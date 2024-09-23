@@ -1,120 +1,86 @@
-Return-Path: <linux-kernel+bounces-335961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF49797ED29
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:25:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C7B597ED30
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3811828140C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:25:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D9B21C212B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:32:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322F42AD25;
-	Mon, 23 Sep 2024 14:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bONhUMdT"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C0D198E81;
+	Mon, 23 Sep 2024 14:32:04 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4881392
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 14:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8CAC1392
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 14:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727101538; cv=none; b=nJolzaE7GpjJlytVH9oJnX7U3opcdfTrefaB2EC3u1fZslEalsAxknaPiyHTZLu1+I9ObOYaD3cQwtN8Ftb/Bs6Hx446zAhRHUPTHII+uK3IjCdf/e8wnku9tQ/LXxpeHeY6MkOigKnVAQeMVjHZHLxuDNC5FDAXtC2SzHfa6sM=
+	t=1727101924; cv=none; b=plHBHY0V/gsf4z138UCq5hHEMsvjCenmM4SVN/6xD3x+pllpTE/t8en5lIojFmzkEEDH4JWpgx6nlfk/bF6Em7p4yRur86QU+D5Vkb/kg9EJtFyuWG8+udjCJJjGfCK7C/09SPUpw4fNu0i92g52qkN2ro2iIBpsKFTAYl5rjNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727101538; c=relaxed/simple;
-	bh=NbbIM+jTtXGG9jCNY5Xhx58HYcV3coXSo0Te2K4usq4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=id4V7Pw0uJbcVBqj5Dg9Pt7LbzkyptVJ/fiIwFQ+KKKC+/SnW6owKNeLAHsDFvhPUBA4T5tTWBRg6GNsaaZVpp8dfQNfT4ThAO04sGDIiTvOSRFU1L5/X8Vh06FCxlU5VI2Nh8fIGAJUnAxLsMRmRlsVgTTpxt7NbIQMCujHxH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bONhUMdT; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7191fb54147so3252624b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 07:25:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727101536; x=1727706336; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=f/RAhNxEAp+I30ReyW3KKpuGInU42s+KyP1A1+TRN0g=;
-        b=bONhUMdTbNdvouT9YhO2tiqRGUld98rFcFEcYUKX543Ollr9/zLAvxLAH4EgIZSXG7
-         z6DdhCq40Sqtft5E9tvIuNiVLBbc/7sEM1HhW1G9Vb89utLK0rvz7z84tBmcYabWXw/E
-         SMROHBRukmIyC2G4p2fK5urzKw3NpdUN1zMb60XzBDx4OEKSpCZHLpzsAJd1Hr+KB8p+
-         z0w9ip3GQMay3CyLH05n3AFHOkjDt7Ctn1I+pqbZIBqWe1kL8CBzw3JUa9WibaY6rTG8
-         0hIRct/h9i2v6ZEABsK4SisvFso3LvtWL4V98j+XIRmP9H6TC3hbGKv7HqUHxznJhhwi
-         Zr8A==
+	s=arc-20240116; t=1727101924; c=relaxed/simple;
+	bh=KPlH+M1QNYQMjZRdvjSVxxxodzvT4Pfe7WzQer9rYHY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=gHmYnGWErrv6pgZ/i3EEuYOVfC5B/TrhlPbd1ISY8MZDG9U12y0i10NMrKgjSOsQOrTDlUB38ntugadjfurysOyIwfdbirDOKy6ng3v17sJxw8jaseDrfPw92BfYo4/MXX0y07ayJMXuyXIIrZW5nkgLedi5k0joIBIAoOS4tzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82cda24c462so456872839f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 07:32:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727101536; x=1727706336;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f/RAhNxEAp+I30ReyW3KKpuGInU42s+KyP1A1+TRN0g=;
-        b=D/L036mOqpIEsENYbb2KKN/keRZaXMUJz3iBrKmjaF5hf8HlO/ThofwNxnZ5+hpUMY
-         saVXhYLHqQmvU078To/9xhyoVeuFp0EG2U0JDDMmbl4sEue5Q2f9a4U49eM32kESevVw
-         NCDzbl7rovYnn8Fh2649O5RCDA9XNj9zrSQB28+bJl/LQQeEMabb/MLNQbzoeMwpIzMt
-         m4QK8yxfk7kVuZXKIisdy+/2a38dbEH9UPXtG/L410QMMMylJ2sLD0EZ7A0Wq1QZxJMm
-         a23thaMriURQBNor82CBjnui04m0qTgHfZmj2pA7vi2Pmlp0ctSMkN1nY9Ea9RjzQiLP
-         du7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUaM2UWF23fwYlm/femMuf9qYMWM5QAK9Y5wQb3vqsXGPm4wsaKCEr4d1REMPJs87+mKHrufylIVECY9AY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzw4xbBcDf2GX4Tzc47O73BKQ6v81pBXI/NrX+USIP4sH54+gyj
-	FhUnCghwWS1JeTcGwxLo4DHySmS8aMAhD8nlfNBKHgCmuEOr3qYYJ0sdkw==
-X-Google-Smtp-Source: AGHT+IF/32xVhJM+Yi3WbHwCjjj37zZwnw2o/XTaGsqD/M6rrHqJy0NKwypUhzJVuXy0X9+Zk/xoAg==
-X-Received: by 2002:aa7:8894:0:b0:719:7475:f073 with SMTP id d2e1a72fcca58-7199cc45545mr17539289b3a.1.1727101536224;
-        Mon, 23 Sep 2024 07:25:36 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944ab56d0sm13952571b3a.66.2024.09.23.07.25.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 07:25:35 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-From: Guenter Roeck <linux@roeck-us.net>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Guenter Roeck <linux@roeck-us.net>,
-	David Hildenbrand <david@redhat.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH] mm: Make SPLIT_PTE_PTLOCKS depend on the existence of NR_CPUS
-Date: Mon, 23 Sep 2024 07:25:33 -0700
-Message-ID: <20240923142533.1197982-1-linux@roeck-us.net>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1727101922; x=1727706722;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3E/19JOdnuHAtShY1CLrK2NlHMvBb8jLpklT15JwURk=;
+        b=mQTCOFS4jySIZ1ET58NBRpDcFxf70fkxMW5uI+GcQVwsCY9yMlA34Di1UHT0UxNT9c
+         eYfj50iSFFhKReEzWbdZcvg6bZdyJJwiyFcay/VIuiZI+GHkJVAZMMUUzNqMD+MEP3s1
+         ZKvqbAPeSE8NMppK8wLHyuePja9o1ZaxxkRlr/SmVH7iMQP/pQRPeYbEjK5FiNgii7Hf
+         evlxfMbPPu7Gciupyww8+kBAdWrLjfFvZ68CZIuCrwMBeRxq2/bRN1b+XEURGTmlk4ZD
+         y6ZENeQErp3ys4+25hIDgdIA1+HLRrMHcPp6u9NMg8m9+TPUUTUZtl4KTr6nAiTj/+X0
+         0sAw==
+X-Gm-Message-State: AOJu0YxiP3JQIwxJER6bYJFHUHwN997diJ0CjAFAXKg5BM/kiYtxI8wu
+	a7hkVxnRSEz/Wun0zbbV+FN5vhD4E7bsPtZheT7lb2kg6tnJRBZioNqwou83vf7W2b140KdaKUG
+	vSuvtGYSWs73XPJIveMgkNnE05x8DRhuQ/DQOKll7A3efZR9aT1M9ZjE=
+X-Google-Smtp-Source: AGHT+IFz6dWjjLfBu/w4oCzULmbh5Lo62QS6q7yiYB4ybP+zbVfGNT4GejyPGKV6qoHboqJ+YTm9JP03VQ0OZERKYSTeSy8jOdC6
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1d01:b0:3a0:ab86:9293 with SMTP id
+ e9e14a558f8ab-3a0c8d7408fmr87292395ab.26.1727101922030; Mon, 23 Sep 2024
+ 07:32:02 -0700 (PDT)
+Date: Mon, 23 Sep 2024 07:32:02 -0700
+In-Reply-To: <CAHiZj8gEHCy5iSisnVkYWijSO2uP+VVuTA_dbaDCoTA2B8cFrg@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f17be2.050a0220.3eed3.000f.GAE@google.com>
+Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in hfs_iget
+From: syzbot <syzbot+18dd03a3fcf0ffe27da0@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, surajsonawane0215@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-SPLIT_PTE_PTLOCKS already depends on "NR_CPUS >= 4", but that evaluates
-to true if there is no NR_CPUS configuration option (such as for m68k).
-This results in CONFIG_SPLIT_PTE_PTLOCKS=y for mac_defconfig.
-This in turn causes the m68k "q800" machine to crash in qemu.
+Hello,
 
-Adding an explicit dependency on the existence of NR_CPUS fixes the
-problem.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Fixes: 394290cba966 ("mm: turn USE_SPLIT_PTE_PTLOCKS / USE_SPLIT_PTE_PTLOCKS into Kconfig options")
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
----
- mm/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reported-by: syzbot+18dd03a3fcf0ffe27da0@syzkaller.appspotmail.com
+Tested-by: syzbot+18dd03a3fcf0ffe27da0@syzkaller.appspotmail.com
 
-diff --git a/mm/Kconfig b/mm/Kconfig
-index 09aebca1cae3..20fe60389cf5 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -595,7 +595,7 @@ config ARCH_MHP_MEMMAP_ON_MEMORY_ENABLE
- config SPLIT_PTE_PTLOCKS
- 	def_bool y
- 	depends on MMU
--	depends on NR_CPUS >= 4
-+	depends on NR_CPUS && NR_CPUS >= 4
- 	depends on !ARM || CPU_CACHE_VIPT
- 	depends on !PARISC || PA20
- 	depends on !SPARC32
--- 
-2.45.2
+Tested on:
 
+commit:         de5cb0dc Merge branch 'address-masking'
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16a4619f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=547de13ee0a4d284
+dashboard link: https://syzkaller.appspot.com/bug?extid=18dd03a3fcf0ffe27da0
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=104f9c27980000
+
+Note: testing is done by a robot and is best-effort only.
 
