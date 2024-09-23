@@ -1,229 +1,301 @@
-Return-Path: <linux-kernel+bounces-335494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC24E97E680
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 09:26:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12BE697E684
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 09:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D38FAB20D35
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 07:25:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F9391F21ECF
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 07:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE82634CDE;
-	Mon, 23 Sep 2024 07:25:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D52E45025;
+	Mon, 23 Sep 2024 07:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b="sivYklNE"
-Received: from ironport.ite.com.tw (60-251-196-230.hinet-ip.hinet.net [60.251.196.230])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b="lUZGi4zE"
+Received: from mail.avm.de (mail.avm.de [212.42.244.94])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC33D529
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 07:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.251.196.230
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7DFE1C6B8;
+	Mon, 23 Sep 2024 07:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.94
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727076351; cv=none; b=GT341PSTNellIaGXxhrahvv6GrsA/nRdJYqiHXiGFFtzz29nQbMCh1fegqw9Hq9J7S5oXKXt4xbG3RVpUUoMW3JM4FG0ALN2PuGLyOwKt8d0cCHAAk8nehtIDZcemsGkkw99EGVsiseOfsdHzSwEDDAXTyn9S7RcH5ul19Gan5I=
+	t=1727076429; cv=none; b=cxNipNWXlnVawZvD0zHO4xAhO2AqblgCrIuzTr50O96deW2oG4I/RMhD5iBXl5Jji2xNwTRfOue61YtZeA1JyGbVwBQX/QB7n5NzbXMuMreChuO61MsenNdSSBM1CVsQp/AqUtXk0Xjg4i6LNPcFMmDa5cBQwzAzSXMEv6fM4a0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727076351; c=relaxed/simple;
-	bh=Al6ZIQ1j4pYnHeF6PuBHBkTz42aKMTMGTD+BY+yAQVs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=GTWojO+cs5jRRL7GGvrmtPD7FaQoj8FttvuEXLMfSc7TIX2nPnFKGzZhGE8IAGe4cbbXTSQQ5DU2BUyb9QGazb4ahDkU0Hb2JBJJBLVcPLO7QO2EVbbQ3rppQwgOGWW6aEWUdeVkw32jXPJakhRzbmk6QEEavCr48+DPy5vglmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw; spf=pass smtp.mailfrom=ite.com.tw; dkim=fail (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b=sivYklNE reason="key not found in DNS"; arc=none smtp.client-ip=60.251.196.230
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ite.com.tw
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=ite.com.tw; s=dkim;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=Al6ZIQ1j4pYnHeF6PuBHBkTz42aKMTMGTD+BY+yAQVs=;
-  b=sivYklNEzLoknZXlmJPbiuusf8Zo5SfVbkp+e3J2f2EGL3JSwCVct7KE
-   QmE6mjBOSvdXlmLtiqRsz5wFlaJm67ohhIJmyDhntU3hK+pnR8rQGeLBl
-   8T6moygy9rtS3kScgRdGHJzPCN9MCwHwBptJV2eCQwPK7Xl/hpM4+Mtoq
-   XWTAJEbsiZesZAhz3xoVUYT76wE0/ge5MgWjpYxziunJvPc2J7WsfEJOg
-   mf9bWR3GVqZZmjFDd6RDagmqWVip6zO8KYPk6y6fisGDRJuUhvEnW5ezH
-   j4K8ptSHQE0Br9ZDbBuyrMaHjE87mYWXs16xk7RFlePkLVx4BPyRE6pZZ
-   w==;
-X-CSE-ConnectionGUID: ftQv93xzSc6kBJM+UFsdKQ==
-X-CSE-MsgGUID: MQHJDxVJRGKv+zN0Dz9k+A==
-Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
-  by ironport.ite.com.tw with ESMTP; 23 Sep 2024 15:25:45 +0800
-Received: from tpemail1.internal.ite.com.tw (TPEMAIL1.internal.ite.com.tw [192.168.15.58])
-	by mse.ite.com.tw with ESMTP id 48N7PdLk007825;
-	Mon, 23 Sep 2024 15:25:39 +0800 (GMT-8)
-	(envelope-from Hermes.Wu@ite.com.tw)
-Received: from TPEMAIL1.internal.ite.com.tw (192.168.15.58) by
- TPEMAIL1.internal.ite.com.tw (192.168.15.58) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 23 Sep 2024 15:25:40 +0800
-Received: from TPEMAIL1.internal.ite.com.tw ([fe80::dd6d:92:8773:b68]) by
- TPEMAIL1.internal.ite.com.tw ([fe80::dd6d:92:8773:b68%6]) with mapi id
- 15.01.2507.039; Mon, 23 Sep 2024 15:25:40 +0800
-From: <Hermes.Wu@ite.com.tw>
-To: <dmitry.baryshkov@linaro.org>
-CC: <treapking@chromium.org>, <a.hajda@samsung.com>, <narmstrong@baylibre.com>,
-        <robert.foss@linaro.org>, <Laurent.pinchart@ideasonboard.com>,
-        <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>, <airlied@gmail.com>,
-        <daniel@ffwll.ch>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <Kenneth.Hung@ite.com.tw>
-Subject: RE: [PATCH v1] drm/bridge: it6505: HDCP CTS fail on repeater items
-Thread-Topic: [PATCH v1] drm/bridge: it6505: HDCP CTS fail on repeater items
-Thread-Index: AQHbC3TJoX+m8u1HGEWhaTgeYcdV3rJk155g//+LmQCAAJj8cA==
-Date: Mon, 23 Sep 2024 07:25:40 +0000
-Message-ID: <97861ebe0244454cb5e76d9c26cb6d33@ite.com.tw>
-References: <20240919025551.254-1-Hermes.Wu@ite.com.tw>
- <CAEXTbpc7N2v4LwoZ4wpHXi7ogyqGwYC3Gpt5sqfxtOpYrngPLg@mail.gmail.com>
- <nczuje3ur7sf7uqkygtziwnz5p6b4b7bf5on5crljr2ijmblrv@ym3fkvqxbjq5>
- <467ea5d3380843a1ad1f2f2429bb2833@ite.com.tw>
- <kek5orlxcrejicq55mczj6gmjgq2pgynzxk2qup65iyuedcwdy@maird5uixbys>
-In-Reply-To: <kek5orlxcrejicq55mczj6gmjgq2pgynzxk2qup65iyuedcwdy@maird5uixbys>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-tm-snts-smtp: 6FB417ABB84EA8DAEA6709E7AAE066896D7CCE5C9C052F617F614F84A71BE15B2002:8
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1727076429; c=relaxed/simple;
+	bh=2aH6XQuWemR1lNsSJNVlynLcDCscjjrjj8wknqDuQcA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fecU62zh3j3JXfxTWju6SZ8rypZ0FI/AFwDpdFvX6wwyqgpjFxn5L//YkUSYyKC4iu5AcBenBNPAZVNzn3WUJTYwvXVM9TX+2OaLFNHUpeRy4pm8W4lCF6bnL0mIJ3NwI1itNQC9CHm6Khxz/iq7U/pYTeIefo3WZahy+co5xZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de; spf=pass smtp.mailfrom=avm.de; dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b=lUZGi4zE; arc=none smtp.client-ip=212.42.244.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=avm.de; s=mail;
+	t=1727076417; bh=2aH6XQuWemR1lNsSJNVlynLcDCscjjrjj8wknqDuQcA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lUZGi4zEUUF3E6PwfEUnq1FVw7fIwWX7rbv0R6lx4MKNhaXsEL90hRpcVGpUymv/H
+	 RhT1V9Husx1S1IAD1vI7pS9ka4/eZgC/EGYjpaVWBagzqcT5v2yUjsM0L2jsH++isQ
+	 F98aQB4GR07fhLjThlnuhaUMvH4paDee6qOxpgT8=
+Received: from mail-auth.avm.de (dovecot-mx-01.avm.de [212.42.244.71])
+	by mail.avm.de (Postfix) with ESMTPS;
+	Mon, 23 Sep 2024 09:26:56 +0200 (CEST)
+Message-ID: <6372b85a-216c-472b-82de-2b4d2ca22008@avm.de>
+Date: Mon, 23 Sep 2024 09:26:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MAIL:mse.ite.com.tw 48N7PdLk007825
+Subject: Re: [RFC PATCH net-next] net: bridge: drop packets with a local
+ source
+To: Nikolay Aleksandrov <razor@blackwall.org>, Roopa Prabhu
+ <roopa@nvidia.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>
+Cc: Johannes Nixdorf <jnixdorf-oss@avm.de>, bridge@lists.linux.dev,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240919085803.105430-1-tmartitz-oss@avm.de>
+ <934bf1f6-3f1c-4de4-be91-ba1913d1cb0e@blackwall.org>
+ <7aa4c66e-d0dc-452f-aebd-eb02a1b15a44@avm.de>
+ <34a42cfa-9f72-4a66-be63-e6179e04f86e@blackwall.org>
+ <74baea7a-318c-482b-9e27-4a9b057b58f3@avm.de>
+ <298aa961-5827-4fa9-bfdc-66267d08198c@blackwall.org>
+Content-Language: de-DE
+From: Thomas Martitz <tmartitz-oss@avm.de>
+In-Reply-To: <298aa961-5827-4fa9-bfdc-66267d08198c@blackwall.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-purgate-ID: 149429::1727076416-C1D5B0CA-864F8123/0/0
+X-purgate-type: clean
+X-purgate-size: 11520
+X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
+X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
+X-purgate: clean
 
-SGkNCg0KQlIsDQpIZXJtZXMNCg0KDQo+LS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj5Gcm9t
-OiBEbWl0cnkgQmFyeXNoa292IDxkbWl0cnkuYmFyeXNoa292QGxpbmFyby5vcmc+IA0KPlNlbnQ6
-IE1vbmRheSwgU2VwdGVtYmVyIDIzLCAyMDI0IDI6MTYgUE0NCj5UbzogSGVybWVzIFd1ICjlkLPk
-vbPlro8pIDxIZXJtZXMuV3VAaXRlLmNvbS50dz4NCj5DYzogdHJlYXBraW5nQGNocm9taXVtLm9y
-ZzsgYS5oYWpkYUBzYW1zdW5nLmNvbTsgbmFybXN0cm9uZ0BiYXlsaWJyZS5jb207IHJvYmVydC5m
-b3NzQGxpbmFyby5vcmc7IExhdXJlbnQucGluY2hhcnRAaWRlYXNvbmJvYXJkLmNvbTsgam9uYXNA
-a3dpYm9vLnNlOyBqZXJuZWouPnNrcmFiZWNAZ21haWwuY29tOyBhaXJsaWVkQGdtYWlsLmNvbTsg
-ZGFuaWVsQGZmd2xsLmNoOyBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnOyBsaW51eC1r
-ZXJuZWxAdmdlci5rZXJuZWwub3JnOyBLZW5uZXRoIEh1bmcgKOa0quWutuWAqykgPEtlbm5ldGgu
-SHVuZ0BpdGUuY29tLnR3Pg0KPlN1YmplY3Q6IFJlOiBbUEFUQ0ggdjFdIGRybS9icmlkZ2U6IGl0
-NjUwNTogSERDUCBDVFMgZmFpbCBvbiByZXBlYXRlciBpdGVtcw0KPg0KPkhpLA0KPg0KPk9uIE1v
-biwgU2VwIDIzLCAyMDI0IGF0IDA1OjIxOjQxQU0gR01ULCBIZXJtZXMuV3VAaXRlLmNvbS50dyB3
-cm90ZToNCj4+IEhpIA0KPj4gDQo+PiBTb3JyeSBmb3IgdGhlIGNvbmZ1c2lvbiBjYXVzZWQNCj4N
-Cj5QbGVhc2UgZG9uJ3QgdG9wIHBvc3QuIEFuc3dlcnMgc2hvdWxkIGNvbWUgYmVsb3cgdGhlIG9y
-aWdpbmFsIHF1b3RlZA0KPnRleHQsIG5vdCBhYm92ZSBpdC4gT3RoZXJ3aXNlIHJlYWRpbmcgdGhl
-IGVtYWlsIGJlY29tZXMgcmVhbGx5IGhhcmQuDQo+DQo+PiANCj4+IExhc3QgcGF0Y2hlcyBkaWQg
-bm90IHN3aXRjaCB0byBkcm0tbWlzYy1uZXN0LiBBbmQgSSBuZWVkIHJlLWNyZWF0ZSBwYXRjaGVz
-Lg0KPj4gDQo+PiBUaGUgSERDUCBwYXRjaGVzIGlzIG5vdyBvbiB0b3cgdGhyZWFkcy4oVGhpcyBv
-bmUgYW5kIHRoZSBvbmUgaW5jbHVkZSBNQ0NTIHBhdGNoZXMgd2l0aCBjb3ZlciBsZXR0ZXIpDQo+
-DQo+SnVzdCBtYWtlIHN1cmUgdGhhdCB3aGVuIHlvdSBzZW5kIHRoZSBuZXh0IGl0ZXJhdGlvbiBv
-ZiB0aGUgSERDUCArIE1DU1MNCj5wYXRjaGVzIHlvdSBwcm92aWRlIHRoZSBoaXN0b3J5IG9mIHRo
-ZSBjaGFuZ2VzIGluIHRoZSBjaGFuZ2Vsb2cgKGVpdGhlcg0KPmluIHRoZSBjb3ZlciBsZXR0ZXIg
-b3IgaW4gdGhlIGluZGl2aWR1YWwgcGF0Y2hlcykuIEFsc28gcGxlYXNlIGRvbid0DQo+c2VuZCBz
-ZXZlcmFsIHBhdGNoZXMgdXNpbmcgdGhlIHNhbWUgdk4uIEknZCBwb2ludCBvdXQgdGhlICdiNCcg
-dG9vbCwgaXQNCj5jYW4gYXV0b21hdGUgYSBsb3Qgb2Ygc3VjaCB0b3BpY3MgZm9yIHlvdS4NCj4N
-Ckkgd2lsbCBjaGVjayB1c2luZyBvZiBCNCB0b29scw0KDQo+PiBTaG91bGQgSSBrZWVwIG9uIHRo
-aXMgdGhyZWFkIG9yIHJlc3RhcnQgYSBuZXcgdGhyZWFkPw0KPg0KPlBsZWFzZSBhbHdheXMgc2Vu
-ZCBuZXcgcmV2aXNpb25zIGFzIGEgbmV3IHRocmVhZC4gT3RoZXJ3aXNlIHlvdXIgcGF0Y2hlcw0K
-PmNhbiBlYXNpbHkgZ2V0IGxvc3QuDQo+DQo+SSBzdXBwb3NlIHRoYXQgWzFdIGlzIHRoZSBsYXRl
-c3QgcmV2aXNpb24uIFBsZWFzZSByZXZpZXcgYW5kIGltcGxlbWVudA0KPnRoZSBmZWVkYmFjayB0
-aGF0IHdhcyBwcm92aWRlZCB0byBhbGwgaXRlcmF0aW9ucyBvZiB5b3VyIHBhY2hzZXQsIHRoZW4N
-Cj5zZW5kIHYzIGFzIGEgc2VwYXJhdGUgbmV3IHRocmVhZC4NCj4NCj5bMV0gaHR0cHM6Ly9sb3Jl
-Lmtlcm5lbC5vcmcvZHJpLWRldmVsL3Z4czNla2xmaWZzbmFxNXJuNmtwcGVnZnYzcGxzdmlxYXE1
-bnZsem8zZmdhendqNnk3QG9kNGF0YnZmNWVwMy9ULyN1DQo+DQoNCkEgc3VnZ2VzdGlvbiB0aGF0
-IGEgYXV4IHBhdGggbmVlZCBzZXBhcmF0ZSB0byBkaWZmZXJlbnQgcGF0aCwgdGhpcyBjaGFuZ2Ug
-d2lsbCBiZWZvcmUgSERDUA0KV29uJ3QgaXQgYmVjb21lIG1vcmUgY29tcGxpY2F0ZT8NCg0KaXQg
-Z29lcyBsaWtlIHRoaXM/DQoNClBhdGNoIFYxIGF1eA0KUGF0Y2ggVjMgSERDUA0KUGF0Y2ggVjMg
-TUNDUw0KDQoNCj4+IA0KPj4gDQo+PiBCUiwNCj4+IEhlcm1lcw0KPj4gLS0tLS1PcmlnaW5hbCBN
-ZXNzYWdlLS0tLS0NCj4+IEZyb206IERtaXRyeSBCYXJ5c2hrb3YgPGRtaXRyeS5iYXJ5c2hrb3ZA
-bGluYXJvLm9yZz4gDQo+PiBTZW50OiBGcmlkYXksIFNlcHRlbWJlciAyMCwgMjAyNCAxMTo1MCBQ
-TQ0KPj4gVG86IFBpbi15ZW4gTGluIDx0cmVhcGtpbmdAY2hyb21pdW0ub3JnPg0KPj4gQ2M6IEhl
-cm1lcyBXdSAo5ZCz5L2z5a6PKSA8SGVybWVzLld1QGl0ZS5jb20udHc+OyBBbmRyemVqIEhhamRh
-IDxhLmhhamRhQHNhbXN1bmcuY29tPjsgTmVpbCBBcm1zdHJvbmcgPG5hcm1zdHJvbmdAYmF5bGli
-cmUuY29tPjsgUm9iZXJ0IEZvc3MgPHJvYmVydC5mb3NzQGxpbmFyby5vcmc+OyA+TGF1cmVudCBQ
-aW5jaGFydCA8TGF1cmVudC5waW5jaGFydEBpZGVhc29uYm9hcmQuY29tPjsgSm9uYXMgS2FybG1h
-biA8am9uYXNAa3dpYm9vLnNlPjsgSmVybmVqIFNrcmFiZWMgPGplcm5lai5za3JhYmVjQGdtYWls
-LmNvbT47IERhdmlkIEFpcmxpZSA8YWlybGllZEBnbWFpbC5jb20+OyA+RGFuaWVsIFZldHRlciA8
-ZGFuaWVsQGZmd2xsLmNoPjsgb3BlbiBsaXN0OkRSTSBEUklWRVJTIDxkcmktZGV2ZWxAbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnPjsgb3BlbiBsaXN0IDxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3Jn
-PjsgS2VubmV0aCBIdW5nICjmtKrlrrblgKspIDxLZW5uZXRoLj5IdW5nQGl0ZS5jb20udHc+DQo+
-PiBTdWJqZWN0OiBSZTogW1BBVENIIHYxXSBkcm0vYnJpZGdlOiBpdDY1MDU6IEhEQ1AgQ1RTIGZh
-aWwgb24gcmVwZWF0ZXIgaXRlbXMNCj4+IA0KPj4gT24gRnJpLCBTZXAgMjAsIDIwMjQgYXQgMDE6
-Mjc6NTRQTSBHTVQsIFBpbi15ZW4gTGluIHdyb3RlOg0KPj4gPiBPbiBUaHUsIFNlcCAxOSwgMjAy
-NCBhdCAxMDo1OOKAr0FNIDxIZXJtZXMuV3VAaXRlLmNvbS50dz4gd3JvdGU6DQo+PiA+ID4NCj4+
-ID4gPiBGcm9tOiBIZXJtZXMgV3UgPEhlcm1lcy5XdUBpdGUuY29tLnR3Pg0KPj4gPiA+DQo+PiA+
-ID4gRml4IEhEQ1AgQ1RTIGl0ZW1zIG9uIFVOSUdSQUYgRFBSLTEwMC4NCj4+ID4gPg0KPj4gPiA+
-IFNpZ25lZC1vZmYtYnk6IEhlcm1lcyBXdSA8SGVybWVzLld1QGl0ZS5jb20udHc+DQo+PiA+IA0K
-Pj4gPiBSZXZpZXdlZC1ieTogUGluLXllbiBMaW4gPHRyZWFwa2luZ0BjaHJvbWl1bS5vcmc+DQo+
-PiANCj4+IEZvciB0aGUgc2FrZSBvZiBzb21lYm9keSBhcHBseWluZyB0aGUgcGF0Y2ggYmVjYXVz
-ZSBpdCB3YXMgUi1CJ2VkDQo+PiANCj4+IE5hY2tlZC1ieTogRG1pdHJ5IEJhcnlzaGtvdiA8ZG1p
-dHJ5LmJhcnlzaGtvdkBsaW5hcm8ub3JnPg0KPj4gDQo+PiBUaGUgY29tbWl0IG1lc3NhZ2UgZG9l
-c24ndCBkZXNjcmliZSB3aGF0IGlzIGJlaW5nIGRvbmUgYW5kIHdoeSwgaXQNCj4+IGRvZXNuJ3Qg
-aGF2ZSBGaXhlcyB0YWdzLCBldGMuDQo+PiANCj4+IEhlcm1lcywgSSdtIG5vdCBzdXJlIHdoYXQn
-cyBoYXBwZW5pbmcgb24geW91ciBzaWRlLiBJIGhhdmUgc2VlbiBzZXZlcmFsDQo+PiByZXZpc2lv
-bnMgb2YgdGhpcyBwYXRjaCB3aXRoIG1pbmltYWwgbW9kaWZpY2F0aW9ucyAoYW5kIGJlaW5nIGEg
-cGFydCBvZg0KPj4gZGlmZmVyZW50IHNlcmllcykuIFNvbWUgb2YgdGhlbSB3ZXJlIG1hcmtlZCBh
-cyB2MSAoYWx0aG91Z2ggeW91J3ZlIHNlbnQNCj4+IGRpZmZlcmVudCBwYXRjaGVzIGFzIHYxKSwg
-b3RoZXIgaGFkIHYyIChidXQgbm8gY2hhbmdlbG9nLCBldGMpLiBQbGVhc2UNCj4+IGFkaGVyZSB0
-byB0aGUgZGVzY3JpYmVkIHByb2Nlc3Mgb2Ygc2VuZGluZyBwYXRjaGVzLg0KPj4gDQo+PiAtLSAN
-Cj4+IFdpdGggYmVzdCB3aXNoZXMNCj4+IERtaXRyeQ0KDQotLSANCldpdGggYmVzdCB3aXNoZXMN
-CkRtaXRyeQ0KDQpCUiwNCkhlcm1lcw0KDQoNCi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQpG
-cm9tOiBEbWl0cnkgQmFyeXNoa292IDxkbWl0cnkuYmFyeXNoa292QGxpbmFyby5vcmc+IA0KU2Vu
-dDogTW9uZGF5LCBTZXB0ZW1iZXIgMjMsIDIwMjQgMjoxNiBQTQ0KVG86IEhlcm1lcyBXdSAo5ZCz
-5L2z5a6PKSA8SGVybWVzLld1QGl0ZS5jb20udHc+DQpDYzogdHJlYXBraW5nQGNocm9taXVtLm9y
-ZzsgYS5oYWpkYUBzYW1zdW5nLmNvbTsgbmFybXN0cm9uZ0BiYXlsaWJyZS5jb207IHJvYmVydC5m
-b3NzQGxpbmFyby5vcmc7IExhdXJlbnQucGluY2hhcnRAaWRlYXNvbmJvYXJkLmNvbTsgam9uYXNA
-a3dpYm9vLnNlOyBqZXJuZWouc2tyYWJlY0BnbWFpbC5jb207IGFpcmxpZWRAZ21haWwuY29tOyBk
-YW5pZWxAZmZ3bGwuY2g7IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmc7IGxpbnV4LWtl
-cm5lbEB2Z2VyLmtlcm5lbC5vcmc7IEtlbm5ldGggSHVuZyAo5rSq5a625YCrKSA8S2VubmV0aC5I
-dW5nQGl0ZS5jb20udHc+DQpTdWJqZWN0OiBSZTogW1BBVENIIHYxXSBkcm0vYnJpZGdlOiBpdDY1
-MDU6IEhEQ1AgQ1RTIGZhaWwgb24gcmVwZWF0ZXIgaXRlbXMNCg0KSGksDQoNCk9uIE1vbiwgU2Vw
-IDIzLCAyMDI0IGF0IDA1OjIxOjQxQU0gR01ULCBIZXJtZXMuV3VAaXRlLmNvbS50dyB3cm90ZToN
-Cj4gSGkNCj4gDQo+IFNvcnJ5IGZvciB0aGUgY29uZnVzaW9uIGNhdXNlZA0KDQpQbGVhc2UgZG9u
-J3QgdG9wIHBvc3QuIEFuc3dlcnMgc2hvdWxkIGNvbWUgYmVsb3cgdGhlIG9yaWdpbmFsIHF1b3Rl
-ZCB0ZXh0LCBub3QgYWJvdmUgaXQuIE90aGVyd2lzZSByZWFkaW5nIHRoZSBlbWFpbCBiZWNvbWVz
-IHJlYWxseSBoYXJkLg0KDQo+IA0KPiBMYXN0IHBhdGNoZXMgZGlkIG5vdCBzd2l0Y2ggdG8gZHJt
-LW1pc2MtbmVzdC4gQW5kIEkgbmVlZCByZS1jcmVhdGUgcGF0Y2hlcy4NCj4gDQo+IFRoZSBIRENQ
-IHBhdGNoZXMgaXMgbm93IG9uIHRvdyB0aHJlYWRzLihUaGlzIG9uZSBhbmQgdGhlIG9uZSBpbmNs
-dWRlIA0KPiBNQ0NTIHBhdGNoZXMgd2l0aCBjb3ZlciBsZXR0ZXIpDQoNCkp1c3QgbWFrZSBzdXJl
-IHRoYXQgd2hlbiB5b3Ugc2VuZCB0aGUgbmV4dCBpdGVyYXRpb24gb2YgdGhlIEhEQ1AgKyBNQ1NT
-IHBhdGNoZXMgeW91IHByb3ZpZGUgdGhlIGhpc3Rvcnkgb2YgdGhlIGNoYW5nZXMgaW4gdGhlIGNo
-YW5nZWxvZyAoZWl0aGVyIGluIHRoZSBjb3ZlciBsZXR0ZXIgb3IgaW4gdGhlIGluZGl2aWR1YWwg
-cGF0Y2hlcykuIEFsc28gcGxlYXNlIGRvbid0IHNlbmQgc2V2ZXJhbCBwYXRjaGVzIHVzaW5nIHRo
-ZSBzYW1lIHZOLiBJJ2QgcG9pbnQgb3V0IHRoZSAnYjQnIHRvb2wsIGl0IGNhbiBhdXRvbWF0ZSBh
-IGxvdCBvZiBzdWNoIHRvcGljcyBmb3IgeW91Lg0KDQo+IFNob3VsZCBJIGtlZXAgb24gdGhpcyB0
-aHJlYWQgb3IgcmVzdGFydCBhIG5ldyB0aHJlYWQ/DQoNClBsZWFzZSBhbHdheXMgc2VuZCBuZXcg
-cmV2aXNpb25zIGFzIGEgbmV3IHRocmVhZC4gT3RoZXJ3aXNlIHlvdXIgcGF0Y2hlcyBjYW4gZWFz
-aWx5IGdldCBsb3N0Lg0KDQpJIHN1cHBvc2UgdGhhdCBbMV0gaXMgdGhlIGxhdGVzdCByZXZpc2lv
-bi4gUGxlYXNlIHJldmlldyBhbmQgaW1wbGVtZW50IHRoZSBmZWVkYmFjayB0aGF0IHdhcyBwcm92
-aWRlZCB0byBhbGwgaXRlcmF0aW9ucyBvZiB5b3VyIHBhY2hzZXQsIHRoZW4gc2VuZCB2MyBhcyBh
-IHNlcGFyYXRlIG5ldyB0aHJlYWQuDQoNClsxXSBodHRwczovL2xvcmUua2VybmVsLm9yZy9kcmkt
-ZGV2ZWwvdnhzM2VrbGZpZnNuYXE1cm42a3BwZWdmdjNwbHN2aXFhcTVudmx6bzNmZ2F6d2o2eTdA
-b2Q0YXRidmY1ZXAzL1QvI3UNCg0KPiANCj4gDQo+IEJSLA0KPiBIZXJtZXMNCj4gLS0tLS1Pcmln
-aW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogRG1pdHJ5IEJhcnlzaGtvdiA8ZG1pdHJ5LmJhcnlz
-aGtvdkBsaW5hcm8ub3JnPg0KPiBTZW50OiBGcmlkYXksIFNlcHRlbWJlciAyMCwgMjAyNCAxMTo1
-MCBQTQ0KPiBUbzogUGluLXllbiBMaW4gPHRyZWFwa2luZ0BjaHJvbWl1bS5vcmc+DQo+IENjOiBI
-ZXJtZXMgV3UgKOWQs+S9s+WujykgPEhlcm1lcy5XdUBpdGUuY29tLnR3PjsgQW5kcnplaiBIYWpk
-YSANCj4gPGEuaGFqZGFAc2Ftc3VuZy5jb20+OyBOZWlsIEFybXN0cm9uZyA8bmFybXN0cm9uZ0Bi
-YXlsaWJyZS5jb20+OyANCj4gUm9iZXJ0IEZvc3MgPHJvYmVydC5mb3NzQGxpbmFyby5vcmc+OyBM
-YXVyZW50IFBpbmNoYXJ0IA0KPiA8TGF1cmVudC5waW5jaGFydEBpZGVhc29uYm9hcmQuY29tPjsg
-Sm9uYXMgS2FybG1hbiA8am9uYXNAa3dpYm9vLnNlPjsgDQo+IEplcm5laiBTa3JhYmVjIDxqZXJu
-ZWouc2tyYWJlY0BnbWFpbC5jb20+OyBEYXZpZCBBaXJsaWUgDQo+IDxhaXJsaWVkQGdtYWlsLmNv
-bT47IERhbmllbCBWZXR0ZXIgPGRhbmllbEBmZndsbC5jaD47IG9wZW4gbGlzdDpEUk0gDQo+IERS
-SVZFUlMgPGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmc+OyBvcGVuIGxpc3QgDQo+IDxs
-aW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPjsgS2VubmV0aCBIdW5nICjmtKrlrrblgKspIA0K
-PiA8S2VubmV0aC5IdW5nQGl0ZS5jb20udHc+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjFdIGRy
-bS9icmlkZ2U6IGl0NjUwNTogSERDUCBDVFMgZmFpbCBvbiByZXBlYXRlciANCj4gaXRlbXMNCj4g
-DQo+IE9uIEZyaSwgU2VwIDIwLCAyMDI0IGF0IDAxOjI3OjU0UE0gR01ULCBQaW4teWVuIExpbiB3
-cm90ZToNCj4gPiBPbiBUaHUsIFNlcCAxOSwgMjAyNCBhdCAxMDo1OOKAr0FNIDxIZXJtZXMuV3VA
-aXRlLmNvbS50dz4gd3JvdGU6DQo+ID4gPg0KPiA+ID4gRnJvbTogSGVybWVzIFd1IDxIZXJtZXMu
-V3VAaXRlLmNvbS50dz4NCj4gPiA+DQo+ID4gPiBGaXggSERDUCBDVFMgaXRlbXMgb24gVU5JR1JB
-RiBEUFItMTAwLg0KPiA+ID4NCj4gPiA+IFNpZ25lZC1vZmYtYnk6IEhlcm1lcyBXdSA8SGVybWVz
-Lld1QGl0ZS5jb20udHc+DQo+ID4gDQo+ID4gUmV2aWV3ZWQtYnk6IFBpbi15ZW4gTGluIDx0cmVh
-cGtpbmdAY2hyb21pdW0ub3JnPg0KPiANCj4gRm9yIHRoZSBzYWtlIG9mIHNvbWVib2R5IGFwcGx5
-aW5nIHRoZSBwYXRjaCBiZWNhdXNlIGl0IHdhcyBSLUInZWQNCj4gDQo+IE5hY2tlZC1ieTogRG1p
-dHJ5IEJhcnlzaGtvdiA8ZG1pdHJ5LmJhcnlzaGtvdkBsaW5hcm8ub3JnPg0KPiANCj4gVGhlIGNv
-bW1pdCBtZXNzYWdlIGRvZXNuJ3QgZGVzY3JpYmUgd2hhdCBpcyBiZWluZyBkb25lIGFuZCB3aHks
-IGl0IA0KPiBkb2Vzbid0IGhhdmUgRml4ZXMgdGFncywgZXRjLg0KPiANCj4gSGVybWVzLCBJJ20g
-bm90IHN1cmUgd2hhdCdzIGhhcHBlbmluZyBvbiB5b3VyIHNpZGUuIEkgaGF2ZSBzZWVuIA0KPiBz
-ZXZlcmFsIHJldmlzaW9ucyBvZiB0aGlzIHBhdGNoIHdpdGggbWluaW1hbCBtb2RpZmljYXRpb25z
-IChhbmQgYmVpbmcgDQo+IGEgcGFydCBvZiBkaWZmZXJlbnQgc2VyaWVzKS4gU29tZSBvZiB0aGVt
-IHdlcmUgbWFya2VkIGFzIHYxIChhbHRob3VnaCANCj4geW91J3ZlIHNlbnQgZGlmZmVyZW50IHBh
-dGNoZXMgYXMgdjEpLCBvdGhlciBoYWQgdjIgKGJ1dCBubyBjaGFuZ2Vsb2csIA0KPiBldGMpLiBQ
-bGVhc2UgYWRoZXJlIHRvIHRoZSBkZXNjcmliZWQgcHJvY2VzcyBvZiBzZW5kaW5nIHBhdGNoZXMu
-DQo+IA0KPiAtLQ0KPiBXaXRoIGJlc3Qgd2lzaGVzDQo+IERtaXRyeQ0KDQotLQ0KV2l0aCBiZXN0
-IHdpc2hlcw0KRG1pdHJ5DQo=
+Am 22.09.24 um 20:22 schrieb Nikolay Aleksandrov:
+> On 9/20/24 16:28, Thomas Martitz wrote:
+>> Am 20.09.24 um 08:42 schrieb Nikolay Aleksandrov:
+>>> On 19/09/2024 14:13, Thomas Martitz wrote:
+>>>> Am 19.09.24 um 12:33 schrieb Nikolay Aleksandrov:
+>>>>> On 19/09/2024 11:58, Thomas Martitz wrote:
+>>>>>> Currently, there is only a warning if a packet enters the bridge
+>>>>>> that has the bridge's or one port's MAC address as source.
+>>>>>>
+>>>>>> Clearly this indicates a network loop (or even spoofing) so we
+>>>>>> generally do not want to process the packet. Therefore, move the check
+>>>>>> already done for 802.1x scenarios up and do it unconditionally.
+>>>>>>
+>>>>>> For example, a common scenario we see in the field:
+>>>>>> In a accidental network loop scenario, if an IGMP join
+>>>>>> loops back to us, it would cause mdb entries to stay indefinitely
+>>>>>> even if there's no actual join from the outside. Therefore
+>>>>>> this change can effectively prevent multicast storms, at least
+>>>>>> for simple loops.
+>>>>>>
+>>>>>> Signed-off-by: Thomas Martitz <tmartitz-oss@avm.de>
+>>>>>> ---
+>>>>>>    net/bridge/br_fdb.c   |  4 +---
+>>>>>>    net/bridge/br_input.c | 17 ++++++++++-------
+>>>>>>    2 files changed, 11 insertions(+), 10 deletions(-)
+>>>>>>
+>>>>>
+>>>>> Absolutely not, I'm sorry but we're not all going to take a performance hit
+>>>>> of an additional lookup because you want to filter src address. You can filter
+>>>>> it in many ways that won't affect others and don't require kernel changes
+>>>>> (ebpf, netfilter etc). To a lesser extent there is also the issue where we might
+>>>>> break some (admittedly weird) setup.
+>>>>>
+>>>>
+>>>> Hello Nikolay,
+>>>>
+>>>> thanks for taking a look at the patch. I expected concerns, therefore the RFC state.
+>>>>
+>>>> So I understand that performance is your main concern. Some users might
+>>>> be willing to pay for that cost, however, in exchange for increased
+>>>> system robustness. May I suggest per-bridge or even per-port flags to
+>>>> opt-in to this behavior? We'd set this from our userspace. This would
+>>>> also address the concern to not break weird, existing setups.
+>>>>
+>>>
+>>> That is the usual way these things are added, as opt-in. A flag sounds good
+>>> to me, if you're going to make it per-bridge take a look at the bridge bool
+>>> opts, they were added for such cases.
+>>>
+>>
+>> Alright. I'll approach this. It may take a little while because the LPC
+>> talks are so amazing that I don't want to miss anything.
+>>
+>> I'm currently considering a per-bridge flag because that's fits our use
+>> case. A per-port flag would also work, though, and may fit the code
+>> there better because it's already checking for other port flags
+>> (BR_PORT_LOCKED, BR_LEARNING). Do you have a preference?
+>>
+> 
+> Hi,
+> Sorry for the delayed response, but I was traveling over the weekend
+> and I got some more time to think about this. There is a more subtle
+> problem with this change - you're introducing packet filtering based on
+> fdb flags in the bridge, but it's not the bridge's job to filter
+> packets. We have filtering subsystems - netfilter, tc or ebpf, if they
+> lack some functionality you need to achieve this, then extend them.
+> Just because it's easy to hard-code this packet filter in the bridge
+> doesn't make it right, use the right subsystem if you want to filter.
+> For example you can extend nft's bridge matching capabilities.
+> More below.
+
+Hi,
+
+Alright, I understand that you basically object to the whole idea of
+filtering in the bridge code directly (based on fdb flags). While that
+makes some sense, I found that basically the same filter that I already
+exists for mac802.11 use cases:
+
+                } else if (READ_ONCE(fdb_src->dst) != p ||
+                           test_bit(BR_FDB_LOCAL, &fdb_src->flags)) { <-- drop if local source on ingress
+                        /* FDB mismatch. Drop the packet without roaming. */
+                        goto drop;
+
+In fact, this very code motivated me because I'm just adding one more
+condition to an existing drop mechanism after all. In this area there
+are also further drops based on fdb flags. 
+
+Anyway, dropping isn't actually my main intent, although it's a welcome
+side effect because it immediately stops loops. What I'm after most is
+avoiding local proccessing, both in the IGMP/MLD snooping code and up in
+the stack. In my opinion, it would be good if the bridge code can be more
+resilient against loops (and spoofers) by not processing its own packets
+as if it came from somebody else. My main issue is: the IGMP/MLD snooping
+code becomes convinced that there are subscribers on the network even if
+here aren't, just by processing IGMP/MLD joins that were send out a moment
+ago. That said, we could still decide to forward these packets and not
+filter them completely.
+
+And I still think that should also be the default, especially if we block
+only local processing but not forwarding. You don't feel this robustness
+is not necessary (or consider the performance impact too high) then I
+accept that and withdraw my proposal. I just thought it would be a useful
+addition to the bridge's out-of-the-box stability.
+
+All that said, I'll explore a netfilter solution (see below) to avoid
+maintaing out-of-tree patches.
+
+
+> 
+> 
+>> Although that would risk breaking existing weird set-ups. So unless you
+>> signal preference for this I will not persue that any further.
+>>
+>>
+>>>> This would be analogous to the check added for MAB in 2022
+>>>> (commit a35ec8e38cdd "bridge: Add MAC Authentication Bypass (MAB) support").
+>>>>
+>>>> While there are maybe other methods, only in the bridge code I may
+>>>> access the resulting FDB to test for the BR_FDB_LOCAL flag. There's
+>>>> typically not only a single MAC adress to check for, but such a local
+>>>> FDB is maintained for the enslaved port's MACs as well. Replicating
+>>>> the check outside of the bridge receive code would be orders more
+>>>> complex. For example, you need to update the filter each time a port is
+>>>> added or removed from the bridge.
+>>>>
+>>>
+>>> That is not entirely true, you can make a solution that dynamically compares
+>>> the mac addresses of net devices with src mac of incoming frames, you may need
+>>> to keep a list of the ports themselves or use ebpf though. It isn't complicated
+>>> at all, you just need to keep that list updated when adding/removing ports
+>>> you can even do it with a simple ip monitor and a bash script as a poc, there's nothing
+>>> complicated about it and we won't have to maintain another bridge option forever.
+>>
+>> I'm really trying to be open-minded about other possible ways, but I'm struggling.
+>>
+>> For one, you know we're making a firmware for our home routers. We control all the
+>> code, from boot-loader to kernel to user space, so it's often both easier and more 
+>> reliable to make small modifications to the kernel than to come up with complex
+>> user space. In other words, we don't have any eBPF tooling in place currently and
+>> that would be a major disruption to our workflow. We don't even use LLVM, just GCC
+>> everywhere. I'd have to justify introducing all the eBPF tooling and processes (in
+>> order to avoid having a small patch to kernel) to my colleagues and my manager. I
+>> don't think that'd work out well. I'm pretty sure other companies in our field are
+>> in the same situation.
+> 
+> That really is your problem, it doesn't change the fact it can be solved
+> using eBPF or netfilter. I'm sorry but this is not an argument for this
+> mailing list or for accepting a patch. It really is a pretty simple
+> solution - take ipmonitor (from iproute2/ip), strip all and just look
+> for NEWLINK then act on master changes: on new master add port/mac to
+> table and vice-versa. What's so complex? You can also do it with
+> netfilter and nftables, just update a matching nft table on master
+> changes. Moreover these events are not usually many. In fact since you
+> control user-space entirely I'd add it to the enslave/release pieces in
+> whatever network management tools you're using, so when an interface is
+> enslaved its mac is added to that filter and removed when it's released,
+> then you won't need to have a constantly running process to monitor,
+> even simpler.
+> 
+> Actually it took me about 15 minutes to get a working solution to this
+> problem just by reusing the ipmonitor and iproute2 netlink code with a
+> nft table hooked on port's ingress. It is that simple, but I'd prefer to
+> do it in the network manager on port add/del and avoid monitoring
+> altogether.
+
+
+Impressive!
+
+
+> 
+>>
+>> Furthermore, from what I understand, an eBPF filter would not perform as good
+>> (performance also matters for us!) because there is no hook at this point. I'd need
+>> to hook earlier, perhaps using XDP (?), and that might have to process many more
+>> packets than those that enter the bridge. On the user space side, I'd need to have
+>> a daemon that update bpf maps or something like that to keep the list updated. I'm
+>> new to eBPF, so sorry if it seems more complex to me than it is.
+> 
+> It will process the same amount of packets that the bridge would.
+
+
+If we add vlan devices the tagged packets that don't enter the bridge would still be
+processed by eBPF.
+
+On top, we have also a custom hook that may consume packets for other reasons before
+they enter the bridge. But that's not your problem.
+
+
+> 
+>>
+>> For netfilter, I looked into that also, but the NF_BR_LOCAL_IN hook is too late. One
+>> of the biggest problems we try to solve is that looping IGMP packets enter the bridge
+>> and acually refresh MDBs that should normally timeout (we send JOINs for the addresses
+>> out but the MDB should only refresh when JOINs from other systems are received). Then,
+>> even if the filter location would fit, I'd effectively just re-implement the bridge's
+>> FDB lookup which rings bells that it's not an effective approach.
+>>
+>> So both alternatives you projected are not a good fit to the actual problem and may
+>> require vastly more complex user space.
+> 
+> Is that all the research? You read 2 minutes of webpages and diagonally
+> scanned some source code, did you see the other bridge netfilter
+> hooks? You can extend netfilter and match in any of them if you insist
+> on having a kernel solution. For example match in NF_BR_PRE_ROUTING.
+> You can extend nft's bridge support and match anything you need.
+
+
+Thank you very much for this! I literally looked for NF_HOOK in br_input.c
+to find suitable entry points and the NF_BR_PRE_ROUTING hook didn't occur
+to me (it's handled differently). I really should have looked more carefully
+over the entire file.
+
+Also, I should have known it anyway, I'm working with the bridge code for
+quite a long time already and considered myself experienced in this area
+(have to reconsider this now...).
+
+So sorry for my incomplete research, NF_BR_PRE_ROUTING seems like a nice
+fit actually. I'll explore this further, and assuming this works, we can
+drop my proposal altogether. From a first look it should work, altough we
+wouldn't be able to just block out local processing (can just have drop or
+not) if need arises and we have to re-implement MAC lookup.
+
+I have to apologize for wasting your time but at least I have lerned a lesson.
+
+Best regards.
 
