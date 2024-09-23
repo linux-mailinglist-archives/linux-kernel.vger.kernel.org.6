@@ -1,94 +1,108 @@
-Return-Path: <linux-kernel+bounces-336156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D030997EFDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 19:32:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9867597EFE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 19:38:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 865801F220FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:32:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7D98282433
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE3B19F13D;
-	Mon, 23 Sep 2024 17:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE50019F12C;
+	Mon, 23 Sep 2024 17:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="23BeIyal"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O0qanL2I"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F0A15D1;
-	Mon, 23 Sep 2024 17:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C4336124
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 17:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727112712; cv=none; b=NfbO3MJbGAci3Af8RUrTanSRlGKzMJ3QfDE0ieD7QLbZN+/gwp1Pxo7516jKe2Y9io20lsaMJn0yZS1MHRI8n23o2TtOI7HLjlQSAJXEIORCtknu4wuQw6ZlOF94DH5TfuQFyAu01A3RJkp76lyaD1JfaxsGCTBMEMvUbRyQ/jk=
+	t=1727113079; cv=none; b=EqI/wl6srA9xloRF/tj2LKn2yjrcSiNoAHLm8BM9/bfNVGa455WfAf9tKeJTaVOORRDRpqqtNuvXsY2JR04b5pqwnM8w77rX2nFdjR9+SKfpurrRsyleodKcuBBEmH4kgUoR7t1tRZTR4ueYtB25cKGxt4z0WAIivpjH0ILmFsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727112712; c=relaxed/simple;
-	bh=40rs9ZJYvUrK7g9KIL5niqwlLMK8H1EN1ciEegYswQk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ob+sEn/KIJMvrrh4sMdP0xu5U5GFfYsl3TPJPvcy79rXLU3pztOdv5efNGtV4Wm4XFEb7SECNdxXlP899Xw3wKA5QDOjHZf8ubdHv8Cv4KNT2X1N54GH0IQi47yy+BNEF50d7N/b2ltr/husNTS7FQFSqog2YJzdixxMjQTWzGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=23BeIyal; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4XC95r3WX2z6ClY9d;
-	Mon, 23 Sep 2024 17:31:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1727112699; x=1729704700; bh=40rs9ZJYvUrK7g9KIL5niqwl
-	LMK8H1EN1ciEegYswQk=; b=23BeIyalq1fR/PvyX95ggjGDsAdQjaxCjrdU8d1h
-	qrrEl2uFIhAxwIA8pL+2eWFloktyI9ZtjcE/1d/PefNYD+T6VgxbKSAIEVgJHqp5
-	f2xq0Bd/5wush+iZCjCvoJ/wMP8jR+cZFDoX8FD+kyJYKPOiTAA5dBKeblQcMZHu
-	8ngi9XQvoS8kkPxyuRB418JloYe5wprpDECWhkoAe6eDJy7yCh+wnCNSxFfNZbjx
-	Yv0S4VyN+ns3sOVWMcdr/lV0sJfBeL0m+SDNYApj8openSmiteuoI/jclvRpMQNK
-	Iy67fUv0seEFkcsT7Kzyew+CjAxznbMRyRToBDQG+GZZNw==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 8YFiwgf2yGLY; Mon, 23 Sep 2024 17:31:39 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4XC95g5fgbz6ClY9c;
-	Mon, 23 Sep 2024 17:31:35 +0000 (UTC)
-Message-ID: <a6cf0ed9-5a0d-4b63-96cf-8ac9da1cbbdd@acm.org>
-Date: Mon, 23 Sep 2024 10:31:33 -0700
+	s=arc-20240116; t=1727113079; c=relaxed/simple;
+	bh=X1fWsAcZf0vbkhOtuDK1DITR89lqk4uOXmmpbSYbyoQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qQnTxfkafz19w2nGmhuGbayfLCAv/oNxV/fOT7P2EeLbh6SgZv/yJ6FiL9+16u+AfIsORY2zpQbJ0r9Ms1zPdQ0JOro7kzqXsckqqdnP6ssowS6+6KyfOIaUVqrCs+2S35Li6yYhu7C9dS0FpgU7tlwGBwEvqm8f8iWRiW/iKUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O0qanL2I; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727113077; x=1758649077;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=X1fWsAcZf0vbkhOtuDK1DITR89lqk4uOXmmpbSYbyoQ=;
+  b=O0qanL2I4PpTvLxHHFpQ+Mnn92MCdhy2Z77fUCMwWgEhZDcSNafc8cw8
+   bg1OHD/sQTbEdc7o2Z5GksJfui5x1uUkFSKKS51p1rv1c/Ax37g5ntvPT
+   i8UYWl2UuZZeF56oJWOGTf2p7by6ZTC6aBT+GamjqsioRBC3pIz1nllEn
+   dniAAqL51wTXs8r7xEbjnJgv3lFjNHiGHK/m2mpRnEkXOXXbquNEqpTqa
+   dkK/fbn62dnd9lBWCw116cL3OAk5ksnJDy/27QDH93TpkEdq/Aefr8OvD
+   mWbXV44Z+yK8Ewwohu74uBSkdLCb9nGbXOsrgJKaw0eBHaD4cKpU6WmON
+   g==;
+X-CSE-ConnectionGUID: vDp9SLcaR9eZAO5/HGxwkA==
+X-CSE-MsgGUID: pMTVHmmaT3mFMD3Qzl5isQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="37453839"
+X-IronPort-AV: E=Sophos;i="6.10,252,1719903600"; 
+   d="scan'208";a="37453839"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 10:37:57 -0700
+X-CSE-ConnectionGUID: /dl40x+IR0imLTCsrv5r8g==
+X-CSE-MsgGUID: SAUYPfOfTPevchEwN1hFiQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,252,1719903600"; 
+   d="scan'208";a="76071308"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 10:37:57 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	Tony Luck <tony.luck@intel.com>
+Subject: [PATCH] x86/cpu: Add two Intel CPU model numbers
+Date: Mon, 23 Sep 2024 10:37:50 -0700
+Message-ID: <20240923173750.16874-1-tony.luck@intel.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] ufs: core: set SDEV_OFFLINE when ufs shutdown.
-To: Seunghwan Baek <sh8267.baek@samsung.com>, linux-kernel@vger.kernel.org,
- linux-scsi@vger.kernel.org, martin.petersen@oracle.com,
- James.Bottomley@HansenPartnership.com, avri.altman@wdc.com,
- alim.akhtar@samsung.com
-Cc: grant.jung@samsung.com, jt77.jang@samsung.com, junwoo80.lee@samsung.com,
- dh0421.hwang@samsung.com, jangsub.yi@samsung.com, sh043.lee@samsung.com,
- cw9316.lee@samsung.com, wkon.kim@samsung.com, stable@vger.kernel.org
-References: <20240829093913.6282-1-sh8267.baek@samsung.com>
- <CGME20240829093921epcas1p35d28696b0f79e2ae39d8e3690f088e64@epcas1p3.samsung.com>
- <20240829093913.6282-2-sh8267.baek@samsung.com>
- <015101db0d8d$daacd030$90067090$@samsung.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <015101db0d8d$daacd030$90067090$@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9/23/24 12:54 AM, Seunghwan Baek wrote:
-> Could you please review this patch? It's been almost a month.
-> If you have any opinions about this patch, share and comment it.
+Pantherlake is a mobile CPU. Diamond Rapids next generation Xeon.
 
-Thanks for the reminder. I'm not sure why this patch got overlooked but
-I will take a look.
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+---
+ arch/x86/include/asm/intel-family.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Bart.
+diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
+index 44949f972826..1a42f829667a 100644
+--- a/arch/x86/include/asm/intel-family.h
++++ b/arch/x86/include/asm/intel-family.h
+@@ -135,6 +135,8 @@
+ 
+ #define INTEL_LUNARLAKE_M		IFM(6, 0xBD)
+ 
++#define INTEL_PANTHERLAKE_L		IFM(6, 0xCC)
++
+ /* "Small Core" Processors (Atom/E-Core) */
+ 
+ #define INTEL_ATOM_BONNELL		IFM(6, 0x1C) /* Diamondville, Pineview */
+@@ -178,4 +180,7 @@
+ #define INTEL_FAM5_QUARK_X1000		0x09 /* Quark X1000 SoC */
+ #define INTEL_QUARK_X1000		IFM(5, 0x09) /* Quark X1000 SoC */
+ 
++/* Family 19 */
++#define INTEL_PANTHERCOVE_X		IFM(19, 0x01) /* Diamond Rapids */
++
+ #endif /* _ASM_X86_INTEL_FAMILY_H */
+-- 
+2.46.1
 
 
