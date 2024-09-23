@@ -1,163 +1,226 @@
-Return-Path: <linux-kernel+bounces-336298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E0D897F1CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 22:50:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D20D697F1D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 22:57:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D321282823
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 20:50:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B6791F21BE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 20:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2FB7441A;
-	Mon, 23 Sep 2024 20:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1A78121F;
+	Mon, 23 Sep 2024 20:57:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aA75cdYs"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k83CYbry"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D302243AA4
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 20:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0553B8C06;
+	Mon, 23 Sep 2024 20:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727124644; cv=none; b=mAM5x8gDjWwSGl24ulDqUTOdmGhOiZ0QKaRO+PVKxNehdGRWb6XMAwNVU0EMxTLettXm+MWSKphpLn23gub6wBmJex+WLuf2CPwsSoHREgf+wGyyUvObs0y3PHW02OrTDpwSiHy/Zoa/SrtbCGEwdN0lKQN2DrNXY+yx66NqhS0=
+	t=1727125050; cv=none; b=FgJBB+NbR+isHpRbvz8WsecIhhuY0DzvKro1PqsiGh7SakBkn90WEMAt1tYAqRoQFLpLMo78dkv4souMDQ7gBNYBsz5zbbvuuxRmE/HLwm1GoUK4vabzfnhLPhyiC+gLb7yM33/mIWfe8ZZB7/QsS+jOt6XnH1AUo9ZuZnSis+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727124644; c=relaxed/simple;
-	bh=aHbt63hyzq3mXjhQceAm6Fx3PJ09r9aifCQR9uAl9tE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CJ4fRIV+VPc1sZd50QpSOMsT8FvOpmWWs6z0iFqnI0SgZUW4VsKhEofYapzwRvGL7CPcaVLsSMXL//d+4FLl+1iVoiQsQmT3dPRh53zehYthjUUnQFMQmJX7gG/vClUS55UfajJnkLh7Pda1K12T35kpXsxMonHxxpcSzXzFTko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aA75cdYs; arc=none smtp.client-ip=209.85.221.53
+	s=arc-20240116; t=1727125050; c=relaxed/simple;
+	bh=1rbLgj0nXxiDnUlApLjxVsJoEy+kGptOdgB947HjKyU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YBFPqi+0B/VCUj+qVTWbBI82C5CQM+iwYzoUCnP8O/bsztP+IeTYgVK6aIdL3UaWcw2KodFa91VhPcl17B54YeAtqIAo4LwnDP/nD1GItWe7WTJztfkD5mi+k+iRxHBhzOhoCVDEzX0DV3V1CFsBE6vMn5+zfolJqRD0vsIj+a4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k83CYbry; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37747c1d928so2538216f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 13:50:42 -0700 (PDT)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-374ba74e9b6so3960090f8f.0;
+        Mon, 23 Sep 2024 13:57:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727124641; x=1727729441; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U9bY1v2U6O2aGMUnM6Dm5z5jTVC5ivj9gng5bvcyVRI=;
-        b=aA75cdYsM68W99fSNAB5/9KMt66bGCY/2u5h74Xn2GEXjcoVZ8x0vnGBPHm6Cqkgzv
-         xtEtf0lrhd74s+cQy67RPqTFaizicvHpcCMZzYcpffEmzZv7ARrKynk07NSjL8yMUZAi
-         C2w07+xg2ZPGZHB08kvR5yAiELd/ISMkFB1U4ZjiS+lePJME0J8ZYWmmw7C3vGaWxMLZ
-         eLbWbnmH0BMSqbdkHhfIQgoTRel1g8RyI9lzzgpO6Iz7vWz2xrtVja4cuqEsI5NR3ei5
-         KnTq6nWbyyGsymQ/1GdZink05E5yaqu5mKOrAoSEsidt+nI+IehBXRtnci59ZVvD/Cac
-         EBHA==
+        d=gmail.com; s=20230601; t=1727125047; x=1727729847; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mCGay+ux/isYrKjVJrEaEY3rQ4NkeGWnKhmqM2Kr0wo=;
+        b=k83CYbrytGCcivu5BpCbGgSN7DO+994tI/HAdSYvBy0KlEqzBOLoQhnXRHsbU7zIiq
+         mZ5Q0ngE99S3nHKrkUVrDhvA+PuO/TJPpIaK6fo6EB1PINghIAVKA9nCZwJ+lZMtokqT
+         I+bLvO9LDBTyiPDMtla1CqmFfePVwOUV6fDqO28ngK0jRW1S1mW13mgT83XqYuEjcarW
+         KLYq1HTPnOmQGKRfwIIX7pC9+czAvFiB8ixV25KeWkiX2ayZVTfjIJZtx2IJPYqkd5S+
+         cDngPDA6ayt5l3KakonnYhqeWWlwTYH75S8ap+SNRTnE5X9Y3DG3+83GAMzBY5cPVJ6a
+         4Hww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727124641; x=1727729441;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U9bY1v2U6O2aGMUnM6Dm5z5jTVC5ivj9gng5bvcyVRI=;
-        b=hrLQIzZNObEWWV+eypwg4f19psZVWt3kI6eaeD/TbJEjLKeznxMbXcKB/m1bVV/zAY
-         xbXGIOnJYVItNlG0WpaaUw94MlS73VPxlGniCsOhfCSPqtli7N26yYAf4HcRgBwf9Fsf
-         BZjop0Cyubz9zjLmbe8IPfKKN7tQicLfpV20khKcG0Fxjd1WR38g3rh6ggow2kKGipV2
-         0xslK3LQpgTHNtdRb35/KVtPeD1McQVl1CyrIVLEiOACU5po5oY+8mVpCW7149Bg30nq
-         MLPcKh5EsuuejUKLuGmDcZMnd95gQLEe28GpEfYvqQpt2BUN2S9TcACkQfh1xj/+evBE
-         xI6Q==
-X-Gm-Message-State: AOJu0YxIhP+i6eG7uUK/4hWZQjDbUJFcAqHfAw/wyEfjd8yPy/tGRyaQ
-	tw6hYoUn5jNdIk6f5BsR3PkXLRht10N7zP0y/MO4hrd4XmnG3JxT
-X-Google-Smtp-Source: AGHT+IGg4wOLC/UAvUPyM/ZyTVaD/b7SE3abUGO9wXw53MtyY6asxbHyU+G7VpgLaiOY+qpBJ4XihQ==
-X-Received: by 2002:a5d:6903:0:b0:368:3b1f:fe40 with SMTP id ffacd0b85a97d-37a42277fb7mr6356003f8f.20.1727124640654;
-        Mon, 23 Sep 2024 13:50:40 -0700 (PDT)
-Received: from localhost ([94.19.228.143])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e7800067sm25365790f8f.77.2024.09.23.13.50.39
+        d=1e100.net; s=20230601; t=1727125047; x=1727729847;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mCGay+ux/isYrKjVJrEaEY3rQ4NkeGWnKhmqM2Kr0wo=;
+        b=BK5QEf+F7v6P6Rs+i1Ia6ioLLU9PzS3dLydRMkgr8O0auYmCnJ9oHt6eftootHcaZ1
+         bQdymX7X+0WuEjbGJfbubXZRuLPoKmUuMiPQjZCMh1lRfz0eSaUb8++4XoGz+PUS4JUQ
+         21S0QGnEp5liNu1fLO2+rrUgh/84BVw3osOIQl9UM/7evyse6771VLwQdr0ESM3eKDmj
+         mLFH4ZegI7qOpnDeXy/ONxrcxaocKx2Z51S8bX/dQMLftWriuRVr+n4vYZfgVkM0jLLe
+         7Xzo5VTcmQ054a7zC0OsUPwQ7Hj9rRHy8D1238vTpNV50ppEkcLnikhmGty5fCWOaJHZ
+         TgVA==
+X-Forwarded-Encrypted: i=1; AJvYcCUrrUrQ+UjEC0gNaW/FfVCQ2dNKQtY2cL4Z7kvymnPVQQehr9pyZNJYfCl7yg699UDef+FgoETf@vger.kernel.org, AJvYcCXvBepRlDHeQOrnNZ3In5KCo2Qgt6PMFulwaGty0dGZotm6vjsxQjW9PDdmmHcEyJhSqcE3J+va2G/0cZA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFbxz6QN5wRUKhj7dFohyzrjb75oZ1wz3GFTLur2r1CFnyfd45
+	qeeKvD1gAmgXLykxAbVTwLGWdHXLz/CcDncYSUZBBfzrIZcJ9KwlcVmIiw==
+X-Google-Smtp-Source: AGHT+IFxIZoaozYQcoDyzpI/OA0rt/U65Yr7E+wku1TjxLBaj7ted4ufB5Rw3g0qfi76pYAPu7EKtA==
+X-Received: by 2002:a5d:4804:0:b0:374:c6af:1658 with SMTP id ffacd0b85a97d-37a422535a5mr11951426f8f.1.1727125046415;
+        Mon, 23 Sep 2024 13:57:26 -0700 (PDT)
+Received: from localhost (dh207-41-185.xnet.hr. [88.207.41.185])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90612df579sm1278930366b.164.2024.09.23.13.57.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 13:50:40 -0700 (PDT)
-Date: Mon, 23 Sep 2024 23:50:39 +0300
-From: Andrey Skvortsov <andrej.skvortzov@gmail.com>
-To: Stuart Hayes <stuart.w.hayes@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Martin Belanger <Martin.Belanger@dell.com>,
-	Oliver O'Halloran <oohall@gmail.com>,
-	Daniel Wagner <dwagner@suse.de>, Keith Busch <kbusch@kernel.org>,
-	Lukas Wunner <lukas@wunner.de>, David Jeffery <djeffery@redhat.com>,
-	Jeremy Allison <jallison@ciq.com>, Jens Axboe <axboe@fb.com>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v8 3/4] driver core: shut down devices asynchronously
-Message-ID: <ZvHUn1Q2R8FumZ20@skv.local>
-Mail-Followup-To: Andrey Skvortsov <andrej.skvortzov@gmail.com>,
-	Stuart Hayes <stuart.w.hayes@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Martin Belanger <Martin.Belanger@dell.com>,
-	Oliver O'Halloran <oohall@gmail.com>,
-	Daniel Wagner <dwagner@suse.de>, Keith Busch <kbusch@kernel.org>,
-	Lukas Wunner <lukas@wunner.de>, David Jeffery <djeffery@redhat.com>,
-	Jeremy Allison <jallison@ciq.com>, Jens Axboe <axboe@fb.com>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	linux-nvme@lists.infradead.org
-References: <20240822202805.6379-1-stuart.w.hayes@gmail.com>
- <20240822202805.6379-4-stuart.w.hayes@gmail.com>
+        Mon, 23 Sep 2024 13:57:25 -0700 (PDT)
+From: Mirsad Todorovac <mtodorovac69@gmail.com>
+To: linux-nfs@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Mirsad Todorovac <mtodorovac69@gmail.com>
+Subject: [PATCH v1 1/1] SUNRPC: Make enough room in servername[] for AF_UNIX addresses
+Date: Mon, 23 Sep 2024 22:55:46 +0200
+Message-ID: <20240923205545.1488448-2-mtodorovac69@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240822202805.6379-4-stuart.w.hayes@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Stuart,
+GCC 13.2.0 reported with W=1 build option the following warning:
 
-On 24-08-22 15:28, Stuart Hayes wrote:
-> Add code to allow asynchronous shutdown of devices, ensuring that each
-> device is shut down before its parents & suppliers.
-> 
-> Only devices with drivers that have async_shutdown_enable enabled will be
-> shut down asynchronously.
-> 
-> This can dramatically reduce system shutdown/reboot time on systems that
-> have multiple devices that take many seconds to shut down (like certain
-> NVMe drives). On one system tested, the shutdown time went from 11 minutes
-> without this patch to 55 seconds with the patch.
-> 
-> Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
-> Signed-off-by: David Jeffery <djeffery@redhat.com>
-> ---
->  drivers/base/base.h           |  4 +++
->  drivers/base/core.c           | 54 ++++++++++++++++++++++++++++++++++-
->  include/linux/device/driver.h |  2 ++
->  3 files changed, 59 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/base/base.h b/drivers/base/base.h
-> index 0b53593372d7..aa5a2bd3f2b8 100644
-> --- a/drivers/base/base.h
-> +++ b/drivers/base/base.h
-> @@ -10,6 +10,7 @@
->   * shared outside of the drivers/base/ directory.
+net/sunrpc/clnt.c: In function ‘rpc_create’:
+net/sunrpc/clnt.c:582:75: warning: ‘%s’ directive output may be truncated writing up to 107 bytes into \
+					a region of size 48 [-Wformat-truncation=]
+  582 |                                 snprintf(servername, sizeof(servername), "%s",
+      |                                                                           ^~
+net/sunrpc/clnt.c:582:33: note: ‘snprintf’ output between 1 and 108 bytes into a destination of size 48
+  582 |                                 snprintf(servername, sizeof(servername), "%s",
+      |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  583 |                                          sun->sun_path);
+      |                                          ~~~~~~~~~~~~~~
 
-This change landed in linux-next and I have problem with shutdown on
-ARM Allwinner A64 device. Device usually hangs at shutdown.
-git bisect pointed to "driver core: shut down devices asynchronously"
-as a first bad commit.
+   548         };
+ → 549         char servername[48];
+   550         struct rpc_clnt *clnt;
+   551         int i;
+   552
+   553         if (args->bc_xprt) {
+   554                 WARN_ON_ONCE(!(args->protocol & XPRT_TRANSPORT_BC));
+   555                 xprt = args->bc_xprt->xpt_bc_xprt;
+   556                 if (xprt) {
+   557                         xprt_get(xprt);
+   558                         return rpc_create_xprt(args, xprt);
+   559                 }
+   560         }
+   561
+   562         if (args->flags & RPC_CLNT_CREATE_INFINITE_SLOTS)
+   563                 xprtargs.flags |= XPRT_CREATE_INFINITE_SLOTS;
+   564         if (args->flags & RPC_CLNT_CREATE_NO_IDLE_TIMEOUT)
+   565                 xprtargs.flags |= XPRT_CREATE_NO_IDLE_TIMEOUT;
+   566         /*
+   567          * If the caller chooses not to specify a hostname, whip
+   568          * up a string representation of the passed-in address.
+   569          */
+   570         if (xprtargs.servername == NULL) {
+   571                 struct sockaddr_un *sun =
+   572                                 (struct sockaddr_un *)args->address;
+   573                 struct sockaddr_in *sin =
+   574                                 (struct sockaddr_in *)args->address;
+   575                 struct sockaddr_in6 *sin6 =
+   576                                 (struct sockaddr_in6 *)args->address;
+   577
+   578                 servername[0] = '\0';
+   579                 switch (args->address->sa_family) {
+ → 580                 case AF_LOCAL:
+ → 581                         if (sun->sun_path[0])
+ → 582                                 snprintf(servername, sizeof(servername), "%s",
+ → 583                                          sun->sun_path);
+ → 584                         else
+ → 585                                 snprintf(servername, sizeof(servername), "@%s",
+ → 586                                          sun->sun_path+1);
+ → 587                         break;
+   588                 case AF_INET:
+   589                         snprintf(servername, sizeof(servername), "%pI4",
+   590                                  &sin->sin_addr.s_addr);
+   591                         break;
+   592                 case AF_INET6:
+   593                         snprintf(servername, sizeof(servername), "%pI6",
+   594                                  &sin6->sin6_addr);
+   595                         break;
+   596                 default:
+   597                         /* caller wants default server name, but
+   598                          * address family isn't recognized. */
+   599                         return ERR_PTR(-EINVAL);
+   600                 }
+   601                 xprtargs.servername = servername;
+   602         }
+   603
+   604         xprt = xprt_create_transport(&xprtargs);
+   605         if (IS_ERR(xprt))
+   606                 return (struct rpc_clnt *)xprt;
 
-I've tried to debug the problem and this is what I see:
+After the address family AF_LOCAL was added in the commit 176e21ee2ec89, the old hard-coded
+size for servername of char servername[48] no longer fits. The maximum AF_UNIX address size
+has now grown to UNIX_PATH_MAX defined as 108 in "include/uapi/linux/un.h" .
 
-1) device 'mmc_host mmc0' processed in device_shutdown. For this device
-async_schedule_domain is called (cookie 264, for example).
+The lines 580-587 were added later, addressing the leading zero byte '\0', but did not fix
+the hard-coded servername limit.
 
-2) after that 'mmcblk mmc0:aaaa' is processed. For this device
-async_schedule_domain is called (cookie 296, for example).
+The AF_UNIX address was truncated to 47 bytes + terminating null byte. This patch will fix the
+servername in AF_UNIX family to the maximum permitted by the system:
 
-3) 'mmc_host mmc0' is parent of 'mmcblk mmc0:aaaa' and
-parent->p->shutdown_after is updated from 263 to 296.
+   548         };
+ → 549         char servername[UNIX_PATH_MAX];
+   550         struct rpc_clnt *clnt;
 
-4) After sometime shutdown_one_device_async is called for 264
-(mmc_host mmc0), but dev->p->shutdown_after was updated to 296 and the
-code calls first async_synchronize_cookie_domain for 297.
+Fixes: 4388ce05fa38b ("SUNRPC: support abstract unix socket addresses")
+Fixes: 510deb0d7035d ("SUNRPC: rpc_create() default hostname should support AF_INET6 addresses")
+Fixes: 176e21ee2ec89 ("SUNRPC: Support for RPC over AF_LOCAL transports")
+Cc: Neil Brown <neilb@suse.de>
+Cc: Chuck Lever <chuck.lever@oracle.com>
+Cc: Trond Myklebust <trondmy@kernel.org>
+Cc: Anna Schumaker <anna@kernel.org>
+Cc: Jeff Layton <jlayton@kernel.org>
+Cc: Olga Kornievskaia <okorniev@redhat.com>
+Cc: Dai Ngo <Dai.Ngo@oracle.com>
+Cc: Tom Talpey <tom@talpey.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Cc: linux-nfs@vger.kernel.org
+Cc: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Mirsad Todorovac <mtodorovac69@gmail.com>
+---
+ v1:
+	initial version.
 
-264 can't finish, because it waits for 297. shutdown process can't continue.
+ net/sunrpc/clnt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The problem is always with a MMC host controller.
-
+diff --git a/net/sunrpc/clnt.c b/net/sunrpc/clnt.c
+index 09f29a95f2bc..67099719893e 100644
+--- a/net/sunrpc/clnt.c
++++ b/net/sunrpc/clnt.c
+@@ -546,7 +546,7 @@ struct rpc_clnt *rpc_create(struct rpc_create_args *args)
+ 		.connect_timeout = args->connect_timeout,
+ 		.reconnect_timeout = args->reconnect_timeout,
+ 	};
+-	char servername[48];
++	char servername[UNIX_PATH_MAX];
+ 	struct rpc_clnt *clnt;
+ 	int i;
+ 
 -- 
-Best regards,
-Andrey Skvortsov
+2.43.0
+
 
