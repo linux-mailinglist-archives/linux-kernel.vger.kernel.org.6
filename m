@@ -1,127 +1,155 @@
-Return-Path: <linux-kernel+bounces-335426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C78E97E59B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 07:22:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C000C97E59F
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 07:27:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDDABB20E9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 05:22:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0F261C20FBF
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 05:26:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D82211187;
-	Mon, 23 Sep 2024 05:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F73913FEE;
+	Mon, 23 Sep 2024 05:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b="qljdvxFx"
-Received: from ironport.ite.com.tw (60-251-196-230.hinet-ip.hinet.net [60.251.196.230])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JqSzKPXe"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F9528EB
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 05:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.251.196.230
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5541C28EB;
+	Mon, 23 Sep 2024 05:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727068917; cv=none; b=j8Yg/ch07mkH9RZW5aixMjjOERJwNIBRsPgEE86cstwLjBWdfpOFR2yTUbzUo/6/CP/FrjZQ4fwZwiKPrzDoao80BqTycxufofoUXvn+6DPJls/crgicoQBOD3ZJEYwx7gAtEu2RQAIM7laFZq1OV5DeY0xakAT5dWI0K9GjaGw=
+	t=1727069213; cv=none; b=VFW9h5WtZjeu7CiMqAGa8TeKNB30RoLQ5PaQR+90LUKYAJw/ULfFYwWZdIS+bWaw8RVv7f7GCCnVrdozDRqxY8jXexT/6aN23Kogv/N/c2IMbGaX7pUOspMJbklIqGfPkp9kI4IC4fxggDDUtDJHn698Uz+8DwglYpqeMwxNwag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727068917; c=relaxed/simple;
-	bh=LxYudaXWcm7UEsO9WTBrIjhF7o2hlByEngG5yYLjS6I=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=PjahX9KDuPO5/9eGGsY1IYxh8MAQRvyyVt0CUceixCW3g8IlFySe4MIA/KIBPhZ2fuoyrXW43O3tYqNviA0XvNcN4H0gybHScHSX5tXwbLJE3lI1y7/Vvu03IC4bR8G0bqnppYiurJWLP/X4kWgtMPpeiIw6SSZkBgWpnCBC5nU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw; spf=pass smtp.mailfrom=ite.com.tw; dkim=fail (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b=qljdvxFx reason="key not found in DNS"; arc=none smtp.client-ip=60.251.196.230
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ite.com.tw
+	s=arc-20240116; t=1727069213; c=relaxed/simple;
+	bh=Mm0xlIlIFywQxWRVlrtM9+P05d5rdtF8j07zuxtwgJM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FTKWBr6iSVhyzMf4tOZYfFr576F1jhpudV0EHYwGtTOINzEHmDnpW3u46wscpmerqh+AKrjGSfRn6eVoLCgcxuDxKEX8FVBgtrNrNnK+e4olSpJVGBvSYor5nnZeSxkcTEyL/kbsCHanTrMXKp1AmPPk+VrYb4kVccrmlgVoGvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JqSzKPXe; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-374c1e5fe79so2780524f8f.1;
+        Sun, 22 Sep 2024 22:26:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=ite.com.tw; s=dkim;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=LxYudaXWcm7UEsO9WTBrIjhF7o2hlByEngG5yYLjS6I=;
-  b=qljdvxFxLyinul2GpzKszlrnTt9dNFzExWa1/J8HE2GaR2/gU4pzm1ol
-   16+2/8g+MTQUd49PTcM+6nOu3QJMeepDgtq+2ZFzJMGD5Drpsn9IrOfCx
-   nA7poWnvQt4wFwDcD0bL3jAEobcwYdR63z0Ys4qkDUFqvkWWyjAT5jEW+
-   2K65gMfhDACgiNt/JRXRx0oJ4kdHr0tpByFea6zomy7itI83iowe3TXw4
-   irFkxgO9/OH11FmIRwzeY4S2pk3Ukl6xzLSaT+Kr68ResRN5HGJQ03boO
-   dF0iq4CIWR+re5dEOL8GkWRLNvwv5ux/HdN0wxMvAe3IYWb8dWXIXvNya
-   Q==;
-X-CSE-ConnectionGUID: FR/yvjxySVurvrTLpNeDWQ==
-X-CSE-MsgGUID: aMXIuBerR+eoIVSvriKtvQ==
-Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
-  by ironport.ite.com.tw with ESMTP; 23 Sep 2024 13:21:46 +0800
-Received: from tpemail1.internal.ite.com.tw (TPEMAIL1.internal.ite.com.tw [192.168.15.58])
-	by mse.ite.com.tw with ESMTP id 48N5LfLX009501;
-	Mon, 23 Sep 2024 13:21:41 +0800 (GMT-8)
-	(envelope-from Hermes.Wu@ite.com.tw)
-Received: from TPEMAIL1.internal.ite.com.tw (192.168.15.58) by
- TPEMAIL1.internal.ite.com.tw (192.168.15.58) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 23 Sep 2024 13:21:41 +0800
-Received: from TPEMAIL1.internal.ite.com.tw ([fe80::dd6d:92:8773:b68]) by
- TPEMAIL1.internal.ite.com.tw ([fe80::dd6d:92:8773:b68%6]) with mapi id
- 15.01.2507.039; Mon, 23 Sep 2024 13:21:41 +0800
-From: <Hermes.Wu@ite.com.tw>
-To: <dmitry.baryshkov@linaro.org>, <treapking@chromium.org>
-CC: <a.hajda@samsung.com>, <narmstrong@baylibre.com>, <robert.foss@linaro.org>,
-        <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
-        <jernej.skrabec@gmail.com>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <Kenneth.Hung@ite.com.tw>
-Subject: RE: [PATCH v1] drm/bridge: it6505: HDCP CTS fail on repeater items
-Thread-Topic: [PATCH v1] drm/bridge: it6505: HDCP CTS fail on repeater items
-Thread-Index: AQHbC3TJoX+m8u1HGEWhaTgeYcdV3rJk155g
-Date: Mon, 23 Sep 2024 05:21:41 +0000
-Message-ID: <467ea5d3380843a1ad1f2f2429bb2833@ite.com.tw>
-References: <20240919025551.254-1-Hermes.Wu@ite.com.tw>
- <CAEXTbpc7N2v4LwoZ4wpHXi7ogyqGwYC3Gpt5sqfxtOpYrngPLg@mail.gmail.com>
- <nczuje3ur7sf7uqkygtziwnz5p6b4b7bf5on5crljr2ijmblrv@ym3fkvqxbjq5>
-In-Reply-To: <nczuje3ur7sf7uqkygtziwnz5p6b4b7bf5on5crljr2ijmblrv@ym3fkvqxbjq5>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-tm-snts-smtp: 8396A173090D384594A0C11FB3BFC18E41FB158EACE01F4901798337420C85672002:8
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20230601; t=1727069209; x=1727674009; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nptK88eLRGfhziZAyDg/BN+0AF91ctgPhAKjtMLU5QE=;
+        b=JqSzKPXewBJIaTtiHQk+VTGONyg43CAp9g5AfSUTBjxH5bDHCd6e/SG+TsrCuoi/8F
+         s5RPW3O73qRvXs87iFYIingh5USOsVXMlrFk4bI+iE89K+ungYs/awybFYUvf5IzkZQp
+         JM4JE6qq02DmMserhyKMMyKWiUFK5eKy3BaWkDs9v95JUlVuXsT+HUs2IphG+mi4us/o
+         4H0HPczIi0bhxkJdipBt/MQIzeF0cJgsh1sy6Ix4s2b59p8dvp73fiwTTNO6skxU/+nB
+         nwpLjKU4Nbjd4lDh0qowreJyzuL9vBK8bJ5FiVvc5XiuyNd2QKKBcKc5o2mKnUE95NMw
+         F7nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727069209; x=1727674009;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nptK88eLRGfhziZAyDg/BN+0AF91ctgPhAKjtMLU5QE=;
+        b=qEu7cAYHNs74VPuqQnOBBcqOgsEz7N0aRxo9ro5ADRxUD0P4x9OIVSierbNlJQIBP3
+         R6YKbkY156JqsxywCBK7D/vpf15Wj3ilE2ZLYzx5XRH//0QqemscTP1rDWiz3VYM+slN
+         YdSRkUdMarV7Clr9lZYegp2AASYHBKkJ8NFw0F+Xg7nj5AHGIStw6DWLsRt1gJW2BfvG
+         bANiyupW/w4tmD9ZD+NVTzXNeHYD1MscIknTYq3aT6qMtcbCKyEItYZ2sE9YKGkaPYzt
+         LC3W0G2jn05r+9/LaI9iUA7q5h5xJLjkRqXP5UQSX2DjHzqOGdqX7XHDRQOZ41D5wA/z
+         D2hg==
+X-Forwarded-Encrypted: i=1; AJvYcCUsBPriQutjVk0IXrHeVbaVoXIb90pd4NMNw17J1bzCDXHu8o6UvWeuKjB5Qs5EgNeXODHtd2gd+bsJcTV9U6VjnFMPSfDW@vger.kernel.org, AJvYcCUvYtJICGt5GF2YF+7u/DTy/PtMQotbIXSlJVfHziCKV5Fm29slyoqfH78uT50gcSv+F76Jzmx54a0CSXsI@vger.kernel.org, AJvYcCXIu9q4pnIYropFsBMp7OYF3ZsXINwibDgxLCgU6wUMJ43eRSuhQjwzMuZdfJtr5U2n9M1UxOMBVAWLmQGeNW4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDuWyKs17uOl6vd0DohexJRyo73lxk69nOEBBEYF676DCxYSMI
+	TIXg8EWQ0uerLxFJx+f7tzXiBBSdCeRU/IOcf7IZcup1rCUwAZPfWZIyCN4FzI54/HvHl5f5pjY
+	EWIycezG/QyhWhjb5OSlwOuustHw=
+X-Google-Smtp-Source: AGHT+IGN1Y1wYq62d3/z2azaE1/F6NaWqyN8z33ualFzloo4skejV5DkABiH2mZew0fz798urjCTZkGySs/DKXGrlbw=
+X-Received: by 2002:adf:f98f:0:b0:378:7e74:cc25 with SMTP id
+ ffacd0b85a97d-37a431ad519mr5364258f8f.39.1727069209381; Sun, 22 Sep 2024
+ 22:26:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MAIL:mse.ite.com.tw 48N5LfLX009501
+References: <20240806133607.869394-1-mjguzik@gmail.com> <3cd8019f03dae99c4e43b7613df869499ec72e66.camel@huaweicloud.com>
+In-Reply-To: <3cd8019f03dae99c4e43b7613df869499ec72e66.camel@huaweicloud.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Mon, 23 Sep 2024 07:26:37 +0200
+Message-ID: <CAGudoHGBTRJqKAE6Db3PyVne6rrJR4vsF2MNH2qKMy-44XReZw@mail.gmail.com>
+Subject: Re: [PATCH] evm: stop avoidably reading i_writecount in evm_file_release
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: zohar@linux.ibm.com, roberto.sassu@huawei.com, paul@paul-moore.com, 
+	jmorris@namei.org, serge@hallyn.com, linux-kernel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGkgDQoNClNvcnJ5IGZvciB0aGUgY29uZnVzaW9uIGNhdXNlZA0KDQpMYXN0IHBhdGNoZXMgZGlk
-IG5vdCBzd2l0Y2ggdG8gZHJtLW1pc2MtbmVzdC4gQW5kIEkgbmVlZCByZS1jcmVhdGUgcGF0Y2hl
-cy4NCg0KVGhlIEhEQ1AgcGF0Y2hlcyBpcyBub3cgb24gdG93IHRocmVhZHMuKFRoaXMgb25lIGFu
-ZCB0aGUgb25lIGluY2x1ZGUgTUNDUyBwYXRjaGVzIHdpdGggY292ZXIgbGV0dGVyKQ0KDQpTaG91
-bGQgSSBrZWVwIG9uIHRoaXMgdGhyZWFkIG9yIHJlc3RhcnQgYSBuZXcgdGhyZWFkPw0KDQoNCg0K
-QlIsDQpIZXJtZXMNCi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQpGcm9tOiBEbWl0cnkgQmFy
-eXNoa292IDxkbWl0cnkuYmFyeXNoa292QGxpbmFyby5vcmc+IA0KU2VudDogRnJpZGF5LCBTZXB0
-ZW1iZXIgMjAsIDIwMjQgMTE6NTAgUE0NClRvOiBQaW4teWVuIExpbiA8dHJlYXBraW5nQGNocm9t
-aXVtLm9yZz4NCkNjOiBIZXJtZXMgV3UgKOWQs+S9s+WujykgPEhlcm1lcy5XdUBpdGUuY29tLnR3
-PjsgQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT47IE5laWwgQXJtc3Ryb25nIDxu
-YXJtc3Ryb25nQGJheWxpYnJlLmNvbT47IFJvYmVydCBGb3NzIDxyb2JlcnQuZm9zc0BsaW5hcm8u
-b3JnPjsgTGF1cmVudCBQaW5jaGFydCA8TGF1cmVudC5waW5jaGFydEBpZGVhc29uYm9hcmQuY29t
-PjsgSm9uYXMgS2FybG1hbiA8am9uYXNAa3dpYm9vLnNlPjsgSmVybmVqIFNrcmFiZWMgPGplcm5l
-ai5za3JhYmVjQGdtYWlsLmNvbT47IERhdmlkIEFpcmxpZSA8YWlybGllZEBnbWFpbC5jb20+OyBE
-YW5pZWwgVmV0dGVyIDxkYW5pZWxAZmZ3bGwuY2g+OyBvcGVuIGxpc3Q6RFJNIERSSVZFUlMgPGRy
-aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmc+OyBvcGVuIGxpc3QgPGxpbnV4LWtlcm5lbEB2
-Z2VyLmtlcm5lbC5vcmc+OyBLZW5uZXRoIEh1bmcgKOa0quWutuWAqykgPEtlbm5ldGguSHVuZ0Bp
-dGUuY29tLnR3Pg0KU3ViamVjdDogUmU6IFtQQVRDSCB2MV0gZHJtL2JyaWRnZTogaXQ2NTA1OiBI
-RENQIENUUyBmYWlsIG9uIHJlcGVhdGVyIGl0ZW1zDQoNCk9uIEZyaSwgU2VwIDIwLCAyMDI0IGF0
-IDAxOjI3OjU0UE0gR01ULCBQaW4teWVuIExpbiB3cm90ZToNCj4gT24gVGh1LCBTZXAgMTksIDIw
-MjQgYXQgMTA6NTjigK9BTSA8SGVybWVzLld1QGl0ZS5jb20udHc+IHdyb3RlOg0KPiA+DQo+ID4g
-RnJvbTogSGVybWVzIFd1IDxIZXJtZXMuV3VAaXRlLmNvbS50dz4NCj4gPg0KPiA+IEZpeCBIRENQ
-IENUUyBpdGVtcyBvbiBVTklHUkFGIERQUi0xMDAuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBI
-ZXJtZXMgV3UgPEhlcm1lcy5XdUBpdGUuY29tLnR3Pg0KPiANCj4gUmV2aWV3ZWQtYnk6IFBpbi15
-ZW4gTGluIDx0cmVhcGtpbmdAY2hyb21pdW0ub3JnPg0KDQpGb3IgdGhlIHNha2Ugb2Ygc29tZWJv
-ZHkgYXBwbHlpbmcgdGhlIHBhdGNoIGJlY2F1c2UgaXQgd2FzIFItQidlZA0KDQpOYWNrZWQtYnk6
-IERtaXRyeSBCYXJ5c2hrb3YgPGRtaXRyeS5iYXJ5c2hrb3ZAbGluYXJvLm9yZz4NCg0KVGhlIGNv
-bW1pdCBtZXNzYWdlIGRvZXNuJ3QgZGVzY3JpYmUgd2hhdCBpcyBiZWluZyBkb25lIGFuZCB3aHks
-IGl0DQpkb2Vzbid0IGhhdmUgRml4ZXMgdGFncywgZXRjLg0KDQpIZXJtZXMsIEknbSBub3Qgc3Vy
-ZSB3aGF0J3MgaGFwcGVuaW5nIG9uIHlvdXIgc2lkZS4gSSBoYXZlIHNlZW4gc2V2ZXJhbA0KcmV2
-aXNpb25zIG9mIHRoaXMgcGF0Y2ggd2l0aCBtaW5pbWFsIG1vZGlmaWNhdGlvbnMgKGFuZCBiZWlu
-ZyBhIHBhcnQgb2YNCmRpZmZlcmVudCBzZXJpZXMpLiBTb21lIG9mIHRoZW0gd2VyZSBtYXJrZWQg
-YXMgdjEgKGFsdGhvdWdoIHlvdSd2ZSBzZW50DQpkaWZmZXJlbnQgcGF0Y2hlcyBhcyB2MSksIG90
-aGVyIGhhZCB2MiAoYnV0IG5vIGNoYW5nZWxvZywgZXRjKS4gUGxlYXNlDQphZGhlcmUgdG8gdGhl
-IGRlc2NyaWJlZCBwcm9jZXNzIG9mIHNlbmRpbmcgcGF0Y2hlcy4NCg0KLS0gDQpXaXRoIGJlc3Qg
-d2lzaGVzDQpEbWl0cnkNCg==
+On Fri, Aug 16, 2024 at 1:53=E2=80=AFPM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+>
+> On Tue, 2024-08-06 at 15:36 +0200, Mateusz Guzik wrote:
+> > The EVM_NEW_FILE flag is unset if the file already existed at the time
+> > of open and this can be checked without looking at i_writecount.
+>
+> Agreed. EVM_NEW_FILE is not going to be set during the open(), only
+> before, in evm_post_path_mknod().
+>
+> Looks good to me.
+>
+> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
+>
+> Thanks
+
+thanks for the review
+
+are there plans to pick this up for this merge window?
+
+>
+> Roberto
+>
+> > Not accessing it reduces traffic on the cacheline during parallel open
+> > of the same file and drop the evm_file_release routine from second plac=
+e
+> > to bottom of the profile.
+> >
+> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> > ---
+> >
+> > The context is that I'm writing a patch which removes one lockref
+> > get/put cycle on parallel open. An operational WIP reduces ping-pong in
+> > that area and made do_dentry_open skyrocket along with evm_file_release=
+,
+> > due to i_writecount access. With the patch they go down again and
+> > apparmor takes the rightful first place.
+> >
+> > The patch accounts for about 5% speed up at 20 cores running open3 from
+> > will-it-scale on top of the above wip. (the apparmor + lockref thing
+> > really don't scale, that's next)
+> >
+> > I would provide better measurements, but the wip is not ready (as the
+> > description suggests) and I need evm out of the way for the actual
+> > patch.
+> >
+> >  security/integrity/evm/evm_main.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm=
+/evm_main.c
+> > index 62fe66dd53ce..309630f319e2 100644
+> > --- a/security/integrity/evm/evm_main.c
+> > +++ b/security/integrity/evm/evm_main.c
+> > @@ -1084,7 +1084,8 @@ static void evm_file_release(struct file *file)
+> >       if (!S_ISREG(inode->i_mode) || !(mode & FMODE_WRITE))
+> >               return;
+> >
+> > -     if (iint && atomic_read(&inode->i_writecount) =3D=3D 1)
+> > +     if (iint && iint->flags & EVM_NEW_FILE &&
+> > +         atomic_read(&inode->i_writecount) =3D=3D 1)
+> >               iint->flags &=3D ~EVM_NEW_FILE;
+> >  }
+> >
+>
+
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
