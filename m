@@ -1,121 +1,80 @@
-Return-Path: <linux-kernel+bounces-335826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED38497EB3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:04:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA3EF97EB3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:04:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B44E2281603
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:04:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75A3C1F22538
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC47198A31;
-	Mon, 23 Sep 2024 12:03:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E54E36AF2;
+	Mon, 23 Sep 2024 12:04:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Svi4Ko5y"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BU+45pDj"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F0C198838
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 12:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6397C1990C4;
+	Mon, 23 Sep 2024 12:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727093034; cv=none; b=F9EsdCmuJzpIPQfG2cpat2u8FD/bI/YgMs5+wNGnCDe1KSitO5e9iKu9dby9F2NwnDLXKJeSRx+QM8d4acWvhud0QG8NfVao0LLCnRdBnQ9GtGJoU9YNlXbJY4aIcc90GWIuYqVq3JWbpgy3MwNdrEDj10YDOoUdF1if6o5Be94=
+	t=1727093047; cv=none; b=gQdIyyDBuLR1JRkiatFUf7/i2rT3PBSuoPYLcYEnAe62dxdQcJ3Ezf95Eo1V7X8SQxnnDAe/B0c+2py3WTTrMCRCAVtv+/37NNRt7c3inZjRb6wdW7qia/32+5xoNNfoK9I5u0YD6tZgR7rrPUKIp+ujUMuWIEq/SN6WiM27Z/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727093034; c=relaxed/simple;
-	bh=2Vb2Cv2Dv37X/Ids8L19JvM6vzYR+tLqulzI/IrwbfE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VvcUg7Bfn5/RwfTK6SSqUq80RGqBoLpuCoctta8aLBWEmhh7CusXkwxFG6X2L8J6wJ4WAZkaoa//mgJZ7pENiH13bJkEjc5QDEw/Z6pMPoAZ1783JppOGrlELe8Tm6GIDPq+oK8AHUREAv8ZLlyuxeECMFazFkBUgY6YPxFidak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Svi4Ko5y; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6de14e0f050so30157157b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 05:03:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727093029; x=1727697829; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZDgplFVDTcPA7FhAL3SqKT1KaN8IQNqhOche9v7f6Is=;
-        b=Svi4Ko5yL9sQy77l2QhUUkQQOXIuFQY1W9DUyf5XuYTt31g9UctACsEgr5/Vc6eKRW
-         rL19ghvJ/Jzsb8CfyOj/XqltNuGMaakJce0+Q2FVU66i2d9o4/tyGOjf1KbcZXaLwQif
-         2LMztd2IKgIFW48xIfkcHtZ0TuuEkaKTOYKxlBdXphZAfLgh/4hf5ES3RHtrPa+J3zPu
-         dh4aJa0uOIo98pjSzqZfrjW6hzz+6I3FC+JeoDW30bl+m9JmmWxCE+qno5c+4G/R7aFd
-         Zon2ti0zxs8HtWw1J2y4XU1UOWw1vB/Bg/LdoicpNFfYRmY1gUJoloGmXjl9U8Dl/4/b
-         BL/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727093029; x=1727697829;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZDgplFVDTcPA7FhAL3SqKT1KaN8IQNqhOche9v7f6Is=;
-        b=Nwcw6fbl4qO09osiuWIHv2Z+e1z/EP/k1YNySIiQK4txbNt4I+yR0vv3Taimz/bWgY
-         5ItGyDdnqnkT+/6hprE0asnv2su8hgvEQImiN3TmQVvqKKLPRb6uup/pMrbTndtZqlRs
-         vDoPBQCIvVH5wHbMeVJAWbVAb5lY0amf580k/3xhGQAjwp4ZWTM9xOljvpTfQC41Q70i
-         hn+5nmBne9FfRRhzewk29WKvHusibdpiQwl/zAo/EXobJdB/y0Wlc3RWym4AmkKyrujr
-         gIF5gpI0zw8ml4SZ6lEUDQjCKWY3ctkBEh5zjkQ35gQ8apMLfbOsXLbes8qd025BgMIY
-         A4TQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU49l9PM/jSmO6CJl0ZpRSrVtbQQ5rqECKSMOdfJrMtYpiesGDmJ+CuXi4bo7wOCrygrLsGHrk2ijfNnLE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGnFFsrP5bYkwmdZJXF6Md7I3j/2iXUi2VMx8hPb7L5CazkaD1
-	X++517K+9wpjBPdVniGqN7eDgNtqMLD5SBpD+jRErfU9107gWKPF
-X-Google-Smtp-Source: AGHT+IFE91qwRy5TXm8qvsiN6PSwuYu09R8ZNvZiypUYOO86nm2CbYAASmOi5MZ6YSjoP243bxN7Qg==
-X-Received: by 2002:a05:690c:7086:b0:66a:ba89:d671 with SMTP id 00721157ae682-6dfeeed1dd1mr84975457b3.35.1727093028967;
-        Mon, 23 Sep 2024 05:03:48 -0700 (PDT)
-Received: from borker.localdomain ([2605:a601:90ad:5400:5953:ee4b:cc9a:dd36])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ddcd8ac3cesm28960767b3.78.2024.09.23.05.03.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 05:03:48 -0700 (PDT)
-From: Parag W <parag.lkml@gmail.com>
-To: hannes@cmpxchg.org
-Cc: anna-maria@linutronix.de,
-	frederic@kernel.org,
-	linux-kernel@vger.kernel.org,
-	peterz@infradead.org,
-	pmenzel@molgen.mpg.de,
-	regressions@lists.linux.dev,
-	surenb@google.com,
-	tglx@linutronix.de
-Subject: Re: Error: psi: inconsistent task state! task=1:swapper/0 cpu=0 psi_flags=4 clear=0 set=4
-Date: Mon, 23 Sep 2024 08:03:39 -0400
-Message-ID: <20240923120339.11809-1-parag.lkml@gmail.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20240922102047.GA437832@cmpxchg.org>
-References: <20240922102047.GA437832@cmpxchg.org>
+	s=arc-20240116; t=1727093047; c=relaxed/simple;
+	bh=60JPb/SxVp0k0GzxfIDVVzpaHFf60YyWCTt78PnVF3w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p5eYt+Wpwx5Dy9lKTTI0ebuQMXCHnHHmN28ytHA90B1mQubRZ2KyiEv1baDB59syAsnlI1Sy8pysi3Nw7hCGO89HTD32HKVBbCFnaBzbVaYPNpvwlDRrfKCNZQnAt4wL7ggqZRn50mkcTFncbM+QBvQ9HO2Hvl0UAe24g3geJRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BU+45pDj; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=9WrfLD09J1aGLdGEu8N8g2HJpWPSa/jlk0R+UCPenVE=; b=BU+45pDj5KRKiUpsDZUJiKgPK5
+	pja6PIM1vIPcO2X+9uUUG83uCwoyMWiM9UmGYHuErTQf5eqag/NLL/M8QTGXc6PNl0Ad3SjqByzG9
+	67lli4krgmyQLqXB8Mzd/WpYEoWDY+TmQ2VLvagnCAzk3PG7XN/jxxxhkJldaLxvr8nvxj0zuhT0S
+	1pinKBDdQ5YAOIZEZmn2jX47uj8Ih0ykohCe2BbuHjK6qreyVxbypa8mBRrKIQhdzj3afIVnjTJ7o
+	kwB3HzatUz6yCumDx6jKP/E3OEEFS5ExAQGDgOj9bo8cpOllIB4ZEX3JAwr8YTrObpWRzM8MpJ2Ui
+	O57KfSAQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sshnI-0000000H8IN-2ahM;
+	Mon, 23 Sep 2024 12:03:56 +0000
+Date: Mon, 23 Sep 2024 05:03:56 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v2] xfs: Use try_cmpxchg() in
+ xlog_cil_insert_pcp_aggregate()
+Message-ID: <ZvFZLKMVMMig4ZCh@infradead.org>
+References: <20240922170746.11361-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240922170746.11361-1-ubizjak@gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-FWIW, moving psi_enqueue to be after ->enqueue_task() in sched/core.c made no difference - I still get the inconsistent task state error. psi_dequeue() is already before ->dequeue_task() in line with uclamp.
+>  {
+> -	struct xlog_cil_pcp	*cilpcp;
+> -	int			cpu;
+> -	int			count = 0;
+> +	int	cpu;
+> +	int	count = 0;
 
+This should not be reformatted, but maye Carlos can fix it up when
+applying the patch.  Otherwise looks good:
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index b6cc1cf499d6..748143d2c218 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -2012,16 +2012,16 @@ void enqueue_task(struct rq *rq, struct task_struct *p, int flags)
- 	if (!(flags & ENQUEUE_NOCLOCK))
- 		update_rq_clock(rq);
- 
--	if (!(flags & ENQUEUE_RESTORE)) {
--		sched_info_enqueue(rq, p);
--		psi_enqueue(p, (flags & ENQUEUE_WAKEUP) && !(flags & ENQUEUE_MIGRATED));
--	}
- 
- 	p->sched_class->enqueue_task(rq, p, flags);
- 	/*
- 	 * Must be after ->enqueue_task() because ENQUEUE_DELAYED can clear
- 	 * ->sched_delayed.
- 	 */
-+	if (!(flags & ENQUEUE_RESTORE)) {
-+		sched_info_enqueue(rq, p);
-+		psi_enqueue(p, (flags & ENQUEUE_WAKEUP) && !(flags & ENQUEUE_MIGRATED));
-+	}
- 	uclamp_rq_inc(rq, p);
- 
- 	if (sched_core_enabled(rq))
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+
 
