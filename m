@@ -1,99 +1,113 @@
-Return-Path: <linux-kernel+bounces-336408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4A0C983A7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 01:49:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FE6B983A80
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 01:52:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85F24283BBF
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 23:49:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F21F1C21DAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 23:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C857612CDBA;
-	Mon, 23 Sep 2024 23:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6700132117;
+	Mon, 23 Sep 2024 23:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JC+ko8oq"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cwHgw9OY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3412907
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 23:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606DF2907;
+	Mon, 23 Sep 2024 23:52:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727135382; cv=none; b=dvUHPw3usNSSk6vp46YeuQnj4kXdL3BlIGruvzNufHEv7t8E/3IyFtjpi2cO5d6/zpBNKgKp3CAVMbgjG1HnAq/jWHD2wNWveViDMj1UzIBzU4orVnB+xWuWxHoFWfLZ9xlh3nv7vMPsEtWIr9IV4qio7Evp3qmxpALTz0cVTNo=
+	t=1727135538; cv=none; b=ty7L+0u7fbj5ZKn2Oe4DBsHWSvlGP184dYQMa8vsUysTU5ijxrgGBhAZdLZA6UBGa/MmfjKBR0zYPfhj87Fe+sUPyyjmOsLaQBTYzqUk6J+J6T6mID3SlATNMCl0/Rmc1qkre46S0gPg2zNT7jLUyLbfMp2Hw+TM9WcUoGbRy1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727135382; c=relaxed/simple;
-	bh=Ecf9w+e01+sq6jgIrA3EgI80df1KuNB4w2B7/z5pTtE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gLAIabanh57LH1s7UZay4xt/KvCvfDtW4Xfxa4oxUGOjcTYGCR3wllek5jQx+KK3CTZvqUv8MTUrRQZC5AWtFthcsyxO2fTVW5oRjiZ2hx7z5rmVD+rGf5Kfouaws2aaPVAOtci02ekybIu54P8nZT+TTItrkNpiMQ7YlcfGM4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JC+ko8oq; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727135377;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=rDdO/5vF6ykhIVNsYXGYgfmGlQo19Ylf96enkGpatXQ=;
-	b=JC+ko8oqNj0vJCSlFt89UXWkK5Pfq5t5GaRASiIYpZVa4vyF8eFbq1SGhsqbFVSWGtK8xQ
-	Us4tzF4750mvUT4fh0L7PbjJv0kYYc1nNhtVo1xZQJ44dCOIOVgD7ko9C2PBqWMjnvTu0G
-	ZZNM+kk+DgX1dAwIrZlq3sLaAQG31qo=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Zack Rusin <zack.rusin@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/vmwgfx: Remove unnecessary NULL checks before kvfree()
-Date: Tue, 24 Sep 2024 01:46:41 +0200
-Message-ID: <20240923234638.236319-5-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1727135538; c=relaxed/simple;
+	bh=liU3xrMhCJ00+SP18e8Pf+o8QqUPpogn+daULb1u5gg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UtbD3KucfanxvOpTfq1F/i0XKEid1XIgveKrNfGnX5OcURo+WE1Oj2C9d8eXZgjYQamlOZohxf4TvJznTvR5lmZ93xcr1NBH4ZaTolzGSunxsPkILtRaiDuytIulK4xM9O+Eqpst9LvJvUfo0FJ9fBnT/grkuHRi+fFdFL0kGdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cwHgw9OY; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727135537; x=1758671537;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=liU3xrMhCJ00+SP18e8Pf+o8QqUPpogn+daULb1u5gg=;
+  b=cwHgw9OYgjB6tl2JKRDBD6M6kVvrvFvsVJ919+rzSz6CjO62DUvb1NXe
+   Ck8eM6jkMS8htUsnyra8EI7EJnaENzHGmJl5ota8BVeC53s9lZ/t4lFm+
+   QUAUJYhyNKVHtpbWH2JSIO/krqZ76eAcjC9B426cIgs0H6lp1XcFHB3vb
+   iXM+CvMQ3dbearrEnR7dPKZKoPS98G6vhStcaA3OHyMZobym0TEOMDEPd
+   PYPAEG6+Ou6TJ9p+qfQwAu/ltyRWOknD4blMCEK6425q+UcXYR5KUUZNJ
+   BlQbAvunUJBGd+rzfkVCdrC03xhn1544Hgmpc+XMfqe1P01YLUBLg2iqR
+   w==;
+X-CSE-ConnectionGUID: nw+T26XTTKShSQneEeBCjA==
+X-CSE-MsgGUID: RjQOmo4DQUuZ4Mp/KRqxGw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="37472806"
+X-IronPort-AV: E=Sophos;i="6.10,252,1719903600"; 
+   d="scan'208";a="37472806"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 16:52:16 -0700
+X-CSE-ConnectionGUID: ebY8c56xTvWzZ2bYe8EGqA==
+X-CSE-MsgGUID: buCkN+fmRTOabrQlEgwvMw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,252,1719903600"; 
+   d="scan'208";a="75755546"
+Received: from tassilo.jf.intel.com (HELO tassilo) ([10.54.38.190])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 16:52:15 -0700
+Date: Mon, 23 Sep 2024 16:52:14 -0700
+From: Andi Kleen <ak@linux.intel.com>
+To: "Liao, Chang" <liaochang1@huawei.com>
+Cc: mhiramat@kernel.org, oleg@redhat.com, andrii@kernel.org,
+	peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+	namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH] uprobes: Improve the usage of xol slots for better
+ scalability
+Message-ID: <ZvH_LiUeOtAwommF@tassilo>
+References: <20240918012752.2045713-1-liaochang1@huawei.com>
+ <87jzf9b12w.fsf@linux.intel.com>
+ <7a6ba3f3-dffa-cdac-73c7-074505ea4b44@huawei.com>
+ <ZuwoUmqXrztp-Mzh@tassilo>
+ <0939300c-a825-5b46-d86f-72ce89b2b95f@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0939300c-a825-5b46-d86f-72ce89b2b95f@huawei.com>
 
-Since kvfree() already checks if its argument is NULL, an additional
-check before calling kvfree() is unnecessary and can be removed.
+> Thanks for the suggestions, I will experiment with a read-write lock, meanwhile,
+> adding the documentation and testing for the lockless scheme.
 
-Remove both and the following Coccinelle/coccicheck warnings reported by
-ifnullfree.cocci:
+Read-write locks are usually not worth it for short critical sections,
+in fact they can be slower due to cache line effects.
 
-  WARNING: NULL check before some freeing functions is not needed
-  WARNING: NULL check before some freeing functions is not needed
+> Sorry, I may not probably get the point clear here, and it would be very
+> nice if more details are provided for the concern. Do you mean it's necessary
+> to make the if-body excution exclusive among the CPUs? If that's the case,
+> I guess the test_and_put_task_slot() is the equvialent to the race condition
+> check. test_and_put_task_slot() uses a compare and exchange operation on the
+> slot_ref of utask instance. Regardless of the work type being performed by
+> other CPU, it will always bail out unless the slot_ref has a value of one,
+> indicating the utask is free to access from local CPU.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- drivers/gpu/drm/vmwgfx/vmwgfx_blit.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+What I meant is that the typical pattern for handling races in destruction
+is to detect someone else is racing and then let it do the destruction
+work or reacquire the resource (so just bail out).
 
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_blit.c b/drivers/gpu/drm/vmwgfx/vmwgfx_blit.c
-index 890a66a2361f..64bd7d74854e 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_blit.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_blit.c
-@@ -635,10 +635,8 @@ int vmw_bo_cpu_blit(struct vmw_bo *vmw_dst,
- 		kunmap_atomic(d.src_addr);
- 	if (d.dst_addr)
- 		kunmap_atomic(d.dst_addr);
--	if (src_pages)
--		kvfree(src_pages);
--	if (dst_pages)
--		kvfree(dst_pages);
-+	kvfree(src_pages);
-+	kvfree(dst_pages);
- 
- 	return ret;
- }
--- 
-2.46.1
+But that's not what you're doing here, in fact you're adding a
+completely new code path that has different semantics? I haven't checked
+all the code, but it looks dubious.
 
+-Andi
 
