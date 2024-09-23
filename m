@@ -1,174 +1,253 @@
-Return-Path: <linux-kernel+bounces-336044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC21497EE6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:46:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5BD197EE71
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:46:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A5D01C20D7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:46:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 353271F226DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3352199229;
-	Mon, 23 Sep 2024 15:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="am5M1dqD"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F103A19CC1E;
+	Mon, 23 Sep 2024 15:46:27 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A895C13D893
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 15:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2F6195B1A
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 15:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727106373; cv=none; b=Lzx+62W8L1XRih1bZtOQZ7+3e2gRRy3NAhJ9azgaWKEvB0KHiH0b4ZPd5hv4uqJEHVAeAZNfxBwpSjOwZIK5c01nwN2LcWORMZZKg5EgYLdrNOBkLAkOkTxbHnYpGB5pxAQb9wGizgG0Y56n30C3qpfpFfIGXQike1PftUhC8VE=
+	t=1727106387; cv=none; b=hB3raj1WRCuuAiCFKkKr0gpVE9mfSd0s+Cbx2DHDx7M3H26xnvxkxoW+b5npHuF0fOyp8rwk+jtWk7WUXHE6hMfche9OHTNb5qMc1AqcayU8xM3rrtDdY27WRvb69H0x6CO7fGiDbFJxZDLeNJTleR/1Dax255Ii5PYHKklBvuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727106373; c=relaxed/simple;
-	bh=C2xYYnW+/eBvgc3v+eP03xaZFfxQt6yM2oxQFwb5t2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KJ3Ul2VuQQcLDkKWpdcLYuCmvy9w1aouu03Z2yjFmbQNnl3tubhk4u3bi7gnJmEGl0U3xs2zcf8rOwf2jEqXDagJFLuML9pq+d7n/VTfh2+n1NpteIqYYwk1bKJ15acxB22hT0HWqM+maLIpf2ojEjIBWOuo0tiY4sOpnPQ4ThY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=am5M1dqD; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6c54a5fbceeso35429556d6.2
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 08:46:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1727106368; x=1727711168; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ESYwXswqqcUH5BLw9hFh9aaHVtjhIWmKyClvFuaPqsg=;
-        b=am5M1dqDlz8m446ULw5Oh8fwTWl3a/YfeiklT52UDem5fGr3Fz3jO9wIvdXO/fvLjM
-         va5MlsUynImKHf4KEEU6odhpK+2wQNGYWqK6MWulVoHlymRVcdpZlG+6Mos4FLO7P9Ph
-         toHASznLgKMsKmAHSySUkDUlbhoJf6zzbIlwVj/BR0fKq4DAqZFWeIBO1CX0+OCLK5/n
-         TBTZF0ZeQeFkSAeTt0fLofN5zOVcAZOQy0Du4305JNZmZhvdeQvjI89lPsL23IHDwpxt
-         kC3N7Q4OknfI4SwYqO23lzM9e8vBVRNh6jexQRVUfjrW89RZY7hUsQIkghOQZuuut8NO
-         je7g==
+	s=arc-20240116; t=1727106387; c=relaxed/simple;
+	bh=LGYCPQ0qMntw/zBmXpJAtB2lzURz8DXm9+Idp1B2B0A=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=exLd6zKzagKNQ5a1f2oSiHF+epyBygr9/i3+KFCSBsXW2udUuYqb5Q3e4J5HGMUedbXWo/lJV7p8foFxOhiWrG8mbXFolF8GTEMghSnrBlGTiGgZy/wE9qEAlaxBfCL3nUvKrl9y0OBkhH7fr7cShVF4S1fjihNb3Yguhxa0V80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a0a54fb476so63315765ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 08:46:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727106368; x=1727711168;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ESYwXswqqcUH5BLw9hFh9aaHVtjhIWmKyClvFuaPqsg=;
-        b=d105gIrollHGmN2eXzgFjNCikN80VJkcByCld8n1UCwhuEgN3VBKWCr0bS8xCv6KUI
-         ch20zpLEk1BwrzAXAD+fvZVc4PEeenFhrqV2ICIgMNSxex9XmJXkeCFYMDK2gNgImOOQ
-         GyRwSUs/zq6Ye530b7Nf8QnBJx9fo2dj5gzFUAOWNghWY2Vth0O1P5nlK2pm47AcCkyn
-         E9qAd2JNnoX4O7NfH5mqImFwCURJdzwD2cjKUzit5wCU8cTg3wj7QQTjVcz/54oUbFjA
-         3sxtEfmqI3K08w1McMzy2a8ggSoR8tpJ6W1K2XCj0uPjYn5AYh/ZiZeyEQ3PKTLN+xcX
-         4RtA==
-X-Forwarded-Encrypted: i=1; AJvYcCUPVmo6x/x7W1tVZZsLKd8rVWxHqKyy/Z4v4nqrjHlcXsGX+q/Z9DWZQgOJydc2ijVHpaeodI4KEhvNUVM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMh8QOgTsrCisx1JH8K6iMSZCX6iWOf4VORciV9zppWL8fW8HZ
-	Du8HH3PLOD3zxLzuRccvE37+3v7xDBwMOGPDOrgJFR8Wvu4jvndvwZVtR/QaCU8=
-X-Google-Smtp-Source: AGHT+IHPUR6EuXJsHNnKKFnokK0Em7hNPMb8rIhk8WEyODJzzOukPb0nF82ySC7C0nba/DeW5dzZjg==
-X-Received: by 2002:a0c:f20a:0:b0:6c5:2a13:b8e1 with SMTP id 6a1803df08f44-6c7bc83bf00mr207859086d6.43.1727106368349;
-        Mon, 23 Sep 2024 08:46:08 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c75e44bfc4sm48392486d6.2.2024.09.23.08.46.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 08:46:06 -0700 (PDT)
-Date: Mon, 23 Sep 2024 11:46:01 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Parag W <parag.lkml@gmail.com>
-Cc: anna-maria@linutronix.de, frederic@kernel.org,
-	linux-kernel@vger.kernel.org, peterz@infradead.org,
-	pmenzel@molgen.mpg.de, regressions@lists.linux.dev,
-	surenb@google.com, tglx@linutronix.de
-Subject: Re: Error: psi: inconsistent task state! task=1:swapper/0 cpu=0
- psi_flags=4 clear=0 set=4
-Message-ID: <20240923154601.GC437832@cmpxchg.org>
-References: <20240922102047.GA437832@cmpxchg.org>
- <20240923120339.11809-1-parag.lkml@gmail.com>
+        d=1e100.net; s=20230601; t=1727106385; x=1727711185;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=prPVt5cguf8d01sLaNgmGgS8NpJHgZ878V5tnotzEpg=;
+        b=xRw55k7bCjoiIo5IuLWVz0mr+vH1SieOx0aLJCqQtDovoclj4CdsWpA/n75PhgM+/9
+         TDDlo5SdEAhALCrKDDNw0dCjSHBQ202ZiGVmbTZV/zfEuz2ggttRSr6kLpCR7NC4pJGe
+         I5qynXMcw4udT9uBc4TETYQ2MONf/yYT8phzLwm0GYiwA8UxZYDzXDsqx2VCAQ9cs9YN
+         ssDrf+Luh59AP+vFj0JMQuZ8uIXzC0W975khpsTEJHWuVhm0f0ENo7sajO1g56+CRTwn
+         p34PbKisuQRg/xVnyGSDVjZ98N2Rurwn+vOjVVIfuYzz1w44kQrSsLFirL5HkFmHqeCh
+         FZ4A==
+X-Forwarded-Encrypted: i=1; AJvYcCXyGfR4ECu3DmY62xxt6TW9wcH9rm7guuUSS1QNK7jzYCrWTNNf/eiwGy/FZFpl5jIA8BSAvFWEDJRiHgo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkVa5sP3HGxVW7cc1iJX/aG+1QmeLkFXFYSqQxDFHpypVuwBvi
+	olJRQitUur1/ljk8umyI1uG9zTBt+YTVQlragjLsWim2aPUDFrlFNZCiRnKJHCM4zuzUEOsM+MC
+	/tVv7oLURhn9XOUv2+Cdi5mnNimarqJpLDBTpvX1fGXiRH0INmM1AwYw=
+X-Google-Smtp-Source: AGHT+IFzJbuikFWCJ31F6HFTXZgdwvxKzbj2BuXXfQeUx1+VxdLNDg/Rk8vlVjgdTJnT4hNWmooyde52lN0AfF8hmnJ2OwdZD9eU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240923120339.11809-1-parag.lkml@gmail.com>
+X-Received: by 2002:a92:ca47:0:b0:39b:3894:9298 with SMTP id
+ e9e14a558f8ab-3a0c9b82e20mr104292805ab.0.1727106384915; Mon, 23 Sep 2024
+ 08:46:24 -0700 (PDT)
+Date: Mon, 23 Sep 2024 08:46:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f18d50.050a0220.c23dd.0012.GAE@google.com>
+Subject: [syzbot] [net?] possible deadlock in gtp_encap_enable_socket
+From: syzbot <syzbot+e953a8f3071f5c0a28fd@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	laforge@gnumonks.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	osmocom-net-gprs@lists.osmocom.org, pabeni@redhat.com, pablo@netfilter.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Sep 23, 2024 at 08:03:39AM -0400, Parag W wrote:
-> FWIW, moving psi_enqueue to be after ->enqueue_task() in
-> sched/core.c made no difference - I still get the inconsistent task
-> state error. psi_dequeue() is already before ->dequeue_task() in
-> line with uclamp.
+Hello,
 
-Yes, that isn't enough.
+syzbot found the following issue on:
 
-AFAICS, in psi want to know when a task gets dequeued from a core POV,
-even if the class holds on to it until picked again. If it's later
-picked and dequeued by the class, I don't think there is a possible
-call into psi. Lastly, if a sched_delayed task is woken and enqueued
-from core, psi wants to know - we should call psi_enqueue() after
-->enqueue_task has cleared sched_delayed.
+HEAD commit:    9410645520e9 Merge tag 'net-next-6.12' of git://git.kernel..
+git tree:       net-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=15d39e9f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=37c006d80708398d
+dashboard link: https://syzkaller.appspot.com/bug?extid=e953a8f3071f5c0a28fd
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16215ca9980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=110c6c27980000
 
-I don't think we want the ttwu_runnable() callback: since the task
-hasn't been dequeued yet from a core & PSI perspective, we shouldn't
-update psi states either. The sched_delayed check in psi_enqueue()
-should accomplish that. Oh, but wait: ->enqueue_task() will clear
-sched_delayed beforehand. We should probably filter ENQUEUE_DELAYED?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/80466d230dfb/disk-94106455.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ba253eabab42/vmlinux-94106455.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/569982fb6c88/bzImage-94106455.xz
 
-This leaves me with the below diff. But I'm still getting the double
-enqueue with it applied:
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e953a8f3071f5c0a28fd@syzkaller.appspotmail.com
 
-[root@ham ~]# dmesg | grep -i psi
-[    0.350533] psi: inconsistent task state! task=1:swapper/0 cpu=0 psi_flags=4 clear=0 set=4
+IPVS: Unknown mcast interface: macvlan0
+netlink: 8 bytes leftover after parsing attributes in process `syz-executor297'.
+netlink: 24 bytes leftover after parsing attributes in process `syz-executor297'.
+======================================================
+WARNING: possible circular locking dependency detected
+6.11.0-syzkaller-01458-g9410645520e9 #0 Not tainted
+------------------------------------------------------
+syz-executor297/5243 is trying to acquire lock:
+ffff88801cf99158 (sk_lock-AF_INET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1609 [inline]
+ffff88801cf99158 (sk_lock-AF_INET){+.+.}-{0:0}, at: gtp_encap_enable_socket+0x2ce/0x5c0 drivers/net/gtp.c:1674
 
-Peter, what am I missing here?
+but task is already holding lock:
+ffffffff8fc88588 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+ffffffff8fc88588 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (rtnl_mutex){+.+.}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       start_sync_thread+0xdc/0x2dc0 net/netfilter/ipvs/ip_vs_sync.c:1761
+       do_ip_vs_set_ctl+0x442/0x13d0 net/netfilter/ipvs/ip_vs_ctl.c:2732
+       nf_setsockopt+0x295/0x2c0 net/netfilter/nf_sockopt.c:101
+       smc_setsockopt+0x275/0xe50 net/smc/af_smc.c:3064
+       do_sock_setsockopt+0x3af/0x720 net/socket.c:2330
+       __sys_setsockopt+0x1ae/0x250 net/socket.c:2353
+       __do_sys_setsockopt net/socket.c:2362 [inline]
+       __se_sys_setsockopt net/socket.c:2359 [inline]
+       __x64_sys_setsockopt+0xb5/0xd0 net/socket.c:2359
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (&smc->clcsock_release_lock){+.+.}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       smc_switch_to_fallback+0x35/0xdb0 net/smc/af_smc.c:902
+       smc_sendmsg+0x11f/0x530 net/smc/af_smc.c:2771
+       sock_sendmsg_nosec net/socket.c:730 [inline]
+       __sock_sendmsg+0x221/0x270 net/socket.c:745
+       ____sys_sendmsg+0x525/0x7d0 net/socket.c:2603
+       ___sys_sendmsg net/socket.c:2657 [inline]
+       __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2686
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (sk_lock-AF_INET){+.+.}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3133 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
+       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
+       __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+       lock_sock_nested+0x48/0x100 net/core/sock.c:3611
+       lock_sock include/net/sock.h:1609 [inline]
+       gtp_encap_enable_socket+0x2ce/0x5c0 drivers/net/gtp.c:1674
+       gtp_encap_enable drivers/net/gtp.c:1707 [inline]
+       gtp_newlink+0x589/0xf30 drivers/net/gtp.c:1511
+       rtnl_newlink_create net/core/rtnetlink.c:3510 [inline]
+       __rtnl_newlink net/core/rtnetlink.c:3730 [inline]
+       rtnl_newlink+0x1591/0x20a0 net/core/rtnetlink.c:3743
+       rtnetlink_rcv_msg+0x73f/0xcf0 net/core/rtnetlink.c:6646
+       netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
+       netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+       netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
+       netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+       sock_sendmsg_nosec net/socket.c:730 [inline]
+       __sock_sendmsg+0x221/0x270 net/socket.c:745
+       ____sys_sendmsg+0x525/0x7d0 net/socket.c:2603
+       ___sys_sendmsg net/socket.c:2657 [inline]
+       __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2686
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  sk_lock-AF_INET --> &smc->clcsock_release_lock --> rtnl_mutex
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(rtnl_mutex);
+                               lock(&smc->clcsock_release_lock);
+                               lock(rtnl_mutex);
+  lock(sk_lock-AF_INET);
+
+ *** DEADLOCK ***
+
+1 lock held by syz-executor297/5243:
+ #0: ffffffff8fc88588 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+ #0: ffffffff8fc88588 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 5243 Comm: syz-executor297 Not tainted 6.11.0-syzkaller-01458-g9410645520e9 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2186
+ check_prev_add kernel/locking/lockdep.c:3133 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3252 [inline]
+ validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
+ __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+ lock_sock_nested+0x48/0x100 net/core/sock.c:3611
+ lock_sock include/net/sock.h:1609 [inline]
+ gtp_encap_enable_socket+0x2ce/0x5c0 drivers/net/gtp.c:1674
+ gtp_encap_enable drivers/net/gtp.c:1707 [inline]
+ gtp_newlink+0x589/0xf30 drivers/net/gtp.c:1511
+ rtnl_newlink_create net/core/rtnetlink.c:3510 [inline]
+ __rtnl_newlink net/core/rtnetlink.c:3730 [inline]
+ rtnl_newlink+0x1591/0x20a0 net/core/rtnetlink.c:3743
+ rtnetlink_rcv_msg+0x73f/0xcf0 net/core/rtnetlink.c:6646
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:745
+ ____sys_sendmsg+0x525/0x7d0 net/socket.c:2603
+ ___sys_sendmsg net/socket.c:2657 [inline]
+ __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2686
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fed198844a9
+Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RS
+
 
 ---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index b6cc1cf499d6..4f036c66cf07 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -2012,11 +2012,6 @@ void enqueue_task(struct rq *rq, struct task_struct *p, int flags)
- 	if (!(flags & ENQUEUE_NOCLOCK))
- 		update_rq_clock(rq);
- 
--	if (!(flags & ENQUEUE_RESTORE)) {
--		sched_info_enqueue(rq, p);
--		psi_enqueue(p, (flags & ENQUEUE_WAKEUP) && !(flags & ENQUEUE_MIGRATED));
--	}
--
- 	p->sched_class->enqueue_task(rq, p, flags);
- 	/*
- 	 * Must be after ->enqueue_task() because ENQUEUE_DELAYED can clear
-@@ -2024,6 +2019,11 @@ void enqueue_task(struct rq *rq, struct task_struct *p, int flags)
- 	 */
- 	uclamp_rq_inc(rq, p);
- 
-+	if (!(flags & (ENQUEUE_RESTORE|ENQUEUE_DELAYED))) {
-+		sched_info_enqueue(rq, p);
-+		psi_enqueue(p, (flags & ENQUEUE_WAKEUP) && !(flags & ENQUEUE_MIGRATED));
-+	}
-+
- 	if (sched_core_enabled(rq))
- 		sched_core_enqueue(rq, p);
- }
-diff --git a/kernel/sched/stats.h b/kernel/sched/stats.h
-index 237780aa3c53..138c52c2f2c9 100644
---- a/kernel/sched/stats.h
-+++ b/kernel/sched/stats.h
-@@ -129,6 +129,9 @@ static inline void psi_enqueue(struct task_struct *p, bool wakeup)
- 	if (static_branch_likely(&psi_disabled))
- 		return;
- 
-+	if (p->se.sched_delayed)
-+		return;
-+
- 	if (p->in_memstall)
- 		set |= TSK_MEMSTALL_RUNNING;
- 
-@@ -148,6 +151,9 @@ static inline void psi_dequeue(struct task_struct *p, bool sleep)
- 	if (static_branch_likely(&psi_disabled))
- 		return;
- 
-+	if (p->se.sched_delayed)
-+		return;
-+
- 	/*
- 	 * A voluntary sleep is a dequeue followed by a task switch. To
- 	 * avoid walking all ancestors twice, psi_task_switch() handles
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
