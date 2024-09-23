@@ -1,115 +1,121 @@
-Return-Path: <linux-kernel+bounces-335746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CE2B97EA0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:44:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28DB597EA14
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:46:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16AAA1F20FBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:44:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7655B217C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:46:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FCA9194A54;
-	Mon, 23 Sep 2024 10:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD4641C77;
+	Mon, 23 Sep 2024 10:46:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RCovq27e"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Il0z/u3U"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A285A78B60;
-	Mon, 23 Sep 2024 10:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7CD5475C
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 10:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727088249; cv=none; b=h0sso3Wr89VPBDrRLQZ7TRR4dVweoKEb14Wfod+R5LSK563vfUp7r/OancxdC/yFWwpY/B8tDTv7+8XzlhZVHNwnkYoQFL2ZIpr+pImAZe2dWGLHYqfICezO7LVFSak8SH7SxNhoSvLMBt+DXuchaVFhXxm/uXWeWFG033sZ1YA=
+	t=1727088360; cv=none; b=bZsVXhyiZOx7+gNuRN30DSghc2o2v7paAlHhTlGm/37a9VvHOOzojfMn7BsRP45Tyx34aSWzjIzYIJxMvmwhIlLzcpAlTcustYjC/2RSPuQgcVjRH2SOSbkh0QCcIfkTCOWCSAdsvABte0hn1JNYTvDmE8x5C3wupDNDoj26KzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727088249; c=relaxed/simple;
-	bh=oKcFWTGa4Wd1F63+4plK6XDY/MxtOsFMlyeMw92+6eY=;
+	s=arc-20240116; t=1727088360; c=relaxed/simple;
+	bh=fMOdZPgrXj5kqX/IGsWsDzpa9PANUTMBvtsSNh3cfV8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZxoXdKdS3Svk9vo56g1WUZ1R2Yap2l6PK4/z8nHd95D4etJJA29Z+DooGxvj6ddCqGP77tZ7ig9+Wc7TdJE6c0dT/Ugyr1Ius32JLTZvN2+V/abADh8TBS6YefHdcm0JAC0QsfV5sjpDlkpvLcdDuPBEfuYW4i/42gFmbs99Fl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RCovq27e; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727088248; x=1758624248;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=oKcFWTGa4Wd1F63+4plK6XDY/MxtOsFMlyeMw92+6eY=;
-  b=RCovq27eC04qwnQWoafbT9RI0aD0OjjbyMiZJDUy6eFFojc338BT1qhz
-   PCaK4qsYRVri3TlKuJTibEIRJ29HllUQDJcLe+n/c/Dbh+3A0bbfSKWDF
-   M7F4UZOPfV94tCuvxUDIlQSR53q7lKsUWtiY9ms+pE/yf0huFMJZMuWv3
-   PoP9TbONPJenEK3IAbQkOcV7BcjrTYlXrO/AvapBwWnnMLpxOPBx1AMZv
-   8YJKkvtc3yG14i779MXrC0mtL7Qzmr4bLtAaE2RTz9IId9yA3mobpG3Dr
-   0fvmERxjJ7HP6Wbb4WHtjmaDWoZM1MDcYsSgmwxkEhPR98rqpcOS5FpBu
-   w==;
-X-CSE-ConnectionGUID: 6Pta1CafSZ+nGHyhU0XMQQ==
-X-CSE-MsgGUID: B3iLkegKQTSVxPUcGyKTLw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11202"; a="26123755"
-X-IronPort-AV: E=Sophos;i="6.10,251,1719903600"; 
-   d="scan'208";a="26123755"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 03:44:07 -0700
-X-CSE-ConnectionGUID: wBEHr1JxRz2EvFbS6PFTNg==
-X-CSE-MsgGUID: 5d6hTUnMTfe+LzCf8TrTlg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,251,1719903600"; 
-   d="scan'208";a="75970264"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 03:44:05 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1ssgXz-0000000BxIp-0UHc;
-	Mon, 23 Sep 2024 13:44:03 +0300
-Date: Mon, 23 Sep 2024 13:44:02 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z3/whaSYoDS0aRaFLVP9W1J3BwZ4984XmLpZV6Yhue8f5xg2NhRPIpi/93oy9UY8rSRkik2sTa/pO94215wrc9TyF81gMZBDlYAS5fEV7T1D5/+cXwxRhfZ85RNSImuDDlyRlS4v2rGmz/PHxHTdmAQeQ12XGFQSBDFSAwGLHPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Il0z/u3U; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727088357;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u1iahnWeoKQXKamAWbB/71kg6S6t9VFu9zGNvZPjo2A=;
+	b=Il0z/u3UHjHyegHNGiQ+HMDOi1g3YOFuxn4j9am8jeBBiw+ssr67YcslOPIIPbeff7I7d6
+	mkY/XJC0juojBM0l6LtmwKVnt+rx2TMs9oG67TV2SiMhFpklVs+CxjW+3Ci07d4ENx8f6Q
+	IyPtxLhIZExotofEGKeEAjpGGYVuCEY=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-575-IY9xwYCdNM-YIUO3DyUIcA-1; Mon,
+ 23 Sep 2024 06:45:53 -0400
+X-MC-Unique: IY9xwYCdNM-YIUO3DyUIcA-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5F466190DE23;
+	Mon, 23 Sep 2024 10:45:52 +0000 (UTC)
+Received: from pauld.westford.csb (unknown [10.22.32.86])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 83F3619560AA;
+	Mon, 23 Sep 2024 10:45:50 +0000 (UTC)
+Date: Mon, 23 Sep 2024 12:45:48 +0200
+From: Phil Auld <pauld@redhat.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: andrea.righi@linux.dev, David Vernet <void@manifault.com>,
+	Giovanni Gherdovich <giovanni.gherdovich@suse.com>,
+	Kleber Sacilotto de Souza <kleber.souza@canonical.com>,
+	Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] pinctrl: nomadik: Use string_choices API instead
- of ternary operator
-Message-ID: <ZvFGctwe1vu9lQmd@smile.fi.intel.com>
-References: <20240826095723.1421065-1-andriy.shevchenko@linux.intel.com>
- <ZtmqdP6Q92vRWh_I@smile.fi.intel.com>
- <CACRpkdYSPGsQt_FQDurtwmyaLtB3=gaay-hLN2QdOj25e3sK8A@mail.gmail.com>
+Subject: Re: [PATCH] sched_ext: Provide a sysfs enable_seq counter
+Message-ID: <20240923104548.GA308802@pauld.westford.csb>
+References: <20240921193921.75594-1-andrea.righi@linux.dev>
+ <ZvCKPkwwC9-o2dsQ@mtj.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkdYSPGsQt_FQDurtwmyaLtB3=gaay-hLN2QdOj25e3sK8A@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <ZvCKPkwwC9-o2dsQ@mtj.duckdns.org>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Mon, Sep 23, 2024 at 11:11:12AM +0200, Linus Walleij wrote:
-> On Thu, Sep 5, 2024 at 2:56 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Mon, Aug 26, 2024 at 12:57:23PM +0300, Andy Shevchenko wrote:
-> 
-> > > Use modern string_choices API instead of manually determining the
-> > > output using ternary operator.
-> >
-> > Linus, do you have any comment on this?
-> >
-> > I had sent two patches of similar changes (different drivers, thoug),
-> > one got applied and this is not. Anything should I do about it?
-> 
-> Sorry for late reply :(
-> 
-> I thought it looks weird to replace just one string choice
-> in the middle of everything and it will be confusing for readers?
-> They will be "but what is this now, this looks weird".
 
-Do you mean it's incomplete? So, i.o.w., if we have str_output_input()
-it will go?
+Hi Tejun,
+
+On Sun, Sep 22, 2024 at 11:21:02AM -1000 Tejun Heo wrote:
+> Hello, Andrea.
+> 
+> On Sat, Sep 21, 2024 at 09:39:21PM +0200, andrea.righi@linux.dev wrote:
+> >  static struct attribute *scx_global_attrs[] = {
+> >  	&scx_attr_state.attr,
+> >  	&scx_attr_switch_all.attr,
+> >  	&scx_attr_nr_rejected.attr,
+> >  	&scx_attr_hotplug_seq.attr,
+> > +	&scx_attr_enable_seq.attr,
+> >  	NULL,
+> >  };
+> 
+> Can you put this in scx_sched_attrs instead as it probably would make sense
+> to track this per-scheduler in the future when we support stacked
+> schedulers.
+
+It's not a per scheduler counter, though. It's global. We want to know
+that a (any) scx scheduler has been loaded at some time in the past. It's
+really only interesting when 0 or > 0. The actual non-zero number and which
+scheduler(s) don't matter that much.
+
+And it needs to persist when the scheduler is unloaded (I didn't look but
+I uspect the per scheduler attrs come and go?).
+
+
+Cheers,
+Phil
+
+> 
+> Thanks.
+> 
+> -- 
+> tejun
+> 
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
 
 
