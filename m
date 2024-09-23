@@ -1,173 +1,127 @@
-Return-Path: <linux-kernel+bounces-336227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D04A97F0DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 20:52:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D01F097F0E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 20:54:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8320B21AD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:52:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08AD6B21A20
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:53:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E41819F105;
-	Mon, 23 Sep 2024 18:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9ACB1A01BC;
+	Mon, 23 Sep 2024 18:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hUKWUStb"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ahItg/sL"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208BB14A85
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 18:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA901FA5;
+	Mon, 23 Sep 2024 18:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727117529; cv=none; b=lbCVSG+BV0u68BjyLuIo4N9KmkiZ7GlD00ZX9tJr5Vygobjbk+9wqjZ01d49n6kkrTAWUDVKS90xdAn/484tS/dhmTZrISW3GnnI6EaJMDKNeXEoMx7qIzfeVKZf0MRBctWgs47Y9d3MpAaXz0XZnc+YiQIjgfZ0ld4GkX/Zr5w=
+	t=1727117628; cv=none; b=s4xeaoVf7x8+sULEgzwFjtWIQnW6IrnZkFQZHWZQGUScy+7hMSBCuB1NyqLSGyVdRScHnL3VLvIgMswZBRa8DUCSvAcx9lqgqCslegoKqdcHL+UHjLv+DMZY205T0aIb7wn8maOsk/v7sILRBCHb4w9aKL8QUG3EmyytPZigHMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727117529; c=relaxed/simple;
-	bh=zLpUr1SxnEAF71ZZ0b+lxYmH+BbaNSeMXUJA3JUB1Rw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=Cv4yzJu+9MlfvVl2cd92NZ/iyyuHIzLTpmN248BXTjv2VWVWhHk8QHarf26v1dzlRsWJBrpk8W4KkB4PnNT8LXPsIG5DalG/w+8WKAZzTEfqy6QcYvKecFLNufwIjLFhqd9BVzSedlmuNYqZ8acRA10oPGN6HKOg/0Jpe7d2XAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hUKWUStb; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20546b8e754so27635ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 11:52:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727117527; x=1727722327; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KXmMrEY65D+AePLk+PY6S5yXHIk7WNDJcw3IWnzcWek=;
-        b=hUKWUStbPz0/lVAoVSGzHiy8Xw3nsjdBIHN3lF00Cg4P1/pfze4uFEX+EhZQoLviWj
-         ZEuhaLaUCNr1WXkv2VPjrpnnpMeem+OeY5wffs9f5zBbZohsIMxvyw8GmPwtlIGfOvlP
-         jLKhwfGPJTJa0qDft/kALSDiaepz6/lHU2FgpXVetxFNp+N+OpCeuNG1sFxWUSmR4uyM
-         Ycx1WH05KVP3tUtyFk21heqF44lfiWMmhOtKc/0gDz0QLxXp8gTgsHhV13lCLfh3BsWc
-         hKH5EJ7QvNSmqYMEQc9/gZtjb1i3VOHP+b3ynydIUzoVbBE0ny2Ou78olOrYVCuBxrpW
-         BtXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727117527; x=1727722327;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KXmMrEY65D+AePLk+PY6S5yXHIk7WNDJcw3IWnzcWek=;
-        b=B8ApDpigxwFlmZ0xfKIAoI46lKcmFxvsrCp01KXTgr2BQhhBn1bIJHLxIgDFiiysiG
-         ymNc2HxCDsxma41yhd/L20Pfg6/9yXj2H3bbhWqLSJoWsbpi0OLs8ryYhBU/F979wQzN
-         6dndjDdkREXb9JsQHbl4pWpd9vmSstQdpChypyKMVRnRLaBZlbHoF2A1lFiGzoMVvR6L
-         pSLLp42aqrlGwD84j9fONsM8w7tSdbA9SmcuW3+E+/ndjWZoCyz5RDELLJX4XXMd3TQc
-         gqInMkEvfJ2XwNAEXFISIbdQpRHneKgkBZI2BB5dYk1uPTmFrH1gUvNfb0msPle5+v5m
-         U6Gw==
-X-Forwarded-Encrypted: i=1; AJvYcCXcFN9LAj2KZEdjeA9wwaJbEQ1STO0wnbzsox6JayqDgXfp498ZnBu5a0t9gs8qkgVPyAV6CFCcok81g30=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNnQMm2KHvlaNaFL7kbJzTzVBNPbI7NciGDNmvZbh7quQHSC/m
-	Q6rPwmMkiJUMehQM6ZHXK7XGi3idFMivy64zYAc91dOHfpN7i2kVVA9+36Q5AF+P0oTpRKRXECd
-	awqyx4gypj//r5Rat3InNF2nVxHtIr+pQGV3G
-X-Google-Smtp-Source: AGHT+IHhtTzu2ptbvGN+YZHo5PJz5j6+4vOkPRlt/xchM9K51k7a14RCaGHYbGk/xjJ2jQV3gdSH2Vc/n3mWPlU1B1Q=
-X-Received: by 2002:a17:902:db02:b0:206:aa47:adc6 with SMTP id
- d9443c01a7336-20aef38cb7emr254245ad.11.1727117527029; Mon, 23 Sep 2024
- 11:52:07 -0700 (PDT)
+	s=arc-20240116; t=1727117628; c=relaxed/simple;
+	bh=wSTLsA5Ybe2xoc8o3MD/A/8FFyISsRuVdTmpWvRDFYM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bAbbkN3T17E/rmuA1QTqg1XI8tKasP7Wldba9/UXBl/Rg9xBok62plkvqUb7ennnAAM8sGeTmlDQjsQj1ROzL7Ps4sawfxPe5UzweFmHQiQrqf/eYNtVTafDo+rKj/beII8eOuNTfp/unhQqSiWDV9dnG7fCthREouIstDS1P1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ahItg/sL; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727117627; x=1758653627;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wSTLsA5Ybe2xoc8o3MD/A/8FFyISsRuVdTmpWvRDFYM=;
+  b=ahItg/sLMxN385rsy35/ttrUQX5Fe8k5lgU0pqUpNhtMcBgeQ6+IjeIw
+   VrM01rJ0Nwpiwa/94DSsWlowEboKtTeTyass0WEnSqUu+G/gPO6oUoAvk
+   XNGG3qN+NCoFLexW/9qVdbL0QJcFWfWQeWROn0119QQpzJYVeHC98RiGe
+   NdLFlFDXZ5TTfjfll0vKyVGUXzcrhnmRXts7e2N/UiUR89Rurk+jjQk3d
+   kqU73s2I+nNKXuIAXZv9aeCLStD0/EUATWis/yy6/A3IoFSXxLVZsCjL6
+   vIYPG3W0pvavhH9CUhtJWuyIs+nq0PnG92GbK4HhN4PT/Z7udid9mYe6k
+   Q==;
+X-CSE-ConnectionGUID: 4elRHYEnQ/+rli72X+rL3w==
+X-CSE-MsgGUID: XbG0UGj5ShiXLp8z1IdK1g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="37448287"
+X-IronPort-AV: E=Sophos;i="6.10,252,1719903600"; 
+   d="scan'208";a="37448287"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 11:53:46 -0700
+X-CSE-ConnectionGUID: qfKhphN1R4KM0lwsB9zRjA==
+X-CSE-MsgGUID: v/ZMOK7mTO6D5F7Mfz+4Jw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,252,1719903600"; 
+   d="scan'208";a="71155818"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 23 Sep 2024 11:53:41 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ssoBm-000HWI-2t;
+	Mon, 23 Sep 2024 18:53:38 +0000
+Date: Tue, 24 Sep 2024 02:52:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: Md Sadre Alam <quic_mdalam@quicinc.com>, broonie@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	andersson@kernel.org, konradybcio@kernel.org,
+	miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+	manivannan.sadhasivam@linaro.org, vkoul@kernel.org,
+	nikita.shubin@maquefel.me, esben@geanix.com,
+	linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org
+Cc: oe-kbuild-all@lists.linux.dev, quic_srichara@quicinc.com,
+	quic_varada@quicinc.com, quic_mdalam@quicinc.com
+Subject: Re: [PATCH v10 6/8] spi: spi-qpic: add driver for QCOM SPI NAND
+ flash Interface
+Message-ID: <202409240205.8sGdi5dZ-lkp@intel.com>
+References: <20240922113351.2390195-7-quic_mdalam@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240502223115.2357499-1-irogers@google.com>
-In-Reply-To: <20240502223115.2357499-1-irogers@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 23 Sep 2024 11:51:53 -0700
-Message-ID: <CAP-5=fXGaLsnqd2DdEx-+9V8tO6Wi_HNFgzrGdhdFo5nFSCb9w@mail.gmail.com>
-Subject: Re: [PATCH v2] perf test: Be more tolerant of metricgroup failures
-To: Veronika Molnarova <vmolnaro@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240922113351.2390195-7-quic_mdalam@quicinc.com>
 
-On Thu, May 2, 2024 at 3:31=E2=80=AFPM Ian Rogers <irogers@google.com> wrot=
-e:
->
-> Previously "set -e" meant any non-zero exit code from perf stat would
-> cause a test failure. As a non-zero exit happens when there aren't
-> sufficient permissions, check for this case and make the exit code
-> 2/skip for it.
->
-> Acked-by: Namhyung Kim <namhyung@kernel.org>
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
-> v2. Add skip if event mode isn't valid in per-thread mode. Suggested
->     by Veronika Molnarova <vmolnaro@redhat.com>.
+Hi Md,
 
-Ping.
+kernel test robot noticed the following build errors:
 
-Thanks,
-Ian
+[auto build test ERROR on mtd/nand/next]
+[also build test ERROR on broonie-spi/for-next robh/for-next linus/master v6.11 next-20240923]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> ---
->  .../perf/tests/shell/stat_all_metricgroups.sh | 36 +++++++++++++++----
->  1 file changed, 30 insertions(+), 6 deletions(-)
->
-> diff --git a/tools/perf/tests/shell/stat_all_metricgroups.sh b/tools/perf=
-/tests/shell/stat_all_metricgroups.sh
-> index 55ef9c9ded2d..c6d61a4ac3e7 100755
-> --- a/tools/perf/tests/shell/stat_all_metricgroups.sh
-> +++ b/tools/perf/tests/shell/stat_all_metricgroups.sh
-> @@ -1,9 +1,7 @@
-> -#!/bin/sh
-> +#!/bin/bash
->  # perf all metricgroups test
->  # SPDX-License-Identifier: GPL-2.0
->
-> -set -e
-> -
->  ParanoidAndNotRoot()
->  {
->    [ "$(id -u)" !=3D 0 ] && [ "$(cat /proc/sys/kernel/perf_event_paranoid=
-)" -gt $1 ]
-> @@ -14,11 +12,37 @@ if ParanoidAndNotRoot 0
->  then
->    system_wide_flag=3D""
->  fi
-> -
-> +err=3D0
->  for m in $(perf list --raw-dump metricgroups)
->  do
->    echo "Testing $m"
-> -  perf stat -M "$m" $system_wide_flag sleep 0.01
-> +  result=3D$(perf stat -M "$m" $system_wide_flag sleep 0.01 2>&1)
-> +  result_err=3D$?
-> +  if [[ $result_err -gt 0 ]]
-> +  then
-> +    if [[ "$result" =3D~ \
-> +          "Access to performance monitoring and observability operations=
- is limited" ]]
-> +    then
-> +      echo "Permission failure"
-> +      echo $result
-> +      if [[ $err -eq 0 ]]
-> +      then
-> +        err=3D2 # Skip
-> +      fi
-> +    elif [[ "$result" =3D~ "in per-thread mode, enable system wide" ]]
-> +    then
-> +      echo "Permissions - need system wide mode"
-> +      echo $result
-> +      if [[ $err -eq 0 ]]
-> +      then
-> +        err=3D2 # Skip
-> +      fi
-> +    else
-> +      echo "Metric group $m failed"
-> +      echo $result
-> +      err=3D1 # Fail
-> +    fi
-> +  fi
->  done
->
-> -exit 0
-> +exit $err
-> --
-> 2.45.0.rc1.225.g2a3ae87e7f-goog
->
+url:    https://github.com/intel-lab-lkp/linux/commits/Md-Sadre-Alam/spi-dt-bindings-Introduce-qcom-spi-qpic-snand/20240922-193748
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next
+patch link:    https://lore.kernel.org/r/20240922113351.2390195-7-quic_mdalam%40quicinc.com
+patch subject: [PATCH v10 6/8] spi: spi-qpic: add driver for QCOM SPI NAND flash Interface
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20240924/202409240205.8sGdi5dZ-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240924/202409240205.8sGdi5dZ-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409240205.8sGdi5dZ-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   m68k-linux-ld: drivers/spi/spi-qpic-snand.o: in function `qcom_spi_remove':
+   spi-qpic-snand.c:(.text+0x19e): undefined reference to `qcom_nandc_unalloc'
+   m68k-linux-ld: drivers/spi/spi-qpic-snand.o: in function `qcom_spi_probe':
+   spi-qpic-snand.c:(.text+0x5da): undefined reference to `qcom_nandc_alloc'
+>> m68k-linux-ld: spi-qpic-snand.c:(.text+0x638): undefined reference to `qcom_write_reg_dma'
+>> m68k-linux-ld: spi-qpic-snand.c:(.text+0x69a): undefined reference to `qcom_submit_descs'
+>> m68k-linux-ld: spi-qpic-snand.c:(.text+0x6ba): undefined reference to `qcom_nandc_unalloc'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
