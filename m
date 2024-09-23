@@ -1,123 +1,172 @@
-Return-Path: <linux-kernel+bounces-335738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D56B297E9EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:30:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40EC597E9F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:32:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 883F51F21E06
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:30:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB2C11F21AD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D46195FEF;
-	Mon, 23 Sep 2024 10:30:36 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F82F195B14;
+	Mon, 23 Sep 2024 10:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TAx9xVyR"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503715339E
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 10:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D895A26AC3;
+	Mon, 23 Sep 2024 10:32:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727087435; cv=none; b=RUHnydJwJa0ezLEIXZavKWSIFtX5ziJYjXYW39fQg5eQoztcptNVPaG6I7PfYmWPWQs9JY/25LLA+M70WvZF/beEG0xAvOubDBpizxtG0s+2rjAyI+tjWBBG9uELSl4EwGW2rXg3apbqCi9ZXJrZ+NRLGxulLGxrI2gLbZPzyCQ=
+	t=1727087543; cv=none; b=T/jNiI8cSwv0e/kjWm7yuT8PeqrHTy4PMxBKmdXB5Rl/LiJ7G7LpbeTSdYmKy1aY0et82PYs3ortVEmQbh25y5jrpI0EfZSlqd8dupQHQM5LFYAewemo3Jsw9S7pREMAlPmrQYfXm+r5/T45XIxIgsF/A3ks/RjUzBMF0eUbdPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727087435; c=relaxed/simple;
-	bh=8dZsC/z1fMQbYexIgLc8zjH4UGq8HP65+IHViLScZqE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pC93ckkQoTH54X2N2YInirn7IKnC+awyD0XZII1gdqUP1XwaKf8ouNbSH5CPhNiPpmz3uxGf60vdYNAkyL36ACzdYHZu5L3bcc8z71xdAII5Liiqe0h/arfgKiBgMkWWD0C6sKJrUpUaYvFc5eoEPKJ4aydLUmP8ZhXXYHFvLVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1ssgKf-0003Dz-5x; Mon, 23 Sep 2024 12:30:17 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1ssgKc-000w1m-JI; Mon, 23 Sep 2024 12:30:14 +0200
-Received: from pengutronix.de (unknown [IPv6:2a01:4f8:1c1c:29e9:22:41ff:fe00:1400])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 12E11341073;
-	Mon, 23 Sep 2024 10:30:13 +0000 (UTC)
-Date: Mon, 23 Sep 2024 12:30:12 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Markus Schneider-Pargmann <msp@baylibre.com>
-Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>, 
-	Chandrasekar Ramakrishnan <rcsekar@samsung.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Martin =?utf-8?Q?Hundeb=C3=B8ll?= <martin@geanix.com>, "Felipe Balbi (Intel)" <balbi@kernel.org>, 
-	Raymond Tan <raymond.tan@intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, 
-	linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux@ew.tq-group.com
-Subject: Re: [PATCH v2 2/2] can: m_can: fix missed interrupts with m_can_pci
-Message-ID: <20240923-tricky-bird-of-symmetry-68519b-mkl@pengutronix.de>
-References: <ac8c49fffac582176ba1899a85db84e0f5d5c7a6.1726745009.git.matthias.schiffer@ew.tq-group.com>
- <861164dfe6d95fd69ab2f82528306db6be94351a.1726745009.git.matthias.schiffer@ew.tq-group.com>
- <lfxoixj52ip25ys5ndhsn4jhoruucpavstwvwzygsvkmld2vxw@d7yiwmz3jb4y>
+	s=arc-20240116; t=1727087543; c=relaxed/simple;
+	bh=1nn2x9pxDWV/l379KhESWhG2apMUdXu6/sxP7e+JNcc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UpJLd5rmSaDcTzUKW/ow9RPBJ9qtZ47KT9IgiYSvoGgTiYZTnw3yHWp0bOpkBkjINSoroG8Mlwlc5TnnIcWCCX73rzNcm9pQlte8B/LjCoFr7nmCv4YFbArYbjUPl4o/WFbrItWZmWdQ34ZL7M5ezsh5d8FzIf1ko4jsnH4uZD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TAx9xVyR; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a8a7596b7dfso2082566b.0;
+        Mon, 23 Sep 2024 03:32:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727087540; x=1727692340; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=t7WybMhTFjyQNe3MuiaKvgD14pvzxhatRQ1+PvPY2Qk=;
+        b=TAx9xVyRnHoNRn9FrDiazMl8CWSebwC46tXMhbBLXOHgSb9QCMv8XVp6iN1fnqO/R1
+         Tk0PjpuvZ43gNqk79zfuS3EJpWawOtRQVCRxXNvM0bbWG9FQyikh4VhrR+hYQSMJsD6O
+         zDjf26ZerQIQWgujP8OfrQgah/mXaqfD/C9X9D6hENhKUVGAH2fGiP5ElXHUq+j6sJQq
+         fsH5PQNMtPn/7eX8TE99DZuv1MrZRKkxLSmcRCbmY8IZmxF0sn1gd6vB+wnrmprKZIqV
+         rtdkq81XAb0HwO9/e7OKlpfD+tl5+3AvQSgqBt+lxszuozjiW91j2GGjQRL9rTiOJ4n3
+         o1Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727087540; x=1727692340;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=t7WybMhTFjyQNe3MuiaKvgD14pvzxhatRQ1+PvPY2Qk=;
+        b=Xq4zH3ZSoV2iqgTTbo4aBvERntHx37FFS/aCFsFmaQUVxVYI4q/m1SBO9oemKT+lHz
+         lNPX8SL5rFev0mJlrZ0jZxl86/ZmPrtijiPmuwota/EghBBZdePsKIhhC372/rcSs31X
+         HBjLJuPurEy+FmkiI0nWvxqwdP7UCBR9kMcmDXPdl2bqggpVpe5RMPRBm6mqrW4gWbfC
+         3eXDggoSxNB2WU5HO5rn0q3SEz05X+sxwk+bY73XS3Mlzf4R5FYkdQmtB7flKk8+viN+
+         UM+y0iGk7jD+mhPBKYMrzk726zDJGoPNADiwgTH/q3PB28Ye4N/tXveNFw4g/JTKJ7Ns
+         eF2g==
+X-Forwarded-Encrypted: i=1; AJvYcCU0uQnZ67YKYDa5tfTrD7BM31Swm6aCQB+OpcCUkcxS7Te2tl3r96P8OMYCio3nb0LZd5mm8HeWa9NP@vger.kernel.org, AJvYcCULxXjIffaNlBLxT62l+wQpttw2plaVasW/tPqCpety1bypUiqSsMGyweA1blzYAN3B29ucChnL99EzLIwY@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRPQrB9xFIb4GRf3HOQVQLGjjhjTsDJUtHcMeOpEWFsyXBBSMo
+	E7XHEVHhcR3WI05zzSy52INq9Dk+dUiWi+Jo4ud/S1qhx7fLVYFT+Gq6nnxYWTi+I/Uy7xuD0gt
+	wyLyPUlEwAuGhbAl4Su9PQe5VbQ==
+X-Google-Smtp-Source: AGHT+IHeqaggM+UXfU/T/6f5PbCqBXtnxIWll8SaceKEzyUrkfKVLbRY45ZmR2+j9VeHTNJR6u24o1KKU9NZSFh29b8=
+X-Received: by 2002:a17:907:3daa:b0:a86:6a9a:d719 with SMTP id
+ a640c23a62f3a-a90d364310fmr1068934966b.29.1727087539905; Mon, 23 Sep 2024
+ 03:32:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3svslzepdnjbffwt"
-Content-Disposition: inline
-In-Reply-To: <lfxoixj52ip25ys5ndhsn4jhoruucpavstwvwzygsvkmld2vxw@d7yiwmz3jb4y>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20240920181231.20542-1-erezgeva@nwtime.org> <20240920181231.20542-2-erezgeva@nwtime.org>
+ <4e0cf43c-4843-451c-ac6f-86775dbccb2b@linaro.org>
+In-Reply-To: <4e0cf43c-4843-451c-ac6f-86775dbccb2b@linaro.org>
+From: Erez <erezgeva2@gmail.com>
+Date: Mon, 23 Sep 2024 12:31:42 +0200
+Message-ID: <CANeKEMOmhAPM1j1_ihzcC2wL6jKsWXPCGfZs+euS8mRvtqgE5A@mail.gmail.com>
+Subject: Re: [PATCH v5 1/5] mtd: spi-nor: core: add manufacturer flags
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Erez Geva <erezgeva@nwtime.org>, linux-mtd@lists.infradead.org, 
+	Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, linux-kernel@vger.kernel.org, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Esben Haabendal <esben@geanix.com>
+Content-Type: text/plain; charset="UTF-8"
+
+On Mon, 23 Sept 2024 at 08:04, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
+>
+> Hi,
+>
+> On 9/20/24 7:12 PM, Erez Geva wrote:
+> > From: Erez Geva <ErezGeva2@gmail.com>
+> >
+> > Add flag for always trying reading SFDP:
+> > Some vendors reuse all JEDEC IDs on manufacture table
+> >  with new chips that support SFDP.
+> >
+> > Add flag for reading OTP parameters from device tree.
+> > Some vendors reuse JEDEC IDs
+> >  with several chips with different OTP parameters.
+> > Alternatively we read parameters from SFDP.
+> > But the OTP parameters are absent from the SFDP.
+>
+> Do you have some specific flashes that you try to identify? Why can't
+> they be differentiated at runtime?
+
+You can not figure OTP parameters based on  JEDEC ID and SFDP existence.
+I did send a few examples.
+
+One of them:
+"How?
+
+When using mx25l12805d, we do not read SFDP.
+As it uses the no-SFDP flags.
+When using mx25l12833f hardware with mx25l12805d driver, it did not
+try to read the SFDP.
+Yet mx25l12833f does have SFDP, when I remove the no-SFDP flags, the
+driver fetch the SFDP.
+
+Secondly SFDP does not contain OTP information.
+
+mx25l12805d has two OTP regions of 128 KiB and 384 KiB (yes asymmetric).
+While mx25l12833f has two OTP regions of 512 KiB.
+
+How do we handle it?
+I would gladly remove the obsolete mx25l12805d.
+And skp compatibles all together."
 
 
---3svslzepdnjbffwt
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>
+> > So there is not other way but to add the OTP parameters in the device tree.
+> >
+>
+> If there isn't any way to distinguish the flashes at runtime (which I
+> doubt/challenge btw), then as a last resort we introduce a dedicated
+> compatible for the flash in cause and specify all needed parameters in a
+> dedicated flash entry. This shall be more generic as further flash
+> parameters can be statically specified in the dedicated flash entry,
+> less invasive for dt, and less confusing for people when they decide
+> whether to use OTP or not. OTP params in device tree is a no-go.
+>
+> But again, you have to prove why you can't distinguish the flash at
+> runtime before introducing a new flash compatible. So don't go this path
+> before sharing with us what you're trying to achieve.
 
-On 23.09.2024 10:03:24, Markus Schneider-Pargmann wrote:
-> Hi Matthias,
->=20
-> On Thu, Sep 19, 2024 at 01:27:28PM GMT, Matthias Schiffer wrote:
-> > The interrupt line of PCI devices is interpreted as edge-triggered,
-> > however the interrupt signal of the m_can controller integrated in Intel
->=20
-> I have a similar patch though for a different setup (I didn't send it
-> yet). I have a tcan chip wired to a pin that is only capable of edge
-> interrupts.
+You keep sending me contradictory messages.
 
-Can you post your patch for completeness?
+I told you we can not "guess" OTP settings based on JEDEC ID and SFDP existence.
+It may be partial and Macronix may add new chips in the future.
+They reuse JEDEC ID only retaining flash size and blocks.
+This is why compatibilities work with new Macronix chips . Although by
+reading the SFDP, we can use higher speeds.
+We can use SFDP parameters to read  flash size, blocks and speed.
+But it does not contain any OTP parameters.
+I found only one Macronix chip with an enterprise SFDP table with a
+boolean flag for OTP, this does not help us much.
+Macronix technical support was explicit on OTP settings. You can not
+deduce them. You must know what chip you use.
+As far as I can see, Macronix does not reuse module names (god thanks for that).
 
-regards,
-Marc
+I do not mind using flash compatible.
+Just clarify that point.
+And I will send the patches accordingly.
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+Thanks
+Erez
 
---3svslzepdnjbffwt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmbxQzEACgkQKDiiPnot
-vG8YNgf/U9xHuZQm+cUJbDUWXlcxzuK1BbWiMAxbnuxl9I8ImpAasQ/9enhn4R0V
-/mf8yhBfFBRYjKyOGn3LVxiPGAgzvGAMYLb9EE+38AVRAFyMxo9dSB6Vmq8SjuRm
-zPpq6hu9NQS58ESmZnMxP28BPOv/DjG84l7UmFNEKpggS0BgAKpqu9uUczv2TrmG
-+tphZrazuNXew2JodXhLRrANFs2YyEymBWYwmq2kjiZ9/Md2jw1C+YEKqJ+x0ZBd
-R79vJQ5YZ30wQajHI+uBFG2XyJo56spI2e2x8PoccURmLY0ojyVytgzNZxRM4ghS
-JfJ3mW5O1lHvfLzyXcHDrEjPuSPSoQ==
-=9KL2
------END PGP SIGNATURE-----
-
---3svslzepdnjbffwt--
+>
+> Cheers,
+> ta
 
