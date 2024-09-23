@@ -1,172 +1,136 @@
-Return-Path: <linux-kernel+bounces-335448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B62A97E5DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:07:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07F2897E5DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:08:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7ECBC1C20C03
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 06:07:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AF3CB20989
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 06:08:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41390179A8;
-	Mon, 23 Sep 2024 06:07:30 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A33918B09;
+	Mon, 23 Sep 2024 06:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BzW2k26p"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3556810A3E
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 06:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4593B17996
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 06:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727071649; cv=none; b=tBo/UBQbQl30neYAq4M/t52S/oYU/AYh70zXEEr80PJStt8PkNqMToerMF0slBrGBuQHZ7IruFrR09gG0tnqABSKNVHDwAHqzmX6wDG9/AshwdmOiseoO2paNB9hX0TtcY+7gOoO08fqPMNFAh4Qd2JEtg9XeDRSh/d7SPjX9Jc=
+	t=1727071678; cv=none; b=NYOooJpIkm1oN/Kjzlpyeu/8BhZQnp6zHLCVdnyqjVLw/YlLjSd+5PDnF3CehA5qo7lImv3Nf4cHLNMnVYxvGRe2aB3csjGRtUfui9PNlV4u3YAFKPj4AtEzENvAe+ZS7AoRtdrUkb2t1+ZZAzvQnQHmu+1f3kHIm7ORj1+iqHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727071649; c=relaxed/simple;
-	bh=BhzlxVaXIzg1geV/sFWQtnAbEsz37RDEkx8+wdfmHe0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qL0knJpWqQpG+kAx15wxNX7tU5Y+mlKfGd0nTAqWbGoQSk4dILzYXD0mQZ3+AoRgQ+ToVmeekdDKWoG2XhH2wmMPYMwipovR/Xg9X3q4J3Ri2V88RA5aIUVMzzcxe5UdRryOqoBAHf9moKA/zQ/bpQK2x05DE7XObzd49j4jULg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a0cd6a028bso24127075ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 23:07:26 -0700 (PDT)
+	s=arc-20240116; t=1727071678; c=relaxed/simple;
+	bh=G3enpQSCpJDlnfNEBv0DcEbUfgDaeO75AF82NJ/37lE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kxTjYWfhCuiCeRvgV7BxK01+NiKMLPjVwaqbOmTv7RFdod0cLQbjnOo0JRKLxahJUrwQAI6mDa8I8I86bPzTi+VLp2EbeWjc2nZf1hWWaMj7C7N2asploOjdIwviLJarTPqF8urW07MRN9jzUPSNLZCfE7WWe5z99iQ26HvKzvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BzW2k26p; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-537a399e06dso208389e87.1
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 23:07:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727071675; x=1727676475; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gCmO/YTjAtYJXPPaJsx5QKtYsIvj2q2oYXd++xIla/8=;
+        b=BzW2k26pz/Z01taXd9LL4YkiTRGNlnaNz/4w/vGs/zzGLPjdFn5Wd8bz0YEfsORaW0
+         ljXXNZR86eUdAAuvBgrfVSr8Oe8c7srIBnjvznuqVCh2WGMiiTxVb4/lHuWLobnaYsdq
+         WCgFgLM8iVShsk6LMuN3AhUdz4hFS737xR3AscRWDmCh6MLKrluAw094kW60VwumLRYj
+         L+1KndwFHbljwrVs/PJg+RTLXXSTohkmKJUlnaSsPNqDFZvaDkae6aS8Nq5YbO9vf3Wk
+         2V7crwxDagugGwnVRjTwWodlZ8K8NEck1iY2BLCgtZ/rVdpAvZesYFa8jVBjpZrWl37j
+         lEbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727071646; x=1727676446;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Xh57jcqwsNfQFFP8jKv5EPTay9rC/zkzDfWjGSosjtc=;
-        b=vQnGGFzejFqlWQEdQEaag+ekUwIbabfcV4JFhaMbRG5qr3OMe3w0S/O7VubtWFguHd
-         PcgyCO9hobp2r6Kjn2IxRwZjcN/iw6RnG3gXo6XSn6WUxny9f4DIjCkzOFQ0TM9DEjQ/
-         CtDfQBT8p8SDYQrUxkRDPrVB1SH0K+d+oB2TVRKDduJERXR66ygIoe8GWOAnxWQO6M8k
-         gXVS9HXN6ECd+RjeVT3Xs274jPvLFsRpfjrPOF+c0VJZ3tz/jQrC+Wkl9GEJhUwGzD2x
-         5hc4zfbxWb/16PF8II6rT1ESUaGd2pR3aRhDFOAyjkYTl79kLhwdamr/AMQQr+rGj+lf
-         hnLA==
-X-Forwarded-Encrypted: i=1; AJvYcCWwMx5s4wBg5OSV/+jwARyV7MaAoWAiwAanXdadiV86tA36VbIguIb+bqXcTsNJ3GHJYQtyTNLT5UlZfak=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyv7L6G7LYbwjdB7V9M2NGUC5BmI9Wx+RLhktqdjzi67l/iuuv6
-	jFNRrDIAGZQNTsUAPv8Zuw0e7LHJUvwTakSgN6nofJclsIQg3/SsOb/On/5aF0cv/8+48DSZfEH
-	bV+B6YKk84aLIKnU7w8KW62m8iFD88SeTSQLYPSFFNUpLGc7lMiJnvb0=
-X-Google-Smtp-Source: AGHT+IFUJyccPwsx2a1Dl+/NJ+Sb0BlTTzm487aEsEvoTv4fLhXg9/BSGoT2yRRRZGPJJOm1EUe2XhsaFT+3iVmnmpnYS2jBYIvc
+        d=1e100.net; s=20230601; t=1727071675; x=1727676475;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gCmO/YTjAtYJXPPaJsx5QKtYsIvj2q2oYXd++xIla/8=;
+        b=ORaEQFQqk2lyryTxu0He3/pBZvp2+KwLkjYRY8FciePUHHvjz2Vu1Nwp51RNtgAbwo
+         TlMFJxkDP5wo/vPDPAb+nSalsaYtJulSJWEyoLQwiBkDRcepf7+3KKmflL0zujQiPShH
+         9YkUi04GhdCmlWTDmmq5UtVI3HPF3UMiK0AQk6Z22aARbkOkHWfpkjkfEuI7hPTWZ7dz
+         IFTTKW9PgfhMdCSjsjQF7ZT3BqEIh7cXXRz6DE2hokaYxBxlfvGv9T6v5i15KzPiYgRX
+         u4isfwk+7D9u4UUrbOg7ti1krk6HrAvUvY49fa1yjsZCy/wfyBTtrYdruauSidzOiBNg
+         MlDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUqgUGYvzcYA22OsS3E1b85XM3gIae6MTw2zoa14dUMe5HzVabMsgkVeU0oh+PfIPZf8a0L/5cpbc9tG7s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxr+rM6PORxpUetmKqnfDd4lbh0T7Gwoy2k2vAEsN490rBchVab
+	Wodw7AaggIWwXNryRYST88QfmOfFBWHYKhaXdiVg6odrAWBj7YGs0CoxoYsCbx8=
+X-Google-Smtp-Source: AGHT+IE9nytSnroJiHN9xKcxla1q+HIPMXUfGMJEkQjc2qU3zMNEUmMCLyZt/tDAoafU+Yd8PgQ6Yg==
+X-Received: by 2002:a05:6512:39c9:b0:536:56d8:24b4 with SMTP id 2adb3069b0e04-536ac2d0514mr5129471e87.5.1727071675372;
+        Sun, 22 Sep 2024 23:07:55 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53687046624sm3172932e87.62.2024.09.22.23.07.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Sep 2024 23:07:54 -0700 (PDT)
+Date: Mon, 23 Sep 2024 09:07:52 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Manikandan.M@microchip.com
+Cc: neil.armstrong@linaro.org, quic_jesszhan@quicinc.com, 
+	airlied@gmail.com, simona@ffwll.ch, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, thierry.reding@gmail.com, sam@ravnborg.org, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Dharma.B@microchip.com
+Subject: Re: [PATCH v2 2/2] drm/panel: simple: Add Microchip AC69T88A LVDS
+ Display panel
+Message-ID: <f4z2egmrcoh7kih2pyr3mq7fzuwtvod6vxlzzim2iw3ly7jcr3@2uxiyzlfixhp>
+References: <20240919091548.430285-1-manikandan.m@microchip.com>
+ <20240919091548.430285-2-manikandan.m@microchip.com>
+ <zognzunciriytm3uvoolxjsvu43v3m2lnctsz5swusnmm3aj2z@ag7zkncccdmf>
+ <83e9d20d-f294-4303-b570-816ebc989bcf@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c269:0:b0:3a0:a08a:a0d3 with SMTP id
- e9e14a558f8ab-3a0c9d6f25emr71948075ab.18.1727071646261; Sun, 22 Sep 2024
- 23:07:26 -0700 (PDT)
-Date: Sun, 22 Sep 2024 23:07:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f1059e.050a0220.c23dd.0007.GAE@google.com>
-Subject: [syzbot] [jfs?] WARNING: locking bug in release_metapage
-From: syzbot <syzbot+1a1e162a53d52033318c@syzkaller.appspotmail.com>
-To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <83e9d20d-f294-4303-b570-816ebc989bcf@microchip.com>
 
-Hello,
+On Mon, Sep 23, 2024 at 05:50:22AM GMT, Manikandan.M@microchip.com wrote:
+> On 20/09/24 9:13 pm, Dmitry Baryshkov wrote:
+> > EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+> > 
+> > On Thu, Sep 19, 2024 at 02:45:48PM GMT, Manikandan Muralidharan wrote:
+> >> Add support for Microchip AC69T88A 5 inch TFT LCD 800x480
+> >> Display module with LVDS interface.The panel uses the Sitronix
+> >> ST7262 800x480 Display driver
+> > 
+> > AC69T88A seems to be a module name, rather than a panel name. What is
+> > the actual panel name present on this module?
+> Both names, "Microchip AC69T88A" and "MPU32-LVDS-DISPLAY-WVGA" are 
+> present on the display module
 
-syzbot found the following issue on:
+Which panel was used for the module? I don't think that Microchip
+produces LVDS panels.
 
-HEAD commit:    4a39ac5b7d62 Merge tag 'random-6.12-rc1-for-linus' of git:..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14600ca9980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dd14c10ec1b6af25
-dashboard link: https://syzkaller.appspot.com/bug?extid=1a1e162a53d52033318c
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> > 
+> >>
+> >> Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
+> >> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
+> >> ---
+> >> changes in v2:
+> >> - replace microchip,ac69t88a-lvds-panel with
+> >> microchip,ac69t88a
+> >> ---
+> >>   drivers/gpu/drm/panel/panel-simple.c | 28 ++++++++++++++++++++++++++++
+> >>   1 file changed, 28 insertions(+)
+> >>
+> > 
+> > --
+> > With best wishes
+> > Dmitry
+> 
+> -- 
+> Thanks and Regards,
+> Manikandan M.
+> 
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-4a39ac5b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e77a3b8ac098/vmlinux-4a39ac5b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f8ee7a5fea46/bzImage-4a39ac5b.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1a1e162a53d52033318c@syzkaller.appspotmail.com
-
-loop0: detected capacity change from 0 to 32768
-ERROR: (device loop0): xtSearch: XT_GETPAGE: xtree page corrupt
-ERROR: (device loop0): remounting filesystem as read-only
-xtLookup: xtSearch returned -5
-------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON(1)
-WARNING: CPU: 0 PID: 5119 at kernel/locking/lockdep.c:232 hlock_class kernel/locking/lockdep.c:232 [inline]
-WARNING: CPU: 0 PID: 5119 at kernel/locking/lockdep.c:232 check_wait_context kernel/locking/lockdep.c:4823 [inline]
-WARNING: CPU: 0 PID: 5119 at kernel/locking/lockdep.c:232 __lock_acquire+0x58c/0x2050 kernel/locking/lockdep.c:5149
-Modules linked in:
-CPU: 0 UID: 0 PID: 5119 Comm: syz.0.0 Not tainted 6.11.0-syzkaller-05319-g4a39ac5b7d62 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:hlock_class kernel/locking/lockdep.c:232 [inline]
-RIP: 0010:check_wait_context kernel/locking/lockdep.c:4823 [inline]
-RIP: 0010:__lock_acquire+0x58c/0x2050 kernel/locking/lockdep.c:5149
-Code: 00 00 83 3d 75 3a ac 0e 00 75 23 90 48 c7 c7 a0 d7 0a 8c 48 c7 c6 40 da 0a 8c e8 1f cc e5 ff 48 ba 00 00 00 00 00 fc ff df 90 <0f> 0b 90 90 90 31 db 48 81 c3 c4 00 00 00 48 89 d8 48 c1 e8 03 0f
-RSP: 0000:ffffc90002e2ef30 EFLAGS: 00010046
-RAX: 265537614b058400 RBX: 0000000000000b90 RCX: 0000000000040000
-RDX: dffffc0000000000 RSI: 0000000000020741 RDI: 0000000000020742
-RBP: 000000000000000f R08: ffffffff8155c052 R09: 1ffff11003fc519a
-R10: dffffc0000000000 R11: ffffed1003fc519b R12: ffff88801dd1c880
-R13: 0000000000000b90 R14: 1ffff11003ba3a7f R15: ffff88801dd1d3f8
-FS:  00007fdc842196c0(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fdc8350c538 CR3: 000000003da9a000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
- __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
- _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
- __wake_up_common_lock+0x25/0x1e0 kernel/sched/wait.c:105
- unlock_metapage fs/jfs/jfs_metapage.c:39 [inline]
- release_metapage+0xb2/0x960 fs/jfs/jfs_metapage.c:763
- xtTruncate+0x1006/0x3270
- jfs_truncate_nolock+0x2e4/0x390 fs/jfs/inode.c:373
- jfs_truncate+0xcb/0x140 fs/jfs/inode.c:412
- jfs_setattr+0x526/0x780 fs/jfs/file.c:119
- notify_change+0xbca/0xe90 fs/attr.c:503
- do_truncate+0x220/0x310 fs/open.c:65
- handle_truncate fs/namei.c:3395 [inline]
- do_open fs/namei.c:3778 [inline]
- path_openat+0x2e1e/0x3590 fs/namei.c:3933
- do_filp_open+0x235/0x490 fs/namei.c:3960
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
- do_sys_open fs/open.c:1430 [inline]
- __do_sys_openat fs/open.c:1446 [inline]
- __se_sys_openat fs/open.c:1441 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fdc8337def9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fdc84219038 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007fdc83535f80 RCX: 00007fdc8337def9
-RDX: 0000000000000200 RSI: 00000000200002c0 RDI: ffffffffffffff9c
-RBP: 00007fdc833f0b76 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fdc83535f80 R15: 00007fff54a45628
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+With best wishes
+Dmitry
 
