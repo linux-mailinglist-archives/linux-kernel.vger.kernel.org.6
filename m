@@ -1,269 +1,159 @@
-Return-Path: <linux-kernel+bounces-335958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84D4197ED24
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:23:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4164597ED25
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:23:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EF09283DB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:23:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08C51284101
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A96F619E7F7;
-	Mon, 23 Sep 2024 14:22:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0DD2181BA8;
+	Mon, 23 Sep 2024 14:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nsulgRRg";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="so/QAP2B";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jloADnid";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="P/GdsNwE"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fbh/wSHZ"
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F8F19DF85
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 14:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A944198E91
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 14:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727101335; cv=none; b=U8EZqk0/E99P5txdXuUVQFmgKZR7Jp+TlQokOjl1mAnrlI9cra1idP7PXo8Mblu84S2DQvhdUYhh6owJ63bN61CfFg9I1qF5etPxiGPivhmNDY47JWcNZUIxBxnrJg0sNieSGTlxtHcj3LXJ3m58FyCbCZ5LvTRf3rArj7AhySk=
+	t=1727101426; cv=none; b=VU3TigR/GVh4FxNtJOjoa0MpMx/rojRBKfjg67VQ54hcNYm2xQk+yFqgTGc+snBZzyr5pW+02M2Bh8mowkOsOSc6CZ8GGac/v/mXkLu7bk4nECUj1EDgvlg6SXpMc7SZZlapE05n3+nccA8VDn+eEH0KFxquRY3HiQOdlHBklEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727101335; c=relaxed/simple;
-	bh=91iiJ5Nh4in6QXaX8KoMwrdnENSodqtP99G3Ia2T7Ws=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fdOQ6vquljj15pwm/J6ZpNSq4dm44oUsBUDro1U9ZUbIwtnM8SnZs9Ime6fSwrz95EFIqEnfItKAgkN5MYDketXq2B1mpuDVJ0Ko81ZwSG4Z8z13AnNKdAbqvo6iNEcWuqbbten5Dz6up0g/2kKU86KTCl5Pq+SRLiB9NFvt16I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nsulgRRg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=so/QAP2B; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jloADnid; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=P/GdsNwE; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 31E0821DE0;
-	Mon, 23 Sep 2024 14:22:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727101330; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XRsI6u4+vgDrTmAPsgmuRGF6Cg6elkqpDAkrilrEhN4=;
-	b=nsulgRRgW1/167dAtVQFBNJYK8hWOdERHqoMfaSVQhu6uBJk3qykaVNHV3zAfdLoXs2pEf
-	Ls9d/ocuQqska7HacEy65sjS5JoTTCDnyWIwgTo1yH2zozfuQRXKjgWUWUw0fgTqzjeB9t
-	UnrHLvUyExHBudZm667Kf+PCXX9RPAg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727101330;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XRsI6u4+vgDrTmAPsgmuRGF6Cg6elkqpDAkrilrEhN4=;
-	b=so/QAP2BO1wk+syXN0AdkJOjrFLRcQodeMhtFtk6MdPx7CLYmJyMkx+TXmwK57EerRTNKM
-	aTGCCWDC8QLkcYDA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=jloADnid;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="P/GdsNwE"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727101329; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XRsI6u4+vgDrTmAPsgmuRGF6Cg6elkqpDAkrilrEhN4=;
-	b=jloADnidvNmpXrmMY6FNuhlKmVNGRXRMJu/nJNEaa0PYSPpB5CYegjL8hmeP1UOUezAZ7T
-	20IQXmM54AtZNbEB4UQVBT/xOpxuQNcpYg7DeX045uHEcQoL02aVHXG2U2LY93P+7yLUa2
-	RDusgm1roCHAoPmcyPzCd9a/KInQS9Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727101329;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XRsI6u4+vgDrTmAPsgmuRGF6Cg6elkqpDAkrilrEhN4=;
-	b=P/GdsNwE4/1GNA6LqK68nh+xijCy1oB3Nt2PfWjy6h4nsnAXnz8XL1seREY9aDCi4X5alY
-	QU+X5stcdTORTvDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 244B813A64;
-	Mon, 23 Sep 2024 14:22:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id MjjYCJF58WYiYQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 23 Sep 2024 14:22:09 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id AB884A0844; Mon, 23 Sep 2024 16:22:08 +0200 (CEST)
-Date: Mon, 23 Sep 2024 16:22:08 +0200
-From: Jan Kara <jack@suse.cz>
-To: Gianfranco Trad <s323713@studenti.polito.it>
-Cc: kernel test robot <lkp@intel.com>, oe-kbuild@lists.linux.dev,
-	Dan Carpenter <error27@gmail.com>, jack@suse.com,
-	linux-kernel@vger.kernel.org,
-	syzbot+8901c4560b7ab5c2f9df@syzkaller.appspotmail.com
-Subject: Re: [PATCH] udf: fix uninit-value use in udf_get_fileshortad
-Message-ID: <20240923142208.qjqi2hix4g7v2dmv@quack3>
-References: <202409230809.5ozgjLm9-lkp@intel.com>
- <8084185d-b4cf-4c30-a67e-28b9b590306d@studenti.polito.it>
+	s=arc-20240116; t=1727101426; c=relaxed/simple;
+	bh=ElvABRr5VjpnwP1zIJazjGAk0ginLE0uvF0oEQoEwgs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rZbf7Iq0MiN17C7iNS/3kxI/0wBd6zSV9MAuUq997kc7okKerWxo3Y6uo34cwfudqSGzfI2weO1jb6t4wfXRHp4cFFC1UHv1nG8Fj8yc6d8MCHANpRyssh2xjoi7j4eSh9avCv0PVBpPxJq7hkXxPoS5pWpTC8wUcIo0uQGGVlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fbh/wSHZ; arc=none smtp.client-ip=209.85.167.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3e04a6feef3so2189022b6e.3
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 07:23:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727101423; x=1727706223; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=lbzh5ja4yUukHa5Xx2/b5igvA7/x1XnV940OLZCShnI=;
+        b=fbh/wSHZbG0fDmTbSelN+zZ0Kx6bWtFVZSfQUt0ldcUABrgQRVsaCCXLDXGvkjV3dR
+         ta001TAmF1yvY7a1NbLJI2SEvAOQbgdlqdY55Bz2P+yuAApTJdEdCv3uc/+kbYmV7chT
+         HnlZGp2ntAD+yQvvSWrfoLcd7CAaNZ6QhoVk2WymjOkexgvEnTtgTzqdmZHfYcUHhV2e
+         y5xwYB9Ea1Bi/liIzp67DuQJwpe3IO9mfMFxFb5+ubH1FSGdcArXGdDAVEqWRrJlwu4a
+         X/SkXEMRJVURSABVVohfeu5yRYr3AHHnzMQ2qYOY7kgvSbY1hBaEvE8YYkwXpgzZwI1m
+         nMBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727101423; x=1727706223;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lbzh5ja4yUukHa5Xx2/b5igvA7/x1XnV940OLZCShnI=;
+        b=akVVwsCC4lZT0U79XkD32KrpbpkovP9ej6ShVDF5nPPmm3PE0diIIhVvF7A9UpMMBR
+         jz/a8WkVcM22antYUB7l0+dB3bC/7QgLCidOGPLTEs5xJH3yFRzNwoYOBXJzQ9wjrWMv
+         cULWwDsyEdwv1HYo+kR2yMiz9Xh9fRqG7k6g9u4FvN3Aimrp+3RNufkxGUZsaI1NbBTJ
+         HqgqS8qAUl+6O5YfPuBOtWOcKAMoc0qY0ToemISeNTeOcspp75mofhvCkVDqyifUxCv3
+         Hu/A+MVPVbrYCXVnhd0WUySJK46jdLeI4D/zK2QClqjLPZyX1ES17dW5187Ml9iGW/b2
+         VtYA==
+X-Forwarded-Encrypted: i=1; AJvYcCX67HIB4P2qDwHueAyy8mJqCAbPMcRbEyNM0uqI4ZvoKFwL1zCUsugJOw3uZ39JNGUssQRtwJpw3CJFjLk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDG7cEQ9oQBh3tmCmu7R2tAkiMBhvEy2oMALcWP0BlaQC224i3
+	+Hx7HsVlPMZVPV7MSujn7cTR4QEKO/xadW8hauantOoHw2qbUsew
+X-Google-Smtp-Source: AGHT+IEXGk0Tzkbw8soq0uJdJ4wvjmVd/QQYLxq6F8yR8dHnNWDibFc90TWyOLj33DpfvWKfmFoowA==
+X-Received: by 2002:a05:6808:309c:b0:3e0:470e:71e4 with SMTP id 5614622812f47-3e2729a5b64mr6209587b6e.33.1727101423086;
+        Mon, 23 Sep 2024 07:23:43 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db49903e39sm13266169a12.31.2024.09.23.07.23.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Sep 2024 07:23:42 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <6769e87a-b2b1-47c5-87cf-a536c4b27ae9@roeck-us.net>
+Date: Mon, 23 Sep 2024 07:23:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8084185d-b4cf-4c30-a67e-28b9b590306d@studenti.polito.it>
-X-Rspamd-Queue-Id: 31E0821DE0
-X-Spam-Score: -2.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[8901c4560b7ab5c2f9df];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[intel.com,lists.linux.dev,gmail.com,suse.com,vger.kernel.org,syzkaller.appspotmail.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,intel.com:email,linuxfoundation.org:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,appspotmail.com:email,linux.dev:email,01.org:url]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] resource, kunit: add dependency on SPARSEMEM
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ Huang Ying <ying.huang@intel.com>
+References: <20240922225041.603186-1-linux@roeck-us.net>
+ <CAMuHMdWAuQcFQaQNy2EP_u9vk13g2C3sb3FFBCMAUPyGMgZ+hg@mail.gmail.com>
+ <435dc218-f7ea-4697-b3ef-6a786e8d1b2c@roeck-us.net>
+ <CAMuHMdVZWWj8aLvRfX4xH_x1v0gMg34jaX24bqB2Qc4Q75ZFhQ@mail.gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <CAMuHMdVZWWj8aLvRfX4xH_x1v0gMg34jaX24bqB2Qc4Q75ZFhQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon 23-09-24 11:23:48, Gianfranco Trad wrote:
-> Hello,
-> On 23/09/24 02:26, kernel test robot wrote:
-> > BCC: lkp@intel.com
-> > CC: oe-kbuild-all@lists.linux.dev
-> > In-Reply-To: <20240919195227.412583-1-gianf.trad@gmail.com>
-> > References: <20240919195227.412583-1-gianf.trad@gmail.com>
-> > TO: Gianfranco Trad <gianf.trad@gmail.com>
-> > TO: jack@suse.com
-> > CC: linux-kernel@vger.kernel.org
-> > CC: skhan@linuxfoundation.org
-> > CC: Gianfranco Trad <gianf.trad@gmail.com>
-> > CC: syzbot+8901c4560b7ab5c2f9df@syzkaller.appspotmail.com
-> > 
-> > Hi Gianfranco,
-> > 
-> > kernel test robot noticed the following build warnings:
-> > 
-> > [auto build test WARNING on brauner-vfs/vfs.all]
-> > [also build test WARNING on linus/master v6.11 next-20240920]
-> > [If your patch is applied to the wrong git tree, kindly drop us a note.
-> > And when submitting patch, we suggest to use '--base' as documented in
-> > https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> > 
-> > url:    https://github.com/intel-lab-lkp/linux/commits/Gianfranco-Trad/udf-fix-uninit-value-use-in-udf_get_fileshortad/20240920-035519
-> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-> > patch link:    https://lore.kernel.org/r/20240919195227.412583-1-gianf.trad%40gmail.com
-> > patch subject: [PATCH] udf: fix uninit-value use in udf_get_fileshortad
-> > :::::: branch date: 3 days ago
-> > :::::: commit date: 3 days ago
-> > config: mips-randconfig-r073-20240922 (https://download.01.org/0day-ci/archive/20240923/202409230809.5ozgjLm9-lkp@intel.com/config)
-> > compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 8663a75fa2f31299ab8d1d90288d9df92aadee88)
-> > 
-> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Reported-by: Dan Carpenter <error27@gmail.com>
-> > | Closes: https://lore.kernel.org/r/202409230809.5ozgjLm9-lkp@intel.com/
-> > 
-> > smatch warnings:
-> > fs/udf/inode.c:2223 udf_current_aext() error: we previously assumed 'epos->bh' could be null (see line 2204)
-> Given this error my initial guess is to update the patch to check the
-> assumption of epos->bh not null.
-
-Yes, epos->bh can definitely be NULL here. Generally the check looks really
-suspicious. I was trying to find your original patch but for some reason
-neither LKML archive nor my mailbox have it. What is the motivation of the
-added check? Are you checking for overflow on alen? In that case it would
-be best to just use check_add_overflow() helper when computing alen few
-lines above...
-
-								Honza
-
-> > vim +2223 fs/udf/inode.c
-> > 
-> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2193
-> > ff116fc8d1d439 Jan Kara        2007-05-08  2194  int8_t udf_current_aext(struct inode *inode, struct extent_position *epos,
-> > 5ca4e4be841e38 Pekka Enberg    2008-10-15  2195  			struct kernel_lb_addr *eloc, uint32_t *elen, int inc)
-> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2196  {
-> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2197  	int alen;
-> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2198  	int8_t etype;
-> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2199  	uint8_t *ptr;
-> > 5ca4e4be841e38 Pekka Enberg    2008-10-15  2200  	struct short_ad *sad;
-> > 5ca4e4be841e38 Pekka Enberg    2008-10-15  2201  	struct long_ad *lad;
-> > 48d6d8ff7dca80 Marcin Slusarz  2008-02-08  2202  	struct udf_inode_info *iinfo = UDF_I(inode);
-> > 28de7948a89676 Cyrill Gorcunov 2007-07-21  2203
-> > cb00ea3528eb3c Cyrill Gorcunov 2007-07-19 @2204  	if (!epos->bh) {
-> > ff116fc8d1d439 Jan Kara        2007-05-08  2205  		if (!epos->offset)
-> > ff116fc8d1d439 Jan Kara        2007-05-08  2206  			epos->offset = udf_file_entry_alloc_offset(inode);
-> > 382a2287bf9cd2 Jan Kara        2020-09-25  2207  		ptr = iinfo->i_data + epos->offset -
-> > 4b11111aba6c80 Marcin Slusarz  2008-02-08  2208  			udf_file_entry_alloc_offset(inode) +
-> > 48d6d8ff7dca80 Marcin Slusarz  2008-02-08  2209  			iinfo->i_lenEAttr;
-> > 4b11111aba6c80 Marcin Slusarz  2008-02-08  2210  		alen = udf_file_entry_alloc_offset(inode) +
-> > 48d6d8ff7dca80 Marcin Slusarz  2008-02-08  2211  							iinfo->i_lenAlloc;
-> > cb00ea3528eb3c Cyrill Gorcunov 2007-07-19  2212  	} else {
-> > ff116fc8d1d439 Jan Kara        2007-05-08  2213  		if (!epos->offset)
-> > ff116fc8d1d439 Jan Kara        2007-05-08  2214  			epos->offset = sizeof(struct allocExtDesc);
-> > ff116fc8d1d439 Jan Kara        2007-05-08  2215  		ptr = epos->bh->b_data + epos->offset;
-> > 28de7948a89676 Cyrill Gorcunov 2007-07-21  2216  		alen = sizeof(struct allocExtDesc) +
-> > 4b11111aba6c80 Marcin Slusarz  2008-02-08  2217  			le32_to_cpu(((struct allocExtDesc *)epos->bh->b_data)->
-> > 4b11111aba6c80 Marcin Slusarz  2008-02-08  2218  							lengthAllocDescs);
-> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2219  	}
-> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2220
-> > 48d6d8ff7dca80 Marcin Slusarz  2008-02-08  2221  	switch (iinfo->i_alloc_type) {
-> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2222  	case ICBTAG_FLAG_AD_SHORT:
-> > 2aa242080b8dda Gianfranco Trad 2024-09-19 @2223  		if (unlikely(alen < 0 && epos->offset == epos->bh->b_size))
-> > 2aa242080b8dda Gianfranco Trad 2024-09-19  2224  			return -1;
-> The check would be inserted up here in the if clause. But if the patch
-> doesn't look good, I can redesign it in a better way. If so, I'm more than
-> glad to follow your advice.
-> > 4b11111aba6c80 Marcin Slusarz  2008-02-08  2225  		sad = udf_get_fileshortad(ptr, alen, &epos->offset, inc);
-> > 4b11111aba6c80 Marcin Slusarz  2008-02-08  2226  		if (!sad)
-> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2227  			return -1;
-> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2228  		etype = le32_to_cpu(sad->extLength) >> 30;
-> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2229  		eloc->logicalBlockNum = le32_to_cpu(sad->extPosition);
-> > 4b11111aba6c80 Marcin Slusarz  2008-02-08  2230  		eloc->partitionReferenceNum =
-> > 48d6d8ff7dca80 Marcin Slusarz  2008-02-08  2231  				iinfo->i_location.partitionReferenceNum;
-> > 28de7948a89676 Cyrill Gorcunov 2007-07-21  2232  		*elen = le32_to_cpu(sad->extLength) & UDF_EXTENT_LENGTH_MASK;
-> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2233  		break;
-> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2234  	case ICBTAG_FLAG_AD_LONG:
-> > 4b11111aba6c80 Marcin Slusarz  2008-02-08  2235  		lad = udf_get_filelongad(ptr, alen, &epos->offset, inc);
-> > 4b11111aba6c80 Marcin Slusarz  2008-02-08  2236  		if (!lad)
-> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2237  			return -1;
-> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2238  		etype = le32_to_cpu(lad->extLength) >> 30;
-> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2239  		*eloc = lelb_to_cpu(lad->extLocation);
-> > 28de7948a89676 Cyrill Gorcunov 2007-07-21  2240  		*elen = le32_to_cpu(lad->extLength) & UDF_EXTENT_LENGTH_MASK;
-> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2241  		break;
-> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2242  	default:
-> > fcbf7637e6647e Steve Magnani   2017-10-12  2243  		udf_debug("alloc_type = %u unsupported\n", iinfo->i_alloc_type);
-> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2244  		return -1;
-> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2245  	}
-> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2246
-> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2247  	return etype;
-> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2248  }
-> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2249
-> > 
-> Thanks for your time,
+On 9/23/24 06:47, Geert Uytterhoeven wrote:
+> Hi Günter,
 > 
-> --Gian
+> On Mon, Sep 23, 2024 at 3:39 PM Guenter Roeck <linux@roeck-us.net> wrote:
+>> Interesting that you get that to boot. The q800 machine crashes for me
+>> when trying to boot it in qemu with the latest upstream kernel, in function
+>> __pte_offset_map_lock(). It bisects to commit 394290cba966 ("mm: turn
+>> USE_SPLIT_PTE_PTLOCKS / USE_SPLIT_PTE_PTLOCKS into Kconfig options").
+>> Reverting that patch fixes the crash for me. I guess you are not seeing that ?
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> I never used qemu -M q800.
+> I have just verified that -M virt boots fine?
+> 
+
+m68k doesn't define a NR_CPUs configuration option. The new "config
+SPLIT_PTE_PTLOCKS" depends on "NR_CPUS >= 4" but for some reason that
+evaluates to true if there is no NR_CPUS configuration option.
+
+It is interesting that this does not affect the 'virt' machine.
+
+Guenter
+
 
