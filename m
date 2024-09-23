@@ -1,216 +1,100 @@
-Return-Path: <linux-kernel+bounces-335752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BA2497EA1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:48:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DAAF97EA27
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:49:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9ECD91C20CDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:48:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE1B9281CEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73F3196C7B;
-	Mon, 23 Sep 2024 10:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40EB197559;
+	Mon, 23 Sep 2024 10:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MSuua116"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jTWuB14k"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B18E19599C
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 10:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79AB19599C
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 10:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727088503; cv=none; b=Xi71rrlTAPMQfJd9m4Bb+Am1/yCKktT5xWqMULDLYh0Fm+fQcZkvwJDJ+6s0kwSpPLoTEC3A7EqpPyjiFCcneY4EWPYRx2fLQw0VKfC0OHr3WJJdIWCqo1LYW/9eSNmUP+2vfjSJnjDUlWD1ZQRV7LqZyefQMBXzARFPCfbq/ZY=
+	t=1727088565; cv=none; b=MXND60lyrhiDp14QJFaAdkiLA7fzblSKe000rGLd/pkyWwolaE0FOLmS5SwkvK4ix/bfTn4vBtisl8N5m3jh/7v2Urygz5Jq1lfQrkKrmzL+R+9N4yxpE4kt8YyJE6cZEK0hq/nEXGRkptRCsxY8ydDWqHBgvILsr2/MEzoucBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727088503; c=relaxed/simple;
-	bh=+C8EsgJ9UqbOmjJWH8ixs+CIsVhcksfl7qxcHC4vU8U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JolHTuSxyEWcGewvGnUrBwn+7QZ1U8jsTob5raGb/RNWBzB87f7rEYRaS/cYt6ZzvpG3e1kGt0TlWN6GyC0kR+VCwjRaTyjG/Q1NjJEWiMngzMrHr/LNRynvIkov8wicU8Ukw9I92ztclAVZI1g1a9XXk7O2b2gfkYAsI1bYLAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MSuua116; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727088499;
+	s=arc-20240116; t=1727088565; c=relaxed/simple;
+	bh=i/tmphCAfKOTxbykRTk9VH95pDN1sk53RbkTdR5Oiy0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b/s+iLcefrXZx8/pButY+wDBO+NdajECCmbq9kLraeoqbnoG3KUMb+6h9EIzZysnarQF7cw+9j+4z8MJScWH42f+oytqcdbp15Lf2xRmgUE93tRjnrmbVO/hGIAIzK7M4ZjgZpehVmCFBHUxfGceZXs7+d9g39wnYGEGB2EZ7VU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jTWuB14k; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727088560;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IiotXPQlbFM/2toFuC512KnVpUNQrr7cx9DuHkk5r8A=;
-	b=MSuua116b2LHIrZDnYL7DpMmLFRbEFuCNorLT/Y8ra7CgCa1CRWOP4RnlZqOHoQ0wpTROf
-	EbAu1+EzKhEreLP0DBMcGoWtSwcRanVj0jzKcYZQ2ArD/2AH7LA4FDtdMS/HdrYjDymF5S
-	NEJIXkUDU5WpUESGzZ00J69nt1gL9Xc=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-421-z3dl42qXMamoP4fGmw2kXA-1; Mon,
- 23 Sep 2024 06:48:16 -0400
-X-MC-Unique: z3dl42qXMamoP4fGmw2kXA-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2CC3618E6A69;
-	Mon, 23 Sep 2024 10:48:15 +0000 (UTC)
-Received: from pauld.westford.csb (unknown [10.22.32.86])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B9C4F1956094;
-	Mon, 23 Sep 2024 10:48:13 +0000 (UTC)
-Date: Mon, 23 Sep 2024 12:48:11 +0200
-From: Phil Auld <pauld@redhat.com>
-To: andrea.righi@linux.dev
-Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
-	Giovanni Gherdovich <giovanni.gherdovich@suse.com>,
-	Kleber Sacilotto de Souza <kleber.souza@canonical.com>,
-	Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched_ext: Provide a sysfs enable_seq counter
-Message-ID: <20240923104811.GB308802@pauld.westford.csb>
-References: <20240921193921.75594-1-andrea.righi@linux.dev>
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=77SNg4RVz7Xv8ZAv6cD5UDFUzHD/MzyETwAuoBF/hSQ=;
+	b=jTWuB14kxov5LPrajucQ1GJJjogH9vfJje5lad39f8WZT+vYFBTGq96zxeDj192cIqRONZ
+	t3vsTWtrf941TEaDMppVzhKYFnPK5EPI9uFVqHXrUxvk14nSK1y/hCVLyR37BuiSUVOv8N
+	ixxeIiH+gw6QqSfrorfY/CA4ZWwxZXw=
+From: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>
+To: Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger@dilger.ca>,
+	Jan Kara <jack@suse.cz>,
+	Harshad Shirwadkar <harshadshirwadkar@gmail.com>
+Cc: linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Luis Henriques (SUSE)" <luis.henriques@linux.dev>
+Subject: [PATCH v2 0/2] ext4: mark FC as ineligible using an handle
+Date: Mon, 23 Sep 2024 11:49:07 +0100
+Message-ID: <20240923104909.18342-1-luis.henriques@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240921193921.75594-1-andrea.righi@linux.dev>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Andrea,
+Hi!
 
-On Sat, Sep 21, 2024 at 09:39:21PM +0200 andrea.righi@linux.dev wrote:
-> From: Andrea Righi <andrea.righi@linux.dev>
-> 
-> As discussed during the distro-centric session within the sched_ext
-> Microconference at LPC 2024, introduce a sequence counter that is
-> incremented every time a BPF scheduler is loaded.
-> 
-> This feature can help distributions in diagnosing potential performance
-> regressions by identifying systems where users are running (or have ran)
-> custom BPF schedulers.
-> 
-> Example:
-> 
->  arighi@virtme-ng~> cat /sys/kernel/sched_ext/enable_seq
->  0
->  arighi@virtme-ng~> sudo scx_simple
->  local=1 global=0
->  ^CEXIT: unregistered from user space
->  arighi@virtme-ng~> cat /sys/kernel/sched_ext/enable_seq
->  1
-> 
-> In this way user-space tools (such as Ubuntu's apport and similar) are
-> able to gather and include this information in bug reports.
-> 
-> Cc: Giovanni Gherdovich <giovanni.gherdovich@suse.com>
-> Cc: Kleber Sacilotto de Souza <kleber.souza@canonical.com>
-> Cc: Marcelo Henrique Cerri <marcelo.cerri@canonical.com>
-> Cc: Phil Auld <pauld@redhat.com>
-> Signed-off-by: Andrea Righi <andrea.righi@linux.dev>
+Changes since v1:
+* only the second patch has been changed to drop the call to
+  ext4_fc_mark_ineligible() in the error path.  Commit text has also been
+  adjusted accordingly.
 
-Thanks for pulling this together. I am hopeful we can get it in
-a 6.12-rc.
+And here's the original cover-letter:
 
-Reviewed-by: Phil Auld <pauld@redhat.com>
+The following patches were suggested by Jan Kara[1] some time ago.  Basically,
+they try to address a race that exists in several places, where function
+ext4_fc_mark_ineligible() is called with a NULL handle: in these cases, marking
+the filesystem as ineligible may effectively happen _after_ the fast-commit is
+done.
 
-Cheers,
-Phil
+There are several places where this happen, and the two patches that follow try
+to address some of them.  The first patch fixes the calls that exist in
+__track_dentry_update().
 
-> ---
->  Documentation/scheduler/sched-ext.rst | 10 ++++++++++
->  kernel/sched/ext.c                    | 17 +++++++++++++++++
->  tools/sched_ext/scx_show_state.py     |  1 +
->  3 files changed, 28 insertions(+)
-> 
-> diff --git a/Documentation/scheduler/sched-ext.rst b/Documentation/scheduler/sched-ext.rst
-> index a707d2181a77..6c0d70e2e27d 100644
-> --- a/Documentation/scheduler/sched-ext.rst
-> +++ b/Documentation/scheduler/sched-ext.rst
-> @@ -83,6 +83,15 @@ The current status of the BPF scheduler can be determined as follows:
->      # cat /sys/kernel/sched_ext/root/ops
->      simple
->  
-> +You can check if any BPF scheduler has ever been loaded since boot by examining
-> +this monotonically incrementing counter (a value of zero indicates that no BPF
-> +scheduler has been loaded):
-> +
-> +.. code-block:: none
-> +
-> +    # cat /sys/kernel/sched_ext/enable_seq
-> +    1
-> +
->  ``tools/sched_ext/scx_show_state.py`` is a drgn script which shows more
->  detailed information:
->  
-> @@ -96,6 +105,7 @@ detailed information:
->      enable_state  : enabled (2)
->      bypass_depth  : 0
->      nr_rejected   : 0
-> +    enable_seq    : 1
->  
->  If ``CONFIG_SCHED_DEBUG`` is set, whether a given task is on sched_ext can
->  be determined as follows:
-> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> index 9ee5a9a261cc..8057ab4c76da 100644
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -874,6 +874,13 @@ static struct scx_exit_info *scx_exit_info;
->  static atomic_long_t scx_nr_rejected = ATOMIC_LONG_INIT(0);
->  static atomic_long_t scx_hotplug_seq = ATOMIC_LONG_INIT(0);
->  
-> +/*
-> + * A monotically increasing sequence number that is incremented every time a
-> + * scheduler is enabled. This can be used by to check if any custom sched_ext
-> + * scheduler has ever been used in the system.
-> + */
-> +static atomic_long_t scx_enable_seq = ATOMIC_LONG_INIT(0);
-> +
->  /*
->   * The maximum amount of time in jiffies that a task may be runnable without
->   * being scheduled on a CPU. If this timeout is exceeded, it will trigger
-> @@ -4154,11 +4161,19 @@ static ssize_t scx_attr_hotplug_seq_show(struct kobject *kobj,
->  }
->  SCX_ATTR(hotplug_seq);
->  
-> +static ssize_t scx_attr_enable_seq_show(struct kobject *kobj,
-> +					struct kobj_attribute *ka, char *buf)
-> +{
-> +	return sysfs_emit(buf, "%ld\n", atomic_long_read(&scx_enable_seq));
-> +}
-> +SCX_ATTR(enable_seq);
-> +
->  static struct attribute *scx_global_attrs[] = {
->  	&scx_attr_state.attr,
->  	&scx_attr_switch_all.attr,
->  	&scx_attr_nr_rejected.attr,
->  	&scx_attr_hotplug_seq.attr,
-> +	&scx_attr_enable_seq.attr,
->  	NULL,
->  };
->  
-> @@ -5176,6 +5191,8 @@ static int scx_ops_enable(struct sched_ext_ops *ops, struct bpf_link *link)
->  	kobject_uevent(scx_root_kobj, KOBJ_ADD);
->  	mutex_unlock(&scx_ops_enable_mutex);
->  
-> +	atomic_long_inc(&scx_enable_seq);
-> +
->  	return 0;
->  
->  err_del:
-> diff --git a/tools/sched_ext/scx_show_state.py b/tools/sched_ext/scx_show_state.py
-> index d457d2a74e1e..8bc626ede1c4 100644
-> --- a/tools/sched_ext/scx_show_state.py
-> +++ b/tools/sched_ext/scx_show_state.py
-> @@ -37,3 +37,4 @@ print(f'switched_all  : {read_static_key("__scx_switched_all")}')
->  print(f'enable_state  : {ops_state_str(enable_state)} ({enable_state})')
->  print(f'bypass_depth  : {read_atomic("scx_ops_bypass_depth")}')
->  print(f'nr_rejected   : {read_atomic("scx_nr_rejected")}')
-> +print(f'enable_seq    : {read_atomic("scx_enable_seq")}')
-> -- 
-> 2.46.0
-> 
-> 
+The second patch _partially_ fixes the call in ext4_xattr_set() -- this is
+because it may fail to obtain an handle.  And, to be honest, I'm not sure what
+to do in this case: try again to obtain a new handle just for marking the fc,
+with a lower value for credits? or leave it as-is, with the NULL?
 
--- 
+The other two missing callers are the ioctl for filesystem resize and
+ext4_evict_inode().
+
+[1] https://lore.kernel.org/all/20240724101504.e2t4pvgw6td7rrmm@quack3/
+
+
+Luis Henriques (SUSE) (2):
+  ext4: use handle to mark fc as ineligible in __track_dentry_update()
+  ext4: mark fc as ineligible using an handle in ext4_xattr_set()
+
+ fs/ext4/fast_commit.c | 19 +++++++++++--------
+ fs/ext4/xattr.c       |  3 ++-
+ 2 files changed, 13 insertions(+), 9 deletions(-)
 
 
