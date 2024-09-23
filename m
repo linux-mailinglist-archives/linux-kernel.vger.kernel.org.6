@@ -1,59 +1,55 @@
-Return-Path: <linux-kernel+bounces-335524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D41E97E6ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 09:54:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6612C97E6C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 09:43:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DACF0B2123C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 07:54:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27960281A25
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 07:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E50157C8D;
-	Mon, 23 Sep 2024 07:54:42 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8988482D8;
+	Mon, 23 Sep 2024 07:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OIHBAlme"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD7D328B6;
-	Mon, 23 Sep 2024 07:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE4A3C485
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 07:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727078081; cv=none; b=tvQCQkpAZuJjb6NwVaLchplSeLQ0QgYLarSnjSZtw1gu1xIipqY/KJyZSbFp/j9nxSkKeSiX9Sb4vYg6+Eovv87sxZwF3cfq8dVYgJ+qC0Qbli3smPTRU5pDbDHe08r93EmFpNB+oBWEYG8UsMhmdUe3gWaSLZYjKV1P53R7S1Q=
+	t=1727077415; cv=none; b=g1ljCrQ77LMhTtQhj/SAJU9scJ1WITUOw3N3zgGmxx4xQyfEqFQjrhaqLgRJoUrrm5A5ePCxOrO+hjK52UAnaHbteIHqk2TA0UTwP2I2xyMFIKExwcLZccfin71AQDJtZ7AnED3idtU4UIdWHZwFT36Hui8U4kAQaRSaq+FE4+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727078081; c=relaxed/simple;
-	bh=QxXIxc+0eslzVUrsut9gNNpsLrYacQ4/TUMBkZGoA+g=;
+	s=arc-20240116; t=1727077415; c=relaxed/simple;
+	bh=5Agj6cLd65Qf0AqMyAUd7lcCbRBnXVc6YrHae7VLBZg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VPKDtjalLIy+eOBan5mV2mSSjkQchyMKaQRSOOIc8OLisKqQwD3H9E3RXi7Djn1pmPuOo1ZdKMVw+m4OMg2L+Bfk0+D8Z9pWyYNRAUXlDFeBXmQ5aEQmFhyOePOduXbv366lHZfhAK++ozIHFKWIs4eeV8sHlKPPrrI/No03p2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id A8B64100FC269;
-	Mon, 23 Sep 2024 09:43:00 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 6E1303972D4; Mon, 23 Sep 2024 09:43:00 +0200 (CEST)
-Date: Mon, 23 Sep 2024 09:43:00 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Wei Huang <wei.huang2@amd.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, netdev@vger.kernel.org,
-	Jonathan.Cameron@huawei.com, helgaas@kernel.org, corbet@lwn.net,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, alex.williamson@redhat.com, gospo@broadcom.com,
-	michael.chan@broadcom.com, ajit.khaparde@broadcom.com,
-	somnath.kotur@broadcom.com, andrew.gospodarek@broadcom.com,
-	manoj.panicker2@amd.com, Eric.VanTassell@amd.com,
-	vadim.fedorenko@linux.dev, horms@kernel.org, bagasdotme@gmail.com,
-	bhelgaas@google.com, paul.e.luse@intel.com, jing2.liu@intel.com
-Subject: Re: [PATCH V5 1/5] PCI: Add TLP Processing Hints (TPH) support
-Message-ID: <ZvEcBLGqlJMj3MHA@wunner.de>
-References: <20240916205103.3882081-1-wei.huang2@amd.com>
- <20240916205103.3882081-2-wei.huang2@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=c/Kj2CVx61vbrN9SuhdCX1SFIEGYHLuuhVWTqHmF1VReJpeJ3nAhqucsEw5Wtz4eosKyC66vbK2pWKq1I6wAq/aCkRw49cSggP+5ZYwUbh8Dc1CmGWxic/DahIxHrlBJycz0A5Ng9j5kjYYg2+3PfvgilyBDjMUEIBcfbcJhXQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OIHBAlme; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BC72C4CEC4;
+	Mon, 23 Sep 2024 07:43:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727077414;
+	bh=5Agj6cLd65Qf0AqMyAUd7lcCbRBnXVc6YrHae7VLBZg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OIHBAlmeU0TujBRyqOQFJSoWFQK4xaGqo+yIwvzcHpvNAxJJSkypk1ClL18nmBEdB
+	 SmOOS0yPXlo956+ZR7td4I8yEyv39pCC6rcJZOyQR7BKTLOBCfbXH2SUOV4D+5EA35
+	 j1DIXnJH8drRIZ0RaUa8ffqLuIRxacH2xuFlc+VHZ8PQjzISD8jSoZeaycEPdyBUgb
+	 cHYyxEBa1mJfJs+boALgnEXa/3hHXP4VbDs9lAaXbE0f+1AFXbSQxmO+eAXiveAJIK
+	 28UyldB+f8zMLEWEhxp/3tMBLpmuooUVeRreY3K6ZQi4aZ+15il4g0nRAo8/P8qqAC
+	 gQCTTe82leTjw==
+Date: Mon, 23 Sep 2024 00:43:33 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Wu Bo <bo.wu@vivo.com>
+Cc: linux-kernel@vger.kernel.org, Wu Bo <wubo.oduw@gmail.com>,
+	Jaegeuk Kim <jaegeuk@kernel.org>,
+	linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH] f2fs: do not set STATX_DIOALIGN if dio is not
+ supported
+Message-ID: <20240923074333.GA8390@sol.localdomain>
+References: <20240923063732.2730521-1-bo.wu@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,87 +58,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240916205103.3882081-2-wei.huang2@amd.com>
+In-Reply-To: <20240923063732.2730521-1-bo.wu@vivo.com>
 
-On Mon, Sep 16, 2024 at 03:50:59PM -0500, Wei Huang wrote:
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -1813,6 +1813,7 @@ int pci_save_state(struct pci_dev *dev)
->  	pci_save_dpc_state(dev);
->  	pci_save_aer_state(dev);
->  	pci_save_ptm_state(dev);
-> +	pci_save_tph_state(dev);
->  	return pci_save_vc_state(dev);
->  }
->  EXPORT_SYMBOL(pci_save_state);
-> @@ -1917,6 +1918,7 @@ void pci_restore_state(struct pci_dev *dev)
->  	pci_restore_vc_state(dev);
->  	pci_restore_rebar_state(dev);
->  	pci_restore_dpc_state(dev);
-> +	pci_restore_tph_state(dev);
->  	pci_restore_ptm_state(dev);
->  
->  	pci_aer_clear_status(dev);
+On Mon, Sep 23, 2024 at 12:37:32AM -0600, Wu Bo via Linux-f2fs-devel wrote:
+> Therefore, if the filesystem does not support DIO, it should not set
+> the STATX_DIOALIGN flag.
 
-I'm wondering if there's a reason to use a different order on save versus
-restore?  E.g. does PTM need to be restored last?
+No, that's incorrect.  STATX_DIOALIGN supports reporting that DIO is
+unsupported, via the alignments being 0.  See the statx man page.
 
-
-> --- a/drivers/pci/pcie/Kconfig
-> +++ b/drivers/pci/pcie/Kconfig
-> @@ -155,3 +155,14 @@ config PCIE_EDR
->  	  the PCI Firmware Specification r3.2.  Enable this if you want to
->  	  support hybrid DPC model which uses both firmware and OS to
->  	  implement DPC.
-> +
-> +config PCIE_TPH
-> +	bool "TLP Processing Hints"
-> +	depends on ACPI
-
-TPH isn't really an ACPI-specific feature, it could exist on
-devicetree-based platforms as well.  I think there could be valid
-use cases for enabling TPH support on such platforms:
-
-E.g. the platform firmware or bootloader might set up the TPH Extended
-Capability in a specific way and the kernel would have to save/restore
-it on system sleep.
-
-So I'd recommend removing this dependency.
-
-Note that there's a static inline for acpi_check_dsm() which returns
-false if CONFIG_ACPI=n, so tph_invoke_dsm() returns AE_ERROR and
-pcie_tph_get_cpu_st() returns -EINVAL.  It thus looks like you may not
-even need an #ifdef.
-
-
-> diff --git a/drivers/pci/pcie/tph.c b/drivers/pci/pcie/tph.c
-> new file mode 100644
-
-The PCIe features added most recently (such as DOE) have been placed
-directly in drivers/pci/ instead of the pcie/ subdirectory.
-The pcie/ subdirectory mostly deals with port drivers.
-So perhaps tph.c should likewise be placed in drivers/pci/ ?
-
-
-> --- /dev/null
-> +++ b/drivers/pci/pcie/tph.c
-> @@ -0,0 +1,199 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * TPH (TLP Processing Hints) support
-> + *
-> + * Copyright (C) 2024 Advanced Micro Devices, Inc.
-> + *     Eric Van Tassell <Eric.VanTassell@amd.com>
-> + *     Wei Huang <wei.huang2@amd.com>
-> + */
-> +#include <linux/pci.h>
-> +#include <linux/pci-acpi.h>
-
-This patch doesn't seem to use any of the symbols defined in pci-acpi.h,
-or did I miss anything?  I'd move the inclusion of pci-acpi.h to the patch
-that actually uses its symbols.
-
-Thanks,
-
-Lukas
+- Eric
 
