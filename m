@@ -1,194 +1,309 @@
-Return-Path: <linux-kernel+bounces-335386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92C4097E4E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 04:57:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0B2097E4F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 05:12:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 576CE2815F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 02:57:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A11501C21072
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 03:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA7979DC;
-	Mon, 23 Sep 2024 02:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FC9B4C96;
+	Mon, 23 Sep 2024 03:12:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="EZqy4KfT"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA424C6E
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 02:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="P3lT1yv6"
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C211B139D
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 03:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727060258; cv=none; b=U4xJ9iob3+0BZsMC8erF54iGglseuLiTEyJ2I02sCcP6gBzHxeRFeZ5YizJPxkyX29Y4gjH1QAOldq6+68bWxGxK/YYGbVfIv/Ymusl8usxdDvH92m9mHxjiciQs3Sep1zuyWcgpM1ieHrg1XtdylgXblukoXEMR5mrTnjKRI4s=
+	t=1727061168; cv=none; b=JmBmSH5hyvIQy4SzMtY/mcoyqFb5jG010S4XJSuvDZcNnOx61L7yc/wE9fY3uVfm2hb4bEHxKULh6hUzWXnkLJCQGMVO5jmsWPcSYgznNqzFPqmZF5m8HYrGBH+wzSdbHFi0NdaqPmp87DFDv8BT//7Qr1dSFEjxAuv0ppr3kPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727060258; c=relaxed/simple;
-	bh=KzDB2Fvw/p/tQNZGvJ2Z3UXAJ8NNDc4oQ6MvNEVQ7o0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZkIjGxKSunA4kMidMmruh1SkXvIAyi+OMX+ZCt5UTCtaHT+VVHNYQSTTQXuM+W9wky4uqBUTCXgXS0U7u75R9AjSzBMIa3laIVYkzZIknN0cKhL8NdmRF0/2HpXgG2wei4Xw8yy/pa2BuDGAvQhpGxcnN+y3TOTKZAlgOJ/V/Zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=EZqy4KfT; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71788bfe60eso3094647b3a.1
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 19:57:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1727060256; x=1727665056; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eOlCfE1VvNojenYK4PaCQ7v+7xfVZi0Mlck1xQLbNPU=;
-        b=EZqy4KfTnH0kksgLCD38SNwQfZ3sOJLoOUHZ4fIsL3+ZCtZpjzrlsmiGaqR47WlmKc
-         KNChsJYz2cBU0CZ0NhNynMr+1ne6YDrlNWVmYdiGufXTcM7eo/wf5E0dmwf4bZsYbr/+
-         mtxH3KAk9GZWM2atx+uAVQuN5vJGPejiC4H6fSTJLr9rEDjO6OYDoSL6F8cVLi8FR2HV
-         c7qlnSf/EDBZE3e2T8av+0JJxt6dBb0kguEmb3deNx+N9DTLti46khE7lj1TY+tJ6DF5
-         HLrZID5u0tzDGiuBUAR69mjzDlyX7P70hH08Ye/IAxbzfQP70fXTsVWsaLY+1rk0Yu4A
-         8z0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727060256; x=1727665056;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eOlCfE1VvNojenYK4PaCQ7v+7xfVZi0Mlck1xQLbNPU=;
-        b=JVeIps7qOm4HKA9c1asld70JKkLKq8uO3u4We+ebWaYxMux/9jMvkSbePm0rWNxrZy
-         pRxk/3SCcEL2vYVyaQ9R7Zc1xrc5uKWtn15uKwRlsKKtxLPqmWtSXc1v92cu4zmtWx4V
-         arYC/L9FPQjgY3/oYQffhJJRjDxc9Phitqlt/ntbwev3jTjiaSFtcwB578BTR8y+YFt1
-         ZnYo6ckBVaT8ITZZnYeSc99LLCmRV59PJ4xgxMO8smip0zelDIS5irFCr/bg8mrNv4ng
-         7yLuIE5pG+AKlnqlEl9KomoDISLvrirlihNvbCIHEUxFFzQ5yCZ/+AlrXiP2777pHkUe
-         zVAw==
-X-Forwarded-Encrypted: i=1; AJvYcCVSeYTZSi9O58ZbRpw2l40/1XAnZ25LdG564YOZD8cEBe8wxf+SLO64AifNQ4LSCF/e9rAlTrZVwYBXzhY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVdlBEbs7P7/INgZnCKoHRLMKUCKnODMzHO9pUQ1pStNrRs+/N
-	0A05zjR2cyCgc7BIJlnzu4kIyA91a3s4Oun5Uk5yZ8YZbwH8ep+fP8ojoDEm0Mc=
-X-Google-Smtp-Source: AGHT+IH2VELuLlAU0XdfCjZH33i9dkmjucfpwNy78ly8Ug0hCYlcUNTgjVWyzhE0W5UaHWaQgWqjKA==
-X-Received: by 2002:a05:6a00:2313:b0:70d:34aa:6d51 with SMTP id d2e1a72fcca58-7199c93a858mr18186642b3a.6.1727060256304;
-        Sun, 22 Sep 2024 19:57:36 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944a980b4sm13031941b3a.34.2024.09.22.19.57.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Sep 2024 19:57:35 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1ssZGW-008oKf-31;
-	Mon, 23 Sep 2024 12:57:32 +1000
-Date: Mon, 23 Sep 2024 12:57:32 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Ritesh Harjani <ritesh.list@gmail.com>, chandan.babu@oracle.com,
-	djwong@kernel.org, dchinner@redhat.com, hch@lst.de,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
-	martin.petersen@oracle.com
-Subject: Re: [PATCH v4 00/14] forcealign for xfs
-Message-ID: <ZvDZHC1NJWlOR6Uf@dread.disaster.area>
-References: <20240813163638.3751939-1-john.g.garry@oracle.com>
- <87frqf2smy.fsf@gmail.com>
- <ZtjrUI+oqqABJL2j@dread.disaster.area>
- <877cbq3g9i.fsf@gmail.com>
- <ZtlQt/7VHbOtQ+gY@dread.disaster.area>
- <8734m7henr.fsf@gmail.com>
- <ZufYRolfyUqEOS1c@dread.disaster.area>
- <c8a9dba5-7d02-4aa2-a01f-dd7f53b24938@oracle.com>
- <Zun+yci6CeiuNS2o@dread.disaster.area>
- <8e13fa74-f8f7-49d3-b640-0daf50da5acb@oracle.com>
+	s=arc-20240116; t=1727061168; c=relaxed/simple;
+	bh=7Wtjz93Ub/yCHTA1/3XxxUIej3HC7k7n9wsX/XQHE3E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=umyKiVt4ZfP39Z+G9TfhN38LUDOmaXVMm17b8xxuxccMILLukPIrHNVklf49i0ZAeKGFvFYCSPAcqFMYdd/9WsIdBxIws+sD3PgLXjf105Tu3Xky4GCtxklbQzGNb2FCxOoUj3787J4tr671Mvz8+IARwEjr0uNU80MMAj8xJ+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=P3lT1yv6; arc=none smtp.client-ip=220.197.31.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=bUX7f9MIrWBIMskkOsD0bihrdVpBa4cvqOzkY0VNqxY=;
+	b=P3lT1yv6ggREGJRu0TPmh1miXernvc5UcjmXVwP76RDctGOZM3VqUjU2JqojyO
+	Wacgj5RKBcJH68NtSeT3a/g/g+WSuOMnEk4RSZIrsux06aamB61RGiMjhNjkaTie
+	SJBVDZ9xUEObFiVFuVx8DLvP3LMXDV1leYochz8cJ+e9M=
+Received: from [192.168.109.86] (unknown [123.149.2.202])
+	by gzsmtp4 (Coremail) with SMTP id qCkvCgCXxpjg2vBmYd0JAQ--.9012S2;
+	Mon, 23 Sep 2024 11:05:05 +0800 (CST)
+Message-ID: <16ceed1c-c032-4695-b974-a118a705342b@126.com>
+Date: Mon, 23 Sep 2024 11:05:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8e13fa74-f8f7-49d3-b640-0daf50da5acb@oracle.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] udf: refactor udf_next_aext() to handle error
+To: Jan Kara <jack@suse.cz>
+Cc: jack@suse.com, zhaomengmeng@kylinos.cn, linux-kernel@vger.kernel.org
+References: <20240918093634.12906-1-zhaomzhao@126.com>
+ <20240918093634.12906-3-zhaomzhao@126.com>
+ <20240920154701.xotlrf37bjlwtg3i@quack3>
+From: Zhao Mengmeng <zhaomzhao@126.com>
+In-Reply-To: <20240920154701.xotlrf37bjlwtg3i@quack3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:qCkvCgCXxpjg2vBmYd0JAQ--.9012S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Gr47CF1fGr47Zry5KF45KFg_yoWfXw4rpr
+	97KayDtayagFy7ur4Iqr1DZr10qay7KF47Cr1FqasxtF48Xr13tFyFkryY93WUurs3Xw4S
+	qr4rK34DCw1xKrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UyKZXUUUUU=
+X-CM-SenderInfo: 52kd0zp2kd0qqrswhudrp/1tbiEA9jd2bw0I7SyAAAsZ
 
-On Wed, Sep 18, 2024 at 08:59:41AM +0100, John Garry wrote:
-> On 17/09/2024 23:12, Dave Chinner wrote:
-> > On Mon, Sep 16, 2024 at 11:24:56AM +0100, John Garry wrote:
-> > > > Hence we'll eventually end
-> > > > up with atomic writes needing to be enabled at mkfs time, but force
-> > > > align will be an upgradeable feature flag.
-> > > 
-> > > Could atomic writes also be an upgradeable feature? We just need to ensure
-> > > that agsize % extsize == 0 for an inode enabled for atomic writes.
-> > 
-> > To turn the superblock feature bit on, we have to check the AGs are
-> > correctly aligned to the *underlying hardware*. If they aren't
-> > correctly aligned (and there is a good chance they will not be)
-> > then we can't enable atomic writes at all. The only way to change
-> > this is to physically move AGs around in the block device (i.e. via
-> > xfs_expand tool I proposed).
-> > > i.e. the mkfs dependency on having the AGs aligned to the underlying
-> > atomic write capabilities of the block device never goes away, even
-> > if we want to make the feature dynamically enabled.
-> > 
-> > IOWs, yes, an existing filesystem -could- be upgradeable, but there
-> > is no guarantee that is will be.
-> > 
-> > Quite frankly, we aren't going to see block devices that filesystems
-> > already exist on suddenly sprout support for atomic writes mid-life.
+On 2024/9/20 23:47, Jan Kara wrote:
+> On Wed 18-09-24 17:36:33, Zhao Mengmeng wrote:
+>> From: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
+>>
+>> Same as udf_current_aext(), take pointer to etype to store the extent
+>> type, while return 0 for success and <0 on error.
+>>
+>> Signed-off-by: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
 > 
-> I would not be so sure. Some SCSI devices used in production which I know
-> implicitly write 32KB atomically. And we would like to use them for atomic
-> writes.
-
-Ok, but that's not going to be widespread. Very little storage
-hardware out there supports atomic writes - the vast majority of
-deployments will be new hardware that will have mkfs run on it.
-
-A better argument for dynamic upgrade is turning on atomic writes
-on reflink enabled filesystems once the kernel implementation has
-been updates to allow the two features to co-exist.
-
-> 32KB is small and I guess that there is a small chance of
-> pre-existing AGs not being 32KB aligned. I would need to check if there is
-> even a min alignment for AGs...
-
-There is no default alignment for AGs unless there is a stripe unit
-set. Then it will align AGs to the stripe unit. There is also no
-guarantee that stripe units are aligned to powers of two or atomic
-write units...
-
-> > Hence if mkfs detects atomic write support in the underlying device,
-> > it should *always* modify the geometry to be compatible with atomic
-> > writes and enable atomic write support.
+> ...
 > 
-> The current solution is to enable via commandline.
-
-Yes, that's the current proposal.  What I'm saying is that this
-isn't a future proof solution, nor how we want this functionality to
-work in the future.
-
-We should be looking at the block device capabilities (like we do for
-stripe unit, etc) and then *do the right thing automatically*. If
-the block device advertises atomic write support, then we should
-automatically align the filesystem to atomic write constraints, even
-if atomic writes can not be immediately enabled (because reflink).
-
-I'm trying to describe how we want things to work once atomic write
-support is ubiquitous. It needs to be simple for users and admins,
-and it should work (or be reliably upgradeable) out of the box on
-all new hardware that supports this functionality.
-
-> > Yes, that means the "incompat with reflink" issue needs to be fixed
-> > before we take atomic writes out of experimental (i.e. we consistently
-> > apply the same "full support" criteria we applied to DAX).
+>> diff --git a/fs/udf/directory.c b/fs/udf/directory.c
+>> index 93153665eb37..f865538c985d 100644
+>> --- a/fs/udf/directory.c
+>> +++ b/fs/udf/directory.c
+>> @@ -166,13 +166,16 @@ static struct buffer_head *udf_fiiter_bread_blk(struct udf_fileident_iter *iter)
+>>   */
+>>  static int udf_fiiter_advance_blk(struct udf_fileident_iter *iter)
+>>  {
+>> +	int8_t etype;
+>> +	int err = 0;
 > 
-> In the meantime, if mkfs auto-enables atomic writes (when the HW supports),
-> what will it do to reflink feature (in terms of enabling)?
+> Nit: please add empty line between declaration and the code.
 
-I didn't say we should always "auto-enable atomic writes".
+Got it.
+>>  	iter->loffset++;
+>>  	if (iter->loffset < DIV_ROUND_UP(iter->elen, 1<<iter->dir->i_blkbits))
+>>  		return 0;
+>>  
+>>  	iter->loffset = 0;
+>> -	if (udf_next_aext(iter->dir, &iter->epos, &iter->eloc, &iter->elen, 1)
+>> -			!= (EXT_RECORDED_ALLOCATED >> 30)) {
+>> +	err = udf_next_aext(iter->dir, &iter->epos, &iter->eloc, &iter->elen,
+>> +			    &etype, 1);
+>> +	if (err || etype != (EXT_RECORDED_ALLOCATED >> 30)) {
+>>  		if (iter->pos == iter->dir->i_size) {
+>>  			iter->elen = 0;
+>>  			return 0;
+> 
+> ...
+> 
+>> @@ -555,7 +556,7 @@ static int udf_do_extend_file(struct inode *inode,
+>>  		 * empty indirect extent.
+>>  		 */
+>>  		if (new_block_bytes)
+>> -			udf_next_aext(inode, last_pos, &tmploc, &tmplen, 0);
+>> +			udf_next_aext(inode, last_pos, &tmploc, &tmplen, &tmptype, 0);
+>>  	}
+>>  	iinfo->i_lenExtents += add;
+>>  
+> 
+> Hum, this will need error checking but we can leave that for future
+> patches.
 
-I said if the hardware is atomic write capable, then mkfs should
-always *align the filesystem* to atomic write constraints.  A kernel
-upgrade will eventually allow reflink and atomic writes to co-exist,
-but only if the filesystem is correctly aligned to the hardware
-constrains for atomic writes. We need to ensure we leave that
-upgrade path open....
+Yes, will add in this series.
+>> @@ -674,8 +675,8 @@ static int udf_extend_file(struct inode *inode, loff_t newsize)
+>>  		extent.extLength = EXT_NOT_RECORDED_NOT_ALLOCATED;
+>>  	} else {
+>>  		epos.offset -= adsize;
+>> -		etype = udf_next_aext(inode, &epos, &extent.extLocation,
+>> -				      &extent.extLength, 0);
+>> +		udf_next_aext(inode, &epos, &extent.extLocation,
+>> +				&extent.extLength, &etype, 0);
+>>  		extent.extLength |= etype << 30;
+>>  	}
+>>  
+>> @@ -712,7 +713,7 @@ static int inode_getblk(struct inode *inode, struct udf_map_rq *map)
+>>  	loff_t lbcount = 0, b_off = 0;
+>>  	udf_pblk_t newblocknum;
+>>  	sector_t offset = 0;
+>> -	int8_t etype;
+>> +	int8_t etype, tmpetype;
+>>  	struct udf_inode_info *iinfo = UDF_I(inode);
+>>  	udf_pblk_t goal = 0, pgoal = iinfo->i_location.logicalBlockNum;
+>>  	int lastblock = 0;
+>> @@ -748,8 +749,8 @@ static int inode_getblk(struct inode *inode, struct udf_map_rq *map)
+>>  		prev_epos.offset = cur_epos.offset;
+>>  		cur_epos.offset = next_epos.offset;
+>>  
+>> -		etype = udf_next_aext(inode, &next_epos, &eloc, &elen, 1);
+>> -		if (etype == -1)
+>> +		ret = udf_next_aext(inode, &next_epos, &eloc, &elen, &etype, 1);
+>> +		if (ret)
+>>  			break;
+> 
+> I think here we need to add error handling as well and we should probably
+> do it in this patch / patch series. If ret is ENODATA, we just break out
+> from the cycle but if ret is some other error, we need to return that error
+> from inode_getblk().
+> 
+>> @@ -771,8 +772,8 @@ static int inode_getblk(struct inode *inode, struct udf_map_rq *map)
+>>  	 * Move prev_epos and cur_epos into indirect extent if we are at
+>>  	 * the pointer to it
+>>  	 */
+>> -	udf_next_aext(inode, &prev_epos, &tmpeloc, &tmpelen, 0);
+>> -	udf_next_aext(inode, &cur_epos, &tmpeloc, &tmpelen, 0);
+>> +	udf_next_aext(inode, &prev_epos, &tmpeloc, &tmpelen, &tmpetype, 0);
+>> +	udf_next_aext(inode, &cur_epos, &tmpeloc, &tmpelen, &tmpetype, 0);
+> 
+> Again, this should have error handling now.
+> 
+>>  
+>>  	/* if the extent is allocated and recorded, return the block
+>>  	   if the extent is not a multiple of the blocksize, round up */
+>> @@ -793,7 +794,7 @@ static int inode_getblk(struct inode *inode, struct udf_map_rq *map)
+>>  	}
+>>  
+>>  	/* Are we beyond EOF and preallocated extent? */
+>> -	if (etype == -1) {
+>> +	if (ret < 0) {
+> 
+> I'd prefer ret == -ENODATA to make this explicit.
+> 
+>>  		loff_t hole_len;
+>>  
+>>  		isBeyondEOF = true;
+>> @@ -846,8 +847,7 @@ static int inode_getblk(struct inode *inode, struct udf_map_rq *map)
+>>  
+>>  		/* if the current block is located in an extent,
+>>  		   read the next extent */
+>> -		etype = udf_next_aext(inode, &next_epos, &eloc, &elen, 0);
+>> -		if (etype != -1) {
+>> +		if (!udf_next_aext(inode, &next_epos, &eloc, &elen, &etype, 0)) {
+>>  			laarr[c + 1].extLength = (etype << 30) | elen;
+>>  			laarr[c + 1].extLocation = eloc;
+>>  			count++;
+> 
+> And this should be distinguisting between EOF and other errors so that we
+> don't set lastblock wrongly. Instead we should bail with error.
+> 
+>> @@ -1190,13 +1191,13 @@ static int udf_update_extents(struct inode *inode, struct kernel_long_ad *laarr,
+>>  			if (err < 0)
+>>  				return err;
+>>  			udf_next_aext(inode, epos, &laarr[i].extLocation,
+>> -				      &laarr[i].extLength, 1);
+>> +				      &laarr[i].extLength, &tmptype, 1);
+>>  			start++;
+>>  		}
+>>  	}
+>>  
+>>  	for (i = start; i < endnum; i++) {
+>> -		udf_next_aext(inode, epos, &tmploc, &tmplen, 0);
+>> +		udf_next_aext(inode, epos, &tmploc, &tmplen, &tmptype, 0);
+>>  		udf_write_aext(inode, epos, &laarr[i].extLocation,
+>>  			       laarr[i].extLength, 1);
+>>  	}
+> 
+> Again these two calls should have error handling now. udf_update_extents()
+> is already able to return errors.
+> 
+>> @@ -2267,7 +2268,7 @@ static int udf_insert_aext(struct inode *inode, struct extent_position epos,
+>>  	if (epos.bh)
+>>  		get_bh(epos.bh);
+>>  
+>> -	while ((etype = udf_next_aext(inode, &epos, &oeloc, &oelen, 0)) != -1) {
+>> +	while (!udf_next_aext(inode, &epos, &oeloc, &oelen, &etype, 0)) {
+>>  		udf_write_aext(inode, &epos, &neloc, nelen, 1);
+>>  		neloc = oeloc;
+>>  		nelen = (etype << 30) | oelen;
+> 
+> Here, we should check if udf_next_aext() returned error (other than
+> ENODATA) and bail in that case instead of trying to insert new extent.
+> 
+>> @@ -2302,10 +2303,10 @@ int8_t udf_delete_aext(struct inode *inode, struct extent_position epos)
+>>  		adsize = 0;
+>>  
+>>  	oepos = epos;
+>> -	if (udf_next_aext(inode, &epos, &eloc, &elen, 1) == -1)
+>> +	if (udf_next_aext(inode, &epos, &eloc, &elen, &etype, 1))
+>>  		return -1;
+>>  
+>> -	while ((etype = udf_next_aext(inode, &epos, &eloc, &elen, 1)) != -1) {
+>> +	while (!udf_next_aext(inode, &epos, &eloc, &elen, &etype, 1)) {
+>>  		udf_write_aext(inode, &oepos, &eloc, (etype << 30) | elen, 1);
+>>  		if (oepos.bh != epos.bh) {
+>>  			oepos.block = epos.block;
+>> @@ -2379,8 +2380,7 @@ int8_t inode_bmap(struct inode *inode, sector_t block,
+>>  	}
+>>  	*elen = 0;
+>>  	do {
+>> -		etype = udf_next_aext(inode, pos, eloc, elen, 1);
+>> -		if (etype == -1) {
+>> +		if (udf_next_aext(inode, pos, eloc, elen, &etype, 1)) {
+>>  			*offset = (bcount - lbcount) >> blocksize_bits;
+>>  			iinfo->i_lenExtents = lbcount;
+>>  			return -1;
+> 
+> Again, here we need to distinguish ENODATA from other errors so that we
+> don't wrongly consider failure to read extent like EOF.
+> 
+>> diff --git a/fs/udf/truncate.c b/fs/udf/truncate.c
+>> index 91b6e2698e7e..b7361222f988 100644
+>> --- a/fs/udf/truncate.c
+>> +++ b/fs/udf/truncate.c
+>> @@ -85,7 +85,7 @@ void udf_truncate_tail_extent(struct inode *inode)
+>>  		BUG();
+>>  
+>>  	/* Find the last extent in the file */
+>> -	while ((netype = udf_next_aext(inode, &epos, &eloc, &elen, 1)) != -1) {
+>> +	while (!udf_next_aext(inode, &epos, &eloc, &elen, &netype, 1)) {
+>>  		etype = netype;
+>>  		lbcount += elen;
+>>  		if (lbcount > inode->i_size) {
+> 
+> This should be checking for error (after the loop) so that we don't
+> accidentally try to truncate extents early in case of error.
+> 
+>> @@ -101,7 +101,7 @@ void udf_truncate_tail_extent(struct inode *inode)
+>>  			epos.offset -= adsize;
+>>  			extent_trunc(inode, &epos, &eloc, etype, elen, nelen);
+>>  			epos.offset += adsize;
+>> -			if (udf_next_aext(inode, &epos, &eloc, &elen, 1) != -1)
+>> +			if (!udf_next_aext(inode, &epos, &eloc, &elen, &netype, 1))
+>>  				udf_err(inode->i_sb,
+>>  					"Extent after EOF in inode %u\n",
+>>  					(unsigned)inode->i_ino);
+>> @@ -132,13 +132,13 @@ void udf_discard_prealloc(struct inode *inode)
+>>  	epos.block = iinfo->i_location;
+>>  
+>>  	/* Find the last extent in the file */
+>> -	while (udf_next_aext(inode, &epos, &eloc, &elen, 0) != -1) {
+>> +	while (!udf_next_aext(inode, &epos, &eloc, &elen, &etype, 0)) {
+>>  		brelse(prev_epos.bh);
+>>  		prev_epos = epos;
+>>  		if (prev_epos.bh)
+>>  			get_bh(prev_epos.bh);
+>>  
+>> -		etype = udf_next_aext(inode, &epos, &eloc, &elen, 1);
+>> +		udf_next_aext(inode, &epos, &eloc, &elen, &etype, 1);
+>>  		lbcount += elen;
+>>  	}
+>>  	if (etype == (EXT_NOT_RECORDED_ALLOCATED >> 30)) {
+> 
+> Again error checking for above two calls plus here we should not depend on
+> 'etype' value after udf_next_aext() returned error. So we'll need another
+> temporary variable for etype to pass to the first udf_next_aext() call.
+> 
+> Thanks!
+> 
+> 								Honza
 
-.... and only once we have full support can we make "mkfs
-auto-enable atomic writes".
+Will fix them in V2. Thanks.
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
 
