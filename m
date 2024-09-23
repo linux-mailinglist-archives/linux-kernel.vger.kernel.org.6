@@ -1,192 +1,130 @@
-Return-Path: <linux-kernel+bounces-335653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D03C97E893
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:25:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1A2797E894
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:25:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF201281C86
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 09:25:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BB691F21023
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 09:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079D3194C95;
-	Mon, 23 Sep 2024 09:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C6849649;
+	Mon, 23 Sep 2024 09:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="hifkAG4O"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SQ/xTLwC"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6069F194A6B;
-	Mon, 23 Sep 2024 09:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD32194A6F
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 09:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727083490; cv=none; b=HUGuuwdFpm2xAEC2EdnZpP4VmkspwzZogvWC4sxVqKJNxEL5k9N0LVWBT8sfFVjHHMipH8tMPLxD+G6Uq0ne7WbBOuGakal11aT5S7kUmpdnec4K5v722z2aqKcrBE9BTHOxTgmT+ENSbGvSS8sYXsBrob3ECgF2TSIOK2xdoPc=
+	t=1727083513; cv=none; b=BjoCe1mTPqnQNOFlKcUbha4moBXY2t5B3rEdG5f4P/cVTkzK//lQb1+LSRdX+YBDd38jOCDbeY6Y0hUXpAZt8T/leCX86EBjg0Txz1NK+LHac5UUnygiSz/0Zf1rL0hh3DN6Mjj2zsbfCG/jqshde2ZvwATnHyurWOBNcMiEPWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727083490; c=relaxed/simple;
-	bh=6Rte3PyrhZs+j32pYSYLb0k55LfwAfzjlW+LYGza6NI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G77D9Sx3qt9HViSWzIkmcY4W0ZHYW+ZHA9T+8STiGePzs0AavCUmc9V6YayzwWseSCz/GSa924s8zYNAP3lZ08ku/2HPglPUoq061Xz/rDJb2yNY+HCor4oMJry6dbGpCaEVi86mjz/rg9qPkOnKZkm4zSrxKdokZII2BFm4Xxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=hifkAG4O; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id B8722A06C6;
-	Mon, 23 Sep 2024 11:24:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=ogsXffhzydOhG3mdvX0B
-	yhOZWftk1um1Vz/tH8zngCk=; b=hifkAG4OxFZdOYod01dZhg6talcoohz+oPSV
-	+jKKuezsqSj4OTDxiU8F1pqpIz+StQGtrlOSTRFjZ4RGkK6AzU9QB5pT7rFdpbVB
-	hk6oEwuR4d5B39I72BIFCBkUrby4diOGwrXtgY8vOzB5vVFzcQnFndwR358MJfm2
-	LPyA/Z2kHIMbCBXFj2e9pPbunePXC4qj8a+u33FdmQKe9TWqV53bUTjIW4OYG1Jp
-	AlwlHzQVAzQlMF3dwMKocyRqaRp3ItZMKHn0P/3/z8ljSVDbQRmhrK3MBaRoBoDb
-	Z1NpgD9mnp9bxz9IXIf7oulqpci5Uvp/eX54lgcqQv4Ss47OC3vCs0qXb7fPixRI
-	DOjiWa27+1ivwp73ZYcEtWP4VQjlemYGVY1GFS6p92PiBRnq8ZBz+1nptuGqO9MK
-	l7CVYEyyuFxRPSemXxRxY/PTIGFEG+9dpEUXofEIJFr7PbpftpsU00lbbjtiHi7r
-	r9di94WuUeb3cvR9RTYExBsf2BSys759zJxVRCkR80MTmd+u8/LMl6jbjukWEvm4
-	r9Q2sDcIgHpEMsMdMT56XCIqT0P40IdJiO1KDJGm9gvPe8pFqxra/4UhPkjCrEgp
-	+S7W6V/1Hp3y2ttG1EWq91I5lL/NqgWIWi+nUwDb60JfBn03nbrkYFsVSQkt3K19
-	4bZZm84=
-From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
-To: Frank Li <Frank.Li@freescale.com>, "David S. Miller"
-	<davem@davemloft.net>, <imx@lists.linux.dev>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>, Wei Fang
-	<wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, Clark Wang
-	<xiaoning.wang@nxp.com>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Richard Cochran
-	<richardcochran@gmail.com>
-Subject: [PATCH net 2/2] net: fec: Reload PTP registers after link-state change
-Date: Mon, 23 Sep 2024 11:23:48 +0200
-Message-ID: <20240923092347.2867309-2-csokas.bence@prolan.hu>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240923092347.2867309-1-csokas.bence@prolan.hu>
-References: <20240923092347.2867309-1-csokas.bence@prolan.hu>
+	s=arc-20240116; t=1727083513; c=relaxed/simple;
+	bh=v1QHDoOgmexyrfMU9NoNlKhk5cabPz+7ykUd04NhdaA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NIdvNoWPBb1L4YrNXBfObVIgYzDzqChXj/tE/KNJGU290cmdo8u3x7JIEc8RWnNZiVqVaMJTq1fesf/3YaBnaZr+R1b7fnt6ivD4YW1ahXzlQ9xKak8u+1SF1HXJrvu2ejTQCZB3dZVDy542rbt+N7pJqiND5Aj2BvzyRV+0xBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SQ/xTLwC; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-374c4c6cb29so4100342f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 02:25:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727083508; x=1727688308; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zo/inl+dQkj4h/8JHayWlKE13Gh29+Qcnjfcg0oSMnk=;
+        b=SQ/xTLwCGQsvs4JWws03utGCo+MvCOflKzRHQynH9eKeBxYwoJHWy227h1m8Jng2SJ
+         duY/ak6cg3j2RP8ft9aO2gMvobQPr0dFwrnFZIUL/HoDI12Eo52Ne3u4KkyNo4lnzhY6
+         wCGcHv+uXhKcWKpIKxzdK/0RRUvPl+fUuYnrFnQQG+B8RA1IBxQ4gA3LJrCa9EjH0dg4
+         27QIrGxM1YXMtcr10OIMUQYIou9cZUnC2wRp2W4WoGCMO/XzzMCk8HmCxc2Stryn6NX7
+         ROfZ8wtPfDCXBOfaA56occ0Y/i0qjmlV8oUncxQFY5ryZa8D2CRpDiiT5sXaON5gIYxm
+         0olg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727083508; x=1727688308;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zo/inl+dQkj4h/8JHayWlKE13Gh29+Qcnjfcg0oSMnk=;
+        b=eh38vXBJ1WIaEGviMsCtw8ReP0UCf1sQXNeRkWDGMZm62e6Pg67X9ZM8DR25ey5YKS
+         IMN52N7jBqCqLgAb8OalWw663j+Hd7E46qc/yb0PojITmGuxy5eclJMG8oO0nezLdl5/
+         bfAOZbp5bPwqs/LYTimgNJ42l7DnB6/UCmPvkHzc5FlB0C9PRspeIvOIgakemzIkalwL
+         RpBpYzGYVE6ZihiNedRCnqIirD2/p2OduQc9uhYdX5AEFw6QjqB7xIKmCDz1gPb3yr3O
+         BnsvkOEW830O/y71Ln622I1GYlNyDL3CsgYNNQlu1ClwX+RINNJEIKql6pRMrNs5RdKU
+         AhAA==
+X-Forwarded-Encrypted: i=1; AJvYcCVVCVWZdO27oHEQO2dDVVtqAwLPGjVObfzd8p89riFAj21Q6iiRk9lmpXWcgYeQCamMYNp+mKCRRT+tZoI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5eIoL9yYxMdi5K2k0RB/l3cENohSUu6JSSTs/2MXMY9A3OV9t
+	t5zgdtjVtRCGBTysWsfHHLrvYNtwDioe6nIgXfHlWDc1GPbsUjl9QmmVxW74OoKPy6gXKR96HF/
+	eiXey67KbSUuihzvYhXe3WCN8mGMJYapiNni3
+X-Google-Smtp-Source: AGHT+IHx8d58x69Efb/u7PFGAQqvDWRxGlD0tGf0focGcku3t84Rjwu43AOhis6qf2wJYkTXSAOF08RL9gMyuD0uADw=
+X-Received: by 2002:a5d:5585:0:b0:371:8e3c:5c with SMTP id ffacd0b85a97d-37a422532b6mr9309865f8f.7.1727083507425;
+ Mon, 23 Sep 2024 02:25:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240816001216.26575-1-dakr@kernel.org> <20240816001216.26575-14-dakr@kernel.org>
+ <a8c31bce-aac2-4ffe-8fab-2e68c9bab035@proton.me> <ZuIS0lBDyxsxuHwf@cassiopeiae>
+In-Reply-To: <ZuIS0lBDyxsxuHwf@cassiopeiae>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 23 Sep 2024 11:24:54 +0200
+Message-ID: <CAH5fLgh+4QHsiQZmKixhZ+e10fAO-gHfPi0Y8wsWBeiV8gyp0Q@mail.gmail.com>
+Subject: Re: [PATCH v6 13/26] rust: alloc: implement kernel `Vec` type
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Benno Lossin <benno.lossin@proton.me>, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, a.hindborg@samsung.com, akpm@linux-foundation.org, 
+	daniel.almeida@collabora.com, faith.ekstrand@collabora.com, 
+	boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, 
+	zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, 
+	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1727083485;VERSION=7976;MC=1880781835;ID=151753;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A29ACD948546C7466
+Content-Transfer-Encoding: quoted-printable
 
-On link-state change, the controller gets reset,
-which clears all PTP registers, including PHC time,
-calibrated clock correction values etc. For correct
-IEEE 1588 operation we need to restore these after
-the reset.
+On Wed, Sep 11, 2024 at 11:59=E2=80=AFPM Danilo Krummrich <dakr@kernel.org>=
+ wrote:
+>
+> On Tue, Sep 10, 2024 at 08:07:40PM +0000, Benno Lossin wrote:
+> > On 16.08.24 02:10, Danilo Krummrich wrote:
+> > > `Vec` provides a contiguous growable array type (such as `Vec`) with
+> > > contents allocated with the kernel's allocators (e.g. `Kmalloc`,
+> > > `Vmalloc` or `KVmalloc`).
+> > >
+> > > In contrast to Rust's `Vec` type, the kernel `Vec` type considers the
+> > > kernel's GFP flags for all appropriate functions, always reports
+> > > allocation failures through `Result<_, AllocError>` and remains
+> > > independent from unstable features.
+> > >
+> > > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> > > ---
+> > >  rust/kernel/alloc.rs      |   6 +
+> > >  rust/kernel/alloc/kvec.rs | 629 ++++++++++++++++++++++++++++++++++++=
+++
+> > >  rust/kernel/prelude.rs    |   2 +-
+> > >  3 files changed, 636 insertions(+), 1 deletion(-)
+> > >  create mode 100644 rust/kernel/alloc/kvec.rs
+> >
+> > I noticed that you don't have a `pop` or `remove` function implemented,
+> > I think it would be weird to have all the other functions but not those=
+.
+>
+> I'd rather not add them for this series anymore. We can add them in subse=
+quent
+> patches, or wait until they're actually needed.
+>
+> I also already have some subsequent patches in the queue. For instance, i=
+n Nova
+> we'll need `Vec::resize` and `Vec::truncate`.
 
-Fixes: 6605b730c061 ("FEC: Add time stamping code and a PTP hardware clock")
-Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
----
- drivers/net/ethernet/freescale/fec.h      |  7 +++++
- drivers/net/ethernet/freescale/fec_main.c |  4 +++
- drivers/net/ethernet/freescale/fec_ptp.c  | 35 +++++++++++++++++++++++
- 3 files changed, 46 insertions(+)
+When this lands in rust-next, we should open good-first-issues for
+these on the Rust-for-Linux bug tracker.
 
-diff --git a/drivers/net/ethernet/freescale/fec.h b/drivers/net/ethernet/freescale/fec.h
-index afa0bfb974e6..efe770fe337d 100644
---- a/drivers/net/ethernet/freescale/fec.h
-+++ b/drivers/net/ethernet/freescale/fec.h
-@@ -691,11 +691,18 @@ struct fec_enet_private {
- 	/* XDP BPF Program */
- 	struct bpf_prog *xdp_prog;
- 
-+	struct {
-+		u64 ns_sys, ns_phc;
-+		u32 at_corr;
-+		u8 at_inc_corr;
-+	} ptp_saved_state;
-+
- 	u64 ethtool_stats[];
- };
- 
- void fec_ptp_init(struct platform_device *pdev, int irq_idx);
- void fec_ptp_restore_state(struct fec_enet_private *fep);
-+void fec_ptp_save_state(struct fec_enet_private *fep);
- void fec_ptp_stop(struct platform_device *pdev);
- void fec_ptp_start_cyclecounter(struct net_device *ndev);
- int fec_ptp_set(struct net_device *ndev, struct kernel_hwtstamp_config *config,
-diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
-index 6c6dbda26f06..31ebf6a4f973 100644
---- a/drivers/net/ethernet/freescale/fec_main.c
-+++ b/drivers/net/ethernet/freescale/fec_main.c
-@@ -1077,6 +1077,8 @@ fec_restart(struct net_device *ndev)
- 	u32 rcntl = OPT_FRAME_SIZE | 0x04;
- 	u32 ecntl = FEC_ECR_ETHEREN;
- 
-+	fec_ptp_save_state(fep);
-+
- 	/* Whack a reset.  We should wait for this.
- 	 * For i.MX6SX SOC, enet use AXI bus, we use disable MAC
- 	 * instead of reset MAC itself.
-@@ -1338,6 +1340,8 @@ fec_stop(struct net_device *ndev)
- 			netdev_err(ndev, "Graceful transmit stop did not complete!\n");
- 	}
- 
-+	fec_ptp_save_state(fep);
-+
- 	/* Whack a reset.  We should wait for this.
- 	 * For i.MX6SX SOC, enet use AXI bus, we use disable MAC
- 	 * instead of reset MAC itself.
-diff --git a/drivers/net/ethernet/freescale/fec_ptp.c b/drivers/net/ethernet/freescale/fec_ptp.c
-index 54dc3d0503b2..5d9c1040b4b3 100644
---- a/drivers/net/ethernet/freescale/fec_ptp.c
-+++ b/drivers/net/ethernet/freescale/fec_ptp.c
-@@ -764,9 +764,44 @@ void fec_ptp_init(struct platform_device *pdev, int irq_idx)
- 	schedule_delayed_work(&fep->time_keep, HZ);
- }
- 
-+void fec_ptp_save_state(struct fec_enet_private *fep)
-+{
-+	unsigned long flags;
-+	u32 atime_inc_corr;
-+
-+	spin_lock_irqsave(&fep->tmreg_lock, flags);
-+
-+	fep->ptp_saved_state.ns_phc = timecounter_read(&fep->tc);
-+	fep->ptp_saved_state.ns_sys = ktime_get_ns();
-+
-+	fep->ptp_saved_state.at_corr = readl(fep->hwp + FEC_ATIME_CORR);
-+	atime_inc_corr = readl(fep->hwp + FEC_ATIME_INC) & FEC_T_INC_CORR_MASK;
-+	fep->ptp_saved_state.at_inc_corr = (u8)(atime_inc_corr >> FEC_T_INC_CORR_OFFSET);
-+
-+	spin_unlock_irqrestore(&fep->tmreg_lock, flags);
-+}
-+
- /* Restore PTP functionality after a reset */
- void fec_ptp_restore_state(struct fec_enet_private *fep)
- {
-+	u32 atime_inc = readl(fep->hwp + FEC_ATIME_INC) & FEC_T_INC_MASK;
-+	unsigned long flags;
-+	u32 counter;
-+	u64 ns;
-+
-+	spin_lock_irqsave(&fep->tmreg_lock, flags);
-+
-+	writel(fep->ptp_saved_state.at_corr, fep->hwp + FEC_ATIME_CORR);
-+	atime_inc |= ((u32)fep->ptp_saved_state.at_inc_corr) << FEC_T_INC_CORR_OFFSET;
-+	writel(atime_inc, fep->hwp + FEC_ATIME_INC);
-+
-+	ns = ktime_get_ns() - fep->ptp_saved_state.ns_sys + fep->ptp_saved_state.ns_phc;
-+	counter = ns & fep->cc.mask;
-+	writel(counter, fep->hwp + FEC_ATIME);
-+	timecounter_init(&fep->tc, &fep->cc, ns);
-+
-+	spin_unlock_irqrestore(&fep->tmreg_lock, flags);
-+
- 	/* Restart PPS if needed */
- 	if (fep->pps_enable) {
- 		/* Reset turned it off, so adjust our status flag */
--- 
-2.34.1
-
-
+Alice
 
