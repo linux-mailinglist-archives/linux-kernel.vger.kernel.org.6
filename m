@@ -1,184 +1,101 @@
-Return-Path: <linux-kernel+bounces-336289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BD4897F19F
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 22:19:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A833F97F1A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 22:20:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC3F41F22286
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 20:19:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FE461F21DB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 20:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9B319F42B;
-	Mon, 23 Sep 2024 20:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483A21A0BC5;
+	Mon, 23 Sep 2024 20:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="h0rpA66u"
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b="HMrNRSep"
+Received: from mail.rosa.ru (mail.rosa.ru [176.109.80.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8BFF15E88
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 20:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F35415E88;
+	Mon, 23 Sep 2024 20:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.109.80.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727122746; cv=none; b=Dnv+nku3LuETjz7WEu0JgdqNR4+78hcGogT7HWNCYruaYV8eo6yMZJKnNYTdtsoMp9ES1Wpb8Uh/LHF2sCaW5kvKoXwMWx5Rj1MVSTkxrXuB+5UMP16lwBnTeB1I28f0Od17wvTkgZmsJwiqrHOzDN2ZjiUo9F7CuXZXLnV0D6I=
+	t=1727122829; cv=none; b=UBbogO+cBCpiLaFqSpQDB8LI1bahcRegS10mfecXHkChz6enD3AAPo63U49Vme1A0uia45RNoeATHtnoqKWm9ewVHd0wXgX4qT+DjcB5AjKZlWH9CGWJ83mJgqqGoAIXSRbaFoTx1FkQcE48JfF218pB7FmB0ezl6asz4WVi460=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727122746; c=relaxed/simple;
-	bh=/eSZTXDrWxp8WU3PcAncNTF6Ub7hlLotegTJAsNx5NU=;
-	h=Content-Type:Message-ID:Date:MIME-Version:To:Cc:From:Subject; b=Bv3By1fIGUSEmwjOYu+qC9lilYudZ/LYeQh48c516nuv6UtDOYiwA5RTWjUZwQOTtq7dBT85eMtqMGIEl9Cu9Yig9kx3UT2lmxsoCs3rTmcWl3y+qG1jDe1fjJcMa4smxjA8ZE+Am7kuyuu2GO573mUy7zapfCCL/L4IEXa9EjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=h0rpA66u; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-82cec47242eso178616439f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 13:19:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1727122744; x=1727727544; darn=vger.kernel.org;
-        h=subject:from:cc:to:content-language:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=DWGul8N+EZy00peKKJT500hgW+GLPhHSqZNfkf+uAl8=;
-        b=h0rpA66usVBN2vYmrxB77XTaXVwp84kx3DW0yu8BAu702bS+QndSXkaRZo4aKSK/z3
-         0ajTUNjKUilzBhLIzJDbVMvh/65AEq5Bwb+BAhcp3NmNvIhzrzAkhWMohnhOPi4QBQkq
-         nMi74n3TTdaOSqSmtvxy94ak82G9mrFnVzTjM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727122744; x=1727727544;
-        h=subject:from:cc:to:content-language:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DWGul8N+EZy00peKKJT500hgW+GLPhHSqZNfkf+uAl8=;
-        b=Bgrgn0GDIRroXdC+bqMUb7XSuCc0YdAsbFoyeY4xW4BMlc7TuVLcsGre6MClSoRkFd
-         e/f7YRk03PkqKlAlPiZlNhincKcwSWN42srbAOAl7kYATXMEVyyh5WT/Bs4++jNEjVLZ
-         fsIYgnxidAE/UGo+U8ZUOKeg81eR1ASsPXNizPptdacNY+n7IkhS2uqpWNnp7LQOvUpB
-         ItsqeeGgcHnnxL9FM9jM+VFb7U17Mq/Dei139NxAWoG7kabv7ehbfKU7dzo4sBIJ+BJT
-         zLLhdqIeUD2Z5pfihHqbaeuPEmgmDWk0+elTlDjAxBEcen+1u9rI3TfOBaQFSuGdMlEB
-         1dBw==
-X-Forwarded-Encrypted: i=1; AJvYcCWSOTYJRHIFJNdVnT6iqZerVcxkFHVTokmVuhjpAn5BspsaNPtD41iYhlCksLdAphrBiPUJxMGaT+jp+ng=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJoHJ5sNCCBK0phHJ+mtIg4wPaDKFcAxamyFm85O68A+Pzyggj
-	8DsVw/9Q/OrKYOaHOOJ6XeL8JpI+3cxNP9TbHVp+KYOAPAkV/6xaZF0t9NBQ0+g=
-X-Google-Smtp-Source: AGHT+IHAp0QTMm7T/66VhAN9fo2hkuaNPKT29AKjYiwTUac4Fpmd+C6TbAgSOlaKv5WqEeG+sLXybg==
-X-Received: by 2002:a05:6e02:156c:b0:3a0:9030:e70b with SMTP id e9e14a558f8ab-3a1a2fec392mr9011545ab.4.1727122743800;
-        Mon, 23 Sep 2024 13:19:03 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d40f2f6e2asm24140173.154.2024.09.23.13.19.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Sep 2024 13:19:02 -0700 (PDT)
-Content-Type: multipart/mixed; boundary="------------1JnQzwMA3Ss9TTIuQFjlnei6"
-Message-ID: <cf329845-48ee-4b25-9b5a-02a6e2b55e5a@linuxfoundation.org>
-Date: Mon, 23 Sep 2024 14:19:01 -0600
+	s=arc-20240116; t=1727122829; c=relaxed/simple;
+	bh=lGwAoI+n9Yo4xnfmF+vllGL8FK8LhqfP38H5u6NnS6I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PZIbk9udHm+YwYZlbEWM1bZZ49XYcqHJ6NaXYXdO/s7i0ZSoLosMd2oIhas0yZJScwwhugDUV1MzbeuxiEbRrRv36BzJqC9JeEn17zSk2fVkNubMzda0w5b00H1rCrmtan3NdnA99Vo0MQc8TPXMJX773KzUaoDfCaI3TmCP8yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rosa.ru; spf=pass smtp.mailfrom=rosa.ru; dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b=HMrNRSep; arc=none smtp.client-ip=176.109.80.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rosa.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosa.ru
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/simple; d=rosa.ru; s=mail;
+	bh=lGwAoI+n9Yo4xnfmF+vllGL8FK8LhqfP38H5u6NnS6I=;
+	h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From;
+	b=HMrNRSepcaCMaLVvg7L2bfmUgxUNGnRd65MhvZXu5PfDK6P0SSiAbV8vfms7rUQOfT3lrgWRAzb
+	nbVDJGcEvrqgJYchQ80bOclSeZ2U1xKKg1SuIMXO8SB2HOVUOumbCuoBQOOGe+e7uFiye1AJDSgn3
+	mzt5Kfb6nODlHrrdpQ4=
+Received: from [194.9.26.89] (account m.arhipov@rosa.ru HELO localhost.localdomain)
+  by mail.rosa.ru (CommuniGate Pro SMTP 6.4.1j)
+  with ESMTPSA id 135313; Mon, 23 Sep 2024 23:20:21 +0300
+From: Mikhail Arkhipov <m.arhipov@rosa.ru>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Mikhail Arkhipov <m.arhipov@rosa.ru>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Felipe Balbi <balbi@ti.com>,
+	Mike Frysinger <vapier@gentoo.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH v2] usb: gadget: r8a66597-udc: Fix double free in r8a66597_probe
+Date: Mon, 23 Sep 2024 23:20:19 +0300
+Message-Id: <20240923202019.37875-1-m.arhipov@rosa.ru>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: shuah <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Guenter Roeck <linux@roeck-us.net>, "John B. Wyatt IV" <jwyatt@redhat.com>,
- Shuah Khan <skhan@linuxfoundation.org>
-From: Shuah Khan <skhan@linuxfoundation.org>
-Subject: [GIT PULL] [GIT PULL] cpupower fixes for Linux 6.12-rc1
+Content-Transfer-Encoding: 8bit
 
-This is a multi-part message in MIME format.
---------------1JnQzwMA3Ss9TTIuQFjlnei6
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+The function r8a66597_free_request is already called in the err_add_udc
+block, and freeing r8a66597->ep0_req twice may lead to a double free error.
 
-Hi Rafael,
+If the probe process fails and the r8a66597_probe function subsequently
+goes through its error handling path. Since r8a66597_free_request is called
+multiple times in different error handling sections, it leads to an attempt
+to free the same memory twice.
 
-Please pull the following cpupower fixes update for Linux 6.12-rc1.
-Please send this up to Linus if at all possible before the merge
-window closes.
+Remove the redundant call to r8a66597_free_request in the clean_up2 block.
 
-This cpupower fixes update consists fix to raw_pylibcpupower.i being
-removed by "make mrproper". "*.i", "*.o" files are generated during
-kernel compile and removed when the repo is cleaned by mrproper.
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-The file is renamed to use .swg extension instead to avoid the problem.
-The second patch removes references to raw_pylibcpupower.i from .gitignore.
+Fixes: 0f91349b89f3 ("usb: gadget: convert all users to the new udc infrastructure")
+Signed-off-by: Mikhail Arkhipov <m.arhipov@rosa.ru>
+---
+v2: Remove redundant call to r8a66597_free_request in clean_up2 block 
+instead of assigning r8a66597->ep0_req to NULL, as suggested by 
+Sebastian Andrzej Siewior <bigeasy@linutronix.de>.
+ drivers/usb/gadget/udc/r8a66597-udc.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff is attached.
+diff --git a/drivers/usb/gadget/udc/r8a66597-udc.c b/drivers/usb/gadget/udc/r8a66597-udc.c
+index db4a10a979f9..a9b82f371abb 100644
+--- a/drivers/usb/gadget/udc/r8a66597-udc.c
++++ b/drivers/usb/gadget/udc/r8a66597-udc.c
+@@ -1956,9 +1956,6 @@ static int r8a66597_probe(struct platform_device *pdev)
+ 	if (r8a66597->pdata->on_chip)
+ 		clk_disable_unprepare(r8a66597->clk);
+ 
+-	if (r8a66597->ep0_req)
+-		r8a66597_free_request(&r8a66597->ep[0].ep, r8a66597->ep0_req);
+-
+ 	return ret;
+ }
+ 
+-- 
+2.39.3 (Apple Git-146)
 
-thanks,
--- Shuah
-
-----------------------------------------------------------------
-The following changes since commit 80e67f1802d0fc21543216557a68320c71d7dbe1:
-
-   pm:cpupower: Add error warning when SWIG is not installed (2024-09-06 10:58:35 -0600)
-
-are available in the Git repository at:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux tags/linux-cpupower-6.12-rc1-fixes
-
-for you to fetch changes up to 6c56fb4434f59df9c777eded5f77cc812882cef3:
-
-   pm: cpupower: Clean up bindings gitignore (2024-09-23 09:06:03 -0600)
-
-----------------------------------------------------------------
-linux-cpupower-6.12-rc1-fixes
-
-This cpupower fixes update consists fix to raw_pylibcpupower.i being
-removed by "make mrproper". "*.i", "*.o" files are generated during
-kernel compile and removed when the repo is cleaned by mrproper.
-
-The file is renamed to use .swg extension instead to avoid the problem.
-The second patch removes references to raw_pylibcpupower.i from .gitignore.
-
-----------------------------------------------------------------
-John B. Wyatt IV (1):
-       pm: cpupower: Clean up bindings gitignore
-
-Min-Hua Chen (1):
-       pm: cpupower: rename raw_pylibcpupower.i
-
-  tools/power/cpupower/bindings/python/.gitignore                       | 3 +--
-  tools/power/cpupower/bindings/python/Makefile                         | 4 ++--
-  .../bindings/python/{raw_pylibcpupower.i => raw_pylibcpupower.swg}    | 0
-  3 files changed, 3 insertions(+), 4 deletions(-)
-  rename tools/power/cpupower/bindings/python/{raw_pylibcpupower.i => raw_pylibcpupower.swg} (100%)
-----------------------------------------------------------------
---------------1JnQzwMA3Ss9TTIuQFjlnei6
-Content-Type: text/x-patch; charset=UTF-8;
- name="linux-cpupower-6.12-rc1-fixes.diff"
-Content-Disposition: attachment; filename="linux-cpupower-6.12-rc1-fixes.diff"
-Content-Transfer-Encoding: base64
-
-ZGlmZiAtLWdpdCBhL3Rvb2xzL3Bvd2VyL2NwdXBvd2VyL2JpbmRpbmdzL3B5dGhvbi8uZ2l0
-aWdub3JlIGIvdG9vbHMvcG93ZXIvY3B1cG93ZXIvYmluZGluZ3MvcHl0aG9uLy5naXRpZ25v
-cmUKaW5kZXggNWM5YTFmMDIxMmRkLi41MWNiYjg3OTljNDQgMTAwNjQ0Ci0tLSBhL3Rvb2xz
-L3Bvd2VyL2NwdXBvd2VyL2JpbmRpbmdzL3B5dGhvbi8uZ2l0aWdub3JlCisrKyBiL3Rvb2xz
-L3Bvd2VyL2NwdXBvd2VyL2JpbmRpbmdzL3B5dGhvbi8uZ2l0aWdub3JlCkBAIC0xLDggKzEs
-NyBAQAorIyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMC1vbmx5CiBfX3B5Y2Fj
-aGVfXy8KIHJhd19weWxpYmNwdXBvd2VyX3dyYXAuYwogKi5vCiAqLnNvCiAqLnB5CiAhdGVz
-dF9yYXdfcHlsaWJjcHVwb3dlci5weQotIyBnaXQga2VlcHMgaWdub3JpbmcgdGhpcyBmaWxl
-LCB1c2UgZ2l0IGFkZCAtZiByYXdfbGliY3B1cG93ZXIuaQotIXJhd19weWxpYmNwdXBvd2Vy
-LmkKZGlmZiAtLWdpdCBhL3Rvb2xzL3Bvd2VyL2NwdXBvd2VyL2JpbmRpbmdzL3B5dGhvbi9N
-YWtlZmlsZSBiL3Rvb2xzL3Bvd2VyL2NwdXBvd2VyL2JpbmRpbmdzL3B5dGhvbi9NYWtlZmls
-ZQppbmRleCBkYzA5YzViNjZlYWQuLmUxZWJiMWQ2MGNkNCAxMDA2NDQKLS0tIGEvdG9vbHMv
-cG93ZXIvY3B1cG93ZXIvYmluZGluZ3MvcHl0aG9uL01ha2VmaWxlCisrKyBiL3Rvb2xzL3Bv
-d2VyL2NwdXBvd2VyL2JpbmRpbmdzL3B5dGhvbi9NYWtlZmlsZQpAQCAtMjAsMTMgKzIwLDEz
-IEBAIF9yYXdfcHlsaWJjcHVwb3dlci5zbzogcmF3X3B5bGliY3B1cG93ZXJfd3JhcC5vCiBy
-YXdfcHlsaWJjcHVwb3dlcl93cmFwLm86IHJhd19weWxpYmNwdXBvd2VyX3dyYXAuYwogCSQo
-Q0MpIC1mUElDIC1jIHJhd19weWxpYmNwdXBvd2VyX3dyYXAuYyAkKFBZX0lOQ0xVREUpCiAK
-LXJhd19weWxpYmNwdXBvd2VyX3dyYXAuYzogcmF3X3B5bGliY3B1cG93ZXIuaQorcmF3X3B5
-bGliY3B1cG93ZXJfd3JhcC5jOiByYXdfcHlsaWJjcHVwb3dlci5zd2cKIGlmZXEgKCQoSEFW
-RV9TV0lHKSwwKQogCSQoZXJyb3IgInN3aWcgd2FzIG5vdCBmb3VuZC4gTWFrZSBzdXJlIHlv
-dSBoYXZlIGl0IGluc3RhbGxlZCBhbmQgaW4gdGhlIFBBVEggdG8gZ2VuZXJhdGUgdGhlIGJp
-bmRpbmdzLiIpCiBlbHNlIGlmZXEgKCQoSEFWRV9QWUNPTkZJRyksMCkKIAkkKGVycm9yICJw
-eXRob24tY29uZmlnIHdhcyBub3QgZm91bmQuIE1ha2Ugc3VyZSB5b3UgaGF2ZSBpdCBpbnN0
-YWxsZWQgYW5kIGluIHRoZSBQQVRIIHRvIGdlbmVyYXRlIHRoZSBiaW5kaW5ncy4iKQogZW5k
-aWYKLQlzd2lnIC1weXRob24gcmF3X3B5bGliY3B1cG93ZXIuaQorCXN3aWcgLXB5dGhvbiBy
-YXdfcHlsaWJjcHVwb3dlci5zd2cKIAogIyBXaWxsIG9ubHkgY2xlYW4gdGhlIGJpbmRpbmdz
-IGZvbGRlcjsgd2lsbCBub3QgY2xlYW4gdGhlIGFjdHVhbCBjcHVwb3dlciBmb2xkZXIKIGNs
-ZWFuOgpkaWZmIC0tZ2l0IGEvdG9vbHMvcG93ZXIvY3B1cG93ZXIvYmluZGluZ3MvcHl0aG9u
-L3Jhd19weWxpYmNwdXBvd2VyLmkgYi90b29scy9wb3dlci9jcHVwb3dlci9iaW5kaW5ncy9w
-eXRob24vcmF3X3B5bGliY3B1cG93ZXIuc3dnCnNpbWlsYXJpdHkgaW5kZXggMTAwJQpyZW5h
-bWUgZnJvbSB0b29scy9wb3dlci9jcHVwb3dlci9iaW5kaW5ncy9weXRob24vcmF3X3B5bGli
-Y3B1cG93ZXIuaQpyZW5hbWUgdG8gdG9vbHMvcG93ZXIvY3B1cG93ZXIvYmluZGluZ3MvcHl0
-aG9uL3Jhd19weWxpYmNwdXBvd2VyLnN3Zwo=
-
---------------1JnQzwMA3Ss9TTIuQFjlnei6--
 
