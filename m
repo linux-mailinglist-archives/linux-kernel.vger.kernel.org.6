@@ -1,151 +1,128 @@
-Return-Path: <linux-kernel+bounces-335561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB22997E774
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:21:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3B1497E77B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:25:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78E021F21A02
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:21:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BDEB1F21826
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7906519342E;
-	Mon, 23 Sep 2024 08:21:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031E119342D;
+	Mon, 23 Sep 2024 08:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y+u9hkm8"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FXT44RQg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C626101E6;
-	Mon, 23 Sep 2024 08:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C9C101E6;
+	Mon, 23 Sep 2024 08:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727079704; cv=none; b=sa/LzlkimKTJJ6p0OQ+uRikdfa1QVdsj0VuOMoY/LU2CO0ssBdlhNemWTDy76golBqd7lVt9btTda+0CinvLUuCqHzBuDfzeBFRbDSiaqsGNIDhwswKdfSQL5rwbZfrjXxvKMo8LgCUOVGzMvhxvlEUbataGNLvPFGgKv6m0lm0=
+	t=1727079929; cv=none; b=CqJcKOblGp9Ym47wOn5Hkb0UPnfv3Fc+HXnGcXxnGJBUGVoOR4Mu1Gn19X7VFbAO4fcosJDqeq3wzSucMb2CBkLXiKLjhoidJdMf8RbIOLrZAPYtCGq9hvyCeodv6qpa58gUvzU085KWrpVIEw8ciFrdbgLqSu/OfH32TeX88kY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727079704; c=relaxed/simple;
-	bh=AhBArCA00fHDd85KD8nAgXjfaoO4k8Sawy/JQYap8f0=;
+	s=arc-20240116; t=1727079929; c=relaxed/simple;
+	bh=1Cf4C1+sLwIadApLBZyzieaza09oq+YyYQasxL0Ht7w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PBnLORqZgxSWB2wEUHf/OiGtskMaQawonJ4z0lwHfbxgwhxOXzqcDGfUOqJVFrmVncmoBVffBJ+LTrKPpllj+AMkk4mVlbPIWqukBc04szDHUJeE5EipFF/+uGJsOkRUeaoLRDZteIq5LKCHEFDtpBr00X/4gPgl6SOHX6uzlLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y+u9hkm8; arc=none smtp.client-ip=192.198.163.9
+	 Content-Type:Content-Disposition:In-Reply-To; b=pH6lNPvBkHQ8EIEhVMvBTGEs70Lquw3KmB6qJWeV11FZ+GSbxUx0FP2Ok15/VBXIgfjSR+uEplulJrwVkswo0Mffd1bnmrybuCYTZxl+PopqIRN+MsuBXlE2H7s9IWYaux2JVZ2YEVcTMzXoT31dxAcDwlmfnRXeK4JVNWi7CCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FXT44RQg; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727079703; x=1758615703;
+  t=1727079928; x=1758615928;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=AhBArCA00fHDd85KD8nAgXjfaoO4k8Sawy/JQYap8f0=;
-  b=Y+u9hkm8ug9rvoFIfBi7OdViKk/gi7pnYCXzjCDirzUe/vd5lWHtB0TK
-   aobs2efrQa+3lVRjomSiRsIKodyF7oEvOqLfr8Qls6PC1jSXXHSfW6uCp
-   eWRYLgqTNYFNe+KoQkUHYCSqltKvdW+426s+cQz815X5kCceZBeh/ZG5x
-   GzGinrxjnMRhUQ+yxpLBWSqMfivPYVC7Zl0jFy67m8BqUypa62vW1q9DC
-   WCllZ8Vouk+5EDa0ntXrO/s3BZvE8QLdXoNXhn1381gy0Xy7GUKppAktV
-   0/KCZ5UO6/4a6IEiYPy5jIb7pAFdqFzT535VySo0eJaImoRc5u1r3Jdqi
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=1Cf4C1+sLwIadApLBZyzieaza09oq+YyYQasxL0Ht7w=;
+  b=FXT44RQgWegl3MuCXZQCnnEAhloc3RzrkQYQn53xFIdP8ImIFPBKCoyw
+   84RRrEIKD7cDAnEvL51dSf1S34oxv5XLkdTikMPFAlM66dB1mi5H8pLaQ
+   y7Afnyiql03lBS0CoxGZu8TeoSrUZ0XogMgcl6tiCPEfEYuVPa62rU8Fg
+   EQV5iDe+NAjLr1ASmsem1UH2r9GepLj+zZ+MrXqW/R0vql5zintCSKof0
+   78Ew12q2ZlE0Bh3VBc1makkERssIr7RVDuqZH/zNf7UeUyL+oiKGws0vQ
+   kGTDc4pPi3D+a9DblBN7X6uURfUB7t/MRglIxOrQGX1rRa/UpXU4i7FxK
    A==;
-X-CSE-ConnectionGUID: 8xiqCuKFTAayNZGcySTCaQ==
-X-CSE-MsgGUID: bpDB/AuiRmuFlPo/vuVX4w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11202"; a="36680228"
+X-CSE-ConnectionGUID: vQWZpuZlT4+vUhwSVnjrbg==
+X-CSE-MsgGUID: QLM8s8WNS0unzjjyDPWiJg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11202"; a="26108022"
 X-IronPort-AV: E=Sophos;i="6.10,250,1719903600"; 
-   d="scan'208";a="36680228"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 01:21:42 -0700
-X-CSE-ConnectionGUID: 6uBB5GAnQeqQ+IU64FDK+g==
-X-CSE-MsgGUID: H/KDjnfpRy+R0NV1dhzzjw==
+   d="scan'208";a="26108022"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 01:25:27 -0700
+X-CSE-ConnectionGUID: uUOCbsW8TSi11bfKU2Xwtw==
+X-CSE-MsgGUID: X5GI/7SVTMiFcKMxvvSs9g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,250,1719903600"; 
-   d="scan'208";a="71303187"
+   d="scan'208";a="71016318"
 Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 01:21:40 -0700
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 01:25:23 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.98)
 	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sseKA-0000000BtFM-0AKM;
-	Mon, 23 Sep 2024 11:21:38 +0300
-Date: Mon, 23 Sep 2024 11:21:37 +0300
+	id 1sseNj-0000000BtJt-3Lv3;
+	Mon, 23 Sep 2024 11:25:19 +0300
+Date: Mon, 23 Sep 2024 11:25:19 +0300
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Serge Semin <fancer.lancer@gmail.com>
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Viresh Kumar <vireshk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	stable@vger.kernel.org, Ferry Toth <fntoth@gmail.com>
-Subject: Re: [PATCH v3 1/1] dmaengine: dw: Select only supported masters for
- ACPI devices
-Message-ID: <ZvElEesYTX-89u_g@smile.fi.intel.com>
-References: <20240920155820.3340081-1-andriy.shevchenko@linux.intel.com>
- <ajcqxw6in7364m6bp2wncym65mlqf57fxr6pc4aor3xbokx2cu@2wve6fdtu3vz>
+To: Tyrone Ting <warp5tw@gmail.com>
+Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
+	venture@google.com, yuenn@google.com, benjaminfair@google.com,
+	andi.shyti@kernel.org, wsa@kernel.org, rand.sec96@gmail.com,
+	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com,
+	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com,
+	KWLIU@nuvoton.com, JJLIU0@nuvoton.com, kfting@nuvoton.com,
+	openbmc@lists.ozlabs.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 4/6] i2c: npcm: Modify the client address assignment
+Message-ID: <ZvEl77NIpNwtAAow@smile.fi.intel.com>
+References: <20240920101820.44850-1-kfting@nuvoton.com>
+ <20240920101820.44850-5-kfting@nuvoton.com>
+ <Zu2HmkagbpMf_CNE@smile.fi.intel.com>
+ <CACD3sJbD4TuhDwazBwcc4FR2yK40LV=D-mk6VAKwNvxqAHNGLw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ajcqxw6in7364m6bp2wncym65mlqf57fxr6pc4aor3xbokx2cu@2wve6fdtu3vz>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACD3sJbD4TuhDwazBwcc4FR2yK40LV=D-mk6VAKwNvxqAHNGLw@mail.gmail.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Sep 23, 2024 at 01:01:08AM +0300, Serge Semin wrote:
-> On Fri, Sep 20, 2024 at 06:56:17PM +0300, Andy Shevchenko wrote:
+On Mon, Sep 23, 2024 at 09:59:31AM +0800, Tyrone Ting wrote:
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> 於 2024年9月20日 週五 下午10:33寫道：
+> > On Fri, Sep 20, 2024 at 06:18:18PM +0800, warp5tw@gmail.com wrote:
 
 ...
 
-> > Fix the problem by specifying the default master ID for both memory
-> > and peripheral devices in the driver data. Thus the issue noticed for
-> > the iDMA 32-bit controllers will be eliminated and the ACPI-probed
-> > DW DMA controllers will be configured with the correct master ID by
-> > default.
-
-> > ---
-> > v3: rewrote to use driver_data
-> > v2: https://lore.kernel.org/r/20240919185151.7331-1-fancer.lancer@gmail.com
+> > > Store the client address earlier since it might get called in
+> > > the i2c_recover_bus logic flow at the early stage of the func()
+> > > npcm_i2c_master_xfer.
+> >
+> > You got my comment really wrong.
+> >
+> > func() in my example was to refer to _a_ function mentioned in the text.
+> > And IIRC I even posted the example, like: i2c_recover_bus().
 > 
-> IMO v2 looked better for me.
+> So the commit message in next patch set would be like:
 
-I disagree, obviously, since I sent a v3.
-(I can drop your authorship and tags in v4)
+Yes.
 
-> I am sure you know, but Master IDs is a
-> platform-specific thing specific for each slave/peripheral device
-> connected to the DMA controller. Depending on the chip design one
-> peripheral device can be accessed over the one master IDs, another
-> device/memory may have another master connected (can be up to four
-> master IDs in general). That's why the master IDs have been declared
-> in the dw_dma_slave structure.
+> Store the client address earlier since it might get called in
+> the i2c_recover_bus() logic flow at the early stage of
+> npcm_i2c_master_xfer().
+> 
+> The code comment would be like:
 
-Correct.
+Yes!
 
-> So adding them to struct
-> dw_dma_chip_pdata doesn't seem like a good idea seeing it contains the
-> generic DW DMA controller info.
-
-So far there is no evidence that the channels are integrated differently on
-the same DMA controller over all hardware that uses this IP.
-
-> On the contrary my implementation
-> seems a bit more coherent since it just changes the default slave IDs
-> defined in the dw_dma_acpi_filter() method and initialized in the
-> dw_dma_slave instance without adding slave-specific fields to the
-> generic controller data.
-
-The default enumeration for PCI + ACPI or pure ACPI devices is not
-changed with my patch, but actually makes it better (increases granularity).
-The defaults are platform specific and that's what driver_data is for.
-
-While you like your solution, the problem with it that it doesn't cover
-different orders, so it's half-baked solution, I think. Mine doesn't
-change the status quo about integration (see above) and has better approach
-regarding different ordering. Both implementations have a flaw regarding per-channel master configuration.
-
-> What seems like a much better alternative to the both approaches, is
-> to use the dw_dma_slave instance defined in the mrfld_spi_setup()
-> method for the Intel Merrifield SPI PXA2xx DMA-interface in
-> drivers/spi/spi-pxa2xx-pci.c. But AFAICT that data is left unused
-> since the DMA-engine handle and connection parameters are determined
-> by the channel name. Right? Is it possible to make use of the
-> filter-function specified to the dma_request_slave_channel_compat()
-> method?
-
-Unfortunately no, in ACPI case the only data we use is the name (index) of
-the channel in the respective resources. Everything else is done automatically.
+> Previously, the address was stored w/o left-shift by one bit and
+> with that shift in the following call to npcm_i2c_master_start_xmit().
+> 
+> Since there are cases that the i2c_recover_bus() gets called at the
+> early stage of npcm_i2c_master_xfer(), the address is
+> stored with the shift and used in the i2c_recover_bus call().
 
 -- 
 With Best Regards,
