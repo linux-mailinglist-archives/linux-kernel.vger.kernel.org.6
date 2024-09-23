@@ -1,94 +1,111 @@
-Return-Path: <linux-kernel+bounces-335823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D012B97EB35
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:03:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0B3C97EB39
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:04:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AE971F22143
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:03:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C8AE1F222D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:04:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D14C19883C;
-	Mon, 23 Sep 2024 12:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4628199244;
+	Mon, 23 Sep 2024 12:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="e06S7W/Y"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dgr+VP4S"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD17433D6;
-	Mon, 23 Sep 2024 12:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF30199225;
+	Mon, 23 Sep 2024 12:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727092998; cv=none; b=P6nJRaFo1BTx77CQVCtjiwOn5XdmrFH4eEHHVAwbf7GEcABD1x5vDsF6wzy3nOJ5ax10klwkRbWvZH662YFSe/q2AwfqZRtNp+w2E/MvhYndWq94D0OWTb7DBqbbkRTCTRsUCuan59gjPN158kPbO+P3xEj6b/qh7qrypDYyN2A=
+	t=1727093010; cv=none; b=EijbrhOsP9ResJe/tO3yRtOy1G7vOH0oc/M9Cee9zrvLE/KJpfOhvz8N/vlmLwoXKGshN1l7YsVUBJUg5w9dS04zCgsSbFIYBiZrQ6o51h4CLCFA17iOdwjNiqDBMCMD4EzOjlDDcjhVAsKvgHgd+/aMczt9N96K5MQhuYTVjH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727092998; c=relaxed/simple;
-	bh=J6mLGKCQImtW4cmdFCUf+ZR0IT2a9SVu9Hrc7LedkXM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RGh+l9hCACIoYY3mxa3R1lfvV1nmi3CRWAvNL4/JqiGsyugZ7cLlY49wF2OZWXd30KEZ07fCZqq39czqxDWDFsbrYpo8NMe4NOjar5jXvnxfxCb4M6Yik2QD6G6+tvaLkzyzOUj5Cl25NrYl8J6f9o12tlwqlu3YaB2M/uKEInA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=e06S7W/Y; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
-	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=rr9O4oopdmio99+RuTegtMX8fwAtshEZaJECcRoNGIs=; b=e06S7W/YhlvXAYq2TAfmXQhZrn
-	kPFkheoOLmbUh/L1MDt4soFJNiIYC4b6yk1mhr2DWqzT6amo9xAti8ICA4R5RidDtCjmbwn+dG3u3
-	dUmI/Nl6BmchyrGskqo5PAFkxBZUk0pqUXq48i7UeU7xYSbQCibU1OPwc+Sz1CTfTAhmJnb9oq6xz
-	bLzTWKQZhWPYLm5qLBGvzHnKO0Idx0RhGKdqLwisoOAshSuiz4bvoPNT9KxRnel3dYZF1/RhuRwio
-	u1Er0OwpAtuf0wdpXZT/shHK+FMUjoY6M1K0pHnGae5mE1tQtRsbW8DUKH2+A/KkE5mHvcsDSmlv6
-	xpb7EldQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sshmZ-0000000H89d-29AW;
-	Mon, 23 Sep 2024 12:03:11 +0000
-Date: Mon, 23 Sep 2024 05:03:11 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Zhu Yanjun <yanjun.zhu@linux.dev>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Haakon Bugge <haakon.bugge@oracle.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-	Allison Henderson <allison.henderson@oracle.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	OFED mailing list <linux-rdma@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"rds-devel@oss.oracle.com" <rds-devel@oss.oracle.com>
-Subject: Re: [MAINLINE 0/2] Enable DIM for legacy ULPs and use it in RDS
-Message-ID: <ZvFY_4mCGq2upmFl@infradead.org>
-References: <20240918083552.77531-1-haakon.bugge@oracle.com>
- <Zuwyf0N_6E6Alx-H@infradead.org>
- <C00EA178-ED20-4D56-B6F2-200AC72F3A39@oracle.com>
- <Zu191hsvJmvBlJ4J@infradead.org>
- <525e9a31-31ee-4acf-a25c-8bf3a617283f@linux.dev>
+	s=arc-20240116; t=1727093010; c=relaxed/simple;
+	bh=DEujSNE8kA8NV65w//k0ciqJySctHjom9KmancTFR2Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=On60N5Fmzu1vhtAGH3nZLKCVXWSIf+zcffHeGSDv4IS9bEaLgZwT9syPmYhMB0DktIhr5g+Ll9sv9UwxYdgJuMZH1LaPuzwP4ITTLJZWDUEmflYXI56rwQxsy7af1CpkfeRtiDVfyUEZw3hGohBuBmEYc/0JXjkYL0JH0CXcgWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dgr+VP4S; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8a6d1766a7so602065766b.3;
+        Mon, 23 Sep 2024 05:03:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727093007; x=1727697807; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rr9QnQ/SHVC3jB3UzK2Sen0r7Hkeve1Iojahm6TuF8A=;
+        b=dgr+VP4SQ9U5h8+k+a6EsgxgLsM2p6UHWfzC3YNBbWL2n5Ui1U7g77y4I1K3eRZxHF
+         SootqJomo3RwBTcdumJu56pdaICaJPa+JZPMOZycmQQN+wYpCyy5kbI6AgUGnJfJSyu4
+         2rpouNL+5esd45rHBIlkmLLd31XfUiaalvFsdr4gSN6bEEkFGL9t0Fa6ZfLNj3R5bSOy
+         MCqsNaHzMe5L5LQRL4puoEvfzb1W15qrF40u8YdFzbz18CSm71taEuBs4uANieDw3wsf
+         uEmddBy3Cmv6shOxHu44l22ZmtRwY8MgWZ+yzqYFtG7ykcfGy67TufKtUlqP5M7+uWbC
+         /9PA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727093007; x=1727697807;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Rr9QnQ/SHVC3jB3UzK2Sen0r7Hkeve1Iojahm6TuF8A=;
+        b=VJl9mgL31o9fX1x/R6VIMKagQWwbuXSmh+Dwz7UfetqtlnwGi7mEUt9xvLlfZCNKlm
+         oLagZrZRF+CkmHi6p4Paia3PS1prkmxkH2T2q7WVEyLdtF5B9kiN3p2T98tqwwMsUEF4
+         bPJGJFYrdmySKv8JPu20EVHHvumxA3PZFOGUnW2dBPHvRXGDKBiN2k7DpSe5ctFjMp8w
+         mGdoZMsq5kcMNHiuCjb7ZbAnIDEfRCCwj2f4a/SZO0FW8lXa0Y8wppMsOG4a7mi5GAAk
+         imMKN2QwFkf2cTKhmxKxqE1Z5eL7mFPaZd/OvMreKusEum+XSI2HrbE88Alx2fuilsEh
+         Z0OQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKDhL5CFIlr7CkMnAV4ln0rnxaaknoa3ntpbNIjKeEMgDF2b6EuyP2HBMPqIwZCrhl0ekHzi8/ZNpiogo=@vger.kernel.org, AJvYcCWbUsP2ZzfQVjFqyHJ4oZQv6J2He1exNlMj3pop2kYSK0LQajsM5n69j2+5PYLs6qay19tdYQcjhj+wboo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyL3pzKMJ1Evm9a69pEVC0sA2qTnLZ5BSsTN5Au0U8to/mgLfgb
+	YkN8Uxew16Jhci3HIHXlsOFklN0wk07DGs9SXGPlNetNxwS89o6Rn1hNyQ==
+X-Google-Smtp-Source: AGHT+IEd8tPFmHQIiQluni3R+3wOabQk+sCenIypIJCUXuYD75ODe5sssnM+7HL1z5WGglZemg94GQ==
+X-Received: by 2002:a17:907:d59d:b0:a8d:345e:a0ba with SMTP id a640c23a62f3a-a90d4fe65d5mr1102181266b.15.1727093006631;
+        Mon, 23 Sep 2024 05:03:26 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9061096689sm1216210566b.27.2024.09.23.05.03.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2024 05:03:26 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: codecs: aw88399: Fix spelling mistake "unsupport" -> "unsupported"
+Date: Mon, 23 Sep 2024 13:03:25 +0100
+Message-Id: <20240923120325.836918-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <525e9a31-31ee-4acf-a25c-8bf3a617283f@linux.dev>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Sat, Sep 21, 2024 at 10:28:48AM +0800, Zhu Yanjun wrote:
-> 在 2024/9/20 21:51, Christoph Hellwig 写道:
-> > On Fri, Sep 20, 2024 at 09:46:06AM +0000, Haakon Bugge wrote:
-> > > > I would much prefer if you could move RDS off that horrible API finally
-> > > > instead of investing more effort into it and making it more complicated.
-> > > 
-> > > ib_alloc_cq() and family does not support arming the CQ with the IB_CQ_SOLICITED flag, which RDS uses.
-> > 
-> > Then work on supporting it.  RDS and SMC are the only users, so one
-> 
-> Some other open source projects are also the users.
+There is a spelling mistake in a dev_err message. Fix it.
 
-I'm not sure what you mean with "open source projects", but the only
-thing that matters is users in the kernel tree.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ sound/soc/codecs/aw88399.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/codecs/aw88399.c b/sound/soc/codecs/aw88399.c
+index 8dc2b8aa6832..f3d4f13e6aed 100644
+--- a/sound/soc/codecs/aw88399.c
++++ b/sound/soc/codecs/aw88399.c
+@@ -462,7 +462,7 @@ static int aw_dev_set_vcalb(struct aw88399 *aw88399)
+ 					vcal_k * aw88399->vcalb_init_val;
+ 		break;
+ 	default:
+-		dev_err(aw_dev->dev, "%s: unsupport vsense\n", __func__);
++		dev_err(aw_dev->dev, "%s: unsupported vsense\n", __func__);
+ 		ret = -EINVAL;
+ 		break;
+ 	}
+-- 
+2.39.2
 
 
