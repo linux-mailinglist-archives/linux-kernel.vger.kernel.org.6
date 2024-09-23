@@ -1,80 +1,64 @@
-Return-Path: <linux-kernel+bounces-335462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE95997E614
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAF0997E615
 	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:37:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AEA31F2140F
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 06:37:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75EE2B20A9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 06:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D918922071;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 927891C2BF;
 	Mon, 23 Sep 2024 06:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="macbIx5X"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ihmIBQ+z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0738C1FDA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98F112E5B;
 	Mon, 23 Sep 2024 06:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727073453; cv=none; b=FhjzPnz7by4mQ0V975zex9YAPSg6Grx/KqrMporkJTUoAVJxvF3OQMsaA5FFjm0pgOTeoxPD6jl3H7PdBWfUmOsBzFL+EE0hD37cSjnkOBxcR0E/4Xw+iszw2CoXxpvDSd3YcOS/5pRZC2Bl3VvFx3rJ3ImVGLfs7Hx5rzSP7is=
+	t=1727073453; cv=none; b=aPLKXGSMcLkIsL5gkA8LTclI89/sJCmnNR3RtSQCvSjeizk0uG/VLhax5LSY8NekQcN+AurtxhpGoWgIRovJw8N73N4EfgPfqBjjpcm9qc6PlLKjDSR6IUKxmk5CnDsLuM1OAwq0O4ICAC1OTPX0TwCl2zDoreJG2KPYfG72mLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727073453; c=relaxed/simple;
-	bh=BdUfwaShRpCIUiPX3x1kfpQwbXbbeJRSzY1aL5XhBO0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Box+ISHfpK51T8J2KB967fqsYwjQ9NDOpgGvU7kI1ob7t08nMPptj3AgFpkO4nPbTz1TW5lMKPGV/TvcxUsXp2HUJnJybRHkX747YKQhwbrFjO1laikd/arIxY8wKe7GLfoWLgIoZynJSxAlv/aJjtAbrUdUBBpwyOrWGyGWtSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=macbIx5X; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2075cfaf51aso2017285ad.1;
-        Sun, 22 Sep 2024 23:37:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727073451; x=1727678251; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oo3K4ayXoJ6fQC5ULUscoZS9a7XRv1LISxLUkyqDDYA=;
-        b=macbIx5X+cAmtxlxVYgdeyJr4/HvShtYmjj2EvC47/nEOxmkgkctG6mfWrtW/LQ2I2
-         i8nRtXihkbOaEGZpgh9rZ8Ki22AiUITZVR3Tr2wP7YIhFPWTVVOoSVwhtqYc4vkLKyrh
-         X3WQlQ3+pYeE63JxkFG9F6J3o00P4W5VwFmrOPMQZVWzD10pD9zuvKMDfIw6ECj//py8
-         Qvb+j3/Ahg8qaj8GUOo+iHNoV3CAjymRrzpKQmZru5sbxD8fd2Pkrff5AXN1ngvzflC4
-         GtmCw0mrACdZ4Uvk8gwUrSExXVfoRKZg7xQyJYgEDo+xGYL3Q9XvlpyyaUHHSxWTHzYI
-         rmtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727073451; x=1727678251;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oo3K4ayXoJ6fQC5ULUscoZS9a7XRv1LISxLUkyqDDYA=;
-        b=n2krvcgWZ8HvBlucSN5GKVzkc/zu5pe7XKYGHTmuek2cQ3BvtPSVqUz1M70cRhvC33
-         5b0PohBK8vDO6jFczFmjZVkHW1d79Xr+qoKavfOgLpCgJ8y75WZ4JGsaqVmoKkwHO1ua
-         Hod5slYZKGB+90UeGdahN4xXIPVMozJS7yO0GoSHIysOrzV2ALPBLormtFFrLh7BjGMF
-         StF1pUu9VomdJ1EITaAL8mZpROHk/VH22utLBMXmaoohS9i8gFFpkycOCvH/r7lPc5T5
-         ruVkAE8PuQOMPYb+g8TU0OHxiIj6Y7YII+2JhsURP1TYx2mX2VlDipSMUYB37oJ984PA
-         QIvg==
-X-Forwarded-Encrypted: i=1; AJvYcCWlSijPMrBdIjoloZrjU5GHnPJd3iyMypYsgBkXo51c7Rlc5uXnvRYtDU5izuU1J04H3uLTtIcRDCGenSbAlZ9V1d2A@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4Vzjs66iD3ex7R68EFa8E5Th15fA9GNEoMKQlIQNJH8Imkw14
-	Eb010EX+vXlFs9FkjlFeTg391vP6PyWKJ+p2cm8JtcvKnqdE7L3P
-X-Google-Smtp-Source: AGHT+IHRej+xZxJY1YT8QKCP/0dXnDf6rIbDgHPxErBA3W6OSjZc1KtOezbp5UKXYwMTaKV8mg8D3g==
-X-Received: by 2002:a17:903:228c:b0:207:5e6d:ae4 with SMTP id d9443c01a7336-208d8442957mr66525905ad.11.1727073451192;
-        Sun, 22 Sep 2024 23:37:31 -0700 (PDT)
-Received: from crlab-Precision-7670.. (2001-b400-e3fc-89df-e906-eb7e-4d7f-9cf6.emome-ip6.hinet.net. [2001:b400:e3fc:89df:e906:eb7e:4d7f:9cf6])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-207945da58csm126909105ad.37.2024.09.22.23.37.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Sep 2024 23:37:30 -0700 (PDT)
-From: Crag Wang <crag0715@gmail.com>
-X-Google-Original-From: Crag Wang <crag_wang@dell.com>
-To: prasanth.ksr@dell.com,
-	hdegoede@redhat.com,
-	Dell.Client.Kernel@dell.com
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	platform-driver-x86@vger.kernel.org,
-	Crag Wang <crag_wang@dell.com>
-Subject: [PATCH] platform/x86: dell-sysman: add support for alienware products
-Date: Mon, 23 Sep 2024 14:36:51 +0800
-Message-ID: <20240923063658.411071-1-crag_wang@dell.com>
+	bh=YU5IHHmdIwhRVsCe/Ns40p8QPGMWO6o0pZ2uibjaigM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q/DSl2TTvaIVwDLJb3AkP3UzOqtAC5okA276b84SzpNSCfHBPbX/qKRcmAjhOVw6wnqIR5apy2grVg3sRVv08aXzY93vkvutT40GGfRHgK//JiOArsx7gF3h7MMM0OlQVY3AhHIPjdpHPGBmoSyrUahbaqaYLawzGGjYsffqjdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ihmIBQ+z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 874E1C4CEC4;
+	Mon, 23 Sep 2024 06:37:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727073451;
+	bh=YU5IHHmdIwhRVsCe/Ns40p8QPGMWO6o0pZ2uibjaigM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ihmIBQ+zGDDXAyKxoZWjS7S63fCG7SqoU0IcFRn7pV3iCPR6CScg4eMUtrGrstZKu
+	 54no9xbdAL4wzBtbf9pDq6wB5nWIjuuLQcTlr3DMWCNDqS78Z1LJ3m0lTqEKk5Hi6x
+	 c8htul2IhYQOltrFn85mNzcrRG68GC/HUUf4+fzySgIPBUyHdi6X2kXc5mEyPtnzm+
+	 QMmhdhLqPvtpaCMrlhDgPO/YcMzqNtH4mgz4hZ7ZafJqyBfhoRrkXSgjfoA4X07q2B
+	 sxkKbSQDlUaaDYCBRYKiCYGj01K+MpkyJLWom4Brw6ITnhpBaJPZi5X2aGrOnUL9qL
+	 FDo0V3YvzpouQ==
+From: Mike Rapoport <rppt@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mike Rapoport <rppt@kernel.org>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	David Hildenbrand <david@redhat.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Wei Yang <richard.weiyang@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-s390@vger.kernel.org
+Subject: memblock: updates for 6.12-rc1
+Date: Mon, 23 Sep 2024 09:37:07 +0300
+Message-ID: <20240923063707.40017-1-rppt@kernel.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -84,49 +68,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use SMBIOS Type 1 manfacturer instead OEM strings to verify product
-compatibility. Also, add Alienware products to the support scope.
+Hi Linus,
 
-Signed-off-by: Crag Wang <crag_wang@dell.com>
----
- .../x86/dell/dell-wmi-sysman/sysman.c         | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+The following changes since commit de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed:
 
-diff --git a/drivers/platform/x86/dell/dell-wmi-sysman/sysman.c b/drivers/platform/x86/dell/dell-wmi-sysman/sysman.c
-index 9def7983d7d6..2f3f7e307b29 100644
---- a/drivers/platform/x86/dell/dell-wmi-sysman/sysman.c
-+++ b/drivers/platform/x86/dell/dell-wmi-sysman/sysman.c
-@@ -516,12 +516,27 @@ static int init_bios_attributes(int attr_type, const char *guid)
- 	return retval;
- }
- 
-+static const struct dmi_system_id sysman_dev_table[] __initconst = {
-+	{
-+		.ident = "Dell Inc.",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+		},
-+	},
-+	{
-+		.ident = "Alienware",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
-+		},
-+	},
-+	{}
-+};
-+
- static int __init sysman_init(void)
- {
- 	int ret = 0;
- 
--	if (!dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Dell System", NULL) &&
--	    !dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "www.dell.com", NULL)) {
-+	if (!dmi_check_system(sysman_dev_table)) {
- 		pr_err("Unable to run on non-Dell system\n");
- 		return -ENODEV;
- 	}
--- 
-2.43.0
+  Linux 6.11-rc2 (2024-08-04 13:50:53 -0700)
 
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/rppt/memblock tags/memblock-v6.12-rc1
+
+for you to fetch changes up to cb088e38aab4c7e9ce711c18c66e851c8f4227bb:
+
+  s390/mm: get estimated free pages by memblock api (2024-08-11 19:19:07 +0300)
+
+----------------------------------------------------------------
+memblock: updates for 6.12-rc1
+
+* new memblock_estimated_nr_free_pages() helper to replace totalram_pages()
+  which is less accurate when CONFIG_DEFERRED_STRUCT_PAGE_INIT is set
+* fixes for memblock tests
+
+----------------------------------------------------------------
+Wei Yang (11):
+      memblock tests: include memory_hotplug.h in mmzone.h as kernel dose
+      memblock tests: include export.h in linkage.h as kernel dose
+      tools/testing: abstract two init.h into common include directory
+      memblock test: fix implicit declaration of function 'virt_to_phys'
+      memblock test: add the definition of __setup()
+      memblock test: fix implicit declaration of function 'memparse'
+      memblock test: fix implicit declaration of function 'isspace'
+      memblock test: fix implicit declaration of function 'strscpy'
+      mm/memblock: introduce a new helper memblock_estimated_nr_free_pages()
+      kernel/fork.c: get estimated free pages by memblock api
+      s390/mm: get estimated free pages by memblock api
+
+ arch/s390/mm/init.c                              |  2 +-
+ include/linux/memblock.h                         |  1 +
+ kernel/fork.c                                    |  2 +-
+ mm/memblock.c                                    | 17 ++++++++
+ tools/include/linux/compiler.h                   |  4 --
+ tools/{testing/memblock => include}/linux/init.h | 19 ++++++---
+ tools/include/linux/linkage.h                    |  2 +
+ tools/include/linux/mm.h                         |  6 +++
+ tools/include/linux/pfn.h                        |  1 +
+ tools/include/linux/string.h                     |  3 ++
+ tools/lib/cmdline.c                              | 53 ++++++++++++++++++++++++
+ tools/testing/memblock/Makefile                  |  2 +-
+ tools/testing/memblock/linux/kernel.h            |  2 +
+ tools/testing/memblock/linux/mmzone.h            |  1 +
+ tools/testing/radix-tree/linux/init.h            |  2 -
+ tools/testing/radix-tree/maple.c                 |  2 +-
+ 16 files changed, 104 insertions(+), 15 deletions(-)
+ rename tools/{testing/memblock => include}/linux/init.h (76%)
+ create mode 100644 tools/lib/cmdline.c
+ delete mode 100644 tools/testing/radix-tree/linux/init.h
 
