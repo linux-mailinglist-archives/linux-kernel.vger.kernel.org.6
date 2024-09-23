@@ -1,177 +1,105 @@
-Return-Path: <linux-kernel+bounces-336371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3E07983A63
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 01:20:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2559983A43
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 01:16:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C190D282C0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 22:42:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13C14B22355
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 23:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0991284A4E;
-	Mon, 23 Sep 2024 22:41:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF05126C0B;
+	Mon, 23 Sep 2024 23:16:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TkVopzGh"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QIAk09aN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A40D2907;
-	Mon, 23 Sep 2024 22:41:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1EB23DE
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 23:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727131313; cv=none; b=uQLnASsUYdWd01hzh9GbnjCYnM1j+VRciXnwDVvNi7CFnezYdgufQNMBUhXFzpSbHFnD/XDXprq2Aje1rH+GFsIP52XUaxILQ7K+vDaiuL0s9Rj7N0mnnhL8g7gEuRK+hnfTIUpZBoYGCCmV1WHsOzK9/92XSqLbnBkyrBb9S1I=
+	t=1727133388; cv=none; b=ZwMnP8r2PcRi/IvKLu0JukoVSoUuSdMdD7p0vW15fjvCU7Bt62u5X7TIY5rwn5073/H7gwnLUNWamAucuiweCPQ43R92l0OGBiHaEKr2epa0fmoRjV0iyXPuMluu2EFZB7O2qz6gHCE3xTMo8TcdiB/e+03CFfTBhSDKMqVea5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727131313; c=relaxed/simple;
-	bh=acQ5Pnzd1240AHA1UDSkE0rzkawSJCtsodK0HhGjupY=;
+	s=arc-20240116; t=1727133388; c=relaxed/simple;
+	bh=ElxzDnHDm+cQyLjqxzn0fvBfDC2loxlsAlEw4+uXM+w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vGpc6bE+aHrN8X1b+450kZHweTtmlekUHuJIICa/JsA0DhPsAZ7JYR3Heqd3AENnLhbjiuVVVTiaFUXjOz8CdF3a2oipG1l9DQHplaYTtALyQ8yPmStkRk1kGTCYFcK+B/nrYYUYNP9dIPg/cDpeF3lXd+jEoUKeR2dSYUUZfxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TkVopzGh; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c5bca6603aso2074085a12.1;
-        Mon, 23 Sep 2024 15:41:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727131310; x=1727736110; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0mLSVu9L4HSBxCS6PoRCoaDYO+/BcP/6sIijJJk1cM4=;
-        b=TkVopzGhojoWJZuP+5q2nf/+m81FlUchh8AY2jqVjk3mUSdlfWBwfSSJ6wbtxEfSLM
-         GAm7t3oJTn2k7E3pxXiLyzXnpHcotVND13GmApvnmREXKCOpS/0bkqQ7z90HV1Y13S+j
-         ZPRftuLD3deE77LOft//aWVbf/MhXBPcF97PRkKFA5FuJ/7lZLDNUVHI/MJDzHdMtAkT
-         5NGGKp3S3QCKSqXwMPxk/wOnrEUiuyA7V/ii6t/30a82+9LfP/ihWk2jMWiZhONwBOjj
-         g1n/Vwa8m/ygvsuxHfilxWyjrh6hjCnRC2SptGSye6oYrxDHIBcVi5wjTbSZHozI7vAq
-         rzkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727131310; x=1727736110;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0mLSVu9L4HSBxCS6PoRCoaDYO+/BcP/6sIijJJk1cM4=;
-        b=uTwg9rJlurmOd3p9C57Y4C063kAxqcBuF07A2GohvQkfLcP+WQe2LW5aJYR0DwdiAV
-         QJZrL9Ru+S+eOP1RI0JAdRI748cg97/sEdSpOB0f8ARquRPQStCLHrC4IwQDRVHPUjwh
-         mZeaNVw4/CiAFz/SHUlw+J7y21+7+PkWFVHULkjzprUJSSqTsX/4k1V2uV0ObvHHLFON
-         lwguJujN9prhTqT9ZssENo071du1KWDmqSwdrx1zv7al4Ay/xu+cujuZZw9QevgS1leQ
-         OW5WxgZmemZqMe/c8qEyd3E/iHjKHf/aa3HNHEqOczmWQ3bIf4ynbR5h84hPCkRXg/gI
-         G/Yw==
-X-Forwarded-Encrypted: i=1; AJvYcCUC1pVPZT0lnxnFXgeEftVnoa4ofO8UArHdZoTUxg3bYD8zOUbCw6RjlT6xU/VYDIUp5trKIjKk@vger.kernel.org, AJvYcCUEZ6eTozMzu/XR43mO0Zl1w8nGWGGrengDCE+A18ZuGpOlvem7Nm8az41FPLFsI1cBbHYmK6hwETNlMg==@vger.kernel.org, AJvYcCVR5aVbxawMg5TDIrPQVYiVQBdvJCxIvoYDoP5cPPOfdf3Q4fw0o6rsrU4HzuhxD8fluF1Spj3ga51yrRP+@vger.kernel.org
-X-Gm-Message-State: AOJu0YwL6fZASkRobU/VtdTscwgHbHHDM0IvPsW0QA3B7GdVflqSIi9Y
-	W09uzpJQJMjj3D5h+LRD9joH04fLjO2ZZyaen0OGIl11dELN2lAc
-X-Google-Smtp-Source: AGHT+IF5GT9BxceuPGXm9hIQeBh6VgNixEhx7RT03nonjeZH/Lkby1khb/iWWCk6+GdsPoYKqOE8PQ==
-X-Received: by 2002:a17:907:9450:b0:a8d:7b7d:8c39 with SMTP id a640c23a62f3a-a90d59266demr1315351666b.43.1727131309679;
-        Mon, 23 Sep 2024 15:41:49 -0700 (PDT)
-Received: from localhost ([94.19.228.143])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9393134c33sm8770666b.197.2024.09.23.15.41.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 15:41:48 -0700 (PDT)
-Date: Tue, 24 Sep 2024 01:41:48 +0300
-From: Andrey Skvortsov <andrej.skvortzov@gmail.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>,
-	Minchan Kim <minchan@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v3] zram: don't free statically defined names
-Message-ID: <ZvHurCYlCoi1ZTCX@skv.local>
-Mail-Followup-To: Andrey Skvortsov <andrej.skvortzov@gmail.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>,
-	Minchan Kim <minchan@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-	stable@vger.kernel.org
-References: <20240923164843.1117010-1-andrej.skvortzov@gmail.com>
- <c8a4e62e-6c24-4b06-ac86-64cc4697bc2f@wanadoo.fr>
+	 Content-Type:Content-Disposition:In-Reply-To; b=D8DXcrOcz/xjzDQlSZB9f8eS94NpXQLeaeuP8nbkEWgLZENq6PXTPSRv+93sJdNNQmL41QE/DEpR2YyQbUh93t4QiLIY251iqfdF+jalBgYLFW4fepV3hp008cAN+l/ujiBQLie+ffU/x32XWXZLmiEvQwi1NyrruKWX45xbGts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QIAk09aN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D394BC4CEC4;
+	Mon, 23 Sep 2024 23:16:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727133388;
+	bh=ElxzDnHDm+cQyLjqxzn0fvBfDC2loxlsAlEw4+uXM+w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QIAk09aNXrgSIqDhOwqbW5TSzHJceiq2OvRtRjoJIV+pU9cWfV3h939PQuxFlDmDY
+	 veZG5CHSRPpJiYhXmXBw+NSDQDRJC6HGbUhAdUgRPjM4ItAaVqKXkk4VRe46Xyi3Pp
+	 IeCJKJnT5dWPRh7i3pePB4wZersiPclxnwRydRAhQyZkVExnN709Zv8uWnTBfNkQy8
+	 1r4ZWTPWQ6OFKG3zoH4jFNE8IlgS6T+B9AWUWhwdb+te0JdEEC4b/m7syxC7eDLeQM
+	 nFHZ152WgWZzcgPHxq4Coh1Bd6AxXLMM5TnkKEj2Hza/qFSKNs7OLvpJtLDG1Twmgg
+	 UibhAQ8BhhLuA==
+Date: Tue, 24 Sep 2024 01:16:24 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Matthew Brost <matthew.brost@intel.com>
+Cc: Philipp Stanner <pstanner@redhat.com>, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Luben Tuikov <ltuikov89@gmail.com>,
+	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+Subject: Re: [PATCH] MAINTAINERS: drm/sched: Add new maintainers
+Message-ID: <ZvH2yIsPIbDXN-_r@pollux.localdomain>
+References: <20240916185159.35727-3-pstanner@redhat.com>
+ <ZuiP/4AzCNnoaDZ/@DUT025-TGLU.fm.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <c8a4e62e-6c24-4b06-ac86-64cc4697bc2f@wanadoo.fr>
+In-Reply-To: <ZuiP/4AzCNnoaDZ/@DUT025-TGLU.fm.intel.com>
 
-On 24-09-23 19:40, Christophe JAILLET wrote:
-> Le 23/09/2024 à 18:48, Andrey Skvortsov a écrit :
-> > When CONFIG_ZRAM_MULTI_COMP isn't set ZRAM_SECONDARY_COMP can hold
-> > default_compressor, because it's the same offset as ZRAM_PRIMARY_COMP,
-> > so we need to make sure that we don't attempt to kfree() the
-> > statically defined compressor name.
+On Mon, Sep 16, 2024 at 08:07:27PM +0000, Matthew Brost wrote:
+> On Mon, Sep 16, 2024 at 08:52:00PM +0200, Philipp Stanner wrote:
+> > DRM's GPU scheduler is arguably in need of more intensive maintenance.
+> > Danilo and Philipp volunteer to help with the maintainership.
 > > 
-> > This is detected by KASAN.
+> > Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+> > Cc: Christian K�nig <christian.koenig@amd.com>
+> > Cc: Luben Tuikov <ltuikov89@gmail.com>
+> > Cc: Matthew Brost <matthew.brost@intel.com>
+> > Cc: Danilo Krummrich <dakr@kernel.org>
+> > Cc: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
 > > 
-> > ==================================================================
-> >    Call trace:
-> >     kfree+0x60/0x3a0
-> >     zram_destroy_comps+0x98/0x198 [zram]
-> >     zram_reset_device+0x22c/0x4a8 [zram]
-> >     reset_store+0x1bc/0x2d8 [zram]
-> >     dev_attr_store+0x44/0x80
-> >     sysfs_kf_write+0xfc/0x188
-> >     kernfs_fop_write_iter+0x28c/0x428
-> >     vfs_write+0x4dc/0x9b8
-> >     ksys_write+0x100/0x1f8
-> >     __arm64_sys_write+0x74/0xb8
-> >     invoke_syscall+0xd8/0x260
-> >     el0_svc_common.constprop.0+0xb4/0x240
-> >     do_el0_svc+0x48/0x68
-> >     el0_svc+0x40/0xc8
-> >     el0t_64_sync_handler+0x120/0x130
-> >     el0t_64_sync+0x190/0x198
-> > ==================================================================
-> > 
-> > Signed-off-by: Andrey Skvortsov <andrej.skvortzov@gmail.com>
-> > Fixes: 684826f8271a ("zram: free secondary algorithms names")
-> > Cc: <stable@vger.kernel.org>
+> 
+> Acked-by: Matthew Brost <matthew.brost@intel.com>
+
+Applied to drm-misc-fixes.
+
+> 
 > > ---
+> >  MAINTAINERS | 2 ++
+> >  1 file changed, 2 insertions(+)
 > > 
-> > Changes in v2:
-> >   - removed comment from source code about freeing statically defined compression
-> >   - removed part of KASAN report from commit description
-> >   - added information about CONFIG_ZRAM_MULTI_COMP into commit description
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 10430778c998..fc2d8bf3ee74 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -7710,6 +7710,8 @@ F:	drivers/gpu/drm/xlnx/
+> >  DRM GPU SCHEDULER
+> >  M:	Luben Tuikov <ltuikov89@gmail.com>
+> >  M:	Matthew Brost <matthew.brost@intel.com>
+> > +M:	Danilo Krummrich <dakr@kernel.org>
+> > +M:	Philipp Stanner <pstanner@redhat.com>
+> >  L:	dri-devel@lists.freedesktop.org
+> >  S:	Maintained
+> >  T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
+> > -- 
+> > 2.46.0
 > > 
-> > Changes in v3:
-> >   - modified commit description based on Sergey's comment
-> >   - changed start for-loop to ZRAM_PRIMARY_COMP
-> > 
-> > 
-> >   drivers/block/zram/zram_drv.c | 6 ++++--
-> >   1 file changed, 4 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-> > index c3d245617083d..ad9c9bc3ccfc5 100644
-> > --- a/drivers/block/zram/zram_drv.c
-> > +++ b/drivers/block/zram/zram_drv.c
-> > @@ -2115,8 +2115,10 @@ static void zram_destroy_comps(struct zram *zram)
-> >   		zram->num_active_comps--;
-> >   	}
-> > -	for (prio = ZRAM_SECONDARY_COMP; prio < ZRAM_MAX_COMPS; prio++) {
-> > -		kfree(zram->comp_algs[prio]);
-> > +	for (prio = ZRAM_PRIMARY_COMP; prio < ZRAM_MAX_COMPS; prio++) {
-> > +		/* Do not free statically defined compression algorithms */
-> > +		if (zram->comp_algs[prio] != default_compressor)
-> > +			kfree(zram->comp_algs[prio]);
 > 
-> Hi,
-> 
-> maybe kfree_const() to be more future proof and less verbose?
-
-kfree_const() will not work if zram is built as a module. It works
-only for .rodata for kernel image. [1]
-
-1. https://elixir.bootlin.com/linux/v6.11/source/include/asm-generic/sections.h#L177
-
--- 
-Best regards,
-Andrey Skvortsov
 
