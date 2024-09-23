@@ -1,117 +1,157 @@
-Return-Path: <linux-kernel+bounces-336384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38DEB9839E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 01:05:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8128983A08
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 01:09:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D60B71F22C4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 23:05:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83FBD282B67
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 23:09:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D40126BE7;
-	Mon, 23 Sep 2024 23:05:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BFA012DD88;
+	Mon, 23 Sep 2024 23:09:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="RPVr1/rm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="UF/00oAN"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65332EBE;
-	Mon, 23 Sep 2024 23:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727132741; cv=none; b=b+2IEGFSV43a/SKX39ME203QLRfjdG3QigZOV4z7DU2DnL1GN5VN8yKBaZkIGc3fIS25m5D7J7P2Arj+kAvbLrd+nmG8ETgCBorjh6v7MAXoJVvdNVVxydhQC2TQH+BHImwW2O25I6PJREpX13vpWA92kdEvHZbmAfv7dBFOM3Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727132741; c=relaxed/simple;
-	bh=0O6PtROxadZrY/VAcyyyw9Np/jYoGHj6QI/nNVeXILo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lvAHHRKoDNPMwN8Eq15fjIacaagVgEr1HTH0xDC3xbTz9HSq/D2q8oUVx3XdchHKcE8qAaM6IqpqvQ0vcIhnfKk+tsjQ4Add0g6Zi8j9tdd5uCBbmc9P9FR/MuHRg62awu4ZP0xdijS/bx110DBfvL4qzfHMIu2wrBtFIbxggjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=RPVr1/rm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12C89C4CEC4;
-	Mon, 23 Sep 2024 23:05:38 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="RPVr1/rm"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1727132737;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5BZ/LKuy4JUAxkCxQ7w2V85f9H0J8TJTm3lbIAOw3TI=;
-	b=RPVr1/rmQkiFFZmwEAEGwQ0hr7hRSCwHhoQiMrMWvFmxgkNs3jJ7HaTbTKUZURFBkafIpK
-	08R2gMJKzesQcloQtqFCdhcivSdF4L8PMxIwzjSe2SeSw4Y3ym7Lx0DRq6ABFLk5gm64h4
-	MNmvE9iqKM7GieSVt00jnmiPN48918E=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id e7ef6b0d (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Mon, 23 Sep 2024 23:05:36 +0000 (UTC)
-Date: Tue, 24 Sep 2024 01:05:33 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-mm@kvack.org, Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH v2 1/8] x86: vdso: Introduce asm/vdso/mman.h
-Message-ID: <ZvH0PdVy5jJN3VTt@zx2c4.com>
-References: <20240923141943.133551-1-vincenzo.frascino@arm.com>
- <20240923141943.133551-2-vincenzo.frascino@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B5712D1FA;
+	Mon, 23 Sep 2024 23:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727132982; cv=pass; b=CyR1w5Clms2WAM6DBkRtmu/xnMHbOgC+4jd6xNfWOm3KpT+UDTCprVH0KSk2ViojwqGartFZpBRIO/YRkG5mBU534x+WjpN7Hu3i/Byrl/eNRewc1/lh8DzNGTmTCXyzzFpGTQVX7N5+fkVRFrv3BwYaeMoYOP/2Tdt2Kuk3Y6g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727132982; c=relaxed/simple;
+	bh=c06FO/kcN5ebzIo8Lxctzj0SeQk61xZa4CP6vGcIkP0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bLw8MC4x5RWMEKSn7OwBXnYZwRiVbzitvGoGbJ7P+GE4XReydFO0hcn5mts7oLf7xOxR1v/a7364S9CIQ0D+OTgev5sQc0vYfub3pAmednGFGQVVoeVikPQZ+MXsiPnaV7evNERNlKHY5vGPHaF4qSxS703HiNRamexfiP5wyUw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=UF/00oAN; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1727132966; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=FJ1NhH7uhig/MkZYlgjPcBD2ITFFRjkTTkCvTNt8aqGo0TP1LtNSzpsitJqDIPdmYBvaohSCE4LU31HrE7CAMbgKIeCd18hfo+jKtJXFaO2wNZxuBJCCxnrrY2kYj85v84WCn/QJpBXeqhQAhvInSndj6OrUpoq806f8C6plH4Y=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1727132966; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=EXwo6vgrQS8r/knP9TPY91FMXiIzo7plKOoU5Yr1Wgg=; 
+	b=duJFrNW3xskG5n3NJAzBzlBQE8e4H5vTnE3v7u6T8l3640ZWcz7fQ0x4ZBkxZL//wjBtWjszpn63mSorw5WElg03yKCaDvyGA3AvTsxDo64Bo2gdwpbejwXti294yEqoGD9Ti2FkIlI0rd9AmOhJ+IGFxyqXwIkpQvYOn54QdW4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1727132966;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=EXwo6vgrQS8r/knP9TPY91FMXiIzo7plKOoU5Yr1Wgg=;
+	b=UF/00oANFDVYlSsiKjV8pabqKMAMn1id+JyX9LW7lq9ahT+MoSYR40DrDhyGJuaa
+	Ru6/QwyskRXp2mVf/Rpoou75+Ct1Ed2gYhzo2VFmJRygALmVTLSy6UIsYUre9hxxFmF
+	nGbD9O8xMxk62UU5V+35tZjKiaf7RQgP4DuC4wJs=
+Received: by mx.zohomail.com with SMTPS id 1727132963748614.7582038696082;
+	Mon, 23 Sep 2024 16:09:23 -0700 (PDT)
+From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: kernel@collabora.com,
+	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org
+Subject: [PATCH v8 0/5] Support fdinfo runtime and memory stats on Panthor
+Date: Tue, 24 Sep 2024 00:06:20 +0100
+Message-ID: <20240923230912.2207320-1-adrian.larumbe@collabora.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240923141943.133551-2-vincenzo.frascino@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi,
+This patch series enables userspace utilities like gputop and nvtop to query a
+render context's fdinfo file and figure out rates of engine and memory utilisation.
 
-I have the feeling I said this in the last two revisions, but maybe I
-just thought it or agreed with somebody else who typed it but never
-typed it myself, so now I'm typing it in no uncertain terms.
+Previous discussion can be found at
+https://lore.kernel.org/dri-devel/20240920234436.207563-1-adrian.larumbe@collabora.com/
 
-On Mon, Sep 23, 2024 at 03:19:36PM +0100, Vincenzo Frascino wrote:
-> +#define VDSO_MMAP_PROT	PROT_READ | PROT_WRITE
-> +#define VDSO_MMAP_FLAGS	MAP_DROPPABLE | MAP_ANONYMOUS
+Changelog:
+v8:
+ - Fixed uninitialised stack variable bug that was triggering an invalid memory reference.
+ - Added a few R-b tags to commits
+v7:
+ - Fixed some kernel test bot-reported documentation and sign mismatch errors.
+ - Defined convenience macros for specifying CS instructions according to their profiled status.
+ - Explicitly initialised instruction count for structure containing a job's
+ instructions when calculating its amount of credits for the scheduler.
+ - Some minor cosmetic nits. 
+v6:
+ - Addressed some nits and style issues.
+ - Enforced static assert equality of instruction buffer when calculating job
+ credits or copying them into the ringbuffer.
+ - Added explanation to the way in which job credits and profiled job size is done.
+ - Broke down fdinfo enablement patch into two, one of them dealing with adding
+ support for calculating the current and top operating device frequencies
+ - Fixed race at the time drm file-wide profiling stats are gathered from groups.
+v5:
+ - Moved profiling information slots into a per-queue BO and away from syncobjs.
+ - Decide on size of profiling slots BO from size of CS for minimal profiled job
+ - Turn job and device profiling flag into a bit mask so that individual metrics
+ can be enabled separately.
+ - Shrunk ringbuffer slot size to that of a cache line.
+ - Track profiling slot indeces separately from the job's queue ringbuffer's
+ - Emit CS instructions one by one and tag them depending on profiling mask
+ - New helper for calculating job credits depending on profiling flags
+ - Add Documentation file for sysfs profiling knob
+ - fdinfo will only show engines or cycles tags if these are respectively enabled.
+v4:
+ - Fixed wrong assignment location for frequency values in Panthor's devfreq
+ - Removed the last two commits about registering size of internal BO's
+ - Rearranged patch series so that sysfs knob is done last and all the previous
+ time sampling and fdinfo show dependencies are already in place
+v3:
+ - Fixed some nits and removed useless bounds check in panthor_sched.c
+ - Added support for sysfs profiling knob and optional job accounting
+ - Added new patches for calculating size of internal BO's
+v2:
+ - Split original first patch in two, one for FW CS cycle and timestamp
+ calculations and job accounting memory management, and a second one
+ that enables fdinfo.
+ - Moved NUM_INSTRS_PER_SLOT to the file prelude
+ - Removed nelem variable from the group's struct definition.
+ - Precompute size of group's syncobj BO to avoid code duplication.
+ - Some minor nits.
 
-No, absolutely not. This is nonsense. Those flags aren't "the vdso
-flags" or something. The variable name makes no sense. Moving the
-definition outside of getrandom.c like the next patch does also makes no
-sense. Do not do this.
+Adrián Larumbe (5):
+  drm/panthor: introduce job cycle and timestamp accounting
+  drm/panthor: record current and maximum device clock frequencies
+  drm/panthor: add DRM fdinfo support
+  drm/panthor: enable fdinfo for memory stats
+  drm/panthor: add sysfs knob for enabling job profiling
 
-If you need to, for some reason, rename those symbols, then rename them
-each to VDSO_MAP_ANONYMOUS or whatever, and then use those from within
-getrandom.c so it remains as readable and reasonable as it currently is.
+ .../testing/sysfs-driver-panthor-profiling    |  10 +
+ Documentation/gpu/panthor.rst                 |  46 +++
+ drivers/gpu/drm/panthor/panthor_devfreq.c     |  18 +-
+ drivers/gpu/drm/panthor/panthor_device.h      |  36 ++
+ drivers/gpu/drm/panthor/panthor_drv.c         |  73 ++++
+ drivers/gpu/drm/panthor/panthor_gem.c         |  12 +
+ drivers/gpu/drm/panthor/panthor_sched.c       | 384 +++++++++++++++---
+ drivers/gpu/drm/panthor/panthor_sched.h       |   2 +
+ 8 files changed, 531 insertions(+), 50 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-driver-panthor-profiling
+ create mode 100644 Documentation/gpu/panthor.rst
 
-But under no circumstances should you move where this is expressed and
-rename it something generic like "vdso flags", when it is not generic
-but rather very specific to the function where it is currently used.
-IOW, please take a look and try to understand the code that you're
-touching when proposing changes like this.
+-- 
+2.46.0
 
-
-Also, though, I don't quite see what this patch accomplishes. If you're
-fine doing #include <notvdso/whatever.h> into here, importing this
-header into vdso code will transitively include notvdso/whatever.h with
-it. So in that case, either we can keep using MAP_ANONYMOUS and whatnot
-in the original sane symbol names, or this approach isn't correct in the
-first place.
-
-Maybe what you want instead is a simpler vdso/whatever.h header that
-just includes nonvdso/whatever.h, and then you let getrandom.c and other
-things keep using the same symbols as they were using before.
-
-Jason
 
