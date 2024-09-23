@@ -1,338 +1,165 @@
-Return-Path: <linux-kernel+bounces-335875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EB2397EBE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:59:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 787B297EBC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:57:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 062671F20EDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:59:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDCCB1F21E44
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:57:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4867419AD85;
-	Mon, 23 Sep 2024 12:57:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0F11990C7;
+	Mon, 23 Sep 2024 12:57:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OGWwup4u"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nI50L/hP"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E93199E9D;
-	Mon, 23 Sep 2024 12:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264C880C0C
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 12:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727096264; cv=none; b=V6gsckpLc8YmnPNRi4SnB06cnWX8U5aedUwf/ajzjD6+x7gFK+G1X2PCes/YX+4Mbd+vE+JnLkPPy6xcW20+hEOQGdzTl2I+7YJPtalnJYgktmMU2/PdovKZw6OJsguSH5jh3vAZD24VqIL+OPlWLXe5N2Xg2UHwVisGTfhaog0=
+	t=1727096253; cv=none; b=NxSATO78RR0Jhrt/yqWKRvKZ/CMezOXSZtkRhtqIbCKE1Khcr18sdRpLnLRzC70cQEHWbtBSTBEm2cX599th+22HnzRo/rW7QWGh++O/tEzfi8WIToRhfP31AjXlkg6nRmq8NoPzDQyxVRHtQmxgzWCYxYX/kmW80beqPWaJdKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727096264; c=relaxed/simple;
-	bh=tSc/5jKYwHOo80LzJTmceHoRtIhcvCiHgAqHKczEVyI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CpGh94DiHuYaKrh7XQZoVDgDT8SE3FF0OSHfTGB5pqNdZYLuLElSdYi1PYICKa5KZTf6HzKcMdTv7fwmzCTwl2BwVdntjCfv0wNg+jouqQyY92tTaxVtTH6F1AiDoquRPFf6ZaXKzTAfFcBwxDCAxpEU9BU+tqEMeFc0aJ1ll+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OGWwup4u; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48NBAVMY026363;
-	Mon, 23 Sep 2024 12:57:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=HI9fqOFrJ8d
-	NwCtjPwqcyklQ/dgCKqxAQalyfBfSw6g=; b=OGWwup4unFYNatRHsbrXaG1JNEU
-	sTyOUnOa97EVr2lPc+FhiCnHA9IXLZBZUfvi7QxjWi6xvA+LCN/+A1sSKp9CtufP
-	TJG9eQtHq0rY/2hUr7ORswodK2u+8MuhFWkcGLEbi/fGCK6xzkesZnQJlJERJLe4
-	tEMSZnolLzP2KFcDg+FQ5TWkiLCPu/tfkv/jtpCZ3q7iKlcx7tNxvqn46bUOH8JQ
-	b/F3ECr4Z+AfMEZWuT0m8AVD4ZkDXkwS/WkBEc1gs6KNRfHsGzfXulXai4ZRp+8w
-	P0O1Uf6ewRK8g9tLlZoZY2DKX5NA10DLRQy5IJOr6ZYg44Dqoavg1yrXhyg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41skuemxcu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 23 Sep 2024 12:57:20 +0000 (GMT)
-Received: from pps.filterd (NALASPPMTA01.qualcomm.com [127.0.0.1])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 48NCnJPl023270;
-	Mon, 23 Sep 2024 12:57:19 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by NALASPPMTA01.qualcomm.com (PPS) with ESMTPS id 41sq7ktnbf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 23 Sep 2024 12:57:19 +0000
-Received: from NALASPPMTA01.qualcomm.com (NALASPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 48NCtur2032740;
-	Mon, 23 Sep 2024 12:57:19 GMT
-Received: from hu-devc-lv-u22-c.qualcomm.com (hu-qianyu-lv.qualcomm.com [10.81.25.114])
-	by NALASPPMTA01.qualcomm.com (PPS) with ESMTPS id 48NCvIo2001842
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 23 Sep 2024 12:57:19 +0000
-Received: by hu-devc-lv-u22-c.qualcomm.com (Postfix, from userid 4098150)
-	id 0331765F; Mon, 23 Sep 2024 05:57:19 -0700 (PDT)
-From: Qiang Yu <quic_qianyu@quicinc.com>
-To: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org,
-        robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, abel.vesa@linaro.org, quic_msarkar@quicinc.com,
-        quic_devipriy@quicinc.com
-Cc: dmitry.baryshkov@linaro.org, kw@linux.com, lpieralisi@kernel.org,
-        neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, Qiang Yu <quic_qianyu@quicinc.com>
-Subject: [PATCH v3 6/6] arm64: dts: qcom: x1e80100: Add support for PCIe3 on x1e80100
-Date: Mon, 23 Sep 2024 05:57:13 -0700
-Message-Id: <20240923125713.3411487-7-quic_qianyu@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240923125713.3411487-1-quic_qianyu@quicinc.com>
-References: <20240923125713.3411487-1-quic_qianyu@quicinc.com>
+	s=arc-20240116; t=1727096253; c=relaxed/simple;
+	bh=AGENL3X2WYbv/5PQxx8UPDvRzHUeY5nRRhGT32q77wo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=COr9JRUAbfPr6UxDHEMI/lXXAfhBX30Sm00aixhaibj1DhPrc60wIxAAtbCDfUAWNoW/iWoPP/P79EL71tdpMtwl5aYJvw8tvn4UJ/cP2wbTZP/L3a/PJjIn8DPH7e+ylelyUjtHk0RPl3Gp/iTYd5WpJYx0ms9KESSbAZ99YYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nI50L/hP; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2d889207d1aso2758051a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 05:57:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727096251; x=1727701051; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MqL+b1FAcrvUWqURWulPmdkzJdVjg5DPzosrsko/fRk=;
+        b=nI50L/hPbkNaXUiibbxGaSE1wpXFvwjHaBPVqBbF0553Oxvm4R6RqwEd88P3nHz6Yu
+         rjD1yTYEKTBP74T+KsnxdenJxXxe5XfZdmpNl9YmqT+S6A0GrnAGqp7FpZvrZ+RmeUpW
+         XuvZ1K2HV3sbZJKATH67SGLIzkFwbd42a5ikugSboXbTWwhboVhFGCRqouvyMbxcpqgt
+         dW1AEdWNEc1c62355JqdMBlAmf6f5R6kRoFNIRUXrmOvgjhUm2+/Zx7ADshd79VT4qIP
+         Z6nHMxWS8IPFBBSC19vwQfMpnR6tXOiR1h6DQd9zlBrxB3wBnys51PPeglIYbzRpzxfJ
+         mO4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727096251; x=1727701051;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MqL+b1FAcrvUWqURWulPmdkzJdVjg5DPzosrsko/fRk=;
+        b=lxveRzHoHePYKo4W6dnabL8E10UR/FXvVbvktsr53k6skmsDj7Ni4Rj0tWa+/29CeQ
+         ny+FLcyLtZl2e4PPNKWoYXsGO67gXeGNL8wocFQ73gIaFS25wdIAzs8dPpLFB7wsD0j7
+         O9kfl4vpH1oTdmfCjvU7AjXP3hFibBbifeQLU+FfCGcTDAlPnMCP5flCpDDpPMdtdprM
+         Hxh+wFeh68nHjwCb5Fgs5sz3rOhUMNjgo1JafH807Mkmhoj3rBdm9th+nECbuI1SZ+LW
+         aHJk7g9u55pkHRmkXWhSPH3D0WFYc5+jDqXq3VH1N7+hPbzegcR8nxFAsFK8n+3CT5jQ
+         THEw==
+X-Forwarded-Encrypted: i=1; AJvYcCWKDphJhpN0hjfirWM2v9HecxJ1i/7pbMAZR+iM1LyXqUhcZkUwWJnCTZRXOmBtklh7t3MBl2hXQ9TBMqU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy08u3t5we40fLyNRBWW1FHccYBQwhYi3CXSEt50GSfM0iFT4qT
+	HwNf+06Do8yeY+1jj+G4C0jV7xwI88Z4YFBeqSXwrRA+dV0EWz/z
+X-Google-Smtp-Source: AGHT+IEV/bw2rQotOm5i6ahVAaEb6Gjhc+RLQd1rT1eTdwlbMtsSETLnKOeMvwOJoMo79T1SEG/wMw==
+X-Received: by 2002:a17:90a:68c3:b0:2d8:8c82:10a with SMTP id 98e67ed59e1d1-2dd80c465f4mr15200818a91.5.1727096251368;
+        Mon, 23 Sep 2024 05:57:31 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dd6ef9858fsm9372570a91.52.2024.09.23.05.57.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2024 05:57:29 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Mon, 23 Sep 2024 05:57:28 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Narayana Murty N <nnmlinux@linux.ibm.com>
+Cc: linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au,
+	linux-kernel@vger.kernel.org, mahesh@linux.ibm.com,
+	oohall@gmail.com, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+	naveen@kernel.org, vaibhav@linux.ibm.com, ganeshgr@linux.ibm.com,
+	sbhat@linux.ibm.com
+Subject: Re: [PATCH v3] powerpc/pseries/eeh: Fix pseries_eeh_err_inject
+Message-ID: <c474f56f-af74-479d-9db6-fbbfdb287604@roeck-us.net>
+References: <20240909140220.529333-1-nnmlinux@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: wDhBMc6kJpN-rTbQYn4-gcGWbxx-STe8
-X-Proofpoint-ORIG-GUID: wDhBMc6kJpN-rTbQYn4-gcGWbxx-STe8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
- adultscore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0
- malwarescore=0 impostorscore=0 mlxlogscore=999 bulkscore=0 mlxscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409230095
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909140220.529333-1-nnmlinux@linux.ibm.com>
 
-Describe PCIe3 controller and PHY. Also add required system resources like
-regulators, clocks, interrupts and registers configuration for PCIe3.
+Hi,
 
-Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- arch/arm64/boot/dts/qcom/x1e80100.dtsi | 204 ++++++++++++++++++++++++-
- 1 file changed, 203 insertions(+), 1 deletion(-)
+On Mon, Sep 09, 2024 at 09:02:20AM -0500, Narayana Murty N wrote:
+> VFIO_EEH_PE_INJECT_ERR ioctl is currently failing on pseries
+> due to missing implementation of err_inject eeh_ops for pseries.
+> This patch implements pseries_eeh_err_inject in eeh_ops/pseries
+> eeh_ops. Implements support for injecting MMIO load/store error
+> for testing from user space.
+> 
+> The check on PCI error type (bus type) code is moved to platform
+> code, since the eeh_pe_inject_err can be allowed to more error
+> types depending on platform requirement. Removal of the check for
+> 'type' in eeh_pe_inject_err() doesn't impact PowerNV as
+> pnv_eeh_err_inject() already has an equivalent check in place.
+> 
+> Signed-off-by: Narayana Murty N <nnmlinux@linux.ibm.com>
+> Reviewed-by: Vaibhav Jain <vaibhav@linux.ibm.com>
+> 
+> ---
+>  arch/powerpc/include/asm/eeh.h               |  2 +-
+>  arch/powerpc/kernel/eeh.c                    |  9 +++--
+>  arch/powerpc/platforms/pseries/eeh_pseries.c | 39 +++++++++++++++++++-
+>  3 files changed, 44 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/powerpc/include/asm/eeh.h b/arch/powerpc/include/asm/eeh.h
+> index 91a9fd53254f..317b12fc1fe4 100644
+> --- a/arch/powerpc/include/asm/eeh.h
+> +++ b/arch/powerpc/include/asm/eeh.h
+> @@ -308,7 +308,7 @@ int eeh_pe_reset(struct eeh_pe *pe, int option, bool include_passed);
+>  int eeh_pe_configure(struct eeh_pe *pe);
+>  int eeh_pe_inject_err(struct eeh_pe *pe, int type, int func,
+>  		      unsigned long addr, unsigned long mask);
+> -
+> +int eeh_pe_inject_mmio_error(struct pci_dev *pdev);
+>  /**
+>   * EEH_POSSIBLE_ERROR() -- test for possible MMIO failure.
+>   *
+> diff --git a/arch/powerpc/kernel/eeh.c b/arch/powerpc/kernel/eeh.c
+> index d03f17987fca..49ab11a287a3 100644
+> --- a/arch/powerpc/kernel/eeh.c
+> +++ b/arch/powerpc/kernel/eeh.c
+> @@ -1537,10 +1537,6 @@ int eeh_pe_inject_err(struct eeh_pe *pe, int type, int func,
+>  	if (!eeh_ops || !eeh_ops->err_inject)
+>  		return -ENOENT;
+>  
+> -	/* Check on PCI error type */
+> -	if (type != EEH_ERR_TYPE_32 && type != EEH_ERR_TYPE_64)
+> -		return -EINVAL;
+> -
+>  	/* Check on PCI error function */
+>  	if (func < EEH_ERR_FUNC_MIN || func > EEH_ERR_FUNC_MAX)
+>  		return -EINVAL;
+> @@ -1851,6 +1847,11 @@ static const struct file_operations eeh_dev_break_fops = {
+>  	.read   = eeh_debugfs_dev_usage,
+>  };
+>  
+> +int eeh_pe_inject_mmio_error(struct pci_dev *pdev)
+> +{
+> +	return eeh_debugfs_break_device(pdev);
+> +}
+> +
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-index a36076e3c56b..c615c930cf0c 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-@@ -744,7 +744,7 @@ gcc: clock-controller@100000 {
- 
- 			clocks = <&bi_tcxo_div2>,
- 				 <&sleep_clk>,
--				 <0>,
-+				 <&pcie3_phy>,
- 				 <&pcie4_phy>,
- 				 <&pcie5_phy>,
- 				 <&pcie6a_phy>,
-@@ -2907,6 +2907,208 @@ mmss_noc: interconnect@1780000 {
- 			#interconnect-cells = <2>;
- 		};
- 
-+		pcie3: pcie@1bd0000 {
-+			device_type = "pci";
-+			compatible = "qcom,pcie-x1e80100";
-+			reg = <0x0 0x01bd0000 0x0 0x3000>,
-+			      <0x0 0x78000000 0x0 0xf1d>,
-+			      <0x0 0x78000f40 0x0 0xa8>,
-+			      <0x0 0x78001000 0x0 0x1000>,
-+			      <0x0 0x78100000 0x0 0x100000>,
-+			      <0x0 0x01bd3000 0x0 0x1000>;
-+			reg-names = "parf",
-+				    "dbi",
-+				    "elbi",
-+				    "atu",
-+				    "config",
-+				    "mhi";
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			ranges = <0x01000000 0x0 0x00000000 0x0 0x78200000 0x0 0x100000>,
-+				 <0x02000000 0x0 0x78300000 0x0 0x78300000 0x0 0x3d00000>,
-+				 <0x03000000 0x7 0x40000000 0x7 0x40000000 0x0 0x40000000>;
-+			bus-range = <0x00 0xff>;
-+
-+			dma-coherent;
-+
-+			linux,pci-domain = <3>;
-+			num-lanes = <8>;
-+
-+			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 769 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 836 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 671 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "msi0",
-+					  "msi1",
-+					  "msi2",
-+					  "msi3",
-+					  "msi4",
-+					  "msi5",
-+					  "msi6",
-+					  "msi7",
-+					  "global";
-+
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 0x7>;
-+			interrupt-map = <0 0 0 1 &intc 0 0 GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 2 &intc 0 0 GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 3 &intc 0 0 GIC_SPI 237 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 4 &intc 0 0 GIC_SPI 238 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			clocks = <&gcc GCC_PCIE_3_AUX_CLK>,
-+				 <&gcc GCC_PCIE_3_CFG_AHB_CLK>,
-+				 <&gcc GCC_PCIE_3_MSTR_AXI_CLK>,
-+				 <&gcc GCC_PCIE_3_SLV_AXI_CLK>,
-+				 <&gcc GCC_PCIE_3_SLV_Q2A_AXI_CLK>,
-+				 <&gcc GCC_CFG_NOC_PCIE_ANOC_NORTH_AHB_CLK>,
-+				 <&gcc GCC_CNOC_PCIE_NORTH_SF_AXI_CLK>;
-+			clock-names = "aux",
-+				      "cfg",
-+				      "bus_master",
-+				      "bus_slave",
-+				      "slave_q2a",
-+				      "noc_aggr",
-+				      "cnoc_sf_axi";
-+
-+			assigned-clocks = <&gcc GCC_PCIE_3_AUX_CLK>;
-+			assigned-clock-rates = <19200000>;
-+
-+			interconnects = <&pcie_south_anoc MASTER_PCIE_3 QCOM_ICC_TAG_ALWAYS
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-+					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-+					 &cnoc_main SLAVE_PCIE_3 QCOM_ICC_TAG_ALWAYS>;
-+			interconnect-names = "pcie-mem",
-+					     "cpu-pcie";
-+
-+			resets = <&gcc GCC_PCIE_3_BCR>,
-+				 <&gcc GCC_PCIE_3_LINK_DOWN_BCR>;
-+			reset-names = "pci",
-+				      "link_down";
-+
-+			power-domains = <&gcc GCC_PCIE_3_GDSC>;
-+
-+			phys = <&pcie3_phy>;
-+			phy-names = "pciephy";
-+
-+			operating-points-v2 = <&pcie3_opp_table>;
-+
-+			status = "disabled";
-+
-+			pcie3_opp_table: opp-table {
-+				compatible = "operating-points-v2";
-+
-+				/* GEN 1 x1 */
-+				opp-2500000 {
-+					opp-hz = /bits/ 64 <2500000>;
-+					required-opps = <&rpmhpd_opp_low_svs>;
-+					opp-peak-kBps = <250000 1>;
-+				};
-+
-+				/* GEN 1 x2 and GEN 2 x1 */
-+				opp-5000000 {
-+					opp-hz = /bits/ 64 <5000000>;
-+					required-opps = <&rpmhpd_opp_low_svs>;
-+					opp-peak-kBps = <500000 1>;
-+				};
-+
-+				/* GEN 1 x4 and GEN 2 x2 */
-+				opp-10000000 {
-+					opp-hz = /bits/ 64 <10000000>;
-+					required-opps = <&rpmhpd_opp_low_svs>;
-+					opp-peak-kBps = <1000000 1>;
-+				};
-+
-+				/* GEN 1 x8 and GEN 2 x4 */
-+				opp-20000000 {
-+					opp-hz = /bits/ 64 <20000000>;
-+					required-opps = <&rpmhpd_opp_low_svs>;
-+					opp-peak-kBps = <2000000 1>;
-+				};
-+
-+				/* GEN 2 x8 */
-+				opp-40000000 {
-+					opp-hz = /bits/ 64 <40000000>;
-+					required-opps = <&rpmhpd_opp_low_svs>;
-+					opp-peak-kBps = <4000000 1>;
-+				};
-+
-+				/* GEN 3 x1 */
-+				opp-8000000 {
-+					opp-hz = /bits/ 64 <8000000>;
-+					required-opps = <&rpmhpd_opp_svs>;
-+					opp-peak-kBps = <984500 1>;
-+				};
-+
-+				/* GEN 3 x2 and GEN 4 x1 */
-+				opp-16000000 {
-+					opp-hz = /bits/ 64 <16000000>;
-+					required-opps = <&rpmhpd_opp_svs>;
-+					opp-peak-kBps = <1969000 1>;
-+				};
-+
-+				/* GEN 3 x4 and GEN 4 x2 */
-+				opp-32000000 {
-+					opp-hz = /bits/ 64 <32000000>;
-+					required-opps = <&rpmhpd_opp_svs>;
-+					opp-peak-kBps = <3938000 1>;
-+				};
-+
-+				/* GEN 3 x8 and GEN 4 x4 */
-+				opp-64000000 {
-+					opp-hz = /bits/ 64 <64000000>;
-+					required-opps = <&rpmhpd_opp_svs>;
-+					opp-peak-kBps = <7876000 1>;
-+				};
-+
-+				/* GEN 4 x8 */
-+				opp-128000000 {
-+					opp-hz = /bits/ 64 <128000000>;
-+					required-opps = <&rpmhpd_opp_svs>;
-+					opp-peak-kBps = <15753000 1>;
-+				};
-+			};
-+		};
-+
-+		pcie3_phy: phy@1be0000 {
-+			compatible = "qcom,x1e80100-qmp-gen4x8-pcie-phy";
-+			reg = <0 0x01be0000 0 0x10000>;
-+
-+			clocks = <&gcc GCC_PCIE_3_PHY_AUX_CLK>,
-+				 <&gcc GCC_PCIE_3_CFG_AHB_CLK>,
-+				 <&tcsr TCSR_PCIE_8L_CLKREF_EN>,
-+				 <&gcc GCC_PCIE_3_PHY_RCHNG_CLK>,
-+				 <&gcc GCC_PCIE_3_PIPE_CLK>,
-+				 <&gcc GCC_PCIE_3_PIPEDIV2_CLK>;
-+			clock-names = "aux",
-+				      "cfg_ahb",
-+				      "ref",
-+				      "rchng",
-+				      "pipe",
-+				      "pipediv2";
-+
-+			resets = <&gcc GCC_PCIE_3_PHY_BCR>,
-+				 <&gcc GCC_PCIE_3_NOCSR_COM_PHY_BCR>;
-+			reset-names = "phy",
-+				      "phy_nocsr";
-+
-+			assigned-clocks = <&gcc GCC_PCIE_3_PHY_RCHNG_CLK>;
-+			assigned-clock-rates = <100000000>;
-+
-+			power-domains = <&gcc GCC_PCIE_3_PHY_GDSC>;
-+
-+			#clock-cells = <0>;
-+			clock-output-names = "pcie3_pipe_clk";
-+
-+			#phy-cells = <0>;
-+
-+			status = "disabled";
-+		};
-+
- 		pcie6a: pci@1bf8000 {
- 			device_type = "pci";
- 			compatible = "qcom,pcie-x1e80100";
--- 
-2.34.1
+The new function, as the context suggests, is only compiled if CONFIG_DEBUG_FS=y.
+However, it is called unconditionally. With CONFIG_DEBUG_FS=n, this results in
 
+powerpc64-linux-ld: arch/powerpc/platforms/pseries/eeh_pseries.o: in function `pseries_eeh_err_inject':
+/opt/buildbot/slave/qemu-ppc64/build/arch/powerpc/platforms/pseries/eeh_pseries.c:814:(.text+0x554): undefined reference to `eeh_pe_inject_mmio_error'
+make[3]: *** [/opt/buildbot/slave/qemu-ppc64/build/scripts/Makefile.vmlinux:34: vmlinux] Error 1
+make[2]: *** [/opt/buildbot/slave/qemu-ppc64/build/Makefile:1157: vmlinux] Error 2
+
+I'll enable CONFIG_DEBUG_FS in my tests and won't report this further,
+but you might want to consider fixing the problem at some point.
+
+Guenter
 
