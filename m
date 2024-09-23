@@ -1,127 +1,91 @@
-Return-Path: <linux-kernel+bounces-336021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D42497EE1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:28:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2916697EE1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:28:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE3041C21692
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:28:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99C1C1F21DDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:28:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F4DB19D898;
-	Mon, 23 Sep 2024 15:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ry7iS+CI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19EF819CD12;
+	Mon, 23 Sep 2024 15:28:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F49C19415E
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 15:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4A919E810
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 15:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727105281; cv=none; b=JK8pGNK7jT6uQ/sKXfMoqo4+ZX6LHbVjc2XwpTYduKIOx2AczQUkPKqDuNv6OV2rpJhId78jJeiwHkiYteOUT6dDfeDejm1v4UZgWqFSYkfshidjvMCBznEL+09m2a7N4XSFXjU8WmTWbW6kpn7SNMcLa/FdmJmwg1wM5wBON1E=
+	t=1727105284; cv=none; b=iK5t6niRBCotsweb/EjwJpDUSQwdPOp4/PzjPz5YMfOLfyMfEmySnVNbj232jXxXmqGJh/fItmI1ce2kElXV1WJAg2p9W7MmKhCbI5N5/efiN1KgNn2pDV4QQGf9MuR4CZWkWVkKFY5hTyXHENkCgS2YeuAR9hytZMxZJPOCESo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727105281; c=relaxed/simple;
-	bh=aj18dTgLEiuMoH/5TK7xy91vjIRsXIF5Ja0C5hRzCvc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VBGqjn9ux/hzqRtCktzS3ZDvtabv5z5faWeFOZzLLZL1BbMya5qYo1DYCyGDKVFnb/6ifIK3v2LggwbwOC7GKm4VguIneZ+UDZMOyUYGdMPr5HYeSREBWbygJbCSv9P/IEy7lWTd3Fk/740W2sZgiEFIpGDZIBCbVhXRe1mgzJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ry7iS+CI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E37A0C4CEC4;
-	Mon, 23 Sep 2024 15:28:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727105281;
-	bh=aj18dTgLEiuMoH/5TK7xy91vjIRsXIF5Ja0C5hRzCvc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ry7iS+CIpWZgKvSQx0hA4O4oEj+a2q5hDRhv/t/0Dj98/GPdm5HGe0871ZyfF+cFf
-	 jx1WkYNYRG8GIhTYYhyYOI5TAQgSTFAIQ5+RqsmIZbW3xqT6+7SzzI7GR2nZQpirg2
-	 jU0JnJy+VB2AYX9mJbYQ0UhU+8+Cypn/1pWKVZ9A0k/zWQT6tZMiqXePQWQnsHWz7q
-	 0aR6E+4EdQCySp7Xs5jt1ccprxz/g+s6lQHVrTR7B8quaReexMNU/joui/qdquBaqR
-	 4v7z39uvYexKj9wJpcNjjEEgAeDubURmzSeJ52Exs7K+UpSYfTpSpzPDboGuYljwyS
-	 C7AgN+kbw0E5w==
-Date: Mon, 23 Sep 2024 05:28:00 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Yu Liao <liaoyu15@huawei.com>
-Cc: xiexiuqi@huawei.com, peterz@infradead.org, mingo@redhat.com,
-	linux-kernel@vger.kernel.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org
-Subject: Re: [RFC PATCH 2/2] sched: Put task_group::idle under
- CONFIG_GROUP_SCHED_WEIGHT
-Message-ID: <ZvGJAD0eJJ67OO6R@slm.duckdns.org>
-References: <20240923135431.2440320-1-liaoyu15@huawei.com>
- <20240923135431.2440320-3-liaoyu15@huawei.com>
+	s=arc-20240116; t=1727105284; c=relaxed/simple;
+	bh=BXuKDvmxn/uadsYCkrctcocwNsA/C0A+CEomiewh5lA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=gzCyhJPByxoWWGSjVIgSlfk+Bui5rfkwDnnYzi6sHs8HQc6V/UxDmV6xrI5LuQ4++LApgFU8FVD+ipgKtFk+GIzv9WKZwme3rOeFsQnDIHUZlw7jbjAVYaWK2wvsLnYqT0C2LljTkpfLcRn4DrYcbStXutw+FOphIr5kDuTb1qY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39f4e119c57so43726505ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 08:28:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727105282; x=1727710082;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2ckOujVLYUX9L8YLfbATQHm9iM+ZOY20csnjvxP3xEk=;
+        b=JS7mAwCLp4cI9OXj2dOBywSv6PT/l35DcO/qucabhqqccqT89OJuQ4F/g/crtNj4sc
+         S+5L+wK5b/WoZ4aEEQaoytPzfTienbdTV3y8Z7SKkNytNB40oQ12TY9NbFT7Gu4h012B
+         FTEIr6xN1yv7gxXis6xQ6gBZ8xI7mKHlEg7ddV//ncWmUa/vLwqSYt/hwSCAUwWakNR/
+         3VAXI3iIZoajkUnPbebILC9X50NgQ8OB9t3LYSWqDpevZiQubghcaLfHtYZSOJMmMoAZ
+         IQ4WIg80kNO6nuhrIGcm6lcwoUbANmjYU0bCX9Pd9E6Xbr4TfrP2LEtNIRLE1k5Gzzxi
+         IMnA==
+X-Forwarded-Encrypted: i=1; AJvYcCV7Cy5nt7IVT/5Xk3YCyp2s6Ir40bOWnuNlMs/h7VV25Ctgt/6j6Imh6AfEQyY+NsGwPyQPisyQF+cpp4M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjbcDEI0k31KQZ6pyorbiMIrWvv9vnK+1ypzxVe4EOKuxGpMQK
+	NSg3FV/P48cq+UUnPKsvEsXW+hqNuYyLMoyGIGjSG9R6nJdiUBsDYdoIS8s336pUILVjUuPYM2+
+	sKRv3Aype0xapPxkpLYWdNKQ1L0RORG86Fm09gMQvlPc8lMJIs0cB+3A=
+X-Google-Smtp-Source: AGHT+IHrPeUe8EPwaXPn6y+dpbt+gLxKHTMO4wmuATQPHI6pQ8kHRTsga6xrvxBJEnOu/3k2uQ5rws73bXS2yRMIqnbmHvWnhXtu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240923135431.2440320-3-liaoyu15@huawei.com>
+X-Received: by 2002:a05:6e02:1c49:b0:3a0:c88c:e668 with SMTP id
+ e9e14a558f8ab-3a0c8cba344mr106518145ab.14.1727105282253; Mon, 23 Sep 2024
+ 08:28:02 -0700 (PDT)
+Date: Mon, 23 Sep 2024 08:28:02 -0700
+In-Reply-To: <CABBYNZLKMu296VLeEcyMZBw1HFivMA=L6xOZRHHcKwWZb7PQ4g@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f18902.050a0220.c23dd.0011.GAE@google.com>
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in
+ l2cap_connect (2)
+From: syzbot <syzbot+c12e2f941af1feb5632c@syzkaller.appspotmail.com>
+To: eadavis@qq.com, hdanton@sina.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, nogikh@google.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
-I applied the patch to sched_ext/for-6.12-fixes with some edits. There's no
-strong reason to keep idle in that particular location and it's easier to
-move it upward out of CONFIG_FAIR_GROUP_SCHED block.
+syzbot tried to test the proposed patch but the build/boot failed:
 
-Thanks.
+failed to apply patch:
+checking file net/bluetooth/hci_core.c
+patch: **** malformed patch at line 6: diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
 
------- 8< ------
-From 7ebd84d627e40cb9fb12b338588e81b6cca371e3 Mon Sep 17 00:00:00 2001
-From: Yu Liao <liaoyu15@huawei.com>
-Date: Mon, 23 Sep 2024 21:54:31 +0800
-Subject: [PATCH] sched: Put task_group::idle under CONFIG_GROUP_SCHED_WEIGHT
 
-When build with CONFIG_GROUP_SCHED_WEIGHT && !CONFIG_FAIR_GROUP_SCHED,
-the idle member is not defined:
 
-kernel/sched/ext.c:3701:16: error: 'struct task_group' has no member named 'idle'
-  3701 |         if (!tg->idle)
-       |                ^~
 
-Fix this by putting 'idle' under new CONFIG_GROUP_SCHED_WEIGHT.
+Tested on:
 
-tj: Move idle field upward to avoid breaking up CONFIG_FAIR_GROUP_SCHED block.
-
-Fixes: e179e80c5d4f ("sched: Introduce CONFIG_GROUP_SCHED_WEIGHT")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202409220859.UiCAoFOW-lkp@intel.com/
-Signed-off-by: Yu Liao <liaoyu15@huawei.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
----
- kernel/sched/sched.h | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 91d14061fdca..b1c3588a8f00 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -432,16 +432,17 @@ struct cfs_bandwidth {
- struct task_group {
- 	struct cgroup_subsys_state css;
- 
-+#ifdef CONFIG_GROUP_SCHED_WEIGHT
-+	/* A positive value indicates that this is a SCHED_IDLE group. */
-+	int			idle;
-+#endif
-+
- #ifdef CONFIG_FAIR_GROUP_SCHED
- 	/* schedulable entities of this group on each CPU */
- 	struct sched_entity	**se;
- 	/* runqueue "owned" by this group on each CPU */
- 	struct cfs_rq		**cfs_rq;
- 	unsigned long		shares;
--
--	/* A positive value indicates that this is a SCHED_IDLE group. */
--	int			idle;
--
- #ifdef	CONFIG_SMP
- 	/*
- 	 * load_avg can be heavily contended at clock tick time, so put
--- 
-2.46.0
+commit:         de5cb0dc Merge branch 'address-masking'
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=57042fe37c7ee7c2
+dashboard link: https://syzkaller.appspot.com/bug?extid=c12e2f941af1feb5632c
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=127c12a9980000
 
 
