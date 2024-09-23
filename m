@@ -1,126 +1,122 @@
-Return-Path: <linux-kernel+bounces-336339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDB83983981
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 00:20:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0CFB983984
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 00:20:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA51C1C20D77
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 22:20:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BB451C20D66
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 22:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F0884A36;
-	Mon, 23 Sep 2024 22:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C7985C5E;
+	Mon, 23 Sep 2024 22:20:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="X28GuW5H"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ab4smDkZ"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206F614A85
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 22:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C958F84A21;
+	Mon, 23 Sep 2024 22:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727130020; cv=none; b=Ho1SadT3eYNLPcKWUKFUmi4zRzPn3lfOuZ9uXpdz8S8ul2Uv0NxCAeytfDGrYNplBc+NZ7hT5nvnH9ah8DnHb9fXjvWTEt3DFNJwGam4UYUpMWD1doDP82FpBzmB1yOdsHb23d9SNd8EXs1vTzWnw8a/IjDMTshCU0vN+B5mf9g=
+	t=1727130050; cv=none; b=hJulqT6DsGT4JfsV+X6ac92NNv7N7C6gefrwz836x3fOASDQsTDVJuvuaF1MxbWWI8McHpZ2PrAVxTpH+5PUpWz/WHuFhW6urU6zfYkFPdjnPfWusI2pJfN/qZYSvNFrmNQgd5lMRyyD5ON/9SRVcajqznsKNDbwrFTIosYaOWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727130020; c=relaxed/simple;
-	bh=kMUy2Oxv8jJ2tt5vf/Z5fPJ2UkRaSdByoRrEKHNQ4Cc=;
+	s=arc-20240116; t=1727130050; c=relaxed/simple;
+	bh=I39zkW/kbT3Ufd9pmx9Uzp6ZFsPoalu4/LQvA0A1FO0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mMANrwPJq50ie1K/jGxi+Yc36IqDytdZGKNLi3cgTzrlzmZvTXQ8fdiFCN6iigU1yL7Sw+rDm1ThyXEvjqAYasqS09cJ2MPBwvj9fFq4zFNzjqA9hpH4sfhse+yWTGZtRkeMJqyrNdMxY1hxKeQLabXyy5a9zUeHxaK/egfWbaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=X28GuW5H; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7a843bef98so656515166b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 15:20:17 -0700 (PDT)
+	 To:Cc:Content-Type; b=AMgBij/E1W6SzQ7XilNLC01ywn5ghUpg0S6JozoS2djRaGhHUVfyvzM0k1vEt97XGFkgPZr847juhn0StmHvBauDdHa61r0R36auMSOoqaSXYOaZzL15xZ5viZlRWhGw0d+vTM2n7TUUkf/EoGce4YJCRMYa/EEItCI9Crjzd7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ab4smDkZ; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-537a2a2c74fso1198966e87.0;
+        Mon, 23 Sep 2024 15:20:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1727130016; x=1727734816; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9S42eFJC2cZLzPSDsM30FylP/sErS75QRhGjAktHewM=;
-        b=X28GuW5H96rPKiJOJUmPUTfpKpIS0UzhQ9GeXm0JuJjKnN3lB6AWAH/aeHhc74AuXK
-         yqQhRaqKL5MG9lYtsrKiP9IwVsfIsNagkZcImHccRjeQ0Bk0bf+seLSSwChOW2oDI4VV
-         EdH/2elGIvf3JsHwTDn9j0UJzRvXXu1itINxc=
+        d=gmail.com; s=20230601; t=1727130047; x=1727734847; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rNMtJL71ZDx/2MpgXo8xbuzvbC5cBg0WyIL0f1AlPoU=;
+        b=ab4smDkZe9ff69bIzZ/6tiu+wP/i3lvxg2IXI0jH7hXR9+Kq0w9RZjq6GAJyiMnNKO
+         DnsoevgkvzA+TpdsFNz0s17QAq1S2CMslTie7LI1twuXnj2nBwX/LLtmgZW+ieMdIUpq
+         /dwVeEPDqQRTysaZ1xNz1vqatj2ChaWMN9iEvUoo3+j6eEA3nKJ81roUM9aQeDd0ISBo
+         jlKu3qwCLCps9KDWqFevCduOec+5RcU58NWxH1ggjQYsgG5S3P8BUyGoO8nSjNY+O40X
+         qYgQaHFRAQSlIq4TrNLmxgmLgYclqyIy6Ln+tJOYX4cPXEqJdBm70Z8UEkzDh3Y3ynGm
+         Ad3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727130016; x=1727734816;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9S42eFJC2cZLzPSDsM30FylP/sErS75QRhGjAktHewM=;
-        b=czj+4513WnaORTzhXf337HBcexO4q3ohRs/FaT6TrmhGw5PCzyDcf9qTJgpL7YqOuN
-         TjGvMDeWBZvUNH1COFDmQsSQkImiSqGg6AXpkihsYAfDNtBTKQQglCAVXA8RN4Ps40cT
-         SG+XvdipfH+4F0WFGLgTyFl7Uqfy0tI8I6dmrhA11OoRCKgj8u08fJ+ENTa7dyEw1nxi
-         SBHTNKVOFB2d+TqjUxvuIWogb43RwbLeAhr20sYwj1j2KR+mVU9kWpsq9rIByqm6mLn+
-         P5G72n+whb2pjs3bZdg41S06ZcTA5IAVhufpx1nP3l2/pKPyIKWwqe2KVLQefm9vIbmK
-         5dCg==
-X-Forwarded-Encrypted: i=1; AJvYcCXFVVU3tzx6C7MEe+IM7sbiaVUFjAIhRv+66x5mUvEzH2cZibsJP7shxyk57wca/I4lOcOsWGFMECE85z8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoPB1cKwC+aKIAzHru3lqwf9104GGkp4RL0RYuqQdgFG9DAquY
-	yV/6RKuPv16AtI6ZUaR0rHsWny+v2Mz8Ow0emhSN6zxeF+TC56G8yGvd9GWimV2mfBlmsYcRtYn
-	+DGYlNw==
-X-Google-Smtp-Source: AGHT+IHbaOyP6GS4nfTUuppkl46nt6yAqK/zd9ksViZMpf3hVmvqZC6GqXiq9lwGRLk5MOYwiZdixA==
-X-Received: by 2002:a17:907:1b10:b0:a90:5280:8b99 with SMTP id a640c23a62f3a-a90d4fdef82mr1596759466b.3.1727130016194;
-        Mon, 23 Sep 2024 15:20:16 -0700 (PDT)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93930cafa5sm7385566b.111.2024.09.23.15.20.15
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Sep 2024 15:20:15 -0700 (PDT)
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a8d64b27c45so896370166b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 15:20:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXL96Y6nUVbS1Op38m1rUCBF5M6uhTbDTS8V71889/Eobmgz15DUMZExyJ4Sf5I+jyzfqbcCXVoiMsMvKw=@vger.kernel.org
-X-Received: by 2002:a17:907:e262:b0:a8a:5ff9:bcd1 with SMTP id
- a640c23a62f3a-a90d4ffda13mr1222335466b.21.1727130014805; Mon, 23 Sep 2024
- 15:20:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727130047; x=1727734847;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rNMtJL71ZDx/2MpgXo8xbuzvbC5cBg0WyIL0f1AlPoU=;
+        b=HBGhL5eJNg+6snW41o/zUBXf/94GPza43R+6wnTR3uWW+Sk4aiJtAH/g28zHWJZ013
+         suOybTzThlQYr+7eKbhK7R2JQvGPNEbkaX1eoUdW14xgNhZri7ukI+iimR14hVFV49Oh
+         mADWG9gm9H5vap/58xeHKK1qMWR0jjSbZ4RCAkASO+jYvB32U/r/Cr0cAv+uez8KFjT9
+         g6IT7MlFu0YF9zRdMXt5ZTJtY1nqNa+4HT4mjZv/fX9/uGpfvqETYejZl1vM4ftAmoFL
+         uBm3xCzAVOuz5KuYGZGU+aFuJjnthYO1Wjdj37XTBBIzGMMg5omUM6jNuM1fqdNeEmqu
+         REsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUOOmVPWKWrvioSOYoUScaGGWIDk5w8anueXQxsYeBm836SfYIEdl5TX6r5eICRVu22PTXAcnz5IzdB@vger.kernel.org, AJvYcCWartzUh1bd/EEn+9m0Fk7JVofXeiyZ1pz9YsSveP7rjBP8LI14Pu2adjbB3rh6eQRZN8ZsZ6eV7lGNM0ERNQ==@vger.kernel.org, AJvYcCXp9KqOszT9lmVs76s2JvA7QdLJ5v4gZlwG45lIEMW0FqfPE3XZUv5g1Scm5oL3pu/qGbCzRtA2EoX7iA1g@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxQm/H3zrPttryPjyYA6yr/yab7stls6RAyyD9K7Kl5oTdE1va
+	X3+B7RlH6jWG6zD9GOMOY5cksDyMZegcqLzVxNkHOb5FOS5TJCVMuIurbscJp6KjK1Ud+8yQZAX
+	QVUSprsjqA3BTtLo214ypnHqPrcE=
+X-Google-Smtp-Source: AGHT+IFSbGoovaCTItwXPKaGxT+vP85QVsKRZkmCJA5rZZuojl9Rce9M7PI4TZVkGutC62+PVBjxG313v9PS8/TSX14=
+X-Received: by 2002:a05:6512:3510:b0:537:a82c:42ec with SMTP id
+ 2adb3069b0e04-537a82c44d1mr81547e87.4.1727130046730; Mon, 23 Sep 2024
+ 15:20:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240923182958.818256-1-sboyd@kernel.org>
-In-Reply-To: <20240923182958.818256-1-sboyd@kernel.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 23 Sep 2024 15:19:57 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjquWwsrEhcJQ1r3nyp_yDbgptuaG1GSmb0WSa5dcPHdA@mail.gmail.com>
-Message-ID: <CAHk-=wjquWwsrEhcJQ1r3nyp_yDbgptuaG1GSmb0WSa5dcPHdA@mail.gmail.com>
-Subject: Re: [GIT PULL] clk changes for the merge window
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <2390624.1726687464@warthog.procyon.org.uk> <31d3465bbb306b7390dd7be15e174671@manguebit.com>
+In-Reply-To: <31d3465bbb306b7390dd7be15e174671@manguebit.com>
+From: Steve French <smfrench@gmail.com>
+Date: Mon, 23 Sep 2024 17:20:35 -0500
+Message-ID: <CAH2r5muENv0sQ0+Q6xtDA-ThVu8B1W9=3-Yy0nOhX3onVVUXFA@mail.gmail.com>
+Subject: Re: [PATCH] cifs: Make the write_{enter,done,err} tracepoints display
+ netfs info
+To: Paulo Alcantara <pc@manguebit.com>
+Cc: David Howells <dhowells@redhat.com>, Steve French <stfrench@microsoft.com>, 
+	Jeff Layton <jlayton@kernel.org>, linux-cifs@vger.kernel.org, netfs@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 23 Sept 2024 at 11:30, Stephen Boyd <sboyd@kernel.org> wrote:
+added to cifs-2.6.git for-next since it is important as it fixes a
+regression affecting cifs.ko
+
+On Thu, Sep 19, 2024 at 11:01=E2=80=AFAM Paulo Alcantara <pc@manguebit.com>=
+ wrote:
 >
-> The following changes since commit 997daa8de64ccbb4dc68d250510893597d485de4:
+> David Howells <dhowells@redhat.com> writes:
 >
-> New Drivers:
->  - Camera, display and GPU clocks on Qualcomm SM4450
->  - Camera clocks on Qualcomm SM8150
->  - Rockchip rk3576 clks
->  - Microchip SAM9X7 clks
->  - Renesas RZ/V2H(P) (R9A09G057) clks
+> > Make the write RPC tracepoints use the same trace macro complexes as th=
+e
+> > read tracepoints and display the netfs request and subrequest IDs where
+> > available (see commit 519be989717c "cifs: Add a tracepoint to track cre=
+dits
+> > involved in R/W requests").
+> >
+> > Signed-off-by: David Howells <dhowells@redhat.com>
+> > cc: Steve French <stfrench@microsoft.com>
+> > cc: Paulo Alcantara (Red Hat) <pc@manguebit.com>
+> > cc: Jeff Layton <jlayton@kernel.org>
+> > cc: linux-cifs@vger.kernel.org
+> > cc: netfs@lists.linux.dev
+> > cc: linux-fsdevel@vger.kernel.org
+> > ---
+> >  fs/smb/client/smb2pdu.c |   22 +++++++++++++++-------
+> >  fs/smb/client/trace.h   |    6 +++---
+> >  2 files changed, 18 insertions(+), 10 deletions(-)
+>
+> Reviewed-by: Paulo Alcantara (Red Hat) <pc@manguebit.com>
+>
 
-Ok, that's useful information.
 
-But Christ, people:
+--=20
+Thanks,
 
-> Updates:
->  - Mark a bunch of struct freq_tbl const to reduce .data usage
-[..]
->  - Drop the Qualcomm SM8150 gcc_cpuss_ahb_clk_src
-[..]
->  - Constify some Amlogic structs
-[..]
-
-This was 65 lines of unnecessary noise.
-
-The merge message is supposed to be an *overview* of the changes. Not
-listing every little change that nobody cares about one by one.
-
-Please edit it down to something reasonable, and something that gives
-a useful idea of what is up. And sometimes that is just "lots of
-driver cleanups".
-
-IOW, try to distill the *meaningful* parts from the detail noise.
-
-               Linus
+Steve
 
