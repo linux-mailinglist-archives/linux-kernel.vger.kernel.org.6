@@ -1,214 +1,172 @@
-Return-Path: <linux-kernel+bounces-336118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62D8A97EF6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:44:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C02897EF71
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:44:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8A93B21B83
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:44:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D054B21CCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E2219F129;
-	Mon, 23 Sep 2024 16:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C496319F428;
+	Mon, 23 Sep 2024 16:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="daVkDwpz"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G82segk6"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5002449649
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 16:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9813319F415;
+	Mon, 23 Sep 2024 16:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727109851; cv=none; b=ImiFFoYNR/XW+MUejZpl1yeSZ1Kwa2kmkKOuYqI56CdstBFXw8PiSpCgLrFPfReLZTtAQgr7Dy0GJ0ZTuGjPkvTUruCuOG3uIn6q9bUwnuL2W79r6XCGQ+5qCMZh7x47kqbQyp7IWxlSjCZL3vwmaTo5t6qOpeRrOaD48KWPexk=
+	t=1727109856; cv=none; b=cvlZWnKCfecnCF5QO+doNNBzcHARn0KC+VGQ3vvTEJ6hbTnulOH9u7O8OT/YmxJN+VJ/0umvXmsx2GHGZn4gLEWJcnwOlNhJ2UkfyMdMBRk8GKnIrenl8zjZWZA/X+AuY3wIoWbr2H30JHeobxcjdIYjNLo74kCY/Soaz2mRQys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727109851; c=relaxed/simple;
-	bh=Tj+rFNp3RUciTXesDUXO/T3ijZS2swiWrnOzdR/3ZKU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tKoiClbbY86svbUBYGzl+fPpr4OGBdQ2mYZ9C3Jvw7BAHpsNxJmj6DF2P7mhfh2tMYciBXDgxazVwBjdQF+4vhQ+MTzd8XRGzS6JwF4Oa0VDbrb4AAZ7qzHg3uP17BlTf61JS63ciDBkQBjCqUt2a60969R8W54wR7ulWBCfX/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=daVkDwpz; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f762de00fbso46184771fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 09:44:09 -0700 (PDT)
+	s=arc-20240116; t=1727109856; c=relaxed/simple;
+	bh=TFvOt3HNoFPmVVuNgvDvNZJdcNu7LUe72278vUlSBJM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hrXZ6lE4JPnZ7TOtPpWsNY/qqem54BrwCym1lvIiN+CnAvzTKWM3Yi7230G6gEjodQmLrhw6h1ZhRPVSdS5JHoK7WFtkKBzfRMt3GXxl8ym88Ua3/8VRScwd1EKf608HirccaTxDCRyr/nI/c1cf8g0nrSAvoPC8jxX+rLqnB48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G82segk6; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-718da0821cbso3490824b3a.0;
+        Mon, 23 Sep 2024 09:44:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1727109847; x=1727714647; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7hXi1VEpOam7nRQRtm5F/Kvp+UglOEaCxtSWG+fjmik=;
-        b=daVkDwpz3QLTSVUSRzhDXYYUc5IEyvk6XBEYW7MYoZwdhLTkqWo8QPxcFtwiPGIy91
-         Rr0j/I4FLTBXO8QG8hCbXZcqmYPkeT6qEvdILvrpVxEZgBSiY2cm9DRpLYkqBc58Y8oy
-         HHUf9Q2TK7ZklJTsNGUSmFd+eWwA26QOqLQi1dI/91w2m4wDgCD4YGHCU5Lpu16xDAAM
-         OMQjW92SBPYk+xhRGbgA1MQyziE6hv3WH6aYf2PL2FQYDtE9q1JpxjXuH4mtfdARYpy0
-         saJK5FqzgLwprT7p5yC4rOS4GSb4QcvQ8rmBeuZdTebImEpAeSMKA86+k+OnNwCjZ5ZJ
-         kUTw==
+        d=gmail.com; s=20230601; t=1727109854; x=1727714654; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=LE2icXy8k73aSjrza+jkChEXgPYFZ3BvwXphHOFJKgs=;
+        b=G82segk6KKLMdag1JEkxdhmrxFufKklRJ4fccJf/078CEf9iudFclg4OIYJf3znrwY
+         Z09tJSjcx1fht88Fq+LaUDYbI6Xv68cSzusDp2vTVkkPWkPQjTdStIaxGUz9eeHvEbx6
+         Hqf1T1DvgSAJ/H4WBcqfzue6qDjGTIx1Wl6uTrQwFuhzXorgvZj+3pwFl9mYfjqp4KcC
+         dyUj9814DUtXPz7+6Re9n/lZvTJDlOTHlbcZxiTiw2Mam1mkkD2v/MHOtCoYeakhLJuF
+         VHFwpGaHo4/QfFzBfLAJ7hboM1vPKW0+eMOtoz20W8ULVWmpd6eaKD7Us/QEVmCi8zf2
+         AIXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727109847; x=1727714647;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1727109854; x=1727714654;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7hXi1VEpOam7nRQRtm5F/Kvp+UglOEaCxtSWG+fjmik=;
-        b=nc5BEniGjz8uD0VyVGtrJXWoCKgIWc6SMg9wnxx+nYEloSdEU9IKi9aS90OtYEXXyS
-         G+H9DK/tXq7A/WPmXCQN1VryRlZCIeJasRNd24VyLviKRymG/U1tV+EsxFzFVtlAMg8r
-         jMhptr79veh8dJO3JbRR6ajCv0QjGaGY2XyomQxxO9z8REfY8zraIgl7r0f3pb0x0pU6
-         uRnoZzII5sLr7nwXXGeI5vBV1hjTjGKCIR15ZDtok89HH/5Y7o1+di+j7OZwIbV6behX
-         AkYWCT3fcwVIPJHXtSjRcsDoeTACyQzV5XoNWZbDpLEPMaz57T0u+rKAMm5yxgd5nBd5
-         5N1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWW1NAHxSpt5ArvGbV1YNGaDeGvqoWfWxu2G302JPKQMcpdYnf6USjKcEhymGM0YBEhkXg2INfwdlT1rzY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzBvb1BtEG+v03Vj1jH+hhhW7UqLhfRm4QWItCNYR1Od6qUY0R
-	tybJpnEP5RsFgF9nBJmWuXAVb62OIVvvAV/pzBq8wF7cRxd2ZvLNDYrBjXCUzvk=
-X-Google-Smtp-Source: AGHT+IGlbMKRBwW56/ddt0TnX1I2vjFVhxMgqZqw8MiUMLPOYvNyOV111a+PrQFKMaiXrHW/JzfNmQ==
-X-Received: by 2002:a05:651c:547:b0:2ef:2344:deec with SMTP id 38308e7fff4ca-2f7cb385ddfmr56631961fa.45.1727109847473;
-        Mon, 23 Sep 2024 09:44:07 -0700 (PDT)
-Received: from cloudflare.com ([2a09:bac5:5063:2432::39b:5a])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb535eesm10506299a12.29.2024.09.23.09.44.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 09:44:06 -0700 (PDT)
-From: Jakub Sitnicki <jakub@cloudflare.com>
-To: David Laight <David.Laight@ACULAB.COM>
-Cc: Martin KaFai Lau <martin.lau@linux.dev>,  'Tiago Lam'
- <tiagolam@cloudflare.com>,  Eric Dumazet <edumazet@google.com>,  Willem de
- Bruijn <willemdebruijn.kernel@gmail.com>,  "David S. Miller"
- <davem@davemloft.net>,  David Ahern <dsahern@kernel.org>,  Jakub Kicinski
- <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  "Alexei Starovoitov"
- <ast@kernel.org>,  Daniel Borkmann <daniel@iogearbox.net>,  "Andrii
- Nakryiko" <andrii@kernel.org>,  Eduard Zingerman <eddyz87@gmail.com>,
-  Song Liu <song@kernel.org>,  Yonghong Song <yonghong.song@linux.dev>,
-  John Fastabend <john.fastabend@gmail.com>,  KP Singh
- <kpsingh@kernel.org>,  Stanislav Fomichev <sdf@fomichev.me>,  Hao Luo
- <haoluo@google.com>,  Jiri Olsa <jolsa@kernel.org>,  Mykola Lysenko
- <mykolal@fb.com>,  Shuah Khan <shuah@kernel.org>,
-  "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-  "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-  "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-  "kernel-team@cloudflare.com" <kernel-team@cloudflare.com>
-Subject: Re: [RFC PATCH v2 2/3] ipv6: Support setting src port in sendmsg().
-In-Reply-To: <29fea23839cf489488f9228a44e79d21@AcuMS.aculab.com> (David
-	Laight's message of "Mon, 23 Sep 2024 15:45:27 +0000")
-References: <20240920-reverse-sk-lookup-v2-0-916a48c47d56@cloudflare.com>
-	<20240920-reverse-sk-lookup-v2-2-916a48c47d56@cloudflare.com>
-	<855fc71343a149479c7da96438bf9e32@AcuMS.aculab.com>
-	<87r09a771t.fsf@cloudflare.com>
-	<29fea23839cf489488f9228a44e79d21@AcuMS.aculab.com>
-User-Agent: mu4e 1.12.4; emacs 29.1
-Date: Mon, 23 Sep 2024 18:44:04 +0200
-Message-ID: <87msjy7223.fsf@cloudflare.com>
+        bh=LE2icXy8k73aSjrza+jkChEXgPYFZ3BvwXphHOFJKgs=;
+        b=TuoqU5ynJIYZeXIclY/29fwROKi9J/x7qO6y3XNe925ZewiajFeivbLMHAQBcwMFkE
+         NkVZOT/EVgCRXDyiK1THrcUX3pllqicIaTeTUOa7iqpV7ErUuczbMFbT9rG1KlikHoa4
+         iSnFUTS+SK9OObt+Jm1sS9lnBRG2788Y9sAHiZr5TVPKXrBaW0NmnX43uidVAnQhYJsx
+         LNiJG+yCRspbaRHckKCTwnJB1LVbQMI+hNDEaHSk2cvAO6T62JI2iWUlr6X54pW/jE2q
+         9j8qwjcRMFoIcolM6f7auzCaU5pqNibUB6dvpEF+RtR78EYLOcrwt1QaikKYUWp6g3nr
+         b91w==
+X-Forwarded-Encrypted: i=1; AJvYcCWkpLznNeNxilprxgVFfB5YJ8D38FfjMiXk6blrrNn5Vg/eNvst3jIQ9/HaZfUeLGrMJKTx7o1i9yU=@vger.kernel.org, AJvYcCXOv3ef3Q7yXkZmlL8PgXnc2I6Iq9GsiNdM576mldfjg75IX0KaEO+mxk2PzfY1hjIa+BauMV4TZrXaYQXh@vger.kernel.org, AJvYcCXVUuKnAxA5yUC8zsfP60dPH89/cQepXlH+0Wtqwmtk3i5OYVQuozegaIrbK/BVXD1Jpz1VHMe/y7tftz4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEpoXrMXqF1gaGZ+Bq4nG8zHJIGWIaD6yme4cv7TWG6tEAhwnt
+	eRrTHtjVUc4zAHNuN1ho/4qfURlAaLFqCBooKD0qcebUvdmHXHBv
+X-Google-Smtp-Source: AGHT+IGFkKeBqlPbwF8lTANmPR1IlCDV9Ofhr250qsjn3aBRkiCnIwM2GuAlJZCRXRbSEmjF9KKuIQ==
+X-Received: by 2002:a05:6a20:c6c1:b0:1cf:4596:d486 with SMTP id adf61e73a8af0-1d30a9d6ac2mr15928045637.47.1727109853749;
+        Mon, 23 Sep 2024 09:44:13 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944b7b577sm14085247b3a.118.2024.09.23.09.44.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Sep 2024 09:44:12 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <64c3f6c3-10b5-44c6-a1cd-c796b770c904@roeck-us.net>
+Date: Mon, 23 Sep 2024 09:44:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/5] hwmon: (pmbus/core) improve handling of write
+ protected regulators
+To: Mark Brown <broonie@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Jean Delvare <jdelvare@suse.com>,
+ Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20240920-pmbus-wp-v1-0-d679ef31c483@baylibre.com>
+ <20240920-pmbus-wp-v1-4-d679ef31c483@baylibre.com>
+ <ZvFrWDF6Pn9zOb23@finisterre.sirena.org.uk>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <ZvFrWDF6Pn9zOb23@finisterre.sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 23, 2024 at 03:45 PM GMT, David Laight wrote:
-> From: Jakub Sitnicki
->> Sent: 23 September 2024 15:56
->> 
->> On Mon, Sep 23, 2024 at 01:08 PM GMT, David Laight wrote:
->> > From: Tiago Lam <tiagolam@cloudflare.com>
->> 
->> [...]
->> 
->> >> To limit its usage, a reverse socket lookup is performed to check if the
->> >> configured egress source address and/or port have any ingress sk_lookup
->> >> match. If it does, traffic is allowed to proceed, otherwise it falls
->> >> back to the regular egress path.
->> >
->> > Is that really useful/necessary?
->> 
->> We've been asking ourselves the same question during Plumbers with
->> Martin.
->> 
->> Unprivileges processes can already source UDP traffic from (almost) any
->> IP & port by binding a socket to the desired source port and passing
->> IP_PKTINFO. So perhaps having a reverse socket lookup is an overkill.
->
-> Traditionally you'd need to bind to the source port on any local IP
-> (or the wildcard IP) that didn't have another socket bound to that port.
+On 9/23/24 06:21, Mark Brown wrote:
+> On Fri, Sep 20, 2024 at 06:47:05PM +0200, Jerome Brunet wrote:
+> 
+>> +int pmbus_regulator_init_cb(struct regulator_dev *rdev,
+>> +			    struct regulator_config *config)
+>> +{
+>> +	struct pmbus_data *data = config->driver_data;
+>> +	struct regulation_constraints *constraints = rdev->constraints;
+>> +
+>> +	if (data->flags & PMBUS_OP_PROTECTED)
+>> +		constraints->valid_ops_mask &= ~REGULATOR_CHANGE_STATUS;
+>> +
+>> +	if (data->flags & PMBUS_VOUT_PROTECTED)
+>> +		constraints->valid_ops_mask &= ~REGULATOR_CHANGE_VOLTAGE;
+>> +
+>> +	return 0;
+>> +}
+>> +EXPORT_SYMBOL_NS_GPL(pmbus_regulator_init_cb, PMBUS);
+> 
+> I'm fairly comfortable with this from a regulator point of view, modulo
+> the suggestion I posted in the other message about registering separate
+> ops.  The fact that there's three combinations of ops is annoying but
+> doesn't feel too bad, though I didn't actually write it out so perhaps
+> it looks horrible.  In general removing permissions is safe, and without
+> separate steps to remove write protect (which I see in your patch 5) the
+> writes wouldn't actually work anyway.
 
-Right. Linux IP_PKTINFO extension relaxes this requirement. You can bind
-to some local IP (whichever is free, plently to choose from in 127/8
-local subnet), and specify the source address to use OOB at sendmsg()
-time (as long as the address is local to the host, otherwise you need
-additional capabilities).
 
-> Modern Linux might have more restrictions and SO_REUSADDR muddies things.
->
-> And I don't think you can do a connect() on an unbound UDP socket to
-> set the source port at the same time as the destination IP+port.
-> (That would actually be useful.)
+I still consider the callback to be unnecessary, but I don't really have time
+to implement a better solution myself. If you accept the regulator patches,
+I'll have another look at the series as-is.
 
-You can. It's somewhat recent (v6.3+) [1]:
+Guenter
 
-https://manpages.debian.org/unstable/manpages/ip.7.en.html#IP_LOCAL_PORT_RANGE
-
-It's not on par with TCP when it comes to local port sharing because we
-hash UDP sockets only by 2-tuple. Though, some effort to improve that is
-taking place I see.
-
-The recipe is:
-
-1. delay the auto-bind until connect() time with IP_BIND_ADDRESS_NO_PORT
-   socket option, and
-2. tell the udp stack to consider only a single local port during the
-   free port search with IP_LOCAL_PORT_RANGE option.
-
-That amounts to something like (in pseudocode):
-
-  s = socket(AF_INET, SOCK_DGRAM)
-  s.setsockopt(SOL_IP, IP_BIND_ADDRESS_NO_PORT, 1)
-  s.setsockopt(SOL_IP, IP_LOCAL_PORT_RANGE, 44_444 << 16 | 44_444)
-  s.bind(("192.0.2.42", 0))
-  s.connect(("1.1.1.1", 53))
-
-You can combine it with SO_REUSEADDR to share the local address between
-sockets, but you have to ensure manually that you don't run into
-conflicts between sockets (two sockets using the same 4-tuple). That's
-something we're hoping to improve in the future.
-
-> OTOH if you just want to send a UDP message you can just use another
-> system on the same network.
-> You might need to spoof the source mac - but that isn't hard (although
-> it might confuse any ethernet switches).
->
->> We should probably respect net.ipv4.ip_local_reserved_ports and
->> net.ipv4.ip_unprivileged_port_start system settings, though, or check
->> for relevant caps.
->
-> True.
->
->> Open question if it is acceptable to disregard exclusive UDP port
->> ownership by sockets binding to a wildcard address without SO_REUSEADDR?
->
-> We've often suffered from the opposite - a program binds to the wildcard
-> IP and everything works until something else binds to the same port and
-> a specific local IP.
-
-Let me see if I understand - what would happen today for UDP is:
-
-app #1 - bind(("0.0.0.0", 53)) -> OK
-app #2 - bind(("192.0.2.1", 53)) -> EADDRINUSE
-
-... unless both are setting SO_REUSEADDR (or SO_REUSEPORT and run under
-same UID).
-
-That is why if we allow selecting the source port at sendmsg() time, we
-would be relaxing the existing UDP port ownership guarantees for
-wildcard binds.
-
-Perhaps this merits a sysctl, so the admin can decide if it is an
-acceptable trade-off in their environment.
-
-> I'm sure this is grief some on both TCP and UDP - especially since you
-> often need to set SO_REUSADDR to stop other things breaking.
->
-> 	David
->  
->
-> -
-> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-> Registration No: 1397386 (Wales)
 
