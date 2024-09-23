@@ -1,183 +1,118 @@
-Return-Path: <linux-kernel+bounces-335345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A87997E45E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 02:27:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73BF397E464
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 02:34:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B1041F21538
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 00:27:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41949281361
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 00:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00661FA4;
-	Mon, 23 Sep 2024 00:27:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C77A4400;
+	Mon, 23 Sep 2024 00:34:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="if1ExWLg"
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="hv7PivUj"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8A0440C;
-	Mon, 23 Sep 2024 00:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39719635;
+	Mon, 23 Sep 2024 00:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727051264; cv=none; b=CvyiQOyaNYiY99zuEeNlfVjtDBJMdwJtypyQ9VF6XVMwsR+WSWscDWxAZTwDKLdjrNHamR7KQ4HNaBg3tYP12qFElhDMp3XyBOtrzP2z2TZ7fAEJLJsoi+Z3J8dza6NMEUW3DQdjy9RrasY8Vqz5p+Fm673qOp7xNPTeTnkdq2A=
+	t=1727051665; cv=none; b=ghaISmUrij3qCoCjSDhPVWwX4YLbNUIin2vkTUZURnP4UNA2K3cHLRWI3a/NPYqhFu3PPEAcMN7n6WXAwHJgXUHv29QZTM45pmebEgR6WjYLifHb9goP3nTFwVA39jUPfotDfPwkxUZQ3korPTMSYmSKVboEpivY0FzTZIjIw1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727051264; c=relaxed/simple;
-	bh=aL78BZDaoWZUZ1YJgTDX8gjk5xYnKqBAzqLQEEwvJsU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tssG0QwVipr9Yvohf8upY1yLdgPvPTDiiRcG/4/R+PWQ4CTWjkMfV7neRZGaajy9dudIJu4skI65ylo//IBlsPq49nMDxZLEgSkb2bUFITWFiOMow3S6UhCKAbwhA2fuCbUhvOqISrLQPybcQ56CzShDHUIxs3JUfDzOCKzGImQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=if1ExWLg; arc=none smtp.client-ip=209.85.161.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5dc93fa5639so1999266eaf.1;
-        Sun, 22 Sep 2024 17:27:42 -0700 (PDT)
+	s=arc-20240116; t=1727051665; c=relaxed/simple;
+	bh=k0R1VSEBcUQCVT5pa6sW4PDOy6epFWwyRWbhVPCZ+kA=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=O43+T1/o7UMMF52NWoEAQlHdab94UbZ45kpczL+zm66gt3rzDJEZpSvKhxyYwT0OSFxE/M2tembWZsDvIXCA4NnlDWR8qH5kuRgJ8zeKQJ7m5a1/EahuwEJKmS3R5RVLzfB239++JfvsFWITqUas4vqSFJQcD7HZGsCwPJFe38M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=hv7PivUj; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727051262; x=1727656062; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IdY+MYWRg3TLdJXc8f3o+FqyhQCsEobdYFbNaMpFW1Y=;
-        b=if1ExWLgJ5U4zjaryb4hLk1nY4hjufmy0KRJzUBJ3nzF/ATir79r+Z9+E0I4pyRZ3d
-         J2GIBR4IE34CcsUgBm+jQ7RfPK9hvLtufRc/x1tSTZz5IcakSC2AsiVUQ3/Up3Et0b/X
-         aPeZZ+HLfdUAhndop43GEZkkOkz3OZrq1uUhQJ3bO/ttQ9I+X6B+2GlwnuwULoSetjbU
-         aufEzIXyI6eAsX7l0bV0wo/8NeLy6BGfkaZXB31pcHsbRF1ZegcEaoU3fVsP9oloX6QT
-         wyuMXgHDjd1BGBDcJAG/V0/dOXc6MUItGzAwE0Ap+s4ma2nDLL83dco1XFkavIEUtUsD
-         doYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727051262; x=1727656062;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IdY+MYWRg3TLdJXc8f3o+FqyhQCsEobdYFbNaMpFW1Y=;
-        b=HFPWTRzEe6aKRDy0Zqb1/03qG1txYVjqozcVXGu3QMOMgUaxDuBHZPqz3Rat6j02FX
-         Gbg+0Y5gF+UrwQwgRWED2O0KtExyCnArOPzj3i+6Ztsxe96lEcrUUOtEgLJ6fsLY6/0j
-         7t6IDQevxF9SFmGiTpSJ3ZXJBmCDUOooCGjE4VjofZGjHDhc6SbwZ1EnF2QYAeWIxke4
-         Nk7bTNdi7nb/m/KUryBJvqu/qjMASpuoZuaUBuqV+8xnqryQNypajhzcFrXINmSqK6Ed
-         CBYwBDUVN9badklZAnWxeiazhn0yJFxMHy1CYG8ZailNEtZPSsvuWwOnlv5PKIsWJ32Q
-         wW5g==
-X-Forwarded-Encrypted: i=1; AJvYcCXODmnRXbNS5Ms37/aS7M1LL6uLfcxHFKJ1rgGL1oMBJX8cvegvoMwcCfoTL91x84oU9V7OExBS9ZjWKws=@vger.kernel.org, AJvYcCXwOKpZ+3LujHgPqO9eNCmPjG/4PSC2aAUB9m2IgZkS0umy8IimEJxal8intoBpBIuSCok6o7syI2XXVIgBGhBusg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4IlypRJL+8tiZqAM3PheK5mqI7rRJ8SKY4UXnGj9C4EBajHih
-	5GyKkNCXAXno0b8+XXwUCJKRbPK3s3nBb0oiMFCqTI/t5SLo0Accsfstd0tLZZHWD7WeYxsu1ng
-	e5RFbtWljk3o69qbjBOWWWON8/hQ=
-X-Google-Smtp-Source: AGHT+IFhEqbijiM3PRdqqniVjygbihN9L9RupT1BgKcfwC59tyExYqeEJzHeFGNDEPAumd7dCXHUg7V80b3aW3Kr5Z0=
-X-Received: by 2002:a05:6820:606:b0:5e1:e8c4:fb00 with SMTP id
- 006d021491bc7-5e58ba91426mr4868164eaf.7.1727051261789; Sun, 22 Sep 2024
- 17:27:41 -0700 (PDT)
+	d=codeconstruct.com.au; s=2022a; t=1727051661;
+	bh=J8lZa+H3G/xwr0+dUXS/TBLSPBCwgo0bJD6759puYZY=;
+	h=Subject:From:To:Date:In-Reply-To:References;
+	b=hv7PivUjzA5mCleEYQ2yPhpRbIv3vJQAqKQWGqTezKx7WLAF2Ou1FzkcuLyIuW5z7
+	 elFpwFaXYpXtxbzAuqQ7nkXVLKQYTUjGNmtWEwCB+ltgV/Azw4kxIC50z4y7pGLREn
+	 44U1efdDyJtxuIOxzUnxjNoTUovGNESkU8QhNn/L73JjMIyIQ3CuI8yfDIijb5GyBU
+	 /BMlp1rT+pbw8qQmwXsLuPc9gnCaDwgolo2E3m4DMfd8LvSNg98DEXe5ha6LknJr7s
+	 u3/CHD+NChCHSe+sAgqFIeQAW9kcHaa8YAfky/Dp4YtKU0OSgBPhItYOQr6pK1/sDI
+	 CYGv6HTS/OALA==
+Received: from [192.168.68.112] (ppp118-210-177-92.adl-adc-lon-bras34.tpg.internode.on.net [118.210.177.92])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id B13FB640E8;
+	Mon, 23 Sep 2024 08:34:17 +0800 (AWST)
+Message-ID: <1333d8dd77c80825cb20bc5a9885a6ced774183b.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v4 3/6] gpio: aspeed: Create llops to handle hardware
+ access
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Billy Tsai <billy_tsai@aspeedtech.com>, "linus.walleij@linaro.org"
+ <linus.walleij@linaro.org>, "brgl@bgdev.pl" <brgl@bgdev.pl>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>,  "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "joel@jms.id.au" <joel@jms.id.au>,  "linux-gpio@vger.kernel.org"
+ <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org"
+ <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
+ <linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, BMC-SW <BMC-SW@aspeedtech.com>, 
+ "Peter.Yin@quantatw.com" <Peter.Yin@quantatw.com>, "Jay_Zhang@wiwynn.com"
+ <Jay_Zhang@wiwynn.com>
+Date: Mon, 23 Sep 2024 10:04:17 +0930
+In-Reply-To: <OSQPR06MB7252FDD739DCE7D4A44F63248B6C2@OSQPR06MB7252.apcprd06.prod.outlook.com>
+References: <20240919094339.2407641-1-billy_tsai@aspeedtech.com>
+	 <20240919094339.2407641-4-billy_tsai@aspeedtech.com>
+	 <7aaed8cf171b67300aa5b7e861628278de948a27.camel@codeconstruct.com.au>
+	 <OSQPR06MB7252FDD739DCE7D4A44F63248B6C2@OSQPR06MB7252.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909203825.1666947-1-arnd@kernel.org>
-In-Reply-To: <20240909203825.1666947-1-arnd@kernel.org>
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Date: Sun, 22 Sep 2024 19:27:29 -0500
-Message-ID: <CABb+yY12GT6GmStDpoghwP4YL+UD+PAhTKTf1vuLjfiSpm65xw@mail.gmail.com>
-Subject: Re: [PATCH] mailbox, remoteproc: omap2+: fix compile testing
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Hari Nagalla <hnagalla@ti.com>, Andrew Davis <afd@ti.com>, Martyn Welch <martyn.welch@collabora.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Konrad Dybcio <konradybcio@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 9, 2024 at 3:38=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wrot=
-e:
->
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> Selecting CONFIG_OMAP2PLUS_MBOX while compile testing
-> causes a build failure:
->
-> WARNING: unmet direct dependencies detected for OMAP2PLUS_MBOX
->   Depends on [n]: MAILBOX [=3Dy] && (ARCH_OMAP2PLUS || ARCH_K3)
->   Selected by [m]:
->   - TI_K3_M4_REMOTEPROC [=3Dm] && REMOTEPROC [=3Dy] && (ARCH_K3 || COMPIL=
-E_TEST [=3Dy])
->
-> Using 'select' to force-enable another subsystem is generally
-> a mistake and causes problems such as this one, so change the
-> three drivers that link against this driver to use 'depends on'
-> instead, and ensure the driver itself can be compile tested
-> regardless of the platform.
->
-> When compile-testing without CONFIG_TI_SCI_PROTOCOL=3Dm, there
-> is a chance for a link failure, so add a careful dependency
-> on that.
->
-> arm-linux-gnueabi-ld: drivers/remoteproc/ti_k3_m4_remoteproc.o: in functi=
-on `k3_m4_rproc_probe':
-> ti_k3_m4_remoteproc.c:(.text.k3_m4_rproc_probe+0x76): undefined reference=
- to `devm_ti_sci_get_by_phandle'
->
-> Fixes: ebcf9008a895 ("remoteproc: k3-m4: Add a remoteproc driver for M4F =
-subsystem")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/mailbox/Kconfig        |  2 +-
->  drivers/mailbox/omap-mailbox.c |  2 +-
->  drivers/remoteproc/Kconfig     | 10 ++++------
->  3 files changed, 6 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
-> index 4eed97295927..ecaf78beb934 100644
-> --- a/drivers/mailbox/Kconfig
-> +++ b/drivers/mailbox/Kconfig
-> @@ -73,7 +73,7 @@ config ARMADA_37XX_RWTM_MBOX
->
->  config OMAP2PLUS_MBOX
->         tristate "OMAP2+ Mailbox framework support"
-> -       depends on ARCH_OMAP2PLUS || ARCH_K3
-> +       depends on ARCH_OMAP2PLUS || ARCH_K3 || COMPILE_TEST
->         help
->           Mailbox implementation for OMAP family chips with hardware for
->           interprocessor communication involving DSP, IVA1.0 and IVA2 in
-> diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbo=
-x.c
-> index 7a87424657a1..6797770474a5 100644
-> --- a/drivers/mailbox/omap-mailbox.c
-> +++ b/drivers/mailbox/omap-mailbox.c
-> @@ -603,7 +603,7 @@ static struct platform_driver omap_mbox_driver =3D {
->         .driver =3D {
->                 .name =3D "omap-mailbox",
->                 .pm =3D &omap_mbox_pm_ops,
-> -               .of_match_table =3D of_match_ptr(omap_mailbox_of_match),
-> +               .of_match_table =3D omap_mailbox_of_match,
->         },
->  };
->  module_platform_driver(omap_mbox_driver);
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index 0f0862e20a93..62f8548fb46a 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -330,8 +330,7 @@ config STM32_RPROC
->  config TI_K3_DSP_REMOTEPROC
->         tristate "TI K3 DSP remoteproc support"
->         depends on ARCH_K3
-> -       select MAILBOX
-> -       select OMAP2PLUS_MBOX
-> +       depends on OMAP2PLUS_MBOX
->         help
->           Say m here to support TI's C66x and C71x DSP remote processor
->           subsystems on various TI K3 family of SoCs through the remote
-> @@ -343,8 +342,8 @@ config TI_K3_DSP_REMOTEPROC
->  config TI_K3_M4_REMOTEPROC
->         tristate "TI K3 M4 remoteproc support"
->         depends on ARCH_K3 || COMPILE_TEST
-> -       select MAILBOX
-> -       select OMAP2PLUS_MBOX
-> +       depends on TI_SCI_PROTOCOL || (COMPILE_TEST && TI_SCI_PROTOCOL=3D=
-n)
-> +       depends on OMAP2PLUS_MBOX
->
-TI_K3_M4_REMOTEPROC isn't in the mainline yet so this fragment doesn't
-apply on my tree.
-I can drop just this and apply the rest of the patch, otherwise the
-patch may go via remoteproc.
-Let me know.
-Thanks
--Jassi
+On Fri, 2024-09-20 at 09:19 +0000, Billy Tsai wrote:
+> >=20
+> > > @@ -1191,6 +1203,9 @@ static int __init aspeed_gpio_probe(struct
+> > > platform_device *pdev)
+> > >=20
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0gpio->config =3D gpio_id->data;
+> > >=20
+> > > +     if (!gpio->config->llops->reg_bit_set || !gpio->config-
+> > > >llops->reg_bits_get)
+> > > +             return -EINVAL;
+> > > +
+>=20
+> > This will need to clean up gpio->clk. Perhaps you could move it
+> > above
+> > the of_clk_get() call instead?
+>=20
+> How about change the `of_clk_get` to `devm_clk_get(&pdev->dev, 0);`?
+
+Yep.
+
+>=20
+> > However, looking through the rest it seems we have a few issues
+> > with
+> > this leak :/
+>=20
+> This gpio driver doesn't have the reset, is it?
+
+No, just leaking the resource.
+
+However, I can't see that we prepare/enable (and disable/unprepare) the
+clock either :( [1]. Do you mind fixing that as well? It would be best
+if debounce didn't work by accident.
+
+Andrew
+
+[1]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
+e/include/linux/clk.h?h=3Dv6.11#n527
+
+
+
 
