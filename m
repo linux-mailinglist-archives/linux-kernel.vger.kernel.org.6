@@ -1,465 +1,238 @@
-Return-Path: <linux-kernel+bounces-335750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5473497EA19
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:46:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32A1697EA1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:47:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D85F21F210C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:46:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E6E2B21750
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD90196DA4;
-	Mon, 23 Sep 2024 10:46:35 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4199E195FF0
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 10:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727088394; cv=none; b=usEhuVI9uVVdV4299aE796Z+2Ik/La0EQbCHdkMnjfVkopP9OqHCzU8EHzZapgDeZplA2Yevo/UdLkcvhTprNm4CEq/eCkiE+jNaoSaDY7Ac44ZRBDifRRxiz4nLQ21nrdYf+sImuO2TwN0OVvnrpQS5SmcRyYBLaM+2K7Q290c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727088394; c=relaxed/simple;
-	bh=xusluKUmJulxEY+VZfDMTk1aSJgnzGyelih6dJtCiVA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LE+eANkh6G+2NMgDzS0ucpKC/sGZevttj68+tKb9nW71PyAecrCUwXkl7YCrcUnGEj2wTNVEzBjCGp2APtbLZJYzyxtF4RdBsw7YpddBwZqkKBXbP0YKRSHqSM+kzCcLOxJ3wSg929fLQF/eBA2nQxQS/0P/540iNJJPBwo8nMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ED1E0FEC;
-	Mon, 23 Sep 2024 03:47:00 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 67ACC3F71A;
-	Mon, 23 Sep 2024 03:46:29 -0700 (PDT)
-Date: Mon, 23 Sep 2024 11:46:24 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Will Deacon <will@kernel.org>,
-	syzbot <syzbot+908886656a02769af987@syzkaller.appspotmail.com>,
-	catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	kasan-dev <kasan-dev@googlegroups.com>,
-	Aleksandr Nogikh <nogikh@google.com>,
-	Alexander Potapenko <glider@google.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>
-Subject: Re: [syzbot] [arm?] upstream test error: KASAN: invalid-access Write
- in setup_arch
-Message-ID: <ZvFGwKfoC4yVjN_X@J2N7QTR9R3>
-References: <000000000000f362e80620e27859@google.com>
- <20240830095254.GA7769@willie-the-truck>
- <86wmjwvatn.wl-maz@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521A8197559;
+	Mon, 23 Sep 2024 10:47:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="xKFtmAFo"
+Received: from outbound.mail.protection.outlook.com (mail-northeuropeazon11012006.outbound.protection.outlook.com [52.101.66.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E5BD78C9C;
+	Mon, 23 Sep 2024 10:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.6
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727088466; cv=fail; b=uhedeLnd/7xMKdT2DaaFlGBd5Er81ZJ97lmyxhz+A62l/h4u6SMbQNDo21/sB/mQrWfgQuUqxHjcQVPzZFelSgvfoIMfz21nxbB2wqXmclihlfltHtJer/CG7Mt0DRh291R7kNBFAHI2vhgkWSh+a7HcaHQYYw7Gk/c5hOMhV2c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727088466; c=relaxed/simple;
+	bh=LdpSgwdhtrysPlv4XvNvBXTeH1aZGUSGQSfILnvZ8Ks=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=gs6vDeZ0sQmbTx5cfGwbfNx8P2mJckpJsYlcOAn7eqFxrf849jpT2l/YyA8OH6WdFzZVRskrD/+OQxnVIWkwkP7rKGr/mzc6oPArcWTJ0JObn3tX89kho1ad3sMgkqfhVyM2zLqIZJTb+NnMidTf6/R0nS+CUDohUO8m9kcIz+4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=xKFtmAFo; arc=fail smtp.client-ip=52.101.66.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=c1YCva3A8wnn8e1hwXJHFSpp8qGzxyj1Q1EDu+YDh4u7Po/4kfp+bYaXvsdqC7MzoymTc8xsTworeZkOEJV6iMogNwD7J2DQYug8zuTaQQlBKyd3JrQ65J343rkiwkwIOW71yDHFcclUQbBeC5S6BxAZ/9gYPP9fKB4tjAmSs1g39E277M3AXQbBrVMjSidSbIKbmrAgx2su3G0BBB4YshL5OfudbXwTXWPfah3lX2PcOB/Il+xv9hQ0qqRrvkF+lDyF9dCXPtfqNR3ZwoHuHzxibN+AMIQ6WCEyBlIo9XpvrziclBiI2X22NSAH+d4p/XwDHPXL0B5Ei+eiQeOO8w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NvCoYnfRkuGeeezYJemwS09KmZCiN3ekkYpCh5dKNMA=;
+ b=SRbq53x6XQ/iJX5L7gd01cEv6c5RufdM8saRMQjUkS0MIKoLzHZrAMS9MQLaCkpJ5lXRAg4ZYahA6Cc8ZMtWvHXWEUdzz21J5d8BVT1PVLur+bmFeFx5pUugc8OQGN8wGsqaXePHWadoKdanwfM2v5EWFbUvS1uvx91KKcnk/kYxK9CHfAY7NR73jELCGL89jvLdEEE+L2NUo9HPR+RSfMkyLbw11PQ6EaLCHYahZt7J+aS65qK7o2IHvg/nXltluzpPoQaAgpJ8tzd+2tr3sR8GQ8TsTeS50l6GWJDK86rfDGORoaSmTS3AmaJ1BjcxPnIQNDi/3GEEBOoeaezMdA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NvCoYnfRkuGeeezYJemwS09KmZCiN3ekkYpCh5dKNMA=;
+ b=xKFtmAFow1VTovSdeEm6/VvDNZJfKuJS+S94ubfArPx3FL8gcYHW4QhojW0fZekfxJbT9P/nNyBZj6Hgkx8iWX0OfSHmT7Jg1Iaag+5sVbamlsBw/8pRTI4uFtxxM4Ov0TXCutKhUrZFINuNPCGbWHivuifzpsLJHyxBKhuiWBKWB5eqeqs8/LcDCUVG56sSc9zy3XnN3LcDPhvVJmTNxtUFfrzw4qx8aTjjl2N2TvDwODx6ccshXkMLZd8yRYhvlfkzYB1CDGBvaSUMpSg95xsnS5L1aU/dPrJrgSXEsQ8gfcYLBE+ZpT3XsCZj3dtSu8PVhfTscNBeTgNw3UBN0g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from AM9PR04MB8487.eurprd04.prod.outlook.com (2603:10a6:20b:41a::6)
+ by DB9PR04MB8331.eurprd04.prod.outlook.com (2603:10a6:10:244::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.25; Mon, 23 Sep
+ 2024 10:47:34 +0000
+Received: from AM9PR04MB8487.eurprd04.prod.outlook.com
+ ([fe80::6d7a:8d2:f020:455]) by AM9PR04MB8487.eurprd04.prod.outlook.com
+ ([fe80::6d7a:8d2:f020:455%5]) with mapi id 15.20.7962.022; Mon, 23 Sep 2024
+ 10:47:34 +0000
+Message-ID: <3b51ff7b-ab9b-431c-a43a-49b5a5e74dff@oss.nxp.com>
+Date: Mon, 23 Sep 2024 13:47:25 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/4] dt-bindings: gpio: add support for NXP S32G2/S32G3
+ SoCs
+To: Conor Dooley <conor@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chester Lin <chester62515@gmail.com>,
+ Matthias Brugger <mbrugger@suse.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, NXP S32 Linux Team <s32@nxp.com>
+References: <20240919134732.2626144-1-andrei.stefanescu@oss.nxp.com>
+ <20240919134732.2626144-3-andrei.stefanescu@oss.nxp.com>
+ <20240920-reapply-amusement-a37cf13fd910@squawk>
+ <16950e81-e0ef-4e7c-b0ef-4f56415dceed@oss.nxp.com>
+ <bd5a2d24-164c-4707-a5fd-6584e444ee0b@kernel.org>
+ <20240921-party-glass-bfb7099c7ded@spud>
+ <e6u3kui5md4km5xvjzlq5cfgwvtb73c763uep4j5ysaokmmucr@gz5nxiebg7gu>
+ <20240922-plug-legible-74f56d898123@spud>
+Content-Language: en-US
+From: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+In-Reply-To: <20240922-plug-legible-74f56d898123@spud>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AM0PR10CA0082.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:208:15::35) To AM9PR04MB8487.eurprd04.prod.outlook.com
+ (2603:10a6:20b:41a::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86wmjwvatn.wl-maz@kernel.org>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM9PR04MB8487:EE_|DB9PR04MB8331:EE_
+X-MS-Office365-Filtering-Correlation-Id: ec7b375c-5552-4e3b-7f89-08dcdbbd21f6
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NEhRNTNjUWVQUHlsOEZzeGNZQnZCUWx1bmtDQjFzYzEvSTY0UjB5bFlWODJj?=
+ =?utf-8?B?UFlvWkxnRE9aanNQNTVER1VsR3RLcWVJL1Z3aEhyNGxxTzRQbGM3WEhwM2JR?=
+ =?utf-8?B?cytndExJT08rK0Myc21CM1FVcGVOQTcyMlVhMXlPL05LcjJuMTcyTVlBa0k0?=
+ =?utf-8?B?Y0FXZm5YbEJjbGpwbnY4YTYzM0JHYVlGYTVQeGt0b2MvSFJEYkZZU1dIeGJT?=
+ =?utf-8?B?QkR6OENPVTA4dVNWU2xtdUxSYlZuYXIxZ3IrM1ZMWFNMOUk1UmlRUTZiSVo3?=
+ =?utf-8?B?NU4vNFhvYmx3VktEYlpYNndHdHRGTTNQS3FaUEN4NmcrN0ppQzVMd2tRSFBz?=
+ =?utf-8?B?RnZibU90QUxyL0k3TkpxWXlZZ0JiaHBkVEZ1NkJrcUpOcEhvVHJpTWxyWWtW?=
+ =?utf-8?B?dUlLNWdtcXJuSjFiUDh4d1JpVFlFalVFWnBtajU4UVYxMndmYkRWRkR6VmNK?=
+ =?utf-8?B?bWxKM050eVVob29mdkovaDk2T3Fudm5XSkF1NDVPa04wdzkycytuVlROd25X?=
+ =?utf-8?B?ZEp2OEVLZmhaVVU3dm1aWjY5Q0wrbTEyMWp5NmtHVkNaZVJkSzJiYVEzWmRN?=
+ =?utf-8?B?T2NhY25SV0NpY2xWb2JZb24wU25iWXNndTRWWm1MZU9XdDNsZ3VQVmhJb1k4?=
+ =?utf-8?B?N2czUEF4WGU5eEE3WTdUUzRYUThwVWQ2K0Nud25PRGZ3Q2U3a01jWGpJRXgw?=
+ =?utf-8?B?ZjBuVkVLR1NxUWJ5ZGhCU0F3NnFWcTFLMTJiL1BlVExqWnVnYzNmOVFPUkp4?=
+ =?utf-8?B?UFBwbDlEZ1NlMjJRQS9UcnVBMU5BQVUxbWZrWWpFWS8vZm9ueExpRWdPTkN3?=
+ =?utf-8?B?U0R2ZEJ1cEEwbm16TXZNZGMxc3cvanY4U0loYUFkNFZ0TmZBcXVpSVBIM1pj?=
+ =?utf-8?B?VGp0RWUzNjY1TUF3d3Q4dllzQUVZMHpYeGdVWHovd0FsQXQwSVdySXgyUUNk?=
+ =?utf-8?B?MXY1RDc1RjdiaG5WN1lxLzNBSWppbWlUczZVNDNtS212UXdiWUF1cXVNd2Jq?=
+ =?utf-8?B?Zzc0NjBsYWVicmgvK1RUUUpiYXpGak81TGJQSUF2czFYWTZvaXJDQWsyYzdm?=
+ =?utf-8?B?c2Q4R2g2OEZkRCtQNlV4enZOR1lNMzZWMmpNclVqNkJQZnZwaVFUMjBNM3lX?=
+ =?utf-8?B?T1BFcjlJRG5LTjlDS3BzeFM3a2xVNU1EY1p3MFlkWmFENzRMMWFmUVk4ODVl?=
+ =?utf-8?B?QUxialRHemFsTStJRzJONlJPdFRUREdXSHNic3ZNdU9wTTZmak1zc0JtRG4r?=
+ =?utf-8?B?RHUvTGVCN1dVVGtVbGFFMlNQbXpHTnVJSGsxZ2I4NGpFZ1VZMXdjMTdjUDV6?=
+ =?utf-8?B?TGl5RnBoYXE2RnpVSUJjOWdHczF0K1Bpb1JwWDNIQzBxY3p6UnkvZEhJYThS?=
+ =?utf-8?B?QUlSUENYT2VjVURTTVo4N0tDYmxJbi9LNHRUUUp5SE5HeUNoenN1Mk1CMVI2?=
+ =?utf-8?B?Zzh5MEZ6bjYrZ2Y3MkJ0cVFwRU9VOXpDdHJkUVcrSGZ4am1ZY0pMcm43Z2xq?=
+ =?utf-8?B?ZUZIRjNNY2VBV2w0ZHRtOFE3VDRRbmtiNHEyZDErZk9jWFU1YWMrZ2l5R1h6?=
+ =?utf-8?B?Uy9sbUpPc1kzYnhqQ3V6aDN4dU5iQkZMZ1dlVzZCN2hHdFM0N01NYW1PQ0tj?=
+ =?utf-8?B?ZHZ5VWl4SkR1YUJ0OUc5dmJTK1A0VER1RS90TklKN3p4Z09lZ1FGQ3ZjUnFN?=
+ =?utf-8?B?dmdGcjk2amVBUTlqYlNEaWxGN00vR3M1dFVRNVNTTTY4WWN2K2xQZFZ1Q2pZ?=
+ =?utf-8?B?ZCs1TkhiTE5GTkVhbThTT0kvbnhaV2pWekkxdGhMZUJHdmtYWHpKODEvbk9s?=
+ =?utf-8?B?NXliYnhJNkNtS3J2T2MxZz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8487.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?OVRWYVErRVFQcys3Zzk5YmRTVEpQVmRza3o0cmRCakIvSWF6M0EyWnAzbCt1?=
+ =?utf-8?B?cFZTQTNrU1d3bTdQQUM5aWc4aVUweVZoTUNJREw5OEdGbTVienR5bmVVR2tv?=
+ =?utf-8?B?Y1hmVDhGcVJTSDdYakhmeU9xb2tHQVBNODducEt2Z3U5bTBvVG93dEd6ZkU4?=
+ =?utf-8?B?anRNN0dYamExbnIrdGV1MVU5SndheXpUZDVZNjhjTkJmbndJeWF6Q0ZORis0?=
+ =?utf-8?B?MGNYVWRJeEhRTUtKQlY1M2JVd25INzE0YTRVd2cxVERUVDJhR1d0ZEhkUWpG?=
+ =?utf-8?B?OE9MVGRDaWZBMGJXZ0JwMnJLVXpnOTdBb3ZXNEpPaUZlRDlGL0JJRUtHY3FS?=
+ =?utf-8?B?aVRieU9iNTdEcW53QStYT3hSSEUyL09LSzEzU3RPVDJ0Z2J4aDNRWmUya1Ex?=
+ =?utf-8?B?elM3QnJ0ZElRaTNqckFOUzdQcVhJY3R0c2tVQktRZ3VTU1ZiRXdWdXJmUU8v?=
+ =?utf-8?B?WkRVd1dKZGhEdVRHYXJxbHB1R0FsazNRa0NyZko2bHBSY0dJZGNyU0FXbC80?=
+ =?utf-8?B?dGY1RGpxNDFEdmdKcGtoY3M4bEtvTnVSaXA2WUJQbnp4ZXBvaHY2ZDVPSmd3?=
+ =?utf-8?B?ejdYb0xMd1dzSk9zR1o2enpOMldzOHZSeTdoVDlzQkk3UWR1RU5yZFhCME91?=
+ =?utf-8?B?b2NlNG5BZ2cxby9TSUQ3cVplNVRHMGYzeVFrdkprY0lwanBrODl1WVR0UHVn?=
+ =?utf-8?B?WmRRcGh5QWZsL1gzT1NFc0d1dFI0SHhTZ1UxbmJjdml5RFdmZStad0U0WGl1?=
+ =?utf-8?B?RytJKzZRNmJxcUpZZU1oV3RTL2VGNDhXdHR0bkRoZjBWa3M3S29uWFhkQ0Y3?=
+ =?utf-8?B?eVpFaVZxcXU5Vkp1dnpHOCt1WnoyRkVLTDRxR1A2QXpUckpZQlJDbkZRdWV0?=
+ =?utf-8?B?cHZLMDZ1UEdSeG9EY0xoa2RmRW4zWU1RcVZqWWJjS0xoTjIvRFRvNTliWGtE?=
+ =?utf-8?B?ZjhRSDNPYkFVcDV0MklHVTlKeDR1N0Fsb1hXMmY4THlScDkvSE12UURHRVEr?=
+ =?utf-8?B?UDFtSmJmSzZwMktjckZXK3hJVk5hb29NV2VrWXNGSVdaUUpUSmRpN1M3b0tZ?=
+ =?utf-8?B?SWlFc25kQTRjcmFqUkxkN3BpczJZKysxc3NzRW9GTjNHU1VsQW1yUENyeC9l?=
+ =?utf-8?B?bHZ5T08wRXJSVENCdHRWaE9DZ25NM0dSUlFTdnNpQzlJRXVwRWl4bTlSZUly?=
+ =?utf-8?B?TTg4OGpNeHJrU3ptd2FpRGY4RlJaazdGWGZyRDN6a29PVGZXMEtOT3NlRmFG?=
+ =?utf-8?B?bG02NFVVenJFa1FocDJmUFBVbkR1YmFYSFJPL3ZmWDFwemxSR1JOeDVsZmsx?=
+ =?utf-8?B?MDB4bUViVE9BWlJNT2pwNk9wQURHUis4VWQ4YndPVCt6N3hXK1p5NWR4R0dr?=
+ =?utf-8?B?ODFudGVHL3lYbnFaUzBHamU4M3lTRGR5THdSRjZpVWJtQng2YXRJdm9pdlkv?=
+ =?utf-8?B?MWNNdWRXcU1oWUpqVXltZUtnN2JRWnVqSjN0KzhJN2lsaHQwM1hjYWczWmxw?=
+ =?utf-8?B?L1NXcXFkcW1LblI5WHNLY1hHWVhTMWN5VHRzRXJwdFQwQllZYmRidFZzZFJV?=
+ =?utf-8?B?NjREdXpvcG9QTEdFbVJINCtnVWdZVjQ1WmhzTW4yb0txc09CaDlSdW9pQmlH?=
+ =?utf-8?B?ZmttN0k1Q3VEaExnS2dVQkhPUWFhSjU4S251S25IbldDdmVIV0FEeW52WTNR?=
+ =?utf-8?B?aU9kQXFjZUtXRkd6ZUFOVkpMRjJ0bFFDV2Z2UjFUUnRtTDZXZmVqb1hMZURx?=
+ =?utf-8?B?b2ZuTGt4eTR1NVBONTVSd3F3TU9vd1lZcHIrdCtpeWRjSkQyNVhuL09Ncnhr?=
+ =?utf-8?B?dldMeGp0MnZWMkQwZHp6QTViSTVsM3pRMGNua3ZZN0JzVzA0Kzdtd3VVRjRv?=
+ =?utf-8?B?elJqaTVqaHczTFN3TUpDY3VMZ0dmMjhreFBjOWVZSlExVFo2TldMcDNsMjNv?=
+ =?utf-8?B?cDU5OVNmcnprbVc2YVU0L3BBS2FqRGUyWWwramVOQjZyandqMnRkeG91bTJD?=
+ =?utf-8?B?UXhmMjZWeFlUWVRWMU9vOElyYXdCWVVaS29abC9WWjlyRWZuRFFqbVdqSm0x?=
+ =?utf-8?B?Q3dsK3pLQUcyQ0JQZUpsQk1BRHAxNGgzRTI1NTcyTEZpNTEycEVyTDU0WS9E?=
+ =?utf-8?B?Zk12N3dqK05CWW85RHNYejZDN0ZKcVo3WjVBcDlNaGJUdGFIYmVFZkZxV1Ni?=
+ =?utf-8?B?RVE9PQ==?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ec7b375c-5552-4e3b-7f89-08dcdbbd21f6
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8487.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2024 10:47:34.8206
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: o830cF0hdRIyUFKa13bmIG8FsuuYReRJGjlG6cD1l0knTp0sKH8josp5oqWF6zH+pkCvikNy5IDA8TWCvTbHL1XiHKjVR+7ua4aCY57jt0E=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8331
 
-[adding KASAN folk]
+Hi,
 
-There appears to be a GCC bug here, analysis below.
-
-The issues with clang are unrelated, and I will follow up with a
-separate mail for those.
-
-On Sat, Aug 31, 2024 at 06:52:52PM +0100, Marc Zyngier wrote:
-> On Fri, 30 Aug 2024 10:52:54 +0100,
-> Will Deacon <will@kernel.org> wrote:
-> > 
-> > On Fri, Aug 30, 2024 at 01:35:24AM -0700, syzbot wrote:
-> > > Hello,
-> > > 
-> > > syzbot found the following issue on:
-> > > 
-> > > HEAD commit:    33faa93bc856 Merge branch kvmarm-master/next into kvmarm-m..
-> > > git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm.git fuzzme
-> > 
-> > +Marc, as this is his branch.
-> >
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=1398420b980000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=2b7b31c9aa1397ca
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=908886656a02769af987
-> > > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> > > userspace arch: arm64
+On 23/09/2024 00:07, Conor Dooley wrote:
+> On Sun, Sep 22, 2024 at 11:04:22PM +0200, Krzysztof Kozlowski wrote:
+>> On Sat, Sep 21, 2024 at 10:58:46PM +0100, Conor Dooley wrote:
+>>> On Fri, Sep 20, 2024 at 03:40:31PM +0200, Krzysztof Kozlowski wrote:
+>>>> On 20/09/2024 15:33, Andrei Stefanescu wrote:
 > 
-> As it turns out, this isn't specific to this branch. I can reproduce
-> it with this config on a vanilla 6.10 as a KVM guest. Even worse,
-> compiling with clang results in an unbootable kernel (without any
-> output at all).
+>>>>>>> +properties:
+>>>>>>> +  compatible:
+>>>>>>> +    items:
+>>>>>>> +      - const: nxp,s32g2-siul2-gpio
+>>>>>>
+>>>>>> Commit message and binding description say s32g2 and s32g3, but there's
+>>>>>> only a compatible here for g2.
+>>>>>
+>>>>> Yes, the SIUL2 GPIO hardware is the same for both S32G2 and S32G3 SoCs. I plan
+>>>>> to reuse the same compatible when I add the SIUL2 GPIO device tree node for
+>>>>> the S32G3 boards. Would that be ok?
+>>>>
+>>>> There are only few exceptions where re-using compatible is allowed. Was
+>>>> S32G on them? Please consult existing practice/maintainers and past reviews.
+
+I will add another compatible: "nxp,s32g3-siul2-gpio" for the S32G3 SoC. We currently
+also have the SIUL2 pinctrl driver in upstream with only one compatible:
+"nxp,s32g2-siul2-pinctrl". Should I also send a separate patch to add an S32G3 compatible
+to it?
+
+>>
+>> Just in case this was not clear - comment "please consult existing..."
+>> was towards Andrei, not you Conor.
 > 
-> Mind you, the binary is absolutely massive (130MB with gcc, 156MB with
-> clang), and I wouldn't be surprised if we were hitting some kind of
-> odd limit.
+> Oh I know, I was just passing through and figured I may as well leave a
+> comment repeating what I said on the other devices :)
 > 
-> > > 
-> > > Downloadable assets:
-> > > disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/384ffdcca292/non_bootable_disk-33faa93b.raw.xz
-> > > vmlinux: https://storage.googleapis.com/syzbot-assets/9093742fcee9/vmlinux-33faa93b.xz
-> > > kernel image: https://storage.googleapis.com/syzbot-assets/b1f599907931/Image-33faa93b.gz.xz
-> > > 
-> > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > > Reported-by: syzbot+908886656a02769af987@syzkaller.appspotmail.com
-> > > 
-> > > Booting Linux on physical CPU 0x0000000000 [0x000f0510]
-> > > Linux version 6.11.0-rc5-syzkaller-g33faa93bc856 (syzkaller@syzkaller) (gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #0 SMP PREEMPT now
-> > > random: crng init done
-> > > Machine model: linux,dummy-virt
-> > > efi: UEFI not found.
-> > > NUMA: No NUMA configuration found
-> > > NUMA: Faking a node at [mem 0x0000000040000000-0x00000000bfffffff]
-> > > NUMA: NODE_DATA [mem 0xbfc1d340-0xbfc20fff]
-> > > Zone ranges:
-> > >   DMA      [mem 0x0000000040000000-0x00000000bfffffff]
-> > >   DMA32    empty
-> > >   Normal   empty
-> > >   Device   empty
-> > > Movable zone start for each node
-> > > Early memory node ranges
-> > >   node   0: [mem 0x0000000040000000-0x00000000bfffffff]
-> > > Initmem setup node 0 [mem 0x0000000040000000-0x00000000bfffffff]
-> > > cma: Reserved 32 MiB at 0x00000000bba00000 on node -1
-> > > psci: probing for conduit method from DT.
-> > > psci: PSCIv1.1 detected in firmware.
-> > > psci: Using standard PSCI v0.2 function IDs
-> > > psci: Trusted OS migration not required
-> > > psci: SMC Calling Convention v1.0
-> > > ==================================================================
-> > > BUG: KASAN: invalid-access in smp_build_mpidr_hash arch/arm64/kernel/setup.c:133 [inline]
-> > > BUG: KASAN: invalid-access in setup_arch+0x984/0xd60 arch/arm64/kernel/setup.c:356
-> > > Write of size 4 at addr 03ff800086867e00 by task swapper/0
-> > > Pointer tag: [03], memory tag: [fe]
-> > > 
-> > > CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.11.0-rc5-syzkaller-g33faa93bc856 #0
-> > > Hardware name: linux,dummy-virt (DT)
-> > > Call trace:
-> > >  dump_backtrace+0x204/0x3b8 arch/arm64/kernel/stacktrace.c:317
-> > >  show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
-> > >  __dump_stack lib/dump_stack.c:93 [inline]
-> > >  dump_stack_lvl+0x260/0x3b4 lib/dump_stack.c:119
-> > >  print_address_description mm/kasan/report.c:377 [inline]
-> > >  print_report+0x118/0x5ac mm/kasan/report.c:488
-> > >  kasan_report+0xc8/0x108 mm/kasan/report.c:601
-> > >  kasan_check_range+0x94/0xb8 mm/kasan/sw_tags.c:84
-> > >  __hwasan_store4_noabort+0x20/0x2c mm/kasan/sw_tags.c:149
-> > >  smp_build_mpidr_hash arch/arm64/kernel/setup.c:133 [inline]
-> > >  setup_arch+0x984/0xd60 arch/arm64/kernel/setup.c:356
-> > >  start_kernel+0xe0/0xff0 init/main.c:926
-> > >  __primary_switched+0x84/0x8c arch/arm64/kernel/head.S:243
-> > > 
-> > > The buggy address belongs to stack of task swapper/0
-> > > 
-> > > Memory state around the buggy address:
-> > >  ffff800086867c00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> > >  ffff800086867d00: 00 fe fe 00 00 00 fe fe fe fe fe fe fe fe fe fe
-> > > >ffff800086867e00: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-> > >                    ^
-> > >  ffff800086867f00: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-> > >  ffff800086868000: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-> > > ==================================================================
-> > 
-> > I can't spot the issue here. We have a couple of fixed-length
-> > (4 element) arrays on the stack and they're indexed by a simple loop
-> > counter that runs from 0-3.
-> 
-> Having trimmed the config to the extreme, I can only trigger the
-> warning with CONFIG_KASAN_SW_TAGS (CONFIG_KASAN_GENERIC does not
-> scream). Same thing if I use gcc 14.2.0.
-> 
-> However, compiling with clang 14 (Debian clang version 14.0.6) does
-> *not* result in a screaming kernel, even with KASAN_SW_TAGS.
-> 
-> So I can see two possibilities here:
-> 
-> - either gcc is incompatible with KASAN_SW_TAGS and the generic
->   version is the only one that works
-> 
-> - or we have a compiler bug on our hands.
-> 
-> Frankly, I can't believe the later, as the code is so daft that I
-> can't imagine gcc getting it *that* wrong.
+>>> Pretty sure I had a similar conversation about another peripheral on
+>>> these devices, and it was established that these are not different fusings
+>>> etc, but rather are independent SoCs that reuse an IP core. Given that,
+>>> I'd expect to see a fallback compatible used here, as is the norm.
+>>
+>> Yep.
+>>
+>> Best regards,
+>> Krzysztof
+>>
 
-It looks like what's happening here is:
+Best regards,
+Andrei
 
-(1) With CONFIG_KASAN_SW_TAGS=y we pass the compiler
-    `-fsanitize=kernel-hwaddress`.
-
-(2) When GCC is passed `-fsanitize=hwaddress` or
-    `-fsanitize=kernel-hwaddress` it ignores
-    `__attribute__((no_sanitize_address))`, and instruments functions we
-    require are not instrumented.
-
-    I believe this is a compiler bug, as there doesn't seem to be a
-    separate attribute to prevent instrumentation in this mode.
-
-(3) In this config, smp_build_mpidr_hash() gets inlined into
-    setup_arch(), and as setup_arch() is instrumented, all of the stack
-    variables for smp_build_mpidr_hash() are initialized at the start of
-    setup_arch(), with calls to __hwasan_tag_memory().
-
-    At this point, we are using the early shadow (where a single page of
-    shadow is used for all memory).
-
-(4) In setup_arch(), we call kasan_init() to transition from the early
-    shadow to the runtime shadow. This replaces the early shadow memory
-    with new shadow memory initialized to KASAN_SHADOW_INIT (0xFE AKA
-    KASAN_TAG_INVALID), including the shadow for the stack.
-
-(5) Once the CPU returns back into setup_arch(), it's using the new
-    shadow initialized to 0xFE. Subsequent stack accesses which check
-    the shadow see 0xFE in the shadow, and fault. Note that in the dump
-    of the shadow above, the shadow around ffff800086867d80 and above is
-    all 0xFE, while below that functions have managed to clear the
-    shadow.
-
-Compiler test case below. Note that this demonstrates the compiler
-ignores  `__attribute__((no_sanitize_address))` regardless of
-KASAN_STACK, so KASAN_SW_TAGS is generally broken with GCC. All versions
-I tried were broken, from 11.3.0 to 14.2.0 inclusive.
-
-I think we have to disable KASAN_SW_TAGS with GCC until this is fixed.
-
-| [mark@lakrids:/mnt/data/tests/kasan-tags]% cat test.c
-| #define __nsa           __attribute__((no_sanitize_address))
-| 
-| long __nsa load_long(long *ptr)
-| {
-|         return *ptr;
-| }
-| 
-| void __nsa store_long(long *ptr, long val)
-| {
-|         *ptr = val;
-| }
-| 
-| void extern_func(void);
-| 
-| long __nsa stack_func(void)
-| {
-|         volatile long val = 0;
-|         extern_func();
-|         return val;
-| }
-| [mark@lakrids:/mnt/data/tests/kasan-tags]% usekorg 12.1.0 aarch64-linux-gcc -c test.c -O2  -fsanitize=kernel-hwaddress
-| [mark@lakrids:/mnt/data/tests/kasan-tags]% usekorg 14.2.0 aarch64-linux-objdump -d test.o
-| 
-| test.o:     file format elf64-littleaarch64
-| 
-| 
-| Disassembly of section .text:
-| 
-| 0000000000000000 <load_long>:
-|    0:   a9be7bfd        stp     x29, x30, [sp, #-32]!
-|    4:   910003fd        mov     x29, sp
-|    8:   f9000bf3        str     x19, [sp, #16]
-|    c:   aa0003f3        mov     x19, x0
-|   10:   94000000        bl      0 <__hwasan_load8_noabort>
-|   14:   f9400260        ldr     x0, [x19]
-|   18:   f9400bf3        ldr     x19, [sp, #16]
-|   1c:   a8c27bfd        ldp     x29, x30, [sp], #32
-|   20:   d65f03c0        ret
-| 
-| 0000000000000024 <store_long>:
-|   24:   a9be7bfd        stp     x29, x30, [sp, #-32]!
-|   28:   910003fd        mov     x29, sp
-|   2c:   a90153f3        stp     x19, x20, [sp, #16]
-|   30:   aa0003f3        mov     x19, x0
-|   34:   aa0103f4        mov     x20, x1
-|   38:   94000000        bl      0 <__hwasan_store8_noabort>
-|   3c:   f9000274        str     x20, [x19]
-|   40:   a94153f3        ldp     x19, x20, [sp, #16]
-|   44:   a8c27bfd        ldp     x29, x30, [sp], #32
-|   48:   d65f03c0        ret
-|   4c:   d503201f        nop
-| 
-| 0000000000000050 <stack_func>:
-|   50:   a9be7bfd        stp     x29, x30, [sp, #-32]!
-|   54:   910003fd        mov     x29, sp
-|   58:   f9000fff        str     xzr, [sp, #24]
-|   5c:   94000000        bl      0 <extern_func>
-|   60:   f9400fe0        ldr     x0, [sp, #24]
-|   64:   a8c27bfd        ldp     x29, x30, [sp], #32
-|   68:   d65f03c0        ret
-| [mark@lakrids:/mnt/data/tests/kasan-tags]% usekorg 12.1.0 aarch64-linux-gcc -c test.c -O2  -fsanitize=kernel-hwaddress  --param hwasan-instrument-stack=1
-| [mark@lakrids:/mnt/data/tests/kasan-tags]% usekorg 14.2.0 aarch64-linux-objdump -d test.o
-| 
-| test.o:     file format elf64-littleaarch64
-| 
-| 
-| Disassembly of section .text:
-| 
-| 0000000000000000 <load_long>:
-|    0:   a9be7bfd        stp     x29, x30, [sp, #-32]!
-|    4:   910003fd        mov     x29, sp
-|    8:   f9000bf3        str     x19, [sp, #16]
-|    c:   aa0003f3        mov     x19, x0
-|   10:   94000000        bl      0 <__hwasan_load8_noabort>
-|   14:   f9400260        ldr     x0, [x19]
-|   18:   f9400bf3        ldr     x19, [sp, #16]
-|   1c:   a8c27bfd        ldp     x29, x30, [sp], #32
-|   20:   d65f03c0        ret
-| 
-| 0000000000000024 <store_long>:
-|   24:   a9be7bfd        stp     x29, x30, [sp, #-32]!
-|   28:   910003fd        mov     x29, sp
-|   2c:   a90153f3        stp     x19, x20, [sp, #16]
-|   30:   aa0003f3        mov     x19, x0
-|   34:   aa0103f4        mov     x20, x1
-|   38:   94000000        bl      0 <__hwasan_store8_noabort>
-|   3c:   f9000274        str     x20, [x19]
-|   40:   a94153f3        ldp     x19, x20, [sp, #16]
-|   44:   a8c27bfd        ldp     x29, x30, [sp], #32
-|   48:   d65f03c0        ret
-|   4c:   d503201f        nop
-| 
-| 0000000000000050 <stack_func>:
-|   50:   a9bd7bfd        stp     x29, x30, [sp, #-48]!
-|   54:   d2800202        mov     x2, #0x10                       // #16
-|   58:   9100c3e0        add     x0, sp, #0x30
-|   5c:   910003fd        mov     x29, sp
-|   60:   d378fc01        lsr     x1, x0, #56
-|   64:   910083e0        add     x0, sp, #0x20
-|   68:   11000821        add     w1, w1, #0x2
-|   6c:   f9000bf3        str     x19, [sp, #16]
-|   70:   94000000        bl      0 <__hwasan_tag_memory>
-|   74:   d2e04000        mov     x0, #0x200000000000000          // #144115188075855872
-|   78:   8b2063e0        add     x0, sp, x0
-|   7c:   f900101f        str     xzr, [x0, #32]
-|   80:   94000000        bl      0 <extern_func>
-|   84:   d2e04000        mov     x0, #0x200000000000000          // #144115188075855872
-|   88:   8b2063e0        add     x0, sp, x0
-|   8c:   d2800202        mov     x2, #0x10                       // #16
-|   90:   52800001        mov     w1, #0x0                        // #0
-|   94:   f9401013        ldr     x19, [x0, #32]
-|   98:   910083e0        add     x0, sp, #0x20
-|   9c:   94000000        bl      0 <__hwasan_tag_memory>
-|   a0:   aa1303e0        mov     x0, x19
-|   a4:   f9400bf3        ldr     x19, [sp, #16]
-|   a8:   a8c37bfd        ldp     x29, x30, [sp], #48
-|   ac:   d65f03c0        ret
-| [mark@lakrids:/mnt/data/tests/kasan-tags]%
-| [mark@lakrids:/mnt/data/tests/kasan-tags]% usekorg 12.1.0 aarch64-linux-gcc -c test.c -O2  -fsanitize=hwaddress
-| [mark@lakrids:/mnt/data/tests/kasan-tags]% usekorg 14.2.0 aarch64-linux-objdump -d test.o
-| 
-| test.o:     file format elf64-littleaarch64
-| 
-| 
-| Disassembly of section .text:
-| 
-| 0000000000000000 <load_long>:
-|    0:   a9be7bfd        stp     x29, x30, [sp, #-32]!
-|    4:   910003fd        mov     x29, sp
-|    8:   f9000bf3        str     x19, [sp, #16]
-|    c:   aa0003f3        mov     x19, x0
-|   10:   94000000        bl      0 <__hwasan_load8>
-|   14:   f9400260        ldr     x0, [x19]
-|   18:   f9400bf3        ldr     x19, [sp, #16]
-|   1c:   a8c27bfd        ldp     x29, x30, [sp], #32
-|   20:   d65f03c0        ret
-| 
-| 0000000000000024 <store_long>:
-|   24:   a9be7bfd        stp     x29, x30, [sp, #-32]!
-|   28:   910003fd        mov     x29, sp
-|   2c:   a90153f3        stp     x19, x20, [sp, #16]
-|   30:   aa0003f3        mov     x19, x0
-|   34:   aa0103f4        mov     x20, x1
-|   38:   94000000        bl      0 <__hwasan_store8>
-|   3c:   f9000274        str     x20, [x19]
-|   40:   a94153f3        ldp     x19, x20, [sp, #16]
-|   44:   a8c27bfd        ldp     x29, x30, [sp], #32
-|   48:   d65f03c0        ret
-|   4c:   d503201f        nop
-| 
-| 0000000000000050 <stack_func>:
-|   50:   a9bd7bfd        stp     x29, x30, [sp, #-48]!
-|   54:   910003fd        mov     x29, sp
-|   58:   f9000bf3        str     x19, [sp, #16]
-|   5c:   94000000        bl      0 <__hwasan_generate_tag>
-|   60:   9100c3e1        add     x1, sp, #0x30
-|   64:   d2800202        mov     x2, #0x10                       // #16
-|   68:   aa00e033        orr     x19, x1, x0, lsl #56
-|   6c:   910083e0        add     x0, sp, #0x20
-|   70:   d378fe61        lsr     x1, x19, #56
-|   74:   94000000        bl      0 <__hwasan_tag_memory>
-|   78:   f81f027f        stur    xzr, [x19, #-16]
-|   7c:   94000000        bl      0 <extern_func>
-|   80:   f85f0273        ldur    x19, [x19, #-16]
-|   84:   910083e0        add     x0, sp, #0x20
-|   88:   d2800202        mov     x2, #0x10                       // #16
-|   8c:   52800001        mov     w1, #0x0                        // #0
-|   90:   94000000        bl      0 <__hwasan_tag_memory>
-|   94:   aa1303e0        mov     x0, x19
-|   98:   f9400bf3        ldr     x19, [sp, #16]
-|   9c:   a8c37bfd        ldp     x29, x30, [sp], #48
-|   a0:   d65f03c0        ret
-| 
-| Disassembly of section .text.startup:
-| 
-| 0000000000000000 <_sub_I_00099_0>:
-|    0:   14000000        b       0 <__hwasan_init>
-| [mark@lakrids:/mnt/data/tests/kasan-tags]% usekorg 12.1.0 aarch64-linux-gcc -c test.c -O2  -fsanitize=hwaddress  --param hwasan-instrument-stack=1
-| [mark@lakrids:/mnt/data/tests/kasan-tags]% usekorg 14.2.0 aarch64-linux-objdump -d test.o
-| 
-| test.o:     file format elf64-littleaarch64
-| 
-| 
-| Disassembly of section .text:
-| 
-| 0000000000000000 <load_long>:
-|    0:   a9be7bfd        stp     x29, x30, [sp, #-32]!
-|    4:   910003fd        mov     x29, sp
-|    8:   f9000bf3        str     x19, [sp, #16]
-|    c:   aa0003f3        mov     x19, x0
-|   10:   94000000        bl      0 <__hwasan_load8>
-|   14:   f9400260        ldr     x0, [x19]
-|   18:   f9400bf3        ldr     x19, [sp, #16]
-|   1c:   a8c27bfd        ldp     x29, x30, [sp], #32
-|   20:   d65f03c0        ret
-| 
-| 0000000000000024 <store_long>:
-|   24:   a9be7bfd        stp     x29, x30, [sp, #-32]!
-|   28:   910003fd        mov     x29, sp
-|   2c:   a90153f3        stp     x19, x20, [sp, #16]
-|   30:   aa0003f3        mov     x19, x0
-|   34:   aa0103f4        mov     x20, x1
-|   38:   94000000        bl      0 <__hwasan_store8>
-|   3c:   f9000274        str     x20, [x19]
-|   40:   a94153f3        ldp     x19, x20, [sp, #16]
-|   44:   a8c27bfd        ldp     x29, x30, [sp], #32
-|   48:   d65f03c0        ret
-|   4c:   d503201f        nop
-| 
-| 0000000000000050 <stack_func>:
-|   50:   a9bd7bfd        stp     x29, x30, [sp, #-48]!
-|   54:   910003fd        mov     x29, sp
-|   58:   f9000bf3        str     x19, [sp, #16]
-|   5c:   94000000        bl      0 <__hwasan_generate_tag>
-|   60:   9100c3e1        add     x1, sp, #0x30
-|   64:   d2800202        mov     x2, #0x10                       // #16
-|   68:   aa00e033        orr     x19, x1, x0, lsl #56
-|   6c:   910083e0        add     x0, sp, #0x20
-|   70:   d378fe61        lsr     x1, x19, #56
-|   74:   94000000        bl      0 <__hwasan_tag_memory>
-|   78:   f81f027f        stur    xzr, [x19, #-16]
-|   7c:   94000000        bl      0 <extern_func>
-|   80:   f85f0273        ldur    x19, [x19, #-16]
-|   84:   910083e0        add     x0, sp, #0x20
-|   88:   d2800202        mov     x2, #0x10                       // #16
-|   8c:   52800001        mov     w1, #0x0                        // #0
-|   90:   94000000        bl      0 <__hwasan_tag_memory>
-|   94:   aa1303e0        mov     x0, x19
-|   98:   f9400bf3        ldr     x19, [sp, #16]
-|   9c:   a8c37bfd        ldp     x29, x30, [sp], #48
-|   a0:   d65f03c0        ret
-| 
-| Disassembly of section .text.startup:
-| 
-| 0000000000000000 <_sub_I_00099_0>:
-|    0:   14000000        b       0 <__hwasan_init>
-
-Mark.
 
