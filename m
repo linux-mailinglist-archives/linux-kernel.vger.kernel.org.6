@@ -1,118 +1,107 @@
-Return-Path: <linux-kernel+bounces-335747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19D3997EA13
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:46:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E77B97EA17
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:46:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90F53B21774
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:46:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFAFF1C21286
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0CF195FF0;
-	Mon, 23 Sep 2024 10:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b="PIGWxJ0+"
-Received: from ironport.ite.com.tw (60-251-196-230.hinet-ip.hinet.net [60.251.196.230])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D53197559;
+	Mon, 23 Sep 2024 10:46:25 +0000 (UTC)
+Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729A41FDA
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 10:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.251.196.230
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5719841C77;
+	Mon, 23 Sep 2024 10:46:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727088359; cv=none; b=trsrgcNDUiPBIUW47SN221KL4x6t3pTPIaim1tvSDDguOEPDkYhr8wi1p9T8t2CeOC7rg+rp555tXG4oCBFbrALnG5mg+ix8eLmBP9Pbw7KHRTsUKeDcthyUF4wONVGGrR2SLGkemfIzyuRH2fRned8Otw7crclMZNvwq1zYHs8=
+	t=1727088385; cv=none; b=NoYcAUAh3LQwBkGTxuV2IYauljJPQhl2wHv3Ox8xHosdUTS4OGq/07Dymhg0nTNC5zfREVwSbP6N6qNDrCtZ61fnwghIDZ0xgTKHm7L75rrSNQDwT9WBcB7A/BjR3F2/w0wPGxNHMkgxLU8XX39j5X92hQdQW7UqD4Sb80NVDpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727088359; c=relaxed/simple;
-	bh=yoBs70lI0nw+Cn15PKnMkP3pkXySdBMC1A7392unMcs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=RL/5stEIMpSLvIIij9+nMFe91Pg9zZgxDbSXT2dPypGDeKFABLoVk/yYNh5itKnPVIEMw6dgVivvTzx2aQ6yiw7ZZl6l364tzKp0gK4eAhRSpKjTJHsoq8Y2uI803rfQpqXSbZFJKIMKkaXnn6vr4hIPnd5nEqxJvzJJqfYJAao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw; spf=pass smtp.mailfrom=ite.com.tw; dkim=fail (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b=PIGWxJ0+ reason="key not found in DNS"; arc=none smtp.client-ip=60.251.196.230
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ite.com.tw
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=ite.com.tw; s=dkim;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=yoBs70lI0nw+Cn15PKnMkP3pkXySdBMC1A7392unMcs=;
-  b=PIGWxJ0+3dVVT6kgzUzdSSMm4B6beUiF/4JTM4U0LFhwbcTD1zlHeE9V
-   Wen1qb1pKI1xVhoymA06dRNRRof2M2tHhdWh+sdzfoCIs8ubpM3cBkXhU
-   /kOEABRCi81k2BNGS2hnOfIly8+6V/xex2Ls8AjwVB38sA+OsE7/9tu3j
-   /alqGX+tBg40yVyHNeS0TXpeVvC+HfaKamJxuKEmh43+MQxR4hSx892I3
-   f1nwida7rh0EJ9MKdvZjJlhgF3/MhIkkV/Ge6ZQcGg5xXh8voM4Ny/T3R
-   qg9MCIq8panYJKCBJEtksWXTDfs7JZ3r/5CgKe0cJbs7N1Ln3TsTvCqCC
-   A==;
-X-CSE-ConnectionGUID: 1BS8BjG9Qfm952M928ZQIw==
-X-CSE-MsgGUID: zeOnaio9SFq42SvrI1QCrg==
-Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
-  by ironport.ite.com.tw with ESMTP; 23 Sep 2024 18:45:54 +0800
-Received: from tpemail1.internal.ite.com.tw (TPEMAIL1.internal.ite.com.tw [192.168.15.58])
-	by mse.ite.com.tw with ESMTP id 48NAjm15039260;
-	Mon, 23 Sep 2024 18:45:48 +0800 (GMT-8)
-	(envelope-from Hermes.Wu@ite.com.tw)
-Received: from TPEMAIL1.internal.ite.com.tw (192.168.15.58) by
- TPEMAIL1.internal.ite.com.tw (192.168.15.58) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 23 Sep 2024 18:45:49 +0800
-Received: from TPEMAIL1.internal.ite.com.tw ([fe80::dd6d:92:8773:b68]) by
- TPEMAIL1.internal.ite.com.tw ([fe80::dd6d:92:8773:b68%6]) with mapi id
- 15.01.2507.039; Mon, 23 Sep 2024 18:45:49 +0800
-From: <Hermes.Wu@ite.com.tw>
-To: <dmitry.baryshkov@linaro.org>
-CC: <treapking@chromium.org>, <Kenneth.Hung@ite.com.tw>,
-        <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
-        <rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>,
-        <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
-        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-        <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v3 2/3] drm/bridge: it6505: HDCP CTS fail on repeater
- items
-Thread-Topic: [PATCH v3 2/3] drm/bridge: it6505: HDCP CTS fail on repeater
- items
-Thread-Index: AQHbDaFxMxnMHj2GkEGHdgKCDl4eaLJlMDIw
-Date: Mon, 23 Sep 2024 10:45:49 +0000
-Message-ID: <a0a8f862018b4c9aa689672551e7a492@ite.com.tw>
-References: <20240923094826.13471-1-Hermes.Wu@ite.com.tw>
- <20240923094826.13471-3-Hermes.Wu@ite.com.tw>
- <4viir5prnuvpp76npblwmdrwlttm5daumvdnocipdsn6geyxvf@2yfcytjb3ono>
-In-Reply-To: <4viir5prnuvpp76npblwmdrwlttm5daumvdnocipdsn6geyxvf@2yfcytjb3ono>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-tm-snts-smtp: 4A944F3EAC0BF5D4DDFF7121E9A65BB68B7D77BDF3D758EC36039E013E91850C2002:8
-Content-Type: text/plain; charset="big5"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1727088385; c=relaxed/simple;
+	bh=uXUXgnx25r8aS3tCDx/lcw2Qd5SFfMtKH9rCu2OCZds=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=EZo/RsQvP5uazGLQbmX9dgjF3R64B9vUn/Mu/y3+E1IFlOx3tt157uP7ocepQoN5bV4m0QJKqSOtQscMc8qA1OOmqQzasaY7Sz8rAfEHCDRxeqyzCfT9Us9BDJ2XLrnJnQjTDnu1Aomi8oKqjM210lW4NspkXeTn8nIg+ZK7PHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=walle.cc; arc=none smtp.client-ip=159.69.201.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
+Received: from localhost (unknown [IPv6:2a02:810b:4340:4ee9:4685:ff:fe12:5967])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.3ffe.de (Postfix) with ESMTPSA id 5BF0D67;
+	Mon, 23 Sep 2024 12:46:20 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MAIL:mse.ite.com.tw 48NAjm15039260
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 23 Sep 2024 12:46:20 +0200
+Message-Id: <D4DLQGLJSKPB.3OOW4RU9Q3K5O@kernel.org>
+Subject: Re: [PATCH v5 1/5] mtd: spi-nor: core: add manufacturer flags
+Cc: "Erez Geva" <erezgeva@nwtime.org>, <linux-mtd@lists.infradead.org>,
+ "Pratyush Yadav" <pratyush@kernel.org>, <linux-kernel@vger.kernel.org>,
+ "Miquel Raynal" <miquel.raynal@bootlin.com>, "Richard Weinberger"
+ <richard@nod.at>, "Vignesh Raghavendra" <vigneshr@ti.com>,
+ <devicetree@vger.kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Esben Haabendal" <esben@geanix.com>
+From: "Michael Walle" <mwalle@kernel.org>
+To: "Erez" <erezgeva2@gmail.com>, "Tudor Ambarus" <tudor.ambarus@linaro.org>
+X-Mailer: aerc 0.16.0
+References: <20240920181231.20542-1-erezgeva@nwtime.org>
+ <20240920181231.20542-2-erezgeva@nwtime.org>
+ <4e0cf43c-4843-451c-ac6f-86775dbccb2b@linaro.org>
+ <CANeKEMOmhAPM1j1_ihzcC2wL6jKsWXPCGfZs+euS8mRvtqgE5A@mail.gmail.com>
+In-Reply-To: <CANeKEMOmhAPM1j1_ihzcC2wL6jKsWXPCGfZs+euS8mRvtqgE5A@mail.gmail.com>
 
-Pk9uIE1vbiwgU2VwIDIzLCAyMDI0IGF0IDA1OjQ4OjI4UE0gR01ULCBIZXJtZXMgV3Ugd3JvdGU6
-DQo+PiBGcm9tOiBIZXJtZXMgV3UgPEhlcm1lcy53dUBpdGUuY29tLnR3Pg0KPj4gDQo+PiBDaGFu
-Z2VzIGluIHYzOg0KPj4gIC1hZGQgZGV0aWFscyBhYm91dCBmYWlsIGl0ZW0gYW5kIGNoYW5nZXMu
-DQo+PiANCj4+IA0KPj4gRml4IEhEQ1AgQ1RTIGZhaWwgaXRlbXMgb24gVU5JR1JBRiBEUlAtMTAw
-DQo+PiANCj4+IERVVCBtdXN0IFN1cHBvcnQgMTI3IGRldmljZXMuDQo+PiBEVVQgbXVzdCBjaGVj
-ayBCU1RBVFVTIHdoZW4gcmVjZWl2ZSBDUF9JUlEuDQo+PiBEVVQgbXVzdCBlbmFibGUgZW5jcnlw
-dGlvbiB3aGVuIFIwJyBpcyByZWFkeS4NCj4+IERVVCBtdXN0IHJldHJ5IFYnIGNoZWNrIDMgdGlt
-ZXMuDQo+PiBpdDY1MDUgbXVzdCByZWFkIERSUC0xMDAgS1NWIEZJRk8gYnkgRklGTyBtb2RlLg0K
-Pj4gaXQ2NTA1IHNob3VsZCByZXN0YXJ0IEhEQ1Agd2l0aGluIDVzIGlmIEtTViBub3QgcmVhZHku
-DQo+DQo+U3RpbGwgbm90IHJlYWRhYmxlLg0KPg0KPkVuZ2xpc2ggdGV4dCwgcGxlYXNlLiBTcGxp
-dCB0aGUgcGF0Y2ggdG8gZml4IG9uZSBpc3N1ZSBhdCBhIHRpbWUuDQo+RGVzY3JpYmUgdGhlIF9y
-ZWFzb25fIGZvciB0aGUgY2hhbmdlLiBBbm5vdGF0ZSBmaXhlcyB3aXRoIEZpeGVzIHRhZ3MuDQo+
-DQoNCndpdGggZml4ZXMgdGFnIGluY2x1ZGUgZHJtL2JyaWRnZSBsaWtlIHRoaXMgPyAgPT4gIkZp
-eGVzOiBkcm0vYnJpZGdlOiBpdDY1MDU6IEhEQ1AgQ1RTIGZhaWwgMUIteHgiDQoNCkFib3V0IHRo
-ZSByZWFzb24gYWJvdXQgYnVnIGZpeGVzLiANCg0KZm9yIGV4YW1wbGUsIHRoZSAxQi0wMSBkZXZp
-Y2UgY291bnQuDQp3aWxsIHRoaXMgcmVhZGFibGU/DQoNCiIgV2hlbiBjb25uZWN0IHRvIEhEQ1Ag
-cmVwZWF0ZXIsIGl0NjUwNSBtdXN0IHN1cHBvcnQgMTI3IGRvd25zdHJlYW0gZGV2aWNlcy4gIg0K
-DQpBbmQgdGhpcyB3aWxsIGJlIG9ubHkgb25lIGNoYW5nZSBpbiBhIHBhdGNoPw0KDQo+PiANCj4+
-IFNpZ25lZC1vZmYtYnk6IEhlcm1lcyBXdSA8SGVybWVzLnd1QGl0ZS5jb20udHc+DQo+PiAtLS0N
-Cj4+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2l0ZS1pdDY1MDUuYyB8IDExMiArKysrKysrKysr
-KysrKysrKystLS0tLS0tLS0tDQo+PiAgMSBmaWxlIGNoYW5nZWQsIDc0IGluc2VydGlvbnMoKyks
-IDM4IGRlbGV0aW9ucygtKQ0KPg0KPi0tIA0KPldpdGggYmVzdCB3aXNoZXMNCj5EbWl0cnkNCg0K
-QlIsDQpIZXJtZXMNCg==
+Hi,
+
+> I would gladly remove the obsolete mx25l12805d.
+
+Why? I don't see any need for that.
+
+> > If there isn't any way to distinguish the flashes at runtime (which I
+> > doubt/challenge btw), then as a last resort we introduce a dedicated
+> > compatible for the flash in cause and specify all needed parameters in =
+a
+> > dedicated flash entry. This shall be more generic as further flash
+> > parameters can be statically specified in the dedicated flash entry,
+> > less invasive for dt, and less confusing for people when they decide
+> > whether to use OTP or not. OTP params in device tree is a no-go.
+> >
+> > But again, you have to prove why you can't distinguish the flash at
+> > runtime before introducing a new flash compatible. So don't go this pat=
+h
+> > before sharing with us what you're trying to achieve.
+>
+> You keep sending me contradictory messages.
+>
+> I told you we can not "guess" OTP settings based on JEDEC ID and
+> SFDP existence.
+
+What are you trying to achieve here? I've told you we are trying
+hard to figure out everything out at runtime. I'd suggest you start
+with one particular device where you want OTP support for. If the
+flash id is already in our database, find a way to distinguish
+between the old and the new one; probably by looking at some SFDP
+parameters. No need for any new compatible. Don't try to solve the
+problem for all the chips out there.
+
+Again, the reason why we are trying hard to determine that at
+runtime is that these flashes are usually second source devices and
+a manufacturer might just replace it with a (more or less)
+compatible one. Therefore, the less information we put into the
+devicetree the better. So before you are sending a new version with
+the flash compatibles, you actually have to convince us that there
+is no other way of knowing what kind of flash there is on your
+board except for providing the name by the firmware.
+
+-michael
 
