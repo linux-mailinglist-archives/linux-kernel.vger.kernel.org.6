@@ -1,207 +1,121 @@
-Return-Path: <linux-kernel+bounces-336055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98F8A97EE87
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:51:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31E5897EE88
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:52:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA7081C21715
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:51:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D36761F21184
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:52:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2DEE199EB4;
-	Mon, 23 Sep 2024 15:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA2F1993BB;
+	Mon, 23 Sep 2024 15:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ENQwd0C+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u0ZWj2Hg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A6926AFF
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 15:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811B926AFF
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 15:52:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727106658; cv=none; b=uXlD8PzCMzfSA/iEqsTSwSDu7M+xW44zhYrGk9JOMLERxSCL9EdL/E5Zr6TlaD8Fp144melDis3DA4+o8R7AL1l77kuqxCVzAlGGNZI6UWGuTFoq9qICMJXRKBNpeVr/2R9tScWfFERSHGPYajmtjnb8He35dtwi7/3/fEPNHuA=
+	t=1727106724; cv=none; b=cnhoG4u3YWe4jM/AgUlQMRM2dLrOvzX5MdX/pveRW7A5k4YCqXZLh0de2CNvn6j5zlTJLNVi2F3JD6O9UKw8BN4r5l/p5KyWTNWjOjOxDrconlWSjHjNkk97PmHOf8qN5MWaWeQvUU6frJVnZ/e6b3qI0KvvmpVuE6P8RYRr35A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727106658; c=relaxed/simple;
-	bh=C6IYc69c062N/vAttS5PkFBgas85TidcSpBcCAu9u9U=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jGFq6coaQ2SpDvWdjJEZ8ZPMXWw5J03xQknkRBTcMJ6jtJEGijzcG/e8h1YWNV4PB73xnYBrH++WYI5mp/N/6WJXO++zzJsR1uvguqSZOoU+srQ2Eu5NoRhp6bS9NAbiKdExqWHSQfq+gK5ChM4iuylyE5e6d/KOYW3e2GWmj9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ENQwd0C+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC5E4C4CEC4;
-	Mon, 23 Sep 2024 15:50:56 +0000 (UTC)
+	s=arc-20240116; t=1727106724; c=relaxed/simple;
+	bh=8870RLKRe93/y7ZSCxbIaAO50ERY0VUWgeoD4C8Lct4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CcvjAe6qwCa3m7VrXSCu4QRV6kFmT2idsaKlmXr/dvki0VfeC0rsZke/5NnOq2gzcngDJb5ZmHaIwksseA4ODrQkqNDS+PYDerzcU/rnhymCVBZHdjLPlukLrnaoLBM2eaRnITeW2ki+u42JLJCJgCkLwjOwLKP3OJU2O/F8ujI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u0ZWj2Hg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01B7FC4CEC4;
+	Mon, 23 Sep 2024 15:52:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727106657;
-	bh=C6IYc69c062N/vAttS5PkFBgas85TidcSpBcCAu9u9U=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ENQwd0C+g45arc+nUATD0vx/udtes0E5tO1/daDHL71j9eB+5v2WvgOr9InzYN15w
-	 wZ/eRnqeUHHirAzlEDmX8yOnuj7e0ZCFOlj6jHJdXa7ZK9xODcpn7eZOFqwtg4meUv
-	 s9mTnSiBhzDXfUMHmozsoRma60PkSvMwafNa/yF+NoByd1/8yDh9ukZrz6h3cvkaTP
-	 4mMzK+1ys2tkwi19p/V6HygLyekQ3AQXmTnOvKp+YQ9F7vvbbAC8RBrmP9gYcL+mR3
-	 O31u78HkNLq54bRViI5X70upoldBmG7unRjumEtd7WZaWtAqZn8pw2+aQ82V/aJsbt
-	 pIYeTSUsYY/3Q==
-Date: Mon, 23 Sep 2024 16:50:54 +0100
-From: Lee Jones <lee@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Pavel Machek <pavel@ucw.cz>
-Subject: [GIT PULL] LEDs for v6.12
-Message-ID: <20240923155054.GB7545@google.com>
+	s=k20201202; t=1727106724;
+	bh=8870RLKRe93/y7ZSCxbIaAO50ERY0VUWgeoD4C8Lct4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=u0ZWj2HgcRkuPgS0SypGalJ0A2nM6vrVlV3LPS28nGtDSjCPi0zQL5kvozVUCjRy2
+	 HPVkZq319pipBvIX3b9SkoFXXw9MANF5OW1+ldBZhdtRihmqbUwfe6FKZSxGbSkBi3
+	 h4zJS+gDt+TCYeg3g6VMeXUZHjfRCBXhbxPkfuyP1MZ+ukwsH0NPgkm1Za1sTYkgNL
+	 zpOuK48B7MW7OM0+yr4Csg8uX0Ux0g3q4fagmNkkp9SVMrd/+oxuL0rSzdcWOe9D0j
+	 kqnjiKv15/s25k3Zo83Rm04lJxJ9I9TNXWrKZqRAbA0g8uDaPo1dUgVTS0uXso77+H
+	 oB0VXKevp5gmg==
+Message-ID: <997da40f-f704-4f57-aff7-64d9745228b3@kernel.org>
+Date: Mon, 23 Sep 2024 17:51:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] extcon: Drop explicit initialization of struct
+ i2c_device_id::driver_data to 0
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-kernel@vger.kernel.org
+References: <20240918123150.1540161-6-u.kleine-koenig@baylibre.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240918123150.1540161-6-u.kleine-koenig@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Good afternoon Linus,
+On 18/09/2024 14:31, Uwe Kleine-König wrote:
+> These drivers don't use the driver_data member of struct i2c_device_id,
+> so don't explicitly initialize this member.
+> 
+> This prepares putting driver_data in an anonymous union which requires
+> either no initialization or named designators. But it's also a nice
+> cleanup on its own.
 
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-are available in the Git repository at:
+Best regards,
+Krzysztof
 
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/lee/leds.git tags/leds-next-6.12
-
-for you to fetch changes up to 64c38866500b0bda4363fb994d545557dffb017c:
-
-  leds: turris-omnia: Fix module autoloading with MODULE_DEVICE_TABLE() (2024-08-30 09:05:08 +0100)
-
-----------------------------------------------------------------
-- Limited LED current based on thermal conditions in the QCOM flash LED driver.
-- Fixed device child node usage in the BD2606MVV and PCA995x drivers.
-- Used device_for_each_child_node_scoped() to access child nodes in the IS31FL319X driver.
-- Reset the LED controller during the probe in the LM3601X driver.
-- Used device_for_each_child_node() to access device child nodes in the PCA995X driver.
-- Fixed CONFIG_LEDS_CLASS_MULTICOLOR dependency in the BlinkM driver.
-- Replaced msleep() with usleep_range() in the SUN50I-A100 driver.
-- Used scoped device node handling to simplify error paths in the AAT1290, KTD2692, and MC13783 drivers.
-- Added missing of_node_get for probe duration in the MAX77693 driver.
-- Simplified using for_each_available_child_of_node_scoped() loops when iterating over device nodes.
-- Used devm_clk_get_enabled() helpers in the LP55XX driver.
-- Converted DT bindings from TXT to YAML format for various drivers, including LM3692x and SC2731-BLTC.
-- Set num_leds after allocation in the GPIO driver.
-- Removed irrelevant blink configuration error message in the PCA9532 driver.
-- Fixed module autoloading with MODULE_DEVICE_TABLE() in the Turris Omnia driver.
-
-----------------------------------------------------------------
-Abhishek Tamboli (1):
-      leds: sun50i-a100: Replace msleep() with usleep_range()
-
-Arnd Bergmann (1):
-      leds: blinkm: Fix CONFIG_LEDS_CLASS_MULTICOLOR dependency
-
-Bastien Curutchet (1):
-      leds: pca9532: Remove irrelevant blink configuration error message
-
-Fenglin Wu (1):
-      leds: flash: leds-qcom-flash: Limit LED current based on thermal condition
-
-Frank Li (1):
-      dt-bindings: leds: Convert leds-lm3692x to YAML format
-
-Huan Yang (1):
-      leds: lp55xx: Use devm_clk_get_enabled() helpers
-
-Jack Chen (2):
-      leds: lm3601x: Calculate max_brightness and brightness properly
-      leds: lm3601x: Reset LED controller during probe
-
-Javier Carrasco (5):
-      leds: bd2606mvv: Fix device child node usage in bd2606mvv_probe()
-      leds: is31fl319x: Use device_for_each_child_node_scoped() to access child nodes
-      leds: pca995x: Use device_for_each_child_node() to access device child nodes
-      leds: pca995x: Fix device child node usage in pca995x_probe()
-      leds: as3645a: Use device_* to iterate over device child nodes
-
-Joseph Strauss (1):
-      leds: Add multicolor support to BlinkM LED driver
-
-Kees Cook (1):
-      leds: gpio: Set num_leds after allocation
-
-Krzysztof Kozlowski (17):
-      leds: aat1290: Use scoped device node handling to simplify error paths
-      leds: ktd2692: Use scoped device node handling to simplify error paths
-      leds: max77693: Add missing of_node_get for probe duration
-      leds: max77693: Simplify with scoped for each OF child loop
-      leds: 88pm860x: Simplify with scoped for each OF child loop
-      leds: aw2013: Simplify with scoped for each OF child loop
-      leds: bcm6328: Simplify with scoped for each OF child loop
-      leds: bcm6358: Simplify with scoped for each OF child loop
-      leds: is31fl32xx: Simplify with scoped for each OF child loop
-      leds: lp55xx: Simplify with scoped for each OF child loop
-      leds: mc13783: Use scoped device node handling to simplify error paths
-      leds: mt6323: Simplify with scoped for each OF child loop
-      leds: netxbig: Simplify with scoped for each OF child loop
-      leds: pca9532: Simplify with scoped for each OF child loop
-      leds: sc27xx: Simplify with scoped for each OF child loop
-      leds: turris-omnia: Simplify with scoped for each OF child loop
-      leds: qcom-lpg: Simplify with scoped for each OF child loop
-
-Liao Chen (1):
-      leds: turris-omnia: Fix module autoloading with MODULE_DEVICE_TABLE()
-
-Lukasz Majewski (1):
-      leds: trigger: netdev: Add support for tx_err and rx_err notification with LEDs
-
-Marek Vasut (1):
-      dt-bindings: leds: Document "netdev" trigger
-
-Pieterjan Camerlynck (2):
-      dt-bindings: leds: pca995x: Add new nxp,pca9956b compatible
-      leds: leds-pca995x: Add support for NXP PCA9956B
-
-Stanislav Jakubek (1):
-      dt-bindings: leds: sc2731-bltc: Convert to YAML
-
- Documentation/devicetree/bindings/leds/common.yaml |   2 +
- .../devicetree/bindings/leds/leds-lm3692x.txt      |  65 ------
- .../devicetree/bindings/leds/leds-sc27xx-bltc.txt  |  43 ----
- .../devicetree/bindings/leds/nxp,pca995x.yaml      |   6 +-
- .../devicetree/bindings/leds/sprd,sc2731-bltc.yaml |  84 ++++++++
- .../devicetree/bindings/leds/ti.lm36922.yaml       | 110 +++++++++++
- Documentation/leds/leds-blinkm.rst                 |  29 ++-
- Documentation/leds/well-known-leds.txt             |   8 +
- drivers/leds/Kconfig                               |   8 +
- drivers/leds/flash/leds-aat1290.c                  |  14 +-
- drivers/leds/flash/leds-as3645a.c                  |   8 +-
- drivers/leds/flash/leds-ktd2692.c                  |  15 +-
- drivers/leds/flash/leds-lm3601x.c                  |  19 +-
- drivers/leds/flash/leds-max77693.c                 |  20 +-
- drivers/leds/flash/leds-qcom-flash.c               | 163 ++++++++++++++-
- drivers/leds/leds-88pm860x.c                       |   5 +-
- drivers/leds/leds-aw2013.c                         |   8 +-
- drivers/leds/leds-bcm6328.c                        |   7 +-
- drivers/leds/leds-bcm6358.c                        |   7 +-
- drivers/leds/leds-bd2606mvv.c                      |  23 +--
- drivers/leds/leds-blinkm.c                         | 220 ++++++++++++++-------
- drivers/leds/leds-gpio.c                           |   9 +-
- drivers/leds/leds-is31fl319x.c                     |  34 ++--
- drivers/leds/leds-is31fl32xx.c                     |  14 +-
- drivers/leds/leds-lp55xx-common.c                  |  22 +--
- drivers/leds/leds-lp55xx-common.h                  |   1 -
- drivers/leds/leds-mc13783.c                        |  24 ++-
- drivers/leds/leds-mt6323.c                         |  22 +--
- drivers/leds/leds-netxbig.c                        |  19 +-
- drivers/leds/leds-pca9532.c                        |  12 +-
- drivers/leds/leds-pca995x.c                        |  78 +++++---
- drivers/leds/leds-sc27xx-bltc.c                    |  12 +-
- drivers/leds/leds-sun50i-a100.c                    |   2 +-
- drivers/leds/leds-turris-omnia.c                   |   9 +-
- drivers/leds/rgb/leds-qcom-lpg.c                   |  14 +-
- drivers/leds/trigger/ledtrig-netdev.c              |  24 ++-
- include/linux/leds.h                               |   2 +
- 37 files changed, 756 insertions(+), 406 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/leds/leds-lm3692x.txt
- delete mode 100644 Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt
- create mode 100644 Documentation/devicetree/bindings/leds/sprd,sc2731-bltc.yaml
- create mode 100644 Documentation/devicetree/bindings/leds/ti.lm36922.yaml
-
--- 
-Lee Jones [李琼斯]
 
