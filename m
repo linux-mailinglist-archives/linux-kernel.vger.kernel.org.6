@@ -1,178 +1,139 @@
-Return-Path: <linux-kernel+bounces-335932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B96397ECD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:07:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21D1D97ECD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:10:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E564A28237C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:07:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EB6F1C21404
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A20419D080;
-	Mon, 23 Sep 2024 14:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZVhPECaM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E805019CC36;
+	Mon, 23 Sep 2024 14:10:10 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D3319CC15;
-	Mon, 23 Sep 2024 14:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F21B745F4
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 14:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727100422; cv=none; b=BFBPwG598pq0nkMKBMhRN6OEnqhQ6509nGzFkANvqSy6z/A+5JmXOr2SWA3PJ0zVyZzFjiWrTSg36MpmuKVVLhrra/Jy7Rvj1PihOfz1hK+f5Xgds+qybX4k5y+QkRGvdTvjdaRO37NXfFhb5UQvzQnAeGPe1LLukupxQC8y0XU=
+	t=1727100610; cv=none; b=fqrNoQYJs638ivvlGla4Sm5TfxjbUwR/Xb+MU2r7bDDHMuWu1KLbcabfO6whbaVsw4sMEpbHcTVLj17f3eNY1vpah46frPkC2H4XItIER0kqsUcaYnU8sY2lOE/oPMoESv9dsNk/c479iFcRdVSo55kcLPyjWxAS0K9l+3g8KcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727100422; c=relaxed/simple;
-	bh=kAhkFOZRzpqpdAPuuKV5YZkv/119rUuKLhWUmcZLwCM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b7C+0SDV3qDejlUH6B1DxKYXKgCVKUzm5AVSR8/xSHVp8AEFWnvwz8f4elpdgeGGRUfym0FdPmp4RnK4AFINGxsN8glz0OBlidIHbDvEe13j3N3fWqJOL4Bq7A67wq/sILSflZZdLjrJ7pw0SiyTf2Fin9/UE5xUbId+lkeWH0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZVhPECaM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4667C4CEC4;
-	Mon, 23 Sep 2024 14:06:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727100422;
-	bh=kAhkFOZRzpqpdAPuuKV5YZkv/119rUuKLhWUmcZLwCM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZVhPECaMceyeaFxgYxfHSJDrWpi3BtHICiUSQ+8mosAzrH3pxFeM+TfPMtR/wxPMC
-	 7exCHZPOJ4JF6i7H7OQEh6LwpJOMmrLkXpM1IqK5U24GtPKxar0DrhNOGprBKRVf19
-	 WlzbpOWKcTUXgYpMjWLEgP3o5BaizCH8BkT+9UZ1+81uVGPDvCo8F+/qBJD0BWt2p7
-	 +mZ0+fZA62i63cc3oYQwfvmYgLTW+EaWD6z5FC93AYzW1aeEDxX7LZC1Lv3RSbnCHQ
-	 umu0McA3VJZCd8z7LaKhumGi84S9qzSmyudsZ3VR8QzAAsD1ZSSfhrByAENfcrGPFR
-	 ZnVfwTCNnOlog==
-Message-ID: <42b347ec-df8e-44b8-ba19-150ebaf04771@kernel.org>
-Date: Mon, 23 Sep 2024 17:06:55 +0300
+	s=arc-20240116; t=1727100610; c=relaxed/simple;
+	bh=4vxE9g9Xu+6JTwSgT8PG0zHujevxi2qE/ZYkoWGNd4s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Khal/azjhn0a6+1s4wCtedVaFoCrYVYT9YVKioyfvdGCNsd4h2tDZyrkF2m82Ffuqrg1Yg4w1xkI7aslfr1ODwtCMXNDvQFpA5v1m2+L2Vj9msJGCOFDskZOrqoE1TamSvmJmyLLbYjlyFd5lzVWA1ZJU7KAwzDVIDdgnvy+qCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XC4Xm2pKvz1HJp8;
+	Mon, 23 Sep 2024 22:06:16 +0800 (CST)
+Received: from dggpeml500003.china.huawei.com (unknown [7.185.36.200])
+	by mail.maildlp.com (Postfix) with ESMTPS id D36B61A0188;
+	Mon, 23 Sep 2024 22:10:04 +0800 (CST)
+Received: from [10.174.177.173] (10.174.177.173) by
+ dggpeml500003.china.huawei.com (7.185.36.200) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 23 Sep 2024 22:10:04 +0800
+Message-ID: <a2548f24-b68d-d7ce-3826-6fa1a19bf70b@huawei.com>
+Date: Mon, 23 Sep 2024 22:10:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v4 3/6] net: ethernet: ti: cpsw_ale: use
- regfields for number of Entries and Policers
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Siddharth Vadapalli <s-vadapalli@ti.com>,
- Julien Panis <jpanis@baylibre.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, Simon Horman <horms@kernel.org>,
- Andrew Lunn <andrew@lunn.ch>, Joe Damato <jdamato@fastly.com>, srk@ti.com,
- vigneshr@ti.com, danishanwar@ti.com, pekka Varis <p-varis@ti.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-omap@vger.kernel.org, bpf@vger.kernel.org
-References: <20240910-am65-cpsw-multi-rx-v4-0-077fa6403043@kernel.org>
- <20240910-am65-cpsw-multi-rx-v4-3-077fa6403043@kernel.org>
- <CAMuHMdUf-tKRDzkz2_m8qdFTFutefddU0NTratVrEjRTzA3yQQ@mail.gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: kernel/sched/ext.c:3701:16: error: 'struct task_group' has no
+ member named 'idle'
 Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <CAMuHMdUf-tKRDzkz2_m8qdFTFutefddU0NTratVrEjRTzA3yQQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+To: kernel test robot <lkp@intel.com>, Tejun Heo <tj@kernel.org>
+CC: <oe-kbuild-all@lists.linux.dev>, <linux-kernel@vger.kernel.org>, David
+ Vernet <dvernet@meta.com>, Xie XiuQi <xiexiuqi@huawei.com>
+References: <202409220859.UiCAoFOW-lkp@intel.com>
+From: Yu Liao <liaoyu15@huawei.com>
+In-Reply-To: <202409220859.UiCAoFOW-lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpeml500003.china.huawei.com (7.185.36.200)
 
-Hi Geert,
+Hi,
 
-On 23/09/2024 16:41, Geert Uytterhoeven wrote:
-> Hi Roger,
+On 2024/9/22 9:02, kernel test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   88264981f2082248e892a706b2c5004650faac54
+> commit: 8195136669661fdfe54e9a8923c33b31c92fc1da sched_ext: Add cgroup support
+> date:   2 weeks ago
+> config: sparc-randconfig-002-20240922 (https://download.01.org/0day-ci/archive/20240922/202409220859.UiCAoFOW-lkp@intel.com/config)
+> compiler: sparc-linux-gcc (GCC) 14.1.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240922/202409220859.UiCAoFOW-lkp@intel.com/reproduce)
 > 
-> On Tue, Sep 10, 2024 at 11:25 AM Roger Quadros <rogerq@kernel.org> wrote:
->> Use regfields for number of ALE Entries and Policers.
->>
->> The variants that support Policers/Classifiers have the number
->> of policers encoded in the ALE_STATUS register.
->>
->> Use that and show the number of Policers in the ALE info message.
->>
->> Signed-off-by: Roger Quadros <rogerq@kernel.org>
->> Reviewed-by: Simon Horman <horms@kernel.org>
->> ---
->> Changelog:
->> v4:
->> - reverse Xmas tree declaration order fixes
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202409220859.UiCAoFOW-lkp@intel.com/
 > 
-> Thanks for your patch, which is now commit 11cbcfeaa79e5c76 ("net:
-> ethernet: ti: cpsw_ale: use regfields for number of Entries
-> and Policers").
+> All errors (new ones prefixed by >>):
 > 
-> This is causing the following warning on BeagleBone Black:
-> 
->     WARNING: CPU: 0 PID: 34 at drivers/base/regmap/regmap.c:1208
-> devm_regmap_field_alloc+0xac/0xc8
->     invalid empty mask defined
->     CPU: 0 UID: 0 PID: 34 Comm: kworker/u4:3 Not tainted
-> 6.11.0-rc7-boneblack-01443-g11cbcfeaa79e #152
->     Hardware name: Generic AM33XX (Flattened Device Tree)
->     Workqueue: events_unbound deferred_probe_work_func
->     Call trace:
->      unwind_backtrace from show_stack+0x10/0x14
->      show_stack from dump_stack_lvl+0x68/0x88
->      dump_stack_lvl from __warn+0x6c/0x1a8
->      __warn from warn_slowpath_fmt+0x1bc/0x1d0
->      warn_slowpath_fmt from devm_regmap_field_alloc+0xac/0xc8
->      devm_regmap_field_alloc from cpsw_ale_create+0x10c/0x36c
->      cpsw_ale_create from cpsw_init_common+0x1fc/0x310
-> 
->> --- a/drivers/net/ethernet/ti/cpsw_ale.c
->> +++ b/drivers/net/ethernet/ti/cpsw_ale.c
->> @@ -1303,6 +1303,9 @@ static const struct reg_field ale_fields_cpsw_nu[] = {
->>         /* CPSW_ALE_IDVER_REG */
->>         [MINOR_VER]     = REG_FIELD(ALE_IDVER, 0, 7),
->>         [MAJOR_VER]     = REG_FIELD(ALE_IDVER, 8, 10),
->> +       /* CPSW_ALE_STATUS_REG */
->> +       [ALE_ENTRIES]   = REG_FIELD(ALE_STATUS, 0, 7),
->> +       [ALE_POLICERS]  = REG_FIELD(ALE_STATUS, 8, 15),
-> 
-> You are adding these entries only to ale_fields_cpsw_nu[], not
-> to ale_fields_cpsw[], while cpsw_ale_regfield_init() loops over
-> ALE_FIELDS_MAX entries, whether they are valid or not:
-> 
->     static int cpsw_ale_regfield_init(struct cpsw_ale *ale)
->     {
->             const struct reg_field *reg_fields = ale->params.reg_fields;
->             struct device *dev = ale->params.dev;
->             struct regmap *regmap = ale->regmap;
->             int i;
-> 
->             for (i = 0; i < ALE_FIELDS_MAX; i++) {
->                     ale->fields[i] = devm_regmap_field_alloc(dev, regmap,
->                                                              reg_fields[i]);
-> 
->                     [...]
->             }
-> 
->             return 0;
->     }
-> 
-> I tried fixing this by skipping entries where all of .reg, .lsb,
-> and .msb are zero, but that doesn't work as that runs beyond the
-> end of ale_fields_cpsw[], thus operating on random data.
-> I think you do have to store the size of the array, instead of assuming
-> ALE_FIELDS_MAX entries everywhere.
-
-Thanks for the report and suggestion. I will send a fix soon.
-
-> 
->> --- a/drivers/net/ethernet/ti/cpsw_ale.h
->> +++ b/drivers/net/ethernet/ti/cpsw_ale.h
->> @@ -33,6 +34,8 @@ struct regmap;
->>  enum ale_fields {
->>         MINOR_VER,
->>         MAJOR_VER,
->> +       ALE_ENTRIES,
->> +       ALE_POLICERS,
->>         /* terminator */
->>         ALE_FIELDS_MAX,
->>  };
->>
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
+>    In file included from kernel/sched/build_policy.c:63:
+>    kernel/sched/ext.c: In function 'scx_cgroup_warn_missing_idle':
+>>> kernel/sched/ext.c:3701:16: error: 'struct task_group' has no member named 'idle'
+>     3701 |         if (!tg->idle)
+>          |                ^~
+>    kernel/sched/ext.c: In function 'scx_ops_disable_workfn':
+>    kernel/sched/ext.c:4455:17: error: implicit declaration of function 'stack_trace_print'; did you mean 'event_trace_printk'? [-Wimplicit-function-declaration]
+>     4455 |                 stack_trace_print(ei->bt, ei->bt_len, 2);
+>          |                 ^~~~~~~~~~~~~~~~~
+>          |                 event_trace_printk
+>    kernel/sched/ext.c: In function 'scx_ops_exit_kind':
+>    kernel/sched/ext.c:4834:30: error: implicit declaration of function 'stack_trace_save'; did you mean 'stack_tracer_enable'? [-Wimplicit-function-declaration]
+>     4834 |                 ei->bt_len = stack_trace_save(ei->bt, SCX_EXIT_BT_LEN, 1);
+>          |                              ^~~~~~~~~~~~~~~~
+>          |                              stack_tracer_enable
+> --
+>    kernel/sched/core.c: In function 'cpu_idle_read_s64':
+>>> kernel/sched/core.c:9626:27: error: 'struct task_group' has no member named 'idle'
+>     9626 |         return css_tg(css)->idle;
+>          |                           ^~
+>    kernel/sched/core.c: In function 'cpu_idle_write_s64':
+>>> kernel/sched/core.c:9634:15: error: implicit declaration of function 'sched_group_set_idle'; did you mean 'scx_group_set_idle'? [-Wimplicit-function-declaration]
+>     9634 |         ret = sched_group_set_idle(css_tg(css), idle);
+>          |               ^~~~~~~~~~~~~~~~~~~~
+>          |               scx_group_set_idle
+>    kernel/sched/core.c: In function 'cpu_idle_read_s64':
+>    kernel/sched/core.c:9627:1: warning: control reaches end of non-void function [-Wreturn-type]
+>     9627 | }
+>          | ^
 > 
 
--- 
-cheers,
--roger
+I post a RFC PATCH series:
+https://lore.kernel.org/all/20240923135431.2440320-1-liaoyu15@huawei.com/T/#t
+
+Best regards,
+Yu
+> 
+> vim +3701 kernel/sched/ext.c
+> 
+>   3694	
+>   3695	static void scx_cgroup_warn_missing_idle(struct task_group *tg)
+>   3696	{
+>   3697		if (scx_ops_enable_state() == SCX_OPS_DISABLED ||
+>   3698		    cgroup_warned_missing_idle)
+>   3699			return;
+>   3700	
+>> 3701		if (!tg->idle)
+>   3702			return;
+>   3703	
+>   3704		pr_warn("sched_ext: \"%s\" does not implement cgroup cpu.idle\n",
+>   3705			scx_ops.name);
+>   3706		cgroup_warned_missing_idle = true;
+>   3707	}
+>   3708	
+> 
+
 
