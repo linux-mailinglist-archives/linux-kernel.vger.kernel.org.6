@@ -1,64 +1,71 @@
-Return-Path: <linux-kernel+bounces-336387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 397AC9839EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 01:08:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A65B0983A02
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 01:09:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AE4D1C22525
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 23:08:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E2331F22DAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 23:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F4E126C1D;
-	Mon, 23 Sep 2024 23:08:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BAFF126C1D;
+	Mon, 23 Sep 2024 23:09:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E8rHmNRd"
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="eDK4ISP1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A482A15E86;
-	Mon, 23 Sep 2024 23:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22AB85656;
+	Mon, 23 Sep 2024 23:09:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727132925; cv=none; b=VPUqkjEo1vz+N9GgfWxkVPmBai4rHyhFZ2qaIuQNIVwrDB2dAqGC8MbsxNzpjLaEVszpMsg4xVeRG+PuVParQhzmh/rCkiR1cAhNh0+rHm6g0b2NQ/puX7Pw33V9eL37u88P55MTRoZ4D3+dyg7yBcjFlKgRp3UD4AOaJq0Obv8=
+	t=1727132975; cv=none; b=LmYCgCUUnpQ1T3EfEw1OujL/1DWODhR9Lya2ZyzaUez3zrxroSQx11Qvx2YWIEnVP93GN7rNZvRsqHKgggn4quBqrlV02z5tiHmgju2rOWRjLvmfLIJnSV4GlQNb1iKHam6Z/0FmCtcdfj2uSTx3B31/fASqmL+APd6uC35xtWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727132925; c=relaxed/simple;
-	bh=OWpMCRGmAqZvzyaBut++OyHffTtRikgWjkKKa9z9WqU=;
+	s=arc-20240116; t=1727132975; c=relaxed/simple;
+	bh=PHoVvDtoIdWZSf/ShIM2IZyXQXsUHZFPkddeumDkn9Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OKJDI3sLkjz97spUKgxFt3IIxFEeDYQMoMUyCYIq2fO7pIh2PM0lBcbTTrqi/p2ZZolJuq+ShKK3Hksg3Cajlcp1GuFG9qKaQ6UpLqZroZFEAGUH1cQw3oUvyClMRYa2DSRy1LeD8zbtkZIZ0jd6iFm/cUxzTgENqBwqOWl0Do8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E8rHmNRd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8D83C4CEC4;
-	Mon, 23 Sep 2024 23:08:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727132925;
-	bh=OWpMCRGmAqZvzyaBut++OyHffTtRikgWjkKKa9z9WqU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E8rHmNRdY0JedAeTG2+9Mz9SdlTI9C+WYtyKAtbScHctsM/oVRt+/ebazyPX+y4xo
-	 qylTWCE19uEcQ43eQ4Iq9iXBGQFSwoxchyWP11ESieyyK5i0Q8V8pdD3rRyfxVOx3E
-	 KMq0P2PFpZqvfRzja9i71nnCII687E01PSVZ/xl5C0vi50D9ZOB+CUrDPqBL7EwUBF
-	 2mWcErk3h7Ix9CXJ+bcR4LUmEyDycsE/xz9kQseSCrhOtezM6hIb1849NvbErkf/JZ
-	 iXX2EpbCxqy43q2XCfI8clWh8LoSHQWCOpZiYQiun/nBSgFcyKpHeujgaNmL4o51b9
-	 luSOXrL1MRKwg==
-Date: Mon, 23 Sep 2024 16:08:42 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=AvazXvXfjrTyXuFDfo2VlcxKYNxBF0O4PHUq1ed7A6q6gXXTiHlxundruH7zELVLVAXIj54G1AoLsIalyQMKQcmtajLDVUCqsY0TnZ/0BZssDezYxijcMA8UKBL/h28a+lc28u7rzjUOirKeKryU1o9APybqF1P37tyMM14MPlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=eDK4ISP1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E5BFC4CEC4;
+	Mon, 23 Sep 2024 23:09:33 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="eDK4ISP1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1727132971;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=43Vh0tWcrKvKgzDvUFrpyFzSlz2V2ztNJ6h2JpPEh18=;
+	b=eDK4ISP1Sfxrg30+qTfgwlp5VetK0vNK7DrEB77tHN47PdhTljElxtvxoYM/9xjuvJu6Q5
+	Oj8etovmHmqkfZARS6r7RDFrTUVZVkPSbc77ewYI4eAO6gBSqvaJ7XcybcSkgsi7x3QfRg
+	+G++Rsa58mUfkX/IE/pYqKs3FVZAadM=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 603268e2 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 23 Sep 2024 23:09:31 +0000 (UTC)
+Date: Tue, 24 Sep 2024 01:09:28 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-mm@kvack.org, Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
 	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	linux-toolchains@vger.kernel.org
-Subject: Re: [RFC/PATCHSET 0/5] perf tools: Support deferred user callchains
- (v2)
-Message-ID: <ZvH0-ny9gUzh_Jc7@google.com>
-References: <20240917222820.197594-1-namhyung@kernel.org>
- <f554bf58-a1df-4ef8-9045-2d1396f30ef3@linux.intel.com>
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH v2 7/8] vdso: Introduce uapi/vdso/random.h
+Message-ID: <ZvH1KKOJeq772enV@zx2c4.com>
+References: <20240923141943.133551-1-vincenzo.frascino@arm.com>
+ <20240923141943.133551-8-vincenzo.frascino@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,111 +74,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <f554bf58-a1df-4ef8-9045-2d1396f30ef3@linux.intel.com>
+In-Reply-To: <20240923141943.133551-8-vincenzo.frascino@arm.com>
 
-Hi Kan,
+On Mon, Sep 23, 2024 at 03:19:42PM +0100, Vincenzo Frascino wrote:
+> --- a/include/uapi/linux/random.h
+> +++ b/include/uapi/linux/random.h
+> @@ -44,30 +44,6 @@ struct rand_pool_info {
+>  	__u32	buf[];
+>  };
+>  
+> -/*
+> - * Flags for getrandom(2)
+> - *
+> - * GRND_NONBLOCK	Don't block and return EAGAIN instead
+> - * GRND_RANDOM		No effect
+> - * GRND_INSECURE	Return non-cryptographic random bytes
+> - */
+> -#define GRND_NONBLOCK	0x0001
+> -#define GRND_RANDOM	0x0002
+> -#define GRND_INSECURE	0x0004
+> -
+> -/**
+> - * struct vgetrandom_opaque_params - arguments for allocating memory for vgetrandom
+> - *
+> - * @size_per_opaque_state:	Size of each state that is to be passed to vgetrandom().
+> - * @mmap_prot:			Value of the prot argument in mmap(2).
+> - * @mmap_flags:			Value of the flags argument in mmap(2).
+> - * @reserved:			Reserved for future use.
+> - */
+> -struct vgetrandom_opaque_params {
+> -	__u32 size_of_opaque_state;
+> -	__u32 mmap_prot;
+> -	__u32 mmap_flags;
+> -	__u32 reserved[13];
+> -};
+> +#include <vdso/random.h>
+>  
+>  #endif /* _UAPI_LINUX_RANDOM_H */
+> diff --git a/include/uapi/vdso/random.h b/include/uapi/vdso/random.h
+> new file mode 100644
+> index 000000000000..5c80995129c2
+> --- /dev/null
+> +++ b/include/uapi/vdso/random.h
+> @@ -0,0 +1,38 @@
+> +
 
-On Wed, Sep 18, 2024 at 04:26:56PM -0400, Liang, Kan wrote:
-> 
-> 
-> On 2024-09-17 6:28 p.m., Namhyung Kim wrote:
-> > Hello,
-> > 
-> > This is a counterpart for Josh's kernel change v2 [1] to support deferred
-> > user callchains.  The change is transparent and users should not notice
-> > anything with the deferred callchains.
-> > 
-> >   $ perf record -g sleep 1
-> > 
-> > I added --[no-]merge-callchains option to control output of perf script.
-> > You can verify it has the deferred callchains like this:
-> > 
-> >   $ perf script --no-merge-callchains
-> >   perf     801 [000]    18.031793:          1 cycles:P:
-> >           ffffffff91a14c36 __intel_pmu_enable_all.isra.0+0x56 ([kernel.kallsyms])
-> >           ffffffff91d373e9 perf_ctx_enable+0x39 ([kernel.kallsyms])
-> >           ffffffff91d36af7 event_function+0xd7 ([kernel.kallsyms])
-> >           ffffffff91d34222 remote_function+0x42 ([kernel.kallsyms])
-> >           ffffffff91c1ebe1 generic_exec_single+0x61 ([kernel.kallsyms])
-> >           ffffffff91c1edac smp_call_function_single+0xec ([kernel.kallsyms])
-> >           ffffffff91d37a9d event_function_call+0x10d ([kernel.kallsyms])
-> >           ffffffff91d33557 perf_event_for_each_child+0x37 ([kernel.kallsyms])
-> >           ffffffff91d47324 _perf_ioctl+0x204 ([kernel.kallsyms])
-> >           ffffffff91d47c43 perf_ioctl+0x33 ([kernel.kallsyms])
-> >           ffffffff91e2f216 __x64_sys_ioctl+0x96 ([kernel.kallsyms])
-> >           ffffffff9265f1ae do_syscall_64+0x9e ([kernel.kallsyms])
-> >           ffffffff92800130 entry_SYSCALL_64+0xb0 ([kernel.kallsyms])
-> > 
-> >   perf     801 [000]    18.031814: DEFERRED CALLCHAIN
-> >                   7fb5fc22034b __GI___ioctl+0x3b (/usr/lib/x86_64-linux-gnu/libc.so.6)
-> > 
-> >   ...
-> > 
-> > When the callchain is merged (it's the default) it'd look like below:
-> > 
-> >   $ perf script
-> >   perf     801 [000]    18.031793:          1 cycles:P:
-> >           ffffffff91a14c36 __intel_pmu_enable_all.isra.0+0x56 ([kernel.kallsyms])
-> >           ffffffff91d373e9 perf_ctx_enable+0x39 ([kernel.kallsyms])
-> >           ffffffff91d36af7 event_function+0xd7 ([kernel.kallsyms])
-> >           ffffffff91d34222 remote_function+0x42 ([kernel.kallsyms])
-> >           ffffffff91c1ebe1 generic_exec_single+0x61 ([kernel.kallsyms])
-> >           ffffffff91c1edac smp_call_function_single+0xec ([kernel.kallsyms])
-> >           ffffffff91d37a9d event_function_call+0x10d ([kernel.kallsyms])
-> >           ffffffff91d33557 perf_event_for_each_child+0x37 ([kernel.kallsyms])
-> >           ffffffff91d47324 _perf_ioctl+0x204 ([kernel.kallsyms])
-> >           ffffffff91d47c43 perf_ioctl+0x33 ([kernel.kallsyms])
-> >           ffffffff91e2f216 __x64_sys_ioctl+0x96 ([kernel.kallsyms])
-> >           ffffffff9265f1ae do_syscall_64+0x9e ([kernel.kallsyms])
-> >           ffffffff92800130 entry_SYSCALL_64+0xb0 ([kernel.kallsyms])
-> >                   7fb5fc22034b __GI___ioctl+0x3b (/usr/lib/x86_64-linux-gnu/libc.so.6)
-> > 
-> >   ...
-> > 
-> > Notice that the last line and it has the __GI___ioctl in the same
-> > callchain.  It should work with other tools like perf report.
-> 
-> 
-> It seems it only works with perf report -D, when I test it on a
-> non-hybrid machine.
-> $perf record -e branches -g -c 3000000 ~/tchain_edit
-> [ perf record: Woken up 1 times to write data ]
-> [ perf record: Captured and wrote 0.397 MB perf.data ]
-> $ perf report -D | tail -n 17
-> 
-> Aggregated stats:
->                TOTAL events:       8235
->                 MMAP events:         78  ( 0.9%)
->                 COMM events:          2  ( 0.0%)
->                 EXIT events:          1  ( 0.0%)
->               SAMPLE events:       4060  (49.3%)
->                MMAP2 events:          2  ( 0.0%)
->              KSYMBOL events:         12  ( 0.1%)
->            BPF_EVENT events:         12  ( 0.1%)
->   CALLCHAIN_DEFERRED events:       4060  (49.3%)
->       FINISHED_ROUND events:          3  ( 0.0%)
->             ID_INDEX events:          1  ( 0.0%)
->           THREAD_MAP events:          1  ( 0.0%)
->              CPU_MAP events:          1  ( 0.0%)
->            TIME_CONV events:          1  ( 0.0%)
->        FINISHED_INIT events:          1  ( 0.0%)
-> $ perf report
-> Error:
-> The perf.data data has no samples!
-> # To display the perf.data header info, please use
-> --header/--header-only options.
-> #
-> 
-> 
-> On a hybrid machine, perf record errors out.
-> 
-> $perf record -g true
-> [ perf record: Woken up 1 times to write data ]
-> 0x58a8 [0x38]: failed to process type: 22 [Bad address]
-> [ perf record: Captured and wrote 0.022 MB perf.data ]
+I really do not like this. This is UAPI, and it's linux/something.h
+style of UAPI. What does moving it to vdso/ accomplish except confusion
+for people looking where the code is and then polluting users'
+/usr/include with extra directories that aren't meaningful?
 
-Thanks for the test, I'll take a look what I missed.
-
-Thanks,
-Namhyung
+A change like this makes me think the approach taken by this patchset
+might not be the right one.
 
