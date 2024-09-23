@@ -1,131 +1,131 @@
-Return-Path: <linux-kernel+bounces-335788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3BF797EAB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:31:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EE7B97EAD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:32:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98EF6B2147F
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:31:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CB691F222DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1471A194A5A;
-	Mon, 23 Sep 2024 11:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0D01991BF;
+	Mon, 23 Sep 2024 11:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YwqFlHld"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pTLkdlPH"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E445558B6;
-	Mon, 23 Sep 2024 11:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB2519409A;
+	Mon, 23 Sep 2024 11:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727091104; cv=none; b=Ce108tBHZLjNJCFkPZic80ufjzhp9woyiuZrH5Rul8ORZMnaRzNKy+D0FrlN4p/WteqpZlrB6I/B2PLCMjZwSCfbo6XkteP+eTpMPIRB/M53QLgOCGCFHsjK3fhA/I7nim30GMo3afYPHLmgqHcFcWtFN6JPv1SiyvbifRYBySA=
+	t=1727091137; cv=none; b=tig6fOnvjIpb6pZCY022WTtDn/gpFxfF2iqayTIQeVkjKzIwU9KfTguHgGxtr+6d8PZXhC6F2pXc1J9aK/h935bvZM8CMjf1AcBEEu4+cMDS18wjT91g+mI/xeUMjezbZHZ9FrzL1M8tyu+w7RL5CrIz5FF7GOzLgsSh9H39/Y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727091104; c=relaxed/simple;
-	bh=wXZdumoEFvRfbEgW6BsNaryOSUO/Gi71dztFXx7hFBM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YrbDIsxIfydcFnDTHiehw9rb1qpfvbAmkHSD8/8dFiBijF8IHKfkH/DPgyQX24nPv9fteeBhsbGcBER7UhCxKegK4Zh8VwXuqHc8rMRoRbIwxWBIDXj6kpDCZ1UcvOfonXcd0zVDki8CRVSHC+Wd1y6pMttOYL+pqUGT2maaWas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YwqFlHld; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-206aee40676so33457495ad.0;
-        Mon, 23 Sep 2024 04:31:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727091102; x=1727695902; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=r8VkOVLUc6X2W9Mk+mkAUfIq+rEQDahm5iYJv/NiMRw=;
-        b=YwqFlHld2cFt1OfsFiP0UFFzfhroQk0KIF5rBd11iD9ZzDrSkSx2BovU/J9gl1jsIY
-         IVNWAcf5bR10yMjZtXQnLvqBA8dnGZH9+S29AwSd6H3vu/TOHZZqEzicot4VcrpMdReU
-         lkowHduGmHsPE6cN8hdVWXD74KKBzD6Vppzn6Hymb52ElYEe01PG2WPP48MmamktZOdV
-         ScsyXSr3Xo4iSRaqPPyBi6OcAdAU2i2UcHufMuL9xg+wtFZ61pXpH3UE3YLndK1PsGMt
-         Jt9/HUKUFUFgHE1uCSJtZIsIoe/vWtUmjV8lreZPOGo/fmalzxyMffKovLHGRzP7gUNJ
-         1UsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727091102; x=1727695902;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=r8VkOVLUc6X2W9Mk+mkAUfIq+rEQDahm5iYJv/NiMRw=;
-        b=dLyIOpyfn/Vtjg5q0oZdUgk7dVLfY7/3Plf39lgiLEtC7dofQQowPmLQ8DJEeElwiG
-         z6Q/aKXtJUsZieQFrLR55l+S/EsmAo3UXEFWV3uToyq6QuFkTMxChdkr63lcoMnP4ffU
-         vuSBELLd/Oq9lpSfs0kpzsthhQ5mvXCUmWaPosfhf+4NlRRsK1+QJ8oKYQvFYKK6gu8T
-         Vcr7YH6HSdTLuDAlRQI7t7MwoZ2ZrjkoXG1Lcn8y3cp29E9PusKQebNY+pFpD+OU+Svz
-         TjOkVSYhU8qPMprolQgR8GKaib5VpQ1lG1vttqykTFtNKLnB37GZVmqJNP1DrcDGVwUL
-         0SGA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4Ng3vaiHUiHl9pC2yf/u13de1+nwWYeN0wnL5xzSUYcxqA7UHa0ewgPcJlmF0BcFRUWJ11yhSBsIZ1Wo=@vger.kernel.org, AJvYcCUS3tEpVdccDlgGTM0SwEM5oPn+L8BgIVp62YfK1c8/3hqpNDDDCJK4nqyth0E7S8dhiBwHOMdr@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVIPZLAmXna6J3dZpvSM2mdd5TFxUHpxIw8S6tbXgXaDw4/I8X
-	l+NV0QjeLM2cHhOs4N8J7zp+XDthBPe0z+xDpj2vWAo7Ul0/1osI
-X-Google-Smtp-Source: AGHT+IFnJ0Awf2LMJDx4WZhRHScp1nXcjNzHLKhfEHa/P7PVi2aBe5TquNmttIi+w0Kcfu84Z0or1g==
-X-Received: by 2002:a17:902:d4c6:b0:206:ba20:dd40 with SMTP id d9443c01a7336-208d8399031mr119464545ad.27.1727091102406;
-        Mon, 23 Sep 2024 04:31:42 -0700 (PDT)
-Received: from ubuntu.. ([27.34.65.190])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2079473c85fsm130925775ad.285.2024.09.23.04.31.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 04:31:41 -0700 (PDT)
-From: Dipendra Khadka <kdipendra88@gmail.com>
-To: sgoutham@marvell.com,
-	gakula@marvell.com,
-	sbhatta@marvell.com,
-	hkelam@marvell.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: Dipendra Khadka <kdipendra88@gmail.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net] net: ethernet: marvell: octeontx2: nic: Add error pointer check in otx2_ethtool.c
-Date: Mon, 23 Sep 2024 11:31:34 +0000
-Message-ID: <20240923113135.4366-1-kdipendra88@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1727091137; c=relaxed/simple;
+	bh=onqh4IboDzyH2TzekegySznBpmueOXQAMAv4x0Plxn0=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=WDaJoKgaG6to2uKJ9VsJykRnar8vYTcV9xRusXFK1Zh2KgpaGcuapqyAPD1vYg8D+y9sJauiVP9aZCDRNb5wLkqpnehEEF1IQ8jcTWQ9g8iQJjYB5qgdQSYnjTI9srkxkJDLTk38zLKsZvDpHwy5Ys5fuLb44kzAuWSX5oP+M0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pTLkdlPH; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48NAf1Se021336;
+	Mon, 23 Sep 2024 11:31:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:date:from:message-id:subject:to; s=qcppdkim1; bh=cXBPUelQDOKD
+	uUr8VK3C848tUnDja1It0ZmvvK6Vrng=; b=pTLkdlPHvnFwwqcXykGUYKpi88rG
+	HFbGFhTFDn1mQtCAIY0dRfusEkkZUGAUDonEaQ8HuDLpTZ+Zjd25LJiJS4Y3Hnbf
+	Fs3swDvoeFs9UPKSRiIJyImKyYCgp7K1Qn6d/vI1zD9j8T27KfhLXdRhinpLiOQ3
+	ApBa+11UQrUkd+ALGqWGCn10+TaYFilWGLxr/vtIfYkqT5Wz+OBMiNkHsQ6tbcIG
+	HwOHNBs/eJNbfNDTLwN9OgJ0k30Al5zdJe2Dc/TKedPGIidxEmmPNIA2IH9OGgiJ
+	/xH4phIX4myM7Hm6ulyklMk39r2qxlwzYguc9yBVfjyfvg50dOYi6luqtg==
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41spc2me03-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 23 Sep 2024 11:31:57 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 48NBVrSU028933;
+	Mon, 23 Sep 2024 11:31:53 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 41sq7kstdj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Mon, 23 Sep 2024 11:31:53 +0000
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 48NBVq4p028910;
+	Mon, 23 Sep 2024 11:31:52 GMT
+Received: from hu-maiyas-hyd.qualcomm.com (hu-mukhopad-hyd.qualcomm.com [10.147.244.250])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 48NBVqI4028902;
+	Mon, 23 Sep 2024 11:31:52 +0000
+Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 3978529)
+	id 890FD5000AB; Mon, 23 Sep 2024 17:01:51 +0530 (+0530)
+From: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
+To: vkoul@kernel.org, kishon@kernel.org, konradybcio@kernel.org,
+        andersson@kernel.org, simona@ffwll.ch, dmitry.baryshkov@linaro.org,
+        abel.vesa@linaro.org, robdclark@gmail.com, quic_abhinavk@quicinc.com,
+        sean@poorly.run, marijn.suijten@somainline.org, airlied@gmail.com,
+        daniel@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, quic_khsieh@quicinc.com, konrad.dybcio@linaro.org,
+        quic_parellan@quicinc.com, quic_bjorande@quicinc.com
+Cc: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        quic_riteshk@quicinc.com, quic_vproddut@quicinc.com
+Subject: [PATCH v3 0/5] Add support for DisplayPort on SA8775P platform
+Date: Mon, 23 Sep 2024 17:01:45 +0530
+Message-Id: <20240923113150.24711-1-quic_mukhopad@quicinc.com>
+X-Mailer: git-send-email 2.17.1
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: c8s8r5_QlOGIOv6Zlsm-TUIzuudpsgj4
+X-Proofpoint-ORIG-GUID: c8s8r5_QlOGIOv6Zlsm-TUIzuudpsgj4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 suspectscore=0 lowpriorityscore=0 spamscore=0
+ impostorscore=0 malwarescore=0 adultscore=0 phishscore=0 mlxlogscore=972
+ bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409230085
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Add error pointer check after calling otx2_mbox_get_rsp().
+This series adds support for the DisplayPort controller
+and eDP PHY v5 found on the Qualcomm SA8775P platform.
 
-Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
 ---
- .../ethernet/marvell/octeontx2/nic/otx2_ethtool.c    | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+v2: Fixed review comments from Dmitry and Bjorn
+	- Made aux_cfg array as const.
+	- Reused edp_swing_hbr_rbr and edp_swing_hbr2_hbr3 for v5.
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
-index 0db62eb0dab3..36a08303752f 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
-@@ -343,6 +343,12 @@ static void otx2_get_pauseparam(struct net_device *netdev,
- 	if (!otx2_sync_mbox_msg(&pfvf->mbox)) {
- 		rsp = (struct cgx_pause_frm_cfg *)
- 		       otx2_mbox_get_rsp(&pfvf->mbox.mbox, 0, &req->hdr);
-+
-+		if (IS_ERR(rsp)) {
-+			mutex_unlock(&pfvf->mbox.lock);
-+			return;
-+		}
-+
- 		pause->rx_pause = rsp->rx_pause;
- 		pause->tx_pause = rsp->tx_pause;
- 	}
-@@ -1074,6 +1080,12 @@ static int otx2_set_fecparam(struct net_device *netdev,
- 
- 	rsp = (struct fec_mode *)otx2_mbox_get_rsp(&pfvf->mbox.mbox,
- 						   0, &req->hdr);
-+
-+	if (IS_ERR(rsp)) {
-+		err = PTR_ERR(rsp);
-+		goto end;
-+	}
-+
- 	if (rsp->fec >= 0)
- 		pfvf->linfo.fec = rsp->fec;
- 	else
+v3: Fixed review comments from Dmitry, Konrad and Bjorn
+	- Used a for loop to write the dp_phy_aux_cfg registers.
+	- Pre-defined the aux_cfg size to prevent any magic numbers.
+	- Added all the necessary DPTX controllers for this platform.
+	 
+---
+Soutrik Mukhopadhyay (5):
+  dt-bindings: phy: Add eDP PHY compatible for sa8775p
+  phy: qcom: edp: Introduce aux_cfg array for version specific aux
+    settings
+  phy: qcom: edp: Add support for eDP PHY on SA8775P
+  dt-bindings: display: msm: dp-controller: document SA8775P compatible
+  drm/msm/dp: Add DisplayPort controller for SA8775P
+
+ .../bindings/display/msm/dp-controller.yaml   |  1 +
+ .../devicetree/bindings/phy/qcom,edp-phy.yaml |  1 +
+ drivers/gpu/drm/msm/dp/dp_display.c           |  9 +++
+ drivers/phy/qualcomm/phy-qcom-edp.c           | 74 +++++++++++++------
+ 4 files changed, 61 insertions(+), 24 deletions(-)
+
 -- 
-2.43.0
+2.17.1
 
 
