@@ -1,51 +1,80 @@
-Return-Path: <linux-kernel+bounces-335405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 763CB97E518
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 05:46:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 543F497E533
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 06:00:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 227951F21953
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 03:46:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D96801F21693
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 04:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88699C13D;
-	Mon, 23 Sep 2024 03:46:04 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE814CA6F;
+	Mon, 23 Sep 2024 03:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J5KrbesH"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16E93FE4
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 03:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF52C3FE4;
+	Mon, 23 Sep 2024 03:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727063164; cv=none; b=gCQLxLCONxevMY4C9QRWCuCNSDEM8YJ8QdC6u4YCz3MYootFmPRO7jbW611+awB6288LBlRr2f4jGSA7GhnTNpQm+1pqtAuGlogstQ3HG+YsMnnnmAr17aqmQhNj/AHQGrCkQWttDygXLIDTBW5cl9eVY8Iz1Ww8Vw0i6VCb39c=
+	t=1727063993; cv=none; b=rzZ8QSctURc9UvI4J6pa8s18rXmUuedCiF4PNLWXZrwi77L40lHAljhfBuIe6YZ6p3cDw/rVzm6urEEDHlob/s/EkuIPFFHSfIvzgx7BYBNY0ubbHNfrK86vnJLBMqjZegghQREBalMMD4cut7awpHpn3XwLXXnTc+znT10p/eQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727063164; c=relaxed/simple;
-	bh=xJDTinMuVgyYBO79TfmFkELLBmH9JUvgEKeHl1+5YJ4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uMKOYl9tZPBgDC52pbhVRT2F2ah6Vjb8N5E40loJ+Z7d07Kh0BkKWXH3Z0AO8ijP1G2X9gNzw0rH2u+zI3Ca1KkZQVxjwXopqOzw82leUOeJL3Q63Xp8R6CK9ZbrlpfSpg5dOp6q0e2TndCVeCvN3BZyuwlcEgXqOmHh45CptQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XBplT0Vyhz1T7nw;
-	Mon, 23 Sep 2024 11:44:37 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0B3EA180087;
-	Mon, 23 Sep 2024 11:45:59 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 23 Sep
- 2024 11:45:58 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <arnd@arndb.de>, <gregkh@linuxfoundation.org>, <samu.p.onkalo@nokia.com>,
-	<jic23@cam.ac.uk>, <akpm@linux-foundation.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH] misc: apds990x: Fix missing pm_runtime_disable()
-Date: Mon, 23 Sep 2024 11:55:56 +0800
-Message-ID: <20240923035556.3009105-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727063993; c=relaxed/simple;
+	bh=flf5fs08m6nwFou6VuxHcfEhuPJQqrpb0xWwYDz0XHY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q5VBojJnewbp5aDmPoWxKWIiDkDn3Vr4qaNA7RXD5fLCaQ8cCMN4q93YHJxT+Sjipn8crgBkjvUnc4kxAd8JsmkI+ywldEQ3AUQbR9cfE4+7wl+BZcywLux42fsFFcKy9BRW3w7iiUTd/o9MSftDyoNxBnXEMlJ7OHo6P2GaFoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J5KrbesH; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7db53a20d1fso2368469a12.0;
+        Sun, 22 Sep 2024 20:59:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727063991; x=1727668791; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9vWSfWfegAN1Rouk3V+ma1Oz3R4yoVwe8VY8Ox45QeM=;
+        b=J5KrbesHc5OSmEwr9yl6iAEhI9uuR3/vf99wT7EhGfZ74oa9c8/4M+I+cOp26GEBa7
+         Zg1AGNBXUoN/+7sD+wU7iIoFkVfjtHpF3na5WiJ2bSOLyrzZLQM/UIJg3O7AcYqspaoG
+         Z6YZweEBfX1kDBa//l5ATy/d+h2T/MCbyASndUK3+iZ2lxgt7j0Q2cj+c1ZElqXd2SwU
+         FHdISt2HEE65wOxCypQQojiOsOXQKUuokomoWbGb4Le38qrdkAdfuKu1Mcp8zDIEjq6N
+         ikvjG0i0TEKQXrWBhZxELv7zNZFH1NhzozIFP44Q0Yu1lkniaP+McRCEGUTUeszg2zQU
+         Zanw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727063991; x=1727668791;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9vWSfWfegAN1Rouk3V+ma1Oz3R4yoVwe8VY8Ox45QeM=;
+        b=B/xLMjuPK1OmfBzKlmmiQaGI2cL1A+uWhabyeVz6ZPOXa4eMMzkP0vxGTN0oNlyJPo
+         /j6kZlZrfBx/DzyhVs+djDCRDyRSuBoiECEfnMM2IAi3n03yEWT2Ywnou99yKc3oRbkP
+         UbZr4TYM8ReB4v2IJO47PSXjLp7eHBAxwICTKCUuy4KjjtoqF5Qfxx84neqXyGe4QFYj
+         ETJU/4fScqPZNwYrYvtHvIcC1WWckO6oi50WW5cufPGswstzgMJ97O1NrRJLqkE15FRE
+         0hED5Qqn5Fvphk34SFgSzzUCY25bturtthdfMC3wYtNhce+g711DumrG1sx7Yvey7C9Y
+         Oklg==
+X-Forwarded-Encrypted: i=1; AJvYcCW1h+XfcuGjPbSuUQc4MAhNgx6BwrgiHZeg7jZy1L6XPXjvMprQYZGRppAWphBktEG7WHdF2ugV/wPNvkxcpxWssqm2@vger.kernel.org, AJvYcCXJ0cfHxcSa7bmxjZuS39S0QHPRLQrA+DFjm0Hiu2LYZYL0JTq+6v0DEOpvZDZVJ14d0u4yex1gXTmJ/GA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUIOUgbhQMzPSytIA3jAPVp1GeUI1BOO4eT/nr4gcS5sF2Obj/
+	7TwKMG3w1owRfEbuCD5GQe1a+XYR7Ay7YCgQhSgPHMfhgeGcChZP
+X-Google-Smtp-Source: AGHT+IE7nNRhO1v4BqYlPdXQ15r7kg6MiuZWEdjs4cv7Aqqwz3KeTt2GJhqvRkBUeMXyHYHxZ/7jlw==
+X-Received: by 2002:a05:6a21:a247:b0:1cf:4da0:d95c with SMTP id adf61e73a8af0-1d30ca206e0mr14258710637.23.1727063990988;
+        Sun, 22 Sep 2024 20:59:50 -0700 (PDT)
+Received: from localhost.localdomain ([240d:1a:13a:f00:4b94:68e0:2d8b:3983])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db4990cebbsm14571877a12.37.2024.09.22.20.59.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Sep 2024 20:59:50 -0700 (PDT)
+From: Tatsuya S <tatsuya.s2862@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Tatsuya S <tatsuya.s2862@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH] ftrace: Hide a extra entry in stack trace
+Date: Mon, 23 Sep 2024 12:59:15 +0900
+Message-ID: <20240923035916.6567-1-tatsuya.s2862@gmail.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,63 +82,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemh500013.china.huawei.com (7.202.181.146)
 
-The pm_runtime_disable() is missing in probe error path,
-so add it to fix it.
+A extra entry is shown on stack trace(CONFIG_UNWINDER_ORC=y).
 
-Fixes: 92b1f84d46b2 ("drivers/misc: driver for APDS990X ALS and proximity sensors")
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+    [003] .....   110.171589: vfs_write <-__x64_sys_write
+    [003] .....   110.171600: <stack trace>
+ => XXXXXXXXX (Wrong function name)
+ => vfs_write
+ => __x64_sys_write
+ => do_syscall_64
+ => entry_SYSCALL_64_after_hwframe
+
+To resolve this, increment skip in __ftrace_trace_stack().
+The reason why skip is incremented in __ftrace_trace_stack()
+is because __ftrace_trace_stack() in stack trace is the only function
+that wasn't skipped from anywhere.
+
+Signed-off-by: Tatsuya S <tatsuya.s2862@gmail.com>
 ---
- drivers/misc/apds990x.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ kernel/trace/trace.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/misc/apds990x.c b/drivers/misc/apds990x.c
-index 6d4edd69db12..e7d73c972f65 100644
---- a/drivers/misc/apds990x.c
-+++ b/drivers/misc/apds990x.c
-@@ -1147,7 +1147,7 @@ static int apds990x_probe(struct i2c_client *client)
- 		err = chip->pdata->setup_resources();
- 		if (err) {
- 			err = -EINVAL;
--			goto fail3;
-+			goto fail4;
- 		}
- 	}
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index c3b2c7dfadef..e0d98621ff23 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -2919,6 +2919,8 @@ static void __ftrace_trace_stack(struct trace_buffer *buffer,
+ #ifndef CONFIG_UNWINDER_ORC
+ 	if (!regs)
+ 		skip++;
++#else
++	skip++;
+ #endif
  
-@@ -1155,7 +1155,7 @@ static int apds990x_probe(struct i2c_client *client)
- 				apds990x_attribute_group);
- 	if (err < 0) {
- 		dev_err(&chip->client->dev, "Sysfs registration failed\n");
--		goto fail4;
-+		goto fail5;
- 	}
- 
- 	err = request_threaded_irq(client->irq, NULL,
-@@ -1166,15 +1166,17 @@ static int apds990x_probe(struct i2c_client *client)
- 	if (err) {
- 		dev_err(&client->dev, "could not get IRQ %d\n",
- 			client->irq);
--		goto fail5;
-+		goto fail6;
- 	}
- 	return err;
--fail5:
-+fail6:
- 	sysfs_remove_group(&chip->client->dev.kobj,
- 			&apds990x_attribute_group[0]);
--fail4:
-+fail5:
- 	if (chip->pdata && chip->pdata->release_resources)
- 		chip->pdata->release_resources();
-+fail4:
-+	pm_runtime_disable(&client->dev);
- fail3:
- 	regulator_bulk_disable(ARRAY_SIZE(chip->regs), chip->regs);
- fail2:
+ 	preempt_disable_notrace();
 -- 
-2.34.1
+2.46.1
 
 
