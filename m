@@ -1,107 +1,153 @@
-Return-Path: <linux-kernel+bounces-335770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 869B097EA67
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:02:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9117597EA6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:02:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B79DA1C21162
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:02:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48199281FB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32206197A92;
-	Mon, 23 Sep 2024 11:02:05 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C96198823;
+	Mon, 23 Sep 2024 11:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BYg04hIQ"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69947DA95
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 11:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C824EADA;
+	Mon, 23 Sep 2024 11:02:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727089324; cv=none; b=WNT4n5t+EgMjuhgugrn6lf4osVRLbFkE17wFPreiIXvzzxl5m6xAV79WPK3VUO6zMHM/xvghla/YGXyKnHCmnZIAJOVbJBYwbcBQtfS60xsdRcLlrwO/MOpwT++1/8/WkJSQEWdEYsvXbHy89JlReIac6uYYk0/bjtYZjfU8cwA=
+	t=1727089361; cv=none; b=GiBR3UF/+P5bgyRB4FJuHJyFAcH+99rjWHFwTpYGHGfbKoZZnhwfjI/QQu3/zCCgVvnUnUrsPS59zP186uDprSLcUf4MQ9gLuhlMPOmU4ffdJB12SFcKeEHPTv2igQFDtNnrQ8g49GPmY1cH/EByvcaUnZcojxqVfiMYX3WlfLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727089324; c=relaxed/simple;
-	bh=HHb/KxNxLPIpqB70CQcSiJsQIsXJlw6dXS3JHI6hr7E=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=pbid1fJkrvQxuGP6awCgxDQnuzh+WLPeHsNH3FmYYdnyWdXz9NpyMq5XnsGcDbpZ8IN6ydxxp4L0GUaATa7gSw+Eq1SnLcHrBCbLSgnuDqWbIsfFVZNAfS79I/JLjgJR2SYH6TmZO+F+6pfZWq5yGYvfX0HTnGEZ04AhWxjawIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XC0Mk3dKJz1HKWw;
-	Mon, 23 Sep 2024 18:58:10 +0800 (CST)
-Received: from kwepemm000013.china.huawei.com (unknown [7.193.23.81])
-	by mail.maildlp.com (Postfix) with ESMTPS id C99C61A016C;
-	Mon, 23 Sep 2024 19:01:58 +0800 (CST)
-Received: from [10.174.178.46] (10.174.178.46) by
- kwepemm000013.china.huawei.com (7.193.23.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 23 Sep 2024 19:01:58 +0800
-Subject: Re: [PATCH v1] jffs2: Correct some typos in comments
-To: Shen Lichuan <shenlichuan@vivo.com>, <dwmw2@infradead.org>,
-	<richard@nod.at>
-CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<opensource.kernel@vivo.com>
-References: <20240923083322.13383-1-shenlichuan@vivo.com>
-From: Zhihao Cheng <chengzhihao1@huawei.com>
-Message-ID: <ece4eab6-b8e6-603a-5c59-26c025d394bb@huawei.com>
-Date: Mon, 23 Sep 2024 19:01:57 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+	s=arc-20240116; t=1727089361; c=relaxed/simple;
+	bh=LlvucM0P1hXSJnxs8UuQo5QRum/PKVcAx7WDA82wobk=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e1UxjgycLlQY+LRPEfLiaVK1V+jjhn728GbNHgCH51josNRovTlLCDFjYsCNzbfZsGAAfWyE4Bu8cvH756U0b97pqGlWPsFF4fcgBlFkvUPYi4bf6HIuCPIkoIzrTC3zUd9ScwwP++ROy2w50bHEBtahjq/Yu2gHSLNpTIfk26s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BYg04hIQ; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-374bd0da617so2978462f8f.3;
+        Mon, 23 Sep 2024 04:02:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727089358; x=1727694158; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9yidkyLnY/xuXlstPu2cMA6yS+9pleuUa9Q9pOuYZ4M=;
+        b=BYg04hIQs21f+OKRzlZOVrZdVaTc7G3p0x9n9U5k4UmBy8HbUuPvHCDE0XUuU4j/LL
+         7aJx7PsSFeMw/MOA/pgm2uaO8z2QxJ1pSBDPJg5NtwzmhhmHxcPpvmHw9bRuSdA6Z9Mi
+         jEV81WU6pMZdC+y6aOroZyHQCvUr9hXcpA+LPYt2Qrkdq6rWo/5gCxZe1KsFxetAbbBV
+         /XQybb8Ia5T1s3AhhSjobTsEgi7x5FefL6N2LEXfnsgYFvOuvI83dhQpOCGivUfzqQWm
+         +8Y+tR2l+YCbQVoggWnDfE/Ho3i15fVGNFbBF/K0t1wOqaZ6+O0cgsEGgWQBabc36Dhf
+         bTxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727089358; x=1727694158;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9yidkyLnY/xuXlstPu2cMA6yS+9pleuUa9Q9pOuYZ4M=;
+        b=PUZr3AVtMgDM9EWUgGTD/Rwf/ZGNNEt38qRiZYzcecLg1yD+xWjRdy0Oj3CJM4foef
+         BGFWcsLq5yglLeiDwEOIQMbX/r4SaSoyedzAfAZQZtNwFpBBDgrqU9gK2F+CJ9eSqdbS
+         s39PB5x45Ilocx0l1Z+QEdlo0grk4iWN4mVjpnDJR6nh5+cLEGxvE2cvdFxRZZIwlWte
+         quN2EKs6W8t718SCmvdhX4+ydkRGqw4vOEX/bsKyFT875dPUvzn/25RwiSYDVfZ8ly3j
+         DsNkO+TRE5PbVtppCTWbrTwwobcn43H6zUVYkXMv3T3ZyFj6r0BJKyZINUKb0F1Fest8
+         wKiA==
+X-Forwarded-Encrypted: i=1; AJvYcCUpvUpw3rjTJpW7uYXoYbrLd9T4eOUH7Ypdp4IzV3XWftj43IM7Fviq/Z31HJbwPNnbjksZc/cCL57hnoLcgh1LhsTQ@vger.kernel.org, AJvYcCX66qoeyTnpMNUCmB+l44EHEBb9kMnMHKmgc0koTulOtXnJdh3cORwF2Ssrh8OZApyi+bXSWYfg8ajMNadq@vger.kernel.org, AJvYcCXBZGj+riApIIgMsceW+kXpQB/MgVLEgMXNhiT7u1tmCBRIXquX/RQL/GMq7DapryV5Uxo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywn9inX3mc+xBUy3cC8PoamsfYiJjVg39vG86Cz4JX6tAfJQGJK
+	SJLkVB4pLXXEsNrQpwNN198OyeQ3d5/cCnJH188MQEQeUrnwCGpT
+X-Google-Smtp-Source: AGHT+IHaEAZrODitl8iCpdeEw/+Vxhs0sLBKOLbimZWJkK85P1HSSkvbyYQR5dqF0IlKeHJAqUEZ1g==
+X-Received: by 2002:adf:f882:0:b0:371:8ec6:f2f0 with SMTP id ffacd0b85a97d-37a4227273dmr6127402f8f.16.1727089357801;
+        Mon, 23 Sep 2024 04:02:37 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73e80eesm24050519f8f.30.2024.09.23.04.02.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2024 04:02:37 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Mon, 23 Sep 2024 13:02:35 +0200
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Peter Zijlstra <peterz@infradead.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@chromium.org>,
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCHv4 02/14] uprobe: Add support for session consumer
+Message-ID: <ZvFKy9WLiz18GjEZ@krava>
+References: <20240917085024.765883-1-jolsa@kernel.org>
+ <20240917085024.765883-3-jolsa@kernel.org>
+ <20240917120250.GA7752@redhat.com>
+ <Zul7UCsftY_ZX6wT@krava>
+ <20240922152722.GA12833@redhat.com>
+ <ZvEhL114tyhLmfB1@krava>
+ <20240923100552.GA20793@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240923083322.13383-1-shenlichuan@vivo.com>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemm000013.china.huawei.com (7.193.23.81)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240923100552.GA20793@redhat.com>
 
-ÔÚ 2024/9/23 16:33, Shen Lichuan Ð´µÀ:
-> Fixed some confusing spelling errors, the details are as follows:
+On Mon, Sep 23, 2024 at 12:05:53PM +0200, Oleg Nesterov wrote:
+> On 09/23, Jiri Olsa wrote:
+> >
+> > change below should do what you proposed originally
 > 
-> -in the code comments:
-> 	wating		-> waiting
-> 	succefully	-> successfully
+> LGTM, just one nit below.
 > 
-> Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
-> ---
->   fs/jffs2/gc.c        | 2 +-
->   fs/jffs2/readinode.c | 2 +-
->   2 files changed, 2 insertions(+), 2 deletions(-)
-> 
+> But I guess you need to do this on top of bpf/bpf.git, Andrii has already
+> applied your series.
 
-Reviewed-by: Zhihao Cheng <chengzhihao1@huawei.com>
-> diff --git a/fs/jffs2/gc.c b/fs/jffs2/gc.c
-> index 822949d0eb00..1b833bbffcf5 100644
-> --- a/fs/jffs2/gc.c
-> +++ b/fs/jffs2/gc.c
-> @@ -82,7 +82,7 @@ static struct jffs2_eraseblock *jffs2_find_gc_block(struct jffs2_sb_info *c)
->   
->   		nextlist = &c->erasable_list;
->   	} else if (!list_empty(&c->erasable_pending_wbuf_list)) {
-> -		/* There are blocks are wating for the wbuf sync */
-> +		/* There are blocks are waiting for the wbuf sync */
->   		jffs2_dbg(1, "Synching wbuf in order to reuse erasable_pending_wbuf_list blocks\n");
->   		spin_unlock(&c->erase_completion_lock);
->   		jffs2_flush_wbuf_pad(c);
-> diff --git a/fs/jffs2/readinode.c b/fs/jffs2/readinode.c
-> index 03b4f99614be..f987f78a894e 100644
-> --- a/fs/jffs2/readinode.c
-> +++ b/fs/jffs2/readinode.c
-> @@ -72,7 +72,7 @@ static int check_node_data(struct jffs2_sb_info *c, struct jffs2_tmp_dnode_info
->   		if (err != -EOPNOTSUPP)
->   			JFFS2_WARNING("MTD point failed: error code %d.\n", err);
->   	} else
-> -		pointed = 1; /* succefully pointed to device */
-> +		pointed = 1; /* successfully pointed to device */
->   #endif
->   
->   	if (!pointed) {
-> 
+that seems confusing but looks like just that one fix with the
+commit link in [1] was applied
 
+[1] https://lore.kernel.org/bpf/172708047825.3261420.5126267811201364070.git-patchwork-notify@kernel.org/T/#mb065649b5ab8f7ea5b03c215bdc6555a0b76c0d7
+
+> 
+> And to remind, 02/14 must be fixed in any case unless I am totally confused,
+> handler_chain() can leak return_instance.
+
+yep it was missing kfree, but it's not needed in this new version
+
+> 
+> > also on top of that.. I discussed with Andrii the possibility of dropping
+> > the UPROBE_HANDLER_IWANTMYCOOKIE completely and setup cookie for any consumer
+> > that has both 'handler' and 'ret_handler' defined, wdyt?
+> 
+> Up to you. As I said from the very beginning I won't insist on _IWANTMYCOOKIE.
+
+ok
+
+> 
+> >  	list_for_each_entry_srcu(uc, &uprobe->consumers, cons_node,
+> >  				 srcu_read_lock_held(&uprobes_srcu)) {
+> > +		ric = return_consumer_find(ri, &ric_idx, uc->id);
+> >  		if (uc->ret_handler)
+> > -			uc->ret_handler(uc, ri->func, regs);
+> > +			uc->ret_handler(uc, ri->func, regs, ric ? &ric->cookie : NULL);
+> >  	}
+> >  	srcu_read_unlock(&uprobes_srcu, srcu_idx);
+> 
+> return_consumer_find() makes no sense if !uc->ret_handler, can you move
+> 
+> 		ric = return_consumer_find(ri, &ric_idx, uc->id);
+> 
+> into the "if (uc->ret_handler)" block?
+
+ok, will move that
+
+thanks,
+jirka
 
