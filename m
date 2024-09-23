@@ -1,157 +1,250 @@
-Return-Path: <linux-kernel+bounces-335695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF83297E942
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:00:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0069C97E94D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:04:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 441E4B21540
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:00:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38911B21325
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC93197A8A;
-	Mon, 23 Sep 2024 10:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF540195811;
+	Mon, 23 Sep 2024 10:04:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ih89HEvr"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70947194C6E;
-	Mon, 23 Sep 2024 10:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="exkjM6cH"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41C26BFA3;
+	Mon, 23 Sep 2024 10:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727085619; cv=none; b=NxQjxnLYdnSJG77SUbovXHdHMKbejo49Xdj+HRaikInvAFjzQWGZMHUQE/lKjQd6ZWVVyXJk3cddVumjb3JzKkJIj2ZZ+0US2VZ2m68DYo/9Uoli7VmaaDzGZ7Hlf1btOwupLZ7zmC2nSNWcO3coyxya/+2U1X7se+NBpAd5190=
+	t=1727085862; cv=none; b=kUOSC4OT6zjj5mLiJm1oZ7Dpis7hInvEP13TcsBhIenbW0gk/dhW3Nsw+9NX+Df4wYnNwzNJ/SLNuGujw0q7yb/veXixoYg4yKjJuf6oFq5UTlEbQHvjK1aI9qnY+Nef6W36S16KwsSMjTBOm0yOPaPp0x0dVYk2rNllugeaVDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727085619; c=relaxed/simple;
-	bh=EVa8pFZK1Gg2RTP6+a6/2urfhYG5YFYSX1JAt7R4Yi8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UnG0kvz5weXz6h0QnEFbhq7WLD8gq3g0rJJd2cDwh6FqGB+GhS6izBfDsQ/hmop7xxHEHDLVuy4kSQXmFriiXTGIqOYbES3pdYyThfjZnHHBamkLBpbFGEmten33KEkAQT5xOsguc3yLNSdfKo/PbplughwUcpzsjuOX/N1UVyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ih89HEvr; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727085615;
-	bh=EVa8pFZK1Gg2RTP6+a6/2urfhYG5YFYSX1JAt7R4Yi8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ih89HEvrjCdr+PhyTQoUw7wGQee/jfqo1S+wA+rutY1NkTRHoyBWrb7JUIxxbi6Pr
-	 og/QOh/P2Csh+mCIR2i6FJTlxhJ9Gap+3995bEtSzqkVNJg4hwF3NpfgvKWGh3aycB
-	 z/NTjbbx1nhKQg8a7G4MrdvnBetbeEfyhStNTE4CBQzOed66K+mpXdIix8KL69QFg5
-	 Nh0Hr8IO1rhxfX6QFgYgodk1BXwz3tE7IBpfF3NX8fYzNhzPsqoN/HBU0V8S+fCNWo
-	 Kcj4U0Pj3CnuXleHU0ufRDowANlc9b+/gaeo0HnsIrAyN8vJ5V1VhyxjVud/oJufuL
-	 MxJBc+gzzplww==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id E93C217E10FC;
-	Mon, 23 Sep 2024 12:00:14 +0200 (CEST)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: lee@kernel.org
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	eddie.huang@mediatek.com,
-	sean.wang@mediatek.com,
-	alexandre.belloni@bootlin.com,
-	sen.chu@mediatek.com,
-	macpaul.lin@mediatek.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-rtc@vger.kernel.org,
-	kernel@collabora.com
-Subject: [PATCH v1 3/3] rtc: mt6359: Use RTC_TC_DOW hardware register for wday
-Date: Mon, 23 Sep 2024 12:00:10 +0200
-Message-ID: <20240923100010.97470-4-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240923100010.97470-1-angelogioacchino.delregno@collabora.com>
-References: <20240923100010.97470-1-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1727085862; c=relaxed/simple;
+	bh=n9V4KqCf25Lnq9DkKmw0iowk10dheuDSj2TPGJAsOUE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Bpd0dZIFJb0sFqa2tv2d43YR0PPBUQZp5eA0edb40Mz96D7jkCOL+EAwea8fpKMTcbqoGKaKyqeV4rlLWtk8EJxFWIooax0ZvoERCnmTDavygXD8ubn6rQ3L3c0gkFGNeclx8Tfoc4fVhbM1bhnP2zyWab4tzKSU2Kf+CfBt6hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=exkjM6cH; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=ryrNTnBObv+2rQkEsJDfbBq2naG6AaoqUBl0vxgeKjk=;
+	b=exkjM6cHc5QSF/M7C65wteZk8D1FqdEY363xznXKV62nDASPPhXY+0oENY+GeL
+	Csn7l5XUrKM2bWihGHnU+0MU78e+3S3DfK5EWiw1AK6sVDdb3wRsxMrSoF0wPH6P
+	GQitUF/4jO8cCDPqij8piA2xqO3OIH03C0Q833nxYRosA=
+Received: from [192.168.31.242] (unknown [27.18.197.191])
+	by gzsmtp2 (Coremail) with SMTP id sSgvCgDnU7p0PPFmZNLEBw--.28765S2;
+	Mon, 23 Sep 2024 18:01:27 +0800 (CST)
+Message-ID: <521a14e0-cb85-419d-87ea-1848b119c86d@163.com>
+Date: Mon, 23 Sep 2024 18:01:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH 1/3] dt-bindings: pinctrl: Add support for
+ canaan,k230 SoC
+To: Rob Herring <robh@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Yangyu Chen <cyy@cyyself.name>,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+References: <20240916063021.311721-1-18771902331@163.com>
+ <20240916064225.316863-1-18771902331@163.com>
+ <20240918171320.GA1810164-robh@kernel.org>
+Content-Language: en-US
+From: Ze Huang <18771902331@163.com>
+In-Reply-To: <20240918171320.GA1810164-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:sSgvCgDnU7p0PPFmZNLEBw--.28765S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxCrWUCw13AF1fKrW5XrW8Zwb_yoWruFy3pF
+	ZxKa98KF18XF47t3yxt3W8uF1aqFs7Ar4xKryUKry7ta909F1xKrWakr48WFs5urn7Jw12
+	vFWjgry29w48ArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UOzV8UUUUU=
+X-CM-SenderInfo: zpryllqrzqjjitr6il2tof0z/1tbiJwBjombxPCUHAwAAss
 
-Instead of calculating the number of full days since Sunday with
-(days + 4) % 7, read (and write) that to the RTC Day-of-week Time
-Counter register (RTC_TC_DOW).
+On 9/19/24 1:13 AM, Rob Herring wrote:
+> On Mon, Sep 16, 2024 at 02:42:23PM +0800, Ze Huang wrote:
+>> Add device tree binding details for Canaan K230 pinctrl device.
+>>
+>> Signed-off-by: Ze Huang <18771902331@163.com>
+>> ---
+>>   .../bindings/pinctrl/canaan,k230-pinctrl.yaml | 128 ++++++++++++++++++
+>>   1 file changed, 128 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/pinctrl/canaan,k230-pinctrl.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/pinctrl/canaan,k230-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/canaan,k230-pinctrl.yaml
+>> new file mode 100644
+>> index 000000000000..979c5bd71e3d
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/pinctrl/canaan,k230-pinctrl.yaml
+>> @@ -0,0 +1,128 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/pinctrl/canaan,k230-pinctrl.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Canaan Kendryte K230 Pin Controller
+>> +
+>> +maintainers:
+>> +  - Ze Huang <18771902331@163.com>
+>> +
+>> +description:
+>> +  The Canaan Kendryte K230 platform includes 64 IO pins, each capable of
+>> +  multiplexing up to 5 different functions. Pin function configuration is
+>> +  performed on a per-pin basis.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: canaan,k230-pinctrl
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +patternProperties:
+>> +  '-pins$':
+>> +    type: object
+>> +    additionalProperties: false
+>> +    description:
+>> +      A pinctrl node should contain at least one subnode representing the
+>> +      pinctrl groups available on the machine.
+>> +
+>> +    patternProperties:
+>> +      '-cfg$':
+>> +        type: object
+>> +        $ref: /schemas/pinctrl/pincfg-node.yaml
+>> +        additionalProperties: false
+>> +        description:
+>> +          Each subnode will list the pins it needs, and how they should
+>> +          be configured, with regard to muxer configuration, bias, input
+>> +          enable/disable, input schmitt trigger, slew-rate enable/disable,
+>> +          slew-rate, drive strength.
+>> +
+>> +        properties:
+>> +          pinmux:
+>> +            $ref: /schemas/types.yaml#/definitions/uint32-array
+> Drop. You need to add a $ref to pinmux-node.yaml (alongside
+> pincfg-node.yaml).
 
-Some transformation (addition and subtraction for set/get) is
-still done, as this register's range is [1..7], while the tm_wday
-in struct tm's range is [0..6].
+OK. will use a allOf like this:
 
-Please note that this was added only to set_time() and read_time()
-callbacks because set_alarm() and read_alarm() are setting a bit
-in RTC_AL_MASK to ignore DOW for RTC HW alarms for unknown reasons.
+patternProperties:
+   '-cfg$':
+   type: object
+   allOf:
+     - $ref: /schemas/pinctrl/pincfg-node.yaml#
+     - $ref: /schemas/pinctrl/pinmux-node.yaml#
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/rtc/rtc-mt6397.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+>
+>> +            description:
+>> +              The list of GPIOs and their mux settings that properties in
+>> +              the node apply to. This should be set with the macro
+>> +              'K230_PINMUX(pin, mode)'
+>> +
+>> +          bias-disable: true
+>> +
+>> +          bias-pull-up: true
+>> +
+>> +          bias-pull-down: true
+>> +
+>> +          drive-strength:
+>> +            minimum: 0
+>> +            maximum: 15
+>> +
+>> +          input-enable: true
+>> +
+>> +          output-enable: true
+>> +
+>> +          input-schmitt-enable: true
+>> +
+>> +          slew-rate:
+>> +            $ref: /schemas/types.yaml#/definitions/uint32
+> Drop. Already has a defined type.
 
-diff --git a/drivers/rtc/rtc-mt6397.c b/drivers/rtc/rtc-mt6397.c
-index 4785af123a7f..152699219a2b 100644
---- a/drivers/rtc/rtc-mt6397.c
-+++ b/drivers/rtc/rtc-mt6397.c
-@@ -75,6 +75,7 @@ static int __mtk_rtc_read_time(struct mt6397_rtc *rtc,
- 	tm->tm_min = data[RTC_OFFSET_MIN];
- 	tm->tm_hour = data[RTC_OFFSET_HOUR];
- 	tm->tm_mday = data[RTC_OFFSET_DOM];
-+	tm->tm_wday = data[RTC_OFFSET_DOW];
- 	tm->tm_mon = data[RTC_OFFSET_MTH] & RTC_TC_MTH_MASK;
- 	tm->tm_year = data[RTC_OFFSET_YEAR];
- 
-@@ -86,9 +87,8 @@ static int __mtk_rtc_read_time(struct mt6397_rtc *rtc,
- 
- static int mtk_rtc_read_time(struct device *dev, struct rtc_time *tm)
- {
--	time64_t time;
- 	struct mt6397_rtc *rtc = dev_get_drvdata(dev);
--	int days, sec, ret;
-+	int sec, ret;
- 
- 	do {
- 		ret = __mtk_rtc_read_time(rtc, tm, &sec);
-@@ -96,15 +96,9 @@ static int mtk_rtc_read_time(struct device *dev, struct rtc_time *tm)
- 			goto exit;
- 	} while (sec < tm->tm_sec);
- 
--	/* HW register start mon from one, but tm_mon start from zero. */
-+	/* HW register start mon/wday from one, but tm_mon/tm_wday start from zero. */
- 	tm->tm_mon--;
--	time = rtc_tm_to_time64(tm);
--
--	/* rtc_tm_to_time64 covert Gregorian date to seconds since
--	 * 01-01-1970 00:00:00, and this date is Thursday.
--	 */
--	days = div_s64(time, 86400);
--	tm->tm_wday = (days + 4) % 7;
-+	tm->tm_wday--;
- 
- exit:
- 	return ret;
-@@ -117,11 +111,13 @@ static int mtk_rtc_set_time(struct device *dev, struct rtc_time *tm)
- 	u16 data[RTC_OFFSET_COUNT];
- 
- 	tm->tm_mon++;
-+	tm->tm_wday++;
- 
- 	data[RTC_OFFSET_SEC] = tm->tm_sec;
- 	data[RTC_OFFSET_MIN] = tm->tm_min;
- 	data[RTC_OFFSET_HOUR] = tm->tm_hour;
- 	data[RTC_OFFSET_DOM] = tm->tm_mday;
-+	data[RTC_OFFSET_DOW] = tm->tm_wday;
- 	data[RTC_OFFSET_MTH] = tm->tm_mon;
- 	data[RTC_OFFSET_YEAR] = tm->tm_year;
- 
--- 
-2.46.0
+Acknowledged.
+
+>
+>> +            description: |
+>> +              slew rate control enable
+>> +              0: disable
+>> +              1: enable
+>> +
+>> +            enum: [0, 1]
+>> +
+>> +          power-source:
+>> +            $ref: /schemas/types.yaml#/definitions/uint32
+> Drop. Already has a defined type.
+
+Acknowledged.
+
+>
+>> +            description: |
+>> +              Specifies the power source voltage for the IO bank that the
+>> +              pin belongs to. Each bank of IO pins operate at a specific,
+>> +              fixed voltage levels. Incorrect voltage configuration can
+>> +              damage the chip. The defined constants represent the
+>> +              possible voltage configurations:
+>> +
+>> +              - K230_MSC_3V3 (value 0): 3.3V power supply
+>> +              - K230_MSC_1V8 (value 1): 1.8V power supply
+>> +
+>> +              The following banks have the corresponding voltage
+>> +              configurations:
+>> +
+>> +              - bank IO0 to IO1: Fixed at 1.8V
+>> +              - bank IO2 to IO13: Fixed at 1.8V
+>> +              - bank IO14 to IO25: Fixed at 1.8V
+>> +              - bank IO26 to IO37: Fixed at 1.8V
+>> +              - bank IO38 to IO49: Fixed at 1.8V
+>> +              - bank IO50 to IO61: Fixed at 3.3V
+>> +              - bank IO62 to IO63: Fixed at 1.8V
+>> +
+>> +            enum: [0, 1]
+>> +
+>> +        required:
+>> +          - pinmux
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    pinctrl: pinctrl@91105000 {
+> Drop unused labels.
+
+Will do.
+
+>
+>> +        compatible = "canaan,k230-pinctrl";
+>> +        reg = <0x91105000 0x100>;
+>> +
+>> +        uart2_pins: uart2-pins {
+>> +            uart2-pins-cfg {
+>> +                pinmux = <0x503>, /* uart2 txd */
+>> +                         <0x603>; /* uart2 rxd */
+>> +                slew-rate = <0>;
+>> +                drive-strength = <4>;
+>> +                power-source = <1>;
+>> +                input-enable;
+>> +                output-enable;
+>> +                bias-disable;
+>> +            };
+>> +        };
+>> +    };
+>> -- 
+>> 2.46.1
+>>
 
 
