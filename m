@@ -1,134 +1,113 @@
-Return-Path: <linux-kernel+bounces-335797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C63FE97EAE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:43:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4012E97EB19
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:54:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 190F2B20D33
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:43:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E5BE1C2158F
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:54:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E372197A92;
-	Mon, 23 Sep 2024 11:42:58 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749D719883C;
+	Mon, 23 Sep 2024 11:53:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s5ZEe+/1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1305752F62;
-	Mon, 23 Sep 2024 11:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC741EB48;
+	Mon, 23 Sep 2024 11:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727091778; cv=none; b=u/+GyF2x6iQFCY5uD80ggImivQQRgTnYth7CV6zFsPisEARpi1VS6JIUWUMNMkpKc38Ek6Vzequ6oeArwSwFDlNmLwHUVeaSYeyGEq6sp1d0vn7ilkOdpR2gTLq1VQlCabyTSMxEmsUboVI1W5i9sgKJN+dFB/xrAgn32xrbVcc=
+	t=1727092387; cv=none; b=R9j2yazD+/flN7zdXgcI8TJiMn6pKYA1GZN4/WV/lziMqwIbBOx/gkgt0XAklg+ApjDVhO0yhB/nUBgblh6CJHyEr2mjM43fhiLPhvZHmiKwCT1R88Lkz7FbBMEZMa9taOqE1Tob8YZA4pK3mLf/3wjoxCPqqzMIa5NAbiPpJwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727091778; c=relaxed/simple;
-	bh=b41EEy3szhsO1UvdNry3bFFvKHTBCd5ElOBFgCAFDuk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GOj555L/fJKUJR3j8OLLxSbDIouLmK7x/Ftbl265pE6EuZ57V2pVoVrXuWUb1UXXtBZPNcoL7ORux+NUjR+VNlPcVxIVGeMa4aOJClnOGqTbeMwL6y2JqXWJgdWF/w3TWMn3GuAIjX4DaYdYiblXfj1ADF68N5zx6SM+Nww13UA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XC1Jg6spczfd0m;
-	Mon, 23 Sep 2024 19:40:35 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 34F7E140384;
-	Mon, 23 Sep 2024 19:42:52 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 23 Sep
- 2024 19:42:51 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <wufan@linux.microsoft.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
-	<serge@hallyn.com>, <deven.desai@linux.microsoft.com>,
-	<linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH] ipe: Fix out-of-bound access of kunit_suite_num_test_cases()
-Date: Mon, 23 Sep 2024 19:52:52 +0800
-Message-ID: <20240923115252.3562956-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727092387; c=relaxed/simple;
+	bh=BHCAGMjIfbhDX04xdZmHDFbvFp+bkX7fak28gq87iMs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PdPNFoFMMqqunL+2tvqARyZdbofdhQiHh428up+JMuLN8BrfcoQAYXHXNw+TkjiPK0CaMEUwI8vtiyGBXfxO6ryoCgxwyXiWRCBuwEscYsUOL3Y+XVN9TcvdMxaLJIl3u2u2+tLssyzgR8Yhimte8kvQMUwI3aBkyX3dYgAFtk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s5ZEe+/1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5078CC4CEC4;
+	Mon, 23 Sep 2024 11:53:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727092387;
+	bh=BHCAGMjIfbhDX04xdZmHDFbvFp+bkX7fak28gq87iMs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=s5ZEe+/1C9RNXAbdxM9JZPxfllH2UGzYtgh26TiTjjHcFKB5e+7tmXKvPBKb9u4xo
+	 7CFHH1vj/6/73vF5nV+YegbueAIi74ggtrHVEGERJAJHc4ATcM4Mn6dT0g1kM1QpwG
+	 GdnvqviV+d+HB3C6rIQNy8ohmS1d6E6fpASIaiBso41P/SjLfI5r9zO69+w0Oh6hz3
+	 QxWXsE6zHY9sexaXtINuC0rnDTr+cyu3mbr5RSpRPedZXPR1Xesqo2NZsQ1ftDOrA9
+	 Qo+ZP0CMzq9G7wy5C2SKxD++6fNXvrnlsKOMVRDKV/Q7NMvOvy6ZS1Mme1FtLWBOmj
+	 u32AKj/xywBhg==
+Message-ID: <a02e472c-f206-44d3-9a6b-d921e73110fd@kernel.org>
+Date: Mon, 23 Sep 2024 14:53:02 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: usb: add missing compatible arraylist
+To: Karan Sanghavi <karansanghvi98@gmail.com>, Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <ZvBNLRc8xnAoGvoc@Emma>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <ZvBNLRc8xnAoGvoc@Emma>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Currently, there is no terminator entry for ipe_parser_test_cases,
-hence facing below KASAN warning,
+On 22/09/2024 20:00, Karan Sanghavi wrote:
+> Added the vice versa order for compatible property in the yaml file so
+> that the dtb can parse for the order mentioned in the dts file
+> k3-am642-sk.dts for ti,j721e-usb.yaml
 
-	BUG: KASAN: global-out-of-bounds in kunit_suite_num_test_cases+0xb4/0xcc
-	Read of size 8 at addr ffffffe21035fec0 by task swapper/0/1
+k3-am642-sk.dts does not introduce any nodes with the said compatibles.
 
-	CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Tainted: G                 N 6.11.0+ #327
-	Tainted: [N]=TEST
-	Hardware name: linux,dummy-virt (DT)
-	Call trace:
-	 dump_backtrace+0x94/0xec
-	 show_stack+0x18/0x24
-	 dump_stack_lvl+0x90/0xd0
-	 print_report+0x1f4/0x5b4
-	 kasan_report+0xc8/0x110
-	 __asan_report_load8_noabort+0x20/0x2c
-	 kunit_suite_num_test_cases+0xb4/0xcc
-	 attr_module_get+0x54/0xc0
-	 kunit_print_attr+0x234/0x358
-	 kunit_run_tests+0x138/0xbf4
-	 __kunit_test_suites_init+0x110/0x1d0
-	 kunit_run_all_tests+0x358/0x394
-	 kernel_init_freeable+0x488/0x61c
-	 kernel_init+0x24/0x1e4
-	 ret_from_fork+0x10/0x20
+"ti,am64-usb" compatible is introduced by k3-am642-main.dtsi.
+There is only one compatible introduced so there is nothing to do about
+order here.
 
-	The buggy address belongs to the variable:
-	 ipe_parser_test_cases+0x60/0x1ba0
+i.e.
+        usbss0: cdns-usb@f900000 {
+                compatible = "ti,am64-usb";
+                reg = <0x00 0xf900000 0x00 0x100>;
 
-	The buggy address belongs to the virtual mapping at
-	 [ffffffe20ffe0000, ffffffe2120c1000) created by:
-	 paging_init+0x474/0x60c
+What is the functional problem you are facing? Maybe then someone
+can point you in the right direction.
 
-	The buggy address belongs to the physical page:
-	page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x4535f
-	flags: 0x3fffe0000002000(reserved|node=0|zone=0|lastcpupid=0x1ffff)
-	raw: 03fffe0000002000 fffffffec014d7c8 fffffffec014d7c8 0000000000000000
-	raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
-	page dumped because: kasan: bad access detected
+> 
+> This is highly ambiguous to me as where exactly the changes needs to be
+> added is it in the dts file or is the yaml where we have to reverse the
+> order already mentioned or do we have to add the another order as I have
+> done ?
+> 
+> Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml b/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml
+> index 95ff9791baea..822653217c43 100644
+> --- a/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml
+> +++ b/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml
+> @@ -17,6 +17,9 @@ properties:
+>        - items:
+>            - const: ti,j721e-usb
+>            - const: ti,am64-usb
+> +      - items:
+> +          - const: ti,am64-usb
+> +          - const: ti,j721e-usb
+>  
+>    reg:
+>      maxItems: 1
 
-	Memory state around the buggy address:
-	 ffffffe21035fd80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-	 ffffffe21035fe00: 00 00 00 00 00 f9 f9 f9 f9 f9 f9 f9 00 00 00 00
-	>ffffffe21035fe80: 00 00 00 00 00 00 00 00 f9 f9 f9 f9 00 00 00 00
-	                                           ^
-	 ffffffe21035ff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-	 ffffffe21035ff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-	==================================================================
-
-Add a dummy terminator entry at the end to assist
-kunit_suite_num_test_cases() in traversing up to the terminator entry
-without accessing an out-of-boundary index.
-
-Fixes: 10ca05a76065 ("ipe: kunit test for parser")
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- security/ipe/policy_tests.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/security/ipe/policy_tests.c b/security/ipe/policy_tests.c
-index 89521f6b9994..0725fe36f8bb 100644
---- a/security/ipe/policy_tests.c
-+++ b/security/ipe/policy_tests.c
-@@ -286,6 +286,7 @@ static void ipe_parser_widestring_test(struct kunit *test)
- static struct kunit_case ipe_parser_test_cases[] = {
- 	KUNIT_CASE_PARAM(ipe_parser_unsigned_test, ipe_policies_gen_params),
- 	KUNIT_CASE(ipe_parser_widestring_test),
-+	{}
- };
- 
- static struct kunit_suite ipe_parser_test_suite = {
 -- 
-2.34.1
-
+cheers,
+-roger
 
