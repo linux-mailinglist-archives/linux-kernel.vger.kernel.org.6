@@ -1,97 +1,90 @@
-Return-Path: <linux-kernel+bounces-335539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E265397E72F
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:07:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5CAE97E73C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:08:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7251FB209AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:07:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 790412814DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC7E5FB95;
-	Mon, 23 Sep 2024 08:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D706EB4C;
+	Mon, 23 Sep 2024 08:08:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="VwRqGhpt"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qENTfuPf"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4417ACA6F;
-	Mon, 23 Sep 2024 08:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69FC5FB95;
+	Mon, 23 Sep 2024 08:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727078813; cv=none; b=tg/cYbwhyPHDUbuWDqy2I9kXSl52hpe1SvCa98VNGHu4gJp2JOLSDXL3Pt0wQ/oCMp8Ssz1tjwdGxLsUMj6gkHK76k6sL8FIezj7/wjU/aOZdM21EMLvDPykYZknAnDHEqtRkPRfBf/KV4iLgkAmqDkVNki+b7bGl30OG4VS/BE=
+	t=1727078888; cv=none; b=QrV4JSCE4ljiARxOd8NzBns+MTpm0JWTyHlu7SBDzjK/qznBReIqz5Z3i0rhwd4/bpr8nIrOQ4mHMPyBKLXfzrkrZXorTxugTEmxt8f0dyYS+i9HuJQC2sKZk4P8S8bJKbhtGNmFLljuAP2ObTNugXRySRayYYPOnpVXii6sjvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727078813; c=relaxed/simple;
-	bh=GewCYpn7wGDokXcE/Vr2HFRzlGkSFHvHRMly3QB/peg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dbSFl+50Qn/9n9JTcupYHnTLsF6dCjbFA0G8mGyEzZtbcJur8YquQhtzoVl1Gi+bhJ6uh0Xwj7qE7YWJjySFX4RBIiJciOYE9M8yCZPoEGrAF7uPO9+OLy9zLRCEs1tdRfQ9c0rEDLtniskI2eUvUb08Pokv/QtvW6SsIOggo20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=VwRqGhpt; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
-	s=default; t=1727078811;
-	bh=5KtvWm6qpjSQg+2gDWl73WfOq7D5a6uUcZ0pBi0T1zs=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=VwRqGhptmGPmicXYLwfjXw8EkJxL4xu4YU/gvJYn3qIfU/rX0NZBXtgpyofiIin31
-	 tRul/v7v2aOjaMSewLTOF5KVY8MWt/QVfQB4PRD+76hv5fokvJ/lqI0+XozVCAm16l
-	 CyF8vY0fA9gUjQuU0NpIuny80jobLl+vMMbBcW14=
-Received: from [IPv6:240e:456:1020:3a44:c13d:8652:53f6:a6b8] (unknown [IPv6:240e:456:1020:3a44:c13d:8652:53f6:a6b8])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 5C0651A3F81;
-	Mon, 23 Sep 2024 04:06:45 -0400 (EDT)
-Message-ID: <b9bc6db245775b0a2e990467f414071e82b06a29.camel@xry111.site>
-Subject: Re: [PATCH] LoongArch: vDSO: Tune the chacha20 implementation
-From: Xi Ruoyao <xry111@xry111.site>
-To: Huacai Chen <chenhuacai@kernel.org>, "Jason A . Donenfeld"
- <Jason@zx2c4.com>
-Cc: WANG Xuerui <kernel@xen0n.name>, Christophe Leroy	
- <christophe.leroy@csgroup.eu>, linux-crypto@vger.kernel.org, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, Jinyang He	
- <hejinyang@loongson.cn>, Tiezhu Yang <yangtiezhu@loongson.cn>, Arnd
- Bergmann	 <arnd@arndb.de>
-Date: Mon, 23 Sep 2024 16:06:41 +0800
-In-Reply-To: <CAAhV-H68HOsX4=yZAmnCMW0VWf5SsqEckcHJQytSzjK8dHHW6g@mail.gmail.com>
-References: <20240919091359.7023-1-xry111@xry111.site>
-	 <CAAhV-H68HOsX4=yZAmnCMW0VWf5SsqEckcHJQytSzjK8dHHW6g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.0 
+	s=arc-20240116; t=1727078888; c=relaxed/simple;
+	bh=GYTKW8AR6kJETWDLmU3RwLAkZzS9wj4woVPeGpF5vr4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RvvAhA7hC3Db7b5adE6cI6dRz/NKJz8alg46wBqlNUNEwA3logS7kZRlcMbOzT2OZOHnNOvxerVPeEnsBOx109af13OWHyceiOCxXmnC6b5XBa21XoOKayHoWPkzHOTM7sF2VQvpbDDMA6UCpIDjXUmicYF1ArfpkD4WrffpMOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qENTfuPf; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727078882;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=6BJIqE0qSpciuGWzdnF6o/Z2xAKQwtHlYnbvWaPa6KI=;
+	b=qENTfuPfMJurs6xmfNTYf9DqN8OvWg1BSUf9tlI3s1Lj3Od1DdPP2K4ZbDGalt3wuXhdse
+	7U6a57+ltXbAnqj4B2ub2V9dZhG3qZwDuvragkvmQOCMqMFlV/VxXvD9cCWUfrj5+DupZy
+	Y1aUVe0134iZnn5edYjyYQEMrgO4mZs=
+From: George Guo <dongtai.guo@linux.dev>
+To: paul@paul-moore.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	George Guo <guodongtai@kylinos.cn>
+Subject: [PATCH 1/1] netlabel: Add missing comment to struct field
+Date: Mon, 23 Sep 2024 16:07:33 +0800
+Message-Id: <20240923080733.2914087-1-dongtai.guo@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, 2024-09-23 at 15:15 +0800, Huacai Chen wrote:
-> > +#define line3=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 st=
-ate12, state13, state14, state15
-> > +
-> > +#define=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 line1_perm=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 state5, state6, state7, state4
-> > +#define=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 line2_perm=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 state10, state11, state8, state9
-> > +#define=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 line3_perm=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 state15, state12, state13, state14
-> > +
-> > +#define=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 copy=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 copy0, copy1, copy2, co=
-py3
-> The indentation here is strange, it seems some of them are spaces and
-> some of them are tabs.
+From: George Guo <guodongtai@kylinos.cn>
 
-Oops indeed.  The tabs after "#define" should be a space instead.
+add a comment to doi_remove in struct netlbl_calipso_ops.
 
-Jason: can you edit it for me or do you want a new revision of the patch
-to fix it?
+Flagged by ./scripts/kernel-doc -none.
 
+Signed-off-by: George Guo <guodongtai@kylinos.cn>
+---
+ include/net/netlabel.h | 1 +
+ 1 file changed, 1 insertion(+)
 
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+diff --git a/include/net/netlabel.h b/include/net/netlabel.h
+index 529160f76cac..4afd934b1238 100644
+--- a/include/net/netlabel.h
++++ b/include/net/netlabel.h
+@@ -208,6 +208,7 @@ struct netlbl_lsm_secattr {
+  * struct netlbl_calipso_ops - NetLabel CALIPSO operations
+  * @doi_add: add a CALIPSO DOI
+  * @doi_free: free a CALIPSO DOI
++ * @doi_remove: remove a CALIPSO DOI
+  * @doi_getdef: returns a reference to a DOI
+  * @doi_putdef: releases a reference of a DOI
+  * @doi_walk: enumerate the DOI list
+-- 
+2.34.1
+
 
