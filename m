@@ -1,203 +1,205 @@
-Return-Path: <linux-kernel+bounces-335910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0C1597EC6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:39:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1809A97EC70
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:39:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 701A41F21BDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:39:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC2BB2827A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:39:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380FF199E8F;
-	Mon, 23 Sep 2024 13:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0603D199938;
+	Mon, 23 Sep 2024 13:39:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qykN+miH"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EywIhy+1"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D816638394
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 13:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0411990BA
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 13:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727098753; cv=none; b=iQtoMqMDDO36YjDNoZDuSJxfeJ4e1nLnOh0xF9AwbKChqii14EVCYh21wVKdvm4+2+Hqr/U///qUycagDG0CTgpqWv6Gl1eecY7fNeCt3LYttZPXL7J3VHZcK74Vym96lQTm4KfRmPs/I8E0wKgMtJBFvqCUcQb7xstTe1WTxrI=
+	t=1727098789; cv=none; b=Ip0UlrPiWzzqG3jBW1P9SJuZaEUkWYsS0YYBy2RbuYqSpx3uSQHprEJsqAB0DfkaF0MTlyUqC/omkwbvp0OC9JJ5RgrgxAHCXqRsRNRVyMx83UMLbXIq/opBZvCY3te0F3h43RelKVQcLQb3RmmTeZ/FUnbxx3zl/+sN3QV87CM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727098753; c=relaxed/simple;
-	bh=DhgIYcexJWXrGxwvMAfaJQr4zxmVMrudzj4seBmIkK8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MhqTfSz0QajwSSnoRCBbWJ+EJicfQPHKOYcyZ/nP0AU+k7257t1eLh/sueKbSN20KFePC4UNr4ONAxn8+YqSlRHjXcdiMl799qIYPfX/EeyVugwVmoVMTjBicu8iZwZ+8MKy5wbriOKcvUE2ECsqYV73d8lwaX35aoAR9408SB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qykN+miH; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c243ef5237so748969a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 06:39:11 -0700 (PDT)
+	s=arc-20240116; t=1727098789; c=relaxed/simple;
+	bh=sEwrlgig42rKnNlBMmsNfYi2JMxzx+5CL6WsYZmB7Ug=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AFFzyNCPVJaHwi/51cS49w/VWBRaeEGnfWLxcpCBfh5XBEdvyn9Y72zSEyXpvLflxT0oL7qKx+ZLAkfp3REVP/zXd7ORrU+6EvtqwHf56xozWHxpGr+REMGJgqk+biuv+UG+lvnn69emyC+eCHXOn4XJd1PlA43HBJ0LU/fHLmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EywIhy+1; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2055f630934so37195305ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 06:39:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727098750; x=1727703550; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cw7IRe11q1zvgtAIfUwyWyhAz+WbOXNiE5JcshO+fbk=;
-        b=qykN+miHmeuVS4m8sW7y9wC+vRWcvwtYwnFC7fJ+0vY4yoFtaxCLA11aVtXLH9IqbU
-         ZFdIKsttNKpayyQ2vLGxqnTQZu4PwyzvDrfJQKXGNgSku+0Fz7PbuSLu+YTt5YpJV79I
-         k+VES4zgUr1rbdmJU7CrTtzT/IjZKA1kAHnv4+a694rIsca6W71CB2dTFPejP+kwc7YO
-         DqZbqWi+a1HRk8WgQMSnOCFm/4cAHRu7nZKTmrHRZ2ODSd3FzweJjyQsFQ6LAA39SUMP
-         eLUPp1LqO0RHjL0+v7aVUPpE4XaQSxFo03ue+UG4ZmcWRiA5ss2FHg8RRWQsYh5VIdN2
-         zeXA==
+        d=gmail.com; s=20230601; t=1727098786; x=1727703586; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=p2yrEemLgwYknTm6OxcZK/C46/zY6aNqnZz/q471sfc=;
+        b=EywIhy+1QX3FZ1C+0BHH99hqVTky68NSa4sZFcKabYSAP9VTNM+F/UUVvAOD9OiH/s
+         lzKxgW0ve/4SMLUPIy6UdRTw0tsD4Y8bAHgSWgXX/ryLU2hq4960vsMzMTXd4RdcYPPa
+         Nx1jzQRXhFuziy52Csfuit7w0/oi3FQXRdEW4a+EKBWoc7XCw2vTc0eEMQ6UCgt1puvy
+         bPMNWeAGTdrGxQ4Nb1at8/3krVkdkqJe9zrXgPEfWa58m5JwVfGCwHT9FFlweeB5ivzV
+         oTwxW4dQlqA6Qib0eNjKpoZgpLq5mXAShXMg0g6fvZVvhPlYhQHMP3Jr5SV0R0deSEiR
+         109g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727098750; x=1727703550;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Cw7IRe11q1zvgtAIfUwyWyhAz+WbOXNiE5JcshO+fbk=;
-        b=B1PQiUBWGkKeiSeHskTRDbpyGVL5pZ06v+5hDLYLwL7cwqlU45sriFeGq6ftlaPbVQ
-         sdQUkEW+w/zu5qXv49CMaMq2Xj0wYwWOoYK/aHtxbtGklD8218sf2o2XNx/XVy4d35ZX
-         8N2f+tVOc3LFhXKZ+GDeLi3nCNOTzm8KycUOpIUcEvMqIM0oE144NxzySjp6EP4VtzTg
-         EQ/yijNo0QqLyzW9fOzizdYPI3MiEJTKwHB7uB0JpJganoMi39eQlNi2/Z9JDwHwQgZc
-         Ytk5wDh0Gc3nWpgORbjs3GdLgRfExRdZDwHfugr579zS2FBaWIKQiaUCAN6VAUyTgFlG
-         4cWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXD4nQN8tMXcqrTnGxFpwxcrS032zbBL7caTf7inpy4NAJTousvKGk+ysjkFSSq6IqW2wMpAjewtzWrLaI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpGiw5hxWWubTiANcDknNUqFsmmBEoLtAVWqgANOB4YxXsPKC+
-	NGzvMENaRGZPtEFEHO+TEFjs8vtyN8jttlXntAmIYO4HgScUxIfX4lAySGbXRA8W7wbHNK+pDYM
-	Ied63gyzR0Ka5HiYstzDhNz8mGlE9paSfxTE6mg==
-X-Google-Smtp-Source: AGHT+IHe34L//STnNFdkZExOpf57WJIyU+TI74+0dDBUlm+CP+gn4q7WoyH811n2jON5HT5guRcuccPvcwENuEEvRJc=
-X-Received: by 2002:a05:6402:4313:b0:5c4:24a4:8848 with SMTP id
- 4fb4d7f45d1cf-5c464a5c24bmr3353651a12.4.1727098750253; Mon, 23 Sep 2024
- 06:39:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727098786; x=1727703586;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p2yrEemLgwYknTm6OxcZK/C46/zY6aNqnZz/q471sfc=;
+        b=iJsLC080hcECjACfmV678cSaK2Rb/raLvjMElg3EwmdSQ81yaO0La6b17eowFQbmjZ
+         vp67dHsMQXs8hye+YjVEzUF78ZOVM4K6YSzvg8klv/oIBnPKO7gvrRz3DxpguDCM+eNa
+         5qUEtgJp3ejgmLkz5u1wsuXTD9TuJPVtgUK2Md9EfziqNcFXoXiXv9Pk13Z+I2+6jnc3
+         jnqwbud4mDYrEViIET8Zp/abq/aR9ZRFzC0Tuc2AEHkT3JXCbgIx5By9luzZ784f3KRY
+         tmD6lpk/033xWlP4CH+7VCfhYHYcHAX+66fqN5/A2PY6FWGx8IknzhC/02foHWBu5e1m
+         YPaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVv8+thk8nfH2Zpz3DDe8+TRuRHgAoxV1oBZZjCWS42SfJN2ytpF/TS58YkJjgx77+Maydng0fbsvPX3xI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+3dMn7RFzZ2xeFHa8xDLt/3gagn7AfcTnxIEocuN2eniBX+3h
+	hfA3TT43hVOvjAlhpVPCY3Y8W97mqYfWAtjWiB9ATIaxSwh0s90W
+X-Google-Smtp-Source: AGHT+IEid5hy1ANnTmLo2sO8vL88FFHzJ4ZmM3RPT8kW3wOf3CeFxPAKj18m/0Ic0vmS8h9jS3vyHw==
+X-Received: by 2002:a17:902:e54c:b0:206:ac4b:8157 with SMTP id d9443c01a7336-208d83ade61mr167279295ad.31.1727098785749;
+        Mon, 23 Sep 2024 06:39:45 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20794702759sm132848805ad.207.2024.09.23.06.39.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Sep 2024 06:39:44 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <435dc218-f7ea-4697-b3ef-6a786e8d1b2c@roeck-us.net>
+Date: Mon, 23 Sep 2024 06:39:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240915080830.11318-1-lvzhaoxiong@huaqin.corp-partner.google.com>
- <20240915080830.11318-3-lvzhaoxiong@huaqin.corp-partner.google.com>
- <CAA8EJpqC5tQ45gj8-0bDutinCs7CoxiQVL1EAzwDK9RJTXYMcQ@mail.gmail.com>
- <CA+6=WdR6+nh9e2HCuCVdR6uw3vuJoWfKCG4gPjJMp9db+Quimw@mail.gmail.com> <ovmleeivshtixncuxwv3dink6l4fi242rcspklicl3u4qp73rx@km3nu4co4hen>
-In-Reply-To: <ovmleeivshtixncuxwv3dink6l4fi242rcspklicl3u4qp73rx@km3nu4co4hen>
-From: zhaoxiong lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-Date: Mon, 23 Sep 2024 21:38:59 +0800
-Message-ID: <CA+6=WdRMihx1f-kDYX-RngkQ-kDa2vLGSFU30C75jdFXGz88VQ@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] drm/panel: boe-th101mb31ig002: Modify Starry panel timing
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: neil.armstrong@linaro.org, quic_jesszhan@quicinc.com, sam@ravnborg.org, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, dianders@chromium.org, hsinyi@google.com, 
-	awarnecke002@hotmail.com, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] resource, kunit: add dependency on SPARSEMEM
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ Huang Ying <ying.huang@intel.com>
+References: <20240922225041.603186-1-linux@roeck-us.net>
+ <CAMuHMdWAuQcFQaQNy2EP_u9vk13g2C3sb3FFBCMAUPyGMgZ+hg@mail.gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <CAMuHMdWAuQcFQaQNy2EP_u9vk13g2C3sb3FFBCMAUPyGMgZ+hg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 23, 2024 at 8:07=E2=80=AFPM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On Mon, Sep 23, 2024 at 05:22:20PM GMT, zhaoxiong lv wrote:
-> > On Mon, Sep 16, 2024 at 1:15=E2=80=AFPM Dmitry Baryshkov
-> > <dmitry.baryshkov@linaro.org> wrote:
-> > >
-> > > Same comment as the one that I've provided to the other patch, plus:
-> > >
-> > > On Sun, 15 Sept 2024 at 10:11, Zhaoxiong Lv
-> > > <lvzhaoxiong@huaqin.corp-partner.google.com> wrote:
-> > > >
-> > > > In order to meet the timing, remove the delay between "backlight of=
-f"
-> > > > and "display off", and reduce the delay between "display_off" and
-> > > > "enter_sleep"
-> > >
-> > > Separate commit, separate _justification_. Why, not what.
-> > >
-> > > >
-> > > > Removing variables: display_off_to_enter_sleep_delay_ms
-> > >
-> > > This phrase is useless.
-> > >
-> > hi Dmitry
-> >
-> > As in another patch reply, in order to solve a black screen problem,
-> > the delay is reduced.
-> > The panel spec:
-> > 1. https://github.com/Vme5o/power-on-off-sequential
->
-> It should be described in the commit message(s). You have removed one
-> delay and added another one. Is that a single fix or two separate fixes?
-hi Dmitry
-We only modify one of the drivers (starry), and the other driver
-(boe_th101mb31ig002) is just to keep the original value.
+On 9/23/24 05:58, Geert Uytterhoeven wrote:
+> Hi Günter,
+> 
+> On Mon, Sep 23, 2024 at 12:50 AM Guenter Roeck <linux@roeck-us.net> wrote:
+>> Building allmodconfig images on systems with SPARSEMEM=n results in
+>> the following message.
+>>
+>> WARNING: unmet direct dependencies detected for GET_FREE_REGION
+>>    Depends on [n]: SPARSEMEM [=n]
+>>    Selected by [m]:
+>>    - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
+>>
+>> and the build ultimately fails.
+> 
+> Really? What's the build error?
 
->
-> >
-> > > >
-> > > > Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google=
-.com>
-> > > > ---
-> > > >  drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c | 11 +++++---=
----
-> > > >  1 file changed, 5 insertions(+), 6 deletions(-)
-> > > >
-> > > > diff --git a/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c b=
-/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c
-> > > > index 0b87f1e6ecae..c2d0ec199829 100644
-> > > > --- a/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c
-> > > > +++ b/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c
-> > > > @@ -29,7 +29,7 @@ struct panel_desc {
-> > > >         bool lp11_before_reset;
-> > > >         unsigned int vcioo_to_lp11_delay_ms;
-> > > >         unsigned int lp11_to_reset_delay_ms;
-> > > > -       unsigned int backlight_off_to_display_off_delay_ms;
-> > > > +       unsigned int display_off_to_enter_sleep_delay_ms;
-> > > >         unsigned int enter_sleep_to_reset_down_delay_ms;
-> > > >         unsigned int power_off_delay_ms;
-> > > >  };
-> > > > @@ -184,12 +184,10 @@ static int boe_th101mb31ig002_disable(struct =
-drm_panel *panel)
-> > > >                                                       panel);
-> > > >         struct mipi_dsi_multi_context dsi_ctx =3D { .dsi =3D ctx->d=
-si };
-> > > >
-> > > > -       if (ctx->desc->backlight_off_to_display_off_delay_ms)
-> > > > -               mipi_dsi_msleep(&dsi_ctx, ctx->desc->backlight_off_=
-to_display_off_delay_ms);
-> > > > -
-> > > >         mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
-> > > >
-> > > > -       mipi_dsi_msleep(&dsi_ctx, 120);
-> > > > +       if (ctx->desc->display_off_to_enter_sleep_delay_ms)
-> > > > +               mipi_dsi_msleep(&dsi_ctx, ctx->desc->display_off_to=
-_enter_sleep_delay_ms);
-> > > >
-> > > >         mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
-> > > >
-> > > > @@ -275,6 +273,7 @@ static const struct panel_desc boe_th101mb31ig0=
-02_desc =3D {
-> > > >                           MIPI_DSI_MODE_NO_EOT_PACKET |
-> > > >                           MIPI_DSI_MODE_LPM,
-> > > >         .init =3D boe_th101mb31ig002_enable,
-> > > > +       .display_off_to_enter_sleep_delay_ms =3D 120,
-> > > >  };
-> > > >
-> > > >  static const struct drm_display_mode starry_er88577_default_mode =
-=3D {
-> > > > @@ -302,7 +301,7 @@ static const struct panel_desc starry_er88577_d=
-esc =3D {
-> > > >         .lp11_before_reset =3D true,
-> > > >         .vcioo_to_lp11_delay_ms =3D 5,
-> > > >         .lp11_to_reset_delay_ms =3D 50,
-> > > > -       .backlight_off_to_display_off_delay_ms =3D 100,
-> > > > +       .display_off_to_enter_sleep_delay_ms =3D 50,
-> > > >         .enter_sleep_to_reset_down_delay_ms =3D 100,
-> > > >         .power_off_delay_ms =3D 1000,
-> > > >  };
-> > > > --
-> > > > 2.17.1
-> > > >
-> > >
-> > >
-> > > --
-> > > With best wishes
-> > > Dmitry
->
-> --
-> With best wishes
-> Dmitry
+I saw it on hexagon, and I didn't bother writing down the actual build error
+message. But it turns out you are correct, the m68k machine does build with
+CONFIG_RESOURCE_KUNIT_TEST=y even though SPARSEMEM and with it GET_FREE_REGION
+are not set. Never mind, I don't really want or have time to argue. I'll just
+disable CONFIG_RESOURCE_KUNIT_TEST when building hexagon images and wherever
+else I see the problem.
+
+> It does build for me on m68k, after fixing:
+> 
+>      --- a/include/linux/mm.h
+>      +++ b/include/linux/mm.h
+>      @@ -101,7 +101,7 @@ extern int mmap_rnd_compat_bits __read_mostly;
+>       # ifdef MAX_PHYSMEM_BITS
+>       # define PHYSMEM_END   ((1ULL << MAX_PHYSMEM_BITS) - 1)
+>       # else
+>      -# define PHYSMEM_END   (-1ULL)
+>     +# define PHYSMEM_END   ((phys_addr_t)-1)
+>       # endif
+>       #endif
+> 
+>> GET_FREE_REGION depends on SPARSEMEM, so any configuration selecting it
+>> also depends on SPARSEMEM. Add the missing dependency.
+>>
+>> Effectively that means that RESOURCE_KUNIT_TEST is now restricted to
+>> systems with SPARSEMEM=y, but that can not be helped.
+> 
+> Perhaps the individual test(s) that do depend on GET_FREE_REGION should
+> be protected by #ifdef CONFIG_GET_FREE_REGION instead? However,
+> I have no idea which parts depend on that, as apparently all tests
+> succeed on m68k/ARAnyM, with CONFIG_SPARSEMEM=n:
+> 
+>      KTAP version 1
+>      1..1
+>          KTAP version 1
+>          # Subtest: resource
+>          # module: resource_kunit
+>          1..3
+>          ok 1 resource_test_union
+>          ok 2 resource_test_intersection
+>          ok 3 resource_test_region_intersects
+>      # resource: pass:3 fail:0 skip:0 total:3
+>      # Totals: pass:3 fail:0 skip:0 total:3
+>      ok 1 resource
+> 
+
+Interesting that you get that to boot. The q800 machine crashes for me
+when trying to boot it in qemu with the latest upstream kernel, in function
+__pte_offset_map_lock(). It bisects to commit 394290cba966 ("mm: turn
+USE_SPLIT_PTE_PTLOCKS / USE_SPLIT_PTE_PTLOCKS into Kconfig options").
+Reverting that patch fixes the crash for me. I guess you are not seeing that ?
+
+Thanks,
+Guenter
+
 
