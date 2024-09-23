@@ -1,141 +1,268 @@
-Return-Path: <linux-kernel+bounces-335849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE4C097EB79
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:25:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EBF397EB89
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:33:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78F681F21C7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:25:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BC101F21A5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A07198826;
-	Mon, 23 Sep 2024 12:25:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5F3195F3A;
+	Mon, 23 Sep 2024 12:33:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Tj/L4nvR"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YBw3ANGN"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B966E195B14;
-	Mon, 23 Sep 2024 12:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4124980043
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 12:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727094313; cv=none; b=erdPkMrWxTzSNyp+gAhospmI4QhrqNapgKlAiPYGF5SmOgL2Uqt1hkpCw8g18fHzFDGvt7I3whRRuyBY47TFgQgqQ9rNoE6vVN3YnNXPO55KjjiYdX18WT3+YVvxX/R31GCKm2FBPEoiIgtEW1UVbiHPSRwzw37+viTPULPzcUc=
+	t=1727094808; cv=none; b=RJsn5/pxYa14rQ6BnWFWJg7Air0sC7EiN6qQlsZrc6n8wOV4GTFAY/+WDIwFwekWqSVjwGlFIGYC9fNXZkywQ2xop4xpTrWPIHSY2eAlR172P4LfkLMEKa6+AA0QFCfJXccwObwRtyFhMf1tTYAtb2nTK/CVsXyqNJV+FAeE6HU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727094313; c=relaxed/simple;
-	bh=oVnappwI2asg1Mmf+oMcKojkg9+Z0J7WmOxhJWSM3kc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UsGAD2KnKSWsSxZ4WrEQ8pfNVupEAVxhnafJ4mLJ2o45LkxrIZvppKb8xpJoA78F2LeKJReNcc3BomtoLFTlnHp7UDkyL5UQeSNTkPBNngIB1N/6KNJXljevmmZx4MpewxN5hWx1cN7h1IoFPA63tlvQP+3tANFoetLVxjP1vL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Tj/L4nvR; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727094309;
-	bh=oVnappwI2asg1Mmf+oMcKojkg9+Z0J7WmOxhJWSM3kc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Tj/L4nvRSp5Oa5oywuog3blCYKnRcOhvwJvam8UXfvTh1zG0pASOMhRoDtDkiGfqO
-	 pB6vekai1WFqwSw3bww3yvYXWjavV6cR/8bTXfAUex/Zuvw2K6uvq3HAwegPKO3M9i
-	 DNjlEJLMjzrbxxnmHjsk1zEV8/T2cuyQbAombyyddafGJMMIcEjsPBlC6eUHTvdDLn
-	 TfP1T2k5CDNte7JF9YXwQ4e7QfHt0kXR7FY8B95H8Wi3xWZ9IInMzsEUPSyJG6P+GI
-	 y+fxOvLEU486ptT4KFrQlH3ZZsyZvZ/wPmXbQrMWncY3tYS1XeBB53x+mItSG24WP2
-	 1Q7KulaV9+G7A==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7E36817E121B;
-	Mon, 23 Sep 2024 14:25:09 +0200 (CEST)
-Message-ID: <228c9508-76c3-4772-bf0a-56e85a47af78@collabora.com>
-Date: Mon, 23 Sep 2024 14:25:09 +0200
+	s=arc-20240116; t=1727094808; c=relaxed/simple;
+	bh=BJ0Kz6ILgetpytbxFvlAh8CsE9v5DDll0SsT9dG41/0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hyz6k55GpmB4Yi5hm0EwTtL7rb8L7Vi/63Cj7M0fLvPQkdZmdsw8ETcqCQ1qSPjphFMJRTVo9V7+nkHHVly85YSDn4LaPThJWyW2znjNg+G2WP3Wuw2odc1bydnAw4Y3uUe1S0dLBa9DyJ8TxjvpgOQHEg2kkgI0qcg/Vn1GDig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YBw3ANGN; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71798a15ce5so3652170b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 05:33:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727094805; x=1727699605; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WnZ1mJ0xSGz3MPNSmU/3w1WkSR43rfZNTvcNA1XQD6c=;
+        b=YBw3ANGNEAeoWPNqX6734Bymw49KVlXVViYzpbL/g7BLzWqMW4jLxG5UgQUzUptmjt
+         WMrrZW427Nv+j3jYqkaSPqFxedGkZOZGwsUeH/VmwMRbMWftWlbFnGddTjOp3EJOxahd
+         KUIS2Tqd5E60GaCfqYEzRv0ZQzqnNe98nch9cBFxheVyqehab6+i3LRL874OMvJy0xu1
+         9wPwpgBdENu6d3Gs5OEC5eUbb3+v4OWCOjNvPrk0OP+oTDR0BQg91a3/fBYTHwncCmDu
+         CdLbBUBvZ12HIrg+4ne3aEiJEMDTYXyUBpm6ysMIIUutWrLFRYwT6AbFfMYx1oRgO0WU
+         tueA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727094805; x=1727699605;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WnZ1mJ0xSGz3MPNSmU/3w1WkSR43rfZNTvcNA1XQD6c=;
+        b=Lj0qbI+CUS86wd20SC3Sru4Tl1qeanr0ydnqqpBZxHJ9bGApn2N5Whtq+PtiRLX1U0
+         +QNBBBAJvtKFdrodBj0hrkWmXrDteqRyDCz5OsD1H/wE/maeDwLPIcJlh530rN4vMKyV
+         9SHBqIiABdlZP0lJkOefChRBbqQ4xQ3ssF+F/OuN0jLc/XPLI+sdrhLXcX3ldpwA1okW
+         fjumPyteCYN2Vk514nqRMJ2IqN7cTKGrEvO7X7/3HO5XnINqGPVOHTXgXMfiD7nDcq63
+         lRCriY75v4nMc1F8v/0f6z7SGfyfv9IAPOwyOGDkK4o3hpc1/zvLcbGnULi1IUNmUEHD
+         7k/A==
+X-Forwarded-Encrypted: i=1; AJvYcCWhe2WPFZ4k8Y/FW/aPP6FaWQ+bDyRdAiIsc8hsO4aXnWdGytYZ0hQzYlDalCySI3Rl9vWUPeSpNz6v198=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1ekYxmV3+ayJ9bRtLfwKZSFifQcAbL1M8aySq5FZDRkIimIHw
+	lRE6g8CcNQPKUBUBfDSw1Llz3dqVcMgFe1lHXvOUTJFKZm4PddLB
+X-Google-Smtp-Source: AGHT+IH2aTee1fvftdnkbuuRP0h6QHYhefVJ/JHUJuhjgKucjhqYQClN/hlAUA8gbCCJ7KVBaejObA==
+X-Received: by 2002:a05:6a20:cf84:b0:1d2:e458:404b with SMTP id adf61e73a8af0-1d30a91f380mr18066767637.14.1727094805325;
+        Mon, 23 Sep 2024 05:33:25 -0700 (PDT)
+Received: from distilledx.srmu.edu.in ([59.152.80.69])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944bc8b30sm13813347b3a.190.2024.09.23.05.33.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2024 05:33:24 -0700 (PDT)
+From: Tejas Vipin <tejasvipin76@gmail.com>
+To: neil.armstrong@linaro.org,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch
+Cc: quic_jesszhan@quicinc.com,
+	dianders@chromium.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Tejas Vipin <tejasvipin76@gmail.com>
+Subject: [PATCH v2] drm/panel: elida-kd35t133: transition to mipi_dsi wrapped functions
+Date: Mon, 23 Sep 2024 17:55:58 +0530
+Message-ID: <20240923122558.728516-1-tejasvipin76@gmail.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] arm64: dts: mediatek: mt8390-genio-700-evk: Enable
- Mali GPU
-To: Pablo Sun <pablo.sun@mediatek.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-clk@vger.kernel.org
-References: <20240920134111.19744-1-pablo.sun@mediatek.com>
- <20240920134111.19744-6-pablo.sun@mediatek.com>
- <eb17085d-78ff-4833-a4de-17b9327d776c@collabora.com>
- <bf45531a-eacf-22a9-65f1-f6474a2ca843@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <bf45531a-eacf-22a9-65f1-f6474a2ca843@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Il 23/09/24 12:14, Pablo Sun ha scritto:
-> Hi Angelo,
-> 
-> On 9/23/24 16:45, AngeloGioacchino Del Regno wrote:
-> [snipped]
->>
->> Is there any real difference between MT8390 and MT8188 in terms of the GPU OPPs?
->>
->> I see that on MT8188, frequencies up to 880MHz want a DVDD_SRAM_GPU of 0.750V,
->> then 0.775/0.762/0.750 (bin1-4/5/6) on 915MHz, and 0.800/0.775/0.750 (bin1-4/5/6)
->> on 950MHz.
->>
->> Those never call for 0.850V...! So is MT8188 (Chromebooks) wrong, or is MT8390
->> different in that?
-> 
-> To the best of my knowledge, MT8390 and MT8188 has identical GPU
-> subsystem. Thus, the OPP table should have no difference.
-> 
-> To be specific, I list the link to the OPP table of Genio 700 EVK
-> (MT8390) in reference in [1]. It should match the setting in Chromebook
-> kernel branches.
-> 
-> The "typical" voltage in the datasheet is the voltage that would work
-> for all frequency settings. As long as it is smaller than the maximum
-> operating voltage, setting voltages higher than the ones specified in
-> the OPP table does not damage the hardware.
-> 
-> But this 0.85V setting is indeed not optimal. We should follow the
-> voltages described in the OPP table, if we want power savings.
-> 
-> I also considered model the regulator setting with 'regulator-coupled-with' and 
-> 'regulator-coupled-max-spread', but I am not entirely sure how to describe the 
-> relation that "DVDD_GPU_SRAM should follow DVDD_GPU
-> if and only if DVDD_GPU is higher than 0.75V" - should I simply
-> set min-voltage to 0.75V and set 'regulator-coupled-with' ?
-> 
+Changes the elida-kd35t133 panel to use multi style functions for
+improved error handling.
 
-VSRAM_GPU regulator:
+Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+---
+Changes in v2:
+    - Changed mipi_dsi_dcs_write to mipi_dsi_dcs_write_buffer_multi
+    - Cleaned up error handling
 
-	regulator-min-microvolt = <750000>;
-	regulator-max-microvolt = <800000>;
-	regulator-coupled-with = <&(vgpu regulator)>;
-	regulator-coupled-max-spread = <1000>;
+Link to v1: https://lore.kernel.org/all/20240917071710.1254520-1-tejasvipin76@gmail.com/
+---
+ drivers/gpu/drm/panel/panel-elida-kd35t133.c | 108 ++++++++-----------
+ 1 file changed, 45 insertions(+), 63 deletions(-)
 
-VGPU regulator:
-	regulator-min-microvolt = <400000>;
-	regulator-max-microvolt = <800000>;
-	regulator-coupled-with = <&(vsram_gpu regulator)>;
-	regulator-coupled-max-spread = <1000>;
-
-Cheers,
-Angelo
-
-> [1]: 
-> https://gitlab.com/mediatek/aiot/rity/meta-mediatek-bsp/-/blob/kirkstone/recipes-kernel/dtbo/mt8390/gpu-mali.dts
-> 
-> Many thanks,
-> Pablo
-> 
-
-
+diff --git a/drivers/gpu/drm/panel/panel-elida-kd35t133.c b/drivers/gpu/drm/panel/panel-elida-kd35t133.c
+index 00791ea81e90..2c031301fdd2 100644
+--- a/drivers/gpu/drm/panel/panel-elida-kd35t133.c
++++ b/drivers/gpu/drm/panel/panel-elida-kd35t133.c
+@@ -50,55 +50,44 @@ static inline struct kd35t133 *panel_to_kd35t133(struct drm_panel *panel)
+ 	return container_of(panel, struct kd35t133, panel);
+ }
+ 
+-static int kd35t133_init_sequence(struct kd35t133 *ctx)
++static void kd35t133_init_sequence(struct mipi_dsi_multi_context *dsi_ctx)
+ {
+-	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+-	struct device *dev = ctx->dev;
+-
+ 	/*
+ 	 * Init sequence was supplied by the panel vendor with minimal
+ 	 * documentation.
+ 	 */
+-	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_POSITIVEGAMMA,
+-			       0x00, 0x13, 0x18, 0x04, 0x0f, 0x06, 0x3a, 0x56,
+-			       0x4d, 0x03, 0x0a, 0x06, 0x30, 0x3e, 0x0f);
+-	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_NEGATIVEGAMMA,
+-			       0x00, 0x13, 0x18, 0x01, 0x11, 0x06, 0x38, 0x34,
+-			       0x4d, 0x06, 0x0d, 0x0b, 0x31, 0x37, 0x0f);
+-	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_POWERCONTROL1, 0x18, 0x17);
+-	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_POWERCONTROL2, 0x41);
+-	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_VCOMCONTROL, 0x00, 0x1a, 0x80);
+-	mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_SET_ADDRESS_MODE, 0x48);
+-	mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_SET_PIXEL_FORMAT, 0x55);
+-	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_INTERFACEMODECTRL, 0x00);
+-	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_FRAMERATECTRL, 0xa0);
+-	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_DISPLAYINVERSIONCTRL, 0x02);
+-	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_DISPLAYFUNCTIONCTRL,
+-			       0x20, 0x02);
+-	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_SETIMAGEFUNCTION, 0x00);
+-	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_ADJUSTCONTROL3,
+-			       0xa9, 0x51, 0x2c, 0x82);
+-	mipi_dsi_dcs_write(dsi, MIPI_DCS_ENTER_INVERT_MODE, NULL, 0);
+-
+-	dev_dbg(dev, "Panel init sequence done\n");
+-	return 0;
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_POSITIVEGAMMA,
++				     0x00, 0x13, 0x18, 0x04, 0x0f, 0x06, 0x3a, 0x56,
++				     0x4d, 0x03, 0x0a, 0x06, 0x30, 0x3e, 0x0f);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_NEGATIVEGAMMA,
++				     0x13, 0x18, 0x01, 0x11, 0x06, 0x38, 0x34,
++				     0x06, 0x0d, 0x0b, 0x31, 0x37, 0x0f);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_POWERCONTROL1, 0x18, 0x17);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_POWERCONTROL2, 0x41);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_VCOMCONTROL, 0x00, 0x1a, 0x80);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, MIPI_DCS_SET_ADDRESS_MODE, 0x48);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, MIPI_DCS_SET_PIXEL_FORMAT, 0x55);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_INTERFACEMODECTRL, 0x00);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_FRAMERATECTRL, 0xa0);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_DISPLAYINVERSIONCTRL, 0x02);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_DISPLAYFUNCTIONCTRL,
++				     0x02);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_SETIMAGEFUNCTION, 0x00);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_ADJUSTCONTROL3,
++				     0x51, 0x2c, 0x82);
++	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, NULL, 0);
+ }
+ 
+ static int kd35t133_unprepare(struct drm_panel *panel)
+ {
+ 	struct kd35t133 *ctx = panel_to_kd35t133(panel);
+ 	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+-	int ret;
++	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
+ 
+-	ret = mipi_dsi_dcs_set_display_off(dsi);
+-	if (ret < 0)
+-		dev_err(ctx->dev, "failed to set display off: %d\n", ret);
+-
+-	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "failed to enter sleep mode: %d\n", ret);
+-		return ret;
+-	}
++	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
++	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
++	if (dsi_ctx.accum_err)
++		return dsi_ctx.accum_err;
+ 
+ 	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
+ 
+@@ -112,18 +101,20 @@ static int kd35t133_prepare(struct drm_panel *panel)
+ {
+ 	struct kd35t133 *ctx = panel_to_kd35t133(panel);
+ 	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+-	int ret;
++	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
+ 
+ 	dev_dbg(ctx->dev, "Resetting the panel\n");
+-	ret = regulator_enable(ctx->vdd);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "Failed to enable vdd supply: %d\n", ret);
+-		return ret;
++	dsi_ctx.accum_err = regulator_enable(ctx->vdd);
++	if (dsi_ctx.accum_err) {
++		dev_err(ctx->dev, "Failed to enable vdd supply: %d\n",
++			dsi_ctx.accum_err);
++		return dsi_ctx.accum_err;
+ 	}
+ 
+-	ret = regulator_enable(ctx->iovcc);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "Failed to enable iovcc supply: %d\n", ret);
++	dsi_ctx.accum_err = regulator_enable(ctx->iovcc);
++	if (dsi_ctx.accum_err) {
++		dev_err(ctx->dev, "Failed to enable iovcc supply: %d\n",
++			dsi_ctx.accum_err);
+ 		goto disable_vdd;
+ 	}
+ 
+@@ -135,27 +126,18 @@ static int kd35t133_prepare(struct drm_panel *panel)
+ 
+ 	msleep(20);
+ 
+-	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "Failed to exit sleep mode: %d\n", ret);
+-		goto disable_iovcc;
+-	}
++	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
++	mipi_dsi_msleep(&dsi_ctx, 250);
+ 
+-	msleep(250);
++	kd35t133_init_sequence(&dsi_ctx);
++	if (!dsi_ctx.accum_err)
++		dev_dbg(ctx->dev, "Panel init sequence done\n");
+ 
+-	ret = kd35t133_init_sequence(ctx);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "Panel init sequence failed: %d\n", ret);
+-		goto disable_iovcc;
+-	}
++	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
++	mipi_dsi_msleep(&dsi_ctx, 50);
+ 
+-	ret = mipi_dsi_dcs_set_display_on(dsi);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "Failed to set display on: %d\n", ret);
++	if (dsi_ctx.accum_err)
+ 		goto disable_iovcc;
+-	}
+-
+-	msleep(50);
+ 
+ 	return 0;
+ 
+@@ -163,7 +145,7 @@ static int kd35t133_prepare(struct drm_panel *panel)
+ 	regulator_disable(ctx->iovcc);
+ disable_vdd:
+ 	regulator_disable(ctx->vdd);
+-	return ret;
++	return dsi_ctx.accum_err;
+ }
+ 
+ static const struct drm_display_mode default_mode = {
+-- 
+2.46.1
 
 
