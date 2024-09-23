@@ -1,175 +1,136 @@
-Return-Path: <linux-kernel+bounces-336313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B89898390B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 23:22:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79C7D983910
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 23:23:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA77128230D
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 21:22:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36AEB282966
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 21:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3AE80C04;
-	Mon, 23 Sep 2024 21:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B9E83A19;
+	Mon, 23 Sep 2024 21:23:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="UhZWKx+7"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DWW5WqUH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B153F6F2F2
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 21:22:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108AD7F7DB;
+	Mon, 23 Sep 2024 21:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727126550; cv=none; b=hXVXr8mdlDAXcsEiQuaxpiNX1yU6HLWR18qm1w8xwStWNW2F0egn1YH5HU0qWzh6qXkntRJ4hHFMPcwmNs6r3kDq2E60C7B2Hw+G5mJNQIWM7kTG6XUGbUjSVzigKu5Wpne5VbF9ysLTVYa+kgnywRdXxeiBX2xsnJ1C5uNMe9c=
+	t=1727126625; cv=none; b=kgVSVevF0A/SVitUBB5z9yb1o9bE4DVyAn0gLGYS92RXvctUNdezeiosQTjn0hg40ieipOdvy2pey/cvsFk/n05aItf4TQMsiZpV8a0Xcoehb7dlo0/YJ2tV+czM32pElTTtevcXIZqMZeNbLDaeYgmXFVTNJEag3OpHoAWgT4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727126550; c=relaxed/simple;
-	bh=TI4UgBvUHxOCfeXggK9U9HOkmwYk1b6eVpu5+BTF+Hc=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=jb4nY+TmQ+zdUBBeWOr1/rN9nc0dAUmGcLHBnIog/RIg1fMOJcIQWaKLE5UX0QzLEcx38C2S4MFehA2P0Npgq9Pg4r+VYCnrlPLN6QDwGLXXgXd1d/u16uJxxvu2KCDvnm80i3Fvaf4TW8pR/pThP2CRb2TH0Gu1Q6Mc8XMt78U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=UhZWKx+7; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7d666fb3fb9so2312928a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 14:22:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1727126548; x=1727731348; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8eV4Vklmlj8bqBkSf+z2gjD9tas8DcH2sV0AiX6LOJs=;
-        b=UhZWKx+7O8Ifr0Z2oPxbOpORjn5I2J/kHYjUbFBk3XbYnG0FI1p+smKJHQKD0S52iB
-         7GJM3/zZHsBZhvXsYDQsvFSonMJWin9nzLwBj5TqzdgrlILj/dR99CK7AVbmPSJM+M4O
-         theyonqtF4l8GMLPwb569qSa+bjW+ViONlVJSJ44fvjvXpE867exj/+32CyAJJFhn6kO
-         qZASgU2gSB9q+SRBHnqMEuvZMNsGRLlxcUX1EetlvjcCF9k8GyeOsTFZanvhcM8W2eUL
-         J7QwAlOg/O3EuH2ri8V3BWx/jbvTtCJrMDoL/DC3JXi1DceBUI4vHtO2bRwVm3iSRYnN
-         Q9RQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727126548; x=1727731348;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8eV4Vklmlj8bqBkSf+z2gjD9tas8DcH2sV0AiX6LOJs=;
-        b=kDPaL1pFnfOsxa6XLzd6a9ItRBscSqYLp8xj/LcG/a+1j//WGElT6yjXfUblxGhMe1
-         5X8s6X+CzXw6D//fs2tYZpNMpokOF+Ccc5aHnIymVHMplySP+fpyv4oMXvVvmpHkWZDd
-         ASWvZK3fwqHisPTnIOnUouvgr7yrr2+MHKgNAokfSsRDlV7vrL4o42gZ4CKVjxvGoV2a
-         1kjpngQaBsNRK1/lhJ6ARJrKj3/xD4ghXCINnV563EVPNa7jjak6v+iQPELRj5SK9ksI
-         PlwFPnXVnXe6CqW5O1Oxq6JOs523Zk8BiM9rDSvv0lWIbjO2bkyCsO2HdwmlJe0PYQQQ
-         c38Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX9wZb10FtLASWeaXDEaKfV74thSHbJgAe51VPQN5hmoGe75QDztq4dxlQGJ+KW0pmfZv/KxFKlRipr0SA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyx8nNYscKtBNL1x/dnWuOeqry1Puc/sIBclqs3BOMm5g5twVE4
-	MWTPFQVCI5mzKICrBwTgzGfoNqFGf2zM57SUgXipsm88uVomh4655favv9qkMdI=
-X-Google-Smtp-Source: AGHT+IHyxfMvPUsr9LZzOLYIagUPDr6zEE6tUUXhw4z3fyt80Nvtp1XMDHbKB4CNrD3CfGDt7Umkbw==
-X-Received: by 2002:a05:6a21:1346:b0:1d2:e8f6:7f3 with SMTP id adf61e73a8af0-1d343c5645amr1626287637.11.1727126547871;
-        Mon, 23 Sep 2024 14:22:27 -0700 (PDT)
-Received: from dev-mkhalfella2.dev.purestorage.com ([208.88.159.129])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-71afc847924sm66047b3a.58.2024.09.23.14.22.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 14:22:27 -0700 (PDT)
-From: Mohamed Khalfella <mkhalfella@purestorage.com>
-To: Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Yuanyuan Zhong <yzhong@purestorage.com>,
-	Jeff Garzik <jgarzik@redhat.com>,
-	Auke Kok <auke-jan.h.kok@intel.com>,
-	Mohamed Khalfella <mkhalfella@purestorage.com>,
-	Simon Horman <horms@kernel.org>,
-	Ying Hsu <yinghsu@chromium.org>
-Cc: intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] igb: Do not bring the device up after non-fatal error
-Date: Mon, 23 Sep 2024 15:22:12 -0600
-Message-Id: <20240923212218.116979-1-mkhalfella@purestorage.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1727126625; c=relaxed/simple;
+	bh=tj4LmrvGayH3XbbYtlkUr8l9vC6zcGbXYX0A15TEu4g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OaU6twdVZX+/+l+wYwKyWmgbdcNQ/cAYLUMOFe3mXkbrGcYbW6Y7F0aKpbgCmA9zy0AE3SDeMAE6b8Ifl5K5A0MHjTe1D7JylG5RLhyyKRjvOfrrT5MQDbjiBqZOjYuUpJrzB9owoIhCBelgEkE0Cq6KznXjBj8UVNLuxnCGaG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DWW5WqUH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B7E3C4CEC4;
+	Mon, 23 Sep 2024 21:23:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727126624;
+	bh=tj4LmrvGayH3XbbYtlkUr8l9vC6zcGbXYX0A15TEu4g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DWW5WqUHlB0Iq+flr9vUnaEgwPU099aociYwPrcfIJx1AP1dhptayX/uq4praF4Mq
+	 rDz8VfnovTd9r3b7esT4ClSZnrzkpgWIv0r8DTH+jgp3JHMLA0rq/R8Ex4jS06S2Xf
+	 Ma3WgsvmHom2mPKXHZehZJPTd6WzvdGTafcuqm0kiOZ7HBWpPEF3b1tHyWOFuDxPyq
+	 2yUwWwNhVYxfe1icSyFWank+6OZ3cU0aGkU7+zGchOSBpxH1FQoLW6lACbHMpQgm0y
+	 VpO5ZHcEkk42YguFpHIK6StJbu3RZqr/eSpVCHHFK/oVTKuGfsmVZNkjSh2OhFubqL
+	 jj+kEjArkoVog==
+Date: Mon, 23 Sep 2024 22:23:39 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Chanh Nguyen <chanh@os.amperecomputing.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Peter Yin <peteryin.openbmc@gmail.com>,
+	Noah Wang <noahwang.wang@outlook.com>, Marek Vasut <marex@denx.de>,
+	Fabio Estevam <festevam@gmail.com>, Lukas Wunner <lukas@wunner.de>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+	Phong Vo <phong@os.amperecomputing.com>,
+	Thang Nguyen <thang@os.amperecomputing.com>,
+	Quan Nguyen <quan@os.amperecomputing.com>,
+	Khanh Pham <khpham@amperecomputing.com>,
+	Open Source Submission <patches@amperecomputing.com>
+Subject: Re: [PATCH v2] dt-bindings: trivial-devices: add onnn,adt7462
+Message-ID: <20240923-private-grower-af6a7c1fca09@spud>
+References: <20240923093800.892949-1-chanh@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="qNZzXI/TECE47qmF"
+Content-Disposition: inline
+In-Reply-To: <20240923093800.892949-1-chanh@os.amperecomputing.com>
 
-Commit 004d25060c78 ("igb: Fix igb_down hung on surprise removal")
-changed igb_io_error_detected() to ignore non-fatal pcie errors in order
-to avoid hung task that can happen when igb_down() is called multiple
-times. This caused an issue when processing transient non-fatal errors.
-igb_io_resume(), which is called after igb_io_error_detected(), assumes
-that device is brought down by igb_io_error_detected() if the interface
-is up. This resulted in panic with stacktrace below.
 
-[ T3256] igb 0000:09:00.0 haeth0: igb: haeth0 NIC Link is Down
-[  T292] pcieport 0000:00:1c.5: AER: Uncorrected (Non-Fatal) error received: 0000:09:00.0
-[  T292] igb 0000:09:00.0: PCIe Bus Error: severity=Uncorrected (Non-Fatal), type=Transaction Layer, (Requester ID)
-[  T292] igb 0000:09:00.0:   device [8086:1537] error status/mask=00004000/00000000
-[  T292] igb 0000:09:00.0:    [14] CmpltTO [  200.105524,009][  T292] igb 0000:09:00.0: AER:   TLP Header: 00000000 00000000 00000000 00000000
-[  T292] pcieport 0000:00:1c.5: AER: broadcast error_detected message
-[  T292] igb 0000:09:00.0: Non-correctable non-fatal error reported.
-[  T292] pcieport 0000:00:1c.5: AER: broadcast mmio_enabled message
-[  T292] pcieport 0000:00:1c.5: AER: broadcast resume message
-[  T292] ------------[ cut here ]------------
-[  T292] kernel BUG at net/core/dev.c:6539!
-[  T292] invalid opcode: 0000 [#1] PREEMPT SMP
-[  T292] RIP: 0010:napi_enable+0x37/0x40
-[  T292] Call Trace:
-[  T292]  <TASK>
-[  T292]  ? die+0x33/0x90
-[  T292]  ? do_trap+0xdc/0x110
-[  T292]  ? napi_enable+0x37/0x40
-[  T292]  ? do_error_trap+0x70/0xb0
-[  T292]  ? napi_enable+0x37/0x40
-[  T292]  ? napi_enable+0x37/0x40
-[  T292]  ? exc_invalid_op+0x4e/0x70
-[  T292]  ? napi_enable+0x37/0x40
-[  T292]  ? asm_exc_invalid_op+0x16/0x20
-[  T292]  ? napi_enable+0x37/0x40
-[  T292]  igb_up+0x41/0x150
-[  T292]  igb_io_resume+0x25/0x70
-[  T292]  report_resume+0x54/0x70
-[  T292]  ? report_frozen_detected+0x20/0x20
-[  T292]  pci_walk_bus+0x6c/0x90
-[  T292]  ? aer_print_port_info+0xa0/0xa0
-[  T292]  pcie_do_recovery+0x22f/0x380
-[  T292]  aer_process_err_devices+0x110/0x160
-[  T292]  aer_isr+0x1c1/0x1e0
-[  T292]  ? disable_irq_nosync+0x10/0x10
-[  T292]  irq_thread_fn+0x1a/0x60
-[  T292]  irq_thread+0xe3/0x1a0
-[  T292]  ? irq_set_affinity_notifier+0x120/0x120
-[  T292]  ? irq_affinity_notify+0x100/0x100
-[  T292]  kthread+0xe2/0x110
-[  T292]  ? kthread_complete_and_exit+0x20/0x20
-[  T292]  ret_from_fork+0x2d/0x50
-[  T292]  ? kthread_complete_and_exit+0x20/0x20
-[  T292]  ret_from_fork_asm+0x11/0x20
-[  T292]  </TASK>
+--qNZzXI/TECE47qmF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-To fix this issue igb_io_resume() checks if the interface is running and
-the device is not down this means igb_io_error_detected() did not bring
-the device down and there is no need to bring it up.
+On Mon, Sep 23, 2024 at 09:38:00AM +0000, Chanh Nguyen wrote:
+> The adt7462 supports monitoring and controlling up to
+> four PWM Fan drive outputs and eight TACH inputs measures.
+> The adt7462 supports reading a single on chip temperature
+> sensor and three remote temperature sensors. There are up
+> to 13 voltage monitoring inputs.
+>=20
+> Add device tree bindings for the adt7462 device.
+>=20
+> Signed-off-by: Chanh Nguyen <chanh@os.amperecomputing.com>
+> ---
+> Change in v2:
+>    - Add onnn,adt7462 to the list of trivial devices       [Guenter]
 
-Signed-off-by: Mohamed Khalfella <mkhalfella@purestorage.com>
-Reviewed-by: Yuanyuan Zhong<yzhong@purestorage.com>
-Fixes: 004d25060c78 ("igb: Fix igb_down hung on surprise removal")
----
- drivers/net/ethernet/intel/igb/igb_main.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Is this really a trivial device? If it monitors and controls fans, how
+come those do not need to be represented in the devicetree? How is it
+possible to tell the difference between monitoring 1 and 4 fans without
+the extra detail?
 
-diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-index 1ef4cb871452..8c6bc3db9a3d 100644
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -9651,6 +9651,10 @@ static void igb_io_resume(struct pci_dev *pdev)
- 	struct igb_adapter *adapter = netdev_priv(netdev);
- 
- 	if (netif_running(netdev)) {
-+		if (!test_bit(__IGB_DOWN, &adapter->state)) {
-+			dev_info(&pdev->dev, "Resuming from non-fatal error, do nothing.\n");
-+			return;
-+		}
- 		if (igb_up(adapter)) {
- 			dev_err(&pdev->dev, "igb_up failed after reset\n");
- 			return;
--- 
-2.45.2
+Curious,
+Conor.
 
+> ---
+>  Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Doc=
+umentation/devicetree/bindings/trivial-devices.yaml
+> index 0108d7507215..15f89d7ecf73 100644
+> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
+> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+> @@ -311,6 +311,8 @@ properties:
+>            - nuvoton,w83773g
+>              # OKI ML86V7667 video decoder
+>            - oki,ml86v7667
+> +            # ON Semiconductor ADT7462 Temperature, Voltage Monitor and =
+Fan Controller
+> +          - onnn,adt7462
+>              # 48-Lane, 12-Port PCI Express Gen 2 (5.0 GT/s) Switch
+>            - plx,pex8648
+>              # Pulsedlight LIDAR range-finding sensor
+> --=20
+> 2.43.0
+>=20
+
+--qNZzXI/TECE47qmF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvHcWgAKCRB4tDGHoIJi
+0sNEAQCC3S9W5Yf6XyOTvzS2qKXG/O9P9J+FP7FXrlBEWIaLLAEAkw9U5FDVFaoq
+TX1eEOoIoUhUMlOZ+Tb/wSbZKUP1IQw=
+=I636
+-----END PGP SIGNATURE-----
+
+--qNZzXI/TECE47qmF--
 
