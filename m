@@ -1,74 +1,62 @@
-Return-Path: <linux-kernel+bounces-336307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7569983909
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 23:21:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D55D49838BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 23:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 967521C2192C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 21:14:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7BC61C213DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 21:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 016FE83A09;
-	Mon, 23 Sep 2024 21:14:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7762061FFC;
+	Mon, 23 Sep 2024 21:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SmYslcXY"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="L4OkvE7S"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE68177103;
-	Mon, 23 Sep 2024 21:13:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F239D366
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 21:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727126041; cv=none; b=A/4TTymljYqNH9ylWiIqiOQYdMsz3mBWB9PU12bAWbBgavq6ooycsv2bs2fHxJfMT6FUdtg3Qv9RToifzVdq1p8Q3St2fvbKjdABsclYgNxyWfX5nPU7n8Y1HVVpfy4btxOfeW80x8ZKA8MxsoPfgLop91WzIBdFj993aNnoAWI=
+	t=1727126309; cv=none; b=o6kCNipD8BrvmlUAZmT5eVOJBdIul3med1oUegrBFOwCDxJ7x3vu9QDFrpWyCvvwAb5KfHqG5PUuOlr7oh9OSIe2TMEJMaOGNI7nkJx01aRiAEeRXGoqVqaaQZAkVtfLJJ4WrrSDItmGMm02VfMZuveE+CM9S0jQtmieVePA6WA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727126041; c=relaxed/simple;
-	bh=MiwbVUI+875lhjAtIuwhzEJNCWQ4HTqGbr0KOUhu2xo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=NjVUASYSkbV7dewkIGeMZm/+9RIRq1wijEk9Iaz/47Ih2mKHKfw3Itoxz5X5b5n0LGoqr82ShTgY+Q5Hp/Bn7uNjhFSpGkyF/s9VaPN7zit18ZZGBAeterVLE0AkFrHzysNTXpfTh8AxXMUiiFYztZqsZTNGkfuu3GzHoqg4AV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SmYslcXY; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7b0c9bbddb4so3251907a12.3;
-        Mon, 23 Sep 2024 14:13:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727126039; x=1727730839; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=pO/6d/gDXXUTcDXUJlrlfTdrh2B/Xbl+JiNfLlhN/5M=;
-        b=SmYslcXY71Rd5TrLk8BA92Y9QH7Ylhf9PtQPkLgMUV6TO7o4jSY+jguiUPbujUOrOr
-         kf8xkuenwApVZiDjlcf8UH98HRDMZIzDp2iolzoQdBdv0XtY7q9wtdxjDXiXen4raOPA
-         pjUSW1d1x6sVGfqgRu5OnlSZRdc2TJgYMna9xUft/ILH6IBTIjoclH9ImbMHa5b0OoFg
-         HP4usBXVYBmiaZnpTxXgmYcw+CyARCy63v+K9POogu+MbRKDnjLFUsExI5erUvktopHU
-         3AKbVe13LhNXAWNGSUxfJT1TnoIoVAewcFVaHyzR2G6Ho7mLiMSqHx3cGGJ0H0WOJW/X
-         LXQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727126039; x=1727730839;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pO/6d/gDXXUTcDXUJlrlfTdrh2B/Xbl+JiNfLlhN/5M=;
-        b=duz2ow9434WRRXd2NCjXu2O2e9CGcYu5dBIwJmjlMxsZZXPwQ3cN15RirHgmhYACLb
-         R4OWQ6SOnLX+L6dos04IpN1KY51avgw00KMOqfnxJ5QeLrNkU0TThTNvnPzzT8bg/XEd
-         5laodE1QpKb2fNVoZ1wzhPVKVdnXepat1Fta2EKaK2ORRXQ6OlOzcbFm3fyLdA5xKkZO
-         1OlJyMd+FuNjaK3QLM2YzFICbhQpSdYPmwOw53fd7YdwpYo92yvC6VOJr+6nE5ozgU7k
-         KQgufS0kjys1OphXID5HCrR2UCsw7mdkwAic9FsffJrFLLaGhvtJxVb9Q9RLweOE7rT9
-         SqDA==
-X-Forwarded-Encrypted: i=1; AJvYcCWBS8c7O9P36YK95p1wiJrsr3BxHMauGfyTAOSy9RW4/ARIS2PhADKBaoY2lhGFmyaHMiCaYdg/@vger.kernel.org, AJvYcCX8/dEPFyiJucLccAp2lAWLVZqSTwctXiF1UkXIGwJDRxVq1yxOHuBdJSy2QglPe5KUOxJCEkNpUiUuJ1E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvAMh10xn7vo/mf6NcpSOivYJUhLanMSsTFJo+E6VxC8VES9iB
-	M018kuw2jq0v5jIr/BpoGkENTgzjFXI9qXoQGMg1IDf6fogW08qf
-X-Google-Smtp-Source: AGHT+IEAnW7yN6qCtrsyo7BIQtrP3+Vy4EfhwZQvPPu/0xGPuycMmFaz2h8wFToO40DI/Ee+ma6LCQ==
-X-Received: by 2002:a05:6a20:9d8f:b0:1cf:1251:9a47 with SMTP id adf61e73a8af0-1d30a9bcf0amr16966274637.31.1727126038988;
-        Mon, 23 Sep 2024 14:13:58 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71afc9c67d7sm55473b3a.187.2024.09.23.14.13.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Sep 2024 14:13:58 -0700 (PDT)
-Message-ID: <ec046bcf-06ce-4abe-b0ea-b6741c9ff004@gmail.com>
-Date: Mon, 23 Sep 2024 14:13:56 -0700
+	s=arc-20240116; t=1727126309; c=relaxed/simple;
+	bh=Qmk3syJXcyMzS3vXQNDgp+bcCvIKs8eACMuLsys4RSo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=V9UoBn2/4d9l2K78cRlsiuFM5slgz6+lQcA+pdNygVASdzklt8F6eognwjK28CJTc3E7jUKWCKOVGKvNzPYjTpQmP+CgU02CJyWLDfhV0N3Un0ZayOk6nnfp0iRtG9DRaroNydCZPe5ulwwyv32wlRR03a8HoozTSqihoA1cNQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=L4OkvE7S; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48NBE5cr002020;
+	Mon, 23 Sep 2024 21:18:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	0OLZPBPwxzNvOrQ3zDFAWKC0gbGXLTAOJEfGnS4t59E=; b=L4OkvE7SKg0D3Kmb
+	ev0KqXbfc9DtkTYwbcuiYZcSBk/ytPR7jF3vEdXiI7Rb75RXiwskgYWiJQlCa/LD
+	9Drz4ErVHt8JJF0NvE5gurGJ/m2ocN0n4BgnwP1npYCP62Hb+tgqOer4HSh7jWo7
+	FhCTm2qpBp97H5MaEGkyMN8XsMX800WUDs4KY5Vq1JmO0m16ezTuflVcCGgEf+SV
+	7cN/KBd8Qkms9lKydAHv9d3J8PMRjYyhqCzW5C3+1RztisIxlGuvjhsOFP+Ey9ky
+	SYB7rwZ48PtPCHJfV3tP0yAtWPwfRXDoAd46zkB9yhJib5o9/9K/gbBzKlyJw3tl
+	TkzawQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sn5bpcyc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 23 Sep 2024 21:18:17 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48NLIGM1025964
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 23 Sep 2024 21:18:16 GMT
+Received: from [10.134.70.212] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 23 Sep
+ 2024 14:18:16 -0700
+Message-ID: <d882e279-9736-419a-a47d-c3b985517efa@quicinc.com>
+Date: Mon, 23 Sep 2024 14:18:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,135 +64,222 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2 1/1] net: ethernet: lantiq_etop: fix memory
- disclosure
-To: Aleksander Jan Bajkowski <olek2@wp.pl>, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- jacob.e.keller@intel.com, andrew@lunn.ch, horms@kernel.org,
- john@phrozen.org, ralph.hempel@lantiq.com, ralf@linux-mips.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240921105801.14578-1-olek2@wp.pl>
- <20240921105801.14578-2-olek2@wp.pl>
- <0a9830fe-790d-4ccd-bec9-3fbb32f18aa8@gmail.com>
- <991dc2b6-12ef-458d-b37f-562c15a73a07@wp.pl>
+Subject: Re: [PATCH v2] drm/panel: elida-kd35t133: transition to mipi_dsi
+ wrapped functions
+To: Tejas Vipin <tejasvipin76@gmail.com>, <neil.armstrong@linaro.org>,
+        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+        <tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>
+CC: <dianders@chromium.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240923122558.728516-1-tejasvipin76@gmail.com>
 Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-In-Reply-To: <991dc2b6-12ef-458d-b37f-562c15a73a07@wp.pl>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-
-On 9/23/24 14:08, Aleksander Jan Bajkowski wrote:
-> Hi Florian,
-> 
-> 
-> On 23.09.2024 20:21, Florian Fainelli wrote:
->> On 9/21/24 03:58, Aleksander Jan Bajkowski wrote:
->>> When applying padding, the buffer is not zeroed, which results in memory
->>> disclosure. The mentioned data is observed on the wire. This patch uses
->>> skb_put_padto() to pad Ethernet frames properly. The mentioned function
->>> zeroes the expanded buffer.
->>>
->>> In case the packet cannot be padded it is silently dropped. Statistics
->>> are also not incremented. This driver does not support statistics in the
->>> old 32-bit format or the new 64-bit format. These will be added in the
->>> future. In its current form, the patch should be easily backported to
->>> stable versions.
->>>
->>> Ethernet MACs on Amazon-SE and Danube cannot do padding of the packets
->>> in hardware, so software padding must be applied.
->>>
->>> Fixes: 504d4721ee8e ("MIPS: Lantiq: Add ethernet driver")
->>> Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
->>> ---
->>>   drivers/net/ethernet/lantiq_etop.c | 11 ++++++-----
->>>   1 file changed, 6 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/net/ethernet/lantiq_etop.c b/drivers/net/ 
->>> ethernet/lantiq_etop.c
->>> index 3c289bfe0a09..36f1e3c93ca5 100644
->>> --- a/drivers/net/ethernet/lantiq_etop.c
->>> +++ b/drivers/net/ethernet/lantiq_etop.c
->>> @@ -477,11 +477,11 @@ ltq_etop_tx(struct sk_buff *skb, struct 
->>> net_device *dev)
->>>       struct ltq_etop_priv *priv = netdev_priv(dev);
->>>       struct ltq_etop_chan *ch = &priv->ch[(queue << 1) | 1];
->>>       struct ltq_dma_desc *desc = &ch->dma.desc_base[ch->dma.desc];
->>> -    int len;
->>>       unsigned long flags;
->>>       u32 byte_offset;
->>>   -    len = skb->len < ETH_ZLEN ? ETH_ZLEN : skb->len;
->>> +    if (skb_put_padto(skb, ETH_ZLEN))
->>> +        return NETDEV_TX_OK;
->>
->> You should consider continuing to use the temporary variable 'len' 
->> here, and just re-assign it after the call to skb_put_padto() and 
->> avoid introducing potential user-after-free near the point where you 
->> program the buffer length into the HW. This also minimizes the amount 
->> of lines to review.
-> 
-> To the best of my knowledge, the skb is not released until the DMA 
-> finishes the transfer.
-> Then the ltq_etop_poll_tx() function is called, which releases the skb. 
-> Can you explain
-> what sequence of events can lead to a use-after-free error?
-
-There is none right now, but assuming you might add byte queue limits in 
-the future, or just re-structure the code, reading from skb->len is 
-error prone and is better left avoided, especially since this will 
-result in few lines being changed in your case.
-
-> 
-> -->ltq_etop_tx()
->       |
->       | (dma irq fires)
->       |
->       -->ltq_etop_dma_irq()
->            |
->            | (napi task schedule)
->            |
->            -->ltq_etop_poll_tx()
->                 |
->                 |
->                 |
->                 -->dev_kfree_skb_any()
-> 
-> Regards
-> 
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <20240923122558.728516-1-tejasvipin76@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: K9QCOVYxELHU5AGK2-kdv0glJKogXu3O
+X-Proofpoint-GUID: K9QCOVYxELHU5AGK2-kdv0glJKogXu3O
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 adultscore=0 impostorscore=0 malwarescore=0 mlxlogscore=999
+ spamscore=0 mlxscore=0 priorityscore=1501 bulkscore=0 phishscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409230153
 
 
--- 
-Florian
+
+On 9/23/2024 5:25 AM, Tejas Vipin wrote:
+> Changes the elida-kd35t133 panel to use multi style functions for
+> improved error handling.
+> 
+> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+
+Hi Tejas,
+
+Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+
+Thanks,
+
+Jessica Zhang
+
+> ---
+> Changes in v2:
+>      - Changed mipi_dsi_dcs_write to mipi_dsi_dcs_write_buffer_multi
+>      - Cleaned up error handling
+> 
+> Link to v1: https://lore.kernel.org/all/20240917071710.1254520-1-tejasvipin76@gmail.com/
+> ---
+>   drivers/gpu/drm/panel/panel-elida-kd35t133.c | 108 ++++++++-----------
+>   1 file changed, 45 insertions(+), 63 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-elida-kd35t133.c b/drivers/gpu/drm/panel/panel-elida-kd35t133.c
+> index 00791ea81e90..2c031301fdd2 100644
+> --- a/drivers/gpu/drm/panel/panel-elida-kd35t133.c
+> +++ b/drivers/gpu/drm/panel/panel-elida-kd35t133.c
+> @@ -50,55 +50,44 @@ static inline struct kd35t133 *panel_to_kd35t133(struct drm_panel *panel)
+>   	return container_of(panel, struct kd35t133, panel);
+>   }
+>   
+> -static int kd35t133_init_sequence(struct kd35t133 *ctx)
+> +static void kd35t133_init_sequence(struct mipi_dsi_multi_context *dsi_ctx)
+>   {
+> -	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+> -	struct device *dev = ctx->dev;
+> -
+>   	/*
+>   	 * Init sequence was supplied by the panel vendor with minimal
+>   	 * documentation.
+>   	 */
+> -	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_POSITIVEGAMMA,
+> -			       0x00, 0x13, 0x18, 0x04, 0x0f, 0x06, 0x3a, 0x56,
+> -			       0x4d, 0x03, 0x0a, 0x06, 0x30, 0x3e, 0x0f);
+> -	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_NEGATIVEGAMMA,
+> -			       0x00, 0x13, 0x18, 0x01, 0x11, 0x06, 0x38, 0x34,
+> -			       0x4d, 0x06, 0x0d, 0x0b, 0x31, 0x37, 0x0f);
+> -	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_POWERCONTROL1, 0x18, 0x17);
+> -	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_POWERCONTROL2, 0x41);
+> -	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_VCOMCONTROL, 0x00, 0x1a, 0x80);
+> -	mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_SET_ADDRESS_MODE, 0x48);
+> -	mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_SET_PIXEL_FORMAT, 0x55);
+> -	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_INTERFACEMODECTRL, 0x00);
+> -	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_FRAMERATECTRL, 0xa0);
+> -	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_DISPLAYINVERSIONCTRL, 0x02);
+> -	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_DISPLAYFUNCTIONCTRL,
+> -			       0x20, 0x02);
+> -	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_SETIMAGEFUNCTION, 0x00);
+> -	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_ADJUSTCONTROL3,
+> -			       0xa9, 0x51, 0x2c, 0x82);
+> -	mipi_dsi_dcs_write(dsi, MIPI_DCS_ENTER_INVERT_MODE, NULL, 0);
+> -
+> -	dev_dbg(dev, "Panel init sequence done\n");
+> -	return 0;
+> +	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_POSITIVEGAMMA,
+> +				     0x00, 0x13, 0x18, 0x04, 0x0f, 0x06, 0x3a, 0x56,
+> +				     0x4d, 0x03, 0x0a, 0x06, 0x30, 0x3e, 0x0f);
+> +	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_NEGATIVEGAMMA,
+> +				     0x13, 0x18, 0x01, 0x11, 0x06, 0x38, 0x34,
+> +				     0x06, 0x0d, 0x0b, 0x31, 0x37, 0x0f);
+> +	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_POWERCONTROL1, 0x18, 0x17);
+> +	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_POWERCONTROL2, 0x41);
+> +	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_VCOMCONTROL, 0x00, 0x1a, 0x80);
+> +	mipi_dsi_dcs_write_seq_multi(dsi_ctx, MIPI_DCS_SET_ADDRESS_MODE, 0x48);
+> +	mipi_dsi_dcs_write_seq_multi(dsi_ctx, MIPI_DCS_SET_PIXEL_FORMAT, 0x55);
+> +	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_INTERFACEMODECTRL, 0x00);
+> +	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_FRAMERATECTRL, 0xa0);
+> +	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_DISPLAYINVERSIONCTRL, 0x02);
+> +	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_DISPLAYFUNCTIONCTRL,
+> +				     0x02);
+> +	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_SETIMAGEFUNCTION, 0x00);
+> +	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_ADJUSTCONTROL3,
+> +				     0x51, 0x2c, 0x82);
+> +	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, NULL, 0);
+>   }
+>   
+>   static int kd35t133_unprepare(struct drm_panel *panel)
+>   {
+>   	struct kd35t133 *ctx = panel_to_kd35t133(panel);
+>   	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+> -	int ret;
+> +	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
+>   
+> -	ret = mipi_dsi_dcs_set_display_off(dsi);
+> -	if (ret < 0)
+> -		dev_err(ctx->dev, "failed to set display off: %d\n", ret);
+> -
+> -	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
+> -	if (ret < 0) {
+> -		dev_err(ctx->dev, "failed to enter sleep mode: %d\n", ret);
+> -		return ret;
+> -	}
+> +	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
+> +	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
+> +	if (dsi_ctx.accum_err)
+> +		return dsi_ctx.accum_err;
+>   
+>   	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
+>   
+> @@ -112,18 +101,20 @@ static int kd35t133_prepare(struct drm_panel *panel)
+>   {
+>   	struct kd35t133 *ctx = panel_to_kd35t133(panel);
+>   	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+> -	int ret;
+> +	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
+>   
+>   	dev_dbg(ctx->dev, "Resetting the panel\n");
+> -	ret = regulator_enable(ctx->vdd);
+> -	if (ret < 0) {
+> -		dev_err(ctx->dev, "Failed to enable vdd supply: %d\n", ret);
+> -		return ret;
+> +	dsi_ctx.accum_err = regulator_enable(ctx->vdd);
+> +	if (dsi_ctx.accum_err) {
+> +		dev_err(ctx->dev, "Failed to enable vdd supply: %d\n",
+> +			dsi_ctx.accum_err);
+> +		return dsi_ctx.accum_err;
+>   	}
+>   
+> -	ret = regulator_enable(ctx->iovcc);
+> -	if (ret < 0) {
+> -		dev_err(ctx->dev, "Failed to enable iovcc supply: %d\n", ret);
+> +	dsi_ctx.accum_err = regulator_enable(ctx->iovcc);
+> +	if (dsi_ctx.accum_err) {
+> +		dev_err(ctx->dev, "Failed to enable iovcc supply: %d\n",
+> +			dsi_ctx.accum_err);
+>   		goto disable_vdd;
+>   	}
+>   
+> @@ -135,27 +126,18 @@ static int kd35t133_prepare(struct drm_panel *panel)
+>   
+>   	msleep(20);
+>   
+> -	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
+> -	if (ret < 0) {
+> -		dev_err(ctx->dev, "Failed to exit sleep mode: %d\n", ret);
+> -		goto disable_iovcc;
+> -	}
+> +	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
+> +	mipi_dsi_msleep(&dsi_ctx, 250);
+>   
+> -	msleep(250);
+> +	kd35t133_init_sequence(&dsi_ctx);
+> +	if (!dsi_ctx.accum_err)
+> +		dev_dbg(ctx->dev, "Panel init sequence done\n");
+>   
+> -	ret = kd35t133_init_sequence(ctx);
+> -	if (ret < 0) {
+> -		dev_err(ctx->dev, "Panel init sequence failed: %d\n", ret);
+> -		goto disable_iovcc;
+> -	}
+> +	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
+> +	mipi_dsi_msleep(&dsi_ctx, 50);
+>   
+> -	ret = mipi_dsi_dcs_set_display_on(dsi);
+> -	if (ret < 0) {
+> -		dev_err(ctx->dev, "Failed to set display on: %d\n", ret);
+> +	if (dsi_ctx.accum_err)
+>   		goto disable_iovcc;
+> -	}
+> -
+> -	msleep(50);
+>   
+>   	return 0;
+>   
+> @@ -163,7 +145,7 @@ static int kd35t133_prepare(struct drm_panel *panel)
+>   	regulator_disable(ctx->iovcc);
+>   disable_vdd:
+>   	regulator_disable(ctx->vdd);
+> -	return ret;
+> +	return dsi_ctx.accum_err;
+>   }
+>   
+>   static const struct drm_display_mode default_mode = {
+> -- 
+> 2.46.1
+> 
+
 
