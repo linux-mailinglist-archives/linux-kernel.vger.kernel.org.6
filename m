@@ -1,52 +1,75 @@
-Return-Path: <linux-kernel+bounces-335802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C213B97EAF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:45:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21CDC97EB3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:04:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34918B21417
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:45:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 201AB1C215D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:04:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9DB198E86;
-	Mon, 23 Sep 2024 11:45:22 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0808C199234;
+	Mon, 23 Sep 2024 12:04:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="E+SjVTW2"
+Received: from out203-205-221-250.mail.qq.com (out203-205-221-250.mail.qq.com [203.205.221.250])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C71195F28;
-	Mon, 23 Sep 2024 11:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4CE1991B0;
+	Mon, 23 Sep 2024 12:04:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.250
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727091922; cv=none; b=MiG1o8GIsT7bGkCpqnPumTsCAjTkNpH3lTiuhHQEGsKxjx2qWC7uykr3bfskMqkpmpf3qNgPfoVkjxsH2oMjvKj2n56tGVitusaHr2YTjotoXLhIKLVnMsF289U7WVPhhnuax1F4G5St0y46dd7AbMfgcIjWaLqijUFJzozhrpQ=
+	t=1727093053; cv=none; b=LusoiHxiYWn4pa226tBPYdzlcPupNEV/adS8Vh2maThwJuh3eBD7Tw34D8CnG1bK6/7wu23peERVd//KJ/K9nXLbcS9ZX/OrSH8/sjyotSUwCQ2GuAhW7vTAMBmjHu8vKhGhzeAPcVO6NY9aBZBO8M9C/FtuHGvi3jKXksN1298=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727091922; c=relaxed/simple;
-	bh=1Y+7jApXWBFrVy3tA4wPb4Sl0TL5mUwX30PQEOhbAEk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TRtebRtEHaxptPniRYH75kmH7n8KDgwOc1vdX/w0tXvBZyodJeCPH7iDWMFeC+cnOMn031CueaUb9KPBwmV/RljsfYJv38X8dtZHXDB4+FaFKQPIk3Xo4+La71xNoGJj7x/2XrKf4mV4wivXNhkzOnp2X0vJ1tx64USnV/O5hAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XC1NV0ncDzySF5;
-	Mon, 23 Sep 2024 19:43:54 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id C4C421800A7;
-	Mon, 23 Sep 2024 19:45:16 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 23 Sep
- 2024 19:45:16 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <broonie@kernel.org>, <heiko@sntech.de>, <kernel@esmil.dk>,
-	<jon.lin@rock-chips.com>, <linux-spi@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-rockchip@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH] spi: rockchip: Fix excessive check for get_fifo_len()
-Date: Mon, 23 Sep 2024 19:55:16 +0800
-Message-ID: <20240923115516.3563029-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727093053; c=relaxed/simple;
+	bh=Bz+JoqEdBhISyEL8kb6UbsH5aTwo2xp9Osjh4iXv6dc=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=ENh6mBQXsRjfdooK61IST5Kt61DD0stjv9awLGuklpJ8nhd7k+abMd4qLBJMkhatZtFEaLEsYERASy/TcclbrhB95at2kdStwd2B0E97gNKEBR1CWTvoSVsXEf74xs6R0xPBxA0G+p2Q15+N/9gJv9Bxg1nqP4I8fR2sCJF0F8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=E+SjVTW2; arc=none smtp.client-ip=203.205.221.250
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1727093045; bh=RAoEGBzb6EF/6O1Kptk4wnZ5GVBR/5P7tADOkljER6A=;
+	h=From:To:Cc:Subject:Date;
+	b=E+SjVTW2XJeLhjcP2740fDrozB4xSqls7hn6zEUuEHijfu+Db9Bp6v3tn1IZd1mje
+	 TnPcBaH64dWG1JgXo0ZCQLA4CWZKD6wBfzL+DYRfuo7AFOzdZXpIbIhU6CPc8fVdu1
+	 N4ZShvJ9xbTdE3KQM8V8HgKvdU8uu5M9a7Yb5L0s=
+Received: from localhost.localdomain ([27.38.127.228])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id E79B1E16; Mon, 23 Sep 2024 19:57:57 +0800
+X-QQ-mid: xmsmtpt1727092677t5dim6nla
+Message-ID: <tencent_7DE03EC9AEAFF374BDAB9CCCF4C047EF2305@qq.com>
+X-QQ-XMAILINFO: NeshAIv1+ONRQKujmtEsiKFxCm/z5qrs1Iyeb0jxAukLBLRT24kCkulOwB5xJJ
+	 9wJxEwCdNu0r/YCxSgzRc7OOwH0m9vFlXiLPxmcz8qPV4p2Z1ZY027xVAlhbnCZegGpnH6Z16wV5
+	 DCicGiMjizltGZmpYMinfeYPB9TbBXqrilvfyHFGS3mCNLq7sUAN6mrCqcVBUNg7UpdOABjnyW3W
+	 Lq0v/v2pdphaeCMY5YgoWEzI0scxTpHaV7BjfaNTKdVTfW2LrKZgLqQm/Yy+193rzre4MCSCPvZw
+	 +O3fJI7iYpUL3fsEYS6qEmEVdBmdYA7xcaZp8PuxLseHxFT/1FNHktfkxqdabdKwUDio0EbXJ9kQ
+	 xmvl7MrnR7XvGGbZqS8aFKbyZKwAxBR9LDsVBgfodiRvz0EXp96HQDM8JTNu7/Cse5sMLSkF8R1t
+	 x9o0VyDoqTvDvlTJPqwGcOZHzaK4CE32W3MOnXOlxERKfNUJ+9VOe02exqbSYQsYSOTLmfg8o10p
+	 81Ka+z1bU0jBX3LK+axHEU9f2/sxB8Zf4jRuqehs8UH7tQ6WTVfkGzfaeEB/KWIYepTQZoAh8zrx
+	 WkfrkMXcAgazSkZA5kmJwpnTtZMsmxuNykSvikYX9Z+B5Nh8TftMTJqucWXEnq1mdXLcTopvHwVa
+	 4jVmwKPIx2MsFeJJt/CzXi6I/+uAzclld0+dp3UGhKhQUWqERCB4dNJ5OnMWD69alCvsctZysH5K
+	 2bGsF+PSpiW7SpBRjGdlDVqRdVaHSTBTkmrRGBppeCZyK23qhQAGVmSYjwP4P9QuXZftdMgAqkLF
+	 3otefCsle2W0OWejIYWQnGRAPJelaYB7kALlrOL45gmUny47Z6+4i3opc8RFLJG4RAD0h1ECvXIS
+	 0zweFby3xoJ928qmQNg64/jT/Jn59Z+enUonlpJ3TOW/CDLI9dm1Mq8giFlzAVtkx2XgeU5bcpx4
+	 LHxUzrZ4Z+kCyHEwy7ZUokADWCJ16VWRXZIR3GxFoLWxMKHS/+/pxcqWlrhDPJo04xLzXVf+DRU+
+	 KLAslUeZf0XP1M1ycGX7eelQP5gh4zL6hjQnsaBFjbo0g6WNYh
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: 1127955419@qq.com
+To: linux@weissschuh.net
+Cc: christian@heusel.eu,
+	nathan@kernel.org,
+	masahiroy@kernel.org,
+	nicolas@fjasle.eu,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zachwade.k@gmail.com,
+	Li XingYang <1127955419@qq.com>
+Subject: [PATCH] kbuild: add package-dbg to pacman packages
+Date: Mon, 23 Sep 2024 19:57:09 +0800
+X-OQ-MSGID: <20240923115709.136727-1-1127955419@qq.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,37 +77,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemh500013.china.huawei.com (7.202.181.146)
 
-Since commit 13a96935e6f6 ("spi: rockchip: Support 64-location deep
-FIFOs"), get_fifo_len() return 64 or 32, never return 0, so remove
-the excessive check in rockchip_spi_probe().
+From: Li XingYang <1127955419@qq.com>
 
-Fixes: 13a96935e6f6 ("spi: rockchip: Support 64-location deep FIFOs")
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+The current pacman package does not include the debuginfo package
+add debuginfo package that include vmlinux
+vmlinux is very useful when debugging the kernel using crash
+
+Signed-off-by: Li XingYang <1127955419@qq.com>
 ---
- drivers/spi/spi-rockchip.c | 5 -----
- 1 file changed, 5 deletions(-)
+ scripts/package/PKGBUILD | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
-index 0bb33c43b1b4..680fe6ef6acc 100644
---- a/drivers/spi/spi-rockchip.c
-+++ b/drivers/spi/spi-rockchip.c
-@@ -819,11 +819,6 @@ static int rockchip_spi_probe(struct platform_device *pdev)
- 	}
+diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+index 663ce300dd06..4b5c435e5eaa 100644
+--- a/scripts/package/PKGBUILD
++++ b/scripts/package/PKGBUILD
+@@ -5,7 +5,7 @@
+ pkgbase=${PACMAN_PKGBASE:-linux-upstream}
+ pkgname=("${pkgbase}" "${pkgbase}-api-headers")
+ if grep -q CONFIG_MODULES=y include/config/auto.conf; then
+-	pkgname+=("${pkgbase}-headers")
++	pkgname+=("${pkgbase}-headers" "${pkgbase}-dbg")
+ fi
+ pkgver="${KERNELRELEASE//-/_}"
+ # The PKGBUILD is evaluated multiple times.
+@@ -100,6 +100,18 @@ _package-api-headers() {
+ 	${MAKE} headers_install INSTALL_HDR_PATH="${pkgdir}/usr"
+ }
  
- 	rs->fifo_len = get_fifo_len(rs);
--	if (!rs->fifo_len) {
--		dev_err(&pdev->dev, "Failed to get fifo length\n");
--		ret = -EINVAL;
--		goto err_put_ctlr;
--	}
- 
- 	pm_runtime_set_autosuspend_delay(&pdev->dev, ROCKCHIP_AUTOSUSPEND_TIMEOUT);
- 	pm_runtime_use_autosuspend(&pdev->dev);
++_package-dbg() {
++	pkgdesc="debuginfo for the ${pkgdesc} kernel"
++
++	export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
++	cd "${objtree}"
++	local builddir="${pkgdir}/usr/${MODLIB}/build"
++	mkdir -p "${builddir}"
++
++	echo "Installing vmlinux..."
++	cp vmlinux "${builddir}/vmlinux"
++}
++
+ for _p in "${pkgname[@]}"; do
+ 	eval "package_$_p() {
+ 		$(declare -f "_package${_p#$pkgbase}")
 -- 
-2.34.1
+2.46.1
 
 
