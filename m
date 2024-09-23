@@ -1,167 +1,159 @@
-Return-Path: <linux-kernel+bounces-336072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CF8E97EECA
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:03:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C380297EECD
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:03:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 104D81F2105B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:03:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A02E1F21D86
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46BF27715;
-	Mon, 23 Sep 2024 16:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9384219E96A;
+	Mon, 23 Sep 2024 16:03:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Mit84Inw"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SD3L9b6Z"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910801FC8
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 16:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711A61FC8
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 16:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727107375; cv=none; b=J+zgeXGDCtQfRHwfSmfUwRlu0v3Rt2f8oW894pG/JVsM+pRHFoYviuLV9sMJMN8NCormTy7abx+KXN+xNhVnPBuCGrZgyQ7Sg0Lyw5aC6F2IhwwL/XSNs50rpD2HqWH044po7dDnLnq31yKukbHtAbCwFz5aVQuX49lqUg0Gp5Y=
+	t=1727107403; cv=none; b=RiqwVsTGCyW6wDIlLoyFIT0Sv8nwUod8+61/5e0afOHl6XpsOP+6wZZ7HYR5iT1XNU44Nytua9fJ81wNGhiZ67PyTHD8CD/ZPyQ9fxMT43SvhLoCN+qIi6+xGk/ujqHf6CLRMb9aZTmmh7v8Jg3v8N8yxKSmN1htI7lPj8BG864=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727107375; c=relaxed/simple;
-	bh=6TuVerOEXrd71O5paKQU3CUKJdwlYlsaDFlvF9rRkm0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NeafymR5Z3xs1G1SIm3lH25KK2dz7SmtuA8sky9OZ5FgmZ6M+/fedJhwGmPSSXZzqq+TyL+0iqdYPj2Ll11fOWVEmcm9Ut5t1ojLbtIpl3jOeF6mTI6PEI+na4PZ9SKcV0b8Joy0Gz6jMFENQ+H2DYvfHfMiavgvO46EcwEGTQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Mit84Inw; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-82aa6be8457so147747439f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 09:02:53 -0700 (PDT)
+	s=arc-20240116; t=1727107403; c=relaxed/simple;
+	bh=QWyOxzMozsVzk92zGB+9ZHVcsZYCCvPloU+QuPQ+5TM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pt03fy9fSbE2Q9M8D8JLEuQ/E6eroDQrx1kKANQVb+ellYzqk/r48nx+kYcyC/ARbW9Hpou0j2r667JTQ+OychlxaZQHKVO/Kq0POy0xZF7KPdwlw34uKnRQ9QDJ/xfmYVyIxHzwEd8A/HoOgreCZSiMxCJs+NHis7yN5wCUwz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SD3L9b6Z; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6dffe3fe4fcso21644037b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 09:03:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1727107373; x=1727712173; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=U7TYhe1rpxxrqplqnvp9IfDZ+pr34hbFyuUI8EXCDkc=;
-        b=Mit84InwB9n5c6VqFOdM/3q1ipZZhXwUcp4wN9GYsEkUAazp0zM3iDxDp2UvXMM3HN
-         SMKeRaNwFa/Tt3YXvxuphcLPQoLS0ZuHz3Q6TLsH6btcxqHO0lgBwL644oBr8j4Y2CuY
-         DIOJKltcdzmcHkACYWaLHwZwfkg1kLVm8lx18=
+        d=linaro.org; s=google; t=1727107400; x=1727712200; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nFSAZfeQOGgqlvh/cZp+dUBXOJn+NGV/+N6DxfYRjUA=;
+        b=SD3L9b6ZtaFmoTTmBc/53nOmrOx9QHeAO5bq/Wov0Hxn8QgZ3tr5o4zKTjj4CGXyUC
+         FCwl7kGclD2Y4iU/UIclMDPeVmaw7jB0SnStmXgPILtaG59tMgnZDI3GIx7WiZpIx6bR
+         oX6gk0myBkVJnruKEwmN2NbaTXBTgGz/O3dTedgp+BiGUswt9PRUYFwU0Oa5zaAsTAer
+         sIK9LK9e7VRVQn6vxzivLibjzVb5gwoUQSnVoYl+SRbXQ74dzRixkkmZp1l/d9jx6TcZ
+         748RjWDYXh5QmCVbIWWUm32BB2l1sO+E4eeplIDc4BDsQU6KPVgWnAV3v+EdX5O/jn1p
+         j56g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727107373; x=1727712173;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U7TYhe1rpxxrqplqnvp9IfDZ+pr34hbFyuUI8EXCDkc=;
-        b=IwIgqr7QsrdNWhhAlMVQxTX/dBCcBDGZB+M+EamdEMLnNH9+9VwdrqLrWIdP3N7Pkx
-         4FY4QTJ+98/tbGaoHgH7N81NvNXCYmbC5DVA0fKAc2tOhdqvKKdZ8pGZMbq+5pQzzG8t
-         eIuQzNMdP8WZo59bL85R23u8wLf8FJ7vQehP+AimYRJEKAhfWpv55U03Mf21C2hImo/B
-         KfktfoPtdVxfIOpK3DpAQwWx+TSz38sN4hQW8viKzxRTvukZ6nzTsdV97nQy9DXNZziB
-         qfGUG/IZDp2uBAR9TXHPFvB5y4r/mY8rryA+PT9o2kEE6fEyW3SkeJKqXUWNgmgPhJaO
-         VUXA==
-X-Forwarded-Encrypted: i=1; AJvYcCXVii9tuOjOihpFw8/jli5dMMNoBy9FZzzoT3vnFvyf+kUVKfAiPVrTe5WIMZVgGtr6c4hwYsfrVythVbI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN7If4uASCdRc042jQ6QXfW/nrqkbU+RkM7bpIaJUUZ+serpm8
-	Ks2FuKokJ+Xr8cY4N+NmPq5ou7jMw/9pEhtmLwNzf5Fs1YkEfK6YqIoxp2uyXek=
-X-Google-Smtp-Source: AGHT+IFbTlKf8TKMANszqjy1yElT6pwu6gCQvDIujsaJntV8C2slJwQVG9f9umm5t1EUKhexryb9bQ==
-X-Received: by 2002:a05:6602:2c93:b0:82c:f7b1:a9fb with SMTP id ca18e2360f4ac-8323b9df004mr10698439f.5.1727107372503;
-        Mon, 23 Sep 2024 09:02:52 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-82d492b34b6sm560153439f.23.2024.09.23.09.02.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Sep 2024 09:02:51 -0700 (PDT)
-Message-ID: <db8b758e-9051-4ee0-b0e7-3b54eda0c71b@linuxfoundation.org>
-Date: Mon, 23 Sep 2024 10:02:49 -0600
+        d=1e100.net; s=20230601; t=1727107400; x=1727712200;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nFSAZfeQOGgqlvh/cZp+dUBXOJn+NGV/+N6DxfYRjUA=;
+        b=jUaIPv1a/zVLNsypEiwTozS4ZrT0SbuFO8Ig7IGPqqSm9T9fzssgHXarqyxqK3nL9o
+         v42cjgkcJ9cgiQf8y4lTZJdDogDFAkE6Tr/D2K4hI1/uBpJcIjr6s3PoWB1qj9LEwoZo
+         pnPEkPMhlZ0atSvDPcT9fhe+QAU+1X2SCmc1cm/nKwCu7pVeTsXeopHWzjKpF/KtXsmm
+         QJydjv7lj61rGoYBEg9E8twbj3kB8usTG85jIMs4fGCoYC8XyrJuBXsxNXLsuYYSFi+G
+         L/J/Htm1RtTA57WRH7P43/pZqQ3iaL+lSg0HnUuE35r+tKKnAnkGKaQz34u8joDzcMQd
+         wtOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXcEVltQkXNYv21NSOC8QHJ2xE9ISEpW0FSyy5yzD5mJKVr+W20SdyoujfxYuU6d19g5MOtMLC8tvIINrE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkI07VJ9ExEg24mmJNLAMTuolbQLyDY9BrGbnguToIb5MOZyrm
+	OMgyN9gBcUA1YLfR0qLEjPDGVECHQzoYTncRsCCGHIJQT4yXG0o6nrGNKKLJ2ybYjPjFoH749Ep
+	tlpymz2n6gZOl7Yder9EZTsjn1XcfxjvdHhlx+Q==
+X-Google-Smtp-Source: AGHT+IFPrXfy+6PpqRhQO2rorgn9zoN0ubR6Sl/agGP8MDcDCIz/xVdzmgZbfESiw8xxQL1DsfBUmp+TRap8Xf4vQ0M=
+X-Received: by 2002:a05:690c:64c6:b0:6db:cd3c:2273 with SMTP id
+ 00721157ae682-6dfeed8eb83mr106089997b3.24.1727107400252; Mon, 23 Sep 2024
+ 09:03:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] kselftests: mm: Fix wrong __NR_userfaultfd value
-To: Muhammad Usama Anjum <Usama.Anjum@collabora.com>,
- Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
- David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>,
- "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
- Andrea Arcangeli <aarcange@redhat.com>, Kim Phillips <kim.phillips@arm.com>
-Cc: kernel@collabora.com, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- John Hubbard <jhubbard@nvidia.com>, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240912103151.1520254-1-usama.anjum@collabora.com>
- <a9ae7dc4-275d-43c3-bf4c-b0090cb6bb12@linuxfoundation.org>
- <3cb9d266-4d4b-4031-8603-da7fd9e3ad47@collabora.com>
- <b3caeb96-2f48-4efd-a56c-e91dae891b48@linuxfoundation.org>
- <0b847784-a95f-4ed5-a0fb-1b7b4023df13@collabora.com>
- <e2a4d2b4-ca3f-4d21-82d5-b87bc9de9358@linuxfoundation.org>
- <e4e2095e-3280-4bfc-8129-80b8d00d146d@collabora.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <e4e2095e-3280-4bfc-8129-80b8d00d146d@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240829-x1e80100-ps8830-v1-0-bcc4790b1d45@linaro.org>
+ <20240829-x1e80100-ps8830-v1-2-bcc4790b1d45@linaro.org> <Zta6cBq881Ju7r7H@hovoldconsulting.com>
+ <Zthet0QqChgGWJAe@hovoldconsulting.com> <ZvGMCTPqBR0VuHd3@linaro.org>
+In-Reply-To: <ZvGMCTPqBR0VuHd3@linaro.org>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Mon, 23 Sep 2024 18:03:09 +0200
+Message-ID: <CAA8EJpqq9ROYyTnwPwj+mX2T_422vcmcyzPta+QPL53EgtJ6vg@mail.gmail.com>
+Subject: Re: [PATCH RFC 2/2] usb: typec: Add support for Parade PS8830 Type-C Retimer
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Johan Hovold <johan@kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rajendra Nayak <quic_rjendra@quicinc.com>, Sibi Sankar <quic_sibis@quicinc.com>, 
+	Trilok Soni <quic_tsoni@quicinc.com>, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/22/24 23:35, Muhammad Usama Anjum wrote:
-> ...
-> 
->>> grep -rnIF "#define __NR_userfaultfd"
->>> tools/include/uapi/asm-generic/unistd.h:681:#define __NR_userfaultfd 282
->>> arch/x86/include/generated/uapi/asm/unistd_32.h:374:#define
->>> __NR_userfaultfd 374
->>> arch/x86/include/generated/uapi/asm/unistd_64.h:327:#define
->>> __NR_userfaultfd 323
->>> arch/x86/include/generated/uapi/asm/unistd_x32.h:282:#define
->>> __NR_userfaultfd (__X32_SYSCALL_BIT + 323)
->>> arch/arm/include/generated/uapi/asm/unistd-eabi.h:347:#define
->>> __NR_userfaultfd (__NR_SYSCALL_BASE + 388)
->>> arch/arm/include/generated/uapi/asm/unistd-oabi.h:359:#define
->>> __NR_userfaultfd (__NR_SYSCALL_BASE + 388)
->>> include/uapi/asm-generic/unistd.h:681:#define __NR_userfaultfd 282
->>>
->>> The number is dependent on the architecture. The above data shows that:
->>> x86    374
->>> x86_64    323
->>
->> Correct and the generated header files do the right thing and it is good to
->> include them as this patch does.
->>
->> This is a good find and fix. I wish you explained this in your changelog.
->> Please add more details when you send v2.
-> I'm sending v2
-> 
->>
->> There could be other issues lurking based on what I found.
->>
->> The other two files are the problem where they hard code it to 282 without
->> taking the __NR_SYSCALL_BASE for the arch into consideration:
->>
->> tools/include/uapi/asm-generic/unistd.h:681:#define __NR_userfaultfd 282
->> include/uapi/asm-generic/unistd.h:681:#define __NR_userfaultfd 282
->>
->>>
->>> I'm unable to find the history of why it is set to 282 in unistd.h and
->>> when this problem happened.
->>
->> According to git history it is added in the following commit to
->> include/uapi/asm-generic/unistd.h:
->>
->> 09f7298100ea9767324298ab0c7979f6d7463183
->> Subject: [PATCH] userfaultfd: register uapi generic syscall (aarch64)
->>
->> and it is added in the following commit to
->> tools/include/uapi/asm-generic/unistd.h
->> 34b009cfde2b8ce20a69c7bfd6bad4ce0e7cd970
->> Subject: [PATCH] tools include: Grab copies of arm64 dependent unistd.h
->> files
->>
->> I think, the above defines from include/uapi/asm-generic/unistd.h and
->> tools/include/uapi/asm-generic/unistd.h should be removed.
->>
->> Maybe others familiar with userfaultfd can determine the best course of
->> action.
->> We might have other NR_ defines in these two files that are causing
->> problems
->> for tests and tools that we haven't uncovered yet.
-> Added authors of these patches.
-> 
+On Mon, 23 Sept 2024 at 17:41, Abel Vesa <abel.vesa@linaro.org> wrote:
+>
+> On 24-09-04 15:20:55, Johan Hovold wrote:
+> > On Tue, Sep 03, 2024 at 09:27:45AM +0200, Johan Hovold wrote:
+> > > On Thu, Aug 29, 2024 at 09:44:26PM +0300, Abel Vesa wrote:
+> > > > The Parade PS8830 is a Type-C muti-protocol retimer controlled over I2C.
+> > > > It provides both altmode and orientation handling.
+> > > >
+> > > > Add a driver with support for the following modes:
+> > > >  - DP 4lanes
+> > > >  - USB3
+> > > >  - DP 2lanes + USB3
+> > > >
+> > > > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> >
+> > > > + retimer->supplies[0].supply = "vdd33";
+> > > > + retimer->supplies[1].supply = "vdd18";
+> > > > + retimer->supplies[2].supply = "vdd15";
+> > >
+> > > vdd115?
+> > >
+> > > > + retimer->supplies[3].supply = "vcc";
+> >
+> > I took a look at the schematics and it seems like all but one of the
+> > above supply names are wrong and that some are missing. "vcc" also does
+> > not exist in either the binding or dt patches you sent separately.
+> >
+> > From what I can tell the supplies are:
+> >
+> >       vdd             1.15 V
+> >       vdd33           3.3 V
+> >       vdd33_cap       3.3 V
+> >       vddat           1.15 V
+> >       vddar           1.15 V
+> >       vddio           1.8 V
+>
+> The schematics seem to suggest that vdd, vddat and vddar are all
+> supplied by the 1.15V supply. As for the vdd33 and vdd33_cap, their
+> seem to be supplied by the 3.3V supply.
 
-Thank you. Would you be able top follow up on this and send patches
-to remove these defines if it deemed to be the correct solution?
+Please follow the datasheet when naming the supplies. Some of them
+might be supplied by a single rail, but that might be a property of
+your platform.
 
-thanks,
--- Shuah
+>
+> >
+> > Also, have you checked that there are no ordering constraints between
+> > the supplies?
+>
+> The documentation seems to suggest that there are some timing as well as
+> ordering contrains, yes. I can't tell for sure if that is really needed
+> or not.
 
+Again, please follow the datasheet.
+
+>
+> Thanks for reviewing.
+>
+> >
+> > Johan
+> >
+>
+> Abel
+
+
+
+-- 
+With best wishes
+Dmitry
 
