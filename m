@@ -1,94 +1,159 @@
-Return-Path: <linux-kernel+bounces-335718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3769097E997
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:10:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB5C097E9A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:16:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68C051C217E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:10:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 092851C212CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:16:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B5A196DA4;
-	Mon, 23 Sep 2024 10:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4BE195F3A;
+	Mon, 23 Sep 2024 10:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="XslPyD/2"
-Received: from uho.ysoft.cz (uho.ysoft.cz [81.19.3.130])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="zM/hHxDt"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215AC19580F;
-	Mon, 23 Sep 2024 10:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.3.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8AD846425;
+	Mon, 23 Sep 2024 10:16:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727086175; cv=none; b=Id25fmIQsRTPTt/tT947Jx1vOqP8lMRz814P3865pYhEv5qs6SzryNiLv3L/w7U64om9FepsvFwJK0ydIiY8Z8hrEUzHSp1v4AZahz5laG/yKrrRXKh8HUdmngMG2LcURcAEZPKHniwW3GQ1nEGzQ5haKHIAmWFYN7/qXFXLnCs=
+	t=1727086582; cv=none; b=ol5bwQFTTQgeKGugmRSPZEs0sBJzyf1+QNwj9TgGVUJ0opFGQxNnKSBDq6A+x8vxPOAZRlabysidZ2HHMX4Crl2HW/YgiD757m+D2aUHKCH7rqOboerDRX+3VQ4gdzZcjLjiYyE8Ve+CIvPCx668GaHlSLruQcwl6wUQYHWZksY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727086175; c=relaxed/simple;
-	bh=QZ3pAoHrGvUQCCcPlsz7aLXmCdd7EUz+OWY1xzniUFo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gz0ElC8JBWI6y2jVjKBjMwRWjiJinekO52owHADPpyD49d/yqHXScy04mPXjcbaWa5oTLPTcv3a/VII3imiWF4Obq1R5YCdGaPSn0J4N5lZ/BXBOj9h9wfMbcLGLGk0pt6i3WpFvQS9wJ2tNEJ0BfRwryTmmDrnJrC6tH5Sum2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com; spf=pass smtp.mailfrom=ysoft.com; dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b=XslPyD/2; arc=none smtp.client-ip=81.19.3.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ysoft.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
-	s=20160406-ysoft-com; t=1727086166;
-	bh=mqxC8Twz5bhAEBeZd64fyOAa9Ptp6JX1NANnvh+5f6A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XslPyD/262cs7tuq3XgQDQY8bwCA9znDEFndO0lWbD9VqVxHisyHuW8PPfJU0b5Hw
-	 OKLM8+WRdFGhPhD74YYn5UqnDY+ZdFNMkEgpN1eyl188K2EwVNacF9ciYbFgI52gJQ
-	 z7xa8sJNQ6AU05DTunnmJI4rJEgxPM5knOff4WsE=
-Received: from [10.1.8.111] (unknown [10.1.8.111])
-	by uho.ysoft.cz (Postfix) with ESMTP id F1063A025E;
-	Mon, 23 Sep 2024 12:09:25 +0200 (CEST)
-Message-ID: <8f054dbe-6f58-4c93-b5db-1c67cb310a5f@ysoft.com>
-Date: Mon, 23 Sep 2024 12:09:25 +0200
+	s=arc-20240116; t=1727086582; c=relaxed/simple;
+	bh=53IWbInwjlO7Z5VBHcWpCMQqe7HNtwdsn8Flx18kno4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DGIn5uPj5LYWAyym7fpbHxHziE21M9q2usSAmhxJUGbAgBTAYeL9ewflMVh+3Xinl0YfwK2NzjbS2tdEoz8PbAd85yEvbxO/bZQVdSVA9GR1jL7T5sJseMe8zyduOKYYjLLjLGxTJ4iCu0PoKWOKjZOA2Aw2UEdH7YrjJAHAb/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=zM/hHxDt; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48N74q7j015348;
+	Mon, 23 Sep 2024 06:15:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
+	content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=4ytrpuro3bSWG9Tt8uGzvDdhz3t
+	76ddrHBtHeXSYhV8=; b=zM/hHxDtOgq1gZdpsEGCO1R84ERuefeoYW4hZGSvidV
+	JfTwHUqg0NUw7SBa0fVnm40+syZKKDol5CHlv+QKTzrg8aGX6ARalSnLKomQ/urj
+	27w9ilP4oW5mCM4LIF6ruzognXfJRyUQmSDX+1u+6gq3k02eAFzyha5rTqCpB8iC
+	6ZCgToNwyhtjbRZkQ6jxNooX09comZWY43GY23GF+MjMhrK8Ewr9rFsHiSfDXwJc
+	S3+4gCcDWs5WjGAL8ksqDPhkwZotzcHeWPUerw+5Jmat95IEoANrjBhrblad5yZg
+	gmz2GorlFSKIll0xsFLzRgEDSPlyT8gDXB7STcPVPWg==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 41u3frrqmh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 23 Sep 2024 06:15:39 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 48NAFbFk028020
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 23 Sep 2024 06:15:37 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Mon, 23 Sep
+ 2024 06:15:37 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Mon, 23 Sep 2024 06:15:37 -0400
+Received: from amiclaus-VirtualBox.ad.analog.com ([10.65.36.213])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 48NAFIQQ001918;
+	Mon, 23 Sep 2024 06:15:20 -0400
+From: Antoniu Miclaus <antoniu.miclaus@analog.com>
+To: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
+        Olivier Moysan
+	<olivier.moysan@foss.st.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
+	<ukleinek@kernel.org>,
+        Andy Shevchenko <andy@kernel.org>,
+        David Lechner
+	<dlechner@baylibre.com>,
+        Marcelo Schmitt <marcelo.schmitt@analog.com>,
+        Ivan
+ Mikhaylov <fr0st61te@gmail.com>,
+        Alisa-Dariana Roman
+	<alisadariana@gmail.com>,
+        Dumitru Ceclan <mitrutzceclan@gmail.com>,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
+        Marius Cristea <marius.cristea@microchip.com>,
+        Sergiu Cuciurean
+	<sergiu.cuciurean@analog.com>,
+        Dragos Bogdan <dragos.bogdan@analog.com>,
+        Antoniu Miclaus <antoniu.miclaus@analog.com>,
+        <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-pwm@vger.kernel.org>
+Subject: [PATCH 0/7] *** Add support for AD485x DAS Family ***
+Date: Mon, 23 Sep 2024 13:10:17 +0300
+Message-ID: <20240923101206.3753-1-antoniu.miclaus@analog.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] arm64: dts: imx: Add imx8mp-iota2-lumpy board
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Shawn Guo <shawnguo@kernel.org>, Petr Benes <petr.benes@ysoft.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Herburger <gregor.herburger@ew.tq-group.com>,
- Hiago De Franco <hiago.franco@toradex.com>,
- Hugo Villeneuve <hvilleneuve@dimonoff.com>,
- Joao Paulo Goncalves <joao.goncalves@toradex.com>,
- Michael Walle <mwalle@kernel.org>,
- Alexander Stein <alexander.stein@ew.tq-group.com>,
- Mathieu Othacehe <m.othacehe@gmail.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-References: <20240920080154.1595808-1-michal.vokac@ysoft.com>
- <20240920080154.1595808-3-michal.vokac@ysoft.com>
- <CAOMZO5BrmuWdiEo6xi8ChT01jfLMaLAb88iUhS1kt6qqr_h7pQ@mail.gmail.com>
-Content-Language: en-US
-From: =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>
-In-Reply-To: <CAOMZO5BrmuWdiEo6xi8ChT01jfLMaLAb88iUhS1kt6qqr_h7pQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: 3KMmdx-vrpxJ5ksvCG0-7JpgEGy81Q2C
+X-Proofpoint-GUID: 3KMmdx-vrpxJ5ksvCG0-7JpgEGy81Q2C
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ suspectscore=0 phishscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0
+ priorityscore=1501 malwarescore=0 clxscore=1011 mlxscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409230075
 
-On 21. 09. 24 14:24, Fabio Estevam wrote:
-> Hi Michal,
-> 
-> On Fri, Sep 20, 2024 at 5:02 AM Michal Vokáč <michal.vokac@ysoft.com> wrote:
-> 
->> +&usb_dwc3_1 {
->> +       dr_mode = "host";
->> +       pinctrl-names = "default";
-> 
-> Per Rob's robot message, this pinctrl-names entry should be removed.
+Add support for AD485X fully buffered, 8-channel simultaneous sampling,
+16/20-bit, 1 MSPS data acquisition system (DAS) with differential, wide
+common-mode range inputs.
 
-Thanks a lot Fabio. I could not really figure out what is wrong and
-thought that all the three warnings are issues of the imx8mp.dtsi.
-Will be fixed in v3.
+Some particularities:
+1. softspan - the devices support multiple softspans which are represented in iio
+              through offset/scale. The current handling implies changing both
+              the scale and the offset separately via IIO, therefore in order to
+              properly set the softspan, each time the offset changes the softspan
+              is set to the default value. And only after changing also the scale
+              the desired softspan is set. This is the approach we are suggesting
+              since we need the softspan configurable from userspace and not from
+              devicetree.
 
-Michal
+2. packet format - Data provided on the CMOS and LVDS conversion data output buses
+                   are packaged into eight channel packets. This is currently handled
+                   as extended info.
+
+Antoniu Miclaus (7):
+  iio: backend: add API for interface get
+  iio: backend: add support for data size set
+  iio: adc: adi-axi-adc: add interface type
+  iio: adc: adi-axi-adc: set data format
+  dt-bindings: iio: adc: add ad458x
+  iio: adc: ad485x: add ad485x driver
+  Documentation: ABI: testing: ad485x: add ABI docs
+
+ .../ABI/testing/sysfs-bus-iio-adc-ad485x      |   14 +
+ .../bindings/iio/adc/adi,ad485x.yaml          |   82 ++
+ drivers/iio/adc/Kconfig                       |   12 +
+ drivers/iio/adc/Makefile                      |    1 +
+ drivers/iio/adc/ad485x.c                      | 1061 +++++++++++++++++
+ drivers/iio/adc/adi-axi-adc.c                 |   44 +
+ drivers/iio/industrialio-backend.c            |   45 +
+ include/linux/iio/backend.h                   |   13 +
+ 8 files changed, 1272 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-ad485x
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad485x.yaml
+ create mode 100644 drivers/iio/adc/ad485x.c
+
+-- 
+2.46.0
+
 
