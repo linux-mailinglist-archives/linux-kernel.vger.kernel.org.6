@@ -1,125 +1,106 @@
-Return-Path: <linux-kernel+bounces-335420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FAA697E583
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 06:53:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 225B397E587
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 06:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CC311C21088
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 04:53:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCA42281410
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 04:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD748EAF1;
-	Mon, 23 Sep 2024 04:53:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C3C5125D6;
+	Mon, 23 Sep 2024 04:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QKGSY40w"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="dtO4zpYV"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2ECB1C3D
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 04:53:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E9AF1C3D;
+	Mon, 23 Sep 2024 04:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727067218; cv=none; b=Kp/vC4hrJ9klQuxLmvpiYmvtLjhx31ccLHeLgly2XxkHKYJFTivL9DY7CS0VztD2coNHJkDzL/3jxFBNQdezSS2gCIOnv5UqH96hk4jyTPInekT5n4yFH1IdC1Lf0b0UdWxf/vZBhMjzUgRCPyq3a6/X3PTJcT0Ody1W98RMFoA=
+	t=1727067415; cv=none; b=B2aNDNUHPfleVCqHIZiZvovcySJjXwhi3Tkf7K5ce9rhdSzip0qa29Re7hf9tD1a5SAfMN0Gt9OXekVAHOq63SaD6pGWOYQCBfNMa7XtupW2swiuH9UwNGvS/gBSIUTBZeApcq+mn3OgPXfJE3UcCqxCX08ReafgeUUSWnunSl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727067218; c=relaxed/simple;
-	bh=u71Qf2SkDRLp4O4wF7193daelVI1zw1JCVVZqTIzMDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jdut/jxYXunNBbhNyhD/7i3CbCrm9iUJ5qSXXll3LgfQMUDIyuIyUBkSJLSZkqxV4nFzOS7m8x/DezB5ElgQr4krfflIWaTlZH1As78TVkEH+Bir+4+pwlg9WBsSOcPMEofdMzw7G+ZwaSbIsgD+xTbMyNklbQU2wB8qJsQ0xFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QKGSY40w; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727067217; x=1758603217;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=u71Qf2SkDRLp4O4wF7193daelVI1zw1JCVVZqTIzMDQ=;
-  b=QKGSY40wGOBFNdZ1FovvpXkXBFkdTayJLHMGqEL7Q/9I8NIG2wnEkx/8
-   sKwwe+YsBxI82huhXUE7uK0CVywqnJNYV+oPl4hM+OWqNZS0pfw2/O0CJ
-   84+qofcacYRqfHMFZHUnquKUeJyId0vheVtss3heNjkEK49t/roTcdBpa
-   JH7/G2IiVn8jotAZw8kmDx9mtdNpXAZBKPHVBoKgRSzTiBpvhPNIRZqbo
-   s6P346EuvAXkqmbfR16Z92/H4U+wTz/tI8pGUp0Dlz3iuCvgEv82ev3es
-   I4g2VKj1T/EN9oWrOgo9Gf7p3ZrDLNTd799wJZRWkM4Re83KQ9x3bkg00
-   g==;
-X-CSE-ConnectionGUID: zlqHg1nZSP60s6wul7gcmQ==
-X-CSE-MsgGUID: jv1XtlXNTEKaMSPRYCIl2A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11202"; a="43514508"
-X-IronPort-AV: E=Sophos;i="6.10,250,1719903600"; 
-   d="scan'208";a="43514508"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2024 21:53:36 -0700
-X-CSE-ConnectionGUID: pTvhCv6aTWWC+NZrcU9cWA==
-X-CSE-MsgGUID: gYaKa9FaQASbWtkmtYnZNA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,250,1719903600"; 
-   d="scan'208";a="108380474"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 22 Sep 2024 21:53:35 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ssb4m-000Gue-2H;
-	Mon, 23 Sep 2024 04:53:32 +0000
-Date: Mon, 23 Sep 2024 12:53:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>
-Subject: drivers/soc/fsl/qe/qmc.c:2002:30: warning: unused variable
- 'qmc_data_qe'
-Message-ID: <202409231229.EFlvN9m0-lkp@intel.com>
+	s=arc-20240116; t=1727067415; c=relaxed/simple;
+	bh=YAiad1qYqEGFsiRIlikGn17OKrMiJQfqenYiwTY676c=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uhSmJ9scxueDiN42xlWtn76IfKHdqsXzBY5+UfrIPKARKCVCax6Na/zqTsuTeTJZ/5HRcaFKBAktmUdibV0eFSv0OWR5ygiyAzgMm9HLQv5BtPjuFW4Gie89HG502db5kWlV9F/yhQqAeYezEPPtvQosac1rlgLjArSNUe30ocg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=dtO4zpYV; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48MLSRqx005697;
+	Sun, 22 Sep 2024 21:56:27 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pfpt0220; bh=YAiad1qYqEGFsiRIlikGn17OK
+	rMiJQfqenYiwTY676c=; b=dtO4zpYV6YIioK0/nikgJiahoZmLUo918osBnMmNM
+	x187ssBQqwSoggDt2xiU5p/s+dVanElakMdSntKulW+g9DT3D1Fn/RRXmjPmVnrK
+	3o/kIbVvPcEGk++lMbm/KDyffHIzwEHgEpmP/Ja7CQ3gU4cQRlAwIyNSqm9bQMVL
+	TEH4A5eOHova1qofpho1LLMzYj1ZINmdJHaO5t8K8bfmx0AWtJxksddRFGDgTpWT
+	H5vMDvRSkUJeYHcHnwdelpXzrwKkBdZHyLuudXd7xYMqhXeP09yxEqkeOwnnh64t
+	7VNconNoEackhTrS36uwpDRlKdTjTARFjCazi1sbvhy1A==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 41swnjnx7n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 22 Sep 2024 21:56:26 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Sun, 22 Sep 2024 21:56:26 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Sun, 22 Sep 2024 21:56:25 -0700
+Received: from maili.marvell.com (unknown [10.28.36.165])
+	by maili.marvell.com (Postfix) with SMTP id 3CF003F706C;
+	Sun, 22 Sep 2024 21:56:20 -0700 (PDT)
+Date: Mon, 23 Sep 2024 10:26:20 +0530
+From: Ratheesh Kannoth <rkannoth@marvell.com>
+To: Wei Fang <wei.fang@nxp.com>
+CC: Vladimir Oltean <vladimir.oltean@nxp.com>,
+        "davem@davemloft.net"
+	<davem@davemloft.net>,
+        "edumazet@google.com" <edumazet@google.com>,
+        "kuba@kernel.org" <kuba@kernel.org>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        Claudiu Manoil <claudiu.manoil@nxp.com>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "hawk@kernel.org"
+	<hawk@kernel.org>,
+        "john.fastabend@gmail.com" <john.fastabend@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "bpf@vger.kernel.org"
+	<bpf@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "imx@lists.linux.dev" <imx@lists.linux.dev>
+Subject: Re: [PATCH net 3/3] net: enetc: reset xdp_tx_in_flight when updating
+ bpf program
+Message-ID: <20240923045620.GA3287263@maili.marvell.com>
+References: <20240919084104.661180-1-wei.fang@nxp.com>
+ <20240919084104.661180-4-wei.fang@nxp.com>
+ <20240919132154.czugz52nirmijohe@skbuf>
+ <PAXPR04MB8510727BD7B77261491B4D31886C2@PAXPR04MB8510.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
+In-Reply-To: <PAXPR04MB8510727BD7B77261491B4D31886C2@PAXPR04MB8510.eurprd04.prod.outlook.com>
+X-Proofpoint-GUID: O5Q2zY0SoljxqKQI_b0351QPVuYjwCSZ
+X-Proofpoint-ORIG-GUID: O5Q2zY0SoljxqKQI_b0351QPVuYjwCSZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   de5cb0dcb74c294ec527eddfe5094acfdb21ff21
-commit: eb680d563089e55b20cb7730ed881638fe4425b7 soc: fsl: cpm1: qmc: Add support for QUICC Engine (QE) implementation
-date:   3 weeks ago
-config: powerpc-randconfig-r054-20240923 (https://download.01.org/0day-ci/archive/20240923/202409231229.EFlvN9m0-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 8663a75fa2f31299ab8d1d90288d9df92aadee88)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240923/202409231229.EFlvN9m0-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409231229.EFlvN9m0-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/soc/fsl/qe/qmc.c:12:
-   In file included from include/linux/dma-mapping.h:11:
-   In file included from include/linux/scatterlist.h:8:
-   In file included from include/linux/mm.h:2228:
-   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> drivers/soc/fsl/qe/qmc.c:2002:30: warning: unused variable 'qmc_data_qe' [-Wunused-const-variable]
-    2002 | static const struct qmc_data qmc_data_qe = {
-         |                              ^~~~~~~~~~~
-   2 warnings generated.
-
-
-vim +/qmc_data_qe +2002 drivers/soc/fsl/qe/qmc.c
-
-  2001	
-> 2002	static const struct qmc_data qmc_data_qe = {
-  2003		.version = QMC_QE,
-  2004		.tstate = 0x30000000,
-  2005		.rstate = 0x30000000,
-  2006		.zistate = 0x00000200,
-  2007		.zdstate_hdlc = 0x80FFFFE0,
-  2008		.zdstate_transp = 0x003FFFE2,
-  2009		.rpack = 0x80000000,
-  2010	};
-  2011	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+On 2024-09-20 at 08:42:06, Wei Fang (wei.fang@nxp.com) wrote:
+> enetc_recycle_xdp_tx_buff() will not be called. Actually all XDP_TX frames are
+> sent out and XDP_TX buffers will be freed by enetc_free_rxtx_rings().
+why didn't you choose enetc_free_rxtx_rings() to reset inflight count to 0 ?
 
