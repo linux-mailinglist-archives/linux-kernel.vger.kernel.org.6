@@ -1,68 +1,84 @@
-Return-Path: <linux-kernel+bounces-335430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3F8597E5AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 07:39:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ECEC97E5AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 07:39:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E7811F217E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 05:39:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B69D2816F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 05:39:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E60125D6;
-	Mon, 23 Sep 2024 05:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98CA17BA5;
+	Mon, 23 Sep 2024 05:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="H1cBJTb7"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AK9BYrWW"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0DEEEAF6;
-	Mon, 23 Sep 2024 05:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727069943; cv=pass; b=Nuk3SV7Ut+jCNAMlMfWThKs35kaHFgsELy2LzRIELdKczI7CkWIXyP/LFMlfMZsp7vjTDlWUAIpE8K+U2Xj+is22JaiGrN2fXJ+E6/RZf3qXwE6Jywvc5UQRA5v1QewH8SbFZtqSyYcO4jks5/cWzW3bWrLfA95gCBkmm3ZvVhw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727069943; c=relaxed/simple;
-	bh=FJ2ttu3ymdbUtGl8rWp/seAINoEH0qpMdehsWGCuTjQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=avC4cIpIXIW6IFoMx132SzGFRu1QTYB3m49I9Uta5GS6KEippHM12jlDRlcxuwXEJA98LHlnwu/7xwGa1CWZP9CkitO58veoy58Qr+da8xe+yHKi15DaJ/jcJa74wNSlnhowPKyNRewzkHv5/pTYETPklapSfq3WAr8Tw1cTQFE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=H1cBJTb7; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1727069929; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Z/8Bb/arnKe09EnTuqR2Yvj/va37Jm96E7h5HfhDvnFHWLeWUX3aEyA3bmv7XuAtmu+yTAUvBdbHBEk4bKirUgFA2ppPieA7wNn51MiyZ6W7w/gBHfsGoKV6OLBDVVOYvUYrjDdsHODik6gkcE5jxyp8Bsgv9drL+AZS3qw0s7Q=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1727069929; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=PmmGSXySg6IlnsTDXpl7Bn2vkcG7CZ7INIi8sf8r2Gc=; 
-	b=KLqIQfOyyngHtcEMhpmhYAJJ1fE+MY7LL3HVJFgtEcjH1n1FGOcIRtN2J9LJtj1PeLVWmJf/4gRrCytNrlguJYhpcn3mp7N+qiZh4k6YzznjYQEOGWJoL2dqia+QpEXeZOe0ioe+IVGA7rFRV31B7tov560HfTi3PaYrvXEeukM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
-	dmarc=pass header.from=<usama.anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1727069929;
-	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Reply-To;
-	bh=PmmGSXySg6IlnsTDXpl7Bn2vkcG7CZ7INIi8sf8r2Gc=;
-	b=H1cBJTb7AKHnE3gCNfJHz2jCquRTwqs2VdCWE+0d1tVoP7h7X7t+r4/BwlirNSyY
-	1jEXzCmMGz0JujOQsPFHLcKljj8bBccKaCcb6kqBn8yGk13+vfThbIvCiiGZb889Qax
-	oc5lPe+sspNpd2RjZFsHcw6HssV5IE9n+phvD4ds=
-Received: by mx.zohomail.com with SMTPS id 1727069928216470.38431144075696;
-	Sun, 22 Sep 2024 22:38:48 -0700 (PDT)
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <shuah@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	John Hubbard <jhubbard@nvidia.com>
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	kernel@collabora.com,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED6A17996;
+	Mon, 23 Sep 2024 05:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727069949; cv=none; b=a23HG+BeaO37j7qEIceTU/x4eToDd6LjeYwQdUBLAK8KPx9EfFA9xI16TdVEq+3/XEzGUazJeghH5WyB6LcJpkAEXFysC+A3/3+VJYlKwI/BDQROfwupCDIHtfOcCx6LiclZP4xfx5iBObLnPPlAwYhgNrs6Tf107hqZyRNFsJ8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727069949; c=relaxed/simple;
+	bh=KLqYVUVSeJnuEqG4D+Dx2keqPgCYluGkixsgYvOgMdg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TaArPbUvzI64ybTNR6SuDoSFyh58wdMaD84iEeFbXD4yh4YMupZQ6aRYJ+8hRhNN09E2fg6qCjIP2decgd0tC+7m96Oxh6TpznTmC75KrvoK05hj74ejhnobnoHnne8YX0OF3br9c1V/IhtT3yO9mlhFkz4HVbEx5cBBesMNuek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AK9BYrWW; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7191fb54147so2907483b3a.2;
+        Sun, 22 Sep 2024 22:39:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727069947; x=1727674747; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AYSzy93Z1kT06bxakvwIIe89yhaOpfH+SPPvpoZ8Oj8=;
+        b=AK9BYrWWnxAst9sFRd7PlWICt4DYwEzmPwcby1XnUuhEyrc5oe2QNj8dHVdxzs6cAD
+         VmZt59etcL0axIJ+EcucGzrM38KdMnZ4r1QB3Jmph0Pp8Itxk574tcEUFB9H0e0yfivX
+         uzy6+aHXK3NJGWF2v4EPzdY2I2M8/zy5PiDrd684Ot59j/AvP7Ho3jHOoMUXWSkBKk3f
+         Of8lgB8ly1K6ewTZ6HiDmKDlpJeH7CSub4m+NVyfObCCQxdcDO2Wofp2uDE7YBhQ7L4P
+         NgrI4GIv6cj431A8Ap7A7+vehk/XOU3u8ykIfGwkJqUrzUd+hXiI9veW1UnNjvvXbXcR
+         664A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727069947; x=1727674747;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AYSzy93Z1kT06bxakvwIIe89yhaOpfH+SPPvpoZ8Oj8=;
+        b=AKtwim5iG1iPRtoyAqZcNT5Zfxc5gDV9otXHn+iEXzBkzH2kTv4jpLpLkoHCrU4e68
+         gVW85EzQKcM9boEzdSN3jo03kPt+3t36GFBtRhSDCzHygIBchMU1fIESbTPWWGoMkkkN
+         yWbYB7DZAxQMKnBi8Zv0lJW7iRdoO+U129JoYJAe+eRJV4NN+7LS00or/JyxfiYJYwrL
+         M9GOADlnhPKxZZl27/TGKnIlwIix5yEZ9OPH2kKRhHZJkFUDDiIpBJ9TPfb1SGG0i6Hn
+         2cFZpVZTm3mq9Fqvf1zIaToCPFWeqDCu08gCBt+AdBZvRsLPORbzoTbnmnRuYl7sGBkU
+         mq/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVatrjoEUynT/zFVPr/YVtlutoPHB5QkpFcI2KaeKXRvWIAkkAE7gS+49qlOgjFoW/mZNTtUyotUsbrgB0=@vger.kernel.org, AJvYcCXIzLacuZl6muwevCkginRGArwnSTjXCY6OflAAiHJy2DEqgqgzhYahCbkTrkUtY3AIThnGGqcc@vger.kernel.org
+X-Gm-Message-State: AOJu0YywCeb/vq3vgIspIDhHtj08+ja2uQdgxwkHpI4BNjtZBA2rJ4+e
+	efPtdGNF38o5SSeiGEtxQyr4cDGIUV/mauOAzdA2TY+XSg2n4C7B
+X-Google-Smtp-Source: AGHT+IHahzVhTsIOnELpI6T+hDoBzw//t7m4xEE0t1bfbOFxCBUorXCpLyYuIGOxiWBnC9oN7cY8hw==
+X-Received: by 2002:a05:6a00:92a2:b0:710:da27:f176 with SMTP id d2e1a72fcca58-7199cd6bbc4mr18281852b3a.12.1727069947006;
+        Sun, 22 Sep 2024 22:39:07 -0700 (PDT)
+Received: from ubuntu.. ([27.34.65.190])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944b98257sm13130330b3a.166.2024.09.22.22.39.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Sep 2024 22:39:06 -0700 (PDT)
+From: Dipendra Khadka <kdipendra88@gmail.com>
+To: andrew@lunn.ch,
+	florian.fainelli@broadcom.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	bcm-kernel-feedback-list@broadcom.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: Dipendra Khadka <kdipendra88@gmail.com>,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] kselftests: mm: Fix wrong __NR_userfaultfd value
-Date: Mon, 23 Sep 2024 10:38:36 +0500
-Message-Id: <20240923053836.3270393-1-usama.anjum@collabora.com>
-X-Mailer: git-send-email 2.39.2
+Subject: [PATCH v2 net] net: Add error pointer check in bcmsysport.c
+Date: Mon, 23 Sep 2024 05:38:58 +0000
+Message-ID: <20240923053900.1310-1-kdipendra88@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,51 +86,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
 
-grep -rnIF "#define __NR_userfaultfd"
-tools/include/uapi/asm-generic/unistd.h:681:#define __NR_userfaultfd 282
-arch/x86/include/generated/uapi/asm/unistd_32.h:374:#define
-__NR_userfaultfd 374
-arch/x86/include/generated/uapi/asm/unistd_64.h:327:#define
-__NR_userfaultfd 323
-arch/x86/include/generated/uapi/asm/unistd_x32.h:282:#define
-__NR_userfaultfd (__X32_SYSCALL_BIT + 323)
-arch/arm/include/generated/uapi/asm/unistd-eabi.h:347:#define
-__NR_userfaultfd (__NR_SYSCALL_BASE + 388)
-arch/arm/include/generated/uapi/asm/unistd-oabi.h:359:#define
-__NR_userfaultfd (__NR_SYSCALL_BASE + 388)
-include/uapi/asm-generic/unistd.h:681:#define __NR_userfaultfd 282
+Add error pointer checks in bcm_sysport_map_queues() and
+bcm_sysport_unmap_queues() before deferencing 'dp'.
 
-The number is dependent on the architecture. The above data shows that:
-x86	374
-x86_64	323
-
-The value of __NR_userfaultfd was changed to 282 when
-asm-generic/unistd.h was included. It makes the test to fail every time
-as the correct number of this syscall on x86_64 is 323. Fix the header
-to asm/unistd.h.
-
-Fixes: a5c6bc590094 ("selftests/mm: remove local __NR_* definitions")
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
 ---
- tools/testing/selftests/mm/pagemap_ioctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2: 
+  - Change the subject of the patch to net
+v1:  https://lore.kernel.org/all/20240922181739.50056-1-kdipendra88@gmail.com/
+ drivers/net/ethernet/broadcom/bcmsysport.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/tools/testing/selftests/mm/pagemap_ioctl.c b/tools/testing/selftests/mm/pagemap_ioctl.c
-index fc90af2a97b80..bcc73b4e805c6 100644
---- a/tools/testing/selftests/mm/pagemap_ioctl.c
-+++ b/tools/testing/selftests/mm/pagemap_ioctl.c
-@@ -15,7 +15,7 @@
- #include <sys/ioctl.h>
- #include <sys/stat.h>
- #include <math.h>
--#include <asm-generic/unistd.h>
-+#include <asm/unistd.h>
- #include <pthread.h>
- #include <sys/resource.h>
- #include <assert.h>
+diff --git a/drivers/net/ethernet/broadcom/bcmsysport.c b/drivers/net/ethernet/broadcom/bcmsysport.c
+index c9faa8540859..97d2ff2329cb 100644
+--- a/drivers/net/ethernet/broadcom/bcmsysport.c
++++ b/drivers/net/ethernet/broadcom/bcmsysport.c
+@@ -2337,6 +2337,9 @@ static int bcm_sysport_map_queues(struct net_device *dev,
+ 	unsigned int num_tx_queues;
+ 	unsigned int q, qp, port;
+ 
++	if (IS_ERR(dp))
++		return PRT_ERR(dp);
++
+ 	/* We can't be setting up queue inspection for non directly attached
+ 	 * switches
+ 	 */
+@@ -2392,6 +2395,9 @@ static int bcm_sysport_unmap_queues(struct net_device *dev,
+ 	unsigned int num_tx_queues;
+ 	unsigned int q, qp, port;
+ 
++	if (IS_ERR(dp))
++		return PTR_ERR(dp);
++
+ 	port = dp->index;
+ 
+ 	num_tx_queues = slave_dev->real_num_tx_queues;
 -- 
-2.39.2
+2.43.0
 
 
