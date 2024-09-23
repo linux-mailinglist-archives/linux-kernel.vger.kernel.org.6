@@ -1,164 +1,134 @@
-Return-Path: <linux-kernel+bounces-335897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BB4B97EC3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:26:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16EE197EC3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:27:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9664CB20797
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:26:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3B972819FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D00031991B0;
-	Mon, 23 Sep 2024 13:26:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175A81993BB;
+	Mon, 23 Sep 2024 13:27:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nZ59gw2f"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FXuZGyHF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9057D19644B;
-	Mon, 23 Sep 2024 13:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018771990DE
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 13:27:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727097970; cv=none; b=RQOnl8Ejc8QgmmMuJfKJuq310tIodb35ASSmOwahqQ0y5lLVwgARbtI6UMyhSbagiS0FaTb6EZkt9NyVQPbd+G4P1mPjR1iMMvGz7lcrYpOHUZxZJXWg62NV5fjyXNd/v1iHjF4Pb0XO6z8++GQOuyVpmjsjWpD9oAsjj+Qbc0k=
+	t=1727098028; cv=none; b=VFU88irmJNrVrfHHND7+QqKal8WFt53edA1tHN9FI0Vmw8vVvcApaVU9KycSfQBBGQ/eVRB/UDrMOUIpXSTP4ZJPzWIAdDILyl7kHS4yP7FgqJPbFP4ZC6k5XmLuzNefPDpuYzZT/uJe39vm7o/8AeAYu4ba3VIlDRcN0IteF3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727097970; c=relaxed/simple;
-	bh=Yf4/nRvCuEzmaiaVcScrGIX1Fqwwbl2EfrCWoGhAWx8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kh+EnEy4d2euvcsllot/4xtsfIMtZCmq9MQwdgEK3cOq53Lx2cdp0aoueUPDrjXdpqKqtDinuQj5Ht6177sG+kcdm6BkrmyHMpSTeWXzcLnoIXtnsbklr8+RuavZSt3CiIelB5O3fRtHopMFqjOLTgU74YbTtwxMffwESiapmA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nZ59gw2f; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c5bca59416so1736958a12.1;
-        Mon, 23 Sep 2024 06:26:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727097967; x=1727702767; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yf4/nRvCuEzmaiaVcScrGIX1Fqwwbl2EfrCWoGhAWx8=;
-        b=nZ59gw2f5RQ5AFdV5MsNKjZ+sRBVGMWhZHw9etFOoKaKdEX5h0fyYZDG23e2EQmzRp
-         RBxBmtNus+WF8k/DWeT7Ct9qeayVIsRiS69fC+fIMn5SCal1v4ZlKCQ2j3DVGZLMBB0D
-         1044IunqJtMVIGcElbY5UouZP67Y2f0LkaDzlJ2GNXHyHkQpg8H7b1yjGbnLBfkjyexB
-         xQvTlzyKZEZGRCpo4q2vqyk0KazIf7d+RHk/jNO+tr7VIqZ267AyjOUuG3Zrvy2WwQE9
-         1pZa9I2cs+sOffAhLjE6+cSEbiutKZkl9pKGDc4HvIWhKd1/v0QsQcS0gN0C7/7mnt5H
-         pm3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727097967; x=1727702767;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Yf4/nRvCuEzmaiaVcScrGIX1Fqwwbl2EfrCWoGhAWx8=;
-        b=MtDRI1v6yXfb8hWGLmJUOtUQiXYLZ0TDrGuUIYvketzO5fyPZvgFojn4uLamJOlG7H
-         tP6Gp2rF1U+fZe2dp/hwrY6U5/ZFXiCyfeIrW6756QdgRsu0RDBqARYal5Cw94Z5g9da
-         86Vc5YElHbsFgQ+SeyfABRgOS+qBRMKUxaApVywxda1Jz4iK/wIrWWy5Eze3kytReuxy
-         CCdpRcry6Mcmq9FGGjqvirvmT/3P4NMMgnPeJj6rgHT+441HdUHdBS6Rn4XtZZHXkfjt
-         KUhT9zbvYqkci6PeW7+0u1qSjvjpTIli3qa31PaAgtk5kKlKxJE8Cfn6hOTzhBYEtiup
-         3urA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8XHJ9KZhorgB0FZ2MBVwPUL4Yn4zjiy4nc34e+wsF9UFp4NATEy8oQTg7m4LJKvD/tfYkIhX/1/Gu@vger.kernel.org, AJvYcCWorGUYHLeoffahUF9dXM5nm/84Px2TU6qIpeRZFYJhlaL8n+a1TxOn1Iz7yWnavSIClCwU3Wp5bNKV1feT@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEhHMMh3pN5o115oncGt/vsrPnI2rA9DJP3Rl1KWeUHRK4rSDv
-	uOV0LmmfWrbzk+AEzb502tINz14mOfgKzggEksYszSp77HhRY5ISKEumSVZ21ybnuwYg/vpkwHJ
-	nfvjneXniWpTv4kWrEUzveutslw==
-X-Google-Smtp-Source: AGHT+IFX6LAbjPZNPZbNmSp+ctjB+4B1CfWLMYqjFYMdeclx8ePL73CjwOMiK5uMOzSTV+LApwjbnwaYTbCyXr4+vi8=
-X-Received: by 2002:a17:907:9443:b0:a8a:7062:23ef with SMTP id
- a640c23a62f3a-a90d561ffd8mr1198840866b.32.1727097966528; Mon, 23 Sep 2024
- 06:26:06 -0700 (PDT)
+	s=arc-20240116; t=1727098028; c=relaxed/simple;
+	bh=dI2jexkoav3yhz6acugRW9+a907CmM5inGbCMhqpRXo=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=PHi93LNJ9VI+UB6qPrACsAIncpHl+kFCMVDErSyHlSXXXnIqEFe7rQstiAzzaeMXeNtO8uSI6aqaw9uCDVrXqsArHLCl9woE23XEXb6QyaQOINbqnI/5e/OHAXKfk9qNvXbwREyEg1tAq9xz5f18AV00zd6hr+/8X6CB1AJ2mq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FXuZGyHF; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727098025;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Uxrw8H9RJR3IFfbc3l75F3IOlJFRvDC/cWL5VOkjHL0=;
+	b=FXuZGyHFXWZGQZ0HbsglXTDVO+Mq5OFRruEBp41NEOP9UOV/sbjgADJHQSiiG3IWcBslAt
+	wXLeF5jo0+NvCYQWNBLx+YeXkqg4m7qnggZNPXdLJe/2yddNX9MLzTKD1stQXXCZlGn5k1
+	dA700CgdvO63fLTZYfVR5+kcV532hdk=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-286-BHMPsk0nOumgYKwG6ROz5A-1; Mon,
+ 23 Sep 2024 09:27:02 -0400
+X-MC-Unique: BHMPsk0nOumgYKwG6ROz5A-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 58DC718FFA5C;
+	Mon, 23 Sep 2024 13:27:00 +0000 (UTC)
+Received: from [10.45.226.79] (unknown [10.45.226.79])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BC39619560AA;
+	Mon, 23 Sep 2024 13:26:58 +0000 (UTC)
+Date: Mon, 23 Sep 2024 15:26:56 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Dipendra Khadka <kdipendra88@gmail.com>
+cc: agk@redhat.com, snitzer@kernel.org, dm-devel@lists.linux.dev, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Return error code for failure input for sscanf in
+ parse_cblock_range()
+In-Reply-To: <20240922164702.49615-1-kdipendra88@gmail.com>
+Message-ID: <5c258e04-10b4-749d-6f15-94a432ab652e@redhat.com>
+References: <20240922164702.49615-1-kdipendra88@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240920181231.20542-1-erezgeva@nwtime.org> <20240920181231.20542-2-erezgeva@nwtime.org>
- <4e0cf43c-4843-451c-ac6f-86775dbccb2b@linaro.org> <CANeKEMOmhAPM1j1_ihzcC2wL6jKsWXPCGfZs+euS8mRvtqgE5A@mail.gmail.com>
- <D4DLQGLJSKPB.3OOW4RU9Q3K5O@kernel.org>
-In-Reply-To: <D4DLQGLJSKPB.3OOW4RU9Q3K5O@kernel.org>
-From: Erez <erezgeva2@gmail.com>
-Date: Mon, 23 Sep 2024 15:25:29 +0200
-Message-ID: <CANeKEMPSoUu7GW5bL8nuyC5xCKG7Tt0=SvWTL_CcX5oebqN_YA@mail.gmail.com>
-Subject: Re: [PATCH v5 1/5] mtd: spi-nor: core: add manufacturer flags
-To: Michael Walle <mwalle@kernel.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Erez Geva <erezgeva@nwtime.org>, 
-	linux-mtd@lists.infradead.org, Pratyush Yadav <pratyush@kernel.org>, 
-	linux-kernel@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, devicetree@vger.kernel.org, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Esben Haabendal <esben@geanix.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Mon, 23 Sept 2024 at 12:46, Michael Walle <mwalle@kernel.org> wrote:
->
-> Hi,
->
-> > I would gladly remove the obsolete mx25l12805d.
->
-> Why? I don't see any need for that.
+Hi
 
-Maybe because we do not want compatibility table?
+I skimmed through the sscanf source code and it seems that it can't return 
+a negative value at all.
 
->
-> > > If there isn't any way to distinguish the flashes at runtime (which I
-> > > doubt/challenge btw), then as a last resort we introduce a dedicated
-> > > compatible for the flash in cause and specify all needed parameters in a
-> > > dedicated flash entry. This shall be more generic as further flash
-> > > parameters can be statically specified in the dedicated flash entry,
-> > > less invasive for dt, and less confusing for people when they decide
-> > > whether to use OTP or not. OTP params in device tree is a no-go.
-> > >
-> > > But again, you have to prove why you can't distinguish the flash at
-> > > runtime before introducing a new flash compatible. So don't go this path
-> > > before sharing with us what you're trying to achieve.
-> >
-> > You keep sending me contradictory messages.
-> >
-> > I told you we can not "guess" OTP settings based on JEDEC ID and
-> > SFDP existence.
->
-> What are you trying to achieve here? I've told you we are trying
-> hard to figure out everything out at runtime. I'd suggest you start
-> with one particular device where you want OTP support for. If the
-> flash id is already in our database, find a way to distinguish
-> between the old and the new one; probably by looking at some SFDP
-> parameters. No need for any new compatibility. Don't try to solve the
-> problem for all the chips out there.
+I think, this should be:
+	r = sscanf(str, "%llu-%llu%c", &b, &e, &dummy);
+	if (r != 2)
+		return -EINVAL;
 
-I start with "Add support for SPI-NOR Macronix OTP".
-With one flash chip and move to another one chip.
-I never suggested adding multiple.
+Mikulas
 
-Yet, after some research I find that all Macronix chips in the last 15
-years have SFDP.
-So I added a second patch to always read the SFDP of Macronix chips.
-Perhaps I should send it separately,as it seems to confuse you.
+On Sun, 22 Sep 2024, Dipendra Khadka wrote:
 
-And no, I do not try to support all chips, just to remove the
-restriction that if
-Macronix reuses an old chip JEDEC ID, we skip the SFDP of the new
-chip, because we have the old chip in the compatibility table,
-although there are two distinct chips. They use different model names.
-There is no reason to differentiate chips in that way, at least not
-with Macronix chips.
+> Smatch reported following:
+> '''
+> drivers/md/dm-cache-target.c:3204 parse_cblock_range() warn: sscanf doesn't return error codes
+> drivers/md/dm-cache-target.c:3217 parse_cblock_range() warn: sscanf doesn't return error codes
+> '''
+> 
+> Since, the only negative value that is returned by sscanf is -1.
+> Returning -ENVAL when sscanf returns -1.
+> 
+> Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
+> ---
+>  drivers/md/dm-cache-target.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/md/dm-cache-target.c b/drivers/md/dm-cache-target.c
+> index 17f0fab1e254..c35d65e310d6 100644
+> --- a/drivers/md/dm-cache-target.c
+> +++ b/drivers/md/dm-cache-target.c
+> @@ -3200,8 +3200,8 @@ static int parse_cblock_range(struct cache *cache, const char *str,
+>  	 * Try and parse form (ii) first.
+>  	 */
+>  	r = sscanf(str, "%llu-%llu%c", &b, &e, &dummy);
+> -	if (r < 0)
+> -		return r;
+> +	if (r == -1)
+> +		return -EINVAL;
+>  
+>  	if (r == 2) {
+>  		result->begin = to_cblock(b);
+> @@ -3213,8 +3213,8 @@ static int parse_cblock_range(struct cache *cache, const char *str,
+>  	 * That didn't work, try form (i).
+>  	 */
+>  	r = sscanf(str, "%llu%c", &b, &dummy);
+> -	if (r < 0)
+> -		return r;
+> +	if (r == -1)
+> +		return -EINVAL;
+>  
+>  	if (r == 1) {
+>  		result->begin = to_cblock(b);
+> -- 
+> 2.43.0
+> 
 
->
-> Again, the reason why we are trying hard to determine that at
-> runtime is that these flashes are usually second source devices and
-> a manufacturer might just replace it with a (more or less)
-> compatible one. Therefore, the less information we put into the
-> devicetree the better. So before you are sending a new version with
-> the flash compatibles, you actually have to convince us that there
-> is no other way of knowing what kind of flash there is on your
-> board except for providing the name by the firmware.
-
-No, reading the SFDP is great.
-Except for OTP parameters/configuration.
-As there is not way to find OTP parameters using JEDEC ID/SFDP
-So as I understand there are only 2 ways to set the OTP parameters:
-* Use a compatibility.
-* Use dynamic OTP configuration, through DT, sysfs,
-
-Erez
-
-
->
-> -michael
 
