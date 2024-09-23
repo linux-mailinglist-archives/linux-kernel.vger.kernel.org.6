@@ -1,115 +1,180 @@
-Return-Path: <linux-kernel+bounces-335922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49A1A97EC99
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:56:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6414197EC9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:58:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C28A6B21FA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:56:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 190981F221CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F5419CC16;
-	Mon, 23 Sep 2024 13:56:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EEA619CC14;
+	Mon, 23 Sep 2024 13:58:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="v//RNm/F"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Pghwibwy"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7081953A9
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 13:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84536BFC7;
+	Mon, 23 Sep 2024 13:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727099805; cv=none; b=Bc+oBfvA/KD8kkIRHFF7iCIz4FTsCuw34v/JN3GnyBmTstFi8rNs8dM2JMg1UOE0i9SHdIeMeUWARfOC7rSNSTrkhj+Q4Hl97KN5ioeINH5QKyOqP0j5eeDCa9nT0YHU9DukHOOv1RDZ1iKErNMfqtaNUJCxeZrgqR8iIHxtMu0=
+	t=1727099882; cv=none; b=SXSkX9z9tXSaf6fKQj9Xk6Zn+BvkE3f1nQwOFQ+S967AMeuwK3Q5U1lY6+mSfDcAo7a7VFL25m0EndbErV5Tq7GexKyvqx8DdUi+JpYy9j4BD9WGtW33bZ+1/1G9V8lhzJkUDS3sL2zJFcEXX0ao/BnJsbBztpoJPDQBFTIbFMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727099805; c=relaxed/simple;
-	bh=giFoMYao8KNNQ2XYXQni00j6S3OL851OX7kh/nDgy7c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IedP9sapjGXWvlNNZvzSLQUqoO1I4Z4+7dal1uYGv+cNm+upteDrsOeVszr+QxEzffqNRCPHKZmmz1O6TTSNdWoS9rKR7gtaQSOU2tyFYzxwN6l5dwWAHWzdtjKL+Sw944JSnUMDCElopGk9EvDJ1xnL0JL31WhDWvy53qKf56k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=v//RNm/F; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3787ddbd5a2so2476222f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 06:56:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727099802; x=1727704602; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K65OUriigmcjw716sL+YS2krxSoNMHfBErxI4saQaak=;
-        b=v//RNm/FDarDxZrGa/Xnj9Csbbe8bxtz53PWMzgI0BtJ+txNICkRLo3C1lJ+pIyItS
-         LiKqTxyPVbMf3kxtfKOf/zVL5ckYkE+m97nPhB/pcxBiIujaurAkdjgx0jKtukvVvmW0
-         lgYT6mE7vODyMn5cv6UvAp7lrREgL/mwTSkRB1ZXoK4wZcE1rtci2UK0ifmPZ/7AWRFS
-         cWFm8mmuSmIPep7C/vjKj03aUF7Fuj60bOlSZw9ZU2w3veh/dQmJmk6QKZkob8pGaVfM
-         x0RE9GJm/VAYG+Xtw8xAU/DD3aDaylX8V677NNCi+f354jd/FlxBi6/yqQxm0cuFwSun
-         rkRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727099802; x=1727704602;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K65OUriigmcjw716sL+YS2krxSoNMHfBErxI4saQaak=;
-        b=B1cCD+PgYE2drTkr5KJ2kBnE59rPNaPCga57M5oIeEM79J+NyBfpp4akdcZUKj5tXX
-         f51LWejo41RKHj8SscIQUPVjYqg4vzWOL/M3UlnHZqmnaylDzJ32NyM9BhPomqjBT+VU
-         WUb9yxmQbLE/sVi49EpORV7zqbBrNAp1m56kF1Q6OcYj6f4eFVM+ttHicDukgBP1pslJ
-         EYXXL0h/PC6Gk5UeZebRMJUG1PFFOiz2Wimw3QXNUMlQQJ63uL3qKgCUAWsh2eXrGxV4
-         g+1L6fbOqUYaLxmcqCBZEq/xGFDZeL/mJdb1G9gE3omX8JJWiVKYn9qjK6ApJDpm8MV5
-         pUaA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOy7NmdgMjp1mGTM8SBTd4nWWdH0aMBFEqYd3kJaTxXawVbQr1fgjzGvEwxrO4g9GNzhrleZ2MU72poaQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOqIX7ex239xP9qy5XTaMDV9ksK4bLU+EGUSxLhQWNA09Ti/ah
-	Jq9M2Mdmm6cGFyR4iwc4G0VTScmQEL4DDy4xYSskLSgD3I0lGBJYbn7Ignsad9qgMSK5y0H1zbT
-	OYC43hMy+qre2JElrPrvONvo5OJBvRyw121Ab
-X-Google-Smtp-Source: AGHT+IGu+WNCdU6LbNA3wlsR43apKaz3iqjvGtP98waIXa8a0szU+JAi5FBbZVSSRy4+UhCRZsAvH2ClsaPWJOBmbIM=
-X-Received: by 2002:a5d:6b43:0:b0:374:bcdc:625f with SMTP id
- ffacd0b85a97d-37a42398cb5mr5439848f8f.51.1727099801892; Mon, 23 Sep 2024
- 06:56:41 -0700 (PDT)
+	s=arc-20240116; t=1727099882; c=relaxed/simple;
+	bh=lIUOOaZTwcZr8QsP94GIOV28sHI8sFismN3IMmEQm8o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LtHNkWFlTCnu5Odu5WNsFTo3LRQ4kG5qH6NeTALYpMznq0q1LYlbVZ7PKqZ7frChfruSM4YWhtLy4jO81hGbcnfSx+AnGUBGVackwkebR7uM/Bl+o0uQKt4GS5lJfuUJpSu1fDylJHBIDXMz7wl+EruJ8LVMc8uJH9WdySlpzXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Pghwibwy; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from localhost.localdomain (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: lukma@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id D803288AD7;
+	Mon, 23 Sep 2024 15:57:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1727099878;
+	bh=L2NnDMl4BqxEyLz16GjGxVE+3eLoWwP7TkmLSj4ceLk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Pghwibwy9M+HwnP+9bt13d2G0/1BWvP9ybmFSiXz/mpt+XqCPfnl+XqvPdrCULF7p
+	 6BC4tQHOZfx0+SxMZICkceABisnf8HgMj3OFddcKBU1994wtMBNWG8vaz9T0or1Qzf
+	 lP2ou7QOICgJnI1Z2qp7XnFrJNAg/eNRhxeKqkGruvr44b+wre1vdpYHhYTo5+rSCY
+	 w65K960ex4AF/bSf7X5c/eFs7R9Uv/2b14yz9M3raLq6qJHUKMSPUUQ3wQHkfJCuc1
+	 dKesJMApjY8hO0KT8lRnajZCiyYRTDi3iKIoa4nL1Mzxjsdj9kdIzBeD/DmWX8fFNO
+	 VEqENEQvZVQ4w==
+From: Lukasz Majewski <lukma@denx.de>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marek Vasut <marex@denx.de>,
+	Stefan Agner <stefan@agner.ch>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukasz Majewski <lukma@denx.de>
+Subject: [PATCH] dt-bindings: lcdif: Add support for specifying display with timings
+Date: Mon, 23 Sep 2024 15:57:44 +0200
+Message-Id: <20240923135744.2813712-1-lukma@denx.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911225449.152928-2-dakr@kernel.org> <20240921153315.70860-1-dakr@kernel.org>
-In-Reply-To: <20240921153315.70860-1-dakr@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 23 Sep 2024 15:56:28 +0200
-Message-ID: <CAH5fLgievsJOe7QET+Wh2c0upygv-nhSnOuTN8K_QkruLwOPgA@mail.gmail.com>
-Subject: Re: [RFC PATCH] rust: alloc: pass `old_layout` to `Allocator`
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	benno.lossin@proton.me, a.hindborg@samsung.com, akpm@linux-foundation.org, 
-	daniel.almeida@collabora.com, faith.ekstrand@collabora.com, 
-	boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, 
-	zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, 
-	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Sat, Sep 21, 2024 at 5:33=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
-wrote:
-> @@ -84,11 +92,18 @@ unsafe fn call(
->          &self,
->          ptr: Option<NonNull<u8>>,
->          layout: Layout,
-> +        old_layout: Layout,
->          flags: Flags,
->      ) -> Result<NonNull<[u8]>, AllocError> {
->          let size =3D aligned_size(layout);
->          let ptr =3D match ptr {
-> -            Some(ptr) =3D> ptr.as_ptr(),
-> +            Some(ptr) =3D> {
-> +                if old_layout.size() =3D=3D 0 {
-> +                    ptr::null()
-> +                } else {
-> +                    ptr.as_ptr()
-> +                }
-> +            }
+Up till now the fsl,lcdif.yaml was requiring the "port" property as a
+must have to specify the display interface on iMX devices.
 
-This is making Allocator work with zero-sized types, which deviates
-from std. We should not do that without a reason. What is the reason?
+However, it shall also be possible to specify the display only with
+passing its timing parameters (h* and v* ones) via "display" property:
+(as in
+Documentation/devicetree/bindings/display/panel/display-timings.yaml).
 
-Alice
+Such approach has already been used (also in the mainline) with several
+imx28, imx5x and imx6q devices.
+
+This change allows them to pass the DT_SCHEMA check without issues.
+
+Signed-off-by: Lukasz Majewski <lukma@denx.de>
+---
+ .../bindings/display/fsl,lcdif.yaml           | 51 ++++++++++++++++++-
+ 1 file changed, 49 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/display/fsl,lcdif.yaml b/Documentation/devicetree/bindings/display/fsl,lcdif.yaml
+index 8e3a98aeec32..14bb64b5b72d 100644
+--- a/Documentation/devicetree/bindings/display/fsl,lcdif.yaml
++++ b/Documentation/devicetree/bindings/display/fsl,lcdif.yaml
+@@ -50,6 +50,10 @@ properties:
+       - const: disp_axi
+     minItems: 1
+ 
++  display:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: The phandle for display timing information
++
+   dmas:
+     items:
+       - description: DMA specifier for the RX DMA channel.
+@@ -64,6 +68,9 @@ properties:
+       - description: LCDIF Error interrupt
+     minItems: 1
+ 
++  lcd-supply:
++    description: Regulator for LCD supply voltage.
++
+   power-domains:
+     maxItems: 1
+ 
+@@ -76,7 +83,10 @@ required:
+   - reg
+   - clocks
+   - interrupts
+-  - port
++
++patternProperties:
++  'display([0-9])':
++    description: Node with display timing parameters
+ 
+ additionalProperties: false
+ 
+@@ -197,5 +207,42 @@ examples:
+             };
+         };
+     };
+-
++  - |
++    lcdif: lcdif@80030000 {
++        compatible = "fsl,imx28-lcdif";
++        reg = <0x80030000 0x2000>;
++        interrupts = <38>;
++        clocks = <&clks 55>;
++        dmas = <&dma_apbh 13>;
++        dma-names = "rx";
++        pinctrl-names = "default";
++        pinctrl-0 = <&lcdif_24bit_pins_a>, <&lcdif_sync_pins_bttc>,
++                 <&lcdif_reset_pins_bttc>;
++        lcd-supply = <&reg_3v3>;
++        display = <&display0>;
++        status = "okay";
++
++        display0: display0 {
++                bits-per-pixel = <32>;
++                bus-width = <24>;
++                display-timings {
++                        native-mode = <&timing0>;
++                        timing0: timing0 {
++                                clock-frequency = <6500000>;
++                                hactive = <320>;
++                                vactive = <240>;
++                                hfront-porch = <20>;
++                                hback-porch = <38>;
++                                hsync-len = <30>;
++                                vfront-porch = <4>;
++                                vback-porch = <14>;
++                                vsync-len = <4>;
++                                hsync-active = <0>;
++                                vsync-active = <0>;
++                                de-active = <0>;
++                                pixelclk-active = <1>;
++                        };
++                };
++        };
++    };
+ ...
+-- 
+2.39.2
+
 
