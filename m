@@ -1,363 +1,224 @@
-Return-Path: <linux-kernel+bounces-336258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8048897F132
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 21:31:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00D7097F134
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 21:32:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3FA61F21ECA
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 19:31:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64E42282EF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 19:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0E619F413;
-	Mon, 23 Sep 2024 19:31:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8020419FA8C;
+	Mon, 23 Sep 2024 19:32:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ROwWIMLS"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eN1patVj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A93FD1CA84;
-	Mon, 23 Sep 2024 19:31:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE7F11CA84;
+	Mon, 23 Sep 2024 19:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727119882; cv=none; b=BoZ0/uAvy2vmGGY/hk98oWYQUjj1J76DDaD9W06dkd356H9+kpElG7M0q2+gI5prrvh1d8kVv5A5MPgKjhD2i/RHrwXqwdM5sV2TNrFHy4P/ofpA5QzZaSzDvpyE0N64MHeALpGhKDv532WBqK9nm54HZ8NbUm14x1yWrHi4txg=
+	t=1727119960; cv=none; b=BmqaWg8T3qSZ2ZFJEy90D1gSrjZlXGQbAo3UbAcOoXQQYvWiVi+0lt0j3yERvoSMQiP3j8b7yrQgnRKnPKLTpz5e+x6m5F7xLKcsu6Xl4W1nmI0CLoaCkyb1hnYRIfE0LwvIzk6s+qKnf6zkcHtvj58tEZ0XfFWMTz6LjbMOU+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727119882; c=relaxed/simple;
-	bh=5QoGy3sZAXp80ryoI6WSGDV40fZexoYClEKWIiiWSn0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LIqmjBH9ShFbB9xblKU29bdNJoRCPAombHMyTrQVYv6W7nGHGFDMESApTSj18XNWaHJFjrelkD6s+HDXEIA5xNlZTdRpNlAeSc/0TLCAKmtncaOwMohGR1yrSA/AUn+Pv/im20AcD08MCXb8Ct3jsZpzJVjgjkWQ9QG7NhIaq0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ROwWIMLS; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a8a6d1766a7so671614366b.3;
-        Mon, 23 Sep 2024 12:31:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727119879; x=1727724679; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=JvFm2ki9nIUnp2WwBMamty9rjZzUB1dJpgqUpdQxORc=;
-        b=ROwWIMLS0JJhpprXnIVp1vGwruU+f0sWKnVcKyCxPMjZHzy/adtaw1Sdi4ZeW0e7rL
-         gdqmD0NqsFw7BVzAmXddF7gLIv6fwt7FHmMZTh5MIflhCmLkaW8VQd8bDHacLcH6bBWO
-         bDHgU6RuUSFoPCvD3rSHSyozCeMtwKkm6UdKB5rtInKL3TMEaNWPty62zLmlQXFOFqpl
-         CzPc8biKTsLDqo7cEWfafrExKIdTxGoo82zQdWOBZYjW0muJTRh5ESMAuTS4P3rolEJU
-         gAp26ra/P9Ip7GkHITqTGmjAKZbzjCx8ugQMHcwA6noRWHIi2bj1hgrUfxtZb4tzQFMa
-         vH1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727119879; x=1727724679;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JvFm2ki9nIUnp2WwBMamty9rjZzUB1dJpgqUpdQxORc=;
-        b=LysPKkAZhWmtJZANrDftgmngh/L/ayT/zAcXPToD19l13JipxvcyRij8XpP6RHmChl
-         uu4K9A0dYBf2mtv3S/qZoXPTJEe4IvhfguEtdpLxm1U8BLKctD9pgKeVm7/ePacLmJj6
-         zdky3AIIHWNl68keNae3pFDYEIPNDSb0cpxU32YDR5FrO7RbxmDBO+wh9FfNL2DOTyEE
-         uRdxfZmEIb2WiKlYMqKaJwcrH3D1kYrG1IMOvmH0ec3CJxMt0MkD+W1Jujr3bw0eGjZE
-         YrdjCaxZiTJ/jYzk7f65nozV67eeEmprF3KILi2WDYSLZGm15pSZKMi3WUxcefR80WQI
-         S/TA==
-X-Forwarded-Encrypted: i=1; AJvYcCWMtWdd+SP8mMp3RJ772HFI4GCKts5/Nfe4esOI4A1qt/KGBy1lv25XtngOILvvWjkvPGIdGdrJ7BASsvdf@vger.kernel.org, AJvYcCWWba4Fn9yhF6vn0o/8hxv44tX+oT+L3BsIn1JutmKb6k0OPLuEt9HOoXHICzOzqR/Nol4BnDIY08pH@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZ7tHEvKg9AlG4+Ml7hKJdIFOBn+5HCcBO8h1EywCKuYSSPIOE
-	/xsbe4S3ZAA/UcZrUwzf10ERnFE9t1Zm8HcXXJ/zs8NF4OK+0Hu9QHf4CSkRD8y46bGFjGNyGAD
-	oW5NpNyYanysqDSXn5dd4VhggVg==
-X-Google-Smtp-Source: AGHT+IGA1KOj/IV5yTLC+zun0hxtguIwmadLjnWwJCk7oStoobj3oho5giIf2no/+J9EZG8GSFPd3aUhBxXgkYbjke8=
-X-Received: by 2002:a17:907:e25a:b0:a86:8832:2fb7 with SMTP id
- a640c23a62f3a-a90d4fe825bmr1174850166b.20.1727119878575; Mon, 23 Sep 2024
- 12:31:18 -0700 (PDT)
+	s=arc-20240116; t=1727119960; c=relaxed/simple;
+	bh=DABQX/iCGMJU8NuVOhReQv5tbV8tfe8JZw5vnzcAeNo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QX0B0ra02RYwVkqFwAxvs+pn8emdFOSIZQHxbdPsNUlL8+rAqOvjLaL+avdq74nfbUzIWCiIVlsU+1bOFXjvn+JmY6dYahAAh/3Day+zZyTfo3fF7/kaRnZPxJgkLUDG7hgKh14HmZ/S0lIsTn6UJQ7A3TLITqWj+9R40kcbBHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eN1patVj; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727119959; x=1758655959;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=DABQX/iCGMJU8NuVOhReQv5tbV8tfe8JZw5vnzcAeNo=;
+  b=eN1patVjzkDqgaxfqET6Va8rJ2tb8OQRLy/r/YExzzZA2bo2E6ga3C+X
+   hZpIvSR5EKpqcpnxgxLIxTOaILugFuaH9sh/1kBlfnKy1PCocnKOgaOxJ
+   98s7RuUKTJtegfTX5HpKdSGKgQ3e/d4gQws6UiWnHwf80ijwUH6AviXh4
+   nAqoX0XhQ9Ow0qmTS6cuJ3xnakOEI6APHG0MVO2t5PeWgLMRuAQ+4nb/7
+   3pcB928K9Dfe0Z+hWRfkXBpZA7HETOjC9m3ANqZh8nSE+0Lx5byFfDzgq
+   Hh5jomuwE45c8YD95w5NihJKzelbgNQ4cSNk0WJsbR9jgSfjztAVCbudc
+   A==;
+X-CSE-ConnectionGUID: kBX1Hn/fTN+zh/1Whnbp7A==
+X-CSE-MsgGUID: gC/O4xu4RECgfqjOZDPSSA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="26181069"
+X-IronPort-AV: E=Sophos;i="6.10,252,1719903600"; 
+   d="scan'208";a="26181069"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 12:32:38 -0700
+X-CSE-ConnectionGUID: r5QOLSUETqmSPiXUBqiJxQ==
+X-CSE-MsgGUID: fJe58bA8S/ym19qMbLWPoQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,252,1719903600"; 
+   d="scan'208";a="71440777"
+Received: from spandruv-desk1.amr.corp.intel.com ([10.125.110.193])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 12:32:38 -0700
+Message-ID: <c7c2665bf433a1648a3f7dff20ac9976ef1defe3.camel@linux.intel.com>
+Subject: Re: [PATCH v2] HID: ishtp-hid-client: replace fake-flex arrays with
+ flex-array members
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: Kees Cook <kees@kernel.org>
+Cc: Erick Archer <erick.archer@outlook.com>, Jiri Kosina <jikos@kernel.org>,
+  Benjamin Tissoires <bentiss@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-input@vger.kernel.org,  linux-hardening@vger.kernel.org
+Date: Mon, 23 Sep 2024 12:32:37 -0700
+In-Reply-To: <20240923002249.it.617-kees@kernel.org>
+References: <20240923002249.it.617-kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240920181231.20542-1-erezgeva@nwtime.org> <20240920181231.20542-2-erezgeva@nwtime.org>
- <4e0cf43c-4843-451c-ac6f-86775dbccb2b@linaro.org> <CANeKEMOmhAPM1j1_ihzcC2wL6jKsWXPCGfZs+euS8mRvtqgE5A@mail.gmail.com>
- <2c87568d-3caa-4162-91de-094684f1b268@linaro.org> <CANeKEMO4ckeJZHKEOKHVeamPzR045jpwkXWfJS9S6rBiMTayuQ@mail.gmail.com>
- <688d3e68-c339-4a44-b6b5-366dd5f12965@linaro.org> <CANeKEMNKF5WtVgzxbMnLFsqRHNOz=+gD-if8aBqsWwjgDvz3GA@mail.gmail.com>
- <ca2c03f7-0769-4b2a-b743-3ebda9e29755@linaro.org>
-In-Reply-To: <ca2c03f7-0769-4b2a-b743-3ebda9e29755@linaro.org>
-From: Erez <erezgeva2@gmail.com>
-Date: Mon, 23 Sep 2024 21:30:41 +0200
-Message-ID: <CANeKEMNdGvteumpvLHhDoiVoZwPJ4iOs+Ej8KDoXR9-Vz0-rvQ@mail.gmail.com>
-Subject: Re: [PATCH v5 1/5] mtd: spi-nor: core: add manufacturer flags
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Erez Geva <erezgeva@nwtime.org>, linux-mtd@lists.infradead.org, 
-	Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, linux-kernel@vger.kernel.org, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Esben Haabendal <esben@geanix.com>
-Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 23 Sept 2024 at 19:53, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
->
->
->
-> On 9/23/24 3:51 PM, Erez wrote:
-> > On Mon, 23 Sept 2024 at 16:18, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
->
-> cut
->
-> >>> After reading a lot of Mactronix datasheets, I suggest also reading
-> >>> all SFDP to all  Mactronix chips.
-> >>
-> >> Why? It seems too invasive. Generally it is not recommended to issue
-> >> unsupported commands to flashes. Change just the flash that you use and
-> >> can test.
-> >
-> > It is not, All Mactronix chips in the last 15 years have SFDP.
->
-> This is false. I worked with an octal macronix flash that didn't define
-> SFDP tables, mx66something.
+T24gU3VuLCAyMDI0LTA5LTIyIGF0IDE3OjIyIC0wNzAwLCBLZWVzIENvb2sgd3JvdGU6Cj4gRnJv
+bTogRXJpY2sgQXJjaGVyIDxlcmljay5hcmNoZXJAb3V0bG9vay5jb20+Cj4gCj4gT25lLWVsZW1l
+bnQgYXJyYXlzIGFzIGZha2UgZmxleCBhcnJheXMgYXJlIGRlcHJlY2F0ZWRbMV0gYXMgdGhlCj4g
+a2VybmVsCj4gaGFzIHN3aXRjaGVkIHRvIEM5OSBmbGV4aWJsZS1hcnJheSBtZW1iZXJzIGluc3Rl
+YWQuIFRoaXMgY2FzZSwKPiBob3dldmVyLAo+IGhhcyBtb3JlIGNvbXBsZXhpdHkgYmVjYXVzZSBp
+dCBpcyBhIGZsZXhpYmxlIGFycmF5IG9mIGZsZXhpYmxlIGFycmF5cwo+IGFuZCB0aGlzIHBhdGNo
+IG5lZWRzIHRvIGJlIHJlYWR5IHRvIGVuYWJsZSB0aGUgbmV3IGNvbXBpbGVyIGZsYWcKPiAtV2Zs
+ZXgtYXJyYXktbWVtYmVyLW5vdC1hdC1lbmQgKGNvbWluZyBpbiBHQ0MtMTQpIGdsb2JhbGx5Lgo+
+IAo+IFNvLCBkZWZpbmUgYSBuZXcgc3RydWN0IHR5cGUgZm9yIHRoZSBzaW5nbGUgcmVwb3J0czoK
+PiAKPiBzdHJ1Y3QgcmVwb3J0IHsKPiDCoMKgwqDCoMKgwqDCoMKgdWludDE2X3Qgc2l6ZTsKPiDC
+oMKgwqDCoMKgwqDCoMKgc3RydWN0IGhvc3RpZl9tc2dfaGRyIG1zZzsKPiB9IF9fcGFja2VkOwo+
+IAo+IGJ1dCB3aXRob3V0IHRoZSBwYXlsb2FkIChmbGV4IGFycmF5KSBpbiBpdC4gQW5kIGFkZCB0
+aGlzIHBheWxvYWQgdG8KPiB0aGUKPiAiaG9zdGlmX21zZyIgc3RydWN0dXJlLiBUaGlzIHdheSwg
+aW4gdGhlICJyZXBvcnRfbGlzdCIgc3RydWN0dXJlIHdlCj4gY2FuCj4gZGVjbGFyZSBhIGZsZXgg
+YXJyYXkgb2Ygc2luZ2xlIHJlcG9ydHMgd2hpY2ggbm93IGRvIG5vdCBjb250YWluCj4gYW5vdGhl
+cgo+IGZsZXggYXJyYXkuCj4gCj4gc3RydWN0IHJlcG9ydF9saXN0IHsKPiDCoMKgwqDCoMKgwqDC
+oMKgWy4uLl0KPiDCoMKgwqDCoMKgwqDCoCBzdHJ1Y3QgcmVwb3J0IHJlcG9ydHNbXTsKPiB9IF9f
+cGFja2VkOwo+IAo+IFRoZXJlZm9yZSwgdGhlICJzdHJ1Y3QgaG9zdGlmX21zZyIgaXMgbm93IG1h
+ZGUgdXAgb2YgYSBoZWFkZXIgYW5kIGEKPiBwYXlsb2FkLiBBbmQgdGhlICJzdHJ1Y3QgcmVwb3J0
+IiB1c2VzIG9ubHkgdGhlICJob3N0aWZfbXNnIiBoZWFkZXIuCj4gVGhlIHBlcmZlY3Qgc29sdXRp
+b24gd291bGQgYmUgZm9yIHRoZSAicmVwb3J0IiBzdHJ1Y3R1cmUgdG8gdXNlIHRoZQo+IHdob2xl
+ICJob3N0aWZfbXNnIiBzdHJ1Y3R1cmUgYnV0IHRoaXMgaXMgbm90IHBvc3NpYmxlIGR1ZSB0byBu
+ZXN0ZWQKPiBmbGV4aWJsZSBhcnJheXMuIEFueXdheSwgdGhlIGVuZCByZXN1bHQgaXMgZXF1aXZh
+bGVudCBzaW5jZSB0aGlzCj4gcGF0Y2gKPiBkb2VzIGF0dGVtcHQgdG8gY2hhbmdlIHRoZSBiZWhh
+dmlvdXIgb2YgdGhlIGNvZGUuCj4gCj4gTm93IGFzIHdlbGwsIHdlIGhhdmUgbW9yZSBjbGFyaXR5
+IGFmdGVyIHRoZSBjYXN0IGZyb20gdGhlIHJhdyBieXRlcwo+IHRvCj4gdGhlIG5ldyBzdHJ1Y3R1
+cmVzLiBSZWZhY3RvciB0aGUgY29kZSBhY2NvcmRpbmdseSB0byB1c2UgdGhlIG5ldwo+IHN0cnVj
+dHVyZXMuCj4gCj4gQWxzbywgdXNlICJjb250YWluZXJfb2YoKSIgd2hlbmV2ZXIgd2UgbmVlZCB0
+byByZXRyaWV2ZSBhIHBvaW50ZXIgdG8KPiB0aGUgZmxleGlibGUgc3RydWN0dXJlLCB0aHJvdWdo
+IHdoaWNoIHdlIGNhbiBhY2Nlc3MgdGhlIGZsZXhpYmxlCj4gYXJyYXkKPiBpZiBuZWVkZWQuCj4g
+Cj4gTGluazoKPiBodHRwczovL3d3dy5rZXJuZWwub3JnL2RvYy9odG1sL25leHQvcHJvY2Vzcy9k
+ZXByZWNhdGVkLmh0bWwjemVyby1sZW5ndGgtYW5kLW9uZS1lbGVtZW50LWFycmF5cwo+IMKgWzFd
+Cj4gQ2xvc2VzOiBodHRwczovL2dpdGh1Yi5jb20vS1NQUC9saW51eC9pc3N1ZXMvMzMzCj4gU2ln
+bmVkLW9mZi1ieTogRXJpY2sgQXJjaGVyIDxlcmljay5hcmNoZXJAb3V0bG9vay5jb20+Cj4gTGlu
+azoKPiBodHRwczovL2xvcmUua2VybmVsLm9yZy9yL0FTOFBSMDJNQjcyMzc2MENCOTM5NDIzNzBF
+OTJGMDA2MzhCRjcyQEFTOFBSMDJNQjcyMzcuZXVycHJkMDIucHJvZC5vdXRsb29rLmNvbQo+IFtr
+ZWVzOiB0d2Vha2VkIGNvbW1pdCBsb2cgYW5kIGRyb3BwZWQgc3RydWN0X3NpemUoKSB1c2VzXQo+
+IFNpZ25lZC1vZmYtYnk6IEtlZXMgQ29vayA8a2Vlc0BrZXJuZWwub3JnPgpBY2tlZC1ieTogU3Jp
+bml2YXMgUGFuZHJ1dmFkYSA8c3Jpbml2YXMucGFuZHJ1dmFkYUBsaW51eC5pbnRlbC5jb20+Cgo+
+IC0tLQo+IMKgdjI6IC0gdXBkYXRlIGJhc2VkIG9uIGZlZWRiYWNrCj4gwqByZmM6Cj4gaHR0cHM6
+Ly9sb3JlLmtlcm5lbC5vcmcvbGttbC9BUzhQUjAyTUI3MjM3NjBDQjkzOTQyMzcwRTkyRjAwNjM4
+QkY3MkBBUzhQUjAyTUI3MjM3LmV1cnByZDAyLnByb2Qub3V0bG9vay5jb20vCj4gLS0tCj4gwqBk
+cml2ZXJzL2hpZC9pbnRlbC1pc2gtaGlkL2lzaHRwLWhpZC1jbGllbnQuYyB8IDI1ICsrKysrKysr
+KystLS0tLS0tLQo+IC0tCj4gwqBkcml2ZXJzL2hpZC9pbnRlbC1pc2gtaGlkL2lzaHRwLWhpZC5o
+wqDCoMKgwqDCoMKgwqAgfCAxMSArKysrKy0tLS0KPiDCoDIgZmlsZXMgY2hhbmdlZCwgMTkgaW5z
+ZXJ0aW9ucygrKSwgMTcgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvaGlk
+L2ludGVsLWlzaC1oaWQvaXNodHAtaGlkLWNsaWVudC5jCj4gYi9kcml2ZXJzL2hpZC9pbnRlbC1p
+c2gtaGlkL2lzaHRwLWhpZC1jbGllbnQuYwo+IGluZGV4IGZiZDRmOGVhMTk1MS4uY2IwNGNkMWQ5
+ODBiIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvaGlkL2ludGVsLWlzaC1oaWQvaXNodHAtaGlkLWNs
+aWVudC5jCj4gKysrIGIvZHJpdmVycy9oaWQvaW50ZWwtaXNoLWhpZC9pc2h0cC1oaWQtY2xpZW50
+LmMKPiBAQCAtNzAsMTAgKzcwLDEwIEBAIHN0YXRpYyB2b2lkIHByb2Nlc3NfcmVjdihzdHJ1Y3Qg
+aXNodHBfY2wKPiAqaGlkX2lzaHRwX2NsLCB2b2lkICpyZWN2X2J1ZiwKPiDCoMKgwqDCoMKgwqDC
+oMKgdW5zaWduZWQgY2hhciAqcGF5bG9hZDsKPiDCoMKgwqDCoMKgwqDCoMKgc3RydWN0IGRldmlj
+ZV9pbmZvICpkZXZfaW5mbzsKPiDCoMKgwqDCoMKgwqDCoMKgaW50IGksIGo7Cj4gLcKgwqDCoMKg
+wqDCoMKgc2l6ZV90wqDCoHBheWxvYWRfbGVuLCB0b3RhbF9sZW4sIGN1cl9wb3MsIHJhd19sZW47
+Cj4gK8KgwqDCoMKgwqDCoMKgc2l6ZV90wqDCoHBheWxvYWRfbGVuLCB0b3RhbF9sZW4sIGN1cl9w
+b3MsIHJhd19sZW4sIG1zZ19sZW47Cj4gwqDCoMKgwqDCoMKgwqDCoGludCByZXBvcnRfdHlwZTsK
+PiDCoMKgwqDCoMKgwqDCoMKgc3RydWN0IHJlcG9ydF9saXN0ICpyZXBvcnRzX2xpc3Q7Cj4gLcKg
+wqDCoMKgwqDCoMKgY2hhciAqcmVwb3J0czsKPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgcmVwb3J0
+ICpyZXBvcnQ7Cj4gwqDCoMKgwqDCoMKgwqDCoHNpemVfdCByZXBvcnRfbGVuOwo+IMKgwqDCoMKg
+wqDCoMKgwqBzdHJ1Y3QgaXNodHBfY2xfZGF0YSAqY2xpZW50X2RhdGEgPQo+IGlzaHRwX2dldF9j
+bGllbnRfZGF0YShoaWRfaXNodHBfY2wpOwo+IMKgwqDCoMKgwqDCoMKgwqBpbnQgY3Vycl9oaWRf
+ZGV2ID0gY2xpZW50X2RhdGEtPmN1cl9oaWRfZGV2Owo+IEBAIC0yODAsMTQgKzI4MCwxMyBAQCBz
+dGF0aWMgdm9pZCBwcm9jZXNzX3JlY3Yoc3RydWN0IGlzaHRwX2NsCj4gKmhpZF9pc2h0cF9jbCwg
+dm9pZCAqcmVjdl9idWYsCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBjYXNlIEhP
+U1RJRl9QVUJMSVNIX0lOUFVUX1JFUE9SVF9MSVNUOgo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJlcG9ydF90eXBlID0gSElEX0lOUFVUX1JFUE9SVDsK
+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXBvcnRz
+X2xpc3QgPSAoc3RydWN0IHJlcG9ydF9saXN0ICopcGF5bG9hZDsKPiAtwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJlcG9ydHMgPSAoY2hhciAqKXJlcG9ydHNf
+bGlzdC0+cmVwb3J0czsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoHJlcG9ydCA9IHJlcG9ydHNfbGlzdC0+cmVwb3J0czsKPiDCoAo+IMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGZvciAoaiA9IDA7IGogPCByZXBv
+cnRzX2xpc3QtPm51bV9vZl9yZXBvcnRzOwo+IGorKykgewo+IC3CoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJlY3ZfbXNnID0gKHN0
+cnVjdCBob3N0aWZfbXNnCj4gKikocmVwb3J0cyArCj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHNp
+emVvZih1aW50MTZfdCkpOwo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJlcG9ydF9sZW4gPSAqKHVpbnQxNl90ICopcmVwb3J0
+czsKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqBwYXlsb2FkID0gcmVwb3J0cyArIHNpemVvZih1aW50MTZfdCkKPiArCj4gLcKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoHNpemVvZihzdHJ1Y3QKPiBob3N0aWZfbXNnX2hkcik7Cj4gK8Kg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgcmVjdl9tc2cgPSBjb250YWluZXJfb2YoJnJlcG9ydC0+bXNnLAo+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHN0cnVjdAo+IGhvc3RpZl9t
+c2csIGhkcik7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgcmVwb3J0X2xlbiA9IHJlcG9ydC0+c2l6ZTsKPiArwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBwYXls
+b2FkID0gcmVjdl9tc2ctPnBheWxvYWQ7Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHBheWxvYWRfbGVuID0gcmVwb3J0X2xl
+biAtCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBzaXplb2Yoc3RydWN0Cj4gaG9zdGlmX21zZ19o
+ZHIpOwo+IMKgCj4gQEAgLTMwNCw3ICszMDMsNyBAQCBzdGF0aWMgdm9pZCBwcm9jZXNzX3JlY3Yo
+c3RydWN0IGlzaHRwX2NsCj4gKmhpZF9pc2h0cF9jbCwgdm9pZCAqcmVjdl9idWYsCj4gwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgMCk7Cj4gwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqB9Cj4gwqAKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqByZXBvcnRzICs9IHNpemVvZih1aW50MTZfdCkgKwo+IHJlcG9y
+dF9sZW47Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgcmVwb3J0ICs9IHNpemVvZigqcmVwb3J0KSArCj4gcGF5bG9hZF9sZW47
+Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfQo+IMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGJyZWFrOwo+IMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgZGVmYXVsdDoKPiBAQCAtMzE2LDEyICszMTUs
+MTIgQEAgc3RhdGljIHZvaWQgcHJvY2Vzc19yZWN2KHN0cnVjdCBpc2h0cF9jbAo+ICpoaWRfaXNo
+dHBfY2wsIHZvaWQgKnJlY3ZfYnVmLAo+IMKgCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqB9Cj4gwqAKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgaWYgKCFjdXJfcG9z
+ICYmIGN1cl9wb3MgKyBwYXlsb2FkX2xlbiArCj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgc2l6ZW9mKHN0cnVjdCBob3N0aWZf
+bXNnKSA8Cj4gdG90YWxfbGVuKQo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBtc2df
+bGVuID0gcGF5bG9hZF9sZW4gKyBzaXplb2Yoc3RydWN0IGhvc3RpZl9tc2cpOwo+ICvCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBpZiAoIWN1cl9wb3MgJiYgY3VyX3BvcyArIG1zZ19sZW4g
+PCB0b3RhbF9sZW4pCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgKytjbGllbnRfZGF0YS0+bXVsdGlfcGFja2V0X2NudDsKPiDCoAo+IC3CoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqBjdXJfcG9zICs9IHBheWxvYWRfbGVuICsgc2l6ZW9mKHN0cnVj
+dCBob3N0aWZfbXNnKTsKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcGF5bG9hZCAr
+PSBwYXlsb2FkX2xlbiArIHNpemVvZihzdHJ1Y3QgaG9zdGlmX21zZyk7Cj4gK8KgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoGN1cl9wb3MgKz0gbXNnX2xlbjsKPiArwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgcGF5bG9hZCArPSBtc2dfbGVuOwo+IMKgCj4gwqDCoMKgwqDCoMKgwqDC
+oH0gd2hpbGUgKGN1cl9wb3MgPCB0b3RhbF9sZW4pOwo+IMKgfQo+IGRpZmYgLS1naXQgYS9kcml2
+ZXJzL2hpZC9pbnRlbC1pc2gtaGlkL2lzaHRwLWhpZC5oCj4gYi9kcml2ZXJzL2hpZC9pbnRlbC1p
+c2gtaGlkL2lzaHRwLWhpZC5oCj4gaW5kZXggMzVkZGRjNTAxNWIzLi4yYmMxOWU4YmExM2UgMTAw
+NjQ0Cj4gLS0tIGEvZHJpdmVycy9oaWQvaW50ZWwtaXNoLWhpZC9pc2h0cC1oaWQuaAo+ICsrKyBi
+L2RyaXZlcnMvaGlkL2ludGVsLWlzaC1oaWQvaXNodHAtaGlkLmgKPiBAQCAtMzEsNiArMzEsNyBA
+QCBzdHJ1Y3QgaG9zdGlmX21zZ19oZHIgewo+IMKgCj4gwqBzdHJ1Y3QgaG9zdGlmX21zZyB7Cj4g
+wqDCoMKgwqDCoMKgwqDCoHN0cnVjdCBob3N0aWZfbXNnX2hkcsKgwqDCoGhkcjsKPiArwqDCoMKg
+wqDCoMKgwqB1aW50OF90IHBheWxvYWRbXTsKPiDCoH0gX19wYWNrZWQ7Cj4gwqAKPiDCoHN0cnVj
+dCBob3N0aWZfbXNnX3RvX3NlbnNvciB7Cj4gQEAgLTUyLDE1ICs1MywxNyBAQCBzdHJ1Y3QgaXNo
+dHBfdmVyc2lvbiB7Cj4gwqDCoMKgwqDCoMKgwqDCoHVpbnQxNl90IGJ1aWxkOwo+IMKgfSBfX3Bh
+Y2tlZDsKPiDCoAo+ICtzdHJ1Y3QgcmVwb3J0IHsKPiArwqDCoMKgwqDCoMKgwqB1aW50MTZfdCBz
+aXplOwo+ICvCoMKgwqDCoMKgwqDCoHN0cnVjdCBob3N0aWZfbXNnX2hkciBtc2c7Cj4gK30gX19w
+YWNrZWQ7Cj4gKwo+IMKgLyogc3RydWN0IGZvciBJU0hUUCBhZ2dyZWdhdGVkIGlucHV0IGRhdGEg
+Ki8KPiDCoHN0cnVjdCByZXBvcnRfbGlzdCB7Cj4gwqDCoMKgwqDCoMKgwqDCoHVpbnQxNl90IHRv
+dGFsX3NpemU7Cj4gwqDCoMKgwqDCoMKgwqDCoHVpbnQ4X3TCoG51bV9vZl9yZXBvcnRzOwo+IMKg
+wqDCoMKgwqDCoMKgwqB1aW50OF90wqBmbGFnczsKPiAtwqDCoMKgwqDCoMKgwqBzdHJ1Y3Qgewo+
+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB1aW50MTZfdMKgwqDCoMKgwqDCoMKgwqBz
+aXplX29mX3JlcG9ydDsKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgdWludDhfdCBy
+ZXBvcnRbMV07Cj4gLcKgwqDCoMKgwqDCoMKgfSBfX3BhY2tlZCByZXBvcnRzWzFdOwo+ICvCoMKg
+wqDCoMKgwqDCoHN0cnVjdCByZXBvcnQgcmVwb3J0c1tdOwo+IMKgfSBfX3BhY2tlZDsKPiDCoAo+
+IMKgLyogSE9TVElGIGNvbW1hbmRzICovCgo=
 
-I did not use the mx66XXX. Is it an SPI-NOR?
-I would guess that mx66something you use is already obsolete.
-Or marked by Mactronix as 'not recommended for new HW'.
-It might be used by a big customer using the HW for a long time.
-
-
->
-> > The chips in the manufacturer compatibility table are all obsolete.
-> > Mactronix reuse the JEDEC IDs. There is no point pretending these are
-> > the same chips.
-> >
->
-> If macronix doesn't care about backward compatibility, we/I do, and we
-> can't break it.
-
-As I said, I do not ask you to do that.
-
-I do not represent Macronix, so I can not speak in their name.
-My conclusions are based on examining their datasheet.
-I did ask their technical representor.
-The only straight answer I got from the technical support is
-that you can not derive OTP configuration based on JEDEC ID/SFDP,
-and you must know what chip you use.
-
->
-> >> cut
-> >>
-> >>>> Which flash do you have at hand, both, none, just one of them?
-> >>>
-> >>> When I started working on the OTP code, I used MX25L12833F.
-> >>> But later I left the company.
-> >>> So I use my beaglebone black and connect it to a MX25L3233F.
-> >>
-> >> I understand mx25l12805d and mx25l12833f share the same ID. How is
-> >> mx25l3233f related, does it share the same ID as the previous two?
-> >
-> > They are not. I just replaced the company hardware with a different one.
-> > You ask me to report the hardware I use for testing.
->
-> So MX25L3233F does not share the same ID as MX25L12833F and mx25l12805d?
-> Then why do we talk about ID reuse?
-
-I replaced the hardware I use.
-Most of the reused IDs are of old chips, usually obsolete, not selled
-or not recommended for new HW.
-So the chance to use 2 new chips with the same ID is limited.
-
-I respect the fact you want to keep backward compatibility.
-I just extend the approach to OTP parameters.
-If an old chip with the same JEDEC ID uses different OTP parameters.
-We will break backward compatibility with this old chip.
-
-> >
-> > The patch covers the one I use with beaglebone black.
-> > I just mentioned the OTP callbacks are per manufacturer.
-> > But if a new chip in the future would require different callbacks,
-> > then just add them.
-> > My patch is using a single chip, the one I send the testing with.
-> > beaglebone black + MX25L3233F.
->
-> Sounds good.
-
-+
-
->
-> cut
->
-> >> I said new compatibility will be introduced as a last resort only if we
-> >> can't differentiate the flashes at run-time. You haven't proved me yet
-> >> that this is the case.
-> >
-> > Then you do not read my explanation.
->
-> What explanation? I've read your cover letter, commit message and I
-> didn't understood what you're trying to achieve.
-
-This is on me.
-I'll try harder with the cover letter.
-I apologize.
-
->
-> > Do you wish me to send the Macronix datasheet of the 4 chips?
->
-> No, I need just a paragraph where you explain what are the challenges
-> and how you want to address them.
-
-+
-
-I try to explain that we can not based on JEDEC ID + SFDP to figure
-out the correct OTP parameters.
-This is also the only straight answer from Maxtronix I got.
-
-
-
-> >
-> >>
-> >>> You ask if it is possible to deduce it from JEDEC ID and SFDP,
-> >>> I answer that this is not possible, at least in some cases..
-> >>
-> >> I'm interested just about your case, not all the possible cases.
-> >
-> > Actually it is the MX25L3233F and its previous chips.
->
-> Which previous chips? Do you have any such chip at hand? If not, why are
-> we talking about collisions?
-
-JEDEC ID 0xc22016
-MX25L3205D - No SFDP, 2 OTP  regions of 128-bit, 384-bit, Status:End of Life,
-Recommended Product MX25L3206E
-MX25L3206E - support SFDP, 2 OTP  regions of 128-bit, 384-bit, Status:
-Not recommend for new design Recommended Product MX25L3233F
-MX25L3233F - support SFDP, 1 OTP region of 4096-bit, Status Production
-
-JEDEC ID 0xc22017
-MX25L6405D - No SFDP,  2 OTP  regions of 128-bit, 384-bit, Status: End
-of Life, recommend Product MX25L6406E.
-MX25L6406E - support SFDP, 2 OTP  regions of 128-bit, 384-bit,
-Status:Not recommended for new design,
-Recommended Product MX25L6433F.
-MX25L6433F - support SFDP, 2 OTP regions of 4096-bit, 4096-bit, Status
-Production.
-
-JEDEC ID 0xc22015
-MX25L1606E - support SFDP, 2 OTP  regions of 128-bit, 384-bit,Status:
-Not recommend for new design,
-Recommended Product MX25V16066
-MX25V16066 - support SFDP, No OTP. Status Production.
-
-The older chips with the same JEDEC IDs are at end of life or not
-commended for new design.
-But if we talk about backward compatibility, we can have them on old Hardware.
-
-I think that I miss a chip in the list, I remember finding 4 chips
-with the same JEDEC ID.
-
->
-> > Anyway, I will not submit a broken solution.
-> > Whether you like the idea or not.
-> >
->
-> Fine by me.
-
-+
-
->
-> cut
->
-> >>>>> I told you we can not "guess" OTP settings based on JEDEC ID and SFDP existence.
-> >>>>
-> >>>> When? And more importantly, why?
-> >>>
-> >>> I send you example of 3/4 chips that using JEDEC ID and SFDP existence
-> >>> is not enough.
-> >>
-> >> Why? Do they have the exact SFDP tables? Prove me, drop them all.
-> >> Any bit that differs in the SFDP tables is enough to differentiate the
-> >> flavors of flashes. Vendor tables included ;)
-> >
-> > Because the SFDP is not related to OTP in any way.
-> > You are planning to decide OTP parameters on non relevant information.
-> > If you wish to implement such a broken feature, you are welcomed.
-> > I'll pass.
->
-> Ideally we have a single jedec,spi-nor compatible. If there are flash ID
-> collisions we try very hard to differentiate the flashes at run-time.
-> New compatibles are introduced only if we can't differentiate the flavor
-> at runtime (be it by parsing SFDP or some other way).
->
-
-All I say is that it is a dangerous approach to deduce in this way.
-Macronix does not care about breaking, they might introduce new chips
-with different SFDP.
-They usually do not sell new chips with the same JEDEC IDs. but apart
-from that, we can not rely on any assumption.
-
-I can understand if you say that you do not wish to go into this mess.
-But indirect probing based on JEDEC ID + SFDP is a risk, I don't think
-we should take with Macronix.
-
-
-> cut
->
-> >>>> And I think I already said that you can differentiate between the two
-> >>>> based on SFDP presence. mx25l12833f has SFDP, thus when SFDP present use
-> >>>> the mx25l12833f-OTP configuration. When SFDP is not presence one may add
-> >>>> support for the mx25l12805d-OTP configuration.
-> >>>
-> >>> No, we have 3 chips.
-> >>> 2 are using the same JEDEC ID and both using SFDP, yet they use a different OTP.
-> >>
-> >> Which ones are these?
-> >>
-> >> I guess mx25l12805d is non-SFDP. Then mx25l12833f and mx25l3233f define
-> >> some SFDP tables. Do mx25l12833f and mx25l3233f have the same OTP
-> >> organization?
-> >
-> > No, that is the point.
-> >
-> ? Do you care to explain?
-
-The point is that you can not predict OTP based on JEDEC ID + SFDP.
-It seems as if Macronix does the OTP in parallel.
-See the list above.
-
->
-> cut
->
-> >
-> >>>
-> >>>>
-> >>>> Is there any case that I miss?
-> >>>
-> >>> According to your reply, I would say pretty much most.
-> >>
-> >> This is again inappropriate ... I will read your next email as well, but
-> >> I'm not going to tolerate such replies anymore.
-> >
-> > I agree on this one.
-> > Seems you are looking for something I do not agree on.
->
-> Michael disagrees with OTP being specified in DT too. We both already
-> suggested how to deal with flash ID collisions but you keep ignoring us ...
-
-I apologize, but I do not insist on DT.
-Any solution that configures OTP regardless of JEDEC ID + SFDP is OK by me,
-I am open to testing and submit a patch accordingly.
-
-
->
-> > This is not because I oppose probing,
-> >  this is because you ask for indirect probing, against Macronix own
-> > recommendation.
->
-> What did macronix exactly recommend? Did they say that we shouldn't
-> interrogate the SFDP data in order to differentiate the flashes at
-> run-time? If yes, why is that?
-
-
-I forward the reply from Holger Schulze, Field Application Engineer,
-Macronix Europe N.V. I received on the 3 Jul.
-
-I ask:
-"But the OTP setting is not in the SFDP.
-How can we know which OTP size and number of regions to set?"
-
-And the reply:
-"You are correct, the OTP setting is not defined in the JEDEC spec for
-the SFDP table. The only way is to refer to the data sheet."
-
-Thanks for your feedback
-Erez Geva
 
