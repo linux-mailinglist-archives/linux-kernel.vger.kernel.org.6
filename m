@@ -1,232 +1,246 @@
-Return-Path: <linux-kernel+bounces-336211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4680D97F0A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 20:28:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C54197F0A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 20:28:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07B7A281CD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:28:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54412B21985
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B27E1A01C3;
-	Mon, 23 Sep 2024 18:28:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91F71A0708;
+	Mon, 23 Sep 2024 18:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="el6xiQBq"
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iy2g73q0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90E9101DE
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 18:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727116092; cv=none; b=U5iVipbqmbnhRYVkQWMSsdNCTOn7gMQ+a5MvqukvpAN0MMsdh2IaoWXRO396m6ZfSbWxt2hYG4x/fTdzYzhV0jhErJkzzRa6/S1uwDrHbt6MvZKBCcLhxAfOWiZ6l5ju9BAIuSN3GJr97KtHT0KTuImIsE44UNuuKLYVLsm3e6I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727116092; c=relaxed/simple;
-	bh=QbRqjtxOB3MHaRJ1QgYEDpdPYgM7DU/nYJWS2/l99G4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UVLk+JlXVOgfbqxOmgsbNa3kyQtEcZFcSZYEZwm9LJe39ITN2dLhvO80U1ruiMCvIle5eZ0Ih927/DPxCzxWGd4bpnyjY9YS7tHuKB3wTPwXHNxjIzFmjXqN/1P+ESJWbeiGw0VouE4MbL5v68zKGv/Lf1QyL9Zyri2SXL+qyDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=el6xiQBq; arc=none smtp.client-ip=209.85.217.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-49bd76fa981so1800428137.3
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 11:28:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727116089; x=1727720889; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VvC8OpRVu7RcWevPpe6zlyuw6fQztO2vgcY7rQ0WA6E=;
-        b=el6xiQBqKlglk/wrlNNlRaEDcNgB7GhhINRemlifwnRIdvyav7roiL+CpUGls1hz5Q
-         epVv2BM0qB70h1sHRrOkgGQ5opKDtOdMkuahhgu0C2crofV6CCtAiFPYkUaVy4O12bHc
-         NDl79kpbQYE5dpu6KCFo5FBtEE4DK2Bqpq8wyCQfpGrxwvw5lcC0oVEqQnGIdh2PzTD0
-         /CoTRruAYjKAOVFlLQlJWkCniU6uloqK7JMrxeA7QcKHKdDiYmhgYdJMcp8CDhEjJIOd
-         7Tq2Xx3Q2ZLX9ADcfc1XjXy+nAVuZZvoOzvKrLB9h1S30PcT+bQoksoK2wQSQkTrxPp3
-         2MJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727116089; x=1727720889;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VvC8OpRVu7RcWevPpe6zlyuw6fQztO2vgcY7rQ0WA6E=;
-        b=jl2ZKihGeiMA70Elakg2inXlUmIKhN+lLvZSDXUGZ9cYGUHWNM3lb7niVm4j89oSDa
-         OXkY3R/5w6lRFzzlI9lA1IwdNWH3vtUv6sSloWUfUGcrON1T4eBsg9Is1TatrBNhov0K
-         LIZY4qIwBx6cWle7mtJoYzNeyy8il6H4aRuhBPTbGiJscr9F24/Jk+MOYPI8vLK+NZaR
-         Uqyj7a2h2grj7edm4MjTjLY9WiuPoDuIeW8T1Ew7XNsEhlf0ldGkA7RFuzoodSTCo0os
-         gj0aNfloYC+QM7oLOcyMNvUIUHP8xkpQlE+2/UG7GV+MjUXlcdB+xAAcQFnyf0YHctUe
-         vn8g==
-X-Forwarded-Encrypted: i=1; AJvYcCXHVy8rvBnyiDMmR7yYB76T1d8cAiOJWz3gMjaqaIZybG452TNnN23haE2lAxIGe/w6vwVcP/OGBUqGoiQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeiFrzBMmutccci+uscpRnfC2y3Zie3VGGx42+clxSmU/Q0OwG
-	Ied0a9HA6i79+qeF2coKqFW92r0Bjc8+d+Q3OEbttwIjCS4MZ2h7In7FGw==
-X-Google-Smtp-Source: AGHT+IExJyb740zkCQVp6XC9+Z56SOW92gmYPETjHCLM9ypiku8Mb1zqeKoMl+NsUrB4+WyBJ+yNyQ==
-X-Received: by 2002:a05:6102:94c:b0:493:b719:efaf with SMTP id ada2fe7eead31-49fc7678485mr8621012137.20.1727116089541;
-        Mon, 23 Sep 2024 11:28:09 -0700 (PDT)
-Received: from hilb.unicamp.br ([143.106.58.82])
-        by smtp.googlemail.com with ESMTPSA id a1e0cc1a2514c-8493999717esm3354397241.31.2024.09.23.11.28.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 11:28:09 -0700 (PDT)
-From: =?UTF-8?q?Bruno=20Sobreira=20Fran=C3=A7a?= <brunofrancadevsec@gmail.com>
-To: akpm@linux-foundation.org,
-	davidgow@google.com,
-	linux-kernel@vger.kernel.org,
-	rmoar@google.com
-Cc: kunit-dev@googlegroups.com,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	=?UTF-8?q?Bruno=20Sobreira=20Fran=C3=A7a?= <brunofrancadevsec@gmail.com>
-Subject: [PATCH v2] lib/math: Add int_log test suite
-Date: Mon, 23 Sep 2024 18:28:01 +0000
-Message-ID: <20240923182801.37747-1-brunofrancadevsec@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10FF18054
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 18:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727116111; cv=fail; b=UZLupumKtaud05nSNirKJR6iOMqBTn0UDspMhJ57K5ca2keybVtwwhpCdhQ5BIXGHGmAiQjJOpTXOE4WFu017tg8cNylTf1TqVH7kiq1vkR8G9p1aEQySan09pnoB3Zhkw0s9HsWQVmmTsdmmosLJaqLa57dxgDAXdIQm53wyoQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727116111; c=relaxed/simple;
+	bh=bRYbmtYy2tDxOkc/KoUH3US9umppsLzsXy/v52brdTQ=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=G0co9nsppulkUAE9OMl9pPvznqw5l+rC/cYKhU6F1bRsa8UQLDIKk8IWqu1kwpr9saynuFwS2Q1VH6DostWVFklzp6X2gXmgqs8kyBxbjlJ7N2vMS28x/xAf5V7DUN8v/laimzN/+mlgvLrgx8YtoVUk9D6OhTIepwgOJYozJdw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iy2g73q0; arc=fail smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727116110; x=1758652110;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=bRYbmtYy2tDxOkc/KoUH3US9umppsLzsXy/v52brdTQ=;
+  b=iy2g73q0L18AqfTpDJQbmWTQJ4agxmGQWZ936RQuQDqeslirfqCv3d0D
+   SOEBJq1leIYWiPoeDBFK8NablagTWyssjeCv80vpNeNumgRQCrnuy90sY
+   riuHSeUDkSY/JAeF9b8V+s4p+NtSqLMOcoUN/jQz0ZRR7Gi2mbqL71IgO
+   kFfEd6mRWeKNhcUg64zWFRTJ5qZOHLyksnDcJxJ+J6sarYZlupI1lA0zQ
+   BF2cQpd1hhvDMsIDFlkE0SBzhaCdHeVIGUVyqmh5jg6o2vlqQBWEw56VR
+   Y6siFA1ji6O1wMx/gi4dX1UFw8Yey1jkDHBjyeMCJcrG0z+MtIktJ5IXa
+   A==;
+X-CSE-ConnectionGUID: JdjsZ2VWQ6Ww1c5Ze0mxdw==
+X-CSE-MsgGUID: gC/K04EBSHePQx6cJZq7TA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="29964856"
+X-IronPort-AV: E=Sophos;i="6.10,252,1719903600"; 
+   d="scan'208";a="29964856"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 11:28:28 -0700
+X-CSE-ConnectionGUID: 1az1R4tyRRq4VWB1obARyg==
+X-CSE-MsgGUID: 2jE3zkMrTV2flYPXQ5ZKPg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,252,1719903600"; 
+   d="scan'208";a="71472400"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 23 Sep 2024 11:28:27 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 23 Sep 2024 11:28:26 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 23 Sep 2024 11:28:26 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.169)
+ by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 23 Sep 2024 11:28:26 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gCgYEeN8aTl1RRPs0aLMNsOt5VUwEsCmaDyLFcgJvzdoS9In4S5Gzq5lya8TXKLsCQGUilau4c+SeSaQEVgTKT90UTVsPCVII0ejlmlb/l2ymW+JUcKkkidOCUFQenpm3hl8sC9iDqgGUcbGZJ3v0dPIdvTE9ITuMeVDmvW8tM6KbWb+ESWXHX50UKgw15RgcR1iEv5nBAPsqhpH5b83pP8Nd9aMyBhHhgpRk4jQe5tbNb/KDCvq+f3oBtehMK6CnFttyh1DpfEWbJCE3Q5YMQJoRjWSuYvi+11SEl1eggCjMIrMo8QP/iOclxXBoOBPF2PSQeYckegq+6FvUcP7CQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6Uej6j9rMufH+r1PYD9L5uUeXySHtB2acC4IEajRYqA=;
+ b=G/cGbUIzyfnSr6muVJX55WAzyX5zsqWpEi63nfn/Hzj//xzH5Vp1HPDhoLOgEIdnIvCa3z5+dpWsSCI6HeHnMV95WsyrbIN+GlqaZ+8JuzvmwzeIeGngS3DPmEVbQ0Vi+Wo/SDmgVh+ifq8y09VxQ2ZK0pFtkwTANwOL+Df4sFmgf658rmwjl4Xc3dl2MOJuoG2WiYDsDBtCijOsKQd3hpxVzxXrdf2o9BTVCoJzJeB39f5QTGKZCgb+LJHzf0VRQ10mcZU57QX0u7cm4gZgAUJ9qhmfLOmhbqW80j2awh0zPsT1gMobdRvNAy5C7rIU5Q2isiJPqVF5jNDGA1i/Pg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BL3PR11MB6435.namprd11.prod.outlook.com (2603:10b6:208:3bb::9)
+ by IA0PR11MB7212.namprd11.prod.outlook.com (2603:10b6:208:43e::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.25; Mon, 23 Sep
+ 2024 18:28:24 +0000
+Received: from BL3PR11MB6435.namprd11.prod.outlook.com
+ ([fe80::23a7:1661:19d4:c1ab]) by BL3PR11MB6435.namprd11.prod.outlook.com
+ ([fe80::23a7:1661:19d4:c1ab%7]) with mapi id 15.20.7982.022; Mon, 23 Sep 2024
+ 18:28:23 +0000
+Message-ID: <3ad7ab07-d91f-a3fe-4d0f-5305ae05e65a@intel.com>
+Date: Mon, 23 Sep 2024 11:28:20 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH] ice: Unbind the workqueue
+Content-Language: en-US
+To: Przemek Kitszel <przemyslaw.kitszel@intel.com>, Frederic Weisbecker
+	<frederic@kernel.org>
+CC: LKML <linux-kernel@vger.kernel.org>, Larysa Zaremba
+	<larysa.zaremba@intel.com>, "intel-wired-lan@lists.osuosl.org"
+	<intel-wired-lan@lists.osuosl.org>
+References: <20240922222420.18009-1-frederic@kernel.org>
+ <db2c96f3-c35d-42ee-a4e6-5233ccbac7bb@intel.com>
+From: Tony Nguyen <anthony.l.nguyen@intel.com>
+In-Reply-To: <db2c96f3-c35d-42ee-a4e6-5233ccbac7bb@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SJ0PR13CA0080.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c4::25) To BL3PR11MB6435.namprd11.prod.outlook.com
+ (2603:10b6:208:3bb::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL3PR11MB6435:EE_|IA0PR11MB7212:EE_
+X-MS-Office365-Filtering-Correlation-Id: fe94b194-ab13-4b6d-7855-08dcdbfd8234
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?YVBrdFJmQVpobzMrK3F0SXJEbzZkUmE0OWp1dzd2WXRTcWg1N0k0VlZyQ3hv?=
+ =?utf-8?B?eGtiT3ZBc2lkVDJFdEJQWkt2R1I0Qk1BRW9Mc1laSHk5YkxhMWtYbmlxNmFn?=
+ =?utf-8?B?S2ZManpQamZsYXF6emtsSm1qNHlxK1pNUnRXZHl1c1J5Q2Frb0duRk9FUmJ3?=
+ =?utf-8?B?R3hiOWlyeU1XR1NBMitXeTBaSGduUW1FdU91TEtIUzhSaFEzRkc1NndZZVZB?=
+ =?utf-8?B?anJHVmxPc05rMVdCQTViM01vaEs4eE1sSzRTdkVoRHQ3WGJQMDJuTktCK0dW?=
+ =?utf-8?B?NHI4VkNjSE0yTGsrdjRzRVZEWUVMbzdXYkJPL3U5SUlWdFd5WncyendrdlNO?=
+ =?utf-8?B?bDZrd0pEUEdWOW9ZZDk4VHB4dC84b0x2cEdnMWRGRWZQWEJabkwvVVozYmRz?=
+ =?utf-8?B?KzJtL0U5KzZ1NjBHcU1GeDFLY3g4RldxT0k2QjU0Q3dSSkJPazhGLzY0RnRk?=
+ =?utf-8?B?RFM4Ylc5UEFtUjEyZ3JaMEVwY2xJWm9UeHJkUlo0OVljbHlYK25TeW5Qd080?=
+ =?utf-8?B?Y3NQOXhaeWJ3aUE5Zm1qYXQ1ZVBDY3pqVW9veW41K1luT256OFVHNGczalJs?=
+ =?utf-8?B?SURYODNTSjNHNkpWWlpaUXl3MTJzRDEwOFlQYTlKTHdMUHpIOTM4SFJCalhG?=
+ =?utf-8?B?T1lXQzRtbHNuU1pvenAwVU5FdmdPQnpDNVNhdm0vczRoMUZoekl2cDdsb1Zh?=
+ =?utf-8?B?WFhUMzNxbzFvZVpUclBYR0liTEF2dGVKK0IwdStQWTUydlNOM2tNZnAvdFdH?=
+ =?utf-8?B?K1hDNjhWSkFBMGFJQkNGMTdtUlhYUzFJdE9uajdUbUtUZGNqaVJQUnRPV3lt?=
+ =?utf-8?B?MXdzNFJFbVQ2cGFLWDR2eTdFWFQxa2dpV0FCN1JyTW94OVhsdFN2NE1sUC9Q?=
+ =?utf-8?B?QkxMN0tKNWJFaDdGTDRRdGFyVG5rc3o0R24ycW94RTliM0xXZGQ3b01xNXFE?=
+ =?utf-8?B?bDhDUjdkaGtCYWNGSERrV1k3M0x1MFZxUlc4MjdkMjNpb3FpZ1MrV3RXbXYy?=
+ =?utf-8?B?ZlZJQ1FCVjFSamVQZnBRcUNTQzhXRW5ZdVVVcWhOcUh2OFlIcHMwU1NVMVVl?=
+ =?utf-8?B?OVdXOFAwS2pwbVA2ZTRVTlVvc252bGoxek1uUjlBN052djExN1FpMEthYVk5?=
+ =?utf-8?B?b29zZlkxT2EyK1FyRHEwR0w5N28vWXJpdlVjcDlDVGtLamk5ZEx4S0M2MDFs?=
+ =?utf-8?B?TUxRWGFXVHJCL0plc1VneG5iUndML1ozdURsVHA5TDRRNVNTMjRJQnFGU2Rn?=
+ =?utf-8?B?ZnNYandML0dTREJVanRsQkI3Yi9YTlRDZnM3VW5zRENyRHRuUzhUR2p5OXFT?=
+ =?utf-8?B?OTNsQTZteGIzMEhzTnpUY1ZJdis2YkUzSjlsK2pSNzFaVUVhUzhGS0JFdVA1?=
+ =?utf-8?B?RjUxN1dnUzJNcVd6dmcrT0Jza3hLeVVrekJ0WFlWL3hnWkZJWGFlSk15YjQ4?=
+ =?utf-8?B?cXNRUFpaQk9kWVVFTkZteE1ZR1lXYnhuN2srUGpmc1VGUFN3MFFDeklZZUtF?=
+ =?utf-8?B?bWNjczF4blB5Q2V4UG5NREQxMnd0U3BTcmkrUmk5QzZ4ampKZVpQVnFyS3c4?=
+ =?utf-8?B?b1l5MS9ScHYvQ0JqRmQ1UGZva0xwZHVobE1RWk1qYTlFSE5TanRGQ1U4Vkhy?=
+ =?utf-8?B?SitwRWtPbHovREh1Wmo2dUZyS3VCS0dXMU1KZE9wOHlUOEFlOWcxTVZjdjFM?=
+ =?utf-8?B?QSttN0hUeno5SDgzamg1QlJOUkFVMUIyWncxOUNmV2ZUODZOSjI0U0xBPT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR11MB6435.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UWxsMWFiYkRobDZJTkZBTVpPL2dSWG04VzdrTzdMNHJIT25acWtzbGttU2xw?=
+ =?utf-8?B?ajdqV01xTnMyMnBWMDBFd3d2d25MdWdGbm0ySGZEWXM0ZzRkdkJxS09vVHNo?=
+ =?utf-8?B?SVRwOE82eVdHQUZzSGVHKzhaQXhOSEphamVmTkJmN3FRbXVZWWFQSk1qZU5S?=
+ =?utf-8?B?R1lRRzg4Q0h6NDh2LzJCVjI5emM5dFJ3dVI3RUI0enlUQWY3ak9VUHU3NHpP?=
+ =?utf-8?B?aU9DRWRURStyOE92U3dwUHdnNTl2MTd5dDVLNWhjODZ5R0lXQ0hBcDdIVEEx?=
+ =?utf-8?B?UERCLzBCU0ZPcjJFRXNSWDcxckp0ekN1bVZ6TlRadm50KzVrUFVEdU5RS2tN?=
+ =?utf-8?B?MldWc05HUWJkYWlVUWdhQnNLdTNoOExIR0lKLzM0OGdzakNQNS9Ka3dmeWZJ?=
+ =?utf-8?B?VjllM3ZKR1dWOXZ5NmpOblRvNWdhZkRXUnozY0JCUlZPU2dhOUxFVG4vUWdX?=
+ =?utf-8?B?TndjcVhsblRiWm8vWXdDUjZ6VUxOanNpdkJObnVsL292WWdpaHhad3ZXVmJP?=
+ =?utf-8?B?a1JWN2k3ZjB0SE40WERCWEZ4R1JVbTRSbTVwb0pDS3VTM0l0cFR5azlIOGxC?=
+ =?utf-8?B?L0RWVDI0eGx2dzkrcjRhN05TL09Sci93YjZMWHNRZWdPdXA1MTJWVXVscG5C?=
+ =?utf-8?B?ZnVvSGVldDlNVjhRVCtiYmVWTlY1S21mckhjdFZVdHh3Rkt2c0JLRWROUVI5?=
+ =?utf-8?B?UUFTT1FrR3h1QnJnTHVjTWZLRlh5Q2FlSWxtc2VLSStlSWRCN2dvdWQzRDQr?=
+ =?utf-8?B?WmNMcTBXejZXM2dYWGJ6cTBTcHNIc3JIWGRrem9yUllUeVQ4NzEyb1JhcVpK?=
+ =?utf-8?B?WS9PWlNOT1A4VTlMZmJhakJtNXV6aE5nSnI2K1R6VW56UmVXckh2aldXdFYx?=
+ =?utf-8?B?TVd5cjVYYU5lRmZiUHNDUnpZYnpWUE9KQUhaMXlPSmlLN3l6NUEycEJBWEwz?=
+ =?utf-8?B?dDZTMGpLV3hHUnNzcHIySjczVDR1eEhxZmtvb0xLeCsyRUZzc2duZDlWQkdB?=
+ =?utf-8?B?RloxUmU4YTZHZzhuTmxIN0xkK1pHckxYdjFuWmVrOWl0OEFxQTNlYTdubE55?=
+ =?utf-8?B?WTFFaGVwcks5eDd1S1BPUVdydUV1M1o0d0R2MUhhM00zWWZEQmZWaHVRZldI?=
+ =?utf-8?B?SGpxUXpqK0swaTI0MnBtMkFXVUIwVDhFK2NnUkVHVytJM0xQaXY3VUhZOUFU?=
+ =?utf-8?B?bzUxQm1rUjNObDk0amxGOTV5L1R3VGpZRFhnTmd6MU1CVVhWNXBPNXhJOGlI?=
+ =?utf-8?B?UFJBRk53aVM5Q1dRRU8vZUt0RjRNL2RuTTV2M3MzT1FkaVhNMEpLcytkWU1w?=
+ =?utf-8?B?aGFjeitYbEZYd1hsdzY5c1k0eElmT0ZBRWtjRmdDaFdWMHlmZWpqNXRuY2Rx?=
+ =?utf-8?B?cCs3WHg5WitHaDd2WHJnOEpuOERic0ZDRXgyVnRiRXJ0Nk5iRUd6dUFEeHZX?=
+ =?utf-8?B?R0lFR2gvK0FtbUFKMFpNajQxRksvQTVMRnpaMFBJaGppL0xLN0RIZ1U5R29h?=
+ =?utf-8?B?ZHdvbXlzT2hwTHd5VjJMQjZtd3BFcFdwS0haWWJnbU9wUnhjaWZoY0pwMlJl?=
+ =?utf-8?B?TWhsM0ZwTS82NVhoemxEMlpqMEdzVDFuODRmQlVzUnRpNUFHdWNaS1BudURj?=
+ =?utf-8?B?bFdJR3BjWTZGcE5KbFdhdVBpSDJUUDhRZndOY2NWOVhOR1hVa21YZ1l1OWZZ?=
+ =?utf-8?B?clk3ZmtWaGoxTkkweGpEeGJsazlMTE5sOURqM3RxZWJzK2V5NWlHNG54c0RO?=
+ =?utf-8?B?WlBlTnlFYUJEMFU0Umg2aFFrQ2FWYVJ2VVdRWlY4d0o2VzRyNHpXWExKTVBz?=
+ =?utf-8?B?eElPVWs2OGNTc25EcU12QWs4OUpybzdxNzQrdWh0b2EreGhIMWZ4SE13bVhQ?=
+ =?utf-8?B?bUlVdFZ2SVNacDhFTjk1WWxsc2NZQkVJZ3RKbG9HWVljU1hod1VSQmdET2FE?=
+ =?utf-8?B?MG1DZi92b0ROeG04MXpMcUlBaVNtM2JvS1VQbk45Z0gzQmpNY1F4VkVpY1JM?=
+ =?utf-8?B?YXpXVjh2RkRnWHFxWm8xTTJnaG9yM2txc2M1VEhkUFp3ZW9BNWxOVmhKMkVB?=
+ =?utf-8?B?aDdFNWxUQlhmSnhPdkJrUS91MkxMemROaFphclVaKzhveXZsOGYxMkRXQ0tI?=
+ =?utf-8?B?ak11NHYvTTFDeUIvU2R3cEFyMCtlTWo1MU1sY0dIY0JibEs5R09aTGN5Sjd5?=
+ =?utf-8?B?YUE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: fe94b194-ab13-4b6d-7855-08dcdbfd8234
+X-MS-Exchange-CrossTenant-AuthSource: BL3PR11MB6435.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2024 18:28:23.9139
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rXE0yoxUtnkzRXP/bI430W1h0onXKfzeEw3a6JB0ykm4O+auRoKsjVi4Tyhnr388Vv1EMvxWUpCYgF9ZMbXi6qy9ekiIEw8VYqBgTD4m6n0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB7212
+X-OriginatorOrg: intel.com
 
-This commit introduces KUnit tests for the intlog2 and intlog10
-functions, which compute logarithms in base 2 and base 10, respectively.
-The tests cover a range of inputs to ensure the correctness of these
-functions across common and edge cases.
 
-Signed-off-by: Bruno Sobreira França <brunofrancadevsec@gmail.com>
----
-Changes in v2:
-  - Fix the overflow warning reported by the kernel test robot
----
- lib/Kconfig.debug              | 11 +++++
- lib/math/Makefile              |  3 +-
- lib/math/tests/Makefile        |  1 +
- lib/math/tests/int_log_kunit.c | 75 ++++++++++++++++++++++++++++++++++
- 4 files changed, 89 insertions(+), 1 deletion(-)
- create mode 100644 lib/math/tests/int_log_kunit.c
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index bc8faa4509e1..b0f658b0f29f 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -3089,3 +3089,14 @@ config INT_POW_TEST
- 	  function.
- 
- 	  If unsure, say N
-+
-+config INT_LOG_TEST
-+	tristate "Integer log (int_log) test" if !KUNIT_ALL_TESTS
-+	depends on KUNIT
-+	default KUNIT_ALL_TESTS
-+	help
-+	  This option enables the KUnit test suite for the int_log library, which 
-+	  provides two functions to compute the integer logarithm in base 2 and 
-+	  base 10, called respectively as intlog2 and intlog10.
-+
-+	  If unsure, say N
-diff --git a/lib/math/Makefile b/lib/math/Makefile
-index 3ef11305f8d2..c3fd967bc49b 100644
---- a/lib/math/Makefile
-+++ b/lib/math/Makefile
-@@ -5,7 +5,8 @@ obj-$(CONFIG_CORDIC)		+= cordic.o
- obj-$(CONFIG_PRIME_NUMBERS)	+= prime_numbers.o
- obj-$(CONFIG_RATIONAL)		+= rational.o
- 
--obj-$(CONFIG_INT_POW_TEST)  += tests/int_pow_kunit.o
-+obj-$(CONFIG_INT_POW_TEST)  	+= tests/int_pow_kunit.o
-+obj-$(CONFIG_INT_LOG_TEST) 	+= tests/int_log_kunit.o
- obj-$(CONFIG_TEST_DIV64)	+= test_div64.o
- obj-$(CONFIG_TEST_MULDIV64)	+= test_mul_u64_u64_div_u64.o
- obj-$(CONFIG_RATIONAL_KUNIT_TEST) += rational-test.o
-diff --git a/lib/math/tests/Makefile b/lib/math/tests/Makefile
-index 6a169123320a..83bbf1e47940 100644
---- a/lib/math/tests/Makefile
-+++ b/lib/math/tests/Makefile
-@@ -1,3 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0-only
- 
- obj-$(CONFIG_INT_POW_TEST) += int_pow_kunit.o
-+obj-$(CONFIG_INT_LOG_TEST) += int_log_kunit.o
-diff --git a/lib/math/tests/int_log_kunit.c b/lib/math/tests/int_log_kunit.c
-new file mode 100644
-index 000000000000..025748cd0bbe
---- /dev/null
-+++ b/lib/math/tests/int_log_kunit.c
-@@ -0,0 +1,75 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+#include <kunit/test.h>
-+#include <linux/int_log.h>
-+
-+struct test_case_params {
-+	u32 value;
-+	unsigned int expected_result;
-+	const char *name;
-+};
-+
-+
-+/* The expected result takes into account the log error */
-+static const struct test_case_params intlog2_params[] = {
-+	{0, 0, "Log base 2 of 0"},
-+	{1, 0, "Log base 2 of 1"},
-+	{2, 16777216, "Log base 2 of 2"},
-+	{3, 26591232, "Log base 2 of 3"},
-+	{4, 33554432, "Log base 2 of 4"},
-+	{8, 50331648, "Log base 2 of 8"},
-+       	{16, 67108864, "Log base 2 of 16"},
-+	{32, 83886080, "Log base 2 of 32"},	
-+	{U32_MAX, 536870911, "Log base 2 of MAX"},
-+};
-+
-+static const struct test_case_params intlog10_params[] = {
-+	{0, 0, "Log base 10 of 0"},
-+	{1, 0, "Log bsae 10 of 1"},
-+	{6, 13055203, "Log base 10 of 6"},
-+	{10, 16777225, "Log base 10 of 10"},
-+	{100, 33554450, "Log base 10 of 100"},
-+	{1000, 50331675, "Log base 10 of 1000"},
-+	{10000, 67108862, "Log base 10 of 10000"},
-+	{U32_MAX, 161614247, "Log base 10 of MAX"}
-+};
-+
-+static void get_desc(const struct test_case_params *tc, char *desc)
-+{
-+	strscpy(desc, tc->name, KUNIT_PARAM_DESC_SIZE); 
-+}
-+
-+
-+KUNIT_ARRAY_PARAM(intlog2, intlog2_params, get_desc); 
-+
-+static void intlog2_test(struct kunit *test)
-+{
-+	const struct test_case_params *tc = (const struct test_case_params *)test->param_value;		
-+	
-+	KUNIT_EXPECT_EQ(test, tc->expected_result, intlog2(tc->value));
-+}
-+
-+KUNIT_ARRAY_PARAM(intlog10, intlog10_params, get_desc);
-+
-+static void intlog10_test(struct kunit *test)
-+{
-+	const struct test_case_params *tc = (const struct test_case_params *)test->param_value;
-+
-+	KUNIT_EXPECT_EQ(test, tc->expected_result, intlog10(tc->value));
-+}
-+
-+static struct kunit_case math_int_log_test_cases[] = {
-+	KUNIT_CASE_PARAM(intlog2_test, intlog2_gen_params),
-+	KUNIT_CASE_PARAM(intlog10_test, intlog10_gen_params),
-+	{}
-+};
-+
-+static struct kunit_suite int_log_test_suite = {
-+	.name = "math-int_log",
-+	.test_cases =  math_int_log_test_cases,
-+};
-+
-+kunit_test_suites(&int_log_test_suite);
-+
-+MODULE_DESCRIPTION("math.int_log KUnit test suite");
-+MODULE_LICENSE("GPL");
-+
--- 
-2.43.0
+On 9/23/2024 1:57 AM, Przemek Kitszel wrote:
+> On 9/23/24 00:24, Frederic Weisbecker wrote:
+>> The ice workqueue doesn't seem to rely on any CPU locality and should
+>> therefore be able to run on any CPU. In practice this is already
+>> happening through the unbound ice_service_timer that may fire anywhere
+>> and queue the workqueue accordingly to any CPU.
+>>
+>> Make this official so that the ice workqueue is only ever queued to
+>> housekeeping CPUs on nohz_full.
+>>
+>> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+>> ---
+>>   drivers/net/ethernet/intel/ice/ice_main.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/net/ethernet/intel/ice/ice_main.c 
+>> b/drivers/net/ethernet/intel/ice/ice_main.c
+>> index ea780d468579..70990f42ac05 100644
+>> --- a/drivers/net/ethernet/intel/ice/ice_main.c
+>> +++ b/drivers/net/ethernet/intel/ice/ice_main.c
+>> @@ -5924,7 +5924,7 @@ static int __init ice_module_init(void)
+>>       ice_adv_lnk_speed_maps_init();
+>> -    ice_wq = alloc_workqueue("%s", 0, 0, KBUILD_MODNAME);
+>> +    ice_wq = alloc_workqueue("%s", WQ_UNBOUND, 0, KBUILD_MODNAME);
+>>       if (!ice_wq) {
+>>           pr_err("Failed to create workqueue\n");
+>>           return status;
+> 
+> Thank you for the patch, it would make sense for our iwl-next tree,
+> with such assumption:
+> Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+> 
+> @Tony, do you want it resent with target tree in the subject?
 
+No, I can apply this as-is but please remember to designate a tree for 
+future patches.
+
+Thanks,
+Tony
 
