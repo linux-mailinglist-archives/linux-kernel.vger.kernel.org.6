@@ -1,115 +1,157 @@
-Return-Path: <linux-kernel+bounces-335735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC41F97E9E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:24:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23BD897E9EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:30:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70CBC2817AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:24:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5146D1C2137D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B6D1974F4;
-	Mon, 23 Sep 2024 10:24:25 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2060DEADA;
-	Mon, 23 Sep 2024 10:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA25197A8E;
+	Mon, 23 Sep 2024 10:30:07 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07FD7197558;
+	Mon, 23 Sep 2024 10:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727087064; cv=none; b=msuKmAwEEfE10U7KjBpmU6Up8Va9q2aSqRSppgDFENH1IwwvVnAnIHmOGVpUXXD+FOcxH6Gpa9rSVeICyGUtGKcBc3ffQqOljMvI8uvwOqK5FVw5vtlg0CwFJXy3T9C8Wt0q3MYac//9L8RVbWVXHg6GAOkMJ47RE1tY1HtnmJ0=
+	t=1727087407; cv=none; b=jtrRlUETHwZjwYChPHknm7hy4zvf6zETTA9pV4tv8vMCDc0+K8D+eZb0XoBt0zW9CTlFcfkultRcmcNstzGxlOnQg8NSu6aSAuTz2R7Ur4Bh1IZSNJaCSIoCCSmZoBGot3S8T3hfgfEDaKskY6i42dilOHrD5mxKV6fJb4kiRSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727087064; c=relaxed/simple;
-	bh=ISFPEWBY4YprYmJOPZ5EFDXSFrJMUSjAHtfrxv2D/B0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZxxkcMkIAb5VF3ipR1Yzd355/zUU1nzV8dmIqG5GIomHkz6/OHOXv1A0580aqhdbmGrHWam6btncCimIVnJOfL094Xu/6EEtXkk7sHQQ4dBAlebrboCuOybHkJMZ7IeaRUL0ciMd4d/RQ+k7I451JypA/7uj0Z/sCNzH6drwuNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8EBCDFEC;
-	Mon, 23 Sep 2024 03:24:50 -0700 (PDT)
-Received: from [10.57.79.18] (unknown [10.57.79.18])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 10BB23F71A;
-	Mon, 23 Sep 2024 03:24:18 -0700 (PDT)
-Message-ID: <f639bacf-eba5-48d3-8385-7d185a030130@arm.com>
-Date: Mon, 23 Sep 2024 11:24:17 +0100
+	s=arc-20240116; t=1727087407; c=relaxed/simple;
+	bh=KtGx5U5GzL7Z/yR+uBlw5VS/+lB7HSxpBr3S7vnjqXw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=NE3WizXt/OaFRlh+WgSwpVTPser64IO/fRBzIlF/JnfBYvEXX1i2Gp5WehxOpnLEDWEP7f/OxosH79Be+ao2kedV+BPlNcWcHA2bJ+s8nWOPUFr3EUlzlIoemK7gVHw2XrBiHd2FLDxvuMpxnuSxWIVPQs4QbtPJJIlL8O6vCaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XBzkG1xpTz1SC8B;
+	Mon, 23 Sep 2024 18:29:10 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id 97EC21A016C;
+	Mon, 23 Sep 2024 18:29:55 +0800 (CST)
+Received: from [10.67.110.108] (10.67.110.108) by
+ kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 23 Sep 2024 18:29:54 +0800
+Message-ID: <0939300c-a825-5b46-d86f-72ce89b2b95f@huawei.com>
+Date: Mon, 23 Sep 2024 18:29:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/5] drm/panthor: introduce job cycle and timestamp
- accounting
-To: Boris Brezillon <boris.brezillon@collabora.com>
-Cc: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- kernel@collabora.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linaro-mm-sig@lists.linaro.org
-References: <20240920234436.207563-1-adrian.larumbe@collabora.com>
- <20240920234436.207563-2-adrian.larumbe@collabora.com>
- <07c8c715-4016-4963-8544-2e9cc1a8208b@arm.com>
- <20240923121850.38181059@collabora.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20240923121850.38181059@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH] uprobes: Improve the usage of xol slots for better
+ scalability
+To: Andi Kleen <ak@linux.intel.com>
+CC: <mhiramat@kernel.org>, <oleg@redhat.com>, <andrii@kernel.org>,
+	<peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+	<namhyung@kernel.org>, <mark.rutland@arm.com>,
+	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
+	<linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+	<linux-perf-users@vger.kernel.org>, <bpf@vger.kernel.org>
+References: <20240918012752.2045713-1-liaochang1@huawei.com>
+ <87jzf9b12w.fsf@linux.intel.com>
+ <7a6ba3f3-dffa-cdac-73c7-074505ea4b44@huawei.com> <ZuwoUmqXrztp-Mzh@tassilo>
+From: "Liao, Chang" <liaochang1@huawei.com>
+In-Reply-To: <ZuwoUmqXrztp-Mzh@tassilo>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
-On 23/09/2024 11:18, Boris Brezillon wrote:
-> On Mon, 23 Sep 2024 10:07:14 +0100
-> Steven Price <steven.price@arm.com> wrote:
+
+
+在 2024/9/19 21:34, Andi Kleen 写道:
+>> Sorry, I know nothing about the ThreadSanitizer and related annotation,
+>> could you provide some information about it, thanks.
 > 
->>> +static struct dma_fence *
->>> +queue_run_job(struct drm_sched_job *sched_job)
->>> +{
->>> +	struct panthor_job *job = container_of(sched_job, struct panthor_job, base);
->>> +	struct panthor_group *group = job->group;
->>> +	struct panthor_queue *queue = group->queues[job->queue_idx];
->>> +	struct panthor_device *ptdev = group->ptdev;
->>> +	struct panthor_scheduler *sched = ptdev->scheduler;
->>> +	struct panthor_job_ringbuf_instrs instrs;  
->>
->> instrs isn't initialised...
->>
->>> +	struct panthor_job_cs_params cs_params;
->>> +	struct dma_fence *done_fence;
->>> +	int ret;
->>>  
->>>  	/* Stream size is zero, nothing to do except making sure all previously
->>>  	 * submitted jobs are done before we signal the
->>> @@ -2900,17 +3062,23 @@ queue_run_job(struct drm_sched_job *sched_job)
->>>  		       queue->fence_ctx.id,
->>>  		       atomic64_inc_return(&queue->fence_ctx.seqno));
->>>  
->>> -	memcpy(queue->ringbuf->kmap + ringbuf_insert,
->>> -	       call_instrs, sizeof(call_instrs));
->>> +	job->profiling.slot = queue->profiling.seqno++;
->>> +	if (queue->profiling.seqno == queue->profiling.slot_count)
->>> +		queue->profiling.seqno = 0;
->>> +
->>> +	job->ringbuf.start = queue->iface.input->insert;
->>> +
->>> +	get_job_cs_params(job, &cs_params);
->>> +	prepare_job_instrs(&cs_params, &instrs);  
->>
->> ...but it's passed into prepare_job_instrs() which depends on
->> instrs.count (same bug as was in calc_job_credits()) - sorry I didn't
->> spot it last review.
+> Documentation/dev-tools/kcsan.rst
+
+Thanks.
+
 > 
-> Hm, can't we initialize instr::count to zero in prepare_job_instrs()
-> instead?
+>>> Would be good to have some commentary why doing so
+>>> many write operations with merely a rcu_read_lock as protection is safe.
+>>> It might be safer to put some write type operations under a real lock. 
+>>> Also it is unclear how the RCU grace period for utasks is enforced.
+>>
+>> You are right, but I think using atomic refcount routine might be a more
+>> suitable apprach for this scenario. The slot_ret field of utask instance
+> 
+> Does it really all need to be lockless? Perhaps you can only make the 
+> common case lockless, but then only when the list overflows take a lock 
+> and avoid a lot of races. That might be good enough for performance.
 
-Indeed that would probably be better! I hadn't noticed there were two
-places in the previous review.
+Agreed, List overflow would happen if new threads were constantly spawned
+and hit the breakpoint. I'm not sure how often this occurs in real application.
+Even if some applications follow this pattern, I suspect the bottleneck
+might shift to another point, like dynamically allocating new utask instances.
+At least, for the scalability selftest benchmark, list overflow shouldn't
+be a common case.
 
-Steve
+> 
+> If you really want a complex lockless scheme you need very clear documentation
+> in comments and commit logs at least.
+> 
+> Also there should be a test case that stresses the various cases.
+> 
+> I would just use a lock 
+
+Thanks for the suggestions, I will experiment with a read-write lock, meanwhile,
+adding the documentation and testing for the lockless scheme.
+
+>> is used to track the status of insn_slot. slot_ret supports three values.
+>> A value of 2 means the utask associated insn_slot is currently in use by
+>> uprobe. A value of 1 means the slot is no being used by uprobe. A value
+>> of 0 means the slot has been reclaimed. So in some term, the atomic refcount
+>> routine test_and_pout_task_slot() also avoid the racing when writing to
+>> the utask instance, providing additional status information about insn_slot.
+>>
+>> BTW, You reminded me that since it might recycle the slot after deleting the
+>> utask from the garbage collection list, so it's necessary to use
+>> test_and_put_task_slot() to avoid the racing on the stale utask. the correct
+>> code might be something like this:
+>>
+>> @@ -1771,16 +1783,16 @@ static void xol_free_insn_slot(struct task_struct *tsk)
+>>
+>>         spin_lock_irqsave(&area->list_lock, flags);
+>>         list_del_rcu(&tsk->utask->gc);
+>> +       /* Ensure the slot is not in use or reclaimed on other CPU */
+>> +       if (test_and_put_task_slot(tsk->utask)) {
+>> +               clear_bit(tsk->utask->insn_slot, area->bitmap);
+>> +               atomic_dec(&area->slot_count);
+>> +               tsk->utask->insn_slot = UINSNS_PER_PAGE;
+>> +               get_task_slot(tsk->utask);
+>> +       }
+> 
+> I would have expected you would add a if (racing) bail out, assume the
+> other CPU will do the work type check but that doesn't seem to be what
+> the code is doing.
+
+Sorry, I may not probably get the point clear here, and it would be very
+nice if more details are provided for the concern. Do you mean it's necessary
+to make the if-body excution exclusive among the CPUs? If that's the case,
+I guess the test_and_put_task_slot() is the equvialent to the race condition
+check. test_and_put_task_slot() uses a compare and exchange operation on the
+slot_ref of utask instance. Regardless of the work type being performed by
+other CPU, it will always bail out unless the slot_ref has a value of one,
+indicating the utask is free to access from local CPU.
+
+> 
+> -Andi
+> 
+> 
+
+-- 
+BR
+Liao, Chang
 
