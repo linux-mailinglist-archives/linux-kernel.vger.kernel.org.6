@@ -1,231 +1,136 @@
-Return-Path: <linux-kernel+bounces-335450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A794097E5E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:09:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83C8497E5E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:16:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D86F11C20F2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 06:09:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D945EB20B1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 06:15:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8026014F70;
-	Mon, 23 Sep 2024 06:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O8PzzO/+"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F16118044;
+	Mon, 23 Sep 2024 06:15:47 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E960010A3E
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 06:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 296C02F26;
+	Mon, 23 Sep 2024 06:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727071742; cv=none; b=t5/mBtOWhxXv1c0Il/b5lR7SGPqyrSJgBt7irybK0Ers4zduMp5nG0Tkb0jmk1jmmlLdLS+R6/+TXNdKqoUHSnW6VTnyMFJ2hD0B0/+NJ08yP4ly0J5CDy9o80/08yc8lbYd4S8uN+3EStXln6MbW1B/VgIQtg2Ns9FLEpFV4Xw=
+	t=1727072147; cv=none; b=f4Bu0cRfjAp3vEen+ez1aXdrBfUsoIhcH1NDveGvbksw0kR1xPz/jC252lY54recTaNFN5G/H760qKCtc7SauhmXVs14FEwkbj/iyHFhUMqE0WWJ3buyBhBmjoTgDQY+oDBgd1GgUGwofg+hl3Po9j8OnMmln9vbNHcnoXDCMoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727071742; c=relaxed/simple;
-	bh=unL0WtMsKVtj69g8UmUIv3RMdTmfHFIiMc0FE2FsCoA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n2mhkLlQH1b6H+Eh2GOGwlPdodPR5mp++01CRfo+crQWCMaE/YhZzA+EXHToaPE/I76jNMnQQv9QFZChWVRtlzie5hK3C2F9J77XkkYGqpfE9EtXmGAjUiaUZRenkDkjAf0GBNwRXIGKXt0Bh6NRh9KdM2Lqz1Ve9mrM6tgeLmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O8PzzO/+; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f75c6ed428so37868391fa.0
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 23:09:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727071739; x=1727676539; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K40eclvjg+5GlWGh4SlN0FjtX41ZWIpAlF1jWels5qA=;
-        b=O8PzzO/+5oyP7GysoVJ9dF7WKg3ysz8vIy1k2ETH8UjxbgqlKGKyV8FF5qNtigdsMZ
-         I8FTPL6xUhtj4bjgYW54iB794ekIafB1xGArXwKXtZqVtqrg7C9Y6QgcBlFoER4oS3Lw
-         7QMpHkRCFnTWSNR64d8ESepD4yz7TXyvXKpMqK+qRYN4GHOMRAtu12P1nJq9xlex1x9u
-         kijEfnX9wnyy5m7rXBHok3qPIh+bpOXstDI5/WnFKewxwiCQp9VMUHjiO5fR+cy3K+H0
-         LZ+fOj7dpbnHBiGwcE4FTgFDppZl+fKDv8qsbKw9Vedb1qIG7TqYfow4ozyYaPwfbE4g
-         7LwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727071739; x=1727676539;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K40eclvjg+5GlWGh4SlN0FjtX41ZWIpAlF1jWels5qA=;
-        b=n82nYUX1L2clVrQS013JP/KO/KVJaB1GnRyOY03I8xFEHM966vd0MBRcHlBs79CW8R
-         aj4ywNcOdJrG7ZPxsIXx6UAojHNyJ0QxrnTgyMwEEGSmEhnG/yPm8s3aWIweK6EpVsDY
-         7L18YaT5V0+GCcn1yRLWBnlmCaDRzx1MEGEHIynbtBHvK4kP91zPp3snmZOffXNoaVRV
-         GvMqjjAuEBWFdiclikL5If5J+OaUlfjbeZGQSbAWq7kJhR7mo1fexiJeS3dOTZhiHChK
-         XgZ3DEeicULOTyJAuALQaNhztop/3NkKfPHv+OjzcEtAd2oKxWZoaxUrICm70C70HLkV
-         Xoew==
-X-Forwarded-Encrypted: i=1; AJvYcCU0/BAd1MRtfTC4CzLPJPI+0lpCv1joIAsuCnmL8+SG6jeWZBNAEMn1KHJF3fpOGsA1RB3MQ+R/YfNYCiw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqE5Vmm71KfCVttzAhFyR6kv9aTra8ouEFZes/WoEf8+mDVOVw
-	0w5LWElrppQvb8iaTe42re9r1FU5535gjqsCg7uwme3NwYavzjDJHLA9qC+PBFehm/EV9etzlVY
-	7I+QUZ8WRlGEuIU4FYxeFXEwn5ss=
-X-Google-Smtp-Source: AGHT+IHXZ8/KhRf9j+/7bXZhnnPZaQ3XwlgnSVJMxl6mx6N/2HFk7xuLnrJ2w7P0CyX1LdgbhickwQtJDiqfe5YAXHQ=
-X-Received: by 2002:a05:6512:a8f:b0:536:a4da:8d86 with SMTP id
- 2adb3069b0e04-536ac2e0382mr4432965e87.15.1727071738642; Sun, 22 Sep 2024
- 23:08:58 -0700 (PDT)
+	s=arc-20240116; t=1727072147; c=relaxed/simple;
+	bh=SDK5WAPvFQbd6TXK5jrk7iXs9dzKjQKBFUw2MueBtgE=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=XV4gfp39HBoVNTVsD+HMt6DFh/FwCiNY/D/QAwn5+3DQZ+dLhm7voa+XrNuMIIqWJzC3fGPHBtERU0oIAP3bhf8ILO8cC19m2g2fvMOIz2pj/62oFgAWLKUCmfNg0vBDZDCdOz8chQF6x/rHANqtNQz7ObC9ITfN7A2n62/rGWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XBt5L1w04z4f3kvm;
+	Mon, 23 Sep 2024 14:15:18 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 177B51A0C3F;
+	Mon, 23 Sep 2024 14:15:35 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgCXysaFB_Fmq7NsCA--.30384S3;
+	Mon, 23 Sep 2024 14:15:34 +0800 (CST)
+Subject: Re: [PATCH RFC 5/6] md/raid1: Handle bio_split() errors
+To: John Garry <john.g.garry@oracle.com>, Yu Kuai <yukuai1@huaweicloud.com>,
+ axboe@kernel.dk, hch@lst.de
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, martin.petersen@oracle.com,
+ "yangerkun@huawei.com" <yangerkun@huawei.com>,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20240919092302.3094725-1-john.g.garry@oracle.com>
+ <20240919092302.3094725-6-john.g.garry@oracle.com>
+ <bc4c414c-a7aa-358b-71c1-598af05f005f@huaweicloud.com>
+ <0161641d-daef-4804-b4d2-4a83f625bc77@oracle.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <c03de5c7-20b8-3973-a843-fc010f121631@huaweicloud.com>
+Date: Mon, 23 Sep 2024 14:15:33 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+fCnZfaZGowWPE8kMeTY60n7BCFT2q4+Z2EJ92YB_+7+OUo7Q@mail.gmail.com>
- <20240922145757.986887-1-snovitoll@gmail.com>
-In-Reply-To: <20240922145757.986887-1-snovitoll@gmail.com>
-From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Date: Mon, 23 Sep 2024 11:09:33 +0500
-Message-ID: <CACzwLxg7_HPxbjLT1v+dHG=V0wAcUJYZvqdcdLBD9xhLgNUmqQ@mail.gmail.com>
-Subject: Re: [PATCH v5] mm: x86: instrument __get/__put_kernel_nofault
-To: andreyknvl@gmail.com
-Cc: akpm@linux-foundation.org, bp@alien8.de, brauner@kernel.org, 
-	dave.hansen@linux.intel.com, dhowells@redhat.com, dvyukov@google.com, 
-	glider@google.com, hpa@zytor.com, kasan-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, mingo@redhat.com, 
-	ryabinin.a.a@gmail.com, tglx@linutronix.de, vincenzo.frascino@arm.com, 
-	x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <0161641d-daef-4804-b4d2-4a83f625bc77@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCXysaFB_Fmq7NsCA--.30384S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Cr4UXF4rurWkCFW3AFyUtrb_yoW8Ary8pr
+	1ktFy5CrWUGrW8Cw17Xw4jya4Fyr1UJ3W5Ary0qa18ArnrJF9FqrWUXr1qgF1Y9r4xGF1j
+	qr18WFsxuFy7JFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Sun, Sep 22, 2024 at 7:57=E2=80=AFPM Sabyrzhan Tasbolatov
-<snovitoll@gmail.com> wrote:
->  arch/x86/include/asm/uaccess.h |  3 +++
->  mm/kasan/kasan_test.c          | 23 +++++++++++++++++++++++
->  2 files changed, 26 insertions(+)
->
-> diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uacces=
-s.h
-> index 3a7755c1a441..e8e5185dd65c 100644
-> --- a/arch/x86/include/asm/uaccess.h
-> +++ b/arch/x86/include/asm/uaccess.h
-> @@ -620,6 +620,7 @@ do {                                                 =
-                       \
->
->  #ifdef CONFIG_CC_HAS_ASM_GOTO_OUTPUT
->  #define __get_kernel_nofault(dst, src, type, err_label)                 =
-       \
-> +       instrument_memcpy_before(dst, src, sizeof(type));               \
->         __get_user_size(*((type *)(dst)), (__force type __user *)(src), \
->                         sizeof(type), err_label)
->  #else // !CONFIG_CC_HAS_ASM_GOTO_OUTPUT
-> @@ -627,6 +628,7 @@ do {                                                 =
-                       \
->  do {                                                                   \
->         int __kr_err;                                                   \
->                                                                         \
-> +       instrument_memcpy_before(dst, src, sizeof(type));               \
->         __get_user_size(*((type *)(dst)), (__force type __user *)(src), \
->                         sizeof(type), __kr_err);                        \
->         if (unlikely(__kr_err))                                         \
-> @@ -635,6 +637,7 @@ do {                                                 =
-                       \
->  #endif // CONFIG_CC_HAS_ASM_GOTO_OUTPUT
->
->  #define __put_kernel_nofault(dst, src, type, err_label)                 =
-       \
-> +       instrument_write(dst, sizeof(type));                            \
->         __put_user_size(*((type *)(src)), (__force type __user *)(dst), \
->                         sizeof(type), err_label)
->
 
-Instead of adding KASAN, KCSAN checks per arch macro,
-here is the alternative, generic way with a wrapper.
-I've tested it on x86_64 only, going to test on arm64
-with KASAN_SW_TAGS, KASAN_HW_TAGS if I can do it in qemu,
-and form a new patch for all arch
-and this PATCH v5 for x86 only can be abandoned.
 
-Please let me know if this wrapper is good enough,
-I will see in kasan_test.c how I should use SW/HW_TAG, probably,
-they should be a separate test with
-KASAN_TEST_NEEDS_CONFIG_ON(test, CONFIG_KASAN_SW_TAGS);
----
- include/linux/uaccess.h |  8 ++++++++
- mm/kasan/kasan_test.c   | 21 +++++++++++++++++++++
- mm/maccess.c            |  4 ++--
- 3 files changed, 31 insertions(+), 2 deletions(-)
+在 2024/09/20 18:04, John Garry 写道:
+> On 20/09/2024 07:58, Yu Kuai wrote:
+>> Hi,
+>>
+>> 在 2024/09/19 17:23, John Garry 写道:
+>>> Add proper bio_split() error handling. For any error, call
+>>> raid_end_bio_io() and return;
+>>>
+>>> Signed-off-by: John Garry <john.g.garry@oracle.com>
+>>> ---
+>>>   drivers/md/raid1.c | 8 ++++++++
+>>>   1 file changed, 8 insertions(+)
+>>>
+>>> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+>>> index 6c9d24203f39..c561e2d185e2 100644
+>>> --- a/drivers/md/raid1.c
+>>> +++ b/drivers/md/raid1.c
+>>> @@ -1383,6 +1383,10 @@ static void raid1_read_request(struct mddev 
+>>> *mddev, struct bio *bio,
+>>>       if (max_sectors < bio_sectors(bio)) {
+>>>           struct bio *split = bio_split(bio, max_sectors,
+>>>                             gfp, &conf->bio_split);
+>>> +        if (IS_ERR(split)) {
+>>> +            raid_end_bio_io(r1_bio);
+>>> +            return;
+>>> +        }
+>>
+>> This way, BLK_STS_IOERR will always be returned, perhaps what you want
+>> is to return the error code from bio_split()?
+> 
+> Yeah, I would like to return that error code, so maybe I can encode it 
+> in the master_bio directly or pass as an arg to raid_end_bio_io().
 
-diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
-index d8e4105a2f21..1b5c23868f97 100644
---- a/include/linux/uaccess.h
-+++ b/include/linux/uaccess.h
-@@ -422,6 +422,14 @@ do { \
- } while (0)
- #endif
+That's fine, however, I think the change can introduce problems in some
+corner cases, for example there is a rdev with badblocks and a slow rdev
+with full copy. Currently raid1_read_request() will split this bio to
+read some from fast rdev, and read the badblocks region from slow rdev.
 
-+#define __get_kernel_nofault_wrapper(dst, src, type, err_label) \
-+ instrument_memcpy_before(dst, src, sizeof(type)); \
-+ __get_kernel_nofault(dst, src, type, err_label); \
-+
-+#define __put_kernel_nofault_wrapper(dst, src, type, err_label) \
-+ instrument_write(dst, sizeof(type)); \
-+ __put_kernel_nofault(dst, src, type, err_label); \
-+
- /**
-  * get_kernel_nofault(): safely attempt to read from a location
-  * @val: read into this variable
-diff --git a/mm/kasan/kasan_test.c b/mm/kasan/kasan_test.c
-index 567d33b493e2..ae05c8858c07 100644
---- a/mm/kasan/kasan_test.c
-+++ b/mm/kasan/kasan_test.c
-@@ -1944,6 +1944,26 @@ static void match_all_mem_tag(struct kunit *test)
-  kfree(ptr);
- }
+We need a new branch in read_balance() to choose a rdev with full copy.
 
-+static void copy_from_to_kernel_nofault_oob(struct kunit *test)
-+{
-+ char *ptr;
-+ char buf[128];
-+ size_t size =3D sizeof(buf);
-+
-+ ptr =3D kmalloc(size - KASAN_GRANULE_SIZE, GFP_KERNEL);
-+ KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
-+
-+ KUNIT_EXPECT_KASAN_FAIL(test,
-+ copy_from_kernel_nofault(&buf[0], ptr, size));
-+ KUNIT_EXPECT_KASAN_FAIL(test,
-+ copy_from_kernel_nofault(ptr, &buf[0], size));
-+ KUNIT_EXPECT_KASAN_FAIL(test,
-+ copy_to_kernel_nofault(&buf[0], ptr, size));
-+ KUNIT_EXPECT_KASAN_FAIL(test,
-+ copy_to_kernel_nofault(ptr, &buf[0], size));
-+ kfree(ptr);
-+}
-+
- static struct kunit_case kasan_kunit_test_cases[] =3D {
-  KUNIT_CASE(kmalloc_oob_right),
-  KUNIT_CASE(kmalloc_oob_left),
-@@ -2017,6 +2037,7 @@ static struct kunit_case kasan_kunit_test_cases[] =3D=
- {
-  KUNIT_CASE(match_all_not_assigned),
-  KUNIT_CASE(match_all_ptr_tag),
-  KUNIT_CASE(match_all_mem_tag),
-+ KUNIT_CASE(copy_from_to_kernel_nofault_oob),
-  {}
- };
+Thanks,
+Kuai
 
-diff --git a/mm/maccess.c b/mm/maccess.c
-index 518a25667323..a3533a0d0677 100644
---- a/mm/maccess.c
-+++ b/mm/maccess.c
-@@ -15,7 +15,7 @@ bool __weak copy_from_kernel_nofault_allowed(const
-void *unsafe_src,
+> 
+> Thanks,
+> John
+> 
+> .
+> 
 
- #define copy_from_kernel_nofault_loop(dst, src, len, type, err_label) \
-  while (len >=3D sizeof(type)) { \
-- __get_kernel_nofault(dst, src, type, err_label); \
-+ __get_kernel_nofault_wrapper(dst, src, type, err_label);\
-  dst +=3D sizeof(type); \
-  src +=3D sizeof(type); \
-  len -=3D sizeof(type); \
-@@ -49,7 +49,7 @@ EXPORT_SYMBOL_GPL(copy_from_kernel_nofault);
-
- #define copy_to_kernel_nofault_loop(dst, src, len, type, err_label) \
-  while (len >=3D sizeof(type)) { \
-- __put_kernel_nofault(dst, src, type, err_label); \
-+ __put_kernel_nofault_wrapper(dst, src, type, err_label);\
-  dst +=3D sizeof(type); \
-  src +=3D sizeof(type); \
-  len -=3D sizeof(type); \
---
 
