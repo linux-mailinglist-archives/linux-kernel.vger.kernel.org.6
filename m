@@ -1,608 +1,304 @@
-Return-Path: <linux-kernel+bounces-335605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6E7E97E801
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:58:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3658F97E804
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:58:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD9D11C213C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:58:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A00F9B21CB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:58:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91FFE1946C7;
-	Mon, 23 Sep 2024 08:57:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464A01946A2;
+	Mon, 23 Sep 2024 08:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IQMa2awP"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ErBlbw9t"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B29BB1940B0
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 08:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9603019343D
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 08:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727081873; cv=none; b=gFFwH1qoi635Qir8fX0xMXS0soziYLPyieYo2SqriamqIaO/L7/T9qWI8wDD5YI72pPN/99+cn3JZhvYtWVu5JP+iO3M8TJMurhMPZ1msMfs0bKkIrBrggm3mAcQbU3UGPEB8snUlhVql7SYm4kPgYW69ff1ULpCrqPkEJIFDy0=
+	t=1727081908; cv=none; b=YQWHiIBhGFalm5ANwTW3RzID4F0lYxqjSVmJ5kRsQkpJXGyU0L7jqWVJzEFZUEh/e1OJPTfV6+5z9nyzEsz+ZGVC5PnmBEvDXGK8cNqdLoSZmgfqojy6l0GRamUcaykVKC4AcYO7SxdyNfN4/ZfIHM8CFKRzBk0LpUxhivNFEec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727081873; c=relaxed/simple;
-	bh=YQLVJWieLc9zhq7jmy4TnD6AHo1rVXcY0n4zS46y+yM=;
+	s=arc-20240116; t=1727081908; c=relaxed/simple;
+	bh=kdnLNpiksyAyDdCgLQjNN7iPGmYGohIAUf9by9wS0XQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XDZpoU4jI/oX/4wtl+4w3UWcvZiqWSqdsxU21O+GQQCg2r4x+hDJSSbgSxTzj5LQPNwhyXp+3WL+HQHeM1E5kx6cRjktz2JTxReQFelcs/6LQ4B5XLwbXrvUNacxXQGBx4QWQQVmjA56MGNLsoo+dvoF3R+VLMpdxBjXrA3Y+Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IQMa2awP; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a90188ae58eso508118366b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 01:57:50 -0700 (PDT)
+	 To:Cc:Content-Type; b=ZJwY8EBDsCgkUumEigjkdl7cfEiX6vsnsNliNTGU5tGrclykqNR52m/m6CAYDEiP3FTjgjkh9azaZtv/cgKXoXRtfjx7fK6ukQ6fybHfXIN10L2bxHlwrB23+cgewNSzztyDRilqkLyCuocOnh6IZkGUQ6Ds/gH7YCCfV8+zcc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ErBlbw9t; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f7ba97ebaaso36181041fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 01:58:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727081869; x=1727686669; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1727081905; x=1727686705; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nyM4DmjzVCW3YthPxYZVDbKycspXMq2IxqBbSvHv/5w=;
-        b=IQMa2awP/P+SZp+yMneEi9n88tMfNjwPsrJDu6qsfO0K3BB4KgD+HtFGn0waBCnS/3
-         v1Om2MoNeUSPx+pvpq4ciGMOY0n9Md3WuHz1R4AaoYWUG4YvWfXTNLh6cLHqE/HoOw9Z
-         vUBcnzCJO10dpDEZEQcmCl3Fc+JE5V+Zuvx88/gkoWfrTH1Fu8tED0nQO/IaU4EWOJPA
-         s1efXGPROAsMZ0IbTkumfp+JFxLY3hAYTfpSjBgSiKWF5h0GeBC0joz9Z6YEyoHTK+ed
-         UN66MaGDJAdLT/qiVxIbBd+tfLG7Zspp47vZzB8DbxxgLLlxhbroQGvlpKICNfadliuP
-         cCUg==
+        bh=U1sQ682pnIkA6X/5BBN5dJdPJY/AuV9vVMjIXL626PQ=;
+        b=ErBlbw9tfmx4MBIKXv1tw0UlRBW9Nb1j4rHvWlBfGO9te4vFOrpz/GstyRc8D9pHN6
+         mxbtRY7PTxsdbx2rRUbXaOhGWnRJ8i34/1FRTZ8QnoOazVpGMTSq7is946hV9oAKXowI
+         jBqKRGRHkcW7E+RxOqxGPIkgnr/NXKvrN+h2duOPA0WAAFr8ZxozMcFgs7azAEDkPWQ5
+         9Vj1m3JwJSfP5xJqKM4KQYW2keLL2q15nzoa+7qykcB4+UsHztTKJS0yCs7nCCiIvhtm
+         AgOb03XE0TeC5eqr3tjRpK27IXa7sQp0XMownXrw4IUUpsZRlV0G2XuO7G2AkEJ/j1Tc
+         l27g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727081869; x=1727686669;
+        d=1e100.net; s=20230601; t=1727081905; x=1727686705;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nyM4DmjzVCW3YthPxYZVDbKycspXMq2IxqBbSvHv/5w=;
-        b=KxD96Rafkvs9EBax+nEliZ5nIoNHbF9VcexfKwH+kqQWD1tI5J5s5/ugSH4pAD5o5O
-         tETiezx09QNuAEOHUGQX1PRyAWM+GeafttFas0VZOKAOW2J/UHPqSbkVfGR6CEcvR9mn
-         h/yn4k0GFAJfpVYPbUO+1o1l24uI1kMCiTFWrJqtHEVHunUaqTc5c3O4or2vgmqlZ65j
-         LxUNhK2L0XD2L6kKwsHkuwsyvt8x9Zwgz5ldGkTOuAIv7vlW6z5fbjnERufhRrcH0i0Q
-         4p3zRkca4tDWpqKBq9pgWZNcjo+lr3Pz5MqJzvzhx+i8uq02f74G6ZEywyv9n9lCwulT
-         sHmg==
-X-Forwarded-Encrypted: i=1; AJvYcCUbXsHsMaHTG/px1eUTpOi/+8XK3YheQgqeVlULRasYmNk+ANsSxWG/OGE3xcJ6CT9CGXgYmqBwBfgLf+g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3DUQ6fgXgfGJ3QPPjAcPQANWya5nOZdiKQLiN97Dc1XdmC+N6
-	c3k/RoAAakd5mPgzt9LALQUk+aW1fL9CkC49hFlOV6maeuNuDNlAKP56B8qQIrwcrRck1K4B8Ne
-	FLVULCUlHfi2s8wrX7pmjozO/jsuwpOahB0nr
-X-Google-Smtp-Source: AGHT+IFBPfRX57lRyRY6QWrqTAVc830bow6tdsOH6p/OCZ0hm+eQY5vQFVbDFlUHINDv5XT+RQbV9caB6pOLUDNz2nA=
-X-Received: by 2002:a17:907:9450:b0:a8d:7b7d:8c39 with SMTP id
- a640c23a62f3a-a90d59266demr1116511566b.43.1727081868591; Mon, 23 Sep 2024
- 01:57:48 -0700 (PDT)
+        bh=U1sQ682pnIkA6X/5BBN5dJdPJY/AuV9vVMjIXL626PQ=;
+        b=E/XbAqZK+x5l7x90ww6g8PFe0BseKrSgI/g6EAfg1WIe+D6QAfz1gVGsYkjFOX9XO8
+         BX9Ghf2ELvAeM0EIlBjCTfCe9wyIHDpiGKSc656YBYzCbKMUOtOKdFN2GbqdbX9ZabOd
+         aWmHGG+Kry1JwsQpwA8cmHyAom6iDCdhPS4DUwPDHsvuS+UniuNjJaGL5Af0P0FlspBO
+         ny2Q4ijk6xse/t8FksxYDyTxqyUWpRK6Pe32/OxWZCxJZvO0NQpW+f0XUXrXvy1x7XYI
+         5R16YdbLPgOi0iWZtYQ8MsJFqtctXpa//1/U3Fo2niECuXrBdjASN8yEwEVhNWb0jED+
+         I7qA==
+X-Forwarded-Encrypted: i=1; AJvYcCWLlVQTWHpNJnKEHBeE46uNHVmKgiVGSoDsLmOYh8/HjN7ICOZ/MEjAXlNl3QG40iTY7ncsADd1FWBBJjw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwN9WOnK4dd9ad4Ld7oJ6DpMbHlyTvhFYuOXx0rkCPPMHPY7VRG
+	tuGXVkcuV7Tw/CUFmVK+AQEXeoLZ9wCXtcMVJeNISrRvq5PUQwyM1bxdT25Tq2vov6WpjVJwd73
+	zcObdDzUZPi61oAGYM/TRAbiN9aJNLlQa/VqsXemurSs1exTDomc=
+X-Google-Smtp-Source: AGHT+IGPYbsu7Vn5CAEgdlkW3pqRnZF7mQQ31TPIJrhGD4dXpbxvp4/C/8SvXTIMoXcEgDh7ARRBzdgO2mVEO6KbFlQ=
+X-Received: by 2002:a05:6512:3b14:b0:535:d4e9:28bb with SMTP id
+ 2adb3069b0e04-536ad3b7e10mr4529008e87.46.1727081904496; Mon, 23 Sep 2024
+ 01:58:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240921215410.638664-1-littlesmilingcloud@gmail.com>
- <CANn89iKP3VPExdyZt+eLFk3rE5=6yRckTPySfh5MvcEqPNm6aA@mail.gmail.com> <ZvB8stjbrXoez86t@dau-work-pc.sunlink.ru>
-In-Reply-To: <ZvB8stjbrXoez86t@dau-work-pc.sunlink.ru>
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 23 Sep 2024 10:57:34 +0200
-Message-ID: <CANn89iJoMcxe6xAOE=QGfqmOa1p+_ssSr_2y4KUJr-Qap3xk0Q@mail.gmail.com>
-Subject: Re: [RFC PATCH net] ipv4: ip_gre: Fix drops of small packets in ipgre_xmit
-To: Anton Danilov <littlesmilingcloud@gmail.com>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
-	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Suman Ghosh <sumang@marvell.com>, Shigeru Yoshida <syoshida@redhat.com>, linux-kernel@vger.kernel.org
+References: <20240903-02-k1-pinctrl-v4-0-d76c00a33b2b@gentoo.org> <20240903-02-k1-pinctrl-v4-2-d76c00a33b2b@gentoo.org>
+In-Reply-To: <20240903-02-k1-pinctrl-v4-2-d76c00a33b2b@gentoo.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 23 Sep 2024 10:58:13 +0200
+Message-ID: <CACRpkda2M5kpBi9jJvvAH1SzFurs=c9Z+brSJ_MOkvNz=28t_Q@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] pinctrl: spacemit: add support for SpacemiT K1 SoC
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Conor Dooley <conor@kernel.org>, Yangyu Chen <cyy@cyyself.name>, Jisheng Zhang <jszhang@kernel.org>, 
+	Inochi Amaoto <inochiama@outlook.com>, Icenowy Zheng <uwu@icenowy.me>, 
+	Meng Zhang <zhangmeng.kevin@spacemit.com>, Meng Zhang <kevin.z.m@hotmail.com>, 
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Sep 22, 2024 at 10:23=E2=80=AFPM Anton Danilov
-<littlesmilingcloud@gmail.com> wrote:
->
-> On Sun, Sep 22, 2024 at 12:20:03PM +0200, Eric Dumazet wrote:
->
-> Hi Eric,
->
-> > Please provide a real selftest, because in this particular example,
-> > the path taken by the packets should not reach the
-> > pskb_network_may_pull(skb, pull_len)),
-> > because dev->header_ops should be NULL ?
->
-> I sincerely apologize for providing an inaccurate example of the commands
-> needed to reproduce the issue. I understand that this may have caused
-> confusion, and I'm truly sorry for any inconvenience.
->
-> Here are the correct commands and their results.
->
->
->   ip l add name mgre0 type gre local 192.168.71.177 remote 0.0.0.0 ikey 1=
-.9.8.4 okey 1.9.8.4
->   ip l s mtu 1400 dev mgre0
->   ip a add 192.168.13.1/24 dev mgre0
->   ip l s up dev mgre0
->   ip n add 192.168.13.2 lladdr 192.168.69.50 dev mgre0
+Hi Yixun,
 
-This looks much better. I was hoping that we could capture this in a
-new test (added in tools/testing/selftests/net)
+thanks for your patch!
 
-Please also move the buggy "tnl_params =3D (const struct iphdr
-*)skb->data;" line as in :
+Some comments and suggestions below:
 
-diff --git a/net/ipv4/ip_gre.c b/net/ipv4/ip_gre.c
-index 5f6fd382af38a32d9e22633cdb2e9fd01f1795e4..f1f31ebfc7934467fd10776c3cb=
-221f9cff9f9dd
-100644
---- a/net/ipv4/ip_gre.c
-+++ b/net/ipv4/ip_gre.c
-@@ -662,11 +662,11 @@ static netdev_tx_t ipgre_xmit(struct sk_buff *skb,
-                if (skb_cow_head(skb, 0))
-                        goto free_skb;
+On Tue, Sep 3, 2024 at 2:27=E2=80=AFPM Yixun Lan <dlan@gentoo.org> wrote:
 
--               tnl_params =3D (const struct iphdr *)skb->data;
--
--               if (!pskb_network_may_pull(skb, pull_len))
-+               if (!pskb_may_pull(skb, pull_len))
-                        goto free_skb;
-
-+               tnl_params =3D (const struct iphdr *)skb->data;
-+
-                /* ip_tunnel_xmit() needs skb->data pointing to gre header.=
- */
-                skb_pull(skb, pull_len);
-                skb_reset_mac_header(skb);
+> SpacemiT's K1 SoC has a pinctrl controller which use single register
+> to describe all functions, which include bias pull up/down(strong pull),
+> drive strength, schmitter trigger, slew rate, mux mode.
+>
+> Signed-off-by: Yixun Lan <dlan@gentoo.org>
 
 
->
->
->   ip -s -s -d l ls dev mgre0
->     19: mgre0@NONE: <NOARP,UP,LOWER_UP> mtu 1400 qdisc noqueue state UNKN=
-OWN mode DEFAULT group default qlen 1000
->         link/gre 192.168.71.177 brd 0.0.0.0 promiscuity 0  allmulti 0 min=
-mtu 0 maxmtu 0
->         gre remote any local 192.168.71.177 ttl inherit ikey 1.9.8.4 okey=
- 1.9.8.4 \
->           addrgenmode eui64 numtxqueues 1 numrxqueues 1 gso_max_size 6553=
-6 gso_max_segs 65535 \
->           tso_max_size 65536 tso_max_segs 65535 gro_max_size 65536
->
->         RX:  bytes packets errors dropped  missed   mcast
->                  0       0      0       0       0       0
->         RX errors:  length    crc   frame    fifo overrun
->                          0      0       0       0       0
->         TX:  bytes packets errors dropped carrier collsns
->                  0       0      0       0       0       0
->         TX errors: aborted   fifo  window heartbt transns
->                          0      0       0       0       0
->
->
->   ping -n -c 10 -s 1374 192.168.13.2
->     PING 192.168.13.2 (192.168.13.2) 1374(1402) bytes of data.
->
->     --- 192.168.13.2 ping statistics ---
->     10 packets transmitted, 0 received, 100% packet loss, time 9237ms
->
->
->   ip -s -s -d l ls dev mgre0
->     19: mgre0@NONE: <NOARP,UP,LOWER_UP> mtu 1400 qdisc noqueue state UNKN=
-OWN mode DEFAULT group default qlen 1000
->         link/gre 192.168.71.177 brd 0.0.0.0 promiscuity 1  allmulti 0 min=
-mtu 0 maxmtu 0
->         gre remote any local 192.168.71.177 ttl inherit ikey 1.9.8.4 okey=
- 1.9.8.4 \
->           addrgenmode eui64 numtxqueues 1 numrxqueues 1 gso_max_size 6553=
-6 gso_max_segs 65535 \
->           tso_max_size 65536 tso_max_segs 65535 gro_max_size 65536
->
->         RX:  bytes packets errors dropped  missed   mcast
->                  0       0      0       0       0       0
->         RX errors:  length    crc   frame    fifo overrun
->                          0      0       0       0       0
->         TX:  bytes packets errors dropped carrier collsns
->              13960      10      0      10       0       0
->         TX errors: aborted   fifo  window heartbt transns
->                      0      0       0       0       0
->
->
->   tcpdump -vni mgre0
->     tcpdump: listening on mgre0, link-type LINUX_SLL (Linux cooked v1), s=
-napshot length 262144 bytes
->     21:51:19.481523 IP (tos 0x0, ttl 64, id 52595, offset 0, flags [+], p=
-roto ICMP (1), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 1, =
-length 1376
->     21:51:19.481547 IP (tos 0x0, ttl 64, id 52595, offset 1376, flags [no=
-ne], proto ICMP (1), length 26)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->     21:51:20.526751 IP (tos 0x0, ttl 64, id 53374, offset 0, flags [+], p=
-roto ICMP (1), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 2, =
-length 1376
->     21:51:20.526773 IP (tos 0x0, ttl 64, id 53374, offset 1376, flags [no=
-ne], proto ICMP (1), length 26)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->     21:51:21.550751 IP (tos 0x0, ttl 64, id 54124, offset 0, flags [+], p=
-roto ICMP (1), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 3, =
-length 1376
->     21:51:21.550775 IP (tos 0x0, ttl 64, id 54124, offset 1376, flags [no=
-ne], proto ICMP (1), length 26)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->     21:51:22.574748 IP (tos 0x0, ttl 64, id 55109, offset 0, flags [+], p=
-roto ICMP (1), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 4, =
-length 1376
->     21:51:22.574766 IP (tos 0x0, ttl 64, id 55109, offset 1376, flags [no=
-ne], proto ICMP (1), length 26)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->     21:51:23.598748 IP (tos 0x0, ttl 64, id 56011, offset 0, flags [+], p=
-roto ICMP (1), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 5, =
-length 1376
->     21:51:23.598771 IP (tos 0x0, ttl 64, id 56011, offset 1376, flags [no=
-ne], proto ICMP (1), length 26)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->     21:51:24.622758 IP (tos 0x0, ttl 64, id 57009, offset 0, flags [+], p=
-roto ICMP (1), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 6, =
-length 1376
->     21:51:24.622783 IP (tos 0x0, ttl 64, id 57009, offset 1376, flags [no=
-ne], proto ICMP (1), length 26)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->     21:51:25.646748 IP (tos 0x0, ttl 64, id 57277, offset 0, flags [+], p=
-roto ICMP (1), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 7, =
-length 1376
->     21:51:25.646775 IP (tos 0x0, ttl 64, id 57277, offset 1376, flags [no=
-ne], proto ICMP (1), length 26)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->     21:51:26.670750 IP (tos 0x0, ttl 64, id 57869, offset 0, flags [+], p=
-roto ICMP (1), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 8, =
-length 1376
->     21:51:26.670773 IP (tos 0x0, ttl 64, id 57869, offset 1376, flags [no=
-ne], proto ICMP (1), length 26)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->     21:51:27.694751 IP (tos 0x0, ttl 64, id 58317, offset 0, flags [+], p=
-roto ICMP (1), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 9, =
-length 1376
->     21:51:27.694774 IP (tos 0x0, ttl 64, id 58317, offset 1376, flags [no=
-ne], proto ICMP (1), length 26)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->     21:51:28.718751 IP (tos 0x0, ttl 64, id 58558, offset 0, flags [+], p=
-roto ICMP (1), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 10,=
- length 1376
->     21:51:28.718775 IP (tos 0x0, ttl 64, id 58558, offset 1376, flags [no=
-ne], proto ICMP (1), length 26)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->
->
->   tcpdump -vni enp11s0.100 'ip proto 47'
->     tcpdump: listening on enp11s0.100, link-type EN10MB (Ethernet), snaps=
-hot length 262144 bytes
->     21:51:19.481696 IP (tos 0x0, ttl 64, id 32563, offset 0, flags [DF], =
-proto GRE (47), length 1424)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 1404
->         IP (tos 0x0, ttl 64, id 52595, offset 0, flags [+], proto ICMP (1=
-), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 1, =
-length 1376
->     21:51:20.526767 IP (tos 0x0, ttl 64, id 33363, offset 0, flags [DF], =
-proto GRE (47), length 1424)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 1404
->         IP (tos 0x0, ttl 64, id 53374, offset 0, flags [+], proto ICMP (1=
-), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 2, =
-length 1376
->     21:51:21.550768 IP (tos 0x0, ttl 64, id 34260, offset 0, flags [DF], =
-proto GRE (47), length 1424)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 1404
->         IP (tos 0x0, ttl 64, id 54124, offset 0, flags [+], proto ICMP (1=
-), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 3, =
-length 1376
->     21:51:22.574761 IP (tos 0x0, ttl 64, id 34922, offset 0, flags [DF], =
-proto GRE (47), length 1424)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 1404
->         IP (tos 0x0, ttl 64, id 55109, offset 0, flags [+], proto ICMP (1=
-), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 4, =
-length 1376
->     21:51:23.598764 IP (tos 0x0, ttl 64, id 35042, offset 0, flags [DF], =
-proto GRE (47), length 1424)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 1404
->         IP (tos 0x0, ttl 64, id 56011, offset 0, flags [+], proto ICMP (1=
-), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 5, =
-length 1376
->     21:51:24.622775 IP (tos 0x0, ttl 64, id 36024, offset 0, flags [DF], =
-proto GRE (47), length 1424)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 1404
->         IP (tos 0x0, ttl 64, id 57009, offset 0, flags [+], proto ICMP (1=
-), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 6, =
-length 1376
->     21:51:25.646766 IP (tos 0x0, ttl 64, id 36133, offset 0, flags [DF], =
-proto GRE (47), length 1424)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 1404
->         IP (tos 0x0, ttl 64, id 57277, offset 0, flags [+], proto ICMP (1=
-), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 7, =
-length 1376
->     21:51:26.670766 IP (tos 0x0, ttl 64, id 36417, offset 0, flags [DF], =
-proto GRE (47), length 1424)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 1404
->         IP (tos 0x0, ttl 64, id 57869, offset 0, flags [+], proto ICMP (1=
-), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 8, =
-length 1376
->     21:51:27.694767 IP (tos 0x0, ttl 64, id 37006, offset 0, flags [DF], =
-proto GRE (47), length 1424)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 1404
->         IP (tos 0x0, ttl 64, id 58317, offset 0, flags [+], proto ICMP (1=
-), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 9, =
-length 1376
->     21:51:28.718767 IP (tos 0x0, ttl 64, id 37825, offset 0, flags [DF], =
-proto GRE (47), length 1424)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 1404
->         IP (tos 0x0, ttl 64, id 58558, offset 0, flags [+], proto ICMP (1=
-), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 10,=
- length 1376
->
->
->   ping -n -c 10 -s 1376 192.168.13.2
->     PING 192.168.13.2 (192.168.13.2) 1376(1404) bytes of data.
->
->     --- 192.168.13.2 ping statistics ---
->     10 packets transmitted, 0 received, 100% packet loss, time 9198ms
->
->
->   ip -s -s -d l ls dev mgre0
->     19: mgre0@NONE: <NOARP,UP,LOWER_UP> mtu 1400 qdisc noqueue state UNKN=
-OWN mode DEFAULT group default qlen 1000
->         link/gre 192.168.71.177 brd 0.0.0.0 promiscuity 0  allmulti 0 min=
-mtu 0 maxmtu 0
->         gre remote any local 192.168.71.177 ttl inherit ikey 1.9.8.4 okey=
- 1.9.8.4 addrgenmode eui64 numtxqueues 1 numrxqueues 1 gso_max_size 65536 g=
-so_max_segs 65535 tso_max_size 65536 tso_max_segs 65535 gro_max_size 65536
->         RX:  bytes packets errors dropped  missed   mcast
->                  0       0      0       0       0       0
->         RX errors:  length    crc   frame    fifo overrun
->                          0      0       0       0       0
->         TX:  bytes packets errors dropped carrier collsns
->              28200      30      0      10       0       0
->         TX errors: aborted   fifo  window heartbt transns
->                          0      0       0       0       0
->
->
->   tcpdump -vni mgre0
->     tcpdump: listening on mgre0, link-type LINUX_SLL (Linux cooked v1), s=
-napshot length 262144 bytes
->     22:01:34.176810 IP (tos 0x0, ttl 64, id 40388, offset 0, flags [+], p=
-roto ICMP (1), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 1, =
-length 1376
->     22:01:34.176830 IP (tos 0x0, ttl 64, id 40388, offset 1376, flags [no=
-ne], proto ICMP (1), length 28)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->     22:01:35.183742 IP (tos 0x0, ttl 64, id 40516, offset 0, flags [+], p=
-roto ICMP (1), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 2, =
-length 1376
->     22:01:35.183765 IP (tos 0x0, ttl 64, id 40516, offset 1376, flags [no=
-ne], proto ICMP (1), length 28)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->     22:01:36.207750 IP (tos 0x0, ttl 64, id 40684, offset 0, flags [+], p=
-roto ICMP (1), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 3, =
-length 1376
->     22:01:36.207774 IP (tos 0x0, ttl 64, id 40684, offset 1376, flags [no=
-ne], proto ICMP (1), length 28)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->     22:01:37.230738 IP (tos 0x0, ttl 64, id 41578, offset 0, flags [+], p=
-roto ICMP (1), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 4, =
-length 1376
->     22:01:37.230756 IP (tos 0x0, ttl 64, id 41578, offset 1376, flags [no=
-ne], proto ICMP (1), length 28)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->     22:01:38.254761 IP (tos 0x0, ttl 64, id 42099, offset 0, flags [+], p=
-roto ICMP (1), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 5, =
-length 1376
->     22:01:38.254789 IP (tos 0x0, ttl 64, id 42099, offset 1376, flags [no=
-ne], proto ICMP (1), length 28)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->     22:01:39.278748 IP (tos 0x0, ttl 64, id 42506, offset 0, flags [+], p=
-roto ICMP (1), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 6, =
-length 1376
->     22:01:39.278771 IP (tos 0x0, ttl 64, id 42506, offset 1376, flags [no=
-ne], proto ICMP (1), length 28)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->     22:01:40.302738 IP (tos 0x0, ttl 64, id 42527, offset 0, flags [+], p=
-roto ICMP (1), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 7, =
-length 1376
->     22:01:40.302754 IP (tos 0x0, ttl 64, id 42527, offset 1376, flags [no=
-ne], proto ICMP (1), length 28)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->     22:01:41.326733 IP (tos 0x0, ttl 64, id 42989, offset 0, flags [+], p=
-roto ICMP (1), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 8, =
-length 1376
->     22:01:41.326749 IP (tos 0x0, ttl 64, id 42989, offset 1376, flags [no=
-ne], proto ICMP (1), length 28)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->     22:01:42.350750 IP (tos 0x0, ttl 64, id 43576, offset 0, flags [+], p=
-roto ICMP (1), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 9, =
-length 1376
->     22:01:42.350773 IP (tos 0x0, ttl 64, id 43576, offset 1376, flags [no=
-ne], proto ICMP (1), length 28)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->     22:01:43.374743 IP (tos 0x0, ttl 64, id 44118, offset 0, flags [+], p=
-roto ICMP (1), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 10,=
- length 1376
->     22:01:43.374762 IP (tos 0x0, ttl 64, id 44118, offset 1376, flags [no=
-ne], proto ICMP (1), length 28)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->
->
->   tcpdump -vni enp11s0.100 'ip proto 47'
->     tcpdump: listening on enp11s0.100, link-type EN10MB (Ethernet), snaps=
-hot length 262144 bytes
->     22:01:34.176825 IP (tos 0x0, ttl 64, id 5066, offset 0, flags [DF], p=
-roto GRE (47), length 1424)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 1404
->         IP (tos 0x0, ttl 64, id 40388, offset 0, flags [+], proto ICMP (1=
-), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 1, =
-length 1376
->     22:01:34.176832 IP (tos 0x0, ttl 64, id 5067, offset 0, flags [DF], p=
-roto GRE (47), length 56)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 36
->         IP (tos 0x0, ttl 64, id 40388, offset 1376, flags [none], proto I=
-CMP (1), length 28)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->     22:01:35.183758 IP (tos 0x0, ttl 64, id 5567, offset 0, flags [DF], p=
-roto GRE (47), length 1424)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 1404
->         IP (tos 0x0, ttl 64, id 40516, offset 0, flags [+], proto ICMP (1=
-), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 2, =
-length 1376
->     22:01:35.183768 IP (tos 0x0, ttl 64, id 5568, offset 0, flags [DF], p=
-roto GRE (47), length 56)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 36
->         IP (tos 0x0, ttl 64, id 40516, offset 1376, flags [none], proto I=
-CMP (1), length 28)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->     22:01:36.207767 IP (tos 0x0, ttl 64, id 5741, offset 0, flags [DF], p=
-roto GRE (47), length 1424)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 1404
->         IP (tos 0x0, ttl 64, id 40684, offset 0, flags [+], proto ICMP (1=
-), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 3, =
-length 1376
->     22:01:36.207778 IP (tos 0x0, ttl 64, id 5742, offset 0, flags [DF], p=
-roto GRE (47), length 56)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 36
->         IP (tos 0x0, ttl 64, id 40684, offset 1376, flags [none], proto I=
-CMP (1), length 28)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->     22:01:37.230751 IP (tos 0x0, ttl 64, id 5785, offset 0, flags [DF], p=
-roto GRE (47), length 1424)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 1404
->         IP (tos 0x0, ttl 64, id 41578, offset 0, flags [+], proto ICMP (1=
-), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 4, =
-length 1376
->     22:01:37.230758 IP (tos 0x0, ttl 64, id 5786, offset 0, flags [DF], p=
-roto GRE (47), length 56)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 36
->         IP (tos 0x0, ttl 64, id 41578, offset 1376, flags [none], proto I=
-CMP (1), length 28)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->     22:01:38.254780 IP (tos 0x0, ttl 64, id 5937, offset 0, flags [DF], p=
-roto GRE (47), length 1424)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 1404
->         IP (tos 0x0, ttl 64, id 42099, offset 0, flags [+], proto ICMP (1=
-), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 5, =
-length 1376
->     22:01:38.254795 IP (tos 0x0, ttl 64, id 5938, offset 0, flags [DF], p=
-roto GRE (47), length 56)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 36
->         IP (tos 0x0, ttl 64, id 42099, offset 1376, flags [none], proto I=
-CMP (1), length 28)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->     22:01:39.278764 IP (tos 0x0, ttl 64, id 6876, offset 0, flags [DF], p=
-roto GRE (47), length 1424)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 1404
->         IP (tos 0x0, ttl 64, id 42506, offset 0, flags [+], proto ICMP (1=
-), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 6, =
-length 1376
->     22:01:39.278775 IP (tos 0x0, ttl 64, id 6877, offset 0, flags [DF], p=
-roto GRE (47), length 56)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 36
->         IP (tos 0x0, ttl 64, id 42506, offset 1376, flags [none], proto I=
-CMP (1), length 28)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->     22:01:40.302749 IP (tos 0x0, ttl 64, id 7410, offset 0, flags [DF], p=
-roto GRE (47), length 1424)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 1404
->         IP (tos 0x0, ttl 64, id 42527, offset 0, flags [+], proto ICMP (1=
-), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 7, =
-length 1376
->     22:01:40.302757 IP (tos 0x0, ttl 64, id 7411, offset 0, flags [DF], p=
-roto GRE (47), length 56)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 36
->         IP (tos 0x0, ttl 64, id 42527, offset 1376, flags [none], proto I=
-CMP (1), length 28)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->     22:01:41.326744 IP (tos 0x0, ttl 64, id 7913, offset 0, flags [DF], p=
-roto GRE (47), length 1424)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 1404
->         IP (tos 0x0, ttl 64, id 42989, offset 0, flags [+], proto ICMP (1=
-), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 8, =
-length 1376
->     22:01:41.326753 IP (tos 0x0, ttl 64, id 7914, offset 0, flags [DF], p=
-roto GRE (47), length 56)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 36
->         IP (tos 0x0, ttl 64, id 42989, offset 1376, flags [none], proto I=
-CMP (1), length 28)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->     22:01:42.350766 IP (tos 0x0, ttl 64, id 8422, offset 0, flags [DF], p=
-roto GRE (47), length 1424)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 1404
->         IP (tos 0x0, ttl 64, id 43576, offset 0, flags [+], proto ICMP (1=
-), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 9, =
-length 1376
->     22:01:42.350776 IP (tos 0x0, ttl 64, id 8423, offset 0, flags [DF], p=
-roto GRE (47), length 56)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 36
->         IP (tos 0x0, ttl 64, id 43576, offset 1376, flags [none], proto I=
-CMP (1), length 28)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->     22:01:43.374756 IP (tos 0x0, ttl 64, id 9410, offset 0, flags [DF], p=
-roto GRE (47), length 1424)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 1404
->         IP (tos 0x0, ttl 64, id 44118, offset 0, flags [+], proto ICMP (1=
-), length 1396)
->         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 10,=
- length 1376
->     22:01:43.374766 IP (tos 0x0, ttl 64, id 9411, offset 0, flags [DF], p=
-roto GRE (47), length 56)
->         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
-=3D0x1090804, length 36
->         IP (tos 0x0, ttl 64, id 44118, offset 1376, flags [none], proto I=
-CMP (1), length 28)
->         192.168.13.1 > 192.168.13.2: ip-proto-1
->
+> +config PINCTRL_SPACEMIT_K1
+> +       tristate "SpacemiT K1 SoC Pinctrl driver"
+> +       depends on ARCH_SPACEMIT || COMPILE_TEST
+> +       depends on OF
+> +       select GENERIC_PINCTRL_GROUPS
+> +       select GENERIC_PINMUX_FUNCTIONS
+> +       select GENERIC_PINCONF
+
+(...)
+
+> @@ -0,0 +1,1078 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Copyright (c) 2024 Yixun Lan <dlan@gentoo.org> */
+> +
+> +#include <linux/bitfield.h>
+
+I think you really just use <linux/bits.h>
+
+> +#include <linux/export.h>
+
+Why?
+
+> +#include <linux/pinctrl/consumer.h>
+
+Why?
+
+> +#include <linux/pinctrl/machine.h>
+
+Why?
+
+> +#include "../core.h"
+> +#include "../pinctrl-utils.h"
+> +#include "../pinconf.h"
+> +#include "../pinmux.h"
+
+All of them, really?
+
+> +static inline void __iomem *spacemit_pin_to_reg(struct spacemit_pinctrl =
+*pctrl,
+> +                                               unsigned int pin)
+> +{
+> +       return pctrl->regs + spacemit_pin_to_offset(pin);
+> +}
+
+If this is the only user of spacemit_pin_to_offset() then fold it into one
+function, I'd say.
+
+> +static unsigned int spacemit_dt_get_pin(u32 value)
+> +{
+> +       return (value >> 16) & GENMASK(15, 0);
+> +}
+
+Make it a static u16 and drop the genmask, shifting 32 bits
+16 bits right shifts in zeroes in the top bits.
+
+> +
+> +static unsigned int spacemit_dt_get_pin_mux(u32 value)
+> +{
+> +       return value & GENMASK(15, 0);
+> +}
+
+Return static u16
+
+> +static void spacemit_pctrl_dbg_show(struct pinctrl_dev *pctldev,
+> +                                   struct seq_file *seq, unsigned int pi=
+n)
+> +{
+> +       struct spacemit_pinctrl *pctrl =3D pinctrl_dev_get_drvdata(pctlde=
+v);
+> +       const struct spacemit_pin *spin =3D spacemit_get_pin(pctrl, pin);
+> +       enum spacemit_pin_io_type type =3D spacemit_to_pin_io_type(spin);
+> +       void __iomem *reg;
+> +       u32 value;
+> +
+> +       seq_printf(seq, "offset: 0x%04x ", spacemit_pin_to_offset(pin));
+> +       seq_printf(seq, "type: %s ", io_type_desc[type]);
+> +
+> +       reg =3D spacemit_pin_to_reg(pctrl, pin);
+> +       value =3D readl(reg);
+> +       seq_printf(seq, "mux: %ld reg: 0x%04x", (value & PAD_MUX), value)=
+;
+> +}
+
+This is nice and helpful for users and debugging!
+
+> +static int spacemit_pctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
+> +                                        struct device_node *np,
+> +                                        struct pinctrl_map **maps,
+> +                                        unsigned int *num_maps)
+> +{
+> +       struct spacemit_pinctrl *pctrl =3D pinctrl_dev_get_drvdata(pctlde=
+v);
+> +       struct device *dev =3D pctrl->dev;
+> +       struct device_node *child;
+> +       struct pinctrl_map *map;
+> +       const char **grpnames;
+> +       const char *grpname;
+> +       int ngroups =3D 0;
+> +       int nmaps =3D 0;
+> +       int ret;
+> +
+> +       for_each_available_child_of_node(np, child)
+> +               ngroups +=3D 1;
+> +
+> +       grpnames =3D devm_kcalloc(dev, ngroups, sizeof(*grpnames), GFP_KE=
+RNEL);
+> +       if (!grpnames)
+> +               return -ENOMEM;
+> +
+> +       map =3D devm_kcalloc(dev, ngroups * 2, sizeof(*map), GFP_KERNEL);
+> +       if (!map)
+> +               return -ENOMEM;
+> +
+> +       ngroups =3D 0;
+> +       mutex_lock(&pctrl->mutex);
+
+Use a scoped guard in this and other instances:
+
+#include <linux/cleanup.h>
+
+guard(mutex)(&pctrl->mutex);
+
+And just drop the mutex unlock, it will be unlocked when you
+exit the function. (narrower scopes are possible consult
+git grep guard drivers/gpio).
+
+> +       for_each_available_child_of_node(np, child) {
+
+Instead of the kludgy construction requireing of_node_put at the end of the
+function, use for_each_available_child_of_node_scoped().
+
+> +static int spacemit_pmx_set_mux(struct pinctrl_dev *pctldev,
+> +                               unsigned int fsel, unsigned int gsel)
+> +{
+> +       struct spacemit_pinctrl *pctrl =3D pinctrl_dev_get_drvdata(pctlde=
+v);
+> +       const struct group_desc *group;
+> +       const struct spacemit_pin_mux_config *configs;
+> +       unsigned int i, mux;
+> +       void __iomem *reg;
+> +
+> +       group =3D pinctrl_generic_get_group(pctldev, gsel);
+> +       if (!group)
+> +               return -EINVAL;
+> +
+> +       configs =3D group->data;
+> +
+> +       for (i =3D 0; i < group->grp.npins; i++) {
+> +               const struct spacemit_pin *spin =3D configs[i].pin;
+> +               u32 value =3D configs[i].config;
+> +               unsigned long flags;
+> +
+> +               reg =3D spacemit_pin_to_reg(pctrl, spin->pin);
+> +               mux =3D spacemit_dt_get_pin_mux(value);
+> +
+> +               raw_spin_lock_irqsave(&pctrl->lock, flags);
+> +               value =3D readl_relaxed(reg) & ~PAD_MUX;
+> +               writel_relaxed(mux | value, reg);
+> +               raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+
+Use a guard() clause for the lock instead.
+
+> +static int spacemit_request_gpio(struct pinctrl_dev *pctldev,
+> +                                struct pinctrl_gpio_range *range,
+> +                                unsigned int pin)
+> +{
+> +       struct spacemit_pinctrl *pctrl =3D pinctrl_dev_get_drvdata(pctlde=
+v);
+> +       const struct spacemit_pin *spin =3D spacemit_get_pin(pctrl, pin);
+> +       void __iomem *reg;
+> +
+> +       reg =3D spacemit_pin_to_reg(pctrl, pin);
+> +       writel(spin->gpiofunc, reg);
+
+Doesn't this register write require any locking?
+
+> +static int spacemit_pin_set_config(struct spacemit_pinctrl *pctrl,
+> +                                  unsigned int pin, u32 value)
+> +{
+> +       const struct spacemit_pin *spin =3D spacemit_get_pin(pctrl, pin);
+> +       void __iomem *reg;
+> +       unsigned long flags;
+> +       unsigned int mux;
+> +
+> +       if (!pin)
+> +               return -EINVAL;
+> +
+> +       reg =3D spacemit_pin_to_reg(pctrl, spin->pin);
+> +
+> +       raw_spin_lock_irqsave(&pctrl->lock, flags);
+> +       mux =3D readl_relaxed(reg) & PAD_MUX;
+> +       writel_relaxed(mux | value, reg);
+> +       raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+
+Use a scoped guard.
+
+Yours,
+Linus Walleij
 
