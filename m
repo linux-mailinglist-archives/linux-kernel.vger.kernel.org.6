@@ -1,177 +1,86 @@
-Return-Path: <linux-kernel+bounces-335843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5606297EB69
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:16:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE23B97EB6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:18:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17BF2280C97
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:16:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70E8D280CCC
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:18:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 516791974FA;
-	Mon, 23 Sep 2024 12:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PlQw9uVF"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D645197512;
+	Mon, 23 Sep 2024 12:18:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D422940B
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 12:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE6419412F
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 12:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727093795; cv=none; b=W7VzWoDgrdPZy3gmo5wXq+nmrnbxmf2TF6JBRiEL5o1IUyrtPPMzZudSRIYLpOl0iUXImofEkuYV22sq7Ml+Ski1Fh3uyTOKliNp47e6P8Q2pF25exHjTgaW8IcY18PUrG2Yya5Z+MVDK7jvZ3zTCZI9Q3TqLkotG/ddAczNoGU=
+	t=1727093884; cv=none; b=QJDsEeS/HS3LalTyRaFelgZIVXRm60S8eBjYOn0xMo4Yu1PkLpwQJ22pF6E2qKXv2l0pEsTTRTHntsjQEgJxSrFm6039H1dMdvHPXpoXw8afb7394Sk1DitduUiL+Yppu504yF/alwAbRAlCO0O2TRHB/VKHALBNcDI4Zn5eFUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727093795; c=relaxed/simple;
-	bh=lscf0WTrlrrHxoUNYjQumrmRY63/obN/O+elZ/klL8g=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZJUtLDBLU600xAAfI0lGydfRrZtG7f9RW6Q1a1Ua1+zuKn67vPcoTBIFxwitayloOQmblkNfcmnktdXzIxiLU8vFZXnyPS78Jm/+KpicAqjDFj+WY6GpGpk/y9jnArV+eYF0FuhKBQ5W9xJ0S+zUbVLcMvna3wlFBa3yI9iV9CA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PlQw9uVF; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5365aa568ceso4813143e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 05:16:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727093791; x=1727698591; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VsNBpuLZI/6vBi0+2mpLKJCoxD+TiNDtjW2xHsUYLc8=;
-        b=PlQw9uVFnhBPPU7dWcYwR7IdO0iolaIstmDFXdgxNsUQdDIGQJQJhxgugXMbQDqINz
-         61QiH05a38vswMStsYEFlNSSgjO5+Wpo+nphcO7lIXvcA9yU4jUb2JMyC1GKcBFkCLfz
-         H3GktuzOrzPWnIKH8e3sxNqZthD+N0xiWWKYRLjT/w0wLoR9NwRojqXsCo2o1/KAzOAB
-         AOldpX79+7948nLh3vRdshaQaheLuV3fjzj/tnBP6EcIfJe6+xY+wLkhxw/EsoVxyjIZ
-         OzK7jc/h7r/Y7rYhP3IP2tabX4aOifXR9zZLncRp+FkeyYODFBZReb0ResN7BKPfVJR9
-         VqxA==
+	s=arc-20240116; t=1727093884; c=relaxed/simple;
+	bh=UUgoWwG9cyOyTxT5rHwFS64RIjNw+yXdlzBhw+l+sP0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=AzhP7rhIls1aESKljpdzQEEfT1DG/WbGIhHmYNQLou3NuGzW83Y5zIx/c0g5D/SDRAB4ELmhkF9Q/4aBDnuyl4+/tSV9O1oOaVrOvjTtvg4Hqq33zARwZEkqPhjUB/E/N2G/eMUFXoKncn1HZt+nI51znLV53J4cpo/bNF/MK5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a0a4db9807so72653715ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 05:18:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727093791; x=1727698591;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:to:from:date
+        d=1e100.net; s=20230601; t=1727093882; x=1727698682;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VsNBpuLZI/6vBi0+2mpLKJCoxD+TiNDtjW2xHsUYLc8=;
-        b=pwLVVqrPb9LBSXrzqHdOwALFzgEeAIfqNXcQm2D5eySnIDciqa5g+rZip+GFXNGbLt
-         TJzaJn1HONnY0t7coXOKytXf74KKRYuqg/Ugie5YzUFd5yVjWJMDK+n8o9SNawMkLIXe
-         MIDoGZIqcgx5f5WMYTffCu6tdNGl20yedbKceEK0R/k4NT+GFaoeXEtYNWXuvAV2YgGA
-         MxCsjWCHEeSjOfjKJ871iEL3XlvnhbUH8ogtJU/yJoLJkMiqGyW9HvRlY/QxXgwPFtrJ
-         cv+zN1FRrL7bJLYrJNejQcZxVReVjLpFOlzS5eUe/L1LpUll1BxQxyo4aUAsk7rlAX6h
-         3TQg==
-X-Forwarded-Encrypted: i=1; AJvYcCV23eodt7B9LxkoIYscaVJ8Op5/yGliGmYFCNyKEEclgGQWMkIhUwvHaklGyOjHrmppKQX5e6PJ5Bnoqjk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwAByLLwt8ZQp6eZczPm7MloqMNru/OBgAy4zzGkhghRnsdOsC
-	NTRIMIgDTsnQ4iOW7NSjFLGg1rQPppK33ZdLqX4Fzypn5OytyMZmoA9WuDZ7E38=
-X-Google-Smtp-Source: AGHT+IEll20m0+xUonHMNXt2UPq8NyfIxK3UGL/wK3GxwtrfstaIDlQYm8uP3dzRZ3/adfrLdF/6UQ==
-X-Received: by 2002:a05:6512:3d0e:b0:535:6baa:8c5d with SMTP id 2adb3069b0e04-536ac2e5a42mr7093911e87.20.1727093790835;
-        Mon, 23 Sep 2024 05:16:30 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5368704660esm3269744e87.15.2024.09.23.05.16.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 05:16:29 -0700 (PDT)
-Date: Mon, 23 Sep 2024 15:16:27 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, jani.nikula@linux.intel.com, 
-	thomas.petazzoni@bootlin.com, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm: writeback: Introduce drm managed helpers
-Message-ID: <5sufhgtqempg56b57ocg45ah4ip5ykhaz6thphctcupk5lortz@fmkxzzzdwd3i>
-References: <20240906-writeback-drmm-v1-1-01ede328182c@bootlin.com>
- <rz3xk3kwwsfstjrqffp4vfkm7mvn5sdviwjzb5dodmsnb5v2fz@vuamquxmvt4r>
- <ZvE68e95dwLqjVuW@2a02-8440-b157-69df-aafc-5046-a3b3-4ce9.rev.sfr.net>
+        bh=WH0M7YG4k9VcjZ9VMvOxdD7Y/VL084p8eNMnZVUQoHY=;
+        b=TxOn43uHLfjN7IkDED9MUlAHEE4yNXEPWsg2CaFBpvLO/yIaG3nOPyXEJswElcZGlg
+         LG1lCUJL7HLpDvXqurfnZgeMKUPrznEE1ivu32nasnFlXUVDm4O4oMLW4EkcSRQkycWS
+         XeqCwQkaVF1gEf/DhEoN670DPMSTKRRK9lJEcMoepDYJlgifxBgyFffqjqrd70vzPvIu
+         bD8cu5Aucq4YRrRk+jvGYcMwrEXoum2B0zs5ghwUnSFDX8UAjjK4D9ZvXsj2c5UDQdhl
+         Al83ON0U1rZmDaDDQQVDBAVCFBVr3FMWNwwtFM0YcSVmSi/6areEFzDJKGuolp11fpeu
+         dM4g==
+X-Gm-Message-State: AOJu0YxLRB5hOKp3AFX8vB8CyruH06vzWWGzRxH1HY66HwqRUhvK7NKs
+	okOOzP2Ed/aipFjh2EXrHGAcnoUrsT/fnLhFWQTTSu22vHGJc5GyKbufQygdrhxoElFLevy3C+C
+	nXMcCHJDwtyhEKm/76M9xZjNhTclKdr54z6bby72G4BHmvBBKyij7CcI=
+X-Google-Smtp-Source: AGHT+IHY5BMmdL4fd308FvhC+tw1nKca1z6ZBuCzsQqJ5yM37COnR5f7cjKn4BtPaI3qcyeTvKyX4heITMw7/pI+OzN6nTnch2cI
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZvE68e95dwLqjVuW@2a02-8440-b157-69df-aafc-5046-a3b3-4ce9.rev.sfr.net>
+X-Received: by 2002:a05:6e02:18cc:b0:3a0:9f96:5bbd with SMTP id
+ e9e14a558f8ab-3a0c9d16185mr94248765ab.10.1727093882511; Mon, 23 Sep 2024
+ 05:18:02 -0700 (PDT)
+Date: Mon, 23 Sep 2024 05:18:02 -0700
+In-Reply-To: <CAABpPxQg+RmC_7udiOmj49MuP3E1B+6bbQQiyTrzzEz0Qei1QA@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f15c7a.050a0220.c23dd.000e.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] possible deadlock in ocfs2_get_system_file_inode
+From: syzbot <syzbot+e0055ea09f1f5e6fabdd@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, pvmohammedanees2003@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Sep 23, 2024 at 11:54:57AM GMT, Louis Chauvet wrote:
-> Le 22/09/24 - 18:31, Dmitry Baryshkov a écrit :
-> > On Fri, Sep 06, 2024 at 07:28:17PM GMT, Louis Chauvet wrote:
-> > > Currently drm_writeback_connector are created by
-> > > drm_writeback_connector_init or drm_writeback_connector_init_with_encoder.
-> > > Both of the function uses drm_connector_init and drm_encoder_init, but
-> > > there is no way to properly clean those structure from outside. By using
-> > > drm managed variants, we can ensure that the writeback connector is
-> > > properly cleaned.
-> > > 
-> > > This patch introduce drmm_writeback_connector_init, an helper to initialize
-> > > a writeback connector using drm managed helpers. This function allows the
-> > > caller to use its own encoder.
-> > 
-> > Also it introduces drm_writeback_connector_cleanup(). Ideally that
-> > should be a separate commit with a proper description.
-> 
-> Will do for the v2.
-> 
-> > You should also
-> > document that existing users should call that function (and maybe add a
-> > WARN_ON that can check if the function wasn't called).
-> 
-> It was my initial implementation [2] (usage in [3]), but Maxime suggested 
-> switching to drmm. If I make it non-static, this will be a new API with no 
-> user.
-> 
-> I don't know how to add a warning if this function is not called. Do you 
-> have an example somewhere where a warning is emitted after everything has 
-> been cleaned up?
+Hello,
 
-Add boolean wariable to drm_connector, make
-drm_writeback_connector_cleanup set it, WARN_ON(!set &&
-connector->connctor_type == DRM_MODE_CONNECTOR_WRITEBACK).
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Or maybe even better, make this function being called from
-drm_connector_cleanup() if it is a writeback connector.
+Reported-by: syzbot+e0055ea09f1f5e6fabdd@syzkaller.appspotmail.com
+Tested-by: syzbot+e0055ea09f1f5e6fabdd@syzkaller.appspotmail.com
 
-> 
-> > Last, but not least, please don't add API without a user. Please switch
-> > at least one driver into using this API.
-> 
-> The user will be VKMS, see [1].
+Tested on:
 
-Usage should come with the API in the same patchset. Otherwise it's
-impossible to judge whether the pieces fit together or not.
+commit:         de5cb0dc Merge branch 'address-masking'
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17cef480580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=74ffdb3b3fad1a43
+dashboard link: https://syzkaller.appspot.com/bug?extid=e0055ea09f1f5e6fabdd
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12f07ca9980000
 
-> 
-> [1]:https://lore.kernel.org/all/20240912-google-vkms-managed-v3-4-7708d6ad262d@bootlin.com/
-> [2]:https://lore.kernel.org/all/20240814-google-remove-crtc-index-from-parameter-v1-11-6e179abf9fd4@bootlin.com/
-> [3]:https://lore.kernel.org/all/20240814-google-remove-crtc-index-from-parameter-v1-12-6e179abf9fd4@bootlin.com/
-> 
-> Thanks,
-> Louis Chauvet
-> 
-> > > 
-> > > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> > > ---
-> > > Hi Maxime, Jani,
-> > > 
-> > > I tried with this commit to implement the drm-managed version of writeback 
-> > > connector initialization. I tested with the current vkms driver, and it 
-> > > seems to works (at least no crash/warns).
-> > > 
-> > > As suggested by Jani, I only created one function, which takes a 
-> > > NULL-able pointer for encoder/encoder functions/possible_crtc. What do you 
-> > > think about it?
-> > > 
-> > > Regarding the documentation, I think I repeated too much, can I simply add 
-> > > comments like "see documentation of @... for the details / requirements"?
-> > > 
-> > > Good weekend,
-> > > Louis Chauvet
-> > > ---
-> > >  drivers/gpu/drm/drm_writeback.c | 224 ++++++++++++++++++++++++++++++++++------
-> > >  include/drm/drm_writeback.h     |   7 ++
-> > >  2 files changed, 201 insertions(+), 30 deletions(-)
-> > > 
-> > 
-> > -- 
-> > With best wishes
-> > Dmitry
-
--- 
-With best wishes
-Dmitry
+Note: testing is done by a robot and is best-effort only.
 
