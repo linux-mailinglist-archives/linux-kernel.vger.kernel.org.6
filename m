@@ -1,138 +1,119 @@
-Return-Path: <linux-kernel+bounces-335354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FFB297E486
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 03:16:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A2C797E48B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 03:19:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5363281264
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 01:16:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25C2E1F20FF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 01:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E03A1C36;
-	Mon, 23 Sep 2024 01:16:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8583F23AD;
+	Mon, 23 Sep 2024 01:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HlvSAj0l"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DqouwM4E"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2738624
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 01:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF00624;
+	Mon, 23 Sep 2024 01:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727054196; cv=none; b=K195KW7ynESyoMs9Tv7NxPHNGiV9hWQVqVH3F0I8d8+FT/wOCL7cSlvvqlB54RVNLtsl9iIbl7nLscNrDErFQWqQ4ZIkFbOYrsx3Kvln/Lrn42vK4sT5cWWch4eZpKOIyBkKX2E/XAbl5tcH5y+PEZHBJnZ3AUvZAAK+Fnoxy/c=
+	t=1727054350; cv=none; b=tj9/YD4JgyN8OKDblu/nyo5vU6cXj1VPLgPccUPqQXbZQLi5Z9avMpicHEekfunfTR2Ct2k2uH2Zwf+7l0DpkC/ULPf1deC9fxMZs8qu9AczxmMkr+gMLZxs/xa6d88EzZZrUi+PlkOvkoD4V3VGtUscTIPlcjkjEGqv17Cvp/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727054196; c=relaxed/simple;
-	bh=NGlFEwneXtdHCSd6YUaSS9Rs+Ie1kHnFGRiAH9QblTQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hnm+dC0k8AuMo/cdKemXoKZTQsCBsQDFSaFo6ARn3GYy+hczfRES0j5Nz8LvO75FFXfDYckytnmLZS7ZtG8EUpkBjWeyeJxslZQCHyVul28ImnkukJs0mPWMiH598lVtm28dYboUvz3y/Gv7yHa0eQsdgt1Beq2edsXTbllAeRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HlvSAj0l; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727054193;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NGlFEwneXtdHCSd6YUaSS9Rs+Ie1kHnFGRiAH9QblTQ=;
-	b=HlvSAj0lNISkkNEVtbE/zcqaU4cPW3zClfcSOzxqrJ3crTLf/hfBlThSv/R2EIsr7kP7A9
-	h6Wlk/bpSgAi3Kf+S6YG1OdQZSJBo6RPO7haLN0vlCBwfQDi7f6/lyxIwjh9YIofZwmAWM
-	KEy06WUZJhDQGgx1dQvPMGG8gj/n5e8=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-658-If0y3hBfP_SaltKZKb6Bjw-1; Sun, 22 Sep 2024 21:16:32 -0400
-X-MC-Unique: If0y3hBfP_SaltKZKb6Bjw-1
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a8d13a9cc2cso283924566b.3
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 18:16:32 -0700 (PDT)
+	s=arc-20240116; t=1727054350; c=relaxed/simple;
+	bh=Jwr025/qUgs/LMxPLsqIgUhRpbA3frCNzlT8tBNoFOw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UrZcgdVoviBfTyqG6EzVYCJjdrf+Q6opgbivXzCDfezUa8CRDjEkQzFQAubltn7vL+Ka6pnBPJ2OPmnZhkZLMHNJLvFxBy4R2TuHfvFGqbcXBKTtHiliMuD8UbWQPUAhzSqQiAZboIzRs6phbWwQSx5HjRbGF4rhJ/CE+sDLZqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DqouwM4E; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2055a524017so2172975ad.1;
+        Sun, 22 Sep 2024 18:19:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727054347; x=1727659147; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MBqObcMlz70tKe3cTglKMmMCQr1xEdAZC0tejq/Q7zg=;
+        b=DqouwM4EyfP8xVWPXjQXkDmOmOeFPH0opqQLxsbnIz0gvwhKMMn3qSlK+o3dHBRaKo
+         eI6i/eX1HXPrKBXv8XsalZMHTt/7qCTO20M1RxUtvYUfHRMVO1iF+fDsjCl2fBPCr6NO
+         TyGabKF6yOp8aYjFX3TknyGvHW5X8+AZ6Uor2cjrWz1uObkZybiRKNPh+rqkyXI+umlk
+         aO6mEEuq5MmSNEKt+mzouE3OcTYuc+nonqXUd6+cmxGrHHmRVTwx6MWCM1G83a6jsmB2
+         vTP5Iu/WFXsHONxka9PiYNY6AClu1VE88VaFng5mNuZtTTmUH+jGy++/smw/eDdPKnYp
+         51Ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727054191; x=1727658991;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NGlFEwneXtdHCSd6YUaSS9Rs+Ie1kHnFGRiAH9QblTQ=;
-        b=dDsEWyjJDM4s4cXYLb0En+lqcyYRSe5UbPGgFk4ZuzwvRkeGrRLCt9+DQTRnEOMz5x
-         bf/eetTlCj3D2/kPlOc5iUMLX51P2BN/HutdY+J1jflQJjdLPBq2pdY2IvQybv3X+QlK
-         /7dTn/5PfLoS9eeJKZIr+SNcaniylcT+q4Agh9bRyzQgn/Xk91I8ZtDQ8+ijkkQhzxqo
-         kxTHkCbUcnTIA0FUmoUVWtELn9DbRVr6vFfLcSGfhbhgg6+ExGC3FDZGwMGW1RDM1e5o
-         TeNXKOMhtwlLf0dr91rmiOMomUfI9uGpPFgwlDgEKzffyuOMIRG3zhnTB16rgTx2GBuE
-         GU+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXTU79vm0SRUR3xdbCa0CFPkFQBq4Yc+Xmoly9DUfQfNcc5qAnPnBMfL/vCZFk7ShFOABnhVRdU5rH6/Dw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIEc1V4gQVPwLxdkyTQ120h4kiqKW+S8vNXWWrARuF8Za2EjYj
-	0TJjEqv5t8jI57BvnIQ+ZiW/+fE5FTNwbPRiKw8xb3zxmmmxnkc+jn9iFQxTla77ZZo1p3gCaxh
-	3ID0vmCoYdWm0MGGGr4N7G4wC8lPo1cI9gfVxX4HTZrelDO0/IN8SUpBjyl83HpMYWB1nhazeJ9
-	XfU/3XLR7zeD7UiYK9iDWsPEc0Syidj+OFIwaL
-X-Received: by 2002:a17:907:3daa:b0:a8a:6e20:761e with SMTP id a640c23a62f3a-a90d512796cmr914370666b.48.1727054191251;
-        Sun, 22 Sep 2024 18:16:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGLLV6DDO/qImWlmUkG7cp+y/TF1dZ2NGr2SXwRJp/tFhd3JDdFBV4oXjYWMZYgf3yJhQ5jZKJEo1GY6mfRngM=
-X-Received: by 2002:a17:907:3daa:b0:a8a:6e20:761e with SMTP id
- a640c23a62f3a-a90d512796cmr914369266b.48.1727054190879; Sun, 22 Sep 2024
- 18:16:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727054347; x=1727659147;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MBqObcMlz70tKe3cTglKMmMCQr1xEdAZC0tejq/Q7zg=;
+        b=AXFdMYmzGQ/x7vaR7J0FI5eMpktC0gpXrsY42cG4+RYPVSorcPA5ozJMvY3LAgcV9Q
+         6GOykwDx+vZTTcH1WmzyGnrYmFgnUlnIUUWSiacwSmQQhb5B9rPOB9eGPFXNv3vJDsem
+         GaLgOgQlQiZeTyjkz/Es7upre9GZ1OPiWhuWy8BvybdUqVok6B9PZL2iJR/RTwipzF8R
+         NQg4Tnu6a4JclLxRGxRa1AIsjv9191GjzUtSshPajlJbyeEoW2UEHGdB8Ky1mWHiBFli
+         dje8cbZC4gphnBEM1E0djq/2mFGTXS6Y2GTnFP2GG+qWX+EhSuSG/tUYN3XMT8H7H5DF
+         batQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYjTDqtehfQxBwRbhsbsSujuGCNtqgc9REofW527NGspPsiPK3zqRRyFI0ItGwR1CTb10XFCBEbfx2@vger.kernel.org, AJvYcCVVqISw6cwcczvIk9uemEnxjpL5cp4h2ZSemK78+m8/dd2Nkug4DpHSgeh31aBv0FD8QUtkEhsWEjl2qtC3@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVckLRGw60SEznc4vfX9k6JTvh+dIkV7SDaP35qIEMGiXrKogW
+	+XewPzD2ne5Zjw5H2HCWnOE6NmJxZ//De91bwRigPYtOQ3yZvwBrWcQV5xJY
+X-Google-Smtp-Source: AGHT+IGR5fxE8/UV+yJoktV+ptXe3LQJTfZ3S9Ac5NCddrTXRKGPcGBaxU/8XH9gNU9+NZklr/I3TQ==
+X-Received: by 2002:a17:902:f2d2:b0:205:40f5:d1a with SMTP id d9443c01a7336-208d83c811fmr60688865ad.6.1727054347164;
+        Sun, 22 Sep 2024 18:19:07 -0700 (PDT)
+Received: from [127.0.1.1] ([45.32.86.188])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db49920497sm14408888a12.45.2024.09.22.18.19.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Sep 2024 18:19:06 -0700 (PDT)
+From: Yasin Lee <yasin.lee.x@gmail.com>
+Subject: [PATCH 0/2] iio: proximity: hx9023s: Add performance tuning
+ function
+Date: Mon, 23 Sep 2024 09:16:09 +0800
+Message-Id: <20240923-add-performance-tuning-configuration-v1-0-587220c8aece@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909020138.1245873-1-lulu@redhat.com> <20240910032825-mutt-send-email-mst@kernel.org>
- <CACGkMEvrti4E2fZBMHGR9LKifZDqtzBqOSg=v7AkKK-r9OZ3wQ@mail.gmail.com>
- <20240910044139-mutt-send-email-mst@kernel.org> <CACGkMEv71_eUY_2361TNKhTxqxnR4iTyOXq6aKR_6MqaxqM5Dg@mail.gmail.com>
- <94c76200-05b2-4142-a637-bf2115827116@oracle.com> <CACGkMEvAR_2j=PdKZZyAZ1yK7H5OO+Ldc0Eygwyo8rMR=_uGBQ@mail.gmail.com>
-In-Reply-To: <CACGkMEvAR_2j=PdKZZyAZ1yK7H5OO+Ldc0Eygwyo8rMR=_uGBQ@mail.gmail.com>
-From: Cindy Lu <lulu@redhat.com>
-Date: Mon, 23 Sep 2024 09:15:53 +0800
-Message-ID: <CACLfguWXFOJK=YGZ1=bKYWEKp5_=mk3wVKbq_LSAzMGu1vODkQ@mail.gmail.com>
-Subject: Re: [RESEND PATCH v1 0/7]vhost: Add support of kthread API
-To: Jason Wang <jasowang@redhat.com>
-Cc: Mike Christie <michael.christie@oracle.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFnB8GYC/x3NQQqDMBBG4avIrDsQUxHaq5QuQvInzsKJTLQUx
+ Ls3dPk23zupwQSNnsNJho80qdpjvA0Ul6AFLKk3eecn9/B3DinxBsvV1qARvB8qWjhWzVIOC3s
+ HGN6NM6Y0w3nq1GbI8v1vXu/r+gGGm/3RdgAAAA==
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Yasin Lee <yasin.lee.x@gmail.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=712; i=yasin.lee.x@gmail.com;
+ h=from:subject:message-id; bh=Jwr025/qUgs/LMxPLsqIgUhRpbA3frCNzlT8tBNoFOw=;
+ b=owGbwMvMwCEYyfeRr6Zs90zG02pJDGkfDt67c0baaediuSSL5D9zjjZ5LLvYoOEQ/+xTtfO3M
+ 3vbpqvs7ChlYRDkYJAVU2Q58/oNa77qwz3Bv10zYOawMoEMYeDiFICJnDrK8D/86ZpAUev1H0Te
+ yKz8aaL7rXJCgrScwLfc7v6/78yeiE5j+F9nKfy9POhgR2HCwc4Iw7q8yi77H6//Tyozbn1lZOJ
+ cZAIA
+X-Developer-Key: i=yasin.lee.x@gmail.com; a=openpgp;
+ fpr=CCEBEC056F25E1BC53FB4568590EF10E7C76BB99
 
-On Thu, 12 Sept 2024 at 10:11, Jason Wang <jasowang@redhat.com> wrote:
->
->
->
-> On Thu, Sep 12, 2024 at 12:17=E2=80=AFAM Mike Christie <michael.christie@=
-oracle.com> wrote:
->>
->> On 9/10/24 10:45 PM, Jason Wang wrote:
->> >>> It depends on how we define "secure". There's plenty of users of
->> >>> kthread and if I was not wrong, mike may still need to fix some bugs=
-.
->> >>>
->> >>
->> >> which bugs?
->> >
->> > https://lore.kernel.org/all/06369c2c-c363-4def-9ce0-f018a9e10e8d@oracl=
-e.com/T/
->>
->> The SIGKILL issue in that specific email is fixed. The patches are
->> merged upstream. I don't know of any other bugs like that (crashes,
->> hangs, etc).
->
->
-> Ah, ok. Good to know that.
->
->>
->> There is the one we can't reproduce so are not sure if
->> it's the vhost changes.
->>
->>
->> There is the change in behavior type of bug we discussed in that
->> thread:
->>
->> https://lore.kernel.org/all/06369c2c-c363-4def-9ce0-f018a9e10e8d@oracle.=
-com/T/#m026f7dd96e064e3a604155e45e7ae9d5c949ae23
->
->
-> Yes.
->
-> Thanks
-Thank you, Michael and Jason. I will continue to work on this
-Thanks
-cindy
+When hardware design introduces significant sensor data noise,
+performance can be improved by adjusting register settings.
+
+Signed-off-by: Yasin Lee <yasin.lee.x@gmail.com>
+---
+Yasin Lee (2):
+      dt-bindings: iio: tyhx,hx9023s: Add performance tuning configuration
+      iio: proximity: hx9023s: Add performance tuning function
+
+ .../bindings/iio/proximity/tyhx,hx9023s.yaml       | 14 ++++++++
+ drivers/iio/proximity/hx9023s.c                    | 37 ++++++++++++++++++++++
+ 2 files changed, 51 insertions(+)
+---
+base-commit: 7f6f44a9e58cd19093b544423bc04e1d668ec341
+change-id: 20240923-add-performance-tuning-configuration-e2016e4d6e02
+
+Best regards,
+-- 
+Yasin Lee <yasin.lee.x@gmail.com>
 
 
