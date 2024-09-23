@@ -1,135 +1,117 @@
-Return-Path: <linux-kernel+bounces-335396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9866F97E4FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 05:36:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F60F97E502
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 05:40:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83BC9B20D51
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 03:35:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 368DB28154D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 03:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8BFC8462;
-	Mon, 23 Sep 2024 03:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9908F66;
+	Mon, 23 Sep 2024 03:40:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yry4K98F"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fHlGOGkl"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE012139D
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 03:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3F2139D;
+	Mon, 23 Sep 2024 03:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727062552; cv=none; b=jexGolqnr2+5vCRp3rj1SHVbchQgvLNHpbKDOEE3lXKAkZIDsxpGoPv1+2Yo9i73VyACx9GlACbqOTlc9jNs67EEvsj8AcaQXt21bRlvQiog4kGtWKdt5LPADHrMChOxnr6fLsoveyLwFuQvluvaaiTwRS8/QUx0mwgWyF9wb24=
+	t=1727062821; cv=none; b=U/oAzweXWzvUOTsr4/CTUKywdzjPhHJy38rN/ZlNLoIPp1/KVM9aUuywV/tSgIJn/uXZHO6s3YED3WyK4RrJcE8L81Gk3/RXoAY1VRLRIrCUzwZkrehAf2ysqK17d6U1oopZsCRPVteFWpZ1NgHJ8oPqzIk3EWlnIMfYIdPz/+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727062552; c=relaxed/simple;
-	bh=FpUZ+NHq2dcHVW6bWRq7UMSDbCK0IKHSy5HYVKdI7o8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EUzz6krZrX68iXz7W/kHEheo1aY8dmDXp1nEzj3EfCQePGfCx7Xg8X9QcjwD462TF2VTpr7sCTFuBP3JUUbzRnKIsGHZXP+MRUrZsmqqUOwA0TyQOGJAraBqob734bta1pLJcSS3a+eid14DiVDBWBRAYX2kSkgLmLzyUy5IN5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yry4K98F; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20551eeba95so32905545ad.2
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 20:35:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727062550; x=1727667350; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=//Q7GU5IrneEyxviJntAp1AonKejz1y+X80/DuCcShU=;
-        b=Yry4K98FJkywdGaeW0AtI+gZUcKxLJ2+WdgFvfJNDzmJvsS+eMG915Nj3tKMPM5nAM
-         eP8zgU/TC3u0JQS+lEtSEDQ6Z3ZNy39BdWS+5YmBF/m75NSrcxIcg2BEUQ0vgil+TVOg
-         tCUpzei1QfFy2eSZuLV6OQ0+gaeNI1ZhlOusJ3NyFbmqS1gAd9mmWcxhoiaPP+lt7IAX
-         9viFKqE4wFwptP7KLgNF/VqwPQQfF4CBnhDwyvRSFHO3nQ+aQ+yFK95yLrqqzVPNmAYC
-         gxQu6WqaCF2Wy6/XisMwQWHCyBth3rDs7Fd1v+E7zX0QWr5ODJeC0UmhjqDgQ2JkeQ4Q
-         TvLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727062550; x=1727667350;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=//Q7GU5IrneEyxviJntAp1AonKejz1y+X80/DuCcShU=;
-        b=FmIALCY5eIH0Vwcg/Y400UTFBsiRmb4QPhRSisQkJFCK8cThNDZnZEFj2foD0KdlxR
-         +UYr7/hXtLyXjCDlcaSDwar3BFawsippej2cHVBdcAtjWuNgD2jIUD2G1X5KeKazRPkN
-         N8kWYEFeLAy2zJ+LbVua5nfG5D4a1Xx6leY7MAV6oTo1DSfwETz4/gXVD9PzZTtjw/h7
-         qHzYSwsv47oQlAuuPakC87KCY6M9B0p1bqwVFFE4zhq+wga4X3uJq24lzKqQvhEpnIbU
-         vMP99O7X5yTBKrcKatIZ9fkcQlzP10jCUktDtwQnREqf+Qc0ayOfdYAQZTydhZutBfMR
-         Tc8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWsSM/b3Dz9S1RiMP37xzi7AHWQHKeBTNLftXclFnsvJdYtPls67QJLaLdsKpLXg18d+NhN1WfNwtEqa5g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuPhF+oM1x9WQZHegesS3NX0uySYud06N3T99uLl98gMeueNoh
-	mYSh3uE5IuimFiPi1udqXDCZZFrkQqBoAYgAuYg80GWjb2u9TcUwJDPnz7gXJ04yRrqqgMEOxbC
-	Za73uuNuSVMqMc2Hra76ovA2+k0U=
-X-Google-Smtp-Source: AGHT+IHsrzIz6wtS9qlSuGP1L/mTxxc1W6yP/zwzDwWmRy48P/cYkG5TEbm5Fp/SKjzlOwRg/SSPzy/xv6nusr3fWD8=
-X-Received: by 2002:a17:902:e5ca:b0:206:cbf0:3089 with SMTP id
- d9443c01a7336-208d8566916mr138808665ad.54.1727062550091; Sun, 22 Sep 2024
- 20:35:50 -0700 (PDT)
+	s=arc-20240116; t=1727062821; c=relaxed/simple;
+	bh=yEXgOsxAVuCLW/auiNN+DdV5wxEH+cW85821HvN/NnQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=m6PCTUGVkznGTRhyi8KfSN6GaXn+JUABC6VeQZGdmSS7Zi+Qax+hrBqiHWPGsOkmAczvNlhsDYPcR7LS9OTW2sn/dI3hAlQmxLmror2H2ACgv7yOB8mvt+yi+/FLEeZr6u6cv3o3BzRDZ6BbtWQVnPEfr321tNSH3WE/hNkvsLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=fHlGOGkl; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1727062812;
+	bh=0dLzaAqs0oHdJSuaNkwZ3RqDp3/htZq7XsxpbQHdeU8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=fHlGOGkl1Z+9cwYZVDpDdwyltXlD9laPrawa5g0l+bIEfvhbQZxMyxxqGuXs+Cm8k
+	 /T9Zgo3W+QnpLi9GNA2clbeW508Z/b6oMxLIcCVrwlrw1tPyyJUGgGqkVzIkEwDUf8
+	 t1HeNH+Faz/0ns76jF3SBi1BjVDDHU9SiqyKfnaz0RRfYR149FVUI0tVPgNrAX94CG
+	 GNeFXFoJrYI9ikZA1tS8BDNo8LlXFdqcW5QLb5a1S1DaERZ7gG+AkYW+2ct8U6WehC
+	 b9rqzMw3B2151etrCmCJjDzU5qCZ3HN5WP6xM/IKP9Jzk98Lpv6qWEkaktIjOFdg7K
+	 sfODwnPctdMCQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XBpfN12Hkz4wcr;
+	Mon, 23 Sep 2024 13:40:11 +1000 (AEST)
+Date: Mon, 23 Sep 2024 13:40:11 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Jiang <dave.jiang@intel.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warnings after merge of the cxl tree
+Message-ID: <20240923134011.7b11598c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240922110000.128650-1-ghanshyam1898@gmail.com> <c9f80af9-4cf0-4b6e-8c61-4b7a6f287cd9@wanadoo.fr>
-In-Reply-To: <c9f80af9-4cf0-4b6e-8c61-4b7a6f287cd9@wanadoo.fr>
-From: Ghanshyam Agrawal <ghanshyam1898@gmail.com>
-Date: Mon, 23 Sep 2024 09:05:13 +0530
-Message-ID: <CAG-BmocfstJNC-JDgtx93EJmg5kMANu4tVRbjqYtZ1CE+AEnEg@mail.gmail.com>
-Subject: Re: [PATCH] jfs: fix array-index-out-of-bounds
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: shaggy@kernel.org, ghandatmanas@gmail.com, jlayton@kernel.org, 
-	eadavis@qq.com, brauner@kernel.org, jfs-discussion@lists.sourceforge.net, 
-	linux-kernel@vger.kernel.org, 
-	syzbot+808f3f84407f08a93022@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/vfaYGiIGdqPHNAbZgjxvzf2";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/vfaYGiIGdqPHNAbZgjxvzf2
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Sep 22, 2024 at 8:35=E2=80=AFPM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> Le 22/09/2024 =C3=A0 13:00, Ghanshyam Agrawal a =C3=A9crit :
-> > In some cases, dn_numag may be greater than MAXAG which may
-> > result in an array-index-out-of-bounds in dbNextAG. Added
-> > a check to return an error code before we crash.
-> >
-> > Reported-by: syzbot+808f3f84407f08a93022@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=3D808f3f84407f08a93022
-> > Signed-off-by: Ghanshyam Agrawal <ghanshyam1898@gmail.com>
-> > ---
-> >   fs/jfs/jfs_imap.c | 3 +++
-> >   1 file changed, 3 insertions(+)
-> >
-> > diff --git a/fs/jfs/jfs_imap.c b/fs/jfs/jfs_imap.c
-> > index 2ec35889ad24..5088da13e8f1 100644
-> > --- a/fs/jfs/jfs_imap.c
-> > +++ b/fs/jfs/jfs_imap.c
-> > @@ -1360,6 +1360,9 @@ int diAlloc(struct inode *pip, bool dir, struct i=
-node *ip)
-> >       if (agno < 0 || agno > dn_numag)
-> >               return -EIO;
-> >
-> > +     if (unlikely(dn_numag > MAXAG))
->
-> Hi,
->
-> looking at other places with checks with MAXAG, I wonder if it should be =
->=3D?
->
-> CJ
->
-> > +             return -EIO;
-> > +
-> >       if (atomic_read(&JFS_SBI(pip->i_sb)->bmap->db_active[agno])) {
-> >               /*
-> >                * There is an open file actively growing.  We want to
->
+Hi all,
 
-Hello Christophe,
+After merging the cxl tree, today's linux-next build (htmldocs)
+produced these warnings:
 
-Thanks for reviewing my code. I believe the greater than symbol I have
-set is correct in this case. Can you please check it thoroughly and let
-me know wny it should be >=3D ?
+Documentation/driver-api/cxl/access-coordinates.rst:33: WARNING: Block quot=
+e ends without a blank line; unexpected unindent.
+Documentation/driver-api/cxl/access-coordinates.rst:34: WARNING: Block quot=
+e ends without a blank line; unexpected unindent.
+Documentation/driver-api/cxl/access-coordinates.rst:34: WARNING: Inline sub=
+stitution_reference start-string without end-string.
+Documentation/driver-api/cxl/access-coordinates.rst:35: WARNING: Block quot=
+e ends without a blank line; unexpected unindent.
+Documentation/driver-api/cxl/access-coordinates.rst:36: WARNING: Block quot=
+e ends without a blank line; unexpected unindent.
+Documentation/driver-api/cxl/access-coordinates.rst:38: WARNING: Block quot=
+e ends without a blank line; unexpected unindent.
+Documentation/driver-api/cxl/access-coordinates.rst:40: WARNING: Block quot=
+e ends without a blank line; unexpected unindent.
+Documentation/driver-api/cxl/access-coordinates.rst:42: WARNING: Definition=
+ list ends without a blank line; unexpected unindent.
 
-Thanks & Regards,
-Ghanshyam Agrawal
+Introduced by commit
+
+  43cb008f857f ("cxl: Add documentation to explain the shared link bandwidt=
+h calculation")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/vfaYGiIGdqPHNAbZgjxvzf2
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbw4xsACgkQAVBC80lX
+0GzMsAf8Dhs/B1TqAlaaWAK56S7pR2liDDik+7vjOVZegb1L76QUrckfLzwOWgJf
+GJuwuimJUqnJVLGKEcNGto+AJZrQwEiRQk1WN7sdk26eoch1ck4Vbqb330QIq2n/
+p2RFzUYomh2VnIJ3knt5J6E3Wlr/iLNptIeBBIxZAI3NQC9hJbWmcezacgDKFX/S
+AssDbrIVTrECBCtWLCpXxzpdovEV1li4qe5CCmlRNXv/jNhzFEwkqptyhdwy0mg7
+Yw/7T1i5pL0I8Yzpl/mO5NniBNoJn+A40SlGRfYKldYeo1lGkdUoqFYj3QD09cUS
+5sCNaTbKMnipdvAuzduHcb3XNiiUuQ==
+=oXc8
+-----END PGP SIGNATURE-----
+
+--Sig_/vfaYGiIGdqPHNAbZgjxvzf2--
 
