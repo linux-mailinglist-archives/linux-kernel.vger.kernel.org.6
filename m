@@ -1,287 +1,478 @@
-Return-Path: <linux-kernel+bounces-335478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65B3897E640
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:57:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62FDB97E645
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:57:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A949281185
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 06:57:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ACB02812CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 06:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4016A3D556;
-	Mon, 23 Sep 2024 06:57:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9BB4CB4E;
+	Mon, 23 Sep 2024 06:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="qlQmfAwl"
-Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11010043.outbound.protection.outlook.com [52.101.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PTEzIJfw"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A932940B
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 06:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727074627; cv=fail; b=nbnKWC77PjEgqi3bW0jiUG2ug1HWjutXRGkDrc7uERgeJL0q3ecfAJXfwYuh+3/+7pSidWxSK2Hn5CZ/7N355p6Ejr3Kvo+XVJm9M4lb7wn/F6dLkrYwScZkxfT2LhpBWXpHjOXc1R8QLFEKJmc5wNpvwSYjpjIm+T5p2t64Qgc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727074627; c=relaxed/simple;
-	bh=MeATTAVhg4wVuvGLQRuKnecxse+FBeyl8RCJeKYrzcw=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=XioRHWPM4Et/C1B82rCzwoGlNm5IYQGuxQ50/ZNhW0KPUHY9O/fttaB6KV6Kz0FN6sqVCmj2PQkz0VXqMjAGoSkjRZsQQM1SqbBOWwqhFShwMnFlUwdPaSjXZt33ukJOLlEKHwJ48XgxJlSHD1QxqngIae0P4ZjRMBkrtPB/EsU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=qlQmfAwl; arc=fail smtp.client-ip=52.101.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wI9ievtVsK9GlxWRn7FdvkPqGcl4bsr9shFqwWY1BowDzkEsToBNSxP8OklqFgcS76OeJMM1BA85xS1bq17qjVrocf+hmq98rdE4B6N0lnjI4Aub4Kn1AX+lued3ERrwvo4/mgWkvCA40aoZFCNlrl5kyrkTWhNiKjwjP2jIDcf58lqeuihJXDI6jXIUu4H99PexZ1yMfCmgNBxJQZxeb13VtBnj8f/m3azWACuBrU986DsP6WRxWUvI/WD8vMeF2qhSV+H61K/I2RdUf2fydwrK3e1gDZ1kic0/Cbz/UNZzghXvmiFvkdQXve70WBxVgPt5YwgBU/lQYExi9HOUDw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oGCE+44M5NNe0hhADGpmahDg58tK4OVGYBbZBP6wR9o=;
- b=Wwz1hXyCNmcgBAKXG8bEHH8T0eHOSWdrY1Tx+hh+JgSfU2MifNz+99YYJ3VsCttuHfPXdj3y2TeQWQX0uoprIG+eLfjDlQJFPjXQ6h+nQJ9x4+QOv7Wohm3hZG4aEqNGu8IuZ+zFQxkgbQG3ySZstSqOcJwvcq+E0wqCbz07lSweYwNWLI8OqWpgzASFpVLX3FwX2wllhK2Pg3RlKWqOVXPLA5kcb68+QLuoPtOUF8RPX7Jr+DDXUSRKxZe/Ry2MlpHryzoN9C1JfotOZAWt2hlpT0C3ZRgRNyrpbqaPA/ltEx5HPV3smRicwLte0cNnc1BgV+G3PP4k6E72ChUWag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oGCE+44M5NNe0hhADGpmahDg58tK4OVGYBbZBP6wR9o=;
- b=qlQmfAwlcVzrKm8lkKS2Bz9Fdz0rmwto8dBlV0MROHx6jUkZ5/rYFJUai9b+fbO2agYRQJvoLe0+5ke5KhKr3DNxxImPiA2+GTcpPvazIOy2rQEjGhw4ID6Giaqig0lU68tNVvvTyM/fCu645YknozZfDsk+Stht19DDspm/1cE/dWpjpC5OQH1Uley2vYgMgb37oHLEM/LSDW6nL2DbnjI0Di8Ce0Jnk7ZVtIEnh6tVukvl5GN9AQQ8BW6saB2r+tAKMLoNrdee3S+gSPJ/+7sHrAylvI2BLmZwTUHAXsDmZqZUGWdpxWASWpsO1L4LvGZ1Wqj47QJ/2vd+WxzFGQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5899.apcprd06.prod.outlook.com (2603:1096:101:e3::16)
- by TYZPR06MB6725.apcprd06.prod.outlook.com (2603:1096:400:45a::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.25; Mon, 23 Sep
- 2024 06:57:01 +0000
-Received: from SEZPR06MB5899.apcprd06.prod.outlook.com
- ([fe80::8bfc:f1ee:8923:77ce]) by SEZPR06MB5899.apcprd06.prod.outlook.com
- ([fe80::8bfc:f1ee:8923:77ce%3]) with mapi id 15.20.7982.022; Mon, 23 Sep 2024
- 06:57:00 +0000
-From: Shen Lichuan <shenlichuan@vivo.com>
-To: computersforpeace@gmail.com,
-	kamal.dasu@broadcom.com,
-	miquel.raynal@bootlin.com,
-	vigneshr@ti.com,
-	maximlevitsky@gmail.com
-Cc: bcm-kernel-feedback-list@broadcom.com,
-	richard@nod.at,
-	michal.simek@amd.com,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com,
-	Shen Lichuan <shenlichuan@vivo.com>
-Subject: [PATCH v1] mtd: rawnand: Correct multiple typos in comments
-Date: Mon, 23 Sep 2024 14:56:49 +0800
-Message-Id: <20240923065649.11966-1-shenlichuan@vivo.com>
-X-Mailer: git-send-email 2.17.1
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0196.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:385::7) To SEZPR06MB5899.apcprd06.prod.outlook.com
- (2603:1096:101:e3::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2704C634;
+	Mon, 23 Sep 2024 06:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727074635; cv=none; b=WUn5G9cwegMYKDPNrQdPRInuaOoKqgIGj6epaNPDX3s/q5n53iMu4MIeI/q4dYdFgQKPXIMN7gTr90eGFurPql40p1Sxj4qKhZxytW7GxRNs24GMq1mp0smjIOCXQY29OMWKzJqj+KBTvYWmSZfVAmlN3+59FP0O/++mOxIiWfE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727074635; c=relaxed/simple;
+	bh=ZbZCN7VUwmteAAm+9m/NtdETyb/oROWmlmxFas5Vtpk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jcWTpBR3WEUHjbTje+g5y/gWxkBOobsc3gJsTNcoQyt4qaBdz0EH8ggCTJw3cLOz/p3EX5fpZgwuToibWjggJ/kd1r5p3O154sjd2NpUfMVGWP8yywO8QS59LsGGrIEIGtcn6BbE+/wEfQiwQu01IFkN4NXJ+Mde+oZr0rZ8jPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PTEzIJfw; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3787ddbd5a2so2205055f8f.0;
+        Sun, 22 Sep 2024 23:57:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727074631; x=1727679431; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=x1wki6dsaUIM0F2ljp9bI4/97eSPYVmCpcisfkoT7og=;
+        b=PTEzIJfwmZn74Gltu99U7r16Q7NGs2Tgf3K2Pg8gZg7DvpWPVfgQY7u+glHwdKes6o
+         46owOXars8TRciyh+8DTCh7lSNOJa9AEtYj8tqQFpB4RP4/fnmiwvOU9LB4a7EMjJ7mi
+         CWrNNur8XFeIyC9+LpmEVFJ5BoOT17gx7Z4m3i3meNmdkzC3BYepepAz8ZkGFw3doHs/
+         bY9+JbAUwpUVknAH6k0wtMLFI0IVE5HL27FuDPKV8EoSGsNNkp6Vz5aQ3S7qNsCcMv3V
+         4Vcd9xkjFSlxPm4nwz67X/GWGtTgOaAUIslU5T7wz8dRj+YPzjtcHgm0oKkFYxVIUnx5
+         GmRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727074631; x=1727679431;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x1wki6dsaUIM0F2ljp9bI4/97eSPYVmCpcisfkoT7og=;
+        b=bhbr3CIliugSx7gIFEINsfXsB0wm9GM6jWibYSTt/T03FTDAUmmwCHbw7ZbHqsouza
+         YshU0bR7i+C+rpUsSlJqPxiXoPhwwtqpaDPBXqRnjcDa7oFnZqpwrRlxDDeowM4UJYaM
+         j3vcZSEABhDRVwq02cUbMx5kVBjZkNeAsuBy6Ev+DUjE0vpF21xGZeO/Q6mkJX9bf2fB
+         XZprmlAT8BtQs9j7i5ljFzJyvHUG95bWYKrm/19vxWUgmSNsvjNEvV+4yUMoTmNqDwdO
+         uPNTWD3IEgZHH0EQXVz/hMKq67DtXLNL9YI+vYcnJ8h6V8yh+3ZMfkOy6MCOYfdk5P2h
+         ZgGg==
+X-Forwarded-Encrypted: i=1; AJvYcCUaX8We/EhXQhAImG+eKA49X844xuBUyVmKhj6lt5lKyoC/hQro52I174crS2qh6svL34W4EP/iTD3+XQ==@vger.kernel.org, AJvYcCUxqtN0HgSkoPMWrc2Rpfk4nlJ2a5SDfr9qYCcboYgY+RDP/OQSfgQPrYXhr6HoG+wf/QUdJyFb0wxED9w=@vger.kernel.org, AJvYcCVaF8OyUIkdygU51PDfIGnhRdKlp7vysvDa+6JmExOdnQJ4qEmSeZb9qNXSdNTt5Us/zNaWOgmAETbjTkxMsEVGFoE=@vger.kernel.org, AJvYcCVviy0BqEPtKOMdx2TUEI8atnRDOWe/ExyqoRsWFSSnW3Y6Mk5jijZcQI6U6XS3a5Q26OIYu2dmHsrpoCI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWS4klVCrX7TKf6XJF3wWMUGf47wyrYeBlAqHGW4L1a4+IlZzu
+	EFsdx9VVbO4oFvcxj7Rd/sG+5XGaSA/8NFVbX6WMqaM5H4tCJdLGselRWu+x
+X-Google-Smtp-Source: AGHT+IHIgE7f67yXgd4ONohcI6zzAIE5+E8I/pn+MGyKGxfuSRqRogyaRmhG8t6jaukPRskeGHwd3A==
+X-Received: by 2002:a05:6000:1544:b0:36b:a2bb:b374 with SMTP id ffacd0b85a97d-37a4239878dmr8105206f8f.52.1727074631161;
+        Sun, 22 Sep 2024 23:57:11 -0700 (PDT)
+Received: from localhost.localdomain (201.red-88-10-59.dynamicip.rima-tde.net. [88.10.59.201])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e78002a4sm23885617f8f.78.2024.09.22.23.57.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Sep 2024 23:57:09 -0700 (PDT)
+From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+To: linux-pci@vger.kernel.org
+Cc: vigneshr@ti.com,
+	s-vadapalli@ti.com,
+	lpieralisi@kernel.org,
+	kw@linux.com,
+	manivannan.sadhasivam@linaro.org,
+	robh@kernel.org,
+	bhelgaas@google.com,
+	jingoohan1@gmail.com,
+	krzk@kernel.org,
+	alim.akhtar@samsung.com,
+	shawn.guo@linaro.org,
+	songxiaowei@hisilicon.com,
+	marek.vasut+renesas@gmail.com,
+	yoshihiro.shimoda.uh@renesas.com,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com,
+	thomas.petazzoni@bootlin.com,
+	pali@kernel.org,
+	florian.fainelli@broadcom.com,
+	angelogioacchino.delregno@collabora.com,
+	ryder.lee@mediatek.com,
+	heiko@sntech.de,
+	kevin.xie@starfivetech.com,
+	kishon@kernel.org,
+	dlemoal@kernel.org,
+	shawn.lin@rock-chips.com,
+	linux-rockchip@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI: controller: Switch back to struct platform_driver::remove()
+Date: Mon, 23 Sep 2024 08:57:06 +0200
+Message-Id: <20240923065706.728769-1-sergio.paracuellos@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5899:EE_|TYZPR06MB6725:EE_
-X-MS-Office365-Filtering-Correlation-Id: ebcc5137-be9d-40d1-af3f-08dcdb9cec2e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|7416014|376014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?fPEzFwGIv1JZhjAtJMJeOUBQ3ZguaklpvR2SQsP+QT9nEt0euQl0ZuHzgGiP?=
- =?us-ascii?Q?sNNODPeZ98xK0RTgUpTnfQe4y28Gr6s2GidAI8tIA0DUMTOOfoKnUER6Ua1e?=
- =?us-ascii?Q?OAg0poFCDM3wwa1DPrYDmgy+TnbGNjO8kL9dlhp8kuc7e2e67d6qjdOcj3n1?=
- =?us-ascii?Q?xbNq6hEcERDTaUd/IsoVMf6RSvm8l0+GftJ9mgA9h8+CUqwzVkAQ0gk+LJzV?=
- =?us-ascii?Q?uNyjfSloqnoOtOlylnxzr8nWHmYIjksRaOB8aqmcsxaCEr4WiiikwN8KXL4V?=
- =?us-ascii?Q?LPtIj+TEZD5es0fL9tIIXz/wWm/JwHv6fApy+7dgy4ub8I8bEhqOcmQUbiSL?=
- =?us-ascii?Q?WrBQkWQneGdoXSBi2FqIc7nUbiyPK6Th0xSZAggRrj/SXqCCjYGk5z627IhV?=
- =?us-ascii?Q?4bqqgX0Gy18WaIL/J7logY+OE4X0O/lgTk3bHyAM7JS+PKPVb0b0Z7GznUza?=
- =?us-ascii?Q?0mAYXMotBr2GEXuiP7Z4AD2Xd5lpWORhOXTcv0vDf8mOfhM8tnN7zS2JEybI?=
- =?us-ascii?Q?cQWTAr8XjARg+65iAu+BySbOAv1yvIH0OQ+QuWppXeIeeAhjCg8N2uqhjlsR?=
- =?us-ascii?Q?vcbediRS4hoWZMqI2cgW0oDYtnIIc1Ovbbkp+oljSWRuFBwj+a8+cegIFAkz?=
- =?us-ascii?Q?Lbf5aS9N1/8qCt27oO2GfRMUD7MMkp1G+1qhwD2z+YmZL1tbvPQInAHROXrg?=
- =?us-ascii?Q?EvqXOQMXBd3lUhNY+YslQT9rCiD23akp7U1OVIE7iMjgiaKDmOrJZm8JV0ZG?=
- =?us-ascii?Q?6UGehrWWMBPF0YF+SIRwdtGaDUiPhkwepEUwPoAd5c0QZG8IRLPwA+TyCQyR?=
- =?us-ascii?Q?DOwGcGajWAA5bmaKH7Dsc1U84K9IBtOgrNbDHG3mDEffgYM1MZceKNkng6Sg?=
- =?us-ascii?Q?lv08bUrcM7xnTTgbqJZomX6grhXRwH38CZhRmugaT6JD/sxWhx6VlymnNHsU?=
- =?us-ascii?Q?QguB1IExhQGLH8B33ytB6FZjhRsAlZGDsFopOeRmw6VWtgheZAK2QDAoevg6?=
- =?us-ascii?Q?9/l6iMiYnv8/wyMSUoAKODUB+o4QVi3YbisH4D6ROK5Uu+TRpmyQ9w0fcRHW?=
- =?us-ascii?Q?F7gxBLnevCQNqZg8CH9T2MhLgR8qHafgbfWWFjO1M1lZYmzKac/EBl5v+mtY?=
- =?us-ascii?Q?SqUZKawY8A5ZT7ZYSjyf32N5CwEeaF3wtfvC7RZUJsyGxh2BfcyaDxsA/4dB?=
- =?us-ascii?Q?Y26HeTC2VsQNQAen2EZOl+kLdinSC/Wa6isMAifyWjqUZYk7N7jIjlsL/o4e?=
- =?us-ascii?Q?USq3zAV8RP/Q+Y2tc637MTK7rQVMBqwYfInjDyFj+reBqCnUOR923Qwad0G8?=
- =?us-ascii?Q?AiQQN+zXFLw6EbEYcoJ8NxVQpphFa6F3Hma4pLNoLDokAQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5899.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(7416014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?z6v6tqTIU69HvwyG27bGtnq3FzNP3CsDA4Mdv0M693daTpX/iEnxwEwdLIDL?=
- =?us-ascii?Q?m5h27KF3/arvEwUBaAc/L5mTaIeLfw/0NuERqZi7t7GB5uM29uciZZCvyEsA?=
- =?us-ascii?Q?BY0fRsmSXa//VzQXdYGMz9IqcykMwyJQ7DGTYL6VcwPLCqPvepRpvDkOWaQ9?=
- =?us-ascii?Q?+sBylw24W+bkuWQVejTpwSHXI8aHJprOFliYTjE7Gi8PUSabZltxQmPMDDvd?=
- =?us-ascii?Q?ri/CsqkaznLXNaWw3ZjG4RSYEKkg2hwL1qYj3tV6gJSwXpz5DDeTIiBdTyaV?=
- =?us-ascii?Q?R/Ykdc4As2HofuJYhEfy+DheDu5viJAkJBn3AoibHxT7c4r+hXPd6X2Sn9OA?=
- =?us-ascii?Q?K8dOZ/lenfXRU1PGAlW6Gp2gw296vKmAwK0RxYsLXf5Iv7mJHxlVYIsmpcCz?=
- =?us-ascii?Q?yxNhAW8+Ar1ZBVOhH+HfAlgeFkAJqLzmm4CGu8sMkn2WltgYA4rTkyGOGGLP?=
- =?us-ascii?Q?GaIclIi92L0QxnTlZzsq409yBu5ueg2dZ2UXqhwu40BoA/8ULhLGl1EPmk1V?=
- =?us-ascii?Q?kHicBaBEXyvEPqNTMvfdDpfUDXAu38W34MpM+c+umosGVxLGW6WOD06UqqBH?=
- =?us-ascii?Q?Nrn68Z3ymY7JczG5Xlp1dlY8Unb5KAyDKLgrFkM3CffH0rWTQOfqHbiyEns1?=
- =?us-ascii?Q?Za1Ed95rGr3O+bVSc/vd13ei7QEpEi/axaapOjmZrUYmsi6e6CUjlSSb8RQW?=
- =?us-ascii?Q?pS5Rsygy3t2T/KqpyGoNEnwEY/DJqsf0RZbSaSYFvXTMbTAcClKdkomAiMUu?=
- =?us-ascii?Q?jDmiUQ8JFUqRS0lyRAAx8axzE+/Lae4v5Nc8rxK3XYFgFh45BVtyRb9fETcr?=
- =?us-ascii?Q?B/EgMlsnAAe1kpxH7Yh3LhgVZsr47KRrVDCAOoC+PLW96nQus2VJHf8kPaWl?=
- =?us-ascii?Q?GOQScD08C/NHwjsaD6tC+x2gPx4xWthy0dmL8JT8uzWn9LyLxz/BIxTrBk4C?=
- =?us-ascii?Q?nCWbbGiwzkKtMCQjr8vEZRxltC4bjhfLr8uzesKjBaAlBOC9vSMaCuyloi7L?=
- =?us-ascii?Q?RahabPGdMO9Ebmlb/rpLI/rjJbzwvglrp/elWi+rZ9WRJ/TP6QpWmiJaq0+s?=
- =?us-ascii?Q?5X+t1zzw7nMfAkfIqsYM+Yano2ooqAPmBsDHrj4TqoAVXDuxxiVwkEHIayd4?=
- =?us-ascii?Q?TzMhX6Ky4uaQmciS+BiB1IuHqdOsDPUUEKsAIlshxvxkMSOcO5ZWlKLU3ZP2?=
- =?us-ascii?Q?Y0X0kqKz1bKIg6R3kbe+6jCSXMLpSe/OfRIPfKlt9B5KgqmhNAhW4/nf07Xq?=
- =?us-ascii?Q?Tq6KpEIBQ1CF0GQNAU2iUHLtLVjjI32kFzB9Mh9rCq15mY3o6YtwQcI7Lwkc?=
- =?us-ascii?Q?MPOiE51tWuHSVOG1tUKqbu4CWISrs/dIx9z5yyEGQS2fPJPMIbNUIrdgYPxY?=
- =?us-ascii?Q?fH35ISluI7pncGeP8KfbFJfdte5xv5DlA5kgWzYRCktReJ2UR4BlJaCrkyVJ?=
- =?us-ascii?Q?YvxgCtNsiTCYtRz5XUXtbt5edoWaQdizCxRNqKErGnXEssdUCtauV7Jqm9YB?=
- =?us-ascii?Q?ciXGd53ms39i9RI1yJN0EH+ILrtTCuKlfu1BdjSwmD/eYXoqf4q2RnC7wxvi?=
- =?us-ascii?Q?v3H2/iALnjrER2lHlXNM7vkvwukJVB8RRMKRfV8W?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ebcc5137-be9d-40d1-af3f-08dcdb9cec2e
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5899.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2024 06:57:00.6993
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uC7zVZAo9vQWYkoc7YhnWQ3jKJJZzVoaHKJ+XGRcrTBrVGCIWPXuQ7uF9WfZ7LMu87QA9dpcZhsJxi5mmMPevg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6725
+Content-Transfer-Encoding: 8bit
 
-Fixed some confusing spelling errors, the details are as follows:
+After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
+return void") .remove() is (again) the right callback to implement for
+platform drivers.
 
--in the code comments:
-	remaing		-> remaining
-	alingment	-> alignment
-	capabilitiies	-> capabilities
-	operatoin	-> operation
-	decriptors	-> descriptors
-	stareted	-> started
-	Unfortunelly	-> Unfortunately
-	compatabable	-> compatible
-	depenent	-> dependent
+Convert all PCI controller drivers to use .remove(), with the eventual goal
+to drop struct platform_driver::remove_new(). As .remove() and .remove_new()
+have the same prototypes, conversion is done by just changing the structure
+member name in the driver initializer.
 
-Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
+Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
 ---
- drivers/mtd/nand/raw/brcmnand/brcmnand.c       | 2 +-
- drivers/mtd/nand/raw/cadence-nand-controller.c | 2 +-
- drivers/mtd/nand/raw/cs553x_nand.c             | 2 +-
- drivers/mtd/nand/raw/nand_macronix.c           | 2 +-
- drivers/mtd/nand/raw/pl35x-nand-controller.c   | 2 +-
- drivers/mtd/nand/raw/r852.c                    | 4 ++--
- drivers/mtd/nand/raw/sm_common.c               | 4 ++--
- 7 files changed, 9 insertions(+), 9 deletions(-)
+ drivers/pci/controller/cadence/pci-j721e.c   | 2 +-
+ drivers/pci/controller/dwc/pci-exynos.c      | 2 +-
+ drivers/pci/controller/dwc/pci-keystone.c    | 2 +-
+ drivers/pci/controller/dwc/pcie-bt1.c        | 2 +-
+ drivers/pci/controller/dwc/pcie-histb.c      | 2 +-
+ drivers/pci/controller/dwc/pcie-intel-gw.c   | 2 +-
+ drivers/pci/controller/dwc/pcie-kirin.c      | 2 +-
+ drivers/pci/controller/dwc/pcie-qcom-ep.c    | 2 +-
+ drivers/pci/controller/dwc/pcie-rcar-gen4.c  | 2 +-
+ drivers/pci/controller/dwc/pcie-tegra194.c   | 2 +-
+ drivers/pci/controller/pci-aardvark.c        | 2 +-
+ drivers/pci/controller/pci-host-generic.c    | 2 +-
+ drivers/pci/controller/pci-mvebu.c           | 2 +-
+ drivers/pci/controller/pci-tegra.c           | 2 +-
+ drivers/pci/controller/pci-xgene-msi.c       | 2 +-
+ drivers/pci/controller/pcie-altera-msi.c     | 2 +-
+ drivers/pci/controller/pcie-altera.c         | 2 +-
+ drivers/pci/controller/pcie-brcmstb.c        | 2 +-
+ drivers/pci/controller/pcie-hisi-error.c     | 2 +-
+ drivers/pci/controller/pcie-iproc-platform.c | 2 +-
+ drivers/pci/controller/pcie-mediatek-gen3.c  | 2 +-
+ drivers/pci/controller/pcie-mediatek.c       | 2 +-
+ drivers/pci/controller/pcie-mt7621.c         | 2 +-
+ drivers/pci/controller/pcie-rockchip-host.c  | 2 +-
+ drivers/pci/controller/plda/pcie-starfive.c  | 2 +-
+ 25 files changed, 25 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/brcmnand/brcmnand.c b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
-index 1b2ec0fec60c..9c253a511e45 100644
---- a/drivers/mtd/nand/raw/brcmnand/brcmnand.c
-+++ b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
-@@ -1561,7 +1561,7 @@ static int write_oob_to_regs(struct brcmnand_controller *ctrl, int i,
- 				(oob[j + 2] <<  8) |
- 				(oob[j + 3] <<  0));
+diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
+index 85718246016b..b9c534e9eb0a 100644
+--- a/drivers/pci/controller/cadence/pci-j721e.c
++++ b/drivers/pci/controller/cadence/pci-j721e.c
+@@ -591,7 +591,7 @@ static void j721e_pcie_remove(struct platform_device *pdev)
  
--	/* handle the remaing bytes */
-+	/* handle the remaining bytes */
- 	while (j < tbytes)
- 		plast[k++] = oob[j++];
+ static struct platform_driver j721e_pcie_driver = {
+ 	.probe  = j721e_pcie_probe,
+-	.remove_new = j721e_pcie_remove,
++	.remove = j721e_pcie_remove,
+ 	.driver = {
+ 		.name	= "j721e-pcie",
+ 		.of_match_table = of_j721e_pcie_match,
+diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
+index fa45da28a218..6a830166d37f 100644
+--- a/drivers/pci/controller/dwc/pci-exynos.c
++++ b/drivers/pci/controller/dwc/pci-exynos.c
+@@ -383,7 +383,7 @@ static const struct of_device_id exynos_pcie_of_match[] = {
  
-diff --git a/drivers/mtd/nand/raw/cadence-nand-controller.c b/drivers/mtd/nand/raw/cadence-nand-controller.c
-index 3bc89b356963..5e87ba66ea03 100644
---- a/drivers/mtd/nand/raw/cadence-nand-controller.c
-+++ b/drivers/mtd/nand/raw/cadence-nand-controller.c
-@@ -1891,7 +1891,7 @@ static int cadence_nand_read_buf(struct cdns_nand_ctrl *cdns_ctrl,
+ static struct platform_driver exynos_pcie_driver = {
+ 	.probe		= exynos_pcie_probe,
+-	.remove_new	= exynos_pcie_remove,
++	.remove		= exynos_pcie_remove,
+ 	.driver = {
+ 		.name	= "exynos-pcie",
+ 		.of_match_table = exynos_pcie_of_match,
+diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+index 52c6420ae200..9e87d6e29afe 100644
+--- a/drivers/pci/controller/dwc/pci-keystone.c
++++ b/drivers/pci/controller/dwc/pci-keystone.c
+@@ -1370,7 +1370,7 @@ static void ks_pcie_remove(struct platform_device *pdev)
  
- 		int len_in_words = (data_dma_width == 4) ? len >> 2 : len >> 3;
+ static struct platform_driver ks_pcie_driver = {
+ 	.probe  = ks_pcie_probe,
+-	.remove_new = ks_pcie_remove,
++	.remove = ks_pcie_remove,
+ 	.driver = {
+ 		.name	= "keystone-pcie",
+ 		.of_match_table = ks_pcie_of_match,
+diff --git a/drivers/pci/controller/dwc/pcie-bt1.c b/drivers/pci/controller/dwc/pcie-bt1.c
+index 76d0ddea8007..1340edc18d12 100644
+--- a/drivers/pci/controller/dwc/pcie-bt1.c
++++ b/drivers/pci/controller/dwc/pcie-bt1.c
+@@ -632,7 +632,7 @@ MODULE_DEVICE_TABLE(of, bt1_pcie_of_match);
  
--		/* read alingment data */
-+		/* read alignment data */
- 		if (data_dma_width == 4)
- 			ioread32_rep(cdns_ctrl->io.virt, buf, len_in_words);
- #ifdef CONFIG_64BIT
-diff --git a/drivers/mtd/nand/raw/cs553x_nand.c b/drivers/mtd/nand/raw/cs553x_nand.c
-index f0a15717cf05..341318024a19 100644
---- a/drivers/mtd/nand/raw/cs553x_nand.c
-+++ b/drivers/mtd/nand/raw/cs553x_nand.c
-@@ -26,7 +26,7 @@
+ static struct platform_driver bt1_pcie_driver = {
+ 	.probe = bt1_pcie_probe,
+-	.remove_new = bt1_pcie_remove,
++	.remove = bt1_pcie_remove,
+ 	.driver = {
+ 		.name	= "bt1-pcie",
+ 		.of_match_table = bt1_pcie_of_match,
+diff --git a/drivers/pci/controller/dwc/pcie-histb.c b/drivers/pci/controller/dwc/pcie-histb.c
+index 7a11c618b9d9..615a0e3e6d7e 100644
+--- a/drivers/pci/controller/dwc/pcie-histb.c
++++ b/drivers/pci/controller/dwc/pcie-histb.c
+@@ -439,7 +439,7 @@ MODULE_DEVICE_TABLE(of, histb_pcie_of_match);
  
- #define NR_CS553X_CONTROLLERS	4
+ static struct platform_driver histb_pcie_platform_driver = {
+ 	.probe	= histb_pcie_probe,
+-	.remove_new = histb_pcie_remove,
++	.remove = histb_pcie_remove,
+ 	.driver = {
+ 		.name = "histb-pcie",
+ 		.of_match_table = histb_pcie_of_match,
+diff --git a/drivers/pci/controller/dwc/pcie-intel-gw.c b/drivers/pci/controller/dwc/pcie-intel-gw.c
+index acbe4f6d3291..177d23aa6180 100644
+--- a/drivers/pci/controller/dwc/pcie-intel-gw.c
++++ b/drivers/pci/controller/dwc/pcie-intel-gw.c
+@@ -443,7 +443,7 @@ static const struct of_device_id of_intel_pcie_match[] = {
  
--#define MSR_DIVIL_GLD_CAP	0x51400000	/* DIVIL capabilitiies */
-+#define MSR_DIVIL_GLD_CAP	0x51400000	/* DIVIL capabilities */
- #define CAP_CS5535		0x2df000ULL
- #define CAP_CS5536		0x5df500ULL
+ static struct platform_driver intel_pcie_driver = {
+ 	.probe = intel_pcie_probe,
+-	.remove_new = intel_pcie_remove,
++	.remove = intel_pcie_remove,
+ 	.driver = {
+ 		.name = "intel-gw-pcie",
+ 		.of_match_table = of_intel_pcie_match,
+diff --git a/drivers/pci/controller/dwc/pcie-kirin.c b/drivers/pci/controller/dwc/pcie-kirin.c
+index 0a29136491b8..8a86c636a645 100644
+--- a/drivers/pci/controller/dwc/pcie-kirin.c
++++ b/drivers/pci/controller/dwc/pcie-kirin.c
+@@ -769,7 +769,7 @@ static int kirin_pcie_probe(struct platform_device *pdev)
  
-diff --git a/drivers/mtd/nand/raw/nand_macronix.c b/drivers/mtd/nand/raw/nand_macronix.c
-index e229de32ff50..03237310852c 100644
---- a/drivers/mtd/nand/raw/nand_macronix.c
-+++ b/drivers/mtd/nand/raw/nand_macronix.c
-@@ -113,7 +113,7 @@ static void macronix_nand_onfi_init(struct nand_chip *chip)
- 	rand_otp = of_property_read_bool(dn, "mxic,enable-randomizer-otp");
+ static struct platform_driver kirin_pcie_driver = {
+ 	.probe			= kirin_pcie_probe,
+-	.remove_new		= kirin_pcie_remove,
++	.remove			= kirin_pcie_remove,
+ 	.driver			= {
+ 		.name			= "kirin-pcie",
+ 		.of_match_table		= kirin_pcie_match,
+diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+index a9b263f749b6..74742cdefa7e 100644
+--- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
++++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+@@ -926,7 +926,7 @@ MODULE_DEVICE_TABLE(of, qcom_pcie_ep_match);
  
- 	mxic = (struct nand_onfi_vendor_macronix *)p->onfi->vendor;
--	/* Subpage write is prohibited in randomizer operatoin */
-+	/* Subpage write is prohibited in randomizer operation */
- 	if (rand_otp && chip->options & NAND_NO_SUBPAGE_WRITE &&
- 	    mxic->reliability_func & MACRONIX_RANDOMIZER_BIT) {
- 		if (p->supports_set_get_features) {
-diff --git a/drivers/mtd/nand/raw/pl35x-nand-controller.c b/drivers/mtd/nand/raw/pl35x-nand-controller.c
-index 2570fd0beea0..a4c192061528 100644
---- a/drivers/mtd/nand/raw/pl35x-nand-controller.c
-+++ b/drivers/mtd/nand/raw/pl35x-nand-controller.c
-@@ -187,7 +187,7 @@ static const struct mtd_ooblayout_ops pl35x_ecc_ooblayout16_ops = {
- 	.free = pl35x_ecc_ooblayout16_free,
+ static struct platform_driver qcom_pcie_ep_driver = {
+ 	.probe	= qcom_pcie_ep_probe,
+-	.remove_new = qcom_pcie_ep_remove,
++	.remove = qcom_pcie_ep_remove,
+ 	.driver	= {
+ 		.name = "qcom-pcie-ep",
+ 		.of_match_table	= qcom_pcie_ep_match,
+diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4.c b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
+index f0f3ebd1a033..c9b2765ab9ab 100644
+--- a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
++++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
+@@ -770,7 +770,7 @@ static struct platform_driver rcar_gen4_pcie_driver = {
+ 		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
+ 	},
+ 	.probe = rcar_gen4_pcie_probe,
+-	.remove_new = rcar_gen4_pcie_remove,
++	.remove = rcar_gen4_pcie_remove,
+ };
+ module_platform_driver(rcar_gen4_pcie_driver);
+ 
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index 4bf7b433417a..77675bee4aa8 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -2498,7 +2498,7 @@ static const struct dev_pm_ops tegra_pcie_dw_pm_ops = {
+ 
+ static struct platform_driver tegra_pcie_dw_driver = {
+ 	.probe = tegra_pcie_dw_probe,
+-	.remove_new = tegra_pcie_dw_remove,
++	.remove = tegra_pcie_dw_remove,
+ 	.shutdown = tegra_pcie_dw_shutdown,
+ 	.driver = {
+ 		.name	= "tegra194-pcie",
+diff --git a/drivers/pci/controller/pci-aardvark.c b/drivers/pci/controller/pci-aardvark.c
+index 8b3e1a079cf3..815cdfcf79f9 100644
+--- a/drivers/pci/controller/pci-aardvark.c
++++ b/drivers/pci/controller/pci-aardvark.c
+@@ -2002,7 +2002,7 @@ static struct platform_driver advk_pcie_driver = {
+ 		.of_match_table = advk_pcie_of_match_table,
+ 	},
+ 	.probe = advk_pcie_probe,
+-	.remove_new = advk_pcie_remove,
++	.remove = advk_pcie_remove,
+ };
+ module_platform_driver(advk_pcie_driver);
+ 
+diff --git a/drivers/pci/controller/pci-host-generic.c b/drivers/pci/controller/pci-host-generic.c
+index 5f06f94db7b1..4051b9b61dac 100644
+--- a/drivers/pci/controller/pci-host-generic.c
++++ b/drivers/pci/controller/pci-host-generic.c
+@@ -82,7 +82,7 @@ static struct platform_driver gen_pci_driver = {
+ 		.of_match_table = gen_pci_of_match,
+ 	},
+ 	.probe = pci_host_common_probe,
+-	.remove_new = pci_host_common_remove,
++	.remove = pci_host_common_remove,
+ };
+ module_platform_driver(gen_pci_driver);
+ 
+diff --git a/drivers/pci/controller/pci-mvebu.c b/drivers/pci/controller/pci-mvebu.c
+index 29fe09c99e7d..46d3afe1d308 100644
+--- a/drivers/pci/controller/pci-mvebu.c
++++ b/drivers/pci/controller/pci-mvebu.c
+@@ -1727,7 +1727,7 @@ static struct platform_driver mvebu_pcie_driver = {
+ 		.pm = &mvebu_pcie_pm_ops,
+ 	},
+ 	.probe = mvebu_pcie_probe,
+-	.remove_new = mvebu_pcie_remove,
++	.remove = mvebu_pcie_remove,
+ };
+ module_platform_driver(mvebu_pcie_driver);
+ 
+diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+index 038d974a318e..42a5ce412cc0 100644
+--- a/drivers/pci/controller/pci-tegra.c
++++ b/drivers/pci/controller/pci-tegra.c
+@@ -2806,6 +2806,6 @@ static struct platform_driver tegra_pcie_driver = {
+ 		.pm = &tegra_pcie_pm_ops,
+ 	},
+ 	.probe = tegra_pcie_probe,
+-	.remove_new = tegra_pcie_remove,
++	.remove = tegra_pcie_remove,
+ };
+ module_platform_driver(tegra_pcie_driver);
+diff --git a/drivers/pci/controller/pci-xgene-msi.c b/drivers/pci/controller/pci-xgene-msi.c
+index 3ce38dfd0d29..88c0977bc41a 100644
+--- a/drivers/pci/controller/pci-xgene-msi.c
++++ b/drivers/pci/controller/pci-xgene-msi.c
+@@ -518,7 +518,7 @@ static struct platform_driver xgene_msi_driver = {
+ 		.of_match_table = xgene_msi_match_table,
+ 	},
+ 	.probe = xgene_msi_probe,
+-	.remove_new = xgene_msi_remove,
++	.remove = xgene_msi_remove,
  };
  
--/* Generic flash bbt decriptors */
-+/* Generic flash bbt descriptors */
- static u8 bbt_pattern[] = { 'B', 'b', 't', '0' };
- static u8 mirror_pattern[] = { '1', 't', 'b', 'B' };
- 
-diff --git a/drivers/mtd/nand/raw/r852.c b/drivers/mtd/nand/raw/r852.c
-index ed0cf732d20e..b07c2f8b4035 100644
---- a/drivers/mtd/nand/raw/r852.c
-+++ b/drivers/mtd/nand/raw/r852.c
-@@ -335,7 +335,7 @@ static void r852_cmdctl(struct nand_chip *chip, int dat, unsigned int ctrl)
- 		else
- 			dev->ctlreg &= ~R852_CTL_WRITE;
- 
--		/* when write is stareted, enable write access */
-+		/* when write is started, enable write access */
- 		if (dat == NAND_CMD_ERASE1)
- 			dev->ctlreg |= R852_CTL_WRITE;
- 
-@@ -372,7 +372,7 @@ static int r852_wait(struct nand_chip *chip)
- 
- 	nand_status_op(chip, &status);
- 
--	/* Unfortunelly, no way to send detailed error status... */
-+	/* Unfortunately, no way to send detailed error status... */
- 	if (dev->dma_error) {
- 		status |= NAND_STATUS_FAIL;
- 		dev->dma_error = 0;
-diff --git a/drivers/mtd/nand/raw/sm_common.c b/drivers/mtd/nand/raw/sm_common.c
-index 24f52a30fb13..e238784c8c3e 100644
---- a/drivers/mtd/nand/raw/sm_common.c
-+++ b/drivers/mtd/nand/raw/sm_common.c
-@@ -52,8 +52,8 @@ static const struct mtd_ooblayout_ops oob_sm_ops = {
- 	.free = oob_sm_ooblayout_free,
+ static int __init xgene_pcie_msi_init(void)
+diff --git a/drivers/pci/controller/pcie-altera-msi.c b/drivers/pci/controller/pcie-altera-msi.c
+index 16336a525c16..318736171d63 100644
+--- a/drivers/pci/controller/pcie-altera-msi.c
++++ b/drivers/pci/controller/pcie-altera-msi.c
+@@ -274,7 +274,7 @@ static struct platform_driver altera_msi_driver = {
+ 		.of_match_table = altera_msi_of_match,
+ 	},
+ 	.probe = altera_msi_probe,
+-	.remove_new = altera_msi_remove,
++	.remove = altera_msi_remove,
  };
  
--/* NOTE: This layout is not compatabable with SmartMedia, */
--/* because the 256 byte devices have page depenent oob layout */
-+/* NOTE: This layout is not compatible with SmartMedia, */
-+/* because the 256 byte devices have page dependent oob layout */
- /* However it does preserve the bad block markers */
- /* If you use smftl, it will bypass this and work correctly */
- /* If you not, then you break SmartMedia compliance anyway */
+ static int __init altera_msi_init(void)
+diff --git a/drivers/pci/controller/pcie-altera.c b/drivers/pci/controller/pcie-altera.c
+index ef73baefaeb9..b921bbb4de80 100644
+--- a/drivers/pci/controller/pcie-altera.c
++++ b/drivers/pci/controller/pcie-altera.c
+@@ -817,7 +817,7 @@ static void altera_pcie_remove(struct platform_device *pdev)
+ 
+ static struct platform_driver altera_pcie_driver = {
+ 	.probe		= altera_pcie_probe,
+-	.remove_new	= altera_pcie_remove,
++	.remove	= altera_pcie_remove,
+ 	.driver = {
+ 		.name	= "altera-pcie",
+ 		.of_match_table = altera_pcie_of_match,
+diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+index c08683febdd4..470c48b4aaa6 100644
+--- a/drivers/pci/controller/pcie-brcmstb.c
++++ b/drivers/pci/controller/pcie-brcmstb.c
+@@ -1690,7 +1690,7 @@ static const struct dev_pm_ops brcm_pcie_pm_ops = {
+ 
+ static struct platform_driver brcm_pcie_driver = {
+ 	.probe = brcm_pcie_probe,
+-	.remove_new = brcm_pcie_remove,
++	.remove = brcm_pcie_remove,
+ 	.driver = {
+ 		.name = "brcm-pcie",
+ 		.of_match_table = brcm_pcie_match,
+diff --git a/drivers/pci/controller/pcie-hisi-error.c b/drivers/pci/controller/pcie-hisi-error.c
+index ad9d5ffcd9e3..cb5fcfe032d1 100644
+--- a/drivers/pci/controller/pcie-hisi-error.c
++++ b/drivers/pci/controller/pcie-hisi-error.c
+@@ -317,7 +317,7 @@ static struct platform_driver hisi_pcie_error_handler_driver = {
+ 		.acpi_match_table = hisi_pcie_acpi_match,
+ 	},
+ 	.probe		= hisi_pcie_error_handler_probe,
+-	.remove_new	= hisi_pcie_error_handler_remove,
++	.remove	= hisi_pcie_error_handler_remove,
+ };
+ module_platform_driver(hisi_pcie_error_handler_driver);
+ 
+diff --git a/drivers/pci/controller/pcie-iproc-platform.c b/drivers/pci/controller/pcie-iproc-platform.c
+index 4e6aa882a567..0cb78c583c7e 100644
+--- a/drivers/pci/controller/pcie-iproc-platform.c
++++ b/drivers/pci/controller/pcie-iproc-platform.c
+@@ -134,7 +134,7 @@ static struct platform_driver iproc_pltfm_pcie_driver = {
+ 		.of_match_table = of_match_ptr(iproc_pcie_of_match_table),
+ 	},
+ 	.probe = iproc_pltfm_pcie_probe,
+-	.remove_new = iproc_pltfm_pcie_remove,
++	.remove = iproc_pltfm_pcie_remove,
+ 	.shutdown = iproc_pltfm_pcie_shutdown,
+ };
+ module_platform_driver(iproc_pltfm_pcie_driver);
+diff --git a/drivers/pci/controller/pcie-mediatek-gen3.c b/drivers/pci/controller/pcie-mediatek-gen3.c
+index b7e8e24f6a40..ebef1be0d168 100644
+--- a/drivers/pci/controller/pcie-mediatek-gen3.c
++++ b/drivers/pci/controller/pcie-mediatek-gen3.c
+@@ -1082,7 +1082,7 @@ MODULE_DEVICE_TABLE(of, mtk_pcie_of_match);
+ 
+ static struct platform_driver mtk_pcie_driver = {
+ 	.probe = mtk_pcie_probe,
+-	.remove_new = mtk_pcie_remove,
++	.remove = mtk_pcie_remove,
+ 	.driver = {
+ 		.name = "mtk-pcie-gen3",
+ 		.of_match_table = mtk_pcie_of_match,
+diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+index 7fc0d7709b7f..f571de8de283 100644
+--- a/drivers/pci/controller/pcie-mediatek.c
++++ b/drivers/pci/controller/pcie-mediatek.c
+@@ -1243,7 +1243,7 @@ MODULE_DEVICE_TABLE(of, mtk_pcie_ids);
+ 
+ static struct platform_driver mtk_pcie_driver = {
+ 	.probe = mtk_pcie_probe,
+-	.remove_new = mtk_pcie_remove,
++	.remove = mtk_pcie_remove,
+ 	.driver = {
+ 		.name = "mtk-pcie",
+ 		.of_match_table = mtk_pcie_ids,
+diff --git a/drivers/pci/controller/pcie-mt7621.c b/drivers/pci/controller/pcie-mt7621.c
+index 9b4754a45515..776caa0b1011 100644
+--- a/drivers/pci/controller/pcie-mt7621.c
++++ b/drivers/pci/controller/pcie-mt7621.c
+@@ -541,7 +541,7 @@ MODULE_DEVICE_TABLE(of, mt7621_pcie_ids);
+ 
+ static struct platform_driver mt7621_pcie_driver = {
+ 	.probe = mt7621_pcie_probe,
+-	.remove_new = mt7621_pcie_remove,
++	.remove = mt7621_pcie_remove,
+ 	.driver = {
+ 		.name = "mt7621-pci",
+ 		.of_match_table = mt7621_pcie_ids,
+diff --git a/drivers/pci/controller/pcie-rockchip-host.c b/drivers/pci/controller/pcie-rockchip-host.c
+index cbec71114825..06cdb68f0920 100644
+--- a/drivers/pci/controller/pcie-rockchip-host.c
++++ b/drivers/pci/controller/pcie-rockchip-host.c
+@@ -1050,7 +1050,7 @@ static struct platform_driver rockchip_pcie_driver = {
+ 		.pm = &rockchip_pcie_pm_ops,
+ 	},
+ 	.probe = rockchip_pcie_probe,
+-	.remove_new = rockchip_pcie_remove,
++	.remove = rockchip_pcie_remove,
+ };
+ module_platform_driver(rockchip_pcie_driver);
+ 
+diff --git a/drivers/pci/controller/plda/pcie-starfive.c b/drivers/pci/controller/plda/pcie-starfive.c
+index c9933ecf6833..0567ec373a3e 100644
+--- a/drivers/pci/controller/plda/pcie-starfive.c
++++ b/drivers/pci/controller/plda/pcie-starfive.c
+@@ -480,7 +480,7 @@ static struct platform_driver starfive_pcie_driver = {
+ 		.pm = pm_sleep_ptr(&starfive_pcie_pm_ops),
+ 	},
+ 	.probe = starfive_pcie_probe,
+-	.remove_new = starfive_pcie_remove,
++	.remove = starfive_pcie_remove,
+ };
+ module_platform_driver(starfive_pcie_driver);
+ 
 -- 
-2.17.1
+2.25.1
 
 
