@@ -1,174 +1,214 @@
-Return-Path: <linux-kernel+bounces-336121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6737A97EF75
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:45:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62D8A97EF6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:44:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0743B21F1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:45:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8A93B21B83
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:44:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF6419F12D;
-	Mon, 23 Sep 2024 16:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E2219F129;
+	Mon, 23 Sep 2024 16:44:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="aD3SrH2w"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2089.outbound.protection.outlook.com [40.107.237.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="daVkDwpz"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4839519F401;
-	Mon, 23 Sep 2024 16:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.89
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727109905; cv=fail; b=Vfr5EH7w17K8HILdwqqhBin/NZ1HTZKNMCD/OJaAKsN/2Cn5j0ZP6GU26XN95o23+2T0d5gFQCw3bg36aityI0vJEtVCnrm/pwuzqf3YelaUuxd3SJJ//cdOHx59b4dhDXKpj0HDEyLBNDqrBtkYadcD8IMmvjiodOUogCh/MIE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727109905; c=relaxed/simple;
-	bh=oepHvrRteVtu3NOBg6KdRGvXg2IgwF0+gR5R1nRQu7c=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fp+B63zPCMxdi+APx4V/bf0qd1Tmc4+hnd/cWtQMQwIcm/hNhklxSjSdmHAJTE+0PD9SCW0TcCJxYtBlvk3oKWgn6UOcHGu3hlCIyED8Xxa3OwToehaMxTRUca4ZcKXS7vIWiI0bQREOUBHngQmCozVrb1G3G2UPHvwfCmeMW9k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=aD3SrH2w; arc=fail smtp.client-ip=40.107.237.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xp1dMKw55ZTNvcSIo6xq3lT/PWIHkrGELT2tYp85LFd73Fdj2g/QS0yJ7StH77sZFpGUNJ0UcmtDrLJjMBNbcK3mZ7qqlFfuSLKOMlZ56fT1NLmPjztE9/chRXs1Ua8i3yuqoVGV9nrQ5IEozmIXlmUVknVx9/BxHEHsrBFvkQR77yUvZmV6BB6xGFcZw/Qiupn5K0pppacwtx1QSpM6k8QglN5C6Oojgz5Ex3q3C2MUToJkegDRvEUI4E9gLeWM311hPsE3vijkH862asZm+YB3JxrLersZL5Bxk/nFhaI/U/oncFELWOZ9y3HQ2d6Oecn9JjHtSNWGkJTqPJU6pA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1B355m/4W5GLciv/FJHSD7AK9150IeMXXIRPSVjEw0Y=;
- b=t1dQwH7hQQ1UpaTyl9nkX3tYfwzvxk0CMs+0oOlQ9JBmN0jVMhe++UKncf5kD60r2drFSHqDMKTbu/A3bfBnu2fL4+BhV15WZHjK8r+GzVWueAYHpjaXHIy47oTSZ1Yk+P81h3qUw2uMaX5x2s559Bo4PIL33zk8pKDUlbJTxAKTm4FV38DMknZ1AkndyW6jVHROFm9dVKWuTENsvutjYCATzP69kiz+Y0s+3I/4HFZa1VB42vGcP+XRwa9sfSLXG0ChPvGDQ0E9zse4MCsZZDOKDreO+xCAKuy+qt6dJVh6OR3V0PSMnQ87Nb0a3Vxv4XUp6W7uKeVuy6V4JHgk3A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=alien8.de smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1B355m/4W5GLciv/FJHSD7AK9150IeMXXIRPSVjEw0Y=;
- b=aD3SrH2wklTgBwUrQAWG/ZNmnIwO8Mj4HJkaUd72OU3Plt1OAOdq6gUoMB/AG3oLs3XFh5Hd8gk+9Eese4cO8QWbI5ugaFD/zKcFdTm4rpDIW1V1m7bT0oL9+7VizL7dhQ7/mp3T62hA4e223mt8Nip1lsDBIiNiYhQMCwS/QEY=
-Received: from MW4P223CA0008.NAMP223.PROD.OUTLOOK.COM (2603:10b6:303:80::13)
- by IA1PR12MB7757.namprd12.prod.outlook.com (2603:10b6:208:422::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.25; Mon, 23 Sep
- 2024 16:44:58 +0000
-Received: from SJ5PEPF00000209.namprd05.prod.outlook.com
- (2603:10b6:303:80:cafe::43) by MW4P223CA0008.outlook.office365.com
- (2603:10b6:303:80::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.30 via Frontend
- Transport; Mon, 23 Sep 2024 16:44:57 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ5PEPF00000209.mail.protection.outlook.com (10.167.244.42) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7918.13 via Frontend Transport; Mon, 23 Sep 2024 16:44:57 +0000
-Received: from jallen-jump-host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 23 Sep
- 2024 11:44:56 -0500
-From: John Allen <john.allen@amd.com>
-To: <bp@alien8.de>, <x86@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, John Allen <john.allen@amd.com>,
-	<stable@vger.kernel.org>
-Subject: [PATCH v2] x86/CPU/AMD: Only apply Zenbleed fix for Zen2 during late microcode load
-Date: Mon, 23 Sep 2024 16:44:04 +0000
-Message-ID: <20240923164404.27227-1-john.allen@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5002449649
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 16:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727109851; cv=none; b=ImiFFoYNR/XW+MUejZpl1yeSZ1Kwa2kmkKOuYqI56CdstBFXw8PiSpCgLrFPfReLZTtAQgr7Dy0GJ0ZTuGjPkvTUruCuOG3uIn6q9bUwnuL2W79r6XCGQ+5qCMZh7x47kqbQyp7IWxlSjCZL3vwmaTo5t6qOpeRrOaD48KWPexk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727109851; c=relaxed/simple;
+	bh=Tj+rFNp3RUciTXesDUXO/T3ijZS2swiWrnOzdR/3ZKU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=tKoiClbbY86svbUBYGzl+fPpr4OGBdQ2mYZ9C3Jvw7BAHpsNxJmj6DF2P7mhfh2tMYciBXDgxazVwBjdQF+4vhQ+MTzd8XRGzS6JwF4Oa0VDbrb4AAZ7qzHg3uP17BlTf61JS63ciDBkQBjCqUt2a60969R8W54wR7ulWBCfX/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=daVkDwpz; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f762de00fbso46184771fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 09:44:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1727109847; x=1727714647; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7hXi1VEpOam7nRQRtm5F/Kvp+UglOEaCxtSWG+fjmik=;
+        b=daVkDwpz3QLTSVUSRzhDXYYUc5IEyvk6XBEYW7MYoZwdhLTkqWo8QPxcFtwiPGIy91
+         Rr0j/I4FLTBXO8QG8hCbXZcqmYPkeT6qEvdILvrpVxEZgBSiY2cm9DRpLYkqBc58Y8oy
+         HHUf9Q2TK7ZklJTsNGUSmFd+eWwA26QOqLQi1dI/91w2m4wDgCD4YGHCU5Lpu16xDAAM
+         OMQjW92SBPYk+xhRGbgA1MQyziE6hv3WH6aYf2PL2FQYDtE9q1JpxjXuH4mtfdARYpy0
+         saJK5FqzgLwprT7p5yC4rOS4GSb4QcvQ8rmBeuZdTebImEpAeSMKA86+k+OnNwCjZ5ZJ
+         kUTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727109847; x=1727714647;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7hXi1VEpOam7nRQRtm5F/Kvp+UglOEaCxtSWG+fjmik=;
+        b=nc5BEniGjz8uD0VyVGtrJXWoCKgIWc6SMg9wnxx+nYEloSdEU9IKi9aS90OtYEXXyS
+         G+H9DK/tXq7A/WPmXCQN1VryRlZCIeJasRNd24VyLviKRymG/U1tV+EsxFzFVtlAMg8r
+         jMhptr79veh8dJO3JbRR6ajCv0QjGaGY2XyomQxxO9z8REfY8zraIgl7r0f3pb0x0pU6
+         uRnoZzII5sLr7nwXXGeI5vBV1hjTjGKCIR15ZDtok89HH/5Y7o1+di+j7OZwIbV6behX
+         AkYWCT3fcwVIPJHXtSjRcsDoeTACyQzV5XoNWZbDpLEPMaz57T0u+rKAMm5yxgd5nBd5
+         5N1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWW1NAHxSpt5ArvGbV1YNGaDeGvqoWfWxu2G302JPKQMcpdYnf6USjKcEhymGM0YBEhkXg2INfwdlT1rzY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzBvb1BtEG+v03Vj1jH+hhhW7UqLhfRm4QWItCNYR1Od6qUY0R
+	tybJpnEP5RsFgF9nBJmWuXAVb62OIVvvAV/pzBq8wF7cRxd2ZvLNDYrBjXCUzvk=
+X-Google-Smtp-Source: AGHT+IGlbMKRBwW56/ddt0TnX1I2vjFVhxMgqZqw8MiUMLPOYvNyOV111a+PrQFKMaiXrHW/JzfNmQ==
+X-Received: by 2002:a05:651c:547:b0:2ef:2344:deec with SMTP id 38308e7fff4ca-2f7cb385ddfmr56631961fa.45.1727109847473;
+        Mon, 23 Sep 2024 09:44:07 -0700 (PDT)
+Received: from cloudflare.com ([2a09:bac5:5063:2432::39b:5a])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb535eesm10506299a12.29.2024.09.23.09.44.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2024 09:44:06 -0700 (PDT)
+From: Jakub Sitnicki <jakub@cloudflare.com>
+To: David Laight <David.Laight@ACULAB.COM>
+Cc: Martin KaFai Lau <martin.lau@linux.dev>,  'Tiago Lam'
+ <tiagolam@cloudflare.com>,  Eric Dumazet <edumazet@google.com>,  Willem de
+ Bruijn <willemdebruijn.kernel@gmail.com>,  "David S. Miller"
+ <davem@davemloft.net>,  David Ahern <dsahern@kernel.org>,  Jakub Kicinski
+ <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  "Alexei Starovoitov"
+ <ast@kernel.org>,  Daniel Borkmann <daniel@iogearbox.net>,  "Andrii
+ Nakryiko" <andrii@kernel.org>,  Eduard Zingerman <eddyz87@gmail.com>,
+  Song Liu <song@kernel.org>,  Yonghong Song <yonghong.song@linux.dev>,
+  John Fastabend <john.fastabend@gmail.com>,  KP Singh
+ <kpsingh@kernel.org>,  Stanislav Fomichev <sdf@fomichev.me>,  Hao Luo
+ <haoluo@google.com>,  Jiri Olsa <jolsa@kernel.org>,  Mykola Lysenko
+ <mykolal@fb.com>,  Shuah Khan <shuah@kernel.org>,
+  "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+  "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+  "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+  "kernel-team@cloudflare.com" <kernel-team@cloudflare.com>
+Subject: Re: [RFC PATCH v2 2/3] ipv6: Support setting src port in sendmsg().
+In-Reply-To: <29fea23839cf489488f9228a44e79d21@AcuMS.aculab.com> (David
+	Laight's message of "Mon, 23 Sep 2024 15:45:27 +0000")
+References: <20240920-reverse-sk-lookup-v2-0-916a48c47d56@cloudflare.com>
+	<20240920-reverse-sk-lookup-v2-2-916a48c47d56@cloudflare.com>
+	<855fc71343a149479c7da96438bf9e32@AcuMS.aculab.com>
+	<87r09a771t.fsf@cloudflare.com>
+	<29fea23839cf489488f9228a44e79d21@AcuMS.aculab.com>
+User-Agent: mu4e 1.12.4; emacs 29.1
+Date: Mon, 23 Sep 2024 18:44:04 +0200
+Message-ID: <87msjy7223.fsf@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF00000209:EE_|IA1PR12MB7757:EE_
-X-MS-Office365-Filtering-Correlation-Id: 754b7555-f625-444f-393e-08dcdbef0f16
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?SxM7mhbTDsR+MEkmL+J+xbKnsnUILFQAtmuWtzl9U270kzMtMjTgY5fZXf58?=
- =?us-ascii?Q?yuyC5Citbt2Gsn8C2bu9Ei8t8om3GBceCdHPs1KWcP/taXnH5CLmLZPdazgS?=
- =?us-ascii?Q?uA6mPx+xCDZv/RvfSa5SaNhtF96af+rhojkp0NrCLOwDeS9Y0bITthpgaxvR?=
- =?us-ascii?Q?O5lHW2X260uIB+4QyIqIa5XfF/SCEvUZPbJtTxIzYmMtSQ+MSUssX0oXYb8K?=
- =?us-ascii?Q?pIc0NrF59Y8JcMt5fU3gwjzuKeXJbUrWuuGw1z3VLYs9BS9KvmdbU2OU3v3H?=
- =?us-ascii?Q?uT0Vchb9QrOSWXAIDzVo7qYRP87629bArlliZZWDG9iKljwutWSjk14Fqz04?=
- =?us-ascii?Q?cPleOMk2COOpvSMwd7VnFtJnr6zRmH3ROV4OjkQBS/9eHy35JiaVXqWWhPsK?=
- =?us-ascii?Q?37JTertHKD+uEQPBXKvmF+wFuCrnMtAhreXETBwwSofPsf3QWdDivpkABlkV?=
- =?us-ascii?Q?5Vsx+Iw95DlcDS9eN+sVRzwYatpGbyc7WsTF8BrIDxqdATeg5Pk/54Cg/iTm?=
- =?us-ascii?Q?GsEtacBDzHMPmb6a+WueA5aJj2FsIIIqexOVQnT72UbUZr625atWDR4IOlF7?=
- =?us-ascii?Q?dMwUdAY7iBTBHIPMHBOcTE9lf+VXV3DqovM+24Bgt78smt2F1tX23NYo1kbr?=
- =?us-ascii?Q?BFBgnDG6pLTWnoCb4fhVv9MQTA6dfewzeyHpNykd6COxh575tg+QDSoH60w1?=
- =?us-ascii?Q?DQHHkmnRy0h552GmtDASq2yl7iqBpiwac+78V6SZfPniW8LNBGXODyyog5mB?=
- =?us-ascii?Q?0BaMgmTAemXzK/vjonMdlN/eVe4K3+YPCa5hwjK4OHRl5Qpip58xk78gUCJ5?=
- =?us-ascii?Q?FIntgiSeHsLPdbtl74M4EJgaucUEi8qSeMmp1bWYrHoENxVXjmxkgeNy97sr?=
- =?us-ascii?Q?/r+HFrnXJXsp0MgVXeQHApjE6beINk4imEIWj0jLecD1Zbl56ACHhVb12sV2?=
- =?us-ascii?Q?cNBbcM+xHstXZA6KAtEskDEDMER0KBdO6aLuD1USucpCmWE0Vir53POooYPH?=
- =?us-ascii?Q?mYT2kBxpFW+gXiIa4LU91aiAKudhSyOwdolZeuKSMN3y0ht5RZgPqTzYahsU?=
- =?us-ascii?Q?vtLZoW8Y0xqn0HmpD3EoIPjeJr5VkwJ4nNCN5P0K882c98g8LFrk8SY65f0P?=
- =?us-ascii?Q?dwhoHvYKMy4MHcEO6AVa/RPviJ6lmy65Hdd0p6OaH74acGYZRo6Xc+5zS/1L?=
- =?us-ascii?Q?d+tOvBr8cnwDt/HQMGMn5wY0VfTjPkWqg7H/oP+B16dQaJQNXeWet9IYQIqO?=
- =?us-ascii?Q?hWg5oF+THJqt7p11UNBWHoE8lcAP2Jqg5R9hBAALcT0V6/7uafMvG+iWlqNI?=
- =?us-ascii?Q?lk0zeZAaV2206KuwxRKt0wU7uKJ0ZPyfUtOOadrpwzLKDWNOcG5NyvkJeRqG?=
- =?us-ascii?Q?f15sXBnDNbhOY9MKohN8fpirTryL?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2024 16:44:57.4986
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 754b7555-f625-444f-393e-08dcdbef0f16
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF00000209.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7757
 
-A problem was introduced with commit f69759be251d ("x86/CPU/AMD: Move
-Zenbleed check to the Zen2 init function") where a bit in the DE_CFG MSR
-is getting set after a microcode late load.
+On Mon, Sep 23, 2024 at 03:45 PM GMT, David Laight wrote:
+> From: Jakub Sitnicki
+>> Sent: 23 September 2024 15:56
+>> 
+>> On Mon, Sep 23, 2024 at 01:08 PM GMT, David Laight wrote:
+>> > From: Tiago Lam <tiagolam@cloudflare.com>
+>> 
+>> [...]
+>> 
+>> >> To limit its usage, a reverse socket lookup is performed to check if the
+>> >> configured egress source address and/or port have any ingress sk_lookup
+>> >> match. If it does, traffic is allowed to proceed, otherwise it falls
+>> >> back to the regular egress path.
+>> >
+>> > Is that really useful/necessary?
+>> 
+>> We've been asking ourselves the same question during Plumbers with
+>> Martin.
+>> 
+>> Unprivileges processes can already source UDP traffic from (almost) any
+>> IP & port by binding a socket to the desired source port and passing
+>> IP_PKTINFO. So perhaps having a reverse socket lookup is an overkill.
+>
+> Traditionally you'd need to bind to the source port on any local IP
+> (or the wildcard IP) that didn't have another socket bound to that port.
 
-The problem seems to be that the microcode late load path calls into
-amd_check_microcode() and subsequently zen2_zenbleed_check(). Since the
-patch removes the cpu_has_amd_erratum() check from zen2_zenbleed_check(),
-this will cause all non-Zen2 CPUs to go through the function and set
-the bit in the DE_CFG MSR.
+Right. Linux IP_PKTINFO extension relaxes this requirement. You can bind
+to some local IP (whichever is free, plently to choose from in 127/8
+local subnet), and specify the source address to use OOB at sendmsg()
+time (as long as the address is local to the host, otherwise you need
+additional capabilities).
 
-Call into the zenbleed fix path on Zen2 CPUs only.
+> Modern Linux might have more restrictions and SO_REUSADDR muddies things.
+>
+> And I don't think you can do a connect() on an unbound UDP socket to
+> set the source port at the same time as the destination IP+port.
+> (That would actually be useful.)
 
-Fixes: f69759be251d ("x86/CPU/AMD: Move Zenbleed check to the Zen2 init function")
-Cc: <stable@vger.kernel.org>
-Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
-Signed-off-by: John Allen <john.allen@amd.com>
----
-v2:
-  - Clean up commit description
----
- arch/x86/kernel/cpu/amd.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+You can. It's somewhat recent (v6.3+) [1]:
 
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index 015971adadfc..368344e1394b 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -1202,5 +1202,6 @@ void amd_check_microcode(void)
- 	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD)
- 		return;
- 
--	on_each_cpu(zenbleed_check_cpu, NULL, 1);
-+	if (boot_cpu_has(X86_FEATURE_ZEN2))
-+		on_each_cpu(zenbleed_check_cpu, NULL, 1);
- }
--- 
-2.34.1
+https://manpages.debian.org/unstable/manpages/ip.7.en.html#IP_LOCAL_PORT_RANGE
 
+It's not on par with TCP when it comes to local port sharing because we
+hash UDP sockets only by 2-tuple. Though, some effort to improve that is
+taking place I see.
+
+The recipe is:
+
+1. delay the auto-bind until connect() time with IP_BIND_ADDRESS_NO_PORT
+   socket option, and
+2. tell the udp stack to consider only a single local port during the
+   free port search with IP_LOCAL_PORT_RANGE option.
+
+That amounts to something like (in pseudocode):
+
+  s = socket(AF_INET, SOCK_DGRAM)
+  s.setsockopt(SOL_IP, IP_BIND_ADDRESS_NO_PORT, 1)
+  s.setsockopt(SOL_IP, IP_LOCAL_PORT_RANGE, 44_444 << 16 | 44_444)
+  s.bind(("192.0.2.42", 0))
+  s.connect(("1.1.1.1", 53))
+
+You can combine it with SO_REUSEADDR to share the local address between
+sockets, but you have to ensure manually that you don't run into
+conflicts between sockets (two sockets using the same 4-tuple). That's
+something we're hoping to improve in the future.
+
+> OTOH if you just want to send a UDP message you can just use another
+> system on the same network.
+> You might need to spoof the source mac - but that isn't hard (although
+> it might confuse any ethernet switches).
+>
+>> We should probably respect net.ipv4.ip_local_reserved_ports and
+>> net.ipv4.ip_unprivileged_port_start system settings, though, or check
+>> for relevant caps.
+>
+> True.
+>
+>> Open question if it is acceptable to disregard exclusive UDP port
+>> ownership by sockets binding to a wildcard address without SO_REUSEADDR?
+>
+> We've often suffered from the opposite - a program binds to the wildcard
+> IP and everything works until something else binds to the same port and
+> a specific local IP.
+
+Let me see if I understand - what would happen today for UDP is:
+
+app #1 - bind(("0.0.0.0", 53)) -> OK
+app #2 - bind(("192.0.2.1", 53)) -> EADDRINUSE
+
+... unless both are setting SO_REUSEADDR (or SO_REUSEPORT and run under
+same UID).
+
+That is why if we allow selecting the source port at sendmsg() time, we
+would be relaxing the existing UDP port ownership guarantees for
+wildcard binds.
+
+Perhaps this merits a sysctl, so the admin can decide if it is an
+acceptable trade-off in their environment.
+
+> I'm sure this is grief some on both TCP and UDP - especially since you
+> often need to set SO_REUSADDR to stop other things breaking.
+>
+> 	David
+>  
+>
+> -
+> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+> Registration No: 1397386 (Wales)
 
