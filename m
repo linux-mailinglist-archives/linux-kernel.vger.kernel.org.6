@@ -1,188 +1,128 @@
-Return-Path: <linux-kernel+bounces-336080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E3D297EEDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:06:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7E3197EEE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 563F91F21E33
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:06:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6214E1F22259
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C648019E96A;
-	Mon, 23 Sep 2024 16:06:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39EBB19E96A;
+	Mon, 23 Sep 2024 16:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NHBjyNNW"
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bRanfLQ0"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B100577107
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 16:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EAB546B5
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 16:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727107562; cv=none; b=C4P3dJrAVJ1VhI8A1Ef9gjvIx3UA/fjAH39z9aPh9+BMjwenneeq76NFwHA64NrX5UHR0GT1ia248LbIVvAnUDByLiJxuZbsNa9QYgbEbbyrOfmIK6YOjrJzdmnpV/WRZjS0WVx0lmSLYW5bT194+z5VdDVn+T2+dJngrtt+45M=
+	t=1727107635; cv=none; b=sEAj6nAP8qrpErPIyNtlt33EPkhJI6vI4goLQ+J0A0I17pACJb62ghboQEVR6ZjLItrqvaYzfW4Y48iZp0VDtkSang4uSazjQMERsvGd8XNeIhClOv6XpwY20dsCXgTVn/oVIOXockFnNnvGrT8ndBWG3h08iWlgg7mP+zGxjS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727107562; c=relaxed/simple;
-	bh=B6nj2YLT4D/wlqqzFmJa2BxfrWUGYUdzA6f5p6Tagew=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mNjNemt4FdwMePVMDBHXjWeSFzxSo0HpfMoDLlMWuv5qGgu+AhEomXeMmzNDbAfPdxpnvcEdEvCX60GIE0vp/t6qUDy6Z0iyEiJ39LhRF2RdeHVV99qqHpI7W0YsXujO/qGNnjgFq3ExAgAXyWM3SVwBlb5W6FrKr8JxovK73hM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NHBjyNNW; arc=none smtp.client-ip=209.85.221.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-502bb7cc965so970838e0c.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 09:06:00 -0700 (PDT)
+	s=arc-20240116; t=1727107635; c=relaxed/simple;
+	bh=io0wtu1A1TSf7wRAKGNdxYAnt/sSmQJGme+MaTWCvTI=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NDV5jK63yWnLX46eWtzcaNPv1Zwj4BCHcjFwr/Cx2RZThauhqUw6yrZseNBA+h1w3NqemxswMe7wD8JhMQygw5oSjEuGWCVem9Fg1wA0boyC33bO4YITzq+EZnaJo+FqIKq0ECU1oCorGwUIOcn/thG13ChzBgcTnbAgWQIONF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=bRanfLQ0; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2068a7c9286so45314125ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 09:07:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727107559; x=1727712359; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rjP2FVA9GyHqcqrVlHf4sMId3XeNp2zxUyT00XEy7YQ=;
-        b=NHBjyNNWMlqd2f1oaFvmE4JdMVFapLrK6hpBu7IvEnOylosxtiDPHZC11tk2mfry+d
-         WUmpXoxtbA3ilL8GQDK1nX/UQm5Sh4wQMQmfOuiQkVQDH+KOIpzzNvUFvVE+YbHTrrhi
-         IdV96rcuRH/oyVscUTXN0sFqjeGoxSU3HVxszfmCiFWr+8hC7NTojEPdGI5/U9AedRYc
-         itOMtSeeWFWvLafUDJhJ7hJ210LWmXmaUjMTm0YCvSjnQc47gLTVqKWysL3tnVdSJLnC
-         8IBzl/7THGlcFdpJEayI4KPvIbimyBLnkyFyi85xSv6eK5b0Y+f6knPl4WiFrF5pI9yf
-         nnNw==
+        d=chromium.org; s=google; t=1727107634; x=1727712434; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=luVqXc9KhZ7w9GnaoZ8AJsYpfSpZXWCjEZPblg+iJTI=;
+        b=bRanfLQ0X9n6wbYLCW+OIt6B3c/XIVbcVyPMqlAjos+CLR1TSmiGLwzYr8kiRAeX10
+         a75dwNe4mYHs6xvnrAGToOyhGfGP1iK6/LqoeXlCApuK5X2I5H6ZacKq+iBaMtwPdAGN
+         jHtmp1Yx6D+xDGTMTW2IAE2eYRxJxhpqM5EHw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727107559; x=1727712359;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rjP2FVA9GyHqcqrVlHf4sMId3XeNp2zxUyT00XEy7YQ=;
-        b=VpdSNRoAZyUoHtxSA2ong6HeuKEXqwIbyXZsREXTSImqSMofrCyWvbfCKBDVkWtKZJ
-         tK6xkkVRVg5xiGJbZiRDvVdcX8waVwxlDbNf8t1cXsCglgaH9LZfQF1qtJxmhQ0UnbDY
-         W6Pausm5/cVP8eWvzajSzpQ8vtARUiJOPOtoPdC+7IYJbujMVNTsnHNpnGc8eBCtzTKa
-         uV6gAzuOyTkYXlr1jo6dhg4bLOkxotxrqmwHsnlkOCaeTOxdpfcWmD1liizm1E3of26F
-         UM8xSG0BsRDo9gWQHd5SKV6RN83sDF6ao+S43PcMmW6tsu99/Xts+7LIBMQBAwplgOAl
-         C+dw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQe7S4DW5Z6wphmDB9bZo0Z4k230x/tbkIgNpxJWKIdei0u+Qp866GE1MQnLZBNaVTObnByevaiVlQ1Nw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhINWJZUd7tZjPWpJljAB1bFe2UClMH+jVrq0fg8dbFF9YbJ8V
-	DyU8YYifstqFfgnEZAxElvF381CjBiBYfmkHaFg+l5iO7p0AABx3uyIHDXswit//J16gtqkKq1R
-	sLmr2cnejEPWBD7pXponll/lJldY=
-X-Google-Smtp-Source: AGHT+IEUg2zXAfe1tkR8PdEPwTh7fron36ChAGsRCD55XcwH8aCFU7+yHgfNiQZvwn9eMgeSstUj4zvz+ZqjMe7+aGA=
-X-Received: by 2002:a05:6122:907:b0:4f5:2c0c:8528 with SMTP id
- 71dfb90a1353d-503e05501f1mr7220010e0c.11.1727107559294; Mon, 23 Sep 2024
- 09:05:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727107634; x=1727712434;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=luVqXc9KhZ7w9GnaoZ8AJsYpfSpZXWCjEZPblg+iJTI=;
+        b=lLtEfeobH2kqLbw/Cs7u9+m7OWZ5L3v/8X1gPh3Ysaqiz4e4p1cp2xRsOmBkGQH+FA
+         Z+luewQpYwbI3rEdC2AVmtsIflt1OoSookFw90I4F7O9fgXb34fRVNHGQywfhW2u4NIP
+         ORFTnBHdfhihaM8HRLDmkYXP3aMIY6vwPrtrNvtTDxOQ6IgPE4pqCKqYG2AaazVZED+g
+         Q6FG8SPXg9XrjD6IopYcey/GTxRvXMaPiKoy0B9U37ZntlCbeSuqq8zv+Chwb6vYbUIe
+         JKGuFDqRlrq8vLdSBXQVgXI/rb/7j+/lr4YYTVpHQ6wcJUDZa2j4BrMhwM83cTP53k81
+         UyLw==
+X-Forwarded-Encrypted: i=1; AJvYcCW7Pp6tDQPpWH3pmSH+uVohPFE8pv1Iii08ccRH3OYK6LAZ5ocdJA67zXxGO3TltuiG99WnHxdGGoNxVd4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvG4liQq80Cm/smmKIvIudigVsX3zkCi1hvdk89i/6mVUIMHGY
+	mPnQQD/fU6JGRj3sUAwHlvWua3ACIyNqVajlwh+pE18v1Bz571OoPf9tkgHGRQ==
+X-Google-Smtp-Source: AGHT+IEpWt+Yy/foLprnpWvGJjXJMBC5m7xUsq8mQSapGDmYrszgCQYOF2JuiDfYnXM1Attzl0G3Dw==
+X-Received: by 2002:a17:903:1c9:b0:206:99a8:525f with SMTP id d9443c01a7336-208d8338b2dmr229794215ad.4.1727107633696;
+        Mon, 23 Sep 2024 09:07:13 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:fd63:e1cf:ea96:b4b0])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946016cesm134680625ad.97.2024.09.23.09.07.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2024 09:07:13 -0700 (PDT)
+Date: Tue, 24 Sep 2024 01:07:08 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Andrey Skvortsov <andrej.skvortzov@gmail.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>,
+	Minchan Kim <minchan@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] zram: don't free statically defined names
+Message-ID: <20240923160708.GF38742@google.com>
+References: <20240923080211.820185-1-andrej.skvortzov@gmail.com>
+ <20240923153449.GC38742@google.com>
+ <20240923154738.GE38742@google.com>
+ <ZvGPWaXm26iq-8TI@skv.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240922164702.49615-1-kdipendra88@gmail.com> <CAAYit8TfBD40aRchLiOWsvqwpAR0x6nW9zObza4vLVzg93N+eA@mail.gmail.com>
- <87139a89-4256-fceb-5ca2-c1077b036eef@redhat.com> <CAEKBCKMv4-dhWU=a2UnX2rBcQjVTJcF+wg6z6f3qtjA4td-62Q@mail.gmail.com>
- <28e1f99d-eb8e-2357-0afb-a9bb0d5b0a06@redhat.com>
-In-Reply-To: <28e1f99d-eb8e-2357-0afb-a9bb0d5b0a06@redhat.com>
-From: Dipendra Khadka <kdipendra88@gmail.com>
-Date: Mon, 23 Sep 2024 21:50:47 +0545
-Message-ID: <CAEKBCKOOm1UETLTgONr=eG8GY1MLkKdG_G=o8Wh0y1079Q1MeQ@mail.gmail.com>
-Subject: Re: [PATCH] Return error code for failure input for sscanf in parse_cblock_range()
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Ming-Hung Tsai <mingnus@gmail.com>, agk@redhat.com, snitzer@kernel.org, 
-	dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZvGPWaXm26iq-8TI@skv.local>
 
-On Mon, 23 Sept 2024 at 21:45, Mikulas Patocka <mpatocka@redhat.com> wrote:
->
->
->
-> On Mon, 23 Sep 2024, Dipendra Khadka wrote:
->
-> > Hi,
-> >
-> > On Mon, 23 Sept 2024 at 20:55, Mikulas Patocka <mpatocka@redhat.com> wr=
-ote:
-> > >
-> > >
-> > >
-> > > On Mon, 23 Sep 2024, Ming-Hung Tsai wrote:
-> > >
-> > > > On Mon, Sep 23, 2024 at 12:47=E2=80=AFAM Dipendra Khadka <kdipendra=
-88@gmail.com> wrote:
-> > > > >
-> > > > > Smatch reported following:
-> > > > > '''
-> > > > > drivers/md/dm-cache-target.c:3204 parse_cblock_range() warn: ssca=
-nf doesn't return error codes
-> > > > > drivers/md/dm-cache-target.c:3217 parse_cblock_range() warn: ssca=
-nf doesn't return error codes
-> > > > > '''
-> > > > >
-> > > > > Since, the only negative value that is returned by sscanf is -1.
-> > > > > Returning -ENVAL when sscanf returns -1.
-> > > > >
-> > > > > Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
-> > > > > ---
-> > > > >  drivers/md/dm-cache-target.c | 8 ++++----
-> > > > >  1 file changed, 4 insertions(+), 4 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/md/dm-cache-target.c b/drivers/md/dm-cache-t=
-arget.c
-> > > > > index 17f0fab1e254..c35d65e310d6 100644
-> > > > > --- a/drivers/md/dm-cache-target.c
-> > > > > +++ b/drivers/md/dm-cache-target.c
-> > > > > @@ -3200,8 +3200,8 @@ static int parse_cblock_range(struct cache =
-*cache, const char *str,
-> > > > >          * Try and parse form (ii) first.
-> > > > >          */
-> > > > >         r =3D sscanf(str, "%llu-%llu%c", &b, &e, &dummy);
-> > > > > -       if (r < 0)
-> > > > > -               return r;
-> > > > > +       if (r =3D=3D -1)
-> > > > > +               return -EINVAL;
-> > > > >
-> > > > >         if (r =3D=3D 2) {
-> > > > >                 result->begin =3D to_cblock(b);
-> > > > > @@ -3213,8 +3213,8 @@ static int parse_cblock_range(struct cache =
-*cache, const char *str,
-> > > > >          * That didn't work, try form (i).
-> > > > >          */
-> > > > >         r =3D sscanf(str, "%llu%c", &b, &dummy);
-> > > > > -       if (r < 0)
-> > > > > -               return r;
-> > > > > +       if (r =3D=3D -1)
-> > > > > +               return -EINVAL;
-> > > > >
-> > > > >         if (r =3D=3D 1) {
-> > > > >                 result->begin =3D to_cblock(b);
-> > > >
-> > > >
-> > > > Could you please clarify how to reproduce unexpected results? From
-> > > > what I observe, the kernel's sscanf doesn't return -1 on an empty
-> > > > input. Even if a negative value other than -EINVAL is returned, it =
-is
-> > > > handled by the callers.
-> > > >
-> > > > Hank
-> > >
-> > > I applied the patch, but I deleted the conditions "if (r =3D=3D -1) r=
-eturn
-> > > -EINVAL;"
-> > >
-> > > sscanf in the kernel doesn't return negative numbers.
-> > >
-> >
-> > Do I have to send v2 with
-> > if (r !=3D 2)
-> >  return -EINVAL;
-> >
-> > or what should I do now?
-> > > Mikulas
-> >
-> > Best Regards,
-> > Dipendra
->
-> You can do nothing :)
->
-> I fixed the patch and I'll send it to Linus in this merge window.
->
+On (24/09/23 18:55), Andrey Skvortsov wrote:
+[..]
+> > Ugh, I know what's happening.  You don't have CONFIG_ZRAM_MULTI_COMP
+> > so that ZRAM_PRIMARY_COMP and ZRAM_SECONDARY_COMP are the same thing.
+> > Yeah, that all makes sense now, I haven't thought about it.
+> 
+> yes, I don't have CONFIG_ZRAM_MULTI_COMP set. I'll include your
+> comment into commit description for v2.
 
-Oh, ok. Thank you for your time.
+Thanks.
 
-> Mikulas
+Can you do it something like the diff below?  Let's iterate
+->comp_algs from ZRAM_PRIMARY_COMP.  I don't really mind the
+"Do not free statically defined" comment, up to you.
 
-Best Regards,
-Dipendra.
+And the commit message probably can stay that: on !CONFIG_ZRAM_MULTI_COMP
+systems ZRAM_SECONDARY_COMP can hold default_compressor, because it's
+the same offset as ZRAM_PRIMARY_COMP, so we need to make sure that we
+don't attempt to kfree() the statically defined comp name.
+
+---
+
+diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+index c3d245617083..ad9c9bc3ccfc 100644
+--- a/drivers/block/zram/zram_drv.c
++++ b/drivers/block/zram/zram_drv.c
+@@ -2115,8 +2115,10 @@ static void zram_destroy_comps(struct zram *zram)
+                zram->num_active_comps--;
+        }
+ 
+-       for (prio = ZRAM_SECONDARY_COMP; prio < ZRAM_MAX_COMPS; prio++) {
+-               kfree(zram->comp_algs[prio]);
++       for (prio = ZRAM_PRIMARY_COMP; prio < ZRAM_MAX_COMPS; prio++) {
++               /* Do not free statically defined compression algorithms */
++               if (zram->comp_algs[prio] != default_compressor)
++                       kfree(zram->comp_algs[prio]);
+                zram->comp_algs[prio] = NULL;
+        }
 
