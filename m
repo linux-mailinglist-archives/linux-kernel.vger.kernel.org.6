@@ -1,69 +1,135 @@
-Return-Path: <linux-kernel+bounces-335395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E70D597E4FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 05:33:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9866F97E4FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 05:36:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A04FB20C61
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 03:33:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83BC9B20D51
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 03:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1B9D268;
-	Mon, 23 Sep 2024 03:33:15 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8BFC8462;
+	Mon, 23 Sep 2024 03:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yry4K98F"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4DD79E1;
-	Mon, 23 Sep 2024 03:33:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE012139D
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 03:35:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727062395; cv=none; b=AD4ao4/z6IWj6sBkcXadRtg9Zt17eiM1XZXyVV8N3+EzUMfaLTUxzNiz2qLI5lItHCY+6tfmgy1qMiU14PXnABeSQpOcSvRY7chskiKKO0ltT8OY+srB0IWOD/K/5GP96ai8L/4bf18h4Sdt4lq7r2b8RoRlfXasfaGaUVkIxe8=
+	t=1727062552; cv=none; b=jexGolqnr2+5vCRp3rj1SHVbchQgvLNHpbKDOEE3lXKAkZIDsxpGoPv1+2Yo9i73VyACx9GlACbqOTlc9jNs67EEvsj8AcaQXt21bRlvQiog4kGtWKdt5LPADHrMChOxnr6fLsoveyLwFuQvluvaaiTwRS8/QUx0mwgWyF9wb24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727062395; c=relaxed/simple;
-	bh=KIuSXjpzAJGxS/ob+rdaP1ri1Y42g4YaGiFmdFfD078=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jJOTADBV4TPSSPUvvatwdQCvrYXOosC8xs9dbtA1CAvUxStoWefQYavUybtch0PVefTdlMjf2MvMYI0ZOB7PkaqvaPvcxpp+jaqOGsUh49e9/zHDK4dxq3/hE5pNrBQGYbO8Uwf8tHLMf1rlvY72MzQlHznbp7sC6WronDWgRWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 3FCF6227AAF; Mon, 23 Sep 2024 05:33:06 +0200 (CEST)
-Date: Mon, 23 Sep 2024 05:33:05 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Dave Chinner <david@fromorbit.com>
-Cc: John Garry <john.g.garry@oracle.com>,
-	Ritesh Harjani <ritesh.list@gmail.com>, chandan.babu@oracle.com,
-	djwong@kernel.org, dchinner@redhat.com, hch@lst.de,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
-	martin.petersen@oracle.com
-Subject: Re: [PATCH v4 00/14] forcealign for xfs
-Message-ID: <20240923033305.GA30200@lst.de>
-References: <87frqf2smy.fsf@gmail.com> <ZtjrUI+oqqABJL2j@dread.disaster.area> <877cbq3g9i.fsf@gmail.com> <ZtlQt/7VHbOtQ+gY@dread.disaster.area> <8734m7henr.fsf@gmail.com> <ZufYRolfyUqEOS1c@dread.disaster.area> <c8a9dba5-7d02-4aa2-a01f-dd7f53b24938@oracle.com> <Zun+yci6CeiuNS2o@dread.disaster.area> <8e13fa74-f8f7-49d3-b640-0daf50da5acb@oracle.com> <ZvDZHC1NJWlOR6Uf@dread.disaster.area>
+	s=arc-20240116; t=1727062552; c=relaxed/simple;
+	bh=FpUZ+NHq2dcHVW6bWRq7UMSDbCK0IKHSy5HYVKdI7o8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EUzz6krZrX68iXz7W/kHEheo1aY8dmDXp1nEzj3EfCQePGfCx7Xg8X9QcjwD462TF2VTpr7sCTFuBP3JUUbzRnKIsGHZXP+MRUrZsmqqUOwA0TyQOGJAraBqob734bta1pLJcSS3a+eid14DiVDBWBRAYX2kSkgLmLzyUy5IN5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yry4K98F; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20551eeba95so32905545ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 20:35:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727062550; x=1727667350; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=//Q7GU5IrneEyxviJntAp1AonKejz1y+X80/DuCcShU=;
+        b=Yry4K98FJkywdGaeW0AtI+gZUcKxLJ2+WdgFvfJNDzmJvsS+eMG915Nj3tKMPM5nAM
+         eP8zgU/TC3u0JQS+lEtSEDQ6Z3ZNy39BdWS+5YmBF/m75NSrcxIcg2BEUQ0vgil+TVOg
+         tCUpzei1QfFy2eSZuLV6OQ0+gaeNI1ZhlOusJ3NyFbmqS1gAd9mmWcxhoiaPP+lt7IAX
+         9viFKqE4wFwptP7KLgNF/VqwPQQfF4CBnhDwyvRSFHO3nQ+aQ+yFK95yLrqqzVPNmAYC
+         gxQu6WqaCF2Wy6/XisMwQWHCyBth3rDs7Fd1v+E7zX0QWr5ODJeC0UmhjqDgQ2JkeQ4Q
+         TvLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727062550; x=1727667350;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=//Q7GU5IrneEyxviJntAp1AonKejz1y+X80/DuCcShU=;
+        b=FmIALCY5eIH0Vwcg/Y400UTFBsiRmb4QPhRSisQkJFCK8cThNDZnZEFj2foD0KdlxR
+         +UYr7/hXtLyXjCDlcaSDwar3BFawsippej2cHVBdcAtjWuNgD2jIUD2G1X5KeKazRPkN
+         N8kWYEFeLAy2zJ+LbVua5nfG5D4a1Xx6leY7MAV6oTo1DSfwETz4/gXVD9PzZTtjw/h7
+         qHzYSwsv47oQlAuuPakC87KCY6M9B0p1bqwVFFE4zhq+wga4X3uJq24lzKqQvhEpnIbU
+         vMP99O7X5yTBKrcKatIZ9fkcQlzP10jCUktDtwQnREqf+Qc0ayOfdYAQZTydhZutBfMR
+         Tc8w==
+X-Forwarded-Encrypted: i=1; AJvYcCWsSM/b3Dz9S1RiMP37xzi7AHWQHKeBTNLftXclFnsvJdYtPls67QJLaLdsKpLXg18d+NhN1WfNwtEqa5g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuPhF+oM1x9WQZHegesS3NX0uySYud06N3T99uLl98gMeueNoh
+	mYSh3uE5IuimFiPi1udqXDCZZFrkQqBoAYgAuYg80GWjb2u9TcUwJDPnz7gXJ04yRrqqgMEOxbC
+	Za73uuNuSVMqMc2Hra76ovA2+k0U=
+X-Google-Smtp-Source: AGHT+IHsrzIz6wtS9qlSuGP1L/mTxxc1W6yP/zwzDwWmRy48P/cYkG5TEbm5Fp/SKjzlOwRg/SSPzy/xv6nusr3fWD8=
+X-Received: by 2002:a17:902:e5ca:b0:206:cbf0:3089 with SMTP id
+ d9443c01a7336-208d8566916mr138808665ad.54.1727062550091; Sun, 22 Sep 2024
+ 20:35:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZvDZHC1NJWlOR6Uf@dread.disaster.area>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <20240922110000.128650-1-ghanshyam1898@gmail.com> <c9f80af9-4cf0-4b6e-8c61-4b7a6f287cd9@wanadoo.fr>
+In-Reply-To: <c9f80af9-4cf0-4b6e-8c61-4b7a6f287cd9@wanadoo.fr>
+From: Ghanshyam Agrawal <ghanshyam1898@gmail.com>
+Date: Mon, 23 Sep 2024 09:05:13 +0530
+Message-ID: <CAG-BmocfstJNC-JDgtx93EJmg5kMANu4tVRbjqYtZ1CE+AEnEg@mail.gmail.com>
+Subject: Re: [PATCH] jfs: fix array-index-out-of-bounds
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: shaggy@kernel.org, ghandatmanas@gmail.com, jlayton@kernel.org, 
+	eadavis@qq.com, brauner@kernel.org, jfs-discussion@lists.sourceforge.net, 
+	linux-kernel@vger.kernel.org, 
+	syzbot+808f3f84407f08a93022@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 23, 2024 at 12:57:32PM +1000, Dave Chinner wrote:
-> Ok, but that's not going to be widespread. Very little storage
-> hardware out there supports atomic writes - the vast majority of
-> deployments will be new hardware that will have mkfs run on it.
+On Sun, Sep 22, 2024 at 8:35=E2=80=AFPM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> Le 22/09/2024 =C3=A0 13:00, Ghanshyam Agrawal a =C3=A9crit :
+> > In some cases, dn_numag may be greater than MAXAG which may
+> > result in an array-index-out-of-bounds in dbNextAG. Added
+> > a check to return an error code before we crash.
+> >
+> > Reported-by: syzbot+808f3f84407f08a93022@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=3D808f3f84407f08a93022
+> > Signed-off-by: Ghanshyam Agrawal <ghanshyam1898@gmail.com>
+> > ---
+> >   fs/jfs/jfs_imap.c | 3 +++
+> >   1 file changed, 3 insertions(+)
+> >
+> > diff --git a/fs/jfs/jfs_imap.c b/fs/jfs/jfs_imap.c
+> > index 2ec35889ad24..5088da13e8f1 100644
+> > --- a/fs/jfs/jfs_imap.c
+> > +++ b/fs/jfs/jfs_imap.c
+> > @@ -1360,6 +1360,9 @@ int diAlloc(struct inode *pip, bool dir, struct i=
+node *ip)
+> >       if (agno < 0 || agno > dn_numag)
+> >               return -EIO;
+> >
+> > +     if (unlikely(dn_numag > MAXAG))
+>
+> Hi,
+>
+> looking at other places with checks with MAXAG, I wonder if it should be =
+>=3D?
+>
+> CJ
+>
+> > +             return -EIO;
+> > +
+> >       if (atomic_read(&JFS_SBI(pip->i_sb)->bmap->db_active[agno])) {
+> >               /*
+> >                * There is an open file actively growing.  We want to
+>
 
-Just about every enterprise NVMe SSD supports atomic write size
-larger than a single LBA, because it is completely natural fallout
-from FTL deѕign.  That beeing said to support those SSDs a block
-size of 16 or 32k would be a lot more natural than all the forcealign
-madness.
+Hello Christophe,
 
+Thanks for reviewing my code. I believe the greater than symbol I have
+set is correct in this case. Can you please check it thoroughly and let
+me know wny it should be >=3D ?
+
+Thanks & Regards,
+Ghanshyam Agrawal
 
