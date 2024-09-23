@@ -1,99 +1,75 @@
-Return-Path: <linux-kernel+bounces-335890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED02597EC25
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:16:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABB2797EC23
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:16:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 287961C212AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:16:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45610B21B6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5B8199E8B;
-	Mon, 23 Sep 2024 13:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75EAC199923;
+	Mon, 23 Sep 2024 13:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=shreeya.patel@collabora.com header.b="QQS27F5e"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vcQscEt5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1709519644B;
-	Mon, 23 Sep 2024 13:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727097381; cv=pass; b=d3UOfLNcZaVU6YrwLAu+DSvgqO/uopYmhAyxJALumnp0aT48lM0nFtQ5HPhTLRh+SpO8HeVBWqxdOVkuv1UJyAUUKUAX7Nuq/woEsubMJBFwvaVhPv9dx8xj2esVwgtvVpUwUWW1F2x9nGhYc2fAmy/XX4/YoL1IZ4mEUWrZ8Ac=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727097381; c=relaxed/simple;
-	bh=m2PmP+xxceZxwGVNP6TCQqgIcRXycNi4N+H9QM8j8mQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mX7oX1DvNqpLiD22+c7EOcvBi3h0/ApZyh06H7D/gr40tJN8dULZ0w0DjKHllL9s/Clmjy+BIeadC6iOwt6LtJWBk/K88GPN0Jfg8G6rIV5QMC+FUWfYCb183Co1V7EgRQqkFBj+ioA/LO0dIfgtrYG1TR1dkQcm74IvL38SnGw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=shreeya.patel@collabora.com header.b=QQS27F5e; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1727097356; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=PjF9wlzWpNZ6wgOlCVh/pllfLyHWXgODapqO2VqF4lguPNvG+HMnLfMvh1fhB2f+Tm8TwLKOvNFzdE1zrooLCaWzK/A1fgY1km0M1sZKpKGQOgvlCr6ClXtzwElbRVLjtXot+nFILsMzG9xsFZ9AAbzTJ7PG2MZfcErpJwwHeHA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1727097356; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=msYfRs07SsKacfZRa430+XqCSrKfn5G0aPxsNP2/Vmk=; 
-	b=SD2kG+hPIWEz52D0tz1v3A797asdpq3Rh0/nsQ9xV6jW0tFCYng52A/R3gGlMCfDh7DbBE49QeJyqbJx4A1hShF/3+ktUKWibrwZOLMcxiXqNQySkt/mQtODc2NFrW3Uzg1hLcOII1PkmKxsNm6tHg196XZaqzf0wR8vz83eAo4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=shreeya.patel@collabora.com;
-	dmarc=pass header.from=<shreeya.patel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1727097356;
-	s=zohomail; d=collabora.com; i=shreeya.patel@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Reply-To;
-	bh=msYfRs07SsKacfZRa430+XqCSrKfn5G0aPxsNP2/Vmk=;
-	b=QQS27F5emJMwCIvWr6MIIDjnjYuZqD2HTUvhwBdjtSRszSnEXLYRRBdShktfvCoc
-	EcCOfuEM1KnLspvX3o7rOz71ILEBkqDKu6RUsFungEzxI7Uhr2bhPoBWzSan2z3gUP/
-	GYfZ+Bq7MufjzImtqn3HLFUx3JuJs8iHuTU9bQSE=
-Received: by mx.zohomail.com with SMTPS id 1727097354412395.9383569758477;
-	Mon, 23 Sep 2024 06:15:54 -0700 (PDT)
-From: Shreeya Patel <shreeya.patel@collabora.com>
-To: jic23@kernel.org,
-	lars@metafoo.de
-Cc: linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	krzk+dt@kernel.org,
-	marex@denx.de,
-	conor+dt@kernel.org,
-	kernel@collabora.com,
-	Shreeya Patel <shreeya.patel@collabora.com>
-Subject: [PATCH] iio: light: ltrf216a: Document device name for compatible
-Date: Mon, 23 Sep 2024 18:45:27 +0530
-Message-Id: <20240923131527.1408691-1-shreeya.patel@collabora.com>
-X-Mailer: git-send-email 2.39.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70B019644B;
+	Mon, 23 Sep 2024 13:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727097372; cv=none; b=F433dkm/92TWFmZe5ZDI1DFQE6/6BHF1VXLzzzgkl9SvfDzpzq2z3oUOyi4sKQmxEyeAl6y0IgnD6dgZQlTobwGnbQq8vG+F28HFjpMTPpCSvOJgImFQvA01RQ8YaTurmIVJHj3jbgyAl7aUm/XKpAiyMmkfmfPfR0OfjuST1ro=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727097372; c=relaxed/simple;
+	bh=KY4Z+q9tIA239UUbBRf0f2Rfkna08HCfCtYkj/W0mos=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WUpwaAjWGeviPwwyh+cMsQ2R4nU3jmBnu8EFgaEKjoCrymCxCEnmb9PuqYbGJsDRYiMEc4ae+jXjv8lhvCHzqnRcy0F4OQwO02e+8GWeqUteQK65uJW4izH79s7DncfgXKPASPTONnBnjim0IE9M1vpWHzmDbCQeqzmgcY5EKaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vcQscEt5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2006C4CEC4;
+	Mon, 23 Sep 2024 13:16:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1727097372;
+	bh=KY4Z+q9tIA239UUbBRf0f2Rfkna08HCfCtYkj/W0mos=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vcQscEt5JT2byQlAM/DemY0JgOs2YP1h6NVj8FhGpr/YVV5PBwkvBZ1xKiTvOc6kp
+	 4Way/9vsLT6HRdvMy5N0gtwAkyof8xEGAn+IClJDlO4jBQRYnqvIhCrTcgJ3M5D66K
+	 QaS/sRM+66imBikXzpF3JhD+XmPUx45XhK8I3sIY=
+Date: Mon, 23 Sep 2024 15:16:07 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: dengjie03 <dengjie03@kylinos.cn>
+Cc: rjw@rjwysocki.net, pavel@ucw.cz, len.brown@intel.com,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, xiehongyu1@kylinos.cn,
+	duanchenghao@kylinos.cn, xiongxin <xiongxin@kylinos.cn>
+Subject: Re: [PATCH] KYLIN: USB: Fix the issue of S4 wakeup queisce phase
+ where task resumption fails due to USB status
+Message-ID: <2024092337-epidermal-drainpipe-cf0d@gregkh>
+References: <20240923100553.119324-1-dengjie03@kylinos.cn>
+ <2024092355-chip-stuffy-bd93@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024092355-chip-stuffy-bd93@gregkh>
 
-Compatible 'ltr,ltrf216a' is used by Valve's Steamdeck device
-via the ACPI + PRP0001 mechanism.
-Document this info alongside the compatible.
+On Mon, Sep 23, 2024 at 03:06:58PM +0200, Greg KH wrote:
+> On Mon, Sep 23, 2024 at 06:05:53PM +0800, dengjie03 wrote:
+> > Reproduction of the problem: During the S4 stress test,
+> > when a USB device is inserted or removed, there is a
+> > probability that the S4 wakeup will turn into a reboot.
+> > The following two points describe how to analyze and
+> > locate the problem points:
 
-Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
----
- drivers/iio/light/ltrf216a.c | 1 +
- 1 file changed, 1 insertion(+)
+Also, what is the "KYLIN" on the subject line for?
 
-diff --git a/drivers/iio/light/ltrf216a.c b/drivers/iio/light/ltrf216a.c
-index bc8444516689..b1dacb48d610 100644
---- a/drivers/iio/light/ltrf216a.c
-+++ b/drivers/iio/light/ltrf216a.c
-@@ -561,6 +561,7 @@ MODULE_DEVICE_TABLE(i2c, ltrf216a_id);
- static const struct of_device_id ltrf216a_of_match[] = {
- 	{ .compatible = "liteon,ltr308", .data = &ltr308_chip_info },
- 	{ .compatible = "liteon,ltrf216a", .data = &ltrf216a_chip_info },
-+	/* For Valve's Steamdeck device, an ACPI platform using PRP0001 */
- 	{ .compatible = "ltr,ltrf216a", .data = &ltrf216a_chip_info },
- 	{}
- };
--- 
-2.39.2
+thanks
 
+greg k-h
 
