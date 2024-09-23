@@ -1,108 +1,138 @@
-Return-Path: <linux-kernel+bounces-335632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 211C797E854
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:15:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B84697E857
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:15:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCAC7280A0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 09:15:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68528B21A4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 09:15:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBECD1946DF;
-	Mon, 23 Sep 2024 09:15:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC4651C45;
+	Mon, 23 Sep 2024 09:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JXcTn7ju"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="mhQoxNHG"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE4A194137
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 09:15:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86CBE19343C;
+	Mon, 23 Sep 2024 09:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727082918; cv=none; b=eds2MjqJvyDcaMz9N7tVOr83zC1//SE+fWg6pcn6Qc/LITVCRJqDhB5+55askwpZ05h3HxbHN6aaGo9ma3Fd7XqCiqZzrxGPpSNL/XRt89/3Gnrea/OBAzXCvDgSMNnogZGylZEloFf5PfsnH3cRN3mjkX+3mOIqSuEmNDQjgZ4=
+	t=1727082931; cv=none; b=kTi/Fi1KUy+Gh8LX2T4f1RlVYQL7sHkYbQHJ7H7hifXALjkipm4yZZNQ9rNLzIW+EUXIUPNWRnDYOot9faUTTH/IS16wW3+T7eaK8limWIDUcoboJ6Oq2xPdtSXiyaLEzB52KwZl5wQpTz+rWk37+Te4yrT6ZPH/Y4vBvCEkMP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727082918; c=relaxed/simple;
-	bh=l9Bx3i72WLmyjAwVDpDo7xamY2Wn7yIoE8/sEWQgZJU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e0ESP9rmYtMFOmyZAqP73lB06qoifrKjI1MQoD9h0N1h8yDVzlst8yq/VSZgCNAoXvmibvP5S+BcQVVCJ1DaOjQP1fSE+3GPlXROlGU2hkXFXKv9Z/zwtIGWlOawOZkxdtKF7+xVQMu+vv8jtjBMQRYQL+dhEYd2Lpv96kq/40c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JXcTn7ju; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f762de00e5so41923451fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 02:15:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727082914; x=1727687714; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l9Bx3i72WLmyjAwVDpDo7xamY2Wn7yIoE8/sEWQgZJU=;
-        b=JXcTn7juDE92YK21naA9GWkCsBWZNWTMkpcd8eJWQmuiDJukEHs7l+G4eZz8GIC4P4
-         jz+NTJN4zNyAx6XNWiQbkKGhVev2RFMG0nuQq36jrNmkdxMQ10PtIx2FmuUqaXftqPtp
-         nqdbcd9s+czeGZp/3x+rEwxYiDPrYOeo9f2C1b3Y71poDI5zcrXpF9veg2ZBuENuJ8xp
-         v9enfyVTI8j7l5XhVeeV0HqeHI+Jdq4Q46ZyUjsTPyiOoWl+h5w9yZVX8a5tDrP7gFBF
-         QAYgD0gsGXFyn/kUd7Ykjcwrv6K9z+IOWpZCHfBZvg3Pt0BM0ctFccxG6FDu6iNZN96J
-         Q1ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727082914; x=1727687714;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l9Bx3i72WLmyjAwVDpDo7xamY2Wn7yIoE8/sEWQgZJU=;
-        b=WaNduqXNW1HYvpBuHTGuPKaLsUAtsJXPE66X5UAUPpT1uqugzVFpwI12Osh6bh89cx
-         2LGAPDMueU5J3VH3WLs+8A5MqNiGAlaxvM0sxAQOKighbO8LME46NCsGgkRbtUuPgqa+
-         vo/cDQbHA8qfS3ys62VeMulk7emg9kt94G2UAff55xTpOGQyhCGlS8SUhuDEikvo4zJG
-         lhShHtOpywekg/sOE5VWgQH7VgbTwReiTdUwdDWxrxdWOCWDALSL+Esb/uu3Pby7+jq2
-         xbweE+vk6xoAOFkQ66dcy/o6iZucI3hbaUGD9EkW7TF+p1s7dgACcpsn1yI0yIa2L2LH
-         zY9A==
-X-Forwarded-Encrypted: i=1; AJvYcCV0ojJUW4ilru5VXfHFdDhEmWED45s83tPK2kSnx7yiz1xSNEKJ0xk4Zlm5thrfcVnQq52MohbmkfYQoxQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuxebN3lUPSD7iWRzPlG2o4/mQ/LClemH+QcELo1Jf91CJ0+BG
-	3tuhalSRF1e5KCAJPnB2P7S8Z/z8KShXjQddpmVv0RxDSIDa9IQYAmk0DCRmCPJ3GAjFAC8S1mY
-	GlrYetS9df4U/WE4v2Acqozm6ALuHB/RBdyKzhg==
-X-Google-Smtp-Source: AGHT+IGm9GYGA96TsHIKMdbS8Ksl+Y69UudH4mPSC68ZSc5eoQB7wn4Q3RxtR+3CXYd3V8oySBmv3CffJB4G3FFeKZ8=
-X-Received: by 2002:a05:6512:10cb:b0:536:2337:7de6 with SMTP id
- 2adb3069b0e04-536ac2f5b22mr4443437e87.34.1727082913853; Mon, 23 Sep 2024
- 02:15:13 -0700 (PDT)
+	s=arc-20240116; t=1727082931; c=relaxed/simple;
+	bh=qr2Qarh6ebtOtLWTNiRJuASl4IN4UHhqMXUsPGMwFSM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=VDdqL+j5jWbRIv8yleLbxkNHHK7oNlC3o3QID2TTYUdoUg/GADs/GvZjmQwFsgM7pFySY5rqCmlXgSTmMaH54L6lxfIMvVAkabZCGDAmeighmzynOyzatDITbPxMKGZCQsA2scbwp7uQN6uq0yvSBxP62vybwGXkwG/VGLju1lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=mhQoxNHG; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727082916; x=1727687716; i=markus.elfring@web.de;
+	bh=dOYAeuhmauXIik/5QB/QhShrC/pfpiZ63Bf7v/99LDs=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=mhQoxNHGGha0a5h2a8oX83C3YHAOETSYC3iPSkZNRcmHxatBZOZogKfV9ic7I3Ky
+	 RsUTySs7Flxk6Xc8eCifgcCwDFKXMAOHauJzlkBpHEeuJyiILjQ+jKDr7BPzwW+yQ
+	 CZdakY5/uoGEdnQCAtJnglhbNLSDqyr8BpqxnVsiDlHN6sPSK5oQTZf2AcfPjcfzk
+	 c52X6SmLDyq3m4lOk2cZxu32lr01iADxqN9blVb1MxQZHhlNJIbhOUpEmIZRhpWq6
+	 q+OERPg8IXb5g40BPilsq8N0xK7NvfEDdBFbB+A8e+WzebP+UAs7VDeQeFDNrQip2
+	 P7bipLpf4lfjb9EI7A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MKMA7-1seioV3NfT-00VAeV; Mon, 23
+ Sep 2024 11:15:16 +0200
+Message-ID: <a58d6585-4573-44bd-b315-770ca3a54af6@web.de>
+Date: Mon, 23 Sep 2024 11:15:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240906100326.624445-1-make24@iscas.ac.cn>
-In-Reply-To: <20240906100326.624445-1-make24@iscas.ac.cn>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 23 Sep 2024 11:15:03 +0200
-Message-ID: <CACRpkdYEH+xEeD+pCpe_LPotaWp95X38NHouP4746bww3-hzXQ@mail.gmail.com>
-Subject: Re: [PATCH v3] pinctrl: stm32: check devm_kasprintf() returned value
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com, 
-	bartosz.golaszewski@linaro.org, patrice.chotard@foss.st.com, 
-	antonio.borneo@foss.st.com, s.shtylyov@omp.ru, valentin.caron@foss.st.com, 
-	peng.fan@nxp.com, akpm@linux-foundation.org, linux-gpio@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH 1/2] ntb_perf: Delete duplicate dmaengine_unmap_put() call in
+ perf_copy_chunk()
+From: Markus Elfring <Markus.Elfring@web.de>
+To: ntb@lists.linux.dev, kernel-janitors@vger.kernel.org,
+ Allen Hubbe <allenbh@gmail.com>, Dave Jiang <dave.jiang@intel.com>,
+ Jon Mason <jdmason@kudzu.us>, Max Hawking <maxahawking@sonnenkinder.org>,
+ Serge Semin <fancer.lancer@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <c7654504-a455-4972-9861-39800732d0df@web.de>
+Content-Language: en-GB
+In-Reply-To: <c7654504-a455-4972-9861-39800732d0df@web.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:40hUvF8fY+XsiElP2ObNoDh/4F0E6+Ag2AaFzpPdT3noA0pimay
+ qmZVuYdqrTLrTmwhlKyVh8Vw/7Djk5Q0ekfOmlQ1jJAOJnqqp+N9lCRoh7oY2NWi/JxMmK6
+ cjcERqxf+FR6xLm1IOYF2yNUP5RHpumzqtRDdSsLPxE1pVHpJKDj6Uv66sEmZF7S9B5MXsw
+ zrkLUvdfPkJSSztWHDJLw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:M8cxhBhZBa8=;ZVAh/HXKdq9BRm+oMLu1GFOlX4s
+ Vib4KSg0VjUSl/8CWhvCJzPrqa2pjlQDjY3nuyRLwGXuS12G60rrAuUHCJWmnTNgxUagzy+8/
+ myLZaCe88U7RqTUDk89E77ZctDUdJQFcQVKuS/gil1OMxNomkvgYbBIn+IHQIlZ2ahQEIWhqY
+ 9aOQclvzgsb2Y77L2nikAK2ao7kBpWnR4FSj6izTW7Z4mszfn1//B1Hy3G8OvAJMWfQk37qmY
+ R+H1BjqTLLGSUuP1WkBZc/B09/sRNIToAOKskpNASSQo9+7rxRUGMc7HEJEucHzXfaXySnVct
+ cUR7wehjZ0/tqth0ZRUkFIUYL4D/uZTI3cMCNYUc2Xvdx2ekGBn/av+immIMSzjPbSti5i++a
+ 4KMoXh5kfgoMk1JR7Qv77DuAGW7YlhWoaxlgwej0VIIZEMiMnvC4F8IdoIXM57XVW1pB4xU+9
+ zyLYV0VyeJZoM+d8oBacVmilupPp+9vHjxD4U7CAWIpMExV+t3K6aNzWUNdaUsuSGQiGNYaWj
+ wE7bItLXy7uh3lKydxB0gXlEomla09nzolmEgkq5QEQLKIchz4ewKWv9HAnydcwLFDr2+axOW
+ cG391JnucQTCcKPnUFCOYzwMsjHGkHqj/OWB2Y2Iy3V5dE2KlWmAxpqWeqKaxsZu2wQlfmScu
+ CvVx0Pfo7V9xxSErYWpSvNU377G+WPlaHywauFMaVG2LU4mevcx0AlYkoNivwSt/e4i6oTFfC
+ eDwEHy5qeDVB3jKYn1IIb3V0c+jlfKUmAcxvNDzIpaeyp0RYha/+t7+Ph7l6r3On4FdRldbm8
+ 13B3jaM1/ef3xlpjDEKAvHIg==
 
-On Fri, Sep 6, 2024 at 12:03=E2=80=AFPM Ma Ke <make24@iscas.ac.cn> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 23 Sep 2024 10:38:11 +0200
 
-> devm_kasprintf() can return a NULL pointer on failure but this returned
-> value is not checked. Fix this lack and check the returned value.
->
-> Found by code review.
->
-> Cc: stable@vger.kernel.org
-> Fixes: 32c170ff15b0 ("pinctrl: stm32: set default gpio line names using p=
-in names")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+The function call =E2=80=9Cdmaengine_unmap_put(unmap)=E2=80=9D was used in=
+ an if branch.
+The same call was immediately triggered by a subsequent goto statement.
+Thus avoid such a call repetition.
 
-Patch applied for fixes.
+This issue was detected by using the Coccinelle software.
 
-Thanks for working on these malloc details, much appreciated!
+Fixes: 5648e56d03fa ("NTB: ntb_perf: Add full multi-port NTB API support")
+Cc: stable@vger.kernel.org
 
-Yours,
-Linus Walleij
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+
+I imagine that a single function call =E2=80=9Cdmaengine_unmap_put(unmap)=
+=E2=80=9D
+can be sufficient for this use case.
+https://elixir.bootlin.com/linux/v6.11/source/drivers/dma/dmaengine.c#L137=
+7
+
+How do you think about to improve resource management any further?
+
+
+ drivers/ntb/test/ntb_perf.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/ntb/test/ntb_perf.c b/drivers/ntb/test/ntb_perf.c
+index 72bc1d017a46..dfd175f79e8f 100644
+=2D-- a/drivers/ntb/test/ntb_perf.c
++++ b/drivers/ntb/test/ntb_perf.c
+@@ -839,10 +839,8 @@ static int perf_copy_chunk(struct perf_thread *pthr,
+ 	dma_set_unmap(tx, unmap);
+
+ 	ret =3D dma_submit_error(dmaengine_submit(tx));
+-	if (ret) {
+-		dmaengine_unmap_put(unmap);
++	if (ret)
+ 		goto err_free_resource;
+-	}
+
+ 	dmaengine_unmap_put(unmap);
+
+=2D-
+2.46.1
+
 
