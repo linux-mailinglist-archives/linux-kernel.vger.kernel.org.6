@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-336354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECBBD983A3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 01:15:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0CB9983A4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 01:16:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49188283025
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 22:36:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CBDA1C21C49
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 22:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80728563E;
-	Mon, 23 Sep 2024 22:34:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D9D149DE8;
+	Mon, 23 Sep 2024 22:34:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p/uXmiPf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EXFeWsO0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40AF5148308;
-	Mon, 23 Sep 2024 22:34:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746A71494A3;
+	Mon, 23 Sep 2024 22:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727130877; cv=none; b=ckvxveerJIet26//zkkotZ7cfJvB7N03W+gJp4HX2a9Gv9YHyKgmgGwrBtMKy14921IRtFYyPQmgYQdpn6fov9ugFeRz8UgbPUX1vmuNeH1BBjQxXpfs/fbEZd2vC5esePmq6l4Cx7ukTdXsi8mFzsOr+RDigc3cVHXjIbJQCQ0=
+	t=1727130878; cv=none; b=BF+0tswhEuLCkmWS0NOJmtnQ1pZzgM3BcEqiQagEfrRy19Pb8iBOH2fMWhwLd+EbMQLthRMqQh8bF9WCA1mEhLLRxJZ2j/pjn7nI7E/l/TdGt2K2fFd9ayXyq4ix4Wg962nQUTnO7xt5woPRqdUtI+Jeo0Q9zwgqij0btVXXUxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727130877; c=relaxed/simple;
-	bh=qPR90HLX4NZurFWlbDTg6m5gahTWMDfPiOlRtsCzOgQ=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=DSHYitYjYGWKi1C2B4Lu0fNX3sovDSdQbIOIKtKZ+23WJW9odRaZXobc0AfvUc/uKB+RZD4LzRtd6Em+u0DpQEZsy3MzPLx+77uyWKDZz56+Q+kMY+WsswBy6fAX0jM0HGoZWQo5zYNUjkAnm86HmmJLxGKqaDUxUuqp5kT+Frc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p/uXmiPf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26856C4CEC4;
-	Mon, 23 Sep 2024 22:34:37 +0000 (UTC)
+	s=arc-20240116; t=1727130878; c=relaxed/simple;
+	bh=mNl9ZW/8x/9Bmdu0puULKIllYIXv6qMujAu2N1qxPmc=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=aEZETVe5fJdLNzpmOrR35klsyd8OFNtjnLElb9u38eAJ+boJ/YkuHaEKsQChc10W5h6NnWlyTkLsuFoe1tZ1buALSd/vk6UBWJJq0RphsQ7+e8r7I4yUzqZQ9wMq89e19sKcGK3BjhL09imvYZAq4pw3j9Gb4ruZmaugqbxCOZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EXFeWsO0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56861C4CEC4;
+	Mon, 23 Sep 2024 22:34:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727130877;
-	bh=qPR90HLX4NZurFWlbDTg6m5gahTWMDfPiOlRtsCzOgQ=;
+	s=k20201202; t=1727130878;
+	bh=mNl9ZW/8x/9Bmdu0puULKIllYIXv6qMujAu2N1qxPmc=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=p/uXmiPfSZk6GrhfoF2jl3U2JR3bycL+5A2921yV6fTj8cWvzWwUTQN+iHO1YlGGH
-	 PClxdoriO+6/9Jgzbp8MQKjovff4IxkhhJI1rsIqWzhmaC3Y2BIOqO3dlRs8ATl5XU
-	 0CJWNl5tYGdJx6HX37mOE26VDuT8zdL2BLMOovwGIwMvUCxGmUUI6VrBU+yxMSJ0Vu
-	 5kJtvqukDt5SuPYhXm4HTCc7NdFzb08yDEXtAKPE1IbFjuoqLjbIa5/XhKU91h3/Nk
-	 Gsg3RmoAitvs7q84G7bj/880XJcfD/G07Txg6hz4XZGJYActjWDG+t4U4BP4DCpVDa
-	 RBHMozO9GZXmQ==
+	b=EXFeWsO0qADEl3IkmOdBq/OtLBeEVXUx3qWSn2qILrsl2XAvZ+6FC0/9NMLH3KT6Q
+	 hVVfw0F/7z3uc+a4nmm1rxPVhQPzhDu8bxxdgMNEzMXLxUCcDXa/8LgGJ9+kpHfVqE
+	 h8ETikoSijt6g6AcX42uP6GdNmfXRpwm/p0pGIWF9odUAZBRaAaS5wtidbG1b7Ssxe
+	 LZXFgUlBGA0FmCHvE++ifCOPtFylK7XZ9bV2/CwKAvSt5eWNzh0XC61AC2dnF4Xdly
+	 m/G2XRB7MtD1I9ytYADGfrK3LztDkKYLbIuPnxu+HFNRSF1Dhek7wN6vuhpc/b+GCl
+	 ov93jUaUUcBPA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE3293809A8F;
-	Mon, 23 Sep 2024 22:34:40 +0000 (UTC)
-Subject: Re: [GIT PULL] pin control changes for v6.12
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id E3B643809A8F;
+	Mon, 23 Sep 2024 22:34:41 +0000 (UTC)
+Subject: Re: [GIT PULL] NTB bug fixes for v6.12
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <CACRpkdaSYE1jPCSi8jE7QZ9=yxo2oYM7c4uwBsYBFgqWey3Mog@mail.gmail.com>
-References: <CACRpkdaSYE1jPCSi8jE7QZ9=yxo2oYM7c4uwBsYBFgqWey3Mog@mail.gmail.com>
+In-Reply-To: <Zu9yehc5ZdgUO_Ws@athena.kudzu.us>
+References: <Zu9yehc5ZdgUO_Ws@athena.kudzu.us>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CACRpkdaSYE1jPCSi8jE7QZ9=yxo2oYM7c4uwBsYBFgqWey3Mog@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v6.12-1
-X-PR-Tracked-Commit-Id: 264c13114bd71ddfd7b25c7b94f6cda4587eca25
+X-PR-Tracked-Message-Id: <Zu9yehc5ZdgUO_Ws@athena.kudzu.us>
+X-PR-Tracked-Remote: https://github.com/jonmason/ntb tags/ntb-6.12
+X-PR-Tracked-Commit-Id: 061a785a114f159e990ea8ed8d1b7dca4b41120f
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 962ad08780a5bfb3240bc793e565181eacfceafb
-Message-Id: <172713087911.3509221.9659893572749530775.pr-tracker-bot@kernel.org>
-Date: Mon, 23 Sep 2024 22:34:39 +0000
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+X-PR-Merge-Commit-Id: 5f153b63302af24e7f807b0208f380f5c8654df4
+Message-Id: <172713088085.3509221.7076363341498174269.pr-tracker-bot@kernel.org>
+Date: Mon, 23 Sep 2024 22:34:40 +0000
+To: Jon Mason <jdmason@kudzu.us>
+Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, ntb@lists.linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Sun, 22 Sep 2024 00:15:57 +0200:
+The pull request you sent on Sat, 21 Sep 2024 21:27:22 -0400:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v6.12-1
+> https://github.com/jonmason/ntb tags/ntb-6.12
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/962ad08780a5bfb3240bc793e565181eacfceafb
+https://git.kernel.org/torvalds/c/5f153b63302af24e7f807b0208f380f5c8654df4
 
 Thank you!
 
