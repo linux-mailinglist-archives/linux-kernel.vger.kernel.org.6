@@ -1,180 +1,131 @@
-Return-Path: <linux-kernel+bounces-335885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 457CD97EC04
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:07:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B2D7997EC07
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:07:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E367A1F21EB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:07:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56C681F21F48
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:07:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F0CC19923F;
-	Mon, 23 Sep 2024 13:07:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ECFF19923F;
+	Mon, 23 Sep 2024 13:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2CcblEp8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S7BR5Sq6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801BA198E6F;
-	Mon, 23 Sep 2024 13:07:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE191990B5;
+	Mon, 23 Sep 2024 13:07:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727096823; cv=none; b=CSYkP7AGMdErSEZwwo/t07/EwAVdAQF1/jGE1AcFftdSeMNmYJLWYnTU/K9UMaDh/TrnaP4+DbXIMI2Immo8cOZhipemQbZEyWCGuVs4myTJSjptJq0xT+mhcShAsT/MY7HRS5hnX2NX+4xdcH0+y9P2nZL8J2Dmf+fV2uZPRQI=
+	t=1727096846; cv=none; b=t/ezHYOauLju94uq/M6uwtwc5UIgwxvwp9INtJul+WkSQu0gQU8pQeJVqKIIjZqS74vu9f/KABIB/oO5zXcMl3bklXrtDxmA4WjirdE8SkwYqpNd7/CABFlNjyqMmkrHF9wLNFt5CsTbql8osvS10HthZpcPmNSs0VKcu3wHMvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727096823; c=relaxed/simple;
-	bh=o8HTBfVyR5kXn+aqXU7zjNAFtRfUn4jh6KoQZTzAbkc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J4LQCqyf/taqaCGXgE8spAoo+XlJLHmiMxI5o/GN0DrU7Y5N9rIC2FogVTcRF2HOAsY6zDrTeY6+PIDHptjepmGnHpZBJrmvGw1I7b1zJ4FFfoujEIg0SHYl+U8fMm/a5xMwvjjnuyrn4ZmiCr9dW1sjQXHdTTayukO/6HQ8JrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2CcblEp8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F5D8C4CEC4;
-	Mon, 23 Sep 2024 13:07:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1727096823;
-	bh=o8HTBfVyR5kXn+aqXU7zjNAFtRfUn4jh6KoQZTzAbkc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=2CcblEp8r66+Mre+tQmJTYKSydEuUo0Y964S1AwaEMY5uonHaHWBCK7YfYCFZ/d3J
-	 MrXCuFZrCqXhALLUj9Bid0XS/gH6mQrdCFsx+85UBZ8H/pCs4FNVxbbrNAH3vBXUKW
-	 G9lxZ7dua4SvCE3cIDrmsYfZa6GsEP2DeXkYNK60=
-Date: Mon, 23 Sep 2024 15:06:58 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: dengjie03 <dengjie03@kylinos.cn>
-Cc: rjw@rjwysocki.net, pavel@ucw.cz, len.brown@intel.com,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, xiehongyu1@kylinos.cn,
-	duanchenghao@kylinos.cn, xiongxin <xiongxin@kylinos.cn>
-Subject: Re: [PATCH] KYLIN: USB: Fix the issue of S4 wakeup queisce phase
- where task resumption fails due to USB status
-Message-ID: <2024092355-chip-stuffy-bd93@gregkh>
-References: <20240923100553.119324-1-dengjie03@kylinos.cn>
+	s=arc-20240116; t=1727096846; c=relaxed/simple;
+	bh=OGPHsMK7U0ARgmjaJNZV0oXO/2Ea4qxBjP9Qd28aTCE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JSWDtQOPXeWqvSK3NeBCvkRW+Q8fs1rNey5lTy7uKVb0EkGdPEleXKD85XHywq5f6174MfQmTxXvD20mlGcix3aHmXVfsDhS9p8qPdKTWgbwT/V2fpiN9JsE8JKWGED3yqINJz/A9cfn+N34tmReJWwPvWMExzXYis3xdiS5A1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S7BR5Sq6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CB77C4CEC4;
+	Mon, 23 Sep 2024 13:07:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727096846;
+	bh=OGPHsMK7U0ARgmjaJNZV0oXO/2Ea4qxBjP9Qd28aTCE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=S7BR5Sq60wnANYMm6pU3wWbfEIPqTlTzSw+eAljDhvZMaShOPkmyrvPs3xFka2g62
+	 UII6Y0/IHPjmPdpXXub8NJzdNahT9hQGXDNC60YeHvrj1S1E+wiRV1tmL9G5R7ph8X
+	 ZwtKtqGbs8KaUY9ZVEE/g9iFmWzVQKS1hB8bIdXVqisCz2o/4HatfcjxsFyc35GSxm
+	 /FxAJZp3ZvGtp6bzmBRpQcIwhZ+83VLNL/qlycB7eppNP9vyUaghkrk+ky7h496ybX
+	 adOOhUBFaa0++6S6qSa5Y6YOkA0rW1bL0ForTEzSayYi9kZEyIu0vZ7odErawNHB8o
+	 CjFzwyr6U5vEg==
+Message-ID: <7f297a66-6c82-498e-81da-85bbb74c8a8f@kernel.org>
+Date: Mon, 23 Sep 2024 15:07:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240923100553.119324-1-dengjie03@kylinos.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ata: libata: fix ALL_SUB_MPAGES not to be performed when
+ CDL is not supported
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: cassel@kernel.org, syzbot+37757dc11ee77ef850bb@syzkaller.appspotmail.com,
+ linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240921124117.82156-1-aha310510@gmail.com>
+ <f70ee386-d8eb-4d28-99fd-9d40e5d93ca8@kernel.org>
+ <CAO9qdTGAgBux-M3GxZdBbBpsUm0V_E8fyWSjZuA7jA8bH-Qf4g@mail.gmail.com>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <CAO9qdTGAgBux-M3GxZdBbBpsUm0V_E8fyWSjZuA7jA8bH-Qf4g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 23, 2024 at 06:05:53PM +0800, dengjie03 wrote:
-> Reproduction of the problem: During the S4 stress test,
-> when a USB device is inserted or removed, there is a
-> probability that the S4 wakeup will turn into a reboot.
-> The following two points describe how to analyze and
-> locate the problem points:
+On 2024/09/23 13:15, Jeongjun Park wrote:
+> Damien Le Moal <dlemoal@kernel.org> wrote:
+>>
+>> On 2024/09/21 14:41, Jeongjun Park wrote:
+>>> In the previous commit 602bcf212637 ("ata: libata: Improve CDL resource
+>>> management"), the ata_cdl structure was added and the ata_cdl structure
+>>> memory was allocated with kzalloc(). Because of this, if CDL is not
+>>> supported, dev->cdl is a NULL pointer, so additional work should never
+>>> be done.
+>>>
+>>> However, even if CDL is not supported now, if spg is ALL_SUB_MPAGES,
+>>> dereferencing dev->cdl will result in a NULL pointer dereference.
+>>>
+>>> Therefore, I think it is appropriate to check dev->flags in
+>>> ata_scsiop_mode_sense() if spg is ALL_SUB_MPAGES to see if CDL is supported.
+>>>
+>>> Reported-by: syzbot+37757dc11ee77ef850bb@syzkaller.appspotmail.com
+>>> Tested-by: syzbot+37757dc11ee77ef850bb@syzkaller.appspotmail.com
+>>> Fixes: 602bcf212637 ("ata: libata: Improve CDL resource management")
+>>> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+>>> ---
+>>>  drivers/ata/libata-scsi.c | 4 +++-
+>>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+>>> index 3328a6febc13..6f5527f12b0e 100644
+>>> --- a/drivers/ata/libata-scsi.c
+>>> +++ b/drivers/ata/libata-scsi.c
+>>> @@ -2442,7 +2442,9 @@ static unsigned int ata_scsiop_mode_sense(struct ata_scsi_args *args, u8 *rbuf)
+>>>       if (spg) {
+>>>               switch (spg) {
+>>>               case ALL_SUB_MPAGES:
+>>> -                     break;
+>>> +                     if (dev->flags & ATA_DFLAG_CDL)
+>>> +                             break;
+>>> +                     fallthrough;
+>>
+>> I do not think this is correct at all. If the user request all sub mpages, we
+>> need to give that list regardless of CDL support. What needs to be fixed is that
+>> if CDL is NOT supported, we should not try to add the information for the T2A
+>> and T2B sub pages. So the fix should be this:
 > 
-> 1. During the boot stage when S4 is awakened, after
-> the USB RootHub is initialized,it will enter the
-> runtime suspend state. From then on, whenever an
-> xhci port change event occurs, it will trigger a
-> remote wakeup request event and add wakeup_work to
-> pm_wq, where the subsequent RootHub runtime resume
-> process will be handled by pm_wq.
+> Okay. But after looking into it further, I think it would be more appropriate to
+> also check the ATA_DFLAG_CDL_ENABLED flag when checking if CDL is
+> not supported. So it seems like it would be better to modify the condition as
+> below.
 > 
-> xhci runtime suspend flow：
-> S4 boot
->    |->xhci init
->        |->register_root_hub
-> 	   |->hub_probe
-> 	       |->callback = RPM_GET_CALLBACK(dev, runtime_suspend)   /* xhci RootHub runtime suspend */
+> What do you think?
 > 
-> xhci runtime resume flow ：
-> xhci_irq()
->     |->xhci_handle_event()
-> 	|->handle_port_status()
->    	    |->if(hcd->state == HC_STATE_SUSPENDED)
-> 		 |->usb_hcd_resume_root_hub()
-> 		    |->set_bit(HCD_FLAG_WAKEUP_PENDING, &hcd->flags)   /* wakeup pending signal to be set */
->   		    |->queue_work(pm_wq, &hcd->wakeup_work)
-> 			|->hcd_resume_work()			       /* hcd->wakeup_work */
-> 			    |->usb_remote_wakeup()
-> 				|->callback = RPM_GET_CALLBACK(dev, runtime_resume)
-> 				    |->usb_runtime_resume()            /* usb runtime resume  */
-> 					|->generic_resume()
-> 					    |->hcd_bus_resume()
-> 						|->clear_bit(HCD_FLAG_WAKEUP_PENDING, &hcd->flags);
-> 						  /* wakeup pending signal to be clear */
-> 
-> 2. However, during the quiesce phase of S4 wakeup,
-> freeze_kernel_threads() will freeze this pm_wq,
-> and between freeze_kernel_threads() and dpm_suspend_start(),
-> there exists a very time-consuming S4 image loading process.
-> This leads to a situation where, if an xhci port change event occurs
-> after freeze_kernel_threads(), triggering the wakeup pending
-> signal to be set,but it cannot be processed by pm_wq to clear
-> this wakeup_pending bit, it will result in a subsequent
-> dpm_suspend_start() where USB suspend_common() detects the
-> wakeup pending signal being set and returns an -EBUSY error,
-> interrupting the S4 quiesce process and reverting to a reboot.
-> 
-> S4 wakeup
->     |->resume_store
-> 	|->software_resume()
-> 	    |->freeze_kernel_threads()		/* will freeze pm_wq */
-> 	    |->load_image_and_restore()
-> 		  |->swsusp_read()    	        /* S4 image loading: time-consuming .
-> When an xhci port change event occurs at this point, it triggers the wakeup pending signal to be set.
-> However, since the pm_wq is in a frozen state, the wakeup_pending bit cannot be cleared.*/
->    		  |->hibernation_restore
-> 			|->dpm_suspend_start(PMSG_QUIESCE)
-> 			    |->hcd_pci_suspend()
-> 				|->suspend_common()
-> 				    |->if (do_wakeup && HCD_WAKEUP_PENDING(hcd))  return -EBUSY;
-> 
-> Below is a description of the countermeasures taken to address this issue:
-> 1. Considering the restore process that occurs after
-> the quiesce phase during S4 wakeup, which essentially
-> resets all root hubs,checking this wakeup pending status
-> in USB suspend_common() during the quiesce phase is of
-> little significance and should therefore be filtered out.
-> 
-> S4 wakeup restore phase
->     |->dpm_resume(PMSG_RESTORE)
-> 	|->hcd_pci_restore()
-> 	    |->xhci_resume()		       /* reset all root hubs */
-> 
-> Fixes: 3904bdf0821c40352495f632862637080e6bd744(PM: hibernate: Freeze kernel threads in software_resume())
+> if (!(dev->flags & ATA_DFLAG_CDL
+>       dev->flags & ATA_DFLAG_CDL_ENABLED) || !dev->cdl)
+>         return 0;
 
-Please read the documentation for how to list a Fixes: tag, it should be
-a bit smaller than this line :)
+No, that would be wrong. The mode sense is to report if CDL is *supported*, not
+if it is enabled or not. So we always must report the T2A and T2B pages for SATA
+drives that support CDL, even if the CDL feature is disabled.
 
-> Signed-off-by: xiongxin <xiongxin@kylinos.cn>
-> Co-developed-by: dengjie03 <dengjie03@kylinos.cn>
-
-As the documentation states, we need real names, not email aliases.
-
-And fix up how you use co-developed-by please, again, the documentation
-shows how to do so.
+The flag ATA_DFLAG_CDL_ENABLED is not checked in ata_scsiop_mode_sense() for
+this reason. Adding that check in ata_msense_control_spgt2() would be wrong.
 
 
-> ---
->  drivers/base/power/main.c  |  5 +++++
->  drivers/usb/core/hcd-pci.c | 21 ++++++++++++++-------
->  include/linux/pm.h         |  1 +
->  3 files changed, 20 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-> index fb4d18a0b185..264d08b9e331 100644
-> --- a/drivers/base/power/main.c
-> +++ b/drivers/base/power/main.c
-> @@ -559,6 +559,11 @@ bool dev_pm_may_skip_resume(struct device *dev)
->  	return !dev->power.must_resume && pm_transition.event != PM_EVENT_RESTORE;
->  }
->  
-> +bool is_pm_queisce(void)
-
-Bad name for a global function :(
-
-> +{
-> +	return pm_transition.event == PM_EVENT_QUIESCE;
-
-What happens if it changes right after this?  Where is the locking
-involved?  And why does USB only care about this and no other subsystem?
-
-thanks,
-
-greg k-h
+-- 
+Damien Le Moal
+Western Digital Research
 
