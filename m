@@ -1,115 +1,172 @@
-Return-Path: <linux-kernel+bounces-335778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1406097EA88
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:14:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63A9097EA8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:16:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 436CB1C215C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:14:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE9541F21C88
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:16:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F980198A05;
-	Mon, 23 Sep 2024 11:14:25 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F14A197A69;
+	Mon, 23 Sep 2024 11:16:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ninrRGzI"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB1C19412F;
-	Mon, 23 Sep 2024 11:14:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193F0944E;
+	Mon, 23 Sep 2024 11:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727090064; cv=none; b=M4VG0p3ULfgaV7c0VKIdMRlnKDAtzBKn6qSQIz0rFfITXosQ689PwQGwIyZW+xcDZnDIYhbMq24PzNZF/NhQ6OpPRKEhmdVHaqnF4OPX5E1uvkfQdRQiNDeKcY9SiwpfnqR398RgpL/0aNXlGm5V9lXXMQ3jPLPeeDUKriuf1+4=
+	t=1727090174; cv=none; b=fhLorzeZaJlVqYSGFwZgDThc3VUrQclKSm7sb51+pi5DyD8WkTKffLCVDzHnZSazE3B/xENmcdOzgGuxgszWnnUSlmtsWdcSNP3dL2ovXpBSKk/9S7QWjj3Q0LLNnGcGL/keHtqyRfoyDXiKMLF7GRuTudMIUie0tceWfB9TbUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727090064; c=relaxed/simple;
-	bh=Bq/UMrG4pbuUbckyfGhjUFjrP/4IPFtDo6ZAxSD5KYI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wx3QhJq7/IpltAtDOx/asMxhsIpegw7uFU5e51SjeTI15mL+EINnCFH/V3cZcKWrna2RxmSPvhM1wiTDSNbHVkoqrj4b87S0ra1E7nUegdeMtC299lQYc3MprJsFMMkyUBsq9q7JVPXzK2xVS3AIfHiff20aAtkHba3UNagy4WQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: L8Sb1rNORpqAhfXgrl4c4Q==
-X-CSE-MsgGUID: 0rIVFschS7+ymhdIPZNidA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11202"; a="26150733"
-X-IronPort-AV: E=Sophos;i="6.10,251,1719903600"; 
-   d="scan'208";a="26150733"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 04:14:22 -0700
-X-CSE-ConnectionGUID: lvBCSTzISEKQ5xHc/QHiiw==
-X-CSE-MsgGUID: qdtAfHCPTyK+NQaNm6zcWA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,251,1719903600"; 
-   d="scan'208";a="70626585"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 04:14:17 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy@kernel.org>)
-	id 1ssh1C-0000000Bxv2-2mWd;
-	Mon, 23 Sep 2024 14:14:14 +0300
-Date: Mon, 23 Sep 2024 14:14:14 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Ivan Mikhaylov <fr0st61te@gmail.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	Dumitru Ceclan <mitrutzceclan@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
-	Marius Cristea <marius.cristea@microchip.com>,
-	Sergiu Cuciurean <sergiu.cuciurean@analog.com>,
-	Dragos Bogdan <dragos.bogdan@analog.com>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pwm@vger.kernel.org
-Subject: Re: [PATCH 0/7] *** Add support for AD485x DAS Family ***
-Message-ID: <ZvFNhiU3aOZ_zHJP@smile.fi.intel.com>
-References: <20240923101206.3753-1-antoniu.miclaus@analog.com>
+	s=arc-20240116; t=1727090174; c=relaxed/simple;
+	bh=tIHO8DH5NyuiT++VB0fJEsbCMEqGEMc8XYaT7bZ5vuQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HSwvZC9TnmOfrYgvEaPIKSWdL9nBQGzHO1dV2kgBRQ7hRiUVoLDlK5bJUxRutyVEOxs4X+xnMk2Er5UqwtMnxcjPF3qDpVftDnurdpX5hs/zH6mxpgm6mNh6eieUJTBBybRz2fVzlLMbxP3VV/rfHicv8YLLApoQ2kQlQ956TKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ninrRGzI; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20536dcc6e9so26504905ad.2;
+        Mon, 23 Sep 2024 04:16:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727090172; x=1727694972; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=R3zN6rjgmDwiqM1tyWgAnuP+HwbctY1gr24v68LNtPU=;
+        b=ninrRGzIfygo84pIhGuOPB1IcagzMSisDxSlb9pm9fJYRyPrW0WZgvE9E/V6UpK7A/
+         GjaTqBj8nxR0PCWvVxtM/FnxCakg9x4cMbxbXjTx3duk67S98xkFVCEZ830tu9vxX7sg
+         IZ/LXDUfVs2fmlpsEVB2rK0XTvMNSh1uPIdBf7mCEt9PaK7nv/9Hyz5tSShrlcC9tSFg
+         d/ZuXCETWXgQywCv+YcwMyVhu5KAZXpIpc70gigXv1sPn41UW4grj/jKRPfYEVbtcNbv
+         oSkvzhGCDdRNmLRg8BYCL5wllZgJnIEvTeu3BXCPJasqTK7XF/WkGD6VCz9iNcYvMq2z
+         4Cuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727090172; x=1727694972;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=R3zN6rjgmDwiqM1tyWgAnuP+HwbctY1gr24v68LNtPU=;
+        b=lyzFROUrb1WcOegGHLNhH9u5ZJ27xZy1I2We8nFNBrpf4yFKlNb0EUQyVyYeYDzQeo
+         jdWGR6NoJKwVeFs0795cAx5QHWXg26augk3CcvvIxp2QeJPcyDYZKC9QZoAOGc8ZnGbj
+         CuX+O6y4YZoUFu7qs7qsZYBVMJhNZHkrk9wMRHWw/+VtqcZbsUoV4NXKug9GKvjmVat5
+         rUgTJQL03mmPhhvXfBdW1fWnSGI546bd9ur62sjHWBomL+2lGT9dOHAHiafdQh35kmsD
+         xHRs3WosGtn1Xsx8Qqz0B7hvVE45It31E4bPhMb39kpFBQWo/G3RjW6hzvQusEhorIgv
+         7ETA==
+X-Forwarded-Encrypted: i=1; AJvYcCWi+wbHNQaQMaGpesQVFcVU0sYYJVOg+8niDzSS5MwyCZ2R+4FdCWmu2ubiyI7efqvccvZxtMKpmc/s2tq0@vger.kernel.org, AJvYcCX6ia1oPkJyqWpcYgRDxVoaSE7cogRv/OMXgPg+9YlNQ2L7vk1RPlrjaHxShe9rMLK6HVv3HsnI9iw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpILNeGatHcuzLW95Ul3ct/4VYzZDR9pzG30GJbRnJZnp8EWPU
+	StgqfzMDFUyvPf02nI9U0nFszryZXC1SsIMVSBg+Ukgt/5ZKMHHQz+Nyw290AI6IgUBFvi9Z8lv
+	aqUMMnNfyKHF0a8Eer1qx2cdD1exc2S5+
+X-Google-Smtp-Source: AGHT+IFxaJ7zZqhfiM8JBHTh6a0N4meJp8WaZT7uvhQ7yC5nkL5yya6ws/X3WlcNC0WR5YNa2oC7fT9fG9zzSXSLhmg=
+X-Received: by 2002:a17:902:e5d1:b0:206:d6ac:8552 with SMTP id
+ d9443c01a7336-208d84143edmr177444945ad.52.1727090172100; Mon, 23 Sep 2024
+ 04:16:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240923101206.3753-1-antoniu.miclaus@analog.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240921124117.82156-1-aha310510@gmail.com> <f70ee386-d8eb-4d28-99fd-9d40e5d93ca8@kernel.org>
+In-Reply-To: <f70ee386-d8eb-4d28-99fd-9d40e5d93ca8@kernel.org>
+From: Jeongjun Park <aha310510@gmail.com>
+Date: Mon, 23 Sep 2024 20:15:59 +0900
+Message-ID: <CAO9qdTGAgBux-M3GxZdBbBpsUm0V_E8fyWSjZuA7jA8bH-Qf4g@mail.gmail.com>
+Subject: Re: [PATCH] ata: libata: fix ALL_SUB_MPAGES not to be performed when
+ CDL is not supported
+To: Damien Le Moal <dlemoal@kernel.org>
+Cc: cassel@kernel.org, syzbot+37757dc11ee77ef850bb@syzkaller.appspotmail.com, 
+	linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Sep 23, 2024 at 01:10:17PM +0300, Antoniu Miclaus wrote:
-> Add support for AD485X fully buffered, 8-channel simultaneous sampling,
-> 16/20-bit, 1 MSPS data acquisition system (DAS) with differential, wide
-> common-mode range inputs.
-> 
-> Some particularities:
-> 1. softspan - the devices support multiple softspans which are represented in iio
->               through offset/scale. The current handling implies changing both
->               the scale and the offset separately via IIO, therefore in order to
->               properly set the softspan, each time the offset changes the softspan
->               is set to the default value. And only after changing also the scale
->               the desired softspan is set. This is the approach we are suggesting
->               since we need the softspan configurable from userspace and not from
->               devicetree.
-> 
-> 2. packet format - Data provided on the CMOS and LVDS conversion data output buses
->                    are packaged into eight channel packets. This is currently handled
->                    as extended info.
+Damien Le Moal <dlemoal@kernel.org> wrote:
+>
+> On 2024/09/21 14:41, Jeongjun Park wrote:
+> > In the previous commit 602bcf212637 ("ata: libata: Improve CDL resource
+> > management"), the ata_cdl structure was added and the ata_cdl structure
+> > memory was allocated with kzalloc(). Because of this, if CDL is not
+> > supported, dev->cdl is a NULL pointer, so additional work should never
+> > be done.
+> >
+> > However, even if CDL is not supported now, if spg is ALL_SUB_MPAGES,
+> > dereferencing dev->cdl will result in a NULL pointer dereference.
+> >
+> > Therefore, I think it is appropriate to check dev->flags in
+> > ata_scsiop_mode_sense() if spg is ALL_SUB_MPAGES to see if CDL is supported.
+> >
+> > Reported-by: syzbot+37757dc11ee77ef850bb@syzkaller.appspotmail.com
+> > Tested-by: syzbot+37757dc11ee77ef850bb@syzkaller.appspotmail.com
+> > Fixes: 602bcf212637 ("ata: libata: Improve CDL resource management")
+> > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> > ---
+> >  drivers/ata/libata-scsi.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+> > index 3328a6febc13..6f5527f12b0e 100644
+> > --- a/drivers/ata/libata-scsi.c
+> > +++ b/drivers/ata/libata-scsi.c
+> > @@ -2442,7 +2442,9 @@ static unsigned int ata_scsiop_mode_sense(struct ata_scsi_args *args, u8 *rbuf)
+> >       if (spg) {
+> >               switch (spg) {
+> >               case ALL_SUB_MPAGES:
+> > -                     break;
+> > +                     if (dev->flags & ATA_DFLAG_CDL)
+> > +                             break;
+> > +                     fallthrough;
+>
+> I do not think this is correct at all. If the user request all sub mpages, we
+> need to give that list regardless of CDL support. What needs to be fixed is that
+> if CDL is NOT supported, we should not try to add the information for the T2A
+> and T2B sub pages. So the fix should be this:
 
-Thanks for the series!
+Okay. But after looking into it further, I think it would be more appropriate to
+also check the ATA_DFLAG_CDL_ENABLED flag when checking if CDL is
+not supported. So it seems like it would be better to modify the condition as
+below.
 
-Quick note: *** in the Subject was also meant to be removed, but it's fine as
-long as it's a cover letter and git send-email does its job.
+What do you think?
 
--- 
-With Best Regards,
-Andy Shevchenko
+if (!(dev->flags & ATA_DFLAG_CDL
+      dev->flags & ATA_DFLAG_CDL_ENABLED) || !dev->cdl)
+        return 0;
 
+Regards,
+Jeongjun Park
 
+>
+> diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+> index 3328a6febc13..6ffa975746a6 100644
+> --- a/drivers/ata/libata-scsi.c
+> +++ b/drivers/ata/libata-scsi.c
+> @@ -2256,10 +2256,15 @@ static inline u16 ata_xlat_cdl_limit(u8 *buf)
+>  static unsigned int ata_msense_control_spgt2(struct ata_device *dev, u8 *buf,
+>                                              u8 spg)
+>  {
+> -       u8 *b, *cdl = dev->cdl->desc_log_buf, *desc;
+> +       u8 *b, *cdl, *desc;
+>         u32 policy;
+>         int i;
+>
+> +       if (!(dev->flags & ATA_DFLAG_CDL) || !dev->cdl)
+> +               return 0;
+> +
+> +       cdl = dev->cdl->desc_log_buf;
+> +
+>         /*
+>          * Fill the subpage. The first four bytes of the T2A/T2B mode pages
+>          * are a header. The PAGE LENGTH field is the size of the page
+>
+>
+> >               case CDL_T2A_SUB_MPAGE:
+> >               case CDL_T2B_SUB_MPAGE:
+> >               case ATA_FEATURE_SUB_MPAGE:
+> > --
+>
+> --
+> Damien Le Moal
+> Western Digital Research
+>
 
