@@ -1,129 +1,123 @@
-Return-Path: <linux-kernel+bounces-335970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 253B497ED50
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:46:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6D6897ED55
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:47:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C298E1F22258
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:45:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B2AC281B11
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C9D19CD0E;
-	Mon, 23 Sep 2024 14:45:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F2819CC36;
+	Mon, 23 Sep 2024 14:47:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HMNqhWGg"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=compal-corp-partner-google-com.20230601.gappssmtp.com header.i=@compal-corp-partner-google-com.20230601.gappssmtp.com header.b="Hl01RO80"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32BCB8286A
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 14:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1C77DA7D
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 14:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727102752; cv=none; b=uY/Cyadhhve3IOYQTiPCOg+VIKXKw7bggb3Bm1u1/0lLfwvAjxFPZ+JMgfsIsCCGel47kWGzQ4N7XJAUA06CjPQ+h5ebZcuGiQZppBEurJhA+MgcDXInsp+crVtk6TzxNU6YVo0EWBN6ltkc7pE3fofoDUY0AehMBiPiZT8ImyI=
+	t=1727102860; cv=none; b=l7x0rIJkRtUCpCl99XSLrkCQEjDDjwy9JrGFIoJewQb3D5W4V6dGjlnRkHt3xnSikkbV2+B29DR24sIq7rPXVHbRLYKd4xt75Hr9/MZDGeGfMo3lddbHRx5oNtQMQvD9iHN4u3YT6uaXeNUTr2gCITJ7Ils7f41EP06Fnufd75I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727102752; c=relaxed/simple;
-	bh=5NRsXwKuBF1Zs3W/foWqq7Sp7HvXgxKlkNNgfdW03+E=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=nyn5//sNxzVUm9fvwgGzHPVjY3hKParZayCSlY2Tn+5SxDLQH+zz9GD+soeJh+ceGHDj72gZE0OkUCu3Z+itSi4GD2tJf3Y6RZMbHL2tKJl84EeAIUoJVjcZ6keGBZJTsAw6DE0cdUGi+BDefu8b106283WfWWjyGxAK+CCRj/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HMNqhWGg; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-536748c7e9aso5363047e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 07:45:49 -0700 (PDT)
+	s=arc-20240116; t=1727102860; c=relaxed/simple;
+	bh=4xOmHPRWCNA4rm8kugTZPG9onTyqHhinxOqer09fNpc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZcRP5V6QNnGvr5TR3d/qa2hjtsGxoWuyBtl1KaxxFHO8RQoOJq/uWdl7HAlXjqQXDKv8Yt+mfnz4m9Oq/AS+V9gudhgMg0lXx1kc3/RatLv5FtO/40iaBM/GJsePTKoeIv/OB/Vv+s/P+EjxBYKqYjUfJSQeL4CRBzcj4VWH/xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=compal.corp-partner.google.com; spf=pass smtp.mailfrom=compal.corp-partner.google.com; dkim=pass (2048-bit key) header.d=compal-corp-partner-google-com.20230601.gappssmtp.com header.i=@compal-corp-partner-google-com.20230601.gappssmtp.com header.b=Hl01RO80; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=compal.corp-partner.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=compal.corp-partner.google.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-718d91eef2eso2815938b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 07:47:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1727102748; x=1727707548; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5NRsXwKuBF1Zs3W/foWqq7Sp7HvXgxKlkNNgfdW03+E=;
-        b=HMNqhWGgKu/eIzT1ur5rRtOEwMmGCkc16GtyBBEg8ljOIreoFpJwgale+suJWbwFko
-         dWs6sNOOZd/55ENfTMs5CoFNOLyQAqGCbtVj9zfRFfaw/lp5Tob6RO8rHJeuvnX/qEi0
-         WOTWqNs/y9Q73lTg4yxhn2MWbfd9GYMaTCzw0PAsqIxneNTc+HZG+cpU7JxuqwNhQ/iT
-         wQuY5z840TdmnugHnT0/RpM6mKZuYzbArvAtN/T+D8Bvakz8PfJmw2TXdAV1CArHQDKg
-         sYm69/w6MDEmXV94FdzIUWB2xK0J6kzfLxNCq6s7THr+sugR89Y+b0VBX6w84Efr6n//
-         X+aA==
+        d=compal-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1727102858; x=1727707658; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ah1pOvFlUWHq7/p7TdIR1C+iDmXhaSnb5086tRuytuw=;
+        b=Hl01RO80FMM6kPgijNDoOR6UNS/FDIO6leaOU4yLXIL968XRb+h2syAgo8BHs0Ypar
+         9pe1mALTvAIJKk/zqmGT5+Sa+hSvwlqEAy2A9WAyYbCSEZAGuFwK01pm4UZ6F1vi9fOQ
+         oCtxO3faBRE+BfJholS1vOAB5xPBhdPl+e1L27VDTkpXCxL/cQ6stbyq1ukUM1uROd85
+         XWJ9DiKkxjor4pzCULgb8LNrptrmVz7cgPmZcnCtNBExbcv/gnGaFo6xO7qbLnsDUZuG
+         tkvnI3IJZaY7NM+1r6hVoRmFEdhmICWzZyjOAA0C6iEshTR1o/Gkk7KxNDETZfZ+4dye
+         zaVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727102748; x=1727707548;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=5NRsXwKuBF1Zs3W/foWqq7Sp7HvXgxKlkNNgfdW03+E=;
-        b=PGKceM/QzveRag8k3wl9rbBDSPpCZL5cnIQ45apdsxCGHH29LlFKZqH6REQQIN6loe
-         mtaADG+9P7SukCF5VIQTpA/cxRi5o11UdGCFKQwOnhcqQZ8ylF57mruwim6MiVyQSq8q
-         Wszzz/d4oY0fVU8AVDw/eNEEmOpVu8J875/tKBZwLgT0RI/EAncliQpHOqDyD6c0KpFH
-         HzHHogk53Yw7gZClqvQxEYvqjryahKQm60i2lJ6l0nAgsmwmutI+NKPrcE8FQCJmzq1i
-         RBMk0sNlQdhHEXikAtLIjwC7IY/SsYUUgf0+g5CyCwa6LRJGWBBz9krU8ub16JW90RfO
-         Rq3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUFs50XiEtSmQfrad2AsnZfgP3R3YRDZyr2jd//wu3VVBUtSoFYMftEEmA3uuONzy2hicMNncqlVcnY1G4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXM0KO1PNSGUkqUDxckjcMZNJ7KFPIC1ayVLgJ5luXYOOG52Ev
-	oKow4aGzm+ib1PqwOFZcYE4/0BizTwkOaslD2nxEb6IqL4TJ9ADaMdBhxnVcyGw2qbB4o6WbD8/
-	3NFo=
-X-Google-Smtp-Source: AGHT+IHX9n+o5rnO2Mry3+H4rn2Nsqm42//8eYN5AaanyzprS8/OBlWuUv+9MAznk/hzN2webuG0DQ==
-X-Received: by 2002:a05:6512:33d6:b0:536:a4d8:917b with SMTP id 2adb3069b0e04-536ac2e5c80mr6152023e87.19.1727102748201;
-        Mon, 23 Sep 2024 07:45:48 -0700 (PDT)
-Received: from ?IPv6:2804:5078:964:d800:58f2:fc97:371f:2? ([2804:5078:964:d800:58f2:fc97:371f:2])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8493985853asm3121629241.18.2024.09.23.07.45.46
+        d=1e100.net; s=20230601; t=1727102858; x=1727707658;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ah1pOvFlUWHq7/p7TdIR1C+iDmXhaSnb5086tRuytuw=;
+        b=ms7Y9Qi17jbqphQWBTUACGXP0N5aI/Hrg8d0i35YyJAQr7seWNem8Mal1AqTesV4iC
+         1PMBkuRGLz7kUGQbcmeEsbxbU6yj34TIPE24MqQJw2qTXVqODlPrTgt06fdWIV5PmVoj
+         bnmm/BjEj23JYEzVmmBSEEL8EmO8hHUjJq/7GUnnGUn+an2lo1hZsaZfFAK1kl3G1CnC
+         d51lneDRfU3AqBtYQXUk1lskLBaevpI7inf8mhZlf5XV97uvWUe1ZWewdVKUipmemq6F
+         o3XAUq6Ww3oNDSqNUYXVHP1DeLYeYrakJ6/jjUV8h8qk4HfuKJ620CbCqnmXGPZtXHw5
+         tQow==
+X-Gm-Message-State: AOJu0Yx5lGsCvjTexLSlpimETPlndsH2JKC6O5oUdmXg3MfC/p6jrToL
+	VpTELKbyBfnNNm/6VNU66Lg9dgzqwOpYsBhUpFWXH9P7R/dpImHcT3z2fEmCuNhYAeYwwxdpAj4
+	D
+X-Google-Smtp-Source: AGHT+IGnzbB8vGG9Sm8T5RN6ljJ6BCzgDbeKgiBqIATXey8B3rBl6Yt3vZdISaSG9UHRAnN3Jn9N7g==
+X-Received: by 2002:a05:6a00:4b0d:b0:719:24a3:2a8b with SMTP id d2e1a72fcca58-7199b14832amr16818922b3a.12.1727102858079;
+        Mon, 23 Sep 2024 07:47:38 -0700 (PDT)
+Received: from maxweng-Latitude-7410.. (2001-b011-6c08-d055-c470-c180-5435-2e25.dynamic-ip6.hinet.net. [2001:b011:6c08:d055:c470:c180:5435:2e25])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944a974dcsm13991122b3a.32.2024.09.23.07.47.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 07:45:47 -0700 (PDT)
-Message-ID: <5e544e68ad83fcdeb3502f1273f18e3d33dc8804.camel@suse.com>
-Subject: Re: [PATCH v3 0/3] selftests: livepatch: test livepatching a
- kprobed function
-From: Marcos Paulo de Souza <mpdesouza@suse.com>
-To: Michael Vetter <mvetter@suse.com>, linux-kselftest@vger.kernel.org, 
-	live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Mon, 23 Sep 2024 11:45:44 -0300
-In-Reply-To: <20240920115631.54142-1-mvetter@suse.com>
-References: <20240920115631.54142-1-mvetter@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (by Flathub.org) 
+        Mon, 23 Sep 2024 07:47:37 -0700 (PDT)
+From: Max Weng <max_weng@compal.corp-partner.google.com>
+To: linux-kernel@vger.kernel.org
+Cc: max_weng@compal.corp-partner.google.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH v2] arm64: dts: mediatek: mt8186: add FHCTL node
+Date: Mon, 23 Sep 2024 22:47:28 +0800
+Message-Id: <20240923144728.870285-1-max_weng@compal.corp-partner.google.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, 2024-09-20 at 13:56 +0200, Michael Vetter wrote:
-> This patchset adds a test for livepatching a kprobed function.
->=20
-> Thanks to Petr and Marcos for the reviews!
->=20
-> V3:
-> Save and restore kprobe state also when test fails, by integrating it
-> into setup_config() and cleanup().
-> Rename SYSFS variables in a more logical way.
-> Sort test modules in alphabetical order.
-> Rename module description.
->=20
-> V2:
-> Save and restore kprobe state.
->=20
-> Michael Vetter (3):
-> =C2=A0 selftests: livepatch: rename KLP_SYSFS_DIR to SYSFS_KLP_DIR
-> =C2=A0 selftests: livepatch: save and restore kprobe state
-> =C2=A0 selftests: livepatch: test livepatching a kprobed function
->=20
+From: max_weng <max_weng@compal.corp-partner.google.com>
 
-Thanks for the new version! LGTM, so the series is
+add FHCTL device node for Frequency Hopping and Spread Spectrum clock function.
 
-Reviewed-by: Marcos Paulo de Souza <mpdesouza@suse.com>
+Change-Id: I7f9f2991978df7d5d3a6a8bc78f6f443f2f0460d
+Signed-off-by: Max Weng <max_weng@compal.corp-partner.google.com>
+---
+ Change frome v1 to v2
+ * Modify the commit description
+ arch/arm64/boot/dts/mediatek/mt8186.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-> =C2=A0tools/testing/selftests/livepatch/Makefile=C2=A0=C2=A0=C2=A0 |=C2=
-=A0 3 +-
-> =C2=A0.../testing/selftests/livepatch/functions.sh=C2=A0 | 13 +++-
-> =C2=A0.../selftests/livepatch/test-kprobe.sh=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 | 62
-> +++++++++++++++++++
-> =C2=A0.../selftests/livepatch/test_modules/Makefile |=C2=A0 3 +-
-> =C2=A0.../livepatch/test_modules/test_klp_kprobe.c=C2=A0 | 38 +++++++++++=
+diff --git a/arch/arm64/boot/dts/mediatek/mt8186.dtsi b/arch/arm64/boot/dts/mediatek/mt8186.dtsi
+index 148c332018b0..d3c3c2a40adc 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8186.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8186.dtsi
+@@ -29,6 +29,13 @@ aliases {
+ 		rdma1 = &rdma1;
+ 	};
+ 
++	fhctl: fhctl@1000ce00 {
++		compatible = "mediatek,mt8186-fhctl";
++		clocks = <&apmixedsys CLK_APMIXED_TVDPLL>;
++		reg = <0 0x1000ce00 0 0x200>;
++		status = "disabled";
++	};
 +
-> =C2=A05 files changed, 114 insertions(+), 5 deletions(-)
-> =C2=A0create mode 100755 tools/testing/selftests/livepatch/test-kprobe.sh
-> =C2=A0create mode 100644
-> tools/testing/selftests/livepatch/test_modules/test_klp_kprobe.c
->=20
+ 	cci: cci {
+ 		compatible = "mediatek,mt8186-cci";
+ 		clocks = <&mcusys CLK_MCU_ARMPLL_BUS_SEL>,
+-- 
+2.34.1
 
 
