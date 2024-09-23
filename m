@@ -1,94 +1,125 @@
-Return-Path: <linux-kernel+bounces-336126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 589C997EF7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:47:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F99297EF8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:50:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE395B21F84
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:47:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60E191C2161D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E29F19F104;
-	Mon, 23 Sep 2024 16:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA9819FA9D;
+	Mon, 23 Sep 2024 16:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bTNuz6qW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="eHw13xpe"
+Received: from msa.smtpout.orange.fr (msa-210.smtpout.orange.fr [193.252.23.210])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D153F19E975
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 16:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90E219F137;
+	Mon, 23 Sep 2024 16:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727110033; cv=none; b=b0nXrD10f8ztrP96THmAdWzgh3hvfKbCvg3SmL07K3rlPNAhBnvJea2nJcglJbFzTBfLgcjt8rsanQyssOchFLbzNFVUNmfvkNPk/hGAGO0zeDSuXIAYtanNL4P50yo85IdwT5eZiOC55D7HeBhNAktMFxj5ed8AizhH5rBfpq4=
+	t=1727110159; cv=none; b=hGoTmRGyA7aimBUpMJAN+RM1oS1gSM3moGor4p8BDGjmC01h2nhb0COK4bU/fxhdshl94ubCfbz63np+0CvCU3qK4IZDjhl9e/37r0qVToqJ8aU+I4at/6jAsHUcd1KHIzZf/YM9jZthcWnef8uf69Of/pmTg31vVgi51slnBBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727110033; c=relaxed/simple;
-	bh=O8BQzVjm3qfGSvjlj+uC9Ax2xc7gVkjR7+6Md/HId98=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IggkjMDgEV6m7yapZsEiBzI8LOpcDTDJfnw6JeUmsizER6DOx0T5tq6N9v6ZnW0jweaSlamPHDPO/xR+y9fn8jVhwCEwOqp0jFHAzUtW2gCmTDYRTumlpSgB0comdx1mzJGFD2/eZZcmvUbn5sbX145Q1MYglQMIvg5PVGYhcc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bTNuz6qW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46B7DC4CECD;
-	Mon, 23 Sep 2024 16:47:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727110033;
-	bh=O8BQzVjm3qfGSvjlj+uC9Ax2xc7gVkjR7+6Md/HId98=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bTNuz6qW+eTg2+6GVHk8AscnUlpM5TWxWvjTBsyIRVYntUh5kEhy+mg+gfmrcbiky
-	 ifsE45A19aagpzHuWUagxR6D7HKc5hsAcLIPx28f9zicFYiTQXGFWzAP7RLhVEsRbo
-	 sWjiWxDHNuIRrpcjgLd/PbPREWfVK4Wr9OQZde841md6913xcbS5sNqtfM16Hxp99I
-	 0VVms6IZAIV/4iIiYr9ymBgmilB5joGF7nqzJYqOqkedNa+6TvlZRwmaJd3i9I4v2T
-	 ZBtB0242K/wTxXnid06wRV2K22udWAdcgk3WBGqg+PTrYdMtM881nkXnlhfEPRYQvj
-	 QESzYK4fuP3FA==
-Date: Mon, 23 Sep 2024 06:47:12 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <andrea.righi@linux.dev>
-Cc: Phil Auld <pauld@redhat.com>, David Vernet <void@manifault.com>,
-	Giovanni Gherdovich <giovanni.gherdovich@suse.com>,
-	Kleber Sacilotto de Souza <kleber.souza@canonical.com>,
-	Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched_ext: Provide a sysfs enable_seq counter
-Message-ID: <ZvGbkCWR7AbgA6ug@slm.duckdns.org>
-References: <20240921193921.75594-1-andrea.righi@linux.dev>
- <ZvCKPkwwC9-o2dsQ@mtj.duckdns.org>
- <20240923104548.GA308802@pauld.westford.csb>
- <ZvGJ_xT2LhYJHQbZ@slm.duckdns.org>
- <20240923160007.GA313849@pauld.westford.csb>
- <ZvGYjKAB07VJW7jq@gpd3>
+	s=arc-20240116; t=1727110159; c=relaxed/simple;
+	bh=FICzON11Dy+gAxW32hX1s8LCXvSdOhsRQVHf8XJ7Mzg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ZyY3om2X5vmjTBwBfekD0J6hH0i+2k2zAc+4rOOM5iQ2YmGBwOLyP1HWbLkDqLy4eTVFlayZJJClC5HViFSnnyoRCVxbhjotfCVEwknURpV3BMeguNfkk8ip8Wdpqg75a2fcobEHCTZoKXEW7kICgE0tnspJs5E6ZaDOOBoXVyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=eHw13xpe; arc=none smtp.client-ip=193.252.23.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id smE1sbivSftTLsmE1sQI14; Mon, 23 Sep 2024 18:47:56 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1727110076;
+	bh=zWX7l462UoWXZJBkgTkiyhgAoYwATUW37J8ldQiqwNM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=eHw13xpe83Kj8V1k35HYSPEUWltzVwcHixYt1HwnhzSoOn0GUADHeP/GwhbGHvY3p
+	 WGU8qeim1q+T9Ehy1h78FIeJihamWdNVIgxJ4uMxnZ3Pief1jly5GSq77WwYXH4aQK
+	 H8Ezy4ujfLlSJbil9C6n33xsaFHtUhJYd62xHhZRM6P46wCJJNJBn9nXdUL0f3cBfW
+	 u30oE09w/E59aDqON6lVB/qr+oYw00izuvoXl2Di/ubEsGNx7gAgygpmtbt6H9AoR9
+	 SIbNvSScrz+J5iILmQgcQu9wFYR9oaW6NZVnUbUVACxZuvn3uGHwjBSzvd89S28Lg4
+	 T9YzBB/WszLJQ==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Mon, 23 Sep 2024 18:47:56 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <9680600d-0bea-4339-bbf5-0ccc50d13551@wanadoo.fr>
+Date: Mon, 23 Sep 2024 18:47:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZvGYjKAB07VJW7jq@gpd3>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] zram: don't free statically defined names
+To: Andrey Skvortsov <andrej.skvortzov@gmail.com>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>,
+ Minchan Kim <minchan@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ linux-block@vger.kernel.org, stable@vger.kernel.org
+References: <20240923080211.820185-1-andrej.skvortzov@gmail.com>
+ <20240923153449.GC38742@google.com> <20240923154738.GE38742@google.com>
+ <ZvGPWaXm26iq-8TI@skv.local> <20240923160708.GF38742@google.com>
+ <ZvGar7f5IcMiFzKk@skv.local>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <ZvGar7f5IcMiFzKk@skv.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Le 23/09/2024 à 18:43, Andrey Skvortsov a écrit :
+> On 24-09-24 01:07, Sergey Senozhatsky wrote:
+>> On (24/09/23 18:55), Andrey Skvortsov wrote:
+>> [..]
+>>>> Ugh, I know what's happening.  You don't have CONFIG_ZRAM_MULTI_COMP
+>>>> so that ZRAM_PRIMARY_COMP and ZRAM_SECONDARY_COMP are the same thing.
+>>>> Yeah, that all makes sense now, I haven't thought about it.
+>>>
+>>> yes, I don't have CONFIG_ZRAM_MULTI_COMP set. I'll include your
+>>> comment into commit description for v2.
+>>
+>> Thanks.
+>>
+>> Can you do it something like the diff below?  Let's iterate
+>> ->comp_algs from ZRAM_PRIMARY_COMP.  I don't really mind the
+>> "Do not free statically defined" comment, up to you.
+>>
+>> And the commit message probably can stay that: on !CONFIG_ZRAM_MULTI_COMP
+>> systems ZRAM_SECONDARY_COMP can hold default_compressor, because it's
+>> the same offset as ZRAM_PRIMARY_COMP, so we need to make sure that we
+>> don't attempt to kfree() the statically defined comp name.
+>>
+>> ---
+>>
+>> diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+>> index c3d245617083..ad9c9bc3ccfc 100644
+>> --- a/drivers/block/zram/zram_drv.c
+>> +++ b/drivers/block/zram/zram_drv.c
+>> @@ -2115,8 +2115,10 @@ static void zram_destroy_comps(struct zram *zram)
+>>                  zram->num_active_comps--;
+>>          }
+>>   
+>> -       for (prio = ZRAM_SECONDARY_COMP; prio < ZRAM_MAX_COMPS; prio++) {
+>> -               kfree(zram->comp_algs[prio]);
+>> +       for (prio = ZRAM_PRIMARY_COMP; prio < ZRAM_MAX_COMPS; prio++) {
+>> +               /* Do not free statically defined compression algorithms */
+>> +               if (zram->comp_algs[prio] != default_compressor)
+>> +                       kfree(zram->comp_algs[prio]);
+>>                  zram->comp_algs[prio] = NULL;
+>>          }
+> Sorry, I've seen you comment after I've sent v2. I'll do this in v3.
+> 
 
-On Mon, Sep 23, 2024 at 06:34:20PM +0200, Andrea Righi wrote:
-...
-> > > Yes, the load sequence number should stay persistent across all schedulers,
-> > > but each scheduler should report the sequence number at which *it* was
-> > > loaded. Note that this doesn't really change anything now. If you only care
-> > > whether any SCX scheduler has ever been loaded, you'd always look under
-> > > root.
-> > >
-> > 
-> > In my testing root is not there is nothing is loaded. 
+Hi,
 
-Ah, right.
+maybe kfree_const() to catch potential future cases and simplify code?
 
-> Right, there's no root if no sched_ext scheduler is loaded. Maybe we
-> should always keep root present, or have a global counter and one
-> per-sched?
+CJ
 
-I'll apply as-is. Let's add per-scheduler load seq separately.
-
-Thanks.
-
--- 
-tejun
 
