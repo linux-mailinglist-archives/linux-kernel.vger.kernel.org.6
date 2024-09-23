@@ -1,101 +1,91 @@
-Return-Path: <linux-kernel+bounces-336145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8EB697EFB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 19:00:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 84F7797EFB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 19:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 837AC1F21C53
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:00:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 302C31F21CE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:02:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E14715E86;
-	Mon, 23 Sep 2024 17:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EBBD19E960;
+	Mon, 23 Sep 2024 17:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rISBagsL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OzntAr1c"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9780519F13D;
-	Mon, 23 Sep 2024 17:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3AD3FC0B
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 17:01:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727110830; cv=none; b=LNQrUHbAoVcVVK6xDw3Ntx+0uyxsJub9KYwxQnUzhrZcb7V5FvwiE4qFNrj6SvWO06S7RLFrambrZEG+6+OMNeO2OBkWT5K8J2DEK10QhOTv0O7Psyy2DM0ltr3poJXVeqpol94EEDcnbnRKFmFeh5Oq3ORBAlLeriLQ14lV+Bc=
+	t=1727110916; cv=none; b=BYZ3dC7ZU4yBgdSNFrbODY3HgT1nS5WdP36mrD/uyGlyhn3kCYIP2fsf3bFXwPVB2uGBddwaguDGdaiUW42SPr1htA9IDs8ROxM9T07HTFBqgU9dBRKFt4HzNUdaf8ZQPAwowNqU8TIJd6M2xeT0BlLZMso9GxmBwIOZTxhTDhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727110830; c=relaxed/simple;
-	bh=Le+8/4rHrktyxAGJVfNrJFueZA8IoxlwKWX6I3aB9fo=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=TUTru9kJva+gClHMbsn+UBweJiO1ZjAg90cafHbQa99oApo59Q3Ij4l5VrSVOQQDbn58bNyLSa2BZcYF2wWxNOvbazatXWG5FUOBeyeBnBRNAJrMRzVlNICSt590RmFtuDuibbO8FX3wG6mUu4E8rTTrrr/pRsbdC/HMb2lxPGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rISBagsL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21206C4CECE;
-	Mon, 23 Sep 2024 17:00:30 +0000 (UTC)
+	s=arc-20240116; t=1727110916; c=relaxed/simple;
+	bh=HvTfVZZWM0K8iF6PzBs/xfSFi6UFaHmIMl1EeMGe6E4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qQ8Qchu8K78ZEaF7X7vrmDJfUJ5F8LKkr6IHUuHiDEQQZI899/f0xoQHFRnKRGL1Um9AcNPeIbZL2crJ9lCuJPdlKp5CR8LneohQp2GorXqrKTI1wvXI/Yp+ydxvzgM7guPn2d6PwsGDzaDiyV2GoU87HZvvj7HbBibKIPOyRp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OzntAr1c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E224C4CEC4;
+	Mon, 23 Sep 2024 17:01:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727110830;
-	bh=Le+8/4rHrktyxAGJVfNrJFueZA8IoxlwKWX6I3aB9fo=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=rISBagsL1XNMFvHAODmsaDAUUZqPPrzSZ5nHIQrvwCLsbpPEVxFUYs/XmHEUnRBho
-	 LGaTxK40CEaAEa7F8M+5EHj1ornVMBQXCAKvubez1Pl6UMmUGXEPSTVb+48Be/tB5I
-	 bGql7+laWqD//n7xVykKHsmEVHUUy4At1uI3BuD+WyBA7cgmYVAwd/SgkAeq59+IxQ
-	 0tlqcypbqJ5G3UTYMi7BN6VzvdbYriYLQO5jCfl0qdYH0WCUqEIGO/M+H9QgCRCUVG
-	 E3qMe7enDwhTg0ZQZbsj9x02qL+awYErfG+W4ITifoq01ynpc9U4fG9JeaDGG8StpJ
-	 BClpOH1Wy/xBw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD4A3809A80;
-	Mon, 23 Sep 2024 17:00:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1727110915;
+	bh=HvTfVZZWM0K8iF6PzBs/xfSFi6UFaHmIMl1EeMGe6E4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OzntAr1cXjVe5kTjVhDrCoiZt3saJ/7XnPo21DQPS9oD+3VDSVvBISXHRC50+51Ig
+	 G7/XNPkwEkA4nyFqVNWEh/Vz4QwomgCtC6opJCRaN9iYHuVticymUq5v95OHt59Ld9
+	 3dxKJdw8NJyXHDOOD8TLNPZY6qhiRSApjNqJCertLMB7Zlbg6bOrgTpyxUgphyVt/w
+	 GDKOLuDe+3FvJjJZ94r6FZv9oAlnA395ATar4/74RYj2AZZuB6JSpyPwyvwM/IXXAd
+	 M3QPZ3kOPi96q2qEbEwEC8FA5SU4VPhEfQRspkfxUph6XmzYCfbfehLk4I+io3Vhuv
+	 b0NpLauiGT6lw==
+Date: Mon, 23 Sep 2024 07:01:54 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Phil Auld <pauld@redhat.com>
+Cc: Andrea Righi <andrea.righi@linux.dev>,
+	David Vernet <void@manifault.com>,
+	Giovanni Gherdovich <giovanni.gherdovich@suse.com>,
+	Kleber Sacilotto de Souza <kleber.souza@canonical.com>,
+	Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched_ext: Provide a sysfs enable_seq counter
+Message-ID: <ZvGfAqVgbB_p4SKX@slm.duckdns.org>
+References: <20240921193921.75594-1-andrea.righi@linux.dev>
+ <ZvCKPkwwC9-o2dsQ@mtj.duckdns.org>
+ <20240923104548.GA308802@pauld.westford.csb>
+ <ZvGJ_xT2LhYJHQbZ@slm.duckdns.org>
+ <20240923160007.GA313849@pauld.westford.csb>
+ <ZvGYjKAB07VJW7jq@gpd3>
+ <ZvGbkCWR7AbgA6ug@slm.duckdns.org>
+ <20240923165749.GB313849@pauld.westford.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 0/4] Bluetooth: btusb: Mediatek ISO interface cliam/release
- adjustment
-From: patchwork-bot+bluetooth@kernel.org
-Message-Id: 
- <172711083224.3420231.16302017182425598923.git-patchwork-notify@kernel.org>
-Date: Mon, 23 Sep 2024 17:00:32 +0000
-References: <20240916113938.30285-1-chris.lu@mediatek.com>
-In-Reply-To: <20240916113938.30285-1-chris.lu@mediatek.com>
-To: Chris Lu <chris.lu@mediatek.com>
-Cc: marcel@holtmann.org, johan.hedberg@gmail.com, luiz.dentz@gmail.com,
- sean.wang@mediatek.com, aaron.hou@mediatek.com, steve.lee@mediatek.com,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240923165749.GB313849@pauld.westford.csb>
 
-Hello:
+Hello,
 
-This series was applied to bluetooth/bluetooth-next.git (master)
-by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
-
-On Mon, 16 Sep 2024 19:39:34 +0800 you wrote:
-> MediaTek performs some test on the platform which can support LE audio and
-> ISO data transmission with kernel driver. We found the additional interface
-> claim and release flow issue need some adjustment.
+On Mon, Sep 23, 2024 at 12:57:49PM -0400, Phil Auld wrote:
+..
+> > I'll apply as-is. Let's add per-scheduler load seq separately.
 > 
-> These patches mainly add a callback function within the usb_disconnect function
-> to prevent a kernel panic caused by interfaces not being released when the BT USB
-> dongle is physically removed. Additionally, the condition for claiming/releasing
-> ISO usb interface have also been adjusted to make driver works as expected.
-> 
-> [...]
+> Thanks! I was thinking that per-scheduler you could just snapshot the
+> global counter (either before or after increment) on load. Then you
+> could easily tell when each was loaded relative to each other etc.
 
-Here is the summary with links:
-  - [1/4] Bluetooth: btusb: mediatek: move Bluetooth power off in btusb_mtk_shutdown
-    https://git.kernel.org/bluetooth/bluetooth-next/c/65e9c1bf2076
-  - [2/4] Bluetooth: btusb: add callback function in btusb_disconnect
-    https://git.kernel.org/bluetooth/bluetooth-next/c/bcfc09e8a15d
-  - [3/4] Bluetooth: btusb: mediatek: add intf release flow in usb disconnect
-    (no matching commit)
-  - [4/4] Bluetooth: btusb: mediatek: change the conditions for claiming/releasing ISO interface
-    (no matching commit)
+Yeap.
 
-You are awesome, thank you!
+> Especially while "per-scheduler" is defined by string comparison I'd
+> prefer not to rely on that for this use case. 
+
+Thanks.
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+tejun
 
