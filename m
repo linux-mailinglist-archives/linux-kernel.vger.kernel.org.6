@@ -1,109 +1,136 @@
-Return-Path: <linux-kernel+bounces-335500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2361297E6A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 09:31:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A246C97E6B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 09:37:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D92932815F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 07:31:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A5B91F2100B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 07:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C288C44C8C;
-	Mon, 23 Sep 2024 07:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b="cRbvpk+F"
-Received: from mail.nearlyone.de (mail.nearlyone.de [49.12.199.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1587E4776E;
+	Mon, 23 Sep 2024 07:37:28 +0000 (UTC)
+Received: from mx1.zhaoxin.com (MX1.ZHAOXIN.COM [210.0.225.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2442B17741;
-	Mon, 23 Sep 2024 07:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.199.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 536103C485
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 07:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.0.225.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727076692; cv=none; b=oplQwxXieN6n4SvL92xtUd4C54XnhsdZNWN+H3ig+XtnFVCpQZ+HrsLt0VDHA9s3spf2kX9TfA0XEf5XdMOp1RrB1XMwf5G5zqgy55JtyawMIkX4KJqcSgpJ0SNNHCp5G/rDZAftaZa8bhxEo9mmsVtiFCu6AlszRtihgk3lssM=
+	t=1727077047; cv=none; b=EmLi9vW0pSRE597aV+sbKGJo5ms/xUNtfqJOBC44NcVfLbIr3/A8cgXHq1/k+iERmJMNRogOr7Lb5SnggclyFPjdhvg2Pc9TYf29fJC0qJmcHpz0viEEjUZlDlrourprcLttAVFNw4X4UMGCb++tOTTRo2UFuA16XUYn7Bywkqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727076692; c=relaxed/simple;
-	bh=YOPrK/LQFNu1yTd7p8XEMFxAWFKnMsmN7u5aRla9zS0=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=fhJ07luihzImF1e6eW32HWlXhY9wI0kJbT3FUhm65VDpNDs69VURDB0HSS4QsuTOmvSC36S60XXA6Y6pnIbypfdq3wjsqXt/f4XP7y0FClRHl2eCK3+RxBet2I94mgNFDdAQOaWlhGNynwifjpTQghJp97MgcxOi3N0acP4MZQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org; spf=pass smtp.mailfrom=monom.org; dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b=cRbvpk+F; arc=none smtp.client-ip=49.12.199.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=monom.org
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D7B1BDB324;
-	Mon, 23 Sep 2024 09:31:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monom.org; s=dkim;
-	t=1727076680; h=from:subject:date:message-id:to:mime-version:content-type;
-	bh=k4fe+L1YliAWTSVKJAMtXdF3NNuBlfyNCAN7rxxKt1I=;
-	b=cRbvpk+FmASae5dX8/+3P80iX7vlauYLYeK5Me0QikOUc2OBXxp/AS9i44p2cTeqx5sYLa
-	qvKAvkwDqK3luGrQgrLjsQfnCg+G4vMQGNz7+Pca85URM1hHXwmhUdpGSl6Q7iNNbfEMjH
-	fD2olnuhuTZEe9L4fKRbJGe7tDGW6yGOjQq8BHABkzttdMxVHI+T/lVY6UqMnsmh0TpaAb
-	PZF3j/BFpJYYS96YsJM5dFTuJe4m+suLoOv1KIqQn8Urnz6IMeUlQIWKz9XHV/Jht3rQE4
-	t5wv3o7I+WVjbIKJY2wdLzEU66/4GOG1CmMYEWuFSoXmXzWWmjjBZJ6RvbNHBA==
-Date: Mon, 23 Sep 2024 09:31:15 +0200
-From: Daniel Wagner <wagi@monom.org>
-To: LKML <linux-kernel@vger.kernel.org>, linux-rt-users@vger.kernel.org, 
-	stable-rt@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Tom Zanussi <tom.zanussi@linux.intel.com>, Clark Williams <williams@redhat.com>
-Subject: [ANNOUNCE] 4.19.322-rt138
-Message-ID: <172707659553.17516.8509354000862390767@beryllium.lan>
+	s=arc-20240116; t=1727077047; c=relaxed/simple;
+	bh=dPvSQqvqu8v8ffvNZW4QajwsVPbXcvLCE3MDFU7L8v4=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=l+68qAxhyaukW+aB6EFzjhJ+DaXl4O6Kduy2qgvQuPjd6Ym+yEeiBTQLMgqBfzWYPY66KC1l6a3Hj4bXPCVECyXj2jSDfz2px8FAmN4Tky5Z3oYgYpNYK/aIGZWoqueX+0BswzGcGicm2jGeL1yxF+aIATQXSzknoV+d2R8pATk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=210.0.225.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
+X-ASG-Debug-ID: 1727077030-086e236b0800f40001-xx1T2L
+Received: from ZXSHMBX2.zhaoxin.com (ZXSHMBX2.zhaoxin.com [10.28.252.164]) by mx1.zhaoxin.com with ESMTP id 9sMIDwAWllpDgD8h (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Mon, 23 Sep 2024 15:37:10 +0800 (CST)
+X-Barracuda-Envelope-From: TonyWWang-oc@zhaoxin.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.164
+Received: from ZXSHMBX2.zhaoxin.com (10.28.252.164) by ZXSHMBX2.zhaoxin.com
+ (10.28.252.164) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 23 Sep
+ 2024 15:37:09 +0800
+Received: from ZXSHMBX2.zhaoxin.com ([fe80::d4e0:880a:d21:684d]) by
+ ZXSHMBX2.zhaoxin.com ([fe80::d4e0:880a:d21:684d%4]) with mapi id
+ 15.01.2507.039; Mon, 23 Sep 2024 15:37:09 +0800
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.164
+Received: from localhost.localdomain (10.32.65.165) by ZXBJMBX03.zhaoxin.com
+ (10.29.252.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 23 Sep
+ 2024 15:33:07 +0800
+From: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
+To: <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
+	<tony.luck@intel.com>, <linux-kernel@vger.kernel.org>,
+	<linux-edac@vger.kernel.org>
+CC: <CobeChen@zhaoxin.com>, <TimGuo@zhaoxin.com>, <LeoLiu-oc@zhaoxin.com>,
+	Lyle Li <LyleLi@zhaoxin.com>
+Subject: [PATCH v4 0/4] x86/mce: Add Zhaoxin MCE support and remove
+Date: Mon, 23 Sep 2024 15:33:07 +0800
+X-ASG-Orig-Subj: [PATCH v4 0/4] x86/mce: Add Zhaoxin MCE support and remove
+Message-ID: <20240923073311.4290-1-TonyWWang-oc@zhaoxin.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240918055436.15551-1-TonyWWang-oc@zhaoxin.com>
+References: <20240918055436.15551-1-TonyWWang-oc@zhaoxin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
+ ZXBJMBX03.zhaoxin.com (10.29.252.7)
+X-Moderation-Data: 9/23/2024 3:37:08 PM
+X-Barracuda-Connect: ZXSHMBX2.zhaoxin.com[10.28.252.164]
+X-Barracuda-Start-Time: 1727077030
+X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
+X-Barracuda-URL: https://10.28.252.35:4443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at zhaoxin.com
+X-Barracuda-Scan-Msg-Size: 1895
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
+X-Barracuda-Spam-Score: -2.02
+X-Barracuda-Spam-Status: No, SCORE=-2.02 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.130843
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------------------------
 
-Hello RT-list!
+From: Lyle Li <LyleLi@zhaoxin.com>
 
-I'm pleased to announce the 4.19.322-rt138 stable release. This is just
-an update to the 4.19.322 stable release. No RT specific changes.
+Zhaoxin consists of two vendors, X86_VENDOR_ZHAOXIN and
+X86_VENDOR_CENTAUR, so add the centaur vendor to support
+Zhaoxin MCA in mce/core.c and mce/intel.c.
 
-You can get this release via the git tree at:
+Since all major vendors do not disable MCA_CTL after initialization,
+functions that disable error reporting should be removed in mce/core.c.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+For the sake of code standardization, add zhaoxin.c to
+override the Zhaoxin MCA code.
 
-  branch: v4.19-rt
-  Head SHA1: 27022b8669f4531defab96b62fddc6e2db7f04a9
+Zhaoxin CPUs support CMCI compatible with Intel, because
+Zhaoxin's UCR error is not reported through CMCI, and in
+order to be compatible with intel's CMCI code, so add Zhaoxin
+CMCI storm toggle to support the new CMCI storm switching
+in mce/intel.c, mce/zhaoxin.c, mce/threshold.c, and mce/internal.h.
 
-Or to build 4.19.322-rt138 directly, the following patches should be applied:
+v3->v4:
+ - Remove functions that disable error reporting (patch 2/4)
 
-  https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.19.tar.xz
+v2->v3:
+ - Consolidate the MCA code for Zhaoxin and Centaur regarding the
+   broadcast MCE configuration (patch 3/4)
 
-  https://www.kernel.org/pub/linux/kernel/v4.x/patch-4.19.322.xz
+v1->v2:
+ - Fix multiple definition of "mce_zhaoxin_feature_init" (patch 3/4)
+ - Fix multiple definition of "mce_zhaoxin_feature_clear" (patch 3/4)
+ - Fix multiple definition of "mce_zhaoxin_handle_storm" (patch 4/4)
 
-  https://www.kernel.org/pub/linux/kernel/projects/rt/4.19/older/patch-4.19.322-rt138.patch.xz
+Lyle Li (4):
+  x86/mce: Add centaur vendor to support Zhaoxin MCA
+  x86/mce: Remove functions that disable error reporting
+  x86/mce: Add zhaoxin.c to support Zhaoxin MCA
+  x86/mce: Add CMCI storm switching support for Zhaoxin
 
-Signing key fingerprint:
+ arch/x86/Kconfig                    |   8 ++
+ arch/x86/kernel/cpu/mce/Makefile    |   2 +-
+ arch/x86/kernel/cpu/mce/core.c      | 116 ++--------------------------
+ arch/x86/kernel/cpu/mce/intel.c     |   8 +-
+ arch/x86/kernel/cpu/mce/internal.h  |  14 +++-
+ arch/x86/kernel/cpu/mce/threshold.c |   4 +
+ arch/x86/kernel/cpu/mce/zhaoxin.c   |  83 ++++++++++++++++++++
+ 7 files changed, 120 insertions(+), 115 deletions(-)
+ create mode 100644 arch/x86/kernel/cpu/mce/zhaoxin.c
 
-  5BF6 7BC5 0826 72CA BB45  ACAE 587C 5ECA 5D0A 306C
+--=20
+2.34.1
 
-All keys used for the above files and repositories can be found on the
-following git repository:
-
-   git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
-
-Enjoy!
-Daniel
-
-Changes from v4.19.317-rt137:
----
-
-Daniel Wagner (1):
-      Linux 4.19.322-rt138
----
-localversion-rt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
----
-diff --git a/localversion-rt b/localversion-rt
-index 41b444e910ef..9f63718d5731 100644
---- a/localversion-rt
-+++ b/localversion-rt
-@@ -1 +1 @@
---rt137
-+-rt138
 
