@@ -1,153 +1,162 @@
-Return-Path: <linux-kernel+bounces-335771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9117597EA6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:02:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39F1297EA73
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:07:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48199281FB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:02:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E475D1F21CAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C96198823;
-	Mon, 23 Sep 2024 11:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9934419883C;
+	Mon, 23 Sep 2024 11:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BYg04hIQ"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="pe2CRJTt";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="Yf8oDo8X"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C824EADA;
-	Mon, 23 Sep 2024 11:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588E1197549;
+	Mon, 23 Sep 2024 11:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727089361; cv=none; b=GiBR3UF/+P5bgyRB4FJuHJyFAcH+99rjWHFwTpYGHGfbKoZZnhwfjI/QQu3/zCCgVvnUnUrsPS59zP186uDprSLcUf4MQ9gLuhlMPOmU4ffdJB12SFcKeEHPTv2igQFDtNnrQ8g49GPmY1cH/EByvcaUnZcojxqVfiMYX3WlfLk=
+	t=1727089616; cv=none; b=WhCe6zrSeXKQDjl+R/9xuohwZpKnerE83TsymbOrOpGeclxug3IXkS27gSILK0oNwa2Wn6z1ExZ5DFxejuzHxYSkzRTLCoCyfE+m46wh2gTPwKXg0vqakO1KNe1vS8ghLF5RCGgMmVidqHBD/zIYiGlELBcZrs79awPrKVTfdW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727089361; c=relaxed/simple;
-	bh=LlvucM0P1hXSJnxs8UuQo5QRum/PKVcAx7WDA82wobk=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e1UxjgycLlQY+LRPEfLiaVK1V+jjhn728GbNHgCH51josNRovTlLCDFjYsCNzbfZsGAAfWyE4Bu8cvH756U0b97pqGlWPsFF4fcgBlFkvUPYi4bf6HIuCPIkoIzrTC3zUd9ScwwP++ROy2w50bHEBtahjq/Yu2gHSLNpTIfk26s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BYg04hIQ; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-374bd0da617so2978462f8f.3;
-        Mon, 23 Sep 2024 04:02:39 -0700 (PDT)
+	s=arc-20240116; t=1727089616; c=relaxed/simple;
+	bh=NUwoXVjP0DXzj/mDS2AXKUKlXgpn964UGAmMJ+Er5nw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DWImxx5j5bb0pV92Kp8BMZriHlEj0Q50Txn+tHicjKTjheGmHjVthdAFuwDdiiV6jxpx0ZGE3rfgO9vkIkshqiQipu/dOwVw+DMCApYac8tiwV9StlfhS1hYUko3Fise/zNqSy3X7u4fGWfGkhROc2m1bTNwhlr7ABJ2TfNM1UQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=pe2CRJTt; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=Yf8oDo8X reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727089358; x=1727694158; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9yidkyLnY/xuXlstPu2cMA6yS+9pleuUa9Q9pOuYZ4M=;
-        b=BYg04hIQs21f+OKRzlZOVrZdVaTc7G3p0x9n9U5k4UmBy8HbUuPvHCDE0XUuU4j/LL
-         7aJx7PsSFeMw/MOA/pgm2uaO8z2QxJ1pSBDPJg5NtwzmhhmHxcPpvmHw9bRuSdA6Z9Mi
-         jEV81WU6pMZdC+y6aOroZyHQCvUr9hXcpA+LPYt2Qrkdq6rWo/5gCxZe1KsFxetAbbBV
-         /XQybb8Ia5T1s3AhhSjobTsEgi7x5FefL6N2LEXfnsgYFvOuvI83dhQpOCGivUfzqQWm
-         +8Y+tR2l+YCbQVoggWnDfE/Ho3i15fVGNFbBF/K0t1wOqaZ6+O0cgsEGgWQBabc36Dhf
-         bTxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727089358; x=1727694158;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9yidkyLnY/xuXlstPu2cMA6yS+9pleuUa9Q9pOuYZ4M=;
-        b=PUZr3AVtMgDM9EWUgGTD/Rwf/ZGNNEt38qRiZYzcecLg1yD+xWjRdy0Oj3CJM4foef
-         BGFWcsLq5yglLeiDwEOIQMbX/r4SaSoyedzAfAZQZtNwFpBBDgrqU9gK2F+CJ9eSqdbS
-         s39PB5x45Ilocx0l1Z+QEdlo0grk4iWN4mVjpnDJR6nh5+cLEGxvE2cvdFxRZZIwlWte
-         quN2EKs6W8t718SCmvdhX4+ydkRGqw4vOEX/bsKyFT875dPUvzn/25RwiSYDVfZ8ly3j
-         DsNkO+TRE5PbVtppCTWbrTwwobcn43H6zUVYkXMv3T3ZyFj6r0BJKyZINUKb0F1Fest8
-         wKiA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpvUpw3rjTJpW7uYXoYbrLd9T4eOUH7Ypdp4IzV3XWftj43IM7Fviq/Z31HJbwPNnbjksZc/cCL57hnoLcgh1LhsTQ@vger.kernel.org, AJvYcCX66qoeyTnpMNUCmB+l44EHEBb9kMnMHKmgc0koTulOtXnJdh3cORwF2Ssrh8OZApyi+bXSWYfg8ajMNadq@vger.kernel.org, AJvYcCXBZGj+riApIIgMsceW+kXpQB/MgVLEgMXNhiT7u1tmCBRIXquX/RQL/GMq7DapryV5Uxo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywn9inX3mc+xBUy3cC8PoamsfYiJjVg39vG86Cz4JX6tAfJQGJK
-	SJLkVB4pLXXEsNrQpwNN198OyeQ3d5/cCnJH188MQEQeUrnwCGpT
-X-Google-Smtp-Source: AGHT+IHaEAZrODitl8iCpdeEw/+Vxhs0sLBKOLbimZWJkK85P1HSSkvbyYQR5dqF0IlKeHJAqUEZ1g==
-X-Received: by 2002:adf:f882:0:b0:371:8ec6:f2f0 with SMTP id ffacd0b85a97d-37a4227273dmr6127402f8f.16.1727089357801;
-        Mon, 23 Sep 2024 04:02:37 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73e80eesm24050519f8f.30.2024.09.23.04.02.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 04:02:37 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Mon, 23 Sep 2024 13:02:35 +0200
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@chromium.org>,
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCHv4 02/14] uprobe: Add support for session consumer
-Message-ID: <ZvFKy9WLiz18GjEZ@krava>
-References: <20240917085024.765883-1-jolsa@kernel.org>
- <20240917085024.765883-3-jolsa@kernel.org>
- <20240917120250.GA7752@redhat.com>
- <Zul7UCsftY_ZX6wT@krava>
- <20240922152722.GA12833@redhat.com>
- <ZvEhL114tyhLmfB1@krava>
- <20240923100552.GA20793@redhat.com>
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1727089613; x=1758625613;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=NUwoXVjP0DXzj/mDS2AXKUKlXgpn964UGAmMJ+Er5nw=;
+  b=pe2CRJTte7f/VCjw6BdbfRzKGyHJhDg24L2AiGacg6P4Ip+gD2P4vvlz
+   kyOjyexJSe7UbLWzsyyFr3VMFZBNsLWwHqYXmNjJouWoescEtgBfTFxsn
+   OHcnvqz0X3kRBloXjiE1gIQwTV1mY03QF4dA3GlUIbF0zDlzMrLNZV/KI
+   0SVg7x9PjUa5MtchXO4JYxMqiGm0dhWaA8zKo1jl2++gheuQYGD2pu1Ob
+   OFh8M0nacTXZMaLnmRuCmA+0MQ2zqPxKLCCaKTgU7xc22iAA1PZXKFpiV
+   KjC5u88EANjOvYVdsnBsKzwHBoAD/xmLJL2sf2B+1PWMM3J0C/asx7jI7
+   A==;
+X-CSE-ConnectionGUID: reDRXPcsSJGf7t0wixE+Dw==
+X-CSE-MsgGUID: UEsOEtLhSXGYx8/hZv8Zvg==
+X-IronPort-AV: E=Sophos;i="6.10,251,1719871200"; 
+   d="scan'208";a="39069132"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 23 Sep 2024 13:06:49 +0200
+X-CheckPoint: {66F14BC9-17-B8661266-C8AC785A}
+X-MAIL-CPID: 0B579DCDA0D8C38CD81507ADAA3CE170_5
+X-Control-Analysis: str=0001.0A682F1C.66F14BC9.0111,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8C31B16E7EF;
+	Mon, 23 Sep 2024 13:06:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1727089605;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=NUwoXVjP0DXzj/mDS2AXKUKlXgpn964UGAmMJ+Er5nw=;
+	b=Yf8oDo8XZNQEaRxj1OBNGDDUQYlV4z2sW4F5kPdkOsIGXLANM5GTfd4BB662Q7KLb4tYhg
+	RTYg/uVvgWCXedRgnwPsw6x9yh9fH/iX3CfulL28TX94mDieZTXM5FKKlqs5vi3GUdE62a
+	kaWb+c2hKrl8WjBi1bZZGYHfrF+CrO6J2RhXLhRbakxUl3LHPC1E6oB3JtCvACfXAgIbvX
+	wBSiecQINJpWXSG4R4nSDpBOuLQmE1bfOZL42i7Mzt1PqJXn89ddTkG8aXh74GBN9Hn+DT
+	T7AOliK3et0fJPOGF0QMWAnXgf4l3Sa/VYZmNmLH8MtdrlscIo6AX098t15iWg==
+Message-ID: <28314c36f464e1d39f71c0a60997c38fd6775172.camel@ew.tq-group.com>
+Subject: Re: [PATCH v2 2/2] can: m_can: fix missed interrupts with m_can_pci
+From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, Vincent Mailhol
+ <mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>,  Martin =?ISO-8859-1?Q?Hundeb=F8ll?=
+ <martin@geanix.com>, Markus Schneider-Pargmann <msp@baylibre.com>, "Felipe
+ Balbi (Intel)" <balbi@kernel.org>, Raymond Tan <raymond.tan@intel.com>,
+ Jarkko Nikula <jarkko.nikula@linux.intel.com>, linux-can@vger.kernel.org, 
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux@ew.tq-group.com,  lst@pengutronix.de
+Date: Mon, 23 Sep 2024 13:06:40 +0200
+In-Reply-To: <20240923-honored-ant-of-ecstasy-f7edae-mkl@pengutronix.de>
+References: 
+	<ac8c49fffac582176ba1899a85db84e0f5d5c7a6.1726745009.git.matthias.schiffer@ew.tq-group.com>
+	 <861164dfe6d95fd69ab2f82528306db6be94351a.1726745009.git.matthias.schiffer@ew.tq-group.com>
+	 <20240923-honored-ant-of-ecstasy-f7edae-mkl@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240923100552.GA20793@redhat.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, Sep 23, 2024 at 12:05:53PM +0200, Oleg Nesterov wrote:
-> On 09/23, Jiri Olsa wrote:
-> >
-> > change below should do what you proposed originally
-> 
-> LGTM, just one nit below.
-> 
-> But I guess you need to do this on top of bpf/bpf.git, Andrii has already
-> applied your series.
+On Mon, 2024-09-23 at 12:17 +0200, Marc Kleine-Budde wrote:
+> On 19.09.2024 13:27:28, Matthias Schiffer wrote:
+> > The interrupt line of PCI devices is interpreted as edge-triggered,
+> > however the interrupt signal of the m_can controller integrated in Inte=
+l
+> > Elkhart Lake CPUs appears to be generated level-triggered.
+> >=20
+> > Consider the following sequence of events:
+> >=20
+> > - IR register is read, interrupt X is set
+> > - A new interrupt Y is triggered in the m_can controller
+> > - IR register is written to acknowledge interrupt X. Y remains set in I=
+R
+> >=20
+> > As at no point in this sequence no interrupt flag is set in IR, the
+> > m_can interrupt line will never become deasserted, and no edge will eve=
+r
+> > be observed to trigger another run of the ISR. This was observed to
+> > result in the TX queue of the EHL m_can to get stuck under high load,
+> > because frames were queued to the hardware in m_can_start_xmit(), but
+> > m_can_finish_tx() was never run to account for their successful
+> > transmission.
+> >=20
+> > To fix the issue, repeatedly read and acknowledge interrupts at the
+> > start of the ISR until no interrupt flags are set, so the next incoming
+> > interrupt will also result in an edge on the interrupt line.
+> >=20
+> > Fixes: cab7ffc0324f ("can: m_can: add PCI glue driver for Intel Elkhart=
+ Lake")
+> > Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+>=20
+> My coworker Lucas pointed me to:
+>=20
+> > https://wiki.linuxfoundation.org/networking/napi#non-level_sensitive_ir=
+qs
+>=20
 
-that seems confusing but looks like just that one fix with the
-commit link in [1] was applied
+Thanks. I don't think this is directly applicable here - in our case the lo=
+st TX complete interrupts
+were the issue, not (only) the RX interrupts.
 
-[1] https://lore.kernel.org/bpf/172708047825.3261420.5126267811201364070.git-patchwork-notify@kernel.org/T/#mb065649b5ab8f7ea5b03c215bdc6555a0b76c0d7
+Matthias
 
-> 
-> And to remind, 02/14 must be fixed in any case unless I am totally confused,
-> handler_chain() can leak return_instance.
 
-yep it was missing kfree, but it's not needed in this new version
+> On the other hand, I would also like to convert the !peripteral part of
+> the driver to rx-offload. However, I am still looking for potential
+> customers for this task. I have talked to some TI and ST people at LPC,
+> maybe they are interested.
+>=20
+> I think let's first fix edge sensitive IRQs, then rework the driver to
+> rx-offload.
+>=20
+> regards,
+> Marc
+>=20
+> =C2=A0
 
-> 
-> > also on top of that.. I discussed with Andrii the possibility of dropping
-> > the UPROBE_HANDLER_IWANTMYCOOKIE completely and setup cookie for any consumer
-> > that has both 'handler' and 'ret_handler' defined, wdyt?
-> 
-> Up to you. As I said from the very beginning I won't insist on _IWANTMYCOOKIE.
-
-ok
-
-> 
-> >  	list_for_each_entry_srcu(uc, &uprobe->consumers, cons_node,
-> >  				 srcu_read_lock_held(&uprobes_srcu)) {
-> > +		ric = return_consumer_find(ri, &ric_idx, uc->id);
-> >  		if (uc->ret_handler)
-> > -			uc->ret_handler(uc, ri->func, regs);
-> > +			uc->ret_handler(uc, ri->func, regs, ric ? &ric->cookie : NULL);
-> >  	}
-> >  	srcu_read_unlock(&uprobes_srcu, srcu_idx);
-> 
-> return_consumer_find() makes no sense if !uc->ret_handler, can you move
-> 
-> 		ric = return_consumer_find(ri, &ric_idx, uc->id);
-> 
-> into the "if (uc->ret_handler)" block?
-
-ok, will move that
-
-thanks,
-jirka
+--=20
+TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
+any
+Amtsgericht M=C3=BCnchen, HRB 105018
+Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
+neider
+https://www.tq-group.com/
 
