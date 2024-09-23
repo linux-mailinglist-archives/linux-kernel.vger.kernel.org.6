@@ -1,103 +1,205 @@
-Return-Path: <linux-kernel+bounces-335628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65BAE97E845
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:12:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9548297E877
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:20:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BE001F21F69
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 09:12:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AC61B209F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 09:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 232301946DF;
-	Mon, 23 Sep 2024 09:11:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7B2194ACF;
+	Mon, 23 Sep 2024 09:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="dVpPeh8V"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b="RBYCQZDR"
+Received: from ironport.ite.com.tw (60-251-196-230.hinet-ip.hinet.net [60.251.196.230])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0F640855;
-	Mon, 23 Sep 2024 09:11:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 305CC51C45
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 09:20:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.251.196.230
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727082713; cv=none; b=X7WdTBOHwbrFRuxaN410tsFkzVhjScPA2m4pwjU9C7AhCn8GCYjnUbV4mBbGwx+cvRdZyG4WYQvi+kAxOi5pZn8tbDvS9MGb3rhZQa9HLzoZYPpJaLBcNMFWlVHiGL4iI+1ltE8hryRoK0c8du+/mWEwAtlu0FcGwSva8A4ProQ=
+	t=1727083224; cv=none; b=qhHtbohOa8jpZ7qxDE0dnRmTL8o71HNvus36koQBD7PnCqq83uC/QBp/zAnrkZXybX2KKdw4W0b8d5cL2D2LIgSgr6wTiQpWfX/RekM/CXwNyMiRTh8slmjecg9XbPlMbRDrgLYr6PbvltYagwm9UCZyJ2+UTWL4DTzc1vzalFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727082713; c=relaxed/simple;
-	bh=gBWers0ECLaN1Tpp4n0BsgXZB6TnnXdA1G+Tw1G+++8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=S+E8CNm5qANkGZrBPWcBk46Y+qP+zSe/+2jf7mAHjbjZihmuc/1OqFBvsMtYqJ4OVP4neHSRznfDUBYZl1Jr2EhEIF90VaFXrWn11K6vfDaZv6NuMusL8a+xOWvoSR6TBt+GL3XXIA7zKSI6tJfzB+F0t06m1v1GjTu49J08oOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=dVpPeh8V; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727082698; x=1727687498; i=markus.elfring@web.de;
-	bh=CQk8PX6PSOJaguatjos6FNc2UVXPNPDpCg2VE5s7YPM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=dVpPeh8V/npgHGhjEYTSr1Gokmbqgm1e13n7hfftDUUzmBWR4Hyc4NSLhxzjQw/J
-	 ARgEQHsyjSXw0nacA+1RzmL5cmKqE+XcpeauM96ue5IXySBi8KRhKb1kShOXwnQlY
-	 tO9jIFzLLf0L8nP9UiwQ7QELzp7NlUJ94CI8WNiz97ZKFv2Kif9BBiiiuRiFl1CxT
-	 fstd79UfoqsviuW61lRYfMnDdIOiVi0lCdipVFSRrQXh8uuUTnLSatNMB/iN0mWHN
-	 uhOuNtiSKDeQokACjzHqx001Y+yNIrC2LZ5KegfnTKpWhhtcdd7oJqNPOVCZsP9ru
-	 pgmBFLbEHZBWywpgUA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MUCz1-1sSZmT0HXX-00PhVO; Mon, 23
- Sep 2024 11:11:38 +0200
-Message-ID: <c7654504-a455-4972-9861-39800732d0df@web.de>
-Date: Mon, 23 Sep 2024 11:11:19 +0200
+	s=arc-20240116; t=1727083224; c=relaxed/simple;
+	bh=dIkgfhrEjhelNkL2u5RedzP8k4BOOuDdCHYIlm9xUzA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SsE4ScNFXqLZG8xnFlswvaZUU92niTnbf+gV1JnE0BcMvQLbNazXq8yjlKeT9hMT53lZeG0TYyrPEUG4ABgccIZmI4XmJJwg3eRqAMPodL/nMnVuz+XOJrPN6YsNjGZ5oEUV9IugmiQOcluWOQhy+D+8wcjMc5C1FSFWKMH/ZKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw; spf=pass smtp.mailfrom=ite.com.tw; dkim=fail (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b=RBYCQZDR reason="key not found in DNS"; arc=none smtp.client-ip=60.251.196.230
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ite.com.tw
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=ite.com.tw; s=dkim;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=P5fEn5an4hKFCvFdp5LcoYh8nytvrSjDeatXQxf7eDs=;
+  b=RBYCQZDRIg36QspMW9L/CzEx4CgsyH4ZNPVtR2CY6hWed/8ynmiXD618
+   QOkPrIsisYMex+2xiTheylDIXkYaNmlVxisxxNwyFmbX2D7lsaOHPD7aq
+   7FRjOR9S/LMwLcEOLnSwfi64ZbK7JRr+2dK0fu51MI1TBWOrtBcq4vSW1
+   UGB0LFBsGkiIOKbDhUZyrNXGR/61yIr6WZfuDpwJCdIWZdG6akO52+u4t
+   EaG/qBLSjVnxOXPeDEQviqGs4XVyNKvwuC7MftBRbZ5qZUQXlve9O7az0
+   79bc4mfsX76MrXv3VMMlfprzn3l+KqaQ683m9LXaDG5lJMXjCTO5RozlS
+   w==;
+X-CSE-ConnectionGUID: V8gX226CSWKLG872PEsVOQ==
+X-CSE-MsgGUID: YrnLVi9MR/yfrtn7c+ZjsQ==
+Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
+  by ironport.ite.com.tw with ESMTP; 23 Sep 2024 17:19:09 +0800
+Received: from tpemail1.internal.ite.com.tw (TPEMAIL1.internal.ite.com.tw [192.168.15.58])
+	by mse.ite.com.tw with ESMTP id 48N9J6GL092387;
+	Mon, 23 Sep 2024 17:19:06 +0800 (GMT-8)
+	(envelope-from Hermes.Wu@ite.com.tw)
+Received: from LAPTOP-C4GM1L3U.localdomain (192.168.82.6) by
+ TPEMAIL1.internal.ite.com.tw (192.168.15.58) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 23 Sep 2024 17:19:06 +0800
+From: Hermes Wu <Hermes.Wu@ite.com.tw>
+To: Pin-yen Lin <treapking@chromium.org>
+CC: Kenneth Hung <Kenneth.hung@ite.com.tw>, Hermes Wu <Hermes.wu@ite.com.tw>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej
+ Skrabec <jernej.skrabec@gmail.com>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        "open list:DRM DRIVERS"
+	<dri-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: [PATCH 1/2] drm/bridge: it6505: fix AUX read use aux fifo
+Date: Mon, 23 Sep 2024 17:13:34 +0800
+Message-ID: <20240923091337.13183-1-Hermes.Wu@ite.com.tw>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: ntb@lists.linux.dev, kernel-janitors@vger.kernel.org,
- Allen Hubbe <allenbh@gmail.com>, Dave Jiang <dave.jiang@intel.com>,
- Jon Mason <jdmason@kudzu.us>, Max Hawking <maxahawking@sonnenkinder.org>,
- Serge Semin <fancer.lancer@gmail.com>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH 0/2] ntb_perf: Adjustments for perf_copy_chunk()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:2iFzJ113ItDpOQFoSOCd53j7v7CtZhsPaoqrsxKHESuZ0EPAyXB
- O7vdFQH5LSWrSh+JiXd84NpM1YBr6uWFshTNApknj5wFwa/tFlERLbF52miGZ03gTcgzmKf
- MiciJDfh+L8/UoVCpcjxxsT+ztcpBqcAtRvQYqYGhx8W3/7kcKSowK2PmPr5duci4j2Yd/o
- 3HGK78uxqO/xDN/1VnanQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Pbsu1iVKWfo=;5yWcn41CawU1fcs22dDqINIbaDd
- 6Y9coIH1N2i1xUT+71T4HXG8Rk8HEKY/wkDpjjzdc7IAVoFroTxlfdtccBgG584ESTX1noF2t
- eWrlJrNa6apPCHoQ+x3yngsrKX6wgC+qtcUP7Qnd1vgEo5Em0jKSo63s9vKN5dNTcRi1RROW2
- vKv98xfL7EyWMBbMH+ae9SYeW4B41xqpn4XHcgwa2x2fK/i46lY+7wyzxzNfCoyS96G82AxuG
- A2zoiDhuSIROTaxMnJMk5SfdAWrIbPOazMmNr0hXVDUg7pC63JeT+4oUI2fW3jzYE5qctlt+7
- MLs7RcQkVTt3C9ncZYXBvq0z/0XkG0G2p3t/x5D+XjYR1JtsRV26KLnk1WwNqKUbVs7ZkKMg8
- j792uFHCk2zwLfCyvTQNW4UTGcQfx49u69EAGWNUQf8zJrSGJfpQGJ8Ag3NDxJD/1foJwhxUR
- 4dNVSqeeCnTgUZr9qSsPPko6892kqndNNIobMXgfHeYV6nqsmAk8YGMKYnl6WBEaSE6e/cHwY
- pzrXKpvdexvu4mWb0L8BjpMWzOziTw7jAgnR6JwbTzPR/A41RHFPCX1fGPqOWJHTycTAs+L3Q
- FtCNRGaDjA3r2Cy+QITTPxU9LRmf0hUx32bG01Y91snZNIACykiyzjfyCERFes8Is2N+CXtwu
- C9GZMpjuDbydOoeB9CEYYOkDp3kY8qsNYwLd7NGpqGYFXVz+ADY3p1j5teQ9zU8ZwtS6p3vw+
- F9mzpeojW/V5TVpav3LhjlpfHazNipfrB2RJtrI9/N/JRq5/qw4c2e+uNJ+cyNI/6FR4GBrS3
- 1E/AVYXgB5XQmsiIhu7kCmDA==
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TPEMAIL1.internal.ite.com.tw (192.168.15.58) To
+ TPEMAIL1.internal.ite.com.tw (192.168.15.58)
+X-TM-SNTS-SMTP:
+	0A4CED03A66246B29512614DEE667410E6A449BB2FE2BB3AAADAF76EE9FD52ED2002:8
+X-MAIL:mse.ite.com.tw 48N9J6GL092387
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 23 Sep 2024 11:00:22 +0200
+From: Hermes Wu <Hermes.wu@ite.com.tw>
 
-A few update suggestions were taken into account
-from static source code analysis.
+Changes in v3:
+ -New in v3
 
-Markus Elfring (2):
-  Delete duplicate dmaengine_unmap_put() call
-  Use common error handling code
+it6505 AUX FIFO mode only 16 byte.
+AUX FIFO mode only supports EDID read and DPCD KSV FIFO area.
 
- drivers/ntb/test/ntb_perf.c | 19 ++++++++-----------
- 1 file changed, 8 insertions(+), 11 deletions(-)
 
-=2D-
-2.46.1
+Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
+---
+ drivers/gpu/drm/bridge/ite-it6505.c | 25 +++++++++++++++++--------
+ 1 file changed, 17 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
+index 87b8545fccc0..d8b40ad890bf 100644
+--- a/drivers/gpu/drm/bridge/ite-it6505.c
++++ b/drivers/gpu/drm/bridge/ite-it6505.c
+@@ -300,7 +300,7 @@
+ #define MAX_CR_LEVEL 0x03
+ #define MAX_EQ_LEVEL 0x03
+ #define AUX_WAIT_TIMEOUT_MS 15
+-#define AUX_FIFO_MAX_SIZE 32
++#define AUX_FIFO_MAX_SIZE 16
+ #define PIXEL_CLK_DELAY 1
+ #define PIXEL_CLK_INVERSE 0
+ #define ADJUST_PHASE_THRESHOLD 80000
+@@ -324,8 +324,13 @@ enum aux_cmd_type {
+ 	CMD_AUX_NATIVE_READ = 0x0,
+ 	CMD_AUX_NATIVE_WRITE = 0x5,
+ 	CMD_AUX_I2C_EDID_READ = 0xB,
++
++	/* KSV list read using AUX native read with FIFO */
++	CMD_AUX_GET_KSV_LIST = 0x10,
+ };
+ 
++#define GET_AUX_CONTROL_CODE(cmd) ((cmd) & 0x0F)
++
+ enum aux_cmd_reply {
+ 	REPLY_ACK,
+ 	REPLY_NACK,
+@@ -965,7 +970,8 @@ static ssize_t it6505_aux_operation(struct it6505 *it6505,
+ 	it6505_set_bits(it6505, REG_AUX_CTRL, AUX_USER_MODE, AUX_USER_MODE);
+ 
+ aux_op_start:
+-	if (cmd == CMD_AUX_I2C_EDID_READ) {
++	/* HW AUX FIFO supports only EDID and DCPD KSV FIFO aread */
++	if (cmd == CMD_AUX_I2C_EDID_READ || cmd == CMD_AUX_GET_KSV_LIST) {
+ 		/* AUX EDID FIFO has max length of AUX_FIFO_MAX_SIZE bytes. */
+ 		size = min_t(size_t, size, AUX_FIFO_MAX_SIZE);
+ 		/* Enable AUX FIFO read back and clear FIFO */
+@@ -996,7 +1002,7 @@ static ssize_t it6505_aux_operation(struct it6505 *it6505,
+ 				  size);
+ 
+ 	/* Aux Fire */
+-	it6505_write(it6505, REG_AUX_CMD_REQ, cmd);
++	it6505_write(it6505, REG_AUX_CMD_REQ, GET_AUX_CONTROL_CODE(cmd));
+ 
+ 	ret = it6505_aux_wait(it6505);
+ 	if (ret < 0)
+@@ -1030,7 +1036,7 @@ static ssize_t it6505_aux_operation(struct it6505 *it6505,
+ 		goto aux_op_start;
+ 	}
+ 
+-	if (cmd == CMD_AUX_I2C_EDID_READ) {
++	if (cmd == CMD_AUX_I2C_EDID_READ || cmd == CMD_AUX_GET_KSV_LIST) {
+ 		for (i = 0; i < size; i++) {
+ 			ret = it6505_read(it6505, REG_AUX_DATA_FIFO);
+ 			if (ret < 0)
+@@ -1055,7 +1061,7 @@ static ssize_t it6505_aux_operation(struct it6505 *it6505,
+ 	ret = i;
+ 
+ aux_op_err:
+-	if (cmd == CMD_AUX_I2C_EDID_READ) {
++	if (cmd == CMD_AUX_I2C_EDID_READ || cmd == CMD_AUX_GET_KSV_LIST) {
+ 		/* clear AUX FIFO */
+ 		it6505_set_bits(it6505, REG_AUX_CTRL,
+ 				AUX_EN_FIFO_READ | CLR_EDID_FIFO,
+@@ -1078,8 +1084,11 @@ static ssize_t it6505_aux_do_transfer(struct it6505 *it6505,
+ 	int i, ret_size, ret = 0, request_size;
+ 
+ 	mutex_lock(&it6505->aux_lock);
+-	for (i = 0; i < size; i += 4) {
+-		request_size = min((int)size - i, 4);
++	for (i = 0; i < size; ) {
++		if (cmd == CMD_AUX_I2C_EDID_READ || cmd == CMD_AUX_GET_KSV_LIST)
++			request_size = min_t(int, (int)size - i, AUX_FIFO_MAX_SIZE);
++		else
++			request_size = min_t(int, (int)size - i, 4);
+ 		ret_size = it6505_aux_operation(it6505, cmd, address + i,
+ 						buffer + i, request_size,
+ 						reply);
+@@ -1088,6 +1097,7 @@ static ssize_t it6505_aux_do_transfer(struct it6505 *it6505,
+ 			goto aux_op_err;
+ 		}
+ 
++		i += request_size;
+ 		ret += ret_size;
+ 	}
+ 
+@@ -2257,7 +2267,6 @@ static void it6505_link_training_work(struct work_struct *work)
+ 		it6505->auto_train_retry--;
+ 		it6505_dump(it6505);
+ 	}
+-
+ }
+ 
+ static void it6505_plugged_status_to_codec(struct it6505 *it6505)
+-- 
+2.34.1
 
 
