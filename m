@@ -1,308 +1,141 @@
-Return-Path: <linux-kernel+bounces-336315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88A6B983914
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 23:24:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F408798391D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 23:31:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 902811C21988
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 21:24:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DC1FB21437
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 21:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9151A84A3F;
-	Mon, 23 Sep 2024 21:24:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF7483A06;
+	Mon, 23 Sep 2024 21:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BiVPcTPV";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RthMSAos";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BiVPcTPV";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RthMSAos"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J+JOV1PR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9420E7F7DB;
-	Mon, 23 Sep 2024 21:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D3C1EB36;
+	Mon, 23 Sep 2024 21:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727126670; cv=none; b=m8DZIyqk0j9A78EHb95SQtA7DOEmUkwX4Ui61kdV96FgzXbbJZMAJKq2H6o7AHDAxY3yqH4mJtbi8WqCJiNHxsbD5gtGwQZ1JCbGNMvCAwg6dw4hhZFX6z2Ism404Hf1FHOnE9jYqDCff4xanElC9cJAxtz5IPAVL8YSBonJIKM=
+	t=1727127070; cv=none; b=B1aaWggJDpddJSAJyFOLJD98c2bDnvsIE8znR+DzNpF3s9mCYNByaEAFBRTrfmYU4bQipSqO9I2gtk75wyuYrJnJnrd2h/1wkR1/Zmooz3VY0ke3N4DEMa7aSurHZuNX65Gx3HnP37jZr/YJTYcF2ulgr2GBZ6NMxi/4vS6T9WE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727126670; c=relaxed/simple;
-	bh=DWT9LTgTwgl3oI2zR0kqC0LrGcG2j48l8BSn+c9QYPw=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=HJoYNeKIhrv3WzQgOIVh3KR4tTNMkAqPUYTg8SV0Xl7C8lMh5JHKZ/4LyJX13T9WW55iPFMHbyUFqyD4RTnWVxZyGN9sKWdCt5JaRv5Li1BjjcYvzgxGTQOJ5h0yt8C15AbaefsfLK4Hcd6gkg1pWfdNL1OiZrX4F6QVE+i0oGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BiVPcTPV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RthMSAos; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BiVPcTPV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RthMSAos; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A88F421CAC;
-	Mon, 23 Sep 2024 21:24:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1727126666; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r6jB3NjLBHp1Hb3SCVME9sYqKJRwKArJJM5yKt3AWpM=;
-	b=BiVPcTPVQQOXadtEkCT6qpOsPvatJsvHeHJGVFZGRFRwU2qceGX9Yge1cBgUxEaI9WXnzd
-	ZZgoiHBRr2Z6DlnKdhYroQCZ459mSFYnoTq4wtN3q4g4A90d+Iv3AYOgUHNvD+x6Sq2XoD
-	i1A1/nu3HKTiXC76YqB18jXM/yeHCuk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1727126666;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r6jB3NjLBHp1Hb3SCVME9sYqKJRwKArJJM5yKt3AWpM=;
-	b=RthMSAoskmprqIuYzWJ0v2jTh7zRz6HFj8WbgEEo3NdElLavWk5mHRDUoD06JTlUzZ3F7E
-	qY1/qrXn6ICjawCw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=BiVPcTPV;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=RthMSAos
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1727126666; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r6jB3NjLBHp1Hb3SCVME9sYqKJRwKArJJM5yKt3AWpM=;
-	b=BiVPcTPVQQOXadtEkCT6qpOsPvatJsvHeHJGVFZGRFRwU2qceGX9Yge1cBgUxEaI9WXnzd
-	ZZgoiHBRr2Z6DlnKdhYroQCZ459mSFYnoTq4wtN3q4g4A90d+Iv3AYOgUHNvD+x6Sq2XoD
-	i1A1/nu3HKTiXC76YqB18jXM/yeHCuk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1727126666;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r6jB3NjLBHp1Hb3SCVME9sYqKJRwKArJJM5yKt3AWpM=;
-	b=RthMSAoskmprqIuYzWJ0v2jTh7zRz6HFj8WbgEEo3NdElLavWk5mHRDUoD06JTlUzZ3F7E
-	qY1/qrXn6ICjawCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D4C671347F;
-	Mon, 23 Sep 2024 21:24:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id HHOTIYXc8WYCUwAAD6G6ig
-	(envelope-from <neilb@suse.de>); Mon, 23 Sep 2024 21:24:21 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1727127070; c=relaxed/simple;
+	bh=QTekxfaNaN8IG6PteUiDDFC8Jb8wzI+6h9p2OTkA0iE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sNVPw99vQIBjKJ3uR1jDjsyb94+/nCj2y0JnfvvaSWHcVewYy96zksCjcIcY5ANP59OJPZyMDHSUCrLyPKcpgaB2RcPf8D+ixG00Ani6XLcpe9B+ULWznLG/Z1QY54AJRZmu7tKUdpqTLQ7zDLe87UektDNzyc6cx/gMllFNbXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J+JOV1PR; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727127069; x=1758663069;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QTekxfaNaN8IG6PteUiDDFC8Jb8wzI+6h9p2OTkA0iE=;
+  b=J+JOV1PRw+iEmHijG/H7ZRUBnkqpzW5pL3A00meqHPgCoX6gGEUaFnUh
+   2Y9Gq0nugYPo9NrCOsbtVSsTmlYGD0kg4NcVW7OysFsktJzBDNQAb0zZz
+   6o4SnuPtmYi/Bc0RjcZB7NyhHPb40meEmNsF6phDTzFGuE0MxC3y7aTTq
+   rwpsEcfz7uz9QLLQKDpu753kfpwa6741pX0hEEh4Ww1NvvlKonkBQJ6b1
+   Rt66yKs/BW18djh7Cbs1dA7CfeDPT+vNxbQfdYokEY79do0R4Nl4DsPcp
+   ehKIRNxe+JQ9hBLuhAPeyxmp9KL7prUMi3FcgfyU2I7woa6wh+HVfzD+q
+   w==;
+X-CSE-ConnectionGUID: VtR71Sf8TQeEFPecHKbJbw==
+X-CSE-MsgGUID: QBcWKXEDTa6RSQ2/aKOaqA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="37233479"
+X-IronPort-AV: E=Sophos;i="6.10,252,1719903600"; 
+   d="scan'208";a="37233479"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 14:31:08 -0700
+X-CSE-ConnectionGUID: tG/6mynYT6yslR9lqNynDA==
+X-CSE-MsgGUID: 4MwurWLkQs6iflw9/6WQSg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,252,1719903600"; 
+   d="scan'208";a="76121064"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 23 Sep 2024 14:30:45 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ssqdm-000HcP-1a;
+	Mon, 23 Sep 2024 21:30:42 +0000
+Date: Tue, 24 Sep 2024 05:30:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Shakeel Butt <shakeel.butt@linux.dev>, linux-api@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Minchan Kim <minchan@kernel.org>
+Subject: Re: [PATCH 1/2] mm/madvise: introduce PR_MADV_SELF flag to
+ process_madvise()
+Message-ID: <202409240556.LgM8vOIF-lkp@intel.com>
+References: <077be0d59cb1047870a84c87c62e7b027af1c75d.1727106751.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Mirsad Todorovac" <mtodorovac69@gmail.com>
-Cc: linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, "Chuck Lever" <chuck.lever@oracle.com>,
- "Jeff Layton" <jlayton@kernel.org>, "Olga Kornievskaia" <okorniev@redhat.com>,
- "Dai Ngo" <Dai.Ngo@oracle.com>, "Tom Talpey" <tom@talpey.com>,
- "Trond Myklebust" <trondmy@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>,
- "Jakub Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>,
- "Mirsad Todorovac" <mtodorovac69@gmail.com>
-Subject: Re: [PATCH v1 1/1] SUNRPC: Make enough room in servername[] for
- AF_UNIX addresses
-In-reply-to: <20240923205545.1488448-2-mtodorovac69@gmail.com>
-References: <20240923205545.1488448-2-mtodorovac69@gmail.com>
-Date: Tue, 24 Sep 2024 07:24:10 +1000
-Message-id: <172712665050.17050.14126694149839508223@noble.neil.brown.name>
-X-Rspamd-Queue-Id: A88F421CAC
-X-Spam-Score: -6.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-6.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,oracle.com,kernel.org,redhat.com,talpey.com,davemloft.net,google.com,gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,davemloft.net:email,talpey.com:email,suse.de:email,suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <077be0d59cb1047870a84c87c62e7b027af1c75d.1727106751.git.lorenzo.stoakes@oracle.com>
 
-On Tue, 24 Sep 2024, Mirsad Todorovac wrote:
-> GCC 13.2.0 reported with W=3D1 build option the following warning:
+Hi Lorenzo,
 
-See
-  https://lore.kernel.org/all/20240814093853.48657-1-kunwu.chan@linux.dev/
+kernel test robot noticed the following build errors:
 
-I don't think anyone really cares about this one.
+[auto build test ERROR on akpm-mm/mm-everything]
+[also build test ERROR on arnd-asm-generic/master soc/for-next linus/master v6.11 next-20240923]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-NeilBrown
+url:    https://github.com/intel-lab-lkp/linux/commits/Lorenzo-Stoakes/mm-madvise-introduce-PR_MADV_SELF-flag-to-process_madvise/20240924-000845
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/077be0d59cb1047870a84c87c62e7b027af1c75d.1727106751.git.lorenzo.stoakes%40oracle.com
+patch subject: [PATCH 1/2] mm/madvise: introduce PR_MADV_SELF flag to process_madvise()
+config: parisc-allnoconfig (https://download.01.org/0day-ci/archive/20240924/202409240556.LgM8vOIF-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240924/202409240556.LgM8vOIF-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409240556.LgM8vOIF-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   mm/madvise.c: In function '__do_sys_process_madvise':
+>> mm/madvise.c:1514:22: error: 'PR_MADV_SELF' undeclared (first use in this function)
+    1514 |         if (flags & ~PR_MADV_SELF) {
+         |                      ^~~~~~~~~~~~
+   mm/madvise.c:1514:22: note: each undeclared identifier is reported only once for each function it appears in
 
 
->=20
-> net/sunrpc/clnt.c: In function =E2=80=98rpc_create=E2=80=99:
-> net/sunrpc/clnt.c:582:75: warning: =E2=80=98%s=E2=80=99 directive output ma=
-y be truncated writing up to 107 bytes into \
-> 					a region of size 48 [-Wformat-truncation=3D]
->   582 |                                 snprintf(servername, sizeof(servern=
-ame), "%s",
->       |                                                                    =
-       ^~
-> net/sunrpc/clnt.c:582:33: note: =E2=80=98snprintf=E2=80=99 output between 1=
- and 108 bytes into a destination of size 48
->   582 |                                 snprintf(servername, sizeof(servern=
-ame), "%s",
->       |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
-~~~~~~~~~~~
->   583 |                                          sun->sun_path);
->       |                                          ~~~~~~~~~~~~~~
->=20
->    548         };
->  =E2=86=92 549         char servername[48];
->    550         struct rpc_clnt *clnt;
->    551         int i;
->    552
->    553         if (args->bc_xprt) {
->    554                 WARN_ON_ONCE(!(args->protocol & XPRT_TRANSPORT_BC));
->    555                 xprt =3D args->bc_xprt->xpt_bc_xprt;
->    556                 if (xprt) {
->    557                         xprt_get(xprt);
->    558                         return rpc_create_xprt(args, xprt);
->    559                 }
->    560         }
->    561
->    562         if (args->flags & RPC_CLNT_CREATE_INFINITE_SLOTS)
->    563                 xprtargs.flags |=3D XPRT_CREATE_INFINITE_SLOTS;
->    564         if (args->flags & RPC_CLNT_CREATE_NO_IDLE_TIMEOUT)
->    565                 xprtargs.flags |=3D XPRT_CREATE_NO_IDLE_TIMEOUT;
->    566         /*
->    567          * If the caller chooses not to specify a hostname, whip
->    568          * up a string representation of the passed-in address.
->    569          */
->    570         if (xprtargs.servername =3D=3D NULL) {
->    571                 struct sockaddr_un *sun =3D
->    572                                 (struct sockaddr_un *)args->address;
->    573                 struct sockaddr_in *sin =3D
->    574                                 (struct sockaddr_in *)args->address;
->    575                 struct sockaddr_in6 *sin6 =3D
->    576                                 (struct sockaddr_in6 *)args->address;
->    577
->    578                 servername[0] =3D '\0';
->    579                 switch (args->address->sa_family) {
->  =E2=86=92 580                 case AF_LOCAL:
->  =E2=86=92 581                         if (sun->sun_path[0])
->  =E2=86=92 582                                 snprintf(servername, sizeof(=
-servername), "%s",
->  =E2=86=92 583                                          sun->sun_path);
->  =E2=86=92 584                         else
->  =E2=86=92 585                                 snprintf(servername, sizeof(=
-servername), "@%s",
->  =E2=86=92 586                                          sun->sun_path+1);
->  =E2=86=92 587                         break;
->    588                 case AF_INET:
->    589                         snprintf(servername, sizeof(servername), "%p=
-I4",
->    590                                  &sin->sin_addr.s_addr);
->    591                         break;
->    592                 case AF_INET6:
->    593                         snprintf(servername, sizeof(servername), "%p=
-I6",
->    594                                  &sin6->sin6_addr);
->    595                         break;
->    596                 default:
->    597                         /* caller wants default server name, but
->    598                          * address family isn't recognized. */
->    599                         return ERR_PTR(-EINVAL);
->    600                 }
->    601                 xprtargs.servername =3D servername;
->    602         }
->    603
->    604         xprt =3D xprt_create_transport(&xprtargs);
->    605         if (IS_ERR(xprt))
->    606                 return (struct rpc_clnt *)xprt;
->=20
-> After the address family AF_LOCAL was added in the commit 176e21ee2ec89, th=
-e old hard-coded
-> size for servername of char servername[48] no longer fits. The maximum AF_U=
-NIX address size
-> has now grown to UNIX_PATH_MAX defined as 108 in "include/uapi/linux/un.h" .
->=20
-> The lines 580-587 were added later, addressing the leading zero byte '\0', =
-but did not fix
-> the hard-coded servername limit.
->=20
-> The AF_UNIX address was truncated to 47 bytes + terminating null byte. This=
- patch will fix the
-> servername in AF_UNIX family to the maximum permitted by the system:
->=20
->    548         };
->  =E2=86=92 549         char servername[UNIX_PATH_MAX];
->    550         struct rpc_clnt *clnt;
->=20
-> Fixes: 4388ce05fa38b ("SUNRPC: support abstract unix socket addresses")
-> Fixes: 510deb0d7035d ("SUNRPC: rpc_create() default hostname should support=
- AF_INET6 addresses")
-> Fixes: 176e21ee2ec89 ("SUNRPC: Support for RPC over AF_LOCAL transports")
-> Cc: Neil Brown <neilb@suse.de>
-> Cc: Chuck Lever <chuck.lever@oracle.com>
-> Cc: Trond Myklebust <trondmy@kernel.org>
-> Cc: Anna Schumaker <anna@kernel.org>
-> Cc: Jeff Layton <jlayton@kernel.org>
-> Cc: Olga Kornievskaia <okorniev@redhat.com>
-> Cc: Dai Ngo <Dai.Ngo@oracle.com>
-> Cc: Tom Talpey <tom@talpey.com>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Eric Dumazet <edumazet@google.com>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: Paolo Abeni <pabeni@redhat.com>
-> Cc: linux-nfs@vger.kernel.org
-> Cc: netdev@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Mirsad Todorovac <mtodorovac69@gmail.com>
-> ---
->  v1:
-> 	initial version.
->=20
->  net/sunrpc/clnt.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/net/sunrpc/clnt.c b/net/sunrpc/clnt.c
-> index 09f29a95f2bc..67099719893e 100644
-> --- a/net/sunrpc/clnt.c
-> +++ b/net/sunrpc/clnt.c
-> @@ -546,7 +546,7 @@ struct rpc_clnt *rpc_create(struct rpc_create_args *arg=
-s)
->  		.connect_timeout =3D args->connect_timeout,
->  		.reconnect_timeout =3D args->reconnect_timeout,
->  	};
-> -	char servername[48];
-> +	char servername[UNIX_PATH_MAX];
->  	struct rpc_clnt *clnt;
->  	int i;
-> =20
-> --=20
-> 2.43.0
->=20
->=20
+vim +/PR_MADV_SELF +1514 mm/madvise.c
 
+  1502	
+  1503	SYSCALL_DEFINE5(process_madvise, int, pidfd, const struct iovec __user *, vec,
+  1504			size_t, vlen, int, behavior, unsigned int, flags)
+  1505	{
+  1506		ssize_t ret;
+  1507		struct iovec iovstack[UIO_FASTIOV];
+  1508		struct iovec *iov = iovstack;
+  1509		struct iov_iter iter;
+  1510		struct task_struct *task;
+  1511		struct mm_struct *mm;
+  1512		unsigned int f_flags;
+  1513	
+> 1514		if (flags & ~PR_MADV_SELF) {
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
