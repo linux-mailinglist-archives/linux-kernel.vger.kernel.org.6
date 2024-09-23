@@ -1,46 +1,47 @@
-Return-Path: <linux-kernel+bounces-336040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B382697EE64
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:42:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EECD97EE67
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:43:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44BEEB2038A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:42:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 036DAB2151D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:43:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF594199FC6;
-	Mon, 23 Sep 2024 15:42:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A06719CC23;
+	Mon, 23 Sep 2024 15:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b="APlDxWqm";
-	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="Az776og0"
-Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WHJ5hmH9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB692199222
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 15:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D4F198E6D;
+	Mon, 23 Sep 2024 15:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727106151; cv=none; b=P0kJPSL54gCegiSV+B2vgllUieUikrDI6rjCCj9PJNGyN7Ls9bjGAF3b0f9X57BTop8ig0x7jYp8CC4JMBROk/XMMpGOfiK9atMq2VzBMTmZAg/ET4VNzwNgeTyG6Fyq+ZS1/Zctf67md+p4we3fI4NFlJ88O/ciF3thKjJhcgI=
+	t=1727106165; cv=none; b=fWk6fUqpGrzRpM1rb2SqJN2rlMKIFKY5vshXi/euyXX7tyk5rrGfu0c/zKXPELvKaegbKiEL9+8TTWK/5rzmmaduv1xHl/tkEGa1OhXa4/BWZMmCUVsjKNtwTloqZxGSTYgWzmzTe9pZTDHt6mBqj4gO0zLfL+7VpJwTMLjVl0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727106151; c=relaxed/simple;
-	bh=jiaxN8v6Qalp5o4bqqg3abzazuoU9/7sYLZwTbmnuaY=;
+	s=arc-20240116; t=1727106165; c=relaxed/simple;
+	bh=t+7IuhRWDk00ypz8u+yjo2secAHWniKaBdDHZARt9tA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VyH7u7R1UXUIwED+fSlKId4nl+Bh/4vEe+85jwabpx0fTnnFJKdPqqdLq9cw/WdE8bxfVzmwhw6g54wkgBerhq9yHZ9joieTYmEv5b+nJBTUCIbt0BxIv1BObCat3uVKuywYzfl4hoarxHk2WN2cwPDsk0d6+T7vWH/PwSPhcG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev; spf=pass smtp.mailfrom=lkcamp.dev; dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b=APlDxWqm; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=Az776og0; arc=none smtp.client-ip=34.202.193.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lkcamp.dev
-Authentication-Results: purelymail.com; auth=pass
-DKIM-Signature: a=rsa-sha256; b=APlDxWqmTBXAFe7838HFRj9wZn/EWIxAzqoUbY+dtTNtL3NrEjwwpb2IytDBm2MipAoeI4721ewChjGJvkv8WjGylOmIee53b4nhX5tx8UQ9K6cn9wjS6GPMLKbTRXzQjO0toZlPrf/3O2NzaRKA/gK0k4Zm4tGR98tQ9DYO523wUm0kKXOP4gPJLl7OBze7+WI4s3h5tLgaEj13ptNEyjgRx1B4reyGFqMUR9mkKM+bbfwlSo4eXFawqOgqiCm5n4eCewVJzQXmJXF9kd4KWuRlIrHG1CpKaVEqlW0MydwDSd1SwPMEPk4/TDa5MBii+Ypgtw1usXjclr26pGWH0A==; s=purelymail3; d=lkcamp.dev; v=1; bh=jiaxN8v6Qalp5o4bqqg3abzazuoU9/7sYLZwTbmnuaY=; h=Received:Date:Subject:To:From;
-DKIM-Signature: a=rsa-sha256; b=Az776og0L+ls8jqQjYsVmQ9ClT/HCXcaXmtyN6Qjm5EOYbkcJ9XnxOHW3KxOIsyDP7eimWjHRwAzFU9pNtNI6NI16TmExBu7WIAHh2AAj41hIzInk2asE6CKSH+zvPMFuJ6w8ZqSZhxhSdVnDS9cbC3+T409mzTalb2rccfTScoQ5XkpqJL2Re+snnvhpGFxpByzCfLO+bgGgSE/Xnqih3UMyez2rdcdRc/2f1JUtlkZaKwq9aI35IBC4C79woiNz1nlIN4hLk/TInDzgAJ+Mzf6CE5mVsQXL6C0+u0MLn4xuqeWRn4jC39GYOi1SIk7SLlEy7QPLi1bWsvY9b7IAQ==; s=purelymail3; d=purelymail.com; v=1; bh=jiaxN8v6Qalp5o4bqqg3abzazuoU9/7sYLZwTbmnuaY=; h=Feedback-ID:Received:Date:Subject:To:From;
-Feedback-ID: 48571:7130:null:purelymail
-X-Pm-Original-To: linux-kernel@vger.kernel.org
-Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -1210100400;
-          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Mon, 23 Sep 2024 15:42:18 +0000 (UTC)
-Message-ID: <53395c4b-8e7e-4871-aeed-cf56215a3c26@lkcamp.dev>
-Date: Mon, 23 Sep 2024 12:42:14 -0300
+	 In-Reply-To:Content-Type; b=QuLL+OyJ0y6o56h2ggf/IJWtpOHVMLTabtde9vipnZlkD/8lEuM2TJoIY7gx4nNkrVPPJJEX7Yxf7IylZ7wyix7JMNhkKDfqQnEzznHc0mwS6u4CqUqkVR1p8G25NzzHl/AWCHdP5Wq2mZMMI4Qt8vuzGK66LVMzTzX8YMK7SnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WHJ5hmH9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BDC1C4CECD;
+	Mon, 23 Sep 2024 15:42:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727106164;
+	bh=t+7IuhRWDk00ypz8u+yjo2secAHWniKaBdDHZARt9tA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WHJ5hmH94HVxC4aUwyQRiop8ww28DHccAf38Cq1/iEbz1FzJ0JHWLaswf2xZq4zLW
+	 T8UiG+jzhMWRYZO49iFmGMLQ8Fe2xUQ/Nm4baHZVGPMWjGohXeAHUoZGyFGaowOrNp
+	 NIAvNt1tO5ymeQpYXTNTYCFY42ug8K01VeUiQRE8u/JdAVc/gl9zVCpIIxbiN/Q/gm
+	 zmnZaCNa+xePHji2SnH5uzkW3ytBjdtqARK+Jt0xNEn6TqqDiWWscp2fxNd7qnjdpX
+	 Bppft+ebCc+/qDyEjPOvzEfdIuuMG5EQfUsapb+rgojUV0n9KNk260IPtCBp55WN3y
+	 R93LWm+1CnZJg==
+Message-ID: <bcb4fcf5-b49b-4e1c-a5c4-e417d04097f0@kernel.org>
+Date: Mon, 23 Sep 2024 17:42:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,54 +49,164 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] unicode: kunit: refactor selftest to kunit tests
-To: Gabriela Bittencourt <gbittencourt@lkcamp.dev>,
- Gabriel Krisman Bertazi <krisman@kernel.org>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, ~lkcamp/patches@lists.sr.ht,
- dpereira@lkcamp.dev
-Cc: linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
- Pedro Orlando <porlando@lkcamp.dev>
-References: <20240922201631.179925-1-gbittencourt@lkcamp.dev>
+Subject: Re: [PATCH v5 3/5] dt-bindings: mtd: spi-nor: add OTP parameters
+To: Erez <erezgeva2@gmail.com>
+Cc: Erez Geva <erezgeva@nwtime.org>, linux-mtd@lists.infradead.org,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>,
+ linux-kernel@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Esben Haabendal <esben@geanix.com>
+References: <20240920181231.20542-1-erezgeva@nwtime.org>
+ <20240920181231.20542-4-erezgeva@nwtime.org>
+ <2fo7pndjqieq6lfydmq2pnwb374oqoqnrcsezycgougmr7mtl5@2wm6fe3inf5u>
+ <CANeKEMPjLYbBi0AXkEdNum=kqtVe_mfTcVf4zUvJsszVhnh+pw@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Pedro Orlando <porlando@lkcamp.dev>
-In-Reply-To: <20240922201631.179925-1-gbittencourt@lkcamp.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <CANeKEMPjLYbBi0AXkEdNum=kqtVe_mfTcVf4zUvJsszVhnh+pw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-+CC linux-kselftest
+On 23/09/2024 11:21, Erez wrote:
+> On Sun, 22 Sept 2024 at 22:40, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On Fri, Sep 20, 2024 at 08:12:29PM +0200, Erez Geva wrote:
+>>> From: Erez Geva <ErezGeva2@gmail.com>
+>>>
+>>> Some flash devices need OTP parameters in device tree.
+>>> As we can not deduce the parameters based on JEDEC ID or SFDP.
+>>>
+>>> Signed-off-by: Erez Geva <ErezGeva2@gmail.com>
+>>> ---
+>>>  .../bindings/mtd/jedec,spi-nor.yaml           | 39 +++++++++++++++++++
+>>>  1 file changed, 39 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml b/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
+>>> index 6e3afb42926e..4f7bb3f41cb1 100644
+>>> --- a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
+>>> +++ b/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
+>>> @@ -90,6 +90,43 @@ properties:
+>>>        the SRWD bit while writing the status register. WP# signal hard strapped to GND
+>>>        can be a valid use case.
+>>>
+>>> +  otp-n-regions:
+>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>> +    description:
+>>> +      Some flash devices need OTP parameters in the device tree.
+>>> +      As we can not deduce the parameters based on JEDEC ID or SFDP.
+>>> +      This parameter indicates the number of OTP regions.
+>>
+>> OTP regions where? In DTS? On flash itself?
+> 
+> Where can OTP regions be?
+> Can you please be serious?
+> If you have any suggestions, I am happy to hear.
+> I did ask before.
 
--------
+Yes, I am serious, imagine that we do not know what you wanted to say.
+At first this just sounded like you mix nvmem-cells here.
 
-On 22/09/2024 17:16, Gabriela Bittencourt wrote:
-> Hey all,
+Out of blue this binding starts mentioning OTP and you add bunch of
+generic properties not really matching anything so far. Instead of being
+sarcastic about reviewers confusion, rather improve your description.
+
+Otherwise, good luck.
+
+
+
 > 
-> We are making these changes as part of a KUnit Hackathon at LKCamp [1].
+>>
+>>> +      The value must be larger or equal to 1 and mandatory for OTP.
+>>
+>> Don't repeat constraints in free form text. Add proper minimum and
 > 
-> This patch sets out to refactor fs/unicode/utf8-selftest.c to KUnit tests.
+> Sure, I will add a minimum.
 > 
-> The first commit is the refactoring itself from self test into KUnit, while
-> the second one applies the naming style conventions.
+>> default, although it is confusing - property is not required but it is
+>> mandatory for OTP?
 > 
-> We appreciate any feedback and suggestions. :)
+> You are welcome to suggest a better rephrase.
+> Using OTP settings is optional.
+> If you set OTP then the number of regions and region length are mandatory.
+> While offset and base are optional for OTP settings.
+
+So properties should be required?
+
 > 
-> [1] https://lkcamp.dev/about/
 > 
-> Co-developed-by: Pedro Orlando <porlando@lkcamp.dev>
-> Co-developed-by: Danilo Pereira <dpereira@lkcamp.dev>
-> Signed-off-by: Pedro Orlando <porlando@lkcamp.dev>
-> Signed-off-by: Danilo Pereira <dpereira@lkcamp.dev>
-> Signed-off-by: Gabriela Bittencourt <gbittencourt@lkcamp.dev>
+>>
+>>
+>>
+>>> +
+>>> +  otp-len:
+>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>> +    description:
+>>> +      Some flash devices need OTP parameters in the device tree.
+>>> +      As we can not deduce the parameters based on JEDEC ID or SFDP.
+>>
+>> Don't repeat the same.
 > 
-> Gabriela Bittencourt (2):
->    unicode: kunit: refactor selftest to kunit tests
->    unicode: kunit: change tests filename and path
+> Is there a grouping description?
 > 
->   fs/unicode/Kconfig                            |   5 +-
->   fs/unicode/Makefile                           |   2 +-
->   fs/unicode/tests/.kunitconfig                 |   3 +
->   .../{utf8-selftest.c => tests/utf8_kunit.c}   | 152 ++++++++----------
->   4 files changed, 76 insertions(+), 86 deletions(-)
->   create mode 100644 fs/unicode/tests/.kunitconfig
->   rename fs/unicode/{utf8-selftest.c => tests/utf8_kunit.c} (63%)
+>>
+>>> +      This parameter indicates the size (length) in bytes of an OTP region.
+>>
+>> What if each region has different length? Is it possible?
 > 
+> Yes, there are. Old Mactronix have chips with the first region bigger
+> than the second region.
+> As these are old chips, we may skip the support of them.
+
+Other devices can come later re-introducing this approach.
+
+
+
+Best regards,
+Krzysztof
+
 
