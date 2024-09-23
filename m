@@ -1,144 +1,174 @@
-Return-Path: <linux-kernel+bounces-336047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D59F197EE7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:48:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC21497EE6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:46:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12FF11C21176
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:48:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A5D01C20D7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:46:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26D019E804;
-	Mon, 23 Sep 2024 15:48:07 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3352199229;
+	Mon, 23 Sep 2024 15:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="am5M1dqD"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D816977104
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 15:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A895C13D893
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 15:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727106487; cv=none; b=SHU4tGkSy6L8geBA3H69UKxq/mfw0vwnQpX9D3B4JoJKZ1i87r95i8JI2hrpesAk1Vwfjwdz2ggBr61efvTFO3GS58sjtdykp4JtPS7WymPOZ7qwbus6YOsVvJmHKc0+jb4MSeQdXpP9pNF981O2EBSLF+9nj2mV3A/zfwZyJ2k=
+	t=1727106373; cv=none; b=Lzx+62W8L1XRih1bZtOQZ7+3e2gRRy3NAhJ9azgaWKEvB0KHiH0b4ZPd5hv4uqJEHVAeAZNfxBwpSjOwZIK5c01nwN2LcWORMZZKg5EgYLdrNOBkLAkOkTxbHnYpGB5pxAQb9wGizgG0Y56n30C3qpfpFfIGXQike1PftUhC8VE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727106487; c=relaxed/simple;
-	bh=hkoieWxJ0471/Q4wgFmy+wiZ2lpn7t8bPYZ/cXRThjo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=QLnwSXU5FilJSVVRL8wKKZXg9xF6CoouzRz5htCX8Pok/u38H0A1+MHwKsXnljLEu08Dxmq0KauMgKfwO9bCzHldJMSQrcpCCprjmv+epKCdUYqhcOLxkj+vAsnwUPEFzn26dBeWH8PAqDFFpDH0Psa7rP7md55q9aIWCZ8ib98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-21-fwPuqpVfPIO66RunyFwVag-1; Mon, 23 Sep 2024 16:46:23 +0100
-X-MC-Unique: fwPuqpVfPIO66RunyFwVag-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Mon, 23 Sep
- 2024 16:45:27 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Mon, 23 Sep 2024 16:45:27 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Jakub Sitnicki' <jakub@cloudflare.com>, Martin KaFai Lau
-	<martin.lau@linux.dev>, 'Tiago Lam' <tiagolam@cloudflare.com>, Eric Dumazet
-	<edumazet@google.com>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-CC: "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Alexei
- Starovoitov" <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
-	"Andrii Nakryiko" <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John
- Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa
-	<jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan
-	<shuah@kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"kernel-team@cloudflare.com" <kernel-team@cloudflare.com>
-Subject: RE: [RFC PATCH v2 2/3] ipv6: Support setting src port in sendmsg().
-Thread-Topic: [RFC PATCH v2 2/3] ipv6: Support setting src port in sendmsg().
-Thread-Index: AQHbDci8OgyMoKtrJE6wBcqRmpwTjbJlgCZQ
-Date: Mon, 23 Sep 2024 15:45:27 +0000
-Message-ID: <29fea23839cf489488f9228a44e79d21@AcuMS.aculab.com>
-References: <20240920-reverse-sk-lookup-v2-0-916a48c47d56@cloudflare.com>
-	<20240920-reverse-sk-lookup-v2-2-916a48c47d56@cloudflare.com>
-	<855fc71343a149479c7da96438bf9e32@AcuMS.aculab.com>
- <87r09a771t.fsf@cloudflare.com>
-In-Reply-To: <87r09a771t.fsf@cloudflare.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1727106373; c=relaxed/simple;
+	bh=C2xYYnW+/eBvgc3v+eP03xaZFfxQt6yM2oxQFwb5t2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KJ3Ul2VuQQcLDkKWpdcLYuCmvy9w1aouu03Z2yjFmbQNnl3tubhk4u3bi7gnJmEGl0U3xs2zcf8rOwf2jEqXDagJFLuML9pq+d7n/VTfh2+n1NpteIqYYwk1bKJ15acxB22hT0HWqM+maLIpf2ojEjIBWOuo0tiY4sOpnPQ4ThY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=am5M1dqD; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6c54a5fbceeso35429556d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 08:46:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1727106368; x=1727711168; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ESYwXswqqcUH5BLw9hFh9aaHVtjhIWmKyClvFuaPqsg=;
+        b=am5M1dqDlz8m446ULw5Oh8fwTWl3a/YfeiklT52UDem5fGr3Fz3jO9wIvdXO/fvLjM
+         va5MlsUynImKHf4KEEU6odhpK+2wQNGYWqK6MWulVoHlymRVcdpZlG+6Mos4FLO7P9Ph
+         toHASznLgKMsKmAHSySUkDUlbhoJf6zzbIlwVj/BR0fKq4DAqZFWeIBO1CX0+OCLK5/n
+         TBTZF0ZeQeFkSAeTt0fLofN5zOVcAZOQy0Du4305JNZmZhvdeQvjI89lPsL23IHDwpxt
+         kC3N7Q4OknfI4SwYqO23lzM9e8vBVRNh6jexQRVUfjrW89RZY7hUsQIkghOQZuuut8NO
+         je7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727106368; x=1727711168;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ESYwXswqqcUH5BLw9hFh9aaHVtjhIWmKyClvFuaPqsg=;
+        b=d105gIrollHGmN2eXzgFjNCikN80VJkcByCld8n1UCwhuEgN3VBKWCr0bS8xCv6KUI
+         ch20zpLEk1BwrzAXAD+fvZVc4PEeenFhrqV2ICIgMNSxex9XmJXkeCFYMDK2gNgImOOQ
+         GyRwSUs/zq6Ye530b7Nf8QnBJx9fo2dj5gzFUAOWNghWY2Vth0O1P5nlK2pm47AcCkyn
+         E9qAd2JNnoX4O7NfH5mqImFwCURJdzwD2cjKUzit5wCU8cTg3wj7QQTjVcz/54oUbFjA
+         3sxtEfmqI3K08w1McMzy2a8ggSoR8tpJ6W1K2XCj0uPjYn5AYh/ZiZeyEQ3PKTLN+xcX
+         4RtA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPVmo6x/x7W1tVZZsLKd8rVWxHqKyy/Z4v4nqrjHlcXsGX+q/Z9DWZQgOJydc2ijVHpaeodI4KEhvNUVM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMh8QOgTsrCisx1JH8K6iMSZCX6iWOf4VORciV9zppWL8fW8HZ
+	Du8HH3PLOD3zxLzuRccvE37+3v7xDBwMOGPDOrgJFR8Wvu4jvndvwZVtR/QaCU8=
+X-Google-Smtp-Source: AGHT+IHPUR6EuXJsHNnKKFnokK0Em7hNPMb8rIhk8WEyODJzzOukPb0nF82ySC7C0nba/DeW5dzZjg==
+X-Received: by 2002:a0c:f20a:0:b0:6c5:2a13:b8e1 with SMTP id 6a1803df08f44-6c7bc83bf00mr207859086d6.43.1727106368349;
+        Mon, 23 Sep 2024 08:46:08 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c75e44bfc4sm48392486d6.2.2024.09.23.08.46.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2024 08:46:06 -0700 (PDT)
+Date: Mon, 23 Sep 2024 11:46:01 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Parag W <parag.lkml@gmail.com>
+Cc: anna-maria@linutronix.de, frederic@kernel.org,
+	linux-kernel@vger.kernel.org, peterz@infradead.org,
+	pmenzel@molgen.mpg.de, regressions@lists.linux.dev,
+	surenb@google.com, tglx@linutronix.de
+Subject: Re: Error: psi: inconsistent task state! task=1:swapper/0 cpu=0
+ psi_flags=4 clear=0 set=4
+Message-ID: <20240923154601.GC437832@cmpxchg.org>
+References: <20240922102047.GA437832@cmpxchg.org>
+ <20240923120339.11809-1-parag.lkml@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240923120339.11809-1-parag.lkml@gmail.com>
 
-From: Jakub Sitnicki
-> Sent: 23 September 2024 15:56
->=20
-> On Mon, Sep 23, 2024 at 01:08 PM GMT, David Laight wrote:
-> > From: Tiago Lam <tiagolam@cloudflare.com>
->=20
-> [...]
->=20
-> >> To limit its usage, a reverse socket lookup is performed to check if t=
-he
-> >> configured egress source address and/or port have any ingress sk_looku=
-p
-> >> match. If it does, traffic is allowed to proceed, otherwise it falls
-> >> back to the regular egress path.
-> >
-> > Is that really useful/necessary?
->=20
-> We've been asking ourselves the same question during Plumbers with
-> Martin.
->=20
-> Unprivileges processes can already source UDP traffic from (almost) any
-> IP & port by binding a socket to the desired source port and passing
-> IP_PKTINFO. So perhaps having a reverse socket lookup is an overkill.
+On Mon, Sep 23, 2024 at 08:03:39AM -0400, Parag W wrote:
+> FWIW, moving psi_enqueue to be after ->enqueue_task() in
+> sched/core.c made no difference - I still get the inconsistent task
+> state error. psi_dequeue() is already before ->dequeue_task() in
+> line with uclamp.
 
-Traditionally you'd need to bind to the source port on any local IP
-(or the wildcard IP) that didn't have another socket bound to that port.
-Modern Linux might have more restrictions and SO_REUSADDR muddies things.
+Yes, that isn't enough.
 
-And I don't think you can do a connect() on an unbound UDP socket to
-set the source port at the same time as the destination IP+port.
-(That would actually be useful.)
+AFAICS, in psi want to know when a task gets dequeued from a core POV,
+even if the class holds on to it until picked again. If it's later
+picked and dequeued by the class, I don't think there is a possible
+call into psi. Lastly, if a sched_delayed task is woken and enqueued
+from core, psi wants to know - we should call psi_enqueue() after
+->enqueue_task has cleared sched_delayed.
 
-OTOH if you just want to send a UDP message you can just use another
-system on the same network.
-You might need to spoof the source mac - but that isn't hard (although
-it might confuse any ethernet switches).
+I don't think we want the ttwu_runnable() callback: since the task
+hasn't been dequeued yet from a core & PSI perspective, we shouldn't
+update psi states either. The sched_delayed check in psi_enqueue()
+should accomplish that. Oh, but wait: ->enqueue_task() will clear
+sched_delayed beforehand. We should probably filter ENQUEUE_DELAYED?
 
-> We should probably respect net.ipv4.ip_local_reserved_ports and
-> net.ipv4.ip_unprivileged_port_start system settings, though, or check
-> for relevant caps.
+This leaves me with the below diff. But I'm still getting the double
+enqueue with it applied:
 
-True.
+[root@ham ~]# dmesg | grep -i psi
+[    0.350533] psi: inconsistent task state! task=1:swapper/0 cpu=0 psi_flags=4 clear=0 set=4
 
-> Open question if it is acceptable to disregard exclusive UDP port
-> ownership by sockets binding to a wildcard address without SO_REUSEADDR?
+Peter, what am I missing here?
 
-We've often suffered from the opposite - a program binds to the wildcard
-IP and everything works until something else binds to the same port and
-a specific local IP.
-I'm sure this is grief some on both TCP and UDP - especially since you
-often need to set SO_REUSADDR to stop other things breaking.
+---
 
-=09David
-=20
-
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index b6cc1cf499d6..4f036c66cf07 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -2012,11 +2012,6 @@ void enqueue_task(struct rq *rq, struct task_struct *p, int flags)
+ 	if (!(flags & ENQUEUE_NOCLOCK))
+ 		update_rq_clock(rq);
+ 
+-	if (!(flags & ENQUEUE_RESTORE)) {
+-		sched_info_enqueue(rq, p);
+-		psi_enqueue(p, (flags & ENQUEUE_WAKEUP) && !(flags & ENQUEUE_MIGRATED));
+-	}
 -
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
+ 	p->sched_class->enqueue_task(rq, p, flags);
+ 	/*
+ 	 * Must be after ->enqueue_task() because ENQUEUE_DELAYED can clear
+@@ -2024,6 +2019,11 @@ void enqueue_task(struct rq *rq, struct task_struct *p, int flags)
+ 	 */
+ 	uclamp_rq_inc(rq, p);
+ 
++	if (!(flags & (ENQUEUE_RESTORE|ENQUEUE_DELAYED))) {
++		sched_info_enqueue(rq, p);
++		psi_enqueue(p, (flags & ENQUEUE_WAKEUP) && !(flags & ENQUEUE_MIGRATED));
++	}
++
+ 	if (sched_core_enabled(rq))
+ 		sched_core_enqueue(rq, p);
+ }
+diff --git a/kernel/sched/stats.h b/kernel/sched/stats.h
+index 237780aa3c53..138c52c2f2c9 100644
+--- a/kernel/sched/stats.h
++++ b/kernel/sched/stats.h
+@@ -129,6 +129,9 @@ static inline void psi_enqueue(struct task_struct *p, bool wakeup)
+ 	if (static_branch_likely(&psi_disabled))
+ 		return;
+ 
++	if (p->se.sched_delayed)
++		return;
++
+ 	if (p->in_memstall)
+ 		set |= TSK_MEMSTALL_RUNNING;
+ 
+@@ -148,6 +151,9 @@ static inline void psi_dequeue(struct task_struct *p, bool sleep)
+ 	if (static_branch_likely(&psi_disabled))
+ 		return;
+ 
++	if (p->se.sched_delayed)
++		return;
++
+ 	/*
+ 	 * A voluntary sleep is a dequeue followed by a task switch. To
+ 	 * avoid walking all ancestors twice, psi_task_switch() handles
 
 
