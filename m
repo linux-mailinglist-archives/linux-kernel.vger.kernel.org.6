@@ -1,78 +1,87 @@
-Return-Path: <linux-kernel+bounces-335801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B46197EAF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:45:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F360797EAF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:45:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53D2F2822F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:45:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5BA8280C20
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0D5197A7B;
-	Mon, 23 Sep 2024 11:45:20 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9848619538A;
+	Mon, 23 Sep 2024 11:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fMnyzQq1"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A7782866;
-	Mon, 23 Sep 2024 11:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F1B824AC
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 11:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727091919; cv=none; b=OK+LfjD/f6HvGBjASZnMMLINN3WrsZDiPW6aVkC6p2GbWuUlUFLpUF4sVDJLdw8asnRkbbuz+TNXpqUj5d3e6tKZID3yBdOhFvv7FKek/IhzN0sppcYqj1sgzZup3+1Y2qwA3V+UsLn9CUfW2IP2TIG3Je5ciNxp3Tzq1Tz83l4=
+	t=1727091931; cv=none; b=G+MV15bj5/cxWzyUGpYycYpMyLT7xUUO8h30HPYCyvmkF3nvFI8JZVdbSkmnekvDr0/0kcPkJynmbUfQUc5FaFltse3jSN6rGHQ/s8EhGxpUR5yI6kDTY10IJLkTQnjgILmpsT9UoyW+vWMV++uC4SyMuHLNIYUoNMpVZY0wP3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727091919; c=relaxed/simple;
-	bh=kp5RM9NeVa8kXHlFBQwMpLlMwtX8pzIXCZlRi07bSJ8=;
+	s=arc-20240116; t=1727091931; c=relaxed/simple;
+	bh=aUq/hEJy5beIUpqN45toKBNilWOEc/UNHjuq4CMJ/GE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TgVncWwt6J7ZYLPRFM10O5bVDGxe3AZ64U+CuszuG5hHUwhddXvvbXQssX++GxAYO9Sr7i2tHIFuYEP/QZ7AlolPZTN/uEz/nAnoHSJlMInQGVLVxevp5pGcKMnUzJkUpYZi39oWbdWjU+5nxcn3/xkx44bTIIwwWHQGXZ8108M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: xqDTcD5GTOi1LttRJEUY3g==
-X-CSE-MsgGUID: UT+7vPg2TL+7N0syzie1Ew==
-X-IronPort-AV: E=McAfee;i="6700,10204,11202"; a="26188680"
-X-IronPort-AV: E=Sophos;i="6.10,251,1719903600"; 
-   d="scan'208";a="26188680"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 04:45:17 -0700
-X-CSE-ConnectionGUID: n1+990J2TryfYvC8F0InNg==
-X-CSE-MsgGUID: yXpVwY32Qfu7jLdPRLFRnw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,251,1719903600"; 
-   d="scan'208";a="71316820"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 04:45:12 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy@kernel.org>)
-	id 1sshV6-0000000ByTt-2zbm;
-	Mon, 23 Sep 2024 14:45:08 +0300
-Date: Mon, 23 Sep 2024 14:45:08 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	Ivan Mikhaylov <fr0st61te@gmail.com>,
-	Dumitru Ceclan <mitrutzceclan@gmail.com>,
-	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Mike Looijmans <mike.looijmans@topic.nl>,
-	Sergiu Cuciurean <sergiu.cuciurean@analog.com>,
-	Dragos Bogdan <dragos.bogdan@analog.com>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pwm@vger.kernel.org
-Subject: Re: [PATCH 7/7] Documentation: ABI: testing: ad485x: add ABI docs
-Message-ID: <ZvFUxHZpB-xecTF0@smile.fi.intel.com>
-References: <20240923101206.3753-1-antoniu.miclaus@analog.com>
- <20240923101206.3753-8-antoniu.miclaus@analog.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sazo92xOn2aO+ZlkKqOh5DIgnnontQzvWMR2bede2ciabrjb93UQVJicTlBI48DYMKzMhnbSKkEqfB6ZSWdLVpmPnDhBiIYJQS2K+SSHt7TTvivTvPZRxNXoK1PglXZVMNHj3hsQsjjUKTEzovxxD0S3BO/zbiJ7Vay67qoeR08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fMnyzQq1; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-535be093a43so5035905e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 04:45:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727091928; x=1727696728; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JMwbFcxKHdbftumcznblxJfBpPC8ptWVXFa2dH4Buk8=;
+        b=fMnyzQq1FvctjaTPFMBllLNAHST34nrti32OW+lndfosdVi+yw2ZugfuzicphetgEu
+         f0Cd3nVFVrFYWL12wrfFcJHG6HRquWCGMLD0uTZo27NtWBzG/5mFGhmpn/ukP6y3v5LZ
+         ujJRfO8FaueAmPbruWzWXuTnOU5K2UNsiAG/sRaUdq5tuiUc+qDPcvTcTlwJ/hWUe6cc
+         NWJkFnlWsAaO+Ae7Sb98XjwFFOYRmS6BzmwAcjPlplBpwdFtnxN/BHX0pOc7KvxhRcAu
+         VBGPKuiavqUX6PTzCD4M5+GMaRJohs8xq6yByR6foCvoVV3lc1K6aV8a9vmtzffh/2lS
+         2P0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727091928; x=1727696728;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JMwbFcxKHdbftumcznblxJfBpPC8ptWVXFa2dH4Buk8=;
+        b=pgS5+YQgUSD4wdGQ58p5ZQt78CTPLG6fbQwA19PhCGZzftmfxuqczlRWsGKT2RmbFO
+         6cqQQrA/oD/5flvww8Nsnds7vCywQjSWWOHxpJUwxPtjmHDKsEkjMLwf7u3QOJR+oA+7
+         /KJ7oZuBnzhPKw+tpBEBXKuEYytC2MQmjomk3J3J10ucJdguo72MK6qNLzF/KQdIZULC
+         p1RzjhfiIntrHymKPGo4fxMh+no9afMQiw3I3Dd7OFJ+dKwvuhLuW0v0G/RNF8Ig1LvU
+         LSdsPtfftiNroFgWByjDDmgNymLNTHGIMQyFyJ1pJPKCJl3ackLLkq2ikg4IHd6tpSJe
+         coTg==
+X-Forwarded-Encrypted: i=1; AJvYcCXh/86Tik3b4ZkpmUYc9/0RX5bMTZYfPC5KSAf9zh8BkB67cFH7uFzkkkrt95YdGQYTAVDUbaXRBBppqbM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSevzSCX74RrzBYlTIzCOr3vhq9nfQB26GBXGXb0ySzUEbXcY0
+	4DegHaVOCNATjsP5bqJs4ltGXetvnhvPeq9gCaObW30ytwkLcRxi1LLI763n7To=
+X-Google-Smtp-Source: AGHT+IFCh2GD/YYaddP7TMIDd36YLwXyayl1/jc49hpm9pk1zAYcHwo3MqpSbCp+ZxyRhnbKUPJIcw==
+X-Received: by 2002:a05:6512:3b27:b0:52e:9b68:d2d4 with SMTP id 2adb3069b0e04-536ac33b18emr4731956e87.56.1727091927618;
+        Mon, 23 Sep 2024 04:45:27 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-536a6959582sm1674291e87.22.2024.09.23.04.45.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2024 04:45:27 -0700 (PDT)
+Date: Mon, 23 Sep 2024 14:45:25 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, konradybcio@kernel.org, 
+	andersson@kernel.org, simona@ffwll.ch, abel.vesa@linaro.org, robdclark@gmail.com, 
+	quic_abhinavk@quicinc.com, sean@poorly.run, marijn.suijten@somainline.org, 
+	airlied@gmail.com, daniel@ffwll.ch, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, quic_khsieh@quicinc.com, konrad.dybcio@linaro.org, 
+	quic_parellan@quicinc.com, quic_bjorande@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, quic_riteshk@quicinc.com, 
+	quic_vproddut@quicinc.com
+Subject: Re: [PATCH v3 3/5] phy: qcom: edp: Add support for eDP PHY on SA8775P
+Message-ID: <mrx2flabzgzsfyenqowgslb5654wcai6q3oclkc2i3em3iqusr@ed3af2qdx7vb>
+References: <20240923113150.24711-1-quic_mukhopad@quicinc.com>
+ <20240923113150.24711-4-quic_mukhopad@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,24 +90,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240923101206.3753-8-antoniu.miclaus@analog.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20240923113150.24711-4-quic_mukhopad@quicinc.com>
 
-On Mon, Sep 23, 2024 at 01:10:24PM +0300, Antoniu Miclaus wrote:
-> Add documentation for the packet size.
+On Mon, Sep 23, 2024 at 05:01:48PM GMT, Soutrik Mukhopadhyay wrote:
+> Add support for eDP PHY v5 found on the Qualcomm SA8775P platform.
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
+> ---
+> v2: Fixed review comments from Dmitry
+> 	- Reused edp_swing_hbr_rbr and edp_swing_hbr2_hbr3 for v5.
+> 
+> v3: No change
+> 
 
-...
-
-> +KernelVersion:
-
-Hmm...
-Can't you use https://hansen.beer/~dave/phb/ (for v6.13)?
-
-> +KernelVersion:
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+With best wishes
+Dmitry
 
