@@ -1,151 +1,155 @@
-Return-Path: <linux-kernel+bounces-336207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52A9397F095
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 20:26:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54DC397F096
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 20:26:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16CB3282B1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:26:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FD93281F5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:26:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3A61A2579;
-	Mon, 23 Sep 2024 18:22:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54541A08A6;
+	Mon, 23 Sep 2024 18:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="L9cnYoQG"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="JyKCEN0M"
+Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6084519F41C;
-	Mon, 23 Sep 2024 18:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630AE1A08A8
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 18:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727115734; cv=none; b=pZFkrkKKs6yVQJ/7PdYCPKgovcnvOaisVXrBNhPXmJz3CZe+bp1qtY0OkcS/zaOutPJzoDoWP/yYXKcGj8bZ1NIemhdQIiXIojFhJInm4Wq0Ycmm7+X7PSwlE9G8YMKtbkgCkHJ6765TrH6JDCtdNLRWblfg/oJYUJQdmT74oxc=
+	t=1727115808; cv=none; b=Iq2OsZfwfLVCt2UN+dYXUFauw+eEefZjSM/UXR2eIMSOWIDGnXTFG3X9RsgtHgLPONtorwEG4BCwMFOz0j8UsheUicaitnHyHF+coOCtf1YWM8mrEtDDj9LeDoD9u9qxEnIQu97cpISpjgZao0dgrIWsKnJUWF50I2BB2dTgTVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727115734; c=relaxed/simple;
-	bh=9iY+4FM4+oIBVw73ti8BAWVWFWPB+mK/XcAHFHXLCmM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Qa0SwZZxR6jG0cjj4TwgwN5Q5ghYZV9fdHO3tBBD7n4x42u09amIQiAWynJiqB3rSQEzaL3DFZtUXtlCoB5jn3NwPElu5u8IuxBGdjZDKgjvpaAIS9yIz1y6GL1H/UMiY9d3KsfmGx/YI+NFmRx3582T5qloIerYz8FIhvAWvhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=L9cnYoQG; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48NAEPjI032714;
-	Mon, 23 Sep 2024 18:21:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FfMvljWqolIkMjOU9A/mkoVjgPykveoXeX/hADfX+Pc=; b=L9cnYoQGDL9UqaUU
-	AxQo4O86R6kqhElq6foVWBvqnYv+r6RnruH5jwBmIx4F4F0gOVjJ66K3h5vnc/fZ
-	C0qw0XXqg2jmhfNv8WgpP72joZRmkcPxOHIwRayin3+lX9ab83V2n/h9z4ZR7qBK
-	X4rj+SFTxPuvMqtRE336IXaZvX1DQxw80BIJTYlmy6yEQzfIRTIVLSemydahltDq
-	BhwEpC+HbhfnsbNo8gF+sioy3v/oUX6khJuvRDW3V/EcxT4ryxNXK4TjZI3l59z4
-	ZoDVCu449saJsTNGaSsBv1FGBtDSSEI2+YuFC1QXbM8/vRc5eu4F7iNh1tJRK8kC
-	pWFZGw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sqe95mde-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 23 Sep 2024 18:21:51 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48NILpn1031081
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 23 Sep 2024 18:21:51 GMT
-Received: from [10.227.110.203] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 23 Sep
- 2024 11:21:50 -0700
-Message-ID: <ca52f5a6-2f38-447c-a2b8-8404fffecaf2@quicinc.com>
-Date: Mon, 23 Sep 2024 11:21:50 -0700
+	s=arc-20240116; t=1727115808; c=relaxed/simple;
+	bh=K66lgzb39/tsC44JMa8QeVze8KWrr6euBEKK0+0Htj4=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=cNrBEN1dT38VHO8dxRGO76jvLF+TF6eeoHZhK1vkLmY5Bpl0RA8jdhpcfk3gpMqwojk9gV0JJ9T7HtANQUa6/uy5iIcmWQhIhwSK2QAliwB8YJ8Xok4zru2/leeEi8jQYh7sTxKPMLScFVxSuuQwosbydWW8ZfIwbyEzddW2JRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=JyKCEN0M; arc=none smtp.client-ip=209.85.210.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-71971d20a95so3194557b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 11:23:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1727115806; x=1727720606; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=zA6f+caa340QDccXGTS1GWN1iuzfH3l7a+cwfvycMmk=;
+        b=JyKCEN0M/XgoHCY9wpehcGFUAIDHYJsbw90z7hK5xNvLMVdwwN+TMkKx7aEkfTiOLQ
+         c12xPjh396DIJwK1+c1pVlAEh7ogO/gETDIWWbjn0wa39zijbf69BYABtNiRh8FFMc7A
+         7c2ZNrjU6JfqsPSGEnSGl+emDCFd7VSmXUtGF2ZdR6LNG1TWhCBHmvdm2f8MKvlIxsvh
+         G1E32T/z3mTFDovojKKSAVYmTdFdYOLzNIAW0bggXznvVQe2Cb4boiwRs84prViOUVN3
+         498UBZd9riQluqYS6eLm+cdb9lrUzBdyFPU68JshiqRtngwnZvb1s1DYuFMCgbf/MlSK
+         QQPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727115806; x=1727720606;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zA6f+caa340QDccXGTS1GWN1iuzfH3l7a+cwfvycMmk=;
+        b=BqanfH3SkcCItKcsfPySwoZBsEyuPhsfY2i9B28fZnQtcD9BvTSHCdZaHvYvd34xXh
+         fo5gzh0Lihs667ar/FSu4IukNka0I04Dnw8K2u4sP1jZNdhY8EAUXNSOzdmjQy71KXJd
+         AtLZLeiNJewDaJvLKLfL4R5ZRYx4khIFf09BctU8bdO+f3IkCq2ibV595OFO4G2xhoCP
+         K0c0B6T73RZwbTOBDD1qZhB+indaxP7/zk97Fzzu+5vxqHNMpzWNTx62xu05qIJawHvo
+         W3xcH9DB2l3hZUd/Jbh6FJrCQGAsMeZR220G1rkCdSy1W+2FesqHFzCOuev33cjNy4fj
+         pvfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXGIYJ+5pAk6U6P8Z5FmdVi8ddGSzNXdaemUSUnB/+lQpxMzsp2MJ29Ig1jMF5euhov1j28sE3haynoyZU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm5lxDZNPdt07RWUfBKDtCmvKEny46w2sgER1mRMumWuM1Txpu
+	Jr3dgZJxm1cQNN/jEDoSMviQ6RsFZ50CMWBGkBxIef7YUwfGswuFmh2JWCSACoNugix0E2/5TpC
+	IXOtSruikxJA6/xwA/hmcLF+/feK/Z1fhF69iBA==
+X-Google-Smtp-Source: AGHT+IH3bigHzH2R776hscI3skYNxcIcWD21EWCuNBmJKsmsmHU4RJMBTlK7knv154edWRFX7jq5IIAUWbOvQoML+QM=
+X-Received: by 2002:a05:6a00:4612:b0:706:b10c:548a with SMTP id
+ d2e1a72fcca58-7199c9f0bc4mr17606705b3a.22.1727115805726; Mon, 23 Sep 2024
+ 11:23:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] ath6kl: Reduce scopes for two variables in
- ath6kl_sdio_power_on()
-To: Markus Elfring <Markus.Elfring@web.de>, <linux-wireless@vger.kernel.org>,
-        Kalle Valo <kvalo@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>
-CC: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@inria.fr>,
-        Peter Zijlstra <peterz@infradead.org>
-References: <d5a19bb5-f940-4f07-9f98-c670d96cc839@web.de>
- <33b08664-fa25-4cef-86b2-49f65b4369c9@web.de>
- <80b820cd-9255-473e-8e4a-3e7d8612d876@quicinc.com>
- <45f6c8a7-4021-483a-aa81-a836cd3fbcd8@web.de>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <45f6c8a7-4021-483a-aa81-a836cd3fbcd8@web.de>
+From: Ignat Korchagin <ignat@cloudflare.com>
+Date: Mon, 23 Sep 2024 19:23:14 +0100
+Message-ID: <CALrw=nGoSW=M-SApcvkP4cfYwWRj=z7WonKi6fEksWjMZTs81A@mail.gmail.com>
+Subject: wireguard/napi stuck in napi_disable
+To: Jason@zx2c4.com, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	wireguard@lists.zx2c4.com, netdev <netdev@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, jiri@resnulli.us, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Lorenzo Bianconi <lorenzo@kernel.org>
+Cc: kernel-team <kernel-team@cloudflare.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 6DdNGXIIae8vwd42zLyoCwKECqZvpZuq
-X-Proofpoint-GUID: 6DdNGXIIae8vwd42zLyoCwKECqZvpZuq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=829 spamscore=0 lowpriorityscore=0 adultscore=0 mlxscore=0
- suspectscore=0 malwarescore=0 phishscore=0 impostorscore=0 clxscore=1015
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409230135
+Content-Transfer-Encoding: quoted-printable
 
-On 9/23/2024 10:00 AM, Markus Elfring wrote:
->>> Adjust the definitions for the local variables "func" and "ret"
->>> so that the corresponding setting will be performed a bit later.
-> …
->>> +++ b/drivers/net/wireless/ath/ath6kl/sdio.c
->>> @@ -503,17 +503,15 @@ static void ath6kl_sdio_irq_handler(struct sdio_func *func)
->>>  static int ath6kl_sdio_power_on(struct ath6kl *ar)
->>>  {
->>>  	struct ath6kl_sdio *ar_sdio = ath6kl_sdio_priv(ar);
->>> -	struct sdio_func *func = ar_sdio->func;
->>> -	int ret = 0;
->>>
->>>  	if (!ar_sdio->is_disabled)
->>>  		return 0;
->>>
->>>  	ath6kl_dbg(ATH6KL_DBG_BOOT, "sdio power on\n");
->>> -
->>> +	struct sdio_func *func = ar_sdio->func;
->>>  	sdio_claim_host(func);
->>>
->>> -	ret = sdio_enable_func(func);
->>> +	int ret = sdio_enable_func(func);
->>>  	sdio_release_host(func);
->>>  	if (ret) {
->>>  		ath6kl_err("Unable to enable sdio func: %d)\n", ret);
->>> --
->>> 2.46.0
->>
->> NAK
->>
->> no maintainer wants to spend time on patches like this which bring no real
->> value to code that is not actively being maintained, and which violates the
->> established understanding that, except under certain recently established
->> criteria, declarations and code should not be interleaved.
-> …
-> 
-> Would you find other software design options more acceptable for further
-> collateral evolution?
-> 
-> 1. Additional compound statements (by using extra curly brackets)
-> 
-> 2. Moving a bit of source code into an additional function implementation
+Hello,
 
-I cannot speak for other maintainers, only myself. For myself I am far more
-interested in changes which fix actual errors or warnings, and far more
-interested in changes to code that is actually being widely used and where
-active development is occurring, as opposed to drivers that have no ongoing
-development and little deployment. At this time the ath.git maintainers are
-100% focused on the ath12k MLO feature, and anything other than bug fixes to
-ath12k or other ath drivers will be ignored.
+We run calico on our Kubernetes cluster, which uses Wireguard to
+encrypt in-cluster traffic [1]. Recently we tried to improve the
+throughput of the cluster and eliminate some packet drops we=E2=80=99re see=
+ing
+by switching on threaded NAPI [2] on these managed Wireguard
+interfaces. However, our Kubernetes hosts started to lock up once in a
+while.
 
-/jeff
+Analyzing one stuck host with drgn we were able to confirm that the
+code is just waiting in this loop [3] for the NAPI_STATE_SCHED bit to
+be cleared for the Wireguard peer napi instance, but that never
+happens for some reason. For context the full state of the stuck napi
+instance is 0b100110111. What makes things worse - this happens when
+calico removes a Wireguard peer, which happens while holding the
+global rtnl_mutex, so all the other tasks requiring that mutex get
+stuck as well.
+
+Full stacktrace of the =E2=80=9Clooping=E2=80=9D task:
+
+#0  context_switch (linux/kernel/sched/core.c:5380:2)
+#1  __schedule (linux/kernel/sched/core.c:6698:8)
+#2  schedule (linux/kernel/sched/core.c:6772:3)
+#3  schedule_hrtimeout_range_clock (linux/kernel/time/hrtimer.c:2311:3)
+#4  usleep_range_state (linux/kernel/time/timer.c:2363:8)
+#5  usleep_range (linux/include/linux/delay.h:68:2)
+#6  napi_disable (linux/net/core/dev.c:6477:4)
+#7  peer_remove_after_dead (linux/drivers/net/wireguard/peer.c:120:2)
+#8  set_peer (linux/drivers/net/wireguard/netlink.c:425:3)
+#9  wg_set_device (linux/drivers/net/wireguard/netlink.c:592:10)
+#10 genl_family_rcv_msg_doit (linux/net/netlink/genetlink.c:971:8)
+#11 genl_family_rcv_msg (linux/net/netlink/genetlink.c:1051:10)
+#12 genl_rcv_msg (linux/net/netlink/genetlink.c:1066:8)
+#13 netlink_rcv_skb (linux/net/netlink/af_netlink.c:2545:9)
+#14 genl_rcv (linux/net/netlink/genetlink.c:1075:2)
+#15 netlink_unicast_kernel (linux/net/netlink/af_netlink.c:1342:3)
+#16 netlink_unicast (linux/net/netlink/af_netlink.c:1368:10)
+#17 netlink_sendmsg (linux/net/netlink/af_netlink.c:1910:8)
+#18 sock_sendmsg_nosec (linux/net/socket.c:730:12)
+#19 __sock_sendmsg (linux/net/socket.c:745:16)
+#20 ____sys_sendmsg (linux/net/socket.c:2560:8)
+#21 ___sys_sendmsg (linux/net/socket.c:2614:8)
+#22 __sys_sendmsg (linux/net/socket.c:2643:8)
+#23 do_syscall_x64 (linux/arch/x86/entry/common.c:51:14)
+#24 do_syscall_64 (linux/arch/x86/entry/common.c:81:7)
+#25 entry_SYSCALL_64+0x9c/0x184 (linux/arch/x86/entry/entry_64.S:121)
+
+We have also noticed that a similar issue is observed, when we switch
+Wireguard threaded NAPI back to off: removing a Wireguard peer task
+may still spend a considerable amount of time in the above loop (and
+hold rtnl_mutex), however the host eventually recovers from this
+state.
+
+So the questions are:
+1. Any ideas why NAPI_STATE_SCHED bit never gets cleared for the
+threaded NAPI case in Wireguard?
+2. Is it generally a good idea for Wireguard to loop for an
+indeterminate amount of time, while holding the rtnl_mutex? Or can it
+be refactored?
+
+We have observed the problem on Linux 6.6.47 and 6.6.48. We did try to
+downgrade the kernel a couple of patch revisions, but it did not help
+and our logs indicate that at least the non-threaded prolonged holding
+of the rtnl_mutex is happening for a while now.
+
+[1]: https://docs.tigera.io/calico/latest/network-policy/encrypt-cluster-po=
+d-traffic
+[2]: https://docs.kernel.org/networking/napi.html#threaded
+[3]: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/=
+net/core/dev.c?h=3Dv6.6.48#n6476
 
