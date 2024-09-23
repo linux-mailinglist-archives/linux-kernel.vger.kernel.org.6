@@ -1,79 +1,81 @@
-Return-Path: <linux-kernel+bounces-336030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4C0297EE48
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:35:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABC3E97EE49
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:35:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADDC21C2163C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:35:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE3E31C21428
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:35:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D321420D0;
-	Mon, 23 Sep 2024 15:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02CE52746A;
+	Mon, 23 Sep 2024 15:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="J50WwPI7"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="oqjO3UPn"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B692C8F6E
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 15:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D409B8821
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 15:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727105696; cv=none; b=XI0UkqoSnKgxZXg/JK24okl9nBRlJMuKz/V4PuK0Sd017raFPLvt9QiPZJO72U8y2HurkRUPZE/WcPNZFdpJSDSV+ct6RLAvfknS10QG7ssMOfvaLX2e2YvKPC+Ry9+1t1Kn5fyJ0FKndRGDrEhDMNk9UIHZ0hwLRyCdisymaoU=
+	t=1727105731; cv=none; b=sAM2zQJLDkpjquQXUQ8GtaJ5lECnJcoIOVV0fSKwc05LOrDcjh6gWdGfPnIeGQU88jkdIbJxvysypeak75JqUr6Q4bweptYiSNMpPb3jVQEaFKINSrslgCF801b0mp7QJubAPwixyHtKCbsnnSrjdki+Mi0UKGdSplr+oEg8EJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727105696; c=relaxed/simple;
-	bh=HUTUtAJwOnQMmP4ReaCRv34dR7cQveXCjOS0OPc85O4=;
+	s=arc-20240116; t=1727105731; c=relaxed/simple;
+	bh=CuX8plZrAsjJPZFuVo718HS91JHUPRkgdyb2aOOvnYg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I6fegwUx5E9ilUUrmZb0qTqj/lraZTu4KSglbKpWLTyAKe4JOHcHnfx17HsKt8fZy5a77/0vcPAc1CvPgeRKUseLGwsl/IRxXhcNloUgOZS/vC7KsrlemjOrwdQiP4rIYTg2Svcf4VhlX7e78tDOlPZItlq1utKafprPvwlkzpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=J50WwPI7; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-206aee4073cso48302245ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 08:34:54 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rFMdeAZylUMd0gXFggONZkwMMH1W6MhPXUVJj7h2q3irCdf1+1orhYtZ8f4t1yuVuFa7CwIzOzRbG3d9MuY+b8AveR2ntFI9MhTWoRTtkGG+C79L0tlXAS4dywdkMos63WA3AnzFqimuMjdoYo/TRI6A7VrRyerRNmJHW1+tA6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=oqjO3UPn; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e1a9b40f6b3so3835556276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 08:35:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727105694; x=1727710494; darn=vger.kernel.org;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1727105729; x=1727710529; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=htTo4bA6hokXxaD54zIm5oQaYvd0c7+2dVU7JGOsPAg=;
-        b=J50WwPI7dLLVNT82rD/g0CuuOnpT2eXDfqqtol1FU/h+cHp7WwfgotmIdVCThEOQLt
-         V/1bS2f0wxf8RdpHyyCjY67EtfdPUlc4kwyCqbUnDp9w2Ir+HK4WbMfukDr1FqzShuCz
-         NpIWXAPVt1FjeLeinjVy3tvsqcBqHyezO3xm4=
+        bh=LAtYhXfjzeyW4ugEIaLLdlY67SyPLOib8m1Uit/Y/cw=;
+        b=oqjO3UPnnEMXcF47e0qtu1zds9DwHS74dFdH4qpmT9zbaRoiR3Q5oODhjZlCFDt2bH
+         fqOEE/+XYrWRqzGFnQcl5ZK31LKPePHOEcJByGnDWVw05wUzbzqXM9D4zsIs6BRT2ULB
+         P9BznIvCDYfiWHnq2/5W+P0Yelg0BAANGfxUFyvOWDmjE0BVbSm1FMFllVlWb6FiFnng
+         9S/1hUdwLjOTEV9lsLVgzOrXleZSVlp3mn/KyZibvYaEKKR00wXwBaE6ZpBo2PNYI3dO
+         eWpKTzsr39tac4OOnzc/Wlk8r0BSvvaOISoGzthcArq/Zr3pwhF8TQlBf0Ptnog+b8Dl
+         rJCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727105694; x=1727710494;
+        d=1e100.net; s=20230601; t=1727105729; x=1727710529;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=htTo4bA6hokXxaD54zIm5oQaYvd0c7+2dVU7JGOsPAg=;
-        b=LnfMPUP87QPCKY7n0tkreJbN26+MLj1SHX5tNYpNxj5SdgYz6J5xS0/7VJd0IcykS0
-         sHRMwgWvioZ25oiCVyGXl+9U8618Ne5F8AheXXkCtZCjV8cSzg14AWfD/x9H9gaZNVpp
-         wgzWVpCsvFKpGeg5k2iYSblR1jCd3j7BZ8KBtq9GGTISiwlANuUgtfF716HKwUDYDYXq
-         Q0r3bYQHtuddj1QaW8a5qSr7c2l1gtUTl1+R2hsVxUgyKT7k6IQ4cgMQMKpF6cbICPKu
-         cHP94zFz3/WSTchyJW2pTa31O+x6WhV65WHc+3mXlPiA3pSjPRcrGkJKYzSNZHdHA8kJ
-         rjeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVnyGFfn/1UTNjI6XyG3/yKyjFqRXbZmDoH9/Yj4gW90YADqncy3oaaKlXOa92l8QbcjGNnmLsp562JhSM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIHfS6PXewFqXgNU7K57c7wZGLrjmQ/L0atSPyIfzrVLsJC6RG
-	etmvKdBFV+iUu7G76Ye1RcXgGUfhRw8M94feskIRCA4un+IaGTdPrBShOJU7Eg==
-X-Google-Smtp-Source: AGHT+IFMxCxBJJJxHj41XbzXl9Q6OwJp+/r0/ziCqyj2dh0P3QlbMT2L4a82gbq0YFQeekc/ifKulg==
-X-Received: by 2002:a17:90b:5344:b0:2da:61e1:1597 with SMTP id 98e67ed59e1d1-2dd80cd73b4mr15760979a91.36.1727105693975;
-        Mon, 23 Sep 2024 08:34:53 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:fd63:e1cf:ea96:b4b0])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dd6ef3c643sm9583520a91.37.2024.09.23.08.34.51
+        bh=LAtYhXfjzeyW4ugEIaLLdlY67SyPLOib8m1Uit/Y/cw=;
+        b=Q+n3s0vh9eNdYA8Q36TMg9QhCy9MpfH02YEKAIdYbFMz8VboU4rt2QGkZq+p7NNY9c
+         PIKOXp61CEYJfkiDg9eYhcFHR4aQsWrwVxxNN901lbf8QUOYqEu9HRYnl50I5jbz3ukT
+         0+CvJDzGvdRyCrHkGi1To6gZjNxmyhBiDKUzgyLITU6jVI+bQOGLH6d1Ycgti2ux4+pB
+         xowqmFH+x6BvfzzTYz3WbYnI2umBInGl/3uHF+IbGUZnPHibRu1QJtdDI3Ryf845se4F
+         wH71Q9pqbsP9m09EvwwD2eGYtpunjbmWsIg7LlVHPuuK113y5YkI8/TSA0OIkt211/Oj
+         +5ew==
+X-Forwarded-Encrypted: i=1; AJvYcCVdFlXRAd48C8hhbwEJr/s94P27h+knhPnyNaINLziRU53VS+gCWzCJJVIGGvxR/PdBIIsrC9RZv/sfbZk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybH7xIFj+GDMVh0uLSn6MAJDSTS1lzrjkwFeLEpv00FvlXQiNM
+	Qvg5a2VmK/3Q6t8iuyjvaCGEAJclQbFSPmcP6z3/bvfEIHx4iX0UsWimUMjZLj0=
+X-Google-Smtp-Source: AGHT+IEi4dVbenN9g8ccGGyWmlovmoPE4Jmp3BdrShWfA6qR/q6u+hoDHbrOg1OSEobdFdKoirYfSw==
+X-Received: by 2002:a05:6902:2e0d:b0:e1a:8857:96dd with SMTP id 3f1490d57ef6-e2250c47473mr8868625276.31.1727105728763;
+        Mon, 23 Sep 2024 08:35:28 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e202117105fsm2058423276.49.2024.09.23.08.35.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 08:34:53 -0700 (PDT)
-Date: Tue, 24 Sep 2024 00:34:49 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Andrey Skvortsov <andrej.skvortzov@gmail.com>
-Cc: Minchan Kim <minchan@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] zram: don't free statically defined names
-Message-ID: <20240923153449.GC38742@google.com>
-References: <20240923080211.820185-1-andrej.skvortzov@gmail.com>
+        Mon, 23 Sep 2024 08:35:28 -0700 (PDT)
+Date: Mon, 23 Sep 2024 11:35:27 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Johannes Thumshirn <jth@kernel.org>
+Cc: Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+	"open list:BTRFS FILE SYSTEM" <linux-btrfs@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: Re: [PATCH v2] btrfs: stripe-tree: correctly truncate stripe extents
+ on delete
+Message-ID: <20240923153527.GC159452@perftesting>
+References: <20240911095206.31060-1-jth@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,102 +84,98 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240923080211.820185-1-andrej.skvortzov@gmail.com>
+In-Reply-To: <20240911095206.31060-1-jth@kernel.org>
 
-On (24/09/23 11:02), Andrey Skvortsov wrote:
-> The change is similar to that is used in comp_algorithm_set.
-> This is detected by KASAN.
+On Wed, Sep 11, 2024 at 11:52:05AM +0200, Johannes Thumshirn wrote:
+> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 > 
-> ==================================================================
-
----8<---
-
->  Unable to handle kernel paging request at virtual address ffffffffc1edc3c8
->  KASAN: maybe wild-memory-access in range
->  [0x0003fffe0f6e1e40-0x0003fffe0f6e1e47]
->  Mem abort info:
->    ESR = 0x0000000096000006
->    EC = 0x25: DABT (current EL), IL = 32 bits
->    SET = 0, FnV = 0
->    EA = 0, S1PTW = 0
->    FSC = 0x06: level 2 translation fault
->  Data abort info:
->    ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
->    CM = 0, WnR = 0, TnD = 0, TagAccess = 0
->    GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
->  swapper pgtable: 4k pages, 48-bit VAs, pgdp=00000000427dc000
->  [ffffffffc1edc3c8] pgd=00000000430e7003, p4d=00000000430e7003,
->  pud=00000000430e8003, pmd=0000000000000000
->  Internal error: Oops: 0000000096000006 [#1] SMP
+> In our CI system, we're seeing the following ASSERT()ion to trigger when
+> running RAID stripe-tree tests on non-zoned devices:
 > 
->  Tainted: [W]=WARN, [C]=CRAP, [N]=TEST
->  Hardware name: Pine64 PinePhone (1.2) (DT)
->  pstate: a0000005 (NzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->  pc : kfree+0x60/0x3a0
->  lr : zram_destroy_comps+0x98/0x198 [zram]
->  sp : ffff800089b57450
->  x29: ffff800089b57460 x28: 0000000000000004 x27: ffff800082833010
->  x26: 1fffe00000c8039c x25: 1fffe00000ba5004 x24: ffff000005d28000
->  x23: ffff800082533178 x22: ffff80007b71eaa8 x21: ffff000006401ce8
->  x20: ffff80007b70f7a0 x19: ffffffffc1edc3c0 x18: 1ffff00010506d6b
->  x17: 0000000000000000 x16: 0000000000000000 x15: ffff8000808e85e4
->  x14: ffff8000808e8478 x13: ffff80008003fa50 x12: ffff80008003f87c
->  x11: ffff800080011550 x10: ffff800081ee63f0 x9 : ffff80007b71eaa8
->  x8 : ffff80008003fa50 x7 : ffff80008003f87c x6 : 00000018a10e2f30
->  x5 : 00ffffffffffffff x4 : ffff00000ec93200 x3 : ffff00000bbee6e0
->  x2 : 0000000000000000 x1 : 0000000000000000 x0 : fffffdffc0000000
-
----8<---
-
-The above is not needed in the commit message (not even sure if the
-backtrace below is relevant).
-
->  Call trace:
->   kfree+0x60/0x3a0
->   zram_destroy_comps+0x98/0x198 [zram]
->   zram_reset_device+0x22c/0x4a8 [zram]
->   reset_store+0x1bc/0x2d8 [zram]
->   dev_attr_store+0x44/0x80
->   sysfs_kf_write+0xfc/0x188
->   kernfs_fop_write_iter+0x28c/0x428
->   vfs_write+0x4dc/0x9b8
->   ksys_write+0x100/0x1f8
->   __arm64_sys_write+0x74/0xb8
->   invoke_syscall+0xd8/0x260
->   el0_svc_common.constprop.0+0xb4/0x240
->   do_el0_svc+0x48/0x68
->   el0_svc+0x40/0xc8
->   el0t_64_sync_handler+0x120/0x130
->   el0t_64_sync+0x190/0x198
-
-[..]
-
-> diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-> index c3d245617083d..d9d2c36658f59 100644
-> --- a/drivers/block/zram/zram_drv.c
-> +++ b/drivers/block/zram/zram_drv.c
-> @@ -2116,7 +2116,9 @@ static void zram_destroy_comps(struct zram *zram)
->  	}
+>  assertion failed: found_start >= start && found_end <= end, in fs/btrfs/raid-stripe-tree.c:64
+> 
+> This ASSERT()ion triggers, because for the initial design of RAID stripe-tree,
+> I had the "one ordered-extent equals one bio" rule of zoned btrfs in mind.
+> 
+> But for a RAID stripe-tree based system, that is not hosted on a zoned
+> storage device, but on a regular device this rule doesn't apply.
+> 
+> So in case the range we want to delete starts in the middle of the
+> previous item, grab the item and "truncate" it's length. That is, subtract
+> the deleted portion from the key's offset.
+> 
+> In case the range to delete ends in the middle of an item, we have to
+> adjust both the item's key as well as the stripe extents.
+> 
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> ---
+> 
+> Changes to v1:
+> - ASSERT() that slot > 0 before calling btrfs_previous_item()
+> 
+>  fs/btrfs/raid-stripe-tree.c | 52 ++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 51 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/btrfs/raid-stripe-tree.c b/fs/btrfs/raid-stripe-tree.c
+> index 4c859b550f6c..075fecd08d87 100644
+> --- a/fs/btrfs/raid-stripe-tree.c
+> +++ b/fs/btrfs/raid-stripe-tree.c
+> @@ -61,7 +61,57 @@ int btrfs_delete_raid_extent(struct btrfs_trans_handle *trans, u64 start, u64 le
+>  		trace_btrfs_raid_extent_delete(fs_info, start, end,
+>  					       found_start, found_end);
 >  
->  	for (prio = ZRAM_SECONDARY_COMP; prio < ZRAM_MAX_COMPS; prio++) {
-> -		kfree(zram->comp_algs[prio]);
-> +		/* Do not free statically defined compression algorithms */
+> -		ASSERT(found_start >= start && found_end <= end);
+> +		if (found_start < start) {
+> +			struct btrfs_key prev;
+> +			u64 diff = start - found_start;
+> +
+> +			ASSERT(slot > 0);
+> +
+> +			ret = btrfs_previous_item(stripe_root, path, start,
+> +						  BTRFS_RAID_STRIPE_KEY);
+> +			leaf = path->nodes[0];
+> +			slot = path->slots[0];
+> +			btrfs_item_key_to_cpu(leaf, &prev, slot);
+> +			prev.offset -= diff;
+> +
+> +			btrfs_mark_buffer_dirty(trans, leaf);
+> +
+> +			start += diff;
+> +			length -= diff;
+> +
+> +			btrfs_release_path(path);
+> +			continue;
+> +		}
+> +
+> +		if (end < found_end && found_end - end < key.offset) {
+> +			struct btrfs_stripe_extent *stripe_extent;
+> +			u64 diff = key.offset - length;
+> +			int num_stripes;
+> +
+> +			num_stripes = btrfs_num_raid_stripes(
+> +				btrfs_item_size(leaf, slot));
+> +			stripe_extent = btrfs_item_ptr(
+> +				leaf, slot, struct btrfs_stripe_extent);
+> +
+> +			for (int i = 0; i < num_stripes; i++) {
+> +				struct btrfs_raid_stride *stride =
+> +					&stripe_extent->strides[i];
+> +				u64 physical = btrfs_raid_stride_physical(
+> +					leaf, stride);
+> +
+> +				physical += diff;
+> +				btrfs_set_raid_stride_physical(leaf, stride,
+> +							       physical);
+> +			}
+> +
+> +			key.objectid += diff;
+> +			key.offset -= diff;
 
-We probably don't really need this comment.
+This part was confusing and isn't necessary, you can drop this bit and then add
 
-> +		if (zram->comp_algs[prio] != default_compressor)
-> +			kfree(zram->comp_algs[prio]);
->  		zram->comp_algs[prio] = NULL;
->  	}
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-OK, so... I wonder how do you get a `default_compressor` on a
-non-ZRAM_PRIMARY_COMP prio.  May I ask what's your reproducer?
+Thanks,
 
-I didn't expect `default_compressor` on ZRAM_SECONDARY_COMP
-and below.  As far as I can tell, we only do this:
-
-	comp_algorithm_set(zram, ZRAM_PRIMARY_COMP, default_compressor);
-
-in zram_reset_device() and zram_add().  So, how does it end up in
-ZRAM_SECONDARY_COMP...
+Josef
 
