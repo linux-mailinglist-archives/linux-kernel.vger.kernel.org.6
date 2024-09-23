@@ -1,127 +1,139 @@
-Return-Path: <linux-kernel+bounces-336228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D01F097F0E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 20:54:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 899C197F0E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 20:54:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08AD6B21A20
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:53:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2204B21B4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:54:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9ACB1A01BC;
-	Mon, 23 Sep 2024 18:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33AA719F128;
+	Mon, 23 Sep 2024 18:54:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ahItg/sL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j0GUxNaU"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA901FA5;
-	Mon, 23 Sep 2024 18:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89411FA5
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 18:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727117628; cv=none; b=s4xeaoVf7x8+sULEgzwFjtWIQnW6IrnZkFQZHWZQGUScy+7hMSBCuB1NyqLSGyVdRScHnL3VLvIgMswZBRa8DUCSvAcx9lqgqCslegoKqdcHL+UHjLv+DMZY205T0aIb7wn8maOsk/v7sILRBCHb4w9aKL8QUG3EmyytPZigHMM=
+	t=1727117641; cv=none; b=ZL6YglQR4+0kWc8gWrCgCuqXHuZpYmwJKIidMkjXdLU2YtZ9TjC3/RBsCzU51hSzsvigimD6lgIj+o+m2cx2fUtfIDb/2kijy5PCK2uTyO19CPYRnR3Mj3iwDAe2gqGM1939qQbqQkZhovmYD5glGDT96VbvNvapYw4YNP37FKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727117628; c=relaxed/simple;
-	bh=wSTLsA5Ybe2xoc8o3MD/A/8FFyISsRuVdTmpWvRDFYM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bAbbkN3T17E/rmuA1QTqg1XI8tKasP7Wldba9/UXBl/Rg9xBok62plkvqUb7ennnAAM8sGeTmlDQjsQj1ROzL7Ps4sawfxPe5UzweFmHQiQrqf/eYNtVTafDo+rKj/beII8eOuNTfp/unhQqSiWDV9dnG7fCthREouIstDS1P1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ahItg/sL; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727117627; x=1758653627;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wSTLsA5Ybe2xoc8o3MD/A/8FFyISsRuVdTmpWvRDFYM=;
-  b=ahItg/sLMxN385rsy35/ttrUQX5Fe8k5lgU0pqUpNhtMcBgeQ6+IjeIw
-   VrM01rJ0Nwpiwa/94DSsWlowEboKtTeTyass0WEnSqUu+G/gPO6oUoAvk
-   XNGG3qN+NCoFLexW/9qVdbL0QJcFWfWQeWROn0119QQpzJYVeHC98RiGe
-   NdLFlFDXZ5TTfjfll0vKyVGUXzcrhnmRXts7e2N/UiUR89Rurk+jjQk3d
-   kqU73s2I+nNKXuIAXZv9aeCLStD0/EUATWis/yy6/A3IoFSXxLVZsCjL6
-   vIYPG3W0pvavhH9CUhtJWuyIs+nq0PnG92GbK4HhN4PT/Z7udid9mYe6k
-   Q==;
-X-CSE-ConnectionGUID: 4elRHYEnQ/+rli72X+rL3w==
-X-CSE-MsgGUID: XbG0UGj5ShiXLp8z1IdK1g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="37448287"
-X-IronPort-AV: E=Sophos;i="6.10,252,1719903600"; 
-   d="scan'208";a="37448287"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 11:53:46 -0700
-X-CSE-ConnectionGUID: qfKhphN1R4KM0lwsB9zRjA==
-X-CSE-MsgGUID: v/ZMOK7mTO6D5F7Mfz+4Jw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,252,1719903600"; 
-   d="scan'208";a="71155818"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 23 Sep 2024 11:53:41 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ssoBm-000HWI-2t;
-	Mon, 23 Sep 2024 18:53:38 +0000
-Date: Tue, 24 Sep 2024 02:52:43 +0800
-From: kernel test robot <lkp@intel.com>
-To: Md Sadre Alam <quic_mdalam@quicinc.com>, broonie@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	andersson@kernel.org, konradybcio@kernel.org,
-	miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
-	manivannan.sadhasivam@linaro.org, vkoul@kernel.org,
-	nikita.shubin@maquefel.me, esben@geanix.com,
-	linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org
-Cc: oe-kbuild-all@lists.linux.dev, quic_srichara@quicinc.com,
-	quic_varada@quicinc.com, quic_mdalam@quicinc.com
-Subject: Re: [PATCH v10 6/8] spi: spi-qpic: add driver for QCOM SPI NAND
- flash Interface
-Message-ID: <202409240205.8sGdi5dZ-lkp@intel.com>
-References: <20240922113351.2390195-7-quic_mdalam@quicinc.com>
+	s=arc-20240116; t=1727117641; c=relaxed/simple;
+	bh=RJp3YO2xkCkvAcGybOy1O0e0pLre294chzcT+uzyV7c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fk4rWL9fmxLhFStYAh+TcX4tmEycSQXRWr6QVYzdOTNKIYScf+8w/EP7ZeEh/Vtys1lJOyefDUofgV+0C5PCvch+ONe82DLlHRFGpx82r+rvInAU61VpmKuWKat112jaV10SZS6ASAkmV58eMjfUXqiQ7B/GCCr7HolRrcoBf8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=j0GUxNaU; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f78b28ddb6so41611731fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 11:53:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727117638; x=1727722438; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JO1L3+X0KalDwilFQ9Qm5x9BvI3ulI14EZ5c5LvvLro=;
+        b=j0GUxNaUS1in9uMcE2BQNbx2vU1D1utv+7zGH5CslBGEhqbgAKcOfI1LJsabqbgL3D
+         /aM9neqGgOyHiLFswZqhflau27HcqiolPK04F9Og6FWv7B7VkJ1C39L6LXrQcsKHHrJ1
+         4vP0igVm7kaagXNBuolZDAg59G0Tlc/RWN0A9TMM2Zkkzv/FqjmmybhsOBNhp2aPFu1d
+         a1sfm69s2gUWDFzludhG+/5mRef+AZuzpjUe2vZHG9c6o66EWexYxcim9Vc6xQOxsJk2
+         HNMCAxmOsa8PKUL0CBKJ7HU6ig6TFI9Oxc8KPujQG83bfmLgrfQyYTvBpCQJUS2pUMJG
+         9HzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727117638; x=1727722438;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JO1L3+X0KalDwilFQ9Qm5x9BvI3ulI14EZ5c5LvvLro=;
+        b=v2Rslzs0ZPpbaOCHMW7bUVWkWx2mJxBIdkWBquehQ8RyhEhXSKUzSOqiND1LqzCuuY
+         g1my8lOQFbKFSvkhlb/NUIE7G6Ec1TKHJgsEgzIYnx6MTg9CqhcEdFxg8g+fIgcuhOee
+         8a9XT5X4Zpno/Ga8cATKGooxLm/oarm0ftwqORxAsVGutE1avVEbZCJ5n/qJu417rCCH
+         VyMZa9gGWmRdSfgdIs3jYguUmvSmvcKOf0nhx08HYGxCzaQPhALjg6HUlMwsBB0wfm9b
+         gDmx+tAvsqdK4fWMdUcak0Ibm30VJrF+8XIYLSsj5GFfbWJ25tH3xb0UrPmrdEaBq47y
+         zP5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUEx0TrA9MXi5EK5AkK62JR/2pCNyTqIAjOwagQlWSObxKwnTeutU8JHoqLZRi4u1nKyKTMyC174UT6+/A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9zGIA1Y2pZfGDfYvP9mIL6uAtnLlZToGA7oG+AOr+9II4CTTQ
+	juXv9T3ZwtX24phmiEFsdp+KL1Za1EPhjcgUT3iT93eitBwLWZkropZCA4HGOLnAoxoujop1RVx
+	XIP7XEI+lo79nqOZbDbfVrimQ/wazkB075/oj
+X-Google-Smtp-Source: AGHT+IH04U1Lg+9AA4YzEyOY/oxn77fuWi8731MNJkLuZIm9Gh2b+asVsvcOw5J2jN6b1VOS+heEC3oArB0KM2NBRJ4=
+X-Received: by 2002:a2e:4619:0:b0:2f6:4aed:9973 with SMTP id
+ 38308e7fff4ca-2f7cc5dd734mr48046651fa.44.1727117637790; Mon, 23 Sep 2024
+ 11:53:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240922113351.2390195-7-quic_mdalam@quicinc.com>
+References: <20240917012808.24037-1-elsk@google.com>
+In-Reply-To: <20240917012808.24037-1-elsk@google.com>
+From: "Hong, Yifan" <elsk@google.com>
+Date: Mon, 23 Sep 2024 11:53:21 -0700
+Message-ID: <CAABy=s1FOwMx99m2D6R9JwaRQDgu-MAKpEJUYSqWOzxf+3m1XA@mail.gmail.com>
+Subject: Re: [PATCH v1] objtool: Also include tools/include/uapi
+To: Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Cc: kernel-team@android.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Md,
+On Mon, Sep 16, 2024 at 6:28=E2=80=AFPM HONG Yifan <elsk@google.com> wrote:
+>
+> When building objtool against a sysroot that contains a stripped down
+> version of the UAPI headers, the following error happens:
+>
+>     In file included from arch/x86/decode.c:10:
+>     In file included from .../tools/arch/x86/include/asm/insn.h:10:
+>     In file included from <sysroot>/include/asm/byteorder.h:9:
+>     In file included from <sysroot>/include/linux/byteorder/little_endian=
+.h:15:
+>     In file included from <sysroot>/include/linux/stddef.h:9:
+>     In file included from .../tools/include/linux/compiler_types.h:36:
+>     .../tools/include/linux/compiler-gcc.h:3:2: error: "Please don't incl=
+ude <linux/compiler-gcc.h> directly, include <linux/compiler.h> instead."
+>         3 | #error "Please don't include <linux/compiler-gcc.h> directly,=
+ include <linux/compiler.h> instead."
+>         |  ^
+>     1 error generated.
+>
+> As hinted by the error, this is because <sysroot>/include/linux/stddef.h
+> (a stripped-down version of uapi/include/linux/stddef.h) includes
+> linux/compiler_types.h directly. However, this gets resolved to
+> tools/include/linux/compiler_types.h, which is not expected to be
+> included directly.
+>
+> To resolve this, I added tools/include/uapi to the include paths when
+> building objtool. With this trick, linux/stddef.h is resolved to
+> tools/include/uapi/linux/stddef.h, which doesn't include
+> linux/compiler_types.h.
+>
+> Signed-off-by: HONG Yifan <elsk@google.com>
+> ---
+>  tools/objtool/Makefile | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
+> index bf7f7f84ac62..f56e27727534 100644
+> --- a/tools/objtool/Makefile
+> +++ b/tools/objtool/Makefile
+> @@ -24,6 +24,7 @@ LIBELF_LIBS  :=3D $(shell $(HOSTPKG_CONFIG) libelf --li=
+bs 2>/dev/null || echo -lel
+>  all: $(OBJTOOL)
+>
+>  INCLUDES :=3D -I$(srctree)/tools/include \
+> +           -I$(srctree)/tools/include/uapi \
+>             -I$(srctree)/tools/arch/$(HOSTARCH)/include/uapi \
+>             -I$(srctree)/tools/arch/$(SRCARCH)/include  \
+>             -I$(srctree)/tools/objtool/include \
+> --
+> 2.46.0.662.g92d0881bb0-goog
+>
 
-kernel test robot noticed the following build errors:
+Hello,
 
-[auto build test ERROR on mtd/nand/next]
-[also build test ERROR on broonie-spi/for-next robh/for-next linus/master v6.11 next-20240923]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Md-Sadre-Alam/spi-dt-bindings-Introduce-qcom-spi-qpic-snand/20240922-193748
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next
-patch link:    https://lore.kernel.org/r/20240922113351.2390195-7-quic_mdalam%40quicinc.com
-patch subject: [PATCH v10 6/8] spi: spi-qpic: add driver for QCOM SPI NAND flash Interface
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20240924/202409240205.8sGdi5dZ-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240924/202409240205.8sGdi5dZ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409240205.8sGdi5dZ-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   m68k-linux-ld: drivers/spi/spi-qpic-snand.o: in function `qcom_spi_remove':
-   spi-qpic-snand.c:(.text+0x19e): undefined reference to `qcom_nandc_unalloc'
-   m68k-linux-ld: drivers/spi/spi-qpic-snand.o: in function `qcom_spi_probe':
-   spi-qpic-snand.c:(.text+0x5da): undefined reference to `qcom_nandc_alloc'
->> m68k-linux-ld: spi-qpic-snand.c:(.text+0x638): undefined reference to `qcom_write_reg_dma'
->> m68k-linux-ld: spi-qpic-snand.c:(.text+0x69a): undefined reference to `qcom_submit_descs'
->> m68k-linux-ld: spi-qpic-snand.c:(.text+0x6ba): undefined reference to `qcom_nandc_unalloc'
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+May I ask if there are any updates? Do I need to revise this patch? Thanks!
 
