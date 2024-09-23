@@ -1,102 +1,78 @@
-Return-Path: <linux-kernel+bounces-335404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E5BA97E516
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 05:45:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44CE997E505
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 05:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDCD01F21A37
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 03:45:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E599A1F21724
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 03:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481B511185;
-	Mon, 23 Sep 2024 03:45:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="tg9pYW67"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E44ADDA9;
+	Mon, 23 Sep 2024 03:41:22 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7730FDDD2;
-	Mon, 23 Sep 2024 03:45:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB41F139D;
+	Mon, 23 Sep 2024 03:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727063106; cv=none; b=KUJloIPOVHwNQVT4moP3IHGOk0v66GX/ukdxWx5rAEoH3im/33tvduzKzV0r6qSZSaKj6d2YoYD4y8XkZgl4+lA7f9xjWQt+QFycUxPFsc55kFATsAItq8Y9TqqJmX/d/xVQj6G5solSW/6k6oR7paqz9Qphppw4Wk6Gg1RFI2U=
+	t=1727062881; cv=none; b=pvP26DIPpMLmUNRuh4fhmvVctu3txpe3cwjUhuuzKcEKVuSskjTgsiTgudthIaNicwxdFois0ONeUSmxC3FjXFwunKklHzJVqXTu1Nyqh5pH5L72KNVmpizs7mr8xcQLbyu6mPo7647PVqaEJZYYBvgKtL1b3m4HOSZ0NoMGWC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727063106; c=relaxed/simple;
-	bh=30EwT+Tnznh3ySKKlYZkbqMe6G/58vr/AakAFlEQsSY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=kd6f9YmtW5GADMjxDAsQ24Tl0qeboWVaXx6Ci7EQXvUaXgHrybRgeLUkEw4sLDKj5SFchsqCbzbk9sSDs31V1qT5kLpZ+HFiMHeDWlvwYz428qs5qKAPA2Km3F5m27mGlly3zIKFBNnU05jjQ9f/MMCLwYqiRmk4pxtyAzGAEbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=tg9pYW67; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1727063102;
-	bh=L7zz/WP3wi6yOy9OEYITIs+EwyHuCdZGPVvmr5cBxmI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=tg9pYW67LG/gAc5nPV86Cse2C14QRFHkpKyjoJN/3y3toO37VbrhQqTS2PQLHxAfH
-	 bvrOWaMTmQYhHFyfNaqTWnmY3xIAbZaLHBje7XGjZHkAHvMt9va6T/2+fJKBzJMO33
-	 Hrt9g+xzISNZhagsxaIBPRiPeQnxe8bet3YdtLPoV9OeOJ80TA40c7ZAY+AEa/tV56
-	 +uEf6H8Sp63XCovW4bJAMIX6QKrCBBCBszSwcUbJ2IkNlld0PzbYBp+0HHZHr/0vdt
-	 qG8/DZ0Dl5IXkJG4NRHi7w5nHKyDXN8i1lqtARvJllwMDQXPl/vl0X34KDE9DT2EZL
-	 Xl6AGkd3bZrVA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XBplx5xr0z4wd0;
-	Mon, 23 Sep 2024 13:45:01 +1000 (AEST)
-Date: Mon, 23 Sep 2024 13:45:01 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Sean Christopherson <seanjc@google.com>, KVM <kvm@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the kvm tree
-Message-ID: <20240923134501.0a14789c@canb.auug.org.au>
+	s=arc-20240116; t=1727062881; c=relaxed/simple;
+	bh=S70C6o0uCWnkHIRojnfTzx6x1zyNOFbxQLqCPLkxhGQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FHeW61k3Mf5bd2jD4kIaR6/QWjKuYd7DcvsyVLKW7/0AP7BS1WcfATEDRlDmIXtvOoChDiRrTecfpjt5tgXyG63EGy4ysHlwlAzjTZuJHTEcHZVuv6kCgTQJRwf7JIHi6aKoIWcOw800JkKhQTPa8ILPENlH27OMSo/fbDTWmLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XBpbF03Zrz1HJsS;
+	Mon, 23 Sep 2024 11:37:29 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id F061D1A0188;
+	Mon, 23 Sep 2024 11:41:16 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
+ (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 23 Sep
+ 2024 11:41:16 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <sakari.ailus@linux.intel.com>, <mchehab@kernel.org>, <ming.qian@nxp.com>,
+	<eagle.zhou@nxp.com>, <stanimir.k.varbanov@gmail.com>,
+	<quic_vgarodia@quicinc.com>, <bryan.odonoghue@linaro.org>,
+	<hans.verkuil@cisco.com>, <linux-media@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH 0/3] media: Fix pm_runtime_set_suspended() with runtime pm enabled
+Date: Mon, 23 Sep 2024 11:51:12 +0800
+Message-ID: <20240923035115.3008900-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/u.K3LrPiU61iIZLE5Sfydv2";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
---Sig_/u.K3LrPiU61iIZLE5Sfydv2
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Fix pm_runtime_set_suspended() with runtime pm enabled.
 
-Hi all,
+Jinjie Ruan (3):
+  media: i2c: dw9768: Fix pm_runtime_set_suspended() with runtime pm
+    enabled
+  media: amphion: Fix pm_runtime_set_suspended() with runtime pm enabled
+  media: venus: Fix pm_runtime_set_suspended() with runtime pm enabled
 
-After merging the kvm tree, today's linux-next build (htmldocs) produced
-this warning:
+ drivers/media/i2c/dw9768.c               | 6 +++---
+ drivers/media/platform/amphion/vpu_drv.c | 2 +-
+ drivers/media/platform/qcom/venus/core.c | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-Documentation/virt/kvm/locking.rst:31: ERROR: Unexpected indentation.
+-- 
+2.34.1
 
-Introduced by commit
-
-  44d174596260 ("KVM: Use dedicated mutex to protect kvm_usage_count to avo=
-id deadlock")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/u.K3LrPiU61iIZLE5Sfydv2
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbw5D0ACgkQAVBC80lX
-0GzZQwf+JPd88Ez2V0UcuMAQZngmXyigjwhvEcW9imqvREPLia1+3UkaQEMnZ1r3
-Xjfds4tsSHiyHTTyEjFzLDOlJLhajO4bRK7TuTnrgBdnbbZGpUh8l83ElwuJZ2ow
-AN2U11OkRgGoI/HlW3oXvYyuI6iKCwucoivUTKF+UbrVSemwhNh5XSYVrXqYBPf8
-V+3dvTR4u5pN4NZ07OKe+QiOnB12sgCLiTM7AF8bijniaYm7H8FJ193izp0aR33s
-vceMBW4ZAqYjk5b9w2LbH9lDSyZXrFA+MMPVqPUeQpLHhdmh/rDzjFsiaD6XGsjT
-QXf9QoT7CFGzSSEQ2TdyRDSKkFYxuQ==
-=qogP
------END PGP SIGNATURE-----
-
---Sig_/u.K3LrPiU61iIZLE5Sfydv2--
 
