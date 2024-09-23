@@ -1,157 +1,123 @@
-Return-Path: <linux-kernel+bounces-335737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23BD897E9EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:30:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D56B297E9EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:30:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5146D1C2137D
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:30:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 883F51F21E06
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA25197A8E;
-	Mon, 23 Sep 2024 10:30:07 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D46195FEF;
+	Mon, 23 Sep 2024 10:30:36 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07FD7197558;
-	Mon, 23 Sep 2024 10:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503715339E
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 10:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727087407; cv=none; b=jtrRlUETHwZjwYChPHknm7hy4zvf6zETTA9pV4tv8vMCDc0+K8D+eZb0XoBt0zW9CTlFcfkultRcmcNstzGxlOnQg8NSu6aSAuTz2R7Ur4Bh1IZSNJaCSIoCCSmZoBGot3S8T3hfgfEDaKskY6i42dilOHrD5mxKV6fJb4kiRSQ=
+	t=1727087435; cv=none; b=RUHnydJwJa0ezLEIXZavKWSIFtX5ziJYjXYW39fQg5eQoztcptNVPaG6I7PfYmWPWQs9JY/25LLA+M70WvZF/beEG0xAvOubDBpizxtG0s+2rjAyI+tjWBBG9uELSl4EwGW2rXg3apbqCi9ZXJrZ+NRLGxulLGxrI2gLbZPzyCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727087407; c=relaxed/simple;
-	bh=KtGx5U5GzL7Z/yR+uBlw5VS/+lB7HSxpBr3S7vnjqXw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NE3WizXt/OaFRlh+WgSwpVTPser64IO/fRBzIlF/JnfBYvEXX1i2Gp5WehxOpnLEDWEP7f/OxosH79Be+ao2kedV+BPlNcWcHA2bJ+s8nWOPUFr3EUlzlIoemK7gVHw2XrBiHd2FLDxvuMpxnuSxWIVPQs4QbtPJJIlL8O6vCaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XBzkG1xpTz1SC8B;
-	Mon, 23 Sep 2024 18:29:10 +0800 (CST)
-Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
-	by mail.maildlp.com (Postfix) with ESMTPS id 97EC21A016C;
-	Mon, 23 Sep 2024 18:29:55 +0800 (CST)
-Received: from [10.67.110.108] (10.67.110.108) by
- kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Mon, 23 Sep 2024 18:29:54 +0800
-Message-ID: <0939300c-a825-5b46-d86f-72ce89b2b95f@huawei.com>
-Date: Mon, 23 Sep 2024 18:29:54 +0800
+	s=arc-20240116; t=1727087435; c=relaxed/simple;
+	bh=8dZsC/z1fMQbYexIgLc8zjH4UGq8HP65+IHViLScZqE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pC93ckkQoTH54X2N2YInirn7IKnC+awyD0XZII1gdqUP1XwaKf8ouNbSH5CPhNiPpmz3uxGf60vdYNAkyL36ACzdYHZu5L3bcc8z71xdAII5Liiqe0h/arfgKiBgMkWWD0C6sKJrUpUaYvFc5eoEPKJ4aydLUmP8ZhXXYHFvLVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1ssgKf-0003Dz-5x; Mon, 23 Sep 2024 12:30:17 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1ssgKc-000w1m-JI; Mon, 23 Sep 2024 12:30:14 +0200
+Received: from pengutronix.de (unknown [IPv6:2a01:4f8:1c1c:29e9:22:41ff:fe00:1400])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 12E11341073;
+	Mon, 23 Sep 2024 10:30:13 +0000 (UTC)
+Date: Mon, 23 Sep 2024 12:30:12 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Markus Schneider-Pargmann <msp@baylibre.com>
+Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>, 
+	Chandrasekar Ramakrishnan <rcsekar@samsung.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Martin =?utf-8?Q?Hundeb=C3=B8ll?= <martin@geanix.com>, "Felipe Balbi (Intel)" <balbi@kernel.org>, 
+	Raymond Tan <raymond.tan@intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, 
+	linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux@ew.tq-group.com
+Subject: Re: [PATCH v2 2/2] can: m_can: fix missed interrupts with m_can_pci
+Message-ID: <20240923-tricky-bird-of-symmetry-68519b-mkl@pengutronix.de>
+References: <ac8c49fffac582176ba1899a85db84e0f5d5c7a6.1726745009.git.matthias.schiffer@ew.tq-group.com>
+ <861164dfe6d95fd69ab2f82528306db6be94351a.1726745009.git.matthias.schiffer@ew.tq-group.com>
+ <lfxoixj52ip25ys5ndhsn4jhoruucpavstwvwzygsvkmld2vxw@d7yiwmz3jb4y>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH] uprobes: Improve the usage of xol slots for better
- scalability
-To: Andi Kleen <ak@linux.intel.com>
-CC: <mhiramat@kernel.org>, <oleg@redhat.com>, <andrii@kernel.org>,
-	<peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-	<namhyung@kernel.org>, <mark.rutland@arm.com>,
-	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
-	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
-	<linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
-	<linux-perf-users@vger.kernel.org>, <bpf@vger.kernel.org>
-References: <20240918012752.2045713-1-liaochang1@huawei.com>
- <87jzf9b12w.fsf@linux.intel.com>
- <7a6ba3f3-dffa-cdac-73c7-074505ea4b44@huawei.com> <ZuwoUmqXrztp-Mzh@tassilo>
-From: "Liao, Chang" <liaochang1@huawei.com>
-In-Reply-To: <ZuwoUmqXrztp-Mzh@tassilo>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemd200013.china.huawei.com (7.221.188.133)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3svslzepdnjbffwt"
+Content-Disposition: inline
+In-Reply-To: <lfxoixj52ip25ys5ndhsn4jhoruucpavstwvwzygsvkmld2vxw@d7yiwmz3jb4y>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
+--3svslzepdnjbffwt
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-在 2024/9/19 21:34, Andi Kleen 写道:
->> Sorry, I know nothing about the ThreadSanitizer and related annotation,
->> could you provide some information about it, thanks.
-> 
-> Documentation/dev-tools/kcsan.rst
+On 23.09.2024 10:03:24, Markus Schneider-Pargmann wrote:
+> Hi Matthias,
+>=20
+> On Thu, Sep 19, 2024 at 01:27:28PM GMT, Matthias Schiffer wrote:
+> > The interrupt line of PCI devices is interpreted as edge-triggered,
+> > however the interrupt signal of the m_can controller integrated in Intel
+>=20
+> I have a similar patch though for a different setup (I didn't send it
+> yet). I have a tcan chip wired to a pin that is only capable of edge
+> interrupts.
 
-Thanks.
+Can you post your patch for completeness?
 
-> 
->>> Would be good to have some commentary why doing so
->>> many write operations with merely a rcu_read_lock as protection is safe.
->>> It might be safer to put some write type operations under a real lock. 
->>> Also it is unclear how the RCU grace period for utasks is enforced.
->>
->> You are right, but I think using atomic refcount routine might be a more
->> suitable apprach for this scenario. The slot_ret field of utask instance
-> 
-> Does it really all need to be lockless? Perhaps you can only make the 
-> common case lockless, but then only when the list overflows take a lock 
-> and avoid a lot of races. That might be good enough for performance.
+regards,
+Marc
 
-Agreed, List overflow would happen if new threads were constantly spawned
-and hit the breakpoint. I'm not sure how often this occurs in real application.
-Even if some applications follow this pattern, I suspect the bottleneck
-might shift to another point, like dynamically allocating new utask instances.
-At least, for the scalability selftest benchmark, list overflow shouldn't
-be a common case.
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-> 
-> If you really want a complex lockless scheme you need very clear documentation
-> in comments and commit logs at least.
-> 
-> Also there should be a test case that stresses the various cases.
-> 
-> I would just use a lock 
+--3svslzepdnjbffwt
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks for the suggestions, I will experiment with a read-write lock, meanwhile,
-adding the documentation and testing for the lockless scheme.
+-----BEGIN PGP SIGNATURE-----
 
->> is used to track the status of insn_slot. slot_ret supports three values.
->> A value of 2 means the utask associated insn_slot is currently in use by
->> uprobe. A value of 1 means the slot is no being used by uprobe. A value
->> of 0 means the slot has been reclaimed. So in some term, the atomic refcount
->> routine test_and_pout_task_slot() also avoid the racing when writing to
->> the utask instance, providing additional status information about insn_slot.
->>
->> BTW, You reminded me that since it might recycle the slot after deleting the
->> utask from the garbage collection list, so it's necessary to use
->> test_and_put_task_slot() to avoid the racing on the stale utask. the correct
->> code might be something like this:
->>
->> @@ -1771,16 +1783,16 @@ static void xol_free_insn_slot(struct task_struct *tsk)
->>
->>         spin_lock_irqsave(&area->list_lock, flags);
->>         list_del_rcu(&tsk->utask->gc);
->> +       /* Ensure the slot is not in use or reclaimed on other CPU */
->> +       if (test_and_put_task_slot(tsk->utask)) {
->> +               clear_bit(tsk->utask->insn_slot, area->bitmap);
->> +               atomic_dec(&area->slot_count);
->> +               tsk->utask->insn_slot = UINSNS_PER_PAGE;
->> +               get_task_slot(tsk->utask);
->> +       }
-> 
-> I would have expected you would add a if (racing) bail out, assume the
-> other CPU will do the work type check but that doesn't seem to be what
-> the code is doing.
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmbxQzEACgkQKDiiPnot
+vG8YNgf/U9xHuZQm+cUJbDUWXlcxzuK1BbWiMAxbnuxl9I8ImpAasQ/9enhn4R0V
+/mf8yhBfFBRYjKyOGn3LVxiPGAgzvGAMYLb9EE+38AVRAFyMxo9dSB6Vmq8SjuRm
+zPpq6hu9NQS58ESmZnMxP28BPOv/DjG84l7UmFNEKpggS0BgAKpqu9uUczv2TrmG
++tphZrazuNXew2JodXhLRrANFs2YyEymBWYwmq2kjiZ9/Md2jw1C+YEKqJ+x0ZBd
+R79vJQ5YZ30wQajHI+uBFG2XyJo56spI2e2x8PoccURmLY0ojyVytgzNZxRM4ghS
+JfJ3mW5O1lHvfLzyXcHDrEjPuSPSoQ==
+=9KL2
+-----END PGP SIGNATURE-----
 
-Sorry, I may not probably get the point clear here, and it would be very
-nice if more details are provided for the concern. Do you mean it's necessary
-to make the if-body excution exclusive among the CPUs? If that's the case,
-I guess the test_and_put_task_slot() is the equvialent to the race condition
-check. test_and_put_task_slot() uses a compare and exchange operation on the
-slot_ref of utask instance. Regardless of the work type being performed by
-other CPU, it will always bail out unless the slot_ref has a value of one,
-indicating the utask is free to access from local CPU.
-
-> 
-> -Andi
-> 
-> 
-
--- 
-BR
-Liao, Chang
+--3svslzepdnjbffwt--
 
