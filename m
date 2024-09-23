@@ -1,259 +1,305 @@
-Return-Path: <linux-kernel+bounces-336182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1063D97F04C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 20:18:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 250B397F050
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 20:19:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16D531C213E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:18:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D81BA282E1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C61B1A01C3;
-	Mon, 23 Sep 2024 18:18:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC0771A0716;
+	Mon, 23 Sep 2024 18:19:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IfrfJElC"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NSsH3Fei"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E63A418054;
-	Mon, 23 Sep 2024 18:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B781EEE4
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 18:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727115481; cv=none; b=gsDp8JkTORgtaCOYWJ1gHUOYPiSPoySw/Nru01nS/FP0UHWYRjKv1nY3O8cGlN3JPIFfN610+T3MnqJ6R21PXLlhpg8w6IqVGwIlrQd8uZIZVHrX4mz048IeN6ygbjmUVoAxx47h3ECYiyIW+POTbDKNnGXVG0aifXOqwgRW5e8=
+	t=1727115549; cv=none; b=R9IOVSBP5qtakN6e1FaoTK/eP+NYer25s6O3vseJ4hiwsCSx0ZKzAxTUcNEECtGYut+8OtKJd6g9EKsj5Q885hEM8guurY6ieu/trSMajuurz9Y/T9azzz0ecR3wRYIlIZNdwsZFft7+Mb91vsypT101+1UwQrHQQeSYwY9nUtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727115481; c=relaxed/simple;
-	bh=OTcgGagByDmAq1xgkKc9MGaM+p/XaNHJCknjP+vYYdw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=suO5g01eh4XP2EQ/INPtOIENTWGIBSY2DCRZf3+S+grh0BmO9vk16R6No6qk1UKe5NV6Wlmy4K0wM0CcocDojp1jP0ERln55OqlpV8p7m5ShzxMhZxPGuEYLNDCSO9QsMo9JRcZaOi5oNAG75dT9WyXopl+/bytlWLA0mCjS0tE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IfrfJElC; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e1a74ee4c75so4007532276.3;
-        Mon, 23 Sep 2024 11:17:58 -0700 (PDT)
+	s=arc-20240116; t=1727115549; c=relaxed/simple;
+	bh=gj6khed8ryNs549o/Lb/gffVUpbK8LV/Z0TyhikI208=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=jL4XC2vkhS5r9uwN9AvLpKrbkT1jgpB0OUyU8fASVw0PEkssAEqgZd4QPR57UINS+OYXc0LVV3R6hZSkNjRSEl0C8Q4Dqj5ax0RrG0rbhhe+Xpa/yOjkEQLuF/m4EqZzWzjdE+b2khZmH6yHYRlgn4p1fTQXit6hAFiS5iiyeoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NSsH3Fei; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-71930797560so4270898b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 11:19:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727115478; x=1727720278; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RPHbLsUciMoisbHksOYRgNERxa176twS9ytYk58G1Wk=;
-        b=IfrfJElCojcryZo/F51Me82VrcvXkDtCAi/IP9A6rx8wP6VbRElbwgyI7XnuXq/zqJ
-         PqDGAxpzYaEntJDMfvq3iZdETO4cwEP6m3NWK7o4xenOz6HkDILpPdzZJaPUoC2GWh0L
-         RMKjfnaAGkHzcrUmGPCxkXEX/GDTX7GrFj1QykjA3qTa5VU7Hi58tYxjLJI5acbvE/3a
-         jJBteva6SHg87DZ6M2OyeAAbU0u6/djbqQNqt06rdRSWfoDzzn0JMaUIIQm/+DPN2nQ+
-         BcjAAm5oFMVIVqfi6afHXOHIPymqB+kxl38SuAjSl6YsK07qiHOtl1W97kLhbEaqKNBP
-         Bt2Q==
+        d=google.com; s=20230601; t=1727115545; x=1727720345; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fYykaPJf9iN08q62sPPqgPYjrSR/2ddqDpdkxmVOH40=;
+        b=NSsH3FeiKout/lPDHS7NLOcKPIGPRDLGnO8pioIat4/Su9yOWn5hoi4UT9AotgyXLV
+         WXSmWCQQ+1WlnuMLYjyaTdxH0sQKM5hlbIb4Z4YKTrs7mDoXDrKv6dYTIAYId0Rw1Zmx
+         YcVIJ9izc6RLdHLqG8O2d2cQ7JMP/aXCNhKD+H/a1K6nnNDfJs4NQFLszZLpmiQz064H
+         sHE9a6egIz5GZF31R3zF71gsI/cJz3Ydpa7g8tHqLu8il2rSLXP9UudxQ0UCUkrQPYvy
+         0nQr+t8mUlSx21kGRZINwDY5m+/epCQQC1Tibb6wkcIDcV7LRuhwtTQwBCjrk7egJVTE
+         3CBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727115478; x=1727720278;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RPHbLsUciMoisbHksOYRgNERxa176twS9ytYk58G1Wk=;
-        b=YxXJtvzbGaJE97pjqAH4oU1+QRgQWR8vMxmAsKqjX+NMyykio2eryaBwU1m6yHkbKy
-         Va+7w4o019vaG3d2qY54GHiFy5jlRtOyhrSStBR29LWfd+WU4LXN400H0LsbMm2SMJGE
-         k1ODfygmybFjPoFdyrfVnvhmqrSvuhZZ67n/pg57edMVCkt7S1hHEtVU9sKimquEwMI9
-         7JBAYcjknTTqVk0ZqDAtOYCFgvEEqgRIbiNpL3sLlLU8EATy/dP2immltUoRQw6CAlAy
-         ZDea997zd3ivMW2UlZpeD2j4m7ASQCjQj9MbxNdSc5E95Jtz+C9EDwAGhAsKa52Z7Bk/
-         B1NA==
-X-Forwarded-Encrypted: i=1; AJvYcCVs6TdGwC+WJM63SWTvhNB9zaUwcJQHLSogmgYh4V2x+Z7JdySXRnRsPlqK/gLVCDROfNotUhUE8P8jbXU=@vger.kernel.org, AJvYcCWzWMLYDQvz71ioaDZsTIF1/FxMA2n3Qm9WxYVQHUELDddBw9jCE94bYTel8iFxZBHK8/tbPtOnLC0kviRgdWN9BA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVOnEiGg2y7YWVa5H4t0Gn54B8me8arGG7BaThxgwTW3V9cEtD
-	13l595CAqJSIGiuETP32YDwtUka/dkBQjwfIbNjRzdDJhiW73jNqPWn/oY4q9J7GgH0ZkrqQdHW
-	2bMY8sePf633qYFy+txw7U44TQbw=
-X-Google-Smtp-Source: AGHT+IGGBMpMk5WqgdtJ2P5UcHz1zogtkgDfh7kuG9kbQZ/sMKxhVDgz0PYoDDwbzVf5Ieg7v/+oMB3gwNabGBP8tNI=
-X-Received: by 2002:a05:6902:c0a:b0:e16:5177:7598 with SMTP id
- 3f1490d57ef6-e2250c3bd55mr9524762276.16.1727115477886; Mon, 23 Sep 2024
- 11:17:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727115545; x=1727720345;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fYykaPJf9iN08q62sPPqgPYjrSR/2ddqDpdkxmVOH40=;
+        b=f2b5gtAGaTzC8n7Oay+9A5u3l69lgbh5Z4lpuvdYOSxl9O2SVaUk+5tCHpTq6GE3UJ
+         n5V2aTHQqkt8Mmv5dhopUc7iGE8Po5czO6LxVbhqw2EOy/4hU0979Olsx+hsrWwbMq6f
+         5d1f2BTw+X/LFhSbIlOS2+cxrkQaXbAswUy2yFuyu1knkNsb9THAHNdS6s/pWJJZijYa
+         Q3FxCUXNEy9X55QYDPu5HPgLRt/ZryYkbiKvP3h0o4hMDK0/zAN6Ux60EW6AnySmDA4A
+         D8ZMjfFhQXwmxiwa0H+w83938CYTMfNDrBn9lpUtPDSPbK6HgOy1beDoTWrGXBkO4fCI
+         sFfg==
+X-Forwarded-Encrypted: i=1; AJvYcCVQ7Xd1I436UjJQohVWXJxfeVFMseDYJqhmx4CX3OKNbM9xHe5rvA/rBhJQfzc/fuUesDYkLylrYmfc8TU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yze1OUsB+U+W1EM8in8QHDEZD7XysQIv4hWsdG0bkQtFqs76U4B
+	LbREAXvnUw8O/MuAFc7GoOhevGK46QBR+xFX8WwH0vqrfzH+uNWiAYncSqPRkncBvoiKL9fiYSh
+	FQbNlkVG4bdpG4LAvqZmm6ramEg==
+X-Google-Smtp-Source: AGHT+IFXsfcwc3JvPBOqJlRoLdNtPRiE6lFFX4gPJa86MrvCNC+ZBctwFTPVCwA4l+3zKo8NhIJqs5E35fawOlvKtBk=
+X-Received: from samitolvanen.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:4f92])
+ (user=samitolvanen job=sendgmr) by 2002:a05:6a00:6f20:b0:718:dfec:9570 with
+ SMTP id d2e1a72fcca58-7199cee9a89mr53651b3a.6.1727115545229; Mon, 23 Sep 2024
+ 11:19:05 -0700 (PDT)
+Date: Mon, 23 Sep 2024 18:18:46 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <ZuH8qhuZB6mr9JvR@x1> <CAH0uvog5akiwUp+28w5u7+-j_fYvQLWahJ6YvEzWjdCz3Ky9Wg@mail.gmail.com>
- <CAH0uvoj_2An0QQgCSenZiK8XubS=amyrxhAWK7ragAFfi+Hnqg@mail.gmail.com> <8ad3ada6-f719-43ca-bf16-0095be555302@oracle.com>
-In-Reply-To: <8ad3ada6-f719-43ca-bf16-0095be555302@oracle.com>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Mon, 23 Sep 2024 11:17:47 -0700
-Message-ID: <CAH0uvohqECsYgCkJKop6ubv3iOpRGEUyj7=LXLfJobisdMKfcw@mail.gmail.com>
-Subject: Re: perf trace: substruct BTF based pretty printing
-To: Alan Maguire <alan.maguire@oracle.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
-	Namhyung Kim <namhyung@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+Mime-Version: 1.0
+X-Developer-Key: i=samitolvanen@google.com; a=openpgp; fpr=35CCFB63B283D6D3AEB783944CB5F6848BBC56EE
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9451; i=samitolvanen@google.com;
+ h=from:subject; bh=gj6khed8ryNs549o/Lb/gffVUpbK8LV/Z0TyhikI208=;
+ b=owGbwMvMwCEWxa662nLh8irG02pJDGkfN7LVCXiHbzxl367qMENkzerDMTIO3lyGm86UeMhut
+ Teyq9rcUcrCIMbBICumyNLydfXW3d+dUl99LpKAmcPKBDKEgYtTACZSxcLIMLdI8oLBu7NxrBlp
+ er8+B/ZuuffDW+rK7LlJOo+a3l4UaWX4xdwRutTaot6tzrvqU3OG2ZUHbgdPPH0n/HlW7BWltyV XWAE=
+X-Mailer: git-send-email 2.46.0.792.g87dc391469-goog
+Message-ID: <20240923181846.549877-22-samitolvanen@google.com>
+Subject: [PATCH v3 00/20] Implement DWARF modversions
+From: Sami Tolvanen <samitolvanen@google.com>
+To: Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>, 
+	Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, 
+	Miroslav Benes <mbenes@suse.cz>, Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Sami Tolvanen <samitolvanen@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hello Alan,
+Hi,
 
-On Mon, Sep 23, 2024 at 10:48=E2=80=AFAM Alan Maguire <alan.maguire@oracle.=
-com> wrote:
->
-> On 23/09/2024 18:42, Howard Chu wrote:
-> > Hello,
-> >
-> > On Wed, Sep 11, 2024 at 6:29=E2=80=AFPM Howard Chu <howardchu95@gmail.c=
-om> wrote:
-> >>
-> >> Hello Arnaldo,
-> >>
-> >> On Wed, Sep 11, 2024 at 1:25=E2=80=AFPM Arnaldo Carvalho de Melo
-> >> <acme@kernel.org> wrote:
-> >>>
-> >>> Hi Howard,
-> >>>
-> >>>         Not really a requirement on you to do work, just a some notes=
- to
-> >>> add to our discussion/experiment on using BTF to pretty print syscall
-> >>> (and tracepoints/whatever) arguments:
-> >>>
-> >>> root@number:~# perf trace -e setitimer -p 5444 |& head -5
-> >>>      0.000 ( 0.017 ms): Xwayland/5444 setitimer(value: (struct __kern=
-el_old_itimerval){})                   =3D 0
-> >>>      0.050 ( 0.004 ms): Xwayland/5444 setitimer(value: (struct __kern=
-el_old_itimerval){})                   =3D 0
-> >>>      0.142 ( 0.005 ms): Xwayland/5444 setitimer(value: (struct __kern=
-el_old_itimerval){})                   =3D 0
-> >>>      0.174 ( 0.004 ms): Xwayland/5444 setitimer(value: (struct __kern=
-el_old_itimerval){})                   =3D 0
-> >>>      0.293 ( 0.004 ms): Xwayland/5444 setitimer(value: (struct __kern=
-el_old_itimerval){})                   =3D 0
-> >
-> > First of all I bypass the from_user check to make perf trace use BTF
-> > output instead of just printing an address:
-> >
-> >         for (i =3D 0, field =3D sc->args; field; ++i, field =3D field->=
-next) {
-> >                 // XXX We're only collecting pointer payloads _from_ us=
-er space
-> >                 /*if (!sc->arg_fmt[i].from_user)*/
-> >                         /*continue;*/
-> >
-> > Got the bad output:
-> >
-> >    500.218 ( 0.015 ms): a.out/112335 setitimer(value: (struct
-> > __kernel_old_itimerval){})                   =3D 0
-> >
-> > But after switching on emit_zeroes from btf_dump_type_data_opts:
-> >
-> > dump_data_opts.compact   =3D true;
-> > dump_data_opts.skip_names =3D !arg->trace->show_arg_names;
-> > dump_data_opts.emit_zeroes =3D true; // this
-> >
-> > My output is good:
-> >
-> >  96058.828 ( 0.010 ms): a.out/104347 setitimer(value: (struct
-> > __kernel_old_itimerval){.it_interval =3D (struct
-> > __kernel_old_timeval){.tv_sec =3D (__kernel_long_t)0,.tv_usec =3D
-> > (__kernel_long_t)500000,},.it_value =3D (struct
-> > __kernel_old_timeval){.tv_sec =3D (__kernel_long_t)0,.tv_usec =3D
-> > (__kernel_long_t)500000,},}) =3D 0
-> >
-> > So I think this is btf_dump's problem... Because most of the time we
-> > want to omit the zeroes, but that will have the side effect of not
-> > being able to print the whole output. I'll figure something out.
-> >
->
-> One thing we could think about is if there's a way for BTF data dump to
-> better represent the fact that a structure is all 0s; currently we will
-> show "{}" since we skip emitting zeroed data, but maybe - at the
-> toplevel only - "{ 0 }" would be more expressive? Thanks!
+Here's v3 of the DWARF modversions series [1][2]. The main
+motivation remains modversions support for Rust, which is important
+for distributions like Android that are eager to ship Rust kernel
+modules. Per Luis' request [3], v2 dropped the Rust specific bits
+from the series and instead added the feature as an option for
+the entire kernel. Matt is still addressing Rust modversion_info
+compatibility issues in a separate series [4], and we'll follow up
+with a patch to actually allow CONFIG_MODVERSIONS with Rust once
+everything else has been sorted out.
 
-I think if the struct is filled with 0, showing "{ 0 }" is a really good id=
-ea.
+A short background recap: Unlike C, Rust source code doesn't
+have sufficient information about the final ABI, as the compiler
+has considerable freedom in adjusting structure layout, for
+example, which makes using a source code parser like genksyms a
+non-starter. Based on Matt's suggestion and previous feedback from
+maintainers, this series uses DWARF debugging information for
+computing versions. DWARF is an established and a relatively stable
+format, which includes all the necessary ABI details, and adding a
+CONFIG_DEBUG_INFO dependency for Rust symbol versioning seems like a
+reasonable trade-off.
 
-Thanks,
-Howard
->
-> Alan
->
-> > Thanks,
-> > Howard
-> >>
-> >> First glance, yes this is a substruct, but we should be able to
-> >> collect those substruct data in BPF, since it is substruct, not
-> >> substruct pointer. It seems to be the same -p problem we discussed
-> >> here:
-> >>
-> >> Before:
-> >> ```
-> >> perf $ perf trace -e open -p 3792392
-> >>          ? (         ):  ... [continued]: open())
-> >>                        =3D -1 ENOENT (No such file or directory)
-> >>          ? (         ):  ... [continued]: open())
-> >>                        =3D -1 ENOENT (No such file or directory)
-> >> ```
-> >>
-> >> We can see there's no output.
-> >>
-> >> After:
-> >> ```
-> >> perf $ perf trace -e open -p 3792392
-> >>      0.000 ( 0.123 ms): a.out/3792392 open(filename: "DINGZHEN",
-> >> flags: WRONLY)                             =3D -1 ENOENT (No such file
-> >> or directory)
-> >>   1000.398 ( 0.116 ms): a.out/3792392 open(filename: "DINGZHEN",
-> >> flags: WRONLY)                             =3D -1 ENOENT (No such file
-> >> or directory)
-> >> ```
-> >>
-> >> I will test and fix it later.
-> >>
-> >> Thanks,
-> >> Howard
-> >>
-> >>> root@number:~# strace -e setitimer -p 5444 |& head -5
-> >>> strace: Process 5444 attached
-> >>> setitimer(ITIMER_REAL, {it_interval=3D{tv_sec=3D0, tv_usec=3D5000}, i=
-t_value=3D{tv_sec=3D0, tv_usec=3D5000}}, NULL) =3D 0
-> >>> setitimer(ITIMER_REAL, {it_interval=3D{tv_sec=3D0, tv_usec=3D0}, it_v=
-alue=3D{tv_sec=3D0, tv_usec=3D0}}, NULL) =3D 0
-> >>> setitimer(ITIMER_REAL, {it_interval=3D{tv_sec=3D0, tv_usec=3D5000}, i=
-t_value=3D{tv_sec=3D0, tv_usec=3D5000}}, NULL) =3D 0
-> >>> setitimer(ITIMER_REAL, {it_interval=3D{tv_sec=3D0, tv_usec=3D0}, it_v=
-alue=3D{tv_sec=3D0, tv_usec=3D0}}, NULL) =3D 0
-> >>> root@number:~#
-> >>> root@number:~#
-> >>> root@number:~# grep -w value /sys/kernel/tracing/events/syscalls/sys_=
-enter_rseq/format
-> >>> root@number:~# grep -w value /sys/kernel/tracing/events/syscalls/sys_=
-enter_setitimer/format
-> >>>         field:struct __kernel_old_itimerval * value;    offset:24;   =
-   size:8; signed:0;
-> >>> print fmt: "which: 0x%08lx, value: 0x%08lx, ovalue: 0x%08lx", ((unsig=
-ned long)(REC->which)), ((unsigned long)(REC->value)), ((unsigned long)(REC=
-->ovalue))
-> >>> root@number:~# pahole __kernel_old_itimerval
-> >>> struct __kernel_old_itimerval {
-> >>>         struct __kernel_old_timeval it_interval;         /*     0    =
-16 */
-> >>>         struct __kernel_old_timeval it_value;            /*    16    =
-16 */
-> >>>
-> >>>         /* size: 32, cachelines: 1, members: 2 */
-> >>>         /* last cacheline: 32 bytes */
-> >>> };
-> >>>
-> >>> root@number:~# pahole -E __kernel_old_itimerval
-> >>> struct __kernel_old_itimerval {
-> >>>         struct __kernel_old_timeval {
-> >>>                 /* typedef __kernel_long_t */ long int           tv_s=
-ec;                 /*     0     8 */
-> >>>                 /* typedef __kernel_long_t */ long int           tv_u=
-sec;                /*     8     8 */
-> >>>         } it_interval; /*     0    16 */
-> >>>         struct __kernel_old_timeval {
-> >>>                 /* typedef __kernel_long_t */ long int           tv_s=
-ec;                 /*    16     8 */
-> >>>                 /* typedef __kernel_long_t */ long int           tv_u=
-sec;                /*    24     8 */
-> >>>         } it_value; /*    16    16 */
-> >>>
-> >>>         /* size: 32, cachelines: 1, members: 2 */
-> >>>         /* last cacheline: 32 bytes */
-> >>> };
-> >>>
-> >>> root@number:~#
->
+The first two patches add more list macros to scripts/include and
+move the genksyms CRC32 implementation to a shared header file. The
+next 15 patches add gendwarfksyms, a tool for computing symbol
+versions from DWARF. When passed a list of exported symbols and
+object files, the tool generates an expanded type string for each
+symbol and computes symbol CRCs similarly to genksyms. gendwarfksyms
+is written in C and uses libdw to process DWARF. Patch 18 ensures
+that debugging information is present where we need it, patch 19
+adds gendwarfksyms as an alternative to genksyms, and the last patch
+adds documentation.
+
+Note that v3 is based on next-20240923 as it depends on Masahiro's
+scripts/include changes. For x86, we also need a separate small
+patch to include asm/ptrace.h in asm/ftrace.h. [5] For your
+convenience, you can find this series with all the prerequisites
+here:
+
+https://github.com/samitolvanen/linux/commits/gendwarfksyms-v3
+
+If you also want to test the series with Rust modules, this branch
+adds Matt's modversion_info series and a small patch to enable Rust
+modversions:
+
+https://github.com/samitolvanen/linux/commits/rustmodversions-v3
+
+Looking forward to hearing your thoughts!
+
+Sami
+
+
+[1] v1: https://lore.kernel.org/lkml/20240617175818.58219-17-samitolvanen@google.com/
+[2] v2: https://lore.kernel.org/lkml/20240815173903.4172139-21-samitolvanen@google.com/
+[3] https://lore.kernel.org/lkml/ZnIZEtkkQWEIGf9n@bombadil.infradead.org/
+[4] https://lore.kernel.org/lkml/20240806212106.617164-1-mmaurer@google.com/
+[5] https://lore.kernel.org/lkml/20240916221557.846853-2-samitolvanen@google.com/
+
+---
+
+Changes in v3:
+- Updated SPX license headers.
+
+- Squashed the first two patches in v2 and tried to reduce churn as
+  much as reasonable.
+
+- Dropped patch 18 from v2 ("x86/asm-prototypes: Include
+  <asm/ptrace.h>") as it's addressed by a separate patch. [5]
+
+- Changed the error handling code to immediately terminate instead
+  of propagating the errors back to main, which cleaned up the code
+  quite a bit.
+
+- Switched to the list and hashtable implementations in scripts and
+  dropped the remaining tools/include dependencies. Added a couple
+  missing list macros. (patch 1)
+
+- Moved the genksyms CRC32 implementation to scripts/include and
+  dropped the duplicate code. (patches 2 and 14)
+
+- Switched from ad-hoc command line parsing to getopt_long (patch 3).
+
+- Added structure member and function parameter names to the DIE
+  output to match genksyms behavior, and tweaked the symtypes format
+  to be more parser-friendly in general based on Petr's suggestions.
+
+- Replaced the declaration-only struct annotations with more generic
+  kABI stability rules that allow source code annotations to be used
+  where #ifndef __GENKSYMS__ was previously used.  Added support for
+  rules that can be used to exclude enumerators from versioning.
+  (patch 16)
+
+- Per Miroslav's suggestion, added an option to hide structure
+  members from versioning when they're added to existing alignment
+  holes, for example. (patch 16)
+
+- Per Greg's request, added documentation and example macros for the
+  --stable features, and a couple of test cases. (patches 15, 16, and
+  20)
+
+- Fixed making symtypes files, which need to depend on .o files with
+  gendwarfksyms. (patch 19)
+
+- Addressed several other smaller issues that Petr and Masahiro
+  kindly pointed out during the v2 review.
+
+Changes in v2:
+- Per Luis' request, dropped Rust-specific patches and added
+  gendwarfksyms as an alternative to genksyms for the entire
+  kernel.
+
+- Added support for missing DWARF features needed to handle
+  also non-Rust code.
+
+- Changed symbol address matching to use the symbol table
+  information instead of relying on addresses in DWARF.
+
+- Added __gendwarfksyms_ptr patches to ensure the compiler emits
+  the necessary type information in DWARF even for symbols that
+  are defined in other TUs.
+
+- Refactored debugging output and moved the more verbose output
+  behind --dump* flags.
+
+- Added a --symtypes flag for generating a genksyms-style
+  symtypes output based on Petr's feedback, and refactored
+  symbol version calculations to be based on symtypes instead
+  of raw --dump-dies output.
+
+- Based on feedback from Greg and Petr, added --stable flag and
+  support for reserved data structure fields and declaration-onl
+  structures. Also added examples for using these features.
+
+- Added a GENDWARFKSYMS option and hooked up kbuild support
+  for both C and assembly code. Note that with gendwarfksyms,
+  we have to actually build a temporary .o file for calculating
+  assembly modversions.
+
+---
+
+Sami Tolvanen (20):
+  scripts: import more list macros
+  scripts: move genksyms crc32 implementation to a common include
+  tools: Add gendwarfksyms
+  gendwarfksyms: Add address matching
+  gendwarfksyms: Expand base_type
+  gendwarfksyms: Add a cache for processed DIEs
+  gendwarfksyms: Expand type modifiers and typedefs
+  gendwarfksyms: Expand subroutine_type
+  gendwarfksyms: Expand array_type
+  gendwarfksyms: Expand structure types
+  gendwarfksyms: Limit structure expansion
+  gendwarfksyms: Add die_map debugging
+  gendwarfksyms: Add symtypes output
+  gendwarfksyms: Add symbol versioning
+  gendwarfksyms: Add support for kABI rules
+  gendwarfksyms: Add support for reserved and ignored fields
+  gendwarfksyms: Add support for symbol type pointers
+  export: Add __gendwarfksyms_ptr_ references to exported symbols
+  kbuild: Add gendwarfksyms as an alternative to genksyms
+  Documentation/kbuild: Add DWARF module versioning
+
+ Documentation/kbuild/gendwarfksyms.rst      |  274 +++++
+ Documentation/kbuild/index.rst              |    1 +
+ include/linux/export.h                      |   15 +
+ kernel/module/Kconfig                       |   31 +
+ scripts/Makefile                            |    3 +-
+ scripts/Makefile.build                      |   39 +-
+ scripts/gendwarfksyms/.gitignore            |    2 +
+ scripts/gendwarfksyms/Makefile              |   12 +
+ scripts/gendwarfksyms/cache.c               |   44 +
+ scripts/gendwarfksyms/die.c                 |  166 +++
+ scripts/gendwarfksyms/dwarf.c               | 1085 +++++++++++++++++++
+ scripts/gendwarfksyms/examples/kabi.h       |  141 +++
+ scripts/gendwarfksyms/examples/kabi_ex0.c   |   86 ++
+ scripts/gendwarfksyms/examples/kabi_ex1.c   |   89 ++
+ scripts/gendwarfksyms/examples/kabi_ex2.c   |   98 ++
+ scripts/gendwarfksyms/examples/kabi_rules.c |   56 +
+ scripts/gendwarfksyms/examples/symbolptr.c  |   29 +
+ scripts/gendwarfksyms/gendwarfksyms.c       |  195 ++++
+ scripts/gendwarfksyms/gendwarfksyms.h       |  351 ++++++
+ scripts/gendwarfksyms/kabi.c                |  214 ++++
+ scripts/gendwarfksyms/symbols.c             |  317 ++++++
+ scripts/gendwarfksyms/types.c               |  477 ++++++++
+ scripts/genksyms/genksyms.c                 |   77 +-
+ scripts/include/crc32.h                     |   93 ++
+ scripts/include/list.h                      |   50 +
+ 25 files changed, 3860 insertions(+), 85 deletions(-)
+ create mode 100644 Documentation/kbuild/gendwarfksyms.rst
+ create mode 100644 scripts/gendwarfksyms/.gitignore
+ create mode 100644 scripts/gendwarfksyms/Makefile
+ create mode 100644 scripts/gendwarfksyms/cache.c
+ create mode 100644 scripts/gendwarfksyms/die.c
+ create mode 100644 scripts/gendwarfksyms/dwarf.c
+ create mode 100644 scripts/gendwarfksyms/examples/kabi.h
+ create mode 100644 scripts/gendwarfksyms/examples/kabi_ex0.c
+ create mode 100644 scripts/gendwarfksyms/examples/kabi_ex1.c
+ create mode 100644 scripts/gendwarfksyms/examples/kabi_ex2.c
+ create mode 100644 scripts/gendwarfksyms/examples/kabi_rules.c
+ create mode 100644 scripts/gendwarfksyms/examples/symbolptr.c
+ create mode 100644 scripts/gendwarfksyms/gendwarfksyms.c
+ create mode 100644 scripts/gendwarfksyms/gendwarfksyms.h
+ create mode 100644 scripts/gendwarfksyms/kabi.c
+ create mode 100644 scripts/gendwarfksyms/symbols.c
+ create mode 100644 scripts/gendwarfksyms/types.c
+ create mode 100644 scripts/include/crc32.h
+
+
+base-commit: ef545bc03a65438cabe87beb1b9a15b0ffcb6ace
+-- 
+2.46.0.792.g87dc391469-goog
+
 
