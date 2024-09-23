@@ -1,54 +1,85 @@
-Return-Path: <linux-kernel+bounces-336373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9CA79839F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 01:09:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E1719839D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 01:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D41EB1F21DD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 22:50:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3A66B21679
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 22:53:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA00126BE1;
-	Mon, 23 Sep 2024 22:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A09E126BE8;
+	Mon, 23 Sep 2024 22:53:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="agMHMDnZ"
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="FzYrDavk"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800525FB95
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 22:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C36583CD4
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 22:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727131813; cv=none; b=MIZwuzQTBbwBkKR4hn6mDXyvqayFxT6pK+5W23q9DpCqPup7fCvMvcL1uPgT0+r00NRAP/vVO6FM+xoISGALfOblf8oY9/qK4JjajMS5CrYmsiSkcljVApnxwmDXjKI1dRtjOsHiFKROFzdCvpgWrlWdrsm2e+Hmkgi4jdc52G0=
+	t=1727131988; cv=none; b=Nw4eUWBgJTfZpcooEfIefdl3w8+5rZqOEcR8GNLC05iG0xANdPBSfsvOnOFObBVB5k6HTYwtEg1hD5X5M68zsBcBWrYrQbtQLMtVYV6FrLiz3cMc/8YbhOxEpq68VbeG6m6TPm6HN381juRMBg40tYZn5zeMM38CWvmCy+EETN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727131813; c=relaxed/simple;
-	bh=YR0Xqt8+C7mjR5jmlImSAF1hvQ4fzLLFFdhBQ6d2n1k=;
+	s=arc-20240116; t=1727131988; c=relaxed/simple;
+	bh=FsNCQM/RwOS08qx2KrsG0GEIZhW5WfuJ8AV3HIg0AnM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WbEL/PYINslxiJhmABmcek+pMYXR1Wxj4q/a7OHHoJdLQ5QaQmjLQ678sqk+ISwtXZooJIl3EF5I8l/dIN7NxsyLgOis9STLQbLlTeNgJVPEk1vt3hvAzIQ4C9vqJ/Qas2+B1b8ud3hfOk14jQAjyS/TaMAsQVU6nAcsRc59E6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=agMHMDnZ; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 23 Sep 2024 18:49:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727131807;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aheXgiH8P/PbfSY7RqGe/lh6Ws0+uEzmE+gOJSefB2o=;
-	b=agMHMDnZJYqAKoc/OftuqPf6artS+92E/NPmA0I1OABh7HuxX2MmOis59xZUleC/CqUNkT
-	IKKdom2aZolIdpMBunDvl07/XO6KYyAlqMm5GohGhiTbAIZ06i7Apr91XXrUmDa7AZa88g
-	cmcul+PcI1G8uxWc77jj5FQeaUHTi2E=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Diogo Jahchan Koike <djahchankoike@gmail.com>
-Cc: syzbot+18a5c5e8a9c856944876@syzkaller.appspotmail.com, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] bcachefs: assign return error when iterating through
- layout
-Message-ID: <oezma5vqvk2dqiorojwdxd4fbhaa5rpibs2ozekluyleen3gqh@t5h5lzp733ju>
-References: <20240923222305.128344-1-djahchankoike@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RdPGqU7vYIB47QEvx0bBfNtHbrwttURHR1YHYmAvbG24D3731St5z9UTXMEiNFa2mHIKCIgQXZZ/Av/ucoB8swRrjprnQNLYHXU2hjWn4OCSFMaxy67h2QjBtwL1QqlTmvzlYDTTSx+JEqsrNvYojuVzSpStiO7ecBzE7phC/uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=FzYrDavk; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2055a3f80a4so30528375ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 15:53:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1727131986; x=1727736786; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=O9P5XLC60lNK/p8dfMcbHXQIRSzTU85TV2a/v1O9tY0=;
+        b=FzYrDavkG1W5pnq60r7GF9Vf71nuFi9iM+p7r+cV5hj4Ilo8zsj41ixjuvY4xSLfXy
+         fKPxKhdrQNmemZUBpqFFqC+nDH8wjaPpyhJfjqIvC6NSWOvChB/7Ma5MVNMftMSguMik
+         USqcCYz78dvL1JlsKjHyNeb+/DLrQ5sj/V9MO4+dZ9BUn+gFU1ZuvTd0ysIcwl3K0aqL
+         vZXIrdDQawTfthYwpgHesG/1gpYKP0X2g5RbAIHpkViaNVxXL4Md4sJc97ZBOtR+sdpe
+         1BgX2wP2QYMZWfKLpWoi9aQeAC87Vcs7/vj9BsVL1+pdu7Ztl2c8+wJOgtLk1VX5ZrnE
+         mc+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727131986; x=1727736786;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O9P5XLC60lNK/p8dfMcbHXQIRSzTU85TV2a/v1O9tY0=;
+        b=KZs87AuS3DhpHhc786Bld4B4t9FTOT4Kll97QyS52PXqf0TgDoTt4BBifA1JdjSIZG
+         rNad2X+EZ3xi2rDY1Mnxxq6/p+2P63vu+ne4QPl98hntYSzZXpw5Omf91anb6eiHGQLx
+         JTxY+TnVYsA9zT4s1ngjp4ykOkurIfVSUM0f4NneSzTOhCWso/Vlb6CW/KaAWa21L1/s
+         J2VubahTtR0Y6jkqhwMLVXt7erUnbSziv9kJMiMzRToG/lssDGKgDHxoY4Yv09hBxs7j
+         vLb8fHwpK3lPoWFQ100VHkd1zzxGEcsD4fcI2X2X6UUEm+H9nSHUab61k1duHq+RCZjR
+         qsZw==
+X-Forwarded-Encrypted: i=1; AJvYcCX238xcrMVJPU0W5/UbVdxXaIwMuu8dTFkcAKWqHGowLJdXGM//PXXlM2CzV5bR38/PMMk7PDNzRVqkV00=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsHxglgLRbG/5GN6vJczfh9nYqXsSECVhjZtcd+WjvTSGMo+oZ
+	ccjNpX82pODDgXT6SBxeha2gQh6hgltnS7ft8cZCw0YG7q7HD+m9cw7RUQSHtC0=
+X-Google-Smtp-Source: AGHT+IGqFdL5QL1D3D/7v1BdqTwc7J8Riov7Lafb0j7972QRq9FLgl3e08r+fjrZlt9IM1YhdwTlsA==
+X-Received: by 2002:a17:903:2305:b0:206:9693:7d5b with SMTP id d9443c01a7336-208d988d398mr197241855ad.55.1727131986385;
+        Mon, 23 Sep 2024 15:53:06 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af17ee05dsm673315ad.123.2024.09.23.15.53.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2024 15:53:06 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1ssrvT-009ArR-24;
+	Tue, 24 Sep 2024 08:53:03 +1000
+Date: Tue, 24 Sep 2024 08:53:03 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Christoph Hellwig <hch@infradead.org>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>
+Subject: Re: [PATCH v3] xfs: Use try_cmpxchg() in
+ xlog_cil_insert_pcp_aggregate()
+Message-ID: <ZvHxTyS79BZSAYQf@dread.disaster.area>
+References: <20240923122311.914319-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,47 +88,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240923222305.128344-1-djahchankoike@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240923122311.914319-1-ubizjak@gmail.com>
 
-On Mon, Sep 23, 2024 at 07:22:14PM GMT, Diogo Jahchan Koike wrote:
-> syzbot reported a null ptr deref in __copy_user [0]
+On Mon, Sep 23, 2024 at 02:22:17PM +0200, Uros Bizjak wrote:
+> Use !try_cmpxchg instead of cmpxchg (*ptr, old, new) != old in
+> xlog_cil_insert_pcp_aggregate().  x86 CMPXCHG instruction returns
+> success in ZF flag, so this change saves a compare after cmpxchg.
 > 
-> In __bch2_read_super, when a corrupt backup superblock matches the
-> default opts offset, no error is assigned to ret and the freed superblock
-> gets through, possibly being assigned as the best sb in bch2_fs_open and
-> being later dereferenced, causing a fault. Assign EINVALID to ret when
-> iterating through layout.
+> Also, try_cmpxchg implicitly assigns old *ptr value to "old" when
+> cmpxchg fails. There is no need to re-read the value in the loop.
 > 
-> [0]: https://syzkaller.appspot.com/bug?extid=18a5c5e8a9c856944876
+> Note that the value from *ptr should be read using READ_ONCE to
+> prevent the compiler from merging, refetching or reordering the read.
 > 
-> Reported-by: syzbot+18a5c5e8a9c856944876@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=18a5c5e8a9c856944876
-> Signed-off-by: Diogo Jahchan Koike <djahchankoike@gmail.com>
+> No functional change intended.
+> 
+> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> Reviewed-by: Christoph Hellwig <hch@infradead.org>
+> Cc: Chandan Babu R <chandan.babu@oracle.com>
+> Cc: "Darrick J. Wong" <djwong@kernel.org>
 
-Thanks, applied
+Looks fine.
 
-> ---
->  fs/bcachefs/super-io.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/bcachefs/super-io.c b/fs/bcachefs/super-io.c
-> index c8c2ccbdfbb5..fbca0bd302db 100644
-> --- a/fs/bcachefs/super-io.c
-> +++ b/fs/bcachefs/super-io.c
-> @@ -796,8 +796,10 @@ static int __bch2_read_super(const char *path, struct bch_opts *opts,
->  	     i < layout.sb_offset + layout.nr_superblocks; i++) {
->  		offset = le64_to_cpu(*i);
->  
-> -		if (offset == opt_get(*opts, sb))
-> +		if (offset == opt_get(*opts, sb)) {
-> +			ret = -BCH_ERR_invalid;
->  			continue;
-> +		}
->  
->  		ret = read_one_super(sb, offset, &err);
->  		if (!ret)
-> -- 
-> 2.43.0
-> 
+Reviewed-by: Dave Chinner <dchinner@redhat.com>
+
+-- 
+Dave Chinner
+david@fromorbit.com
 
