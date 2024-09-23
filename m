@@ -1,97 +1,112 @@
-Return-Path: <linux-kernel+bounces-335613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A2C397E810
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:02:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B54A297E814
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:03:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 695EA1C206A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 09:02:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25F2EB21C23
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 09:03:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F36351946D1;
-	Mon, 23 Sep 2024 09:02:24 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449E91953B9;
+	Mon, 23 Sep 2024 09:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oC/7T2GP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B1218801D
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 09:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A087A18F2F6;
+	Mon, 23 Sep 2024 09:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727082144; cv=none; b=haFO/O+PpT5OpWYvx0MLScAyfjOTaV/ZQt5T6A8XgROr6enn9voVd+OlyHKsPqIPOOlwUVRHJ7dXHRbFUhfG10HjbAoBq6hI1vuU0NzYeC+ITB0/XQANmoYX75dYXS81lhsvYKwr+EnWTUjSS9KNngb9A3apvCO5Elpkfwt344I=
+	t=1727082151; cv=none; b=gOnKeo6tardpNhKLKXKyFPKfmqn8bDrG0tuZYDlth3u8ACJGCg0g7FHQt/fQejTl87Axol4awOuqphfEupQI7obZBMq0djlLV62kSyqqukZmlaXZIl3FKh+dkT5sWjxZ1MrWzZ9HPw2kJlWDrYdxEZpUoYCmYjtzecj5du7jNPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727082144; c=relaxed/simple;
-	bh=GAd44S+5klCaPfKDd6etwTCIXJl3mBx+mqeSxPW4+dE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=H7dJNEdTkGNd4h3ZpBe0AD4XzF3Z9ckVEbLOQ2j4UCEE8I9DszV9PV22KlcoL3tnGFmj7U9u3jLkvLfGsOOwpIMdzdr5HF8dBShJ+WBZ/O3UB9QUs9uBxK1Fw8nuEjYNu6UUiK2ZNa5rKYDRfpVn1Iq5iH7UAeAK8YOksRnn9No=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39f56ac8d88so61810475ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 02:02:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727082142; x=1727686942;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5iWrHDgy75ujQSAtkrd1YSd/BK1uHyW7PPvp12qtc8g=;
-        b=Oh6Dyrpose+ydGMAvT+tFrjHgXEBR0o9jVcJ08DhkYiCVyUqVPsDYfsfxtFrvpXe3Q
-         pQ7z1Fc6sExdgtCaL5rzCH5uYEvaf0mD/8uhaWWt89L8N9IjkmBIEDW8tulksSAApzWe
-         wNDcK1iRVHKM6m5I7K13wGj8vPTN2Kne3EocDa7JySHiqLwd5VXkPPD83jM2OREqNEHF
-         Zb5oB1Zmb6twxaac6Y7ZLZNGbYjTQ2Aq5Hi+YQaHjXcpfYdQQIQlg29blCi+5dc3ELOi
-         PCJp0mAntFqmSWhXOIdhvYqaLynX/8xG0rKvnUAICpxSpWwNAIMqxCeXFRrBQuT0ocEx
-         tjLA==
-X-Gm-Message-State: AOJu0Yy+uYrwHaN1aIqJ6WfEiUVBhaJ1KyFOanSgPNE9+JXSeO6HuiXP
-	QsV78dlo49jDt+hHY9wzBo34uPGkcm4AItzJFG7e1bcwtElBHCYL3KrD7qgDqdWnfO6Az5B/Uzk
-	0iitMYpHioekE9LrMBMCebddej25YMpXB6nUXWKyBqzi89HrR9v4azrA=
-X-Google-Smtp-Source: AGHT+IHr/1nMZN9npsBJqflH8EDyMKxMKowp6Z57TX0KA0hBnVZKYlmZ/dMEdZ0nIpW8iSX+MxjK+mYO90E3bQ/u+/HoicntAi0w
+	s=arc-20240116; t=1727082151; c=relaxed/simple;
+	bh=nYReNpQtNv6aYEQbY/B+irqqvulEmXF1JG6ZUNt6kIk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MiJ6zhlOadfe9+PIsxB/f4nBvJzmQzTCqoZ7DNjFSZyLQC5NWWIuroFNnXxRKgqnlPAz4rXUWvUMcd8c0LG+N2HX8rv6rwVemL9ibIRnfnvaGXbkktle1aKxmzuhAC/YJPjCe0SaF0YG7fFzmyM3hbpJuuxhoP+pP4WWll0mMvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oC/7T2GP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AACF9C4CEC4;
+	Mon, 23 Sep 2024 09:02:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727082151;
+	bh=nYReNpQtNv6aYEQbY/B+irqqvulEmXF1JG6ZUNt6kIk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oC/7T2GPTEvBksS19Owaae6jeUBOo/Hw78fXKX9kuca/dooUsfODdwq8nHO/pwq4V
+	 XynAEO5icKlxUlNg/gD3AwAPjVFM5aAyS3XL4L2j9ksu7fDO8DWw+Yh4dcf1bydg+7
+	 JFnAj/KrdNbtcupEnurYihkBuGxcbTo7A1H6pV/luixAozE12+sulfmcnrG+PnIKNM
+	 6TS1XWQ7jB+xFoncPsoXDwD/TIe2C5TCkzSUgBoObj/DpMo6wEnysc5YvOFaP6i9Se
+	 E7o1bxo9V53Mrt6Ha77gNI3KKiVXOibCwT/E+ab/34tpdBe1+3gWC39xteT+efVDO0
+	 CkcXpkDisEvLg==
+Date: Mon, 23 Sep 2024 12:02:26 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Junxian Huang <huangjunxian6@hisilicon.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
+	linuxarm@huawei.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 for-next 2/2] RDMA/hns: Disassociate mmap pages for
+ all uctx when HW is being reset
+Message-ID: <20240923090226.GI11337@unreal>
+References: <20240913122955.1283597-1-huangjunxian6@hisilicon.com>
+ <20240913122955.1283597-3-huangjunxian6@hisilicon.com>
+ <20240916091323.GM4026@unreal>
+ <595ec9f3-c3cd-66b3-c523-452f88e079ac@hisilicon.com>
+ <Zu1u/aiOAooVUeq2@ziepe.ca>
+ <24e9ec1c-8b63-f3e0-a465-80030ea6002d@hisilicon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2184:b0:3a0:b0dc:abfe with SMTP id
- e9e14a558f8ab-3a0c8d25cffmr81200665ab.17.1727082142465; Mon, 23 Sep 2024
- 02:02:22 -0700 (PDT)
-Date: Mon, 23 Sep 2024 02:02:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f12e9e.050a0220.3eed3.000a.GAE@google.com>
-Subject: [syzbot] Monthly ppp report (Sep 2024)
-From: syzbot <syzbot+list22f4c01bc59cfcacc23a@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-ppp@vger.kernel.org, 
-	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <24e9ec1c-8b63-f3e0-a465-80030ea6002d@hisilicon.com>
 
-Hello ppp maintainers/developers,
+On Mon, Sep 23, 2024 at 02:17:40PM +0800, Junxian Huang wrote:
+> 
+> 
+> On 2024/9/20 20:47, Jason Gunthorpe wrote:
+> > On Fri, Sep 20, 2024 at 05:18:14PM +0800, Junxian Huang wrote:
+> > 
+> >>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_main.c b/drivers/infiniband/hw/hns/hns_roce_main.c
+> >>>> index 4cb0af733587..49315f39361d 100644
+> >>>> --- a/drivers/infiniband/hw/hns/hns_roce_main.c
+> >>>> +++ b/drivers/infiniband/hw/hns/hns_roce_main.c
+> >>>> @@ -466,6 +466,11 @@ static int hns_roce_mmap(struct ib_ucontext *uctx, struct vm_area_struct *vma)
+> >>>>  	pgprot_t prot;
+> >>>>  	int ret;
+> >>>>  
+> >>>> +	if (hr_dev->dis_db) {
+> >>>
+> >>> How do you clear dis_db after calling to hns_roce_hw_v2_reset_notify_down()? Does it have any locking protection?
+> >>>
+> >>
+> >> Sorry for the late response, I just came back from vacation.
+> >>
+> >> After calling hns_roce_hw_v2_reset_notify_down(), we will call ib_unregister_device()
+> >> and destory all HW resources eventually, so there is no need to clear dis_db.
+> > 
+> > Why can't you do the unregister device sooner then and avoid all this
+> > special stuff?
+> > 
+> 
+> It's a limitation of HW. Resources such as QP/CQ/MR will be destoryed
+> during unregistering device. This is not allowed by HW until
+> hns_roce_hw_v2_reset_notify_uninit(), or it may lead to some HW errors.
 
-This is a 31-day syzbot report for the ppp subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/ppp
+It is interested claim given the fact that you are changing original
+code from 2016.
 
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 4 issues are still open and 9 have been fixed so far.
+Thanks
 
-Some of the still happening issues:
-
-Ref Crashes Repro Title
-<1> 73      No    INFO: task hung in ppp_exit_net (4)
-                  https://syzkaller.appspot.com/bug?extid=32bd764abd98eb40dea8
-<2> 27      Yes   inconsistent lock state in valid_state (4)
-                  https://syzkaller.appspot.com/bug?extid=d43eb079c2addf2439c3
-<3> 16      No    possible deadlock in ppp_input
-                  https://syzkaller.appspot.com/bug?extid=38ad8c7c6638c5381a47
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+> 
+> > I assumed you'd bring the same device back after completing the reset??
+> > 
+> 
+> Yes
+> 
+> > Jason
+> 
 
