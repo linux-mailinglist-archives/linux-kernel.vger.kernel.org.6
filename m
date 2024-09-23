@@ -1,224 +1,187 @@
-Return-Path: <linux-kernel+bounces-335768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5987C97EA62
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:01:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A2E997EA65
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:01:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CF1B1C214A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:01:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D3EF1C214A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:01:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE1E19994B;
-	Mon, 23 Sep 2024 11:00:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 230F8198837;
+	Mon, 23 Sep 2024 11:01:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V1b8jcNU"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ggQMqa9v"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9A7199234;
-	Mon, 23 Sep 2024 11:00:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5F2524D7;
+	Mon, 23 Sep 2024 11:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727089216; cv=none; b=ETeyr9C6saBd7E92zFMkSBR23ngfwz6tXSv0SbsFVoNQJ+xui6Y27ISQ9GFJRgyxGjgOhmC8DQR3bRhx/R5vx7ZKjyS9Y7rfm+kaw2M8FnLWsW+4QIYfqVotUjdROZ0ZVgUqIcxqSbisMdJFMWLNuH/63/FucGfjpyyKD3Rs2DY=
+	t=1727089287; cv=none; b=TxiXnTtN/3unNSMBsJnHuyIYs/metLzsRoFr3nLPUFXWBL4/YAXIaJ99lPlEZqw4nmKONipcilgGjdiOXGnI+XWO4E+XbG8TMK9j45DO1/6AhbeIFDRx6T8r7FbzQXeeixVQrRJsUrvwUfdFUXGdDM3lFf+sNixDh7RRnFzp7S0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727089216; c=relaxed/simple;
-	bh=WK2gxePyJ3COI9wVgLo2wfO2u0lNfIo8LDzjMGUNyDE=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r9gS81rcQQDVDmhQciaOgY5AGxiRaa46c86PE/DTFt7DOFfTvLDdCbIQEUNTY+vQASNZqL8P5w10agKiatOtEvcu/RKXL+4VGBnvLFibvNRBq7+ZzGfuxWt+Yg0wh7qcMW4PmH+NLDcn9e7tu2OG+E/FKglZuxJlgli0pNPQ7JM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V1b8jcNU; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1727089287; c=relaxed/simple;
+	bh=B7fJgQO+IwcIL4JDUyACIQ4RACsjWyG4aRKlf1A+7I4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=blkqP8nlD4JU3oykDYFLagT6J0Y+sZBY6CnjLEBkEfZ4Ltdr0AZ5ly8bs3wUCm+qgjoBrIJ+VUVrjH5T9U5k25zKBPiG+4rxvCJYCGXeLmDASjU0qXspXobGVsExe1m1fC7X2rhjeIV9jgiD7iJD+sWvSy3UNYTuhdTh/qm3uYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ggQMqa9v; arc=none smtp.client-ip=209.85.208.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42cae6bb895so41854175e9.1;
-        Mon, 23 Sep 2024 04:00:14 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c413cf5de5so5654268a12.0;
+        Mon, 23 Sep 2024 04:01:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727089213; x=1727694013; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nUqmFP2QzVpf7LDbD5h6EoX7C93mpfwdZpjgGxZ7JB0=;
-        b=V1b8jcNUQbo/A/dyYzcKtqpdxKRsyu6STfSSZpxNJliqLWtOsgYwEQ0B+UA3X+bS53
-         CjGm1pbpeh9gjIP2GoJjL9r5bBVRd3ShyCgSiOs0MHZvn8iZJJCMED/WqgpQOXaRsdz2
-         EizsfT1qX+qITec/r1HssVVqTqHgjTQ/0WOdvtVrfir0RcO3rI/rIUi/lb809gyduVv6
-         +w3ho7ijLoHNlCHMuQKqZhlMF/jZCLodzlTCJJcW+efZXf9Epof0DEW+5Oi/CVFRf/r8
-         dhB9Eb6g8pB1zRYK4WVBCqIMNqP3iqB22B2gp6NhP3D0IOPHyGyh88u8foUfl/U8TWwf
-         8lTg==
+        d=gmail.com; s=20230601; t=1727089284; x=1727694084; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rTwjyJINn/UiyHVLTt4SQp0fQnAkFaFHMRg1gYcKq54=;
+        b=ggQMqa9vM1jCVj4dc2Gi71je5mMPdxT1VZJQSUtEnYWXuBBiR7lvfwBN2knJVW6oBU
+         IInkUYW0psfjIbCo2ckHWV61Yqt/R18kLmYwKGBjdhbs/AxeaHv9ScYDXU1HaVfrchXG
+         o21F1k5MtIXIr/Gr575sEL7jRVMO/Lcmw+u0AoeWYP3RKqpZWjlSHGVe1Es8K3zTtpgh
+         GCV8RCLxrSPks4EGNbS8sTPHPxGE5eqsC3cv6J2gEcs09lXoL0VO5Xvu+x4ANxxbln9D
+         mVFujlp9gKsTx/hSdugu1cl05iciaxtSlOlYaxPmmc10s4AGXEy87n2MA+GdGgn8XDeI
+         eReA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727089213; x=1727694013;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nUqmFP2QzVpf7LDbD5h6EoX7C93mpfwdZpjgGxZ7JB0=;
-        b=ALbf9DugoGxInT2SfKE1akw9UrQhWtLkLuk+iOdqYFSuIFBJh8lHzZiqjvz33fwr58
-         J21iBtdDorxtUDsKMgwyIQoZ0KjMwYZCV4vliVl3VCU2vp6N6u6OKtICQYmSWW8ywF+4
-         kIGxnFgSWWXNPklL7O74oin/Ljb0QsgvgaIY7I95YLFardmYuoAWiF2/owBCl2zw8Xpm
-         G3bZXULGjxQkWUqWRwIpTGiDa5Uuy5OZfciMrg1KB6uMYtcFW3CyNd/RDKfCSH5isE4j
-         TbM7+ECLVjVIrN6/O/nsoLOvuwk+IRQ5rF/sHaQf83MgVkfSWYoNNLMIVY1RTt2yphIk
-         JFIw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNl0PG1An1JJIW4UskACyWWo12Kou9dvkkqemkyCQH79oine6vBEwRKWIVyuKcZtQlBncrBTktJBKpgaKA@vger.kernel.org, AJvYcCVbCcXVNdzqBe3fVNrU8gS7bAwJXT/yeQqkXJIuEE9E6kXdZRFyzwSdhzf2OfHRD68Koo6DUAP/AsrC@vger.kernel.org, AJvYcCVqDcctbDN1tVNI/kMxeTh+vGHEPsYy0BVBwH7KHrCX/N+UbVp8V3o6FX0qSVOWX5fDF+dIDHy0XSGHkU8=@vger.kernel.org, AJvYcCW+UCyU0D43Wdj0CnOL3zo4PfQAGyLEwb2moNVoUo5BxiXi/SnNGEJt+QSY/qAOI5lL+lSCs4nssVLi@vger.kernel.org, AJvYcCXhZ8Ij6+qLX966RDNVVjBdwszgxvuPwYPpNrrGlMbvz376qxWEV/B3fsbgW/tMP7RsDoUgwgfSofMG@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcaJEOMlJQn/0Kh9SEx3rtEN7QEvCkuULj6BieICzSaWgs7YfN
-	lAI3PylF4mZJslIoj4adC9pD4q6j4uLGi43t7r7vnS2UQ2gU3C0K
-X-Google-Smtp-Source: AGHT+IHCSD/ALgIwBZ5s3Hy9r99p7T8tE7frQFItu74MHzu4oqQCqGEDZBKVq8n6KYGDunFNzIIAfw==
-X-Received: by 2002:a7b:cb8f:0:b0:42c:c003:edd1 with SMTP id 5b1f17b1804b1-42e7fa8229dmr57296115e9.10.1727089213273;
-        Mon, 23 Sep 2024 04:00:13 -0700 (PDT)
-Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42e7afd7490sm97856615e9.28.2024.09.23.04.00.11
+        d=1e100.net; s=20230601; t=1727089284; x=1727694084;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rTwjyJINn/UiyHVLTt4SQp0fQnAkFaFHMRg1gYcKq54=;
+        b=cLcg2hpjD6UHJWHOcAW5p2QN6SsIRb7TMiBYaeH6pCi1jiL9PRVUZUjtb9Da3R74Fv
+         DzBjfdOwxPWzSMfFGB//rW9se2gdn+0ccKDT5x4hfPb+9yPZNarXJaTZ9g/x00YsxoAO
+         bCR1jjYJLFZTXw37KILXLD1VNIZ91mJB/Jb5CjFkQ4CP0IV8Zl6BCx0eLbJVzyVaVgL6
+         iRLDjUCbU5u9a68Gel5j6V05bcM1bWXzd8IYk6npA72/E9zBe6b6D459cOTf5s2enFV7
+         l0VAUyrhMzNceXxu2nqvjAtfXQBai5wA0eZkz54MzqYU+3W8A5YUiGTiqgJIq5nb7nff
+         84nw==
+X-Forwarded-Encrypted: i=1; AJvYcCUUh3VaukbcgwUxWtGaaOZa0qrNBIqJ0w8S3yHj2Q/SpiV3k4/aA+wlc73WGs6Jau1NNIxn5gSXzRDP2XSE@vger.kernel.org, AJvYcCVu+PSTlzdsuxI/m8X3U7JPdv3n9PnL08wr8zmJWEbWmWSyrJ39AeDC/60xwMTKhVf/3slF0mckSSUDZig=@vger.kernel.org, AJvYcCWorDRJ7icqJZ9QlqMIdDP2dyKj9vjL3zZz0ojnFUsuGVFLDHBFmV14/oYEdUEYqE29F/6Bn1ndJczN@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeLByq0ut76VnTdKFQzIdAf3ZEJjD3o2il/SEQahbokPxxG4RD
+	C7vzIJbUDtxc/sB/HAsJL3ij+Al/l6aacMh1nB99j3ebh+Bhn4q9
+X-Google-Smtp-Source: AGHT+IHxMTVvUNTmfoksDdljADMNOLyh6BbAqWSEdaOlDI6rNFZYgiSbwTk4raDX/Zj/cptvuLggGA==
+X-Received: by 2002:a17:907:2da9:b0:a8e:a578:2b63 with SMTP id a640c23a62f3a-a90d516727cmr1224056966b.55.1727089283729;
+        Mon, 23 Sep 2024 04:01:23 -0700 (PDT)
+Received: from orome (p200300e41f147300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f14:7300:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90613303bfsm1195843466b.202.2024.09.23.04.01.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 04:00:12 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	INAGAKI Hiroshi <musashino.open@gmail.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Ming Lei <ming.lei@redhat.com>,
-	Li Lingfeng <lilingfeng3@huawei.com>,
-	Christian Heusel <christian@heusel.eu>,
-	linux-block@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>
-Subject: [RFC PATCH 4/4] dt-bindings: mmc: Document support for partition table in mmc-card
-Date: Mon, 23 Sep 2024 12:59:33 +0200
-Message-ID: <20240923105937.4374-5-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240923105937.4374-1-ansuelsmth@gmail.com>
-References: <20240923105937.4374-1-ansuelsmth@gmail.com>
+        Mon, 23 Sep 2024 04:01:23 -0700 (PDT)
+Date: Mon, 23 Sep 2024 13:01:21 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] arm64: tegra: add wp-gpio to P2957 board
+Message-ID: <goi3wqrbva565ejst25fwflgvp4d5vznmqlba4q6liylzdkwfk@hovwpzcnvf2q>
+References: <20240815-tx1_sdmmc-v1-0-7856ac25a204@tecnico.ulisboa.pt>
+ <172494536049.1302383.5328678787632525054.b4-ty@nvidia.com>
+ <kbz72jma3bj7dnfnvdjo6m5yqrvjwkvz2gtt6bxpezkslwt3kh@a7wqzkssdfvf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="mc7zawmzeupknuyz"
+Content-Disposition: inline
+In-Reply-To: <kbz72jma3bj7dnfnvdjo6m5yqrvjwkvz2gtt6bxpezkslwt3kh@a7wqzkssdfvf>
 
-Document support for defining a partition table in the mmc-card node.
 
-This is needed if the eMMC doesn't have a partition table written and
-the bootloader of the device load data by using absolute offset of the
-block device. This is common on embedded device that have eMMC installed
-to save space and have non removable block devices.
+--mc7zawmzeupknuyz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-eMMC provide a generic disk for user data and if supported also provide
-one or two additional disk (boot0 and boot1) for special usage of boot
-operation where normally is stored the bootloader or boot info.
+On Fri, Aug 30, 2024 at 11:20:45AM GMT, Diogo Ivo wrote:
+> Hi Thierry,
+>=20
+> On Thu, Aug 29, 2024 at 05:31:23PM GMT, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> >=20
+> > On Thu, 15 Aug 2024 16:50:38 +0100, Diogo Ivo wrote:
+> > > Define the wp-gpio for the P2597 board.
+> > >=20
+> > > For this, patch 1 fixes the assignment of the vmmc supply's gpio that
+> > > was incorrectly assigned to the wp-gpio of the external slot.
+> > >=20
+> > > Patch 2 adds the definition of the wp-gpio.
+> > >=20
+> > > [...]
+> >=20
+> > Applied, thanks!
+>=20
+> Thanks for picking up the patches! In my testing around SD/MMC I found th=
+at
+> currently UHS-I cards are broken on the P2597. When trying to use one
+> the system shows somewhat erratic behaviour where it sometimes hangs and
+> some other times it simply fails to read from the SD card. I have
+> tracked the point at which this happens to be around
+> tegra_sdhci_pad_autocalib() when switching to SDR104 mode, where there
+> is the possibility of using specific offsets for this mode. Currently
+> there are no values specified in tegra210.dtsi, so the 1.8V values are
+> being used. However, when I tried specifying them as
+>=20
+> 	nvidia,pad-autocal-pull-up-offset-sdr104 =3D <0>;
+> 	nvidia,pad-autocal-pull-down-offset-sdr104 =3D <0>;
+>=20
+> in the DT things started working fine. I did not send a patch with these
+> values since I could not find what they should be on the X1 TRM, are
+> there any recommended values for these parameters so that we can have
+> this fixed?
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- .../devicetree/bindings/mmc/mmc-card.yaml     | 75 +++++++++++++++++++
- 1 file changed, 75 insertions(+)
+Sorry for the late reply. Looking at the Tegra X1 TRM, section 32.7
+"Programming Guidelines" (starting on page 2473), I see there are a
+few subsections called "Run Auto-Calibration", which list recommended
+values for the auto-calibration pull-down/-up offsets, depending on the
+signaling mode (3.3V vs. 1.8V).
 
-diff --git a/Documentation/devicetree/bindings/mmc/mmc-card.yaml b/Documentation/devicetree/bindings/mmc/mmc-card.yaml
-index fd347126449a..fab9fa5c170a 100644
---- a/Documentation/devicetree/bindings/mmc/mmc-card.yaml
-+++ b/Documentation/devicetree/bindings/mmc/mmc-card.yaml
-@@ -13,6 +13,10 @@ description: |
-   This documents describes the devicetree bindings for a mmc-host controller
-   child node describing a mmc-card / an eMMC.
- 
-+  It's possible to define a fixed partition table for an eMMC for the user
-+  partition and one of the 2 boot partition (boot0/boot1) if supported by the
-+  eMMC.
-+
- properties:
-   compatible:
-     const: mmc-card
-@@ -26,6 +30,48 @@ properties:
-       Use this to indicate that the mmc-card has a broken hpi
-       implementation, and that hpi should not be used.
- 
-+  "#address-cells": true
-+
-+  "#size-cells": true
-+
-+patternProperties:
-+  "^partitions(-boot[01])?$":
-+    type: object
-+
-+    properties:
-+      "#address-cells": true
-+
-+      "#size-cells": true
-+
-+    patternProperties:
-+      "@[0-9a-f]+$":
-+        type: object
-+
-+        properties:
-+          reg:
-+            description: partition's offset and size within the flash (in sector
-+              block, 512byte)
-+            maxItems: 1
-+
-+
-+          label:
-+            description: The label / name for this partition.
-+
-+          read-only:
-+            description: This parameter, if present, is a hint that this partition
-+              should only be mounted read-only. This is usually used for flash
-+              partitions containing early-boot firmware images or data which should
-+              not be clobbered.
-+            type: boolean
-+
-+        required:
-+          - reg
-+          - label
-+
-+        additionalProperties: false
-+
-+    additionalProperties: false
-+
- required:
-   - compatible
-   - reg
-@@ -42,6 +88,35 @@ examples:
-             compatible = "mmc-card";
-             reg = <0>;
-             broken-hpi;
-+
-+            #address-cells = <0>;
-+            #size-cells = <0>;
-+
-+            partitions {
-+                #address-cells = <1>;
-+                #size-cells = <1>;
-+
-+                partition@0 {
-+                    label = "kernel"; /* Kernel */
-+                    reg = <0x0 0x10000>; /* 32 MB */
-+                };
-+
-+                partition@3400 {
-+                    label = "rootfs";
-+                    reg = <0x3400 0x200000>; /* 1GB */
-+                };
-+            };
-+
-+            partitions-boot0 {
-+                #address-cells = <1>;
-+                #size-cells = <1>;
-+
-+                partition@0 {
-+                    label = "bl";
-+                    reg = <0x0 0x10000>; /* 32MB */
-+                    read-only;
-+                };
-+            };
-         };
-     };
- 
--- 
-2.45.2
+They are:
 
+          3.3V    1.8V
+          PD  PU  PD  PU
+  SDMMC1  125  0  123 123
+  SDMMC2  n/a n/a  5   5
+  SDMMC3  125  0  123 123
+  SDMMC4  n/a n/a  5   5
+
+Now these aren't the ones you've been using, but it is what we have in
+the Tegra210 DTSI file. Interestingly the TRM doesn't make those
+specific to the mode (such as SDR104 and HS400 like the DT bindings
+suggest they should be).
+
+Also interestingly, on Tegra234 the recommended values in the TRM for
+these fields is 0 (like you're using), irrespective of mode.
+
+It's not entirely clear to me why we need these offsets during auto-
+calibration, so 0 makes as much sense as any other value. The
+documentation isn't very clear on what these values do, either. So I'd
+be inclined to accept a patch such as yours based purely on the fact
+that it makes things work.
+
+Thierry
+
+--mc7zawmzeupknuyz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmbxSn4ACgkQ3SOs138+
+s6EHnQ//Y8alU8VqYitvTFckK7KuVqRhtMGfqmYlJx/t/uFB016HJbm4iMhMWiJp
+B3LzYb2A2mDR2Y6MFceItdb0m3iuBDL9GORtEDVL6ILYRlrA8CVwJgjtfaPBU2pb
+sbuxfD5GQLsQaMOc13IJrvtxfWYFyBny5T0N5+/GiuoeAYE7tjN6V84YcB8QBoiF
+DcFJqzgPgiXG5uxt1jKTFUQMU6c6ezu5U+BrL1dvetx5SMmJBKUFs/9ESPJj+7qe
+KXGRwfkTFOSAYlwvrX7d6K68YRmqAVb1uBNMB/b0+Z+qGvB2xA4A+7Gms6VXdipN
+JeJdQAYwz978Ujc7GWXfvkgMVOJRp4HT+s27O/KfLkSsdLhJy+epbWC+q34mIyvO
+5Bp7OPWKaCR2KCwR3POWXJZ35WJ3kxsF7uAoSofBHR9NG86zymGeVi3ZhrhhkQ2v
++/idbpNlg1oU+ySTkk7AGlJlc9v6j5+NRtR8en6AMApLQSu7aUG0CHl5Uc1L8+pX
+JAFM71FllxW9ISMN+Z0WjYq22fXOPtyoxS/sz99ruU0QUL+L1m7zOUgZDkuZkreE
+TqsQyrwPSTkK0wMgfMn7g5AXCiHRvuatGuLdUpGApfwGRn3+f1IW95bSF0O0cbBc
+zf1qcU9EvMVBOIUjHS5Twnr6P3SeM88ky57075PQd2PmxpQxeCs=
+=xzSm
+-----END PGP SIGNATURE-----
+
+--mc7zawmzeupknuyz--
 
