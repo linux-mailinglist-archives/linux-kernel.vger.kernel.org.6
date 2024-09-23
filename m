@@ -1,177 +1,132 @@
-Return-Path: <linux-kernel+bounces-335905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 597E897EC59
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:35:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3522197EC5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:36:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27A53281E8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:35:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 651AF1C2131D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A43D199930;
-	Mon, 23 Sep 2024 13:35:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F2C1993AF;
+	Mon, 23 Sep 2024 13:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pd0cxYdi"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="EPjRaj/6"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3469038394;
-	Mon, 23 Sep 2024 13:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA5D199237
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 13:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727098549; cv=none; b=WoUD1+KnbTZaB/EgkqPNo/bYFpxOLhXF040oxEGmQHWb5udjL7M08F/AOgSfTu0chjo9gIH0M2juTvnYhV4bdsU9dq+3rXUFaEGbj1JIsx2eu3PXnx+14aypFIv4ejwSWT3Q1sahwI2rEclJN+tjeSjvhvMVbKZoa3meE6T7LWQ=
+	t=1727098583; cv=none; b=Yp+r4OH8sZayx2Sn7g2f4QIkQaKIAgtBuN28w3u8yfFQqYzy+9Vs3FwR9gJ/z83OPWbWx+uXAbcpu7THxUsyipymBAg3zTqkyZsz1+fOOTPMjfs2TZYAfKll00ZQrRQ9Ukd5Od9pzH4mgPYg+L2AkjFTuGeP4TpWHO14Vj3+ZDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727098549; c=relaxed/simple;
-	bh=QiolusFNonU5H3QdL09kY/L86vkxnWUj2IpkCajjdUU=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ev51gIXtUTvDq33g9xOSRxgrEy4Ad9ingc/MP+mAWnF3lcIZKAxt6oMdpYtrq4LdqANJ1rDtM9LmYlZnlbEi/b7Vt9GaJMo5VT1wKDdrj4XiTMESjBnOmaMYUq1b6Cb439+f3e8q4L4KB5/GaKxvYbPmCVFLrcAgQp029FReeMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pd0cxYdi; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727098548; x=1758634548;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=QiolusFNonU5H3QdL09kY/L86vkxnWUj2IpkCajjdUU=;
-  b=Pd0cxYdiawKV9T1lWv5Pc1l6HlgokEzIgWQZ4n2bT9qpjFKpr5hfkhEU
-   Yv+4KzT9EY+maQ1tHg+Cpo98crgt9uJrgJ7TVm1JJbMF1CmZ/Rp8/rw6h
-   +h8/EdAkLLYx78hIaUSr2qIbKfZJWYEwSXE0QyjyU4YdiaCvn+Dy4x1MA
-   qBEPBbp3AmuCx8Z+ChnvUCjFRyvglOfcjV1ZG48tOHMPCafwIuyv0xBLy
-   XugarzaD47huo2gyakKxUfLATCAPqQEFuyHp+MI3O0Igkt70Pdw3q5+7I
-   rkTyMhqOD1sJ7ZzWknhkRKxm5X1KNvdWc3IWVCmi98sl1Gv1pMzyFZGcp
-   A==;
-X-CSE-ConnectionGUID: Na0LmmX/TImOa6WhOWFGjA==
-X-CSE-MsgGUID: f/4i64aDTZq4zQAwtbWTHg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="43562734"
-X-IronPort-AV: E=Sophos;i="6.10,251,1719903600"; 
-   d="scan'208";a="43562734"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 06:35:47 -0700
-X-CSE-ConnectionGUID: rB/mfvIiQJKd0eEVD6kiCA==
-X-CSE-MsgGUID: KZOvXjsVSWSHVoga22sJrA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,251,1719903600"; 
-   d="scan'208";a="75837456"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.23])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 06:35:43 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 23 Sep 2024 16:35:39 +0300 (EEST)
-To: Armin Wolf <W_Armin@gmx.de>
-cc: mjg59@srcf.ucam.org, pali@kernel.org, dilinger@queued.net, 
-    "Rafael J. Wysocki" <rafael@kernel.org>, lenb@kernel.org, 
-    Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
-    linux-acpi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/3] ACPI: battery: Simplify battery hook locking
-In-Reply-To: <20240922064026.496422-2-W_Armin@gmx.de>
-Message-ID: <5b3e4ec1-e5a6-cb77-1d57-3515eb051cc2@linux.intel.com>
-References: <20240922064026.496422-1-W_Armin@gmx.de> <20240922064026.496422-2-W_Armin@gmx.de>
+	s=arc-20240116; t=1727098583; c=relaxed/simple;
+	bh=sD+X1ps4LRqCGCcMwxGM2EdJliT9Zi41prneqLKVZJI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I1eQwNueb0sHJMqQzJIBLOAvfnoA92FOTRxhxf+PYQrMFeMTPeXnoEglZzpjvEqKk7LHIGZWQKY4ttY0jttWv0KUYhoDZms7TYkIFz2Bt2QeLyuWdGKc75XbgNA5Ep9+/BoLx8jazU9wExcNqoXFoCvsywNlQvy8aBy+4a0G1rA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=EPjRaj/6; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: ce27fb3479b011efb66947d174671e26-20240923
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=awc4i9nMPrTPIYiJ1Q5PrfLytY/PFn2fXwvwl1Rwcs4=;
+	b=EPjRaj/66gUq8kBfjkydiip+a4gjSZZF2DN7Dx8UJrtl0dsG/d89y+s5wy9NAhrVHvrCZT4aNnhP7knq7PLLtT21Mbir7ZgD9/FpsxQ7q4qOFfn5rAb0NYQU52mO+E52F0lkw+vaHhSW1RKZG67/yZytnw6wllCtqnOuGmJr8vE=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:4b0809a1-fda1-43e9-aee0-17e3e45ce3b8,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:764aa1d0-7921-4900-88a1-3aef019a55ce,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: ce27fb3479b011efb66947d174671e26-20240923
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
+	(envelope-from <liankun.yang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 992786734; Mon, 23 Sep 2024 21:36:15 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Mon, 23 Sep 2024 21:36:13 +0800
+Received: from mszsdhlt06.gcn.mediatek.inc (10.16.6.206) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Mon, 23 Sep 2024 21:36:13 +0800
+From: Liankun Yang <liankun.yang@mediatek.com>
+To: <chunkuang.hu@kernel.org>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
+	<simona@ffwll.ch>, <matthias.bgg@gmail.com>,
+	<angelogioacchino.delregno@collabora.com>, <jitao.shi@mediatek.com>,
+	<mac.shen@mediatek.com>, <peng.liu@mediatek.com>, <liankun.yang@mediatek.com>
+CC: <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH v1 1/1] drm/mediatek: dp: Add sdp path reset
+Date: Mon, 23 Sep 2024 21:35:44 +0800
+Message-ID: <20240923133610.23728-1-liankun.yang@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-400505829-1727098539=:978"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+When using type-c to type-c to connect to the monitor,
+the sound plays normally. If you unplug the type-c and
+connect the type-c to hdmi dongle to the monitor, there will be noise.
 
---8323328-400505829-1727098539=:978
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+By capturing the audio data, it is found that
+the data position is messy, and there is no error in the data.
 
-On Sun, 22 Sep 2024, Armin Wolf wrote:
+Through experiments, it can be restored by resetting the SDP path
+when unplugging it.
 
-> Move the conditional locking from __battery_hook_unregister()
-> into battery_hook_unregister() and rename the low-level function
-> to simplify the locking during battery hook removal.
->=20
-> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+Signed-off-by: Liankun Yang <liankun.yang@mediatek.com>
+---
+ drivers/gpu/drm/mediatek/mtk_dp.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+diff --git a/drivers/gpu/drm/mediatek/mtk_dp.c b/drivers/gpu/drm/mediatek/mtk_dp.c
+index d8796a904eca..4003bd83f64e 100644
+--- a/drivers/gpu/drm/mediatek/mtk_dp.c
++++ b/drivers/gpu/drm/mediatek/mtk_dp.c
+@@ -1052,6 +1052,18 @@ static void mtk_dp_digital_sw_reset(struct mtk_dp *mtk_dp)
+ 			   0, DP_TX_TRANSMITTER_4P_RESET_SW_DP_TRANS_P0);
+ }
+ 
++static void mtk_dp_sdp_path_reset(struct mtk_dp *mtk_dp)
++{
++	mtk_dp_update_bits(mtk_dp, MTK_DP_ENC0_P0_3004,
++				SDP_RESET_SW_DP_ENC0_P0,
++				SDP_RESET_SW_DP_ENC0_P0);
++
++	/* Wait for sdp path reset to complete */
++	usleep_range(1000, 5000);
++	mtk_dp_update_bits(mtk_dp, MTK_DP_ENC0_P0_3004,
++				0, SDP_RESET_SW_DP_ENC0_P0);
++}
++
+ static void mtk_dp_set_lanes(struct mtk_dp *mtk_dp, int lanes)
+ {
+ 	mtk_dp_update_bits(mtk_dp, MTK_DP_TRANS_P0_35F0,
+@@ -2314,6 +2326,9 @@ static void mtk_dp_bridge_atomic_disable(struct drm_bridge *bridge,
+ 			   DP_PWR_STATE_BANDGAP_TPLL,
+ 			   DP_PWR_STATE_MASK);
+ 
++	/* SDP path reset sw*/
++	mtk_dp_sdp_path_reset(mtk_dp);
++
+ 	/* Ensure the sink is muted */
+ 	msleep(20);
+ }
+-- 
+2.45.2
 
---=20
- i.
-
-> ---
->  drivers/acpi/battery.c | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
->=20
-> diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
-> index da3a879d638a..10e9136897a7 100644
-> --- a/drivers/acpi/battery.c
-> +++ b/drivers/acpi/battery.c
-> @@ -706,28 +706,28 @@ static LIST_HEAD(acpi_battery_list);
->  static LIST_HEAD(battery_hook_list);
->  static DEFINE_MUTEX(hook_mutex);
->=20
-> -static void __battery_hook_unregister(struct acpi_battery_hook *hook, in=
-t lock)
-> +static void battery_hook_unregister_unlocked(struct acpi_battery_hook *h=
-ook)
->  {
->  =09struct acpi_battery *battery;
-> +
->  =09/*
->  =09 * In order to remove a hook, we first need to
->  =09 * de-register all the batteries that are registered.
->  =09 */
-> -=09if (lock)
-> -=09=09mutex_lock(&hook_mutex);
->  =09list_for_each_entry(battery, &acpi_battery_list, list) {
->  =09=09if (!hook->remove_battery(battery->bat, hook))
->  =09=09=09power_supply_changed(battery->bat);
->  =09}
->  =09list_del(&hook->list);
-> -=09if (lock)
-> -=09=09mutex_unlock(&hook_mutex);
-> +
->  =09pr_info("extension unregistered: %s\n", hook->name);
->  }
->=20
->  void battery_hook_unregister(struct acpi_battery_hook *hook)
->  {
-> -=09__battery_hook_unregister(hook, 1);
-> +=09mutex_lock(&hook_mutex);
-> +=09battery_hook_unregister_unlocked(hook);
-> +=09mutex_unlock(&hook_mutex);
->  }
->  EXPORT_SYMBOL_GPL(battery_hook_unregister);
->=20
-> @@ -753,7 +753,7 @@ void battery_hook_register(struct acpi_battery_hook *=
-hook)
->  =09=09=09 * hooks.
->  =09=09=09 */
->  =09=09=09pr_err("extension failed to load: %s", hook->name);
-> -=09=09=09__battery_hook_unregister(hook, 0);
-> +=09=09=09battery_hook_unregister_unlocked(hook);
->  =09=09=09goto end;
->  =09=09}
->=20
-> @@ -807,7 +807,7 @@ static void battery_hook_add_battery(struct acpi_batt=
-ery *battery)
->  =09=09=09 */
->  =09=09=09pr_err("error in extension, unloading: %s",
->  =09=09=09=09=09hook_node->name);
-> -=09=09=09__battery_hook_unregister(hook_node, 0);
-> +=09=09=09battery_hook_unregister_unlocked(hook_node);
->  =09=09}
->  =09}
->  =09mutex_unlock(&hook_mutex);
-> @@ -840,7 +840,7 @@ static void __exit battery_hook_exit(void)
->  =09 * need to remove the hooks.
->  =09 */
->  =09list_for_each_entry_safe(hook, ptr, &battery_hook_list, list) {
-> -=09=09__battery_hook_unregister(hook, 1);
-> +=09=09battery_hook_unregister(hook);
->  =09}
->  =09mutex_destroy(&hook_mutex);
->  }
-> --
-> 2.39.5
->=20
---8323328-400505829-1727098539=:978--
 
