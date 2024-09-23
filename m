@@ -1,145 +1,144 @@
-Return-Path: <linux-kernel+bounces-336043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A23397EE6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:43:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D59F197EE7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:48:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3207B2828DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:43:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12FF11C21176
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:48:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B75199EB4;
-	Mon, 23 Sep 2024 15:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bbyVJVzP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26D019E804;
+	Mon, 23 Sep 2024 15:48:07 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD49126C01;
-	Mon, 23 Sep 2024 15:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D816977104
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 15:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727106203; cv=none; b=l3A/FYeVRjFCZjEIcMg2dsyUSgOURAs3MO7YN4IgK66oTbCqgy6g1cfYm808d89vv3u/MnbGyhIRgUkbxTwCxz0xMdtO/teB2ae7JiT75+QN+bkxuYGE/4Iw3mkthGINAYySrzbS6zNH77ZhsUKRtdT+8GyM5Tr65rriSRM7Ro0=
+	t=1727106487; cv=none; b=SHU4tGkSy6L8geBA3H69UKxq/mfw0vwnQpX9D3B4JoJKZ1i87r95i8JI2hrpesAk1Vwfjwdz2ggBr61efvTFO3GS58sjtdykp4JtPS7WymPOZ7qwbus6YOsVvJmHKc0+jb4MSeQdXpP9pNF981O2EBSLF+9nj2mV3A/zfwZyJ2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727106203; c=relaxed/simple;
-	bh=mABUhkH2kzNPjrHcQ/f8Gpo5mmF7TL7/jd56zHXY2/I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gR2oN3y5C9T3ZY9iLHkuxOb9mG6gI0AFgmAP1mKbrCG4mBmBgPgdmG0F69SkxSXYZsrKBvkpJFICCwAWvNy1jEA1zsaDhi+ge9hwTCAODlJfQDNR2mLZ7Z5ogqX2J7P9j/Ypvxp7R8IAsfL9KReoVuhioyW8OcubatbELCyQBGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bbyVJVzP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 659E7C4CEC4;
-	Mon, 23 Sep 2024 15:43:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727106202;
-	bh=mABUhkH2kzNPjrHcQ/f8Gpo5mmF7TL7/jd56zHXY2/I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bbyVJVzPyyeH9xX0OsfZssIuN3l68I/AN2jTroJxEgb/uP6K0zPR/UUiZk2K5sC+6
-	 gTcpaYXDbHdWVCz19JMqslljC2K18skT14QCBleSpRBIkJeram0MxXUjdt4rKkTmz/
-	 l+j5KZztcZcGK2k9ke1MfiDyAFqdgcx6lmJd3R46qqSDbQXCJMNIioP9JRq7kIvrwr
-	 amqqBE8lNHbybIdQA7K2DnM+jQ6jn69t/+wgURK51Yjs6VtRWgqJpUsVA+zFZ4qVjO
-	 jv9VwRkIr78O06OO3A16IxrZnR36iKbM2kV8KvRK6uO0u3M3M9C2QMvnub3SJj2j67
-	 VEJzQihlWKyZg==
-Message-ID: <7dfc70fa-6076-4bd0-a9d1-2477a5a088e8@kernel.org>
-Date: Mon, 23 Sep 2024 17:43:14 +0200
+	s=arc-20240116; t=1727106487; c=relaxed/simple;
+	bh=hkoieWxJ0471/Q4wgFmy+wiZ2lpn7t8bPYZ/cXRThjo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=QLnwSXU5FilJSVVRL8wKKZXg9xF6CoouzRz5htCX8Pok/u38H0A1+MHwKsXnljLEu08Dxmq0KauMgKfwO9bCzHldJMSQrcpCCprjmv+epKCdUYqhcOLxkj+vAsnwUPEFzn26dBeWH8PAqDFFpDH0Psa7rP7md55q9aIWCZ8ib98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-21-fwPuqpVfPIO66RunyFwVag-1; Mon, 23 Sep 2024 16:46:23 +0100
+X-MC-Unique: fwPuqpVfPIO66RunyFwVag-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Mon, 23 Sep
+ 2024 16:45:27 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Mon, 23 Sep 2024 16:45:27 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Jakub Sitnicki' <jakub@cloudflare.com>, Martin KaFai Lau
+	<martin.lau@linux.dev>, 'Tiago Lam' <tiagolam@cloudflare.com>, Eric Dumazet
+	<edumazet@google.com>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+CC: "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Alexei
+ Starovoitov" <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+	"Andrii Nakryiko" <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John
+ Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa
+	<jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan
+	<shuah@kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"kernel-team@cloudflare.com" <kernel-team@cloudflare.com>
+Subject: RE: [RFC PATCH v2 2/3] ipv6: Support setting src port in sendmsg().
+Thread-Topic: [RFC PATCH v2 2/3] ipv6: Support setting src port in sendmsg().
+Thread-Index: AQHbDci8OgyMoKtrJE6wBcqRmpwTjbJlgCZQ
+Date: Mon, 23 Sep 2024 15:45:27 +0000
+Message-ID: <29fea23839cf489488f9228a44e79d21@AcuMS.aculab.com>
+References: <20240920-reverse-sk-lookup-v2-0-916a48c47d56@cloudflare.com>
+	<20240920-reverse-sk-lookup-v2-2-916a48c47d56@cloudflare.com>
+	<855fc71343a149479c7da96438bf9e32@AcuMS.aculab.com>
+ <87r09a771t.fsf@cloudflare.com>
+In-Reply-To: <87r09a771t.fsf@cloudflare.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] drm/rockchip: vop: Split rk3288-vop into big and lit
-To: Jonas Karlman <jonas@kwiboo.se>, Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Sandy Huang <hjc@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>,
- Andy Yan <andy.yan@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240921222007.2301868-1-jonas@kwiboo.se>
- <20240921222007.2301868-4-jonas@kwiboo.se>
- <c6821033-57be-4d10-9e37-935f7748570e@kernel.org>
- <26ed8563-b6d6-4e72-91a9-f4d5946cef8f@kwiboo.se>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <26ed8563-b6d6-4e72-91a9-f4d5946cef8f@kwiboo.se>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On 23/09/2024 11:01, Jonas Karlman wrote:
->>>  	0, 0,
->>> @@ -1245,8 +1253,13 @@ static const struct of_device_id vop_driver_dt_match[] = {
->>>  	  .data = &rk3066_vop },
->>>  	{ .compatible = "rockchip,rk3188-vop",
->>>  	  .data = &rk3188_vop },
->>> +	{ .compatible = "rockchip,rk3288-vop-big",
->>> +	  .data = &rk3288_vop_big },
->>
->> Hm... that's not really needed. Instead of having three compatibles, you
->> could keep "rk3288-vop" as big and then my comment on bindings patch
->> could be ignored (you keep the compatible).
-> 
-> Thanks, I guess that just adding a new compatible for vop-lit should be
-> enough.
-> 
-> VOP_BIG: rockchip,rk3288-vop
-> VOP_LIT: rockchip,rk3288-vop-lit, rockchip,rk3288-vop
-> 
-> That should ensure backward/forward compatibility with any mix of
-> old/new boot-firmware, DTs and kernels.
-> 
-> Will change to use that in v2.
+From: Jakub Sitnicki
+> Sent: 23 September 2024 15:56
+>=20
+> On Mon, Sep 23, 2024 at 01:08 PM GMT, David Laight wrote:
+> > From: Tiago Lam <tiagolam@cloudflare.com>
+>=20
+> [...]
+>=20
+> >> To limit its usage, a reverse socket lookup is performed to check if t=
+he
+> >> configured egress source address and/or port have any ingress sk_looku=
+p
+> >> match. If it does, traffic is allowed to proceed, otherwise it falls
+> >> back to the regular egress path.
+> >
+> > Is that really useful/necessary?
+>=20
+> We've been asking ourselves the same question during Plumbers with
+> Martin.
+>=20
+> Unprivileges processes can already source UDP traffic from (almost) any
+> IP & port by binding a socket to the desired source port and passing
+> IP_PKTINFO. So perhaps having a reverse socket lookup is an overkill.
 
-Yes, thanks.
+Traditionally you'd need to bind to the source port on any local IP
+(or the wildcard IP) that didn't have another socket bound to that port.
+Modern Linux might have more restrictions and SO_REUSADDR muddies things.
 
-Best regards,
-Krzysztof
+And I don't think you can do a connect() on an unbound UDP socket to
+set the source port at the same time as the destination IP+port.
+(That would actually be useful.)
+
+OTOH if you just want to send a UDP message you can just use another
+system on the same network.
+You might need to spoof the source mac - but that isn't hard (although
+it might confuse any ethernet switches).
+
+> We should probably respect net.ipv4.ip_local_reserved_ports and
+> net.ipv4.ip_unprivileged_port_start system settings, though, or check
+> for relevant caps.
+
+True.
+
+> Open question if it is acceptable to disregard exclusive UDP port
+> ownership by sockets binding to a wildcard address without SO_REUSEADDR?
+
+We've often suffered from the opposite - a program binds to the wildcard
+IP and everything works until something else binds to the same port and
+a specific local IP.
+I'm sure this is grief some on both TCP and UDP - especially since you
+often need to set SO_REUSADDR to stop other things breaking.
+
+=09David
+=20
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
 
 
