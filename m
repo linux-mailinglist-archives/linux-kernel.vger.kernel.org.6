@@ -1,131 +1,177 @@
-Return-Path: <linux-kernel+bounces-335903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EACC697EC50
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:31:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 597E897EC59
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:35:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACA0F2822C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:31:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27A53281E8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:35:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B67199EA1;
-	Mon, 23 Sep 2024 13:31:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A43D199930;
+	Mon, 23 Sep 2024 13:35:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hg9wFZ6R"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pd0cxYdi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 710E619993B;
-	Mon, 23 Sep 2024 13:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3469038394;
+	Mon, 23 Sep 2024 13:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727098270; cv=none; b=a4flBj/Dnb+E2xuWqthSf4Yiywkf5ucEsR6lfREc3t4uE1CI2MDcNEREPXsVIcwZENvqEfBOKBFQuImtZmn0kctQ3IyosqlwCtu0+M5KHyRXHoT6c35kpC/N+g6/+nC42DeZhfgqv1w+AD+pCSi2Z0B1xib0MsScqePqT0jbK7g=
+	t=1727098549; cv=none; b=WoUD1+KnbTZaB/EgkqPNo/bYFpxOLhXF040oxEGmQHWb5udjL7M08F/AOgSfTu0chjo9gIH0M2juTvnYhV4bdsU9dq+3rXUFaEGbj1JIsx2eu3PXnx+14aypFIv4ejwSWT3Q1sahwI2rEclJN+tjeSjvhvMVbKZoa3meE6T7LWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727098270; c=relaxed/simple;
-	bh=Ss/EtoccCyESZ7ERJmnmcrAqXBKWTB53fXWkCP6srxY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=swJkpcwMPKHP7SuwE4OTf7sDYhMSnKi6Xe+G6sGk1cZjN0VwG0XuJxqTE3jXUbQFAOd3nZ++nYw8ImdZJtZMsGFTrzw03222ogX97veNmCxvRd6r4IREQsa3PHQxxM1VcDKndypn/MbRRKwktBwfkyyaw7sU1NJ7uFja/BxGkV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hg9wFZ6R; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48N1qrBw022199;
-	Mon, 23 Sep 2024 13:30:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=u7k5SwI6chCIk
-	sCZz8Hi2DUWn3zMg3MUHqjtPjnnnwI=; b=hg9wFZ6Rd1sP01JpFDlNGN2PJ51ZU
-	bKCifHe2jBfpBc6+baLTY2cvHfl+vZbmWn2OfMPELbLatvzSlue1TGrHqlRLN3WO
-	UiW863CvPoUVDAwI7NXNrozA7zKqecGtiqZ+sSWm8bGyfwhXX0y/6kloCbE1Bp2W
-	7XWgBVU18ykMTAvWv7nwuXcP9TaUtHUtCtkMB2GT1o9dxUErrDMUnCsTtAGuympY
-	6K1pqZ29fYHRHpl/RCWzlJfhbfCJX1oHyDTDVXqiqgiPdAXLQ867nZp8IZ4uZJ2r
-	Kty9flSJmqOBehZNEhyQa1cn2/0gHSIcEbLdH9XsPeGR71w29wZvg6gaw==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41sntw46ek-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 23 Sep 2024 13:30:54 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48NAwTQn008701;
-	Mon, 23 Sep 2024 13:30:51 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41t8v0xww8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 23 Sep 2024 13:30:51 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48NDUnGh33489364
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 23 Sep 2024 13:30:50 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C16FD5805A;
-	Mon, 23 Sep 2024 13:30:49 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1D6985805C;
-	Mon, 23 Sep 2024 13:30:49 +0000 (GMT)
-Received: from ltcden12-lp3.aus.stglabs.ibm.com (unknown [9.40.195.53])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 23 Sep 2024 13:30:49 +0000 (GMT)
-From: Danny Tsen <dtsen@linux.ibm.com>
-To: linux-crypto@vger.kernel.org
-Cc: stable@vger.kernel.org, herbert@gondor.apana.org.au, leitao@debian.org,
-        nayna@linux.ibm.com, appro@cryptogams.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        mpe@ellerman.id.au, ltcgcw@linux.vnet.ibm.com, dtsen@us.ibm.com,
-        Danny Tsen <dtsen@linux.ibm.com>
-Subject: [PATCH 3/3] crypto: added CRYPTO_SIMD in Kconfig for CRYPTO_AES_GCM_P10.
-Date: Mon, 23 Sep 2024 09:30:40 -0400
-Message-ID: <20240923133040.4630-4-dtsen@linux.ibm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240923133040.4630-1-dtsen@linux.ibm.com>
-References: <20240923133040.4630-1-dtsen@linux.ibm.com>
+	s=arc-20240116; t=1727098549; c=relaxed/simple;
+	bh=QiolusFNonU5H3QdL09kY/L86vkxnWUj2IpkCajjdUU=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ev51gIXtUTvDq33g9xOSRxgrEy4Ad9ingc/MP+mAWnF3lcIZKAxt6oMdpYtrq4LdqANJ1rDtM9LmYlZnlbEi/b7Vt9GaJMo5VT1wKDdrj4XiTMESjBnOmaMYUq1b6Cb439+f3e8q4L4KB5/GaKxvYbPmCVFLrcAgQp029FReeMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pd0cxYdi; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727098548; x=1758634548;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=QiolusFNonU5H3QdL09kY/L86vkxnWUj2IpkCajjdUU=;
+  b=Pd0cxYdiawKV9T1lWv5Pc1l6HlgokEzIgWQZ4n2bT9qpjFKpr5hfkhEU
+   Yv+4KzT9EY+maQ1tHg+Cpo98crgt9uJrgJ7TVm1JJbMF1CmZ/Rp8/rw6h
+   +h8/EdAkLLYx78hIaUSr2qIbKfZJWYEwSXE0QyjyU4YdiaCvn+Dy4x1MA
+   qBEPBbp3AmuCx8Z+ChnvUCjFRyvglOfcjV1ZG48tOHMPCafwIuyv0xBLy
+   XugarzaD47huo2gyakKxUfLATCAPqQEFuyHp+MI3O0Igkt70Pdw3q5+7I
+   rkTyMhqOD1sJ7ZzWknhkRKxm5X1KNvdWc3IWVCmi98sl1Gv1pMzyFZGcp
+   A==;
+X-CSE-ConnectionGUID: Na0LmmX/TImOa6WhOWFGjA==
+X-CSE-MsgGUID: f/4i64aDTZq4zQAwtbWTHg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="43562734"
+X-IronPort-AV: E=Sophos;i="6.10,251,1719903600"; 
+   d="scan'208";a="43562734"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 06:35:47 -0700
+X-CSE-ConnectionGUID: rB/mfvIiQJKd0eEVD6kiCA==
+X-CSE-MsgGUID: KZOvXjsVSWSHVoga22sJrA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,251,1719903600"; 
+   d="scan'208";a="75837456"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.23])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 06:35:43 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 23 Sep 2024 16:35:39 +0300 (EEST)
+To: Armin Wolf <W_Armin@gmx.de>
+cc: mjg59@srcf.ucam.org, pali@kernel.org, dilinger@queued.net, 
+    "Rafael J. Wysocki" <rafael@kernel.org>, lenb@kernel.org, 
+    Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
+    linux-acpi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/3] ACPI: battery: Simplify battery hook locking
+In-Reply-To: <20240922064026.496422-2-W_Armin@gmx.de>
+Message-ID: <5b3e4ec1-e5a6-cb77-1d57-3515eb051cc2@linux.intel.com>
+References: <20240922064026.496422-1-W_Armin@gmx.de> <20240922064026.496422-2-W_Armin@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: VMTLlQ3Y2GYVfKo8jqx_hYOZoqfcDzAQ
-X-Proofpoint-GUID: VMTLlQ3Y2GYVfKo8jqx_hYOZoqfcDzAQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-23_10,2024-09-23_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
- mlxscore=0 lowpriorityscore=0 suspectscore=0 clxscore=1015
- priorityscore=1501 adultscore=0 mlxlogscore=864 bulkscore=0 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409230099
+Content-Type: multipart/mixed; boundary="8323328-400505829-1727098539=:978"
 
-Added CRYPTO_SIMD for CRYPTO_AES_GCM_P10.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Fixes: 45a4672b9a6e ("crypto: p10-aes-gcm - Update Kconfig and Makefile")
+--8323328-400505829-1727098539=:978
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Signed-off-by: Danny Tsen <dtsen@linux.ibm.com>
----
- arch/powerpc/crypto/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Sun, 22 Sep 2024, Armin Wolf wrote:
 
-diff --git a/arch/powerpc/crypto/Kconfig b/arch/powerpc/crypto/Kconfig
-index 46a4c85e85e2..951a43726461 100644
---- a/arch/powerpc/crypto/Kconfig
-+++ b/arch/powerpc/crypto/Kconfig
-@@ -107,12 +107,12 @@ config CRYPTO_AES_PPC_SPE
- 
- config CRYPTO_AES_GCM_P10
- 	tristate "Stitched AES/GCM acceleration support on P10 or later CPU (PPC)"
--	depends on BROKEN
- 	depends on PPC64 && CPU_LITTLE_ENDIAN && VSX
- 	select CRYPTO_LIB_AES
- 	select CRYPTO_ALGAPI
- 	select CRYPTO_AEAD
- 	select CRYPTO_SKCIPHER
-+	select CRYPTO_SIMD
- 	help
- 	  AEAD cipher: AES cipher algorithms (FIPS-197)
- 	  GCM (Galois/Counter Mode) authenticated encryption mode (NIST SP800-38D)
--- 
-2.43.0
+> Move the conditional locking from __battery_hook_unregister()
+> into battery_hook_unregister() and rename the low-level function
+> to simplify the locking during battery hook removal.
+>=20
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
 
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+
+--=20
+ i.
+
+> ---
+>  drivers/acpi/battery.c | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
+>=20
+> diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
+> index da3a879d638a..10e9136897a7 100644
+> --- a/drivers/acpi/battery.c
+> +++ b/drivers/acpi/battery.c
+> @@ -706,28 +706,28 @@ static LIST_HEAD(acpi_battery_list);
+>  static LIST_HEAD(battery_hook_list);
+>  static DEFINE_MUTEX(hook_mutex);
+>=20
+> -static void __battery_hook_unregister(struct acpi_battery_hook *hook, in=
+t lock)
+> +static void battery_hook_unregister_unlocked(struct acpi_battery_hook *h=
+ook)
+>  {
+>  =09struct acpi_battery *battery;
+> +
+>  =09/*
+>  =09 * In order to remove a hook, we first need to
+>  =09 * de-register all the batteries that are registered.
+>  =09 */
+> -=09if (lock)
+> -=09=09mutex_lock(&hook_mutex);
+>  =09list_for_each_entry(battery, &acpi_battery_list, list) {
+>  =09=09if (!hook->remove_battery(battery->bat, hook))
+>  =09=09=09power_supply_changed(battery->bat);
+>  =09}
+>  =09list_del(&hook->list);
+> -=09if (lock)
+> -=09=09mutex_unlock(&hook_mutex);
+> +
+>  =09pr_info("extension unregistered: %s\n", hook->name);
+>  }
+>=20
+>  void battery_hook_unregister(struct acpi_battery_hook *hook)
+>  {
+> -=09__battery_hook_unregister(hook, 1);
+> +=09mutex_lock(&hook_mutex);
+> +=09battery_hook_unregister_unlocked(hook);
+> +=09mutex_unlock(&hook_mutex);
+>  }
+>  EXPORT_SYMBOL_GPL(battery_hook_unregister);
+>=20
+> @@ -753,7 +753,7 @@ void battery_hook_register(struct acpi_battery_hook *=
+hook)
+>  =09=09=09 * hooks.
+>  =09=09=09 */
+>  =09=09=09pr_err("extension failed to load: %s", hook->name);
+> -=09=09=09__battery_hook_unregister(hook, 0);
+> +=09=09=09battery_hook_unregister_unlocked(hook);
+>  =09=09=09goto end;
+>  =09=09}
+>=20
+> @@ -807,7 +807,7 @@ static void battery_hook_add_battery(struct acpi_batt=
+ery *battery)
+>  =09=09=09 */
+>  =09=09=09pr_err("error in extension, unloading: %s",
+>  =09=09=09=09=09hook_node->name);
+> -=09=09=09__battery_hook_unregister(hook_node, 0);
+> +=09=09=09battery_hook_unregister_unlocked(hook_node);
+>  =09=09}
+>  =09}
+>  =09mutex_unlock(&hook_mutex);
+> @@ -840,7 +840,7 @@ static void __exit battery_hook_exit(void)
+>  =09 * need to remove the hooks.
+>  =09 */
+>  =09list_for_each_entry_safe(hook, ptr, &battery_hook_list, list) {
+> -=09=09__battery_hook_unregister(hook, 1);
+> +=09=09battery_hook_unregister(hook);
+>  =09}
+>  =09mutex_destroy(&hook_mutex);
+>  }
+> --
+> 2.39.5
+>=20
+--8323328-400505829-1727098539=:978--
 
