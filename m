@@ -1,74 +1,62 @@
-Return-Path: <linux-kernel+bounces-336206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5C5797F093
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 20:26:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52A9397F095
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 20:26:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 265721F22503
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:26:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16CB3282B1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D33701A2542;
-	Mon, 23 Sep 2024 18:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3A61A2579;
+	Mon, 23 Sep 2024 18:22:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f5cTxbKF"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="L9cnYoQG"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469AF1A072C;
-	Mon, 23 Sep 2024 18:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6084519F41C;
+	Mon, 23 Sep 2024 18:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727115688; cv=none; b=syi2mm6bqz46o97eTqXrReXBS3ZIgOD++aUT5EUYi1W37r5Th6MJbKkkTxe3wik2jBAr48P04BPWwbvaULv2JweZzNpVMcXPXtVquBePfS1OtGrLxy9kYOzJr/cCd54xO2ODXQOmrrBZSd2EPoC4VxipivBKxiyhXD/x37s3iuQ=
+	t=1727115734; cv=none; b=pZFkrkKKs6yVQJ/7PdYCPKgovcnvOaisVXrBNhPXmJz3CZe+bp1qtY0OkcS/zaOutPJzoDoWP/yYXKcGj8bZ1NIemhdQIiXIojFhJInm4Wq0Ycmm7+X7PSwlE9G8YMKtbkgCkHJ6765TrH6JDCtdNLRWblfg/oJYUJQdmT74oxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727115688; c=relaxed/simple;
-	bh=4ymZnMyZGtT6UYFulOD/DYIYTVeFJgXF6MGj7sQm6Yw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=UqtBnbH3yOqUVYL/iogQ0gl3zLro8eqf3Be4nE4Lk854X0r4H55KrqjbbXc2w5XnjTpCSbPgIDqfdButC3at5LOJ5S0TZjfD5zG5CKM3eSP8/xnG0ofNeB8fXfj6oD2I3txrsWdaP4OJdIQ855osbhg69bsxGrRJWIYCOaLNsbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f5cTxbKF; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2054e22ce3fso45801075ad.2;
-        Mon, 23 Sep 2024 11:21:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727115685; x=1727720485; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=C5N8zqrjLqH1Y9p5/idxazVzjCi4LkorIqH28d1Q4uo=;
-        b=f5cTxbKFHtrhVh8f7Yt5dbU3Xs4V3LofTIGan5cAoDfeJT7iQXLT6YetQ7QTZOg9vd
-         kylxf4hKX2o94g7fkUAr8mfGdvOThHV3bqftgd4tRVk63bUQMFDbhFWZgd0DWN5UdueO
-         uyDaaaCgCfb3M6HTX1koWGXfCxphspUtRZb/JWJ27pjePgJRi5qeq7kOvn1URRmsnNKV
-         sUafjGJuDm9/vwhK8ZpSLyhYHV8mUsDrzFoFxIUHaoNsQkPj8LIHzDBN+y0hieodI0E+
-         HQeWC9h8GAsH5L2564lK3cNGNj3QOMHHEJFp6R/i/vqVgssZN4M0EOBBp/ic9cBJRQfR
-         yACg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727115685; x=1727720485;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C5N8zqrjLqH1Y9p5/idxazVzjCi4LkorIqH28d1Q4uo=;
-        b=NWXiCJDaclU+PY39VGw5Wxv+J5TZQ8teVU+83m4aiaJNLoHPml8OKZiEdSK9cqbsAx
-         cGNqHjeJhE1MhIT2kFEeIufmNctNuhykJOjGla/R7RjiazwZb+VTGdQzWloQTyiwZBMb
-         9O0L4II74xjYFYsgJqrblrkPBfcK+cIrnuzMF3GL1KxMO1xrQpUbT5cSQekQs0XOtB/N
-         WI8695d1GU0j+xLAzH720EitibQJ5yUZ+Nh6Cnv8ME/43AlOFr2gEDLj+zk42pBlWhlZ
-         ma5JTIgQefqdcAMd/7hHyJVmPhExEDd0Fla7NGwZs5KN8X3ypELf5T6+0GHF1WAbVTNF
-         8aAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUXov9VkAyJTqeftLMf5/AzopfRCuSrHmyioqU/RX8LTSXmJucLX/AufK3uAxDcj7GgCA+gT3RY@vger.kernel.org, AJvYcCW4/orA3m7RWovAEUd22K8kfhlL9VS85krsMGknhWCvCh26W91lBXCY4BtaF6dxA6KSHxRPHV6KUXyEsl0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsRc1MXv4vsvv8vH186P7U8Wld8x05vTA0/oVp7Ah6IjQVKrfl
-	6HIgNvE6iK1ZxsDCo8K9ZSKX/UoIFI/fXr+B04U6+MYdhpgloWCg
-X-Google-Smtp-Source: AGHT+IE2d1T2d7dq1cTkk+7HY1Bll4PQQiyiD5lbMZcZpfW9xPKz6R96UC7tCV4rfcbUaUDDoAjyTg==
-X-Received: by 2002:a05:6a21:a24c:b0:1ce:dd2e:d875 with SMTP id adf61e73a8af0-1d30aa0a41dmr17942165637.37.1727115685417;
-        Mon, 23 Sep 2024 11:21:25 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944b7b5c6sm14124299b3a.128.2024.09.23.11.21.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Sep 2024 11:21:24 -0700 (PDT)
-Message-ID: <0a9830fe-790d-4ccd-bec9-3fbb32f18aa8@gmail.com>
-Date: Mon, 23 Sep 2024 11:21:23 -0700
+	s=arc-20240116; t=1727115734; c=relaxed/simple;
+	bh=9iY+4FM4+oIBVw73ti8BAWVWFWPB+mK/XcAHFHXLCmM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Qa0SwZZxR6jG0cjj4TwgwN5Q5ghYZV9fdHO3tBBD7n4x42u09amIQiAWynJiqB3rSQEzaL3DFZtUXtlCoB5jn3NwPElu5u8IuxBGdjZDKgjvpaAIS9yIz1y6GL1H/UMiY9d3KsfmGx/YI+NFmRx3582T5qloIerYz8FIhvAWvhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=L9cnYoQG; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48NAEPjI032714;
+	Mon, 23 Sep 2024 18:21:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	FfMvljWqolIkMjOU9A/mkoVjgPykveoXeX/hADfX+Pc=; b=L9cnYoQGDL9UqaUU
+	AxQo4O86R6kqhElq6foVWBvqnYv+r6RnruH5jwBmIx4F4F0gOVjJ66K3h5vnc/fZ
+	C0qw0XXqg2jmhfNv8WgpP72joZRmkcPxOHIwRayin3+lX9ab83V2n/h9z4ZR7qBK
+	X4rj+SFTxPuvMqtRE336IXaZvX1DQxw80BIJTYlmy6yEQzfIRTIVLSemydahltDq
+	BhwEpC+HbhfnsbNo8gF+sioy3v/oUX6khJuvRDW3V/EcxT4ryxNXK4TjZI3l59z4
+	ZoDVCu449saJsTNGaSsBv1FGBtDSSEI2+YuFC1QXbM8/vRc5eu4F7iNh1tJRK8kC
+	pWFZGw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sqe95mde-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 23 Sep 2024 18:21:51 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48NILpn1031081
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 23 Sep 2024 18:21:51 GMT
+Received: from [10.227.110.203] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 23 Sep
+ 2024 11:21:50 -0700
+Message-ID: <ca52f5a6-2f38-447c-a2b8-8404fffecaf2@quicinc.com>
+Date: Mon, 23 Sep 2024 11:21:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,96 +64,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2 1/1] net: ethernet: lantiq_etop: fix memory
- disclosure
-To: Aleksander Jan Bajkowski <olek2@wp.pl>, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- jacob.e.keller@intel.com, andrew@lunn.ch, horms@kernel.org,
- john@phrozen.org, ralph.hempel@lantiq.com, ralf@linux-mips.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240921105801.14578-1-olek2@wp.pl>
- <20240921105801.14578-2-olek2@wp.pl>
+Subject: Re: [PATCH 3/3] ath6kl: Reduce scopes for two variables in
+ ath6kl_sdio_power_on()
+To: Markus Elfring <Markus.Elfring@web.de>, <linux-wireless@vger.kernel.org>,
+        Kalle Valo <kvalo@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+CC: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@inria.fr>,
+        Peter Zijlstra <peterz@infradead.org>
+References: <d5a19bb5-f940-4f07-9f98-c670d96cc839@web.de>
+ <33b08664-fa25-4cef-86b2-49f65b4369c9@web.de>
+ <80b820cd-9255-473e-8e4a-3e7d8612d876@quicinc.com>
+ <45f6c8a7-4021-483a-aa81-a836cd3fbcd8@web.de>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
 Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-In-Reply-To: <20240921105801.14578-2-olek2@wp.pl>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <45f6c8a7-4021-483a-aa81-a836cd3fbcd8@web.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 6DdNGXIIae8vwd42zLyoCwKECqZvpZuq
+X-Proofpoint-GUID: 6DdNGXIIae8vwd42zLyoCwKECqZvpZuq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=829 spamscore=0 lowpriorityscore=0 adultscore=0 mlxscore=0
+ suspectscore=0 malwarescore=0 phishscore=0 impostorscore=0 clxscore=1015
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409230135
 
-On 9/21/24 03:58, Aleksander Jan Bajkowski wrote:
-> When applying padding, the buffer is not zeroed, which results in memory
-> disclosure. The mentioned data is observed on the wire. This patch uses
-> skb_put_padto() to pad Ethernet frames properly. The mentioned function
-> zeroes the expanded buffer.
+On 9/23/2024 10:00 AM, Markus Elfring wrote:
+>>> Adjust the definitions for the local variables "func" and "ret"
+>>> so that the corresponding setting will be performed a bit later.
+> …
+>>> +++ b/drivers/net/wireless/ath/ath6kl/sdio.c
+>>> @@ -503,17 +503,15 @@ static void ath6kl_sdio_irq_handler(struct sdio_func *func)
+>>>  static int ath6kl_sdio_power_on(struct ath6kl *ar)
+>>>  {
+>>>  	struct ath6kl_sdio *ar_sdio = ath6kl_sdio_priv(ar);
+>>> -	struct sdio_func *func = ar_sdio->func;
+>>> -	int ret = 0;
+>>>
+>>>  	if (!ar_sdio->is_disabled)
+>>>  		return 0;
+>>>
+>>>  	ath6kl_dbg(ATH6KL_DBG_BOOT, "sdio power on\n");
+>>> -
+>>> +	struct sdio_func *func = ar_sdio->func;
+>>>  	sdio_claim_host(func);
+>>>
+>>> -	ret = sdio_enable_func(func);
+>>> +	int ret = sdio_enable_func(func);
+>>>  	sdio_release_host(func);
+>>>  	if (ret) {
+>>>  		ath6kl_err("Unable to enable sdio func: %d)\n", ret);
+>>> --
+>>> 2.46.0
+>>
+>> NAK
+>>
+>> no maintainer wants to spend time on patches like this which bring no real
+>> value to code that is not actively being maintained, and which violates the
+>> established understanding that, except under certain recently established
+>> criteria, declarations and code should not be interleaved.
+> …
 > 
-> In case the packet cannot be padded it is silently dropped. Statistics
-> are also not incremented. This driver does not support statistics in the
-> old 32-bit format or the new 64-bit format. These will be added in the
-> future. In its current form, the patch should be easily backported to
-> stable versions.
+> Would you find other software design options more acceptable for further
+> collateral evolution?
 > 
-> Ethernet MACs on Amazon-SE and Danube cannot do padding of the packets
-> in hardware, so software padding must be applied.
+> 1. Additional compound statements (by using extra curly brackets)
 > 
-> Fixes: 504d4721ee8e ("MIPS: Lantiq: Add ethernet driver")
-> Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
-> ---
->   drivers/net/ethernet/lantiq_etop.c | 11 ++++++-----
->   1 file changed, 6 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/lantiq_etop.c b/drivers/net/ethernet/lantiq_etop.c
-> index 3c289bfe0a09..36f1e3c93ca5 100644
-> --- a/drivers/net/ethernet/lantiq_etop.c
-> +++ b/drivers/net/ethernet/lantiq_etop.c
-> @@ -477,11 +477,11 @@ ltq_etop_tx(struct sk_buff *skb, struct net_device *dev)
->   	struct ltq_etop_priv *priv = netdev_priv(dev);
->   	struct ltq_etop_chan *ch = &priv->ch[(queue << 1) | 1];
->   	struct ltq_dma_desc *desc = &ch->dma.desc_base[ch->dma.desc];
-> -	int len;
->   	unsigned long flags;
->   	u32 byte_offset;
->   
-> -	len = skb->len < ETH_ZLEN ? ETH_ZLEN : skb->len;
-> +	if (skb_put_padto(skb, ETH_ZLEN))
-> +		return NETDEV_TX_OK;
+> 2. Moving a bit of source code into an additional function implementation
 
-You should consider continuing to use the temporary variable 'len' here, 
-and just re-assign it after the call to skb_put_padto() and avoid 
-introducing potential user-after-free near the point where you program 
-the buffer length into the HW. This also minimizes the amount of lines 
-to review.
--- 
-Florian
+I cannot speak for other maintainers, only myself. For myself I am far more
+interested in changes which fix actual errors or warnings, and far more
+interested in changes to code that is actually being widely used and where
+active development is occurring, as opposed to drivers that have no ongoing
+development and little deployment. At this time the ath.git maintainers are
+100% focused on the ath12k MLO feature, and anything other than bug fixes to
+ath12k or other ath drivers will be ignored.
+
+/jeff
 
