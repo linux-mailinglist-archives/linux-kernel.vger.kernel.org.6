@@ -1,138 +1,149 @@
-Return-Path: <linux-kernel+bounces-335557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E490197E768
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:18:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF06897E76B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:19:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 929491F218A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:18:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A13E5281709
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:19:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B69519342E;
-	Mon, 23 Sep 2024 08:18:46 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6AD319341D;
+	Mon, 23 Sep 2024 08:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LeYVMNc/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C4A6F2EB;
-	Mon, 23 Sep 2024 08:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E72B6F2EB;
+	Mon, 23 Sep 2024 08:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727079525; cv=none; b=O9j4ei7Dfd09THILjP58eBhPyXfCAe6NltVSB9Rj+OY9XsmNPMipm12qKJokyZ+dLjaCWiTUW54rqHQhzdNQcnnuekjZihAYBi2ldmokWYI0a0lwa9Wpaewhp+6BhWfmpBTPIGsW23kZ64ypALLgPTivmCP5PV5EVLXlU7Mk0Iw=
+	t=1727079590; cv=none; b=S/MB5YycTgH2zVRoUC/y74/136Y0ZH+82I7m4GLCz8bdtqSWC9qVru9qXoFj8S+PxRWcdOq/PN9g0LkGENKgCkIa38IrZrwYXgKKNY0zXKQMky0Wp48tVPELKR/8AQ3mUK2to6oynJ1TsR1JD0ls6nrzRkhbu5P6ReS/QAPzjWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727079525; c=relaxed/simple;
-	bh=fijOqEVomEustEmItf5PSy8xG7Va8hKn/5IRgxXspOs=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=j+fVug6CHowGMn4BFbrGPTXdGBAujwYJi00jaFaaVWSL3jiMsBT0EbEMgFDyuzCA6ywNntgiTcCVqHkfZqUdYQzxlCxb+TImwBe+Lx1fC8vzFSyxu8z08KA0VqHR8YreibsDstDNPwSk4LcRBxKWWTgA2R0nJfbVzXUdQMYvSGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XBwqP12W7z4f3jkg;
-	Mon, 23 Sep 2024 16:18:25 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 446591A08FC;
-	Mon, 23 Sep 2024 16:18:36 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgAnXMhaJPFmsdt0CA--.61517S3;
-	Mon, 23 Sep 2024 16:18:36 +0800 (CST)
-Subject: Re: [PATCH RFC 5/6] md/raid1: Handle bio_split() errors
-To: John Garry <john.g.garry@oracle.com>, Yu Kuai <yukuai1@huaweicloud.com>,
- axboe@kernel.dk, hch@lst.de
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, martin.petersen@oracle.com,
- "yangerkun@huawei.com" <yangerkun@huawei.com>,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20240919092302.3094725-1-john.g.garry@oracle.com>
- <20240919092302.3094725-6-john.g.garry@oracle.com>
- <bc4c414c-a7aa-358b-71c1-598af05f005f@huaweicloud.com>
- <0161641d-daef-4804-b4d2-4a83f625bc77@oracle.com>
- <c03de5c7-20b8-3973-a843-fc010f121631@huaweicloud.com>
- <44806c6f-d96a-498c-83e1-e3853ee79d5a@oracle.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <59a46919-6c6d-46cb-1fe4-5ded849617e1@huaweicloud.com>
-Date: Mon, 23 Sep 2024 16:18:34 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1727079590; c=relaxed/simple;
+	bh=gQ1xXXNFSQ0hMp/hqA4GAQ7kD/mpS6i/zp2Gmw3vPRw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E2pi1cxRPiHMQpefEVMvFXojwvCQRywqKWoTHrq68faLrSFg8fI+YWai8I5se7YFJl/eAIf/cg2eU3lpHBLT6X01fvhnYNzoiI9ydRxEpOJfVt3dstQp/aLEPsjwo/9iS5joblMe64QoQULSS0TEMKpij9hDLV8S7cGP4Cpp3Q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LeYVMNc/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CEB1C4CEC4;
+	Mon, 23 Sep 2024 08:19:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727079589;
+	bh=gQ1xXXNFSQ0hMp/hqA4GAQ7kD/mpS6i/zp2Gmw3vPRw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LeYVMNc/c1PpcDq/PGTNH8EeH683lhQ22/Ye7Wa4pPsxVuDDsLY7Q9JyzQS1As9ys
+	 1FxD65e/lBiV5VktoD0dv2pZ7FLgoeIFKJEwS9agXwshH7aqAKWq63ZP+UjytmPKLu
+	 yAIQUsTNGCMG1aQpwo4+9E1W77uhKT3AXbPHR4683BNeokwEgHhRfR2eHDuZoIv+nH
+	 WB483aJV+y58kgAC0/JTULv4RpA1WkJEg+q+q2T6+pLYIygf3JBmgW7xmVAplusijv
+	 wrTGbbhIB55EzaYYVnuIWO5abH1Uweoc6XHXEdDjVa2BsDSfs8pb/9aWkxwrnz6+mn
+	 A7DeNA4vO15LA==
+Date: Mon, 23 Sep 2024 10:19:46 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Sandy Huang <hjc@rock-chips.com>, 
+	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, 
+	kernel@collabora.com, Alexandre ARNOUD <aarnoud@me.com>, 
+	Luis de Arquer <ldearquer@gmail.com>, Algea Cao <algea.cao@rock-chips.com>
+Subject: Re: [PATCH v6 1/3] drm/bridge: synopsys: Add DW HDMI QP TX
+ Controller support library
+Message-ID: <20240923-spirited-wealthy-pelican-4e15dc@penduick>
+References: <20240906-b4-rk3588-bridge-upstream-v6-0-a3128fb103eb@collabora.com>
+ <20240906-b4-rk3588-bridge-upstream-v6-1-a3128fb103eb@collabora.com>
+ <20240909-horned-congenial-curassow-ebc5fa@houat>
+ <f8b17995-ce53-45ab-8e68-c7087dbc9786@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <44806c6f-d96a-498c-83e1-e3853ee79d5a@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAnXMhaJPFmsdt0CA--.61517S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7AF47Aw17Gr13ZFW7Cw4rXwb_yoW8Cw4rpr
-	yFka95Ar4DJFWIkr18Zr40yasYvw1fAa15J348G3y7urn0g3Z7trWUWw409ayagFy7Cw1q
-	qryrWa9xGFyUZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="bjmxjjuhmv2zdjhq"
+Content-Disposition: inline
+In-Reply-To: <f8b17995-ce53-45ab-8e68-c7087dbc9786@collabora.com>
 
-Hi,
 
-在 2024/09/23 15:44, John Garry 写道:
-> On 23/09/2024 07:15, Yu Kuai wrote:
->>>>
->>>> This way, BLK_STS_IOERR will always be returned, perhaps what you want
->>>> is to return the error code from bio_split()?
->>>
->>> Yeah, I would like to return that error code, so maybe I can encode 
->>> it in the master_bio directly or pass as an arg to raid_end_bio_io().
->>
->> That's fine, however, I think the change can introduce problems in some
->> corner cases, for example there is a rdev with badblocks and a slow rdev
->> with full copy. Currently raid1_read_request() will split this bio to
->> read some from fast rdev, and read the badblocks region from slow rdev.
->>
->> We need a new branch in read_balance() to choose a rdev with full copy.
-> 
-> Sure, I do realize that the mirror'ing personalities need more 
-> sophisticated error handling changes (than what I presented).
-> 
-> However, in raid1_read_request() we do the read_balance() and then the 
-> bio_split() attempt. So what are you suggesting we do for the 
-> bio_split() error? Is it to retry without the bio_split()?
-> 
-> To me bio_split() should not fail. If it does, it is likely ENOMEM or 
-> some other bug being exposed, so I am not sure that retrying with 
-> skipping bio_split() is the right approach (if that is what you are 
-> suggesting).
+--bjmxjjuhmv2zdjhq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-bio_split_to_limits() is already called from md_submit_bio(), so here
-bio should only be splitted because of badblocks or resync. We have to
-return error for resync, however, for badblocks, we can still try to
-find a rdev without badblocks so bio_split() is not needed. And we need
-to retry and inform read_balance() to skip rdev with badblocks in this
-case.
+On Sat, Sep 14, 2024 at 10:12:29PM GMT, Cristian Ciocaltea wrote:
+> Hi Maxime,
+>=20
+> On 9/9/24 6:13 PM, Maxime Ripard wrote:
+> > Hi,
+> >=20
+> > On Fri, Sep 06, 2024 at 04:17:40AM GMT, Cristian Ciocaltea wrote:
+> >> +static enum drm_connector_status
+> >> +dw_hdmi_qp_bridge_detect(struct drm_bridge *bridge)
+> >> +{
+> >> +	struct dw_hdmi_qp *hdmi =3D bridge->driver_private;
+> >> +	enum drm_connector_status status;
+> >> +
+> >> +	status =3D hdmi->phy.ops->read_hpd(hdmi, hdmi->phy.data);
+> >> +
+> >> +	dev_dbg(hdmi->dev, "%s conn=3D%d scramb=3D%d\n", __func__,
+> >> +		status =3D=3D connector_status_connected, hdmi->scramb_enabled);
+> >> +
+> >> +	if (hdmi->scramb_enabled) {
+> >> +		cancel_delayed_work_sync(&hdmi->scramb_work);
+> >> +
+> >> +		if (status =3D=3D connector_status_connected)
+> >> +			dw_hdmi_qp_check_and_set_scramb(hdmi);
+> >> +	}
+> >> +
+> >> +	return status;
+> >> +}
+> >=20
+> > Unfortunately, that won't work. The HDMI Spec has (HDMI 2.0, Section
+> > 6.1.3.1 - Scrambling Control):
+> >=20
+> > The minimum time period between the write to the Scrambling_Enable bit,
+> > and the transmission of a scrambled video signal is not specified;
+> > however the Source shall not begin transmission of a scrambled video
+> > signal before writing a 1 to the Scrambling_Enable bit. The maximum time
+> > period between the write to the Scrambling_Enable bit and the
+> > transmission of a scrambled video signal shall be 100 ms.
+> >=20
+> > So you need to disable the output and enable it again.
+> >=20
+> > vc4 does just that, you can have a look here:
+> > https://elixir.bootlin.com/linux/v6.10.9/source/drivers/gpu/drm/vc4/vc4=
+_hdmi.c#L410
+>=20
+> Thanks for all the details and references!
+>=20
+> Unfortunately I had to drop the scrambling setup for now [1], as I
+> encountered some issues while attempting to get this implemented as
+> suggested.  Will get back to this and submit it separately when done.
 
-This can only happen if the full copy only exist in slow disks. This
-really is corner case, and this is not related to your new error path by
-atomic write. I don't mind this version for now, just something
-I noticed if bio_spilit() can fail.
+Yeah, I think that's the best way forward for now :)
 
-Thanks,
-Kuai
+Maxime
+--bjmxjjuhmv2zdjhq
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> 
-> Thanks,
-> John
-> 
-> .
-> 
+-----BEGIN PGP SIGNATURE-----
 
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZvEkmgAKCRAnX84Zoj2+
+dtqIAYCEGRZltZdX05vOCUhg+bOJmCXtzlvHsgM0R0lqKkF47Ts4/UIXsS4SIBrh
+GzywXicBfA+E1AnqXzojQFvunTAvhnbNDmkORCYsD6W+6g1tpbLD2aeqkSlYNen/
+ghfb0s5gfA==
+=WJBj
+-----END PGP SIGNATURE-----
+
+--bjmxjjuhmv2zdjhq--
 
