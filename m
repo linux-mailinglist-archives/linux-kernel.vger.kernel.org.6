@@ -1,123 +1,124 @@
-Return-Path: <linux-kernel+bounces-335368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F7F797E4AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 03:52:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B79C97E4B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 03:57:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C139F2813A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 01:52:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D37971F211E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 01:57:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D57E23CE;
-	Mon, 23 Sep 2024 01:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jF+QW7i4"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AEAF2114;
+	Mon, 23 Sep 2024 01:57:21 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A07D184;
-	Mon, 23 Sep 2024 01:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A321854;
+	Mon, 23 Sep 2024 01:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727056329; cv=none; b=di7yi1ewlgRnrgtoj5n1LIKoIWKAu7yY8XJYwmsnLlL4KkSAKzJCClKydbrpAZSpn7czF8D8jhrGUxBXSvbAgysEDFqOqQukZhmwRYIYaJRhGmCBajCuUweJlC/rcxXPJY0Av/Nui7vUrIkiFxUqtsC2AbW0T6E0X9o9tf/zAsU=
+	t=1727056641; cv=none; b=pAXJ6ni/18m5C7yXklhtoMpWJ40ycQGqIQoDReSOju7Daonb60u5J5U/Em0yGucVrwRB35utEV9wJSiSEqb2VKoIAweBSlNIqqbPr9qba67riNT3Auls3FqLqkrT9wNaZW0GlglpStO4zKUnLTVv7jjeHRJ5I9/NR8xGiqlRNgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727056329; c=relaxed/simple;
-	bh=sWMVVxxW+AfDBr5LSOb/cH6eDOfidObguR+oCv5UphQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UgblXk2q7HbSLK7vLvrOq2EmzR2QOHpHtrMAhkzr65kYzGe/s/NJVK5uPstzC0LdVe6Ma6lSyIF2aWduid/QPw4gJKCmPCtfUW/UNIaXkXc0XKBMiUJu0QoZKRhfrQbWEZrLWM9yiqpp8a1DSfinjsiKLZZ177hwZLZBRDMlPfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jF+QW7i4; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c26311c6f0so5359250a12.3;
-        Sun, 22 Sep 2024 18:52:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727056326; x=1727661126; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sWMVVxxW+AfDBr5LSOb/cH6eDOfidObguR+oCv5UphQ=;
-        b=jF+QW7i4bgUyKQiI4XkPMThSgP3T86xg92pHQv0VNhdGe2B7BPdpuTSLi2axLXDpcA
-         pNnefcB2HWZ8HdU/hhhmPzVGchjFYKNzWpjX80MugIK9IEkHo3eDoejdkIsWbib2E3HM
-         k8menP6b1pbTQMSIMzQRUYwzYIa6I3Q16GwcnxD6d+GJduGp10Vjp2RRJXH1uFiOETIX
-         vAS0guOsUn0WuWm6GLIoS7HFmATrdHkO39MZpHjGCT/9P8iNpnc4ZZRT8zXImWA7p/7B
-         aaYRY9ubVHlzjkhxDTHy1Oej/bK/CgZtbuKMjxiBegxc/7yS8ZIP/B7pF1C6erhK1qOi
-         GWPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727056326; x=1727661126;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sWMVVxxW+AfDBr5LSOb/cH6eDOfidObguR+oCv5UphQ=;
-        b=awirhGcf+sSO0LjnG0BbETi4fXQseo2wGTpWUbVjs8UpmggKVGG49a2OA4/ap0B4P1
-         1CsacSESarK19Bb0vuaOnQchxZHi8uj9/Muiros5/UlKYSouZ7iIXfNx94AKw9vOYSSo
-         vtDa5i/cC1it90klV0OkRZUwfTGjUwVuGvZ0U07EiA+3L29CAM1lctGwYtHEU8Z1zPB4
-         4hQl5SRh/Kk0UIEc0hmDhP3b5PwuRnoEJNyvyEEpl9+Z7DjBWCwQPefZN5oNezId1hrC
-         rItXC8NgHQpSBhhNgfgnifCefInzy5BLh9Iqy77DJc01n6Njp/MyzW+pufxHV71k4/ig
-         41pQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUfLz1Wg+kxAh0Vr0J/0ekZMwqIAU9Z5T0dBsQayTgtHmUGTmCzE3OYIQIzTCZfk+eQYlNpgNrcvPw=@vger.kernel.org, AJvYcCUgl1WMeP6qugxn1+2UnB8ljfArzxKu/N4bkJziI2UEUkRoPeTAQtrWzZCbSg1Do3FR+IbDZIlZ1aLqorRw@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyqxxbs1IgMoqYG1I4fP0NscVbfZb2qJDK6s+h008c3MioWf3WH
-	0xIPshjarWHyqEqC/KJoh82Z6CWEGlfYZoxk3glcj3LhchkeqNVhbpn5awp4rMQmP/m2dIanma+
-	45Do5Vh9DWhESLchbTyHs8ercvQ==
-X-Google-Smtp-Source: AGHT+IFFETaOQGu652OB7nrGXOP/MzYyqIndUDFmdQaGb9RRqPWu8MVcTogmukY38ENE6g3voRpeLnI43t2ioo+hnB8=
-X-Received: by 2002:a17:907:d3dc:b0:a7d:e956:ad51 with SMTP id
- a640c23a62f3a-a90d4ffe2a3mr912415966b.21.1727056326270; Sun, 22 Sep 2024
- 18:52:06 -0700 (PDT)
+	s=arc-20240116; t=1727056641; c=relaxed/simple;
+	bh=fL4p/lQI+D7HNKmdgiSiCtz6bBMspJIBsmABtRppagw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WiYXm6LIB8x/ecoHGP1a2QWxdmuIIDXk+tgBTwPYhR8aSLQ3MZOiWyUJcXcBKG5B6EHNLKePgvu2c2/AySQ0W/zFMX6IsaWLVV9XqsjcBwwIbO/mIqONe5FTqtB/yB9Fwpnmc9FwIJrD5loR9opdzBmLUpjkMpmxOSMK23Umr4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XBmMc2CkQz1ym7M;
+	Mon, 23 Sep 2024 09:57:16 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id 291F01A016C;
+	Mon, 23 Sep 2024 09:57:15 +0800 (CST)
+Received: from [10.67.110.108] (10.67.110.108) by
+ kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 23 Sep 2024 09:57:14 +0800
+Message-ID: <b90ce6f1-0d47-2429-5536-a8d5d91d6a70@huawei.com>
+Date: Mon, 23 Sep 2024 09:57:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240920101820.44850-1-kfting@nuvoton.com> <20240920101820.44850-2-kfting@nuvoton.com>
- <Zu2HGte_05AA6yky@smile.fi.intel.com>
-In-Reply-To: <Zu2HGte_05AA6yky@smile.fi.intel.com>
-From: Tyrone Ting <warp5tw@gmail.com>
-Date: Mon, 23 Sep 2024 09:51:54 +0800
-Message-ID: <CACD3sJYqWz3y2EZ1N3SqboNz20gdjZRaLz5c49u2bfztoVsudQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/6] i2c: npcm: correct the read/write operation procedure
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
-	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	andi.shyti@kernel.org, wsa@kernel.org, rand.sec96@gmail.com, 
-	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, 
-	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, 
-	JJLIU0@nuvoton.com, kfting@nuvoton.com, openbmc@lists.ozlabs.org, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH] arm64: uprobes: Optimize cache flushes for xol slot
+To: Catalin Marinas <catalin.marinas@arm.com>
+CC: Oleg Nesterov <oleg@redhat.com>, <mhiramat@kernel.org>,
+	<peterz@infradead.org>, <will@kernel.org>, <mark.rutland@arm.com>,
+	<linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+References: <20240919121719.2148361-1-liaochang1@huawei.com>
+ <20240919141824.GB12149@redhat.com>
+ <41fdfc47-4161-d2e4-6528-4079b660424f@huawei.com> <Zu2VdYrLWTJbVOAt@arm.com>
+From: "Liao, Chang" <liaochang1@huawei.com>
+In-Reply-To: <Zu2VdYrLWTJbVOAt@arm.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
-Hi Andy:
 
-Thank you for your feedback.
 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> =E6=96=BC 2024=E5=B9=B4=
-9=E6=9C=8820=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=8810:30=E5=AF=AB=
-=E9=81=93=EF=BC=9A
->
-> On Fri, Sep 20, 2024 at 06:18:15PM +0800, warp5tw@gmail.com wrote:
-> > From: Tyrone Ting <kfting@nuvoton.com>
-> >
-> > From: Tyrone Ting <kfting@nuvoton.com>
->
-> Something wrong with your email setup. This patch may not be applied in t=
-his form.
->
-> But before (re-)sending, wait for others to comment (up to 1 week).
->
+在 2024/9/20 23:32, Catalin Marinas 写道:
+> On Fri, Sep 20, 2024 at 04:58:31PM +0800, Liao, Chang wrote:
+>>
+>>
+>> 在 2024/9/19 22:18, Oleg Nesterov 写道:
+>>> On 09/19, Liao Chang wrote:
+>>>>
+>>>> --- a/arch/arm64/kernel/probes/uprobes.c
+>>>> +++ b/arch/arm64/kernel/probes/uprobes.c
+>>>> @@ -17,12 +17,16 @@ void arch_uprobe_copy_ixol(struct page *page, unsigned long vaddr,
+>>>>  	void *xol_page_kaddr = kmap_atomic(page);
+>>>>  	void *dst = xol_page_kaddr + (vaddr & ~PAGE_MASK);
+>>>>
+>>>> +	if (!memcmp(dst, src, len))
+>>>> +		goto done;
+>>>
+>>> can't really comment, I know nothing about arm64...
+>>>
+>>> but don't we need to change __create_xol_area()
+>>>
+>>> 	-	area->page = alloc_page(GFP_HIGHUSER);
+>>> 	+	area->page = alloc_page(GFP_HIGHUSER | __GFP_ZERO);
+>>>
+>>> to avoid the false positives?
+>>
+>> Indeed, it would be safer.
+>>
+>> Could we tolerate these false positives? Even if the page are not reset
+>> to zero bits, if the existing bits are the same as the instruction being
+>> copied, it still can execute the correct instruction.
+> 
+> Not if the I-cache has stale data. If alloc_page() returns a page with
+> some random data that resembles a valid instruction but there was never
+> a cache flush (sync_icache_aliases() on arm64), it's irrelevant whether
+> the compare (on the D-cache side) succeeds or not.
 
-I'll remove the "--from" parameter to git send-email command in next patch =
-set.
+Absolutly right, I overlooked the comparsion is still performed in the D-cache.
+However, the most important thing is ensuring the I-cache sees the accurate bits,
+which is why a cache flush in necessary for each xol slot.
 
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+> 
+> I think using __GFP_ZERO should do the trick. All 0s is a permanently
+> undefined instruction, not something we'd use with xol.
 
-Thank you.
+Unfortunately, the comparison assumes the D-cache and I-cache are already
+in sync for the slot being copied. But this assumption is flawed if we start
+with a page with some random bits and D-cache has not been sychronized with
+I-cache. So, besides __GFP_ZERO, should we have a additional cache flush
+after page allocation?
 
-Regards,
-Tyrone
+> 
+
+-- 
+BR
+Liao, Chang
 
