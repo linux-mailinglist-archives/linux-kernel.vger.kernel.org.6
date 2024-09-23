@@ -1,202 +1,205 @@
-Return-Path: <linux-kernel+bounces-335544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6651E97E73D
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:08:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFEE597E745
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:09:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 853A01C20E96
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:08:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D474281385
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF9D5FBBA;
-	Mon, 23 Sep 2024 08:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB6F680054;
+	Mon, 23 Sep 2024 08:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="D5C7b3qO";
-	dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="AdrISO8D"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.53])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mCfr1jkX"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5865DDA8;
-	Mon, 23 Sep 2024 08:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727078916; cv=pass; b=oCCea0DDYL1ngFAzwiJE9KXbN0/gJZ0HLjGWDFzfMbtDLbWUCKzOk5sL1Jyd51ngjM2MxkcVsV7LyrU39+KU6yRneo7ZdOWadB0w1qtcjRmWEKxqN2uTBSrPzStHGdrR3ONZQpeFgO2Wx6SJGl/Igw0bWXIPvgVIP/GxiW3Gegw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727078916; c=relaxed/simple;
-	bh=1QVCddyUVoxAqj8pQxyLJzuxnI5bt+LsrHASbey5M+c=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=bnbgkz0kE6AttJYcBUAKh75HV0lKrnBnq5lrJLWOReD0Tdtku/SBIilmIFAtzgCZNgdAmje7ojNS06tU0mfl5PvLfNosrns9qujexC9QLxL9jkibpd4H55Yq+KiSRyB41ZnchRPHLrMDH7AUno55rl4MR3VOEz+q3C9piL9AQTs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com; spf=pass smtp.mailfrom=goldelico.com; dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=D5C7b3qO; dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=AdrISO8D; arc=pass smtp.client-ip=85.215.255.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
-ARC-Seal: i=1; a=rsa-sha256; t=1727078879; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=qKwB86n00GmfcdUJfGBW/5bqno7ESssB/Zz8YN9EMWYJTb2VpCa0KxDO8giRh4TlzX
-    7hjh78Fu7tnJNfvNMQr/mvziVh3lNrOCldKjwju4eB8epB3QAPLphU67ZAnpLTNOTZdH
-    1R961uQEI4rpslq7P1+8E1RUuDp3BXV5cViNVmqpLMt2jfLh6rYzh2ETc0L33j0bsuFG
-    vYiLxXWfTqaBhd42pzi3BFHvYVFzsLRZ8JhnWS3Ma/FgLWTex7YR7SFfaPMmIBJ7HCoW
-    IytEeqrIysa0BnhWBGQbs9K92/r6Wa6saP1keHSErkgEPqNahhQZXGrSAlETqml0eYok
-    V/4A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1727078879;
-    s=strato-dkim-0002; d=strato.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=VIQRhUxEARqR1v/zOQvtmNidqw74JAtjsezcmG6rzK0=;
-    b=XF15O3S+YKxdNtIzfuoM9GtJN1M6ctDTNuuwPmgGix43stSmFSWR1n6Jp72OKdt5Mv
-    xy11wFAjOZr23d/LB6x2ZQV3ArbgdSC2Ceg2MjN2rOsORh2Ra7SAQLUteXgUwb6csYW7
-    ppx8W6p/aScq7DEuoYG2A7JJxcZlK49ZUv+WxoxtXH7AXyvc2eN99B0WFQhT3ir7HwOh
-    a3l6c2YADe8SBwHMZgJVqPm1mJz4dtqYrF8GSZ+lx5r2GobZD0S1xBvRDp1J6vmUDkdG
-    OOisFf1vBFmOMelqeFoUrRBWsoT1cEBVPlRu5K9UwoI/srmr8UCUIw/MHHK4d0FHMtoF
-    O1cA==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1727078879;
-    s=strato-dkim-0002; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=VIQRhUxEARqR1v/zOQvtmNidqw74JAtjsezcmG6rzK0=;
-    b=D5C7b3qOMSDo10DcEeUoQARntf/f97LPrwchUHF/8NdI0bKfSqfLv7q2WCfkfjFEwt
-    qWsaPCnesmF4SjV15u7wwbJEzTgCJdt2xyWghvBsC/0EHcGJDttuLY6oj4enmX7R8vM7
-    bVSGxptRUAqC8qLBAWSziAuCKP6ucdzQ/BuqT1GUjTLHhXkHtDF37fidlRUTlM+c2pP5
-    PhW+yvfOMjgtFVPsth8FvDvbOunV5RNFhs/BtyjJ/OzQaeK6OYkKcQaowlQNdVNRSKkB
-    CCljsMiGrHM6nuYLaLlU8cFd2IccP/c/NDTc9Gs8vc7ksgLDtc7nOMtyGhVlNpNCeAWa
-    C3uQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1727078879;
-    s=strato-dkim-0003; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=VIQRhUxEARqR1v/zOQvtmNidqw74JAtjsezcmG6rzK0=;
-    b=AdrISO8DrdcnwY2zxF9hMFSw89l6bB6CfzRbUYC4+70csYj2EkYnrrt7+1gPVFoEtL
-    CVQTGj1IM4lyotvF7KDg==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0lFzL1yeTAZ"
-Received: from smtpclient.apple
-    by smtp.strato.de (RZmta 51.2.7 DYNA|AUTH)
-    with ESMTPSA id Qd0dc208N87wRua
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-	(Client did not present a certificate);
-    Mon, 23 Sep 2024 10:07:58 +0200 (CEST)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16047F484;
+	Mon, 23 Sep 2024 08:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727078938; cv=none; b=arv6zS28sTGzoJ97p73Nq3hxDFQR6C3PYD8F1BaiKvV7MvJTnSQgLWyuSXXOpOsAwuPo543rlsjKhOYMcTzBFQdY7b22RJ2YXZjWB593e763dSDFnfJLPOaUN7d3bonU1Xtf/m5sqxyPspY1y7W7weqdhjv87p0BhW3da/02CHI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727078938; c=relaxed/simple;
+	bh=DpxhoiVY4UveFzijoTaZZuYDPDgdMW8hSTAj3Aw1WtY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=q+jmL1Kj+/Cm3vCl3z6yX8urYjHN7PojbUewNxHoCG4uiYPc2h+sbi13khAVYtNe2s0fYwUKLGoomSoxR01bjUxhJ6JWWAzBAkCAcyk/TfKxMNTbUfbQfOmLblvZMwZRES2N1fFDSt/bbmBp7nPpwY85PWv1WGiP0GQKK8GZ7YA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mCfr1jkX; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48N1nNUg026249;
+	Mon, 23 Sep 2024 08:08:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:in-reply-to:references:date:message-id
+	:mime-version:content-type; s=pp1; bh=1R9JlDqk6J0Q09htjggzzB6TZ2
+	8LP8W5JbuY7zcW460=; b=mCfr1jkXIfMG5PUV/2avPEKDfIHBU3MJWHgETurzEG
+	1l1U5Bufckz4Ol5dLdXuavFzIwCCgkT8oxmiCR7EFxwJHO/biSkgS1SCWvcpVsLg
+	uVXNWIHB0VTUCVD+4EUqAv3pAmCulrtmpwyjdL5EJrfEvGLedWQ0k/GHrd6yE5if
+	jJODLhj9gMMmM+Shd9WiKt+LqBt0MFkWm1XgHPrlFS4fK4+wL2D2T0o/zdYWeqbm
+	zkHTTtTvYI68rUaYzFBFxmeMEZJPlZ6j6+LOVsw4QSx+uLoUZO76A0qjvOIq/KUK
+	LJ0cEVLqVySw6pbibn8gg6HANqUnOvpZh305xrg1AnnQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41snna2f27-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 23 Sep 2024 08:08:05 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48N84U49023386;
+	Mon, 23 Sep 2024 08:08:05 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41snna2f23-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 23 Sep 2024 08:08:05 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48N7Gn4n000668;
+	Mon, 23 Sep 2024 08:08:04 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 41t8fudhxv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 23 Sep 2024 08:08:02 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48N880k218743704
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 23 Sep 2024 08:08:01 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C68672004D;
+	Mon, 23 Sep 2024 08:08:00 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8EF1A20049;
+	Mon, 23 Sep 2024 08:08:00 +0000 (GMT)
+Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 23 Sep 2024 08:08:00 +0000 (GMT)
+From: Sven Schnelle <svens@linux.ibm.com>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Steven Rostedt
+ <rostedt@goodmis.org>,
+        Florent Revest <revest@chromium.org>,
+        linux-trace-kernel@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Daniel Borkmann
+ <daniel@iogearbox.net>,
+        Alan Maguire <alan.maguire@oracle.com>,
+        Mark
+ Rutland <mark.rutland@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Guo Ren <guoren@kernel.org>,
+        linux-arch@vger.kernel.org
+Subject: Re: [PATCH v15 13/19] fprobe: Rewrite fprobe on function-graph tracer
+In-Reply-To: <172639152107.366111.11355494843935654791.stgit@devnote2> (Masami
+	Hiramatsu's message of "Sun, 15 Sep 2024 18:12:01 +0900")
+References: <172639136989.366111.11359590127009702129.stgit@devnote2>
+	<172639152107.366111.11355494843935654791.stgit@devnote2>
+Date: Mon, 23 Sep 2024 10:08:00 +0200
+Message-ID: <yt9dmsjyx067.fsf@linux.ibm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
-Subject: Re: [PATCH] ASoC: topology: fix stack corruption by code unification
- for creating standalone and widget controls
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <3ceac85f-e419-44b1-b04b-1d1cf99a3e87@linux.intel.com>
-Date: Mon, 23 Sep 2024 10:07:48 +0200
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>,
- linux-sound@vger.kernel.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Discussions about the Letux Kernel <letux-kernel@openphoenux.org>,
- kernel@pyra-handheld.com,
- risca@dalakolonin.se
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <746AA9D5-9D53-4351-A534-B9F86A5B9B82@goldelico.com>
-References: <7eca678fa7faa9e160b998192e87220de81315c8.1726847965.git.hns@goldelico.com>
- <3ceac85f-e419-44b1-b04b-1d1cf99a3e87@linux.intel.com>
-To: =?utf-8?Q?Amadeusz_S=C5=82awi=C5=84ski?= <amadeuszx.slawinski@linux.intel.com>
-X-Mailer: Apple Mail (2.3776.700.51.11.1)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: LLRWWqtHpZxdyP_87_aFJYy56ygCj52M
+X-Proofpoint-ORIG-GUID: Cg4VZKSNlROPP6jDB8fnjbZeTePXL0PW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-23_04,2024-09-19_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ mlxscore=0 mlxlogscore=799 spamscore=0 impostorscore=0 priorityscore=1501
+ phishscore=0 bulkscore=0 clxscore=1011 lowpriorityscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409230056
 
-Hi,
+"Masami Hiramatsu (Google)" <mhiramat@kernel.org> writes:
 
-> Am 23.09.2024 um 09:39 schrieb Amadeusz S=C5=82awi=C5=84ski =
-<amadeuszx.slawinski@linux.intel.com>:
->=20
-> On 9/20/2024 5:59 PM, H. Nikolaus Schaller wrote:
->> After finding kernel crashes on omap4/5 aess on PandaES and OMAP5UEVM =
-like
->> [   46.367041] Unable to handle kernel execution of memory at virtual =
-address f164d95c when execute
->> a bisect did initially hint at commit 8f2942b9198c9 ("ASoC: topology: =
-Unify
->> code for creating standalone and widget enum control")
->> Deeper analysis shows a bug in two of the three "ASoC: topology: =
-Unify code"
->> patches. There, a variable is initialized to point into the struct =
-snd_kcontrol_new
->> on stack instead of the newly devm_kzalloc'ed memory.
->> Hence, initialization through struct soc_mixer_control or struct =
-soc_bytes_ext
->> members overwrites stack instead of the intended target address, =
-leading to
->> the observed kernel crashes.
->> Fixes: 8f2942b9198c ("ASoC: topology: Unify code for creating =
-standalone and widget enum control")
->> Fixes: 4654ca7cc8d6 ("ASoC: topology: Unify code for creating =
-standalone and widget mixer control").
->> Fixes: 0867278200f7 ("ASoC: topology: Unify code for creating =
-standalone and widget bytes control").
->> Tested-by: risca@dalakolonin.se
->> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
->> ---
->=20
-> There was an earlier patch for same issue which got merged:
-> =
-https://lore.kernel.org/linux-sound/172675955522.1842725.17347774552974803=
-458.b4-ty@kernel.org/T/#m527c2b9bee99d40d7cd5224cb1d8046dd0528097
+> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+>
+> Rewrite fprobe implementation on function-graph tracer.
+> Major API changes are:
+>  -  'nr_maxactive' field is deprecated.
+>  -  This depends on CONFIG_DYNAMIC_FTRACE_WITH_ARGS or
+>     !CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS, and
+>     CONFIG_HAVE_FUNCTION_GRAPH_FREGS. So currently works only
+>     on x86_64.
+>  -  Currently the entry size is limited in 15 * sizeof(long).
+>  -  If there is too many fprobe exit handler set on the same
+>     function, it will fail to probe.
+>
+> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> ---
+>  Changes in v14:
+>   - Add ftrace_regs_get_return_addresss() for riscv.
+>  Changes in v12:
+>   - Skip updating ftrace hash if not required.
+>  Changes in v9:
+>   - Remove unneeded prototype of ftrace_regs_get_return_address().
+>   - Fix entry data address calculation.
+>   - Remove DIV_ROUND_UP() from hotpath.
+>  Changes in v8:
+>   - Use trace_func_graph_ret/ent_t for fgraph_ops.
+>   - Update CONFIG_FPROBE dependencies.
+>   - Add ftrace_regs_get_return_address() for each arch.
+>  Changes in v3:
+>   - Update for new reserve_data/retrieve_data API.
+>   - Fix internal push/pop on fgraph data logic so that it can
+>     correctly save/restore the returning fprobes.
+>  Changes in v2:
+>   - Add more lockdep_assert_held(fprobe_mutex)
+>   - Use READ_ONCE() and WRITE_ONCE() for fprobe_hlist_node::fp.
+>   - Add NOKPROBE_SYMBOL() for the functions which is called from
+>     entry/exit callback.
+> ---
+>  arch/arm64/include/asm/ftrace.h     |    6 
+>  arch/loongarch/include/asm/ftrace.h |    6 
+>  arch/powerpc/include/asm/ftrace.h   |    6 
+>  arch/riscv/include/asm/ftrace.h     |    5 
+>  arch/s390/include/asm/ftrace.h      |    6 
+>  arch/x86/include/asm/ftrace.h       |    6 
+>  include/linux/fprobe.h              |   53 ++-
+>  kernel/trace/Kconfig                |    8 
+>  kernel/trace/fprobe.c               |  639 +++++++++++++++++++++++++----------
+>  lib/test_fprobe.c                   |   45 --
+>  10 files changed, 535 insertions(+), 245 deletions(-)
+[..]
 
-Ah, I see. They were just some days faster than me :) Great if it will =
-be fixed asap.
+> diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
+> index 90a3c8e2bbdf..5a0b4ef52fa7 100644
+> --- a/kernel/trace/fprobe.c
+> +++ b/kernel/trace/fprobe.c
+> +/* The entry data size is 4 bits (=16) * sizeof(long) in maximum */
+> +#define FPROBE_HEADER_SIZE_BITS		4
+> +#define MAX_FPROBE_DATA_SIZE_WORD	((1L << FPROBE_HEADER_SIZE_BITS) - 1)
+> +#define MAX_FPROBE_DATA_SIZE		(MAX_FPROBE_DATA_SIZE_WORD * sizeof(long))
+> +#define FPROBE_HEADER_PTR_BITS		(BITS_PER_LONG - FPROBE_HEADER_SIZE_BITS)
+> +#define FPROBE_HEADER_PTR_MASK		GENMASK(FPROBE_HEADER_PTR_BITS - 1, 0)
+> +#define FPROBE_HEADER_SIZE		sizeof(unsigned long)
+> +
+> +static inline unsigned long encode_fprobe_header(struct fprobe *fp, int size_words)
+> +{
+> +	if (WARN_ON_ONCE(size_words > MAX_FPROBE_DATA_SIZE_WORD ||
+> +	    ((unsigned long)fp & ~FPROBE_HEADER_PTR_MASK) !=
+> +	    ~FPROBE_HEADER_PTR_MASK)) {
+> +		return 0;
+>  	}
+> +	return ((unsigned long)size_words << FPROBE_HEADER_PTR_BITS) |
+> +		((unsigned long)fp & FPROBE_HEADER_PTR_MASK);
+> +}
 
->=20
->> Notes:
->>     There seems to be another weakness of all three patches. The =
-initialization
->>     of the kc.private_value is now done after calling =
-soc_tplg_control_load()
->>     which may pass the incompletely initialized control down to some =
-control_load()
->>     operation (if tplg->ops are defined).
->>          Since this feature is not used by the omap4/5 aess subsystem =
-drivers it is
->>     not taken care of by this fix.
->>    =20
->=20
-> dobj is internal management detail of topology handling, I'm not =
-convinced end users of topology API should touch it. I would say that I =
-would even be worried that someone touches that, as they may corrupt =
-list etc.
+I haven't yet fully understood why this logic is needed, but the
+WARN_ON_ONCE triggers on s390. I'm assuming this fails because fp always
+has the upper bits of the address set on x86 (and likely others). As an
+example, in my test setup, fp is 0x8feec218 on s390, while it is
+0xffff888100add118 in x86-kvm.
 
-Well, someone may want to inspect values or use the list to see if it is =
-empty.
-
->=20
->>     Another general observation with this code (not related to these =
-patches here)
->>     is that it does not appear to be 64 bit address safe since =
-private_value of
->>     struct snd_kcontrol_new is 'unsigned long' [1] but used to store =
-a pointer.
->>          This is fine on omap4/5 since they are 32 bit machines with =
-32 bit address
->>     range. A problem would be a machine with 32 bit unsigned long and =
->32 bit
->>     addresses.
->=20
-> As far as I know that's exactly the reason why it is unsigned long in =
-kernel, you can store a pointer in it.
-
-You can't store a 64 bit pointer in an 32 bit unsigned int without =
-getting into trouble
-on conversion back :) That is what uintptr_t is intended for, but it is =
-also just an
-unsigned long in linux/types.h. AFAIK it is defined by C99 as "unsigned =
-integer type
-capable of holding a pointer".
-
-BR and thanks,
-Nikolaus
-
-
+Regards
+Sven
 
