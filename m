@@ -1,93 +1,111 @@
-Return-Path: <linux-kernel+bounces-335575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9BF997E7A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:35:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E49A897E7A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:36:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65104281711
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:35:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71B74B21866
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:35:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34F38193439;
-	Mon, 23 Sep 2024 08:35:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFCB319343B;
+	Mon, 23 Sep 2024 08:35:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XY/MlD+F"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="d7ao3V7m"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C00E2F2D;
-	Mon, 23 Sep 2024 08:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9197A1885B9;
+	Mon, 23 Sep 2024 08:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727080537; cv=none; b=mZxBa7aijuGcMf0yo1oQSUWd076uCwmUrAW2Ek4fHZFui6biuf/OlGmuWS+IKTbf7vscCLXCqdHnZnmd3G7OSinplg6KadagGeqZvAL1KGeLDJ6aA5x6tThUKbeN+LsqLA3DLrd9lGABrQKk3FoLRkQi4u5iWu181yQTS04Sj0k=
+	t=1727080554; cv=none; b=Ohw1nfFhk2+9vzsDPTWx5xLqQ6M7DJAHCytOBDWa4RrAJi50EWO9UpPuIoaVz02H1FM/ZpCwS0FiCFjAYRaAH7P6b+05f54HOoToj18zBFB/8DCtPIk1t5F9XT86mYpHo/jvysgphV0jDrzh/BelBIjWUHudGmdEQFgonihhbvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727080537; c=relaxed/simple;
-	bh=TuLbQ6JY2vaoEN0WIg+n3A+Asb+9whfW5ES2kkitQr8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TWs+gmcnjVvQKzSmOwz95RbFhcDRFwr5XEXMUpMmvJlW8wvGtVFOmbVQYhNNyQ6spdSg2g+nFbpXPXSXNMknSrcO7sxL0CuutITaGyiRKDLvZjfAZkQwQa/hfH76k7R2DABT8Om8q/mEqzY0UBFzs5lsRl/mcIfOpf7qr2S/uM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XY/MlD+F; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727080536; x=1758616536;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=TuLbQ6JY2vaoEN0WIg+n3A+Asb+9whfW5ES2kkitQr8=;
-  b=XY/MlD+FJ1naa29Fj5LTMWL+ouchUY1mTDCWUN00E2G2G7vo9vsAFHGs
-   tCM8JE0FycB4Opt1fH46FsdmnNjxNGT6bgSmk/lm18Jp9lVXmPnIz8Biu
-   07ID3i22avLKK8YoO/ywtBzBcOv+crOtvLpfVkQldyrVWNTM1m0bCDq5h
-   5k8TGfUO25OVccb07ExnN8UDLFPC2+YKIJtZigvQrzIQ0sfOBB+7lIIpT
-   kPAY1OOVnJaSk+80DzFk6SgGgnv9yzJb936X+Pf3epX0exwq2rPvcMIez
-   OBaSfhqdqWHNuLNhUOwUx+TDweeUUyVC3fisbEvTUSbO4A429AeqLlPa4
-   Q==;
-X-CSE-ConnectionGUID: FSx1izCeT1mmEsQVuGi5jQ==
-X-CSE-MsgGUID: gOTrw77BQbW4UX2Ih32ksA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11202"; a="26208650"
-X-IronPort-AV: E=Sophos;i="6.10,250,1719903600"; 
-   d="scan'208";a="26208650"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 01:35:35 -0700
-X-CSE-ConnectionGUID: 5LZN6QK7Q8mDS07Bq1iiaQ==
-X-CSE-MsgGUID: CxGdlIbmR4CijYL5m5mqlg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,250,1719903600"; 
-   d="scan'208";a="71444819"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by orviesa007.jf.intel.com with SMTP; 23 Sep 2024 01:35:33 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 23 Sep 2024 11:35:32 +0300
-Date: Mon, 23 Sep 2024 11:35:32 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Dipendra Khadka <kdipendra88@gmail.com>
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Fix  dereferencing freed memory 'fw'
-Message-ID: <ZvEoVC_j6jdBhvim@kuha.fi.intel.com>
-References: <20240922105212.28099-1-kdipendra88@gmail.com>
+	s=arc-20240116; t=1727080554; c=relaxed/simple;
+	bh=e4cC60E4kblxFg6svxGrB/DLOt/LdtfLXEBt+zfPq6o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JPCHFErq6/msvegOFtXMvE9SJB8/Ygko5YN3/LAYEp4M8ODUTAQeQbZcpgtDlurzMr7VN+hBPXv/FvMSjVhjTfZ7dRskmb0eVgjBqnspHqaYFi4/Vu8CRS3VNS1YdnZJfb/G4Lb2KKiYioErtmCDKC/VeGjZL/YWlDlH27lAPKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=d7ao3V7m; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1727080545;
+	bh=e4cC60E4kblxFg6svxGrB/DLOt/LdtfLXEBt+zfPq6o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=d7ao3V7mR+5JAWYxPQVcVv2U5EBc7eBEh/CHW5gAfTscBY5DkJd2LtNLU7krxGtwf
+	 Ar+5BgjAc05fixS48pzsFiL0l4PSFVeji3z/8/b3z5NgfveeGEiaAcHnZ1cQZB36kV
+	 PevWGSG/be1uaMS3S6rIj1+H3bY14+D8GIl0co3yIO5mTU68e7fyF/fBnVLfJwgBsD
+	 bmcF/pACl6dNYEhZE9SLVb+lJWe76pgIzlGxStouVxWOtZDM348tG0S1/EO6d7lyg7
+	 Q+QpITPTTwbv5ugMx18Clob3e9GkyjCl0GHNcDusdVOORFk/EnRohAuTR+/GwZ49LT
+	 KyEaoR2xMTRxw==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 338A817E105F;
+	Mon, 23 Sep 2024 10:35:45 +0200 (CEST)
+Message-ID: <b05d0543-b4f4-463d-a56a-28f7fa99a3f0@collabora.com>
+Date: Mon, 23 Sep 2024 10:35:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240922105212.28099-1-kdipendra88@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] arm64: dts: mediatek: mt8186: add FHCTL node
+To: Max Weng <max_weng@compal.corp-partner.google.com>,
+ linux-kernel@vger.kernel.org
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ matthias.bgg@gmail.com, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20240923081340.860715-1-max_weng@compal.corp-partner.google.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240923081340.860715-1-max_weng@compal.corp-partner.google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Sep 22, 2024 at 10:52:11AM +0000, Dipendra Khadka wrote:
-> smatch reported dereferencing freed memory as below:
-> '''
-> drivers/usb/typec/tipd/core.c:1196 tps6598x_apply_patch() error: dereferencing freed memory 'fw'
-> '''
+Il 23/09/24 10:13, Max Weng ha scritto:
+> From: max_weng <max_weng@compal.corp-partner.google.com>
+> 
+> add fhctl device node.
 
-This is only my opinion, but I don't like those '''single triple
-quotes''' in commit messages - they are just confusing. You don't need
-to use any kind of quotation marks in cases like this IMO.
+Please clarify the commit description, like so:
 
-thanks,
+Add FHCTL device node for Frequency Hopping and Spread Spectrum
+clocking function.
 
--- 
-heikki
+After which,
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+
+> 
+> Signed-off-by: max_weng <max_weng@compal.corp-partner.google.com>
+> ---
+>   arch/arm64/boot/dts/mediatek/mt8186.dtsi | 7 +++++++
+>   1 file changed, 7 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8186.dtsi b/arch/arm64/boot/dts/mediatek/mt8186.dtsi
+> index 148c332018b0..d3c3c2a40adc 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8186.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8186.dtsi
+> @@ -29,6 +29,13 @@ aliases {
+>   		rdma1 = &rdma1;
+>   	};
+>   
+> +	fhctl: fhctl@1000ce00 {
+> +		compatible = "mediatek,mt8186-fhctl";
+> +		clocks = <&apmixedsys CLK_APMIXED_TVDPLL>;
+> +		reg = <0 0x1000ce00 0 0x200>;
+> +		status = "disabled";
+> +	};
+> +
+>   	cci: cci {
+>   		compatible = "mediatek,mt8186-cci";
+>   		clocks = <&mcusys CLK_MCU_ARMPLL_BUS_SEL>,
+
 
