@@ -1,142 +1,120 @@
-Return-Path: <linux-kernel+bounces-336059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3806B97EE94
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:55:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A334497EE96
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:56:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC5811F226A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:55:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 578681F226CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3548419CC3D;
-	Mon, 23 Sep 2024 15:55:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50CED19CC20;
+	Mon, 23 Sep 2024 15:56:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OObR0qQr"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZQiEla8x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6ED79F5;
-	Mon, 23 Sep 2024 15:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE6A146A86;
+	Mon, 23 Sep 2024 15:56:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727106909; cv=none; b=bhxlri6Q4WvTI6BOD1/IGu11rvqZC/jebmFR9301JdLbAsJ2FjGeZYq4ZjyrxAfw7DYs2e1z5NJPGo7J96vxXBvwoWnEXOj6tnAHvfuWUqOY4abNpzipjYW2CfiSNrtdrxKq6b3WEtrVwNZ5WvvwgeRUDiouBEHJZVP8Bka78rE=
+	t=1727106971; cv=none; b=KaviWmBvuVwwV9wNHD0kImKG1Stfb5dfHxx4ilrUyIIYqUZ1nUrydFIPKM+VBKEdXJr22sVb9ekUw8ygWeI8pkGc/uB1iG9xJPdhEvL/6rRZGAGHdzOlSiFDThycgcwj9b6QhjSuvbcihdAAIez/V0K+UjKkNJ7qThJLC3TUBJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727106909; c=relaxed/simple;
-	bh=I4qqvKfI3qsxSjajX+axsxmMdK2WOz0a5Flac1Plv5o=;
+	s=arc-20240116; t=1727106971; c=relaxed/simple;
+	bh=l2jEMii5JSbv/FCwmREbX1ZvFRNHHliJQH1mbhgt5OQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KBEoASezDaOw2CpvC3snpflhZEbhPvBTQPvFwgIRsh+Bwl5v0nHX9gk+xNnv/hiIvJnKl1heEow0GvLM5/Eh428gFEgnLuzkBk7k+KjB0YG/lLJi0exPU5KGA/MQdeW+6AAAlUcL2ivcHctIiFmux9xoSD4UdNSJtoUcGajf7WE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OObR0qQr; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5365928acd0so470930e87.2;
-        Mon, 23 Sep 2024 08:55:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727106906; x=1727711706; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J96D0VZp4OQWTWTHY+mSQGAMc4n2W7afLh9IPn5NwlU=;
-        b=OObR0qQrDhnwIDZdtbec3cdJRZNsvS32WzU1Oh6Sb0/lR+v0xHuEQ0ygGc3G1e+ntv
-         rbTZk9cewr78P5164cn0pDO+DuKBhNxBOjdd5ebLZzwqxoQa01WohvG5OyrTO/5+TnyM
-         4L0rwSEshgx8DoQO4BMI+x40hB1kVfVxPKq+Wz6ZuhXnkp7eb606odXx0q97pyLDihHy
-         i1P9hj9GKr2SePlCCQZi770e2pCoQ6pc8to6Piu7HKMWf+Xphnx1nuksAfrmTqgG+jc5
-         YqiVkzGdmvWBfFBz+ykTFI/pwdITzFfPh0KQTfsYreCBtQmxFDFK1a85H1U07TYy6jap
-         45jA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727106906; x=1727711706;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=J96D0VZp4OQWTWTHY+mSQGAMc4n2W7afLh9IPn5NwlU=;
-        b=TVNGtIwG2Ghv2JAeEExWAJBZnhT6OQ9nvlXxN6Q2f1b1pvw8Eye3ixiN9WlP9OkqV6
-         0Z9uBGcdk3ZE+Synm4A5P7j3FHKfT/xWICKD8jRZz7qoarz7dKhCmYXBOpep94H19A1R
-         jO4lXH9EFRy5dDnU7mbXpWrrlMu66lDPysM+qF7oCiTYhAGAoWq6U4/UYSfPxfep8hC0
-         I2TYAVOjUjpLfBkWda9vTIfkhVrJJPRpsZrIirxsiag4ZlVFKM62wt8dlDfnsq3NQ/tj
-         pVz7lNh1Q82cpROhv3ojWo0mmEBGlBe0k74j/LvLn7hg2cBSkG6MyxJrXhxP1eWdeD6T
-         v+IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU4m79bXv+g1wMXoI9u1jwXKm+UaHDyiMAUbZs6W4iCfDHIgylLrYr0R8v8p7HkecJdpdwj6OYVJ3lB2w==@vger.kernel.org, AJvYcCURskPrtYR3ilP+TVxCmrcTxWQ8k43jVma3e1HfNbBW/se/aR1No58XbE8yoYdKQbgc4wRxDhi8u4O4fcFp@vger.kernel.org, AJvYcCWXkvdltA3li3NtXP6u/lIVv2yDWghff4jNsFWvSx/hf59/04xRK4zXNJnAUYHNZGqo/2kYhSVF@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8jKsIwVzPTBtzgbfK+K/cz0UeQ+xS9Rp8EgqOf/UNTjt6vDp1
-	KQu/GeF5YPYnbq55+GH/1cdkzggM7oIamNk1gc0UVYEkqD53bFep9l3bKmNk
-X-Google-Smtp-Source: AGHT+IG9eayZYDTNm5hjijheO6JpBCyT0OpbqAXtx9FxUMw7FEdoTZ3KlaMLsBGwM/PoIFtTAfY/Mg==
-X-Received: by 2002:a05:6512:2251:b0:52c:8979:9627 with SMTP id 2adb3069b0e04-536acf6b73fmr6524718e87.3.1727106905782;
-        Mon, 23 Sep 2024 08:55:05 -0700 (PDT)
-Received: from localhost ([94.19.228.143])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5368704c35esm3337263e87.77.2024.09.23.08.55.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 08:55:05 -0700 (PDT)
-Date: Mon, 23 Sep 2024 18:55:05 +0300
-From: Andrey Skvortsov <andrej.skvortzov@gmail.com>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>,
-	Minchan Kim <minchan@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] zram: don't free statically defined names
-Message-ID: <ZvGPWaXm26iq-8TI@skv.local>
-Mail-Followup-To: Andrey Skvortsov <andrej.skvortzov@gmail.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>,
-	Minchan Kim <minchan@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-	stable@vger.kernel.org
-References: <20240923080211.820185-1-andrej.skvortzov@gmail.com>
- <20240923153449.GC38742@google.com>
- <20240923154738.GE38742@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=t5GfhNeOmDpyt0Zt4RVsnlUWGooYhuX+9/t1z/B0aDcOt25yCXUFJPUvagJRj+fft1qT693UJu8RGC6Ur/bIETkQB7NyhWv295bT9nJAxwjoyZskYQiA0LmJtZJgnChtzSYNrF22fAhx8eg3N0ZrkqYk2FeoNbOm5x8Nnw006Lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZQiEla8x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 007B2C4CECD;
+	Mon, 23 Sep 2024 15:56:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727106971;
+	bh=l2jEMii5JSbv/FCwmREbX1ZvFRNHHliJQH1mbhgt5OQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZQiEla8xieiFYicSKDHbJNPPO6ukXwKDwRkeGgnmhG9MlJEWm/3YHQdhXVlCwjdp1
+	 FbtbYQ2M63Y+ZsYvhJ4NF/1WlaRBv6hFjUJebl6VnuZ9LUVmT5xNuU42+oXjHmhQMU
+	 giANTf322PUT/Z0Z/LDvqXGrBylVJWFgENTLzPVdB4FeHw6FKsAj6t2t5ticlOZyBi
+	 qKXmVscK1ZkPsYX614asYUq9HkEFzWCAu9NL9khfmGonCmAaYLUSVQ9HW1LmqZexk9
+	 /Bo/v6P8orbpz6rfGB/mzKOgIBAXOIoiuRkmxwbcltk9NWrz3LNB+49UkKcNPXFP7i
+	 3dcTNXMEWiEzQ==
+Date: Mon, 23 Sep 2024 16:56:06 +0100
+From: Simon Horman <horms@kernel.org>
+To: Dipendra Khadka <kdipendra88@gmail.com>
+Cc: sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
+	hkelam@marvell.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Staging: net: nic: Add error pointer check in
+ otx2_flows.c
+Message-ID: <20240923155606.GJ3426578@kernel.org>
+References: <20240922185235.50413-1-kdipendra88@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240923154738.GE38742@google.com>
+In-Reply-To: <20240922185235.50413-1-kdipendra88@gmail.com>
 
-Hi Sergey,
-
-On 24-09-24 00:47, Sergey Senozhatsky wrote:
-> ** Re-sending properly, somehow I managed to badly mess up
->    the headers the first time, sorry ***
+On Sun, Sep 22, 2024 at 06:52:35PM +0000, Dipendra Khadka wrote:
+> Smatch reported following:
+> '''
+> drivers/net/ethernet/marvell/octeontx2/nic/otx2_flows.c:123 otx2_alloc_mcam_entries() error: 'rsp' dereferencing possible ERR_PTR()
+> drivers/net/ethernet/marvell/octeontx2/nic/otx2_flows.c:201 otx2_mcam_entry_init() error: 'rsp' dereferencing possible ERR_PTR()
+> drivers/net/ethernet/marvell/octeontx2/nic/otx2_flows.c:236 otx2_mcam_entry_init() error: 'frsp' dereferencing possible ERR_PTR()
+> '''
 > 
+> Adding error pointer check after calling otx2_mbox_get_rsp.
 > 
-> On (24/09/24 00:34), Sergey Senozhatsky wrote:
-> > On (24/09/23 11:02), Andrey Skvortsov wrote:
-> > >     for (prio = ZRAM_SECONDARY_COMP; prio < ZRAM_MAX_COMPS; prio++) {
-> > > -           kfree(zram->comp_algs[prio]);
-> > > +           /* Do not free statically defined compression algorithms */
-> >
-> > We probably don't really need this comment.
-> >
-> > > +           if (zram->comp_algs[prio] != default_compressor)
-> > > +                   kfree(zram->comp_algs[prio]);
-> > >             zram->comp_algs[prio] = NULL;
-> > >     }
-> >
-> > OK, so... I wonder how do you get a `default_compressor` on a
-> > non-ZRAM_PRIMARY_COMP prio.  May I ask what's your reproducer?
-> >
-> > I didn't expect `default_compressor` on ZRAM_SECONDARY_COMP
-> > and below.  As far as I can tell, we only do this:
-> >
-> >       comp_algorithm_set(zram, ZRAM_PRIMARY_COMP, default_compressor);
-> >
-> > in zram_reset_device() and zram_add().  So, how does it end up in
-> > ZRAM_SECONDARY_COMP...
+> Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
+
+Hi Dipendra,
+
+As noted by Andrew Lunn in relation to another patch [1],
+this driver isn't in Staging so the subject is not correct.
+And moreover, as Andrew suggested, please take a look at [2].
+
+[1] https://lore.kernel.org/all/13fbb6c3-661f-477a-b33b-99303cd11622@lunn.ch/
+[2] https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
+
+> ---
+>  .../ethernet/marvell/octeontx2/nic/otx2_flows.c   | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
 > 
-> Ugh, I know what's happening.  You don't have CONFIG_ZRAM_MULTI_COMP
-> so that ZRAM_PRIMARY_COMP and ZRAM_SECONDARY_COMP are the same thing.
-> Yeah, that all makes sense now, I haven't thought about it.
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_flows.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_flows.c
+> index 98c31a16c70b..4b61236c7c41 100644
+> --- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_flows.c
+> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_flows.c
+> @@ -120,6 +120,11 @@ int otx2_alloc_mcam_entries(struct otx2_nic *pfvf, u16 count)
+>  		rsp = (struct npc_mcam_alloc_entry_rsp *)otx2_mbox_get_rsp
+>  			(&pfvf->mbox.mbox, 0, &req->hdr);
 
-yes, I don't have CONFIG_ZRAM_MULTI_COMP set. I'll include your
-comment into commit description for v2.
+nit: No blank line here please.
+     Similarly in the other hunks of this patch.
 
-> Can you please send v2 (with the feedback resolved).
+>  
+> +		if (IS_ERR(rsp)) {
+> +			mutex_unlock(&bfvf->mbox.lock);
 
--- 
-Best regards,
-Andrey Skvortsov
+This doesn't compile as bfvf doesn't exit in this context.
+
+> +			return PTR_ERR(rsp);
+
+Looking at error handling elsewhere in the same loop, perhaps this
+is appropriate instead of returning.
+
+			goto exit;
+
+> +		}
+> +
+>  		for (ent = 0; ent < rsp->count; ent++)
+>  			flow_cfg->flow_ent[ent + allocated] = rsp->entry_list[ent];
+>  
+
+...
 
