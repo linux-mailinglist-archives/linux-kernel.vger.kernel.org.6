@@ -1,199 +1,170 @@
-Return-Path: <linux-kernel+bounces-335697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4782497E948
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:03:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC38897E904
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:47:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC2261F21ED6
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:03:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43FD31F21B2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 09:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9E11946CD;
-	Mon, 23 Sep 2024 10:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7FF194A7C;
+	Mon, 23 Sep 2024 09:47:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="ZRWpPwx1"
-Received: from imap4.hz.codethink.co.uk (imap4.hz.codethink.co.uk [188.40.203.114])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="bepTSk1d"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101CE1C36
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 10:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.203.114
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23CA08479;
+	Mon, 23 Sep 2024 09:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727085815; cv=none; b=fKWoq1eaZpz2nNihkIpOg3CGWlYRxvV2R8FYSLMjWSWFUOSs65S9jle2291zZXRy4gURJeZa+DHhjT4Z/X0stmZLN1HVHXWTGzhJOHF3zEhp6KX4miFVNskid0SeVNJBdSZQhWQhJhEC42czgCrDhgsT7MmfmIIX6ZvYfFC0XgU=
+	t=1727084838; cv=none; b=CEAcc9FSQAfMkx7tp6X6IkN3bjBIsv3fvop2HwZv1YmgXTf7EYWnqLzP2Acwqv7M/zLtpfnz2ATaZqxAP4hXWVYeh8U95c15lwvpNQfnd3J52TWY87ANh2xXT7Vw88lh/s8CwV4ukVURCaRH7NRHR1osml/euWs3QHx1uOAkfC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727085815; c=relaxed/simple;
-	bh=07Z+zGbNbn+KAtDrmMC1J1FiEZrGCC13a3HoOl4nNvU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NUDsJDMlv5zgQoN+y3UtoENECvJA3HiYEEciqem9IsB4oOypUxEP7iahXykcjg9PnPgLT4rSigQt/5KIaqPutvlHxGGWuM9JKRXYocAYv1DcPBPOxzrB/AAydQs79acLDIm5RcRS9gtsmJiH1KH0710+HgO9fZMghEXdgJXUueY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=ZRWpPwx1; arc=none smtp.client-ip=188.40.203.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codethink.co.uk; s=imap4-20230908; h=Sender:Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=M4vBfdM0E+Q1Eqn0D2bifpyInvcBhY39m5Q1LBNvNiI=; b=ZRWpPwx15apUUlQepYIIJSHtdD
-	X8nDeTPMqwoXUHxEIjHY1E908ND0DWfxNjbqmTRVb0rN4Z80y5jqu/WCZy1oN+2mRd7G42FxGqH4B
-	bcONh82F6NIXyqTw2dD9yYM4hFV+pDMd6SpEGXg2xa7cb7N1267m9/nVtf+YaF1s7x0eXDhwYBcAa
-	HnD9xHHg6rtecBYrpksR4mb2huHwju+FeTaZUykTLldykV/O6AH2yWJORlnFGfyLue7QL/oV1mGi3
-	lQ8n2UGWzAPF8xz+PptuCI4CjjjW6GC3BvgP+OETSEBERI+OknKictpggopydZw5NuTjdx1ywH0PV
-	YrYsdaYQ==;
-Received: from [167.98.27.226] (helo=[10.35.6.157])
-	by imap4.hz.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
-	id 1ssfe0-002GGl-P0; Mon, 23 Sep 2024 10:46:13 +0100
-Message-ID: <575583c5-5a52-461b-944a-5e32bd4b627b@codethink.co.uk>
-Date: Mon, 23 Sep 2024 10:46:11 +0100
+	s=arc-20240116; t=1727084838; c=relaxed/simple;
+	bh=hwk0tBbzwWGtPFcWvfrxbwwiC1zX13mWQ0fZaRHWdro=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=j27mVv/jgzlrZ9ucKDfJ4uOpx4dO2Au2sN3heiCqT3DTg0CU6nKmgvk02HFCl8V6Zqifdt/cL0pO/lrlGmyR1s8eMoLmAaF8CdNj/GfhMSffTBa1b5a7B8Sfbpp2usEKHPM7pCbIQfgtO0GaDm6B24Snhm6V00J4vS/5zqP9oW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=bepTSk1d; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from wsk (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: lukma@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id D98378862E;
+	Mon, 23 Sep 2024 11:47:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1727084833;
+	bh=+tppFS2oLuaEwqRTzj9fnAMiRlSoieCQHR+Y3pC9ZME=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bepTSk1dhA43opvHvQDdQq2JunFcLNitxrJMiNQIJvlZqAKqIvMToMQEyUbLBbV4J
+	 Nf//FDNv7PWTI1xjLkoCqdjTckEYHWmYHNzmpW8F0YauKur/OuQYbAVt51NuRaKedT
+	 Rg6mKqgZLsiJjxttUHrPHzjRih8tMSJ41vG6f21j78+coggQqW/1clpWyQrcLDFnCk
+	 yAaMgOMjuzyZrIbLZfK/B603LeSpa1ku9vMhpf2UQ/g/h3GeVyJhdExR9J8kz7Y/lz
+	 6sRzIsnZZnKBVuePzUt9O/ZWSD0u0QleaDIMAnJisVyoktRw7yG3E/+POJb0kqJax8
+	 Ss0YAjLW8Bivw==
+Date: Mon, 23 Sep 2024 11:47:11 +0200
+From: Lukasz Majewski <lukma@denx.de>
+To: Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/2] dts: nxp: mxs: Add descriptions for imx287 based
+ btt3-[012] devices
+Message-ID: <20240923114711.1c294b6b@wsk>
+In-Reply-To: <CAOMZO5DJ4=ARZEcq+vbisA4kJBg+WFkH3G8-hYDkL82GQBEPBw@mail.gmail.com>
+References: <20240912124825.2528984-1-lukma@denx.de>
+	<20240912124825.2528984-2-lukma@denx.de>
+	<CAOMZO5DJ4=ARZEcq+vbisA4kJBg+WFkH3G8-hYDkL82GQBEPBw@mail.gmail.com>
+Organization: denx.de
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv: make ZONE_DMA32 optional
-To: Drew Fustini <drew@pdp7.com>, Palmer Dabbelt <palmer@dabbelt.com>
-Cc: dfustini@tenstorrent.com, Conor Dooley <conor@kernel.org>,
- vladimir.kondratiev@mobileye.com, Paul Walmsley <paul.walmsley@sifive.com>,
- aou@eecs.berkeley.edu, akpm@linux-foundation.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <Zs5c3KJR41AUVyEv@x1>
- <mhng-ff7311d0-a1e2-4487-af68-130a7efb6040@palmer-ri-x1c9>
- <Zu12G+Px2E+d26aD@x1>
-Content-Language: en-GB
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Organization: Codethink Limited.
-In-Reply-To: <Zu12G+Px2E+d26aD@x1>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Sender: ben.dooks@codethink.co.uk
+Content-Type: multipart/signed; boundary="Sig_/Ilu4b09qMfQa=FASJqP83n=";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On 20/09/2024 14:18, Drew Fustini wrote:
-> On Fri, Sep 20, 2024 at 01:58:23AM -0700, Palmer Dabbelt wrote:
->> On Tue, 27 Aug 2024 16:10:20 PDT (-0700), dfustini@tenstorrent.com wrote:
->>> On Tue, Aug 27, 2024 at 02:36:11PM +0300, Vladimir Kondratiev wrote:
->>>> It is not necessary any RISCV platform has ZONE_DMA32.
->>>>
->>>> Example - if platform has no DRAM in [0..4G] region,
->>>> it will report failure like below each boot.
->>>>
->>>> [    0.088709] swapper/0: page allocation failure: order:7, mode:0xcc4(GFP_KERNEL|GFP_DMA32), nodemask=(null),cpuset=/
->>>> [    0.088832] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0-rc5 #30
->>>> [    0.088864] Call Trace:
->>>> [    0.088869] [<ffffffff800059f2>] dump_backtrace+0x1c/0x24
->>>> [    0.088910] [<ffffffff805f328c>] show_stack+0x2c/0x38
->>>> [    0.088957] [<ffffffff805fd800>] dump_stack_lvl+0x52/0x74
->>>> [    0.088987] [<ffffffff805fd836>] dump_stack+0x14/0x1c
->>>> [    0.089010] [<ffffffff801a23a8>] warn_alloc+0xf4/0x176
->>>> [    0.089041] [<ffffffff801a3052>] __alloc_pages_noprof+0xc28/0xcb4
->>>> [    0.089067] [<ffffffff80086eda>] atomic_pool_expand+0x62/0x1f8
->>>> [    0.089090] [<ffffffff8080d674>] __dma_atomic_pool_init+0x46/0x9e
->>>> [    0.089115] [<ffffffff8080d762>] dma_atomic_pool_init+0x96/0x11c
->>>> [    0.089139] [<ffffffff80002146>] do_one_initcall+0x5c/0x1b2
->>>> [    0.089158] [<ffffffff8080127c>] kernel_init_freeable+0x214/0x274
->>>> [    0.089190] [<ffffffff805fefd8>] kernel_init+0x1e/0x10a
->>>> [    0.089209] [<ffffffff8060748a>] ret_from_fork+0xe/0x1c
->>>>
->>>> Signed-off-by: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
->>>> ---
->>>>   arch/riscv/Kconfig | 2 +-
->>>>   mm/Kconfig         | 2 +-
->>>>   2 files changed, 2 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
->>>> index 0f3cd7c3a436..94a573112625 100644
->>>> --- a/arch/riscv/Kconfig
->>>> +++ b/arch/riscv/Kconfig
->>>> @@ -50,6 +50,7 @@ config RISCV
->>>>   	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
->>>>   	select ARCH_HAS_UBSAN
->>>>   	select ARCH_HAS_VDSO_DATA
->>>> +	select ARCH_HAS_ZONE_DMA_SET if 64BIT
->>>>   	select ARCH_KEEP_MEMBLOCK if ACPI
->>>>   	select ARCH_MHP_MEMMAP_ON_MEMORY_ENABLE	if 64BIT && MMU
->>>>   	select ARCH_OPTIONAL_KERNEL_RWX if ARCH_HAS_STRICT_KERNEL_RWX
->>>> @@ -200,7 +201,6 @@ config RISCV
->>>>   	select THREAD_INFO_IN_TASK
->>>>   	select TRACE_IRQFLAGS_SUPPORT
->>>>   	select UACCESS_MEMCPY if !MMU
->>>> -	select ZONE_DMA32 if 64BIT
->>>>
->>>>   config CLANG_SUPPORTS_DYNAMIC_FTRACE
->>>>   	def_bool CC_IS_CLANG
->>>> diff --git a/mm/Kconfig b/mm/Kconfig
->>>> index b72e7d040f78..97c85da98e89 100644
->>>> --- a/mm/Kconfig
->>>> +++ b/mm/Kconfig
->>>> @@ -1032,7 +1032,7 @@ config ZONE_DMA
->>>>   config ZONE_DMA32
->>>>   	bool "Support DMA32 zone" if ARCH_HAS_ZONE_DMA_SET
->>>>   	depends on !X86_32
->>>> -	default y if ARM64
->>>> +	default y if ARM64 || (RISCV && 64BIT)
->>>>
->>>>   config ZONE_DEVICE
->>>>   	bool "Device memory (pmem, HMM, etc...) hotplug support"
->>>> --
->>>> 2.37.3
->>>>
->>>
->>> Reviewed-by: Drew Fustini <dfustini@tenstorrent.com>
->>>
->>> Thanks for sending this patch as I've also encountered that annoying
->>> error on systems with DRAM above 4GB.
->>>
->>> I tested this patch by changing the qemu virt machine to have DRAM
->>> starting at 2^32:
->>>
->>> diff --git a/hw/riscv/virt.c b/hw/riscv/virt.c
->>> index cef41c150aaf..3033a2560edb 100644
->>> --- a/hw/riscv/virt.c
->>> +++ b/hw/riscv/virt.c
->>> @@ -87,7 +87,7 @@ static const MemMapEntry virt_memmap[] = {
->>>       [VIRT_IMSIC_S] =      { 0x28000000, VIRT_IMSIC_MAX_SIZE },
->>>       [VIRT_PCIE_ECAM] =    { 0x30000000,    0x10000000 },
->>>       [VIRT_PCIE_MMIO] =    { 0x40000000,    0x40000000 },
->>> -    [VIRT_DRAM] =         { 0x80000000,           0x0 },
->>> +    [VIRT_DRAM] =        { 0x100000000,           0x0 },
->>>   };
->>>
->>>   /* PCIe high mmio is fixed for RV32 */
->>
->> IIRC the ZONE_DMA32 stuff existed for some of the early SiFive systems,
->> where the expansion daughterboard's PCIe controller (via a Xilinx FPGA)
->> could only handle 32-bit DMA addreses.  I think there's a similar quirk in
->> the Microsemi PCIe controller on the PolarFire boards, but Conor would know
->> for sure.
+--Sig_/Ilu4b09qMfQa=FASJqP83n=
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-The Fu740 SoC has a mirror of part of DRAM in 32bit space specifically
-I think for PCIe where something may be attached via a PCIe-PCI bridge.
+Hi Fabio,
 
-> I don't think this patch would affect those systems that need ZONE_DMA2.
-> I believe it just makes it possible to disable it in the kernel config.
-> The platform I'm working on has no memory below 4GB and all the PCIe
-> devices that I care about are not 32-bit constrained. Therefore I just
-> want to be able to turn it off in my .config.
-> 
-> Thanks,
-> Drew
+> Hi Lukasz,
+>=20
+> On Thu, Sep 12, 2024 at 9:48=E2=80=AFAM Lukasz Majewski <lukma@denx.de> w=
+rote:
+>=20
+> > +&lcdif {
+> > +       pinctrl-names =3D "default";
+> > +       pinctrl-0 =3D <&lcdif_24bit_pins_a>, <&lcdif_sync_pins_bttc>,
+> > +                   <&lcdif_reset_pins_bttc>;
+> > +       lcd-supply =3D <&reg_3v3>;
+> > +       display =3D <&display0>;
+> > +       status =3D "okay";
+> > +       display0: display0 {
+> > +               bits-per-pixel =3D <32>;
+> > +               bus-width =3D <24>;
+> > +               display-timings {
+> > +                       native-mode =3D <&timing0>;
+> > +                       timing0: timing0 {
+> > +                               clock-frequency =3D <6500000>;
+> > +                               hactive =3D <320>;
+> > +                               vactive =3D <240>;
+> > +                               hfront-porch =3D <20>;
+> > +                               hback-porch =3D <38>;
+> > +                               hsync-len =3D <30>;
+> > +                               vfront-porch =3D <4>;
+> > +                               vback-porch =3D <14>;
+> > +                               vsync-len =3D <4>;
+> > +                               hsync-active =3D <0>;
+> > +                               vsync-active =3D <0>;
+> > +                               de-active =3D <0>;
+> > +                               pixelclk-active =3D <1>; =20
+>=20
+> According to fsl,lcdif.yaml, a remote-endpoint to the display is
+> needed.
+>=20
+> See imx28-evk.dts for an example.
 
-I tried this a while ago and IIRC you run into issues with DMA
-allocations from certain drivers that expect this to exist.
+This file has the:
+	panel {
+		compatible =3D "sii,43wvf1g";
 
-With new platforms that don't have any memory in DMA32 space
-this may become more common. I've already had to deal with this
-for an internal dev project, and it ended up having a couple of
-hacks into the allocation code to silence warnings/errors.
+Whereas in those devices (i.e. btt3) - I don't know the names of the
+displays - manufacturer buys them according to the timing properties.
 
-This of course may have been fixed, given this was last year.
+Hence the question - how shall I proceed?
 
--- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
+IMHO the most straightforward way is to modify fsl,lcdif.yaml to
+not require "port" and "remote-endpoint" and instead add support for
+"display-timings" and "timingX"
 
-https://www.codethink.co.uk/privacy.html
+Especially that
+Documentation/devicetree/bindings/display/panel/display-timings.yaml
+
+are already defined and used by many imx boards (from imx25 to imx6q)
+- git grep -n "display-timings"
+
+Even the imx28-m28evk.dts is using the "display-timings" and not
+"remote-endpoint" approach.
+
+
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/Ilu4b09qMfQa=FASJqP83n=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmbxOR8ACgkQAR8vZIA0
+zr0RMAf+P+IBxVFol0awhUrlSAa6pvq0jmSf8oazCU+VunQD0ICMJEQBpxVd4jTN
+Iz7ov8d6CQ1A2e5uJnG+O3va0aZ8mqmwQ6B1wosg+GtUJtQVpOkadJRx7uYs/JQf
+L7ymVrgGQ7vC2xof5qG2mFKHK5AbjNAZNsThXUc8Nfo2wniCcene2bOMzykUfisN
+cav071REJJVVkZ39RAhLy5mv9R61VQaLMgBPWQ+0Ps7xEr50w+er5qspcW+FQBMP
+CVcfZ3VwQ8WYUGuyHzialbpTUcmJAM3MVb+9SdSxGYohjgyHsJpNhNcuHMBu4fET
+1PyLx4J4PqB07xcRnKKymE7dsL5ZEg==
+=BLj/
+-----END PGP SIGNATURE-----
+
+--Sig_/Ilu4b09qMfQa=FASJqP83n=--
 
