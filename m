@@ -1,145 +1,162 @@
-Return-Path: <linux-kernel+bounces-335955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C43BF97ED20
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:22:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F4AE97ED0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:21:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 847EC282EA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:22:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59D91281999
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:21:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B588A1A08DF;
-	Mon, 23 Sep 2024 14:20:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119701A01A9;
-	Mon, 23 Sep 2024 14:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F2819F111;
+	Mon, 23 Sep 2024 14:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RxYGa3yW";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="s4AK6itM";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RxYGa3yW";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="s4AK6itM"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA84C19E993;
+	Mon, 23 Sep 2024 14:20:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727101214; cv=none; b=TY2zD4nh2Hko06TKXsZQOdypsEA44fK39jGBMid/c4thzF4Q2hAUp6OFh50YDxOvI1v5JGcyXxoN2cSdrz9nSxBN4BJv3JqoftOx8GVnovRffn74w8xa7Z/8TlMmhl40+6nPXZBq5ldJu+feuXt3D8nu6QQJiIatbmSg+Xu5s8o=
+	t=1727101202; cv=none; b=jGwCTVtSXDgwgYE5lc7hZ8teekQ/VynZFheBjLmyWbtN1pwlGQ9pOAtw5ViQbxzT+fVxZcOOngVuDDkmtssTHQ+TmSEfgMEw+0hZeVZiaYoK02wAgq0s2CMHk5Bxu66a4LUirPuckJse40Mp2Zx98fiOOW6pdWv4bBmeSmpLmiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727101214; c=relaxed/simple;
-	bh=aAQIVvNH9jCkIm53CyHltIZPAkPGuz3UkFczGsiESu4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DLxZtPSpezFFHxzwPS7PFPqyKmCtAAWGsM4HqkE5NlkuzMgo6wUN7+JXzfP0TZEGD/Fkj72gvC7AaDc7b9HBZmx14LJs7wQ+9IkTbIk4NrBIQVASv/pP4iOCV+cAh0Z3U5XXwuM36eKL3io9xnUAn3Sq2R5vv4xyGV09Sbl2I+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 21AD6FEC;
-	Mon, 23 Sep 2024 07:20:41 -0700 (PDT)
-Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 37AEC3F64C;
-	Mon, 23 Sep 2024 07:20:09 -0700 (PDT)
-From: Vincenzo Frascino <vincenzo.frascino@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [PATCH v2 8/8] vdso: Modify getrandom to include the correct namespace.
-Date: Mon, 23 Sep 2024 15:19:43 +0100
-Message-Id: <20240923141943.133551-9-vincenzo.frascino@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240923141943.133551-1-vincenzo.frascino@arm.com>
-References: <20240923141943.133551-1-vincenzo.frascino@arm.com>
+	s=arc-20240116; t=1727101202; c=relaxed/simple;
+	bh=IamA9VXOZThSdOw4061uDlSVFqLEpBsHgQ+wb4xP+vA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fz3H9YPybTMCuLpW868B94IFy/zNIrycbXQgdP24dC4cF8TtMx/JWLdnaXlXfe+NEGee+7pxip6z1ymBmPUBBnAYSqwL/PLQWe5qx7LouYeDfb+V8WeI9Lb4sFc7c6qvRYu6Vm4mj405TyGTG8+NuN/K/QQQU0D/bpUlaQxy81c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RxYGa3yW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=s4AK6itM; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RxYGa3yW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=s4AK6itM; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id F283721DDB;
+	Mon, 23 Sep 2024 14:19:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727101199;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z9K5eCzdd4BEW/VRC2G61gaq8ZXLYhpSqmek7gKOb50=;
+	b=RxYGa3yWbKgP9rEVGeJJMilfk5Tw5MOKl8LdbK5YXV8zOQWju1Ywg78siigceqnVlMMQe4
+	OqazBDs1xyePxA6Bvqe9GcwtL/RayLTxIhnafkDKnFzvkk0ZYfoSjX5hsfj8szuV7MNp0B
+	cenOxEGSylmKURz7HaE+BqNZsYIB25o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727101199;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z9K5eCzdd4BEW/VRC2G61gaq8ZXLYhpSqmek7gKOb50=;
+	b=s4AK6itMJUPY2HhaKDrp1s60F42QJJpQUZmH8MxGaUVDBZJSBJEwsTr/2XAOjPGtwgpzV6
+	uYXTFObgaelOU7Cw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=RxYGa3yW;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=s4AK6itM
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727101199;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z9K5eCzdd4BEW/VRC2G61gaq8ZXLYhpSqmek7gKOb50=;
+	b=RxYGa3yWbKgP9rEVGeJJMilfk5Tw5MOKl8LdbK5YXV8zOQWju1Ywg78siigceqnVlMMQe4
+	OqazBDs1xyePxA6Bvqe9GcwtL/RayLTxIhnafkDKnFzvkk0ZYfoSjX5hsfj8szuV7MNp0B
+	cenOxEGSylmKURz7HaE+BqNZsYIB25o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727101199;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z9K5eCzdd4BEW/VRC2G61gaq8ZXLYhpSqmek7gKOb50=;
+	b=s4AK6itMJUPY2HhaKDrp1s60F42QJJpQUZmH8MxGaUVDBZJSBJEwsTr/2XAOjPGtwgpzV6
+	uYXTFObgaelOU7Cw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D08E713B06;
+	Mon, 23 Sep 2024 14:19:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id lb1zMg558WZeYAAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Mon, 23 Sep 2024 14:19:58 +0000
+Date: Mon, 23 Sep 2024 16:19:57 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Shen Lichuan <shenlichuan@vivo.com>
+Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	opensource.kernel@vivo.com
+Subject: Re: [PATCH v1] btrfs: Correct some typos in comments
+Message-ID: <20240923141957.GE13599@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20240923065833.12046-1-shenlichuan@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240923065833.12046-1-shenlichuan@vivo.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Rspamd-Queue-Id: F283721DDB
+X-Spam-Score: -4.21
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.21 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-The VDSO implementation includes headers from outside of the
-vdso/ namespace.
+On Mon, Sep 23, 2024 at 02:58:33PM +0800, Shen Lichuan wrote:
+> Fixed some confusing spelling errors, the details are as follows:
+> 
+> -in the code comments:
+> 	filesysmte	-> filesystem
+> 	trasnsaction	-> transaction
 
-Modify getrandom to take advantage of the refactoring done in the
-previous patches and to include only the vdso/ namespace.
+Strange that codespell does not find the typos. We also want to fix
+typos in bigger batches so please check for more, my quick search gives
 
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jason A. Donenfeld <Jason@zx2c4.com>
-Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
----
- include/vdso/datapage.h |  1 +
- lib/vdso/getrandom.c    | 22 +++++++++++-----------
- 2 files changed, 12 insertions(+), 11 deletions(-)
-
-diff --git a/include/vdso/datapage.h b/include/vdso/datapage.h
-index b7d6c71f20c1..127f0c51bf01 100644
---- a/include/vdso/datapage.h
-+++ b/include/vdso/datapage.h
-@@ -5,6 +5,7 @@
- #ifndef __ASSEMBLY__
- 
- #include <linux/compiler.h>
-+#include <linux/build_bug.h>
- #include <uapi/linux/time.h>
- #include <uapi/linux/types.h>
- #include <uapi/asm-generic/errno-base.h>
-diff --git a/lib/vdso/getrandom.c b/lib/vdso/getrandom.c
-index 938ca539aaa6..e15d3cf768c9 100644
---- a/lib/vdso/getrandom.c
-+++ b/lib/vdso/getrandom.c
-@@ -3,19 +3,19 @@
-  * Copyright (C) 2022-2024 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
-  */
- 
--#include <linux/array_size.h>
--#include <linux/minmax.h>
- #include <vdso/datapage.h>
- #include <vdso/getrandom.h>
- #include <vdso/unaligned.h>
--#include <asm/vdso/getrandom.h>
--#include <uapi/linux/mman.h>
--#include <uapi/linux/random.h>
-+#include <vdso/mman.h>
-+#include <vdso/page.h>
- 
--#undef PAGE_SIZE
--#undef PAGE_MASK
--#define PAGE_SIZE (1UL << CONFIG_PAGE_SHIFT)
--#define PAGE_MASK (~(PAGE_SIZE - 1))
-+#ifndef ARRAY_SIZE
-+#define ARRAY_SIZE(x)	(sizeof(x) / sizeof(*x))
-+#endif
-+
-+#ifndef min_t
-+#define min_t(type,a,b)	((type)(a) < (type)(b) ? (type)(a) : (type)(b))
-+#endif
- 
- #define MEMCPY_AND_ZERO_SRC(type, dst, src, len) do {				\
- 	while (len >= sizeof(type)) {						\
-@@ -79,8 +79,8 @@ __cvdso_getrandom_data(const struct vdso_rng_data *rng_info, void *buffer, size_
- 	if (unlikely(opaque_len == ~0UL && !buffer && !len && !flags)) {
- 		struct vgetrandom_opaque_params *params = opaque_state;
- 		params->size_of_opaque_state = sizeof(*state);
--		params->mmap_prot = PROT_READ | PROT_WRITE;
--		params->mmap_flags = MAP_DROPPABLE | MAP_ANONYMOUS;
-+		params->mmap_prot = VDSO_MMAP_PROT;
-+		params->mmap_flags = VDSO_MMAP_FLAGS;
- 		for (size_t i = 0; i < ARRAY_SIZE(params->reserved); ++i)
- 			params->reserved[i] = 0;
- 		return 0;
--- 
-2.34.1
-
+block-group.c:2800: uncompressible ==> incompressible
+extent_io.c:3188: utlizing ==> utilizing
+extent_map.c:1323: ealier ==> earlier
+extent_map.c:1325: possiblity ==> possibility
+fiemap.c:189: emmitted ==> emitted
+fiemap.c:197: emmitted ==> emitted
+fiemap.c:203: emmitted ==> emitted
+transaction.h:36: trasaction ==> transaction
 
