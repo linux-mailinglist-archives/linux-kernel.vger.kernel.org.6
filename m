@@ -1,369 +1,204 @@
-Return-Path: <linux-kernel+bounces-335820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F239197EB2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:00:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EC1497EB2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:01:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3EA02815CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:00:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDC181F220D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF60195B1A;
-	Mon, 23 Sep 2024 12:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2265197A8A;
+	Mon, 23 Sep 2024 12:01:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KnXxOI3h"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="sRSeRQcT"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2044.outbound.protection.outlook.com [40.107.20.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7992B194085
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 12:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727092835; cv=none; b=LEJPxz0yFycMbxkwX056BKUH6WmH14TdZx5WYpk8WeA3xCIYMkFBpqPUTAxLE0ps9yMtt0AMGBgdyOmjFLDNffgrpx5rqKIAJRe4S2gIszcsA4A1zC7+skO6d4V+t7O+xZO/9+K5x1UgObsTC/gEb7VM7859GrTIfLZ4X3vcLfY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727092835; c=relaxed/simple;
-	bh=c0IY/gnBWRtGlG7yVFR+KCjsg2rtEishwr+1LH1PhTE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CJ/phQybB/Xeb3kvcWlXfgNY/kMHAcYxQzhQSpXPDIe1u8/NVAh4YmCVtd/w5cOhu3z52YPi4EaqVpIfLw7Jfs8P+1aUsswKH5yWVCRaJmxo1E5xdcrZdLi6ugRWR0e8yWWBfVOSvs2hrmPb1BmitWI2R/caR3+b9yIAsw/YIGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KnXxOI3h; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5365392cfafso4294464e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 05:00:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727092831; x=1727697631; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Md7c9mcq1/wAV8F1yIx1w2UTYRhMAvy5XqGUWxmdRzs=;
-        b=KnXxOI3hDahYJVY4+NiTfk2qCgsH/aRv9In8YwggmZtCFHYDnf/AGsoZGQMKPoI/VS
-         X9QokY4bpZYp6OdR4/RVjBle+dxJK67SKOMQHobbwL//w2t96LFMc62plABuW/NpPaIF
-         RxDCEQSPrBKoJP39ciCTSTw1GSUFOq2wpHN7AiiEV+Ag78D34RbLj1DWpz4i6auQX+rW
-         TzQqgA1XZ8cM8a590bnU89PaCx2Teasoq17ktcFYB76T/I18BhcpALKlikIt7PRdQxan
-         K3sdf1Yh2Cql55WlOxjS8wNEpLT1/+x1uBomranmUas6CcM98iw4Uvv1H+9rw+L096Zr
-         qhLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727092831; x=1727697631;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Md7c9mcq1/wAV8F1yIx1w2UTYRhMAvy5XqGUWxmdRzs=;
-        b=Nzj2WrW/OwQ/QtSkzeA/Ug9NUZwWcU7rnT9cVHLCEL1pB72qovVcKWhWf7DxcT9nAd
-         3iJwzDC1JBTtVLLPDPdaylA2jP/N0ic8rWV5obNab4tIE3TATRIWYOd7x6ubmI+7HNNF
-         0wgDHSUT6AqUjMRNYCIQx+Ea8CnzOT/QbZo9YfY3OBggp8WdGzoZmYuB481vvOiJV9tN
-         4eHabXpaQAZ4uT1MP4N2uIacwisDkov18l5cBNv7eiu5CNYgUEFXClAXyxaDFpgsmDfl
-         fgVZDHzGsTnOVeSp6PXpnhICaj07T94txchawaRmvtHW8odBfMj69ERCeUoNmxJlcnGK
-         7tHw==
-X-Forwarded-Encrypted: i=1; AJvYcCVxKAHu9ElTvWEUokQehwYwN4yTwWsiTx7aGeCUIgcVO/4YFZJRZ3UE5Wh2QJMPMG5l4IzFCd3vlaDvB2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9SCW2uRlxN3LVGNARTFmgDH8uW+QL3UYOTWoEBGmktZEvRnYv
-	PtuxIEWCoVC0aCh9nBIlvWKqSpGYACfTwO5XvoBAPj5rKH9wjt3L+m9LMaUhnvA=
-X-Google-Smtp-Source: AGHT+IHMGwxuJEOEo/1RvgDCQ5R3Ei7EBB5RFQQW8WFRvSBzxSt2KvoxnNg+eqQWxcQOM8CKEHQeaQ==
-X-Received: by 2002:a05:6512:ac2:b0:536:5515:e9b5 with SMTP id 2adb3069b0e04-536ac34092emr5338624e87.52.1727092831295;
-        Mon, 23 Sep 2024 05:00:31 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5368704da94sm3273569e87.89.2024.09.23.05.00.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 05:00:30 -0700 (PDT)
-Date: Mon, 23 Sep 2024 15:00:27 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Hermes Wu <Hermes.Wu@ite.com.tw>
-Cc: Pin-yen Lin <treapking@chromium.org>, 
-	Kenneth Hung <Kenneth.hung@ite.com.tw>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 3/3] drm/bridge: it6505: Add MCCS support
-Message-ID: <x4eixnu3kta6u2xqf6mn7ons2pupr7oe5fzjur2pfhgppmozoq@lgmk7zwqhcqm>
-References: <20240923094826.13471-1-Hermes.Wu@ite.com.tw>
- <20240923094826.13471-4-Hermes.Wu@ite.com.tw>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F76C944E;
+	Mon, 23 Sep 2024 12:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727092872; cv=fail; b=Dpl87n1Tp6g1g00Hty4y0i3kpDpdkbu29dKqMfdkHgQoSquDUWXVRYfL7vnpRabtlYjaPh7qpXY6zltEyxyqla8CaSLWLPZjVqXXf/kzJXskBPebwZhnTNCvV4vXIa9PjLQvztq4x3FtrBIWdtS19finu6bZDFTnbZDjTWwG0Tk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727092872; c=relaxed/simple;
+	bh=IllR5eQSWSl6HVBTbdsO0qRpAH+Dy+VQ5j4WUD4LoEs=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=UxqtyLqQLmO4OORccBS5apKNsrm4YLdZ1Y4qR1hma+IJ7DvghexeIduzCrTJlFucJ4EVQaKy3NHq3CELGQUN/jed9+LnHrauzHzAyk4t1pmxEMmvB9OAtbaA4k+1YW3qCbLtJ1XwQP1t/m/u3NCAeV5UhklpLl9HKRBaBQiDewo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=sRSeRQcT; arc=fail smtp.client-ip=40.107.20.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TX9eU3IJpuZNB+RU64/P3DMbz7nR7YBq/UOfd57fEjhK/f2nf28I6EzEJORicySfUskMZaI1hLR/mWeJRzdSaeAkPdoLDs5g+HnQttJ6zXQEN4Q4nu4Mycgk+GV0N672rJQtDMrw6GicoxFCNBTRGzolFAO6mYGAZb4SLsLEHIFr3MsMwht2au4lQT0GWVdC3NqsVrIutpBZL23BWPhWrDOXNCmy5WDuJMW9/koQ4ttYjTMSBl/q1D3003pQghCzzQZXhN/HT7Y1px6g08Ft65+9Ehhv7ux7LSi3Cd2UqLfQoqoXRsHeyHmJtDaN1yae9zS0ODPhl0UF8A94kxzCyw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Gs2fF0NR1FUS8ZaqTfGyuzwFuv0XOucL6OoHTrHiU60=;
+ b=IeZtRe1sTHo83hYtIc5e1/7ON9NarIiKtDj+7hvtkKUtIXm+khbU6d96bgJQ/Qi18R+iF6McJxeGrMgEZotmKc6u/quE8X5spz9OQWO2gkLejSp7ElhYyzCCgPrHYg/4GqP1pjQGTXoL+NCr81Y1vPsH4u4R7yFZhTmiceQswXospXu/pLo6CwCyaQL66muvx6+f5eSRPENljKA37WmFnrnUqVi1TTK3mUVgpbbbEFE76xpPelqrNzS5HsnNots2bBuiyyUU41YdLNQ4T8/dwyEMRJruSeutQSwthBqlRArkGhrCbjvkGRKV4icqJDwTqiSZlVMSe714gjjAqQ/JeQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Gs2fF0NR1FUS8ZaqTfGyuzwFuv0XOucL6OoHTrHiU60=;
+ b=sRSeRQcTiPCYD5v+Nw8VDOFusor1VACracIj5avfsSIOoklOxfpGPgfzZYy/OMgp2B3Xsnn15aASYsLrQGbUcHnRdnXmc4kq6zmmSMdlXOrQuf2gcumiZGjoZmQXX9keOeCmXcIFCKOGXjBsMXJ2DEoC8a7SmDc8AtxftkRYP7ocFLgPK6OiW1oPnwvzqlX0B5IiNe5lACq1+SEM/5SMaHj6OY1iIyc2O7rhQ0dboiqSiINSHECejt7fnoEvRZgkb4B+1+/6Q6lhQjpheCI9WGaWf1gihmILC/goEQY3WF9wSlJnh2Ich0HOJVACOgUtiDIvVv/WFCbzuOPHt0SK0Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from AS4PR04MB9576.eurprd04.prod.outlook.com (2603:10a6:20b:4fe::12)
+ by GV1PR04MB11063.eurprd04.prod.outlook.com (2603:10a6:150:20c::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.25; Mon, 23 Sep
+ 2024 12:00:53 +0000
+Received: from AS4PR04MB9576.eurprd04.prod.outlook.com
+ ([fe80::9cf2:8eae:c3d1:2f30]) by AS4PR04MB9576.eurprd04.prod.outlook.com
+ ([fe80::9cf2:8eae:c3d1:2f30%7]) with mapi id 15.20.7982.022; Mon, 23 Sep 2024
+ 12:00:53 +0000
+From: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Guoniu Zhou <guoniu.zhou@nxp.com>,
+	Christian Hemp <c.hemp@phytec.de>,
+	Stefan Riedmueller <s.riedmueller@phytec.de>
+Cc: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+	Jacopo Mondi <jacopo@jmondi.org>,
+	linux-media@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] media: nxp: imx8-isi: fix m2m device v4l2-compliance test errors
+Date: Mon, 23 Sep 2024 15:00:48 +0300
+Message-Id: <20240923120048.3200166-1-laurentiu.palcu@oss.nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AS4P195CA0011.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5e2::15) To AS4PR04MB9576.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4fe::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240923094826.13471-4-Hermes.Wu@ite.com.tw>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9576:EE_|GV1PR04MB11063:EE_
+X-MS-Office365-Filtering-Correlation-Id: 82ecf3e0-4f7b-4ac0-4ba2-08dcdbc75f77
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|1800799024|7416014|376014|366016|921020;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?LtN3uuMISe8ZeqdbnLhCXIiHAVc6KVZAZsCFKwIihxO8jeZ1AanyzgmuT4Up?=
+ =?us-ascii?Q?Xm9iedxjlUfj0CAvfhxY7Jg3ch6kRTQ7vKXiUtKbxvt4wEUUmLYzNcGz5gfI?=
+ =?us-ascii?Q?hew8pQ/XBLHL/cpuBXHRIJbeXYJF7n5wEkC+gkTtL+U2UjcPB47h3O6jnSmj?=
+ =?us-ascii?Q?Pd0K1duJ3K5jvfTuB4fsblgXmLm6bH/dteUFILWNXG5TisLmL3aKFXs3H13/?=
+ =?us-ascii?Q?pBST92WhQqhpRNAYFIWrOIPkOIuOMK5I7xZukra2YeA1EKSxRVgVwhTzIpW9?=
+ =?us-ascii?Q?OejcJtC+psbOAS6dCIbS53cQlgjq9hoRFRSKN0v3kWJKOBjhSS5ogPH+HMQk?=
+ =?us-ascii?Q?RL3UGC5m91ZmVXOVGVtEfXkXKYZvp1DqImKaORKnmCcBxg0l4j2D0ZS9tjda?=
+ =?us-ascii?Q?TUXgZJMpR8/rVcvXaw+qOcFjEi0BDKc4EJF7/rEhjwE8fbM9rg5o05nCoUff?=
+ =?us-ascii?Q?ucdJDjp8i9dWYv2vwTeXKf2x/tciKd6RjY1yTXDqQJ2fcIrFR8rUqVyGUXGh?=
+ =?us-ascii?Q?DD7VNr3VwHQkajgARRRwYg6CnadvMdN0s3PJx2PpH5KKyWLPOWdsbBS4fMXM?=
+ =?us-ascii?Q?/pCkH0538nq7oHcjmicUMWQGqMJNYy28VuOPlqgULEFurvkH9z0JGwoQdI+L?=
+ =?us-ascii?Q?hSrVc7Ex+TJdEkqjmZ5wKg8bFIv1xMYEEbq+B4w8uSuiRftQEM1wala4x04Q?=
+ =?us-ascii?Q?PteCnetF8rPrWzeKBD1Z70UCygEf+DgLb6p3R0lpN0Dqb9v4DXulwsr+hVid?=
+ =?us-ascii?Q?6cFE/h0GvzJU4QfrB7fjhE/vwJhnsc7xQxL6U6ycuC+TeF4IpvnWo9EH23vI?=
+ =?us-ascii?Q?CPmiuEb1b2zKhKY/wr1MqBEjCjfPUQWkfXHHIivQU+K2Y30s7UmSVnO6g1T0?=
+ =?us-ascii?Q?wLJLtu0fYUIOuJSsvwXu00DdnteWdYQYHWo2aqDUNO4aPVfV98gGOSjbN/EM?=
+ =?us-ascii?Q?vA/yX910y0I5ZXjcfNvzRUch/IiTfyq4F7nZEDtdAx2/Pe+ESBhMPRMR4xEK?=
+ =?us-ascii?Q?/v/xA1e+w/4bpvM5dtfkpHqUagTYyrhk9+Fff7e1L5hm4w29SRzLFKXt7/nC?=
+ =?us-ascii?Q?4DKjz/zvFW2pwVs58VIcHC5HYm8W2G7va0uupY3IeB1yenpWR6Cx7jcFAKds?=
+ =?us-ascii?Q?cEJPYKBjlwEqyFVwTk52JTp/3F6S8HBgBhQt4x6BwoAUS6WjK2esdyVds3pf?=
+ =?us-ascii?Q?M+dgvQo3J44lLA1X4YEU95lh4IP+nwHlBl4q3JkX+GDW8YrF+GmFvJoJvxEy?=
+ =?us-ascii?Q?viGKfsFDntjr/AF5PGEWXvUuK/mkNUayOMoZJBYC6BP78LicO4J6MSOirmQc?=
+ =?us-ascii?Q?vUKJ5b55z8pvPdlxgfPaxWSep2mId18u9mdZJ5oAzrsvFJmEl92Xq0a5v9tm?=
+ =?us-ascii?Q?LVPGAIH4/pLWDv03t4SgdeofXn29?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9576.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?X2bpSrUV/PEO8CpPlsXYWfmHyx4xMp5lGpXOlOFDQMTPP6wZYkibHqX/gHr8?=
+ =?us-ascii?Q?T4SVZ6u3TAWM7h+ql6bXOaJtSfPNs6tgLGP5HPnBri31nBfGTkRkFjhVZDlx?=
+ =?us-ascii?Q?JnEchpL2PXnXfu4qFLJtSUSCXN989u8qJmW9e9rg5jbY4eTsx6XaPeUFksOK?=
+ =?us-ascii?Q?PXDPsVoQg2V8TN6cJASUrKEuAJBUuqPwouMK1bzKem8NxgUIXp5zm9ID8CCz?=
+ =?us-ascii?Q?6h7OQJ9Y37DIXCTb5Hk5CKTLYLRi053kHf1b+wd3/Yjor4Msr9SxNccbips4?=
+ =?us-ascii?Q?r1bNt83ZHa4WyBTeOFWVaEwS2EDgkmnPo50K8YcVVyVgbqjmfsvX8PF/6jbn?=
+ =?us-ascii?Q?guAzbjVhCBSYoNzSNa6PCkSaLlakAnywbtRj8Br4SHPEi9yaiSozXdXv1ZFX?=
+ =?us-ascii?Q?KSoI0mc1U5BJ3kABLrGFEAi7pJxNpBpPkzgjak94G0Mx1Uex+W7PEqERcC/Q?=
+ =?us-ascii?Q?bcdOaFShONpBgRlmTRd3AS2pC3u7gZe47TXOgzOdJzCP7m2ur3nohbK5bBqh?=
+ =?us-ascii?Q?nYkp1nySVT4vCQoUSuYkEKz/fB0Ck8ZOQOJebjcl4CQKbsSJ7PeUp2n9wHLx?=
+ =?us-ascii?Q?WJtYjBHmrnbVNhAKfyFJYPgf6M4suCqtCK/S/K5wNeP1Dg3YzP0/eKwCPnOw?=
+ =?us-ascii?Q?QKOalU7G3rltaEdPiyKo1vEgXMZQphmlDKI4wjNd7JlZg0a/Gu+24Vf1djJ6?=
+ =?us-ascii?Q?P2MYodbsfvPSXG7VXRARyDJwK2UWkqNbDRu7u0gSwvzeDiZmEgT3UpoyL78g?=
+ =?us-ascii?Q?waXMGsXJK3I4W5tf2Tyk2VCwiUa2062bwFwwiKUYpfTMUMv1+7TTstWCko/u?=
+ =?us-ascii?Q?IsXjt1YfcXhup+cdixAJ51AiTs7duSxi+f5L2VgnaYzeqVXYOO3EyFhyvCmU?=
+ =?us-ascii?Q?Xi8TAnm+QX7DfNXB6Kanm8NN923coVzYGB041ygQEXBXgHONSnQtPqDJjOFJ?=
+ =?us-ascii?Q?favyEkXijPK0pGQPxGDdpxwAZwktjBmxoT+S9pxsmOdgljIO59WdMsAupm3+?=
+ =?us-ascii?Q?PXN2ic+W3dUEixYVzOBl7GuzLe2B61pZY5ToIDulN4p4T4wmWzAYE3n0C1oJ?=
+ =?us-ascii?Q?l9cGCL3Q5wWg38X35L6hgzMy4akZbBDcViYsUGT1qycgK4OiIuldPP3PPDXQ?=
+ =?us-ascii?Q?JrisRWerbEIlzAL7rJgIVJA1IJYaI64aoojxVn8SpbfhLye3N5WFSTe2lInV?=
+ =?us-ascii?Q?Ac2kB0WLLOOicsVrJnP0re+u7bHBKuR4+rYrqseDdu2HW75c5wz8WmSZfdob?=
+ =?us-ascii?Q?hkz2E6n8Hg3MlPFMUPkq+NJ38rcx9ARslnCMJxFnOOkf+KaB2SXED1w3yYI/?=
+ =?us-ascii?Q?Yr3xqtXTKyIVdMPvuTGX0J2wfH3EyXsbVDEDCRqdzHfPwHQO4eG95ceMbnNf?=
+ =?us-ascii?Q?FfwaSYQ2AdWEIIQxDhPG/+oYHC7FfCH53qTLTsLC5zsPWkDG+AFt/7IFbjAL?=
+ =?us-ascii?Q?hdGLzcxuKNak8dC4b0v/xvQzobhKlkVMV/KkBlqGcMKX8vR6CElu4LsuOSxj?=
+ =?us-ascii?Q?aNYrDMoP3bsvAOD1xw1+JS73aJolb9JHLbcVfzRnBhMF0B6PzdII8fB6PAWa?=
+ =?us-ascii?Q?IPoQZ8rdKQdWF8901oWMMR9BdWXYMa9c/KSZiQx0a9EdoYf4kJu7F1eBeod8?=
+ =?us-ascii?Q?Bg=3D=3D?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 82ecf3e0-4f7b-4ac0-4ba2-08dcdbc75f77
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9576.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2024 12:00:53.0512
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: PHEyle14ZBSshLJOPDJHWvYFFSeKZZPeDkyf6pwp1pnM7IJzgHtdy+J95MPZwo5Z5RWTqy7JDZsxGS3dzDSzPA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB11063
 
-On Mon, Sep 23, 2024 at 05:48:29PM GMT, Hermes Wu wrote:
-> From: Hermes Wu <Hermes.wu@ite.com.tw>
-> 
-> Changes in v3:
->  -remove non used definition for aux i2x cmd reply
-> 
-> Add Aux-I2C functionality to support MCCS.
-> 
-> Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
-> ---
->  drivers/gpu/drm/bridge/ite-it6505.c | 174 +++++++++++++++++++++++++++-
->  1 file changed, 172 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
-> index 156440c6517e..5aedc5570739 100644
-> --- a/drivers/gpu/drm/bridge/ite-it6505.c
-> +++ b/drivers/gpu/drm/bridge/ite-it6505.c
-> @@ -125,6 +125,9 @@
->  #define REG_AUX_ADR_16_19 0x26
->  #define REG_AUX_OUT_DATA0 0x27
->  
-> +#define REG_AUX_I2C_ADR 0x25
-> +#define REG_AUX_I2C_OP 0x26
-> +
+Running the v4l2-compliance (1.27.0-5208, SHA: af114250d48d) on the m2m
+device fails on the MMAP streaming tests, with the following messages:
 
-Are these registers CMD-specific? Because I see that you already have
-defines for 0x25 and 0x26.
+fail: v4l2-test-buffers.cpp(240): g_field() == V4L2_FIELD_ANY
+fail: v4l2-test-buffers.cpp(1508): buf.qbuf(node)
 
->  #define REG_AUX_CMD_REQ 0x2B
->  #define AUX_BUSY BIT(5)
->  
-> @@ -266,6 +269,19 @@
->  #define REG_SSC_CTRL1 0x189
->  #define REG_SSC_CTRL2 0x18A
->  
-> +#define REG_AUX_USER_CTRL 0x190
-> +#define EN_USER_AUX BIT(0)
-> +#define USER_AUX_DONE BIT(1)
-> +#define AUX_EVENT BIT(4)
-> +
-> +#define REG_AUX_USER_DATA_REC 0x191
-> +#define M_AUX_IN_REC   0xF0
-> +#define M_AUX_OUT_REC  0x0F
-> +
-> +#define REG_AUX_USER_TXB 0x190
+Apparently, the driver does not properly set the field member of
+vb2_v4l2_buffer struct, returning the default V4L2_FIELD_ANY value which
+is against the guidelines.
 
-And two defines for 0x190 too.
+Fixes: cf21f328fcafac ("media: nxp: Add i.MX8 ISI driver")
+Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+---
+ drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-> +#define REG_AUX_USER_REPLY 0x19A
-> +#define REG_AUX_USER_RXB(n) (n + 0x19B)
-> +
->  #define RBR DP_LINK_BW_1_62
->  #define HBR DP_LINK_BW_2_7
->  #define HBR2 DP_LINK_BW_5_4
-> @@ -301,6 +317,8 @@
->  #define MAX_EQ_LEVEL 0x03
->  #define AUX_WAIT_TIMEOUT_MS 15
->  #define AUX_FIFO_MAX_SIZE 16
-> +#define AUX_I2C_MAX_SIZE 4
-> +#define AUX_I2C_DEFER_RETRY 4
->  #define PIXEL_CLK_DELAY 1
->  #define PIXEL_CLK_INVERSE 0
->  #define ADJUST_PHASE_THRESHOLD 80000
-> @@ -323,7 +341,12 @@
->  enum aux_cmd_type {
->  	CMD_AUX_NATIVE_READ = 0x0,
->  	CMD_AUX_NATIVE_WRITE = 0x5,
-> +	CMD_AUX_GI2C_ADR = 0x08,
-> +	CMD_AUX_GI2C_READ = 0x09,
-> +	CMD_AUX_GI2C_WRITE = 0x0A,
->  	CMD_AUX_I2C_EDID_READ = 0xB,
-> +	CMD_AUX_I2C_READ = 0x0D,
-> +	CMD_AUX_I2C_WRITE = 0x0C,
->  
->  	/* KSV list read using AUX native read with FIFO */
->  	CMD_AUX_GET_KSV_LIST = 0x10,
-> @@ -1106,6 +1129,154 @@ static ssize_t it6505_aux_do_transfer(struct it6505 *it6505,
->  	return ret;
->  }
->  
-> +static int it6505_aux_i2c_wait(struct it6505 *it6505, u8 *reply)
-> +{
-> +	int err = 0;
-
-Skip assignment here.
-
-> +	unsigned long timeout;
-> +	struct device *dev = it6505->dev;
-> +
-> +	timeout = jiffies + msecs_to_jiffies(AUX_WAIT_TIMEOUT_MS) + 1;
-> +
-> +	do {
-> +		if (it6505_read(it6505, REG_AUX_USER_CTRL) & AUX_EVENT)
-> +			break;
-> +		if (time_after(jiffies, timeout)) {
-> +			dev_err(dev, "Timed out waiting AUX I2C, BUSY = %X\n",
-> +				it6505_aux_op_finished(it6505));
-> +			err = -ETIMEDOUT;
-> +			goto end_aux_i2c_wait;
-> +		}
-> +		usleep_range(300, 800);
-> +	} while (!it6505_aux_op_finished(it6505));
-> +
-> +	if (!reply)
-> +		goto end_aux_i2c_wait;
-> +
-> +	*reply = it6505_read(it6505, REG_AUX_USER_REPLY) >> 4;
-> +
-> +	if (*reply == 0)
-> +		goto end_aux_i2c_wait;
-
-assign err = 0 here, so that it's obvious that it's a successfull case.
-
-> +
-> +	if ((*reply == DP_AUX_NATIVE_REPLY_DEFER) ||
-> +	    (*reply == DP_AUX_I2C_REPLY_DEFER))
-> +		err = -EBUSY;
-> +	else if ((*reply == DP_AUX_NATIVE_REPLY_NACK) ||
-> +		 (*reply == DP_AUX_I2C_REPLY_NACK))
-> +		err = -ENXIO;
-> +
-> +end_aux_i2c_wait:
-> +	it6505_set_bits(it6505, REG_AUX_USER_CTRL, USER_AUX_DONE, USER_AUX_DONE);
-> +	return err;
-> +}
-> +
-> +static int it6505_aux_i2c_readb(struct it6505 *it6505, u8 *buf, size_t size, u8 *reply)
-> +{
-> +	int ret, i;
-> +	int retry = 0;
-
-Skip the init
-
-> +
-> +	for (retry = 0; retry < AUX_I2C_DEFER_RETRY; retry++) {
-> +		it6505_write(it6505, REG_AUX_CMD_REQ, CMD_AUX_GI2C_READ);
-
-empty line
-
-> +		ret = it6505_aux_i2c_wait(it6505, reply);
-> +		if ((*reply == DP_AUX_NATIVE_REPLY_DEFER) ||
-> +		    (*reply == DP_AUX_I2C_REPLY_DEFER))
-
-These two lines keep on being repeated over and over. Please consider
-defining a helper function.
-
-> +			continue;
-> +		if (ret >= 0)
-> +			break;
-> +	}
-> +
-> +	for (i = 0; i < size; i++)
-> +		buf[i] =  (u8)it6505_read(it6505, REG_AUX_USER_RXB(0 + i));
-
-Single space, drop type conversion.
-
-> +
-> +	return size;
-> +}
-> +
-> +static int it6505_aux_i2c_writeb(struct it6505 *it6505, u8 *buf, size_t size, u8 *reply)
-> +{
-> +	int i, ret;
-> +	int retry = 0;
-> +
-> +	for (i = 0; i < size; i++)
-> +		it6505_write(it6505, REG_AUX_OUT_DATA0 + i, buf[i]);
-> +
-> +	for (retry = 0; retry < AUX_I2C_DEFER_RETRY; retry++) {
-> +		it6505_write(it6505, REG_AUX_CMD_REQ, CMD_AUX_GI2C_WRITE);
-
-empty line
-
-> +		ret = it6505_aux_i2c_wait(it6505, reply);
-> +		if ((*reply == DP_AUX_NATIVE_REPLY_DEFER) ||
-> +		    (*reply == DP_AUX_I2C_REPLY_DEFER))
-> +			continue;
-> +		if (ret >= 0)
-> +			break;
-> +	}
-> +	return size;
-> +}
-> +
-> +static ssize_t it6505_aux_i2c_operation(struct it6505 *it6505,
-> +					struct drm_dp_aux_msg *msg)
-> +{
-> +	int ret;
-> +	ssize_t request_size, data_cnt = 0;
-> +	u8 *buffer = msg->buffer;
-> +
-> +	/* set AUX user mode */
-> +	it6505_set_bits(it6505, REG_AUX_CTRL,
-> +			AUX_USER_MODE | AUX_NO_SEGMENT_WR, AUX_USER_MODE);
-> +	it6505_set_bits(it6505, REG_AUX_USER_CTRL, EN_USER_AUX, EN_USER_AUX);
-> +	/* clear AUX FIFO */
-> +	it6505_set_bits(it6505, REG_AUX_CTRL,
-> +			AUX_EN_FIFO_READ | CLR_EDID_FIFO,
-> +			AUX_EN_FIFO_READ | CLR_EDID_FIFO);
-> +
-> +	it6505_set_bits(it6505, REG_AUX_CTRL,
-> +			AUX_EN_FIFO_READ | CLR_EDID_FIFO, 0x00);
-> +
-> +	it6505_write(it6505, REG_AUX_ADR_0_7, 0x00);
-> +	it6505_write(it6505, REG_AUX_I2C_ADR, msg->address << 1);
-> +
-> +	if (msg->size == 0) {
-> +		/* IIC Start/STOP dummy write */
-> +		it6505_write(it6505, REG_AUX_I2C_OP, msg->request);
-> +		it6505_write(it6505, REG_AUX_CMD_REQ, CMD_AUX_GI2C_ADR);
-> +		ret = it6505_aux_i2c_wait(it6505, &msg->reply);
-> +		goto end_aux_i2c_transfer;
-> +	}
-> +
-> +	/* IIC data transfer */
-> +	for (data_cnt = 0; data_cnt < msg->size; ) {
-> +		request_size = min_t(ssize_t, msg->size - data_cnt, AUX_I2C_MAX_SIZE);
-> +		it6505_write(it6505, REG_AUX_I2C_OP,
-> +			     msg->request | ((request_size - 1) << 4));
-> +		if ((msg->request & DP_AUX_I2C_READ) == DP_AUX_I2C_READ)
-> +			ret = it6505_aux_i2c_readb(it6505, &buffer[data_cnt],
-> +						   request_size, &msg->reply);
-> +		else
-> +			ret = it6505_aux_i2c_writeb(it6505, &buffer[data_cnt],
-> +						    request_size, &msg->reply);
-> +
-> +		if (ret < 0)
-> +			goto end_aux_i2c_transfer;
-> +
-> +		data_cnt += request_size;
-> +	}
-> +	ret = data_cnt;
-> +end_aux_i2c_transfer:
-> +
-> +	it6505_set_bits(it6505, REG_AUX_USER_CTRL, EN_USER_AUX, 0);
-> +	it6505_set_bits(it6505, REG_AUX_CTRL, AUX_USER_MODE, 0);
-> +	return ret;
-> +}
-> +
-> +static ssize_t it6505_aux_i2c_transfer(struct drm_dp_aux *aux,
-> +				       struct drm_dp_aux_msg *msg)
-> +{
-> +	struct it6505 *it6505 = container_of(aux, struct it6505, aux);
-> +	int ret;
-> +
-> +	mutex_lock(&it6505->aux_lock);
-> +	ret = it6505_aux_i2c_operation(it6505, msg);
-> +	mutex_unlock(&it6505->aux_lock);
-
-Is it enough to protect from other commands sending data in parallel?
-Also as much as I don't like it, in this case using guard() from
-cleanup.h will remove a need for a separte function.
-
-> +	return ret;
-> +}
-> +
->  static ssize_t it6505_aux_transfer(struct drm_dp_aux *aux,
->  				   struct drm_dp_aux_msg *msg)
->  {
-> @@ -1115,9 +1286,8 @@ static ssize_t it6505_aux_transfer(struct drm_dp_aux *aux,
->  	int ret;
->  	enum aux_cmd_reply reply;
->  
-> -	/* IT6505 doesn't support arbitrary I2C read / write. */
->  	if (is_i2c)
-> -		return -EINVAL;
-> +		return it6505_aux_i2c_transfer(aux, msg);
->  
->  	switch (msg->request) {
->  	case DP_AUX_NATIVE_READ:
-> -- 
-> 2.34.1
-> 
-
+diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c b/drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c
+index b71195a3ba256..3f0c9e2ac802d 100644
+--- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c
++++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c
+@@ -222,6 +222,11 @@ static int mxc_isi_m2m_vb2_buffer_prepare(struct vb2_buffer *vb2)
+ 	struct mxc_isi_m2m_ctx *ctx = vb2_get_drv_priv(vq);
+ 	const struct mxc_isi_m2m_ctx_queue_data *qdata =
+ 		mxc_isi_m2m_ctx_qdata(ctx, vq->type);
++	struct vb2_v4l2_buffer *v4l2_buf = to_vb2_v4l2_buffer(vb2);
++
++	v4l2_buf->field = vq->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE ?
++			  ctx->queues.out.format.field :
++			  ctx->queues.cap.format.field;
+ 
+ 	return mxc_isi_video_buffer_prepare(ctx->m2m->isi, vb2, qdata->info,
+ 					    &qdata->format);
 -- 
-With best wishes
-Dmitry
+2.34.1
+
 
