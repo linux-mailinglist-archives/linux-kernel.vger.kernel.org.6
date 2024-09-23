@@ -1,120 +1,291 @@
-Return-Path: <linux-kernel+bounces-335549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AABA197E751
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:14:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C15C397E753
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A65628177C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:14:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 469371F21851
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C846A7350E;
-	Mon, 23 Sep 2024 08:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501A21885AF;
+	Mon, 23 Sep 2024 08:14:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=compal-corp-partner-google-com.20230601.gappssmtp.com header.i=@compal-corp-partner-google-com.20230601.gappssmtp.com header.b="I712QI/p"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="Z72++AFX"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011054.outbound.protection.outlook.com [52.101.70.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B674E57C8D
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 08:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727079238; cv=none; b=FhzQK4ewufaYOvqX4Y1jsWv6ikFH6vTRG/OCsKGf9srTPWCuzraueaC2gyicyB/5AGNc7Fgni7Lf62wLzp3PE32ETJbsRdUzWQfm+Xf76wwCpnK0zupbIcvh0KKxhHpwtoZ/6GlS4ypDSzcUYoCCGOe+4dKTv1C25t4CLHHtqOY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727079238; c=relaxed/simple;
-	bh=zl+VItl9QxENvndSaLeMfmluf1i154fUFaBkvmqNL9A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ia9J0qJy+mFL5anN+uK8hbGGe0F348GlX/LYTCWG0FjxbcDkF1/sl2ctfNSl1DPkGyLstjwvqI2WXwd+ykgs47Z/iO2kPUaE6K1927a9PYcaQuyYG5iPt8/YXTvan59yspXuXPtFotbzZaZLY7wM2MMN099laLB9CxJF5RysKr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=compal.corp-partner.google.com; spf=pass smtp.mailfrom=compal.corp-partner.google.com; dkim=pass (2048-bit key) header.d=compal-corp-partner-google-com.20230601.gappssmtp.com header.i=@compal-corp-partner-google-com.20230601.gappssmtp.com header.b=I712QI/p; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=compal.corp-partner.google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=compal.corp-partner.google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2059112f0a7so35238475ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 01:13:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=compal-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1727079235; x=1727684035; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pQy8Dxfmu7fap2VOihFGL73YkwS/WJ5DNXUiPdnsd/I=;
-        b=I712QI/pZzQVoMtMQonAXO4spOU5GXyC8ZCfd+c/TpzBYhYqWnadk/7CpaPdwKOtJq
-         pGvugjO0FyAlM1y2F5saJ/15f8mB2SAUitRer1HUZTDtDTRrdRiSQkm815LXriAYPmtD
-         tExUVgc4BFAqXOPudrwWvLNbRWlPXyotJCqN6TnSM7ewnII/h2zGBzETneA9o2+9IThw
-         tB/4XdXRxz3Q01TMjDhW+RvKsepSoB2fzjV4H3pSY7iIid6i7Ke9FGo/nuy+XkEFKtNH
-         aOL2TTW0JiDK+ymDXPPJbn+n0YbwtgihWbl1W82I3VzKaOK2FAXs+gIQ/EjMcWjsf9ur
-         Ou0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727079235; x=1727684035;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pQy8Dxfmu7fap2VOihFGL73YkwS/WJ5DNXUiPdnsd/I=;
-        b=kHz/u7IxksXT/pdviwB5tnNoAY6Xg4r4uZfS0L+t7YVPKO1Jm3f6q94GMvBZUxeJ6l
-         emU/H63+9jNZwDmL+ae+Sa3pZPgJ0QoS3ptaAc7AouS1hW+djXWq9iND/pfmLLMxVyUF
-         /Fv1rooc29xU3mKElY4PdZ6m+YBpb5SdfjfcWDbUpOd/frhoerNzGyZHB8AzikKkFo3W
-         FB9qsNUvjp+rvC5Y1c9K0oYmIK/cRCsYzc1MNWOKbrHRsu/0fiEHZDn6FS7l5TWnWoLQ
-         al0/HfPs3+JKEeWqIdFXwnzaIwDIXYsd6pvtJgXWo2qkhKU0Ds8QSzJ8thF1EYFsnwgM
-         FibA==
-X-Gm-Message-State: AOJu0YyeIgFGCn95MyRiokVYL759yualbWgEnuewai5LCUzpAwDTIk2i
-	UPziOWOkzy2x5tzw9jvbSlUSgCUfIbL1NBR8OL+0TJd+mDGRifWg9Fj97TI3bR+6KAShITkV9PI
-	+aA0=
-X-Google-Smtp-Source: AGHT+IE26gx2jgT7LO3ISI0SJ9dTEoWLtDfoJJBXr1rZ4bhzlohyJeU/p7j2+b//vCf8oO67DUUqNw==
-X-Received: by 2002:a17:902:da85:b0:205:5427:2231 with SMTP id d9443c01a7336-208d840d687mr139802545ad.47.1727079235519;
-        Mon, 23 Sep 2024 01:13:55 -0700 (PDT)
-Received: from maxweng-Latitude-7410.. (2001-b030-0251-0200-ae0b-14c1-5918-69cd.hinet-ip6.hinet.net. [2001:b030:251:200:ae0b:14c1:5918:69cd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2079470f38csm128256985ad.205.2024.09.23.01.13.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 01:13:54 -0700 (PDT)
-From: Max Weng <max_weng@compal.corp-partner.google.com>
-To: linux-kernel@vger.kernel.org
-Cc: max_weng@compal.corp-partner.google.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH v1] arm64: dts: mediatek: mt8186: add FHCTL node
-Date: Mon, 23 Sep 2024 16:13:40 +0800
-Message-Id: <20240923081340.860715-1-max_weng@compal.corp-partner.google.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D518A18787C;
+	Mon, 23 Sep 2024 08:14:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727079268; cv=fail; b=SCtklSoAt1ib0jnMJbtBiAGewN2BCe8fEMz55rSGhULD+B0ktU9x7NhB2qyrEQFf4vyac3e1IvrFOwHU1a8Fus/iqlxJm12ph2Moi7/zIloraXpNWTmyfcBTKZ+YsYtkswJcbzzcf62Wt0E4zCDsVUFG/qZgOPsf/1yNSHA8uHU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727079268; c=relaxed/simple;
+	bh=/t408rVhXxjtJVl14U3h9j6MMTGf+jloVK9QyGKXSI8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=rbGmFkey7Mt82pYTIHVfr9Xjgdtc+d6nSkUKlWJi8FehZ6uD4HFXw3Xhb4HpHNPg4On0G1Vu9aydkqVO1m3bq4rNn05y6KO6kFQvhpIAnp0lUlfp0Hg7RkWvoGNTCuDehk4sT8D3U8SXfgACJyrTE2nIH/aXkW3TSMFaPxyu0Hk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=Z72++AFX; arc=fail smtp.client-ip=52.101.70.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EjESoOlqFQxYzPc4kvz6fr0OfpJiAoxTyLpCJQp1OkAZCWlV5JxASK4aRxBcL8LKlnwxuPg+jy9er/oWOLCmo/lYHItnKwbpbaioMnkGi0FoQ0XyWjDsEuMg9t9lsazrFnXVuUt4SfDenouVYgF0m668VpnVVTGsbEe8R8wXKDnhfLZAg9DkkrYIxzCKB7XWLqD7FZb3vtzlVpc8kiWYgNSuQKiQqMvyGTOgJ7j4d/E0o2xrseuqFYYwMY5vbGyyTsoLCma3CLbD6+jsXVH9GDD4o78LOAa7xVd/glaGgmNDLbUEmbJLMpV4VBTl/m1Vv7j8q5nWjxfaE62DL0tjhQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kORLTrD+klBsx6cMAay4UK+tcglaLRioYHTZFDThPsM=;
+ b=amAvUBnO2HqdvEGuwOGhe4yhAI9LlOKq7wp/XtjpqEa4WQaxK7Gi3ZYbfiA6h6OU+zqjDG0x/Ba4jGXpXLTy3CtMjUPNRZiefLiFR2/gquOdLPRFqUpUGKPjFqFW2ACuUzdygJ3SwjzA6uw9jcqXVTJ8sCGzJSSp3qYvzMqSfI/Dc63dLW5K12quJRhgMjVRYMEWF34PaG0PPyM8s6K6i6MuEk/0b/daV2nCyn42I9z0buVsEvt9Nwbx4dospikbrrkvDqYhol5M4D9eFGEJJWkj1bWLDq0LZsG+lMVl+sEdlZcGa3DTObznnZFgJggFL7bRt323uns6NCIntfTrTQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=axis.com; dmarc=pass action=none header.from=axis.com;
+ dkim=pass header.d=axis.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kORLTrD+klBsx6cMAay4UK+tcglaLRioYHTZFDThPsM=;
+ b=Z72++AFXCTio+BZphJq0ooiysG+smTVo9ui9KBiX2APoWzz5SGgogk/AHdSSvUbEzB4gIx/Dpzjlshp+AdaDgzU3iCMkOwlHMubrzBeN//i+4/h6g72MfIIS+T7217p00EHUxErwztkoNqrSsIFVbVp9ETUQsGyp5tM2sct9xnA=
+Received: from VI1PR02MB10076.eurprd02.prod.outlook.com
+ (2603:10a6:800:1c2::19) by DU0PR02MB9941.eurprd02.prod.outlook.com
+ (2603:10a6:10:44a::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.25; Mon, 23 Sep
+ 2024 08:14:16 +0000
+Received: from VI1PR02MB10076.eurprd02.prod.outlook.com
+ ([fe80::869a:7318:e349:822d]) by VI1PR02MB10076.eurprd02.prod.outlook.com
+ ([fe80::869a:7318:e349:822d%6]) with mapi id 15.20.7982.022; Mon, 23 Sep 2024
+ 08:14:13 +0000
+From: Jerry Lv <Jerry.Lv@axis.com>
+To: =?iso-8859-1?Q?Pali_Roh=E1r?= <pali@kernel.org>
+CC: Sebastian Reichel <sre@kernel.org>, "linux-pm@vger.kernel.org"
+	<linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Kernel <Kernel@axis.com>
+Subject: Re: [PATCH] power: supply: bq27xxx_battery: Do not return ENODEV when
+ busy
+Thread-Topic: [PATCH] power: supply: bq27xxx_battery: Do not return ENODEV
+ when busy
+Thread-Index: AQHbBbmt73uivc7As0OFguJznR12bLJWO/SAgABUg0yAAGMzgIAOHT95
+Date: Mon, 23 Sep 2024 08:14:13 +0000
+Message-ID:
+ <VI1PR02MB1007675ED9E1F1DBC6A915680F46F2@VI1PR02MB10076.eurprd02.prod.outlook.com>
+References: <20240913-foo-fix2-v1-1-a0f499404f3a@axis.com>
+ <20240913212715.gmchsmmaqrhksmhx@pali>
+ <VI1PR02MB1007663D83495B0594DE794C7F4662@VI1PR02MB10076.eurprd02.prod.outlook.com>
+ <20240914082447.mrxtfgazkpaeqetu@pali>
+In-Reply-To: <20240914082447.mrxtfgazkpaeqetu@pali>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=axis.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: VI1PR02MB10076:EE_|DU0PR02MB9941:EE_
+x-ms-office365-filtering-correlation-id: bb3c5194-472a-4f63-4f82-08dcdba7b59a
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?Hpm951OaC+Fd033+aS67tpCmVL+cI4jyWyw7T1abaa7RW5sswv3M737B0V?=
+ =?iso-8859-1?Q?zGg+3TkXBkdGYO/pyrvR2Sut+QdZnr0Z0TTSGZP2sTkKK9AhFKcEAk/jN2?=
+ =?iso-8859-1?Q?lzlf6i81uvBvG7/bq7jDPa1huIzi6FrlZxTZN/KvFsNRGJYHoDFXXep8E6?=
+ =?iso-8859-1?Q?NfKrByS6IebzpksPV8+vbiJccOsKQADpBeqQL22JPNBLswk62iwn44xtdf?=
+ =?iso-8859-1?Q?9K/8EuNS6bMLDzM9ZmPTU7Z9DHwTKldqJhzYA2kJUxczzAAn27SdxsDMUm?=
+ =?iso-8859-1?Q?bIxx4qQ80FE6vhJsRnE1NfwYRO9X291de+JOeO8xcfTI50pwjgN5HweG+s?=
+ =?iso-8859-1?Q?xS70VvmAuxQceDbIMY7WvuOSbkui3UnGQehu/X1lwAKm+7zu8eimf/8mNM?=
+ =?iso-8859-1?Q?JiEMW85+r5SUNKqRZpIV5DybdTjdRzgsR5qA15RCMqiY9FC5fIloT7Iuxj?=
+ =?iso-8859-1?Q?Mi40lkgMaVrzH4R/p69F7ZmUanGJ85oSK0HZcL4LIGwTIV+MDA44I7z+WP?=
+ =?iso-8859-1?Q?mOA92PcsoBu12O1sqtX/MxH0nx4V3r5zuqbYdkLPc5KIiNz7DdI+6Zfuk1?=
+ =?iso-8859-1?Q?2QBJRoXiuH2sADW8WtMLXelJ81k6PzFkiVtJ6w6F+XYC2s7lZ/kqYPdQ4p?=
+ =?iso-8859-1?Q?z5Wkj6egJzW7LUNSBPDS2gRBOEbdk3XI5gKgyEjF75N4XzDUDERupl1X9f?=
+ =?iso-8859-1?Q?nx+LPSSfKc08iR1ywh/p+crCi4sH0TUSWy7/SOHkUskCK5kILAo5nmB9wM?=
+ =?iso-8859-1?Q?MNzOuB3uPINbFZ8/Zh1u4UvOGJxliuLcTr6PThd231j7RLz1ATct87W7Q6?=
+ =?iso-8859-1?Q?jgTbGsj5Y9tVDufZhHe/5nrKixHaECSzDKwAwlb53OYhZLQsw76LnZbKu5?=
+ =?iso-8859-1?Q?DRKoMfQv2RCG0ldKnNNL4Qp8us0pwKS09Zsm/Zoe7Hr/kXMRcyGhYbkr62?=
+ =?iso-8859-1?Q?SG0mMVOVcasANk3t1+4jS88Jk/RlpVagFYpNIwkRZatY2CwNHH7tpghWEs?=
+ =?iso-8859-1?Q?2NxE4Q0KDCaZZpaeArHmmlm/7P0ASMbW7PEVnqkZ9aDyQsCqQTkHReYMJG?=
+ =?iso-8859-1?Q?uDD0jf738bz4/Urq1WNgYD7UpiyvB/nmnVmANu0Jf1gdnaV67v+MfuKinw?=
+ =?iso-8859-1?Q?8nKoy1S8JQF/WEF61sJMhB2wYKF9zB9mzGAGnewdRbR4soNsSxees7XuR6?=
+ =?iso-8859-1?Q?5QCml8FCv/wtsnPp0a+TYM85EUo+GMU6AsneJqKuQfXoVCoyqNRibers9z?=
+ =?iso-8859-1?Q?67ZgUluWc4K/ctCq3+msZd4Am/SbzntZ+IqmCYH6gLpgt4OKEE7Ub42wFp?=
+ =?iso-8859-1?Q?2fHFeyomaprJkwu/zq83xqpaneNgAhe9oOvXQbaH5XJyNjLwth95MpOAWR?=
+ =?iso-8859-1?Q?uiEGokN0qT/ntvybWLikD1yEqbXkr8tA=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR02MB10076.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?uPAHMLzd3RQb0DUcH5gdTLmoQ3BVhHOP1I0Szy4eJ4ONLkFkWdgHWOzk8r?=
+ =?iso-8859-1?Q?zDeetDYV1BM+jxepjCHFEzpvlwl/H0hUtkhJEfPu9LIY+s3dxaBy8IzXxl?=
+ =?iso-8859-1?Q?YMA2/xK+TkUsT9rGFJixyskaCnZS7CiO9UyKGEKnB61cQcLEQ1RtIXmfvv?=
+ =?iso-8859-1?Q?xGiSW3YVbx89azXn7rq5vd6LUtZQybZ6rMNOJCWVM/McVcjtar0XbU0mMi?=
+ =?iso-8859-1?Q?HwIhbXmC4lNEZdMPFFboFJOtm48yfRjFtJ9po3F6VePT0gledLINdFwh2y?=
+ =?iso-8859-1?Q?sSt7Rx2/ZlpFuXMWzpAnR77sngcTS0QVGXlPLv7dIDh67prDt1E9O6ZfFn?=
+ =?iso-8859-1?Q?7spzgw0iKYXekAxuINF8fYUxSy39xFTJfu9834T54wJWsUSZWkpL28IERY?=
+ =?iso-8859-1?Q?Cwf5MKlCLxhwtCCp0NTMbYe8QJCgs2Af7tfUsfZPApKP9iZbFPYBI+uono?=
+ =?iso-8859-1?Q?J6g4zKgws3ueMWmDTqdAyCuWAak8gEv9P8ftbhxVUSf0+IXYGS6zJpZHr6?=
+ =?iso-8859-1?Q?hd0iBP9Hf+3h+3FOD4Iaum7OE20WyQbQu0mJFqkdWK8y1dzhm23Ou0qIOA?=
+ =?iso-8859-1?Q?5oDSYhDei/oT64QMHSlW04z2f1dwCINau9+OwkrpgOn08WgGcsRc9H2/gJ?=
+ =?iso-8859-1?Q?wPlZvaes/mAudkpS1HROQfUi0i8IgtkWj6uzzsRZSM9Kw5vnx9dUiREBDn?=
+ =?iso-8859-1?Q?VSZvSJuzxUqwFIVdyrnKVqEidpICva2rjc5x4lwoTSTT+N7dvUTecdOrtm?=
+ =?iso-8859-1?Q?kQtG9/bOoWW0BLK8wN7m2sswrkuPY99iXyvy0uYqLPFObB4nh1GLIJg5Zw?=
+ =?iso-8859-1?Q?fVlZvOI2adaOyztqcaPSSmpj/ZkpbTRRcBgqXvXsCRXH2XGCwhCCDrevfC?=
+ =?iso-8859-1?Q?DP97Kh/buD866ToNhKId40w4o0V3XzHE3uU/NV4WkUwhlUzumJ+/OhgvRa?=
+ =?iso-8859-1?Q?VgjdSEsjfRMg8smQCk8KgNalyPUWzsIUfB/zmXytPpCn2/dnmA7KdlUFXP?=
+ =?iso-8859-1?Q?WXi7IX64ZIISal4rCpQsdtfTpkSAiQvwBQaJxd5y6vjtC3IZaZxbaVPkEE?=
+ =?iso-8859-1?Q?vCRLnDWeRxnh7g1cDn3roVQKbg/FvRyq1w92isuI2Wt7yDXvw2gP6OZYdk?=
+ =?iso-8859-1?Q?BYvQjcZSsZDXS3kUkALjI4Ocyy0EyyhQXkId8L02ilKtNmEaUAQyiEYeI3?=
+ =?iso-8859-1?Q?EZCZcy/po8W9JNtQzU+XPSGfn2iukp4Er/i0lOgGTYeZFaNRsuiNF5nNtX?=
+ =?iso-8859-1?Q?TPQnXuWMCmSfzLQeVX+TZnCffn8HoW1cJkr/a2Ce3Z6bKthHXYMQisq6Q7?=
+ =?iso-8859-1?Q?vuJ9eQemOf3n4GWx9La7HgvXUFoJRkN0xN3B6Hb0AbX4brs0xqdrMRyhac?=
+ =?iso-8859-1?Q?60jPn5Wk3d3HWpv13Gvt9iLOWxZPAY+aHUAr5q/HklwlwmyRVLQIKbXKG7?=
+ =?iso-8859-1?Q?nWZJsgMOCcJEwi8XC4V308SwqzKXvZdIR8SY5bneUpWWwjdX1OWOfCjk3V?=
+ =?iso-8859-1?Q?GPJ26/aXXNSwrHORD8PIHtlgfi7Ygts3fL1uUggVKoHgDgd5QaBXVBcy1+?=
+ =?iso-8859-1?Q?M6uKa3rK350xX2GAwS5dGCrFZnnUs2X+u+mnAwqER+M7pfbaq9aFiTeZLN?=
+ =?iso-8859-1?Q?K/jXI6M9VzDxQ=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR02MB10076.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb3c5194-472a-4f63-4f82-08dcdba7b59a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Sep 2024 08:14:13.2018
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zIUq/TBaVpX97w9cFaTHXCq04GR5owVsypwK+UDuiXLG5lKjmCiYrhi0sF/hsEsbNgLotBKPB/FWsdoTQi+Asg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR02MB9941
 
-From: max_weng <max_weng@compal.corp-partner.google.com>
-
-add fhctl device node.
-
-Signed-off-by: max_weng <max_weng@compal.corp-partner.google.com>
----
- arch/arm64/boot/dts/mediatek/mt8186.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/mediatek/mt8186.dtsi b/arch/arm64/boot/dts/mediatek/mt8186.dtsi
-index 148c332018b0..d3c3c2a40adc 100644
---- a/arch/arm64/boot/dts/mediatek/mt8186.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8186.dtsi
-@@ -29,6 +29,13 @@ aliases {
- 		rdma1 = &rdma1;
- 	};
- 
-+	fhctl: fhctl@1000ce00 {
-+		compatible = "mediatek,mt8186-fhctl";
-+		clocks = <&apmixedsys CLK_APMIXED_TVDPLL>;
-+		reg = <0 0x1000ce00 0 0x200>;
-+		status = "disabled";
-+	};
-+
- 	cci: cci {
- 		compatible = "mediatek,mt8186-cci";
- 		clocks = <&mcusys CLK_MCU_ARMPLL_BUS_SEL>,
--- 
-2.34.1
-
+Hi Pali,=0A=
+=0A=
+Thanks for your excellent suggestion, I will change the code accordingly.=
+=0A=
+=0A=
+About the question: =0A=
+Anyway, which bus is BQ27Z561-R2 using (i2c?)? And how is EBUSY indicated o=
+r transferred over wire?=0A=
+--- Yes, we connect the gauge BQ27Z561 to I2C. When it's busy, the feedback=
+ we got from the logic analyser is "NAK".=0A=
+=0A=
+=0A=
+Best Regards,=0A=
+Jerry Lv=0A=
+=0A=
+________________________________________=0A=
+From: Pali Roh=E1r <pali@kernel.org>=0A=
+Sent: Saturday, September 14, 2024 4:24 PM=0A=
+To: Jerry Lv=0A=
+Cc: Sebastian Reichel; linux-pm@vger.kernel.org; linux-kernel@vger.kernel.o=
+rg; Kernel=0A=
+Subject: Re: [PATCH] power: supply: bq27xxx_battery: Do not return ENODEV w=
+hen busy=0A=
+=0A=
+Hello Jerry,=0A=
+=0A=
+I think that this issue should be handled in different way.=0A=
+=0A=
+First thing is to propagate error and not change it to -ENODEV. This is=0A=
+really confusing and makes debugging harder.=0A=
+=0A=
+Second thing, if bq27xxx_read() returns -EBUSY, sleep few milliseconds=0A=
+and call bq27xxx_read() again.=0A=
+=0A=
+This should cover the issue which you are observing and also fixing the=0A=
+problem which you introduced in your change (interpreting error code as=0A=
+bogus cache data).=0A=
+=0A=
+Anyway, which bus is BQ27Z561-R2 using (i2c?)? And how is EBUSY=0A=
+indicated or transferred over wire?=0A=
+=0A=
+Pali=0A=
+=0A=
+On Saturday 14 September 2024 02:57:39 Jerry Lv wrote:=0A=
+> Hi Pali,=0A=
+>=0A=
+> (Sorry for inconvineient! previous email was rejected by some email list =
+for some HTML part, so I edit it and send it again.)=0A=
+>=0A=
+> Yes, bq27xxx_read() will return -EBUSY, and bq27xxx_read() will be called=
+ in many functions.=0A=
+>=0A=
+> In our product, some different applications may access the gauge BQ27Z561=
+-R2, and we see many times the returned error code is -ENODEV.=0A=
+> After debugging it by oscillograph and adding some debug info, we found t=
+he device is busy sometimes, and it will recover very soon(a few millisecon=
+ds).=0A=
+> So, we want to exclude the busy case before return -ENODEV.=0A=
+>=0A=
+> Best Regards,=0A=
+> Jerry=0A=
+>=0A=
+> On Friday 13 September 2024 16:45:37 Jerry Lv wrote:=0A=
+> > Multiple applications may access the device gauge at the same time, so =
+the=0A=
+> > gauge may be busy and EBUSY will be returned. The driver will set a fla=
+g to=0A=
+> > record the EBUSY state, and this flag will be kept until the next perio=
+dic=0A=
+> > update. When this flag is set, bq27xxx_battery_get_property() will just=
+=0A=
+> > return ENODEV until the flag is updated.=0A=
+>=0A=
+> I did not find any evidence of EBUSY. Which function and to which caller=
+=0A=
+> it returns? Do you mean that bq27xxx_read() returns -EBUSY?=0A=
+>=0A=
+> > Even if the gauge was busy during the last accessing attempt, returning=
+=0A=
+> > ENODEV is not ideal, and can cause confusion in the applications layer.=
+=0A=
+>=0A=
+> It would be better to either propagate correct error or return old value=
+=0A=
+> from cache...=0A=
+>=0A=
+> > Instead, retry accessing the gauge to update the properties is as expec=
+ted.=0A=
+> > The gauge typically recovers from busy state within a few milliseconds,=
+ and=0A=
+> > the cached flag will not cause issues while updating the properties.=0A=
+> >=0A=
+> > Signed-off-by: Jerry Lv <Jerry.Lv@axis.com>=0A=
+> > ---=0A=
+> >  drivers/power/supply/bq27xxx_battery.c | 2 +-=0A=
+> >  1 file changed, 1 insertion(+), 1 deletion(-)=0A=
+> >=0A=
+> > diff --git a/drivers/power/supply/bq27xxx_battery.c b/drivers/power/sup=
+ply/bq27xxx_battery.c=0A=
+> > index 750fda543308..eefbb5029a3b 100644=0A=
+> > --- a/drivers/power/supply/bq27xxx_battery.c=0A=
+> > +++ b/drivers/power/supply/bq27xxx_battery.c=0A=
+> > @@ -2029,7 +2029,7 @@ static int bq27xxx_battery_get_property(struct po=
+wer_supply *psy,=0A=
+> >                bq27xxx_battery_update_unlocked(di);=0A=
+> >        mutex_unlock(&di->lock);=0A=
+> >=0A=
+> > -     if (psp !=3D POWER_SUPPLY_PROP_PRESENT && di->cache.flags < 0)=0A=
+> > +     if (psp !=3D POWER_SUPPLY_PROP_PRESENT && di->cache.flags < 0 && =
+di->cache.flags !=3D -EBUSY)=0A=
+> >                return -ENODEV;=0A=
+>=0A=
+> ... but ignoring error and re-using the error return value as flags in=0A=
+> code later in this function is bad idea.=0A=
+>=0A=
+> >=0A=
+> >        switch (psp) {=0A=
+> >=0A=
+> > ---=0A=
+> > base-commit: da3ea35007d0af457a0afc87e84fddaebc4e0b63=0A=
+> > change-id: 20240913-foo-fix2-a0d79db86a0b=0A=
+> >=0A=
+> > Best regards,=0A=
+> > --=0A=
+> > Jerry Lv <Jerry.Lv@axis.com>=0A=
+> >=0A=
+>=0A=
 
