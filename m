@@ -1,134 +1,206 @@
-Return-Path: <linux-kernel+bounces-335474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A04E97E637
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:54:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F3DE97E639
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 058E01F21554
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 06:54:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA8351F216AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 06:55:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B736429CF0;
-	Mon, 23 Sep 2024 06:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rFmVSjPB"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB88734CDE;
+	Mon, 23 Sep 2024 06:55:30 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38D51D52B
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 06:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C0B1D52B
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 06:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727074444; cv=none; b=SLfc7ODTohm8QVn/VNlekiKcfZNvJ6DhoMUp7xnp2LsNoMTE80aMw8CnCUsQpZNE2vOQ3pvSFa/HYj6t2N6yQbFaqVh0EQX6zQqfWXzlaSoDl3Y/wrEzQWxNOgOy5xVc3lBmXZ8rcT22E3au2JIHqD6MBD+Lv5tUkXMNsFPvRy0=
+	t=1727074530; cv=none; b=doloPLI+hnkNHBlnX7RqMBj8aT4Rytzdfa1nXxxZwcIMEoeqlj0bvg8oSawn4Iavn1fDE4PhkWoHexZRPSHD7XgCQxmXAqcnk4IbQ/lNbN9YGgGWWVd5wTHIWx7ZESIHfSVHwWoVbTVRBGZ7jmgvL9IWtGl/vU1zjMfONsbUP3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727074444; c=relaxed/simple;
-	bh=oyQnC0O5oSwQOoAQfAmgv1yjJgkW9AlXx1tPPhQt9m4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LQ0+zicNhKXblLG4RgSxvPRmM409YTc1L9ryzp+KU9Uqg0ccq7eMlfX6IY8c16v7ebL+L7sRHhZTpL7fDnrMYGaVCQKLDM8dqD0DEcgVy1olL2FurOIoA3iwiGkBdQULPqoaXOFXA0S+2W3OO/dwYJ/Q4VR2lyXih+GDET7klfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rFmVSjPB; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-374cacf18b1so2390941f8f.2
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 23:54:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727074439; x=1727679239; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0IrKYwdcplB4PqG5MUDB7kDHEBg4+7QsR9hwNRsCDwA=;
-        b=rFmVSjPBLWJmHwfA3kjpyjKtetPvpInl35FLtXncjtKrI4W86cFk4d/7LkhMZ/9yzA
-         +rxnc3UkkYRj0yYdCGNl1gxZZ4YQTF/XMAMxe1lHmoUCkQJjRzo0cCLzbDOXsdTKtDfe
-         jgZxg5c/b5bg3lGQTrA8UdYhv1njIJF0juaTZ40d8eYN/zMJoCdrOALWzWqc6SuF+p2N
-         ZVlQ3vZAFtbkSNkDdphzhKOHVoSno1JGQc4AyU09bp8BEVGWUWPr7ctQol1Eb2jHVHeL
-         raMQN8H8PGKbX5FXy4Xk0i124tGjtZ/GS5uF4NC757avrLEJb70PzCfioy+egY5sSjl/
-         TdIg==
+	s=arc-20240116; t=1727074530; c=relaxed/simple;
+	bh=yiWRBDMbZP3+Ew4611AJT1CCHm4Yfq+j6+8WtkEecCY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=oIIXwKmTHv1eCW9YQvCoJVh1qecTT7ozG8JcjM8E6+/5jtqkFhPiDUGJ+IpIo9bhPs2gJVuN43Oa/SavPx69mE9mqs4TE65PrgPmVpq4Lt44fyEReYpBH6dnBNeqKiBhcixNl2NGooKT3Z9HGIRvs8dGv5WdbWzkEnuD9VS/eic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-82ad9fca614so651913939f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 23:55:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727074439; x=1727679239;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1727074527; x=1727679327;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0IrKYwdcplB4PqG5MUDB7kDHEBg4+7QsR9hwNRsCDwA=;
-        b=cD12Ps3OgWsSL3lihqd59209yerzSx0lt8dsj6GnNiVUyf/4vvy9GfxiVlmaUuyT2s
-         Usi7syR7Bk3pPibRUe3BMLwR378/2UyJGRErG9HcoOnG3rxHXYTSzuqYMoPkChySTOd+
-         2K2vN2jsXekDaVZIz9i25h9AwFRDeDiBjRO7q3FIB0cri1FlWYZ64NTwWVijIbJKnqq0
-         b1k0fK1sXfQHEWc1tovGWpdtCLj85gEo/SqspB5aUMPjZocQT0CcQu16G30ez221qeei
-         Dzx57XUYvauVo5tmXxGZcVfgTOBblqGoUtHKmsBEono1D063H4c9S2EvF+wdrYO48uzw
-         P5qA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3M3JxQWyv2g571GDIz56cmoJLHsmaYyTJb4X34mZW6mhe4kO0fxgJ3iLSWyiS6t7koiasbSGHJN90H+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+WoRLJwsyp5sI0xFCkR9gghjYUHCTcTDXGcd8TjJXzp47o5OA
-	PvMzAfPFxlf3VNtSP/w7MYh9o0r8/8SrnBtoYh3tgrUUQIslYrSje/UQ+lD66zAwfMg0YLUQcB9
-	O
-X-Google-Smtp-Source: AGHT+IEaPMxTl8BZwywGoBhw6tY+/KStLZzFF7wxzFciOYoL1eb6lQA+E2sOa2JobaYCp65dgoUFgA==
-X-Received: by 2002:a5d:4f0e:0:b0:374:bf97:ba10 with SMTP id ffacd0b85a97d-37a43154b16mr5364814f8f.25.1727074439272;
-        Sun, 22 Sep 2024 23:53:59 -0700 (PDT)
-Received: from [10.11.12.107] ([79.115.63.20])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e72e49bfsm23626562f8f.21.2024.09.22.23.53.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 22 Sep 2024 23:53:58 -0700 (PDT)
-Message-ID: <97134efb-398d-4c21-a915-87a5b4f1b29a@linaro.org>
-Date: Mon, 23 Sep 2024 07:53:56 +0100
+        bh=aD2K1JyiO0whuy0905nu922ujMgxbkurwc3120l24cY=;
+        b=wat3Ce385uE9oVBRSdXTtjtx9FhlXPhr15ezZRTWlZ8gTSXG6/VF6eT6lDF8UGKVip
+         Q4c8GKEQCOWxUsusRutMZuIhIhAHGib5mItScf1VkjAPpnsLoqIbTercdMx7X41zVLCV
+         ffyKJAIXlnch5ly2Kh7cYhhSbsJm5Y+05BHL1QWSLvI+YMHZhCw6/naRg8OHHPecpwkW
+         Bl8e3ph4+Zx3d9AIZlrOlek6g0C4GlD68qDvSj+t6L/E/Vww/wZy0/kKJkhAyWK7OC0x
+         JE8LeyJ7mpdXxh453qmN0TK/pyZAQOtFLnkziy4Fi7w/8g37zhK4CH5oMUSNenHv5nEM
+         PsTw==
+X-Forwarded-Encrypted: i=1; AJvYcCVQp3bkJzRDBoBBfmMv8hdzIPrdxsuzbsTC4Shz7ZVDdh/8qiZL4bHKHxlA6h9e1PZM19QIVbVMtHYjdp8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhlDn3lyEg7zwvIxdfJtII1P+pROtqK9IvepLKPVx9PlI5XOxD
+	HCaOC9hAWxPEjXFkBaK7mGacH70GzXTrIP5pmBK9QZjGSb/RlcAubfz2zVe10j5m4Khy6/peTSG
+	JQVpeO6CPkI8rY3yeBnbRaxhRfun4396aCojfjy452/thp7OocFtINMU=
+X-Google-Smtp-Source: AGHT+IHHHN+fa10FoNMzJtZAT3CrRagrvldHVUcaGSzKVEmw3oChfr5CCGqfbWQDup2sJ7DitiDozoXy4Es9GxSkPTReYcci2949
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 6/6] mtd: spi-nor: add support for Macronix Octal flash
-To: AlvinZhou <alvinzhou.tw@gmail.com>, linux-mtd@lists.infradead.org,
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
- pratyush@kernel.org, mwalle@kernel.org, miquel.raynal@bootlin.com,
- richard@nod.at, vigneshr@ti.com, broonie@kernel.org
-Cc: chengminglin@mxic.com.tw, leoyu@mxic.com.tw,
- AlvinZhou <alvinzhou@mxic.com.tw>, JaimeLiao <jaimeliao@mxic.com.tw>,
- Bough Chen <haibo.chen@nxp.com>
-References: <20240718034614.484018-1-alvinzhou.tw@gmail.com>
- <20240718034614.484018-7-alvinzhou.tw@gmail.com>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20240718034614.484018-7-alvinzhou.tw@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1ca5:b0:3a0:8f20:36e7 with SMTP id
+ e9e14a558f8ab-3a0c8d16258mr100995175ab.19.1727074527596; Sun, 22 Sep 2024
+ 23:55:27 -0700 (PDT)
+Date: Sun, 22 Sep 2024 23:55:27 -0700
+In-Reply-To: <00000000000020c8d0061e647124@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f110df.050a0220.c23dd.0009.GAE@google.com>
+Subject: Re: [syzbot] [net?] INFO: task hung in addrconf_dad_work (5)
+From: syzbot <syzbot+82ccd564344eeaa5427d@syzkaller.appspotmail.com>
+To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi, Alvin,
+syzbot has found a reproducer for the following issue on:
 
-I quickly skimmed over the previous 5 patches and they are looking fine.
+HEAD commit:    af9c191ac2a0 Merge tag 'trace-ring-buffer-v6.12' of git://..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=148aa19f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=74ffdb3b3fad1a43
+dashboard link: https://syzkaller.appspot.com/bug?extid=82ccd564344eeaa5427d
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=162e9c27980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1123c107980000
 
-I don't get this patch however.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/d3f6f73cc34a/disk-af9c191a.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a5895312beb3/vmlinux-af9c191a.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c737e741d8d8/bzImage-af9c191a.xz
 
-On 7/18/24 4:46 AM, AlvinZhou wrote:
-> From: AlvinZhou <alvinzhou@mxic.com.tw>
-> 
-> Adding Manufacture ID 0xC2 in last of ID table because of
-> Octal Flash need manufacturer fixup for enabling/disabling
-> Octal DTR mode.
-> 
-> Signed-off-by: JaimeLiao <jaimeliao@mxic.com.tw>
-> Signed-off-by: AlvinZhou <alvinzhou@mxic.com.tw>
-> ---
->  drivers/mtd/spi-nor/macronix.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/spi-nor/macronix.c b/drivers/mtd/spi-nor/macronix.c
-> index f039819a5252..1a8ccebdfe0e 100644
-> --- a/drivers/mtd/spi-nor/macronix.c
-> +++ b/drivers/mtd/spi-nor/macronix.c
-> @@ -200,7 +200,9 @@ static const struct flash_info macronix_nor_parts[] = {
->  		.name = "mx25l3255e",
->  		.size = SZ_4M,
->  		.no_sfdp_flags = SECT_4K,
-> -	}
-> +	},
-> +	/* Need the manufacturer fixups, Keep this last */
-> +	{ .id = SNOR_ID(0xc2) }
->  };
->  
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+82ccd564344eeaa5427d@syzkaller.appspotmail.com
 
-Could you please elaborate why you need just the manufacturer id here? I
-would have expected to see a specific flash entry instead.
+INFO: task kworker/R-ipv6_:2724 blocked for more than 147 seconds.
+      Not tainted 6.11.0-syzkaller-08829-gaf9c191ac2a0 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/R-ipv6_ state:D stack:28560 pid:2724  tgid:2724  ppid:2      flags:0x00004000
+Workqueue: ipv6_addrconf addrconf_dad_work
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x1843/0x4ae0 kernel/sched/core.c:6674
+ __schedule_loop kernel/sched/core.c:6751 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6766
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6823
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
+ addrconf_dad_work+0xd0/0x16f0 net/ipv6/addrconf.c:4196
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+ rescuer_thread+0x63f/0x10a0 kernel/workqueue.c:3487
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+INFO: task syz-executor183:5220 blocked for more than 150 seconds.
+      Not tainted 6.11.0-syzkaller-08829-gaf9c191ac2a0 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor183 state:D stack:20192 pid:5220  tgid:5220  ppid:5219   flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x1843/0x4ae0 kernel/sched/core.c:6674
+ __schedule_loop kernel/sched/core.c:6751 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6766
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6823
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
+ rtnl_lock net/core/rtnetlink.c:79 [inline]
+ rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:745
+ __sys_sendto+0x398/0x4f0 net/socket.c:2210
+ __do_sys_sendto net/socket.c:2222 [inline]
+ __se_sys_sendto net/socket.c:2218 [inline]
+ __x64_sys_sendto+0xde/0x100 net/socket.c:2218
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4abeb91463
+RSP: 002b:00007fff6c3ace18 EFLAGS: 00000202 ORIG_RAX: 000000000000002c
+RAX: ffffffffffffffda RBX: 00007f4abec14560 RCX: 00007f4abeb91463
+RDX: 0000000000000040 RSI: 00007f4abec145b0 RDI: 0000000000000003
+RBP: 0000000000000003 R08: 00007fff6c3ace34 R09: 000000000000000c
+R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000001
+R13: 0000000000000000 R14: 00007f4abec145b0 R15: 0000000000000000
+ </TASK>
 
-Thanks,
-ta
+Showing all locks held in the system:
+3 locks held by kworker/1:0/25:
+ #0: ffff88801ac80948 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
+ #0: ffff88801ac80948 ((wq_completion)events){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
+ #1: ffffc900001f7d00 (reg_work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
+ #1: ffffc900001f7d00 (reg_work){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
+ #2: ffffffff8fcb97c8 (rtnl_mutex){+.+.}-{3:3}, at: reg_todo+0x1c/0x8d0 net/wireless/reg.c:3218
+1 lock held by khungtaskd/30:
+ #0: ffffffff8e937ee0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ #0: ffffffff8e937ee0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ #0: ffffffff8e937ee0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6701
+3 locks held by kworker/u8:2/35:
+ #0: ffff88801ac89148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
+ #0: ffff88801ac89148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
+ #1: ffffc90000ab7d00 ((linkwatch_work).work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
+ #1: ffffc90000ab7d00 ((linkwatch_work).work){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
+ #2: ffffffff8fcb97c8 (rtnl_mutex){+.+.}-{3:3}, at: linkwatch_event+0xe/0x60 net/core/link_watch.c:276
+4 locks held by kworker/u8:3/52:
+7 locks held by kworker/u8:5/74:
+3 locks held by kworker/R-ipv6_/2724:
+ #0: ffff88814bba0948 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
+ #0: ffff88814bba0948 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
+ #1: ffffc90009497c80 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
+ #1: ffffc90009497c80 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
+ #2: ffffffff8fcb97c8 (rtnl_mutex){+.+.}-{3:3}, at: addrconf_dad_work+0xd0/0x16f0 net/ipv6/addrconf.c:4196
+4 locks held by kworker/1:2/3197:
+1 lock held by syslogd/4651:
+1 lock held by klogd/4658:
+5 locks held by udevd/4669:
+3 locks held by dhcpcd/4883:
+2 locks held by getty/4972:
+ #0: ffff888032e120a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc90002f062f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6a6/0x1e00 drivers/tty/n_tty.c:2211
+1 lock held by syz-executor183/5213:
+ #0: ffffffff8fcb97c8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+ #0: ffffffff8fcb97c8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
+4 locks held by syz-executor183/5216:
+1 lock held by syz-executor183/5217:
+ #0: ffffffff8fcb97c8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+ #0: ffffffff8fcb97c8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
+1 lock held by syz-executor183/5220:
+ #0: ffffffff8fcb97c8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+ #0: ffffffff8fcb97c8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
+4 locks held by syz-executor183/5221:
+2 locks held by dhcpcd/5267:
+ #0: ffff888067190258 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1609 [inline]
+ #0: ffff888067190258 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: packet_do_bind+0x32/0xcb0 net/packet/af_packet.c:3266
+ #1: ffffffff8e93d478 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock kernel/rcu/tree_exp.h:297 [inline]
+ #1: ffffffff8e93d478 (rcu_state.exp_mutex){+.+.}-{3:3}, at: synchronize_rcu_expedited+0x381/0x830 kernel/rcu/tree_exp.h:976
+
+=============================================
+
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
