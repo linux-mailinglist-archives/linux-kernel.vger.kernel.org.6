@@ -1,200 +1,146 @@
-Return-Path: <linux-kernel+bounces-335669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F67697E8E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:38:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6193297E8DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:38:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7B1EB20FD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 09:38:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2122D281E7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 09:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA641953B0;
-	Mon, 23 Sep 2024 09:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="MvyCFuMh"
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11020098.outbound.protection.outlook.com [52.101.85.98])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CB3194AF0;
+	Mon, 23 Sep 2024 09:38:33 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6EED194A49;
-	Mon, 23 Sep 2024 09:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.98
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727084313; cv=fail; b=fHwx0L52oEz1gW0zZin926GtuPs1SRLmel5ubAN4op0YaVTc0kd9+eiZ/SEZEA1qxtiiMrzIugIDCgohTEyUfisPS7K//Q0uDG3XwALP/9108vck5suWMQkxQ3A9VsVinl4twdwOv5KTOxPbTQqfWZ/NyXTHisJOnT5WAcdd+sk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7759A194A4C;
+	Mon, 23 Sep 2024 09:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727084313; cv=none; b=NxxHXczfl9zwtfbpOXU7RjKgbql3Hw6MmdF9MB/FeAQIqsG3/2V3WW8I/KG3BX7W1xJRlM+5EqhEySqOp0pQYo/m67nudeYhVHGxnWwxylkdqrbRPdLdhDY8oHx1b9sMZIK5q52Rxl9dX+dB/hv1f1LPB75rJa5EsYIZ2Ydc5tk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727084313; c=relaxed/simple;
-	bh=cnKX/R/giV+Tm5cPrwjQLbG1QScSso8/ir76ttaT32o=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=g8a49u0grLbzSv5kVPnhbpn9fT65jUTfJayAmNHGRXEwIk+iQBUGLvlYbaT0kexmHX3E6rcZTjy0VljeW2/WB6mgRaLSg+TpkaIdKFFRo+inz+e9Jom3HXuPjIg1Ybz6SqmSJmNmP3OBLlcynPsPoFl2+zN/VKcsMZM9VLN79T8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=MvyCFuMh; arc=fail smtp.client-ip=52.101.85.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VmP5ej29fOfSWjpm4R0XcMVgPaErsKCH0R9+THnsLFVl0JwjgxfB2Og2RABEHKUU87zp2fNGTCmdWrC89XVvS0CO7s1c4jAx2J9aAXDMI1PAc+Z+u4DjkM2mz6fsBV6LdW0utGTx5M0JgnKZI9L19fld1Xl7JOZZRle5vuqHSf3zJczPO9UR9y0f1gR20pHI2GNvpSsFuIGLYAwhg79pzj6fcVyMHWybs7asyUqHlA8S0YQNwL3n1EXt8XC1M1Ufb1kv6Ce88kmJIlp9BEVAF+mNKBV4Nq7Rapbl0WRocFD6RRgpJNSvaBx8XngEzrETU6CXoXAWiZqkzJqBp9ekhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3POTCOh5VA69KAf1cgWGtAFgMUr1N+zowH3OjrEK410=;
- b=QebOplQJbkBHpL2cWHF4BMT4wbIOxiVO45psKuCYC5zibvg+8geeqP2yU2M08roO0QBgpNO5rMlfZaImuSzSbFXjpeTpZbjh+BXu+2Hneqj2OnMmNC6NaEVWVWNtr4wrEWobvjSE6o4YZhIedcDeM5aW2FSEuKISwHtzuJjKF5NN32HwrQt54CiN7/sDFCA5nsHrX4WivtuIjwGTtgWsAsiSCYTnSkdu8K4DBEdIYG+SwIzL6izn6P/C2fLHmyuziSgELix5npFdndivOmUxTGCnTSpynt5jKuU+bIo88x9bpynrplpouNt6h3TjgqrEkIOo6PX16Xrw8D2ygCQwCQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3POTCOh5VA69KAf1cgWGtAFgMUr1N+zowH3OjrEK410=;
- b=MvyCFuMhrlgesSNrch69gFhleI69EJrBtXHXt+nrxvRiDTfu5hC/qavKHDFc3XO7dwmV3qFfXDHHi+QninE9c7sf8EmV+xqQJIK5HA53ykNMeS+QG+WC5WI5D+qWs7yJDN9nxO4hi2oUxmub2eF29fKI5JFL5BNmKsYHOa0YBUk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from BL3PR01MB7057.prod.exchangelabs.com (2603:10b6:208:35c::16) by
- PH0PR01MB8120.prod.exchangelabs.com (2603:10b6:510:29f::15) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7982.26; Mon, 23 Sep 2024 09:38:27 +0000
-Received: from BL3PR01MB7057.prod.exchangelabs.com
- ([fe80::b69e:5684:ed7c:4d09]) by BL3PR01MB7057.prod.exchangelabs.com
- ([fe80::b69e:5684:ed7c:4d09%4]) with mapi id 15.20.7982.022; Mon, 23 Sep 2024
- 09:38:27 +0000
-From: Chanh Nguyen <chanh@os.amperecomputing.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Peter Yin <peteryin.openbmc@gmail.com>,
-	Noah Wang <noahwang.wang@outlook.com>,
-	Marek Vasut <marex@denx.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	OpenBMC Maillist <openbmc@lists.ozlabs.org>
-Cc: Phong Vo <phong@os.amperecomputing.com>,
-	Thang Nguyen <thang@os.amperecomputing.com>,
-	Quan Nguyen <quan@os.amperecomputing.com>,
-	Khanh Pham <khpham@amperecomputing.com>,
-	Open Source Submission <patches@amperecomputing.com>,
-	Chanh Nguyen <chanh@os.amperecomputing.com>
-Subject: [PATCH v2] dt-bindings: trivial-devices: add onnn,adt7462
-Date: Mon, 23 Sep 2024 09:38:00 +0000
-Message-ID: <20240923093800.892949-1-chanh@os.amperecomputing.com>
-X-Mailer: git-send-email 2.43.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR04CA0191.apcprd04.prod.outlook.com
- (2603:1096:4:14::29) To BL3PR01MB7057.prod.exchangelabs.com
- (2603:10b6:208:35c::16)
+	bh=AxSizFcURWRzULv29STkrlMjYUG/kvRIdyM/3uD/gL4=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=n5qGHbrKh3/D5ao3ioWUG638538TnGcHASrPNnVi4AzsZZQ9toF3Mi2sXg3Qcf7x07te/2UqLMqHEJKnU+r+fD+OfwWCYKWz/FXx5HYWkyDVx0nHJgehacwrx2cLbJ577EBRSsazWfbiuQI4wybGmzOIp3Z4LWHHiW6fbCOMS/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XBybV1zLWz4f3jkc;
+	Mon, 23 Sep 2024 17:38:14 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 642A81A0D89;
+	Mon, 23 Sep 2024 17:38:25 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgAXTMgQN_FmYxx6CA--.4261S3;
+	Mon, 23 Sep 2024 17:38:25 +0800 (CST)
+Subject: Re: [PATCH RFC 5/6] md/raid1: Handle bio_split() errors
+To: John Garry <john.g.garry@oracle.com>, Yu Kuai <yukuai1@huaweicloud.com>,
+ axboe@kernel.dk, hch@lst.de
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, martin.petersen@oracle.com,
+ "yangerkun@huawei.com" <yangerkun@huawei.com>,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20240919092302.3094725-1-john.g.garry@oracle.com>
+ <20240919092302.3094725-6-john.g.garry@oracle.com>
+ <bc4c414c-a7aa-358b-71c1-598af05f005f@huaweicloud.com>
+ <0161641d-daef-4804-b4d2-4a83f625bc77@oracle.com>
+ <c03de5c7-20b8-3973-a843-fc010f121631@huaweicloud.com>
+ <44806c6f-d96a-498c-83e1-e3853ee79d5a@oracle.com>
+ <59a46919-6c6d-46cb-1fe4-5ded849617e1@huaweicloud.com>
+ <6148a744-e62c-45f6-b273-772aaf51a2df@oracle.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <be465913-80c7-762a-51f1-56021aa323dd@huaweicloud.com>
+Date: Mon, 23 Sep 2024 17:38:24 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL3PR01MB7057:EE_|PH0PR01MB8120:EE_
-X-MS-Office365-Filtering-Correlation-Id: f3a5afc3-eccd-4b64-f9b8-08dcdbb3798d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|7416014|376014|366016|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?FDYKQ8k9LEsrFlfVkywWdbBzyk19x0Qukrl02UNIa4G+V3JIEXnq9Ad9xw5z?=
- =?us-ascii?Q?rRg+/fmAOp+6xi6zdFauUeIWq0MV35Y6nag7aTaVR4Tbdgyfz9MfoygCoylR?=
- =?us-ascii?Q?IawJuRHytIl1ZJK3njXMLMp7HQpRH6o4y9ugOIAkAEB4Cddzch0u5v3nNjRE?=
- =?us-ascii?Q?o0UFsMqAEMomOc/fxN8F6aQJDl3vEwjrIAw/mrC8HYMwMHNPkyLIXO8oVYAd?=
- =?us-ascii?Q?dtvo5D4BOhxOdz4HgYl3Ru3NKTZJzX0G7Ro0f5NiVTXUo0/3FCusCMRLsgsh?=
- =?us-ascii?Q?RZPIQsvbUPE5nTsIlXxcs0bsAMB8yvrhw8BsS51JkpadAP/RS/nxuD/MD31O?=
- =?us-ascii?Q?ot6xryKLXL9F1toJ2Y7+kuMNiCsPVWDQlra7dgZI+xxpcwFY9EZgOx3nqc0R?=
- =?us-ascii?Q?Qw8QyCesKP1FWCndGfmw+P44anObM2QWupg0NsyYpM0Q3dAxSoY9VcbzWZye?=
- =?us-ascii?Q?6j2kPCWY/ZAazvMXHHD/PhKYkr73+VORS3syg87dMi4uGrdJZSzRshE+O/58?=
- =?us-ascii?Q?952pDLPV+z6S/A/6dfPNsQpw1hgysCcXqox6GBkSWI9nuzdMCEY5Y5vZmkuN?=
- =?us-ascii?Q?rPpQiuidyq53jsfWRU983iLjGRNHSuHNG8GNai2nTs8RPryWeOAuxNqv91Sk?=
- =?us-ascii?Q?merMjzn8dnku7Ka+iHn3cT92beXoVKcrw9LeCKApr9D2kyDNKN6La+glwgg1?=
- =?us-ascii?Q?UUI7z2lWG4QGqV7AvIW4ycuVdbpEsFgJzH6Rp1AGRIt4ndxv/ggcg4P2eUWH?=
- =?us-ascii?Q?Qg0arfGvsfYj9117Se2j+Nv8jyeNXiOhC+vBvJ74OdMX1bqQiUorYEX2O2WD?=
- =?us-ascii?Q?n59Ll4iF3ZKvEYRXVHpHezqsv0pf3DsGqkQHcIky+euySj4ExJVW7orSXcNp?=
- =?us-ascii?Q?sAQQRol+2HuEF+W0/LpVIRtCrn+8oNFghRWZOG8IrHbare/SWOL2Ho1tsvTh?=
- =?us-ascii?Q?kzcLSpq0XKZwhS0LGgnd5y2S5ZDqIyHAuZTCiOLzMkQZfWmS1B3Bik51p3Uh?=
- =?us-ascii?Q?f1UP/r5E+P4KwSEdgiI/U9hhsDVEnp/PRQ8pbzJgxtHKcvsE1l7S4MWlQZPS?=
- =?us-ascii?Q?t7QIwDAYeNo5/V9hBO/yp2egfmcDtkZq6Lj4NXeuKF3UP10WjuAR9YcoMre4?=
- =?us-ascii?Q?T7NMPF/XKeRx2+b58W8stpLCsKrRGPAlYqPpp6XaGP24ojLQiiRj0/W+v7n8?=
- =?us-ascii?Q?E0TIWY5HrAhtFqxVK57npYhd9mq01bkcaR3xCmAvGCrF22G5U6qDhGcE5Wbg?=
- =?us-ascii?Q?i/zpumdoEC7e9gdZ972SUqLhII5Sn9TJ3vASPy3CVth/uKYyDAeNLJhPyomH?=
- =?us-ascii?Q?k8GY/LmuITjbqeU+3RDCofPvEj1CFm3Uti5j6IROg6UARGlyacIw24JdlCJe?=
- =?us-ascii?Q?Oq9jjpU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR01MB7057.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(7416014)(376014)(366016)(38350700014)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?fdbWDOsUaAEfT9rRER4WSf+1uHOCDh0VYF5cimcX9qkxsTIScHxNlaKnwpF6?=
- =?us-ascii?Q?/NFkHv+RzCEghjn+2e+SektbNgiyuc55AFINwSh5KLmKDIndK1PpIYpFXvnX?=
- =?us-ascii?Q?mSMG9AHs+h5VzZzf0I6GiMOF9jFo7oG8ZU5tRCTkf+qx6Ic4qPbXYNwkG2ue?=
- =?us-ascii?Q?yOckm5Qby/I9kv/r6uemkseF2eMiWWM71ia7r4DchyCbiJxRghkpGPGxcK2R?=
- =?us-ascii?Q?6xyi1AESgGLY1ep8doDWoUNoKkid48ZhRp5F4hFI2TDFQOsdyRp9+WFctSQy?=
- =?us-ascii?Q?yOM0WMYhpkRgDR5b/JxOkGAiZazOEFyFQ9grtRA3NDhabOYzAzkHY8kXh5La?=
- =?us-ascii?Q?GIvyeS7qna8u522kq7e7JrQidOqhvI2DQQ4IqFYUbfzbGzQpDpqiuuHt2+li?=
- =?us-ascii?Q?6MGATVFciLiP/A36Gq0XX61cKLKDGlgJ4lHe+nNaLTE/9CBlHg4svhjMz9hW?=
- =?us-ascii?Q?ch9vpPtx6cXYDWQMSZaEnobzSJXqUGGmEoVSXt9eHlDSBhaxgR5FCDOvpS5X?=
- =?us-ascii?Q?ITV+4QwSF/Nh+wJh3VqG4xb4g9rBvSrUgwzryewgyZnyk5c7RpV5XcdivoXs?=
- =?us-ascii?Q?nQA+riILW0X5mn/0cx/9aW5h5Jv7ywrwKOQBEy0uO2abxZUq9ZrAlq41xrAp?=
- =?us-ascii?Q?8eAiSD186oMbSxhihOhQb2BQvCTy0xxW27elSHJqhr/iHJcF7G8mr15ZoVpf?=
- =?us-ascii?Q?zTe/dPa/jYeigmFsa5Tixj/fRI0JqYQgkKK63//oz+5TyPsTKslryxdwDICN?=
- =?us-ascii?Q?DVjcp+FFBBGnkW6OK3ye07Cavx+z7EWVp46oM56dj0Nemz9SOSPqjsbreYfJ?=
- =?us-ascii?Q?hSyArBhruEPi3Aig2FnPEOziq6tQO1Dc5OnSgKXfwa0onv0kqKVwL6S/ecPt?=
- =?us-ascii?Q?JLvP80VyV6tOKh+fFHSdsKoQHZ4DUwySEfK8FXin6cBPlDMG+SKOqomikdzf?=
- =?us-ascii?Q?i3pcIJyY9BcUllP9soBVOUPrtq82rbgIi41hfrmfEAjxXN5IbtIHPBk71Gjy?=
- =?us-ascii?Q?5a3AQPruVOtX2qEdjevRqssQhslFsH5ejz+dOS45RRmBtBvTV5ouZjjlGsPV?=
- =?us-ascii?Q?HuakiVHn92SeQJDFmToB+UA1/9jV6ocpc7npsfwj2XkdNiiAZs+tF6iSG9BE?=
- =?us-ascii?Q?FR55m8G46lFTjxrD+95pAASpe+S+KclFhoJ8ygM/qDj4iLCRgz7KWNv4vzsj?=
- =?us-ascii?Q?eMTtZEE1JbrMFNRe84QyjAg/LBwwIBUh7AjLDFbDFf4dORUuNo+1hM96lLLw?=
- =?us-ascii?Q?lzdpp4s0TzKcWwRspm253szyFgbMUrmYLCQMx7xRMVG3RWPx/oMEvzfRBGLE?=
- =?us-ascii?Q?wLX4wKM3jB3G1nQWag1wHNLSEELaiTweh8+SYZ3JVKuJIPi18mAQb39FaWjX?=
- =?us-ascii?Q?tlotHHAhlUsXEcbZj4NYyFojUgxT7doRAflX/dp+h5Z20tfFTL2NDYigFLes?=
- =?us-ascii?Q?Kc+Kg/VNZnNE2So6GKPj+NIICjBDE/YR0hHEhgqZ+T++/+hFzoMFYWJwnlrZ?=
- =?us-ascii?Q?70Rmy+2rL8xnhdUjbJU8hInFkNIRM8B3/zenlhtDhvtSiG9fY9gH0B3Z43PE?=
- =?us-ascii?Q?oCsTeeldIFM+MgjqRn6VSrXcIGrvGXVRvqf3m6bPK0tTAJMvFgIN3/flhJGa?=
- =?us-ascii?Q?avNUMIpI7duIhg++Q9Wfw5o=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f3a5afc3-eccd-4b64-f9b8-08dcdbb3798d
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR01MB7057.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2024 09:38:26.9960
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2B79k1cueGXS1LRohDMHN5Nwyhd5Cx7dw0xk5hR1ZVz7lxw+ZnNV2YiVTYFpdUFB3t4th6QF18Tl2qKv/TqNgib/Y5sk3oEhUG1AiwTco2wPjE+QHLImyjKCBJsA/0mE
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR01MB8120
+In-Reply-To: <6148a744-e62c-45f6-b273-772aaf51a2df@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAXTMgQN_FmYxx6CA--.4261S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZF45Zw4UJrW7KF45CF4DJwb_yoW8uFyUpr
+	y093Z5Ar4DJ39Ikwn2qF10y3ZYvw1xZ3y5Zry8G3yUCrn0g3Zayr4jgw40kas0grW2kw4v
+	vr4rWasxGa4DurJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUZYFZUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-The adt7462 supports monitoring and controlling up to
-four PWM Fan drive outputs and eight TACH inputs measures.
-The adt7462 supports reading a single on chip temperature
-sensor and three remote temperature sensors. There are up
-to 13 voltage monitoring inputs.
+Hi,
 
-Add device tree bindings for the adt7462 device.
+在 2024/09/23 17:21, John Garry 写道:
+> On 23/09/2024 09:18, Yu Kuai wrote:
+>>>>
+>>>> We need a new branch in read_balance() to choose a rdev with full copy.
+>>>
+>>> Sure, I do realize that the mirror'ing personalities need more 
+>>> sophisticated error handling changes (than what I presented).
+>>>
+>>> However, in raid1_read_request() we do the read_balance() and then 
+>>> the bio_split() attempt. So what are you suggesting we do for the 
+>>> bio_split() error? Is it to retry without the bio_split()?
+>>>
+>>> To me bio_split() should not fail. If it does, it is likely ENOMEM or 
+>>> some other bug being exposed, so I am not sure that retrying with 
+>>> skipping bio_split() is the right approach (if that is what you are 
+>>> suggesting).
+>>
+>> bio_split_to_limits() is already called from md_submit_bio(), so here
+>> bio should only be splitted because of badblocks or resync. We have to
+>> return error for resync, however, for badblocks, we can still try to
+>> find a rdev without badblocks so bio_split() is not needed. And we need
+>> to retry and inform read_balance() to skip rdev with badblocks in this
+>> case.
+>>
+>> This can only happen if the full copy only exist in slow disks. This
+>> really is corner case, and this is not related to your new error path by
+>> atomic write. I don't mind this version for now, just something
+>> I noticed if bio_spilit() can fail.
+> 
+> Are you saying that some improvement needs to be made to the current 
+> code for badblocks handling, like initially try to skip bio_split()?
+> 
+> Apart from that, what about the change in raid10_write_request(), w.r.t 
+> error handling?
+> 
+> There, for an error in bio_split(), I think that we need to do some 
+> tidy-up if bio_split() fails, i.e. undo increase in rdev->nr_pending 
+> when looping conf->copies
+> 
+> BTW, feel free to comment in patch 6/6 for that.
 
-Signed-off-by: Chanh Nguyen <chanh@os.amperecomputing.com>
----
-Change in v2:
-   - Add onnn,adt7462 to the list of trivial devices       [Guenter]
----
- Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+Yes, raid1/raid10 write are the same. If you want to enable atomic write
+for raid1/raid10, you must add a new branch to handle badblocks now,
+otherwise, as long as one copy contain any badblocks, atomic write will
+fail while theoretically I think it can work.
 
-diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
-index 0108d7507215..15f89d7ecf73 100644
---- a/Documentation/devicetree/bindings/trivial-devices.yaml
-+++ b/Documentation/devicetree/bindings/trivial-devices.yaml
-@@ -311,6 +311,8 @@ properties:
-           - nuvoton,w83773g
-             # OKI ML86V7667 video decoder
-           - oki,ml86v7667
-+            # ON Semiconductor ADT7462 Temperature, Voltage Monitor and Fan Controller
-+          - onnn,adt7462
-             # 48-Lane, 12-Port PCI Express Gen 2 (5.0 GT/s) Switch
-           - plx,pex8648
-             # Pulsedlight LIDAR range-finding sensor
--- 
-2.43.0
+Thanks,
+Kuai
+
+> 
+> Thanks,
+> John
+> 
+> .
+> 
 
 
