@@ -1,765 +1,543 @@
-Return-Path: <linux-kernel+bounces-335760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F32397EA3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:56:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40FDA97EA44
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:58:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8EE21F21B42
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:56:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0EB1281BE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:58:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E78F197A8A;
-	Mon, 23 Sep 2024 10:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11F1198826;
+	Mon, 23 Sep 2024 10:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eQWt/F1G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b="MRf3jwNe"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F6D6D1B4;
-	Mon, 23 Sep 2024 10:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADFC0197A88
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 10:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727089008; cv=none; b=k03vebMY6JofBun0w+vsjkw7TWDYQnWzVB7br8CCHL+R8icP3yVc76NxPUhmlYZj+om/eK8h7AAE2vOqcraJbIn+1YZPKcOdcaQHO/tUoS1J6wr5uQb/5EhiCPYj1J33/2AoGQgh40XBptDR7WBKeLTwwhVgwbgoohTpx8zypiA=
+	t=1727089066; cv=none; b=TSOFO/RDWXiHL7Tgjn+hZytorIZRdlqLTWB+vSL3fx51dOECQjntK4QJqymrbEuWxuvrxpiDznscFyK8x0ASNqLp4aiX9la99jkQuZxNQ+qTNGOqrSAw0BbnDWjGvCI8drN4bbuJQmjV+ww/3nLxkFcw9Y43tgJ493i6S/lcb7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727089008; c=relaxed/simple;
-	bh=RP45ER8D4v5tl4q1UftwWDRHy/SzzHuDAQZ0MZfd4e0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=hcEl6amPBJ3C8DtcsNnVPaS6tkY1cUH3+Yk6pultoEkyuRXuI2UlgL2kCUlJqUEvez1bKUmc1mpZtS+2BteSasw1Sv07AZpwqP+5Knx60qX6bB3wWTu0Tn7ge0rU9SCUwx9t5bKgzBGrkUzMAjNvUDSf3KMwRDfBv4GyRHy8I44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eQWt/F1G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 408D2C4CEC5;
-	Mon, 23 Sep 2024 10:56:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727089007;
-	bh=RP45ER8D4v5tl4q1UftwWDRHy/SzzHuDAQZ0MZfd4e0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=eQWt/F1GNNWYLxMqVkgdJBUqrMUWsbXOHqC2BoBl1VHOf2l9Jj7GckqtdLTWZjj8F
-	 qDOE+gOR0ph4vneUWlsph2aJ7hmIPj2Rdmv8wpf8rPY4ZeIYo3zVyJcS/HdIKvWc3b
-	 b+fkezhKGNBS5eLfDKgdvFUd3jaHoB3WHVsSueV/5TMyowCWJ+Vgw8Qt1vf4atAByT
-	 3GFxskuH4GSMrNphUAr+ChEq+165KN6TRgPXUzt/ZaJBNMI7yY7eiCVaq3mDF7n5q6
-	 xVVWn5kE87+L+pvc/9Knly9YyskoWiSMk6pNlakf9Kq2L/7APSZVN0NXCQrmvGfvQH
-	 jMgvmWpDl3jcA==
-Date: Mon, 23 Sep 2024 12:56:42 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton
- <akpm@linux-foundation.org>, Linux Media Mailing List
- <linux-media@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL for v6.12-rc1] media updates
-Message-ID: <20240923125642.7aed968b@foz.lan>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
-Importance: high
-X-Priority: 1 (Highest)
+	s=arc-20240116; t=1727089066; c=relaxed/simple;
+	bh=FoXl5SumvE/1ZA96j1jDN80h5PHgupYG4LD9hhrG3AI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RAki7n/WC5DEWq6wwB7oUbZjStvRNHEwTtjQtj/RLW8hWyE15WSJ/NdcjmcvvJgec8Wgq1OKn1Sd+kCMI7FpwkbTPA7vDUE3sJ1KDwdv8UbdUyHmmNJnC6Zt4bFpTxBFTmBcJtSIfSF9N5PJx67LkdEmI3OdxrILMsRJj2Fzu1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org; spf=pass smtp.mailfrom=endlessos.org; dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b=MRf3jwNe; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=endlessos.org
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e1a74ee4c0cso3513710276.2
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 03:57:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessos.org; s=google; t=1727089062; x=1727693862; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nzeSVX/hxMemfiO95K7LVTU+P15KE67lAtTqSFh7LcY=;
+        b=MRf3jwNe45rFCDwdJFDvHOYWdGrnN+h3XxxloH2rz+AjXHwB8Z78sNIVkIbcaRZptc
+         +GEZuicokYr6RjscbcOBWu+ZJu5ChXt/fpbkkiqQbaxEdE/70F4XM2u8ipqrraAwiwsy
+         6L0Pbhpa5wsUUSBeTkd6gWoWfMIJJoEILx7AKGc+dl1FAOKIcysnMW1bgloMopLkc/6/
+         /gW1bSbYXIj1OEZ64NRURYiRiUDh8GusyidP/ODNa1eTz1fp3BAPJgxIVFe+K7qqSk+0
+         tKFFX3oqP8S3GO/YcjHZrT9NOWY809rBckLYDBjMqKgna/MbSYME4jZqF5x9tOz+XPBj
+         xbtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727089062; x=1727693862;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nzeSVX/hxMemfiO95K7LVTU+P15KE67lAtTqSFh7LcY=;
+        b=egm7ZudLxCeeqj9U3wQINXTRl3btcoxrvIOtJY++FR+q4l7bYWrebyOOwE3H46JD+q
+         5B0Qe56ZnDy/ucTyXmRwi2QigeWaX9iYYvzUb/0mX3bInv8k2/qMAzKipqXQWoeFKRfG
+         rSIpTPy/YFgtvTQC/14+mxMH029b17sdlyvU4GwVU3cKyTG9kOm3D3O2R4SzPbwNcXgb
+         KP2AFsVHdVBoZN4uA63xmnuuqcbgR2CNEe253jNsinT3rwCbSj+kMHZdkzWhUPBZTJcC
+         MJgRP5rlz1X0ZecXq9FuryEBN1EO13wy+cRVDBOaXuzeckMChvu35rwrXZNFe1Fkj81F
+         0mIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVm99ZjjMO/0s/krXnRqMM9kz8sMBbxvl1lARj/6VuQnIuIOmx6Plw6W53YKln7It76907bFUpUFzSmCPc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgofZVMrD3LeCYtLmobBNd6+dX63BTCbXQaYxfN7JOaJujbRDr
+	HExH9rAldnQA77wBGNtvzESHOnjkelOa9amd/22X6khoUszF2/lfJOentGF1hRX09WFwZ4O55Qc
+	bLTcLtfAi1LArwMizzGB0OeA4/RsvaaKhhYqHGw==
+X-Google-Smtp-Source: AGHT+IE14Qch+4uqfdF+MxQ/jpVyqNRWaScJxnJCcoXxWzKwPfPDCwChzgvIcDFLmpkUuXAFhGMB4oCa0u5ijvcw1kY=
+X-Received: by 2002:a05:6902:e10:b0:e1d:a2ac:2791 with SMTP id
+ 3f1490d57ef6-e2252f1f33emr6897517276.4.1727089062390; Mon, 23 Sep 2024
+ 03:57:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20240719075200.10717-2-jhp@endlessos.org> <20240719080255.10998-2-jhp@endlessos.org>
+ <CAPpJ_edybLMtrN_gxP2h9Z-BuYH+RG-qRqMqgZM1oSVoW1sP5A@mail.gmail.com>
+ <e37536a435630583398307682e1a9aadbabfb497.camel@linux.intel.com>
+ <CAPpJ_eeATLdcnH9CWpvJM_9juV5ok+OEYysTit_HparqBpQ3CQ@mail.gmail.com>
+ <eb900245-5e13-bc6c-994a-43f2db8322ea@linux.intel.com> <fc0e8066b06abed97d3857c5deefb03041a0fd2e.camel@linux.intel.com>
+ <f9660f21-f2e8-c62c-5e86-ed4875f61701@linux.intel.com> <CAPpJ_eeO9j38VGaukrw79dqQAZ7Z8+QMOvTbymyV9=fbQBqFzw@mail.gmail.com>
+ <20240920090333.000071fc@linux.intel.com>
+In-Reply-To: <20240920090333.000071fc@linux.intel.com>
+From: Jian-Hong Pan <jhp@endlessos.org>
+Date: Mon, 23 Sep 2024 18:57:06 +0800
+Message-ID: <CAPpJ_ecn2ByfaxD5=Ybjg19fa+tPEaKQsKdS_dM7uU91fJt6GQ@mail.gmail.com>
+Subject: Re: [PATCH v8 4/4] PCI/ASPM: Fix L1.2 parameters when enable link state
+To: Nirmal Patel <nirmal.patel@linux.intel.com>
+Cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	"David E. Box" <david.e.box@linux.intel.com>, Bjorn Helgaas <helgaas@kernel.org>, 
+	Johan Hovold <johan@kernel.org>, 
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, Damien Le Moal <dlemoal@kernel.org>, 
+	Jonathan Derrick <jonathan.derrick@linux.dev>, 
+	Paul M Stillwell Jr <paul.m.stillwell.jr@intel.com>, linux-pci@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, linux@endlessos.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
-
-Please pull from:
-  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/me=
-dia/v6.12-1
-
-For:
-
-- New CEC driver: Extron DA HD 4K Plus;
-- Lots of driver fixes, cleanups and improvements.
-
-Regards,
-Mauro
-
----
-
-The following changes since commit de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed:
-
-  Linux 6.11-rc2 (2024-08-04 13:50:53 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/me=
-dia/v6.12-1
-
-for you to fetch changes up to 81ee62e8d09ee3c7107d11c8bbfd64073ab601ad:
-
-  media: atomisp: Use clamp() in ia_css_eed1_8_vmem_encode() (2024-09-10 07=
-:30:36 +0200)
-
-----------------------------------------------------------------
-media updates for v6.12-rc1
-
-----------------------------------------------------------------
-Alex Bee (1):
-      dt-bindings: media: rockchip,vpu: Document RK3128 compatible
-
-Alexander Shiyan (1):
-      media: i2c: ar0521: Use cansleep version of gpiod_set_value()
-
-Alexander Stein (2):
-      media: verisilicon: Move Rockchip hardware drivers to the correspondi=
-ng option
-      media: verisilicon: Move Rockchip AV1 hardware drivers to the corresp=
-onding option
-
-Anastasia Belova (1):
-      media: coda: cast an operand of multiplication to a larger type
-
-Andy Shevchenko (3):
-      media: atomisp: Remove duplicated leftover, i.e. sh_css_dvs_info.h
-      media: atomisp: Replace rarely used macro from math_support.h
-      media: atomisp: Simplify ia_css_pipe_create_cas_scaler_desc_single_ou=
-tput()
-
-Benjamin Gaignard (4):
-      media: verisilicon: AV1: Be more flexible with postproc capabilities
-      media: verisilicon: Fix auxiliary buffer allocation size
-      media: verisilicon: AV1: Correct some sizes/positions on register fie=
-lds
-      media: verisilicon: Add reference buffer compression feature
-
-Biju Das (5):
-      media: dt-bindings: media: renesas,vsp1: Document RZ/G2UL VSPD bindin=
-gs
-      media: dt-bindings: media: renesas,fcp: Document RZ/G2UL FCPVD bindin=
-gs
-      media: platform: rzg2l-cru: rzg2l-csi2: Add missing MODULE_DEVICE_TAB=
-LE
-      media: mt9p031: Extend match support for OF tables
-      media: mt9p031: Drop CONFIG_OF ifdeffery
-
-Bryan O'Donoghue (3):
-      media: qcom: camss: Remove use_count guard in stop_streaming
-      media: qcom: camss: Fix ordering of pm_runtime_enable
-      media: ov5675: Fix power on/off delay timings
-
-Changhuang Liang (2):
-      staging: media: starfive: Add the dynamic resolution support
-      media: MAINTAINERS: Add "qcom," substring for Qualcomm Camera Subsyst=
-em
-
-Chen Ni (1):
-      media: i2c: thp7312: Convert comma to semicolon
-
-Christian Hewitt (2):
-      dt-bindings: media: amlogic,gx-vdec: add the GXLX SoC family and upda=
-te GXL
-      media: meson: vdec: add GXLX SoC platform
-
-Christophe JAILLET (6):
-      media: i2c: tvp5150: Constify some structures
-      media: platform: allegro-dvt: Constify struct regmap_config
-      media: ti: cal: Constify struct media_entity_operations
-      media: venus: Constify struct dec_bufsize_ops and enc_bufsize_ops
-      media: mediatek: vcodec: Constify struct vb2_ops
-      media: atomisp: Use clamp() in ia_css_eed1_8_vmem_encode()
-
-Colin Ian King (2):
-      media: i2c: GC05A2: Fix spelling mistake "Horizental" -> "Horizontal"
-      media: i2c: GC08A3: Fix spelling mistake "STRAEMING_REG" -> "STREAMIN=
-G_REG"
-
-Deborah Brouwer (1):
-      media: vicodec: allow en/decoder cmd w/o CAPTURE
-
-Emmanuel Gil Peyrot (1):
-      media: dt-bindings: rk3568-vepu: Add RK3588 VEPU121
-
-Erling Ljunggren (3):
-      media: videodev2.h: add V4L2_CAP_EDID
-      media: v4l2-dev: handle V4L2_CAP_EDID
-      media: docs: Add V4L2_CAP_EDID
-
-Fabio Estevam (2):
-      media: imx-mipi-csis: Switch to RUNTIME_PM_OPS()
-      media: imx8mq-mipi-csi2: Switch to RUNTIME/SYSTEM_SLEEP_PM_OPS()
-
-Fritz Koenig (2):
-      Documentation: media: Fix v4l2_av1_segmentation table formatting
-      Documentation: media: Fix AV1 struct documentation
-
-Geert Uytterhoeven (2):
-      media: raspberrypi: VIDEO_RASPBERRYPI_PISP_BE should depend on ARCH_B=
-CM2835
-      media: imagination: VIDEO_E5010_JPEG_ENC should depend on ARCH_K3
-
-Hans Verkuil (19):
-      media: cec: core: add new CEC_MSG_FL_REPLY_VENDOR_ID flag
-      media: vivid: add <Vendor Command With ID> support
-      media: uapi/linux/cec.h: cec_msg_set_reply_to: zero flags
-      media: cec: cec-adap.c: improve CEC_MSG_FL_REPLY_VENDOR_ID check
-      Documentation: media: vivid.rst: update TODO list
-      Documentation: media: add missing V4L2_BUF_CAP_ flags
-      media: v4l2-core: v4l2-ioctl: missing ', ' in create_bufs logging
-      Documentation: media: move Memory Consistency Flags
-      Merge tag 'next-media-rkisp1-20240814' of git://git.kernel.org/pub/sc=
-m/linux/kernel/git/pinchartl/linux.git
-      Merge tag 'tags/next-media-misc-20240825' of git://git.kernel.org/pub=
-/scm/linux/kernel/git/pinchartl/linux.git
-      Merge tag 'tags/next-media-imx-20240825' of git://git.kernel.org/pub/=
-scm/linux/kernel/git/pinchartl/linux.git
-      Merge tag 'tags/next-media-renesas-20240825' of git://git.kernel.org/=
-pub/scm/linux/kernel/git/pinchartl/linux.git
-      Merge tag 'next-media-20240826' of git://git.kernel.org/pub/scm/linux=
-/kernel/git/pinchartl/linux.git
-      Merge tag 'tags/next-media-videobuf-20240827' of git://git.kernel.org=
-/pub/scm/linux/kernel/git/pinchartl/linux.git
-      media: input: serio.h: add SERIO_EXTRON_DA_HD_PLUS
-      media: cec: move cec_get/put_device to header
-      media: cec: extron-da-hd-4k-plus: add the Extron DA HD 4K Plus CEC dr=
-iver
-      media: atomisp: add missing wait_prepare/finish ops
-      media: atomisp: set lock before calling vb2_queue_init()
-
-Hans de Goede (4):
-      media: atomisp: csi2-bridge: Add DMI quirk for t4ka3 on Xiaomi Mipad2
-      media: atomisp: Drop dev_dbg() calls from hmm_[alloc|free]()
-      media: atomisp: Improve binary finding debug logging
-      media: atomisp: Fix eed1_8 code assigning signed values to an unsigne=
-d variable
-
-Hongbo Li (1):
-      media: intel/ipu6: make use of dev_err_cast_probe()
-
-Jacopo Mondi (7):
-      media: uapi: rkisp1-config: Add extensible params format
-      media: uapi: videodev2: Add V4L2_META_FMT_RK_ISP1_EXT_PARAMS
-      media: rkisp1: Add struct rkisp1_params_buffer
-      media: rkisp1: Copy the parameters buffer
-      media: rkisp1: Cache the currently active format
-      media: rkisp1: Implement extensible params support
-      media: rkisp1: Implement s_fmt/try_fmt
-
-Javier Carrasco (2):
-      media: i2c: tda1997x: constify snd_soc_component_driver struct
-      media: docs: Fix newline typos in capture.c
-
-Jianfeng Liu (1):
-      media: dt-bindings: rockchip-vpu: Add RK3588 VPU121
-
-Julien Massot (2):
-      media: i2c: max96717: coding style fixes
-      media: i2c: max96714: coding style fixes
-
-Junlin Li (2):
-      drivers: media: dvb-frontends/rtl2832: fix an out-of-bounds write err=
-or
-      drivers: media: dvb-frontends/rtl2830: fix an out-of-bounds write err=
-or
-
-Kartik Kulkarni (1):
-      media: atomisp: bnr: fix trailing statement
-
-Kathara Sasikumar (1):
-      media: atomisp: Fix trailing statement in ia_css_de.host.c
-
-Kuninori Morimoto (4):
-      media: platform: microchip: use for_each_endpoint_of_node()
-      media: platform: ti: use for_each_endpoint_of_node()
-      media: platform: xilinx: use for_each_endpoint_of_node()
-      staging: media: atmel: use for_each_endpoint_of_node()
-
-Laurent Pinchart (11):
-      media: rkisp1: Add helper function to swap colour channels
-      media: rkisp1: Add features mask to extensible block handlers
-      media: v4l2-mc: Mark v4l2_pipeline_link_notify() as deprecated
-      media: Documentation: mc: Replace deprecated graph walk API
-      media: microchip-isc: Drop v4l2_subdev_link_validate() for video devi=
-ces
-      media: sun4i_csi: Implement link validate for sun4i_csi subdev
-      media: sun4i_csi: Don't use v4l2_subdev_link_validate() for video dev=
-ice
-      media: v4l2-subdev: Refactor warnings in v4l2_subdev_link_validate()
-      media: v4l2-subdev: Support hybrid links in v4l2_subdev_link_validate=
-()
-      media: renesas: vsp1: Implement .link_validate() for video devices
-      media: videobuf2: Drop minimum allocation requirement of 2 buffers
-
-Li Zetao (2):
-      media: atomisp: use clamp() in ia_css_eed1_8_encode()
-      media: atomisp: use clamp() in compute_coring()
-
-Liao Chen (2):
-      media: i2c: mt9v111: Enable module autoloading
-      media: i2c: mt9v111: Drop redundant comma
-
-Lu Baolu (1):
-      media: venus: firmware: Use iommu_paging_domain_alloc()
-
-Luca Weiss (1):
-      media: dt-bindings: qcom,sc7280-venus: Allow one IOMMU entry
-
-Martin T=C5=AFma (4):
-      media: mgb4: Add support for YUV image formats
-      media: mgb4: Add support for V4L2_CAP_TIMEPERFRAME
-      media: mgb4: Fixed signal frame rate limit handling
-      media: admin-guide: mgb4: Outputs DV timings documentation update
-
-Matthias Fend (1):
-      media: imx-mipi-csis: avoid logging while holding spinlock
-
-Mauro Carvalho Chehab (1):
-      Merge tag 'v6.11-rc2' into media_stage
-
-Max Staudt (3):
-      staging: media: ipu3: Drop superfluous check in imgu_vb2_stop_streami=
-ng()
-      staging: media: ipu3: Return buffers outside of needless locking
-      staging: media: ipu3: Stop streaming in inverse order of starting
-
-Michael Tretter (1):
-      media: verisilicon: Use fourcc format string
-
-Nicolas Dufresne (4):
-      docs: uapi: media: Properly locate NV12MT diagram
-      docs: uapi: media: Move NV12_10BE_8L128 to NV15 section
-      docs: uapi: media: Add a layout diagram for MT2110T
-      docs: uapi: media: Document Mediatek 10bit tiled formats
-
-Niklas S=C3=B6derlund (3):
-      dt-bindings: media: renesas,vin: Add Gen4 family fallback
-      media: rcar-vin: Add family compatible for R-Car Gen4 family
-      dt-bindings: media: renesas,vin: Add binding for V4M
-
-Ondrej Jirman (1):
-      media: rkisp1: Adapt to different SoCs having different size limits
-
-Paul Elder (3):
-      media: rkisp1: Add register definitions for the companding block
-      media: rkisp1: Add feature flags for BLS and compand
-      media: rkisp1: Add support for the companding block
-
-Ricardo Ribalda (17):
-      media: siano: Simplify smscore_load_firmware_from_file
-      media: imx-pxp: Rewrite coeff expression
-      media: venus: Refactor struct hfi_uncompressed_plane_info
-      media: venus: Refactor struct hfi_session_get_property_pkt
-      media: venus: Refactor struct hfi_uncompressed_format_supported
-      media: venus: Refactor hfi_session_empty_buffer_uncompressed_plane0_p=
-kt
-      media: venus: Refactor hfi_session_empty_buffer_compressed_pkt
-      media: venus: Refactor hfi_sys_get_property_pkt
-      media: venus: Refactor hfi_session_fill_buffer_pkt
-      media: venus: Refactor hfi_buffer_alloc_mode_supported
-      media: venus: Convert one-element-arrays to flex-arrays
-      media: ar0521: Refactor ar0521_power_off()
-      media: i2c: ov5645: Refactor ov5645_set_power_off()
-      media: i2c: s5c73m3: Move clk_prepare to its own function
-      media: tc358746: Move clk_prepare to its own function
-      media: meson: vdec_1: Refactor vdec_1_stop()
-      media: meson: vdec: hevc: Refactor vdec_hevc_start and vdec_hevc_stop
-
-Robert Mader (1):
-      media: i2c: imx355: Parse and register properties
-
-Roman Smirnov (1):
-      Revert "media: tuners: fix error return code of hybrid_tuner_request_=
-state()"
-
-Roshan Khatri (3):
-      media: atomisp: Fix spelling mistake in csi_rx_public.h
-      media: atomisp: Fix spelling mistakes in atomisp_platform.h
-      media: atomisp: Fix spelling mistakes in atomisp.h
-
-Sakari Ailus (1):
-      media: Documentation: Fix spelling of "blanking"
-
-Sakirnth Nagarasa (1):
-      media: atomisp: move trailing statement to next line.
-
-Sean Young (1):
-      media: rc: remove unused tx_resolution field
-
-Sebastian Reichel (2):
-      media: hantro: Disable multicore support
-      media: hantro: Add RK3588 VEPU121
-
-Sergio de Almeida Cipriano Junior (1):
-      media: atomisp: move trailing */ to separate lines
-
-Tommaso Merciai (1):
-      media: i2c: max96717: add test pattern ctrl
-
-Umang Jain (3):
-      media: imx283: Add 3/3 binning mode
-      dt-bindings: media: imx335: Add reset-gpios to the DT example
-      media: imx335: Fix reset-gpio handling
-
-Uwe Kleine-K=C3=B6nig (2):
-      media: Drop explicit initialization of struct i2c_device_id::driver_d=
-ata to 0
-      media: staging: media: starfive: camss: Drop obsolete return value do=
-cumentation
-
-Vladimir Zapolskiy (6):
-      media: dt-bindings: Add OmniVision OG01A1B image sensor
-      media: i2c: og01a1b: Add OF support to the image sensor driver
-      media: i2c: og01a1b: Add stubs of runtime power management functions
-      media: i2c: og01a1b: Add support of xvclk supply clock in power manag=
-ement
-      media: i2c: og01a1b: Add management of optional reset GPIO
-      media: i2c: og01a1b: Add management of optional sensor supply lines
-
-Wolfram Sang (8):
-      media: allegro: use 'time_left' variable with wait_for_completion_tim=
-eout()
-      media: atmel-isi: use 'time_left' variable with wait_for_completion_t=
-imeout()
-      media: bdisp: use 'time_left' variable with wait_event_timeout()
-      media: fimc-is: use 'time_left' variable with wait_event_timeout()
-      media: platform: exynos-gsc: use 'time_left' variable with wait_event=
-_timeout()
-      media: solo6x10: use 'time_left' variable with wait_for_completion_ti=
-meout()
-      media: tegra-vde: use 'time_left' variable with wait_for_completion_i=
-nterruptible_timeout()
-      media: ti: cal: use 'time_left' variable with wait_event_timeout()
-
-Yue Haibing (2):
-      media: ccs: Remove unused declarations
-      media: siano: Remove unused declarations
-
-Yunfei Dong (3):
-      media: mediatek: vcodec: Fix H264 multi stateless decoder smatch warn=
-ing
-      media: mediatek: vcodec: Fix VP8 stateless decoder smatch warning
-      media: mediatek: vcodec: Fix H264 stateless decoder smatch warning
-
-Yunke Cao (4):
-      media: videobuf2-core: clear memory related fields in __vb2_plane_dma=
-buf_put()
-      media: videobuf2-core: release all planes first in __prepare_dmabuf()
-      media: videobuf2-core: reverse the iteration order in __vb2_buf_dmabu=
-f_put
-      media: videobuf2-core: attach once if multiple planes share the same =
-dbuf
-
-Zelong Dong (1):
-      media: rc: meson-ir: support PM suspend/resume
-
-Zhang Zekun (1):
-      media: atomisp: Remove unused declaration
-
-Zheng Wang (1):
-      media: venus: fix use after free bug in venus_remove due to race cond=
-ition
-
- Documentation/admin-guide/media/cec.rst            |   87 +
- Documentation/admin-guide/media/mgb4.rst           |   23 +-
- Documentation/admin-guide/media/rkisp1.rst         |   11 +-
- Documentation/admin-guide/media/vivid.rst          |    4 +-
- .../devicetree/bindings/media/amlogic,gx-vdec.yaml |    3 +-
- .../bindings/media/i2c/ovti,og01a1b.yaml           |  107 ++
- .../devicetree/bindings/media/i2c/sony,imx335.yaml |    4 +
- .../bindings/media/qcom,sc7280-venus.yaml          |    1 +
- .../devicetree/bindings/media/renesas,fcp.yaml     |    2 +
- .../devicetree/bindings/media/renesas,vin.yaml     |    4 +
- .../devicetree/bindings/media/renesas,vsp1.yaml    |    1 +
- .../bindings/media/rockchip,rk3568-vepu.yaml       |    1 +
- .../devicetree/bindings/media/rockchip-vpu.yaml    |    7 +-
- Documentation/driver-api/media/mc-core.rst         |   67 +-
- .../media/cec/cec-ioc-adap-g-caps.rst              |    6 +
- .../userspace-api/media/cec/cec-ioc-receive.rst    |   15 +
- Documentation/userspace-api/media/v4l/biblio.rst   |   11 +
- Documentation/userspace-api/media/v4l/buffer.rst   |   35 -
- .../userspace-api/media/v4l/capture.c.rst          |    6 +-
- .../media/v4l/ext-ctrls-codec-stateless.rst        |   20 +-
- .../media/v4l/ext-ctrls-image-process.rst          |    2 +-
- .../userspace-api/media/v4l/metafmt-rkisp1.rst     |   57 +-
- Documentation/userspace-api/media/v4l/mt2110t.svg  |  315 ++++
- .../userspace-api/media/v4l/pixfmt-reserved.rst    |   13 -
- .../userspace-api/media/v4l/pixfmt-yuv-planar.rst  |  181 +-
- .../userspace-api/media/v4l/vidioc-querycap.rst    |   11 +
- .../userspace-api/media/v4l/vidioc-reqbufs.rst     |   40 +-
- .../userspace-api/media/videodev2.h.rst.exceptions |    1 +
- MAINTAINERS                                        |   10 +-
- drivers/media/cec/core/cec-adap.c                  |   53 +-
- drivers/media/cec/core/cec-api.c                   |    4 +-
- drivers/media/cec/core/cec-core.c                  |   31 +-
- drivers/media/cec/core/cec-priv.h                  |    2 -
- drivers/media/cec/usb/Kconfig                      |    1 +
- drivers/media/cec/usb/Makefile                     |    1 +
- drivers/media/cec/usb/extron-da-hd-4k-plus/Kconfig |   14 +
- .../media/cec/usb/extron-da-hd-4k-plus/Makefile    |    8 +
- .../cec/usb/extron-da-hd-4k-plus/cec-splitter.c    |  657 +++++++
- .../cec/usb/extron-da-hd-4k-plus/cec-splitter.h    |   51 +
- .../extron-da-hd-4k-plus/extron-da-hd-4k-plus.c    | 1836 ++++++++++++++++=
-++++
- .../extron-da-hd-4k-plus/extron-da-hd-4k-plus.h    |  118 ++
- drivers/media/common/siano/smscoreapi.c            |   15 +-
- drivers/media/common/siano/smscoreapi.h            |   10 -
- drivers/media/common/videobuf2/videobuf2-core.c    |  166 +-
- drivers/media/dvb-frontends/a8293.c                |    2 +-
- drivers/media/dvb-frontends/af9013.c               |    2 +-
- drivers/media/dvb-frontends/af9033.c               |    2 +-
- drivers/media/dvb-frontends/au8522_decoder.c       |    2 +-
- drivers/media/dvb-frontends/cxd2099.c              |    2 +-
- drivers/media/dvb-frontends/cxd2820r_core.c        |    2 +-
- drivers/media/dvb-frontends/lgdt3306a.c            |    2 +-
- drivers/media/dvb-frontends/lgdt330x.c             |    2 +-
- drivers/media/dvb-frontends/mn88472.c              |    2 +-
- drivers/media/dvb-frontends/mn88473.c              |    2 +-
- drivers/media/dvb-frontends/mxl692.c               |    2 +-
- drivers/media/dvb-frontends/rtl2830.c              |    4 +-
- drivers/media/dvb-frontends/rtl2832.c              |    4 +-
- drivers/media/dvb-frontends/si2165.c               |    2 +-
- drivers/media/dvb-frontends/si2168.c               |    2 +-
- drivers/media/dvb-frontends/sp2.c                  |    2 +-
- drivers/media/dvb-frontends/stv090x.c              |    2 +-
- drivers/media/dvb-frontends/stv6110x.c             |    2 +-
- drivers/media/dvb-frontends/tda10071.c             |    2 +-
- drivers/media/dvb-frontends/ts2020.c               |    4 +-
- drivers/media/i2c/ad5820.c                         |    4 +-
- drivers/media/i2c/adp1653.c                        |    2 +-
- drivers/media/i2c/adv7170.c                        |    4 +-
- drivers/media/i2c/adv7175.c                        |    4 +-
- drivers/media/i2c/adv7183.c                        |    4 +-
- drivers/media/i2c/adv7343.c                        |    4 +-
- drivers/media/i2c/adv7393.c                        |    4 +-
- drivers/media/i2c/adv7511-v4l2.c                   |    2 +-
- drivers/media/i2c/adv7842.c                        |    2 +-
- drivers/media/i2c/ak881x.c                         |    4 +-
- drivers/media/i2c/ar0521.c                         |   22 +-
- drivers/media/i2c/bt819.c                          |    6 +-
- drivers/media/i2c/bt856.c                          |    2 +-
- drivers/media/i2c/bt866.c                          |    2 +-
- drivers/media/i2c/ccs/ccs-reg-access.h             |    3 -
- drivers/media/i2c/cs3308.c                         |    2 +-
- drivers/media/i2c/cs5345.c                         |    2 +-
- drivers/media/i2c/cs53l32a.c                       |    2 +-
- drivers/media/i2c/cx25840/cx25840-core.c           |    2 +-
- drivers/media/i2c/ds90ub913.c                      |    5 +-
- drivers/media/i2c/dw9714.c                         |    4 +-
- drivers/media/i2c/et8ek8/et8ek8_driver.c           |    2 +-
- drivers/media/i2c/gc05a2.c                         |    2 +-
- drivers/media/i2c/gc08a3.c                         |    2 +-
- drivers/media/i2c/imx274.c                         |    2 +-
- drivers/media/i2c/imx283.c                         |   33 +
- drivers/media/i2c/imx335.c                         |    9 +-
- drivers/media/i2c/imx355.c                         |   12 +-
- drivers/media/i2c/isl7998x.c                       |    4 +-
- drivers/media/i2c/ks0127.c                         |    6 +-
- drivers/media/i2c/lm3560.c                         |    4 +-
- drivers/media/i2c/lm3646.c                         |    2 +-
- drivers/media/i2c/m52790.c                         |    2 +-
- drivers/media/i2c/max2175.c                        |    4 +-
- drivers/media/i2c/max96714.c                       |   18 +-
- drivers/media/i2c/max96717.c                       |  236 ++-
- drivers/media/i2c/ml86v7667.c                      |    4 +-
- drivers/media/i2c/msp3400-driver.c                 |    2 +-
- drivers/media/i2c/mt9m001.c                        |    2 +-
- drivers/media/i2c/mt9m111.c                        |    2 +-
- drivers/media/i2c/mt9p031.c                        |   38 +-
- drivers/media/i2c/mt9t112.c                        |    2 +-
- drivers/media/i2c/mt9v011.c                        |    2 +-
- drivers/media/i2c/mt9v111.c                        |    3 +-
- drivers/media/i2c/og01a1b.c                        |  187 +-
- drivers/media/i2c/ov13858.c                        |    4 +-
- drivers/media/i2c/ov2640.c                         |    2 +-
- drivers/media/i2c/ov2659.c                         |    4 +-
- drivers/media/i2c/ov5640.c                         |    4 +-
- drivers/media/i2c/ov5645.c                         |   17 +-
- drivers/media/i2c/ov5647.c                         |    2 +-
- drivers/media/i2c/ov5675.c                         |   12 +-
- drivers/media/i2c/ov6650.c                         |    2 +-
- drivers/media/i2c/ov7640.c                         |    2 +-
- drivers/media/i2c/ov772x.c                         |    2 +-
- drivers/media/i2c/ov7740.c                         |    2 +-
- drivers/media/i2c/ov9640.c                         |    2 +-
- drivers/media/i2c/ov9650.c                         |    4 +-
- drivers/media/i2c/rj54n1cb0c.c                     |    2 +-
- drivers/media/i2c/s5c73m3/s5c73m3-core.c           |   15 +-
- drivers/media/i2c/s5k5baf.c                        |    4 +-
- drivers/media/i2c/saa6588.c                        |    2 +-
- drivers/media/i2c/saa6752hs.c                      |    2 +-
- drivers/media/i2c/saa7110.c                        |    2 +-
- drivers/media/i2c/saa717x.c                        |    2 +-
- drivers/media/i2c/saa7185.c                        |    2 +-
- drivers/media/i2c/sony-btf-mpx.c                   |    2 +-
- drivers/media/i2c/tc358743.c                       |    2 +-
- drivers/media/i2c/tc358746.c                       |   12 +-
- drivers/media/i2c/tda1997x.c                       |    2 +-
- drivers/media/i2c/tda7432.c                        |    2 +-
- drivers/media/i2c/tda9840.c                        |    2 +-
- drivers/media/i2c/tea6415c.c                       |    2 +-
- drivers/media/i2c/tea6420.c                        |    2 +-
- drivers/media/i2c/thp7312.c                        |    2 +-
- drivers/media/i2c/ths7303.c                        |    6 +-
- drivers/media/i2c/ths8200.c                        |    4 +-
- drivers/media/i2c/tlv320aic23b.c                   |    2 +-
- drivers/media/i2c/tvaudio.c                        |    2 +-
- drivers/media/i2c/tvp5150.c                        |    6 +-
- drivers/media/i2c/tvp7002.c                        |    2 +-
- drivers/media/i2c/tw2804.c                         |    2 +-
- drivers/media/i2c/tw9900.c                         |    2 +-
- drivers/media/i2c/tw9903.c                         |    2 +-
- drivers/media/i2c/tw9906.c                         |    2 +-
- drivers/media/i2c/tw9910.c                         |    2 +-
- drivers/media/i2c/uda1342.c                        |    2 +-
- drivers/media/i2c/upd64031a.c                      |    2 +-
- drivers/media/i2c/upd64083.c                       |    2 +-
- drivers/media/i2c/vp27smpx.c                       |    2 +-
- drivers/media/i2c/vpx3220.c                        |    6 +-
- drivers/media/i2c/wm8739.c                         |    2 +-
- drivers/media/i2c/wm8775.c                         |    2 +-
- drivers/media/pci/intel/ipu6/ipu6.c                |   20 +-
- drivers/media/pci/mgb4/mgb4_core.c                 |    2 +-
- drivers/media/pci/mgb4/mgb4_core.h                 |    2 +
- drivers/media/pci/mgb4/mgb4_io.h                   |   29 +-
- drivers/media/pci/mgb4/mgb4_sysfs_out.c            |    9 +-
- drivers/media/pci/mgb4/mgb4_vin.c                  |  193 +-
- drivers/media/pci/mgb4/mgb4_vin.h                  |    3 +-
- drivers/media/pci/mgb4/mgb4_vout.c                 |  309 +++-
- drivers/media/pci/mgb4/mgb4_vout.h                 |    5 +-
- drivers/media/pci/solo6x10/solo6x10-p2m.c          |    8 +-
- drivers/media/platform/allegro-dvt/allegro-core.c  |   28 +-
- drivers/media/platform/atmel/atmel-isi.c           |    8 +-
- drivers/media/platform/chips-media/coda/coda-bit.c |    2 +-
- drivers/media/platform/imagination/Kconfig         |    1 +
- .../vcodec/decoder/mtk_vcodec_dec_stateful.c       |    2 +-
- .../vcodec/decoder/mtk_vcodec_dec_stateless.c      |    2 +-
- .../vcodec/decoder/vdec/vdec_h264_req_if.c         |    9 +-
- .../vcodec/decoder/vdec/vdec_h264_req_multi_if.c   |    9 +-
- .../mediatek/vcodec/decoder/vdec/vdec_vp8_req_if.c |   10 +-
- .../media/platform/microchip/microchip-isc-base.c  |   19 +-
- .../platform/microchip/microchip-sama5d2-isc.c     |   21 +-
- .../platform/microchip/microchip-sama7g5-isc.c     |   21 +-
- drivers/media/platform/nvidia/tegra-vde/h264.c     |   10 +-
- drivers/media/platform/nxp/imx-mipi-csis.c         |   19 +-
- drivers/media/platform/nxp/imx-pxp.h               |    9 +-
- drivers/media/platform/nxp/imx8mq-mipi-csi2.c      |   17 +-
- drivers/media/platform/qcom/camss/camss-video.c    |    6 -
- drivers/media/platform/qcom/camss/camss.c          |    5 +-
- drivers/media/platform/qcom/venus/core.c           |    1 +
- drivers/media/platform/qcom/venus/firmware.c       |    6 +-
- drivers/media/platform/qcom/venus/hfi_cmds.c       |    8 +-
- drivers/media/platform/qcom/venus/hfi_cmds.h       |   16 +-
- drivers/media/platform/qcom/venus/hfi_helper.h     |   20 +-
- drivers/media/platform/qcom/venus/hfi_parser.c     |    2 +-
- .../media/platform/qcom/venus/hfi_plat_bufs_v6.c   |   20 +-
- drivers/media/platform/raspberrypi/pisp_be/Kconfig |    1 +
- .../media/platform/renesas/rcar-vin/rcar-core.c    |   21 +-
- .../media/platform/renesas/rzg2l-cru/rzg2l-csi2.c  |    1 +
- drivers/media/platform/renesas/vsp1/vsp1_video.c   |   22 +
- .../media/platform/rockchip/rkisp1/rkisp1-common.c |   14 +
- .../media/platform/rockchip/rkisp1/rkisp1-common.h |   49 +-
- .../media/platform/rockchip/rkisp1/rkisp1-csi.c    |    5 +-
- .../media/platform/rockchip/rkisp1/rkisp1-dev.c    |   15 +-
- .../media/platform/rockchip/rkisp1/rkisp1-isp.c    |    9 +-
- .../media/platform/rockchip/rkisp1/rkisp1-params.c | 1041 +++++++++--
- .../media/platform/rockchip/rkisp1/rkisp1-regs.h   |   23 +
- .../platform/rockchip/rkisp1/rkisp1-resizer.c      |    4 +-
- .../media/platform/rockchip/rkisp1/rkisp1-stats.c  |   51 +-
- .../media/platform/samsung/exynos-gsc/gsc-core.c   |   10 +-
- .../media/platform/samsung/exynos4-is/fimc-core.c  |   10 +-
- drivers/media/platform/st/sti/bdisp/bdisp-v4l2.c   |   10 +-
- drivers/media/platform/sunxi/sun4i-csi/sun4i_csi.c |   12 +
- drivers/media/platform/ti/am437x/am437x-vpfe.c     |   12 +-
- drivers/media/platform/ti/cal/cal-camerarx.c       |    2 +-
- drivers/media/platform/ti/cal/cal.c                |    8 +-
- drivers/media/platform/ti/davinci/vpif_capture.c   |   14 +-
- drivers/media/platform/verisilicon/Kconfig         |    8 +
- drivers/media/platform/verisilicon/Makefile        |   14 +-
- drivers/media/platform/verisilicon/hantro_drv.c    |   48 +
- drivers/media/platform/verisilicon/hantro_g2.c     |   29 +
- .../platform/verisilicon/hantro_g2_hevc_dec.c      |   20 +-
- .../media/platform/verisilicon/hantro_g2_regs.h    |    4 +
- drivers/media/platform/verisilicon/hantro_hevc.c   |    8 +
- drivers/media/platform/verisilicon/hantro_hw.h     |   38 +
- .../media/platform/verisilicon/hantro_postproc.c   |    6 +-
- drivers/media/platform/verisilicon/hantro_v4l2.c   |    6 +-
- .../verisilicon/rockchip_vpu981_hw_av1_dec.c       |    3 +-
- .../platform/verisilicon/rockchip_vpu981_regs.h    |   10 +-
- .../media/platform/verisilicon/rockchip_vpu_hw.c   |    1 -
- drivers/media/platform/xilinx/xilinx-vipp.c        |    9 +-
- drivers/media/radio/radio-tea5764.c                |    2 +-
- drivers/media/radio/saa7706h.c                     |    4 +-
- drivers/media/radio/si470x/radio-si470x-i2c.c      |    2 +-
- drivers/media/radio/si4713/si4713.c                |    4 +-
- drivers/media/radio/tef6862.c                      |    4 +-
- drivers/media/rc/ene_ir.c                          |    3 -
- drivers/media/rc/ite-cir.c                         |    1 -
- drivers/media/rc/meson-ir.c                        |   27 +
- drivers/media/rc/rc-loopback.c                     |    1 -
- drivers/media/test-drivers/vicodec/vicodec-core.c  |    6 +-
- drivers/media/test-drivers/vidtv/vidtv_demod.c     |    2 +-
- drivers/media/test-drivers/vidtv/vidtv_tuner.c     |    2 +-
- drivers/media/test-drivers/vivid/vivid-cec.c       |   48 +-
- drivers/media/tuners/e4000.c                       |    2 +-
- drivers/media/tuners/fc2580.c                      |    2 +-
- drivers/media/tuners/m88rs6000t.c                  |    2 +-
- drivers/media/tuners/mt2060.c                      |    2 +-
- drivers/media/tuners/mxl301rf.c                    |    2 +-
- drivers/media/tuners/qm1d1b0004.c                  |    2 +-
- drivers/media/tuners/qm1d1c0042.c                  |    2 +-
- drivers/media/tuners/tda18212.c                    |    2 +-
- drivers/media/tuners/tda18250.c                    |    2 +-
- drivers/media/tuners/tua9001.c                     |    2 +-
- drivers/media/tuners/tuner-i2c.h                   |    4 +-
- drivers/media/usb/go7007/s2250-board.c             |    2 +-
- drivers/media/v4l2-core/v4l2-dev.c                 |   15 +
- drivers/media/v4l2-core/v4l2-ioctl.c               |    3 +-
- drivers/media/v4l2-core/v4l2-subdev.c              |   53 +-
- .../staging/media/atomisp/include/linux/atomisp.h  |    4 +-
- .../media/atomisp/include/linux/atomisp_platform.h |    6 +-
- .../media/atomisp/pci/atomisp_csi2_bridge.c        |    2 +
- drivers/staging/media/atomisp/pci/atomisp_fops.c   |    2 +
- drivers/staging/media/atomisp/pci/atomisp_subdev.c |    2 +-
- .../pci/hive_isp_css_common/host/vmem_local.h      |    4 +-
- .../pci/hive_isp_css_include/assert_support.h      |    6 +-
- .../pci/hive_isp_css_include/host/csi_rx_public.h  |    4 +-
- .../pci/hive_isp_css_include/math_support.h        |    6 -
- drivers/staging/media/atomisp/pci/hmm/hmm.c        |    5 -
- .../pci/isp/kernels/bnr/bnr_1.0/ia_css_bnr.host.c  |    3 +-
- .../pci/isp/kernels/de/de_1.0/ia_css_de.host.c     |    3 +-
- .../pci/isp/kernels/eed1_8/ia_css_eed1_8.host.c    |   22 +-
- .../pci/isp/kernels/eed1_8/ia_css_eed1_8_param.h   |    4 +-
- .../pci/isp/kernels/fpn/fpn_1.0/ia_css_fpn.host.c  |    3 +-
- .../ipu2_io_ls/bayer_io_ls/ia_css_bayer_io.host.c  |    9 +-
- .../yuv444_io_ls/ia_css_yuv444_io.host.c           |    9 +-
- .../pci/isp/kernels/xnr/xnr_3.0/ia_css_xnr3.host.c |   12 +-
- .../media/atomisp/pci/runtime/binary/src/binary.c  |  259 ++-
- .../atomisp/pci/runtime/isys/src/virtual_isys.c    |    8 +-
- drivers/staging/media/atomisp/pci/sh_css.c         |   44 +-
- .../staging/media/atomisp/pci/sh_css_dvs_info.h    |   37 -
- .../staging/media/atomisp/pci/sh_css_param_dvs.h   |    1 -
- .../media/deprecated/atmel/atmel-sama5d2-isc.c     |   10 +-
- .../media/deprecated/atmel/atmel-sama7g5-isc.c     |   10 +-
- drivers/staging/media/ipu3/ipu3-v4l2.c             |   40 +-
- drivers/staging/media/meson/vdec/vdec.c            |    2 +
- drivers/staging/media/meson/vdec/vdec_1.c          |   16 +-
- drivers/staging/media/meson/vdec/vdec_hevc.c       |   43 +-
- drivers/staging/media/meson/vdec/vdec_platform.c   |   44 +
- drivers/staging/media/meson/vdec/vdec_platform.h   |    2 +
- drivers/staging/media/starfive/camss/stf-camss.c   |    2 -
- drivers/staging/media/starfive/camss/stf-capture.c |    4 +-
- include/media/cec.h                                |   33 +
- include/media/rc-core.h                            |    2 -
- include/media/v4l2-mc.h                            |    3 +
- include/media/v4l2-subdev.h                        |    6 +
- include/media/videobuf2-core.h                     |    3 +
- include/uapi/linux/cec.h                           |    9 +-
- include/uapi/linux/rkisp1-config.h                 |  578 ++++++
- include/uapi/linux/serio.h                         |    1 +
- include/uapi/linux/videodev2.h                     |    2 +
- 297 files changed, 7385 insertions(+), 1364 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/media/i2c/ovti,og01a1=
-b.yaml
- create mode 100644 Documentation/userspace-api/media/v4l/mt2110t.svg
- create mode 100644 drivers/media/cec/usb/extron-da-hd-4k-plus/Kconfig
- create mode 100644 drivers/media/cec/usb/extron-da-hd-4k-plus/Makefile
- create mode 100644 drivers/media/cec/usb/extron-da-hd-4k-plus/cec-splitter=
-.c
- create mode 100644 drivers/media/cec/usb/extron-da-hd-4k-plus/cec-splitter=
-.h
- create mode 100644 drivers/media/cec/usb/extron-da-hd-4k-plus/extron-da-hd=
--4k-plus.c
- create mode 100644 drivers/media/cec/usb/extron-da-hd-4k-plus/extron-da-hd=
--4k-plus.h
- delete mode 100644 drivers/staging/media/atomisp/pci/sh_css_dvs_info.h
-
+Nirmal Patel <nirmal.patel@linux.intel.com> =E6=96=BC 2024=E5=B9=B49=E6=9C=
+=8821=E6=97=A5 =E9=80=B1=E5=85=AD =E4=B8=8A=E5=8D=8812:03=E5=AF=AB=E9=81=93=
+=EF=BC=9A
+>
+> On Mon, 12 Aug 2024 16:18:22 +0800
+> Jian-Hong Pan <jhp@endlessos.org> wrote:
+>
+> > Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com> =E6=96=BC 2024=E5=B9=
+=B48=E6=9C=888=E6=97=A5 =E9=80=B1=E5=9B=9B
+> > =E4=B8=8B=E5=8D=885:49=E5=AF=AB=E9=81=93=EF=BC=9A
+> > >
+> > > On Wed, 7 Aug 2024, David E. Box wrote:
+> > >
+> > > > On Wed, 2024-08-07 at 14:18 +0300, Ilpo J=C3=A4rvinen wrote:
+> > > > > On Wed, 7 Aug 2024, Jian-Hong Pan wrote:
+> > > > >
+> > > > > > David E. Box <david.e.box@linux.intel.com> =E6=96=BC 2024=E5=B9=
+=B48=E6=9C=886=E6=97=A5
+> > > > > > =E9=80=B1=E4=BA=8C =E4=B8=8A=E5=8D=884:26=E5=AF=AB=E9=81=93=EF=
+=BC=9A
+> > > > > > >
+> > > > > > > Hi Jian-Hong,
+> > > > > > >
+> > > > > > > On Fri, 2024-08-02 at 16:24 +0800, Jian-Hong Pan wrote:
+> > > > > > > > Jian-Hong Pan <jhp@endlessos.org> =E6=96=BC 2024=E5=B9=B47=
+=E6=9C=8819=E6=97=A5 =E9=80=B1=E4=BA=94
+> > > > > > > > =E4=B8=8B=E5=8D=884:04=E5=AF=AB=E9=81=93=EF=BC=9A
+> > > > > > > > >
+> > > > > > > > > Currently, when enable link's L1.2 features with
+> > > > > > > > > __pci_enable_link_state(),
+> > > > > > > > > it configs the link directly without ensuring related
+> > > > > > > > > L1.2 parameters, such
+> > > > > > > > > as T_POWER_ON, Common_Mode_Restore_Time, and
+> > > > > > > > > LTR_L1.2_THRESHOLD have been
+> > > > > > > > > programmed.
+> > > > > > > > >
+> > > > > > > > > This leads the link's L1.2 between PCIe Root Port and
+> > > > > > > > > child device gets
+> > > > > > > > > wrong configs when a caller tries to enabled it.
+> > > > > > > > >
+> > > > > > > > > Here is a failed example on ASUS B1400CEAE with enabled
+> > > > > > > > > VMD:
+> > > > > > > > >
+> > > > > > > > > 10000:e0:06.0 PCI bridge: Intel Corporation 11th Gen
+> > > > > > > > > Core Processor PCIe
+> > > > > > > > > Controller (rev 01) (prog-if 00 [Normal decode])
+> > > > > > > > >     ...
+> > > > > > > > >     Capabilities: [200 v1] L1 PM Substates
+> > > > > > > > >         L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+
+> > > > > > > > > ASPM_L1.1+ L1_PM_Substates+
+> > > > > > > > >                   PortCommonModeRestoreTime=3D45us
+> > > > > > > > > PortTPowerOnTime=3D50us L1SubCtl1: PCI-PM_L1.2-
+> > > > > > > > > PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1- T_CommonMode=3D45us
+> > > > > > > > > LTR1.2_Threshold=3D101376ns L1SubCtl2: T_PwrOn=3D50us
+> > > > > > > > >
+> > > > > > > > > 10000:e1:00.0 Non-Volatile memory controller: Sandisk
+> > > > > > > > > Corp WD Blue SN550
+> > > > > > > > > NVMe SSD (rev 01) (prog-if 02 [NVM Express])
+> > > > > > > > >     ...
+> > > > > > > > >     Capabilities: [900 v1] L1 PM Substates
+> > > > > > > > >         L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+
+> > > > > > > > > ASPM_L1.1- L1_PM_Substates+
+> > > > > > > > >                   PortCommonModeRestoreTime=3D32us
+> > > > > > > > > PortTPowerOnTime=3D10us L1SubCtl1: PCI-PM_L1.2-
+> > > > > > > > > PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1- T_CommonMode=3D0us
+> > > > > > > > > LTR1.2_Threshold=3D0ns L1SubCtl2: T_PwrOn=3D10us
+> > > > > > > > >
+> > > > > > > > > According to "PCIe r6.0, sec 5.5.4", before enabling
+> > > > > > > > > ASPM L1.2 on the PCIe
+> > > > > > > > > Root Port and the child NVMe, they should be programmed
+> > > > > > > > > with the same LTR1.2_Threshold value. However, they
+> > > > > > > > > have different values in this case.
+> > > > > > > > >
+> > > > > > > > > Invoke aspm_calc_l12_info() to program the L1.2
+> > > > > > > > > parameters properly before
+> > > > > > > > > enable L1.2 bits of L1 PM Substates Control Register in
+> > > > > > > > > __pci_enable_link_state().
+> > > > > > > > >
+> > > > > > > > > Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D21839=
+4
+> > > > > > > > > Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
+> > > > > > > > > ---
+> > > > > > > > > v2:
+> > > > > > > > > - Prepare the PCIe LTR parameters before enable L1
+> > > > > > > > > Substates
+> > > > > > > > >
+> > > > > > > > > v3:
+> > > > > > > > > - Only enable supported features for the L1 Substates
+> > > > > > > > > part
+> > > > > > > > >
+> > > > > > > > > v4:
+> > > > > > > > > - Focus on fixing L1.2 parameters, instead of
+> > > > > > > > > re-initializing whole L1SS
+> > > > > > > > >
+> > > > > > > > > v5:
+> > > > > > > > > - Fix typo and commit message
+> > > > > > > > > - Split introducing aspm_get_l1ss_cap() to "PCI/ASPM:
+> > > > > > > > > Introduce aspm_get_l1ss_cap()"
+> > > > > > > > >
+> > > > > > > > > v6:
+> > > > > > > > > - Skipped
+> > > > > > > > >
+> > > > > > > > > v7:
+> > > > > > > > > - Pick back and rebase on the new version kernel
+> > > > > > > > > - Drop the link state flag check. And, always config
+> > > > > > > > > link state's timing
+> > > > > > > > >   parameters
+> > > > > > > > >
+> > > > > > > > > v8:
+> > > > > > > > > - Because pcie_aspm_get_link() might return the link as
+> > > > > > > > > NULL, move getting the link's parent and child devices
+> > > > > > > > > after check the link is not NULL. This avoids NULL
+> > > > > > > > > memory access.
+> > > > > > > > >
+> > > > > > > > >  drivers/pci/pcie/aspm.c | 15 +++++++++++++++
+> > > > > > > > >  1 file changed, 15 insertions(+)
+> > > > > > > > >
+> > > > > > > > > diff --git a/drivers/pci/pcie/aspm.c
+> > > > > > > > > b/drivers/pci/pcie/aspm.c index
+> > > > > > > > > 5db1044c9895..55ff1d26fcea 100644 ---
+> > > > > > > > > a/drivers/pci/pcie/aspm.c +++ b/drivers/pci/pcie/aspm.c
+> > > > > > > > > @@ -1411,9 +1411,15 @@
+> > > > > > > > > EXPORT_SYMBOL(pci_disable_link_state); static int
+> > > > > > > > > __pci_enable_link_state(struct pci_dev *pdev, int
+> > > > > > > > > state, bool locked)
+> > > > > > > > >  {
+> > > > > > > > >         struct pcie_link_state *link =3D
+> > > > > > > > > pcie_aspm_get_link(pdev);
+> > > > > > > > > +       u32 parent_l1ss_cap, child_l1ss_cap;
+> > > > > > > > > +       struct pci_dev *parent, *child;
+> > > > > > > > >
+> > > > > > > > >         if (!link)
+> > > > > > > > >                 return -EINVAL;
+> > > > > > > > > +
+> > > > > > > > > +       parent =3D link->pdev;
+> > > > > > > > > +       child =3D link->downstream;
+> > > > > > > > > +
+> > > > > > > > >         /*
+> > > > > > > > >          * A driver requested that ASPM be enabled on
+> > > > > > > > > this device, but
+> > > > > > > > >          * if we don't have permission to manage ASPM
+> > > > > > > > > (e.g., on ACPI @@ -1428,6 +1434,15 @@ static int
+> > > > > > > > > __pci_enable_link_state(struct pci_dev
+> > > > > > > > > *pdev, int state, bool locked)
+> > > > > > > > >         if (!locked)
+> > > > > > > > >                 down_read(&pci_bus_sem);
+> > > > > > > > >         mutex_lock(&aspm_lock);
+> > > > > > > > > +       /*
+> > > > > > > > > +        * Ensure L1.2 parameters:
+> > > > > > > > > Common_Mode_Restore_Times, T_POWER_ON and
+> > > > > > > > > +        * LTR_L1.2_THRESHOLD are programmed properly
+> > > > > > > > > before enable bits for
+> > > > > > > > > +        * L1.2, per PCIe r6.0, sec 5.5.4.
+> > > > > > > > > +        */
+> > > > > > > > > +       parent_l1ss_cap =3D aspm_get_l1ss_cap(parent);
+> > > > > > > > > +       child_l1ss_cap =3D aspm_get_l1ss_cap(child);
+> > > > > > > > > +       aspm_calc_l12_info(link, parent_l1ss_cap,
+> > > > > > > > > child_l1ss_cap);
+> > > > > > >
+> > > > > > > I still don't think this is the place to recalculate the
+> > > > > > > L1.2 parameters especially when know the calculation was
+> > > > > > > done but was cleared by pci_bus_reset(). Can't we just do a
+> > > > > > > pci_save/restore_state() before/after pci_bus_reset() in
+> > > > > > > vmd.c?
+> > > > > >
+> > > > > > I have not thought pci_save/restore_state() around
+> > > > > > pci_bus_reset() before.  It is an interesting direction.
+> > > > > >
+> > > > > > So, I prepare modification below for test.  Include "[PATCH
+> > > > > > v8 1/4] PCI: vmd: Set PCI devices to D0 before enable PCI
+> > > > > > PM's L1 substates", too.  Then, both the PCIe bridge and the
+> > > > > > PCIe device have the same LTR_L1.2_THRESHOLD 101376ns as
+> > > > > > expected.
+> > > > > >
+> > > > > > diff --git a/drivers/pci/controller/vmd.c
+> > > > > > b/drivers/pci/controller/vmd.c index
+> > > > > > bbf4a47e7b31..6b8dd4f30127 100644 ---
+> > > > > > a/drivers/pci/controller/vmd.c +++
+> > > > > > b/drivers/pci/controller/vmd.c @@ -727,6 +727,18 @@ static
+> > > > > > void vmd_copy_host_bridge_flags(struct pci_host_bridge
+> > > > > > *root_bridge, vmd_bridge->native_dpc =3D
+> > > > > > root_bridge->native_dpc; }
+> > > > > >
+> > > > > > +static int vmd_pci_save_state(struct pci_dev *pdev, void
+> > > > > > *userdata) +{
+> > > > > > +       pci_save_state(pdev);
+> > > > > > +       return 0;
+> > > > > > +}
+> > > > > > +
+> > > > > > +static int vmd_pci_restore_state(struct pci_dev *pdev, void
+> > > > > > *userdata) +{
+> > > > > > +       pci_restore_state(pdev);
+> > > > > > +       return 0;
+> > > > > > +}
+> > > > > > +
+> > > > > >  /*
+> > > > > >   * Enable ASPM and LTR settings on devices that aren't
+> > > > > > configured by BIOS. */
+> > > > > > @@ -927,6 +939,7 @@ static int vmd_enable_domain(struct
+> > > > > > vmd_dev *vmd, unsigned long features)
+> > > > > >         pci_scan_child_bus(vmd->bus);
+> > > > > >         vmd_domain_reset(vmd);
+> > > > > >
+> > > > > > +       pci_walk_bus(vmd->bus, vmd_pci_save_state, NULL);
+> > > > > >         /* When Intel VMD is enabled, the OS does not
+> > > > > > discover the Root Ports
+> > > > > >          * owned by Intel VMD within the MMCFG space.
+> > > > > > pci_reset_bus() applies
+> > > > > >          * a reset to the parent of the PCI device supplied
+> > > > > > as argument. This
+> > > > > > @@ -945,6 +958,7 @@ static int vmd_enable_domain(struct
+> > > > > > vmd_dev *vmd, unsigned long features)
+> > > > > >                         break;
+> > > > > >                 }
+> > > > > >         }
+> > > > > > +       pci_walk_bus(vmd->bus, vmd_pci_restore_state, NULL);
+> > > > >
+> > > > > Why not call pci_reset_bus() (or __pci_reset_bus()) then in
+> > > > > vmd_enable_domain() which preserves state unlike
+> > > > > pci_reset_bus()?
+> > > > >
+> > > > > (Don't tell me naming of these functions is a horrible mess.
+> > > > > :-/)
+> > > >
+> > > > Hmm. So this *is* calling pci_reset_bus().
+> > >
+> > > Yeah, I managed to get confused by the names myself, I somehow
+> > > ended up thinking it calls pci_bus_reset() which is not correct...
+> > >
+> > > > L1.2 configuration has specific
+> > > > ordering requirements for changes to parent & child devices.
+> > > > Could be why it's not getting restored properly.
+> > >
+> > > Indeed, it has to be something else since the patch above doesn't
+> > > even restore anything because dev->state_saved should get set to
+> > > false by the first pci_restore_state() called from
+> > > __pci_reset_bus() -> pci_bus_restore_locked() -> pci_dev_restore(),
+> > > I think!?
+> >
+> > Inspired by Ilpo's comment.  I add some debug messages based on
+> > linux-next's tag 'next-20240809' to understand the code path of
+> > pci_reset_bus():
+> >
+> > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> > index ffaaca0978cb..3ee71374f1de 100644
+> > --- a/drivers/pci/pci.c
+> > +++ b/drivers/pci/pci.c
+> > @@ -5133,8 +5133,10 @@ static void pci_dev_save_and_disable(struct
+> > pci_dev *dev)
+> >          * races with ->remove() by the device lock, which must be
+> > held by
+> >          * the caller.
+> >          */
+> > -       if (err_handler && err_handler->reset_prepare)
+> > +       if (err_handler && err_handler->reset_prepare) {
+> > +               pci_info(dev, "%s: %pF\n", __func__,
+> > err_handler->reset_prepare);
+> >                 err_handler->reset_prepare(dev);
+> > +       }
+> >
+> >         /*
+> >          * Wake-up device prior to save.  PM registers default to D0
+> > after @@ -5144,6 +5146,7 @@ static void
+> > pci_dev_save_and_disable(struct pci_dev *dev)
+> > pci_set_power_state(dev, PCI_D0);
+> >
+> >         pci_save_state(dev);
+> > +       pci_info(dev, "%s: PCI state_saved is %s\n", __func__,
+> > dev->state_saved ? "true" : "false");
+> >         /*
+> >          * Disable the device by clearing the Command register,
+> > except for
+> >          * INTx-disable which is set.  This not only disables MMIO
+> > and I/O port @@ -5655,6 +5658,10 @@ static void
+> > pci_bus_save_and_disable_locked(struct pci_bus *bus)
+> >         struct pci_dev *dev;
+> >
+> >         list_for_each_entry(dev, &bus->devices, bus_list) {
+> > +               pci_info(dev, "%s: PCI state_saved is %s, and %s
+> > subordinate\n",
+> > +                        __func__,
+> > +                        dev->state_saved ? "true" : "false",
+> > +                        dev->subordinate ? "has" : "does not have");
+> >                 pci_dev_save_and_disable(dev);
+> >                 if (dev->subordinate)
+> >                         pci_bus_save_and_disable_locked(dev->subordinat=
+e);
+> > @@ -5671,6 +5678,10 @@ static void pci_bus_restore_locked(struct
+> > pci_bus *bus) struct pci_dev *dev;
+> >
+> >         list_for_each_entry(dev, &bus->devices, bus_list) {
+> > +               pci_info(dev, "%s: PCI state_saved is %s, and %s
+> > subordinate\n",
+> > +                        __func__,
+> > +                        dev->state_saved ? "true" : "false",
+> > +                        dev->subordinate ? "has" : "does not have");
+> >                 pci_dev_restore(dev);
+> >                 if (dev->subordinate)
+> >                         pci_bus_restore_locked(dev->subordinate);
+> > @@ -5786,8 +5797,10 @@ static int pci_bus_reset(struct pci_bus *bus,
+> > bool probe) if (!bus->self || !pci_bus_resettable(bus))
+> >                 return -ENOTTY;
+> >
+> > -       if (probe)
+> > +       if (probe) {
+> > +               pci_info(bus->self, "%s: probe is true.  So return 0
+> > directly", __func__);
+> >                 return 0;
+> > +       }
+> >
+> >         pci_bus_lock(bus);
+> >
+> > @@ -5858,10 +5871,12 @@ static int __pci_reset_bus(struct pci_bus
+> > *bus) int rc;
+> >
+> >         rc =3D pci_bus_reset(bus, PCI_RESET_PROBE);
+> > +       pci_info(bus->self, "%s: pci_bus_reset() returns %d\n",
+> > __func__, rc); if (rc)
+> >                 return rc;
+> >
+> >         if (pci_bus_trylock(bus)) {
+> > +               pci_info(bus->self, "%s: pci_bus_trylock() returns
+> > true\n", __func__);
+> >                 pci_bus_save_and_disable_locked(bus);
+> >                 might_sleep();
+> >                 rc =3D pci_bridge_secondary_bus_reset(bus->self);
+> > @@ -5881,6 +5896,7 @@ static int __pci_reset_bus(struct pci_bus *bus)
+> >   */
+> >  int pci_reset_bus(struct pci_dev *pdev)
+> >  {
+> > +       pci_info(pdev, "%s: %s", __func__,
+> > !pci_probe_reset_slot(pdev->slot) ? "true" : "false");
+> >         return (!pci_probe_reset_slot(pdev->slot)) ?
+> >             __pci_reset_slot(pdev->slot) : __pci_reset_bus(pdev->bus);
+> >  }
+> >
+> > And, have the information of VMD PCIe devices with the built kernel:
+> >
+> > 10000:e0:06.0 PCI bridge [0604]: Intel Corporation 11th Gen Core
+> > Processor PCIe Controller [8086:9a09] (rev 01) (prog-if 00 [Normal
+> > decode])
+> >   ...
+> >   Capabilities: [200 v1] L1 PM Substates
+> >     L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+
+> > L1_PM_Substates+ PortCommonModeRestoreTime=3D45us PortTPowerOnTime=3D50=
+us
+> >     L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
+> >       T_CommonMode=3D0us LTR1.2_Threshold=3D0ns
+> >     L1SubCtl2: T_PwrOn=3D0us
+> >
+> > 10000:e1:00.0 Non-Volatile memory controller [0108]: Sandisk Corp WD
+> > Blue SN550 NVMe SSD [15b7:5009] (rev 01) (prog-if 02 [NVM Express])
+> >   ...
+> >   Capabilities: [900 v1] L1 PM Substates
+> >     L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
+> > L1_PM_Substates+ PortCommonModeRestoreTime=3D32us PortTPowerOnTime=3D10=
+us
+> >     L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
+> >       T_CommonMode=3D0us LTR1.2_Threshold=3D101376ns
+> >     L1SubCtl2: T_PwrOn=3D50us
+> >
+> > We can see the NVMe has expected LTR1.2_Threshold=3D101376ns, but the
+> > PCIe bridge has LTR1.2_Threshold=3D0ns.
+> >
+> > Then, check the dmesg.  I notice the debug messages:
+> >
+> > pci 10000:e0:06.0: PCI bridge to [bus e1]
+> > pci 10000:e0:06.0: Primary bus is hard wired to 0
+> > pci 10000:e1:00.0: pci_reset_bus: false
+> > pci 10000:e0:06.0: pci_bus_reset: probe is true.  So return 0 directly
+> > pci 10000:e0:06.0: __pci_reset_bus: pci_bus_reset() returns 0
+> > pci 10000:e0:06.0: __pci_reset_bus: pci_bus_trylock() returns true
+> > pci 10000:e1:00.0: pci_bus_save_and_disable_locked: PCI state_saved is
+> > false, and does not have subordinate
+> > pci 10000:e1:00.0: pci_dev_save_and_disable: PCI state_saved is true
+> > Freeing initrd memory: 75236K
+> > pci 10000:e1:00.0: pci_bus_restore_locked: PCI state_saved is true,
+> > and does not have subordinate
+> >
+> > So, the code path is:
+> >
+> > vmd_enable_domain()
+> >   pci_reset_bus()
+> >     __pci_reset_bus()
+> >       pci_bus_reset()
+> >         pci_bus_save_and_disable_locked()
+> >           pci_dev_save_and_disable()
+> >         pci_bus_restore_locked()
+> >           pci_dev_restore()
+> >
+> > And, from the debug messages, I learned only NVMe 10000:e1:00.0 does
+> > pci_save/restore_state.  But, the PCIe bridge 10000:e0:06.0 does not.
+> > So, PCIe bridge 10000:e0:06.0 does not restore state correctly.
+> >
+> > Besides, it is NVMe 10000:e1:00.0's bus [e1] been reset, not the VMD's
+> > bus in vmd_enable_domain().
+> > * Bus "e1" has only NVMe 10000:e1:00.0
+> > * VMD's bus in vmd_enable_domain() has PCIe bridge 10000:e0:06.0, NVMe
+> > 10000:e1:00.0 and SATA Controller 10000:e0:17.0.
+> >
+> > Here is the PCI tree:
+> >
+> > -+-[0000:00]-+-00.0  Intel Corporation Device 9a04
+> >  |           +-02.0  Intel Corporation Tiger Lake-LP GT2 [UHD
+> > Graphics G4] |           +-04.0  Intel Corporation TigerLake-LP
+> > Dynamic Tuning Processor Participant
+> >  |           +-06.0  Intel Corporation RST VMD Managed Controller
+> >  |           +-07.0-[01-2b]--
+> >  |           +-08.0  Intel Corporation GNA Scoring Accelerator module
+> >  |           +-0a.0  Intel Corporation Tigerlake Telemetry Aggregator
+> > Driver |           +-0d.0  Intel Corporation Tiger Lake-LP
+> > Thunderbolt 4 USB Controller
+> >  |           +-0d.2  Intel Corporation Tiger Lake-LP Thunderbolt 4
+> > NHI #0 |           +-0e.0  Intel Corporation Volume Management Device
+> > NVMe RAID Controller
+> >  |           +-14.0  Intel Corporation Tiger Lake-LP USB 3.2 Gen 2x1
+> > xHCI Host Controller
+> >  |           +-14.2  Intel Corporation Tiger Lake-LP Shared SRAM
+> >  |           +-14.3  Intel Corporation Wi-Fi 6 AX201
+> >  |           +-15.0  Intel Corporation Tiger Lake-LP Serial IO I2C
+> > Controller #0 |           +-15.1  Intel Corporation Tiger Lake-LP
+> > Serial IO I2C Controller #1 |           +-16.0  Intel Corporation
+> > Tiger Lake-LP Management Engine Interface |           +-17.0  Intel
+> > Corporation RST VMD Managed Controller |           +-1f.0  Intel
+> > Corporation Tiger Lake-LP LPC Controller |           +-1f.3  Intel
+> > Corporation Tiger Lake-LP Smart Sound Technology Audio Controller
+> >  |           +-1f.4  Intel Corporation Tiger Lake-LP SMBus Controller
+> >  |           +-1f.5  Intel Corporation Tiger Lake-LP SPI Controller
+> >  |           \-1f.6  Intel Corporation Ethernet Connection (13) I219-V
+> >  \-[10000:e0]-+-06.0-[e1]----00.0  Sandisk Corp WD Blue SN550 NVMe SSD
+> >               \-17.0  Intel Corporation Tiger Lake-LP SATA Controller
+> >
+> > According the findings above, to ensure the devices on the VMD bus
+> > have correctly states, seems pci_save_state() all the devices before
+> > pci_reset_bus(), and pci_restore_state() all the devices after
+> > pci_reset_bus() is the correct answer.
+>
+> Did you get a chance to test this theory?
+
+Yes.  But, according the findings in the previous mail talking about
+restoring parent's LTR1.2_Threshold with a wrong value 0, it can be
+shrunk to save/restore the PCIe bridge's state.
+
+Preparing a new patch set.
+
+Jian-Hong Pan
 
