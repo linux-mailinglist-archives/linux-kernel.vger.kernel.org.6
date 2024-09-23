@@ -1,230 +1,220 @@
-Return-Path: <linux-kernel+bounces-335852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 764AD97EB81
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:26:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44F2A97EB87
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:33:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAE601F21EA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:26:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F804B216B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F79198E6C;
-	Mon, 23 Sep 2024 12:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D580C198E63;
+	Mon, 23 Sep 2024 12:33:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mntMiE4x"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="o7z9l6kI"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2069.outbound.protection.outlook.com [40.107.96.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E33433D6;
-	Mon, 23 Sep 2024 12:26:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727094397; cv=none; b=UdNnV0Jxd0OqtcLf1Ol3YXu4ZtCzreS6KebZVwgWFvgVTUSJH4uXq1JslnPWvqaLkJMaoOT1le7ZUaMdivbMfJH560Lqr01GJF/14qDAux/d6WSNJE2uFLz6ZP3oiX6o0GECxXZOXNkWlPmgExdw1NYt7eF1bw4K9X4O9VTaHLM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727094397; c=relaxed/simple;
-	bh=0+rHveRIzeX/k1EnmHO4P7BXvM8+tKhGRjZgSAf/ASw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f7JbquNgwz36144lJKbCdeBxdrlL6GRpXkHzgWAoTwQoHAmcaFJ//LJE3FSMo42SjJ7O2pTZ9jrhYg+RCYTZhM2sweyNf9j3J73CTpMq1WWoM5+yn6/Jb8vG98bOQOL31y25Gi9hBX6Pl3VAAwCZ3F5QxpOViLijBIQm+bDGXSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mntMiE4x; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727094396; x=1758630396;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0+rHveRIzeX/k1EnmHO4P7BXvM8+tKhGRjZgSAf/ASw=;
-  b=mntMiE4xRxWsr3oWRkZ4qhiTyFGqtGDcYcRpUebLiNdjiqE9y9T9D/Yp
-   BoPC0wOU13A9/QW9LgckbnOZ0/wznRJURG9NuZ8M3vIr9KF5oSAtTKJzB
-   0hJq5OKjIlQsEcAis3+ogNCGe1BjEjCFizYUd5tFyMM6N8orNxVTLjVzW
-   K7QY6U+04TZG4uFHzDlQT4Ad9DTNHw2p2MoYFtibbZ/zNTNcgWULIcRj4
-   piXwnedTnm45PmIAjbNeeTk4ArCkAdfRApw9fn4dmZpIsaHn9dFGX7Bap
-   F8TffwtBU+pImCE72UM+hV/g8yDFsmhXHjC8smHdmkQONQOYuMmprzahF
-   A==;
-X-CSE-ConnectionGUID: nzSV0/ptRXyCl3rpIe7QKg==
-X-CSE-MsgGUID: XLRitA9FT7C5fhAMiDxOIQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="51455648"
-X-IronPort-AV: E=Sophos;i="6.10,251,1719903600"; 
-   d="scan'208";a="51455648"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 05:26:29 -0700
-X-CSE-ConnectionGUID: b7iqpQ3lR4y3Ebju69WcTQ==
-X-CSE-MsgGUID: oJQiPuevRvKsjCiiOn7adw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,251,1719903600"; 
-   d="scan'208";a="71046093"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 05:26:27 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1ssi92-0000000BzCk-4Ato;
-	Mon, 23 Sep 2024 15:26:24 +0300
-Date: Mon, 23 Sep 2024 15:26:24 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Serge Semin <fancer.lancer@gmail.com>
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Viresh Kumar <vireshk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	stable@vger.kernel.org, Ferry Toth <fntoth@gmail.com>
-Subject: Re: [PATCH v3 1/1] dmaengine: dw: Select only supported masters for
- ACPI devices
-Message-ID: <ZvFecC6u0rFczFR9@smile.fi.intel.com>
-References: <20240920155820.3340081-1-andriy.shevchenko@linux.intel.com>
- <ajcqxw6in7364m6bp2wncym65mlqf57fxr6pc4aor3xbokx2cu@2wve6fdtu3vz>
- <ZvElEesYTX-89u_g@smile.fi.intel.com>
- <7cy2ho5lysh4tqk3vqz6rv67dadsi33bszx234vpu7bvslnddp@ed6zxezx7nwf>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958A51714DF;
+	Mon, 23 Sep 2024 12:32:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727094780; cv=fail; b=uxT0juARBgOTuAyQNzdSRTVsfIsq8TDyBEl7O58SIcdd+c5yPZqFDa0uT3PvN48P04IRvuPoGjGaKbBVkk1E4zmfUtFZXe6X+Qt0xpNtu5B0jIlprU2NcHuE3leSQvVMGQiz4RmrZpqpo0qii9FUNA2n3tEf9ir/4w+rHYBFnoY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727094780; c=relaxed/simple;
+	bh=wT5bZiKKoW3L/ffG7RX5UbbaU1c2Deb/nXGLHSKePVY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NgRsJDqoiuiCVpJfAK9/VRwcX0zxBEqSJmmmmP8pyQh49AV6RKKfQtINgY/9bX8wb8fhB7MD/9NpzUPMhVVrr9NarEFCTMdhOafbFFA9ft70ug2/WSda/W2zuD5RTgAViGcsUds0QELx30LKz06wpmUKSiCRUTb8Ro23Fgr3ykQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=o7z9l6kI; arc=fail smtp.client-ip=40.107.96.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ypZsqzgCUXZCpXHcWQxTxmFjypXKw3dQbuR+5VjuMQ7X8RDcvpaEvNA7hjF8GB4THbBCW2NRyy4Pi31RHJbFshOmAJu8wpcU99ZdJUfK5ltt40hkfkZSG5yYrfJaWzTPVKPnbYJuX2aZSnkGWVTDclSVgiwLHA+SYvfufqbyfp9AGWOI5SRDkZrF67llt1GF6wD3wqkNZ57qKI7BZanbmVKabR+Qns23vW3mXaNQrORg98yTe+5+2i9upFp6X3lZYUpVAQR8rAqttK45cBRntpYITtDiDdI5nk/B1m7kHWggEiXZ9TgEEOgaIz4mewg5yu81GegxKmk6eYKxqQkowg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ekd7HZB+CGDSsjupV/qJVcGpPDLen7CAMpIeKRBAJOE=;
+ b=D2eRiMxWH8XiNrjHoUXYaut067hQjneH88zldtA7VlkGvw3hL6ibi7d6I4XOn3XCxpEk2tY96lllmUVr8kAUNfX61UF7w56zusnEXgH1vy249UYIWFJIFcdFUEIy+zfsFlDG3dQwNtiF7cQogQ45JAttQ978wFbS3QQ9Qb3rzLrO/U0MeKZvjBzwD3zOHk8Z+D0YNLJgvN+9txALNC3DZ1RaA4rbh8yD6PhMXSxMEkZbpqMg/Mm7HvnLOQxFfn5pWqsRhGNaHWX0Wpw8476+Au1HLA5n5lyw7a4Wdc9o3tKdZaZkRbD/kqAtIzUt9HjQ3obktaQcXrcOxiAm2EHZqA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ekd7HZB+CGDSsjupV/qJVcGpPDLen7CAMpIeKRBAJOE=;
+ b=o7z9l6kIpvarDsVkJoGRgzmS3r9wTP2rsLJdcgKqyV7ds1ggQThxJVmSnJMQZ4+qqKzfeduAtgESH5sXD5VoDi3cdU2b7GmP68U/Hl9cOVKrWPh/B5nM4/eqab1tttwQQbek+PgYeehkCznH7jQYbFv99OfmMZ2d/u6VfROeIc0=
+Received: from MW4PR03CA0140.namprd03.prod.outlook.com (2603:10b6:303:8c::25)
+ by SA1PR12MB6893.namprd12.prod.outlook.com (2603:10b6:806:24c::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.25; Mon, 23 Sep
+ 2024 12:32:51 +0000
+Received: from CO1PEPF000044F3.namprd05.prod.outlook.com
+ (2603:10b6:303:8c:cafe::5d) by MW4PR03CA0140.outlook.office365.com
+ (2603:10b6:303:8c::25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.30 via Frontend
+ Transport; Mon, 23 Sep 2024 12:32:50 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1PEPF000044F3.mail.protection.outlook.com (10.167.241.73) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7918.13 via Frontend Transport; Mon, 23 Sep 2024 12:32:50 +0000
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 23 Sep
+ 2024 07:32:48 -0500
+Received: from xhdakumarma40.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Mon, 23 Sep 2024 07:32:44 -0500
+From: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+To: <broonie@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>
+CC: <michal.simek@amd.com>, <linux-spi@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <git@amd.com>, <amitrkcian2002@gmail.com>,
+	Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+Subject: [PATCH] dt-bindings: spi: xilinx: Add clocks & clock-names properties
+Date: Mon, 23 Sep 2024 18:02:42 +0530
+Message-ID: <20240923123242.2101562-1-amit.kumar-mahapatra@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7cy2ho5lysh4tqk3vqz6rv67dadsi33bszx234vpu7bvslnddp@ed6zxezx7nwf>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB04.amd.com: amit.kumar-mahapatra@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044F3:EE_|SA1PR12MB6893:EE_
+X-MS-Office365-Filtering-Correlation-Id: c62ad539-2d5e-43f5-1567-08dcdbcbd691
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?LEImL5ZPRzhyAAV3Pdr9ZTs/ySzRDSodJMlHMkN3GUy+tLDSE5cOz+nvCD+0?=
+ =?us-ascii?Q?KShJOg7TH7oMV/P/NtZJ4VHmcOikeBs18CGkHUMWcHSYBP1lfbFEehWQTAPm?=
+ =?us-ascii?Q?hWmTZFqQdJrtydFoWuNTs3TytztRDnIDgxAUXs16Norkk/8pdvPVqMml3iel?=
+ =?us-ascii?Q?vo7IH/Xh1eYotBzHyYRKTkBQodbYzji8z7OnkK2L5US2rz8oWmgV3sYq0GFS?=
+ =?us-ascii?Q?3J+OfoaivSHSqLaSGh7RnnKnVl3xVk8gMM0uQ3Bhxgc6oQrfhayo4YWPsmMh?=
+ =?us-ascii?Q?za/B/KyV652nduuFjFwu2VxQAB43Fag9R5BKDHcL01c0TX1KXsLBPFlhsVP9?=
+ =?us-ascii?Q?dmuhfjhrrlVUyC1fJKzDzc+PTxJh9YpbwIzIZi4ECzisZ+1aKhObVzqLcJKj?=
+ =?us-ascii?Q?1S79pWCNrthtlVNdsF5eDUos+elQ4eNHUMHdW1GBMQ2lAqjtohOplw03WV1+?=
+ =?us-ascii?Q?EbyGveM8w3IaHy/DD/ac+ApNQVKZQrGec3ZI2LyiTUHAhhmicNTdKuwNcB/H?=
+ =?us-ascii?Q?iTC2PsmJTOpMZmvLLcH4A71mUu6JF8HLccxyK8VCvsMrgFHcrOYq9hrgzBfz?=
+ =?us-ascii?Q?PYwWK6R37ECP5aq1pzeNgk3I5vXm96jotu860MBo6EGZAp++Ntd5u/WZCQWu?=
+ =?us-ascii?Q?VLFFsffWXA6T2t6eF2kBewFq0fZ/o0F7oV7DwZmbr9F0jayOpfY5haVJ711G?=
+ =?us-ascii?Q?2NViSmih2DgC/INhdm8RE6Y+4h2xy9lnf0sQqa/hTS0noN56U8lOCgb4mYZA?=
+ =?us-ascii?Q?yV+LzWifa1LfYcq9Pef94dMJfBl1416ydEH9w/nnDrMWyYmZ/oexVyEgTXCe?=
+ =?us-ascii?Q?oHVRXHjqY9m0fHxmeNYvOsgWs98nL7KUA39IvKKNRNVInkbddknqKhMMajDf?=
+ =?us-ascii?Q?Cdh2J6YL9ZyVQLFpS6mM2FHHs3v/vgEiXDNczk6Aedy+LNWZo1/+4w5W4BR+?=
+ =?us-ascii?Q?D+Ns1QeKs4Z1JNtCNbmm6pBEpep7RBAYFICpo18o2InSH4CY65OXBdY/rw7O?=
+ =?us-ascii?Q?7DwY1GNxCzoLrIcSlgoPKU5waWoor+rssbnKKbIltSygbllzbpybubR4hqHJ?=
+ =?us-ascii?Q?CEHsqyBtlx9nyM/PB7F+QJTKl6nkhsIU4XtkPsndGYUCnhMO0Ez7DZ31KhzG?=
+ =?us-ascii?Q?96+fHrs0qjwCXipza1O5rI2Ma1fR3eAHjgp9llrSnRtHbDbByr6DUeMD8RLK?=
+ =?us-ascii?Q?ZKVtaTM/25VI4TfVM6EysSD6gZ9jpvdTMAKSyXStluhDQ6fWmh+n1bKiiKnF?=
+ =?us-ascii?Q?KWJzi1eXTg2f5Ut9v5BSA/a9fzCXquCvrA9T/i5SdQTSzKK77rg19wB2QiMw?=
+ =?us-ascii?Q?xFRMfJZ6I5iDTcbbr3Oa4U4t3sR1Vrf9K1J2BwQlVFPfgWLJf0i7FKDYLT90?=
+ =?us-ascii?Q?hJ/JtwnHKA/SAR6ng/10p6b9RAU+AeCp+i7wJynJProzZr/GR1o5U28ESxbj?=
+ =?us-ascii?Q?ACCu8/HdgiLYle67h8Lxc8AhNL2swY0l?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2024 12:32:50.2569
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c62ad539-2d5e-43f5-1567-08dcdbcbd691
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044F3.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6893
 
-On Mon, Sep 23, 2024 at 02:57:27PM +0300, Serge Semin wrote:
-> On Mon, Sep 23, 2024 at 11:21:37AM +0300, Andy Shevchenko wrote:
-> > On Mon, Sep 23, 2024 at 01:01:08AM +0300, Serge Semin wrote:
-> > > On Fri, Sep 20, 2024 at 06:56:17PM +0300, Andy Shevchenko wrote:
+Include the 'clocks' and 'clock-names' properties in the AXI Quad-SPI
+bindings. When the AXI4-Lite interface is enabled, the core operates in
+legacy mode, maintaining backward compatibility with version 1.00, and
+uses 's_axi_aclk' and 'ext_spi_clk'. For the AXI interface, it uses
+'s_axi4_aclk' and 'ext_spi_clk'.
 
-...
+Signed-off-by: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+---
+BRANCH: for-next
+---
+ .../devicetree/bindings/spi/spi-xilinx.yaml   | 29 +++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-> > > So adding them to struct
-> > > dw_dma_chip_pdata doesn't seem like a good idea seeing it contains the
-> > > generic DW DMA controller info.
-> > 
-> > So far there is no evidence that the channels are integrated differently on
-> > the same DMA controller over all hardware that uses this IP.
-> 
-> I've got one device (which currently isn't supported by the vanilla
-> kernel) which DW DMA-controller have a weird feature of being able to
-> communicate with one of the peripherals via both available masters.)
-> So the master IDs order can differ from what is currently set by
-> default (for ACPI).
-> 
-> Anyway regarding the amount of the master I/F-es, yes, I failed to
-> find any platform with more than two masters synthesized in. But based
-> on the DW DMAC IP-core databook there can be up to four of them (see
-> the DMAH_NUM_MASTER_INT parameter).
-
-Not sure about weirdness, but IIRC those Intel ones should support that
-configuration as well, as the peripheral and memory busses are the same
-at the end.
-
-> > > On the contrary my implementation
-> > > seems a bit more coherent since it just changes the default slave IDs
-> > > defined in the dw_dma_acpi_filter() method and initialized in the
-> > > dw_dma_slave instance without adding slave-specific fields to the
-> > > generic controller data.
-> 
-> > The default enumeration for PCI + ACPI or pure ACPI devices is not
-> > changed with my patch, but actually makes it better (increases granularity).
-> > The defaults are platform specific and that's what driver_data is for.
-> 
-> Since it's a default setting for the particular controller then it
-> seems it would be better to signify that semantic in the fields name.
-> Moreover seeing it's a per-platform setup I would recomment to move
-> these fields to the dw_dma_platform_data structure instead.
-> (Please see my last comment regarding this.)
-> 
-> > While you like your solution, the problem with it that it doesn't cover
-> > different orders, so it's half-baked solution, I think. Mine doesn't
-> > change the status quo about integration (see above) and has better approach
-> > regarding different ordering.
-> 
-> Well, your solution doesn't cover the different order of the master
-> IDs either,
-
-Correct, I explicitly mentioned that that neither of proposed solutions cover
-this right now.
-
-> because the IDs order is still fixed but on the per-controller
-> basis. Yes, in that regard your approach is bit more comprehensive,
-> but it still remains half-baked since, as you said yourself further,
-> it doesn't cover the cases of the non-default master IDs combination.
-
-Right. And I propose to follow this way as long as we have no other devices
-in the wild. I.o.w. let's solve the problem when it appears.
-
-> My solution doesn't change the status quo either, but merely fixes the
-> case which is currently incorrectly handled in the
-> dw_dma_acpi_filter() method. The rest remains the same.
-> (See further before responding to this comment.)
-> 
-> > Both implementations have a flaw regarding per-channel master configuration.
-> 
-> Right, none of our approaches provide a complete solution of the
-> problem with a per-peripheral device master IDs setup. Based on this and
-> what was said in the previous comments chunk, I would normally prefer to
-> choose a simpler, more localised, less invasive fix, which is provided
-> in my version of the change. That's why I started the discussion
-> in the first place.
-
-
-> (Please see my last comment before answering to this one.)
-
-> > > What seems like a much better alternative to the both approaches, is
-> > > to use the dw_dma_slave instance defined in the mrfld_spi_setup()
-> > > method for the Intel Merrifield SPI PXA2xx DMA-interface in
-> > > drivers/spi/spi-pxa2xx-pci.c. But AFAICT that data is left unused
-> > > since the DMA-engine handle and connection parameters are determined
-> > > by the channel name. Right? Is it possible to make use of the
-> > > filter-function specified to the dma_request_slave_channel_compat()
-> > > method?
-> 
-> > Unfortunately no, in ACPI case the only data we use is the name (index) of
-> > the channel in the respective resources. Everything else is done automatically.
-> 
-> Right, but AFAICS ACPI doesn't provide the complete settings in this
-> case.
-
-I would even say in many sophisticated DMA controller cases... :-(
-
-> I thought about some combined solution: retrieve the DMAC
-> channel via the standard name/index-based approach and then pass the
-> dw_dma_slave settings via the custom filter method specified by the
-> client driver, thus making use of what is implemented in the
-> Merrifield SPI PXA2xx driver. Alas implementing this approach would
-> require to alter the generic DMA-engine core somehow.(
-
-This sounds way too far from KISS.
-
-> In anyway if you prefer your version of the fix, fine by me. I've
-> provided my reasoning above. If it wasn't enough to persuade you I
-> won't be insisting on my change anymore especially seeing its your and
-> Varesh duty to maintain the driver.
-
-Yes, I still prefer mine.
-
-> But, again IMO, it seems to be
-> better to add the default_{m,p}_master/d{p,m}_master/etc fields to the
-> dw_dma_platform_data structure since the platform-specific controller
-> settings have been consolidated in there. The dw_dma_chip_pdata
-> structure looks as more like generic driver data storage.
-
-I don't think that is correct place for it. The platform data is specific
-to the DMA controller as a whole and having there the master configuration
-will mean to have the arrays of them. This OTOH will break the OF setup
-where this comes from the slave descriptions and may not be provided with
-DMA controller, making it imbalanced. Yes, I may agree with you that chip data
-is not a good place either, but at least it isolates the case to PCI + ACPI /
-pure ACPI devices (and in particular we won't need to alter Intel Quark case).
-
-Ideally, we should parse the additional properties from ACPI for this kind
-of DMA controllers to get this from the _slave_ resources. Currently this is
-not done, but anyone may propose a such (would you like to volunteer?).
-
-...
-
-TL;DR: If you are okay with your authorship in v3, I prefer it over other
-versions with the explanations given in this email thread.
-
+diff --git a/Documentation/devicetree/bindings/spi/spi-xilinx.yaml b/Documentation/devicetree/bindings/spi/spi-xilinx.yaml
+index 4beb3af0416d..9dfec195ecd4 100644
+--- a/Documentation/devicetree/bindings/spi/spi-xilinx.yaml
++++ b/Documentation/devicetree/bindings/spi/spi-xilinx.yaml
+@@ -12,6 +12,25 @@ maintainers:
+ allOf:
+   - $ref: spi-controller.yaml#
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: xlnx,axi-quad-spi-1.00.a
++    then:
++      properties:
++        clock-names:
++          items:
++            - const: s_axi_aclk
++            - const: ext_spi_clk
++
++    else:
++      properties:
++        clock-names:
++          items:
++            - const: s_axi4_aclk
++            - const: ext_spi_clk
++
+ properties:
+   compatible:
+     enum:
+@@ -25,6 +44,12 @@ properties:
+   interrupts:
+     maxItems: 1
+ 
++  clocks:
++    maxItems: 2
++
++  clock-names:
++    maxItems: 2
++
+   xlnx,num-ss-bits:
+     description: Number of chip selects used.
+     minimum: 1
+@@ -39,6 +64,8 @@ required:
+   - compatible
+   - reg
+   - interrupts
++  - clocks
++  - clock-names
+ 
+ unevaluatedProperties: false
+ 
+@@ -49,6 +76,8 @@ examples:
+       interrupt-parent = <&intc>;
+       interrupts = <0 31 1>;
+       reg = <0x41e00000 0x10000>;
++      clocks = <&clkc 72>, <&clkc 73>;
++      clock-names = "s_axi4_aclk", "ext_spi_clk";
+       xlnx,num-ss-bits = <0x1>;
+       xlnx,num-transfer-bits = <32>;
+     };
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
 
