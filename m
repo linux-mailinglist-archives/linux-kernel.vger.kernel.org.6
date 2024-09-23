@@ -1,149 +1,136 @@
-Return-Path: <linux-kernel+bounces-335866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9809997EBBB
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:53:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4173097EBBF
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:54:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C95B31C20DCC
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:53:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04F5C282C4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6555C1991AA;
-	Mon, 23 Sep 2024 12:53:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485821990D2;
+	Mon, 23 Sep 2024 12:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l32Hvrc9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="aS7BgPCr"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1747A80C0C;
-	Mon, 23 Sep 2024 12:53:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F91197A7F
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 12:54:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727096006; cv=none; b=UlaL6BVOekyIGBN8sjch92BeMrvIwlQPiblbCGSYiOUU3AoHZKIm02roHviJYWyFh3/js9/hDpqHe+jyBcC0HIE/esfNj4RrqgnV7aoDPXu8mo5URgwTOr+x1XyXoMiNX8QbVDvsHCoNBywzUjlG3K7mYL3XRk1hARYttHJXG2c=
+	t=1727096071; cv=none; b=VbxMo0Rkr5EXv2EYigS5koeLDzIpA+KrjIWlU39R7hydevwPjdErs4W4JiAT9jCYuW5Ho/biTE9spQ+v+Rdc/SwQfL/9ZJZdEMraDXj63F+ZCUqt0iLbSGKihVZlcvdxHXinbQyjZ5hAFbmOhpPjZvoezTxdS7NMiNLrjcvyafU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727096006; c=relaxed/simple;
-	bh=U85natxC5lKU5jfLHXEMyFt+8HVrr2Afqb2PHGISf48=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gJSOwQ+JvoQq0fxJ3TIO89uYPhxA1QhCLcJ8+vIRgS1ScEvdGPuaID8WlakAe/KBUyRHIEO9dQ3XCrdrYApJA1QmxHOBQAY4/STQei3qFTg3cyDXuZFKlnTPC67Tq0+7wJU93f7MSZAq2NTdDGxKkQtmNg1bD2ENW/dp/7dGUzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l32Hvrc9; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727096005; x=1758632005;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=U85natxC5lKU5jfLHXEMyFt+8HVrr2Afqb2PHGISf48=;
-  b=l32Hvrc9iFSrYlMetHxTLeY6IlXlK//GM82le+PJdujv4L08+DDCdw1T
-   71vtDm8wWIlXxvLZBUllC70iFETH7ReMu9U6cdLgCVPM7uyPsw1eSiDlz
-   dOLxSp145a5b5/2aOiccLPLcG1L7Epe3snPi8D+nc8gP1irVKdsrs9LLm
-   6X4V1v0fPbGfTXtpV1zfr3uA/ODaLAVXlWF1wVWPiDCn/sKFQVY4bwNzh
-   yBsrGC32h+fkmuFH8/6Vz3Fx1uStyS1mdw3vvYHNV5X+hiOiGv8CXmVx0
-   EqM7TtClE1CWMXi0RLkRrFnQ6Lb1DfVq3yz+gKFk+2l5z7sqZOdCaZh1Y
-   A==;
-X-CSE-ConnectionGUID: 2RnFhkflS5ecRmij+rRyFg==
-X-CSE-MsgGUID: fHjezW+GR7WnlCTXIOR2zQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="37413303"
-X-IronPort-AV: E=Sophos;i="6.10,251,1719903600"; 
-   d="scan'208";a="37413303"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 05:53:24 -0700
-X-CSE-ConnectionGUID: 5zE+S9xjQg+xOlbaNc96dQ==
-X-CSE-MsgGUID: BBTLqyh9QSaCn0jBQvQwcQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,251,1719903600"; 
-   d="scan'208";a="70646530"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 05:53:23 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1ssiZ6-0000000Bzph-1uDI;
-	Mon, 23 Sep 2024 15:53:20 +0300
-Date: Mon, 23 Sep 2024 15:53:19 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Roger Quadros <rogerq@kernel.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Chen <peter.chen@kernel.org>,
-	Pawel Laszczak <pawell@cadence.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v1 1/1] sub: cdns3: Use predefined PCI vendor ID constant
-Message-ID: <ZvFkv-xrs1ul7-oI@smile.fi.intel.com>
-References: <20240913131710.3630560-1-andriy.shevchenko@linux.intel.com>
- <d6ec3b8b-9405-49fa-ba39-a0bf6311a489@kernel.org>
+	s=arc-20240116; t=1727096071; c=relaxed/simple;
+	bh=fkdX2qdyVa8XQQhzqRNN1qcWXCIclow1HT74EdiUjeM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G+BlCXnh3PwnJH/6iLyElOfO/OEwEurH155C2ev4eNQQK537qrVBET4LYjcQNuLBuoaTKj5tfQjZ0+k7V9T3kvKjGUkQkfBFBkdV85eRWN7siczkeRW39QkguByf1SKh0BYahD+Hbqmn0hjx+r8smkCzK50tvesgH3fFQWhJ5Fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=aS7BgPCr; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cb806623eso36029185e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 05:54:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727096068; x=1727700868; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yh4YI8MDFswPwJ6paWfDgj1WYX5E3EtWwUyMI7c8GPQ=;
+        b=aS7BgPCrJcDRZQp03LMTlv3F0/pM3Bb18+BsxlnyCmlinZN4W7CWafWt2Pg7445Lmi
+         tvJ/juLHsVS0DLQ15/SK7S+19lggm8CQ8FyYNx0Otc53vZXQV2R5B2ICPJa7p5aoXesX
+         Q0OdGwwFjRhlED368hzfmMdW2iNRkORvE2jpnWRUFyGGWRVY4qOF2w6XiR0qU3DCdWfR
+         n4/YZu2wCetL5PTuQsZNZV7mSfVUX6GfuT5pwjqfWIrzs8oZZk/h48KuuuwLLubpQnzf
+         SZLA2E/xbOGG8Kr/W3QauI475WRkUEKChpD9RkOZo2V61w1CtcGAm5g2YgRR3k9LnbzX
+         eQoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727096068; x=1727700868;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yh4YI8MDFswPwJ6paWfDgj1WYX5E3EtWwUyMI7c8GPQ=;
+        b=gEV2bYH7PicuP/BBzAoH7HAYnnaA0HntCzWHB6YWFXdkYxi9qkh6NBfaXw9c4Y0YoU
+         BXUK6qi9op3rWCX3BFQFFyu9Y6RpIvDdedveLTqe8Fw+FmQujAwXdylIEr/kqL0f1V+/
+         8aiah8baK2MVN4LSXk1QvK2Q1ztmyUD1QuyEknqrY4IgqoMpEvIh/EX34o4px9IcmqXJ
+         719cz31cwPFK1GmQYzHToDuFUWUvQ/6XjdeoKjVaxT/cISVq/l536XDcbXnB8Zt0WPuB
+         jcSLTLujzU3s5gCnVzeHxW8E5Cyia3rNKsvXJ14bJboIOwhR0kYrvDomLmipGsWLrsES
+         9FPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUqVxOn4upNui1NHSBtv39NZdE0pFqH1sV/D2Ty7xwyPvMGKfGVto/lDCt57I2S80EQqveRcUnJA0+SsmM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycwpZ6SRAw4QXRcWO6Eoj2C7nj40rQ/wgzhoXcfbNFH5nOsW2E
+	VmlrVqhCwgS15FY7+THFMhxietyAZXeHpq7vs0whupGJ9cjIaMR5eQNJD93MU9E=
+X-Google-Smtp-Source: AGHT+IEGjHnkFit7841GhvucGBCyOMPhgxDoJaHn3olb9xYhfSmxpIa8Gv9DhOgOBkQI3ZssiQhLEA==
+X-Received: by 2002:a05:600c:3b17:b0:426:6710:223c with SMTP id 5b1f17b1804b1-42e7abe7aebmr68934555e9.9.1727096068218;
+        Mon, 23 Sep 2024 05:54:28 -0700 (PDT)
+Received: from localhost (amontpellier-556-1-151-252.w109-210.abo.wanadoo.fr. [109.210.7.252])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e7afe0eedsm99915575e9.32.2024.09.23.05.54.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2024 05:54:27 -0700 (PDT)
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Michael Hennerich <michael.hennerich@analog.com>,
+	=?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+	Trevor Gamblin <tgamblin@baylibre.com>
+Cc: linux-pwm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] pwm: axi-pwmgen: Create a dedicated function for getting driver data from a chip
+Date: Mon, 23 Sep 2024 14:54:17 +0200
+Message-ID: <20240923125418.16558-2-u.kleine-koenig@baylibre.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d6ec3b8b-9405-49fa-ba39-a0bf6311a489@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1867; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=fkdX2qdyVa8XQQhzqRNN1qcWXCIclow1HT74EdiUjeM=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBm8WT6GLZcnl7+/Dbek9vYcq0NDZ6OZ+9vGCh2L fVSWiWN0F+JATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZvFk+gAKCRCPgPtYfRL+ Tjx0CAC5dIROdFpnwfRFTaMHpxjFJrdpb8KiHiTUt+tKQBjnnAWkzrnyZVb2D1hIJnk/+58ZpYH 4IADiG5ZGZXZz+AyeoYWqive6E7E7ykF2RKLs+IkAyd95hraALaSXDK1Ly3LTSwUfZaTclUxm3/ qgj0cbZOXYrqQacDSulF3tJ3kWoncKqcTiSNreuuz9KTTk2Q98OZOGjK5r4iGpKgFJH3koroaBY YpDAj54qFn8LcqCtBM5nM4EwF/aN9tqzadJz4FoIFndTMX6LbuxKSEJ9fqOXFEz1AZosVq76ith i4deDt0LOp0KleJYdFwBSmi/5r+i5nhacVQrRobAFKcJo4ah
+X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 23, 2024 at 03:42:20PM +0300, Roger Quadros wrote:
-> On 13/09/2024 16:17, Andy Shevchenko wrote:
-> > The PCI vendor ID for Cadence is defined in pci_ids.h. Use it.
-> > While at it, move to PCI_DEVICE() macro and usual pattern for
-> > PCI class and device IDs.
+Compared to direct calls to pwmchip_get_drvdata() a dedicated function
+has two upsides: A better name and the right type. So the code becomes
+easier to read and the new function is harder to use wrongly.
 
-...
+Another side effect (which is the secret motivation for this patch, but
+shhh) is that the driver becomes a bit easier to backport to kernel
+versions that don't have devm_pwmchip_alloc() yet.
 
-> > +#define PCI_DEVICE_ID_CDNS_USB3	0x0100
-> 
-> Why do we need to change this? You did not explain in commit log.
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+---
+ drivers/pwm/pwm-axi-pwmgen.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-It's explained: "...usual pattern for PCI class and device IDs."
+diff --git a/drivers/pwm/pwm-axi-pwmgen.c b/drivers/pwm/pwm-axi-pwmgen.c
+index b5477659ba18..e5162f3e511e 100644
+--- a/drivers/pwm/pwm-axi-pwmgen.c
++++ b/drivers/pwm/pwm-axi-pwmgen.c
+@@ -53,10 +53,15 @@ static const struct regmap_config axi_pwmgen_regmap_config = {
+ 	.max_register = 0xFC,
+ };
+ 
++static struct axi_pwmgen_ddata axi_pwmgen_ddata_from_chip(struct pwm_chip *chip)
++{
++	return pwmchip_get_drvdata(chip);
++}
++
+ static int axi_pwmgen_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+ 			    const struct pwm_state *state)
+ {
+-	struct axi_pwmgen_ddata *ddata = pwmchip_get_drvdata(chip);
++	struct axi_pwmgen_ddata *ddata = axi_pwmgen_ddata_from_chip(chip);
+ 	unsigned int ch = pwm->hwpwm;
+ 	struct regmap *regmap = ddata->regmap;
+ 	u64 period_cnt, duty_cnt;
+@@ -100,7 +105,7 @@ static int axi_pwmgen_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+ static int axi_pwmgen_get_state(struct pwm_chip *chip, struct pwm_device *pwm,
+ 				struct pwm_state *state)
+ {
+-	struct axi_pwmgen_ddata *ddata = pwmchip_get_drvdata(chip);
++	struct axi_pwmgen_ddata *ddata = axi_pwmgen_ddata_from_chip(chip);
+ 	struct regmap *regmap = ddata->regmap;
+ 	unsigned int ch = pwm->hwpwm;
+ 	u32 cnt;
 
-> I would call this PCI_DEVICE_ID_CDNS_USBSS3. Also see later why to differentiate with USBSSP.
-
-It's good to know that there are semantic differences,
-but it is already applied, feel free to update.
-
-...
-
-> > -	{ PCI_DEVICE(CDNS_VENDOR_ID, CDNS_DEVICE_ID), },
-> > +	{ PCI_VDEVICE(CDNS, PCI_DEVICE_ID_CDNS_USB3) },
-> 
-> For better readability I still prefer
-> 	PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_USBSS3)
-
-I disagree. The PCI_VDEVICE() has less letters and much easier to get
-the vendor from the (less power to parse and decode is required).
-
-...
-
-> > -#define CDNS_DEVICE_ID		0x0200
-> > -#define CDNS_DRD_ID		0x0100
-> > -#define CDNS_DRD_IF		(PCI_CLASS_SERIAL_USB << 8 | 0x80)
-> > +#define PCI_DEVICE_ID_CDNS_USB3		0x0100
-> 
-> This is an entirely different card who's device ID should be 0x200?
-> Also I don't think this card supports USB3 so it is a wrong name choice.
-
-Are you stating that 0x0100 in both cases points to the *different* devices?!
-This is unbelievable, however possible abuse of PCI IDs.
-
-> I would call this PCI_DEVICE_ID_CDNS_USBSSP	0x200	to match with PCI driver name.
-> 
-> > +#define PCI_DEVICE_ID_CDNS_UDC		0x0200
-> 
-> UDC is used for Peripheral controller only. Is that really the case here?
-> originally it was called DRD. 
-> So how about?
-> 	PCI_DEVICE_ID_CDNS_DRD		0x0100
-
-I strongly disagree. The same PCI IDs should be named the same independently on
-how many drivers use them.
-
-The only possibility to have what you propose is the complete screwed up PCI
-IDs allocations done by vendor (I do not believe this is the case with Cadence).
-
+base-commit: 62f92d634458a1e308bb699986b9147a6d670457
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.45.2
 
 
