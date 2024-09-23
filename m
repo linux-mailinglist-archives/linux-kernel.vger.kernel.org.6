@@ -1,131 +1,114 @@
-Return-Path: <linux-kernel+bounces-335891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E921897EC2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:19:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F31297EC2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:21:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2676B1C2101C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:19:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B2A31F21E3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:21:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDC4B199934;
-	Mon, 23 Sep 2024 13:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732921993AF;
+	Mon, 23 Sep 2024 13:21:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h8NwHA8S"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WQOREanU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F77199231
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 13:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8FE553373;
+	Mon, 23 Sep 2024 13:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727097582; cv=none; b=HXVPfwqjeag8kl3lNOOBOnsjeE0bi3y36H1VebRnlFB51emmv50hURPkoRtlq+QDic26EtKOla8JlyGe5rHSI002+opxPNroNBFbLOENwy36lh1LcU8j1iqFaG7iFdQSRRSbmUOARyCfhiUumpIZ0j6AHSJyB1AtfWSshN/lZ2A=
+	t=1727097692; cv=none; b=SUOgrvHMDgJkiUkqyqSMTRO69wIupV7DU2AjRyjVcnxQ8gqyd3yrvh9g8d6ux/hGC7N7pHlcBkd8GqRB1EVhrS4o5bHKnV3lOTwTE98rMBJX9S8/xNv+vh4O65kqd1h52wvSHq9cdLreniV/bkiMu4Uqu8Kh/fq+/ZlZR7fa5fY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727097582; c=relaxed/simple;
-	bh=h/BEMtHgfJ7o98fvYyXlIv2+yWceMHMTagptnb1Zg5k=;
+	s=arc-20240116; t=1727097692; c=relaxed/simple;
+	bh=E306zOT+XloAE6oX3ODJdm/0hX6vuEMFsI2lvp4roaI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fXQPEE3kNrUM5e3bLvkAxj9eLBnSgpuF/QeZyOyzdM51MXljMvUNGh3zQTmIcy9wD6Zlmp52QjcQA36sZLdnn8nnsRoGuxwLJPAnpB2b1kmvQgy8oJgYgW19wqEJnh7XHnRET4rNQPhIjqcZGg802hk5eKgVbmdRiPiIa+JLgqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h8NwHA8S; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53568ffc525so4910628e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 06:19:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727097578; x=1727702378; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kGk2orlX+fi9SeSwRZwCGAgpSwWImCEuGfUk0feNgoc=;
-        b=h8NwHA8SYu29+jh1K5SUYEVF7UpFjCVuUepnDQ2bTAjCMnPgblqFhfm2GASvDJSHNl
-         XFQOv5Efc9rrRST4hUc43+2aTJA9iJEX1ktTiF/uizWko349HRHc/eZCen3aDkHgEgIP
-         L/oxws7rLqX5t35j5wGB1hSiCToVu0gjw+PuyDXaeYbHpI8gpXK3OxmTpZ3A4f1QS1Yt
-         taXHQ0maHTVWr8Yn1cxa2KsAbUH/b3FL+B629nYVHiBFaZIh9iPOfLS6c44f+Yk6s20o
-         ICGrWfKbi8se2WVSpNjFZ0SybAbanXXH63Ez4Nb8sX4wBR+S4R7PnJER5ChNDsLsLNEG
-         94wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727097578; x=1727702378;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kGk2orlX+fi9SeSwRZwCGAgpSwWImCEuGfUk0feNgoc=;
-        b=hgJLSjKLYTEuLQXTSQAze3UhfSSAn1CZloea23fROsqFSWCuvPYbIdH7CgEP6PNBek
-         Apc1koJO09XI55SckiRrEgStCqqH+Fmn1gU+3TvrkwHxuAIOl4NFbKUt6kZnjP/GBI8K
-         SOh+hM2QVv8RFEe7yiTaSNoTtOToENLhJWbNUOFuwkKx4nlFcvAja+d2Y79JQdCH5NXT
-         5uSNYxnauDcwHQi1e9yAkct8IV7udY1qyaJcBkwnAbupoAFQ07fc1Et5s9pEfFgtL6RK
-         T/JB85bBI6dq467oJAtXPLNG8qrAXfPUtXLJcdb8zgv9mAgEcv7K2E4DrIlOelWW+s17
-         rOhA==
-X-Forwarded-Encrypted: i=1; AJvYcCWvao2p33QYI3qwihOPKGkwmixVIcfe0XYke1nBRHcYVKz64c6x0D8NSynoBFrGK+Ll6TfrBqLfgP/idDk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMBTohKNIgPlQVHT0naoBviycdEeyYWWOcNYnn6OzX1Bp7IdxV
-	Cvmy3uq59TIKal5xnYExBXA9Kcj3uvR21GSY20+lMgEK8fCxvrIfhS75DtVv3dI=
-X-Google-Smtp-Source: AGHT+IGOBZJQI5jNN3s4SzM7Ap+2SyMdJN1H7lWTNYEIrJ6+UEojqKqP8ntoAuCXELz9jje36RoeLw==
-X-Received: by 2002:a05:6512:1250:b0:536:7a88:616b with SMTP id 2adb3069b0e04-536ac2f462cmr5710269e87.26.1727097578302;
-        Mon, 23 Sep 2024 06:19:38 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-536870b4108sm3276674e87.244.2024.09.23.06.19.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 06:19:37 -0700 (PDT)
-Date: Mon, 23 Sep 2024 16:19:35 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Qiang Yu <quic_qianyu@quicinc.com>
-Cc: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org, 
-	robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, abel.vesa@linaro.org, 
-	quic_msarkar@quicinc.com, quic_devipriy@quicinc.com, kw@linux.com, lpieralisi@kernel.org, 
-	neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 2/6] dt-bindings: PCI: qcom: Add OPP table for X1E80100
-Message-ID: <jz6eqbreus2hrhxadj643ibfy3ejr5tjhkerln6sh6bsvfhaw4@6uwpabq2d76a>
-References: <20240923125713.3411487-1-quic_qianyu@quicinc.com>
- <20240923125713.3411487-3-quic_qianyu@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jp3XYbDM5JSCJEiTPEQ0r4vLSm6usJNezg53giiA5P45gB/FZLk0CQvzGuG01+e5mvsBrRQya6AFS64bNe7dD7qbSgfCldctSFzBAZddgPekbmQjW1qc8RFslqKn+XsIueuc4N7tdXMBo4tZND50dL4S6PN7r/x1zObxdr4xbdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WQOREanU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5A8FC4CEC4;
+	Mon, 23 Sep 2024 13:21:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727097692;
+	bh=E306zOT+XloAE6oX3ODJdm/0hX6vuEMFsI2lvp4roaI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WQOREanUwrJXVJpkgSXkf0kxXdips9J5navkZLaKvH1PatNZb8pncPpbj5jDZ5EuS
+	 EaRZBIhd6WsC3mrj3Xc+vOToUL7x+IU7EVm4tk8pTTPL8Nto1kwg4kyvjwkJWM8U08
+	 eSPvayD/4KAjWnbXsoZSJYq2CM+JBuC4n5cJ1AY7CIT33SlnOhkQgnet8mGThvPWqb
+	 07HGaSoTSEuRUDzJoiiZowu90BYdcVYPpK/ZQpJ/nm2VzRUpnsJ+BF6njHf0+SL+Oa
+	 bNgqJ4YXf/rz3HWih7/e69xkr6OTJZv8jtBtEmrG8jdaWnJ480Gbbc2dDol/wmhCMP
+	 j/JNIFJuIbCZA==
+Date: Mon, 23 Sep 2024 15:21:28 +0200
+From: Mark Brown <broonie@kernel.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 4/5] hwmon: (pmbus/core) improve handling of write
+ protected regulators
+Message-ID: <ZvFrWDF6Pn9zOb23@finisterre.sirena.org.uk>
+References: <20240920-pmbus-wp-v1-0-d679ef31c483@baylibre.com>
+ <20240920-pmbus-wp-v1-4-d679ef31c483@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6iy5Tqbs7EFl+Qz+"
+Content-Disposition: inline
+In-Reply-To: <20240920-pmbus-wp-v1-4-d679ef31c483@baylibre.com>
+X-Cookie: Editing is a rewording activity.
+
+
+--6iy5Tqbs7EFl+Qz+
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240923125713.3411487-3-quic_qianyu@quicinc.com>
 
-On Mon, Sep 23, 2024 at 05:57:09AM GMT, Qiang Yu wrote:
-> Add OPP table so that PCIe is able to adjust power domain performance
-> state and ICC peak bw according to PCIe gen speed and link width.
-> 
-> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-> ---
->  Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml
-> index 704c0f58eea5..3c6430fe9331 100644
-> --- a/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml
-> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml
-> @@ -78,6 +78,10 @@ properties:
->      description: GPIO controlled connection to WAKE# signal
->      maxItems: 1
->  
-> +  operating-points-v2: true
-> +  opp-table:
-> +    type: object
+On Fri, Sep 20, 2024 at 06:47:05PM +0200, Jerome Brunet wrote:
+
+> +int pmbus_regulator_init_cb(struct regulator_dev *rdev,
+> +			    struct regulator_config *config)
+> +{
+> +	struct pmbus_data *data = config->driver_data;
+> +	struct regulation_constraints *constraints = rdev->constraints;
 > +
->  required:
->    - reg
->    - reg-names
+> +	if (data->flags & PMBUS_OP_PROTECTED)
+> +		constraints->valid_ops_mask &= ~REGULATOR_CHANGE_STATUS;
+> +
+> +	if (data->flags & PMBUS_VOUT_PROTECTED)
+> +		constraints->valid_ops_mask &= ~REGULATOR_CHANGE_VOLTAGE;
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_NS_GPL(pmbus_regulator_init_cb, PMBUS);
 
-Please drop it from qcom,pcie-sm8450.yaml, it's redundant now.
+I'm fairly comfortable with this from a regulator point of view, modulo
+the suggestion I posted in the other message about registering separate
+ops.  The fact that there's three combinations of ops is annoying but
+doesn't feel too bad, though I didn't actually write it out so perhaps
+it looks horrible.  In general removing permissions is safe, and without
+separate steps to remove write protect (which I see in your patch 5) the
+writes wouldn't actually work anyway.
 
-> -- 
-> 2.34.1
-> 
-> 
-> -- 
-> linux-phy mailing list
-> linux-phy@lists.infradead.org
-> https://lists.infradead.org/mailman/listinfo/linux-phy
+--6iy5Tqbs7EFl+Qz+
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-With best wishes
-Dmitry
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbxa1gACgkQJNaLcl1U
+h9CpcAf6A49BIiFBHQIkvhxz+iKWNjQtbVSuuTT82zLviL66UgU2vRovsAhYS1rg
+2NtJZ+FxJU5oy5j0qotaNYx4mBPTgqHYn6blBbOFZx1ds3JhkKz7Os3UNoxDe0dP
+DkIWtIN+wpBbgKhPDF3ATHZWdQTdEiLN9XPQliY+jf1SZGULqNy9p86OpM92e2wt
+sq4wfx3MQqADr8pPVuaGa6zcUBRj+zMUZGhVSHhEpvywNCcJJMckmzLgoFYh/EUJ
+NPIJwhEb+FbVCFdNlFJs3/8bXl5LkkAtvowQs78thZdrd5aX7wCX2opybklVZU34
+zIsYRtqtDicc+r16ww6AiztXn0F4kQ==
+=5FU0
+-----END PGP SIGNATURE-----
+
+--6iy5Tqbs7EFl+Qz+--
 
