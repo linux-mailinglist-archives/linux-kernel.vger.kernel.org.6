@@ -1,122 +1,149 @@
-Return-Path: <linux-kernel+bounces-336340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0CFB983984
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 00:20:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64F08983987
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 00:23:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BB451C20D66
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 22:20:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02E5C1F21918
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 22:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C7985C5E;
-	Mon, 23 Sep 2024 22:20:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479E086131;
+	Mon, 23 Sep 2024 22:22:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ab4smDkZ"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gd/ifUGr"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C958F84A21;
-	Mon, 23 Sep 2024 22:20:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41BE183CA3;
+	Mon, 23 Sep 2024 22:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727130050; cv=none; b=hJulqT6DsGT4JfsV+X6ac92NNv7N7C6gefrwz836x3fOASDQsTDVJuvuaF1MxbWWI8McHpZ2PrAVxTpH+5PUpWz/WHuFhW6urU6zfYkFPdjnPfWusI2pJfN/qZYSvNFrmNQgd5lMRyyD5ON/9SRVcajqznsKNDbwrFTIosYaOWQ=
+	t=1727130170; cv=none; b=loP2K9jyt2D25szE00WMIYb9HTf+7lwVvJbs63EisXBBll0jitKlZrCspbKKo1o4kZWkWWOemY2+4zJzFjsARaZXY490b6n8KKnMuxFDHdXPiNZ3xWoO/mlDzJlXqIHqA1JvcAM7sbAJZzKhy5fu37BmnNfbSTqM7llG0tpYd/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727130050; c=relaxed/simple;
-	bh=I39zkW/kbT3Ufd9pmx9Uzp6ZFsPoalu4/LQvA0A1FO0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AMgBij/E1W6SzQ7XilNLC01ywn5ghUpg0S6JozoS2djRaGhHUVfyvzM0k1vEt97XGFkgPZr847juhn0StmHvBauDdHa61r0R36auMSOoqaSXYOaZzL15xZ5viZlRWhGw0d+vTM2n7TUUkf/EoGce4YJCRMYa/EEItCI9Crjzd7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ab4smDkZ; arc=none smtp.client-ip=209.85.167.42
+	s=arc-20240116; t=1727130170; c=relaxed/simple;
+	bh=HKK0VxHYGyBIQhIaFtf0goqKBtH5DTLVK+rSuvJGvic=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Ahh/JUczt+chqgU//pUAulFKkTcwxHp38pBb0wbTaoTL6LhOatIIB4CvxTS2P837ofChDSihuBqqHiB+B1R2SkjFkaPySel7UXBJ8UDgaj/W+3bcXLjV8o4CYfh0PMeapKhtR3R5qeS07FlNDYq2XlrM84jRXnFzb4scOKGXHeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gd/ifUGr; arc=none smtp.client-ip=209.85.215.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-537a2a2c74fso1198966e87.0;
-        Mon, 23 Sep 2024 15:20:48 -0700 (PDT)
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7c3e1081804so2022982a12.3;
+        Mon, 23 Sep 2024 15:22:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727130047; x=1727734847; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rNMtJL71ZDx/2MpgXo8xbuzvbC5cBg0WyIL0f1AlPoU=;
-        b=ab4smDkZe9ff69bIzZ/6tiu+wP/i3lvxg2IXI0jH7hXR9+Kq0w9RZjq6GAJyiMnNKO
-         DnsoevgkvzA+TpdsFNz0s17QAq1S2CMslTie7LI1twuXnj2nBwX/LLtmgZW+ieMdIUpq
-         /dwVeEPDqQRTysaZ1xNz1vqatj2ChaWMN9iEvUoo3+j6eEA3nKJ81roUM9aQeDd0ISBo
-         jlKu3qwCLCps9KDWqFevCduOec+5RcU58NWxH1ggjQYsgG5S3P8BUyGoO8nSjNY+O40X
-         qYgQaHFRAQSlIq4TrNLmxgmLgYclqyIy6Ln+tJOYX4cPXEqJdBm70Z8UEkzDh3Y3ynGm
-         Ad3w==
+        d=gmail.com; s=20230601; t=1727130168; x=1727734968; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=tYe0Euele3YD3oaKdrt1RnhBLaJrTf4yrjUPP1puDB0=;
+        b=gd/ifUGrl4C/ooncNVIywhRiJJWBJ/2XbaKcnHswileVT3l3u8DPVhCLcwCV9IGCE3
+         HaW3IukGyU7rVuDEjAnZlWNDuUR2G+jCApgvWHZExw3qybe0KWQGowVjZBJHjm4NaBfQ
+         A58NKG2TBZpDEogEV3txc2lWO9ecXqB4qfSLRwU3HWacm007/3VHdJRPYb92QzrqmFb8
+         oVvfgKV/k7gvSjnpcet+8dNKdU/zg5GM0/jm43dNyLu0Ge2b18flr0B4/Ap2lA/VlOjd
+         w20oaSEG42kqrru0oc45XtTm0V3LcatH3Xz1xZY51OQ/ZDJS/AngEaSeySxqUMeHrgL0
+         lBVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727130047; x=1727734847;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rNMtJL71ZDx/2MpgXo8xbuzvbC5cBg0WyIL0f1AlPoU=;
-        b=HBGhL5eJNg+6snW41o/zUBXf/94GPza43R+6wnTR3uWW+Sk4aiJtAH/g28zHWJZ013
-         suOybTzThlQYr+7eKbhK7R2JQvGPNEbkaX1eoUdW14xgNhZri7ukI+iimR14hVFV49Oh
-         mADWG9gm9H5vap/58xeHKK1qMWR0jjSbZ4RCAkASO+jYvB32U/r/Cr0cAv+uez8KFjT9
-         g6IT7MlFu0YF9zRdMXt5ZTJtY1nqNa+4HT4mjZv/fX9/uGpfvqETYejZl1vM4ftAmoFL
-         uBm3xCzAVOuz5KuYGZGU+aFuJjnthYO1Wjdj37XTBBIzGMMg5omUM6jNuM1fqdNeEmqu
-         REsg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOOmVPWKWrvioSOYoUScaGGWIDk5w8anueXQxsYeBm836SfYIEdl5TX6r5eICRVu22PTXAcnz5IzdB@vger.kernel.org, AJvYcCWartzUh1bd/EEn+9m0Fk7JVofXeiyZ1pz9YsSveP7rjBP8LI14Pu2adjbB3rh6eQRZN8ZsZ6eV7lGNM0ERNQ==@vger.kernel.org, AJvYcCXp9KqOszT9lmVs76s2JvA7QdLJ5v4gZlwG45lIEMW0FqfPE3XZUv5g1Scm5oL3pu/qGbCzRtA2EoX7iA1g@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxQm/H3zrPttryPjyYA6yr/yab7stls6RAyyD9K7Kl5oTdE1va
-	X3+B7RlH6jWG6zD9GOMOY5cksDyMZegcqLzVxNkHOb5FOS5TJCVMuIurbscJp6KjK1Ud+8yQZAX
-	QVUSprsjqA3BTtLo214ypnHqPrcE=
-X-Google-Smtp-Source: AGHT+IFSbGoovaCTItwXPKaGxT+vP85QVsKRZkmCJA5rZZuojl9Rce9M7PI4TZVkGutC62+PVBjxG313v9PS8/TSX14=
-X-Received: by 2002:a05:6512:3510:b0:537:a82c:42ec with SMTP id
- 2adb3069b0e04-537a82c44d1mr81547e87.4.1727130046730; Mon, 23 Sep 2024
- 15:20:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727130168; x=1727734968;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tYe0Euele3YD3oaKdrt1RnhBLaJrTf4yrjUPP1puDB0=;
+        b=DRQCQZhgVlT4t9+jDdIPwu/7oe50Ng2zBow3NivrKr4hZnVqeAJhSk30zWa1I8RuWq
+         B144d2UvlQLLk0LUMcxtL45FdZE9Kpvf6bEIJnWJP30nHuDFAwe4bg/HWpI3uhDcr4zM
+         QVxwuxQK5LbXgGmRYKPq6vqBfBGynzLbSRLH3TN5H8RB1UlWqQV8HC6cMq07y4Hga9Rg
+         +wjNSpM1ljFsc2T4J0qnUd8cqD8AOcRpkqauF7Ibfoge0WzbP48QMLSHLvWMNWN9cUAg
+         tuJc07vS4giTA76rspomDW4nLBX/9lOARnzyYzewRHBwQ7dcY6NQ8CyiXbYwybePqne7
+         DjQA==
+X-Forwarded-Encrypted: i=1; AJvYcCUEprDA40YGXopykZjjFJHQ5eoNCnbSuYOv3sGMF3IyDUHOqVIj9n48FXTwEmdGwMbrlcXvy0Pn96WeTsw=@vger.kernel.org, AJvYcCV4hQWrwZ3V6HTPmrwGCdg/ls4tEAl6ZY9mafxWT4BYIYfiP/1GXbdEyYbjL6o5bA49soTV0hP/@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgbFiWAh3oXjAey2pP1fQ4B7+vwSDYFmxjp9vVvVo2GHFuckTO
+	CRdKYcAKKkfA5u/V2WsLETweJnTQ1PSaIW8DYDwRqLpthF3XUNiJ
+X-Google-Smtp-Source: AGHT+IEuFjqnPPBtqzxCYI0K9D9Hh4O31DgIE8XMJh3dIs1vfveJa0kS8jU6/Pqur+WLD8NyGSPv/g==
+X-Received: by 2002:a05:6a21:e96:b0:1d3:9cd:e737 with SMTP id adf61e73a8af0-1d30a9a5470mr19493863637.28.1727130168354;
+        Mon, 23 Sep 2024 15:22:48 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71afc8343adsm103006b3a.6.2024.09.23.15.22.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Sep 2024 15:22:47 -0700 (PDT)
+Message-ID: <12e5cb65-28a5-4f43-bf54-437e6141811a@gmail.com>
+Date: Mon, 23 Sep 2024 15:22:46 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2390624.1726687464@warthog.procyon.org.uk> <31d3465bbb306b7390dd7be15e174671@manguebit.com>
-In-Reply-To: <31d3465bbb306b7390dd7be15e174671@manguebit.com>
-From: Steve French <smfrench@gmail.com>
-Date: Mon, 23 Sep 2024 17:20:35 -0500
-Message-ID: <CAH2r5muENv0sQ0+Q6xtDA-ThVu8B1W9=3-Yy0nOhX3onVVUXFA@mail.gmail.com>
-Subject: Re: [PATCH] cifs: Make the write_{enter,done,err} tracepoints display
- netfs info
-To: Paulo Alcantara <pc@manguebit.com>
-Cc: David Howells <dhowells@redhat.com>, Steve French <stfrench@microsoft.com>, 
-	Jeff Layton <jlayton@kernel.org>, linux-cifs@vger.kernel.org, netfs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v3 1/1] net: ethernet: lantiq_etop: fix memory
+ disclosure
+To: Aleksander Jan Bajkowski <olek2@wp.pl>, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ jacob.e.keller@intel.com, john@phrozen.org, ralf@linux-mips.org,
+ ralph.hempel@lantiq.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240923214949.231511-1-olek2@wp.pl>
+ <20240923214949.231511-2-olek2@wp.pl>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+In-Reply-To: <20240923214949.231511-2-olek2@wp.pl>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-added to cifs-2.6.git for-next since it is important as it fixes a
-regression affecting cifs.ko
+On 9/23/24 14:49, Aleksander Jan Bajkowski wrote:
+> When applying padding, the buffer is not zeroed, which results in memory
+> disclosure. The mentioned data is observed on the wire. This patch uses
+> skb_put_padto() to pad Ethernet frames properly. The mentioned function
+> zeroes the expanded buffer.
+> 
+> In case the packet cannot be padded it is silently dropped. Statistics
+> are also not incremented. This driver does not support statistics in the
+> old 32-bit format or the new 64-bit format. These will be added in the
+> future. In its current form, the patch should be easily backported to
+> stable versions.
+> 
+> Ethernet MACs on Amazon-SE and Danube cannot do padding of the packets
+> in hardware, so software padding must be applied.
+> 
+> Fixes: 504d4721ee8e ("MIPS: Lantiq: Add ethernet driver")
+> Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
 
-On Thu, Sep 19, 2024 at 11:01=E2=80=AFAM Paulo Alcantara <pc@manguebit.com>=
- wrote:
->
-> David Howells <dhowells@redhat.com> writes:
->
-> > Make the write RPC tracepoints use the same trace macro complexes as th=
-e
-> > read tracepoints and display the netfs request and subrequest IDs where
-> > available (see commit 519be989717c "cifs: Add a tracepoint to track cre=
-dits
-> > involved in R/W requests").
-> >
-> > Signed-off-by: David Howells <dhowells@redhat.com>
-> > cc: Steve French <stfrench@microsoft.com>
-> > cc: Paulo Alcantara (Red Hat) <pc@manguebit.com>
-> > cc: Jeff Layton <jlayton@kernel.org>
-> > cc: linux-cifs@vger.kernel.org
-> > cc: netfs@lists.linux.dev
-> > cc: linux-fsdevel@vger.kernel.org
-> > ---
-> >  fs/smb/client/smb2pdu.c |   22 +++++++++++++++-------
-> >  fs/smb/client/trace.h   |    6 +++---
-> >  2 files changed, 18 insertions(+), 10 deletions(-)
->
-> Reviewed-by: Paulo Alcantara (Red Hat) <pc@manguebit.com>
->
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
 
-
---=20
-Thanks,
-
-Steve
+Thanks for taking in the suggsetion!
+-- 
+Florian
 
