@@ -1,121 +1,114 @@
-Return-Path: <linux-kernel+bounces-336094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5F6F97EF09
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:17:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60DD397EF0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:19:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90B03282C29
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:17:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2770F282AE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0F419E98E;
-	Mon, 23 Sep 2024 16:17:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E90E19E99E;
+	Mon, 23 Sep 2024 16:19:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YiU2BKgM"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ibjpnFLq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7BFF7DA81;
-	Mon, 23 Sep 2024 16:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A45C7DA81;
+	Mon, 23 Sep 2024 16:19:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727108267; cv=none; b=YgkHTmGvEiICV1GaQXWbxnY6xp5M0iYxrQvslYPWKVrIR8MBClHv82AgZktOU3+0kNyCClK15Nr/DJFghIoKbn4Sw5gz4scqsbMhWcT8xKcWqlhjUpCIYslqrNbne0EwTtWwGEYjZFR7R88AhKxH2aJH/Ixw+WBF+tE76k46QYg=
+	t=1727108360; cv=none; b=tw0XvDPKjchFU3wpWccuVYX8kfFPkN8MKR0hL75u5c/IAR9c/oAnwGD+me8VwULS9igLFx0TQg00jJOlhPuEsExSMiE15g9GLyX4hlZpQ3Pri71TbsEBivN3TIYcOlHwSQWLEyXuIvNYMnLURC8pH/Dr9vfizv9Pu9OD5phH18U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727108267; c=relaxed/simple;
-	bh=RLzJyfg5AK5xZRDFJSGR6hrofYoy+gBKxFGWXE0AAVc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pQSz4vMLRloGIVd5ecxqgwdIX1gWcjxVEdc9yqrRp1qSs8ZpnqNPCD/AL7ZZWiiNV9UC6GoSKymD+rqSwfGZLpMbU3TgXJ76c3u7V8pJjQX2QwL5geu7VlwxLfEzO/onuWPyFKidQQcJ7vZ+ASVMXEeyrptjvGYq0/TJCJ743yQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YiU2BKgM; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2d8881850d9so3694205a91.3;
-        Mon, 23 Sep 2024 09:17:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727108265; x=1727713065; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sLgOKVLfgDO8mBE7MewwTev6JyniSNgCmsWCdduvp8A=;
-        b=YiU2BKgMtFoicyW0mhgtiIgzCsfJjwC6Asb6QV2Q6BqpbmCvaDH2XHAMZ9h/VPJ2+y
-         H0bsEfasGIoCqvRXFIBN+3mt+9wId34xBQNJEsC8zSJJ+Nz+YqVMpJgOKePEerVaMI0l
-         KoC2TD4tS2LhoX6QZkKld20eKIs+NjLCl2T+zBy7sc/1hp4UvmyOwJDjcqgDruC2kDxx
-         CFCsoTwJ2LpQDgv0drtS3BUe//o5nwoUjiL4maW8ymvBs4egmI7cPDrFA6bWULZXJI3E
-         rHmZaUKOMJaZ4ODD0FGfKLEMk/azpC7nyX2KIKVtAv1nsWViBMtyCj0OGTDC6RJYAz1/
-         RN6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727108265; x=1727713065;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sLgOKVLfgDO8mBE7MewwTev6JyniSNgCmsWCdduvp8A=;
-        b=okVDOM8uSSQlp7pq5AXVNAuaDlZxxpkAX/AAmOzeWkmaPDVu+TTB4igUNgMW1k2Qn2
-         P1CBPs+/x7tk4+j75lrtXdL9n1ZLj41iYARS3f+/QTZ6p2t0tV2EhwouVlGZtsalAEG9
-         3ljOf+WK8i149dRemwn8K7sVJLIcZcml2uWKCxZg7Jlz8/NU8TMAO1JetCkdCeQTO8lU
-         ZLYU3sRhLe1qQpxH1z8/VUoKrri5JigFigKwMtVzjrnHhACPWI2cMimcz08RP1npZih6
-         2Hjy+HaSgw3o8+HQ2bbgljc2J8SOpc6BJDQ66MCo6Bg7Xfdf7ns18NinbVGw+IUM2+vY
-         wrcw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6BoyTMM1pAt4+ZIch40qrZc/6LcS9bx4iZe2xTRQvgPefw1FT3paleFjJ0383Rs4h1vXJDxROuWV7pVU=@vger.kernel.org, AJvYcCVgxQBYTay5IBdF6TsOWbKxdI/G8usthF910esT17Wu6qWiMS3k9akb2jEOqHV2JX19wP+dbYTz@vger.kernel.org
-X-Gm-Message-State: AOJu0YwT5iOQ6f6nKLtvCAt7haIfknKRvVjojVhj3+40WMuajGibP40I
-	oRPMxf0KWHr4C+UlGVcts4tryWvfm4Y1MQNrVV8wx2TfHLKTB5ww
-X-Google-Smtp-Source: AGHT+IELuk9miNEkDnwZWDV41GLKiwIjj78ibzWscBvV8eQFS6DqsOB4w4ZcJ3ncawRVqTo61EBOFg==
-X-Received: by 2002:a17:90b:3511:b0:2c9:9f50:3f9d with SMTP id 98e67ed59e1d1-2dd7f37f2c7mr17003285a91.5.1727108265117;
-        Mon, 23 Sep 2024 09:17:45 -0700 (PDT)
-Received: from ubuntu.. ([27.34.65.190])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dd6ef3c64fsm9609082a91.38.2024.09.23.09.17.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 09:17:44 -0700 (PDT)
-From: Dipendra Khadka <kdipendra88@gmail.com>
-To: sgoutham@marvell.com,
-	gakula@marvell.com,
-	sbhatta@marvell.com,
-	hkelam@marvell.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: Dipendra Khadka <kdipendra88@gmail.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 net] net: ethernet: marvell: octeontx2: nic: Add error pointer check in otx2_common.c
-Date: Mon, 23 Sep 2024 16:17:37 +0000
-Message-ID: <20240923161738.4988-1-kdipendra88@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1727108360; c=relaxed/simple;
+	bh=L+HrpQOt/sp64V+/b1XLHvuUE4MhTMOvK2G33tvFkgQ=;
+	h=Content-Type:Date:Message-Id:Subject:Cc:From:To:References:
+	 In-Reply-To; b=LDp4JBxwbhv9mCwXZimdrXRZsSbsPbsgRcfXQK4xxSz9s9uTaEUGHuTCqn3fm2FJavwuixSKq0KSey2NJdawju+bYI3N0ZEkJYp5qCiIKnK2fSdgBqDwa4sNGPthnjgJOlFXcqh/HWnIrpgxqNjiwqaZWnVB6K9eOl+OgpwN4oQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ibjpnFLq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81F9AC4CEC4;
+	Mon, 23 Sep 2024 16:19:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727108360;
+	bh=L+HrpQOt/sp64V+/b1XLHvuUE4MhTMOvK2G33tvFkgQ=;
+	h=Date:Subject:Cc:From:To:References:In-Reply-To:From;
+	b=ibjpnFLqSxjsJEfMV8/u0ampncfU0/VrFCP41L/7DNMy2V0cRhN0TlZEcK1nK9MF2
+	 ROM3BOT3dVht5+0VXDDELDl5Xq9Q6q+qv9UYbwNZLV9hk+A/lIp3Yp5jnhoy7HXR3y
+	 9pvNor7I4t/1wPXJerCOFK4zBC6F0xUxgdrtlG0PUvK5D5734TdvwdLvKVSJXE2RKE
+	 /m1CbkzWwugm8zmH+9wlBZ4upmvv59moz6WfwO/eHJQuwMHFYEAokArzrgaXHS3Eo2
+	 wAimx41GvvI4SAPN3A/7UGhhteJst5BSQ6k8k5d3R7HbN6xAAu0rgYrFC6y/nS5lYI
+	 v7WJZVg7Nnf9w==
+Content-Type: multipart/signed;
+ boundary=4435393838c56d35a9520abeca3bdfccaaf3b3c8ee281df4639bc47aa985;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Mon, 23 Sep 2024 18:19:15 +0200
+Message-Id: <D4DSTDA3HE2B.20ACE70SQAL7A@kernel.org>
+Subject: Re: [PATCH v5 1/5] mtd: spi-nor: core: add manufacturer flags
+Cc: "Tudor Ambarus" <tudor.ambarus@linaro.org>, "Erez Geva"
+ <erezgeva@nwtime.org>, <linux-mtd@lists.infradead.org>, "Pratyush Yadav"
+ <pratyush@kernel.org>, <linux-kernel@vger.kernel.org>, "Miquel Raynal"
+ <miquel.raynal@bootlin.com>, "Richard Weinberger" <richard@nod.at>,
+ "Vignesh Raghavendra" <vigneshr@ti.com>, <devicetree@vger.kernel.org>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Esben Haabendal" <esben@geanix.com>
+From: "Michael Walle" <mwalle@kernel.org>
+To: "Erez" <erezgeva2@gmail.com>
+X-Mailer: aerc 0.16.0
+References: <20240920181231.20542-1-erezgeva@nwtime.org>
+ <20240920181231.20542-2-erezgeva@nwtime.org>
+ <4e0cf43c-4843-451c-ac6f-86775dbccb2b@linaro.org>
+ <CANeKEMOmhAPM1j1_ihzcC2wL6jKsWXPCGfZs+euS8mRvtqgE5A@mail.gmail.com>
+ <D4DLQGLJSKPB.3OOW4RU9Q3K5O@kernel.org>
+ <CANeKEMPSoUu7GW5bL8nuyC5xCKG7Tt0=SvWTL_CcX5oebqN_YA@mail.gmail.com>
+In-Reply-To: <CANeKEMPSoUu7GW5bL8nuyC5xCKG7Tt0=SvWTL_CcX5oebqN_YA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Adding error pointer check after calling otx2_mbox_get_rsp().
+--4435393838c56d35a9520abeca3bdfccaaf3b3c8ee281df4639bc47aa985
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-Fixes: ab58a416c93f ("octeontx2-pf: cn10k: Get max mtu supported from admin function")
-Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
----
-v2:
- - Added Fixes: tag.
- - Changed the return logic to follow the existing return path.
-v1: https://lore.kernel.org/all/20240923110633.3782-1-kdipendra88@gmail.com/
- drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Hi,
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-index 87d5776e3b88..e4bde38eebda 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-@@ -1837,6 +1837,10 @@ u16 otx2_get_max_mtu(struct otx2_nic *pfvf)
- 	if (!rc) {
- 		rsp = (struct nix_hw_info *)
- 		       otx2_mbox_get_rsp(&pfvf->mbox.mbox, 0, &req->hdr);
-+		if (IS_ERR(rsp)) {
-+			rc = PTR_ERR(rsp);
-+			goto out;
-+		}
- 
- 		/* HW counts VLAN insertion bytes (8 for double tag)
- 		 * irrespective of whether SQE is requesting to insert VLAN
--- 
-2.43.0
+> > > I would gladly remove the obsolete mx25l12805d.
+> > Why? I don't see any need for that.
+> Maybe because we do not want compatibility table?
 
+I don't get this? Anyway, we do not remove support for older
+flashes for no reason.
+
+> No, reading the SFDP is great.
+> Except for OTP parameters/configuration.
+> As there is not way to find OTP parameters using JEDEC ID/SFDP
+> So as I understand there are only 2 ways to set the OTP parameters:
+> * Use a compatibility.
+> * Use dynamic OTP configuration, through DT, sysfs,
+
+* Use the in-kernel database to look up the parameters as it is done
+  with any other flash device. If the id is reused, look for
+  differences in the SFDP to figure out the correct flash device,
+  then add some .fixups to manually add the OTP flags and
+  parameters.
+
+-michael
+
+--4435393838c56d35a9520abeca3bdfccaaf3b3c8ee281df4639bc47aa985
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCZvGVBBIcbXdhbGxlQGtl
+cm5lbC5vcmcACgkQEic87j4CH/gUEQF/VOQpFkq0WrVXag0EPbAEIxTgFyKdouQs
+QrlWS9ikmx+/jabf2o19//lXIc66quhYAX9FYSiGNxXObzE3jBp5TU7NFXWyMxfV
+Btc6eXuS1c4Pa2RxPYz0IyLkJVdBDcdhrnM=
+=XAMQ
+-----END PGP SIGNATURE-----
+
+--4435393838c56d35a9520abeca3bdfccaaf3b3c8ee281df4639bc47aa985--
 
