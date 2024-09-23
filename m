@@ -1,121 +1,119 @@
-Return-Path: <linux-kernel+bounces-336342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78B2A983A73
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 01:40:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51FD0983A76
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 01:41:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 728BF28250A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 22:23:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41EE51C215A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 22:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5737DA7D;
-	Mon, 23 Sep 2024 22:23:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20CA85654;
+	Mon, 23 Sep 2024 22:24:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="deru6eWe"
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VkrrLvyI"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9C884A5E;
-	Mon, 23 Sep 2024 22:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7758B29402
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 22:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727130201; cv=none; b=T6cRMPNxJOEDWrEDBrS96lMa/GR8oqpghF4i6zLurpBdec58mO9wlqOKzcyDW+r7hb6sWXv4FaEvPvAOgXykbrZqvjmbhtq66lQNx4Y6f9FDdXuOeb6ENy7wnIDqVyH7KSps24jv8By+WRUaGYwp5oUYfd5RgHpLw2Z9jo5TH4w=
+	t=1727130256; cv=none; b=iqaZzDoPUCADcU/Z1oycusCMhpqeAv7FMTwajWiWyFZvkBdJNaT1MTzC8I+fhe1xoqSGBacVrqJX2bgy16iqEVvC9rE1Y7nBh4O8qx7khyGJbJ/fgzrys93lWHlJb2sMDvjhaxK8o7VATF/tLloanGZoKSkpYvt8Q4Hmn+Gn58s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727130201; c=relaxed/simple;
-	bh=+IRU5MvoXdAZd41b966UC1JOfxDMpRGlFZYIaL5dSPg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P41z+qrFJRaV8HAZMCCqtGvSolkmFdfUkoFejYlobYKBj46GQqIZEQO/UDEmYCOwvgme9VyZRy8ovtJTetC4hgUo5p0yrrEiVzDW8N+HllQZu0Dd8JSqft45KR0YYaamY1c7LmtX3t0berGCDBLoAz607FzKQeK+gxF5YCLeL6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=deru6eWe; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-501269674daso1408401e0c.0;
-        Mon, 23 Sep 2024 15:23:18 -0700 (PDT)
+	s=arc-20240116; t=1727130256; c=relaxed/simple;
+	bh=nWv5jkxsYGb6BH8f1B+XxElW8yEexPiQUWRgqJ2atn4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=TqtEHvaVH/D4xsYueGgLedYGwEdVjxrtHKfEWS+fp8mASRZrB90gBam40PvtG/82QBqyM1MlcXtU7+9tzp0S/c3k3QEMuP3O7Dx2G+I81Ij4h697Ks8qDCsVh0zbDxg1V0vz4cha6Nm0oc69FL0KLVserzSeczjWMNTSGmhxiFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VkrrLvyI; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a8d2b24b7a8so135652866b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 15:24:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727130197; x=1727734997; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QymWD1IrtknSkAA2lmTqG0YpoY1LO6eanvSL27b8XIM=;
-        b=deru6eWerlvYD7TP99FGkr4+oez/3sGZZ0Or9qf0Ktk6clrwoXUall5GyNIaDKLgyd
-         JybEIh0i7q8sR3Yr8LQCDwBr9G2rOZqKOZTz+EF6ShjmIMCt+sy+xsULA+4NKpJtAXiO
-         /EtDtgaMAk3VJ0sdfo4epivz2cC7BO5Xq/XylEdPKt4AkhLRJJ/Garwe67MFvwQUGK0b
-         9dI4K9MREKc2MeKPrr7JR2fZlIUJnFsEZwQXnBjtWOlaB8X1WqjqtO86xxtVVJ+bF++b
-         eNJyfEy/7JsgCcTQYIvprUG4vc/HovxdWHDJiK3mtZCq6D77JaTHIEii62GEb46hS9Np
-         94jw==
+        d=linux-foundation.org; s=google; t=1727130252; x=1727735052; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xEtwfj2Zun/Vxwsgf+psjJ2+i16O146ctHz5aKhwNu4=;
+        b=VkrrLvyIQws3bMhiiek37LXUIQy8iaKK0JfWKi5sWb995z+9LXWzfmLp37qaVGPcWB
+         R/2yNnCBCUWAuCqmNglU++DBML/8U8kD5yveDNjcXDkpSl6jEpb9Bpxr5CBwhd/2URFA
+         givfxuvjR6GpB6059lD1ZmjzzZc5MwoPMjRdY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727130197; x=1727734997;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QymWD1IrtknSkAA2lmTqG0YpoY1LO6eanvSL27b8XIM=;
-        b=Gt3hJGi/BmHm/V1cc8uFQ5FxAUFLm0uLLR4MEs9pJdY9Ck8rOON2piq7v/vQPAMZ7Q
-         b4bC5OiPUewSvyy2kYl6TNwBZm41Q9UoifJI8zrgCCqB0lSr5FINu6D4plKr+CzwkMRY
-         rORUpRTlbQ7PdF93WO+NVYAy4rh9uqXces73a95qx3o565WLG/X87mhsIF/NwL0D7CjK
-         ps9R4GiyGylTxm0iZzt1gtpvgQOu0fi1GhbJ0u57CYz36E02iumRMYJ8UrRg7m00SQdj
-         qeD5x0PZjcc9YM1kTk37JY6a3sPKbgfSzn8PhmVqKgDMixCjFq7gARMJEiH/y6GJvThN
-         nXtg==
-X-Forwarded-Encrypted: i=1; AJvYcCVOKYWWksgSco1jUkz1R+igygyhY13iG6XNlYkljwXIi48WBfNJ2RZ6NLwBD2QDy6S3AVcUZlmKsy1pVe2r@vger.kernel.org, AJvYcCX20fz5Rd+81ZnRMBFwWqjsZgbEbfIS/5q4vKyql5TTolBriXZFU7blFlUm3BswfY7Qmld+1QCrw8xnpaSKlw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoFTQS2PLRHqnTBrZZEkNWxTwlzNDkYtad/OcGPwRAj1rfb7iX
-	cFjh2T+WLjsjfrZ7P3JItMboETWHuqpvlrTN7c3bpo1W7UnjPOU9
-X-Google-Smtp-Source: AGHT+IH5f45ouRi0DUtEDTvrxo5pc+E6m40jFG6QrHhEYFQQOvkf08AU0lsDiEKLhyNVNI98qIdvJg==
-X-Received: by 2002:a05:6122:3b12:b0:4f5:1ea3:736f with SMTP id 71dfb90a1353d-503e0580dc0mr7628307e0c.13.1727130197543;
-        Mon, 23 Sep 2024 15:23:17 -0700 (PDT)
-Received: from diogo-jahchan-ASUS-TUF-Gaming-A15-FA507RM-FA507RM.. ([200.4.98.112])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-505a9f3ef8bsm180382e0c.17.2024.09.23.15.23.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 15:23:16 -0700 (PDT)
-From: Diogo Jahchan Koike <djahchankoike@gmail.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Diogo Jahchan Koike <djahchankoike@gmail.com>,
-	syzbot+18a5c5e8a9c856944876@syzkaller.appspotmail.com,
-	linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] bcachefs: assign return error when iterating through layout
-Date: Mon, 23 Sep 2024 19:22:14 -0300
-Message-ID: <20240923222305.128344-1-djahchankoike@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1727130252; x=1727735052;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xEtwfj2Zun/Vxwsgf+psjJ2+i16O146ctHz5aKhwNu4=;
+        b=lKRTS85jSojGf+PdUQLiSwOdLjwHT2+r0oN0hVy/PeSNcu4036V74JisOrhXEj2lyx
+         Jyirm29TmtVv9T8QqJ8tyOakFsOY3RreX/EzazX03xc3rHx9wguHPdduIlZZGP6bDt1W
+         seIa0fQl5eP5TXN6+Kzb1wwoQhxAVfn+y5MRg9cSv1/wJJoMYVlbkib7AI6tJ9FL0eYc
+         pXLj3LH/t8uw37zFiiqiAOHo7iGp4li9Nm1RJZEbk6ZL9/MjmP3totZLnElz85o6qkip
+         XNRu7YMrX7fcY4Sz+kAyZoBzXv8GOuo0Dm/a7RHXrmyfhmGOUUwh1DYnc6d8i/unPzGh
+         HH6g==
+X-Forwarded-Encrypted: i=1; AJvYcCX8TsAgM2p+7SbqHpc0KBO2e58uRQI5gXCVABxf9wxOpdBOq3pvKEjmdLEdKEBDZuh7mY0QsFBC0fNRaVQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUHVOYoMHmTyiDqT1ppLXnTBGBoZf6s8h6wTQFbFdso0ik9rW/
+	QBIFQMuLEZUSvbWucBpQ7cBQt9OAs/+19JftwZdVei/LE7Fywx4yXKYc15j1ZdmU4DAAoS4RmXw
+	2qMpIzw==
+X-Google-Smtp-Source: AGHT+IFMgiSm9dXo3KEtld2ycqagRwS9ettafSU24ysoCblXlof/Pvi0D5DoiR6tOWLVeCFHVa804w==
+X-Received: by 2002:a17:907:d13:b0:a8d:2bc7:6331 with SMTP id a640c23a62f3a-a92d560f2c5mr99511166b.27.1727130252399;
+        Mon, 23 Sep 2024 15:24:12 -0700 (PDT)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com. [209.85.218.53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93930c8ca6sm7842566b.127.2024.09.23.15.24.11
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Sep 2024 15:24:11 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8d6ac24a3bso121148366b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 15:24:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXqnik82AMDC67MqfYrvW3ljwdlVyzqyz9vTCwhE4sqzbMhD1hu23/UIabOZ3Ps4O+JfypGqdZTPI35xLc=@vger.kernel.org
+X-Received: by 2002:a17:907:1b27:b0:a8d:5f69:c839 with SMTP id
+ a640c23a62f3a-a92c4857d58mr115908566b.15.1727130251376; Mon, 23 Sep 2024
+ 15:24:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <ZvEaHWH0IndyeMvs@shikoro>
+In-Reply-To: <ZvEaHWH0IndyeMvs@shikoro>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 23 Sep 2024 15:23:55 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wghWmpCT9Drh6wLXW04THfr=ZrHonRLDUdy=ou2Cmv9gA@mail.gmail.com>
+Message-ID: <CAHk-=wghWmpCT9Drh6wLXW04THfr=ZrHonRLDUdy=ou2Cmv9gA@mail.gmail.com>
+Subject: Re: [PULL REQUEST] i2c-for-6.12-rc1
+To: Wolfram Sang <wsa@kernel.org>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>, Andi Shyti <andi.shyti@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-syzbot reported a null ptr deref in __copy_user [0]
+On Mon, 23 Sept 2024 at 00:35, Wolfram Sang <wsa@kernel.org> wrote:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.12-rc1
 
-In __bch2_read_super, when a corrupt backup superblock matches the
-default opts offset, no error is assigned to ret and the freed superblock
-gets through, possibly being assigned as the best sb in bch2_fs_open and
-being later dereferenced, causing a fault. Assign EINVALID to ret when
-iterating through layout.
+What is it with people this merge window?
 
-[0]: https://syzkaller.appspot.com/bug?extid=18a5c5e8a9c856944876
+> The Intel LJCA driver loses "target_addr" parameter in
+> ljca_i2c_stop() because it was unused.
+[..]
+> Still in the iMX/MXC driver a comma ',' has been replaced by a
+> semicolon ';', while in different drivers the ',' has been
+> removed from the '{ }' delimiters.
 
-Reported-by: syzbot+18a5c5e8a9c856944876@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=18a5c5e8a9c856944876
-Signed-off-by: Diogo Jahchan Koike <djahchankoike@gmail.com>
----
- fs/bcachefs/super-io.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Stop describing pointless noise. The pull request - and the resulting
+merge message - is about USEFUL INFORMATION.
 
-diff --git a/fs/bcachefs/super-io.c b/fs/bcachefs/super-io.c
-index c8c2ccbdfbb5..fbca0bd302db 100644
---- a/fs/bcachefs/super-io.c
-+++ b/fs/bcachefs/super-io.c
-@@ -796,8 +796,10 @@ static int __bch2_read_super(const char *path, struct bch_opts *opts,
- 	     i < layout.sb_offset + layout.nr_superblocks; i++) {
- 		offset = le64_to_cpu(*i);
- 
--		if (offset == opt_get(*opts, sb))
-+		if (offset == opt_get(*opts, sb)) {
-+			ret = -BCH_ERR_invalid;
- 			continue;
-+		}
- 
- 		ret = read_one_super(sb, offset, &err);
- 		if (!ret)
--- 
-2.43.0
+The above is just pure noise. You're literally hiding all the useful
+stuff by overwhelming people with totally uninteresting stuff that
+matters not at all.
 
+I edited things down a bit, but I shouldn't need to wade through this
+kind of pointless verbiage.
+
+I want a useful *summary* of what has happened, and what I'm getting.
+Not some line-by-line "I changed a character".
+
+Is this some broken attempt at AI summary? Because it sure isn't real
+intelligence.
+
+               Linus
 
