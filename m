@@ -1,115 +1,195 @@
-Return-Path: <linux-kernel+bounces-335666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1427497E8DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:36:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3C9797E8DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:37:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44FF31C20F8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 09:36:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D3ED281744
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 09:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F674194A67;
-	Mon, 23 Sep 2024 09:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90413194A7C;
+	Mon, 23 Sep 2024 09:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ncDwAOyy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aY3GGgTU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED211946D0
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 09:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE283D528;
+	Mon, 23 Sep 2024 09:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727084192; cv=none; b=VG9pnSlavI8ptlRK+DOilHMRuQDNrBrTzxn5ocL9CiSDMOeEJvxN6N5pzTHdQX0NJCmDEJIhjkG374u/+2rtZYZ8ZxLBdkFsG7G/qjtBuNebmG1AOMx5XwFNnecwFavoQtFPgQHs7uxsf3A76/ecKbvrE16ysWrFvi/ENiy6/+8=
+	t=1727084260; cv=none; b=eA0H6gN/BctCJI+8urpzXVeAPUdk3lc5/7tY7ianXrPfOeqhUfSAvjWB+yZLlPegGHhIvQ9ch7BwzEAEbrRKN+qdi+kIHZu/Fb/YyCTDFjMEjvOb5ZMEbFv64A9xBDgfI/CymY9j5bgopY/pf1QZ7cegppAhfJ0Oz7RQ+m2+JAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727084192; c=relaxed/simple;
-	bh=hxOOIcHxpn1k7+C+uO984/vXp2LIHB/TbDCDWpqrAvQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YbJILKwUYhx+/mlp/B20oaz3SdKk2BH5HVkVwcaP3THT22Id19I1MFpp3I/1E7LZtVbyKNX095fh4f1th9FHRXzGQs+OBM3++5BY9HKDd9OT5qqujPyxd2xCNWZUMF1PYA2slv6pjGQge/G7h5++OiGsF1WDdi4mzV70Bmwo3bY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ncDwAOyy; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727084191; x=1758620191;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=hxOOIcHxpn1k7+C+uO984/vXp2LIHB/TbDCDWpqrAvQ=;
-  b=ncDwAOyy8xptj3yhwXyAEhAILcUdEGFMdSJB0sv6Fb/sYvCO06Hzmg3l
-   tmZxFmWeM2e5aGW4VD4QCqA5uMh7gVy7aViSyudv6Lb+ZWHFENDXijmf+
-   blxyL+gAEjMTqT6UgCn6rkUTtOyVYBmgUG3qfhgLp4d9LoJornp4DJfzL
-   3Rr1d7lfYgEn0KQXC/UWS44uVKCjESw6PegwCdARaAJrG24nZCPX1AI7U
-   XnwLH5MoIWlPH9oBF6VJtSV+aS3Cx7+lM75BtLco71WjqX2dswuxvQd5M
-   p9oy/4Ubcoak6wmk4RXnM8XrfCmvfjYw5V/a3qdcvGcY8yzvdzJrbsyRc
-   A==;
-X-CSE-ConnectionGUID: 6D0AElIDTkuPI9ZkK2ezYg==
-X-CSE-MsgGUID: UAYz3zKNRtOljC5qcqnsLQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11202"; a="37158378"
-X-IronPort-AV: E=Sophos;i="6.10,251,1719903600"; 
-   d="scan'208";a="37158378"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 02:36:30 -0700
-X-CSE-ConnectionGUID: xSqErfLXSPy0NpRFbaE5Xw==
-X-CSE-MsgGUID: KAkOJ+AZTX2KjfaFW8d8WQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,251,1719903600"; 
-   d="scan'208";a="71032232"
-Received: from sschumil-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.65])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 02:36:25 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Tejas Vipin <tejasvipin76@gmail.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, Laurent.pinchart@ideasonboard.com,
- patrik.r.jakobsson@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, airlied@gmail.com, daniel@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] drm/gma500: replace drm_detect_hdmi_monitor() with
- drm_display_info.is_hdmi
-In-Reply-To: <4c053d01-2f67-47c3-9f08-e20e8e6ef1dd@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240911180650.820598-1-tejasvipin76@gmail.com>
- <b0f77fcc-5d84-4727-9a17-9d1f1e2c5b76@suse.de>
- <4c053d01-2f67-47c3-9f08-e20e8e6ef1dd@gmail.com>
-Date: Mon, 23 Sep 2024 12:36:22 +0300
-Message-ID: <877cb27lux.fsf@intel.com>
+	s=arc-20240116; t=1727084260; c=relaxed/simple;
+	bh=w3AXe7Q7QQ2NbwO91Ot+VgUMJcArPUctZY4zNwKUOLs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eRH2dJ3OlUGAj+0S0u1we468b3N4YQmu1cyBGjFr63Zz73DTx0yYVViqecFkiv8eHh2FWnQ/BRK6iSFjFu7bJRQ3ytWYnskP2AHbLqap+L530TcVLrrsSSExUOMOkakROJkC05b/5XFkvYBhZq9nAIfMwVJCUAwhIWypIz0Szc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aY3GGgTU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82CAEC4CEC4;
+	Mon, 23 Sep 2024 09:37:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727084259;
+	bh=w3AXe7Q7QQ2NbwO91Ot+VgUMJcArPUctZY4zNwKUOLs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aY3GGgTUzXPqD0IvOVjLBC+pCX5A2+Wp0O1iTfphzGduzGxqjZiiJtQjnQ2MI6/TV
+	 Gg0GuVNGAOpkKcsEbzaUsGgwkDereXbpeHH2OYIc4c4rMR3hbrGrbwW30W85CJYGTR
+	 11/MtlSOovKbKzbChcuEJSwp3mkbOM+dGt8s50Vi+wQhxOH//Z/9xkw0jmCtnZYGOW
+	 WLD5/V/B0LFrW55hmItPr3oq4wUqJq90ZVBM8hHspbixOzN2pYVv0d2XI0CmxpAofX
+	 UJotxLa6WZ7RtXkIl9xGcwCagBgB8a+wDN9+6173DGkvX1PZFz0aa0gRbh/sBaFNnH
+	 AB0DYIfw3O1oA==
+Date: Mon, 23 Sep 2024 10:37:35 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Sandie Cao <sandie.cao@deepcomputing.io>
+Cc: Emil Renner Berthing <kernel@esmil.dk>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] riscv:dts:starfive:add framework dts
+Message-ID: <20240923-rehydrate-daintily-1199bce1456c@spud>
+References: <20240923053621.1585972-2-sandie.cao@deepcomputing.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-
-On Thu, 12 Sep 2024, Tejas Vipin <tejasvipin76@gmail.com> wrote:
-> On 9/12/24 12:49 PM, Thomas Zimmermann wrote:
->> Hi
->> 
->> Am 11.09.24 um 20:06 schrieb Tejas Vipin:
->>> Replace drm_detect_hdmi_monitor() with drm_display_info.is_hdmi since
->>> monitor HDMI information is available after EDID is parsed. Additionally
->>> rewrite the code the code to have fewer indentation levels.
->> 
->> The problem is that the entire logic is outdated. The content of cdv_hdmi_detect() should go into cdv_hdmi_get_modes(), the detect_ctx callback should be set to drm_connector_helper_detect_from_ddc() and cdv_hdmi_detect() should be deleted. The result is that ->detect_ctx will detect the presence of a display and ->get_modes will update EDID and other properties.
->> 
->> Do you have  a device for testing such a change?
->> 
->> Best regards
->> Thomas
->
-> I do not have a device to test this. Reading the rest of the series and
-> given my circumstances, I do not think I will be continuing with this
-> patch.
-
-*sad trombone*
-
-I think we could've made concrete incremental positive changes here,
-without changing everything about detect and get_modes.
-
-BR,
-Jani.
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="vaw+pNIvYxNDsg5l"
+Content-Disposition: inline
+In-Reply-To: <20240923053621.1585972-2-sandie.cao@deepcomputing.io>
 
 
+--vaw+pNIvYxNDsg5l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Jani Nikula, Intel
+Hey,
+
+Firstly your $subject should have a space after each :
+
+On Mon, Sep 23, 2024 at 01:36:20PM +0800, Sandie Cao wrote:
+> Add dts to support RISC-V Framework Laptop 13 Mainboard.=20
+>=20
+> Signed-off-by: Sandie Cao <sandie.cao@deepcomputing.io>
+> ---
+>  arch/riscv/boot/dts/starfive/Makefile         |  1 +
+>  .../boot/dts/starfive/jh7110-framework.dts    | 35 +++++++++++++++++++
+>  2 files changed, 36 insertions(+)
+>  create mode 100644 arch/riscv/boot/dts/starfive/jh7110-framework.dts
+>=20
+> diff --git a/arch/riscv/boot/dts/starfive/Makefile b/arch/riscv/boot/dts/=
+starfive/Makefile
+> index 7a163a7d6ba3..ebc8966fde0c 100644
+> --- a/arch/riscv/boot/dts/starfive/Makefile
+> +++ b/arch/riscv/boot/dts/starfive/Makefile
+> @@ -12,3 +12,4 @@ dtb-$(CONFIG_ARCH_STARFIVE) +=3D jh7110-milkv-mars.dtb
+>  dtb-$(CONFIG_ARCH_STARFIVE) +=3D jh7110-pine64-star64.dtb
+>  dtb-$(CONFIG_ARCH_STARFIVE) +=3D jh7110-starfive-visionfive-2-v1.2a.dtb
+>  dtb-$(CONFIG_ARCH_STARFIVE) +=3D jh7110-starfive-visionfive-2-v1.3b.dtb
+> +dtb-$(CONFIG_ARCH_STARFIVE) +=3D jh7110-framework.dtb
+
+Can you add this in alphanumerical order please?
+
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-framework.dts b/arch/ris=
+cv/boot/dts/starfive/jh7110-framework.dts
+> new file mode 100644
+> index 000000000000..4da7ade5c8e7
+> --- /dev/null
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-framework.dts
+> @@ -0,0 +1,35 @@
+> +// SPDX-License-Identifier: GPL-2.0 OR MIT
+> +/*
+> + * Copyright (C) 2022 StarFive Technology Co., Ltd.
+> + * Copyright (C) 2022 Emil Renner Berthing <kernel@esmil.dk>
+> + */
+> +
+> +/dts-v1/;
+> +#include "jh7110-common.dtsi"
+> +
+> +/ {
+> +	model =3D "jh7110 framework";
+> +	compatible =3D "jh7110 framework", "starfive,jh7110";
+
+"jh7110 framework" is not a real compatible (you need a vendor prefix
+and no spaces) nor is it documented - which produces warnings:
+arch/riscv/boot/dts/starfive/jh7110-framework.dtb: /: compatible: 'oneOf' c=
+onditional failed, one must be fixed:
+        'jh7110 framework' is not one of ['beagle,beaglev-starlight-jh7100-=
+r0', 'starfive,visionfive-v1']
+        'jh7110 framework' is not one of ['milkv,mars', 'pine64,star64', 's=
+tarfive,visionfive-2-v1.2a', 'starfive,visionfive-2-v1.3b']
+        'starfive,jh7100' was expected
+        from schema $id: http://devicetree.org/schemas/riscv/starfive.yaml#
+arch/riscv/boot/dts/starfive/jh7110-framework.dtb: /: compatible:0: 'jh7110=
+ framework' does not match '^[a-zA-Z0-9][a-zA-Z0-9,+\\-._/]+$'
+        from schema $id: http://devicetree.org/schemas/dt-core.yaml#
+arch/riscv/boot/dts/starfive/jh7110-framework.dtb: /: failed to match any s=
+chema with compatible: ['jh7110 framework', 'starfive,jh7110']
+
+Please run dtbs_check on future versions and fix reported warnings
+by documenting things in dt-bindings.
+"jh7110 framework" isn't very specific, so if there's a model number
+attached to the mainboard that'd be good to have. The vendor in the
+vendor prefix should be deepcomputing, so you'll likely have to add a
+new vendor prefix for that.
+
+The model field could also be improved, check out the visionfive 2 and
+see how that property was written there.
+
+
+> +};
+> +
+> +&gmac0 {
+> +	status =3D "disabled";
+> +};
+> +
+> +&gmac1 {
+> +	status =3D "disabled";
+> +};
+> +
+> +&usb0 {
+> +	dr_mode =3D "host"; /*host or peripheral*/
+
+What does the comment here mean?
+
+Cheers,
+Conor.
+
+> +	status =3D "okay";
+> +};
+> +
+> +&pwmdac {
+> +	status =3D "disabled";
+> +};
+> +
+> +
+> +&pcie0 {
+> +	status =3D "disabled";
+> +};
+> --=20
+> 2.34.1
+>=20
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
+
+--vaw+pNIvYxNDsg5l
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvE23wAKCRB4tDGHoIJi
+0gyvAQDz1vZH2TIvBpTQC58kuTqgGDt/GaaUbL8JEK34HqmPngEAkbAv7lmlYVTe
+qxriIGgNgbxTqp7ZIFQHEzAcLKDa6Ak=
+=sUq6
+-----END PGP SIGNATURE-----
+
+--vaw+pNIvYxNDsg5l--
 
