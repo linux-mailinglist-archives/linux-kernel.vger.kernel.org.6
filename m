@@ -1,346 +1,110 @@
-Return-Path: <linux-kernel+bounces-335975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A63A997ED63
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:52:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3735F97ED6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:53:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66D55281AF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:52:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D85A21F222D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:53:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB5A12C526;
-	Mon, 23 Sep 2024 14:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52AF19CC3C;
+	Mon, 23 Sep 2024 14:53:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SJ+fPAdV"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FSqtbZOL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00CB977F2F;
-	Mon, 23 Sep 2024 14:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F124126BFE;
+	Mon, 23 Sep 2024 14:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727103134; cv=none; b=FdUj2fO89z7PGOeXSvBVbFs4cjwWZxnjA7FgvS4D2c7/tz1cwu4rgooKUMMdMtOEL+4PT0GqkWaYZcvcwkH92yD4Gxmg7IVxPAFGQYeJHy7yHOVhut3smV2ltp7jH+EKliwKZv9h6W5kQJtGNTWkg2btSsoBb5Gpk9dFF/1V5Ns=
+	t=1727103211; cv=none; b=PDNm81OyhDvpjqwDx5APYKDCOLZwwQVTi9jZV5v7XW0GR2PX/8REH+4kVSfqKAAaizfzx7rXYbJNcTAFjTT1Dg8JQJcM/KuQxIbJC56FHQdd8N575l0E8tEs7vWntFCmyMprWCehSgjZzmNoS9tx4oVCerzLEpcZY+YHJuWuYcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727103134; c=relaxed/simple;
-	bh=ZbBKrYNDKpoosIS8ePOmxsDR40FZcAhpBVDXDQ8A2mU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n8M9YE5bLh1LU5oP1Rvh94IXSyKBJXtK1J1GcUOgyHVrebA/lSwlRTaItSfqJYCd50oCgujuWppe6D4fYE5IHm5FKtqTG+n7zSYKeuwMhels9znjHlC/CuW4U9b+RxMKPQSs70LUADR8EAs5hLbIcuV9q47Ql1E/FBXFt7ssdUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SJ+fPAdV; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a8a7596b7dfso55123866b.0;
-        Mon, 23 Sep 2024 07:52:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727103131; x=1727707931; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=dvYWgvPz4GHMK4BJ9bWLcc0WD2pvlKF4BVBrgMYJ8ss=;
-        b=SJ+fPAdV8Hv8DZlwNSWYTTTMC8cBEIdizrwf8jICu/kLnjvAERhidkPAnZ4fXr6lAQ
-         aD4FWIG5EKuHVmmGGnXTAuCMkzAY5Gy2Gz9XTq1LiXkHzupvwEElljALAimG6eKrCcnE
-         MY25JiqIzM8PmEyF10auQiJR0SrsFrp//PM4wHh1uRdpn4EQaET8hnDSjgzsazbpe8IK
-         VunBhg0l5hiybidToGxKN6lvIMhtKQja39Ed9W7QBWcEWwRve06H2agFXuTjgBeL8z/x
-         ob6wwi8oD5ZBW2o0AKVqFNzhfImzJge6Pb2Ya4tFg7ecT3nwuozUrQxDXCvJNUZAt9Na
-         C1Vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727103131; x=1727707931;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dvYWgvPz4GHMK4BJ9bWLcc0WD2pvlKF4BVBrgMYJ8ss=;
-        b=JDuO4oNDDodY/wlk3FRPHhG3jxAEztTojR0BA8KdoSxi8Xet7/tMHK6hNjVto/19KS
-         4bwAwzVFdWbK40oc3Zl3Is2m3FzJgfe4BelwY1CMEfwi+uvbB2T1cwbeEVI8kQasrAIV
-         Elsw/bLsx4Z50wOYKEBp23YdgzJpXPRxLFIvpPc6s0BXZLMR/2cFSJRiM67XLRB5+XOw
-         CMiqg2i41wpEou6mJYPRxAODBdgdleSgsc6REXolXQdtMfbhr2xDS2YS1+098pT0WpDT
-         Z8wKKleyHtTs07gCpfX5sN5p3xG9VFWyoisfOtpeSyUPKv9e+Vj18k6czwM+PqkjG7lX
-         J6gA==
-X-Forwarded-Encrypted: i=1; AJvYcCUEBMqub5riq7+Unc6kSb1ugyQGrnMCXk9GjzTt/eu63bN1f5J4O5/OZG+CY17LvKJts24x3mI1X2G+@vger.kernel.org, AJvYcCWtVmkIi88y6rBId3tG+qCKv9/YrZA8Ny+3UQY42Pf0W4Xjtn3aabCqweVext++i+nra6djjIfKUFld6bsz@vger.kernel.org
-X-Gm-Message-State: AOJu0YzED3bs/0LhLtBQuKVghYQH76MYg6FQtelKahOiJy/C+ZvNHCxX
-	uYqEo/NtqISruug94q7riicU7JbZbkG6TSq6YemIf4qmqDPy/sIaJdtrQol2q/xeqpHvcb3stFK
-	iPx7HfONtlix+bU2tSec6PJaNvQ==
-X-Google-Smtp-Source: AGHT+IEvo3JhxwABWxqG3yFZJBEez9HzkjZPXVQ6IVtlqFqNG4oRX+cgwW5vzetZ+acXoPUHTt0hu06nL1Lm0kDdYxc=
-X-Received: by 2002:a17:907:9482:b0:a8a:85c7:8755 with SMTP id
- a640c23a62f3a-a90c1c747a4mr1776481166b.11.1727103131040; Mon, 23 Sep 2024
- 07:52:11 -0700 (PDT)
+	s=arc-20240116; t=1727103211; c=relaxed/simple;
+	bh=nKwqZC0rEOeleKnqcEnAwn2FC3PO/cMvKnG1Hs4oV0k=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Rq3FEuxynKqwjHgCZ0gT/JtiWpjQ7diELI8Y3tWEtrFrUtVERJEECK7tvm7xfFPZNO5n0gqz06RW2u6p+lhNgDdPrPxRtwxzKT98lXqW0h8TswwFzr4eRcLW0H1n0Fdxlf+3eTJX2usBrURqlMXyUwC20qUJUkS6EmvhHAuaXs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FSqtbZOL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B8C0EC4CEC4;
+	Mon, 23 Sep 2024 14:53:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727103210;
+	bh=nKwqZC0rEOeleKnqcEnAwn2FC3PO/cMvKnG1Hs4oV0k=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=FSqtbZOLQe7WZ6y4IYs8FUyiAm8Z2GUVTPZI4BMxHpB+3b/ED8izMku9uNHyeUwT5
+	 49hC3cFMqVVC6QCJHvCFAlrZ3eW9XWy/tXj/fFGGEL9IUwTRrqQrx9xiGCKwnZk95n
+	 Zq0pyiBgUZxTDF/f2F8fyAXN654fXrMEkhiQjXBKO1tB7YvsvrIgAP/9s8jA5SV5wd
+	 9APdYJm5ntKKLDg1l2mpDP9zfokBN7hxH1VD7WGcteIOVSKY8rlQKvHHHbepgJOO6M
+	 516tQp39L+m3n9MDr1aPSfd7ga8hoR+gqvh/3dtAXoSwdjhiAJZsQ272z5BchRY15S
+	 j3vX4Dek6LioA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1D0ECF9C6F;
+	Mon, 23 Sep 2024 14:53:30 +0000 (UTC)
+From: Jean-Baptiste Maneyrol via B4 Relay <devnull+jean-baptiste.maneyrol.tdk.com@kernel.org>
+Subject: [PATCH v2 0/2] Add support of IAM-20680 HP & HT
+Date: Mon, 23 Sep 2024 16:53:20 +0200
+Message-Id: <20240923-inv-mpu6050-add-iam20680-ht-hp-v2-0-48290e0b9931@tdk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240920181231.20542-1-erezgeva@nwtime.org> <20240920181231.20542-2-erezgeva@nwtime.org>
- <4e0cf43c-4843-451c-ac6f-86775dbccb2b@linaro.org> <CANeKEMOmhAPM1j1_ihzcC2wL6jKsWXPCGfZs+euS8mRvtqgE5A@mail.gmail.com>
- <2c87568d-3caa-4162-91de-094684f1b268@linaro.org> <CANeKEMO4ckeJZHKEOKHVeamPzR045jpwkXWfJS9S6rBiMTayuQ@mail.gmail.com>
- <688d3e68-c339-4a44-b6b5-366dd5f12965@linaro.org>
-In-Reply-To: <688d3e68-c339-4a44-b6b5-366dd5f12965@linaro.org>
-From: Erez <erezgeva2@gmail.com>
-Date: Mon, 23 Sep 2024 16:51:32 +0200
-Message-ID: <CANeKEMNKF5WtVgzxbMnLFsqRHNOz=+gD-if8aBqsWwjgDvz3GA@mail.gmail.com>
-Subject: Re: [PATCH v5 1/5] mtd: spi-nor: core: add manufacturer flags
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Erez Geva <erezgeva@nwtime.org>, linux-mtd@lists.infradead.org, 
-	Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, linux-kernel@vger.kernel.org, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Esben Haabendal <esben@geanix.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOCA8WYC/x3NwQrCMAyA4VcZORsI6VasryIeMpvZHFZLq0MYe
+ /cVj9/l/3doWk0b3IYdqm7W7J07+DLAM0l+KVrsBiYeKbBDyxuu5etpIpQY0WRl8lfC9MFUcJl
+ kZAk+ODdDj5Sqi/3+g/vjOE4Vr5wRcAAAAA==
+X-Change-ID: 20240923-inv-mpu6050-add-iam20680-ht-hp-f5a42a96933b
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727103209; l=1076;
+ i=jean-baptiste.maneyrol@tdk.com; s=20240923; h=from:subject:message-id;
+ bh=nKwqZC0rEOeleKnqcEnAwn2FC3PO/cMvKnG1Hs4oV0k=;
+ b=+fg/gqi4YuYK/P3eSCPIUczNFoHJgDxTpEbozIsYbMS2ZVEdzJv34mt4OWjCG4ILzbcwn6yOl
+ n0r6nREKFjiC/Roz6feDjXRkBS/PTLDmWG++uhSXLC6XbDkd33uH/Uq
+X-Developer-Key: i=jean-baptiste.maneyrol@tdk.com; a=ed25519;
+ pk=bRqF1WYk0hR3qrnAithOLXSD0LvSu8DUd+quKLxCicI=
+X-Endpoint-Received: by B4 Relay for
+ jean-baptiste.maneyrol@tdk.com/20240923 with auth_id=218
+X-Original-From: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+Reply-To: jean-baptiste.maneyrol@tdk.com
 
-On Mon, 23 Sept 2024 at 16:18, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
->
->
->
-> On 9/23/24 2:01 PM, Erez wrote:
->
-> cut
->
-> >>>
-> >>> mx25l12805d has two OTP regions of 128 KiB and 384 KiB (yes asymmetric).
-> >>> While mx25l12833f has two OTP regions of 512 KiB.
-> >>
-> >> Ok, so you want to add support for mx25l12833f which shares the same ID
-> >> as mx25l12805d and has different OTP settings. Is that correct?
-> >
-> > My patch purpose was initially adding Mactronix OTP.
->
-> support needs to be added per flash, not per manufacturer.
+Add support of IAM-20680 HP & HT variants. These chips have better
+hardware specs and a bigger FIFO while retaining full compatibility with
+IAM-20680.
 
-The OTP code is per manufacturer.
-Not my inventions, See drivers/mtd/spi-nor/winbond.c OTP callbacks.
-My patch adds support after a single chip flash.
+Changes for v2:
+* Send patches to the correct list (devicetree was missing)
 
+Signed-off-by: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+---
+Jean-Baptiste Maneyrol (2):
+      dt-bindings: iio: imu: mpu6050: Add iam20680ht/hp bindings to mpu6050
+      iio: imu: inv_mpu6050: add support for IAM-20680HT/HP
 
->
-> > After reading a lot of Mactronix datasheets, I suggest also reading
-> > all SFDP to all  Mactronix chips.
->
-> Why? It seems too invasive. Generally it is not recommended to issue
-> unsupported commands to flashes. Change just the flash that you use and
-> can test.
+ .../bindings/iio/imu/invensense,mpu6050.yaml         |  5 +++++
+ drivers/iio/imu/inv_mpu6050/inv_mpu_core.c           | 20 ++++++++++++++++++++
+ drivers/iio/imu/inv_mpu6050/inv_mpu_i2c.c            | 10 ++++++++++
+ drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h            |  4 ++++
+ drivers/iio/imu/inv_mpu6050/inv_mpu_spi.c            | 10 ++++++++++
+ 5 files changed, 49 insertions(+)
+---
+base-commit: 1504ee03b6e48187348d20f6efc74e7d93855728
+change-id: 20240923-inv-mpu6050-add-iam20680-ht-hp-f5a42a96933b
 
-It is not, All Mactronix chips in the last 15 years have SFDP.
-The chips in the manufacturer compatibility table are all obsolete.
-Mactronix reuse the JEDEC IDs. There is no point pretending these are
-the same chips.
-
+Best regards,
+-- 
+Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
 
 
->
-> cut
->
-> >> Which flash do you have at hand, both, none, just one of them?
-> >
-> > When I started working on the OTP code, I used MX25L12833F.
-> > But later I left the company.
-> > So I use my beaglebone black and connect it to a MX25L3233F.
->
-> I understand mx25l12805d and mx25l12833f share the same ID. How is
-> mx25l3233f related, does it share the same ID as the previous two?
-
-They are not. I just replaced the company hardware with a different one.
-You ask me to report the hardware I use for testing.
-
-The patch covers the one I use with beaglebone black.
-I just mentioned the OTP callbacks are per manufacturer.
-But if a new chip in the future would require different callbacks,
-then just add them.
-My patch is using a single chip, the one I send the testing with.
-beaglebone black + MX25L3233F.
-
->
-> >
-> >>>
-> >>> How do we handle it?
-> >>> I would gladly remove the obsolete mx25l12805d.
-> >>> And skp compatibles all together."
-> >>
-> >> I need to understand first what you're trying to do. Don't assume that I
-> >> remember what we discussed one month ago. Describe the why in the commit
-> >> message.
-> >
-> > "Add support for SPI-NOR Macronix OTP."
-> > I wrote in the cover letter.
-> > No, I do not expect you to remember everything.
-> > I did write my intention in the cover letter.
-> >
->
-> I already read your cover letter and it didn't explain the challenges
-> that you're facing.
-
-Sorry, I will improve my cover letter.
-
->
-> cut
->
-> >>>
-> >>> You keep sending me contradictory messages.
-> >>
-> >> when? Please accept my apologies if that's the case, it's not in my
-> >> intention. Provide better commit message, help me help you.
-> >
-> > I tried adding a new compatibility.
-> > You say you do not want new compatibility.
->
-> I said new compatibility will be introduced as a last resort only if we
-> can't differentiate the flashes at run-time. You haven't proved me yet
-> that this is the case.
-
-Then you do not read my explanation.
-Do you wish me to send the Macronix datasheet of the 4 chips?
-
->
-> > You ask if it is possible to deduce it from JEDEC ID and SFDP,
-> > I answer that this is not possible, at least in some cases..
->
-> I'm interested just about your case, not all the possible cases.
-
-Actually it is the MX25L3233F and its previous chips.
-Anyway, I will not submit a broken solution.
-Whether you like the idea or not.
-
->
-> > I try to add OTP parameters in DT. You do not like it, fair enough.
-> > What am I to do?
-> > Seems like a dead end.
-> >
->
-> You can better explain what are the challenges you have and answer the
-> questions that we're asking ...
-
-I try.
-But seems you are lock in a loop.
-You want to eat the cake and leave it as is.
-You do not want to add compatibility and reject using dynamic OTP.
-You are welcome to find a third way.
-And no you can not use JEDEC ID and SFDP for that.
-
-
-
-> > Erez
-> >
-> >
-> >>
-> >>>
-> >>> I told you we can not "guess" OTP settings based on JEDEC ID and SFDP existence.
-> >>
-> >> When? And more importantly, why?
-> >
-> > I send you example of 3/4 chips that using JEDEC ID and SFDP existence
-> > is not enough.
->
-> Why? Do they have the exact SFDP tables? Prove me, drop them all.
-> Any bit that differs in the SFDP tables is enough to differentiate the
-> flavors of flashes. Vendor tables included ;)
-
-Because the SFDP is not related to OTP in any way.
-You are planning to decide OTP parameters on non relevant information.
-If you wish to implement such a broken feature, you are welcomed.
-I'll pass.
-
-> >
-> >>
-> >>> It may be partial and Macronix may add new chips in the future.
-> >>
-> >> I don't understand what you mean by partial, please elaborate.
-> >
-> > I think Kernel like using bullet proof methods.
-> > methods that will produce a working results.
-> > If I find one example we can not probe the OTP parameters this way, it
-> > means this method is NOT bullet proof.
-> >
-> >>
-> >> And we don't add support for what we assume new chips will look like.
-> >
-> > This is not what I ask for.
-> > Just trying to guess OTP parameters in current chips will break with new chips.
-> >
->
-> Again, I'm interested just in the flashes that you use and can test. I'm
-> not interested in addressing theoretical problems.
-> >
-> >>
-> >>> They reuse JEDEC ID only retaining flash size and blocks.
-> >>
-> >> Yes, I know macronix shares flash IDs among flavors of flashes or new
-> >> chips altogether.
-> >
-> > I am glad you know.
->
-> I sense some rage and I find this inappropriate. I'm just trying to help.
-
-Because I repeat myself over and over.
-And I find myself in a loop with you.
-
->
-> cut
->
-> >>
-> >> And I think I already said that you can differentiate between the two
-> >> based on SFDP presence. mx25l12833f has SFDP, thus when SFDP present use
-> >> the mx25l12833f-OTP configuration. When SFDP is not presence one may add
-> >> support for the mx25l12805d-OTP configuration.
-> >
-> > No, we have 3 chips.
-> > 2 are using the same JEDEC ID and both using SFDP, yet they use a different OTP.
->
-> Which ones are these?
->
-> I guess mx25l12805d is non-SFDP. Then mx25l12833f and mx25l3233f define
-> some SFDP tables. Do mx25l12833f and mx25l3233f have the same OTP
-> organization?
-
-No, that is the point.
-
-
->
-> > So, the problem is here, and probably be bigger in the future, despite
-> > you "do not care".
-> >
->
-> I hear about your problem just here, after 3 emails exchanged and at
-> least one hour wasted of my time.
-
-Sorry for wasting your time.
-I am also wasting mine, I hope you appreciate mine as yourself.
-
->
-> I want to address problems one step at a time. We can address the bigger
-> theoretical problems in the future, if they'll ever become real.
-
-As I read more than 15 datasheets of Macronix flash chips, and
-specifically ask the Macronix technical staff.
-This is not theoretical. But actually.
-Having said that, does not mean I plan to support in this patch more
-than one chip with OTP.
-Only that your suggestion will lead to a broken probing of OTP
-parameters, if not in the present, then in the future.
-See, until today OTP was not that appealing. I seem to be the first
-one who wrote OTP code for Macronix.
-So it is not like you have a real experience with it.
-I just start the surface of it.
-
-
-
-
-
-> >
-> >>
-> >> Is there any case that I miss?
-> >
-> > According to your reply, I would say pretty much most.
->
-> This is again inappropriate ... I will read your next email as well, but
-> I'm not going to tolerate such replies anymore.
-
-I agree on this one.
-Seems you are looking for something I do not agree on.
-This is not because I oppose probing,
- this is because you ask for indirect probing, against Macronix own
-recommendation.
-
-Sorry for bothering you
-
-Yours
-   Erez
 
