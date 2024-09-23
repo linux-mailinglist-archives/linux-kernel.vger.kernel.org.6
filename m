@@ -1,129 +1,156 @@
-Return-Path: <linux-kernel+bounces-335619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FA7397E81D
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:05:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEAF097E7F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:56:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B12F01C21415
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 09:05:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83264B214F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BC2A19415E;
-	Mon, 23 Sep 2024 09:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="kWDnVxso"
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A387B19408A;
-	Mon, 23 Sep 2024 09:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F0F19415D;
+	Mon, 23 Sep 2024 08:56:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D111535B7;
+	Mon, 23 Sep 2024 08:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727082305; cv=none; b=V3nuTw1YaaUoSUVzZdvuj0uKStR7d8g0BEfk1IGhaj1MvjJAfFHik6AHAq46GjSOP3Q6TJlZNFsQNtFLlNuUzBboxKHmuUNdsJEz3hHETqgwE/JZCsWDL3VYxv+Ns9LO3SDr86CzwCDZhYV1AeBIQrVs1CeVnHuiFwhsVVTklKA=
+	t=1727081770; cv=none; b=KxTUqoZlBNXRz1HrlAnMwi2A9iM7vp47VXOhKbVOHar06AsrEdrI+7itCA36xYf6Rjntd3HUNyqs4EK0sRhYQT4m/z5aU9AJ2WNny+6ugh0uJpVa0nmCgj+wp+CclVrEA4zKoZ+H+KuFhUGt7LRscZ8sodXBeTZDDtSYf4sp7Fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727082305; c=relaxed/simple;
-	bh=k9xp4HT0KfmMEah7RTJzHOqd+Psq/6SKQaWSl+s9GHs=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=K/n1wVj5sZYRdiwzzIE52e3nQqHLwI2jx0NRriIqgitX8ZcNcoszkUNClcZdhKNDJWCbj2EVNxDz2k5vKg9IBEL6MnIcxKDnFZ0PS8Z+qsaIiD4OLe6WFWF+rWnEwbDmo+XkEmbTHeGqizfUUBTDjlfJr3Rwhe+Hcw5iU267r/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=kWDnVxso; arc=none smtp.client-ip=185.125.188.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from localhost.localdomain (unknown [222.129.37.69])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id EF3E43FAD1;
-	Mon, 23 Sep 2024 08:55:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1727081752;
-	bh=tFqbx20s3eVOndjh3nVrsPXEtwFY8lQ0VrYHujgxud4=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=kWDnVxso8qF6rJE89XoTgmCgElUCnv9OYMPFijvBAEHpUXWrONkbHogFsHSOEXG4O
-	 0DYwjGZzawg2eNqui3AElJ1BuB91jbnMNOdSxpbF2m03Pi4ZjvIOYbFbEN88IPZTKu
-	 cAMUH/1S4esij9bNXNluzTm/EVQsFtDzqiYssHHRK9rC1HZ/xEG9m/AHqt19CujUMP
-	 0jkcNE71STcPmMSGIfqMPIs+BqpA/PT83Kh0JuNTDnCPUOpuqKs+/2Ev/dBfQUwZPy
-	 HaGOWUqMoBCOiVJseZLfXyU29jWvJIovS6HHy2u90wb3qHKSkjmdA8kCuU0vbWJ/+L
-	 DKKxNU++ouqKA==
-From: Aaron Ma <aaron.ma@canonical.com>
-To: linux-kernel@vger.kernel.org,
-	linux-bluetooth@vger.kernel.org,
-	luiz.dentz@gmail.com,
-	marcel@holtmann.org,
-	aaron.ma@canonical.com
-Subject: [PATCH] Bluetooth: btusb: add Foxconn 0xe0fc for Qualcomm WCN785x
-Date: Mon, 23 Sep 2024 16:55:19 +0800
-Message-ID: <20240923085519.19074-1-aaron.ma@canonical.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1727081770; c=relaxed/simple;
+	bh=njYXQemaQx/tCPelqnjQtrqSYGu8itQVDVmbS2OFB7w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gkh79O+2/DedOqhNpI1X1K1m5pwwfxC2gghPKY0lvANH71SpuU59xMtFZ97vEiYU4n17bXaat3JuEJBDWnAiEACw5iD3zwRS/5DjNHcoQi1dd9IPvF/05CKhKHQm0ButcfaOjtK7ynqF7AVUWlkwZiVXZfvrlLVoMDVPuKxXBZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2D680FEC;
+	Mon, 23 Sep 2024 01:56:36 -0700 (PDT)
+Received: from [10.57.79.18] (unknown [10.57.79.18])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7F5C63F64C;
+	Mon, 23 Sep 2024 01:56:03 -0700 (PDT)
+Message-ID: <0316b8a2-8199-41bb-ad0c-99404c896272@arm.com>
+Date: Mon, 23 Sep 2024 09:56:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 2/5] drm/panthor: record current and maximum device
+ clock frequencies
+To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linaro-mm-sig@lists.linaro.org
+References: <20240920234436.207563-1-adrian.larumbe@collabora.com>
+ <20240920234436.207563-3-adrian.larumbe@collabora.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240920234436.207563-3-adrian.larumbe@collabora.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Firmwares are already in upstream.
+On 21/09/2024 00:43, Adrián Larumbe wrote:
+> In order to support UM in calculating rates of GPU utilisation, the current
+> operating and maximum GPU clock frequencies must be recorded during device
+> initialisation, and also during OPP state transitions.
+> 
+> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
 
-kernel boot log as following:
-Bluetooth: hci0: using rampatch file: qca/rampatch_usb_00190200.bin
-Bluetooth: hci0: QCA: patch rome 0x190200 build 0x5656, firmware rome 0x190200 build 0x43fb
-Bluetooth: hci0: using NVM file: qca/nvm_usb_00190200.bin
+I thought I gave my r-b on v6 and I can't actually see any change:
 
-Paired BT headphone, output is good.
+Reviewed-by: Steven Price <steven.price@arm.com>
 
-T:  Bus=01 Lev=02 Prnt=02 Port=00 Cnt=01 Dev#=  4 Spd=12   MxCh= 0
-D:  Ver= 1.10 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=0489 ProdID=e0fc Rev= 0.01
-C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=100mA
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-I:  If#= 1 Alt= 7 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  65 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  65 Ivl=1ms
-
-Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
----
- drivers/bluetooth/btusb.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 6c9c761d5b93..9a96a8e38f3e 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -371,6 +371,8 @@ static const struct usb_device_id quirks_table[] = {
- 	/* QCA WCN785x chipset */
- 	{ USB_DEVICE(0x0cf3, 0xe700), .driver_info = BTUSB_QCA_WCN6855 |
- 						     BTUSB_WIDEBAND_SPEECH },
-+	{ USB_DEVICE(0x0489, 0xe0fc), .driver_info = BTUSB_QCA_WCN6855 |
-+						     BTUSB_WIDEBAND_SPEECH },
- 
- 	/* Broadcom BCM2035 */
- 	{ USB_DEVICE(0x0a5c, 0x2009), .driver_info = BTUSB_BCM92035 },
--- 
-2.43.0
+> ---
+>  drivers/gpu/drm/panthor/panthor_devfreq.c | 18 +++++++++++++++++-
+>  drivers/gpu/drm/panthor/panthor_device.h  |  6 ++++++
+>  2 files changed, 23 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_devfreq.c b/drivers/gpu/drm/panthor/panthor_devfreq.c
+> index c6d3c327cc24..9d0f891b9b53 100644
+> --- a/drivers/gpu/drm/panthor/panthor_devfreq.c
+> +++ b/drivers/gpu/drm/panthor/panthor_devfreq.c
+> @@ -62,14 +62,20 @@ static void panthor_devfreq_update_utilization(struct panthor_devfreq *pdevfreq)
+>  static int panthor_devfreq_target(struct device *dev, unsigned long *freq,
+>  				  u32 flags)
+>  {
+> +	struct panthor_device *ptdev = dev_get_drvdata(dev);
+>  	struct dev_pm_opp *opp;
+> +	int err;
+>  
+>  	opp = devfreq_recommended_opp(dev, freq, flags);
+>  	if (IS_ERR(opp))
+>  		return PTR_ERR(opp);
+>  	dev_pm_opp_put(opp);
+>  
+> -	return dev_pm_opp_set_rate(dev, *freq);
+> +	err = dev_pm_opp_set_rate(dev, *freq);
+> +	if (!err)
+> +		ptdev->current_frequency = *freq;
+> +
+> +	return err;
+>  }
+>  
+>  static void panthor_devfreq_reset(struct panthor_devfreq *pdevfreq)
+> @@ -130,6 +136,7 @@ int panthor_devfreq_init(struct panthor_device *ptdev)
+>  	struct panthor_devfreq *pdevfreq;
+>  	struct dev_pm_opp *opp;
+>  	unsigned long cur_freq;
+> +	unsigned long freq = ULONG_MAX;
+>  	int ret;
+>  
+>  	pdevfreq = drmm_kzalloc(&ptdev->base, sizeof(*ptdev->devfreq), GFP_KERNEL);
+> @@ -161,6 +168,7 @@ int panthor_devfreq_init(struct panthor_device *ptdev)
+>  		return PTR_ERR(opp);
+>  
+>  	panthor_devfreq_profile.initial_freq = cur_freq;
+> +	ptdev->current_frequency = cur_freq;
+>  
+>  	/* Regulator coupling only takes care of synchronizing/balancing voltage
+>  	 * updates, but the coupled regulator needs to be enabled manually.
+> @@ -204,6 +212,14 @@ int panthor_devfreq_init(struct panthor_device *ptdev)
+>  
+>  	dev_pm_opp_put(opp);
+>  
+> +	/* Find the fastest defined rate  */
+> +	opp = dev_pm_opp_find_freq_floor(dev, &freq);
+> +	if (IS_ERR(opp))
+> +		return PTR_ERR(opp);
+> +	ptdev->fast_rate = freq;
+> +
+> +	dev_pm_opp_put(opp);
+> +
+>  	/*
+>  	 * Setup default thresholds for the simple_ondemand governor.
+>  	 * The values are chosen based on experiments.
+> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
+> index a48e30d0af30..2109905813e8 100644
+> --- a/drivers/gpu/drm/panthor/panthor_device.h
+> +++ b/drivers/gpu/drm/panthor/panthor_device.h
+> @@ -184,6 +184,12 @@ struct panthor_device {
+>  
+>  	/** @profile_mask: User-set profiling flags for job accounting. */
+>  	u32 profile_mask;
+> +
+> +	/** @current_frequency: Device clock frequency at present. Set by DVFS*/
+> +	unsigned long current_frequency;
+> +
+> +	/** @fast_rate: Maximum device clock frequency. Set by DVFS */
+> +	unsigned long fast_rate;
+>  };
+>  
+>  /**
 
 
