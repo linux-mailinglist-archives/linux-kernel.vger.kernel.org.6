@@ -1,220 +1,151 @@
-Return-Path: <linux-kernel+bounces-336578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A476983CAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:08:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA6C1983F1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:32:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D93B81F21A4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 06:08:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A09C2828EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F9173451;
-	Tue, 24 Sep 2024 06:08:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B61D01482F3;
+	Tue, 24 Sep 2024 07:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="xWqndHAx"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DewFfEuo"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F5153373
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 06:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 976EE142E78
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727158095; cv=none; b=DV10xl/u0MbfjVLLITjzySaXu9KnpiqPCcpscrZPYlmgOLUxaxkuTlY5LQZyV7ieuC+Bb3JIwwXydAk3fYd7BDCiiAP+leDNNdCRDBU2x5uN3TXB9BrMN7FSUa7oJm80YFofNQtotGHxluqxTm/xhCHVgnkvI7EDnGcF1aCn3X0=
+	t=1727163123; cv=none; b=ki97BVJIh4rx7QI2xUPu0E5wdQUYKwBj9g4qlwXyXdp1qgZvGfFsssMRPqP2scIfbT3/HxHnzVKFfCkZSBjO1gTkPBcgeqqDMrQAMQQBFNNbeK6LCKBuCyJK6yJUUQZP409UrqSYB+doefDWWbBZL6P7NvUBErwCyv89YBDBCjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727158095; c=relaxed/simple;
-	bh=gDW51VJPoXNQgg+K5Mw5ZlfbpYrIZ9JbXKBia32d0+Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fo27RzhesaIrr1+ZiYDrCLlOVp+srEuGeTxgMXNXnKMIlqiumvQlod5mQuNiu5sOyjYgg6Q49JAW5ZLIrS74jdLCq0F5DeKfHs7ce6zeAG0X/vjBAmq3tyRPyDUFUkCQtKid6jKnj8cfSWgEP0DHVL4DauS5sIUoAP6QLDy9mFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=xWqndHAx; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-374ca65cafdso2821131f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 23:08:11 -0700 (PDT)
+	s=arc-20240116; t=1727163123; c=relaxed/simple;
+	bh=7O+CXPnTSksQhlE1WYFBvfR1OCzLYspV9WTzEf8Dj/k=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=qoMR7V7N5EHv6XcdZMUjPnH9zQsXunxc31tS0nMTtFhCShmCCZvKsbU8FeS51kVkjlSDykfhUjSQfN8PLGwZdHtWU1y8cFysico2CCGHH29CP9FrE7j83sym1MhWyyHR3/2yKTxWsn9lTXXRieTju46Fj/Z89i2S96xuZfJFZiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DewFfEuo; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6ddbcc96984so81395447b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 00:32:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727158090; x=1727762890; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=VzFo2I1E2rP8+5n9kj14nz0J+HvkgPte4rz85u/uQJE=;
-        b=xWqndHAx8cFJs29wfaen/8ExQ9+b5ESrh4k2mn9n8/mj7SgsmO2wO9YqysmWNVK4b1
-         g1kJbvfMHFvEFwn3dCzQQH2xIkR0oAZ6M0hCqFdR3ZqmoKCV6T5L9J630yp1nJYEjBG7
-         O9y/GZoZ9kAoxtX/ZsTW7Shv5ogOVLSHVJkPV6TXlTSp0LWlh0UBHyn8jXMEhaLf89R+
-         jAwsMGEEQIsyJFs/fLMY6P4UN0nzsMT/Kg5yaA1Y0GQuPfp8K4CdsHONhqeXz2ommxAR
-         CJKI+i6fYMrW9wmAPC/tFzBhQJLNxpPdb70SeONVMO7x3P/QTQjsAWcxwQOQYcLAfdyr
-         2eGA==
+        d=google.com; s=20230601; t=1727163120; x=1727767920; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7O+CXPnTSksQhlE1WYFBvfR1OCzLYspV9WTzEf8Dj/k=;
+        b=DewFfEuoC6EeLDf9BKywn1No28EUXDKpulPOBaVAPn/T/OdODyxSRfYi1pKQfF0GuH
+         Caw751PImDuzywSkTQs/lf7qmuKqlIiCQEvGi3JwEdRgF6qkNFw//rzE/aapDV5SSZeC
+         X/802JkJK8M5jDm2NMDjLBdEcKHvA2r6vYw9rWuX9t1AUVSFzkt9kTTPPJe1Vc9sIOGI
+         AnKyr7H3DPvFiXtt7ttLmWg+uW+0Fy+idbqeBnHZlZmQvEGuRGAPXuTGZUtOaUkEf8ct
+         693x2NAi+4e9FavpGfhIzfZlL3nHArWSkliUTpce1zsiRAs53EXFwbAmyAJMaJbp+qFc
+         N8CQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727158090; x=1727762890;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VzFo2I1E2rP8+5n9kj14nz0J+HvkgPte4rz85u/uQJE=;
-        b=XjVXacz2zF8v0ym5FBEsf8d1jbpWL3MgY7g1XRiSB6cyuyYEi7wi3LmA+Bsl8Nq+xt
-         zqXuyXga0qXnbU+XZcaHr+P/kG8eAw9PlinDvbM3T1dhEGDS+6xAON2MVP9AFLSb7r9x
-         XVGP3RT1tmlbVjw2DPGsHD6kuVpKCMvolnl0ax2Bx+AtJlsJkcaKxC7pPghVXU4aAxZf
-         MeMZHZHcP2Pf0YcXxumnkOTmvOMBSNL3AjDPS+Dr0ZYrPwCnGIB/JdLeymHowGhdywIh
-         C0EHdWyVtvQGUGTSWB6I5NXkEMD78Hya05UhhTNjYqwbUDQslRyPAxaqwUC042kkQfNo
-         vMfw==
-X-Forwarded-Encrypted: i=1; AJvYcCWosvX3wFjdm4PZ//OgUoDlnq1fVsX5cJRAxfmtJHrjTHE5bDw03/s7Gs8SGOklrG1vfnaF2QiyLCM4u1I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNeYDNS9DEr9S4028PV5yLmYuyiXlvRWT5s/sUc4lkNDgUm8BQ
-	TGkcI3gTHZEsNneM24kTr30RR0WmTlT48yfAWPIs6jCfuL5y3esYo59mrIzmaIc=
-X-Google-Smtp-Source: AGHT+IFIjkRUSoZ0ykhdCmCTbZ7FojC7Aoo7miCt4ja9O8VZx4rPyeNb8Il00ud5ZJI/VjGVgBeTJQ==
-X-Received: by 2002:a5d:54c3:0:b0:364:6c08:b9b2 with SMTP id ffacd0b85a97d-37a4234d339mr6917282f8f.45.1727158089812;
-        Mon, 23 Sep 2024 23:08:09 -0700 (PDT)
-Received: from blmsp ([2001:4091:a245:8155:f78b:11e0:5100:a478])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cbc2f976esm662656f8f.69.2024.09.23.23.08.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 23:08:09 -0700 (PDT)
-Date: Tue, 24 Sep 2024 08:08:08 +0200
-From: Markus Schneider-Pargmann <msp@baylibre.com>
-To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
-	Marc Kleine-Budde <mkl@pengutronix.de>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Martin =?utf-8?Q?Hundeb=C3=B8ll?= <martin@geanix.com>, "Felipe Balbi (Intel)" <balbi@kernel.org>, 
-	Raymond Tan <raymond.tan@intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, 
-	linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux@ew.tq-group.com
-Subject: Re: [PATCH v3 2/2] can: m_can: fix missed interrupts with m_can_pci
-Message-ID: <6qk7fmbbvi5m3evyriyq4txswuzckbg4lmdbdkyidiedxhzye5@av3gw7vweimu>
-References: <ed86ab0d7d2b295dc894fc3e929beb69bdc921f6.1727092909.git.matthias.schiffer@ew.tq-group.com>
- <4715d1cfed61d74d08dcc6a27085f43092da9412.1727092909.git.matthias.schiffer@ew.tq-group.com>
+        d=1e100.net; s=20230601; t=1727163120; x=1727767920;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=7O+CXPnTSksQhlE1WYFBvfR1OCzLYspV9WTzEf8Dj/k=;
+        b=Ne+u9peH4f8uGq2jVcCQ8KmPQuoVvpcK64B4FjbgBEQWX+HyDMf9/4lycA+NBNS8aR
+         9o7ME1GJVc3bJFllE5ayMlYAF39mAUiHR8KEsv/H1BKc5mF7VFZqAeFTfgJQZbq6LmSu
+         E5AJK04kc/8dChtoZYPooeu1IGSvHOGiDyXQRbXWjG9KyRvbBNN/gCqbfJbLxHUHrkdY
+         2uYRKp/lfHrrHle3kxUepo4ichkKBoGwAiOQ98tol44YR0Z3Mp3TI0nBXM21qOvzlPZt
+         zUbSYaZAL8+HbuZ0zg8N3Pxkn+mc5HfTDPfkAm1cl9c0tqEKkCN6MgTT0IxyKmK++zg8
+         7Tgw==
+X-Forwarded-Encrypted: i=1; AJvYcCXhUtM+gi3p7fBks5MgctBCCPbFmIYuYX/nEQgrz2kEp8NRfVft3jWm1YI1RgvgL82whZo9YPglDOeXpOM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+tajsOdZX4eAfhU5BdUL83spj5oA3mj9kzPWOP+I3pqYhSVPJ
+	6SFCh312Puq4VimHawlnFA7jfp6mPJMhKkrMplgKyjiu18loBFr7H4JV8ggxSzKcAFcYjeKTii1
+	8Yw==
+X-Google-Smtp-Source: AGHT+IHIvfFWdiWh91SJhJ3q3oJZ+CokUdqnnzQjcHBfAmTjXSleF3H3xG8poCJJ2BpECc61ov955ihOH6Y=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a0d:fdc7:0:b0:6dd:bc07:2850 with SMTP id
+ 00721157ae682-6dfef028d1amr243517b3.6.1727163120369; Tue, 24 Sep 2024
+ 00:32:00 -0700 (PDT)
+Date: Mon, 23 Sep 2024 14:46:17 -0700
+In-Reply-To: <cb06b33acdad04bef8c9541b4247a36f51cf2d36.camel@amazon.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4715d1cfed61d74d08dcc6a27085f43092da9412.1727092909.git.matthias.schiffer@ew.tq-group.com>
+Mime-Version: 1.0
+References: <20240923141810.76331-1-iorlov@amazon.com> <ZvGfnARMqZS0mkg-@google.com>
+ <cb06b33acdad04bef8c9541b4247a36f51cf2d36.camel@amazon.co.uk>
+Message-ID: <ZvHhqRWW04jmk8TW@google.com>
+Subject: Re: [PATCH 0/4] Process some MMIO-related errors without KVM exit
+From: Sean Christopherson <seanjc@google.com>
+To: Jack Allister <jalliste@amazon.co.uk>
+Cc: Ivan Orlov <iorlov@amazon.co.uk>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, "bp@alien8.de" <bp@alien8.de>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "hpa@zytor.com" <hpa@zytor.com>, 
+	"mingo@redhat.com" <mingo@redhat.com>, "tglx@linutronix.de" <tglx@linutronix.de>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	"nh-open-source@amazon.com" <nh-open-source@amazon.com>, "shuah@kernel.org" <shuah@kernel.org>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 23, 2024 at 05:32:16PM GMT, Matthias Schiffer wrote:
-> The interrupt line of PCI devices is interpreted as edge-triggered,
-> however the interrupt signal of the m_can controller integrated in Intel
-> Elkhart Lake CPUs appears to be generated level-triggered.
-> 
-> Consider the following sequence of events:
-> 
-> - IR register is read, interrupt X is set
-> - A new interrupt Y is triggered in the m_can controller
-> - IR register is written to acknowledge interrupt X. Y remains set in IR
-> 
-> As at no point in this sequence no interrupt flag is set in IR, the
-> m_can interrupt line will never become deasserted, and no edge will ever
-> be observed to trigger another run of the ISR. This was observed to
-> result in the TX queue of the EHL m_can to get stuck under high load,
-> because frames were queued to the hardware in m_can_start_xmit(), but
-> m_can_finish_tx() was never run to account for their successful
-> transmission.
-> 
-> To fix the issue, repeatedly read and acknowledge interrupts at the
-> start of the ISR until no interrupt flags are set, so the next incoming
-> interrupt will also result in an edge on the interrupt line.
-> 
-> Fixes: cab7ffc0324f ("can: m_can: add PCI glue driver for Intel Elkhart Lake")
-> Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+On Mon, Sep 23, 2024, Jack Allister wrote:
+> On Mon, 2024-09-23 at 10:04 -0700, Sean Christopherson wrote:
+> >=20
+> > On Mon, Sep 23, 2024, Ivan Orlov wrote:
+> > > Currently, KVM may return a variety of internal errors to VMM when
+> > > accessing MMIO, and some of them could be gracefully handled on the
+> > > KVM
+> > > level instead. Moreover, some of the MMIO-related errors are
+> > > handled
+> > > differently in VMX in comparison with SVM, which produces certain
+> > > inconsistency and should be fixed. This patch series introduces
+> > > KVM-level handling for the following situations:
+> > >=20
+> > > 1) Guest is accessing MMIO during event delivery: triple fault
+> > > instead
+> > > of internal error on VMX and infinite loop on SVM
+> > >=20
+> > > 2) Guest fetches an instruction from MMIO: inject #UD and resume
+> > > guest
+> > > execution without internal error
+> >=20
+> > No.=C2=A0 This is not architectural behavior.=C2=A0 It's not even remot=
+ely
+> > close to
+> > architectural behavior.=C2=A0 KVM's behavior isn't great, but making up
+> > _guest visible_
+> > behavior is not going to happen.
+>=20
+> Is this a no to the whole series or from the cover letter?=C2=A0
 
-Just a few comment nitpicks below. Otherwise:
+The whole series.
 
-Reviewed-by: Markus Schneider-Pargmann <msp@baylibre.com>
+> For patch 1 we have observed that if a guest has incorrectly set it's
+> IDT base to point inside=C2=A0of an MMIO region it will result in a tripl=
+e
+> fault (bare metal Cascake Lake Intel).
 
-> ---
-> 
-> v2: introduce flag is_edge_triggered, so we can avoid the loop on !m_can_pci
-> v3:
-> - rename flag to irq_edge_triggered
-> - update comment to describe the issue more generically as one of systems with
->   edge-triggered interrupt line. m_can_pci is mentioned as an example, as it
->   is the only m_can variant that currently sets the irq_edge_triggered flag.
-> 
->  drivers/net/can/m_can/m_can.c     | 22 +++++++++++++++++-----
->  drivers/net/can/m_can/m_can.h     |  1 +
->  drivers/net/can/m_can/m_can_pci.c |  1 +
->  3 files changed, 19 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
-> index c85ac1b15f723..24e348f677714 100644
-> --- a/drivers/net/can/m_can/m_can.c
-> +++ b/drivers/net/can/m_can/m_can.c
-> @@ -1207,20 +1207,32 @@ static void m_can_coalescing_update(struct m_can_classdev *cdev, u32 ir)
->  static int m_can_interrupt_handler(struct m_can_classdev *cdev)
->  {
->  	struct net_device *dev = cdev->net;
-> -	u32 ir;
-> +	u32 ir = 0, ir_read;
->  	int ret;
->  
->  	if (pm_runtime_suspended(cdev->dev))
->  		return IRQ_NONE;
->  
-> -	ir = m_can_read(cdev, M_CAN_IR);
-> +	/* The m_can controller signals its interrupt status as a level, but
-> +	 * depending in the integration the CPU may interpret the signal as
-                 ^ on?
+That happens because the IDT is garbage and/or the CPU is getting master ab=
+ort
+semantics back, not because anything in the x86 architectures says that acc=
+essing
+MMIO during exception vectoring goes straight to shutdown.
 
-> +	 * edge-triggered (for example with m_can_pci).
-> +	 * We must observe that IR is 0 at least once to be sure that the next
+> Yes a sane operating system is not really going to be doing setting it's =
+IDT
+> or GDT base to point into an MMIO region, but we've seen occurrences.
+> Normally when other external things have gone horribly wrong.
+>=20
+> Ivan can clarify as to what's been seen on AMD platforms regarding the
+> infinite loop for patch one. This was also tested on bare metal
+> hardware. Injection of the #UD within patch 2 may be debatable but I
+> believe Ivan has some more data from experiments backing this up.
 
-As the loop has a break for non edge-triggered chips, I think you should
-include that in the comment, like 'For these edge-triggered
-integrations, we must observe...' or something similar.
-
-Best
-Markus
-
-> +	 * interrupt will generate an edge.
-> +	 */
-> +	while ((ir_read = m_can_read(cdev, M_CAN_IR)) != 0) {
-> +		ir |= ir_read;
-> +
-> +		/* ACK all irqs */
-> +		m_can_write(cdev, M_CAN_IR, ir);
-> +
-> +		if (!cdev->irq_edge_triggered)
-> +			break;
-> +	}
-> +
->  	m_can_coalescing_update(cdev, ir);
->  	if (!ir)
->  		return IRQ_NONE;
->  
-> -	/* ACK all irqs */
-> -	m_can_write(cdev, M_CAN_IR, ir);
-> -
->  	if (cdev->ops->clear_interrupts)
->  		cdev->ops->clear_interrupts(cdev);
->  
-> diff --git a/drivers/net/can/m_can/m_can.h b/drivers/net/can/m_can/m_can.h
-> index 92b2bd8628e6b..ef39e8e527ab6 100644
-> --- a/drivers/net/can/m_can/m_can.h
-> +++ b/drivers/net/can/m_can/m_can.h
-> @@ -99,6 +99,7 @@ struct m_can_classdev {
->  	int pm_clock_support;
->  	int pm_wake_source;
->  	int is_peripheral;
-> +	bool irq_edge_triggered;
->  
->  	// Cached M_CAN_IE register content
->  	u32 active_interrupts;
-> diff --git a/drivers/net/can/m_can/m_can_pci.c b/drivers/net/can/m_can/m_can_pci.c
-> index d72fe771dfc7a..9ad7419f88f83 100644
-> --- a/drivers/net/can/m_can/m_can_pci.c
-> +++ b/drivers/net/can/m_can/m_can_pci.c
-> @@ -127,6 +127,7 @@ static int m_can_pci_probe(struct pci_dev *pci, const struct pci_device_id *id)
->  	mcan_class->pm_clock_support = 1;
->  	mcan_class->pm_wake_source = 0;
->  	mcan_class->can.clock.freq = id->driver_data;
-> +	mcan_class->irq_edge_triggered = true;
->  	mcan_class->ops = &m_can_pci_ops;
->  
->  	pci_set_drvdata(pci, mcan_class);
-> -- 
-> TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
-> Amtsgericht München, HRB 105018
-> Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
-> https://www.tq-group.com/
+I have no problems improving KVM's handling of scenarios that KVM can't emu=
+late,
+but there needs to be reasonable justification for taking on complexity, an=
+d KVM
+must not make up guest visible behavior.
 
