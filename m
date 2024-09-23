@@ -1,122 +1,328 @@
-Return-Path: <linux-kernel+bounces-336153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10F6497EFCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 19:19:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6055797EFD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 19:20:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87441B21710
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:19:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11B0A1C214F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE51419F40C;
-	Mon, 23 Sep 2024 17:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="QC2T+nEQ"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7E319F134
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 17:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7875219F13D;
+	Mon, 23 Sep 2024 17:20:01 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2979719E980;
+	Mon, 23 Sep 2024 17:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727111963; cv=none; b=Z1UVvMWY8WNSQ5alC9JmZVedkg5LVyev8uIP38P6UqojZPrZZl/9YGDQ3dtRDawtB8o568FH284TJLVL9HpXajTcX5idV1l5JyjIhPdnHc1+j7PWVoWrDoB6AQ3aO/KRZ3GVXutYxiBtBpoDhjIVdYYgyN+Lc36dJr2A5NFc7Nw=
+	t=1727112000; cv=none; b=WCM/ErRKn/iJvu/YPLiAtNSL/FZ/lqRRIIoGCRR9emcMLOo/RDVxpDAbMgemwWi7GFcjXMeXQENVyIuIfLPZr9G0HRxxFewEEgIz2CZe4qOkws/xegMhf+KPUAM8YnYRFf1QBZilbZaRi8a3xd6s1aoQXafhhIRNImWr2p5Gnn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727111963; c=relaxed/simple;
-	bh=8CzslkZb0sUznqump5kOXrXFXRvqNxrUKdCua2E89hI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b7egL2rWZEd+pruLs4BvtYfT7EodpwrS401frpIm2OtLUxMKQnLbt1JSNaZxKh2dSOJhh9+NhwdGXukDNtTuLWtNi65acP9EI+9RYMKN617JBwpmIVNniMKVaouWVLkc0/ZUAUtygyE99pogVdOXDijDwJByGemVI/1FSBSwpN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=QC2T+nEQ; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c5bca6603aso1750783a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 10:19:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1727111959; x=1727716759; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/88YtmKHLqGAFWhvYULFA4aDXhjl5wiNzxfGpypDRso=;
-        b=QC2T+nEQ4zjm1hAyc8Ust5SwR2l6+krMKc6TwZOyxoTy5ejx5G+/lCixQ7eEH9+xU6
-         +TyMoBepH2b7ooGUZ5to8kDCm4kM2txTsZpErLjXqIP9LP6qtlmXMko6zMeRT9dHOt6I
-         0om6YGh05gsSkwzdWTPuj/oOapBu5qa00OLp0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727111959; x=1727716759;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/88YtmKHLqGAFWhvYULFA4aDXhjl5wiNzxfGpypDRso=;
-        b=W2ea/mtXTAEay0D8pYfWIL9lk4tkhPZ3pPuKb1fA3gKVPdt+PefnMDkbgWwA7W6Tde
-         4M+bT7zLGRQZeHL3AHRHdZhqhlpzbwMl4c0Yi0g9n0zw14JxKPnXcsesN28THAzIwWjL
-         9OMaHorKPbHY3PgPZBX5p/+pcw5IH062qhF0eJLrsVqXWyJTsi0wkpd/d4HF0KzSynR9
-         A9Qq6sKIRsRYpPOQX9rhiWPzRacjeoEb7D0Ulo0I9zS3K/WbE+LT7WElQzvNrnq3Uxoh
-         p/dWEiKWnEcp4obtojXKSgDk0uhit8G4drwQ4S8B7XEUrByUTwkE7ptw+a6a8AKVn/uE
-         dR/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWfKuW28UWfBCVjGMXGqcNcNlrRmMzsVLuX1zzJ9VuWICDBtdUBOim5QeWZKg9jAiU+kLUBPYU7hX04MQo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhHRaKAvM0lZ1flmxC7d4yRY27cSJiWjDsunvRQgs9bcd9cpBf
-	TJzEYp4J7/d8r8OJL/mHoUuNk2073Tksd08jFUyXwndhLgEUhFgmxmC50oveJ2XC3HNuJGQ23Gg
-	Dny8=
-X-Google-Smtp-Source: AGHT+IEJqVjW957xFzVzk3IsfONTp0QVPM0g0RJUk/2Ik/DEL1aix4f9e0MFLLVyC9W3Kz6T/DawXw==
-X-Received: by 2002:a05:6402:3588:b0:5c4:2b73:636d with SMTP id 4fb4d7f45d1cf-5c464df28efmr9267627a12.35.1727111959490;
-        Mon, 23 Sep 2024 10:19:19 -0700 (PDT)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb8a218sm10648146a12.62.2024.09.23.10.19.14
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Sep 2024 10:19:14 -0700 (PDT)
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9018103214so669711466b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 10:19:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVzNCxiwUj/o1OmY5jL1DP3KeZEpUsOe2rmVYMYCArZQ3feO4YIDsaR601NKJeUDY31OjDOeM34YyMTd/M=@vger.kernel.org
-X-Received: by 2002:a17:907:25c1:b0:a8f:f799:e7c9 with SMTP id
- a640c23a62f3a-a90d566c9bdmr1174018266b.2.1727111953883; Mon, 23 Sep 2024
- 10:19:13 -0700 (PDT)
+	s=arc-20240116; t=1727112000; c=relaxed/simple;
+	bh=FwA9k21LqL31ELrrijVwndjSDt/NfS3FHO6UqfN0ClU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ifRcG8oxXOlVrsvepX7lTfXvugknJiLD3rIq7HYv32iw4aIK5hyfA0b+cqgPVBkN8j0pHLF7khWzy+aeMo2tjM+/gGYRx2FEqD+PKfnXbs0R2NtPPjDUPwhaPaFP/EVGYZ4+LVZqCQLoxdORSF+IBkrsSLW4GM5ctpSX//EDngY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B6E4FDA7;
+	Mon, 23 Sep 2024 10:20:26 -0700 (PDT)
+Received: from e130802.arm.com (unknown [10.57.53.36])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6CB033F528;
+	Mon, 23 Sep 2024 10:19:53 -0700 (PDT)
+Date: Mon, 23 Sep 2024 18:19:48 +0100
+From: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: mathieu.poirier@linaro.org, Adam.Johnston@arm.com,
+	Hugues.KambaMpiana@arm.com, Drew.Reed@arm.com, andersson@kernel.org,
+	conor+dt@kernel.org, devicetree@vger.kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org, liviu.dudau@arm.com,
+	lpieralisi@kernel.org, robh@kernel.org, sudeep.holla@arm.com,
+	robin.murphy@arm.com
+Subject: Re: [PATCH v2 1/5] dt-bindings: remoteproc: sse710: Add the External
+ Systems remote processors
+Message-ID: <20240923171948.GA348509@e130802.arm.com>
+References: <20240919093517.GA43740@e130802.arm.com>
+ <222b3b11-151a-4ad0-91ea-54ae8f280bcb@kernel.org>
+ <20240919145741.GA7940@e130802.arm.com>
+ <85a223e9-05a4-4034-87a5-57d3eb9409b7@kernel.org>
+ <20240920141958.GA288724@e130802.arm.com>
+ <7784248d-4372-4cf1-a01a-5b731b3f6b96@kernel.org>
+ <20240920163851.GA385919@e130802.arm.com>
+ <e37a0542-d405-4d15-84d2-4c7b1385d3ef@kernel.org>
+ <20240923114945.GA133670@e130802.arm.com>
+ <c263b843-50bc-4c2c-b15e-9b87dfb201ab@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <dtolpfivc4fvdfbqgmljygycyqfqoranpsjty4sle7ouydycez@aw7v34oibdhm>
-In-Reply-To: <dtolpfivc4fvdfbqgmljygycyqfqoranpsjty4sle7ouydycez@aw7v34oibdhm>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 23 Sep 2024 10:18:57 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whQTx4xmWp9nGiFofSC-T0U_zfZ9L8yt9mG5Qvx8w=_RQ@mail.gmail.com>
-Message-ID: <CAHk-=whQTx4xmWp9nGiFofSC-T0U_zfZ9L8yt9mG5Qvx8w=_RQ@mail.gmail.com>
-Subject: Re: [GIT PULL] bcachefs changes for 6.12-rc1
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c263b843-50bc-4c2c-b15e-9b87dfb201ab@linaro.org>
 
-On Sat, 21 Sept 2024 at 12:28, Kent Overstreet
-<kent.overstreet@linux.dev> wrote:
->
-> We're now using an rhashtable instead of the system inode hash table;
-> this is another significant performance improvement on multithreaded
-> metadata workloads, eliminating more lock contention.
+Hi Krzysztof,
 
-So I've pulled this, but I reacted to this issue - what is the load
-where the inode hash table is actually causing issues?
+> >>>>>>>>>>> +  '#extsys-id':
+> >>>>>>>>>>
+> >>>>>>>>>> '#' is not correct for sure, that's not a cell specifier.
+> >>>>>>>>>>
+> >>>>>>>>>> But anyway, we do not accept in general instance IDs.
+> >>>>>>>>>
+> >>>>>>>>> I'm happy to replace the instance ID with  another solution.
+> >>>>>>>>> In our case the remoteproc instance does not have a base address
+> >>>>>>>>> to use. So, we can't put remoteproc@address
+> >>>>>>>>>
+> >>>>>>>>> What do you recommend in this case please ?
+> >>>>>>>>
+> >>>>>>>> Waiting one month to respond is a great way to drop all context from my
+> >>>>>>>> memory. The emails are not even available for me - gone from inbox.
+> >>>>>>>>
+> >>>>>>>> Bus addressing could note it. Or you have different devices, so
+> >>>>>>>> different compatibles. Tricky to say, because you did not describe the
+> >>>>>>>> hardware really and it's one month later...
+> >>>>>>>>
+> >>>>>>>
+> >>>>>>> Sorry for waiting. I was in holidays.
+> >>>>>>>
+> >>>>>>> I'll add more documentation about the external system for more clarity [1].
+> >>>>>>>
+> >>>>>>> Basically, Linux runs on the Cortex-A35. The External system is a
+> >>>>>>> Cortex-M core. The Cortex-A35 can not access the memory of the Cortex-M.
+> >>>>>>> It can only control Cortex-M core using the reset control and status registers mapped
+> >>>>>>> in the memory space of the Cortex-A35.
+> >>>>>>
+> >>>>>> That's pretty standard.
+> >>>>>>
+> >>>>>> It does not explain me why bus addressing or different compatible are
+> >>>>>> not sufficient here.
+> >>>>>
+> >>>>> Using an instance ID was a design choice.
+> >>>>> I'm happy to replace it with the use of compatible and match data (WIP).
+> >>>>>
+> >>>>> The match data will be pointing to a data structure containing the right offsets
+> >>>>> to be used with regmap APIs.
+> >>>>>
+> >>>>> syscon node is used to represent the Host Base System Control register area [1]
+> >>>>> where the external system reset registers are mapped (EXT_SYS*).
+> >>>>>
+> >>>>> The nodes will look like this:
+> >>>>>
+> >>>>> syscon@1a010000 {
+> >>>>>         compatible = "arm,sse710-host-base-sysctrl", "simple-mfd", "syscon";
+> >>>>>         reg = <0x1a010000 0x1000>;
+> >>>>>
+> >>>>>         #address-cells = <1>;
+> >>>>>         #size-cells = <1>;
+> >>>>>
+> >>>>>         remoteproc@310 {
+> >>>>>             compatible = "arm,sse710-extsys0";
+> >>>>>             reg = <0x310 4>;
+> >>>>
+> >>>> Uh, why do you create device nodes for one word? This really suggests it
+> >>>> is part of parent device and your split is artificial.
+> >>>
+> >>> The external system registers (described by the remoteproc node) are part
+> >>> of the parent device (the Host Base System Control register area) described
+> >>> by syscon.
+> >>>
+> >>> In case of the external system 0 , its registers are located at offset 0x310
+> >>> (physical address: 0x1a010310)
+> >>>
+> >>> When instantiating the devices without @address, the DTC compiler
+> >>> detects 2 nodes with the same name (remoteproc).
+> >>
+> >> There should be no children at all. DT is not for instantiating your
+> >> drivers. I claim you have only one device and that's
+> >> arm,sse710-host-base-sysctrl. If you create child node for one word,
+> >> that's not a device.
+> > 
+> > The Host Base System Control [3] is the big block containing various functionalities (MMIO registers).
+> > Among the functionalities, the two remote cores registers (aka External system 0 and 1).
+> > The remote cores have two registers each.
+> > 
+> > 1/ In the v1 patchset, a valid point was made by the community:
+> > 
+> >    Right now it seems somewhat tenuous to describe two consecutive
+> >    32-bit registers as separate "reg" entries, but *maybe* it's OK if that's
+> 
+> ARM is not special, neither this hardware is. Therefore:
+> 1. Each register as reg: nope, for obvious reasons.
+> 2. One device for entire syscon: quite common, why do you think it is
+> somehow odd?
+> 3. If you quote other person, please provide the lore link, so I won't
+> spend useless 5 minutes to find who said that or if it was even said...
 
-Because honestly, the reason we're using that "one single lock" for
-the inode hash table is that nobody has ever bothered.
+Please have a look at this lore link [1]. The idea is to add syscon
+and regmap support which I did in the v2 patchset.
 
-In particular, it *should* be reasonably straightforward (lots of
-small details, but not fundamentally hard) to just make the inode hash
-table be a "bl" hash - with the locking done per-bucket, not using one
-global lock.
+[1]: https://lore.kernel.org/all/ZfMVcQsmgQUXXcef@bogus/
 
-But nobody has ever seemed to care before. Because the inode hash just
-isn't all that heavily used, since normal loads don't look up inodes
-directly (they look up dentries, and you find the inodes off those -
-and the *dentry* hash scales well thanks to both RCU and doing the
-bucket lock thing).
+> 
+> >    all there ever is. However if it's actually going to end up needing several
+> >    more additional MMIO and/or memory regions for other functionality, then
+> >    describing each register and location individually is liable to get
+> >    unmanageable really fast, and a higher-level functional grouping (e.g. these
+> >    reset-related registers together as a single 8-byte region) would likely be
+> >    a better design.
+> > 
+> >    The Exernal system registers are part of a bigger block with other functionality in place.
+> >    MFD/syscon might be better way to use these registers. You never know in
+> >    future you might want to use another set of 2-4 registers with a different
+> >    functionality in another driver.
+> > 
+> >    I would see if it makes sense to put together a single binding for
+> >    this "Host Base System Control" register (not sure what exactly that means).
+> >    Use MFD/regmap you access parts of this block. The remoteproc driver can
+> >    then be semi-generic (meaning applicable to group of similar platforms)
+> >    based on the platform compatible and use this regmap to provide the
+> >    functionality needed.
+> 
+> I don't understand how this lengthy semi-quote answers my concerns.
+> Please write concise points as arguments to my questions.
+> 
+> For example, I don't care what your remote proc driver does and it
+> should not matter in the terms of this binding.
 
-So the fact that bcachefs cares makes me go "Why?"
+I just wanted to show why we are using syscon based on the arguments
+of other reviewers.
 
-Normal filesystems *never* call ilookup() and friends.  Why does
-bcachefs do it so much that you decided that you need to use a whole
-other hashtable?
+> 
+> > 
+> > 2/ There are many examples in the kernel that use syscon as a parent node of
+> >    child nodes for devices located at an offset from the syscon base address.
+> >    Please see these two examples [1][2]. I'm trying to follow a similar design if that
+> >    makes sense.
+> 
+> Yeah, for separate devices. If you have two words without any resources,
+> I claim you might not have here any separate devices or "not separate
+> enough", because all this is somehow fluid. Remote core sounds like
+> separate device, but all your arguments about need of extid which cannot
+> be used in reg does not support this case.
+> 
+> The example in the binding is also not complete - missing rest of
+> devices - which does not help.
 
-                   Linus
+Here I would like to explain the current suggestion and suggest an alternative solution.
+
+1/ For more clarity, here is a complete example of use of both remote cores
+at the same time:
+
+    syscon@1a010000 {
+        compatible = "arm,sse710-host-base-sysctrl", "simple-mfd", "syscon";
+        reg = <0x1a010000 0x1000>;
+
+        #address-cells = <1>;
+        #size-cells = <1>;
+
+        remoteproc@310 {
+            compatible = "arm,sse710-extsys0";
+            reg = <0x310 8>;
+            firmware-name = "es0_flashfw.elf";
+            mboxes = <&mhu0_hes0 0 1>, <&mhu0_es0h 0 1>;
+            mbox-names = "txes0", "rxes0";
+            memory-region = <&extsys0_vring0>, <&extsys0_vring1>;
+        };
+
+        remoteproc@318 {
+            compatible = "arm,sse710-extsys1";
+            reg = <0x318 8>;
+            firmware-name = "es1_flashfw.elf";
+            mboxes = <&mhu0_hes1 0 1>, <&mhu0_es1h 0 1>;
+            mbox-names = "txes0", "rxes0";
+            memory-region = <&extsys1_vring0>, <&extsys1_vring1>;
+        };
+};
+
+Here we have 2 cores, each one have 2 registers mapped respectively
+at 0x1a010310 and 0x1a010318.
+
+Definetly these cores have seperate HW resources associated with them
+which are the MHUs (mailboxes HW). There are 2 pairs of MHUs associated
+with each core. These mailbox peripherals are obviously seperate.
+Furthermore, the vring buffers used for communication are seperate.
+
+Moreover, the remote cores are independent. They are not SMP cores of one processor.
+
+They can have different default firmware to use. In this example es0_flashfw.elf
+and es1_flashfw.elf
+
+The current HW implementation (Corstone-1000) provides one remote core only.
+However, the second core control registers are at 0x1a010318 do exist.
+
+Support for a second core is taken into consideration in this work to help
+end users who want to add a second core to their HW.
+
+2/ Here I'm suggesting an alternative solution by using one remoteproc node for both cores as
+follows:
+
+    syscon@1a010000 {
+        compatible = "arm,sse710-host-base-sysctrl", "simple-mfd", "syscon";
+        reg = <0x1a010000 0x1000>;
+
+        remoteproc {
+            compatible = "arm,sse710-extsys";
+            firmware-name = "es0_flashfw.elf";
+            mboxes = <&mhu0_hes0 0 1>, <&mhu0_es0h 0 1>, <&mhu0_hes1 0 1>, <&mhu0_es1h 0 1>;
+            mbox-names = "txes0", "rxes0", "txes1", "rxes1";
+            memory-region = <&extsys0_vring0>, <&extsys0_vring1>, <&extsys1_vring0>, <&extsys1_vring1>;
+        };
+};
+
+Does this meet your expectations please ?
+
+> 
+> > 
+> > 3/ Since there are two registers for each remote core. I'm suggesting to set the
+> >    size in the reg property to 8. 
+> 
+> How is this related?
+> 
+> > The driver will read the match data to get the right
+> >    offset to be used with regmap APIs.
+> 
+> Sorry, no talks about driver. Don't care, at least in this context.
+> 
+> You can completely omit address space from children in DT and everything
+> will work fine and look fine from bindings point of view.
+> 
+> > 
+> > Suggested nodes:
+> > 
+> > 
+> >     syscon@1a010000 {
+> >         compatible = "arm,sse710-host-base-sysctrl", "simple-mfd", "syscon";
+> >         reg = <0x1a010000 0x1000>;
+> > 
+> >         #address-cells = <1>;
+> >         #size-cells = <1>;
+> > 
+> >         remoteproc@310 {
+> >             compatible = "arm,sse710-extsys0";
+> >             reg = <0x310 8>;
+> >             firmware-name = "es_flashfw.elf";
+> >             mboxes = <&mhu0_hes0 0 1>, <&mhu0_es0h 0 1>;
+> >             mbox-names = "txes0", "rxes0";
+> >             memory-region = <&extsys0_vring0>, <&extsys0_vring1>;
+> >         };
+> > 
+> >         remoteproc@318 {
+> >             compatible = "arm,sse710-extsys1";
+> >             reg = <0x318 8>;
+> >             firmware-name = "es_flashfw.elf";
+> 
+> Same firmware? Always or only depends?
+
+The firmware of the second core depends on the end user choice.
+Currently the second core is not implemented in the HW.
+Users who want to tweak Corstone-1000 HW can add
+a second core.
+
+Kind regards
+Abdellatif
 
