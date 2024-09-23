@@ -1,162 +1,116 @@
-Return-Path: <linux-kernel+bounces-335947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F4AE97ED0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:21:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ACAE997ED15
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:22:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59D91281999
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:21:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67C0F2833F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F2819F111;
-	Mon, 23 Sep 2024 14:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F5D91A00C5;
+	Mon, 23 Sep 2024 14:20:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RxYGa3yW";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="s4AK6itM";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RxYGa3yW";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="s4AK6itM"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EYaLs38j"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA84C19E993;
-	Mon, 23 Sep 2024 14:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EAF719F473;
+	Mon, 23 Sep 2024 14:20:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727101202; cv=none; b=jGwCTVtSXDgwgYE5lc7hZ8teekQ/VynZFheBjLmyWbtN1pwlGQ9pOAtw5ViQbxzT+fVxZcOOngVuDDkmtssTHQ+TmSEfgMEw+0hZeVZiaYoK02wAgq0s2CMHk5Bxu66a4LUirPuckJse40Mp2Zx98fiOOW6pdWv4bBmeSmpLmiE=
+	t=1727101210; cv=none; b=GkzRwP8s47scM8W8ev47WfTB9XAaxgtO3Xb8rodTsHW5OVGdZAeOPRqNtF8zMjOKe9MpK+7kjZ45yMK3f7i5DM8/315aco4VB1yBqYDSRMT2RnPyMH3Nw3FqAExfwaWd7J7yDG61HZ32SRkXPaoV1eEc6MUhdsmXhPbrzWdE3+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727101202; c=relaxed/simple;
-	bh=IamA9VXOZThSdOw4061uDlSVFqLEpBsHgQ+wb4xP+vA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fz3H9YPybTMCuLpW868B94IFy/zNIrycbXQgdP24dC4cF8TtMx/JWLdnaXlXfe+NEGee+7pxip6z1ymBmPUBBnAYSqwL/PLQWe5qx7LouYeDfb+V8WeI9Lb4sFc7c6qvRYu6Vm4mj405TyGTG8+NuN/K/QQQU0D/bpUlaQxy81c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RxYGa3yW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=s4AK6itM; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RxYGa3yW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=s4AK6itM; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F283721DDB;
-	Mon, 23 Sep 2024 14:19:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727101199;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z9K5eCzdd4BEW/VRC2G61gaq8ZXLYhpSqmek7gKOb50=;
-	b=RxYGa3yWbKgP9rEVGeJJMilfk5Tw5MOKl8LdbK5YXV8zOQWju1Ywg78siigceqnVlMMQe4
-	OqazBDs1xyePxA6Bvqe9GcwtL/RayLTxIhnafkDKnFzvkk0ZYfoSjX5hsfj8szuV7MNp0B
-	cenOxEGSylmKURz7HaE+BqNZsYIB25o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727101199;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z9K5eCzdd4BEW/VRC2G61gaq8ZXLYhpSqmek7gKOb50=;
-	b=s4AK6itMJUPY2HhaKDrp1s60F42QJJpQUZmH8MxGaUVDBZJSBJEwsTr/2XAOjPGtwgpzV6
-	uYXTFObgaelOU7Cw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=RxYGa3yW;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=s4AK6itM
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727101199;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z9K5eCzdd4BEW/VRC2G61gaq8ZXLYhpSqmek7gKOb50=;
-	b=RxYGa3yWbKgP9rEVGeJJMilfk5Tw5MOKl8LdbK5YXV8zOQWju1Ywg78siigceqnVlMMQe4
-	OqazBDs1xyePxA6Bvqe9GcwtL/RayLTxIhnafkDKnFzvkk0ZYfoSjX5hsfj8szuV7MNp0B
-	cenOxEGSylmKURz7HaE+BqNZsYIB25o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727101199;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z9K5eCzdd4BEW/VRC2G61gaq8ZXLYhpSqmek7gKOb50=;
-	b=s4AK6itMJUPY2HhaKDrp1s60F42QJJpQUZmH8MxGaUVDBZJSBJEwsTr/2XAOjPGtwgpzV6
-	uYXTFObgaelOU7Cw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D08E713B06;
-	Mon, 23 Sep 2024 14:19:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id lb1zMg558WZeYAAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Mon, 23 Sep 2024 14:19:58 +0000
-Date: Mon, 23 Sep 2024 16:19:57 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Shen Lichuan <shenlichuan@vivo.com>
-Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com
-Subject: Re: [PATCH v1] btrfs: Correct some typos in comments
-Message-ID: <20240923141957.GE13599@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20240923065833.12046-1-shenlichuan@vivo.com>
+	s=arc-20240116; t=1727101210; c=relaxed/simple;
+	bh=Inzy0DSIliUiUT38rZJgW6rXrcv0CF52ifiuwGOLE7Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=I4EJFegadzf/QkGAFFVUVaotNZTqt9lK3/iZvgKIMlnOFLsf4WC78oLDN202zo8doRIidPxWdjzxSi+G4u2W0AbwyQzgTz356wafr4PNYVjEnsG31T3WGluj+xqkQiUEQ8vKukuRahe2jOhe16scT98lYAnFubNONGAAqEFNq4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EYaLs38j; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e0875f1e9edso3643037276.1;
+        Mon, 23 Sep 2024 07:20:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727101208; x=1727706008; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DuKStVLsBE0ny3FVufAe1SWiRjcCSbjVlrZiWLt+IA8=;
+        b=EYaLs38jvq4h7/EypozWtcS5icftNs2Htotmu62Rq4K7TEhyCpTVZY36BcO4U6rPR5
+         ZLP/8hPs55sL+MOzCcKy5ejo/U4vC5upsBHwaoQI/pkTVfJ01HijzeTyv98BrFpWj2Me
+         NcgWUo0cFcY3VBQHlsHgevtcdpnHXKiDPWBTIrYNlNRPKyXIvhBlF9RcQ0+GterYASD2
+         jLLNYfxIw8Akf6gP2C262EkabLP1VLouWeim65Ox8AZn8G9YCvIo3ic/HKfp6DyGTt5W
+         K33LBmOWkhcr5vWSiGoLKGv31D9OKf9ceuufFwxBJktZk24DtQcSGPQD2UerHW90mOC9
+         6uaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727101208; x=1727706008;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DuKStVLsBE0ny3FVufAe1SWiRjcCSbjVlrZiWLt+IA8=;
+        b=VO8vk/ePIi6rRL82WRoVYTPayHO6LSwWLVaKORmrBvb9dZT4+BeuoIqcrPiy/mz0qe
+         +Ics50OcgsMQ/hO2Ssp6g05DQn3HxOK12ertzcHuVmsbtsx+QDQArJcp5R6qUrNLOdQm
+         rsxPg/SB72OMShlN4jk5iKS7m0dmFVEwV9G9DI4Ym4QrbZBMADRLecf4VaqYVW3gUmo5
+         D/w50S1Uba+IlUY62dfZwA2zUIeDX6ZvVh6ZSvfp2XqLBgYOk4yl1aMW2QAnR5LfwJyQ
+         6lAgmNg5wemxIDte71DNHnac/FkNrUE3bDWsx+m87q72FupNsKKLRkhgy9LrU/zzYH7z
+         1VSA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5fQjvzwFdWwqKVXt9R4Kb+kliFkuRCEtdXsumWV7dhPwAvWuMSUPyel+g91zR9TtP8fFwgntEUEM2tCEyjumE@vger.kernel.org, AJvYcCUENPxgn4y+vBJNS1iWfyMlFd39UrtEYUpAS4W/ADVQ1aAsRc0Vsl2vAe8Ai8j8jsDmiJ/hqlVtrhIsT4k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZcDDDAGa6h24M22KKhI63pIy/vdHvOg56sJoKSAAjZ497GJf2
+	wgqBai/u3axhwqM9rAoi4mlWONZCx0aQTc9xAze2oV74Dz8x7Ad7RG8gvqUJ
+X-Google-Smtp-Source: AGHT+IFOQylqp35ZraFiJBq+od7qrkn87cS5UenkAZqmyTTFY+gPzUcrt2qNAvexHiDdVpwS+JPofw==
+X-Received: by 2002:a05:6902:2208:b0:e20:2ab4:9d5e with SMTP id 3f1490d57ef6-e2252fbb7d5mr8824914276.41.1727101207890;
+        Mon, 23 Sep 2024 07:20:07 -0700 (PDT)
+Received: from localhost (fwdproxy-frc-005.fbsv.net. [2a03:2880:21ff:5::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e1dc1108b49sm3634220276.1.2024.09.23.07.20.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2024 07:20:07 -0700 (PDT)
+From: Joshua Hahn <joshua.hahnjy@gmail.com>
+To: tj@kernel.org
+Cc: cgroups@vger.kernel.org,
+	hannes@cmpxchg.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	lizefan.x@bytedance.com,
+	mkoutny@suse.com,
+	shuah@kernel.org
+Subject: [PATCH v3 0/2] Exposing nice CPU usage to userspace 
+Date: Mon, 23 Sep 2024 07:20:04 -0700
+Message-ID: <20240923142006.3592304-1-joshua.hahnjy@gmail.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240923065833.12046-1-shenlichuan@vivo.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Queue-Id: F283721DDB
-X-Spam-Score: -4.21
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 23, 2024 at 02:58:33PM +0800, Shen Lichuan wrote:
-> Fixed some confusing spelling errors, the details are as follows:
-> 
-> -in the code comments:
-> 	filesysmte	-> filesystem
-> 	trasnsaction	-> transaction
+From: Joshua Hahn <joshua.hahn6@gmail.com>
 
-Strange that codespell does not find the typos. We also want to fix
-typos in bigger batches so please check for more, my quick search gives
+v2 -> v3: Signed-off-by & renamed subject for clarity.
+v1 -> v2: Edited commit messages for clarity.
 
-block-group.c:2800: uncompressible ==> incompressible
-extent_io.c:3188: utlizing ==> utilizing
-extent_map.c:1323: ealier ==> earlier
-extent_map.c:1325: possiblity ==> possibility
-fiemap.c:189: emmitted ==> emitted
-fiemap.c:197: emmitted ==> emitted
-fiemap.c:203: emmitted ==> emitted
-transaction.h:36: trasaction ==> transaction
+Niced CPU usage is a metric reported in host-level /prot/stat, but is
+not reported in cgroup-level statistics in cpu.stat. However, when a
+host contains multiple tasks across different workloads, it becomes
+difficult to gauge how much of the task is being spent on niced
+processes based on /proc/stat alone, since host-level metrics do not
+provide this cgroup-level granularity.
+
+Exposing this metric will allow users to accurately probe the niced CPU
+metric for each workload, and make more informed decisions when
+directing higher priority tasks.
+
+Joshua Hahn (2):
+  Tracking cgroup-level niced CPU time
+  Selftests for niced CPU statistics
+
+ include/linux/cgroup-defs.h               |  1 +
+ kernel/cgroup/rstat.c                     | 16 ++++-
+ tools/testing/selftests/cgroup/test_cpu.c | 72 +++++++++++++++++++++++
+ 3 files changed, 86 insertions(+), 3 deletions(-)
+
+-- 
+2.43.5
+
 
