@@ -1,128 +1,107 @@
-Return-Path: <linux-kernel+bounces-335463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F264997E619
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:38:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9A1697E622
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:46:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D8851F21410
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 06:38:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A48F1C20B7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 06:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB5B1BF54;
-	Mon, 23 Sep 2024 06:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mEiZNK9l"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD2C5219FF;
+	Mon, 23 Sep 2024 06:46:06 +0000 (UTC)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27CD112E4D;
-	Mon, 23 Sep 2024 06:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4AF379E1;
+	Mon, 23 Sep 2024 06:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727073497; cv=none; b=iXfnBocEHTkDIIokq6t8NPHMeGASb8D7KmD4YnroI/+pXRfMfdA73T2YoHlgD/o56211p6Fd3HO/Su1YLy7YlSlxnzGbox3bibQWkFS4P67STECZdLrhzUpU3df+froowTNYmUS+YZ0nfQrGOL6kOAs7Zb89IiVD8YLrlHfwLB4=
+	t=1727073966; cv=none; b=Hycanjuj78s/6G+ViFl9jaDYffv8DZ0ZeCzq6mEJdEKGWPC2U4Nql9M133LcLnMAyEfoJCra8ma0Qgfr5e7rk8WbYCdm6VKyaLeRdtsZuGhqbc7BYzXmw/4KzlDMwKMo6D/3qPaXZ12Nf8i+WGzZKY17k/LKlCIaf6p/c2qlOAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727073497; c=relaxed/simple;
-	bh=adkwsWEFcrcrhBa6//oKeGXzJBAGOjoocn+XTlCL0qs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=aIDrPAxWRwGjReOaCKwIOOSoSpP1G8Ci1S/gyr9p2JZPgzI4lvO7Dx+ErjWBeu6aRRxvcm4A37x9INWhRgX6VtWpJweUz6Ff1s27LcZz8/xJbjMF//mcX0nGu+f7uj9YIAYhshLeZmOJAzDyw/Np62Ky2poaCoEPKBW/K3Ikzhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mEiZNK9l; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727073495; x=1758609495;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=adkwsWEFcrcrhBa6//oKeGXzJBAGOjoocn+XTlCL0qs=;
-  b=mEiZNK9lzeJv19r0KYrzHcoU+vqtKK4GAL6P1+BZzsc2YfF1uheFdMwp
-   GDwbqHfJIJdru94uljINK0Z40d31thDaQM3kWFOeaIoZXTuGiaHcFlu/+
-   6YoqchovZqjO7keNUlp9HXgJp0eT9AYc94IyhRKVah59FszGCac75Kqkt
-   kdo5z735RZAEutTzt17iTI3ixMFppyGVFFnTANMlhkhOSD7uLe1HVJWdr
-   LpleF1nbPJ8C1AygTDcGyLOBFWullHNxaanMpdXcyPz3FfV0L35AjTdAQ
-   e3oN9mQVO7ehAwl5YxYYTAc17P8MUtjMs1p6GrmoUeuFlPztdacePPQ+s
-   A==;
-X-CSE-ConnectionGUID: eyEHiveUTu+wYahxOzE21g==
-X-CSE-MsgGUID: DGnmQyJ3TmGyqW3OMVP6lQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11202"; a="29793281"
-X-IronPort-AV: E=Sophos;i="6.10,250,1719903600"; 
-   d="scan'208";a="29793281"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2024 23:38:15 -0700
-X-CSE-ConnectionGUID: Ci5p0AlmR9KtN2G+m8XrqQ==
-X-CSE-MsgGUID: DGqgHnh+SPeowsoxjCJocQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,250,1719903600"; 
-   d="scan'208";a="75525517"
-Received: from sschumil-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.65])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2024 23:38:08 -0700
-From: Jani Nikula <jani.nikula@intel.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Rob Clark
- <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean
- Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Nathan
- Chancellor <nathan@kernel.org>, Nick Desaulniers
- <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt
- <justinstitt@google.com>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH] drm/msm/hdmi: drop pll_cmp_to_fdata from hdmi_phy_8998
-In-Reply-To: <20240922-msm-drop-unused-func-v1-1-c5dc083415b8@linaro.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240922-msm-drop-unused-func-v1-1-c5dc083415b8@linaro.org>
-Date: Mon, 23 Sep 2024 09:38:05 +0300
-Message-ID: <874j6698oi.fsf@intel.com>
+	s=arc-20240116; t=1727073966; c=relaxed/simple;
+	bh=bxptygOmMcq1Bshzz4RYiW48dnfzATZyXLTCfFFN0mg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sZ9J/bTqhGiXw/SEwQxKhfV2rnFspBT224b91QkOlp9qWruxkHiHaeySv5AASoS0yZxl/0YYVVANbT4eHyG6QEgirNv8WJX6NMS/EWAzMiyLQcC1a2bhqkI+OVP01T22ovLiWAqBR2jX7XM3zcvkcpsXbJGGrO4dUGyeYVbF5/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cae102702so30826865e9.0;
+        Sun, 22 Sep 2024 23:46:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727073963; x=1727678763;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zo0dAkRT+AqYG1gzt+JV1P2irG7GBbHX1QJ390D0754=;
+        b=duTbAGiQLdz5CLG8r2oajFZRLrqfAFCkgCBCODuBBexJ6zxj6dCsY3U5lUftTHvuJV
+         Rcj4W44Wx1asb3SI0hO2Y4Q1q5ICCpr0U95ybeC4o35oSs/LF75bgajFTBLiy0n21fll
+         o7eaDpbW1MvXCVC61p38LRtTgUXpX7us1FdWIEsloM9uAFLAEEhK5imo/gbamup0fuhZ
+         khH/aLrFoSfSSj9CQ8flkLPsMF5ml0TfkcLOJolYsBud5U5XlveSdI6NYgAWfFt3da72
+         t0wyzX0TIVuXT7TffjgEYXnWu9krrch8Y5VlliZ59qDrxIHqDYPRUFyvKYLnkukA7gIt
+         bzEA==
+X-Forwarded-Encrypted: i=1; AJvYcCUA972acPA7XwCd0eF5DKCd/XxEGZDK4V6cnqipNebS2uH8nnFhm1R0pzezRTrDvVVkkChxm8SWDsF8Yg==@vger.kernel.org, AJvYcCWO3SDvHh0DwnzauczgV84MOQ9YiuUFRLDAkziggHp6Ewn+iYQQIz/Ng2yFGoGKd4hfkQ7aWS9WQzVIo0SG@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywcra+xleT5z9uqGbEXQDnznB/PAButASNdchysOEniVUcavi31
+	K0SDtbwNeI3FuEYI8Sylqkm+6MjOWgqd91WLrvt6OBZd3VfsZPuZ
+X-Google-Smtp-Source: AGHT+IEKPyeK5mIXRlxhwKWGqU6n+Ro2HOWCIbCN6lazV3i33jLAoLGKysmTcDxbDc4V06y+y+2taQ==
+X-Received: by 2002:a5d:64e1:0:b0:377:2df4:55f6 with SMTP id ffacd0b85a97d-37a42265576mr6872513f8f.17.1727073962704;
+        Sun, 22 Sep 2024 23:46:02 -0700 (PDT)
+Received: from nuc.fritz.box (p200300f6f72a2100fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f72a:2100:fa63:3fff:fe02:74c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73e81cbsm23547838f8f.28.2024.09.22.23.46.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Sep 2024 23:46:02 -0700 (PDT)
+From: Johannes Thumshirn <jth@kernel.org>
+To: Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org (open list:BTRFS FILE SYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Qu Wenruo <wqu@suse.com>,
+	Naohiro Aota <naohiro.aota@wdc.com>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: [PATCH] btrfs: also add stripe entries for NOCOW writes
+Date: Mon, 23 Sep 2024 08:45:47 +0200
+Message-ID: <20240923064549.14224-1-jth@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Sun, 22 Sep 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
-> The pll_cmp_to_fdata() was never used by the working code. Drop it to
-> prevent warnings with W=1 and clang.
->
-> Reported-by: Jani Nikula <jani.nikula@intel.com>
-> Closes: https://lore.kernel.org/dri-devel/3553b1db35665e6ff08592e35eb438a574d1ad65.1725962479.git.jani.nikula@intel.com
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+NOCOW writes do not generate stripe_extent entries in the RAID stripe
+tree, as the RAID stripe-tree feature initially was designed with a
+zoned filesystem in mind and on a zoned filesystem, we do not allow NOCOW
+writes. But the RAID stripe-tree feature is independent from the zoned
+feature, so we must also allow NOCOW writes for zoned filesystems.
 
-> ---
->  drivers/gpu/drm/msm/hdmi/hdmi_phy_8998.c | 9 ---------
->  1 file changed, 9 deletions(-)
->
-> diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_phy_8998.c b/drivers/gpu/drm/msm/hdmi/hdmi_phy_8998.c
-> index 0e3a2b16a2ce..e6ffaf92d26d 100644
-> --- a/drivers/gpu/drm/msm/hdmi/hdmi_phy_8998.c
-> +++ b/drivers/gpu/drm/msm/hdmi/hdmi_phy_8998.c
-> @@ -153,15 +153,6 @@ static inline u32 pll_get_pll_cmp(u64 fdata, unsigned long ref_clk)
->  	return dividend - 1;
->  }
->  
-> -static inline u64 pll_cmp_to_fdata(u32 pll_cmp, unsigned long ref_clk)
-> -{
-> -	u64 fdata = ((u64)pll_cmp) * ref_clk * 10;
-> -
-> -	do_div(fdata, HDMI_PLL_CMP_CNT);
-> -
-> -	return fdata;
-> -}
-> -
->  #define HDMI_REF_CLOCK_HZ ((u64)19200000)
->  #define HDMI_MHZ_TO_HZ ((u64)1000000)
->  static int pll_get_post_div(struct hdmi_8998_post_divider *pd, u64 bclk)
->
-> ---
-> base-commit: 32ffa5373540a8d1c06619f52d019c6cdc948bb4
-> change-id: 20240922-msm-drop-unused-func-b9e76ad8e0ea
->
-> Best regards,
+Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+---
+ fs/btrfs/inode.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index edac499fd83d..c6e4b58c334c 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -3111,6 +3111,11 @@ int btrfs_finish_one_ordered(struct btrfs_ordered_extent *ordered_extent)
+ 		ret = btrfs_update_inode_fallback(trans, inode);
+ 		if (ret) /* -ENOMEM or corruption */
+ 			btrfs_abort_transaction(trans, ret);
++
++		ret = btrfs_insert_raid_extent(trans, ordered_extent);
++		if (ret)
++			btrfs_abort_transaction(trans, ret);
++
+ 		goto out;
+ 	}
+ 
 -- 
-Jani Nikula, Intel
+2.43.0
+
 
