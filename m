@@ -1,298 +1,385 @@
-Return-Path: <linux-kernel+bounces-335445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F72197E5D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:02:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0704397E5D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:04:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80AEF1C20B7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 06:02:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD3D02814AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 06:04:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40FE179A8;
-	Mon, 23 Sep 2024 06:02:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W+lXOYhr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EBC310A3E;
+	Mon, 23 Sep 2024 06:04:09 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8F410A3E
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 06:02:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727071349; cv=fail; b=CPeCUqy6ZIABAcXR8+h59fwZoJ0BuqjqsQd8oHRQNRv0tOARgOW0Zg5g8VyA1lQI+CUapGcCiEx5UqrjzvoxsTfk2QOq8e9CLK/rekVrgmXWFpvbqlWOcQ+FnQgYnMiGLcr5huADcpX/RQCDtY74wAYFZN5+dqUUPU1paXintjI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727071349; c=relaxed/simple;
-	bh=QQNeKtw8j7VKKQdwwO22w7gSyTE4pBr5fTko1Xx5byc=;
-	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=qoNrEdfZBB4JgahCqy0MvqyvHnoYSCZ0TQEzc6/M+OKrrhXAoFYd+DmfYiW1wTiyqNj3qcpUVc0jvX6bB91vWpWBiWVmYQVmuIRxUgP/EnLrRQSUlbq5wL2q1A62pGf+IR/dxmkPElba8GVLnNCqr6oavBBfeORTDX5RD2pR9vc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W+lXOYhr; arc=fail smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727071348; x=1758607348;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=QQNeKtw8j7VKKQdwwO22w7gSyTE4pBr5fTko1Xx5byc=;
-  b=W+lXOYhr0uIQl+Ep7Z8CynwzvhD1gSlZHTpmTAj8YPvcca03e6KLI8jP
-   0wwGLjwdcYrsjMWGW2/7rGfed3rHJiq3BKRN60mRvGdf4b/Qfiwof3ZhT
-   0DtmjkOYXKywHIvgxZ3JjBjbOcXV0lytr0MLlTTyLEGEy/nu1/oArzRoL
-   XaUl50tLczXvcVN/LHrmT1LG1BoTZkW8JQpAxAa2JsJ4nuMdlml86tqRN
-   9QXd42kzupcHiuR1MFJBMxc1RMIvWPdYn72cQYJTn3yEtVVDBYXfsDypp
-   Vz5f120otaUqiQ7djBg2pEYQ3eiMawAMh92t1wkgVNmdflxIedeUtbDrW
-   g==;
-X-CSE-ConnectionGUID: BQQsVfzvSoSb/6DnDGT1+A==
-X-CSE-MsgGUID: uTM4JRO1SKGW+V9KTUawOg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11202"; a="37374143"
-X-IronPort-AV: E=Sophos;i="6.10,250,1719903600"; 
-   d="scan'208";a="37374143"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2024 23:02:27 -0700
-X-CSE-ConnectionGUID: /Eo2gIUyTZuDa3Ww5Z+udg==
-X-CSE-MsgGUID: 6A+y+P9lQOKjlD5WW4CntA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,250,1719903600"; 
-   d="scan'208";a="75905946"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 22 Sep 2024 23:02:27 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sun, 22 Sep 2024 23:02:27 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sun, 22 Sep 2024 23:02:26 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Sun, 22 Sep 2024 23:02:26 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.48) by
- edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sun, 22 Sep 2024 23:02:26 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iBHgbLuxpj2TdX3+Phj7W5proBGYjAMLx24+N9fgMGxOXs8NNEZVzTSBz+fjnjubtUiZeTF0ibM/Z/7WumR9EeNZJlX7EdJKxYhNI3xhiktd/OtbazLtf+6sBtu+iEupqDAjlW+wX6Upb7WWEU8xPPkc+mb/0D/rkBG+W0O2YHJi/p6jAx60nblf5dmEvBjcl9VeE5fWiqs/qcV/9gxIHQEEpufGF38pCmu5Fpk9OZRd9eLEeJCevHEPUAdCsrfjQalxB2K8e1qKJMNlrxHyh+xn+m0hD6sIg6SCQjzipbkDNqt9q+/vpV4tgA40ZqHKzoQQIFY4+RIEsSFeAVZQoA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4uwA1xz5prZY7NNc05syM3HQutcl+Wul45M5GZB0k0I=;
- b=ft7Ng99AXG223moHMFdxRhomVm9BvGsExVsM+5adHv+2HnMStEDteJ1lNit+307mw4bjSVOozw7J+3j06UPE5p14x1iqpmpaRaxS/io+RsiV51oAfkvyt0UNTcM1KHsxnUN2/b3zwQ4N0QWVPzJ0quoZ+nb45Hiykf6D9ozMwYoJv/Cgzm2ABBkTez6V/YMhUq9IhxhDSzSaTAInTCm8ZLaNqpdMzoWjkCN/NfQVd1iTnUAvL9hX7Cfz5J3O3paJYCAZ86KI4cblsjWS6CH+5qBDa8IfCAdEGim2uFuKxemx97Yl+20ISGanasoVMTzKzs5C5UTYGBkqjoMNN+N8OA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
- by SN7PR11MB8043.namprd11.prod.outlook.com (2603:10b6:806:2ee::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.25; Mon, 23 Sep
- 2024 06:02:24 +0000
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c%5]) with mapi id 15.20.7982.022; Mon, 23 Sep 2024
- 06:02:24 +0000
-Date: Mon, 23 Sep 2024 14:02:15 +0800
-From: kernel test robot <oliver.sang@intel.com>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
-	Jocelyn Falempe <jfalempe@redhat.com>, <dri-devel@lists.freedesktop.org>,
-	<oliver.sang@intel.com>
-Subject: [linus:master] [drm/ast]  2a2391f857:
- WARNING:at_drivers/gpu/drm/ast/ast_mode.c:#ast_primary_plane_helper_atomic_check[ast]
-Message-ID: <202409231329.c40e1dd8-oliver.sang@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-X-ClientProxiedBy: SI2PR01CA0041.apcprd01.prod.exchangelabs.com
- (2603:1096:4:193::15) To LV3PR11MB8603.namprd11.prod.outlook.com
- (2603:10b6:408:1b6::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC91747F
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 06:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727071448; cv=none; b=W1VCTG+XLTXuusc8eQBs3SOvIW+t0MUB2XLTFTL+0pZFmqi700r8cds1wyLxhqSVCdN8S82DD9Wwj6EPXdP4Vtm5mA+iXpyXb079j0aHs9rrzus9tYBvWx/cfYpcJizQI477bntFZ482GFtZBRv591lTwmX+DEbkW01MDrWXT0g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727071448; c=relaxed/simple;
+	bh=TlbhfQs49SpFdGvBlI/yE0zz9ZMDLh3wJfOp+MsX8Hs=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=EGC6EYOxhOiLxJ64VOEpi6IryeyEacc49FtHFgvkz/cZ98aGGDxg8lAc6+tJLJfyX0s/M6ovv2NoF4Xjp1rJDcB/sck1fN7OXQewHAvFwsz9ktQKEgiMBDL/vAXu25Sh7Rn3699wKaWLtRzNK/JH1zFagO2QEHG11KBCU3+rjyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 9a3d574a797111efa216b1d71e6e1362-20240923
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:120c2f61-aa16-4eec-85f4-da0ff71b04e3,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:82c5f88,CLOUDID:e844e0157a94cd5d9eafa5d4822609bc,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:nil,UR
+	L:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
+	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 9a3d574a797111efa216b1d71e6e1362-20240923
+Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
+	(envelope-from <liuye@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 356476908; Mon, 23 Sep 2024 14:03:49 +0800
+Received: from node2.com.cn (localhost [127.0.0.1])
+	by node2.com.cn (NSMail) with SMTP id 94013B8075B2;
+	Mon, 23 Sep 2024 14:03:49 +0800 (CST)
+X-ns-mid: postfix-66F104C5-514459568
+Received: from [172.30.70.71] (unknown [172.30.70.71])
+	by node2.com.cn (NSMail) with ESMTPA id EDBB0B8075B2;
+	Mon, 23 Sep 2024 06:03:46 +0000 (UTC)
+Subject: Re: [PATCH v2] mm/vmscan: Fix hard LOCKUP in function
+ isolate_lru_folios
+To: Bharata B Rao <bharata@amd.com>, akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Johannes Weiner <hannes@cmpxchg.org>,
+ "Dadhania, Nikunj" <nikunj.dadhania@amd.com>,
+ Usama Arif <usamaarif642@gmail.com>, Yu Zhao <yuzhao@google.com>,
+ Zhaoyang Huang <huangzhaoyang@gmail.com>, Breno Leitao <leitao@debian.org>
+References: <20240814142743.c8227d72be4c5fd9777a4717@linux-foundation.org>
+ <20240919021443.9170-1-liuye@kylinos.cn>
+ <1727070383769353.48.seg@mailgw.kylinos.cn>
+From: liuye <liuye@kylinos.cn>
+Message-ID: <e878653e-d380-81c2-90a8-fd2d1d4e7287@kylinos.cn>
+Date: Mon, 23 Sep 2024 14:03:46 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|SN7PR11MB8043:EE_
-X-MS-Office365-Filtering-Correlation-Id: 71e75f87-eb24-4305-974a-08dcdb954b3c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?AEeU/OwraUGi2vaZv1fNZZD2gwbAfDJn/hAiJiATspjjBVLq8JwcGr3/sqO7?=
- =?us-ascii?Q?lORQFe7I1iLLuHXwLaP7O27p/lyHeg5MBQkdDnjRyDKhFXJT9/B5w/CGpPNa?=
- =?us-ascii?Q?vlAzUgGJL+cZqUbNfWddjgb2IhlM3o6yTDRNngi2MsB4b3PpjOGoeSDxz8oT?=
- =?us-ascii?Q?h3JSR85QNzsNbbci1kV4eMoQL64ZvdYHj9ArvKLXJCDqQrqvtD9YoO+6iA1t?=
- =?us-ascii?Q?FBjnMcvX1RfKupSPJqFwXDrYGy12Amy8X871N0e3WkhKT5s9BE3SgvgkwT8G?=
- =?us-ascii?Q?yEDyzvPfhAEBklNuYio6h7tyd/hWfiJmb/cJCvP37oXKfX6nOEKAxxSYi/fv?=
- =?us-ascii?Q?aRQqVUxT8yTYk8oNHCfkxLxQ0nlrw0r9tj5gT4t8ZcVvpC2hV8dGP/neB87Z?=
- =?us-ascii?Q?IH7lq3JwKpOyoC0LZl1tIJKUTg0sUxITsfRUipdd5eTDnSkM+RIwP1UvvaPj?=
- =?us-ascii?Q?ydaI5MAWW+le85uX/fVv8G8Cx2VmXSHK5U0LGSxyCZ3dzE/CIx9Lc0cMt/p+?=
- =?us-ascii?Q?TUooAeXsjUwLl/tRknkJCCoykqKn7xfWRm73GacNTuvnGMCbWTOOMRisN3JV?=
- =?us-ascii?Q?HPXtwuSHYtEsFCKnsSj/mu7AnEjefptM1NI3WXfmGEZ9Cd9BYi69+DJBkz65?=
- =?us-ascii?Q?U0lLeW8/Frm/Yzc+zprri2bxBrmgpN0xj2HNoYlFLBnb8xYAqWSMxyfggAx6?=
- =?us-ascii?Q?Zbnq64f/OulzRlkRC+IMsH3xsXJ4b3YgWGnty+gABtTti6irk5ARVF07t4tG?=
- =?us-ascii?Q?GC8xxYlksCNjzps1oaHJFKp7ZZitPj0DQZ4YnvvzuOYSCdG/R5caVArVr4TJ?=
- =?us-ascii?Q?+c+XtJFqgJrhDgIRk8Tu6TMDXbMZEyX1QixxeU4qwLZlwGLsJYvwIMeL8P1k?=
- =?us-ascii?Q?KznbVkReWNf7j1/xljvFAK+QuH8cuhAfC11qdnxN0NbFpLedsgAoot0h2AZP?=
- =?us-ascii?Q?NiLaUlSb2zZYbJ50sC3Qfu2j3U1Q9iBfjX2Pll2/bilJxFs8Ky9JX5ibVJD2?=
- =?us-ascii?Q?qctJUvHyoJHc1AHv632YoOb1hznAjfKC3W62jrzDYBlxXwRqmbLlvL2egf4e?=
- =?us-ascii?Q?ACZdQwVLGED+7jCyv64tk0eLLVCKpvyRQoJdD4Z3XlFdwfF4MW4HdmaE954B?=
- =?us-ascii?Q?CRVJDkhgzVVM9VCBwxl07uFh69W8vlbAbkIMHZfUwzIVrwL4jfyMjm5+iWMH?=
- =?us-ascii?Q?JJhKC4Z9OXf7Seff62U8JT5RSN2w270KRoFgq9xwxqp2MOKjfdeppd/t9VGF?=
- =?us-ascii?Q?/OgOQlAWOFPEN2jqGZoBvk6TEWACo3tqS7hSmxwFXiGbqM7oui+5NRhtEfTt?=
- =?us-ascii?Q?Om1OGfurF7ZQalv9EU4Lub5F+V4WojsTabb7Q1IBbn/t6nIVKDRsNYQzU8VV?=
- =?us-ascii?Q?4gUjUAI=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?yvnmBH8E4hNyhKvRgcRiE4FEwfDpEMdd1hteJm/xZGXWT3OWHnFTF13sKa5M?=
- =?us-ascii?Q?fKQjEEazHzJyGCAwD1DDjBRwpW0GG5yoI/81TS5D3yz5+vMuXo6diy0oENwW?=
- =?us-ascii?Q?45j0AhTDIQJHB9mhM41vIPU9q0EcZxUaoAbshH0BMM5by6U0LJURRvHQ6bI/?=
- =?us-ascii?Q?kfRET3SSqU2mSFMuT8+zfWnTMFbgmRaT3D1MFI3t9p7HtoY7m8hWRkX3lkn5?=
- =?us-ascii?Q?wo7uCLnIExSFs9cvubWccWJtu2b8+yzVmEUZJUOnwalR1z0iSnmdNRjNJtol?=
- =?us-ascii?Q?O28WsuZFj0IgFywqxvsDoQQBzkCKE2urZPl21EowGyuZg+bWis77gAFCmzC9?=
- =?us-ascii?Q?lyhocWu9OCOSFuDR7y2NqFe3Hok17M5krNVtyvG56nUJR1p3UIvHxOaxA3q4?=
- =?us-ascii?Q?rPy6vL/DiZR/YOnWcGrvuuukc/w1miH+E2RA3V6VnSv3dAtdz4ugmRwn/ORX?=
- =?us-ascii?Q?KiWmWVFE9TK9hUR0zgBR3h/z5mLWTqYnsP65DxINpJ3uer/R0hCnAvc54FkN?=
- =?us-ascii?Q?tK6hXyHnvtwIWHoABbRUdQrN1kIEUHYYzqvl1a/wy5YvwioxwSdlPn6dkQdo?=
- =?us-ascii?Q?o2KHgfayEz+f4GLJo5K8lr+eBNO2XNB9HKfgIDsTcvX3ce0lh5K7jS9ebRxs?=
- =?us-ascii?Q?tRoOngYPO1uF8ogO8EZXTLmnhjodGJev/2zBpkZq5S4l8dqbHTg5I0XE/09E?=
- =?us-ascii?Q?sFsElUFxLThBUQ0iauV0Cykd2kxsTD4Gwm04Kgn/sWxJtjGEHa5YcBSChisd?=
- =?us-ascii?Q?nCCRxvZ7BQDymJIBEQFYvEyliQPEvC8FqbF3cR//teS3ehokjmBMO2GKuR6+?=
- =?us-ascii?Q?zrXyDZfqGghnYhM/vvW4sQsWHynuOsd9pIVEfedwNOmFsOopMsptd+oDLZoI?=
- =?us-ascii?Q?TkycNViLLhWfMWP7xjb+5ZiYt8ZREz8Yj6/YTK7k2U0tlj0zIwigJWikCKWW?=
- =?us-ascii?Q?SkxnJiNsatFxxJa4pQ9ncov7Pwl1RLCODiexdhMIykYaFoUdb0Sg0RK+mwId?=
- =?us-ascii?Q?1cIb0O/FLKZah1Z/PvblQH3aKMdfZQ2mCbSLHf1QV2aJZV28avVkXr1Zt4sr?=
- =?us-ascii?Q?EYM938/aeR3u3XkMm3TkRsbWsWHY3IQfgXhM7KaOUo1jCJHZh0553q1qHAdR?=
- =?us-ascii?Q?uwFSn/6nn/CbV8mh5atscJ6pVG0ijJgt2URYOsGhmRjSykNKQkkClcBtcUF3?=
- =?us-ascii?Q?ymvny8WdMHLYO96mLFlqickqhNGo4/9T4oDqsjHNec01X9u5No7TurpP2dBy?=
- =?us-ascii?Q?KUNwMx5a3/PX3IQbeJG2qJ3qmFKm2hLYgwSA/0z6CMDplAEInM0idO2mqGju?=
- =?us-ascii?Q?QEvVQcf/1F/ApGr/I9VYl4vzfB/rcpwCz9Qt9TPARaUHk5UanhBuk/cEJDG+?=
- =?us-ascii?Q?7xXHsc7GxewtzyNCzIDSibMJ/gfbRuW3CrXgwypsjEWWd40Svntn37wGYpRT?=
- =?us-ascii?Q?qoFN5TcEOxWzKLouY3INf7J53hXmPNr4+MowgAazOhazyjajgedrBlbvIrn8?=
- =?us-ascii?Q?P9LWMKvXlqHX7g2pCmWv2NHzoOm9jLh01lai0RRY/sYVAwMU3O+mFNsr8IIb?=
- =?us-ascii?Q?1HHhjMj/EPHuBbFkjrpysbMEYKFW+w+SAAmo2j2KQV0JilvrsiPX3jb39lFJ?=
- =?us-ascii?Q?Kg=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71e75f87-eb24-4305-974a-08dcdb954b3c
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2024 06:02:24.0148
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bYjunJgywDP+IJtowIdSFxNrGSkjNyLl1r15lz3AlvwJFEkxQs1xjEOtOXlFL8BaU1WhuuvFH4f+wzgImN2zwQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB8043
-X-OriginatorOrg: intel.com
+In-Reply-To: <1727070383769353.48.seg@mailgw.kylinos.cn>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
 
 
-Hello,
+On 2024/9/20 =E4=B8=8B=E5=8D=882:31, Bharata B Rao wrote:
+> On 19-Sep-24 7:44 AM, liuye wrote:
+>> This fixes the following hard lockup in function isolate_lru_folios
+>> when memory reclaim.If the LRU mostly contains ineligible folios
+>> May trigger watchdog.
+>>
+>> watchdog: Watchdog detected hard LOCKUP on cpu 173
+>> RIP: 0010:native_queued_spin_lock_slowpath+0x255/0x2a0
+>> Call Trace:
+>> =C2=A0=C2=A0=C2=A0=C2=A0_raw_spin_lock_irqsave+0x31/0x40
+>> =C2=A0=C2=A0=C2=A0=C2=A0folio_lruvec_lock_irqsave+0x5f/0x90
+>> =C2=A0=C2=A0=C2=A0=C2=A0folio_batch_move_lru+0x91/0x150
+>> =C2=A0=C2=A0=C2=A0=C2=A0lru_add_drain_per_cpu+0x1c/0x40
+>> =C2=A0=C2=A0=C2=A0=C2=A0process_one_work+0x17d/0x350
+>> =C2=A0=C2=A0=C2=A0=C2=A0worker_thread+0x27b/0x3a0
+>> =C2=A0=C2=A0=C2=A0=C2=A0kthread+0xe8/0x120
+>> =C2=A0=C2=A0=C2=A0=C2=A0ret_from_fork+0x34/0x50
+>> =C2=A0=C2=A0=C2=A0=C2=A0ret_from_fork_asm+0x1b/0x30
+>>
+>> lruvec->lru_lock owner=EF=BC=9A
+>>
+>> PID: 2865=C2=A0=C2=A0=C2=A0=C2=A0 TASK: ffff888139214d40=C2=A0 CPU: 40=
+=C2=A0=C2=A0 COMMAND: "kswapd0"
+>> =C2=A0 #0 [fffffe0000945e60] crash_nmi_callback at ffffffffa567a555
+>> =C2=A0 #1 [fffffe0000945e68] nmi_handle at ffffffffa563b171
+>> =C2=A0 #2 [fffffe0000945eb0] default_do_nmi at ffffffffa6575920
+>> =C2=A0 #3 [fffffe0000945ed0] exc_nmi at ffffffffa6575af4
+>> =C2=A0 #4 [fffffe0000945ef0] end_repeat_nmi at ffffffffa6601dde
+>> =C2=A0=C2=A0=C2=A0=C2=A0 [exception RIP: isolate_lru_folios+403]
+>> =C2=A0=C2=A0=C2=A0=C2=A0 RIP: ffffffffa597df53=C2=A0 RSP: ffffc90006fb=
+7c28=C2=A0 RFLAGS: 00000002
+>> =C2=A0=C2=A0=C2=A0=C2=A0 RAX: 0000000000000001=C2=A0 RBX: ffffc90006fb=
+7c60=C2=A0 RCX: ffffea04a2196f88
+>> =C2=A0=C2=A0=C2=A0=C2=A0 RDX: ffffc90006fb7c60=C2=A0 RSI: ffffc90006fb=
+7c60=C2=A0 RDI: ffffea04a2197048
+>> =C2=A0=C2=A0=C2=A0=C2=A0 RBP: ffff88812cbd3010=C2=A0=C2=A0 R8: ffffea0=
+4a2197008=C2=A0=C2=A0 R9: 0000000000000001
+>> =C2=A0=C2=A0=C2=A0=C2=A0 R10: 0000000000000000=C2=A0 R11: 000000000000=
+0001=C2=A0 R12: ffffea04a2197008
+>> =C2=A0=C2=A0=C2=A0=C2=A0 R13: ffffea04a2197048=C2=A0 R14: ffffc90006fb=
+7de8=C2=A0 R15: 0000000003e3e937
+>> =C2=A0=C2=A0=C2=A0=C2=A0 ORIG_RAX: ffffffffffffffff=C2=A0 CS: 0010=C2=A0=
+ SS: 0018
+>> =C2=A0=C2=A0=C2=A0=C2=A0 <NMI exception stack>
+>> =C2=A0 #5 [ffffc90006fb7c28] isolate_lru_folios at ffffffffa597df53
+>> =C2=A0 #6 [ffffc90006fb7cf8] shrink_active_list at ffffffffa597f788
+>> =C2=A0 #7 [ffffc90006fb7da8] balance_pgdat at ffffffffa5986db0
+>> =C2=A0 #8 [ffffc90006fb7ec0] kswapd at ffffffffa5987354
+>> =C2=A0 #9 [ffffc90006fb7ef8] kthread at ffffffffa5748238
+>> crash>
+>>
+>> Scenario:
+>> User processe are requesting a large amount of memory and keep page ac=
+tive.
+>> Then a module continuously requests memory from ZONE_DMA32 area.
+>> Memory reclaim will be triggered due to ZONE_DMA32 watermark alarm rea=
+ched.
+>> However pages in the LRU(active_anon) list are mostly from
+>> the ZONE_NORMAL area.
+>>
+>> Reproduce:
+>> Terminal 1: Construct to continuously increase pages active(anon).
+>> mkdir /tmp/memory
+>> mount -t tmpfs -o size=3D1024000M tmpfs /tmp/memory
+>> dd if=3D/dev/zero of=3D/tmp/memory/block bs=3D4M
+>> tail /tmp/memory/block
+>>
+>> Terminal 2:
+>> vmstat -a 1
+>> active will increase.
+>> procs ---memory--- ---swap-- ---io---- -system-- ---cpu--- ...
+>> =C2=A0 r=C2=A0 b=C2=A0=C2=A0 swpd=C2=A0=C2=A0 free=C2=A0 inact active=C2=
+=A0=C2=A0 si=C2=A0=C2=A0 so=C2=A0=C2=A0=C2=A0 bi=C2=A0=C2=A0=C2=A0 bo
+>> =C2=A0 1=C2=A0 0=C2=A0=C2=A0 0 1445623076 45898836 83646008=C2=A0=C2=A0=
+=C2=A0 0=C2=A0=C2=A0=C2=A0 0=C2=A0=C2=A0=C2=A0=C2=A0 0
+>> =C2=A0 1=C2=A0 0=C2=A0=C2=A0 0 1445623076 43450228 86094616=C2=A0=C2=A0=
+=C2=A0 0=C2=A0=C2=A0=C2=A0 0=C2=A0=C2=A0=C2=A0=C2=A0 0
+>> =C2=A0 1=C2=A0 0=C2=A0=C2=A0 0 1445623076 41003480 88541364=C2=A0=C2=A0=
+=C2=A0 0=C2=A0=C2=A0=C2=A0 0=C2=A0=C2=A0=C2=A0=C2=A0 0
+>> =C2=A0 1=C2=A0 0=C2=A0=C2=A0 0 1445623076 38557088 90987756=C2=A0=C2=A0=
+=C2=A0 0=C2=A0=C2=A0=C2=A0 0=C2=A0=C2=A0=C2=A0=C2=A0 0
+>> =C2=A0 1=C2=A0 0=C2=A0=C2=A0 0 1445623076 36109688 93435156=C2=A0=C2=A0=
+=C2=A0 0=C2=A0=C2=A0=C2=A0 0=C2=A0=C2=A0=C2=A0=C2=A0 0
+>> =C2=A0 1=C2=A0 0=C2=A0=C2=A0 0 1445619552 33663256 95881632=C2=A0=C2=A0=
+=C2=A0 0=C2=A0=C2=A0=C2=A0 0=C2=A0=C2=A0=C2=A0=C2=A0 0
+>> =C2=A0 1=C2=A0 0=C2=A0=C2=A0 0 1445619804 31217140 98327792=C2=A0=C2=A0=
+=C2=A0 0=C2=A0=C2=A0=C2=A0 0=C2=A0=C2=A0=C2=A0=C2=A0 0
+>> =C2=A0 1=C2=A0 0=C2=A0=C2=A0 0 1445619804 28769988 100774944=C2=A0=C2=A0=
+=C2=A0 0=C2=A0=C2=A0=C2=A0 0=C2=A0=C2=A0=C2=A0=C2=A0 0
+>> =C2=A0 1=C2=A0 0=C2=A0=C2=A0 0 1445619804 26322348 103222584=C2=A0=C2=A0=
+=C2=A0 0=C2=A0=C2=A0=C2=A0 0=C2=A0=C2=A0=C2=A0=C2=A0 0
+>> =C2=A0 1=C2=A0 0=C2=A0=C2=A0 0 1445619804 23875592 105669340=C2=A0=C2=A0=
+=C2=A0 0=C2=A0=C2=A0=C2=A0 0=C2=A0=C2=A0=C2=A0=C2=A0 0
+>>
+>> cat /proc/meminfo | head
+>> Active(anon) increase.
+>> MemTotal:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 1579941036 kB
+>> MemFree:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 1445618500 kB
+>> MemAvailable:=C2=A0=C2=A0 1453013224 kB
+>> Buffers:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 6516 kB
+>> Cached:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 128653956 kB
+>> SwapCached:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 0 kB
+>> Active:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 118110812 kB
+>> Inactive:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 11436620 kB
+>> Active(anon):=C2=A0=C2=A0 115345744 kB
+>> Inactive(anon):=C2=A0=C2=A0 945292 kB
+>>
+>> When the Active(anon) is 115345744 kB, insmod module triggers
+>> the ZONE_DMA32 watermark.
+>>
+>> perf record -e vmscan:mm_vmscan_lru_isolate -aR
+>> perf script
+>> isolate_mode=3D0 classzone=3D1 order=3D1 nr_requested=3D32 nr_scanned=3D=
+2
+>> nr_skipped=3D2 nr_taken=3D0 lru=3Dactive_anon
+>> isolate_mode=3D0 classzone=3D1 order=3D1 nr_requested=3D32 nr_scanned=3D=
+0
+>> nr_skipped=3D0 nr_taken=3D0 lru=3Dactive_anon
+>> isolate_mode=3D0 classzone=3D1 order=3D0 nr_requested=3D32 nr_scanned=3D=
+28835844
+>> nr_skipped=3D28835844 nr_taken=3D0 lru=3Dactive_anon
+>> isolate_mode=3D0 classzone=3D1 order=3D1 nr_requested=3D32 nr_scanned=3D=
+28835844
+>> nr_skipped=3D28835844 nr_taken=3D0 lru=3Dactive_anon
+>> isolate_mode=3D0 classzone=3D1 order=3D0 nr_requested=3D32 nr_scanned=3D=
+29
+>> nr_skipped=3D29 nr_taken=3D0 lru=3Dactive_anon
+>> isolate_mode=3D0 classzone=3D1 order=3D0 nr_requested=3D32 nr_scanned=3D=
+0
+>> nr_skipped=3D0 nr_taken=3D0 lru=3Dactive_anon
+>>
+>> See nr_scanned=3D28835844.
+>> 28835844 * 4k =3D 115343376KB approximately equal to 115345744 kB.
+>>
+>> If increase Active(anon) to 1000G then insmod module triggers
+>> the ZONE_DMA32 watermark. hard lockup will occur.
+>>
+>> In my device nr_scanned =3D 0000000003e3e937 when hard lockup.
+>> Convert to memory size 0x0000000003e3e937 * 4KB =3D 261072092 KB.
+>>
+>> =C2=A0=C2=A0=C2=A0 [ffffc90006fb7c28] isolate_lru_folios at ffffffffa5=
+97df53
+>> =C2=A0=C2=A0=C2=A0=C2=A0 ffffc90006fb7c30: 0000000000000020 0000000000=
+000000
+>> =C2=A0=C2=A0=C2=A0=C2=A0 ffffc90006fb7c40: ffffc90006fb7d40 ffff88812c=
+bd3000
+>> =C2=A0=C2=A0=C2=A0=C2=A0 ffffc90006fb7c50: ffffc90006fb7d30 0000000106=
+fb7de8
+>> =C2=A0=C2=A0=C2=A0=C2=A0 ffffc90006fb7c60: ffffea04a2197008 ffffea0006=
+ed4a48
+>> =C2=A0=C2=A0=C2=A0=C2=A0 ffffc90006fb7c70: 0000000000000000 0000000000=
+000000
+>> =C2=A0=C2=A0=C2=A0=C2=A0 ffffc90006fb7c80: 0000000000000000 0000000000=
+000000
+>> =C2=A0=C2=A0=C2=A0=C2=A0 ffffc90006fb7c90: 0000000000000000 0000000000=
+000000
+>> =C2=A0=C2=A0=C2=A0=C2=A0 ffffc90006fb7ca0: 0000000000000000 0000000003=
+e3e937
+>> =C2=A0=C2=A0=C2=A0=C2=A0 ffffc90006fb7cb0: 0000000000000000 0000000000=
+000000
+>> =C2=A0=C2=A0=C2=A0=C2=A0 ffffc90006fb7cc0: 8d7c0b56b7874b00 ffff88812c=
+bd3000
+>>
+>> About the Fixes:
+>> Why did it take eight years to be discovered?
+>>
+>> The problem requires the following conditions to occur:
+>> 1. The device memory should be large enough.
+>> 2. Pages in the LRU(active_anon) list are mostly from the ZONE_NORMAL =
+area.
+>> 3. The memory in ZONE_DMA32 needs to reach the watermark.
+>>
+>> If the memory is not large enough, or if the usage design of ZONE_DMA3=
+2
+>> area memory is reasonable, this problem is difficult to detect.
+>>
+>> notes:
+>> The problem is most likely to occur in ZONE_DMA32 and ZONE_NORMAL,
+>> but other suitable scenarios may also trigger the problem.
+>=20
+> This problem appears very similar to the one we reported sometime back =
+at
+>=20
+> https://lore.kernel.org/linux-mm/d2841226-e27b-4d3d-a578-63587a3aa4f3@a=
+md.com/
+>=20
+> where ~150 million folios were being skipped to isolate a few ZONE_DMA =
+folios.
+>=20
 
-kernel test robot noticed "WARNING:at_drivers/gpu/drm/ast/ast_mode.c:#ast_primary_plane_helper_atomic_check[ast]" on:
+Yes, similar to this scenario.
 
-commit: 2a2391f857cdc5cf16f8df030944cef8d3d2bc30 ("drm/ast: vga: Transparently handle BMC support")
-https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+>>
+>> Fixes: b2e18757f2c9 ("mm, vmscan: begin reclaiming pages on a per-node=
+ basis")
+>> Signed-off-by: liuye <liuye@kylinos.cn>
+>>
+>> ---
+>> V1->V2 : Adjust code format and add scenario description, reproduction=
+ method.
+>> ---
+>> ---
+>> =C2=A0 include/linux/swap.h | 1 +
+>> =C2=A0 mm/vmscan.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ | 6 +++++-
+>> =C2=A0 2 files changed, 6 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/include/linux/swap.h b/include/linux/swap.h
+>> index ba7ea95d1c57..afb3274c90ef 100644
+>> --- a/include/linux/swap.h
+>> +++ b/include/linux/swap.h
+>> @@ -223,6 +223,7 @@ enum {
+>> =C2=A0 };
+>> =C2=A0 =C2=A0 #define SWAP_CLUSTER_MAX 32UL
+>> +#define SWAP_CLUSTER_MAX_SKIPPED (SWAP_CLUSTER_MAX << 10)
+>> =C2=A0 #define COMPACT_CLUSTER_MAX SWAP_CLUSTER_MAX
+>> =C2=A0 =C2=A0 /* Bit flag in swap_map */
+>> diff --git a/mm/vmscan.c b/mm/vmscan.c
+>> index bd489c1af228..d2e436a4f47d 100644
+>> --- a/mm/vmscan.c
+>> +++ b/mm/vmscan.c
+>> @@ -1636,6 +1636,7 @@ static unsigned long isolate_lru_folios(unsigned=
+ long nr_to_scan,
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long nr_skipped[MAX_NR_ZONES] =
+=3D { 0, };
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long skipped =3D 0;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long scan, total_scan, nr_page=
+s;
+>> +=C2=A0=C2=A0=C2=A0 unsigned long max_nr_skipped =3D 0;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 LIST_HEAD(folios_skipped);
+>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 total_scan =3D 0;
+>> @@ -1650,9 +1651,12 @@ static unsigned long isolate_lru_folios(unsigne=
+d long nr_to_scan,
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 nr_pages =3D fo=
+lio_nr_pages(folio);
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 total_scan +=3D=
+ nr_pages;
+>> =C2=A0 -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (folio_zonenum(f=
+olio) > sc->reclaim_idx) {
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Using max_nr_skipped to=
+ prevent hard LOCKUP*/
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (max_nr_skipped < SWAP_=
+CLUSTER_MAX_SKIPPED &&
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (f=
+olio_zonenum(folio) > sc->reclaim_idx)) {
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 nr_skipped[folio_zonenum(folio)] +=3D nr_pages;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 move_to =3D &folios_skipped;
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ma=
+x_nr_skipped++;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 goto move;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>=20
+> I am not sure if the above would help in all scenarios as limiting the =
+skipped folios list to 1 million entries couldn't fix the soft/hard locku=
+p issue.
+>=20
 
-[test failed on linus/master      88264981f2082248e892a706b2c5004650faac54]
-[test failed on linux-next/master 62f92d634458a1e308bb699986b9147a6d670457]
+This value should not be too large, the earliest value is 32, before b2e1=
+8757f2c9.
 
-in testcase: igt
-version: igt-x86_64-73e21b2bb-1_20240623
-with following parameters:
+ #define SWAP_CLUSTER_MAX 32UL
++#define SWAP_CLUSTER_MAX_SKIPPED (SWAP_CLUSTER_MAX << 10)
 
-	group: group-23
+To prevent lock contention and lockup, this value should be neither too s=
+mall nor too large.=20
+Depending on the CPU frequency, the time to trigger the lockup will vary.
+Not sure if this value of SWAP_CLUSTER_MAX_SKIPPED is the most appropriat=
+e, but it does work.
+My patch works for all scenarios and does not change the earlier code log=
+ic.
 
+> In fact what helped was the fix by Yu Zhao which released the lruvec lo=
+ck. This was posted for consideration at
+>=20
+> https://lore.kernel.org/lkml/ZsTOwBffg5xSCUbP@gmail.com/T/
+>=20
+> However this posting eventually resulted in the revert of
+> 5da226dbfce3a2. Also some concerns about hoarding large number of folio=
+s in skipped list and effect (on compaction) of releasing of lruvec spinl=
+ock without clearing LRU flag were raised by Johannes.
+>=20
 
+Regarding Yu Zhao's patch, unlocking and releasing the scheduler may caus=
+e changes in the lru list and more likely cause data corruption. And ther=
+e are some other concerns you mentioned.
+Of course, this method would be great if all the problems in all scenario=
+s could be solved.
 
-compiler: gcc-12
-test machine: 128 threads 2 sockets Intel(R) Xeon(R) Platinum 8358 CPU @ 2.60GHz (Ice Lake) with 128G memory
+Please also let me know about other emails regarding this discussion. Cc =
+me.
 
-(please refer to attached dmesg/kmsg for entire log/backtrace)
-
-
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <oliver.sang@intel.com>
-| Closes: https://lore.kernel.org/oe-lkp/202409231329.c40e1dd8-oliver.sang@intel.com
-
-
-
-The kernel config and materials to reproduce are available at:
-https://download.01.org/0day-ci/archive/20240923/202409231329.c40e1dd8-oliver.sang@intel.com
-
-
-[  250.121296][ T3960] ------------[ cut here ]------------
-[  250.121299][ T3960] ast 0000:02:00.0: [drm] drm_WARN_ON(new_plane_state->crtc)
-[  250.121343][ T3960] WARNING: CPU: 72 PID: 3960 at drivers/gpu/drm/ast/ast_mode.c:618 ast_primary_plane_helper_atomic_check+0x2e0/0x410 [ast]
-[  250.121353][ T3960] Modules linked in: kmem device_dax nd_pmem dax_pmem nd_btt i915 drm_buddy intel_gtt drm_display_helper ttm video intel_rapl_msr intel_rapl_common intel_uncore_frequency intel_uncore_frequency_common x86_pkg_temp_thermal intel_powerclamp btrfs coretemp blake2b_generic xor zstd_compress raid6_pq libcrc32c sd_mod kvm_intel sg kvm crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel sha512_ssse3 rapl ast ahci ipmi_ssif drm_shmem_helper libahci mei_me acpi_power_meter intel_cstate intel_th_gth i2c_i801 intel_th_pci ioatdma intel_uncore dax_hmem libata drm_kms_helper mei intel_pch_thermal i2c_smbus intel_vsec intel_th dca wmi ipmi_si acpi_ipmi nfit ipmi_devintf libnvdimm ipmi_msghandler acpi_pad joydev binfmt_misc drm fuse loop dm_mod ip_tables
-[  250.121407][ T3960] CPU: 72 UID: 0 PID: 3960 Comm: kms_cursor_lega Not tainted 6.11.0-rc2-00356-g2a2391f857cd #1
-[  250.121411][ T3960] RIP: 0010:ast_primary_plane_helper_atomic_check+0x2e0/0x410 [ast]
-[  250.121417][ T3960] Code: 48 8b 6b 50 48 85 ed 74 59 48 89 df e8 29 d9 8d c1 48 c7 c1 20 23 12 c1 48 89 ea 48 c7 c7 80 23 12 c1 48 89 c6 e8 a0 47 0d c0 <0f> 0b b8 ea ff ff ff e9 55 ff ff ff 48 89 34 24 e8 1b 39 98 c0 48
-[  250.121420][ T3960] RSP: 0018:ffa0000026b1f8f8 EFLAGS: 00010282
-[  250.121423][ T3960] RAX: 0000000000000000 RBX: ff1100017299a0c8 RCX: 0000000000000027
-[  250.121425][ T3960] RDX: 0000000000000027 RSI: 0000000000000004 RDI: ff11000c3f430b08
-[  250.121427][ T3960] RBP: ff11000113c335a0 R08: 0000000000000001 R09: ffe21c0187e86161
-[  250.121428][ T3960] R10: ff11000c3f430b0b R11: 0000000000000014 R12: ff1100018f9db000
-[  250.121430][ T3960] R13: ff11000215a30000 R14: ff1100018f9d8808 R15: ff11000215a30688
-[  250.121432][ T3960] FS:  00007f5cb09fe8c0(0000) GS:ff11000c3f400000(0000) knlGS:0000000000000000
-[  250.121434][ T3960] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  250.121435][ T3960] CR2: 00007f5cb0942000 CR3: 00000001451d6004 CR4: 0000000000771ef0
-[  250.121437][ T3960] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  250.121438][ T3960] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  250.121439][ T3960] PKRU: 55555554
-[  250.121441][ T3960] Call Trace:
-[  250.121442][ T3960]  <TASK>
-[  250.121444][ T3960]  ? __warn+0xcc/0x260
-[  250.121450][ T3960]  ? ast_primary_plane_helper_atomic_check+0x2e0/0x410 [ast]
-[  250.121455][ T3960]  ? report_bug+0x261/0x2c0
-[  250.121461][ T3960]  ? handle_bug+0x3c/0x70
-[  250.121465][ T3960]  ? exc_invalid_op+0x17/0x40
-[  250.121468][ T3960]  ? asm_exc_invalid_op+0x1a/0x20
-[  250.121473][ T3960]  ? ast_primary_plane_helper_atomic_check+0x2e0/0x410 [ast]
-[  250.121478][ T3960]  ? ast_primary_plane_helper_atomic_check+0x2e0/0x410 [ast]
-[  250.121483][ T3960]  drm_atomic_helper_check_planes+0x30a/0x8f0 [drm_kms_helper]
-[  250.121503][ T3960]  drm_atomic_helper_check+0x7a/0x120 [drm_kms_helper]
-[  250.121517][ T3960]  ? __pfx_drm_atomic_helper_check+0x10/0x10 [drm_kms_helper]
-[  250.121530][ T3960]  drm_atomic_check_only+0x5ac/0x11a0 [drm]
-[  250.121580][ T3960]  ? __pfx___drm_dev_dbg+0x10/0x10 [drm]
-[  250.121621][ T3960]  drm_atomic_commit+0x114/0x2b0 [drm]
-[  250.121654][ T3960]  ? __pfx_drm_atomic_commit+0x10/0x10 [drm]
-[  250.121692][ T3960]  ? __pfx___drm_printfn_info+0x10/0x10 [drm]
-[  250.121732][ T3960]  drm_mode_atomic_ioctl+0x985/0xe80 [drm]
-[  250.121765][ T3960]  ? __pfx_drm_mode_atomic_ioctl+0x10/0x10 [drm]
-[  250.121797][ T3960]  ? __drm_mode_object_find+0xdc/0x300 [drm]
-[  250.121839][ T3960]  ? __pfx___drm_mode_object_find+0x10/0x10 [drm]
-[  250.121879][ T3960]  ? __pfx___might_resched+0x10/0x10
-[  250.121883][ T3960]  ? __pfx_drm_mode_obj_get_properties_ioctl+0x10/0x10 [drm]
-[  250.121925][ T3960]  ? drm_mode_getproperty_ioctl+0x2c2/0x680 [drm]
-[  250.121965][ T3960]  ? __pfx___drm_dev_dbg+0x10/0x10 [drm]
-[  250.122002][ T3960]  ? __pfx_drm_mode_atomic_ioctl+0x10/0x10 [drm]
-[  250.122034][ T3960]  drm_ioctl_kernel+0x16c/0x2e0 [drm]
-[  250.122079][ T3960]  ? __pfx_drm_ioctl_kernel+0x10/0x10 [drm]
-[  250.122121][ T3960]  drm_ioctl+0x4cc/0xac0 [drm]
-[  250.122165][ T3960]  ? __pfx_drm_mode_atomic_ioctl+0x10/0x10 [drm]
-[  250.122199][ T3960]  ? do_vmi_munmap+0x17b/0x2f0
-[  250.122204][ T3960]  ? __pfx_drm_ioctl+0x10/0x10 [drm]
-[  250.122257][ T3960]  ? __fget_light+0x57/0x420
-[  250.122262][ T3960]  __x64_sys_ioctl+0x134/0x1b0
-[  250.122265][ T3960]  do_syscall_64+0x5f/0x170
-[  250.122271][ T3960]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[  250.122273][ T3960] RIP: 0033:0x7f5cb2d92c5b
-[  250.122276][ T3960] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
-[  250.122278][ T3960] RSP: 002b:00007fff688b2e80 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-[  250.122280][ T3960] RAX: ffffffffffffffda RBX: 000055ecf1f74580 RCX: 00007f5cb2d92c5b
-[  250.122282][ T3960] RDX: 00007fff688b2f20 RSI: 00000000c03864bc RDI: 0000000000000004
-[  250.122283][ T3960] RBP: 00007fff688b2f20 R08: 0000000000000004 R09: 0000000000000004
-[  250.122284][ T3960] R10: 000055ecf1eec010 R11: 0000000000000246 R12: 00000000c03864bc
-[  250.122286][ T3960] R13: 0000000000000004 R14: 000055ecf1f81ea0 R15: 000055ecf1f75d10
-[  250.122288][ T3960]  </TASK>
-[  250.122289][ T3960] ---[ end trace 0000000000000000 ]---
+Thanks,
+Liuye
 
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
 
