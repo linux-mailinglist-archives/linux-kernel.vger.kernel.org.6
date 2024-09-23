@@ -1,101 +1,149 @@
-Return-Path: <linux-kernel+bounces-336290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A833F97F1A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 22:20:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEEEC97F1A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 22:21:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FE461F21DB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 20:20:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CA0B1C21915
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 20:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483A21A0BC5;
-	Mon, 23 Sep 2024 20:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8D51A0BE5;
+	Mon, 23 Sep 2024 20:21:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b="HMrNRSep"
-Received: from mail.rosa.ru (mail.rosa.ru [176.109.80.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TnKk/sCu"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F35415E88;
-	Mon, 23 Sep 2024 20:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.109.80.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1902C197A77;
+	Mon, 23 Sep 2024 20:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727122829; cv=none; b=UBbogO+cBCpiLaFqSpQDB8LI1bahcRegS10mfecXHkChz6enD3AAPo63U49Vme1A0uia45RNoeATHtnoqKWm9ewVHd0wXgX4qT+DjcB5AjKZlWH9CGWJ83mJgqqGoAIXSRbaFoTx1FkQcE48JfF218pB7FmB0ezl6asz4WVi460=
+	t=1727122862; cv=none; b=gqwzkS65tgp1qb0Hhr8UPvTrNrPg2mcU9RcNGwjsZsGMGwJ+NaFuKAxjP/OJuT08DXtnw2gpbsis9ap5ouo6gILTwVVkonhQKyDv7W70EG7xz4CMfps7g24DR589u2BHvObFXwM9qCHh4E5COH9VeB7maEzlcLPFtXVMpwjLttw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727122829; c=relaxed/simple;
-	bh=lGwAoI+n9Yo4xnfmF+vllGL8FK8LhqfP38H5u6NnS6I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PZIbk9udHm+YwYZlbEWM1bZZ49XYcqHJ6NaXYXdO/s7i0ZSoLosMd2oIhas0yZJScwwhugDUV1MzbeuxiEbRrRv36BzJqC9JeEn17zSk2fVkNubMzda0w5b00H1rCrmtan3NdnA99Vo0MQc8TPXMJX773KzUaoDfCaI3TmCP8yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rosa.ru; spf=pass smtp.mailfrom=rosa.ru; dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b=HMrNRSep; arc=none smtp.client-ip=176.109.80.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rosa.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosa.ru
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/simple; d=rosa.ru; s=mail;
-	bh=lGwAoI+n9Yo4xnfmF+vllGL8FK8LhqfP38H5u6NnS6I=;
-	h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From;
-	b=HMrNRSepcaCMaLVvg7L2bfmUgxUNGnRd65MhvZXu5PfDK6P0SSiAbV8vfms7rUQOfT3lrgWRAzb
-	nbVDJGcEvrqgJYchQ80bOclSeZ2U1xKKg1SuIMXO8SB2HOVUOumbCuoBQOOGe+e7uFiye1AJDSgn3
-	mzt5Kfb6nODlHrrdpQ4=
-Received: from [194.9.26.89] (account m.arhipov@rosa.ru HELO localhost.localdomain)
-  by mail.rosa.ru (CommuniGate Pro SMTP 6.4.1j)
-  with ESMTPSA id 135313; Mon, 23 Sep 2024 23:20:21 +0300
-From: Mikhail Arkhipov <m.arhipov@rosa.ru>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Mikhail Arkhipov <m.arhipov@rosa.ru>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Felipe Balbi <balbi@ti.com>,
-	Mike Frysinger <vapier@gentoo.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH v2] usb: gadget: r8a66597-udc: Fix double free in r8a66597_probe
-Date: Mon, 23 Sep 2024 23:20:19 +0300
-Message-Id: <20240923202019.37875-1-m.arhipov@rosa.ru>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	s=arc-20240116; t=1727122862; c=relaxed/simple;
+	bh=DsCb6qpLdEgMJ5yT5bmM7oaMBnnki7ouT3XEgyQdChw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jK+D+x3EGcQpidD4loIxGb7IL/pg7YlvuFxH8lp4obQNcfl42PQ3wX4+CevoCbBMrnLgMZSltHyvYweN7nvmeSM6TLwZ70GlV2juC8vksSFkjMzFod8sUgm7TBFzzzB1D8DqW3kM1LhNSLTH+XERPVlOfDxlUF2ocHv8cvK5an4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TnKk/sCu; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53653ee23adso4311597e87.3;
+        Mon, 23 Sep 2024 13:21:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727122859; x=1727727659; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NleUZATndt1acwKzBa7y/6tS+SaA3XdbIXpdmDlWmuM=;
+        b=TnKk/sCuLv5vkgPYiYZINQrsq61aMi24rCYxVeETwQm6zi5mSGlsbh1uT5Ttj6/rb5
+         vJwEy4Z0ix3MwEmSSI4aEGS1L81JOvRT+8vkVRSIRBf7eLt8Xq4bI91pwDNZVSrLnOIn
+         E6WSdUquC9OYz9OleyGMrM4/nFRMVxTpQ5Wzu9ZBL2WZCGT2SDqLUr/cLuqjT7Hb5vWx
+         xZuipdCxVsny87xpXfqS/GR0Hmf+wa3QpBYVOUlWMif32d42fOOA2raOEZP6VJSYPr+2
+         u6IaKIVs8vN+Cf/1nFpHnm8YusG+5TF7eYVjZ0RuguabFHMAEVntGLT0Z530sqtGfb6u
+         8ZrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727122859; x=1727727659;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NleUZATndt1acwKzBa7y/6tS+SaA3XdbIXpdmDlWmuM=;
+        b=g19eWJvP2pAiJ5C/yo0EYCoB9ZfhTHfwE7Jq84hcvEY2XpI9/r/sBONR/Ozc0igv9q
+         9ciSgrUIVv4r5AkBXEk+R4zXJTRamnOMncxueYZPsBikBeAgyzMzr7/Bztvwf8L0Rf2V
+         lFAccz/SdInJesRMWH/ejUfiB4UrwjeAnaAbES5wLGr7mA7BNiF2hQOE2eQEM7qMMYJc
+         EPWIp58vwIP9HNtjOVcd934Qx8jBHp4gT7ZIL/AdkDHxSXMICkSr+NqBgJ0iYT2dJN6M
+         45M1wPomBH9yshGeNIsyBpI/4QTEcwHLsROIHipACpd51zlXsn31e59vdFvwv4KXS1bj
+         kunQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFzGF6omiZV+XWIybbIzrpuhJ9yb1Avrq8IxpLNNcrhp4GBSzV2rT81t8MSYXsycmSGsxUcnaVWf29@vger.kernel.org, AJvYcCVN8VQkaPLHZ+kLFlKDv3YDkS1NkkUbFmZnazji9hk9dbESY4yoJ9pwUDRYhSw8egnDzpX9HG166LT7@vger.kernel.org, AJvYcCVvVBW7hCEAnwmSWOhihuAR3nV3obE0JI9YC5czL5m1hDqMC9q0FvQYklJVl+B7HV3jMQanJy0d8YB8Pg==@vger.kernel.org, AJvYcCWTLJS3OZkmslimGd/MFJIcNi7CoILaN3P1JTFPoIMLOzwUSSv7EWHaXN/jvSQKBJf724bXEzCleWeMbeAgZg==@vger.kernel.org, AJvYcCX5C0zXtntRXDvPbIL6qaZKYDqH7n/xpeiKv6ryIQ1dAyeLbxGXtZzRXiCAqnG5QNYoyqXkcgH2Z74cwp/V@vger.kernel.org, AJvYcCXH2KTM/zFdk5lfgcw66Htl13FFO/dN0LWIoiOJKyYGDkaJJ6Cm6/oUd791wRXT6Sg13c2CBHuJ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6tkieRY34dcDCKB/NymGv3VXpJcpFyv1VUIFrmK0b55hxXqAj
+	bpGewHMFwgorkDwmlmaQDVKpdIeaIXqqntufm+8Tl8u20+fqKBwLNGUVaxPgtJJyZoY0vGMzzXq
+	L6canLMMny7ar9TEEOeamrcJgmcs=
+X-Google-Smtp-Source: AGHT+IFe6pzcf17Wh1gjew0V8YTIVeE9hLlPHLiePqr1rh/borgYiDBhQWNwMIzi8TlRjg6PaEMoWqREOxcDUAURZmM=
+X-Received: by 2002:a05:6512:6c3:b0:535:63a3:c7d1 with SMTP id
+ 2adb3069b0e04-536ad3b7f23mr6933488e87.48.1727122858742; Mon, 23 Sep 2024
+ 13:20:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240814203850.2240469-20-dhowells@redhat.com>
+ <20240923183432.1876750-1-chantr4@gmail.com> <912766.1727120313@warthog.procyon.org.uk>
+In-Reply-To: <912766.1727120313@warthog.procyon.org.uk>
+From: Manu Bretelle <chantr4@gmail.com>
+Date: Mon, 23 Sep 2024 13:20:47 -0700
+Message-ID: <CAArYzrL0+tiPRhW6Z5fDp4WJgxVBeMg90A44rA=htXku0Q99eQ@mail.gmail.com>
+Subject: Re: [PATCH v2 19/25] netfs: Speed up buffered reading
+To: David Howells <dhowells@redhat.com>
+Cc: asmadeus@codewreck.org, ceph-devel@vger.kernel.org, christian@brauner.io, 
+	ericvh@kernel.org, hsiangkao@linux.alibaba.com, idryomov@gmail.com, 
+	jlayton@kernel.org, linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org, 
+	linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
+	marc.dionne@auristor.com, netdev@vger.kernel.org, netfs@lists.linux.dev, 
+	pc@manguebit.com, smfrench@gmail.com, sprasad@microsoft.com, tom@talpey.com, 
+	v9fs@lists.linux.dev, willy@infradead.org, eddyz87@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The function r8a66597_free_request is already called in the err_add_udc
-block, and freeing r8a66597->ep0_req twice may lead to a double free error.
+On Mon, Sep 23, 2024 at 12:38=E2=80=AFPM David Howells <dhowells@redhat.com=
+> wrote:
+>
+> Hi Manu,
+>
+> Are you using any other network filesystem than 9p, or just 9p?
 
-If the probe process fails and the r8a66597_probe function subsequently
-goes through its error handling path. Since r8a66597_free_request is called
-multiple times in different error handling sections, it leads to an attempt
-to free the same memory twice.
+Should be 9p only.
 
-Remove the redundant call to r8a66597_free_request in the clean_up2 block.
+We ended up reverting the whole merge with
+https://patch-diff.githubusercontent.com/raw/kernel-patches/vmtest/pull/288=
+.patch
+as my initial commit revert happened to work because of the left over
+cached .o.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+FWIW, I quickly checked and virtiofs is not affected. e.g is I was to
+apply https://github.com/danobi/vmtest/pull/88 to vmtest and recompile
+the kernel with:
+  CONFIG_FUSE_FS=3Dy
+  CONFIG_VIRTIO_FS=3Dy
+  CONFIG_FUSE_PASSTHROUGH=3Dy
 
-Fixes: 0f91349b89f3 ("usb: gadget: convert all users to the new udc infrastructure")
-Signed-off-by: Mikhail Arkhipov <m.arhipov@rosa.ru>
----
-v2: Remove redundant call to r8a66597_free_request in clean_up2 block 
-instead of assigning r8a66597->ep0_req to NULL, as suggested by 
-Sebastian Andrzej Siewior <bigeasy@linutronix.de>.
- drivers/usb/gadget/udc/r8a66597-udc.c | 3 ---
- 1 file changed, 3 deletions(-)
+qemu-system-x86_64 "-nodefaults" "-display" "none" \
+  "-serial" "mon:stdio" "-enable-kvm" "-cpu" "host" \
+  "-qmp" "unix:/tmp/qmp-895732.sock,server=3Don,wait=3Doff" \
+  "-chardev" "socket,path=3D/tmp/qga-733184.sock,server=3Don,wait=3Doff,id=
+=3Dqga0" \
+  "-device" "virtio-serial" \
+  "-device" "virtserialport,chardev=3Dqga0,name=3Dorg.qemu.guest_agent.0" \
+  "-object" "memory-backend-memfd,id=3Dmem,share=3Don,size=3D4G" "-numa"
+"node,memdev=3Dmem" \
+  "-device" "virtio-serial" "-chardev"
+"socket,path=3D/tmp/cmdout-713466.sock,server=3Don,wait=3Doff,id=3Dcmdout" =
+\
+  "-device" "virtserialport,chardev=3Dcmdout,name=3Dorg.qemu.virtio_serial.=
+0" \
+  "-chardev" "socket,id=3Droot,path=3D/tmp/virtiofsd-807478.sock" \
+  "-device" "vhost-user-fs-pci,queue-size=3D1024,chardev=3Droot,tag=3Drootf=
+s" \
+  "-kernel" "/data/users/chantra/linux/arch/x86/boot/bzImage" \
+  "-no-reboot" "-append" "rootfstype=3Dvirtiofs root=3Drootfs rw
+earlyprintk=3Dserial,0,115200 printk.devkmsg=3Don console=3D0,115200
+loglevel=3D7 raid=3Dnoautodetect init=3D/tmp/vmtest-initBdg4J.sh panic=3D-1=
+" \
+  "-chardev" "socket,id=3Dshared,path=3D/tmp/virtiofsd-992342.sock" \
+  "-device" "vhost-user-fs-pci,queue-size=3D1024,chardev=3Dshared,tag=3Dvmt=
+est-shared"
+\
+  "-smp" "2" "-m" "4G"
 
-diff --git a/drivers/usb/gadget/udc/r8a66597-udc.c b/drivers/usb/gadget/udc/r8a66597-udc.c
-index db4a10a979f9..a9b82f371abb 100644
---- a/drivers/usb/gadget/udc/r8a66597-udc.c
-+++ b/drivers/usb/gadget/udc/r8a66597-udc.c
-@@ -1956,9 +1956,6 @@ static int r8a66597_probe(struct platform_device *pdev)
- 	if (r8a66597->pdata->on_chip)
- 		clk_disable_unprepare(r8a66597->clk);
- 
--	if (r8a66597->ep0_req)
--		r8a66597_free_request(&r8a66597->ep[0].ep, r8a66597->ep0_req);
--
- 	return ret;
- }
- 
--- 
-2.39.3 (Apple Git-146)
+would work.
 
+Manu
+
+>
+> David
+>
 
