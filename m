@@ -1,180 +1,219 @@
-Return-Path: <linux-kernel+bounces-335340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DDCE97E44A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 02:06:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65ED697E44F
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 02:23:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F175B20CDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 00:06:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E35A31F215BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 00:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA06F1C27;
-	Mon, 23 Sep 2024 00:06:26 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E95162114;
+	Mon, 23 Sep 2024 00:23:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A5iqCmKX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4A98624
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 00:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB88366;
+	Mon, 23 Sep 2024 00:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727049986; cv=none; b=tXQyeDOLXH8kzAnb8+pMldS4ChGszrlyzxlbPber6sVZhgc7Zo+YrvNV/HnUkpWs4Wr9jzSizi5EW2ZlRbf0TKEYsydhq5K7t88+Wywu6B4O12qX3ucJDYW3Ptkjdnf89Xi7KduYSai4WEJ5AepwhY4TmDXQJ1JVn8I3G1haKKM=
+	t=1727050980; cv=none; b=D1ARo4vyvjAfiP1NCpA7Mtg3GgRvpp16ieISO3Vj8S0MM5AYtHRTQi2H+4Rr003WSGt6fS80lCmspPjZaOH4uEjKDA19q67CpCySIa6Win+HI4M6w/2dRzfuDG0zXbVSkLkLyyCDkZ67IA6OYazmz8q2jE5uQsC0hduuz48jIQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727049986; c=relaxed/simple;
-	bh=u9rXPoUapOlaU2GpofbQQFx7+tCMjUDOiiOuWaTg9No=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=k/W5MqZ3gsV668IOfB0WoNMYfag5dDSvpabBqK+8g0XaME5t3x3fQJM5cz5FLy41al0dOCy7hCxMD1iN7HwUj1anOQGYx7veGoznbdykh4yzQZg1rkmWr+CfrGRGleeQIMbi5lIchhl+2YcLRK4MHkTZL+T1FtyGDfMBCx3U0vE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82cd682f1d2so601857639f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 17:06:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727049984; x=1727654784;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yQWdKNdDhsxt/8CPNHc5tRRXzIePlhhS1oOIVFgpmd8=;
-        b=G2d829yYHVMbgrV6G1mC2NTb/oeHWMH4oz8rE5K8G4vb7N8l7qdUT259Mr9zWTLgd9
-         XN7X4SOCFRlJhlza80p3IdvDFyml9aNwrVnl9ngHXmv51qf5VmyuMZtmv9OB8R9PSnCM
-         MGo8xsHkmS+RaF0dBxzmqtfYo+G2TGdcRM6FNzFR+Spwusp1pM9PRFlQUKNabxBILk2/
-         pNJtbZS9Im4k1thBcsnP0i/uEpD+WIpDfIwh1z2LxnhXcGni7BjF8d+stjvVy+GwTKIN
-         J4FAfwQHGhv7iXCi80C/gP0W/iE7ge1P/sssmHP2K7E1WsKHu5LK2q7daBGDv1u/N/FB
-         ZJfA==
-X-Forwarded-Encrypted: i=1; AJvYcCUjv47NK/V5kOhr0rrDxVgx0nc0DTn8a5V5WTytAMnegnHxr6G5AkojHuZ3/FzAyiiPKzWKvDnamJ4xX5s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywsn1xcEAyJT0eCSVorKiO0oHOTM1wuArOpRx4XUEpIzN8Dt5vL
-	Dyli1DGDtDzMNzxnDNcUU6YerNRsLEjikb091XH1zduPqqokvv91LCuDsFd6twf5zjhNegl0K7i
-	Y7r07PI+awN+wKiKnFAAn+2HjOaM+JaLhZ6AHycvW3IsCgR2ib9h3v6c=
-X-Google-Smtp-Source: AGHT+IGFq9FhiNg775XidPqJcSGPujpZ+QwY2yfqANrzbOE9O/horlZnGHFL5bruOq4stOZ9kPVl/n7T5GrlyAQanNUFjz7bDGWs
+	s=arc-20240116; t=1727050980; c=relaxed/simple;
+	bh=8DJo0Bvq/UTnLxHUyehI+leQhE80jTAy3dOZGuZqjUc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q6nDIBcxL482r+qrDEN5tUK9xi5aSau/Tnowi4S78re6FTUXwpXmC45aRE31WsHJsb6292O3axPj2dprgGlWnDkOudAX15kZ72xstWYJXT6RnrOVqo9Lur69+BwhPB1HjMHJwDfkVzcQsIHBj3MoaJBdX7ZlV1/vXSpOEfZYhpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A5iqCmKX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE0B9C4CEC3;
+	Mon, 23 Sep 2024 00:22:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727050979;
+	bh=8DJo0Bvq/UTnLxHUyehI+leQhE80jTAy3dOZGuZqjUc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=A5iqCmKXWX1KQpuxaK7a7m4vnXWIUwymf6PxkDKcfc7yfDb/oIU2328ISO/qDk9WA
+	 fV2usyVNrbed9Wib4IkhI8i0t8F0/lIUqgbuX5Ap0/Fc1R81U7ZL2GrmKGro1SaonT
+	 5S6XM0iVeaG8K+ISOEXFiTCqeJxVQaVlxC1mrtRvDJcJessLhXBEflosW5/ST93Kcm
+	 LQ0Vl8HbZ2+/9/xg4f3OAWDoCf/5T+LQ33E8m745k/7A8hAO6epxP2xXn9yUKTceb9
+	 w2zzr0AOGJkwHqHH13RvfwlCmG1AbsS5nNbuY3R4JlrJI75tSxAV93F2F+59nQAide
+	 CcqnGBTYE5gCw==
+From: Kees Cook <kees@kernel.org>
+To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: Kees Cook <kees@kernel.org>,
+	Erick Archer <erick.archer@outlook.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH v2] HID: ishtp-hid-client: replace fake-flex arrays with flex-array members
+Date: Sun, 22 Sep 2024 17:22:53 -0700
+Message-Id: <20240923002249.it.617-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:18ca:b0:3a0:bb8c:bd0 with SMTP id
- e9e14a558f8ab-3a0c8cb0affmr84352105ab.12.1727049984076; Sun, 22 Sep 2024
- 17:06:24 -0700 (PDT)
-Date: Sun, 22 Sep 2024 17:06:24 -0700
-In-Reply-To: <000000000000d1dd99061d4a0af4@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f0b100.050a0220.c23dd.0001.GAE@google.com>
-Subject: Re: [syzbot] [mptcp?] WARNING in __mptcp_move_skbs_from_subflow
-From: syzbot <syzbot+d1bff73460e33101f0e7@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, geliang@kernel.org, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, martineau@kernel.org, 
-	matttbe@kernel.org, mptcp@lists.linux.dev, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5499; i=kees@kernel.org; h=from:subject:message-id; bh=uL5+LkE+LDdHqSXx5n9OqqD94O15ptLIfs0dSMtn5ZQ=; b=owGbwMvMwCVmps19z/KJym7G02pJDGkfttzhK9uWcjD7nH7SvLtnk7XCJ2ycUlOpxeRqzGtcI RGfrS/UUcrCIMbFICumyBJk5x7n4vG2Pdx9riLMHFYmkCEMXJwCMJFH0YwM5/e8Div13XzgTH/N 52kLwpmkhT2Yt87bVuN+RHxSAFOEJsP/Evl9hnF9+VysnC4TLmTN44s5cnrpZf3XSxhTNC09myW 4AA==
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-syzbot has found a reproducer for the following issue on:
+From: Erick Archer <erick.archer@outlook.com>
 
-HEAD commit:    af9c191ac2a0 Merge tag 'trace-ring-buffer-v6.12' of git://..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=174f4107980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e851828834875d6f
-dashboard link: https://syzkaller.appspot.com/bug?extid=d1bff73460e33101f0e7
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14f9219f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=122d1c27980000
+One-element arrays as fake flex arrays are deprecated[1] as the kernel
+has switched to C99 flexible-array members instead. This case, however,
+has more complexity because it is a flexible array of flexible arrays
+and this patch needs to be ready to enable the new compiler flag
+-Wflex-array-member-not-at-end (coming in GCC-14) globally.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/2b553a08733b/disk-af9c191a.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/aa643c9f0242/vmlinux-af9c191a.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d4895374e1fc/bzImage-af9c191a.xz
+So, define a new struct type for the single reports:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d1bff73460e33101f0e7@syzkaller.appspotmail.com
+struct report {
+	uint16_t size;
+	struct hostif_msg_hdr msg;
+} __packed;
 
-TCP: request_sock_subflow_v4: Possible SYN flooding on port [::]:20002. Sending cookies.
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5227 at net/mptcp/protocol.c:695 __mptcp_move_skbs_from_subflow+0x20a9/0x21f0 net/mptcp/protocol.c:695
-Modules linked in:
-CPU: 0 UID: 0 PID: 5227 Comm: syz-executor350 Not tainted 6.11.0-syzkaller-08829-gaf9c191ac2a0 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-RIP: 0010:__mptcp_move_skbs_from_subflow+0x20a9/0x21f0 net/mptcp/protocol.c:695
-Code: 0f b6 dc 31 ff 89 de e8 b5 dd ea f5 89 d8 48 81 c4 50 01 00 00 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc e8 98 da ea f5 90 <0f> 0b 90 e9 47 ff ff ff e8 8a da ea f5 90 0f 0b 90 e9 99 e0 ff ff
-RSP: 0018:ffffc90000006db8 EFLAGS: 00010246
-RAX: ffffffff8ba9df18 RBX: 00000000000055f0 RCX: ffff888030023c00
-RDX: 0000000000000100 RSI: 00000000000081e5 RDI: 00000000000055f0
-RBP: 1ffff110062bf1ae R08: ffffffff8ba9cf12 R09: 1ffff110062bf1b8
-R10: dffffc0000000000 R11: ffffed10062bf1b9 R12: 0000000000000000
-R13: dffffc0000000000 R14: 00000000700cec61 R15: 00000000000081e5
-FS:  000055556679c380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020287000 CR3: 0000000077892000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- move_skbs_to_msk net/mptcp/protocol.c:811 [inline]
- mptcp_data_ready+0x29c/0xa90 net/mptcp/protocol.c:854
- subflow_data_ready+0x34a/0x920 net/mptcp/subflow.c:1490
- tcp_data_queue+0x20fd/0x76c0 net/ipv4/tcp_input.c:5283
- tcp_rcv_established+0xfba/0x2020 net/ipv4/tcp_input.c:6237
- tcp_v4_do_rcv+0x96d/0xc70 net/ipv4/tcp_ipv4.c:1915
- tcp_v4_rcv+0x2dc0/0x37f0 net/ipv4/tcp_ipv4.c:2350
- ip_protocol_deliver_rcu+0x22e/0x440 net/ipv4/ip_input.c:205
- ip_local_deliver_finish+0x341/0x5f0 net/ipv4/ip_input.c:233
- NF_HOOK+0x3a4/0x450 include/linux/netfilter.h:314
- NF_HOOK+0x3a4/0x450 include/linux/netfilter.h:314
- __netif_receive_skb_one_core net/core/dev.c:5662 [inline]
- __netif_receive_skb+0x2bf/0x650 net/core/dev.c:5775
- process_backlog+0x662/0x15b0 net/core/dev.c:6107
- __napi_poll+0xcb/0x490 net/core/dev.c:6771
- napi_poll net/core/dev.c:6840 [inline]
- net_rx_action+0x89b/0x1240 net/core/dev.c:6962
- handle_softirqs+0x2c5/0x980 kernel/softirq.c:554
- do_softirq+0x11b/0x1e0 kernel/softirq.c:455
- </IRQ>
- <TASK>
- __local_bh_enable_ip+0x1bb/0x200 kernel/softirq.c:382
- local_bh_enable include/linux/bottom_half.h:33 [inline]
- rcu_read_unlock_bh include/linux/rcupdate.h:919 [inline]
- __dev_queue_xmit+0x1764/0x3e80 net/core/dev.c:4451
- dev_queue_xmit include/linux/netdevice.h:3094 [inline]
- neigh_hh_output include/net/neighbour.h:526 [inline]
- neigh_output include/net/neighbour.h:540 [inline]
- ip_finish_output2+0xd41/0x1390 net/ipv4/ip_output.c:236
- ip_local_out net/ipv4/ip_output.c:130 [inline]
- __ip_queue_xmit+0x118c/0x1b80 net/ipv4/ip_output.c:536
- __tcp_transmit_skb+0x2544/0x3b30 net/ipv4/tcp_output.c:1466
- tcp_transmit_skb net/ipv4/tcp_output.c:1484 [inline]
- tcp_mtu_probe net/ipv4/tcp_output.c:2547 [inline]
- tcp_write_xmit+0x641d/0x6bf0 net/ipv4/tcp_output.c:2752
- __tcp_push_pending_frames+0x9b/0x360 net/ipv4/tcp_output.c:3015
- tcp_push_pending_frames include/net/tcp.h:2107 [inline]
- tcp_data_snd_check net/ipv4/tcp_input.c:5714 [inline]
- tcp_rcv_established+0x1026/0x2020 net/ipv4/tcp_input.c:6239
- tcp_v4_do_rcv+0x96d/0xc70 net/ipv4/tcp_ipv4.c:1915
- sk_backlog_rcv include/net/sock.h:1113 [inline]
- __release_sock+0x214/0x350 net/core/sock.c:3072
- release_sock+0x61/0x1f0 net/core/sock.c:3626
- mptcp_push_release net/mptcp/protocol.c:1486 [inline]
- __mptcp_push_pending+0x6b5/0x9f0 net/mptcp/protocol.c:1625
- mptcp_sendmsg+0x10bb/0x1b10 net/mptcp/protocol.c:1903
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0x1a6/0x270 net/socket.c:745
- ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2603
- ___sys_sendmsg net/socket.c:2657 [inline]
- __sys_sendmsg+0x2aa/0x390 net/socket.c:2686
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fb06e9317f9
-Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe2cfd4f98 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007fb06e97f468 RCX: 00007fb06e9317f9
-RDX: 0000000000000000 RSI: 0000000020000080 RDI: 0000000000000005
-RBP: 00007fb06e97f446 R08: 0000555500000000 R09: 0000555500000000
-R10: 0000555500000000 R11: 0000000000000246 R12: 00007fb06e97f406
-R13: 0000000000000001 R14: 00007ffe2cfd4fe0 R15: 0000000000000003
- </TASK>
+but without the payload (flex array) in it. And add this payload to the
+"hostif_msg" structure. This way, in the "report_list" structure we can
+declare a flex array of single reports which now do not contain another
+flex array.
 
+struct report_list {
+	[...]
+        struct report reports[];
+} __packed;
 
+Therefore, the "struct hostif_msg" is now made up of a header and a
+payload. And the "struct report" uses only the "hostif_msg" header.
+The perfect solution would be for the "report" structure to use the
+whole "hostif_msg" structure but this is not possible due to nested
+flexible arrays. Anyway, the end result is equivalent since this patch
+does attempt to change the behaviour of the code.
+
+Now as well, we have more clarity after the cast from the raw bytes to
+the new structures. Refactor the code accordingly to use the new
+structures.
+
+Also, use "container_of()" whenever we need to retrieve a pointer to
+the flexible structure, through which we can access the flexible array
+if needed.
+
+Link: https://www.kernel.org/doc/html/next/process/deprecated.html#zero-length-and-one-element-arrays [1]
+Closes: https://github.com/KSPP/linux/issues/333
+Signed-off-by: Erick Archer <erick.archer@outlook.com>
+Link: https://lore.kernel.org/r/AS8PR02MB723760CB93942370E92F00638BF72@AS8PR02MB7237.eurprd02.prod.outlook.com
+[kees: tweaked commit log and dropped struct_size() uses]
+Signed-off-by: Kees Cook <kees@kernel.org>
 ---
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+ v2: - update based on feedback
+ rfc: https://lore.kernel.org/lkml/AS8PR02MB723760CB93942370E92F00638BF72@AS8PR02MB7237.eurprd02.prod.outlook.com/
+---
+ drivers/hid/intel-ish-hid/ishtp-hid-client.c | 25 ++++++++++----------
+ drivers/hid/intel-ish-hid/ishtp-hid.h        | 11 +++++----
+ 2 files changed, 19 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/hid/intel-ish-hid/ishtp-hid-client.c b/drivers/hid/intel-ish-hid/ishtp-hid-client.c
+index fbd4f8ea1951..cb04cd1d980b 100644
+--- a/drivers/hid/intel-ish-hid/ishtp-hid-client.c
++++ b/drivers/hid/intel-ish-hid/ishtp-hid-client.c
+@@ -70,10 +70,10 @@ static void process_recv(struct ishtp_cl *hid_ishtp_cl, void *recv_buf,
+ 	unsigned char *payload;
+ 	struct device_info *dev_info;
+ 	int i, j;
+-	size_t	payload_len, total_len, cur_pos, raw_len;
++	size_t	payload_len, total_len, cur_pos, raw_len, msg_len;
+ 	int report_type;
+ 	struct report_list *reports_list;
+-	char *reports;
++	struct report *report;
+ 	size_t report_len;
+ 	struct ishtp_cl_data *client_data = ishtp_get_client_data(hid_ishtp_cl);
+ 	int curr_hid_dev = client_data->cur_hid_dev;
+@@ -280,14 +280,13 @@ static void process_recv(struct ishtp_cl *hid_ishtp_cl, void *recv_buf,
+ 		case HOSTIF_PUBLISH_INPUT_REPORT_LIST:
+ 			report_type = HID_INPUT_REPORT;
+ 			reports_list = (struct report_list *)payload;
+-			reports = (char *)reports_list->reports;
++			report = reports_list->reports;
+ 
+ 			for (j = 0; j < reports_list->num_of_reports; j++) {
+-				recv_msg = (struct hostif_msg *)(reports +
+-					sizeof(uint16_t));
+-				report_len = *(uint16_t *)reports;
+-				payload = reports + sizeof(uint16_t) +
+-					sizeof(struct hostif_msg_hdr);
++				recv_msg = container_of(&report->msg,
++							struct hostif_msg, hdr);
++				report_len = report->size;
++				payload = recv_msg->payload;
+ 				payload_len = report_len -
+ 					sizeof(struct hostif_msg_hdr);
+ 
+@@ -304,7 +303,7 @@ static void process_recv(struct ishtp_cl *hid_ishtp_cl, void *recv_buf,
+ 						0);
+ 					}
+ 
+-				reports += sizeof(uint16_t) + report_len;
++				report += sizeof(*report) + payload_len;
+ 			}
+ 			break;
+ 		default:
+@@ -316,12 +315,12 @@ static void process_recv(struct ishtp_cl *hid_ishtp_cl, void *recv_buf,
+ 
+ 		}
+ 
+-		if (!cur_pos && cur_pos + payload_len +
+-				sizeof(struct hostif_msg) < total_len)
++		msg_len = payload_len + sizeof(struct hostif_msg);
++		if (!cur_pos && cur_pos + msg_len < total_len)
+ 			++client_data->multi_packet_cnt;
+ 
+-		cur_pos += payload_len + sizeof(struct hostif_msg);
+-		payload += payload_len + sizeof(struct hostif_msg);
++		cur_pos += msg_len;
++		payload += msg_len;
+ 
+ 	} while (cur_pos < total_len);
+ }
+diff --git a/drivers/hid/intel-ish-hid/ishtp-hid.h b/drivers/hid/intel-ish-hid/ishtp-hid.h
+index 35dddc5015b3..2bc19e8ba13e 100644
+--- a/drivers/hid/intel-ish-hid/ishtp-hid.h
++++ b/drivers/hid/intel-ish-hid/ishtp-hid.h
+@@ -31,6 +31,7 @@ struct hostif_msg_hdr {
+ 
+ struct hostif_msg {
+ 	struct hostif_msg_hdr	hdr;
++	uint8_t payload[];
+ } __packed;
+ 
+ struct hostif_msg_to_sensor {
+@@ -52,15 +53,17 @@ struct ishtp_version {
+ 	uint16_t build;
+ } __packed;
+ 
++struct report {
++	uint16_t size;
++	struct hostif_msg_hdr msg;
++} __packed;
++
+ /* struct for ISHTP aggregated input data */
+ struct report_list {
+ 	uint16_t total_size;
+ 	uint8_t	num_of_reports;
+ 	uint8_t	flags;
+-	struct {
+-		uint16_t	size_of_report;
+-		uint8_t report[1];
+-	} __packed reports[1];
++	struct report reports[];
+ } __packed;
+ 
+ /* HOSTIF commands */
+-- 
+2.34.1
+
 
