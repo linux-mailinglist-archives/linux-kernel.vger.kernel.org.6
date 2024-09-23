@@ -1,62 +1,74 @@
-Return-Path: <linux-kernel+bounces-336308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BCB198303C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 23:15:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7569983909
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 23:21:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 731781F22127
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 21:15:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 967521C2192C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 21:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB56839F4;
-	Mon, 23 Sep 2024 21:15:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 016FE83A09;
+	Mon, 23 Sep 2024 21:14:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Xyi40PuD"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SmYslcXY"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB948C06;
-	Mon, 23 Sep 2024 21:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE68177103;
+	Mon, 23 Sep 2024 21:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727126099; cv=none; b=k2tWgC4dTCjhtp/0PAmHcOWO7hAFj1sBMW9apVtKCcZ7addFXmfpnQ6clT2ttZZkBglLZGWcwmRQJE5pD2bYNPLyDPkIn7otg0cquM634vQUQtna4hjoeHEP7QDvMcNOASYqfXT9LGC6jboA1LWya2li0W2ykJ5fYnBjtc3Iws4=
+	t=1727126041; cv=none; b=A/4TTymljYqNH9ylWiIqiOQYdMsz3mBWB9PU12bAWbBgavq6ooycsv2bs2fHxJfMT6FUdtg3Qv9RToifzVdq1p8Q3St2fvbKjdABsclYgNxyWfX5nPU7n8Y1HVVpfy4btxOfeW80x8ZKA8MxsoPfgLop91WzIBdFj993aNnoAWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727126099; c=relaxed/simple;
-	bh=lqgP/1Q9KtOcLKTxVNHpblZ3VGGoPIy3/+XK5F8/cTg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jQAc05oa/GXSfcQAODS9ZnPZ/fPvOfTTk+Vs/WFHUvIgL9A2m1Kt3KCQWvdsAGx5n7fZ2tQN9DDwuzwQII3+5Z30I/jIWeGIlll4bnzgGrcDHDkNI1QC1pjg33+VZsCP13MBwaNIDJQc3hr5RIh5chnYCqflWKfiULgnLQ7kG+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Xyi40PuD; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48NKnLg5024394;
-	Mon, 23 Sep 2024 21:14:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ZXgl4PCb3TvAFDKPDjYDViIP5fOG7TPMmJVSLbpG1Ro=; b=Xyi40PuDVA1oiLP2
-	edWhn1GwJKrfBxo1g5w/yRsTOnNcSlc6WIkK/RAWzzwIUgW5RW93xKC0GJ5MV0wO
-	LNSEzCX2e9Zx6d+XXQ9utfn/XeVE4utvLF8Lhwt5JrilRaFlVd8ydZbrcy/QGNMc
-	v7F4pETM/hcxN0XLb2vK4z1qWgoEw/ZzPuBkpJBUiA+Fjs8TKBF8PAdSpp+RaK/A
-	3nEMA9Nl66nR7a2y/ksjRciloMzuXahWaIHomaFIvPQBMD3htES2a9wTu1KUFld1
-	e6YoIPaG2TIMK7Do912/VE4TZ54pLEcgD+5rpy/bKzDXKdoiNDkbvbtbU7V+1EgY
-	qA17Iw==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sn3s64hf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 23 Sep 2024 21:14:24 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48NLEOsT020994
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 23 Sep 2024 21:14:24 GMT
-Received: from [10.134.70.212] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 23 Sep
- 2024 14:14:23 -0700
-Message-ID: <42f0b4b1-87c7-4ebe-94a1-e2ad1a759dd7@quicinc.com>
-Date: Mon, 23 Sep 2024 14:14:07 -0700
+	s=arc-20240116; t=1727126041; c=relaxed/simple;
+	bh=MiwbVUI+875lhjAtIuwhzEJNCWQ4HTqGbr0KOUhu2xo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=NjVUASYSkbV7dewkIGeMZm/+9RIRq1wijEk9Iaz/47Ih2mKHKfw3Itoxz5X5b5n0LGoqr82ShTgY+Q5Hp/Bn7uNjhFSpGkyF/s9VaPN7zit18ZZGBAeterVLE0AkFrHzysNTXpfTh8AxXMUiiFYztZqsZTNGkfuu3GzHoqg4AV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SmYslcXY; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7b0c9bbddb4so3251907a12.3;
+        Mon, 23 Sep 2024 14:13:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727126039; x=1727730839; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=pO/6d/gDXXUTcDXUJlrlfTdrh2B/Xbl+JiNfLlhN/5M=;
+        b=SmYslcXY71Rd5TrLk8BA92Y9QH7Ylhf9PtQPkLgMUV6TO7o4jSY+jguiUPbujUOrOr
+         kf8xkuenwApVZiDjlcf8UH98HRDMZIzDp2iolzoQdBdv0XtY7q9wtdxjDXiXen4raOPA
+         pjUSW1d1x6sVGfqgRu5OnlSZRdc2TJgYMna9xUft/ILH6IBTIjoclH9ImbMHa5b0OoFg
+         HP4usBXVYBmiaZnpTxXgmYcw+CyARCy63v+K9POogu+MbRKDnjLFUsExI5erUvktopHU
+         3AKbVe13LhNXAWNGSUxfJT1TnoIoVAewcFVaHyzR2G6Ho7mLiMSqHx3cGGJ0H0WOJW/X
+         LXQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727126039; x=1727730839;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pO/6d/gDXXUTcDXUJlrlfTdrh2B/Xbl+JiNfLlhN/5M=;
+        b=duz2ow9434WRRXd2NCjXu2O2e9CGcYu5dBIwJmjlMxsZZXPwQ3cN15RirHgmhYACLb
+         R4OWQ6SOnLX+L6dos04IpN1KY51avgw00KMOqfnxJ5QeLrNkU0TThTNvnPzzT8bg/XEd
+         5laodE1QpKb2fNVoZ1wzhPVKVdnXepat1Fta2EKaK2ORRXQ6OlOzcbFm3fyLdA5xKkZO
+         1OlJyMd+FuNjaK3QLM2YzFICbhQpSdYPmwOw53fd7YdwpYo92yvC6VOJr+6nE5ozgU7k
+         KQgufS0kjys1OphXID5HCrR2UCsw7mdkwAic9FsffJrFLLaGhvtJxVb9Q9RLweOE7rT9
+         SqDA==
+X-Forwarded-Encrypted: i=1; AJvYcCWBS8c7O9P36YK95p1wiJrsr3BxHMauGfyTAOSy9RW4/ARIS2PhADKBaoY2lhGFmyaHMiCaYdg/@vger.kernel.org, AJvYcCX8/dEPFyiJucLccAp2lAWLVZqSTwctXiF1UkXIGwJDRxVq1yxOHuBdJSy2QglPe5KUOxJCEkNpUiUuJ1E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvAMh10xn7vo/mf6NcpSOivYJUhLanMSsTFJo+E6VxC8VES9iB
+	M018kuw2jq0v5jIr/BpoGkENTgzjFXI9qXoQGMg1IDf6fogW08qf
+X-Google-Smtp-Source: AGHT+IEAnW7yN6qCtrsyo7BIQtrP3+Vy4EfhwZQvPPu/0xGPuycMmFaz2h8wFToO40DI/Ee+ma6LCQ==
+X-Received: by 2002:a05:6a20:9d8f:b0:1cf:1251:9a47 with SMTP id adf61e73a8af0-1d30a9bcf0amr16966274637.31.1727126038988;
+        Mon, 23 Sep 2024 14:13:58 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71afc9c67d7sm55473b3a.187.2024.09.23.14.13.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Sep 2024 14:13:58 -0700 (PDT)
+Message-ID: <ec046bcf-06ce-4abe-b0ea-b6741c9ff004@gmail.com>
+Date: Mon, 23 Sep 2024 14:13:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,114 +76,135 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] drm/panel: jd9365da: Modify Kingdisplay and Melfas
- panel timing
-To: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>,
-        <neil.armstrong@linaro.org>, <sam@ravnborg.org>,
-        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-        <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
-        <dianders@chromium.org>, <hsinyi@google.com>,
-        <awarnecke002@hotmail.com>, <dmitry.baryshkov@linaro.org>
-CC: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240923134227.11383-1-lvzhaoxiong@huaqin.corp-partner.google.com>
- <20240923134227.11383-2-lvzhaoxiong@huaqin.corp-partner.google.com>
+Subject: Re: [PATCH net v2 1/1] net: ethernet: lantiq_etop: fix memory
+ disclosure
+To: Aleksander Jan Bajkowski <olek2@wp.pl>, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ jacob.e.keller@intel.com, andrew@lunn.ch, horms@kernel.org,
+ john@phrozen.org, ralph.hempel@lantiq.com, ralf@linux-mips.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240921105801.14578-1-olek2@wp.pl>
+ <20240921105801.14578-2-olek2@wp.pl>
+ <0a9830fe-790d-4ccd-bec9-3fbb32f18aa8@gmail.com>
+ <991dc2b6-12ef-458d-b37f-562c15a73a07@wp.pl>
 Content-Language: en-US
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <20240923134227.11383-2-lvzhaoxiong@huaqin.corp-partner.google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: IV3rl3zIZofrCVveXX6jGA2Vl3uEKWiE
-X-Proofpoint-ORIG-GUID: IV3rl3zIZofrCVveXX6jGA2Vl3uEKWiE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
- mlxscore=0 impostorscore=0 spamscore=0 malwarescore=0 suspectscore=0
- priorityscore=1501 lowpriorityscore=0 mlxlogscore=999 clxscore=1011
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409230152
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+In-Reply-To: <991dc2b6-12ef-458d-b37f-562c15a73a07@wp.pl>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-
-
-On 9/23/2024 6:42 AM, Zhaoxiong Lv wrote:
-> In MTK chips, if the system starts suspending before the DRM runtime
-> resume has not completed, there is a possibility of a black screen
-> after waking the machine. Reduce the disable delay resolves this issue,
-
-Hi Zhaoxiong,
-
-Do you mean "if the system starts suspending before the DRM runtime 
-resume *has* completed" here?
-
-> 
-> The "backlight_off_to_display_off_delay_ms" was added between
-> "backlight off" and "display off"  to prevent "display off" from being
-> executed when the backlight is not fully powered off, which may cause
-> a white screen. However, we removed this
-> "backlight_off_to_display_off_delay_ms" and found that this situation
-> did not occur. Therefore, in order to solve the problem mentioned
-> above, we We reduced it from 100ms to 3ms (tCMD_OFF >= 1ms).
-
-So from my understanding of this paragraph, 
-`backlight_off_to_display_off_delay_ms` was added to prevent the display 
-powering off before backlight is fully powered off. You recently tested 
-dropping this completely and saw no issue with this.
-
-If that's the case, why not drop this delay completely?
-
-Thanks,
-
-Jessica Zhang
-
-> 
-> This is the timing specification for the two panels:
-> 1. Kingdisplay panel timing spec:
-> https://github.com/KD54183/-JD9365DA_Power-On-Off-Sequence_V0120240923
-> 2. LMFBX101117480 timing spec: https://github.com/chiohsin-lo/TDY-JD_LIB
+On 9/23/24 14:08, Aleksander Jan Bajkowski wrote:
+> Hi Florian,
 > 
 > 
-> Fixes: 2b976ad760dc ("drm/panel: jd9365da: Support for kd101ne3-40ti MIPI-DSI panel")
-> Fixes: c4ce398cf18a ("drm/panel: jd9365da: Support for Melfas lmfbx101117480 MIPI-DSI panel")
+> On 23.09.2024 20:21, Florian Fainelli wrote:
+>> On 9/21/24 03:58, Aleksander Jan Bajkowski wrote:
+>>> When applying padding, the buffer is not zeroed, which results in memory
+>>> disclosure. The mentioned data is observed on the wire. This patch uses
+>>> skb_put_padto() to pad Ethernet frames properly. The mentioned function
+>>> zeroes the expanded buffer.
+>>>
+>>> In case the packet cannot be padded it is silently dropped. Statistics
+>>> are also not incremented. This driver does not support statistics in the
+>>> old 32-bit format or the new 64-bit format. These will be added in the
+>>> future. In its current form, the patch should be easily backported to
+>>> stable versions.
+>>>
+>>> Ethernet MACs on Amazon-SE and Danube cannot do padding of the packets
+>>> in hardware, so software padding must be applied.
+>>>
+>>> Fixes: 504d4721ee8e ("MIPS: Lantiq: Add ethernet driver")
+>>> Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
+>>> ---
+>>>   drivers/net/ethernet/lantiq_etop.c | 11 ++++++-----
+>>>   1 file changed, 6 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/drivers/net/ethernet/lantiq_etop.c b/drivers/net/ 
+>>> ethernet/lantiq_etop.c
+>>> index 3c289bfe0a09..36f1e3c93ca5 100644
+>>> --- a/drivers/net/ethernet/lantiq_etop.c
+>>> +++ b/drivers/net/ethernet/lantiq_etop.c
+>>> @@ -477,11 +477,11 @@ ltq_etop_tx(struct sk_buff *skb, struct 
+>>> net_device *dev)
+>>>       struct ltq_etop_priv *priv = netdev_priv(dev);
+>>>       struct ltq_etop_chan *ch = &priv->ch[(queue << 1) | 1];
+>>>       struct ltq_dma_desc *desc = &ch->dma.desc_base[ch->dma.desc];
+>>> -    int len;
+>>>       unsigned long flags;
+>>>       u32 byte_offset;
+>>>   -    len = skb->len < ETH_ZLEN ? ETH_ZLEN : skb->len;
+>>> +    if (skb_put_padto(skb, ETH_ZLEN))
+>>> +        return NETDEV_TX_OK;
+>>
+>> You should consider continuing to use the temporary variable 'len' 
+>> here, and just re-assign it after the call to skb_put_padto() and 
+>> avoid introducing potential user-after-free near the point where you 
+>> program the buffer length into the HW. This also minimizes the amount 
+>> of lines to review.
 > 
-> Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-> ---
-> Changes between V2 and V1:
-> -  1. Modify the commit message
-> -  2. Modify the value of backlight_off_to_display_off_delay_ms.
-> v1: https://lore.kernel.org/all/20240915080830.11318-2-lvzhaoxiong@huaqin.corp-partner.google.com/
-> ---
->   drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+> To the best of my knowledge, the skb is not released until the DMA 
+> finishes the transfer.
+> Then the ltq_etop_poll_tx() function is called, which releases the skb. 
+> Can you explain
+> what sequence of events can lead to a use-after-free error?
+
+There is none right now, but assuming you might add byte queue limits in 
+the future, or just re-structure the code, reading from skb->len is 
+error prone and is better left avoided, especially since this will 
+result in few lines being changed in your case.
+
 > 
-> diff --git a/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c b/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
-> index 44897e5218a6..486aa20e5518 100644
-> --- a/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
-> +++ b/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
-> @@ -858,7 +858,7 @@ static const struct jadard_panel_desc kingdisplay_kd101ne3_40ti_desc = {
->   	.reset_before_power_off_vcioo = true,
->   	.vcioo_to_lp11_delay_ms = 5,
->   	.lp11_to_reset_delay_ms = 10,
-> -	.backlight_off_to_display_off_delay_ms = 100,
-> +	.backlight_off_to_display_off_delay_ms = 3,
->   	.display_off_to_enter_sleep_delay_ms = 50,
->   	.enter_sleep_to_reset_down_delay_ms = 100,
->   };
-> @@ -1109,7 +1109,7 @@ static const struct jadard_panel_desc melfas_lmfbx101117480_desc = {
->   	.reset_before_power_off_vcioo = true,
->   	.vcioo_to_lp11_delay_ms = 5,
->   	.lp11_to_reset_delay_ms = 10,
-> -	.backlight_off_to_display_off_delay_ms = 100,
-> +	.backlight_off_to_display_off_delay_ms = 3,
->   	.display_off_to_enter_sleep_delay_ms = 50,
->   	.enter_sleep_to_reset_down_delay_ms = 100,
->   };
-> -- 
-> 2.17.1
+> -->ltq_etop_tx()
+>       |
+>       | (dma irq fires)
+>       |
+>       -->ltq_etop_dma_irq()
+>            |
+>            | (napi task schedule)
+>            |
+>            -->ltq_etop_poll_tx()
+>                 |
+>                 |
+>                 |
+>                 -->dev_kfree_skb_any()
+> 
+> Regards
 > 
 
+
+-- 
+Florian
 
