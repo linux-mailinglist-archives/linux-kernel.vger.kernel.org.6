@@ -1,91 +1,157 @@
-Return-Path: <linux-kernel+bounces-336097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1BF697EF17
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:21:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA21897EF1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:22:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E66F1C21570
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:21:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE01B282B58
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:22:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362D619F105;
-	Mon, 23 Sep 2024 16:21:05 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18653146A86;
+	Mon, 23 Sep 2024 16:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jTYLubTj"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811A0823AC
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 16:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA32E823AC;
+	Mon, 23 Sep 2024 16:22:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727108464; cv=none; b=koqczAquhToDwsglQx0L5IyqfJkfz9HIjbYslwONZ0Fb6dv6pfI66kt7wGZyntGhvUBoKUTQS0CuWzdXbS/4QJ0slY+aW72bXdXr/8xBfFAWr/NUaePiGJWPlxXJIxoad5SfQ+9trMdD+Gh2Gluy4ThcXTG3JuBmMRimiQ3p+Dw=
+	t=1727108558; cv=none; b=G3TjQ42QbagDSUMe8iE+WbhtZAGN4IY553wG1tfPwHB+h9yB2C1908sQ/00VYLSH+BHCvdj8N8xHf75k83rRpd/x9Oy3KN0EvGq4JAA4ULmVxDQVyXHsZXtBQIOE6R9xfMe4ynuDFKJdXE9AVkWfSrXQXmLKZVZrDq0QO7GeTpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727108464; c=relaxed/simple;
-	bh=L+9N+3jNgDaYbqwAlmJ0cEzDvhkQwJ1dQex7ayV1rzM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=QwpHRK6IaBDAg5ZvJ7Zmv5Lq+FWIKr8qL8mvhcG/0cgWvEbdCWNKeCsE3EcZ6tlsfNO5x5GZZU1T50yymyJpwxv38QOFq7GRoilTwRWMCaSwZFq/zuLh6nOXNJ1IRTKXY5XG2nMC1VtbZgkwyrD9tRcHWhQdT/HHwFxWKpxiKOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82cf28c74efso656762439f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 09:21:03 -0700 (PDT)
+	s=arc-20240116; t=1727108558; c=relaxed/simple;
+	bh=VdkM75IQkxU7Lpd/F13lYAcYe/ObislY5V39DVe3lPo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S1RONPSfQNf1kRv7Fe//d9TsO1Sq3nLkpqT4nb9EwETC4/5lGWRbJRZL1MQduFhKSCclkJZvBuVsiN/jroxE90lA/JqbVeH2hDDNbXT9y9F035aEtFS9TP8JXhnBRg1LMAEKhURXwME3/xBu4X2jccDzf5lV/O396E5mYiGkt4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jTYLubTj; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-45821ebb4e6so36354711cf.2;
+        Mon, 23 Sep 2024 09:22:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727108556; x=1727713356; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xMAjUDxOyknWcICNvHoeRR5xLaaisNjKFQiCg/h7w/8=;
+        b=jTYLubTjbnmldzO9E53MWvqB8r5o6t4M+pSfAZIPk0PS8gOXzAttLzz+MSYudhUQim
+         VnlP5gMFqeJcvM0C1NvsUx/etqFQ+UaptSVMDDT1O902e0709x5Rrh5qOQrUH4CgVZY+
+         iGHGuHlOHniCfV6e0aEhMEBqaK7RE23FUYTmzRkUgTvGKCiRVlbUTBjIiFF1O3bO9br2
+         aizgaqu/QT+JpQ7eNBx40+MWrFmBn5fdYaBllsuivvLWV/qYwNNQay0ECSkM0wXgxJT7
+         TmGpPbb/Zkxs2cy8gh/g0PakVHL1oXnSaV5WRIj9XuqH6VN03ZmNrcDoEJvCx8jPr/mZ
+         /PXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727108462; x=1727713262;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MyXLZ8YcQWxUiFP4L5BAm3AOQgYVSxXc8FGcwG20glc=;
-        b=vgr5wn9Z0yOi/DLDhmrhrBFW4YMgEYZkAlR6FSz8UVwYJgv5mjfNqMU43JRzFneBl6
-         JXxrRLg4dOvVMlfUqmkXhDe2MKGy+R6gHwR8pnylc5juGnzI7IHaPMVcURvrYMvJIP25
-         FaBu38WvjHkJIN28IOGBVYI+33g3jkazDQ1AFb5Md2L0hRbjsfsY4njiQGxtZ+9nv9tC
-         W04Uzhr2vJN7T/y3r8FrF5xx4bvIT+8ofcJIu3QXOiJIOu9DEwlceXOsk3SyjUDtBl8C
-         +3WcENV4Odh9igsHq9Bs1ND+CdPmUrsMxS4FiNAhFwhKqM4xXxDSrSryOrnJ3NbMOuLV
-         bl/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUfAwxc8vb6sLLu7S3AluuxBOKXqdRajmGaAeN7CGn/MzovX54ZOOhF20gj3po3XHO2y65INsjQi1yordY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxT3sfPPgG4tHrODGOWLFlCJkC19xCspZPEeQSH1bagiMfvjT34
-	Bbxqy25tSw/xkK3smFDOlPmlZZLL1mPATxZM8hZBvaRK9Ektc7rxfmY1ZF8u3zCOfxmms+C+rXs
-	OXToW9RvR6D2WeRHE6KLM0tTejBxgZ36bMt6f7ldwce2DSiWjxFZEYCI=
-X-Google-Smtp-Source: AGHT+IHu6xO2NprjhpjUnqu0sXeXKxSgmtjxkZDyTx/YPDMumgh4eSm+vTEsSa2P8/E+7U5J7QnlEz8tZhaF4o4MAvCRALkqLg6J
+        d=1e100.net; s=20230601; t=1727108556; x=1727713356;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xMAjUDxOyknWcICNvHoeRR5xLaaisNjKFQiCg/h7w/8=;
+        b=Go61KG1eM/TZoDzac4C818immqCmgf7DE6qT9OsM1kv3vZ6Qcy6Sw2EzQywFQtYnhd
+         9NoyrfZsiyD+UkbJ4th+fuoKcILXM+sc29LudHV3qN9DUESrG4H/Zdq2OZ8pzS5jDNIZ
+         HGhSUSoBFb0JzXedB8cbFn1H1rhI5mZOFUJZnJquu3/rT7cduTiNIbSz8e/Ktn3e63j6
+         RK2m7Hh7S8UrtIRIenNClKQu36KuDRU4qUjlWgtTAeTlFS+o3WDP2EPvIOnj1Fig9Izu
+         hs8qcZVG5Lvl6wZ2lJPzR/vFaLLc7I4qmMxh67MtqlQAoRp7DPQY9g0k2UyK61/6IIqh
+         6Heg==
+X-Forwarded-Encrypted: i=1; AJvYcCVGMOQY3aMi4Lm3RTYDTCPw+w+fZ8BfdDM3LzFL+P1ZvbifsKzgSwdhLP1qaSYsn6g9eBe9JPq3//fJ@vger.kernel.org, AJvYcCWkhmr7qW7KguJHxBD0vn8/zj+SQ7JqVI9rtXS7W90plJAAQmdEwC3FX+G+hR0WeX5UCzQK8hZxklKNfM4S@vger.kernel.org, AJvYcCXxKa7JizGb+dhJGDXOTF7m2/xMiS8hNCgKgNAamQ3Fe2l+rmn2ws6dK8Zbf+IzhdpjSq9qb79hNQe5@vger.kernel.org
+X-Gm-Message-State: AOJu0YwI3Dvxj08nswBwRTBFbw7PvDlEgVLil5CLdxBBcotogZO3ztxe
+	5CifeRx9yZ/Tjki9zYsTI3+8C4AboDGLCYc6ejrCvJZ/x4EOifc3
+X-Google-Smtp-Source: AGHT+IFCJxsI00ZrQnDdvugyIqeqvv9DQpGecgLpiot6gq0UD9k6CQSR8jxNdqQlbuJjiZbrcWW3uQ==
+X-Received: by 2002:ac8:5d4a:0:b0:456:61f0:810d with SMTP id d75a77b69052e-45b226d1230mr220772381cf.10.1727108555440;
+        Mon, 23 Sep 2024 09:22:35 -0700 (PDT)
+Received: from VM-Arch.gst.l3harris.com ([208.127.73.102])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45b17867fb0sm48587901cf.1.2024.09.23.09.22.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2024 09:22:34 -0700 (PDT)
+From: Alex Lanzano <lanzano.alex@gmail.com>
+To: dmitry.baryshkov@linaro.org,
+	Alex Lanzano <lanzano.alex@gmail.com>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Mehdi Djait <mehdi.djait@bootlin.com>
+Cc: skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	christophe.jaillet@wanadoo.fr,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org
+Subject: [PATCH v7 0/2] Add driver for Sharp Memory LCD
+Date: Mon, 23 Sep 2024 12:21:33 -0400
+Message-ID: <20240923162205.55658-1-lanzano.alex@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12c2:b0:39d:4c8a:370d with SMTP id
- e9e14a558f8ab-3a0c9d70074mr98104555ab.18.1727108462650; Mon, 23 Sep 2024
- 09:21:02 -0700 (PDT)
-Date: Mon, 23 Sep 2024 09:21:02 -0700
-In-Reply-To: <CABBYNZKg28ccCZXqBphNLp0WEOznS89Z-AiShC53JAVbsSsbGw@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f1956e.050a0220.3eed3.0013.GAE@google.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in
- l2cap_connect (2)
-From: syzbot <syzbot+c12e2f941af1feb5632c@syzkaller.appspotmail.com>
-To: eadavis@qq.com, hdanton@sina.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, nogikh@google.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+This patch series add support for the monochrome Sharp Memory LCD
+panels. This series is based off of the work done by Mehdi Djait.
 
-syzbot tried to test the proposed patch but the build/boot failed:
+References:
+https://lore.kernel.org/dri-devel/71a9dbf4609dbba46026a31f60261830163a0b99.1701267411.git.mehdi.djait@bootlin.com/
+https://www.sharpsde.com/fileadmin/products/Displays/2016_SDE_App_Note_for_Memory_LCD_programming_V1.3.pdf
 
-failed to apply patch:
-checking file net/bluetooth/hci_core.c
-patch: **** malformed patch at line 6: diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
+Co-developed-by: Mehdi Djait <mehdi.djait@bootlin.com>
+Signed-off-by: Mehdi Djait <mehdi.djait@bootlin.com>
+Signed-off-by: Alex Lanzano <lanzano.alex@gmail.com>
+---
+Changes in v7:
+- Add Reviewed-by tag back to dt-binding patch
 
+Changes in v6:
+- Rebase off latest drm-misc-next
+- Replace pwm_apply_state with pwm_apply_might_sleep
 
+Changes in v5:
+- Address minor style issues in sharp-memory.c
 
+Changes in v4:
+- Remove redundant dev_err
 
-Tested on:
+Changes in v3:
+- Fix file path in MAINTAINERS file
+- Address review comments
+- Simplify mode selection based on match data instead of model
 
-commit:         de5cb0dc Merge branch 'address-masking'
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=57042fe37c7ee7c2
-dashboard link: https://syzkaller.appspot.com/bug?extid=c12e2f941af1feb5632c
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11f72107980000
+Changes in v2:
+- Credited Mehdi Djait in commit messages
+- Renamed sharp,sharp-memory.yaml to sharp,ls010b7dh04.yaml
+- Using strings instead of int for vcom-mode in dt-binding
+- Fixed indentation of binding example
+- Removed binding header
+- Removed extra whitespace in sharp-memory.c
+- Fixed error handling in sharp-memory.c
+- Added match data to of_device_id table to be in-sync with spi_device_id table
+- Replaced redundant function with spi_get_device_match_data
+- Sorted header files in sharp-memory.c
+---
+
+Alex Lanzano (2):
+  dt-bindings: display: Add Sharp Memory LCD bindings
+  drm/tiny: Add driver for Sharp Memory LCD
+
+ .../bindings/display/sharp,ls010b7dh04.yaml   |  92 +++
+ MAINTAINERS                                   |   6 +
+ drivers/gpu/drm/tiny/Kconfig                  |  20 +
+ drivers/gpu/drm/tiny/Makefile                 |   1 +
+ drivers/gpu/drm/tiny/sharp-memory.c           | 682 ++++++++++++++++++
+ 5 files changed, 801 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/sharp,ls010b7dh04.yaml
+ create mode 100644 drivers/gpu/drm/tiny/sharp-memory.c
+
+-- 
+2.46.0
 
 
