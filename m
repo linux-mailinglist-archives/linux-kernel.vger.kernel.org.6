@@ -1,107 +1,179 @@
-Return-Path: <linux-kernel+bounces-336267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A545E97F14E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 21:40:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D41F97F152
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 21:44:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47E511F228D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 19:40:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 438CB2827A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 19:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9282F1A08D7;
-	Mon, 23 Sep 2024 19:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1DF1A08C5;
+	Mon, 23 Sep 2024 19:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jFrJqq12"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kfovu1K6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8951D19E97A;
-	Mon, 23 Sep 2024 19:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF8019F413;
+	Mon, 23 Sep 2024 19:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727120422; cv=none; b=b5T+6XTWQOqU5yUzKcdPGCgTqwe2AMIoN4P6wb0lxi1K/NHL02AZPfyDK8jJ401gJhQTMkXvrs0sG/5ZxEZ06b9TpBYUrAglehbc3SmtlYCiufsEFY8+bPkCZcTcQ/H1wM6kYiAFrCGRp1hzROdTs+ekWpzkPNh5wE1ET7ZHCLw=
+	t=1727120688; cv=none; b=shYao4okiO+xZWoeRoqz93ONJ8fpCuf+hEh28elzGFkXDsKWNjakDpblcjWzjqe/FeEag066mG+QkNSFmcBWr1Jsw9ImVMFg8RqUC+M0zsLut49PjvYuH7k7sBE3xL1ebckIoMSKT9hH41LFGE1658FhbpTd1jvDR0y9saJiK9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727120422; c=relaxed/simple;
-	bh=ERNNM8hT/vJGtD/Ln5CDaljFWEc42veBV91nhIIYLRM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yr/LB93PNWhdfmKpgbXRe9qGbEAXRqc6h6jAhkhKKsHZ5MtQV/ffosEqetz2a4nQeIimgkdmx5pasDOF6IdL9KdHCNv9MKmfIzGYTag2FjVPwMBiMY+x1s/exYUGVf/rqs/rZB9bvlT59jT4Y9Baw+93qbm7FV9KlUEMKc2F7WQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jFrJqq12; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7dafb321dbcso301892a12.1;
-        Mon, 23 Sep 2024 12:40:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727120420; x=1727725220; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=51RTtdmnW15bZ4d7aEGEGz378EzshMD/jEqRF+XqVkM=;
-        b=jFrJqq12pvF2nLRoq97pm1pODlhpuehZNquUC1xHO2AhDSsFG24EWALN2GlToVOWVQ
-         M1CIDxBxEaQxZl0rpSIvoqZW03EsVUcmTh6znhZeZX885sLb/y/8cwAqkTjTk/TFK+v+
-         gRxYXsCHZv4PQS8y4X7/MO1b9KRGKOevZOkioFj87AaBL+KyRD/Q7e8DsB8g79QsQEAF
-         zem8+Syc8omSRlk6xRkDvNxdXbd0sylSnrUhLOeIBgCIwOW0uH3ZUHUyPzV6dapzp1GV
-         q5hNmXsva4Vf2H0CV+EGfXn4MpQXcwqfHt+rwIKO4UUvINXfm0tS3TIZmIE14t1VAGFm
-         forA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727120420; x=1727725220;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=51RTtdmnW15bZ4d7aEGEGz378EzshMD/jEqRF+XqVkM=;
-        b=WIU7LjB9flFxwZlIckaaTCjqje5aA7Uu8NB/SgawOZll3KdXwJ5WvSYPorgBKLs0ZE
-         QVlpf2ggqs5runqEWzuRsMtfEE1QonvruD3HKig2jEan4xSmmF6AZupJL6VoLEPIWLOY
-         Scw5noI570tmJv3y0W/8/21R7zd7cTWIBFG5VTT20Kz5oGxBgR8dY5zHD9QzUjRBb3TM
-         z015D3cWjSpUYFHf0lckrl7FGbEY3xNdib1QjR7mqKAxJiKbQvaGX3Yp1YdSg5eeKV/h
-         m+MchyNixcN3FYsXojW/Yf10Izqrvx4BYKuzqBL2I9HMjOoafiFkWayMBDpreh2wfX9+
-         cXEA==
-X-Forwarded-Encrypted: i=1; AJvYcCVzTn3ovb7G/ZlMzbV44lwZfZTFdE1LZ9U0WMtkKFYG/+dFbexrUReJyV0V0A65YuCdjJkk7fZwJwTivgM=@vger.kernel.org, AJvYcCXZ8gj8sH0fNqzrQwkDxXeJifLGJWtDl+62fQ5HAf0CfAq61J5QfGP9jAqB+BfpgQD2oW2J82acWn6wqQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyisxwiq9onjXXMTrgW/Pp4lHfifMZrgIUwqo8PQAkHmPyTnrQK
-	KkxfLL7ewZUG8YPJf2H/NkOe9C4sUfB+9IR116MbG8gzmW+Ld0U9RrmV2WQRWL0JkGckR2t5mrq
-	JCfLMJIng+kH+t6t2/EBrUzmr7JI=
-X-Google-Smtp-Source: AGHT+IFuNLe0Mw9eflilTvIfP0FGO6MlYa2wMh6lQlq1YpU3zlROlsGpyEw9NhqNCrahSy87WRq9GWzuvvoEv1yROvo=
-X-Received: by 2002:a05:6a20:2452:b0:1cf:43e0:d75f with SMTP id
- adf61e73a8af0-1d30a9f2180mr9328230637.7.1727120419894; Mon, 23 Sep 2024
- 12:40:19 -0700 (PDT)
+	s=arc-20240116; t=1727120688; c=relaxed/simple;
+	bh=Clkk71o0s79HGUcEPbrwaa9UXB/yqp1hOLGuoxrDjV8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e0Sv6+FByc0v6A6GlkKOO5XIwiii/TQSlEUKWad8v4OQjIj0+VkHm8hawf3GeKaV4axwH9YioYqva1F0i8Q66f5L0kNpU0kdDMF607GYkhB4pj8nSrCveYznuzo5DAjgS3bpVAtK3wkgHQ9pIwk4b+WEUP8bGpvspTU4YWH9sZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kfovu1K6; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727120687; x=1758656687;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Clkk71o0s79HGUcEPbrwaa9UXB/yqp1hOLGuoxrDjV8=;
+  b=Kfovu1K6/l9bIJeolUrNqu0zwJvtoIv0kwOwD0JkL6odZPsnG3ivyM2I
+   OeLOB5SfIWhrHg5j54jxLMXwu2Hy7vz26fNuRUctfst1+HIqXPQQ1SbaR
+   5WInqbATxC/JU+uo9Mj3fg/65/AD6zliSouaAzbjBVPoXqYwGJqFPqoQA
+   lZNDJQHFgtDO9sOZ3V9tmKAYXKUCrr1rTAxw4ddyQuO9uLzhVGnNw6/Xw
+   45je0n3ha02lMNlMXBUcmvF7JDqDnKazjI54kIFvAl/QzRD/6HHVQUH3z
+   Zq78wuS17fYXBpMdspCfWISjVzwsrOYJ+AyMC4WY+WqG3d8KfXe4Tmolx
+   Q==;
+X-CSE-ConnectionGUID: NvErrL2AR56hbIpA+X31iA==
+X-CSE-MsgGUID: UkxWt6pdTP6m9GHzuWFKag==
+X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="25602859"
+X-IronPort-AV: E=Sophos;i="6.10,252,1719903600"; 
+   d="scan'208";a="25602859"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 12:44:45 -0700
+X-CSE-ConnectionGUID: tEv9MQoSStOASbPCzWw2iQ==
+X-CSE-MsgGUID: O+i2Mu1OSs+QdEZ2xYMJkQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,252,1719903600"; 
+   d="scan'208";a="75553711"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 23 Sep 2024 12:44:42 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ssozA-000HYI-05;
+	Mon, 23 Sep 2024 19:44:40 +0000
+Date: Tue, 24 Sep 2024 03:44:13 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dipendra Khadka <kdipendra88@gmail.com>, andrew@lunn.ch,
+	florian.fainelli@broadcom.com, davem@davemloft.net,
+	edumazet@google.com, bcm-kernel-feedback-list@broadcom.com,
+	kuba@kernel.org, pabeni@redhat.com
+Cc: oe-kbuild-all@lists.linux.dev, Dipendra Khadka <kdipendra88@gmail.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 net] net: Add error pointer check in bcmsysport.c
+Message-ID: <202409240305.PgIkDx1K-lkp@intel.com>
+References: <20240923053900.1310-1-kdipendra88@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240917145941.2c4695a5@canb.auug.org.au>
-In-Reply-To: <20240917145941.2c4695a5@canb.auug.org.au>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 23 Sep 2024 21:40:07 +0200
-Message-ID: <CANiq72mi05w4YuN+D=-0VODDCnP-kWeX-bn1UOAJGvTcJ_tJ2Q@mail.gmail.com>
-Subject: Re: linux-next: duplicate patch in the rust tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240923053900.1310-1-kdipendra88@gmail.com>
 
-On Tue, Sep 17, 2024 at 6:59=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org=
-.au> wrote:
->
-> The following commit is also in the mm-stable tree as a different commit
-> (but the same patch):
->
->   cc1d98f9fe30 ("kasan: simplify and clarify Makefile")
->
-> This is commit
->
->   78788c3ede90 ("kasan: simplify and clarify Makefile")
->
-> in the mm-stable branch.
+Hi Dipendra,
 
-I forgot to reply during the conferences, but Andrew and I were expected th=
-is.
+kernel test robot noticed the following build errors:
 
-Thanks!
+[auto build test ERROR on net/main]
 
-Cheers,
-Miguel
+url:    https://github.com/intel-lab-lkp/linux/commits/Dipendra-Khadka/net-Add-error-pointer-check-in-bcmsysport-c/20240923-134407
+base:   net/main
+patch link:    https://lore.kernel.org/r/20240923053900.1310-1-kdipendra88%40gmail.com
+patch subject: [PATCH v2 net] net: Add error pointer check in bcmsysport.c
+config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20240924/202409240305.PgIkDx1K-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240924/202409240305.PgIkDx1K-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409240305.PgIkDx1K-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/net/ethernet/broadcom/bcmsysport.c: In function 'bcm_sysport_map_queues':
+>> drivers/net/ethernet/broadcom/bcmsysport.c:2341:24: error: implicit declaration of function 'PRT_ERR'; did you mean 'PTR_ERR'? [-Werror=implicit-function-declaration]
+    2341 |                 return PRT_ERR(dp);
+         |                        ^~~~~~~
+         |                        PTR_ERR
+   cc1: some warnings being treated as errors
+
+
+vim +2341 drivers/net/ethernet/broadcom/bcmsysport.c
+
+  2330	
+  2331	static int bcm_sysport_map_queues(struct net_device *dev,
+  2332					  struct net_device *slave_dev)
+  2333	{
+  2334		struct dsa_port *dp = dsa_port_from_netdev(slave_dev);
+  2335		struct bcm_sysport_priv *priv = netdev_priv(dev);
+  2336		struct bcm_sysport_tx_ring *ring;
+  2337		unsigned int num_tx_queues;
+  2338		unsigned int q, qp, port;
+  2339	
+  2340		if (IS_ERR(dp))
+> 2341			return PRT_ERR(dp);
+  2342	
+  2343		/* We can't be setting up queue inspection for non directly attached
+  2344		 * switches
+  2345		 */
+  2346		if (dp->ds->index)
+  2347			return 0;
+  2348	
+  2349		port = dp->index;
+  2350	
+  2351		/* On SYSTEMPORT Lite we have twice as less queues, so we cannot do a
+  2352		 * 1:1 mapping, we can only do a 2:1 mapping. By reducing the number of
+  2353		 * per-port (slave_dev) network devices queue, we achieve just that.
+  2354		 * This need to happen now before any slave network device is used such
+  2355		 * it accurately reflects the number of real TX queues.
+  2356		 */
+  2357		if (priv->is_lite)
+  2358			netif_set_real_num_tx_queues(slave_dev,
+  2359						     slave_dev->num_tx_queues / 2);
+  2360	
+  2361		num_tx_queues = slave_dev->real_num_tx_queues;
+  2362	
+  2363		if (priv->per_port_num_tx_queues &&
+  2364		    priv->per_port_num_tx_queues != num_tx_queues)
+  2365			netdev_warn(slave_dev, "asymmetric number of per-port queues\n");
+  2366	
+  2367		priv->per_port_num_tx_queues = num_tx_queues;
+  2368	
+  2369		for (q = 0, qp = 0; q < dev->num_tx_queues && qp < num_tx_queues;
+  2370		     q++) {
+  2371			ring = &priv->tx_rings[q];
+  2372	
+  2373			if (ring->inspect)
+  2374				continue;
+  2375	
+  2376			/* Just remember the mapping actual programming done
+  2377			 * during bcm_sysport_init_tx_ring
+  2378			 */
+  2379			ring->switch_queue = qp;
+  2380			ring->switch_port = port;
+  2381			ring->inspect = true;
+  2382			priv->ring_map[qp + port * num_tx_queues] = ring;
+  2383			qp++;
+  2384		}
+  2385	
+  2386		return 0;
+  2387	}
+  2388	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
