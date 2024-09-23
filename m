@@ -1,182 +1,161 @@
-Return-Path: <linux-kernel+bounces-335649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B4C97E88A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:22:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ACE997E88E
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:23:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F8BB1F21E99
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 09:22:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECFC7B21A80
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 09:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE005194C69;
-	Mon, 23 Sep 2024 09:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4101957FD;
+	Mon, 23 Sep 2024 09:22:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I7pjSNdF"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DvZCSDeQ"
+Received: from mail-qk1-f193.google.com (mail-qk1-f193.google.com [209.85.222.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7E71946B4
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 09:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1DC194ACF
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 09:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727083355; cv=none; b=uJ1cIOeaDrOu9gpQVN0xgiBrPy0vtpUwxbf/fnlbAgIew1+aOkg+a3B29D+ohQ/hAHJLlV95mZOZxEtDKae0tVS+bVADsdyelzGrzx2J0cwbXI52XF2NZ57euSKHicW46frYuKGOaSJComI499ZhYVOm1lfO3w2coAkZ4kwAopg=
+	t=1727083373; cv=none; b=E543HEV6dnF2qicuotDQV9DJiaJ6EWsTND5bc4afOkYFwzFn8l7uOyg3n1Pxn+QRIUzX5rCClPbOPLTA+r78Cqj0ubFWiOeuCvk0K3m5flLtEwy/uYjy8lCz3xgRz3HYk/an2t2wP4/eo6+KZK7FlpzxWVJ73H1bFbnfr627eyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727083355; c=relaxed/simple;
-	bh=20yp7UF2xtMSFNSWQTwGzQ8Y8WUwoVW0ItEvgc5XuQY=;
+	s=arc-20240116; t=1727083373; c=relaxed/simple;
+	bh=2BVCBoPYKtdH5pnaJe5Pgh3XzeoZZjI+jxhPstYa3aQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pgPJmCrR+OSsopVHPdx2K7PnTN5BgZiR9lmI6kRpBqEazHvkcd1cPcsGIoFYvBujZqx1wqS/vPAkQxaEnOt59B5Fr2JbaDwfT72U5fFVGIbhJay3bYucVpJ1g8e3PR2PELx+Aur6D0/Xe5BJk8WpDZJk3Q7B3EZzPCu9SgbMKqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I7pjSNdF; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c42bad4eb9so666964a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 02:22:33 -0700 (PDT)
+	 To:Cc:Content-Type; b=DluBjECfnza6mIpTleske41tYW3Gv35SGle1ZYslxRPR0SiMs3UlSKTX3dMKraLiA0OV0nEpSAKKEYmxWUKF6LhR5/rppNM6+omFoLlp/WKd80AAgCLcZLhhXcx41GJ9mmfIbt/ttA2Wbi6q8C0Zdsp54UwdAvKlXEixiN5zWUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=DvZCSDeQ; arc=none smtp.client-ip=209.85.222.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f193.google.com with SMTP id af79cd13be357-7acb0499ffeso404002285a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 02:22:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727083352; x=1727688152; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1727083370; x=1727688170; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=n7cmHyBl9nc6KTcNNqA/aAzbevaaSNsmEu/DrICna2o=;
-        b=I7pjSNdFJYe6YZm0VcPzmyo9R6/zUSooPfKv+oWlBvPcoo9xJK8FO7EACbf+NrUSMA
-         X+0MMmxlRedPh50qmvtRu2qZyLGOufZpGbfiZDVRe6SNvOq0Vrs/0jwnviHseiaZRH9n
-         ruorIrdn+RXjnvZg/w+tyHvIPbXgC0Bm/LrzGDJI338MbSOt8AtZDZ9Qv+fZTPnCiFc/
-         BHYd6kI4Oq6B9hXvrXnqeY+LHH3UmpOnqyu7xLSmkWtXHCbGIe3QZPrWPDfKDJaGbeO2
-         0yLfyVEITlQZ8E4QETYzaK6COomZec1vZrhVQ86+s2KfukkjGcnupooNa+a6Vk/VCvdq
-         p4bw==
+        bh=rHR5/PqnEGvG2nKOK2RFe26k4BMP9Pm6Oaseg0KD65Q=;
+        b=DvZCSDeQn3voUX7M0SSu9VR8G81zyL8PIDWsiYM+gxcv17URVvgiYXdCZ/gW8gs3D3
+         YmbIKLOm3qlWBYDSnjkJ/yZtOjluRx++TvW++N0s38tCRA4fokXnd9JZRW259NIBSWDO
+         deozdSOWA9Fict9kFWj8iGCIOGCM4ztgLzk/0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727083352; x=1727688152;
+        d=1e100.net; s=20230601; t=1727083370; x=1727688170;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=n7cmHyBl9nc6KTcNNqA/aAzbevaaSNsmEu/DrICna2o=;
-        b=j5/CaLoglbw1aoZA+vxqtEOse7fHyk1daV4I+8NAQwoxp0sQbpO84Cmj4bDAdExJV5
-         n2bmDukV1uLgDCMt5Blprff0pHQxFRhyHM7Mj226lsJ5XGuLguSuNj/lwfVa56k1xl7o
-         rOIjwc22bFGfyHzrFF26WS5K5qIHn1LKl94lssWAKnhLhfDDf6WG23pv7yBhOSl+OPwM
-         oy+7X22ZOtBEIKb7crB555s3AnTy71nQMJqEE/N6Ib8fah5zGr7juIqppyi9Fw+jlLlW
-         jTeJosOjOjytYgZt24v/+/YyUOgMjeaNAAD5DGdrQj9sfZAwDhdK3nFCpe9KWn6qzXOc
-         eOuA==
-X-Forwarded-Encrypted: i=1; AJvYcCWJV3vj7a8oqazJyKzdI7zO6KflCYMrZCxjgM8yEnf9WMm/NwxChIkSArzezBuSXVXX07NmvujHAL2PLOM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHsMijf3CQhup6PgYbSA85ts4VGbg5DJsdTKkV6v0OuUDFjJL5
-	ccAG0tm9Uqzeh3HNc/hJdJtrOSj3OMyPUU1SnYYUO8zchrriZKJde4pZbG+TRi3tpDKVBYhltl7
-	ypGQbsE2Allj5+B0ZiVlwZa8cn1lN+t7atMKWxAbwsAhxpPmwJ2bUjw==
-X-Google-Smtp-Source: AGHT+IHhp17g5Fbe+7A2S2wLr+KiDdABA/q1DteOxMrJXmxR3bBqCME6Ga+w6RWL0BpYabZkxl8ORE3TkRZB3gZj4dU=
-X-Received: by 2002:a05:6402:268b:b0:5c5:c5fc:1aa6 with SMTP id
- 4fb4d7f45d1cf-5c5c5fc1b0amr152694a12.5.1727083351600; Mon, 23 Sep 2024
- 02:22:31 -0700 (PDT)
+        bh=rHR5/PqnEGvG2nKOK2RFe26k4BMP9Pm6Oaseg0KD65Q=;
+        b=Nknh/BB3uKH2KRFkm9Or5JQtQS3OBKMZW+nqFZS6iDHypS8Ct9d7GDveUvOQgpz8tu
+         7nenmeg6eN1OyxjHdSSUrshkwCsRgSxPm6Zeg4vHsOEnMwMhfNxitsBC6hHqru1xK9Ek
+         VCjRUdhOP9Q8CEL2i9RplXZnRmUDUSpFKHIj2yZCVI3EPpXqBkdX1JXroNJC1RJoMA3k
+         edeQShfw0jgpphlKwFXp2Vezt+cBWn+0Rh7b8YflbqyBE7r1bCz32mHONAgtvrvrq+rk
+         ExZxxAPbmvuZCXEjryW07PWnDZr4N5+M9qCz4F4zTS3Cl3Fk4ciP5RynTh8kpEZakjDf
+         TGqw==
+X-Forwarded-Encrypted: i=1; AJvYcCXnbQuyFzqgsPmWeg32NFpuNsBRK+1d5VO4hv/LeeYn0F2dawMFGTWi6k8uDTvaFTafV+3rkO0u380pytk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjIakkpxG5aeHL98TlA+QlvjWzBh2LQZSEBY1ZNNcXZxHliime
+	YMOLLZfZJXfhgjuPtAohsC4iyaljOO3bp1CyeWe84Hp+jQsVVs/1/VxC2IhBpn6B7IRvcYReSBp
+	+Rew9nCd4g9XyzdQlnB9xmNP0UdGLQ00rYZl9
+X-Google-Smtp-Source: AGHT+IH2U8WBLfUNtvF0U7zgHJJecXFoNGuBJBPDQ5KlvHw1m5rB5qtsUrYjwY20aN5I76g0MS7qCKmMVYbcFU6lHf8=
+X-Received: by 2002:a05:622a:1893:b0:458:3233:8eea with SMTP id
+ d75a77b69052e-45b22694420mr173373311cf.12.1727083370617; Mon, 23 Sep 2024
+ 02:22:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240915080830.11318-1-lvzhaoxiong@huaqin.corp-partner.google.com>
- <20240915080830.11318-3-lvzhaoxiong@huaqin.corp-partner.google.com> <CAA8EJpqC5tQ45gj8-0bDutinCs7CoxiQVL1EAzwDK9RJTXYMcQ@mail.gmail.com>
-In-Reply-To: <CAA8EJpqC5tQ45gj8-0bDutinCs7CoxiQVL1EAzwDK9RJTXYMcQ@mail.gmail.com>
-From: zhaoxiong lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-Date: Mon, 23 Sep 2024 17:22:20 +0800
-Message-ID: <CA+6=WdR6+nh9e2HCuCVdR6uw3vuJoWfKCG4gPjJMp9db+Quimw@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] drm/panel: boe-th101mb31ig002: Modify Starry panel timing
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: neil.armstrong@linaro.org, quic_jesszhan@quicinc.com, sam@ravnborg.org, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, dianders@chromium.org, hsinyi@google.com, 
-	awarnecke002@hotmail.com, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240119033126.1802711-1-ototot@chromium.org> <CAH2knV03g8_z8326yd=pQV11X3N1VFc_DqXzVjMgM4Q0C+8awg@mail.gmail.com>
+In-Reply-To: <CAH2knV03g8_z8326yd=pQV11X3N1VFc_DqXzVjMgM4Q0C+8awg@mail.gmail.com>
+From: Tommy Chiang <ototot@chromium.org>
+Date: Mon, 23 Sep 2024 09:22:39 +0000
+Message-ID: <CAH2knV3RZdnu36+dDQGU834G+82dOqtyHY4RhRow5tb0VXWpqg@mail.gmail.com>
+Subject: Re: [PATCH] dma-buf: Add syntax highlighting to code listings in the document
+To: Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 16, 2024 at 1:15=E2=80=AFPM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> Same comment as the one that I've provided to the other patch, plus:
->
-> On Sun, 15 Sept 2024 at 10:11, Zhaoxiong Lv
-> <lvzhaoxiong@huaqin.corp-partner.google.com> wrote:
-> >
-> > In order to meet the timing, remove the delay between "backlight off"
-> > and "display off", and reduce the delay between "display_off" and
-> > "enter_sleep"
->
-> Separate commit, separate _justification_. Why, not what.
->
-> >
-> > Removing variables: display_off_to_enter_sleep_delay_ms
->
-> This phrase is useless.
->
-hi Dmitry
+Ping.
+Please let me know if I'm doing something wrong.
 
-As in another patch reply, in order to solve a black screen problem,
-the delay is reduced.
-The panel spec:
-1. https://github.com/Vme5o/power-on-off-sequential
-
-> >
-> > Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com=
+On Mon, Feb 19, 2024 at 11:00=E2=80=AFAM Tommy Chiang <ototot@chromium.org>=
+ wrote:
 >
+> Kindly ping :)
+>
+> On Fri, Jan 19, 2024 at 11:33=E2=80=AFAM Tommy Chiang <ototot@chromium.or=
+g> wrote:
+> >
+> > This patch tries to improve the display of the code listing
+> > on The Linux Kernel documentation website for dma-buf [1] .
+> >
+> > Originally, it appears that it was attempting to escape
+> > the '*' character, but looks like it's not necessary (now),
+> > so we are seeing something like '\*' on the webite.
+> >
+> > This patch removes these unnecessary backslashes and adds syntax
+> > highlighting to improve the readability of the code listing.
+> >
+> > [1] https://docs.kernel.org/driver-api/dma-buf.html
+> >
+> > Signed-off-by: Tommy Chiang <ototot@chromium.org>
 > > ---
-> >  drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c | 11 +++++------
-> >  1 file changed, 5 insertions(+), 6 deletions(-)
+> >  drivers/dma-buf/dma-buf.c | 15 +++++++++------
+> >  1 file changed, 9 insertions(+), 6 deletions(-)
 > >
-> > diff --git a/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c b/dri=
-vers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c
-> > index 0b87f1e6ecae..c2d0ec199829 100644
-> > --- a/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c
-> > +++ b/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c
-> > @@ -29,7 +29,7 @@ struct panel_desc {
-> >         bool lp11_before_reset;
-> >         unsigned int vcioo_to_lp11_delay_ms;
-> >         unsigned int lp11_to_reset_delay_ms;
-> > -       unsigned int backlight_off_to_display_off_delay_ms;
-> > +       unsigned int display_off_to_enter_sleep_delay_ms;
-> >         unsigned int enter_sleep_to_reset_down_delay_ms;
-> >         unsigned int power_off_delay_ms;
-> >  };
-> > @@ -184,12 +184,10 @@ static int boe_th101mb31ig002_disable(struct drm_=
-panel *panel)
-> >                                                       panel);
-> >         struct mipi_dsi_multi_context dsi_ctx =3D { .dsi =3D ctx->dsi }=
-;
-> >
-> > -       if (ctx->desc->backlight_off_to_display_off_delay_ms)
-> > -               mipi_dsi_msleep(&dsi_ctx, ctx->desc->backlight_off_to_d=
-isplay_off_delay_ms);
-> > -
-> >         mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
-> >
-> > -       mipi_dsi_msleep(&dsi_ctx, 120);
-> > +       if (ctx->desc->display_off_to_enter_sleep_delay_ms)
-> > +               mipi_dsi_msleep(&dsi_ctx, ctx->desc->display_off_to_ent=
-er_sleep_delay_ms);
-> >
-> >         mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
-> >
-> > @@ -275,6 +273,7 @@ static const struct panel_desc boe_th101mb31ig002_d=
-esc =3D {
-> >                           MIPI_DSI_MODE_NO_EOT_PACKET |
-> >                           MIPI_DSI_MODE_LPM,
-> >         .init =3D boe_th101mb31ig002_enable,
-> > +       .display_off_to_enter_sleep_delay_ms =3D 120,
-> >  };
-> >
-> >  static const struct drm_display_mode starry_er88577_default_mode =3D {
-> > @@ -302,7 +301,7 @@ static const struct panel_desc starry_er88577_desc =
-=3D {
-> >         .lp11_before_reset =3D true,
-> >         .vcioo_to_lp11_delay_ms =3D 5,
-> >         .lp11_to_reset_delay_ms =3D 50,
-> > -       .backlight_off_to_display_off_delay_ms =3D 100,
-> > +       .display_off_to_enter_sleep_delay_ms =3D 50,
-> >         .enter_sleep_to_reset_down_delay_ms =3D 100,
-> >         .power_off_delay_ms =3D 1000,
-> >  };
+> > diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+> > index 8fe5aa67b167..e083a0ab06d7 100644
+> > --- a/drivers/dma-buf/dma-buf.c
+> > +++ b/drivers/dma-buf/dma-buf.c
+> > @@ -1282,10 +1282,12 @@ EXPORT_SYMBOL_NS_GPL(dma_buf_move_notify, DMA_B=
+UF);
+> >   *   vmap interface is introduced. Note that on very old 32-bit archit=
+ectures
+> >   *   vmalloc space might be limited and result in vmap calls failing.
+> >   *
+> > - *   Interfaces::
+> > + *   Interfaces:
+> >   *
+> > - *      void \*dma_buf_vmap(struct dma_buf \*dmabuf, struct iosys_map =
+\*map)
+> > - *      void dma_buf_vunmap(struct dma_buf \*dmabuf, struct iosys_map =
+\*map)
+> > + *   .. code-block:: c
+> > + *
+> > + *     void *dma_buf_vmap(struct dma_buf *dmabuf, struct iosys_map *ma=
+p)
+> > + *     void dma_buf_vunmap(struct dma_buf *dmabuf, struct iosys_map *m=
+ap)
+> >   *
+> >   *   The vmap call can fail if there is no vmap support in the exporte=
+r, or if
+> >   *   it runs out of vmalloc space. Note that the dma-buf layer keeps a=
+ reference
+> > @@ -1342,10 +1344,11 @@ EXPORT_SYMBOL_NS_GPL(dma_buf_move_notify, DMA_B=
+UF);
+> >   *   enough, since adding interfaces to intercept pagefaults and allow=
+ pte
+> >   *   shootdowns would increase the complexity quite a bit.
+> >   *
+> > - *   Interface::
+> > + *   Interface:
+> > + *
+> > + *   .. code-block:: c
+> >   *
+> > - *      int dma_buf_mmap(struct dma_buf \*, struct vm_area_struct \*,
+> > - *                    unsigned long);
+> > + *     int dma_buf_mmap(struct dma_buf *, struct vm_area_struct *, uns=
+igned long);
+> >   *
+> >   *   If the importing subsystem simply provides a special-purpose mmap=
+ call to
+> >   *   set up a mapping in userspace, calling do_mmap with &dma_buf.file=
+ will
 > > --
-> > 2.17.1
+> > 2.43.0.381.gb435a96ce8-goog
 > >
->
->
-> --
-> With best wishes
-> Dmitry
 
