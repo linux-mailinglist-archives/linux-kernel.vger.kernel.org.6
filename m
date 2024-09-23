@@ -1,95 +1,178 @@
-Return-Path: <linux-kernel+bounces-335931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7685F97ECD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:06:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B96397ECD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:07:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A28C91C21267
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:06:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E564A28237C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23B219CC20;
-	Mon, 23 Sep 2024 14:06:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A20419D080;
+	Mon, 23 Sep 2024 14:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="hhYytb/o"
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZVhPECaM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B27881AC6;
-	Mon, 23 Sep 2024 14:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D3319CC15;
+	Mon, 23 Sep 2024 14:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727100409; cv=none; b=I3kn6vTNUOrmYzzmL1GuTfW6NI1Q0VVHseOTYSLQM6EbOvVMIAmBXYo+nXR8rRjV83WJus5/7ueUC0KF//ADPvm421HTu9O6nia3TeQmrzITwVRjGSXfMXBSkbCwjCXD34b06AMWJ9o+rVdMWNhH6kLJZMWhiTiYix0NYJSMWRE=
+	t=1727100422; cv=none; b=BFBPwG598pq0nkMKBMhRN6OEnqhQ6509nGzFkANvqSy6z/A+5JmXOr2SWA3PJ0zVyZzFjiWrTSg36MpmuKVVLhrra/Jy7Rvj1PihOfz1hK+f5Xgds+qybX4k5y+QkRGvdTvjdaRO37NXfFhb5UQvzQnAeGPe1LLukupxQC8y0XU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727100409; c=relaxed/simple;
-	bh=amYk76ox76gJLUUut7K6mpi34lPE4CePWuLirmUPGAQ=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=qiFOFxVwNz4wvtDwhV7jdbe1MzmdCAjPe/3GAxXaBxc1YVtzJazxSbJnJF95WTB/nbZHdNfgzS7jP2aFg48HKkvuM0sY7qywim9l9e3vOaqy6VTxexy8sEAMa24pQ3rXDaQ/aGXUHDClwMzTyGuUI8X8ddbHJS7NBNmYvLJvHHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=hhYytb/o; arc=none smtp.client-ip=162.62.57.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1727100392; bh=tEta8O3+3KmFyhduT/iL/N1Z/7jFQgZWLhvul/eqDVw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=hhYytb/ovDWeHpvnfCG1yrwqTbgabcR2KClHLeBRkNUNJD0oRMuoSBPdPau0o+a7N
-	 y4u+X9tMDtZvE8M9gOBwOdKT6NCuDINm+SP9NZVk9Y2ydrGcciGzmELMq3tMlyPuAQ
-	 X61dtw0RPbQs6zwJftlMmysKF00D/qHbFTKUjl+o=
-Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id 150B9038; Mon, 23 Sep 2024 22:05:16 +0800
-X-QQ-mid: xmsmtpt1727100316tbjv39guc
-Message-ID: <tencent_E58DB7922A5DF0DDAB19394FA78D84A5FC07@qq.com>
-X-QQ-XMAILINFO: NyTsQ4JOu2J29T6jwAe0wk440ePxrnwkamRGpbnOFtjdbWrBPgRgs5m//TIIG+
-	 49QMQ9brBDQJ0944GmTIP9QWwcOz/1eIA02aBGk0UJnGRkO3ccGmFWwP65+SF/2pmGaVI1iBy1zz
-	 tqK4hVNM3aglPTNeZOYOYFNiZotkM9vvizCYS5WHfxzRzmX05RSlmjzUdEILeg0yR7joGTT0x/86
-	 ssISIiSXXyUzxA6PHVuUNCiGGpZ4RMaU95PcO0fNqNJ/Jyk/r+a4SgrBsXmSR84Rh/Bb4OqJPmp2
-	 5HiwLCYnPAIjpR+qipvbokrd++21bUVI3buKmoh2Sjt9bAUkHqx/jWjJbcWCncKK0Y4okLjik5VG
-	 H2fVy7EkSssMW6K8ZoqEPkHr7uiqb8bHfDRSWIKwYIX9GY3ayhZ+mCCx17RdsfXYCNTCE/0fHlpI
-	 pfBAyCHz6NblBNhw+/6E0sFWZiG1+KZ5jR7g0K7tu5DU6HizKzvW1oCvKAN+Dmg18LKX9PoN1RG1
-	 NU166g2GuECZhHgE/E04aYzuOB9lPj8kz6ja1OAhwc4iUN5Y8GrhLkbzVn9Ii6lACwtMpmX0lx5/
-	 OgpKZtaupeyM9QOGRG823jSesyBncNIej6oZk33sfn68bCOh58POPr3GRoIGyIj9deCat9KTFs3y
-	 +YNdNJJsR4djw5ZRk7l/tLTlDMbp2RYyhEWnJqwVBuO1gDncxd1TE+3kAVNcuvHWC/LGA8c9xtbU
-	 UCzCI2vMRgBSJu+he4f+ZcEXihD6/ReQJnpejnRescBYsVPVPvdesFK4I+cLhXa+8MJW0uNtTz4m
-	 QTj+VWHCauiJ3iGkxRhumnIRrG5TwLXQQSXjrvaGGxewHv0hBdkH24fWtLUn97sV9rUVtacX371+
-	 /E4mdGw59jKLCyP1A2933soJJEQ8iXbS/jMdqVR18jj/64VsVtp+P04nOC3ANIWg==
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+18dd03a3fcf0ffe27da0@syzkaller.appspotmail.com
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in hfs_iget
-Date: Mon, 23 Sep 2024 22:05:17 +0800
-X-OQ-MSGID: <20240923140516.2437463-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <66f11c57.050a0220.c23dd.000b.GAE@google.com>
-References: <66f11c57.050a0220.c23dd.000b.GAE@google.com>
+	s=arc-20240116; t=1727100422; c=relaxed/simple;
+	bh=kAhkFOZRzpqpdAPuuKV5YZkv/119rUuKLhWUmcZLwCM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b7C+0SDV3qDejlUH6B1DxKYXKgCVKUzm5AVSR8/xSHVp8AEFWnvwz8f4elpdgeGGRUfym0FdPmp4RnK4AFINGxsN8glz0OBlidIHbDvEe13j3N3fWqJOL4Bq7A67wq/sILSflZZdLjrJ7pw0SiyTf2Fin9/UE5xUbId+lkeWH0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZVhPECaM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4667C4CEC4;
+	Mon, 23 Sep 2024 14:06:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727100422;
+	bh=kAhkFOZRzpqpdAPuuKV5YZkv/119rUuKLhWUmcZLwCM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZVhPECaMceyeaFxgYxfHSJDrWpi3BtHICiUSQ+8mosAzrH3pxFeM+TfPMtR/wxPMC
+	 7exCHZPOJ4JF6i7H7OQEh6LwpJOMmrLkXpM1IqK5U24GtPKxar0DrhNOGprBKRVf19
+	 WlzbpOWKcTUXgYpMjWLEgP3o5BaizCH8BkT+9UZ1+81uVGPDvCo8F+/qBJD0BWt2p7
+	 +mZ0+fZA62i63cc3oYQwfvmYgLTW+EaWD6z5FC93AYzW1aeEDxX7LZC1Lv3RSbnCHQ
+	 umu0McA3VJZCd8z7LaKhumGi84S9qzSmyudsZ3VR8QzAAsD1ZSSfhrByAENfcrGPFR
+	 ZnVfwTCNnOlog==
+Message-ID: <42b347ec-df8e-44b8-ba19-150ebaf04771@kernel.org>
+Date: Mon, 23 Sep 2024 17:06:55 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v4 3/6] net: ethernet: ti: cpsw_ale: use
+ regfields for number of Entries and Policers
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Siddharth Vadapalli <s-vadapalli@ti.com>,
+ Julien Panis <jpanis@baylibre.com>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>, Simon Horman <horms@kernel.org>,
+ Andrew Lunn <andrew@lunn.ch>, Joe Damato <jdamato@fastly.com>, srk@ti.com,
+ vigneshr@ti.com, danishanwar@ti.com, pekka Varis <p-varis@ti.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-omap@vger.kernel.org, bpf@vger.kernel.org
+References: <20240910-am65-cpsw-multi-rx-v4-0-077fa6403043@kernel.org>
+ <20240910-am65-cpsw-multi-rx-v4-3-077fa6403043@kernel.org>
+ <CAMuHMdUf-tKRDzkz2_m8qdFTFutefddU0NTratVrEjRTzA3yQQ@mail.gmail.com>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <CAMuHMdUf-tKRDzkz2_m8qdFTFutefddU0NTratVrEjRTzA3yQQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-When the read data is insufficient to fill the rec, use 0 to fill it
+Hi Geert,
 
-#syz test
+On 23/09/2024 16:41, Geert Uytterhoeven wrote:
+> Hi Roger,
+> 
+> On Tue, Sep 10, 2024 at 11:25 AM Roger Quadros <rogerq@kernel.org> wrote:
+>> Use regfields for number of ALE Entries and Policers.
+>>
+>> The variants that support Policers/Classifiers have the number
+>> of policers encoded in the ALE_STATUS register.
+>>
+>> Use that and show the number of Policers in the ALE info message.
+>>
+>> Signed-off-by: Roger Quadros <rogerq@kernel.org>
+>> Reviewed-by: Simon Horman <horms@kernel.org>
+>> ---
+>> Changelog:
+>> v4:
+>> - reverse Xmas tree declaration order fixes
+> 
+> Thanks for your patch, which is now commit 11cbcfeaa79e5c76 ("net:
+> ethernet: ti: cpsw_ale: use regfields for number of Entries
+> and Policers").
+> 
+> This is causing the following warning on BeagleBone Black:
+> 
+>     WARNING: CPU: 0 PID: 34 at drivers/base/regmap/regmap.c:1208
+> devm_regmap_field_alloc+0xac/0xc8
+>     invalid empty mask defined
+>     CPU: 0 UID: 0 PID: 34 Comm: kworker/u4:3 Not tainted
+> 6.11.0-rc7-boneblack-01443-g11cbcfeaa79e #152
+>     Hardware name: Generic AM33XX (Flattened Device Tree)
+>     Workqueue: events_unbound deferred_probe_work_func
+>     Call trace:
+>      unwind_backtrace from show_stack+0x10/0x14
+>      show_stack from dump_stack_lvl+0x68/0x88
+>      dump_stack_lvl from __warn+0x6c/0x1a8
+>      __warn from warn_slowpath_fmt+0x1bc/0x1d0
+>      warn_slowpath_fmt from devm_regmap_field_alloc+0xac/0xc8
+>      devm_regmap_field_alloc from cpsw_ale_create+0x10c/0x36c
+>      cpsw_ale_create from cpsw_init_common+0x1fc/0x310
+> 
+>> --- a/drivers/net/ethernet/ti/cpsw_ale.c
+>> +++ b/drivers/net/ethernet/ti/cpsw_ale.c
+>> @@ -1303,6 +1303,9 @@ static const struct reg_field ale_fields_cpsw_nu[] = {
+>>         /* CPSW_ALE_IDVER_REG */
+>>         [MINOR_VER]     = REG_FIELD(ALE_IDVER, 0, 7),
+>>         [MAJOR_VER]     = REG_FIELD(ALE_IDVER, 8, 10),
+>> +       /* CPSW_ALE_STATUS_REG */
+>> +       [ALE_ENTRIES]   = REG_FIELD(ALE_STATUS, 0, 7),
+>> +       [ALE_POLICERS]  = REG_FIELD(ALE_STATUS, 8, 15),
+> 
+> You are adding these entries only to ale_fields_cpsw_nu[], not
+> to ale_fields_cpsw[], while cpsw_ale_regfield_init() loops over
+> ALE_FIELDS_MAX entries, whether they are valid or not:
+> 
+>     static int cpsw_ale_regfield_init(struct cpsw_ale *ale)
+>     {
+>             const struct reg_field *reg_fields = ale->params.reg_fields;
+>             struct device *dev = ale->params.dev;
+>             struct regmap *regmap = ale->regmap;
+>             int i;
+> 
+>             for (i = 0; i < ALE_FIELDS_MAX; i++) {
+>                     ale->fields[i] = devm_regmap_field_alloc(dev, regmap,
+>                                                              reg_fields[i]);
+> 
+>                     [...]
+>             }
+> 
+>             return 0;
+>     }
+> 
+> I tried fixing this by skipping entries where all of .reg, .lsb,
+> and .msb are zero, but that doesn't work as that runs beyond the
+> end of ale_fields_cpsw[], thus operating on random data.
+> I think you do have to store the size of the array, instead of assuming
+> ALE_FIELDS_MAX entries everywhere.
 
-diff --git a/fs/hfs/bfind.c b/fs/hfs/bfind.c
-index ef9498a6e88a..f0292b76e3d4 100644
---- a/fs/hfs/bfind.c
-+++ b/fs/hfs/bfind.c
-@@ -168,6 +168,8 @@ int hfs_brec_read(struct hfs_find_data *fd, void *rec, int rec_len)
- 	if (fd->entrylength > rec_len)
- 		return -EINVAL;
- 	hfs_bnode_read(fd->bnode, rec, fd->entryoffset, fd->entrylength);
-+	if (rec_len > fd->entrylength)
-+		memset(rec + fd->entrylength, 0, rec_len - fd->entrylength);
- 	return 0;
- }
- 
+Thanks for the report and suggestion. I will send a fix soon.
 
+> 
+>> --- a/drivers/net/ethernet/ti/cpsw_ale.h
+>> +++ b/drivers/net/ethernet/ti/cpsw_ale.h
+>> @@ -33,6 +34,8 @@ struct regmap;
+>>  enum ale_fields {
+>>         MINOR_VER,
+>>         MAJOR_VER,
+>> +       ALE_ENTRIES,
+>> +       ALE_POLICERS,
+>>         /* terminator */
+>>         ALE_FIELDS_MAX,
+>>  };
+>>
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+
+-- 
+cheers,
+-roger
 
