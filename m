@@ -1,401 +1,151 @@
-Return-Path: <linux-kernel+bounces-336203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1052B97F08D
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 20:25:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5138197F08F
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 20:25:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8992BB21DF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:25:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 646D7B2306F
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:25:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDF31A7248;
-	Mon, 23 Sep 2024 18:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979BD1A01C6;
+	Mon, 23 Sep 2024 18:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nPTJd6au"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oJAqAQYX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B2181A4F2E
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 18:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D5E1A01D8
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 18:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727115585; cv=none; b=MKKLTZNAQy3pxmxHc6mGfbDvENpgXTRwTT99p35K7NvK8QmAdbma8NCGtNVvYaI/2RlIj/MzUzqHSX5gz7zfESKJqLLjYX4L3xJlEKY43DA/akfEUNg9gHCnCr9L3RjvEsvJQ2r5AGQ3s9sk2dKJU2NG/kZ9dHyriCUmc/09RF0=
+	t=1727115671; cv=none; b=nMGUCo4eaTz2liqs5SNVeRH8SOe4aZvvu+QGXzXwAsL26bqpG/R9Iv7Y7ZbKfigJJWhU3kgZCpW3m9gckejhf+W87aBByFTvNh7wNGkTAniJAWT9De/gNYjkZpzL3hpZ/giS9FTPj10FCm2z4sK3UA2VjZmCLsgixlyjO1h4nTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727115585; c=relaxed/simple;
-	bh=MUvyVDOVnoZUdt93DJbmEjcHlGHywIDAJExoIyBJwTc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=EyLGkwUgeVnAad+WXFPK4b/zFh1fQw+oIDd2zYoqntnSoHVdVKlEfQLyiD+yF/nNJqESHzhm4mBKIEpRqDkoEo1YLwwPHpS1DbXoD9m5HG7DupcV3SYNyoEKDO+Go/HkigxrbNfBt/IBX+WX5GVXVJiUx1lAJSpIXs68jGm1t3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nPTJd6au; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e1fbe2a9a2so15592897b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 11:19:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727115582; x=1727720382; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LIeNJExclvncrOtPvfgf/zFSBPEGc6h5JAKcbMZPgWU=;
-        b=nPTJd6auPw5uWBT+1NZ2Qr+KeCYyBTCENVaVKqEi4cw4jtR9GbbGsgNgVnfsvWKxi3
-         uYHOcO/8ry9UgJwHIeNNvzbfASJL4iutgp/+MH/rSxfy7VOqtaGHC5A+52Vc40gvlSZx
-         CHjDDR1uHFqhC7oikBKkwYKy7EzbkKEuGNFd9AGn1Fv/VH652cwowyp6N37Ewk3XhNDK
-         alNvbD7e74f3QNsogumpxrmDF+Gci+djYeVAsTEbcoBHE+iwbhVgatkoB8JkzqMrhURE
-         2gCYmHgEypyZ90Cv6izAlZdAckRtuzhyQxRgGHBBuXBWYciwtPlNCsngbkG8VV8nZMoL
-         3iaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727115582; x=1727720382;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LIeNJExclvncrOtPvfgf/zFSBPEGc6h5JAKcbMZPgWU=;
-        b=jk+ySS8f4dzk8jzi3p1ybv7S8aQFXNmFPu0+RDKhsRwFgqqZx3Y2er+RWgV8Nvhnkc
-         17JeMYqnKOrsY1K9ZCZSmx/VHkB5H5j3cTjFfm4TDy9qxKKZd4pVf/y6TGefIu6RL3l7
-         nGd1Nc0IXpJIBkZJ5MrF7YG4yjtzhnUQ14TOro21xNkPckVwV7nKMpJjW0Uj+TRg374f
-         HnoN+xQYfe8xUkQrbBLD6VXE9yoh/ugl8RD8ccP1EfFCGP6BLE4ORD26A2PqgjSyE94d
-         nsosWDCDGsBnc6H2kcytXDmyZG+mRR0fURxjgTHnlI8XomSrASrM6Hvf9RGtsKmd2ouN
-         D3QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWOzir05wXaECNca3GNzvzRwoivPeO9VUbpKNFH3n8GMSOCCCyadOGYwI18ZvjjJ76Yj5uyKeaPFllicdQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS52ACehsSgHX2Lhz16uwFrml/eR3c7qVTR6iCW9c9CtDYtwdu
-	519XzPtfu5iZVMALNCIClwbvbBMFQK8R8tAvoXrqoSxy961tzRJzNmdRy0C6qb1iYWk3+MJ3nDB
-	irhgWSsRfuL2U6m0yv4uOcN3ZOA==
-X-Google-Smtp-Source: AGHT+IGn5NLkaYtJf4zx1Oj6VLn9yvEjY3yp8FW/8aCXhpJ0JMKN//NTWxYZpRpKz1KNy1nm96hS6Hsq1+IESPg824U=
-X-Received: from samitolvanen.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:4f92])
- (user=samitolvanen job=sendgmr) by 2002:a81:a704:0:b0:6db:c6eb:bae9 with SMTP
- id 00721157ae682-6dff270d59bmr1849607b3.2.1727115581692; Mon, 23 Sep 2024
- 11:19:41 -0700 (PDT)
-Date: Mon, 23 Sep 2024 18:19:06 +0000
-In-Reply-To: <20240923181846.549877-22-samitolvanen@google.com>
+	s=arc-20240116; t=1727115671; c=relaxed/simple;
+	bh=4W+9+uEw6U1YUmQUoFTtj9ci4w6gAz42P/CEX2pKqX0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hdn0zRe5LnK5oBTxtlfofu27t+/97AlFOdhueLKXRA3p+/UVUPOYum7Me2AGOPwosZhV8umMD/t2eYd/3plpOIqkpfkp+q+1p1a9qyOZ7qN+Vhw2JWqBgVTDVUf63bKP4xdi6dpG55dgryPq4IWx3YaFSKkCSs1F7+lc1thlWaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oJAqAQYX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40177C4CECD;
+	Mon, 23 Sep 2024 18:21:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727115670;
+	bh=4W+9+uEw6U1YUmQUoFTtj9ci4w6gAz42P/CEX2pKqX0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oJAqAQYX2Me9NV5XuqSplePKRPzaLC0axJUlq7n0O7OANu2zP999vFf6yLqsBWH/P
+	 GeGzXgXm8yCl13Rmz53xP4wnc4iSxjxn7czAR8Oyf3FS4QMCGlqbI4T0gVYistH5Hi
+	 jV0dL/fiFU53yL7t9HJzP+pkA9F1ZRBRADb2nHA4/wLFTIF4FiQmSs8V+6CHke22OI
+	 cCN6W4ry0hDVVSPd7zKTQMIbYpNN5NighfsI0v/qv/5hTQFqVDUWCCfnZsCz31kyuC
+	 0RcRjnLPVVVb8vlZam7fF0UwcUOdBOgwjKEFwsR3qX2E1nD2Q4h+HSGdMRDRPgTwVS
+	 iCC2d5aQ/HRkQ==
+Date: Mon, 23 Sep 2024 08:21:09 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Aboorva Devarajan <aboorvad@linux.ibm.com>
+Cc: void@manifault.com, linux-kernel@vger.kernel.org,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>
+Subject: Re: [sched_ext/for-6.11]: Issue with BPF Scheduler during CPU Hotplug
+Message-ID: <ZvGxlcMwFOmUBfr9@slm.duckdns.org>
+References: <daf2370f5456cbf1660bbdc13621559fb3f2f6cc.camel@linux.ibm.com>
+ <Zq1NksrG9blyN-KR@slm.duckdns.org>
+ <e3069da05fb1676f8faad88b9a4dfc4a6cef4175.camel@linux.ibm.com>
+ <Zru5_UmEmWhNaPyo@slm.duckdns.org>
+ <fa56b39990dd0b90f971018f5abb7352c60af3b1.camel@linux.ibm.com>
+ <ZsTwoWJQcnsJhYbe@slm.duckdns.org>
+ <3da12c96daecaa055c478816f5e86c7b44a04d53.camel@linux.ibm.com>
+ <ZszKI2GA-8yparh_@slm.duckdns.org>
+ <Zul6l-S_JulEnDQw@mtj.duckdns.org>
+ <516106abdf5c922ee19dffd9eb69ea3f9e20e54a.camel@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240923181846.549877-22-samitolvanen@google.com>
-X-Developer-Key: i=samitolvanen@google.com; a=openpgp; fpr=35CCFB63B283D6D3AEB783944CB5F6848BBC56EE
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11935; i=samitolvanen@google.com;
- h=from:subject; bh=MUvyVDOVnoZUdt93DJbmEjcHlGHywIDAJExoIyBJwTc=;
- b=owGbwMvMwCEWxa662nLh8irG02pJDGkfNwq0Kpa5t5WHuQfeK867smrOH7WfMx615Xc9cWI/0
- nJk7U62jlIWBjEOBlkxRZaWr6u37v7ulPrqc5EEzBxWJpAhDFycAjCRfysZGXqF3h5okQ0XnzJd
- XO2QbLnqPp7e67f0XmxWXJO+MWTdxycM/3QUre208y5l+cxZzrFqk8Xq4MllL5aEetl6GBjGZfR v4wYA
-X-Mailer: git-send-email 2.46.0.792.g87dc391469-goog
-Message-ID: <20240923181846.549877-42-samitolvanen@google.com>
-Subject: [PATCH v3 20/20] Documentation/kbuild: Add DWARF module versioning
-From: Sami Tolvanen <samitolvanen@google.com>
-To: Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>, 
-	Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, 
-	Miroslav Benes <mbenes@suse.cz>, Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Sami Tolvanen <samitolvanen@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <516106abdf5c922ee19dffd9eb69ea3f9e20e54a.camel@linux.ibm.com>
 
-Add documentation for gendwarfksyms changes, and the kABI stability
-features that can be useful for distributions even though they're not
-used in mainline kernels.
+Hello,
 
-Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
----
- Documentation/kbuild/gendwarfksyms.rst | 274 +++++++++++++++++++++++++
- Documentation/kbuild/index.rst         |   1 +
- 2 files changed, 275 insertions(+)
- create mode 100644 Documentation/kbuild/gendwarfksyms.rst
+(cc'ing Alexei and Andrii for the BPF part)
 
-diff --git a/Documentation/kbuild/gendwarfksyms.rst b/Documentation/kbuild/gendwarfksyms.rst
-new file mode 100644
-index 000000000000..4b89743d2a88
---- /dev/null
-+++ b/Documentation/kbuild/gendwarfksyms.rst
-@@ -0,0 +1,274 @@
-+=======================
-+DWARF module versioning
-+=======================
-+
-+1. Introduction
-+===============
-+
-+When CONFIG_MODVERSIONS is enabled, symbol versions for modules
-+are typically calculated from preprocessed source code using the
-+**genksyms** tool.  However, this is incompatible with languages such
-+as Rust, where the source code has insufficient information about
-+the resulting ABI. With CONFIG_GENDWARFKSYMS (and CONFIG_DEBUG_INFO)
-+selected, **gendwarfksyms** is used instead to calculate symbol versions
-+from the DWARF debugging information, which contains the necessary
-+details about the final module ABI.
-+
-+1.1. Usage
-+==========
-+
-+gendwarfksyms accepts a list of object files on the command line, and a
-+list of symbol names (one per line) in standard input::
-+
-+        Usage: gendwarfksyms [options] elf-object-file ... < symbol-list
-+
-+        Options:
-+          -d, --debug          Print debugging information
-+              --dump-dies      Dump DWARF DIE contents
-+              --dump-die-map   Print debugging information about die_map changes
-+              --dump-types     Dump type strings
-+              --dump-versions  Dump expanded type strings used for symbol versions
-+          -s, --stable         Support kABI stability features
-+          -T, --symtypes file  Write a symtypes file
-+          -h, --help           Print this message
-+
-+
-+2. Type information availability
-+================================
-+
-+While symbols are typically exported in the same translation unit (TU)
-+where they're defined, it's also perfectly fine for a TU to export
-+external symbols. For example, this is done when calculating symbol
-+versions for exports in stand-alone assembly code.
-+
-+To ensure the compiler emits the necessary DWARF type information in the
-+TU where symbols are actually exported, gendwarfksyms adds a pointer
-+to exported symbols in the `EXPORT_SYMBOL()` macro using the following
-+macro::
-+
-+        #define __GENDWARFKSYMS_EXPORT(sym)                             \
-+                static typeof(sym) *__gendwarfksyms_ptr_##sym __used    \
-+                        __section(".discard.gendwarfksyms") = &sym;
-+
-+
-+When a symbol pointer is found in DWARF, gendwarfksyms can use its
-+type for calculating symbol versions even if the symbol is defined
-+elsewhere. The name of the symbol pointer is expected to start with
-+`__gendwarfksyms_ptr_`, followed by the name of the exported symbol.
-+
-+3. Symtypes output format
-+=========================
-+
-+Similarly to genksyms, gendwarfksyms supports writing a symtypes file
-+for each processed object that contain types for exported symbols and
-+each referenced type that was used in calculating symbol versions. These
-+files can be useful when trying to determine what exactly caused symbol
-+versions to change between builds.
-+
-+Matching the existing format, the first column of each line contains
-+either a type reference or a symbol name. Type references have a
-+one-letter prefix followed by "#" and the name of the type. Four
-+reference types are supported::
-+
-+        e#<type> = enum
-+        s#<type> = struct
-+        t#<type> = typedef
-+        u#<type> = union
-+
-+Type names with spaces in them are wrapped in single quotes, e.g.::
-+
-+        s#'core::result::Result<u8, core::num::error::ParseIntError>'
-+
-+The rest of the line contains a type string. Unlike with genksyms that
-+produces C-style type strings, gendwarfksyms uses the same simple parsed
-+DWARF format produced by **--dump-dies**, but with type references
-+instead of fully expanded strings.
-+
-+4. Maintaining a stable kABI
-+============================
-+
-+Distribution maintainers often need the ability to make ABI compatible
-+changes to kernel data structures due to LTS updates or backports. Using
-+the traditional `#ifndef __GENKSYMS__` to hide these changes from symbol
-+versioning won't work when processing object files. To support this
-+use case, gendwarfksyms provides kABI stability features designed to
-+hide changes that won't affect the ABI when calculating versions. These
-+features are all gated behind the **--stable** command line flag and are
-+not used in the mainline kernel.
-+
-+Examples for using these features are provided in the
-+**scripts/gendwarfksyms/examples** directory, including helper macros
-+for source code annotation. Note that as these features are only used to
-+transform the inputs for symbol versioning, the user is responsible for
-+ensuring that their changes actually won't break the ABI.
-+
-+4.1. kABI rules
-+===============
-+
-+kABI rules allow distributions to fine-tune certain parts
-+of gendwarfksyms output and thus control how symbol
-+versions are calculated. These rules are defined in the
-+`.discard.gendwarfksyms.kabi_rules` section of the object file and
-+consist of simple null-terminated strings with the following structure::
-+
-+	version\0type\0target\0value\0
-+
-+This string sequence is repeated as many times as needed to express all
-+the rules. The fields are as follows:
-+
-+- `version`: Ensures backward compatibility for future changes to the
-+  structure. Currently expected to be "1".
-+- `type`: Indicates the type of rule being applied.
-+- `target`: Specifies the target of the rule, typically the fully
-+  qualified name of the DWARF Debugging Information Entry (DIE).
-+- `value`: Provides rule-specific data.
-+
-+The following helper macro, for example, can be used to specify rules
-+in the source code::
-+
-+	#define __KABI_RULE(hint, target, value)                             \
-+		static const char __PASTE(__gendwarfksyms_rule_,             \
-+					  __COUNTER__)[] __used __aligned(1) \
-+			__section(".discard.gendwarfksyms.kabi_rules") =     \
-+				"1\0" #hint "\0" #target "\0" #value
-+
-+
-+Currently, only the rules discussed in this section are supported, but
-+the format is extensible enough to allow further rules to be added as
-+need arises.
-+
-+4.1.1. Managing structure visibility
-+====================================
-+
-+A structure declaration can change into a full definition when
-+additional includes are pulled into the translation unit. This changes
-+the versions of any symbol that references the structure even if the ABI
-+remains unchanged. As it may not be possible to drop includes without
-+breaking the build, the `struct_declonly` rule can be used to specify a
-+data structure as declaration-only, even if the debugging information
-+contains the full definition.
-+
-+The rule fields are expected to be as follows:
-+
-+- `type`: "struct_declonly"
-+- `target`: The fully qualified name of the target data structure
-+  (as shown in **--dump-dies** output).
-+- `value`: This field is ignored and is expected to have the value ";".
-+
-+Using the `__KABI_RULE` macro, this rule can be defined as::
-+
-+	#define KABI_STRUCT_DECLONLY(fqn) \
-+		__KABI_RULE(struct_declonly, fqn, ;)
-+
-+Example usage::
-+
-+	struct s {
-+		/* definition */
-+	};
-+
-+	KABI_STRUCT_DECLONLY(s);
-+
-+4.1.2. Adding enumerators
-+=========================
-+
-+For enums, all enumerators and their values are included in calculating
-+symbol versions, which becomes a problem if we later need to add more
-+enumerators without changing symbol versions. The `enumerator_ignore`
-+rule allows us to hide named enumerators from the input.
-+
-+The rule fields are expected to be as follows:
-+
-+- `type`: "enumerator_ignore"
-+- `target`: The fully qualified name of the target enum
-+  (as shown in **--dump-dies** output).
-+- `value`: The name of the enumerator to ignore.
-+
-+Using the `__KABI_RULE` macro, this rule can be defined as::
-+
-+	#define KABI_ENUMERATOR_IGNORE(fqn, field) \
-+		__KABI_RULE(enumerator_ignore, fqn, field)
-+
-+Example usage::
-+
-+	enum e {
-+		A, B, C, D,
-+	};
-+
-+	KABI_ENUMERATOR_IGNORE(e, B);
-+	KABI_ENUMERATOR_IGNORE(e, C);
-+
-+
-+4.3. Adding structure members
-+=============================
-+
-+Perhaps the most common ABI compatible changeis adding a member to a
-+kernel data structure. When changes to a structure are anticipated,
-+distribution maintainers can pre-emptively reserve space in the
-+structure and take it into use later without breaking the ABI. If
-+changes are needed to data structures without reserved space, existing
-+alignment holes can potentially be used instead. While kABI rules could
-+be added for these type of changes, using unions is typically a more
-+natural method. This section describes gendwarfksyms support for using
-+reserved space in data structures and hiding members that don't change
-+the ABI when calculating symbol versions.
-+
-+4.3.1. Reserving space and replacing members
-+============================================
-+
-+To reserve space in a struct, adding a member of any type with a name
-+that starts with `__kabi_` will result in the name being left out of
-+symbol versioning::
-+
-+        struct s {
-+                long a;
-+                long __kabi_reserved_0; /* reserved for future use */
-+        };
-+
-+The space reserved by this member can be later taken into use by
-+wrapping it into a union, which includes the original type and the
-+replacement struct member::
-+
-+        struct s {
-+                long a;
-+                union {
-+                        long __kabi_reserved_0; /* original type */
-+                        struct b b; /* replaced field */
-+                };
-+        };
-+
-+As long as the reserved member's name in the union starts with
-+`__kabi_reserved_`, the original type will be used for symbol
-+versioning and rest of the union is ignored. The examples include
-+`KABI_(RESERVE|USE)*` macros that help simplify the process and also
-+ensure the replacement member's size won't exceed the reserved space.
-+
-+4.3.2. Hiding members
-+=====================
-+
-+Predicting which structures will require changes during the support
-+timeframe isn't always possible, in which case one might have to resort
-+to placing new members into existing alignment holes::
-+
-+        struct s {
-+                int a;
-+                /* a 4-byte alignment hole */
-+                unsigned long b;
-+        };
-+
-+
-+While this won't change the size of the data structure, one needs to
-+be able to hide the added members from symbol versioning. Similarly
-+to reserved fields, this can be accomplished by wrapping the added
-+member to a union where one of the fields has a name starting with
-+`__kabi_ignored`::
-+
-+        struct s {
-+                int a;
-+                union {
-+                        char __kabi_ignored_0;
-+                        int n;
-+                };
-+                unsigned long b;
-+        };
-+
-+With **--stable**, both versions produce the same symbol version.
-diff --git a/Documentation/kbuild/index.rst b/Documentation/kbuild/index.rst
-index cee2f99f734b..e82af05cd652 100644
---- a/Documentation/kbuild/index.rst
-+++ b/Documentation/kbuild/index.rst
-@@ -21,6 +21,7 @@ Kernel Build System
-     reproducible-builds
-     gcc-plugins
-     llvm
-+    gendwarfksyms
- 
- .. only::  subproject and html
- 
+On Mon, Sep 23, 2024 at 08:26:32PM +0530, Aboorva Devarajan wrote:
+> Sharing the crash logs observed in PowerPC here for general reference, FYI:
+> 
+> [ 8638.891964] Kernel attempted to read user page (a8) - exploit attempt? (uid: 0)
+> [ 8638.892002] BUG: Kernel NULL pointer dereference on read at 0x000000a8
+> [ 8638.892019] Faulting instruction address: 0xc0000000004e7cc0
+> [ 8638.892038] Oops: Kernel access of bad area, sig: 11 [#1]
+> [ 8638.892060] LE PAGE_SIZE=64K MMU=Radix SMP NR_CPUS=2048 NUMA PowerNV
+> [ 8638.892080] Modules linked in: nf_conntrack_netlink nfnetlink xfrm_user xfrm_algo xt_addrtype
+> br_netfilter xt_CHECKSUM xt_MASQUERADE xt_conntrack ipt_REJECT nf_reject_ipv4 xt_tcpudp
+>  ip6table_mangle ip6table_nat iptable_mangle iptable_nat nf_nat nf_conntrack nf_defrag_ipv6
+> nf_defrag_ipv4 ebtable_filter ebtables vhost_vsock vmw_vsock_virtio_transport_common ip6tabl
+> e_filter ip6_tables vhost vhost_iotlb iptable_filter vsock bridge stp llc kvm_hv kvm joydev
+> input_leds mac_hid at24 ofpart cmdlinepart uio_pdrv_genirq ibmpowernv opal_prd ipmi_powernv 
+> powernv_flash uio binfmt_misc sch_fq_codel nfsd mtd ipmi_devintf ipmi_msghandler auth_rpcgss
+> jc42 ramoops reed_solomon ip_tables x_tables autofs4 raid10 raid456 async_raid6_recov async
+> _memcpy async_pq async_xor async_tx raid1 raid0 dm_mirror dm_region_hash dm_log mlx5_ib ib_uverbs
+> ib_core mlx5_core hid_generic usbhid hid ast i2c_algo_bit drm_shmem_helper drm_kms_hel
+> per vmx_crypto drm mlxfw crct10dif_vpmsum crc32c_vpmsum psample tls tg3 ahci libahci
+> drm_panel_orientation_quirks
+> [ 8638.892621] CPU: 62 UID: 0 PID: 5591 Comm: kworker/62:2 Not tainted 6.11.0-rc4+ #2
+> [ 8638.892663] Hardware name: 8335-GTW POWER9 0x4e1203 opal:skiboot-v6.5.3-35-g1851b2a06 PowerNV
+> [ 8638.892693] Workqueue: events bpf_prog_free_deferred
+> [ 8638.892735] NIP:  c0000000004e7cc0 LR: c0000000004e7bbc CTR: c0000000003a9b30
+> [ 8638.892798] REGS: c000000ea4cbf7f0 TRAP: 0300   Not tainted  (6.11.0-rc4+)
+> [ 8638.892862] MSR:  9000000000009033 <SF,HV,EE,ME,IR,DR,RI,LE>  CR: 42a00284  XER: 00000000
+> [ 8638.892915] CFAR: c0000000004e7bb8 DAR: 00000000000000a8 DSISR: 40000000 IRQMASK: 1 
+> [ 8638.892915] GPR00: c0000000004e7bbc c000000ea4cbfa90 c000000002837f00 0000000000000005 
+> [ 8638.892915] GPR04: 0000000000000015 0000000000000009 0000000000000009 c000000004840b00 
+> [ 8638.892915] GPR08: ffffffffffffffff 00000000ffffe000 ffffffffffffffff 000001937b55db50 
+> [ 8638.892915] GPR12: 0000000000200000 c000007ffdfac300 c0000000031b1fc8 0000000000010000 
+> [ 8638.892915] GPR16: c00000000000018e 000000007fffffff 0000000000000000 000000000000e1c0 
+> [ 8638.892915] GPR20: 61c8864680b583eb 0000000000000000 0000000000000000 00000000000de1d5 
+> [ 8638.892915] GPR24: 0000000000000000 c000000003da4408 c000000003da4400 c000000003da43f8 
+> [ 8638.892915] GPR24: 0000000000000000 c000000003da4408 c000000003da4400 c000000003da43f8 
+> [ 8638.892915] GPR28: 0000000000000000 0000000000000000 0000000000000000 c000000ea4cbfa90 
+> [ 8638.893350] NIP [c0000000004e7cc0] walk_to_pmd+0x80/0x240
+> [ 8638.893380] LR [c0000000004e7bbc] __get_locked_pte+0x4c/0xd0
+> [ 8638.893398] Call Trace:
+> [ 8638.893407] [c000000ea4cbfa90] [c000000ea4cbfb20] 0xc000000ea4cbfb20 (unreliable)
+> [ 8638.893429] [c000000ea4cbfaf0] [c0000000004e7bbc] __get_locked_pte+0x4c/0xd0
+> [ 8638.893457] [c000000ea4cbfb40] [c0000000000b1dd0] patch_instructions+0x130/0x630
+> [ 8638.893500] [c000000ea4cbfc10] [c000000000123180] bpf_arch_text_invalidate+0x80/0xd0
+> [ 8638.893552] [c000000ea4cbfc60] [c0000000003a7508] bpf_prog_pack_free+0x138/0x2f0
+> [ 8638.893584] [c000000ea4cbfd10] [c0000000003a7e38] bpf_jit_binary_pack_free+0x48/0xa0
+> [ 8638.893617] [c000000ea4cbfd50] [c000000000123258] bpf_jit_free+0x88/0x100
+> [ 8638.893667] [c000000ea4cbfd90] [c0000000003a9d70] bpf_prog_free_deferred+0x240/0x280
+> [ 8638.893725] [c000000ea4cbfde0] [c0000000001a6828] process_scheduled_works+0x268/0x520
+> [ 8638.893767] [c000000ea4cbfee0] [c0000000001a9ed0] worker_thread+0x3f0/0x590
+> [ 8638.893809] [c000000ea4cbff80] [c0000000001b37b0] kthread+0x1a0/0x1c0
+> [ 8638.893862] [c000000ea4cbffe0] [c00000000000d030] start_kernel_thread+0x14/0x18
+> [ 8638.893913] Code: 3cc20157 3b63c4f8 3b45c500 3929c510 3b26c508 3940ffff e87b0000 e8ba0000
+> 81290000 e8d90000 38830010 7d494830 <e87d00a8> 7ce42a14 7d2948f8 7d073214 
+> [ 8638.894003] ---[ end trace 0000000000000000 ]---
+> [ 8639.098185] pstore: backend (nvram) writing error (-1)
+> [ 8639.098205] 
+> [ 8639.098215] note: kworker/62:2[5591] exited with irqs disabled
+> [ 8798.806603] ------------[ cut here ]------------
+> [ 8798.806631] WARNING: CPU: 62 PID: 3769 at kernel/kthread.c:76 kthread_set_per_cpu+0x40/0xd0
+> [ 8798.806653] Modules linked in: nf_conntrack_netlink nfnetlink xfrm_user xfrm_algo xt_addrtype
+> br_netfilter xt_CHECKSUM xt_MASQUERADE xt_conntrack ipt_REJECT nf_reject_ipv4 xt_tcpudp ip6table_mangle
+> ip6table_nat iptable_mangle iptable_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv
+> ------------------------------------------------------------------------------------------
+> 
+> We will look at this issue as it is specific to PowerPC.
+
+This does look like a bug in BPF proper.
+
+> But I can confirm that the originally reported hang (deadlock) is no longer present.
+
+Great to hear. I'll post the patchset w/ your Tested-by.
+
+Thanks.
+
 -- 
-2.46.0.792.g87dc391469-goog
-
+tejun
 
