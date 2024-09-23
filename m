@@ -1,116 +1,183 @@
-Return-Path: <linux-kernel+bounces-336029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23E5D97EE45
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:34:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4C0297EE48
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:35:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E01B52825C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:34:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADDC21C2163C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:35:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6987D2745E;
-	Mon, 23 Sep 2024 15:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D321420D0;
+	Mon, 23 Sep 2024 15:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GtPndt5U"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="J50WwPI7"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134648821;
-	Mon, 23 Sep 2024 15:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B692C8F6E
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 15:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727105681; cv=none; b=AW+KW+iK9+3soBtYgP7p9A/3lPF7rEsSBvz2uyldq8GUFJzHo8CmIqwvToBYZPkyKRJf7qQAjdoX5IA/NS9Xbf24dbBND6FS1oJE8pQ/La1D+9V4iKyrB+DYE5/WMmGqYeVewJ9dilH1hOJ0SZFgnnmcR8/o6x9gXi89NorhCJs=
+	t=1727105696; cv=none; b=XI0UkqoSnKgxZXg/JK24okl9nBRlJMuKz/V4PuK0Sd017raFPLvt9QiPZJO72U8y2HurkRUPZE/WcPNZFdpJSDSV+ct6RLAvfknS10QG7ssMOfvaLX2e2YvKPC+Ry9+1t1Kn5fyJ0FKndRGDrEhDMNk9UIHZ0hwLRyCdisymaoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727105681; c=relaxed/simple;
-	bh=1ihrzNsoHedW5QPdykkQhnC8mXnzUD4yi+qABSdH45M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ks88BXFNvCn+VyhUEZsCFhOEoOyeyXQxoIxvi3vCvMiopHFn5/Azzo2c+HmsNLjL32JNVz9YsmTyT9Dgc3epUMwIIEO/6l+qHRNUNWzZqK8okkBNDWY7yUF+GtrGogkmgGSXhEBZGzT+CXxVO2+2/+U9usLUDnTEVfVGwVj/GiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GtPndt5U; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D484740007;
-	Mon, 23 Sep 2024 15:34:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1727105670;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Shl/P3rqF6pZR6bKikAxoyuuEMEI3xU//Kez0cGjkzw=;
-	b=GtPndt5UFh6yJ72Um4s3NyDYRWjI4Duyw6di438owEeCLouPGjxXaYob65CjbiSrEJiS9s
-	RhBsyaEY+uHpMVuA6AblLHxMaMA/5LHnhafn08qqM6ccR8E9ZZHyu1B6tuVx57dRrU9ofb
-	v7A0xfBiy0Jdsh0i02bCRCnRvsK34CJrjjGAgYQow4Wf98VYOMoX6BxzEts6N6kXtQwxQG
-	DTzBRBI10fO0jGN9gTHdys4uRdwWNlemWxAXxBn/bd7V2h8gLOqdTnia0c0EofYgX0AwGT
-	JH9pcHucscDwUXr0A7nv2DU8zZgF/9oJXfLzNVaDVQ3p9Z8LdHFaCpfgvw6HAQ==
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: "Kory Maincent (Dent Project)" <kory.maincent@bootlin.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Kyle Swenson <kyle.swenson@est.tech>,
-	thomas.petazzoni@bootlin.com,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>
-Subject: [PATCH net] net: pse-pd: tps23881: Fix boolean evaluation for bitmask checks
-Date: Mon, 23 Sep 2024 17:34:26 +0200
-Message-Id: <20240923153427.2135263-1-kory.maincent@bootlin.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727105696; c=relaxed/simple;
+	bh=HUTUtAJwOnQMmP4ReaCRv34dR7cQveXCjOS0OPc85O4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I6fegwUx5E9ilUUrmZb0qTqj/lraZTu4KSglbKpWLTyAKe4JOHcHnfx17HsKt8fZy5a77/0vcPAc1CvPgeRKUseLGwsl/IRxXhcNloUgOZS/vC7KsrlemjOrwdQiP4rIYTg2Svcf4VhlX7e78tDOlPZItlq1utKafprPvwlkzpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=J50WwPI7; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-206aee4073cso48302245ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 08:34:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1727105694; x=1727710494; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=htTo4bA6hokXxaD54zIm5oQaYvd0c7+2dVU7JGOsPAg=;
+        b=J50WwPI7dLLVNT82rD/g0CuuOnpT2eXDfqqtol1FU/h+cHp7WwfgotmIdVCThEOQLt
+         V/1bS2f0wxf8RdpHyyCjY67EtfdPUlc4kwyCqbUnDp9w2Ir+HK4WbMfukDr1FqzShuCz
+         NpIWXAPVt1FjeLeinjVy3tvsqcBqHyezO3xm4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727105694; x=1727710494;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=htTo4bA6hokXxaD54zIm5oQaYvd0c7+2dVU7JGOsPAg=;
+        b=LnfMPUP87QPCKY7n0tkreJbN26+MLj1SHX5tNYpNxj5SdgYz6J5xS0/7VJd0IcykS0
+         sHRMwgWvioZ25oiCVyGXl+9U8618Ne5F8AheXXkCtZCjV8cSzg14AWfD/x9H9gaZNVpp
+         wgzWVpCsvFKpGeg5k2iYSblR1jCd3j7BZ8KBtq9GGTISiwlANuUgtfF716HKwUDYDYXq
+         Q0r3bYQHtuddj1QaW8a5qSr7c2l1gtUTl1+R2hsVxUgyKT7k6IQ4cgMQMKpF6cbICPKu
+         cHP94zFz3/WSTchyJW2pTa31O+x6WhV65WHc+3mXlPiA3pSjPRcrGkJKYzSNZHdHA8kJ
+         rjeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVnyGFfn/1UTNjI6XyG3/yKyjFqRXbZmDoH9/Yj4gW90YADqncy3oaaKlXOa92l8QbcjGNnmLsp562JhSM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIHfS6PXewFqXgNU7K57c7wZGLrjmQ/L0atSPyIfzrVLsJC6RG
+	etmvKdBFV+iUu7G76Ye1RcXgGUfhRw8M94feskIRCA4un+IaGTdPrBShOJU7Eg==
+X-Google-Smtp-Source: AGHT+IFMxCxBJJJxHj41XbzXl9Q6OwJp+/r0/ziCqyj2dh0P3QlbMT2L4a82gbq0YFQeekc/ifKulg==
+X-Received: by 2002:a17:90b:5344:b0:2da:61e1:1597 with SMTP id 98e67ed59e1d1-2dd80cd73b4mr15760979a91.36.1727105693975;
+        Mon, 23 Sep 2024 08:34:53 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:fd63:e1cf:ea96:b4b0])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dd6ef3c643sm9583520a91.37.2024.09.23.08.34.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2024 08:34:53 -0700 (PDT)
+Date: Tue, 24 Sep 2024 00:34:49 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Andrey Skvortsov <andrej.skvortzov@gmail.com>
+Cc: Minchan Kim <minchan@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] zram: don't free statically defined names
+Message-ID: <20240923153449.GC38742@google.com>
+References: <20240923080211.820185-1-andrej.skvortzov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240923080211.820185-1-andrej.skvortzov@gmail.com>
 
-Fixed potential incorrect boolean evaluation when checking bitmask values.
-The existing code assigned the result of bitwise operations directly to
-boolean variables, which could lead to unexpected values.
-This has been corrected by explicitly converting the results to booleans
-using the !! operator.
+On (24/09/23 11:02), Andrey Skvortsov wrote:
+> The change is similar to that is used in comp_algorithm_set.
+> This is detected by KASAN.
+> 
+> ==================================================================
 
-Fixes: 20e6d190ffe1 ("net: pse-pd: Add TI TPS23881 PSE controller driver")
-Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
----
- drivers/net/pse-pd/tps23881.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+---8<---
 
-diff --git a/drivers/net/pse-pd/tps23881.c b/drivers/net/pse-pd/tps23881.c
-index 5c4e88be46ee..1a57c55f8577 100644
---- a/drivers/net/pse-pd/tps23881.c
-+++ b/drivers/net/pse-pd/tps23881.c
-@@ -139,9 +139,9 @@ static int tps23881_pi_is_enabled(struct pse_controller_dev *pcdev, int id)
- 
- 	chan = priv->port[id].chan[0];
- 	if (chan < 4)
--		enabled = ret & BIT(chan);
-+		enabled = !!(ret & BIT(chan));
- 	else
--		enabled = ret & BIT(chan + 4);
-+		enabled = !!(ret & BIT(chan + 4));
- 
- 	if (priv->port[id].is_4p) {
- 		chan = priv->port[id].chan[1];
-@@ -172,11 +172,11 @@ static int tps23881_ethtool_get_status(struct pse_controller_dev *pcdev,
- 
- 	chan = priv->port[id].chan[0];
- 	if (chan < 4) {
--		enabled = ret & BIT(chan);
--		delivering = ret & BIT(chan + 4);
-+		enabled = !!(ret & BIT(chan));
-+		delivering = !!(ret & BIT(chan + 4));
- 	} else {
--		enabled = ret & BIT(chan + 4);
--		delivering = ret & BIT(chan + 8);
-+		enabled = !!(ret & BIT(chan + 4));
-+		delivering = !!(ret & BIT(chan + 8));
- 	}
- 
- 	if (priv->port[id].is_4p) {
--- 
-2.34.1
+>  Unable to handle kernel paging request at virtual address ffffffffc1edc3c8
+>  KASAN: maybe wild-memory-access in range
+>  [0x0003fffe0f6e1e40-0x0003fffe0f6e1e47]
+>  Mem abort info:
+>    ESR = 0x0000000096000006
+>    EC = 0x25: DABT (current EL), IL = 32 bits
+>    SET = 0, FnV = 0
+>    EA = 0, S1PTW = 0
+>    FSC = 0x06: level 2 translation fault
+>  Data abort info:
+>    ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
+>    CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+>    GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+>  swapper pgtable: 4k pages, 48-bit VAs, pgdp=00000000427dc000
+>  [ffffffffc1edc3c8] pgd=00000000430e7003, p4d=00000000430e7003,
+>  pud=00000000430e8003, pmd=0000000000000000
+>  Internal error: Oops: 0000000096000006 [#1] SMP
+> 
+>  Tainted: [W]=WARN, [C]=CRAP, [N]=TEST
+>  Hardware name: Pine64 PinePhone (1.2) (DT)
+>  pstate: a0000005 (NzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>  pc : kfree+0x60/0x3a0
+>  lr : zram_destroy_comps+0x98/0x198 [zram]
+>  sp : ffff800089b57450
+>  x29: ffff800089b57460 x28: 0000000000000004 x27: ffff800082833010
+>  x26: 1fffe00000c8039c x25: 1fffe00000ba5004 x24: ffff000005d28000
+>  x23: ffff800082533178 x22: ffff80007b71eaa8 x21: ffff000006401ce8
+>  x20: ffff80007b70f7a0 x19: ffffffffc1edc3c0 x18: 1ffff00010506d6b
+>  x17: 0000000000000000 x16: 0000000000000000 x15: ffff8000808e85e4
+>  x14: ffff8000808e8478 x13: ffff80008003fa50 x12: ffff80008003f87c
+>  x11: ffff800080011550 x10: ffff800081ee63f0 x9 : ffff80007b71eaa8
+>  x8 : ffff80008003fa50 x7 : ffff80008003f87c x6 : 00000018a10e2f30
+>  x5 : 00ffffffffffffff x4 : ffff00000ec93200 x3 : ffff00000bbee6e0
+>  x2 : 0000000000000000 x1 : 0000000000000000 x0 : fffffdffc0000000
 
+---8<---
+
+The above is not needed in the commit message (not even sure if the
+backtrace below is relevant).
+
+>  Call trace:
+>   kfree+0x60/0x3a0
+>   zram_destroy_comps+0x98/0x198 [zram]
+>   zram_reset_device+0x22c/0x4a8 [zram]
+>   reset_store+0x1bc/0x2d8 [zram]
+>   dev_attr_store+0x44/0x80
+>   sysfs_kf_write+0xfc/0x188
+>   kernfs_fop_write_iter+0x28c/0x428
+>   vfs_write+0x4dc/0x9b8
+>   ksys_write+0x100/0x1f8
+>   __arm64_sys_write+0x74/0xb8
+>   invoke_syscall+0xd8/0x260
+>   el0_svc_common.constprop.0+0xb4/0x240
+>   do_el0_svc+0x48/0x68
+>   el0_svc+0x40/0xc8
+>   el0t_64_sync_handler+0x120/0x130
+>   el0t_64_sync+0x190/0x198
+
+[..]
+
+> diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+> index c3d245617083d..d9d2c36658f59 100644
+> --- a/drivers/block/zram/zram_drv.c
+> +++ b/drivers/block/zram/zram_drv.c
+> @@ -2116,7 +2116,9 @@ static void zram_destroy_comps(struct zram *zram)
+>  	}
+>  
+>  	for (prio = ZRAM_SECONDARY_COMP; prio < ZRAM_MAX_COMPS; prio++) {
+> -		kfree(zram->comp_algs[prio]);
+> +		/* Do not free statically defined compression algorithms */
+
+We probably don't really need this comment.
+
+> +		if (zram->comp_algs[prio] != default_compressor)
+> +			kfree(zram->comp_algs[prio]);
+>  		zram->comp_algs[prio] = NULL;
+>  	}
+
+OK, so... I wonder how do you get a `default_compressor` on a
+non-ZRAM_PRIMARY_COMP prio.  May I ask what's your reproducer?
+
+I didn't expect `default_compressor` on ZRAM_SECONDARY_COMP
+and below.  As far as I can tell, we only do this:
+
+	comp_algorithm_set(zram, ZRAM_PRIMARY_COMP, default_compressor);
+
+in zram_reset_device() and zram_add().  So, how does it end up in
+ZRAM_SECONDARY_COMP...
 
