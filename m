@@ -1,107 +1,108 @@
-Return-Path: <linux-kernel+bounces-335587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3CAF97E7C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:43:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFA3497E7CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:46:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95677B20A79
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:43:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 829AE281BFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:45:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE37F74416;
-	Mon, 23 Sep 2024 08:43:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08437194090;
+	Mon, 23 Sep 2024 08:45:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VNNxugWp"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gEvM3ldn"
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F76E19408D
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 08:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A813032A;
+	Mon, 23 Sep 2024 08:45:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727080994; cv=none; b=jAh/wyAjij21QoHtvWZlEfNeP8cnssrE/EedOywl4mqVOF+QZxSVvSZwXEtldWkMWD2Y3kAnKTUBWXFJS/6yre2VMxnLVCBznTxstyaLBH3tPCR9ec5g+Tax+ZRvACAqsJZ+0wwq+lj9oRIkbo1Wl8feYNeNvpZqiN84LPf05ck=
+	t=1727081152; cv=none; b=MbPrDXGCs8EJeR4aX/KXz0ik/Vl7sqqbO8QktKFywNPMGSZfh2txlSTLIA9PECI24CqRkEwFPn9r1i2ggLRYxi0+NbzJZ+2W4x4yAK7WliVWv3iU1uQ3+za4K4Aqc6JB49BeLlguCxYE8guqPhgYWq2bAn/v2aKufjEtI1nMj88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727080994; c=relaxed/simple;
-	bh=XSzUh6ZJJ6sFM4hLu82VZxpVet5y5KagtnDBdYcnFF0=;
+	s=arc-20240116; t=1727081152; c=relaxed/simple;
+	bh=dqYEiBbupjRg1zIR1DoGNbbHYOqQUOZ7smtF8tjTIjE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=REPXE135AfL2lWpafCKaDnbtps/aRcwTUri8KvnQOfDkicd4hC5VwujLQq6nM8h/XuTpCOT7jbAaue5Qp384XnsLdumHYcJi5jO1DI6ASbLpCOaxc3X/Q4aBXW9RNLzOhmpKRJtaKL/AUnYE7v+hyye4aV2OtdFK4yZCRCPY3gQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VNNxugWp; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5356bb55224so5335193e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 01:43:12 -0700 (PDT)
+	 To:Cc:Content-Type; b=rpKNMPJp1y1wDZx6H0oovux7REn5aWIKlAvvEOcFLI5Dp4nrZ5cV63src6LCWSzaK73YwnE8GIXM/f69RNYNYHWjNlgz+TB8MFL/id7CGTf0laAtlyjgltZqc1ri5sluM3ZVciwdtsuS7tvg88Bz0yCo3f3T6yQARJr74s+gwvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gEvM3ldn; arc=none smtp.client-ip=209.85.222.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-846b934981aso804496241.3;
+        Mon, 23 Sep 2024 01:45:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727080991; x=1727685791; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aZz5ns/39I9CNLcdEHgb1bq93Bmp6tryH2rW0CAcV34=;
-        b=VNNxugWp6T0f8fg1SEvBLPmORAIyl5X67B9rqHxra+5cBaITskq08SgONOHrMM4XMM
-         xq2vn09c64cji3+XsveCGACoGMWqclM8zSajempw4sf73ujdfagGNJlu/O7yLIxzO8is
-         qbfCIaV+506+gB17GiZAXWwI5fQ+FkLpHp7Rjp7RPxZwBT/1T6FiRXsC9kRsZygHWC5D
-         jYy8rCjidApW3Ui3gqmvZA+MOckjjlLZKGWXibJ42Qw/1qp+uyGLrEmhrVojyQPWLp3X
-         K7clY16foXVp1FjZK9DeLUB1vIJBJCAm6P7E/l5N+ew4nCqL9B9PCxhGDjhaQKM+rPyt
-         Y4mw==
+        d=gmail.com; s=20230601; t=1727081150; x=1727685950; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=dqYEiBbupjRg1zIR1DoGNbbHYOqQUOZ7smtF8tjTIjE=;
+        b=gEvM3ldnhZvWkbK5LwH23aqVNUrkX00lYK9TvyO30MbGrvsxBaOKaulPoMBxlT2QOh
+         NaBGyXNsQHQpD3J1kdDTvE8Rp9aicpMExDBOyxbD+e8/z6Vou+M9X2bTBPLbFS8p3EUW
+         NSGFCyNe+ZYikyX8VlIbpm+Wy6ZTCuNIf3wHaGipGL6qa9aEdOzXdTCdDe1o3ThI5dW+
+         ebFd4gVL4Hx8/5l+1UncAg20V8umFSUX4COQe1mDYY9pUI542rkz1h3h20FVW0b00YG1
+         +V3lzc9KDbfwjDjMFMJ3xB+BXWtYIv2BMOql+rwVGDneGVteRXR4xpEpuYkEeEKRfNNA
+         h9rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727080991; x=1727685791;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aZz5ns/39I9CNLcdEHgb1bq93Bmp6tryH2rW0CAcV34=;
-        b=M+1b9XbsOAJZUx6CpEBd8at1Nr0o2EGKCfJECJ+7dsSRsF6+GEpOz1FY52BSRgMvZ7
-         xbiYoABySLLkhQcCZuZHqX2hC6tTiHvZV4J9FULmRq4vVywskw/gaG1lUbfakdxc9w5m
-         L9z78bM7ucOJ9SlNEKvSyFZiNLp66HG3dX/+ATvEPe1ngjY6/lrjrWSe5W5LafsEIjDQ
-         zYDiT5CdforAJnqie8ZlTsR6fJHuUijfgUwLFmYma5iWBBstHy+vmJsThW/otxYlh7nr
-         m7YS1BOsKZ4OCp46YKr3JD3Iofo7g42n9VQbGX+82Yz0V+69HgvEXt+HL7zfE7uddRwX
-         UxtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXktP6QD1HDNcZ+5ZX3AHzNPkg35eFF8wshNUrshOCTfYtSKYiMH0MIStGf/1X1tWh8Vwk43GP6hkeoHqw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIzAyLVFYJZ7WFUv/bz529L/MZ3CF7octaYMOJEOpwa6Ud2BcC
-	Tt/xUhNweYNuZBrJt0fhDmw1EQuzc8l9vYZcvMrHMx2NO+O2bRKYAx+UNOWc21f67jWIx0VO7UF
-	T43RDvDIqU0OrF4qDFDP5k7DfOh3Vdz4ILU/4Vg==
-X-Google-Smtp-Source: AGHT+IH/lTkkxNf7gVB4Qk11bFX5oTtze9g4A3iaawv5kVYgzIVZ7trMrLr/mwDA4DTElB5MHwruJq3qAdcaDv06+ig=
-X-Received: by 2002:a05:6512:398c:b0:535:6033:265f with SMTP id
- 2adb3069b0e04-536ad3ed8a8mr3787007e87.58.1727080990398; Mon, 23 Sep 2024
- 01:43:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727081150; x=1727685950;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dqYEiBbupjRg1zIR1DoGNbbHYOqQUOZ7smtF8tjTIjE=;
+        b=ReYHxkhIf9niOx8GU6euoYwtFPjxaj9wW0aTzVpKHT2c4RWtRNZ4rcpvB0INFkX2eF
+         MQgBOs9Qjv5D2iZmgEvChuk0T3xb4FVCaByttCeOy/NueW7A9YASLINq5hhugDdBpoFP
+         Y4DZAnk2WJGAxdvtfrtSmQA9FBjbF+jk35S/1aMCYH11ByMhpQsu9K8hNdmKhlCjT1la
+         hOs+wbl2JCf+tyc0hQaIs1xlETpvRXUWgBd9bugd7Hqw8qVVFS/L93sR0c1iiTbt899d
+         swrMjPrpGulr9sSaL3MwSxeng9W/oQkM7uw0gg1fY3chsQ4IoBGy6Dx+5FfWIW5Kth+l
+         f42Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVgiYpa6xJzCNRL8gKRhF5NUCsO2XnT8NFTofOMoE2sQOt9WEb/x3y3adLxWoZPeoF/WS8Cd1X4A69BYkA=@vger.kernel.org, AJvYcCXrOm9iO6k14D16QRKgR+P3gSuIp4W4L6ZTDTzL9pq6lLUkyiVYZJYWEHWIE48IFO9bQ/ulmg1pWfNY@vger.kernel.org
+X-Gm-Message-State: AOJu0YzP4VXO2wjYZUosLMQpICEKuqsvezA5+YSu49VrdvaKqXiOvUqh
+	4EelrSql9lEq7FpfhPYwpREevUBmF45alvD+cwgNMDcJhn+xe/Z31nzE/pjNYRUkeg+Z01HDiDT
+	jqKC/E7Ut4mW/A9yU1aL6mYGGSik=
+X-Google-Smtp-Source: AGHT+IEzbx43L1g7xNzICxB6bl0i3dkmy4SfSzShQk/2kMz8ApnMlXSxFMXtyZkY5Hp9AjqMiQ32fjxz3oAf6LqSXEg=
+X-Received: by 2002:a05:6122:2225:b0:4ef:678e:8a90 with SMTP id
+ 71dfb90a1353d-503e041b6b1mr6407274e0c.3.1727081149835; Mon, 23 Sep 2024
+ 01:45:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240906110113.3154327-1-sai.krishna.potthuri@amd.com>
-In-Reply-To: <20240906110113.3154327-1-sai.krishna.potthuri@amd.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 23 Sep 2024 10:42:58 +0200
-Message-ID: <CACRpkdY0VRAD4+P5aFiJetjxce95K1fDeeYVYwimrMMADRb9fg@mail.gmail.com>
-Subject: Re: [PATCH v5 0/3] pinctrl: pinctrl-zynqmp: Add Versal platform support
-To: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
-Cc: Michal Simek <michal.simek@amd.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jay Buddhabhatti <jay.buddhabhatti@amd.com>, 
-	Praveen Teja Kundanala <praveen.teja.kundanala@amd.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, saikrishna12468@gmail.com, git@amd.com
+References: <20240922105212.28099-1-kdipendra88@gmail.com> <ZvEoVC_j6jdBhvim@kuha.fi.intel.com>
+In-Reply-To: <ZvEoVC_j6jdBhvim@kuha.fi.intel.com>
+From: Dipendra Khadka <kdipendra88@gmail.com>
+Date: Mon, 23 Sep 2024 14:30:38 +0545
+Message-ID: <CAEKBCKOHEynh1CLDyY8uibUXt5XhU6yGDRKAswfeQhVxGVAdEg@mail.gmail.com>
+Subject: Re: [PATCH] Fix dereferencing freed memory 'fw'
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 6, 2024 at 1:01=E2=80=AFPM Sai Krishna Potthuri
-<sai.krishna.potthuri@amd.com> wrote:
+Hi Heikki,
 
-> Update the binding and pinctrl-zynqmp driver to add Versal platform
-> support.
-> Add Get Attribute ID in the Xilinx firmware driver to get the pin
-> information from Xilinx Platform Management Firmware.
+On Mon, 23 Sept 2024 at 14:20, Heikki Krogerus
+<heikki.krogerus@linux.intel.com> wrote:
 >
-> Changes in v5:
-> -> 1/3 - Used the pins and groups properties references available in $def=
-s
->          for properties in "mux" (suggested by Rob).
+> On Sun, Sep 22, 2024 at 10:52:11AM +0000, Dipendra Khadka wrote:
+> > smatch reported dereferencing freed memory as below:
+> > '''
+> > drivers/usb/typec/tipd/core.c:1196 tps6598x_apply_patch() error: dereferencing freed memory 'fw'
+> > '''
+>
+> This is only my opinion, but I don't like those '''single triple
+> quotes''' in commit messages - they are just confusing. You don't need
+> to use any kind of quotation marks in cases like this IMO.
+>
 
-Patches applied!
+Thanks for the feedback. I will send v2.
 
-Yours,
-Linus Walleij
+> thanks,
+>
+> --
+> heikki
+
+Best Regards,
+Dipendra Khadka
 
