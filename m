@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-335895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3648997EC36
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:24:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55A5597EC34
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:24:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6707C1C21160
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:24:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAB84B207E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42E819994A;
-	Mon, 23 Sep 2024 13:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE471993AF;
+	Mon, 23 Sep 2024 13:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rffk1QKP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mo8CkF8p"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5751993BB;
-	Mon, 23 Sep 2024 13:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B93153373;
+	Mon, 23 Sep 2024 13:24:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727097860; cv=none; b=fTJ1aXS9WP85ggUkryFduLCvyuIlYaJA/1/Z3uFXfbCT9KqD9KBH2yHfrI61T+rOuFDrmGHt4YG2b4SRxEvk07FxHWqc3tGM82GaS7oculB2a1CmOaTGp+FzDdo5wRmuxjG4GCtIyoiC/ktGA/rkjyX6HWlYqdlF5jYB2MO0YsQ=
+	t=1727097859; cv=none; b=j8RtM1rlMtinz6zUKrY3bphxuh5I5MOXq+e7tChvyzXi/2tHqTkwdrk1L4zb+6S4QNUAT3hTMoU3wgp+ta1LQG8CXvuuknOjHos/D2fU+fDIYvpeJwzAEYVMRtt92H4QHrny16YnR5NxELP5xMjNSkaeBQp+sHk7c/LxQEITpco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727097860; c=relaxed/simple;
-	bh=1Y5lWsWltXKCLrbYTCBEEqslN/hWBYcwxbc2HekEYDc=;
+	s=arc-20240116; t=1727097859; c=relaxed/simple;
+	bh=3JI6RiVBuJLIcdU7280ZfF/+YRIT/OIplxKMKuBFswQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BEFGFQxTvOV4VROPrC46bmC6kkbWMDTkYOD09C4SYUZXpl/+BoM/Kyl/Odcmu61o+NHpjN/3CUWkfn3wZvHZCPRkVbggvKXdGAYvtJZGn8aukpPJi5oy+Ziy0DKY5038SP9QHz6j/P7mVTlPVQiY0fcjLA6ajbm32P5FQBFUsUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rffk1QKP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DA41C4CEC7;
-	Mon, 23 Sep 2024 13:24:18 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=tM9yxTJzmpIuAqAU9bOdV+/56M/y3lf5puiK71Qz70/qpQqOoyXzqmP1ArymuIpJA8ogyAGHHcpNnEHouy4evXGEkMeD19CMe/jgi+kH0MXOcnZTgSEp9kxa53KLb6iCPGY8pmQRxLoEH2rX95G3wwJRFG8ESGJcmJ0BaXA/gvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mo8CkF8p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A75CFC4CEC4;
+	Mon, 23 Sep 2024 13:24:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727097859;
-	bh=1Y5lWsWltXKCLrbYTCBEEqslN/hWBYcwxbc2HekEYDc=;
+	s=k20201202; t=1727097858;
+	bh=3JI6RiVBuJLIcdU7280ZfF/+YRIT/OIplxKMKuBFswQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rffk1QKPBAYFtMH/ZWgcOreUBrNLZhVVmajBiOhZU6zjiayA8mI7wlOOjsv2HKIja
-	 mxHuD6khAtWxzLrUJhQSgBOZCjjACKOLCi16Qww8SHqHnE+45qONN6zybu5QXQLMIy
-	 reWyv4yPGpJUYW0txFfwZ9HEwmXIuHx4p0M3KxyQx/K3y6BhWfdsfU7WQH0GNEbMeO
-	 fXbvEMK+TNzz0LT2cAzdbn8q+l0gncIgO2yeONITpskAlKFHxaoUJ65W1ccO818/wu
-	 +q8/X2IKXuVBYdjlN6qVFfwQNc29iFoLBPTi5riPTVnQdaephJNCiQtKFEusqF2H0q
-	 TmROieqrSXjew==
-Message-ID: <ed7e7044-1b5a-44a4-be24-7c94278244b0@kernel.org>
-Date: Mon, 23 Sep 2024 16:24:15 +0300
+	b=mo8CkF8pKiu6gvVTcpvXRlsNlVYskfpDDRh/2A3s1HnCZJV77VQ5dk0C773JSd8KL
+	 DgImDXAd+MpvXdRhUk4JQ9UEnRWsvBL93l9Y56Q3tqmxsJ6D/TKmE661NcxqUhfy6b
+	 V1KkCXzAXR0z20Aw0GIkaxi5gqxoIjnca5FehleEfzRzoRNsoWdeo7VJ+zYW5q7mjy
+	 jtUsZAj+znl0aQbTcT6ypDHkpcfbAmhYpRAXj2ui6RHuljOV9hv3g9EBFqJd5OIi17
+	 euuu+5kWWXqqEo7Zp6awfE+GwBqT9S0r1Jo2mZnVB9Kfv85e4WFn4cUindf6Jzuc2A
+	 lt6NYozpLjjXQ==
+Message-ID: <6f13db36-f49c-4389-90df-a1bfffbd75d4@kernel.org>
+Date: Mon, 23 Sep 2024 15:24:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,94 +49,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] sub: cdns3: Use predefined PCI vendor ID constant
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- Peter Chen <peter.chen@kernel.org>, Pawel Laszczak <pawell@cadence.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20240913131710.3630560-1-andriy.shevchenko@linux.intel.com>
- <d6ec3b8b-9405-49fa-ba39-a0bf6311a489@kernel.org>
- <ZvFkv-xrs1ul7-oI@smile.fi.intel.com>
+Subject: Re: [PATCH] ata: libata: fix ALL_SUB_MPAGES not to be performed when
+ CDL is not supported
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: cassel@kernel.org, syzbot+37757dc11ee77ef850bb@syzkaller.appspotmail.com,
+ linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240921124117.82156-1-aha310510@gmail.com>
+ <f70ee386-d8eb-4d28-99fd-9d40e5d93ca8@kernel.org>
+ <CAO9qdTGAgBux-M3GxZdBbBpsUm0V_E8fyWSjZuA7jA8bH-Qf4g@mail.gmail.com>
+ <7f297a66-6c82-498e-81da-85bbb74c8a8f@kernel.org>
+ <CAO9qdTE+vdFPsCLfaxMK1N8t=9+zSF88LQr-C5L=K9rZRoQjSQ@mail.gmail.com>
 Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <ZvFkv-xrs1ul7-oI@smile.fi.intel.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <CAO9qdTE+vdFPsCLfaxMK1N8t=9+zSF88LQr-C5L=K9rZRoQjSQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-On 23/09/2024 15:53, Andy Shevchenko wrote:
-> On Mon, Sep 23, 2024 at 03:42:20PM +0300, Roger Quadros wrote:
->> On 13/09/2024 16:17, Andy Shevchenko wrote:
->>> The PCI vendor ID for Cadence is defined in pci_ids.h. Use it.
->>> While at it, move to PCI_DEVICE() macro and usual pattern for
->>> PCI class and device IDs.
-> 
-> ...
-> 
->>> +#define PCI_DEVICE_ID_CDNS_USB3	0x0100
+On 2024/09/23 15:22, Jeongjun Park wrote:
+> Damien Le Moal <dlemoal@kernel.org> wrote:
 >>
->> Why do we need to change this? You did not explain in commit log.
-> 
-> It's explained: "...usual pattern for PCI class and device IDs."
-> 
->> I would call this PCI_DEVICE_ID_CDNS_USBSS3. Also see later why to differentiate with USBSSP.
-> 
-> It's good to know that there are semantic differences,
-> but it is already applied, feel free to update.
-> 
-> ...
-> 
->>> -	{ PCI_DEVICE(CDNS_VENDOR_ID, CDNS_DEVICE_ID), },
->>> +	{ PCI_VDEVICE(CDNS, PCI_DEVICE_ID_CDNS_USB3) },
+>> On 2024/09/23 13:15, Jeongjun Park wrote:
+>>> Damien Le Moal <dlemoal@kernel.org> wrote:
+>>>>
+>>>> On 2024/09/21 14:41, Jeongjun Park wrote:
+>>>>> In the previous commit 602bcf212637 ("ata: libata: Improve CDL resource
+>>>>> management"), the ata_cdl structure was added and the ata_cdl structure
+>>>>> memory was allocated with kzalloc(). Because of this, if CDL is not
+>>>>> supported, dev->cdl is a NULL pointer, so additional work should never
+>>>>> be done.
+>>>>>
+>>>>> However, even if CDL is not supported now, if spg is ALL_SUB_MPAGES,
+>>>>> dereferencing dev->cdl will result in a NULL pointer dereference.
+>>>>>
+>>>>> Therefore, I think it is appropriate to check dev->flags in
+>>>>> ata_scsiop_mode_sense() if spg is ALL_SUB_MPAGES to see if CDL is supported.
+>>>>>
+>>>>> Reported-by: syzbot+37757dc11ee77ef850bb@syzkaller.appspotmail.com
+>>>>> Tested-by: syzbot+37757dc11ee77ef850bb@syzkaller.appspotmail.com
+>>>>> Fixes: 602bcf212637 ("ata: libata: Improve CDL resource management")
+>>>>> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+>>>>> ---
+>>>>>  drivers/ata/libata-scsi.c | 4 +++-
+>>>>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+>>>>> index 3328a6febc13..6f5527f12b0e 100644
+>>>>> --- a/drivers/ata/libata-scsi.c
+>>>>> +++ b/drivers/ata/libata-scsi.c
+>>>>> @@ -2442,7 +2442,9 @@ static unsigned int ata_scsiop_mode_sense(struct ata_scsi_args *args, u8 *rbuf)
+>>>>>       if (spg) {
+>>>>>               switch (spg) {
+>>>>>               case ALL_SUB_MPAGES:
+>>>>> -                     break;
+>>>>> +                     if (dev->flags & ATA_DFLAG_CDL)
+>>>>> +                             break;
+>>>>> +                     fallthrough;
+>>>>
+>>>> I do not think this is correct at all. If the user request all sub mpages, we
+>>>> need to give that list regardless of CDL support. What needs to be fixed is that
+>>>> if CDL is NOT supported, we should not try to add the information for the T2A
+>>>> and T2B sub pages. So the fix should be this:
+>>>
+>>> Okay. But after looking into it further, I think it would be more appropriate to
+>>> also check the ATA_DFLAG_CDL_ENABLED flag when checking if CDL is
+>>> not supported. So it seems like it would be better to modify the condition as
+>>> below.
+>>>
+>>> What do you think?
+>>>
+>>> if (!(dev->flags & ATA_DFLAG_CDL
+>>>       dev->flags & ATA_DFLAG_CDL_ENABLED) || !dev->cdl)
+>>>         return 0;
 >>
->> For better readability I still prefer
->> 	PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_USBSS3)
-> 
-> I disagree. The PCI_VDEVICE() has less letters and much easier to get
-> the vendor from the (less power to parse and decode is required).
-> 
-
-:)
-
-> ...
-> 
->>> -#define CDNS_DEVICE_ID		0x0200
->>> -#define CDNS_DRD_ID		0x0100
->>> -#define CDNS_DRD_IF		(PCI_CLASS_SERIAL_USB << 8 | 0x80)
->>> +#define PCI_DEVICE_ID_CDNS_USB3		0x0100
+>> No, that would be wrong. The mode sense is to report if CDL is *supported*, not
+>> if it is enabled or not. So we always must report the T2A and T2B pages for SATA
+>> drives that support CDL, even if the CDL feature is disabled.
 >>
->> This is an entirely different card who's device ID should be 0x200?
->> Also I don't think this card supports USB3 so it is a wrong name choice.
-> 
-> Are you stating that 0x0100 in both cases points to the *different* devices?!
-> This is unbelievable, however possible abuse of PCI IDs.
-
-I am not entirely sure.
-What I do know is that one card should be USBSS (0x100) and other should be USBSSP (0x200). P for super-speed-Plus.
-
-Also please see commit 96b96b2a567f ("usb: cdnsp: changes PCI Device ID to fix conflict with CNDS3 driver")
-
-> 
->> I would call this PCI_DEVICE_ID_CDNS_USBSSP	0x200	to match with PCI driver name.
+>> The flag ATA_DFLAG_CDL_ENABLED is not checked in ata_scsiop_mode_sense() for
+>> this reason. Adding that check in ata_msense_control_spgt2() would be wrong.
 >>
->>> +#define PCI_DEVICE_ID_CDNS_UDC		0x0200
+> 
+> Thanks for your reply! I will write a v2 patch to meet the
+> requirements you provided
+> and send it to you.
+
+No need. I have the fix patch already. And while writing it, I also noticed that
+ata_msense_control() is wrong (the ALL_SUB_MPAGES case adds the T2A page twice
+instead of adding the T2A page and then the T2B page. So I have another patch to
+fix that.
+
+Will be posting soon.
+
+> 
+> Regards,
+> Jeongjun Park
+> 
 >>
->> UDC is used for Peripheral controller only. Is that really the case here?
->> originally it was called DRD. 
->> So how about?
->> 	PCI_DEVICE_ID_CDNS_DRD		0x0100
-> 
-> I strongly disagree. The same PCI IDs should be named the same independently on
-> how many drivers use them.
+>> --
+>> Damien Le Moal
+>> Western Digital Research
 
-Agreed.
 
-> 
-> The only possibility to have what you propose is the complete screwed up PCI
-> IDs allocations done by vendor (I do not believe this is the case with Cadence).
-> 
 -- 
-cheers,
--roger
+Damien Le Moal
+Western Digital Research
 
