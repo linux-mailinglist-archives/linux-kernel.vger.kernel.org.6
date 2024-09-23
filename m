@@ -1,96 +1,157 @@
-Return-Path: <linux-kernel+bounces-335942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FA7997ED02
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:20:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B855D97ED04
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:20:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB7C6281F84
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:20:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C89D282A8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48AFD197554;
-	Mon, 23 Sep 2024 14:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fae5vt/k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A676B19CD1B
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 14:19:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9FD219CC1F;
+	Mon, 23 Sep 2024 14:19:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368BE19DF4D;
+	Mon, 23 Sep 2024 14:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727101177; cv=none; b=CeRtKH7Oc0805Lxu0RmOTx9SqrqSS2lFp+lnuvNTasPWWZ8u8bknx8OG0at4yxyLq6v4+NTImImiSNuMHUvJ9Axo6/GV28ayH00RMwNHxZWLVL3orh+FDKG+L/LcTAFDM+UvhO32gqsSETnqS/+Hr7OarmbYsrOYAEO135lxqic=
+	t=1727101194; cv=none; b=Gx/6Upmnumbxw+B92I3URr57rFhG/7/j6639VaRCu7gy9m66V2yvbQ3m+sHn8gei0uVDQagRn5A1P6UToyao0JuY6qTJSikp13nSXq3ZxNEBcuJXw0ieHW6gCizcmj+ofn02Luex2vBm2XytYm7mJi6Gdfm6VYlB6Ve4RdwRnm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727101177; c=relaxed/simple;
-	bh=SFgrI4olngEkBpWsmcuVB37o8iX9U8HhunyWS7uFIBc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IE2NQKYFTzDRiAxH1K6DLYlwo6Ax06h5k4PmfpVfVrcpO1s9nLquqOQajhQwUj8IcvEmYbMAFFxLx1cByoWlC9Fa2OcDMJM8/+eCpxhSTJJFhj9Aqcl374FS1FyuKJlifBSortiPAbDJESEdVQ8uWBJcFKa8y5p12E2kAKpmdYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fae5vt/k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CC33C4CEC4;
-	Mon, 23 Sep 2024 14:19:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727101177;
-	bh=SFgrI4olngEkBpWsmcuVB37o8iX9U8HhunyWS7uFIBc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Fae5vt/ksJ2GXeCd49ZAgLuCXPu1fjht6SxVpgM6Qm6qRx5kA2QXZtLGKhtwZFWzs
-	 COAQSzgiSTPQmbDtpnkppPaNeNWNkBargXPMUBlBYD+6+SQA2fQFr9rJFi2iBpF1zr
-	 T0hgSwkO2plXuEYAgWj/U0B7SORQA5byHGIbm8yQmr/y2r3N/M+JDa/xhPSQp2mJjH
-	 c8+6XNo/JVulerroVQ3ihTXvhGecvnkK5DjN+X/zVkhXZGfLhGipISdPF118KDbWVs
-	 gai+4L5I/vLiR85zaEqJIdnEaDjEkZ60pLo+CGjyY7Dh9e78SjjnLxZrjDZ8Vgg1Bh
-	 Mby5oBwG7CJgQ==
-Date: Mon, 23 Sep 2024 16:19:32 +0200
-From: Mark Brown <broonie@kernel.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] regulator: do not ignore provided init_data
-Message-ID: <ZvF49CZhRc2rrPQ0@finisterre.sirena.org.uk>
-References: <20240920-regulator-ignored-data-v1-1-7ea4abfe1b0a@baylibre.com>
+	s=arc-20240116; t=1727101194; c=relaxed/simple;
+	bh=HE9XapyKDp/Lx/cb8T6Xc5488xqHzYgWFyFVytf/0EM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CmEhAW/6M0T3BbUUEJSsC7rrGx0zh0IoIHIKHp9mcHEvHjVlYEPA9QcaXDEoSmYrW3krfUAV1FpR5vu8p3CoHfnXm6FKTEtau+PbgG+5sW719Od/fsCu4270cDs71ozZkIGSO2rTmhgNdU0rg3YOiXIO4yBgxdv2UsScwRVUrG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 78EA5FEC;
+	Mon, 23 Sep 2024 07:20:19 -0700 (PDT)
+Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8CD8A3F64C;
+	Mon, 23 Sep 2024 07:19:47 -0700 (PDT)
+From: Vincenzo Frascino <vincenzo.frascino@arm.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-mm@kvack.org
+Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: [PATCH v2 0/8] vdso: Use only headers from the vdso/ namespace
+Date: Mon, 23 Sep 2024 15:19:35 +0100
+Message-Id: <20240923141943.133551-1-vincenzo.frascino@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5bDXW9jFwRojPsBD"
-Content-Disposition: inline
-In-Reply-To: <20240920-regulator-ignored-data-v1-1-7ea4abfe1b0a@baylibre.com>
-X-Cookie: Editing is a rewording activity.
+Content-Transfer-Encoding: 8bit
 
+The recent implementation of getrandom in the generic vdso library,
+includes headers from outside of the vdso/ namespace.
 
---5bDXW9jFwRojPsBD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The purpose of this patch series is to refactor the code to make sure
+that the library uses only the allowed namespace.
 
-On Fri, Sep 20, 2024 at 07:21:12PM +0200, Jerome Brunet wrote:
+The series has been rebased on [1] to simplify the testing. 
 
-> Note that it is probably not problem at the moment since no one complained
-> about ignored data.
+[1] git://git.kernel.org/pub/scm/linux/kernel/git/crng/random.git master
 
-I'm fine with tweaking the functionality here but since I don't think
-we're using this at all we should probably warn about systems with both
-forms of constraints specified since they probably need some
-consideration needed and people might not be doing this intentionally.
+Changes:
+--------
+v2:
+  - Added common PAGE_SIZE and PAGE_MASK definitions.
+  - Added opencoded macros where not defined.
+  - Dropped VDSO_PAGE_* redefinitions.
 
-That probably means checking if regulator_of_get_init_node() can find
-something and warning if that's the case.
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason A. Donenfeld <Jason@zx2c4.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Naveen N Rao <naveen@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Theodore Ts'o <tytso@mit.edu>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 
---5bDXW9jFwRojPsBD
-Content-Type: application/pgp-signature; name="signature.asc"
+Vincenzo Frascino (8):
+  x86: vdso: Introduce asm/vdso/mman.h
+  arm64: vdso: Introduce asm/vdso/mman.h
+  vdso: Introduce vdso/mman.h
+  vdso: Introduce vdso/page.h
+  x86: vdso: Modify asm/vdso/getrandom.h to include datapage
+  vdso: Modify vdso/getrandom.h to include the asm header
+  vdso: Introduce uapi/vdso/random.h
+  vdso: Modify getrandom to include the correct namespace.
 
------BEGIN PGP SIGNATURE-----
+ arch/alpha/include/asm/page.h         |  6 +----
+ arch/arc/include/uapi/asm/page.h      |  7 +++--
+ arch/arm/include/asm/page.h           |  5 +---
+ arch/arm64/include/asm/page-def.h     |  5 +---
+ arch/arm64/include/asm/vdso/mman.h    | 15 +++++++++++
+ arch/csky/include/asm/page.h          |  8 ++----
+ arch/hexagon/include/asm/page.h       |  4 +--
+ arch/loongarch/include/asm/page.h     |  7 +----
+ arch/m68k/include/asm/page.h          |  6 ++---
+ arch/microblaze/include/asm/page.h    |  5 +---
+ arch/mips/include/asm/page.h          |  7 +----
+ arch/nios2/include/asm/page.h         |  7 +----
+ arch/openrisc/include/asm/page.h      | 11 +-------
+ arch/parisc/include/asm/page.h        |  4 +--
+ arch/powerpc/include/asm/page.h       | 10 +------
+ arch/riscv/include/asm/page.h         |  4 +--
+ arch/s390/include/asm/page.h          |  4 +--
+ arch/sh/include/asm/page.h            |  6 ++---
+ arch/sparc/include/asm/page_32.h      |  4 +--
+ arch/sparc/include/asm/page_64.h      |  4 +--
+ arch/um/include/asm/page.h            |  5 +---
+ arch/x86/include/asm/page_types.h     |  5 +---
+ arch/x86/include/asm/vdso/getrandom.h |  2 ++
+ arch/x86/include/asm/vdso/mman.h      | 15 +++++++++++
+ arch/xtensa/include/asm/page.h        |  8 +-----
+ include/uapi/linux/random.h           | 26 +-----------------
+ include/uapi/vdso/random.h            | 38 +++++++++++++++++++++++++++
+ include/vdso/datapage.h               |  2 ++
+ include/vdso/getrandom.h              |  1 +
+ include/vdso/mman.h                   |  7 +++++
+ include/vdso/page.h                   | 18 +++++++++++++
+ lib/vdso/getrandom.c                  | 22 ++++++++--------
+ 32 files changed, 137 insertions(+), 141 deletions(-)
+ create mode 100644 arch/arm64/include/asm/vdso/mman.h
+ create mode 100644 arch/x86/include/asm/vdso/mman.h
+ create mode 100644 include/uapi/vdso/random.h
+ create mode 100644 include/vdso/mman.h
+ create mode 100644 include/vdso/page.h
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbxePMACgkQJNaLcl1U
-h9DDwgf+MgFeHhmXWj1l8ZBsWeEGvaVY/rlWtw6RoUzGcv+COycfmxa40CQO5BUD
-Zr5TWIMZlioOSG2wmA+BocZ1Yft2Kj/rGD8mNbiAf3OfOM/RZ/Varme0MP5GhzuU
-6jlsI4sh9yihBSgZPeXixNs2GrtORlSynaANtNfT/0Dgte74hen8NOI4JiKLhqA3
-mg0ykv6J3grcSQSnIaEKB2v3bZt5pDufnP1RD0zIbYUsR3w3YuqAdjRyBo9new/C
-Hm/9U4RJbMHRuozQMv8Psl+aVHR2rRAon/2H6b83SZlswoJLovKaVzXh+w/QqSIb
-DUtfIp+slH+73UVxoP0DsyDzEGxv/g==
-=meRP
------END PGP SIGNATURE-----
+-- 
+2.34.1
 
---5bDXW9jFwRojPsBD--
 
