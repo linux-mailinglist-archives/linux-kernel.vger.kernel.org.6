@@ -1,130 +1,117 @@
-Return-Path: <linux-kernel+bounces-336383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC9359839D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 01:03:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38DEB9839E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 01:05:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2031F1C2261F
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 23:03:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D60B71F22C4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 23:05:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92539EBE;
-	Mon, 23 Sep 2024 23:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D40126BE7;
+	Mon, 23 Sep 2024 23:05:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GRyBsoyU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="RPVr1/rm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2386213B58E;
-	Mon, 23 Sep 2024 23:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65332EBE;
+	Mon, 23 Sep 2024 23:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727132577; cv=none; b=BCSHATh6fgy7aGO7FkU8wWa6iLcq5MvWF5HUDCugo0z+3NjrMZOjETA0mII1/MUamkhJP4J1jAe2ZFbTMhmxyNIT/GQ5KHHGuUUuKPEnyfnp6Vd/ogBzPVepnOWw6Vb4wAEh/eSwIyVMuZskv0rxh1Or0zMQXYM4sDb30Z4XwFI=
+	t=1727132741; cv=none; b=b+2IEGFSV43a/SKX39ME203QLRfjdG3QigZOV4z7DU2DnL1GN5VN8yKBaZkIGc3fIS25m5D7J7P2Arj+kAvbLrd+nmG8ETgCBorjh6v7MAXoJVvdNVVxydhQC2TQH+BHImwW2O25I6PJREpX13vpWA92kdEvHZbmAfv7dBFOM3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727132577; c=relaxed/simple;
-	bh=sT2ERJf1IiiQr2+SWze8EkX9mc+I3GG3PKU3JCCVBjY=;
+	s=arc-20240116; t=1727132741; c=relaxed/simple;
+	bh=0O6PtROxadZrY/VAcyyyw9Np/jYoGHj6QI/nNVeXILo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BsoWCptb1Ubt1eSeJtFrz8HOda5leZ0PLe1i39keZ0yXvt0+lEUlGdAuXSxN5v4JJniql98GnTgZnKEkgkUB9uspM8KoccLtKbLoBgI7cCn+HY5npX3IAqRwduRQMHUNWJ1fWYSN7j6bQvQxQFT2AKjFr8wMj+RCscr//Qyb0mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GRyBsoyU; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727132575; x=1758668575;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sT2ERJf1IiiQr2+SWze8EkX9mc+I3GG3PKU3JCCVBjY=;
-  b=GRyBsoyUFAcS+ndUalrjfDTzXXJgVFluape6Smk8QoLIM/+tmTD8BrJJ
-   4Z1aIVqYqegfXVyiEytNYnuiiye/ml5BqE4q3k9RS2a1PVuBbLHX5eC75
-   wHqQRnLkk0hGiENl4wz+XTssE8HyMjZRsAsYJNjQUWyyVMHWHOJdtDOvT
-   aeUnJWI5hu+TOxbxjh4tfnZCzWn4ZLUwrt9ekav6RUVVnfdbb3aFMbdn9
-   HLjS/jTCq53/efcq4Zpa41wKwlmpEsB9hn3lmKfbmb63HWhMyNoFcar2b
-   6aL501x+Gwuamaz9U0449U0DYah404Zmi9zfsQEEu2nJBtCUHIRZTqK3U
-   g==;
-X-CSE-ConnectionGUID: SZyQggyfRXGDWqdq8P+iAw==
-X-CSE-MsgGUID: 3QjBCGZRQ3eXNIG6vHfjsw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="43619919"
-X-IronPort-AV: E=Sophos;i="6.10,252,1719903600"; 
-   d="scan'208";a="43619919"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 16:02:54 -0700
-X-CSE-ConnectionGUID: j7WMgWH0REWhb6PcC1xKjw==
-X-CSE-MsgGUID: pjBFfilMSHiuQui1WsfUtQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,252,1719903600"; 
-   d="scan'208";a="76138059"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 23 Sep 2024 16:02:49 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sss4s-000Hfb-0R;
-	Mon, 23 Sep 2024 23:02:46 +0000
-Date: Tue, 24 Sep 2024 07:02:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: Md Sadre Alam <quic_mdalam@quicinc.com>, broonie@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	andersson@kernel.org, konradybcio@kernel.org,
-	miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
-	manivannan.sadhasivam@linaro.org, vkoul@kernel.org,
-	nikita.shubin@maquefel.me, esben@geanix.com,
-	linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org
-Cc: oe-kbuild-all@lists.linux.dev, quic_srichara@quicinc.com,
-	quic_varada@quicinc.com, quic_mdalam@quicinc.com
-Subject: Re: [PATCH v10 6/8] spi: spi-qpic: add driver for QCOM SPI NAND
- flash Interface
-Message-ID: <202409240634.CH4E22kp-lkp@intel.com>
-References: <20240922113351.2390195-7-quic_mdalam@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lvAHHRKoDNPMwN8Eq15fjIacaagVgEr1HTH0xDC3xbTz9HSq/D2q8oUVx3XdchHKcE8qAaM6IqpqvQ0vcIhnfKk+tsjQ4Add0g6Zi8j9tdd5uCBbmc9P9FR/MuHRg62awu4ZP0xdijS/bx110DBfvL4qzfHMIu2wrBtFIbxggjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=RPVr1/rm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12C89C4CEC4;
+	Mon, 23 Sep 2024 23:05:38 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="RPVr1/rm"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1727132737;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5BZ/LKuy4JUAxkCxQ7w2V85f9H0J8TJTm3lbIAOw3TI=;
+	b=RPVr1/rmQkiFFZmwEAEGwQ0hr7hRSCwHhoQiMrMWvFmxgkNs3jJ7HaTbTKUZURFBkafIpK
+	08R2gMJKzesQcloQtqFCdhcivSdF4L8PMxIwzjSe2SeSw4Y3ym7Lx0DRq6ABFLk5gm64h4
+	MNmvE9iqKM7GieSVt00jnmiPN48918E=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id e7ef6b0d (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 23 Sep 2024 23:05:36 +0000 (UTC)
+Date: Tue, 24 Sep 2024 01:05:33 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-mm@kvack.org, Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH v2 1/8] x86: vdso: Introduce asm/vdso/mman.h
+Message-ID: <ZvH0PdVy5jJN3VTt@zx2c4.com>
+References: <20240923141943.133551-1-vincenzo.frascino@arm.com>
+ <20240923141943.133551-2-vincenzo.frascino@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240922113351.2390195-7-quic_mdalam@quicinc.com>
+In-Reply-To: <20240923141943.133551-2-vincenzo.frascino@arm.com>
 
-Hi Md,
+Hi,
 
-kernel test robot noticed the following build errors:
+I have the feeling I said this in the last two revisions, but maybe I
+just thought it or agreed with somebody else who typed it but never
+typed it myself, so now I'm typing it in no uncertain terms.
 
-[auto build test ERROR on mtd/nand/next]
-[also build test ERROR on broonie-spi/for-next robh/for-next linus/master v6.11 next-20240923]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+On Mon, Sep 23, 2024 at 03:19:36PM +0100, Vincenzo Frascino wrote:
+> +#define VDSO_MMAP_PROT	PROT_READ | PROT_WRITE
+> +#define VDSO_MMAP_FLAGS	MAP_DROPPABLE | MAP_ANONYMOUS
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Md-Sadre-Alam/spi-dt-bindings-Introduce-qcom-spi-qpic-snand/20240922-193748
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next
-patch link:    https://lore.kernel.org/r/20240922113351.2390195-7-quic_mdalam%40quicinc.com
-patch subject: [PATCH v10 6/8] spi: spi-qpic: add driver for QCOM SPI NAND flash Interface
-config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20240924/202409240634.CH4E22kp-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240924/202409240634.CH4E22kp-lkp@intel.com/reproduce)
+No, absolutely not. This is nonsense. Those flags aren't "the vdso
+flags" or something. The variable name makes no sense. Moving the
+definition outside of getrandom.c like the next patch does also makes no
+sense. Do not do this.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409240634.CH4E22kp-lkp@intel.com/
+If you need to, for some reason, rename those symbols, then rename them
+each to VDSO_MAP_ANONYMOUS or whatever, and then use those from within
+getrandom.c so it remains as readable and reasonable as it currently is.
 
-All errors (new ones prefixed by >>):
+But under no circumstances should you move where this is expressed and
+rename it something generic like "vdso flags", when it is not generic
+but rather very specific to the function where it is currently used.
+IOW, please take a look and try to understand the code that you're
+touching when proposing changes like this.
 
-   loongarch64-linux-ld: drivers/spi/spi-qpic-snand.o: in function `qcom_spi_remove':
->> spi-qpic-snand.c:(.text+0x3e8): undefined reference to `qcom_nandc_unalloc'
-   loongarch64-linux-ld: drivers/spi/spi-qpic-snand.o: in function `qcom_spi_probe':
->> spi-qpic-snand.c:(.text+0xb48): undefined reference to `qcom_nandc_alloc'
->> loongarch64-linux-ld: spi-qpic-snand.c:(.text+0xbe4): undefined reference to `qcom_write_reg_dma'
-   loongarch64-linux-ld: spi-qpic-snand.c:(.text+0xc08): undefined reference to `qcom_write_reg_dma'
-   loongarch64-linux-ld: spi-qpic-snand.c:(.text+0xc24): undefined reference to `qcom_write_reg_dma'
-   loongarch64-linux-ld: spi-qpic-snand.c:(.text+0xc40): undefined reference to `qcom_write_reg_dma'
->> loongarch64-linux-ld: spi-qpic-snand.c:(.text+0xc48): undefined reference to `qcom_submit_descs'
->> loongarch64-linux-ld: spi-qpic-snand.c:(.text+0xc7c): undefined reference to `qcom_nandc_unalloc'
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Also, though, I don't quite see what this patch accomplishes. If you're
+fine doing #include <notvdso/whatever.h> into here, importing this
+header into vdso code will transitively include notvdso/whatever.h with
+it. So in that case, either we can keep using MAP_ANONYMOUS and whatnot
+in the original sane symbol names, or this approach isn't correct in the
+first place.
+
+Maybe what you want instead is a simpler vdso/whatever.h header that
+just includes nonvdso/whatever.h, and then you let getrandom.c and other
+things keep using the same symbols as they were using before.
+
+Jason
 
