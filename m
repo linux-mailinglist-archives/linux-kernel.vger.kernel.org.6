@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-335777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35E6E97EA83
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:12:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1406097EA88
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:14:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F06F92821CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:12:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 436CB1C215C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27DD8198838;
-	Mon, 23 Sep 2024 11:12:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m7dP0idm"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F980198A05;
+	Mon, 23 Sep 2024 11:14:25 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26477198827;
-	Mon, 23 Sep 2024 11:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB1C19412F;
+	Mon, 23 Sep 2024 11:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727089946; cv=none; b=k7KA2kPhXCavFJMf4WQnaiXZ3qDeKb2FoNWtoBHreKtsOwLPbXfPsbWqJZfsaaJn5IlA29tejP03zblIUKENhI8SeyxO10ckBKvgmFsKtpUvfwqaMax3Cyjh4zwIU5MHrDmk+nTl8DsbdCZrmC7UpFSSWWN0ZGxfsEW+qsm5D88=
+	t=1727090064; cv=none; b=M4VG0p3ULfgaV7c0VKIdMRlnKDAtzBKn6qSQIz0rFfITXosQ689PwQGwIyZW+xcDZnDIYhbMq24PzNZF/NhQ6OpPRKEhmdVHaqnF4OPX5E1uvkfQdRQiNDeKcY9SiwpfnqR398RgpL/0aNXlGm5V9lXXMQ3jPLPeeDUKriuf1+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727089946; c=relaxed/simple;
-	bh=7Uk/BvAzCSlnJH7buOhPPD2FCL4vS4J2C9jomty2e8k=;
+	s=arc-20240116; t=1727090064; c=relaxed/simple;
+	bh=Bq/UMrG4pbuUbckyfGhjUFjrP/4IPFtDo6ZAxSD5KYI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eRYCTDwYM8KeL6xPMs8XWpFO3z+ZBFNBs3rnlkoelyENFIE3sR+g0WgVw4g92KfmY6dQkhCU+CK645PDefSVqj40tuTWCJGu1RwfCTwBdOCBRfnD58Hast7gLJg+xrXQdtXy1X20haKX+fqfsfHXjzhk2vDkw3sbkWOrBLOVPqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m7dP0idm; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727089945; x=1758625945;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7Uk/BvAzCSlnJH7buOhPPD2FCL4vS4J2C9jomty2e8k=;
-  b=m7dP0idmhMX7ISR2GmgWJpPXtNTUBp3fly0wAohMbZQdi2sPfmHrHFtI
-   24x8r+i34rg/9Sjf5ad1XnFiiTKG/rJ++KlRlmOU0WIHHZxepV7024qrO
-   00z5JbPiCtBoCs7L6nqC0scMJcTKpgEgVHP3FkDypf6XHoUPiywrIPVMA
-   YjEQC62s7q5qBM3WB5Eaq1JciR63Zt7xGOpi+YvkiVqWSRhLJ1DBTck80
-   SDKlhOGl7c3SHZolLB1mRtor5yZQe90nv4mY/jjZUVoU8mkvXSGz/0dIR
-   VqmY312FAJRFohQPex8FAfWcIJnqNprX1LMU4/6SFed9PFNEESZznlr1T
-   w==;
-X-CSE-ConnectionGUID: Rm6LYU4OSTe9kilDRnMGjQ==
-X-CSE-MsgGUID: fhPjUiahQH273fWMY83Gcg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11202"; a="51448972"
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wx3QhJq7/IpltAtDOx/asMxhsIpegw7uFU5e51SjeTI15mL+EINnCFH/V3cZcKWrna2RxmSPvhM1wiTDSNbHVkoqrj4b87S0ra1E7nUegdeMtC299lQYc3MprJsFMMkyUBsq9q7JVPXzK2xVS3AIfHiff20aAtkHba3UNagy4WQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: L8Sb1rNORpqAhfXgrl4c4Q==
+X-CSE-MsgGUID: 0rIVFschS7+ymhdIPZNidA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11202"; a="26150733"
 X-IronPort-AV: E=Sophos;i="6.10,251,1719903600"; 
-   d="scan'208";a="51448972"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 04:12:25 -0700
-X-CSE-ConnectionGUID: Tw+hnIZHTE6oUkR7QPdYMw==
-X-CSE-MsgGUID: /BchHAHfS+WqFegAIgyz1Q==
+   d="scan'208";a="26150733"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 04:14:22 -0700
+X-CSE-ConnectionGUID: lvBCSTzISEKQ5xHc/QHiiw==
+X-CSE-MsgGUID: qdtAfHCPTyK+NQaNm6zcWA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,251,1719903600"; 
-   d="scan'208";a="75806075"
+   d="scan'208";a="70626585"
 Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 04:12:23 -0700
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 04:14:17 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1ssgzM-0000000Bxsj-0Rdh;
-	Mon, 23 Sep 2024 14:12:20 +0300
-Date: Mon, 23 Sep 2024 14:12:19 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Kunwu Chan <chentao@kylinos.cn>
-Cc: linux@armlinux.org.uk, robh@kernel.org, saravanak@google.com,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] amba: Add dev_is_amba() function and export it for
- modules
-Message-ID: <ZvFNE7pbwFN28ROF@smile.fi.intel.com>
-References: <20240923094249.80399-1-chentao@kylinos.cn>
- <20240923094249.80399-2-chentao@kylinos.cn>
- <ZvFM6yC1EQPS5w_s@smile.fi.intel.com>
+	(envelope-from <andy@kernel.org>)
+	id 1ssh1C-0000000Bxv2-2mWd;
+	Mon, 23 Sep 2024 14:14:14 +0300
+Date: Mon, 23 Sep 2024 14:14:14 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	Ivan Mikhaylov <fr0st61te@gmail.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	Dumitru Ceclan <mitrutzceclan@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
+	Marius Cristea <marius.cristea@microchip.com>,
+	Sergiu Cuciurean <sergiu.cuciurean@analog.com>,
+	Dragos Bogdan <dragos.bogdan@analog.com>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pwm@vger.kernel.org
+Subject: Re: [PATCH 0/7] *** Add support for AD485x DAS Family ***
+Message-ID: <ZvFNhiU3aOZ_zHJP@smile.fi.intel.com>
+References: <20240923101206.3753-1-antoniu.miclaus@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,21 +80,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZvFM6yC1EQPS5w_s@smile.fi.intel.com>
+In-Reply-To: <20240923101206.3753-1-antoniu.miclaus@analog.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Sep 23, 2024 at 02:11:40PM +0300, Andy Shevchenko wrote:
-> On Mon, Sep 23, 2024 at 05:42:47PM +0800, Kunwu Chan wrote:
-> > Add dev_is_amba() function to determine
-> > whether the device is a AMBA device.
+On Mon, Sep 23, 2024 at 01:10:17PM +0300, Antoniu Miclaus wrote:
+> Add support for AD485X fully buffered, 8-channel simultaneous sampling,
+> 16/20-bit, 1 MSPS data acquisition system (DAS) with differential, wide
+> common-mode range inputs.
 > 
-> Thanks, but it needs at least a user to show the conversion.
-> I think I suggested in the last discussion to convert all
-> straightforward cases (which are not the direct users of the
-> given bus type).
+> Some particularities:
+> 1. softspan - the devices support multiple softspans which are represented in iio
+>               through offset/scale. The current handling implies changing both
+>               the scale and the offset separately via IIO, therefore in order to
+>               properly set the softspan, each time the offset changes the softspan
+>               is set to the default value. And only after changing also the scale
+>               the desired softspan is set. This is the approach we are suggesting
+>               since we need the softspan configurable from userspace and not from
+>               devicetree.
+> 
+> 2. packet format - Data provided on the CMOS and LVDS conversion data output buses
+>                    are packaged into eight channel packets. This is currently handled
+>                    as extended info.
 
-Okay, I see now, I was only Cc'ed to the first in the series...
-Scratch that comment then, sorry for the noise.
+Thanks for the series!
+
+Quick note: *** in the Subject was also meant to be removed, but it's fine as
+long as it's a cover letter and git send-email does its job.
 
 -- 
 With Best Regards,
