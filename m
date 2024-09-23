@@ -1,205 +1,193 @@
-Return-Path: <linux-kernel+bounces-335911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1809A97EC70
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:39:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 694F697EC7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:41:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC2BB2827A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:39:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3288B21DC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0603D199938;
-	Mon, 23 Sep 2024 13:39:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EywIhy+1"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B902199E9A;
+	Mon, 23 Sep 2024 13:41:45 +0000 (UTC)
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0411990BA
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 13:39:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722EA38394;
+	Mon, 23 Sep 2024 13:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727098789; cv=none; b=Ip0UlrPiWzzqG3jBW1P9SJuZaEUkWYsS0YYBy2RbuYqSpx3uSQHprEJsqAB0DfkaF0MTlyUqC/omkwbvp0OC9JJ5RgrgxAHCXqRsRNRVyMx83UMLbXIq/opBZvCY3te0F3h43RelKVQcLQb3RmmTeZ/FUnbxx3zl/+sN3QV87CM=
+	t=1727098904; cv=none; b=rPdD3obTmVcyy7oYhZ+tFingYqh5VZ9iw3iIWmWi0d1Q5FVPHozZ1wKYYqeqio3FjsVUDXjIhca9O34XAUoyUhe6SrvEPSHCQ7Qd1suN5RjdkFScyOGkrfolAU3C1vNrgPLmnMCxVlkqUPt6l3rns0LGSsTJO6Ri70nb0MFwZmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727098789; c=relaxed/simple;
-	bh=sEwrlgig42rKnNlBMmsNfYi2JMxzx+5CL6WsYZmB7Ug=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AFFzyNCPVJaHwi/51cS49w/VWBRaeEGnfWLxcpCBfh5XBEdvyn9Y72zSEyXpvLflxT0oL7qKx+ZLAkfp3REVP/zXd7ORrU+6EvtqwHf56xozWHxpGr+REMGJgqk+biuv+UG+lvnn69emyC+eCHXOn4XJd1PlA43HBJ0LU/fHLmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EywIhy+1; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1727098904; c=relaxed/simple;
+	bh=hsxv2s0aP4r3lxntQOdM0DgLVU7283pZh+orvWKbXoM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NzqztbqNPUA4eHOsiwB+G+r6X/jmj+1pgitPqg6uX7V9WD+1E0bMCboF+//ltgynYUeGfa79Z+VhrBgrbsWD5hutOeXhOME9o9e1QL2i/PKusUOvoZLHwtyBt2bYEF9VkJEvs9Dh9FwA1HG9UQi/cLtTedDfO0blOMdYcsGTBn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2055f630934so37195305ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 06:39:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727098786; x=1727703586; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=p2yrEemLgwYknTm6OxcZK/C46/zY6aNqnZz/q471sfc=;
-        b=EywIhy+1QX3FZ1C+0BHH99hqVTky68NSa4sZFcKabYSAP9VTNM+F/UUVvAOD9OiH/s
-         lzKxgW0ve/4SMLUPIy6UdRTw0tsD4Y8bAHgSWgXX/ryLU2hq4960vsMzMTXd4RdcYPPa
-         Nx1jzQRXhFuziy52Csfuit7w0/oi3FQXRdEW4a+EKBWoc7XCw2vTc0eEMQ6UCgt1puvy
-         bPMNWeAGTdrGxQ4Nb1at8/3krVkdkqJe9zrXgPEfWa58m5JwVfGCwHT9FFlweeB5ivzV
-         oTwxW4dQlqA6Qib0eNjKpoZgpLq5mXAShXMg0g6fvZVvhPlYhQHMP3Jr5SV0R0deSEiR
-         109g==
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6dffe3fe4fcso20018957b3.1;
+        Mon, 23 Sep 2024 06:41:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727098786; x=1727703586;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p2yrEemLgwYknTm6OxcZK/C46/zY6aNqnZz/q471sfc=;
-        b=iJsLC080hcECjACfmV678cSaK2Rb/raLvjMElg3EwmdSQ81yaO0La6b17eowFQbmjZ
-         vp67dHsMQXs8hye+YjVEzUF78ZOVM4K6YSzvg8klv/oIBnPKO7gvrRz3DxpguDCM+eNa
-         5qUEtgJp3ejgmLkz5u1wsuXTD9TuJPVtgUK2Md9EfziqNcFXoXiXv9Pk13Z+I2+6jnc3
-         jnqwbud4mDYrEViIET8Zp/abq/aR9ZRFzC0Tuc2AEHkT3JXCbgIx5By9luzZ784f3KRY
-         tmD6lpk/033xWlP4CH+7VCfhYHYcHAX+66fqN5/A2PY6FWGx8IknzhC/02foHWBu5e1m
-         YPaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVv8+thk8nfH2Zpz3DDe8+TRuRHgAoxV1oBZZjCWS42SfJN2ytpF/TS58YkJjgx77+Maydng0fbsvPX3xI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+3dMn7RFzZ2xeFHa8xDLt/3gagn7AfcTnxIEocuN2eniBX+3h
-	hfA3TT43hVOvjAlhpVPCY3Y8W97mqYfWAtjWiB9ATIaxSwh0s90W
-X-Google-Smtp-Source: AGHT+IEid5hy1ANnTmLo2sO8vL88FFHzJ4ZmM3RPT8kW3wOf3CeFxPAKj18m/0Ic0vmS8h9jS3vyHw==
-X-Received: by 2002:a17:902:e54c:b0:206:ac4b:8157 with SMTP id d9443c01a7336-208d83ade61mr167279295ad.31.1727098785749;
-        Mon, 23 Sep 2024 06:39:45 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20794702759sm132848805ad.207.2024.09.23.06.39.44
+        d=1e100.net; s=20230601; t=1727098901; x=1727703701;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=t1Nb87hNB3zzIbZ7p6JsVdiw/rvLzl7jE2mKiDh11Ss=;
+        b=cPncJKBeIEi92osID8qicn52NpCCjk5O2wyPc4PPGNmjV/zRT7WtHRau1GSVPgrsqD
+         +YE6WDcrpNFfOgbdyhtre5cZ9nwBJE0SbIwkkwvDVw/r8ngQTVm6CqifP5fSl69AuEuH
+         zuy4GxIT6m8yPz1puXlnbnAIt9+goAyXVHKgex8cGfE74cNCDMarDzrApb3RJqHVxaqa
+         pg2SOois21lYOt1ZrbJGV+WKklqY7HclqwaF6UnchH5mKojULbVseNrHyn8j4hgBP+AU
+         uTLLMWHST+mnFm3abxhm3uszRKXGF3CMei0Ha4DAWICs9kp0y7L6vZdM6HG+o4TzogDu
+         d8jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUGGEB2d/R3J1384oFa+vpK3jj/O+Ezvx/HzbI06QIXAtB4o/KFZBE98wyCR7TIXagjMg=@vger.kernel.org, AJvYcCVQPcfX4MZaSiOUf9u45B2jLwWjRGX6CqpxAkKNRopPyts6ii/ezXXinUYt3NDeKB2jFncE0xsexL75xli/@vger.kernel.org, AJvYcCVvx64HEQ4AAZB3/d5dyczIsPhiaCdrgJZexAPLu8c5xHPtoUAb+d0N+RT00eIUEQI1eJ0NQCXt@vger.kernel.org, AJvYcCWpH87WWRU58iw1NUKWSQ3clEOc1Fz8R+EbNy0GRFpCd2pG2CusoO1zsgLXBWdcfAX3OHpIXGtS8ZxDwA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIgZ/q5E9lc3Y623b8eGpYZJvYurJMrKFddOFSARzoHykJSDPM
+	1Qry6rb6sLV/QBhW6XzQflGtckQFqO4U11f8GeNEJOA2YZw6S0pTDz0e4S/g
+X-Google-Smtp-Source: AGHT+IEp1tOQad9OBsRlt3qcuhXq4am6XPqR3aO2VhPUjzwA7mT8FDgYo1wkrQ73zneRvZMTntdyOw==
+X-Received: by 2002:a05:690c:6612:b0:62c:c684:b1e1 with SMTP id 00721157ae682-6dfeeeeb549mr89065737b3.29.1727098901027;
+        Mon, 23 Sep 2024 06:41:41 -0700 (PDT)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6dbe2f0759asm34603967b3.131.2024.09.23.06.41.40
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Sep 2024 06:39:44 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <435dc218-f7ea-4697-b3ef-6a786e8d1b2c@roeck-us.net>
-Date: Mon, 23 Sep 2024 06:39:43 -0700
+        Mon, 23 Sep 2024 06:41:40 -0700 (PDT)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6e00f47f70eso11568657b3.0;
+        Mon, 23 Sep 2024 06:41:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCViIVIrs6YPpgNkjENoW1fPQ0tDdyupyBgo75So/gc7bduCUumGQSoyyU4AhYE8SP4Dz6k=@vger.kernel.org, AJvYcCWPFF9tZR/1S8lAha5Ky99xyRrCpKUdC+9c2WtEItKKU5/rZ0ueBw3BQKiBchwBI+QPpsdtyY2v@vger.kernel.org, AJvYcCWQ6il4IJyGnImudLNnCpHOuDM7AfJHezot6GSYUsxsQ2HZa/Mm8VJh+5vMFCiaaR2XSWrx1VRuX2+PQNBT@vger.kernel.org, AJvYcCWsNGBszvr3aUa3K+cb49ZKR1SkCExGMrJyud6Yua2gMOG9C+bqrtVwDT1ETteYUx9yrURtkXjv53zFPg==@vger.kernel.org
+X-Received: by 2002:a05:690c:6a03:b0:6d3:be51:6d03 with SMTP id
+ 00721157ae682-6dfeed8e97fmr94972827b3.23.1727098900023; Mon, 23 Sep 2024
+ 06:41:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] resource, kunit: add dependency on SPARSEMEM
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
- Huang Ying <ying.huang@intel.com>
-References: <20240922225041.603186-1-linux@roeck-us.net>
- <CAMuHMdWAuQcFQaQNy2EP_u9vk13g2C3sb3FFBCMAUPyGMgZ+hg@mail.gmail.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <CAMuHMdWAuQcFQaQNy2EP_u9vk13g2C3sb3FFBCMAUPyGMgZ+hg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240910-am65-cpsw-multi-rx-v4-0-077fa6403043@kernel.org> <20240910-am65-cpsw-multi-rx-v4-3-077fa6403043@kernel.org>
+In-Reply-To: <20240910-am65-cpsw-multi-rx-v4-3-077fa6403043@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 23 Sep 2024 15:41:27 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUf-tKRDzkz2_m8qdFTFutefddU0NTratVrEjRTzA3yQQ@mail.gmail.com>
+Message-ID: <CAMuHMdUf-tKRDzkz2_m8qdFTFutefddU0NTratVrEjRTzA3yQQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v4 3/6] net: ethernet: ti: cpsw_ale: use
+ regfields for number of Entries and Policers
+To: Roger Quadros <rogerq@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Siddharth Vadapalli <s-vadapalli@ti.com>, Julien Panis <jpanis@baylibre.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
+	Simon Horman <horms@kernel.org>, Andrew Lunn <andrew@lunn.ch>, Joe Damato <jdamato@fastly.com>, srk@ti.com, 
+	vigneshr@ti.com, danishanwar@ti.com, pekka Varis <p-varis@ti.com>, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-omap@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/23/24 05:58, Geert Uytterhoeven wrote:
-> Hi Günter,
-> 
-> On Mon, Sep 23, 2024 at 12:50 AM Guenter Roeck <linux@roeck-us.net> wrote:
->> Building allmodconfig images on systems with SPARSEMEM=n results in
->> the following message.
->>
->> WARNING: unmet direct dependencies detected for GET_FREE_REGION
->>    Depends on [n]: SPARSEMEM [=n]
->>    Selected by [m]:
->>    - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
->>
->> and the build ultimately fails.
-> 
-> Really? What's the build error?
+Hi Roger,
 
-I saw it on hexagon, and I didn't bother writing down the actual build error
-message. But it turns out you are correct, the m68k machine does build with
-CONFIG_RESOURCE_KUNIT_TEST=y even though SPARSEMEM and with it GET_FREE_REGION
-are not set. Never mind, I don't really want or have time to argue. I'll just
-disable CONFIG_RESOURCE_KUNIT_TEST when building hexagon images and wherever
-else I see the problem.
+On Tue, Sep 10, 2024 at 11:25=E2=80=AFAM Roger Quadros <rogerq@kernel.org> =
+wrote:
+> Use regfields for number of ALE Entries and Policers.
+>
+> The variants that support Policers/Classifiers have the number
+> of policers encoded in the ALE_STATUS register.
+>
+> Use that and show the number of Policers in the ALE info message.
+>
+> Signed-off-by: Roger Quadros <rogerq@kernel.org>
+> Reviewed-by: Simon Horman <horms@kernel.org>
+> ---
+> Changelog:
+> v4:
+> - reverse Xmas tree declaration order fixes
 
-> It does build for me on m68k, after fixing:
-> 
->      --- a/include/linux/mm.h
->      +++ b/include/linux/mm.h
->      @@ -101,7 +101,7 @@ extern int mmap_rnd_compat_bits __read_mostly;
->       # ifdef MAX_PHYSMEM_BITS
->       # define PHYSMEM_END   ((1ULL << MAX_PHYSMEM_BITS) - 1)
->       # else
->      -# define PHYSMEM_END   (-1ULL)
->     +# define PHYSMEM_END   ((phys_addr_t)-1)
->       # endif
->       #endif
-> 
->> GET_FREE_REGION depends on SPARSEMEM, so any configuration selecting it
->> also depends on SPARSEMEM. Add the missing dependency.
->>
->> Effectively that means that RESOURCE_KUNIT_TEST is now restricted to
->> systems with SPARSEMEM=y, but that can not be helped.
-> 
-> Perhaps the individual test(s) that do depend on GET_FREE_REGION should
-> be protected by #ifdef CONFIG_GET_FREE_REGION instead? However,
-> I have no idea which parts depend on that, as apparently all tests
-> succeed on m68k/ARAnyM, with CONFIG_SPARSEMEM=n:
-> 
->      KTAP version 1
->      1..1
->          KTAP version 1
->          # Subtest: resource
->          # module: resource_kunit
->          1..3
->          ok 1 resource_test_union
->          ok 2 resource_test_intersection
->          ok 3 resource_test_region_intersects
->      # resource: pass:3 fail:0 skip:0 total:3
->      # Totals: pass:3 fail:0 skip:0 total:3
->      ok 1 resource
-> 
+Thanks for your patch, which is now commit 11cbcfeaa79e5c76 ("net:
+ethernet: ti: cpsw_ale: use regfields for number of Entries
+and Policers").
 
-Interesting that you get that to boot. The q800 machine crashes for me
-when trying to boot it in qemu with the latest upstream kernel, in function
-__pte_offset_map_lock(). It bisects to commit 394290cba966 ("mm: turn
-USE_SPLIT_PTE_PTLOCKS / USE_SPLIT_PTE_PTLOCKS into Kconfig options").
-Reverting that patch fixes the crash for me. I guess you are not seeing that ?
+This is causing the following warning on BeagleBone Black:
 
-Thanks,
-Guenter
+    WARNING: CPU: 0 PID: 34 at drivers/base/regmap/regmap.c:1208
+devm_regmap_field_alloc+0xac/0xc8
+    invalid empty mask defined
+    CPU: 0 UID: 0 PID: 34 Comm: kworker/u4:3 Not tainted
+6.11.0-rc7-boneblack-01443-g11cbcfeaa79e #152
+    Hardware name: Generic AM33XX (Flattened Device Tree)
+    Workqueue: events_unbound deferred_probe_work_func
+    Call trace:
+     unwind_backtrace from show_stack+0x10/0x14
+     show_stack from dump_stack_lvl+0x68/0x88
+     dump_stack_lvl from __warn+0x6c/0x1a8
+     __warn from warn_slowpath_fmt+0x1bc/0x1d0
+     warn_slowpath_fmt from devm_regmap_field_alloc+0xac/0xc8
+     devm_regmap_field_alloc from cpsw_ale_create+0x10c/0x36c
+     cpsw_ale_create from cpsw_init_common+0x1fc/0x310
 
+> --- a/drivers/net/ethernet/ti/cpsw_ale.c
+> +++ b/drivers/net/ethernet/ti/cpsw_ale.c
+> @@ -1303,6 +1303,9 @@ static const struct reg_field ale_fields_cpsw_nu[] =
+=3D {
+>         /* CPSW_ALE_IDVER_REG */
+>         [MINOR_VER]     =3D REG_FIELD(ALE_IDVER, 0, 7),
+>         [MAJOR_VER]     =3D REG_FIELD(ALE_IDVER, 8, 10),
+> +       /* CPSW_ALE_STATUS_REG */
+> +       [ALE_ENTRIES]   =3D REG_FIELD(ALE_STATUS, 0, 7),
+> +       [ALE_POLICERS]  =3D REG_FIELD(ALE_STATUS, 8, 15),
+
+You are adding these entries only to ale_fields_cpsw_nu[], not
+to ale_fields_cpsw[], while cpsw_ale_regfield_init() loops over
+ALE_FIELDS_MAX entries, whether they are valid or not:
+
+    static int cpsw_ale_regfield_init(struct cpsw_ale *ale)
+    {
+            const struct reg_field *reg_fields =3D ale->params.reg_fields;
+            struct device *dev =3D ale->params.dev;
+            struct regmap *regmap =3D ale->regmap;
+            int i;
+
+            for (i =3D 0; i < ALE_FIELDS_MAX; i++) {
+                    ale->fields[i] =3D devm_regmap_field_alloc(dev, regmap,
+                                                             reg_fields[i])=
+;
+
+                    [...]
+            }
+
+            return 0;
+    }
+
+I tried fixing this by skipping entries where all of .reg, .lsb,
+and .msb are zero, but that doesn't work as that runs beyond the
+end of ale_fields_cpsw[], thus operating on random data.
+I think you do have to store the size of the array, instead of assuming
+ALE_FIELDS_MAX entries everywhere.
+
+> --- a/drivers/net/ethernet/ti/cpsw_ale.h
+> +++ b/drivers/net/ethernet/ti/cpsw_ale.h
+> @@ -33,6 +34,8 @@ struct regmap;
+>  enum ale_fields {
+>         MINOR_VER,
+>         MAJOR_VER,
+> +       ALE_ENTRIES,
+> +       ALE_POLICERS,
+>         /* terminator */
+>         ALE_FIELDS_MAX,
+>  };
+>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
