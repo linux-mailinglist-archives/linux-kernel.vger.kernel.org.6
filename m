@@ -1,212 +1,148 @@
-Return-Path: <linux-kernel+bounces-335661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F58197E8B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:30:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAC1897E8B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6F981F21EDE
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 09:30:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09A4AB20920
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 09:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D3973451;
-	Mon, 23 Sep 2024 09:30:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B66194ACA;
+	Mon, 23 Sep 2024 09:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ME467GUe"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fA9rCV/V"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D255B19412E
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 09:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D75319343C
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 09:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727083809; cv=none; b=vFndg3oldd6g4m4Y1fId5QKS35nonFYYjQwttzl9R36UEGr5BTlUgE/hgGuwyfiJqkiG6QaZjL0iBMiLfOBB7jbIeC63uPZ34KUan0QcCbBDfRxUQKnAvLKZgD2aklC+K0QPpMjnOjxf4jgnu34DYTeR3n+rN1fhKtquMz0YJ1Q=
+	t=1727083799; cv=none; b=XciCqG3zasvXiqSXEH2bvrmmzKJyO9Hy50bM5I6kmvCtO4BYE/lTY49UnovQpZiLF6P/F+OMSfS6NS6oj7ZwrAaiUgZ4b8iwu/aQm7ugZYStHcMHYkIQCcSCQW5IIv7BL01G4XDosleewFxwIgFaXRV+MX7hDoghe2uDX3BKIN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727083809; c=relaxed/simple;
-	bh=xveS8An5yPxN/MxZ/eWTONl87PHoFBR9KHYvY0iw02A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YZYz9L+MGl+DdgsKVHfk8X620KjgtM1MjBXV4YzXV1uwEuVDNPc6T1jnwE6PXYKIm88t9oDqI4OcxqYMSobO0/VYvAluQeX+WF68Hz6kdYOvLpqxpnURzbZs6e36zBj1FgtIGNbOI07Lc+WNmaMzGXTQnCBW+3va9r7vvSXiGjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ME467GUe; arc=none smtp.client-ip=209.85.208.47
+	s=arc-20240116; t=1727083799; c=relaxed/simple;
+	bh=JxlWTKfLKfV1N7stRJBPiFZggE9mXH97QTo/q/pDES0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=dgESL0HnA00N9YRt8KNBcuRWPmMfrYGW2GbyEeLFcXe39UJiQ1soUneWg/39GBtmvpnW6g1FTA5efXE3oyCrrG41+DbfqX1e+N2No9efxLOd6hva5nOj6hckgROZASXGDzoSJAHzTm75ljUoccmpmufvqKIVxP5Rt+ZKwsVXyiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fA9rCV/V; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c4226a56a8so5147026a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 02:30:07 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7db1762d70fso3402308a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 02:29:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727083806; x=1727688606; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vuk3CfC/8d2trmHsLKwiAc84e3WNXWpr9l6TZadOWI4=;
-        b=ME467GUeuCMJRBo5Kv+Q02kLumBmhWulAqBLUOaTCTsP3zVqz43URJ+1kZ/221Le7+
-         YxXDyz6iRFXbbjcSrkzWSgOOnN7+fgL0LZxT42S1Xv1LGdczmB7V0nIwBYpjetoutwRf
-         ABZ+WhBjj0JoSp0gmsToSQIBCw2Mdr3ZtFFc1xUaz8iGxUy0NZxLdozJn+FkvqlzwswC
-         usW4uJj+GA7W0EYCZZ45Lul8nEHuLOEDEdxVafBG4GikxDVCj++pxZKgr//5OO3+OaHi
-         KFFsVRwxD4fI2XzbrjAHCe2TwQDXLlNgnvYQ9BTczs8dBLLTM4Ozr8KZeCRQM/xt4FWg
-         /2Yg==
+        d=google.com; s=20230601; t=1727083798; x=1727688598; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JxlWTKfLKfV1N7stRJBPiFZggE9mXH97QTo/q/pDES0=;
+        b=fA9rCV/VNMoIic2tJjpRyqBuR6+vmd1ns6HpenQBMUId4OwuzHACAlXY9R/H+P8wjo
+         ZuNYcYVdKcENNPrkTCDmAg/fpYKAcuTyCmEfU3tB5JGmDCC59SXp5tPA8TY29RhvOjkg
+         zJU2wimE0DhAnPOfoE8jZgFkoYRIoMfGo/ufmAoimVqJmr7H9Nqn/DeUY6rPWb2h1OYm
+         rsOLtFwyuM7utymutJi3RCLSmW2IXZUUNoB9P7KCSKEi48uu60cwgSytjwr35lCNJHAR
+         Z0sm33MtFmzLh5yVHfy3sbX9P8eFH0nSG1riQ6VXbqL6/xUCEXDlZLpnqFeYzBNGErud
+         NW5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727083806; x=1727688606;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Vuk3CfC/8d2trmHsLKwiAc84e3WNXWpr9l6TZadOWI4=;
-        b=Hvp8VwuJ+Pb5+W3AF6pSjSoZdtZxOMjfpaY2Z9UTWazVWBD/NaWu0a+RiY9veCU57n
-         V16Sl8Om25leAzGqTjjpqatvHYEXqkzSz5WQh6Y1cH7FJSlamr51IUrZq7ERXQwBhQpI
-         O4pQ7+6JLfX2ccicyDisw+VWE0ww0FbZHzfriUb07Fn3CzOwpm/DHZavF/uyozbuTt5O
-         aaCP2pACt6bHbeSKTbC93Ur7KqWE7RrhXKCT4lv3yLg0jkWdw+y6uEjDpuR8UjeEmANq
-         16Xr2IWvk9D37q+S5VnM0NRv5y63GZYQa1WDPhY8GJuWwkFoLdCfkoiFaIvowcpeRbfw
-         5I8w==
-X-Forwarded-Encrypted: i=1; AJvYcCVn4Snrc9f/XHM4IE5qygO1dFtcCFA1HymTvFcs/cvI2ybuKVvOPi+6lM8KzTcf3JbVv2z/FH3CUWcpm/o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyj8m3FKzSlmx3euoNl3HaQ2jlvUt3NWvqO1c89yFX9N29+sa2j
-	mUPx7VGl1uK47xIeL7DkDjci8JOS91ZLZ4OJGu3PA3Qlg4PXCRte6lvJvDwnZImya64s8x4IJuN
-	6M2XHrWNQnppn+K13lBogqeXt/SrnEi2//3BL
-X-Google-Smtp-Source: AGHT+IFVRkOuz/0hqyC4TUZW9wr9CQzEnHCIPDxI2kRUa/SbM68opPu+QAgvUStGeDqWB+N5a4dUu9svuUD/5ab7oWo=
-X-Received: by 2002:a05:6402:2b94:b0:5a1:c43:82ca with SMTP id
- 4fb4d7f45d1cf-5c464a5d40emr9977738a12.26.1727083805807; Mon, 23 Sep 2024
- 02:30:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727083798; x=1727688598;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=JxlWTKfLKfV1N7stRJBPiFZggE9mXH97QTo/q/pDES0=;
+        b=VL6fQnmJWY1w6G/qXTzuFOk1U3xfDXgStT1M1e3/JcZQNwWr0M5iogtgbZgcXuYGQV
+         tZODDtIwlPO2fLHH+Dw0H9lEAFKH5APakA6gKPzJ6BOMaR1FMHCcIIdDiBJCAegTrL6p
+         0Ipm/JwFGMD7EYNXbbi2l2S1HWf8A5tCz5TlXcE694yCbQghG9PWPxDdjxn/Vz0u5ge2
+         uz52Z7Mehkk247oFEZxUjyNJCMsNtRR3xzEmqkOmPnCv51voaAPi5zYrs6eqssakzQOx
+         zJS8ySmpZehcAHPORLoM7G9x2NUoaUFT0CwLd5ZCooSYmIJPSoMWXynqJgZSZ3vxCueK
+         nbFg==
+X-Forwarded-Encrypted: i=1; AJvYcCV09Cp0a19qPwE0EK9wrfmS1dAfTwXQ5qvhn5QwveqpRQlkpct8Xr6DIsp2qwSgLMC1LZdoGZRJ3xXlg8Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6WsB25hoX1oY1fhnzwTT5/OeH/sTq4BgBYmOrTINB7KY4XPM1
+	+qkr+Ee60UnANlcqjv7T3YwRWIIveMjlQoLl3tIVAFtyG7+NdNtElvV37dJX4NRT81t0SHzq9l7
+	CFA==
+X-Google-Smtp-Source: AGHT+IFSZX5FuNM8tCzpug601r0FUEjufJORJGp2xW2npv3HHNvfqWh9QPhzOBODH4in3nPCT3E6eApyC4U=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a02:2305:b0:7db:2689:f6ee with SMTP id
+ 41be03b00d2f7-7e6ae037512mr783a12.7.1727083797611; Mon, 23 Sep 2024 02:29:57
+ -0700 (PDT)
+Date: Mon, 23 Sep 2024 02:29:55 -0700
+In-Reply-To: <e5218efaceec20920166bd907416d6f88905558d.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <EC5AC714C75A855E+20240923091535.77865-1-yushengjin@uniontech.com>
-In-Reply-To: <EC5AC714C75A855E+20240923091535.77865-1-yushengjin@uniontech.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 23 Sep 2024 11:29:54 +0200
-Message-ID: <CANn89i+4wbef3k6at_Kf+8MBmU4HhE9nxMRvROR_OxsZptffjA@mail.gmail.com>
-Subject: Re: [PATCH] net/bridge: Optimizing read-write locks in ebtables.c
-To: yushengjin <yushengjin@uniontech.com>
-Cc: pablo@netfilter.org, kadlec@netfilter.org, roopa@nvidia.com, 
-	razor@blackwall.org, davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
-	bridge@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20231002115723.175344-1-mlevitsk@redhat.com> <ZRsYNnYEEaY1gMo5@google.com>
+ <1d6044e0d71cd95c477e319d7e47819eee61a8fc.camel@redhat.com> <e5218efaceec20920166bd907416d6f88905558d.camel@redhat.com>
+Message-ID: <ZvE06wB0JGWXGxpK@google.com>
+Subject: Re: [PATCH v3 0/4] Allow AVIC's IPI virtualization to be optional
+From: Sean Christopherson <seanjc@google.com>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: kvm@vger.kernel.org, Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Joerg Roedel <joro@8bytes.org>, Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, 
+	Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev, 
+	Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 23, 2024 at 11:16=E2=80=AFAM yushengjin <yushengjin@uniontech.c=
-om> wrote:
->
-> When conducting WRK testing, the CPU usage rate of the testing machine wa=
-s
-> 100%. forwarding through a bridge, if the network load is too high, it ma=
-y
-> cause abnormal load on the ebt_do_table of the kernel ebtable module, lea=
+On Tue, Sep 10, 2024, Maxim Levitsky wrote:
+> On Wed, 2023-10-04 at 16:14 +0300, Maxim Levitsky wrote:
+> > =D0=A3 =D0=BF=D0=BD, 2023-10-02 =D1=83 12:21 -0700, Sean Christopherson=
+ =D0=BF=D0=B8=D1=88=D0=B5:
+> > > On Mon, Oct 02, 2023, Maxim Levitsky wrote:
+> > > > Hi!
+> > > >=20
+> > > > This patch allows AVIC's ICR emulation to be optional and thus allo=
+ws
+> > > > to workaround AVIC's errata #1235 by disabling this portion of the =
+feature.
+> > > >=20
+> > > > This is v3 of my patch series 'AVIC bugfixes and workarounds' inclu=
 ding
-> to excessive soft interrupts and sometimes even directly causing CPU soft
-> deadlocks.
->
-> After analysis, it was found that the code of ebtables had not been optim=
-ized
-> for a long time, and the read-write locks inside still existed. However, =
-other
-> arp/ip/ip6 tables had already been optimized a lot, and performance bottl=
-enecks
-> in read-write locks had been discovered a long time ago.
->
-> Ref link: https://lore.kernel.org/lkml/20090428092411.5331c4a1@nehalam/
->
-> So I referred to arp/ip/ip6 modification methods to optimize the read-wri=
-te
-> lock in ebtables.c.
->
-> test method:
-> 1) Test machine creates bridge :
-> ``` bash
-> brctl addbr br-a
-> brctl addbr br-b
-> brctl addif br-a enp1s0f0 enp1s0f1
-> brctl addif br-b enp130s0f0 enp130s0f1
-> ifconfig br-a up
-> ifconfig br-b up
-> ```
-> 2) Testing with another machine:
-> ``` bash
-> ulimit -n 2048
-> ./wrk -t48 -c2000 -d6000 -R10000 -s request.lua http://4.4.4.2:80/4k.html=
- &
-> ./wrk -t48 -c2000 -d6000 -R10000 -s request.lua http://5.5.5.2:80/4k.html=
- &
-> ```
->
-> Signed-off-by: yushengjin <yushengjin@uniontech.com>
-> ---
->  include/linux/netfilter_bridge/ebtables.h |  47 +++++++-
->  net/bridge/netfilter/ebtables.c           | 132 ++++++++++++++++------
->  2 files changed, 145 insertions(+), 34 deletions(-)
->
-> diff --git a/include/linux/netfilter_bridge/ebtables.h b/include/linux/ne=
-tfilter_bridge/ebtables.h
-> index fd533552a062..dd52dea20fb8 100644
-> --- a/include/linux/netfilter_bridge/ebtables.h
-> +++ b/include/linux/netfilter_bridge/ebtables.h
-> @@ -93,7 +93,6 @@ struct ebt_table {
->         char name[EBT_TABLE_MAXNAMELEN];
->         struct ebt_replace_kernel *table;
->         unsigned int valid_hooks;
-> -       rwlock_t lock;
->         /* the data used by the kernel */
->         struct ebt_table_info *private;
->         struct nf_hook_ops *ops;
-> @@ -124,4 +123,50 @@ static inline bool ebt_invalid_target(int target)
->
->  int ebt_register_template(const struct ebt_table *t, int(*table_init)(st=
-ruct net *net));
->  void ebt_unregister_template(const struct ebt_table *t);
-> +
-> +/**
-> + * ebt_recseq - recursive seqcount for netfilter use
-> + *
-> + * Packet processing changes the seqcount only if no recursion happened
-> + * get_counters() can use read_seqcount_begin()/read_seqcount_retry(),
-> + * because we use the normal seqcount convention :
-> + * Low order bit set to 1 if a writer is active.
-> + */
-> +DECLARE_PER_CPU(seqcount_t, ebt_recseq);
-> +
-> +/**
-> + * ebt_write_recseq_begin - start of a write section
-> + *
-> + * Begin packet processing : all readers must wait the end
-> + * 1) Must be called with preemption disabled
-> + * 2) softirqs must be disabled too (or we should use this_cpu_add())
-> + * Returns :
-> + *  1 if no recursion on this cpu
-> + *  0 if recursion detected
-> + */
-> +static inline unsigned int ebt_write_recseq_begin(void)
-> +{
-> +       unsigned int addend;
-> +
-> +       addend =3D (__this_cpu_read(ebt_recseq.sequence) + 1) & 1;
-> +
-> +       __this_cpu_add(ebt_recseq.sequence, addend);
-> +       smp_mb();
-> +
-> +       return addend;
-> +}
-> +
-> +/**
-> + * ebt_write_recseq_end - end of a write section
-> + * @addend: return value from previous ebt_write_recseq_begin()
-> + *
-> + * End packet processing : all readers can proceed
-> + * 1) Must be called with preemption disabled
-> + * 2) softirqs must be disabled too (or we should use this_cpu_add())
-> + */
-> +static inline void ebt_write_recseq_end(unsigned int addend)
-> +{
-> +       smp_wmb();
-> +       __this_cpu_add(ebt_recseq.sequence, addend);
-> +}
+> > > > review feedback.
+> > >=20
+> > > Please respond to my idea[*] instead of sending more patches.=20
+> >=20
+> > Hi,
+> >=20
+> > For the v2 of the patch I was already on the fence if to do it this way=
+ or to refactor
+> > the code, and back when I posted it, I decided still to avoid the refac=
+toring.
+> >=20
+> > However, your idea of rewriting this patch, while it does change less l=
+ines of code,
+> > is even less obvious and consequently required you to write even longer=
+ comment to=20
+> > justify it which is not a good sign.
+> >=20
+> > In particular I don't want someone to find out later, and in the hard w=
+ay that sometimes
+> > real physid table is accessed, and sometimes a fake copy of it is.
+> >=20
+> > So I decided to fix the root cause by not reading the physid table back=
+,
+> > which made the code cleaner, and even with the workaround the code=20
+> > IMHO is still simpler than it was before.
+> >=20
+> > About the added 'vcpu->loaded' variable, I added it also because it is =
+something that is=20
+> > long overdue to be added, I remember that in IPIv code there was also a=
+ need for this,=20
+> > and probalby more places in KVM can be refactored to take advantage of =
+it,
+> > instead of various hacks.
+> >=20
+> > I did adopt your idea of using 'enable_ipiv', although I am still not 1=
+00% sure that this
+> > is more readable than 'avic_zen2_workaround'.
+>=20
+> Hi!
+>=20
+> Sean, can you take another look at this patch series?
 
-Why not reusing xt_recseq, xt_write_recseq_begin(), xt_write_recseq_end(),
-instead of copy/pasting them ?
-
-This was added in
-
-commit 7f5c6d4f665bb57a19a34ce1fb16cc708c04f219    netfilter: get rid
-of atomic ops in fast path
-
-If this is an include mess, just move them in a separate include file.
+Ya, it might take a week or two, but it's on my todo list.
 
