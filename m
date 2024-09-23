@@ -1,148 +1,122 @@
-Return-Path: <linux-kernel+bounces-335730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95AA797E9CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:18:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B30E97E9D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CB531F21916
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:18:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C14F281720
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:19:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F95197552;
-	Mon, 23 Sep 2024 10:18:09 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43224196C86;
+	Mon, 23 Sep 2024 10:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="JFVK5qSM"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EC656B72
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 10:18:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE656195809;
+	Mon, 23 Sep 2024 10:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727086689; cv=none; b=csQBvTr162a7GLTDwzoFyfQ6Hgy4DHyGf+L7226xWYGBm3acZ8E7KouuuOMtil5iybMDuzMqK2OeOTzlSSim+AJnPgeUztt8w2fHRkx8TSqHYnFA/eTnZJA7Oqrn5DlQVK8sLbtG/yBDYxRhKoyTQeO+HGI2E3Or4gLV6ZNi0BM=
+	t=1727086740; cv=none; b=af8MgBHQZU41/mPMUx02/8QzXoHiPKFP8MnbDZUSyk8Y9+x8gHMcIC/EbyS2K6yi7TaTIxGkOYq7aOmhKelQic36AbrDHaAdvfxOE6UvLNmHUAS/PmZ8KRmaarYybGx3DuKR837p5Y2f1pkDlI05SQyQWb6aYmiMnEFZSCDllFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727086689; c=relaxed/simple;
-	bh=fnGOKInTAhOp+GV97i2VYgezakm03+dQugDqppd1DkA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JtdxoBz0jW1GgGgHo1CMtULV2bQTWePFQRS9Y9GwvB6kT8+zFuKQYsHObYx3PLkz2xV7LpHXHi53eAm7QMkHqwWk7HJLg2TcElpbv23gS3jUDie/0Jq+m4QeS4q0K6ZXf523Ga6dJe/ME3VaDRgFIMwlLof/p+t5gj2NucuELa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1ssg8U-0001YE-Gs; Mon, 23 Sep 2024 12:17:42 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1ssg8S-000vzX-7C; Mon, 23 Sep 2024 12:17:40 +0200
-Received: from pengutronix.de (unknown [IPv6:2a01:4f8:1c1c:29e9:22:41ff:fe00:1400])
+	s=arc-20240116; t=1727086740; c=relaxed/simple;
+	bh=FZPFPyImlZ9G/QZYUIY+wTwdbXvFKDdPVq5ZV7K2YM0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Xk0QFQUzvFZoZC+CL1cmGbCbORYH29PrdDEGJkD0qjKfwMbNEzAJ/S5k5AGg91fzaJ3C9ugljulerI/n++Gun2kwUuqQ2fwovyOAgV9QPYcSwLD4WiyjVefCxmg4e6VE8MVTjRV3tJmC2hD/bKy9RL35Hw1LVlF5VCEgUlvqkRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=JFVK5qSM; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1727086736;
+	bh=FZPFPyImlZ9G/QZYUIY+wTwdbXvFKDdPVq5ZV7K2YM0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=JFVK5qSMFhRSItdTGbHWohtUZKut2/6jd9DE3PZ7by+BDMt6KhajR4rzAZkrcXLg1
+	 yLRFcN7WYCTbvptb0Q//GQffpQngzTkCC3fEFgjuOKRWzx8HnrKpmNOavv2m4We9m4
+	 xCbGDNyucriAtfaLUDiYP4KV78oyKB+orPEBocQweq/LbT8LWRRnDVK/eUzoHgDGvC
+	 dZFYFzJDzgwf1ZchvQTRbccYhVxhOmxMIU4OXseJMleqmJX01IKTN/oA82lxW53Dh6
+	 8KRxcEbTBlAGLSpbAUE5a9FETDlKkLfnVDgQDB+oe668aPT8aQ+9GIFKAHd3aGWuEC
+	 HPSmZCeCDPR0Q==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 0D78C341059;
-	Mon, 23 Sep 2024 10:17:38 +0000 (UTC)
-Date: Mon, 23 Sep 2024 12:17:38 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Martin =?utf-8?Q?Hundeb=C3=B8ll?= <martin@geanix.com>, 
-	Markus Schneider-Pargmann <msp@baylibre.com>, "Felipe Balbi (Intel)" <balbi@kernel.org>, 
-	Raymond Tan <raymond.tan@intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, 
-	linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux@ew.tq-group.com, lst@pengutronix.de
-Subject: Re: [PATCH v2 2/2] can: m_can: fix missed interrupts with m_can_pci
-Message-ID: <20240923-honored-ant-of-ecstasy-f7edae-mkl@pengutronix.de>
-References: <ac8c49fffac582176ba1899a85db84e0f5d5c7a6.1726745009.git.matthias.schiffer@ew.tq-group.com>
- <861164dfe6d95fd69ab2f82528306db6be94351a.1726745009.git.matthias.schiffer@ew.tq-group.com>
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id F3CF217E10D3;
+	Mon, 23 Sep 2024 12:18:55 +0200 (CEST)
+Date: Mon, 23 Sep 2024 12:18:50 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Steven Price <steven.price@arm.com>
+Cc: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>, Liviu
+ Dudau <liviu.dudau@arm.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>,
+ Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+ kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v7 1/5] drm/panthor: introduce job cycle and timestamp
+ accounting
+Message-ID: <20240923121850.38181059@collabora.com>
+In-Reply-To: <07c8c715-4016-4963-8544-2e9cc1a8208b@arm.com>
+References: <20240920234436.207563-1-adrian.larumbe@collabora.com>
+	<20240920234436.207563-2-adrian.larumbe@collabora.com>
+	<07c8c715-4016-4963-8544-2e9cc1a8208b@arm.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ekqu47z3b5kakgtd"
-Content-Disposition: inline
-In-Reply-To: <861164dfe6d95fd69ab2f82528306db6be94351a.1726745009.git.matthias.schiffer@ew.tq-group.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Mon, 23 Sep 2024 10:07:14 +0100
+Steven Price <steven.price@arm.com> wrote:
 
---ekqu47z3b5kakgtd
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> > +static struct dma_fence *
+> > +queue_run_job(struct drm_sched_job *sched_job)
+> > +{
+> > +	struct panthor_job *job = container_of(sched_job, struct panthor_job, base);
+> > +	struct panthor_group *group = job->group;
+> > +	struct panthor_queue *queue = group->queues[job->queue_idx];
+> > +	struct panthor_device *ptdev = group->ptdev;
+> > +	struct panthor_scheduler *sched = ptdev->scheduler;
+> > +	struct panthor_job_ringbuf_instrs instrs;  
+> 
+> instrs isn't initialised...
+> 
+> > +	struct panthor_job_cs_params cs_params;
+> > +	struct dma_fence *done_fence;
+> > +	int ret;
+> >  
+> >  	/* Stream size is zero, nothing to do except making sure all previously
+> >  	 * submitted jobs are done before we signal the
+> > @@ -2900,17 +3062,23 @@ queue_run_job(struct drm_sched_job *sched_job)
+> >  		       queue->fence_ctx.id,
+> >  		       atomic64_inc_return(&queue->fence_ctx.seqno));
+> >  
+> > -	memcpy(queue->ringbuf->kmap + ringbuf_insert,
+> > -	       call_instrs, sizeof(call_instrs));
+> > +	job->profiling.slot = queue->profiling.seqno++;
+> > +	if (queue->profiling.seqno == queue->profiling.slot_count)
+> > +		queue->profiling.seqno = 0;
+> > +
+> > +	job->ringbuf.start = queue->iface.input->insert;
+> > +
+> > +	get_job_cs_params(job, &cs_params);
+> > +	prepare_job_instrs(&cs_params, &instrs);  
+> 
+> ...but it's passed into prepare_job_instrs() which depends on
+> instrs.count (same bug as was in calc_job_credits()) - sorry I didn't
+> spot it last review.
 
-On 19.09.2024 13:27:28, Matthias Schiffer wrote:
-> The interrupt line of PCI devices is interpreted as edge-triggered,
-> however the interrupt signal of the m_can controller integrated in Intel
-> Elkhart Lake CPUs appears to be generated level-triggered.
->=20
-> Consider the following sequence of events:
->=20
-> - IR register is read, interrupt X is set
-> - A new interrupt Y is triggered in the m_can controller
-> - IR register is written to acknowledge interrupt X. Y remains set in IR
->=20
-> As at no point in this sequence no interrupt flag is set in IR, the
-> m_can interrupt line will never become deasserted, and no edge will ever
-> be observed to trigger another run of the ISR. This was observed to
-> result in the TX queue of the EHL m_can to get stuck under high load,
-> because frames were queued to the hardware in m_can_start_xmit(), but
-> m_can_finish_tx() was never run to account for their successful
-> transmission.
->=20
-> To fix the issue, repeatedly read and acknowledge interrupts at the
-> start of the ISR until no interrupt flags are set, so the next incoming
-> interrupt will also result in an edge on the interrupt line.
->=20
-> Fixes: cab7ffc0324f ("can: m_can: add PCI glue driver for Intel Elkhart L=
-ake")
-> Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-
-My coworker Lucas pointed me to:
-
-| https://wiki.linuxfoundation.org/networking/napi#non-level_sensitive_irqs
-
-On the other hand, I would also like to convert the !peripteral part of
-the driver to rx-offload. However, I am still looking for potential
-customers for this task. I have talked to some TI and ST people at LPC,
-maybe they are interested.
-
-I think let's first fix edge sensitive IRQs, then rework the driver to
-rx-offload.
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---ekqu47z3b5kakgtd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmbxQD4ACgkQKDiiPnot
-vG/y8Qf/QkdsR/kI8NBZPDV69bGXrC6yCjLd8PUWOuSqWxNBzXAxlQq9cU3HTYCz
-k3QUmftS1Jx2WuyrjLISVpUs14eJVHeckU7lVuyAYxMy6sCE5H1JeaiifS/0YQOV
-dZcalCoLBt+Z9GI9vWtddEluP4YhTI7vehVjzg9jBGOAn3WoIGadyLr/6pMoxHXs
-cqzJLy/7oN28HcVL9RtxHpOOpCE5yVJp2FV/axKFQ7NlIfMxP2Lqiebm4MkDXsBb
-huS0eCO/pOhjbzdQGw7BGA4Ct5p2UwhLceTihU52EO0VcLUxaym22Fbb1/reXx7e
-T21qCnN1F67cDBzG99z5qH8JKEGpAA==
-=I1Nn
------END PGP SIGNATURE-----
-
---ekqu47z3b5kakgtd--
+Hm, can't we initialize instr::count to zero in prepare_job_instrs()
+instead?
 
