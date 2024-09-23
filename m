@@ -1,234 +1,211 @@
-Return-Path: <linux-kernel+bounces-335600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 022C697E7EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:54:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CD1E97E7EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:54:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EE94281C63
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:54:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 114AA1F21E7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:54:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B7E194158;
-	Mon, 23 Sep 2024 08:54:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F3519415E;
+	Mon, 23 Sep 2024 08:54:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="DTjZ2KNz"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Lk7oGuWS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Mh49yuCJ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Lk7oGuWS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Mh49yuCJ"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A503859160;
-	Mon, 23 Sep 2024 08:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72EF449649;
+	Mon, 23 Sep 2024 08:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727081659; cv=none; b=Uc2v3yeI9/5UllwWZY/AyWfXJFcLNuTNLvme4+muOUwZYsYEGPN9+Cq7YH+U6+er7e+qpPsClkshgx3uCCqfX8bTY1+ahta16rfz4bpw3LmGVwNqWueyRT9rO3MQC9Z8S3ILfXVXVfWPZsXaupOGoykItFz9yHFjTTQ9hVOjnJg=
+	t=1727081646; cv=none; b=kXB35HisMUmkbpNhEGqQrSqnTS4oll7Pte/h94MSFU/Bm68aGKfd2s2CaUO/O21ENWe8qEVt/MA8ir0UFbRLZp1WHPrRHDmmeC6jgN7XwYZ21ZAlZ0klFbPUwBy6ZwqBMbFynASXHoDWjqFXTE5aQXv4BNZ3puNDzP24UXT64OI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727081659; c=relaxed/simple;
-	bh=tVr2b1WrKsl9NvsB8FTYYQJE2FLcLKEHGH9mE06IYqo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tx0OhIFu6WENSPPLRUsco56IHaz9Xb/sp/rla8vIQ+ahyi87WSel20jE83XwVJ13/QnpJZRpNzxd2+yXCEmkqtY5Ljem90pKWleXDb+DFqswi/o4Pa2sS8gClMCFL85VJT6znR9KIqPbOUOKgfnhqA+6L7Zq0mqq0/aGnJXbOhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=DTjZ2KNz; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1727081643; x=1727686443; i=quwenruo.btrfs@gmx.com;
-	bh=tVr2b1WrKsl9NvsB8FTYYQJE2FLcLKEHGH9mE06IYqo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=DTjZ2KNzUn9UxtF2aqhaV+cYgSEd9cbmklm945vpelNr6uylD+FYdVE0aDJT2MtT
-	 KalQpw4SlcH6S0k3cDWYRp4ttOMU0zCMgbI7o91EtqNYq+PetPxaFsYHTpQwA6IQJ
-	 iLGJShVdBOmUZhsa76owgwjZP2WzkjTpo2I7khGeONy7fmQE+qTO2SQhHaqy6nchX
-	 yXmpJqECPRhsw1nLZF9DX6j5HM5Mrv/IK7NyJhOQ5z2R4ePWJbNyHxZlF+BITpMLO
-	 dBLl0l06SHygtJ0FylqeB/OFphHlH+eWsMxv7mgOMrtUnY3QKk4Jcr7HBhXhh7TVT
-	 y3XQIolwQb/UX7eomA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MrQEx-1s7kp20hT5-00gNLi; Mon, 23
- Sep 2024 10:54:03 +0200
-Message-ID: <47d0f003-ebc8-4959-a22c-ccf9ea7ef35a@gmx.com>
-Date: Mon, 23 Sep 2024 18:23:58 +0930
+	s=arc-20240116; t=1727081646; c=relaxed/simple;
+	bh=O7powSMYV53/q5xvNeAigkdmWUjsqYWO0CqysN5jlAw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e6m9jG8pswH/6lccuhqqkoJIgvoC/SW9IdP/L/88NAV8VwWA60OcPKbw+01IJY3y0XUFL2ix369vVPVpoSon9eLz2d6MBMyIUjdcpKyqqvIWOf6KkpohxvI6LO/ex8zLIiQmIouqu7HA8yvh702KEndks+8G5xELE4tIjWUGxZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Lk7oGuWS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Mh49yuCJ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Lk7oGuWS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Mh49yuCJ; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id ADA971F7A5;
+	Mon, 23 Sep 2024 08:54:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727081642; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=In9SJZ6ZHi06A9k5Lxyf47PBCyy9O7DDkMytyeOolwg=;
+	b=Lk7oGuWSPr629D/kdVE8FNC0heaRHAYy+/wCjcrL4lgvAFl5dzhXq07aEwjgXEV+OwWW7Q
+	M5KGQDAhyKIcJPVFh3zOzR5RJmR9YkzUzffc/FABfsVdsCC9Y8C/uvvuyTukWiWaEVB3uw
+	m618x6ktaKgqOtbCwyY1ylehIaQv9Ns=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727081642;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=In9SJZ6ZHi06A9k5Lxyf47PBCyy9O7DDkMytyeOolwg=;
+	b=Mh49yuCJKZ+7ri1WkowjZsyZK6BVIANAVCZ6uPCA5XeshdHvCUPB0eCuF8VQSsDgPphdXQ
+	6enX+Tbu5VqPEICg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727081642; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=In9SJZ6ZHi06A9k5Lxyf47PBCyy9O7DDkMytyeOolwg=;
+	b=Lk7oGuWSPr629D/kdVE8FNC0heaRHAYy+/wCjcrL4lgvAFl5dzhXq07aEwjgXEV+OwWW7Q
+	M5KGQDAhyKIcJPVFh3zOzR5RJmR9YkzUzffc/FABfsVdsCC9Y8C/uvvuyTukWiWaEVB3uw
+	m618x6ktaKgqOtbCwyY1ylehIaQv9Ns=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727081642;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=In9SJZ6ZHi06A9k5Lxyf47PBCyy9O7DDkMytyeOolwg=;
+	b=Mh49yuCJKZ+7ri1WkowjZsyZK6BVIANAVCZ6uPCA5XeshdHvCUPB0eCuF8VQSsDgPphdXQ
+	6enX+Tbu5VqPEICg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9519A13A64;
+	Mon, 23 Sep 2024 08:54:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id WWZiJKos8WaydgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 23 Sep 2024 08:54:02 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 577EFA0ABF; Mon, 23 Sep 2024 10:54:02 +0200 (CEST)
+Date: Mon, 23 Sep 2024 10:54:02 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tytso@mit.edu,
+	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH v2 10/10] ext4: factor out a common helper to lock and
+ flush data before fallocate
+Message-ID: <20240923085402.amto7pryy67eadpj@quack3>
+References: <20240904062925.716856-1-yi.zhang@huaweicloud.com>
+ <20240904062925.716856-11-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] btrfs: also add stripe entries for NOCOW writes
-To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
- Johannes Thumshirn <jth@kernel.org>, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
- "open list:BTRFS FILE SYSTEM" <linux-btrfs@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-Cc: WenRuo Qu <wqu@suse.com>, Naohiro Aota <Naohiro.Aota@wdc.com>
-References: <20240923064549.14224-1-jth@kernel.org>
- <71088008-c105-4eb9-9199-882091eafe07@gmx.com>
- <3c0c8517-a642-4e7b-bbcd-ef0022c49c3f@wdc.com>
- <d42756f6-d5a8-4f44-a6f0-6056f5c1015b@gmx.com>
- <aacb742c-2081-441e-ac52-d9e0f580ab1e@wdc.com>
-Content-Language: en-US
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
- pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
- BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
- XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
- jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
- LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
- mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
- CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
- tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
- INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
- DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
- iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
-In-Reply-To: <aacb742c-2081-441e-ac52-d9e0f580ab1e@wdc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:T35gwD+QKh88bGFZ9hUqesqIj1j1atNXZ39CCrTNAxpCwj8bWda
- fr1UYurovMxKkgl5PRt6buLkYaCJa+q9i+ocRDUMT/2cMtsjnt4rVa+vF1d6/VhBSB95aqJ
- YRHgLUFmcklf90UedrJ7FxM5XdE041GEwUfi3NXjtJfU8a38RMFqxxL5m/elFYnkN9293vW
- vOIadC+xCaqwkOFocKX8Q==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904062925.716856-11-yi.zhang@huaweicloud.com>
+X-Spam-Score: -2.30
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:cEy3TkyX550=;BZCiwRWq8AqkiCzUi/dCJZleQod
- sjW+Jc5Cv+fymc4wa6MdJ65LIeoEGSzpmVkb7Hdfw0RvcC7pBgXUm0TpKjylFJoAm1GAnL5ol
- d96IgYZCJP2Ijpx43Btgy7S+64xM72H7y+VE2J1JknpDdMG25tbjg3R1JJeQWLFUQ9sbaH4hd
- IjdKuF4y4yRzYRTY6npsxgO/fKf6+33tF6j9xnNQG073bj2wVDSZerrj+biKfo3JYWO2VpeT0
- oX6UrK9qdMIj86ZSS7vqv77t6eRGAmWhQUEoBKC7F8nKuUrr9CxJsOTmUYxilf59F9GJRcudT
- dJ1Arz3EW6ZbRbVHz4jWZDDJbCHLQaqpvOR+k8O7bTqMpPxC2cepCj0RcQfof8b6LlQvQt7Vs
- 5nUeK8ELYubGlQeQV0qqWAvpG8F/9ZtsA8kRRc4S0nJ2/VHBh93+hPj1sGhr42RPFPI8x+RLT
- EuNcubRf64i5hNJVsvD68oNfAZs421LkPgH2FA0onslaOEJ6YQM9Nd088FaQbmKi68yXxLm6L
- 5JFhUKwihVCBm/WvdIEv7Ib+5KZu5fubPOimxdpcukUtGILnBBhKfrrca9UAgBR2JtIw2N1TS
- 66impuZNmAVSd/u1Cjb6JXn3acIqa6rbQpczOmMMs4wqbYSZTmSyT07fhFruB4/BAswWYUrHX
- OuEdz0CxdhPmU6YsUZ3dVBO7SeYwjag+riHl41lDXmAWSh+77BSpR3xc98F6ddSckElZZgSdx
- SyNo339Uk+KACe7ZCAiQ7/Aqh49tz9xL3Y/8zbsp1FnWVb/otH5dn16X2sP1SFemqje3YEKUJ
- WgDlBnqVDKhWTfLau0YK7u5w==
+X-Spam-Level: 
 
+On Wed 04-09-24 14:29:25, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> Now the beginning of the first four functions in ext4_fallocate() (punch
+> hole, zero range, insert range and collapse range) are almost the same,
+> they need to wait for the dio to finish, get filemap invalidate lock,
+> write back dirty data and finally drop page cache. Factor out a common
+> helper to do these work can reduce a lot of the redundant code.
+> 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
+I like that we factor out this functionality in a common helper. But see
+below:
 
-=E5=9C=A8 2024/9/23 17:45, Johannes Thumshirn =E5=86=99=E9=81=93:
-> On 23.09.24 09:56, Qu Wenruo wrote:
->>>> =E5=9C=A8 2024/9/23 16:15, Johannes Thumshirn =E5=86=99=E9=81=93:
->>>>> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
->>>>>
->>>>> NOCOW writes do not generate stripe_extent entries in the RAID strip=
-e
->>>>> tree, as the RAID stripe-tree feature initially was designed with a
->>>>> zoned filesystem in mind and on a zoned filesystem, we do not allow =
-NOCOW
->>>>> writes. But the RAID stripe-tree feature is independent from the zon=
-ed
->>>>> feature, so we must also allow NOCOW writes for zoned filesystems.
->>>>>
->>>>> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
->>>>
->>>> Sorry I'm going to repeat myself again, I still believe if we insert =
-an
->>>> RST entry at falloc() time, it will be more consistent with the non-R=
-ST
->>>> code.
->>>>
->>>> Yes, I known preallocated space will not need any read nor search RST
->>>> entry, and we just fill the page cache with zero at read time.
->>>>
->>>> But the point of proper (not just dummy) RST entry for the whole
->>>> preallocated space is, we do not need to touch the RST entry anymore =
-for
->>>> NOCOW/PREALLOCATED write at all.
->>>>
->>>> This makes the RST NOCOW/PREALLOC writes behavior to align with the
->>>> non-RST code, which doesn't update any extent item, but only modify t=
-he
->>>> file extent for PREALLOC writes.
->>>
->>> Please re-read the patch. This is not a dummy RST entry but a real RST
->>> entry for NOCOW writes.
->>>
->> I know, but my point is, if the RST entry for preallocated range is
->> already a regular one, you won't even need to insert/update the RST tre=
-e
->> at all.
->>
->> Just like we do not need to update the extent tree for
->> NOCOW/PREALLOCATED writes.
->
-> But as long as there is no data on disk there is no point of having a
-> logical to N-disk physical mapping. We haven't even called
-> btrfs_map_block() before, so where do we know which disks will get the
-> blocks at which address? Look at this example:
->
-> Fallocate [0, 1M]
-> virtme-scsi:/mnt # xfs_io -fc "falloc 0 1M" -c sync test
-[...]
->
->
-> [1] we preallocate the data for [0, 1M] @ 298844160
-> [2] we have the actual written data for [64k, 128k] @ 298844160
->
-> What should I do to insert the RST entry there as we get:
+> @@ -4731,6 +4707,52 @@ static int ext4_fallocate_check(struct inode *inode, int mode,
+>  	return 0;
+>  }
+>  
+> +int ext4_prepare_falloc(struct file *file, loff_t start, loff_t end, int mode)
+> +{
+> +	struct inode *inode = file_inode(file);
+> +	struct address_space *mapping = inode->i_mapping;
+> +	int ret;
+> +
+> +	/* Wait all existing dio workers, newcomers will block on i_rwsem */
+> +	inode_dio_wait(inode);
+> +	ret = file_modified(file);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * Prevent page faults from reinstantiating pages we have released
+> +	 * from page cache.
+> +	 */
+> +	filemap_invalidate_lock(mapping);
+> +
+> +	ret = ext4_break_layouts(inode);
+> +	if (ret)
+> +		goto failed;
+> +
+> +	/*
+> +	 * Write data that will be zeroed to preserve them when successfully
+> +	 * discarding page cache below but fail to convert extents.
+> +	 */
+> +	ret = filemap_write_and_wait_range(mapping, start, end);
 
-Do the needed write map and insert the RST entries, just as if we're
-doing a write, but without any actual IO.
+The comment is somewhat outdated now. Also the range is wrong for collapse
+and insert range. There we need to writeout data upto the EOF because we
+truncate it below.
 
+								Honza
 
-Currently the handling of RST is not consistent with non-RST, thus
-that's the reason causing problems with scrub on preallocated extents.
+> +	if (ret)
+> +		goto failed;
+> +
+> +	/*
+> +	 * For insert range and collapse range, COWed private pages should
+> +	 * be removed since the file's logical offset will be changed, but
+> +	 * punch hole and zero range doesn't.
+> +	 */
+> +	if (mode & (FALLOC_FL_INSERT_RANGE | FALLOC_FL_COLLAPSE_RANGE))
+> +		truncate_pagecache(inode, start);
+> +	else
+> +		truncate_pagecache_range(inode, start, end);
+> +
+> +	return 0;
+> +failed:
+> +	filemap_invalidate_unlock(mapping);
+> +	return ret;
+> +}
 
-I known preallocated range won't trigger any read thus it makes no sense
-to do the proper RST setup.
-But let's also take the example of non-RST scrub:
-
-Do we spend our time checking if a data extent is preallocated or not?
-No, we do not. We just read the content, and check against its csum.
-For preallocated extents, it just has no csum.
-
-You can argue that this is wasting IO, but I can also counter-argue that
-we need to make sure the read on that device range is fine, even if we
-know we will not really read the content (but that's only for now).
-
-
-Furthermore, from the logical aspect, at least to me, non-RST case is
-just a special case where logical address is 1:1 mapped already.
-
-This also means, even for preallocated extents, they should have RST
-entries.
-
-
-Finally, I do not think it's a good idea to insert RST entries for NOCOW.
-If a file is set NOCOW, it means we'll doing a lot of overwrite for it.
-Then why waste our time updating the RST entries again and again?
-
-Isn't such behavior going to cause more write amplification? Meanwhile
-for non-RST cases, NOCOW should cause the least amount of write
-amplification.
-
-
-
-So again, YES, I know doing proper write map and inserting RST entries
-for preallocated range makes no sense for READ.
-But preallocation and NOCOW is utilized for contents we frequently
-over-writes, and such RST entries save us more for those frequently
-over-writes.
-
-Thanks,
-Qu
->
-> [3] the physical copies starting at 298909696 on devid 1 and 277938176
-> on devid 2
->
->
-
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
