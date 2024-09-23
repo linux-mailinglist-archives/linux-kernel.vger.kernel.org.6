@@ -1,182 +1,87 @@
-Return-Path: <linux-kernel+bounces-336276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B62A97F177
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 21:59:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF23997F173
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 21:58:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3ACFF2827A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 19:59:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 862581F22946
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 19:58:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465A11A0BE2;
-	Mon, 23 Sep 2024 19:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F291A08AB;
+	Mon, 23 Sep 2024 19:58:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iislJ+7j"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wJmWHuak"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0CCF1A00F5;
-	Mon, 23 Sep 2024 19:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E542C19F42D
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 19:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727121519; cv=none; b=Y0tVsMj+e0ESWJRhY7Id0x5axAoydqA7o3NWgETwa7txZ4fox2DnM3mCvDn70CR91VtNKzsId/dBJLQJYr6PAy4gz6Ob14uc7YNAZThRrTbk4fQpXb3SeMI+UCar7fD0yAQWKUZ8Z8z2IvQaHdjAdp0DOjoIVQgbJTqZr8nAhrA=
+	t=1727121512; cv=none; b=kVFjsIjblTaDmsimFmB1Bd34+7/D+k4SDVYekuNHmRAUtusI9jFOplfcIhBxjdrpYrlEheeB+6KttNQl9EnWRyabBO2/rfe60/K60yCvYMKp+qyKqfoTVxjbCfHxqUo4oIXDNdxyukDvQkwKTy8JkF9coPhOf5LjpTjvqhNnWKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727121519; c=relaxed/simple;
-	bh=Il6i3w+gsdOwRmD9TfWP5x/CDAFYDHMn5SPUSokQ60c=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C1FJjY4gMQhysb/rsdLNfi6AxbWA+VOxihvQBaFgkKq8uRRVqs7B+HGEUrJ7orEdaxZEHt2wSDq1uhHKcAJtReMj3V3m+fpvQ+m4WNXw4W3Zwhkp0vW7Y6wJeT3rNs77vg9KnE1mnPGgAgwB66xGRstV+lhjn6KkzuClDz1d1LQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iislJ+7j; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48NBek1P022699;
-	Mon, 23 Sep 2024 19:58:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=z6wb02yUb05pmv4YBYmLlCqX
-	MDXAd164bdsu0ye707M=; b=iislJ+7j+m0SE3SYP6Q2rXPw/JGjiJNb+REwlYjP
-	XJ05ucRqDQqRTxRu1B9OfuDrkPv32zScwdfWnZSwQBkJwzm8wm/Xx5kFXNNLfkti
-	uTTml4yXwZJDuMYchhadkdZmPw/RnyWu/J9MMDRc9nDZns4J60LAX7IrJ+Rerv0D
-	V6JOLaZlicOv0uuJj6zpR6cKvgZdJJftx6jdXFbGbDAFO5qk5+c6quPTzpapiIMd
-	wyPNSmFXbluIRlAGsEfWNEJiNh9SA7iPb9rGERFNxuzg1SlVhmXOyDjKUvBitjXF
-	JayVytm4YVKqtrFpotHbrHzi/swfRj1ZGZulMOvuDUEAnQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41snqye7s2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 23 Sep 2024 19:58:26 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48NJwPZ1007818
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 23 Sep 2024 19:58:25 GMT
-Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 23 Sep 2024 12:58:19 -0700
-Date: Tue, 24 Sep 2024 01:28:15 +0530
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        "Konrad
- Dybcio" <konrad.dybcio@linaro.org>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        "Puranam V G Tejaswi"
-	<quic_pvgtejas@quicinc.com>
-Subject: Re: [PATCH 0/3] DRM/MSM: Support for Adreno 663 GPU
-Message-ID: <20240923195815.phtxrnnpt7cxm3mz@hu-akhilpo-hyd.qualcomm.com>
-References: <20240918-a663-gpu-support-v1-0-25fea3f3d64d@quicinc.com>
- <5fxmsbtyagtzt2pizdjoadiwxt3klafaulrhxoz4adevapxyoj@5jg7qaqhwkgr>
+	s=arc-20240116; t=1727121512; c=relaxed/simple;
+	bh=yxft5aTPJgFo41egnZNnYL2AdYaotMJT020F3tsr8TU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bbm3lpcwNJQ3R1i/hMumkiJGV3Keny3PdyrUD8MHTf9NmZx3DpWCRlrQ2lWxSarpEL7+fzt5BVxCd0v3Kx89vCYHsBJ3JbqHiNysLWMTJUd2b5DIMfQW4BGbqzLOfvoEUI7BA8ruVOtasjmPI6WB0Hq8GLYo4AGmJYcGsik/Ydc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wJmWHuak; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 23 Sep 2024 15:58:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727121508;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sDZ+6d0KCtNkxJnxHWfLVyKDdWVgUy9qCQtEFEkdszQ=;
+	b=wJmWHuakuBAKNAV0WmmPRNZvBeiLWrW1HnWaM14kfpJKFiIjGt93VvqXZnOD/KGRg+x8Z/
+	owz+aw8dr2tuMURqjEPlBiRJ1qbAG995D9WMcKPp/b5LyFy7VYCKLrTCnH3OtVVotjyYVF
+	lWu/JgjAv7AQmzffAm8tETawvtmzrgI=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [GIT PULL] bcachefs changes for 6.12-rc1
+Message-ID: <5wupeqpme5syfqwleeckmvdv5vtsg7m3fsvc7sr6br45mx4mr4@5y3ylpgdnd46>
+References: <dtolpfivc4fvdfbqgmljygycyqfqoranpsjty4sle7ouydycez@aw7v34oibdhm>
+ <CAHk-=whQTx4xmWp9nGiFofSC-T0U_zfZ9L8yt9mG5Qvx8w=_RQ@mail.gmail.com>
+ <CAHk-=wjEDDexH4DQdmzQMipPPABVoHmXBx_byHkWC3qUM3uamw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5fxmsbtyagtzt2pizdjoadiwxt3klafaulrhxoz4adevapxyoj@5jg7qaqhwkgr>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: MVa_S3vuw5Iwwef3--9pf0RywK13A0ew
-X-Proofpoint-ORIG-GUID: MVa_S3vuw5Iwwef3--9pf0RywK13A0ew
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 adultscore=0 bulkscore=0 phishscore=0 mlxlogscore=999
- spamscore=0 lowpriorityscore=0 clxscore=1015 mlxscore=0 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409230144
+In-Reply-To: <CAHk-=wjEDDexH4DQdmzQMipPPABVoHmXBx_byHkWC3qUM3uamw@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Sep 18, 2024 at 12:34:32AM +0300, Dmitry Baryshkov wrote:
-> On Wed, Sep 18, 2024 at 02:08:40AM GMT, Akhil P Oommen wrote:
-> > This series adds support for Adreno 663 gpu found in SA8775P chipsets.
-> > The closest gpu which is currently supported in drm-msm is A660.
-> > Following are the major differences with that:
-> > 	1. gmu/zap firmwares
-> > 	2. Recommended to disable Level2 swizzling
-> > 
-> > Verified kmscube with the below Mesa change [1]. This series is rebased
-> > on top of msm-next.
+On Mon, Sep 23, 2024 at 12:07:24PM GMT, Linus Torvalds wrote:
+> On Mon, 23 Sept 2024 at 10:18, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > On Sat, 21 Sept 2024 at 12:28, Kent Overstreet
+> > <kent.overstreet@linux.dev> wrote:
+> > >
+> > > We're now using an rhashtable instead of the system inode hash table;
+> > > this is another significant performance improvement on multithreaded
+> > > metadata workloads, eliminating more lock contention.
+> >
+> > So I've pulled this, but I reacted to this issue - what is the load
+> > where the inode hash table is actually causing issues?
 > 
-> Is there a chance of you sharing Vulkan CTS results?
-
-No. As of now there are no plans to run CTS.
-
--Akhil
-
+> Oh, and I also only now noticed that a third of the commits are fairly
+> recent and from after the merge window even started.
 > 
-> > 
-> > Patch (1) & (2) for Rob Clark and Patch (3) for Bjorn
-> > 
-> > [0] https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/31211
-> > 
-> > To: Rob Clark <robdclark@gmail.com>
-> > To: Sean Paul <sean@poorly.run>
-> > To: Konrad Dybcio <konrad.dybcio@linaro.org>
-> > To: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> > To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > To: Marijn Suijten <marijn.suijten@somainline.org>
-> > To: David Airlie <airlied@gmail.com>
-> > To: Daniel Vetter <daniel@ffwll.ch>
-> > To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> > To: Maxime Ripard <mripard@kernel.org>
-> > To: Thomas Zimmermann <tzimmermann@suse.de>
-> > To: Rob Herring <robh@kernel.org>
-> > To: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> > To: Conor Dooley <conor+dt@kernel.org>
-> > To: Bjorn Andersson <andersson@kernel.org>
-> > Cc: linux-arm-msm@vger.kernel.org
-> > Cc: dri-devel@lists.freedesktop.org
-> > Cc: freedreno@lists.freedesktop.org
-> > Cc: linux-kernel@vger.kernel.org
-> > Cc: devicetree@vger.kernel.org
-> > 
-> > Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
-> > ---
-> > Puranam V G Tejaswi (3):
-> >       drm/msm/a6xx: Add support for A663
-> >       dt-bindings: display/msm/gmu: Add Adreno 663 GMU
-> >       arm64: dts: qcom: sa8775p: Add gpu and gmu nodes
-> > 
-> >  .../devicetree/bindings/display/msm/gmu.yaml       |  1 +
-> >  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi         |  8 +++
-> >  arch/arm64/boot/dts/qcom/sa8775p.dtsi              | 75 ++++++++++++++++++++++
-> >  drivers/gpu/drm/msm/adreno/a6xx_catalog.c          | 19 ++++++
-> >  drivers/gpu/drm/msm/adreno/a6xx_gpu.c              |  8 ++-
-> >  drivers/gpu/drm/msm/adreno/a6xx_hfi.c              | 33 ++++++++++
-> >  drivers/gpu/drm/msm/adreno/adreno_gpu.h            |  5 ++
-> >  7 files changed, 148 insertions(+), 1 deletion(-)
-> > ---
-> > base-commit: 15302579373ed2c8ada629e9e7bcf9569393a48d
-> > change-id: 20240917-a663-gpu-support-b1475c828606
-> > 
-> > Best regards,
-> > -- 
-> > Akhil P Oommen <quic_akhilpo@quicinc.com>
-> > 
-> 
-> -- 
-> With best wishes
-> Dmitry
+> Maybe there's a good reason for that, but it sure wasn't explained in
+> the pull request. Grr.
+
+I rebased to drop a patch that conflicts with Andrew's tree (the
+PF_MEMALLOC_NORECLAIM stuff, which I would still like to chat with him
+about since I missed him at Plumbers...)
 
