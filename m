@@ -1,75 +1,124 @@
-Return-Path: <linux-kernel+bounces-336006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7874997EDF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:17:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9203697EDF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:18:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DE9D1F21BBB
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:17:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEDBE1C2154D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2805E19CC1C;
-	Mon, 23 Sep 2024 15:16:56 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD0D19D062;
+	Mon, 23 Sep 2024 15:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="AQf8hGkT"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68EA12CDB6
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 15:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43CD512CDB6;
+	Mon, 23 Sep 2024 15:17:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727104615; cv=none; b=e8JF7YuWNM4Fowv4olCvM1Jky/KtVX/sUCLrS9WbeGTf0pzktCJKjdn4ml1xpIxcjtMiJL4cuOzlOxT4Lp0nRBPk9lc1ypwYUJ1+Mrk8Nb5f1EcTw3Vn67x6lnmzNKbTrB06SAXnNzkDPLiCNBuDxX41KdeXuVeSKCrOxUAHsVM=
+	t=1727104677; cv=none; b=itucB6irYMcpQHHMUOvmstBPZrw3CQLTlCJDhAPKIvl23+R3+jRZg4yY0zajaIepsXjYvSMRX+9hqPWVM8LGQR4TTOO4RYNB1XlpB67QsDXRNv5Oq4VTMD25J9mnlf8wjLkG9QcFgpo11o/b101LrxpnGGm39uborFMDoZzua0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727104615; c=relaxed/simple;
-	bh=vOx157s95qoV7CPWPkAReQKiswUEhlIYBuOu1h/6aWE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ddtlYve/JbKEGDA1I1c/mkJHM7xI1GxPRt3yjf1/7lRN4TPzd3bXIPXhGZ70anyxJbP5PNsKSK69K14i5jx+9/ia0T9rrECxvm90fcylDMh8VURfm2xk5wAGC4m3wfOp1TSNzLLH7qeui82kx2oBt3w/N0XapjoGH5mgM2ZZ/tM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 58C9D227A88; Mon, 23 Sep 2024 17:16:43 +0200 (CEST)
-Date: Mon, 23 Sep 2024 17:16:42 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: "Alex Xu (Hello71)" <alex_y_xu@yahoo.ca>
-Cc: Leon Romanovsky <leon@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Christoph Hellwig <hch@lst.de>, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: AMD SME fails boot after "dma-mapping: direct calls for
- dma-iommu"
-Message-ID: <20240923151642.GA26627@lst.de>
-References: <1727103770.hoytxrqcmg.none.ref@localhost> <1727103770.hoytxrqcmg.none@localhost>
+	s=arc-20240116; t=1727104677; c=relaxed/simple;
+	bh=yG8AvyiyRP5u3+5MM4OvFIqzHE1uXD8tmtbV+ly49xI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=QuQO8CP6M5Ia0vWNk6WaxRE3PjQE0RQgFzE3liuV90cVfbRFmQO8SJoBfdKCsINeGjccrrs5o+AQkCR6qBf4vwGjrbsbtfDiggg0s15yX41dFk2DAi4rKgWBIWhRN0sWLVo8JDly/pxDp0xlvzKFd8JXi9VmUIMoyjSBGhixA6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=AQf8hGkT; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727104662; x=1727709462; i=markus.elfring@web.de;
+	bh=xAMBgY9rGgoaR+LD1HXkmIq4mkMiYynQ4+4OcyBbevg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=AQf8hGkTPAS57uNusN0UdsplvH8Ns1k2oVLI18xlPtYjBNwmJvKCHSNAyy4RFraQ
+	 hYHcuFM2/uXFbbgyzBNqmScS+20mij4QAb+sM9KGS6C8kzdJ3dKJtCO6lqkkmDoze
+	 4CEgwVMzXM9+ZW0e/1x2QVsXSlYVzCxQjlIBEA1iPN2LylZmgd3GkFqqkV8ubl01b
+	 fLDUye+kKu4U/Jctnlq5SRWPOtHb09E7WylpvXyyS62qwIA2apcTgZd7MrxvillmR
+	 c/l7crDolFZ8X3NAEtFhbLffR/qRhYxxhlXYFRa2r5SoRQv+WR8KuqoRc/302l7Uy
+	 mEkJop0NJW1XHayQwA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MMGyK-1scrrM0I46-00Vnsi; Mon, 23
+ Sep 2024 17:17:42 +0200
+Message-ID: <d4e3550f-3c50-41f8-a6ed-dd689b2ae868@web.de>
+Date: Mon, 23 Sep 2024 17:17:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1727103770.hoytxrqcmg.none@localhost>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: Mozilla Thunderbird
+To: nvdimm@lists.linux.dev, kernel-janitors@vger.kernel.org,
+ Dan Williams <dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>,
+ Ira Weiny <ira.weiny@intel.com>, Vishal Verma <vishal.l.verma@intel.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] nvdimm: Call nvdimm_put_key(key) only once in
+ nvdimm_key_revalidate()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:VF7p49MuxkY8KK/+835nqEHjxWIxBGdrEo9OwVO8q9EfY1AobB0
+ eR0SX6rDij5Bina2F/ag/P+2aJHpKgvF/TJbQpMMr+ek87nEr3t9sBN5xtK93zCM2umtoLP
+ Lr7btV85YkCrVRX0UuwiOHDXiHS4PZKbvNzk/CI5ewTrKw5UU8h4z3VHQbqGFhijK3G+YwA
+ FzOJRXwvRqhdY6EN+b4mQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:dXDkJNmOHFk=;DwZwlhMCkHMjeJSd6Nj1edmkDaB
+ XzlhPaSccn5BvMvjpgSEi/sqJYHzNP72Boz8YDKxCyhKCt6NV59iUyTleRavQKSo6pxIzBlU5
+ Jw4AZScblxOxHp190JcC4nz9IaMyJu8MwrXvXICaHRA2hIo+n4q7+23FAfGQAJFWPcqp7PO0n
+ ZdK+t9l749WVgzVTka/kmVb6tb3vzC2vf8OlUPYcv7fCCLS4Z6o0aIs4zE/2qJdwwpeXALhMz
+ 76mkXSfMp/Dm5EB0Un4JdsmlUJ9AKN19U3YcmLL3f+mDl0NmIb05AbR+iQKmA6Bz8PgLg+AbP
+ khjCHaFffkmY8UWfaJ/S+L1uNthnlMr8EEMouvZBwjwzlBLtFqTezR2mX9gxQnFihosfH6Qth
+ nGVwO6cNip547uOsuOnP6G5I2xlIKNTcpWcVAWvVFih0QlZ4RwzvRibKiHzwlkM90ahHEjtpX
+ +RBm/4ITGLHQ4GfzjNqFwwcdXcVIxjpUu2095lcZRbUyFGm+jGVzuhwrB5fPIAsu71OH4aWc5
+ buOCOWCyBpJIJ5aiEbJ5F66YmSxtUJ01kz4D7XIsG+fOk8+mY+3mx0Cp+l5YxlvLouw2D7SaS
+ PUWupHdl7Fm7s3kOg/LeIt+ek/kmjlFFr9/Q/1flFSnINGiq3bZaQzapKyCjPgyntCTbvRZwh
+ jnKk0izoLIKU/VYVK51VxAogciVVuwaUphgVtpzqRO5Fceu7Gk5VYAcxbgLAKWxWxZB55c47Y
+ kRog/IxAB6Yru2Z7LWgu1YpwyI9PrBFAOgcoWx7OoJShtJ5w20vSjVsVI6+7wwna67Gk0p0G6
+ 8iq6AMing5sbBeIDaPmEAwTw==
 
-On Mon, Sep 23, 2024 at 11:09:32AM -0400, Alex Xu (Hello71) wrote:
-> Hi all,
-> 
-> Recently on torvalds master my ASRock B450 Pro4 with Ryzen 1600 cannot 
-> boot with mem_encrypt=on. Bisect blames "dma-mapping: direct calls for 
-> dma-iommu".
-> 
-> Let me know what further information is needed to troubleshoot this 
-> issue.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 23 Sep 2024 17:05:39 +0200
 
-Can you try the fixes already queued up here:
+A nvdimm_put_key(key) call was immediately used after a return code
+check for a change_key() call in this function implementation.
+Thus call such a function only once instead directly before the check.
 
-git://git.infradead.org/users/hch/dma-mapping.git for-next
+This issue was transformed by using the Coccinelle software.
 
-?
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/nvdimm/security.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-> 
-> Thanks,
-> Alex.
----end quoted text---
+diff --git a/drivers/nvdimm/security.c b/drivers/nvdimm/security.c
+index a03e3c45f297..83c30980307c 100644
+=2D-- a/drivers/nvdimm/security.c
++++ b/drivers/nvdimm/security.c
+@@ -152,12 +152,10 @@ static int nvdimm_key_revalidate(struct nvdimm *nvdi=
+mm)
+ 	 * verify that the key is good.
+ 	 */
+ 	rc =3D nvdimm->sec.ops->change_key(nvdimm, data, data, NVDIMM_USER);
+-	if (rc < 0) {
+-		nvdimm_put_key(key);
++	nvdimm_put_key(key);
++	if (rc < 0)
+ 		return rc;
+-	}
+
+-	nvdimm_put_key(key);
+ 	nvdimm->sec.flags =3D nvdimm_security_flags(nvdimm, NVDIMM_USER);
+ 	return 0;
+ }
+=2D-
+2.46.1
+
 
