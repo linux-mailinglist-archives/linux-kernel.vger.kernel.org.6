@@ -1,172 +1,137 @@
-Return-Path: <linux-kernel+bounces-335779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63A9097EA8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:16:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C51297EA8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:16:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE9541F21C88
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:16:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 483AC1F21CDE
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:16:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F14A197A69;
-	Mon, 23 Sep 2024 11:16:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ninrRGzI"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA74198A33;
+	Mon, 23 Sep 2024 11:16:23 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193F0944E;
-	Mon, 23 Sep 2024 11:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC07944E;
+	Mon, 23 Sep 2024 11:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727090174; cv=none; b=fhLorzeZaJlVqYSGFwZgDThc3VUrQclKSm7sb51+pi5DyD8WkTKffLCVDzHnZSazE3B/xENmcdOzgGuxgszWnnUSlmtsWdcSNP3dL2ovXpBSKk/9S7QWjj3Q0LLNnGcGL/keHtqyRfoyDXiKMLF7GRuTudMIUie0tceWfB9TbUc=
+	t=1727090182; cv=none; b=tfJ8KJ7oQ3Z7TvP4tFXINU89u1nFJRnhPFdrmclV62VGodI6WH19HJvA84EOH/u/cAAOiks7c49vdlMbASUR3K5J9ii9PjH6qVuphO28ErlnNrDEEt6TkSoFSus1aT5J5AvEkp6mjk/v8bPbh7qatVG5L5SYaqBjzi6NJ00pcZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727090174; c=relaxed/simple;
-	bh=tIHO8DH5NyuiT++VB0fJEsbCMEqGEMc8XYaT7bZ5vuQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HSwvZC9TnmOfrYgvEaPIKSWdL9nBQGzHO1dV2kgBRQ7hRiUVoLDlK5bJUxRutyVEOxs4X+xnMk2Er5UqwtMnxcjPF3qDpVftDnurdpX5hs/zH6mxpgm6mNh6eieUJTBBybRz2fVzlLMbxP3VV/rfHicv8YLLApoQ2kQlQ956TKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ninrRGzI; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20536dcc6e9so26504905ad.2;
-        Mon, 23 Sep 2024 04:16:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727090172; x=1727694972; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=R3zN6rjgmDwiqM1tyWgAnuP+HwbctY1gr24v68LNtPU=;
-        b=ninrRGzIfygo84pIhGuOPB1IcagzMSisDxSlb9pm9fJYRyPrW0WZgvE9E/V6UpK7A/
-         GjaTqBj8nxR0PCWvVxtM/FnxCakg9x4cMbxbXjTx3duk67S98xkFVCEZ830tu9vxX7sg
-         IZ/LXDUfVs2fmlpsEVB2rK0XTvMNSh1uPIdBf7mCEt9PaK7nv/9Hyz5tSShrlcC9tSFg
-         d/ZuXCETWXgQywCv+YcwMyVhu5KAZXpIpc70gigXv1sPn41UW4grj/jKRPfYEVbtcNbv
-         oSkvzhGCDdRNmLRg8BYCL5wllZgJnIEvTeu3BXCPJasqTK7XF/WkGD6VCz9iNcYvMq2z
-         4Cuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727090172; x=1727694972;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=R3zN6rjgmDwiqM1tyWgAnuP+HwbctY1gr24v68LNtPU=;
-        b=lyzFROUrb1WcOegGHLNhH9u5ZJ27xZy1I2We8nFNBrpf4yFKlNb0EUQyVyYeYDzQeo
-         jdWGR6NoJKwVeFs0795cAx5QHWXg26augk3CcvvIxp2QeJPcyDYZKC9QZoAOGc8ZnGbj
-         CuX+O6y4YZoUFu7qs7qsZYBVMJhNZHkrk9wMRHWw/+VtqcZbsUoV4NXKug9GKvjmVat5
-         rUgTJQL03mmPhhvXfBdW1fWnSGI546bd9ur62sjHWBomL+2lGT9dOHAHiafdQh35kmsD
-         xHRs3WosGtn1Xsx8Qqz0B7hvVE45It31E4bPhMb39kpFBQWo/G3RjW6hzvQusEhorIgv
-         7ETA==
-X-Forwarded-Encrypted: i=1; AJvYcCWi+wbHNQaQMaGpesQVFcVU0sYYJVOg+8niDzSS5MwyCZ2R+4FdCWmu2ubiyI7efqvccvZxtMKpmc/s2tq0@vger.kernel.org, AJvYcCX6ia1oPkJyqWpcYgRDxVoaSE7cogRv/OMXgPg+9YlNQ2L7vk1RPlrjaHxShe9rMLK6HVv3HsnI9iw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpILNeGatHcuzLW95Ul3ct/4VYzZDR9pzG30GJbRnJZnp8EWPU
-	StgqfzMDFUyvPf02nI9U0nFszryZXC1SsIMVSBg+Ukgt/5ZKMHHQz+Nyw290AI6IgUBFvi9Z8lv
-	aqUMMnNfyKHF0a8Eer1qx2cdD1exc2S5+
-X-Google-Smtp-Source: AGHT+IFxaJ7zZqhfiM8JBHTh6a0N4meJp8WaZT7uvhQ7yC5nkL5yya6ws/X3WlcNC0WR5YNa2oC7fT9fG9zzSXSLhmg=
-X-Received: by 2002:a17:902:e5d1:b0:206:d6ac:8552 with SMTP id
- d9443c01a7336-208d84143edmr177444945ad.52.1727090172100; Mon, 23 Sep 2024
- 04:16:12 -0700 (PDT)
+	s=arc-20240116; t=1727090182; c=relaxed/simple;
+	bh=rLuSuMI7eCvefXhH8bL5ECCipo0DZ7ujNwOng5gl/bo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GSK3HonELq+8OUCsbUZ8yvjrf7SVHs9sPraYaj+V9gp1dPSFdoD/mCdCj0U2tIZGwpbpw+pqtdI+e9V80gqm+v94A1x+HgJtqgJBl73y2Avg5e0n6jOvxd5xXGGZxvQ2u0FNIya7WxV53yrR05PcYsl+vvHrTTLwhrGIPx3cJ14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XC0md2Hsyz1ylyY;
+	Mon, 23 Sep 2024 19:16:17 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1786F140138;
+	Mon, 23 Sep 2024 19:16:16 +0800 (CST)
+Received: from [10.67.110.108] (10.67.110.108) by
+ kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 23 Sep 2024 19:16:15 +0800
+Message-ID: <ec36e8f7-3a16-e42f-51c7-94c5c2acbb55@huawei.com>
+Date: Mon, 23 Sep 2024 19:16:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240921124117.82156-1-aha310510@gmail.com> <f70ee386-d8eb-4d28-99fd-9d40e5d93ca8@kernel.org>
-In-Reply-To: <f70ee386-d8eb-4d28-99fd-9d40e5d93ca8@kernel.org>
-From: Jeongjun Park <aha310510@gmail.com>
-Date: Mon, 23 Sep 2024 20:15:59 +0900
-Message-ID: <CAO9qdTGAgBux-M3GxZdBbBpsUm0V_E8fyWSjZuA7jA8bH-Qf4g@mail.gmail.com>
-Subject: Re: [PATCH] ata: libata: fix ALL_SUB_MPAGES not to be performed when
- CDL is not supported
-To: Damien Le Moal <dlemoal@kernel.org>
-Cc: cassel@kernel.org, syzbot+37757dc11ee77ef850bb@syzkaller.appspotmail.com, 
-	linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH] arm64: uprobes: Optimize cache flushes for xol slot
+To: Will Deacon <will@kernel.org>, Oleg Nesterov <oleg@redhat.com>
+CC: Catalin Marinas <catalin.marinas@arm.com>, <mhiramat@kernel.org>,
+	<peterz@infradead.org>, <mark.rutland@arm.com>,
+	<linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+References: <20240919121719.2148361-1-liaochang1@huawei.com>
+ <20240919141824.GB12149@redhat.com>
+ <41fdfc47-4161-d2e4-6528-4079b660424f@huawei.com> <Zu2VdYrLWTJbVOAt@arm.com>
+ <20240920173223.GA20847@redhat.com> <20240922140910.GA31288@willie-the-truck>
+From: "Liao, Chang" <liaochang1@huawei.com>
+In-Reply-To: <20240922140910.GA31288@willie-the-truck>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
-Damien Le Moal <dlemoal@kernel.org> wrote:
->
-> On 2024/09/21 14:41, Jeongjun Park wrote:
-> > In the previous commit 602bcf212637 ("ata: libata: Improve CDL resource
-> > management"), the ata_cdl structure was added and the ata_cdl structure
-> > memory was allocated with kzalloc(). Because of this, if CDL is not
-> > supported, dev->cdl is a NULL pointer, so additional work should never
-> > be done.
-> >
-> > However, even if CDL is not supported now, if spg is ALL_SUB_MPAGES,
-> > dereferencing dev->cdl will result in a NULL pointer dereference.
-> >
-> > Therefore, I think it is appropriate to check dev->flags in
-> > ata_scsiop_mode_sense() if spg is ALL_SUB_MPAGES to see if CDL is supported.
-> >
-> > Reported-by: syzbot+37757dc11ee77ef850bb@syzkaller.appspotmail.com
-> > Tested-by: syzbot+37757dc11ee77ef850bb@syzkaller.appspotmail.com
-> > Fixes: 602bcf212637 ("ata: libata: Improve CDL resource management")
-> > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> > ---
-> >  drivers/ata/libata-scsi.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-> > index 3328a6febc13..6f5527f12b0e 100644
-> > --- a/drivers/ata/libata-scsi.c
-> > +++ b/drivers/ata/libata-scsi.c
-> > @@ -2442,7 +2442,9 @@ static unsigned int ata_scsiop_mode_sense(struct ata_scsi_args *args, u8 *rbuf)
-> >       if (spg) {
-> >               switch (spg) {
-> >               case ALL_SUB_MPAGES:
-> > -                     break;
-> > +                     if (dev->flags & ATA_DFLAG_CDL)
-> > +                             break;
-> > +                     fallthrough;
->
-> I do not think this is correct at all. If the user request all sub mpages, we
-> need to give that list regardless of CDL support. What needs to be fixed is that
-> if CDL is NOT supported, we should not try to add the information for the T2A
-> and T2B sub pages. So the fix should be this:
 
-Okay. But after looking into it further, I think it would be more appropriate to
-also check the ATA_DFLAG_CDL_ENABLED flag when checking if CDL is
-not supported. So it seems like it would be better to modify the condition as
-below.
 
-What do you think?
+在 2024/9/22 22:09, Will Deacon 写道:
+> On Fri, Sep 20, 2024 at 07:32:23PM +0200, Oleg Nesterov wrote:
+>> On 09/20, Catalin Marinas wrote:
+>>>
+>>> On Fri, Sep 20, 2024 at 04:58:31PM +0800, Liao, Chang wrote:
+>>>>
+>>>>
+>>>> 在 2024/9/19 22:18, Oleg Nesterov 写道:
+>>>>> On 09/19, Liao Chang wrote:
+>>>>>>
+>>>>>> --- a/arch/arm64/kernel/probes/uprobes.c
+>>>>>> +++ b/arch/arm64/kernel/probes/uprobes.c
+>>>>>> @@ -17,12 +17,16 @@ void arch_uprobe_copy_ixol(struct page *page, unsigned long vaddr,
+>>>>>>  	void *xol_page_kaddr = kmap_atomic(page);
+>>>>>>  	void *dst = xol_page_kaddr + (vaddr & ~PAGE_MASK);
+>>>>>>
+>>>>>> +	if (!memcmp(dst, src, len))
+>>>>>> +		goto done;
+>>>>>
+>>>>> can't really comment, I know nothing about arm64...
+>>>>>
+>>>>> but don't we need to change __create_xol_area()
+>>>>>
+>>>>> 	-	area->page = alloc_page(GFP_HIGHUSER);
+>>>>> 	+	area->page = alloc_page(GFP_HIGHUSER | __GFP_ZERO);
+>>>>>
+>>>>> to avoid the false positives?
+>>>>
+>>>> Indeed, it would be safer.
+>>>>
+>>>> Could we tolerate these false positives? Even if the page are not reset
+>>>> to zero bits, if the existing bits are the same as the instruction being
+>>>> copied, it still can execute the correct instruction.
+>>>
+>>> Not if the I-cache has stale data. If alloc_page() returns a page with
+>>> some random data that resembles a valid instruction but there was never
+>>> a cache flush (sync_icache_aliases() on arm64), it's irrelevant whether
+>>> the compare (on the D-cache side) succeeds or not.
+>>
+>> But shouldn't the page fault paths on arm64 flush I-cache ?
+>>
+>> If alloc_page() returns a page with some random data that resembles a valid
+>> instruction, user-space can't execute this instruction until
+>> special_mapping_fault() installs the page allocated in __create_xol_area().
+>>
+>> Again, I know nothing about arm64/icache/etc, I am just curious and trying
+>> to understand...
+> 
+> We defer the icache maintenance until set_pte_at() time, where we call
+> __sync_icache_dcache() if we're installing a present, executable user
+> eintry. That also elides the maintenance if PG_arch_1 is set (i.e. the
+> kernel only takes responsibility for the freshly allocated page).
 
-if (!(dev->flags & ATA_DFLAG_CDL
-      dev->flags & ATA_DFLAG_CDL_ENABLED) || !dev->cdl)
-        return 0;
+The newly allocated page should always have PG_arch_1 cleared, correct? Is it
+possible for alloc_page() to return a page with PG_arch_1 set in the current
+arm64 kernel?
 
-Regards,
-Jeongjun Park
+> 
+> Will
+> 
+>>
+>> Oleg.
+>>
 
->
-> diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-> index 3328a6febc13..6ffa975746a6 100644
-> --- a/drivers/ata/libata-scsi.c
-> +++ b/drivers/ata/libata-scsi.c
-> @@ -2256,10 +2256,15 @@ static inline u16 ata_xlat_cdl_limit(u8 *buf)
->  static unsigned int ata_msense_control_spgt2(struct ata_device *dev, u8 *buf,
->                                              u8 spg)
->  {
-> -       u8 *b, *cdl = dev->cdl->desc_log_buf, *desc;
-> +       u8 *b, *cdl, *desc;
->         u32 policy;
->         int i;
->
-> +       if (!(dev->flags & ATA_DFLAG_CDL) || !dev->cdl)
-> +               return 0;
-> +
-> +       cdl = dev->cdl->desc_log_buf;
-> +
->         /*
->          * Fill the subpage. The first four bytes of the T2A/T2B mode pages
->          * are a header. The PAGE LENGTH field is the size of the page
->
->
-> >               case CDL_T2A_SUB_MPAGE:
-> >               case CDL_T2B_SUB_MPAGE:
-> >               case ATA_FEATURE_SUB_MPAGE:
-> > --
->
-> --
-> Damien Le Moal
-> Western Digital Research
->
+-- 
+BR
+Liao, Chang
 
