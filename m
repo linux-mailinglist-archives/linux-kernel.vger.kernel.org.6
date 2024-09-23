@@ -1,89 +1,124 @@
-Return-Path: <linux-kernel+bounces-335493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD98397E672
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 09:24:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72FCD97E66B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 09:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C919B20B2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 07:24:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1839A1F216A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 07:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703F8364BC;
-	Mon, 23 Sep 2024 07:24:12 +0000 (UTC)
-Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E8B834CDE;
+	Mon, 23 Sep 2024 07:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YN2UMLBh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 194D5D529;
-	Mon, 23 Sep 2024 07:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0102C9D;
+	Mon, 23 Sep 2024 07:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727076252; cv=none; b=YRLlsi4WZbV9XCt9nTA7vYk07G7dQMhB0cRXNX43sUdyJIaokXFEiMUDq95G1EWwNz6CiF9W/DNhLhQIP7472EKFPOZcJ5OQS5P+yjyxPBzcVr26PKeqhuDd9iMvGfBPylNKqOoypBhXYrkFc8ZbM3CjrLFgZCYEfeWLb7pAPog=
+	t=1727075943; cv=none; b=bTuUkD6+DotE6bwFkUWNK/3zf3c3m9VY05l9FrfnCHmdD4eBNJECRLAndaGtAYCxVGejb3mJVmm9cc6o2+pssEl3IZE/GmvDloWxEPpMUVViXxIeQuYqw8k+cegADzne6gdX6uf08GZ8Jg0Ytimz0b+eyAa3QeWReTyI0Xa0lIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727076252; c=relaxed/simple;
-	bh=J+gXBU4oM5p8X1MMHrOd5w8x8gnG4wWNFQ4hggpXm8g=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Subject:Cc:
-	 References:In-Reply-To; b=eOCuDKoQrVApk9RlpLUcNuDb0j3Xql7nxOsngaWtkcm+dD+NkTSYiNP9/QhFdeSGTU4ejF/tf6aF4AMpAt6K29CbsA1AZ4mMTTDS7sHkD+LgkYmVD7f/bYj35X7L9w/1zw7uamrPpuORR1/5owDkEffj6y9Ps0HBCgT+4jSCqT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=walle.cc; arc=none smtp.client-ip=159.69.201.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
-Received: from localhost (unknown [IPv6:2a02:810b:4340:4ee9:4685:ff:fe12:5967])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.3ffe.de (Postfix) with ESMTPSA id 4C90C4CF;
-	Mon, 23 Sep 2024 09:18:02 +0200 (CEST)
+	s=arc-20240116; t=1727075943; c=relaxed/simple;
+	bh=Ocmkj+uLEsz/w8DNkQaMK1OQUpnpKXPRPjzpvqt95nU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=adJK//jMWpjhkHGLt2/ecWvgNSfoInqzV7lQtzY4op2/Tk5F5yy5GBgXChPyLS1F3kdqYYG0chZjlFVymfAwbJNAvUvvHCb4hReS5iRWvhk83lmX06Jnj6REZdMXlGbKr48bqQXPTmhDFLcVhnR4uffJ69dsC5zthZJbj8hHIX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YN2UMLBh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40F32C4CEC4;
+	Mon, 23 Sep 2024 07:19:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727075943;
+	bh=Ocmkj+uLEsz/w8DNkQaMK1OQUpnpKXPRPjzpvqt95nU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YN2UMLBhxLc5XzD75KU8uuG/rOAxN/48szMddlfjHOqDLGO0VynFHWhco6Jzh5y3j
+	 0cdCNhScIbCmy4KQ6nxEBzZcK41rlBTSFDvdwz8wNQuaZvnpdSyHtk11IvEJLpq4fj
+	 OTroR5dMo8T3sFtIIlbQMnm2GnXRHsNIjYasHNJwC5zq9hdViXIM4inr1btMIU83P4
+	 OEqzB/U+gkAbSQYrX0tqEbpRJsZ9OCSdfdTILVgUV7BOqjKi/6n9en8F9d+CcLFmhp
+	 FhqYIZBu352FzndWilH5Uzv3bJfxafmhRnaVo3jbgqFNVyEXaZOGeYaSpwUizjfdlk
+	 vsY+6cgC693Vw==
+Date: Mon, 23 Sep 2024 08:18:57 +0100
+From: Will Deacon <will@kernel.org>
+To: "Liao, Chang" <liaochang1@huawei.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Oleg Nesterov <oleg@redhat.com>, mhiramat@kernel.org,
+	peterz@infradead.org, mark.rutland@arm.com,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] arm64: uprobes: Optimize cache flushes for xol slot
+Message-ID: <20240923071856.GA31866@willie-the-truck>
+References: <20240919121719.2148361-1-liaochang1@huawei.com>
+ <20240919141824.GB12149@redhat.com>
+ <41fdfc47-4161-d2e4-6528-4079b660424f@huawei.com>
+ <Zu2VdYrLWTJbVOAt@arm.com>
+ <b90ce6f1-0d47-2429-5536-a8d5d91d6a70@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 23 Sep 2024 09:18:01 +0200
-Message-Id: <D4DHAZ1MIJV2.1G810GI4K5DVV@kernel.org>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Tudor Ambarus" <tudor.ambarus@linaro.org>, "AlvinZhou"
- <alvinzhou.tw@gmail.com>, <linux-mtd@lists.infradead.org>,
- <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <pratyush@kernel.org>, <miquel.raynal@bootlin.com>, <richard@nod.at>,
- <vigneshr@ti.com>, <broonie@kernel.org>
-Subject: Re: [PATCH v9 6/6] mtd: spi-nor: add support for Macronix Octal
- flash
-Cc: <chengminglin@mxic.com.tw>, <leoyu@mxic.com.tw>, "AlvinZhou"
- <alvinzhou@mxic.com.tw>, "JaimeLiao" <jaimeliao@mxic.com.tw>, "Bough Chen"
- <haibo.chen@nxp.com>
-X-Mailer: aerc 0.16.0
-References: <20240718034614.484018-1-alvinzhou.tw@gmail.com>
- <20240718034614.484018-7-alvinzhou.tw@gmail.com>
- <97134efb-398d-4c21-a915-87a5b4f1b29a@linaro.org>
-In-Reply-To: <97134efb-398d-4c21-a915-87a5b4f1b29a@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b90ce6f1-0d47-2429-5536-a8d5d91d6a70@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Hi,
+On Mon, Sep 23, 2024 at 09:57:14AM +0800, Liao, Chang wrote:
+> 在 2024/9/20 23:32, Catalin Marinas 写道:
+> > On Fri, Sep 20, 2024 at 04:58:31PM +0800, Liao, Chang wrote:
+> >> 在 2024/9/19 22:18, Oleg Nesterov 写道:
+> >>> On 09/19, Liao Chang wrote:
+> >>>> --- a/arch/arm64/kernel/probes/uprobes.c
+> >>>> +++ b/arch/arm64/kernel/probes/uprobes.c
+> >>>> @@ -17,12 +17,16 @@ void arch_uprobe_copy_ixol(struct page *page, unsigned long vaddr,
+> >>>>  	void *xol_page_kaddr = kmap_atomic(page);
+> >>>>  	void *dst = xol_page_kaddr + (vaddr & ~PAGE_MASK);
+> >>>>
+> >>>> +	if (!memcmp(dst, src, len))
+> >>>> +		goto done;
+> >>>
+> >>> can't really comment, I know nothing about arm64...
+> >>>
+> >>> but don't we need to change __create_xol_area()
+> >>>
+> >>> 	-	area->page = alloc_page(GFP_HIGHUSER);
+> >>> 	+	area->page = alloc_page(GFP_HIGHUSER | __GFP_ZERO);
+> >>>
+> >>> to avoid the false positives?
+> >>
+> >> Indeed, it would be safer.
+> >>
+> >> Could we tolerate these false positives? Even if the page are not reset
+> >> to zero bits, if the existing bits are the same as the instruction being
+> >> copied, it still can execute the correct instruction.
+> > 
+> > Not if the I-cache has stale data. If alloc_page() returns a page with
+> > some random data that resembles a valid instruction but there was never
+> > a cache flush (sync_icache_aliases() on arm64), it's irrelevant whether
+> > the compare (on the D-cache side) succeeds or not.
+> 
+> Absolutly right, I overlooked the comparsion is still performed in the D-cache.
+> However, the most important thing is ensuring the I-cache sees the accurate bits,
+> which is why a cache flush in necessary for each xol slot.
+> 
+> > 
+> > I think using __GFP_ZERO should do the trick. All 0s is a permanently
+> > undefined instruction, not something we'd use with xol.
+> 
+> Unfortunately, the comparison assumes the D-cache and I-cache are already
+> in sync for the slot being copied. But this assumption is flawed if we start
+> with a page with some random bits and D-cache has not been sychronized with
+> I-cache. So, besides __GFP_ZERO, should we have a additional cache flush
+> after page allocation?
 
-> > --- a/drivers/mtd/spi-nor/macronix.c
-> > +++ b/drivers/mtd/spi-nor/macronix.c
-> > @@ -200,7 +200,9 @@ static const struct flash_info macronix_nor_parts[]=
- =3D {
-> >  		.name =3D "mx25l3255e",
-> >  		.size =3D SZ_4M,
-> >  		.no_sfdp_flags =3D SECT_4K,
-> > -	}
-> > +	},
-> > +	/* Need the manufacturer fixups, Keep this last */
-> > +	{ .id =3D SNOR_ID(0xc2) }
-> >  };
-> > =20
->
-> Could you please elaborate why you need just the manufacturer id here? I
-> would have expected to see a specific flash entry instead.
+No, I think Oleg's right. The initial cache maintenance will happen when the
+executable pte is installed. However, we should use __GFP_ZERO anyway
+because I don't think it's a good idea to map an uninitialised page into
+userspace.
 
-I can't find the thread anymore as this is going on for forever, but
-that was my suggestion. That's a catch all to have the manufacturer
-fixup applied for any macronix flashes instead of having to list
-each flash id here.
-
--michael
+Will
 
