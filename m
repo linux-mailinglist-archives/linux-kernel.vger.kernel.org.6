@@ -1,129 +1,127 @@
-Return-Path: <linux-kernel+bounces-335934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FB5A97ECE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:15:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E822797ECF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:19:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CE71B21AF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:15:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24A6C1C211BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:19:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0C919CC2C;
-	Mon, 23 Sep 2024 14:15:20 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECABF19E98A;
+	Mon, 23 Sep 2024 14:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="PBpNBhDQ"
+Received: from smtp-fw-9102.amazon.com (smtp-fw-9102.amazon.com [207.171.184.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41EDA81749;
-	Mon, 23 Sep 2024 14:15:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568AA19D080;
+	Mon, 23 Sep 2024 14:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.184.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727100919; cv=none; b=f+z35u5jTWk9oxudwR+JjhQJoz0sD0xFMYNMAJq95GQWwkcyvk/DG8nIdEuhlH5WyEryDQW/UAaLS1ha5h/UaChHTurbr4EsljBsj8Mbp5bguCMuf0eSWbaM13urkcTEwPt93nWKjvjERTM5Vj664uyVknUovTckTcrwNGtencw=
+	t=1727101113; cv=none; b=old0+CgvPB8B5DbV9b706ylAU5hHX93Vrflsn9SSj/uRbkqIvEwQ62LzrfwM9ZMgX1Q28aylGstp9KjYpaaGu0a6kw3Hyh2NhbhlB2c7i8o8mnomrpzn/UeP2fpH/Js5+SJ9VPr2flPoK7q/7aU6aDgbqicjXV3UsB/BU3LkAPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727100919; c=relaxed/simple;
-	bh=/XwMJGacKB3Q9tSQpF+xZkiuk45oC0eTI8prctv9ZfU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NlOodwsgx1EbBqZlxEmAxrlZ4DN2yW/jrWqUwLFnO5NiKfk1OTF4r2c/3xXakPMkrNKMwpL1bI5lHsoxCx+MwQBssseKwGJAElhBJIxv08jgCf6SOyZ+NakxDmocupzjvl+5XCVmUq1dp56AJyBPY6z/jBFwNwZdVQPsr6RHXmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XC4hk2gWKzpW3d;
-	Mon, 23 Sep 2024 22:13:10 +0800 (CST)
-Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5D23A1401F2;
-	Mon, 23 Sep 2024 22:15:13 +0800 (CST)
-Received: from [10.67.120.168] (10.67.120.168) by
- kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 23 Sep 2024 22:15:12 +0800
-Message-ID: <18db929f-1d01-1d51-1600-dc4985646ed3@hisilicon.com>
-Date: Mon, 23 Sep 2024 22:15:12 +0800
+	s=arc-20240116; t=1727101113; c=relaxed/simple;
+	bh=ReqY0L7Jtzg8i0INnc+0MTwXnMWRWujG1K+IBvmcoGk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jjNJQRXIag6X2rzmXSOvGpxbQhtvkcZyXREDEbY9yRrChBiP47EsbhgupA82/IeBWvXT6d2ZMXHbG9OKnFEZSNiKJfz49/Ca/vtvwtfRJfGRjY45ruizeY6TOGb3MAR1XlPgussj1POlKYRHzM0NO1UQiTLb+hoAT6zSRcyqvS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=PBpNBhDQ; arc=none smtp.client-ip=207.171.184.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1727101109; x=1758637109;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=3S25fca7vLdE5XnX/SYke2OMDRQglZZJ2XXDI9ojeGg=;
+  b=PBpNBhDQpKHl74N7sSvKnbtfXVG45RmA2lQ1dg/+c7kO+OO/9Pp6gXkO
+   VFY2EBsN7J4z8g+lxych9pVHf12TiNBNqJpR1Ap4hFjzS4oesPEMtPBsJ
+   h5lDIC+rJwn0/jQDY2eXRLKG4TfZhAZcuqh2F6VQKPgPBAJIDcEGzPAIR
+   Y=;
+X-IronPort-AV: E=Sophos;i="6.10,251,1719878400"; 
+   d="scan'208";a="457053117"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-9102.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 14:18:17 +0000
+Received: from EX19MTAEUB002.ant.amazon.com [10.0.17.79:19364]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.37.171:2525] with esmtp (Farcaster)
+ id c53ccefd-03c2-4238-bb01-cb9f0f8978e6; Mon, 23 Sep 2024 14:18:16 +0000 (UTC)
+X-Farcaster-Flow-ID: c53ccefd-03c2-4238-bb01-cb9f0f8978e6
+Received: from EX19D031EUB003.ant.amazon.com (10.252.61.88) by
+ EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Mon, 23 Sep 2024 14:18:16 +0000
+Received: from EX19MTAUWB002.ant.amazon.com (10.250.64.231) by
+ EX19D031EUB003.ant.amazon.com (10.252.61.88) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Mon, 23 Sep 2024 14:18:15 +0000
+Received: from email-imr-corp-prod-iad-all-1a-93a35fb4.us-east-1.amazon.com
+ (10.25.36.214) by mail-relay.amazon.com (10.250.64.228) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1258.34 via Frontend Transport; Mon, 23 Sep 2024 14:18:15 +0000
+Received: from dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com (dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com [10.253.74.38])
+	by email-imr-corp-prod-iad-all-1a-93a35fb4.us-east-1.amazon.com (Postfix) with ESMTPS id 8D1B440592;
+	Mon, 23 Sep 2024 14:18:13 +0000 (UTC)
+From: Ivan Orlov <iorlov@amazon.com>
+To: <hpa@zytor.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<mingo@redhat.com>, <pbonzini@redhat.com>, <seanjc@google.com>,
+	<shuah@kernel.org>, <tglx@linutronix.de>
+CC: Ivan Orlov <iorlov@amazon.com>, <jalliste@amazon.com>,
+	<nh-open-source@amazon.com>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<x86@kernel.org>
+Subject: [PATCH 0/4] Process some MMIO-related errors without KVM exit
+Date: Mon, 23 Sep 2024 14:18:06 +0000
+Message-ID: <20240923141810.76331-1-iorlov@amazon.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.0
-Subject: Re: [PATCH v5 for-next 2/2] RDMA/hns: Disassociate mmap pages for all
- uctx when HW is being reset
-Content-Language: en-US
-To: Leon Romanovsky <leon@kernel.org>
-CC: Jason Gunthorpe <jgg@ziepe.ca>, <linux-rdma@vger.kernel.org>,
-	<linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>
-References: <20240913122955.1283597-1-huangjunxian6@hisilicon.com>
- <20240913122955.1283597-3-huangjunxian6@hisilicon.com>
- <20240916091323.GM4026@unreal>
- <595ec9f3-c3cd-66b3-c523-452f88e079ac@hisilicon.com>
- <Zu1u/aiOAooVUeq2@ziepe.ca>
- <24e9ec1c-8b63-f3e0-a465-80030ea6002d@hisilicon.com>
- <20240923090226.GI11337@unreal>
-From: Junxian Huang <huangjunxian6@hisilicon.com>
-In-Reply-To: <20240923090226.GI11337@unreal>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemf100018.china.huawei.com (7.202.181.17)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
+Currently, KVM may return a variety of internal errors to VMM when
+accessing MMIO, and some of them could be gracefully handled on the KVM
+level instead. Moreover, some of the MMIO-related errors are handled
+differently in VMX in comparison with SVM, which produces certain
+inconsistency and should be fixed. This patch series introduces
+KVM-level handling for the following situations:
 
+1) Guest is accessing MMIO during event delivery: triple fault instead
+of internal error on VMX and infinite loop on SVM
 
-On 2024/9/23 17:02, Leon Romanovsky wrote:
-> On Mon, Sep 23, 2024 at 02:17:40PM +0800, Junxian Huang wrote:
->>
->>
->> On 2024/9/20 20:47, Jason Gunthorpe wrote:
->>> On Fri, Sep 20, 2024 at 05:18:14PM +0800, Junxian Huang wrote:
->>>
->>>>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_main.c b/drivers/infiniband/hw/hns/hns_roce_main.c
->>>>>> index 4cb0af733587..49315f39361d 100644
->>>>>> --- a/drivers/infiniband/hw/hns/hns_roce_main.c
->>>>>> +++ b/drivers/infiniband/hw/hns/hns_roce_main.c
->>>>>> @@ -466,6 +466,11 @@ static int hns_roce_mmap(struct ib_ucontext *uctx, struct vm_area_struct *vma)
->>>>>>  	pgprot_t prot;
->>>>>>  	int ret;
->>>>>>  
->>>>>> +	if (hr_dev->dis_db) {
->>>>>
->>>>> How do you clear dis_db after calling to hns_roce_hw_v2_reset_notify_down()? Does it have any locking protection?
->>>>>
->>>>
->>>> Sorry for the late response, I just came back from vacation.
->>>>
->>>> After calling hns_roce_hw_v2_reset_notify_down(), we will call ib_unregister_device()
->>>> and destory all HW resources eventually, so there is no need to clear dis_db.
->>>
->>> Why can't you do the unregister device sooner then and avoid all this
->>> special stuff?
->>>
->>
->> It's a limitation of HW. Resources such as QP/CQ/MR will be destoryed
->> during unregistering device. This is not allowed by HW until
->> hns_roce_hw_v2_reset_notify_uninit(), or it may lead to some HW errors.
-> 
-> It is interested claim given the fact that you are changing original
-> code from 2016.
-> 
+2) Guest fetches an instruction from MMIO: inject #UD and resume guest
+execution without internal error
 
-Well, this isn't a new issue. We once sent a patch to try to address it
-in 2019 [1], but that solution wasn't the right way since it relied on
-userspace. We haven't come up with any new solutions since then, until
-this series recently.
+Additionaly, this patch series includes a KVM selftest which covers
+different cases of MMIO misuse.
 
-[1] https://lore.kernel.org/linux-rdma/20190812055220.GA8440@mtr-leonro.mtl.com/
+Also, update the set_memory_region_test to expect the triple fault when
+starting VM with no RAM.
 
-Junxian
+Ivan Orlov (4):
+  KVM: vmx, svm, mmu: Fix MMIO during event delivery handling
+  KVM: x86: Inject UD when fetching from MMIO
+  selftests: KVM: Change expected exit code in test_zero_memory_regions
+  selftests: KVM: Add new test for faulty mmio usage
 
-> Thanks
-> 
->>
->>> I assumed you'd bring the same device back after completing the reset??
->>>
->>
->> Yes
->>
->>> Jason
->>
+ arch/x86/include/asm/kvm_host.h               |   6 +
+ arch/x86/kvm/emulate.c                        |   3 +
+ arch/x86/kvm/kvm_emulate.h                    |   1 +
+ arch/x86/kvm/mmu/mmu.c                        |  13 +-
+ arch/x86/kvm/svm/svm.c                        |   4 +
+ arch/x86/kvm/vmx/vmx.c                        |  21 +-
+ arch/x86/kvm/x86.c                            |   7 +-
+ tools/testing/selftests/kvm/Makefile          |   1 +
+ .../selftests/kvm/set_memory_region_test.c    |   3 +-
+ .../selftests/kvm/x86_64/faulty_mmio.c        | 199 ++++++++++++++++++
+ 10 files changed, 242 insertions(+), 16 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/x86_64/faulty_mmio.c
+
+-- 
+2.43.0
+
 
