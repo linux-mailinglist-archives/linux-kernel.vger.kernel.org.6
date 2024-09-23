@@ -1,109 +1,129 @@
-Return-Path: <linux-kernel+bounces-335972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72A8897ED56
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:48:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 253B497ED50
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:46:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05B9DB21784
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:48:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C298E1F22258
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:45:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798D714A08D;
-	Mon, 23 Sep 2024 14:47:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C9D19CD0E;
+	Mon, 23 Sep 2024 14:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KXlsyNKS"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HMNqhWGg"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C8519CC3A
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 14:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32BCB8286A
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 14:45:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727102877; cv=none; b=LaFbC5CR9mSaiNNtcdP6TyyFpBtUrm0cGZ7XwSyIoBmnFtR8NfKnoOKKe44jMOgm3Rh9HEg49OEAS2Q2jdjsN/rZTRJZcUlaXIew3qXKGFIwmBFHAQlUh2/CRu/fr3WltHPVkZhEojevtYPS3JoQaJ5BDXoscc+zlB/Nfw/Qy+M=
+	t=1727102752; cv=none; b=uY/Cyadhhve3IOYQTiPCOg+VIKXKw7bggb3Bm1u1/0lLfwvAjxFPZ+JMgfsIsCCGel47kWGzQ4N7XJAUA06CjPQ+h5ebZcuGiQZppBEurJhA+MgcDXInsp+crVtk6TzxNU6YVo0EWBN6ltkc7pE3fofoDUY0AehMBiPiZT8ImyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727102877; c=relaxed/simple;
-	bh=Bk0fNQRsh28mlTF+N79aeZ/0DJFr8w85c0CjH9t0gtI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P+vHQ8ZAiED/XGvHUhEgInOm+dyDgy2b3A2iJDlE3JgmVr1H3Zr6J2kfZdzqgKc9NG3DK2Gxw5TpgWaXdXQ578lerndlYBamsOeMA1B/rU9I9glwE/TysVDnNudCWURa9+TfQz8hSupOM2rmVa9lZO0e1swNpElIg0uNfgERkGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KXlsyNKS; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727102871;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=wxyecHP0DQb9yEgGdekn4EqQ2Tgs0JnWo2dsEC0la5w=;
-	b=KXlsyNKSZZE8+Cm9rTlGTCi5mj1z84IPRzzqcxCmh2+/xQALL0hzKtFflItnWmhiAVPzMJ
-	ASjufaJkbsoYQgv4Gw2VHhQB5+5BQGI4GIHZbLS5F2U0MTp3h0SYq4FVHQWVIjhE5nioKL
-	i/8dvVUQ/k5hYpi9Pg4hgejh+G9ILfk=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] bcachefs: Use FOREACH_ACL_ENTRY() macro to iterate over acl entries
-Date: Mon, 23 Sep 2024 16:44:53 +0200
-Message-ID: <20240923144452.233096-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1727102752; c=relaxed/simple;
+	bh=5NRsXwKuBF1Zs3W/foWqq7Sp7HvXgxKlkNNgfdW03+E=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=nyn5//sNxzVUm9fvwgGzHPVjY3hKParZayCSlY2Tn+5SxDLQH+zz9GD+soeJh+ceGHDj72gZE0OkUCu3Z+itSi4GD2tJf3Y6RZMbHL2tKJl84EeAIUoJVjcZ6keGBZJTsAw6DE0cdUGi+BDefu8b106283WfWWjyGxAK+CCRj/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HMNqhWGg; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-536748c7e9aso5363047e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 07:45:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1727102748; x=1727707548; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5NRsXwKuBF1Zs3W/foWqq7Sp7HvXgxKlkNNgfdW03+E=;
+        b=HMNqhWGgKu/eIzT1ur5rRtOEwMmGCkc16GtyBBEg8ljOIreoFpJwgale+suJWbwFko
+         dWs6sNOOZd/55ENfTMs5CoFNOLyQAqGCbtVj9zfRFfaw/lp5Tob6RO8rHJeuvnX/qEi0
+         WOTWqNs/y9Q73lTg4yxhn2MWbfd9GYMaTCzw0PAsqIxneNTc+HZG+cpU7JxuqwNhQ/iT
+         wQuY5z840TdmnugHnT0/RpM6mKZuYzbArvAtN/T+D8Bvakz8PfJmw2TXdAV1CArHQDKg
+         sYm69/w6MDEmXV94FdzIUWB2xK0J6kzfLxNCq6s7THr+sugR89Y+b0VBX6w84Efr6n//
+         X+aA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727102748; x=1727707548;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=5NRsXwKuBF1Zs3W/foWqq7Sp7HvXgxKlkNNgfdW03+E=;
+        b=PGKceM/QzveRag8k3wl9rbBDSPpCZL5cnIQ45apdsxCGHH29LlFKZqH6REQQIN6loe
+         mtaADG+9P7SukCF5VIQTpA/cxRi5o11UdGCFKQwOnhcqQZ8ylF57mruwim6MiVyQSq8q
+         Wszzz/d4oY0fVU8AVDw/eNEEmOpVu8J875/tKBZwLgT0RI/EAncliQpHOqDyD6c0KpFH
+         HzHHogk53Yw7gZClqvQxEYvqjryahKQm60i2lJ6l0nAgsmwmutI+NKPrcE8FQCJmzq1i
+         RBMk0sNlQdhHEXikAtLIjwC7IY/SsYUUgf0+g5CyCwa6LRJGWBBz9krU8ub16JW90RfO
+         Rq3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUFs50XiEtSmQfrad2AsnZfgP3R3YRDZyr2jd//wu3VVBUtSoFYMftEEmA3uuONzy2hicMNncqlVcnY1G4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXM0KO1PNSGUkqUDxckjcMZNJ7KFPIC1ayVLgJ5luXYOOG52Ev
+	oKow4aGzm+ib1PqwOFZcYE4/0BizTwkOaslD2nxEb6IqL4TJ9ADaMdBhxnVcyGw2qbB4o6WbD8/
+	3NFo=
+X-Google-Smtp-Source: AGHT+IHX9n+o5rnO2Mry3+H4rn2Nsqm42//8eYN5AaanyzprS8/OBlWuUv+9MAznk/hzN2webuG0DQ==
+X-Received: by 2002:a05:6512:33d6:b0:536:a4d8:917b with SMTP id 2adb3069b0e04-536ac2e5c80mr6152023e87.19.1727102748201;
+        Mon, 23 Sep 2024 07:45:48 -0700 (PDT)
+Received: from ?IPv6:2804:5078:964:d800:58f2:fc97:371f:2? ([2804:5078:964:d800:58f2:fc97:371f:2])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8493985853asm3121629241.18.2024.09.23.07.45.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2024 07:45:47 -0700 (PDT)
+Message-ID: <5e544e68ad83fcdeb3502f1273f18e3d33dc8804.camel@suse.com>
+Subject: Re: [PATCH v3 0/3] selftests: livepatch: test livepatching a
+ kprobed function
+From: Marcos Paulo de Souza <mpdesouza@suse.com>
+To: Michael Vetter <mvetter@suse.com>, linux-kselftest@vger.kernel.org, 
+	live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 23 Sep 2024 11:45:44 -0300
+In-Reply-To: <20240920115631.54142-1-mvetter@suse.com>
+References: <20240920115631.54142-1-mvetter@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Use the existing FOREACH_ACL_ENTRY() macro to iterate over POSIX acl
-entries and remove the custom acl_for_each_entry() macro.
+On Fri, 2024-09-20 at 13:56 +0200, Michael Vetter wrote:
+> This patchset adds a test for livepatching a kprobed function.
+>=20
+> Thanks to Petr and Marcos for the reviews!
+>=20
+> V3:
+> Save and restore kprobe state also when test fails, by integrating it
+> into setup_config() and cleanup().
+> Rename SYSFS variables in a more logical way.
+> Sort test modules in alphabetical order.
+> Rename module description.
+>=20
+> V2:
+> Save and restore kprobe state.
+>=20
+> Michael Vetter (3):
+> =C2=A0 selftests: livepatch: rename KLP_SYSFS_DIR to SYSFS_KLP_DIR
+> =C2=A0 selftests: livepatch: save and restore kprobe state
+> =C2=A0 selftests: livepatch: test livepatching a kprobed function
+>=20
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- fs/bcachefs/acl.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+Thanks for the new version! LGTM, so the series is
 
-diff --git a/fs/bcachefs/acl.c b/fs/bcachefs/acl.c
-index 1def61875a6f..56b160e71a53 100644
---- a/fs/bcachefs/acl.c
-+++ b/fs/bcachefs/acl.c
-@@ -184,11 +184,6 @@ static struct posix_acl *bch2_acl_from_disk(struct btree_trans *trans,
- 	return ERR_PTR(-EINVAL);
- }
- 
--#define acl_for_each_entry(acl, acl_e)			\
--	for (acl_e = acl->a_entries;			\
--	     acl_e < acl->a_entries + acl->a_count;	\
--	     acl_e++)
--
- /*
-  * Convert from in-memory to filesystem representation.
-  */
-@@ -199,11 +194,11 @@ bch2_acl_to_xattr(struct btree_trans *trans,
- {
- 	struct bkey_i_xattr *xattr;
- 	bch_acl_header *acl_header;
--	const struct posix_acl_entry *acl_e;
-+	const struct posix_acl_entry *acl_e, *pe;
- 	void *outptr;
- 	unsigned nr_short = 0, nr_long = 0, acl_len, u64s;
- 
--	acl_for_each_entry(acl, acl_e) {
-+	FOREACH_ACL_ENTRY(acl_e, acl, pe) {
- 		switch (acl_e->e_tag) {
- 		case ACL_USER:
- 		case ACL_GROUP:
-@@ -241,7 +236,7 @@ bch2_acl_to_xattr(struct btree_trans *trans,
- 
- 	outptr = (void *) acl_header + sizeof(*acl_header);
- 
--	acl_for_each_entry(acl, acl_e) {
-+	FOREACH_ACL_ENTRY(acl_e, acl, pe) {
- 		bch_acl_entry *entry = outptr;
- 
- 		entry->e_tag = cpu_to_le16(acl_e->e_tag);
--- 
-2.46.1
+Reviewed-by: Marcos Paulo de Souza <mpdesouza@suse.com>
+
+> =C2=A0tools/testing/selftests/livepatch/Makefile=C2=A0=C2=A0=C2=A0 |=C2=
+=A0 3 +-
+> =C2=A0.../testing/selftests/livepatch/functions.sh=C2=A0 | 13 +++-
+> =C2=A0.../selftests/livepatch/test-kprobe.sh=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 | 62
+> +++++++++++++++++++
+> =C2=A0.../selftests/livepatch/test_modules/Makefile |=C2=A0 3 +-
+> =C2=A0.../livepatch/test_modules/test_klp_kprobe.c=C2=A0 | 38 +++++++++++=
++
+> =C2=A05 files changed, 114 insertions(+), 5 deletions(-)
+> =C2=A0create mode 100755 tools/testing/selftests/livepatch/test-kprobe.sh
+> =C2=A0create mode 100644
+> tools/testing/selftests/livepatch/test_modules/test_klp_kprobe.c
+>=20
 
 
