@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-335359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDC0897E499
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 03:25:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6A1997E49B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 03:25:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E0192811F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 01:25:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD8C31C2102B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 01:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD56A4A1E;
-	Mon, 23 Sep 2024 01:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F7238BE5;
+	Mon, 23 Sep 2024 01:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="QBr7ddZj"
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="HQvEo2ER"
 Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6393624
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63B7635
 	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 01:25:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727054706; cv=none; b=jvrWFEKbNHunQPiFZHoVc8UD/xSRjOb28OCtPMIdqbaQ5Lon3pu/lOxap3qwQCc0an2PTcR/kUembtiLMHx1vQCk7zUxSPOi3p5Pd31SS8r0Qhephrg4VPX+T/TkFgr3N0yxyUMr+1f3DKJxpMJ5wRaqU+WAX3tDFyCik9Lu2d0=
+	t=1727054706; cv=none; b=NKrHwN7LMSK0iCdtu9nJ9q2+02s3ysW376h149OenYljmNc701olQX87V2ww2A58DMs1swuFQseGJY+kyzsKm5ckfvPeEj45jEDBAEivTRS/9fAR0ugiu73hfcy6DOzvuehLXEH1dkTDv2GpoYiV+N8USs6ENlMyfCXxX5wlMB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727054706; c=relaxed/simple;
-	bh=gLxFg5mVO63UvR8Prnu5hVDQWxuuFpMZ5gtHevV+ROE=;
+	bh=LB5rWp/18DUdrsxMn0BG3uhy90Wlc4jDkfAMDs09Srs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KWmeyFBj0Y4Nx5kPXTlJkPvkrAFs8v86O8ilZ5YzjnkCvnuEcnq6Xn52RKy5BtuiS6z9IZsb2wsewYVkux35PPtXGNdiJzgRWHaixocI6OPOM++Y5teA7qYHQ4rJirU7p3ACihv6+ZQzjBayCWstx7CmnrtU5QwPKDhJLP/UpCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=QBr7ddZj; arc=none smtp.client-ip=46.235.229.95
+	 MIME-Version; b=cIlZ4jHPHaRy4k4/2PDiUwUuMkF4A5JVTQalpO7n3MTxicsZpOwnwa85MO8YPnPqoaxwEiLcPF/YBJ8tRMFEaG0l1UwzCQ1pVyfWK4V/ktf71DGkmHVvk+52mMy8r0fmxVUZypTjaUa6K9XSIfkl1mQEK5UhmD3FiqT9IeiXJFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=HQvEo2ER; arc=none smtp.client-ip=46.235.229.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
 	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=0V2AdfgE23jS7hBIUEzp4BsZ0ty7sP1XLQloMvwgZOc=; b=QBr7ddZjimhR3pK5
-	/Amz5CPf/6CBLQ38h+GLfjAr9adVboARmO9+K5OohmdlGKiNXEudlawNVqqDNDCHbmdHxViRSVyNJ
-	8IJ82MDD6/djEl+Nlt2CDrhR9nsamtqVxyduqLsf9B4i0F7wPq8oU3RGWpYtoxinOxUcg6P8kXov1
-	Wxv4AT64FKRXXqsd31RMMWZ33rOFmFY/n51FffBgzT6/ykTsaTpIKi6vgtOb6OKlcM+ofFk7BFuG1
-	UMC/PtK+ckoH31Q0dI5FIwzcYNLya6gtw3fQoXQy7/Yf42aKDrqnmRasrrEPgQ4YFdvMvtXa7Ksct
-	Ot5pA3rQ3VmFmub4YQ==;
+	:Subject; bh=55Nb5AnSiTpPJhse4SS8idw+5d/f+IiBGFBN3Nv8730=; b=HQvEo2ER4bfHmAEy
+	09EZG1516ULKSO4q2DZ1yqxtraHnmIqob7x18XJqHT8laCaba1d5XBG7n/iSBTZaP8UAoFVADESqJ
+	7Qs/qDxjbdYd7smmr9m4gsTAGdLqvAffYWbNgCTgWDdNhTXKBfRew7K1H6km+MXtbrzkRdeQfc4BD
+	TXKJalG/+2jrKVBNPtiPqJyOkEdr6ojLG7FrksQy1imdtL7OJmPJQWn8kpMWe2sP2LZAWJwdLqB03
+	T4j3SZHecJ9tZMBfDc8q/XdMeUpSdzeY4E/EExKEswF1zpHBKkdKsn1M3dYy50E103asO+nxsWb9c
+	lk4Ei4M5jNb2miULMw==;
 Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
 	by mx.treblig.org with esmtp (Exim 4.96)
 	(envelope-from <linux@treblig.org>)
-	id 1ssXow-006k2k-2p;
-	Mon, 23 Sep 2024 01:24:58 +0000
+	id 1ssXoy-006k2k-02;
+	Mon, 23 Sep 2024 01:25:00 +0000
 From: linux@treblig.org
 To: alexander.deucher@amd.com,
 	christian.koenig@amd.com,
@@ -53,9 +53,9 @@ Cc: airlied@gmail.com,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH 2/5] drm/amdgpu: Remove unused amdgpu_atpx functions
-Date: Mon, 23 Sep 2024 02:24:43 +0100
-Message-ID: <20240923012446.4965-3-linux@treblig.org>
+Subject: [PATCH 3/5] drm/amdgpu: Remove unused amdgpu_gmc_vram_cpu_pa
+Date: Mon, 23 Sep 2024 02:24:44 +0100
+Message-ID: <20240923012446.4965-4-linux@treblig.org>
 X-Mailer: git-send-email 2.46.1
 In-Reply-To: <20240923012446.4965-1-linux@treblig.org>
 References: <20240923012446.4965-1-linux@treblig.org>
@@ -69,72 +69,52 @@ Content-Transfer-Encoding: 8bit
 
 From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-amdgpu_atpx_dgpu_req_power_for_displays has been unused since
-commit bdb1ccb080da ("drm/amdgpu: remove ATPX_DGPU_REQ_POWER_FOR_DISPLAYS
-check when hotplug-in")
+amdgpu_gmc_vram_cpu_pa has been unused since commit
+087451f372bf ("drm/amdgpu: use generic fb helpers instead of setting up AMD own's.")
 
-amdgpu_atpx_get_dhandle has been unused since commit
-f9b7f3703ff9 ("drm/amdgpu/acpi: make ATPX/ATCS structures global (v2)")
-
-Remove them.
+Remove it.
 
 Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu.h              |  8 --------
- drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c | 12 ------------
- 2 files changed, 20 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c | 12 ------------
+ drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.h |  1 -
+ 2 files changed, 13 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu.h b/drivers/gpu/drm/amd/amdgpu/amdgpu.h
-index c654668e2a56..f360296fc9da 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu.h
-@@ -1452,23 +1452,15 @@ void amdgpu_register_atpx_handler(void);
- void amdgpu_unregister_atpx_handler(void);
- bool amdgpu_has_atpx_dgpu_power_cntl(void);
- bool amdgpu_is_atpx_hybrid(void);
--bool amdgpu_atpx_dgpu_req_power_for_displays(void);
- bool amdgpu_has_atpx(void);
- #else
- static inline void amdgpu_register_atpx_handler(void) {}
- static inline void amdgpu_unregister_atpx_handler(void) {}
- static inline bool amdgpu_has_atpx_dgpu_power_cntl(void) { return false; }
- static inline bool amdgpu_is_atpx_hybrid(void) { return false; }
--static inline bool amdgpu_atpx_dgpu_req_power_for_displays(void) { return false; }
- static inline bool amdgpu_has_atpx(void) { return false; }
- #endif
- 
--#if defined(CONFIG_VGA_SWITCHEROO) && defined(CONFIG_ACPI)
--void *amdgpu_atpx_get_dhandle(void);
--#else
--static inline void *amdgpu_atpx_get_dhandle(void) { return NULL; }
--#endif
--
- /*
-  * KMS
-  */
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c
-index 375f02002579..3893e6fc2f03 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c
-@@ -89,18 +89,6 @@ bool amdgpu_is_atpx_hybrid(void)
- 	return amdgpu_atpx_priv.atpx.is_hybrid;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c
+index 17a19d49d30a..58b5c436ad15 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c
+@@ -1065,18 +1065,6 @@ uint64_t amdgpu_gmc_vram_pa(struct amdgpu_device *adev, struct amdgpu_bo *bo)
+ 	return amdgpu_gmc_vram_mc2pa(adev, amdgpu_bo_gpu_offset(bo));
  }
  
--bool amdgpu_atpx_dgpu_req_power_for_displays(void)
+-/**
+- * amdgpu_gmc_vram_cpu_pa - calculate vram buffer object's physical address
+- * from CPU's view
+- *
+- * @adev: amdgpu_device pointer
+- * @bo: amdgpu buffer object
+- */
+-uint64_t amdgpu_gmc_vram_cpu_pa(struct amdgpu_device *adev, struct amdgpu_bo *bo)
 -{
--	return amdgpu_atpx_priv.atpx.dgpu_req_power_for_displays;
+-	return amdgpu_bo_gpu_offset(bo) - adev->gmc.vram_start + adev->gmc.aper_base;
 -}
 -
--#if defined(CONFIG_ACPI)
--void *amdgpu_atpx_get_dhandle(void)
--{
--	return amdgpu_atpx_priv.dhandle;
--}
--#endif
--
- /**
-  * amdgpu_atpx_call - call an ATPX method
-  *
+ int amdgpu_gmc_vram_checking(struct amdgpu_device *adev)
+ {
+ 	struct amdgpu_bo *vram_bo = NULL;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.h
+index 4d951a1baefa..e0bed91dd5a0 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.h
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.h
+@@ -447,7 +447,6 @@ void amdgpu_gmc_get_vbios_allocations(struct amdgpu_device *adev);
+ void amdgpu_gmc_init_pdb0(struct amdgpu_device *adev);
+ uint64_t amdgpu_gmc_vram_mc2pa(struct amdgpu_device *adev, uint64_t mc_addr);
+ uint64_t amdgpu_gmc_vram_pa(struct amdgpu_device *adev, struct amdgpu_bo *bo);
+-uint64_t amdgpu_gmc_vram_cpu_pa(struct amdgpu_device *adev, struct amdgpu_bo *bo);
+ int amdgpu_gmc_vram_checking(struct amdgpu_device *adev);
+ int amdgpu_gmc_sysfs_init(struct amdgpu_device *adev);
+ void amdgpu_gmc_sysfs_fini(struct amdgpu_device *adev);
 -- 
 2.46.1
 
