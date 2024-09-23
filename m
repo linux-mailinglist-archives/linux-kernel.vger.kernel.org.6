@@ -1,69 +1,134 @@
-Return-Path: <linux-kernel+bounces-336327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9AE1983934
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 23:48:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51BD698393A
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 23:50:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 157111C21902
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 21:48:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 802B71C21902
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 21:50:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04B88405D;
-	Mon, 23 Sep 2024 21:48:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1405A84E0A;
+	Mon, 23 Sep 2024 21:50:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="W8Ttx5Yq"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="HZvEt5IP";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LTdAPKi9"
+Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8782F9D4
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 21:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244D980603;
+	Mon, 23 Sep 2024 21:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727128126; cv=none; b=H295+sln9tpMBfEiFVvj9wYt1k3eNKRKgNVBL7hovNtYO7BoZveMLTkEHs2f4jlq8HSfjbJWYMqG8SlzCpsLLsDJc1nr3HMEglbh7n5SlA+/ebmxE7aIUtY1fBvANNswSGBCFbfH68k4NH1HbBiiWdIEIxbAhBUL44DGMDNmIkE=
+	t=1727128240; cv=none; b=cxw6JvF+b4INFSlMNrY9rQ0e7QEJKLjGzyXJ1R2p+3yLAfH98lcynTHXb2Oj44cSIGrR5dVdM7E1DVENjHQ3I/VJNMsGjmtCZf9if/kHqmExcGj4XiZcnDucj8TSG1G6Z485U/eoAPmTuyC/H1d+hKz+xQNG1WgRFcf+0P3bXHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727128126; c=relaxed/simple;
-	bh=II79k+GS5zkgCuXUlc/QmJkvk6+NT2WAr5JQnufpvbI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mN3MwH4/eQGL+KA3tDoPOx47OFgZT492xpBixHlsOCIv/BNHA3qUCo4KCvDL/OAQ+pU0XNv+HnXfnAP/pOQVvja9fkzcqYJnA1Y85ychflpxMZhAUL6B/T91Pd2++CTBGsUMpTA6STHVGjFG5V5vpeAPrP4sf5PF4xG/PJK5PL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=W8Ttx5Yq; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 23 Sep 2024 17:48:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727128122;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o3ZaiQCp6EuA3Rd+SYYAu9elnZtTJh3YiHfzfwzjY2c=;
-	b=W8Ttx5YqIKvYUanO53QL0d5Doo7NSp+EuEqW2I0Hn3JOm1gA6GlTiDncGpmZS3mmKFnnEl
-	edAwKMYbFWZiT9pSc3fWlhQFMw8GWVAFMKq9KaM0QyshH+tbgsURvdV6XsdhWWL/JZL53r
-	P+ujhVPojiebPKeeJgNi0qEfGUTKGZo=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] bcachefs: Use FOREACH_ACL_ENTRY() macro to iterate over
- acl entries
-Message-ID: <3sjosqkags6o2gymm5ywqyianfs7f32qgquqpfnew34g2pohtc@rmsjfkqdb25m>
-References: <20240923144452.233096-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1727128240; c=relaxed/simple;
+	bh=jGoUda1eMDnVP6rY2rx+0rdFBSl5UCMK+VNb5V/HWbQ=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=mg3mbaWk2vSb8qhUznUSCbva/6j4k0JIpBciwbvn5mKifzhUAfhH9qcrMZvThHeoU34MA+IywaIO95DX3HX+KSC7XFw1Wic/Olzlnr5gHGFx3rdv4GOEenQKQf8KX+f6/M5f75zF8+Cd5PFK2LTd7M6/XEbxp+W9J+XyzREP/dU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=HZvEt5IP; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LTdAPKi9; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 312FD11401A8;
+	Mon, 23 Sep 2024 17:50:36 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Mon, 23 Sep 2024 17:50:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1727128236;
+	 x=1727214636; bh=O9Q/eImCaEWCrXoZrzE5xrq6F5YUMncTztU3Tb7lqN8=; b=
+	HZvEt5IPNg2ONCbdFOIUYj1y5TP7QfFXn6dSsbLLHlKnIbcFf+utUjHwJqjuHuXO
+	18HORSZinuDOb7QKRQsauCYDcsl7M/lO7pviDzkucfJzLxF1lukaHkqTbxMIQ5hO
+	G3iXDwn0c3zjdyXNooZ5cPABBvZvga8wN1TajU4LLB1X+QAiejGirdGa9+XCZ84K
+	3plNKso1qqrITtT25EFc/3NHewLVOYKMMqrAFaGB1iIHSd4l+le/KBlhu2MNmM3S
+	InTcVAIxIyuwcGopqToG8zH4D4kzpAY79xlz2BxfLN8GDRNfuipSLUbrGG7V0vS1
+	SKVfXOpJ6ouZB7cIzgA0UQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727128236; x=
+	1727214636; bh=O9Q/eImCaEWCrXoZrzE5xrq6F5YUMncTztU3Tb7lqN8=; b=L
+	TdAPKi9+eBrZKoZTjMK31/zAtWm9vVP0VWE3G6++eab6VAuHyYw2ylMea7CfrZqo
+	cr5IubP4/pbRtrfrFukOnyHP3FCLKLaPW4d2DFu/M7424hj2YfpGoaceNLxuB0GM
+	5ci5L//lGHGBUA7D75pILD49fUoD0U43SalKQOLr8HgPCT7SyTEeaIo4OQaZzNDo
+	mQOjvwrJ3mb2sRfnFNhLh7HluYxfeSLQLV9ArILvUXGatLQ7eXSJpt5tQzASJ8zn
+	aoLbqEyQaO8rvCQuA8jkzLq+udRLapqjzEAAzPQRMPhBIAMhwhsdZ9VYc0TGx7f3
+	DHVbmt3xpHxIPJA5+SexQ==
+X-ME-Sender: <xms:q-LxZvRdb2aFCNDyDFT-neInijQp55NalNUJarYTmS4AXKBHiZcRpg>
+    <xme:q-LxZgxVuigNDfOV764U1ZwggcBq_fKvRRn1AG5ZmQjtnVSjLkmMLUZAA5NgFisjO
+    2QrUCDcbQ4Pj4hh-0Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddttddgtdegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddt
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsuhhrvghnsgesghhoohhglhgvrd
+    gtohhmpdhrtghpthhtohepmhhinhgthhgrnheskhgvrhhnvghlrdhorhhgpdhrtghpthht
+    oheplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtoheprghkphhmsehlih
+    hnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehshhgrkhgvvghlrdgs
+    uhhttheslhhinhhugidruggvvhdprhgtphhtthhopehlihgrmhdrhhhofihlvghtthesoh
+    hrrggtlhgvrdgtohhmpdhrtghpthhtoheplhhorhgvnhiiohdrshhtohgrkhgvshesohhr
+    rggtlhgvrdgtohhmpdhrtghpthhtohepvhgsrggskhgrsehsuhhsvgdrtgiipdhrtghpth
+    htoheplhhinhhugidqrghpihesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:q-LxZk1WL4bu1SO3Y81fmQzNm4OTQ-qbMqB2lPv9sse7ULXtM1Tvjw>
+    <xmx:q-LxZvBYkENMwOsRIHW_rzL6V1-Fd4D4x3x66yAUVT_FZIXJ3r9Tfg>
+    <xmx:q-LxZohC4c0Gidpewc0ExEclA-5c1Rpu8ziZqUSaeb5WkbsALpWuyw>
+    <xmx:q-LxZjog9tDynDg7kPbE2qi5LRqY1op5ardphEJmmLmbskGrvE3bSQ>
+    <xmx:rOLxZrOVLbLhD084W92gTRAMIgmRNELKqDaoSE-sGqzrHpNnVPI_j0uN>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 928C12220071; Mon, 23 Sep 2024 17:50:35 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240923144452.233096-2-thorsten.blum@linux.dev>
-X-Migadu-Flow: FLOW_OUT
+Date: Mon, 23 Sep 2024 21:49:43 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
+ "Shakeel Butt" <shakeel.butt@linux.dev>
+Cc: "Andrew Morton" <akpm@linux-foundation.org>,
+ "Vlastimil Babka" <vbabka@suse.cz>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ "Suren Baghdasaryan" <surenb@google.com>, linux-api@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ "Minchan Kim" <minchan@kernel.org>
+Message-Id: <337e4359-37e0-4ed7-894d-6c88b3498a42@app.fastmail.com>
+In-Reply-To: <c44d373d-d72b-4e62-a613-a746a2c290e7@lucifer.local>
+References: <cover.1727106751.git.lorenzo.stoakes@oracle.com>
+ <077be0d59cb1047870a84c87c62e7b027af1c75d.1727106751.git.lorenzo.stoakes@oracle.com>
+ <njjxbroy5nvn2gxmvsvk7m23rrsoyih24nhmbmf7lpd5yzwwk7@ijudgtbiwyq6>
+ <c44d373d-d72b-4e62-a613-a746a2c290e7@lucifer.local>
+Subject: Re: [PATCH 1/2] mm/madvise: introduce PR_MADV_SELF flag to process_madvise()
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 23, 2024 at 04:44:53PM GMT, Thorsten Blum wrote:
-> Use the existing FOREACH_ACL_ENTRY() macro to iterate over POSIX acl
-> entries and remove the custom acl_for_each_entry() macro.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+On Mon, Sep 23, 2024, at 19:34, Lorenzo Stoakes wrote:
+> On Mon, Sep 23, 2024 at 11:56:06AM GMT, Shakeel Butt wrote:
+>
+> +	/* Require PTRACE_MODE_READ to avoid leaking ASLR metadata. */
+> +	mm = mm_access(task, PTRACE_MODE_READ_FSCREDS);
+> +	if (IS_ERR_OR_NULL(mm)) {
+> +		ret = IS_ERR(mm) ? PTR_ERR(mm) : -ESRCH;
+> +		goto release_task;
+> +	}
 
-Applied
+Any chance we can fix mm_access() to not be able to return
+a NULL pointer and an error pointer?  IS_ERR_OR_NULL() is
+usually an indication of a confusing API, and this is
+clearly one of them, given that only one of the
+callers actually wants the NULL value instead of -ESRCH.
+
+    Arnd
 
