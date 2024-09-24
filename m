@@ -1,179 +1,203 @@
-Return-Path: <linux-kernel+bounces-337379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE58398494D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:12:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A71E98494B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:12:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50C96B23F69
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:12:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C70CA1F24E8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:12:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9E71ABEBC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06FED1ABEB0;
 	Tue, 24 Sep 2024 16:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ujvtm6JT"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J2F3XWeM"
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4EA1B960
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 16:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26F51AB534;
+	Tue, 24 Sep 2024 16:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727194319; cv=none; b=CyZd3b35uXc9jyj/RHznXhfZS9Sj7wo3EbKp2yHDU8bQ0MHH70/aKmEpqIrjUD2fy7EavqG3o95UM9ITWh0OzMSPdNlxdH4x5IA5YRDx29Dktqihg7Jyqq5WZTqRR0hTxpjyaE9ZGUta3vfemNN5fs/8/QmS4nyPipeStZFt9wM=
+	t=1727194319; cv=none; b=ErIBnbUqrNcOrXLCbeLlNpyZMh58Wx0EnLvpL5GFLObr70kjqe4WloF/Q3TF+3UKaBQomm/RYo/KGmNk8TZa5yz1uc6DIUhKoM77qa2O5tOyT3qGvDo1sXcNgG4xq8K2VIzbH701bHosQtmC5sENPEMhA6266HkpnQ+ZGc9v5s0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727194319; c=relaxed/simple;
-	bh=yL3SPCS7ha4gVZmF/jL6dtueVPQCVEjaP3dTRzBpBV0=;
+	bh=JjRZzm00PbFmFmIh22FAdPYC7BclagHwlRtb53nlnes=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aw9sNF3vyUgBO2OBKMOG0hK7yq9CSp05xVhtwNdCfgF5tp+4LHeeaRk4vm68nnssp3MMOF4LA1dvmBLKNqzo6XBbU6x9tfcMmhnQpVda4N+vtUrrN/tToObv9RAXlKBaVC42TfwP8dSiuutAjpWFrqg6rD7G2SUwW1QyME0nLiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ujvtm6JT; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a1a4f2cc29so215195ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:11:56 -0700 (PDT)
+	 To:Cc:Content-Type; b=kBumdSyHp9q/9lEwHFjFlghme6fRmHzymNB0pSIdi6us/+WoG5quRTXYLdRfaQsKGqAIrZHBHb3R5MnjMORfpCsqNNavh9nufTNgtJ02D2MUZIDdCUrV/hZXQnGQiZxx8ZlzjukJ3gBMX46/TKbmwtvHt1TsDicU97rE/cvk6EI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J2F3XWeM; arc=none smtp.client-ip=209.85.166.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-82cf3286261so212839939f.0;
+        Tue, 24 Sep 2024 09:11:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727194316; x=1727799116; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1727194317; x=1727799117; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aK+8nqvRO7dO5/4/shw4l0Rx/ZNh1LhM3L6aL1WqmLo=;
-        b=Ujvtm6JTf1Iib2dbQCezEhpWH6pBQv1u6NQG4jzqvv7WRgt2hQbST3lZuZHFxI60sK
-         Q/54CV09ZFg46lOfTK8jBIeLnPlZcKrzR1J9iYbHNA9WL5OBsei39iZr3vYXJPIb0pfh
-         x4HJWSjzprHFZIVyAFdnxPd+8cuRM+OEuiPCC/6jsWGDUWGS1zu8029P3Z2ZTv1MJ+F1
-         yfmlUkrCFe5R2nWt/LDl5SQJ4ElkAWFmUoNZr9dYLCG64355LFu+FNE/xJ8Ao5xetveL
-         l6T7InHFkbzLBxQbMR/D7w/HiQBck3s39Ipla+/FRoEHY7L/gpwERlmMqt1ZhsJ3ZWL4
-         Rq3g==
+        bh=sWeglnw6BZKB/VuyrSzHmYia1dbxFZbiLz4gI3HzQMY=;
+        b=J2F3XWeMQ45FjedoaJ18E5GcvQ/CI32D58W9wrCiuzLw+v1ha98YH7qu2N/7rvsXt5
+         YHsAmkE7M6VfiI13dAbG8zmIcfn6EE+Ky1vT981qmcQ/AE0/Uhc8Usrhs/QLeh1Vr3nD
+         bZJPBAIpcPiWMy6PEP67Y4/JsM64DrHNJuFu/xz0KQce9GnV9JZMMaEthkm5Ze5b9P0D
+         36WPZRjQmBr1IsO7UmYYgiD9SmsDblGvqb/GCTAOeYOhdz4ypdcSx5pWEviNn1lOLMT/
+         m/JN4EEkx93qJn0hINXklJ5vmV1Skfe6guqnPOx0cnSODeEdMIhS9ZepXLTXBIW7wd+5
+         zT3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727194316; x=1727799116;
+        d=1e100.net; s=20230601; t=1727194317; x=1727799117;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aK+8nqvRO7dO5/4/shw4l0Rx/ZNh1LhM3L6aL1WqmLo=;
-        b=Ll7tFNKd0wddTwsCYnJIFj119rAlgd6BkpIDrO3aWSn8e8hnPxHJDKO+jQQnQzU0Kj
-         UoJKf2kyweocHvK9RW6tTxydAx2h3rIb65wUSbBQH1N5P7/rFnjonO1ArAyrgzRh06vQ
-         e3jPCQ0+2f8z2PYAcZyip6wy7FqVWvfpxnjhfEtyjV6+77x9/OKARPBafx35aENJZbZ6
-         Vd2mmUTE+QG/IrWEevSUZagKmaCX66rB+SgIdpBZRXtpRR1uLAwRr2PAqpHrXBklMFSS
-         P1/5gfpfuCmynurV3jrjCMPWYv/wwTO7J7CKJpGDg5GnZUk/jUROPT1QOLwrekZVJHK1
-         wR2g==
-X-Forwarded-Encrypted: i=1; AJvYcCW9G0VNU0BMbzpODT3+7jy9Xz1v216b5zuDEKQhxBIdj5yGIrivMDCAf0oHpLBKA57b/dCeHeJ1/UYvFZo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyP/aty29tjBamG+jQTA1IoOWswxArVoEYOIh55kL4gMf3fZGAk
-	jQ2nfzVetTgJHDqtc77u6lD88KPBD48hDaB9VgyCYEM18xrkI9tzFRBIM5vT2me1a/bSovLOy5w
-	0wpo+4io7nIicDNznJMzSJluRzOtOoiieyYeX
-X-Google-Smtp-Source: AGHT+IEDgO319xABlz3mm6Gouan+c85GCidD435zCa45qz34uLpw1tJ1xfxblbnmMiqV9LbkkULcbf/jlji4psKbtjg=
-X-Received: by 2002:a05:6e02:170b:b0:376:3026:9dfc with SMTP id
- e9e14a558f8ab-3a1a3f9fb73mr4541725ab.24.1727194315929; Tue, 24 Sep 2024
- 09:11:55 -0700 (PDT)
+        bh=sWeglnw6BZKB/VuyrSzHmYia1dbxFZbiLz4gI3HzQMY=;
+        b=Pw3PlW0oRdEE+rhZIQJ778xYmvSIk1CCqXKu4aapH6HUF528le7lUZbGUykQZ5bHw3
+         OMh7douBltL1GGGhMBOStX2FeT0z3LFv/jwRFdeQgw+CMzQrBaps5vt45gDEEUH1A4CL
+         eoZuk1QnnuMA2+ObiSAOjhz3176DI61CjFHmUBYQO/c/ZPZ7Bp6EVX6JGzaGM3PUmprU
+         c1dXMIqVQEbEWrSr2qo6CcRCJn5nSd8rG/R9wn3d59e/ziZi26NweJHPVNQiD71T3i+d
+         pSRju/50s96v14WRorXp15Pehz5yv3TMcv4Gr1cRzGMegoopn1+/XtkBHzaZCxeRb1Fu
+         oG3g==
+X-Forwarded-Encrypted: i=1; AJvYcCWT4/pK2ZiKuibcCkM8Wp+cXNDttPpfxVY5DpHvHMNY6XfrRM6dEiGkkvoCHbJOJxy4mztl7hCa+G8fvGlg@vger.kernel.org, AJvYcCXrrFfrJfZyibRg0tB6Sxo5gZhN3iiKmCcdarlpGpUiMUs0p9//u9EZ3lg3idebla4SiscKwtsp7u+QFS3G@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEQbOkeNzlFpwgFIilfqnxqhRTd62A0hS7U00f197vAsL56nFZ
+	tomM9etcjO1zPZ37RKp4sHiGL19atVmMlKBYkvS2ZW6PGwWPEMza8YuzyZRnATn+X090jDnXRjx
+	Eh/5pjtuzlPqgaGphAXe5dOKxZCU=
+X-Google-Smtp-Source: AGHT+IG4Ne74kYPMdaaO0rPyy8apUK0dOKNk+6D4i79VukxVDUPWLBfaAP9Hxec3LUQE3xdsiYRvJgLiIFoB95h3b34=
+X-Received: by 2002:a05:6e02:2162:b0:3a0:a0bd:f92b with SMTP id
+ e9e14a558f8ab-3a26d785d84mr81805ab.10.1727194316674; Tue, 24 Sep 2024
+ 09:11:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830-perf_syscalltbl_fix-v1-1-e2ff61ee5e8e@rivosinc.com> <ZvLaGy7jRa9Q/5fQ@ghost>
-In-Reply-To: <ZvLaGy7jRa9Q/5fQ@ghost>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 24 Sep 2024 09:11:41 -0700
-Message-ID: <CAP-5=fVWFUA4LpchM1MZdMhDvSFhTUtqdVR-s59WtAcpj1fO=g@mail.gmail.com>
-Subject: Re: [PATCH] perf syscalltbl: Add syscalltbl__id_at_idx() with no
- syscall table support
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Howard Chu <howardchu95@gmail.com>, David Abdurachmanov <davidlt@rivosinc.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org
+References: <20240913195132.8282-1-robdclark@gmail.com> <CACu1E7ECxJLH8+GqUuWH=+oM=N=fgkpBBqJ8ShrSwbdZmw+nZQ@mail.gmail.com>
+In-Reply-To: <CACu1E7ECxJLH8+GqUuWH=+oM=N=fgkpBBqJ8ShrSwbdZmw+nZQ@mail.gmail.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Tue, 24 Sep 2024 09:11:44 -0700
+Message-ID: <CAF6AEGsJpLwyXK7_TH0jZx64A1rOX9F23dL5TZUJUBV=tsKLCA@mail.gmail.com>
+Subject: Re: [PATCH] drm/msm/a6xx+: Insert a fence wait before SMMU table update
+To: Connor Abbott <cwabbott0@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+	freedreno@lists.freedesktop.org, Akhil P Oommen <quic_akhilpo@quicinc.com>, 
+	Rob Clark <robdclark@chromium.org>, Sean Paul <sean@poorly.run>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 24, 2024 at 8:26=E2=80=AFAM Charlie Jenkins <charlie@rivosinc.c=
-om> wrote:
+On Wed, Sep 18, 2024 at 9:51=E2=80=AFAM Connor Abbott <cwabbott0@gmail.com>=
+ wrote:
 >
-> On Fri, Aug 30, 2024 at 09:30:50PM -0700, Charlie Jenkins wrote:
-> > When HAVE_SYSCALL_TABLE_SUPPORT is not defined, neither is
-> > syscalltbl__id_at_idx(). However, this function is expected to be
-> > defined when HAVE_BPF_SKEL is defined.
+> On Fri, Sep 13, 2024 at 8:51=E2=80=AFPM Rob Clark <robdclark@gmail.com> w=
+rote:
 > >
-> > Return -1 from syscalltbl__id_at_idx() to match the other functions whe=
-n
-> > HAVE_SYSCALL_TABLE_SUPPORT is not defined.
+> > From: Rob Clark <robdclark@chromium.org>
 > >
-> > Without this, compiling perf on riscv when libtraceevents, libelf, and
-> > clang are available will cause the functions trying to call
-> > syscalltbl__id_at_idx() to be compiled. This results in the following
-> > error:
+> > The CP_SMMU_TABLE_UPDATE _should_ be waiting for idle, but on some
+> > devices (x1-85, possibly others), it seems to pass that barrier while
+> > there are still things in the event completion FIFO waiting to be
+> > written back to memory.
 > >
-> > /usr/bin/ld: perf-in.o: in function `.L0 ':
-> > builtin-trace.c:(.text+0x60b14): undefined reference to `syscalltbl__id=
-_at_idx'
-> > /usr/bin/ld: builtin-trace.c:(.text+0x60c6c): undefined reference to `s=
-yscalltbl__id_at_idx'
-> > /usr/bin/ld: perf-in.o: in function `.L2564':
-> > builtin-trace.c:(.text+0x60cb6): undefined reference to `syscalltbl__id=
-_at_idx'
-> > collect2: error: ld returned 1 exit status
-> > make[2]: *** [Makefile.perf:793: perf] Error 1
-> > make[1]: *** [Makefile.perf:290: sub-make] Error 2
-> > make: *** [Makefile:70: all] Error 2
-> > make: Leaving directory '/src/linux-6.11-rc5/tools/perf'
+> > Work around that by adding a fence wait before context switch.  The
+> > CP_EVENT_WRITE that writes the fence is the last write from a submit,
+> > so seeing this value hit memory is a reliable indication that it is
+> > safe to proceed with the context switch.
 > >
-> > This patch resolves this issue for all architectures which do not defin=
-e
-> > HAVE_SYSCALL_TABLE_SUPPORT.
-> >
-> > $ ./perf trace -e syscalls:sys_enter_mmap --max-events=3D1 ls
-> > 0.000 ls/287 syscalls:sys_enter_mmap(__syscall_nr: 222, len: 9939, prot=
-: READ, flags: PRIVATE, fd: 3)
-> >
-> > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> > Reported-by: David Abdurachmanov <davidlt@rivosinc.com>
-> > Suggested-by: David Abdurachmanov <davidlt@rivosinc.com>
-> > Fixes: 7a2fb5619cc1 ("perf trace: Fix iteration of syscall ids in sysca=
-lltbl->entries")
+> > Closes: https://gitlab.freedesktop.org/drm/msm/-/issues/63
+> > Signed-off-by: Rob Clark <robdclark@chromium.org>
 > > ---
-> >  tools/perf/util/syscalltbl.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
+> >  drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 14 +++++++++++---
+> >  1 file changed, 11 insertions(+), 3 deletions(-)
 > >
-> > diff --git a/tools/perf/util/syscalltbl.c b/tools/perf/util/syscalltbl.=
-c
-> > index 0dd26b991b3f..12654460428f 100644
-> > --- a/tools/perf/util/syscalltbl.c
-> > +++ b/tools/perf/util/syscalltbl.c
-> > @@ -188,4 +188,9 @@ int syscalltbl__strglobmatch_first(struct syscalltb=
-l *tbl, const char *syscall_g
-> >  {
-> >       return syscalltbl__strglobmatch_next(tbl, syscall_glob, idx);
+> > diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/ms=
+m/adreno/a6xx_gpu.c
+> > index bcaec86ac67a..ba5b35502e6d 100644
+> > --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> > +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> > @@ -101,9 +101,10 @@ static void get_stats_counter(struct msm_ringbuffe=
+r *ring, u32 counter,
 > >  }
-> > +
-> > +int syscalltbl__id_at_idx(struct syscalltbl *tbl __always_unused, int =
-idx __always_unused)
-> > +{
-> > +     return -1;
-> > +}
-> >  #endif /* HAVE_SYSCALL_TABLE_SUPPORT */
 > >
-> > ---
-> > base-commit: 985bf40edf4343dcb04c33f58b40b4a85c1776d4
-> > change-id: 20240830-perf_syscalltbl_fix-4f586221795e
-> > --
-> > - Charlie
+> >  static void a6xx_set_pagetable(struct a6xx_gpu *a6xx_gpu,
+> > -               struct msm_ringbuffer *ring, struct msm_file_private *c=
+tx)
+> > +               struct msm_ringbuffer *ring, struct msm_gem_submit *sub=
+mit)
+> >  {
+> >         bool sysprof =3D refcount_read(&a6xx_gpu->base.base.sysprof_act=
+ive) > 1;
+> > +       struct msm_file_private *ctx =3D submit->queue->ctx;
+> >         struct adreno_gpu *adreno_gpu =3D &a6xx_gpu->base;
+> >         phys_addr_t ttbr;
+> >         u32 asid;
+> > @@ -115,6 +116,13 @@ static void a6xx_set_pagetable(struct a6xx_gpu *a6=
+xx_gpu,
+> >         if (msm_iommu_pagetable_params(ctx->aspace->mmu, &ttbr, &asid))
+> >                 return;
 > >
+> > +       /* Wait for previous submit to complete before continuing: */
+> > +       OUT_PKT7(ring, CP_WAIT_TIMESTAMP, 4);
 >
-> Can this please be picked up? Compilation on riscv (along with any of
-> the other architectures that don't have syscall table support) is
-> broken. The long term solution is to add support for the syscall table
-> on riscv. I will send out a patch for that, but in the meantime it would
-> be great to have this in the tree.
+> CP_WAIT_TIMESTAMP doesn't exist on a6xx, so this won't work there. I
+> don't know if the bug exists on a6xx, but I'd be inclined to say it
+> has always existed and we just never hit it because it requires some
+> very specific timing conditions. We can make it work on a6xx by using
+> CP_WAIT_REG_MEM and waiting for it to equal the exact value.
 
-I thought something had been done:
-https://lore.kernel.org/lkml/739001a4-4df1-4dec-a141-926c78c5c07e@kernel.or=
-g/
-Not sure what's happened.
+I've been unable to reproduce this on a690, despite running at a
+similar fps (so similar rate of CP_SMMU_TABLE_UPDATEs).  I guess I
+can't rule out that this is just _harder_ to hit on a6xx due to the
+shallower pipeline.  It would be nice to get some data points on other
+a7xx, but I only have the one.
 
-Thanks,
-Ian
+I did attempt to come up with an igt stand-alone reproducer by just
+ping-ponging between contexts (with fences to force context switches)
+with 1000's of CP_EVENT_WRITE's, to no avail.  I guess I'd need to
+actually setup a blit or draw to make the event-write asynchronous,
+but that would be a lot harder to do in igt.
+
+I guess for now I'll re-work this patch to only do the workaround on
+a7xx.  And wire up the gallium preemption support so we can confirm
+whether this is also an issue for preemption.
+
+BR,
+-R
+
+> Connor
+>
+> > +       OUT_RING(ring, 0);
+> > +       OUT_RING(ring, lower_32_bits(rbmemptr(ring, fence)));
+> > +       OUT_RING(ring, upper_32_bits(rbmemptr(ring, fence)));
+> > +       OUT_RING(ring, submit->seqno - 1);
+> > +
+> >         if (!sysprof) {
+> >                 if (!adreno_is_a7xx(adreno_gpu)) {
+> >                         /* Turn off protected mode to write to special =
+registers */
+> > @@ -193,7 +201,7 @@ static void a6xx_submit(struct msm_gpu *gpu, struct=
+ msm_gem_submit *submit)
+> >         struct msm_ringbuffer *ring =3D submit->ring;
+> >         unsigned int i, ibs =3D 0;
+> >
+> > -       a6xx_set_pagetable(a6xx_gpu, ring, submit->queue->ctx);
+> > +       a6xx_set_pagetable(a6xx_gpu, ring, submit);
+> >
+> >         get_stats_counter(ring, REG_A6XX_RBBM_PERFCTR_CP(0),
+> >                 rbmemptr_stats(ring, index, cpcycles_start));
+> > @@ -283,7 +291,7 @@ static void a7xx_submit(struct msm_gpu *gpu, struct=
+ msm_gem_submit *submit)
+> >         OUT_PKT7(ring, CP_THREAD_CONTROL, 1);
+> >         OUT_RING(ring, CP_THREAD_CONTROL_0_SYNC_THREADS | CP_SET_THREAD=
+_BR);
+> >
+> > -       a6xx_set_pagetable(a6xx_gpu, ring, submit->queue->ctx);
+> > +       a6xx_set_pagetable(a6xx_gpu, ring, submit);
+> >
+> >         get_stats_counter(ring, REG_A7XX_RBBM_PERFCTR_CP(0),
+> >                 rbmemptr_stats(ring, index, cpcycles_start));
+> > --
+> > 2.46.0
+> >
 
