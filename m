@@ -1,156 +1,113 @@
-Return-Path: <linux-kernel+bounces-337572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DF77984BD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:52:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8099984BD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:53:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BBC21C21979
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:52:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64C24281D2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:53:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1F613A87E;
-	Tue, 24 Sep 2024 19:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9035132120;
+	Tue, 24 Sep 2024 19:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="nxP/MB1E"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="I9tL5Akg"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F36282F4;
-	Tue, 24 Sep 2024 19:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6430512CDAE
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 19:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727207536; cv=none; b=p1W2ognqNhtpHzO4AKzAxwfx7fogo5BBrKrMrRWujN8yc8/MwuncXoR4E4U3k6KLHBAIQHaJgVO8ICUfiv5gK9csCC5KmWBkj8GyT7e86qURB6mMrMTYVZjYEXeub97+53B0gTIMM2LPzXhJReRk6SAmpLdA/q5zmINWFSUHq50=
+	t=1727207586; cv=none; b=HMEYA5ReZ0vXedmPpQlpTEMdNJ1UYLv7E2aTwLbMXJlfG8bi4kr3NaxT4jMfOgDFwCyHzfaGLh9phJe79krRvtxXG9nFd6D4Cz4E+OPzWbdKzcGoPp1ncz5tNBaLCuTP1aKZm3emi4GY3J/IhZ3IOzgr1h7PWsoMz0iijMw098Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727207536; c=relaxed/simple;
-	bh=GBfPl46p3Qqe6ckVePVV4hgMaOCUbspLx+WDceCd36g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WXTvqzeVkcAxJ32zJb15pMQUv70VtsMtDF2fpKwor9sJm39uf5LmQ7qwxD8hpnMdt43Pish26B3KRx+XOk9I30nujhBxH1QykbFJqou6sLNWoKdX6TCQH7YNrOKGNWb2fkpSvqI30tdEV42zPOpBRSL2C24eR4HcISik5UaJ4pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=nxP/MB1E; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4XCr9N6W7NzlgTWK;
-	Tue, 24 Sep 2024 19:52:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1727207526; x=1729799527; bh=GJda8fhfxXefGlmLq7zLa+LN
-	hw8pcTKg3Mnj21Cyvzs=; b=nxP/MB1EesPglse33V2POfq65q17IS3bboThLGEj
-	rT2eUfGYJBG8pv2FjtS47fR63Yl/WC+haUOYrDR+YD5vgyzAEibaRCigXOSo4qvZ
-	FgkBuDUI6QbBPPNVOmv1cRtzgN/3sT+J4J0J+XAohMfOTMvHPjrjDqZKXpZqxLmp
-	7YXCAu7GXy3vxsd9Kg/qo96N3hYjVZnZRC1/R5gKeeAxa0pbmZab70271tDkqjU7
-	AU0C/s6oBdsaUaa5eNG8ycBgBiiRIga0xkwNVEMcjgvWahdLFAMnrZ5RjCufGcCo
-	jQ/Rfr6cEgB7R1o+dVhNNoeIPa5+b5vbDN32Utq2m8SDTg==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id aGwnB5ttcOzw; Tue, 24 Sep 2024 19:52:06 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4XCr9L2CpczlgTWG;
-	Tue, 24 Sep 2024 19:52:06 +0000 (UTC)
-Message-ID: <8bb504f5-9ed6-4fc0-bea0-f0561164f70f@acm.org>
-Date: Tue, 24 Sep 2024 12:52:05 -0700
+	s=arc-20240116; t=1727207586; c=relaxed/simple;
+	bh=KT8rvM77L2IbGpejE79KBgEP4qmqCVvvennzSDIi2pI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NE9Ked130DOeFbYw1l+c8dy/DxtG25QsmsDH2VeCn0mvFefvtqyBk2/rXXWuCCLVVXto81L4m6BWvTF+Fm1JtBYY3bpNACL2QYsG3QYTf4Pa16z6AH2MjFzuJrs8Mc7fm0z+FTwrJxk1puAcvLX9cKvC6JYZ0A7p9THneLv9Scg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=I9tL5Akg; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f754d4a6e4so59656421fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 12:53:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1727207582; x=1727812382; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=947KiTDRASLjIeg3socCB022+DS5zCO6A8y2gr+pDQw=;
+        b=I9tL5AkgWWoxq/Y3LL0QUeJRmIWpKBCVfJHLnkyQOogIQHUtQcrJCOM+DKvzsY0Qdr
+         Ukd03jfVpT8/0G+nK20uIn76EIdv0+kXutJpOfVejlvejK9IhOrFkWGTLxPGnUJ7tPCt
+         /zYzP2ilp7fz+YLzajUN9idpRyJ3cRaobSz/I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727207582; x=1727812382;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=947KiTDRASLjIeg3socCB022+DS5zCO6A8y2gr+pDQw=;
+        b=QlO+bZQWn4i2t2jfAWZNVJTuZ5fY9hGJUpOolC3HFx7sag4UFybIoZkx6FPG4xylzX
+         EtoBFSNPTxULi4bdgdRpFfIV0rMRgTsiym0b0ZRgbQt8F2b9WMkpbCbhA4INeQr0xlH1
+         VfdPy21rPEnIGAjK6hFPlZ6oHVzgs0j+SUaIB1k2JQ+ENYxaOCbTJoDc1+J+wVakEvOF
+         bzONJ1mS5WALYiY8D5VEdaBXm8ida8knf8QWUmmPSSkNDWP0jIbbMRa1/mIrOHzAGtuS
+         ChyRSkokbXYh91js1pmu2xMwrLgx6Rdo+clCbYzXUrmyGSDC3P7G5CTJ2HbFbS6BhFFF
+         Cdcw==
+X-Forwarded-Encrypted: i=1; AJvYcCXqId0FIcJdYN02HDdu3xuYkfRJQca1r0/ecG3ZSqiYbUPJwMorbOJAvRUaOXus2QsyfD0PxSFaaXMaOSg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNXXOEzf05MV38yB1nTYBETzMhuRqEKzLAerw/mZG9ZDZt2RYe
+	h9XL/IVGfnbUotsVWSjE5ek1MvsGpdC86c4T3DhsW9WcE/nKBA2vKE9iY97yJrJs3iPJDdPh6O/
+	kZ2YASA==
+X-Google-Smtp-Source: AGHT+IHam32MCRzipDCpaH3V5Qfl6lnoYnP4+NuI56P1X/FgA8MCphGOzWblqKU1JeZX1TIaU5+4WQ==
+X-Received: by 2002:a05:651c:1993:b0:2f7:5a95:3a11 with SMTP id 38308e7fff4ca-2f915fcc4f0mr3453641fa.6.1727207582347;
+        Tue, 24 Sep 2024 12:53:02 -0700 (PDT)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f8d283bcfdsm3180821fa.36.2024.09.24.12.52.59
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Sep 2024 12:53:01 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53655b9bbcdso7120312e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 12:52:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXfx9ewtCoIaJcAds1dUFiIHCtatYEYGHhcIgF5pYvWZnmigzhM7MMXNE+EgoeIHkoLK0dnqmreBpe2TCU=@vger.kernel.org
+X-Received: by 2002:a05:6512:b92:b0:535:674a:2c18 with SMTP id
+ 2adb3069b0e04-53877530ef6mr121416e87.32.1727207579451; Tue, 24 Sep 2024
+ 12:52:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] scsi: ufs: Zero utp_upiu_req at the beginning of each
- command
-To: Avri Altman <avri.altman@wdc.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240921062306.56019-1-avri.altman@wdc.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240921062306.56019-1-avri.altman@wdc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240924044741.3078097-1-andersson@kernel.org> <CAHk-=wieXpmx=+gEuhQSEEZLyQHFLDk5=59j0OtOF==mQdVjYA@mail.gmail.com>
+In-Reply-To: <CAHk-=wieXpmx=+gEuhQSEEZLyQHFLDk5=59j0OtOF==mQdVjYA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 24 Sep 2024 12:52:42 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgMBWsDkuQvZYfLj=rvQDnN4rdseS-LkR_VwD+xzvjjiA@mail.gmail.com>
+Message-ID: <CAHk-=wgMBWsDkuQvZYfLj=rvQDnN4rdseS-LkR_VwD+xzvjjiA@mail.gmail.com>
+Subject: Re: [GIT PULL] remoteproc updates for v6.12
+To: Bjorn Andersson <andersson@kernel.org>, Martyn Welch <martyn.welch@collabora.com>, 
+	Hari Nagalla <hnagalla@ti.com>, Andrew Davis <afd@ti.com>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Peng Fan <peng.fan@nxp.com>, Beleswar Padhi <b-padhi@ti.com>, Zhang Zekun <zhangzekun11@huawei.com>, 
+	Naina Mehta <quic_nainmeht@quicinc.com>, Jan Kiszka <jan.kiszka@siemens.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Tanmay Shah <tanmay.shah@amd.com>, Tengfei Fan <quic_tengfan@quicinc.com>, 
+	Udit Kumar <u-kumar1@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/20/24 11:23 PM, Avri Altman wrote:
-> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-> index 8ea5a82503a9..9187cf5c949c 100644
-> --- a/drivers/ufs/core/ufshcd.c
-> +++ b/drivers/ufs/core/ufshcd.c
-> @@ -2761,7 +2761,6 @@ void ufshcd_prepare_utp_scsi_cmd_upiu(struct ufshcd_lrb *lrbp, u8 upiu_flags)
->   	ucd_req_ptr->sc.exp_data_transfer_len = cpu_to_be32(cmd->sdb.length);
->   
->   	cdb_len = min_t(unsigned short, cmd->cmd_len, UFS_CDB_SIZE);
-> -	memset(ucd_req_ptr->sc.cdb, 0, UFS_CDB_SIZE);
->   	memcpy(ucd_req_ptr->sc.cdb, cmd->cmnd, cdb_len);
->   
->   	memset(lrbp->ucd_rsp_ptr, 0, sizeof(struct utp_upiu_rsp));
-> @@ -2864,6 +2863,26 @@ static void ufshcd_comp_scsi_upiu(struct ufs_hba *hba, struct ufshcd_lrb *lrbp)
->   	ufshcd_prepare_utp_scsi_cmd_upiu(lrbp, upiu_flags);
->   }
->   
-> +static void __ufshcd_setup_cmd(struct ufshcd_lrb *lrbp, struct scsi_cmnd *cmd, u8 lun, int tag)
-> +{
-> +	memset(lrbp->ucd_req_ptr, 0, sizeof(*lrbp->ucd_req_ptr));
-> +
-> +	lrbp->cmd = cmd;
-> +	lrbp->task_tag = tag;
-> +	lrbp->lun = lun;
-> +	ufshcd_prepare_lrbp_crypto(cmd ? scsi_cmd_to_rq(cmd) : NULL, lrbp);
-> +}
-> +
-> +static void ufshcd_setup_scsi_cmd(struct ufs_hba *hba, struct ufshcd_lrb *lrbp,
-> +				  struct scsi_cmnd *cmd, u8 lun, int tag)
-> +{
-> +	__ufshcd_setup_cmd(lrbp, cmd, lun, tag);
-> +	lrbp->intr_cmd = !ufshcd_is_intr_aggr_allowed(hba);
-> +	lrbp->req_abort_skip = false;
-> +
-> +	ufshcd_comp_scsi_upiu(hba, lrbp);
-> +}
-> +
->   /**
->    * ufshcd_upiu_wlun_to_scsi_wlun - maps UPIU W-LUN id to SCSI W-LUN ID
->    * @upiu_wlun_id: UPIU W-LUN id
-> @@ -2997,16 +3016,8 @@ static int ufshcd_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
->   	ufshcd_hold(hba);
->   
->   	lrbp = &hba->lrb[tag];
-> -	lrbp->cmd = cmd;
-> -	lrbp->task_tag = tag;
-> -	lrbp->lun = ufshcd_scsi_to_upiu_lun(cmd->device->lun);
-> -	lrbp->intr_cmd = !ufshcd_is_intr_aggr_allowed(hba);
->   
-> -	ufshcd_prepare_lrbp_crypto(scsi_cmd_to_rq(cmd), lrbp);
-> -
-> -	lrbp->req_abort_skip = false;
-> -
-> -	ufshcd_comp_scsi_upiu(hba, lrbp);
-> +	ufshcd_setup_scsi_cmd(hba, lrbp, cmd, ufshcd_scsi_to_upiu_lun(cmd->device->lun), tag);
->   
->   	err = ufshcd_map_sg(hba, lrbp);
->   	if (err) {
-> @@ -3034,11 +3045,8 @@ static int ufshcd_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
->   static void ufshcd_setup_dev_cmd(struct ufs_hba *hba, struct ufshcd_lrb *lrbp,
->   			     enum dev_cmd_type cmd_type, u8 lun, int tag)
->   {
-> -	lrbp->cmd = NULL;
-> -	lrbp->task_tag = tag;
-> -	lrbp->lun = lun;
-> +	__ufshcd_setup_cmd(lrbp, NULL, lun, tag);
->   	lrbp->intr_cmd = true; /* No interrupt aggregation */
-> -	ufshcd_prepare_lrbp_crypto(NULL, lrbp);
->   	hba->dev_cmd.type = cmd_type;
->   }
->   
+On Tue, 24 Sept 2024 at 12:31, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> It's in my tree now, but please fix asap.
 
-This should have been two patches: one patch that introduces the
-ufshcd_setup_scsi_cmd() function and a second patch that adds the code
-for zeroing the UPIU header. Anyway, I'm fine with this patch.
+Argh, now that I noticed it, I can no longer unsee it.
 
-Bart.
+So I did this
+
+-       depends on ARCH_K3 || COMPILE_TEST
++       depends on ARCH_OMAP2PLUS || ARCH_K3
+
+to the TI_K3_M4_REMOTEPROC entry so that it wouldn't try to select
+OMAP2PLUS_MBOX in conditions where it isn't valid.
+
+                Linus
 
