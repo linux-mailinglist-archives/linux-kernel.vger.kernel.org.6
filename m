@@ -1,195 +1,153 @@
-Return-Path: <linux-kernel+bounces-337623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94DAD984C8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:09:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F48F984C91
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:11:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E123FB226C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:09:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85481285EA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:11:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACD913D29A;
-	Tue, 24 Sep 2024 21:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426DE13D29A;
+	Tue, 24 Sep 2024 21:11:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="MNGScPw5"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="PQQCHOds"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC7213B7BC
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 21:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE54113A3F3
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 21:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727212179; cv=none; b=qDlPRPIELuLZx45D98f11/bFxjQcqllmYvr52cpHZQCeMbEFSg1BgyGnMj2n+ur46V/9dTl0r3i1RPGIn3OQoBkbhDprK1eW3xwOtm6h1BCTt7E7AXk6rlI7Ux91EKlv7xfTcw9UY5DMLZHyvc2lLMqjAJ094Qe0yIx8jVuOLUI=
+	t=1727212284; cv=none; b=TQKHXzx3SfSE9bzjTqu+u0/qVgfq+8GTnPbIlTwa9+/BaBHJJnTeOjom4XAkvC28tNeMV/AyePTaRF6jLtDjivCkl91otY9NCGHSbGu0vvAkgA6IN3h0pctdULzdFo/XTWgFdyJ4FJVkTQTfE7bC3A/UH325tR1amsxh+Vob0t4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727212179; c=relaxed/simple;
-	bh=hpxmhIs4fKSzep02/3hSvKTa+tYcPxooei4lTMawdQk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z2qIqfd9O8cwD5SpRaZ1qLadZNOp2tUzIvZQnMARRyqpuXQB9Zaub6w9nh6boIofm+xYXSp+wEurFF32fBySY/oQFUJQArueEYqsdR4FluwJREhlPQP4WUnj5FQwSItiz6W3YAKnTq+/CoNo2acRDodmR1DGhFRcfiMGeMfBXDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=MNGScPw5; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2053a0bd0a6so60241765ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 14:09:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1727212177; x=1727816977; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hvi10htTRwsku5eDKHxkGSBGzDuBQAMC2x7T230TNcQ=;
-        b=MNGScPw5411c8LIsvDckQfYZuBXOM+K7KUyGJOaT4m17p3aY2uKUP/93FM7vgTt+YN
-         1+CYINdqzctqS+i105nbK4XnDGwKh3Psut3aUsLh9d/XyqleAg5QSsRR6Ngv7W4BbKcz
-         3tBgWEsUbxB00OyQzo+W0+t7/SJBc5tY+ru8I3/K3K9fINc3jEIczSA/Rf7isgtm8/gT
-         j7PTu3nqTrwe8M2nlmaSMGh5E9ZdMBZd48AAnlbBsHMQlpl/eOZmeT5xDqGHq3uvniDM
-         9TMlsGZHjU4MB0XbKlTOWQbHYGQ1bsfE1nvDtZnGLflFLp3fAhUMJir/OdxMP0VwHu0Z
-         G/oA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727212177; x=1727816977;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hvi10htTRwsku5eDKHxkGSBGzDuBQAMC2x7T230TNcQ=;
-        b=gU4lTgUEuLCJYa/XFvWO4O1IIopq99yTU7JAhAD3lYl46k6eLnkNt7gqsX+9jylWoK
-         ECL/o0kVouh7NDFesltunkjgbTEw4vHR4Tygr9jKSeYi4uRgPLhfXArjlw0ar8zshb0y
-         wsJP9xeCsYKanDviVCgLPw8r9KwjvZl3zvgpY+4ERHznUJjPK5KeScGbTmto3PVJb8x1
-         x6b2HVG7CRGcqdoHgWqZIpadZ9X7WWUihgsjJoJ2+AlmnipimRgpDxb8aFPNcqB1t3j8
-         ANaA0tD9PALKju5wEF2CbFca+4ynfAuUqGf6FLeWLBsNGRumEek7+P75qJtG+SEpzRiq
-         KJkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVS9Fc9UriG5g5A19Twzs/f7RdMFmbd3kBvys4g4ROMVXVM2Cc2bxiPYBkm/PZc2Nxm/TcAfVJqGmLVJZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxERQigRqyJQmEQLFBzP9FvIJFIx4HlflO+AudNn0rtG9zKt4/f
-	/xWY0Fa/0yDpE+UTpOIlentYxlVP7qroWYm+YddzrTekXYdRvJUEo9/4EUG2qDM=
-X-Google-Smtp-Source: AGHT+IH3fDIW+mmLHCM91kmeHZ2EKz1hP33clsvTdfu3wSzCfU+MUEiYMOB1YSAuJizFDCnP6UeboA==
-X-Received: by 2002:a05:6a21:b8b:b0:1be:c3c1:7be8 with SMTP id adf61e73a8af0-1d4d4b1998bmr582980637.26.1727212176541;
-        Tue, 24 Sep 2024 14:09:36 -0700 (PDT)
-Received: from medusa.lab.kspace.sh ([208.88.152.253])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-71afc8446fesm1581438b3a.64.2024.09.24.14.09.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 14:09:36 -0700 (PDT)
-Date: Tue, 24 Sep 2024 14:09:34 -0700
-From: Mohamed Khalfella <mkhalfella@purestorage.com>
-To: Jacob Keller <jacob.e.keller@intel.com>
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Yuanyuan Zhong <yzhong@purestorage.com>,
-	Jeff Garzik <jgarzik@redhat.com>,
-	Auke Kok <auke-jan.h.kok@intel.com>,
-	Simon Horman <horms@kernel.org>, Ying Hsu <yinghsu@chromium.org>,
-	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] igb: Do not bring the device up after non-fatal error
-Message-ID: <ZvMqjkjbv9mURaJx@apollo.purestorage.com>
-References: <20240923212218.116979-1-mkhalfella@purestorage.com>
- <2c272599-6b25-4c93-86fa-ecfd8df024c1@intel.com>
- <847a2c45-782d-4cac-9a53-83557393af80@intel.com>
+	s=arc-20240116; t=1727212284; c=relaxed/simple;
+	bh=wmUpZfC/htD+iA5wrFbgl2pgQTzIbbElSrdk9cyMR7M=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=dnvBT3PHvAtZnLm8zkMApNzFxmfdNYVQ5NLOajKBBuMKTrl6ZDOGypj2x0H2mHNl65rYBsAZBx4mt2yr5IJgOTLVajU4WpcEqqMMXNeg+9rpIHHdGvVofGUq29WjbtbOwejtld+tXBfFZs3B7f1KZQRS4WWcN7Hu4SBFeIz9oCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=PQQCHOds; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id D17102C05DB;
+	Wed, 25 Sep 2024 09:11:13 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1727212273;
+	bh=wmUpZfC/htD+iA5wrFbgl2pgQTzIbbElSrdk9cyMR7M=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+	b=PQQCHOdsMILjfKbKz7lKGd9jlu99F1CX5R5whH4q5fe6depqvxwsuX9E2lTRh7hx6
+	 8HMFfGDHZdEIqcNcnF545gaV+xSq+O5VKybz3nNH1ZH08riakfMPRiyL7vk4J+xXll
+	 DXD3MO0BiRIHAlPiYJ1NHJIY7zYD1c4bfvRhauXNh9WUXQPYRgODkK2Qociss+SR82
+	 36yqVvcIxPoDnavWisPx1nTivQeWSyvfusABdxVltkU4BqwR3Wag9cxgepqMuelCna
+	 w/Md7s8AW6aBAs/sVVfCP90DntpCJYTl8iBBfpztcvv/z0CvuzHcKuk3Hurm5hVCT2
+	 WD9u/GYBLNCZg==
+Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B66f32af10001>; Wed, 25 Sep 2024 09:11:13 +1200
+Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
+ svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.1544.11; Wed, 25 Sep 2024 09:11:13 +1200
+Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
+ svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with Microsoft
+ SMTP Server (TLS) id 15.0.1497.48; Wed, 25 Sep 2024 09:11:13 +1200
+Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
+ svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
+ 15.02.1544.011; Wed, 25 Sep 2024 09:11:13 +1200
+From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: "andi.shyti@kernel.org" <andi.shyti@kernel.org>, "robh@kernel.org"
+	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, "tsbogend@alpha.franken.de"
+	<tsbogend@alpha.franken.de>, "linux-i2c@vger.kernel.org"
+	<linux-i2c@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-mips@vger.kernel.org"
+	<linux-mips@vger.kernel.org>
+Subject: Re: [PATCH v3 1/3] dt-bindings: i2c: Add RTL9300 I2C controller
+Thread-Topic: [PATCH v3 1/3] dt-bindings: i2c: Add RTL9300 I2C controller
+Thread-Index: AQHbDgytK10u72+gUkipBcb15OmiQrJl2bMAgADNmgA=
+Date: Tue, 24 Sep 2024 21:11:13 +0000
+Message-ID: <4a0dbf45-3f27-43d4-87c6-35b1983ceaef@alliedtelesis.co.nz>
+References: <20240923230230.3001657-1-chris.packham@alliedtelesis.co.nz>
+ <20240923230230.3001657-2-chris.packham@alliedtelesis.co.nz>
+ <uxv5kzjo5btypvca5vh27i7xkajyqvbqtkys7xcmfz5ltmwezv@fgrlz4yzznri>
+In-Reply-To: <uxv5kzjo5btypvca5vh27i7xkajyqvbqtkys7xcmfz5ltmwezv@fgrlz4yzznri>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <57FDC9A905DF6D4A8AFDB832831CAF85@atlnz.lc>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <847a2c45-782d-4cac-9a53-83557393af80@intel.com>
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=Id0kWnqa c=1 sm=1 tr=0 ts=66f32af1 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=oKJsc7D3gJEA:10 a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=62ntRvTiAAAA:8 a=gEfo2CItAAAA:8 a=ybuHqjYP6VfxY7Zg_iQA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=pToNdpNmrtiFLRE6bQ9Z:22 a=sptkURWiP4Gy88Gu7hUp:22
+X-SEG-SpamProfiler-Score: 0
 
-On 2024-09-23 17:10:36 -0700, Jacob Keller wrote:
-> 
-> 
-> On 9/23/2024 4:11 PM, Jacob Keller wrote:
-> > 
-> > 
-> > On 9/23/2024 2:22 PM, Mohamed Khalfella wrote:
-> >> Commit 004d25060c78 ("igb: Fix igb_down hung on surprise removal")
-> >> changed igb_io_error_detected() to ignore non-fatal pcie errors in order
-> >> to avoid hung task that can happen when igb_down() is called multiple
-> >> times. This caused an issue when processing transient non-fatal errors.
-> >> igb_io_resume(), which is called after igb_io_error_detected(), assumes
-> >> that device is brought down by igb_io_error_detected() if the interface
-> >> is up. This resulted in panic with stacktrace below.
-> >>
-> >> [ T3256] igb 0000:09:00.0 haeth0: igb: haeth0 NIC Link is Down
-> >> [  T292] pcieport 0000:00:1c.5: AER: Uncorrected (Non-Fatal) error received: 0000:09:00.0
-> >> [  T292] igb 0000:09:00.0: PCIe Bus Error: severity=Uncorrected (Non-Fatal), type=Transaction Layer, (Requester ID)
-> >> [  T292] igb 0000:09:00.0:   device [8086:1537] error status/mask=00004000/00000000
-> >> [  T292] igb 0000:09:00.0:    [14] CmpltTO [  200.105524,009][  T292] igb 0000:09:00.0: AER:   TLP Header: 00000000 00000000 00000000 00000000
-> >> [  T292] pcieport 0000:00:1c.5: AER: broadcast error_detected message
-> >> [  T292] igb 0000:09:00.0: Non-correctable non-fatal error reported.
-> >> [  T292] pcieport 0000:00:1c.5: AER: broadcast mmio_enabled message
-> >> [  T292] pcieport 0000:00:1c.5: AER: broadcast resume message
-> >> [  T292] ------------[ cut here ]------------
-> >> [  T292] kernel BUG at net/core/dev.c:6539!
-> >> [  T292] invalid opcode: 0000 [#1] PREEMPT SMP
-> >> [  T292] RIP: 0010:napi_enable+0x37/0x40
-> >> [  T292] Call Trace:
-> >> [  T292]  <TASK>
-> >> [  T292]  ? die+0x33/0x90
-> >> [  T292]  ? do_trap+0xdc/0x110
-> >> [  T292]  ? napi_enable+0x37/0x40
-> >> [  T292]  ? do_error_trap+0x70/0xb0
-> >> [  T292]  ? napi_enable+0x37/0x40
-> >> [  T292]  ? napi_enable+0x37/0x40
-> >> [  T292]  ? exc_invalid_op+0x4e/0x70
-> >> [  T292]  ? napi_enable+0x37/0x40
-> >> [  T292]  ? asm_exc_invalid_op+0x16/0x20
-> >> [  T292]  ? napi_enable+0x37/0x40
-> >> [  T292]  igb_up+0x41/0x150
-> >> [  T292]  igb_io_resume+0x25/0x70
-> >> [  T292]  report_resume+0x54/0x70
-> >> [  T292]  ? report_frozen_detected+0x20/0x20
-> >> [  T292]  pci_walk_bus+0x6c/0x90
-> >> [  T292]  ? aer_print_port_info+0xa0/0xa0
-> >> [  T292]  pcie_do_recovery+0x22f/0x380
-> >> [  T292]  aer_process_err_devices+0x110/0x160
-> >> [  T292]  aer_isr+0x1c1/0x1e0
-> >> [  T292]  ? disable_irq_nosync+0x10/0x10
-> >> [  T292]  irq_thread_fn+0x1a/0x60
-> >> [  T292]  irq_thread+0xe3/0x1a0
-> >> [  T292]  ? irq_set_affinity_notifier+0x120/0x120
-> >> [  T292]  ? irq_affinity_notify+0x100/0x100
-> >> [  T292]  kthread+0xe2/0x110
-> >> [  T292]  ? kthread_complete_and_exit+0x20/0x20
-> >> [  T292]  ret_from_fork+0x2d/0x50
-> >> [  T292]  ? kthread_complete_and_exit+0x20/0x20
-> >> [  T292]  ret_from_fork_asm+0x11/0x20
-> >> [  T292]  </TASK>
-> >>
-> >> To fix this issue igb_io_resume() checks if the interface is running and
-> >> the device is not down this means igb_io_error_detected() did not bring
-> >> the device down and there is no need to bring it up.
-> >>
-> >> Signed-off-by: Mohamed Khalfella <mkhalfella@purestorage.com>
-> >> Reviewed-by: Yuanyuan Zhong<yzhong@purestorage.com>
-> >> Fixes: 004d25060c78 ("igb: Fix igb_down hung on surprise removal")
-> >> ---
-> >>  drivers/net/ethernet/intel/igb/igb_main.c | 4 ++++
-> >>  1 file changed, 4 insertions(+)
-> >>
-> >> diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-> >> index 1ef4cb871452..8c6bc3db9a3d 100644
-> >> --- a/drivers/net/ethernet/intel/igb/igb_main.c
-> >> +++ b/drivers/net/ethernet/intel/igb/igb_main.c
-> >> @@ -9651,6 +9651,10 @@ static void igb_io_resume(struct pci_dev *pdev)
-> >>  	struct igb_adapter *adapter = netdev_priv(netdev);
-> >>  
-> >>  	if (netif_running(netdev)) {
-> >> +		if (!test_bit(__IGB_DOWN, &adapter->state)) {
-> >> +			dev_info(&pdev->dev, "Resuming from non-fatal error, do nothing.\n");
-> >> +			return;
-> > 
-> > I'm not sure this needs to be a dev_info.
-> > 
-> 
-> I was thinking dev_dbg, because I don't really see why its relevant to
-> inform the user we did nothing. Seems like its log spam to me.
-
-Good point. I changed it to dev_dbg() in v2.
-
-v2: https://lore.kernel.org/all/20240924210604.123175-1-mkhalfella@purestorage.com/
-
-> 
-> > Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
-> > 
-> 
+DQpPbiAyNC8wOS8yNCAyMDo1NSwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToNCj4gT24gVHVl
+LCBTZXAgMjQsIDIwMjQgYXQgMTE6MDI6MjhBTSArMTIwMCwgQ2hyaXMgUGFja2hhbSB3cm90ZToN
+Cj4+IEFkZCBkdHNjaGVtYSBmb3IgdGhlIEkyQyBjb250cm9sbGVyIG9uIHRoZSBSVEw5MzAwIFNv
+Qy4gVGhlIEkyQw0KPj4gY29udHJvbGxlcnMgb24gdGhpcyBTb0MgYXJlIHBhcnQgb2YgdGhlICJz
+d2l0Y2giIGJsb2NrIHdoaWNoIGlzDQo+PiByZXByZXNlbnRlZCBoZXJlIGFzIGEgc3lzY29uIG5v
+ZGUuIFRoZSBTQ0wgcGlucyBhcmUgZGVwZW5kZW50IG9uIHRoZSBJMkMNCj4+IGNvbnRyb2xsZXIg
+KEdQSU84IGZvciB0aGUgZmlyc3QgY29udHJvbGxlciwgR1BJTyAxNyBmb3IgdGhlIHNlY29uZCku
+IFRoZQ0KPj4gU0RBIHBpbnMgY2FuIGJlIGFzc2lnbmVkIHRvIGVpdGhlciBvbmUgb2YgdGhlIEky
+QyBjb250cm9sbGVycyAoYnV0IG5vdA0KPj4gYm90aCkuDQo+Pg0KPj4gU2lnbmVkLW9mZi1ieTog
+Q2hyaXMgUGFja2hhbSA8Y2hyaXMucGFja2hhbUBhbGxpZWR0ZWxlc2lzLmNvLm56Pg0KPj4gLS0t
+DQo+Pg0KPj4gTm90ZXM6DQo+PiAgICAgIENoYW5nZXMgaW4gdjM6DQo+PiAgICAgIC0gUmVtb3Zl
+IHBhcmVudCBub2RlIGluIGV4YW1wbGUNCj4+ICAgICAgLSBwdXQgdW5ldmFsdWF0ZWRQcm9wZXJ0
+aWVzIGFmdGVyIHJlcXVpcmVkDQo+PiAgICAgIC0gQWRkICNhZGRyZXNzLWNlbGxzIGFuZCAjc2l6
+ZS1jZWxscw0KPj4gICAgICANCj4+ICAgICAgQ2hhbmdlcyBpbiB2MjoNCj4+ICAgICAgLSBVc2Ug
+cmVnIHByb3BlcnR5IGZvciBjb250cm9sbGVyIHJlZ2lzdGVycw0KPj4gICAgICAtIFJlbW92ZSBn
+bG9iYWwtY29udHJvbC1vZmZzZXQgKHdpbGwgYmUgaGFyZCBjb2RlZCBpbiBkcml2ZXIpDQo+PiAg
+ICAgIC0gSW50ZWdyYXRlZCB0aGUgbXVsdGlwbGV4aW5nIGZ1bmN0aW9uLiBDaGlsZCBub2RlcyBu
+b3cgcmVwcmVzZW50IHRoZQ0KPj4gICAgICAgIGF2YWlsYWJsZSBTREEgbGluZXMNCj4+DQo+PiAg
+IC4uLi9iaW5kaW5ncy9pMmMvcmVhbHRlayxydGw5MzAwLWkyYy55YW1sICAgICB8IDgwICsrKysr
+KysrKysrKysrKysrKysNCj4+ICAgTUFJTlRBSU5FUlMgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgIHwgIDYgKysNCj4+ICAgMiBmaWxlcyBjaGFuZ2VkLCA4NiBpbnNlcnRpb25zKCsp
+DQo+PiAgIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
+Z3MvaTJjL3JlYWx0ZWsscnRsOTMwMC1pMmMueWFtbA0KPj4NCj4+IGRpZmYgLS1naXQgYS9Eb2N1
+bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvaTJjL3JlYWx0ZWsscnRsOTMwMC1pMmMueWFt
+bCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9pMmMvcmVhbHRlayxydGw5MzAw
+LWkyYy55YW1sDQo+PiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPj4gaW5kZXggMDAwMDAwMDAwMDAw
+Li45NzllYzIyZTgxZjENCj4+IC0tLSAvZGV2L251bGwNCj4+ICsrKyBiL0RvY3VtZW50YXRpb24v
+ZGV2aWNldHJlZS9iaW5kaW5ncy9pMmMvcmVhbHRlayxydGw5MzAwLWkyYy55YW1sDQo+PiBAQCAt
+MCwwICsxLDgwIEBADQo+PiArIyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogKEdQTC0yLjAtb25s
+eSBPUiBCU0QtMi1DbGF1c2UpDQo+PiArJVlBTUwgMS4yDQo+PiArLS0tDQo+PiArJGlkOiBodHRw
+Oi8vc2Nhbm1haWwudHJ1c3R3YXZlLmNvbS8/Yz0yMDk4OCZkPWdmN3k1cmd5OUVSNDRIWnB0a2tv
+dkxiVkd0a1lkN0J5QXozSzZQTlBBdyZ1PWh0dHAlM2ElMmYlMmZkZXZpY2V0cmVlJTJlb3JnJTJm
+c2NoZW1hcyUyZmkyYyUyZnJlYWx0ZWslMmNydGw5MzAwLWkyYyUyZXlhbWwlMjMNCj4+ICskc2No
+ZW1hOiBodHRwOi8vc2Nhbm1haWwudHJ1c3R3YXZlLmNvbS8/Yz0yMDk4OCZkPWdmN3k1cmd5OUVS
+NDRIWnB0a2tvdkxiVkd0a1lkN0J5QTItYTdLSktCZyZ1PWh0dHAlM2ElMmYlMmZkZXZpY2V0cmVl
+JTJlb3JnJTJmbWV0YS1zY2hlbWFzJTJmY29yZSUyZXlhbWwlMjMNCj4+ICsNCj4+ICt0aXRsZTog
+UmVhbHRlayBSVEwgSTJDIENvbnRyb2xsZXINCj4+ICsNCj4+ICttYWludGFpbmVyczoNCj4+ICsg
+IC0gQ2hyaXMgUGFja2hhbSA8Y2hyaXMucGFja2hhbUBhbGxpZWR0ZWxlc2lzLmNvLm56Pg0KPj4g
+Kw0KPj4gK2Rlc2NyaXB0aW9uOg0KPj4gKyAgVGhlIFJUTDkzMDAgU29DIGhhcyB0d28gSTJDIGNv
+bnRyb2xsZXJzLiBFYWNoIG9mIHRoZXNlIGhhcyBhbiBTQ0wgbGluZSAod2hpY2gNCj4gVGhpcyBp
+cyBjb25mdXNpbmcuIEl0IHRvb2sgbWUgc29tZSBtaW51dGVzIHRvIHVuZGVyc3RhbmQgdGhhdCB0
+d28gSTJDcw0KPiBpbiB0aGUgZXhhbXBsZSBkbyBub3QgbWF0Y2ggd2hhdCB5b3Ugd3JvdGUgaGVy
+ZS4gSSBnb3QgdGhlcmUgb25seSBiZWNhdXNlDQo+IG9mIHlvdXIgRFRTLiBZb3VyIHBhdGNoc2V0
+cyAtIHNlbnQgc2VwYXJhdGVseSBhbmQgZGVzY3JpYmluZyBwcm9ibGVtDQo+IGluY29tcGxldGVs
+eSAtIGRvIG5vdCBoZWxwLg0KPg0KPiBUaGlzIGlzIHRoZSBiaW5kaW5nIGZvciBJMkMsIG5vdCBm
+b3IgUlRMOTMwMCBTb0MuDQo+DQo+PiArICBpZiBub3QtdXNlZCBmb3IgU0NMIGNhbiBiZSBhIEdQ
+SU8pLiBUaGVyZSBhcmUgOCBjb21tb24gU0RBIGxpbmVzIHRoYXQgY2FuIGJlDQo+PiArICBhc3Np
+Z25lZCB0byBlaXRoZXIgSTJDIGNvbnRyb2xsZXIuDQo+PiArDQo+PiArcHJvcGVydGllczoNCj4+
+ICsgIGNvbXBhdGlibGU6DQo+PiArICAgIGNvbnN0OiByZWFsdGVrLHJ0bDkzMDAtaTJjDQo+PiAr
+DQo+PiArICByZWc6DQo+PiArICAgIGRlc2NyaXB0aW9uOiBSZWdpc3RlciBvZmZzZXQgYW5kIHNp
+emUgdGhpcyBJMkMgY29udHJvbGxlci4NCj4gTm9wZSwgeW91ciByZWJvb3QgbW9kZSBkb2VzIG5v
+dCBoYXZlIHJlZy4gRWl0aGVyIGZpeCByZWJvb3QgbW9kZSBkcml2ZXINCj4gb3IgdGhpcy4gUHJl
+ZmVyYWJseSByZWJvb3QgbW9kZS4NCg0KSSdtIG5vdCBzdXJlIHdoYXQgeW91IG1lYW4gYnkgdGhp
+cy4gVGhlIHN5c2Nvbi1yZWJvb3QgYmluZGluZyBkb2Vzbid0IA0KcmVxdWlyZSBhIHJlZyBwcm9w
+ZXJ0eSBhbmQgSSBjYW4gb25seSBmaW5kIG9uZSBpbi10cmVlIGR0cyANCih0dXJyaXMxeC5kdHMp
+IHRoYXQgYWN0dWFsbHkgZ2l2ZXMgaXQgYSByZWcgcHJvcGVydHkuDQoNCj4NCj4gQmVzdCByZWdh
+cmRzLA0KPiBLcnp5c3p0b2YNCj4=
 
