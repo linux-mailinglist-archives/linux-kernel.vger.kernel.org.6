@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-337590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3550984C1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:21:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6730B984C21
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:22:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B13C71C23115
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:21:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC91AB2320F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1DF813BC3F;
-	Tue, 24 Sep 2024 20:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526A013D89D;
+	Tue, 24 Sep 2024 20:21:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IKJ1Tdfq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vv93CvMH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8B182488;
-	Tue, 24 Sep 2024 20:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07E112EBE1;
+	Tue, 24 Sep 2024 20:21:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727209288; cv=none; b=PpEhDAottXlhIibQr+YljFArwBlIlKBWdzL4Su+wvHRroQyfQ+z4EPZf2uPNgX3tCwi0nZLJUG6PMABTuOUBV4VxQU22qUE7JT3h5x/ZxW3t1KrAYOPNxAP4ZKWx7CUwQFjGGQb2sW0DO/jHyqG/MgCnDcutEoXGXQsZuctB4Do=
+	t=1727209292; cv=none; b=qW6lplRxQX46950gTO1AAwj/dVqMNcDIcCDY2Lz3zZlO3rRrZndWfd4Q6cBTfdRb/6v5xudi+ZgwmT+71a2bdVtBcXe+trQ/+/u2H8jM8SxqKZe6hqUv4BCm/pNuvysP5/wqW8s2oAoISVCVhWiB7TbRX95F+g2a5SYod+VM7r0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727209288; c=relaxed/simple;
-	bh=1L8sUNtgNOK7T1Q1e0Kj4EcVybnJ6SIUcwKPJ/VUnAE=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=auLhFCGYRvxrm3wyskOWmxdHTpB5W8du4dMR+JpQNsmt1GW6EPvF6M3fY7ND9O2oK+Uyw3nGZyYyOIBIcRSNWGfJ4lwdXY9xDL9Uyb08hLiVT6vL2+sy5BroIXA1/SkcwmZiy5SWFJY75OllK0Z477J4vPa8tRpF8kY5hDCn8vI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IKJ1Tdfq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F747C4CEC4;
-	Tue, 24 Sep 2024 20:21:28 +0000 (UTC)
+	s=arc-20240116; t=1727209292; c=relaxed/simple;
+	bh=DuKVFPupGPbbk8/6FUFTSTfkCApwtc8zA8hYKrq0Z+0=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=UfKj37REKYESXUtsKbJ/mwTkFa7Z86aw9ur7knamXDU2SFSPXSZpD3suYXLgq591GMTfuvw1mvaAa7ZotZwqOcHTGTTc26FZHSPHCjG1ExHr/k3CMWkN60UFn+xNpedJA16oidQ2jyHLed1rCLIFQRPbMyaBgYNCU67L7HI3ZBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vv93CvMH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94730C4CEC4;
+	Tue, 24 Sep 2024 20:21:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727209288;
-	bh=1L8sUNtgNOK7T1Q1e0Kj4EcVybnJ6SIUcwKPJ/VUnAE=;
+	s=k20201202; t=1727209292;
+	bh=DuKVFPupGPbbk8/6FUFTSTfkCApwtc8zA8hYKrq0Z+0=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=IKJ1TdfqV4pnP+REzExxtm+wfVkT1daKYfQrQeR2BeGKPPeYWJyzeDaXdpTsszkzf
-	 PnNkVs91eNKa1QUgb/Y7Y7zvnpHKQdAGVSuTlik389zVWOT9jSiZ+FSaAA3LZVSoaE
-	 wStbqzQJs1D6ijJFY5PysTfKjVxZy+4w2rVqRHpmizAVr2Lkx4vOC/5FId7hbKZqPy
-	 tZejO5eO9Ys3nTr6ysYDk/7an53egRmM6/Fx8cJ6mEBwHVmY57osTFunBYxZ/epoQ+
-	 O+zp7rN0OVQOR59HjwijhCuGYB6ZuHvX/8RYFYu3cn+NDT5NOVRIs2Z9TJGitko3FS
-	 2VtZIPBhPRs+Q==
+	b=Vv93CvMHjFRhfdC2JJzFjFGvxrDEqbUZ8osEkCYIv2GCfFRzguzPLidpGNeQxAFc8
+	 S2BeeSfS5LVh/4moLm9BmvbMhhEJs7YHwGiginWWjTVeIU2KzL2N54u/0MqV66JW59
+	 DIUPcsF1NWUDiibKLwxJnrouc853YbzQvj+dCiLeM0mj6KJUkPwFZZ1Dhep4/1Wwuc
+	 uxI1sCKwM2ML0q8tCnqB2yqNmjuicYUS6V6kNq20kyiag00AVgNjvPB7SxiYytRfEs
+	 d/oeGZFlMGlgrFpNoZQaQ0tmDsKfnE3z/nk9ufZLiD1gdTe4zvFW2VCI7D30GyVZM1
+	 AZt3WRiiEox7A==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE2623806656;
-	Tue, 24 Sep 2024 20:21:31 +0000 (UTC)
-Subject: Re: [GIT PULL] Kbuild updates for v6.12-rc1
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 340593806656;
+	Tue, 24 Sep 2024 20:21:36 +0000 (UTC)
+Subject: Re: [GIT PULL] [GIT PULL] cpupower fixes for Linux 6.12-rc1
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAK7LNAR=QwD=c1kN_VxQ-NoNoZqQWU3VPc+Xy88BDTjG8s_v8A@mail.gmail.com>
-References: <CAK7LNAR=QwD=c1kN_VxQ-NoNoZqQWU3VPc+Xy88BDTjG8s_v8A@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kbuild.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAK7LNAR=QwD=c1kN_VxQ-NoNoZqQWU3VPc+Xy88BDTjG8s_v8A@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git tags/kbuild-v6.12
-X-PR-Tracked-Commit-Id: fa911d1f377bbe4cc47e58afbd8fff7750b7ac62
+In-Reply-To: <cf329845-48ee-4b25-9b5a-02a6e2b55e5a@linuxfoundation.org>
+References: <cf329845-48ee-4b25-9b5a-02a6e2b55e5a@linuxfoundation.org>
+X-PR-Tracked-List-Id: <linux-pm.vger.kernel.org>
+X-PR-Tracked-Message-Id: <cf329845-48ee-4b25-9b5a-02a6e2b55e5a@linuxfoundation.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux tags/linux-cpupower-6.12-rc1-fixes
+X-PR-Tracked-Commit-Id: 6c56fb4434f59df9c777eded5f77cc812882cef3
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 68e5c7d4cefb66de3953a874e670ec8f1ce86a24
-Message-Id: <172720929019.4186044.5884636763066616855.pr-tracker-bot@kernel.org>
-Date: Tue, 24 Sep 2024 20:21:30 +0000
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+X-PR-Merge-Commit-Id: 7f8de2bf072530a48f53a5658db8528af598b75f
+Message-Id: <172720929487.4186044.6964190812073925273.pr-tracker-bot@kernel.org>
+Date: Tue, 24 Sep 2024 20:21:34 +0000
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, shuah <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, "John B. Wyatt IV" <jwyatt@redhat.com>, Shuah Khan <skhan@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Wed, 25 Sep 2024 00:44:52 +0900:
+The pull request you sent on Mon, 23 Sep 2024 14:19:01 -0600:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git tags/kbuild-v6.12
+> git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux tags/linux-cpupower-6.12-rc1-fixes
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/68e5c7d4cefb66de3953a874e670ec8f1ce86a24
+https://git.kernel.org/torvalds/c/7f8de2bf072530a48f53a5658db8528af598b75f
 
 Thank you!
 
