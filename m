@@ -1,306 +1,242 @@
-Return-Path: <linux-kernel+bounces-336571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82E60983C85
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:53:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18726983C94
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:59:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE0F01F229D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 05:53:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F4651C21FDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 05:59:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CC15914C;
-	Tue, 24 Sep 2024 05:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2825914C;
+	Tue, 24 Sep 2024 05:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EF636BeV"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="egmwlRTu"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597221FB4;
-	Tue, 24 Sep 2024 05:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FDF1FB4
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 05:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727157200; cv=none; b=oJlddt3VuSTlWnae1W93AfaWWvnJvIQGT1W356MrRwB5C8uI7xauDQXbYJKiJAb2PhC7BR2e85LQi/pbxT+1F2vBkZ2xDVgwHqAYoMeIIcWgteQNa/7gAkkSUsksbj41784rAtQPlSXDs6OuMl/UZiLEMfQDVngX7tz3TnZv5mc=
+	t=1727157537; cv=none; b=U40Vd0XJP+WUfh4u3SSo4TNEREnNOx5iROs4I2oAG+AnFlj5WdxVI7X7AkzuEW4rIcO0DtsrKUrPp8pChLLVbRd4cS1ba+EN+tuUpanGvfZUIAAiHw9kZCz3TsNMfU60Jnji4hmk+tDTFxnM7mxsi5mTaLbg8WkNxABkzm07XpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727157200; c=relaxed/simple;
-	bh=V18ygPbLM4ZCWjISmoNo8ENeNOaYX2Ogx/Ok5AaJnus=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IX8laioBr9eP/9F7xT4DSDM0FupjLoge4gTswdVD92p1PjvybFcalDeN2e0jo1/OHYjQ/GOwLUdXQBK5paD2uGoTemwrt8wv/nBbz5KEAznKqSTJFZn21TE8rttPhJVBUOYTi4v2ZMTkGFkOFkiXUQs/KGivunaVUmnTLpfnT0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EF636BeV; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48NLdNYM011775;
-	Tue, 24 Sep 2024 05:52:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=kFcB0e+kn21msd0XWACkrhAAekjJjEh12SL
-	Or3cHgUM=; b=EF636BeVSjgbHG6xtTW86XAW/RBTaMBFrSFnN5doUnO31XMMCVI
-	/ltLvAHInLPs7S71b4OokBtceKGjWm/a0GYRsF5s9RnxZjQeQ3pkR7MB+ryH0x4y
-	CjE/BoH3Etg/X0ewiSCaAYtvVoGH5PSGK+EbUky/x60FdwjmDjRHWZrN+tqtQYi1
-	h/1yLQruWWRm/qdo6gP8QHLiebZCws5yMQEatTK+zCNkmh1PoOqpaTMudzBHSFxG
-	w1JPSr/ZJ8rSx0S+z+mE3EqCiw1LeXlbsjFG4nM7nDrgQL3/cAG8lf+ppywuiNky
-	gWrl5GZjiYTzZPrbPnHI+7GIkFDNL3FyqsA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sph6qcjy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Sep 2024 05:52:54 +0000 (GMT)
-Received: from pps.filterd (NALASPPMTA02.qualcomm.com [127.0.0.1])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 48O5j6HJ031414;
-	Tue, 24 Sep 2024 05:52:52 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by NALASPPMTA02.qualcomm.com (PPS) with ESMTPS id 41ugm9b44j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Sep 2024 05:52:52 +0000
-Received: from NALASPPMTA02.qualcomm.com (NALASPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 48O5qqSE010623;
-	Tue, 24 Sep 2024 05:52:52 GMT
-Received: from hu-devc-lv-u20-a-new.qualcomm.com (hu-abchauha-lv.qualcomm.com [10.81.25.35])
-	by NALASPPMTA02.qualcomm.com (PPS) with ESMTPS id 48O5qqiT010622
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Sep 2024 05:52:52 +0000
-Received: by hu-devc-lv-u20-a-new.qualcomm.com (Postfix, from userid 214165)
-	id 012DE21B99; Mon, 23 Sep 2024 22:52:51 -0700 (PDT)
-From: Abhishek Chauhan <quic_abchauha@quicinc.com>
-To: "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Andrew Halaney <ahalaney@redhat.com>,
-        "Russell King (Oracle)" <linux@armlinux.org.uk>,
-        Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Brad Griffis <bgriffis@nvidia.com>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: kernel@quicinc.com
-Subject: [PATCH net v2] net: phy: aquantia: Introduce custom get_features
-Date: Mon, 23 Sep 2024 22:52:51 -0700
-Message-Id: <20240924055251.3074850-1-quic_abchauha@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1727157537; c=relaxed/simple;
+	bh=ob21lybJrdERUbqkYpjIHA94wyFzwUG+tzNd5PyOx7M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MyugzLZkax7lwENiojxYex05yODRt3a3hqYsBIdVX15QbMJugqtLZVuKxpZtMK6ukcBdzz+cXfisKmnM3emyaQ4tuii+V4TZi5lBQs0Rr1hSDeRmzfoSv20Hihs3Toe7KKBqqh7TYREU6jCuiXmBtu8WOcBl1zG7W9i/v18DjpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=egmwlRTu; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20792913262so60555305ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 22:58:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1727157535; x=1727762335; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yRtIYDanldq3DTAtfPE2b78bokU628Re5ejpctfqrkE=;
+        b=egmwlRTuiyKC4XEhCx+Qz0uk55Zvaok1L5Df5M4EldpRMyulwqUqWz8FUQBV4sfUzX
+         CwlQAW7k7UJQyfmwwyIOr+2RfhHGyxm3RfGTAUipxBcQie+Rmmju4AN1FK9SBcmzJRfe
+         PqQsDohF3QEP8o7nTmucUZGtfCognaKbz0dKU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727157535; x=1727762335;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yRtIYDanldq3DTAtfPE2b78bokU628Re5ejpctfqrkE=;
+        b=iV/zaDYZzNLM86x3aTQFlDZ+gixWQsMEe5TVGM2V8Jvp7L/9oJELghDJ/+c1QMb6f8
+         z8dfvR0UYaCX66gK0kczu3ET+gClqu6dVKTwYpb8OLN/VVLSgamWCzVQ3/tka+ixopxu
+         /Jt5+0yldWcJr3VzfdOVbxOOdDIy7tgIFxIvWy3LjlL4b+fdlWyWbsyGsmTa4vRp672A
+         zCSXVDESxa+4zClXY9286kJm6qnXle6Mv8V/EHLr3Zm60uK/EJTmAwzYJpeIUjBy0ClT
+         tIHYP/iAnnkE198asVRBuI+Ae2Q0wmKgnAnmqUkKYFG8H9h62K3p/lEab66LkD29/IdH
+         4DxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUDsYXYBTHnUKv0ywjhoaD0WotwfA67e/1cV6TR/37S9RfaiGVdnpSMBXAwUtWG5tqytfr/jjp4SYenZfM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeeAZbgaZhQBh3IzjC9ayL5PSny3pSUSWAIsJCpQLjwyRyJLTm
+	9cMO42rnUJ6/zrYXMiDAT5MAkocOGxA9hvJm61f/9XELm5m6QFwdM+sub1q96Q==
+X-Google-Smtp-Source: AGHT+IEb2Cn0zNdg8UplHAxAAyvpzeRYOYRjPnX0YOgSQ3eHhbrWgDCH7EhJ/T20eSMR4UZqEpLKFw==
+X-Received: by 2002:a17:902:db05:b0:1fb:62e8:ae98 with SMTP id d9443c01a7336-208d833b445mr215821195ad.3.1727157534724;
+        Mon, 23 Sep 2024 22:58:54 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:93d1:1107:fd24:adf0])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af1726745sm4172335ad.111.2024.09.23.22.58.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2024 22:58:54 -0700 (PDT)
+Date: Tue, 24 Sep 2024 14:58:50 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Andrey Skvortsov <andrej.skvortzov@gmail.com>,
+	Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>,
+	Minchan Kim <minchan@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	stable@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH v3] zram: don't free statically defined names
+Message-ID: <20240924055850.GN38742@google.com>
+References: <20240923164843.1117010-1-andrej.skvortzov@gmail.com>
+ <c8a4e62e-6c24-4b06-ac86-64cc4697bc2f@wanadoo.fr>
+ <ZvHurCYlCoi1ZTCX@skv.local>
+ <8294e492-5811-44de-8ee2-5f460a065f54@wanadoo.fr>
+ <20240924054951.GM38742@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: VWIIQgYI3Hfzu3EfJZEJka7Z7_iNnShN
-X-Proofpoint-ORIG-GUID: VWIIQgYI3Hfzu3EfJZEJka7Z7_iNnShN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- impostorscore=0 bulkscore=0 spamscore=0 clxscore=1015 mlxlogscore=999
- mlxscore=0 adultscore=0 phishscore=0 suspectscore=0 priorityscore=1501
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409240038
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240924054951.GM38742@google.com>
 
-Remove the use of phy_set_max_speed in phy driver as the
-function is mainly used in MAC driver to set the max
-speed.
+On (24/09/24 14:49), Sergey Senozhatsky wrote:
+> On (24/09/24 07:21), Christophe JAILLET wrote:
+> [..]
+> > > kfree_const() will not work if zram is built as a module. It works
+> > > only for .rodata for kernel image. [1]
+> > >
+> > > 1. https://elixir.bootlin.com/linux/v6.11/source/include/asm-generic/sections.h#L177
+> > >
+> >
+> > If so, then it is likely that it is not correctly used elsewhere.
+> >
+> > https://elixir.bootlin.com/linux/v6.11/source/drivers/dax/kmem.c#L289
+> > https://elixir.bootlin.com/linux/v6.11/source/drivers/firmware/arm_scmi/bus.c#L341
+> > https://elixir.bootlin.com/linux/v6.11/source/drivers/input/touchscreen/chipone_icn8505.c#L379
+>
+> icn8505_probe_acpi() uses kfree_const(subsys)...
+>
+> subsys is returned from acpi_get_subsystem_id() which only
+> does
+> 		sub = kstrdup(obj->string.pointer, GFP_KERNEL);
+>
+> However, if acpi_get_subsystem_id() returns an error then
+> icn8505_probe_acpi() does
+>
+> 		subsys = "unknown";
+>
+> and I suspect that kfree_const(subsys) can, in fact, explode?
 
-Introduce custom get_features for AQR family of chipsets
+A trivial test to replicate icn8505_probe_acpi() error path
 
-1. such as AQR111/B0/114c which supports speeds up to 5Gbps
-2. such as AQR115c/AQCS109 which supports speeds up to 2.5Gbps
+(zram built as a module)
 
-Fixes: 038ba1dc4e54 ("net: phy: aquantia: add AQR111 and AQR111B0 PHY ID")
-Fixes: 0974f1f03b07 ("net: phy: aquantia: remove false 5G and 10G speed ability for AQCS109")
-Fixes: c278ec644377 ("net: phy: aquantia: add support for AQR114C PHY ID")
-Fixes: 0ebc581f8a4b ("net: phy: aquantia: add support for aqr115c")
-Link: https://lore.kernel.org/all/20240913011635.1286027-1-quic_abchauha@quicinc.com/T/
-Signed-off-by: Abhishek Chauhan <quic_abchauha@quicinc.com>
 ---
-Changes since v1 
-1. remove usage of phy_set_max_speed in the aquantia driver code.
-2. Introduce aqr_custom_get_feature which checks for the phy id and
-   takes necessary actions based on max_speed supported by the phy
-3. remove aqr111_config_init as it is just a wrapper function. 
-
-output from my device looks like :- 
-1. Link is up with 2.5Gbps with 2500BaseX with autoneg on.
-
-
-Settings for eth0:
-        Supported ports: [ TP    FIBRE ]
-        Supported link modes:   10baseT/Full
-                                100baseT/Full
-                                1000baseT/Full
-                                2500baseX/Full
-                                2500baseT/Full
-        Supported pause frame use: Symmetric Receive-only
-        Supports auto-negotiation: Yes
-        Supported FEC modes: Not reported
-        Advertised link modes:  10baseT/Full
-                                100baseT/Full
-                                1000baseT/Full
-                                2500baseX/Full
-                                2500baseT/Full
-
-
-
- drivers/net/phy/aquantia/aquantia_main.c | 71 +++++++++++++++++-------
- 1 file changed, 52 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
-index e982e9ce44a5..53e7e25f3c85 100644
---- a/drivers/net/phy/aquantia/aquantia_main.c
-+++ b/drivers/net/phy/aquantia/aquantia_main.c
-@@ -527,12 +527,6 @@ static int aqcs109_config_init(struct phy_device *phydev)
- 	if (!ret)
- 		aqr107_chip_info(phydev);
- 
--	/* AQCS109 belongs to a chip family partially supporting 10G and 5G.
--	 * PMA speed ability bits are the same for all members of the family,
--	 * AQCS109 however supports speeds up to 2.5G only.
--	 */
--	phy_set_max_speed(phydev, SPEED_2500);
--
- 	return aqr107_set_downshift(phydev, MDIO_AN_VEND_PROV_DOWNSHIFT_DFLT);
+diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+index d3329a67e805..5cd65dd7dafa 100644
+--- a/drivers/block/zram/zram_drv.c
++++ b/drivers/block/zram/zram_drv.c
+@@ -2719,11 +2719,21 @@ static void destroy_devices(void)
+        cpuhp_remove_multi_state(CPUHP_ZCOMP_PREPARE);
  }
- 
-@@ -639,6 +633,50 @@ static int aqr107_resume(struct phy_device *phydev)
- 	return aqr107_wait_processor_intensive_op(phydev);
- }
- 
-+static void aqr_supported_speed(struct phy_device *phydev, u32 max_speed)
+
++static void boom(void)
 +{
-+	__ETHTOOL_DECLARE_LINK_MODE_MASK(supported) = { 0, };
++       char *str = "unknown";
 +
-+	linkmode_set_bit(ETHTOOL_LINK_MODE_Autoneg_BIT, supported);
-+	linkmode_set_bit(ETHTOOL_LINK_MODE_Pause_BIT, supported);
-+	linkmode_set_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, supported);
-+	linkmode_set_bit(ETHTOOL_LINK_MODE_FIBRE_BIT, supported);
-+	linkmode_set_bit(ETHTOOL_LINK_MODE_TP_BIT, supported);
-+	linkmode_set_bit(ETHTOOL_LINK_MODE_10baseT_Half_BIT, supported);
-+	linkmode_set_bit(ETHTOOL_LINK_MODE_10baseT_Full_BIT, supported);
-+	linkmode_set_bit(ETHTOOL_LINK_MODE_100baseT_Half_BIT, supported);
-+	linkmode_set_bit(ETHTOOL_LINK_MODE_100baseT_Full_BIT, supported);
-+	linkmode_set_bit(ETHTOOL_LINK_MODE_1000baseT_Half_BIT, supported);
-+	linkmode_set_bit(ETHTOOL_LINK_MODE_1000baseT_Full_BIT, supported);
-+
-+	if (max_speed == SPEED_2500) {
-+		linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseX_Full_BIT, supported);
-+		linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT, supported);
-+	} else if (max_speed == SPEED_5000) {
-+		linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseX_Full_BIT, supported);
-+		linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT, supported);
-+		linkmode_set_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT, supported);
-+	}
-+
-+	linkmode_copy(phydev->supported, supported);
++       pr_err(":: kfree_const() %s\n", str);
++       kfree_const(str);
 +}
 +
-+static int aqr_custom_get_feature(struct phy_device *phydev)
-+{
-+	switch (phydev->drv->phy_id) {
-+	case PHY_ID_AQR115C:
-+	case PHY_ID_AQCS109:
-+		aqr_supported_speed(phydev, SPEED_2500);
-+	break;
-+	case PHY_ID_AQR111:
-+	case PHY_ID_AQR111B0:
-+	case PHY_ID_AQR114C:
-+		aqr_supported_speed(phydev, SPEED_5000);
-+	break;
-+	}
-+	return 0;
-+}
-+
- static const u16 aqr_global_cfg_regs[] = {
- 	VEND1_GLOBAL_CFG_10M,
- 	VEND1_GLOBAL_CFG_100M,
-@@ -757,16 +795,6 @@ static int aqr107_probe(struct phy_device *phydev)
- 	return aqr_hwmon_probe(phydev);
- }
- 
--static int aqr111_config_init(struct phy_device *phydev)
--{
--	/* AQR111 reports supporting speed up to 10G,
--	 * however only speeds up to 5G are supported.
--	 */
--	phy_set_max_speed(phydev, SPEED_5000);
--
--	return aqr107_config_init(phydev);
--}
--
- static struct phy_driver aqr_driver[] = {
+ static int __init zram_init(void)
  {
- 	PHY_ID_MATCH_MODEL(PHY_ID_AQ1202),
-@@ -843,6 +871,7 @@ static struct phy_driver aqr_driver[] = {
- 	.get_sset_count	= aqr107_get_sset_count,
- 	.get_strings	= aqr107_get_strings,
- 	.get_stats	= aqr107_get_stats,
-+	.get_features	= aqr_custom_get_feature,
- 	.link_change_notify = aqr107_link_change_notify,
- 	.led_brightness_set = aqr_phy_led_brightness_set,
- 	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
-@@ -855,7 +884,7 @@ static struct phy_driver aqr_driver[] = {
- 	.name		= "Aquantia AQR111",
- 	.probe		= aqr107_probe,
- 	.get_rate_matching = aqr107_get_rate_matching,
--	.config_init	= aqr111_config_init,
-+	.config_init	= aqr107_config_init,
- 	.config_aneg    = aqr_config_aneg,
- 	.config_intr	= aqr_config_intr,
- 	.handle_interrupt = aqr_handle_interrupt,
-@@ -867,6 +896,7 @@ static struct phy_driver aqr_driver[] = {
- 	.get_sset_count	= aqr107_get_sset_count,
- 	.get_strings	= aqr107_get_strings,
- 	.get_stats	= aqr107_get_stats,
-+	.get_features	= aqr_custom_get_feature,
- 	.link_change_notify = aqr107_link_change_notify,
- 	.led_brightness_set = aqr_phy_led_brightness_set,
- 	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
-@@ -879,7 +909,7 @@ static struct phy_driver aqr_driver[] = {
- 	.name		= "Aquantia AQR111B0",
- 	.probe		= aqr107_probe,
- 	.get_rate_matching = aqr107_get_rate_matching,
--	.config_init	= aqr111_config_init,
-+	.config_init	= aqr107_config_init,
- 	.config_aneg    = aqr_config_aneg,
- 	.config_intr	= aqr_config_intr,
- 	.handle_interrupt = aqr_handle_interrupt,
-@@ -891,6 +921,7 @@ static struct phy_driver aqr_driver[] = {
- 	.get_sset_count	= aqr107_get_sset_count,
- 	.get_strings	= aqr107_get_strings,
- 	.get_stats	= aqr107_get_stats,
-+	.get_features	= aqr_custom_get_feature,
- 	.link_change_notify = aqr107_link_change_notify,
- 	.led_brightness_set = aqr_phy_led_brightness_set,
- 	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
-@@ -1000,7 +1031,7 @@ static struct phy_driver aqr_driver[] = {
- 	.name           = "Aquantia AQR114C",
- 	.probe          = aqr107_probe,
- 	.get_rate_matching = aqr107_get_rate_matching,
--	.config_init    = aqr111_config_init,
-+	.config_init    = aqr107_config_init,
- 	.config_aneg    = aqr_config_aneg,
- 	.config_intr    = aqr_config_intr,
- 	.handle_interrupt = aqr_handle_interrupt,
-@@ -1012,6 +1043,7 @@ static struct phy_driver aqr_driver[] = {
- 	.get_sset_count = aqr107_get_sset_count,
- 	.get_strings    = aqr107_get_strings,
- 	.get_stats      = aqr107_get_stats,
-+	.get_features	= aqr_custom_get_feature,
- 	.link_change_notify = aqr107_link_change_notify,
- 	.led_brightness_set = aqr_phy_led_brightness_set,
- 	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
-@@ -1036,6 +1068,7 @@ static struct phy_driver aqr_driver[] = {
- 	.get_sset_count = aqr107_get_sset_count,
- 	.get_strings    = aqr107_get_strings,
- 	.get_stats      = aqr107_get_stats,
-+	.get_features	= aqr_custom_get_feature,
- 	.link_change_notify = aqr107_link_change_notify,
- 	.led_brightness_set = aqr_phy_led_brightness_set,
- 	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
--- 
-2.25.1
+        struct zram_table_entry zram_te;
+        int ret;
 
++       boom();
++
+        BUILD_BUG_ON(__NR_ZRAM_PAGEFLAGS > sizeof(zram_te.flags) * 8);
+
+        ret = cpuhp_setup_state_multi(CPUHP_ZCOMP_PREPARE, "block/zram:prepare",
+---
+
+
+[   15.494947] zram: :: kfree_const() unknown
+[..]
+[   15.498085] WARNING: CPU: 5 PID: 420 at mm/slub.c:4690 free_large_kmalloc+0x18/0xb0
+[   15.500393] Modules linked in: zram(+) 842_decompress 842_compress zsmalloc zstd_compress lz4hc_compress lz4_compress zlib_deflate
+[   15.503405] CPU: 5 UID: 0 PID: 420 Comm: modprobe Tainted: G                 N 6.11.0-next-20240920+ #727
+[   15.506013] Tainted: [N]=TEST
+[   15.506792] RIP: 0010:free_large_kmalloc+0x18/0xb0
+[..]
+[   15.531487] Call Trace:
+[   15.532102]  <TASK>
+[   15.532616]  ? __warn+0x12d/0x340
+[   15.533409]  ? free_large_kmalloc+0x18/0xb0
+[   15.534397]  ? free_large_kmalloc+0x18/0xb0
+[   15.535426]  ? report_bug+0x170/0x380
+[   15.536365]  ? handle_bug+0x5c/0xa0
+[   15.537206]  ? exc_invalid_op+0x16/0x40
+[   15.538155]  ? asm_exc_invalid_op+0x16/0x20
+[   15.539189]  ? free_large_kmalloc+0x18/0xb0
+[   15.540194]  init_module+0x25/0xffb [zram]
+[   15.541173]  do_one_initcall+0x130/0x450
+[   15.542143]  ? __cfi_init_module+0x5/0x5 [zram]
+[   15.543282]  ? stack_depot_save_flags+0x25/0x700
+[   15.544413]  ? stack_trace_save+0xb3/0x150
+[   15.545428]  ? kasan_save_track+0x3c/0x60
+[   15.546401]  ? kasan_save_track+0x2b/0x60
+[   15.547364]  ? __kasan_kmalloc+0x6e/0x80
+[   15.548350]  ? do_init_module+0x16e/0x890
+[   15.549348]  ? __se_sys_finit_module+0x513/0x7e0
+[   15.550437]  ? do_syscall_64+0x71/0x110
+[   15.551385]  ? entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   15.552662]  ? stack_depot_save_flags+0x25/0x700
+[   15.553751]  ? stack_trace_save+0xb3/0x150
+[   15.554754]  ? __create_object+0x62/0x110
+[   15.555767]  ? do_raw_spin_unlock+0x5a/0x950
+[   15.556778]  ? __create_object+0x62/0x110
+[   15.557727]  ? _raw_spin_unlock_irqrestore+0x31/0x40
+[   15.558928]  ? __create_object+0x62/0x110
+[   15.559947]  ? kasan_unpoison+0x49/0x70
+[   15.560855]  ? __asan_register_globals+0x54/0x70
+[   15.561976]  do_init_module+0x36a/0x890
+[   15.562940]  __se_sys_finit_module+0x513/0x7e0
+[   15.564034]  do_syscall_64+0x71/0x110
+[   15.564948]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[..]
+[   15.894538] kernel BUG at include/linux/mm.h:1140!
+[   15.895727] Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
+[   15.897003] CPU: 5 UID: 0 PID: 420 Comm: modprobe Tainted: G    B   W        N 6.11.0-next-20240920+ #727
+[   15.899215] Tainted: [B]=BAD_PAGE, [W]=WARN, [N]=TEST
+[   15.900395] RIP: 0010:free_large_kmalloc+0xaa/0xb0
+[..]
+[   15.924239] Call Trace:
+[   15.924836]  <TASK>
+[   15.925343]  ? __die_body+0x66/0xb0
+[   15.926183]  ? die+0xa0/0xc0
+[   15.926873]  ? do_trap+0xf4/0x2e0
+[   15.927671]  ? free_large_kmalloc+0xaa/0xb0
+[   15.928665]  ? do_error_trap+0xfc/0x180
+[   15.929567]  ? free_large_kmalloc+0xaa/0xb0
+[   15.930550]  ? handle_invalid_op+0x4f/0x60
+[   15.931529]  ? free_large_kmalloc+0xaa/0xb0
+[   15.932513]  ? exc_invalid_op+0x2f/0x40
+[   15.933422]  ? asm_exc_invalid_op+0x16/0x20
+[   15.934413]  ? free_large_kmalloc+0xaa/0xb0
+[   15.935410]  init_module+0x25/0xffb [zram]
+[   15.936375]  do_one_initcall+0x130/0x450
+[   15.937306]  ? __cfi_init_module+0x5/0x5 [zram]
+[   15.938550]  ? stack_depot_save_flags+0x25/0x700
+[   15.939799]  ? stack_trace_save+0xb3/0x150
+[   15.940786]  ? kasan_save_track+0x3c/0x60
+[   15.941755]  ? kasan_save_track+0x2b/0x60
+[   15.942729]  ? __kasan_kmalloc+0x6e/0x80
+[   15.943697]  ? do_init_module+0x16e/0x890
+[   15.944665]  ? __se_sys_finit_module+0x513/0x7e0
+[   15.945782]  ? do_syscall_64+0x71/0x110
+[   15.946716]  ? entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   15.947978]  ? stack_depot_save_flags+0x25/0x700
+[   15.949091]  ? stack_trace_save+0xb3/0x150
+[   15.950082]  ? __create_object+0x62/0x110
+[   15.951052]  ? do_raw_spin_unlock+0x5a/0x950
+[   15.952094]  ? __create_object+0x62/0x110
+[   15.953064]  ? _raw_spin_unlock_irqrestore+0x31/0x40
+[   15.954255]  ? __create_object+0x62/0x110
+[   15.955221]  ? kasan_unpoison+0x49/0x70
+[   15.956154]  ? __asan_register_globals+0x54/0x70
+[   15.957261]  do_init_module+0x36a/0x890
+[   15.958199]  __se_sys_finit_module+0x513/0x7e0
+[   15.959282]  do_syscall_64+0x71/0x110
+[   15.960172]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
 
