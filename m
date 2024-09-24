@@ -1,98 +1,153 @@
-Return-Path: <linux-kernel+bounces-336955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A77C98432C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:09:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 217E598432F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:09:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A28501F223CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:09:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4F092819D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06EE1171671;
-	Tue, 24 Sep 2024 10:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8F016EC19;
+	Tue, 24 Sep 2024 10:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SqzYzQp9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ad5A8Jpw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6059B170A3D;
-	Tue, 24 Sep 2024 10:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD8015C13F
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 10:09:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727172506; cv=none; b=ELrymS5/B6bIsXyqAZPv5jwwdNtWCKUV+0eajffPwyJfxfsBboEJxl3nGFE9de4lW13/VoCYZjdpHaJGMLd8s9ttA+SM+dDj02BU1+xMUTuaMauoLZ62VW4+qVyu94Mbz6MeUu7tngTo+voHZiFQPTsiNpNtIj1+be9Q/3/eaKw=
+	t=1727172579; cv=none; b=WpqAqQa5E8TW8ytXHlalf0cNGc1uTCvtaMvp893tySOlHfIBj8DvzNcQN1Y0GIXUUM1/Y6ep0GP2KHfBLfbN8Gd02dSZnaXRC+f73qFCP9k3UNidFIbJxcdpAK8OXqbGlnixTEbXkUdN+lDoL4bU06IwMqEFnNeva9QhdJoCwps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727172506; c=relaxed/simple;
-	bh=qjRcD8XaCQtfC+CXj8B3RS3iMr5qqtfxn/9w1+Vpwoo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QVMhjtNoPK6CjHQkBb4NhrZAZqCrjeHg7KLArTO23b9QlmjBCIHt3K77P2OZaMy0q4iK6Xj6spwN0r3wFLJivU1lpfDtsXWR7uU5X2dtLX6VqwSY2tFIGkpoV3dijo6J5OaKxqQRjcOTdqs4cD+FuMAwB8CuY4RzCFU6c1TqEzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SqzYzQp9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6654DC4CEC4;
-	Tue, 24 Sep 2024 10:08:22 +0000 (UTC)
+	s=arc-20240116; t=1727172579; c=relaxed/simple;
+	bh=21gzw8X4CfgdeTMPWUWRiLXO1PQAT7xyURRtjw0CXsk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rhNGpw5Ev5DAdeGs2rb/a7Ob4HLhi3pFVZhuhmkS91DS6+VfxadAlCN1aVpTpPb3Wjx7xBx6YXCcLi2kmgDkofzs0nH33rrStShMX3XJMT1B6VD/xI7lLTtbcyTmlA9gVNdswOYwSn5kLCjnT0HQr+nctRYboeVNnA2oGFThP9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ad5A8Jpw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 169F3C4CEC4;
+	Tue, 24 Sep 2024 10:09:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727172505;
-	bh=qjRcD8XaCQtfC+CXj8B3RS3iMr5qqtfxn/9w1+Vpwoo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SqzYzQp93dGUwuK3crgxPjosYaZsJEloYZeMqEihgotzZQM/CDv8CASzjYnufILO5
-	 taIViMjN5jBlchcv6+6gBgO/UxbQbixJvRaO4uwSENJ6IYUPZjYs4nw6NxJRa1MmRa
-	 AjrKROcGgot0hbWzNsynhn72O8xNROSGRUMMAzlm2ilYTLu4FIefRlrh2MCwAZY1l1
-	 JEunDpHWEfS0EUeDmr9/MPgYV/zsQ5yB4UhciO6ZVy0K5bmj6Y7juXBbtiVcx7++ex
-	 EIPfX47cskTKbsSMV/qGaPYbgpu3LMhRX7iZhi2W6aCfVBLKzh6IvnmlSQKsGTjJ3X
-	 VK7f45vLMyBSg==
-Date: Tue, 24 Sep 2024 11:08:20 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: l.stach@pengutronix.de, kwilczynski@kernel.org, bhelgaas@google.com,
-	lpieralisi@kernel.org, frank.li@nxp.com, robh+dt@kernel.org,
-	conor+dt@kernel.org, shawnguo@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, festevam@gmail.com,
-	s.hauer@pengutronix.de, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, kernel@pengutronix.de,
-	imx@lists.linux.dev
-Subject: Re: [PATCH v1 1/9] dt-bindings: imx6q-pcie: Add ref clock for i.MX95
- PCIe
-Message-ID: <20240924-ended-unlaced-cc7ddf87af90@spud>
-References: <1727148464-14341-1-git-send-email-hongxing.zhu@nxp.com>
- <1727148464-14341-2-git-send-email-hongxing.zhu@nxp.com>
+	s=k20201202; t=1727172578;
+	bh=21gzw8X4CfgdeTMPWUWRiLXO1PQAT7xyURRtjw0CXsk=;
+	h=From:Date:Subject:To:Cc:From;
+	b=ad5A8JpwMOlXsTzMpSQYzQF3nwKrx9K16t168hIoJ/ay6gSPC54f3L/ZGjuG0vwgJ
+	 UXM6tn5pcBYJ5kOyEC2h0TpPRsK3pstmuHSR1lU2tcToYm9kmLU4MbDb/0LWoG/Ilr
+	 Vnu+2zdL+AeCxFsLK+xtwPyo2q38u7qSxR+cD2kHe/VYNr/W65fMUDlcR4E578CxxQ
+	 a0s45ei+Pa9H/x26GmYT6AjoIX+gVQ9TNzX9ujtf1SASocBgqnZE4LrLYJsYcJixbt
+	 kUFrzklY3NiSiBDa+/Air3Xj9KbpZd2fnHps6hlqCoeX39k/eRLMRicmjiyvmnZD4b
+	 yiS8wT+ugmKiQ==
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 24 Sep 2024 12:08:53 +0200
+Subject: [PATCH] regmap: Specifically test writing 0 as a value to sparse
+ caches
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="QPsNdq4s/PN2L3Fw"
-Content-Disposition: inline
-In-Reply-To: <1727148464-14341-2-git-send-email-hongxing.zhu@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240924-regcache-zero-value-v1-1-8a1224214b52@kernel.org>
+X-B4-Tracking: v=1; b=H4sIALSP8mYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDSyNj3aLU9OTE5IxU3arUonzdssSc0lTdFEtTE0uTFMM0c4NUJaDOgqL
+ UtMwKsKnRsbW1AL42dHhlAAAA
+To: linux-kernel@vger.kernel.org
+Cc: Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2929; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=21gzw8X4CfgdeTMPWUWRiLXO1PQAT7xyURRtjw0CXsk=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBm8o/fHEvVkpm5WZQDQj4nTSqv4PTw7Nb1gOKl/
+ 1nhLXATvtWJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZvKP3wAKCRAk1otyXVSH
+ 0KuCB/98RxXLWz+GnN1k9GbxjIBneyamrTa+/9Wy9bXFIYg+y5ic/tHVYoncBFALl9B4TM0EZ7F
+ C8aXJ5E1NwzHSGpO0AJ4eUhnNMA7b4tQX+yYvLb5O9rL2XXBGSK/BqZrFBouJU3YlA1VGeSy086
+ Ptphn/Fq3wEWGcruL8pcQIRk76fAU4FdAsWTS1vXMATV/n1MA/MCQ9ZNKlNkb4iMqA0QZwf5duJ
+ sPf5zYzLcbSWtWUVmlvM2Mwk+UVwMyek6lsRcZhBUK2hD7tRX/fpNpzqFzeGx+oNiHpzbDGwUI1
+ usq8W3DKL3+195X9E9ErtLz9ckTcQJ5aXN0Ido5SKE9RD41Q
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
+Since 0 can look a lot like a NULL pointer when used in a cache some clever
+data structures might potentially introduce bugs specific to handling it.
+Add some explicit testing of storing 0 as a value in a sparse cache, at the
+minute there are no issues and this will stop any appearing in the future.
 
---QPsNdq4s/PN2L3Fw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/base/regmap/regmap-kunit.c | 43 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
-On Tue, Sep 24, 2024 at 11:27:36AM +0800, Richard Zhu wrote:
-> Add one ref clock for i.MX95 PCIe. Increase clocks' maxItems to 5 and
-> keep the same restriction with other compatible string.
->=20
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+diff --git a/drivers/base/regmap/regmap-kunit.c b/drivers/base/regmap/regmap-kunit.c
+index d790c7df5cac..64df047d9d53 100644
+--- a/drivers/base/regmap/regmap-kunit.c
++++ b/drivers/base/regmap/regmap-kunit.c
+@@ -1486,6 +1486,48 @@ static void cache_present(struct kunit *test)
+ 		KUNIT_ASSERT_TRUE(test, regcache_reg_cached(map, param->from_reg + i));
+ }
+ 
++static void cache_write_zero(struct kunit *test)
++{
++	const struct regmap_test_param *param = test->param_value;
++	struct regmap *map;
++	struct regmap_config config;
++	struct regmap_ram_data *data;
++	unsigned int val;
++	int i;
++
++	config = test_regmap_config;
++
++	map = gen_regmap(test, &config, &data);
++	KUNIT_ASSERT_FALSE(test, IS_ERR(map));
++	if (IS_ERR(map))
++		return;
++
++	for (i = 0; i < BLOCK_TEST_SIZE; i++)
++		data->read[param->from_reg + i] = false;
++
++	/* No defaults so no registers cached. */
++	for (i = 0; i < BLOCK_TEST_SIZE; i++)
++		KUNIT_ASSERT_FALSE(test, regcache_reg_cached(map, param->from_reg + i));
++
++	/* We didn't trigger any reads */
++	for (i = 0; i < BLOCK_TEST_SIZE; i++)
++		KUNIT_ASSERT_FALSE(test, data->read[param->from_reg + i]);
++
++	/* Write a zero value */
++	KUNIT_EXPECT_EQ(test, 0, regmap_write(map, 1, 0));
++
++	/* Read that zero value back */
++	KUNIT_EXPECT_EQ(test, 0, regmap_read(map, 1, &val));
++	KUNIT_EXPECT_EQ(test, 0, val);
++
++	/* From the cache? */
++	KUNIT_ASSERT_TRUE(test, regcache_reg_cached(map, 1));
++
++	/* Try to throw it away */
++	KUNIT_EXPECT_EQ(test, 0, regcache_drop_region(map, 1, 1));
++	KUNIT_ASSERT_FALSE(test, regcache_reg_cached(map, 1));
++}
++
+ /* Check that caching the window register works with sync */
+ static void cache_range_window_reg(struct kunit *test)
+ {
+@@ -1999,6 +2041,7 @@ static struct kunit_case regmap_test_cases[] = {
+ 	KUNIT_CASE_PARAM(cache_drop_all_and_sync_no_defaults, sparse_cache_types_gen_params),
+ 	KUNIT_CASE_PARAM(cache_drop_all_and_sync_has_defaults, sparse_cache_types_gen_params),
+ 	KUNIT_CASE_PARAM(cache_present, sparse_cache_types_gen_params),
++	KUNIT_CASE_PARAM(cache_write_zero, sparse_cache_types_gen_params),
+ 	KUNIT_CASE_PARAM(cache_range_window_reg, real_cache_types_only_gen_params),
+ 
+ 	KUNIT_CASE_PARAM(raw_read_defaults_single, raw_test_types_gen_params),
 
-It'd be really good to mention why this clock is appearing now, when it
-did not before. You're just explaining what you've done, which can be
-seen in the diff, but not why you did it.
+---
+base-commit: 98f7e32f20d28ec452afb208f9cffc08448a2652
+change-id: 20240923-regcache-zero-value-d95494d1f70e
 
---QPsNdq4s/PN2L3Fw
-Content-Type: application/pgp-signature; name="signature.asc"
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvKPlAAKCRB4tDGHoIJi
-0gdqAP9OZE7f2j2BJ6kK0OX4ojssKFgoNCVvarSmVjUoswwluAD9GJRlsy4e4cVO
-V+bFllNycrn9H5nOyRGfT0fu8JdWTw8=
-=I93h
------END PGP SIGNATURE-----
-
---QPsNdq4s/PN2L3Fw--
 
