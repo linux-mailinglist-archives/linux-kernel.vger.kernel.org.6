@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-336436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B87ED983ABC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 03:18:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EB32983ABD
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 03:18:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 802592822F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 01:18:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4B892822CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 01:18:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D6C1D696;
-	Tue, 24 Sep 2024 01:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A972BAFC;
+	Tue, 24 Sep 2024 01:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mtA2eFYH"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hQRg9t8M"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A54D0C13C
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 01:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9C812E7E
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 01:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727140638; cv=none; b=lVBaGGhTNN6MaXgsctpTj7nYgfnYm2e/iUkeAcRARl7cjg+fuKfubuN0huORGTJg284Pn7hWkbDlkAwCLryEVg2hg8vuSdJKwD9TIKA72ESSmIPWkusPyvId+/9I4U0CDo6TS4ALEh8lw5lKJjg0j2W2jcENB9fHsv/Tk71aFo4=
+	t=1727140639; cv=none; b=a1G94LI+Y2Xneo6yBP4ScS8gJqWPGBoRz1kiyjx0TWeNKv3xASo3zBaQ+DASuuRU9/TzBH9Brd9StztY7k4rA4bT4ZC0+LwBBEqKG7fjR6/XwcIN114D6gV8irklw0Fd0aJ7ePtLDJzpjexlXn+N++yyxvC51WaTT4cy8JnpNUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727140638; c=relaxed/simple;
-	bh=nZQ5WdYOudXFblQyI1xpFNONjVx0pWlV5kfygJBmOHg=;
+	s=arc-20240116; t=1727140639; c=relaxed/simple;
+	bh=6ALoeaC41g+MaGEwJSRyCvBiONdX4EAtPZdFIMUQEE0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Sv5GWdCrI57sVZL9XAOvczcZ32VJUM+KtOqdqkaCCds+Vp4dD+kUdoOtvcCfW/5C/OZH9lX8A+G7EPrIuEcP5f6uvUHixYrUyxHOls17cpag8sg3ij+wCmHPDcx3YOquZUu+vowQcgoR0XkpOZjux5Sw1YgP8raxF3BQrBfdvTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mtA2eFYH; arc=none smtp.client-ip=192.198.163.12
+	 MIME-Version; b=fO6so110cYewOt5ZLAbJXSEtvjHrEyaQ1joRTlOOP2Y01sFazpCM7NjsInE04lj9O1c1m7okRLUzfgkJ8Med93KCcRpQNBJz+xGrtOr8XlYWFbCf7BN+g2myqsIkOvnaaFflBpxdhqTwObiaGd+aq280Swxg1/HDIdHRcJoNQy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hQRg9t8M; arc=none smtp.client-ip=192.198.163.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727140636; x=1758676636;
+  t=1727140637; x=1758676637;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=nZQ5WdYOudXFblQyI1xpFNONjVx0pWlV5kfygJBmOHg=;
-  b=mtA2eFYH2HaCeU2SemCor6gO8aJy9aXp6uMwlMjdZGVwD8UdX4L9yN/S
-   bhvcqSM34ZaCRUpLbvHK2e6yAqrvM8MJoAAFpTmEMXzDqYIyPhUDHPdwo
-   lciwf0WE6994Eq5DVdiEngueUApRCExm0CaUGYtUFdeGTJoI/363TtdFb
-   5cvYXqS0xvqW9qz+wwYlr66KU4bhYU9jZBNzi2JDGKOxlD6RJ3AieUn+l
-   +dH5SbflYOAtRZ9kUhbuySASjva8+OmF624f9TqjxSobIKgoBp4jfwRdY
-   o0nZnCuWABiSEPJFYuKPProzhWho/Yv+Lk5X41a1KZ9wwQp/0sGv4x4LX
+  bh=6ALoeaC41g+MaGEwJSRyCvBiONdX4EAtPZdFIMUQEE0=;
+  b=hQRg9t8M655KJBkSTNGN0uhpt5rdlRLI+M0xBVSeWAnV4XR7Etn6a32s
+   5so8VZqfmRQDR3gO68ulEzLH2GW0/T9i2eKkDKMMEEFzzPCAsjbl1Krxg
+   KkL2ysdb+5N44+ZiH47mbbqp80bKcI8vBdJThxZjgmRfQ7D4YYhmMzXNQ
+   WkGucgLsh1dVBSqYSsZ9diC3ZPcc+Jnp90ylTUflroYn1yNx6dBkLLisK
+   eXt2Cce9Rpc7XCLSFP2BEPG9rJytihFyO1kR+5yZNmci9MVeXY7132iFB
+   qzCGCkE4ckF8F19jJ2M0we1/gn98sZyCKDtQuhYDh8EYLi8kDnN4GPgQ/
    g==;
-X-CSE-ConnectionGUID: cvmXRArySz6FRWN5pDTx/A==
-X-CSE-MsgGUID: zxEUhqtXQuS3wYbfUbzezQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="30002046"
+X-CSE-ConnectionGUID: TkANmsP0RPa8ArRA4Tef9g==
+X-CSE-MsgGUID: XRAFMqICROGPjF39eo+sRA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="30002051"
 X-IronPort-AV: E=Sophos;i="6.10,253,1719903600"; 
-   d="scan'208";a="30002046"
+   d="scan'208";a="30002051"
 Received: from orviesa001.jf.intel.com ([10.64.159.141])
   by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 18:17:11 -0700
-X-CSE-ConnectionGUID: udjgHgWqQzO/LxXYb+uyVQ==
-X-CSE-MsgGUID: lLNNKrXVTtWLEYgP3S0l6Q==
+X-CSE-ConnectionGUID: XVBMt6QAQySzvitwOcWK+A==
+X-CSE-MsgGUID: EuABZkyHT6aA0zdKQwNlSA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,253,1719903600"; 
-   d="scan'208";a="108688463"
+   d="scan'208";a="108688466"
 Received: from jf5300-b11a338t.jf.intel.com ([10.242.51.6])
   by orviesa001.jf.intel.com with ESMTP; 23 Sep 2024 18:17:10 -0700
 From: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
@@ -74,9 +74,9 @@ Cc: nanhai.zou@intel.com,
 	wajdi.k.feghali@intel.com,
 	vinodh.gopal@intel.com,
 	kanchana.p.sridhar@intel.com
-Subject: [PATCH v7 7/8] mm: swap: Count successful mTHP ZSWAP stores in sysfs mTHP zswpout stats.
-Date: Mon, 23 Sep 2024 18:17:08 -0700
-Message-Id: <20240924011709.7037-8-kanchana.p.sridhar@intel.com>
+Subject: [PATCH v7 8/8] mm: Document the newly added mTHP zswpout stats, clarify swpout semantics.
+Date: Mon, 23 Sep 2024 18:17:09 -0700
+Message-Id: <20240924011709.7037-9-kanchana.p.sridhar@intel.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20240924011709.7037-1-kanchana.p.sridhar@intel.com>
 References: <20240924011709.7037-1-kanchana.p.sridhar@intel.com>
@@ -88,78 +88,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a new MTHP_STAT_ZSWPOUT entry to the sysfs mTHP stats so that
-per-order mTHP folio ZSWAP stores can be accounted.
+Added documentation for the newly added sysfs mTHP "zswpout" stats.
 
-If zswap_store() successfully swaps out an mTHP, it will be counted under
-the per-order sysfs "zswpout" stats:
-
-/sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/zswpout
-
-Other block dev/fs mTHP swap-out events will be counted under
-the existing sysfs "swpout" stats:
-
-/sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/swpout
+Clarified that only non-ZSWAP mTHP swapouts will be accounted in the mTHP
+"swpout" stats.
 
 Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
 ---
- include/linux/huge_mm.h | 1 +
- mm/huge_memory.c        | 3 +++
- mm/page_io.c            | 1 +
- 3 files changed, 5 insertions(+)
+ Documentation/admin-guide/mm/transhuge.rst | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 0b0539f4ee1a..ab95b94e9627 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -118,6 +118,7 @@ enum mthp_stat_item {
- 	MTHP_STAT_ANON_FAULT_ALLOC,
- 	MTHP_STAT_ANON_FAULT_FALLBACK,
- 	MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
-+	MTHP_STAT_ZSWPOUT,
- 	MTHP_STAT_SWPOUT,
- 	MTHP_STAT_SWPOUT_FALLBACK,
- 	MTHP_STAT_SHMEM_ALLOC,
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 4e34b7f89daf..7d8ce7891ba8 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -612,6 +612,7 @@ static struct kobj_attribute _name##_attr = __ATTR_RO(_name)
- DEFINE_MTHP_STAT_ATTR(anon_fault_alloc, MTHP_STAT_ANON_FAULT_ALLOC);
- DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_ANON_FAULT_FALLBACK);
- DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
-+DEFINE_MTHP_STAT_ATTR(zswpout, MTHP_STAT_ZSWPOUT);
- DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
- DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
- #ifdef CONFIG_SHMEM
-@@ -630,6 +631,7 @@ static struct attribute *anon_stats_attrs[] = {
- 	&anon_fault_fallback_attr.attr,
- 	&anon_fault_fallback_charge_attr.attr,
- #ifndef CONFIG_SHMEM
-+	&zswpout_attr.attr,
- 	&swpout_attr.attr,
- 	&swpout_fallback_attr.attr,
- #endif
-@@ -660,6 +662,7 @@ static struct attribute_group file_stats_attr_grp = {
+diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+index cfdd16a52e39..a65f905e9ca7 100644
+--- a/Documentation/admin-guide/mm/transhuge.rst
++++ b/Documentation/admin-guide/mm/transhuge.rst
+@@ -530,10 +530,14 @@ anon_fault_fallback_charge
+ 	instead falls back to using huge pages with lower orders or
+ 	small pages even though the allocation was successful.
  
- static struct attribute *any_stats_attrs[] = {
- #ifdef CONFIG_SHMEM
-+	&zswpout_attr.attr,
- 	&swpout_attr.attr,
- 	&swpout_fallback_attr.attr,
- #endif
-diff --git a/mm/page_io.c b/mm/page_io.c
-index bc1183299a7d..4aa34862676f 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -269,6 +269,7 @@ int swap_writepage(struct page *page, struct writeback_control *wbc)
- 		swap_zeromap_folio_clear(folio);
- 	}
- 	if (zswap_store(folio)) {
-+		count_mthp_stat(folio_order(folio), MTHP_STAT_ZSWPOUT);
- 		folio_unlock(folio);
- 		return 0;
- 	}
+-swpout
+-	is incremented every time a huge page is swapped out in one
++zswpout
++	is incremented every time a huge page is swapped out to ZSWAP in one
+ 	piece without splitting.
+ 
++swpout
++	is incremented every time a huge page is swapped out to a non-ZSWAP
++	swap entity in one piece without splitting.
++
+ swpout_fallback
+ 	is incremented if a huge page has to be split before swapout.
+ 	Usually because failed to allocate some continuous swap space
 -- 
 2.27.0
 
