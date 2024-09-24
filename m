@@ -1,206 +1,224 @@
-Return-Path: <linux-kernel+bounces-336700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C7EF983F89
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:43:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED383983F8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EC261C20A21
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:43:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD278281F09
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657EA149C4A;
-	Tue, 24 Sep 2024 07:43:30 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306FB1494CE;
+	Tue, 24 Sep 2024 07:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S/77Miam"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A51148FF9;
-	Tue, 24 Sep 2024 07:43:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1637045026;
+	Tue, 24 Sep 2024 07:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727163810; cv=none; b=bNekstcDpnPThdSg4+SBeS+MuuvdKFPBL0HlMI4zyg2N86/QDK9xB2+JQim4GCsIXITgyYIqGr7ExQKJoGyZaeW0IB0hl8hi8TLvBEu0O6x3m0eGyBJzh/4vvZGsLaTGmN7qaa7/VZOK5tPQVAdVuz+3GjKY4AoZKWWZDodcjlQ=
+	t=1727163854; cv=none; b=ID5hAFaRvCSRBgO6JuOWXRgs+JjOwko0vh+hxrAjC8F9Xky6OLGJcDgilIKIHKh6LJfK2ANpPgfKDAgaYB3lLqpgfHxmYWAVjYLPQqqV2Br8G/7RpLnuuwxzeaC4pORyYgn12hLMdOQxjH+9K36dd2yqIHmtjZfv4EUcbcStJSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727163810; c=relaxed/simple;
-	bh=w6OIkxu0c0aRorGX0RNKZ2Zty8s6bl/Zv9aFMNGUfbk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RcT1k/0ELvTjfyTMBO2+JC6qgjaQvKPzLdj/esM1muepvBfFzj0vy9CQ4iPVF+S9esAOJJYCMCdWwWGz6x3Np5m3WhxayxUKrQ4Ou310EndeiAsoe6EnaOIbCzLtzHi7AvGTQCgwsTUkK35m+JYRYIcYHlqAPVLWlW/UHhJwb+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XCX0C3kt5z4f3l22;
-	Tue, 24 Sep 2024 15:43:07 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 645121A07B6;
-	Tue, 24 Sep 2024 15:43:24 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgCXysaabfJmX5bQCA--.4309S3;
-	Tue, 24 Sep 2024 15:43:24 +0800 (CST)
-Message-ID: <5de46c69-74f4-4955-a825-8c8970c0aa09@huaweicloud.com>
-Date: Tue, 24 Sep 2024 15:43:22 +0800
+	s=arc-20240116; t=1727163854; c=relaxed/simple;
+	bh=7DQinbWJYr9pz315R5995DNBrONlOziueyWnA2vSf7Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XU7+/kXxVS4M3jdyd0wXd9x9j01zq9f2yrPiGmZlaHjwiriTRP1YkZ3rMjrpaYoBn3+Mnol9z5f016/Ax8EbDZDBbvrQ9EZS/MsVBtAyj5uE+6sIjXhXdabEEPfIJ0rma+ucrz5q+XYca2Bk7jfTzcLx9hpKz20OwFSYoPCSXmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S/77Miam; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727163852; x=1758699852;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7DQinbWJYr9pz315R5995DNBrONlOziueyWnA2vSf7Y=;
+  b=S/77MiamptjOHyeV2CxlRVyWX80VOHEZQl+l6ljLxqAGNqFeJ4vH8Zy2
+   b99TA24jSX2J/Dj/GVfKpZWhQfPDumLd+DuK+mNJhZYPyrxeYby8gj+32
+   jz4H4OnR80NWRztfiesARMq2w9mEI1fj0RX8iyaj4TdntmBUS2uFhooKw
+   SJe9rSggCv//K6J/b59GlfYGT3gvKQdL2TefL1Iqaf7jGYK/nKC63BhC3
+   /lWGq1ldzip5Dt3WjJgTIp8pykSu26RQGmNAOMTXixXeMhVljBygoc3Gl
+   0dTptf1dnk9gL2IWdm7IRcOtRmZOS3bu5uPqrfe7hdgDbs4JSPSe2Dkje
+   A==;
+X-CSE-ConnectionGUID: xWTz+P/9Rbe3gTbG5tlV6Q==
+X-CSE-MsgGUID: iWB7V3/BQda2o6Cwp9LjZA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="43612059"
+X-IronPort-AV: E=Sophos;i="6.10,253,1719903600"; 
+   d="scan'208";a="43612059"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 00:44:11 -0700
+X-CSE-ConnectionGUID: l0KGYaohRO2ptv92GxYnow==
+X-CSE-MsgGUID: 02PQ56D/QzWtzGAnYGRXVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,253,1719903600"; 
+   d="scan'208";a="75433442"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 24 Sep 2024 00:44:07 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1st0DN-000I5P-1V;
+	Tue, 24 Sep 2024 07:44:05 +0000
+Date: Tue, 24 Sep 2024 15:43:30 +0800
+From: kernel test robot <lkp@intel.com>
+To: yushengjin <yushengjin@uniontech.com>, pablo@netfilter.org
+Cc: oe-kbuild-all@lists.linux.dev, kadlec@netfilter.org, roopa@nvidia.com,
+	razor@blackwall.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org, bridge@lists.linux.dev,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yushengjin <yushengjin@uniontech.com>
+Subject: Re: [PATCH v2] net/bridge: Optimizing read-write locks in ebtables.c
+Message-ID: <202409241543.F99I82u3-lkp@intel.com>
+References: <2860814445452DE8+20240924022437.119730-1-yushengjin@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/10] ext4: drop ext4_update_disksize_before_punch()
-To: Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- ritesh.list@gmail.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
- yukuai3@huawei.com
-References: <20240904062925.716856-1-yi.zhang@huaweicloud.com>
- <20240904062925.716856-4-yi.zhang@huaweicloud.com>
- <20240920161351.ax3oidpt6w6bf3o4@quack3>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <20240920161351.ax3oidpt6w6bf3o4@quack3>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgCXysaabfJmX5bQCA--.4309S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxWr1DtFWxtw4DJryxCr45KFg_yoWrAw48pr
-	93JFy8Kr4Fqa4DurWIgFnxZr10y3W2krW8WryfGF1Iq3sFvwn7KF10qr1ruFWUtrWkAr40
-	qF4UtFsrWr15urJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2860814445452DE8+20240924022437.119730-1-yushengjin@uniontech.com>
 
-On 2024/9/21 0:13, Jan Kara wrote:
-> On Wed 04-09-24 14:29:18, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> Since we always write back dirty data before zeroing range and punching
->> hole, the delalloc extended file's disksize of should be updated
->> properly when writing back pages, hence we don't need to update file's
->> disksize before discarding page cache in ext4_zero_range() and
->> ext4_punch_hole(), just drop ext4_update_disksize_before_punch().
->>
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> 
-> So when we don't write out before hole punching & company this needs to stay
-> in some shape or form. 
-> 
+Hi yushengjin,
 
-Thanks for taking time to review this series!
+kernel test robot noticed the following build errors:
 
-I don't fully understand this comment, please let me confirm. Do you
-suggested that we still don't write out all the data before punching /
-zeroing / collapseing(i.e. drop patch 01), so we need to keep
-ext4_update_disksize_before_punch()(i.e. also drop this patch), is
-that right?
+[auto build test ERROR on netfilter-nf/main]
+[also build test ERROR on horms-ipvs/master linus/master v6.11 next-20240924]
+[cannot apply to nf-next/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks,
-Yi.
+url:    https://github.com/intel-lab-lkp/linux/commits/yushengjin/net-bridge-Optimizing-read-write-locks-in-ebtables-c/20240924-102547
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/netfilter/nf.git main
+patch link:    https://lore.kernel.org/r/2860814445452DE8%2B20240924022437.119730-1-yushengjin%40uniontech.com
+patch subject: [PATCH v2] net/bridge: Optimizing read-write locks in ebtables.c
+config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20240924/202409241543.F99I82u3-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240924/202409241543.F99I82u3-lkp@intel.com/reproduce)
 
-> 
->> ---
->>  fs/ext4/ext4.h    |  3 ---
->>  fs/ext4/extents.c |  4 ----
->>  fs/ext4/inode.c   | 37 +------------------------------------
->>  3 files changed, 1 insertion(+), 43 deletions(-)
->>
->> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
->> index 08acd152261e..e8d7965f62c4 100644
->> --- a/fs/ext4/ext4.h
->> +++ b/fs/ext4/ext4.h
->> @@ -3414,9 +3414,6 @@ static inline int ext4_update_inode_size(struct inode *inode, loff_t newsize)
->>  	return changed;
->>  }
->>  
->> -int ext4_update_disksize_before_punch(struct inode *inode, loff_t offset,
->> -				      loff_t len);
->> -
->>  struct ext4_group_info {
->>  	unsigned long   bb_state;
->>  #ifdef AGGRESSIVE_CHECK
->> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
->> index 19a9b14935b7..d9fccf2970e9 100644
->> --- a/fs/ext4/extents.c
->> +++ b/fs/ext4/extents.c
->> @@ -4637,10 +4637,6 @@ static long ext4_zero_range(struct file *file, loff_t offset,
->>  		flags |= (EXT4_GET_BLOCKS_CONVERT_UNWRITTEN |
->>  			  EXT4_EX_NOCACHE);
->>  
->> -		ret = ext4_update_disksize_before_punch(inode, offset, len);
->> -		if (ret)
->> -			goto out_invalidate_lock;
->> -
->>  		/* Now release the pages and zero block aligned part of pages */
->>  		truncate_pagecache_range(inode, start, end - 1);
->>  
->> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
->> index 8af25442d44d..9343ce9f2b01 100644
->> --- a/fs/ext4/inode.c
->> +++ b/fs/ext4/inode.c
->> @@ -3872,37 +3872,6 @@ int ext4_can_truncate(struct inode *inode)
->>  	return 0;
->>  }
->>  
->> -/*
->> - * We have to make sure i_disksize gets properly updated before we truncate
->> - * page cache due to hole punching or zero range. Otherwise i_disksize update
->> - * can get lost as it may have been postponed to submission of writeback but
->> - * that will never happen after we truncate page cache.
->> - */
->> -int ext4_update_disksize_before_punch(struct inode *inode, loff_t offset,
->> -				      loff_t len)
->> -{
->> -	handle_t *handle;
->> -	int ret;
->> -
->> -	loff_t size = i_size_read(inode);
->> -
->> -	WARN_ON(!inode_is_locked(inode));
->> -	if (offset > size || offset + len < size)
->> -		return 0;
->> -
->> -	if (EXT4_I(inode)->i_disksize >= size)
->> -		return 0;
->> -
->> -	handle = ext4_journal_start(inode, EXT4_HT_MISC, 1);
->> -	if (IS_ERR(handle))
->> -		return PTR_ERR(handle);
->> -	ext4_update_i_disksize(inode, size);
->> -	ret = ext4_mark_inode_dirty(handle, inode);
->> -	ext4_journal_stop(handle);
->> -
->> -	return ret;
->> -}
->> -
->>  static void ext4_wait_dax_page(struct inode *inode)
->>  {
->>  	filemap_invalidate_unlock(inode->i_mapping);
->> @@ -4022,13 +3991,9 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
->>  	last_block_offset = round_down((offset + length), sb->s_blocksize) - 1;
->>  
->>  	/* Now release the pages and zero block aligned part of pages*/
->> -	if (last_block_offset > first_block_offset) {
->> -		ret = ext4_update_disksize_before_punch(inode, offset, length);
->> -		if (ret)
->> -			goto out_dio;
->> +	if (last_block_offset > first_block_offset)
->>  		truncate_pagecache_range(inode, first_block_offset,
->>  					 last_block_offset);
->> -	}
->>  
->>  	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
->>  		credits = ext4_writepage_trans_blocks(inode);
->> -- 
->> 2.39.2
->>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409241543.F99I82u3-lkp@intel.com/
 
+All errors (new ones prefixed by >>):
+
+   In file included from include/asm-generic/percpu.h:7,
+                    from ./arch/sh/include/generated/asm/percpu.h:1,
+                    from include/linux/irqflags.h:19,
+                    from arch/sh/include/asm/cmpxchg-irq.h:5,
+                    from arch/sh/include/asm/cmpxchg.h:20,
+                    from arch/sh/include/asm/atomic.h:19,
+                    from include/linux/atomic.h:7,
+                    from include/asm-generic/bitops/atomic.h:5,
+                    from arch/sh/include/asm/bitops.h:23,
+                    from include/linux/bitops.h:68,
+                    from include/linux/thread_info.h:27,
+                    from include/asm-generic/preempt.h:5,
+                    from ./arch/sh/include/generated/asm/preempt.h:1,
+                    from include/linux/preempt.h:79,
+                    from include/linux/spinlock.h:56,
+                    from include/linux/mmzone.h:8,
+                    from include/linux/gfp.h:7,
+                    from include/linux/umh.h:4,
+                    from include/linux/kmod.h:9,
+                    from net/bridge/netfilter/ebtables.c:14:
+   net/bridge/netfilter/ebtables.c: In function 'get_counters':
+>> net/bridge/netfilter/ebtables.c:1006:30: error: 'ebt_recseq' undeclared (first use in this function); did you mean 'xt_recseq'?
+    1006 |                 s = &per_cpu(ebt_recseq, cpu);
+         |                              ^~~~~~~~~~
+   include/linux/percpu-defs.h:219:54: note: in definition of macro '__verify_pcpu_ptr'
+     219 |         const void __percpu *__vpp_verify = (typeof((ptr) + 0))NULL;    \
+         |                                                      ^~~
+   include/linux/percpu-defs.h:263:49: note: in expansion of macro 'VERIFY_PERCPU_PTR'
+     263 | #define per_cpu_ptr(ptr, cpu)   ({ (void)(cpu); VERIFY_PERCPU_PTR(ptr); })
+         |                                                 ^~~~~~~~~~~~~~~~~
+   include/linux/percpu-defs.h:269:35: note: in expansion of macro 'per_cpu_ptr'
+     269 | #define per_cpu(var, cpu)       (*per_cpu_ptr(&(var), cpu))
+         |                                   ^~~~~~~~~~~
+   net/bridge/netfilter/ebtables.c:1006:22: note: in expansion of macro 'per_cpu'
+    1006 |                 s = &per_cpu(ebt_recseq, cpu);
+         |                      ^~~~~~~
+   net/bridge/netfilter/ebtables.c:1006:30: note: each undeclared identifier is reported only once for each function it appears in
+    1006 |                 s = &per_cpu(ebt_recseq, cpu);
+         |                              ^~~~~~~~~~
+   include/linux/percpu-defs.h:219:54: note: in definition of macro '__verify_pcpu_ptr'
+     219 |         const void __percpu *__vpp_verify = (typeof((ptr) + 0))NULL;    \
+         |                                                      ^~~
+   include/linux/percpu-defs.h:263:49: note: in expansion of macro 'VERIFY_PERCPU_PTR'
+     263 | #define per_cpu_ptr(ptr, cpu)   ({ (void)(cpu); VERIFY_PERCPU_PTR(ptr); })
+         |                                                 ^~~~~~~~~~~~~~~~~
+   include/linux/percpu-defs.h:269:35: note: in expansion of macro 'per_cpu_ptr'
+     269 | #define per_cpu(var, cpu)       (*per_cpu_ptr(&(var), cpu))
+         |                                   ^~~~~~~~~~~
+   net/bridge/netfilter/ebtables.c:1006:22: note: in expansion of macro 'per_cpu'
+    1006 |                 s = &per_cpu(ebt_recseq, cpu);
+         |                      ^~~~~~~
+   net/bridge/netfilter/ebtables.c: In function 'do_replace_finish':
+   net/bridge/netfilter/ebtables.c:1111:42: error: 'ebt_recseq' undeclared (first use in this function); did you mean 'xt_recseq'?
+    1111 |                 seqcount_t *s = &per_cpu(ebt_recseq, cpu);
+         |                                          ^~~~~~~~~~
+   include/linux/percpu-defs.h:219:54: note: in definition of macro '__verify_pcpu_ptr'
+     219 |         const void __percpu *__vpp_verify = (typeof((ptr) + 0))NULL;    \
+         |                                                      ^~~
+   include/linux/percpu-defs.h:263:49: note: in expansion of macro 'VERIFY_PERCPU_PTR'
+     263 | #define per_cpu_ptr(ptr, cpu)   ({ (void)(cpu); VERIFY_PERCPU_PTR(ptr); })
+         |                                                 ^~~~~~~~~~~~~~~~~
+   include/linux/percpu-defs.h:269:35: note: in expansion of macro 'per_cpu_ptr'
+     269 | #define per_cpu(var, cpu)       (*per_cpu_ptr(&(var), cpu))
+         |                                   ^~~~~~~~~~~
+   net/bridge/netfilter/ebtables.c:1111:34: note: in expansion of macro 'per_cpu'
+    1111 |                 seqcount_t *s = &per_cpu(ebt_recseq, cpu);
+         |                                  ^~~~~~~
+
+
+vim +1006 net/bridge/netfilter/ebtables.c
+
+   987	
+   988	
+   989	static void get_counters(const struct ebt_counter *oldcounters,
+   990				 struct ebt_counter *counters, unsigned int nentries)
+   991	{
+   992		int i, cpu;
+   993		struct ebt_counter *counter_base;
+   994		seqcount_t *s;
+   995	
+   996		/* counters of cpu 0 */
+   997		memcpy(counters, oldcounters,
+   998		       sizeof(struct ebt_counter) * nentries);
+   999	
+  1000		/* add other counters to those of cpu 0 */
+  1001		for_each_possible_cpu(cpu) {
+  1002	
+  1003			if (cpu == 0)
+  1004				continue;
+  1005	
+> 1006			s = &per_cpu(ebt_recseq, cpu);
+  1007			counter_base = COUNTER_BASE(oldcounters, nentries, cpu);
+  1008			for (i = 0; i < nentries; i++) {
+  1009				u64 bcnt, pcnt;
+  1010				unsigned int start;
+  1011	
+  1012				do {
+  1013					start = read_seqcount_begin(s);
+  1014					bcnt = counter_base[i].bcnt;
+  1015					pcnt = counter_base[i].pcnt;
+  1016				} while (read_seqcount_retry(s, start));
+  1017	
+  1018				ADD_COUNTER(counters[i], bcnt, pcnt);
+  1019				cond_resched();
+  1020			}
+  1021		}
+  1022	}
+  1023	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
