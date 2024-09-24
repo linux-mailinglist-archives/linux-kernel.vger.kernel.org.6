@@ -1,202 +1,94 @@
-Return-Path: <linux-kernel+bounces-336687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FF8B983F56
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:39:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0C73983F66
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:40:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E2A82829C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:39:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 755061F221CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C3214C5AF;
-	Tue, 24 Sep 2024 07:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC0814D456;
+	Tue, 24 Sep 2024 07:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2F2xhpmz"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YPkedyFU"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7590D148FF7
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD9D1494AB
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727163517; cv=none; b=sxzwq1FlHaoH637SOODwhGVqMBJIFY7PdExaRgmd1/JQvYnmkZsS7EjGVTSueap/M9cVB8Jb1osBQ4aV+F1A2ezH9kMNcjz77wTzgpH9ejjklS/o18/EQ6B4ecYH+xr9I55kPiaTwzXwTXg0ykF9kTqRojhMQ2tT9V8S1rZP3Kc=
+	t=1727163612; cv=none; b=oACNLs5GIkiuKQxLSB2I14qc3GGm1EPHRQ/eglOz7mUrwcLbrUgLCPuiFBsxuuoXVQyoGnqAmLqAeeFxNyuj+vwJPMwNWnqNCE/hb4kpWe+dMWnxE6zxq/4d5VieVKOdsvepRZayFcKU72qOb7fZ4tFjcNdEGcK+A+DqK/Ne9kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727163517; c=relaxed/simple;
-	bh=MDgohN12nsf9M2mRFuJEw+fa/KxZISPlzEO6ManVUSY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=WbbhXqgk362VgH78XgPWDrRBzaO95ums84yBdHHints+m9/YpZk1806jzsSvlCP9qCQbHyeC4L4UtVD61MKqaMIiAb0oIU+K5dYIxYy1pbyptg/tYjvcKq8ddEgLLP3SbOne7OD7ygkgSf2PqZQEgsPRvVoTOvDqSeLrz6HavAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2F2xhpmz; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-718d6ad6105so8733296b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 00:38:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727163516; x=1727768316; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4ZkYWJqNf6eoiBM6WqGlfzoIuo2kVyjLaKv1M7ETX4c=;
-        b=2F2xhpmzxYNgUcnhbQ9PTCZaxurWsu0umOflsfFz74AbdO5sDj/KY1SKzHcHBIazlr
-         orfjRUrn7AlklQLN98ybwVisBwAfu7uAtgxIREmHdrLvHadkq46bgYQSV1dxogb62hwq
-         bzIsqxt1RP04bcOwhRk7Tgstp1FXdpFKZK3NrtVCKVlhQlILhBhfWPpr7XAOEbKsZZGS
-         taw08TmnTK2+UQZxwGTn5Xl31EzZvUY+5lfHUd6ex/JIAXOCTk0jzFL053l97FgbdXLh
-         nUJigFDo95DEMOyOtnfqG9AkYjMYfE5INpFUBMeDD4e/f6g++dnGX9wSZOn/VkcovRkN
-         p9vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727163516; x=1727768316;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4ZkYWJqNf6eoiBM6WqGlfzoIuo2kVyjLaKv1M7ETX4c=;
-        b=pzKr2OadHJR5KDoXnhAzcBDeCp3mhicaDsnnU7ir0m9Y9oMbsyVCcv0lKGorkOFmRa
-         cCsK/dOw+bhl+HiVyqZVD6PocS3TguhrkMog6Vn8GgjdfH3yVq6j1sF8dfyCre3M47Hh
-         HtG5lw7pR2KN+92aUmII+6zOPgmJuZEKvR/XS1bv1yobPNRMllw0JSREnd77OPSKSb7m
-         fEqglTnO2xnKEbZMzUna6h7F40hqRtkfCMxfn5xwd8VheLSDj8pKZucgteAiEFC7yW5t
-         iilKYZK33YLibb9dwPzHV+dME6UdianA7BMfrWuSWkqXwfmgNUM6EHi90jGSsSyQIDnn
-         Cmyw==
-X-Forwarded-Encrypted: i=1; AJvYcCUo1yjvFRogSJCvqP3j/0HXxw0x14RsyOTI2kAqmRXJdqlVyh60K8gVgeDs/4J6dPdBjQFESRlrAsptyts=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxL9X7HoL3GqlSmHUv425Ulatt6Y7ip5Ahqy7W5Bhjc1haNwqnN
-	i5gAjWQmr4KAbzh0xdbcSASr8DNUxEXSvdjKCYf7brHKHBtO1PVz3PcrjJFTbcLdkvETPVFWvD+
-	cag==
-X-Google-Smtp-Source: AGHT+IGqaVfCjWT7w9L72pzk8ZvtxcHt2q2D2SKW8JkbXsTB6bk6jQAflozKkKgLgVrGHRgS43NAgT8SMao=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:66d1:b0:717:8e0f:3e5c with SMTP id
- d2e1a72fcca58-7199caac6b7mr20285b3a.5.1727163515356; Tue, 24 Sep 2024
- 00:38:35 -0700 (PDT)
-Date: Tue, 24 Sep 2024 00:38:33 -0700
-In-Reply-To: <cb06b33acdad04bef8c9541b4247a36f51cf2d36.camel@amazon.co.uk>
+	s=arc-20240116; t=1727163612; c=relaxed/simple;
+	bh=FXwR1zkmR65RnT65O9dxB/DKHOb3WjI0B8f09VidI5U=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=hPS1TyHRF3vl6Ift+LLVYFFwOgL0rLkORhf5Atj90v5DgYUdSpnndDlO8b1696nN2wc3qoQbTmNkIQ8okUjQFmFuvyxOvm47ZHEw/Nl7mopfXNLeldpSbCKtlJIQmXSGTPjXUjJMstM9cxOfnjIdtTdBCdebqnfD81s1oADMAao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YPkedyFU; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727163606;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=feLnDK54jWgpehNv7jGj+iux9/EZ9Wgvx1Gm5rmvg6M=;
+	b=YPkedyFU/qRPuoy/VtaBWlSgDWI8B2BI03Y7bNfEpngs/NFa8208jLRInhPul0eFFj+VSy
+	+fFZzUeFSO22eScfZyubg4GNkcVW1clL3kJLI6JpuHZpWp5k7MqrHb79qaIv206sIuK4sf
+	eo9VQMecooB/ppvUQTJvAMlpDNOb2J0=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240923141810.76331-1-iorlov@amazon.com> <ZvGfnARMqZS0mkg-@google.com>
- <cb06b33acdad04bef8c9541b4247a36f51cf2d36.camel@amazon.co.uk>
-Message-ID: <ZvJseVoT7gN_GBG3@google.com>
-Subject: Re: [PATCH 0/4] Process some MMIO-related errors without KVM exit
-From: Sean Christopherson <seanjc@google.com>
-To: Jack Allister <jalliste@amazon.co.uk>
-Cc: Ivan Orlov <iorlov@amazon.co.uk>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, "bp@alien8.de" <bp@alien8.de>, 
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "hpa@zytor.com" <hpa@zytor.com>, 
-	"mingo@redhat.com" <mingo@redhat.com>, "tglx@linutronix.de" <tglx@linutronix.de>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"nh-open-source@amazon.com" <nh-open-source@amazon.com>, "shuah@kernel.org" <shuah@kernel.org>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
+Subject: Re: [PATCH v4 09/13] mm: mremap: move_ptes() use
+ pte_offset_map_rw_nolock()
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <c7b3ba9e8e58efe7bba9d52ce30a8ff4f4298e2f.1727148662.git.zhengqi.arch@bytedance.com>
+Date: Tue, 24 Sep 2024 15:39:21 +0800
+Cc: david@redhat.com,
+ hughd@google.com,
+ willy@infradead.org,
+ vbabka@kernel.org,
+ akpm@linux-foundation.org,
+ rppt@kernel.org,
+ vishal.moola@gmail.com,
+ peterx@redhat.com,
+ ryan.roberts@arm.com,
+ christophe.leroy2@cs-soprasteria.com,
+ linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org,
+ linux-arm-kernel@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <EF701BDB-5742-417C-AAC3-99EF12997DFB@linux.dev>
+References: <cover.1727148662.git.zhengqi.arch@bytedance.com>
+ <c7b3ba9e8e58efe7bba9d52ce30a8ff4f4298e2f.1727148662.git.zhengqi.arch@bytedance.com>
+To: Qi Zheng <zhengqi.arch@bytedance.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Sep 23, 2024, Jack Allister wrote:
-> On Mon, 2024-09-23 at 10:04 -0700, Sean Christopherson wrote:
-> >=20
-> > On Mon, Sep 23, 2024, Ivan Orlov wrote:
-> > > Currently, KVM may return a variety of internal errors to VMM when
-> > > accessing MMIO, and some of them could be gracefully handled on the
-> > > KVM
-> > > level instead. Moreover, some of the MMIO-related errors are
-> > > handled
-> > > differently in VMX in comparison with SVM, which produces certain
-> > > inconsistency and should be fixed. This patch series introduces
-> > > KVM-level handling for the following situations:
-> > >=20
-> > > 1) Guest is accessing MMIO during event delivery: triple fault
-> > > instead
-> > > of internal error on VMX and infinite loop on SVM
-> > >=20
-> > > 2) Guest fetches an instruction from MMIO: inject #UD and resume
-> > > guest
-> > > execution without internal error
-> >=20
-> > No.=C2=A0 This is not architectural behavior.=C2=A0 It's not even remot=
-ely close to
-> > architectural behavior.=C2=A0 KVM's behavior isn't great, but making up=
- _guest
-> > visible_ behavior is not going to happen.
->=20
-> Is this a no to the whole series or from the cover letter?=C2=A0
 
-The whole series.
 
-> For patch 1 we have observed that if a guest has incorrectly set it's
-> IDT base to point inside=C2=A0of an MMIO region it will result in a tripl=
-e
-> fault (bare metal Cascake Lake Intel).
+> On Sep 24, 2024, at 14:10, Qi Zheng <zhengqi.arch@bytedance.com> wrote:
+> 
+> In move_ptes(), we may modify the new_pte after acquiring the new_ptl, so
+> convert it to using pte_offset_map_rw_nolock(). Now new_pte is none, so
+> hpage_collapse_scan_file() path can not find this by traversing
+> file->f_mapping, so there is no concurrency with retract_page_tables(). In
+> addition, we already hold the exclusive mmap_lock, so this new_pte page is
+> stable, so there is no need to get pmdval and do pmd_same() check.
+> 
+> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 
-The triple fault occurs because the MMIO read returns garbage, e.g. because=
- it
-gets back master abort semantics.
+Reviewed-by: Muchun Song <muchun.song@linux.dev>
 
-> Yes a sane operating system is not really going to be doing setting it's =
-IDT
-> or GDT base to point into an MMIO region, but we've seen occurrences.
 
-Sure, but that doesn't make it architecturally correct to synthesize arbitr=
-ary
-faults.
-
-> Normally when other external things have gone horribly wrong.
->=20
-> Ivan can clarify as to what's been seen on AMD platforms regarding the
-> infinite loop for patch one.
-
-So it sounds like what you really want to do is not put the vCPU into an in=
-finite
-loop.  Have you tried kvm/next or kvm-x86/next, which has fixes for infinit=
-e
-loops on TDP faults?  Specifically, these commits:
-
-  98a69b96caca3e07aff57ca91fd7cc3a3853871a KVM: x86/mmu: WARN on MMIO cache=
- hit when emulating write-protected gfn
-  d859b16161c81ee929b7b02a85227b8e3250bc97 KVM: x86/mmu: Detect if unprotec=
-t will do anything based on invalid_list
-  6b3dcabc10911711eba15816d808e2a18f130406 KVM: x86/mmu: Subsume kvm_mmu_un=
-protect_page() into the and_retry() version
-  2876624e1adcd9a3a3ffa8c4fe3bf8dbba969d95 KVM: x86: Rename reexecute_instr=
-uction()=3D>kvm_unprotect_and_retry_on_failure()
-  4df685664bed04794ad72b58d8af1fa4fcc60261 KVM: x86: Update retry protectio=
-n fields when forcing retry on emulation failure
-  dabc4ff70c35756bc107bc5d035d0f0746396a9a KVM: x86: Apply retry protection=
- to "unprotect on failure" path
-  19ab2c8be070160be70a88027b3b93106fef7b89 KVM: x86: Check EMULTYPE_WRITE_P=
-F_TO_SP before unprotecting gfn
-  620525739521376a65a690df899e1596d56791f8 KVM: x86: Remove manual pfn look=
-up when retrying #PF after failed emulation
-  b299c273c06f005976cdc1b9e9299d492527607e KVM: x86/mmu: Move event re-inje=
-ction unprotect+retry into common path
-  29e495bdf847ac6ad0e0d03e5db39a3ed9f12858 KVM: x86/mmu: Always walk guest =
-PTEs with WRITE access when unprotecting
-  b7e948898e772ac900950c0dac4ca90e905cd0c0 KVM: x86/mmu: Don't try to unpro=
-tect an INVALID_GPA
-  2df354e37c1398a85bb43cbbf1f913eb3f91d035 KVM: x86: Fold retry_instruction=
-() into x86_emulate_instruction()
-  41e6e367d576ce1801dc5c2b106e14cde35e3c80 KVM: x86: Move EMULTYPE_ALLOW_RE=
-TRY_PF to x86_emulate_instruction()
-  dfaae8447c53819749cf3ba10ce24d3c609752e3 KVM: x86/mmu: Try "unprotect for=
- retry" iff there are indirect SPs
-  01dd4d319207c4cfd51a1c9a1812909e944d8c86 KVM: x86/mmu: Apply retry protec=
-tion to "fast nTDP unprotect" path
-  9c19129e535bfff85bdfcb5a804e19e5aae935b2 KVM: x86: Store gpa as gpa_t, no=
-t unsigned long, when unprotecting for retry
-  019f3f84a40c88b68ca4d455306b92c20733e784 KVM: x86: Get RIP from vCPU stat=
-e when storing it to last_retry_eip
-  c1edcc41c3603c65f34000ae031a20971f4e56f9 KVM: x86: Retry to-be-emulated i=
-nsn in "slow" unprotect path iff sp is zapped
-  2fb2b7877b3a4cac4de070ef92437b38f13559b0 KVM: x86/mmu: Skip emulation on =
-page fault iff 1+ SPs were unprotected
-  989a84c93f592e6b288fb3b96d2eeec827d75bef KVM: x86/mmu: Trigger unprotect =
-logic only on write-protection page faults
-  4ececec19a0914873634ad69bbaca5557c33e855 KVM: x86/mmu: Replace PFERR_NEST=
-ED_GUEST_PAGE with a more descriptive helper
-
-> This was also tested on bare metal hardware. Injection of the #UD within
-> patch 2 may be debatable but I believe Ivan has some more data from
-> experiments backing this up.
-
-Heh, it's not debatable.  Fetching from MMIO is perfectly legal.  Again, an=
-y #UD
-you see on bare metal is all but guaranteed to be due to fetching garbage.
 
