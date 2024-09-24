@@ -1,234 +1,202 @@
-Return-Path: <linux-kernel+bounces-337404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A3F98499D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:28:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E03D898499E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:29:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 836F7280CB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:28:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 318F4B23A78
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:29:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D531ABEC6;
-	Tue, 24 Sep 2024 16:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="h75f9wlY"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011032.outbound.protection.outlook.com [52.101.70.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1BD01AB6E9;
+	Tue, 24 Sep 2024 16:29:00 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B74781AB6E4;
-	Tue, 24 Sep 2024 16:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727195307; cv=fail; b=DeWeeND6u/eXdkGRO9zbua60GG4mixgQwlN6+fBUTmxC++IVXybDnXy2P+Vtlb0k7rsVKD3ZmBG58OaC69iafTO9E92o8U8mY8wPaw8Xw471tPQPZiW52EF6WUbk9potwGl4La3Gqj8/wqP9cxaCqKUdALje4hQtYHYuQKMtxv4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727195307; c=relaxed/simple;
-	bh=FuypOtAwgNRsaaNVrbYgbZUEu8EUmHdlByPj4SR3BQA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=P7ttOOrwToh8SXrXcy8P4XtKOxDOE9ZBkJd8scdZxxC+4tvZqUTeg25L8xJ0hpJQ3+giPfJbGOWxpG0ur4uut0FxVWNYTohTQGfDkDi6UJxAE9lgK0hTxAOr944aXMohIbfd0LVqSM/eYeCfdcF2dKr+s0RPZ3JJhbWvcZIQhT4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=h75f9wlY; arc=fail smtp.client-ip=52.101.70.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hXThloQEggcpW9XZfvPjZH3WfXzqeEghzMkhfHT34nUpFfk2Oj01UKTD3yqM4WKP5E1Qt+/bbFcgRLC6Oje9zTIf3v369X7yNgxF7SH6gphVNfXHf0NasI0SlzpDVK1+Gu7rOJ35YcjCAHWL4neSQExcz4f32kUt7nyxgPlqZEN2yhLo76Ca/OIPgFNApz+YSblTBIriTpLPPmgxDzqHoIkqRNlhhQYFqC1wQujiGAl6JzaPo51xCShsMtbSLXDqmwED/aLDlRSxjT3BEl4xa47QrcpsNj4WLm9d7WHSkXKzYrOwlofFkJt0MKCUTEX1B+DKa5D/zMaYBOI+fEgOuA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Kd0/mPNhbx0/f6rKdkmNXIWGiS22K2fZTmwm+hzk564=;
- b=dlqkZXI7VKRTaZwSGS3ZA4/a2PpvA79ENfyJc0kr7i9CohFd8VYg6ucchg3b0cEZOLNVuKop7WP7RaPn5A9lRNvKDAL5D4iQQwRbr3WIHp/DoYB6i7kq+HRD8RUVy7bLDWm4JJtPJR7LYuFM368kehrjVDTHE1oERPobjSRQzVwlzXfM3PoUyfrWxl1YnFPMtvNSj9OAIHSh0pKzkDJG3KD/th2pbDWJd8oQeQgQ1qrmMbAlcDgCczGGiUuYb+23uWeNxJmDFH2dmvpR/E8n/rzof+IVURucTA4W+dCSEWt9ZYhGmZhfGRkxpK3Njp67IY0QwXCc8kibTMQSROpcNw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Kd0/mPNhbx0/f6rKdkmNXIWGiS22K2fZTmwm+hzk564=;
- b=h75f9wlYnMfw1RmLxbODTixDSf+XrT2Kdg5SCR2KoWwBCItMMdxnXEx+kYRokh1FhWOq7wJNkeAO2PUR6KYkwmdxcCloD10jye8Pc1n59rpe66+JDdVFICrzFPG2hHNY94c1/AVntKGOoVt5ZhP5AL6Bs8sNz/Apup5yeBou1kkwqS60l/b3FDw9Gft7eqoX1FdmWvwS9S3Q4AJmGJo/StJDHJotYhVqH6NSZFpjWRuD6xmcHLBL8FLfwZ5FJzgi68+Zu4vQlTVknGXkNrdicDfegcA8B7cApznf+ip6qMYYpPEZpgNukNUuqCJaKP8m0LjE8894AZK7z8OaNHk8YQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by GV1PR04MB10127.eurprd04.prod.outlook.com (2603:10a6:150:1ad::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.27; Tue, 24 Sep
- 2024 16:28:19 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7982.022; Tue, 24 Sep 2024
- 16:28:18 +0000
-Date: Tue, 24 Sep 2024 12:28:09 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: l.stach@pengutronix.de, kwilczynski@kernel.org, bhelgaas@google.com,
-	lpieralisi@kernel.org, robh+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	festevam@gmail.com, s.hauer@pengutronix.de,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	kernel@pengutronix.de, imx@lists.linux.dev
-Subject: Re: [PATCH v1 9/9] arm64: dts: imx95: Add ref clock for i.MX95 PCIe
-Message-ID: <ZvLomXcbbiZ+LTP0@lizhi-Precision-Tower-5810>
-References: <1727148464-14341-1-git-send-email-hongxing.zhu@nxp.com>
- <1727148464-14341-10-git-send-email-hongxing.zhu@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1727148464-14341-10-git-send-email-hongxing.zhu@nxp.com>
-X-ClientProxiedBy: BYAPR01CA0040.prod.exchangelabs.com (2603:10b6:a03:94::17)
- To PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854601B85D2
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 16:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727195340; cv=none; b=SAE5tizZ+HQf8PWKduCA265wDI5gf5nndTl9NP7ZjKfufcjW9CKZ9161vxtc6TjA8cHjepiL7Hrm3f/hGdM3CgaQQKqTv07LBaGQjz8GRMD1WlPXk9k5cOUWDjFu7wsbuUYI3fr7HQZzzx/ZHs30atQGzB28gCYw098jKMDjBXs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727195340; c=relaxed/simple;
+	bh=0EJ4H0VGxNnTz37z2THiHhAONQCTq6KAKm8c2hv4+4M=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OrsA5S1IDrtXzhPW2MAjepBV7zrygcbjHdkuFAxrRSHXhAjNI6bbuURd6To2AR0zGHh8Xxi9krwjkWgnr3ggP78ji8bY88XxNLzKwPSInuWOQXWG3ihrbs5oj7OYmo8Q6nwnVZPGQ742p29lbvmLUXknJhz1hJpYt6jNdUOAERI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XClYc2X8Bz6K5rf;
+	Wed, 25 Sep 2024 00:24:20 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0AED01401F3;
+	Wed, 25 Sep 2024 00:28:55 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 24 Sep
+ 2024 18:28:54 +0200
+Date: Tue, 24 Sep 2024 17:28:53 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Gowthami Thiagarajan <gthiagarajan@marvell.com>
+CC: <will@kernel.org>, <mark.rutland@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<gcherian@marvell.com>, <bbhushan2@marvell.com>, <sgoutham@marvell.com>
+Subject: Re: [PATCH v8 4/6] perf/marvell: Odyssey DDR Performance monitor
+ support
+Message-ID: <20240924172853.0000647e@Huawei.com>
+In-Reply-To: <20240919074717.3276854-5-gthiagarajan@marvell.com>
+References: <20240919074717.3276854-1-gthiagarajan@marvell.com>
+	<20240919074717.3276854-5-gthiagarajan@marvell.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|GV1PR04MB10127:EE_
-X-MS-Office365-Filtering-Correlation-Id: de588c66-067b-45d7-6760-08dcdcb5e628
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|52116014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?KIP0uFJk4uihv4xQ+ycl0gOtntSNkpiVIl2ncGqK1V9wRj78KqbVT98jmmQU?=
- =?us-ascii?Q?GMVCERmEokZtZQxWuCQlo58HZc0amKdbnhZFuoewC7I1SdZSFUErLYmNqwvA?=
- =?us-ascii?Q?r8nt+B7SAQpYT+jmV0K0xRi5QFJQV7i78Bn8BieTRC6Xp0+XUoUrLLxYJSwW?=
- =?us-ascii?Q?3HjwoIXLA0xBsYuF9+7dQG6uiwWY/JBfMRz3wcPaekntyqgUoTNe/Ibl65NP?=
- =?us-ascii?Q?QZNKx5XOIX9a2hBESRrBHaoM1JqJqIicn1glm5PmpqKEv12vmaBQstf11/JW?=
- =?us-ascii?Q?mlvyCDmHKq05/AlM9C7GB+9FLxiznAxu1axCTFcCcGAWzp5HO0qQTNXGWcAU?=
- =?us-ascii?Q?j/6FWn3YOePny3KskC0UwDCg5gR3eNmHVlNkPkAmMbaEswMSa0jzK9NqnWqT?=
- =?us-ascii?Q?ETOCD7xvCCna7GudajEKsR2pdNyIHhtByT7s4CUrBchu+D+FcJrWhsZwD074?=
- =?us-ascii?Q?JWTpK2Bh3fkrqyrTJLBZrsnUDJW+/spll2xeK7nVA0geZvuku7oEhU5DuszY?=
- =?us-ascii?Q?UKyV6p4P9E5VApVEOm8OqYbLH+RdIT0147PBC2E1CkPcjs1l3ioju8wkQWD6?=
- =?us-ascii?Q?Yis7lZEZZV0HEuA25aLkaw+8T9tHpjb9GzURxjunb+FX2Lq/NzP7oAUdvcB+?=
- =?us-ascii?Q?5iKdAoEljnNjg7Fbs1xyXtZjBQX4IV9+U6yW8ZlDVCcckJBOTsFOtaeLvf5y?=
- =?us-ascii?Q?/kggRuDqM4F331TkfUgCNruz6yfpyEfs07qgxW9zfdjIqGyLobVcw5dW9eHC?=
- =?us-ascii?Q?n6rDQTi6xEa/XNQmX6v9Vkypa749U/RjiS2TdpugaFbSvUtKCKMrxMOTqGTw?=
- =?us-ascii?Q?PX0L2jXMWnk5aU+g1kcKSUqrTY7uWZhAerRLouO+jwaEAqZF42vAS6+yVfNP?=
- =?us-ascii?Q?q9Rw4O11zZ2jllAi9kTvQyoy2UaVMpqLtD3fdFRubtWACD5ysb2tQ5w/kFhK?=
- =?us-ascii?Q?jUrNJloLoN+iNyD63ZGF8qKSqdYDCTxlloqVv8TDxdIdgDTU5KXY3nLXwqM4?=
- =?us-ascii?Q?MvELnmq0qtAMIOc3vwJhjF47HmD4KYGC7Yb7WCs285uG0X536KoWHIIfVrA4?=
- =?us-ascii?Q?Y1Nli7DeddVNdDZr8A2iOt0T5pQGeTHDYsmUsjsUJwh+qllSJbxO2bIT4m8n?=
- =?us-ascii?Q?s+t7kjiMeSwdAcWrVr/Z7g8zsXipAY1LBuKtQJwAuJqwEXyt/7Ch1QeVocdA?=
- =?us-ascii?Q?32bCbffYCKp1A6+3gghbasv30q41V4QPEOTBp20qY55bwaDDmxVDxfGazRl/?=
- =?us-ascii?Q?sdQdgcAlK8GjbdX++JKOINvn18wQiVdxwart4aNowuKKAypZeh4fduOqTPut?=
- =?us-ascii?Q?mJ52gVDpdgVqxH8tioIovSzDA+goGOTd773zKslVKXq+Qw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?XRo8uzm7NdQdIWr4a6Mg9GxjqWciKWIoR//vJlpUt7tHZj6sLdGlDC4tl1kY?=
- =?us-ascii?Q?YHKGl/qTBJPVrF/UpvA8K1KPX4IuEpgLp8Rue8Op8ei3p914GHNT5fqImD92?=
- =?us-ascii?Q?emVAHdyObrQth/O+ycCi9Xksjo1xJEA3xnUHEFpKfE7YOUghypAfOcM5lotV?=
- =?us-ascii?Q?cc3g0GsDUexUBGXd0aa9kmIgk11Qkl0n41mxuEwJul+GcmqzOhKTWj7ZoIBS?=
- =?us-ascii?Q?nv1sHPJMoTT3jK6OeZDsgifdWVfH3IkvM8Th8nC9nXf93sMzOWdjp65ZdI5U?=
- =?us-ascii?Q?r9Hznjz1RXcOqyIEwXoxxlceTpdGtE6phizlg8CX6OH5dNSZaVk2lcy6vaOr?=
- =?us-ascii?Q?pqSViW+LZV8BHe5/H/nEHSwJx1LIG5evk1ISIo80Zqf8nrkM+kr/yUqhCbIv?=
- =?us-ascii?Q?gnxtrlBvVORHBQRY0kElXLfi50IUEs+ce9CSJoiUD++d+ATRZTTD92dRMHX4?=
- =?us-ascii?Q?QeooZicfX5LX5aNj3x6VQyn9YhuyZtIchDVzu0rdmUEkYNcX1iGiRBvqbOl1?=
- =?us-ascii?Q?ZZXj+y/lddtIXH8fZGw0lP4IHcZSD6JLJNlSuWVTCGULDeLK6mxyUfa1NLi0?=
- =?us-ascii?Q?e2j0F3Qb1cpEukQ1LM/fRnNAJ8SwhTfcWUYHmAM4cgz2kzayY9jMMGVi/Dwe?=
- =?us-ascii?Q?M2AwSJJHrTAmyjXAD6MzDofJzgMnylCQNv6WGAqTynBvfPDSzEMFEYJYtGRd?=
- =?us-ascii?Q?DDfnG0v6zU6KhF/3OwIcmmXT1fPuUOUFkt9bSsp2Cai+anIqS3bGhQ+1gI14?=
- =?us-ascii?Q?tFsARTaeaxJqx+4GBVX2QWNMmad6ZJA0Ds3MeqzCEYLNT/RlijQ9uvPMjxKf?=
- =?us-ascii?Q?EoF++hxRxd6IBjdA7JvPc9BOIwTh+fXvKphqKeIIC/f5hZL+k5lQNn4QZkDV?=
- =?us-ascii?Q?3Eo5Bgd1rLZW5MgIkRizBjrC1v5oeWhu6K7CVpOi9c/tKAQuWZ3CW2nczzf1?=
- =?us-ascii?Q?B0OsEdgjQmWx+D0X4RY2wM/dvKkd4UYW2HrYt4lX8eMzpA28pWqwIAUnEZTP?=
- =?us-ascii?Q?VzuduBhX5XcQOOUTm/Kg3u93rh8rT1RF9czfUIrTALAf6d4PVpvdHq8Y9Uui?=
- =?us-ascii?Q?+52Cg7/1FloTj4bXzGQ/uXgNjdKQ9ayQXmp6yuN3SE0x08+jb0ZLimcV2Lho?=
- =?us-ascii?Q?N/2t6K71jvR8R8t5ni8SQ2RKqPwtyErFpwknS5IZtWwFIZ82/TNP/7T4xKwx?=
- =?us-ascii?Q?lF2N6XS+5juzi9AzRA3t6mBZdAZ2oBRYJxMxn8+dX4VZ6OKI7r35Z3BE3BPh?=
- =?us-ascii?Q?8vOtjddQrHWZGwWDVLEZNE6TC50tYFGtWwi57kOE8iFwttVZ7iEC1bjP8W6C?=
- =?us-ascii?Q?rn6yHTob3x5tEehOa268gRwjaFR1cLuROCfxhf+8R2jf3IrVOBKlqAhQyBa6?=
- =?us-ascii?Q?g3qS2PWwyoylV14LF6tAeLLBuWNH89uwb0BDd9S5XOBmJbUx8ZmeO0jXwJn4?=
- =?us-ascii?Q?QzxzWspR1r3T3Dxd9SoUWDFYXbBiP5SCMh0gjR644qiw07AEuwwLrXMoM5J1?=
- =?us-ascii?Q?A5qDrpVUFcRCDO/yGMfVjEKlS0cPF3+CgzBXOaxvdKpvr79qTXXrgppCoNOl?=
- =?us-ascii?Q?pXqDPT47q6Vd2kBgghY=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: de588c66-067b-45d7-6760-08dcdcb5e628
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2024 16:28:18.9248
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Dna1L9sfr2PldBuDq4lDVq2AlcnVBF59FaUeBCKrZjnKdYpVuyG9wgUKexh0KbdEWXIxk5OFYKNb1hsihwksEQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10127
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Tue, Sep 24, 2024 at 11:27:44AM +0800, Richard Zhu wrote:
-> Add ref clock for i.MX95 PCIe.
->
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+On Thu, 19 Sep 2024 13:17:15 +0530
+Gowthami Thiagarajan <gthiagarajan@marvell.com> wrote:
 
-below nit.
+> Odyssey DRAM Subsystem supports eight counters for monitoring performance
+> and software can program those counters to monitor any of the defined
+> performance events. Supported performance events include those counted
+> at the interface between the DDR controller and the PHY, interface between
+> the DDR Controller and the CHI interconnect, or within the DDR Controller.
+> 
+> Additionally DSS also supports two fixed performance event counters, one
+> for ddr reads and the other for ddr writes.
+> 
+> Signed-off-by: Gowthami Thiagarajan <gthiagarajan@marvell.com>
+Follow on comments. Given I'm late to the game and none of this
+is critical, you can ignore if maintainers think current code
+is fine.
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Jonathan
 
 > ---
->  arch/arm64/boot/dts/freescale/imx95.dtsi | 25 ++++++++++++++++++++----
->  1 file changed, 21 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/freescale/imx95.dtsi b/arch/arm64/boot/dts/freescale/imx95.dtsi
-> index 1bbf9a0468f6..e66be264c2f2 100644
-> --- a/arch/arm64/boot/dts/freescale/imx95.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx95.dtsi
-> @@ -221,6 +221,13 @@ core5 {
->  		};
->  	};
->
-> +	clk_dummy: clock-dummy {
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		clock-frequency = <0>;
-> +		clock-output-names = "clk_dummy";
-> +	};
+>  Documentation/admin-guide/perf/index.rst      |   1 +
+>  .../admin-guide/perf/mrvl-odyssey-ddr-pmu.rst |  80 ++++++
+>  drivers/perf/marvell_cn10k_ddr_pmu.c          | 257 +++++++++++++++++-
+>  3 files changed, 335 insertions(+), 3 deletions(-)
+>  create mode 100644 Documentation/admin-guide/perf/mrvl-odyssey-ddr-pmu.rst
+> 
+> diff --git a/Documentation/admin-guide/perf/index.rst b/Documentation/admin-guide/perf/index.rst
+> index 7eb3dcd6f4da..d673ccfea903 100644
+> --- a/Documentation/admin-guide/perf/index.rst
+> +++ b/Documentation/admin-guide/perf/index.rst
+> @@ -14,6 +14,7 @@ Performance monitor support
+>     qcom_l2_pmu
+>     qcom_l3_pmu
+>     starfive_starlink_pmu
+> +   mrvl-odyssey-ddr-pmu
+>     arm-ccn
+>     arm-cmn
+>     xgene-pmu
+> diff --git a/Documentation/admin-guide/perf/mrvl-odyssey-ddr-pmu.rst b/Documentation/admin-guide/perf/mrvl-odyssey-ddr-pmu.rst
+> new file mode 100644
+> index 000000000000..2e817593a4d9
+> --- /dev/null
+> +++ b/Documentation/admin-guide/perf/mrvl-odyssey-ddr-pmu.rst
+...
+
+> diff --git a/drivers/perf/marvell_cn10k_ddr_pmu.c b/drivers/perf/marvell_cn10k_ddr_pmu.c
+> index 65422fd5ddd2..95818bc035e4 100644
+> --- a/drivers/perf/marvell_cn10k_ddr_pmu.c
+> +++ b/drivers/perf/marvell_cn10k_ddr_pmu.c
+
+> -static int ddr_perf_get_event_bitmap(int eventid, u64 *event_bitmap)
+> +static int ddr_perf_get_event_bitmap(int eventid, u64 *event_bitmap,
+> +				     struct cn10k_ddr_pmu *ddr_pmu)
+>  {
+>  	switch (eventid) {
+>  	case EVENT_HIF_RD_OR_WR ... EVENT_WAW_HAZARD:
+>  	case EVENT_OP_IS_REFRESH ... EVENT_OP_IS_ZQLATCH:
+>  		*event_bitmap = (1ULL << (eventid - 1));
+>  		break;
+> +	case EVENT_DFI_PARITY_POISON ...EVENT_DFI_CMD_IS_RETRY:
+> +		if (ddr_pmu->version == DDR_PMU_V2)
+> +			*event_bitmap = (1ULL << (eventid - 1));
+> +		else
+> +			goto err;
+> +		break;
+>  	case EVENT_OP_IS_ENTER_SELFREF:
+>  	case EVENT_OP_IS_ENTER_POWERDOWN:
+>  	case EVENT_OP_IS_ENTER_MPSM:
+>  		*event_bitmap = (0xFULL << (eventid - 1));
+>  		break;
+>  	default:
+> -		pr_err("%s Invalid eventid %d\n", __func__, eventid);
+> +err:		pr_err("%s Invalid eventid %d\n", __func__, eventid);
+
+Hmm. Not pretty. I'd print that the event is not supported prior to
+v2 in where you have goto err above.
+
+>  		return -EINVAL;
+>  	}
+>  
+c void cn10k_ddr_perf_event_start(struct perf_event *event, int flags)
+>  {
+>  	struct cn10k_ddr_pmu *pmu = to_cn10k_ddr_pmu(event->pmu);
+> +	u64 ctrl_reg = pmu->p_data->ddrc_perf_cnt_op_mode_ctrl;
+>  	struct hw_perf_event *hwc = &event->hw;
+>  	int counter = hwc->idx;
+>  
+>  	local64_set(&hwc->prev_count, 0);
+>  
+>  	cn10k_ddr_perf_counter_enable(pmu, counter, true);
+> +	if (pmu->version == DDR_PMU_V2) {
+As below.  Just use a flag for whether to do this.
+That flag can give it a clear name rather than basing it on 
+a magic version number.
+
+> +	/* Setup the PMU counter to work in manual mode */
+> +		writeq_relaxed(OP_MODE_CTRL_VAL_MANUAL, pmu->base +
+> +			       DDRC_PERF_REG(ctrl_reg, counter));
 > +
->  	clk_ext1: clock-ext1 {
->  		compatible = "fixed-clock";
->  		#clock-cells = <0>;
-> @@ -1055,6 +1062,14 @@ smmu: iommu@490d0000 {
->  			};
->  		};
->
-> +		hsio_blk_ctl: syscon@4c0100c0 {
-> +			compatible = "nxp,imx95-hsio-blk-ctl", "syscon";
-> +			reg = <0x0 0x4c0100c0 0x0 0x4>;
-> +			#clock-cells = <1>;
-> +			power-domains = <&scmi_devpd IMX95_PD_HSIO_TOP>;
-> +			clocks = <&clk_dummy>;
+> +		cn10k_ddr_perf_counter_start(pmu, counter);
+> +	}
+>  
+>  	hwc->state = 0;
+>  }
+> @@ -495,7 +636,7 @@ static int cn10k_ddr_perf_event_add(struct perf_event *event, int flags)
+>  	if (counter < DDRC_PERF_NUM_GEN_COUNTERS) {
+>  		/* Generic counters, configure event id */
+>  		reg_offset = DDRC_PERF_CFG(p_data->ddrc_perf_cfg_base, counter);
+> -		ret = ddr_perf_get_event_bitmap(config, &val);
+> +		ret = ddr_perf_get_event_bitmap(config, &val, pmu);
+>  		if (ret)
+>  			return ret;
+>  
+> @@ -524,6 +665,9 @@ static void cn10k_ddr_perf_event_stop(struct perf_event *event, int flags)
+>  
+>  	cn10k_ddr_perf_counter_enable(pmu, counter, false);
+>  
+> +	if (pmu->version == DDR_PMU_V2)
+> +		cn10k_ddr_perf_counter_stop(pmu, counter);
+Use a flag in pdata to decide if this needs doing, not a version check.
+Versions are just not flexible enough once a significant number of
+them exist and there is very little cost in avoiding them in the first place.
 
-nit: move clocks above power-domains
+Also, use device names not v1 and v2.
 
 
-> +		};
+Jonathan
+
 > +
->  		pcie0: pcie@4c300000 {
->  			compatible = "fsl,imx95-pcie";
->  			reg = <0 0x4c300000 0 0x10000>,
-> @@ -1082,8 +1097,9 @@ pcie0: pcie@4c300000 {
->  			clocks = <&scmi_clk IMX95_CLK_HSIO>,
->  				 <&scmi_clk IMX95_CLK_HSIOPLL>,
->  				 <&scmi_clk IMX95_CLK_HSIOPLL_VCO>,
-> -				 <&scmi_clk IMX95_CLK_HSIOPCIEAUX>;
-> -			clock-names = "pcie", "pcie_bus", "pcie_phy", "pcie_aux";
-> +				 <&scmi_clk IMX95_CLK_HSIOPCIEAUX>,
-> +				 <&hsio_blk_ctl 0>;
-> +			clock-names = "pcie", "pcie_bus", "pcie_phy", "pcie_aux", "ref";
->  			assigned-clocks =<&scmi_clk IMX95_CLK_HSIOPLL_VCO>,
->  					 <&scmi_clk IMX95_CLK_HSIOPLL>,
->  					 <&scmi_clk IMX95_CLK_HSIOPCIEAUX>;
-> @@ -1149,8 +1165,9 @@ pcie1: pcie@4c380000 {
->  			clocks = <&scmi_clk IMX95_CLK_HSIO>,
->  				 <&scmi_clk IMX95_CLK_HSIOPLL>,
->  				 <&scmi_clk IMX95_CLK_HSIOPLL_VCO>,
-> -				 <&scmi_clk IMX95_CLK_HSIOPCIEAUX>;
-> -			clock-names = "pcie", "pcie_bus", "pcie_phy", "pcie_aux";
-> +				 <&scmi_clk IMX95_CLK_HSIOPCIEAUX>,
-> +				 <&hsio_blk_ctl 0>;
-> +			clock-names = "pcie", "pcie_bus", "pcie_phy", "pcie_aux", "ref";
->  			assigned-clocks =<&scmi_clk IMX95_CLK_HSIOPLL_VCO>,
->  					 <&scmi_clk IMX95_CLK_HSIOPLL>,
->  					 <&scmi_clk IMX95_CLK_HSIOPCIEAUX>;
-> --
-> 2.37.1
->
+>  	if (flags & PERF_EF_UPDATE)
+>  		cn10k_ddr_perf_event_update(event);
+>  
+> @@ -640,6 +784,66 @@ static void ddr_pmu_overflow_hander(struct cn10k_ddr_pmu *pmu, int evt_idx)
+>  	cn10k_ddr_perf_pmu_enable(&pmu->pmu);
+>  }
+> 
 
