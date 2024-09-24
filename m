@@ -1,178 +1,225 @@
-Return-Path: <linux-kernel+bounces-337414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F25749849CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:37:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2705F9849CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:41:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 724401F2603D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:37:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59798284DAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5BC91ABEB0;
-	Tue, 24 Sep 2024 16:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BZKeNpem"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB1C1AB6F4;
+	Tue, 24 Sep 2024 16:40:54 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AAF41AAE0D;
-	Tue, 24 Sep 2024 16:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E151AAE0D
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 16:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727195812; cv=none; b=PXf3vJFWpeRFgc+se91E8WMqrAwrBTxyTrzGfwD3dUuUn3UVvOMC0h4zPgFbJ2/8M0OnJBqPfW+9ayFQaP3lIKjGvzA4z78tUakep55PZCQumvV9EswMtDcLAMOFwcMJlhf77GGRLZzNBQ3gZXpXX1AtLrk+zG5r0d/RVlMHn/0=
+	t=1727196054; cv=none; b=NyWUJhGQz4rs+P9Rt79XMgfXvT6tpdLrWCRqAWoWbIrD1hiPpxsLIFaF7+9fUCsySxldEjB4K0uqZcobT5Iff6QgWGvtHk591a4YanNGePcSLYmDLfZBN0FY9hQj18zExc76B+j8nLgBynRr7v5VGwa2ygfB2CSKzBQo2VGdMAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727195812; c=relaxed/simple;
-	bh=5VvhCMZaeNsBAmWJBTCSPhE8m0YS7fNLFTIYRz8hII0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vCIjeVvkNMc9mW3i19gcQHSpmPRSqBAwzAfUHr83+YOiVzDxsHMA3HnyFu/mcaSdFj1JpQ9a82zG8XRB1Qb/oqC7GtbSxr+q3PugjeC0FwF/s45e7Sv4u1Q6XW+QHGMyG+rlDJRw05Al1TYbbgLhhkoYLGnHVfS2wBRu00ko2y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BZKeNpem; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67D7BC4CEC4;
-	Tue, 24 Sep 2024 16:36:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727195811;
-	bh=5VvhCMZaeNsBAmWJBTCSPhE8m0YS7fNLFTIYRz8hII0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BZKeNpemH38X1KDslf8fCc73trcmd1s7gfe4cWu9EtLSOMIAEvSFCtcn8mmMAvhUj
-	 g60Bl22v05/MRaNZOJnmM4lqbAk4FtU4t5Odeg1DsxjqUIVNXFtiudVoQr61635FkJ
-	 Fq/w+hE6/bhCo9vPnh1+aKLEOWOuvxNhFmcrPaGJQOVYa2bE/CjXvt/eVBJTggkW9e
-	 1FnPuWsUhiOE1rmdSCvu0alkUhBSks++HAOarNQXIlMbADtm4+aRWawhZ9EU6bkHcl
-	 Y/9YZ7z44o01GY6jhrn7QgjNo0cmScY7qnhNNA+c4O/VkYHbxC58noQF1Fhr3u2axb
-	 BfEUkdodOxFwA==
-Date: Tue, 24 Sep 2024 17:36:46 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
-Cc: broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, michal.simek@amd.com,
-	linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	git@amd.com, amitrkcian2002@gmail.com
-Subject: Re: [PATCH] dt-bindings: spi: xilinx: Add clocks & clock-names
- properties
-Message-ID: <20240924-impaired-starving-eef91b339f67@spud>
-References: <20240923123242.2101562-1-amit.kumar-mahapatra@amd.com>
+	s=arc-20240116; t=1727196054; c=relaxed/simple;
+	bh=eqmOGMQRVtWIYluqhXcdHzrBfzLr8lW9oWtQeMCeU7Y=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=o7EcI+1Ot74B2Bb79azRlDrmZufNZuVy28UMRX9lev/+/2Sgk4nzMNbHpbQGzmGZtbzZpmudFXt8t3hkL+L8w1PiXuyeSm78HpX5H1Ya5Jp673Ban5ptFeXLIJz1qFmAWyxw1ip9B4y1nqDDL+32LWyIt9EspUf5K3YITCLDh0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XClr35b8vz6L75c;
+	Wed, 25 Sep 2024 00:36:51 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 872211400D4;
+	Wed, 25 Sep 2024 00:40:48 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 24 Sep
+ 2024 18:40:48 +0200
+Date: Tue, 24 Sep 2024 17:40:46 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Gowthami Thiagarajan <gthiagarajan@marvell.com>
+CC: <will@kernel.org>, <mark.rutland@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<andrew@lunn.ch>, <sgoutham@marvell.com>, <lcherian@marvell.com>,
+	<gcherian@marvell.com>
+Subject: Re: [PATCH v8] perf/marvell: Marvell PEM performance monitor
+ support
+Message-ID: <20240924174046.0000242d@Huawei.com>
+In-Reply-To: <20240924063126.460219-1-gthiagarajan@marvell.com>
+References: <20240924063126.460219-1-gthiagarajan@marvell.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="TW6iJUl9SjJzFTPf"
-Content-Disposition: inline
-In-Reply-To: <20240923123242.2101562-1-amit.kumar-mahapatra@amd.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
+ frapeml500008.china.huawei.com (7.182.85.71)
+
+On Tue, 24 Sep 2024 12:01:26 +0530
+Gowthami Thiagarajan <gthiagarajan@marvell.com> wrote:
+
+> PCI Express Interface PMU includes various performance counters
+> to monitor the data that is transmitted over the PCIe link. The
+> counters track various inbound and outbound transactions which
+> includes separate counters for posted/non-posted/completion TLPs.
+> Also, inbound and outbound memory read requests along with their
+> latencies can also be monitored. Address Translation Services(ATS)events
+> such as ATS Translation, ATS Page Request, ATS Invalidation along with
+> their corresponding latencies are also supported.
+> 
+> The performance counters are 64 bits wide.
+> 
+> For instance,
+> perf stat -e ib_tlp_pr <workload>
+> tracks the inbound posted TLPs for the workload.
+> 
+> Signed-off-by: Gowthami Thiagarajan <gthiagarajan@marvell.com>
+
+A few quick comments inline from a superficial look.
+
+Jonathan
 
 
---TW6iJUl9SjJzFTPf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> diff --git a/drivers/perf/marvell_pem_pmu.c b/drivers/perf/marvell_pem_pmu.c
+> new file mode 100644
+> index 000000000000..d3aca94278fb
+> --- /dev/null
+> +++ b/drivers/perf/marvell_pem_pmu.c
+> @@ -0,0 +1,427 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Marvell PEM(PCIe RC) Performance Monitor Driver
+> + *
+> + * Copyright (C) 2024 Marvell.
+> + */
+> +
+> +#include <linux/acpi.h>
+> +#include <linux/init.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/perf_event.h>
+> +#include <linux/platform_device.h>
+> +
+> +/*
+> + * Each of these events maps to a free running 64 bit counter
+> + * with no event control, but can be reset.
+> + *
 
-On Mon, Sep 23, 2024 at 06:02:42PM +0530, Amit Kumar Mahapatra wrote:
-> Include the 'clocks' and 'clock-names' properties in the AXI Quad-SPI
-> bindings. When the AXI4-Lite interface is enabled, the core operates in
-> legacy mode, maintaining backward compatibility with version 1.00, and
-> uses 's_axi_aclk' and 'ext_spi_clk'. For the AXI interface, it uses
-> 's_axi4_aclk' and 'ext_spi_clk'.
->=20
-> Signed-off-by: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
-> ---
-> BRANCH: for-next
-> ---
->  .../devicetree/bindings/spi/spi-xilinx.yaml   | 29 +++++++++++++++++++
->  1 file changed, 29 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/spi/spi-xilinx.yaml b/Docu=
-mentation/devicetree/bindings/spi/spi-xilinx.yaml
-> index 4beb3af0416d..9dfec195ecd4 100644
-> --- a/Documentation/devicetree/bindings/spi/spi-xilinx.yaml
-> +++ b/Documentation/devicetree/bindings/spi/spi-xilinx.yaml
-> @@ -12,6 +12,25 @@ maintainers:
->  allOf:
->    - $ref: spi-controller.yaml#
+This blank line adds nothing. I'd drop it.
 
-Please move the allOf block down to the end of the binding, after the
-property definitions.
+> + */
+> +enum pem_events {
+> +	IB_TLP_NPR,
+> +	IB_TLP_PR,
+> +	IB_TLP_CPL,
+> +	IB_TLP_DWORDS_NPR,
+> +	IB_TLP_DWORDS_PR,
+> +	IB_TLP_DWORDS_CPL,
+> +	IB_INFLIGHT,
+> +	IB_READS,
+> +	IB_REQ_NO_RO_NCB,
+> +	IB_REQ_NO_RO_EBUS,
+> +	OB_TLP_NPR,
+> +	OB_TLP_PR,
+> +	OB_TLP_CPL,
+> +	OB_TLP_DWORDS_NPR,
+> +	OB_TLP_DWORDS_PR,
+> +	OB_TLP_DWORDS_CPL,
+> +	OB_INFLIGHT,
+> +	OB_READS,
+> +	OB_MERGES_NPR,
+> +	OB_MERGES_PR,
+> +	OB_MERGES_CPL,
+> +	ATS_TRANS,
+> +	ATS_TRANS_LATENCY,
+> +	ATS_PRI,
+> +	ATS_PRI_LATENCY,
+> +	ATS_INV,
+> +	ATS_INV_LATENCY,
+> +	PEM_EVENTIDS_MAX,
 
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: xlnx,axi-quad-spi-1.00.a
-> +    then:
-> +      properties:
-> +        clock-names:
-> +          items:
-> +            - const: s_axi_aclk
-> +            - const: ext_spi_clk
+A comma after a MAX entry rarely makes sense. I'd drop it.
 
-These are all clocks, there should be no need to have "clk" in the
-names.
+> +};
+
+
+
+> +static int pem_pmu_offline_cpu(unsigned int cpu, struct hlist_node *node)
+> +{
+> +	struct pem_pmu *pmu = hlist_entry_safe(node, struct pem_pmu,
+> +					       node);
+
+Why wrap? It's under 80 chars anyway.
+
+> +	unsigned int target;
+> +
+> +	if (cpu != pmu->cpu)
+> +		return 0;
+> +
+> +	target = cpumask_any_but(cpu_online_mask, cpu);
+> +	if (target >= nr_cpu_ids)
+> +		return 0;
+> +
+> +	perf_pmu_migrate_context(&pmu->pmu, cpu, target);
+> +	pmu->cpu = target;
+> +	return 0;
+> +}
 
 > +
-> +    else:
-> +      properties:
-> +        clock-names:
-> +          items:
-> +            - const: s_axi4_aclk
-> +            - const: ext_spi_clk
+> +#ifdef CONFIG_ACPI
+> +static const struct acpi_device_id pem_pmu_acpi_match[] = {
+> +	{"MRVL000E", 0},
+> +	{},
+
+No need for trailing comma.
+
+> +};
+> +MODULE_DEVICE_TABLE(acpi, pem_pmu_acpi_match);
+> +#endif
 > +
->  properties:
->    compatible:
->      enum:
-> @@ -25,6 +44,12 @@ properties:
->    interrupts:
->      maxItems: 1
-> =20
-> +  clocks:
-> +    maxItems: 2
-> +
-> +  clock-names:
-> +    maxItems: 2
-> +
->    xlnx,num-ss-bits:
->      description: Number of chip selects used.
->      minimum: 1
-> @@ -39,6 +64,8 @@ required:
->    - compatible
->    - reg
->    - interrupts
-> +  - clocks
-> +  - clock-names
+> +static struct platform_driver pem_pmu_driver = {
+> +	.driver	= {
+> +		.name   = "pem-pmu",
+> +		.acpi_match_table = ACPI_PTR(pem_pmu_acpi_match),
 
-New required properties are an ABI break, where is the driver patch
-that makes use of these clocks?
+Drop the ACPI_PTR() protection and the ifdefs.
 
-Cheers,
-Conor.
+They provide very little advantage and hurt readabilty.
+Maybe make sense if the driver supports dt binding but this
+one doesn't.
 
-> =20
->  unevaluatedProperties: false
-> =20
-> @@ -49,6 +76,8 @@ examples:
->        interrupt-parent =3D <&intc>;
->        interrupts =3D <0 31 1>;
->        reg =3D <0x41e00000 0x10000>;
-> +      clocks =3D <&clkc 72>, <&clkc 73>;
-> +      clock-names =3D "s_axi4_aclk", "ext_spi_clk";
->        xlnx,num-ss-bits =3D <0x1>;
->        xlnx,num-transfer-bits =3D <32>;
->      };
-> --=20
-> 2.34.1
->=20
+> +		.suppress_bind_attrs = true,
+> +	},
+> +	.probe		= pem_perf_probe,
+> +	.remove		= pem_perf_remove,
+> +};
 
---TW6iJUl9SjJzFTPf
-Content-Type: application/pgp-signature; name="signature.asc"
+> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+> index 9316c39260e0..254491a6d09b 100644
+> --- a/include/linux/cpuhotplug.h
+> +++ b/include/linux/cpuhotplug.h
+> @@ -228,6 +228,7 @@ enum cpuhp_state {
+>  	CPUHP_AP_PERF_ARM_APM_XGENE_ONLINE,
+>  	CPUHP_AP_PERF_ARM_CAVIUM_TX2_UNCORE_ONLINE,
+>  	CPUHP_AP_PERF_ARM_MARVELL_CN10K_DDR_ONLINE,
+> +	CPUHP_AP_PERF_ARM_MRVL_PEM_ONLINE,
 
------BEGIN PGP SIGNATURE-----
+Silly question but which of the rules at: 
+https://elixir.bootlin.com/linux/v6.11/source/include/linux/cpuhotplug.h#L45
+means this can't use CPUHP_AP_ONLINE_DYN?
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvLqngAKCRB4tDGHoIJi
-0jgQAP4qT9JElUko9VSDsRLLQWSll1SEQ7ZXTfbTFIke2mfMLQEAi65j4G/1poMs
-wXPxx+hlcO36bMcB6Ac4Pus+2JQInwY=
-=mVJ5
------END PGP SIGNATURE-----
+Quite a few recent PMU drivers have used that without issues.
 
---TW6iJUl9SjJzFTPf--
+>  	CPUHP_AP_PERF_POWERPC_NEST_IMC_ONLINE,
+>  	CPUHP_AP_PERF_POWERPC_CORE_IMC_ONLINE,
+>  	CPUHP_AP_PERF_POWERPC_THREAD_IMC_ONLINE,
+
 
