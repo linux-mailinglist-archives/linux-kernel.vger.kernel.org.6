@@ -1,170 +1,391 @@
-Return-Path: <linux-kernel+bounces-337546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C51A1984B90
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:29:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5635B984B94
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:31:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E87CF1C230E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:29:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2322B20E0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49BCC1AC898;
-	Tue, 24 Sep 2024 19:29:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4090312CDBA;
+	Tue, 24 Sep 2024 19:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L5Gmi2tA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M+sQFsOg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E7581AC458;
-	Tue, 24 Sep 2024 19:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74B041760
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 19:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727206152; cv=none; b=VZ5L6wfzEFqhGtDOvzQ3gdONtcbKqwUa+XRWqBzGsBntMH4PhgYa6INUORiQGsbkXldf7cV8z4Shlbw+kgeEK/xoycViYa85Hvkn/fGJR3aovLWWttl0ZliYAJZUR5xeczfE+8p+iLwWLcejvDIelhjxrP5mTWrzQM2cFv+3XjM=
+	t=1727206266; cv=none; b=R67B6dXau+H8+L7i//7cfRHm/todW+ZZ3YTjSgqTUZc++ZAP+4N4cae9k448SsVFwd3ihLslUl2M+nSFU1MMGHeSjLYgxAD96IzT/VU3uwnNfGB3aQTdgcaOk9RTtA9dwc1o7L5Adab+jjLPFMPeqdkUKa0j60TudaVwkUUM7kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727206152; c=relaxed/simple;
-	bh=/1y5DAKEaa73LT3bRfv9WDo15j9LQIYDIMNv4BdG5lk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gucqNxMuxw77GAaQfcOoBmJdeZkmNum19XpGz4yqbTdfC4DOqCfhweO81gm5WTHjT0DE2Jiv5JWc0WuRWwqyyemOBf5HJ8TFSFqT/XRpgEbVf78GGIq/o9yj2F7EGPVWSOlVwssGCvyqWoeeG9TCec1hEl8tAPeU0VAwJ1IkVLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L5Gmi2tA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A947C4CED0;
-	Tue, 24 Sep 2024 19:29:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727206152;
-	bh=/1y5DAKEaa73LT3bRfv9WDo15j9LQIYDIMNv4BdG5lk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L5Gmi2tAphnpBnUa07dzx3wsjhqWvkSfXuKS017Tx8h/S4N6UOCQeFSkwXydEKm6h
-	 Y0c7q3wnc9Ilo0k1lsfMiKeUepLj0usrOgtSoZzc/C6oaMnwJpadsVE38dnSvAgWta
-	 kr1GKfDr8Bp1CJejVHplyzYLFbLmZJDV3JNc1D7AaK835BSZekEeiLz79BdTnEdWT6
-	 T1qewE2ChaaC1oQIl1dx7yolhXTDQznD9nctc7RNmWu6ZaEra5/aV5GDv9QlT2F2dd
-	 8hasK7FowJgE80Dwsx4BAXoFaj0FzqaCgF/U2ylzrGjfbEP0OgJZB05WMNzcC096M5
-	 tOoHTIlqGb1Vw==
-Date: Tue, 24 Sep 2024 12:29:10 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Levi Yun <yeoreum.yun@arm.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, james.clark@linaro.org,
-	asmadeus@codewreck.org, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, nd@arm.com
-Subject: Re: [PATCH v4 1/2] perf stat: Close cork_fd when
- create_perf_stat_counter() failed
-Message-ID: <ZvMTBryjl5xTYr8W@google.com>
-References: <20240913135907.648734-1-yeoreum.yun@arm.com>
- <20240913135907.648734-2-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1727206266; c=relaxed/simple;
+	bh=9kbMn6YpChM5AonBd7P0EdzUPS03Dkt/DezgXrUlmDQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=umP/tax1pAg7s3rHf6vKQ6+UnSN6/MV4zFYV5QXBfL9m4bz4Ebxj1NET0MTI6IA99+aajRS+9ZI9VipRFbe48Hd/S2LhzFP5MVCltHaLWmvd3iZu6sTW10qZ6JkShbCjO06+kwwzhEa/Nke9qq8kTYXfTIJYbUlR/65G5bGwfEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M+sQFsOg; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727206261;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2gHwfJb9Jq74Zp+MSNc/zGBlnegLnGX+F7dKDa/eoiY=;
+	b=M+sQFsOgy5V3y/Lty+BYk71j8/WzKtwRZcKjJf0dncL8WeCkgUktEx7ObXcbN9sIwCN1+u
+	a330yd5lFALWaGV+rIhfRSAWI0xyRifX+OR4X4OK8FwBDcCudHNGZLuv59MsBpRPLp2WH/
+	ikqhVeQCiRu7ldtWex9ETy/6iJgv/cs=
+Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
+ [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-452-GZWHLaBxMqCLfarqbFRA0A-1; Tue, 24 Sep 2024 15:31:00 -0400
+X-MC-Unique: GZWHLaBxMqCLfarqbFRA0A-1
+Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-6d9e31e66eeso96993197b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 12:31:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727206259; x=1727811059;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2gHwfJb9Jq74Zp+MSNc/zGBlnegLnGX+F7dKDa/eoiY=;
+        b=EjwK4mx1AfIFOQqgUSUD4NvprrnpEGztmx0cGLblSZ1qH3u1/rLIjqZW1S5wyWz9Qn
+         ZwG5jkHnTc96n3fbdknK7bUVn6aZ3aZLML/gDfPt9wy2dD0lq0U7ZrYxIIQI5cuseqh9
+         OP1Jywy0GAATlFYFH/z+H+7rZ5VUf+jnp0sI4tKyIVskIM1neXfl8c4ySzS/RSCWGQ/G
+         q7EdjYrc0K80YE/Ywi+iHnXTKkHwOG3+zH02cvGFQ7L0KLu94dBt1FLO+FCV+GUc8ORI
+         GQaxJLJlfNgdDXjyhv6XZmKs9SNaY7pcaVqz2TicsorovpHGhyqbR4r6m8FX19S+mIrL
+         NtGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX0icaeYWvChDxq/U5mYpW+mmuYkQOJ7B8iadMnET/7wBVonxeezXfGoqQYDLwJRz/ovHMcO93u44twCIs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7IztFvGPSExkwpycLHh3VlBn42CAkz+XWeiCnlXdL0Uz942OH
+	ujSyU9pYMqSvM5wgiL/107QfEGoNsTOZpi/uMINbEIcMCsIUSFXUThrZkQd6VF2yMt77lKhJKpG
+	EcjwE7DmMjiUBK5Zgjt/3CqTYZj6q/Bnjzh7RG6IyBw4WAPYyj+toly9KcuymVFfOyEGM0HaI/p
+	7YJI+Z1x+aqrnpHqu8zB5oR4Qo1M6kn9hC0U6B
+X-Received: by 2002:a05:690c:fd5:b0:615:1a0:78ea with SMTP id 00721157ae682-6e21d9d61e9mr6452477b3.34.1727206259250;
+        Tue, 24 Sep 2024 12:30:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEaolj6P4i0qjFzMZyNndz98E0I2Qssv/UEM6HEyqJk7BxXfmWHZzgUB9rpcSAzqfB5atMyGtdKKy/FUu/ENOg=
+X-Received: by 2002:a05:690c:fd5:b0:615:1a0:78ea with SMTP id
+ 00721157ae682-6e21d9d61e9mr6452127b3.34.1727206258873; Tue, 24 Sep 2024
+ 12:30:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240913135907.648734-2-yeoreum.yun@arm.com>
+References: <20240919165641.4632-1-user@am64> <20240924020824.6264-1-user@am64>
+ <8eb45005-c6fb-4baa-a44a-243958a3a1ba@suse.de> <c960dc48-0a05-4cad-b86b-33ad59923bc3@suse.de>
+ <CADnq5_OtdUvOUPpq1aUoxtgpt6a4h598019SNhe+9ZWUaANYqg@mail.gmail.com>
+In-Reply-To: <CADnq5_OtdUvOUPpq1aUoxtgpt6a4h598019SNhe+9ZWUaANYqg@mail.gmail.com>
+From: Ewan Milne <emilne@redhat.com>
+Date: Tue, 24 Sep 2024 15:30:47 -0400
+Message-ID: <CAGtn9rmUfHHOGX-_7ZNUpJMjBkCOMaAuGQsJnpSrfjMfmK1xSQ@mail.gmail.com>
+Subject: Re: radeon ARUBA NULL pointer dereference
+To: Alex Deucher <alexdeucher@gmail.com>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>, Arthur Marsh <arthur.marsh@internode.on.net>, 
+	Xinhui.Pan@amd.com, airlied@gmail.com, alexander.deucher@amd.com, 
+	amd-gfx@lists.freedesktop.org, christian.koenig@amd.com, daniel@ffwll.ch, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	wuhoipok@gmail.com, iommu@lists.linux.dev, 
+	"the arch/x86 maintainers" <x86@kernel.org>, Nilesh Javali <njavali@marvell.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+I think we are seeing a similar problem w/qla2xxx panicing at boot:
 
-On Fri, Sep 13, 2024 at 02:59:06PM +0100, Levi Yun wrote:
-> When create_perf_stat_counter() failed, it doesn't close workload.cork_fd
-> open in evlist__prepare_workload(). This could make too many open file
-> error while __run_perf_stat() repeats.
-> 
-> Introduce evlist__cancel_workload to close workload.cork_fd and
-> wait workload.child_pid until exit to clear child process
-> when create_perf_stat_counter() is failed with COUNTER_FATAL.
-> 
-> Signed-off-by: Levi Yun <yeoreum.yun@arm.com>
-> Reviewed-by: James Clark <james.clark@linaro.org>
-> ---
->  tools/perf/builtin-stat.c |  4 ++++
->  tools/perf/util/evlist.c  | 14 +++++++++++++-
->  tools/perf/util/evlist.h  |  1 +
->  3 files changed, 18 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-> index 661832756a24..954eb37ce7b8 100644
-> --- a/tools/perf/builtin-stat.c
-> +++ b/tools/perf/builtin-stat.c
-> @@ -763,6 +763,8 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
->  
->  			switch (stat_handle_error(counter)) {
->  			case COUNTER_FATAL:
-> +				if (forks)
-> +					evlist__cancel_workload(evsel_list);
->  				return -1;
->  			case COUNTER_RETRY:
->  				goto try_again;
-> @@ -804,6 +806,8 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
->  
->  				switch (stat_handle_error(counter)) {
->  				case COUNTER_FATAL:
-> +					if (forks)
-> +						evlist__cancel_workload(evsel_list);
->  					return -1;
+commit 1868f9d0260e9afaf7c6436d14923ae12eaea465 (HEAD -> master,
+origin/master, origin/HEAD)
+Merge: 056f8c437dc3 96319dacaf15
+Author: Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri Sep 20 19:34:00 2024 -0700
 
-I don't think you covered all the places it can return before starting
-the workload.  You'd better have an error handling code at the end with
-a label and then goto there.
+    Merge tag 'for-linux-6.12-ofs1' of
+git://git.kernel.org/pub/scm/linux/kernel/git/hubcap/linux
 
-Thanks,
-Namhyung
+[    3.376687] qla2xxx [0000:00:00.0]-0005: : QLogic Fibre Channel HBA
+Driver: 10.02.09.300-k.
+[    3.385285] qla2xxx [0000:c4:00.0]-011c: : MSI-X vector count: 16.
+[    3.391502] qla2xxx [0000:c4:00.0]-001d: : Found an ISP2261 irq 121
+iobase 0x000000003b0c542c.
+[    3.400118] BUG: kernel NULL pointer dereference, address: 0000000000000=
+0a0
+[    3.407075] #PF: supervisor read access in kernel mode
+[    3.412215] #PF: error_code(0x0000) - not-present page
+[    3.417356] PGD 0 P4D 0
+[    3.419896] Oops: Oops: 0000 [#1] PREEMPT SMP NOPTI
+[    3.424776] CPU: 0 UID: 0 PID: 413 Comm: kworker/0:2 Not tainted 6.11.0+=
+ #1
+[    3.431731] Hardware name: Dell Inc. PowerEdge R6515/04F3CJ, BIOS
+2.13.3 09/12/2023
+[    3.439386] Workqueue: events work_for_cpu_fn
+[    3.443744] RIP: 0010:dma_get_required_mask+0x11/0x50
+[    3.448796] Code: 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90
+90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 48 8b 87 38 02 00 00 48 85
+c0 74 12 <48> 8b 80 a0 00 00 00 48 85 c0 74 20 e9 fe f1 b7 00 cc 48 8b
+05 9e
+[    3.467542] RSP: 0018:ffffb05741007d80 EFLAGS: 00010202
+[    3.472769] RAX: 0000000000000000 RBX: 0000000000000055 RCX: ffff9f8601f=
+92088
+[    3.479901] RDX: ffffb05740e07000 RSI: ffffffffffffffff RDI: ffff9f8601f=
+920c8
+[    3.487032] RBP: ffff9f861b3ec000 R08: 0000000000000000 R09: ffffb057410=
+07b10
+[    3.494165] R10: ffffb05741007b08 R11: ffffffff831e15c8 R12: ffff9f8601f=
+92000
+[    3.501299] R13: ffff9f861b3ec4a8 R14: 0000000000001000 R15: 00000000000=
+02000
+[    3.508432] FS:  0000000000000000(0000) GS:ffff9f896f200000(0000)
+knlGS:0000000000000000
+[    3.516517] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    3.522261] CR2: 00000000000000a0 CR3: 000000011d930000 CR4: 00000000003=
+50ef0
+[    3.529394] Call Trace:
+[    3.531848]  <TASK>
+[    3.533954]  ? __die+0x20/0x70
+[    3.537012]  ? page_fault_oops+0x75/0x170
+[    3.541028]  ? exc_page_fault+0x64/0x140
+[    3.544951]  ? asm_exc_page_fault+0x22/0x30
+[    3.549141]  ? dma_get_required_mask+0x11/0x50
+[    3.553584]  qla2x00_probe_one+0x12a1/0x1cb0 [qla2xxx]
+[    3.558758]  ? srso_return_thunk+0x5/0x5f
+[    3.562770]  ? __update_idle_core+0x5b/0xb0
+[    3.566958]  local_pci_probe+0x46/0xa0
+[    3.570711]  work_for_cpu_fn+0x16/0x20
+[    3.574459]  process_one_work+0x17c/0x390
+[    3.578474]  worker_thread+0x239/0x340
+[    3.582227]  ? __pfx_worker_thread+0x10/0x10
+[    3.586497]  kthread+0xcf/0x100
+[    3.589643]  ? __pfx_kthread+0x10/0x10
+[    3.593398]  ret_from_fork+0x30/0x50
+[    3.596975]  ? __pfx_kthread+0x10/0x10
+[    3.600728]  ret_from_fork_asm+0x1a/0x30
+[    3.604660]  </TASK>
+[    3.606846] Modules linked in: qla2xxx(+) sd_mod sg nvme_fc
+nvme_fabrics ahci(+) nvme_keyring libahci crct10dif_pclmul
+crc32_pclmul ccp nvme_core crc32c_intel libata nvme_auth
+ghash_clmulni_intel megaraid_sas tg3 scsi_transport_fc sp5100_tco wmi
+dm_mirror dm_region_hash dm_log dm_mod
+[    3.631945] CR2: 00000000000000a0
+[    3.635265] ---[ end trace 0000000000000000 ]---
+[    3.728765] RIP: 0010:dma_get_required_mask+0x11/0x50
+[    3.733828] Code: 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90
+90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 48 8b 87 38 02 00 00 48 85
+c0 74 12 <48> 8b 80 a0 00 00 00 48 85 c0 74 20 e9 fe f1 b7 00 cc 48 8b
+05 9e
+[    3.752572] RSP: 0018:ffffb05741007d80 EFLAGS: 00010202
+[    3.757798] RAX: 0000000000000000 RBX: 0000000000000055 RCX: ffff9f8601f=
+92088
+[    3.764930] RDX: ffffb05740e07000 RSI: ffffffffffffffff RDI: ffff9f8601f=
+920c8
+[    3.772062] RBP: ffff9f861b3ec000 R08: 0000000000000000 R09: ffffb057410=
+07b10
+[    3.779197] R10: ffffb05741007b08 R11: ffffffff831e15c8 R12: ffff9f8601f=
+92000
+[    3.786328] R13: ffff9f861b3ec4a8 R14: 0000000000001000 R15: 00000000000=
+02000
+[    3.793460] FS:  0000000000000000(0000) GS:ffff9f896f200000(0000)
+knlGS:0000000000000000
+[    3.801548] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    3.807292] CR2: 00000000000000a0 CR3: 000000011d930000 CR4: 00000000003=
+50ef0
+[    3.814425] Kernel panic - not syncing: Fatal exception
+[    3.821267] Kernel Offset: 0x600000 from 0xffffffff81000000
+(relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+[    3.890453] pstore: backend (erst) writing error (-28)
+[    3.895598] ---[ end Kernel panic - not syncing: Fatal exception ]---
 
+On Tue, Sep 24, 2024 at 10:23=E2=80=AFAM Alex Deucher <alexdeucher@gmail.co=
+m> wrote:
+>
+> On Tue, Sep 24, 2024 at 8:43=E2=80=AFAM Thomas Zimmermann <tzimmermann@su=
+se.de> wrote:
+> >
+> >
+> >
+> > Am 24.09.24 um 14:20 schrieb Thomas Zimmermann:
+> > > (cc: DMA and x86 folks)
+> > >
+> > > Hi
+> > >
+> > > Am 24.09.24 um 04:08 schrieb Arthur Marsh:
+> > >> Using current Linus git head kernel, I was able to save the dmesg
+> > >> output:
+> > >>
+> > >> [   17.218724] [drm] radeon kernel modesetting enabled.
+> > >> [   17.218778] radeon 0000:00:01.0: vgaarb: deactivate vga console
+> > >> [   17.219509] Console: switching to colour dummy device 80x25
+> > >> [   17.219700] [drm] initializing kernel modesetting (ARUBA
+> > >> 0x1002:0x990C 0x1002:0x0123 0x00).
+> > >> [   17.219773] ATOM BIOS: 113
+> > >> [   17.219838] radeon 0000:00:01.0: VRAM: 768M 0x0000000000000000 -
+> > >> 0x000000002FFFFFFF (768M used)
+> > >> [   17.219841] radeon 0000:00:01.0: GTT: 1024M 0x0000000030000000 -
+> > >> 0x000000006FFFFFFF
+> > >> [   17.219844] [drm] Detected VRAM RAM=3D768M, BAR=3D256M
+> > >> [   17.219845] [drm] RAM width 64bits DDR
+> > >> [   17.219851] BUG: kernel NULL pointer dereference, address:
+> > >> 00000000000000a0
+> > >
+> > > This is 160 bytes behind NULL, which indicates a field within a struc=
+t.
+> > >
+> > >> [   17.219852] #PF: supervisor read access in kernel mode
+> > >> [   17.219853] #PF: error_code(0x0000) - not-present page
+> > >> [   17.219854] PGD 0 P4D 0
+> > >> [   17.219856] Oops: Oops: 0000 [#1] PREEMPT_RT SMP NOPTI
+> > >> [   17.219858] CPU: 0 UID: 0 PID: 451 Comm: udevd Not tainted 6.11.0=
++
+> > >> #6121
+> > >> [   17.219860] Hardware name: Gigabyte Technology Co., Ltd. To be
+> > >> filled by O.E.M./F2A78M-HD2, BIOS F2 05/28/2014
+> > >> [   17.219862] RIP: 0010:dma_get_required_mask+0x11/0x50
+> > >> [   17.219868] Code: 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90
+> > >> 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 48 8b 87 68 02 00 00 48 85
+> > >> c0 74 11 <48> 8b 80 a0 00 00 00 48 85 c0 74 1f e9 ee ed 94 00 f6 87
+> > >> 2c 03 00
+> > >> [   17.219870] RSP: 0018:ffffa54bc13a7b00 EFLAGS: 00010202
+> > >> [   17.219871] RAX: 0000000000000000 RBX: 000000ffffffffff RCX:
+> > >> 0000000000000000
+> > >> [   17.219872] RDX: 0000000000000000 RSI: 0000000000000027 RDI:
+> > >> ffff976f44e720c8
+> > >> [   17.219873] RBP: ffff976f44e720c8 R08: 00000000ffffefff R09:
+> > >> ffffffffab2aab08
+> > >> [   17.219874] R10: 00000000fffff000 R11: 0000000000000002 R12:
+> > >> 0000000000000000
+> > >> [   17.219875] R13: ffff976f48a4aa30 R14: 0000000000000000 R15:
+> > >> 0000000000000028
+> > >> [   17.219876] FS:  00007f59a070d840(0000) GS:ffff97726f800000(0000)
+> > >> knlGS:0000000000000000
+> > >> [   17.219878] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > >> [   17.219879] CR2: 00000000000000a0 CR3: 00000001053b4000 CR4:
+> > >> 00000000000406f0
+> > >> [   17.219880] Call Trace:
+> > >> [   17.219881]  <TASK>
+> > >> [   17.219882]  ? __die_body.cold+0x19/0x1e
+> > >> [   17.219885]  ? page_fault_oops+0xa8/0x230
+> > >> [   17.219889]  ? search_module_extables+0x4f/0x90
+> > >> [   17.219891]  ? fixup_exception+0x36/0x2f0
+> > >> [   17.219894]  ? exc_page_fault+0x88/0x1b0
+> > >> [   17.219897]  ? asm_exc_page_fault+0x22/0x30
+> > >> [   17.219900]  ? dma_get_required_mask+0x11/0x50
+>
+> Also reported here:
+> https://gitlab.freedesktop.org/drm/amd/-/issues/3648
+>
+> Alex
+>
+> > >
+> > > This is not in the radeon driver but the DMA code. I'd say it's at
+> > > [1], as get_required_mask is 160 bytes within struct drm_map_ops. The
+> > > call to get_arch_dma_ops() probably returns NULL.
+> >
+> > And indeed, when I added
+> >
+> >      pr_warn("dev dma ops: 0x%p\n", pdev->dev.dma_ops);
+> >      pr_warn("arch dma ops: 0x%p\n", get_arch_dma_ops());
+> >
+> > to radeon_pci_probe(), I got
+> >
+> > [   22.325657] dev dma ops: 0x0000000000000000
+> > [   22.342921] arch dma ops: 0x0000000000000000
+> >
+> > as a result.
+> >
+> > Best regards
+> > Thomas
+> >
+> > >
+> > > Best regards
+> > > Thomas
+> > >
+> > > [1]
+> > > https://elixir.bootlin.com/linux/v6.11/source/kernel/dma/mapping.c#L5=
+23
+> > > [2]
+> > > https://elixir.bootlin.com/linux/v6.11/source/include/linux/dma-map-o=
+ps.h#L98
+> > >
+> > >> [   17.219902] dma_addressing_limited+0x6c/0xb0
+> > >> [   17.219905]  radeon_ttm_init+0x3f/0x210 [radeon]
+> > >> [   17.219977]  cayman_init+0x97/0x290 [radeon]
+> > >> [   17.220057]  radeon_device_init+0x5e9/0xb40 [radeon]
+> > >> [   17.220115]  radeon_driver_load_kms+0xb0/0x260 [radeon]
+> > >> [   17.220174]  radeon_pci_probe+0xff/0x170 [radeon]
+> > >> [   17.220231]  pci_device_probe+0xbe/0x1a0
+> > >> [   17.220234]  really_probe+0xde/0x350
+> > >> [   17.220237]  ? pm_runtime_barrier+0x61/0xb0
+> > >> [   17.220240]  ? __pfx___driver_attach+0x10/0x10
+> > >> [   17.220242]  __driver_probe_device+0x78/0x110
+> > >> [   17.220245]  driver_probe_device+0x2d/0xc0
+> > >> [   17.220247]  __driver_attach+0xc9/0x1c0
+> > >> [   17.220249]  bus_for_each_dev+0x6a/0xb0
+> > >> [   17.220251]  ? migrate_enable+0xbf/0xf0
+> > >> [   17.220254]  bus_add_driver+0x139/0x220
+> > >> [   17.220256]  driver_register+0x6e/0xc0
+> > >> [   17.220258]  ? __pfx_radeon_module_init+0x10/0x10 [radeon]
+> > >> [   17.220315]  do_one_initcall+0x42/0x210
+> > >> [   17.220318]  ? __kmalloc_cache_noprof+0x89/0x230
+> > >> [   17.220321]  do_init_module+0x60/0x210
+> > >> [   17.220324]  init_module_from_file+0x89/0xc0
+> > >> [   17.220326]  __x64_sys_finit_module+0x142/0x390
+> > >> [   17.220329]  do_syscall_64+0x47/0x110
+> > >> [   17.220331]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > >> [   17.220334] RIP: 0033:0x7f59a0625279
+> > >> [   17.220336] Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00
+> > >> 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24
+> > >> 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 77 6b 0d 00 f7 d8 64
+> > >> 89 01 48
+> > >> [   17.220337] RSP: 002b:00007ffd15ee7df8 EFLAGS: 00000246 ORIG_RAX:
+> > >> 0000000000000139
+> > >> [   17.220339] RAX: ffffffffffffffda RBX: 00005578ae660840 RCX:
+> > >> 00007f59a0625279
+> > >> [   17.220340] RDX: 0000000000000000 RSI: 00005578ae677fc0 RDI:
+> > >> 0000000000000011
+> > >> [   17.220341] RBP: 0000000000000000 R08: 00007f59a06fcb20 R09:
+> > >> 00005578ae640550
+> > >> [   17.220342] R10: 0000000000000040 R11: 0000000000000246 R12:
+> > >> 00005578ae677fc0
+> > >> [   17.220342] R13: 0000000000020000 R14: 00005578ae651750 R15:
+> > >> 0000000000000000
+> > >> [   17.220344]  </TASK>
+> > >> [   17.220345] Modules linked in: radeon(+) snd_hda_codec_hdmi
+> > >> snd_seq_midi snd_seq_midi_event snd_seq snd_hda_intel
+> > >> snd_intel_dspcfg snd_emu10k1 snd_hda_codec drm_ttm_helper ttm
+> > >> snd_util_mem drm_suballoc_helper snd_ac97_codec snd_hda_core
+> > >> drm_display_helper ac97_bus snd_rawmidi snd_hwdep snd_seq_device
+> > >> snd_pcm drm_kms_helper edac_mce_amd sha512_ssse3 sha512_generic
+> > >> k10temp sha256_ssse3 sha1_ssse3 drm aesni_intel snd_timer gf128mul
+> > >> crypto_simd cryptd acpi_cpufreq evdev pcspkr serio_raw emu10k1_gp
+> > >> gameport at24 regmap_i2c i2c_algo_bit snd video soundcore wmi button
+> > >> sp5100_tco ext4 crc32c_generic crc16 mbcache jbd2 uas usb_storage
+> > >> hid_generic usbhid hid sg sr_mod sd_mod cdrom ata_generic
+> > >> firewire_ohci crc32_pclmul crc32c_intel firewire_core crc_itu_t
+> > >> pata_atiixp i2c_piix4 i2c_smbus ahci r8169 libahci xhci_pci ohci_pci
+> > >> realtek libata mdio_devres ehci_pci ohci_hcd xhci_hcd scsi_mod
+> > >> ehci_hcd scsi_common usbcore libphy usb_common
+> > >> [   17.220388] CR2: 00000000000000a0
+> > >> [   17.220390] ---[ end trace 0000000000000000 ]---
+> > >>
+> > >> Happy to provide additional information and run tests.
+> > >>
+> > >> Regards,
+> > >>
+> > >> Arthur Marsh.
+> > >
+> >
+> > --
+> > --
+> > Thomas Zimmermann
+> > Graphics Driver Developer
+> > SUSE Software Solutions Germany GmbH
+> > Frankenstrasse 146, 90461 Nuernberg, Germany
+> > GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+> > HRB 36809 (AG Nuernberg)
+> >
+>
 
->  				case COUNTER_RETRY:
->  					goto try_again_reset;
-> diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-> index 3a719edafc7a..51a221679c92 100644
-> --- a/tools/perf/util/evlist.c
-> +++ b/tools/perf/util/evlist.c
-> @@ -46,6 +46,7 @@
->  #include <sys/mman.h>
->  #include <sys/prctl.h>
->  #include <sys/timerfd.h>
-> +#include <sys/wait.h>
->  
->  #include <linux/bitops.h>
->  #include <linux/hash.h>
-> @@ -1465,7 +1466,7 @@ int evlist__prepare_workload(struct evlist *evlist, struct target *target, const
->  		 * For cancelling the workload without actually running it,
->  		 * the parent will just close workload.cork_fd, without writing
->  		 * anything, i.e. read will return zero and we just exit()
-> -		 * here.
-> +		 * here (See evlist__cancel_workload()).
->  		 */
->  		if (ret != 1) {
->  			if (ret == -1)
-> @@ -1546,6 +1547,17 @@ int evlist__start_workload(struct evlist *evlist)
->  	return 0;
->  }
->  
-> +void evlist__cancel_workload(struct evlist *evlist)
-> +{
-> +	int status;
-> +
-> +	if (evlist->workload.cork_fd > 0) {
-> +		close(evlist->workload.cork_fd);
-> +		evlist->workload.cork_fd = -1;
-> +		waitpid(evlist->workload.pid, &status, WNOHANG);
-> +	}
-> +}
-> +
->  int evlist__parse_sample(struct evlist *evlist, union perf_event *event, struct perf_sample *sample)
->  {
->  	struct evsel *evsel = evlist__event2evsel(evlist, event);
-> diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-> index cb91dc9117a2..12f929ffdf92 100644
-> --- a/tools/perf/util/evlist.h
-> +++ b/tools/perf/util/evlist.h
-> @@ -184,6 +184,7 @@ int evlist__prepare_workload(struct evlist *evlist, struct target *target,
->  			     const char *argv[], bool pipe_output,
->  			     void (*exec_error)(int signo, siginfo_t *info, void *ucontext));
->  int evlist__start_workload(struct evlist *evlist);
-> +void evlist__cancel_workload(struct evlist *evlist);
->  
->  struct option;
->  
-> -- 
-> LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
-> 
 
