@@ -1,100 +1,109 @@
-Return-Path: <linux-kernel+bounces-336740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7633984013
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:12:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BAFE984014
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:13:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60F4BB240F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:12:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39C4A2840FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41B514BF8D;
-	Tue, 24 Sep 2024 08:12:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457DA14A639;
+	Tue, 24 Sep 2024 08:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mFdu8cOm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="TcVn2Sdm"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3132214B092;
-	Tue, 24 Sep 2024 08:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D27A1C32;
+	Tue, 24 Sep 2024 08:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727165538; cv=none; b=cBuS8BjZJHpG1dDqi6AX3YKqAY/RfoG1+mOF7m6LedtnTgRGnngmKbftxAIl6AeZZcJmhnYpQILZSR6qMGLHvObsPw57B0oaD0CikHxd5+HafCUoADoeSgFsphwTKH+RzSsCpiPspgUBktvGWtOVpQsl+FXXdhu6fhMg282nSps=
+	t=1727165606; cv=none; b=BPeLv2r0TLFLzBh1wU295bVK0XmjwVdIOxXpMc4tYPAjlt5GZfE5+ilEuVm+oWtY7AMPMb2kKw0zMlPqrGSpmMcesNWuOjWJJEw2ABLc7Y7/mI1//qoQhDtKtA7zFEGLvRAdjy4Tjdo8as4jV3Z0AQFGQNuk61MnrDKEBVbLw2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727165538; c=relaxed/simple;
-	bh=iUpcSaGr7iLjsSYAwxOzfjwVdfOIH/Rhk21DNLcNFV0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j2esneXlJaBYt6lStVXxdBLEmVC3uFIr81hrkrz+FtwTaQ/D3R0h1bhdMDq2YSstib2gKGC5cyNBVZHqqi3b/7epZ8VjiSu0NDeq7Ytb/qNMaCxQawpoKGiH8x8gqoYwjb8XZyxJJWhh+NfH/TaBNn7CDlj/ZCAY9A3Ke4lVNuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mFdu8cOm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B4FDC4CEC4;
-	Tue, 24 Sep 2024 08:12:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727165537;
-	bh=iUpcSaGr7iLjsSYAwxOzfjwVdfOIH/Rhk21DNLcNFV0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mFdu8cOmjZsMjW/g/TQA7xx3YjdjRoAmTdLQGnzDDoWIsOwL5OKTwJc3EVuUK33p6
-	 JxJtTWT2tA7yp75DFRsYzJeo60ajsxmq56p03Qda15sD9Vz7l6rsWd8xppUQqsved7
-	 zuoS/GBC7rRpDkxl2IChyWq4SBEDbHOaG1hM/EmPXYsbGJOGonqckTuorW74++8Am4
-	 GtCSVSLnsxBtrfMizWgdObuRlJeqY90BbnguKp84BCoQiwlBsiqm9KGqy6hLbXKOxK
-	 IQ6q6KhuFOclj9k7nXoKzl+MkN5Pt63W7ow6wIJ04YVg9mTQH72Ago+O85Uw1Spk7Y
-	 kzA2GWcIgf2qA==
-Date: Tue, 24 Sep 2024 10:12:12 +0200
-From: Mark Brown <broonie@kernel.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 2/5] regulator: core: remove machine init callback from
- config
-Message-ID: <ZvJ0XIF8FW_HiM0I@finisterre.sirena.org.uk>
-References: <20240920-pmbus-wp-v1-0-d679ef31c483@baylibre.com>
- <20240920-pmbus-wp-v1-2-d679ef31c483@baylibre.com>
+	s=arc-20240116; t=1727165606; c=relaxed/simple;
+	bh=GZc63eXCJHLz2doVRvuGzvZovQYn0B8xHq46bwGnFE4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HV52QFDCIlb3orTrSZZFwnqCjTm64WqywK1wo4l57kSHaKEEjvdKnICBrmMUz9naMkBPB3pm2hyLdu9QSbK5pLMT9eearxkjwqY/prMN5iHtSJ6YKo2MHj/9yUZKL3RTLmQKSzXfKPL7uxlD8wsU5pBxJ5DQ2rXFYXI9WZlcduA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=TcVn2Sdm; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1727165604; x=1758701604;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=GZc63eXCJHLz2doVRvuGzvZovQYn0B8xHq46bwGnFE4=;
+  b=TcVn2SdmNHc8IRo7qJzJSxzCexNSOr3dF1keIJ24Szlo4bi805OlUQK8
+   w4tagHycUFzZPQJ4acIb0FERp/MN+gOtHiTCEK/n5vQAuhKR0pKOF5ukT
+   uBzpMmrCkWlksR/yHbStJ68mnqGAfGZmqJG7r27PtJA7grvzT/Lezmxoe
+   gjL6N0virqaU5yqCGVO8N81eM5yjllzTL+UmLE8cfSe7qAYa/v8z+Jhck
+   p8TyyUtJE/JEwtNTnIXrBvb79El3cqcZpTeJ69FsbMGPregqM8B7fYEtn
+   FnInUGqg/PFsx4AyHIqevJ9265Z8AXpBfpPK6UDkQinYYrufr6ufDAoLf
+   g==;
+X-CSE-ConnectionGUID: az7ICeymT/y/jLAHNtXqzg==
+X-CSE-MsgGUID: qObPW9fWTl6T45AWPAfa/g==
+X-IronPort-AV: E=Sophos;i="6.10,253,1719903600"; 
+   d="scan'208";a="32031723"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Sep 2024 01:13:22 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 24 Sep 2024 01:12:59 -0700
+Received: from ROB-ULT-M76677.microchip.com (10.10.85.11) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Tue, 24 Sep 2024 01:12:57 -0700
+From: Andrei Simion <andrei.simion@microchip.com>
+To: <claudiu.beznea@tuxon.dev>, <lgirdwood@gmail.com>, <broonie@kernel.org>,
+	<perex@perex.cz>, <tiwai@suse.com>, <nicolas.ferre@microchip.com>,
+	<alexandre.belloni@bootlin.com>
+CC: <alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	Andrei Simion <andrei.simion@microchip.com>
+Subject: [PATCH] ASoC: atmel: mchp-pdmc: Skip ALSA restoration if substream runtime is uninitialized
+Date: Tue, 24 Sep 2024 11:12:38 +0300
+Message-ID: <20240924081237.50046-1-andrei.simion@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="aTcDCwg1q99Fo/13"
-Content-Disposition: inline
-In-Reply-To: <20240920-pmbus-wp-v1-2-d679ef31c483@baylibre.com>
-X-Cookie: Editing is a rewording activity.
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
+Update the driver to prevent alsa-restore.service from failing when
+reading data from /var/lib/alsa/asound.state at boot. Ensure that the
+restoration of ALSA mixer configurations is skipped if substream->runtime
+is NULL.
 
---aTcDCwg1q99Fo/13
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: 50291652af52 ("ASoC: atmel: mchp-pdmc: add PDMC driver")
+Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
+---
+ sound/soc/atmel/mchp-pdmc.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-On Fri, Sep 20, 2024 at 06:47:03PM +0200, Jerome Brunet wrote:
-> The machine specific regulator_init() appears to be unused.
-> It does not allow a lot of interactiona with the regulator framework,
-> since nothing from the framework is passed along (desc, config,
-> etc ...)
->=20
-> Machine specific init may also be done with the added init_cb() in
-> the regulator description, so remove regulator_init().
+diff --git a/sound/soc/atmel/mchp-pdmc.c b/sound/soc/atmel/mchp-pdmc.c
+index 939cd44ebc8a..06dc3c48e7e8 100644
+--- a/sound/soc/atmel/mchp-pdmc.c
++++ b/sound/soc/atmel/mchp-pdmc.c
+@@ -302,6 +302,9 @@ static int mchp_pdmc_chmap_ctl_put(struct snd_kcontrol *kcontrol,
+ 	if (!substream)
+ 		return -ENODEV;
+ 
++	if (!substream->runtime)
++		return 0; /* just for avoiding error from alsactl restore */
++
+ 	map = mchp_pdmc_chmap_get(substream, info);
+ 	if (!map)
+ 		return -EINVAL;
 
-This makes sense regardless of what happens with the rest of the series.
+base-commit: 4d0326b60bb753627437fff0f76bf1525bcda422
+-- 
+2.34.1
 
---aTcDCwg1q99Fo/13
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbydFwACgkQJNaLcl1U
-h9Cj0ggAgEOWV5/gcx0JmZoCxeIxvIpNMnR1BVx7O0ufkxYPPWRSPjH+jijsNftG
-qS2xJ9EFhZafzVrSgPs0/w2JiN0AEFPnUnEFU9jT77QNOqUJ+LRNymytO2u6gHhI
-dUTSiDgLD/swzh0cuMF2QaYDPTJMsaUjmlpQqKiRNyu97lfnJ87FvsMsXWLsgI8H
-JZzppy5zIAoXHP1B9+GumG0nn8JM4HuWhqqUvIKHNK9onn1SmFKVJSOW/LsW8hZz
-QHJ3J8WOtkDFwldDFaYxKJQNDIB6jlA7XFe6UgmfP5w1RWdqseiYU2YXqiHo4tXk
-f0yyXlGLdfDQ1BTStP0/vJgQ+1t+HQ==
-=WKI4
------END PGP SIGNATURE-----
-
---aTcDCwg1q99Fo/13--
 
