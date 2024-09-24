@@ -1,178 +1,256 @@
-Return-Path: <linux-kernel+bounces-337338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4B9C9848D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:43:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F87B9848D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:45:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A21D1F234D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:43:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B774283DF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:45:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F2C1AB6D7;
-	Tue, 24 Sep 2024 15:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE4E19B3F3;
+	Tue, 24 Sep 2024 15:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mUpNCdh0"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mOB2TOXZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB8419F40D;
-	Tue, 24 Sep 2024 15:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0521B85D5;
+	Tue, 24 Sep 2024 15:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727192608; cv=none; b=SGI+SeANd08dtWzRZIeZHDwPgKmYGB2svlN5fhHjKZMOEWqlFMmBLUxZb8YjB9Vi0AUEEDwPitukTxhFIJ9GDiySi1E7R0EoKUF4NFKKps6mJRkVUC/WyKLhluMrquzOs4NtIGrm7fPspkN9vCpn+GVb9eo0Y4Nb7MGbIQYRc7U=
+	t=1727192732; cv=none; b=gAf7wZIE9VE4cPvb266H4wJBDFfqcG/HJf5OPWGNgnBa7TyXagu7+nrTnr1i5KdABAiTcWx3tfXqTk+Aj5ECXH0pwgWZ4dmtarCgJQ40SrxvlDl0rDQG6+lY5+AfudlX5QkCXPQ6mQeW5OW9bo7oraispkX80MEoo5kdPRsap7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727192608; c=relaxed/simple;
-	bh=IKlPFgwPs3C9s5jXT8lrcoRt3WARlazJOwa/Uk2KWCw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G4ZvP4RRVjEVaZ6H5GN8sfLVeWvyFZ98mgedgpSYZd7vn0+ywnJGZJ6H3UxVSdbFhwEB9K/Y/2T7hmsMx71Rru1iVxE2V0V4iGzjqlUFc9H1KuUr4n2ifFkj4SCJk9cUMO5GmrE2f8Jr5Z5VFga+pCb3TeK4WNx9zTcRaayOwrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mUpNCdh0; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2054feabfc3so51548325ad.1;
-        Tue, 24 Sep 2024 08:43:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727192605; x=1727797405; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=HSC0aWydli9B/QIw7es5dpYAa7Ef7DjM4fveUpwQgYk=;
-        b=mUpNCdh0T42aQDk3nGDga3Eo6t6R+2/SZRNeSoz/vzIJRbvHjnWFzP24OatWbXqe+4
-         lxGc7ezWK085AFXOqEe0wJB11ZpWZkKanQNXKo8q0FdS6ofzrMb747RuDjjWyKEkrane
-         ynmyCL56gG9rJkuFaht6EJJmvXp1PWRNR0LUpfirEbZDKWfpdxII3Xbg3g6sozY9A4Yw
-         8Lc0zhepogru07qj6y4CRA2Ie/1mYhsQTVMYU+HJo7hvo8KPy3bR+miV+BaVBp2en5ki
-         AVAVsDe1lQfCzM5n8dgCeccHdU/Ki+Mycff63df0G7wXxqmYvZFgoyW0G/cuJTxlzcJK
-         pAfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727192605; x=1727797405;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HSC0aWydli9B/QIw7es5dpYAa7Ef7DjM4fveUpwQgYk=;
-        b=h1CE1v/RGXOZumdBPaeDS5M+sjF1oJFc2UIKwsyKPENas5daQBRd49PeKc3yfOZqvY
-         p7kF8RHgf6AWo+4HRieSF/1eRIrWcR83WnF8sk+TagR2fCguEbKeyAp2WMIlcsR40VhF
-         tUWuSUZWw/RsmNjeG0gNSV7cbPkQqma/FhYGnlSegqOs4Ej0ztw95SWOPfAeQwCNRlEr
-         xiOgvCo/tL0UBKq1BFeSWaqMESj0XA+oQTpwtHgxCX+K+LqB7q7+ZVeJbXjc0fQ0Jllb
-         TM81yzY/mPypsi0yztHP6ll0wLvqGEuvIqHgn9LVIYPVLFn61XGNBSefCGTuQu22BpLd
-         eqwA==
-X-Forwarded-Encrypted: i=1; AJvYcCUPAx3pfw/WwTT6O+r0gB5zm9GWfj22kVL4Fic6WWdRT2R7mvoY8UQlPtPzf7mLqBzOi10j4ZHOsdin57Y4@vger.kernel.org, AJvYcCWzjO/o/RIHT2op6a2hDyN93qP/Qbt8xqtR1umUx1+o3tPYYc9FyaEgZJRRUh/ztAw1l4qOVmS9z8HVKQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFYFipvUYNMZ68SJuDPEm2LKhybm2L+eVk6CFIL4hetECiX1m1
-	mMwK9n4zb5d6oE6LFs1Dse6zItzIRjS+Vsm7tBrCPkoLHm1FDV7/WMYflQ==
-X-Google-Smtp-Source: AGHT+IFH9WrlJpfH753BdHtnT5CIhp53Pk/y5Zw2kwudwnzRxSpjCgyekzHht78a7HeVWEXlRaQuHw==
-X-Received: by 2002:a17:902:d4ca:b0:206:b7b8:1f0e with SMTP id d9443c01a7336-208d97f356cmr233567395ad.1.1727192605170;
-        Tue, 24 Sep 2024 08:43:25 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af185482asm11636165ad.244.2024.09.24.08.43.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Sep 2024 08:43:24 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <84ba0d7f-cb85-4f00-a8a9-ad8e8a56840f@roeck-us.net>
-Date: Tue, 24 Sep 2024 08:43:23 -0700
+	s=arc-20240116; t=1727192732; c=relaxed/simple;
+	bh=a6WuSN+R0QTe0iMpSaI1lp+B3upYERKrAgsFzECh1Ng=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=hjihDpsoztTQtjSk9iBfDuGGIopbMghciMUK54kVfi23bWbOHPTKx1VaPn7Dj4VuPgfp38mu4qoMgVc+skSr3t8gt8SHNSQb3J5DYvGawnkDsISYG0+Uj/2xAtkcQr8FUPMyUL+GPfmT/G2MyC3yiKiNEITwM6e1LtnSqs3lJD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mOB2TOXZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27C17C4CEC4;
+	Tue, 24 Sep 2024 15:45:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727192731;
+	bh=a6WuSN+R0QTe0iMpSaI1lp+B3upYERKrAgsFzECh1Ng=;
+	h=From:Date:Subject:To:Cc:From;
+	b=mOB2TOXZK5XuBGTiCz8fNqCsJmskv6TT18TnKUsFm3d5kBeZrI7hZng3314E/tkeH
+	 ouStywAlnkox0kyi9vWR6l8uhrbt//L3MCp4LxJjn3xi5+Hh6cAyQR4RAvCz4UDIOa
+	 NwE4LR9p3p08dMp/4sg1kkZePYjDPls7CifMdchzDa+Y9CzwfQoMW6TDIZP0io4K5s
+	 qvtUZTlATye0ZQVi3lcWDvteRWSafMK3XXlazvWqgDFUj9y0pp3gNsjv9/x1gUbBFR
+	 l61y8om0JlRDb/ViuT11Fx5CH5RIQAdWdRZpdT/ayp2T8jrrPb25iPNmFG/rxl1EkQ
+	 mHFfjqYYRsYEA==
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f761461150so68673821fa.0;
+        Tue, 24 Sep 2024 08:45:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWF12NSWcRKvz02HHpSHbVhJsHnN2WrTlZKVtmDS0RR5rTYoIbzlZbCiHp6TnF/7AvWMvtiUhS0Qt90saM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeFn6ypsLEOyfd6ZcdwXxTkCm6lCz4GF1+iONV+jHcwrqMi7ed
+	tehMhBHM4gtpTjbaJzoRMbNiHfFdYUk//eimVb84jLR8Ir3Hfue9BajoYGn//DxLk6EsfvNVSNt
+	6hpxjZvvpoiUpl42u07g9CuD4CYo=
+X-Google-Smtp-Source: AGHT+IEqAXFBJFaI0TrfQuPpbCY1CkM/T9IvSZG/f+Xt2XiUIzPi59D1aDmiiSVTZzhxADtYg8V8PZn2LL74UueRjmM=
+X-Received: by 2002:a05:6512:3048:b0:533:4785:82ab with SMTP id
+ 2adb3069b0e04-536ac2d6a6bmr10141777e87.1.1727192729764; Tue, 24 Sep 2024
+ 08:45:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hwmon: (max6639) : Add DT support
-To: Naresh Solanki <naresh.solanki@9elements.com>
-Cc: Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org,
- linux-hwmon@vger.kernel.org
-References: <20240628115451.4169902-1-naresh.solanki@9elements.com>
- <349543e5-21b2-4725-9b33-1fcb4ae124f6@roeck-us.net>
- <CABqG17hpqFG-PeyENXnGn9k7V2goBP+k6BtSURoMM7DgXtxWmA@mail.gmail.com>
- <0aaed899-9001-4355-bcca-17855576a928@roeck-us.net>
- <CABqG17h0+HWSCF0PRVBaj37WYYsz17+n1MD1Uiuscqy_dvU41g@mail.gmail.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <CABqG17h0+HWSCF0PRVBaj37WYYsz17+n1MD1Uiuscqy_dvU41g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 25 Sep 2024 00:44:52 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAR=QwD=c1kN_VxQ-NoNoZqQWU3VPc+Xy88BDTjG8s_v8A@mail.gmail.com>
+Message-ID: <CAK7LNAR=QwD=c1kN_VxQ-NoNoZqQWU3VPc+Xy88BDTjG8s_v8A@mail.gmail.com>
+Subject: [GIT PULL] Kbuild updates for v6.12-rc1
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/24/24 07:44, Naresh Solanki wrote:
-> Hi Guenter,
-> 
-> On Tue, 24 Sept 2024 at 19:42, Guenter Roeck <linux@roeck-us.net> wrote:
->>
->> On 9/24/24 02:29, Naresh Solanki wrote:
->>> Hi Guenter,
->>>
->>> Sorry for the late reply,
->>>
->>> On Fri, 28 Jun 2024 at 20:30, Guenter Roeck <linux@roeck-us.net> wrote:
->>>>
->>>> On 6/28/24 04:54, Naresh Solanki wrote:
->>>>> Remove platform data & add devicetree support.
->>>>>
->>>>
->>>> Unless I am missing something, this doesn't just add devicetree support,
->>>> it actually _mandates_ devicetree support. There are no defaults.
->>>> That is not acceptable.
->>> I agree with you. It is best to have some defaults & then overwrite
->>> based on DT properties.
->>> But in that case we would have to assume that all fans are enabled
->>> irrespective of their hardware connections in the schematics(example
->>> fan_enable).
->>>
->>> I'm not sure if that is fine. But if you feel that is alright then
->>> I'll rewrite the driver to assume
->>> everything is enabled with default values.
->>
->> That would still be a functional change, or am I missing something ?
->> It would overwrite any configuration written by a BIOS/ROMMON.
-> With that, driver would take the current chip configuration as default &
-> just configure specific config specified in DT(if any) & continue with
-> initialization?
+Hello Linus,
 
-Yes.
 
-Thanks,
-Guenter
+Please pull Kbuild updates for v6.12-rc1.
 
+Thank you.
+
+
+The following changes since commit 431c1646e1f86b949fa3685efc50b660a364c2b6=
+:
+
+  Linux 6.11-rc6 (2024-09-01 19:46:02 +1200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
+tags/kbuild-v6.12
+
+for you to fetch changes up to fa911d1f377bbe4cc47e58afbd8fff7750b7ac62:
+
+  kbuild: doc: replace "gcc" in external module description
+(2024-09-24 03:07:21 +0900)
+
+----------------------------------------------------------------
+Kbuild updates for v6.12
+
+ - Support cross-compiling linux-headers Debian package and kernel-devel
+   RPM package
+
+ - Add support for the linux-debug Pacman package
+
+ - Improve module rebuilding speed by factoring out the common code to
+   scripts/module-common.c
+
+ - Separate device tree build rules into scripts/Makefile.dtbs
+
+ - Add a new script to generate modules.builtin.ranges, which is useful
+   for tracing tools to find symbols in built-in modules
+
+ - Refactor Kconfig and misc tools
+
+ - Update Kbuild and Kconfig documentation
+
+----------------------------------------------------------------
+Jose Fernandez (2):
+      kbuild: control extra pacman packages with PACMAN_EXTRAPACKAGES
+      kbuild: add debug package to pacman PKGBUILD
+
+Kris Van Hees (4):
+      kbuild: add mod(name,file)_flags to assembler flags for module object=
+s
+      kbuild: generate offset range data for builtin modules
+      scripts: add verifier script for builtin module range data
+      kbuild: add install target for modules.builtin.ranges
+
+Laurent Pinchart (1):
+      Remove *.orig pattern from .gitignore
+
+Masahiro Yamada (39):
+      modpost: remove unused HOST_ELFCLASS
+      modpost: detect endianness on run-time
+      kbuild: slim down package for building external modules
+      kbuild: cross-compile linux-headers package when possible
+      kbuild: modinst: remove the multithread option from zstd compression
+      tinyconfig: remove unnecessary 'is not set' for choice blocks
+      kconfig: remove dummy assignments to cur_{filename,lineno}
+      kconfig: stop adding P_SYMBOL property to symbols
+      kconfig: remove P_SYMBOL property
+      kbuild: split x*alloc() functions in kconfig to scripts/include/xallo=
+c.h
+      modpost: replace the use of NOFAIL() with xmalloc() etc.
+      kallsyms: use xmalloc() and xrealloc()
+      fixdep: use xmalloc()
+      modpost: improve the section mismatch warning format
+      kbuild: pacman-pkg: move common commands to a separate function
+      kbuild: pacman-pkg: do not override objtree
+      modpost: simplify modpost_log()
+      kbuild: remove *.symversions left-over
+      ARC: update the help message for CONFIG_ARC_BUILTIN_DTB_NAME
+      kbuild: add intermediate targets for Flex/Bison in scripts/Makefile.h=
+ost
+      kbuild: split device tree build rules into scripts/Makefile.dtbs
+      scripts: import more hash table macros
+      kallsyms: squash output_address()
+      kallsyms: change overflow variable to bool type
+      scripts: move hash function from scripts/kconfig/ to scripts/include/
+      kconfig: change some expr_*() functions to bool
+      kconfig: add comments to expression transformations
+      kconfig: refactor expr_eliminate_dups()
+      kconfig: use hash table to reuse expressions
+      kconfig: cache expression values
+      kbuild: remove unnecessary export of RUST_LIB_SRC
+      kbuild: doc: update the description about Kbuild/Makefile split
+      kbuild: doc: remove description about grepping CONFIG options
+      kbuild: doc: remove outdated description of the limitation on -I usag=
+e
+      kbuild: doc: throw out the local table of contents in modules.rst
+      kbuild: doc: drop section numbering, use references in modules.rst
+      kbuild: doc: remove the description about shipped files
+      kbuild: doc: describe the -C option precisely for external module bui=
+lds
+      kbuild: doc: replace "gcc" in external module description
+
+Nick Desaulniers (1):
+      scripts: subarch.include: fix SUBARCH on macOS hosts
+
+Stephen Brennan (1):
+      Documentation: kconfig: explicitly document missing prompt
+
+Thomas Wei=C3=9Fschuh (2):
+      kbuild: compile constant module information only once
+      kbuild: remove append operation on cmd_ld_ko_o
+
+Tony Battersby (1):
+      kbuild: remove recent dependency on "truncate" program
+
+ .gitignore                                |   3 +-
+ Documentation/dontdiff                    |   1 +
+ Documentation/kbuild/kbuild.rst           |  10 +
+ Documentation/kbuild/kconfig-language.rst |   6 +-
+ Documentation/kbuild/makefiles.rst        |   1 -
+ Documentation/kbuild/modules.rst          | 224 ++++++--------------
+ Documentation/process/changes.rst         |   7 +
+ Makefile                                  |   7 +-
+ arch/arc/Kconfig                          |   2 +-
+ arch/x86/configs/tiny.config              |   4 -
+ drivers/of/fdt.c                          |   2 +-
+ drivers/of/unittest.c                     |   4 +-
+ kernel/configs/tiny.config                |   6 -
+ lib/Kconfig.debug                         |  15 ++
+ scripts/Makefile.build                    |  58 +++---
+ scripts/Makefile.dtbs                     | 142 +++++++++++++
+ scripts/Makefile.host                     |   5 +
+ scripts/Makefile.lib                      | 119 +----------
+ scripts/Makefile.modfinal                 |   9 +-
+ scripts/Makefile.modinst                  |   8 +-
+ scripts/Makefile.package                  |   3 +-
+ scripts/Makefile.vmlinux                  |  18 ++
+ scripts/Makefile.vmlinux_o                |   3 +
+ scripts/basic/fixdep.c                    |  15 +-
+ scripts/generate_builtin_ranges.awk       | 508
+++++++++++++++++++++++++++++++++++++++++++++++
+ scripts/include/hash.h                    |  28 +++
+ scripts/include/hashtable.h               |  50 +++++
+ scripts/include/list.h                    |  69 +++++++
+ scripts/include/xalloc.h                  |  53 +++++
+ scripts/kallsyms.c                        |  46 ++---
+ scripts/kconfig/confdata.c                |   3 +
+ scripts/kconfig/expr.c                    | 482
++++++++++++++++++++------------------------
+ scripts/kconfig/expr.h                    |  27 ++-
+ scripts/kconfig/internal.h                |   6 +
+ scripts/kconfig/lexer.l                   |   1 +
+ scripts/kconfig/lkc.h                     |   6 -
+ scripts/kconfig/mconf.c                   |   1 +
+ scripts/kconfig/menu.c                    |  38 ++--
+ scripts/kconfig/nconf.c                   |   1 +
+ scripts/kconfig/nconf.gui.c               |   1 +
+ scripts/kconfig/parser.y                  |  13 +-
+ scripts/kconfig/preprocess.c              |   1 +
+ scripts/kconfig/qconf.cc                  |   2 +-
+ scripts/kconfig/symbol.c                  |   9 +-
+ scripts/kconfig/util.c                    |  63 +-----
+ scripts/link-vmlinux.sh                   |   2 +-
+ scripts/mod/mk_elfconfig.c                |  25 ---
+ scripts/mod/modpost.c                     | 125 ++++++------
+ scripts/mod/modpost.h                     |  28 +--
+ scripts/mod/sumversion.c                  |   6 +-
+ scripts/mod/symsearch.c                   |   6 +-
+ scripts/module-common.c                   |  25 +++
+ scripts/package/PKGBUILD                  |  52 +++--
+ scripts/package/install-extmod-build      |  55 ++++-
+ scripts/subarch.include                   |   2 +-
+ scripts/verify_builtin_ranges.awk         | 370
++++++++++++++++++++++++++++++++++
+ 56 files changed, 1867 insertions(+), 909 deletions(-)
+ create mode 100644 scripts/Makefile.dtbs
+ create mode 100755 scripts/generate_builtin_ranges.awk
+ create mode 100644 scripts/include/hash.h
+ create mode 100644 scripts/include/xalloc.h
+ create mode 100644 scripts/module-common.c
+ create mode 100755 scripts/verify_builtin_ranges.awk
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
