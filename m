@@ -1,92 +1,103 @@
-Return-Path: <linux-kernel+bounces-337104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F0F3984567
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:02:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA158984569
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 193E7B23F22
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:01:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF5AA285991
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E421A724B;
-	Tue, 24 Sep 2024 12:01:09 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E9E1A7079;
+	Tue, 24 Sep 2024 12:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RB21x9yd"
+Received: from mail-ej1-f68.google.com (mail-ej1-f68.google.com [209.85.218.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811F01A7076
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 12:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D3317C222;
+	Tue, 24 Sep 2024 12:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727179268; cv=none; b=ubxTU85lbXbVMFXBQtrlRvpeNgBZy7AjUj8Q4ZzNQ0yvPBffIzuSCwW6eQOI/ld6z9Zgjsa3oTNQYsvttTQUMe0wiGzUj0omXwjq7FLdqgrp6oszGm43yOl/hP9KH5VnFmkxh8Kb3mh3hetW2zLv3hSLft/GGolzUZ7TZcWMcR0=
+	t=1727179283; cv=none; b=uSu52zIUrZJmjK/8AXqjN53D/4Ig9LzRq9aivj4h22992G3kZ741ofQitm478aj7GVCbWMJysqtq2pzrTrD2S/XK4hG76g74ywN1Ir+JZMEElvXtszpE60iu0AuFsnZLczm+KEixI1IfvPJpP4H6nB07qeRFoJljxc8N9f7vX7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727179268; c=relaxed/simple;
-	bh=cObrgCUSvHW+ygJ1FqkY0+Tz/uCqpy6uPK5t+gWO+j8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Vw8s2D2G4bbQFxA0ZJxk0sZz/lMELqOErgA+G+9nlGhuYrgCA8U/wDIZ+z36dcho1lKcq5q4LnroKW2q69O8FtQ/w20U2EhxQuPmMuBZtSKq1TwUgKNHsBvOdaePR/ED3w/VxuSeyzAUJwlr0U4CbXb7FWjtnbskjRfh1rb8u+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a19665ed40so20051415ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 05:01:07 -0700 (PDT)
+	s=arc-20240116; t=1727179283; c=relaxed/simple;
+	bh=D2wkM8MceUdpaz5tbti6HFcDG2ZYxeGIAjkCyA9IpVw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=py9z1e/XX3/Sbu2uGFtGDgENusNAzHHiGm777AV5uhapVP/u+jPnjwQIC/bgaKXj/1EWG2xM2H9EMncjXE8ElnwjsGzyfTs47Lzu+LJLSTbThMT8QCAi4IrcJE7Fzl0wkx1C5TYXtyRcz/2EbtQKApEOYWs+uwv1uEMv763YQOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RB21x9yd; arc=none smtp.client-ip=209.85.218.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f68.google.com with SMTP id a640c23a62f3a-a8d446adf6eso840633166b.2;
+        Tue, 24 Sep 2024 05:01:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727179280; x=1727784080; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=D2wkM8MceUdpaz5tbti6HFcDG2ZYxeGIAjkCyA9IpVw=;
+        b=RB21x9yd1leqUY7hB/C+obVNjtMUBvxqM+H4RCkr0HaSVNfZVaPBenSYhB2DKnlHIw
+         pCZZkTofN7iKE9CaxuajkAB0tU7ndlmQJAwW0xFGmi3lqhC6QZkUzYmnheibNXlWCTDa
+         BrnNn2txFKbCHvhUBoFt/wKTpL/GxLwCFCqtxhLAwNHWrqb+M8IudyP5FjbFV6DPOWiS
+         YE3k6MUxeH1p++Pv8L8OyvOY/L/1Rdtqxe6W6VG9AclFJ0zUgRgr0C1Hevnz3CiRWmtk
+         lY4Hs0aNh76mAO6DfrSwFPFi7IgwhDo+rRiqKAjTVI4tsWSkNOJKFJc5Ihzm5h2YtYOy
+         D8Jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727179266; x=1727784066;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L6XSwTL3/zFm9C67RW1I8K+Y0nZgbXlIR8uoPmui7Ow=;
-        b=D5je79D18wC6NnJPMztiWS13tr1FHL20XDKOGiHlTuIhbe/6kLtjfk9b8etkaVNfYg
-         mMKsiI9Jx44l7cp+1U0sTntNMRFgHBNfGmSU83Wl/6QcOMf7EUVG62K0JMWnhb+/8V51
-         ds1QBvGwMMorC6U3WqXeTWWrD9wsloPDWToe8VyKiZ4uBbjOezIYCEDVzFvvpoq2auBw
-         1nCdGgbXTQC+UY894/UvmyRBV52y+uQu+S19fzoUSvlb27RfSEqgoriaZctjc78KopzU
-         VmptOiz5fH4XohhkvEyQ3lXREpTzghM1vbbBFasxXDo/Qc69KSf2a72c3rib6mBTki/1
-         qxsA==
-X-Forwarded-Encrypted: i=1; AJvYcCU92pTTmVQlLcd0HnydW0eLEbAbu+H7v/OC22cVbsWfdOmNYYOCndmQ/KcwBhur239E9+cnhEUyqLDTRvM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQb41JA+HWNXD+uQFrERFntxEkF8l9CDrzfimfCSPPtApBy1sE
-	7dBGHGd5Q/MJVVZ+M/MTGhUh1m8VqK9TIC7zWVpTrEJPc9SB2werDcMz4KUJEJR0izFDsDLX68O
-	x30+83or7s7yQnuAo3TaQ9e3+jk7fbE1asp9qBcYvxOB6fkfhyz+Vh2U=
-X-Google-Smtp-Source: AGHT+IHrOmvjiLzvF7jwvN3hI5LzS+Kv/KB41hVRF7f6fcdWg2aKQjwpw0ahz2JHQBSNt2sFKNFZvypTChxKfYan2ZHULmNIvNPZ
+        d=1e100.net; s=20230601; t=1727179280; x=1727784080;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D2wkM8MceUdpaz5tbti6HFcDG2ZYxeGIAjkCyA9IpVw=;
+        b=toN/hjoYFNkJe+VNDUKp93nQ+M6YHFhbyAIFqPMFgnuIrRsxgfBPCPZWnYPb7vn3cm
+         3DBDWvQiqLpEZv4h9aeuTmV5c7o9qle1rCUJhztTvaGdDxSICZqD3rx3lEoSXp5SpyeK
+         7dx6HTqYlh46QW6MNnjISfc21APTMBSEDTTlyjQ89zCTmGjdt0ZgIlLpDmDXU/+jfQGm
+         /kE2gEzpoNkMBb5YN2PEyxMCh1DDRNgOmbNR82FWpiX0FM8oxMZsQV+89J5KOIR/0e/N
+         E7lS+HtjJNs4wDrsxIRQu+CeIBKOo5jLIEJKysf7+AZvVsVXQrTtc6vqEsYykvAyDXgI
+         sKrw==
+X-Forwarded-Encrypted: i=1; AJvYcCUPmTDeGGqVgtRPvS3tllzbIEaeBWaPuLTeLIFMF16iBwSppkBQjcLVxFeI2piliw+rkyQ65ueB@vger.kernel.org, AJvYcCVUSQQ9YHT7ZnxdhUy7DXjvxk7yaVaPr6pQ7ki/zrQzmJVOTFJ+OCivK17ZqQ4NcDP3UGn4AsGeUD26uOk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzB9ashJ+a5ylrcO/s7pfC6KMNYYY00CpGLCFFZBuQ6/Ve/FL7d
+	6X+pdmXcutP8jb1qw366KQI/ilWXSNtg85+fxy67x8QocE+DeXybVsVIjq3Q+NgbU9TkizgBNtZ
+	Pl6SpJFi9i8DI1aFen5/YHoGkS14=
+X-Google-Smtp-Source: AGHT+IFj3aAX7TONduQVRl0aDVye9cHiXiB1Q9dRt5Ij0vv8gJiBD7Z0JZgMv9QkrrMa2dqXYtZEeUy71igP0MXxbek=
+X-Received: by 2002:a17:907:e246:b0:a90:d1e1:eeb3 with SMTP id
+ a640c23a62f3a-a90d50d0521mr1357512066b.44.1727179279902; Tue, 24 Sep 2024
+ 05:01:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a64:b0:3a0:ca91:2b4e with SMTP id
- e9e14a558f8ab-3a1a2fd73ffmr19734095ab.3.1727179264991; Tue, 24 Sep 2024
- 05:01:04 -0700 (PDT)
-Date: Tue, 24 Sep 2024 05:01:04 -0700
-In-Reply-To: <00000000000020c8d0061e647124@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f2aa00.050a0220.c23dd.0029.GAE@google.com>
-Subject: Re: [syzbot] [net?] INFO: task hung in addrconf_dad_work (5)
-From: syzbot <syzbot+82ccd564344eeaa5427d@syzkaller.appspotmail.com>
-To: bigeasy@linutronix.de, davem@davemloft.net, dsahern@kernel.org, 
-	edumazet@google.com, kerneljasonxing@gmail.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+References: <20240913091053.14220-1-chenqiuji666@gmail.com> <ZvKNVut_V9fiiaaT@phenom.ffwll.local>
+In-Reply-To: <ZvKNVut_V9fiiaaT@phenom.ffwll.local>
+From: Qiu-ji Chen <chenqiuji666@gmail.com>
+Date: Tue, 24 Sep 2024 20:01:06 +0800
+Message-ID: <CANgpojXKgZXjeCO9MYr83=p-Kz0_Migm4c9-4qTidHYp=G+fMg@mail.gmail.com>
+Subject: Re: [PATCH] drm/vc4: Fix atomicity violation in vc4_crtc_send_vblank()
+To: Qiu-ji Chen <chenqiuji666@gmail.com>, mripard@kernel.org, 
+	dave.stevenson@raspberrypi.com, kernel-list@raspberrypi.com, 
+	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	baijiaju1990@gmail.com, stable@vger.kernel.org, simona.vetter@ffwll.ch
+Cc: daniel@ffwll.ch
 Content-Type: text/plain; charset="UTF-8"
 
-syzbot has bisected this issue to:
+Hi,
 
-commit d15121be7485655129101f3960ae6add40204463
-Author: Paolo Abeni <pabeni@redhat.com>
-Date:   Mon May 8 06:17:44 2023 +0000
+In the drm_device structure, it is mentioned: "@event_lock: Protects
+@vblank_event_list and event delivery in general." I believe that the
+validity check and the subsequent null assignment operation are part
+of the event delivery process, and all of these should be protected by
+the event_lock. If there is no lock protection before the validity
+check, it is possible for a null crtc->state->event to be passed into
+the drm_crtc_send_vblank_event() function, leading to a null pointer
+dereference error.
 
-    Revert "softirq: Let ksoftirqd do its job"
+We have observed its callers and found that they are from the
+drm_crtc_helper_funcs driver interface. We believe that functions
+within driver interfaces can be concurrent, potentially causing a data
+race on crtc->state->event.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=103252a9980000
-start commit:   af9c191ac2a0 Merge tag 'trace-ring-buffer-v6.12' of git://..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=143252a9980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=74ffdb3b3fad1a43
-dashboard link: https://syzkaller.appspot.com/bug?extid=82ccd564344eeaa5427d
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=162e9c27980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1123c107980000
-
-Reported-by: syzbot+82ccd564344eeaa5427d@syzkaller.appspotmail.com
-Fixes: d15121be7485 ("Revert "softirq: Let ksoftirqd do its job"")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Qiu-ji Chen
 
