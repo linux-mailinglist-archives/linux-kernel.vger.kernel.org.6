@@ -1,94 +1,149 @@
-Return-Path: <linux-kernel+bounces-336618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2471983D1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:26:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB6B0983D1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:26:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D30FB223C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 06:26:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 817DDB2254D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 06:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B6374418;
-	Tue, 24 Sep 2024 06:26:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F053377104;
+	Tue, 24 Sep 2024 06:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hbxdEGw6"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fQAjDCcS"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 152DB53373;
-	Tue, 24 Sep 2024 06:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0490953373
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 06:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727159160; cv=none; b=IBS7iCo+moGv2c66PDbgL8+3lkb+ndhfOyZfViDW4Gx7jK67/Ur7pM++d37+fqbjPVRaBSuNcnfhR2BFwhtFwDTimfzgRTQos8Kqh+kzcgUBGMt1YEGhcuCcwyRYHGelerrFUygtVZpPzAygCamy35XOquGe0TYq9Zf8xbTaFpQ=
+	t=1727159190; cv=none; b=jFwgVC0d9xykDbAI5kXUfZCpmn7ARwQNVpscPL2jR8ERGQe95psWaqLyfKvBYc75zYMNLHJXuEbX7cb24kquN+2bvnoFclLi7vlzDjHf57h+EOJVG8G0RzLCoP+aLsCoFRvbWWwYdrDGHxDFbFPH3peJ5oFNyigooeiMt0EwJjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727159160; c=relaxed/simple;
-	bh=+czLGlaqsYQEgDA6uOX2TIM07wUp7DCqpQ1RSdiFd4o=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=SzUQQ8Ykv38b8ysjF83uv1+uTeDtEbk9y9GC7NpEgQN2KqZIoXvzWJGhkWtGLtjYTvy889IQi1ws+3Ld6Li+l6YZnQheVCpG+mzy3NMX4J6R7fUPL1+afnuVYU2YxT0p4VIsDPuPhY6xI243JEWmCigtmTaISC1MFIo4x6kVN6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hbxdEGw6; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Type:MIME-Version:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=dgZD0WccF5QojPYETT7JzmM0yE7LqTl10iAGH+T0z/Q=; b=hbxdEGw6iQAYn+6ClyXqzNJMpj
-	yP1QpWkFNOI0DongiBIeCM7H6NjM2//l2rcHinS8tK1jexIBlCUWSbgzkKGTQrmmg1lgRYIKxSXHf
-	j3/BGmc5hr/Np9rWeYWxqt+DjqvcNiTmSHH2QK3baskYR3w5PlS0P87/3LmZ6cuxgl5nDWt/H0OY4
-	IJ23Ih1VbZsbOI4LYqtOFUd27/sac/CpDRjOy6k1BBB1TAe9jTWHmnq1feOAUeABa1JokHZKcG+lT
-	nuIPBOScbijTxgQ5XuG5vs0S0Es9a7hs/7dHjwaoMz2rANpK6/brvP4LNkGeZpe9Ld0fxo7CJzAv0
-	YVCOxq3A==;
-Received: from 2a02-8389-2341-5b80-b62d-f525-8e84-d569.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:b62d:f525:8e84:d569] helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1ssyzl-00000001FGr-00Vd;
-	Tue, 24 Sep 2024 06:25:57 +0000
-Date: Tue, 24 Sep 2024 08:25:53 +0200
-From: Christoph Hellwig <hch@infradead.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-Subject: [GIT PULL] dma-mapping fixes for Linux 6.12
-Message-ID: <ZvJbcRLlblu7s2kd@infradead.org>
+	s=arc-20240116; t=1727159190; c=relaxed/simple;
+	bh=lYTd7hQ8FAoCkKxITL4zdXuYX8Yn/AHY0EdO4ffZYAQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FHnc6tZ48GhHtF0oNgYuepxfvCrPddKb+aVKSSNNFs6lC8/RWyxLRjycKQfe95/Po5Gt7ayx0LSxfRliUv3ZLhLqpLIgqUrO6ThCGxDkVFXeMP1zuhSQYkgghyNesPUBv/zsihbdTa1JaPrKWcCn024ERc4TO971H60zeT9UNTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fQAjDCcS; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37747c1d928so2700050f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 23:26:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727159185; x=1727763985; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gdBSLWTjDz46WnUKd/zsdS9Z+CNhvUe7k25zO7xWOHY=;
+        b=fQAjDCcSNUTRxIM1dmv0SUvdNpT3s2gDbNVTAeaeHoLy8xwJShFrP0jkZQ4tcBZRFo
+         O7H5y8Ovw94mhm3nbbadfwYHQUTMiSqpvIlM7Xv3NYbb18DZzZm/1+U7IhuBJgVjrGDt
+         N2cQ3Y3MZxtoNJvAZFHgj3O9s6nheIOnpDZBTpppEFiax0cmh+NF4qfGGLNCiYTAk0Pm
+         OJiZZnWH52zm1U3mQNVH/L1cq336WqXJubl4F7hnwxsv/jb8DfK7js+3oonIO72VM+oV
+         sngqYuDt8XIx4v2mSOk07I/GRMPkxXwetmI0dsH7rb++ptRZvUDNGG+XvYaWRj4TdpYQ
+         djaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727159185; x=1727763985;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gdBSLWTjDz46WnUKd/zsdS9Z+CNhvUe7k25zO7xWOHY=;
+        b=b6f8ugEhRGkBkCYf5UCnEz/Ivi/gVpIxQZCKWHDW9Dstt1FkjW7akLZ9CQucaACl76
+         iBf87+4w3LNaxMUK4O8OCNVjY2EIa4X+PJlb3G0VE8hCiB4CpI0J0AiR0GoxYpOzM8FH
+         Ib/Zllkb3hjfOOlEnzpOeaHREnjKNCmn2BayKt4TR85VsJ2lSFJREXibsTYgrxeM5qZH
+         y6xPc72aKqmixs5XZ0BtsRXAo/DU/w7EpIEOOfQLZxB6ByYtXAWHmGJc+U/eu1bJP5zQ
+         oIQegu3LIjc9E+jttx3mvMSNHY81Hpgs3pRDhpFJvwvbPzPcrDxAtqNFAFGblSqwicM+
+         yecg==
+X-Forwarded-Encrypted: i=1; AJvYcCXKneSxIja0ikziY+2kqvXrFV5uJZuhmQtcgzLW7HpIV9xwGJyR/wJAP859yVCjD54leCbsNwA5n0MGoik=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYlN8YEdgWL/rIczOWDgRBScJczP+9uEOaWWOK4LHH170YoU/8
+	NSYC8IR14zrSRHjbfxFeuuDwbbShFbcOThILMXRzWGcj5qYl6OW1q4/6ZvqqD4U=
+X-Google-Smtp-Source: AGHT+IH7QCoWbsnczGD/UHfDyngk5Dnq6vWWlZdr2uSQqSKGcBjiebnb2RSWlwiXS9rCJr2xUVJQxw==
+X-Received: by 2002:a5d:4a07:0:b0:374:af19:7992 with SMTP id ffacd0b85a97d-37a42252c42mr6407890f8f.7.1727159185161;
+        Mon, 23 Sep 2024 23:26:25 -0700 (PDT)
+Received: from [192.168.0.157] ([79.115.63.20])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cbc2c1acasm693353f8f.32.2024.09.23.23.26.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Sep 2024 23:26:24 -0700 (PDT)
+Message-ID: <368cd6fb-cab1-44ad-af46-651d9323bc19@linaro.org>
+Date: Tue, 24 Sep 2024 07:26:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 6/6] mtd: spi-nor: add support for Macronix Octal flash
+To: Alvin Zhou <alvinzhou.tw@gmail.com>
+Cc: linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, pratyush@kernel.org, mwalle@kernel.org,
+ miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+ broonie@kernel.org, chengminglin@mxic.com.tw, leoyu@mxic.com.tw,
+ AlvinZhou <alvinzhou@mxic.com.tw>, JaimeLiao <jaimeliao@mxic.com.tw>,
+ Bough Chen <haibo.chen@nxp.com>
+References: <20240718034614.484018-1-alvinzhou.tw@gmail.com>
+ <20240718034614.484018-7-alvinzhou.tw@gmail.com>
+ <97134efb-398d-4c21-a915-87a5b4f1b29a@linaro.org>
+ <CAPhrvRR3U9=0DuG_FQ81ZJq+RLe6Bn9YO831Mx2n3NkeV3MCdA@mail.gmail.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <CAPhrvRR3U9=0DuG_FQ81ZJq+RLe6Bn9YO831Mx2n3NkeV3MCdA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The following changes since commit 88264981f2082248e892a706b2c5004650faac54:
 
-  Merge tag 'sched_ext-for-6.12' of git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext (2024-09-21 09:44:57 -0700)
 
-are available in the Git repository at:
+On 9/24/24 4:25 AM, Alvin Zhou wrote:
+> Hi Tudor,
+> 
+> Tudor Ambarus <tudor.ambarus@linaro.org> 於 2024年9月23日 週一 下午2:54寫道：
+>>
+>> Hi, Alvin,
+>>
+>> I quickly skimmed over the previous 5 patches and they are looking fine.
+>>
+>> I don't get this patch however.
+>>
+>> On 7/18/24 4:46 AM, AlvinZhou wrote:
+>>> From: AlvinZhou <alvinzhou@mxic.com.tw>
+>>>
+>>> Adding Manufacture ID 0xC2 in last of ID table because of
+>>> Octal Flash need manufacturer fixup for enabling/disabling
+>>> Octal DTR mode.
+>>>
+>>> Signed-off-by: JaimeLiao <jaimeliao@mxic.com.tw>
+>>> Signed-off-by: AlvinZhou <alvinzhou@mxic.com.tw>
+>>> ---
+>>>  drivers/mtd/spi-nor/macronix.c | 4 +++-
+>>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/mtd/spi-nor/macronix.c b/drivers/mtd/spi-nor/macronix.c
+>>> index f039819a5252..1a8ccebdfe0e 100644
+>>> --- a/drivers/mtd/spi-nor/macronix.c
+>>> +++ b/drivers/mtd/spi-nor/macronix.c
+>>> @@ -200,7 +200,9 @@ static const struct flash_info macronix_nor_parts[] = {
+>>>               .name = "mx25l3255e",
+>>>               .size = SZ_4M,
+>>>               .no_sfdp_flags = SECT_4K,
+>>> -     }
+>>> +     },
+>>> +     /* Need the manufacturer fixups, Keep this last */
+>>> +     { .id = SNOR_ID(0xc2) }
+>>>  };
+>>>
+>>
+>> Could you please elaborate why you need just the manufacturer id here? I
+>> would have expected to see a specific flash entry instead.
+> 
+> Grateful to Michael for the valuable suggestion. This addition of the
+> Macronix manufacturer ID enables the fixup functions such as
+> macronix_nor_set_octal_dtr to be executed without the need to
+> create separate ID entries for each Octal DTR NOR Flash in the
+> flash_info.
+> 
 
-  git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-6.12-2024-09-24
-
-for you to fetch changes up to b348b6d17fd1d5d89b86db602f02bea54a754bd8:
-
-  dma-mapping: report unlimited DMA addressing in IOMMU DMA path (2024-09-23 08:38:56 +0200)
-
-----------------------------------------------------------------
-dma-mapping fixes for Linux 6.12
-
- - sort out a few issues with the direct calls to iommu-dma
-   (Christoph Hellwig, Leon Romanovsky)
-
-----------------------------------------------------------------
-Christoph Hellwig (2):
-      dma-mapping: fix vmap and mmap of noncontiougs allocations
-      iommu/dma: remove most stubs in iommu-dma.h
-
-Leon Romanovsky (1):
-      dma-mapping: report unlimited DMA addressing in IOMMU DMA path
-
- drivers/iommu/dma-iommu.c   |  33 +++++++++++++
- include/linux/dma-map-ops.h |  19 --------
- include/linux/iommu-dma.h   | 114 ++++++--------------------------------------
- kernel/dma/mapping.c        |  43 ++++++-----------
- 4 files changed, 62 insertions(+), 147 deletions(-)
+Ah, nice. Okay then. I'm going to review the rest of the patches. They
+look promising ;).
 
