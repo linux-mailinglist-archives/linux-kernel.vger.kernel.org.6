@@ -1,93 +1,86 @@
-Return-Path: <linux-kernel+bounces-336784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E4379840C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:41:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAE239840CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:43:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55A992878E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:41:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 497DAB20BCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B871714F9F8;
-	Tue, 24 Sep 2024 08:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6652B1509B4;
+	Tue, 24 Sep 2024 08:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="KizET30Z"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rA/vjWKD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7956A14F123
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 08:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC95514EC4A;
+	Tue, 24 Sep 2024 08:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727167306; cv=none; b=X6ZyJs6IdOT1MkJOgXStzKgOLp0t4/jg8HZFae0q8k798rz74zc9G3YiIBVYV7SiBIUbfvB12tVPN8s7vTsPWd7tfUGuMuzdJ7mgSEjl8oXa83YqZUDDLiTs7LlU3LSqMceaBo0VQz0hdxt4g22c6M/VIK5u3K+wd9EPZfZBIlI=
+	t=1727167386; cv=none; b=dHA4BJ6xI3/uGvFKWmrmpN63arii+2w10bR/h08z6rZeGzUMHciXMPRjSP3KMKM7K1nqiSJE7LXyrzsHu5RWIeOqMI15Fwn2vGyZP6vJXQJmWUG2xkDXzpsVN0XHJl7h1T6FOcrrRwKt7bcfBJe3AS3ogZPZ+c9mRmxGR3JdD00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727167306; c=relaxed/simple;
-	bh=0Nxohz98wsc6izrrKqrkIzll7iRJ8I4nyuTfQRY2aaU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b1L79xh5PsFYesK4j85eIAYZ9DXVDbJj6pINIJaujEnzDfeP/WhT8+Ey1F/87vxyOpohHCxvwyhiSK6XoYKIuLUCACUfOXY0FjpHTFhr+qRqaGkp09BIlK1XxmYMpQKDvKiOIT6yPuJow9oMhzEHqRTxp8D8lu2Z5APxCB6/x0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=KizET30Z; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727167302;
-	bh=0Nxohz98wsc6izrrKqrkIzll7iRJ8I4nyuTfQRY2aaU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KizET30ZYWAlv4XJzFn4/Dn1JgreGEciuLmwr+bPzLztL1s7S8v62aUwodhOw7GkZ
-	 L7vJYwiUkgi11IbHhlC/FhOGcKljWZPOvsubEJ0Gsy5oaYBIW38Xwozwl8/MDBABqG
-	 DpGcR4jlc0FFjh6pYTOAWwkTPngqI8hq7cCBjaGTn7LuUMLUJx+eS/zJIWNz6VyuEi
-	 5xPCeYaWWWMQowVPReqfQnAXrcnKCki4eO5bjtbc1TBOUzp84WMhRxu1qOH1Q3orRg
-	 B3fHiJ/gNashbVw7dlzcof0RJ/MC9Jotki+VA7cdgRAlkumLta3C5IKa5Nua+orLtJ
-	 +MgFE6MFXk2fw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1D98017E1067;
-	Tue, 24 Sep 2024 10:41:42 +0200 (CEST)
-Message-ID: <9a7b67a4-f4aa-44df-8933-876396e873d9@collabora.com>
-Date: Tue, 24 Sep 2024 10:41:41 +0200
+	s=arc-20240116; t=1727167386; c=relaxed/simple;
+	bh=G03an4s/BBkbiR5sfEuBnlun4tbtlIlIOPYVWkYcMPU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=edJeokv7v3mgeu2ChsTd2TYk9o8qgMPPB2+LarTGN3MEpuwPbgqjAIbjvUZ7DQpP2ZJI+5Fy+Zt3mRM9nvOsHZ8eXdIDpJi8bOvzrnsQZNb7xnvvwBSbmlQ388RuCptF9AaopGu1ngf0GtTEWxDIcqyZSByLlgmUBvCR8OdySZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rA/vjWKD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37D5CC4CEC4;
+	Tue, 24 Sep 2024 08:43:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727167386;
+	bh=G03an4s/BBkbiR5sfEuBnlun4tbtlIlIOPYVWkYcMPU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rA/vjWKDVg4XoXhqoSRyPjmQaRYSrI00ThmOhO6SGl2/h5PKG6/x3/P0wNZBNuzTd
+	 RPf93PE9q5moiD/R2ga0mGP8Xt2FsRdWYqXsbGQIW/pNpwCNcB0qE5yFBeZBOnKU4l
+	 ZwCDP8YzK2IsCMsQgKxZm6MO7/qRlC1UkxkHZ4rN4u3iSiwfVedq4WOuYc/P0pAu6I
+	 A6DrFV/ZIRYh0MdV8Qo3oLJyOQiPQSl+tE6sf6LtgfXybwvl4eL6wVVQpBEPfTI5/R
+	 D5V5SKA8lNmCEVKaJ8+6xOB2VeyzOGZtnjCznHcJBR/G/SfIKCgJqXmV/EYESqEZAB
+	 8pQhucrdjqyxA==
+Date: Tue, 24 Sep 2024 10:43:02 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, konradybcio@kernel.org, 
+	andersson@kernel.org, simona@ffwll.ch, dmitry.baryshkov@linaro.org, 
+	abel.vesa@linaro.org, robdclark@gmail.com, quic_abhinavk@quicinc.com, sean@poorly.run, 
+	marijn.suijten@somainline.org, airlied@gmail.com, daniel@ffwll.ch, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, quic_khsieh@quicinc.com, 
+	konrad.dybcio@linaro.org, quic_parellan@quicinc.com, quic_bjorande@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	quic_riteshk@quicinc.com, quic_vproddut@quicinc.com
+Subject: Re: [PATCH v3 4/5] dt-bindings: display: msm: dp-controller:
+ document SA8775P compatible
+Message-ID: <6v3wtdxcooi6qfolj5bfbgeru4uyawj6bsbfcnxu3lspuuhsi6@ysmb435njcul>
+References: <20240923113150.24711-1-quic_mukhopad@quicinc.com>
+ <20240923113150.24711-5-quic_mukhopad@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] phy: phy-rockchip-samsung-hdptx: Depend on
- CONFIG_COMMON_CLK
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Heiko Stuebner <heiko@sntech.de>
-Cc: kernel@collabora.com, linux-phy@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-References: <20240923-sam-hdptx-link-fix-v1-1-8d10d7456305@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240923-sam-hdptx-link-fix-v1-1-8d10d7456305@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240923113150.24711-5-quic_mukhopad@quicinc.com>
 
-Il 23/09/24 18:40, Cristian Ciocaltea ha scritto:
-> Ensure CONFIG_PHY_ROCKCHIP_SAMSUNG_HDPTX depends on CONFIG_COMMON_CLK to
-> fix the following link errors when compile testing some random kernel
-> configurations:
+On Mon, Sep 23, 2024 at 05:01:49PM +0530, Soutrik Mukhopadhyay wrote:
+> Add compatible string for the DisplayPort controller found on the
+> Qualcomm SA8775P platform.
 > 
->    m68k-linux-ld: drivers/phy/rockchip/phy-rockchip-samsung-hdptx.o: in function `rk_hdptx_phy_clk_register':
->    drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c:1031:(.text+0x470): undefined reference to `__clk_get_name'
->    m68k-linux-ld: drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c:1036:(.text+0x4ba): undefined reference to `devm_clk_hw_register'
->    m68k-linux-ld: drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c:1040:(.text+0x4d2): undefined reference to `of_clk_hw_simple_get'
->    m68k-linux-ld: drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c:1040:(.text+0x4da): undefined reference to `devm_of_clk_add_hw_provider'
+> Signed-off-by: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
+> ---
+> v2: No change
 > 
-> Fixes: c4b09c562086 ("phy: phy-rockchip-samsung-hdptx: Add clock provider support")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202409180305.53PXymZn-lkp@intel.com/
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> v3: No change
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
+Best regards,
+Krzysztof
 
 
