@@ -1,100 +1,120 @@
-Return-Path: <linux-kernel+bounces-337019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8EFC98443A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:09:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC9A698443D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:10:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05C7A1C23034
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:09:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19B421C2317F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:10:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A401A4F15;
-	Tue, 24 Sep 2024 11:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d5i5pQY9"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6101A4F1A;
+	Tue, 24 Sep 2024 11:10:05 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E941419E98A;
-	Tue, 24 Sep 2024 11:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CFE91A4E95;
+	Tue, 24 Sep 2024 11:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727176174; cv=none; b=n47AqGjC93p5dOKfiWQMG+neCjKA5bNTFbsvqIj8v1R7U0VxFaNfdqM2kWGjs48LYIlMEXNF9DRvdhZGDZ7UA1Bze/9ZECHqJK+TDladSjQkLxURRzexGlIdNh1BCWESiFfz/7j0EkcFZ8dtCyTfIZH4pmF6zMF98OmpkCwC2+M=
+	t=1727176205; cv=none; b=jg4ExqxQflxFfVl8ihhJGpqiZD8WSrFW2YcRfmSbg+nMqwxg/kLX7QWhf2hJXMhv/0hIWwQDw151s6oiTDmAzaeaGqFX3Y8JHh5N5JAE47PRg96+AYuYl4zDwfZjpt/aD7zTu/mM+v4pnV1p3IN4Cvn3/U6137ontiHosLZGNMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727176174; c=relaxed/simple;
-	bh=C2KsKJ3VaL6KowMsuyZfe6cS0JW8ksINh3HbU6/3l4o=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pNWQT7tl3xHDSt6US/8mIfKlDEM5woB3VFQi8DkjVdSGG4rTZafu6q0U309JU6sOuf+bzfKG//tfq5e+UMbX+CfBtLBkvPU0ZpB+BoCvLnlFQQGyh33R9Rh3nIGozWRQRPzh+z9RjVm5mic7U6eppi9XFkfSnyC1WPu4yZ7spgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d5i5pQY9; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-206b9455460so40923855ad.0;
-        Tue, 24 Sep 2024 04:09:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727176172; x=1727780972; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=C2KsKJ3VaL6KowMsuyZfe6cS0JW8ksINh3HbU6/3l4o=;
-        b=d5i5pQY9atJEjM2B3U0EUV9r8FfczM8dnYAuALHBLERkZsn6RbOQGs8W1auAun/M0p
-         wKjvshK/ssYIWtLrO0zI2r74XxjU3qEOLhDFvCUtUtstZstxmzyDXMlctggDjWbG9v9B
-         c5WfBVQ0fR4Ne45OLkol+fn1dX1lj5c6BQs5MJgl5fBT+Tp4WERvJ7Xh3dJIJ2XsLLGc
-         8+Efn/PQ2AbH8vC6RZ3cbaeroIl7fOghNkF/Cjyqwe2Nuq82JY/g0cfz9FSuJo3PQI4T
-         7aCwUI+F73szKCbIM1Rjvb79Rgo2f/VuJnQMt5j5Dvxp9pu5C4XHy16m4Jpw0zChuJqi
-         3rfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727176172; x=1727780972;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=C2KsKJ3VaL6KowMsuyZfe6cS0JW8ksINh3HbU6/3l4o=;
-        b=URtJWr8rF2ag2F0+eE8J4SYLvZnSiVQvi4dPe4LkAT7f3EpRypOBfb2/3MNv2jlWu4
-         vQjVij/XKL+WbzNXniXDfwWOLiOe5MUUrU8wa5vfZlulIgj4R4Mrv7fZgEGqiWpSTpWp
-         85AipDmlyaoRUXQEiT514K42T4IKuzL17OgixHDL6AMQWTp1uvNOwx3hqYyA4qJEMuY2
-         LMJdZ+SQew7sEYAOJAAwoMzm0iuC1MLpCBqiN63dwAr+yyaLOBIKrBlxCMwKDe3HyZQR
-         wRzR7AID/1sI395kPq/4EdYd89XsxJXHwOGibra33etDLaZ7U6s1QC/onT0v6tOrxkWY
-         pHFg==
-X-Forwarded-Encrypted: i=1; AJvYcCUF5WUpF08TFg4pTFHkjbYEp8IrOu4alogn6FSiJzZrbB0ig5b0bW1BXSQgF95/5i8ksf1uyKk0W0/u5qrA@vger.kernel.org, AJvYcCV+Zk8kp/b+BkqYPoFHThy9oKJKZmLAw3ELuSGE7RD14t7a57Em8EpimWYDrED4mi3JTnM=@vger.kernel.org, AJvYcCXey52aawInweXKW9W16qoWyF3YNpy/I0ZlhWkzAfgBdTt0+KIUI4jmTv0TUnuR+ADqsEtYzn6DKPzxgdg81rOD@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCcjsTjZLy7aJYoEKv6mBvxfe1U8SicQ0KbYN1t7L/5Rdlf+jX
-	OuBGUZ6Qfmsrxq8jatFACTDlcb8ROCo0q3KwaM7amiBu3v34ybRYRFhvVy26
-X-Google-Smtp-Source: AGHT+IGQq7X7HpuEbTOkrYYaoD11F1CKrWkGCj4fLeKD+7f3XfOb82rNHyRUHVh8KI7/32lG7s/rmg==
-X-Received: by 2002:a17:902:cecb:b0:206:9dfb:3e9e with SMTP id d9443c01a7336-20aed09feeamr42684295ad.10.1727176172141;
-        Tue, 24 Sep 2024 04:09:32 -0700 (PDT)
-Received: from [192.168.0.235] ([38.34.87.7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af1851f88sm8584975ad.242.2024.09.24.04.09.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 04:09:31 -0700 (PDT)
-Message-ID: <df4f18a91ae9bf016a569fe65ad5a164541345ab.camel@gmail.com>
-Subject: Re: [PATCH] selftests/bpf: Add missing va_end.
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>, andrii@kernel.org
-Cc: shuah@kernel.org, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Tue, 24 Sep 2024 04:09:27 -0700
-In-Reply-To: <20240924045534.8672-1-zhangjiao2@cmss.chinamobile.com>
-References: <20240924045534.8672-1-zhangjiao2@cmss.chinamobile.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1727176205; c=relaxed/simple;
+	bh=cpI6pGHmRebpNzkmkIEeAjGeKKQx/iNqWGbZ1h3E+KU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M+vrZ7kJdzFCpObqt+FVwj/3xnK8jlJx7WK24AjctImtCk7S6ttW16jvxoP6osWS8V3uMr94NhRuG39Ppgczmn7KHnH7cdgD+I45lCiLpMmIESLpiJ/8olT0s3yBUzFBVzOplNxD/1EoPqnz7i+tBKcagubKCVh+ONbE4tA+3kI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XCcZV3vPPz4f3lCv;
+	Tue, 24 Sep 2024 19:09:38 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 6C5AC1A0359;
+	Tue, 24 Sep 2024 19:09:55 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgDHR8QBnvJm3RbeCA--.62308S3;
+	Tue, 24 Sep 2024 19:09:55 +0800 (CST)
+Message-ID: <d92d106b-3a85-4ca1-85da-7078ba63f95b@huaweicloud.com>
+Date: Tue, 24 Sep 2024 19:09:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/10] ext4: drop ext4_update_disksize_before_punch()
+To: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ ritesh.list@gmail.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+ yukuai3@huawei.com
+References: <20240904062925.716856-1-yi.zhang@huaweicloud.com>
+ <20240904062925.716856-4-yi.zhang@huaweicloud.com>
+ <20240920161351.ax3oidpt6w6bf3o4@quack3>
+ <5de46c69-74f4-4955-a825-8c8970c0aa09@huaweicloud.com>
+ <20240924101119.xzejk3a2rjmgqed7@quack3>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20240924101119.xzejk3a2rjmgqed7@quack3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgDHR8QBnvJm3RbeCA--.62308S3
+X-Coremail-Antispam: 1UD129KBjvJXoWrKFyfJr43JFykGF4ftF45GFg_yoW8Jry3pF
+	WfKay8tF48K3y8Cr1Iq3WIvr18tw4Iyr48XryxXr17XrZY9Fy3Kr4IqryUKF95uw1vkr45
+	X3Wjga97Z3yjvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Tue, 2024-09-24 at 12:55 +0800, zhangjiao2 wrote:
-> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
->=20
-> There is no va_end after va_copy, just add it.
->=20
-> Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
-> ---
+On 2024/9/24 18:11, Jan Kara wrote:
+> On Tue 24-09-24 15:43:22, Zhang Yi wrote:
+>> On 2024/9/21 0:13, Jan Kara wrote:
+>>> On Wed 04-09-24 14:29:18, Zhang Yi wrote:
+>>>> From: Zhang Yi <yi.zhang@huawei.com>
+>>>>
+>>>> Since we always write back dirty data before zeroing range and punching
+>>>> hole, the delalloc extended file's disksize of should be updated
+>>>> properly when writing back pages, hence we don't need to update file's
+>>>> disksize before discarding page cache in ext4_zero_range() and
+>>>> ext4_punch_hole(), just drop ext4_update_disksize_before_punch().
+>>>>
+>>>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>>>
+>>> So when we don't write out before hole punching & company this needs to stay
+>>> in some shape or form. 
+>>>
+>>
+>> Thanks for taking time to review this series!
+>>
+>> I don't fully understand this comment, please let me confirm. Do you
+>> suggested that we still don't write out all the data before punching /
+>> zeroing / collapseing(i.e. drop patch 01), so we need to keep
+>> ext4_update_disksize_before_punch()(i.e. also drop this patch), is
+>> that right?
+> 
+> Yes, this is what I meant. Sorry for not being clear.
+> 
+> 								Honza
+> 
 
-My bad, thank you for fixing this.
+OK, this looks fine to me. Let me revise this series.
 
-Acked-by: Eduard Zingerman <eddyz87@gmail.com>
+Thanks,
+Yi.
 
 
