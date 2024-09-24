@@ -1,211 +1,150 @@
-Return-Path: <linux-kernel+bounces-337610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FCD6984C69
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:51:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3D44984C6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:51:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 726E91C22B65
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:51:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A0D11F23520
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC6813CF86;
-	Tue, 24 Sep 2024 20:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9B413BAEE;
+	Tue, 24 Sep 2024 20:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XuVsvKdt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bCO2hw7x"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F817F460
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 20:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965B974418
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 20:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727211058; cv=none; b=kjV8IOwD35BVZG4kPphdNhq54xOClsMO84KX+4XIPHI8b2x5Nxx6enuwco7nrSuvrTcIon66M4FxDO2vLwtpfQEcO/B32mXG3xaa2U64YYkIRWu7GNP1HBblvebP1WAVwruaem1N/Mxz7SDQYadycKWJywEFO16yarK2kI8yPzY=
+	t=1727211087; cv=none; b=LuVxEFx5D/RJFpuDZZ8qFMRqIUb1x4UFQ0dNfSkNjr+I2pgkFukXuo4gP/AqPnZ3UgYBL1xqiSYl/mJCCEJtX5UwFQ0y60vK8X14tKJ+0w38EU11VR74xciwC6At/l5/lyc0W3ZtyFfY0a9VeuUqy6QDzyFZB2g2KotIZI3gN6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727211058; c=relaxed/simple;
-	bh=q1Fzh6XcLCvsZX97wtdGvG+wbgRVQb9FWzltMHxrYhU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=TlqW0RZrCZ25pLCNlegQJCrFMQ9iEZzDKyhGhMn4/vgsg8e4qxirRDTYBLXWJh0R09je2vr0zaVAZv4JHx0BGMn9yiXLGnb4OjOBNK3HtM7tSsORq90NoPzbtmFQzK4e3zkA04x++BQBKzMSLJbVuH5Okm9PHPg39+sxHx/KmSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XuVsvKdt; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727211054;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=Ha73YKMkXYy714HDQl55jm40mWYNmGrnegcmLNCX6UI=;
-	b=XuVsvKdtbddFmvyhBgg5KQsLKtsRxYVy0lJ7n+m1DIwADGtrWygpIojbUzoWlZxkj0VhMs
-	LUmY5nZ5uwrRWj+s9FYG4aelFLENAvxd8pghWhpqxoYJ4g8mhiwFRLzQvTb3hrKqb8jZjU
-	8q8aBfPypiEUEIdGfJ9btJOiZwIWTls=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-81-REO2jbbyMP2VlxWP07Az7A-1; Tue, 24 Sep 2024 16:50:52 -0400
-X-MC-Unique: REO2jbbyMP2VlxWP07Az7A-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42cb808e9fcso38260565e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 13:50:52 -0700 (PDT)
+	s=arc-20240116; t=1727211087; c=relaxed/simple;
+	bh=to3sMPAPUS+U8Yc2xR8p1UrQH7WHum/0e5cqAn3w/Ho=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EAm8XsJI7w2lFi2GJR8LHwPTQvEVek4yq23JJPHS4FeclprxCAet6aTP7jZuEGRt/RXdjoiaevFop1uUgkOBkNI+7fGYSlNVHxUCSt9KK3ihRhtA1u77zSH09gQF/J1Ur1pEYh6xF5HdzRzUqxIsqnaLiqltTGKBjd42wW+3iW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bCO2hw7x; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6c359c1a2fdso53160206d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 13:51:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727211084; x=1727815884; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w8Ouk3+mOzkk2sFKAnAlzIMXgObvchvQn+4b73wEQTE=;
+        b=bCO2hw7xTYQFBDvLOB4s0N4rScT5Tknei3MzDqWM/j+2eBQ35izM2/jSiroSQsPque
+         JMoBuOLGBZr3H2KeX7fpBRWOm6frUnkLYhYYf6+fEKfEu19/3NW1b3WcI0CUQR+KqWso
+         dVUiIFkkz3Bpw2rm2l1uMxVy9iLLvRFeTblOqYdJDZYly9Rr91Jl1Dh88opQqXeh4b9I
+         lmMKZ62zpnCK/6OfkhnZpWzL0WSRGcL44lCMXXQCd2Z5hprvJGJ3OC2vR7bQEAn3nZjv
+         Xm50J8FwckhdQzcnAb+SlI4NcMdl9QI3ivq2QfyomoDd72ippVKfcIZ1X7Xnafs/ycjs
+         GDLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727211051; x=1727815851;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ha73YKMkXYy714HDQl55jm40mWYNmGrnegcmLNCX6UI=;
-        b=wiJAVEhtUtGTka25qBaA+jsqF6ioV9MjxvFLJ/jlJ7wSh9EFxG7UCGqXRIBvjN818C
-         UejTVE8aLXoGgF0Q0IqErItFlpBAVr7RM2ZstHWsEI0kXYWXg0LVS8kCsep6HIAKUypj
-         D/ZF8ZuQwnFZdF6a4OGyEKuHdTLenu5Qqs2cyjYl8wuiXzF9gzFFA6Uox4zvMpIidXF1
-         aJmruGXZTnuFr0dt2Tf9jnkIaVkBw6i6P0IbwanSxKuLMa1ZWmdmiBeJRJhEFPnAfGmV
-         TSwxsU+p9uPa+KsriLfOYH2kOKGVwTM9HVJsFY2TYrMRNYMNCQrTRV6f5S1j31rXf8P9
-         JARg==
-X-Forwarded-Encrypted: i=1; AJvYcCXERuvyv81SLsnnThnSE85YmWOrlDDNal+gAQKKmKpsp28OOsb5gUc5BMVzD0Ck1x/KIzP2ZjeRa2N3/u4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdTnNiD3NGcimltAHG9uk2l1+7M5WSOm4uts5wFZWmDZbVKEYG
-	N1mHo9Sq1ZgMAGhMKvQpzLCrchoqNarlRFjYQhjZxRx7k5cavLZWBypqGtTzo4yOSGNrd3nDK8n
-	OIlq6z65sZ+7Rpcfnn/Xgarm9u6fUuaaXlFaB/vgoH9xOxG4rDgLttZAMHUVHGQ==
-X-Received: by 2002:a05:600c:1e0b:b0:426:5dc8:6a63 with SMTP id 5b1f17b1804b1-42e96242214mr1865625e9.30.1727211051379;
-        Tue, 24 Sep 2024 13:50:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFiXHIUYfLg/ApdHxFIkfiGLw4xDQ4Vi/t8oKMffgZIEevAFQUBrtSqrnnQvLLtODlevmJANQ==
-X-Received: by 2002:a05:600c:1e0b:b0:426:5dc8:6a63 with SMTP id 5b1f17b1804b1-42e96242214mr1865395e9.30.1727211050977;
-        Tue, 24 Sep 2024 13:50:50 -0700 (PDT)
-Received: from redhat.com ([2a06:c701:7405:9900:56a3:401a:f419:5de9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e754a7aedsm170062615e9.31.2024.09.24.13.50.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 13:50:50 -0700 (PDT)
-Date: Tue, 24 Sep 2024 16:50:46 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	david@redhat.com, dtatulea@nvidia.com, eperezma@redhat.com,
-	jasowang@redhat.com, leiyang@redhat.com, leonro@nvidia.com,
-	lihongbo22@huawei.com, luigi.leonardi@outlook.com, lulu@redhat.com,
-	marco.pinn95@gmail.com, mgurtovoy@nvidia.com, mst@redhat.com,
-	pankaj.gupta.linux@gmail.com, philipchen@chromium.org,
-	pizhenwei@bytedance.com, sgarzare@redhat.com, yuehaibing@huawei.com,
-	zhujun2@cmss.chinamobile.com
-Subject: [GIT PULL] virtio: features, fixes, cleanups
-Message-ID: <20240924165046-mutt-send-email-mst@kernel.org>
+        d=1e100.net; s=20230601; t=1727211084; x=1727815884;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w8Ouk3+mOzkk2sFKAnAlzIMXgObvchvQn+4b73wEQTE=;
+        b=g8tfaEqpYGgHog/FdgTqAm85is37Y5cZeGKj4VrkPhP/+IgYtwAztuBbT6ejYe5pCy
+         lP0Icb/edbwe2QyYQ4paVWqLVmOHPTfbw/DaBcVrgjd/T4H4hsQCKFXvlJQSPKS4W6E/
+         Wdakj6YPQjXQa6w+hHjgMpz0+lD+fEzrvkn3II5E9QGKF1iwECylHlxgc9fqoIhIuRl4
+         fqJ3PjXuifeOzwF8i0FSPSAG67EPPtqGTeyZF3Ilyd2DraXDBSiOYQ8lWy+kZnTzeJsL
+         Y43iPJ1nAiN/LHRfX5D1V9zN+dR++GZkGe6a+eT5x8Sxh8zS8+LThfBrE6lY3bcZmOpN
+         DQEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV01gzhVok06D3HV1rMuyHE0pLMm+xvkUBMpsuahCp+aeirbhur1SZESzUrvU6TwxtrhnVxgrH+i0vqnIg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlJwpPkXIxM+VzwZ0BlJDpfBzUeWJUqinAmBxAlN410ot8Y2Id
+	q032I3OkxTXDBeTj8r53aAB5ITHTqzTdFegyZAAR5zHt6Yv9cf6G6r0SmOnkuotDdPV4T/0Rfap
+	hRIjNKcFvHJnvKpydfcGs6EnOt2o=
+X-Google-Smtp-Source: AGHT+IFQC06uACtY5Q0qyEv5c3jsAf1V1JqntpR5sTV+WlZmbiWoVeqVnTXQJigx0D8eL1UWD58roQDqvyzbVMEpV4M=
+X-Received: by 2002:a05:6214:4a85:b0:6c5:a934:6b7d with SMTP id
+ 6a1803df08f44-6cb1dd70739mr7083626d6.6.1727211084320; Tue, 24 Sep 2024
+ 13:51:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mutt-Fcc: =sent
+References: <20240924011709.7037-1-kanchana.p.sridhar@intel.com>
+ <20240924011709.7037-7-kanchana.p.sridhar@intel.com> <CAJD7tkbd=H+=wx0gnu8sh44hOmx7BE3G3oSxi7zt+o3HKJthkA@mail.gmail.com>
+In-Reply-To: <CAJD7tkbd=H+=wx0gnu8sh44hOmx7BE3G3oSxi7zt+o3HKJthkA@mail.gmail.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Tue, 24 Sep 2024 13:51:13 -0700
+Message-ID: <CAKEwX=O4PJmLRLog3NGzy+r6+1XTXs_r9Nxs73CJeFeN0pcr+Q@mail.gmail.com>
+Subject: Re: [PATCH v7 6/8] mm: zswap: Support mTHP swapout in zswap_store().
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, hannes@cmpxchg.org, chengming.zhou@linux.dev, 
+	usamaarif642@gmail.com, shakeel.butt@linux.dev, ryan.roberts@arm.com, 
+	ying.huang@intel.com, 21cnbao@gmail.com, akpm@linux-foundation.org, 
+	nanhai.zou@intel.com, wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following changes since commit 431c1646e1f86b949fa3685efc50b660a364c2b6:
+On Tue, Sep 24, 2024 at 12:39=E2=80=AFPM Yosry Ahmed <yosryahmed@google.com=
+> wrote:
+>
+> On Mon, Sep 23, 2024 at 6:17=E2=80=AFPM Kanchana P Sridhar
+> > +        * The cgroup zswap limit check is done once at the beginning o=
+f an
+> > +        * mTHP store, and not within zswap_store_page() for each page
+> > +        * in the mTHP. We do however check the zswap pool limits at th=
+e
+> > +        * start of zswap_store_page(). What this means is, the cgroup
+> > +        * could go over the limits by at most (HPAGE_PMD_NR - 1) pages=
+.
+> > +        * However, the per-store-page zswap pool limits check should
+> > +        * hopefully trigger the cgroup aware and zswap LRU aware globa=
+l
+> > +        * reclaim implemented in the shrinker. If this assumption hold=
+s,
+> > +        * the cgroup exceeding the zswap limits could potentially be
+> > +        * resolved before the next zswap_store, and if it is not, the =
+next
+> > +        * zswap_store would fail the cgroup zswap limit check at the s=
+tart.
+> > +        */
+>
+> I do not really like this. Allowing going one page above the limit is
+> one thing, but one THP above the limit seems too much. I also don't
 
-  Linux 6.11-rc6 (2024-09-01 19:46:02 +1200)
+Hmm what if you have multiple concurrent zswap stores, from different
+tasks but the same cgroup? If none of them has charged, they would all
+get greenlit, and charge towards the cgroup...
 
-are available in the Git repository at:
+So technically the zswap limit checking is already best-effort only.
+But now, instead of one page per violation, it's 512 pages per
+violation :)
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_linus
+Yeah this can be bad. I think this is only safe if you only use
+zswap.max as a binary knob (0 or max)...
 
-for you to fetch changes up to 1bc6f4910ae955971097f3f2ae0e7e63fa4250ae:
+> like relying on the repeated limit checking in zswap_store_page(), if
+> anything I think that should be batched too.
+>
+> Is it too unreasonable to maintain the average compression ratio and
+> use that to estimate limit checking for both memcg and global limits?
+> Johannes, Nhat, any thoughts on this?
 
-  vsock/virtio: avoid queuing packets when intermediate queue is empty (2024-09-12 02:54:10 -0400)
+I remember asking about this, but past Nhat might have relented :)
 
-----------------------------------------------------------------
-virtio: features, fixes, cleanups
+https://lore.kernel.org/linux-mm/CAKEwX=3DPfAMZ2qJtwKwJsVx3TZWxV5z2ZaU1Epk1=
+UD=3DDBdMsjFA@mail.gmail.com/
 
-Several new features here:
+We can do limit checking and charging after compression is done, but
+that's a lot of code change (might not even be possible)... It will,
+however, allow us to do charging + checking in one go (rather than
+doing it 8, 16, or 512 times)
 
-	virtio-balloon supports new stats
+Another thing we can do is to register a zswap writeback after the
+zswap store attempts to clean up excess capacity. Not sure what will
+happen if zswap writeback is disabled for the cgroup though :)
 
-	vdpa supports setting mac address
-
-	vdpa/mlx5 suspend/resume as well as MKEY ops are now faster
-
-	virtio_fs supports new sysfs entries for queue info
-
-	virtio/vsock performance has been improved
-
-Fixes, cleanups all over the place.
-
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-
-----------------------------------------------------------------
-Cindy Lu (3):
-      vdpa: support set mac address from vdpa tool
-      vdpa_sim_net: Add the support of set mac address
-      vdpa/mlx5: Add the support of set mac address
-
-Dragos Tatulea (18):
-      vdpa/mlx5: Fix invalid mr resource destroy
-      net/mlx5: Support throttled commands from async API
-      vdpa/mlx5: Introduce error logging function
-      vdpa/mlx5: Introduce async fw command wrapper
-      vdpa/mlx5: Use async API for vq query command
-      vdpa/mlx5: Use async API for vq modify commands
-      vdpa/mlx5: Parallelize device suspend
-      vdpa/mlx5: Parallelize device resume
-      vdpa/mlx5: Keep notifiers during suspend but ignore
-      vdpa/mlx5: Small improvement for change_num_qps()
-      vdpa/mlx5: Parallelize VQ suspend/resume for CVQ MQ command
-      vdpa/mlx5: Create direct MKEYs in parallel
-      vdpa/mlx5: Delete direct MKEYs in parallel
-      vdpa/mlx5: Rename function
-      vdpa/mlx5: Extract mr members in own resource struct
-      vdpa/mlx5: Rename mr_mtx -> lock
-      vdpa/mlx5: Introduce init/destroy for MR resources
-      vdpa/mlx5: Postpone MR deletion
-
-Hongbo Li (1):
-      fw_cfg: Constify struct kobj_type
-
-Jason Wang (1):
-      vhost_vdpa: assign irq bypass producer token correctly
-
-Lei Yang leiyang@redhat.com (1):
-      ack! vdpa/mlx5: Parallelize device suspend/resume
-
-Luigi Leonardi (1):
-      vsock/virtio: avoid queuing packets when intermediate queue is empty
-
-Marco Pinna (1):
-      vsock/virtio: refactor virtio_transport_send_pkt_work
-
-Max Gurtovoy (2):
-      virtio_fs: introduce virtio_fs_put_locked helper
-      virtio_fs: add sysfs entries for queue information
-
-Philip Chen (1):
-      virtio_pmem: Check device status before requesting flush
-
-Stefano Garzarella (1):
-      MAINTAINERS: add virtio-vsock driver in the VIRTIO CORE section
-
-Yue Haibing (1):
-      vdpa: Remove unused declarations
-
-Zhu Jun (1):
-      tools/virtio:Fix the wrong format specifier
-
-zhenwei pi (3):
-      virtio_balloon: introduce oom-kill invocations
-      virtio_balloon: introduce memory allocation stall counter
-      virtio_balloon: introduce memory scan/reclaim info
-
- MAINTAINERS                                   |   1 +
- drivers/firmware/qemu_fw_cfg.c                |   2 +-
- drivers/net/ethernet/mellanox/mlx5/core/cmd.c |  21 +-
- drivers/nvdimm/nd_virtio.c                    |   9 +
- drivers/vdpa/ifcvf/ifcvf_base.h               |   3 -
- drivers/vdpa/mlx5/core/mlx5_vdpa.h            |  47 ++-
- drivers/vdpa/mlx5/core/mr.c                   | 291 +++++++++++++---
- drivers/vdpa/mlx5/core/resources.c            |  76 +++-
- drivers/vdpa/mlx5/net/mlx5_vnet.c             | 477 +++++++++++++++++---------
- drivers/vdpa/pds/cmds.h                       |   1 -
- drivers/vdpa/vdpa.c                           |  79 +++++
- drivers/vdpa/vdpa_sim/vdpa_sim_net.c          |  21 +-
- drivers/vhost/vdpa.c                          |  16 +-
- drivers/virtio/virtio_balloon.c               |  18 +
- fs/fuse/virtio_fs.c                           | 164 ++++++++-
- include/linux/vdpa.h                          |   9 +
- include/uapi/linux/vdpa.h                     |   1 +
- include/uapi/linux/virtio_balloon.h           |  16 +-
- net/vmw_vsock/virtio_transport.c              | 144 +++++---
- tools/virtio/ringtest/main.c                  |   2 +-
- 20 files changed, 1098 insertions(+), 300 deletions(-)
-
+If it's too hard, the average estimate could be a decent compromise,
+until we figure something smarter.
 
