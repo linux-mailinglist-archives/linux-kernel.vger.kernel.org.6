@@ -1,105 +1,131 @@
-Return-Path: <linux-kernel+bounces-337423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84E989849F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:45:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2E779849F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:46:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 302EC1F22593
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:45:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DDEB285779
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:46:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A3521ABEB1;
-	Tue, 24 Sep 2024 16:45:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532B81ABEDA;
+	Tue, 24 Sep 2024 16:46:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PVOI/Eb2"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="e/a1jRUb"
+Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9209D1DFFB
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 16:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE4E1AAE39;
+	Tue, 24 Sep 2024 16:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727196354; cv=none; b=ND0ozeFEXwssOnc712xTdKsMeb/M82rK+FxwOsdd6hpgVyq+L6RYdDd6f/ipTSvgS0VzmupW+LoMzzpeN/A6YEaSziUEld+Um3NzcQfUqBK7Su2iBI7mJshsOaxDGxSmLeorcObgHTnj7b6vymRLuglA0Rf7Ltw/fP0RyH2jr8k=
+	t=1727196378; cv=none; b=dULt036LLg3egK1LC6wAI8fIbJH27SAoq62tzY0Sj9hgaGTxzp+6dxs7sDaSmA+eh+DH8dTGGAZxl+pWXKE+JIHVcPx4TjkKk8n7J49FRxD2UPBEK8XMxfKbkylNYCJHCNKbr4J7njxbQdL4xthAgBkAieSZdTArSXczVoWtce4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727196354; c=relaxed/simple;
-	bh=+SzV7fFq7O7PDf0VqdSERZDfwYvvBdko7lAtcX60RHs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R1xDlVKfjPnVTaEhWXs3GvKq9YL7Yp9ZvPikVnTesPvTCAldbF4urLvfqqAQwW56OwolAeuV4kKVlL+vUF7QCrENkNZUWo1AXCs8GCH+SN2ue8V+QA63hMEequRxRu9F7q0FpCfSbL3hACnb9Lp9jXymgCcp8CCoSt743SPtfSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PVOI/Eb2; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6c34dd6c21aso39282726d6.2
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:45:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727196351; x=1727801151; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+SzV7fFq7O7PDf0VqdSERZDfwYvvBdko7lAtcX60RHs=;
-        b=PVOI/Eb2fLKIFQFw71cGmqp0DgTop2s7k7MUuU9O/XRx6ZE0sYqPxstIgAxlQmTC77
-         kvqnI4wIdVa0dN7Du4PVZBrMF79ETcWXJlRnZ/G9lpKMl8lTpecmbrwBpr+IG1EOIWM5
-         G0w3oUQN+ypvh599ZJoz5DnF+3PC2Jt4TCdqSPauvjQwpYsPlAuNd+XN6aEkPF+Nu67c
-         YUN4DPihEjCJ4YMzMe1EFvP20Z+Vm+gd6PBLJE2sPSJn/dZqVdmpYOgmOGPnv7liLBNQ
-         9BQCXAux5ye3h13chi1tHGuG7RUtFUADyGQEim42mnvUH+j/kpUMJ9viKP2b71IuE0Dq
-         nuKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727196351; x=1727801151;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+SzV7fFq7O7PDf0VqdSERZDfwYvvBdko7lAtcX60RHs=;
-        b=ZWGxjkeNu96kjUfRcgYTZ67po2MhFyfdssQZLkbYcYwIAVlUA1ELOQ/zdFWwe3rnVU
-         l3mQLpZ97Qm9Z0L7INyFHgC0TnXZD7UlhiQUhnB2mlEoCgY7wRcQjoGaOIU9hd0+TS1x
-         qW89X9gXF92HZH0wbRdK70PuOhcFK7Ii1od0PWLdCmpuvcFcvUg26ctXMull8LRRutRd
-         T0auU04W1zazxpgFXiXtVBe4Fab19su8bOrV++2Wb5fALWqr/8vNV1HLt2y6kJdRr/eO
-         hexpxOrcjc9/TikAHfMzPT68vhP7hWk/G6kdFSiVI1CXkpoGyL4xlqsFEdLK5Ryw/D0Y
-         NRUQ==
-X-Gm-Message-State: AOJu0YyPEVdBL80THs2jwCcU8iFK/1C7qHBLf0IymQCeDv5cFRS+16IO
-	sBZeUjgwpEUR0RjH5AMkc/IsiwGdcY5gTDj7zxKdk5lPjqaJ4si3rbeVeArGMKBqABeSk17t+uk
-	CvQLfmOBr3BL7wkmgq2M4rkCIcQ0=
-X-Google-Smtp-Source: AGHT+IFpvovKHW/6gr2HZxe+Tzx29jAKRIxAmoJ9xLg2JGW+0UXJqoy7RHqw7ZzLGg0PrHy0WcStMMY30tbz5G3auSY=
-X-Received: by 2002:a05:6214:2f8f:b0:6c7:c650:962b with SMTP id
- 6a1803df08f44-6c7c650966dmr205276556d6.51.1727196351322; Tue, 24 Sep 2024
- 09:45:51 -0700 (PDT)
+	s=arc-20240116; t=1727196378; c=relaxed/simple;
+	bh=ojARksjer35/xv8IIdbyLRrk0/CVkX7KcYV+wb/kQE4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q5Hq0nqtRFTkYOkZYLdv84fk6oo47QyxnjUKgZHGJ6jiNIkKcCG5uhLODenqcCVKbVbFoBfISfQTMZPKQQLdREl6fFuUsq6pPDNwNcWHBMd2h+Tl8HchlmkgcYPWTm/JJlsErHHyqMUdWErr2jiASz5CNJV2UHoJ4nvienV6heI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=e/a1jRUb; arc=none smtp.client-ip=213.133.104.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=yRil3Ks0WNUcjIepcvt5HXYk3DsTBQppYF7FZg8gEIA=; b=e/a1jRUbqM5E+ASZ3zKhYnmv/0
+	HYU9q7/fuHZ2gN5NpzPolyXSO5dDjo223das/lir4BW3Q1ISuYqnrk2KEWZROzlQuT4MQ/NaXyp1O
+	Le6V/ooXVGOu6mLBbAESaWKdHMLF1xpOBF647Ns5D9gRbMFPQoQaZ3YUyqCiqT4msF4l7K1O1nFge
+	DuZbfRsyCx2oLkGseQoEcSBJWrV6XPXlkc0CN7neWhXNCHq/wIj0aoeGzJlcgnJHLoe8hXOPnl9cM
+	dGUc15MfF7wSmBXbf4O8amYStc6uppxNf7z3LL6vQLKCTkKEpO+ZDZB92W8EbFr6bUHJWZwnDli8c
+	3aJ4l+Rg==;
+Received: from sslproxy01.your-server.de ([78.46.139.224])
+	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1st8g0-00031P-Qr; Tue, 24 Sep 2024 18:46:12 +0200
+Received: from [178.197.249.54] (helo=[192.168.1.114])
+	by sslproxy01.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1st8g0-0006vS-0x;
+	Tue, 24 Sep 2024 18:46:11 +0200
+Message-ID: <a22858d6-1676-4429-b617-86191e44cb65@iogearbox.net>
+Date: Tue, 24 Sep 2024 18:46:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240924011709.7037-1-kanchana.p.sridhar@intel.com> <20240924011709.7037-2-kanchana.p.sridhar@intel.com>
-In-Reply-To: <20240924011709.7037-2-kanchana.p.sridhar@intel.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Tue, 24 Sep 2024 09:45:40 -0700
-Message-ID: <CAKEwX=Ou7k2ySbycrXrst4bK7Dj+2F1PMMCP3Y5QUmFu7BjHFA@mail.gmail.com>
-Subject: Re: [PATCH v7 1/8] mm: Define obj_cgroup_get() if CONFIG_MEMCG is not defined.
-To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
-	yosryahmed@google.com, chengming.zhou@linux.dev, usamaarif642@gmail.com, 
-	shakeel.butt@linux.dev, ryan.roberts@arm.com, ying.huang@intel.com, 
-	21cnbao@gmail.com, akpm@linux-foundation.org, nanhai.zou@intel.com, 
-	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] bpf: use raw_spinlock_t in ringbuf
+To: Wander Lairson Costa <wander@redhat.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, "open list:BPF [RINGBUF]"
+ <bpf@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Cc: Wander Lairson Costa <wander.lairson@gmail.com>,
+ Brian Grech <bgrech@redhat.com>
+References: <20240920190700.617253-1-wander@redhat.com>
+Content-Language: en-US
+From: Daniel Borkmann <daniel@iogearbox.net>
+In-Reply-To: <20240920190700.617253-1-wander@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27408/Tue Sep 24 10:34:28 2024)
 
-On Mon, Sep 23, 2024 at 6:17=E2=80=AFPM Kanchana P Sridhar
-<kanchana.p.sridhar@intel.com> wrote:
+On 9/20/24 9:06 PM, Wander Lairson Costa wrote:
+> From: Wander Lairson Costa <wander.lairson@gmail.com>
 >
-> This resolves an issue with obj_cgroup_get() not being defined if
-> CONFIG_MEMCG is not defined.
+> The function __bpf_ringbuf_reserve is invoked from a tracepoint, which
+> disables preemption. Using spinlock_t in this context can lead to a
+> "sleep in atomic" warning in the RT variant. This issue is illustrated
+> in the example below:
 >
-> Before this patch, we would see build errors if obj_cgroup_get() is
-> called from code that is agnostic of CONFIG_MEMCG.
+> BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
+> in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 556208, name: test_progs
+> preempt_count: 1, expected: 0
+> RCU nest depth: 1, expected: 1
+> INFO: lockdep is turned off.
+> Preemption disabled at:
+> [<ffffd33a5c88ea44>] migrate_enable+0xc0/0x39c
+> CPU: 7 PID: 556208 Comm: test_progs Tainted: G
+> Hardware name: Qualcomm SA8775P Ride (DT)
+> Call trace:
+>   dump_backtrace+0xac/0x130
+>   show_stack+0x1c/0x30
+>   dump_stack_lvl+0xac/0xe8
+>   dump_stack+0x18/0x30
+>   __might_resched+0x3bc/0x4fc
+>   rt_spin_lock+0x8c/0x1a4
+>   __bpf_ringbuf_reserve+0xc4/0x254
+>   bpf_ringbuf_reserve_dynptr+0x5c/0xdc
+>   bpf_prog_ac3d15160d62622a_test_read_write+0x104/0x238
+>   trace_call_bpf+0x238/0x774
+>   perf_call_bpf_enter.isra.0+0x104/0x194
+>   perf_syscall_enter+0x2f8/0x510
+>   trace_sys_enter+0x39c/0x564
+>   syscall_trace_enter+0x220/0x3c0
+>   do_el0_svc+0x138/0x1dc
+>   el0_svc+0x54/0x130
+>   el0t_64_sync_handler+0x134/0x150
+>   el0t_64_sync+0x17c/0x180
 >
-> The zswap_store() changes for mTHP in subsequent commits will require
-> the use of obj_cgroup_get() in zswap code that falls into this category.
+> Switch the spinlock to raw_spinlock_t to avoid this error.
 >
-> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-> ---
+> Signed-off-by: Wander Lairson Costa <wander.lairson@gmail.com>
+> Reported-by: Brian Grech <bgrech@redhat.com>
+> Fixes: 457f44363a88 ("bpf: Implement BPF ring buffer and verifier support for it")
+> Signed-off-by: Wander Lairson Costa <wander@redhat.com>
+Fix is for bpf tree, lgtm:
 
-LGTM.
-
-Reviewed-by: Nhat Pham <nphamcs@gmail.com>
+Acked-by: Daniel Borkmann <daniel@iogearbox.net>
 
