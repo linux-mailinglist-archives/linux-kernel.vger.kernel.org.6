@@ -1,205 +1,335 @@
-Return-Path: <linux-kernel+bounces-337793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 357BC984F07
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:40:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E2CA984F0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:41:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A91401F2448D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:40:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6CE21F243FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:41:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B235118950A;
-	Tue, 24 Sep 2024 23:39:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201D118950C;
+	Tue, 24 Sep 2024 23:41:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="VwZI05cW"
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11020131.outbound.protection.outlook.com [52.101.193.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wldFcCNt"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6295A188CD5;
-	Tue, 24 Sep 2024 23:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.131
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727221197; cv=fail; b=KoRWccbPOxe6ILUBq1nttnqJ3SQxwx/UHzr8CfDFhzALmNn+VVLgL1HJe985FeKRLOjvgWnZuoKiPZdu09I6cJ5UFEduYcNXzvgkrWqdGk1qoN+fZYPDoSFVMb/1vO940sHeOEUnAI8buKiIFxV5AJyvA9X1liAWW0DBFad0Yj8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727221197; c=relaxed/simple;
-	bh=gK6xCcnFrFSLxGfkgWUS0d5IzhXnWZ/J2ONJNBixIww=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=NN90kVwrz0bQUzqNeO+bTnBcOOAnw+fgAveMcZ0s1scmYDT2LLIYHnOR6x5wJNbmdzx3xqYUIqArLzK1xWXEzlqo5cC0l9m2zcD5r8s8uzJlvKJIQbFUrRCA9RnGHBoLqesU5y2HQGaLR7eB3mnojfPiH7QPiTVSsV9YgZ/SeLI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=VwZI05cW; arc=fail smtp.client-ip=52.101.193.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TXJXJ3VmlBPsbZkMH+wu9TVvwlfNlM0w3b1Xi0Q8DIf/nenx2iYkohXPztSmjvY5BHvgUyeYt5mLy9d1JpU8HXs7b7Mzgxo7dZ0CKdsL54KiPoz+FffsfUJnU3fojfRviY3dNjt+G/QYwU+2LLUlhIOTpZ3Ba858L2sP0mXfBzKuj6za/YfaD6LnCKazRscABuplkWw/1AKf5Xk2YuArrDq8iJkoNh0xh4v9LavntN1V7iX6q7O+Q6PVsX4Ha8UdCJpWIB3g9f4tC/5Aex6xLGu/Vv9hu4x5fNNoQrwpyw1VGML/cBxd22HvK2DN72UGA1PM2Ztv1OvHVl6zDCHjpQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wYfHtq99ybCfWIaUuCw30Xkvjx0GsyzDqazqNcMg0Gs=;
- b=h+l5sPXU9WClsHHH3xhr5qUatCVAyXRMVvS9Q7+9xYW/jqbNW8s7igr4IEksC6JTfg+o7R5mpnPCThjy3bQ+7eHOOqsK/8UCC4tR3ytDGgJj4VPCAN1ITYElbatK0yXMJCOuxI77YAQIT5ZeVJ66+TIgIzjSwxr7/DNNRJZRWvrWYgdqYY7xAynLnP7Qn+bPONJxKVqDqUlfqTyulfoRJ+E8TDOlHbqH6s14z9Qh3AG9Ra/lhL+h4P6xJnMXtFbc+O6Bvv7YQg+wUUjsLRThncQHXnk5HFuAf56Dx2cBY2Sa9oE4FySTBMrc1KLLkfHpXxByF0x6C9fC/gBcBAfQWg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37622188CD5
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 23:41:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727221285; cv=none; b=F6s5DcCqinsyO4F5V9FESIA+a25qlQ3kNnO5PK7ZMJlIS1rjtaDh3Mgv8ZTfI3jbvLOuSjx3OYfM4EnIx43QlAJpwb40o2U8fNW4vuYb653ZRq3kr4YBlOioX0+B5N/KuneBbPZj9yPK+lROytAF8t7Be5dMykQ75p9WkxwDyKM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727221285; c=relaxed/simple;
+	bh=qfzk0A5TKpWfM4Pcso8w17fGNMAala27P7ommRtIetY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O+WWtZ8NAQfyUb+4vCZtht9/LAG34Qy415uFegb4NiVJ086/h2mwDOakHvQB7ecDTqf6d2jhN2ZkJz7pKfp4T/jRhZj58Uofft8P3dExkajEMJn9vVejRF7QXqsHtPDR4yM/DF28B0z+5D6UZVN6iqxcPLhU86OnnSLbPSt2OxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wldFcCNt; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f75c205e4aso62216501fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 16:41:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wYfHtq99ybCfWIaUuCw30Xkvjx0GsyzDqazqNcMg0Gs=;
- b=VwZI05cWDIpEayCYCMuq51HR7UZyBHKKO2JMtmvsuhtxySeVXYey3MspBg5Kyo/0IgN4Bl+8UCD/b8a0WolHJGpviTSrs4hHlXmLxp4YFuC9z2D8mem6ABLBqKnEnJj8khLPAo5KZKHYal899jOzGS5DJVQSCdFczAVQO8eB1wk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from MW4PR01MB6228.prod.exchangelabs.com (2603:10b6:303:76::7) by
- BY1PR01MB8922.prod.exchangelabs.com (2603:10b6:a03:5b6::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7982.27; Tue, 24 Sep 2024 23:39:52 +0000
-Received: from MW4PR01MB6228.prod.exchangelabs.com
- ([fe80::13ba:df5b:8558:8bba]) by MW4PR01MB6228.prod.exchangelabs.com
- ([fe80::13ba:df5b:8558:8bba%7]) with mapi id 15.20.7982.022; Tue, 24 Sep 2024
- 23:39:52 +0000
-From: Ilkka Koskinen <ilkka@os.amperecomputing.com>
-To: James Clark <james.clark@linaro.org>,
-	John Garry <john.g.garry@oracle.com>,
-	Will Deacon <will@kernel.org>,
-	Mike Leach <mike.leach@linaro.org>,
-	Leo Yan <leo.yan@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	coresight@lists.linaro.org,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ilkka Koskinen <ilkka@os.amperecomputing.com>
-Subject: [PATCH] perf: cs-etm: Fix the assert() to handle captured and unprocessed cpu trace
-Date: Tue, 24 Sep 2024 16:39:30 -0700
-Message-ID: <20240924233930.5193-1-ilkka@os.amperecomputing.com>
-X-Mailer: git-send-email 2.42.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: CH0PR03CA0249.namprd03.prod.outlook.com
- (2603:10b6:610:e5::14) To MW4PR01MB6228.prod.exchangelabs.com
- (2603:10b6:303:76::7)
+        d=linaro.org; s=google; t=1727221281; x=1727826081; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2feo948SmaV8ow3qJ2/9/7VRCJ6SWmFcxCQdCFyNVVw=;
+        b=wldFcCNtLl4Ko/jsXJRbqgN1mJJeoX+2V9vZvEKsaX7jFSMyPMfjs+Y5lVUr2oK4Y+
+         RzYJytADK3mfHle3roCf8kWLOqwa6AcYPt8O3d4OWcMYJLtRdOEmWKW6tOx0Srb5tU5z
+         JUPsw9MXUAVZgiLoDqPZDQpOOWU91CRRVnlnZnqBwx0pmLRaWJhZgQ4nMxhnMMJLH6+E
+         OGLT0Yx8xlOQTnNwt1swvwa9F4cGRQLyAVjVKiGpMkOey1Yr6BTpPsh6wTKjWoAXcIlD
+         KjGW2rMyeTVeduIl4+HqLPvhKXs+UpF2Fz89kYpx0Aa/0ZAH3JX0+cF+UXkE5vRrjc2p
+         fE5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727221281; x=1727826081;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2feo948SmaV8ow3qJ2/9/7VRCJ6SWmFcxCQdCFyNVVw=;
+        b=eqKIzw69K5YbWY1q6HWcVpI2ldwUAWYVGFfu1jYMA+tNN40UpA/IQDJ2zUD07t9Sg1
+         I0DqNm+LdNOYJ+y8mKvWdUm95pEu2ja3zbJTJ/HTigMezEA9fmHPTAnKrKaWEazrHtZu
+         +DlgoEZVfAfiVdhz4JFW8kzL3/MOYRSC38bx30hn5giE43JbePLMUSJ89rgAG4MyWG+P
+         wvuqWyzan5t5y/MFy6JENl10+m7u/qSPo1ipEE8kP9tTUb+wTIhw//4J8ER6JzmI2i/I
+         GahNMaieU6Qj9+ju5P+pxepCwmxeL7EyCHj5U4At/xgCWfKArkX4PXqGFDIjkTp8Hmt0
+         JnMA==
+X-Forwarded-Encrypted: i=1; AJvYcCWdoVakYpC3ukaF+w/Y3KD7P5l2l4+lCiJmtW+87Hq7Epa3PaM+UtLuD61EmSvFMT3kadcEDI9pKd7SFXI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkQ6jdv9T14bzR+JMhpomo9F5IzQuVYumCQsJPOzVWUOYIwHY7
+	17GH5od7PVK/mKzGxjFN/v84fYs7kmGY81REDM06HdoWvWLYmRyVUa9WfA/goVs=
+X-Google-Smtp-Source: AGHT+IFdyRu7TASU0zlCTVpDX5/bBlv6G+05vYgnnTIL+dEQFPu7NNL6mllXHkXoMwweXQLGC70+yg==
+X-Received: by 2002:a05:6512:2348:b0:52f:cdb0:11c0 with SMTP id 2adb3069b0e04-538704983ffmr412811e87.21.1727221280989;
+        Tue, 24 Sep 2024 16:41:20 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-537a864da14sm354777e87.258.2024.09.24.16.41.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2024 16:41:20 -0700 (PDT)
+Date: Wed, 25 Sep 2024 02:41:18 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jessica Zhang <quic_jesszhan@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, quic_abhinavk@quicinc.com, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, quic_ebharadw@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Rob Clark <robdclark@chromium.org>, Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Subject: Re: [PATCH v2 16/22] drm/msm/dpu: Configure CWB in writeback encoder
+Message-ID: <qfqvtbc2o2xrv35caonsvhykmq6bvjpc5plnknjgkodrsoez6d@rpobkvdyqeb2>
+References: <20240924-concurrent-wb-v2-0-7849f900e863@quicinc.com>
+ <20240924-concurrent-wb-v2-16-7849f900e863@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR01MB6228:EE_|BY1PR01MB8922:EE_
-X-MS-Office365-Filtering-Correlation-Id: 423c77f3-25fe-43eb-c879-08dcdcf23006
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|52116014|376014|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?odJzWoEp+WE9Kjl4UjyxgCIuWcqKKLvrvMAswzDMPjHBFqCiPMguHOT8k2n2?=
- =?us-ascii?Q?M41DFpUGm9Uy2PQ8C3hENr9EjTT6u8pxIpqefEpPr4z6clGyrgbaR+R41zY1?=
- =?us-ascii?Q?yAF7mz1BR6xHHmCm7/0Kpx9gLTxmyFEVg0traYvJqw8J3F46+9NeNI/FbtNU?=
- =?us-ascii?Q?RE8k3+55OB80iBDFgk7rk865q+EArP+St9x9XQT9mpjkNqQBwomA6o/C/NHE?=
- =?us-ascii?Q?L4cnqytE81wR/9IlPgCSatLx/7vvsDSPdzDbbUupcYUO8XC9q3iZJOf+rwz0?=
- =?us-ascii?Q?jBH3q5wtSxMw6BMKu0Px+1HsyO69uQbq/SgfIyzMu8a3VLpVQ1vodZdl8/Uy?=
- =?us-ascii?Q?0VYtrr1IvBq9V57SIecfMFf09k9+Qrio6XXDffrNYnrkgd2fRymKYwudCmKn?=
- =?us-ascii?Q?ImO5H0rJha+w+CHK0m1c66H3R3nmDlEJIhpD0obWsP/ScGkBfsFl2CUqBOBX?=
- =?us-ascii?Q?lyD/jPlAHODPL5+rrNNlAJiiG0PKt83twJdwu7wectxstN6psVir87DOMeD0?=
- =?us-ascii?Q?q5R2Dp3BR8DYjDfQOJvHjbxlM8mdA1E4ynHMTRcWtRt4SJJE4/twI6+DsOUK?=
- =?us-ascii?Q?uzqN12txL/McmruVIlK+1XCfQnv4Rw2l6u5hgypmm8idWcohiiwuIBw4Gf+/?=
- =?us-ascii?Q?9/DUPxL+jNWD19ZOWve8XW1JBkYQM1iLWMNQDYVMEDjL6miAh0vEhWXaY3Ch?=
- =?us-ascii?Q?iv3+BuJAXRh03fOopRa/WmR/KZ5w76tHlSE3zbLiYCOlYs9i7gV3ZRMEE8Ei?=
- =?us-ascii?Q?rgqile+NC57Rd77lbcoU0+DN0nO5WZtPvLmmSkqaMfJvnsARzJ1Nnl+6TxAh?=
- =?us-ascii?Q?dAWILifzl/FwjDsjs6/KDa06T3oPiAuy+IG7txSDWq4QIAZIY6nhnFUIB6K3?=
- =?us-ascii?Q?hU7oYir/787/GX0ikNMEPD8z+CD03mw0KD+OKwpBXVVABg5ualY8odG2UrGv?=
- =?us-ascii?Q?DXzwoSx/CPlJ1Hxu+LHRoSj8LtyKtPfEODVG2XJrVoML07rFRRXSyzRjk0Na?=
- =?us-ascii?Q?+o7ocM3a19qXpusjDywNg6Cshf1EN5UXFz0JLQhr8U/laTSoixviNmwYr/hd?=
- =?us-ascii?Q?Jn2qGNf72yzv/LCXVfNFuF07+IBFbVpU3K4HC7hARNAGzdm0jq+hx+qejOho?=
- =?us-ascii?Q?3HfOArvb7aOzN4L0lYLDPyRqGEhcfW1bwkJ6YJwkioH9rDlh10fwFY2+Bubi?=
- =?us-ascii?Q?inLHzfk5Px98Udg7jd6zl4dVsYXyyNpVZ317iRAOVNMq+W5LgehJPL5jZGYw?=
- =?us-ascii?Q?lgdbBeyFTD1oRPaRh0wNwx4udzNEyZzSUjDv6oVI7Aa6BgX6NC8v0ofheOeo?=
- =?us-ascii?Q?h7wQfhApj/jOaHgkpffnJSsJMMgKnE9BWXLH8xVtlInZYM8ftqyeVBoptATN?=
- =?us-ascii?Q?x+BG3OOi6bifQxiCyCOxbrUUxICs+PI9CEnI+EhN5+xYPlIjAIEJuQ67owC9?=
- =?us-ascii?Q?1fTuBc85dkk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR01MB6228.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(52116014)(376014)(38350700014)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?hZ+YBWMOGNhMzBHqZ3YHUqaoN6AGuQda46Hn8V1/duCYLII3NQu7MdznAwRH?=
- =?us-ascii?Q?MZ/4OWneF4Z/cPZwrh+C1slhJ2P3ZvzKNox1lXc9mcLFNefCgc7z82B9LZps?=
- =?us-ascii?Q?1oE/8BtnzhTv1cYfLtPryhdct6IaftW2Xj9pTUAfZVsB7ybeZ9M93PnRL2nQ?=
- =?us-ascii?Q?Rektice047+b8VtP6OsQazsGh8phYMb1cv3HrXxfjgKng0qJRsdeGQYPZfSx?=
- =?us-ascii?Q?V6Hp5Xx/1xZ6Ml2XGBBw1/egAWyVUQgJeAPWyd7py2WR7sJJnaNeT6KIW/Ui?=
- =?us-ascii?Q?EzSUTOYTVGWM/69EDi9knkaBwbYH6A5nUu4WEv6yZd8r/kcXXn2ve9vQKSpp?=
- =?us-ascii?Q?6KZy+crCqyP5Ku7AFr+LRBqKu2i3Q/4J7GSgQ8TrFDUe9PlSH0EXOgMIQNnC?=
- =?us-ascii?Q?lsZmX8X3rdYp+iO+yf2R+gTEx+TbR19tunTsP6x7NAZUiJrFozbpeW7HHaXx?=
- =?us-ascii?Q?LYY+F8++ElNAkLMJqV9pYbLfBx0G85dPIzG7MGOA+WoPnyd4JKFMUYSUmEi7?=
- =?us-ascii?Q?gAmCq/qxfK07JlH5NYwbuUM/wXibi5uZHi48JVrEcybbxKWnqvc4+xfkxWYm?=
- =?us-ascii?Q?7m54lQAktEzSH3nJQYl4MNGuSmrVi41usvtOFnaZc+71OJA7S8KY4i1u1wkp?=
- =?us-ascii?Q?y2+eT281wrlqW71fL2xkTmr2ONI+Y222oICBsPu829uRDJzJG0JUlUucpVyo?=
- =?us-ascii?Q?4wHO2x2RFlK2ZNTkoA3LhsPLLFSAvo13f05vGgsXxBCxOlCXoFAx7kAkRdt9?=
- =?us-ascii?Q?uaReb70TTq1DhmZe2HAjY+2aUsDjJ4cyxjM5K5Ch0WQ32+qTqHY2jEzvYQAx?=
- =?us-ascii?Q?3q8XpW2VDRmrsoF4YUsDcCU9cJAsITCFutxS1n/UsmttWQ9TYV9Aq0LvhY4e?=
- =?us-ascii?Q?6/NMjrJXiiyYGvC7XI2iSY1yWta2Yk2DBTw6wrZGdwS5KyNmy+gnLmpqIFR+?=
- =?us-ascii?Q?P6KN17KQo683CL+gW/fbv2/4fXn1o9fmsLbj7mpdZkbYQzAA00V7vm7suR+Q?=
- =?us-ascii?Q?Iwypwrq3wffC3cqMDcNysQjrqChq307GhuOe6OSvzFMg3Bqjvn5yfCWWO/bK?=
- =?us-ascii?Q?9x4cL7XcPiF0nQxfZGYwWsl+jTuFEVaCeTtIxL5+zLIsCbZ4cMQ+MAzX00aS?=
- =?us-ascii?Q?ttoo37ULmzMLHJmlmHcDk8fFqnX3vanUvjr5SFYDkCAtmRpuDHVvrmfuXCcc?=
- =?us-ascii?Q?Rg8HvDFgdh7keO8ethABV5ngmvikEQMxuNDCvJ8c8+VRqtnhKqBBAC4uySl8?=
- =?us-ascii?Q?3aLK/fhUa+ZHZS2ypBRh/zUcN75wNc3E2+qhoxgOBZBALsGwlFLW767hnup4?=
- =?us-ascii?Q?AKkemxwZhPoxhYu2OA0Aa8b2fGwAKHpxTpiOYjy/VO3u7TN2hLpDSU3tvUU6?=
- =?us-ascii?Q?807M54PX6a09X64whJZ8w7+hK6bZl3XaALlvlqHIPamKM4EUIUlXQqSicKqg?=
- =?us-ascii?Q?7Cssju53br6OL5XLa21sp37kCgoyxSjpg9GrDtJXRxrqZidgH8N2o4Oiv+Wn?=
- =?us-ascii?Q?Yw1WgQSr0bfwkCuPqJjTcpiy+73PmjlkCyaEvCh59pvgBR/+xC78tPir06Jb?=
- =?us-ascii?Q?2mB/fLOjU36Hl5SS5XVrXEV1TMtgGZs2B0Bu9gHutRMEd4iK+E+G6Kedt50B?=
- =?us-ascii?Q?8D73rPMrFy2kpCgppL5XIS4=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 423c77f3-25fe-43eb-c879-08dcdcf23006
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR01MB6228.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2024 23:39:52.7423
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NwcZ8NqpamIz11zXykQfP/0/cQ/7e7Cfld7dRN1lpAP/3JjJvZNke7yz1fcViphz/5ZVGJR2SJjSOzIB0Y0ebJdrjZGSq2OaZM4yCcoZ/94zCeWOonIPbQiCa3/7nv+3
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR01MB8922
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240924-concurrent-wb-v2-16-7849f900e863@quicinc.com>
 
-If one builds perf with DEBUG=1, captures data on multiple CPUs and
-finally runs 'perf report -C <cpu>' for only one of the cpus, assert()
-aborts the program. This happens because there are empty queues with
-format set. This patch changes the condition to abort only if a queue
-is not empty and if the format is unset.
+On Tue, Sep 24, 2024 at 03:59:32PM GMT, Jessica Zhang wrote:
+> Cache the CWB block mask in the DPU virtual encoder and configure CWB
+> according to the CWB block mask within the writeback phys encoder
+> 
+> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c        | 83 +++++++++++++++++++++-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h   | 16 ++++-
+>  .../gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c    |  4 +-
+>  3 files changed, 100 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> index b2f0bf412451..2628f2d55cb3 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> @@ -24,6 +24,7 @@
+>  #include "dpu_hw_catalog.h"
+>  #include "dpu_hw_intf.h"
+>  #include "dpu_hw_ctl.h"
+> +#include "dpu_hw_cwb.h"
+>  #include "dpu_hw_dspp.h"
+>  #include "dpu_hw_dsc.h"
+>  #include "dpu_hw_merge3d.h"
+> @@ -139,6 +140,7 @@ enum dpu_enc_rc_states {
+>   *			num_phys_encs.
+>   * @hw_dsc:		Handle to the DSC blocks used for the display.
+>   * @dsc_mask:		Bitmask of used DSC blocks.
+> + * @cwb_mask		Bitmask of used CWB muxes
+>   * @intfs_swapped:	Whether or not the phys_enc interfaces have been swapped
+>   *			for partial update right-only cases, such as pingpong
+>   *			split where virtual pingpong does not generate IRQs
+> @@ -185,6 +187,7 @@ struct dpu_encoder_virt {
+>  	struct dpu_hw_dsc *hw_dsc[MAX_CHANNELS_PER_ENC];
+>  
+>  	unsigned int dsc_mask;
+> +	unsigned int cwb_mask;
+>  
+>  	bool intfs_swapped;
+>  
+> @@ -1063,6 +1066,7 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
+>  	int num_cwb = 0;
+>  	bool is_cwb_encoder;
+>  	unsigned int dsc_mask = 0;
+> +	unsigned int cwb_mask = 0;
+>  	int i;
+>  
+>  	if (!drm_enc) {
+> @@ -1103,8 +1107,12 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
+>  						       ARRAY_SIZE(hw_pp));
+>  	}
+>  
+> -	for (i = 0; i < num_cwb; i++)
+> +	for (i = 0; i < num_cwb; i++) {
+>  		dpu_enc->hw_cwb[i] = to_dpu_hw_cwb(hw_cwb[i]);
+> +		cwb_mask |= BIT(dpu_enc->hw_cwb[i]->idx - CWB_0);
+> +	}
+> +
+> +	dpu_enc->cwb_mask = cwb_mask;
+>  
+>  	dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
+>  			drm_enc->crtc, DPU_HW_BLK_CTL, hw_ctl, ARRAY_SIZE(hw_ctl));
+> @@ -2071,6 +2079,9 @@ void dpu_encoder_helper_phys_cleanup(struct dpu_encoder_phys *phys_enc)
+>  		}
+>  	}
+>  
+> +	if (dpu_enc->cwb_mask)
+> +		dpu_encoder_helper_phys_setup_cwb(phys_enc, false);
+> +
+>  	/* reset the merge 3D HW block */
+>  	if (phys_enc->hw_pp && phys_enc->hw_pp->merge_3d) {
+>  		phys_enc->hw_pp->merge_3d->ops.setup_3d_mode(phys_enc->hw_pp->merge_3d,
+> @@ -2114,6 +2125,68 @@ void dpu_encoder_helper_phys_cleanup(struct dpu_encoder_phys *phys_enc)
+>  	ctl->ops.clear_pending_flush(ctl);
+>  }
+>  
+> +void dpu_encoder_helper_phys_setup_cwb(struct dpu_encoder_phys *phys_enc,
+> +				       bool enable)
+> +{
+> +	struct dpu_encoder_virt *dpu_enc = to_dpu_encoder_virt(phys_enc->parent);
+> +	struct dpu_hw_cwb *hw_cwb;
+> +	struct dpu_hw_cwb_setup_cfg cwb_cfg;
+> +
+> +	struct dpu_kms *dpu_kms;
+> +	struct dpu_global_state *global_state;
+> +	struct dpu_hw_blk *rt_pp_list[MAX_CHANNELS_PER_ENC];
+> +	int num_pp, rt_pp_idx[MAX_CHANNELS_PER_ENC];
+> +
+> +	if (!phys_enc || !phys_enc->hw_wb || !dpu_enc->cwb_mask)
+> +		return;
 
-  $ make -C tools/perf DEBUG=1 CORESIGHT=1 CSLIBS=/usr/lib CSINCLUDES=/usr/include install
-  $ perf record -o kcore --kcore -e cs_etm/timestamp/k -s -C 0-1 dd if=/dev/zero of=/dev/null bs=1M count=1
-  $ perf report --input kcore/data --vmlinux=/home/ikoskine/projects/linux/vmlinux -C 1
-  Aborted (core dumped)
+We have already dereferened phys_enc, so checking that it's not NULL is
+futile. Also we know that the function is only called if cwb_mask is not
+zero, so the last check is also useless.
 
-Fixes: 57880a7966be ("perf: cs-etm: Allocate queues for all CPUs")
-Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
----
- tools/perf/util/cs-etm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +
+> +	dpu_kms = phys_enc->dpu_kms;
+> +	global_state = dpu_kms_get_existing_global_state(dpu_kms);
+> +	num_pp = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
+> +					       phys_enc->parent->crtc,
+> +					       DPU_HW_BLK_PINGPONG, rt_pp_list,
+> +					       ARRAY_SIZE(rt_pp_list));
+> +
+> +	if (num_pp == 0 || num_pp > MAX_CHANNELS_PER_ENC) {
+> +		DPU_DEBUG_ENC(dpu_enc, "invalid num_pp %d\n", num_pp);
+> +		return;
+> +	}
+> +
+> +	for (int i = 0; i < num_pp; i++) {
+> +		struct dpu_hw_pingpong *hw_pp = to_dpu_hw_pingpong(rt_pp_list[i]);
+> +
+> +		for (int j = 0; j < ARRAY_SIZE(dpu_enc->hw_cwb); j++) {
+> +			hw_cwb = dpu_enc->hw_cwb[i];
+> +
+> +			/*
+> +			 * Even CWB muxes must take input from even real-time
+> +			 * pingpongs and odd CWB muxes must take input from odd
+> +			 * pingpongs
+> +			 */
+> +			if (hw_pp->idx % 2 == hw_cwb->idx % 2) {
 
-diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index 90f32f327b9b..40f047baef81 100644
---- a/tools/perf/util/cs-etm.c
-+++ b/tools/perf/util/cs-etm.c
-@@ -3323,7 +3323,7 @@ static int cs_etm__create_decoders(struct cs_etm_auxtrace *etm)
- 		 * Don't create decoders for empty queues, mainly because
- 		 * etmq->format is unknown for empty queues.
- 		 */
--		assert(empty == (etmq->format == UNSET));
-+		assert(empty || etmq->format != UNSET);
- 		if (empty)
- 			continue;
- 
+What about `if (a != b) continue;`?
+
+> +				rt_pp_idx[i] = enable ? hw_pp->idx : PINGPONG_NONE;
+
+Can we call config_cwb() here directly with no intermediate arrays?
+
+> +				break;
+> +			}
+> +		}
+> +	}
+> +
+> +	/*
+> +	 * The CWB mux supports using LM or DSPP as tap points. For now,
+> +	 * always use LM tap point
+> +	 */
+> +	cwb_cfg.input = INPUT_MODE_LM_OUT;
+> +
+> +	for (int i = 0; i < MAX_CHANNELS_PER_ENC; i++) {
+> +		hw_cwb = dpu_enc->hw_cwb[i];
+> +		if (!hw_cwb)
+> +			continue;
+> +
+> +		cwb_cfg.pp_idx = rt_pp_idx[i];
+> +
+> +		hw_cwb->ops.config_cwb(hw_cwb, &cwb_cfg);
+> +	}
+> +}
+> +
+>  void dpu_encoder_helper_phys_setup_cdm(struct dpu_encoder_phys *phys_enc,
+>  				       const struct msm_format *dpu_fmt,
+>  				       u32 output_type)
+> @@ -2557,6 +2630,14 @@ enum dpu_intf_mode dpu_encoder_get_intf_mode(struct drm_encoder *encoder)
+>  	return INTF_MODE_NONE;
+>  }
+>  
+> +unsigned int dpu_encoder_helper_get_cwb(struct dpu_encoder_phys *phys_enc)
+
+it's called get_cwb, but it returns a mask?
+
+> +{
+> +	struct drm_encoder *encoder = phys_enc->parent;
+> +	struct dpu_encoder_virt *dpu_enc = to_dpu_encoder_virt(encoder);
+> +
+> +	return dpu_enc->cwb_mask;
+> +}
+> +
+>  unsigned int dpu_encoder_helper_get_dsc(struct dpu_encoder_phys *phys_enc)
+>  {
+>  	struct drm_encoder *encoder = phys_enc->parent;
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h
+> index e77ebe3a68da..d7a02d1f8053 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h
+> @@ -1,6 +1,6 @@
+>  /* SPDX-License-Identifier: GPL-2.0-only */
+>  /*
+> - * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>   * Copyright (c) 2015-2018 The Linux Foundation. All rights reserved.
+>   */
+>  
+> @@ -331,6 +331,12 @@ static inline enum dpu_3d_blend_mode dpu_encoder_helper_get_3d_blend_mode(
+>  	return BLEND_3D_NONE;
+>  }
+>  
+> +/**
+> + * dpu_encoder_helper_get_cwb - get CWB blocks mask for the DPU encoder
+> + * @phys_enc: Pointer to physical encoder structure
+> + */
+
+All kerneldoc at the function definition, please. I plan to go through
+the existing codebase and move existing docs. It seems to be the only
+way to get kerneldoc-related warnings.
+
+> +unsigned int dpu_encoder_helper_get_cwb(struct dpu_encoder_phys *phys_enc);
+> +
+>  /**
+>   * dpu_encoder_helper_get_dsc - get DSC blocks mask for the DPU encoder
+>   *   This helper function is used by physical encoder to get DSC blocks mask
+> @@ -400,6 +406,14 @@ int dpu_encoder_helper_wait_for_irq(struct dpu_encoder_phys *phys_enc,
+>   */
+>  void dpu_encoder_helper_phys_cleanup(struct dpu_encoder_phys *phys_enc);
+>  
+> +/**
+> + * dpu_encoder_helper_phys_setup_cwb - helper to configure CWB muxes
+> + * @phys_enc: Pointer to physical encoder structure
+> + * @enable: Enable CWB mux
+> + */
+> +void dpu_encoder_helper_phys_setup_cwb(struct dpu_encoder_phys *phys_enc,
+> +				       bool enable);
+> +
+>  /**
+>   * dpu_encoder_helper_phys_setup_cdm - setup chroma down sampling block
+>   * @phys_enc: Pointer to physical encoder
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c
+> index 882c717859ce..e88c4d91041f 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+>  /*
+> - * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>   */
+>  
+>  #define pr_fmt(fmt)	"[drm:%s:%d] " fmt, __func__, __LINE__
+> @@ -342,6 +342,8 @@ static void dpu_encoder_phys_wb_setup(
+>  
+>  	dpu_encoder_helper_phys_setup_cdm(phys_enc, dpu_fmt, CDM_CDWN_OUTPUT_WB);
+>  
+> +	dpu_encoder_helper_phys_setup_cwb(phys_enc, true);
+> +
+>  	dpu_encoder_phys_wb_setup_ctl(phys_enc);
+>  }
+>  
+> 
+> -- 
+> 2.34.1
+> 
+
 -- 
-2.42.0
-
+With best wishes
+Dmitry
 
