@@ -1,90 +1,136 @@
-Return-Path: <linux-kernel+bounces-336944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6D839842ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:04:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E1D99842F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:04:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87FEA1F23CF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:04:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ACB8287667
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F45158DD9;
-	Tue, 24 Sep 2024 10:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654A816DED5;
+	Tue, 24 Sep 2024 10:04:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="BJAjnir0"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y2wm0uQ1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FDC156871
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 10:04:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E89156678;
+	Tue, 24 Sep 2024 10:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727172247; cv=none; b=Oo9y+v4JEzmYbjpYDgfdV2pbtrIC2CN5eiBSutnLWX4WuMCR7Qh3+ycS0QIyGkTSL8EY9/v4KBUv77SPTuc7iJZ5LK2orQ5y4DX/52tfmKdlPvcSIhAxJIGHImjXiDuCkBNPXfJT3xyD2SLHq4sLH37M2P5Lh4aT4nBIKHbszGc=
+	t=1727172257; cv=none; b=SmTQF2i587520yTs7QjR05gcl2KXY+ZynQXWn9I8Ab3pyqHVYaFwqU8tJdNe3iMnVDpIF28jmLnCrwwZADz726WlNAizclL4yrM1v42KgX0EwfuQdRo9NQHWsueQndEfKsbs7GZr8yyVtxtkh+hvWSpOSkr3Rv+DvKDwk794JuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727172247; c=relaxed/simple;
-	bh=2845401r35f9abnXfJ8yUfXYEom6IHe6nAAH2z77qPE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gekrF8ieaf/9Z21gNdrdGunHLkkXw8Afp5+I3wxomZ+VdGR5QuodZu2ogYncZE8r4ZI5Z7K3sxNrNpPcEZ/yMFNFM/R0U7SNoLvN6862MKyaCssRybReYex4JwhFE4XaKJ3KkNs+8y08T3xHXtFW2l7VXFQq+k+4Sn9/f4xBgNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=BJAjnir0; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=9PhYPLjVwe/Ok8R5xESci9lBy2EalpZUO9Ew79WKLdI=; b=BJAjnir01Q8EwBe47wbTlEjWse
-	izG8PIe1WvVNw+uu7j6TOBEweoTJXKNCFc/aF7g9QqmQ+YgX9sv9fDwn3LAmJnC34q22gAvk7VmEz
-	DIpy2ErB4mUsIjp+ddkPnVZZu9A+x2LeR1UJgCdYdixMoENeAMeV4zi5vPrjuzKvftOY7uWLyV1LH
-	PEagDY6nf4rb4nXvEPPssndeDk1Um9rGarZwbQnbJdZPDgb18oWJ7LPYbJgRURzmbt4sIalHIVFKz
-	DctLLmRYir6Ep9RBqmGn4XBoI1CLTN+Aw91lINwiuR+LxBC4EE2f2wFPrZ136Z9wW/o7gMPMIV2Z8
-	gKvRqSXg==;
-Received: from 90-177-212-167.rck.o2.cz ([90.177.212.167] helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1st2Oj-0000yj-Qg; Tue, 24 Sep 2024 12:03:57 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: kernel@collabora.com, linux-phy@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject:
- Re: [PATCH] phy: phy-rockchip-samsung-hdptx: Depend on CONFIG_COMMON_CLK
-Date: Tue, 24 Sep 2024 12:03:56 +0200
-Message-ID: <2000463.jZfb76A358@phil>
-In-Reply-To: <20240923-sam-hdptx-link-fix-v1-1-8d10d7456305@collabora.com>
-References: <20240923-sam-hdptx-link-fix-v1-1-8d10d7456305@collabora.com>
+	s=arc-20240116; t=1727172257; c=relaxed/simple;
+	bh=ZOlF++g0DIY2Dau+2rmCmqOq54oAWz267Ydk8PsExYs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OdP5tKMA/tVoZNQNrJ990tfpFM2/NUI7e/uP3gOE/o4LVcMP7rHzfLBZ/3bwFZfO5Nl2t67e9oMD3+9WDcWBYWVqSkINjk/bUZLBhN4s7UmF/Tw6K6AuGwj8p5OAdlwrmva9R93WQkwtyCA5NHfspu7ItnT2pj9lNCYEAGj2Zp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y2wm0uQ1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46FBAC4CEC4;
+	Tue, 24 Sep 2024 10:04:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727172257;
+	bh=ZOlF++g0DIY2Dau+2rmCmqOq54oAWz267Ydk8PsExYs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Y2wm0uQ1HDdCiv+s91by4J87LRT7W7YFZE1tg7HJiRISSINtagwlzVCbuDJr6X4ai
+	 4cIN8c7BzMQk64IJvthriuY4uY2ldAYJJ7u9Z7nljCn7bPMdNYolFabllJUrJkKsUU
+	 1hve/5wBQuebCazjHcTG2DvheM0YizqmqNc1w3Hb0HXBSCQ6yvEN1PNe9u7HC54YLM
+	 KUV3HEYbZWvikfxzqIdnvzxaUa7XtcHRMwb23i89VuXam0hhUciKgxS4mW2pH+eTrb
+	 cMve6I5158QTF+YIrwDoGdxUOnsx/a3G0Xafp3glQT9xzR9FW1tZL+Bm2cWi+zv1++
+	 j88IphF1gqrIw==
+Message-ID: <2a1b199b-b426-4895-be8f-2b7629e84fcd@kernel.org>
+Date: Tue, 24 Sep 2024 12:04:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 07/11] arm64: dts: qcom: sm6350: Affirm IDR0.CCTW on
+ apps_smmu
+To: Luca Weiss <luca.weiss@fairphone.com>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org
+Cc: Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Konrad Dybcio <quic_kdybcio@quicinc.com>
+References: <20240919-topic-apps_smmu_coherent-v1-0-5b3a8662403d@quicinc.com>
+ <20240919-topic-apps_smmu_coherent-v1-7-5b3a8662403d@quicinc.com>
+ <D4EBVCYB1A56.21TT1WFRGCYGN@fairphone.com>
+ <D4ECC1Y7MLX2.2072IIRC7SJV3@fairphone.com>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <D4ECC1Y7MLX2.2072IIRC7SJV3@fairphone.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Am Montag, 23. September 2024, 18:40:16 CEST schrieb Cristian Ciocaltea:
-> Ensure CONFIG_PHY_ROCKCHIP_SAMSUNG_HDPTX depends on CONFIG_COMMON_CLK to
-> fix the following link errors when compile testing some random kernel
-> configurations:
+On 24.09.2024 9:37 AM, Luca Weiss wrote:
+> On Tue Sep 24, 2024 at 9:15 AM CEST, Luca Weiss wrote:
+>> On Thu Sep 19, 2024 at 12:57 AM CEST, Konrad Dybcio wrote:
+>>> From: Konrad Dybcio <quic_kdybcio@quicinc.com>
+>>>
+>>> On RPMh-based SoCs, the APPS SMMU advertizes support for cache-coherent
+>>> pagetable walk via the IDR0 register. This however is not respected by
+>>> the arm-smmu driver unless dma-coherent is set.
+>>>
+>>> Mark the node as dma-coherent to ensure this (and other) implementations
+>>> take this coherency into account.
+>>
+>> Hi Konrad!
+>>
+>> Similar to [0] everything seems to look fine on SM7225 Fairphone 4.
+>>
+>> [    0.190433] arm-smmu 15000000.iommu: probing hardware configuration...
+>> [    0.190459] arm-smmu 15000000.iommu: SMMUv2 with:
+>> [    0.190499] arm-smmu 15000000.iommu:         stage 1 translation
+>> [    0.190515] arm-smmu 15000000.iommu:         coherent table walk
+>> [    0.190531] arm-smmu 15000000.iommu:         stream matching with 71 register groups
+>> [    0.190560] arm-smmu 15000000.iommu:         63 context banks (0 stage-2 only)
+>> [    0.191097] arm-smmu 15000000.iommu:         Supported page sizes: 0x61311000
+>> [    0.191114] arm-smmu 15000000.iommu:         Stage-1: 36-bit VA -> 36-bit IPA
+>> [    0.191299] arm-smmu 15000000.iommu:         preserved 0 boot mappings
+>>
+>> The Adreno SMMU still has non-coherent table walk.
+>>
+>> [    1.141215] arm-smmu 3d40000.iommu: probing hardware configuration...
+>> [    1.141243] arm-smmu 3d40000.iommu: SMMUv2 with:
+>> [    1.141270] arm-smmu 3d40000.iommu:  stage 1 translation
+>> [    1.141279] arm-smmu 3d40000.iommu:  address translation ops
+>> [    1.141288] arm-smmu 3d40000.iommu:  non-coherent table walk
+>> [    1.141296] arm-smmu 3d40000.iommu:  (IDR0.CTTW overridden by FW configuration)
+>> [    1.141307] arm-smmu 3d40000.iommu:  stream matching with 5 register groups
+>> [    1.141326] arm-smmu 3d40000.iommu:  5 context banks (0 stage-2 only)
+>> [    1.141347] arm-smmu 3d40000.iommu:  Supported page sizes: 0x63315000
+>> [    1.141356] arm-smmu 3d40000.iommu:  Stage-1: 48-bit VA -> 36-bit IPA
+>> [    1.141568] arm-smmu 3d40000.iommu:  preserved 0 boot mappings
+>>
+>>
+>> Tested-by: Luca Weiss <luca.weiss@fairphone.com> # sm7225-fairphone-fp4
+>>
+>> [0] https://lore.kernel.org/linux-arm-msm/CAD=FV=Xrbe1NO+trk1SJ30gHm5jLFjd0bAeG3H46gD+vNFZa1w@mail.gmail.com/
 > 
->   m68k-linux-ld: drivers/phy/rockchip/phy-rockchip-samsung-hdptx.o: in function `rk_hdptx_phy_clk_register':
->   drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c:1031:(.text+0x470): undefined reference to `__clk_get_name'
->   m68k-linux-ld: drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c:1036:(.text+0x4ba): undefined reference to `devm_clk_hw_register'
->   m68k-linux-ld: drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c:1040:(.text+0x4d2): undefined reference to `of_clk_hw_simple_get'
->   m68k-linux-ld: drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c:1040:(.text+0x4da): undefined reference to `devm_of_clk_add_hw_provider'
+> FWIW adding 'dma-coherent;' to &adreno_smmu also doesn't seem to
+> explode:
 > 
-> Fixes: c4b09c562086 ("phy: phy-rockchip-samsung-hdptx: Add clock provider support")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202409180305.53PXymZn-lkp@intel.com/
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> [    1.451965] arm-smmu 3d40000.iommu: probing hardware configuration...
+> [    1.455547] arm-smmu 3d40000.iommu: SMMUv2 with:
+> [    1.459041] arm-smmu 3d40000.iommu:  stage 1 translation
+> [    1.462446] arm-smmu 3d40000.iommu:  address translation ops
+> [    1.465843] arm-smmu 3d40000.iommu:  coherent table walk
+> [    1.469216] arm-smmu 3d40000.iommu:  stream matching with 5 register groups
+> [    1.472645] arm-smmu 3d40000.iommu:  5 context banks (0 stage-2 only)
+> [    1.476067] arm-smmu 3d40000.iommu:  Supported page sizes: 0x63315000
+> [    1.479458] arm-smmu 3d40000.iommu:  Stage-1: 48-bit VA -> 36-bit IPA
+> [    1.483152] arm-smmu 3d40000.iommu:  preserved 0 boot mappings
+> 
+> And kmscube still runs as expected.
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+Thanks, I'll look into adreno separately
 
-
+Konrad
 
