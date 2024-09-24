@@ -1,99 +1,116 @@
-Return-Path: <linux-kernel+bounces-337595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0672B984C2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:28:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEDAB984C2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:29:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7821BB226E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:28:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EABBA1C22947
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB4FC13C695;
-	Tue, 24 Sep 2024 20:28:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82AB413B783;
+	Tue, 24 Sep 2024 20:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i0J9MP8f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YuUNo6/P"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D408126C0D;
-	Tue, 24 Sep 2024 20:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A86B126C0D
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 20:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727209719; cv=none; b=nSkLpQ3qKcPS5RsZQz/6lPqDldXPAK4zHlYq1wGULMFH7BIuccyKhyB+4rWJ872j8ZbGCTDbo8CG/PPiNlT+BjpqaosDa6DWjan7I8aeyohzVoxI+tIi2qPnP09vzS1r7ntvo+ax4lsSAeE0SOV9jUdf8akw8DRaiywllxkjXpI=
+	t=1727209766; cv=none; b=CYdcMvVrikVqKcXZH1tZj5pTAKueOoDLBoDHhVzOlSKsY0FzTlZ6nSYhoV/HWm+N4QFAkwm+lNOB5C1yesIBdFWTu7jtagELNktHLxbDezL0x6ELJRHbip6VAzz61jVxXwDzw2ItNc6+BT5Svxq8u+o4Cd/TAy84iXKeqJ7T/hU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727209719; c=relaxed/simple;
-	bh=1BbBMtvhZrJTG25V2HSyKYE2CU7TM+G7e8UL/oziNG0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=usq7UPvuNYxNK53MUJV0wX+3EZaYWwjpM13lyWfvFLBh4x+oksclgyVGdfm5LEkFaAiIcMOu0d8lr1LqqeG/nYl1QJjlMq6SK7pMqtOb42nAkwxqgyMxOc2VVXtFoiezA7kQiXFplIfNk8R06SLzJcbpadFP3mV1VRLTA69DNxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i0J9MP8f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 045FAC4CEC4;
-	Tue, 24 Sep 2024 20:28:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727209719;
-	bh=1BbBMtvhZrJTG25V2HSyKYE2CU7TM+G7e8UL/oziNG0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i0J9MP8fuBRMumjkooK26XsHl6GDK8uJ6+UdeLVRTkFRZYZqk/W4beOIYSzjYBGq0
-	 REg/eMDP6D29upQ1cpmjIGo1cwY6DwMQjuVow4QIgbL+nqw9zaoBoBfV6y6kQ4aFCK
-	 QHOp5nvz94CICkKDz9oPoSkoeguhLlIGwZY5xoGZ1oo//9DsgtEFcZug4QJuaW/6AN
-	 ZErcfvOBFri/V60jdyf2KMU+TZr+L6mAbU8oFEmsTzRNhxEnERJdST+svLH9eVi8bx
-	 eTigUAcZa58/3lbKn1CcB/CSBlhpDBD/X8biDdDmic9s/j77VcL6Sh4TCrwond0b50
-	 M1gNnys1hTCVg==
-Date: Tue, 24 Sep 2024 15:28:38 -0500
-From: Rob Herring <robh@kernel.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: mmc: controller: allow node name to
- be named slot@*
-Message-ID: <20240924202838.GA276949-robh@kernel.org>
-References: <20240920-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v2-0-5aa8bdfe01af@linaro.org>
- <20240920-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v2-1-5aa8bdfe01af@linaro.org>
+	s=arc-20240116; t=1727209766; c=relaxed/simple;
+	bh=mFjhdQiwvR9CAqZB6ZhikCzrE0gEej86IXDZhFy6CX4=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=CF/sqi+pp9aZzvNeZ232mUzQeo9x35F+hGThCS6jBR2uAAo4eWOPaYf4WB8Rz2XxFrp5q/1rpreb7rS5SWPny1W5788Iar/PTX661BtQ1YPkDxZZcHm79w1CgC4B4G75im5r3kjI3WzZg1IKZjFs7SNwlG4u+kDVWZYr/vWvPGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YuUNo6/P; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6d7124939beso91734657b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 13:29:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727209763; x=1727814563; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Nn8ECyCmWyPn9tXLc8lNZejR80O62lwdh1iFMAs+Rqo=;
+        b=YuUNo6/PE5J24a3sNTFYd1PLvyaEBqttAdNd+BMuK8wCktxAeyPvH8Xtx1azaR3Lp4
+         iLzqrkWTvoQhMUCzG9AwrQ6NawDB8ul9sGwm2CxW9SLjLwlnXNFpt1zqNZUUpbDoizrn
+         BBYk3WzccCF78jBQwaiw8E9o81WgCaS4iV5GEex0wGToFS5IyRosQelZWH9ZHdEdQyRS
+         gOSmyeQ991wBjwfTWBd49Vf0RkHM/tWbhbYeYW9W+QhFCXnhjse92tzdLnrWmNTxqDlN
+         90fqjyJqnhn6Erqq4r3OO7b/zW/T7tgF7kBhTMrVULrO8wz5uXYSoJsFa8MM1mWumokK
+         X1ZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727209763; x=1727814563;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Nn8ECyCmWyPn9tXLc8lNZejR80O62lwdh1iFMAs+Rqo=;
+        b=gCjoH3O/A/b1+kvxYyeRpK8qY1RGpqru7ofhjVNhz7g5EelhO/BtH+dDm8wGPUbcIN
+         gcUirG6IuiN9MOGUogs6GFhzZvQROCSd955bYPh6CVp58lNnESid0/HIKxaHWRG91e0n
+         whoMXeJOXV4jMqUnaAVnVEL/+RD2D/MVZGraSlgskXGfbmIGyarH6DXMyrCaMjVn34ti
+         NaAjnUY7w0NLVg1+TLi1GDrHCiarRvdn7sD3Kt6gTLmLCz4a4zBcNzW9gnvzIQ56ykae
+         5XMlzmRLhSwSia9UzyXPhlw9SDTF4DNr9l9rS9DwMSvWw+YfrjQpu6ro58o7KLmdti8p
+         hQow==
+X-Forwarded-Encrypted: i=1; AJvYcCV09dRHKOxABcVEPrPQl9bRCaJKlU0+hiGp+9pvjYikdQjUtmFciv3k6uHyKbuS9+W9OdAt+w/Y0MdqV8A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7wDNY7QJQdXsX4dtJ7IkZfPo63ulGPoEx+5RRMB6x5rJQ+BgF
+	w68gir33XifIzss5zaktZXAcDMHu1gwoHCleeOF5yJUArxMyZdX+4a+yhRjw1CwlWhCyFSG97Qk
+	+vmKZBw==
+X-Google-Smtp-Source: AGHT+IF9aApUK33I6f+5seodeuhmYm49UBu0r6pcj/qZiBEC6FE68CAKJFmd469r3veH4l1UEVa5sCABPcz1
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:965e:4297:88a9:5902])
+ (user=irogers job=sendgmr) by 2002:a25:9c84:0:b0:e20:2b5b:c6e6 with SMTP id
+ 3f1490d57ef6-e24d9bdb37bmr8964276.9.1727209763324; Tue, 24 Sep 2024 13:29:23
+ -0700 (PDT)
+Date: Tue, 24 Sep 2024 13:29:13 -0700
+Message-Id: <20240924202916.1560687-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240920-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v2-1-5aa8bdfe01af@linaro.org>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.792.g87dc391469-goog
+Subject: [PATCH v1 1/4] perf stat: Fix affinity memory leaks on error path
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 20, 2024 at 10:38:03AM +0200, Neil Armstrong wrote:
-> In preparation of supporting the mmc-slot subnode, allow
-> the nodename to be either mmc@ or mmc-slot@
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  Documentation/devicetree/bindings/mmc/mmc-controller.yaml | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/mmc-controller.yaml b/Documentation/devicetree/bindings/mmc/mmc-controller.yaml
-> index 58ae298cd2fc..f797c32ea688 100644
-> --- a/Documentation/devicetree/bindings/mmc/mmc-controller.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/mmc-controller.yaml
-> @@ -20,7 +20,9 @@ description: |
->  
->  properties:
->    $nodename:
-> -    pattern: "^mmc(@.*)?$"
-> +    oneOf:
-> +      - pattern: "^mmc(@.*)?$"
-> +      - pattern: "^slot(@.*)?$"
+Missed cleanup when an error occurs.
 
-'^(mmc|slot)(@.*)?$'
+Fixes: 49de179577e7 ("perf stat: No need to setup affinities when starting a workload")
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/builtin-stat.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-But the description says something else...
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index 689a3d43c258..cc55df3ccb18 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -767,6 +767,7 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+ 
+ 			switch (stat_handle_error(counter)) {
+ 			case COUNTER_FATAL:
++				affinity__cleanup(affinity);
+ 				return -1;
+ 			case COUNTER_RETRY:
+ 				goto try_again;
+@@ -808,6 +809,7 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+ 
+ 				switch (stat_handle_error(counter)) {
+ 				case COUNTER_FATAL:
++					affinity__cleanup(affinity);
+ 					return -1;
+ 				case COUNTER_RETRY:
+ 					goto try_again_reset;
+-- 
+2.46.0.792.g87dc391469-goog
 
-In any case, avoiding 'oneOf' when possible makes for better warnings.
-
-Rob
 
