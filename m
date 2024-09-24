@@ -1,105 +1,81 @@
-Return-Path: <linux-kernel+bounces-337280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A410F98480A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:52:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 740FD984840
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:08:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B18DB215C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:52:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6CEE283173
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E41C1AAE24;
-	Tue, 24 Sep 2024 14:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF9F71AB6E1;
+	Tue, 24 Sep 2024 15:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uCCiGp55"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1EF1B85F0;
-	Tue, 24 Sep 2024 14:52:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="SIwsw7G4"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB683155757
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 15:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727189554; cv=none; b=MaP8BX0L5J8T/QXKwcTv3mVQ8jfqvmaYUbhLPUYjDYGmi4XeRTUW5uHb6taNBYEMsUEJhE9B0EQS1EQUcD9RZKy7UGtTNmwfg9XXMlAyBIOP0iDyVtN8orbbBo4EW6LbjdWWDBW0MDxlTHa45K/HNfzCbcoxpVNbyrI4R4ECr4o=
+	t=1727190498; cv=none; b=bOp6Sz9+svKugHmcPUwAfgOYAfUiEoDSn5iUEZYsHvOK03mAxKcmXVHfNDpRsBmVmea991lzokCWk3yILo4xea8cWzctFAwlJBupdwwxqxr1S4pVuBbhEIWrEid+nhc8Uz3LtTzPbPVERgbZj04IM64hfLVR34aeOzIiUSoiWuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727189554; c=relaxed/simple;
-	bh=keRaJN5JmeP4cnnXSTQ7GucBOsaTPwdcyRxc4LBX160=;
+	s=arc-20240116; t=1727190498; c=relaxed/simple;
+	bh=ULMko6igJvaoBCPFqT+liu0gp1Fyz0QFilrMWEkY+mU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cm4MOvIjQvoP3UdskQSx8afqsFBCEhe40R6aIqh/o08OpIeTu9Xi4+BNDpHblepG+9qcYBxNirXkWv7ZGUJQyWJVUWXynnw8BqwYsy0JBMHVjzNqul3/jZ1B5t7sUEKU4R/Wz+UbjA5LfFQi7Hooxrjt72x2k+krl6bjxtXsIF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uCCiGp55; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42CB8C4CEC4;
-	Tue, 24 Sep 2024 14:52:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727189554;
-	bh=keRaJN5JmeP4cnnXSTQ7GucBOsaTPwdcyRxc4LBX160=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uCCiGp55YCoqto6GQhdXR/7ya2p+SYO5Z2YwXnD22jI2LPyil/seZusg5f0GSqLOW
-	 8bl8gTNnE16Zkxgz/ZzIpJXlhFnbgooDOYUjyKgQJgyQJhLInIIT1AOWHJPqzdKSTU
-	 KnNyV5ViGbkQ4SDrGb+hT2GlOBZ9AA8PEIFC5Jq3FnhVxozXJwh57H0NViZowMKDxW
-	 KQcxnwH8i/aHt194FHhmmpbigpqSCnoRzdVuFzrfT7ZPSlSFX0T3+eAVSeZHZqVv6O
-	 zr2T1fFQwgImTo7nPGnsUKGSfFi/Q9vXot2OirPhQWLv3oePZVBKcwH612/qTH/yfl
-	 fZFY+UoNSLWwg==
-Date: Tue, 24 Sep 2024 16:52:30 +0200
-From: Mark Brown <broonie@kernel.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: AlvinZhou <alvinzhou.tw@gmail.com>, linux-mtd@lists.infradead.org,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pratyush@kernel.org, mwalle@kernel.org, miquel.raynal@bootlin.com,
-	richard@nod.at, vigneshr@ti.com, chengminglin@mxic.com.tw,
-	leoyu@mxic.com.tw, AlvinZhou <alvinzhou@mxic.com.tw>,
-	JaimeLiao <jaimeliao@mxic.com.tw>
-Subject: Re: [PATCH v9 5/6] spi: mxic: Add support for swapping byte
-Message-ID: <ZvLSLt95Hrd7JYj3@finisterre.sirena.org.uk>
-References: <20240718034614.484018-1-alvinzhou.tw@gmail.com>
- <20240718034614.484018-6-alvinzhou.tw@gmail.com>
- <ZvKktPc0luV9hItN@finisterre.sirena.org.uk>
- <a87a159e-eff1-45c3-bf26-115d4ca5a9be@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YGDZbFLD408ICEyVG6WGwa/geiw4Fi5MMhuvRE/onIyBCCq38/CVRwlNdlrwlzaYurjuS6lEmnPl5SnwNuz0bEDNTrqEkcEbikvl9t3st7Y62Ve7ppTR9cpjGvPZbk3QV8tO4id/stuPKykM7K06lfWlP04yAv7FuYfve+ZbT4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=SIwsw7G4; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=LwfC9PTnd4pszvKr1e64PP91HM2G1SYCij7IUmOm1mM=;
+	b=SIwsw7G4nMUwUwRWxOmqysfssBJou4zdYnrV8qODR3rZiyVLaUagsTSnYWSyzU
+	//EOIYBVw/divRMPLHllbZTEbdnB0cKfB+08aJvxUPCLzDrIg3zkvXgs3dg8ogMK
+	aff/KRqXp4OmEa/u26OZbIZ5XF9eTBbrvnIVGbCSHlDv0=
+Received: from localhost (unknown [60.168.209.67])
+	by gzsmtp1 (Coremail) with SMTP id sCgvCgBHqp5A0vJmpZkTAA--.4626S2;
+	Tue, 24 Sep 2024 22:52:49 +0800 (CST)
+Date: Tue, 24 Sep 2024 22:52:48 +0800
+From: Qianqiang Liu <qianqiang.liu@163.com>
+To: syzbot <syzbot+3d613ae53c031502687a@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [btrfs?] [fbdev?] BUG: unable to handle kernel NULL
+ pointer dereference in fbcon_putcs (3)
+Message-ID: <ZvLSQLuLLGIkDthp@thinkpad>
+References: <Zud_7s__fu1aVw_u@debian.debian.local>
+ <000000000000d9c6880622323052@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="RdxPtqe1G7U3rehe"
-Content-Disposition: inline
-In-Reply-To: <a87a159e-eff1-45c3-bf26-115d4ca5a9be@linaro.org>
-X-Cookie: Editing is a rewording activity.
-
-
---RdxPtqe1G7U3rehe
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <000000000000d9c6880622323052@google.com>
+X-CM-TRANSID:sCgvCgBHqp5A0vJmpZkTAA--.4626S2
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUcsqXUUUUU
+X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiLwRkambysS70lgABsN
 
-On Tue, Sep 24, 2024 at 03:29:37PM +0100, Tudor Ambarus wrote:
-> On 9/24/24 12:38 PM, Mark Brown wrote:
+#syz test
 
-> > Acked-by: Mark Brown <broonie@kernel.org>
+diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
+index 3f7333dca508..fedd796c9a5c 100644
+--- a/drivers/video/fbdev/core/fbcon.c
++++ b/drivers/video/fbdev/core/fbcon.c
+@@ -847,6 +847,8 @@ static int set_con2fb_map(int unit, int newidx, int user)
+ 			return err;
+ 
+ 		fbcon_add_cursor_work(info);
++	} else if (vc) {
++		set_blitting_type(vc, info);
+ 	}
+ 
+ 	con2fb_map[unit] = newidx;
+-- 
+2.34.1
 
-> I'm fine with the SPI bits as well. Shall I take the SPI/SPIMEM patches
-> through mtd and provide you an immutable tag? I can do that after -rc1
-> is out.
-
-> Or you can take them directly through spi/, but I'll need an immutable tag.
-
-If you apply and send me a pull request with the tag that should be
-good.
-
---RdxPtqe1G7U3rehe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmby0ioACgkQJNaLcl1U
-h9AqJQf/WnsU8mtfyhIc1dUx0L/KK1z+R/rUY8OIQJxsLZg7e/OKyep//NQjPV0C
-6L6xsnHFR5+IvJMbsTyJAQuOxL/G+M4xkUOOYpYgjlMkNPOgrk18ePdUFcWa60q5
-dzMkkvH5y2DsBkC/vvedANvFzLjCPgkSUa4TEEe3Qt4yrgKPNeR4ctyVregZr8eK
-B/nO7Xhcs/epbXlNc5h8xLwzbVAjPROAIz0hyX0y12z0qYgWbP30ykLsR+D2cycG
-R6iv19NkP8wpHBwx/1P4nFfFFFkujgJuHWDVC1anREgfjsnhy2VBK1SsSb1bNidX
-pJvlkoC6XYed7tqABVCGiqBn3NJHYQ==
-=mo0n
------END PGP SIGNATURE-----
-
---RdxPtqe1G7U3rehe--
 
