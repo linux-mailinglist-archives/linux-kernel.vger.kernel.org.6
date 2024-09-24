@@ -1,123 +1,105 @@
-Return-Path: <linux-kernel+bounces-337619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3088984C82
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:01:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A877D984C85
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:06:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 511702832D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:01:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54F641F23BF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:06:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 870D413AD0F;
-	Tue, 24 Sep 2024 21:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80CD13C3D3;
+	Tue, 24 Sep 2024 21:06:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P3mlY5Qo"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="K/swazZa"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D291BC3F;
-	Tue, 24 Sep 2024 21:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DEB613A3F0
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 21:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727211690; cv=none; b=CmYCpgT2RRFvULlpHDFpapfDr7zsIk+BX8s6PyXqGsI2bJdYL22NVLpMPdP11l7IZ8cUsgUypc82iN9NKFpQeQDMOvZDjaZm3ah2bNqhX+lstugjdCr1enP5ip3sfLD4G7ygA4zXjk1edjSTOuwpPF0VQlQ3vC04kxqACB6/hwE=
+	t=1727212008; cv=none; b=sL43UJYN+6G3lT/UH1DTumfkdqvIxOkbskMvUMShSr2WCyeqs4VStC7xoGhs8mBz84nNj8QoDZk6IOC2Gdu3aZjgwaaMe4cUTMmcukIAJbxJFeCnQtBz+6Ljo+DF9aQ7W/JHTJCW8TnEbZMOVMVlZZmPBt2prUudQeKUuAyIsm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727211690; c=relaxed/simple;
-	bh=1QAxI24QNqyJlBVZFtXE8X2tAH9zh2VD1mXWlHuZ918=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G9r4gZklMjT7kKnLw23OERkYzDEttF+i2m1foKGxuidUxW45QjFXP/lvOGKLrDjS6UuVlj4HU5mx9bs6KhY9kppA33uBefc+xZqsmgBXKgPmKHy7GCrmUXsfK7yGNn42A8PsitWMz6HTeIY2Kn88NY3jEzUxlT3u61OufEQ4s3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P3mlY5Qo; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20551e2f1f8so70191105ad.2;
-        Tue, 24 Sep 2024 14:01:28 -0700 (PDT)
+	s=arc-20240116; t=1727212008; c=relaxed/simple;
+	bh=duiQhgIpdYt0fr4EBf9j6/V+Y6v9sOYJHzZbM3O7qyM=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=nh3mB1K+8UBmL0v4ahoiyqlCAnJ8uTGB5fvfaFwN6Ei9GFq5VYbC9qtFhBSbiQW+2CDyvUqC+a5U5t0ZGdQ1LLfPMlC8xquOPCl/KHYcboU5Wa+0IOZa4dxkDazyAO+xpAoo0BWrF2KrZleh+vZxXFVNQnpAo+//3D5aULZ63qA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=K/swazZa; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-205909afad3so68439405ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 14:06:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727211688; x=1727816488; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=MsmwfGIxGDNHXFbLStjjpLFP1XK3C1AVuwxVxIWA5pc=;
-        b=P3mlY5Qov3wFf59Xsp2izLTp6jdD0weowXk0NJc801RaFrzmh/w+D9r/8wMgFGmyr2
-         UDNky1QD5hXhW4UnwubTicET7VrHP3eJQdhJ8oi7wX2G1T5QjhZ+DbvvxtnGITy/zjco
-         74wwRdLyNS2DytAnwblpq2Ck6PZcOb4lNSm0peAgOXa8cOch/vyAk8mKnVjdHRj3Bcwh
-         XOt7XNteG/ppA/ayXrKlVcJfKKckufO6R3iRNpOt+TCoczw5ormv1aMImNqxzgjygjVc
-         VXvR0w2+W5DS2C+5+ls6K/TK8T/Zrgb9CMYEkmwp7GpMfSVY7S4N40rvC+4qNRttYe1r
-         FKbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727211688; x=1727816488;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+        d=purestorage.com; s=google2022; t=1727212006; x=1727816806; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MsmwfGIxGDNHXFbLStjjpLFP1XK3C1AVuwxVxIWA5pc=;
-        b=b8rlGQWw9evZxbNJxUhAPKdUPNG7h5lHgh3iBA39nxgBXOD0oEHIWlBJ9ped8l15Fi
-         B5MK4XZfJBnKqyjM/idKXJroHDiyThccxZ3TjiEX7M1gNPcoyMt3DwvkvFrBskcWvr7c
-         xaU93ui6N6MOa5ddijG91QNEShG1hDk+N1GuP9PDuqKHA1o00qK/PvzC4mQCMyTPbXUE
-         iGjLD6Vh32dx6wLgoZCLQ2cz3WfB5ZhthDT2/HSr/SjkJNEgy9o/fofBNvkkC40SCesi
-         sAi2nj9OLpreci+hA3gSqKlJc/jLe0JAF9MFNUtMgtHtNfsuu3W9Zss3s3Gl2p0seM/S
-         Ecow==
-X-Forwarded-Encrypted: i=1; AJvYcCUANWYAn2CRRjKEzmmlrqtkX6+aJLNBk7BpoQrP11oHD05Tm2EMlvAKb90J9205dqBHYsnRQmeQ9kLjVQY=@vger.kernel.org, AJvYcCV6J4CRBMzF3P+1JLMfwyx4qPDdgQhRU+89IYj5vrEccPRwkwz9639By0hnwgrjfK63Hqlsuchhff6o@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxy89MgAnyEhwJJM9iuQMAE+uqxBVPfFdtFI/hzg4hX9StgpXnp
-	rU0h+XUpSyTpiaSOaF8b8SAWlXhrM5cbawrst039/9elEi9d5qgX
-X-Google-Smtp-Source: AGHT+IHGAgzTdiIMarbX1EfDyWZlQDo2yhTL6zFfq5FVYuejP7LnAB0RB0L9FOX9jUSKIwY3LsbBrg==
-X-Received: by 2002:a17:902:db0b:b0:205:76d0:563b with SMTP id d9443c01a7336-20afc2d215bmr7394685ad.0.1727211687547;
-        Tue, 24 Sep 2024 14:01:27 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af1724163sm13754305ad.66.2024.09.24.14.01.25
+        bh=2cOSRCTldnYmAEoOT+PgzbC1WcHMLOlX9r7cKBA/cm4=;
+        b=K/swazZayGJF0QHOQE6+Mez6T9gYG9QHzroTdf0lTHntyOnk3wU96kHtmjDfAwT37e
+         YWsmflDkRx9tpv2Gy45CDWWJH9RNB84P5zo1ZauGsfFIvoEYFXTOa8063+0AadGb9/rZ
+         TnLW5+CmLFgAHWIHh1LqoE6VWM595Ga89c1Ta0f2CEjL0FanhF4VAReP31nfCoXB/P5F
+         ea/dSpLXaBABKjWYQIe5n87dgYQEHf2tObd9OzL7MprjAyXY/FhfIf6YG7d8tr3LXBBv
+         0t6VAfV6D/MFEPMMs3dlLUsvLkWAioKCSv4hX+fb6UNWwca+CFdSRmNg3H9RiuL775Sf
+         8EyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727212006; x=1727816806;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2cOSRCTldnYmAEoOT+PgzbC1WcHMLOlX9r7cKBA/cm4=;
+        b=F5lDTqvjOfYLopXdLofumGTTh8AkDnoQerJIAzIat8oO/YiaMKiEkIPTTy8wm9QFPM
+         /B74Ty0D2OXLLswl7lmkbyCdEin0k2aFIykSsWav/AgXjo6JT1LHq4R6Z8ABaqZ6LTDH
+         5DiFIzZJ4JeWkbsMTMfnU6y/SnGYQN8VECHSj0U6GwD3PS7uXeflfnBc1KFZv0NnwLoj
+         3ZkvuXr7AaVp9uxW2xZY9tkIIwVl8q2RHXRPvmGte4elM9AVRpzE60NCPz9TRSOWpya6
+         LAj7wo/yVoN56ANyVUsK3ucIpuOLp+eGwqnO/T8JsIxY3ESvGyi+YliVktXhch4+XkWf
+         HDSA==
+X-Forwarded-Encrypted: i=1; AJvYcCWerE5v4f4WUUh5UvqYknOsFf3SSUWQJbJyuTvzmKBypQK0wqDQt5sYU6LJ84P/3qrcf6Xs676bubNySUg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxzw4edH8PInf0rrglcpIF5gt2M9X4E1NBJfQT2lIJFrbHcWjlk
+	LlJqVwJXsiQBVN3tBQVA1VApNiS4BNvx/H0xdF9OaB++lFkW0nn1Z5lDk+1uENc=
+X-Google-Smtp-Source: AGHT+IGhyzhT4ItbLkXqJFOEF/QVw8PfECiY10lnETHANlsD8HmM/Se5SFVUhHSAQcwZL7gQfWEuoA==
+X-Received: by 2002:a17:902:f60c:b0:205:826e:6a13 with SMTP id d9443c01a7336-20afc5f07damr7240965ad.54.1727212005646;
+        Tue, 24 Sep 2024 14:06:45 -0700 (PDT)
+Received: from dev-mkhalfella2.dev.purestorage.com ([208.88.159.129])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20af1818f69sm13717095ad.184.2024.09.24.14.06.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 14:01:26 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-From: Guenter Roeck <linux@roeck-us.net>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Guenter Roeck <linux@roeck-us.net>,
-	Christoph Hellwig <hch@lst.de>,
-	Robin Murphy <robin.murphy@arm.com>
-Subject: [PATCH] mmc: core: Only set maximum DMA segment size if DMA is supported
-Date: Tue, 24 Sep 2024 14:01:23 -0700
-Message-ID: <20240924210123.2288529-1-linux@roeck-us.net>
-X-Mailer: git-send-email 2.45.2
+        Tue, 24 Sep 2024 14:06:45 -0700 (PDT)
+From: Mohamed Khalfella <mkhalfella@purestorage.com>
+To: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jeff Garzik <jgarzik@redhat.com>,
+	Yuanyuan Zhong <yzhong@purestorage.com>,
+	Auke Kok <auke-jan.h.kok@intel.com>,
+	Mohamed Khalfella <mkhalfella@purestorage.com>,
+	Simon Horman <horms@kernel.org>,
+	Ying Hsu <yinghsu@chromium.org>
+Cc: intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/1] igb: Do not bring the device up after non-fatal error
+Date: Tue, 24 Sep 2024 15:06:00 -0600
+Message-Id: <20240924210604.123175-1-mkhalfella@purestorage.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Since upstream commit 334304ac2bac ("dma-mapping: don't return errors
-from dma_set_max_seg_size") calling dma_set_max_seg_size() on a device
-not supporting DMA results in a warning traceback. This is seen when
-booting the sifive_u machine from SD. The underlying SPI controller
-(sifive,spi0 compatible) explicitly sets dma_mask to NULL.
+Changes:
+- Changed dev_info() to dev_dbg() as suggested.
 
-Avoid the backtrace by only calling dma_set_max_seg_size() if DMA is
-supported.
+v1: https://lore.kernel.org/all/20240923212218.116979-1-mkhalfella@purestorage.com/
 
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Robin Murphy <robin.murphy@arm.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
----
- drivers/mmc/core/queue.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Mohamed Khalfella (1):
+  igb: Do not bring the device up after non-fatal error
 
-diff --git a/drivers/mmc/core/queue.c b/drivers/mmc/core/queue.c
-index d0b3ca8a11f0..4d6844261912 100644
---- a/drivers/mmc/core/queue.c
-+++ b/drivers/mmc/core/queue.c
-@@ -388,7 +388,8 @@ static struct gendisk *mmc_alloc_disk(struct mmc_queue *mq,
- 
- 	blk_queue_rq_timeout(mq->queue, 60 * HZ);
- 
--	dma_set_max_seg_size(mmc_dev(host), queue_max_segment_size(mq->queue));
-+	if (mmc_dev(host)->dma_parms)
-+		dma_set_max_seg_size(mmc_dev(host), queue_max_segment_size(mq->queue));
- 
- 	INIT_WORK(&mq->recovery_work, mmc_mq_recovery_handler);
- 	INIT_WORK(&mq->complete_work, mmc_blk_mq_complete_work);
+ drivers/net/ethernet/intel/igb/igb_main.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
 -- 
 2.45.2
 
