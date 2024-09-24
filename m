@@ -1,98 +1,312 @@
-Return-Path: <linux-kernel+bounces-337383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0517F98495D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:14:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9F4898495B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:13:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 918E3B24960
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:14:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99D1728646C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:13:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574801AC434;
-	Tue, 24 Sep 2024 16:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="LH/wwFNF"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561DA1ABEBD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBFBA1ABEB7;
 	Tue, 24 Sep 2024 16:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ad8Dnb8E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A2A1AAE2D;
+	Tue, 24 Sep 2024 16:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727194410; cv=none; b=YuXq30Mc28zkoHDax63VcibeHva0E/gfUQk9oZyjZDKRL9UCC4FfBLj5D57V+1x8Z8YGcuvIOnppsEObWxiIWJ12QRi8XAQzI8Bk6rcmoMf0UxfcIPD8oU+fBv5n3uT6YdExtT5yCxfTlC5Hjh31TwK6v9ZiPdPNIvJv+e0YVkY=
+	t=1727194406; cv=none; b=P0eq0hwKpb3255kC2syFQsQNcd+x+BTDWunE6BCSdiiSQRhuooGdXamLAdTPqB9qMYi0EiCfEm0BSMjmZJ8LHIPPcY4ZVODZnfXmbK/AoIoEoVLvX8erj26FJhl1b0XiLvvthxpTQYBQ1PskWX4hhpLQa1rHzXSmbnfz/e/y7ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727194410; c=relaxed/simple;
-	bh=t6AjbKcGVGH4Lyk3hdDpgm5HtA6JgD4/Qz6lHPOv/2M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aRgfGxfuo2tKg/N2EBR5aOmRzA5j2kkNhLtYyMxQvJtHTUKAOe1Gr0URjeyi9okqT3ODaxQcOTRNfIfcjFYxZtlacETzPQ5T4FU+LIWWiZ68vs38vJxk4IT1wOAnHEgXySgQGCR9vqKlGdAefIW16uz3Pd9wWFn8J/zd/IeWxvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=LH/wwFNF; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=BrH8uwAPz6dm19tTD8qJUI3oNOdqcPltQmXlOJbEMcY=;
-	b=LH/wwFNFtFU31UGknMkYN0PYfJIIIGyhE6xwTbQJiAjs0oksSJ5pzsXd3Sgwdr
-	zYcuBWGSr73C/EAXKc0NxGHeVxtBQJGD78twN4jvSYkMfxNEX+Q7sgCDfA7auhYL
-	PDpDTG6n223mS9RI6d8Vj/aOcZK6xNkTXkr6IvjrWupa8=
-Received: from localhost (unknown [60.168.209.67])
-	by gzga-smtp-mta-g2-4 (Coremail) with SMTP id _____wA3P38S5fJmrprUDA--.36212S2;
-	Wed, 25 Sep 2024 00:13:07 +0800 (CST)
-Date: Wed, 25 Sep 2024 00:13:06 +0800
-From: Qianqiang Liu <qianqiang.liu@163.com>
-To: Helge Deller <deller@gmx.de>
-Cc: linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	syzbot+3d613ae53c031502687a@syzkaller.appspotmail.com
-Subject: [PATCH v2] fbcon: Fix a NULL pointer dereference issue in fbcon_putcs
-Message-ID: <ZvLlEpIMQnJcJsla@thinkpad>
-References: <20240916011027.303875-1-qianqiang.liu@163.com>
- <a57734e8-ffb9-4af1-be02-eb0c99507048@gmx.de>
+	s=arc-20240116; t=1727194406; c=relaxed/simple;
+	bh=E0HPrDszblN8VJOrdeajUB6d3Yu9y1ethcovl037+/Y=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=WeXcnxoXIllSx8FKXZHXBHh/uP14v4UxbK/8BbPMqPQwMRWEHe7tNocEpdU6Jx1+g+JIKBeW0S6pi7VgD/NSZ564mBMF4NmT0ZCHTWmOALZXK016g/L7pU5qBcHK1yR9MSPEMoKiafPpKwbgbN1SOAtYWukHpN4PORsG/ICT/8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ad8Dnb8E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32743C4CEC4;
+	Tue, 24 Sep 2024 16:13:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727194405;
+	bh=E0HPrDszblN8VJOrdeajUB6d3Yu9y1ethcovl037+/Y=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=Ad8Dnb8EqPqZinbGTzO5qT5OFHfyOKf8U4aYdnE+7SpB67uToO/3xAZFLyTeENSaA
+	 JwyFzaqBIyJELb5NKowe+uJQyEzXEcLvNly3KsD4ebsris/OeTkhLoS3AglFJ00xcE
+	 E5CogEHigEWGM+2w0pY/jAHJVaRPOGiGscbJK0YoWyPDEPpSjGxTre2+9KXmzrMXHd
+	 CjfEQcgdsTRXSekynfj16KcGoeF39/Kc1s8DvOcMYKIq2mSyt8mFPBDwnibfmj/LF5
+	 /bKxvW0sCmpS1Uy7KB3b4Ch/TyaavMFBx+75fkpudNZYViL0qrW2us9BjOqKk+FipQ
+	 mCkx9i3vqHieg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a57734e8-ffb9-4af1-be02-eb0c99507048@gmx.de>
-X-CM-TRANSID:_____wA3P38S5fJmrprUDA--.36212S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrtrWkCrWUZr1fAF4kCw4kWFg_yoWDuFg_CF
-	95ZF95X34qkF17KrnYyF13Jr90y34xur1S9a4qyFW3Cry3Ar1rXr4DZw1rWryfGFn7ZF97
-	J3sF9r40v3yfCjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUexpnPUUUUU==
-X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiLwdkamby4gU23AAAs-
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 24 Sep 2024 19:13:22 +0300
+Message-Id: <D4ENBEH902OY.2HO91169I3HV0@kernel.org>
+To: "James Bottomley" <James.Bottomley@HansenPartnership.com>,
+ <linux-integrity@vger.kernel.org>
+Cc: <roberto.sassu@huawei.com>, <mapengyu@gmail.com>,
+ <stable@vger.kernel.org>, "Mimi Zohar" <zohar@linux.ibm.com>, "David
+ Howells" <dhowells@redhat.com>, "Paul Moore" <paul@paul-moore.com>, "James
+ Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, "Peter
+ Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>,
+ <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 4/5] tpm: Allocate chip->auth in
+ tpm2_start_auth_session()
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20240921120811.1264985-1-jarkko@kernel.org>
+ <20240921120811.1264985-5-jarkko@kernel.org>
+ <12e17497239dd9b47059b03a0273e2d995371278.camel@HansenPartnership.com>
+In-Reply-To: <12e17497239dd9b47059b03a0273e2d995371278.camel@HansenPartnership.com>
 
-syzbot has found a NULL pointer dereference bug in fbcon.
-
-This issue is caused by ops->putcs being a NULL pointer.
-We need to ensure it is initialized properly.
-
-Reported-by: syzbot+3d613ae53c031502687a@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=3d613ae53c031502687a
-Tested-by: syzbot+3d613ae53c031502687a@syzkaller.appspotmail.com
-Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
+On Tue Sep 24, 2024 at 4:33 PM EEST, James Bottomley wrote:
+> On Sat, 2024-09-21 at 15:08 +0300, Jarkko Sakkinen wrote:
+> > Move allocation of chip->auth to tpm2_start_auth_session() so that
+> > the field can be used as flag to tell whether auth session is active
+> > or not.
+> >=20
+> > Cc: stable@vger.kernel.org=C2=A0# v6.10+
+> > Fixes: 699e3efd6c64 ("tpm: Add HMAC session start and end functions")
+> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > ---
+> > v5:
+> > - No changes.
+> > v4:
+> > - Change to bug.
+> > v3:
+> > - No changes.
+> > v2:
+> > - A new patch.
+> > ---
+> > =C2=A0drivers/char/tpm/tpm2-sessions.c | 43 +++++++++++++++++++--------=
 ---
- Changes since v1:
- - Initialize ops->putcs by calling set_blitting_type()
----
- drivers/video/fbdev/core/fbcon.c | 2 ++
- 1 file changed, 2 insertions(+)
+> > --
+> > =C2=A01 file changed, 25 insertions(+), 18 deletions(-)
+> >=20
+> > diff --git a/drivers/char/tpm/tpm2-sessions.c
+> > b/drivers/char/tpm/tpm2-sessions.c
+> > index 1aef5b1f9c90..a8d3d5d52178 100644
+> > --- a/drivers/char/tpm/tpm2-sessions.c
+> > +++ b/drivers/char/tpm/tpm2-sessions.c
+> > @@ -484,7 +484,8 @@ static void tpm2_KDFe(u8 z[EC_PT_SZ], const char
+> > *str, u8 *pt_u, u8 *pt_v,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0sha256_final(&sctx, out=
+);
+> > =C2=A0}
+> > =C2=A0
+> > -static void tpm_buf_append_salt(struct tpm_buf *buf, struct tpm_chip
+> > *chip)
+> > +static void tpm_buf_append_salt(struct tpm_buf *buf, struct tpm_chip
+> > *chip,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct tpm2_auth *auth)
+>
+> This addition of auth as an argument is a bit unnecessary.  You can set
+> chip->auth before calling this and it will all function.  Since there's
+> no error leg in tpm2_start_auth_session unless the session creation
+> itself fails and the guarantee of the ops lock is single threading this
+> chip->auth can be nulled again in that error leg.
+>
+> If you want to keep the flow proposed in the patch, the change from how
+> it works now to how it works with this patch needs documenting in the
+> change log
 
-diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
-index 2e093535884b..d9abae2516d8 100644
---- a/drivers/video/fbdev/core/fbcon.c
-+++ b/drivers/video/fbdev/core/fbcon.c
-@@ -861,6 +861,8 @@ static int set_con2fb_map(int unit, int newidx, int user)
- 			return err;
- 
- 		fbcon_add_cursor_work(info);
-+	} else if (vc) {
-+		set_blitting_type(vc, info);
- 	}
- 
- 	con2fb_map[unit] = newidx;
--- 
-2.34.1
+OK, I don't want to overgrow the diff so +1 for this.
 
+>
+> > =C2=A0{
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct crypto_kpp *kpp;
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct kpp_request *req=
+;
+> > @@ -543,7 +544,7 @@ static void tpm_buf_append_salt(struct tpm_buf
+> > *buf, struct tpm_chip *chip)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0sg_set_buf(&s[0], chip-=
+>null_ec_key_x, EC_PT_SZ);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0sg_set_buf(&s[1], chip-=
+>null_ec_key_y, EC_PT_SZ);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0kpp_request_set_input(r=
+eq, s, EC_PT_SZ*2);
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0sg_init_one(d, chip->auth->s=
+alt, EC_PT_SZ);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0sg_init_one(d, auth->salt, E=
+C_PT_SZ);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0kpp_request_set_output(=
+req, d, EC_PT_SZ);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0crypto_kpp_compute_shar=
+ed_secret(req);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0kpp_request_free(req);
+> > @@ -554,8 +555,7 @@ static void tpm_buf_append_salt(struct tpm_buf
+> > *buf, struct tpm_chip *chip)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * This works because K=
+DFe fully consumes the secret before
+> > it
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * writes the salt
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tpm2_KDFe(chip->auth->salt, =
+"SECRET", x, chip->null_ec_key_x,
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 chip->auth->salt);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tpm2_KDFe(auth->salt, "SECRE=
+T", x, chip->null_ec_key_x, auth-
+> > >salt);
+> > =C2=A0
+> > =C2=A0 out:
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0crypto_free_kpp(kpp);
+> > @@ -854,6 +854,8 @@ int tpm_buf_check_hmac_response(struct tpm_chip
+> > *chip, struct tpm_buf *buf,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+/* manually close the session if it wasn't
+> > consumed */
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+tpm2_flush_context(chip, auth->handle);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0memzero_explicit(auth, sizeof(*auth));
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0kfree(auth);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0chip->auth =3D NULL;
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0} else {
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0/* reset for next use=C2=A0 */
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0auth->session =3D TPM_HEADER_SIZE;
+> > @@ -882,6 +884,8 @@ void tpm2_end_auth_session(struct tpm_chip *chip)
+> > =C2=A0
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tpm2_flush_context(chip=
+, auth->handle);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0memzero_explicit(auth, =
+sizeof(*auth));
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0kfree(auth);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0chip->auth =3D NULL;
+> > =C2=A0}
+> > =C2=A0EXPORT_SYMBOL(tpm2_end_auth_session);
+> > =C2=A0
+> > @@ -970,25 +974,29 @@ static int tpm2_load_null(struct tpm_chip
+> > *chip, u32 *null_key)
+> > =C2=A0 */
+> > =C2=A0int tpm2_start_auth_session(struct tpm_chip *chip)
+> > =C2=A0{
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct tpm2_auth *auth;
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct tpm_buf buf;
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct tpm2_auth *auth =3D c=
+hip->auth;
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int rc;
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u32 null_key;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int rc;
+> > =C2=A0
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!auth) {
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0dev_warn_once(&chip->dev, "auth session is not
+> > active\n");
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (chip->auth) {
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0dev_warn_once(&chip->dev, "auth session is
+> > active\n");
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0return 0;
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+> > =C2=A0
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0auth =3D kzalloc(sizeof(*aut=
+h), GFP_KERNEL);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!auth)
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0return -ENOMEM;
+> > +
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rc =3D tpm2_load_null(c=
+hip, &null_key);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (rc)
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0goto out;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0goto err;
+> > =C2=A0
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0auth->session =3D TPM_H=
+EADER_SIZE;
+> > =C2=A0
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rc =3D tpm_buf_init(&bu=
+f, TPM2_ST_NO_SESSIONS,
+> > TPM2_CC_START_AUTH_SESS);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (rc)
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0goto out;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0goto err;
+> > =C2=A0
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* salt key handle */
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tpm_buf_append_u32(&buf=
+, null_key);
+> > @@ -1000,7 +1008,7 @@ int tpm2_start_auth_session(struct tpm_chip
+> > *chip)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tpm_buf_append(&buf, au=
+th->our_nonce, sizeof(auth-
+> > >our_nonce));
+> > =C2=A0
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* append encrypted sal=
+t and squirrel away unencrypted in
+> > auth */
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tpm_buf_append_salt(&buf, ch=
+ip);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tpm_buf_append_salt(&buf, ch=
+ip, auth);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* session type (HMAC, =
+audit or policy) */
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tpm_buf_append_u8(&buf,=
+ TPM2_SE_HMAC);
+> > =C2=A0
+> > @@ -1021,10 +1029,13 @@ int tpm2_start_auth_session(struct tpm_chip
+> > *chip)
+> > =C2=A0
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tpm_buf_destroy(&buf);
+> > =C2=A0
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (rc)
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0goto out;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (rc =3D=3D TPM2_RC_SUCCES=
+S) {
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0chip->auth =3D auth;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0return 0;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+> > =C2=A0
+> > - out:
+> > +err:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0kfree(auth);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return rc;
+> > =C2=A0}
+> > =C2=A0EXPORT_SYMBOL(tpm2_start_auth_session);
+> > @@ -1371,10 +1382,6 @@ int tpm2_sessions_init(struct tpm_chip *chip)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (rc)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0return rc;
+> > =C2=A0
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0chip->auth =3D kmalloc(sizeo=
+f(*chip->auth), GFP_KERNEL);
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!chip->auth)
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0return -ENOMEM;
+> > -
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return rc;
+> > =C2=A0}
+> > =C2=A0#endif /* CONFIG_TCG_TPM2_HMAC */
+>
+> Other than the comment above
+>
+> Reviewed-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+
+Just in case, I'll address the comment so please check also v6.
+
+BR, Jarkko
 
