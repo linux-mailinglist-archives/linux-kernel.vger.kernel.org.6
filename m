@@ -1,206 +1,162 @@
-Return-Path: <linux-kernel+bounces-337290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D82B698483F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:08:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 83730984842
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:08:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CCDB284026
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:08:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36D2F283733
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1290C1AB52F;
-	Tue, 24 Sep 2024 15:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zaeMKMgw"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B761AB6D2;
+	Tue, 24 Sep 2024 15:08:35 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17B7EEB3
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 15:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30B8D155757;
+	Tue, 24 Sep 2024 15:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727190496; cv=none; b=JGnHJ1jIT1QxPnjnpophoTU01+ERWDzrwpRSyQeTRKMHZDFOsrp0Yd7In4XZaPgfCZCRCY6hQA39F/Xlw7oeciviEjy5rLVVZuTy1V0Vqxm4UT5CJhaaOgClu129W9aPm9YBxRZ8KReVBPWl9Yl8EvuVec/7mXiRWsKT39Bvt2M=
+	t=1727190515; cv=none; b=ZCgR+/tMoyTM7AzdUpplCFF030k1YBaQimUwz7vtsQIn9fbz5UkayD8VKijzKsSw6ZrSOtyusZ1fwEHMiRt87QUzvM1jhVzlNv5yHAZXM49S/8deZfcVSYjCfrPY4hLSg//nv1+A2pG+s81spQrN4w6/HetSFKZYsTX4J6KTaO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727190496; c=relaxed/simple;
-	bh=txe05EkN78YSxQ+w4D5wPuMdBXQ+DuV8uIQKXYfBCqg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KH/Y3krGrIEUFyRYhsMWz4jmaeVKzubZDNnRQnEW9aslxrPiz8yQzuOHt6DTuUxbDnUsC+22gSYAsfebrNXU56JqtJ7OqFdE/sAr8EO9UlUqJ4QHWHSf2kYzPHMRLMQTJy21bQWrG7nHYDqL+3HJ059jy2F4Uc6Wr0GuTuriGUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zaeMKMgw; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c5b954c359so3753617a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 08:08:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727190493; x=1727795293; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=txe05EkN78YSxQ+w4D5wPuMdBXQ+DuV8uIQKXYfBCqg=;
-        b=zaeMKMgwNpkUKuK6nvT56hzNHis6sF0LSzqLDfBBGB6hPCn7Xhu9ZG0GKNqlD0Q3pJ
-         /8IxSuoLSGdmgkQxgWiVwZW/8tEcP9p5HexhMa+mYGR79BNoQOWHuMuy5aQbQX2JeSKR
-         0caWPV9qV8sfojaaccZ5MKX4MKwxnF8BbVvA0gYLkP/g365HynVVI0DF5GeyDH0fivWe
-         itj8/2ACtMVr1yJzmeY1UgCq2E/mY0d8T88FL24BQJA3EggfypaNHl7nhxlfqyqtzI6W
-         QyjXmcdnLaGuI3r0I4ZE4xMO4ro2mo6ElW5iOInHk0jL9pyKF3tMUQr/5GDCROzO4Vrp
-         0bUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727190493; x=1727795293;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=txe05EkN78YSxQ+w4D5wPuMdBXQ+DuV8uIQKXYfBCqg=;
-        b=Sdm31md2RfJS+Bl/5oAILFf4b2CE3rxXm7+Fcy0M3z6jKSdNkzWI1ZkLnD/tSBjI03
-         W+Dmc5EusZS8jyCLSVPnwh2gm3rFjY9yoQ5CyHXlCJK2uBqEetPqXAO5Tq8AX1WdiNu5
-         XmswWiaFK5mefXcegn2293dJ0GOozWOndrpYUn1quItHmkCa3Y30ydO29/l3DTVGFUBs
-         w+YJsxIwvcNwA2DLXDFJXMLX4jtOTJJisCkNTwVaSNA5lOyaE1tYI9BQhdkWDVTCHoKf
-         2XAYhoW2G/HdoF4a4XCQNF3GVTwn8zgVPSVsncMNQO1sMfoX1SBZUDBsDera9Wliul2f
-         WYOg==
-X-Forwarded-Encrypted: i=1; AJvYcCWFNC/BiibPBLr37/207cQHVnjxBTv4Qwb3EsXugc0RnxN6+UaxiWiHqQURuQ1TBL1SEko4PGVPsBDOWlA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9h4w5vxlxYW4E5FbL91qcEK6f1mQ4lrwhThQa0YLZaa6lFwGu
-	j7dQYmby2hnbfX7lWqPWOZ9sGm937sfW1NhNEa4OpvKu7BWOCoHPipFoUvgaO4yg+6wDls9unkn
-	o+Ki9nzcuh/m+8nK6u/Cr0m69Ke9lzh/SUHWs
-X-Google-Smtp-Source: AGHT+IHWQ32+4fKQOYz5Y4zM1Cg77Ilylj/RMv9JiMX5KJvXcem0wZpM07wcBHBoO5LF3JgjmwtoDqoMYzV0iXr24o4=
-X-Received: by 2002:a17:907:d2db:b0:a8d:f04:b19b with SMTP id
- a640c23a62f3a-a90d4fbcfd5mr1484565566b.2.1727190492533; Tue, 24 Sep 2024
- 08:08:12 -0700 (PDT)
+	s=arc-20240116; t=1727190515; c=relaxed/simple;
+	bh=bJl4aHDHHFVlpUdXXtylYpC5cGHghAmoBWgZNKJcXlM=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KdMJX8su+1mqu48iXg/wuUoo27DHHGjgSbFvFDqFNdIz9pSBhqfd3SgiPSNIkTswD8BU8CWgdTeB8mXhawW26Jm2SmPdjr1e+BfvsWqvxSdE56NGI1YMQBtZhgGQhFiSvu3smqEhWtsPTSjkU0ft/XlnVUmpZ9lcifz9EBYaK4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XCjnX3Sz2z6DB8S;
+	Tue, 24 Sep 2024 23:04:32 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 20AF9140B39;
+	Tue, 24 Sep 2024 23:08:29 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 24 Sep
+ 2024 17:08:28 +0200
+Date: Tue, 24 Sep 2024 16:08:27 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
+CC: <linux-pci@vger.kernel.org>, <bhelgaas@google.com>,
+	<manivannan.sadhasivam@linaro.org>, <logang@deltatee.com>,
+	<linux-kernel@vger.kernel.org>, <sumanesh.samanta@broadcom.com>,
+	<sathya.prakash@broadcom.com>, <sjeaugey@nvidia.com>
+Subject: Re: [PATCH 2/2 v2] PCI/P2PDMA: Modify p2p_dma_distance to detect
+ P2P links
+Message-ID: <20240924160827.000049dd@Huawei.com>
+In-Reply-To: <1726733624-2142-3-git-send-email-shivasharan.srikanteshwara@broadcom.com>
+References: <1726733624-2142-1-git-send-email-shivasharan.srikanteshwara@broadcom.com>
+	<1726733624-2142-3-git-send-email-shivasharan.srikanteshwara@broadcom.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240923231142.4155415-1-nphamcs@gmail.com> <4d38c65d-760c-43a5-bb47-8e0235c13a51@linux.alibaba.com>
- <CAJD7tkamKcaqHR5V+4+9ixmFc3dC2NnGcu7YzdXqxqNEe8FqqA@mail.gmail.com>
- <9a110f20-42ad-468b-96c6-683e162452a9@linux.alibaba.com> <CAKEwX=PiOdrR7Ad5XoT8pRZDLB=q6B_fmwQ3ScgWFPNptBuHPw@mail.gmail.com>
-In-Reply-To: <CAKEwX=PiOdrR7Ad5XoT8pRZDLB=q6B_fmwQ3ScgWFPNptBuHPw@mail.gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 24 Sep 2024 08:07:33 -0700
-Message-ID: <CAJD7tkZFu3DbovTwyRdQmEG=7nQtmzrjQVgyhE4mNzbCtZxFZA@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/2] remove SWAP_MAP_SHMEM
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org, 
-	hannes@cmpxchg.org, hughd@google.com, shakeel.butt@linux.dev, 
-	ryan.roberts@arm.com, ying.huang@intel.com, chrisl@kernel.org, 
-	david@redhat.com, kasong@tencent.com, willy@infradead.org, 
-	viro@zeniv.linux.org.uk, baohua@kernel.org, chengming.zhou@linux.dev, 
-	linux-mm@kvack.org, kernel-team@meta.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Tue, Sep 24, 2024 at 7:32=E2=80=AFAM Nhat Pham <nphamcs@gmail.com> wrote=
-:
->
-> On Mon, Sep 23, 2024 at 8:25=E2=80=AFPM Baolin Wang
-> <baolin.wang@linux.alibaba.com> wrote:
-> >
-> >
-> > On 2024/9/24 10:15, Yosry Ahmed wrote:
-> > > On Mon, Sep 23, 2024 at 6:55=E2=80=AFPM Baolin Wang
-> > > <baolin.wang@linux.alibaba.com> wrote:
-> > >>
-> > >>
-> > >>
-> > >> On 2024/9/24 07:11, Nhat Pham wrote:
-> > >>> The SWAP_MAP_SHMEM state was originally introduced in the commit
-> > >>> aaa468653b4a ("swap_info: note SWAP_MAP_SHMEM"), to quickly determi=
-ne if a
-> > >>> swap entry belongs to shmem during swapoff.
-> > >>>
-> > >>> However, swapoff has since been rewritten drastically in the commit
-> > >>> b56a2d8af914 ("mm: rid swapoff of quadratic complexity"). Now
-> > >>> having swap count =3D=3D SWAP_MAP_SHMEM value is basically the same=
- as having
-> > >>> swap count =3D=3D 1, and swap_shmem_alloc() behaves analogously to
-> > >>> swap_duplicate()
-> > >>>
-> > >>> This RFC proposes the removal of this state and the associated help=
-er to
-> > >>> simplify the state machine (both mentally and code-wise). We will a=
-lso
-> > >>> have an extra state/special value that can be repurposed (for swap =
-entries
-> > >>> that never gets re-duplicated).
-> > >>>
-> > >>> Another motivation (albeit a bit premature at the moment) is the ne=
-w swap
-> > >>> abstraction I am currently working on, that would allow for swap/zs=
-wap
-> > >>> decoupling, swapoff optimization, etc. The fewer states and swap AP=
-I
-> > >>> functions there are, the simpler the conversion will be.
-> > >>>
-> > >>> I am sending this series first as an RFC, just in case I missed som=
-ething
-> > >>> or misunderstood this state, or if someone has a swap optimization =
-in mind
-> > >>> for shmem that would require this special state.
-> > >>
-> > >> The idea makes sense to me. I did a quick test with shmem mTHP, and
-> > >> encountered the following warning which is triggered by
-> > >> 'VM_WARN_ON(usage =3D=3D 1 && nr > 1)' in __swap_duplicate().
-> > >
-> > > Apparently __swap_duplicate() does not currently handle increasing th=
-e
-> > > swap count for multiple swap entries by 1 (i.e. usage =3D=3D 1) becau=
-se it
-> > > does not handle rolling back count increases when
-> > > swap_count_continued() fails.
-> > >
-> > > I guess this voids my Reviewed-by until we sort this out. Technically
-> > > swap_count_continued() won't ever be called for shmem because we only
-> > > ever increment the count by 1, but there is no way to know this in
-> > > __swap_duplicate() without SWAP_HAS_SHMEM.
->
-> Ah this is my bad. I compiled with CONFIG_THP_SWAP, but forgot to
-> remove the swapfile check (that's another can of worms, but I need
-> data before submitting the patch to remove it...)
->
-> One thing we can do is instead of warning here, we can handle it in
-> the for loop check, where we have access to count - that's the point
-> of having that for-loop check anyway? :)
->
-> There's a couple of ways to go about it:
->
-> 1. VM_WARN_ON(usage =3D=3D 1 && nr > 1 && count !=3D 0 );
+On Thu, 19 Sep 2024 01:13:44 -0700
+Shivasharan S <shivasharan.srikanteshwara@broadcom.com> wrote:
 
-Hmm that should work, although it's a bit complicated tbh.
+> Update the p2p_dma_distance() to determine inter-switch P2P links existing
+> between two switches and use this to calculate the DMA distance between
+> two devices.
+> 
+> Signed-off-by: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
+> ---
+>  drivers/pci/p2pdma.c       | 17 ++++++++++++++++-
+>  drivers/pci/pcie/portdrv.c | 34 ++++++++++++++++++++++++++++++++++
+>  drivers/pci/pcie/portdrv.h |  2 ++
+>  3 files changed, 52 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
+> index 4f47a13cb500..eed3b69e7293 100644
+> --- a/drivers/pci/p2pdma.c
+> +++ b/drivers/pci/p2pdma.c
+> @@ -21,6 +21,8 @@
+>  #include <linux/seq_buf.h>
+>  #include <linux/xarray.h>
+>  
+> +extern bool pcie_port_is_p2p_link_available(struct pci_dev *a, struct pci_dev *b);
 
-> (or more accurately, (count & ~COUNT_CONTINUED) >=3D SWAP_MAP_MAX))
+That's nasty.  Include the header so you get a clean stub if
+this support is not built in etc.
 
-I think this will make the warning very hard to hit if there's a
-misuse of __swap_duplicate(). It will only be hit when an entry needs
-count continuation, which I am not sure is very common. If there's a
-bug, the warning will potentially catch it too late, if ever.
+> +
 
-The side effect here is failing to decrement the swap count of some
-swap entries which will lead to them never being freed, essentially
-leaking swap capacity slowly over time. I am not sure if there are
-more detrimental effects.
+> diff --git a/drivers/pci/pcie/portdrv.c b/drivers/pci/pcie/portdrv.c
+> index c940b4b242fd..2fe1598fc684 100644
+> --- a/drivers/pci/pcie/portdrv.c
+> +++ b/drivers/pci/pcie/portdrv.c
+> @@ -104,6 +104,40 @@ static bool pcie_port_is_p2p_supported(struct pci_dev *dev)
+>  	return false;
+>  }
+>  
+> +/**
+> + * pcie_port_is_p2p_link_available: Determine if a P2P link is available
+> + * between the two upstream bridges. The serial number of the two devices
+> + * will be compared and if they are same then it is considered that the P2P
+> + * link is available.
+> + *
+> + * Return value: true if inter switch P2P is available, return false otherwise.
+> + */
+> +bool pcie_port_is_p2p_link_available(struct pci_dev *a, struct pci_dev *b)
+> +{
+> +	u64 dsn_a, dsn_b;
+> +
+> +	/*
+> +	 * Check if the devices support Inter switch P2P.
+> +	 */
 
->
-> 2. Alternatively, instead of warning here, we can simply return
-> -ENOMEM. Then, at shmem callsite, have a VM_WARN_ON/VM_BUG_ON(), since
-> this MUST succeed.
+Single line comment syntax fine here.  However it's kind
+of obvious, so I'd just drop the comment.
 
-We still fail to rollback incremented counts though when we return
--ENOMEM, right? Maybe I didn't get what you mean.
 
->
-> Either solutions should follow with careful documentation to make it
-> clear the expectation/guarantee of the new API.
->
-> Yosry, Baolin, how do you two feel about this? Would something like
-> this work? I need to test it first, but let me know if I'm missing
-> something.
->
-> If this does not work, we can do what Baolin is suggesting, and
-> perhaps maintain the swap_shmem_alloc() helper. It's less than ideal,
-> but at least we still lose a state...
+> +	if (!pcie_port_is_p2p_supported(a) ||
+> +	    !pcie_port_is_p2p_supported(b))
 
-Depending on the complexity tbh, right now removing SWAP_MAP_SHMEM is
-just a cleanup with small wins, so if it's too complicated to remove
-it it may not be worth it. I am assuming with your ongoing work, it
-becomes much more valuable, so maybe if it's too complicated we can
-defer it until the benefits are realizable?
+Don't wrap this. I think it's under 80 chars anyway.
+
+> +		return false;
+> +
+> +	dsn_a = pci_get_dsn(a);
+> +	if (!dsn_a)
+> +		return false;
+If we assume that dsn is the only right way to detect this
+(I'm fine with that for now) then we know the supported tests
+above would only pass if this is true. Hence
+
+return pci_get_dsn(a) == pci_get_dsn(b);
+
+should be fine.
+
+> +
+> +	dsn_b = pci_get_dsn(b);
+> +	if (!dsn_b)
+> +		return false;
+> +
+> +	if (dsn_a == dsn_b)
+> +		return true;
+
+	return dsn_a == dsn_b;
+
+> +
+> +	return false;
+> +}
+> +EXPORT_SYMBOL_GPL(pcie_port_is_p2p_link_available);
+> +
+>  /*
+>   * Traverse list of all PCI bridges and find devices that support Inter switch P2P
+>   * and have the same serial number to create report the BDF over sysfs.
+
+
 
