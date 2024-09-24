@@ -1,105 +1,109 @@
-Return-Path: <linux-kernel+bounces-337511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51E4A984B32
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:42:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F8F984B34
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:43:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 728651C22EDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:42:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CBF01F23F8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:43:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7522A1AC895;
-	Tue, 24 Sep 2024 18:42:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A1DD1AC8A6;
+	Tue, 24 Sep 2024 18:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r99C9Vpk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UvxwJMmK"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C5B1B85F5;
-	Tue, 24 Sep 2024 18:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707691A4F0C;
+	Tue, 24 Sep 2024 18:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727203337; cv=none; b=lgbC1Alml6HZZ9RcFiY1eZWYmwd9jwc6ZSDEwb6ieiRxTuzKwet0Yp/auqJsJApktfSKZrRaf7qphowqda1wFIcIASh1VDqX7tQHRSdXZByW/eM2n7brvcmeIWav0hF+oAhSx6tyCyR+YEfM3V2tRfBI549PLvx1GD4bfgafkqE=
+	t=1727203378; cv=none; b=i9zCCEgkXhnyHlwNFXsZ3U6RxY5OxmS2rItHq4mTKMzM8Ys/pzMQhU5lbo6UMd0u0rV3XPlWITnCpntRx8vAZQL4j1KtuUgmjh4YPMO1EKtzEWfkGju93T4YmeXAJuI2x597norOF03U4TNOWV6ZrEZEi/oKuqxht0b5xWZ8R9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727203337; c=relaxed/simple;
-	bh=y3OXYglhlp43kVHeV0em3+MF9/JdFVSnXc51Xo/43Q8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ai3PPjqdEfLWeEKa9//lvfMaMMRZU+sKVOg+rRlYmMHQlN4rSj6Q7u6N+CtMaOiHkJYBZ2lyiVZzB//eMCUgdD7Vh0QE6ZMqqKXPhNhTybWMIS/WVIZoI6VgI7xcFAycjKDrGLe8T9qgYonikDTW1/ddlDzEe8k6cEDxrBBDtQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r99C9Vpk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D4E5C4CEC4;
-	Tue, 24 Sep 2024 18:42:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727203337;
-	bh=y3OXYglhlp43kVHeV0em3+MF9/JdFVSnXc51Xo/43Q8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r99C9VpktgXTtWPwLrZhAvAzCHn4RS3SxjfdFcBI9QatPVRBKJbYicsEK9YGfk2WL
-	 A9guDhWuHfz82VR28cxDeOn3KxTun7TUDguvsNZWmDdxMR0qdUsOImAyhR+JUsMyBu
-	 XpE5kISj31J5wL0oWfuuQU61u0hC68KbwV+e7KsNTTL/IaukfIrXrrFp7yIR2QuKpA
-	 rjIjie+DRmlOa8MR+yv10mCHn9hwlEGKYQ4d3u/KSUdZK6SIKgiCzX0QF+F/t78v06
-	 s5x/mo/pC9dJfNE+ObFncno18qzKiWAVrOx1A+44k+P6Bv/s2AgEp9FoPcCJQ0NDxY
-	 5qE8SeXBMu9DA==
-Date: Tue, 24 Sep 2024 11:42:15 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: acme@kernel.org, Yang Jihong <yangjihong@bytedance.com>
-Cc: peterz@infradead.org, mingo@redhat.com, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, james.clark@arm.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	leo.yan@arm.com
-Subject: Re: [PATCH RESEND v3 0/3] perf: build: Minor fixes for build failures
-Message-ID: <ZvMIBxRzYSI5G7yU@google.com>
-References: <20240919013513.118527-1-yangjihong@bytedance.com>
+	s=arc-20240116; t=1727203378; c=relaxed/simple;
+	bh=qem24K8hDJtqOZflZxzGoBu2Q9HuUP6RNgJ8qSOhPoQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WRcots78mpBnKsQ0T+QiEtK91tAVbID1QNmnOQbrPZuJmYOVEYvt0gM/hNgLYYirNDOv88G1d7ho9lVTYR/yOEgqS1wwGOo8ptUehcuT0QWcN4/f5uPQGzg5mxW8MP9JPCP8a4clMXMz2xXZd0gpo6NdDOmgGvpzj4llIgSs+1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UvxwJMmK; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2d8afdd62e8so1072419a91.3;
+        Tue, 24 Sep 2024 11:42:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727203376; x=1727808176; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AfURFzn65sh6X2dItLUMd07O5TuGvYCWV/xXT4OYjhY=;
+        b=UvxwJMmKk/1fHqe++25JLeGaQoTYzxu8qozRHm1QJvW0IIErPMm5/5nHTuecF7VcJh
+         Q8T3Q223Da0Brj+LzWmH0raxeOtYVddVRGVG1qzRVN5XUUd0Muq4SOlunyK9SeGSuTGh
+         PPihLjZrAlXsjLkrmf28tYmAbxHEUpn/HJCOTiKlj2r6GHgYFPFEnDLrnzt+AyLaEPk3
+         bjwL4F5N8GdZkCcASaKyW6dsOD83VsHIyZiojZbRiQrCTWqvBv1pymKiVptsYgEllLgZ
+         pUWrr6BZSqPUChBRKlmT1GWhkepJwXv5E1rmi+cyeVYpE6o6MTgA0+XqCs0vuoLK9SCs
+         pnmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727203376; x=1727808176;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AfURFzn65sh6X2dItLUMd07O5TuGvYCWV/xXT4OYjhY=;
+        b=obBkmd5YElShTnVmQDj6ElXg2wg2cuDtBa+5GNjcIQud/XBAYlkn4vS5JSwYADeloL
+         AFG47NdE9VknXTQVu9d2pgl5vGHBz8PH3zHA4kdkzRwmPBA17XTMQ5fSzVro9hvNPHxe
+         v8MqoxeRdZZ2VOWIdfYizzZ9X5TqjtNb5nU25FVHPFbF483ExcRnVJLR4c5L404PhV/s
+         Tv7V2QYvEJH//T8ZanucBHiWXcNOOM4S93TxsjV+Lq5r0ISf/N6zEVzmE8Xs1Tza35ae
+         lUoKvk9K6LT/kt7wY1lTWZcgTrexZQuXMwNjKA8Zx6+4dYjq2J+/UlvnujtD+fILGO5d
+         guEg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/7ryEaB7gVehSy23PsoMhgb4EGCadzgXJBvFWD0j+SHA5ezNd9uCMgqJ7qcn7pveMUfL3Cqq6vyCF5BqL910=@vger.kernel.org, AJvYcCVdFtPWae8ardJ+eJt6x9Giq294vQjkZBGJfCl5V3YvWg5qmmb8PI1WtdHKVEJalIFrzv5cmWL09zpbrKI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLIWvrfe4BjxRlIsnoUBNCkgRAYVRVA0uGk5XHO0Iuwp6B6ZFM
+	J6fE/JjywqBhzb4kG4yBuuPSyNL3dhzLtDH93ROl3yCQAGeLI5NsadCdpudGvcpbcnM63HIYrul
+	0pmnMtNSoR8g86w03Jy8SbTrw2zU=
+X-Google-Smtp-Source: AGHT+IGRLgHGVhSijck+qaah7MB5r4zyIKNkXh5xMY4YGSKcSP21XOEKI+3jbVBEVqm+Ow49sg6OJYTpkozSDQXoWdw=
+X-Received: by 2002:a17:90b:1c11:b0:2d8:b071:e10e with SMTP id
+ 98e67ed59e1d1-2e06ae2605emr63840a91.1.1727203376556; Tue, 24 Sep 2024
+ 11:42:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240919013513.118527-1-yangjihong@bytedance.com>
+References: <20240913180622.1327656-1-masahiroy@kernel.org>
+In-Reply-To: <20240913180622.1327656-1-masahiroy@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 24 Sep 2024 20:42:43 +0200
+Message-ID: <CANiq72=ynULSpiBwvpau62ym0cx+WDd99T-4LBh5V_h1YCfeag@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: remove unnecessary export of RUST_LIB_SRC
+To: Masahiro Yamada <masahiroy@kernel.org>, Fiona Behrens <me@kloenk.de>
+Cc: linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Alice Ryhl <aliceryhl@google.com>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Benno Lossin <benno.lossin@proton.me>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 19, 2024 at 09:35:10AM +0800, Yang Jihong wrote:
-> Changes since v3:
->  - Add reviewed-by tag from Leo. (see Link[1])
->  - Resend the patchset with no code changes.
-> 
-> Link[1]: https://lore.kernel.org/all/b5688d4a-9389-4998-8031-3f002302311e@arm.com/
-> 
-> Changes since v2:
->  - patch1: change LIBDW_VERSION to follow up the style of
->    LIBTRACEEVENT_VERSION. (by Leo's suggestion)
->  - patch2: Use a new line for the -ldl dependency and with comment,
->    synchronize tools/perf/Makefile.config. (by Leo's suggestion)
->  - patch3: include header files in alphabetical order,
->    add reviewed-by tag from Leo. (by Leo's suggestion)
-> 
-> Changes since v1:
->  - patch3: Remove UTF-8 characters from build failure logs
-> 
-> Yang Jihong (3):
->   perf: build: Fix static compilation error when libdw is not installed
->   perf: build: Fix build feature-dwarf_getlocations fail for old libdw
->   perf dwarf-aux: Fix build fail when HAVE_DWARF_GETLOCATIONS_SUPPORT
->     undefined
+On Fri, Sep 13, 2024 at 8:06=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.o=
+rg> wrote:
+>
+> This code was added by this commit:
+>
+>   https://github.com/Rust-for-Linux/linux/commit/3f46885dc03ed2d750085b22=
+37078a1628323964
+>
+> Please me know if I am missing something.
 
-Acked-by: Namhyung Kim <namhyung@kernel.org>
+I think it is OK -- unless Fiona recalls something:
 
-Arnaldo, can you please pick this up to perf-tools tree?
+Acked-by: Miguel Ojeda <ojeda@kernel.org>
+Tested-by: Miguel Ojeda <ojeda@kernel.org>
 
-Thanks,
-Namhyung
+Thanks Masahiro for the simplification!
 
-> 
->  tools/build/feature/Makefile | 5 ++++-
->  tools/perf/Makefile.config   | 7 +++++--
->  tools/perf/util/dwarf-aux.h  | 1 +
->  3 files changed, 10 insertions(+), 3 deletions(-)
-> 
-> -- 
-> 2.25.1
-> 
+Cheers,
+Miguel
 
