@@ -1,267 +1,540 @@
-Return-Path: <linux-kernel+bounces-337470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CC74984A78
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:54:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1663984913
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:06:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4EC9B22FC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:54:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55E4EB2146B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:06:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76A31AB6F5;
-	Tue, 24 Sep 2024 17:54:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6865C1AD3F1;
+	Tue, 24 Sep 2024 16:05:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dell.com header.i=@dell.com header.b="NJ38rMb2"
-Received: from mx0b-00154904.pphosted.com (mx0b-00154904.pphosted.com [148.163.137.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NQVIbucd"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C44C288B5;
-	Tue, 24 Sep 2024 17:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.137.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727200441; cv=fail; b=Ec9YFzGUISEhOl9q6znEqANTBo56xnmMzaCVnJIf94bPaJIIjsZl8HZ0VEtrGq27ovy5d/FrvYjLDdKmlmo8PUCyC40nTlzpH1cb788C3javzAxsdeWKAvrde3BWdV74eAv2c9/NuBjZjC3le6zecanoz1dMLziOK+LLnJqSKzo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727200441; c=relaxed/simple;
-	bh=zXIV7Kdu77q/xGjzNXT8NqlzeZzrQz9ZDvf3eKb/gA8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=QMRrnde2QqukAyIkzlQjDPE51ZQ0y7mPKXOJdxDKNDfEypi+IQHmt9KtLj3XiQXtFMTihxUGlYF3A4HBmSQRGH9SGjIDJFhvF98cpVOPkmwTtdDzqLhjCMzUzk2RbpCTmz58jqkiDHoOeUmvajryHGbXkEMtc6CxjskLsupVNFA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=dell.com; spf=pass smtp.mailfrom=dell.com; dkim=pass (2048-bit key) header.d=dell.com header.i=@dell.com header.b=NJ38rMb2; arc=fail smtp.client-ip=148.163.137.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=dell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dell.com
-Received: from pps.filterd (m0170398.ppops.net [127.0.0.1])
-	by mx0b-00154904.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48OBIvlj027162;
-	Tue, 24 Sep 2024 10:34:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=from
-	:to:cc:subject:date:message-id:references:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=
-	smtpout1; bh=ke6dEs3SSTFmU0jZHY+mGqQVog5xW0wHo9QgTQwGMkA=; b=NJ3
-	8rMb2nnXtt7IaZUySiEgC3utfLl+QxX5aIO3uBqVpSFST5XV5PpHQM2F6PWoRFsa
-	afAj+QULdNT1oUa8u4VtakBhpHEQ3auBECMg4STfDynItXRTVjsZJrYG6e4wIcfx
-	RSqrbVKFELzs57//4bFeLOpLhvu3ZVNdWil0r71E9Apcoslax6YCbKHK7FMPYoqT
-	lcLmI4HqwT0CjGa5mjuud36/9cgGx417xca1pHEVc63YNXeCU6IyxE0F9u4zn+d4
-	JCJtlxTyk0G4Upb5RPBxqT0Sqq8kuAA2QdLhIgfRurS++R2AHLeOccD9+76y53FC
-	HgtR9YTX+jVqMwHXXFA==
-Received: from mx0b-00154901.pphosted.com (mx0b-00154901.pphosted.com [67.231.157.37])
-	by mx0b-00154904.pphosted.com (PPS) with ESMTPS id 41ssc84964-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Sep 2024 10:34:25 -0400 (EDT)
-Received: from pps.filterd (m0089483.ppops.net [127.0.0.1])
-	by mx0b-00154901.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48OAkSlQ018002;
-	Tue, 24 Sep 2024 10:34:25 -0400
-Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam02lp2047.outbound.protection.outlook.com [104.47.56.47])
-	by mx0b-00154901.pphosted.com (PPS) with ESMTPS id 41ufnnmdgv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 24 Sep 2024 10:34:24 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nMq08IFpcr1UbOEm2t7Bc0NcxBwv+xSWrJpeWFDzHFPeZBRJ+0kJAKWq0Odvl3N+wDqrBmaGQxGLKmDT0XeQoi2UqgIV7Crxg235+OxvfzkbmFKKBEajXbc08JbFBM7xuThy3QfQYByv24cgdet2nWaxTXusr3IZ8tD3KyOUfZRhui8oR/fhDcbAy48V9IMrYHtNPJ8EqV45sfr16VLZq417cZytHUCvHO7JZ1Hfg6ycEkiFOt/NMTq+POXQx11np5d3zIYW2FOWuolZkcG3FivaPCNOSKOrR43A/TKK7YwGKS9BCVgZdGWWS2sRy2PsdrVLZHjUxZMi3GhDYTHjgw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ke6dEs3SSTFmU0jZHY+mGqQVog5xW0wHo9QgTQwGMkA=;
- b=QefkQjgQN4Jeb/87/1u/f5nOjnuxgbqd29UuR6KTe1RfQ3/GJ35f25SH6/igRxEsV40a726C4lapUQhoielE3uNr6uTRKpm1JZVmVT1XoY3yQXUn7ydRs919ruqbem3DIIj8GJ6A3AJWg8hxnTUI2shphnkTUYvckhUGAVZ3LJDca0Y8nKP/s77B85TMH5b9WsUOMvEs8XrHZJJ17T2OqioaqCzqcGpsCOk9qgKfIMq7KbJSKx2dy2jo+1YJFmVFGOmsyoScSUJYaO7fGMc3ttOUUStCIs/zyw4bgJ0/oFcJ386sDQddI+ydS+fJCoIKAuKcWJu9VutOveyMTaFrJw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=dell.com; dmarc=pass action=none header.from=dell.com;
- dkim=pass header.d=dell.com; arc=none
-Received: from CY5PR19MB6147.namprd19.prod.outlook.com (2603:10b6:930:c::14)
- by DM6PR19MB3834.namprd19.prod.outlook.com (2603:10b6:5:249::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.27; Tue, 24 Sep
- 2024 14:34:17 +0000
-Received: from CY5PR19MB6147.namprd19.prod.outlook.com
- ([fe80::d390:13bd:b078:f743]) by CY5PR19MB6147.namprd19.prod.outlook.com
- ([fe80::d390:13bd:b078:f743%6]) with mapi id 15.20.7982.022; Tue, 24 Sep 2024
- 14:34:17 +0000
-From: "Tudor, Laurentiu" <Laurentiu.Tudor1@dell.com>
-To: Mario Limonciello <mario.limonciello@amd.com>,
-        Crag Wang
-	<crag0715@gmail.com>,
-        "Ksr, Prasanth" <Prasanth.Ksr@dell.com>,
-        Hans de Goede
-	<hdegoede@redhat.com>,
-        =?utf-7?B?SWxwbyBKK0FPUS1ydmluZW4=?=
-	<ilpo.jarvinen@linux.intel.com>
-CC: "Wang, Crag" <Crag.Wang@dell.com>, "Wang, Crag" <Crag.Wang@dell.com>,
-        Dell
- Client Kernel <Dell.Client.Kernel@dell.com>,
-        "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCHv2 1/1] platform/x86: dell-sysman: add support for
- alienware products
-Thread-Topic: [PATCHv2 1/1] platform/x86: dell-sysman: add support for
- alienware products
-Thread-Index: AQHbDj84MXlbZutFFUaizZvriNyv9bJm7agAgAAS3cA=
-Date: Tue, 24 Sep 2024 14:34:17 +0000
-Message-ID:
- <CY5PR19MB61479854D62CAD389C99BA15BA682@CY5PR19MB6147.namprd19.prod.outlook.com>
-References: <20240923063658.411071-1-crag_wang@dell.com>
- <20240924050302.317522-2-crag_wang@dell.com>
- <0a31cb22-e3f9-4212-8fc1-77d6cafa7277@amd.com>
-In-Reply-To: <0a31cb22-e3f9-4212-8fc1-77d6cafa7277@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_ActionId=83462e2f-3ea9-434e-8041-cec6fed885da;MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_ContentBits=0;MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_Enabled=true;MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_Method=Standard;MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_Name=No
- Protection (Label Only) - Internal
- Use;MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_SetDate=2024-09-24T14:31:56Z;MSIP_Label_73dd1fcc-24d7-4f55-9dc2-c1518f171327_SiteId=945c199a-83a2-4e80-9f8c-5a91be5752dd;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CY5PR19MB6147:EE_|DM6PR19MB3834:EE_
-x-ms-office365-filtering-correlation-id: 42c4cd05-e286-499a-190e-08dcdca5f893
-x-exotenant: 2khUwGVqB6N9v58KS13ncyUmMJd8q4
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-7?B?bzZjdEptVzFGeFJJTVVLUUc0QnViVzlMZ0djckt6dExPVUg4dE1jaGZtbnR5?=
- =?utf-7?B?ZXRpVHU1T05rMEpaclF5YUMvazZLRjJNRXJTTE94am1tMFQyN1EvbmZhNzJk?=
- =?utf-7?B?OGNsNEdrQ2F6NVhhT1RpdlF0TWJkKy1rYWt6SEtrb1lselVxZnBlOFJLVm9Z?=
- =?utf-7?B?a2NlMHFWaXBuRnlsWUNBWEQ3MTZiVHc1VXc3Q2dzbkdURGdJZGlxeHNFeVE1?=
- =?utf-7?B?QVR4NHF6ejlkbGROR1FqakJYaWt0VkVqUjg2SjM1RFFDWWdKb0tabGdmcWEz?=
- =?utf-7?B?NjFqTTBreTJwV3VRRjg0d3U3NzY5WjJmVistQ29vSEpCZDJUYjlOejFGL2lr?=
- =?utf-7?B?L0tiU29mWXJCL1BBVGl4eU52OHorLWdaV1YwaGxIUDlUNWFITnBxbEJSeWxY?=
- =?utf-7?B?R2ZhVUk5L2Vtb0lDdHVBbG5LYnhkR1YwZEhXQTJMSzZRL094bEdyNHFqTlNi?=
- =?utf-7?B?SSstNWVDNE15WnhXQWJzZFg2U2VxNUhlSm1HcGZUNWlMUXJIWFlaYWo5aC9h?=
- =?utf-7?B?cTV2cU9hVndvYkdGY3ZsaWhWUFp0WFcrLXoxTUVzVWxaQVZSRnQ2ZUdKa3RW?=
- =?utf-7?B?L3MrLXVqc1JHbTlrR0pwNUZKT21CKy1XWkJnMUpiMVEvemljY24vdFBJVGJH?=
- =?utf-7?B?Y0EvNWw0TWx3OXhTb2p3MTlRZzZXTjQyQkIxWW52S08xVWVpdjBZbi9rSURM?=
- =?utf-7?B?U0N3ei9wRDZoODRKeFN4UG1zNENFdXBQaWVWZnF6SmJuRGErLVFJYystTGRL?=
- =?utf-7?B?OGdSOWxrbDZtYWdkMmZ4aGtNdEMwN0MySXJFUW1GRUlFc3ErLWJiQmg5RnA=?=
- =?utf-7?B?SCstTUJKSk5ha2E1dHZpOHpmVE1zYXd2UjFyb3pYZDJWYzBqY3lCdmxvQTRr?=
- =?utf-7?B?a2xRc0lzY2J2VmlKKy14ZlJNKy1kTkdZOXdzQ29MaDJOYkVhelFGUVVDQmtZ?=
- =?utf-7?B?Z1hUVHRrUVpCNkNPemRlU2hTKy1ZZkI1aVBCS28zcDVNZFd2NG9JNkllRWFm?=
- =?utf-7?B?L3cxc3pZTy8zSlFHcVg5Rm96RWluOUMycXlXV0lYQWFXUXVwQ2I4azRQMjRU?=
- =?utf-7?B?QXJLU01VZWx2V0dKUlB0bVBXQk9uZ2QzRTNWYW82WnMxbmJXeVJRZHYrLW9p?=
- =?utf-7?B?RkZLSnBJT05FZHRnTUVPL1NaWmVsUndHZ0xudlBFRXRVVnVac0VhUS8yL0ky?=
- =?utf-7?B?SklHYjZJUGxsWGZ6ckJydGlrcmRFNnhCNno4MTVxTHVCQmRJWTRUMlh3RDkx?=
- =?utf-7?B?R0FPY21mSXUyWExQYVQ4ZVFsSGhPZ1lOUCstRkQ3TnJXQzJQM2xKYk1mcWlk?=
- =?utf-7?B?UjVlWDRyeXJXQVJKM3NjY3dvc2pKdmp6ME0vTFkveGtiUEYzNHp3TDRER0xB?=
- =?utf-7?B?aU5uOCstZlVJKy1uSjZHaG11Sk8zdUdSSHUzd3RobmkxMkdLSkFVVGtyTVk=?=
- =?utf-7?B?Ky1vQzBhbFByQ1dka2lveWFMakdjWmZHYW5Xa1pvdDFWOFBYYVFwQlRvTmEw?=
- =?utf-7?B?UjZBczVudC9xN2hVNmk3bXhzb2VVTm1XYUNHTFVzQ29SNXNrcko2RVoxRlpV?=
- =?utf-7?B?MGJpSWV5WkpOKy01SVZMWkZlOWhhNk95dUZqVlBlM0Z5aEdMZENHT0ZUNjVG?=
- =?utf-7?B?SDNWbElMS0Nnc3k1bVFVc1Z5Tk1oZXBkOXVpa0orLVd5bjJxbzQ4MUxxd051?=
- =?utf-7?B?ZHIwdistMmFpSW5SdU4zaWxkSWtESGZ5dk1pRS9KOEJMMzUrLWlUN0FnVThx?=
- =?utf-7?B?UUxLKy1yc2x2Z0hSRk1MVkFYSzkxaXcrQUQwQVBRLQ==?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR19MB6147.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-7?B?SWkzODlTV01xZkJXMmdVKy00SG1NeEZFT0FEYi9odjZCVUI4Y3ZoZ29WejVy?=
- =?utf-7?B?WXB3RWFQSzRnTHJKY3BweistaERraGJSR0g2Y3lGQ1RuZ3JzYmh3eFZMR3U3?=
- =?utf-7?B?Q1gyckRyWktudFhuYXdKSkR2ekRoWnBKWVJJZkw0NlFYN0JjL3NlUWV0Qlpo?=
- =?utf-7?B?S0huTkhGZEdCelFRaGpQOXZzMmlUblY0L3p6TnRHR3J3cVRCNjk4N3FPKy0x?=
- =?utf-7?B?VTh0OUtGa2ZaV21TY1hDVVpBczJ1cE5FOUZBMDZPeUFmckEvazFoRVVlUDlv?=
- =?utf-7?B?MXJjcVhwVnlZODNRb2paNm4wbXBYRXd6UkM1eWh2aGJSbWtoNWQ5cEt5N0Ev?=
- =?utf-7?B?aTF1M3Y1MHdXbUZZampVSU5tZU9URDBJby9NdmE4YWw5dkxhT2s5aVZ6TVAz?=
- =?utf-7?B?eGEwOUhkUXVITVJEYkYrLVpIbjJQbWJPM3htUllhR3h2QU9mdjFEc3RZKy1U?=
- =?utf-7?B?UklFV05WRGMxbGdSOEhobU1lcktwaHFKeUJXOHV1WktIUVJCN2FBNlhYL2tD?=
- =?utf-7?B?ZVlxaEZibTdHMCstUWk3RDRTcHhSdW00SjBOUlJ2dkl4M29XL21jaWdpMjZy?=
- =?utf-7?B?aXRldnRCZjE0SDV4a0RWMXVtbUJSdWg1N3U1UlVVb2dnSVRXSktiYkc3cVZt?=
- =?utf-7?B?WjhXR1VGWlBEZnA1OERHZkMwRWRRcHFJeWJNWmVtbEx0OEQwS3F4UDJRKy1B?=
- =?utf-7?B?Nk9tdkQ5N0szbmVINEl2Mld0aU80aDFzTFFtOEhPdkFHTkkxeG52TGo4enB2?=
- =?utf-7?B?ZVQrLSstRWYxMG5veDJrUmNJVFFXVS9JQUR2cistSWxYazkwQmpMNVpFdll2?=
- =?utf-7?B?R3BEcDdJWWR3TFJDejZwcHkvSGJXWWJwblNiMnlGejJUaVR6bUd2MnlnT3ZK?=
- =?utf-7?B?OFh4UVA4RmpYMU9tZU5NSjZOTXlsQ3hOblBOTjBqblErLVVGL3Y4TG95NkNw?=
- =?utf-7?B?b0daMHlQS2pkcnFoSS9JeVhJbCsteG9teHFPUGxhdE9kUXpWVkFXTzhlWG9Y?=
- =?utf-7?B?RmFubmh5QU8zM2VsVmw1ZEhZU3NVWXBVY2lYbjhZTXhHVGVNMElNUk9icHVW?=
- =?utf-7?B?aXYrLVY2dnFFeXlvVUVySVduam9YNW5oZDZZbFhlTWk1SUhRUlBud2ZHak4z?=
- =?utf-7?B?T29JbmNFdGswQVdwckxjSWR4V2F6M2ttZDBxcnhIVWpZWG1hOUF1Z2RIZnlY?=
- =?utf-7?B?RDhqR3g2WjdVbXBIUUdIUmlxVmswdmRJbWd4cEpmR2UvcmxmQlZ4VlJKKy04?=
- =?utf-7?B?eGNJaURQeWtXeC9mdHVDVTd6dUYvUE8rLXM2b0FmVmMyeWxWc1hJcE0vYWY4?=
- =?utf-7?B?dmhpMXZ5aGJSbTk0MnNsMWxadFM4R0ljSXZYd2VIeXo5WHg1NFl3aGhQU1lQ?=
- =?utf-7?B?eUVpWnpIT0NEU3VTTENpR1dZQ2pmUlFPekxodjZIWFEwd256SG1ydldMKy1h?=
- =?utf-7?B?R1pEQ0liSkNmSlZDRGl1UXh0MDVTNnIwSUJHVmwxUjVwUnhGRistR1R6ZlpC?=
- =?utf-7?B?Si9FWVhjRkcyMXNHdUFHa0hCM3BBZURvVFc3YVVvSmdsbGpVU0ZVREhQU1VT?=
- =?utf-7?B?UGxob1VEWmF4R1ozeFBsWUZmd1pSR0RIM1REeklhaHJrcDVSZm1kN2toeFJ6?=
- =?utf-7?B?RkVKZXI1eDhWV0tsWDVBTUQxUHFOblBWNW5tT3lyalNSVU41OFFuM0gxVkxx?=
- =?utf-7?B?OE1xRystZWRDNWI0dXI0aE5OUmEySThvUkRGdXNwTU80Y0dCOVhhZzlzL2M1?=
- =?utf-7?B?ZEY2ZHlHMlpQYm1Hb3BlNTdETHBWbDZLR1UvNDVLTjYrLWtSR2N0Y0hJY0hq?=
- =?utf-7?B?UXRCNXdoeGVBZDBrUGtiWGdxRWV0blpCMHVyaHRzVEFtY1BhVkFoRWVkdjJR?=
- =?utf-7?B?alJsOTVZbW9XcjRNamdOUUlCeWlQRWJ4dDZmSmhSTW5OWTZTeTIwT3FYUVRY?=
- =?utf-7?B?U0xabDhFeGhHN1BOajgzR3ZiLzZwd2hiNGZhTzFXa05PbnNuTzFMblFIbmN4?=
- =?utf-7?B?UjByVmJFVjluSGZzNkRjV1hicVdHNVR0V1dQMk9kWlNOaGZ3MXZQOGowRCst?=
- =?utf-7?B?MFUrLWdtekhmbjg2eEdXWVlHcUxCa0lld2VIdWpEUEN0b0srLTdoMkRYV0Zi?=
- =?utf-7?B?MXZXdmEwRTQyRW5OKy1KbDZhSVFqeTNzTistdnFlYmJqZ0piKy1vcFJvNm42?=
- =?utf-7?B?anFyaTg=?=
-Content-Type: text/plain; charset="utf-7"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F2011ACE19
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 16:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727193907; cv=none; b=jNxdtOLyH9i1cWFgNo+UoMjQFnM5Ko8Lr4bRZcXUvzGlW/WS9gJ1Q7w2hTf/po+PuQbJNsy570ay174kEuOEKDQdgX2wtNCD2MIZ7dnmumx1ZQv8BnYblweSfN/GLL2tqB6jXeNhDb8YOv3CPKRQiKoXPa2tZSob5OeEl15pLOY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727193907; c=relaxed/simple;
+	bh=be6Br7t7JJuChqJcHEEIyDqBMAxfgiPyKovXnXsCQzs=;
+	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
+	 To:Content-Type; b=Q3lbJSGlvjS5OYvOam0M63zOkO+T+uHaRlR+7gntMoELZuAoyP/nDKtF598LeIbZb67El8GcNgMzq5QS659HnyjBBeRC8ZO2/5Jx/IEoyxNy9xufGV0nmi9PE44ClHrATRMmzD7ynwSQi2ifdwlN71gILNB0yDjOHgVkkNF6cYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NQVIbucd; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e0082c1dd0so69600447b3.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:05:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727193904; x=1727798704; darn=vger.kernel.org;
+        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HNakM6FkHNrD9rPAWwux66nydIOrUNl1zkccN2f0X5Y=;
+        b=NQVIbucdF6cqtwKLERGfaTmFH6qZjReMoE1cu668QQheRtdU895JlS9xGtHOVDSzkI
+         TVsmTFpRrkpGiEC6Rk6eR3WKlS+j69/vjV64ZFzdLKN81GYcAFFRGhFqp5ZEWrUuJf1f
+         KB+3T87ExAmPCod/HIy53idsNdn6yjkNB20fQNLK/ft5xsKepjG7rTPW6QZxd4ltkVgK
+         4y+NpjurB7lFNW2TDuFNa0K7asIj3lAFN1/ncBAZ4V8MOpoaZmqo6Js/D81zFy6u4SWi
+         J5g6EuDeMX17lckKdHJyrUDJoi7RpsXqVuFFlL5jlR5jOraiIlUzPJzY4xSJy1CDN/LZ
+         99TQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727193904; x=1727798704;
+        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HNakM6FkHNrD9rPAWwux66nydIOrUNl1zkccN2f0X5Y=;
+        b=F1n+rRYoh9bEnJDSu0F6H6DL81NbTgam3joaC6s7+aUKyzGm6wcJ5zwgtqrJlUBpPb
+         i22ME1Pj374CQfbfZAG5kgkUtpLMUp0SRDFA5Oh/Zsm9YsgHEX497eYwisjiYQWScGbw
+         DSOkO8ifw7Ui7AMKll5Yzluhy++B9MCa9P2MgzKN2B/cGunI+gktr9Je+cH9DnVNByZb
+         CgcOO4Fne2J09Pwj4Lh1sBOlLvw4bZxzA2d4Nj9d5f+tmuxLRDwlCvBaiD4G6ZdMtyge
+         fff2Vwy5C0qAp88DQW/NBm60SEmv/x1Ktnl3wwbjA/FldOoRb4HxGPn8nrnBm1r0+eVo
+         Ketw==
+X-Forwarded-Encrypted: i=1; AJvYcCXy/TRRPjhd1gH5PDThB39/1H4mxCvffjLWIfiRnX8huzfEZRYbpOo/chxOlnuaK4/1EAvCBaSWEM++sWA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGeFSFuHPqPMfm24U2inmdPX77bFrQdM5zNcV4Rtui4l/V0l/E
+	EtIqu/+Iw8YRuDsJBgdHSuzrPPKer4FLlSpiiS/Z1wyz2+czmSt+MrjCqAmFsBTHCZpjcMjBG6x
+	V1N0PEA==
+X-Google-Smtp-Source: AGHT+IHhOO3BdGotUcPk3DKBZCsGLzUiw3SpiRV9rEQVlWQiV4TpDQbRC7X+QN9L6yPyequ5zuPRtvnkmpzr
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:61a6:b27c:a1cd:e6a0])
+ (user=irogers job=sendgmr) by 2002:a05:690c:7085:b0:6dd:d1be:ca0e with SMTP
+ id 00721157ae682-6dfee9fe3e3mr3239397b3.0.1727193904302; Tue, 24 Sep 2024
+ 09:05:04 -0700 (PDT)
+Date: Tue, 24 Sep 2024 09:04:16 -0700
+In-Reply-To: <20240924160418.1391100-1-irogers@google.com>
+Message-Id: <20240924160418.1391100-10-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: Dell.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR19MB6147.namprd19.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 42c4cd05-e286-499a-190e-08dcdca5f893
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2024 14:34:17.7687
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 945c199a-83a2-4e80-9f8c-5a91be5752dd
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ogCctItEglyVJv4ElNffrg0Fsq+9c2iNTYd0s/WYZ3dXG9XFT857lD4xc4TCp5OzavTpIspAI49xdbUIKpanCo1ZjPgcQBRDY+f2NsmG5eY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR19MB3834
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-24_02,2024-09-24_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
- mlxscore=0 suspectscore=0 clxscore=1011 bulkscore=0 malwarescore=0
- mlxlogscore=999 lowpriorityscore=0 adultscore=0 spamscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2408220000 definitions=main-2409240104
-X-Proofpoint-ORIG-GUID: _Rv8qbK_qYFmPos2rPAnR2A9_86CM1al
-X-Proofpoint-GUID: _Rv8qbK_qYFmPos2rPAnR2A9_86CM1al
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 phishscore=0
- impostorscore=0 priorityscore=1501 mlxscore=0 spamscore=0 mlxlogscore=999
- malwarescore=0 suspectscore=0 adultscore=0 bulkscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409240104
+Mime-Version: 1.0
+References: <20240924160418.1391100-1-irogers@google.com>
+X-Mailer: git-send-email 2.46.0.792.g87dc391469-goog
+Subject: [PATCH v1 09/11] perf build: Rename HAVE_DWARF_SUPPORT to HAVE_LIBDW_SUPPORT
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>, 
+	Will Deacon <will@kernel.org>, James Clark <james.clark@linaro.org>, 
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, Guo Ren <guoren@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Nick Terrell <terrelln@fb.com>, 
+	Guilherme Amadio <amadio@gentoo.org>, Changbin Du <changbin.du@huawei.com>, 
+	"Steinar H. Gunderson" <sesse@google.com>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
+	Aditya Gupta <adityag@linux.ibm.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, 
+	Bibo Mao <maobibo@loongson.cn>, Kajol Jain <kjain@linux.ibm.com>, 
+	Anup Patel <anup@brainfault.org>, Shenlin Liang <liangshenlin@eswincomputing.com>, 
+	Atish Patra <atishp@rivosinc.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Chen Pei <cp0613@linux.alibaba.com>, Dima Kogan <dima@secretsauce.net>, 
+	Alexander Lobakin <aleksander.lobakin@intel.com>, "David S. Miller" <davem@davemloft.net>, 
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, Yang Jihong <yangjihong@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+In Makefile.config for unwinding the name dwarf implies either
+libunwind or libdw. Make it clearer that HAVE_DWARF_SUPPORT is really
+just defined when libdw is present by renaming to HAVE_LIBDW_SUPPORT.
 
-
-Internal Use - Confidential
------Original Message-----
-From: Mario Limonciello +ADw-mario.limonciello+AEA-amd.com+AD4-
-Sent: Tuesday, September 24, 2024 4:24 PM
-
-On 9/24/2024 00:02, Crag Wang wrote:
-+AD4- Remove the URL check and add alienware string for broader support.
-
-Couple of newbie questions: what's the reason for dropping the URL check? W=
-ould it make sense to include the reason in the commit msg?
-
+Signed-off-by: Ian Rogers <irogers@google.com>
 ---
-Thanks +ACY- Best Regards, Laurentiu
+ tools/perf/Documentation/perf-check.txt         |  6 +++---
+ tools/perf/Makefile.config                      |  2 +-
+ tools/perf/arch/powerpc/annotate/instructions.c |  4 ++--
+ tools/perf/arch/x86/annotate/instructions.c     |  2 +-
+ tools/perf/builtin-annotate.c                   |  2 +-
+ tools/perf/builtin-check.c                      |  6 +++---
+ tools/perf/builtin-probe.c                      | 12 ++++++------
+ tools/perf/builtin-report.c                     |  4 ++--
+ tools/perf/util/annotate-data.h                 |  8 ++++----
+ tools/perf/util/debuginfo.h                     |  6 +++---
+ tools/perf/util/disasm.c                        |  4 ++--
+ tools/perf/util/disasm.h                        |  4 ++--
+ tools/perf/util/genelf.c                        |  4 ++--
+ tools/perf/util/genelf.h                        |  2 +-
+ tools/perf/util/include/dwarf-regs.h            |  6 +++---
+ tools/perf/util/probe-event.c                   |  4 ++--
+ tools/perf/util/probe-finder.h                  |  4 ++--
+ 17 files changed, 40 insertions(+), 40 deletions(-)
 
-+AD4- Signed-off-by: Crag Wang +ADw-crag+AF8-wang+AEA-dell.com+AD4-
-+AD4- ---
-Reviewed-by: Mario Limonciello +ADw-mario.limonciello+AEA-amd.com+AD4-
-+AD4-   drivers/platform/x86/dell/dell-wmi-sysman/sysman.c +AHw- 2 +--
-+AD4-   1 file changed, 1 insertion(+-), 1 deletion(-)
-+AD4-
-+AD4- diff --git a/drivers/platform/x86/dell/dell-wmi-sysman/sysman.c b/dri=
-vers/platform/x86/dell/dell-wmi-sysman/sysman.c
-+AD4- index 9def7983d7d6..68c63e1fbd27 100644
-+AD4- --- a/drivers/platform/x86/dell/dell-wmi-sysman/sysman.c
-+AD4- +-+-+- b/drivers/platform/x86/dell/dell-wmi-sysman/sysman.c
-+AD4- +AEAAQA- -521,7 +-521,7 +AEAAQA- static int +AF8AXw-init sysman+AF8-i=
-nit(void)
-+AD4-       int ret +AD0- 0+ADs-
-+AD4-
-+AD4-       if (+ACE-dmi+AF8-find+AF8-device(DMI+AF8-DEV+AF8-TYPE+AF8-OEM+A=
-F8-STRING, +ACI-Dell System+ACI-, NULL) +ACYAJg-
-+AD4- -         +ACE-dmi+AF8-find+AF8-device(DMI+AF8-DEV+AF8-TYPE+AF8-OEM+A=
-F8-STRING, +ACI-www.dell.com+ACI-, NULL)) +AHs-
-+AD4- +-         +ACE-dmi+AF8-find+AF8-device(DMI+AF8-DEV+AF8-TYPE+AF8-OEM+=
-AF8-STRING, +ACI-Alienware+ACI-, NULL)) +AHs-
-+AD4-               pr+AF8-err(+ACI-Unable to run on non-Dell system+AFw-n+=
-ACI-)+ADs-
-+AD4-               return -ENODEV+ADs-
-+AD4-       +AH0-
+diff --git a/tools/perf/Documentation/perf-check.txt b/tools/perf/Documentation/perf-check.txt
+index 45101a8e4154..31741499e786 100644
+--- a/tools/perf/Documentation/perf-check.txt
++++ b/tools/perf/Documentation/perf-check.txt
+@@ -47,15 +47,15 @@ feature::
+                 bpf                     /  HAVE_LIBBPF_SUPPORT
+                 bpf_skeletons           /  HAVE_BPF_SKEL
+                 debuginfod              /  HAVE_DEBUGINFOD_SUPPORT
+-                dwarf                   /  HAVE_DWARF_SUPPORT
+-                dwarf_getlocations      /  HAVE_DWARF_SUPPORT
++                dwarf                   /  HAVE_LIBDW_SUPPORT
++                dwarf_getlocations      /  HAVE_LIBDW_SUPPORT
+                 dwarf-unwind            /  HAVE_DWARF_UNWIND_SUPPORT
+                 auxtrace                /  HAVE_AUXTRACE_SUPPORT
+                 libaudit                /  HAVE_LIBAUDIT_SUPPORT
+                 libbfd                  /  HAVE_LIBBFD_SUPPORT
+                 libcapstone             /  HAVE_LIBCAPSTONE_SUPPORT
+                 libcrypto               /  HAVE_LIBCRYPTO_SUPPORT
+-                libdw-dwarf-unwind      /  HAVE_DWARF_SUPPORT
++                libdw-dwarf-unwind      /  HAVE_LIBDW_SUPPORT
+                 libelf                  /  HAVE_LIBELF_SUPPORT
+                 libnuma                 /  HAVE_LIBNUMA_SUPPORT
+                 libopencsd              /  HAVE_CSTRACE_SUPPORT
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index db79b25ada6f..9ed0909db170 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -556,7 +556,7 @@ ifndef NO_LIBELF
+       $(warning DWARF register mappings have not been defined for architecture $(SRCARCH), DWARF support disabled)
+       NO_LIBDW := 1
+     else
+-      CFLAGS += -DHAVE_DWARF_SUPPORT $(LIBDW_CFLAGS)
++      CFLAGS += -DHAVE_LIBDW_SUPPORT $(LIBDW_CFLAGS)
+       LDFLAGS += $(LIBDW_LDFLAGS)
+       EXTLIBS += ${DWARFLIBS}
+       $(call detected,CONFIG_DWARF)
+diff --git a/tools/perf/arch/powerpc/annotate/instructions.c b/tools/perf/arch/powerpc/annotate/instructions.c
+index ede9eeade0ab..54478cf5cccc 100644
+--- a/tools/perf/arch/powerpc/annotate/instructions.c
++++ b/tools/perf/arch/powerpc/annotate/instructions.c
+@@ -255,7 +255,7 @@ static struct ins_ops *check_ppc_insn(struct disasm_line *dl)
+  * is moved to r31. update_insn_state_powerpc tracks these state
+  * changes
+  */
+-#ifdef HAVE_DWARF_SUPPORT
++#ifdef HAVE_LIBDW_SUPPORT
+ static void update_insn_state_powerpc(struct type_state *state,
+ 		struct data_loc_info *dloc, Dwarf_Die * cu_die __maybe_unused,
+ 		struct disasm_line *dl)
+@@ -300,7 +300,7 @@ static void update_insn_state_powerpc(struct type_state *state,
+ 			insn_offset, src->reg1, dst->reg1);
+ 	pr_debug_type_name(&tsr->type, tsr->kind);
+ }
+-#endif /* HAVE_DWARF_SUPPORT */
++#endif /* HAVE_LIBDW_SUPPORT */
+ 
+ static int powerpc__annotate_init(struct arch *arch, char *cpuid __maybe_unused)
+ {
+diff --git a/tools/perf/arch/x86/annotate/instructions.c b/tools/perf/arch/x86/annotate/instructions.c
+index 5caf5a17f03d..c869abe3c31d 100644
+--- a/tools/perf/arch/x86/annotate/instructions.c
++++ b/tools/perf/arch/x86/annotate/instructions.c
+@@ -207,7 +207,7 @@ static int x86__annotate_init(struct arch *arch, char *cpuid)
+ 	return err;
+ }
+ 
+-#ifdef HAVE_DWARF_SUPPORT
++#ifdef HAVE_LIBDW_SUPPORT
+ static void update_insn_state_x86(struct type_state *state,
+ 				  struct data_loc_info *dloc, Dwarf_Die *cu_die,
+ 				  struct disasm_line *dl)
+diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
+index 04af13eb4a4c..bb87e6e7687d 100644
+--- a/tools/perf/builtin-annotate.c
++++ b/tools/perf/builtin-annotate.c
+@@ -840,7 +840,7 @@ int cmd_annotate(int argc, const char **argv)
+ 	}
+ #endif
+ 
+-#ifndef HAVE_DWARF_SUPPORT
++#ifndef HAVE_LIBDW_SUPPORT
+ 	if (annotate.data_type) {
+ 		pr_err("Error: Data type profiling is disabled due to missing DWARF support\n");
+ 		return -ENOTSUP;
+diff --git a/tools/perf/builtin-check.c b/tools/perf/builtin-check.c
+index 18c0a815243b..2346536a5ee1 100644
+--- a/tools/perf/builtin-check.c
++++ b/tools/perf/builtin-check.c
+@@ -27,15 +27,15 @@ struct feature_status supported_features[] = {
+ 	FEATURE_STATUS("bpf", HAVE_LIBBPF_SUPPORT),
+ 	FEATURE_STATUS("bpf_skeletons", HAVE_BPF_SKEL),
+ 	FEATURE_STATUS("debuginfod", HAVE_DEBUGINFOD_SUPPORT),
+-	FEATURE_STATUS("dwarf", HAVE_DWARF_SUPPORT),
+-	FEATURE_STATUS("dwarf_getlocations", HAVE_DWARF_SUPPORT),
++	FEATURE_STATUS("dwarf", HAVE_LIBDW_SUPPORT),
++	FEATURE_STATUS("dwarf_getlocations", HAVE_LIBDW_SUPPORT),
+ 	FEATURE_STATUS("dwarf-unwind", HAVE_DWARF_UNWIND_SUPPORT),
+ 	FEATURE_STATUS("auxtrace", HAVE_AUXTRACE_SUPPORT),
+ 	FEATURE_STATUS("libaudit", HAVE_LIBAUDIT_SUPPORT),
+ 	FEATURE_STATUS("libbfd", HAVE_LIBBFD_SUPPORT),
+ 	FEATURE_STATUS("libcapstone", HAVE_LIBCAPSTONE_SUPPORT),
+ 	FEATURE_STATUS("libcrypto", HAVE_LIBCRYPTO_SUPPORT),
+-	FEATURE_STATUS("libdw-dwarf-unwind", HAVE_DWARF_SUPPORT),
++	FEATURE_STATUS("libdw-dwarf-unwind", HAVE_LIBDW_SUPPORT),
+ 	FEATURE_STATUS("libelf", HAVE_LIBELF_SUPPORT),
+ 	FEATURE_STATUS("libnuma", HAVE_LIBNUMA_SUPPORT),
+ 	FEATURE_STATUS("libopencsd", HAVE_CSTRACE_SUPPORT),
+diff --git a/tools/perf/builtin-probe.c b/tools/perf/builtin-probe.c
+index 91672bb3047c..69800e4d9530 100644
+--- a/tools/perf/builtin-probe.c
++++ b/tools/perf/builtin-probe.c
+@@ -229,7 +229,7 @@ static int opt_set_target_ns(const struct option *opt __maybe_unused,
+ 
+ /* Command option callbacks */
+ 
+-#ifdef HAVE_DWARF_SUPPORT
++#ifdef HAVE_LIBDW_SUPPORT
+ static int opt_show_lines(const struct option *opt,
+ 			  const char *str, int unset __maybe_unused)
+ {
+@@ -505,7 +505,7 @@ static int perf_del_probe_events(struct strfilter *filter)
+ 	return ret;
+ }
+ 
+-#ifdef HAVE_DWARF_SUPPORT
++#ifdef HAVE_LIBDW_SUPPORT
+ #define PROBEDEF_STR	\
+ 	"[EVENT=]FUNC[@SRC][+OFF|%return|:RL|;PT]|SRC:AL|SRC;PT [[NAME=]ARG ...]"
+ #else
+@@ -521,7 +521,7 @@ __cmd_probe(int argc, const char **argv)
+ 		"perf probe [<options>] --add 'PROBEDEF' [--add 'PROBEDEF' ...]",
+ 		"perf probe [<options>] --del '[GROUP:]EVENT' ...",
+ 		"perf probe --list [GROUP:]EVENT ...",
+-#ifdef HAVE_DWARF_SUPPORT
++#ifdef HAVE_LIBDW_SUPPORT
+ 		"perf probe [<options>] --line 'LINEDESC'",
+ 		"perf probe [<options>] --vars 'PROBEPOINT'",
+ #endif
+@@ -545,7 +545,7 @@ __cmd_probe(int argc, const char **argv)
+ 		"\t\tFUNC:\tFunction name\n"
+ 		"\t\tOFF:\tOffset from function entry (in byte)\n"
+ 		"\t\t%return:\tPut the probe at function return\n"
+-#ifdef HAVE_DWARF_SUPPORT
++#ifdef HAVE_LIBDW_SUPPORT
+ 		"\t\tSRC:\tSource code path\n"
+ 		"\t\tRL:\tRelative line number from function entry.\n"
+ 		"\t\tAL:\tAbsolute line number in file.\n"
+@@ -612,7 +612,7 @@ __cmd_probe(int argc, const char **argv)
+ 	set_option_flag(options, 'd', "del", PARSE_OPT_EXCLUSIVE);
+ 	set_option_flag(options, 'D', "definition", PARSE_OPT_EXCLUSIVE);
+ 	set_option_flag(options, 'l', "list", PARSE_OPT_EXCLUSIVE);
+-#ifdef HAVE_DWARF_SUPPORT
++#ifdef HAVE_LIBDW_SUPPORT
+ 	set_option_flag(options, 'L', "line", PARSE_OPT_EXCLUSIVE);
+ 	set_option_flag(options, 'V', "vars", PARSE_OPT_EXCLUSIVE);
+ #else
+@@ -694,7 +694,7 @@ __cmd_probe(int argc, const char **argv)
+ 		if (ret < 0)
+ 			pr_err_with_code("  Error: Failed to show functions.", ret);
+ 		return ret;
+-#ifdef HAVE_DWARF_SUPPORT
++#ifdef HAVE_LIBDW_SUPPORT
+ 	case 'L':
+ 		ret = show_line_range(&params->line_range, params->target,
+ 				      params->nsi, params->uprobes);
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index 426cbc9110d1..13cc57e99d35 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -455,7 +455,7 @@ static int report__setup_sample_type(struct report *rep)
+ 	if (!(evlist__combined_branch_type(session->evlist) & PERF_SAMPLE_BRANCH_ANY))
+ 		rep->nonany_branch_mode = true;
+ 
+-#if !defined(HAVE_LIBUNWIND_SUPPORT) && !defined(HAVE_DWARF_SUPPORT)
++#if !defined(HAVE_LIBUNWIND_SUPPORT) && !defined(HAVE_LIBDW_SUPPORT)
+ 	if (dwarf_callchain_users) {
+ 		ui__warning("Please install libunwind or libdw "
+ 			    "development packages during the perf build.\n");
+@@ -1701,7 +1701,7 @@ int cmd_report(int argc, const char **argv)
+ 		report.data_type = true;
+ 		annotate_opts.annotate_src = false;
+ 
+-#ifndef HAVE_DWARF_SUPPORT
++#ifndef HAVE_LIBDW_SUPPORT
+ 		pr_err("Error: Data type profiling is disabled due to missing DWARF support\n");
+ 		goto error;
+ #endif
+diff --git a/tools/perf/util/annotate-data.h b/tools/perf/util/annotate-data.h
+index 8ac0fd94a0ba..98c80b2268dd 100644
+--- a/tools/perf/util/annotate-data.h
++++ b/tools/perf/util/annotate-data.h
+@@ -9,7 +9,7 @@
+ #include "dwarf-regs.h"
+ #include "annotate.h"
+ 
+-#ifdef HAVE_DWARF_SUPPORT
++#ifdef HAVE_LIBDW_SUPPORT
+ #include "debuginfo.h"
+ #endif
+ 
+@@ -165,7 +165,7 @@ struct annotated_data_stat {
+ };
+ extern struct annotated_data_stat ann_data_stat;
+ 
+-#ifdef HAVE_DWARF_SUPPORT
++#ifdef HAVE_LIBDW_SUPPORT
+ /*
+  * Type information in a register, valid when @ok is true.
+  * The @caller_saved registers are invalidated after a function call.
+@@ -244,7 +244,7 @@ bool get_global_var_info(struct data_loc_info *dloc, u64 addr,
+ 				const char **var_name, int *var_offset);
+ void pr_debug_type_name(Dwarf_Die *die, enum type_state_kind kind);
+ 
+-#else /* HAVE_DWARF_SUPPORT */
++#else /* HAVE_LIBDW_SUPPORT */
+ 
+ static inline struct annotated_data_type *
+ find_data_type(struct data_loc_info *dloc __maybe_unused)
+@@ -276,7 +276,7 @@ static inline int hist_entry__annotate_data_tty(struct hist_entry *he __maybe_un
+ 	return -1;
+ }
+ 
+-#endif /* HAVE_DWARF_SUPPORT */
++#endif /* HAVE_LIBDW_SUPPORT */
+ 
+ #ifdef HAVE_SLANG_SUPPORT
+ int hist_entry__annotate_data_tui(struct hist_entry *he, struct evsel *evsel,
+diff --git a/tools/perf/util/debuginfo.h b/tools/perf/util/debuginfo.h
+index ad6422c3f8ca..a52d69932815 100644
+--- a/tools/perf/util/debuginfo.h
++++ b/tools/perf/util/debuginfo.h
+@@ -5,7 +5,7 @@
+ #include <errno.h>
+ #include <linux/compiler.h>
+ 
+-#ifdef HAVE_DWARF_SUPPORT
++#ifdef HAVE_LIBDW_SUPPORT
+ 
+ #include "dwarf-aux.h"
+ 
+@@ -25,7 +25,7 @@ void debuginfo__delete(struct debuginfo *dbg);
+ int debuginfo__get_text_offset(struct debuginfo *dbg, Dwarf_Addr *offs,
+ 			       bool adjust_offset);
+ 
+-#else /* HAVE_DWARF_SUPPORT */
++#else /* HAVE_LIBDW_SUPPORT */
+ 
+ /* dummy debug information structure */
+ struct debuginfo {
+@@ -49,7 +49,7 @@ static inline int debuginfo__get_text_offset(struct debuginfo *dbg __maybe_unuse
+ 	return -EINVAL;
+ }
+ 
+-#endif /* HAVE_DWARF_SUPPORT */
++#endif /* HAVE_LIBDW_SUPPORT */
+ 
+ #ifdef HAVE_DEBUGINFOD_SUPPORT
+ int get_source_from_debuginfod(const char *raw_path, const char *sbuild_id,
+diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
+index 2c8063660f2e..aef06a36bf40 100644
+--- a/tools/perf/util/disasm.c
++++ b/tools/perf/util/disasm.c
+@@ -151,14 +151,14 @@ static struct arch architectures[] = {
+ 			.memory_ref_char = '(',
+ 			.imm_char = '$',
+ 		},
+-#ifdef HAVE_DWARF_SUPPORT
++#ifdef HAVE_LIBDW_SUPPORT
+ 		.update_insn_state = update_insn_state_x86,
+ #endif
+ 	},
+ 	{
+ 		.name = "powerpc",
+ 		.init = powerpc__annotate_init,
+-#ifdef HAVE_DWARF_SUPPORT
++#ifdef HAVE_LIBDW_SUPPORT
+ 		.update_insn_state = update_insn_state_powerpc,
+ #endif
+ 	},
+diff --git a/tools/perf/util/disasm.h b/tools/perf/util/disasm.h
+index f56beedeb9da..486c269b29ba 100644
+--- a/tools/perf/util/disasm.h
++++ b/tools/perf/util/disasm.h
+@@ -4,7 +4,7 @@
+ 
+ #include "map_symbol.h"
+ 
+-#ifdef HAVE_DWARF_SUPPORT
++#ifdef HAVE_LIBDW_SUPPORT
+ #include "dwarf-aux.h"
+ #endif
+ 
+@@ -39,7 +39,7 @@ struct arch {
+ 		char memory_ref_char;
+ 		char imm_char;
+ 	} objdump;
+-#ifdef HAVE_DWARF_SUPPORT
++#ifdef HAVE_LIBDW_SUPPORT
+ 	void		(*update_insn_state)(struct type_state *state,
+ 				struct data_loc_info *dloc, Dwarf_Die *cu_die,
+ 				struct disasm_line *dl);
+diff --git a/tools/perf/util/genelf.c b/tools/perf/util/genelf.c
+index c8f6bee1fa61..cdce7f173d00 100644
+--- a/tools/perf/util/genelf.c
++++ b/tools/perf/util/genelf.c
+@@ -16,7 +16,7 @@
+ #include <inttypes.h>
+ #include <fcntl.h>
+ #include <err.h>
+-#ifdef HAVE_DWARF_SUPPORT
++#ifdef HAVE_LIBDW_SUPPORT
+ #include <dwarf.h>
+ #endif
+ 
+@@ -499,7 +499,7 @@ jit_write_elf(int fd, uint64_t load_addr, const char *sym,
+ 	shdr->sh_size = sizeof(bnote);
+ 	shdr->sh_entsize = 0;
+ 
+-#ifdef HAVE_DWARF_SUPPORT
++#ifdef HAVE_LIBDW_SUPPORT
+ 	if (debug && nr_debug_entries) {
+ 		retval = jit_add_debug_info(e, load_addr, debug, nr_debug_entries);
+ 		if (retval)
+diff --git a/tools/perf/util/genelf.h b/tools/perf/util/genelf.h
+index 4e2e4f40e134..9f0b875d6548 100644
+--- a/tools/perf/util/genelf.h
++++ b/tools/perf/util/genelf.h
+@@ -8,7 +8,7 @@
+ int jit_write_elf(int fd, uint64_t code_addr, const char *sym,
+ 		  const void *code, int csize, void *debug, int nr_debug_entries,
+ 		  void *unwinding, uint64_t unwinding_header_size, uint64_t unwinding_size);
+-#ifdef HAVE_DWARF_SUPPORT
++#ifdef HAVE_LIBDW_SUPPORT
+ /* genelf_debug.c */
+ int jit_add_debug_info(Elf *e, uint64_t code_addr, void *debug, int nr_debug_entries);
+ #endif
+diff --git a/tools/perf/util/include/dwarf-regs.h b/tools/perf/util/include/dwarf-regs.h
+index 75b28dcc8317..29a7d0546b82 100644
+--- a/tools/perf/util/include/dwarf-regs.h
++++ b/tools/perf/util/include/dwarf-regs.h
+@@ -6,7 +6,7 @@
+ #define DWARF_REG_PC  0xd3af9c /* random number */
+ #define DWARF_REG_FB  0xd3affb /* random number */
+ 
+-#ifdef HAVE_DWARF_SUPPORT
++#ifdef HAVE_LIBDW_SUPPORT
+ const char *get_arch_regstr(unsigned int n);
+ /*
+  * get_dwarf_regstr - Returns ftrace register string from DWARF regnum
+@@ -23,7 +23,7 @@ int get_arch_regnum(const char *name);
+  */
+ int get_dwarf_regnum(const char *name, unsigned int machine);
+ 
+-#else /* HAVE_DWARF_SUPPORT */
++#else /* HAVE_LIBDW_SUPPORT */
+ 
+ static inline int get_dwarf_regnum(const char *name __maybe_unused,
+ 				   unsigned int machine __maybe_unused)
+@@ -32,7 +32,7 @@ static inline int get_dwarf_regnum(const char *name __maybe_unused,
+ }
+ #endif
+ 
+-#if !defined(__powerpc__) || !defined(HAVE_DWARF_SUPPORT)
++#if !defined(__powerpc__) || !defined(HAVE_LIBDW_SUPPORT)
+ static inline void get_powerpc_regs(u32 raw_insn __maybe_unused, int is_source __maybe_unused,
+ 		struct annotated_op_loc *op_loc __maybe_unused)
+ {
+diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+index a17c9b8a7a79..fd94614a4022 100644
+--- a/tools/perf/util/probe-event.c
++++ b/tools/perf/util/probe-event.c
+@@ -342,7 +342,7 @@ static char *find_module_name(const char *module)
+ 	return mod_name;
+ }
+ 
+-#ifdef HAVE_DWARF_SUPPORT
++#ifdef HAVE_LIBDW_SUPPORT
+ 
+ static int kernel_get_module_dso(const char *module, struct dso **pdso)
+ {
+@@ -1250,7 +1250,7 @@ int show_available_vars(struct perf_probe_event *pevs, int npevs,
+ 	return ret;
+ }
+ 
+-#else	/* !HAVE_DWARF_SUPPORT */
++#else	/* !HAVE_LIBDW_SUPPORT */
+ 
+ static void debuginfo_cache__exit(void)
+ {
+diff --git a/tools/perf/util/probe-finder.h b/tools/perf/util/probe-finder.h
+index f0149d72310c..b9a5afca4cc1 100644
+--- a/tools/perf/util/probe-finder.h
++++ b/tools/perf/util/probe-finder.h
+@@ -21,7 +21,7 @@ static inline int is_c_varname(const char *name)
+ 	return isalpha(name[0]) || name[0] == '_';
+ }
+ 
+-#ifdef HAVE_DWARF_SUPPORT
++#ifdef HAVE_LIBDW_SUPPORT
+ 
+ #include "dwarf-aux.h"
+ #include "debuginfo.h"
+@@ -102,6 +102,6 @@ struct line_finder {
+ 	int			found;
+ };
+ 
+-#endif /* HAVE_DWARF_SUPPORT */
++#endif /* HAVE_LIBDW_SUPPORT */
+ 
+ #endif /*_PROBE_FINDER_H */
+-- 
+2.46.0.792.g87dc391469-goog
 
 
