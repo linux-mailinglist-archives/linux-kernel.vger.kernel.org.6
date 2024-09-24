@@ -1,123 +1,99 @@
-Return-Path: <linux-kernel+bounces-337077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD29F9844FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:40:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6B21984500
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:41:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E7ED2814D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:40:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50D81B248B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:41:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F7919ADB9;
-	Tue, 24 Sep 2024 11:40:40 +0000 (UTC)
-Received: from MSK-MAILEDGE.securitycode.ru (msk-mailedge.securitycode.ru [195.133.217.143])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3FD9126BF7;
+	Tue, 24 Sep 2024 11:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="C+ghwE1Y"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1DB3126BF7;
-	Tue, 24 Sep 2024 11:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.133.217.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7946B19ADB9;
+	Tue, 24 Sep 2024 11:40:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727178039; cv=none; b=q/ALOfhwU36PTR+AaBDKKjH4UW0V74xxWdvoJl+B7KsIxPJeLxftplfcacTrOQLB+Bf0nAyrJk1o+ONv0w9qwq+OFWycOF70D5c+ZBOoMRElAVeJsGEl4xMkZ2n6fa9NabQKPQv8QLAj3BXo4ynLV5pwokv/dxcMon7Lm95Sqos=
+	t=1727178061; cv=none; b=hZ3vb2tVNMSQbgdTAs2Irz07KVewFjDXT4aErRvcrRszjl2CtM7trUz6Z4kWNcGKbE8YZsd4Tg9Gy/byU/FLYu0smEVThAsj7lbAOJ2lLOPv5cSTF17fZILYOgcJePMaH2Va1aVYRa+7L8zU4+458yMdQexC/02oiSOTSBJGSL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727178039; c=relaxed/simple;
-	bh=8digug/2eny5eemeKKr826HxeviLtUFg+wRijkLLm4g=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MWn3uTAz4DRV87ccEKhiG8AkiWjU6j0WCcFg6b3ZAER/RBKCCH5sK9NF6OOLSArHANqKE1s1YTmB+z+ULqSVbLAotdrl3LJqtl40TbuhEGrEXT+7xNQlzehsRaZk/aelNdgd1ln79zOIrjX0iXa7TsIS16CjIJeK3LGZmzvz/Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=securitycode.ru; spf=pass smtp.mailfrom=securitycode.ru; arc=none smtp.client-ip=195.133.217.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=securitycode.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=securitycode.ru
-From: George Rurikov <g.ryurikov@securitycode.ru>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-CC: George Rurikov <g.ryurikov@securitycode.ru>, Rodrigo Vivi
-	<rodrigo.vivi@intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, <intel-gfx@lists.freedesktop.org>,
-	<intel-xe@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: [PATCH] drm: Add check for encoder in intel_get_crtc_new_encoder()
-Date: Tue, 24 Sep 2024 14:40:04 +0300
-Message-ID: <20240924114004.1084283-1-g.ryurikov@securitycode.ru>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727178061; c=relaxed/simple;
+	bh=IiUCI3JZ4g4DcG0KIxqW45jhj6Um0lGhaqn65JVO4ME=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Xw9b2dJ1czwAWCRoZjk6aUBTvJgSgdcw+oieFGh9jYKwLGTFaU0MF6fJwlO7/UeTi0MP0csVgvjvwT4MfevuBr7gjAV0cwe9mBZ3ggRUhv+z+xDo45yxqlZG6cB9Slxy5cZ6URb8NXiXXCbFpTq+MaIhntAuHuCRb9mnjcswQ1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=C+ghwE1Y; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 3597E1FA23;
+	Tue, 24 Sep 2024 13:40:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1727178057;
+	bh=9co741zr2UlRWeCN4eaEPEYNCnJ8DvVN0AUhGdl/5O0=; h=From:To:Subject;
+	b=C+ghwE1YOGzd+xT7EI34lk66l2/E/JDvkXdC/yjYE1FRdO0nExlAGlRLF6nByBS0e
+	 a4HwMm4b8sZkuCcysk905RZRdyDgWkoG4VBaOSihayZeK7BR0hyK6XlSinLVUyOb/4
+	 rC10GWQFV9JtQUf7mr+nCS4MqqAcGHX8L3OQKI2rhcf5sWvMNa6cfasBcFdVTHoas8
+	 WFwk/2KCmBlpUIgqvw8c7DhkDEdsI2RUziha4qzOqD98yG27HSDBn9c4qLtWXGBD9X
+	 Z4VcyaudlJnYE6fHwoA/VF9IhMUPlw4LjB7igICVvoahzRdkj2tqF5/x7T+p0fshEa
+	 fjR19DAUJ7umg==
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v1 0/3] arm64: dts: freescale: imx8mp-verdin: Add Ivy carrier
+Date: Tue, 24 Sep 2024 13:40:50 +0200
+Message-Id: <20240924114053.127737-1-francesco@dolcini.it>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: SPB-EX2.Securitycode.ru (172.16.24.92) To
- MSK-EX2.Securitycode.ru (172.17.8.92)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-If the video card driver could not find the connector assigned to the
-current video controller, or if the hardware status has changed so that
-a pre-existing connector is no longer active, none of the state
-connectors will meet the assignment criteria for the current crtc video
-controller.
+From: Francesco Dolcini <francesco.dolcini@toradex.com>
 
-In the drm_WARN function, encoder->base.dev is called, so
-'&encoder->base.dev' will be dereferenced since encoder will still be
-initialized NULL.
+Add support for the Toradex Verdin iMX8MP Ivy carrier board. Ivy is a carrier
+board designed for industrial environments, supporting industrial
+I/O interfaces such as CAN, RS485, RS232, Gigabit Ethernet, 0-25mA analog
+inputs, relays, PCIe and more. The board also includes a TPM for security
+applications.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+https://www.toradex.com/products/carrier-board/ivy-carrier-board
 
-Fixes: e12d6218fda2 ("drm/i915: Reduce bigjoiner special casing")
-Cc: stable@vger.kernel.org
-Signed-off-by: George Rurikov <g.ryurikov@securitycode.ru>
----
- drivers/gpu/drm/i915/display/intel_display.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+João Paulo Gonçalves (3):
+  dt-bindings: arm: freescale: Add verdin imx8mp ivy board
+  arm64: dts: freescale: imx8mp-verdin: add labels to som nodes
+  arm64: dts: freescale: imx8mp-verdin: Add Ivy carrier board
 
-diff --git a/drivers/gpu/drm/i915/display/intel_display.c b/drivers/gpu/drm=
-/i915/display/intel_display.c
-index b4ef4d59da1a..1f25b12e5f67 100644
---- a/drivers/gpu/drm/i915/display/intel_display.c
-+++ b/drivers/gpu/drm/i915/display/intel_display.c
-@@ -819,9 +819,11 @@ intel_get_crtc_new_encoder(const struct intel_atomic_s=
-tate *state,
-                num_encoders++;
-        }
+ .../devicetree/bindings/arm/fsl.yaml          |   2 +
+ arch/arm64/boot/dts/freescale/Makefile        |   2 +
+ .../boot/dts/freescale/imx8mp-verdin-ivy.dtsi | 512 ++++++++++++++++++
+ .../freescale/imx8mp-verdin-nonwifi-ivy.dts   |  18 +
+ .../dts/freescale/imx8mp-verdin-wifi-ivy.dts  |  18 +
+ .../boot/dts/freescale/imx8mp-verdin.dtsi     |   5 +-
+ 6 files changed, 555 insertions(+), 2 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-verdin-ivy.dtsi
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-verdin-nonwifi-ivy.dts
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-verdin-wifi-ivy.dts
 
--       drm_WARN(state->base.dev, num_encoders !=3D 1,
-+       if (encoder) {
-+               drm_WARN(state->base.dev, num_encoders !=3D 1,
-                 "%d encoders for pipe %c\n",
-                 num_encoders, pipe_name(primary_crtc->pipe));
-+       }
+-- 
+2.39.5
 
-        return encoder;
- }
---
-2.34.1
-
-=D0=97=D0=B0=D1=8F=D0=B2=D0=BB=D0=B5=D0=BD=D0=B8=D0=B5 =D0=BE =D0=BA=D0=BE=
-=D0=BD=D1=84=D0=B8=D0=B4=D0=B5=D0=BD=D1=86=D0=B8=D0=B0=D0=BB=D1=8C=D0=BD=D0=
-=BE=D1=81=D1=82=D0=B8
-
-=D0=94=D0=B0=D0=BD=D0=BD=D0=BE=D0=B5 =D1=8D=D0=BB=D0=B5=D0=BA=D1=82=D1=80=
-=D0=BE=D0=BD=D0=BD=D0=BE=D0=B5 =D0=BF=D0=B8=D1=81=D1=8C=D0=BC=D0=BE =D0=B8 =
-=D0=BB=D1=8E=D0=B1=D1=8B=D0=B5 =D0=BF=D1=80=D0=B8=D0=BB=D0=BE=D0=B6=D0=B5=
-=D0=BD=D0=B8=D1=8F =D0=BA =D0=BD=D0=B5=D0=BC=D1=83 =D1=8F=D0=B2=D0=BB=D1=8F=
-=D1=8E=D1=82=D1=81=D1=8F =D0=BA=D0=BE=D0=BD=D1=84=D0=B8=D0=B4=D0=B5=D0=BD=
-=D1=86=D0=B8=D0=B0=D0=BB=D1=8C=D0=BD=D1=8B=D0=BC=D0=B8 =D0=B8 =D0=BF=D1=80=
-=D0=B5=D0=B4=D0=BD=D0=B0=D0=B7=D0=BD=D0=B0=D1=87=D0=B5=D0=BD=D1=8B =D0=B8=
-=D1=81=D0=BA=D0=BB=D1=8E=D1=87=D0=B8=D1=82=D0=B5=D0=BB=D1=8C=D0=BD=D0=BE =
-=D0=B4=D0=BB=D1=8F =D0=B0=D0=B4=D1=80=D0=B5=D1=81=D0=B0=D1=82=D0=B0. =D0=95=
-=D1=81=D0=BB=D0=B8 =D0=92=D1=8B =D0=BD=D0=B5 =D1=8F=D0=B2=D0=BB=D1=8F=D0=B5=
-=D1=82=D0=B5=D1=81=D1=8C =D0=B0=D0=B4=D1=80=D0=B5=D1=81=D0=B0=D1=82=D0=BE=
-=D0=BC =D0=B4=D0=B0=D0=BD=D0=BD=D0=BE=D0=B3=D0=BE =D0=BF=D0=B8=D1=81=D1=8C=
-=D0=BC=D0=B0, =D0=BF=D0=BE=D0=B6=D0=B0=D0=BB=D1=83=D0=B9=D1=81=D1=82=D0=B0,=
- =D1=83=D0=B2=D0=B5=D0=B4=D0=BE=D0=BC=D0=B8=D1=82=D0=B5 =D0=BD=D0=B5=D0=BC=
-=D0=B5=D0=B4=D0=BB=D0=B5=D0=BD=D0=BD=D0=BE =D0=BE=D1=82=D0=BF=D1=80=D0=B0=
-=D0=B2=D0=B8=D1=82=D0=B5=D0=BB=D1=8F, =D0=BD=D0=B5 =D1=80=D0=B0=D1=81=D0=BA=
-=D1=80=D1=8B=D0=B2=D0=B0=D0=B9=D1=82=D0=B5 =D1=81=D0=BE=D0=B4=D0=B5=D1=80=
-=D0=B6=D0=B0=D0=BD=D0=B8=D0=B5 =D0=B4=D1=80=D1=83=D0=B3=D0=B8=D0=BC =D0=BB=
-=D0=B8=D1=86=D0=B0=D0=BC, =D0=BD=D0=B5 =D0=B8=D1=81=D0=BF=D0=BE=D0=BB=D1=8C=
-=D0=B7=D1=83=D0=B9=D1=82=D0=B5 =D0=B5=D0=B3=D0=BE =D0=B2 =D0=BA=D0=B0=D0=BA=
-=D0=B8=D1=85-=D0=BB=D0=B8=D0=B1=D0=BE =D1=86=D0=B5=D0=BB=D1=8F=D1=85, =D0=
-=BD=D0=B5 =D1=85=D1=80=D0=B0=D0=BD=D0=B8=D1=82=D0=B5 =D0=B8 =D0=BD=D0=B5 =
-=D0=BA=D0=BE=D0=BF=D0=B8=D1=80=D1=83=D0=B9=D1=82=D0=B5 =D0=B8=D0=BD=D1=84=
-=D0=BE=D1=80=D0=BC=D0=B0=D1=86=D0=B8=D1=8E =D0=BB=D1=8E=D0=B1=D1=8B=D0=BC =
-=D1=81=D0=BF=D0=BE=D1=81=D0=BE=D0=B1=D0=BE=D0=BC.
 
