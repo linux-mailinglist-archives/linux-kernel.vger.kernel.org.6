@@ -1,275 +1,322 @@
-Return-Path: <linux-kernel+bounces-336594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF0E8983CD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:14:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FD7D983CD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:15:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69DC71F23948
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 06:14:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0B891F23A69
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 06:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5BA6EB4A;
-	Tue, 24 Sep 2024 06:14:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E5781AB1;
+	Tue, 24 Sep 2024 06:15:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YZ66UYj2"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="e1/HJiRe"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2061.outbound.protection.outlook.com [40.107.244.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10AD4779F
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 06:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727158472; cv=none; b=brrCgBparvZmGWg48a6GZr+tUZeoQ+6y8+/oDqW21yDMtwjA78M9tOOKRKt3uiDz7AnBdsmdYOzlXmTA6dSN6FZxA8jqIhhWiGTL4FN3M7hnTNPY/ERtMOzlpDaIZTBIi7R0j+wRBw9QbR1ExoG6XEF089Rrqdd3f/Hoa7GiESE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727158472; c=relaxed/simple;
-	bh=Qr8m1yo5fCudhrN8+J3AFsSeYbvPSLy4ErAplDL01hw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tssCaOoT9+pOZAme2QKXWivuxcZ0nfPoRRJSPddXEkhHo638BD7B5O/MTBKOqCoynTSqCsdCAOz1DmqoUVRGYspEBpWQN1efKE+RGaGJOHDnT4eJyyRP5yQSKBCqoW+kjOlKEwzhBWrzlCIxlRW7EZq+srNhMdJCt0qtMsuSezk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YZ66UYj2; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6ddd758aaf4so36961837b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 23:14:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727158468; x=1727763268; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/VjSBYA8cGtVWX7UwzKIdqqC/5t90VWcah768k+1m10=;
-        b=YZ66UYj2uXdOVOkcQuTgymnvckjIi/8Oe5L3V02N2hxkdI+78bjpT9T8SRdPJt5uN6
-         7tmQ7o6ryGK4lLm6Anq5IqpIyqFNVBvA2vA77e6sdnRdJg06VW8SPOnnqIxcjpC1DPzY
-         W2G09X70RGFISyb/4BhgKSDdoA93Gw1pnV7JgBC9HTLJfx81XxmBIv05K04I1C9+vm7r
-         GnBhIgJpavEKww7oiCeAJSgDVegcFH7i2OHvtqB7alcXA1WZL3HoyLgWNfq+8wLjX+uS
-         6uY2cMJ0rLRGiU4LRPtnqPf9SSl0NYf3ZGcQptegOYFCP9GbFjVnJlmE5Y8HXfIVWSmR
-         4LlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727158468; x=1727763268;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/VjSBYA8cGtVWX7UwzKIdqqC/5t90VWcah768k+1m10=;
-        b=Oiozb3Z3S1swmV2EmvJddDnYDtg0zxruJRgm/QlIwj4sNKZ1aomF3ww7pm2nJ28FF1
-         ZH9AMFhU2RfGriTTSbFjwQBFGSo9cpVAzIGmCK4hMDA3QRMrOQCGxbqyUCQPaaA2CKFi
-         LBjYfXujLJLP7l2SaHC695nrlkJrdfPHXRGt6Dz5sP3PB7sNnEK+a6FEzDU6HfSrnzL1
-         fO4PwbdxXy40aC1LP+Iyxlvf9MFLjtFjilrTYKWQNGDe1U7cFR8OmzSRyNu/Sx1o7FL4
-         QMKxVjVDlJL8PvtkCgUzGFJRKkVRijor7YikKTU3FyK7RoTEvYO1AERSj75SVyR5y1f0
-         Ed3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWXlyRf2MDcTiU3/i/rl2LHNRBU/FIOFXFD4bVwP9E/HylZzMvEQUyrhMwmLb5yDQ1T2ZWyVIz4r6HnU5Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+UDizguYUckGr2g0U5KsTbx3DrBgY46LM6lqZMHqYbZLvA7LX
-	xcNvt9s4S4v3aycozkzn5Oha4wyK7l2lKcSq/f8hX12NRP7IE99IKTGOg/DYSyWjeguIjhFFKGO
-	acnHXPDDX6YKXBRutqcZKQm9XOgG/MF7T5k7lOQ==
-X-Google-Smtp-Source: AGHT+IG72jBrJpCMbV8xmaTG1rW1NrWV8soeY10kze37FjgyQ6JCaV/IOnv2E1o6c7zVnMf1sRd7+1dpErtm2GfwguA=
-X-Received: by 2002:a05:690c:f0a:b0:6dd:d34b:373f with SMTP id
- 00721157ae682-6dfeed222ebmr130914267b3.8.1727158468586; Mon, 23 Sep 2024
- 23:14:28 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2CC74418;
+	Tue, 24 Sep 2024 06:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727158506; cv=fail; b=MRnzkuxZxFKcquMG1EZ0O59bCdqpHt9E+11Jbb4s7/95NiRIuZdWinVZWkvR9ib/lGMrGhJGagepKTVJyKoYWEFk95P2UpDhuRt7BnIMM1HxpsoxbTpukbvjt66isX1wO0D5N70cY5xLBeaHsQbq4mUT7oZCR+rVplzGAOiN8gs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727158506; c=relaxed/simple;
+	bh=mZ4E7iwSyoZdE8j1KuFC2mYa6UqUiuUuOLp3FWmZoto=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HBxctgwASRdJwuN5E+4mB/XUu3zx2dxpN5UBChTeW7UpR4ylrJ6uXBPjvl9/FC3dyZA31ZkU2+Okm+Bp1APmH1g9RT0kVyNMYJHswj5lX9Vogmdd0PN6mT0F6H98U64OL2H0n7KMcq1pTDcafkVPP+FCpNE2flcTx4gkAvzqYDA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=e1/HJiRe; arc=fail smtp.client-ip=40.107.244.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rGVwHbaBdmqnckAlOWpo5yscyVPWAxdDXQERge646nUaMGZj5wTWVuDx4Xi0Rx7IXGgxQNGx2KD2/MkGxLSP9ua5rKcFC7YSuUhyr/kSaNE3QYlJVmjQCO8TNvY7RSQSvwHDf+p/ItPlMjw/ovjcrSNAJU8PujLMy+ID9beK6XK3H5mTf1atX1bC7rpTyobFWMvhxkV3FpWOtOrj3w0vSjMwVch6O4fqJ/d8+9KjnOJgBx6E9rL1s4eEtIPHr6BzUDjjYrfb4a72hw8U79Aoxh0fAO8KXN0DZwaiwd2adEZjXZAXxwH8SLMhBp7O38qla4OXZzLqGbofDuyIQpmIpA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+P6yVMQhhmhdpElZWftDYs+hrztkKBINKK29tfnYhag=;
+ b=wBWrJP6pdvD4dkorHw3+q/51sLnQDUjqGQyFSsZ9ZJpkrr9PzNxPJPt4NfISF8kL922HPlVbHv9ONhSH4nKjZTa+ANDIYPd5OYju0nctzvhbcGEFJOm/oZ9eK692DMG+GlcK9/joHsTUk0XqjW4Lx2GO2BU+eJtKNwu/2KCZQiKY+SF/ZEOlUuZTtlwFh6XwfPlKDw+U1N2FdVC2oRQBgPG+FMHsvoFcjy2V0+ladlml8AenBx0jWsdlqoK27fWMhv89UbyfOQa/hFyXD8GyyF0/4ZTfQIGjoE58TAe8QZZV5XTt334Jj14ZZXYNaqDBVr5DuIWtXNzmeGRP00qgrw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=suse.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+P6yVMQhhmhdpElZWftDYs+hrztkKBINKK29tfnYhag=;
+ b=e1/HJiRewK4Pxw7oJiC617iLTECuqIxBtAFfYki022fM86H43ZNCfwlxS9zXKVb09bVwQ+WdfR1C/m1bFC2DAJgtl4QkgSyMyPYjP4Qd6xX4al7+apiZ1FOfDVmku1JOqXKW3P802HoAZ5JDF3PaCD0KaYe3+f0frS6urtXxYgk=
+Received: from SJ0PR13CA0069.namprd13.prod.outlook.com (2603:10b6:a03:2c4::14)
+ by SJ2PR12MB7868.namprd12.prod.outlook.com (2603:10b6:a03:4cd::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.25; Tue, 24 Sep
+ 2024 06:14:59 +0000
+Received: from SJ5PEPF000001F7.namprd05.prod.outlook.com
+ (2603:10b6:a03:2c4:cafe::c) by SJ0PR13CA0069.outlook.office365.com
+ (2603:10b6:a03:2c4::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.17 via Frontend
+ Transport; Tue, 24 Sep 2024 06:14:59 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ5PEPF000001F7.mail.protection.outlook.com (10.167.242.75) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8005.15 via Frontend Transport; Tue, 24 Sep 2024 06:14:58 +0000
+Received: from cjq-desktop.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 24 Sep
+ 2024 01:14:56 -0500
+From: Jiqian Chen <Jiqian.Chen@amd.com>
+To: Juergen Gross <jgross@suse.com>, Stefano Stabellini
+	<sstabellini@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, "Rafael J .
+ Wysocki" <rafael@kernel.org>
+CC: <xen-devel@lists.xenproject.org>, <linux-kernel@vger.kernel.org>,
+	<linux-pci@vger.kernel.org>, <linux-acpi@vger.kernel.org>, Jiqian Chen
+	<Jiqian.Chen@amd.com>
+Subject: [KERNEL PATCH v10 0/3] Support device passthrough when dom0 is PVH on Xen
+Date: Tue, 24 Sep 2024 14:14:34 +0800
+Message-ID: <20240924061437.2636766-1-Jiqian.Chen@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240918-a663-gpu-support-v1-0-25fea3f3d64d@quicinc.com>
- <20240918-a663-gpu-support-v1-3-25fea3f3d64d@quicinc.com> <udt76i3sl7zekhudqpnvhvhfxchvixwoinz7metuwfrpynl47k@wlpforwv7mcf>
- <20240923200537.q5rcw66wmqnwmtpk@hu-akhilpo-hyd.qualcomm.com>
-In-Reply-To: <20240923200537.q5rcw66wmqnwmtpk@hu-akhilpo-hyd.qualcomm.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 24 Sep 2024 08:14:17 +0200
-Message-ID: <CAA8EJpqNXb+pJp0OQXi5Pn7d2u2zGeJmVkTvsgFXzvkHn6FjqA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: sa8775p: Add gpu and gmu nodes
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F7:EE_|SJ2PR12MB7868:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3e6a56aa-8ad3-416f-ea3c-08dcdc6037d3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?jA+GadcbgkrC20ReBMz7guhGYOC8vrX4+F9HBI9G27er7Z0b23ne1cmOTfsb?=
+ =?us-ascii?Q?1W7h+FXtMgNWQK9rYQYQxx+SJNhL8x2oZBNdp46Lmhk2Ki6rNvk4pt8+P3rU?=
+ =?us-ascii?Q?nrL36mw7tfihZMZQrLbjBqbfmRlE1oMQ+lZeK1uh/6teI/bhbuA6hJYrBLv0?=
+ =?us-ascii?Q?pwWf3OyfnSUBEUP46fjuQm95evvzzp75wB5u4pZg3Sbk8rSwsQXaTf09eDo2?=
+ =?us-ascii?Q?tW6giLinRoielijZIjBnxLqt5EIwNu8hJeRRLgjL43ck+9VADH3/lk92/gWf?=
+ =?us-ascii?Q?glgxOE18rmqxPypjbDGGAkB1NRnz6bAIatKs5dBPjTJvSwP5KGVk0YEUloC5?=
+ =?us-ascii?Q?7UZkKaKdcZThtyGE/Ps9KFU0M80k+fAtbjPxzZmOzMqpjGCeq8EvVFVljy+3?=
+ =?us-ascii?Q?SGUtYqgehvv+aZeOkVSPWIcWnVZwW9M8rP/7lwARS8pQd8Hyktkk+GNGa5Ls?=
+ =?us-ascii?Q?s6P/5QjAWYgbmb5tr09FnuyYx5IjS03qHWsRTilOwOSogBKYaBGFUUKosBDo?=
+ =?us-ascii?Q?pEXOpWI19kj/aB4/nWqV+amGTgqtV69h3w0PCPsbd3SXXpH+Z7doBHaKRfF4?=
+ =?us-ascii?Q?qn+8y8oapyQ8s0UfBWh8YLDM0ctwiIXxb76AcP8HAd5Opkm5kz7QLdE16Csn?=
+ =?us-ascii?Q?psazFqiAmjfKcKYZ9pdN1jUc7ujNbPyPc9OcttTVeVMOTfyx0dHb6FGjV8dn?=
+ =?us-ascii?Q?gWTkQ4qMyqYVIW0xwtSnMEfLGWgjCUpDzmAR5oTe9rBgLsKwQEqkJFNxkm3t?=
+ =?us-ascii?Q?oV6W98V62T7XUONhTwszvKmFpdZU73B/ygs/jhmX3bSJnDavCcyPqclSdztA?=
+ =?us-ascii?Q?ukDvwfYPPsvMhnC+jfK0IzudfVRiZesfLbGH5aJCptm0IR9ekXCuBMCPSr8r?=
+ =?us-ascii?Q?fbO0fYF4oNyRC5uUx7+mQyOuNP5iEjSLCrXSlayTvYc2l+ohJ/feIa6hcvE7?=
+ =?us-ascii?Q?rJkittBxAMqbAJpqjI0n1YVM+OTFShnGhi+hKallriVLfQqQUtf5Ge/ltriL?=
+ =?us-ascii?Q?cv7OxzZmcuiMXkCVvzHTTKa6ChCQPbh4KRjDKQxBfnYl1U3AQB9hkrYuE8Ix?=
+ =?us-ascii?Q?H8CaEiOgjEEf8/TR1KVNEpMqphVLEcGf2ipspZYgE9UYyAzdEUUyADLzv9dF?=
+ =?us-ascii?Q?IuaqVRfF/9BL4VskUay4JQkaWBJCHObaCTv72aQAmxoUFyYRSWPLb+P7ZfGD?=
+ =?us-ascii?Q?DZ6UcdYK8+c1TwQVCtWJY7qzWiyz5feK/T84V6P+IdAWwnGTW3q6EfRrxHH7?=
+ =?us-ascii?Q?3SFc/SCvHBiyUzVyEiUrm6v8dWx/SDgPD05F/YIa67sLQ9YrQ3zYY82kqVeE?=
+ =?us-ascii?Q?Oy0dGcwcLd8gnqyy4Ib4mlb4VlaHgrUjyImtuBHgSlV8Ns43bKpIDNm/18OH?=
+ =?us-ascii?Q?7sTzQwp+ELQt+h0qsP3HshZMr4uM?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2024 06:14:58.9967
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3e6a56aa-8ad3-416f-ea3c-08dcdc6037d3
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001F7.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7868
 
-On Mon, 23 Sept 2024 at 22:05, Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
->
-> On Wed, Sep 18, 2024 at 12:27:03AM +0300, Dmitry Baryshkov wrote:
-> > On Wed, Sep 18, 2024 at 02:08:43AM GMT, Akhil P Oommen wrote:
-> > > From: Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>
-> > >
-> > > Add gpu and gmu nodes for sa8775p based platforms.
-> >
-> > Which platforms? The commit adds nodes to the SoC and the single RIDE
-> > platform.
-> >
-> > >
-> > > Signed-off-by: Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>
-> > > Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
-> > > ---
-> > >  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi |  8 ++++
-> > >  arch/arm64/boot/dts/qcom/sa8775p.dtsi      | 75 ++++++++++++++++++++++++++++++
-> > >  2 files changed, 83 insertions(+)
-> > >
-> > > diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-> > > index 2a6170623ea9..a01e6675c4bb 100644
-> > > --- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-> > > +++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-> > > @@ -407,6 +407,14 @@ queue3 {
-> > >     };
-> > >  };
-> > >
-> > > +&gpu {
-> > > +   status = "okay";
-> > > +
-> > > +   zap-shader {
-> >
-> > It's easier to add gpu_zap_shader_link label in the DTSI file and then
-> > reference it instead of using the subnode again.
-> >
-> > > +           firmware-name = "qcom/sa8775p/a663_zap.mbn";
-> > > +   };
-> > > +};
-> >
-> > Separate patch, please.
-> >
-> > > +
-> > >  &i2c11 {
-> > >     clock-frequency = <400000>;
-> > >     pinctrl-0 = <&qup_i2c11_default>;
-> > > diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> > > index 23f1b2e5e624..12c79135a303 100644
-> > > --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> > > +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> > > @@ -2824,6 +2824,81 @@ tcsr_mutex: hwlock@1f40000 {
-> > >                     #hwlock-cells = <1>;
-> > >             };
-> > >
-> > > +           gpu: gpu@3d00000 {
-> > > +                   compatible = "qcom,adreno-663.0", "qcom,adreno";
-> > > +                   reg = <0 0x03d00000 0 0x40000>,
-> > > +                         <0 0x03d9e000 0 0x1000>,
-> > > +                         <0 0x03d61000 0 0x800>;
-> >
-> > I think it's suggested to use 0x0 now
-> >
-> > > +                   reg-names = "kgsl_3d0_reg_memory",
-> > > +                               "cx_mem",
-> > > +                               "cx_dbgc";
-> > > +                   interrupts = <GIC_SPI 300 IRQ_TYPE_LEVEL_HIGH>;
-> > > +                   iommus = <&adreno_smmu 0 0xc00>,
-> > > +                            <&adreno_smmu 1 0xc00>;
-> > > +                   operating-points-v2 = <&gpu_opp_table>;
-> > > +                   qcom,gmu = <&gmu>;
-> > > +                   interconnects = <&gem_noc MASTER_GFX3D 0 &mc_virt SLAVE_EBI1 0>;
-> >
-> > QCOM_ICC_TAG_ALWAYS instead of 0
-> >
-> > > +                   interconnect-names = "gfx-mem";
-> > > +                   #cooling-cells = <2>;
-> >
-> > No speed bins?
->
-> Thanks for the review. Agree on all comments.
->
-> Speedbins were missed because we are sharing these changes early in the
-> developement cycle, sort of like what we did for chromeos develeopment.
-> Will try to pick it up in the next patchset.
-
-Ack. If you mention this in the commit message, that would be great!
-
->
-> -Akhil
->
-> >
-> > > +
-> > > +                   status = "disabled";
-> > > +
-> > > +                   zap-shader {
-> >
-> > gpu_zap_shader: zap-shader
-> >
-> > > +                           memory-region = <&pil_gpu_mem>;
-> > > +                   };
-> > > +
-> > > +                   gpu_opp_table: opp-table {
-> > > +                           compatible = "operating-points-v2";
-> > > +
-> > > +                           opp-405000000 {
-> >
-> > Just a single freq?
-> >
-> > > +                                   opp-hz = /bits/ 64 <405000000>;
-> > > +                                   opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
-> > > +                                   opp-peak-kBps = <8368000>;
-> > > +                           };
-> > > +
-> >
-> > Drop the empty line, please.
-> >
-> > > +                   };
-> > > +           };
-> > > +
-> > > +           gmu: gmu@3d6a000 {
-> > > +                   compatible = "qcom,adreno-gmu-663.0", "qcom,adreno-gmu";
-> > > +                   reg = <0 0x03d6a000 0 0x34000>,
-> > > +                           <0 0x3de0000 0 0x10000>,
-> > > +                           <0 0x0b290000 0 0x10000>;
-> >
-> > Wrong indentation, please align to the angle bracket.
-> > Also I think it's suggested to use 0x0 now
-> >
-> > > +                   reg-names = "gmu", "rscc", "gmu_pdc";
-> > > +                   interrupts = <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
-> > > +                                   <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
-> >
-> > And here
-> >
-> > > +                   interrupt-names = "hfi", "gmu";
-> > > +                   clocks = <&gpucc GPU_CC_CX_GMU_CLK>,
-> > > +                            <&gpucc GPU_CC_CXO_CLK>,
-> > > +                            <&gcc GCC_DDRSS_GPU_AXI_CLK>,
-> > > +                            <&gcc GCC_GPU_MEMNOC_GFX_CLK>,
-> > > +                            <&gpucc GPU_CC_AHB_CLK>,
-> > > +                            <&gpucc GPU_CC_HUB_CX_INT_CLK>,
-> > > +                            <&gpucc GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK>;
-> > > +                   clock-names = "gmu",
-> > > +                                 "cxo",
-> > > +                                 "axi",
-> > > +                                 "memnoc",
-> > > +                                 "ahb",
-> > > +                                 "hub",
-> > > +                                 "smmu_vote";
-> > > +                   power-domains = <&gpucc GPU_CC_CX_GDSC>,
-> > > +                                   <&gpucc GPU_CC_GX_GDSC>;
-> > > +                   power-domain-names = "cx",
-> > > +                                        "gx";
-> > > +                   iommus = <&adreno_smmu 5 0xc00>;
-> > > +                   operating-points-v2 = <&gmu_opp_table>;
-> > > +
-> > > +                   gmu_opp_table: opp-table {
-> > > +                           compatible = "operating-points-v2";
-> > > +
-> > > +                           opp-200000000 {
-> > > +                                   opp-hz = /bits/ 64 <200000000>;
-> > > +                                   opp-level = <RPMH_REGULATOR_LEVEL_MIN_SVS>;
-> > > +                           };
-> > > +                   };
-> > > +           };
-> > > +
-> > >             gpucc: clock-controller@3d90000 {
-> > >                     compatible = "qcom,sa8775p-gpucc";
-> > >                     reg = <0x0 0x03d90000 0x0 0xa000>;
-> > >
-> > > --
-> > > 2.45.2
-> > >
-> >
-> > --
-> > With best wishes
-> > Dmitry
+Hi All,
+This is v10 series to support passthrough on Xen when dom0 is PVH.
+v9->v10 changes:
+* patch#1: Added Reviewed-by of Stefano.
+* patch#2: Added Reviewed-by of Stefano.
+* patch#3: Changed the macro wrapping "pcistub_get_gsi_from_sbdf" from "CONFIG_XEN_PCIDEV_BACKEND" to "CONFIG_XEN_ACPI".
+           Added "imply CONFIG_XEN_PCIDEV_BACKEND" for CONFIG_XEN_PRIVCMD Kconfig definition.
+           Added check "if (IS_REACHABLE(CONFIG_XEN_PCIDEV_BACKEND))" before calling pcistub_get_gsi_from_sbdf.
 
 
+Best regards,
+Jiqian Chen
+
+
+
+v8->v9 changes:
+* patch#1: Due to the struct and name of the hypercall changed on Xen side, I did the corresponding
+           changes. But no function changes actually.
+* patch#2: Moved the calling of xen_acpi_get_gsi_info under check "if (xen_initial_domain() && xen_pvh_domain())"
+           to prevent it is called in PV dom0.
+* patch#3: Changed the syscall name from "IOCTL_PRIVCMD_GSI_FROM_DEV" to "IOCTL_PRIVCMD_PCIDEV_GET_GSI".
+           Also changed the other functions name.
+           Changed the macro wrapping "pcistub_get_gsi_from_sbdf" from "CONFIG_XEN_ACPI" to "CONFIG_XEN_PCIDEV_BACKEND"
+           to fix compile errors reported by CI robot.
+           Changed the parameter gsi of struct privcmd_pcidev_get_gsi from int to u32.
+
+
+v7->v8 change:
+* patch#1: This is the patch#1 of v6, because it is reverted from the staging branch due to the
+           API changes on Xen side.
+           Add pci_device_state_reset_type_t to distinguish the reset types.
+* patch#2: is the patch#1 of v7. Use CONFIG_XEN_ACPI instead of CONFIG_ACPI to wrap codes.
+* patch#3: is the patch#2 of v7. In function privcmd_ioctl_gsi_from_dev, return -EINVAL when not
+           confige CONFIG_XEN_ACPI.
+           Used PCI_BUS_NUM PCI_SLOT PCI_FUNC instead of open coding.
+
+
+v6->v7 change:
+* the first patch of v6 was already merged into branch linux_next.
+* patch#1: is the patch#2 of v6. move the implementation of function xen_acpi_get_gsi_info to
+           file drivers/xen/acpi.c, that modification is more convenient for the subsequent
+           patch to obtain gsi.
+* patch#2: is the patch#3 of v6. add a new parameter "gsi" to struct pcistub_device and set
+           gsi when pcistub initialize device. Then when userspace wants to get gsi by passing
+           sbdf, we can return that gsi.
+
+
+v5->v6 change:
+* patch#3: change to add a new syscall to translate irq to gsi, instead adding a new gsi sysfs.
+
+
+v4->v5 changes:
+* patch#1: Add Reviewed-by Stefano
+* patch#2: Add Reviewed-by Stefano
+* patch#3: No changes
+
+
+v3->v4 changes:
+* patch#1: change the comment of PHYSDEVOP_pci_device_state_reset; use a new function
+           pcistub_reset_device_state to wrap __pci_reset_function_locked and xen_reset_device_state,
+           and call pcistub_reset_device_state in pci_stub.c
+* patch#2: remove map_pirq from xen_pvh_passthrough_gsi
+
+
+v2->v3 changes:
+* patch#1: add condition to limit do xen_reset_device_state for no-pv domain in pcistub_init_device.
+* patch#2: Abandoning previous implementations that call unmask_irq. To setup gsi and map pirq for
+           passthrough device in pcistub_init_device.
+* patch#3: Abandoning previous implementations that adds new syscall to get gsi from irq. To add a new
+           sysfs for gsi, then userspace can get gsi number from sysfs.
+
+
+Below is the description of v2 cover letter:
+This series of patches are the v2 of the implementation of passthrough when dom0 is PVH on Xen.
+We sent the v1 to upstream before, but the v1 had so many problems and we got lots of suggestions.
+I will introduce all issues that these patches try to fix and the differences between v1 and v2.
+
+Issues we encountered:
+1. pci_stub failed to write bar for a passthrough device.
+Problem: when we run \u201csudo xl pci-assignable-add <sbdf>\u201d to assign a device, pci_stub will
+call \u201cpcistub_init_device() -> pci_restore_state() -> pci_restore_config_space() ->
+pci_restore_config_space_range() -> pci_restore_config_dword() -> pci_write_config_dword(), the pci
+config write will trigger an io interrupt to bar_write() in the xen, but the bar->enabled was set before,
+the write is not allowed now, and then when bar->Qemu config the passthrough device in xen_pt_realize(),
+it gets invalid bar values.
+
+Reason: the reason is that we don't tell vPCI that the device has been reset, so the current cached state
+in pdev->vpci is all out of date and is different from the real device state.
+
+Solution: to solve this problem, the first patch of kernel(xen/pci: Add xen_reset_device_state
+function) and the fist patch of xen(xen/vpci: Clear all vpci status of device) add a new hypercall to
+reset the state stored in vPCI when the state of real device has changed.
+Thank Roger for the suggestion of this v2, and it is different from v1
+(https://lore.kernel.org/xen-devel/20230312075455.450187-3-ray.huang@amd.com/), v1 simply allow domU to
+write pci bar, it does not comply with the design principles of vPCI.
+
+2. failed to do PHYSDEVOP_map_pirq when dom0 is PVH
+Problem: HVM domU will do PHYSDEVOP_map_pirq for a passthrough device by using gsi. See
+xen_pt_realize->xc_physdev_map_pirq and pci_add_dm_done->xc_physdev_map_pirq. Then xc_physdev_map_pirq
+will call into Xen, but in hvm_physdev_op(), PHYSDEVOP_map_pirq is not allowed.
+
+Reason: In hvm_physdev_op(), the variable "currd" is PVH dom0 and PVH has no X86_EMU_USE_PIRQ flag, it
+will fail at has_pirq check.
+
+Solution: I think we may need to allow PHYSDEVOP_map_pirq when "currd" is dom0 (at present dom0 is PVH).
+The second patch of xen(x86/pvh: Open PHYSDEVOP_map_pirq for PVH dom0) allow PVH dom0 do
+PHYSDEVOP_map_pirq. This v2 patch is better than v1, v1 simply remove the has_pirq check
+(xen https://lore.kernel.org/xen-devel/20230312075455.450187-4-ray.huang@amd.com/).
+
+3. the gsi of a passthrough device doesn't be unmasked
+ 3.1 failed to check the permission of pirq
+ 3.2 the gsi of passthrough device was not registered in PVH dom0
+
+Problem:
+3.1 callback function pci_add_dm_done() will be called when qemu config a passthrough device for domU.
+This function will call xc_domain_irq_permission()-> pirq_access_permitted() to check if the gsi has
+corresponding mappings in dom0. But it didn\u2019t, so failed. See
+XEN_DOMCTL_irq_permission->pirq_access_permitted, "current" is PVH dom0 and it return irq is 0.
+3.2 it's possible for a gsi (iow: vIO-APIC pin) to never get registered on PVH dom0, because the
+devices of PVH are using MSI(-X) interrupts. However, the IO-APIC pin must be configured for it to be
+able to be mapped into a domU.
+
+Reason: After searching codes, I find "map_pirq" and "register_gsi" will be done in function
+vioapic_write_redirent->vioapic_hwdom_map_gsi when the gsi(aka ioapic's pin) is unmasked in PVH dom0.
+So the two problems can be concluded to that the gsi of a passthrough device doesn't be unmasked.
+
+Solution: to solve these problems, the second patch of kernel(xen/pvh: Unmask irq for passthrough device
+in PVH dom0) call the unmask_irq() when we assign a device to be passthrough. So that passthrough devices
+can have the mapping of gsi on PVH dom0 and gsi can be registered. This v2 patch is different from the
+v1( kernel https://lore.kernel.org/xen-devel/20230312120157.452859-5-ray.huang@amd.com/,
+kernel https://lore.kernel.org/xen-devel/20230312120157.452859-5-ray.huang@amd.com/ and
+xen https://lore.kernel.org/xen-devel/20230312075455.450187-5-ray.huang@amd.com/),
+v1 performed "map_pirq" and "register_gsi" on all pci devices on PVH dom0, which is unnecessary and may
+cause multiple registration.
+
+4. failed to map pirq for gsi
+Problem: qemu will call xc_physdev_map_pirq() to map a passthrough device\u2019s gsi to pirq in function
+xen_pt_realize(). But failed.
+
+Reason: According to the implement of xc_physdev_map_pirq(), it needs gsi instead of irq, but qemu pass
+irq to it and treat irq as gsi, it is got from file /sys/bus/pci/devices/xxxx:xx:xx.x/irq in function
+xen_host_pci_device_get(). But actually the gsi number is not equal with irq. On PVH dom0, when it
+allocates irq for a gsi in function acpi_register_gsi_ioapic(), allocation is dynamic, and follow the
+principle of applying first, distributing first. And if you debug the kernel codes(see
+function __irq_alloc_descs), you will find the irq number is allocated from small to large by order, but
+the applying gsi number is not, gsi 38 may come before gsi 28, that causes gsi 38 get a smaller irq number
+than gsi 28, and then gsi != irq.
+
+Solution: we can record the relation between gsi and irq, then when userspace(qemu) want to use gsi, we
+can do a translation. The third patch of kernel(xen/privcmd: Add new syscall to get gsi from irq) records
+all the relations in acpi_register_gsi_xen_pvh() when dom0 initialize pci devices, and provide a syscall
+for userspace to get the gsi from irq. The third patch of xen(tools: Add new function to get gsi from irq)
+add a new function xc_physdev_gsi_from_irq() to call the new syscall added on kernel side.
+And then userspace can use that function to get gsi. Then xc_physdev_map_pirq() will success. This v2 patch
+is the same as v1( kernel https://lore.kernel.org/xen-devel/20230312120157.452859-6-ray.huang@amd.com/ and
+xen https://lore.kernel.org/xen-devel/20230312075455.450187-6-ray.huang@amd.com/)
+
+About the v2 patch of qemu, just change an included head file, other are similar to the v1 (
+qemu https://lore.kernel.org/xen-devel/20230312092244.451465-19-ray.huang@amd.com/), just call
+xc_physdev_gsi_from_irq() to get gsi from irq.
+
+Jiqian Chen (3):
+  xen/pci: Add a function to reset device for xen
+  xen/pvh: Setup gsi for passthrough device
+  xen/privcmd: Add new syscall to get gsi from dev
+
+ arch/x86/xen/enlighten_pvh.c       | 23 +++++++++
+ drivers/acpi/pci_irq.c             |  2 +-
+ drivers/xen/Kconfig                |  1 +
+ drivers/xen/acpi.c                 | 50 ++++++++++++++++++++
+ drivers/xen/pci.c                  | 13 +++++
+ drivers/xen/privcmd.c              | 32 +++++++++++++
+ drivers/xen/xen-pciback/pci_stub.c | 76 +++++++++++++++++++++++++++---
+ include/linux/acpi.h               |  1 +
+ include/uapi/xen/privcmd.h         |  7 +++
+ include/xen/acpi.h                 | 27 +++++++++++
+ include/xen/interface/physdev.h    | 17 +++++++
+ include/xen/pci.h                  |  6 +++
+ 12 files changed, 248 insertions(+), 7 deletions(-)
 
 -- 
-With best wishes
-Dmitry
+2.34.1
+
 
