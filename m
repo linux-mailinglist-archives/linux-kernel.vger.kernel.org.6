@@ -1,387 +1,321 @@
-Return-Path: <linux-kernel+bounces-336462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AB6D983B28
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 04:25:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94613983B2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 04:25:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B1AF1C2263C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 02:25:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6D111C2111A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 02:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069F0DF49;
-	Tue, 24 Sep 2024 02:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2AD8C8EB;
+	Tue, 24 Sep 2024 02:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="oZQdIJFF"
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GZL94EHc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F88E1B85FF;
-	Tue, 24 Sep 2024 02:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E655F1FB4
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 02:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727144693; cv=none; b=qH+uQsH9+tq4icpgMuT5KJp2dzaPLck5VAyR4+o0jZUqqO5BwQwUOSiyp9g6YmH5h8ron7vE60+JSm08oem8Wv0x926uXfwZ2YOGFlI/mL+yhv6lypOtqxOT63PM60hmPWNMA4rM+/4nPxPp1JBysBSszVC7E4JAHkFYOG4Cv1o=
+	t=1727144734; cv=none; b=jn6EGf5EG1cqD2pe1MMCXt356Gx/0+HLb2JbfbeUaIeSLNYTsH0Gd494B2aV5zJve+OVuaae4kfRtPDb1ZVVlkBUktM4iponVXPTa8+se3zdU8DhmeHi3Z3638GVdkhaYdMWMIdz5URihtvkQrYH7qDVv72KWyzOPj6dm9+8PS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727144693; c=relaxed/simple;
-	bh=ZeD2dxHt4glNwYGeQd3QpH4sDCyqQq8WnnHbXARjZvU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g7jG1dmH5fWk74aSRbBaLjf5FelP5qPJbLuQStt0LdmqP7cvQ3dEfMT1bksLa1k6phmITF4jmxqYH1GTASOkN/REM9Yo6YP7U+fRhb8uh3z4m43KavEJFDTL7q856QrxEtl75KDglFvciZaRyfbPIzabBZK7RtArBHwGQKr/sdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=oZQdIJFF; arc=none smtp.client-ip=54.254.200.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1727144686;
-	bh=/tLBDCK7pbckkG3+mplCpjgt4khIOUVDy/lEAnn6+fk=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=oZQdIJFFauSUjuy8cAgzZ2BtsYyXFA9aZ5AfEuBMX4r6NGWbjMAhg9SjBUOXgJbKr
-	 OJDsmjO79Iv5pVFO/c2cKM3Dk9s1/42yV3HM7YSMMe7uq8c6XuN9V4/RXAOOiN27Dp
-	 km2Z2PhXXOPewtqvR6TrMiZbjglnqnO6Mp5hqPsw=
-X-QQ-mid: bizesmtp88t1727144681trzskiwd
-X-QQ-Originating-IP: JBqxVDiVgZHmutUkV4/9rq+sIJ1hsVnj8BqRUusNbg0=
-Received: from fish-NBLK-WAX9X.. ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 24 Sep 2024 10:24:39 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 1965234270321233155
-From: yushengjin <yushengjin@uniontech.com>
-To: pablo@netfilter.org
-Cc: kadlec@netfilter.org,
-	roopa@nvidia.com,
-	razor@blackwall.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	bridge@lists.linux.dev,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yushengjin <yushengjin@uniontech.com>
-Subject: [PATCH v2] net/bridge: Optimizing read-write locks in ebtables.c
-Date: Tue, 24 Sep 2024 10:24:37 +0800
-Message-ID: <2860814445452DE8+20240924022437.119730-1-yushengjin@uniontech.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1727144734; c=relaxed/simple;
+	bh=j05pNEWsqu7/7Imhpv6SR6Py3R78sTJY6dwEU8/YxAs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t4BnGMxSwEl8KuhJsgg03JhFgF7/qVAt9CQ4l/VpNm8NH3/w8cKiHeoQaLPNCgSwWTc81unfRU/IOiz8TTb0/QYS2P+SOZHbKiP0AaRHkCWesgJQTnRhf/K4BgBFcWT5aZvguNShYwLKE/iWZsN42a0n6t0TtIRs9FQrPE+71lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GZL94EHc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21239C4CEC4;
+	Tue, 24 Sep 2024 02:25:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727144733;
+	bh=j05pNEWsqu7/7Imhpv6SR6Py3R78sTJY6dwEU8/YxAs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GZL94EHcBrI2d7HxaXz6oPKCzHsYZw8foRvjlqB1xCHs8RfeI1JZyIJKUJ4ol51rY
+	 I4RJuVusob8g6+BUARKTY+rTFnLcCq1AI3gRD05/tODcQMVKcVvVoMMudC8evEOHq3
+	 dC1iomaVKFdPZy8LHClTPwMfiHMrRRTOi2vzimbhR4+rM5KhV7ylvBzXfl7BY3CYr7
+	 3t7RC+/GPEUF21Oo8mJkPi67FWLPuMRbkhxeWm8H1NK9IWUSoDnBL3AlbIMHvnBVPo
+	 t401gBm091Qj3v41+PIXS9UUZQELtB6YcobKdJfSysh7ElSLlS24C4ApcDBZICWwH1
+	 JlNLn+Uc/dFlw==
+Date: Tue, 24 Sep 2024 02:25:31 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com,
+	Daeho Jeong <daehojeong@google.com>
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: introduce device aliasing file
+Message-ID: <ZvIjG8NQlwSI1GLX@google.com>
+References: <20240923155356.2313669-1-daeho43@gmail.com>
+ <1fc86d4e-ce1e-45f5-a2d4-14d9e61b7503@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrsz:qybglogicsvrsz4a-0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1fc86d4e-ce1e-45f5-a2d4-14d9e61b7503@kernel.org>
 
-When conducting WRK testing, the CPU usage rate of the testing machine was
-100%. forwarding through a bridge, if the network load is too high, it may
-cause abnormal load on the ebt_do_table of the kernel ebtable module, leading
-to excessive soft interrupts and sometimes even directly causing CPU soft
-deadlocks.
+On 09/24, Chao Yu wrote:
+> On 2024/9/23 23:53, Daeho Jeong wrote:
+> > From: Daeho Jeong <daehojeong@google.com>
+> > 
+> > F2FS should understand how the device aliasing file works and support
+> > deleting the file after use. A device aliasing file can be created by
+> > mkfs.f2fs tool and it can map the whole device with an extrent, not
+> > using node blocks. The file space should be pinned and normally used for
+> > read-only usages.
+> > 
+> > Signed-off-by: Daeho Jeong <daehojeong@google.com>
+> > ---
+> > v2: changed the position of f2fs_destroy_extent_tree() only for device
+> >      aliasing files
+> > ---
+> >   fs/f2fs/data.c         |  5 +++++
+> >   fs/f2fs/extent_cache.c | 10 ++++++++++
+> >   fs/f2fs/f2fs.h         |  5 +++++
+> >   fs/f2fs/file.c         | 36 ++++++++++++++++++++++++++++++++----
+> >   fs/f2fs/inode.c        | 12 +++++++++++-
+> >   fs/f2fs/sysfs.c        |  2 ++
+> >   6 files changed, 65 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > index b94cf6eea2f9..385b46e62ede 100644
+> > --- a/fs/f2fs/data.c
+> > +++ b/fs/f2fs/data.c
+> > @@ -3441,6 +3441,11 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
+> >   	if (!f2fs_lookup_read_extent_cache_block(inode, index,
+> >   						 &dn.data_blkaddr)) {
+> > +		if (IS_DEVICE_ALIASING(inode)) {
+> > +			err = -ENODATA;
+> > +			goto out;
+> > +		}
+> > +
+> >   		if (locked) {
+> >   			err = f2fs_reserve_block(&dn, index);
+> >   			goto out;
+> > diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+> > index 62ac440d9416..0c8a705faa8b 100644
+> > --- a/fs/f2fs/extent_cache.c
+> > +++ b/fs/f2fs/extent_cache.c
+> > @@ -401,6 +401,11 @@ void f2fs_init_read_extent_tree(struct inode *inode, struct page *ipage)
+> >   	if (atomic_read(&et->node_cnt) || !ei.len)
+> >   		goto skip;
+> > +	if (IS_DEVICE_ALIASING(inode)) {
+> > +		et->largest = ei;
+> > +		goto skip;
+> > +	}
+> 
+> device alias feature replies on extent cache mount option, right? do
+> we need to check noextent_cache option during parse_options()?
 
-After analysis, it was found that the code of ebtables had not been optimized
-for a long time, and the read-write locks inside still existed. However, other
-arp/ip/ip6 tables had already been optimized a lot, and performance bottlenecks
-in read-write locks had been discovered a long time ago.
+Oh, if we hit !__may_extent_tree() above, we'll break the layout. I now feel
+I need to stop rushing this in this merge window. Daeho, could you please
+check these corner cases?
 
-Ref link: https://lore.kernel.org/lkml/20090428092411.5331c4a1@nehalam/
+ 385         if (!__may_extent_tree(inode, EX_READ)) {
+ 386                 /* drop largest read extent */
+ 387                 if (i_ext->len) {
+ 388                         f2fs_wait_on_page_writeback(ipage, NODE, true, true);
+ 389                         i_ext->len = 0;
+ 390                         set_page_dirty(ipage);
+ 391                 }
+ 392                 set_inode_flag(inode, FI_NO_EXTENT);
+ 393                 return;
+ 394         }
 
-So I referred to arp/ip/ip6 modification methods to optimize the read-write
-lock in ebtables.c.
 
-test method:
-1) Test machine creates bridge :
-``` bash
-brctl addbr br-a
-brctl addbr br-b
-brctl addif br-a enp1s0f0 enp1s0f1
-brctl addif br-b enp130s0f0 enp130s0f1
-ifconfig br-a up
-ifconfig br-b up
-```
-2) Testing with another machine:
-``` bash
-ulimit -n 2048
-./wrk -t48 -c2000 -d6000 -R10000 -s request.lua http://4.4.4.2:80/4k.html &
-./wrk -t48 -c2000 -d6000 -R10000 -s request.lua http://5.5.5.2:80/4k.html &
-```
-
-Suggested-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: yushengjin <yushengjin@uniontech.com>
-Link: https://lore.kernel.org/all/CANn89iJCBRCM3aHDy-7gxWu_+agXC9M1R=hwFuh2G9RSLu_6bg@mail.gmail.com/
----
- include/linux/netfilter_bridge/ebtables.h |   1 -
- net/bridge/netfilter/ebtables.c           | 124 ++++++++++++++++------
- 2 files changed, 91 insertions(+), 34 deletions(-)
-
-diff --git a/include/linux/netfilter_bridge/ebtables.h b/include/linux/netfilter_bridge/ebtables.h
-index fd533552a062..15aad1e479d7 100644
---- a/include/linux/netfilter_bridge/ebtables.h
-+++ b/include/linux/netfilter_bridge/ebtables.h
-@@ -93,7 +93,6 @@ struct ebt_table {
- 	char name[EBT_TABLE_MAXNAMELEN];
- 	struct ebt_replace_kernel *table;
- 	unsigned int valid_hooks;
--	rwlock_t lock;
- 	/* the data used by the kernel */
- 	struct ebt_table_info *private;
- 	struct nf_hook_ops *ops;
-diff --git a/net/bridge/netfilter/ebtables.c b/net/bridge/netfilter/ebtables.c
-index 3e67d4aff419..d7db7380fcbb 100644
---- a/net/bridge/netfilter/ebtables.c
-+++ b/net/bridge/netfilter/ebtables.c
-@@ -204,11 +204,14 @@ unsigned int ebt_do_table(void *priv, struct sk_buff *skb,
- 	const char *base;
- 	const struct ebt_table_info *private;
- 	struct xt_action_param acpar;
-+	unsigned int addend;
- 
- 	acpar.state   = state;
- 	acpar.hotdrop = false;
- 
--	read_lock_bh(&table->lock);
-+	local_bh_disable();
-+	addend = xt_write_recseq_begin();
-+
- 	private = table->private;
- 	cb_base = COUNTER_BASE(private->counters, private->nentries,
- 	   smp_processor_id());
-@@ -229,10 +232,8 @@ unsigned int ebt_do_table(void *priv, struct sk_buff *skb,
- 
- 		if (EBT_MATCH_ITERATE(point, ebt_do_match, skb, &acpar) != 0)
- 			goto letscontinue;
--		if (acpar.hotdrop) {
--			read_unlock_bh(&table->lock);
--			return NF_DROP;
--		}
-+		if (acpar.hotdrop)
-+			goto drop_out;
- 
- 		ADD_COUNTER(*(counter_base + i), skb->len, 1);
- 
-@@ -251,13 +252,13 @@ unsigned int ebt_do_table(void *priv, struct sk_buff *skb,
- 			verdict = t->u.target->target(skb, &acpar);
- 		}
- 		if (verdict == EBT_ACCEPT) {
--			read_unlock_bh(&table->lock);
-+			xt_write_recseq_end(addend);
-+			local_bh_enable();
- 			return NF_ACCEPT;
- 		}
--		if (verdict == EBT_DROP) {
--			read_unlock_bh(&table->lock);
--			return NF_DROP;
--		}
-+		if (verdict == EBT_DROP)
-+			goto drop_out;
-+
- 		if (verdict == EBT_RETURN) {
- letsreturn:
- 			if (WARN(sp == 0, "RETURN on base chain")) {
-@@ -278,10 +279,8 @@ unsigned int ebt_do_table(void *priv, struct sk_buff *skb,
- 		if (verdict == EBT_CONTINUE)
- 			goto letscontinue;
- 
--		if (WARN(verdict < 0, "bogus standard verdict\n")) {
--			read_unlock_bh(&table->lock);
--			return NF_DROP;
--		}
-+		if (WARN(verdict < 0, "bogus standard verdict\n"))
-+			goto drop_out;
- 
- 		/* jump to a udc */
- 		cs[sp].n = i + 1;
-@@ -290,10 +289,8 @@ unsigned int ebt_do_table(void *priv, struct sk_buff *skb,
- 		i = 0;
- 		chaininfo = (struct ebt_entries *) (base + verdict);
- 
--		if (WARN(chaininfo->distinguisher, "jump to non-chain\n")) {
--			read_unlock_bh(&table->lock);
--			return NF_DROP;
--		}
-+		if (WARN(chaininfo->distinguisher, "jump to non-chain\n"))
-+			goto drop_out;
- 
- 		nentries = chaininfo->nentries;
- 		point = (struct ebt_entry *)chaininfo->data;
-@@ -309,10 +306,15 @@ unsigned int ebt_do_table(void *priv, struct sk_buff *skb,
- 	if (chaininfo->policy == EBT_RETURN)
- 		goto letsreturn;
- 	if (chaininfo->policy == EBT_ACCEPT) {
--		read_unlock_bh(&table->lock);
-+		xt_write_recseq_end(addend);
-+		local_bh_enable();
- 		return NF_ACCEPT;
- 	}
--	read_unlock_bh(&table->lock);
-+
-+drop_out:
-+	xt_write_recseq_end(addend);
-+	local_bh_enable();
-+
- 	return NF_DROP;
- }
- 
-@@ -983,12 +985,48 @@ static int translate_table(struct net *net, const char *name,
- 	return ret;
- }
- 
--/* called under write_lock */
-+
- static void get_counters(const struct ebt_counter *oldcounters,
- 			 struct ebt_counter *counters, unsigned int nentries)
- {
- 	int i, cpu;
- 	struct ebt_counter *counter_base;
-+	seqcount_t *s;
-+
-+	/* counters of cpu 0 */
-+	memcpy(counters, oldcounters,
-+	       sizeof(struct ebt_counter) * nentries);
-+
-+	/* add other counters to those of cpu 0 */
-+	for_each_possible_cpu(cpu) {
-+
-+		if (cpu == 0)
-+			continue;
-+
-+		s = &per_cpu(ebt_recseq, cpu);
-+		counter_base = COUNTER_BASE(oldcounters, nentries, cpu);
-+		for (i = 0; i < nentries; i++) {
-+			u64 bcnt, pcnt;
-+			unsigned int start;
-+
-+			do {
-+				start = read_seqcount_begin(s);
-+				bcnt = counter_base[i].bcnt;
-+				pcnt = counter_base[i].pcnt;
-+			} while (read_seqcount_retry(s, start));
-+
-+			ADD_COUNTER(counters[i], bcnt, pcnt);
-+			cond_resched();
-+		}
-+	}
-+}
-+
-+
-+static void get_old_counters(const struct ebt_counter *oldcounters,
-+			 struct ebt_counter *counters, unsigned int nentries)
-+{
-+	int i, cpu;
-+	struct ebt_counter *counter_base;
- 
- 	/* counters of cpu 0 */
- 	memcpy(counters, oldcounters,
-@@ -1013,6 +1051,7 @@ static int do_replace_finish(struct net *net, struct ebt_replace *repl,
- 	/* used to be able to unlock earlier */
- 	struct ebt_table_info *table;
- 	struct ebt_table *t;
-+	unsigned int cpu;
- 
- 	/* the user wants counters back
- 	 * the check on the size is done later, when we have the lock
-@@ -1050,6 +1089,8 @@ static int do_replace_finish(struct net *net, struct ebt_replace *repl,
- 		goto free_unlock;
- 	}
- 
-+	local_bh_disable();
-+
- 	/* we have the mutex lock, so no danger in reading this pointer */
- 	table = t->private;
- 	/* make sure the table can only be rmmod'ed if it contains no rules */
-@@ -1058,15 +1099,31 @@ static int do_replace_finish(struct net *net, struct ebt_replace *repl,
- 		goto free_unlock;
- 	} else if (table->nentries && !newinfo->nentries)
- 		module_put(t->me);
--	/* we need an atomic snapshot of the counters */
--	write_lock_bh(&t->lock);
--	if (repl->num_counters)
--		get_counters(t->private->counters, counterstmp,
--		   t->private->nentries);
- 
-+	smp_wmb();
- 	t->private = newinfo;
--	write_unlock_bh(&t->lock);
-+	smp_mb();
-+
-+	local_bh_enable();
-+
-+	// wait for even ebt_recseq on all cpus
-+	for_each_possible_cpu(cpu) {
-+		seqcount_t *s = &per_cpu(ebt_recseq, cpu);
-+		u32 seq = raw_read_seqcount(s);
-+
-+		if (seq & 1) {
-+			do {
-+				cond_resched();
-+				cpu_relax();
-+			} while (seq == raw_read_seqcount(s));
-+		}
-+	}
-+
- 	mutex_unlock(&ebt_mutex);
-+
-+	if (repl->num_counters)
-+	    get_old_counters(table->counters, counterstmp, table->nentries);
-+
- 	/* so, a user can change the chains while having messed up her counter
- 	 * allocation. Only reason why this is done is because this way the lock
- 	 * is held only once, while this doesn't bring the kernel into a
-@@ -1093,6 +1150,7 @@ static int do_replace_finish(struct net *net, struct ebt_replace *repl,
- 	return 0;
- 
- free_unlock:
-+	local_bh_enable();
- 	mutex_unlock(&ebt_mutex);
- free_iterate:
- 	EBT_ENTRY_ITERATE(newinfo->entries, newinfo->entries_size,
-@@ -1235,7 +1293,6 @@ int ebt_register_table(struct net *net, const struct ebt_table *input_table,
- 		goto free_chainstack;
- 
- 	table->private = newinfo;
--	rwlock_init(&table->lock);
- 	mutex_lock(&ebt_mutex);
- 	list_for_each_entry(t, &ebt_net->tables, list) {
- 		if (strcmp(t->name, table->name) == 0) {
-@@ -1382,6 +1439,7 @@ static int do_update_counters(struct net *net, const char *name,
- 	int i, ret;
- 	struct ebt_counter *tmp;
- 	struct ebt_table *t;
-+	unsigned int addend;
- 
- 	if (num_counters == 0)
- 		return -EINVAL;
-@@ -1405,14 +1463,16 @@ static int do_update_counters(struct net *net, const char *name,
- 		goto unlock_mutex;
- 	}
- 
--	/* we want an atomic add of the counters */
--	write_lock_bh(&t->lock);
-+	local_bh_disable();
-+	addend = xt_write_recseq_begin();
- 
- 	/* we add to the counters of the first cpu */
- 	for (i = 0; i < num_counters; i++)
- 		ADD_COUNTER(t->private->counters[i], tmp[i].bcnt, tmp[i].pcnt);
- 
--	write_unlock_bh(&t->lock);
-+	xt_write_recseq_end(addend);
-+	local_bh_enable();
-+
- 	ret = 0;
- unlock_mutex:
- 	mutex_unlock(&ebt_mutex);
-@@ -1530,9 +1590,7 @@ static int copy_counters_to_user(struct ebt_table *t,
- 	if (!counterstmp)
- 		return -ENOMEM;
- 
--	write_lock_bh(&t->lock);
- 	get_counters(oldcounters, counterstmp, nentries);
--	write_unlock_bh(&t->lock);
- 
- 	if (copy_to_user(user, counterstmp,
- 	    array_size(nentries, sizeof(struct ebt_counter))))
--- 
-2.43.0
-
+> 
+> Thanks,
+> 
+> > +
+> >   	en = __attach_extent_node(sbi, et, &ei, NULL,
+> >   				&et->root.rb_root.rb_node, true);
+> >   	if (en) {
+> > @@ -463,6 +468,11 @@ static bool __lookup_extent_tree(struct inode *inode, pgoff_t pgofs,
+> >   		goto out;
+> >   	}
+> > +	if (IS_DEVICE_ALIASING(inode)) {
+> > +		ret = false;
+> > +		goto out;
+> > +	}
+> > +
+> >   	en = __lookup_extent_node(&et->root, et->cached_en, pgofs);
+> >   	if (!en)
+> >   		goto out;
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index 33f5449dc22d..b6ba22a1da47 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -213,6 +213,7 @@ struct f2fs_mount_info {
+> >   #define F2FS_FEATURE_CASEFOLD			0x00001000
+> >   #define F2FS_FEATURE_COMPRESSION		0x00002000
+> >   #define F2FS_FEATURE_RO				0x00004000
+> > +#define F2FS_FEATURE_DEVICE_ALIAS		0x00008000
+> >   #define __F2FS_HAS_FEATURE(raw_super, mask)				\
+> >   	((raw_super->feature & cpu_to_le32(mask)) != 0)
+> > @@ -3046,6 +3047,7 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
+> >   #define F2FS_DIRSYNC_FL			0x00010000 /* dirsync behaviour (directories only) */
+> >   #define F2FS_PROJINHERIT_FL		0x20000000 /* Create with parents projid */
+> >   #define F2FS_CASEFOLD_FL		0x40000000 /* Casefolded file */
+> > +#define F2FS_DEVICE_ALIAS_FL		0x80000000 /* File for aliasing a device */
+> >   #define F2FS_QUOTA_DEFAULT_FL		(F2FS_NOATIME_FL | F2FS_IMMUTABLE_FL)
+> > @@ -3061,6 +3063,8 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
+> >   /* Flags that are appropriate for non-directories/regular files. */
+> >   #define F2FS_OTHER_FLMASK	(F2FS_NODUMP_FL | F2FS_NOATIME_FL)
+> > +#define IS_DEVICE_ALIASING(inode)	(F2FS_I(inode)->i_flags & F2FS_DEVICE_ALIAS_FL)
+> > +
+> >   static inline __u32 f2fs_mask_flags(umode_t mode, __u32 flags)
+> >   {
+> >   	if (S_ISDIR(mode))
+> > @@ -4510,6 +4514,7 @@ F2FS_FEATURE_FUNCS(sb_chksum, SB_CHKSUM);
+> >   F2FS_FEATURE_FUNCS(casefold, CASEFOLD);
+> >   F2FS_FEATURE_FUNCS(compression, COMPRESSION);
+> >   F2FS_FEATURE_FUNCS(readonly, RO);
+> > +F2FS_FEATURE_FUNCS(device_alias, DEVICE_ALIAS);
+> >   #ifdef CONFIG_BLK_DEV_ZONED
+> >   static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi, int devi,
+> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> > index 99903eafa7fe..f2d2d84d025b 100644
+> > --- a/fs/f2fs/file.c
+> > +++ b/fs/f2fs/file.c
+> > @@ -725,6 +725,11 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
+> >   	trace_f2fs_truncate_blocks_enter(inode, from);
+> > +	if (IS_DEVICE_ALIASING(inode) && from) {
+> > +		err = -EINVAL;
+> > +		goto out_err;
+> > +	}
+> > +
+> >   	free_from = (pgoff_t)F2FS_BLK_ALIGN(from);
+> >   	if (free_from >= max_file_blocks(inode))
+> > @@ -739,6 +744,21 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
+> >   		goto out;
+> >   	}
+> > +	if (IS_DEVICE_ALIASING(inode)) {
+> > +		struct extent_tree *et = F2FS_I(inode)->extent_tree[EX_READ];
+> > +		struct extent_info ei = et->largest;
+> > +		unsigned int i;
+> > +
+> > +		for (i = 0; i < ei.len; i++)
+> > +			f2fs_invalidate_blocks(sbi, ei.blk + i);
+> > +
+> > +		dec_valid_block_count(sbi, inode, ei.len);
+> > +		f2fs_update_time(sbi, REQ_TIME);
+> > +
+> > +		f2fs_put_page(ipage, 1);
+> > +		goto out;
+> > +	}
+> > +
+> >   	if (f2fs_has_inline_data(inode)) {
+> >   		f2fs_truncate_inline_inode(inode, ipage, from);
+> >   		f2fs_put_page(ipage, 1);
+> > @@ -774,7 +794,7 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
+> >   	/* lastly zero out the first data page */
+> >   	if (!err)
+> >   		err = truncate_partial_data_page(inode, from, truncate_page);
+> > -
+> > +out_err:
+> >   	trace_f2fs_truncate_blocks_exit(inode, err);
+> >   	return err;
+> >   }
+> > @@ -992,7 +1012,8 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+> >   		return -EPERM;
+> >   	if ((attr->ia_valid & ATTR_SIZE)) {
+> > -		if (!f2fs_is_compress_backend_ready(inode))
+> > +		if (!f2fs_is_compress_backend_ready(inode) ||
+> > +				IS_DEVICE_ALIASING(inode))
+> >   			return -EOPNOTSUPP;
+> >   		if (is_inode_flag_set(inode, FI_COMPRESS_RELEASED) &&
+> >   			!IS_ALIGNED(attr->ia_size,
+> > @@ -1860,7 +1881,7 @@ static long f2fs_fallocate(struct file *file, int mode,
+> >   		return -EIO;
+> >   	if (!f2fs_is_checkpoint_ready(F2FS_I_SB(inode)))
+> >   		return -ENOSPC;
+> > -	if (!f2fs_is_compress_backend_ready(inode))
+> > +	if (!f2fs_is_compress_backend_ready(inode) || IS_DEVICE_ALIASING(inode))
+> >   		return -EOPNOTSUPP;
+> >   	/* f2fs only support ->fallocate for regular file */
+> > @@ -3296,6 +3317,9 @@ int f2fs_pin_file_control(struct inode *inode, bool inc)
+> >   	struct f2fs_inode_info *fi = F2FS_I(inode);
+> >   	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> > +	if (IS_DEVICE_ALIASING(inode))
+> > +		return -EINVAL;
+> > +
+> >   	if (fi->i_gc_failures >= sbi->gc_pin_file_threshold) {
+> >   		f2fs_warn(sbi, "%s: Enable GC = ino %lx after %x GC trials",
+> >   			  __func__, inode->i_ino, fi->i_gc_failures);
+> > @@ -3326,6 +3350,9 @@ static int f2fs_ioc_set_pin_file(struct file *filp, unsigned long arg)
+> >   	if (f2fs_readonly(sbi->sb))
+> >   		return -EROFS;
+> > +	if (!pin && IS_DEVICE_ALIASING(inode))
+> > +		return -EOPNOTSUPP;
+> > +
+> >   	ret = mnt_want_write_file(filp);
+> >   	if (ret)
+> >   		return ret;
+> > @@ -4764,7 +4791,8 @@ static int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *iter,
+> >   	else
+> >   		return 0;
+> > -	map.m_may_create = true;
+> > +	if (!IS_DEVICE_ALIASING(inode))
+> > +		map.m_may_create = true;
+> >   	if (dio) {
+> >   		map.m_seg_type = f2fs_rw_hint_to_seg_type(sbi,
+> >   						inode->i_write_hint);
+> > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> > index 1ed86df343a5..25f66a0ed831 100644
+> > --- a/fs/f2fs/inode.c
+> > +++ b/fs/f2fs/inode.c
+> > @@ -372,6 +372,12 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
+> >   		return false;
+> >   	}
+> > +	if ((fi->i_flags & F2FS_DEVICE_ALIAS_FL) && !f2fs_sb_has_device_alias(sbi)) {
+> > +		f2fs_warn(sbi, "%s: inode (ino=%lx) has device alias flag, but the feature is off",
+> > +			  __func__, inode->i_ino);
+> > +		return false;
+> > +	}
+> > +
+> >   	return true;
+> >   }
+> > @@ -823,7 +829,8 @@ void f2fs_evict_inode(struct inode *inode)
+> >   	f2fs_bug_on(sbi, get_dirty_pages(inode));
+> >   	f2fs_remove_dirty_inode(inode);
+> > -	f2fs_destroy_extent_tree(inode);
+> > +	if (!IS_DEVICE_ALIASING(inode))
+> > +		f2fs_destroy_extent_tree(inode);
+> >   	if (inode->i_nlink || is_bad_inode(inode))
+> >   		goto no_delete;
+> > @@ -879,6 +886,9 @@ void f2fs_evict_inode(struct inode *inode)
+> >   		goto retry;
+> >   	}
+> > +	if (IS_DEVICE_ALIASING(inode))
+> > +		f2fs_destroy_extent_tree(inode);
+> > +
+> >   	if (err) {
+> >   		f2fs_update_inode_page(inode);
+> >   		if (dquot_initialize_needed(inode))
+> > diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+> > index c56e8c873935..e51304bc65ea 100644
+> > --- a/fs/f2fs/sysfs.c
+> > +++ b/fs/f2fs/sysfs.c
+> > @@ -1313,6 +1313,7 @@ F2FS_SB_FEATURE_RO_ATTR(sb_checksum, SB_CHKSUM);
+> >   F2FS_SB_FEATURE_RO_ATTR(casefold, CASEFOLD);
+> >   F2FS_SB_FEATURE_RO_ATTR(compression, COMPRESSION);
+> >   F2FS_SB_FEATURE_RO_ATTR(readonly, RO);
+> > +F2FS_SB_FEATURE_RO_ATTR(device_alias, DEVICE_ALIAS);
+> >   static struct attribute *f2fs_sb_feat_attrs[] = {
+> >   	ATTR_LIST(sb_encryption),
+> > @@ -1329,6 +1330,7 @@ static struct attribute *f2fs_sb_feat_attrs[] = {
+> >   	ATTR_LIST(sb_casefold),
+> >   	ATTR_LIST(sb_compression),
+> >   	ATTR_LIST(sb_readonly),
+> > +	ATTR_LIST(sb_device_alias),
+> >   	NULL,
+> >   };
+> >   ATTRIBUTE_GROUPS(f2fs_sb_feat);
+> 
 
