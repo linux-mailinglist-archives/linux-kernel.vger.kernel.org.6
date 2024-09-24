@@ -1,200 +1,184 @@
-Return-Path: <linux-kernel+bounces-337172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9F13984643
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:55:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2FE698464B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:58:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73CBF1F24415
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:55:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C19E41C22CE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:58:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2545C1A7AD6;
-	Tue, 24 Sep 2024 12:55:25 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88F71A7059;
+	Tue, 24 Sep 2024 12:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A2+pyMWp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090091A76C3
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 12:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660C03FE55
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 12:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727182524; cv=none; b=snL9Ej32dKVU081OAT+RbagKyRrlZTT+fTSTF5JWNMAZk9mDL3ZPUjApPRqdAOw+dJSbif7hnGw31VPrpMvi/FmpPMyAogIOQzZV7S2KsfTftkOMgN5xxis4CuaO+Y6mwrHsqqzMK4lEBivM4l69SLLS6nO8S/5i9i96AGSutyM=
+	t=1727182710; cv=none; b=OANPSgraxwLDq3PslDS/DCV7ygvG9cifjw04+ht3e9AmCTsR86nXbn1+GoSYoVEgGyroHDaRdNUPnvuS7dKbOqE+AoiOysnrsjvnzWh6P/ZZZxQjeyXKr2YOq4/c0QGplmsbJ9ML0jhDGG7ZRcx0YmrqUBcITrFowkk0t/PTZPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727182524; c=relaxed/simple;
-	bh=qtEUsdMDZBv53VL04YSicjN207LQkGSQTXs+RwqkFMw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=EnLj4vMfX8YGnfWrNN61WMppBjq+9a3gHeCzRUbOmL+5hrgt2xFb++KqtlTCj4PMctbZrRGpB9XycXo8eyVWH9tmqyWHJ00DSkAjdMQo0uNFJAauUTDHF6SgaKIi9SXJyIl7mRRmCMu3FSwdiG2tzkTsPYu2nZuhPLCqtm5HOPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39f53b1932aso62138805ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 05:55:22 -0700 (PDT)
+	s=arc-20240116; t=1727182710; c=relaxed/simple;
+	bh=EKEorE8R3jH2Z1DLrd7yr/ooZ5B1dCh5WEWxtctJUZY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cHK+8MmOK9INodhcQa2inS9Yt2jpEeWhG+iUiDcmHYZtnI2TMXH6SyDnGN9MQ0GGfqWYEd1va+zXXQVlfBMO409MG+KIdpTXSekPOj8pYjg/37nFW/9mISg9oVy5ryRpvDGJUrHkfQsYNDLHQ+zT7dZxpEsn8KOCx4qolwD6jlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A2+pyMWp; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727182707;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=xC9UCBhzwUAOQFao/KUDqH/apeuIr1frJEI+ucMu8PU=;
+	b=A2+pyMWp53rwRrHaUXcDuRhhEwA0RW0RZu3SFQ+VJ1fIngHNZeNW0R8CTbt3EtAkPNP2BX
+	ilQrwQpoMRZPfEgTpgOucV+f/Pjvf12hWQPZNfFXZJVcitfw2f188u52kXds+4QwEgWfw2
+	Awy4LunyxfLIRetVoc8XqIodKRP66ms=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-467-TwWijEfmNZOkhFmYeIAEDA-1; Tue, 24 Sep 2024 08:58:26 -0400
+X-MC-Unique: TwWijEfmNZOkhFmYeIAEDA-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42caca7215dso36790675e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 05:58:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727182522; x=1727787322;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IaV95rr5dy/KVsLIv10Xol1401VIYQE+FUIMdKezUfQ=;
-        b=cW45nm3DMhBuVXuvrqfIqwyGUa22y658JP4z7xZ0a42b1KXY/KGTwuDXItMML0sASx
-         fgGJEdNPpqSuR46yN0xTeYinP+i2t7iNnra5EIQoBf/hDkEnY1ziPFHbGH3QqHwvRkPV
-         8LbZWhhITCCrvHLVQZoflawRP3K/6t/Z974ZngI5FeZDJn2SEaazPtASmmkkKFkhFShH
-         t57Rp3+T5DtBuzNGjgKUL0vwesd65voRh56e2yIl1Z4YAKLyVJJicFZoN+cG3AIYh/oN
-         ygUPBtJ77UwfvGlHuXCLBiPVUiyJorjcMlIC9GGAP9+3kup83NmR1eQLkyc8bueyjiqN
-         cCBg==
-X-Forwarded-Encrypted: i=1; AJvYcCXCE4h6KiXUrTkR4RAYY2gL3A8MIwkYNvOZ9+nynXyoJHWsiO2jTCOjWzkX8iJ3fy9rdbR867GJ7zyYPg0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yww54sXh2+cjO3AfhpzTSG9G3wlcuHBnQ5RQEBvFL2behTHxHBW
-	aLFoDws6hykquXtTywYRNTgIflyTmShDk+jO9L++FDnqK6qioqYwjrvakN/2PLvxtEU/mT/RQ1p
-	0x32kxiq8P6WJmgJGLOjNHKjdkucDONW4mUj39/UqNY44YNeybdjcasQ=
-X-Google-Smtp-Source: AGHT+IGq40g22mDZUFKmiOpfVUYhLa9vtDZ2VP6Os/1gCKULwWxLmxccUHWx94qpFOxL4brhVAKl3m2cUsFQ3azOoRa2hqZwC+qB
+        d=1e100.net; s=20230601; t=1727182705; x=1727787505;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=xC9UCBhzwUAOQFao/KUDqH/apeuIr1frJEI+ucMu8PU=;
+        b=ddMaLtPtvcydn4GgOR0p3Ld+VoXrxsV/yla0Ir5K+GwZKgRnAQxgbaFdTxkbzHcoZ6
+         RoOSSsp4OUX4MqvhLQHMulUZpMdIknfOcdpig7USXni8rP4UA9qo+QAJz5W5y1gsl22L
+         P6iaZTXHGdtj3KlGi/nvXKmINiun+cdP1dxHjwY2gatjxBp97COOJgl2vUarr3sN7f/j
+         VyRw7wTRV1aLfvRDM7vhQfpsRi7Zor2Mspuz/xX0Y69tsq8ZHK/fWLhD/24m6usGBA9y
+         ckGy7U9A3EhH1XDqFB/3FSxBLApREWYc/wkeP/v1iz0C7gyP7cSYs/Mx1/pSE+xQBu6q
+         w/uA==
+X-Gm-Message-State: AOJu0Yxpq2s0Cvz7s9Fonvy/cfz38eq1Co+T9FKicNB456CFFG0Us5KB
+	jCxJK9hIS75E1AuZXheMr7lXZxEJtGHognOpVY688hCC41ATLZy5TipMPycBBYsYWTJCTe5vv3I
+	05hljg27uPPm6EMspMXzNrYsfkb4wfpL8VV/lKmmtcdGnTzRDeKb0Pj8x9drj4g==
+X-Received: by 2002:a05:600c:4f55:b0:426:593c:9361 with SMTP id 5b1f17b1804b1-42e7c193efbmr109030435e9.26.1727182704969;
+        Tue, 24 Sep 2024 05:58:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGI4EF96B1PEOenADb7Illije/hnjtwV8J24MIjfh4CgMke7FEiL5+zsiMwccSuAGfVWsgegw==
+X-Received: by 2002:a05:600c:4f55:b0:426:593c:9361 with SMTP id 5b1f17b1804b1-42e7c193efbmr109030165e9.26.1727182704575;
+        Tue, 24 Sep 2024 05:58:24 -0700 (PDT)
+Received: from [10.202.151.204] (nat-pool-brq-u.redhat.com. [213.175.37.12])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e754a6f82sm158012075e9.37.2024.09.24.05.58.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Sep 2024 05:58:24 -0700 (PDT)
+Message-ID: <4f9dffe7-a652-4476-ae18-15997085e5b4@redhat.com>
+Date: Tue, 24 Sep 2024 14:58:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c2f:b0:3a0:8d60:8ba7 with SMTP id
- e9e14a558f8ab-3a0c8d0eee3mr141058945ab.14.1727182521817; Tue, 24 Sep 2024
- 05:55:21 -0700 (PDT)
-Date: Tue, 24 Sep 2024 05:55:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f2b6b9.050a0220.3eed3.002d.GAE@google.com>
-Subject: [syzbot] [wireguard?] general protection fault in wg_packet_receive (2)
-From: syzbot <syzbot+c0f4a2553a2527b3fc1f@syzkaller.appspotmail.com>
-To: Jason@zx2c4.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com, wireguard@lists.zx2c4.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 01/13] mm: pgtable: introduce
+ pte_offset_map_{ro|rw}_nolock()
+To: Qi Zheng <zhengqi.arch@bytedance.com>, hughd@google.com,
+ willy@infradead.org, muchun.song@linux.dev, vbabka@kernel.org,
+ akpm@linux-foundation.org, rppt@kernel.org, vishal.moola@gmail.com,
+ peterx@redhat.com, ryan.roberts@arm.com, christophe.leroy2@cs-soprasteria.com
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
+References: <cover.1727148662.git.zhengqi.arch@bytedance.com>
+ <1a4fea06f8cada72553a8d8992a92e9c09f2c9d4.1727148662.git.zhengqi.arch@bytedance.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <1a4fea06f8cada72553a8d8992a92e9c09f2c9d4.1727148662.git.zhengqi.arch@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 24.09.24 08:09, Qi Zheng wrote:
+> Currently, the usage of pte_offset_map_nolock() can be divided into the
+> following two cases:
+> 
+> 1) After acquiring PTL, only read-only operations are performed on the PTE
+>     page. In this case, the RCU lock in pte_offset_map_nolock() will ensure
+>     that the PTE page will not be freed, and there is no need to worry
+>     about whether the pmd entry is modified.
+> 
+> 2) After acquiring PTL, the pte or pmd entries may be modified. At this
+>     time, we need to ensure that the pmd entry has not been modified
+>     concurrently.
+> 
+> To more clearing distinguish between these two cases, this commit
+> introduces two new helper functions to replace pte_offset_map_nolock().
+> For 1), just rename it to pte_offset_map_ro_nolock(). For 2), in addition
+> to changing the name to pte_offset_map_rw_nolock(), it also outputs the
+> pmdval when successful. It is applicable for may-write cases where any
+> modification operations to the page table may happen after the
+> corresponding spinlock is held afterwards. But the users should make sure
+> the page table is stable like checking pte_same() or checking pmd_same()
+> by using the output pmdval before performing the write operations.
+> 
+> Note: "RO" / "RW" expresses the intended semantics, not that the *kmap*
+> will be read-only/read-write protected.
+> 
+> Subsequent commits will convert pte_offset_map_nolock() into the above
+> two functions one by one, and finally completely delete it.
+> 
+> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+> ---
 
-syzbot found the following issue on:
+Acked-by: David Hildenbrand <david@redhat.com>
 
-HEAD commit:    de5cb0dcb74c Merge branch 'address-masking'
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=167ce19f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=74ffdb3b3fad1a43
-dashboard link: https://syzkaller.appspot.com/bug?extid=c0f4a2553a2527b3fc1f
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+-- 
+Cheers,
 
-Unfortunately, I don't have any reproducer for this issue yet.
+David / dhildenb
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/6dde53474dba/disk-de5cb0dc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6a60a36c2a3b/vmlinux-de5cb0dc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f3f799d774bf/bzImage-de5cb0dc.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c0f4a2553a2527b3fc1f@syzkaller.appspotmail.com
-
-Oops: general protection fault, probably for non-canonical address 0xedfd63131ffff113: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: maybe wild-memory-access in range [0x6feb3898ffff8898-0x6feb3898ffff889f]
-CPU: 1 UID: 0 PID: 6046 Comm: kworker/1:8 Not tainted 6.11.0-syzkaller-08833-gde5cb0dcb74c #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Workqueue: wg-kex-wg0 wg_packet_handshake_receive_worker
-RIP: 0010:__lock_acquire+0x69/0x2050 kernel/locking/lockdep.c:5062
-Code: b6 04 30 84 c0 0f 85 9b 16 00 00 45 31 f6 83 3d 88 66 ab 0e 00 0f 84 b6 13 00 00 89 54 24 54 89 5c 24 68 4c 89 f8 48 c1 e8 03 <80> 3c 30 00 74 12 4c 89 ff e8 f9 27 8b 00 48 be 00 00 00 00 00 fc
-RSP: 0018:ffffc90000a17fd0 EFLAGS: 00010002
-RAX: 0dfd67131ffff113 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: dffffc0000000000 RDI: 6feb3898ffff8898
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000001
-R10: dffffc0000000000 R11: fffffbfff2036ac6 R12: ffff88801e783c00
-R13: 0000000000000001 R14: 0000000000000000 R15: 6feb3898ffff8898
-FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fd8f5bfa440 CR3: 0000000029774000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
- __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
- _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
- __queue_work+0x759/0xf50
- queue_work_on+0x1c2/0x380 kernel/workqueue.c:2390
- wg_packet_receive+0x133a/0x2570 drivers/net/wireguard/receive.c:570
- wg_receive+0x75/0xa0 drivers/net/wireguard/socket.c:326
- udpv6_queue_rcv_one_skb+0x1695/0x18a0 net/ipv6/udp.c:726
- udp6_unicast_rcv_skb+0x230/0x370 net/ipv6/udp.c:928
- ip6_protocol_deliver_rcu+0xccf/0x1580 net/ipv6/ip6_input.c:436
- ip6_input_finish+0x187/0x2d0 net/ipv6/ip6_input.c:481
- NF_HOOK+0x3a4/0x450 include/linux/netfilter.h:314
- NF_HOOK+0x3a4/0x450 include/linux/netfilter.h:314
- __netif_receive_skb_one_core net/core/dev.c:5662 [inline]
- __netif_receive_skb+0x1ea/0x650 net/core/dev.c:5775
- process_backlog+0x662/0x15b0 net/core/dev.c:6107
- __napi_poll+0xcb/0x490 net/core/dev.c:6771
- napi_poll net/core/dev.c:6840 [inline]
- net_rx_action+0x89b/0x1240 net/core/dev.c:6962
- handle_softirqs+0x2c5/0x980 kernel/softirq.c:554
- do_softirq+0x11b/0x1e0 kernel/softirq.c:455
- </IRQ>
- <TASK>
- __local_bh_enable_ip+0x1bb/0x200 kernel/softirq.c:382
- wg_socket_send_skb_to_peer+0x176/0x1d0 drivers/net/wireguard/socket.c:184
- wg_packet_send_handshake_response+0x198/0x2e0 drivers/net/wireguard/send.c:103
- wg_receive_handshake_packet drivers/net/wireguard/receive.c:154 [inline]
- wg_packet_handshake_receive_worker+0x5e6/0xf50 drivers/net/wireguard/receive.c:213
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__lock_acquire+0x69/0x2050 kernel/locking/lockdep.c:5062
-Code: b6 04 30 84 c0 0f 85 9b 16 00 00 45 31 f6 83 3d 88 66 ab 0e 00 0f 84 b6 13 00 00 89 54 24 54 89 5c 24 68 4c 89 f8 48 c1 e8 03 <80> 3c 30 00 74 12 4c 89 ff e8 f9 27 8b 00 48 be 00 00 00 00 00 fc
-RSP: 0018:ffffc90000a17fd0 EFLAGS: 00010002
-RAX: 0dfd67131ffff113 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: dffffc0000000000 RDI: 6feb3898ffff8898
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000001
-R10: dffffc0000000000 R11: fffffbfff2036ac6 R12: ffff88801e783c00
-R13: 0000000000000001 R14: 0000000000000000 R15: 6feb3898ffff8898
-FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fd8f5bfa440 CR3: 0000000029774000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	b6 04                	mov    $0x4,%dh
-   2:	30 84 c0 0f 85 9b 16 	xor    %al,0x169b850f(%rax,%rax,8)
-   9:	00 00                	add    %al,(%rax)
-   b:	45 31 f6             	xor    %r14d,%r14d
-   e:	83 3d 88 66 ab 0e 00 	cmpl   $0x0,0xeab6688(%rip)        # 0xeab669d
-  15:	0f 84 b6 13 00 00    	je     0x13d1
-  1b:	89 54 24 54          	mov    %edx,0x54(%rsp)
-  1f:	89 5c 24 68          	mov    %ebx,0x68(%rsp)
-  23:	4c 89 f8             	mov    %r15,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	80 3c 30 00          	cmpb   $0x0,(%rax,%rsi,1) <-- trapping instruction
-  2e:	74 12                	je     0x42
-  30:	4c 89 ff             	mov    %r15,%rdi
-  33:	e8 f9 27 8b 00       	call   0x8b2831
-  38:	48                   	rex.W
-  39:	be 00 00 00 00       	mov    $0x0,%esi
-  3e:	00 fc                	add    %bh,%ah
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
