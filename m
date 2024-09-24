@@ -1,39 +1,74 @@
-Return-Path: <linux-kernel+bounces-337236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 802C798475B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:11:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2BA098476F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:14:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45552281B25
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:11:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B32FB216ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE2131A7AE7;
-	Tue, 24 Sep 2024 14:11:06 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D39D1B85D5;
-	Tue, 24 Sep 2024 14:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFA61AAE0C;
+	Tue, 24 Sep 2024 14:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="XYw9WTE9"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C021A76C6
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 14:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727187066; cv=none; b=KoT7WDvCznj8gfZQX2ubWTGCSKUcyZdWsIJcHK6un2SvhGl5FBA3aDqh7XhqPwjhjbHDT3Mgr1Xgbbx3gWHHIbXeeSCra5UDOEU+a9cEM1oz575BtzoMVObjAOkJhTJFxe5UCm6LG51krxjzsIYf0RyNC5dK33y5hgEb+NBArbo=
+	t=1727187258; cv=none; b=JTR0af+RCKE9/DTAuytLGPA1PW15C+c18UZ4TVQkTDtss2wmLOfMk2imyEq5AMWtOZqpmXIVtZJTQm6gqobTEWZRyjzzacX1UM7kbDPg4RP0Xe9uyRv9tCeiQa8FssG9G4qLqW1tDotf9vvWl4uHh89scnOo05Ez+E94BSKlwt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727187066; c=relaxed/simple;
-	bh=i5rmoElxEjHeqYioWgetey9pZgrZWLg5GZgY/JXJrpU=;
+	s=arc-20240116; t=1727187258; c=relaxed/simple;
+	bh=V/PUUsrHTTTW+3zaxNcMjyWj64r3RcrrF4rrOXWDBT4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gm/xsNR28KXEJRJ7a9KlgmtQo6D5DqgD+SqI/O2+Ynw05kcFh5tWsHAZqXTwbFOpfc7RiAcIap8TcH1FCsoZU2bRBtRWKAerNxPaqOh3/7jAuAUJFLMuljp+z5kWiEJI4hHUjf1F3Knuy2oUrPuwDEQpp1REXLYbDdZnPmF8xoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D09F8DA7;
-	Tue, 24 Sep 2024 07:11:31 -0700 (PDT)
-Received: from [10.1.196.72] (e119884-lin.cambridge.arm.com [10.1.196.72])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 149F13F528;
-	Tue, 24 Sep 2024 07:10:59 -0700 (PDT)
-Message-ID: <645e5f3f-debf-4f68-ad75-4fb749b07a5b@arm.com>
-Date: Tue, 24 Sep 2024 15:10:58 +0100
+	 In-Reply-To:Content-Type; b=brGqmKbQvR8cKhYxhzfBWKAp+HkD6oV3tszK1xNJHeFulbFS81icpcq60L6RLwb+nw+IONL0M3kisdX8Cb7FuuWHNSZM+CKjj8Tj88lSlE5jyJbSNvGMTcx2C+kf1a3uxIRiIofVL6jmM9qQQz0pfdI2rVL3YrL9HOgN8tOUcfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=XYw9WTE9; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42cb5b3c57eso55758115e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:14:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727187253; x=1727792053; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cPqPAIRC4kzpvMVpwleDzWlqXHAHV6tKF2dStYetukg=;
+        b=XYw9WTE9y/XuNELY3ED+zr6P6fOTog7B3YF44ZrTWJbxXQKzCM6psHCqIwPvofXlzc
+         ms5iShVlDWTNLEZEt6rR7VZg615i94Q9AYYblYBuMsZw7y6WaJ1Vbvz+6l1HwoNUThnB
+         ehFoEVbLus2dNtT/RwMMHaKdXPFN2Js1AukRNyHQGSbsjOy0/+kcb6Fv1ejJW3217bCC
+         ssYkkEx6T/hAkW2e552DrCjbSXWtIXLqQ34++NwvueFVX5jUIGSsDDimgOs/kZwcdxTg
+         E9tJV/cPaXA/XRxvkRh1M9hh1sKCTrmumP5vgJDKF+HPro3PoHBRvluPeYJKmR2IXRds
+         PPfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727187253; x=1727792053;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cPqPAIRC4kzpvMVpwleDzWlqXHAHV6tKF2dStYetukg=;
+        b=MrEG7rjs8wtL3KjyduxsnygRilOGu81GXUXDtV7Oi2ix04TcB8PI9PxXUrA8LF5Ab9
+         KApqCC5KquZIUXgJystDSi4VN5VD0wHBpgleIs+vQ9Xa/Mo1gYAVjZtDNykL00rPjBam
+         Ujmgy1HMRbUy3dVrODC263b1J67QpyVq90C/cI0KOINqq92te1i5UGBs3i0Bl2NWkPmq
+         Bb4arIB03rRtaBAgnGERY+Cn4qrAum7Ym2OBg0QQ4v58AdHCnJOvZNbIefY1rkPV7pYP
+         ycamUIL5/il89VyDDcdTX9NwhhR7bgpyvwDv7GubYlq8d+gkIfrEa8L0+jnoOhqFSzRJ
+         +O+g==
+X-Forwarded-Encrypted: i=1; AJvYcCUYPneijERoPy2Wq+yGReKXQehXZUKzsRP/iTwmqogILNaC604IREAS6pmFcpWZzfdqiRZ3n/kF6D+Erlw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/KCxbdqMo7HX4O2evQiHz/GUsGWKwNstvdv4v0UxpDN3JKc+L
+	05j0GJuoBeqgj/xl7AmG0eT+UoeWJlEzi0NBsuaYrJ9/B/lsijLQQiP8m60IKDtK92wjArjIdeU
+	mU6Piqw==
+X-Google-Smtp-Source: AGHT+IGSYsWrKVwIe2oOw8UgUxMbvkjKQb/gIym3agpxcBX+5tTzqrrsLc3m+aKpdOUh4SQ0yvSzuA==
+X-Received: by 2002:a5d:47a8:0:b0:374:c6ad:a7c6 with SMTP id ffacd0b85a97d-37a431583e1mr10060570f8f.20.1727187252638;
+        Tue, 24 Sep 2024 07:14:12 -0700 (PDT)
+Received: from [10.2.5.157] (amontpellier-556-1-151-252.w109-210.abo.wanadoo.fr. [109.210.7.252])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e75450ec6sm157838835e9.21.2024.09.24.07.14.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Sep 2024 07:14:11 -0700 (PDT)
+Message-ID: <45f72533-ba1b-4531-890d-63d86a1f0ca4@baylibre.com>
+Date: Tue, 24 Sep 2024 16:11:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,109 +76,206 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/8] vdso: Introduce vdso/page.h
-To: Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
- Linux-Arch <linux-arch@vger.kernel.org>, linux-mm@kvack.org
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
- Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <20240923141943.133551-1-vincenzo.frascino@arm.com>
- <20240923141943.133551-5-vincenzo.frascino@arm.com>
- <f8256ade-c17f-46d1-bd4a-4d01235be5a0@app.fastmail.com>
+Subject: Re: [PATCH v3 05/10] iio: backend: extend features
+To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Nuno Sa <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Olivier Moysan <olivier.moysan@foss.st.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, dlechner@baylibre.com
+References: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-0-a17b9b3d05d9@baylibre.com>
+ <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-5-a17b9b3d05d9@baylibre.com>
+ <60610fe3e5885033c0a1d14db6e2f576367a2e44.camel@gmail.com>
 Content-Language: en-US
-From: Vincenzo Frascino <vincenzo.frascino@arm.com>
-In-Reply-To: <f8256ade-c17f-46d1-bd4a-4d01235be5a0@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Angelo Dureghello <adureghello@baylibre.com>
+In-Reply-To: <60610fe3e5885033c0a1d14db6e2f576367a2e44.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
 
-
-On 23/09/2024 17:54, Arnd Bergmann wrote:
-> On Mon, Sep 23, 2024, at 14:19, Vincenzo Frascino wrote:
->> The VDSO implementation includes headers from outside of the
->> vdso/ namespace.
+On 20/09/24 14:50, Nuno Sá wrote:
+> On Thu, 2024-09-19 at 11:20 +0200, Angelo Dureghello wrote:
+>> From: Angelo Dureghello <adureghello@baylibre.com>
 >>
->> Introduce vdso/page.h to make sure that the generic library
->> uses only the allowed namespace.
+>> Extend backend features with new calls needed later on this
+>> patchset from axi version of ad3552r.
 >>
->> Cc: Andy Lutomirski <luto@kernel.org>
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: Jason A. Donenfeld <Jason@zx2c4.com>
->> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-> 
-> Thanks for the new version. This looks all good, just some
-> very minor ideas for how to possibly improve the new version:
-> 
-
-Thanks Arnd.
-
->> +/* PAGE_SHIFT determines the page size */
->> +#define PAGE_SHIFT      CONFIG_PAGE_SHIFT
+>> The follwoing calls are added:
+>>
+>> iio_backend_ext_sync_enable
+>> 	enable synchronize channels on external trigger
+>> iio_backend_ext_sync_disable
+>> 	disable synchronize channels on external trigger
+>> iio_backend_ddr_enable
+>> 	enable ddr bus transfer
+>> iio_backend_ddr_disable
+>> 	disable ddr bus transfer
+>> iio_backend_set_bus_mode
+>> 	select the type of bus, so that specific read / write
+>> 	operations are performed accordingly
+>> iio_backend_buffer_enable
+>> 	enable buffer
+>> iio_backend_buffer_disable
+>> 	disable buffer
+>> iio_backend_data_transfer_addr
+>> 	define the target register address where the DAC sample
+>> 	will be written.
+>>
+>> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+>> ---
+>>   drivers/iio/industrialio-backend.c | 111 +++++++++++++++++++++++++++++++++++++
+>>   include/linux/iio/backend.h        |  23 ++++++++
+>>   2 files changed, 134 insertions(+)
+>>
+>> diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industrialio-
+>> backend.c
+>> index 20b3b5212da7..f4802c422dbf 100644
+>> --- a/drivers/iio/industrialio-backend.c
+>> +++ b/drivers/iio/industrialio-backend.c
+>> @@ -718,6 +718,117 @@ static int __devm_iio_backend_get(struct device *dev, struct
+>> iio_backend *back)
+>>   	return 0;
+>>   }
+>>   
+>> +/**
+>> + * iio_backend_ext_sync_enable - Enable external synchronization
+>> + * @back: Backend device
+>> + *
+>> + * Enable synchronization by external signal.
+>> + *
+>> + * RETURNS:
+>> + * 0 on success, negative error number on failure.
+>> + */
+>> +int iio_backend_ext_sync_enable(struct iio_backend *back)
+>> +{
+>> +	return iio_backend_op_call(back, ext_sync_enable);
+>> +}
+>> +EXPORT_SYMBOL_NS_GPL(iio_backend_ext_sync_enable, IIO_BACKEND);
 >> +
->> +#define PAGE_SIZE	(_AC(1,UL) << PAGE_SHIFT)
+>> +/**
+>> + * iio_backend_ext_sync_disable - Disable external synchronization
+>> + * @back: Backend device
+>> + *
+>> + * Disable synchronization by external signal.
+>> + *
+>> + * RETURNS:
+>> + * 0 on success, negative error number on failure.
+>> + */
+>> +int iio_backend_ext_sync_disable(struct iio_backend *back)
+>> +{
+>> +	return iio_backend_op_call(back, ext_sync_disable);
+>> +}
+>> +EXPORT_SYMBOL_NS_GPL(iio_backend_ext_sync_disable, IIO_BACKEND);
 >> +
->> +#if defined(CONFIG_PHYS_ADDR_T_64BIT) && !defined(CONFIG_X86_64)
->> +#define PAGE_MASK	(~((1 << PAGE_SHIFT) - 1))
->> +#else
->> +#define PAGE_MASK	(~(PAGE_SIZE-1))
->> +#endif
-> 
-> I would open-code the CONFIG_PAGE_SHIFT in PAGE_SIZE
-> and PAGE_MASK, just to avoid the extra indirection in the
-> preprocessor. This mainly has the benefit of slightly
-> shorter compiler warnings when all the macros get
-> traced back but can also slightly improve compile speed
-> in case this is used in deeply nested macros.
-> 
+>> +/**
+>> + * iio_backend_ddr_enable - Enable interface DDR (Double Data Rate) mode
+>> + * @back: Backend device
+>> + *
+>> + * Enabling DDR, data is generated by the IP at each front
+>> + * (raising and falling) of the bus clock signal.
+>> + *
+>> + * RETURNS:
+>> + * 0 on success, negative error number on failure.
+>> + */
+>> +int iio_backend_ddr_enable(struct iio_backend *back)
+>> +{
+>> +	return iio_backend_op_call(back, ddr_enable);
+>> +}
+>> +EXPORT_SYMBOL_NS_GPL(iio_backend_ddr_enable, IIO_BACKEND);
+>> +
+>> +/**
+>> + * iio_backend_ddr_disable - Disable interface DDR (Double Data Rate) mode
+>> + * @back: Backend device
+>> + *
+>> + * Disabling DDR data is generated byt the IP at rising or falling front
+>> + * of the interface clock signal (SDR, Single Data Rate).
+>> + *
+>> + * RETURNS:
+>> + * 0 on success, negative error number on failure.
+>> + */
+>> +int iio_backend_ddr_disable(struct iio_backend *back)
+>> +{
+>> +	return iio_backend_op_call(back, ddr_disable);
+>> +}
+>> +EXPORT_SYMBOL_NS_GPL(iio_backend_ddr_disable, IIO_BACKEND);
+>> +
+>> +/**
+>> + * iio_backend_buffer_enable - Enable iio buffering
+>> + * @back: Backend device
+>> + *
+>> + * Enabling the buffer, buffer data is processed and sent out from the
+>> + * bus interface.
+>> + *
+>> + * RETURNS:
+>> + * 0 on success, negative error number on failure.
+>> + */
+>> +int iio_backend_buffer_enable(struct iio_backend *back)
+>> +{
+>> +	return iio_backend_op_call(back, buffer_enable);
+>> +}
+>> +EXPORT_SYMBOL_NS_GPL(iio_backend_buffer_enable, IIO_BACKEND);
+>> +
+>> +/**
+>> + * iio_backend_buffer_disable - Disable iio buffering
+>> + * @back: Backend device
+>> + *
+>> + * Disabling the buffer, buffer data transfer on the bus interface
+>> + * is stopped.
+>> + *
+>> + * RETURNS:
+>> + * 0 on success, negative error number on failure.
+>> + */
+>> +int iio_backend_buffer_disable(struct iio_backend *back)
+>> +{
+>> +	return iio_backend_op_call(back, buffer_disable);
+>> +}
+>> +EXPORT_SYMBOL_NS_GPL(iio_backend_buffer_disable, IIO_BACKEND);
+>> +
+> IIRC, both me and Jonathan had some comments about the above 2 calls? Aren't they
+> about buffering? I think I mentioned something about using the same buffer ops as
+> typical IIO devices use.
 
-I will fix it in the next iteration.
+i have now separated iio_backend_ops, keeping buffer enable/disable
+for axi-ad3352r case only,
 
-> Without a comment, the special case for CONFIG_X86_64
-> not very clear, and probably not needed. If you are
-> worried about introducing an architecture specific
-> regression, I would suggest instead explaining the
-> possible issue in the patch description but using the
-> more generic and simpler #ifdef check.
-> 
+static const struct iio_backend_ops axi_dac_generic_ops = {
+     .enable = axi_dac_enable,
+     .disable = axi_dac_disable,
+     .request_buffer = axi_dac_request_buffer,
+     .free_buffer = axi_dac_free_buffer,
+     .extend_chan_spec = axi_dac_extend_chan,
+     .ext_info_set = axi_dac_ext_info_set,
+     .ext_info_get = axi_dac_ext_info_get,
+     .data_source_set = axi_dac_data_source_set,
+     .set_sample_rate = axi_dac_set_sample_rate,
+     .debugfs_reg_access = iio_backend_debugfs_ptr(axi_dac_reg_access),
+};
 
-If I do not add the #ifdef, it does not build. But you are right, I should have
-put a comment in the commit message.
+static const struct iio_backend_ops axi_ad3552r_ops = {
+     .enable = axi_dac_enable,
+     .read_raw = axi_dac_read_raw,
+     .request_buffer = axi_dac_request_buffer,
+     .data_source_set = axi_dac_data_source_set,
+     .ext_sync_enable = axi_dac_ext_sync_enable,
+     .ext_sync_disable = axi_dac_ext_sync_disable,
+     .ddr_enable = axi_dac_ddr_enable,
+     .ddr_disable = axi_dac_ddr_disable,
+     .buffer_enable = axi_dac_buffer_enable,
+     .buffer_disable = axi_dac_buffer_disable,
+     .data_format_set = axi_dac_data_format_set,
+     .data_transfer_addr = axi_dac_data_transfer_addr,
+};
 
-Regression below:
 
-drivers/gpu/drm/i915/gt/intel_gt_print.h:29:36: error: format ‘%lx’ expects
-argument of type ‘long unsigned int’, but argument 6 has type ‘u32’ {aka
-‘unsigned int’} [-Werror=format=]
-   29 |         drm_dbg(&(_gt)->i915->drm, "GT%u: " _fmt, (_gt)->info.id,
-##__VA_ARGS__)
-      |                                    ^~~~~~~~
-include/drm/drm_print.h:424:39: note: in definition of macro ‘drm_dev_dbg’
-  424 |         __drm_dev_dbg(NULL, dev, cat, fmt, ##__VA_ARGS__)
-      |                                       ^~~
-include/drm/drm_print.h:524:33: note: in expansion of macro ‘drm_dbg_driver’
-  524 | #define drm_dbg(drm, fmt, ...)  drm_dbg_driver(drm, fmt, ##__VA_ARGS__)
-      |                                 ^~~~~~~~~~~~~~
-linux/drivers/gpu/drm/i915/gt/intel_gt_print.h:29:9: note: in expansion of macro
-‘drm_dbg’
-   29 |         drm_dbg(&(_gt)->i915->drm, "GT%u: " _fmt, (_gt)->info.id,
-##__VA_ARGS__)
-      |         ^~~~~~~
-drivers/gpu/drm/i915/gt/intel_gt.c:310:25: note: in expansion of macro ‘gt_dbg’
-  310 |                         gt_dbg(gt, "Unexpected fault\n"
-      |                         ^~~~~~
+could this be good ?
 
-I am open to alternative suggestions.
 
->       Arnd
+> - Nuno Sá
 
--- 
 Regards,
-Vincenzo
+Angelo
+
 
