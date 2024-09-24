@@ -1,96 +1,84 @@
-Return-Path: <linux-kernel+bounces-336853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB8FD9841C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:13:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ACF89841CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBB101C2498B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:13:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B2E01C23127
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F140F1547D8;
-	Tue, 24 Sep 2024 09:12:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B7FE154C0E;
+	Tue, 24 Sep 2024 09:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tWuEqDAv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Za+zMia/"
+Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56EC814A604;
-	Tue, 24 Sep 2024 09:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC4814F102
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727169168; cv=none; b=RX8xxgxWWiq4z86tMItdP1htxeQuYX9bqnd6ZbJJNTFzKXTadzZ+P0u6QsTPLLB2YQ/4W/qLn3/8ivUmTYDJF+pORBfdsGv4DuTRN8IHD+QqbBUQUfeoChU5XoYQ2NVMrIAqn1XLmtlLjS9glsp6BdCQBhqxHwrOZaZknib6v2Y=
+	t=1727169262; cv=none; b=XwSsZ8KOdsVVUz9ZgGcr3vmGuEU0das73+yTZD8rv+/zo5tO3NUpA4qhYqrexcmO79jRId8504r5sgICyWVVr56IhuxmqCd1yBoKtuTBLt938CdgVH/V8yslWqiZeBjAsvnJmDe8v9Or4ZAjkYcqAZELyea3IA38Q4XR4fHqg+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727169168; c=relaxed/simple;
-	bh=OWP93lxMU7Kz7NXhHpQx1nS5UtQYEswveLq4GJOZPeA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oHf+fHhbI6uTgSKE9temhHwpXE0wrPGfqpuGubX5v2LEIzTe4ub+nI4fDv/XE++OVjUOgBgea2FO2Z9GaIr7Er7SXeyr+LQplygSrdAZy30NDGbXUlwztUwVSj4kEq/GUoCwEp0LI7rXhx5ZHSNLgMdIQE1YB28HB4u1PG55U+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tWuEqDAv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 147DFC4CEC6;
-	Tue, 24 Sep 2024 09:12:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727169167;
-	bh=OWP93lxMU7Kz7NXhHpQx1nS5UtQYEswveLq4GJOZPeA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tWuEqDAvLDmw+g74otC7+T/ALm+AaCx1SFASlCaSbJk0UYwqeGeXw5lH63uAOihzG
-	 M6+/VdXUfX1qwTTNJsaXeVZM4jSczGcEfB+6/suJQeWfFPLjqJNpJhywOvFvi2l0Iy
-	 pFiT0xg1thDnu+RAVaqZa1AuVa7cWCTMsc1nLxecD0EX+/ctZsBnK7KAezw1U3XJig
-	 p0FHHhQAh1ulnvR2TwCfo/VHePqibUD5FnkmfkNotszk+d7Q/S6Od7pMZLL6x7umt4
-	 8vjUSReu3lGW5tGaaOgFU9O19E41UKz8rRNveEtg0Pny1rKA0uKtEe1xUGq6WQereq
-	 Pvaw4Zo5bhDYQ==
-Date: Tue, 24 Sep 2024 11:12:44 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: mmc: controller: allow node name to
- be named slot@*
-Message-ID: <qt3ivwsa3uaidcgkzbd2ewohbyd6zbzseraihftdhxpziuhnpq@xsne3f4wdfua>
-References: <20240920-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v2-0-5aa8bdfe01af@linaro.org>
- <20240920-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v2-1-5aa8bdfe01af@linaro.org>
+	s=arc-20240116; t=1727169262; c=relaxed/simple;
+	bh=gpafSpem4HB2dPyhl/6Bj9nqfP/ORi7C7BNrIIUafno=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HoXMUua/+GmyxZo3CLbt9WCLG3mGTWb84PlnQPw1nMunJX9exCq1UKNY+ewpYcEMgp7Wc9i7uI2lnRXMcw7CSbW5msaWkClUKl3FtzA+WYeTbZ8bXBXH9EGAylVJywPd0jhNgF6pugcAU7fIeEAl5KxiZ/a7jRIbsJW9DnaDdyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Za+zMia/; arc=none smtp.client-ip=95.215.58.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727169258;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=nFHd29R/rsH2fVSDacZDI+gbua1g6h18VtoviUxOb4g=;
+	b=Za+zMia/NZyUlnhNsw1eNO9V47VIshtv/BeOEChBcxEdrgMZIc0SL99zvA2EAlBjF3ZN0d
+	eUDDT0gaE7HV7E3w1+/ExD13aD7c/kAYQrm5Cy9118xsTV+CAUaD7i+2J4VrLvJKU536uM
+	3Rj6HdLaS4QAfe+Rosd9dTfIFSDXnpM=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] MAINTAINERS: Add kernel hardening keywords __counted_by{_le|_be}
+Date: Tue, 24 Sep 2024 11:12:49 +0200
+Message-ID: <20240924091248.238698-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240920-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v2-1-5aa8bdfe01af@linaro.org>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Sep 20, 2024 at 10:38:03AM +0200, Neil Armstrong wrote:
-> In preparation of supporting the mmc-slot subnode, allow
-> the nodename to be either mmc@ or mmc-slot@
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  Documentation/devicetree/bindings/mmc/mmc-controller.yaml | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/mmc-controller.yaml b/Documentation/devicetree/bindings/mmc/mmc-controller.yaml
-> index 58ae298cd2fc..f797c32ea688 100644
-> --- a/Documentation/devicetree/bindings/mmc/mmc-controller.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/mmc-controller.yaml
-> @@ -20,7 +20,9 @@ description: |
->  
->  properties:
->    $nodename:
-> -    pattern: "^mmc(@.*)?$"
-> +    oneOf:
-> +      - pattern: "^mmc(@.*)?$"
-> +      - pattern: "^slot(@.*)?$"
+In addition to __counted_by, also match the keywords __counted_by_le and
+__counted_by_be.
 
-I don't think mmc-slot is allowed by this.
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This should be squashed with mmc-slot child patch. It does not make
-sense to allow mmc-slots if there are no mmc-slots.
-
-Best regards,
-Krzysztof
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 911d573f7779..aff8b04b5eac 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12293,7 +12293,7 @@ F:	lib/usercopy_kunit.c
+ F:	mm/usercopy.c
+ K:	\b(add|choose)_random_kstack_offset\b
+ K:	\b__check_(object_size|heap_object)\b
+-K:	\b__counted_by\b
++K:	\b__counted_by(_le|_be)?\b
+ 
+ KERNEL JANITORS
+ L:	kernel-janitors@vger.kernel.org
+-- 
+2.46.1
 
 
