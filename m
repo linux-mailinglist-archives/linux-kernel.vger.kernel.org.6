@@ -1,114 +1,152 @@
-Return-Path: <linux-kernel+bounces-336644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F253D983D6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:57:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A554983D96
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:09:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4BB8281858
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 06:57:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D00E41F20F47
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:09:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C307E824A0;
-	Tue, 24 Sep 2024 06:57:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DDED12D1F1;
+	Tue, 24 Sep 2024 07:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="K1SVnSB5"
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="xxM/CGGe"
+Received: from out203-205-221-149.mail.qq.com (out203-205-221-149.mail.qq.com [203.205.221.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A50481B3
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 06:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC02312C52E;
+	Tue, 24 Sep 2024 07:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727161020; cv=none; b=SZAJB4GkXlZGkK1bYmpQBMWOdcdV6Fank8j/+uPLtZuF/N94D9Vc6vEg7WjhSOQI2Nwo7kyTJ9U4udRxSNK5cvZDLEVL+Nr8Qg0lCg3HNwlDSddnk9UJAMJ7ReCKxIpCx2ucKy8qZn7sdadqUaSIQIEczCDjJ/2LEDU2bGvvZQA=
+	t=1727161780; cv=none; b=WsXFmA/9TxvzMUz8xkCMWxtUZSCPrP04+uLH/F/jBS0TVEW5NjeIR3YEOKu4XG9ZxWxEC3y/ocfCdDYhbQ8f8qrX6Kexpwnbc/D6/08/Vgd0uD6LjoY8/Wy9g1UycgnRvcuSV8sFn5izhLWOxlvtzRQkfOL9zBJEumBokYcl7Ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727161020; c=relaxed/simple;
-	bh=rZCmcKHKcYg+MlUJLS8/2Z+mZZnt6STAuG+4AaRUi+g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xn6xERPGtCY6iE097ZU28nEL6N0m0T+euUf3lfOGlDEOKZdkWhqd6w9Jl6Hw2gsPv3fZOYZ0UpFy5qaJByVQzdihHzjPFHgw3/iQbMo1/2d+p9+WWwZJduYtXCRrP5lA846LW4k4hha2QLfin+cC67jx3ZRH8ZunJJCyiy6V5QQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=K1SVnSB5; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3e033e66a31so3209237b6e.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 23:56:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727161018; x=1727765818; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jmU1v9KX4n6GLJqBkkbAiLzfM4YZaK2LngCXnM7X3Yc=;
-        b=K1SVnSB5JFEHbZD4lu82TjIaYJYEUeKm2bjgAsIv1vK3wDgm0gwaYf2k03V8DREeLt
-         HZrcH94cOc+8OQVbyU04kQz3Rbj48OyD2l0kNdTT0zE+lFjlAAVerZPhBcranMKWm0fH
-         rOFdv0qSSmTBmVkUW7dtWOsHF6QxPgTR2ZDQk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727161018; x=1727765818;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jmU1v9KX4n6GLJqBkkbAiLzfM4YZaK2LngCXnM7X3Yc=;
-        b=TDDL/esMSgxJQuUUR/NnY02QeI7xE9IT2P+tO5owRqdNlbDyiDfN4/0CbYl9q06eT3
-         76+sNPtu4iFGYdxxAgY3iiDOAZCZ2dpOM+7oRFJVHL6S8zarPTGopAu+yGrqlGgf7fRT
-         5Bx+gVuo95pJmh/4/4ilufDbKDGWASn3Sj1jYbjBn+I4yVkRx/xBmyBJ+PJSgT/3aaTE
-         SFLTgi5EA2RQfck7AWCG8+KO6PRl9k21XrrLZfJoo6GuytJJQeARcfzeSmSWGi6LEjav
-         zoqjKeAwYFHNGUvVHTZaebRnM57GKt7WvbRK+IYdc5PzNj4AtIPkYK+KAuLDxiTrxdzp
-         rt3g==
-X-Forwarded-Encrypted: i=1; AJvYcCWo53Jdcy5sfxPE1rkaLQpiea1MrMxaTIgmZxeoDESi3FnOSmzmuUkRSiA5gpzFq4zTLE0YNIHbOA+2FDc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIFJ8s7iBQPnPS708o1ZOqxEgBX4WjDZtdchOp5z5nLl2g+Cqj
-	1Oyo5qgOPkxU6ZbYOO1GAXLj2spbbtVFIX62pqaGZSAL8iQF3z/NhoEV/7qRGA==
-X-Google-Smtp-Source: AGHT+IG7hYRPMTRkHU1EalQzBqR1bwxDO/fhEf0IjTgWkuptwoVgLofvxpc27W/PHGhYwCMTqFpxOQ==
-X-Received: by 2002:a05:6808:1401:b0:3e0:4dbc:34f7 with SMTP id 5614622812f47-3e2729334b1mr8520782b6e.21.1727161017759;
-        Mon, 23 Sep 2024 23:56:57 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:93d1:1107:fd24:adf0])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6b7c4f04esm566711a12.44.2024.09.23.23.56.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 23:56:57 -0700 (PDT)
-Date: Tue, 24 Sep 2024 15:56:53 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Andrey Skvortsov <andrej.skvortzov@gmail.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2] mm: do not export const kfree and kstrdup variants
-Message-ID: <20240924065653.GQ38742@google.com>
-References: <20240924050937.697118-1-senozhatsky@chromium.org>
- <ZvJfhDrv-eArtU8Y@infradead.org>
+	s=arc-20240116; t=1727161780; c=relaxed/simple;
+	bh=7PqOZ2exGA950VzYSvAYI+wOZWeCtIvMo1PDwY6ibqM=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=pMKAslHpcETl8CH/i8NQl8V+EBcc0cmcOh1f+J+GpvNRxYBZRNK22u7wrkNTVtTcCgRnRbCH90ehOknWqPXqwldVk/0WCafhbEM7xb8k0gDGrV2gsGmbtkAz+9yEdPs49zZ57DFO9kJzELo289EX7MxBEeOwvqeM/ZTv9/sK0SM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=xxM/CGGe; arc=none smtp.client-ip=203.205.221.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1727161469;
+	bh=6nLDi1GI6gjWb57haYeBALrQCo0jbnuR0Q8IBtjPb6k=;
+	h=From:To:Cc:Subject:Date;
+	b=xxM/CGGeZFOQJzdGRsVMDetTJl7NL+QGh89EEvx7aD5SIJOwETmNPGumgHrrHlExv
+	 Qcy+n6dELK/7qV+JvoW5VB8zB9XZm1NEotZpG2d/sxjoB0XQFtyTqFD4/tZmUr8KgJ
+	 ZCdnOQLIrxfRl8VgO5jz8sPaMkb1nIGNsSrsJt/Y=
+Received: from localhost.localdomain ([114.246.200.160])
+	by newxmesmtplogicsvrszb9-1.qq.com (NewEsmtp) with SMTP
+	id E851F86C; Tue, 24 Sep 2024 14:58:05 +0800
+X-QQ-mid: xmsmtpt1727161085tvessbuja
+Message-ID: <tencent_3B2F4F2B4DA30FAE2F51A9634A16B3AD4908@qq.com>
+X-QQ-XMAILINFO: NkHKfw09D6j8h3BDT/nk5cUn7vudnWTLFitphfOtfD6IgKl+cJ+ovaa6iG8p6x
+	 u+9PxjL2EYRBujeEJYANg9ACEaBBZprTnzje/UDCUqlsiLe/fxLnatFS2lUqJM8ZF1/UUn5js2Pe
+	 sblq3oqoclwq1OsoSv+6Byh1CY3Jy5vUeHO2pGqiC0DtjuIGqkrPhpkn8spukHU9EuXbdYpA8M0o
+	 jrd9Y5pUunzeOlVj3aGnufkqxrXptsDk6Tfa0lJy9SBkZKnisSOfaFQFGy95tTUhszHYSlwrIPgs
+	 z/YzdagMwRMyDDa0LkKcqz1GRRoJIBX5E9G6QqUV2RXNZ+qddG9nDamuhiShWbjeX6w6+V08auIR
+	 AnL6u1GKyDkS13c3BVvdzdXUnSfhzlY2YnlMHkKW8t35rVzJTQHvPxLlhjgKZ+WPl1A+2BTlCTQI
+	 2mAqGE6xb4VOLzRDo7xz6F8v1ClJqYhJ/B+Uy+MyEP0BZiIv1/4ni3Wj6fwe5xV1mLWpTYZX0mzk
+	 4aYwRlLONT6NbPXHbwW9+mNRkOC/8PlYsBqgJV/43ejcUBpAlbz2e14MyBaKJpfeiT3nWlkrVRWG
+	 CR9bzAhaH0bT+HbL2GMH+Q3+voNGdJOyr/mW1hWYA7tvnAcmmVR4hqDQvc0an/Catvnf94xwP5s7
+	 Oh+8xy/xxdOnQPdeixZkgWZ0jSPelSf8zvc3NzVBDdfiPyhfqBWOaGicGWhShS044QoJ9M1Rg+RY
+	 0CruCcraxzimgC4dpMjpk55TzvLFl6IL+TvoFteNO5YfBCMC5k6KOaJH+9s69WVevTg356oZxtPZ
+	 hOqv/qUFgqWB2Xiu+Lv4cdFmqnGIDW5HCnAL3MHbDhM1zXEnMli3kfZ3v/QSGoDCymTuz+CBtAys
+	 p1a6B/Udcy6u62POmvPMVO1bcLQ+q1S0d2eohdrw4IGoXaTP02jfvaqu6dBeTnI7OiH+gprhY+j5
+	 ZF25raOutUklObzxc8MnTvyGkp87m4+hj3+lGYuAOCxh1yQ3mRdgHoV6kCVSzCSBi0ccBj9/HLQp
+	 6MLXYsPwN2A0JbMfVViMjhkoVTGeo=
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: Jiawei Ye <jiawei.ye@foxmail.com>
+To: stefan@datenfreihafen.org
+Cc: alex.aring@gmail.com,
+	davem@davemloft.net,
+	david.girault@qorvo.com,
+	edumazet@google.com,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-wpan@vger.kernel.org,
+	miquel.raynal@bootlin.com,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	przemyslaw.kitszel@intel.com,
+	stable@vger.kernel.org
+Subject: [PATCH v3] mac802154: Fix potential RCU dereference issue in mac802154_scan_worker
+Date: Tue, 24 Sep 2024 06:58:05 +0000
+X-OQ-MSGID: <20240924065805.2106689-1-jiawei.ye@foxmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZvJfhDrv-eArtU8Y@infradead.org>
+Content-Transfer-Encoding: 8bit
 
-On (24/09/23 23:43), Christoph Hellwig wrote:
-> On Tue, Sep 24, 2024 at 02:08:37PM +0900, Sergey Senozhatsky wrote:
-> > Both kfree_const() and kstrdup_const() use __start_rodata
-> > and __end_rodata, which do not work for modules.  This is
-> > especially important for kfree_const().  Stop exporting
-> > these functions, as they cannot be used in the modules.
-> 
-> Well, they do work when called from modules, they just don't work
-> on constant data that is in modules.   There's also plenty of
-> existing callers in modules.
-> 
-> So just unexporting them is going to break.   The API is kinda
-> horrible, but an implementation to check for constants in modules
-> would also be quite horrible.  So I don't have a good answer here,
-> but simply unexporting them is not going to cut it.
+In the `mac802154_scan_worker` function, the `scan_req->type` field was
+accessed after the RCU read-side critical section was unlocked. According
+to RCU usage rules, this is illegal and can lead to unpredictable
+behavior, such as accessing memory that has been updated or causing
+use-after-free issues.
 
-Totally agree with all the points, I haven't looked at how
-popular that API was before sending out the patch.  Is there
-some sort of "built time const" but for strings that we, perhaps,
-can add to kfree_const() (and make kfree_const() always inline)?
-So that we can turn this
+This possible bug was identified using a static analysis tool developed
+by myself, specifically designed to detect RCU-related issues.
 
-	str = "boom";
-	...
-	kfree_const(str);
+To address this, the `scan_req->type` value is now stored in a local
+variable `scan_req_type` while still within the RCU read-side critical
+section. The `scan_req_type` is then used after the RCU lock is released,
+ensuring that the type value is safely accessed without violating RCU
+rules.
 
-into a safe scenario for modules.
+Fixes: e2c3e6f53a7a ("mac802154: Handle active scanning")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jiawei Ye <jiawei.ye@foxmail.com>
+Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+---
+Changelog:
+
+v1 -> v2:
+- Repositioned the enum nl802154_scan_types scan_req_type declaration
+between struct cfg802154_scan_request *scan_req and struct
+ieee802154_sub_if_data *sdata to comply with the reverse Christmas tree
+rule.
+
+v2 -> v3:
+- Add Cc stable tag and Acked-by.
+---
+ net/mac802154/scan.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/net/mac802154/scan.c b/net/mac802154/scan.c
+index 1c0eeaa76560..a6dab3cc3ad8 100644
+--- a/net/mac802154/scan.c
++++ b/net/mac802154/scan.c
+@@ -176,6 +176,7 @@ void mac802154_scan_worker(struct work_struct *work)
+ 	struct ieee802154_local *local =
+ 		container_of(work, struct ieee802154_local, scan_work.work);
+ 	struct cfg802154_scan_request *scan_req;
++	enum nl802154_scan_types scan_req_type;
+ 	struct ieee802154_sub_if_data *sdata;
+ 	unsigned int scan_duration = 0;
+ 	struct wpan_phy *wpan_phy;
+@@ -209,6 +210,7 @@ void mac802154_scan_worker(struct work_struct *work)
+ 	}
+ 
+ 	wpan_phy = scan_req->wpan_phy;
++	scan_req_type = scan_req->type;
+ 	scan_req_duration = scan_req->duration;
+ 
+ 	/* Look for the next valid chan */
+@@ -246,7 +248,7 @@ void mac802154_scan_worker(struct work_struct *work)
+ 		goto end_scan;
+ 	}
+ 
+-	if (scan_req->type == NL802154_SCAN_ACTIVE) {
++	if (scan_req_type == NL802154_SCAN_ACTIVE) {
+ 		ret = mac802154_transmit_beacon_req(local, sdata);
+ 		if (ret)
+ 			dev_err(&sdata->dev->dev,
+-- 
+2.34.1
+
 
