@@ -1,152 +1,158 @@
-Return-Path: <linux-kernel+bounces-337175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D423F98464E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:01:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98195984653
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:02:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BE73B22CDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:01:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5731E284829
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A821A7258;
-	Tue, 24 Sep 2024 13:01:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D5E15575C;
+	Tue, 24 Sep 2024 13:02:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EZOrhIEr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HTFq2TY7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7621B85DD;
-	Tue, 24 Sep 2024 13:01:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2B81B85DD
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 13:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727182866; cv=none; b=OW/9YVpJ0/W1rjrA2dWemWZPYWGqtDHf6JZ8N9awCMY1SGFipNCiLe1CrdWILwUl319GrbIxQljE5R0DDfnztN8XDFkMtdiYlGrFy/bPn2ntaevCyImMm6dd1jE+NR34MwCqQ73DqRhBw+Q6uIxGPgIw3GQ+sd32kqyBsR3/dM0=
+	t=1727182945; cv=none; b=b+VGWmHE3w2EzoCLjKRkpU2gCP8Wa4V+u5WHEBHx/vhJfTMymdfOmsOFAbjsc1rQF4h+xcLM0tb9NiZ83CGCy0MY+PPTC4FL2lnNKf3QVGx7WQe75tkaTooeJuhxLbTX3P51El/VlCr0n+QoszWoFglxTks5MUf/JkTTBDYSZWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727182866; c=relaxed/simple;
-	bh=OakmT0sLzny8R4JiJYYxGXCumP8RVBEVBkER1UAFCqc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ejbNbUrblvOlBkT2UTme3J744XnPE6YNG/Si5R3Ik+OZwPaNHPC+8AArxBKTv/19MpAWkXDLH6wav4Vit0MuQAodIqNsitULIdEURCa9oqW1kOcjXezCvMz9hK0YxZ642ssG9w6NuLF4QmIeZ7zC7R1qmAwYMwlk+0XA+UJVBJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EZOrhIEr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF214C4CEC4;
-	Tue, 24 Sep 2024 13:01:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727182865;
-	bh=OakmT0sLzny8R4JiJYYxGXCumP8RVBEVBkER1UAFCqc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=EZOrhIEr2zgqlMHomrBGjn4qf2AhbOE/5eB6mnm/2fuMtMJ+ZgpprUbomnoTqy7hw
-	 r845phN3j3ryzwrH2oXkLMqqrumYvGXzTZfHVZpbDthcvk5Co+iBR1CYw9D9ouqE/b
-	 S2vajtRzNG2NBx7rDe9ELDr3c7gwBmoPDeYzuRcPQ0lsg6xuk9/x5ydgxqIxvHhA3H
-	 NyvraLkHZlKLx73aIrpNLGuZdvHu0WCxU4h4Xkjook5JGxWETUEEvm6Pa44qnp0Xj+
-	 y+D8ma5QUUc8fVqqVHPKUHghpVWrRgPY/uBJ+hDsN5SDWocjSK8eIxfOXB1fnjliL8
-	 UIHsflQBF+d+Q==
-Date: Tue, 24 Sep 2024 15:00:58 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Igor Mammedov <imammedo@redhat.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
- <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
- <anisinha@redhat.com>, Cleber Rosa <crosa@redhat.com>, Dongjiu Geng
- <gengdongjiu1@gmail.com>, Eric Blake <eblake@redhat.com>, John Snow
- <jsnow@redhat.com>, Markus Armbruster <armbru@redhat.com>, Michael Roth
- <michael.roth@amd.com>, Paolo Bonzini <pbonzini@redhat.com>, Peter Maydell
- <peter.maydell@linaro.org>, Shannon Zhao <shannon.zhaosl@gmail.com>,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org, qemu-arm@nongnu.org,
- qemu-devel@nongnu.org
-Subject: Re: [PATCH v10 00/21] Add ACPI CPER firmware first error injection
- on ARM emulation
-Message-ID: <20240924150058.4879abe9@foz.lan>
-In-Reply-To: <20240917141519.57766bb6@imammedo.users.ipa.redhat.com>
-References: <cover.1726293808.git.mchehab+huawei@kernel.org>
-	<20240917141519.57766bb6@imammedo.users.ipa.redhat.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1727182945; c=relaxed/simple;
+	bh=UhRVDL0yVld4KIPEEaCC7BuTVu/aur9u01fhVYVCJLg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FD/Tyjg+y/WixOw2H30/6NxNWrO2P1k72NvyAp9qlq6jXycRyyr+gveRCK0bbWN0c9bW91GwKVpqoz/PbOQiZf59DrH89giJE643V9ex3RxpLJdKsk6Kja6cFRxafqTtmNOmCm2BwJQeMixkEaVT6cCHUW6W/vNl9oBvsohzDjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HTFq2TY7; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727182942;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=B8171xBnxXFgUA3dn4SJGjvuiXkwJh1OWHV6K1spTTs=;
+	b=HTFq2TY7R0CkfxcLCLmqh9djyXROjxUG06DhGd0MvJfdeNv4i7Ajev8DmaTCbXmZrrwN4W
+	Y3pmU509qm7+tZQX9X4IzGT826w6hW4CM2tVrDyMBy2h4n7npj9N//7W3vpmN7up5n/eBc
+	ZOt3d9TjRHLvlloT7yS/SGsl9xALoLM=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-423-ZKU9ZzpCN-G2tdjpz5bMQw-1; Tue, 24 Sep 2024 09:02:21 -0400
+X-MC-Unique: ZKU9ZzpCN-G2tdjpz5bMQw-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42cb33e6299so36346235e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 06:02:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727182940; x=1727787740;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B8171xBnxXFgUA3dn4SJGjvuiXkwJh1OWHV6K1spTTs=;
+        b=cKlsVRMY+iO34h44WDypZ2hn8qIOZ7vT0qoEytucU5j3FPco0MnxY8jHSg8Fbk4Y5Y
+         N0JeIQ9XepnPKheKyz2dMHr2RGE0mKmvMEbpNb6nsJhRMRJsB9+mYFEjrcSVHGdnVdxf
+         phx9jnaxhScpC2NQ3StOgnNLfCcPtOSjLIr95RsH0Uik3SrQeUehYZMCrP4XMvGwZsP0
+         54TPVEg2GGmWWwtJWcpjwXD3dBzoI5LH21DDAnDctj6O3GpAHmz4h26sqFAxWZ596gT3
+         1iynsIx86nq7MQ9t9CRCsIpqitWz3bBv1NA0zt37zoUPf4S+yUNH7bfZycGDv1latOCk
+         pKnA==
+X-Gm-Message-State: AOJu0YwJqsamcfElDi8hqy2qT2hfbPHvAmoI/HI/xSNYTluvUiduL1bu
+	+6yUlMhc5oxjzJpzS3cdOEHloCOxkdreBtlwzhErp2fyERR0V2oAvperL+CoWOkkMvHiSUoGT9h
+	P8ZcZSN48Ua5Hs4SLU/ZVs+wAPurqeIrzX4LnSxuvV5oCFYuQkAhA5VWzny0QEQ==
+X-Received: by 2002:a05:600c:4695:b0:42c:ae30:fc4d with SMTP id 5b1f17b1804b1-42e7abe12b1mr124959575e9.7.1727182939988;
+        Tue, 24 Sep 2024 06:02:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH3CIa9EWtG/qdw/omrcXn3MG+Eg2+wuyw2pj/6X69axFAIYupjIGMR7g73XzhN58JyBieXkw==
+X-Received: by 2002:a05:600c:4695:b0:42c:ae30:fc4d with SMTP id 5b1f17b1804b1-42e7abe12b1mr124959285e9.7.1727182939592;
+        Tue, 24 Sep 2024 06:02:19 -0700 (PDT)
+Received: from [10.202.151.204] (nat-pool-brq-u.redhat.com. [213.175.37.12])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cbc2cec13sm1525835f8f.51.2024.09.24.06.02.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Sep 2024 06:02:16 -0700 (PDT)
+Message-ID: <b2ba0bb1-20b0-4368-9585-38ad4764c634@redhat.com>
+Date: Tue, 24 Sep 2024 15:02:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 13/13] mm: pgtable: remove pte_offset_map_nolock()
+To: Qi Zheng <zhengqi.arch@bytedance.com>, hughd@google.com,
+ willy@infradead.org, muchun.song@linux.dev, vbabka@kernel.org,
+ akpm@linux-foundation.org, rppt@kernel.org, vishal.moola@gmail.com,
+ peterx@redhat.com, ryan.roberts@arm.com, christophe.leroy2@cs-soprasteria.com
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
+References: <cover.1727148662.git.zhengqi.arch@bytedance.com>
+ <8eb7fcecf9ed8268980d0bd040c0a4f349cbca8f.1727148662.git.zhengqi.arch@bytedance.com>
+Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <8eb7fcecf9ed8268980d0bd040c0a4f349cbca8f.1727148662.git.zhengqi.arch@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Em Tue, 17 Sep 2024 14:15:19 +0200
-Igor Mammedov <imammedo@redhat.com> escreveu:
-
-> I'm done with this round of review.
+On 24.09.24 08:10, Qi Zheng wrote:
+> Now no users are using the pte_offset_map_nolock(), remove it.
 > 
-> Given that the series accumulated a bunch of cleanups,
-> I'd suggest to move all cleanups/renamings not related
-> to new HEST lookup and new src id mapping to the beginning
-> of the series, so once they reviewed they could be split up into
-> a separate series that could be merged while we are ironing down
-> the new functionality. 
+> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+> Reviewed-by: Muchun Song <muchun.song@linux.dev>
+> ---
 
-I've rebased the series placing the preparation stuff (cleanups
-and renames) at the beginning. So, what I have now is:
+Acked-by: David Hildenbrand <david@redhat.com>
 
-1) preparation patches:
+-- 
+Cheers,
 
-41709f0898e1 acpi/ghes: get rid of ACPI_HEST_SRC_ID_RESERVED
-5409daa41c78 acpi/ghes: simplify acpi_ghes_record_errors() code
-2539f1f662b9 acpi/ghes: better handle source_id and notification
-3f19400549c1 acpi/ghes: Remove a duplicated out of bounds check
-f0b06ecede46 acpi/ghes: Change the type for source_id
-9f08301ac195 acpi/ghes: Prepare to support multiple sources on ghes
-2426cd76e868 acpi/ghes: make the GHES record generation more generic
-3fb7ec864700 acpi/ghes: better name GHES memory error function
-1a22dad3211e acpi/ghes: don't crash QEMU if ghes GED is not found
-726968d4ee20 acpi/ghes: rename etc/hardware_error file macros
-f562380da7ce docs: acpi_hest_ghes: fix documentation for CPER size
-69850f550f99 acpi/generic_event_device: add an APEI error device
+David / dhildenb
 
-Patches were changed to ensure that they won't be add any new
-new features. They are just code shift in order to make the diff
-of the next patches smaller.
-
-There is a small point here: the logic was simplified to only
-support a single source ID (I added an assert() to enforce it) and
-simplified the calculus in preparation for the HEST and migration
-series.
-
-
-2) add a BIOS pointer to HEST, using it. The migration stuff
-will be along those:
-
-c24f1a8708e3 acpi/ghes: add a firmware file with HEST address
-853dce23ec39 acpi/ghes: Use HEST table offsets when preparing GHES records
-c148716fd7c8 acpi/generic_event_device: Update GHES migration to cover hest addr
-
-Up to that, still no new features, but the offset calculus will be
-relative to HEST table and will use the bios pointers stored there;
-
-3) Add support for generic error inject:
-
-f5ec0d197d82 acpi/ghes: add a notifier to notify when error data is ready
-f5e015537209 arm/virt: Wire up a GED error device for ACPI / GHES
-3b6692dbf473 qapi/acpi-hest: add an interface to do generic CPER error injection
-620a5a49f218 scripts/ghes_inject: add a script to generate GHES error inject
-
-4) MPIDR property:
-2dd6e3aae450 target/arm: add an experimental mpidr arm cpu property object
-02c88cd4daa2 scripts/arm_processor_error.py: retrieve mpidr if not filled
-
-I'm still testing if the rebase didn't cause any issues. So, the above
-may still change a little bit. I also need to address your comments to the
-cleanup patches and work at the migration, but just want to double check if
-this is what you want.
-
-If OK to you, my plan is to submit you the cleanup patches after I
-finish testing the hole series.
-
-The migration logic will require some time, and I don't want to bother
-with the cleanup stuff while doing it. So, perhaps while I'm doing it,
-you could review/merge the cleanups.
-
-We can do the same for each of the 4 above series of patches, as it
-makes review simpler as there will be less patches to look into on
-each series.
-
-Would it work for you?
-
-Thanks,
-Mauro
 
