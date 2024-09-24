@@ -1,62 +1,56 @@
-Return-Path: <linux-kernel+bounces-337695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A80F8984DC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:28:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6178984DCA
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:29:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7EB4B233D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:28:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 581E41F241E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:29:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4D414A62F;
-	Tue, 24 Sep 2024 22:28:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DBF7155A34;
+	Tue, 24 Sep 2024 22:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nkyw7TgU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H3Ic/izS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5BB146A7B;
-	Tue, 24 Sep 2024 22:28:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC339155733;
+	Tue, 24 Sep 2024 22:28:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727216921; cv=none; b=jJ1t06ZNqu2Y8qfyvUkSrjabl1kRWEpmStZfKFggm8LmxjUWwc/atC9HAGLqNMHn4x+B+oFAX0R6vUNyY474guFCHqoarlyI+O5IwYFugYbSccKdTxj2qqF4nGlDuBsR9AWRvPgEEVxBiZPrlPFYAuiFiFYd7/GmiVguy8eRSrY=
+	t=1727216939; cv=none; b=DFINKHDDF5gQ3n4pakyiH2E8TP+Yn0nQK6k0yRPZbgsim+GSBHxI6pIZQ+JwIm1QwnSLuHHsZmv/RTQf6DThIPrM5PQTu7knyVLSV8NTouK/l/vroMXZHhwNnWBWBjQPgthuCKiLQKZqWDBUb8kGWXRHdcZtDfUVK4nw+ldTjCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727216921; c=relaxed/simple;
-	bh=GsVkTtyX/rc3JJKceprQUMQw10UNBAbWAkdmH00ea+Y=;
+	s=arc-20240116; t=1727216939; c=relaxed/simple;
+	bh=csW1xRX/CF25lbQVuhHQ4dXWOUVuHFooioDDiVh4nGY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b2byGVWqnfFKvdxJ6cytK84WUkoAq56dJDMHGVcZYnGMo8BhdqsNhMi5IVXkQRtCB+Ylgmz9GoBQ5PuwEECOAK/yRW1ISz/GkyyqsNlVc+5RIYyLASGNDO/xxHxCioGeBetc1lifhF6pbEoEpWGg75oCy4cpj1CEB2HfTHLey0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nkyw7TgU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BF30C4CEC4;
-	Tue, 24 Sep 2024 22:28:40 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=A121osuwHX5iOb+am//fitj9mSNnKNM+4Lb+KIzkK6FWLD/EnrJHfVByHTyO8kYh3klxa3imrIC3ERLI+NBX2Q594ks0Wo0RZbGQPvYbQdMY+eRVESeZVao3DF8mWg7KTXwyHAYU+kH27GDr8kYCdumv5c8AngntziPFwFpHOKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H3Ic/izS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D942C4CEC4;
+	Tue, 24 Sep 2024 22:28:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727216920;
-	bh=GsVkTtyX/rc3JJKceprQUMQw10UNBAbWAkdmH00ea+Y=;
+	s=k20201202; t=1727216938;
+	bh=csW1xRX/CF25lbQVuhHQ4dXWOUVuHFooioDDiVh4nGY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Nkyw7TgUrMk8k6+AAj4dlvo0Wf6I9ClSsmADp20hCwN5zP6jyECmqYdCVAyE+yBvP
-	 C+szEw6AKUep9mgcNK4F6TAO1/Zq3OA0ZOBBwnP8Z1puOiiiFduOHRME8495UOR3pM
-	 EaYiogikueTz2QTg3pL6NLk8Stcqhpg6XDfCi+kH5g951Fnb4oufus6d8/LVjMKzt2
-	 IW7ELaKsWCwCW2aKtvKJeyVZubRIJqbnoO3+2jypZzqfrpStw2NDzNkJuQl9Z10h4O
-	 OqmeRNWk5rpcl3RhsSZ/9RtU6qqRceCwp+egpt42f2Y14AH24xENro7vTO7oqmTEei
-	 2Aswcn+zHAgYQ==
-Date: Tue, 24 Sep 2024 15:28:39 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
-	LTP List <ltp@lists.linux.it>,
-	open list <linux-kernel@vger.kernel.org>,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-	lkft-triage@lists.linaro.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>, chrubis <chrubis@suse.cz>
-Subject: Re: af_alg01.c:36: TFAIL: instantiated nested hmac algorithm
- ('hmac(hmac(md5))')!
-Message-ID: <20240924222839.GC1585@sol.localdomain>
-References: <CA+G9fYtu-h_pp_hNfmx1pBg48oGeRiEDnEc4b-r3AiC_QfWiKg@mail.gmail.com>
- <ZvK-_5QKQ2e0S2Sd@gondor.apana.org.au>
+	b=H3Ic/izSQekLXk6i3LULFQ/fofpaFW4njkZPnfgTKvOiFAGUXWacxJMtiXZzuTl9u
+	 j9gAUiXS2kjjYYuUcsRKdM2sfoYNYlUMCoevA+aAQnfkzfFkEaCbWDRcejmXrkF1C4
+	 X7nh4BoJ73nBKkiWg/TjPmbHgSxFUH417ipdzUvOlHN795g9kouFogrXG1QoxlVIp4
+	 2oC4jseVEq5YaZ8m15E+2Ek7HVMZuGqduiwt/CmeKQNeMlQtQ6Ej3C5YHgz9X1NBy1
+	 Yu2TURioKwqoZGSIR8JiziJ3Igu+akPbP7ViHnZxZkhVhE37q0deNk88VgQel1HGYd
+	 pLEfIrhuGfDqw==
+Date: Tue, 24 Sep 2024 17:28:57 -0500
+From: Rob Herring <robh@kernel.org>
+To: Kunwu Chan <chentao@kylinos.cn>, linux@armlinux.org.uk
+Cc: saravanak@google.com, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH 1/2] amba: Add dev_is_amba() function and export it for
+ modules
+Message-ID: <20240924222857.GA404805-robh@kernel.org>
+References: <20240923094249.80399-1-chentao@kylinos.cn>
+ <20240923094249.80399-2-chentao@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,51 +59,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZvK-_5QKQ2e0S2Sd@gondor.apana.org.au>
+In-Reply-To: <20240923094249.80399-2-chentao@kylinos.cn>
 
-On Tue, Sep 24, 2024 at 09:30:39PM +0800, Herbert Xu wrote:
-> On Tue, Sep 24, 2024 at 03:16:09PM +0530, Naresh Kamboju wrote:
-> >
-> > Warning log:
-> > ----------
-> > tst_test.c:1617: TINFO: Timeout per run is 0h 02m 30s
-> > af_alg01.c:36: TFAIL: instantiated nested hmac algorithm ('hmac(hmac(md5))')!
-> > tst_af_alg.c:46: TBROK: unexpected error binding AF_ALG socket to hash
-> > algorithm 'hmac(hmac(md5))': EINVAL (22)
+On Mon, Sep 23, 2024 at 05:42:47PM +0800, Kunwu Chan wrote:
+> Add dev_is_amba() function to determine
+> whether the device is a AMBA device.
 > 
-> This is expected.  You need to fix the test to not treat this as an
-> error.
-> 
+> Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
+> ---
+>  drivers/amba/bus.c       | 6 ++++++
+>  include/linux/amba/bus.h | 5 +++++
+>  2 files changed, 11 insertions(+)
 
-So the error code changed from ENOENT to EINVAL.  These particular LTP tests
-(af_alg01 and af_alg03) could check for either ENOENT or EINVAL, and it would
-preserve the main point of the tests.
+Russell, Can I get an ack for this to take it with patch #2.
 
-I do feel that the previous error code, ENOENT, was more logical though.  From
-userspace's perspective, these invalid algorithms don't exist and don't need to
-be treated any different from other algorithms that don't exist.
-
-Has it been checked what else in userspace might need to be updated as a result
-of this change?
-
-Looking at libkcapi for example
-(https://github.com/smuellerDD/libkcapi/blob/master/lib/kcapi.h#L125) it passes
-the error code up and documents it as part of its API:
-
-     * @return 0 upon success;
-     *         -ENOENT - algorithm not available;
-     *         -EOPNOTSUPP - AF_ALG family not available;
-     *         -EINVAL - accept syscall failed
-     *         -ENOMEM - cipher handle cannot be allocated
-     */
-    int kcapi_cipher_init(struct kcapi_handle **handle, const char *ciphername,
-                          uint32_t flags);
-
-So that is now wrong, as "algorithm not available" can now be either ENOENT or
-EINVAL.
-
-I don't really see the reason for this churn.  The kernel commit which made this
-change (795f85fca229) provides no explanation either.
-
-- Eric
+Rob
 
