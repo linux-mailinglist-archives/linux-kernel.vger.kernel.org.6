@@ -1,155 +1,72 @@
-Return-Path: <linux-kernel+bounces-337446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED0B7984A37
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:18:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F239F984A4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:29:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29E461C22B4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:18:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CA04B22F3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4461AC428;
-	Tue, 24 Sep 2024 17:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237261AC432;
+	Tue, 24 Sep 2024 17:29:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="kbrpGWm2"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=atomide.com header.i=@atomide.com header.b="UUeEnJsB"
+Received: from mail5.25mail.st (mail5.25mail.st [74.50.62.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A892E419;
-	Tue, 24 Sep 2024 17:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E884A2E419;
+	Tue, 24 Sep 2024 17:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.50.62.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727198295; cv=none; b=mA7sS1n8c/BS7rsUuvogYYgyKjvAM0aZh3O2bvCbLgmFFYnK2+n7fStplkM2sa0kfsliSN3uT4A6+b7p4h2hyfMhgMbMDnH/IHZlSFxfmo7GcIq3i2nqedQ/OiIubdj9wPn71cOAmtTS88a7Xpl33ROYfulAK1OYBL8GtbpfZ1k=
+	t=1727198958; cv=none; b=Aqabs4XOAOUqPhN9X2468k0nxZwtm9d/ZZ9xJkvtiLaTJ4n9iTiP1zAEj/TFcZANXTAnbBB+3+mndI5DtbGqMgEpPvZeQr0Z0fg1rITv0nyPXfT/cRpRVTuNoboNlZXyuM3SrARUQt7NhFny0TIldEL3BfN/I7QmuJChC3ZNKI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727198295; c=relaxed/simple;
-	bh=SDh/w9bYOwefz7vHc6h1SwrveHXcT778HDAlVUqm8NY=;
+	s=arc-20240116; t=1727198958; c=relaxed/simple;
+	bh=1MiYoJ352dg3Tzl7QgwgHf+oqQEjGcjapxsqge4jKa0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UJrGUhVBf0Cb+TOy03yrqByspOkPAgTaJhCWy0SuThL7Mhy8WkBjC/R0Url79T1ZYCqq5NJsNGT+JtH/L72ScWJ2JfcSWXwDqdzeIbW+SdtC60sUlIodvV3TzyE6yc9Qx7JqkYQ8lU3BXAXpzRbdctbcVIur1dzcX8psBoTA+og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=kbrpGWm2; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 090B719BA;
-	Tue, 24 Sep 2024 19:16:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1727198202;
-	bh=SDh/w9bYOwefz7vHc6h1SwrveHXcT778HDAlVUqm8NY=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=IqW2+xrtTzKYoGQooIxH/mJWkqoK1uV4CS7gfWuI0TkBAL9Zvy3PTgAFF8LfCC2qrlWEemE+FbvMt0AChLx2O+gaEE7xVljcVJCVWDw04YSuSDV83JdFC6o0UCH0uPa0BJSLC0Qr3p9nUcqLxs+9wKfeEWmu1J1XBRlmvz7NR+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com; spf=fail smtp.mailfrom=atomide.com; dkim=pass (2048-bit key) header.d=atomide.com header.i=@atomide.com header.b=UUeEnJsB; arc=none smtp.client-ip=74.50.62.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=atomide.com
+Received: from localhost (91-158-86-216.elisa-laajakaista.fi [91.158.86.216])
+	by mail5.25mail.st (Postfix) with ESMTPSA id 1691360365;
+	Tue, 24 Sep 2024 17:19:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=atomide.com;
+	s=25mailst; t=1727198382;
+	bh=1MiYoJ352dg3Tzl7QgwgHf+oqQEjGcjapxsqge4jKa0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kbrpGWm2C3eLPF/4upHVSAiEaLjx9FeY7fwYC/vIXZJvsY9NSOFOASb5EgvjOBkO2
-	 uR+ekoGYYdJAP+5ML8I9sb65FZuss09drV6f+wqenx5H4sUexHkMs4X354Au7j+Mvl
-	 mFcyubbPes5HkZTBXY9pBNO+ix8Al7Sz00Leq9qo=
-Date: Tue, 24 Sep 2024 20:17:36 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Subject: Re: [PATCH 1/4] media: v4l2-subdev: Add cleanup macros for active
- state
-Message-ID: <20240924171736.GE30551@pendragon.ideasonboard.com>
-References: <20240917-scoped-state-v1-0-b8ba3fbe5952@ideasonboard.com>
- <20240917-scoped-state-v1-1-b8ba3fbe5952@ideasonboard.com>
+	b=UUeEnJsBUUxBeUugiL01ollULfa2nuiEOuB3MOfG0KNkVBZd1Rk5Eqd+++BsNjAzK
+	 E7TpHF9D4pkvN33n+CVhTDl6W78CCed4PugJJvC314O0UNhRsfxSBkXBnW6GeH/uWr
+	 4BYp+EdX2bmqvboL4Ge26U4awQsntz8Er8VkfvrowpOeFDD53SCgCpUvTh7IJR6AaY
+	 EN2mKxyRRVB4NlmwkAZMuoZN7+njzB5y9uZ5VmbDK+H51RjoM1oszreUH9017jGr73
+	 RhXCBaAVY9W1RnBGnNgqC2k0tc2za24mWYTOP+lO9+2Cbj7J8Zcbagx74ZbE4WRYq/
+	 NegJ8D0gzGBdQ==
+Date: Tue, 24 Sep 2024 20:19:26 +0300
+From: Tony Lindgren <tony@atomide.com>
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
+	Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Roger Quadros <rogerq@kernel.org>, linux-omap@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] MAINTAINERS: sync omap devicetree maintainers with omap
+ platform
+Message-ID: <20240924171926.GA5102@atomide.com>
+References: <20240915195321.1071967-1-andreas@kemnade.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240917-scoped-state-v1-1-b8ba3fbe5952@ideasonboard.com>
+In-Reply-To: <20240915195321.1071967-1-andreas@kemnade.info>
 
-Hi Tomi,
+* Andreas Kemnade <andreas@kemnade.info> [240915 19:53]:
+> Both used to go through Tony's branches, so lets keep things together.
+> This was missed at the time when Co-Maintainers were added.
 
-Thank you for the patch.
-
-On Tue, Sep 17, 2024 at 05:09:29PM +0300, Tomi Valkeinen wrote:
-> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> 
-> Add cleanup macros for active state. These can be used to call
-> v4l2_subdev_lock_and_get_active_state() and manage the unlocking either
-> in unscoped or scoped fashion:
-> 
-> This locks the state, gets it to the 'state' variable, and unlocks when
-> exiting the surrounding scope:
-> 
-> CLASS(v4l2_subdev_lock_and_get_active_state, state)(subdev);
-> 
-> This does the same, but inside the given scope:
-> 
-> scoped_v4l2_subdev_lock_and_get_active_state(subdev) {
-> }
-> 
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> ---
->  include/media/v4l2-subdev.h | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/include/media/v4l2-subdev.h b/include/media/v4l2-subdev.h
-> index bd235d325ff9..699007cfffd7 100644
-> --- a/include/media/v4l2-subdev.h
-> +++ b/include/media/v4l2-subdev.h
-> @@ -8,6 +8,7 @@
->  #ifndef _V4L2_SUBDEV_H
->  #define _V4L2_SUBDEV_H
->  
-> +#include <linux/cleanup.h>
->  #include <linux/types.h>
->  #include <linux/v4l2-subdev.h>
->  #include <media/media-entity.h>
-> @@ -1854,6 +1855,15 @@ v4l2_subdev_lock_and_get_active_state(struct v4l2_subdev *sd)
->  	return sd->active_state;
->  }
->  
-> +DEFINE_CLASS(v4l2_subdev_lock_and_get_active_state, struct v4l2_subdev_state *,
-> +	     v4l2_subdev_unlock_state(_T),
-> +	     v4l2_subdev_lock_and_get_active_state(sd), struct v4l2_subdev *sd);
-> +
-> +#define scoped_v4l2_subdev_lock_and_get_active_state(sd)              \
-> +	for (CLASS(v4l2_subdev_lock_and_get_active_state, state)(sd), \
-> +	     *done = NULL;                                            \
-> +	     !done; done = (void *)1)
-
-That a very long name :-S Could this be done using the scoped_guard()
-macro instead ? For instance, with spinlocks you can do
-
-	scoped_guard(spinlock_irqsave, &dev->lock) {
-		...
-	}
-
-It would be nice to be able to write
-
-	scoped_guard(v4l2_subdev_state, sd) {
-		...
-	}
-
-This being said, we would then end up with the state variable being
-named scope, which wouldn't be great.
-
-This is actually one of my issues with the above macros, and especially
-scoped_v4l2_subdev_lock_and_get_active_state(). It creates a local state
-variable in the scope, which makes the code less readable in my opinion.
-
-We could keep the class and drop
-scoped_v4l2_subdev_lock_and_get_active_state(). I think I would like to
-shorten the class name then.
-
-Another option is to use DEFINE_FREE() and __free() instead.
-
-> +
->  /**
->   * v4l2_subdev_init - initializes the sub-device struct
->   *
-> 
-
--- 
-Regards,
-
-Laurent Pinchart
+Acked-by: Tony Lindgren <tony@atomide.com>
 
