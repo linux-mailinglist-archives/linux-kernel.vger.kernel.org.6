@@ -1,177 +1,136 @@
-Return-Path: <linux-kernel+bounces-337621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DA48984C88
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:07:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75295984C8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:08:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 905C51C22EF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:07:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A58C81C213DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB93F13CFA5;
-	Tue, 24 Sep 2024 21:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C46213B783;
+	Tue, 24 Sep 2024 21:08:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="YAi3ps53"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jq7tnT5U"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8788B12E1C2
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 21:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F67712C52E
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 21:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727212018; cv=none; b=j0C2U4f4NSP1jb3Rd409vrsniV0iko1sMFb2zEwvmHl/YDUA4fZhmwTti2pf9z+Ktw5PfBT3B/lGdeXMX8wqU/csvL0ceMgOLrVPYawpwhbDIQONN0Sm6/+ISbx7p2ITck/SIEj3sGjRbYXXAif9jAv5k/CJWrgftewGzZ10KYs=
+	t=1727212096; cv=none; b=ry5Wvk3Ok/Og18YiJ1MCZ/zFm1rYa5DxSeJEVqcDSIIBTU3Sqj/kEv5CT7aWDdd0kbX3vD9j2NxaIFeXTf9oWvDLpSzLqeCVvKH4mX1Z6nz+YuH3vdEs4Ske6NPcTFDSwpCYzgw6zhRN0eRe4+53I71MqMnwAo0QbLbUaARbUXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727212018; c=relaxed/simple;
-	bh=DXNZkOA77RXi62rcIEhLJXZxQfK1+7mSL4ZFunO7ozQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=TOEfcsAAhBUj6B4IJYGq//IBzrffmIuPdN7WoL6o96pQIec6JExo14/rCa83Y51S5I9oCDTzLPX9k+TtBdCCh4lZzOjP7PmHcT1nSZzMW/gDtiVB/JXSKY6rbu49PWmi8TH9+g2QjSman7xELR1R7PLYGkAA4h4swRbdyPKOxYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=YAi3ps53; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-208ccde82e6so47371055ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 14:06:55 -0700 (PDT)
+	s=arc-20240116; t=1727212096; c=relaxed/simple;
+	bh=SSMnSNvjgL0HgXS96DbEez/+JL/Fq+TwXsk0eFSypFU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NK6Qo2e3wAM/RhXwredL6VIjsgqvxx1Qn/ZJkpPgkO27PBAafWKkg7bgEOusLCdB5WpND8QbPCSrUrRbnm1gwEMOSUVVZkoYz16cS9E9cztXnlT7Qrewh6kS4AfN9f36Ru1Cs0Kqmw495VHxNrnYgSCUj+PNzexNR/0pZaWWud8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jq7tnT5U; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6c34c2a7dc7so39969136d6.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 14:08:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1727212015; x=1727816815; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=zze8MV+a5IZuaNoaIPGWHIQDnCuS1cR3u4TVceY5GpQ=;
-        b=YAi3ps53+1hF2Eg/HQeegOUOb5c8+EXhico9ZkktkIei4xepbMrQxw9MG7Zy81KPiG
-         ymbz3XDfAM0oyGcKe1JQWtcUMdqy9CFONa9szSqm+h6LABB9yZ82m4FyaP/3hNCbfXlZ
-         /LUj7P+1clh5ihBpnbYEl4Zi3AMjRluBYkIOVdJqKAww6YJL4o9G8DWN32hCmZ6ZCLUl
-         3/Roef7s6k85Yxa7QVlP++2xIRA1e0PGIK2pRFrsI58P8lFwzdtuuK3lIg1rkzjx3cy/
-         /Yymu7NDmcmAxsIEeF6Oxj9P7OBFd7NUOouMOyU2Vw7LArPaixrxv7P4X8QFI3BY7UvJ
-         UlPg==
+        d=gmail.com; s=20230601; t=1727212094; x=1727816894; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SSMnSNvjgL0HgXS96DbEez/+JL/Fq+TwXsk0eFSypFU=;
+        b=jq7tnT5UihH9LWQIZQBz4QDtm6kfBCT0QK+DqyOk7XtHZJ3DwFZROtI8y0zQo68gLs
+         nUJiJ69phXVaeCk0LBvg5lb+eVPKDPfzF9NNPQ5EdkkdI30sCMHUx5HHywCQiJF1CpP2
+         VxhHQj4p+lXgsLMfqlEYXelYN9TmO1e68rFEc8EgIoTPA3589AFa3tzqca0PCRMMpi1i
+         6S5l3IC5SpmUxD1RFyN2lKCzo0mcWHOn5RzpAGLSV+N2moSc6pEx5YVlCDm4/8Sx+Qpg
+         8HqoGsgEyN5TlJDg4NJGM+Myy+PfnEFOE9OE/7EfifCpfuo1qk7pFHcAXNpcmd0F702z
+         UUfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727212015; x=1727816815;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zze8MV+a5IZuaNoaIPGWHIQDnCuS1cR3u4TVceY5GpQ=;
-        b=vIMi3IJFcBaoc6axBvfpGh63S+sbw+raqDlfS5MV86Itym4WKJQHs9PREZV5SulVO1
-         H/xfsdO9KoGtWbrXhfgT/1wAP+KCKYcbl9oJhyV8avt0zukJy7tQZOoPXj0ZTXKM9/Rz
-         X/gF0UFjARj/1H0fHMU5GILqpBPaVwIlhv5DVOo0MdOsnnu431SKZ25lxbZEfgL/5qdQ
-         BKCORa4aC6uy8ZIe0giPjjWpBG/Rrhd/fSk/xbiDWMre7KZr6P0gbh6Ow4+rgLdjvWu1
-         9+WEf7MDNPDVRfCv8YEre933fNfytHHdrYVjRLNs7q7O8Ukd3XL2nOxMEUr25yh6hV1p
-         abow==
-X-Forwarded-Encrypted: i=1; AJvYcCV250W9JSLgTJAdePlbqN5laC+h4u6QW0QHhDNm9A68Vvvyc/ewhv3bO/tfiJ/EDVb/B9WWSjlPQXgKduI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzETyxJW5TFezy2GTP+Mu6PWxf7bx0oUvbXrYrlMAMDJOtECodR
-	ttbTeKDGkXCdQRvJpMqYFuVrAYDHX6s6cqxo+Oc8SG1vOQkwBSEO5JdzneLAorc=
-X-Google-Smtp-Source: AGHT+IHX3x5sr2y+cTrUUt+sNEM5mWSUWbyv2wne6NfTdQiuQ1/NbXsHRbIcp7XwwrX4t2d+S7Qg/g==
-X-Received: by 2002:a17:903:2309:b0:207:1913:8bae with SMTP id d9443c01a7336-20afc477029mr7357425ad.14.1727212014748;
-        Tue, 24 Sep 2024 14:06:54 -0700 (PDT)
-Received: from dev-mkhalfella2.dev.purestorage.com ([208.88.159.129])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20af1818f69sm13717095ad.184.2024.09.24.14.06.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 14:06:54 -0700 (PDT)
-From: Mohamed Khalfella <mkhalfella@purestorage.com>
-To: Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Auke Kok <auke-jan.h.kok@intel.com>,
-	Yuanyuan Zhong <yzhong@purestorage.com>,
-	Jeff Garzik <jgarzik@redhat.com>,
-	Mohamed Khalfella <mkhalfella@purestorage.com>,
-	Ying Hsu <yinghsu@chromium.org>,
-	Simon Horman <horms@kernel.org>
-Cc: intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/1] igb: Do not bring the device up after non-fatal error
-Date: Tue, 24 Sep 2024 15:06:01 -0600
-Message-Id: <20240924210604.123175-2-mkhalfella@purestorage.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240924210604.123175-1-mkhalfella@purestorage.com>
-References: <20240924210604.123175-1-mkhalfella@purestorage.com>
+        d=1e100.net; s=20230601; t=1727212094; x=1727816894;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SSMnSNvjgL0HgXS96DbEez/+JL/Fq+TwXsk0eFSypFU=;
+        b=MM8s5eTaiAn0nSYStYbx/cSgWYwJsOEzAxRydvkss2uG6I4TwzUa+vsAWOnuuV0L0W
+         eukvmAOH10dFdlZjFxYgJbhgH9H+vZisxV6ECHz30ISbrtSSLcyoLcYg4DVCgfcVZX/s
+         +vTHi9EjAiFCp1hzR9Cd3EbAupR16XDXEqwmPQZRFC6ZaJHo2nfI//EKHtJcKlWKPPtd
+         VWqN5QXb/7lkWQtlEu/cygycvxEtTCh4rtptdvFj5lkYtpmX2fGUunCdJD/1bI27nyhw
+         NSexUARjpDcbJ7puP7B9VbwWTpM0HnUjvScB8GHnTBIhIC1vM92C1DiADQcYS3pNJfyZ
+         9+Sg==
+X-Gm-Message-State: AOJu0YyGxhU6RbjnjcwOZOnTEnBv44TcRAM+AjQlXJzgLl4QxKfjQ3CV
+	RxULX5h/604zYtgprRkwRRro8o11y9rKTYgh7Ka+A2D1TtPQXEgvLSznETzzI0yaFUMGy79AiSf
+	MB4k5ItlIwvVx40fGpiyfYBVHtkM=
+X-Google-Smtp-Source: AGHT+IGCmA3qvUzok96RjQDT3EVBAau3Kny/vhALAySBV+fIqKJa/T0yPs6n3+jE90A8DTwCuoza26XdQx2gDjspogc=
+X-Received: by 2002:a05:6214:451e:b0:6c5:a2ca:38b7 with SMTP id
+ 6a1803df08f44-6cb1ddb34bbmr5289676d6.27.1727212093984; Tue, 24 Sep 2024
+ 14:08:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20240924011709.7037-1-kanchana.p.sridhar@intel.com>
+ <20240924011709.7037-7-kanchana.p.sridhar@intel.com> <CAKEwX=Nw_ax0RRSaD9n3h1vqbu+5PEuur3RqXrMrYyvOPuzB3Q@mail.gmail.com>
+ <SJ0PR11MB56785712C0EF98B7BE558720C9682@SJ0PR11MB5678.namprd11.prod.outlook.com>
+In-Reply-To: <SJ0PR11MB56785712C0EF98B7BE558720C9682@SJ0PR11MB5678.namprd11.prod.outlook.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Tue, 24 Sep 2024 14:08:03 -0700
+Message-ID: <CAKEwX=MgpP_w6JFC5ahVN-erCWK2NDGSbxNdLxKg9P4yd01Unw@mail.gmail.com>
+Subject: Re: [PATCH v7 6/8] mm: zswap: Support mTHP swapout in zswap_store().
+To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "yosryahmed@google.com" <yosryahmed@google.com>, 
+	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, 
+	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "shakeel.butt@linux.dev" <shakeel.butt@linux.dev>, 
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>, "Huang, Ying" <ying.huang@intel.com>, 
+	"21cnbao@gmail.com" <21cnbao@gmail.com>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
+	"Zou, Nanhai" <nanhai.zou@intel.com>, "Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, 
+	"Gopal, Vinodh" <vinodh.gopal@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Commit 004d25060c78 ("igb: Fix igb_down hung on surprise removal")
-changed igb_io_error_detected() to ignore non-fatal pcie errors in order
-to avoid hung task that can happen when igb_down() is called multiple
-times. This caused an issue when processing transient non-fatal errors.
-igb_io_resume(), which is called after igb_io_error_detected(), assumes
-that device is brought down by igb_io_error_detected() if the interface
-is up. This resulted in panic with stacktrace below.
+On Tue, Sep 24, 2024 at 1:51=E2=80=AFPM Sridhar, Kanchana P
+<kanchana.p.sridhar@intel.com> wrote:
+>
+>
+> This is an excellent point. Thanks Nhat for catching this! I can see two
+> options to solving this:
+>
+> Option 1: If zswap_mthp_enabled is "false", delete all stored offsets
+> for the mTHP in zswap before exiting. This could race with writeback
+> (either one or more subpages could be written back before zswap_store
+> acquires the tree lock), however, I don't think it will cause data incons=
+istencies.
+> Any offsets for subpages not written back will be deleted from zswap,
+> zswap_store() will return false, and the backing swap device's subsequent
+> swapout will over-write the zswap write-back data. Could anything go wron=
+g
+> with this?
 
-[ T3256] igb 0000:09:00.0 haeth0: igb: haeth0 NIC Link is Down
-[  T292] pcieport 0000:00:1c.5: AER: Uncorrected (Non-Fatal) error received: 0000:09:00.0
-[  T292] igb 0000:09:00.0: PCIe Bus Error: severity=Uncorrected (Non-Fatal), type=Transaction Layer, (Requester ID)
-[  T292] igb 0000:09:00.0:   device [8086:1537] error status/mask=00004000/00000000
-[  T292] igb 0000:09:00.0:    [14] CmpltTO [  200.105524,009][  T292] igb 0000:09:00.0: AER:   TLP Header: 00000000 00000000 00000000 00000000
-[  T292] pcieport 0000:00:1c.5: AER: broadcast error_detected message
-[  T292] igb 0000:09:00.0: Non-correctable non-fatal error reported.
-[  T292] pcieport 0000:00:1c.5: AER: broadcast mmio_enabled message
-[  T292] pcieport 0000:00:1c.5: AER: broadcast resume message
-[  T292] ------------[ cut here ]------------
-[  T292] kernel BUG at net/core/dev.c:6539!
-[  T292] invalid opcode: 0000 [#1] PREEMPT SMP
-[  T292] RIP: 0010:napi_enable+0x37/0x40
-[  T292] Call Trace:
-[  T292]  <TASK>
-[  T292]  ? die+0x33/0x90
-[  T292]  ? do_trap+0xdc/0x110
-[  T292]  ? napi_enable+0x37/0x40
-[  T292]  ? do_error_trap+0x70/0xb0
-[  T292]  ? napi_enable+0x37/0x40
-[  T292]  ? napi_enable+0x37/0x40
-[  T292]  ? exc_invalid_op+0x4e/0x70
-[  T292]  ? napi_enable+0x37/0x40
-[  T292]  ? asm_exc_invalid_op+0x16/0x20
-[  T292]  ? napi_enable+0x37/0x40
-[  T292]  igb_up+0x41/0x150
-[  T292]  igb_io_resume+0x25/0x70
-[  T292]  report_resume+0x54/0x70
-[  T292]  ? report_frozen_detected+0x20/0x20
-[  T292]  pci_walk_bus+0x6c/0x90
-[  T292]  ? aer_print_port_info+0xa0/0xa0
-[  T292]  pcie_do_recovery+0x22f/0x380
-[  T292]  aer_process_err_devices+0x110/0x160
-[  T292]  aer_isr+0x1c1/0x1e0
-[  T292]  ? disable_irq_nosync+0x10/0x10
-[  T292]  irq_thread_fn+0x1a/0x60
-[  T292]  irq_thread+0xe3/0x1a0
-[  T292]  ? irq_set_affinity_notifier+0x120/0x120
-[  T292]  ? irq_affinity_notify+0x100/0x100
-[  T292]  kthread+0xe2/0x110
-[  T292]  ? kthread_complete_and_exit+0x20/0x20
-[  T292]  ret_from_fork+0x2d/0x50
-[  T292]  ? kthread_complete_and_exit+0x20/0x20
-[  T292]  ret_from_fork_asm+0x11/0x20
-[  T292]  </TASK>
+I think this should be safe, albeit a bit awkward.
 
-To fix this issue igb_io_resume() checks if the interface is running and
-the device is not down this means igb_io_error_detected() did not bring
-the device down and there is no need to bring it up.
+At this point (zswap_store()), we should have the folio added to to
+swap cache, and locked. All the associated swap entries will point to
+this same (large) folio.
 
-Signed-off-by: Mohamed Khalfella <mkhalfella@purestorage.com>
-Reviewed-by: Yuanyuan Zhong<yzhong@purestorage.com>
-Fixes: 004d25060c78 ("igb: Fix igb_down hung on surprise removal")
----
- drivers/net/ethernet/intel/igb/igb_main.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Any concurrent zswap writeback attempt, even on a tail page, should
+get that folio when it calls __read_swap_cache_async(), and with
+page_allocated =3D=3D false, and should short circuit.
 
-diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-index 1ef4cb871452..f1d088168723 100644
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -9651,6 +9651,10 @@ static void igb_io_resume(struct pci_dev *pdev)
- 	struct igb_adapter *adapter = netdev_priv(netdev);
- 
- 	if (netif_running(netdev)) {
-+		if (!test_bit(__IGB_DOWN, &adapter->state)) {
-+			dev_dbg(&pdev->dev, "Resuming from non-fatal error, do nothing.\n");
-+			return;
-+		}
- 		if (igb_up(adapter)) {
- 			dev_err(&pdev->dev, "igb_up failed after reset\n");
- 			return;
--- 
-2.45.2
+So I don't think we will race with zswap_writeback().
 
+Yosry, Chengming, Johannes, any thoughts?
+
+>
+> Option 2: Only provide a build config option,
+> CONFIG_ZSWAP_STORE_THP_DEFAULT_ON, that cannot be dynamically changed.
+
+This can be a last resort thing, if the above doesn't work. Not the
+end of the world, but not ideal :)
+
+>
+> Would appreciate suggestions on these, and other potential solutions.
+>
+> Thanks,
+> Kanchana
 
