@@ -1,377 +1,224 @@
-Return-Path: <linux-kernel+bounces-337763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62EAB984E98
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:04:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50206984E3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:59:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98E9BB24B3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:04:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C694B1F236BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D20189B88;
-	Tue, 24 Sep 2024 23:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E872C183CA1;
+	Tue, 24 Sep 2024 22:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ll41RW4o"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b="JLpmeHWo";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="naAS52CC"
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A723B187553;
-	Tue, 24 Sep 2024 23:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF3318308A;
+	Tue, 24 Sep 2024 22:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727218820; cv=none; b=kTmb79NZjaXOXlwF0XNLl/j9e1G5uQ79gqRobmoZDqBp7A3fCvtPQ2aRDvaJbMs6TnqEp7ULxx39wCiodEPOjl14bMsBImVWrLVLQSph6AQ/yL5TmbEDnDDTMwr1oPU0HPEio2EmFowImcStmediA7H4w1uJjoshZ865umy/jZg=
+	t=1727218782; cv=none; b=ZBNSaSg/0lhiSTyg5xVejj7oK3DKMYlDkzxKz5O7xvS19eFUZVYLy/Nb/m53qzPRPkLoKASVEigTAv4WXfYa3xIMP805wqHf5f811QUK5ZLsmhLUuaC7uEdNtpuAIFTrPl0EkDpl0JTlG0YaRJWDF44VnXGKU1CHLs6bqOwseG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727218820; c=relaxed/simple;
-	bh=AsOWTCLkHtMjUR703OJdY4jfVE4ZWbTZJzH6daFadYc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=HCO3jCdNGwGGN56/ZDnXG4Q6JPQW71GATdd/1m2zLxJx20LIxNjAA39RQ9oQRJT4qNb0W6LnrrdYSi6eotuGq7oZ97S5264mdK85wNnQkyrt7tGBSjs8QL0GtShXpF/ttz2vCAWwMCoefYH3y8V27hRY1RYQXoRMEU6ArJubyhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ll41RW4o; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48OHk1kc008435;
-	Tue, 24 Sep 2024 23:00:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	eTT8UyVal/8rqZyKc4FwnvoCFWwT+sEDyKv9WUiyjZo=; b=Ll41RW4oxzAHC6eu
-	lODeAyQQRPCsR3QrsjD3AA2uIRVpnWZCxA9hz+1P+9a05qd9WUP61EFFuiHACTFv
-	ruE8OrMxGH+61+74zbYMzI0szI67d6r8pWqlobJudgWf7b3GEOT4VWcXnmjfeTEw
-	fwLiGe6WLK/+bfFyDeiA+H8wS/+CiP6Y7MAeAFsCYejkQOUfh4YYDDTvtBBiNDku
-	O34JBUavee7x5c7VIR+Lls5QdGCC2iezzzKgEWTvT4JxmmpIuE0K9duhGyiYCLsD
-	RR77z8t2Sd+KuWQPe9hTLnkz3D+zXz3q8WGYTB5UW/BTG7s6aMoBXm3siL5RBzJz
-	lr5Q2w==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sp7ujbh9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Sep 2024 22:59:59 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48OMxwSk024758
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Sep 2024 22:59:58 GMT
-Received: from jesszhan-linux.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 24 Sep 2024 15:59:58 -0700
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-Date: Tue, 24 Sep 2024 15:59:33 -0700
-Subject: [PATCH v2 17/22] drm/msm/dpu: Support CWB in dpu_hw_ctl
+	s=arc-20240116; t=1727218782; c=relaxed/simple;
+	bh=hCm2r49j3Of0+4EQato9rBmCHM9Q/7oZBXd2y2KGElU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J8A58lfMwW+l6w3H41ZD8VIbs6K16Q7Ol2CyqArkqia8SYBVG57uuzAla8C5C5+cResH52gAOXTYyjNToshzUkZczcp1dVySrhd3KtnhqywQzIHZyCM7hdOGcnGyuDI9gEPF9qvjCURVC0rAfA36sDgS3HjqBWw4K+jRBImuPwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza; spf=pass smtp.mailfrom=tycho.pizza; dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b=JLpmeHWo; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=naAS52CC; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tycho.pizza
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailfout.phl.internal (Postfix) with ESMTP id 9B83213800F0;
+	Tue, 24 Sep 2024 18:59:39 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Tue, 24 Sep 2024 18:59:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
+	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1727218779; x=1727305179; bh=d8fUlRHE2i
+	Zfy80BDgU0TCA1aV71a21YfiFtM5egfSU=; b=JLpmeHWoWH6kE+W42hBonNbqK1
+	MU6EglXwbTg8IylUGpH58l2TFkopHLmOPFMAie1iFzqJu/ht1OY8OWfw3yQ0gVu+
+	7qUlC48O7QSk7YY79ZAyfRkAaxE4UXbJnb+ULC0XV16s/zzI2GVcYpoT35wQSqkI
+	i59vcYcau6W1uz9nTOgQKZxP64Qs2BZqUVa+jtCiu8YcdWENBYKFLuxhq+awz06U
+	oZPUmpB8MTb1Umkq4OIgtHpZSPP1iC1TGFeJP9Oz3TKbtQEtLQ9RKhGDdb9sj0de
+	6A+Z8Al2s2nKfQ3syEh87pCDRqEb8fIXDDabgxkOHkPdQmJhRkWkIP4fKdOg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1727218779; x=1727305179; bh=d8fUlRHE2iZfy80BDgU0TCA1aV71
+	a21YfiFtM5egfSU=; b=naAS52CC4mk6nmZPC08I6+3XtolR88HMhgLx24YxES/7
+	rVwRp/rh7wTozU6t7CNSzk7J7n9GnZAxLnTFf2Sc5RJzgXHYelclqepTLZHdgPyN
+	QQjKoRXyxtx8afvdUdnxtXW9cu7VFFrBEjo1dp/Nh2if4qh+OU4n5ERypTUMRxox
+	pqyLrayTFkgpT1mqrIpvKcQnFmy8/k884Iu7iD+4srs08/Lp/MvQV64M0dGNYrF2
+	3dOJ5dXlfrQGQUeFqHeolbwgcGFdnVQY24VL2fuqoueGV481yc7UPiyKCmgGSZV1
+	mbmm7i6oJrEv1qfCYechgy//sESy0s5rB7BMgyxMEw==
+X-ME-Sender: <xms:WkTzZikh350BFq5eKnrrkajnBwFicADwlCJ4O9OUgUk0xw77ofZtBw>
+    <xme:WkTzZp0Qjhcq_lpj2HMa-z1DG89MQ5mzmcqBxD7g3f8eq9Ze4ZA9X6R1CdPnLif19
+    _LXZJdZr8brKXAbCK4>
+X-ME-Received: <xmr:WkTzZgp5hhjijI9fnozf7YTNVCt_Z9WC7fqAwyXnOhfsODXMNQlHQlT7NmU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtgedgudeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
+    ucfhrhhomhepvfihtghhohcutehnuggvrhhsvghnuceothihtghhohesthihtghhohdrph
+    hiiiiirgeqnecuggftrfgrthhtvghrnhepueettdetgfejfeffheffffekjeeuveeifedu
+    leegjedutdefffetkeelhfelleetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepthihtghhohesthihtghhohdrphhiiiiirgdpnhgspghrtghp
+    thhtohepudegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehkvggvsheskhgvrh
+    hnvghlrdhorhhgpdhrtghpthhtohepvggsihgvuggvrhhmseigmhhishhsihhonhdrtgho
+    mhdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtg
+    hpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgrtghk
+    sehsuhhsvgdrtgiipdhrtghpthhtohepjhhlrgihthhonheskhgvrhhnvghlrdhorhhgpd
+    hrtghpthhtoheptghhuhgtkhdrlhgvvhgvrhesohhrrggtlhgvrdgtohhmpdhrtghpthht
+    oheprghlvgigrdgrrhhinhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugi
+    dqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:WkTzZmnxG8iZlArWJrTtCHR1bUfKxNOyjtngtG727WYrsqscq4a_1Q>
+    <xmx:WkTzZg3k2SWdm8D1mS4f2uIncmEy_EHvWitrHCm1uC0ZGaag-ABptw>
+    <xmx:WkTzZttjjOPm1DFdeuQ0kg9g9YR4pb3z_yJZhCj_ddkKVUyZ8Tel_A>
+    <xmx:WkTzZsXX_m6wNvYQqsylvcRBGpYdk0t1hyeic3gFemOYB6c79DbhKw>
+    <xmx:W0TzZqP1W3TDASKyYhUGBWtKx_LPX1sDcnzMpAMwK92jfd5pmxe4K_lU>
+Feedback-ID: i21f147d5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 24 Sep 2024 18:59:35 -0400 (EDT)
+Date: Tue, 24 Sep 2024 16:59:33 -0600
+From: Tycho Andersen <tycho@tycho.pizza>
+To: Kees Cook <kees@kernel.org>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Tycho Andersen <tandersen@netflix.com>,
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
+	Aleksa Sarai <cyphar@cyphar.com>
+Subject: Re: [RFC] exec: add a flag for "reasonable" execveat() comm
+Message-ID: <ZvNEVT+AR6dX88KK@tycho.pizza>
+References: <20240924141001.116584-1-tycho@tycho.pizza>
+ <87msjx9ciw.fsf@email.froward.int.ebiederm.org>
+ <8D545969-2EFA-419A-B988-74AD0C26020C@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240924-concurrent-wb-v2-17-7849f900e863@quicinc.com>
-References: <20240924-concurrent-wb-v2-0-7849f900e863@quicinc.com>
-In-Reply-To: <20240924-concurrent-wb-v2-0-7849f900e863@quicinc.com>
-To: Rob Clark <robdclark@gmail.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        <quic_abhinavk@quicinc.com>, Sean Paul
-	<sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        "David
- Airlie" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>
-CC: <quic_ebharadw@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, Rob Clark <robdclark@chromium.org>,
-        =?utf-8?q?Ville_Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
-        "Jessica
- Zhang" <quic_jesszhan@quicinc.com>
-X-Mailer: b4 0.15-dev-99b12
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1727218793; l=10194;
- i=quic_jesszhan@quicinc.com; s=20230329; h=from:subject:message-id;
- bh=AsOWTCLkHtMjUR703OJdY4jfVE4ZWbTZJzH6daFadYc=;
- b=1sYrznMKWoYM4jxBHUcnQiN4plqr6SDI/S8jOYiXVEuKHHNzLUs1v62beWN/2zYpxyqA7IYa5
- 1JczyOsWtDADMjBcFLmu0p2W2zLFikzfoV9LzeE+g6pwcjVxCIESe5n
-X-Developer-Key: i=quic_jesszhan@quicinc.com; a=ed25519;
- pk=gAUCgHZ6wTJOzQa3U0GfeCDH7iZLlqIEPo4rrjfDpWE=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: YcLYzu5x9pmFLzt9vZDb1QQxmOrlhOOx
-X-Proofpoint-ORIG-GUID: YcLYzu5x9pmFLzt9vZDb1QQxmOrlhOOx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- clxscore=1015 bulkscore=0 mlxlogscore=999 mlxscore=0 phishscore=0
- suspectscore=0 impostorscore=0 spamscore=0 malwarescore=0
- priorityscore=1501 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2408220000 definitions=main-2409240159
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8D545969-2EFA-419A-B988-74AD0C26020C@kernel.org>
 
-The CWB mux has a pending flush bit and *_active register.
+On Tue, Sep 24, 2024 at 02:37:13PM -0700, Kees Cook wrote:
+> 
+> 
+> On September 24, 2024 10:39:35 AM PDT, "Eric W. Biederman" <ebiederm@xmission.com> wrote:
+> >Tycho Andersen <tycho@tycho.pizza> writes:
+> >
+> >> From: Tycho Andersen <tandersen@netflix.com>
+> >>
+> >> Zbigniew mentioned at Linux Plumber's that systemd is interested in
+> >> switching to execveat() for service execution, but can't, because the
+> >> contents of /proc/pid/comm are the file descriptor which was used,
+> >> instead of the path to the binary. This makes the output of tools like
+> >> top and ps useless, especially in a world where most fds are opened
+> >> CLOEXEC so the number is truly meaningless.
+> 
+> And just to double check: systemd's use would be entirely cosmetic, yes?
 
-Add support for configuring them within the dpu_hw_ctl layer.
+I think it's not really systemd, but their concern for admins looking
+at `ps` and being confused by "4 is using lots of CPU". IIUC systemd
+won't actually use the value at all. Zbigniew can confirm though.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c        | 13 ++++++++++
- .../gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c    |  1 +
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c         | 30 +++++++++++++++++++++-
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h         | 15 ++++++++++-
- 4 files changed, 57 insertions(+), 2 deletions(-)
+> >>
+> >> This patch adds an AT_ flag to fix up /proc/pid/comm to instead be the
+> >> contents of argv[0], instead of the fdno.
+> >
+> >The kernel allows prctl(PR_SET_NAME, ...)  without any permission
+> >checks so adding an AT_ flat to use argv[0] instead of the execed
+> >filename seems reasonable.
+> >
+> >Maybe the flag should be called AT_NAME_ARGV0.
+> 
+> If we add an AT flag I like this name.
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-index 2628f2d55cb3..7337bb3ae7ca 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-@@ -2108,6 +2108,7 @@ void dpu_encoder_helper_phys_cleanup(struct dpu_encoder_phys *phys_enc)
- 	intf_cfg.stream_sel = 0; /* Don't care value for video mode */
- 	intf_cfg.mode_3d = dpu_encoder_helper_get_3d_blend_mode(phys_enc);
- 	intf_cfg.dsc = dpu_encoder_helper_get_dsc(phys_enc);
-+	intf_cfg.cwb = dpu_enc->cwb_mask;
- 
- 	if (phys_enc->hw_intf)
- 		intf_cfg.intf = phys_enc->hw_intf->idx;
-@@ -2130,6 +2131,7 @@ void dpu_encoder_helper_phys_setup_cwb(struct dpu_encoder_phys *phys_enc,
- {
- 	struct dpu_encoder_virt *dpu_enc = to_dpu_encoder_virt(phys_enc->parent);
- 	struct dpu_hw_cwb *hw_cwb;
-+	struct dpu_hw_ctl *hw_ctl;
- 	struct dpu_hw_cwb_setup_cfg cwb_cfg;
- 
- 	struct dpu_kms *dpu_kms;
-@@ -2140,6 +2142,14 @@ void dpu_encoder_helper_phys_setup_cwb(struct dpu_encoder_phys *phys_enc,
- 	if (!phys_enc || !phys_enc->hw_wb || !dpu_enc->cwb_mask)
- 		return;
- 
-+	hw_ctl = phys_enc->hw_ctl;
-+
-+	if (!phys_enc->hw_ctl) {
-+		DPU_DEBUG("[wb:%d] no ctl assigned\n",
-+			  phys_enc->hw_wb->idx - WB_0);
-+		return;
-+	}
-+
- 	dpu_kms = phys_enc->dpu_kms;
- 	global_state = dpu_kms_get_existing_global_state(dpu_kms);
- 	num_pp = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
-@@ -2184,6 +2194,9 @@ void dpu_encoder_helper_phys_setup_cwb(struct dpu_encoder_phys *phys_enc,
- 		cwb_cfg.pp_idx = rt_pp_idx[i];
- 
- 		hw_cwb->ops.config_cwb(hw_cwb, &cwb_cfg);
-+
-+		if (hw_ctl->ops.update_pending_flush_cwb)
-+			hw_ctl->ops.update_pending_flush_cwb(hw_ctl, hw_cwb->idx);
- 	}
- }
- 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c
-index e88c4d91041f..d0bf23d4da5f 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c
-@@ -236,6 +236,7 @@ static void dpu_encoder_phys_wb_setup_ctl(struct dpu_encoder_phys *phys_enc)
- 
- 		intf_cfg.intf = DPU_NONE;
- 		intf_cfg.wb = hw_wb->idx;
-+		intf_cfg.cwb = dpu_encoder_helper_get_cwb(phys_enc);
- 
- 		if (mode_3d && hw_pp && hw_pp->merge_3d)
- 			intf_cfg.merge_3d = hw_pp->merge_3d->idx;
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
-index 2e50049f2f85..792687b010ee 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /* Copyright (c) 2015-2018, The Linux Foundation. All rights reserved.
-- * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
-+ * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-  */
- 
- #include <linux/delay.h>
-@@ -31,12 +31,14 @@
- #define   CTL_MERGE_3D_ACTIVE           0x0E4
- #define   CTL_DSC_ACTIVE                0x0E8
- #define   CTL_WB_ACTIVE                 0x0EC
-+#define   CTL_CWB_ACTIVE                0x0F0
- #define   CTL_INTF_ACTIVE               0x0F4
- #define   CTL_CDM_ACTIVE                0x0F8
- #define   CTL_FETCH_PIPE_ACTIVE         0x0FC
- #define   CTL_MERGE_3D_FLUSH            0x100
- #define   CTL_DSC_FLUSH                0x104
- #define   CTL_WB_FLUSH                  0x108
-+#define   CTL_CWB_FLUSH                 0x10C
- #define   CTL_INTF_FLUSH                0x110
- #define   CTL_CDM_FLUSH                0x114
- #define   CTL_PERIPH_FLUSH              0x128
-@@ -53,6 +55,7 @@
- #define  PERIPH_IDX     30
- #define  INTF_IDX       31
- #define WB_IDX          16
-+#define CWB_IDX         28
- #define  DSPP_IDX       29  /* From DPU hw rev 7.x.x */
- #define CTL_INVALID_BIT                 0xffff
- #define CTL_DEFAULT_GROUP_ID		0xf
-@@ -110,6 +113,7 @@ static inline void dpu_hw_ctl_clear_pending_flush(struct dpu_hw_ctl *ctx)
- 	ctx->pending_flush_mask = 0x0;
- 	ctx->pending_intf_flush_mask = 0;
- 	ctx->pending_wb_flush_mask = 0;
-+	ctx->pending_cwb_flush_mask = 0;
- 	ctx->pending_merge_3d_flush_mask = 0;
- 	ctx->pending_dsc_flush_mask = 0;
- 	ctx->pending_cdm_flush_mask = 0;
-@@ -144,6 +148,9 @@ static inline void dpu_hw_ctl_trigger_flush_v1(struct dpu_hw_ctl *ctx)
- 	if (ctx->pending_flush_mask & BIT(WB_IDX))
- 		DPU_REG_WRITE(&ctx->hw, CTL_WB_FLUSH,
- 				ctx->pending_wb_flush_mask);
-+	if (ctx->pending_flush_mask & BIT(CWB_IDX))
-+		DPU_REG_WRITE(&ctx->hw, CTL_CWB_FLUSH,
-+				ctx->pending_cwb_flush_mask);
- 
- 	if (ctx->pending_flush_mask & BIT(DSPP_IDX))
- 		for (dspp = DSPP_0; dspp < DSPP_MAX; dspp++) {
-@@ -310,6 +317,13 @@ static void dpu_hw_ctl_update_pending_flush_wb_v1(struct dpu_hw_ctl *ctx,
- 	ctx->pending_flush_mask |= BIT(WB_IDX);
- }
- 
-+static void dpu_hw_ctl_update_pending_flush_cwb_v1(struct dpu_hw_ctl *ctx,
-+		enum dpu_cwb cwb)
-+{
-+	ctx->pending_cwb_flush_mask |= BIT(cwb - CWB_0);
-+	ctx->pending_flush_mask |= BIT(CWB_IDX);
-+}
-+
- static void dpu_hw_ctl_update_pending_flush_intf_v1(struct dpu_hw_ctl *ctx,
- 		enum dpu_intf intf)
- {
-@@ -547,6 +561,7 @@ static void dpu_hw_ctl_intf_cfg_v1(struct dpu_hw_ctl *ctx,
- 	u32 intf_active = 0;
- 	u32 dsc_active = 0;
- 	u32 wb_active = 0;
-+	u32 cwb_active = 0;
- 	u32 mode_sel = 0;
- 
- 	/* CTL_TOP[31:28] carries group_id to collate CTL paths
-@@ -561,6 +576,7 @@ static void dpu_hw_ctl_intf_cfg_v1(struct dpu_hw_ctl *ctx,
- 
- 	intf_active = DPU_REG_READ(c, CTL_INTF_ACTIVE);
- 	wb_active = DPU_REG_READ(c, CTL_WB_ACTIVE);
-+	cwb_active = DPU_REG_READ(c, CTL_CWB_ACTIVE);
- 	dsc_active = DPU_REG_READ(c, CTL_DSC_ACTIVE);
- 
- 	if (cfg->intf)
-@@ -569,12 +585,16 @@ static void dpu_hw_ctl_intf_cfg_v1(struct dpu_hw_ctl *ctx,
- 	if (cfg->wb)
- 		wb_active |= BIT(cfg->wb - WB_0);
- 
-+	if (cfg->cwb)
-+		cwb_active |= cfg->cwb;
-+
- 	if (cfg->dsc)
- 		dsc_active |= cfg->dsc;
- 
- 	DPU_REG_WRITE(c, CTL_TOP, mode_sel);
- 	DPU_REG_WRITE(c, CTL_INTF_ACTIVE, intf_active);
- 	DPU_REG_WRITE(c, CTL_WB_ACTIVE, wb_active);
-+	DPU_REG_WRITE(c, CTL_CWB_ACTIVE, cwb_active);
- 	DPU_REG_WRITE(c, CTL_DSC_ACTIVE, dsc_active);
- 
- 	if (cfg->merge_3d)
-@@ -624,6 +644,7 @@ static void dpu_hw_ctl_reset_intf_cfg_v1(struct dpu_hw_ctl *ctx,
- 	struct dpu_hw_blk_reg_map *c = &ctx->hw;
- 	u32 intf_active = 0;
- 	u32 wb_active = 0;
-+	u32 cwb_active = 0;
- 	u32 merge3d_active = 0;
- 	u32 dsc_active;
- 	u32 cdm_active;
-@@ -651,6 +672,12 @@ static void dpu_hw_ctl_reset_intf_cfg_v1(struct dpu_hw_ctl *ctx,
- 		DPU_REG_WRITE(c, CTL_INTF_ACTIVE, intf_active);
- 	}
- 
-+	if (cfg->cwb) {
-+		cwb_active = DPU_REG_READ(c, CTL_CWB_ACTIVE);
-+		cwb_active &= ~cfg->cwb;
-+		DPU_REG_WRITE(c, CTL_CWB_ACTIVE, cwb_active);
-+	}
-+
- 	if (cfg->wb) {
- 		wb_active = DPU_REG_READ(c, CTL_WB_ACTIVE);
- 		wb_active &= ~BIT(cfg->wb - WB_0);
-@@ -703,6 +730,7 @@ static void _setup_ctl_ops(struct dpu_hw_ctl_ops *ops,
- 		ops->update_pending_flush_merge_3d =
- 			dpu_hw_ctl_update_pending_flush_merge_3d_v1;
- 		ops->update_pending_flush_wb = dpu_hw_ctl_update_pending_flush_wb_v1;
-+		ops->update_pending_flush_cwb = dpu_hw_ctl_update_pending_flush_cwb_v1;
- 		ops->update_pending_flush_dsc =
- 			dpu_hw_ctl_update_pending_flush_dsc_v1;
- 		ops->update_pending_flush_cdm = dpu_hw_ctl_update_pending_flush_cdm_v1;
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h
-index 4401fdc0f3e4..45c1bcb737fa 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0-only */
- /* Copyright (c) 2015-2018, The Linux Foundation. All rights reserved.
-- * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
-+ * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-  */
- 
- #ifndef _DPU_HW_CTL_H
-@@ -42,6 +42,7 @@ struct dpu_hw_stage_cfg {
-  * @cdm:                   CDM block used
-  * @stream_sel:            Stream selection for multi-stream interfaces
-  * @dsc:                   DSC BIT masks used
-+ * @cwb:                   CWB BIT masks used
-  */
- struct dpu_hw_intf_cfg {
- 	enum dpu_intf intf;
-@@ -51,6 +52,7 @@ struct dpu_hw_intf_cfg {
- 	enum dpu_ctl_mode_sel intf_mode_sel;
- 	enum dpu_cdm cdm;
- 	int stream_sel;
-+	unsigned int cwb;
- 	unsigned int dsc;
- };
- 
-@@ -114,6 +116,15 @@ struct dpu_hw_ctl_ops {
- 	void (*update_pending_flush_wb)(struct dpu_hw_ctl *ctx,
- 		enum dpu_wb blk);
- 
-+	/**
-+	 * OR in the given flushbits to the cached pending_(cwb_)flush_mask
-+	 * No effect on hardware
-+	 * @ctx       : ctl path ctx pointer
-+	 * @blk       : concurrent writeback block index
-+	 */
-+	void (*update_pending_flush_cwb)(struct dpu_hw_ctl *ctx,
-+		enum dpu_cwb blk);
-+
- 	/**
- 	 * OR in the given flushbits to the cached pending_(intf_)flush_mask
- 	 * No effect on hardware
-@@ -258,6 +269,7 @@ struct dpu_hw_ctl_ops {
-  * @pending_flush_mask: storage for pending ctl_flush managed via ops
-  * @pending_intf_flush_mask: pending INTF flush
-  * @pending_wb_flush_mask: pending WB flush
-+ * @pending_cwb_flush_mask: pending CWB flush
-  * @pending_dsc_flush_mask: pending DSC flush
-  * @pending_cdm_flush_mask: pending CDM flush
-  * @ops: operation list
-@@ -274,6 +286,7 @@ struct dpu_hw_ctl {
- 	u32 pending_flush_mask;
- 	u32 pending_intf_flush_mask;
- 	u32 pending_wb_flush_mask;
-+	u32 pending_cwb_flush_mask;
- 	u32 pending_periph_flush_mask;
- 	u32 pending_merge_3d_flush_mask;
- 	u32 pending_dspp_flush_mask[DSPP_MAX - DSPP_0];
++1
 
--- 
-2.34.1
+> >
+> >
+> >That said I am trying to remember why we picked /dev/fd/N, as the
+> >filename.
+> >
+> >My memory is that we couldn't think of anything more reasonable to use.
+> >Looking at commit 51f39a1f0cea ("syscalls: implement execveat() system
+> >call") unfortunately doesn't clarify anything for me, except that
+> >/dev/fd/N was a reasonable choice.
+> >
+> >I am thinking the code could reasonably try:
+> >	get_fs_root_rcu(current->fs, &root);
+> >	path = __d_path(file->f_path, root, buf, buflen);
+> >
+> >To see if a path to the file from the current root directory can be
+> >found.  For files that are not reachable from the current root the code
+> >still need to fallback to /dev/fd/N.
+> >
+> >Do you think you can investigate that and see if that would generate
+> >a reasonable task->comm?
+> >
+> >If for no other reason than because it would generate a usable result
+> >for #! scripts, without /proc mounted.
+> >
+> >
+> >It looks like a reasonable case can be made that while /dev/fd/N is
+> >a good path for interpreters, it is never a good choice for comm,
+> >so perhaps we could always use argv[0] if the fdpath is of the
+> >form /dev/fd/N.
+> 
+> I haven't had a chance to go look closely yet, but this was the same thought I had when I first read this RFC. Nobody really wants a dev path in comm. Can we do this unconditionally? (And if argv0 is empty, use dev path...)
 
+We can, I was just worried about the behavior change. But it seems we
+are all in violent agreement that the current behavior isn't very
+good, so maybe it's fine to change.
+
+> >All of that said I am not a fan of the implementation below as it has
+> >the side effect of replacing /dev/fd/N with a filename that is not
+> >usable by #! interpreters.  So I suggest an implementation that affects
+> >task->comm and not brpm->filename.
+> 
+> Also agreed. There is already enough fiddly usage of the bprm filename/interpreter/fdpath members -- the argv0 stuff should be distinct. Perhaps store a pointer to argv0 during arg copy? I need to go look but I'm still AFK/OoO...
+
+Yeah, on second thought we could do something like:
+
+diff --git a/fs/exec.c b/fs/exec.c
+index 36434feddb7b..a45ea270cc43 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1416,7 +1416,10 @@ int begin_new_exec(struct linux_binprm * bprm)
+                set_dumpable(current->mm, SUID_DUMP_USER);
+
+        perf_event_exec();
+-       __set_task_comm(me, kbasename(bprm->filename), true);
++       if (needs_comm_fixup)
++               __set_task_comm(me, argv0, true);
++       else
++               __set_task_comm(me, kbasename(bprm->filename), true);
+
+        /* An exec changes our domain. We are no longer part of the thread
+           group */
+
+and then we don't need to mess with bprm at all. Seems much cleaner. I
+will see about the
+
+	get_fs_root_rcu(current->fs, &root);
+	path = __d_path(file->f_path, root, buf, buflen);
+
+that Eric suggested and how that works with the above.
+
+Tycho
 
