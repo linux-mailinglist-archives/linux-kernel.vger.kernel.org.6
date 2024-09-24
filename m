@@ -1,270 +1,105 @@
-Return-Path: <linux-kernel+bounces-337727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 765CB984E0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:44:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C175C984E06
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:44:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36A61285F9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:44:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69DBA1F24E28
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479B31A76BD;
-	Tue, 24 Sep 2024 22:44:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA7F1AC8B1;
+	Tue, 24 Sep 2024 22:44:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="NQQxrwwx"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="UMVXgnwR"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E51FD1AB51F;
-	Tue, 24 Sep 2024 22:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D92C1AD3E0;
+	Tue, 24 Sep 2024 22:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727217875; cv=none; b=h3EB/biPxyBOXhQjoXjhXmhpd0VNrQe1zaubco6wE6Teape1fApX9Shqs/9r2LP0ZCkwj8jX965yZWz9e3YKr42NHhr/VxiBXRVa8nva2qs38rCgAG1MJKngKWr4ZJ2Rwg6TEN8ZLeKLQWytdO4KboJ/i67maT2o3z0YRkezrck=
+	t=1727217853; cv=none; b=aI60vPg1jCXsyy7CU2v4SMCJi7Oo7heYi/aN08JAT/jGJQ5mZgP8nZW2kvVcQ494jrHbzNrqMpmj/luTv9LHFfQCVLxsFHEJezZUkQcEsVs//2juR7UH89SrNGwSPKfc0w5TR8vtwZFNm8+SFlyd09B5MBKSfhInbAKlaR8c5q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727217875; c=relaxed/simple;
-	bh=Nh4w8B6OrEr7+CcT9Eop5Nj8fyiVYtJx2YEeu4hbTsk=;
+	s=arc-20240116; t=1727217853; c=relaxed/simple;
+	bh=1kak7Papg+REt0YX9qEAPqyd0bv8zJRl0skoenBu4Es=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rzsIKs11QusTFX6cheBB1pfA2TE0WI/F/SgF8fG5u6js78vzv9Wt/oVhminyGRIybrBMnOpmJ2ccGj25EuzMGdUZ9eQNG/Z7Gn7R4KYElBW6rTwztM8IiJavj7fQYi3sAArOXehjjTtj26rGbuvNXa5ISyik2wHMIOVK1FSI/GE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=NQQxrwwx; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 85FA07E2;
-	Wed, 25 Sep 2024 00:43:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1727217784;
-	bh=Nh4w8B6OrEr7+CcT9Eop5Nj8fyiVYtJx2YEeu4hbTsk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NQQxrwwxfRiQe5KhndbrzADSz7monTfQ1UPb2Rbh6Tjnmst0grN+lt1s88orN5/Ok
-	 gkpXo9Wy0IdpbDp7VrGle6HjEg8UwWQLcvj0xRB3xbOCqHqcgfF1qPCbxgs4hWUz/9
-	 qvw+iCUYYmvOLqrkQkvVQZpdxkMFSWa0eEFPuTzY=
-Date: Wed, 25 Sep 2024 01:43:57 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v2 04/11] media: i2c: ov5645: Use dev_err_probe instead
- of dev_err
-Message-ID: <20240924224357.GM7165@pendragon.ideasonboard.com>
-References: <20240910170610.226189-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240910170610.226189-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hsuot/I8OkNjlYB5WNMMQzMgbPTXYoZ17RAY7btCl22wMB0OIHJ344Zy+Xi0gw2X2MYvW5eHL4yd7ZUvuddnFytnxSAY+z+AMIxC6RXHRj4Og2Jw831IeqtbsMdBMqEnq310oHBxgjwL925FJSEzKbbogxTOanUIZCqK71aI7QM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=UMVXgnwR; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=IIQp0fRS7W4DUEIrqrSf6cHBI+Xpz5AzpoihIU8mkY0=; b=UMVXgnwRJoohfetEiSKOCMwFSf
+	9exaMvMbJWlLxNI2qwm1q/J7FFqtVvH7OEzUP31x47dJPc3t+VVQpNrBxoj6CUlmATQ8mgqqZRqw1
+	0GsxMl8cO2R3vx23sKuatXPMQwf4yIbp2GdwGfzcakpD4e8rWIc615AubZjeUkSu3VvxeJeAgd5WF
+	D9mKzyFYnZ5a+G51Xo/pbeulxQ2CHvNNzcVkY2OJBslnGBsiRX71Q9oitwXA4b/8Tp2FCL9vpVUjh
+	6/RxNwLCmri8W5hesrDL1DwjafIH3L3shMteym3zHNN8gDveoyaSYlYNNBTnmbkyMMSvdW6qdP0aN
+	iGBwSoXg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:39768)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1stEGJ-0005vY-1Z;
+	Tue, 24 Sep 2024 23:44:03 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1stEGF-0006ki-3D;
+	Tue, 24 Sep 2024 23:44:00 +0100
+Date: Tue, 24 Sep 2024 23:43:59 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Rob Herring <robh@kernel.org>
+Cc: Kunwu Chan <chentao@kylinos.cn>, saravanak@google.com,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH 1/2] amba: Add dev_is_amba() function and export it for
+ modules
+Message-ID: <ZvNAr0d5gYmuM+Zt@shell.armlinux.org.uk>
+References: <20240923094249.80399-1-chentao@kylinos.cn>
+ <20240923094249.80399-2-chentao@kylinos.cn>
+ <20240924222857.GA404805-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240910170610.226189-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240924222857.GA404805-robh@kernel.org>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hi Prabhakar,
-
-Thank you for the patch.
-
-On Tue, Sep 10, 2024 at 06:06:03PM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Tue, Sep 24, 2024 at 05:28:57PM -0500, Rob Herring wrote:
+> On Mon, Sep 23, 2024 at 05:42:47PM +0800, Kunwu Chan wrote:
+> > Add dev_is_amba() function to determine
+> > whether the device is a AMBA device.
+> > 
+> > Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
+> > ---
+> >  drivers/amba/bus.c       | 6 ++++++
+> >  include/linux/amba/bus.h | 5 +++++
+> >  2 files changed, 11 insertions(+)
 > 
-> Drop dev_err() and use the dev_err_probe() helper on probe path.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
->  drivers/media/i2c/ov5645.c | 74 +++++++++++++++-----------------------
->  1 file changed, 28 insertions(+), 46 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
-> index 78b86438c798..9e6ff1f1b9ac 100644
-> --- a/drivers/media/i2c/ov5645.c
-> +++ b/drivers/media/i2c/ov5645.c
-> @@ -1076,51 +1076,37 @@ static int ov5645_probe(struct i2c_client *client)
->  	ov5645->dev = dev;
->  
->  	endpoint = of_graph_get_endpoint_by_regs(dev->of_node, 0, -1);
-> -	if (!endpoint) {
-> -		dev_err(dev, "endpoint node not found\n");
-> -		return -EINVAL;
-> -	}
-> +	if (!endpoint)
-> +		return dev_err_probe(dev, -EINVAL, "endpoint node not found\n");
->  
->  	ret = v4l2_fwnode_endpoint_parse(of_fwnode_handle(endpoint),
->  					 &ov5645->ep);
->  
->  	of_node_put(endpoint);
->  
-> -	if (ret < 0) {
-> -		dev_err(dev, "parsing endpoint node failed\n");
-> -		return ret;
-> -	}
-> +	if (ret < 0)
-> +		return dev_err_probe(dev, ret, "parsing endpoint node failed\n");
->  
-> -	if (ov5645->ep.bus_type != V4L2_MBUS_CSI2_DPHY) {
-> -		dev_err(dev, "invalid bus type, must be CSI2\n");
-> -		return -EINVAL;
-> -	}
-> +	if (ov5645->ep.bus_type != V4L2_MBUS_CSI2_DPHY)
-> +		return dev_err_probe(dev, -EINVAL, "invalid bus type, must be CSI2\n");
->  
->  	/* get system clock (xclk) */
->  	ov5645->xclk = devm_clk_get(dev, NULL);
-> -	if (IS_ERR(ov5645->xclk)) {
-> -		dev_err(dev, "could not get xclk");
-> -		return PTR_ERR(ov5645->xclk);
-> -	}
-> +	if (IS_ERR(ov5645->xclk))
-> +		return dev_err_probe(dev, PTR_ERR(ov5645->xclk), "could not get xclk");
->  
->  	ret = of_property_read_u32(dev->of_node, "clock-frequency", &xclk_freq);
-> -	if (ret) {
-> -		dev_err(dev, "could not get xclk frequency\n");
-> -		return ret;
-> -	}
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "could not get xclk frequency\n");
->  
->  	/* external clock must be 24MHz, allow 1% tolerance */
-> -	if (xclk_freq < 23760000 || xclk_freq > 24240000) {
-> -		dev_err(dev, "external clock frequency %u is not supported\n",
-> -			xclk_freq);
-> -		return -EINVAL;
-> -	}
-> +	if (xclk_freq < 23760000 || xclk_freq > 24240000)
-> +		return dev_err_probe(dev, -EINVAL, "external clock frequency %u is not supported\n",
-> +				     xclk_freq);
->  
->  	ret = clk_set_rate(ov5645->xclk, xclk_freq);
-> -	if (ret) {
-> -		dev_err(dev, "could not set xclk frequency\n");
-> -		return ret;
-> -	}
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "could not set xclk frequency\n");
->  
->  	for (i = 0; i < OV5645_NUM_SUPPLIES; i++)
->  		ov5645->supplies[i].supply = ov5645_supply_name[i];
-> @@ -1131,16 +1117,12 @@ static int ov5645_probe(struct i2c_client *client)
->  		return ret;
->  
->  	ov5645->enable_gpio = devm_gpiod_get(dev, "enable", GPIOD_OUT_HIGH);
-> -	if (IS_ERR(ov5645->enable_gpio)) {
-> -		dev_err(dev, "cannot get enable gpio\n");
-> -		return PTR_ERR(ov5645->enable_gpio);
-> -	}
-> +	if (IS_ERR(ov5645->enable_gpio))
-> +		return dev_err_probe(dev, PTR_ERR(ov5645->enable_gpio), "cannot get enable gpio\n");
+> Russell, Can I get an ack for this to take it with patch #2.
 
-Those lines are getting long. We usually try to wrap at 80 columns for
-sensor drivers:
+Would be nice to discuss "how shall we merge this cross-subsystem
+patch series" first, hmm?
 
-		return dev_err_probe(dev, PTR_ERR(ov5645->enable_gpio),
-				     "cannot get enable gpio\n");
-
-Same elsewhere. I'll let Sakari decide.
-
->  
->  	ov5645->rst_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
-> -	if (IS_ERR(ov5645->rst_gpio)) {
-> -		dev_err(dev, "cannot get reset gpio\n");
-> -		return PTR_ERR(ov5645->rst_gpio);
-> -	}
-> +	if (IS_ERR(ov5645->rst_gpio))
-> +		return dev_err_probe(dev, PTR_ERR(ov5645->rst_gpio), "cannot get reset gpio\n");
->  
->  	mutex_init(&ov5645->power_lock);
->  
-> @@ -1177,9 +1159,9 @@ static int ov5645_probe(struct i2c_client *client)
->  	ov5645->sd.ctrl_handler = &ov5645->ctrls;
->  
->  	if (ov5645->ctrls.error) {
-> -		dev_err(dev, "%s: control initialization error %d\n",
-> -		       __func__, ov5645->ctrls.error);
->  		ret = ov5645->ctrls.error;
-> +		dev_err_probe(dev, ret, "%s: control initialization error %d\n",
-> +			      __func__, ov5645->ctrls.error);
->  		goto free_ctrl;
->  	}
->  
-> @@ -1192,7 +1174,7 @@ static int ov5645_probe(struct i2c_client *client)
->  
->  	ret = media_entity_pads_init(&ov5645->sd.entity, 1, &ov5645->pad);
->  	if (ret < 0) {
-> -		dev_err(dev, "could not register media entity\n");
-> +		dev_err_probe(dev, ret, "could not register media entity\n");
->  		goto free_ctrl;
->  	}
->  
-> @@ -1202,14 +1184,14 @@ static int ov5645_probe(struct i2c_client *client)
->  
->  	ret = ov5645_read_reg(ov5645, OV5645_CHIP_ID_HIGH, &chip_id_high);
->  	if (ret < 0 || chip_id_high != OV5645_CHIP_ID_HIGH_BYTE) {
-> -		dev_err(dev, "could not read ID high\n");
->  		ret = -ENODEV;
-> +		dev_err_probe(dev, ret, "could not read ID high\n");
->  		goto power_down;
->  	}
->  	ret = ov5645_read_reg(ov5645, OV5645_CHIP_ID_LOW, &chip_id_low);
->  	if (ret < 0 || chip_id_low != OV5645_CHIP_ID_LOW_BYTE) {
-> -		dev_err(dev, "could not read ID low\n");
->  		ret = -ENODEV;
-> +		dev_err_probe(dev, ret, "could not read ID low\n");
->  		goto power_down;
->  	}
->  
-> @@ -1218,24 +1200,24 @@ static int ov5645_probe(struct i2c_client *client)
->  	ret = ov5645_read_reg(ov5645, OV5645_AEC_PK_MANUAL,
->  			      &ov5645->aec_pk_manual);
->  	if (ret < 0) {
-> -		dev_err(dev, "could not read AEC/AGC mode\n");
->  		ret = -ENODEV;
-> +		dev_err_probe(dev, ret, "could not read AEC/AGC mode\n");
->  		goto power_down;
->  	}
->  
->  	ret = ov5645_read_reg(ov5645, OV5645_TIMING_TC_REG20,
->  			      &ov5645->timing_tc_reg20);
->  	if (ret < 0) {
-> -		dev_err(dev, "could not read vflip value\n");
->  		ret = -ENODEV;
-> +		dev_err_probe(dev, ret, "could not read vflip value\n");
->  		goto power_down;
->  	}
->  
->  	ret = ov5645_read_reg(ov5645, OV5645_TIMING_TC_REG21,
->  			      &ov5645->timing_tc_reg21);
->  	if (ret < 0) {
-> -		dev_err(dev, "could not read hflip value\n");
->  		ret = -ENODEV;
-> +		dev_err_probe(dev, ret, "could not read hflip value\n");
->  		goto power_down;
->  	}
->  
-> @@ -1243,7 +1225,7 @@ static int ov5645_probe(struct i2c_client *client)
->  
->  	ret = v4l2_async_register_subdev(&ov5645->sd);
->  	if (ret < 0) {
-> -		dev_err(dev, "could not register v4l2 device\n");
-> +		dev_err_probe(dev, ret, "could not register v4l2 device\n");
->  		goto power_down;
->  	}
->  
-
-The probe function looks really young, I think it would benefit from
-being broken down in multiple functions.
+The reason I didn't take patch 1 originally is because it was submitted
+to me without any users, and the general principle is not to accept
+patches without users. Too many times, I've merged code where there's
+been a "promise" that it will be used, only to have the author go
+silent and users never come along. So now, my rule is... any code that
+adds something must also come with its user.
 
 -- 
-Regards,
-
-Laurent Pinchart
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
