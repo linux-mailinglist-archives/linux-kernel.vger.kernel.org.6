@@ -1,80 +1,95 @@
-Return-Path: <linux-kernel+bounces-337138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA2DC9845D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:20:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F7469845D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:21:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D57F281EA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:20:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1176281EA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A041A4F18;
-	Tue, 24 Sep 2024 12:20:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F8441A4F2F;
+	Tue, 24 Sep 2024 12:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZKEeWdj6"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="E6bejxMQ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="reJh85lX";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZXMQbUXr";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="aoY2/MUV"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA2E3F9D5
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 12:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5DC3F9D5
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 12:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727180453; cv=none; b=bYfhqd1MTTk3iYnguVRb0vN1TBile5ubNE5x+Ie077sEcRC4r+c4P6DgdzvscUEbDzm3jy5qiFfL8TNpFaFBa0IC8U+jmIaxcakclW3Eh0+ezdhSdksWiSHjmv0cJvU9mjsy9xPeEnyu+BmzK5GPhrtMHjFH/AL4zSa/o9aeUsI=
+	t=1727180463; cv=none; b=Ka+TQbXjRmZbkHmzYsbr17NCaWFxVQWEY15+RGMAHjgpTAqjZPBCnnYZ4/yqATQ2x0ocu0SnQy8cb6PP8lwGjrxjBM0BiJoEFmPnMqBYGi8+3wYK+5oXsQXFjuI1eo37rWo3jBF5Mi7gT/bDUJls8rNjPLhikmn8jZEUKxexKB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727180453; c=relaxed/simple;
-	bh=IUaZr5e91uzz5Wzf+oEkbGm9uKHupmhNUOuchYP+YdI=;
+	s=arc-20240116; t=1727180463; c=relaxed/simple;
+	bh=zTDcHn9JUDHRG4CApLI91U/iEllety/ixPPD4f+mdjE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YIN3O/jtIX9vWvNS3eV2GczOR+3eBCcCZ5r4IbidUMmY5VcjTKtAWmi6amTdOIzOCQWMw3hNqyD4c8cyfZ4dNbwFgEwaCk1mqQi/ppQxHCTyRh3t65+Ramaco4thYEDSJob+BTVZF6pTZSXUHo2TIas3sdQc9sGfs9zD7FT4xfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZKEeWdj6; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727180450;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 In-Reply-To:Content-Type; b=tqHT1olv5Efn0DTmRte2IpHRLgO9SBz5e5O4ZgXNJ6mxK8XFZx8pH0totCp2L9QfrhLpi9Wa+z7mxdIJA53o0D1w0fprHLaDgUUpUp/NbjjpTYskqbLkse7RMsvjaWooWPUdGUKhTVZhQAG45FmKx3Ccdk0sJQJI76llO7V++Hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=E6bejxMQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=reJh85lX; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZXMQbUXr; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=aoY2/MUV; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 624271F792;
+	Tue, 24 Sep 2024 12:20:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1727180457; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=fEhwcR0nDcDNcXbh+vZDJxC06tKI6AicjYaDzZ3FegY=;
-	b=ZKEeWdj6CgDl7Ttj+VrGWNltR/u+mQc0LbwdethpLhNzSBwZH7mRlowoagmsLB5wLU0q1T
-	YoDloNSsLFrjxJC2onNsOc8oOH5ljuHw9dA8Wkfzd5vjPKBkX218iQiT3zCpLN9UhHu2cG
-	XUBRG4b8b6084QIJdF3aXmOhWgTGT/0=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-28-OizDCImoMdmpx_e2esDr2A-1; Tue, 24 Sep 2024 08:20:49 -0400
-X-MC-Unique: OizDCImoMdmpx_e2esDr2A-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-374cbbaf315so2856257f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 05:20:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727180447; x=1727785247;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=fEhwcR0nDcDNcXbh+vZDJxC06tKI6AicjYaDzZ3FegY=;
-        b=AKYpJXQ3xdnObkCdZ5aivSt5XjjDqQexFHWn0BS+K/9Y6z7JAmbwFtZeITaES8EIwv
-         ck9G3gczMzpg++2ZOT09UrOMzIhoU3qn3Yh7OMo/8fcFVZJalEHfzuaJynhs0vrGvIpm
-         mnuH4k+qz+l3EeKEtM7/HJDaTjhPQMe/qdh3RlgY5XVeuCitzaUPecx2hP/hSbRu8/mL
-         7x93vjz8k4axhGEBwwWCNZmuXHB7glNnPtCoQi5X3DDbJoL1oe815AQactsI7xyV4ErZ
-         Nesz02E3yJGCDQrefnnShCWeYsdIZdo9Sh92b1kQjEfRMpEptJ4BW5es8flXNz+iewit
-         ICiw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNonho73tCLIn3uIu1es9kfw1M5KIqkp2t6ZAH3pXVlFSWZinBbTIjMI79FAi3HIkWxg01PiJTcgjrrLo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXFUdtFX7g0RKeeOcRLKmsWtPBLX3GwuK6c1n6gIE4ytFXMlpB
-	QMPxYj+af1tJ5xS9AQIQq/4gC5YZm34i5rxRTqTyIfrlNxb8ZKj15teAnZwKTMUuJpbWo8xYftE
-	MNJbuqiVxQta6PkbvXZZ+Gwn7nKxDXgBSKlmBoJJ+Z8Un1tqGVSjJEa/QesHB/g==
-X-Received: by 2002:a5d:4b89:0:b0:376:3a98:739 with SMTP id ffacd0b85a97d-37c7ebb6d21mr1929373f8f.17.1727180447452;
-        Tue, 24 Sep 2024 05:20:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFXEpfmhqjsaIApP/IYFzxW9Ak1x8pk3qOeh0WbS4U8+1RSLv6OinaOVjOunku06raVWfXlxA==
-X-Received: by 2002:a5d:4b89:0:b0:376:3a98:739 with SMTP id ffacd0b85a97d-37c7ebb6d21mr1929334f8f.17.1727180446997;
-        Tue, 24 Sep 2024 05:20:46 -0700 (PDT)
-Received: from [10.202.151.204] (nat-pool-brq-u.redhat.com. [213.175.37.12])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cbc2c1ed9sm1444993f8f.34.2024.09.24.05.20.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Sep 2024 05:20:46 -0700 (PDT)
-Message-ID: <900b012f-c36d-4470-860f-1489879d2bd9@redhat.com>
-Date: Tue, 24 Sep 2024 14:20:45 +0200
+	bh=/RdI90hqbd+U+GKYnDCuab+NMyzd7Sw92pEn9ihmru8=;
+	b=E6bejxMQd16DcVqoSdl0OPcMqUQUF7pPVKWlWHMT3n+Zy7hFSMQSO+ni4wSmDiP0NURdq4
+	Xz9lC8fVle+tw4JTUqbabURUxZV8GS0P7Ah8zpSR8CBLUb7KWvfOUiFGW/Kew3VwEzyvvK
+	ogViJ9UiHcDSxl8RVj99bU/ms1/jy8U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1727180457;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/RdI90hqbd+U+GKYnDCuab+NMyzd7Sw92pEn9ihmru8=;
+	b=reJh85lXZ9nL9RlLDKC/wy7MZYu5PH9Nss1Fa2IYwrTL1yridZLUcNL6u+6nHB2SZuY7Vx
+	jo1WawPUky91rcAQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ZXMQbUXr;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="aoY2/MUV"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1727180456; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/RdI90hqbd+U+GKYnDCuab+NMyzd7Sw92pEn9ihmru8=;
+	b=ZXMQbUXrfx6iOJ7JdCNEP8q8y1jq1hja6NfeFhqQgJOLI2Wgmrs7q5ZdXz/QrCdrjvAMlG
+	XGTU7iflFqG4Shai+Jg9jJc3uls0gsbV+VzHeaeoQNqlfO/wStIVagnXz3mBy/J0+rl0/M
+	NlSNbk+4m16Vx0lCGxus6iwC/P3goTI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1727180456;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/RdI90hqbd+U+GKYnDCuab+NMyzd7Sw92pEn9ihmru8=;
+	b=aoY2/MUVKy6P8biYbvxCHUK/LggGaLEZDpuWI7RoTkfZYZLRlFtUDO6ATn88LGjrMC65u/
+	SpI5SyQGzgrF4eBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0375F13AA8;
+	Tue, 24 Sep 2024 12:20:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id uKguO6eu8mbTQAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Tue, 24 Sep 2024 12:20:55 +0000
+Message-ID: <8eb45005-c6fb-4baa-a44a-243958a3a1ba@suse.de>
+Date: Tue, 24 Sep 2024 14:20:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,85 +97,186 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/2] mm: Allocate THP on hugezeropage wp-fault
-To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org,
- willy@infradead.org, kirill.shutemov@linux.intel.com
-Cc: ryan.roberts@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
- cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
- dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
- jack@suse.cz, mark.rutland@arm.com, hughd@google.com,
- aneesh.kumar@kernel.org, yang@os.amperecomputing.com, peterx@redhat.com,
- ioworker0@gmail.com, jglisse@google.com, wangkefeng.wang@huawei.com,
- ziy@nvidia.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240924101654.1777697-1-dev.jain@arm.com>
- <20240924101654.1777697-3-dev.jain@arm.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: radeon ARUBA NULL pointer dereference
+To: Arthur Marsh <arthur.marsh@internode.on.net>
+Cc: Xinhui.Pan@amd.com, airlied@gmail.com, alexander.deucher@amd.com,
+ amd-gfx@lists.freedesktop.org, christian.koenig@amd.com, daniel@ffwll.ch,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ wuhoipok@gmail.com, iommu@lists.linux.dev,
+ the arch/x86 maintainers <x86@kernel.org>
+References: <20240919165641.4632-1-user@am64>
+ <20240924020824.6264-1-user@am64>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240924101654.1777697-3-dev.jain@arm.com>
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20240924020824.6264-1-user@am64>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 624271F792
+X-Spam-Score: -6.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-6.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_TO(0.00)[internode.on.net];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,internode.on.net];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[amd.com,gmail.com,lists.freedesktop.org,ffwll.ch,vger.kernel.org,lists.linux.dev,kernel.org];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,bootlin.com:url,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 24.09.24 12:16, Dev Jain wrote:
-> Introduce do_huge_zero_wp_pmd() to handle wp-fault on a hugezeropage and
-> replace it with a PMD-mapped THP. Remember to flush TLB entry
-> corresponding to the hugezeropage. In case of failure, fallback
-> to splitting the PMD.
-> 
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
+(cc: DMA and x86 folks)
 
-Nothing jumped at me and it looks much cleaner now
+Hi
 
-Acked-by: David Hildenbrand <david@redhat.com>
+Am 24.09.24 um 04:08 schrieb Arthur Marsh:
+> Using current Linus git head kernel, I was able to save the dmesg output:
+>
+> [   17.218724] [drm] radeon kernel modesetting enabled.
+> [   17.218778] radeon 0000:00:01.0: vgaarb: deactivate vga console
+> [   17.219509] Console: switching to colour dummy device 80x25
+> [   17.219700] [drm] initializing kernel modesetting (ARUBA 0x1002:0x990C 0x1002:0x0123 0x00).
+> [   17.219773] ATOM BIOS: 113
+> [   17.219838] radeon 0000:00:01.0: VRAM: 768M 0x0000000000000000 - 0x000000002FFFFFFF (768M used)
+> [   17.219841] radeon 0000:00:01.0: GTT: 1024M 0x0000000030000000 - 0x000000006FFFFFFF
+> [   17.219844] [drm] Detected VRAM RAM=768M, BAR=256M
+> [   17.219845] [drm] RAM width 64bits DDR
+> [   17.219851] BUG: kernel NULL pointer dereference, address: 00000000000000a0
+
+This is 160 bytes behind NULL, which indicates a field within a struct.
+
+> [   17.219852] #PF: supervisor read access in kernel mode
+> [   17.219853] #PF: error_code(0x0000) - not-present page
+> [   17.219854] PGD 0 P4D 0
+> [   17.219856] Oops: Oops: 0000 [#1] PREEMPT_RT SMP NOPTI
+> [   17.219858] CPU: 0 UID: 0 PID: 451 Comm: udevd Not tainted 6.11.0+ #6121
+> [   17.219860] Hardware name: Gigabyte Technology Co., Ltd. To be filled by O.E.M./F2A78M-HD2, BIOS F2 05/28/2014
+> [   17.219862] RIP: 0010:dma_get_required_mask+0x11/0x50
+> [   17.219868] Code: 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 48 8b 87 68 02 00 00 48 85 c0 74 11 <48> 8b 80 a0 00 00 00 48 85 c0 74 1f e9 ee ed 94 00 f6 87 2c 03 00
+> [   17.219870] RSP: 0018:ffffa54bc13a7b00 EFLAGS: 00010202
+> [   17.219871] RAX: 0000000000000000 RBX: 000000ffffffffff RCX: 0000000000000000
+> [   17.219872] RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff976f44e720c8
+> [   17.219873] RBP: ffff976f44e720c8 R08: 00000000ffffefff R09: ffffffffab2aab08
+> [   17.219874] R10: 00000000fffff000 R11: 0000000000000002 R12: 0000000000000000
+> [   17.219875] R13: ffff976f48a4aa30 R14: 0000000000000000 R15: 0000000000000028
+> [   17.219876] FS:  00007f59a070d840(0000) GS:ffff97726f800000(0000) knlGS:0000000000000000
+> [   17.219878] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   17.219879] CR2: 00000000000000a0 CR3: 00000001053b4000 CR4: 00000000000406f0
+> [   17.219880] Call Trace:
+> [   17.219881]  <TASK>
+> [   17.219882]  ? __die_body.cold+0x19/0x1e
+> [   17.219885]  ? page_fault_oops+0xa8/0x230
+> [   17.219889]  ? search_module_extables+0x4f/0x90
+> [   17.219891]  ? fixup_exception+0x36/0x2f0
+> [   17.219894]  ? exc_page_fault+0x88/0x1b0
+> [   17.219897]  ? asm_exc_page_fault+0x22/0x30
+> [   17.219900]  ? dma_get_required_mask+0x11/0x50
+
+This is not in the radeon driver but the DMA code. I'd say it's at [1], 
+as get_required_mask is 160 bytes within struct drm_map_ops. The call to 
+get_arch_dma_ops() probably returns NULL.
+
+Best regards
+Thomas
+
+[1] https://elixir.bootlin.com/linux/v6.11/source/kernel/dma/mapping.c#L523
+[2] 
+https://elixir.bootlin.com/linux/v6.11/source/include/linux/dma-map-ops.h#L98
+
+> [   17.219902]  dma_addressing_limited+0x6c/0xb0
+> [   17.219905]  radeon_ttm_init+0x3f/0x210 [radeon]
+> [   17.219977]  cayman_init+0x97/0x290 [radeon]
+> [   17.220057]  radeon_device_init+0x5e9/0xb40 [radeon]
+> [   17.220115]  radeon_driver_load_kms+0xb0/0x260 [radeon]
+> [   17.220174]  radeon_pci_probe+0xff/0x170 [radeon]
+> [   17.220231]  pci_device_probe+0xbe/0x1a0
+> [   17.220234]  really_probe+0xde/0x350
+> [   17.220237]  ? pm_runtime_barrier+0x61/0xb0
+> [   17.220240]  ? __pfx___driver_attach+0x10/0x10
+> [   17.220242]  __driver_probe_device+0x78/0x110
+> [   17.220245]  driver_probe_device+0x2d/0xc0
+> [   17.220247]  __driver_attach+0xc9/0x1c0
+> [   17.220249]  bus_for_each_dev+0x6a/0xb0
+> [   17.220251]  ? migrate_enable+0xbf/0xf0
+> [   17.220254]  bus_add_driver+0x139/0x220
+> [   17.220256]  driver_register+0x6e/0xc0
+> [   17.220258]  ? __pfx_radeon_module_init+0x10/0x10 [radeon]
+> [   17.220315]  do_one_initcall+0x42/0x210
+> [   17.220318]  ? __kmalloc_cache_noprof+0x89/0x230
+> [   17.220321]  do_init_module+0x60/0x210
+> [   17.220324]  init_module_from_file+0x89/0xc0
+> [   17.220326]  __x64_sys_finit_module+0x142/0x390
+> [   17.220329]  do_syscall_64+0x47/0x110
+> [   17.220331]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [   17.220334] RIP: 0033:0x7f59a0625279
+> [   17.220336] Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 77 6b 0d 00 f7 d8 64 89 01 48
+> [   17.220337] RSP: 002b:00007ffd15ee7df8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+> [   17.220339] RAX: ffffffffffffffda RBX: 00005578ae660840 RCX: 00007f59a0625279
+> [   17.220340] RDX: 0000000000000000 RSI: 00005578ae677fc0 RDI: 0000000000000011
+> [   17.220341] RBP: 0000000000000000 R08: 00007f59a06fcb20 R09: 00005578ae640550
+> [   17.220342] R10: 0000000000000040 R11: 0000000000000246 R12: 00005578ae677fc0
+> [   17.220342] R13: 0000000000020000 R14: 00005578ae651750 R15: 0000000000000000
+> [   17.220344]  </TASK>
+> [   17.220345] Modules linked in: radeon(+) snd_hda_codec_hdmi snd_seq_midi snd_seq_midi_event snd_seq snd_hda_intel snd_intel_dspcfg snd_emu10k1 snd_hda_codec drm_ttm_helper ttm snd_util_mem drm_suballoc_helper snd_ac97_codec snd_hda_core drm_display_helper ac97_bus snd_rawmidi snd_hwdep snd_seq_device snd_pcm drm_kms_helper edac_mce_amd sha512_ssse3 sha512_generic k10temp sha256_ssse3 sha1_ssse3 drm aesni_intel snd_timer gf128mul crypto_simd cryptd acpi_cpufreq evdev pcspkr serio_raw emu10k1_gp gameport at24 regmap_i2c i2c_algo_bit snd video soundcore wmi button sp5100_tco ext4 crc32c_generic crc16 mbcache jbd2 uas usb_storage hid_generic usbhid hid sg sr_mod sd_mod cdrom ata_generic firewire_ohci crc32_pclmul crc32c_intel firewire_core crc_itu_t pata_atiixp i2c_piix4 i2c_smbus ahci r8169 libahci xhci_pci ohci_pci realtek libata mdio_devres ehci_pci ohci_hcd xhci_hcd scsi_mod ehci_hcd scsi_common usbcore libphy usb_common
+> [   17.220388] CR2: 00000000000000a0
+> [   17.220390] ---[ end trace 0000000000000000 ]---
+>
+> Happy to provide additional information and run tests.
+>
+> Regards,
+>
+> Arthur Marsh.
 
 -- 
-Cheers,
-
-David / dhildenb
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
 
