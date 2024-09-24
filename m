@@ -1,52 +1,80 @@
-Return-Path: <linux-kernel+bounces-336713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7308F983FB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:52:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3345E983FB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:52:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D094CB22101
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:52:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7E64282E51
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7EEF149C54;
-	Tue, 24 Sep 2024 07:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B086822334;
+	Tue, 24 Sep 2024 07:52:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="mLh+uCTk"
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hb/8tOZj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8733053363;
-	Tue, 24 Sep 2024 07:52:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619D81494A3
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727164340; cv=none; b=BqkEHd4ENYb+/yWBFTqRQhG98RSbe/gfx3TnJlWYKEyYM9xx19S2801mVGCQpDd9jM+f59qxedg7VFXc1oNTyLilzVoYa2xq48huu7Jg/a7BpUn5Eaw/vvsZY6QhJvHcFY7Bx/tG7HDPp7cAESlih4yrguk3j8WJnlTfZwM6y+4=
+	t=1727164370; cv=none; b=nGMLTYKf1wsJU3CtVYcpjLdKcGiuUbSdy8yy1Ay32dMJe9zP52S3J4/cYsJD9d5OVG0upgvCRmx/3KjsamdPlErVfc1UYhbvsGIYHF+fahtoX3gccTjzdl99FoqjltmCQ5vxM7mg5IG1bLzBHo1q4NA6Yw+ZCqmDuqFT9tVI52Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727164340; c=relaxed/simple;
-	bh=NTd0t+qinWQnAX++9XFkj7T7aFD7zwdrKxyLLskJXwM=;
+	s=arc-20240116; t=1727164370; c=relaxed/simple;
+	bh=jmxCdwBMGJfRiTBkGEvh+OIgwE2BlqH9TH/yhYHzDLw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hwxicUhYl9uU23u32/pKbmrCz8LO1Wssjp1FyuPnw/Darlge4cMMWZs4ELbWH6C0CJkgTVwuc106Obb0p57SvcUkylSYZVLkdkRbB97oHYXLUmUyOauGe1+bxgA2rAboOHLUBRQyixKgWFN5RNV2n0IwJkEsv/XK4xo/a/Al+74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=mLh+uCTk; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1727164291;
-	bh=r4eemh7jZj2u6TNqRwGZf/axJNehP4EjeRUes5xaZV4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=mLh+uCTkQYHY3mIY4MbpASl/f4UJAoGy6MVuh0YpU2PnNY9q6ZaoZx7zQgCrNPipr
-	 1lcU5fVR+A7MD+lXLHV3wynSq/vIHbKxAyihnqA33WcNLrKIE8Bve22ufF9z9DnZ2p
-	 zqvQjIfoYvLndwp2q70cuvqV0rlMkcb+nGgLAx+k=
-X-QQ-mid: bizesmtpsz10t1727164282tr3jcg
-X-QQ-Originating-IP: bxMDDNVv5FlXn95gHGJiW5i+8i6XkpIgylBUVnSSyfg=
-Received: from [10.20.254.18] ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 24 Sep 2024 15:51:19 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 4963312410890576946
-Message-ID: <14E46687CBDB8037+8f5455b2-89a5-483b-902d-c6977ee71b02@uniontech.com>
-Date: Tue, 24 Sep 2024 15:51:20 +0800
+	 In-Reply-To:Content-Type; b=IXrJoeFq3YbV/Q+PIv2HokPKSGBLHJcJu7+wyzOQmyCsGKbiCCgMJm4RM+Idolxu7QnjkQk9JnwZqFcF8WmtP4kGjV34nw3Iwu+u9V2qBMd8aiuCbnzQGpyqfIg+DBsA6P29AS2MY2Xz7Zek3Xtkw3T3cvqbb+9PcIcj8YSOil4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hb/8tOZj; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727164368;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ObXE9vIRh5fRALLQD7xR1O0F8ZoBqYvtbEm80vH4934=;
+	b=hb/8tOZjnzOFsT5LSj1Hul+pe3CIK/CSV3IS2otAah5MqJ183Uvza8RbXDDyyw6IrqtWbk
+	uMecJZc/bhgUjEE5RyXTTrdk/ax7lT+g5pNZtKPD2hD7GKcb+ZuXobPZWTmt4Fk8G1BhrO
+	zSprpfmJ+8t2HBZI7k6GAzGQwLkVc+8=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-530-edvOiAiOPhS88Xe7GticdQ-1; Tue, 24 Sep 2024 03:52:46 -0400
+X-MC-Unique: edvOiAiOPhS88Xe7GticdQ-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-374c3402d93so2957560f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 00:52:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727164365; x=1727769165;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ObXE9vIRh5fRALLQD7xR1O0F8ZoBqYvtbEm80vH4934=;
+        b=A1xYQuqV6tT5xoo4/9yY1XbJbkwdsP32NqohSsHx6wLH0O+shnN+qMoDJkDJU1aQGi
+         VPAufbdmAGDpd7Hw4uvi/mu5aOUgBHczyUlK+b39AkWwJkFJ2DM5YO5/1BQrJzvOJh4D
+         f21gZUlMo/32RfHk+jsYvbV+X2RAmvirOeV3T9CO9WtNlOvptk5BZmGYxL1ycecThf+M
+         4d8v5Pl5rzlJ7/MH3ecGxDCoYHSuqbY15H5GVfqTuP1cs3r6bCZAsbR6OEqfabPvO/U1
+         BCpnChWpTP3TWE8+aPOCCMqBkL1a2dMoCg8TciHpiC0WUGYlhZa2TIKiIOCbc1NZrqWX
+         VL/w==
+X-Forwarded-Encrypted: i=1; AJvYcCWYJxitleThf2G7ekWCyxBhZRzEDgTr1sptahVy+gpcThpxeNDyC7lb43qPh/b67O0XmAUL67yK/GfeWs8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRXMThMV3CKj1PHIe724cSozc8XUhwD06AtOdBDyQfSvO4Tj5S
+	tI1XQr44QMLxnnlO7nupoh5MoojrqdP4VxswlNm9eHcxoW1TWRpE9GYJQcFso/pAgzu77WN1Jvt
+	WJIjReThQ4nS4LXQw0fhuO6d/sSD8XTdTyxXlg+djvk73vrwv20l3Z+sOwib68FmPOhS50eGs
+X-Received: by 2002:a5d:47a8:0:b0:374:c6ad:a7c6 with SMTP id ffacd0b85a97d-37a431583e1mr9188493f8f.20.1727164364819;
+        Tue, 24 Sep 2024 00:52:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGGi61AR7ZQd735ap15hTXbAosrgZ53xoTwmw7kaKYs0un5FWhvEzu7+ZbaquyAzWoh4P/H3A==
+X-Received: by 2002:a5d:47a8:0:b0:374:c6ad:a7c6 with SMTP id ffacd0b85a97d-37a431583e1mr9188471f8f.20.1727164364325;
+        Tue, 24 Sep 2024 00:52:44 -0700 (PDT)
+Received: from [10.202.151.204] (nat-pool-brq-u.redhat.com. [213.175.37.12])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cbc2a8c2csm858559f8f.20.2024.09.24.00.52.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Sep 2024 00:52:43 -0700 (PDT)
+Message-ID: <c10d3f92-e4ec-4a56-b78e-acb68865a11c@redhat.com>
+Date: Tue, 24 Sep 2024 09:52:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,161 +82,149 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] net/bridge: Optimizing read-write locks in ebtables.c
-To: kernel test robot <lkp@intel.com>, pablo@netfilter.org
-Cc: oe-kbuild-all@lists.linux.dev, kadlec@netfilter.org, roopa@nvidia.com,
- razor@blackwall.org, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, netfilter-devel@vger.kernel.org,
- coreteam@netfilter.org, bridge@lists.linux.dev, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <2860814445452DE8+20240924022437.119730-1-yushengjin@uniontech.com>
- <202409241543.F99I82u3-lkp@intel.com>
-From: yushengjin <yushengjin@uniontech.com>
-In-Reply-To: <202409241543.F99I82u3-lkp@intel.com>
+Subject: Re: [PATCH] mm: Make SPLIT_PTE_PTLOCKS depend on the existence of
+ NR_CPUS
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Guenter Roeck <linux@roeck-us.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
+ linux-kbuild <linux-kbuild@vger.kernel.org>
+References: <20240923142533.1197982-1-linux@roeck-us.net>
+ <f15ff981-e725-40f0-8d2f-856b4b6a65b3@redhat.com>
+ <4c2cdf84-9794-4722-8417-cf924f890797@roeck-us.net>
+ <203f0d01-d25e-4436-b769-b89edb1b57d9@roeck-us.net>
+ <CAMuHMdWfsgnCRLhCkvJBn8Prdd4M=HvwtsPT0BeRPtA-nFHzYQ@mail.gmail.com>
+Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CAMuHMdWfsgnCRLhCkvJBn8Prdd4M=HvwtsPT0BeRPtA-nFHzYQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrsz:qybglogicsvrsz4a-0
 
+On 24.09.24 09:45, Geert Uytterhoeven wrote:
+> Hi Günter,
+> 
+> CC kbuild
+> 
+> I have two comments...
+> 
+> On Tue, Sep 24, 2024 at 1:52 AM Guenter Roeck <linux@roeck-us.net> wrote:
+>> On 9/23/24 15:08, Guenter Roeck wrote:
+>>> On 9/23/24 08:23, David Hildenbrand wrote:
+>>>> On 23.09.24 16:25, Guenter Roeck wrote:
+>>>>> SPLIT_PTE_PTLOCKS already depends on "NR_CPUS >= 4", but that evaluates
+>>>>> to true if there is no NR_CPUS configuration option (such as for m68k).
+>>>>> This results in CONFIG_SPLIT_PTE_PTLOCKS=y for mac_defconfig.
+>>>>> This in turn causes the m68k "q800" machine to crash in qemu.
+> 
+> Should this be fixed in Kconfig (too)?
+> 
+>>>> Oh, that's why my compile tests still worked ... I even removed the additional NR_CPUS check, assuming it's not required ...
+>>>>
+>>>> Thanks for debugging and fixing!
+>>>>
+>>>> Acked-by: David Hildenbrand <david@redhat.com>
+>>>>
+>>>
+>>> Apparently it wasn't that simple :-(. 0-day reports a build failure
+>>> with s390 builds.
+>>>
+>>> arch/s390/mm/gmap.c:357:16: error: implicit declaration of function 'pmd_pgtable_page'.
+>>>
+>>> Turns out that
+>>>       depends on NR_CPUS && NR_CPUS >= 4
+>>>
+>>> doesn't work and disables SPLIT_PTE_PTLOCKS even if NR_CPUS _is_ defined.
+>>> I have no idea how to declare the dependency correctly.
+>>> Sorry, I did not expect that.
+>>
+>> The only solution I found was to define NR_CPUS for m68k. That seems to be
+>> the only architecture not defining it, so hopefully that is an acceptable
+>> solution. I'll send v2 of the patch shortly.
+> 
+> My first thought was to agree, as m68k is indeed the only architecture
+> that does not define NR_CPUS. Upon closer look, most architectures
+> have NR_CPUS depend on SMP, hence I assume the issue could happen for
+> those too (although I didn't manage to create such a config on anything
 
-在 24/9/2024 下午3:43, kernel test robot 写道:
-> Hi yushengjin,
->
-> kernel test robot noticed the following build errors:
->
-> [auto build test ERROR on netfilter-nf/main]
-> [also build test ERROR on horms-ipvs/master linus/master v6.11 next-20240924]
-> [cannot apply to nf-next/master]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:https://github.com/intel-lab-lkp/linux/commits/yushengjin/net-bridge-Optimizing-read-write-locks-in-ebtables-c/20240924-102547
-> base:https://git.kernel.org/pub/scm/linux/kernel/git/netfilter/nf.git main
-> patch link:https://lore.kernel.org/r/2860814445452DE8%2B20240924022437.119730-1-yushengjin%40uniontech.com
-> patch subject: [PATCH v2] net/bridge: Optimizing read-write locks in ebtables.c
-> config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20240924/202409241543.F99I82u3-lkp@intel.com/config)
-> compiler: sh4-linux-gcc (GCC) 14.1.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240924/202409241543.F99I82u3-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot<lkp@intel.com>
-> | Closes:https://lore.kernel.org/oe-kbuild-all/202409241543.F99I82u3-lkp@intel.com/
->
-> All errors (new ones prefixed by >>):
->
->     In file included from include/asm-generic/percpu.h:7,
->                      from ./arch/sh/include/generated/asm/percpu.h:1,
->                      from include/linux/irqflags.h:19,
->                      from arch/sh/include/asm/cmpxchg-irq.h:5,
->                      from arch/sh/include/asm/cmpxchg.h:20,
->                      from arch/sh/include/asm/atomic.h:19,
->                      from include/linux/atomic.h:7,
->                      from include/asm-generic/bitops/atomic.h:5,
->                      from arch/sh/include/asm/bitops.h:23,
->                      from include/linux/bitops.h:68,
->                      from include/linux/thread_info.h:27,
->                      from include/asm-generic/preempt.h:5,
->                      from ./arch/sh/include/generated/asm/preempt.h:1,
->                      from include/linux/preempt.h:79,
->                      from include/linux/spinlock.h:56,
->                      from include/linux/mmzone.h:8,
->                      from include/linux/gfp.h:7,
->                      from include/linux/umh.h:4,
->                      from include/linux/kmod.h:9,
->                      from net/bridge/netfilter/ebtables.c:14:
->     net/bridge/netfilter/ebtables.c: In function 'get_counters':
->>> net/bridge/netfilter/ebtables.c:1006:30: error: 'ebt_recseq' undeclared (first use in this function); did you mean 'xt_recseq'?
->      1006 |                 s = &per_cpu(ebt_recseq, cpu);
->           |                              ^~~~~~~~~~
->     include/linux/percpu-defs.h:219:54: note: in definition of macro '__verify_pcpu_ptr'
->       219 |         const void __percpu *__vpp_verify = (typeof((ptr) + 0))NULL;    \
->           |                                                      ^~~
->     include/linux/percpu-defs.h:263:49: note: in expansion of macro 'VERIFY_PERCPU_PTR'
->       263 | #define per_cpu_ptr(ptr, cpu)   ({ (void)(cpu); VERIFY_PERCPU_PTR(ptr); })
->           |                                                 ^~~~~~~~~~~~~~~~~
->     include/linux/percpu-defs.h:269:35: note: in expansion of macro 'per_cpu_ptr'
->       269 | #define per_cpu(var, cpu)       (*per_cpu_ptr(&(var), cpu))
->           |                                   ^~~~~~~~~~~
->     net/bridge/netfilter/ebtables.c:1006:22: note: in expansion of macro 'per_cpu'
->      1006 |                 s = &per_cpu(ebt_recseq, cpu);
->           |                      ^~~~~~~
->     net/bridge/netfilter/ebtables.c:1006:30: note: each undeclared identifier is reported only once for each function it appears in
->      1006 |                 s = &per_cpu(ebt_recseq, cpu);
->           |                              ^~~~~~~~~~
->     include/linux/percpu-defs.h:219:54: note: in definition of macro '__verify_pcpu_ptr'
->       219 |         const void __percpu *__vpp_verify = (typeof((ptr) + 0))NULL;    \
->           |                                                      ^~~
->     include/linux/percpu-defs.h:263:49: note: in expansion of macro 'VERIFY_PERCPU_PTR'
->       263 | #define per_cpu_ptr(ptr, cpu)   ({ (void)(cpu); VERIFY_PERCPU_PTR(ptr); })
->           |                                                 ^~~~~~~~~~~~~~~~~
->     include/linux/percpu-defs.h:269:35: note: in expansion of macro 'per_cpu_ptr'
->       269 | #define per_cpu(var, cpu)       (*per_cpu_ptr(&(var), cpu))
->           |                                   ^~~~~~~~~~~
->     net/bridge/netfilter/ebtables.c:1006:22: note: in expansion of macro 'per_cpu'
->      1006 |                 s = &per_cpu(ebt_recseq, cpu);
->           |                      ^~~~~~~
->     net/bridge/netfilter/ebtables.c: In function 'do_replace_finish':
->     net/bridge/netfilter/ebtables.c:1111:42: error: 'ebt_recseq' undeclared (first use in this function); did you mean 'xt_recseq'?
->      1111 |                 seqcount_t *s = &per_cpu(ebt_recseq, cpu);
->           |                                          ^~~~~~~~~~
->     include/linux/percpu-defs.h:219:54: note: in definition of macro '__verify_pcpu_ptr'
->       219 |         const void __percpu *__vpp_verify = (typeof((ptr) + 0))NULL;    \
->           |                                                      ^~~
->     include/linux/percpu-defs.h:263:49: note: in expansion of macro 'VERIFY_PERCPU_PTR'
->       263 | #define per_cpu_ptr(ptr, cpu)   ({ (void)(cpu); VERIFY_PERCPU_PTR(ptr); })
->           |                                                 ^~~~~~~~~~~~~~~~~
->     include/linux/percpu-defs.h:269:35: note: in expansion of macro 'per_cpu_ptr'
->       269 | #define per_cpu(var, cpu)       (*per_cpu_ptr(&(var), cpu))
->           |                                   ^~~~~~~~~~~
->     net/bridge/netfilter/ebtables.c:1111:34: note: in expansion of macro 'per_cpu'
->      1111 |                 seqcount_t *s = &per_cpu(ebt_recseq, cpu);
->           |                                  ^~~~~~~
->
->
-> vim +1006 net/bridge/netfilter/ebtables.c
->
->     987	
->     988	
->     989	static void get_counters(const struct ebt_counter *oldcounters,
->     990				 struct ebt_counter *counters, unsigned int nentries)
->     991	{
->     992		int i, cpu;
->     993		struct ebt_counter *counter_base;
->     994		seqcount_t *s;
->     995	
->     996		/* counters of cpu 0 */
->     997		memcpy(counters, oldcounters,
->     998		       sizeof(struct ebt_counter) * nentries);
->     999	
->    1000		/* add other counters to those of cpu 0 */
->    1001		for_each_possible_cpu(cpu) {
->    1002	
->    1003			if (cpu == 0)
->    1004				continue;
->    1005	
->> 1006			s = &per_cpu(ebt_recseq, cpu);
->    1007			counter_base = COUNTER_BASE(oldcounters, nentries, cpu);
->    1008			for (i = 0; i < nentries; i++) {
->    1009				u64 bcnt, pcnt;
->    1010				unsigned int start;
->    1011	
->    1012				do {
->    1013					start = read_seqcount_begin(s);
->    1014					bcnt = counter_base[i].bcnt;
->    1015					pcnt = counter_base[i].pcnt;
->    1016				} while (read_seqcount_retry(s, start));
->    1017	
->    1018				ADD_COUNTER(counters[i], bcnt, pcnt);
->    1019				cond_resched();
->    1020			}
->    1021		}
->    1022	}
->    1023	
+I recall that I played the same thing, convincing me that having no
+CONFIG_NR_CPUS on !SMP would actually do the right thing. Apparently it doesn't
+for m68k at least.
 
-Sorry, it's my fault, I will test it again.
+> but m68k)?  So the simple solution would be to add a dependency on
+> SMP to SPLIT_PTE_PTLOCKS.
 
+That will probably work for now. CONFIG_NR_CPUS should be cleaned up at some point
+to sort out the FIXME I commented in v2. Having kconfig set CONFIG_NR_CPUS=1 without
+SMP would be easiest, but it's probably not that easy.
 
-> -- 0-DAY CI Kernel Test Service https://github.com/intel/lkp-tests/wiki
+> 
+> BTW, the list of excluded architectures looks fragile to me:
+> 
+>      config SPLIT_PTE_PTLOCKS
+>              def_bool y
+>              depends on MMU
+>              depends on NR_CPUS >= 4
+>              depends on !ARM || CPU_CACHE_VIPT
+>              depends on !PARISC || PA20
+>              depends on !SPARC32
+> 
+> If this can't be handled in a generic way, perhaps this should be
+> changed from opt-out to opt-in (i.e. select gate symbol in arch-specific
+> Kconfig)?
+
+Yes, as stated in my commit:
+
+     More cleanups would be reasonable (like the arch-specific "depends on" for
+     CONFIG_SPLIT_PTE_PTLOCKS), but we'll leave that for another day.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
