@@ -1,161 +1,168 @@
-Return-Path: <linux-kernel+bounces-337376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E98DA984943
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:10:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FF1E984940
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:10:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF8A1286A50
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:10:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B222D285C3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF97F1AC894;
-	Tue, 24 Sep 2024 16:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09511AC427;
+	Tue, 24 Sep 2024 16:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GzSMNVBP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I5PQ8iNQ"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738331AC441;
-	Tue, 24 Sep 2024 16:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2DA1AAE39
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 16:09:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727194174; cv=none; b=Powk/VHSPNfUi1Okyc5GGzEmFrXhnKGrDjYBob7WUXLGDYCEsgHEmpgTFHbHFznp+HcS8eh72R7oOjZurB7Cp8LrG4nZHiTv2LucT7LIrNrmKT5DXf+5uthS/8z+JvNr1ktawH57orh1eDoD1Ns3L2oIbZmqKvuWWr7OhZPGqFQ=
+	t=1727194142; cv=none; b=qkOmwcDj0q7ncAP4X7mSZ4upJCo4esrhwDWwisgfkZvrKOCkpjjteR55mpU3/cWPD2h8lSvjHwchCARcsCiydygCHfhW6aysriOE3zCALQXDemXSmD2hWt9u55/6iYt7giFJEEZobsT3lEbdd5tYe32hPr1owUL+n5LSLMJdcvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727194174; c=relaxed/simple;
-	bh=WDJIymi6jhbzorfvBp3dPP8K22eFx3XqEjkbhxGF0xE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aZ8q+DW9DDZf3BMy238Ftxu3uND1gv5R3hpglo8YdJMTECJv5RElewl/KKNRI+3NBrVt7P4K0MB7/SSH5xX3Fd8kSH+8MN+66079y9JZnDEwrBX4lS+6Jx/sejr5gQcdgWwGkT2LRa+7tMsuqc4RLT8b4JSLE0/dI/JyhXV4RYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GzSMNVBP; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727194173; x=1758730173;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WDJIymi6jhbzorfvBp3dPP8K22eFx3XqEjkbhxGF0xE=;
-  b=GzSMNVBPkPkz4UNUr+HYPD1ug3wSEvDHoB0lToCfHHjIRkcKJNrcflD/
-   gmUAEPlcF8piVmwd8mz92YrFOmkzp5969kbls3CXOYvDkJOZfNk6X0vPm
-   hf/FJ3dqz6S+jiHGKbptuOyx1Je79FsakWxMC4rzrNqjH1STIKfCRsWuF
-   ML1l1tSSjoRyXb7cpcCkTydMPGsr1N+OfuO5mPH1ulTsv1JxbVVVgccNH
-   2mwUwHOvJwxuS7u16ljknMNBv7BVPSyWRJZA442PQt+SH7ifpV32cMrI5
-   kEsj/1YApJKkMCcOYbpaD0rEmxYOxInS1FTkJTAiL5EkDB/++/7fD9utC
-   w==;
-X-CSE-ConnectionGUID: dZGt7d54R3yyZf3PoGceNQ==
-X-CSE-MsgGUID: V2lAm4AwRSaL/X1e3CAU8Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="51615038"
-X-IronPort-AV: E=Sophos;i="6.10,255,1719903600"; 
-   d="scan'208";a="51615038"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 09:09:32 -0700
-X-CSE-ConnectionGUID: +92+O1hhS3SAon2BTcyrVw==
-X-CSE-MsgGUID: RxAyyAicQ2iDrsFlZ4YDwA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,255,1719903600"; 
-   d="scan'208";a="71457803"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 24 Sep 2024 09:09:26 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1st86O-000IXp-09;
-	Tue, 24 Sep 2024 16:09:24 +0000
-Date: Wed, 25 Sep 2024 00:08:29 +0800
-From: kernel test robot <lkp@intel.com>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
-	Mike Looijmans <mike.looijmans@topic.nl>,
-	Dumitru Ceclan <mitrutzceclan@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	Sergiu Cuciurean <sergiu.cuciurean@analog.com>,
-	Dragos Bogdan <dragos.bogdan@analog.com>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pwm@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH 6/7] iio: adc: ad485x: add ad485x driver
-Message-ID: <202409242353.rDAcuGYR-lkp@intel.com>
-References: <20240923101206.3753-7-antoniu.miclaus@analog.com>
+	s=arc-20240116; t=1727194142; c=relaxed/simple;
+	bh=KkmUzD1B3rTdMHQwTOB1+WCKsMotsvmbp0/GVAoTxJw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GbkDg63TMczzIVoPULcEWccJ0SKjleD92FGk607xLc/o5uYtICyPX7Z9c/fa50HLIzLd0p/EAEJqVI7Y1ZyRomsf3xtRZWSuLvbXYEijIxBjD8Okb0Jja5kqB34cBk+FDl7iBKxslX0NOLPm1p++pInwNnY3ux81Xw8PPxOpaEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I5PQ8iNQ; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-718e0421143so1137071b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:09:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727194140; x=1727798940; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wWsuC1k58rgBxgEKQ95dKaFfehaSkHrV3qM3cnflsPg=;
+        b=I5PQ8iNQ0qrF+JsgrBiX1drrJN4XXa+yWosGItkYVF0/hTvEH5ZF5Ezz5iYO0f2dCM
+         t0n/zECBV/y6CKP5D3OOTZPYuxVtPR1WkPI1xEoDpAhFtST0/ORZvLJ2HfHAgoWe/q1o
+         zA0+iHrhL9gwgHbcSqSnuix9QkVtsnRA8yrS6JpyDJoLc302nnn4cN7JfoRsR+tccKN0
+         kay9+U26qZGj7xI3Q6R+6ww0Jh0Jy916OzzE+fv5LVb9MQlSByPKB2NeCrJe+hNiKVAY
+         ZRSqTRTQoak52XOh8FGBmqv3But14+cURVSfiud5HnKEgJ45+ulIetaHFMvknPChe6V6
+         X+Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727194140; x=1727798940;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wWsuC1k58rgBxgEKQ95dKaFfehaSkHrV3qM3cnflsPg=;
+        b=dkJrhfISqhySMG+DT8GvPbZMJb6HMinaBKp3PFcteyPTM7eWFMbBm8WmnH3y8984a9
+         Io5SOSoAmFq6M9cmkVuxau3W/FLv1urtSltNIa3Y7glz9zb4zFXYQeQftBkZ4zs93XT6
+         xa9eh5JGZ2kv+erflfQNihAfiHdOs8pWvGUYqYC72/EcYQPrc6ill80R8tYptZ4srkUH
+         dtqKdkSA6dB6JmzmT71YuByDDgU43Al4C6tOPa733K7XxcIG4US8RYc8XD79tbmk6Syw
+         c5Q3U5SsA6l1w/hrFeHWb/21j68ROkbMWyOCKu/zPdR14Mp9+7qCzo0enyO4VXDh0RRE
+         Q0pg==
+X-Forwarded-Encrypted: i=1; AJvYcCUjkXcEWGMzRI+0uFEZZF7mwKvQA0rg8PGfbJWpMVwkRSl7f5vIXEQ6JZjLYTJsvsXYnBCp2YQsYPjiuu0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWj7ZMq58N6yrQBhAkNM1dhiDyR5RA20WePcPNjSxxg3tpyjW3
+	yHA55dc2iMPx0nphRz1yAqd2YnCHKAFhZ5fma6z3hEV1ua1U/iquRTLtYnLqnzrlFTeeGqNpYSz
+	1GEx3+BNby7X8v1R3Df0d76q/uo2GXQ==
+X-Google-Smtp-Source: AGHT+IHOExPAGZCXFGmdvFYllAvrAWe+T33mgW0ydNW0IhFfuAjbsci12Zvgz4GCqe7jF+3muMjRPm97OHwCLHCD8KY=
+X-Received: by 2002:a05:6a00:1889:b0:714:2051:89ea with SMTP id
+ d2e1a72fcca58-71afb5c86bcmr2053630b3a.1.1727194139706; Tue, 24 Sep 2024
+ 09:08:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240923101206.3753-7-antoniu.miclaus@analog.com>
+References: <F25A139789E87C3E+20240920022755.1162495-1-wangyuli@uniontech.com> <ade271e8-2f6e-494b-979a-e53942b6b9a7@amd.com>
+In-Reply-To: <ade271e8-2f6e-494b-979a-e53942b6b9a7@amd.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Tue, 24 Sep 2024 12:08:47 -0400
+Message-ID: <CADnq5_Pvq=W69KM08O4TOhG1fcQTO-KEE31KVqfsuOwJL9vv7w@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: Fix typo "acccess" and improve the comment
+ style here
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: WangYuli <wangyuli@uniontech.com>, alexander.deucher@amd.com, Xinhui.Pan@amd.com, 
+	airlied@gmail.com, simona@ffwll.ch, sunil.khatri@amd.com, 
+	yifan1.zhang@amd.com, vitaly.prosyak@amd.com, Tim.Huang@amd.com, 
+	Prike.Liang@amd.com, jesse.zhang@amd.com, lijo.lazar@amd.com, 
+	Hawking.Zhang@amd.com, kevinyang.wang@amd.com, srinivasan.shanmugam@amd.com, 
+	victorchengchi.lu@amd.com, Jiadong.Zhu@amd.com, tao.zhou1@amd.com, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, le.ma@amd.com, Wenhui.Sheng@amd.com, 
+	Thomas Zimmermann <tzimmermann@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Antoniu,
+Applied.  Thanks!
 
-kernel test robot noticed the following build errors:
+Alex
 
-[auto build test ERROR on robh/for-next]
-[also build test ERROR on linus/master v6.11]
-[cannot apply to jic23-iio/togreg next-20240924]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Antoniu-Miclaus/iio-backend-add-API-for-interface-get/20240923-182050
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20240923101206.3753-7-antoniu.miclaus%40analog.com
-patch subject: [PATCH 6/7] iio: adc: ad485x: add ad485x driver
-config: openrisc-allyesconfig (https://download.01.org/0day-ci/archive/20240924/202409242353.rDAcuGYR-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240924/202409242353.rDAcuGYR-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409242353.rDAcuGYR-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/iio/adc/ad485x.c: In function 'ad485x_get_packet_format':
->> drivers/iio/adc/ad485x.c:396:18: error: implicit declaration of function 'FIELD_GET' [-Wimplicit-function-declaration]
-     396 |         format = FIELD_GET(AD485X_PACKET_FORMAT_MASK, format);
-         |                  ^~~~~~~~~
-   drivers/iio/adc/ad485x.c: At top level:
-   drivers/iio/adc/ad485x.c:854:23: warning: initialized field overwritten [-Woverride-init]
-     854 |         .resolution = 16,
-         |                       ^~
-   drivers/iio/adc/ad485x.c:854:23: note: (near initialization for 'ad4856_info.resolution')
-
-
-vim +/FIELD_GET +396 drivers/iio/adc/ad485x.c
-
-   384	
-   385	static int ad485x_get_packet_format(struct iio_dev *indio_dev,
-   386					    const struct iio_chan_spec *chan)
-   387	{
-   388		struct ad485x_state *st = iio_priv(indio_dev);
-   389		unsigned int format;
-   390		int ret;
-   391	
-   392		ret = regmap_read(st->regmap, AD485X_REG_PACKET, &format);
-   393		if (ret)
-   394			return ret;
-   395	
- > 396		format = FIELD_GET(AD485X_PACKET_FORMAT_MASK, format);
-   397	
-   398		return format;
-   399	}
-   400	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+On Fri, Sep 20, 2024 at 2:29=E2=80=AFAM Christian K=C3=B6nig
+<christian.koenig@amd.com> wrote:
+>
+> Am 20.09.24 um 04:27 schrieb WangYuli:
+> > There are some spelling mistakes of 'acccess' in comments which
+> > should be instead of 'access'.
+> >
+> > And the comment style should be like this:
+> >   /*
+> >    * Text
+> >    * Text
+> >    */
+> >
+> > Suggested-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+> > Link: https://lore.kernel.org/all/f75fbe30-528e-404f-97e4-854d27d7a401@=
+amd.com/
+> > Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
+> > Link: https://lore.kernel.org/all/0c768bf6-bc19-43de-a30b-ff5e3ddfd0b3@=
+suse.de/
+> > Signed-off-by: WangYuli <wangyuli@uniontech.com>
+>
+> Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+>
+> > ---
+> >   drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c  | 6 ++++--
+> >   drivers/gpu/drm/amd/amdgpu/gfx_v9_4_3.c | 6 ++++--
+> >   2 files changed, 8 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c b/drivers/gpu/drm/a=
+md/amdgpu/gfx_v11_0.c
+> > index d3e8be82a172..33fd2da49a2a 100644
+> > --- a/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
+> > +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
+> > @@ -1893,8 +1893,10 @@ static void gfx_v11_0_init_compute_vmid(struct a=
+mdgpu_device *adev)
+> >       soc21_grbm_select(adev, 0, 0, 0, 0);
+> >       mutex_unlock(&adev->srbm_mutex);
+> >
+> > -     /* Initialize all compute VMIDs to have no GDS, GWS, or OA
+> > -        acccess. These should be enabled by FW for target VMIDs. */
+> > +     /*
+> > +      * Initialize all compute VMIDs to have no GDS, GWS, or OA
+> > +      * access. These should be enabled by FW for target VMIDs.
+> > +      */
+> >       for (i =3D adev->vm_manager.first_kfd_vmid; i < AMDGPU_NUM_VMID; =
+i++) {
+> >               WREG32_SOC15_OFFSET(GC, 0, regGDS_VMID0_BASE, 2 * i, 0);
+> >               WREG32_SOC15_OFFSET(GC, 0, regGDS_VMID0_SIZE, 2 * i, 0);
+> > diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_4_3.c b/drivers/gpu/drm/=
+amd/amdgpu/gfx_v9_4_3.c
+> > index 408e5600bb61..57b55b6d797d 100644
+> > --- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_4_3.c
+> > +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_4_3.c
+> > @@ -1247,8 +1247,10 @@ static void gfx_v9_4_3_xcc_init_compute_vmid(str=
+uct amdgpu_device *adev,
+> >       soc15_grbm_select(adev, 0, 0, 0, 0, GET_INST(GC, xcc_id));
+> >       mutex_unlock(&adev->srbm_mutex);
+> >
+> > -     /* Initialize all compute VMIDs to have no GDS, GWS, or OA
+> > -        acccess. These should be enabled by FW for target VMIDs. */
+> > +     /*
+> > +      * Initialize all compute VMIDs to have no GDS, GWS, or OA
+> > +      * access. These should be enabled by FW for target VMIDs.
+> > +      */
+> >       for (i =3D adev->vm_manager.first_kfd_vmid; i < AMDGPU_NUM_VMID; =
+i++) {
+> >               WREG32_SOC15_OFFSET(GC, GET_INST(GC, xcc_id), regGDS_VMID=
+0_BASE, 2 * i, 0);
+> >               WREG32_SOC15_OFFSET(GC, GET_INST(GC, xcc_id), regGDS_VMID=
+0_SIZE, 2 * i, 0);
+>
 
