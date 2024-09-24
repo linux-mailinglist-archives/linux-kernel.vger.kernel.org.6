@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-337475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98014984A8F
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E1D2984A8E
 	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:01:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C75751C22FB8
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D684280EC5
 	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6EC21AC898;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB2CE1AC895;
 	Tue, 24 Sep 2024 18:01:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aAqnMEyE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SmhXbk8x"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1258D31A60;
-	Tue, 24 Sep 2024 18:01:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1255B1B85CA;
+	Tue, 24 Sep 2024 18:01:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727200868; cv=none; b=EyeZIhK4NqS92uUTsVTuP2dKkyR7ca3xGYxuvyhoU5AsohURpLqvN9TxcBXgzA7Iv/YNR3NCHgeM6n5CByefhk8HkDFQhP+i0JNivoYAK/TYsdUkJkYzapTubJj4SyxGTDYfG//5EWMT6oIscT/50yVNEA+Iaa7M8B/+RR3VqNk=
+	t=1727200868; cv=none; b=IvXE1zti5lW02gDSIBFmvB+a7/E6zkIMqTzL0JyzuAwqUSaFLfKNBeoPPDdO28C9cZ66/yQq032JjD/Fzzj72KTDF2n/0pdZooYG+wpe60bP7tbi98O6LQYLw1OP1NXsRIoth1uPxnTDNiCc4v3/E5GkYdqxvlVhLCMt3Jt8J5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727200868; c=relaxed/simple;
-	bh=vE8pGVYwDVIrlIjKoF6T0212mB8n6SPYkRCwr61rAUw=;
+	bh=FIBb6Xvg+vsgLgLFLONIDRw5APSJqrReEgeIWNL+IS0=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=BAY9QLHtdYuwqujfw9HqYsL/l8tX/hn2/AKW+86iABT5m/PERZwIGIzxyXZPJjg+kkvhyX9JXDsRqE58UzqQIkRrLe+7lCJyrFEfXfKWcPUFaoYy9spmQ5t+o84v1FcszrpbtD5f32hF/ufQ9jmGtAFXVxOR3in8er+nDGdmD8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aAqnMEyE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92A3FC4CEC4;
-	Tue, 24 Sep 2024 18:01:06 +0000 (UTC)
+	 Message-Id:Subject; b=VhGrgaPj9HJPqeorVbf0wQwjgbJMQ/qodvAnvJQYdjoX2N7FZqGAtftVbietYmNpkZxTGManeqLsyl2mHOv/cFkTAhpMf4Gc7E7xM3s6QmewIqmlJZdumNULTti1c/8rYlX0MHFUUpdCanTnW2lIhDsX+2IV88XX6e2UTA5iGSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SmhXbk8x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89CADC4CEC5;
+	Tue, 24 Sep 2024 18:01:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727200866;
-	bh=vE8pGVYwDVIrlIjKoF6T0212mB8n6SPYkRCwr61rAUw=;
+	s=k20201202; t=1727200867;
+	bh=FIBb6Xvg+vsgLgLFLONIDRw5APSJqrReEgeIWNL+IS0=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=aAqnMEyEu0uCAmz3kn+7IUO3/RB2QOyeS8oYiE9bDkCZXnPdlkSCkZxg53/BA8NXm
-	 9iI/dz08QotnMxwXZY53r0cEaGM3YM/FX1UQmPw0A0yQjOWL7InId3K4E2Kz+cLfil
-	 Zae2E9R+y0ofIaIoU3xQPPgxCvTOQJ1TGYP8YBCjp2SGn/8we61MDb70v7KqJW6v0h
-	 5012T6eLvZ3ZgjKXNyCVjCEpGAYqkEOSWHZuqtirKTDf6Hm8Y7PNO3UJsIqKyBPc9W
-	 jTzOKtSstllbY5a7lhpC2Jv5v4v9UFtEKJwcnrI4JDo17ek7KkPsJJ2PI7UosP0fho
-	 CIO2/qMpUxs9Q==
-Date: Tue, 24 Sep 2024 13:01:05 -0500
+	b=SmhXbk8xSfBousexFosmlobUgbqZZT8vkrhy3PqNvfGjguI5C24e74tfAoS288cv+
+	 ShVL9IN8zynLttc4j52kERYVOhfxp3spvFLrCL3RJ8PjOp/jl6X38qkw8bi966fmyw
+	 IeoCBOh3AId7HJW43JDo/hrV4gHx3Enbz305N0GwFmnOQmX4TKLBXiQjEWiybngqjS
+	 oFPmOHpvi9OUFLskXitlQJ2cydCon8zJFtepf6nfOqt2bwFnMyNqJQC1WLrX9NTi00
+	 GBabJGQ9D6PXccpqOyjCDKaB6Yv0rmJqzgMHH0v+VGHOLJ+ymo6HqUFhroJrhGokpp
+	 JM0D42QcdaScQ==
+Date: Tue, 24 Sep 2024 13:01:06 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,50 +50,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Hal Feng <hal.feng@starfivetech.com>
-Cc: "David S . Miller" <davem@davemloft.net>, 
- Jakub Kicinski <kuba@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Palmer Dabbelt <palmer@dabbelt.com>, 
- Marc Kleine-Budde <mkl@pengutronix.de>, 
- William Qiu <william.qiu@starfivetech.com>, 
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
- netdev@vger.kernel.org, linux-can@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-In-Reply-To: <20240922145151.130999-3-hal.feng@starfivetech.com>
-References: <20240922145151.130999-1-hal.feng@starfivetech.com>
- <20240922145151.130999-3-hal.feng@starfivetech.com>
-Message-Id: <172720086189.2892.16772874968651869906.robh@kernel.org>
-Subject: Re: [PATCH v2 2/4] dt-bindings: can: Add CAST CAN Bus Controller
+To: Sandor Yu <Sandor.yu@nxp.com>
+Cc: andrzej.hajda@intel.com, sam@ravnborg.org, robh+dt@kernel.org, 
+ jonas@kwiboo.se, Laurent.pinchart@ideasonboard.com, 
+ krzysztof.kozlowski+dt@linaro.org, linux-phy@lists.infradead.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, kernel@pengutronix.de, 
+ alexander.stein@ew.tq-group.com, shawnguo@kernel.org, linux-imx@nxp.com, 
+ mripard@kernel.org, vkoul@kernel.org, dri-devel@lists.freedesktop.org, 
+ daniel@ffwll.ch, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, airlied@gmail.com, 
+ jernej.skrabec@gmail.com, s.hauer@pengutronix.de, oliver.brown@nxp.com, 
+ devicetree@vger.kernel.org, festevam@gmail.com, dmitry.baryshkov@linaro.org, 
+ neil.armstrong@linaro.org
+In-Reply-To: <b2e1d26f964a03163ec7a1ba6ac8d7c88d6cb111.1727159906.git.Sandor.yu@nxp.com>
+References: <cover.1727159906.git.Sandor.yu@nxp.com>
+ <b2e1d26f964a03163ec7a1ba6ac8d7c88d6cb111.1727159906.git.Sandor.yu@nxp.com>
+Message-Id: <172720086579.2917.61541648754055069.robh@kernel.org>
+Subject: Re: [PATCH v17 3/8] dt-bindings: display: bridge: Add Cadence
+ MHDP8501
 
 
-On Sun, 22 Sep 2024 22:51:48 +0800, Hal Feng wrote:
-> From: William Qiu <william.qiu@starfivetech.com>
+On Tue, 24 Sep 2024 15:36:48 +0800, Sandor Yu wrote:
+> Add bindings for Cadence MHDP8501 DisplayPort/HDMI bridge.
 > 
-> Add bindings for CAST CAN Bus Controller.
-> 
-> Signed-off-by: William Qiu <william.qiu@starfivetech.com>
-> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+> Signed-off-by: Sandor Yu <Sandor.yu@nxp.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
->  .../bindings/net/can/cast,can-ctrl.yaml       | 106 ++++++++++++++++++
->  1 file changed, 106 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/can/cast,can-ctrl.yaml
+> v16->v17:
+> - Add lane-mapping property
+> 
+> v9->v16:
+>  *No change
+> 
+> .../display/bridge/cdns,mhdp8501.yaml         | 109 ++++++++++++++++++
+>  1 file changed, 109 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/bridge/cdns,mhdp8501.yaml
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
 
 yamllint warnings/errors:
-./Documentation/devicetree/bindings/net/can/cast,can-ctrl.yaml:27:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
 
 dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8501.yaml: lane-mapping: missing type definition
 
 doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240922145151.130999-3-hal.feng@starfivetech.com
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/b2e1d26f964a03163ec7a1ba6ac8d7c88d6cb111.1727159906.git.Sandor.yu@nxp.com
 
 The base for the series is generally the latest rc1. A different dependency
 should be noted in *this* patch.
