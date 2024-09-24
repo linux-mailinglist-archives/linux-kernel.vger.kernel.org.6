@@ -1,151 +1,138 @@
-Return-Path: <linux-kernel+bounces-336442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6D27983AC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 03:31:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D033983AEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 03:34:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03D311C21DCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 01:31:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A0B61C2263A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 01:34:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F3C1B85D4;
-	Tue, 24 Sep 2024 01:31:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E124414;
+	Tue, 24 Sep 2024 01:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="blSG7nfq"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Q6uWoSs+"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD40FECF;
-	Tue, 24 Sep 2024 01:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4B9184E
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 01:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727141503; cv=none; b=QFo8HsxcP7ER0lAFtB65olwc7sCFC0Esf+uXxRHjUh759RT62j6N6GhjZEucZlnxk7jti63HJ/lj3adlD4XwxdO0tqCdl1/oDQSTcV7lpG2iv9GOnx1+7urq0cJDkGkw/70vqEQD3OQENQWz+rl3gDaNkCeWEBLJNiJMD3HeMpE=
+	t=1727141652; cv=none; b=o22ePX1tH90V/erSIutfUjJFiVMy7QiLui066qhCahjXmi/BwzDT47Qvg/D5s5WShvHQ6ri0K9l0EitNsVxmQQtlB7HeXhCRkxW5ClhiNHKFxZEZ+tB83YTHH3hfcMhzcP9MG6KjmG+QrJqZLkGhh/uLkXe9uiBx0tRB434wozc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727141503; c=relaxed/simple;
-	bh=xs5detKTVBLzPpGt/D9q21ZoFkPbRVyCsZ8mayN/prA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KHHZoi1OfCNY9fgA3M1lW4mywltxIJLZ89LJGWIqvv/udPmIzT+9criGLcZr4HSVePiW5Vk/v0lEXClTQVvswBhvT5BOFotESGItiNcRu+PreWCxjyEpy97/7ysMM6QuSC94SjGFc5Zyr8EKHX9RkGOknQKl1GJs+jNq/tURjlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=blSG7nfq; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-537a399e06dso1676915e87.1;
-        Mon, 23 Sep 2024 18:31:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727141499; x=1727746299; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RXUE+TGoraxHwTrjcDn7MdkTSgQGCB8AYjN18G7qHEs=;
-        b=blSG7nfqrdFb5yBF9PsTTDx0eNmBzf+BHBIwalMuvnKt2/bZedTqSGBPfg1zKnhSI7
-         0NlS7lIzaSn48Gn7WB9s9Y1iW9IBpJrOXdix9gKy7iPel50IVi8vjo4WRyolxgjCcvTM
-         YnYsJ/n2PsttB4dFLCojH0+dzV0KWNASJKGcGNNu3/V9f93kxVKrwBBWV6vNLIgh43ax
-         c4681adPyjtxcEpHQt0kJ/JKzCXK1votD5/X3PIct6RBue1X3Q/v6dn4080jO1KiY7cc
-         YfjsZL3yTjZoRslxyQs4hVFRHd+CMN3vWP8fXr4rPEwwjV3eZtGvTu0DTZ7aCMN9slk4
-         ylKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727141499; x=1727746299;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RXUE+TGoraxHwTrjcDn7MdkTSgQGCB8AYjN18G7qHEs=;
-        b=laqimbp4cMvQaZ/qlmKFVReju4OT3tE3sS0ZnDPW1sobQwoxNepjDsq6/eHNzrxuXT
-         My++kahwQaA1klVYCGl6gG+ltWhLxiApPGTYQ1WX9w+4gLeUVBizYESPqJ5KxPykS180
-         AYqSARCq4MrJgjOFzHQAw8+gipbttSdahdnDhBgOId+AWpSVcodmbHMHpQMrQVLdzZD2
-         hWHRKziNwlp2YitnbQcON/eudhfawOAijeiqdprPC4Ir7EYLGprQJLAhVEh0kjFV1P44
-         qD32t53KQ/3rCjd4CfNh8aFBVLCqauy6gH55+GI9leGhToYi2TkNBfHmVZLwnoYNYe5E
-         v7eg==
-X-Forwarded-Encrypted: i=1; AJvYcCWdYzwbWOiS5/SeYCDRGfT6TJyafRAutyCZXsKaPwa103+LGbZ2flMN0L+bYEltzkOmZa1g0BSpqfidjQc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGUDVBTEGO5NIfUHSJnVkx3TJPxQidwzKRC1rGkKDsuu6zt6Ot
-	HfgbtM24enJxmwZxXGKlWa+HZLiCmcmxVZQGh6/4qQWzSSNEuuI0RvlOVLUxOrY=
-X-Google-Smtp-Source: AGHT+IFBLkPpAD23jrQ6hVZAW8PQa7/Mvpz9LGc30yvgHGYRnCjvbVouaQDoQGW8pZgLe35cmCIBWw==
-X-Received: by 2002:a05:6512:401e:b0:52c:cc38:592c with SMTP id 2adb3069b0e04-536ac179d05mr7431867e87.0.1727141499229;
-        Mon, 23 Sep 2024 18:31:39 -0700 (PDT)
-Received: from dau-work-pc.zonatelecom.ru ([185.149.163.197])
-        by smtp.googlemail.com with ESMTPSA id 2adb3069b0e04-537a864d7fdsm52233e87.254.2024.09.23.18.31.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 18:31:37 -0700 (PDT)
-From: Anton Danilov <littlesmilingcloud@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Anton Danilov <littlesmilingcloud@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Shigeru Yoshida <syoshida@redhat.com>,
-	Suman Ghosh <sumang@marvell.com>,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH net v2] ipv4: ip_gre: Fix drops of small packets in ipgre_xmit
-Date: Tue, 24 Sep 2024 04:30:40 +0300
-Message-Id: <20240924013039.29200-1-littlesmilingcloud@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1727141652; c=relaxed/simple;
+	bh=yJD0zsN4IxxFpPSK0ulQhgwMOGJv7TGdJe1DmKmeOqY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c8TPk+eAc1Y38GBlVhAScYPW06qZJV6/ws2URkaNTZBYDK/PJzIidu7V6MlytCeqWQPoijygnV1EWEIimGvtbSWP2DlH087Q43OeUaKBZhj1ggfiCkApjNxvn+5hhA9NXn3w7AP2rTFdI7rheERh8ABBBcrTZtPAtr40RjGcXJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Q6uWoSs+; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1727141649; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=6UjjrfXK1WYlhJ+HrX1vB4ucv1aD7phgPcBAQ5tWEtw=;
+	b=Q6uWoSs+2Rzmw3zz8iEtrgHUFrWQEqeocsTO86EwPHM/xxJnpCfaWEzzATyylMh5uuk7XZYxoI9O4HkGx0K7ea8xOi5hGPpnSuJkhQaLf+ithDD3GtVYp28xInGwGt78iWIS8i8sypX/3CKibtv8nTviw5nUvTgmzrG/x4qKthM=
+Received: from 30.221.128.243(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WFdsVUM_1727141647)
+          by smtp.aliyun-inc.com;
+          Tue, 24 Sep 2024 09:34:08 +0800
+Message-ID: <10da0c50-f796-4ea3-8a7f-eceb127923f9@linux.alibaba.com>
+Date: Tue, 24 Sep 2024 09:34:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ocfs2: Fix deadlock in ocfs2_get_system_file_inode
+To: Mohammed Anees <pvmohammedanees2003@gmail.com>,
+ ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org
+Cc: Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
+ syzbot+e0055ea09f1f5e6fabdd@syzkaller.appspotmail.com
+References: <20240923132854.13936-1-pvmohammedanees2003@gmail.com>
+Content-Language: en-US
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <20240923132854.13936-1-pvmohammedanees2003@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Regression Description:
 
-Depending on the GRE tunnel device options, small packets are being
-dropped. This occurs because the pskb_network_may_pull function fails due
-to insufficient space in the network header. For example, if only the key
-option is specified for the tunnel device, packets of sizes up to 27
-(including the IPv4 header itself) will be dropped. This affects both
-locally originated and forwarded packets in the DMVPN-like setups.
 
-How to reproduce (for local originated packets):
+On 9/23/24 9:28 PM, Mohammed Anees wrote:
+> syzbot has found a possible deadlock in ocfs2_get_system_file_inode [1].
+> 
+> The scenario is depicted here,
+> 
+> 	CPU0					CPU1
+> lock(&ocfs2_file_ip_alloc_sem_key);
+>                                lock(&osb->system_file_mutex);
+>                                lock(&ocfs2_file_ip_alloc_sem_key);
+> lock(&osb->system_file_mutex);
+> 
+> The function calls which could lead to this are:
+> 
+> CPU0
+> ocfs2_mknod - lock(&ocfs2_file_ip_alloc_sem_key);
+> .
+> .
+> .
+> ocfs2_get_system_file_inode - lock(&osb->system_file_mutex);
+> 
+> CPU1 -
+> ocfs2_file_super - lock(&osb->system_file_mutex);
+> .
+> .
+> .
+> ocfs2_read_virt_blocks - lock(&ocfs2_file_ip_alloc_sem_key);
+> 
+> This issue can be resolved by making the down_read -> down_read_try
+> in the ocfs2_read_virt_blocks.
+> 
+> [1] https://syzkaller.appspot.com/bug?extid=e0055ea09f1f5e6fabdd
+> 
+> Reported-and-tested-by: syzbot+e0055ea09f1f5e6fabdd@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=e0055ea09f1f5e6fabdd
+> Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
+> ---
+> v2:
+> - Remove retries when doing down_read_trylock() and fail directly
+> ---
+>  fs/ocfs2/extent_map.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletions(-)
+> 
+> diff --git a/fs/ocfs2/extent_map.c b/fs/ocfs2/extent_map.c
+> index 70a768b62..48919464a 100644
+> --- a/fs/ocfs2/extent_map.c
+> +++ b/fs/ocfs2/extent_map.c
+> @@ -973,7 +973,12 @@ int ocfs2_read_virt_blocks(struct inode *inode, u64 v_block, int nr,
+>  	}
+>  
+>  	while (done < nr) {
+> -		down_read(&OCFS2_I(inode)->ip_alloc_sem);
+> +		if (!down_read_trylock(&OCFS2_I(inode)->ip_alloc_sem))
+> +			rc = -EAGAIN;
+> +		if (rc) {
+> +			mlog(ML_ERROR, "Resource is temporarily unavailable\n");
+> +			break;
+> +		}
 
-  ip link add dev gre1 type gre ikey 1.9.8.4 okey 1.9.8.4 \
-          local <your-ip> remote 0.0.0.0
+Or could be simplified to:
 
-  ip link set mtu 1400 dev gre1
-  ip link set up dev gre1
-  ip address add 192.168.13.1/24 dev gre1
-  ip neighbor add 192.168.13.2 lladdr <remote-ip> dev gre1
-  ping -s 1374 -c 10 192.168.13.2
-  tcpdump -vni gre1
-  tcpdump -vni <your-ext-iface> 'ip proto 47'
-  ip -s -s -d link show dev gre1
+if (!down_read_trylock(&OCFS2_I(inode)->ip_alloc_sem)) {
+	rc = -EAGAIN;
+	mlog(ML_ERROR, "Inode #%llu ip_alloc_sem is temporarily unavailable\n",
+	     (unsigned long long)OCFS2_I(inode)->ip_blkno);
+	break;
+}
 
-Solution:
+Thanks,
+Joseph
 
-Use the pskb_may_pull function instead the pskb_network_may_pull.
-
-Fixes: 80d875cfc9d3 ("ipv4: ip_gre: Avoid skb_pull() failure in ipgre_xmit()")
-Signed-off-by: Anton Danilov <littlesmilingcloud@gmail.com>
----
-v1 -> v2 :
-- Fix the reproduce commands
-- Move out the 'tnl_params' assignment line to the more suitable place
-with Eric's suggestion
-https://lore.kernel.org/netdev/CANn89iJoMcxe6xAOE=QGfqmOa1p+_ssSr_2y4KUJr-Qap3xk0Q@mail.gmail.com/
----
- net/ipv4/ip_gre.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/net/ipv4/ip_gre.c b/net/ipv4/ip_gre.c
-index 5f6fd382af38..f1f31ebfc793 100644
---- a/net/ipv4/ip_gre.c
-+++ b/net/ipv4/ip_gre.c
-@@ -662,11 +662,11 @@ static netdev_tx_t ipgre_xmit(struct sk_buff *skb,
- 		if (skb_cow_head(skb, 0))
- 			goto free_skb;
- 
--		tnl_params = (const struct iphdr *)skb->data;
--
--		if (!pskb_network_may_pull(skb, pull_len))
-+		if (!pskb_may_pull(skb, pull_len))
- 			goto free_skb;
- 
-+		tnl_params = (const struct iphdr *)skb->data;
-+
- 		/* ip_tunnel_xmit() needs skb->data pointing to gre header. */
- 		skb_pull(skb, pull_len);
- 		skb_reset_mac_header(skb);
--- 
-2.39.2
+>  		rc = ocfs2_extent_map_get_blocks(inode, v_block + done,
+>  						 &p_block, &p_count, NULL);
+>  		up_read(&OCFS2_I(inode)->ip_alloc_sem);
 
 
