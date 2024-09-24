@@ -1,106 +1,104 @@
-Return-Path: <linux-kernel+bounces-337669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34996984D49
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:03:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F026E984D51
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:04:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E87D228182C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:03:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E50C1C228D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:04:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24102146D57;
-	Tue, 24 Sep 2024 22:03:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1DC14A62F;
+	Tue, 24 Sep 2024 22:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="djbVBHLr"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YHSE/qt0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C495913DBBC
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 22:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86308146A87;
+	Tue, 24 Sep 2024 22:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727215389; cv=none; b=YGkugNv3sbT3DfCxwJGfUblJcvXuBZ0gBJ606DQiJf7GqYgFMS9JqyBOaYqsZ6xZ1wnHH6Ft2+Xj8NSeDpoiyZL3eZtkMqpyfPwPkfcgAZ8pzefYo/wXrcOcxZ+eteS6AbeQssFyX5Xhjo7J1HQBW8Wfog9PV57ExboYQ/g9i3c=
+	t=1727215477; cv=none; b=BW2MhH/pgwE8H+q8nXwHn+/mxm0YpiAw9dlbFcPTgxeUUzysWzBtbkv2aRbkeeFiwwR6MFj+v+tBR+Io+hF6EYj1N6R82/hk9QvQA93QN9JTXL1p7ekkoTTLiszoGPfOg7CFXbhida7BhiXMy99QTpXhbOm01clnoWFnzMOzmHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727215389; c=relaxed/simple;
-	bh=NsZrdsG+uwrLVvS5FWIhBRuHHog4+l/Yf5EAxQLtzhs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WVYlZ9j0JkzdFu8797qrJtDB+KgNqcfF54t1ax24uqxoqrD9Ww8/ozCG9ZdSvBQQTxyCDe9ASdzEeBlmP7ZKq0djFQyV0StZtn1KKf0rxkU7F5/WjqSo/AEmncpF/3idcu68t3yjW3s/rWloqm7KyiysG9Vl8TSN8+So7Gd9rHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=djbVBHLr; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7a99a46af10so627244785a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 15:03:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fooishbar.org; s=google; t=1727215386; x=1727820186; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=NsZrdsG+uwrLVvS5FWIhBRuHHog4+l/Yf5EAxQLtzhs=;
-        b=djbVBHLrcuojBXGYJbM/DhCPfqFxPFaWJW7Bq8aGqE0nekN5bf/AH5bvrMb80X0vMi
-         jPV23fsa3AdGutjCpwkvGnOhl94/LlXfRN7JdCn6LpvE0sEw6pCHr2M8ZZesOOXMxsS3
-         nl7ZbdJgxlYhh16lOjd1NUokMbgEOqWhXNikdCbKpN64zyCBkk64G4kW5zcf55nAJrsK
-         57YNvHPmZP/GWLmEQDtx4Co2smjvuZjjS/mY5xYkxM0tbuqG/G86Qvpje6OWF3C6Kxop
-         xIpsJMnBt1jiyaySttZFx5YeY61nIsE5poxNyRhwg9Dze+Mlk8ggciBnkJMOjku6gozp
-         kPpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727215386; x=1727820186;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NsZrdsG+uwrLVvS5FWIhBRuHHog4+l/Yf5EAxQLtzhs=;
-        b=XwEAFsbsa6k/agtRuKcTh3FaSU1Zo039DE1FKfXv9PfIJjgNuvuFI5aft37JTSmsz0
-         Y/HMydhYwgwT1xareQGB9myD6WqXHteY/zsWu0dW/RIfz+G10bk7/LaGJTkEjFJtQDLU
-         AVKP4OTC6eNhmVYip4Vf6UajPcLHLVR/G4X+dwXkHXnWAGeH2QzUAA27Yfv2n/4/TZjt
-         H92l0T7ReJ40hUKzGBdDTPd2Yv5mxxtIhf9gOr/s8npgnZ9lKj65v5lE2hQwlPR2+tMw
-         sV6FDm+A9bTuz0TPXk5yS7LiToid/NA42Smr62fAef0rcNhAbgaYh7H5vRYTRgeJmKxR
-         FACQ==
-X-Gm-Message-State: AOJu0YwHxYqGmH/0UE8oIHMXuJOMhALzPtfM/EQuufw69odhppnyOZao
-	X+SMnMDBR6lPc6mxMuCgG7+YUAmK17UbGii3yAqWWbtLRivpq2UX5vErOxIirycUB+SCRjiz+Vp
-	QmHvgpxCoeyLy/tbdxVG7Uo73e2IMRyCLcj3pjeRe0YbAC9+/7x8=
-X-Google-Smtp-Source: AGHT+IElqfXPuPng8AojlDDF2C6GLMgjgq9uYfkfDW9uAzUUN373GhIZBRXCnSZ4eftp7Scr+RM/AU3bO+2aPn4itIQ=
-X-Received: by 2002:a05:620a:179e:b0:7a9:be7a:9220 with SMTP id
- af79cd13be357-7ace745d94emr87761585a.60.1727215386507; Tue, 24 Sep 2024
- 15:03:06 -0700 (PDT)
+	s=arc-20240116; t=1727215477; c=relaxed/simple;
+	bh=ph7TAmMw39B3nL4g9AnJGmFDqgpNUh2Ues8UMkyvezM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Izsbm4Bja7r9Lke8BFpPkq+NO+1NOHwe6Hd4BOz81toboZnIQUDbF02hMW4zw+6lKNgpHZqfkL0J4L78a+3i5lSkjVBjZbSQU5shDwYY81TnojVetQjJ9FE8I7JGr+FYqWPzrMiDM7gOuVSnPPh5L4ntkRO5NRTvnlfXuGLsbGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YHSE/qt0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BD6CC4CEC4;
+	Tue, 24 Sep 2024 22:04:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727215477;
+	bh=ph7TAmMw39B3nL4g9AnJGmFDqgpNUh2Ues8UMkyvezM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YHSE/qt0AiT8AlwY1uSTrM4Z+ddSgOQ1IG50S21mOHCh5+bAm0FTiaj8U0tsSSsTY
+	 O2kH8wsJaPK9PB92jyQVw/lhH+5Jbye96igquHgFjB4OjUO8QZ81XWKyH+MfvQyTS2
+	 RdpMxn6MU3xPwqTU8MrZPY3VPdPRmSyRL9av7qiJhInMfvBKuynohB07s0T08Nbj7d
+	 lmPdObo40LTaycX8ebXQTapeJK/rULYRm/TJvFhl37j60cjcRl62ZDMWCaIKuF2Jgx
+	 p/6Di08hH6mRYEqPHHbE3jfXR+rHUKYV6+UymboTU/cEi164hzevz4dtd1IagSNl2M
+	 Pzod9bdNwPm+A==
+Date: Tue, 24 Sep 2024 15:04:34 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Md Sadre Alam <quic_mdalam@quicinc.com>, axboe@kernel.dk,
+	song@kernel.org, yukuai3@huawei.com, agk@redhat.com,
+	snitzer@kernel.org, mpatocka@redhat.com, adrian.hunter@intel.com,
+	quic_asutoshd@quicinc.com, ritesh.list@gmail.com,
+	ulf.hansson@linaro.org, andersson@kernel.org,
+	konradybcio@kernel.org, kees@kernel.org, gustavoars@kernel.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-raid@vger.kernel.org, dm-devel@lists.linux.dev,
+	linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-hardening@vger.kernel.org, quic_srichara@quicinc.com,
+	quic_varada@quicinc.com
+Subject: Re: [PATCH v2 1/3] dm-inlinecrypt: Add inline encryption support
+Message-ID: <20240924220434.GB1585@sol.localdomain>
+References: <20240916085741.1636554-1-quic_mdalam@quicinc.com>
+ <20240916085741.1636554-2-quic_mdalam@quicinc.com>
+ <20240921185519.GA2187@quark.localdomain>
+ <ZvJt9ceeL18XKrTc@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830070351.2855919-1-jens.wiklander@linaro.org>
-In-Reply-To: <20240830070351.2855919-1-jens.wiklander@linaro.org>
-From: Daniel Stone <daniel@fooishbar.org>
-Date: Tue, 24 Sep 2024 23:02:54 +0100
-Message-ID: <CAPj87rM5LSBEdMECyh0WTkjWWySDv2_eyqj7ew_qU7xQ5LEdgA@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/4] Linaro restricted heap
-To: Jens Wiklander <jens.wiklander@linaro.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linaro-mm-sig@lists.linaro.org, op-tee@lists.trustedfirmware.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	Olivier Masse <olivier.masse@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Yong Wu <yong.wu@mediatek.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Sumit Garg <sumit.garg@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZvJt9ceeL18XKrTc@infradead.org>
 
-Hi Jens,
+On Tue, Sep 24, 2024 at 12:44:53AM -0700, Christoph Hellwig wrote:
+> On Sat, Sep 21, 2024 at 11:55:19AM -0700, Eric Biggers wrote:
+> > (https://android.googlesource.com/kernel/common/+/refs/heads/android-mainline/drivers/md/dm-default-key.c),
+> > and I've been looking for the best way to get the functionality upstream.  The
+> > main challenge is that dm-default-key is integrated with fscrypt, such that if
+> > fscrypt encrypts the data, then the data isn't also encrypted with the block
+> > device key.  There are also cases such as f2fs garbage collection in which
+> > filesystems read/write raw data without en/decryption by any key.  So
+> > essentially a passthrough mode is supported on individual I/O requests.
+> 
+> Adding a default key is not the job of a block remapping driver.  You'll
+> need to fit that into the file system and/or file system level helpers.
 
-On Fri, 30 Aug 2024 at 08:04, Jens Wiklander <jens.wiklander@linaro.org> wrote:
-> This patch set is based on top of Yong Wu's restricted heap patch set [1].
-> It's also a continuation on Olivier's Add dma-buf secure-heap patch set [2].
->
-> The Linaro restricted heap uses genalloc in the kernel to manage the heap
-> carvout. This is a difference from the Mediatek restricted heap which
-> relies on the secure world to manage the carveout.
+What about a block device ioctl, as was previously proposed
+(https://lore.kernel.org/linux-block/1658316391-13472-1-git-send-email-israelr@nvidia.com/T/#u)?
 
-Calling this the 'genalloc heap' would be much more clear.
+> > It looks like this patch not only does not support that, but it ignores the
+> > existence of fscrypt (or any other use of inline encryption by filesystems)
+> > entirely, and overrides any filesystem-provided key with the block device's.  At
+> > the very least, this case would need to be explicitly not supported initially,
+> > i.e. dm-inlinecrypt would error out if the upper layer already provided a key.
+> 
+> I agree that we have an incompatibility here, but simply erroring out
+> feels like the wrong way to approach the stacking.  If a stacking driver
+> consumes the inline encryption capability it must not advertise it to
+> the upper layers.
 
-Cheers,
-Daniel
+Right, I missed that's actually already how it works.  The crypto capabilities
+are only passed through if the target sets DM_TARGET_PASSES_CRYPTO.
+
+- Eric
 
