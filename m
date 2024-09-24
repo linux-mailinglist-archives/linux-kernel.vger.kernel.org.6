@@ -1,387 +1,205 @@
-Return-Path: <linux-kernel+bounces-337792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6854D984F02
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:33:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 357BC984F07
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:40:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B66B1C21C24
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:33:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A91401F2448D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:40:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4223188934;
-	Tue, 24 Sep 2024 23:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B235118950A;
+	Tue, 24 Sep 2024 23:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bkHJo6IB"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="VwZI05cW"
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11020131.outbound.protection.outlook.com [52.101.193.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F5E13DBBE
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 23:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727220796; cv=none; b=mqdkrq6CjX2eKfRUg4p+voNrCJLeEotJ36f1hsu5t5mvyMsZ4P2G5MH50CS4Cj75hwYxMl4oDnrww6D0YUUcZiqX66cpcdeXKmHnDgqkBZ3L+i1KylL8+k8AiNZSwGVCLd0c9hM+9jSlk0BkoZMtHL8+E7O/6MvaSErTK67nY14=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727220796; c=relaxed/simple;
-	bh=Kz4EteGBnEcdT6WBTAi5msqfDeHPNtCY/bIVxqiq53Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eU4SYf51CuhCI5drS5f3HB75Q+cewVZsM2IPnLQGUaRNNtOvzdW1VZPA5nBqchl8786SaQAY459oCisdayqfno25zVBhOWshTaTAe7/GWbI769X/vaN2dnTCzbRoPGTOaXg9K1K2zMa+wGdbSADcI9KnqralSj9bWIwsfjvQrVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bkHJo6IB; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5356bb55224so8292991e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 16:33:13 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6295A188CD5;
+	Tue, 24 Sep 2024 23:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.131
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727221197; cv=fail; b=KoRWccbPOxe6ILUBq1nttnqJ3SQxwx/UHzr8CfDFhzALmNn+VVLgL1HJe985FeKRLOjvgWnZuoKiPZdu09I6cJ5UFEduYcNXzvgkrWqdGk1qoN+fZYPDoSFVMb/1vO940sHeOEUnAI8buKiIFxV5AJyvA9X1liAWW0DBFad0Yj8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727221197; c=relaxed/simple;
+	bh=gK6xCcnFrFSLxGfkgWUS0d5IzhXnWZ/J2ONJNBixIww=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=NN90kVwrz0bQUzqNeO+bTnBcOOAnw+fgAveMcZ0s1scmYDT2LLIYHnOR6x5wJNbmdzx3xqYUIqArLzK1xWXEzlqo5cC0l9m2zcD5r8s8uzJlvKJIQbFUrRCA9RnGHBoLqesU5y2HQGaLR7eB3mnojfPiH7QPiTVSsV9YgZ/SeLI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=VwZI05cW; arc=fail smtp.client-ip=52.101.193.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TXJXJ3VmlBPsbZkMH+wu9TVvwlfNlM0w3b1Xi0Q8DIf/nenx2iYkohXPztSmjvY5BHvgUyeYt5mLy9d1JpU8HXs7b7Mzgxo7dZ0CKdsL54KiPoz+FffsfUJnU3fojfRviY3dNjt+G/QYwU+2LLUlhIOTpZ3Ba858L2sP0mXfBzKuj6za/YfaD6LnCKazRscABuplkWw/1AKf5Xk2YuArrDq8iJkoNh0xh4v9LavntN1V7iX6q7O+Q6PVsX4Ha8UdCJpWIB3g9f4tC/5Aex6xLGu/Vv9hu4x5fNNoQrwpyw1VGML/cBxd22HvK2DN72UGA1PM2Ztv1OvHVl6zDCHjpQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wYfHtq99ybCfWIaUuCw30Xkvjx0GsyzDqazqNcMg0Gs=;
+ b=h+l5sPXU9WClsHHH3xhr5qUatCVAyXRMVvS9Q7+9xYW/jqbNW8s7igr4IEksC6JTfg+o7R5mpnPCThjy3bQ+7eHOOqsK/8UCC4tR3ytDGgJj4VPCAN1ITYElbatK0yXMJCOuxI77YAQIT5ZeVJ66+TIgIzjSwxr7/DNNRJZRWvrWYgdqYY7xAynLnP7Qn+bPONJxKVqDqUlfqTyulfoRJ+E8TDOlHbqH6s14z9Qh3AG9Ra/lhL+h4P6xJnMXtFbc+O6Bvv7YQg+wUUjsLRThncQHXnk5HFuAf56Dx2cBY2Sa9oE4FySTBMrc1KLLkfHpXxByF0x6C9fC/gBcBAfQWg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727220792; x=1727825592; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hRlv8s8GoItuIpeQU419MkcSoMXZV/bPMhcqrG6dwwI=;
-        b=bkHJo6IBpNIUJ26Md/r4nqzDLlH5Pw5KWZEH2MT/ilZEN0tp3rm0Bmi5LO1DYaqmYI
-         5OPFf6aIZmCNm7msxic5cyNW15O7kRdPxYrNPftfjTfYunGTUIPwKrPgDPDvbDMlNwWZ
-         cqj7YBLHb4pDpznXfdsT8j2UdB6lEPMH4ZczOlEYW0smx0IKRxBz+9PlqnHNekViqXXe
-         COrv1fdqDl1Gwn2NBm9ETxrTa02zrjeLqh4mwHQM//oPrRJ7zMMpyCRmEWhHWPUEQzj8
-         UXsN4u4k2atMwHdtRi6zEa48B+aPqQCTRRsLO0R/rNVJfKdJ8v1jNJ+UkPlm0I/urrCv
-         IfJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727220792; x=1727825592;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hRlv8s8GoItuIpeQU419MkcSoMXZV/bPMhcqrG6dwwI=;
-        b=KMVSwxoPuHTLETyDLecdWqmIjz0nOG4SJ8x4BsfZIZDs6I62goODQIAYBQDpPws8oa
-         nPODLXBqmodUfB6aUwuVa+tbj7BOvuTZOiZLLoK9dsxnTpTaDT3xirEkjF5Wu9MZWjSR
-         QKsZP3y8FxgqrVj3DXTjKwXEYfUlE5GvVacDe+PwY9lFwFZoiILBOtLIow+9Yse+VpCQ
-         weOynTo9fGCoUkrr32R2HoB/py6jRUUcog34f5b0Yu5CB/dfHblqCckYkJLqntYtDfpH
-         NcZtdirIH7NUPIdc4fL7WtrksEfpzi9M30WyAr0K7HtSv/V+IMLI3cjYH/u+Ge8S8X5A
-         LuVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXIZmPhboVAfk18wxrWbrHXSVIG8l3IujypXjGGjd9A/YCly8SmSiU2WzGEzHwOa8fk1+HSjYA2azRa16M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynHxh6te5UEXRJFDOFoXlnAvotB8//K77mxzSQk3s74pJuWtcd
-	zxbCjznNS0Wk3y5JYJ//n94Ubni8oW+DISpOjC78QMhYKx0NZpuOd57hWQ6zAC8=
-X-Google-Smtp-Source: AGHT+IHnBmWYzwQDUD394Srxn+hiP6zYOXP+PHgD5N0zIrFFjdx0/JXyGO/S6L6DEekiStAGgMFsLQ==
-X-Received: by 2002:a2e:4a0a:0:b0:2ef:1784:a20 with SMTP id 38308e7fff4ca-2f91ca68786mr4246941fa.38.1727220791577;
-        Tue, 24 Sep 2024 16:33:11 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f8d282fcb8sm3562201fa.4.2024.09.24.16.33.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 16:33:10 -0700 (PDT)
-Date: Wed, 25 Sep 2024 02:33:07 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jessica Zhang <quic_jesszhan@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, quic_abhinavk@quicinc.com, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, quic_ebharadw@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Rob Clark <robdclark@chromium.org>, Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Subject: Re: [PATCH v2 15/22] drm/msm/dpu: Reserve resources for CWB
-Message-ID: <zjm4lyjyvdbbixhcwrcttavukxgmw63a2b2fn742advjrahq3a@auykiy6vwtrj>
-References: <20240924-concurrent-wb-v2-0-7849f900e863@quicinc.com>
- <20240924-concurrent-wb-v2-15-7849f900e863@quicinc.com>
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wYfHtq99ybCfWIaUuCw30Xkvjx0GsyzDqazqNcMg0Gs=;
+ b=VwZI05cWDIpEayCYCMuq51HR7UZyBHKKO2JMtmvsuhtxySeVXYey3MspBg5Kyo/0IgN4Bl+8UCD/b8a0WolHJGpviTSrs4hHlXmLxp4YFuC9z2D8mem6ABLBqKnEnJj8khLPAo5KZKHYal899jOzGS5DJVQSCdFczAVQO8eB1wk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from MW4PR01MB6228.prod.exchangelabs.com (2603:10b6:303:76::7) by
+ BY1PR01MB8922.prod.exchangelabs.com (2603:10b6:a03:5b6::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7982.27; Tue, 24 Sep 2024 23:39:52 +0000
+Received: from MW4PR01MB6228.prod.exchangelabs.com
+ ([fe80::13ba:df5b:8558:8bba]) by MW4PR01MB6228.prod.exchangelabs.com
+ ([fe80::13ba:df5b:8558:8bba%7]) with mapi id 15.20.7982.022; Tue, 24 Sep 2024
+ 23:39:52 +0000
+From: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+To: James Clark <james.clark@linaro.org>,
+	John Garry <john.g.garry@oracle.com>,
+	Will Deacon <will@kernel.org>,
+	Mike Leach <mike.leach@linaro.org>,
+	Leo Yan <leo.yan@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	coresight@lists.linaro.org,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ilkka Koskinen <ilkka@os.amperecomputing.com>
+Subject: [PATCH] perf: cs-etm: Fix the assert() to handle captured and unprocessed cpu trace
+Date: Tue, 24 Sep 2024 16:39:30 -0700
+Message-ID: <20240924233930.5193-1-ilkka@os.amperecomputing.com>
+X-Mailer: git-send-email 2.42.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: CH0PR03CA0249.namprd03.prod.outlook.com
+ (2603:10b6:610:e5::14) To MW4PR01MB6228.prod.exchangelabs.com
+ (2603:10b6:303:76::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240924-concurrent-wb-v2-15-7849f900e863@quicinc.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW4PR01MB6228:EE_|BY1PR01MB8922:EE_
+X-MS-Office365-Filtering-Correlation-Id: 423c77f3-25fe-43eb-c879-08dcdcf23006
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|52116014|376014|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?odJzWoEp+WE9Kjl4UjyxgCIuWcqKKLvrvMAswzDMPjHBFqCiPMguHOT8k2n2?=
+ =?us-ascii?Q?M41DFpUGm9Uy2PQ8C3hENr9EjTT6u8pxIpqefEpPr4z6clGyrgbaR+R41zY1?=
+ =?us-ascii?Q?yAF7mz1BR6xHHmCm7/0Kpx9gLTxmyFEVg0traYvJqw8J3F46+9NeNI/FbtNU?=
+ =?us-ascii?Q?RE8k3+55OB80iBDFgk7rk865q+EArP+St9x9XQT9mpjkNqQBwomA6o/C/NHE?=
+ =?us-ascii?Q?L4cnqytE81wR/9IlPgCSatLx/7vvsDSPdzDbbUupcYUO8XC9q3iZJOf+rwz0?=
+ =?us-ascii?Q?jBH3q5wtSxMw6BMKu0Px+1HsyO69uQbq/SgfIyzMu8a3VLpVQ1vodZdl8/Uy?=
+ =?us-ascii?Q?0VYtrr1IvBq9V57SIecfMFf09k9+Qrio6XXDffrNYnrkgd2fRymKYwudCmKn?=
+ =?us-ascii?Q?ImO5H0rJha+w+CHK0m1c66H3R3nmDlEJIhpD0obWsP/ScGkBfsFl2CUqBOBX?=
+ =?us-ascii?Q?lyD/jPlAHODPL5+rrNNlAJiiG0PKt83twJdwu7wectxstN6psVir87DOMeD0?=
+ =?us-ascii?Q?q5R2Dp3BR8DYjDfQOJvHjbxlM8mdA1E4ynHMTRcWtRt4SJJE4/twI6+DsOUK?=
+ =?us-ascii?Q?uzqN12txL/McmruVIlK+1XCfQnv4Rw2l6u5hgypmm8idWcohiiwuIBw4Gf+/?=
+ =?us-ascii?Q?9/DUPxL+jNWD19ZOWve8XW1JBkYQM1iLWMNQDYVMEDjL6miAh0vEhWXaY3Ch?=
+ =?us-ascii?Q?iv3+BuJAXRh03fOopRa/WmR/KZ5w76tHlSE3zbLiYCOlYs9i7gV3ZRMEE8Ei?=
+ =?us-ascii?Q?rgqile+NC57Rd77lbcoU0+DN0nO5WZtPvLmmSkqaMfJvnsARzJ1Nnl+6TxAh?=
+ =?us-ascii?Q?dAWILifzl/FwjDsjs6/KDa06T3oPiAuy+IG7txSDWq4QIAZIY6nhnFUIB6K3?=
+ =?us-ascii?Q?hU7oYir/787/GX0ikNMEPD8z+CD03mw0KD+OKwpBXVVABg5ualY8odG2UrGv?=
+ =?us-ascii?Q?DXzwoSx/CPlJ1Hxu+LHRoSj8LtyKtPfEODVG2XJrVoML07rFRRXSyzRjk0Na?=
+ =?us-ascii?Q?+o7ocM3a19qXpusjDywNg6Cshf1EN5UXFz0JLQhr8U/laTSoixviNmwYr/hd?=
+ =?us-ascii?Q?Jn2qGNf72yzv/LCXVfNFuF07+IBFbVpU3K4HC7hARNAGzdm0jq+hx+qejOho?=
+ =?us-ascii?Q?3HfOArvb7aOzN4L0lYLDPyRqGEhcfW1bwkJ6YJwkioH9rDlh10fwFY2+Bubi?=
+ =?us-ascii?Q?inLHzfk5Px98Udg7jd6zl4dVsYXyyNpVZ317iRAOVNMq+W5LgehJPL5jZGYw?=
+ =?us-ascii?Q?lgdbBeyFTD1oRPaRh0wNwx4udzNEyZzSUjDv6oVI7Aa6BgX6NC8v0ofheOeo?=
+ =?us-ascii?Q?h7wQfhApj/jOaHgkpffnJSsJMMgKnE9BWXLH8xVtlInZYM8ftqyeVBoptATN?=
+ =?us-ascii?Q?x+BG3OOi6bifQxiCyCOxbrUUxICs+PI9CEnI+EhN5+xYPlIjAIEJuQ67owC9?=
+ =?us-ascii?Q?1fTuBc85dkk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR01MB6228.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(52116014)(376014)(38350700014)(921020);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?hZ+YBWMOGNhMzBHqZ3YHUqaoN6AGuQda46Hn8V1/duCYLII3NQu7MdznAwRH?=
+ =?us-ascii?Q?MZ/4OWneF4Z/cPZwrh+C1slhJ2P3ZvzKNox1lXc9mcLFNefCgc7z82B9LZps?=
+ =?us-ascii?Q?1oE/8BtnzhTv1cYfLtPryhdct6IaftW2Xj9pTUAfZVsB7ybeZ9M93PnRL2nQ?=
+ =?us-ascii?Q?Rektice047+b8VtP6OsQazsGh8phYMb1cv3HrXxfjgKng0qJRsdeGQYPZfSx?=
+ =?us-ascii?Q?V6Hp5Xx/1xZ6Ml2XGBBw1/egAWyVUQgJeAPWyd7py2WR7sJJnaNeT6KIW/Ui?=
+ =?us-ascii?Q?EzSUTOYTVGWM/69EDi9knkaBwbYH6A5nUu4WEv6yZd8r/kcXXn2ve9vQKSpp?=
+ =?us-ascii?Q?6KZy+crCqyP5Ku7AFr+LRBqKu2i3Q/4J7GSgQ8TrFDUe9PlSH0EXOgMIQNnC?=
+ =?us-ascii?Q?lsZmX8X3rdYp+iO+yf2R+gTEx+TbR19tunTsP6x7NAZUiJrFozbpeW7HHaXx?=
+ =?us-ascii?Q?LYY+F8++ElNAkLMJqV9pYbLfBx0G85dPIzG7MGOA+WoPnyd4JKFMUYSUmEi7?=
+ =?us-ascii?Q?gAmCq/qxfK07JlH5NYwbuUM/wXibi5uZHi48JVrEcybbxKWnqvc4+xfkxWYm?=
+ =?us-ascii?Q?7m54lQAktEzSH3nJQYl4MNGuSmrVi41usvtOFnaZc+71OJA7S8KY4i1u1wkp?=
+ =?us-ascii?Q?y2+eT281wrlqW71fL2xkTmr2ONI+Y222oICBsPu829uRDJzJG0JUlUucpVyo?=
+ =?us-ascii?Q?4wHO2x2RFlK2ZNTkoA3LhsPLLFSAvo13f05vGgsXxBCxOlCXoFAx7kAkRdt9?=
+ =?us-ascii?Q?uaReb70TTq1DhmZe2HAjY+2aUsDjJ4cyxjM5K5Ch0WQ32+qTqHY2jEzvYQAx?=
+ =?us-ascii?Q?3q8XpW2VDRmrsoF4YUsDcCU9cJAsITCFutxS1n/UsmttWQ9TYV9Aq0LvhY4e?=
+ =?us-ascii?Q?6/NMjrJXiiyYGvC7XI2iSY1yWta2Yk2DBTw6wrZGdwS5KyNmy+gnLmpqIFR+?=
+ =?us-ascii?Q?P6KN17KQo683CL+gW/fbv2/4fXn1o9fmsLbj7mpdZkbYQzAA00V7vm7suR+Q?=
+ =?us-ascii?Q?Iwypwrq3wffC3cqMDcNysQjrqChq307GhuOe6OSvzFMg3Bqjvn5yfCWWO/bK?=
+ =?us-ascii?Q?9x4cL7XcPiF0nQxfZGYwWsl+jTuFEVaCeTtIxL5+zLIsCbZ4cMQ+MAzX00aS?=
+ =?us-ascii?Q?ttoo37ULmzMLHJmlmHcDk8fFqnX3vanUvjr5SFYDkCAtmRpuDHVvrmfuXCcc?=
+ =?us-ascii?Q?Rg8HvDFgdh7keO8ethABV5ngmvikEQMxuNDCvJ8c8+VRqtnhKqBBAC4uySl8?=
+ =?us-ascii?Q?3aLK/fhUa+ZHZS2ypBRh/zUcN75wNc3E2+qhoxgOBZBALsGwlFLW767hnup4?=
+ =?us-ascii?Q?AKkemxwZhPoxhYu2OA0Aa8b2fGwAKHpxTpiOYjy/VO3u7TN2hLpDSU3tvUU6?=
+ =?us-ascii?Q?807M54PX6a09X64whJZ8w7+hK6bZl3XaALlvlqHIPamKM4EUIUlXQqSicKqg?=
+ =?us-ascii?Q?7Cssju53br6OL5XLa21sp37kCgoyxSjpg9GrDtJXRxrqZidgH8N2o4Oiv+Wn?=
+ =?us-ascii?Q?Yw1WgQSr0bfwkCuPqJjTcpiy+73PmjlkCyaEvCh59pvgBR/+xC78tPir06Jb?=
+ =?us-ascii?Q?2mB/fLOjU36Hl5SS5XVrXEV1TMtgGZs2B0Bu9gHutRMEd4iK+E+G6Kedt50B?=
+ =?us-ascii?Q?8D73rPMrFy2kpCgppL5XIS4=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 423c77f3-25fe-43eb-c879-08dcdcf23006
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR01MB6228.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2024 23:39:52.7423
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: NwcZ8NqpamIz11zXykQfP/0/cQ/7e7Cfld7dRN1lpAP/3JjJvZNke7yz1fcViphz/5ZVGJR2SJjSOzIB0Y0ebJdrjZGSq2OaZM4yCcoZ/94zCeWOonIPbQiCa3/7nv+3
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR01MB8922
 
-On Tue, Sep 24, 2024 at 03:59:31PM GMT, Jessica Zhang wrote:
-> Add support for RM to reserve dedicated CWB pingpongs and CWB muxes
-> 
-> For concurrent writeback, even-indexed CWB muxes must be assigned to
-> even-indexed LMs and odd-indexed CWB muxes for odd-indexed LMs. The same
-> even/odd rule applies for dedicated CWB pingpongs.
-> 
-> Track the CWB muxes in the global state and add a CWB-specific helper to
-> reserve the correct CWB muxes and dedicated pingpongs following the
-> even/odd rule.
-> 
-> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 34 ++++++++++--
->  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h |  2 +
->  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h     |  1 +
->  drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c      | 84 +++++++++++++++++++++++++++++
->  4 files changed, 117 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> index 36b677cf9c7a..b2f0bf412451 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> @@ -2,7 +2,7 @@
->  /*
->   * Copyright (C) 2013 Red Hat
->   * Copyright (c) 2014-2018, 2020-2021 The Linux Foundation. All rights reserved.
-> - * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
-> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
->   *
->   * Author: Rob Clark <robdclark@gmail.com>
->   */
-> @@ -28,6 +28,7 @@
->  #include "dpu_hw_dsc.h"
->  #include "dpu_hw_merge3d.h"
->  #include "dpu_hw_cdm.h"
-> +#include "dpu_hw_cwb.h"
->  #include "dpu_formats.h"
->  #include "dpu_encoder_phys.h"
->  #include "dpu_crtc.h"
-> @@ -133,6 +134,9 @@ enum dpu_enc_rc_states {
->   * @cur_slave:		As above but for the slave encoder.
->   * @hw_pp:		Handle to the pingpong blocks used for the display. No.
->   *			pingpong blocks can be different than num_phys_encs.
-> + * @hw_cwb:		Handle to the CWB muxes used for concurrent writeback
-> + *			display. Number of CWB muxes can be different than
-> + *			num_phys_encs.
->   * @hw_dsc:		Handle to the DSC blocks used for the display.
->   * @dsc_mask:		Bitmask of used DSC blocks.
->   * @intfs_swapped:	Whether or not the phys_enc interfaces have been swapped
-> @@ -177,6 +181,7 @@ struct dpu_encoder_virt {
->  	struct dpu_encoder_phys *cur_master;
->  	struct dpu_encoder_phys *cur_slave;
->  	struct dpu_hw_pingpong *hw_pp[MAX_CHANNELS_PER_ENC];
-> +	struct dpu_hw_cwb *hw_cwb[MAX_CHANNELS_PER_ENC];
->  	struct dpu_hw_dsc *hw_dsc[MAX_CHANNELS_PER_ENC];
->  
->  	unsigned int dsc_mask;
-> @@ -1053,7 +1058,10 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
->  	struct dpu_hw_blk *hw_pp[MAX_CHANNELS_PER_ENC];
->  	struct dpu_hw_blk *hw_ctl[MAX_CHANNELS_PER_ENC];
->  	struct dpu_hw_blk *hw_dsc[MAX_CHANNELS_PER_ENC];
-> +	struct dpu_hw_blk *hw_cwb[MAX_CHANNELS_PER_ENC];
->  	int num_pp, num_dsc;
-> +	int num_cwb = 0;
-> +	bool is_cwb_encoder;
->  	unsigned int dsc_mask = 0;
->  	int i;
->  
-> @@ -1067,6 +1075,8 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
->  
->  	priv = drm_enc->dev->dev_private;
->  	dpu_kms = to_dpu_kms(priv->kms);
-> +	is_cwb_encoder = drm_crtc_in_clone_mode(crtc_state) &&
-> +			dpu_enc->disp_info.intf_type == INTF_WB;
->  
->  	global_state = dpu_kms_get_existing_global_state(dpu_kms);
->  	if (IS_ERR_OR_NULL(global_state)) {
-> @@ -1077,9 +1087,25 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
->  	trace_dpu_enc_mode_set(DRMID(drm_enc));
->  
->  	/* Query resource that have been reserved in atomic check step. */
-> -	num_pp = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
-> -		drm_enc->crtc, DPU_HW_BLK_PINGPONG, hw_pp,
-> -		ARRAY_SIZE(hw_pp));
-> +	if (is_cwb_encoder) {
-> +		num_pp = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
-> +						       drm_enc->crtc,
-> +						       DPU_HW_BLK_DCWB_PINGPONG,
-> +						       hw_pp, ARRAY_SIZE(hw_pp));
-> +		num_cwb = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
-> +						       drm_enc->crtc,
-> +						       DPU_HW_BLK_CWB,
-> +						       hw_cwb, ARRAY_SIZE(hw_cwb));
-> +	} else {
-> +		num_pp = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
-> +						       drm_enc->crtc,
-> +						       DPU_HW_BLK_PINGPONG, hw_pp,
-> +						       ARRAY_SIZE(hw_pp));
-> +	}
-> +
-> +	for (i = 0; i < num_cwb; i++)
-> +		dpu_enc->hw_cwb[i] = to_dpu_hw_cwb(hw_cwb[i]);
-> +
->  	dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
->  			drm_enc->crtc, DPU_HW_BLK_CTL, hw_ctl, ARRAY_SIZE(hw_ctl));
->  
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-> index c43cb55fe1d2..34195bf4e270 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-> @@ -77,12 +77,14 @@ enum dpu_hw_blk_type {
->  	DPU_HW_BLK_LM,
->  	DPU_HW_BLK_CTL,
->  	DPU_HW_BLK_PINGPONG,
-> +	DPU_HW_BLK_DCWB_PINGPONG,
->  	DPU_HW_BLK_INTF,
->  	DPU_HW_BLK_WB,
->  	DPU_HW_BLK_DSPP,
->  	DPU_HW_BLK_MERGE_3D,
->  	DPU_HW_BLK_DSC,
->  	DPU_HW_BLK_CDM,
-> +	DPU_HW_BLK_CWB,
->  	DPU_HW_BLK_MAX,
->  };
->  
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
-> index 4fdc5f933261..a078b5334dc1 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
-> @@ -128,6 +128,7 @@ struct dpu_global_state {
->  	uint32_t dspp_to_crtc_id[DSPP_MAX - DSPP_0];
->  	uint32_t dsc_to_crtc_id[DSC_MAX - DSC_0];
->  	uint32_t cdm_to_crtc_id;
-> +	uint32_t cwb_to_crtc_id[CWB_MAX - CWB_0];
->  };
->  
->  struct dpu_global_state
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-> index 04df3056d75a..429e432e2163 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-> @@ -223,6 +223,54 @@ static int _dpu_rm_get_lm_peer(struct dpu_rm *rm, int primary_idx)
->  	return -EINVAL;
->  }
->  
-> +static int _dpu_rm_reserve_cwb_mux_and_pingpongs(struct dpu_rm *rm,
-> +						 struct dpu_global_state *global_state,
-> +						 uint32_t crtc_id,
-> +						 struct msm_display_topology *topology)
-> +{
-> +	int num_cwb_pp = topology->num_lm, cwb_pp_count = 0;
-> +	int cwb_pp_start_idx = PINGPONG_CWB_0 - PINGPONG_0;
-> +	int cwb_pp_idx[MAX_BLOCKS];
-> +	int cwb_mux_idx[MAX_BLOCKS];
-> +
-> +	/*
-> +	 * Reserve additional dedicated CWB pingpong blocks and muxes for each
+If one builds perf with DEBUG=1, captures data on multiple CPUs and
+finally runs 'perf report -C <cpu>' for only one of the cpus, assert()
+aborts the program. This happens because there are empty queues with
+format set. This patch changes the condition to abort only if a queue
+is not empty and if the format is unset.
 
-s/pingpong/PINGPONG/ globally
+  $ make -C tools/perf DEBUG=1 CORESIGHT=1 CSLIBS=/usr/lib CSINCLUDES=/usr/include install
+  $ perf record -o kcore --kcore -e cs_etm/timestamp/k -s -C 0-1 dd if=/dev/zero of=/dev/null bs=1M count=1
+  $ perf report --input kcore/data --vmlinux=/home/ikoskine/projects/linux/vmlinux -C 1
+  Aborted (core dumped)
 
-> +	 * mixer
-> +	 *
-> +	 * TODO: add support for reserving non-dedicated CWB pingpong blocks
+Fixes: 57880a7966be ("perf: cs-etm: Allocate queues for all CPUs")
+Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+---
+ tools/perf/util/cs-etm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-... on platforms with no dedicated PINGPONG_CWB
-
-> +	 */
-> +	for (int i = 0; i < ARRAY_SIZE(rm->mixer_blks) &&
-> +	     cwb_pp_count < num_cwb_pp; i++) {
-> +		for (int j = cwb_pp_start_idx;
-> +		     j < ARRAY_SIZE(rm->pingpong_blks); j++) {
-> +			/*
-> +			 * Odd LMs must be assigned to odd pingpongs and even
-> +			 * LMs with even pingpongs
-> +			 */
-> +			if (reserved_by_other(global_state->pingpong_to_crtc_id,
-> +					      j, crtc_id) || i % 2 != j % 2)
-
-Carriage return after ||, please. Maybe use single line for
-reserved_by_other call, it's easier to read this way.
-
-> +				continue;
-> +
-> +			cwb_pp_idx[cwb_pp_count] = j;
-> +			cwb_mux_idx[cwb_pp_count] = j - cwb_pp_start_idx;
-> +			cwb_pp_count++;
-> +			break;
-> +		}
-> +	}
-> +
-> +	if (cwb_pp_count != num_cwb_pp) {
-> +		DPU_ERROR("Unable to reserve all cwb pingpongs\n");
-> +		return -ENAVAIL;
-> +	}
-> +
-> +	for (int i = 0; i < cwb_pp_count; i++) {
-> +		global_state->pingpong_to_crtc_id[cwb_pp_idx[i]] = crtc_id;
-> +		global_state->cwb_to_crtc_id[cwb_mux_idx[i]] = crtc_id;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  /**
->   * _dpu_rm_check_lm_and_get_connected_blks - check if proposed layer mixer meets
->   *	proposed use case requirements, incl. hardwired dependent blocks like
-> @@ -603,6 +651,14 @@ static int _dpu_rm_make_reservation(
->  		return ret;
->  	}
->  
-> +	if (topology->cwb_enabled) {
-> +		ret = _dpu_rm_reserve_cwb_mux_and_pingpongs(rm, global_state,
-> +							    crtc_id, topology);
-> +		if (ret) {
-> +			DPU_ERROR("unable to find appropriate dcwb pingpongs\n");
-
-Can we have a single error please? There was already one in the
-reserve-cwb-and-pp function.
-
-> +			return ret;
-> +		}
-> +	}
->  
->  	ret = _dpu_rm_reserve_ctls(rm, global_state, crtc_id,
->  			topology);
-> @@ -653,6 +709,8 @@ void dpu_rm_release(struct dpu_global_state *global_state,
->  	_dpu_rm_clear_mapping(global_state->dspp_to_crtc_id,
->  			ARRAY_SIZE(global_state->dspp_to_crtc_id), crtc_id);
->  	_dpu_rm_clear_mapping(&global_state->cdm_to_crtc_id, 1, crtc_id);
-> +	_dpu_rm_clear_mapping(global_state->cwb_to_crtc_id,
-> +			ARRAY_SIZE(global_state->cwb_to_crtc_id), crtc_id);
->  }
->  
->  int dpu_rm_reserve(
-> @@ -692,6 +750,7 @@ int dpu_rm_get_assigned_resources(struct dpu_rm *rm,
->  
->  	switch (type) {
->  	case DPU_HW_BLK_PINGPONG:
-> +	case DPU_HW_BLK_DCWB_PINGPONG:
->  		hw_blks = rm->pingpong_blks;
->  		hw_to_crtc_id = global_state->pingpong_to_crtc_id;
->  		max_blks = ARRAY_SIZE(rm->pingpong_blks);
-> @@ -721,6 +780,11 @@ int dpu_rm_get_assigned_resources(struct dpu_rm *rm,
->  		hw_to_crtc_id = &global_state->cdm_to_crtc_id;
->  		max_blks = 1;
->  		break;
-> +	case DPU_HW_BLK_CWB:
-> +		hw_blks = rm->cwb_blks;
-> +		hw_to_crtc_id = global_state->cwb_to_crtc_id;
-> +		max_blks = ARRAY_SIZE(rm->cwb_blks);
-> +		break;
->  	default:
->  		DPU_ERROR("blk type %d not managed by rm\n", type);
->  		return 0;
-> @@ -731,6 +795,20 @@ int dpu_rm_get_assigned_resources(struct dpu_rm *rm,
->  		if (hw_to_crtc_id[i] != crtc_id)
->  			continue;
->  
-> +		if (type == DPU_HW_BLK_PINGPONG) {
-> +			struct dpu_hw_pingpong *pp = to_dpu_hw_pingpong(hw_blks[i]);
-> +
-> +			if (pp->idx >= PINGPONG_CWB_0)
-> +				continue;
-> +		}
-> +
-> +		if (type == DPU_HW_BLK_DCWB_PINGPONG) {
-> +			struct dpu_hw_pingpong *pp = to_dpu_hw_pingpong(hw_blks[i]);
-> +
-> +			if (pp->idx < PINGPONG_CWB_0)
-> +				continue;
-> +		}
-> +
->  		if (num_blks == blks_size) {
->  			DPU_ERROR("More than %d resources assigned to crtc %d\n",
->  				  blks_size, crtc_id);
-> @@ -801,4 +879,10 @@ void dpu_rm_print_state(struct drm_printer *p,
->  	dpu_rm_print_state_helper(p, rm->cdm_blk,
->  				  global_state->cdm_to_crtc_id);
->  	drm_puts(p, "\n");
-> +
-> +	drm_puts(p, "\tcwb=");
-> +	for (i = 0; i < ARRAY_SIZE(global_state->cwb_to_crtc_id); i++)
-> +		dpu_rm_print_state_helper(p, rm->cwb_blks[i],
-> +					  global_state->cwb_to_crtc_id[i]);
-> +	drm_puts(p, "\n");
->  }
-> 
-> -- 
-> 2.34.1
-> 
-
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index 90f32f327b9b..40f047baef81 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -3323,7 +3323,7 @@ static int cs_etm__create_decoders(struct cs_etm_auxtrace *etm)
+ 		 * Don't create decoders for empty queues, mainly because
+ 		 * etmq->format is unknown for empty queues.
+ 		 */
+-		assert(empty == (etmq->format == UNSET));
++		assert(empty || etmq->format != UNSET);
+ 		if (empty)
+ 			continue;
+ 
 -- 
-With best wishes
-Dmitry
+2.42.0
+
 
