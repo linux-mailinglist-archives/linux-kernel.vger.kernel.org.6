@@ -1,111 +1,247 @@
-Return-Path: <linux-kernel+bounces-337039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77AF4984480
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:28:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6B1498447C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:28:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0674BB238E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:28:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9CD31C23AD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5F51A4F36;
-	Tue, 24 Sep 2024 11:28:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFECD1A4F20;
+	Tue, 24 Sep 2024 11:28:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="asH3XX6e"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QcI40u8C"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE0D1A4F18
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 11:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2948B1A704A
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 11:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727177315; cv=none; b=PSYgKIg/X6MOnlVghXd++Lx3GwF79UG4eaK4j00L3UZZOancLsIX0VYOsz5Lk17U6p0RNasIE0drj6keOrdqGlpMDVv9RYyu0dp/s3OGMcRWs6KHFqj5M8vzu8qqjGRxRHRlru14EYcHJuubnzxCbkzEbhzx0pdMEsW4Jul44aw=
+	t=1727177284; cv=none; b=ojojnObsVHjr/piA/iQkN6pbCs4wxx1SD3KbakJ+9lQREkheIqeAb5tGdRwFj/MQUlMNxN+nxFb3UJHok2MiC5hz7bWAQj1INcIleNDig8kbchO95T+bUJLFGOtPZliAjmVjP3jzhCUq9HpbQLdmzD1+254TNj3LOcNVx9BXS3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727177315; c=relaxed/simple;
-	bh=q5UZeL435xxsbTRnqVMbE7I0KXvGXLPvKEVUcMhQiG8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jmVsNvcHnI2ptoKBcsjzoPaQPAcbARPvY+lL+XLCwHdmitFXTwWUnDTR2SmjtlEW9e/NConCXg5hQ8wk6Kzewrc/YshYHkfr15uhmeXSfjRNIUI/njXkVinCgopinzg8saSYX9y4Fgpes6uItim9+SGpvcw5GG9aCE/GrBkfZvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=asH3XX6e; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727177310;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=6mfOBUZu5uZrIMueNvcR/vKvNgdMRDW+ab3CDDANE+I=;
-	b=asH3XX6efe/nroWVM1/qEH2MmlEtBZHcFQO2/GQrju2RKZrWH0cijuIAqLR4pD+u1IbgQL
-	rX6t27rWVfL0t0ylvNIgJoTN9zCcc15zWTK+EidY00uJJ7sJIcHaSIesaPp0ITgpYIkHfm
-	4isCmI4lypoZ4Bw39DeNNMJ+s1XKBBg=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-crypto@vger.kernel.org,
+	s=arc-20240116; t=1727177284; c=relaxed/simple;
+	bh=Vj/+h4clW39HO9NfY4+281e9vNVIw+9TDYWQv30La4U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iOMgIHdr47IgFrB7Zu7p4Wb6sh95dZwCiI85N/qnS9STCwVpdH+R34tiaL6T0fjD8vmDpg3tf/hxWbjzFInNLBP4PQuSdoJJAwE5X2BEeJc+tEjjR1C7ltjYV5zXoTTwJQGhKkJk960ft+on9NHZE161DTLY1f9LKzcvCI3ua2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QcI40u8C; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a8d0d0aea3cso729425466b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 04:28:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1727177280; x=1727782080; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4XoewAAgRhjyjtS5SRLJsJLIBsaq3XcQDP2Zckj9flo=;
+        b=QcI40u8CJogk78EbCWL+mBQL/RbWnhCQH2yXPEglwTUVEeVmRAgMT+Nmo3sUs4y271
+         CHdJAEXaNBJTsvYNz1m3c4jtZRbDKB8vN6iCXBaVAli4BMnk/eM8RycvA19zy4YMxKVp
+         gtdu3GggnqwOCnFe9tKll+PXkMbqLqR2GIMLVhu/mqr4LVSfD8GdJRvsK/3K3OKxRsSG
+         8YcvjtBhjhUj6Oa7cBEI7ia+4RqrXg1iC0OnS7k2tz0qOzc6P5bVvQV3KSNjBQEmeb/7
+         2hymPrfR6pCq2Lcf9I3w7QkvEA3xtzV/bcdZ8CJEeZdSR/BXe5E93Wxl7UVnBUMtoFQ5
+         yKEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727177280; x=1727782080;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4XoewAAgRhjyjtS5SRLJsJLIBsaq3XcQDP2Zckj9flo=;
+        b=QXL9IOe4Aj6EQCOGqAh56aQyOx/Y/t5LkNYxzx3nB07SnL9nA4nBdUkaLk+X90QXcV
+         m3ZpZ6TQWBx++J7xwlQDfNt3eRY871AezaP2+16RgekfjIfyS2GeXCLQdKBAc+v+1q49
+         RL92uKJsh9OU6NzYDAS3cgO6osGsMsqMmEPlYJ9vLyua5CrIPfYmZeThxwDsrYKVCK5/
+         i/pvc3KHmXyC4ay/qtLR/ZcEF/OlRYggR4r4DH3v+Q+wez++81Pe5+tm0qL6JP/4OtT/
+         WeJhsOukl+togR7zWG3BNXfNsZPLm2AgImfLdy9HWf5brQufo/0YIl0UQkXodqrXp+b/
+         NFXg==
+X-Forwarded-Encrypted: i=1; AJvYcCXLt4JTAYQPQhSTJBCsB3qHeLds8moA/Y4qxGOWhZf7xbbwgsIHXoN7HPAo+jQ/RJd2CRZD6aZWyVoMu/U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzY4n9nCvSo3qefp+p29KwhONyQfPs0HPoVGdUFQ2uwzaUE48Li
+	i6xC2tjGgR7ZjspEPLEtZuxe6Fo16wpeEZyQtN+/OmYjw1sWbpyW6HIp1G7oSJg=
+X-Google-Smtp-Source: AGHT+IHT85zGFTdU3hUBRoI5YQMowHkk2n04uYM4pFq5OpuNGRvYWq9HAfjJCQZ3r8HL3+OJaiZIhQ==
+X-Received: by 2002:a17:907:d3dc:b0:a7d:e956:ad51 with SMTP id a640c23a62f3a-a90d4ffe2a3mr1325730466b.21.1727177280584;
+        Tue, 24 Sep 2024 04:28:00 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9392f541b8sm73018066b.84.2024.09.24.04.28.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2024 04:28:00 -0700 (PDT)
+Date: Tue, 24 Sep 2024 13:27:58 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Wardenjohn <zhangwarden@gmail.com>
+Cc: jpoimboe@kernel.org, mbenes@suse.cz, jikos@kernel.org,
+	joe.lawrence@redhat.com, live-patching@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] crypto: hmac - Improve local variable types
-Date: Tue, 24 Sep 2024 13:27:27 +0200
-Message-ID: <20240924112727.240950-2-thorsten.blum@linux.dev>
+Subject: Re: [PATCH 1/2] livepatch: introduce 'order' sysfs interface to
+ klp_patch
+Message-ID: <ZvKiPvID1K0dAHnq@pathway.suse.cz>
+References: <20240920090404.52153-1-zhangwarden@gmail.com>
+ <20240920090404.52153-2-zhangwarden@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240920090404.52153-2-zhangwarden@gmail.com>
 
-Since crypto_shash_blocksize(), crypto_shash_digestsize(), and
-crypto_shash_statesize() return an unsigned int, also use unsigned int
-for the local variables.
+On Fri 2024-09-20 17:04:03, Wardenjohn wrote:
+> This feature can provide livepatch patch order information.
+> With the order of sysfs interface of one klp_patch, we can
+> use patch order to find out which function of the patch is
+> now activate.
+> 
+> After the discussion, we decided that patch-level sysfs
+> interface is the only accaptable way to introduce this
+> information.
+> 
+> This feature is like:
+> cat /sys/kernel/livepatch/livepatch_1/order -> 1
+> means this livepatch_1 module is the 1st klp patch applied.
+> 
+> cat /sys/kernel/livepatch/livepatch_module/order -> N
+> means this lviepatch_module is the Nth klp patch applied
+> to the system.
+>
+> --- a/kernel/livepatch/transition.c
+> +++ b/kernel/livepatch/transition.c
+> @@ -46,6 +46,15 @@ EXPORT_SYMBOL(klp_sched_try_switch_key);
+>  
+>  #endif /* CONFIG_PREEMPT_DYNAMIC && CONFIG_HAVE_PREEMPT_DYNAMIC_CALL */
+>  
+> +static inline int klp_get_patch_order(struct klp_patch *patch)
+> +{
+> +	int order = 0;
+> +
+> +	klp_for_each_patch(patch)
+> +		order = order + 1;
+> +	return order;
+> +}
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- crypto/hmac.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+This does not work well. It uses the order on the stack when
+the livepatch is being loaded. It is not updated when any livepatch gets
+removed. It might create wrong values.
 
-diff --git a/crypto/hmac.c b/crypto/hmac.c
-index 7cec25ff9889..6ab7ce4cb930 100644
---- a/crypto/hmac.c
-+++ b/crypto/hmac.c
-@@ -31,9 +31,9 @@ struct hmac_ctx {
- static int hmac_setkey(struct crypto_shash *parent,
- 		       const u8 *inkey, unsigned int keylen)
- {
--	int bs = crypto_shash_blocksize(parent);
--	int ds = crypto_shash_digestsize(parent);
--	int ss = crypto_shash_statesize(parent);
-+	unsigned int bs = crypto_shash_blocksize(parent);
-+	unsigned int ds = crypto_shash_digestsize(parent);
-+	unsigned int ss = crypto_shash_statesize(parent);
- 	struct hmac_ctx *tctx = crypto_shash_ctx(parent);
- 	struct crypto_shash *hash = tctx->hash;
- 	u8 *ipad = &tctx->pads[0];
-@@ -108,8 +108,8 @@ static int hmac_update(struct shash_desc *pdesc,
- static int hmac_final(struct shash_desc *pdesc, u8 *out)
- {
- 	struct crypto_shash *parent = pdesc->tfm;
--	int ds = crypto_shash_digestsize(parent);
--	int ss = crypto_shash_statesize(parent);
-+	unsigned int ds = crypto_shash_digestsize(parent);
-+	unsigned int ss = crypto_shash_statesize(parent);
- 	const struct hmac_ctx *tctx = crypto_shash_ctx(parent);
- 	const u8 *opad = &tctx->pads[ss];
- 	struct shash_desc *desc = shash_desc_ctx(pdesc);
-@@ -124,8 +124,8 @@ static int hmac_finup(struct shash_desc *pdesc, const u8 *data,
- {
+I have even tried to reproduce this:
+
+	# modprobe livepatch-sample
+	# modprobe livepatch-shadow-fix1
+	# cat /sys/kernel/livepatch/livepatch_sample/order
+	1
+	# cat /sys/kernel/livepatch/livepatch_shadow_fix1/order
+	2
+
+	# echo 0 >/sys/kernel/livepatch/livepatch_sample/enabled
+	# rmmod livepatch_sample
+	# cat /sys/kernel/livepatch/livepatch_shadow_fix1/order
+	2
+
+	# modprobe livepatch-sample
+	# cat /sys/kernel/livepatch/livepatch_shadow_fix1/order
+	2
+	# cat /sys/kernel/livepatch/livepatch_sample/order
+	2
+
+BANG: The livepatches have the same order.
+
+I suggest to replace this with a global load counter. Something like:
+
+diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
+index 51a258c24ff5..44a8887573bb 100644
+--- a/include/linux/livepatch.h
++++ b/include/linux/livepatch.h
+@@ -150,10 +150,12 @@ struct klp_state {
+  * @list:	list node for global list of actively used patches
+  * @kobj:	kobject for sysfs resources
+  * @obj_list:	dynamic list of the object entries
++ * @load_counter sequence counter in which the patch is loaded
+  * @enabled:	the patch is enabled (but operation may be incomplete)
+  * @forced:	was involved in a forced transition
+  * @free_work:	patch cleanup from workqueue-context
+  * @finish:	for waiting till it is safe to remove the patch module
++ * @order:	the order of this patch applied to the system
+  */
+ struct klp_patch {
+ 	/* external */
+@@ -166,6 +168,7 @@ struct klp_patch {
+ 	struct list_head list;
+ 	struct kobject kobj;
+ 	struct list_head obj_list;
++	int load_counter;
+ 	bool enabled;
+ 	bool forced;
+ 	struct work_struct free_work;
+diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+index 3c21c31796db..3a858477ae02 100644
+--- a/kernel/livepatch/core.c
++++ b/kernel/livepatch/core.c
+@@ -44,6 +44,9 @@ DEFINE_MUTEX(klp_mutex);
+  */
+ LIST_HEAD(klp_patches);
  
- 	struct crypto_shash *parent = pdesc->tfm;
--	int ds = crypto_shash_digestsize(parent);
--	int ss = crypto_shash_statesize(parent);
-+	unsigned int ds = crypto_shash_digestsize(parent);
-+	unsigned int ss = crypto_shash_statesize(parent);
- 	const struct hmac_ctx *tctx = crypto_shash_ctx(parent);
- 	const u8 *opad = &tctx->pads[ss];
- 	struct shash_desc *desc = shash_desc_ctx(pdesc);
++/* The counter is incremented everytime a new livepatch is being loaded. */
++static int klp_load_counter;
++
+ static struct kobject *klp_root_kobj;
+ 
+ static bool klp_is_module(struct klp_object *obj)
+@@ -347,6 +350,7 @@ int klp_apply_section_relocs(struct module *pmod, Elf_Shdr *sechdrs,
+  * /sys/kernel/livepatch/<patch>/transition
+  * /sys/kernel/livepatch/<patch>/force
+  * /sys/kernel/livepatch/<patch>/replace
++ * /sys/kernel/livepatch/<patch>/load_counter
+  * /sys/kernel/livepatch/<patch>/<object>
+  * /sys/kernel/livepatch/<patch>/<object>/patched
+  * /sys/kernel/livepatch/<patch>/<object>/<function,sympos>
+@@ -452,15 +456,26 @@ static ssize_t replace_show(struct kobject *kobj,
+ 	return sysfs_emit(buf, "%d\n", patch->replace);
+ }
+ 
++static ssize_t load_counter_show(struct kobject *kobj,
++			struct kobj_attribute *attr, char *buf)
++{
++	struct klp_patch *patch;
++
++	patch = container_of(kobj, struct klp_patch, kobj);
++	return sysfs_emit(buf, "%d\n", patch->load_counter);
++}
++
+ static struct kobj_attribute enabled_kobj_attr = __ATTR_RW(enabled);
+ static struct kobj_attribute transition_kobj_attr = __ATTR_RO(transition);
+ static struct kobj_attribute force_kobj_attr = __ATTR_WO(force);
+ static struct kobj_attribute replace_kobj_attr = __ATTR_RO(replace);
++static struct kobj_attribute load_counter_kobj_attr = __ATTR_RO(load_counter);
+ static struct attribute *klp_patch_attrs[] = {
+ 	&enabled_kobj_attr.attr,
+ 	&transition_kobj_attr.attr,
+ 	&force_kobj_attr.attr,
+ 	&replace_kobj_attr.attr,
++	&load_counter_kobj_attr.attr,
+ 	NULL
+ };
+ ATTRIBUTE_GROUPS(klp_patch);
+@@ -934,6 +949,7 @@ static void klp_init_patch_early(struct klp_patch *patch)
+ 	INIT_LIST_HEAD(&patch->list);
+ 	INIT_LIST_HEAD(&patch->obj_list);
+ 	kobject_init(&patch->kobj, &klp_ktype_patch);
++	patch->load_counter = klp_load_counter + 1;
+ 	patch->enabled = false;
+ 	patch->forced = false;
+ 	INIT_WORK(&patch->free_work, klp_free_patch_work_fn);
+@@ -1050,6 +1066,7 @@ static int __klp_enable_patch(struct klp_patch *patch)
+ 	}
+ 
+ 	klp_start_transition();
++	klp_load_counter++;
+ 	patch->enabled = true;
+ 	klp_try_complete_transition();
+ 
 -- 
 2.46.1
 
+Any better (shorter) name would be appreciated ;-)
+
+Best Regards,
+Petr
 
