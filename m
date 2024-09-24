@@ -1,144 +1,277 @@
-Return-Path: <linux-kernel+bounces-336927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFFF79842B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:53:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFFD39842B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:54:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29EFE1C2031A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:53:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88108B27784
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636AB17F397;
-	Tue, 24 Sep 2024 09:51:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83CC17BEA2;
+	Tue, 24 Sep 2024 09:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="nBaDzqwb"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UIsLSSX+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2A917C9F9;
-	Tue, 24 Sep 2024 09:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBBE5176FA5;
+	Tue, 24 Sep 2024 09:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727171494; cv=none; b=CpaSR2gTElGo4ByHKsLoM8EzVG+5X/LVde0QOq4zZUKKAApv4Kr6WWuC6DYJc7stsmJJ3CKsUcAjYUw38pPhmN0h2iUY3Ke1R4AeCKA8hUsmyRFcpUib0/8vecEgR+G0RgEcK9nP8A8MY/IYWNPZPOYhC/LKI0EFGVk9BmfsaBA=
+	t=1727171490; cv=none; b=fIN4S3o6mO0VSOYuDOITfjSpzSjOALbQ+rXYyRSlFgGRgIggnZzVqH8yMthEZPc4l/b0q1RbyguPtuVUa1XAH8wlxVqg8Pf0iwbKsRgVEDRMtQNhQMiODgMrgfGL52EhIcQlbaw0CVslSheSqGq5zj/RhDx1AL0XSrLN7DH/oas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727171494; c=relaxed/simple;
-	bh=MdcHjICSpj3jCUd6bD1wEhgq64QDj+cNSJHu45+y/Zc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=IKB3rA0Nen1jDtbNKqJm8IPddJZPpH78F+Oa36Jl0PLqU0bH02Nv9wEgzPoNM60WF2jTq/KOD087oxq2nfleRlJ6iOWOSYgSHbW700+wWgQeFRYSCbJvHinF+dhXgflrZXdAymgLguE26ysUKi4glKuSC1l4Wx7Yrq4Lt4RJAaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=nBaDzqwb; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48O9pSWc003212;
-	Tue, 24 Sep 2024 04:51:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1727171488;
-	bh=QeoCQfMkCQADOer2TgZxIF8m7AprUWBAy1/d+sbV/2M=;
-	h=From:Date:Subject:References:In-Reply-To:To:CC;
-	b=nBaDzqwb6MVxVceHkbjWkP5UHC0KdnRjebzz+6oqFo8MphqBujflDNBSWbV0hBEyd
-	 Ngh0sNZ88WZULv0J4/Nmp2/JYL7HTBJlssd276NPFMderqJQPsmtOa1fTi1i4RGxx9
-	 knAhOvcjq3kccujW3mfcGEM7h3MuNxMV1zJ1lfuI=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48O9pR4b001109
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 24 Sep 2024 04:51:27 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 24
- Sep 2024 04:51:27 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 24 Sep 2024 04:51:28 -0500
-Received: from [127.0.1.1] (lcpd911.dhcp.ti.com [172.24.227.226])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48O9owSv017217;
-	Tue, 24 Sep 2024 04:51:23 -0500
-From: Dhruva Gole <d-gole@ti.com>
-Date: Tue, 24 Sep 2024 15:20:46 +0530
-Subject: [PATCH v5 6/6] cpufreq: ti-cpufreq: Update efuse/rev offsets in
- AM62 family
+	s=arc-20240116; t=1727171490; c=relaxed/simple;
+	bh=igw/EcSOODy/LuZ3kSdwJEjQbI05MZlb8fOw+iDBQ10=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jclP2K6jJ4ESsJfjb9xC00vNjWQnAoicjTiDr4FlUWV+RB1K7JnpvU16lYCw2uBqaSmeuRptf3MIXhGp45RcIEDCmBPSQVo4Y4tR23Czhy1nF8WdG9Z7rOZl+3JpLiELOJl2YCO5TxiOB+vvV5cIevW24NiOR5M0ULcmyA+diME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UIsLSSX+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E90C6C4CECD;
+	Tue, 24 Sep 2024 09:51:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727171490;
+	bh=igw/EcSOODy/LuZ3kSdwJEjQbI05MZlb8fOw+iDBQ10=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UIsLSSX+nXBqbSWZR962dQohzcly2VG9rNrMaeeBD2aHgWfJ66UPifMCiKz3cXv/F
+	 Uepiftc12uPR2DlUR50fgAdiwQp1NZaj5KkLBpNCQXFA7/HVn7Lc+I6pK4Z4ag3hM1
+	 7cqMYUqg7ZdbJKdP1CvEs85+4TwolzV0x0CPNjYu7NCknJNcaVZq75KAMmNg6w6yZ2
+	 TuhlMiYVUMKQM5VSIdWT5QaNIul4V+9TVJP7hokDBVbenX0bVlvglzZqaYkBo9Pa1A
+	 6K1uPMtSfAqJlnoe5lCFelxPt+QWxeGjine4xmrkc2KxdLRh+G2rwmhp//6o2cOBs7
+	 Tty1bEVDpaTLA==
+Date: Tue, 24 Sep 2024 11:51:27 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Sandor Yu <sandor.yu@nxp.com>
+Cc: "dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>, 
+	"andrzej.hajda@intel.com" <andrzej.hajda@intel.com>, "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "jonas@kwiboo.se" <jonas@kwiboo.se>, 
+	"jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>, "airlied@gmail.com" <airlied@gmail.com>, 
+	"daniel@ffwll.ch" <daniel@ffwll.ch>, "robh+dt@kernel.org" <robh+dt@kernel.org>, 
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, 
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>, 
+	"vkoul@kernel.org" <vkoul@kernel.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, 
+	dl-linux-imx <linux-imx@nxp.com>, Oliver Brown <oliver.brown@nxp.com>, 
+	"alexander.stein@ew.tq-group.com" <alexander.stein@ew.tq-group.com>, "sam@ravnborg.org" <sam@ravnborg.org>
+Subject: Re: [EXT] Re: [PATCH v16 4/8] drm: bridge: Cadence: Add MHDP8501
+ DP/HDMI driver
+Message-ID: <20240924-miniature-jade-gibbon-c9a226@houat>
+References: <cover.1719903904.git.Sandor.yu@nxp.com>
+ <359914108b879e995d4a39de32a33310009f0fab.1719903904.git.Sandor.yu@nxp.com>
+ <20240702-quartz-salamander-of-culture-eec264@houat>
+ <PAXPR04MB94480AB0490BBF00D2BA17BBF4932@PAXPR04MB9448.eurprd04.prod.outlook.com>
+ <20240903-gay-capable-hound-3cbef2@houat>
+ <PAXPR04MB9448EF507CB5C18A43239A80F49E2@PAXPR04MB9448.eurprd04.prod.outlook.com>
+ <20240912-zippy-mongoose-of-domination-2ebc1d@houat>
+ <PAXPR04MB94484D86A71A7527ADD42EA4F4652@PAXPR04MB9448.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240924-ti-cpufreq-fixes-v5-v5-6-cbe16b9ddb1b@ti.com>
-References: <20240924-ti-cpufreq-fixes-v5-v5-0-cbe16b9ddb1b@ti.com>
-In-Reply-To: <20240924-ti-cpufreq-fixes-v5-v5-0-cbe16b9ddb1b@ti.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Rafael
- J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        Andrew Davis
-	<afd@ti.com>, Bryan Brattlof <bb@ti.com>,
-        Dhruva Gole <d-gole@ti.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1727171458; l=1509;
- i=d-gole@ti.com; s=20240919; h=from:subject:message-id;
- bh=MdcHjICSpj3jCUd6bD1wEhgq64QDj+cNSJHu45+y/Zc=;
- b=zrW5/Ctpd0tlw/Wd7DOLEV4OODMMPTYP7G9B1A0wAu8d0i4qc+SLtYRVwEWrFQ1OHfn8pt2Te
- YGB8tvLZDK7C9ljPQBADMn2Rml3RrsvfUK0b5lEnpTxKzpnhU0iM3Mh
-X-Developer-Key: i=d-gole@ti.com; a=ed25519;
- pk=k8NnY4RbxVqeqGsYfTHeVn4hPOHkjg7Mii0Ixs4rghM=
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="j43latycugo6x7f7"
+Content-Disposition: inline
+In-Reply-To: <PAXPR04MB94484D86A71A7527ADD42EA4F4652@PAXPR04MB9448.eurprd04.prod.outlook.com>
 
-With the Silicon revision being taken directly from socinfo, there's no
-longer any need for reading any SOC register for revision from this driver.
-Hence, we do not require any rev_offset for AM62 family of devices.
-The efuse offset should be 0x0 for AM625 as well, as the syscon
-register being used from DT refers to the efuse_offset directly.
 
-Signed-off-by: Dhruva Gole <d-gole@ti.com>
----
- drivers/cpufreq/ti-cpufreq.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+--j43latycugo6x7f7
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
-index ba621ce1cdda694c98867422dbb7f10c0df2afef..870ab0b376c1c0389b952b61a13d169b174538bb 100644
---- a/drivers/cpufreq/ti-cpufreq.c
-+++ b/drivers/cpufreq/ti-cpufreq.c
-@@ -313,10 +313,9 @@ static const struct soc_device_attribute k3_cpufreq_soc[] = {
- 
- static struct ti_cpufreq_soc_data am625_soc_data = {
- 	.efuse_xlate = am625_efuse_xlate,
--	.efuse_offset = 0x0018,
-+	.efuse_offset = 0x0,
- 	.efuse_mask = 0x07c0,
- 	.efuse_shift = 0x6,
--	.rev_offset = 0x0014,
- 	.multi_regulator = false,
- };
- 
-@@ -325,7 +324,6 @@ static struct ti_cpufreq_soc_data am62a7_soc_data = {
- 	.efuse_offset = 0x0,
- 	.efuse_mask = 0x07c0,
- 	.efuse_shift = 0x6,
--	.rev_offset = 0x0014,
- 	.multi_regulator = false,
- };
- 
-@@ -334,7 +332,6 @@ static struct ti_cpufreq_soc_data am62p5_soc_data = {
- 	.efuse_offset = 0x0,
- 	.efuse_mask = 0x07c0,
- 	.efuse_shift = 0x6,
--	.rev_offset = 0x0014,
- 	.multi_regulator = false,
- };
- 
+On Fri, Sep 13, 2024 at 09:46:12AM GMT, Sandor Yu wrote:
+> > Subject: Re: [EXT] Re: [PATCH v16 4/8] drm: bridge: Cadence: Add MHDP85=
+01
+> > DP/HDMI driver
+> >=20
+> > On Fri, Sep 06, 2024 at 02:50:08AM GMT, Sandor Yu wrote:
+> > > > On Tue, Sep 03, 2024 at 06:07:25AM GMT, Sandor Yu wrote:
+> > > > > > -----Original Message-----
+> > > > > > From: dri-devel <dri-devel-bounces@lists.freedesktop.org> On
+> > > > > > Behalf Of Maxime Ripard
+> > > > > > Sent: 2024=E5=B9=B47=E6=9C=882=E6=97=A5 21:25
+> > > > > > To: Sandor Yu <sandor.yu@nxp.com>
+> > > > > > Cc: dmitry.baryshkov@linaro.org; andrzej.hajda@intel.com;
+> > > > > > neil.armstrong@linaro.org; Laurent Pinchart
+> > > > > > <laurent.pinchart@ideasonboard.com>; jonas@kwiboo.se;
+> > > > > > jernej.skrabec@gmail.com; airlied@gmail.com; daniel@ffwll.ch;
+> > > > > > robh+dt@kernel.org; krzysztof.kozlowski+dt@linaro.org;
+> > > > > > shawnguo@kernel.org; s.hauer@pengutronix.de;
+> > festevam@gmail.com;
+> > > > > > vkoul@kernel.org; dri-devel@lists.freedesktop.org;
+> > > > > > devicetree@vger.kernel.org;
+> > > > > > linux-arm-kernel@lists.infradead.org;
+> > > > > > linux-kernel@vger.kernel.org; linux-phy@lists.infradead.org;
+> > > > > > kernel@pengutronix.de; dl-linux-imx <linux-imx@nxp.com>; Oliver
+> > > > > > Brown <oliver.brown@nxp.com>; alexander.stein@ew.tq-group.com;
+> > > > > > sam@ravnborg.org
+> > > > > > Subject: [EXT] Re: [PATCH v16 4/8] drm: bridge: Cadence: Add
+> > > > > > MHDP8501 DP/HDMI driver
+> > > > > >
+> > > > > > Hi,
+> > > > > >
+> > > > > > There's still the scrambler issue we discussed on v15, but I
+> > > > > > have some more comments.
+> > > > > >
+> > > > > > On Tue, Jul 02, 2024 at 08:22:36PM GMT, Sandor Yu wrote:
+> > > > > > > +enum drm_connector_status cdns_mhdp8501_detect(struct
+> > > > > > > +cdns_mhdp8501_device *mhdp) {
+> > > > > > > +	u8 hpd =3D 0xf;
+> > > > > > > +
+> > > > > > > +	hpd =3D cdns_mhdp8501_read_hpd(mhdp);
+> > > > > > > +	if (hpd =3D=3D 1)
+> > > > > > > +		return connector_status_connected;
+> > > > > > > +	else if (hpd =3D=3D 0)
+> > > > > > > +		return connector_status_disconnected;
+> > > > > > > +
+> > > > > > > +	dev_warn(mhdp->dev, "Unknown cable status, hdp=3D%u\n",
+> > hpd);
+> > > > > > > +	return connector_status_unknown; }
+> > > > > > > +
+> > > > > > > +static void hotplug_work_func(struct work_struct *work) {
+> > > > > > > +	struct cdns_mhdp8501_device *mhdp =3D container_of(work,
+> > > > > > > +						     struct cdns_mhdp8501_device,
+> > > > > > > +						     hotplug_work.work);
+> > > > > > > +	enum drm_connector_status status =3D
+> > > > cdns_mhdp8501_detect(mhdp);
+> > > > > > > +
+> > > > > > > +	drm_bridge_hpd_notify(&mhdp->bridge, status);
+> > > > > > > +
+> > > > > > > +	if (status =3D=3D connector_status_connected) {
+> > > > > > > +		/* Cable connected  */
+> > > > > > > +		DRM_INFO("HDMI/DP Cable Plug In\n");
+> > > > > > > +		enable_irq(mhdp->irq[IRQ_OUT]);
+> > > > > > > +	} else if (status =3D=3D connector_status_disconnected) {
+> > > > > > > +		/* Cable Disconnected  */
+> > > > > > > +		DRM_INFO("HDMI/DP Cable Plug Out\n");
+> > > > > > > +		enable_irq(mhdp->irq[IRQ_IN]);
+> > > > > > > +	}
+> > > > > > > +}
+> > > > > >
+> > > > > > You shouldn't play with the interrupt being enabled here:
+> > > > > > hotplug interrupts should always enabled.
+> > > > > >
+> > > > > > If you can't for some reason, the reason should be documented in
+> > > > > > your
+> > > > driver.
+> > > > >
+> > > > > iMX8MQ have two HPD interrupters, one for plugout and the other
+> > > > > for plugin, because they could not be masked, so we have to enable
+> > > > > one and
+> > > > disable the other.
+> > > > > I will add more comments here.
+> > > >
+> > > > Right, but why do you need to enable and disable them? Do you get
+> > > > spurious interrupts?
+> > >
+> > > They don't have status registers and cannot be masked. If they are not
+> > > disabled, they will continuously generate interrupts. Therefore, I ha=
+ve to
+> > disable one and enable the other.
+> >=20
+> > Sorry, I still don't get it. How can it be useful to detect hotplug int=
+errupts if it
+> > constantly sends spurious interrupts when it's enabled?
+>=20
+> Yes, this interrupt is different from a normal one; it's likely a design =
+flaw.=20
+> For instance, the plugin interrupt is continuously generated as long as t=
+he cable is plugged in,
+> only stopping when the cable is unplugged.
+>
+> That's why two interrupts are used to detect cable plugout and plugin
+> separately. If interrupts aren't used, the only option is polling.
 
--- 
-2.34.1
+Urgh. Ok. At least, you should document that in your code then.
 
+> > > > > > > +	/* Mailbox protect for HDMI PHY access */
+> > > > > > > +	mutex_lock(&mhdp->mbox_mutex);
+> > > > > > > +	ret =3D phy_init(mhdp->phy);
+> > > > > > > +	mutex_unlock(&mhdp->mbox_mutex);
+> > > > > > > +	if (ret) {
+> > > > > > > +		dev_err(dev, "Failed to initialize PHY: %d\n", ret);
+> > > > > > > +		goto clk_disable;
+> > > > > > > +	}
+> > > > > > > +
+> > > > > > > +	/* Mailbox protect for HDMI PHY access */
+> > > > > > > +	mutex_lock(&mhdp->mbox_mutex);
+> > > > > > > +	ret =3D phy_set_mode(mhdp->phy, phy_mode);
+> > > > > > > +	mutex_unlock(&mhdp->mbox_mutex);
+> > > > > > > +	if (ret) {
+> > > > > > > +		dev_err(dev, "Failed to configure PHY: %d\n", ret);
+> > > > > > > +		goto clk_disable;
+> > > > > > > +	}
+> > > > > >
+> > > > > > Why do you need a shared mutex between the phy and HDMI
+> > controller?
+> > > > >
+> > > > > Both PHY and HDMI controller could access to the HDMI firmware by
+> > > > > mailbox, So add mutex to avoid race condition.
+> > > >
+> > > > That should be handled at either the phy or mailbox level, not in
+> > > > your hdmi driver.
+> > >
+> > > In both HDMI driver and PHY driver, every mailbox access had protected
+> > > by its owns mutex. However, this mutex can only protect each mailbox
+> > > access within their respective drivers, and it cannot provide
+> > > protection for access between the HDMI and PHY drivers.
+> > >
+> > > The PHY driver only provides two API functions, and these functions
+> > > are only called in the HDMI driver. Therefore, when accessing these
+> > > functions, we use a mutex to protect them. This ensures that mailbox
+> > > access is protected across different PHY and HDMI drivers.
+> >=20
+> > It's really about abstraction. You're using a publicly defined API, and=
+ change
+> > the semantics for your driver only, and that's not ok.
+> >=20
+> > Why can't the mailbox driver itself serialize the accesses from any use=
+r, HDMI
+> > and PHY drivers included?
+>
+> In the current code implementation, cdns-mhdp-helper.c isn't a
+> standalone driver but rather a library. It provides fundamental
+> mailbox access functions and basic register read/write operations that
+> rely on the mailbox. These functions are highly reusable across
+> MHDP8501 and MHDP8546 and can be leveraged by future MHDP versions.
+>=20
+> However, most MHDP firmware interactions involve a sequence of mailbox
+> accesses, including sending commands and receiving firmware responses.
+> These commands constitute a significant portion of all firmware
+> interactions, encompassing operations like EDID reading and DP link
+> training. Unfortunately, these commands cannot be reused between
+> MHDP8501 and MHDP8546.
+>=20
+> Creating a dedicated mailbox driver with its own mutex would
+> effectively address race conditions. However, this would necessitate
+> relocating all mailbox-related functions to this driver. Including
+> these non-reusable functions would defeat the purpose of code reuse.
+>=20
+> To strike a balance between code reusability and race condition
+> mitigation, adding mutexes to PHY access functions seems like a
+> reasonable solution.
+
+No, it's really not. You need to address this in some other way. Why
+can't you put the mutex in cdns-mhdp-helper.c calls?
+
+Maxime
+
+--j43latycugo6x7f7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZvKLmgAKCRAnX84Zoj2+
+dtgDAYC97zkBZ6FfRAm8/ipveqsjGvff9RhcY4+DzDuxWXPeqHpKVh9OqdCydnSX
+r6One7QBgOTBHfSvZQZ3vk/xJyl+2i8RitQVgCIesR+Yvhb1d0OuKPFpsy0YFZrP
+afxoHqnoXg==
+=QCHa
+-----END PGP SIGNATURE-----
+
+--j43latycugo6x7f7--
 
