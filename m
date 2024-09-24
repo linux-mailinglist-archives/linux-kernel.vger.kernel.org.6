@@ -1,86 +1,147 @@
-Return-Path: <linux-kernel+bounces-336709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AB73983FA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:48:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30FB3983FA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:48:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1147D1F24279
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:48:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA7D61F24208
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C72149C52;
-	Tue, 24 Sep 2024 07:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="O6agZlwy"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4656A1494CA;
+	Tue, 24 Sep 2024 07:48:30 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565804642D
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A6811CBD;
+	Tue, 24 Sep 2024 07:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727164099; cv=none; b=kO953aOzMt+wn5L1b1camRIz/Vq0/Of5cdHiGWbQg7v4goUw3U5WT1Y1yP/VctThX/+SSziJiOdu8shN8V3IlATqsskeJg8Q5P+T20siG7QfEkpgRLMDmszIRSryu4xUQ9haiJIJnsbJRSiM6gkDpCGtsLfR5sCIxQU+NgJg9MQ=
+	t=1727164109; cv=none; b=iSPjxuqId/yNI5J2ayP1+OXMh6eH63oxTUK8y/DShyVHcjSJtqbQIgkGRVWLPpQhl/nzqRyypMAefVmFZh6Y8BP2t9TqU2dC2wrIZZROqFmgJ+clZhuNaFM7TtURAUddsia+LZKal7U6XMU9VULdffOKWo7VJGtMRJB56Qsz2j8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727164099; c=relaxed/simple;
-	bh=jSIQCBOXb7xxJAqBcJ5TzSXLiMib7uG0uNu3M2NFxnI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=CZhwBXSHrQC4wZ93aA8FG8CgNOy7d5ZVYf3zLV7IOaZSOhd0p0Tza5s9lrqfUzbCgHiDaVNI37BezSgxOccFSSwCmrEi1xRRPLG6i18nKz7doQMoLFbZllnenXnEbQ17ImG4bInNR4g0/j2XFXn7dgbUTmDPIHtaKdY+2QDJXEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=O6agZlwy; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
-	s=default; t=1727164090;
-	bh=vLuYCUVbyfHMl1SP0XrDP5FqPLARlZVT/5whgYll5ek=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=O6agZlwy+/uH6jawTyVcjCaY9rSqjo58L2prwIdDyCHQV6wvNLi6QUCY2HaUTWvO5
-	 84i4G7Km9344VFRhtyYqtZn+TuzKZX14MWxdfG5RCBiBZB166DC8L3Iu0rVPRKK9iL
-	 JmLOoGdWRonIYIwRmijFxMwLoA42anHrnTXRL15g=
-Received: from [192.168.124.11] (unknown [113.200.174.100])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id D199765B9F;
-	Tue, 24 Sep 2024 03:48:09 -0400 (EDT)
-Message-ID: <5154cb18303e4b902bb4f58e66f3dc22fedc4672.camel@xry111.site>
-Subject: Re: [PATCH] LoongArch: Enable generic CPU vulnerabilites support
-From: Xi Ruoyao <xry111@xry111.site>
-To: Tiezhu Yang <yangtiezhu@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-Date: Tue, 24 Sep 2024 15:48:06 +0800
-In-Reply-To: <20240924062001.31029-1-yangtiezhu@loongson.cn>
-References: <20240924062001.31029-1-yangtiezhu@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.0 
+	s=arc-20240116; t=1727164109; c=relaxed/simple;
+	bh=CSwaPVNkAQ30B+hlvci2uTj9rmPm9lc0sX+C9imgF5s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QG76Hmq18YpOZ3DUm33gs9RQKSzsAzckRxzbGrgd9NrU4ok1vdMABzXN3L7yERz4OmE7p2eWZqm6lcd4CulqvPuihmU1Db9ev7jh3wMwkAESau9MoEE1tXDb+p7i3graAc9DfHDFeY51HkklPU400PKy54GDbOdpfJ13eap7ARA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XCX5H6pvcz2QTxJ;
+	Tue, 24 Sep 2024 15:47:31 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id A6BD31A016C;
+	Tue, 24 Sep 2024 15:48:17 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 24 Sep 2024 15:48:17 +0800
+Message-ID: <64730d70-e5b7-4117-9ee8-43f23543eafd@huawei.com>
+Date: Tue, 24 Sep 2024 15:48:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net 2/2] page_pool: fix IOMMU crash when driver has
+ already unbound
+To: Gur Stavi <gur.stavi@huawei.com>
+CC: <akpm@linux-foundation.org>, <aleksander.lobakin@intel.com>,
+	<alexander.duyck@gmail.com>, <angelogioacchino.delregno@collabora.com>,
+	<anthony.l.nguyen@intel.com>, <ast@kernel.org>, <bpf@vger.kernel.org>,
+	<daniel@iogearbox.net>, <davem@davemloft.net>, <edumazet@google.com>,
+	<fanghaiqing@huawei.com>, <hawk@kernel.org>, <ilias.apalodimas@linaro.org>,
+	<imx@lists.linux.dev>, <intel-wired-lan@lists.osuosl.org>,
+	<iommu@lists.linux.dev>, <john.fastabend@gmail.com>, <kuba@kernel.org>,
+	<kvalo@kernel.org>, <leon@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-mm@kvack.org>,
+	<linux-rdma@vger.kernel.org>, <linux-wireless@vger.kernel.org>,
+	<liuyonglong@huawei.com>, <lorenzo@kernel.org>, <matthias.bgg@gmail.com>,
+	<nbd@nbd.name>, <netdev@vger.kernel.org>, <pabeni@redhat.com>,
+	<przemyslaw.kitszel@intel.com>, <robin.murphy@arm.com>,
+	<ryder.lee@mediatek.com>, <saeedm@nvidia.com>, <sean.wang@mediatek.com>,
+	<shayne.chen@mediatek.com>, <shenwei.wang@nxp.com>, <tariqt@nvidia.com>,
+	<wei.fang@nxp.com>, <xiaoning.wang@nxp.com>, <zhangkun09@huawei.com>
+References: <2fb8d278-62e0-4a81-a537-8f601f61e81d@huawei.com>
+ <20240924064559.1681488-1-gur.stavi@huawei.com>
+Content-Language: en-US
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <20240924064559.1681488-1-gur.stavi@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-On Tue, 2024-09-24 at 14:20 +0800, Tiezhu Yang wrote:
-> Currently, many architectures support generic CPU vulnerabilites,
-> such as x86, arm64 and riscv:
->=20
-> =C2=A0 commit 61dc0f555b5c ("x86/cpu: Implement CPU vulnerabilites sysfs =
-functions")
-> =C2=A0 commit 61ae1321f06c ("arm64: enable generic CPU vulnerabilites sup=
-port")
-> =C2=A0 commit 0e3f3649d44b ("riscv: Enable generic CPU vulnerabilites sup=
-port")
->=20
-> All LoongArch CPUs (not only LS3A5000)
+On 2024/9/24 14:45, Gur Stavi wrote:
+>>>>> With all the caching in the network stack, some pages may be
+>>>>> held in the network stack without returning to the page_pool
+>>>>> soon enough, and with VF disable causing the driver unbound,
+>>>>> the page_pool does not stop the driver from doing it's
+>>>>> unbounding work, instead page_pool uses workqueue to check
+>>>>> if there is some pages coming back from the network stack
+>>>>> periodically, if there is any, it will do the dma unmmapping
+>>>>> related cleanup work.
+>>>>>
+>>>>> As mentioned in [1], attempting DMA unmaps after the driver
+>>>>> has already unbound may leak resources or at worst corrupt
+>>>>> memory. Fundamentally, the page pool code cannot allow DMA
+>>>>> mappings to outlive the driver they belong to.
+>>>>>
+>>>>> Currently it seems there are at least two cases that the page
+>>>>> is not released fast enough causing dma unmmapping done after
+>>>>> driver has already unbound:
+>>>>> 1. ipv4 packet defragmentation timeout: this seems to cause
+>>>>>    delay up to 30 secs:
+>>>>>
+>>>>> 2. skb_defer_free_flush(): this may cause infinite delay if
+>>>>>    there is no triggering for net_rx_action().
+>>>>>
+>>>>> In order not to do the dma unmmapping after driver has already
+>>>>> unbound and stall the unloading of the networking driver, add
+>>>>> the pool->items array to record all the pages including the ones
+>>>>> which are handed over to network stack, so the page_pool can
+>>>>> do the dma unmmapping for those pages when page_pool_destroy()
+>>>>> is called.
+>>>>
+>>>> So, I was thinking of a very similar idea. But what do you mean by
+>>>> "all"? The pages that are still in caches (slow or fast) of the pool
+>>>> will be unmapped during page_pool_destroy().
+>>>
+>>> Yes, it includes the one in pool->alloc and pool->ring.
+>>
+>> It worths mentioning that there is a semantics changing here:
+>> Before this patch, there can be almost unlimited inflight pages used by
+>> driver and network stack, as page_pool doesn't really track those pages.
+>> After this patch, as we use a fixed-size pool->items array to track the
+>> inflight pages, the inflight pages is limited by the pool->items, currently
+>> the size of pool->items array is calculated as below in this patch:
+>>
+>> +#define PAGE_POOL_MIN_ITEM_CNT	512
+>> +	unsigned int item_cnt = (params->pool_size ? : 1024) +
+>> +				PP_ALLOC_CACHE_SIZE + PAGE_POOL_MIN_ITEM_CNT;
+>>
+>> Personally I would consider it is an advantage to limit how many pages which
+>> are used by the driver and network stack, the problem seems to how to decide
+>> the limited number of page used by network stack so that performance is not
+>> impacted.
+> 
+> In theory, with respect to the specific problem at hand, you only have
+> a limit on the number of mapped pages inflight. Once you reach this
+> limit you can unmap these old pages, forget about them and remember
+> new ones.
 
-There will be other LoongArch CPUs (some may be even not designed by
-Loongson Technology).  So to me we should match the CPUCFG.PRID value
-and report "Unknown: No mitigations" for unknown models, instead of
-being too optimistic and report "Not Affected" for them.
+Yes, it can be done theoretically.
+The tricky part seems to be how to handle the concurrency problem when
+we evict the old pages and the old pages are also returned back to the
+page_pool concurrently without any locking or lockless operation.
 
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+For now each item has only one producer and one consumer, so we don't
+really have to worry about the concurrency problem before calling
+page_pool_item_uninit() in page_pool_destroy() to do the unmapping
+for the inflight pages by using a newly added 'destroy_lock' lock.
 
