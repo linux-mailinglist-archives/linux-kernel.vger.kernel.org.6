@@ -1,158 +1,152 @@
-Return-Path: <linux-kernel+bounces-339870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC13A986B9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 06:02:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EF0D986BFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 07:25:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08BEF1C216EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 04:02:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 729BCB249B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 05:25:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F50B1D5ABA;
-	Thu, 26 Sep 2024 04:02:29 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F00D5588E;
+	Thu, 26 Sep 2024 05:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UP1SYrY6"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887C41D5AC4
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 04:02:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50C879C4
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2024 05:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727323349; cv=none; b=g99qUuLuIlWS7yQ/rcxC4EwMKBeaKO1hiMkjXO+pETIZYH3g4NVeZa2XUp2WQSP3Y3xtkYQrGClnWl+CYMDQjlS0DJ55l5QypxTJMyu8sZ3RGaAPUb8Pj9Tl3CM3GUW9+/hL8rN3XY3vcTJbuaChV7ET9r/TZ2wmiakQJKobKns=
+	t=1727328332; cv=none; b=Hdon46Hfb1cXR9jwOTYZQpae8TmdbjwVRpRowXdHqsST5lvlOX9BQOYRZ9MDFlsdDSiIl/Nhe/cSBZEIl+tv+gv/w8Jm+/qPIlFucWOXC37kGIy3POjfrmOyIKui+wkHjTf/9JhH/xZ+4trnJ1Li1G1zG0z5BfjPLzuYOg146tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727323349; c=relaxed/simple;
-	bh=fMWPfu9FJkZxYnNqK6kp/28nndQp0mqwMK8Hlmf7660=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=TIxGJuBPNiplWeGGhrfjzL5FCzBHDIiaxVFpE5+2DeoV/dTugT4eDTNxOhxskYjGgle1i6Jf0a90HEyoNb5FoidEfmfQU4VcRDHxUqvqDbH1rXqbXFFt0N9cm4VMhZTiQYWaQAwGW4vkPTIQU5iKuEU2CJ0PQtSxNFRuKodlDb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a1e69f6f51so5204915ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 21:02:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727323346; x=1727928146;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=m6AHITBFcHYLvt7nE1Q6Ch127vP6+FBh72zrJdlA9Uw=;
-        b=Nrk3s8aPnWg6MZtXxe+1uiGSnMOp73zSWOOe1bOuYbzmnEHAVAKS3ErbOI4kUD2vdC
-         3WQMCQUJvYHTwUTcAtJZPt0C3lzRaRchnMZ5lS0f5/qFe26bIbJZSp9Z2r64vHwx1mXf
-         vdcwnj8DJanpiD28qWIyuamo21UiPR00WYka4nTKQBqXdNgkBmhPDfAMmrfEIpzT7MEw
-         evvCssCtdUqU0V8PoH2Yn+goU20S17orkFn8cAcauln6s6hDmoBaeiOHj2CSdD1rRy8p
-         QecRWE4nSmGEvw6HfxjdJv/6/5Nk/aG+A7irMWXTmAzoIP7nsVU30tSO4uBuUInVs4S5
-         OKJw==
-X-Forwarded-Encrypted: i=1; AJvYcCVMOqN8eJwBxQSKSjJbybqwCTXd/3VvA5uaQTDLAL1T+yaFj/wNQR+E0cHrllZC92/pG0o+uLKreuFfEcY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0XD59ra/hMWl69oPFVviXcm1RaTiKZFF749uPlKEnS/glDqjx
-	GCNnF7o67l03pew2GkXIQDzIXoWrtuZWYVNX/uK7JurNWSJ0BKwvjDPhJyOeklSoxC+RMs7upoE
-	M9tLhS6XFrrsgwVSgQSRkfAwj6nRACA6yBP08MSEzbNNuR2Hf+oCQe/I=
-X-Google-Smtp-Source: AGHT+IEeM7Xdo3aXQnKZvPp9KJctY4UnXNoVObnXe8akTQMzAgghX9EM4hQkFEhbm7X1twlsHPsp0rRwej8gswt/w2pDCnynjHsV
+	s=arc-20240116; t=1727328332; c=relaxed/simple;
+	bh=4N2kpRy1useREFPbJn9t5g5N8Pk7h3iVO0H8S/NCqeQ=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Cc:Date:
+	 Message-Id:References:To; b=m9omD6ztgYSHvEIZoH0mXjjNVdInVVZ8feTgi4KiMqcL1kWhXJLoRFz2IeW/tmy3vIKsiqRuCZYK1MtQgS0u3lFFG4i2mWpboibRG/rdwC+ubZOPE6eLOmkDfqp/t62Ytca9whhIXU0ZJ6jCQtHt+32+AsjxnqgegiLJ1dAwD2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UP1SYrY6; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain; charset=utf-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727328326;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Zp82X1gEUMsH0cTyMFodXGf6d6eN6K2y3H6Zo3CY6V4=;
+	b=UP1SYrY6JNvaw/mqwf7M8PBn5o0rhDki+ijb1ln0L0MUcljBYuE/XJ3+2eVvuQI7dGuJG5
+	4C4rVEWKofEycZYjhgvQDINKY95NSLfQBiyugpfuLu+TYKtPny66Ux7rXAt+3IgCR2wE/m
+	MES1uFoQEEs5qXOLCDAw/xaJxHyq/LY=
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1448:b0:3a0:8c5f:90d8 with SMTP id
- e9e14a558f8ab-3a26d732381mr48110885ab.6.1727323346613; Wed, 25 Sep 2024
- 21:02:26 -0700 (PDT)
-Date: Wed, 25 Sep 2024 21:02:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f4dcd2.050a0220.211276.003a.GAE@google.com>
-Subject: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in bch2_stripe_to_text
-From: syzbot <syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    1ec6d097897a Merge tag 's390-6.12-1' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14c0b080580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6265dd30e362bb47
-dashboard link: https://syzkaller.appspot.com/bug?extid=f8c98a50c323635be65d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12e58e07980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12c0b080580000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-1ec6d097.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0b74fa2b2b4e/vmlinux-1ec6d097.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/1ed852a3c5d1/bzImage-1ec6d097.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/19c2305bd0ee/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com
-
-bcachefs (loop0): Doing compatible version upgrade from 1.7: mi_btree_bitmap to 1.12: rebalance_work_acct_fix
-  running recovery passes: check_allocations
-------------[ cut here ]------------
-UBSAN: shift-out-of-bounds in fs/bcachefs/ec.c:147:2
-shift exponent 108 is too large for 32-bit type 'unsigned int'
-CPU: 0 UID: 0 PID: 5088 Comm: syz-executor278 Not tainted 6.11.0-syzkaller-08068-g1ec6d097897a #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- ubsan_epilogue lib/ubsan.c:231 [inline]
- __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:468
- bch2_stripe_to_text+0x899/0x8c0 fs/bcachefs/ec.c:147
- __bch2_bkey_fsck_err+0x11f/0x230 fs/bcachefs/error.c:429
- bch2_stripe_validate+0x3ca/0x630 fs/bcachefs/ec.c:116
- bch2_btree_node_read_done+0x3dc6/0x5d60 fs/bcachefs/btree_io.c:1219
- btree_node_read_work+0x68b/0x1260 fs/bcachefs/btree_io.c:1323
- bch2_btree_node_read+0x2433/0x2a10
- __bch2_btree_root_read fs/bcachefs/btree_io.c:1749 [inline]
- bch2_btree_root_read+0x626/0x980 fs/bcachefs/btree_io.c:1773
- read_btree_roots+0x296/0x840 fs/bcachefs/recovery.c:523
- bch2_fs_recovery+0x24ac/0x38b0 fs/bcachefs/recovery.c:851
- bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1036
- bch2_fs_get_tree+0xd61/0x1700 fs/bcachefs/fs.c:1956
- vfs_get_tree+0x90/0x2b0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3507
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4055 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fbcc7b8a8fa
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc0febe3f8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffc0febe410 RCX: 00007fbcc7b8a8fa
-RDX: 0000000020005d80 RSI: 0000000020005dc0 RDI: 00007ffc0febe410
-RBP: 0000000000000004 R08: 00007ffc0febe450 R09: 0000000000005d9a
-R10: 0000000000200400 R11: 0000000000000282 R12: 0000000000200400
-R13: 00007ffc0febe450 R14: 0000000000000003 R15: 0000000001000000
- </TASK>
----[ end trace ]---
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v4 07/13] mm: khugepaged: collapse_pte_mapped_thp() use pte_offset_map_rw_nolock()
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <07d975c50fe09c246e087303b39998430b1a66bd.1727148662.git.zhengqi.arch@bytedance.com>
+Cc: david@redhat.com, hughd@google.com, willy@infradead.org, vbabka@kernel.org,
+ akpm@linux-foundation.org, rppt@kernel.org, vishal.moola@gmail.com,
+ peterx@redhat.com, ryan.roberts@arm.com,
+ christophe.leroy2@cs-soprasteria.com, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org
+Date: Tue, 24 Sep 2024 15:14:25 +0800
+Message-Id: <79699B24-0D99-4051-91F3-5695D32D62AC@linux.dev>
+References: <07d975c50fe09c246e087303b39998430b1a66bd.1727148662.git.zhengqi.arch@bytedance.com>
+To: Qi Zheng <zhengqi.arch@bytedance.com>
+X-Migadu-Flow: FLOW_OUT
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> On Sep 24, 2024, at 14:11, Qi Zheng <zhengqi.arch@bytedance.com> wrote:
+> =EF=BB=BFIn collapse_pte_mapped_thp(), we may modify the pte and pmd entry=
+ after
+> acquring the ptl, so convert it to using pte_offset_map_rw_nolock(). At
+> this time, the pte_same() check is not performed after the PTL held. So we=
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+> should get pgt_pmd and do pmd_same() check after the ptl held.
+>=20
+> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+> ---
+> mm/khugepaged.c | 14 +++++++++++---
+> 1 file changed, 11 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index 6498721d4783a..8ab79c13d077f 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -1605,7 +1605,7 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, un=
+signed long addr,
+>    if (userfaultfd_armed(vma) && !(vma->vm_flags & VM_SHARED))
+>        pml =3D pmd_lock(mm, pmd);
+>=20
+> -    start_pte =3D pte_offset_map_nolock(mm, pmd, haddr, &ptl);
+> +    start_pte =3D pte_offset_map_rw_nolock(mm, pmd, haddr, &pgt_pmd, &ptl=
+);
+>    if (!start_pte)        /* mmap_lock + page lock should prevent this */
+>        goto abort;
+>    if (!pml)
+> @@ -1613,6 +1613,9 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, un=
+signed long addr,
+>    else if (ptl !=3D pml)
+>        spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
+>=20
+> +    if (unlikely(!pmd_same(pgt_pmd, pmdp_get_lockless(pmd))))
+> +        goto abort;
+> +
+>    /* step 2: clear page table and adjust rmap */
+>    for (i =3D 0, addr =3D haddr, pte =3D start_pte;
+>         i < HPAGE_PMD_NR; i++, addr +=3D PAGE_SIZE, pte++) {
+> @@ -1645,7 +1648,6 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, un=
+signed long addr,
+>        nr_ptes++;
+>    }
+>=20
+> -    pte_unmap(start_pte);
+>    if (!pml)
+>        spin_unlock(ptl);
+>=20
+> @@ -1658,13 +1660,19 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, u=
+nsigned long addr,
+>    /* step 4: remove empty page table */
+>    if (!pml) {
+>        pml =3D pmd_lock(mm, pmd);
+> -        if (ptl !=3D pml)
+> +        if (ptl !=3D pml) {
+>            spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
+> +            if (unlikely(!pmd_same(pgt_pmd, pmdp_get_lockless(pmd)))) {
+> +                spin_unlock(pml);
+> +                goto abort;
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Drop the reference of folio and the mm counter twice at the label of abort a=
+nd the step 3.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+> +            }
+> +        }
+>    }
+>    pgt_pmd =3D pmdp_collapse_flush(vma, haddr, pmd);
+>    pmdp_get_lockless_sync();
+>    if (ptl !=3D pml)
+>        spin_unlock(ptl);
+> +    pte_unmap(start_pte);
+>    spin_unlock(pml);
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+Why not?
 
-If you want to undo deduplication, reply with:
-#syz undup
+pte_unmap_unlock(start_pte, ptl);
+if (pml !=3D ptl)
+        spin_unlock(pml);
+
+>=20
+>    mmu_notifier_invalidate_range_end(&range);
+> --
+> 2.20.1
 
