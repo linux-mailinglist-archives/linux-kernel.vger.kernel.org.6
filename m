@@ -1,131 +1,140 @@
-Return-Path: <linux-kernel+bounces-336973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 616D3984387
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:20:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B93AA98438A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:21:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F286B2A3DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:19:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54E0CB275F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915E1178370;
-	Tue, 24 Sep 2024 10:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF9F178364;
+	Tue, 24 Sep 2024 10:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z38oR2E1"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jOSc0Gyl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4464218C325;
-	Tue, 24 Sep 2024 10:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B061714CD
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 10:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727173064; cv=none; b=ku3MAo/HSPeG69CMJlcnJOtLzKOXrr8FXMYICAFIfRpWrtTwiqvEbWRlfvmnsKs/QPkD8IMgHv+2KVn65sZ6+di7LBVN1Fb3NnaBCB6KkukH4GSXTQKc1CnTFIRhjO25tlfGKxz3xIIprfi2Y+mjsHK7Tk7ms1nJAmQysf2X6iE=
+	t=1727173177; cv=none; b=NGMGm24oF9QR4sUxSnxsJGLYJ1yyBa/Y7dfJQ+Pb+oOoC4frMHBo32c8jymU1IlFi/ikxZZMOhqOaqRhzkHYb4ZNg19KYShD/lLTrqVIogG2O3vwhCXh+BlfSEWp2Neq7xq+uWMqtbaHV7dwmONanabu+aGYWRmxoa0hC8dRc2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727173064; c=relaxed/simple;
-	bh=MOrv/PO4+p/q2gx2H/jXlnLEDH+f3OEGh0lgTFRI7QQ=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VCmewtgXF0Sfi9Dz194/EUoMXXDnPF4/MWnhMWGd5ILy++e3UqwdrmeqDlRhcsdDmw0cNEXq8qkbvH7WfuzQRhPvKpO8xt1PM61wJEm2OTP58Lm0CdeS1Y4fcU8bb/eK2HJF28Ab+LcX0pYXoxAeGD6uLmaPJVlTMwvt24uC/jU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z38oR2E1; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42e5e1e6d37so53307635e9.3;
-        Tue, 24 Sep 2024 03:17:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727173061; x=1727777861; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y6yq/DwFQfx4tBwrb6K58nwBTecQ5jjhs54hsQLsb9E=;
-        b=Z38oR2E1dsCG6CNYo51evLlunqZ20cOYS4Ppt1yoZVdkMgZrKv9J02i7f5MIJIy3pz
-         lkMSfpTAA+vi4j8rfgTcRDMV+pyNivEHEFEYEqdquoD3s8nsx/y5A+aAAjWzaMBHac4t
-         E/5hCXTtnNjJzomGLqD4TxFpbifNJn8rSyb7+K38wTOIEW46cHHxZZ2NKG06dh0f8Em5
-         8Rd9iAdTJTUz8BeDl7k/zz2K8LNPkScGNJOCVnr9Q8TmsEIp/pOqTVg+6f7NKQXGNcbq
-         uJHAtmOB1kddFNtYL3xiRil60W2owfkiSgiuo0LSZquyrcget57b+cYAhhaDz41yfVKH
-         aoYQ==
+	s=arc-20240116; t=1727173177; c=relaxed/simple;
+	bh=UchMxXEXcad0LIjFfTqK0it44Uqh316PnTh6X24Qpb0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=talX4e/w0ZHkaR6TwqJ8cZwKW9swLyrNOu0tpLILmlb2qKwlBYst5OMdyFdEHOwK5IByXKE/vxixQN0J4NZQaIFvCjrGOQHHmIxR2/YI3EcPc12QaLFD1kd9N/hfF2j7q1AwZHtlWoIC+qJtOFrMc4J23CYJWazM5nqVcbhyuyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jOSc0Gyl; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727173174;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rJzkKNQcKbyX0QFGo3eW/PqcmuWb71AkdgCrjjKSlqo=;
+	b=jOSc0GylDOr5GtrhTVFMobzoerfCPq4p7EUMzHjbpVnDXkHaW9DpJ8JYawzLptIjm6yFNS
+	hlzi9UP8m8dOvOHntf4Q4BWfJjizjmo/C8m9opPtIQduKqqzYh8NUWpsBfFk/vfBu+bJ1o
+	qnycxrY6xm13n38eC4fPuIL5aMK/vJQ=
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
+ [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-605-y45cl5y4OlK1g_FGAAXuag-1; Tue, 24 Sep 2024 06:19:33 -0400
+X-MC-Unique: y45cl5y4OlK1g_FGAAXuag-1
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82aa3ff05b9so52837539f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 03:19:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727173061; x=1727777861;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1727173172; x=1727777972;
+        h=content-transfer-encoding:mime-version:organization:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Y6yq/DwFQfx4tBwrb6K58nwBTecQ5jjhs54hsQLsb9E=;
-        b=p0e9xjdoPsHRZPsvLGPtoL7c+9HW0mIRFQ0DfQp7DsGV2QHIwIC+OfWqKlCj09uFCq
-         S53SaAHP/GA40dSSx09SjuQ9ewmcpSwQcvDnfTWKl6i+d/J85kUIUKuo0x/L3LVarJk1
-         T79DBzMRdfLfP4Gvc/RNJF6Tl3cVHuPIkBEii7MWqTDQRsUTR99MpBcbvzUgdeYIqUT2
-         INwiq1IvSasrxkREH/v2cExy393TRXrVL42VvotAhKPzbLLuNHBa3nupUzmVD/ZI7xOz
-         ko5VhnIwLADCBbfpNcXV1v0tQyX5EoUWnH+6vXXpzDpKxr/Ee+g7G6RM3mgSvNH+wso8
-         F92A==
-X-Forwarded-Encrypted: i=1; AJvYcCUa5DXOhQ05b3n85NeKxyw8XLhlYJxl1eC3Wxft4BM8JzWajpiS4jB3BJTZ1IcBgzoFguOgkATuuOOp@vger.kernel.org, AJvYcCUqk/Ob0M8x0mpUd7P/rRkUcpbceFVHAvz0O9e8Fgvptzhn0T2QSGO14lw8W69JnOhx91cvlvWIFXcMrbg=@vger.kernel.org, AJvYcCXLURe4W8R/yDkprd9Riobm0dbO62aJaGr5xjDChiLLOcCiPc/r+5iEmV2kGdUUE39xiPfBOveSxXnddbRT@vger.kernel.org, AJvYcCXNIb06qukqmiqIWrPdgxOXYO3sivBKaTUPf4WnTfPODG6d4f00N3CmMMsLvu8BmdIPcrmy3yEmkV5X@vger.kernel.org, AJvYcCXq5PWCz4UTjuTyBHUUT6/nR76i3EONd3Tm6KQeMODH9JRzt7i0FeRon9nb4ryv7wBmYUYNkbSJ6ra+@vger.kernel.org
-X-Gm-Message-State: AOJu0YyS0dClzAe7bRGqyUWI6NAWJjOaBxkHuYJq+jW0fXInORs1tMP1
-	18a0C0YVGdkDuzSs1e8OlPytss/7XUNjUuCoib/1/8Ugb9jwNyy+
-X-Google-Smtp-Source: AGHT+IE83mnLUuf+4WZRfrPw50LD+lxqX8rWtjINgvgK2vW5eLA5p3k20e4sMLnXxjQweQjgZ91oYA==
-X-Received: by 2002:a5d:4488:0:b0:377:9867:9028 with SMTP id ffacd0b85a97d-37a431ad4dbmr7918215f8f.44.1727173061365;
-        Tue, 24 Sep 2024 03:17:41 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cbc2c1ef1sm1188238f8f.35.2024.09.24.03.17.40
+        bh=rJzkKNQcKbyX0QFGo3eW/PqcmuWb71AkdgCrjjKSlqo=;
+        b=bD5Q9UvZSHu7SdtoIPMAKZmDscfCs76lhc89r7auo9IW1HnY96fvEdem89sOfU23dF
+         iEGc3PC4Dyu/U5qHmoQGT2Cvzt7LYHbql+IH27fSL0r4ZsWvnBren8tcIByW09ScaOuI
+         iyDVVFjAhqlWSlo6ESX16FtraQh5ks4WQ1fXPF2cmChbIEl0LBQ8px/TNxzrR6znIseM
+         Nu60pA9DkfXvYGD5l9WWX7/XlLtQNMDSrhpUMR2upenRSPw4fSDRkMN1OIQAXLq90k50
+         +l+NcY4YNXdkCp4JuqAQBsUfsQjzm5Y3R8dLgc81hBuefekjVgFdDK/BVHk9p8NrajCS
+         BbQw==
+X-Gm-Message-State: AOJu0YzAwd1QGzk3I6mZFN6kU68Hu1LYaPj3406ye3BVhga3zvI7jb5R
+	s0yE+eAxch9fdc6ZllXrQWHaewBM68fHs8t7qmUoFmztHeykGhGmdPcDHU4jZ5OnmCnrnlFQqcR
+	35U/a/1WycEHLM7ZAXO3hpO7frkywMud26G5FPrvKmDQVXhvBXqY7QiGBlLdFd9lzTEVWBtRZ
+X-Received: by 2002:a5d:9b90:0:b0:82d:2e1b:66c5 with SMTP id ca18e2360f4ac-8323c854edemr56722439f.1.1727173172106;
+        Tue, 24 Sep 2024 03:19:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFFNj/14WbEMKL5rlVdUOeAgjM2NSsG7TYmN4xxKX7XrOF8K1oLGiMxYB8r0eNQ5wRYhmTHQg==
+X-Received: by 2002:a5d:9b90:0:b0:82d:2e1b:66c5 with SMTP id ca18e2360f4ac-8323c854edemr56721339f.1.1727173171671;
+        Tue, 24 Sep 2024 03:19:31 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d40f0e7150sm341493173.14.2024.09.24.03.19.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 03:17:41 -0700 (PDT)
-Message-ID: <66f291c5.5d0a0220.328e5a.2c9e@mx.google.com>
-X-Google-Original-Message-ID: <ZvKRwI3zrXURbYKS@Ansuel-XPS.>
-Date: Tue, 24 Sep 2024 12:17:36 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
-	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	INAGAKI Hiroshi <musashino.open@gmail.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>, Ming Lei <ming.lei@redhat.com>,
-	Li Lingfeng <lilingfeng3@huawei.com>,
-	Christian Heusel <christian@heusel.eu>, linux-block@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>
-Subject: Re: [RFC PATCH 3/4] block: add support for partition table defined
- in OF
-References: <20240923105937.4374-1-ansuelsmth@gmail.com>
- <20240923105937.4374-4-ansuelsmth@gmail.com>
- <ZvJdjRpFaPUuFhIO@infradead.org>
+        Tue, 24 Sep 2024 03:19:31 -0700 (PDT)
+Date: Tue, 24 Sep 2024 12:19:27 +0200
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: [GIT PULL] VFIO updates for v6.12-rc1
+Message-ID: <20240924121927.07b82b38.alex.williamson@redhat.com>
+Organization: Red Hat
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZvJdjRpFaPUuFhIO@infradead.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 23, 2024 at 11:34:53PM -0700, Christoph Hellwig wrote:
-> On Mon, Sep 23, 2024 at 12:59:32PM +0200, Christian Marangi wrote:
-> > +#define BOOT0_STR	"boot0"
-> > +#define BOOT1_STR	"boot1"
-> > +
-> 
-> This boot0/1 stuff looks like black magic, so it should probably be
-> documented at very least.
->
+Hi Linus,
 
-It is but from what I have read in the spec for flash in general (this
-is not limited to eMMC but also apply to UFS) these are hardware
-partition. If the version is high enough these are always present and
-have boot0 and boot1 name hardcoded by the driver.
+Just a few cleanups this cycle.  Thanks,
 
-> > +	partitions_np = get_partitions_node(disk_np,
-> > +					    state->disk->disk_name);
-> 
-> disk->disk_name is not a stable identifier and can change from boot to
-> boot due to async probing.  You'll need to check a uuid or label instead.
+Alex
 
-This is really for the 2 special partition up to check the suffix, we
-don't really care about the name. I guess it's acceptable to use
-unstable identifier?
+The following changes since commit 431c1646e1f86b949fa3685efc50b660a364c2b6:
 
-Thanks a lot for the review!
+  Linux 6.11-rc6 (2024-09-01 19:46:02 +1200)
 
--- 
-	Ansuel
+are available in the Git repository at:
+
+  https://github.com/awilliam/linux-vfio.git tags/vfio-v6.12-rc1
+
+for you to fetch changes up to aab439ffa1ca1067c0114773d4044828fab582af:
+
+  vfio/pci: clean up a type in vfio_pci_ioctl_pci_hot_reset_groups() (2024-09-12 14:15:07 -0600)
+
+----------------------------------------------------------------
+VFIO updates for v6.12
+
+ - Remove several unused structure and function declarations, and unused
+   variables. (Dr. David Alan Gilbert, Yue Haibing, Zhang Zekun)
+
+ - Constify unmodified structure in mdev. (Hongbo Li)
+
+ - Convert to unsigned type to catch overflow with less fanfare than
+   passing a negative value to kcalloc(). (Dan Carpenter)
+
+----------------------------------------------------------------
+Dan Carpenter (1):
+      vfio/pci: clean up a type in vfio_pci_ioctl_pci_hot_reset_groups()
+
+Dr. David Alan Gilbert (1):
+      vfio/pci: Remove unused struct 'vfio_pci_mmap_vma'
+
+Hongbo Li (1):
+      vfio/mdev: Constify struct kobj_type
+
+Yue Haibing (1):
+      vfio/fsl-mc: Remove unused variable 'hwirq'
+
+Zhang Zekun (1):
+      vfio: mdev: Remove unused function declarations
+
+ drivers/vfio/fsl-mc/vfio_fsl_mc_intr.c | 4 +---
+ drivers/vfio/mdev/mdev_private.h       | 3 ---
+ drivers/vfio/mdev/mdev_sysfs.c         | 2 +-
+ drivers/vfio/pci/vfio_pci_core.c       | 7 +------
+ 4 files changed, 3 insertions(+), 13 deletions(-)
+
 
