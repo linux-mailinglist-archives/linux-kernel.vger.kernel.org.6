@@ -1,168 +1,156 @@
-Return-Path: <linux-kernel+bounces-337571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B499984BCD
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:51:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DF77984BD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:52:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD99F1C22689
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:51:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BBC21C21979
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1421369AA;
-	Tue, 24 Sep 2024 19:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1F613A87E;
+	Tue, 24 Sep 2024 19:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3j/t6Q6O"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="nxP/MB1E"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F7012EBDB
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 19:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F36282F4;
+	Tue, 24 Sep 2024 19:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727207494; cv=none; b=EbcpoOjjkayJiwKetL5pMYyVp0Me2pZ+Guvb/KN6+8UGZLDi4JewyVzpqqVplLfiIYpThacMz5wxN1BBvnyE6PdFIYJpwg9a+grA3l7xIBuM7k8+xv8hkZCjqlfK6BcJdTal1je3BcSzjDRmXCmNdDRWRFH72RO655Nmn5hull0=
+	t=1727207536; cv=none; b=p1W2ognqNhtpHzO4AKzAxwfx7fogo5BBrKrMrRWujN8yc8/MwuncXoR4E4U3k6KLHBAIQHaJgVO8ICUfiv5gK9csCC5KmWBkj8GyT7e86qURB6mMrMTYVZjYEXeub97+53B0gTIMM2LPzXhJReRk6SAmpLdA/q5zmINWFSUHq50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727207494; c=relaxed/simple;
-	bh=gKob+i2saQp48rnX7TTOD2WApJHduJmGU15H4aZagFQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=INEsTwb1x8mdCYuDAl1TMLNenbVgTn1if98NvX78q9Up1RKdBsOHqWD1CRidNmsN4pM4WFIUGFW5ALlh6yAMYyIEm1TgPqCOn8yHFaaEJ4vgkDfbw8wm55hfHIiWW6Iv1qJXWp0qZT6Q6jp3iT7kG0vg5IViKb/Mzs8Tjwf8V3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3j/t6Q6O; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3a045f08fd6so38345ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 12:51:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727207492; x=1727812292; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oTv5Kz1/nHcd+bzdeFJN5jUl+0y6XwDkMUQRA6INFWM=;
-        b=3j/t6Q6OrNv/JcDac//TmHFhmBHyJp+s1psxCcz75lnCeIFVa65HXxURjXEwpOcWJf
-         PdoCka4lumggFBmON8cKVwXpSBct0WSL5C8o6K/opjpx9Za43IY68uCJTOM2eSfpVJOU
-         AUC4XAK7Eiw6IEHthngSGyheY9TgIBA+y3gVwM+Pqu43NFshFHyY5OZga2UacPItcJf8
-         BsvIBvbP084Bc3/ZCNjCpReW7VLBIiBqLvfsEcQCHxkOFCmRPydbzxaanVhv5VEf6zdl
-         uPyKColJ3I0i3XUxtdWiW/izxQIT1IrxhEPDB3y1HI3hVZNzzne5FvRgrPI/kMmS8iwS
-         kYFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727207492; x=1727812292;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oTv5Kz1/nHcd+bzdeFJN5jUl+0y6XwDkMUQRA6INFWM=;
-        b=HRroubd9q/LvtweFdSYwn+d6d+1Rz/meMLmxT9731gijO7m98RZbRutYa6NMpukGkI
-         Tj7MWHO9iJwTcI/fMChgtq4hS1jsfQBb3Mka7p9aAOo/0yufL3J7cQL3FmxDFr5h2cfo
-         ZkNHxM7+rGOnoPKPc4q4nfPxG0iI9TrWmLCIgtUse7lA+q+a7KcAsuEp1JT4zsUWb15r
-         5PURp5jrNPtx1jbsOKdKmAI9pAbl3VJd6treJ8mGUlsWIHolYYopa8ut6yMA2cA0JBrd
-         rn55KW+LSVOUbsJGd+0AGVTD6E43pqngfxlk1MYayvb0Z/6zMj6E4wwOVgmq44t/s3kO
-         /Z9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWtPxJld5NFRzqWvBroJYTwkCdWjDhf4Vr/yEdUcOd358xB7BdMPywQLJo4FyshZk7t7kJ4QZXD8F0MqLs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrXy/7aISEF0TT5BxrZ9QkjdfMmYyg0Xe0nXkTGgaz1hfGtpzX
-	jo7ZXx6x0j7FTo11S8+jfnkYYumyDrF/F0MQdPr+ByYAB+xTwBoWN9RHhVgtzeo29sFm48KX8/q
-	fWBvRi7XyPlkwyCWoY4WbZi7qV1hib+rxR79k
-X-Google-Smtp-Source: AGHT+IEGNxuRwBmOz4OpvXhgnkkEoLCghzrvyxA3kBY//Y5LIoKIdpd1P33eorPTibTURcjZ8kCIKwSU70w8KnK7sec=
-X-Received: by 2002:a05:6e02:164e:b0:3a0:44d1:dca4 with SMTP id
- e9e14a558f8ab-3a26e2c4afemr702355ab.6.1727207491479; Tue, 24 Sep 2024
- 12:51:31 -0700 (PDT)
+	s=arc-20240116; t=1727207536; c=relaxed/simple;
+	bh=GBfPl46p3Qqe6ckVePVV4hgMaOCUbspLx+WDceCd36g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WXTvqzeVkcAxJ32zJb15pMQUv70VtsMtDF2fpKwor9sJm39uf5LmQ7qwxD8hpnMdt43Pish26B3KRx+XOk9I30nujhBxH1QykbFJqou6sLNWoKdX6TCQH7YNrOKGNWb2fkpSvqI30tdEV42zPOpBRSL2C24eR4HcISik5UaJ4pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=nxP/MB1E; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4XCr9N6W7NzlgTWK;
+	Tue, 24 Sep 2024 19:52:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1727207526; x=1729799527; bh=GJda8fhfxXefGlmLq7zLa+LN
+	hw8pcTKg3Mnj21Cyvzs=; b=nxP/MB1EesPglse33V2POfq65q17IS3bboThLGEj
+	rT2eUfGYJBG8pv2FjtS47fR63Yl/WC+haUOYrDR+YD5vgyzAEibaRCigXOSo4qvZ
+	FgkBuDUI6QbBPPNVOmv1cRtzgN/3sT+J4J0J+XAohMfOTMvHPjrjDqZKXpZqxLmp
+	7YXCAu7GXy3vxsd9Kg/qo96N3hYjVZnZRC1/R5gKeeAxa0pbmZab70271tDkqjU7
+	AU0C/s6oBdsaUaa5eNG8ycBgBiiRIga0xkwNVEMcjgvWahdLFAMnrZ5RjCufGcCo
+	jQ/Rfr6cEgB7R1o+dVhNNoeIPa5+b5vbDN32Utq2m8SDTg==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id aGwnB5ttcOzw; Tue, 24 Sep 2024 19:52:06 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4XCr9L2CpczlgTWG;
+	Tue, 24 Sep 2024 19:52:06 +0000 (UTC)
+Message-ID: <8bb504f5-9ed6-4fc0-bea0-f0561164f70f@acm.org>
+Date: Tue, 24 Sep 2024 12:52:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240924003720.617258-1-irogers@google.com> <20240924003720.617258-2-irogers@google.com>
- <ZvMHHKKZwab2IhlL@google.com>
-In-Reply-To: <ZvMHHKKZwab2IhlL@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 24 Sep 2024 12:51:20 -0700
-Message-ID: <CAP-5=fUCbzz=bLY75DKfdPRNjW91yz6yAzywVe_QWDwK4d7R8g@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] perf disasm: Fix capstone memory leak
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Kajol Jain <kjain@linux.ibm.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
-	"Steinar H. Gunderson" <sesse@google.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
-	Alexander Lobakin <aleksander.lobakin@intel.com>, Hemant Kumar <hemant@linux.vnet.ibm.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yang Jihong <yangjihong@bytedance.com>, leo.yan@arm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] scsi: ufs: Zero utp_upiu_req at the beginning of each
+ command
+To: Avri Altman <avri.altman@wdc.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240921062306.56019-1-avri.altman@wdc.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240921062306.56019-1-avri.altman@wdc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 24, 2024 at 11:38=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
- wrote:
->
-> On Mon, Sep 23, 2024 at 05:37:18PM -0700, Ian Rogers wrote:
-> > The insn argument passed to cs_disasm needs freeing. To support
-> > accurately having count, add an additional free_count variable.
-> >
-> > Fixes: c5d60de1813a ("perf annotate: Add support to use libcapstone in =
-powerpc")
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > ---
-> >  tools/perf/util/disasm.c | 11 +++++++----
-> >  1 file changed, 7 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
-> > index f05ba7739c1e..2c8063660f2e 100644
-> > --- a/tools/perf/util/disasm.c
-> > +++ b/tools/perf/util/disasm.c
-> > @@ -1627,12 +1627,12 @@ static int symbol__disassemble_capstone(char *f=
-ilename, struct symbol *sym,
-> >       u64 start =3D map__rip_2objdump(map, sym->start);
-> >       u64 len;
-> >       u64 offset;
-> > -     int i, count;
-> > +     int i, count, free_count;
-> >       bool is_64bit =3D false;
-> >       bool needs_cs_close =3D false;
-> >       u8 *buf =3D NULL;
-> >       csh handle;
-> > -     cs_insn *insn;
-> > +     cs_insn *insn =3D NULL;
-> >       char disasm_buf[512];
-> >       struct disasm_line *dl;
-> >
-> > @@ -1664,7 +1664,7 @@ static int symbol__disassemble_capstone(char *fil=
-ename, struct symbol *sym,
-> >
-> >       needs_cs_close =3D true;
-> >
-> > -     count =3D cs_disasm(handle, buf, len, start, len, &insn);
-> > +     free_count =3D count =3D cs_disasm(handle, buf, len, start, len, =
-&insn);
-> >       for (i =3D 0, offset =3D 0; i < count; i++) {
-> >               int printed;
-> >
-> > @@ -1702,8 +1702,11 @@ static int symbol__disassemble_capstone(char *fi=
-lename, struct symbol *sym,
-> >       }
-> >
-> >  out:
-> > -     if (needs_cs_close)
-> > +     if (needs_cs_close) {
-> >               cs_close(&handle);
-> > +             if (free_count > 0)
-> > +                     cs_free(insn, free_count);
->
-> It seems cs_free() can handle NULL insn and 0 free_count (like regular fr=
-ee)
-> so we can call it unconditionally.
+On 9/20/24 11:23 PM, Avri Altman wrote:
+> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+> index 8ea5a82503a9..9187cf5c949c 100644
+> --- a/drivers/ufs/core/ufshcd.c
+> +++ b/drivers/ufs/core/ufshcd.c
+> @@ -2761,7 +2761,6 @@ void ufshcd_prepare_utp_scsi_cmd_upiu(struct ufshcd_lrb *lrbp, u8 upiu_flags)
+>   	ucd_req_ptr->sc.exp_data_transfer_len = cpu_to_be32(cmd->sdb.length);
+>   
+>   	cdb_len = min_t(unsigned short, cmd->cmd_len, UFS_CDB_SIZE);
+> -	memset(ucd_req_ptr->sc.cdb, 0, UFS_CDB_SIZE);
+>   	memcpy(ucd_req_ptr->sc.cdb, cmd->cmnd, cdb_len);
+>   
+>   	memset(lrbp->ucd_rsp_ptr, 0, sizeof(struct utp_upiu_rsp));
+> @@ -2864,6 +2863,26 @@ static void ufshcd_comp_scsi_upiu(struct ufs_hba *hba, struct ufshcd_lrb *lrbp)
+>   	ufshcd_prepare_utp_scsi_cmd_upiu(lrbp, upiu_flags);
+>   }
+>   
+> +static void __ufshcd_setup_cmd(struct ufshcd_lrb *lrbp, struct scsi_cmnd *cmd, u8 lun, int tag)
+> +{
+> +	memset(lrbp->ucd_req_ptr, 0, sizeof(*lrbp->ucd_req_ptr));
+> +
+> +	lrbp->cmd = cmd;
+> +	lrbp->task_tag = tag;
+> +	lrbp->lun = lun;
+> +	ufshcd_prepare_lrbp_crypto(cmd ? scsi_cmd_to_rq(cmd) : NULL, lrbp);
+> +}
+> +
+> +static void ufshcd_setup_scsi_cmd(struct ufs_hba *hba, struct ufshcd_lrb *lrbp,
+> +				  struct scsi_cmnd *cmd, u8 lun, int tag)
+> +{
+> +	__ufshcd_setup_cmd(lrbp, cmd, lun, tag);
+> +	lrbp->intr_cmd = !ufshcd_is_intr_aggr_allowed(hba);
+> +	lrbp->req_abort_skip = false;
+> +
+> +	ufshcd_comp_scsi_upiu(hba, lrbp);
+> +}
+> +
+>   /**
+>    * ufshcd_upiu_wlun_to_scsi_wlun - maps UPIU W-LUN id to SCSI W-LUN ID
+>    * @upiu_wlun_id: UPIU W-LUN id
+> @@ -2997,16 +3016,8 @@ static int ufshcd_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
+>   	ufshcd_hold(hba);
+>   
+>   	lrbp = &hba->lrb[tag];
+> -	lrbp->cmd = cmd;
+> -	lrbp->task_tag = tag;
+> -	lrbp->lun = ufshcd_scsi_to_upiu_lun(cmd->device->lun);
+> -	lrbp->intr_cmd = !ufshcd_is_intr_aggr_allowed(hba);
+>   
+> -	ufshcd_prepare_lrbp_crypto(scsi_cmd_to_rq(cmd), lrbp);
+> -
+> -	lrbp->req_abort_skip = false;
+> -
+> -	ufshcd_comp_scsi_upiu(hba, lrbp);
+> +	ufshcd_setup_scsi_cmd(hba, lrbp, cmd, ufshcd_scsi_to_upiu_lun(cmd->device->lun), tag);
+>   
+>   	err = ufshcd_map_sg(hba, lrbp);
+>   	if (err) {
+> @@ -3034,11 +3045,8 @@ static int ufshcd_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
+>   static void ufshcd_setup_dev_cmd(struct ufs_hba *hba, struct ufshcd_lrb *lrbp,
+>   			     enum dev_cmd_type cmd_type, u8 lun, int tag)
+>   {
+> -	lrbp->cmd = NULL;
+> -	lrbp->task_tag = tag;
+> -	lrbp->lun = lun;
+> +	__ufshcd_setup_cmd(lrbp, NULL, lun, tag);
+>   	lrbp->intr_cmd = true; /* No interrupt aggregation */
+> -	ufshcd_prepare_lrbp_crypto(NULL, lrbp);
+>   	hba->dev_cmd.type = cmd_type;
+>   }
+>   
 
-No, on error from cs_disasm free_count gets assigned -1 and my
-experience was things crashing.
+This should have been two patches: one patch that introduces the
+ufshcd_setup_scsi_cmd() function and a second patch that adds the code
+for zeroing the UPIU header. Anyway, I'm fine with this patch.
 
-Thanks,
-Ian
-
->
-> > +     }
-> >       free(buf);
-> >       return count < 0 ? count : 0;
-> >
-> > --
-> > 2.46.0.792.g87dc391469-goog
-> >
+Bart.
 
