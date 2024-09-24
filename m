@@ -1,87 +1,44 @@
-Return-Path: <linux-kernel+bounces-336612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BACD8983D03
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:20:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BC86983D04
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:20:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39D491F21694
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 06:20:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC2C21C22623
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 06:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D8B6EB5C;
-	Tue, 24 Sep 2024 06:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ie20jkRH"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2050.outbound.protection.outlook.com [40.107.244.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85CE13A24A;
-	Tue, 24 Sep 2024 06:19:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727158756; cv=fail; b=WYki3xFq7zbqmF0X+U1N8pxF78cA7V0iejZEfWeERCOFp6hSND2S7gNPL3xiqM0095sWIVfErKBN95tXCepeTuI50HvdCv2qCEY6HH879YY5K5XjlzAFjWK5+pym4dm1MeNhyXuTaoPDK3eg/NBk/myJ5sMkMD2wQ/c7v4oDIU4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727158756; c=relaxed/simple;
-	bh=loQzfQmJhsQ0pWkbcGsa188ZKhzzVpYxkEQOWXeanRE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m+mbpIJp/W5ohSix/RjG9BwWFFY6+jyp55LP8zN/bhWICruuS2T8oGBJKsbQQc908PYHBhDiU0P5RRDs4xnHh+SbHopvjddxEuxoZazmjOuon2Ce/K28Cy4tgw8wuaNYAsMXFq2E6AAx/g8kjV5iLJ/QLs05JEbajo+h7uVOClI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ie20jkRH; arc=fail smtp.client-ip=40.107.244.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=M4mv6/+AFj3wmmVga4B2gDOklPzqnzGqRxmOaHC/4FKbbSNJ72Y4AexrRcRzx7lNj2184s1vU8S2GAl0o8UngLBIl9a7vaMzztuRJHHKHHPYbPlEw8107q1nrdO/9N2s8kZ+7Ln59TkQnZP6tHpslz3D6CKtKb57oPcs8K4lxFtY/9/HO19w/6mHSrsDsxaYjLdSlVBMPJPrwdoARVk5CUQuztXuHgA+oUdaVqQgNrlJAKWt7y7qrwWzgaTmXYOzj7BNmilc5MI9Ph6Pmt9OgnlBXHfdO1aPAHq25rkHSfaPkyuEnYKF7dudFWbRhZtGYcY4tO7/rBFgxLAKd1GR5g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cf4LILkITo6sRTgwpXVGJGnK3u/PXFXhO0mgTbTkqgE=;
- b=yqRqe7Gv+1+rYRCPk21foZbjH+dt1j/HeE0Iz4KdxXRU0mpVCPaZmX2WCCnclcVwMuLNEZvNrzT1s3TkgkSK/ARFhBxI2+WYMzBMQotObSRIHFvlgOqafDWuuvHooA7eoI7wLC3c7WEx8Z9RdnMybm63pdPWtSRj4lIXFA6yuK3446sN/DeS62Y+HPkqU+3/vQH+ot4J0nUZyTKJqcjKtE1G8bOtW8ZXadnx/rc9t6mqCKpctyAphS8HjWF+Z/33093tzjcLTbrPT5FgQlTOwVGxIeHULigNGgnZlivSA5VOEfe3PcC8i9hV4girG1VIu2F+nbl1MyPreFc0BjFDYQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cf4LILkITo6sRTgwpXVGJGnK3u/PXFXhO0mgTbTkqgE=;
- b=ie20jkRHrK/WxsWvNiUMXvlHDLdwbg+5LqWGZtS0h7pr2i71yQ6Tc5Y/dZPw57G/4hTTwXgTZ5ewOZkaU84I8PeTHJNForn5L2rVhAnQJ7QAiITy4S2UtNKINoXwAjcf3TCazXE8ZgtssS4m+MS4ZJzVZIU6uvTbw6U3+JLYQ2s=
-Received: from SA9PR13CA0056.namprd13.prod.outlook.com (2603:10b6:806:22::31)
- by MW5PR12MB5597.namprd12.prod.outlook.com (2603:10b6:303:192::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.27; Tue, 24 Sep
- 2024 06:19:11 +0000
-Received: from SN1PEPF0002BA50.namprd03.prod.outlook.com
- (2603:10b6:806:22:cafe::e2) by SA9PR13CA0056.outlook.office365.com
- (2603:10b6:806:22::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24 via Frontend
- Transport; Tue, 24 Sep 2024 06:19:10 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SN1PEPF0002BA50.mail.protection.outlook.com (10.167.242.73) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7918.13 via Frontend Transport; Tue, 24 Sep 2024 06:19:10 +0000
-Received: from vijendar-X570-GAMING-X.amd.com (10.180.168.240) by
- SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 24 Sep 2024 01:19:06 -0500
-From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-To: <broonie@kernel.org>
-CC: <alsa-devel@alsa-project.org>, <lgirdwood@gmail.com>, <perex@perex.cz>,
-	<tiwai@suse.com>, <Basavaraj.Hiregoudar@amd.com>,
-	<Sunil-kumar.Dommati@amd.com>, <venkataprasad.potturu@amd.com>,
-	<linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Vijendar
- Mukunda" <Vijendar.Mukunda@amd.com>
-Subject: [PATCH V2 9/9] ASoC: amd: acp: remove unused variable from acp platform driver
-Date: Tue, 24 Sep 2024 11:48:21 +0530
-Message-ID: <20240924061821.1127054-10-Vijendar.Mukunda@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240924061821.1127054-1-Vijendar.Mukunda@amd.com>
-References: <20240924061821.1127054-1-Vijendar.Mukunda@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB3A79B8E;
+	Tue, 24 Sep 2024 06:20:16 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8BBC4779F
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 06:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727158815; cv=none; b=X/Wxc3r2bXmQbJDbofVy0bR70FbTl/rp6iiImO2mn0kArXZBbSTnDQsnqvXsXH4YboZoepw11t/E1M6gr3jU+n4LGQO9UAnlkhbw5kzp54nCYcRoxBDXcRkwd4BI51pX0d0hCSuqapWNynvTz8xvVMeLDb604O5gVUCMnUzZTwM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727158815; c=relaxed/simple;
+	bh=5FQDDYs0nRz+Oq1YU4mWw8FOlIj9pbeglI4+dvIYkZ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fZEPpbpr8kbwJzsyD9tqM3UPmW/bDNlBlgnozOcrvJqsY6/p0LFd3/urbTtxNbWPZh1D4BhcYbCypIe0B3RobUi6T/hBQEv1tUrlJyMFI/6XcsbkG4f7UXqDcnH5HlF5UJyF+BxrRzSev3msitRPkuttVXW1GhO3Tf71AEVl0iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8AxbeoTWvJmJb4NAA--.31651S3;
+	Tue, 24 Sep 2024 14:20:03 +0800 (CST)
+Received: from linux.localdomain (unknown [113.200.148.30])
+	by front2 (Coremail) with SMTP id qciowMCxbccSWvJmJHwQAA--.2260S2;
+	Tue, 24 Sep 2024 14:20:02 +0800 (CST)
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] LoongArch: Enable generic CPU vulnerabilites support
+Date: Tue, 24 Sep 2024 14:20:01 +0800
+Message-ID: <20240924062001.31029-1-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,156 +46,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002BA50:EE_|MW5PR12MB5597:EE_
-X-MS-Office365-Filtering-Correlation-Id: dead6033-bd9f-4ac2-6b91-08dcdc60cde5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?wakeq3q+lZfy6dpyd1Pg+0618ezgobtFHCk+SR/fFVIHrfXFxSsFeT45mk36?=
- =?us-ascii?Q?76nFkB4PshRsj/kXWOIytJ7da/bm2shRuwkONW7p1q39LhTtC0ssxBq2dEp/?=
- =?us-ascii?Q?E1tb/EZ1i5njDlgoB88GWAEznkkG2PpxSDuuSwSbl9hORMZR4HVsGO3/H8Zq?=
- =?us-ascii?Q?uMnSN9Dmp32MbE+6swq9SJxyiRXOe/dC46OTl4oS0y7FoQ8gwgomoeMR1L9e?=
- =?us-ascii?Q?r1UpWDI3+0Xccpw10w729EYMCr81aulvfe2tGgVRreWYx0flGVJ1NjOiHgXL?=
- =?us-ascii?Q?e9UdlsqD39aBYNcybXPp03aZqDhaom2W2yugmpyAxl6GZppm4hjKs2hqXRV8?=
- =?us-ascii?Q?wgCOzglzwwznGAqKlamCiiDn9pp2BLqiCZw2J6QYwrWADH8Zxc2CfkVDvUZA?=
- =?us-ascii?Q?z6pOrW3qASK3EglDb2vMDwPHD54b3QIBvJtYumEOmvUJQ/apaSk2VTPnDtCo?=
- =?us-ascii?Q?IrX/Mbi60ZcknlZ+swjoj6qDVBRaDr7/vpBXsLa3I2VqGL1bl7ZuDLpfvuDr?=
- =?us-ascii?Q?XdgtVRGyHdi35UNFnAYZz+SJG3GL4QaRD6+7YnIEjCLeJQbjS4fl2LdnqoKx?=
- =?us-ascii?Q?Ce4Alr4u1fzybALGG70F3F1boDpHMH0Aq0IqSR8BNmPgj5bbcTiZa6Pywini?=
- =?us-ascii?Q?t1AD6frl8jLrj540JNlB/wU5EgY/S8biHsmxXW2vVGbW2TePCtse/hx+Q4OM?=
- =?us-ascii?Q?2E/3qZgXsVOHLcwHjIwp51QlSeP4SypPr4bzzAmDrzV+Z5YQCjzDe2yjNaZ+?=
- =?us-ascii?Q?4jR9LVt46de/TIy+ohKYpyEfhZEhOta9TGh9a4wlulT0OF+Wjk138wo/C9Pj?=
- =?us-ascii?Q?2HsDsMoiBmHqlsrtES1V0fLRzKeP4vXBasrfLU+ihFjspE7OUIoLcUGZ56DV?=
- =?us-ascii?Q?ovaDsEsvoJ9kQVhf3QYiJJCVumJ8E9yWOtHT0Mi6p3jDTz+eRO69SdjWTjKs?=
- =?us-ascii?Q?usbK7UsH9CqSobjTjw8FQt9RziCZztvJDrqDwrDVHyJtBQ7XolOCnMaRrljO?=
- =?us-ascii?Q?r9I1g5Nz3+kVh6U8PEEr/w4+Hku/GM+T+ZKZnMBgF9PTJSHp1HQ96LWuOIT2?=
- =?us-ascii?Q?oovSUygOZ01xIv5PmHjURm4vx74zzZrcppydeFC09XGz7y3pYnKqxJmSW+0o?=
- =?us-ascii?Q?bLaQyYEU/OFcD1/t3Hlhxu93AKcFznohY23wywB/KHJ6ug8LpT92UOGogfOS?=
- =?us-ascii?Q?P061yl6xAlcR/FKiIe2ui0Bcri+FnG2tS8LAGOy5/lZx1/KwD63cuAkFphP1?=
- =?us-ascii?Q?FDXpbueNPykc+va8h8ipFGZcO0G8ZeIfjpc+KfZ0G9cQk8LDJW4YEwEU9Pt2?=
- =?us-ascii?Q?6iUb2jhNlYu9MwdQIVuqr0WH1vsCEHcD+y2tQThhWp2bRYyCVJILUbxuof2u?=
- =?us-ascii?Q?GAj1Q5+bAXWwtFsRoXGqXX+P6d2Ot6EPH+W2G0maaQBkEt05CQl4Nafy3zql?=
- =?us-ascii?Q?jdgLZ+hbm6RfDXFhc5BhOqRof/wAlDJ+?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2024 06:19:10.8166
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: dead6033-bd9f-4ac2-6b91-08dcdc60cde5
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002BA50.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR12MB5597
+X-CM-TRANSID:qciowMCxbccSWvJmJHwQAA--.2260S2
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7ZFyDAFy8XF4kZFW3tFy5Awc_yoW8tF15pF
+	ZYyr1SqrW7JF4xJrnF9a48GFWUX34kKa1fXryqyrW8GayfCryUWw4fJr13t3WjvrZ8Gayf
+	ZayFgFWSqF4UZagCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUkFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
+	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv
+	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2
+	Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s02
+	6x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAKI48JMIIF0x
+	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE
+	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
+	kF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j1WlkUUUUU=
 
-Remove 'platform' variable from acp platform driver private data
-structure. For platform differentiation, ACP pci revision id being
-used through out the code. As platform variable is no longer used in
-code, drop the code corresponding to 'platform' variable.
+Currently, many architectures support generic CPU vulnerabilites,
+such as x86, arm64 and riscv:
 
-Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+  commit 61dc0f555b5c ("x86/cpu: Implement CPU vulnerabilites sysfs functions")
+  commit 61ae1321f06c ("arm64: enable generic CPU vulnerabilites support")
+  commit 0e3f3649d44b ("riscv: Enable generic CPU vulnerabilites support")
+
+All LoongArch CPUs (not only LS3A5000) implement a special mechanism
+in the processor core to prevent "Spectre" and "Meltdown" attacks, so
+it can enable generic CPU vulnerabilites support for LoongArch too.
+
+Without this patch, there are no user interfaces of vulnerabilities
+to check on LoongArch. The output of those files reflects the state
+of the CPUs in the system, the output value "Not affected" means
+"CPU is not affected by the vulnerability".
+
+Before:
+
+  # cat /sys/devices/system/cpu/vulnerabilities/spec_rstack_overflow
+  cat: /sys/devices/system/cpu/vulnerabilities/spec_rstack_overflow: No such file or directory
+  # cat /sys/devices/system/cpu/vulnerabilities/spec_store_bypass
+  cat: /sys/devices/system/cpu/vulnerabilities/spec_store_bypass: No such file or directory
+  # cat /sys/devices/system/cpu/vulnerabilities/meltdown
+  cat: /sys/devices/system/cpu/vulnerabilities/meltdown: No such file or directory
+
+After:
+
+  # cat /sys/devices/system/cpu/vulnerabilities/spec_rstack_overflow
+  Not affected
+  # cat /sys/devices/system/cpu/vulnerabilities/spec_store_bypass
+  Not affected
+  # cat /sys/devices/system/cpu/vulnerabilities/meltdown
+  Not affected
+
+Link: https://www.loongson.cn/EN/news/show?id=633
+Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
 ---
- sound/soc/amd/acp/acp-mach.h      | 8 --------
- sound/soc/amd/acp/acp-rembrandt.c | 1 -
- sound/soc/amd/acp/acp-renoir.c    | 1 -
- sound/soc/amd/acp/acp63.c         | 1 -
- sound/soc/amd/acp/acp70.c         | 5 -----
- sound/soc/amd/acp/amd.h           | 1 -
- 6 files changed, 17 deletions(-)
+ arch/loongarch/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/amd/acp/acp-mach.h b/sound/soc/amd/acp/acp-mach.h
-index 414d0175988b..f94c30c20f20 100644
---- a/sound/soc/amd/acp/acp-mach.h
-+++ b/sound/soc/amd/acp/acp-mach.h
-@@ -53,14 +53,6 @@ enum codec_endpoints {
- 	ES83XX,
- };
- 
--enum platform_end_point {
--	RENOIR = 0,
--	REMBRANDT,
--	ACP63,
--	ACP70,
--	ACP71,
--};
--
- struct acp_mach_ops {
- 	int (*probe)(struct snd_soc_card *card);
- 	int (*configure_link)(struct snd_soc_card *card, struct snd_soc_dai_link *dai_link);
-diff --git a/sound/soc/amd/acp/acp-rembrandt.c b/sound/soc/amd/acp/acp-rembrandt.c
-index 065ac13b2220..008d97598b62 100644
---- a/sound/soc/amd/acp/acp-rembrandt.c
-+++ b/sound/soc/amd/acp/acp-rembrandt.c
-@@ -227,7 +227,6 @@ static int rembrandt_audio_probe(struct platform_device *pdev)
- 	adata->dai_driver = acp_rmb_dai;
- 	adata->num_dai = ARRAY_SIZE(acp_rmb_dai);
- 	adata->rsrc = &rsrc;
--	adata->platform = REMBRANDT;
- 	adata->acp_rev = chip->acp_rev;
- 	adata->flag = chip->flag;
- 	adata->is_i2s_config = chip->is_i2s_config;
-diff --git a/sound/soc/amd/acp/acp-renoir.c b/sound/soc/amd/acp/acp-renoir.c
-index f372a56a0a17..166f1efacf1d 100644
---- a/sound/soc/amd/acp/acp-renoir.c
-+++ b/sound/soc/amd/acp/acp-renoir.c
-@@ -185,7 +185,6 @@ static int renoir_audio_probe(struct platform_device *pdev)
- 	adata->dai_driver = acp_renoir_dai;
- 	adata->num_dai = ARRAY_SIZE(acp_renoir_dai);
- 	adata->rsrc = &rsrc;
--	adata->platform = RENOIR;
- 	adata->acp_rev = chip->acp_rev;
- 	adata->flag = chip->flag;
- 
-diff --git a/sound/soc/amd/acp/acp63.c b/sound/soc/amd/acp/acp63.c
-index f0c516ccf96b..e0b86132eb95 100644
---- a/sound/soc/amd/acp/acp63.c
-+++ b/sound/soc/amd/acp/acp63.c
-@@ -237,7 +237,6 @@ static int acp63_audio_probe(struct platform_device *pdev)
- 	adata->dai_driver = acp63_dai;
- 	adata->num_dai = ARRAY_SIZE(acp63_dai);
- 	adata->rsrc = &rsrc;
--	adata->platform = ACP63;
- 	adata->acp_rev = chip->acp_rev;
- 	adata->flag = chip->flag;
- 	adata->is_i2s_config = chip->is_i2s_config;
-diff --git a/sound/soc/amd/acp/acp70.c b/sound/soc/amd/acp/acp70.c
-index db5dd64969b0..3e4fd113a8a4 100644
---- a/sound/soc/amd/acp/acp70.c
-+++ b/sound/soc/amd/acp/acp70.c
-@@ -210,11 +210,6 @@ static int acp_acp70_audio_probe(struct platform_device *pdev)
- 	adata->rsrc = &rsrc;
- 	adata->machines = snd_soc_acpi_amd_acp70_acp_machines;
- 	adata->acp_rev = chip->acp_rev;
--	if (chip->acp_rev == ACP70_PCI_ID)
--		adata->platform = ACP70;
--	else
--		adata->platform = ACP71;
--
- 	adata->flag = chip->flag;
- 	acp_machine_select(adata);
- 
-diff --git a/sound/soc/amd/acp/amd.h b/sound/soc/amd/acp/amd.h
-index dcfc29b2f072..ee69dfb10cb8 100644
---- a/sound/soc/amd/acp/amd.h
-+++ b/sound/soc/amd/acp/amd.h
-@@ -201,7 +201,6 @@ struct acp_dev_data {
- 	u32 xfer_tx_resolution[3];
- 	u32 xfer_rx_resolution[3];
- 	unsigned int flag;
--	unsigned int platform;
- };
- 
- enum acp_config {
+diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+index 6d68c5020307..4b02b0492c3b 100644
+--- a/arch/loongarch/Kconfig
++++ b/arch/loongarch/Kconfig
+@@ -84,6 +84,7 @@ config LOONGARCH
+ 	select GENERIC_CMOS_UPDATE
+ 	select GENERIC_CPU_AUTOPROBE
+ 	select GENERIC_CPU_DEVICES
++	select GENERIC_CPU_VULNERABILITIES
+ 	select GENERIC_ENTRY
+ 	select GENERIC_GETTIMEOFDAY
+ 	select GENERIC_IOREMAP if !ARCH_IOREMAP
 -- 
-2.34.1
+2.42.0
 
 
