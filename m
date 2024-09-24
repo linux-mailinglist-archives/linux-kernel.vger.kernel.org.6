@@ -1,122 +1,224 @@
-Return-Path: <linux-kernel+bounces-337766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EE5F984E9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:05:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08526984EA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:06:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D05421C21F1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:05:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B9341C208B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48710178367;
-	Tue, 24 Sep 2024 23:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB6F185B51;
+	Tue, 24 Sep 2024 23:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b="ol3TPljd";
-	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="RH2AzJEL"
-Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nqc4ac9s"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76FF43AA4
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 23:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96F5184554;
+	Tue, 24 Sep 2024 23:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727218861; cv=none; b=fK/rivClx02ZVyCGC/8a532j3gHdLLb+gyIl3pNEwZUugIxpz2JSu2yzxynxOEx5yIXmk56tu1yWOwyh1pgTHmd5BdNhxncV8CGAxBrKTKtCg8J0409vjucNZ7fg6a6ZeLc8tiaTPc6SKWIN56omXijFn7AHoO/bOnVL7JjYDfY=
+	t=1727218910; cv=none; b=qE389WR45bvAoCBxqmOydYzluqzVz/Wut8ES5BukuN2F1GHh/5YX5TmkS0Fh7AA+r0uOqN+1uEyacLFvMtfjkhq5Uz1XUJ2X3RQLy3fT9O58T4DWeTU/dhUgHMGC0MzsdZOVKDvJAKB+/dTL5N4F9yW124bLkGZv4OZfs/pxsCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727218861; c=relaxed/simple;
-	bh=2bZ2QjhUxtrcmCd1aeLBq1AehNwWii0833L9Y9DH4/A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QtMvrBSAe42x3eaad2viLrpl6vgBa0C2RPuM152HuMpGbUAL8VNmAD+RwQsDA1vkLM6iBElucVkQ/S8gOit/5SJ9+3e2lQsBj2nJ05h3nADfgqS6bfjVm76LaluV49CQbxPV07/80ALmgklvWctj03xlwbyYsFMqqELnErq8Srk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev; spf=pass smtp.mailfrom=lkcamp.dev; dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b=ol3TPljd; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=RH2AzJEL; arc=none smtp.client-ip=34.202.193.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lkcamp.dev
-DKIM-Signature: a=rsa-sha256; b=ol3TPljdANgRxYCl1bOK58yVha0axzwNJvjTt9HNn9MpLlLEmYhES44en+QhQX54l6t+IgwYZfenDqCsiUn0dECQQxY9HAQwKStH+MlBeqrDfnX6g9Wdm6241dA7EIMIeBxUCziBeF7cvTCeO37vL/b4X8GAB0bP6BUXIvCcmh5AZdm88ALAxUXiTaF98oCbjbaRJe7vnrrK2gIAtt25FADoz+x11f+R4txHRKjpdioCT/nx57AaEoLn1BItIuXuSuURMOW+q3Qb/Qn0iu9F2LeJjFws2HFvkzFBpmoj41ftkbHVXdYmSNC51ROgAY+z0pe4Svd32FvC2MOEKOTppw==; s=purelymail1; d=lkcamp.dev; v=1; bh=2bZ2QjhUxtrcmCd1aeLBq1AehNwWii0833L9Y9DH4/A=; h=Received:Date:Subject:To:From;
-DKIM-Signature: a=rsa-sha256; b=RH2AzJELkw7bEHbwbJp/mkojFjcLtwYuK7fegZT6ybXDtHfwakRDi5zDIW6m4MQ97IcSp46RlvPU5Ezmfh0PcYr2E4Aqqz5VXsSRywkhJTvbWwKbY6PwHD4joByEqP99KbnnRsx1hHng/lezBXLiogkdTe7W0R2SiA8HlnZXyPF4N1V28/4hpd8hGOiV4mQHEd6iay82GCQ0vYWgTFrECUHtyOxVX5r9++JYg8e8Pf0/QvDjuYvPtEMVK3uUhWR5oT6YjyPj5SXqsKS7zxqD/18rPTCAMe7m7/rFVe6Edaj3YSBNuQCPedT3dvnbkE13oL+4H5cZULCboU3JejNLqg==; s=purelymail1; d=purelymail.com; v=1; bh=2bZ2QjhUxtrcmCd1aeLBq1AehNwWii0833L9Y9DH4/A=; h=Feedback-ID:Received:Date:Subject:To:From;
-Feedback-ID: 40580:7130:null:purelymail
-X-Pm-Original-To: linux-kernel@vger.kernel.org
-Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 2145792936;
-          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Tue, 24 Sep 2024 23:00:30 +0000 (UTC)
-Message-ID: <6d3025ed-e00d-4f8a-bab7-256cf78774af@lkcamp.dev>
-Date: Tue, 24 Sep 2024 20:00:09 -0300
+	s=arc-20240116; t=1727218910; c=relaxed/simple;
+	bh=iCpstCu67Jc2MNXnXgMRYbHpsGMR/seZfOB+2ddMqn0=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cuF6Mgxwq7qesHdXBnd+AQ0wTJYoJ0ggALTAqW6JFNWXXFqQyMrVHXAYVapvXmS1VnXBy77IahCAieXiae57nCVf3N06odFIZjKll+1sXvHeCWhbNNXNVCrWCo5YO+5SbOPia8uA+oXLZjBzlOYmmkutj5Y5NXwiaY/qwYEUycg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nqc4ac9s; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-375e5c12042so3206418f8f.3;
+        Tue, 24 Sep 2024 16:01:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727218907; x=1727823707; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=EiHP41TD7xH9XF/qUpUvxLVEqhRCLzxrTYdZWcoiVUM=;
+        b=nqc4ac9s9JB09+R/ruP233XyvLhpliVaQCRLWrqdg5AAzxGMeFTdSYWE1oUj74kCJs
+         Eleg6yTqyYZVOGte2pUqxCtxu8PJzd8//Yc2mIElVNJ2lO2lH/izwxR+NEdh1RnrOs5+
+         j4nemyUaEYvPP2t+G4At665BE1tnxZmGjf3SAn7fArNUjk8OdRnHL3QPZoCfERONVfIK
+         Baa7lvTJDYd+g+4E+YwCmazVR6ExwR+ct2wIvzbBKkHRHKMwd/H2/nBrdzacqxXlJg4c
+         lAPRR5KGWfkxzVz7FD/MEMJ1FJ2xujGB5/QjvZ76Bmkk6USLpZ5Zv9q+xSDIFt+uR1dT
+         jRzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727218907; x=1727823707;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EiHP41TD7xH9XF/qUpUvxLVEqhRCLzxrTYdZWcoiVUM=;
+        b=Cd4FtVBCMJWHSEqElrWOtUeACZzd8ksPL2keoGhfBL6BGYR8WOR+2c4y8TCO2pWebO
+         sfYU2IOr2O8BNUdFwzeZNymFF8iayIO7Jxh6+ILVGlkvRTzMVSMTlVDZSQJjNM8wrUXZ
+         OybGEo2o2KOjFPsP2a+bnZyKDFBEK977ww+5q+YcBpqSaIl1W2g04uxo8ig7+3o75ze9
+         QKEW63sKCGD/WId4GW7smTOCbkYIKuDdnGUALmwPC+hrbgPdu8Myy2ir3/lkWTIzvQXW
+         TgGdLC2MQvO67EGYJIuwhaj5WHlcQmjSbI9IyaarZgldiNpc1QGgY3Hpcw2oWDCIc1Hs
+         9f3A==
+X-Forwarded-Encrypted: i=1; AJvYcCUR3wd7BiqWCSJQVJnIFVck68iWAkAMkDTOK+jUpErjMsEwcnPewWK8cxJuzWiIdHNdxGBcDcMuZR2uJAIm@vger.kernel.org, AJvYcCVFd4W1EsR/VgKb0YW1ULEveedVZNtLJBPP2H/zvZqGyzhXMNCVmWaTOU1m2Q6oZxJTVRArhdDQrVMz@vger.kernel.org, AJvYcCWLaFwmnDK3cIEWa6bci9TYz0PfMyCdpw1yFQqnsOIQYpNNba9V6VCZKtns+q9Zf+pc8y5cZh3J+uHR1kM=@vger.kernel.org, AJvYcCX7KqQ3njwgcosJqSSUx68UHw/IB8iF81eJwXw1iscULAO/mzDtfnTMPBO7H7jHpt/1ZR1Qe1eVXpjh@vger.kernel.org, AJvYcCXJ2VOZrLLfoeH0Xq6hDsIhsRt/hT0T9BzSfORM0rR5FidsgdwTveG/9/hftWB9QKWSjJSBsA+DKRY4@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbVs0uRQRESe58yVwE5PX9+ExC2ioL3daS/JViNJVImaJ8muNR
+	Ryf8ssNtkFrhIdifxzLzkc3fDPizUxpKrjmnr6UEvpAU1UhXZ62k
+X-Google-Smtp-Source: AGHT+IHhJIoOphxVKhmWmmKjq29jIYBLCsWBccEN8ZbNLrKJ6c6VCv3EmW4t5yVT7uEqTdAjLsEgVQ==
+X-Received: by 2002:a05:6000:5:b0:374:c69b:5a16 with SMTP id ffacd0b85a97d-37cc24ca382mr433421f8f.50.1727218906570;
+        Tue, 24 Sep 2024 16:01:46 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e96a54dd4sm1345465e9.45.2024.09.24.16.01.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2024 16:01:45 -0700 (PDT)
+Message-ID: <66f344d9.050a0220.3a46fd.0723@mx.google.com>
+X-Google-Original-Message-ID: <ZvNE1qfnCfFPm6hV@Ansuel-XPS.>
+Date: Wed, 25 Sep 2024 01:01:42 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	INAGAKI Hiroshi <musashino.open@gmail.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>, Ming Lei <ming.lei@redhat.com>,
+	Li Lingfeng <lilingfeng3@huawei.com>,
+	Christian Heusel <christian@heusel.eu>, linux-block@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>
+Subject: Re: [RFC PATCH 4/4] dt-bindings: mmc: Document support for partition
+ table in mmc-card
+References: <20240923105937.4374-1-ansuelsmth@gmail.com>
+ <20240923105937.4374-5-ansuelsmth@gmail.com>
+ <20240924225343.GA413172-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/1] Add KUnit tests for lib/crc16.c
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@riseup.net>
-Cc: Brendan Higgins <brendan.higgins@linux.dev>, ~lkcamp/patches@lists.sr.ht,
- Rae Moar <rmoar@google.com>, David Gow <davidgow@google.com>,
- Andrew Morton <akpm@linux-foundation.org>, kunit-dev@googlegroups.com,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20240922232643.535329-1-vpeixoto@lkcamp.dev>
- <8291c6eb-750a-4ab2-8904-65d723d034dd@riseup.net>
-From: Vinicius Peixoto <vpeixoto@lkcamp.dev>
-Content-Language: en-US
-In-Reply-To: <8291c6eb-750a-4ab2-8904-65d723d034dd@riseup.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-MIME-Autoconverted: from 8bit to quoted-printable by Purelymail
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240924225343.GA413172-robh@kernel.org>
 
-Hi Andre=CC=81,
+On Tue, Sep 24, 2024 at 05:53:43PM -0500, Rob Herring wrote:
+> On Mon, Sep 23, 2024 at 12:59:33PM +0200, Christian Marangi wrote:
+> > Document support for defining a partition table in the mmc-card node.
+> > 
+> > This is needed if the eMMC doesn't have a partition table written and
+> > the bootloader of the device load data by using absolute offset of the
+> > block device. This is common on embedded device that have eMMC installed
+> > to save space and have non removable block devices.
+> 
+> What if the partition table is written? What does one use? One of them 
+> or both and merge them?
+>
 
-On 9/24/24 6:33 PM, Andr=C3=A9 Almeida wrote:
-> Hey!
->=20
-> On 9/23/24 01:26, Vinicius Peixoto wrote:
->> Hi all,
->>
->> This patch was developed during a hackathon organized by LKCAMP [1],
->> with the objective of writing KUnit tests, both to introduce people to
->> the kernel development process and to learn about different subsystems
->> (with the positive side effect of improving the kernel test coverage, of
->> course).
->>
->> We noticed there were tests for CRC32 in lib/crc32test.c and thought it
->> would be nice to have something similar for CRC16, since it seems to be
->> widely used in network drivers (as well as in some ext4 code).
->>
->> Although this patch turned out quite big, most of the LOCs come from
->> tables containing randomly-generated test data that we use to validate
->> the kernel's implementation of CRC-16.
-> Can you share how you created the tables? Given that is impossible to=20
-> review the table itself, at least people will be able to see how they=20
-> got created at least.
+Hi Rob,
+thanks a lot for the review!
 
-Yes, of course, that was an oversight on my part. I'll make sure to add=20
-a more detailed explanation in the cover letter/commit message for the=20
-next revisions. Thanks for the suggestion!
+The block code parse partition table with some kind of priority system.
 
-This test follows lib/crc32test.c very closely; the data table is filled=20
-with 4096 random bytes, and the idea is to calculate several checksums=20
-within it by randomly choosing a i) start offset within the data buffer,=20
-ii) number of bytes after the start offset and iii) input CRC.
+Example if cmdline is found, then anything else is ignored. (simple
+logic, first parser that match an expected structure win)
 
-The checksums for the randomly-generated test cases were calculated=20
-using a reference implementation [1] and this test compares them against=20
-the values yielded by the kernel's implementation.
+We apply the same logic. So with partition table defined in OF, then
+anything written will be ignored.
 
-Thanks,
-Vinicius
+> > eMMC provide a generic disk for user data and if supported also provide
+> > one or two additional disk (boot0 and boot1) for special usage of boot
+> > operation where normally is stored the bootloader or boot info.
+> > 
+> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > ---
+> >  .../devicetree/bindings/mmc/mmc-card.yaml     | 75 +++++++++++++++++++
+> >  1 file changed, 75 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/mmc/mmc-card.yaml b/Documentation/devicetree/bindings/mmc/mmc-card.yaml
+> > index fd347126449a..fab9fa5c170a 100644
+> > --- a/Documentation/devicetree/bindings/mmc/mmc-card.yaml
+> > +++ b/Documentation/devicetree/bindings/mmc/mmc-card.yaml
+> > @@ -13,6 +13,10 @@ description: |
+> >    This documents describes the devicetree bindings for a mmc-host controller
+> >    child node describing a mmc-card / an eMMC.
+> >  
+> > +  It's possible to define a fixed partition table for an eMMC for the user
+> > +  partition and one of the 2 boot partition (boot0/boot1) if supported by the
+> > +  eMMC.
+> > +
+> >  properties:
+> >    compatible:
+> >      const: mmc-card
+> > @@ -26,6 +30,48 @@ properties:
+> >        Use this to indicate that the mmc-card has a broken hpi
+> >        implementation, and that hpi should not be used.
+> >  
+> > +  "#address-cells": true
+> > +
+> > +  "#size-cells": true
+> > +
+> > +patternProperties:
+> > +  "^partitions(-boot[01])?$":
+> > +    type: object
+> 
+> You don't define this is fixed partitions with a fixed-partitions 
+> compatible. Why not reuse that? Then this all goes away with a 
+> reference to it.
+> 
 
-[1] https://github.com/lammertb/libcrc/blob/master/src/crc16.c
+My problem is that the fixed-partition schema in MTD have some
+additional property that can't be supported.
 
->> We would really appreciate any feedback/suggestions on how to improve
->> this. Thanks! :-)
->>
->> Vinicius Peixoto (1):
->> =C2=A0=C2=A0 lib/crc16_kunit.c: add KUnit tests for crc16
->>
->> =C2=A0 lib/Kconfig.debug |=C2=A0=C2=A0 8 +
->> =C2=A0 lib/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
->> =C2=A0 lib/crc16_kunit.c | 715 +++++++++++++++++++++++++++++++++++++++++=
-+++++
->> =C2=A0 3 files changed, 724 insertions(+)
->> =C2=A0 create mode 100644 lib/crc16_kunit.c
->>
+Ideally I should define a generic schema that can be shared and then
+expand it in MTD. Any hint on the directory structure tho?
 
+Where should I put this generic schema?
+
+> > +
+> > +    properties:
+> > +      "#address-cells": true
+> > +
+> > +      "#size-cells": true
+> > +
+> > +    patternProperties:
+> > +      "@[0-9a-f]+$":
+> > +        type: object
+> > +
+> > +        properties:
+> > +          reg:
+> > +            description: partition's offset and size within the flash (in sector
+> > +              block, 512byte)
+> 
+> Units are sectors? Use bytes instead because everything else does in DT. 
+> 
+
+Ok will try to convert value to bytes internally.
+
+> > +            maxItems: 1
+> > +
+> > +
+> > +          label:
+> > +            description: The label / name for this partition.
+> > +
+> > +          read-only:
+> > +            description: This parameter, if present, is a hint that this partition
+> > +              should only be mounted read-only. This is usually used for flash
+> > +              partitions containing early-boot firmware images or data which should
+> > +              not be clobbered.
+> > +            type: boolean
+> > +
+> > +        required:
+> > +          - reg
+> > +          - label
+> > +
+> > +        additionalProperties: false
+> > +
+> > +    additionalProperties: false
+> 
+> Put the indented cases of additionalProperties/unevaluatedProperties 
+> before 'properties'. Easier to see what they apply to that way.
+> 
+
+ack.
+
+-- 
+	Ansuel
 
