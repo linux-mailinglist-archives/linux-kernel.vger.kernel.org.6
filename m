@@ -1,156 +1,163 @@
-Return-Path: <linux-kernel+bounces-336496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1375983B7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 05:16:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 391A6983B7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 05:16:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DACAC1C21C65
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 03:16:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDCF42838DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 03:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B1F1A28D;
-	Tue, 24 Sep 2024 03:16:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E586C1B977;
+	Tue, 24 Sep 2024 03:16:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YcEC5Wqy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bDx8Xax7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8002A1B85FA;
-	Tue, 24 Sep 2024 03:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE3F11CAF;
+	Tue, 24 Sep 2024 03:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727147763; cv=none; b=Aou1FJ6K72WmC/ne94CT0EcHhlDoke6eAtbGO9iFVkPew0PFRIa/MTR+Plz1+9Y/Ndi0qZ2bLB8xXSaL+8j+KAb3SALH6pylaQv0Q0ZZEGFQ/0gLWb0FJtLpSCW8iG7nkzVTDdiQsW+PV4chT2SLuztlOLwyrQIBN39iL9WEGys=
+	t=1727147806; cv=none; b=uDs91RUtdPZtvZqpNAFJ9BncCuhNb7Saii5GH2dQ1y6VkYqk6svtW9PgAeTQ70Bh+ooaI/RTj4hIL8RCY/79bCizkb2+HISI4fV71uwYU4f475xuBqB+Ohd2KtYIEy2F/bWFeJmaOuFRNwMrXF7KMho7ZKViMn9vMUrwaZb2bOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727147763; c=relaxed/simple;
-	bh=dO2hQgM5HLKyuiR7VUZ4brd4nSGoDAhmjyz/emJAvDE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B11vZ/YiI69qKLsAToLDxJ5mf9I424e/vG3eHBDkAmq2sZdJAHHNSAk1+yF8Oh+cHnsIGAmjSzWrgekYAWJU1V+NMNA4Wkg8JwMzAUtXQIj7i4iwzTSN5ZFjqL80Iy1Gs7/f74dUFlhebK4BWbIzR2N9oua7+Lzol/gXEv128DI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YcEC5Wqy; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1727147806; c=relaxed/simple;
+	bh=2mDjUtYT3nhH15SjrQEMq299lS31ef3rK5oxMVeP7TE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gpbcSYSkUSckbjctVKPG+Mo9kaXNfQDTd4JHrG3nH6bAcaopbqYkOpfTrlKA6Q8Gt+Pv5cjhc82PMlNJ/0JgSDONrP/prWOs+n2BlNQfpXoLzaMRRKnVapmXNkE8ySd9N2lgft4qCAHDU5iAuyznHrCgjW9mG7kPdwtwKJrR15M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bDx8Xax7; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727147761; x=1758683761;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=dO2hQgM5HLKyuiR7VUZ4brd4nSGoDAhmjyz/emJAvDE=;
-  b=YcEC5Wqy3dgXeD8zFdDwTdh29iNb1uqm7s9UjNLgUZCHxDzo6P3DQnBU
-   sKlbb4qQdEpok1IST47/5PcUlX+I8/zCgpCw3cdHdBBi4FBLWmdBeAXhm
-   kMIiVVCPKIjYwkhHlqms8yB//4vSJT/eDhsFNLx0LGjWMzFwfrUDmaohI
-   5gDDMbeeIbV0f9uZEoF8Nv3TBKc6B7L1DZv67qU6VhtB76bByf8BvNyEM
-   vAIuaWjkfmuf5qJfUgNpQBxM6Zru/j0m+hJOdWqZbxNCdHVLuKDkY2mxU
-   FzDYNFshxGxHfh2NfxxUo5rv5pFtf+0rHMXtF9s1lZrE96Ag/pV9C8eyw
-   A==;
-X-CSE-ConnectionGUID: v8kH9xLlSbq3WcOvr4x7FA==
-X-CSE-MsgGUID: TmQbRsxiSaKEoK5sRQHF9A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="29838269"
+  t=1727147805; x=1758683805;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=2mDjUtYT3nhH15SjrQEMq299lS31ef3rK5oxMVeP7TE=;
+  b=bDx8Xax7/hK6Ipx/8Um5kPA+BuBx1eh4ng2JO4MhXvCvzh7RyhtLPy7i
+   doz7bM/OEqZXE8phCHWXXLfAA/nKXta9nfgDM5eilQiKK8JFl/HplpS0L
+   yUe/LYf3ZWKZsc+Mz7UjZX0rB52yTRyXZSYzrbuTNHt5YJFzZL8DIf2Zo
+   Irahfnz+HK+AvHMTKociXNAH3n1PyyKsnPRpOtGhiVf0AsPWJyVBVMgOz
+   i5+IfxUO9c23hq1kqVAZNA1FADXQyah4yH/EHC2l8yR1Vgt0JkYpHUb32
+   BCeMzLx/OEsjF8GdybY9RJ+ZfepRCwg7UGupROpEWxDpEQMcHwE6JMy8T
+   Q==;
+X-CSE-ConnectionGUID: mtV7pZYZSnW5sugM2gfzaA==
+X-CSE-MsgGUID: RsFnxDj3RiGWAsb5/tXVNg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="26314452"
 X-IronPort-AV: E=Sophos;i="6.10,253,1719903600"; 
-   d="scan'208";a="29838269"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 20:16:01 -0700
-X-CSE-ConnectionGUID: XfdfgSgxRzexW0dJHeoqtA==
-X-CSE-MsgGUID: 20Bcb4OISlWsptH0jrQ11Q==
+   d="scan'208";a="26314452"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 20:16:44 -0700
+X-CSE-ConnectionGUID: ITs2l1jZRYi57OHlh3J7uw==
+X-CSE-MsgGUID: uhM6XM67SuSAGBtpL5iqIw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,253,1719903600"; 
-   d="scan'208";a="71272988"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 23 Sep 2024 20:15:57 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ssw1r-000HrX-1p;
-	Tue, 24 Sep 2024 03:15:55 +0000
-Date: Tue, 24 Sep 2024 11:15:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Shakeel Butt <shakeel.butt@linux.dev>, linux-api@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Minchan Kim <minchan@kernel.org>
-Subject: Re: [PATCH 1/2] mm/madvise: introduce PR_MADV_SELF flag to
- process_madvise()
-Message-ID: <202409241034.6ilzMh4w-lkp@intel.com>
-References: <077be0d59cb1047870a84c87c62e7b027af1c75d.1727106751.git.lorenzo.stoakes@oracle.com>
+   d="scan'208";a="71707538"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.128]) ([10.124.245.128])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 20:16:41 -0700
+Message-ID: <625485ea-d76c-4d27-b72b-f3d4c6f484b1@linux.intel.com>
+Date: Tue, 24 Sep 2024 11:16:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <077be0d59cb1047870a84c87c62e7b027af1c75d.1727106751.git.lorenzo.stoakes@oracle.com>
-
-Hi Lorenzo,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on soc/for-next linus/master v6.11 next-20240923]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Lorenzo-Stoakes/mm-madvise-introduce-PR_MADV_SELF-flag-to-process_madvise/20240924-000845
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/077be0d59cb1047870a84c87c62e7b027af1c75d.1727106751.git.lorenzo.stoakes%40oracle.com
-patch subject: [PATCH 1/2] mm/madvise: introduce PR_MADV_SELF flag to process_madvise()
-config: mips-ip32_defconfig (https://download.01.org/0day-ci/archive/20240924/202409241034.6ilzMh4w-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 8663a75fa2f31299ab8d1d90288d9df92aadee88)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240924/202409241034.6ilzMh4w-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409241034.6ilzMh4w-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from mm/madvise.c:9:
-   In file included from include/linux/mman.h:5:
-   In file included from include/linux/mm.h:2198:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from mm/madvise.c:21:
-   include/linux/mm_inline.h:47:41: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-      47 |         __mod_lruvec_state(lruvec, NR_LRU_BASE + lru, nr_pages);
-         |                                    ~~~~~~~~~~~ ^ ~~~
-   include/linux/mm_inline.h:49:22: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-      49 |                                 NR_ZONE_LRU_BASE + lru, nr_pages);
-         |                                 ~~~~~~~~~~~~~~~~ ^ ~~~
->> mm/madvise.c:1514:15: error: use of undeclared identifier 'PR_MADV_SELF'
-    1514 |         if (flags & ~PR_MADV_SELF) {
-         |                      ^
-   mm/madvise.c:1527:14: error: use of undeclared identifier 'PR_MADV_SELF'
-    1527 |         if (flags & PR_MADV_SELF) {
-         |                     ^
-   3 warnings and 2 errors generated.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [linus:master] [perf/x86/intel] 25dfc9e357:
+ kvm-unit-tests-qemu.pmu.fail
+To: Oliver Sang <oliver.sang@intel.com>
+Cc: "Liang, Kan" <kan.liang@linux.intel.com>, oe-lkp@lists.linux.dev,
+ lkp@intel.com, linux-kernel@vger.kernel.org,
+ Thomas Gleixner <tglx@linutronix.de>, Li Huafei <lihuafei1@huawei.com>,
+ linux-perf-users@vger.kernel.org
+References: <202409201525.4877023e-oliver.sang@intel.com>
+ <f272389f-8565-4bdc-8727-8b37eaa82821@linux.intel.com>
+ <ZvDvB98DW10Au8lo@xsang-OptiPlex-9020>
+ <196706e4-e892-4e73-8ba7-1fa939d8998b@linux.intel.com>
+ <ZvIoDCpLW6kX8pFw@xsang-OptiPlex-9020>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <ZvIoDCpLW6kX8pFw@xsang-OptiPlex-9020>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-vim +/PR_MADV_SELF +1514 mm/madvise.c
+On 9/24/2024 10:46 AM, Oliver Sang wrote:
+> hi, Dapeng Mi,
+>
+> On Tue, Sep 24, 2024 at 10:17:17AM +0800, Mi, Dapeng wrote:
+>> On 9/23/2024 12:31 PM, Oliver Sang wrote:
+>>> hi, Kan,
+>>>
+>>> On Fri, Sep 20, 2024 at 09:27:06AM -0400, Liang, Kan wrote:
+>>>
+>>>>> ...
+>>>>> [32mPASS[0m msr (1836 tests)
+>>>>> [31mFAIL[0m pmu (143 tests, 24 unexpected failures, 14 skipped)  <---
+>>>> Is there a list to show which checks are failed?
+>>> I attached a pmu.log.
+>>>
+>>> below failed which can pass on parent (v6.11-rc5)
+>>>
+>>> FAIL: Intel: overflow: cntr-0
+>>> FAIL: Intel: overflow: status-0
+>>> FAIL: Intel: overflow: cntr-1
+>>> FAIL: Intel: overflow: status-1
+>>> FAIL: Intel: overflow: irq-1
+>>> FAIL: Intel: overflow: cntr-2
+>>> FAIL: Intel: overflow: status-2
+>>> FAIL: Intel: overflow: cntr-3
+>>> FAIL: Intel: overflow: status-3
+>>> FAIL: Intel: overflow: irq-3
+>>> FAIL: Intel: overflow: cntr-4
+>>> FAIL: Intel: overflow: status-4
+>>> FAIL: Intel: full-width writes: overflow: cntr-0
+>>> FAIL: Intel: full-width writes: overflow: status-0
+>>> FAIL: Intel: full-width writes: overflow: cntr-1
+>>> FAIL: Intel: full-width writes: overflow: status-1
+>>> FAIL: Intel: full-width writes: overflow: irq-1
+>>> FAIL: Intel: full-width writes: overflow: cntr-2
+>>> FAIL: Intel: full-width writes: overflow: status-2
+>>> FAIL: Intel: full-width writes: overflow: cntr-3
+>>> FAIL: Intel: full-width writes: overflow: status-3
+>>> FAIL: Intel: full-width writes: overflow: irq-3
+>>> FAIL: Intel: full-width writes: overflow: cntr-4
+>>> FAIL: Intel: full-width writes: overflow: status-4
+>> Hi Oliver,
+>>
+>> What HW platform do you see this error on? 
+> it's on a Haswell desktop
+> test machine: 8 threads 1 sockets Intel(R) Core(TM) i7-4770 CPU @ 3.40GHz (Haswell) with 16G memory
+>
+>> If possible, could you please
+>> apply the previously mentioned KUT/pmu patchset and check if the issue can
+>> be fixed? Thanks.
+> do you have a repo/branch? unfortunately, our bot failed to fetch this
+> patch-set.
 
-  1502	
-  1503	SYSCALL_DEFINE5(process_madvise, int, pidfd, const struct iovec __user *, vec,
-  1504			size_t, vlen, int, behavior, unsigned int, flags)
-  1505	{
-  1506		ssize_t ret;
-  1507		struct iovec iovstack[UIO_FASTIOV];
-  1508		struct iovec *iov = iovstack;
-  1509		struct iov_iter iter;
-  1510		struct task_struct *task;
-  1511		struct mm_struct *mm;
-  1512		unsigned int f_flags;
-  1513	
-> 1514		if (flags & ~PR_MADV_SELF) {
+Please try this branch.
+https://github.com/intel-sandbox/dapengmi-kvm-unit-tests/commits/main/
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+>
+>> Dapeng Mi
+>>
+>>>
+>>>> Thanks,
+>>>> Kan
+>>>>
+>>>>> [32mPASS[0m pmu_lbr (3 tests)
+>>>>> [33mSKIP[0m pmu_pebs (1 tests, 1 skipped)
+>>>>> ...
+>>>>>
+>>>>>
+>>>>>
+>>>>> The kernel config and materials to reproduce are available at:
+>>>>> https://download.01.org/0day-ci/archive/20240920/202409201525.4877023e-oliver.sang@intel.com
+>>>>>
+>>>>>
+>>>>>
 
