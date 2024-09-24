@@ -1,203 +1,170 @@
-Return-Path: <linux-kernel+bounces-337282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1C63984811
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:54:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB938984814
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:55:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D4B5B22CC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:54:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2C64282126
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE3D1AB504;
-	Tue, 24 Sep 2024 14:53:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6BC1AB511;
+	Tue, 24 Sep 2024 14:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GOX8iNnX"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X3uj620j"
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A524D1A7249;
-	Tue, 24 Sep 2024 14:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634501AAE13;
+	Tue, 24 Sep 2024 14:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727189634; cv=none; b=EO2cmKTmF++vv8urEvrYYsMGbWjh/nSbUur1JZen5fcm/P1qBHIJtaffhRtUmee5bZisyGW5XdR624Vwnzejocdg/Qps3Y1B/wvtJXQitRUFVuxOPRFPB5MQNedIBd4yYklsY4xw6n71h9drBXBmZvdBf94B1OeFL6XYCPT3G5g=
+	t=1727189702; cv=none; b=rjjhcJBGJLtwlRktOt9TYWvXOua2kUiXZW5kqS8ij9MkfkBchzg7WJdAvB/yRaBRItJURFZAlpIj3Fb/v/6pQBE/7nnNBLg2fmnoD68uzAp6z7XFAoBmH8+S23EmgwyVc5aAWdI9NetIEOYivfXnFsq1MlvWMj7ad0hEsW6hsag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727189634; c=relaxed/simple;
-	bh=TCJLDM7gCBvwoMwYfgBNZ+Z5C02vQHEWGskPMXyLimU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
-	 References:In-Reply-To; b=hysEjnT1FzAlrbkQpweOAPPW4IdAwXv0OJFjpvHCFq3/qHUC9pBwL2aiqhZwwtX2AxE7VkWsyUJYXXrWEPM0BQAqucTNskRG1YvtLTToNa35f+zj12HT1ibTZ7aSBEJjjD0tW+j8+9Y8NUOzS82ap3cYUC9EvKwwLfIOt+SxXLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GOX8iNnX; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1306AE0014;
-	Tue, 24 Sep 2024 14:53:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1727189624;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wigSxOqNkKcKbc8lRP6tKsLp+aMKAD5JcJ5P3FL8EaI=;
-	b=GOX8iNnXPdY5HXhMnvys4sJ200DTi2dA+V956WeoyIL0rlp7yMnV83Fy8ylPb9TJB1MgBL
-	4XsVFT1++sB/rpdgGZFZIV1d7kAFYTcpbO+Jj5El4qizEigRgUVLqitjVES5t4kGvPX5yZ
-	+yeo/IMK5hffqfqWZiGIWcgqqcbhnngjjIINGChwwDqVe3xpiNn8SqC+hCD3i8B/J/nbPU
-	kfmWn5StScH1n7waqdK/3BE38XGng+FHEVgOUIfxJvVVxvyQ/AvKn5C/u11923BmGABmT7
-	nImymXPXo7hTV9Z8v2ozEuMWOA3tLrNXPYZolWW9FrhQ5qBZtq0t+mO8EjAHGQ==
+	s=arc-20240116; t=1727189702; c=relaxed/simple;
+	bh=1sduO03urr59Qi4dBbushooe5wvxEuzK+cxIfuoq6o4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eRCgmGeJ0VgNkOOGWk/+eQbOf8StcKLlmBbXMqGK93042otNVfYpatVH/y3hDXK5L4wa9iilnu4q5NEhxjEx1kK1puDPOzGy1M777W4UNJFYmHXetTygQgla+CMcLSUWAeUdAAeHe7QnXGgckJ+j/b4TbB4uLLkbDJbHVbplCEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X3uj620j; arc=none smtp.client-ip=209.85.222.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-84e8028c47eso11828241.0;
+        Tue, 24 Sep 2024 07:55:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727189699; x=1727794499; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PwWYYT9Q/cZvoSGqhJBMfjUwdvULWxIyVQqI4LWjq0s=;
+        b=X3uj620j181Qf6KkoPjyCW3DZt8RFE2kUp6pbQBgJFLO8oIRRP2yo9/dJ69ufjjk7h
+         ULu3jtKkKkLYSesUlrnvTRUSDa0vjv/Vhy0t6R1+fsaNwrt9EMFyY7/PnIPRQKpy8VQ5
+         ji3UP9IQwYBG++Mm1zWLx6DleUWrRK5/bf8+pvcU0s7JDlMkv/2tncGHn4np70UlzSx6
+         dgEav1HAlMwmChjm+K7OmTNb0aI/vUN8eC94wc6QtTPTPWF/wFntFMnwq/M5dNIzH/9v
+         NU6C4uMl7bGDx0rkOHzucABY4KMSxX3kibX81cGvfEOOuY71nlHAuWeadX76n/Vns80s
+         dnSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727189699; x=1727794499;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PwWYYT9Q/cZvoSGqhJBMfjUwdvULWxIyVQqI4LWjq0s=;
+        b=c0LEJr8NxrCql90gDNF7yDjI18chUpMmB/0s2CA4LD8g1em/Qo5fthcAXnh5YRWdxO
+         fL6Vl44kr2vFUwW4dWJ0tCx5HshLTK6X6865+neq5mSJtrezHt8hb+dm2CCE6NtZCjXJ
+         Oqk4Weqqu9z4kjhQABrgVTUF3bvBwm5BPRvIy9wB3AABOdHftJmyqgvhYdYFKaZ3Kezq
+         JR3OUPAFbs7aSInySScp2I/Ud3a7SIbtobBGUToMWii1ndwR4IfzhdX3N2SHBThV83XM
+         Zr08XFuEvwMQr3ZPg+zCmReFo24pBTch49X/DdVEPx2pMfOhqj0pToVWY3n6qLoPKduo
+         OxYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyhPaM1Qff7ZKMv/zDgY+VkeyHCl6IVzzRSa+OZzf0/y4HyDqtzOGqE+J0Ucx2OPUq0buQVNIE@vger.kernel.org, AJvYcCW7kKfSwlStQ38cq7UXOs1iY1kNbD/Jop4G6wLHukuN9yCeD2NxuXYV7s5/Cb3VEEeg4iPcGWF4ZAbgjbY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTxjTmkinMIJnw26D4mJY0dOI/ZdTXQw2yhIGxE2IDJhlh/4hV
+	mJH315W6YmL+tQ9hCTXuXJprP8M5lpWuPeOnZujfXFUxTacsI34VnPUx/V5Lqr2izg4STMtqH7P
+	Mh5pAOgl1iYgfG8XbOLONwDF2ycI=
+X-Google-Smtp-Source: AGHT+IGp2WnKifFn498aaSlEvNDjRDXiBaKVYshHt0U4VHY/6ABsUsx864I5sdsS5B5MWGauWZDHrj/ARvcN9RZhMDU=
+X-Received: by 2002:a05:6122:3c89:b0:4fc:eb15:b0f6 with SMTP id
+ 71dfb90a1353d-503e04b6397mr9904680e0c.8.1727189699122; Tue, 24 Sep 2024
+ 07:54:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 24 Sep 2024 16:53:43 +0200
-Message-Id: <D4ELMFAUQYZ7.3LXGQZJSX68UF@bootlin.com>
-To: "Stephen Boyd" <sboyd@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Michael Turquette"
- <mturquette@baylibre.com>, "Rob Herring" <robh@kernel.org>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH RESEND v3 4/4] clk: eyeq: add driver
-Cc: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Vladimir Kondratiev"
- <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
- <gregory.clement@bootlin.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>
-X-Mailer: aerc 0.18.2-0-ge037c095a049
-References: <20240730-mbly-clk-v3-0-4f90fad2f203@bootlin.com>
- <20240730-mbly-clk-v3-4-4f90fad2f203@bootlin.com>
- <586966c515e15f455973e7c55bd3ac5e.sboyd@kernel.org>
-In-Reply-To: <586966c515e15f455973e7c55bd3ac5e.sboyd@kernel.org>
-X-GND-Sasl: theo.lebrun@bootlin.com
+MIME-Version: 1.0
+References: <20240923113135.4366-1-kdipendra88@gmail.com> <20240924071026.GB4029621@kernel.org>
+In-Reply-To: <20240924071026.GB4029621@kernel.org>
+From: Dipendra Khadka <kdipendra88@gmail.com>
+Date: Tue, 24 Sep 2024 20:39:47 +0545
+Message-ID: <CAEKBCKPw=uwN+MCLenOe6ZkLBYiwSg35eQ_rk_YeNBMOuqvVOw@mail.gmail.com>
+Subject: Re: [PATCH net] net: ethernet: marvell: octeontx2: nic: Add error
+ pointer check in otx2_ethtool.c
+To: Simon Horman <horms@kernel.org>
+Cc: sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com, 
+	hkelam@marvell.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Stephen,
+Hi Simon,
 
-Only answering to questions to which I have answers.
-The rest is addressed for next revision.
-
-On Wed Sep 18, 2024 at 7:28 AM CEST, Stephen Boyd wrote:
-> Quoting Th=C3=A9o Lebrun (2024-07-30 09:04:46)
-> > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> > index 3e9099504fad..31f48edf855c 100644
-> > --- a/drivers/clk/Kconfig
-> > +++ b/drivers/clk/Kconfig
-> > @@ -218,6 +218,19 @@ config COMMON_CLK_EN7523
-> >           This driver provides the fixed clocks and gates present on Ai=
-roha
-> >           ARM silicon.
-> > =20
-> > +config COMMON_CLK_EYEQ
-> > +       bool "Clock driver for the Mobileye EyeQ platform"
-> > +       depends on 64BIT # for readq()
-> > +       depends on OF || COMPILE_TEST
+On Tue, 24 Sept 2024 at 12:55, Simon Horman <horms@kernel.org> wrote:
 >
-> What's the OF build dependency? If there isn't one please remove this
-> line.
-
-There is none (at least we have a compat layer that means we can build
-even with CONFIG_OF=3Dn). Removed in next revision.
-
+> On Mon, Sep 23, 2024 at 11:31:34AM +0000, Dipendra Khadka wrote:
+> > Add error pointer check after calling otx2_mbox_get_rsp().
+> >
 >
-> > +               *mult =3D *mult * 0x100000 + FIELD_GET(PCSR1_FRAC_IN, r=
-1);
-> > +       }
+> Hi Dipendra,
+>
+> Please add a fixes tag here (no blank line between it and your
+> Signed-off-by line).
+> > Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
+>
+> As you have posted more than one patch for this driver, with very similar,
+> not overly complex or verbose changes, it might make sense to combine them
+> into a single patch. Or, if not, to bundle them up into a patch-set with a
+> cover letter.
+>
+> Regarding the patch subject, looking at git history, I think
+> an appropriate prefix would be 'octeontx2-pf:'. I would go for
+> something like this:
+>
+>   Subject: [PATCH net v2] octeontx2-pf: handle otx2_mbox_get_rsp errors
+>
+
+If I bundle all the patches for the
+drivers/net/ethernet/marvell/octeontx2/ , will this subject without v2
+work? Or do I need to change anything? I don't know how to send the
+patch-set with the cover letter.
+
+> As for the code changes themselves, module the nits below, I agree the
+> error handling is consistent with that elsewhere in the same functions, and
+> is correct.
+>
+> > ---
+> >  .../ethernet/marvell/octeontx2/nic/otx2_ethtool.c    | 12 ++++++++++++
+> >  1 file changed, 12 insertions(+)
+> >
+> > diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
+> > index 0db62eb0dab3..36a08303752f 100644
+> > --- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
+> > +++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
+> > @@ -343,6 +343,12 @@ static void otx2_get_pauseparam(struct net_device *netdev,
+> >       if (!otx2_sync_mbox_msg(&pfvf->mbox)) {
+> >               rsp = (struct cgx_pause_frm_cfg *)
+> >                      otx2_mbox_get_rsp(&pfvf->mbox.mbox, 0, &req->hdr);
 > > +
-> > +       if (!*mult || !*div)
-> > +               return -EINVAL;
+>
+> nit: No blank line here.
+>
+> > +             if (IS_ERR(rsp)) {
+> > +                     mutex_unlock(&pfvf->mbox.lock);
+> > +                     return;
+> > +             }
 > > +
-> > +       /* Spread spectrum. */
-> > +       if (!(r1 & (PCSR1_RESET | PCSR1_DIS_SSCG))) {
-> > +               /*
-> > +                * Spread is 1/1000 parts of frequency, accuracy is hal=
-f of
-> > +                * that. To get accuracy, convert to ppb (parts per bil=
-lion).
-> > +                */
-> > +               u32 spread =3D FIELD_GET(PCSR1_SPREAD, r1);
+
+If the above blank line after the check is ok or do I have to remove
+this as well?
+
+> >               pause->rx_pause = rsp->rx_pause;
+> >               pause->tx_pause = rsp->tx_pause;
+> >       }
+> > @@ -1074,6 +1080,12 @@ static int otx2_set_fecparam(struct net_device *netdev,
+> >
+> >       rsp = (struct fec_mode *)otx2_mbox_get_rsp(&pfvf->mbox.mbox,
+> >                                                  0, &req->hdr);
 > > +
-> > +               *acc =3D spread * 500000;
 >
-> Where does 500000 come from? Half a billion?
-
-In addition to the above comment, I added this to clarify:
-
-	 * acc =3D spread * 1e6 / 2
-	 *   with acc in parts per billion and,
-	 *        spread in parts per thousand.
-
-[...]
-
+> Ditto.
+>
+> > +     if (IS_ERR(rsp)) {
+> > +             err = PTR_ERR(rsp);
+> > +             goto end;
+> > +     }
 > > +
-> > +static const struct eqc_early_match_data eqc_eyeq6h_central_early_matc=
-h_data =3D {
-> > +       .early_pll_count        =3D ARRAY_SIZE(eqc_eyeq6h_central_early=
-_plls),
-> > +       .early_plls             =3D eqc_eyeq6h_central_early_plls,
-> > +       .nb_late_clks =3D 0,
-> > +};
-> > +
-> > +/* Required early for UART. */
+> >       if (rsp->fec >= 0)
+> >               pfvf->linfo.fec = rsp->fec;
+> >       else
 >
-> Is this required for earlycon? Where is the UART not a device driver
-> that needs to get clks early?
+> --
+> pw-bot: changes-requested
 
-The UART is PL011. It is an AMBA device, those get probed before
-platform devices by of_platform_bus_create(). "pll-per" must be
-available at that time.
-
-[...]
-
-> > +static void __init eqc_init(struct device_node *np)
-[...]
-> > +       spin_lock(&eqc_list_slock);
->
-> I don't see how the spinlock provides any value. This function will run
-> before any struct devices have been created.
-
-Indeed no clash can happen. Will remove.
-
->
-> > +       list_add_tail(&priv->list, &eqc_list);
->
-> The list is also kind of unnecessary. Set a bool in the match_data and
-> move on? We could have some sort of static_assert() check to make sure
-> if there's a CLK_OF_DECLARE_DRIVER() then the bool is set in the
-> match_data for the driver. Such a design is cheaper than taking a lock,
-> adding to a list.
-
-This list's main goal is not to know what was early-inited. Its only
-reason for existence is that we want to get, at eqc_probe(), the cells
-pointer allocated at eqc_init().
-
-struct eqc_priv {
-	/* this field is why we store priv inside a linked list: */
-	struct clk_hw_onecell_data	*cells;
-	/* the rest, we don't care much: */
-	const struct eqc_early_match_data *early_data;
-	const struct eqc_match_data	*data;
-	void __iomem			*base;
-	struct device_node		*np;
-	struct list_head		list;
-};
-
-I do not see how to do that with a bool. We could put the pointer into
-the match data, but that would mean we'd have to make them writable
-(currently static const data). We are talking about a linked list with
-two items in the worst case (EyeQ6H), accessed twice.
-
-The reason we store the whole of priv: simpler code and we avoid mapping
-registers twice (once at eqc_init() and once at eqc_probe()).
-
-Can you confirm the current static linked list approach (without any
-spinlock) will be good for next revision?
-
-Thanks,
-
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+Best regards,
+Dipendra Khadka
 
