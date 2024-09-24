@@ -1,271 +1,206 @@
-Return-Path: <linux-kernel+bounces-336706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58FA9983F9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:46:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C7EF983F89
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:43:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD0F81F24195
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:46:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EC261C20A21
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD4A14EC4A;
-	Tue, 24 Sep 2024 07:46:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E9lZaGYI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657EA149C4A;
+	Tue, 24 Sep 2024 07:43:30 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D8E1494A3;
-	Tue, 24 Sep 2024 07:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A51148FF9;
+	Tue, 24 Sep 2024 07:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727163960; cv=none; b=PCC68L5DQV8O1hLkJq+7t232oCmMSfi7F6xatG8GV+Cn2z3gIpv6r5/wtNQrOzpOgkeVuHhOAvrUNmrmkPpMxiuiMzIe/LYxiTd2qX7hz8M4rwhi1/thMLTb8vcXxsQq6fiCluu35YNYQzZDT/wZy/KCCwUreOUCbCPhhfbx9W0=
+	t=1727163810; cv=none; b=bNekstcDpnPThdSg4+SBeS+MuuvdKFPBL0HlMI4zyg2N86/QDK9xB2+JQim4GCsIXITgyYIqGr7ExQKJoGyZaeW0IB0hl8hi8TLvBEu0O6x3m0eGyBJzh/4vvZGsLaTGmN7qaa7/VZOK5tPQVAdVuz+3GjKY4AoZKWWZDodcjlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727163960; c=relaxed/simple;
-	bh=zN/s5ZIuAhecqLXbsRHCxK97tt/OADzp9Qo3Ga1kqYM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qMyIS8zC7hfnn1wuyXombQVmjmEbtatdz81a4v+ad4u1vpHoMWnvHLJXcwZEwBYKznWiegx0N1MdPFMPD+TGplomVhiBUCgnyqb/sMd/b6L8RRDXuOHzldWkwEWEAQ0xfQkZWjkO+ZRyDLFmMD5ImuonTMsP2zZONw/OBOimBfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E9lZaGYI; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727163958; x=1758699958;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zN/s5ZIuAhecqLXbsRHCxK97tt/OADzp9Qo3Ga1kqYM=;
-  b=E9lZaGYIrgIMN5hI8Ev3vu1XYZwTianqO6hVO6Jo0IekYRkzkYdA2maM
-   HktYTrns0vzWiX3H95nLoW/L5pVKu4NnZ/eLA3SlmDFykfjT0aZ7fI8Zo
-   nEgtVzclCca5RZGh6lK3bPbIVnnluwT/a48JrvBelO9/9vGWZqroyVJQb
-   8EXL2z0rQxJfp8yeiesL/mOblspWxRtxOXfgGT2GYgfdZ/Yvn8wDFRiWl
-   eT64VNDTEhHflwga5r0vJOwhdKThV/1GwmOWPqnXl31zJVKkf0QL0L3th
-   D+GugaSBl8aYFvaRRVlkfxxW1+2gFoad2xabkGAenIKvJqbVBZ74WP6+N
-   Q==;
-X-CSE-ConnectionGUID: IrwE/AGHTDGCTgUuq4pEfg==
-X-CSE-MsgGUID: KBg6q63fSv2XWaMm9+Rz5w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="43660619"
-X-IronPort-AV: E=Sophos;i="6.10,253,1719903600"; 
-   d="scan'208";a="43660619"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 00:45:56 -0700
-X-CSE-ConnectionGUID: MDrG7BL6RjOAvTqv1E7zgw==
-X-CSE-MsgGUID: vS2IO8SjQAi3TO+4Q6HetQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,253,1719903600"; 
-   d="scan'208";a="71476361"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by fmviesa008.fm.intel.com with ESMTP; 24 Sep 2024 00:45:54 -0700
-Date: Tue, 24 Sep 2024 15:42:59 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Peter Colberg <peter.colberg@intel.com>
-Cc: Wu Hao <hao.wu@intel.com>, Tom Rix <trix@redhat.com>,
-	Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>,
-	linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Russ Weight <russ.weight@linux.dev>,
-	Marco Pagani <marpagan@redhat.com>,
-	Matthew Gerlach <matthew.gerlach@linux.intel.com>
-Subject: Re: [PATCH v3 7/9] fpga: dfl: store FIU type in feature platform data
-Message-ID: <ZvJtg/IFmZAiaJBT@yilunxu-OptiPlex-7050>
-References: <20240919203430.1278067-1-peter.colberg@intel.com>
- <20240919203430.1278067-8-peter.colberg@intel.com>
+	s=arc-20240116; t=1727163810; c=relaxed/simple;
+	bh=w6OIkxu0c0aRorGX0RNKZ2Zty8s6bl/Zv9aFMNGUfbk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RcT1k/0ELvTjfyTMBO2+JC6qgjaQvKPzLdj/esM1muepvBfFzj0vy9CQ4iPVF+S9esAOJJYCMCdWwWGz6x3Np5m3WhxayxUKrQ4Ou310EndeiAsoe6EnaOIbCzLtzHi7AvGTQCgwsTUkK35m+JYRYIcYHlqAPVLWlW/UHhJwb+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XCX0C3kt5z4f3l22;
+	Tue, 24 Sep 2024 15:43:07 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 645121A07B6;
+	Tue, 24 Sep 2024 15:43:24 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgCXysaabfJmX5bQCA--.4309S3;
+	Tue, 24 Sep 2024 15:43:24 +0800 (CST)
+Message-ID: <5de46c69-74f4-4955-a825-8c8970c0aa09@huaweicloud.com>
+Date: Tue, 24 Sep 2024 15:43:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240919203430.1278067-8-peter.colberg@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/10] ext4: drop ext4_update_disksize_before_punch()
+To: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ ritesh.list@gmail.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+ yukuai3@huawei.com
+References: <20240904062925.716856-1-yi.zhang@huaweicloud.com>
+ <20240904062925.716856-4-yi.zhang@huaweicloud.com>
+ <20240920161351.ax3oidpt6w6bf3o4@quack3>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20240920161351.ax3oidpt6w6bf3o4@quack3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgCXysaabfJmX5bQCA--.4309S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxWr1DtFWxtw4DJryxCr45KFg_yoWrAw48pr
+	93JFy8Kr4Fqa4DurWIgFnxZr10y3W2krW8WryfGF1Iq3sFvwn7KF10qr1ruFWUtrWkAr40
+	qF4UtFsrWr15urJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Thu, Sep 19, 2024 at 04:34:28PM -0400, Peter Colberg wrote:
-> Remove the local function feature_dev_id_type() in favour of persisting
-> the FIU type in struct dfl_feature_platform_data. Add type to struct
-> build_feature_devs_info and drop argument to build_info_create_dev().
+On 2024/9/21 0:13, Jan Kara wrote:
+> On Wed 04-09-24 14:29:18, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> Since we always write back dirty data before zeroing range and punching
+>> hole, the delalloc extended file's disksize of should be updated
+>> properly when writing back pages, hence we don't need to update file's
+>> disksize before discarding page cache in ext4_zero_range() and
+>> ext4_punch_hole(), just drop ext4_update_disksize_before_punch().
+>>
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 > 
-> Signed-off-by: Peter Colberg <peter.colberg@intel.com>
-> Reviewed-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
-> ---
->  drivers/fpga/dfl.c | 57 ++++++++++++++++++++++------------------------
->  drivers/fpga/dfl.h |  3 +++
->  2 files changed, 30 insertions(+), 30 deletions(-)
+> So when we don't write out before hole punching & company this needs to stay
+> in some shape or form. 
 > 
-> diff --git a/drivers/fpga/dfl.c b/drivers/fpga/dfl.c
-> index e644eb9fde39..9610ef1ec2ff 100644
-> --- a/drivers/fpga/dfl.c
-> +++ b/drivers/fpga/dfl.c
-> @@ -119,17 +119,6 @@ static void dfl_id_free(enum dfl_id_type type, int id)
->  	mutex_unlock(&dfl_id_mutex);
->  }
->  
-> -static enum dfl_id_type feature_dev_id_type(struct platform_device *pdev)
-> -{
-> -	int i;
-> -
-> -	for (i = 0; i < ARRAY_SIZE(dfl_devs); i++)
-> -		if (!strcmp(dfl_devs[i].name, pdev->name))
-> -			return i;
-> -
-> -	return DFL_ID_MAX;
-> -}
-> -
->  static enum dfl_id_type dfh_id_to_type(u16 id)
->  {
->  	int i;
-> @@ -379,7 +368,7 @@ dfl_dev_add(struct dfl_feature_platform_data *pdata,
->  	if (ret)
->  		goto put_dev;
->  
-> -	ddev->type = feature_dev_id_type(pdev);
-> +	ddev->type = pdata->type;
->  	ddev->feature_id = feature->id;
->  	ddev->revision = feature->revision;
->  	ddev->dfh_version = feature->dfh_version;
-> @@ -693,6 +682,7 @@ EXPORT_SYMBOL_GPL(dfl_fpga_dev_ops_unregister);
->   * @irq_table: Linux IRQ numbers for all irqs, indexed by local irq index of
->   *	       this device.
->   * @feature_dev: current feature device.
-> + * @type: the current FIU type.
->   * @ioaddr: header register region address of current FIU in enumeration.
->   * @start: register resource start of current FIU.
->   * @len: max register resource length of current FIU.
-> @@ -706,6 +696,7 @@ struct build_feature_devs_info {
->  	int *irq_table;
->  
->  	struct platform_device *feature_dev;
-> +	enum dfl_id_type type;
->  	void __iomem *ioaddr;
->  	resource_size_t start;
->  	resource_size_t len;
-> @@ -752,13 +743,12 @@ static void dfl_fpga_cdev_add_port_data(struct dfl_fpga_cdev *cdev,
->  static struct dfl_feature_platform_data *
->  binfo_create_feature_dev_data(struct build_feature_devs_info *binfo)
->  {
-> +	enum dfl_id_type type = binfo->type;
->  	struct platform_device *fdev = binfo->feature_dev;
->  	struct dfl_feature_platform_data *pdata;
->  	struct dfl_feature_info *finfo, *p;
-> -	enum dfl_id_type type;
 
-Move this line up breaks the reverse Xmas tree, seems no need.
+Thanks for taking time to review this series!
 
->  	int ret, index = 0, res_idx = 0;
->  
-> -	type = feature_dev_id_type(fdev);
->  	if (WARN_ON_ONCE(type >= DFL_ID_MAX))
->  		return ERR_PTR(-EINVAL);
->  
-> @@ -773,6 +763,7 @@ binfo_create_feature_dev_data(struct build_feature_devs_info *binfo)
->  		return ERR_PTR(-ENOMEM);
->  
->  	pdata->dev = fdev;
-> +	pdata->type = type;
->  	pdata->num = binfo->feature_num;
->  	pdata->dfl_cdev = binfo->cdev;
->  	pdata->id = FEATURE_DEV_ID_UNUSED;
-> @@ -861,14 +852,11 @@ binfo_create_feature_dev_data(struct build_feature_devs_info *binfo)
->  }
->  
->  static int
-> -build_info_create_dev(struct build_feature_devs_info *binfo,
-> -		      enum dfl_id_type type)
-> +build_info_create_dev(struct build_feature_devs_info *binfo)
->  {
-> +	enum dfl_id_type type = binfo->type;
->  	struct platform_device *fdev;
->  
-> -	if (type >= DFL_ID_MAX)
-> -		return -EINVAL;
-> -
->  	/*
->  	 * we use -ENODEV as the initialization indicator which indicates
->  	 * whether the id need to be reclaimed
-> @@ -905,7 +893,7 @@ static int build_info_commit_dev(struct build_feature_devs_info *binfo)
->  	if (ret)
->  		return ret;
->  
-> -	if (feature_dev_id_type(binfo->feature_dev) == PORT_ID)
-> +	if (binfo->type == PORT_ID)
->  		dfl_fpga_cdev_add_port_data(binfo->cdev, pdata);
->  	else
->  		binfo->cdev->fme_dev = get_device(&binfo->feature_dev->dev);
-> @@ -919,6 +907,9 @@ static int build_info_commit_dev(struct build_feature_devs_info *binfo)
->  	 */
->  	binfo->feature_dev = NULL;
->  
-> +	/* reset the binfo for next FIU */
-> +	binfo->type = DFL_ID_MAX;
-> +
->  	return 0;
->  }
->  
-> @@ -931,8 +922,7 @@ static void build_info_free(struct build_feature_devs_info *binfo)
->  	 * build_info_create_dev()
->  	 */
->  	if (binfo->feature_dev && binfo->feature_dev->id >= 0) {
-> -		dfl_id_free(feature_dev_id_type(binfo->feature_dev),
-> -			    binfo->feature_dev->id);
-> +		dfl_id_free(binfo->type, binfo->feature_dev->id);
->  
->  		list_for_each_entry_safe(finfo, p, &binfo->sub_features, node) {
->  			list_del(&finfo->node);
-> @@ -1030,7 +1020,7 @@ static int parse_feature_irqs(struct build_feature_devs_info *binfo,
->  		 * Instead, features with interrupt functionality provide
->  		 * the information in feature specific registers.
->  		 */
-> -		type = feature_dev_id_type(binfo->feature_dev);
-> +		type = binfo->type;
->  		if (type == PORT_ID) {
->  			switch (fid) {
->  			case PORT_FEATURE_ID_UINT:
-> @@ -1222,7 +1212,7 @@ static int parse_feature_port_afu(struct build_feature_devs_info *binfo,
->  	return create_feature_instance(binfo, ofst, size, FEATURE_ID_AFU);
->  }
->  
-> -#define is_feature_dev_detected(binfo) (!!(binfo)->feature_dev)
-> +#define is_feature_dev_detected(binfo) ((binfo)->type != DFL_ID_MAX)
-
-Seems too early to make this change. The 2 fields don't always align in
-this phase ..
-
->  
->  static int parse_feature_afu(struct build_feature_devs_info *binfo,
->  			     resource_size_t ofst)
-> @@ -1232,7 +1222,7 @@ static int parse_feature_afu(struct build_feature_devs_info *binfo,
->  		return -EINVAL;
->  	}
->  
-> -	switch (feature_dev_id_type(binfo->feature_dev)) {
-> +	switch (binfo->type) {
->  	case PORT_ID:
->  		return parse_feature_port_afu(binfo, ofst);
->  	default:
-> @@ -1278,6 +1268,7 @@ static void build_info_complete(struct build_feature_devs_info *binfo)
->  static int parse_feature_fiu(struct build_feature_devs_info *binfo,
->  			     resource_size_t ofst)
->  {
-> +	enum dfl_id_type type;
->  	int ret = 0;
->  	u32 offset;
->  	u16 id;
-> @@ -1299,8 +1290,14 @@ static int parse_feature_fiu(struct build_feature_devs_info *binfo,
->  	v = readq(binfo->ioaddr + DFH);
->  	id = FIELD_GET(DFH_ID, v);
->  
-> +	type = dfh_id_to_type(id);
-> +	if (type >= DFL_ID_MAX)
-> +		return -EINVAL;
-> +
-> +	binfo->type = type;
-> +
->  	/* create platform device for dfl feature dev */
-> -	ret = build_info_create_dev(binfo, dfh_id_to_type(id));
-> +	ret = build_info_create_dev(binfo);
-
-.. like here, binfo->type is valid but binfo->feature_dev may not.
+I don't fully understand this comment, please let me confirm. Do you
+suggested that we still don't write out all the data before punching /
+zeroing / collapseing(i.e. drop patch 01), so we need to keep
+ext4_update_disksize_before_punch()(i.e. also drop this patch), is
+that right?
 
 Thanks,
-Yilun
+Yi.
+
+> 
+>> ---
+>>  fs/ext4/ext4.h    |  3 ---
+>>  fs/ext4/extents.c |  4 ----
+>>  fs/ext4/inode.c   | 37 +------------------------------------
+>>  3 files changed, 1 insertion(+), 43 deletions(-)
+>>
+>> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+>> index 08acd152261e..e8d7965f62c4 100644
+>> --- a/fs/ext4/ext4.h
+>> +++ b/fs/ext4/ext4.h
+>> @@ -3414,9 +3414,6 @@ static inline int ext4_update_inode_size(struct inode *inode, loff_t newsize)
+>>  	return changed;
+>>  }
+>>  
+>> -int ext4_update_disksize_before_punch(struct inode *inode, loff_t offset,
+>> -				      loff_t len);
+>> -
+>>  struct ext4_group_info {
+>>  	unsigned long   bb_state;
+>>  #ifdef AGGRESSIVE_CHECK
+>> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+>> index 19a9b14935b7..d9fccf2970e9 100644
+>> --- a/fs/ext4/extents.c
+>> +++ b/fs/ext4/extents.c
+>> @@ -4637,10 +4637,6 @@ static long ext4_zero_range(struct file *file, loff_t offset,
+>>  		flags |= (EXT4_GET_BLOCKS_CONVERT_UNWRITTEN |
+>>  			  EXT4_EX_NOCACHE);
+>>  
+>> -		ret = ext4_update_disksize_before_punch(inode, offset, len);
+>> -		if (ret)
+>> -			goto out_invalidate_lock;
+>> -
+>>  		/* Now release the pages and zero block aligned part of pages */
+>>  		truncate_pagecache_range(inode, start, end - 1);
+>>  
+>> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+>> index 8af25442d44d..9343ce9f2b01 100644
+>> --- a/fs/ext4/inode.c
+>> +++ b/fs/ext4/inode.c
+>> @@ -3872,37 +3872,6 @@ int ext4_can_truncate(struct inode *inode)
+>>  	return 0;
+>>  }
+>>  
+>> -/*
+>> - * We have to make sure i_disksize gets properly updated before we truncate
+>> - * page cache due to hole punching or zero range. Otherwise i_disksize update
+>> - * can get lost as it may have been postponed to submission of writeback but
+>> - * that will never happen after we truncate page cache.
+>> - */
+>> -int ext4_update_disksize_before_punch(struct inode *inode, loff_t offset,
+>> -				      loff_t len)
+>> -{
+>> -	handle_t *handle;
+>> -	int ret;
+>> -
+>> -	loff_t size = i_size_read(inode);
+>> -
+>> -	WARN_ON(!inode_is_locked(inode));
+>> -	if (offset > size || offset + len < size)
+>> -		return 0;
+>> -
+>> -	if (EXT4_I(inode)->i_disksize >= size)
+>> -		return 0;
+>> -
+>> -	handle = ext4_journal_start(inode, EXT4_HT_MISC, 1);
+>> -	if (IS_ERR(handle))
+>> -		return PTR_ERR(handle);
+>> -	ext4_update_i_disksize(inode, size);
+>> -	ret = ext4_mark_inode_dirty(handle, inode);
+>> -	ext4_journal_stop(handle);
+>> -
+>> -	return ret;
+>> -}
+>> -
+>>  static void ext4_wait_dax_page(struct inode *inode)
+>>  {
+>>  	filemap_invalidate_unlock(inode->i_mapping);
+>> @@ -4022,13 +3991,9 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
+>>  	last_block_offset = round_down((offset + length), sb->s_blocksize) - 1;
+>>  
+>>  	/* Now release the pages and zero block aligned part of pages*/
+>> -	if (last_block_offset > first_block_offset) {
+>> -		ret = ext4_update_disksize_before_punch(inode, offset, length);
+>> -		if (ret)
+>> -			goto out_dio;
+>> +	if (last_block_offset > first_block_offset)
+>>  		truncate_pagecache_range(inode, first_block_offset,
+>>  					 last_block_offset);
+>> -	}
+>>  
+>>  	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
+>>  		credits = ext4_writepage_trans_blocks(inode);
+>> -- 
+>> 2.39.2
+>>
+
 
