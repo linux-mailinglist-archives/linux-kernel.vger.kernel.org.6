@@ -1,205 +1,207 @@
-Return-Path: <linux-kernel+bounces-337402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 577E3984992
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:27:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04236984998
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:27:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AF4C1C2352A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:27:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B9191F20F41
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9BD1ABEC2;
-	Tue, 24 Sep 2024 16:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCE51AB6FD;
+	Tue, 24 Sep 2024 16:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="AmMF9+vq"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011055.outbound.protection.outlook.com [52.101.70.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wua6sy3y"
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CFC41AB6EF;
-	Tue, 24 Sep 2024 16:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727195212; cv=fail; b=Dx30eI2YxRqXrE+fnIBzESM0zoGegybOOKO3oScVunIt41OBaJZLNAnR47JTiu7REGkw7bFHXPriHTsOJM4FZHQrNHeFnfT9AEko/8giPKi7zKuUPuicKpd5O5I6vNgv0k4Un8eTQR7iXGanLS/qCDkAqP61sWT5MXTe3v69iW0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727195212; c=relaxed/simple;
-	bh=mQbLwWlVk4K9zuVJ/50XHpByzaFuA2Vp8g5pQchjj2A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Z99Vq9zmQa93KHL0xBTgQAEtr6s1byLtofEZ7v23UeV2j9GBYw9y+lNJYxrzIfK+NNcZvxbKBJiVTXVxASt54+wqXxsFxkFuh71ArX0Xf5OoCtC4l/d9ld30UcR2/thHiGyKTJ/dLrLUIENMAEKFp5EwM7TKGyL1v8d3bgOIC08=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=AmMF9+vq; arc=fail smtp.client-ip=52.101.70.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=b8lS4L6XxZHizj+a/9RllZpGvgqeyR+Ij0JkAA+avElLQUgUqoGmbn4FXCfJByk9HydgWsRmOA8ieeKzIDElHlBS+v+b2DTt06zzdxmwM+c0k9im6J17XNnVCIU0LaG8IA7nyc7u6jeZMFyXZ9ddlFap6KyVa+snaHGn0JBILrSeMOvzasoZU703APqHQWYYQmEUbtTrKEPyfAQ9p4BQn3KJeMyTdTnqhXnwxSVCzkhfZbev9MUaRKPXyVpSlXXzTysx67y+KIsJvjx2YhftC06FzXAgaM2lEALXp6F0WxUSneQG6fixY9ri1CJtNZ6f7ahlMW9VfPMnnxnuv6JyCg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=n03lyZH/oibrqJE3/m6iXJQD79DGV+ppnk/R7jRTIg8=;
- b=C6prTfZWbdvXK4orZ4eNhHRCiQ6bbWicbo6Y7gnGGzbU8ndVu4RrRWUhyMNrUG+Xyf3BPw9a+C8m772jcQkuE8zKZMPoEGLT0vbF5Sk3GjYB6wdbRH1WoiIq6PeovHJd43OPFyc5033s6t+fImH5w6WfsarZzFhBONbTis3GVi0ISCs0s3zNhr3EGJdYM+yd2QvW6+aZtLeQz9Vy97nkKAmv9K5gMKQN/KHxT5tw2z8LR5i6nvbZkVekKIHKim02XHaJhWqGeybYfUXCs3sLeu4wXtc0nqq4qouBNDnoERTYlKwYlipgTsdB6XFHy8w8+uHODGklXcbFRN+JfFatKA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n03lyZH/oibrqJE3/m6iXJQD79DGV+ppnk/R7jRTIg8=;
- b=AmMF9+vqDO4g8ixX5ehwSl4cHtRBA6ajTOI/8QPMvNKR3sLZXJvEl119GIaVwlcVbvIgJ9Dj8IesJFyyF96C6argYgev6+MWYy3hIPkSJXIj06vFgj2+b14fy19i02LrN8T9pnGjeBKTgp6jo2BfegwjQQPRzcBbYMt98gWjQ/K5z7L41RlAQdhbla+rMLMP9/YAhTjCtKAG1hQlPtAbxOh4ftO23Q/JognhfLgc8exmbJyJG7uC7DpZ8d5uGR7pxKd3HPjXuZSUjtrOzi6wHC5LorgvAV1i/MOoEoa6FnIRlaCu7UAjJZFJUshzOCPcUZHGq4D/2WDk9RnPQwtJnQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by GV1PR04MB10127.eurprd04.prod.outlook.com (2603:10a6:150:1ad::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.27; Tue, 24 Sep
- 2024 16:26:42 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7982.022; Tue, 24 Sep 2024
- 16:26:42 +0000
-Date: Tue, 24 Sep 2024 12:26:33 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: l.stach@pengutronix.de, kwilczynski@kernel.org, bhelgaas@google.com,
-	lpieralisi@kernel.org, robh+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	festevam@gmail.com, s.hauer@pengutronix.de,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	kernel@pengutronix.de, imx@lists.linux.dev
-Subject: Re: [PATCH v1 8/9] PCI: imx6: Add i.MX8MQ i.MX8Q and i.MX95 PCIe PM
- support
-Message-ID: <ZvLoOUOiYIzLnA5H@lizhi-Precision-Tower-5810>
-References: <1727148464-14341-1-git-send-email-hongxing.zhu@nxp.com>
- <1727148464-14341-9-git-send-email-hongxing.zhu@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1727148464-14341-9-git-send-email-hongxing.zhu@nxp.com>
-X-ClientProxiedBy: SJ0PR13CA0221.namprd13.prod.outlook.com
- (2603:10b6:a03:2c1::16) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DAFA1B85D2;
+	Tue, 24 Sep 2024 16:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727195250; cv=none; b=XsYTj48U15tSreuL9CRUr2aw+TpfU0CS6J/FQFkNHKFUt8nvauPc+TJrQgrgDgz/J/MaOqpo4ulf7CUwaCb7g2+GFOCDhNZQqpy5ihQ7fFthAbkPNLi8zcLyC5JFYPFlDpu/m9cgLq3RETOvtm5Vp2W5NbXN0g72lP8q5+fnYIc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727195250; c=relaxed/simple;
+	bh=9HF8JVLN9dQ2kLahJhqOyeSX7NT07bcL0IEtmzfd7nw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tuHH6cUhzLS35m8ewM9jahMcGiIqiP0VrPUHi/4tnIsVOjFrVR7lNZCzWlIREJyhDdy6fa4jgZ529Rn1rhWCRKWUuhH75WW7GaWTBjXTvVuMtJ7rXMpoSLY87NkVuq1W8e0U0OEjflNK6nPzqFho6gq6b+fEOnKNou0TtWrtpmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wua6sy3y; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3a1a3090f39so5720785ab.3;
+        Tue, 24 Sep 2024 09:27:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727195248; x=1727800048; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tIKJ3tLYnjzjQAicXIIqfWRcuCEsTe9hsi8L1oCHUJE=;
+        b=Wua6sy3yuDyKsGD9hyg/EytfrvOyIXg5ppwLy8HPacWpHjmW9lAx0+L+MFz9uA4CHA
+         NUpN9gQQucZUvdmmTpFyTapKdJU6ojEl5ZVnc3pWG5LzQ72JmrmRkRuVMpUihZDuSXO1
+         35b+A/3Em7uzMeXHtVhxAimWdgC3s0FNoGL8iUF8AuvkWUaFFw/E3+ixP7Y1P8/UZq4Z
+         10XzY0Be8+jDFmJkVkP3UrLLUVWI5VT49cBP6b9/quHgNeMK5vPLv5h2BeYtBTVIlCNX
+         P8adgLgDjR/sgnvG8F28F99PCah8+vqbRjtxItaqtX3c8xI8sOyxjcbTXDTmZ9VQ+3B2
+         2S7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727195248; x=1727800048;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tIKJ3tLYnjzjQAicXIIqfWRcuCEsTe9hsi8L1oCHUJE=;
+        b=L1hivqEOjq8mMss5y4AgUoAPqzJt+Zfzjijx3/47BavIl1wvBjMEh9Q1hOp3CaP7Q/
+         lA1njvJswnVWXIw4smTxp6AS6jq0uvrxSt1vg/3fiLgM/VqYOJ9kSjk+xDTR2AMWVCBg
+         Ppji/iFpa8Qw1VzG/IFump9sOmFQNj+I0hxBqHCPkLfh6/UwHWBFpaOnADmbQqjlWaAU
+         f0P9XaEEV0NfxXN2gAxqPQ/tRCdUsQzbyWdqO6OSSv1Qff8kpmTw6GTzNoJ+5iVcZsLN
+         H4dmH95X4e9BcXXfwVGMvWpWkrvKZoUHKKhZtef72vjv2BOzQ7sZJv9DJbapHNqlJTFg
+         Z6ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUmqYAWmlc58AMA0k2w3ryenTxoUZdD8Mwf5cCUDH8bDGOh+elLkjUlDrIuPEZUI6xL0XSxzHMhQLeA@vger.kernel.org, AJvYcCWEkwxBn3i+Hzrdox93gR5RTA4f1EZGoYG6CioE6quuu2tEUnhixG2r67fgJnZXxursVb+xydYJZDJ/nL9/@vger.kernel.org, AJvYcCWxBuzmKKaPKSerRxfikAqnooJrgYN99WTUDBJ6blzRrzjexOyvD8zj3gWEStVlZnuwRzdxAqK1DoET+Y2u@vger.kernel.org
+X-Gm-Message-State: AOJu0Yya5gA+2//19cSBYo8shV89USmKDAwcZn7J9LJHDo0gzYpfsfO0
+	WnrF/YnEK1X4AiIcshNm7JQ+hpS7RZVx+Re66UTOupHkUl4Hzb7YbFrDN5R0rlFnDIkdZAUY2rC
+	Av5gU4wnA6jK9YsksXHW/2K0gNac=
+X-Google-Smtp-Source: AGHT+IG9boXyVk/1DBYrjUtsCFlsGG3k5A0clibRl0uG/AxfB6qhwgN3oUtXzCNhhSbUc7BmikIteq3R9XRZ7x4hGyY=
+X-Received: by 2002:a05:6e02:20c8:b0:3a0:9aff:5046 with SMTP id
+ e9e14a558f8ab-3a26d795471mr409395ab.15.1727195248272; Tue, 24 Sep 2024
+ 09:27:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|GV1PR04MB10127:EE_
-X-MS-Office365-Filtering-Correlation-Id: 67e5a643-1244-404c-7049-08dcdcb5ac99
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|52116014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?sPqn7rVwsXCutKjcJZyTdYNUwIuZCBlzqhZmPMAskTIHdAaqLuGnNjUQRxWc?=
- =?us-ascii?Q?QS/k7N9uTfhRkyUAXbX9SHV4xpTxiCGeRYRWsDLVjoAnIgI+fqDLj4mG5ckI?=
- =?us-ascii?Q?fPnvhIBOSIEM2q28u2jRsZRn2xy4V1vzl32ko2L2PoSORufvHhoZdN4EmPZE?=
- =?us-ascii?Q?LBuHoQ78F437S8li5dg6AlBBdaPJZvc/7sd9aFQDIePmk7wS9r4JgbPg5d97?=
- =?us-ascii?Q?Ki5VSKOHValdVRgM7KN5cw8MAcTBUsDBkgYcH8su1i1Aou5KygEuTDGFDy/T?=
- =?us-ascii?Q?a42cj7vNUlwVCAU+fDKfOO5Qk1h0JIJBHyyUvSFoN8Orca4vHULgZWyPu4SD?=
- =?us-ascii?Q?+GkMoHdkXS2IevOXpG7OW1crblg4T6/20KnI64c0WUueqBOwGEJpkAGTLs3R?=
- =?us-ascii?Q?j80moofxwphVlvpawD12MI2DI6av0ZY2UzrIBrDnmZRt/8sJKZ84fXEIaj1u?=
- =?us-ascii?Q?uV2GJdt2JvtYJlCf0OowsVVBM6usFqHM6UyTwdfvJx3T6fhjmo3JUdZMAwu0?=
- =?us-ascii?Q?bcUFqzHnqeDk3c40Ulw7Bb70EKskLxsQvSPPLsyGalY60k2VD3PMSRuuXEc/?=
- =?us-ascii?Q?oKJRh6mwyW5isP7BXuc+Ll9K3qJD4Q0yh7VDE4BcwAlEcR8JBgXZulty6gFF?=
- =?us-ascii?Q?wKwKtrVf+sqn9LEMhjYyC0at1U5k1QO5nbRIXd6jtKCNuQ5j2dMRHqu2+/cd?=
- =?us-ascii?Q?ZFSGNnjsjLktEdfrkqvYHIghZBwZNXqJL2vvusAWdG8h7cjO8s6HfNpJQ+V5?=
- =?us-ascii?Q?pthVHglN5XDlaGb4jztYNSom3IIBHmElUTbXlTVv6UHSPiZ6T98Kr7rGjXqC?=
- =?us-ascii?Q?9EzQz5WOV1nqus0QKpl7kl8tCzLPMT5R7mwcN43qBeo/UhnlrwNmQ6ugMZXl?=
- =?us-ascii?Q?hb2NIunr+bCryx3CFRP3Dy4KNzIfb3v+mKgn1MZQq5qx+QF12Ub7Na09rcjk?=
- =?us-ascii?Q?Q2WXhIoFTix7a92GJ3iKz/YxVZ95jRWUY+iZquyFt7z63KA7zPelV2n4qoAn?=
- =?us-ascii?Q?F6CiYfse+JB1me3R7Q+yTXNQlPbtM+hTj/RUx1XCTYMMRySYgISoCeAJzJLf?=
- =?us-ascii?Q?Jn9mL8swuyahkabn2Rg7lN+8dVRvEAUN3DtZH6UBlaW2mn01P83posm78gCl?=
- =?us-ascii?Q?U/Tn3zSrPaIsIA/KEkz0kriGtWMplkcjXyhT13MIzmhjRbAmvU6DETyn5B6b?=
- =?us-ascii?Q?RSVw75GZvpMliBCuu+UmolVkhxRWDW+calt6Vkip2aTrGq55jMjd2NLhj/R3?=
- =?us-ascii?Q?JjOY1EXvoGIcdXDMICpKPHg7Aed55VX+O4hTd/5/WjC9UVtp9VHezplYuajE?=
- =?us-ascii?Q?Z43YVqnfu32a0+70I1YkeGL/I1lj2XQeqDSAFDB9aq/R4g=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?qpHHe6H03PAg8AyJ9/twXEhA2PcUQOQnd3kdW2uPB8R+kul4/mCwc5Ogw784?=
- =?us-ascii?Q?teROkdNv6+lhLJ4QjhLFoo9lD3mEQ/PO9T0hY0CSBVA6BP8z5NwFu++0mXou?=
- =?us-ascii?Q?9kNESxHWtFXoVFPXOLj8i7svMtgHGINeq8Hkdal/yLkFJNCWXOQhFqKFuXDZ?=
- =?us-ascii?Q?ndmEtXQrHntlw2e/wdc+fohMbR+Xy3fQKgBxaG+koGsJ81hEgDiBbSix+JcJ?=
- =?us-ascii?Q?d3QDaIPJ6koaqT2ypPphvlyGeMaj5MPh8vwdIDAayb54dinYRyTr1DRru+nN?=
- =?us-ascii?Q?3GtZYtzSyGUiTeAHqn6nGSERvbNq38SrJpJLkGnq2WhbpUjOl+ydN+fCaHkF?=
- =?us-ascii?Q?Kx3+hmw1IKRVotl1opK1ZV4D/pezKlxEa45CuC1nOgVHk3tGPQBxl30oH1gu?=
- =?us-ascii?Q?q8xoDNn3IStrm0We14PF/323r6jduMTl7qjj/Aw55zBORKvu40QQxO8VwmGi?=
- =?us-ascii?Q?vtLCWPHTj4Fvt0F0P8FF6dgROwcIXcxtj3a61tCHszXEjxd7xv6bW5j5VCdK?=
- =?us-ascii?Q?PfNUMnedG7UD1qvjmWadyiBpOMAiFrE2EUa8YZ3Eu8PDRUG3PMZiI7nRNr+S?=
- =?us-ascii?Q?uC0SxMSV3MWshMcupaY5/oxBrtoWup7xOlUqSWYZGoBY4lhZ7QOHX9Yli+TH?=
- =?us-ascii?Q?nvSExLWgjjGvWqjrgOvbaM2iUAAfKsnuW+C2BGYRYGU1Y2FekrT7o2BrQxJc?=
- =?us-ascii?Q?nlP+y8Cer3JdAPK2ZxrMJI0+Juzo5ScYI6/DFZ2NfuAH6lMrZlAFifD0TQi0?=
- =?us-ascii?Q?PU26DmE5jRHp8Htb/DO+VrCLS6yCxMUXMLM63F8SDAtNmVIeqDEqsX9do4lf?=
- =?us-ascii?Q?pBJ6gw+DQfFkhIwo2AqMox7H64Da3LwlaXyPzq5y+0caLbJ4xuAphuYUbNW2?=
- =?us-ascii?Q?p9vkkEfICUan+w3dPxdBD/h54VQdvv82IwGKYxDwL1CupQNH39YUvm2xMTLa?=
- =?us-ascii?Q?qY1Dr4x8XCG1mrmvDtyRmfNqPkuS9FrPNWSjVT8pX1krINZMxO0vYG5YHC1L?=
- =?us-ascii?Q?MaOOD50t3R0kO1nNJJ0rrfps/mqwrMh9kco1vmmsWOuFgcfaLRDkKnaJ8gW2?=
- =?us-ascii?Q?ShG4mOEo8QZw3QuxCgnEZlAmayzmZ5Wz/XxaH4LV9l5xOs1Z0mVGv0/tZuC/?=
- =?us-ascii?Q?6NIscJv+XpLUwYGgwvvZDp+09lqWYlC0n57yUdoG+nS53mUjp/fO1OmTOo85?=
- =?us-ascii?Q?5KvT1tEELRyQwxVxjUO5Qs4wSj5AdsvEZtmYlWEDNMO88xw5FNmO4tofCsor?=
- =?us-ascii?Q?J03wopLY4+QT9OqmyQDcdw5nF8rTJKsHGvohQWBBMtzvOPxqmM8xtIva3zGr?=
- =?us-ascii?Q?dm3E+/uAb/j9iAbU5uyiqHT7NKjQvP2SNFcCRqz125WYg0Y4G/Wa47FyD+zm?=
- =?us-ascii?Q?Gp1Ygvy4qsotA4BHngEiVEUJfX2tkwv75Ppnw88eRidUajjZUi0nj4byfXN7?=
- =?us-ascii?Q?umoUrB7r4eRswf0FFNBUIh+wzqpSubM4UJtsPaBnprxC1AEITk/Z40FQyJlN?=
- =?us-ascii?Q?4Ra2n4VJp5T4YpoTei7ZJ5VtvQ6a1vgru1YxHUc1rDcdMwbIrGkErPX0akUY?=
- =?us-ascii?Q?goe9t7AWm+HZa7aOtys=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 67e5a643-1244-404c-7049-08dcdcb5ac99
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2024 16:26:42.3904
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: L5NgiWl6H/YokE5kDsqIkT+cJLhgkncJAUY6hitkgx030KJ7hDmMgZpcy1wm05g4Slz8gQlnrwIZ0/WVfR50LA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10127
+References: <20240924-preemption-a750-t-v5-0-0be2bf81c187@gmail.com> <20240924-preemption-a750-t-v5-10-0be2bf81c187@gmail.com>
+In-Reply-To: <20240924-preemption-a750-t-v5-10-0be2bf81c187@gmail.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Tue, 24 Sep 2024 09:27:16 -0700
+Message-ID: <CAF6AEGsixas1wa4k6QjjwdjKqq1hHk8RDBeL-MUHTcmMRrFDoQ@mail.gmail.com>
+Subject: Re: [PATCH v5 10/11] drm/msm/A6xx: Enable preemption for A750
+To: Antonino Maniscalco <antomani103@gmail.com>
+Cc: Sean Paul <sean@poorly.run>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Jonathan Corbet <corbet@lwn.net>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	Neil Armstrong <neil.armstrong@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 24, 2024 at 11:27:43AM +0800, Richard Zhu wrote:
-> Add iMX8MQ i.MX8Q and i.MX95 PCIe suspend/resume support.
+nit, lowercase "a6xx" in subject prefix
+
+(no need to resend just for this, I can fix it up when applying
+patches if needed.. but if you do resend pls fix that)
+
+BR
+-R
+
+On Tue, Sep 24, 2024 at 4:30=E2=80=AFAM Antonino Maniscalco
+<antomani103@gmail.com> wrote:
 >
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
-
+> Initialize with 4 rings to enable preemption.
+>
+> For now only on A750 as other targets require testing.
+>
+> Add the "preemption_enabled" module parameter to override this for other
+> A7xx targets.
+>
+> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
+> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD
+> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8450-HDK
+> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
 > ---
->  drivers/pci/controller/dwc/pci-imx6.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
+>  drivers/gpu/drm/msm/adreno/a6xx_catalog.c  | 3 ++-
+>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c      | 6 +++++-
+>  drivers/gpu/drm/msm/adreno/adreno_device.c | 4 ++++
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.h    | 1 +
+>  4 files changed, 12 insertions(+), 2 deletions(-)
 >
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 36df439d43ae..a8505cd3b53d 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -1497,7 +1497,8 @@ static const struct imx_pcie_drvdata drvdata[] = {
->  	[IMX8MQ] = {
->  		.variant = IMX8MQ,
->  		.flags = IMX_PCIE_FLAG_HAS_APP_RESET |
-> -			 IMX_PCIE_FLAG_HAS_PHY_RESET,
-> +			 IMX_PCIE_FLAG_HAS_PHY_RESET |
-> +			 IMX_PCIE_FLAG_SUPPORTS_SUSPEND,
->  		.gpr = "fsl,imx8mq-iomuxc-gpr",
->  		.clk_names = imx8mq_clks,
->  		.clks_cnt = ARRAY_SIZE(imx8mq_clks),
-> @@ -1535,13 +1536,15 @@ static const struct imx_pcie_drvdata drvdata[] = {
->  	[IMX8Q] = {
->  		.variant = IMX8Q,
->  		.flags = IMX_PCIE_FLAG_HAS_PHYDRV |
-> -			 IMX_PCIE_FLAG_CPU_ADDR_FIXUP,
-> +			 IMX_PCIE_FLAG_CPU_ADDR_FIXUP |
-> +			 IMX_PCIE_FLAG_SUPPORTS_SUSPEND,
->  		.clk_names = imx8q_clks,
->  		.clks_cnt = ARRAY_SIZE(imx8q_clks),
->  	},
->  	[IMX95] = {
->  		.variant = IMX95,
-> -		.flags = IMX_PCIE_FLAG_HAS_SERDES,
-> +		.flags = IMX_PCIE_FLAG_HAS_SERDES |
-> +			 IMX_PCIE_FLAG_SUPPORTS_SUSPEND,
->  		.clk_names = imx95_clks,
->  		.clks_cnt = ARRAY_SIZE(imx95_clks),
->  		.ltssm_off = IMX95_PE0_GEN_CTRL_3,
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/=
+msm/adreno/a6xx_catalog.c
+> index 316f23ca91671d973797f2a5b69344f376707325..0e3041b2941905f1acdc9e571=
+e0549a960a7edfa 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+> @@ -1240,7 +1240,8 @@ static const struct adreno_info a7xx_gpus[] =3D {
+>                 .gmem =3D 3 * SZ_1M,
+>                 .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
+>                 .quirks =3D ADRENO_QUIRK_HAS_CACHED_COHERENT |
+> -                         ADRENO_QUIRK_HAS_HW_APRIV,
+> +                         ADRENO_QUIRK_HAS_HW_APRIV |
+> +                         ADRENO_QUIRK_PREEMPTION,
+>                 .init =3D a6xx_gpu_init,
+>                 .zapfw =3D "gen70900_zap.mbn",
+>                 .a6xx =3D &(const struct a6xx_info) {
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/=
+adreno/a6xx_gpu.c
+> index edbcb6d229ba614be910ee70e75731538116e4a4..4760f9469613c0bf208f56be9=
+608747b5aa75606 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> @@ -2529,6 +2529,7 @@ struct msm_gpu *a6xx_gpu_init(struct drm_device *de=
+v)
+>         struct a6xx_gpu *a6xx_gpu;
+>         struct adreno_gpu *adreno_gpu;
+>         struct msm_gpu *gpu;
+> +       extern int enable_preemption;
+>         bool is_a7xx;
+>         int ret;
+>
+> @@ -2567,7 +2568,10 @@ struct msm_gpu *a6xx_gpu_init(struct drm_device *d=
+ev)
+>                 return ERR_PTR(ret);
+>         }
+>
+> -       if (is_a7xx)
+> +       if ((enable_preemption =3D=3D 1) || (enable_preemption =3D=3D -1 =
+&&
+> +           (config->info->quirks & ADRENO_QUIRK_PREEMPTION)))
+> +               ret =3D adreno_gpu_init(dev, pdev, adreno_gpu, &funcs_a7x=
+x, 4);
+> +       else if (is_a7xx)
+>                 ret =3D adreno_gpu_init(dev, pdev, adreno_gpu, &funcs_a7x=
+x, 1);
+>         else if (adreno_has_gmu_wrapper(adreno_gpu))
+>                 ret =3D adreno_gpu_init(dev, pdev, adreno_gpu, &funcs_gmu=
+wrapper, 1);
+> diff --git a/drivers/gpu/drm/msm/adreno/adreno_device.c b/drivers/gpu/drm=
+/msm/adreno/adreno_device.c
+> index cfc74a9e2646d3de76a06bd67457d69afa49e309..9ffe91920fbfb4841b28aabec=
+9fbde94539fdd83 100644
+> --- a/drivers/gpu/drm/msm/adreno/adreno_device.c
+> +++ b/drivers/gpu/drm/msm/adreno/adreno_device.c
+> @@ -20,6 +20,10 @@ bool allow_vram_carveout =3D false;
+>  MODULE_PARM_DESC(allow_vram_carveout, "Allow using VRAM Carveout, in pla=
+ce of IOMMU");
+>  module_param_named(allow_vram_carveout, allow_vram_carveout, bool, 0600)=
+;
+>
+> +int enable_preemption =3D -1;
+> +MODULE_PARM_DESC(enable_preemption, "Enable preemption (A7xx only) (1=3D=
+on , 0=3Ddisable, -1=3Dauto (default))");
+> +module_param(enable_preemption, int, 0600);
+> +
+>  extern const struct adreno_gpulist a2xx_gpulist;
+>  extern const struct adreno_gpulist a3xx_gpulist;
+>  extern const struct adreno_gpulist a4xx_gpulist;
+> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/ms=
+m/adreno/adreno_gpu.h
+> index 87098567483b69c21025b80f356e0a68f0e7f172..d1cd53f05de68b3873f355206=
+55e09e82fc40449 100644
+> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> @@ -56,6 +56,7 @@ enum adreno_family {
+>  #define ADRENO_QUIRK_LMLOADKILL_DISABLE                BIT(2)
+>  #define ADRENO_QUIRK_HAS_HW_APRIV              BIT(3)
+>  #define ADRENO_QUIRK_HAS_CACHED_COHERENT       BIT(4)
+> +#define ADRENO_QUIRK_PREEMPTION                        BIT(5)
+>
+>  /* Helper for formating the chip_id in the way that userspace tools like
+>   * crashdec expect.
+>
 > --
-> 2.37.1
+> 2.46.1
 >
 
