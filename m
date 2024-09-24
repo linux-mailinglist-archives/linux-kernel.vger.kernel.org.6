@@ -1,193 +1,112 @@
-Return-Path: <linux-kernel+bounces-337710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7586E984DE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:34:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A7E3984DE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CDD21F24452
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:34:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 446591F24E7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FC514B06E;
-	Tue, 24 Sep 2024 22:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F1413A25F;
+	Tue, 24 Sep 2024 22:34:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FUgu8IJr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="bgKA3ZkA"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE90140E30;
-	Tue, 24 Sep 2024 22:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5788A84A2C;
+	Tue, 24 Sep 2024 22:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727217174; cv=none; b=cRCZo28CJlPjc2+ueQtzwYqv9MKLKp6GeShNqXuEGSC5JRT3oMiQ/0vVN7go5+QkXNxzDw6qFwr9my5nSWUHJTO3alqwZNd2Gl0or+cN5ZViYZSwuAGsTEJ4Rf+UuIhi7B2CGd6vEzPHxhqheRjjWgM76YeUtZc17wbM3GLKTps=
+	t=1727217262; cv=none; b=BAEA7XMNo5T1y7slVW3x7bJK8ftW1TrconBb3RAZi3v9BwZGFgtan9TKlZI3v8bG4a6grYJlZhltpyx/Ha2yqqK89tH7hGLmaKqWyyObXKWiFSryQTOgV4QaUlwMQm/jMrvuWRO1BTt+ElDEwLxMn8o7hVpmsnkT0pm3Ky72w0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727217174; c=relaxed/simple;
-	bh=MMuFHHE8yf0thaTzhn4AnEOYyvt5BjWMgnjwJ6KAB1s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sx8tKoLEzHXdlqZJOqzwkp4nkDG+b9u1Cz/yV+eUSU4jgFBM9EwMTOMoYOyaBPf2vfZtDJqQSJXY2kCwh0EB72c11wYdF+VEk6BC56UhFpBN4GGnM0MUa77DfB5gi+EmHrDx0PgmVKdcnbj8iMFu3TS3WD1ItKdgy52q59PTV+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FUgu8IJr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AA66C4CEC4;
-	Tue, 24 Sep 2024 22:32:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727217174;
-	bh=MMuFHHE8yf0thaTzhn4AnEOYyvt5BjWMgnjwJ6KAB1s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FUgu8IJr+Ekzzbc91nB4TXhAvZHd+gILh+QZALXrs3n7MX83hNy+x1A7twHI4XDr2
-	 fqBbeShVgqHMB/Af0g0ANggVirXF6Hak/FrdeXnSgmhzCHXmSoE70zu4CsYS7LwjFi
-	 1ySQHpMSHbnCf2C3iPXQ7Wmjb4+9OON4faBN0m1uGsujVZH//y7FLtdEvKsZ8nRBxY
-	 VEbzylvY+eToUycMvxIVe+CDiTOi2Kf3TnWGW+53IcxfpxBem+xKPfrZn9icGWvAit
-	 sujR8UvklpNmJqROJhlCVrhdEjKFf2hwg6VFg/hwrYnaY+TxWAjbm0Ky+rwwhARgc5
-	 Kh2fs75iXpkIw==
-Date: Tue, 24 Sep 2024 17:32:53 -0500
-From: Rob Herring <robh@kernel.org>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Mike Looijmans <mike.looijmans@topic.nl>,
-	Marius Cristea <marius.cristea@microchip.com>,
-	Dumitru Ceclan <mitrutzceclan@gmail.com>,
-	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	Sergiu Cuciurean <sergiu.cuciurean@analog.com>,
-	Dragos Bogdan <dragos.bogdan@analog.com>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pwm@vger.kernel.org
-Subject: Re: [PATCH 5/7] dt-bindings: iio: adc: add ad458x
-Message-ID: <20240924223253.GA408169-robh@kernel.org>
-References: <20240923101206.3753-1-antoniu.miclaus@analog.com>
- <20240923101206.3753-6-antoniu.miclaus@analog.com>
+	s=arc-20240116; t=1727217262; c=relaxed/simple;
+	bh=0PVoR/5v1qOqDBiBN/LRx9kWjXH0Ln5f3zb09MFgbOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NRBvBm7it5CQFZ4cBEQ/zBguHXVRUrFn5auCPgs8UFrSiEOn55imHGrL6T3Cg2WoQ1feCJmSAiJrzytJO/w45WD3kblj05APJp40eyuDI2cybNgseodRSElOxZMVaDADViXGYGhPsMM1vG0d1Mz9z28D9TgRCX1T4eqzy0y1zZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=bgKA3ZkA; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1727217256;
+	bh=+PdiF74Zj3+uPdW/jYy57BKkkqQL+6Mon45WVqcPNYY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bgKA3ZkARpwKLyubUpdXUhZN1EdCyPobS8bUtW2PeapE+pGPruyuhyu13lcB0/ZIn
+	 TOB6GE6gP/P3Ny2iK3s3z9rd6J0QpNPGBADVp9unwbExbQ7nhXvVxvXC+RycljFbvD
+	 Y2JlI1llfGCoxqciBkciMscFit39aeaqUVm0gAk6ZIMSCoBO70pGQrFf+46MnzZhd0
+	 fb2YZsKb6W5E2HVgg/DHjHWpH4Mvwrc3/nniHWDeHZkrcfgBsyClk4DWTDmp1xFHnz
+	 m6TUAmRMeYxQ9UIcxnISBB6N5zuiyXHkBO4E26Koka4Yw1OCfjyN+h0EWdd2ONRYQ8
+	 hGK6Mzk4RIfew==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XCvmS5Dz8z4wb7;
+	Wed, 25 Sep 2024 08:34:15 +1000 (AEST)
+Date: Wed, 25 Sep 2024 08:34:15 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the ftrace tree
+Message-ID: <20240925083415.5cd7b465@canb.auug.org.au>
+In-Reply-To: <20240919150513.067dd727@canb.auug.org.au>
+References: <20240919150513.067dd727@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240923101206.3753-6-antoniu.miclaus@analog.com>
+Content-Type: multipart/signed; boundary="Sig_/ChejGa2Wy9F7zDIk4wndHfd";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Mon, Sep 23, 2024 at 01:10:22PM +0300, Antoniu Miclaus wrote:
-> Add devicetree bindings for ad458x DAS family.
+--Sig_/ChejGa2Wy9F7zDIk4wndHfd
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-typo: ad485x
+Hi all,
 
-Subject too.
+On Thu, 19 Sep 2024 15:05:13 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the ftrace tree, today's linux-next build (htmldocs)
+> produced this warning:
+>=20
+> Documentation/trace/debugging.rst: WARNING: document isn't included in an=
+y toctree
+>=20
+> Introduced by commit
+>=20
+>   2fcd5aff92aa ("tracing/Documentation: Start a document on how to debug =
+with tracing")
 
-> 
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> ---
->  .../bindings/iio/adc/adi,ad485x.yaml          | 82 +++++++++++++++++++
->  1 file changed, 82 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad485x.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad485x.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad485x.yaml
-> new file mode 100644
-> index 000000000000..5f5bdfa9522b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad485x.yaml
-> @@ -0,0 +1,82 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +# Copyright 2022 Analog Devices Inc.
+This commit is now in Linus' tree, but I am still seeing this warning (as o=
+f yesterday).
 
-It's 2024
+--=20
+Cheers,
+Stephen Rothwell
 
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/adc/adi,ad485x.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Analog Devices AD485X DAS family device driver
+--Sig_/ChejGa2Wy9F7zDIk4wndHfd
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-What's DAS?
+-----BEGIN PGP SIGNATURE-----
 
-This is a binding, not 'device driver'. Just drop.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbzPmcACgkQAVBC80lX
+0GwzfAf/bsocWqGz5t6NCUm+3gCFQvwbBb93MT75zxxsWNOe/I7kgAvdEMS5v2dz
+zA/MFYUWgxLE0eUdP9LnE5H6nqnhk2Ehj3YpMe88HUwWx9LDuO0hyb/znbuN5dZw
+RnYi/DtffJ5tnHIpZxhrxhpPzZRdy7I6ctrOb5ikAjsvU0y3PqHQxa4PZB2Yt6Gc
+TN9UGLp06C/fGiScZYtVUmso1rnUlNrqwlnd7zzxnWoWXjyJivKrxxPPGLJm2Z6J
+034Epg7Do+D63DnnvR6rqDqKRLG4PhxWjaNzG2HH7YK1yA+Z41aleHUb0rjQe7UP
+EKj+CI1c1x60dqUs84A8CGEq/25J7w==
+=cbt1
+-----END PGP SIGNATURE-----
 
-> +
-> +maintainers:
-> +  - Sergiu Cuciurean <sergiu.cuciurean@analog.com>
-> +  - Dragos Bogdan <dragos.bogdan@analog.com>
-> +  - Antoniu Miclaus <antoniu.miclaus@analog.com>
-> +
-> +description: |
-> +  Analog Devices AD485X DAS family
-> +
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad4858.pdf
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - adi,ad4858
-> +      - adi,ad4857
-> +      - adi,ad4856
-> +      - adi,ad4855
-> +      - adi,ad4854
-> +      - adi,ad4853
-> +      - adi,ad4852
-> +      - adi,ad4851
-> +      - adi,ad4858i
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  vcc-supply: true
-> +
-> +  vdd-supply: true
-> +
-> +  vddh-supply: true
-> +
-> +  vio-supply: true
-> +
-> +  pwms:
-> +    maxItems: 1
-> +
-> +  io-backends:
-> +    maxItems: 1
-> +
-> +  spi-max-frequency:
-> +    maximum: 100000000
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - vcc-supply
-> +  - vdd-supply
-> +  - vddh-supply
-> +  - vio-supply
-> +  - pwms
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    spi {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        adc@0{
-> +            compatible = "adi,ad4858";
-> +            reg = <0>;
-> +            spi-max-frequency = <10000000>;
-> +            vcc-supply = <&vcc>;
-> +            vdd-supply = <&vdd>;
-> +            vddh-supply = <&vddh>;
-> +            vio-supply = <&vio>;
-> +            pwms = <&pwm_gen 0 0>;
-> +            io-backends = <&iio_backend>;
-> +        };
-> +    };
-> +...
-> -- 
-> 2.46.0
-> 
+--Sig_/ChejGa2Wy9F7zDIk4wndHfd--
 
