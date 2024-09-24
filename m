@@ -1,281 +1,202 @@
-Return-Path: <linux-kernel+bounces-337241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2BA098476F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:14:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23AF8984761
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B32FB216ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:14:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D8A71C22D32
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:13:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFA61AAE0C;
-	Tue, 24 Sep 2024 14:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C451AAE0A;
+	Tue, 24 Sep 2024 14:13:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="XYw9WTE9"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="OJ0yLZXF"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2068.outbound.protection.outlook.com [40.107.22.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C021A76C6
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 14:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727187258; cv=none; b=JTR0af+RCKE9/DTAuytLGPA1PW15C+c18UZ4TVQkTDtss2wmLOfMk2imyEq5AMWtOZqpmXIVtZJTQm6gqobTEWZRyjzzacX1UM7kbDPg4RP0Xe9uyRv9tCeiQa8FssG9G4qLqW1tDotf9vvWl4uHh89scnOo05Ez+E94BSKlwt0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727187258; c=relaxed/simple;
-	bh=V/PUUsrHTTTW+3zaxNcMjyWj64r3RcrrF4rrOXWDBT4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=brGqmKbQvR8cKhYxhzfBWKAp+HkD6oV3tszK1xNJHeFulbFS81icpcq60L6RLwb+nw+IONL0M3kisdX8Cb7FuuWHNSZM+CKjj8Tj88lSlE5jyJbSNvGMTcx2C+kf1a3uxIRiIofVL6jmM9qQQz0pfdI2rVL3YrL9HOgN8tOUcfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=XYw9WTE9; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42cb5b3c57eso55758115e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:14:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727187253; x=1727792053; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cPqPAIRC4kzpvMVpwleDzWlqXHAHV6tKF2dStYetukg=;
-        b=XYw9WTE9y/XuNELY3ED+zr6P6fOTog7B3YF44ZrTWJbxXQKzCM6psHCqIwPvofXlzc
-         ms5iShVlDWTNLEZEt6rR7VZg615i94Q9AYYblYBuMsZw7y6WaJ1Vbvz+6l1HwoNUThnB
-         ehFoEVbLus2dNtT/RwMMHaKdXPFN2Js1AukRNyHQGSbsjOy0/+kcb6Fv1ejJW3217bCC
-         ssYkkEx6T/hAkW2e552DrCjbSXWtIXLqQ34++NwvueFVX5jUIGSsDDimgOs/kZwcdxTg
-         E9tJV/cPaXA/XRxvkRh1M9hh1sKCTrmumP5vgJDKF+HPro3PoHBRvluPeYJKmR2IXRds
-         PPfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727187253; x=1727792053;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cPqPAIRC4kzpvMVpwleDzWlqXHAHV6tKF2dStYetukg=;
-        b=MrEG7rjs8wtL3KjyduxsnygRilOGu81GXUXDtV7Oi2ix04TcB8PI9PxXUrA8LF5Ab9
-         KApqCC5KquZIUXgJystDSi4VN5VD0wHBpgleIs+vQ9Xa/Mo1gYAVjZtDNykL00rPjBam
-         Ujmgy1HMRbUy3dVrODC263b1J67QpyVq90C/cI0KOINqq92te1i5UGBs3i0Bl2NWkPmq
-         Bb4arIB03rRtaBAgnGERY+Cn4qrAum7Ym2OBg0QQ4v58AdHCnJOvZNbIefY1rkPV7pYP
-         ycamUIL5/il89VyDDcdTX9NwhhR7bgpyvwDv7GubYlq8d+gkIfrEa8L0+jnoOhqFSzRJ
-         +O+g==
-X-Forwarded-Encrypted: i=1; AJvYcCUYPneijERoPy2Wq+yGReKXQehXZUKzsRP/iTwmqogILNaC604IREAS6pmFcpWZzfdqiRZ3n/kF6D+Erlw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/KCxbdqMo7HX4O2evQiHz/GUsGWKwNstvdv4v0UxpDN3JKc+L
-	05j0GJuoBeqgj/xl7AmG0eT+UoeWJlEzi0NBsuaYrJ9/B/lsijLQQiP8m60IKDtK92wjArjIdeU
-	mU6Piqw==
-X-Google-Smtp-Source: AGHT+IGSYsWrKVwIe2oOw8UgUxMbvkjKQb/gIym3agpxcBX+5tTzqrrsLc3m+aKpdOUh4SQ0yvSzuA==
-X-Received: by 2002:a5d:47a8:0:b0:374:c6ad:a7c6 with SMTP id ffacd0b85a97d-37a431583e1mr10060570f8f.20.1727187252638;
-        Tue, 24 Sep 2024 07:14:12 -0700 (PDT)
-Received: from [10.2.5.157] (amontpellier-556-1-151-252.w109-210.abo.wanadoo.fr. [109.210.7.252])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e75450ec6sm157838835e9.21.2024.09.24.07.14.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Sep 2024 07:14:11 -0700 (PDT)
-Message-ID: <45f72533-ba1b-4531-890d-63d86a1f0ca4@baylibre.com>
-Date: Tue, 24 Sep 2024 16:11:20 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1549E1B85D5;
+	Tue, 24 Sep 2024 14:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727187181; cv=fail; b=AIS29O8cpOxztz3sSDsafUOqOzUq9TYC3M+87kHiJsPWpSfvHQ3Izln55PeYeRe3fxT6zXmmu3Q1wDgwmC9dQUB8waE9rKlBXqiXSbyE3DSSO5FG0RbHGZobAeXujv3gdcnLVFqJNsFJPq1D0TNK2PBVpqhh8iwwZzC2QMI6yak=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727187181; c=relaxed/simple;
+	bh=LWxsIzG7z5KZVxsjSXAphHB/rIq1Z3GftmIk+GAZKQI=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=KK8Kwo1LcOK5Ln6bRmNpglvQ8Ji5UAF7HIW1ojbIeyIh/I1gxsfyyj0kwZeLu7vy3Zqwn5+3KU4BL1Pd6CkL9PVOKkJvgVOcBjRgnSL846k3PxrjsVCLZR5sw0fIN8kRM7ICXBz6Vkym1lF5oSN3rt8EdDAieYpADPtp9o5dW7s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=OJ0yLZXF; arc=fail smtp.client-ip=40.107.22.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=brVWNr82QbWiK9WOziVXAc0TCCFTy8MoyUPdwr+IfnQc05Ij6Y7JsoPsXtT/8r8yn50s/T0j7FIVsYPCmaOtW7hm+MgP8mIoVyB7lWzgNSrb0tVBc5nRMTzAYnIoE5FSooDGHLPkJyHbimGu6yj+OepujOeVtCAc8nLOf4ze0bazvv3QQL12yd7nheOP2ioezqfzCM5bzcrXPe3T3gr+tu/v6fUSBwwmyJ7Ie+zMVVe9Icxx3aF5HaufRNmNPdAUsYaHXuO5kUZTIULNOc6cOwKLJrS2H5L4XT2cp5mMOv91Yp8YBA5++REIo7isKTrViqCldCzTwyAAgOw+vrLtcw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LA35i00sw0B6QnNVylK0dQeYbGnvE+3e9nrqcRqPABk=;
+ b=Mi4jn8heyPEfKGdi5x84fzS7rFeln9muYLjU6mMvyv67tYEpnl2suG4B3TIiaW25wIZITcwNiMZ5kJk+XZtUNtpfoiUomhLvm+xwz1B0viB/dWFloBp/bcNnGHqCDjr8J7SnTFmCzXZkBPcLn5ud05boKLnqVuftR0DSZfJzDJNrB3U0MzAQj6ajxIWDSwmkeZ0r2E5MDn9bX5653NHVNkJK/k5Ly5r/uxJ9xMAvEO727UltAJi224UsUPxc/P9ryklJX3D/c3ombFpxIvSxLYdEvMvq4+vf/JC9TDvY3gniGlQ+/U5Ee1EWx3oxM822XDGAnMpayShpCXDDn2/frQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LA35i00sw0B6QnNVylK0dQeYbGnvE+3e9nrqcRqPABk=;
+ b=OJ0yLZXFfpwfroLJSBkvwXfnZ7S15qswDVdiucGAJbXLGlDxcV7utRrGQANHH43MAOVKpkiydvVG/4c/MOG/Rf+vyJHnesvXPNCFA0eD9bUR1kQuj3kK3aa3MCe+FtUCMijuaAgnZRz3mDhIGJ97F4xQpgnQzchZZZKR82MBkPx00l3u2xNTLRiosV2IuAezjmvemZ08H8O5J7QR1RThs7xw9xDC1YasLY/BnfMXmJ2kjlMZHDQC57TzckzBh8M6NxNp1Z0mbXS3JZqozhcvoxoZ6DxJJRgZcd1hKCUK8izGNwph2jBV0QMTd7IqgFnrLfNkSTh5KTVRcMRoj084Uw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9251.eurprd04.prod.outlook.com (2603:10a6:10:352::15)
+ by DB9PR04MB9791.eurprd04.prod.outlook.com (2603:10a6:10:4ce::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.27; Tue, 24 Sep
+ 2024 14:12:50 +0000
+Received: from DU0PR04MB9251.eurprd04.prod.outlook.com
+ ([fe80::708f:69ee:15df:6ebd]) by DU0PR04MB9251.eurprd04.prod.outlook.com
+ ([fe80::708f:69ee:15df:6ebd%7]) with mapi id 15.20.7982.022; Tue, 24 Sep 2024
+ 14:12:50 +0000
+From: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chester Lin <chester62515@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Christophe Lizzi <clizzi@redhat.com>,
+	Alberto Ruiz <aruizrui@redhat.com>,
+	Enric Balletbo <eballetb@redhat.com>,
+	Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+Subject: [PATCH 0/2] add NXP LINFlexD UART clock support for S32G2/S32G3 SoC
+Date: Tue, 24 Sep 2024 17:12:45 +0300
+Message-ID: <20240924141247.132455-1-ciprianmarian.costea@oss.nxp.com>
+X-Mailer: git-send-email 2.45.2
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AM0PR07CA0009.eurprd07.prod.outlook.com
+ (2603:10a6:208:ac::22) To DU0PR04MB9251.eurprd04.prod.outlook.com
+ (2603:10a6:10:352::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 05/10] iio: backend: extend features
-To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Nuno Sa <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Olivier Moysan <olivier.moysan@foss.st.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, dlechner@baylibre.com
-References: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-0-a17b9b3d05d9@baylibre.com>
- <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-5-a17b9b3d05d9@baylibre.com>
- <60610fe3e5885033c0a1d14db6e2f576367a2e44.camel@gmail.com>
-Content-Language: en-US
-From: Angelo Dureghello <adureghello@baylibre.com>
-In-Reply-To: <60610fe3e5885033c0a1d14db6e2f576367a2e44.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9251:EE_|DB9PR04MB9791:EE_
+X-MS-Office365-Filtering-Correlation-Id: a985112a-1e20-40fb-12e2-08dcdca2f91f
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VVkyamdqdW1QMDdtMXVqb3NOU2tiMjlhVE9FUVIwY0pXZEducHEwTC8ra2tM?=
+ =?utf-8?B?cGpkSExMMXFtWGZubzVramJDRGY2YmR1anc4eFRmQ1p3OWo0OTNWdmVuOFk4?=
+ =?utf-8?B?Rnd3WEtNWFl0VXJNRjVEMzlRZnJhUHdUY0YrdnB2ZlBmRWRzSzVhVjYrUkpD?=
+ =?utf-8?B?cHBpcEIyQWM3RUdrRFM5Y0hhVGpSQ3F6UVBSOXlTYzhaQTN2WEhoUWV2cDVR?=
+ =?utf-8?B?MUI0Uk1kUWs2WnpyaVQzYTg1bGo5dUpJSFN4RmtXOFRIelhJL1c2c3ZHcXZI?=
+ =?utf-8?B?ZmFxbllIWWlOQ1VxelVraTZ0Z3ZScXJFdmVBMjBLS1BDU1F6S3RxRUpxalFF?=
+ =?utf-8?B?UnBjWGFzM2xoWDRzWE9mREErQ201VW9wVmQ0LzFtTWlZbzk2Z0hOUVQ1aDc5?=
+ =?utf-8?B?VzZKQzFlbmVwNzQ1dnloR1hxR0drdVpSeStQVndNQzdoNGhVK2pJWERLeTVN?=
+ =?utf-8?B?Qk5CZzkyYU9nTUFNNDFwdGJlai82YUVKYzZZUTd5NkdJSjBEalJyVnlFekhW?=
+ =?utf-8?B?SzBnWlErWTlWZUhQYVhTLytpbFRaVG5jbHNmMmUvT1FZdk12UGY3RnhpZldv?=
+ =?utf-8?B?OTI1S0d2bDhIZ0JsM1g4WS9tbC9VZksxdThLcUxicnBXQTVoRzNxSE9DbTJo?=
+ =?utf-8?B?ZkZPVzF2ZXFJUUZjZmFtKzAxQ1YxSnlDUVlPcmZiQUZUdndKdjNkdTRNSFd2?=
+ =?utf-8?B?QWhPSk44QVhDZkNVUDFXWjBrSENzR0NwNkNqRjVEd1VSZFo0N0NvKzhyRWVx?=
+ =?utf-8?B?MmFzQ3FOTnlFSFZBejlBSUhFZ3ZqUUhCMEZjc0kzd09QMU85Nm5XaEJoS2NJ?=
+ =?utf-8?B?OWtZWWM0RXpJNEowZ2MvZk5mVWNTRGRqeWk4MSs3MGlvaENsbyt3U0xyMDIz?=
+ =?utf-8?B?Q2tueTgyYnQ4Vk0zTS83TTlNZHpMQ2dMTWwwTUVXeDZsRW1weWFRVGNvd1hI?=
+ =?utf-8?B?N0RjN2ZYRTEzZE5kY3pjdzJ1ZmhjbWwyOWNsTnQ4VWVlNUIwZEZZUWttNzFC?=
+ =?utf-8?B?aXViZXlDQmFuOW1kSzVMRkNLOVVyS0Z0am1RSnUyRmRLZ0xLdy9abFY5TWo4?=
+ =?utf-8?B?d3FtVWVMNnhFbU43WnZJZzJpd3AyRUYvT0RJQ0ptblAzZ0NxYWhsZEM4Qmp5?=
+ =?utf-8?B?aFBWeWIzazhiOHBrOTk5VTdWTnF2azA5V0ltV0xSRHJuZEVVNW1ZSTNJc3hV?=
+ =?utf-8?B?bWtBb1FnMDh4VFQrQ2dSK3J0enJjeG8zN3hwdnZJVmh0THdPbjJ0M1VHbHpi?=
+ =?utf-8?B?ZkMxUkJpZHJWMEFvY0pnTkkyRTlNbnhNNGNnY1B2Y084YTJZaFVvQUZNRUJT?=
+ =?utf-8?B?RWNONy95QWtNK01lV1JudWFQSU9HUTBjbWsxQU1rTWdJOXFxV1lLT2JnRHJV?=
+ =?utf-8?B?VnZQa2plMFM2UGUxc2ZPWkF4S3g4S3RNL3BraVo1eTloZTdrMk1oNWlFSW9H?=
+ =?utf-8?B?c3BYYXN2RHA3RWxVZHdOSW9pOWhiWGZ1TTlhendVWFVvYUhSajFrZVdkTFhL?=
+ =?utf-8?B?ZEx3VWpmNUxyWk1VcHNmbjlhMWtCdEhyUzZXdkhVL3FHc2I0R2xQR0tmeVIy?=
+ =?utf-8?B?ZjJkeHI1c3RYdEYzMzFWWTVadkRrV3FlNDBBbG8vZnZ1VGd6OWF2d3k5UVM2?=
+ =?utf-8?B?T1dMSjVGT0hiWFNpM0EyaU1WajBMUzJsZ0JCZjZIUW1YNjBUTmVDdStpa3Jn?=
+ =?utf-8?B?WlkwVHE5NVI3VkdpY0NCTUZlb2lZNGxERkhTVGZtcE82R3MzMnh0STlOZi9i?=
+ =?utf-8?B?b1laZGd2VVFvelY2Y3dkWnZZNE9jN242MzNmNHMxS3c2dXkzYVZseDVqanht?=
+ =?utf-8?B?VGZoY0ZpYWhKWlhUMDZnZz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9251.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aWpPdXA5amQyWmtIUHQzTFBxVFdNcDBIb2xjMVFOSTh2YytXcStPWDl4cy9u?=
+ =?utf-8?B?dC8vS3UyVDMzb0pGUFdSMFpvai9oc2ZGWnFMSmJ2bjdHSkVpay9YTCs4bVpC?=
+ =?utf-8?B?UFdrcWNveG93V3dVMHlGVCtaZTJNQ0pjd1l2b1N5TDBkQzZBRHVBVVBSVjN2?=
+ =?utf-8?B?U2xsdEVHRVlQSDhlVzAxamo0S1lQaXlISHBxQit5TzZoc2kzKzR6TVQ2V3Zn?=
+ =?utf-8?B?UG9tVmJHNFRaWDcvak5uMEUrQmFJa3duSURhWHFhaGpRdWhRMzFqbEFycnNM?=
+ =?utf-8?B?VDFRUldjN3ZJRm4remlBVkxMOFB5VllLU3h0MVVCWVBVM3ZBRjAxYytEMzZS?=
+ =?utf-8?B?VE9JVitBUTMycmJOVjBuYTd5K2dLaHpSWlZ4OWlJcUtHRUU3ODhQYW9NbFMy?=
+ =?utf-8?B?N0hyaUNvTnhKSStzNTVHdmhvc0FMbDBhTjcxWGVCSU5XbmxZSmgyU016c3ZM?=
+ =?utf-8?B?aHVqMHRtUHdGTjZ2dUVCMUVscXRRaVpXZ3hqeXdPdDVzTmZUMEovalpBUzlp?=
+ =?utf-8?B?YUlXQVdiaVdQRU8yK0FxRlphSnMxMDI4Wjg2cThneGV6MkRCTll5cHBiM0Iv?=
+ =?utf-8?B?cE1YaG9iY0tBNWNMVm5mUm1JVC9RM2ZlOVYvQ2tHZ0U3ZXg2U1dabHBPRWVH?=
+ =?utf-8?B?UEEwSmJ1TWluN1k5QXl6VDh4R2E3WVM0MFdrcjFNNUtIK1B3TWhFYnlUZElt?=
+ =?utf-8?B?WmtDdG5oUzhIQlhHTHIrejQzMm9OWnEvdTZRYkdWZlp3eDk5M3poTllCdXlk?=
+ =?utf-8?B?WVVkNUdpaWpVaHREdC93VTh5SUh4Q3FwTTJIOHBXUFpFQUxMLzFBWFYzOTlE?=
+ =?utf-8?B?aEU0SVR6RUdGVkFndXNab2ZMNlhHSllucDYrSmFLNWFQOFFweGdlSkcvS2xJ?=
+ =?utf-8?B?bDFMdnJITUtvWUh6SVhUbGowdVEydUhLeWE0R1p1UEZXcWExdU82cWxKVHpF?=
+ =?utf-8?B?ejY2bUc2S2V3RDViSHpGWndhSGZ2OHAvSW13OTZpZFhEOXhEMk9qM2ZqWXBr?=
+ =?utf-8?B?YUE1aGJiSHhKbG45YUkxRkxHSDhyN0JqaVJuVUJXb1FMaUpmM3RPaHIvRUdy?=
+ =?utf-8?B?V1I0Y3lLSG11M1BnSTNBcTNrMno0dFZPMDJKZE9jM1E1VVFybWc5NURmM0NQ?=
+ =?utf-8?B?THpCM0R2VVNZdTd0cWpCK3UyNGtGOC9xbWVLL0lBWXRSaklBTlBtUUNJclZS?=
+ =?utf-8?B?Sm9HaUFJS0o2eWdUM2hWNm5xTmtWZHd3cDhnOHZWa2dDNktabjlpcTl6RUxI?=
+ =?utf-8?B?aUVhdDRodWJzWU02c3VtTjRHMHhjQzV5MVp2VzBLLys0cGlhNlNaMy9MSVlI?=
+ =?utf-8?B?c2NsRGlGbFZnK3FoSmZuQ3Q1clNLNHhpVmM4NnY3YkVLdG1LSTBuQ1J2UzRm?=
+ =?utf-8?B?WlVFaEQ0dE0rd3BjMDFvcEFRVGFtYmkrZHNvaFdzcjRxbzdUNFRsTWxncVd4?=
+ =?utf-8?B?UHpnKzVZeVVidHFKZ2JiK2pYc2lDMU4rYUptckJPWTkvTTQzRmF0MFFTcnlt?=
+ =?utf-8?B?MC95bFp0MWd4ZVU2aHE1dTI2UXVIU3plbjR3eU5VZlhSbGhKbkQ0SVZmT1dG?=
+ =?utf-8?B?WWxPZFNrUU9HTk8ydzhNM01SblFxclhoOVZsSWMvdlFtQlJ3c25qa1hNNjRp?=
+ =?utf-8?B?T1IvK1VxaU9ZK04vSUtINEtYZ0xJbXJYWXBTYTVZcjRhWlYzMWRxRFdJaFI2?=
+ =?utf-8?B?NkZ0R3B3Z1Y1Ry9XN0Nad2p1ZndmN0dHNHBxQlAxUHE1MCtHdFk2bTljVnl4?=
+ =?utf-8?B?eWh3RzROREF1T2d2YkpDT09ScW1XRDNVeFR1T1J2alRsVlh2THhhWEhvVFdW?=
+ =?utf-8?B?WC9BdkZOWHVUTkQwc05IdXBRYVhwU3IxdkdrWS80c1RBMk5mNGkxWmFFbnBr?=
+ =?utf-8?B?U3J2L0lVakRJaWtEZkttUjVvb0Y4cEJOMTNaV1pjRDBoV3Z4VjRRWkpoT251?=
+ =?utf-8?B?dDVzUENhRGJNbzBvdGhqeUJMd0JpRSs4RGFTTGgvMEVwQ0pGTHFLZVVEVEVw?=
+ =?utf-8?B?VHFZQWc4ZVpDaFdQd2hwMVBjakRtRmRsOGpKVVpwWnBGdlMyMnJTVy9UK3BE?=
+ =?utf-8?B?ZCtKYThtWTZoSjREMVpvVWpIekNuRFZtRW9WYnl0c01xMjNkcFE1TldjWHZ5?=
+ =?utf-8?B?QkVLdlN4UGtoT0lzWVZ1WWxXVkc1dXFZZUJNQjRvWW9qMUQ2QnZsdTNETnNL?=
+ =?utf-8?B?ZHc9PQ==?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a985112a-1e20-40fb-12e2-08dcdca2f91f
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9251.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2024 14:12:50.5403
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZyrdFkqiWsY48p7IKFXXTZjcGA1mHCzMs4LfxvU1Xc+W8Xl0GXwNWpIJ9FrncQnRj4oKM7cLaV0DkF43UrNy9XU7Q+T5l7eiZ8NcI6F2Kqw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9791
 
+From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
 
-On 20/09/24 14:50, Nuno Sá wrote:
-> On Thu, 2024-09-19 at 11:20 +0200, Angelo Dureghello wrote:
->> From: Angelo Dureghello <adureghello@baylibre.com>
->>
->> Extend backend features with new calls needed later on this
->> patchset from axi version of ad3552r.
->>
->> The follwoing calls are added:
->>
->> iio_backend_ext_sync_enable
->> 	enable synchronize channels on external trigger
->> iio_backend_ext_sync_disable
->> 	disable synchronize channels on external trigger
->> iio_backend_ddr_enable
->> 	enable ddr bus transfer
->> iio_backend_ddr_disable
->> 	disable ddr bus transfer
->> iio_backend_set_bus_mode
->> 	select the type of bus, so that specific read / write
->> 	operations are performed accordingly
->> iio_backend_buffer_enable
->> 	enable buffer
->> iio_backend_buffer_disable
->> 	disable buffer
->> iio_backend_data_transfer_addr
->> 	define the target register address where the DAC sample
->> 	will be written.
->>
->> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
->> ---
->>   drivers/iio/industrialio-backend.c | 111 +++++++++++++++++++++++++++++++++++++
->>   include/linux/iio/backend.h        |  23 ++++++++
->>   2 files changed, 134 insertions(+)
->>
->> diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industrialio-
->> backend.c
->> index 20b3b5212da7..f4802c422dbf 100644
->> --- a/drivers/iio/industrialio-backend.c
->> +++ b/drivers/iio/industrialio-backend.c
->> @@ -718,6 +718,117 @@ static int __devm_iio_backend_get(struct device *dev, struct
->> iio_backend *back)
->>   	return 0;
->>   }
->>   
->> +/**
->> + * iio_backend_ext_sync_enable - Enable external synchronization
->> + * @back: Backend device
->> + *
->> + * Enable synchronization by external signal.
->> + *
->> + * RETURNS:
->> + * 0 on success, negative error number on failure.
->> + */
->> +int iio_backend_ext_sync_enable(struct iio_backend *back)
->> +{
->> +	return iio_backend_op_call(back, ext_sync_enable);
->> +}
->> +EXPORT_SYMBOL_NS_GPL(iio_backend_ext_sync_enable, IIO_BACKEND);
->> +
->> +/**
->> + * iio_backend_ext_sync_disable - Disable external synchronization
->> + * @back: Backend device
->> + *
->> + * Disable synchronization by external signal.
->> + *
->> + * RETURNS:
->> + * 0 on success, negative error number on failure.
->> + */
->> +int iio_backend_ext_sync_disable(struct iio_backend *back)
->> +{
->> +	return iio_backend_op_call(back, ext_sync_disable);
->> +}
->> +EXPORT_SYMBOL_NS_GPL(iio_backend_ext_sync_disable, IIO_BACKEND);
->> +
->> +/**
->> + * iio_backend_ddr_enable - Enable interface DDR (Double Data Rate) mode
->> + * @back: Backend device
->> + *
->> + * Enabling DDR, data is generated by the IP at each front
->> + * (raising and falling) of the bus clock signal.
->> + *
->> + * RETURNS:
->> + * 0 on success, negative error number on failure.
->> + */
->> +int iio_backend_ddr_enable(struct iio_backend *back)
->> +{
->> +	return iio_backend_op_call(back, ddr_enable);
->> +}
->> +EXPORT_SYMBOL_NS_GPL(iio_backend_ddr_enable, IIO_BACKEND);
->> +
->> +/**
->> + * iio_backend_ddr_disable - Disable interface DDR (Double Data Rate) mode
->> + * @back: Backend device
->> + *
->> + * Disabling DDR data is generated byt the IP at rising or falling front
->> + * of the interface clock signal (SDR, Single Data Rate).
->> + *
->> + * RETURNS:
->> + * 0 on success, negative error number on failure.
->> + */
->> +int iio_backend_ddr_disable(struct iio_backend *back)
->> +{
->> +	return iio_backend_op_call(back, ddr_disable);
->> +}
->> +EXPORT_SYMBOL_NS_GPL(iio_backend_ddr_disable, IIO_BACKEND);
->> +
->> +/**
->> + * iio_backend_buffer_enable - Enable iio buffering
->> + * @back: Backend device
->> + *
->> + * Enabling the buffer, buffer data is processed and sent out from the
->> + * bus interface.
->> + *
->> + * RETURNS:
->> + * 0 on success, negative error number on failure.
->> + */
->> +int iio_backend_buffer_enable(struct iio_backend *back)
->> +{
->> +	return iio_backend_op_call(back, buffer_enable);
->> +}
->> +EXPORT_SYMBOL_NS_GPL(iio_backend_buffer_enable, IIO_BACKEND);
->> +
->> +/**
->> + * iio_backend_buffer_disable - Disable iio buffering
->> + * @back: Backend device
->> + *
->> + * Disabling the buffer, buffer data transfer on the bus interface
->> + * is stopped.
->> + *
->> + * RETURNS:
->> + * 0 on success, negative error number on failure.
->> + */
->> +int iio_backend_buffer_disable(struct iio_backend *back)
->> +{
->> +	return iio_backend_op_call(back, buffer_disable);
->> +}
->> +EXPORT_SYMBOL_NS_GPL(iio_backend_buffer_disable, IIO_BACKEND);
->> +
-> IIRC, both me and Jonathan had some comments about the above 2 calls? Aren't they
-> about buffering? I think I mentioned something about using the same buffer ops as
-> typical IIO devices use.
+LINFlexD UART driver is used by S32 SoC family.
+Add clocking support as optional in order to not break
+existing support for S32V234 SoC.
 
-i have now separated iio_backend_ops, keeping buffer enable/disable
-for axi-ad3352r case only,
+A separate patch adding clock definitions to
+the S32G2/S32G3 based boards devicetree will be sent
+for review.
 
-static const struct iio_backend_ops axi_dac_generic_ops = {
-     .enable = axi_dac_enable,
-     .disable = axi_dac_disable,
-     .request_buffer = axi_dac_request_buffer,
-     .free_buffer = axi_dac_free_buffer,
-     .extend_chan_spec = axi_dac_extend_chan,
-     .ext_info_set = axi_dac_ext_info_set,
-     .ext_info_get = axi_dac_ext_info_get,
-     .data_source_set = axi_dac_data_source_set,
-     .set_sample_rate = axi_dac_set_sample_rate,
-     .debugfs_reg_access = iio_backend_debugfs_ptr(axi_dac_reg_access),
-};
+Ciprian Marian Costea (2):
+  dt-bindings: linflexuart: add clock definitions
+  serial: fsl_linflexuart: add clock support
 
-static const struct iio_backend_ops axi_ad3552r_ops = {
-     .enable = axi_dac_enable,
-     .read_raw = axi_dac_read_raw,
-     .request_buffer = axi_dac_request_buffer,
-     .data_source_set = axi_dac_data_source_set,
-     .ext_sync_enable = axi_dac_ext_sync_enable,
-     .ext_sync_disable = axi_dac_ext_sync_disable,
-     .ddr_enable = axi_dac_ddr_enable,
-     .ddr_disable = axi_dac_ddr_disable,
-     .buffer_enable = axi_dac_buffer_enable,
-     .buffer_disable = axi_dac_buffer_disable,
-     .data_format_set = axi_dac_data_format_set,
-     .data_transfer_addr = axi_dac_data_transfer_addr,
-};
+ .../bindings/serial/fsl,s32-linflexuart.yaml  | 21 ++++++
+ drivers/tty/serial/fsl_linflexuart.c          | 67 ++++++++++++++-----
+ 2 files changed, 72 insertions(+), 16 deletions(-)
 
-
-could this be good ?
-
-
-> - Nuno Sá
-
-Regards,
-Angelo
+-- 
+2.45.2
 
 
