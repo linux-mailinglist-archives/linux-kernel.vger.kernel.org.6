@@ -1,182 +1,347 @@
-Return-Path: <linux-kernel+bounces-337677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06F7E984D65
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:09:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B8DF984D71
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:11:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A993B223C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:09:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC9E01C20E39
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:11:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E57146D78;
-	Tue, 24 Sep 2024 22:08:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00833146D76;
+	Tue, 24 Sep 2024 22:11:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T0SDUTNv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R2srPkut"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625B7146A7A
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 22:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157036E614;
+	Tue, 24 Sep 2024 22:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727215693; cv=none; b=LRLcPO95mnWhmoMNKrTE9HPtCBBXWPEb4KC80J+M2N+Ygq5V+DXghBTtmF0b2qbu3cjTUhPw/bLC3L5hMWh+bc+nXo5ycfoBIVGDFNMr7iEyA9y3lkuYI7fjZKT4hlZT6EBPVV04jgyMIBEjNGOVWQAthVX7waiZ1SxnShXpNcw=
+	t=1727215865; cv=none; b=VKTVjQZGWFeOx72hZu+JhkIalmEe/p3CIw366far64SLo+xh5j+X9dugPvwsvWMf4dctVaJtBgIDxbUJ2hYzbbPpkkm2BMOdZ9q8g29aLH+oSaswKm5ga4u2/O1XC1HHY2RfiQ0XBB8NkKuKdgHolDRbGynmi7J4pyDM9462v80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727215693; c=relaxed/simple;
-	bh=XM1R/E+GZDsbMYwzwuScBr/8Mynr9WZp9/04dFBHH5I=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=ldIe7EMpYar6vsrOUJ3IsinygOtAjPy6mjAvPJJOJ93muYzrpa3aT9DXvm6oSf2WwSVDrEJZUIpOLQuOBE6uUWfnZ6mK6LuG5wSoIS9nAx/6iG3Su30xUBr8eoCV1mztVEftWXSn350E3zCror7HbwSwYLlBRhJt1+KnliDIA94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T0SDUTNv; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727215690;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ze6Jh1dkudzhCy2kThDzWDTT7ZR0+ZKc4btmmg9o7DY=;
-	b=T0SDUTNvzrCNaqLnrhv/Ah+PtZuOGib3w/7ujEE5RfKbuclXd9d8yqxYEmPbKcAlMGQ3zi
-	pWt+NQZgTULnffqKQ53lyGTxWMna3wWOS7G6juL98DAH8qtjuJ/bOZF54r3zpuZIOKa4gU
-	442HidUs67uAFk8AfR7rXI1bryAmZR4=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-113-xV7ma4d9MJWHIH60R_6Wuw-1; Tue,
- 24 Sep 2024 18:08:06 -0400
-X-MC-Unique: xV7ma4d9MJWHIH60R_6Wuw-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6B30118E68D2;
-	Tue, 24 Sep 2024 22:08:05 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.145])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6754719560AD;
-	Tue, 24 Sep 2024 22:08:02 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: netdev@vger.kernel.org
-cc: dhowells@redhat.com, yuxuanzhe@outlook.com,
-    Marc Dionne <marc.dionne@auristor.com>,
-    "David S. Miller" <davem@davemloft.net>,
-    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-    Paolo Abeni <pabeni@redhat.com>, linux-afs@lists.infradead.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH net] rxrpc: Fix a race between socket set up and I/O thread creation
+	s=arc-20240116; t=1727215865; c=relaxed/simple;
+	bh=Yt/sMjEffMjjPuTPQdKdC6kHuAqr5rF7lMy0jLkO11M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mta2CkegbVi7CQ095/KDgt6bWQNfkhjxvy1wAfRpsx02z2Qf4DDOfbMBhAgiJ38b7AP1oeG7X4/+MRiQuIC+N2JbTByTnCpRb4fAbmAih6FqOPjhkqlBkEhJsYAbjSRocYattSfeesDxVtsLs8y+G2fj8I7CC4BeZYyNQyfqt9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R2srPkut; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FB5CC4CEC4;
+	Tue, 24 Sep 2024 22:11:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727215864;
+	bh=Yt/sMjEffMjjPuTPQdKdC6kHuAqr5rF7lMy0jLkO11M=;
+	h=From:To:Cc:Subject:Date:From;
+	b=R2srPkut3uBbw7TBjeI7pX6Mha/C6MoKdaWsXAN/tSnz0IAl968PzSd5yzrAoF4d7
+	 /6hB1wRqsfnIrheRblV9xN8unkRp2dGNnDZg2dmmz1+pkYXfYV9s+agtOmZE4yzs/o
+	 Mi0A6D2nlhunULg4ZkJFbjI8ydV7qoC7bABo3qV+u3cqi0jg0QWvPEWBWR6HCGAeIy
+	 r25ugSGol0o24dHKrckTuY+7w/vS4Xt8mSimnXODUXTk7PNb84jIf3vsiQxiKI1SiH
+	 RtXQM+v21ODVhbDG09gDn10E1Lcd/xETf6fU16u59QVmYoxbf6L9Utf0frrcvUxL3I
+	 Ze3s8rnEcJDIw==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Rust for 6.12
+Date: Wed, 25 Sep 2024 00:10:23 +0200
+Message-ID: <20240924221023.197610-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1210176.1727215681.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 24 Sep 2024 23:08:01 +0100
-Message-ID: <1210177.1727215681@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Transfer-Encoding: 8bit
 
-In rxrpc_open_socket(), it sets up the socket and then sets up the I/O
-thread that will handle it.  This is a problem, however, as there's a gap
-between the two phases in which a packet may come into rxrpc_encap_rcv()
-from the UDP packet but we oops when trying to wake the not-yet created I/=
-O
-thread.
+Hi Linus,
 
-As a quick fix, just make rxrpc_encap_rcv() discard the packet if there's
-no I/O thread yet.
+This is the next round of the Rust support.
 
-A better, but more intrusive fix would perhaps be to rearrange things such
-that the socket creation is done by the I/O thread.
+Quite late, but all the commits have been in linux-next for at least a
+week (most have been for a few weeks).
 
-Fixes: a275da62e8c1 ("rxrpc: Create a per-local endpoint receive queue and=
- I/O thread")
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-cc: yuxuanzhe@outlook.com
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: "David S. Miller" <davem@davemloft.net>
-cc: Jakub Kicinski <kuba@kernel.org>
-cc: Paolo Abeni <pabeni@redhat.com>
-cc: linux-afs@lists.infradead.org
-cc: netdev@vger.kernel.org
----
- net/rxrpc/ar-internal.h  |    2 +-
- net/rxrpc/io_thread.c    |    7 ++++---
- net/rxrpc/local_object.c |    2 +-
- 3 files changed, 6 insertions(+), 5 deletions(-)
+This PR is a bit more involved than the usual ones -- the relevant
+maintainers were OK with us carrying the patches since there were a few
+interdependencies.
 
-diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
-index 80d682f89b23..d0fd37bdcfe9 100644
---- a/net/rxrpc/ar-internal.h
-+++ b/net/rxrpc/ar-internal.h
-@@ -1056,7 +1056,7 @@ bool rxrpc_direct_abort(struct sk_buff *skb, enum rx=
-rpc_abort_reason why,
- int rxrpc_io_thread(void *data);
- static inline void rxrpc_wake_up_io_thread(struct rxrpc_local *local)
- {
--	wake_up_process(local->io_thread);
-+	wake_up_process(READ_ONCE(local->io_thread));
- }
- =
+Three simple conflicts expected. Please note that akpm and I carried
+the same patch ("kasan: simplify and clarify Makefile").
 
- static inline bool rxrpc_protocol_error(struct sk_buff *skb, enum rxrpc_a=
-bort_reason why)
-diff --git a/net/rxrpc/io_thread.c b/net/rxrpc/io_thread.c
-index 0300baa9afcd..5c0a5374d51a 100644
---- a/net/rxrpc/io_thread.c
-+++ b/net/rxrpc/io_thread.c
-@@ -27,8 +27,9 @@ int rxrpc_encap_rcv(struct sock *udp_sk, struct sk_buff =
-*skb)
- {
- 	struct sk_buff_head *rx_queue;
- 	struct rxrpc_local *local =3D rcu_dereference_sk_user_data(udp_sk);
-+	struct task_struct *io_thread =3D READ_ONCE(local->io_thread);
- =
+Regarding Rust-related things: you already merged the QR code panic
+screen via DRM, the Applied Micro QT2025 PHY driver (with a new `sizes`
+module) via netdev, a `k{v,}realloc()` patch via mm and two selftest
+config fixes. You have also got a firmware code doc fix via asoc.
 
--	if (unlikely(!local)) {
-+	if (unlikely(!local || !io_thread)) {
- 		kfree_skb(skb);
- 		return 0;
- 	}
-@@ -47,7 +48,7 @@ int rxrpc_encap_rcv(struct sock *udp_sk, struct sk_buff =
-*skb)
- #endif
- =
+Please pull for v6.12 -- thanks!
 
- 	skb_queue_tail(rx_queue, skb);
--	rxrpc_wake_up_io_thread(local);
-+	wake_up_process(io_thread);
- 	return 0;
- }
- =
+Cheers,
+Miguel
 
-@@ -565,7 +566,7 @@ int rxrpc_io_thread(void *data)
- 	__set_current_state(TASK_RUNNING);
- 	rxrpc_see_local(local, rxrpc_local_stop);
- 	rxrpc_destroy_local(local);
--	local->io_thread =3D NULL;
-+	WRITE_ONCE(local->io_thread, NULL);
- 	rxrpc_see_local(local, rxrpc_local_stopped);
- 	return 0;
- }
-diff --git a/net/rxrpc/local_object.c b/net/rxrpc/local_object.c
-index 504453c688d7..f9623ace2201 100644
---- a/net/rxrpc/local_object.c
-+++ b/net/rxrpc/local_object.c
-@@ -232,7 +232,7 @@ static int rxrpc_open_socket(struct rxrpc_local *local=
-, struct net *net)
- 	}
- =
+The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
 
- 	wait_for_completion(&local->io_thread_ready);
--	local->io_thread =3D io_thread;
-+	WRITE_ONCE(local->io_thread, io_thread);
- 	_leave(" =3D 0");
- 	return 0;
- =
+  Linux 6.11-rc4 (2024-08-18 13:17:27 -0700)
 
+are available in the Git repository at:
+
+  https://github.com/Rust-for-Linux/linux.git tags/rust-6.12
+
+for you to fetch changes up to a2f11547052001bd448ccec81dd1e68409078fbb:
+
+  kasan: rust: Add KASAN smoke test via UAF (2024-09-16 18:04:37 +0200)
+
+----------------------------------------------------------------
+Rust changes for v6.12
+
+Toolchain and infrastructure:
+
+ - Support 'MITIGATION_{RETHUNK,RETPOLINE,SLS}' (which cleans up objtool
+   warnings), teach objtool about 'noreturn' Rust symbols and mimic
+   '___ADDRESSABLE()' for 'module_{init,exit}'. With that, we should be
+   objtool-warning-free, so enable it to run for all Rust object files.
+
+ - KASAN (no 'SW_TAGS'), KCFI and shadow call sanitizer support.
+
+ - Support 'RUSTC_VERSION', including re-config and re-build on change.
+
+ - Split helpers file into several files in a folder, to avoid conflicts
+   in it. Eventually those files will be moved to the right places with
+   the new build system. In addition, remove the need to manually export
+   the symbols defined there, reusing existing machinery for that.
+
+ - Relax restriction on configurations with Rust + GCC plugins to just
+   the RANDSTRUCT plugin.
+
+'kernel' crate:
+
+ - New 'list' module: doubly-linked linked list for use with reference
+   counted values, which is heavily used by the upcoming Rust Binder.
+   This includes 'ListArc' (a wrapper around 'Arc' that is guaranteed
+   unique for the given ID), 'AtomicTracker' (tracks whether a 'ListArc'
+   exists using an atomic), 'ListLinks' (the prev/next pointers for an
+   item in a linked list), 'List' (the linked list itself), 'Iter' (an
+   iterator over a 'List'), 'Cursor' (a cursor into a 'List' that allows
+   to remove elements), 'ListArcField' (a field exclusively owned by a
+   'ListArc'), as well as support for heterogeneous lists.
+
+ - New 'rbtree' module: red-black tree abstractions used by the upcoming
+   Rust Binder. This includes 'RBTree' (the red-black tree itself),
+   'RBTreeNode' (a node), 'RBTreeNodeReservation' (a memory reservation
+   for a node), 'Iter' and 'IterMut' (immutable and mutable iterators),
+   'Cursor' (bidirectional cursor that allows to remove elements), as
+   well as an entry API similar to the Rust standard library one.
+
+ - 'init' module: add 'write_[pin_]init' methods and the 'InPlaceWrite'
+   trait. Add the 'assert_pinned!' macro.
+
+ - 'sync' module: implement the 'InPlaceInit' trait for 'Arc' by
+   introducing an associated type in the trait.
+
+ - 'alloc' module: add 'drop_contents' method to 'BoxExt'.
+
+ - 'types' module: implement the 'ForeignOwnable' trait for
+   'Pin<Box<T>>' and improve the trait's documentation. In addition,
+   add the 'into_raw' method to the 'ARef' type.
+
+ - 'error' module: in preparation for the upcoming Rust support for
+   32-bit architectures, like arm, locally allow Clippy lint for those.
+
+Documentation:
+
+ - https://rust.docs.kernel.org has been announced, so link to it.
+
+ - Enable rustdoc's "jump to definition" feature, making its output a
+   bit closer to the experience in a cross-referencer.
+
+ - Debian Testing now also provides recent Rust releases (outside of
+   the freeze period), so add it to the list.
+
+MAINTAINERS:
+
+ - Trevor is joining as reviewer of the "RUST" entry.
+
+And a few other small bits.
+
+----------------------------------------------------------------
+Alex Mantel (1):
+      rust: Implement the smart pointer `InPlaceInit` for `Arc`
+
+Alice Ryhl (14):
+      rust: implement ForeignOwnable for Pin<Box<T>>
+      rust: sort blk includes in bindings_helper.h
+      rust: list: add ListArc
+      rust: list: add tracking for ListArc
+      rust: list: add struct with prev/next pointers
+      rust: list: add macro for implementing ListItem
+      rust: list: add List
+      rust: list: add iterators
+      rust: list: add cursor
+      rust: list: support heterogeneous lists
+      rust: list: add ListArcField
+      rust: rbtree: add `RBTree::entry`
+      rust: support for shadow call stack sanitizer
+      cfi: add CONFIG_CFI_ICALL_NORMALIZE_INTEGERS
+
+Andreas Hindborg (1):
+      rust: kbuild: split up helpers.c
+
+Andrey Konovalov (1):
+      kasan: simplify and clarify Makefile
+
+Benno Lossin (4):
+      rust: types: improve `ForeignOwnable` documentation
+      rust: kernel: add `drop_contents` to `BoxExt`
+      rust: init: add `write_[pin_]init` functions
+      rust: init: add `assert_pinned` macro
+
+Gary Guo (1):
+      rust: kbuild: auto generate helper exports
+
+Kartik Prajapati (1):
+      rust: types: add `ARef::into_raw`
+
+Matt Gilbride (1):
+      rust: rbtree: add cursor
+
+Matthew Maurer (6):
+      rust: support arrays in target JSON
+      rust: cfi: add support for CFI_CLANG with Rust
+      kbuild: rust: Define probing macros for rustc
+      rust: kasan: Rust does not support KHWASAN
+      kbuild: rust: Enable KASAN support
+      kasan: rust: Add KASAN smoke test via UAF
+
+Michael Vetter (1):
+      rust: kernel: use docs.kernel.org links in code documentation
+
+Miguel Ojeda (19):
+      rust: error: allow `useless_conversion` for 32-bit builds
+      rust: module: add static pointer to `{init,cleanup}_module()`
+      x86/rust: support MITIGATION_RETPOLINE
+      x86/rust: support MITIGATION_RETHUNK
+      x86/rust: support MITIGATION_SLS
+      objtool/rust: list `noreturn` Rust functions
+      objtool/kbuild/rust: enable objtool for Rust
+      rust: enable bindgen's `--enable-function-attribute-detection` flag
+      docs: rust: quick-start: add Debian Testing
+      docs: rust: link to https://rust.docs.kernel.org
+      docs: rust: improve main page introducing a "Code documentation" section
+      rust: enable rustdoc's `--generate-link-to-definition`
+      MAINTAINERS: add Trevor Gross as Rust reviewer
+      rust: avoid `box_uninit_write` feature
+      kbuild: rust: add `CONFIG_RUSTC_VERSION`
+      kbuild: rust: re-run Kconfig if the version text changes
+      kbuild: rust: rebuild if the version text changes
+      kbuild: rust: replace proc macros dependency on `core.o` with the version text
+      docs: rust: include other expressions in conditional compilation section
+
+Neal Gompa (1):
+      init/Kconfig: Only block on RANDSTRUCT for RUST
+
+Wedson Almeida Filho (3):
+      rust: rbtree: add red-black tree implementation backed by the C version
+      rust: rbtree: add iterator
+      rust: rbtree: add mutable iterator
+
+ Documentation/rust/general-information.rst |   27 +-
+ Documentation/rust/index.rst               |   18 +-
+ Documentation/rust/quick-start.rst         |    4 +-
+ MAINTAINERS                                |    1 +
+ Makefile                                   |   19 +-
+ arch/Kconfig                               |   16 +
+ arch/arm64/Kconfig                         |   14 +-
+ arch/arm64/Makefile                        |    3 +
+ arch/riscv/Kconfig                         |    9 +-
+ arch/x86/Makefile                          |   11 +-
+ init/Kconfig                               |   19 +-
+ mm/kasan/Makefile                          |    8 +-
+ mm/kasan/kasan.h                           |    6 +
+ mm/kasan/{kasan_test.c => kasan_test_c.c}  |   11 +
+ mm/kasan/kasan_test_rust.rs                |   21 +
+ rust/Makefile                              |   56 +-
+ rust/bindings/bindings_helper.h            |    2 +-
+ rust/exports.c                             |    1 +
+ rust/helpers.c                             |  239 ------
+ rust/helpers/blk.c                         |   14 +
+ rust/helpers/bug.c                         |    8 +
+ rust/helpers/build_assert.c                |   25 +
+ rust/helpers/build_bug.c                   |    9 +
+ rust/helpers/err.c                         |   19 +
+ rust/helpers/helpers.c                     |   26 +
+ rust/helpers/kunit.c                       |    9 +
+ rust/helpers/mutex.c                       |    9 +
+ rust/helpers/page.c                        |   19 +
+ rust/helpers/rbtree.c                      |    9 +
+ rust/helpers/refcount.c                    |   19 +
+ rust/helpers/signal.c                      |    9 +
+ rust/helpers/slab.c                        |    9 +
+ rust/helpers/spinlock.c                    |   24 +
+ rust/helpers/task.c                        |   19 +
+ rust/helpers/uaccess.c                     |   15 +
+ rust/helpers/wait.c                        |    9 +
+ rust/helpers/workqueue.c                   |   15 +
+ rust/kernel/alloc/box_ext.rs               |   33 +-
+ rust/kernel/error.rs                       |    5 +-
+ rust/kernel/init.rs                        |  191 ++++-
+ rust/kernel/init/__internal.rs             |   29 +
+ rust/kernel/lib.rs                         |    2 +
+ rust/kernel/list.rs                        |  686 +++++++++++++++
+ rust/kernel/list/arc.rs                    |  521 ++++++++++++
+ rust/kernel/list/arc_field.rs              |   96 +++
+ rust/kernel/list/impl_list_item_mod.rs     |  274 ++++++
+ rust/kernel/prelude.rs                     |    2 +-
+ rust/kernel/print.rs                       |   20 +-
+ rust/kernel/rbtree.rs                      | 1278 ++++++++++++++++++++++++++++
+ rust/kernel/std_vendor.rs                  |    2 +-
+ rust/kernel/sync/arc.rs                    |   25 +-
+ rust/kernel/types.rs                       |   63 +-
+ rust/macros/lib.rs                         |    4 +
+ rust/macros/module.rs                      |   12 +
+ scripts/Kconfig.include                    |    8 +
+ scripts/Makefile.build                     |    9 +-
+ scripts/Makefile.compiler                  |   15 +
+ scripts/Makefile.kasan                     |   84 +-
+ scripts/Makefile.lib                       |    3 +
+ scripts/generate_rust_target.rs            |   98 ++-
+ scripts/rustc-version.sh                   |   26 +
+ tools/objtool/check.c                      |   52 +-
+ tools/objtool/noreturns.h                  |    2 +
+ 63 files changed, 3884 insertions(+), 407 deletions(-)
+ rename mm/kasan/{kasan_test.c => kasan_test_c.c} (99%)
+ create mode 100644 mm/kasan/kasan_test_rust.rs
+ delete mode 100644 rust/helpers.c
+ create mode 100644 rust/helpers/blk.c
+ create mode 100644 rust/helpers/bug.c
+ create mode 100644 rust/helpers/build_assert.c
+ create mode 100644 rust/helpers/build_bug.c
+ create mode 100644 rust/helpers/err.c
+ create mode 100644 rust/helpers/helpers.c
+ create mode 100644 rust/helpers/kunit.c
+ create mode 100644 rust/helpers/mutex.c
+ create mode 100644 rust/helpers/page.c
+ create mode 100644 rust/helpers/rbtree.c
+ create mode 100644 rust/helpers/refcount.c
+ create mode 100644 rust/helpers/signal.c
+ create mode 100644 rust/helpers/slab.c
+ create mode 100644 rust/helpers/spinlock.c
+ create mode 100644 rust/helpers/task.c
+ create mode 100644 rust/helpers/uaccess.c
+ create mode 100644 rust/helpers/wait.c
+ create mode 100644 rust/helpers/workqueue.c
+ create mode 100644 rust/kernel/list.rs
+ create mode 100644 rust/kernel/list/arc.rs
+ create mode 100644 rust/kernel/list/arc_field.rs
+ create mode 100644 rust/kernel/list/impl_list_item_mod.rs
+ create mode 100644 rust/kernel/rbtree.rs
+ create mode 100755 scripts/rustc-version.sh
 
