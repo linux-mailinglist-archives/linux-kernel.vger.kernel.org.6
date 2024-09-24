@@ -1,183 +1,167 @@
-Return-Path: <linux-kernel+bounces-336808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4840998411E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:53:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0788984120
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:54:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0805E28109F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:53:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B7111F22FE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C832B1531D2;
-	Tue, 24 Sep 2024 08:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B0B1531D2;
+	Tue, 24 Sep 2024 08:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Y/NlUSsN"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QHM24gDL"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50ACD450EE
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 08:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41AD3149DF0
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 08:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727168001; cv=none; b=f5HZlWVgYh3PWqyDuYJZuO30KxBtcNej1+AI+hJ++vX/UdG85iUN6Qn9VpnjlTCViMHxE63/Tr6wUO3K5yiKM7LeYwv+ZmB+1ccf1PFBPTIK1x66QQ5fpTQFNeqekpTa4dmcy5+ZY+7OPnEyNad9yCtwK2a83ufjaHlDEVgEy20=
+	t=1727168084; cv=none; b=VDVlVVvvf5wG9GhR1TgxmU+jRASIbrnfZ/JYJ8+5b4ZJ/k4UwF7gxBfUYAru+i4rgRDncpZw7cVRYVas0GaYTRLdpf6oefPpZYGoV8YyzN6lzkvdXVA2I3AZUfyKb/Nh2nTXTbxVqq1RejahMFti55PpCtwjtgimX2q7PJlHSME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727168001; c=relaxed/simple;
-	bh=AwIJlQYCQ+VfX3Y6n/rzeDK3O1xeCqsjV5gozeKXdN8=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=IdPI7WoJJR20bGvtHa1v8QZRPUbUGhP0CZu9pif4ACZO3DgElfKiox4glBW/KJYhlbdJzmtGhiR9sAvpTOKFpDTghA/CiF2w7KLWHDFeFbsvQW5QfMEo8Ttlc6iKjCYT11k69jxHExKly9Vd3De24UsDD8e/LxRcahdjU5h/Lt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Y/NlUSsN; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=utf-8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727167995;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wpyNjX3SywB8uvA6z8NNxtoy61vc2SVjYp0FLcYU0Bg=;
-	b=Y/NlUSsNLr1ACfiVoikNI877ntJ8eQYVJ79owK8l2o96uz/W+SW5BzZ9Yl2sW1QHthH6qw
-	/K38dLAstL3gN/S/H9vCtK6QVpg/3wmjbBNVlh8Sm8CfOZrojR5+YCAeqlErfWBM3S6tYR
-	84G6gXzxoUGE03YcUoZZL6IjT8URxhc=
+	s=arc-20240116; t=1727168084; c=relaxed/simple;
+	bh=It8KmbiNVywuJRrNOhlX86pbhNe1mt/pPRIkqV8wzzQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=W+1EAd4lfFohVXsMQQTVF51jBUMrxJ9JdJtyKbKwaMvWvUXgoZlQL1ndrDTVZcJGQQpprwRy0Ma1PwVGCjz5rrAHvbjvgC6aPP2rNfusyVsSppnq11GUsx4tXqnAm50gVx3RLJMckXXVBbr/CmHck9ijwuDoEPHHfSYDQegoFOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QHM24gDL; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso51657045e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 01:54:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727168081; x=1727772881; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=E8PfYcY31BFyjkya50NQFN5gx01igLjx4gLhGrbptp0=;
+        b=QHM24gDLS4ZLasWKEmq3MiU7TNOO75VykGwFHtfX2eGUn0oBAb2xyzUgrVGQ+lOSoQ
+         Z0v5GkG/K9CUG0J4Lc9zMvlyDgMhxMH43lHgExvsr9YfjIWf15Wh4XqmNQ2f/FMDNF4u
+         PAx0XGpcaMW+gSVZiwt9u8nC2qfzyMxJ5Kunx71JZe2UezWshxV496dewGpgWGbGPDJJ
+         9vej5HFln9K+ZDiE8PFUHYl3ELhP0TZ6Ffjoo4w0jaQC+QprMahZ1gt7KijwA3f+FSYU
+         S1Ew09yT9TjFxluMDAqwOIvyLgI916WoasFG/oKx6YtNY1N6zBkC0+wbxUV0hhlYikXh
+         ZcaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727168081; x=1727772881;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=E8PfYcY31BFyjkya50NQFN5gx01igLjx4gLhGrbptp0=;
+        b=QVEuMJREh4tQNX/+OHo//1QXrpLwyGM15oX2YSsESsAh5g/VG79Ad99D8gSM6kv6sq
+         LximI8fd5BABp5ZInN0MyuLXt0yvevNKCJMi9gvcdzCZx/XLf9U8QizFP+udCPjSvOBH
+         CocAoOe0T3sNhdQl+T1/imjVjJBV1ZT5cTkNhOO9YE7VLVryp8QEGc/gXYIl3+/ENnKy
+         ZXQ/4qdaDE6qO6dmR1QA7UylsEe86AzUWbq0KdNYarywQfm+yOHk4pCqSHo1/Wxe5o5q
+         MsWmo2TLxB+0SsXCJNP9UZhKJ5vL4q8ssXuJ8xh0q588KBOUWVZ79bhrA8JYZQTf1+6r
+         qfYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXiulczGGmFPhFPPwdL/d2DfMI0xL6ZNzqozqHQznm7eeCqkwpN1tW+Bg9p2K4DxwKJl7z49PP+nzIj0sA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxvc3j+gaByBVIGg//HQeBoTUuvv14WmIpXiSOxoqGk9iwZ+dOS
+	S7jo58a+4ZVRlMIRjen3TJkEPlEN4jtfW8pIMmEyA9MxlPveksrV
+X-Google-Smtp-Source: AGHT+IElq1z30Aq6Y3sJSrzrvTzKoK5AlyzQkWDVv8hQPMqhTj70joSERnFtQfuPsexeuBUvA1QPfw==
+X-Received: by 2002:a5d:4647:0:b0:371:8e0d:b0fc with SMTP id ffacd0b85a97d-37a4315bdd6mr8122763f8f.35.1727168080377;
+        Tue, 24 Sep 2024 01:54:40 -0700 (PDT)
+Received: from wheatley.localdomain (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e9029eed4sm15004175e9.24.2024.09.24.01.54.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2024 01:54:39 -0700 (PDT)
+Received: from wheatley.pinto-pinecone.ts.net (wheatley.k8r.cz [127.0.0.1])
+	by wheatley.localdomain (Postfix) with ESMTP id 2966726AB1DF;
+	Tue, 24 Sep 2024 10:54:39 +0200 (CEST)
+From: Martin Kletzander <nert.pinx@gmail.com>
+To: Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] x86/resctrl: Avoid overflow in MB settings in bw_validate()
+Date: Tue, 24 Sep 2024 10:53:09 +0200
+Message-ID: <8d028c5f6f23e92fb83cbf20599366e896abc5b5.1727167989.git.nert.pinx@gmail.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
-Subject: Re: [PATCH v4 07/13] mm: khugepaged: collapse_pte_mapped_thp() use
- pte_offset_map_rw_nolock()
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <2343da2e-f91f-4861-bb22-28f77db98c52@bytedance.com>
-Date: Tue, 24 Sep 2024 16:52:34 +0800
-Cc: david@redhat.com,
- hughd@google.com,
- willy@infradead.org,
- vbabka@kernel.org,
- akpm@linux-foundation.org,
- rppt@kernel.org,
- vishal.moola@gmail.com,
- peterx@redhat.com,
- ryan.roberts@arm.com,
- christophe.leroy2@cs-soprasteria.com,
- linux-kernel@vger.kernel.org,
- linux-mm@kvack.org,
- linux-arm-kernel@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <1D1872F1-7280-4F43-8213-A720C56B0646@linux.dev>
-References: <07d975c50fe09c246e087303b39998430b1a66bd.1727148662.git.zhengqi.arch@bytedance.com>
- <79699B24-0D99-4051-91F3-5695D32D62AC@linux.dev>
- <2343da2e-f91f-4861-bb22-28f77db98c52@bytedance.com>
-To: Qi Zheng <zhengqi.arch@bytedance.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
+The memory bandwidth value was parsed as unsigned long, but later on
+rounded up and stored in u32.  That could result in an overflow,
+especially if resctrl is mounted with the "mba_MBps" option.
 
+Switch the variable right to u32 and parse it as such.
 
-> On Sep 24, 2024, at 15:29, Qi Zheng <zhengqi.arch@bytedance.com> =
-wrote:
->=20
->=20
->=20
-> On 2024/9/24 15:14, Muchun Song wrote:
->>> On Sep 24, 2024, at 14:11, Qi Zheng <zhengqi.arch@bytedance.com> =
-wrote:
->>> =EF=BB=BFIn collapse_pte_mapped_thp(), we may modify the pte and pmd =
-entry after
->>> acquring the ptl, so convert it to using pte_offset_map_rw_nolock(). =
-At
->>> this time, the pte_same() check is not performed after the PTL held. =
-So we
->>> should get pgt_pmd and do pmd_same() check after the ptl held.
->>>=20
->>> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
->>> ---
->>> mm/khugepaged.c | 14 +++++++++++---
->>> 1 file changed, 11 insertions(+), 3 deletions(-)
->>>=20
->>> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
->>> index 6498721d4783a..8ab79c13d077f 100644
->>> --- a/mm/khugepaged.c
->>> +++ b/mm/khugepaged.c
->>> @@ -1605,7 +1605,7 @@ int collapse_pte_mapped_thp(struct mm_struct =
-*mm, unsigned long addr,
->>>    if (userfaultfd_armed(vma) && !(vma->vm_flags & VM_SHARED))
->>>        pml =3D pmd_lock(mm, pmd);
->>>=20
->>> -    start_pte =3D pte_offset_map_nolock(mm, pmd, haddr, &ptl);
->>> +    start_pte =3D pte_offset_map_rw_nolock(mm, pmd, haddr, =
-&pgt_pmd, &ptl);
->>>    if (!start_pte)        /* mmap_lock + page lock should prevent =
-this */
->>>        goto abort;
->>>    if (!pml)
->>> @@ -1613,6 +1613,9 @@ int collapse_pte_mapped_thp(struct mm_struct =
-*mm, unsigned long addr,
->>>    else if (ptl !=3D pml)
->>>        spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
->>>=20
->>> +    if (unlikely(!pmd_same(pgt_pmd, pmdp_get_lockless(pmd))))
->>> +        goto abort;
->>> +
->>>    /* step 2: clear page table and adjust rmap */
->>>    for (i =3D 0, addr =3D haddr, pte =3D start_pte;
->>>         i < HPAGE_PMD_NR; i++, addr +=3D PAGE_SIZE, pte++) {
->>> @@ -1645,7 +1648,6 @@ int collapse_pte_mapped_thp(struct mm_struct =
-*mm, unsigned long addr,
->>>        nr_ptes++;
->>>    }
->>>=20
->>> -    pte_unmap(start_pte);
->>>    if (!pml)
->>>        spin_unlock(ptl);
->>>=20
->>> @@ -1658,13 +1660,19 @@ int collapse_pte_mapped_thp(struct mm_struct =
-*mm, unsigned long addr,
->>>    /* step 4: remove empty page table */
->>>    if (!pml) {
->>>        pml =3D pmd_lock(mm, pmd);
->>> -        if (ptl !=3D pml)
->>> +        if (ptl !=3D pml) {
->>>            spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
->>> +            if (unlikely(!pmd_same(pgt_pmd, =
-pmdp_get_lockless(pmd)))) {
->>> +                spin_unlock(pml);
->>> +                goto abort;
->> Drop the reference of folio and the mm counter twice at the label of =
-abort and the step 3.
->=20
-> My bad, should set nr_ptes to 0 and call flush_tlb_mm() here, right?
+Since the granularity and minimum bandwidth are not used when the
+software controller is used (resctrl is mounted with the "mba_MBps"),
+skip the rounding up as well and return early from bw_validate().
 
-Or add a new label "out" just below the "abort". Then go to out.
+Signed-off-by: Martin Kletzander <nert.pinx@gmail.com>
+Co-developed-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+---
+v3:
+ - use u32 right away without going through unsigned long
 
->=20
->>> +            }
->>> +        }
->>>    }
->>>    pgt_pmd =3D pmdp_collapse_flush(vma, haddr, pmd);
->>>    pmdp_get_lockless_sync();
->>>    if (ptl !=3D pml)
->>>        spin_unlock(ptl);
->>> +    pte_unmap(start_pte);
->>>    spin_unlock(pml);
->> Why not?
->> pte_unmap_unlock(start_pte, ptl);
->> if (pml !=3D ptl)
->>         spin_unlock(pml);
->=20
-> Both are fine, will do.
->=20
-> Thanks,
-> Qi
->=20
->>>=20
->>>    mmu_notifier_invalidate_range_end(&range);
->>> --
->>> 2.20.1
+v2:
+ - actually save the value in the output parameter @data
 
+ arch/x86/kernel/cpu/resctrl/ctrlmondata.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+index 50fa1fe9a073..53defc5a6784 100644
+--- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
++++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+@@ -29,10 +29,10 @@
+  * hardware. The allocated bandwidth percentage is rounded to the next
+  * control step available on the hardware.
+  */
+-static bool bw_validate(char *buf, unsigned long *data, struct rdt_resource *r)
++static bool bw_validate(char *buf, u32 *data, struct rdt_resource *r)
+ {
+-	unsigned long bw;
+ 	int ret;
++	u32 bw;
+ 
+ 	/*
+ 	 * Only linear delay values is supported for current Intel SKUs.
+@@ -42,14 +42,19 @@ static bool bw_validate(char *buf, unsigned long *data, struct rdt_resource *r)
+ 		return false;
+ 	}
+ 
+-	ret = kstrtoul(buf, 10, &bw);
++	ret = kstrtou32(buf, 10, &bw);
+ 	if (ret) {
+-		rdt_last_cmd_printf("Non-decimal digit in MB value %s\n", buf);
++		rdt_last_cmd_printf("Invalid MB value %s\n", buf);
+ 		return false;
+ 	}
+ 
+-	if ((bw < r->membw.min_bw || bw > r->default_ctrl) &&
+-	    !is_mba_sc(r)) {
++	/* Nothing else to do if software controller is enabled. */
++	if (is_mba_sc(r)) {
++		*data = bw;
++		return true;
++	}
++
++	if (bw < r->membw.min_bw || bw > r->default_ctrl) {
+ 		rdt_last_cmd_printf("MB value %ld out of range [%d,%d]\n", bw,
+ 				    r->membw.min_bw, r->default_ctrl);
+ 		return false;
+@@ -65,7 +70,7 @@ int parse_bw(struct rdt_parse_data *data, struct resctrl_schema *s,
+ 	struct resctrl_staged_config *cfg;
+ 	u32 closid = data->rdtgrp->closid;
+ 	struct rdt_resource *r = s->res;
+-	unsigned long bw_val;
++	u32 bw_val;
+ 
+ 	cfg = &d->staged_config[s->conf_type];
+ 	if (cfg->have_new_ctrl) {
+-- 
+2.46.1
 
 
