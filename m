@@ -1,122 +1,204 @@
-Return-Path: <linux-kernel+bounces-336470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97016983B42
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 04:36:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A750983B44
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 04:40:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C619E1C2245F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 02:36:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17691281B88
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 02:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 356C9DDDC;
-	Tue, 24 Sep 2024 02:36:09 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C051AEAD7;
+	Tue, 24 Sep 2024 02:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P0ItYPpy"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73E71B85DA;
-	Tue, 24 Sep 2024 02:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED9FC8CE;
+	Tue, 24 Sep 2024 02:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727145368; cv=none; b=Suq9W694O5uq0L3yfcfFCyQ9U/NadR/mAxbb2a4Qol2ON/Is9GQNn2WuCypaTzaUOPx3I+afFjsxsu/Qsm7Ws4GJ2tnnkBhnoarYTNUwSxVdtyW5+YRAW3UUL+RRDo8x/VfLDetFgbnlSBMTxVMWxLNIJ9KsP+bKctN74ZYUt/k=
+	t=1727145616; cv=none; b=QWEmwfXcydOsEDtR2tE+nhxqysZf/g9LiQySG9FRLpqc5QVBU7zUlS5ylYQF7eV2+rYFwL0zTpowEkbWFXZJVgypwtBSa7U9qKKZCHri8uKSMb9XEg1a4d9R5csj51c9xbUy1+VcX9D3yDFRACNAccFBdINhlt5aaGjYlPy4AlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727145368; c=relaxed/simple;
-	bh=h/9KeGAQlE4FEuRlNyt97Jd0e9xZmPRkV6TE6oY+udQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B5L7pAlYZTk0uV3iwYK8mJthatvwcUUfjz4K3Ql4h5gQKBS87iisabEledMBzI1dtjthIuWKy0Snh7tT65O8G9WGpIRwEszIYxv3IKio5Odo3i88DTEpDN7/7KXkCKkq3JXMMnyVYg6UkIxjAnFvIZ4fQXcyipAuNqYEMPXm3Ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XCP9070bBz1SBTc;
-	Tue, 24 Sep 2024 10:35:16 +0800 (CST)
-Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2E95D1A016C;
-	Tue, 24 Sep 2024 10:36:03 +0800 (CST)
-Received: from huawei.com (10.175.127.227) by kwepemg500017.china.huawei.com
- (7.202.181.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 24 Sep
- 2024 10:36:02 +0800
-From: Li Lingfeng <lilingfeng3@huawei.com>
-To: <trondmy@kernel.org>, <anna@kernel.org>
-CC: <trond.myklebust@hammerspace.com>, <jlayton@kernel.org>,
-	<linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yukuai1@huaweicloud.com>, <houtao1@huawei.com>, <yi.zhang@huawei.com>,
-	<yangerkun@huawei.com>, <lilingfeng@huaweicloud.com>,
-	<lilingfeng3@huawei.com>
-Subject: [PATCH] nfs: maintain nfs_server in the reclaim process
-Date: Tue, 24 Sep 2024 10:45:21 +0800
-Message-ID: <20240924024521.2898776-1-lilingfeng3@huawei.com>
-X-Mailer: git-send-email 2.31.1
+	s=arc-20240116; t=1727145616; c=relaxed/simple;
+	bh=AxIeSno/1DoU++XQOIvkR6IyM7d89vGa8e+sDw3eF1g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nqakfc4CJyA5shCLCN2XE+9U4+1hv6hEANqWnciFKO7KvINOja0IOPTUTlv3hWr7CLUzDQCohI1EmpuE7dQwIa2Cx7wzRrXWv9zzRcUcTkLUn4b71PYF7/8vCRnGWURFsGNpzMXR/4haX9TSaMFqrW62sj15FGCtZTPjXyzlN/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P0ItYPpy; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727145615; x=1758681615;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=AxIeSno/1DoU++XQOIvkR6IyM7d89vGa8e+sDw3eF1g=;
+  b=P0ItYPpyWPw5kG1QsCmzjvAw0EQ7pfbn5kpUJdCjjAMA4pSKeO0Cml+O
+   B1vF25gvlhJ09tYfwdoOVrUmYi9oSiSZXYLs/wLFHvPT9ezEXgTd7Rgil
+   pKSm4jDKdiKxHD7ie3gHbF69iZma+mYNVaEfh/4P/UHIIcra1VKJYqXJz
+   GuiqhDYve0P0+kglpkfb5w/ETbl1ZG9RCBKBJIkxWlwkg0X6tEI0Ab2An
+   6dyS8rUpUdTiJDdpOV9rZ92s0YwwdVOtSMKTotJqbTjTbXmRFXnNQseTn
+   kIc3JgyyWNOJDTZrceF/bq88LZ1iGQPjS1g/rW8xAS4oxHHoPm0oDzIwM
+   g==;
+X-CSE-ConnectionGUID: aoapjH3tTFONNgf2+ZF4gA==
+X-CSE-MsgGUID: DHUMkAZwRcCURcWzntHP9Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="29835816"
+X-IronPort-AV: E=Sophos;i="6.10,253,1719903600"; 
+   d="scan'208";a="29835816"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 19:40:14 -0700
+X-CSE-ConnectionGUID: 7aoVqqMLRMutRrlIwUo6hg==
+X-CSE-MsgGUID: 5yg3wsnDQOGGUZY47dBnjg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,253,1719903600"; 
+   d="scan'208";a="70857713"
+Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 19:40:13 -0700
+Date: Mon, 23 Sep 2024 19:45:51 -0700
+From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Cc: "Zhang, Rui" <rui.zhang@intel.com>,
+	"regressions@leemhuis.info" <regressions@leemhuis.info>,
+	"Neri, Ricardo" <ricardo.neri@intel.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"Gupta, Pawan Kumar" <pawan.kumar.gupta@intel.com>,
+	"regressions@lists.linux.dev" <regressions@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Luck, Tony" <tony.luck@intel.com>,
+	"thomas.lindroth@gmail.com" <thomas.lindroth@gmail.com>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [STABLE REGRESSION] Possible missing backport of x86_match_cpu()
+ change in v6.1.96
+Message-ID: <20240924024551.GA13538@ranerica-svr.sc.intel.com>
+References: <eb709d67-2a8d-412f-905d-f3777d897bfa@gmail.com>
+ <a79fa3cc-73ef-4546-b110-1f448480e3e6@leemhuis.info>
+ <2024081217-putt-conform-4b53@gregkh>
+ <05ced22b5b68e338795c8937abb8141d9fa188e6.camel@intel.com>
+ <2024091900-unimpeded-catalyst-b09f@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemg500017.china.huawei.com (7.202.181.81)
+In-Reply-To: <2024091900-unimpeded-catalyst-b09f@gregkh>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 
-In the reclaim process, there may be a situation where all files are
-closed and the file system is unmounted, which will result in the release
-of nfs_server.
-This will trigger UAF in nfs4_put_open_state when the count of nfs4_state
-is decremented to zero, because the freed nfs_server will be accessed
-when evicting inode.
+On Thu, Sep 19, 2024 at 01:19:27PM +0200, gregkh@linuxfoundation.org wrote:
+> On Wed, Sep 18, 2024 at 06:54:33AM +0000, Zhang, Rui wrote:
+> > On Mon, 2024-08-12 at 14:11 +0200, Greg KH wrote:
+> > > On Wed, Aug 07, 2024 at 10:15:23AM +0200, Thorsten Leemhuis wrote:
+> > > > [CCing the x86 folks, Greg, and the regressions list]
+> > > > 
+> > > > Hi, Thorsten here, the Linux kernel's regression tracker.
+> > > > 
+> > > > On 30.07.24 18:41, Thomas Lindroth wrote:
+> > > > > I upgraded from kernel 6.1.94 to 6.1.99 on one of my machines and
+> > > > > noticed that
+> > > > > the dmesg line "Incomplete global flushes, disabling PCID" had
+> > > > > disappeared from
+> > > > > the log.
+> > > > 
+> > > > Thomas, thx for the report. FWIW, mainline developers like the x86
+> > > > folks
+> > > > or Tony are free to focus on mainline and leave stable/longterm
+> > > > series
+> > > > to other people -- some nevertheless help out regularly or
+> > > > occasionally.
+> > > > So with a bit of luck this mail will make one of them care enough
+> > > > to
+> > > > provide a 6.1 version of what you afaics called the "existing fix"
+> > > > in
+> > > > mainline (2eda374e883ad2 ("x86/mm: Switch to new Intel CPU model
+> > > > defines") [v6.10-rc1]) that seems to be missing in 6.1.y. But if
+> > > > not I
+> > > > suspect it might be up to you to prepare and submit a 6.1.y variant
+> > > > of
+> > > > that fix, as you seem to care and are able to test the patch.
+> > > 
+> > > Needs to go to 6.6.y first, right?  But even then, it does not apply
+> > > to
+> > > 6.1.y cleanly, so someone needs to send a backported (and tested)
+> > > series
+> > > to us at stable@vger.kernel.org and we will be glad to queue them up
+> > > then.
+> > > 
+> > > thanks,
+> > > 
+> > > greg k-h
+> > 
+> > There are three commits involved.
+> > 
+> > commit A:
+> >    4db64279bc2b (""x86/cpu: Switch to new Intel CPU model defines"") 
+> >    This commit replaces
+> >       X86_MATCH_INTEL_FAM6_MODEL(ANY, 1),             /* SNC */
+> >    with
+> >       X86_MATCH_VFM(INTEL_ANY,         1),    /* SNC */
+> >    This is a functional change because the family info is replaced with
+> > 0. And this exposes a x86_match_cpu() problem that it breaks when the
+> > vendor/family/model/stepping/feature fields are all zeros.
+> > 
+> > commit B:
+> >    93022482b294 ("x86/cpu: Fix x86_match_cpu() to match just
+> > X86_VENDOR_INTEL")
+> >    It addresses the x86_match_cpu() problem by introducing a valid flag
+> > and set the flag in the Intel CPU model defines.
+> >    This fixes commit A, but it actually breaks the x86_cpu_id
+> > structures that are constructed without using the Intel CPU model
+> > defines, like arch/x86/mm/init.c.
+> > 
+> > commit C:
+> >    2eda374e883a ("x86/mm: Switch to new Intel CPU model defines")
+> >    arch/x86/mm/init.c: broke by commit B but fixed by using the new
+> > Intel CPU model defines
+> > 
+> > In 6.1.99,
+> > commit A is missing
+> > commit B is there
+> > commit C is missing
+> > 
+> > In 6.6.50,
+> > commit A is missing
+> > commit B is there
+> > commit C is missing
+> > 
+> > Now we can fix the problem in stable kernel, by converting
+> > arch/x86/mm/init.c to use the CPU model defines (even the old style
+> > ones). But before that, I'm wondering if we need to backport commit B
+> > in 6.1 and 6.6 stable kernel because only commit A can expose this
+> > problem.
+> 
+> If so, can you submit the needed backports for us to apply?  That's the
+> easiest way for us to take them, thanks.
 
-Maintaining the nfs_server throughout the entire reclaim process by adding
-nfs_sb_active and nfs_sb_deactive to fix it.
+I audited all the uses of x86_match_cpu(match). All callers that construct
+the `match` argument using the family of X86_MATCH_* macros from arch/x86/
+include/asm/cpu_device_id.h function correctly because the commit B has
+been backported to v6.1.99 and to v6.6.50 -- 93022482b294 ("x86/cpu: Fix
+x86_match_cpu() to match just X86_VENDOR_INTEL").
 
-Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
----
- fs/nfs/nfs4state.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+Only those callers that use their own thing to compose the `match` argument
+are buggy:
+    * arch/x86/mm/init.c
+    * drivers/powercap/intel_rapl_msr.c (only in 6.1.99)
 
-diff --git a/fs/nfs/nfs4state.c b/fs/nfs/nfs4state.c
-index 877f682b45f2..f09f63b5a7c0 100644
---- a/fs/nfs/nfs4state.c
-+++ b/fs/nfs/nfs4state.c
-@@ -1934,6 +1934,8 @@ static int nfs4_do_reclaim(struct nfs_client *clp, const struct nfs4_state_recov
- restart:
- 	rcu_read_lock();
- 	list_for_each_entry_rcu(server, &clp->cl_superblocks, client_link) {
-+		if (!(server->super && nfs_sb_active(server->super)))
-+			continue;
- 		nfs4_purge_state_owners(server, &freeme);
- 		spin_lock(&clp->cl_lock);
- 		for (pos = rb_first(&server->state_owners);
-@@ -1942,10 +1944,14 @@ static int nfs4_do_reclaim(struct nfs_client *clp, const struct nfs4_state_recov
- 			sp = rb_entry(pos,
- 				struct nfs4_state_owner, so_server_node);
- 			if (!test_and_clear_bit(ops->owner_flag_bit,
--							&sp->so_flags))
-+							&sp->so_flags)) {
-+				nfs_sb_deactive(server->super);
- 				continue;
--			if (!atomic_inc_not_zero(&sp->so_count))
-+			}
-+			if (!atomic_inc_not_zero(&sp->so_count)) {
-+				nfs_sb_deactive(server->super);
- 				continue;
-+			}
- 			spin_unlock(&clp->cl_lock);
- 			rcu_read_unlock();
- 
-@@ -1961,9 +1967,11 @@ static int nfs4_do_reclaim(struct nfs_client *clp, const struct nfs4_state_recov
- 			}
- 
- 			nfs4_put_state_owner(sp);
-+			nfs_sb_deactive(server->super);
- 			goto restart;
- 		}
- 		spin_unlock(&clp->cl_lock);
-+		nfs_sb_deactive(server->super);
- 	}
- 	rcu_read_unlock();
- 	nfs4_free_state_owners(&freeme);
--- 
-2.31.1
+Summarizing, v6.1.99 needs these two commits from mainline
+    * d05b5e0baf42 ("powercap: RAPL: fix invalid initialization for
+      pl4_supported field")
+    * 2eda374e883a ("x86/mm: Switch to new Intel CPU model defines")
 
+v6.6.50 only needs the second commit.
+
+I will submit these backports.
+
+Thanks and BR,
+Ricardo
 
