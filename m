@@ -1,158 +1,116 @@
-Return-Path: <linux-kernel+bounces-337110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25340984579
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:05:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A6689846D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:35:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 547A81C20456
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:05:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A495B22A42
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:34:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E03411A7242;
-	Tue, 24 Sep 2024 12:04:32 +0000 (UTC)
-Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141701A76D4;
+	Tue, 24 Sep 2024 13:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=milecki.pl header.i=@milecki.pl header.b="H4Qq7VYD"
+Received: from 13.mo581.mail-out.ovh.net (13.mo581.mail-out.ovh.net [87.98.150.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F821A7058;
-	Tue, 24 Sep 2024 12:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5CD16F0C1
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 13:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=87.98.150.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727179472; cv=none; b=Utk2zP0DFuLfe+O3Hp6vZIBaXF84gNCiY9PjMyf9f0zntxLHJVCvXJ8mrqY+hkSxX1Es97Xx6HHGOsSMosSLL4EisQddAKpMLM6s8Owm4Z01b3LMmqnfckWunxJYrXcY1LMaTDAml7Ed7fNT9vnqLGkeRh4qdo4bXW8nkUs5J/g=
+	t=1727184892; cv=none; b=qqlcQ3qlzO2Fl+ZWdVd7tfLlxcPzSRHxgIO2NKunMhnW6GHl3ihPhiqp8c9r1aiO8CuC/IpIyS0fs0w5ejiYE921rDeziP9JLbYgXSd4iepWXJ3qgh65coPhAdl4Ev1D9siPGrh6DUBrFff2Cvtlk7Zq2BQwwQP8XsTFrjQW1dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727179472; c=relaxed/simple;
-	bh=YdL10GeXIjk2nbU0lsa5VntCDc2dr0aErMRWGxduYus=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oJgcjegTh+Zh0jRUJRzxwMKtT0pjdKd4bE2oRw8++jRX54Zqen57urDTx6er99vc1IVsLijig68vc+7pImmGqfCCHJ9MJ1QDNG/i8+BogefpqcSe0KVS5Mrs6zjCAUME19+WVZEzPJX50CAI1rcmZgFDpyJTUe0MyuufxQa4EvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
-Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
- (195.54.195.169) with Microsoft SMTP Server (TLS) id 14.3.498.0; Tue, 24 Sep
- 2024 15:04:18 +0300
-Received: from localhost (10.0.253.138) by Ex16-01.fintech.ru (10.0.10.18)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Tue, 24 Sep
- 2024 15:04:18 +0300
-From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-To: <stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>, Jaegeuk Kim
-	<jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-	<linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH 6.1 1/1] f2fs: convert to MAX_SBI_FLAG instead of 32 in stat_show()
-Date: Tue, 24 Sep 2024 05:04:11 -0700
-Message-ID: <20240924120411.34948-2-n.zhandarovich@fintech.ru>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240924120411.34948-1-n.zhandarovich@fintech.ru>
-References: <20240924120411.34948-1-n.zhandarovich@fintech.ru>
+	s=arc-20240116; t=1727184892; c=relaxed/simple;
+	bh=BnNTOClk37Yx5kmE3nkdR71wySOFIiN6hExvBSLNF8Q=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=sMfkyr4hhma12k3WA2DKvGvaJPL5arstycIdXlzvjGpwHIWboiO7r+GTcQoTnahtDucmGanIaLExUMe4ChtPoNHyG/fZAAXjOLfEtDUcpFGyh/gNYXQae7Xx7oeWQ9lOgXh8Cp2nBiVAQKQMMQJHp/z+Tk5B6g9Fkkh9GKIAeeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=milecki.pl; spf=pass smtp.mailfrom=milecki.pl; dkim=pass (2048-bit key) header.d=milecki.pl header.i=@milecki.pl header.b=H4Qq7VYD; arc=none smtp.client-ip=87.98.150.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=milecki.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=milecki.pl
+Received: from director6.ghost.mail-out.ovh.net (unknown [10.109.176.170])
+	by mo581.mail-out.ovh.net (Postfix) with ESMTP id 4XCZxK6yC1z1Np1
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:55:49 +0000 (UTC)
+Received: from ghost-submission-55b549bf7b-5q9lx (unknown [10.110.164.235])
+	by director6.ghost.mail-out.ovh.net (Postfix) with ESMTPS id 3B7A11FE9B;
+	Tue, 24 Sep 2024 09:55:47 +0000 (UTC)
+Received: from milecki.pl ([37.59.142.101])
+	by ghost-submission-55b549bf7b-5q9lx with ESMTPSA
+	id AqzIBaOM8mZcgQAA+u7rcQ
+	(envelope-from <rafal@milecki.pl>); Tue, 24 Sep 2024 09:55:47 +0000
+Authentication-Results:garm.ovh; auth=pass (GARM-101G004d3854881-9240-4405-bcc0-c07042d02785,
+                    1AB79004D049CCABD2FE35BF073248474FDEF107) smtp.auth=rafal@milecki.pl
+X-OVh-ClientIp:151.80.29.20
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Date: Tue, 24 Sep 2024 11:55:44 +0200
+From: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>
+To: Sandie Cao <sandie.cao@deepcomputing.io>
+Cc: Conor Dooley <conor@kernel.org>, Emil Renner Berthing <kernel@esmil.dk>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Heiko Stuebner
+ <heiko.stuebner@cherry.de>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Michael Zhu
+ <michael.zhu@starfivetech.com>, Drew Fustini <drew@beagleboard.org>,
+ linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dhs@frame.work, ams@frame.work,
+ gregkh@linuxfoundation.org, yuning.liang@deepcomputing.io,
+ huiming.qiu@deepcomputing.io
+Subject: Re: [patch v2 3/3] riscv: dts: starfive: add framework dts
+In-Reply-To: <20240924080650.1345485-4-sandie.cao@deepcomputing.io>
+References: <20240924080650.1345485-4-sandie.cao@deepcomputing.io>
+Message-ID: <75d4f0395187f7950e0450a91fbe087d@milecki.pl>
+X-Sender: rafal@milecki.pl
+X-Webmail-UserID: rafal@milecki.pl
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
- (10.0.10.18)
+X-Ovh-Tracer-Id: 10134506538491882359
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtvddgvdduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepggffhffvvefujghfkfigihgtgfesthekjhdttddtjeenucfhrhhomheptfgrfhgrlhcuofhilhgvtghkihcuoehrrghfrghlsehmihhlvggtkhhirdhplheqnecuggftrfgrthhtvghrnhepjeejkeekgeejtdffffevffeivedtueeifeeuffegkeehkeeliedugfelfedutdeunecukfhppeduvdejrddtrddtrddupdefuddruddurddvudekrddutdeipdduhedurdektddrvdelrddvtddpfeejrdehledrudegvddruddtudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomheprhgrfhgrlhesmhhilhgvtghkihdrphhlpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehkedupdhmohguvgepshhmthhpohhuth
+DKIM-Signature: a=rsa-sha256; bh=jffzDI9wqpTBxYh402/WuPcxuVwvyleh09GDw3XTbs0=;
+ c=relaxed/relaxed; d=milecki.pl; h=From; s=ovhmo3028686-selector1;
+ t=1727171750; v=1;
+ b=H4Qq7VYDRzRWv9WFaKeW1C47OolejEPczUMrO/b5LLTjo2+5Z3m5nY+1cHFcCufYPh5t/6hk
+ oMrRFbUEq/f2QprP1TO9UxEXsV2uwjvrBk3XxOGOfYSh5lvYxK8q5do3FJoXGkBQVlCRRl3O1+G
+ j3wAt0duT4a3RN+jaHXNimzKu2hN9qKAr153r4ypR60sYAP9fibB4gSaWR9PBsawYGFcpDlscQ4
+ 5UZk7IOgZuy4uu+Q+0HWZBAFmDEiCqhUShtiId4/icFcn0eloP/h2br97bFgUBxA3/YVg3IvwQ+
+ qqLrPsjwzccFcyJdJRsf9qwltIPJWn42N5B7jCN4YUvKg==
 
-From: Yangtao Li <frank.li@vivo.com>
+On 2024-09-24 10:06, Sandie Cao wrote:
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-framework.dts
+> b/arch/riscv/boot/dts/starfive/jh7110-framework.dts
+> new file mode 100644
+> index 000000000000..ff12c24ebab3
+> --- /dev/null
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-framework.dts
+> @@ -0,0 +1,34 @@
+> +// SPDX-License-Identifier: GPL-2.0 OR MIT
+> +/*
+> + * Copyright (C) 2022 StarFive Technology Co., Ltd.
+> + * Copyright (C) 2022 Emil Renner Berthing <kernel@esmil.dk>
+> + */
+> +
+> +/dts-v1/;
+> +#include "jh7110-common.dtsi"
+> +
+> +/ {
+> +	model = "Framework FRANME0000";
+> +	compatible = "deepcomputing,fm7110", "starfive,jh7110";
+> +};
 
-commit 5bb9c111cd98ad844d48ace9924e29f56312f036 upstream.
+Nitpicking: property "compatible" should go first.
 
-BIW reduce the s_flag array size and make s_flag constant.
+See Documentation/devicetree/bindings/dts-coding-style.rst
 
-Signed-off-by: Yangtao Li <frank.li@vivo.com>
-Reviewed-by: Chao Yu <chao@kernel.org>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-[Nikita: This patch has been cherry-picked from original commit:
-the only discrepancy was in stat_show(). Specifically, due to
-lack of commit dda7d77bcd42 ("f2fs: replace si->sbi w/ sbi in
-stat_show()") keep &si->sbi->s_flag instead of &sbi->s_flag.]
-Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
----
- fs/f2fs/debug.c | 36 ++++++++++++++++++------------------
- fs/f2fs/f2fs.h  |  6 +++++-
- 2 files changed, 23 insertions(+), 19 deletions(-)
-
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index a9baa121d829..002bf12b4e26 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -332,22 +332,22 @@ static void update_mem_info(struct f2fs_sb_info *sbi)
- #endif
- }
- 
--static char *s_flag[] = {
--	[SBI_IS_DIRTY]		= " fs_dirty",
--	[SBI_IS_CLOSE]		= " closing",
--	[SBI_NEED_FSCK]		= " need_fsck",
--	[SBI_POR_DOING]		= " recovering",
--	[SBI_NEED_SB_WRITE]	= " sb_dirty",
--	[SBI_NEED_CP]		= " need_cp",
--	[SBI_IS_SHUTDOWN]	= " shutdown",
--	[SBI_IS_RECOVERED]	= " recovered",
--	[SBI_CP_DISABLED]	= " cp_disabled",
--	[SBI_CP_DISABLED_QUICK]	= " cp_disabled_quick",
--	[SBI_QUOTA_NEED_FLUSH]	= " quota_need_flush",
--	[SBI_QUOTA_SKIP_FLUSH]	= " quota_skip_flush",
--	[SBI_QUOTA_NEED_REPAIR]	= " quota_need_repair",
--	[SBI_IS_RESIZEFS]	= " resizefs",
--	[SBI_IS_FREEZING]	= " freezefs",
-+static const char *s_flag[MAX_SBI_FLAG] = {
-+	[SBI_IS_DIRTY]		= "fs_dirty",
-+	[SBI_IS_CLOSE]		= "closing",
-+	[SBI_NEED_FSCK]		= "need_fsck",
-+	[SBI_POR_DOING]		= "recovering",
-+	[SBI_NEED_SB_WRITE]	= "sb_dirty",
-+	[SBI_NEED_CP]		= "need_cp",
-+	[SBI_IS_SHUTDOWN]	= "shutdown",
-+	[SBI_IS_RECOVERED]	= "recovered",
-+	[SBI_CP_DISABLED]	= "cp_disabled",
-+	[SBI_CP_DISABLED_QUICK]	= "cp_disabled_quick",
-+	[SBI_QUOTA_NEED_FLUSH]	= "quota_need_flush",
-+	[SBI_QUOTA_SKIP_FLUSH]	= "quota_skip_flush",
-+	[SBI_QUOTA_NEED_REPAIR]	= "quota_need_repair",
-+	[SBI_IS_RESIZEFS]	= "resizefs",
-+	[SBI_IS_FREEZING]	= "freezefs",
- };
- 
- static int stat_show(struct seq_file *s, void *v)
-@@ -367,8 +367,8 @@ static int stat_show(struct seq_file *s, void *v)
- 			"Disabled" : (f2fs_cp_error(si->sbi) ? "Error" : "Good"));
- 		if (si->sbi->s_flag) {
- 			seq_puts(s, "[SBI:");
--			for_each_set_bit(j, &si->sbi->s_flag, 32)
--				seq_puts(s, s_flag[j]);
-+			for_each_set_bit(j, &si->sbi->s_flag, MAX_SBI_FLAG)
-+				seq_printf(s, " %s", s_flag[j]);
- 			seq_puts(s, "]\n");
- 		}
- 		seq_printf(s, "[SB: 1] [CP: 2] [SIT: %d] [NAT: %d] ",
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 2b540d87859e..75db7c09bdfe 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1271,7 +1271,10 @@ struct f2fs_gc_control {
- 	unsigned int nr_free_secs;	/* # of free sections to do GC */
- };
- 
--/* For s_flag in struct f2fs_sb_info */
-+/*
-+ * For s_flag in struct f2fs_sb_info
-+ * Modification on enum should be synchronized with s_flag array
-+ */
- enum {
- 	SBI_IS_DIRTY,				/* dirty flag for checkpoint */
- 	SBI_IS_CLOSE,				/* specify unmounting */
-@@ -1288,6 +1291,7 @@ enum {
- 	SBI_QUOTA_NEED_REPAIR,			/* quota file may be corrupted */
- 	SBI_IS_RESIZEFS,			/* resizefs is in process */
- 	SBI_IS_FREEZING,			/* freezefs is in process */
-+	MAX_SBI_FLAG,
- };
- 
- enum {
+-- 
+Rafał Miłecki
 
