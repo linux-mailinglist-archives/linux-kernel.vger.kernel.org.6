@@ -1,81 +1,44 @@
-Return-Path: <linux-kernel+bounces-337113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C3CE984590
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:08:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 809E8984595
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:09:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8EEBB222B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:08:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3B6E1C2199C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484151A7243;
-	Tue, 24 Sep 2024 12:08:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C4101A7076;
+	Tue, 24 Sep 2024 12:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="BaGed3Th"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED9C1A3AB7;
-	Tue, 24 Sep 2024 12:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="PeYwUKB2"
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 329F9126C04
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 12:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727179684; cv=none; b=glh9izLwOsJ/6piTKqrvfdaej23gpz7JRpNf0IDuNMYNqVEUZ7l1k7J+YgiO4gaYw0M6JpQ6/ZfAkoacwflQtAzwJ7lTNJ7gqSkivvo4IN1lm2dYRDJkOIbDQGJJLHbpq6jrTDLLrjyaKr7vUt+SAIB9CdflAwVQlfQutt67VVo=
+	t=1727179762; cv=none; b=mNoC4Bp4ud3AwgKXGziIqUcbW5X4vnHDnCrRLH4BAINIJ8vpAWMOMbmw+KnB/Aup0riqk7DkZ30zxkbffHOHLvrRdjjsEUEwrZsS4iivfV/Lpc/qqxwBuB0YzzG/bTwExvoyrwI8M2PyB7kEJrQ2H1qmF0UQ2Ci9BimyCZVcV7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727179684; c=relaxed/simple;
-	bh=nNz2+oId6mzXmRk2C0COQrwvkJHEdReK3I1joI2vNaA=;
+	s=arc-20240116; t=1727179762; c=relaxed/simple;
+	bh=yr/6p1XuaflXZcbWcYM7BNT0tAUaUqmryFgL6upSusY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nQm7wVwhDkXjQG4MeAhxoZD9cnhhwE+FqxR2wBlsBcTJqX/awtPtu98/FfprNXSUDqgcmY+LwWxz/dksx+Mi/45UTX2vi8o/5MzcWk9rgZ9iRt3xmgXgHG3a/tD9iWGlS8dkzRZP4sc3SBOxCQGO9m8t0pvdQeLmDcmvWodx9p4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=BaGed3Th; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48OBaauT008661;
-	Tue, 24 Sep 2024 12:07:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=x
-	Nc7cw9Kq0ynPaYqsSVBD/YgCtnZUZCRP85lFxbVEl0=; b=BaGed3ThF2vbJ0d8f
-	EOCd+L3gUzV5NgBca4evb1dDyhz19cRlxbAoPbkxHXJNqzqWThG417Ojaopr8YeT
-	BXluXH89AN41tLne0N9g9ASgN65xxk8KfleBD7/oPo7x2lbKXsQLWqlu33gcc8Hr
-	S6+M5529EsCjJ5QAMzaiZvXGZNdq9PDi4adVRnGj2gBVVUqOqV5jEsokougOBUkT
-	zzX6tNIhM4e4Ss7P66BsVEwN1+9sAFBgs3rYSh+B/185JncA7xcjD2iaUXM82hPO
-	HLxxN4BvpCzPHEemC+Bz95Uw9E+xlYcQ7yikhavF4Rgkj14qcER0D+CH0vdaLhhq
-	87qHg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41skjrhv72-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Sep 2024 12:07:53 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48OC7qS5000857;
-	Tue, 24 Sep 2024 12:07:53 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41skjrhv6y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Sep 2024 12:07:52 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48OAHoNU000668;
-	Tue, 24 Sep 2024 12:07:52 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 41t8fum2dd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Sep 2024 12:07:52 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48OC7maI57999680
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 24 Sep 2024 12:07:48 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C7B1E20049;
-	Tue, 24 Sep 2024 12:07:48 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4EFE220040;
-	Tue, 24 Sep 2024 12:07:48 +0000 (GMT)
-Received: from [9.171.10.137] (unknown [9.171.10.137])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 24 Sep 2024 12:07:48 +0000 (GMT)
-Message-ID: <1302ec9f-ed6a-4606-a823-a4e0eb306698@linux.ibm.com>
-Date: Tue, 24 Sep 2024 14:07:48 +0200
+	 In-Reply-To:Content-Type; b=TR9Rmm7i4mBapMEGgMm4vIdW3RybtDAIqV4Jv2mQNNEsRjbvvYuaa5i6LKItiGGrIQxt+1LwAqwKdd/E5ifuD+P5PiSJ77Rat3e7VML6jqJi62EXroqH7VjCbsu3fd1kNabbHaZGzLIgqBpENCskKhKkVIk6XZvfEy2csEU3w9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=PeYwUKB2; arc=none smtp.client-ip=220.197.31.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=dzYX9L6IeUKBp98QvN+GVTSyWqQvMJBA1AMuWxDdckc=;
+	b=PeYwUKB2VSKhaCRU5KTS65gQqJ7DuFtjFAvWWABiVLEtXQzKcXnLHOE04l66cV
+	beVbHNnoM0SPK3wvCqe5/BXIIHe1bbsP2e2AA6EdfXn0M445EyWnx6oRL8jiyZIl
+	9eFVpc6mpsXDr5Pgl8lzkC2WnASHkPXBZB8aNnwDVrmg8=
+Received: from [192.168.109.86] (unknown [123.149.2.202])
+	by gzga-smtp-mta-g2-3 (Coremail) with SMTP id _____wD3n5TZq_JmYlAkDA--.13825S2;
+	Tue, 24 Sep 2024 20:08:57 +0800 (CST)
+Message-ID: <6b22baa6-a75f-45ff-a0cb-33ae0ecf4720@126.com>
+Date: Tue, 24 Sep 2024 20:08:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,91 +46,235 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/5] KVM: s390: selftests: Add regression tests for CPU
- subfunctions
-To: Hariharan Mari <hari55@linux.ibm.com>, linux-kselftest@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, shuah@kernel.org,
-        borntraeger@linux.ibm.com, imbrenda@linux.ibm.com, david@redhat.com,
-        pbonzini@redhat.com, schlameuss@linux.ibm.com
-References: <20240823130947.38323-1-hari55@linux.ibm.com>
-Content-Language: en-US
-From: Janosch Frank <frankja@linux.ibm.com>
-Autocrypt: addr=frankja@linux.ibm.com; keydata=
- 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
-In-Reply-To: <20240823130947.38323-1-hari55@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH 2/3] udf: refactor udf_next_aext() to handle error
+To: Jan Kara <jack@suse.cz>
+Cc: jack@suse.com, zhaomengmeng@kylinos.cn, linux-kernel@vger.kernel.org
+References: <20240918093634.12906-1-zhaomzhao@126.com>
+ <20240918093634.12906-3-zhaomzhao@126.com>
+ <20240920154701.xotlrf37bjlwtg3i@quack3>
+From: Zhao Mengmeng <zhaomzhao@126.com>
+In-Reply-To: <20240920154701.xotlrf37bjlwtg3i@quack3>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: JpBo8Wu1IcBHHquAqXtNtiSS0ABzr1Pl
-X-Proofpoint-ORIG-GUID: Dz0idRleiCKeDKGA9KR00AmR7-hXYnuJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-24_02,2024-09-24_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
- spamscore=0 adultscore=0 lowpriorityscore=0 impostorscore=0 phishscore=0
- clxscore=1011 malwarescore=0 mlxlogscore=583 bulkscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409240084
+X-CM-TRANSID:_____wD3n5TZq_JmYlAkDA--.13825S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Gr47CF1fGr47Zry5KF45KFg_yoW3AF1rpr
+	97KayqyayYgFW7ur4IqF4DZr10qa42kF4UCrnYqasxtF48Xr15KFyFkryY9F1Uurs3Xw4S
+	qr4rK34DCw1xKrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UyKZXUUUUU=
+X-CM-SenderInfo: 52kd0zp2kd0qqrswhudrp/1tbi6BBkd2bymnOv9AAAsN
 
-On 8/23/24 3:05 PM, Hariharan Mari wrote:
-> This patch series introduces a set of regression tests for various s390x
-> CPU subfunctions in KVM. The tests ensure that the KVM implementation accurately
-> reflects the behavior of actual CPU instructions for these subfunctions.
+On 2024/9/20 23:47, Jan Kara wrote:
+> On Wed 18-09-24 17:36:33, Zhao Mengmeng wrote:
+>> From: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
+>>
+>> Same as udf_current_aext(), take pointer to etype to store the extent
+>> type, while return 0 for success and <0 on error.
+>>
+>> Signed-off-by: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
 > 
-> The series adds tests for a total of 15 instructions across five patches,
-> covering a range of operations including sorting, compression, and various
-> cryptographic functions. Each patch follows a consistent testing pattern:
+> ...
 > 
-> 1. Obtain the KVM_S390_VM_CPU_MACHINE_SUBFUNC attribute for the VM.
-> 2. Execute the relevant asm instructions.
-> 3. Compare KVM-reported results with direct instruction execution results.
+>> diff --git a/fs/udf/directory.c b/fs/udf/directory.c
+>> index 93153665eb37..f865538c985d 100644
+>> --- a/fs/udf/directory.c
+>> +++ b/fs/udf/directory.c
+>> @@ -166,13 +166,16 @@ static struct buffer_head *udf_fiiter_bread_blk(struct udf_fileident_iter *iter)
+>>   */
+>>  static int udf_fiiter_advance_blk(struct udf_fileident_iter *iter)
+>>  {
+>> +	int8_t etype;
+>> +	int err = 0;
 > 
-> Testing has been performed on s390x hardware with KVM support. All tests
-> pass successfully, verifying the correct implementation of these
-> subfunctions in KVM.
+> Nit: please add empty line between declaration and the code.
+> 
+>>  	iter->loffset++;
+>>  	if (iter->loffset < DIV_ROUND_UP(iter->elen, 1<<iter->dir->i_blkbits))
+>>  		return 0;
+>>  
+>>  	iter->loffset = 0;
+>> -	if (udf_next_aext(iter->dir, &iter->epos, &iter->eloc, &iter->elen, 1)
+>> -			!= (EXT_RECORDED_ALLOCATED >> 30)) {
+>> +	err = udf_next_aext(iter->dir, &iter->epos, &iter->eloc, &iter->elen,
+>> +			    &etype, 1);
+>> +	if (err || etype != (EXT_RECORDED_ALLOCATED >> 30)) {
+>>  		if (iter->pos == iter->dir->i_size) {
+>>  			iter->elen = 0;
+>>  			return 0;
+> 
+> ...
+> 
+>> @@ -555,7 +556,7 @@ static int udf_do_extend_file(struct inode *inode,
+>>  		 * empty indirect extent.
+>>  		 */
+>>  		if (new_block_bytes)
+>> -			udf_next_aext(inode, last_pos, &tmploc, &tmplen, 0);
+>> +			udf_next_aext(inode, last_pos, &tmploc, &tmplen, &tmptype, 0);
+>>  	}
+>>  	iinfo->i_lenExtents += add;
+>>  
+> 
+> Hum, this will need error checking but we can leave that for future
+> patches.
+> 
+>> @@ -674,8 +675,8 @@ static int udf_extend_file(struct inode *inode, loff_t newsize)
+>>  		extent.extLength = EXT_NOT_RECORDED_NOT_ALLOCATED;
+>>  	} else {
+>>  		epos.offset -= adsize;
+>> -		etype = udf_next_aext(inode, &epos, &extent.extLocation,
+>> -				      &extent.extLength, 0);
+>> +		udf_next_aext(inode, &epos, &extent.extLocation,
+>> +				&extent.extLength, &etype, 0);
+>>  		extent.extLength |= etype << 30;
+>>  	}
+>>  
+>> @@ -712,7 +713,7 @@ static int inode_getblk(struct inode *inode, struct udf_map_rq *map)
+>>  	loff_t lbcount = 0, b_off = 0;
+>>  	udf_pblk_t newblocknum;
+>>  	sector_t offset = 0;
+>> -	int8_t etype;
+>> +	int8_t etype, tmpetype;
+>>  	struct udf_inode_info *iinfo = UDF_I(inode);
+>>  	udf_pblk_t goal = 0, pgoal = iinfo->i_location.logicalBlockNum;
+>>  	int lastblock = 0;
+>> @@ -748,8 +749,8 @@ static int inode_getblk(struct inode *inode, struct udf_map_rq *map)
+>>  		prev_epos.offset = cur_epos.offset;
+>>  		cur_epos.offset = next_epos.offset;
+>>  
+>> -		etype = udf_next_aext(inode, &next_epos, &eloc, &elen, 1);
+>> -		if (etype == -1)
+>> +		ret = udf_next_aext(inode, &next_epos, &eloc, &elen, &etype, 1);
+>> +		if (ret)
+>>  			break;
+> 
+> I think here we need to add error handling as well and we should probably
+> do it in this patch / patch series. If ret is ENODATA, we just break out
+> from the cycle but if ret is some other error, we need to return that error
+> from inode_getblk().
+> 
+>> @@ -771,8 +772,8 @@ static int inode_getblk(struct inode *inode, struct udf_map_rq *map)
+>>  	 * Move prev_epos and cur_epos into indirect extent if we are at
+>>  	 * the pointer to it
+>>  	 */
+>> -	udf_next_aext(inode, &prev_epos, &tmpeloc, &tmpelen, 0);
+>> -	udf_next_aext(inode, &cur_epos, &tmpeloc, &tmpelen, 0);
+>> +	udf_next_aext(inode, &prev_epos, &tmpeloc, &tmpelen, &tmpetype, 0);
+>> +	udf_next_aext(inode, &cur_epos, &tmpeloc, &tmpelen, &tmpetype, 0);
+> 
+> Again, this should have error handling now.
+> 
+>>  
+>>  	/* if the extent is allocated and recorded, return the block
+>>  	   if the extent is not a multiple of the blocksize, round up */
+>> @@ -793,7 +794,7 @@ static int inode_getblk(struct inode *inode, struct udf_map_rq *map)
+>>  	}
+>>  
+>>  	/* Are we beyond EOF and preallocated extent? */
+>> -	if (etype == -1) {
+>> +	if (ret < 0) {
+> 
+> I'd prefer ret == -ENODATA to make this explicit.
+> 
+>>  		loff_t hole_len;
+>>  
+>>  		isBeyondEOF = true;
+>> @@ -846,8 +847,7 @@ static int inode_getblk(struct inode *inode, struct udf_map_rq *map)
+>>  
+>>  		/* if the current block is located in an extent,
+>>  		   read the next extent */
+>> -		etype = udf_next_aext(inode, &next_epos, &eloc, &elen, 0);
+>> -		if (etype != -1) {
+>> +		if (!udf_next_aext(inode, &next_epos, &eloc, &elen, &etype, 0)) {
+>>  			laarr[c + 1].extLength = (etype << 30) | elen;
+>>  			laarr[c + 1].extLocation = eloc;
+>>  			count++;
+> 
+> And this should be distinguisting between EOF and other errors so that we
+> don't set lastblock wrongly. Instead we should bail with error.
+> 
+>> @@ -1190,13 +1191,13 @@ static int udf_update_extents(struct inode *inode, struct kernel_long_ad *laarr,
+>>  			if (err < 0)
+>>  				return err;
+>>  			udf_next_aext(inode, epos, &laarr[i].extLocation,
+>> -				      &laarr[i].extLength, 1);
+>> +				      &laarr[i].extLength, &tmptype, 1);
+>>  			start++;
+>>  		}
+>>  	}
+>>  
+>>  	for (i = start; i < endnum; i++) {
+>> -		udf_next_aext(inode, epos, &tmploc, &tmplen, 0);
+>> +		udf_next_aext(inode, epos, &tmploc, &tmplen, &tmptype, 0);
+>>  		udf_write_aext(inode, epos, &laarr[i].extLocation,
+>>  			       laarr[i].extLength, 1);
+>>  	}
+> 
+> Again these two calls should have error handling now. udf_update_extents()
+> is already able to return errors.
+> 
+>> @@ -2267,7 +2268,7 @@ static int udf_insert_aext(struct inode *inode, struct extent_position epos,
+>>  	if (epos.bh)
+>>  		get_bh(epos.bh);
+>>  
+>> -	while ((etype = udf_next_aext(inode, &epos, &oeloc, &oelen, 0)) != -1) {
+>> +	while (!udf_next_aext(inode, &epos, &oeloc, &oelen, &etype, 0)) {
+>>  		udf_write_aext(inode, &epos, &neloc, nelen, 1);
+>>  		neloc = oeloc;
+>>  		nelen = (etype << 30) | oelen;
+> 
+> Here, we should check if udf_next_aext() returned error (other than
+> ENODATA) and bail in that case instead of trying to insert new extent.
+> 
+>> @@ -2302,10 +2303,10 @@ int8_t udf_delete_aext(struct inode *inode, struct extent_position epos)
+>>  		adsize = 0;
+>>  
+>>  	oepos = epos;
+>> -	if (udf_next_aext(inode, &epos, &eloc, &elen, 1) == -1)
+>> +	if (udf_next_aext(inode, &epos, &eloc, &elen, &etype, 1))
+>>  		return -1;
+>>  
+>> -	while ((etype = udf_next_aext(inode, &epos, &eloc, &elen, 1)) != -1) {
+>> +	while (!udf_next_aext(inode, &epos, &eloc, &elen, &etype, 1)) {
+>>  		udf_write_aext(inode, &oepos, &eloc, (etype << 30) | elen, 1);
+>>  		if (oepos.bh != epos.bh) {
+>>  			oepos.block = epos.block;
+>> @@ -2379,8 +2380,7 @@ int8_t inode_bmap(struct inode *inode, sector_t block,
+>>  	}
+>>  	*elen = 0;
+>>  	do {
+>> -		etype = udf_next_aext(inode, pos, eloc, elen, 1);
+>> -		if (etype == -1) {
+>> +		if (udf_next_aext(inode, pos, eloc, elen, &etype, 1)) {
+>>  			*offset = (bcount - lbcount) >> blocksize_bits;
+>>  			iinfo->i_lenExtents = lbcount;
+>>  			return -1;
+> 
+> Again, here we need to distinguish ENODATA from other errors so that we
+> don't wrongly consider failure to read extent like EOF.
+> 
+>> diff --git a/fs/udf/truncate.c b/fs/udf/truncate.c
+>> index 91b6e2698e7e..b7361222f988 100644
+>> --- a/fs/udf/truncate.c
+>> +++ b/fs/udf/truncate.c
+>> @@ -85,7 +85,7 @@ void udf_truncate_tail_extent(struct inode *inode)
+>>  		BUG();
+>>  
+>>  	/* Find the last extent in the file */
+>> -	while ((netype = udf_next_aext(inode, &epos, &eloc, &elen, 1)) != -1) {
+>> +	while (!udf_next_aext(inode, &epos, &eloc, &elen, &netype, 1)) {
+>>  		etype = netype;
+>>  		lbcount += elen;
+>>  		if (lbcount > inode->i_size) {
+> 
+> This should be checking for error (after the loop) so that we don't
+> accidentally try to truncate extents early in case of error.
+> 
+Sorry to bother, in case of error(including EOF), it won't go into the loop and
+has chance to call extent_trunc(). After the loop, only some update and clean op,
 
-I've picked this up but seem to have missed adding it to 6.12 since I 
-have a lot going on.
+	iinfo->i_lenExtents = inode->i_size;
+	brelse(epos.bh);
 
-It will be in 6.13 though.
+So I'm a little confused which part of this piece of code needs to change?
+ 
+
 
