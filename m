@@ -1,122 +1,150 @@
-Return-Path: <linux-kernel+bounces-337789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90CCF984EF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:28:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5985C984EFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:29:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A88AB20DD4
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:28:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A9001C22A14
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6CD4188586;
-	Tue, 24 Sep 2024 23:28:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC2C188588;
+	Tue, 24 Sep 2024 23:29:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="RZfbnLFF"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L9wCQg0w"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0236518801A
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 23:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6F6188583
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 23:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727220503; cv=none; b=gJ6NLbmX4MAxt3aeUFn2TuCuF0HZohHdlVZFrSEMIjCkpUKgGQPW7TvZyYtATXXHN1bssWXkHwocvoF6PosHBANrDaYWflzM8uarzKzu5fFZvRyWHORbFHcQE6L/rZrYk7xE8eczOOSPDHcTe316vgwvfD0Hum/Q0zD5BMDpA7g=
+	t=1727220591; cv=none; b=nAUomVDCFT1B1aR0NnXd7HTTENSWj2xLblNRIkPjTViprO+JIKzPd0RM2MObXQ19gmDP/yBgANpWhJdtm6DZJaieKEkpsMEXCLM5BDLSo1JE7B37qwcyFgTbQ4tv82FN06wWd5rkvJMKzVJFOtYU/aV8ngeynjhx6jF9cFcnjtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727220503; c=relaxed/simple;
-	bh=ITsHAe3KdXUZvi7NiPJUIO+czz8G3BcOEG81FvbDwIs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DXmHrlqXB/i1lSAsApWuy4TRt77n0Mkj2jsZCUZZNBba+tE3VRzM7yUsgZtA/L6HjIiLLruXhBj4Y4vX6K61EKm2TxKkUIse/tSO7q6bvjd73BgySiVl6kRSTms1kRhUC/g9p3Fj8uXjhcja3kPnFf0ugCn5k+U/zEVUOIqLcH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=RZfbnLFF; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=lVGrogRJ5/ibcpWwrkJ/fDzsxfjOA/jAdbQFGrsRUhY=; b=RZfbnLFFxJseapl1lA5GOGuQeS
-	4tCdJlwJj9QF4RA7OpSV4wQvP/Nz4ZhBAujIm6eEf4Ces5PlkFsVetY66Oz18Aj4CfI2lDY9vBTAb
-	B7xo34nyZ65URY5P6pt4vjUiSpwJnBxR3oFd7S7H/o95+FCXEwx2BB97QPHndrmN0GKJhexBzrhg3
-	PRgQ42zCNXknhCNvkaBqiBGvh0tUJDxq4tokkf9/fNSkUne5JSlIqzD7/vij5viULc81dvMUZu5W7
-	pA8VXoxUvWz9SawJn9jvIRKnXzPs9E0xbMnhRajkqhGxczBD16eFN+x7HBTadF7eo/nfx7aFezBsL
-	lJ0jzO5w==;
-Received: from [187.36.213.55] (helo=[192.168.1.212])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1stEwt-000eWD-P6; Wed, 25 Sep 2024 01:28:04 +0200
-Message-ID: <5fc3e586-cc8d-4ee5-ad1a-23740d1075a1@igalia.com>
-Date: Tue, 24 Sep 2024 20:27:55 -0300
+	s=arc-20240116; t=1727220591; c=relaxed/simple;
+	bh=BL9wQg3EmpqGkCRLh57Z/pLM+zsTDky+PprLB+vZR20=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jocthDeblTQskRhD2hMgPEoYpKSMXoQBFkzErW1Sj02SeBmtwY5x85vmSykK0LK82LDZ/bI4c4mWN9DijOU9gHXO1jIk1yOEzhQU3baol1eM5rHWYOYXSbPn2f9mjMwnA9rj7xZfs84n1/T9ai1vINZolr3PEhrEwH7uRYN+oSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L9wCQg0w; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727220589; x=1758756589;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=BL9wQg3EmpqGkCRLh57Z/pLM+zsTDky+PprLB+vZR20=;
+  b=L9wCQg0wIAjIjnXpAFmlYqg10Dz8ULAeJql18TKmuQ/0tDlxh94/Agsa
+   PizAZTHdp2ZGrQCCO61SYOEtAxDQfWlRrxBdpjMsMLGgywwAVmfZ56UwF
+   XQJrDmbZegNgmYn27Rtm5O7SHUFV3Ro/kev07CQdeUsuXUCs6SX05/Xu7
+   mpBDtJQbRerRTFZbngnOv0rrSlhVXTnH3n8Hu5WpnpJ99JPqHDZq3mLTC
+   vOUZhANoU0N2ULwvGnIK+QTKFR+AoZMIoOGNR4etT1oYEQ/i9eMOsSB9w
+   wSkHoE3CrjjMwvpQeWyd1Ur3NakoK1/QV+yJ6+0phC5PKaiBcIzQCYQzy
+   g==;
+X-CSE-ConnectionGUID: VXeGjO3TRRWDiYgwAbkJbA==
+X-CSE-MsgGUID: WJRz9w/mS+q61NMPLhKA8g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="43765124"
+X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
+   d="scan'208";a="43765124"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 16:29:49 -0700
+X-CSE-ConnectionGUID: YLJXeP3UQfe3KrMKz35BkA==
+X-CSE-MsgGUID: +RKT5L9lThKb4rhsCHrfxw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
+   d="scan'208";a="94915419"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 24 Sep 2024 16:29:46 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1stEyW-000IwD-1b;
+	Tue, 24 Sep 2024 23:29:44 +0000
+Date: Wed, 25 Sep 2024 07:29:18 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dipendra Khadka <kdipendra88@gmail.com>, will@kernel.org,
+	robin.murphy@arm.com, joro@8bytes.org, baolu.lu@linux.intel.com
+Cc: oe-kbuild-all@lists.linux.dev, Dipendra Khadka <kdipendra88@gmail.com>,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Staging: iommu:  Replace null pointer check with IS_ERR
+ in arm_smmu_domain_alloc_user()
+Message-ID: <202409250753.7q3zl3b8-lkp@intel.com>
+References: <20240922155621.49432-1-kdipendra88@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/v3d: Use v3d_perfmon_find(..)
-To: Christian Gmeiner <christian.gmeiner@gmail.com>,
- Melissa Wen <mwen@igalia.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: Christian Gmeiner <cgmeiner@igalia.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20240923152000.185980-1-christian.gmeiner@gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-Autocrypt: addr=mcanal@igalia.com; keydata=
- xjMEZIsaeRYJKwYBBAHaRw8BAQdAGU6aY8oojw61KS5rGGMrlcilFqR6p6ID45IZ6ovX0h3N
- H01haXJhIENhbmFsIDxtY2FuYWxAaWdhbGlhLmNvbT7CjwQTFggANxYhBDMCqFtIvFKVRJZQ
- hDSPnHLaGFVuBQJkixp5BQkFo5qAAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQNI+cctoYVW5u
- GAEAwpaC5rI3wD8zqETKwGVoXd6+AbmGfZuVD40xepy7z/8BAM5w95/oyPsHUqOsg/xUTlNp
- rlbhA+WWoaOXA3XgR+wCzjgEZIsaeRIKKwYBBAGXVQEFAQEHQGoOK0jgh0IorMAacx6WUUWb
- s3RLiJYWUU6iNrk5wWUbAwEIB8J+BBgWCAAmFiEEMwKoW0i8UpVEllCENI+cctoYVW4FAmSL
- GnkFCQWjmoACGwwACgkQNI+cctoYVW6cqwD/Q9R98msvkhgRvi18fzUPFDwwogn+F+gQJJ6o
- pwpgFkAA/R2zOfla3IT6G3SBoV5ucdpdCpnIXFpQLbmfHK7dXsAC
-In-Reply-To: <20240923152000.185980-1-christian.gmeiner@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240922155621.49432-1-kdipendra88@gmail.com>
 
-Hi Christian,
+Hi Dipendra,
 
-On 9/23/24 12:19, Christian Gmeiner wrote:
-> From: Christian Gmeiner <cgmeiner@igalia.com>
-> 
-> Replace the open coded v3d_perfmon_find(..) with the real
-> thing.
-> 
-> Signed-off-by: Christian Gmeiner <cgmeiner@igalia.com>
+kernel test robot noticed the following build errors:
 
-Thanks for your patch!
+[auto build test ERROR on staging/staging-testing]
 
-Reviewed-by: Maíra Canal <mcanal@igalia.com>
+url:    https://github.com/intel-lab-lkp/linux/commits/Dipendra-Khadka/Staging-iommu-Replace-null-pointer-check-with-IS_ERR-in-arm_smmu_domain_alloc_user/20240922-235756
+base:   staging/staging-testing
+patch link:    https://lore.kernel.org/r/20240922155621.49432-1-kdipendra88%40gmail.com
+patch subject: [PATCH] Staging: iommu:  Replace null pointer check with IS_ERR in arm_smmu_domain_alloc_user()
+config: arm64-randconfig-001-20240925 (https://download.01.org/0day-ci/archive/20240925/202409250753.7q3zl3b8-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240925/202409250753.7q3zl3b8-lkp@intel.com/reproduce)
 
-Applied to misc/kernel.git (drm-misc-next).
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409250753.7q3zl3b8-lkp@intel.com/
 
-Best Regards,
-- Maíra
+All errors (new ones prefixed by >>):
 
-> ---
->   drivers/gpu/drm/v3d/v3d_perfmon.c | 6 +-----
->   1 file changed, 1 insertion(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/v3d/v3d_perfmon.c b/drivers/gpu/drm/v3d/v3d_perfmon.c
-> index cd7f1eedf17f..54a486a9b74c 100644
-> --- a/drivers/gpu/drm/v3d/v3d_perfmon.c
-> +++ b/drivers/gpu/drm/v3d/v3d_perfmon.c
-> @@ -402,11 +402,7 @@ int v3d_perfmon_get_values_ioctl(struct drm_device *dev, void *data,
->   	if (req->pad != 0)
->   		return -EINVAL;
->   
-> -	mutex_lock(&v3d_priv->perfmon.lock);
-> -	perfmon = idr_find(&v3d_priv->perfmon.idr, req->id);
-> -	v3d_perfmon_get(perfmon);
-> -	mutex_unlock(&v3d_priv->perfmon.lock);
-> -
-> +	perfmon = v3d_perfmon_find(v3d_priv, req->id);
->   	if (!perfmon)
->   		return -EINVAL;
->   
+   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c: In function 'arm_smmu_domain_alloc_user':
+>> drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:3066:24: error: returning 'struct arm_smmu_domain *' from a function with incompatible return type 'struct iommu_domain *' [-Wincompatible-pointer-types]
+    3066 |                 return smmu_domain;
+         |                        ^~~~~~~~~~~
+
+
+vim +3066 drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+
+  3048	
+  3049	static struct iommu_domain *
+  3050	arm_smmu_domain_alloc_user(struct device *dev, u32 flags,
+  3051				   struct iommu_domain *parent,
+  3052				   const struct iommu_user_data *user_data)
+  3053	{
+  3054		struct arm_smmu_master *master = dev_iommu_priv_get(dev);
+  3055		const u32 PAGING_FLAGS = IOMMU_HWPT_ALLOC_DIRTY_TRACKING;
+  3056		struct arm_smmu_domain *smmu_domain;
+  3057		int ret;
+  3058	
+  3059		if (flags & ~PAGING_FLAGS)
+  3060			return ERR_PTR(-EOPNOTSUPP);
+  3061		if (parent || user_data)
+  3062			return ERR_PTR(-EOPNOTSUPP);
+  3063	
+  3064		smmu_domain = arm_smmu_domain_alloc();
+  3065		if (IS_ERR(smmu_domain))
+> 3066			return smmu_domain;
+  3067	
+  3068		smmu_domain->domain.type = IOMMU_DOMAIN_UNMANAGED;
+  3069		smmu_domain->domain.ops = arm_smmu_ops.default_domain_ops;
+  3070		ret = arm_smmu_domain_finalise(smmu_domain, master->smmu, flags);
+  3071		if (ret)
+  3072			goto err_free;
+  3073		return &smmu_domain->domain;
+  3074	
+  3075	err_free:
+  3076		kfree(smmu_domain);
+  3077		return ERR_PTR(ret);
+  3078	}
+  3079	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
