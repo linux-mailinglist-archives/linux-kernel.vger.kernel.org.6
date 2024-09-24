@@ -1,162 +1,149 @@
-Return-Path: <linux-kernel+bounces-336841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B26FA9841A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:07:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D68709841A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:08:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D35871C243E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:07:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 085F31C20955
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83271155345;
-	Tue, 24 Sep 2024 09:06:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80EAE14EC4E;
+	Tue, 24 Sep 2024 09:08:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="AsK+i3b9"
-Received: from uho.ysoft.cz (uho.ysoft.cz [81.19.3.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y2oVUGdC"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31EC81547CE;
-	Tue, 24 Sep 2024 09:06:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.3.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4140380C13;
+	Tue, 24 Sep 2024 09:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727168768; cv=none; b=jsqyw/SmHEnh1ob3McrfwrLskLCOMAmEavjzDM+HwPcRUyHxkfA1C/PEZWowYBikFxmd0vn1l/KSw8Dodzm+TrBN9CtCkzzQj6dm+UlQKzhdyymnFZ4TQZIyo76YCv3BSY4ekDM9VRD3CSwZ16gCj7RBYuBvaaWMuUaAZxEvvCY=
+	t=1727168900; cv=none; b=BnisL3nHYes+QFAHABFz8i3Lwduf6kC/xWatH4QwFH0bVBNvyY4ODWYmwkGXRP7Lhq1XprXzgwM8KOYKPI6LIe27nEL8v+UTPaKfbcSSM9OahN076pfjChFfQWbawsR5lFMV7ekQKHZ4TIt9JRUm5vhZ1E+90CMojwuEHyl186w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727168768; c=relaxed/simple;
-	bh=wovpaHFB10LIzs3fdJJq/mz5svW1UsFrygXXIzMeKXo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jLGkRD+X+9iQeI5+kgEQ9OHt0sE4iNkM/fdhuBsUGMtvG8x5SBfu69OYFvbudZ+szu/0RLkRSJ7gWRhepprN98ikWm+MEMNHnlnyWo6zTMTzjW6OX+kXIsKmCA8nua3aZZBEDcTeohy/CjHvLaCY871zayu/112OHQPkQVfZs7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com; spf=pass smtp.mailfrom=ysoft.com; dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b=AsK+i3b9; arc=none smtp.client-ip=81.19.3.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ysoft.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
-	s=20160406-ysoft-com; t=1727168765;
-	bh=ujzDlHPlpBvvQmrIa8ds3zxcHct8rpP9W2AqvjbIiPk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AsK+i3b9AM3mTox1EabGSAaWX7EOfkME4RFlZXX2KWwyge1Bb6tugp4Jugn2mXSHj
-	 3ohe2knCCdYtodJjBL1qZWf0aQ0bv7Xq8lhs4h7XKuHSZkvno5STzmDF2ow90MhxX5
-	 B5dIXYW5WrNa69Q40Zd86xyjTHsCPDqLNit/E/hQ=
-Received: from [10.1.8.111] (unknown [10.1.8.111])
-	by uho.ysoft.cz (Postfix) with ESMTP id CD345A0419;
-	Tue, 24 Sep 2024 11:06:04 +0200 (CEST)
-Message-ID: <8243ef43-cb5b-4aef-88cd-7aeffa9eeff6@ysoft.com>
-Date: Tue, 24 Sep 2024 11:06:04 +0200
+	s=arc-20240116; t=1727168900; c=relaxed/simple;
+	bh=b3ifNtCiYW5//8iWkr/38z7yeNE8yDDPeoFvn7XD1bk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UweaCEQlJw1M5ct4eX9ZyRh9Jm/H0wM36T00MlYloxBqAQhvPxqNWACO7j3tf/3zoddkBlY7TyMK7LWV326nZXD1mNOwiwgauAHdHSoOQeENkwcu678vW62F3emKOyZw9hUvBX3/1DuqW1lvnehSrYP9GgZP/g36aIZKeb/7jRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y2oVUGdC; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8d24f98215so708800466b.1;
+        Tue, 24 Sep 2024 02:08:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727168897; x=1727773697; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=f+Eln/8BTIQlpH7HVK7SHuQ+hNoExFv0R1JgGjQKVcM=;
+        b=Y2oVUGdCPwk8esKOXubAxGR5VVn+rMkHk3QPwNmR5K26LlrEzqUWQsTbW6U0Dpptqx
+         CZjkIMRus6cUtDcagKnKFABchfu1/E9gOq+LivZTcgjLjtE34AUcPvl/V/yl2WJVV91n
+         DEvkT8Uo9QHU0oAUXhZJm6zQoSxS8r6zRKKSVw4Ebl/4dBqrh0gG+hIlJPxkM/I85MBz
+         JDttNMdpRKNGTiLB9rVRZ0YBiu8kpqPIozAT1Ofm7/R5b4k+aUf56vKSUNRg4teXA5r3
+         mYjKjhD1ux7J9gCYMI+ocWEL9zBLetWKTViBn9UBjDfguo/fyS0oURQABmkwu0DMS6M6
+         g4Lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727168897; x=1727773697;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=f+Eln/8BTIQlpH7HVK7SHuQ+hNoExFv0R1JgGjQKVcM=;
+        b=XOIXhPpgq0fnROjtCfDFs2e4q5rpHKFfxyNrBHxaq6gqd3lHycwOsPA0ld1dtKzyr2
+         lOtH0CU+x8oOcYSnLnYGNmrByqqWqlayAfR3DxtHBLtppcAjYSN/RJRwJH0A3N9AOOcX
+         uR7RadPtGz/HsXKFx/9cBclpM+AKJ2ul4JTDT2AAtS1LChCoplqXgjxxxFi68mpuoFEC
+         nRJg2TJk4Otq/dLVFM2kOoaw0f06mZv6oXVmlAE74WApeOFsU2BvKaTURQjQcNVP7n5J
+         VhgFoEuxrrnTvH7lhqri6xk8rTspYAJq+IFRprBjEqAn17gDCnpqLhbvkK/ftTOwPJsF
+         rMYg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFSG3GbEo02RExvJsD9c1LH9fg4JuwV1z1OYOFBMO0scp1+dSllK+NjeyEbIwysUNIrBIjd2PtlANtGI8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOTpDY34VPUk//kXu+/JLrI6QHMoHqUwWxzi94rTf2Qp2+g8bM
+	eUvnt3jvhAcxITR9pKlTybfrGnE9alsdDSp6oD2lKOl4pitwnUt2o39C69Nq
+X-Google-Smtp-Source: AGHT+IFqUBQOchvS0kxszZ1PO9FDqCY/icF3y9f4Iiu32fEva1IUlApaVBHDZQr1KKVFlab/Nmq7HQ==
+X-Received: by 2002:a17:907:2d92:b0:a8b:5dcf:493e with SMTP id a640c23a62f3a-a90d5109c22mr1595551166b.58.1727168896327;
+        Tue, 24 Sep 2024 02:08:16 -0700 (PDT)
+Received: from fedora.iskraemeco.si ([193.77.86.250])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93930caf87sm59240866b.123.2024.09.24.02.08.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2024 02:08:15 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>
+Subject: [PATCH] perf/hw_breakpoint: Use ERR_PTR_PCPU(), IS_ERR_PCPU() and PTR_ERR_PCPU() macros
+Date: Tue, 24 Sep 2024 11:07:13 +0200
+Message-ID: <20240924090813.1353586-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] arm64: dts: imx: Add imx8mp-iota2-lumpy board
-To: Marco Felsch <m.felsch@pengutronix.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Shawn Guo <shawnguo@kernel.org>, Petr Benes <petr.benes@ysoft.com>,
- devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
- Michael Walle <mwalle@kernel.org>, imx@lists.linux.dev,
- Alexander Stein <alexander.stein@ew.tq-group.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Mathieu Othacehe <m.othacehe@gmail.com>,
- Hugo Villeneuve <hvilleneuve@dimonoff.com>, linux-kernel@vger.kernel.org,
- Hiago De Franco <hiago.franco@toradex.com>,
- Herburger <gregor.herburger@ew.tq-group.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Joao Paulo Goncalves <joao.goncalves@toradex.com>,
- Fabio Estevam <festevam@gmail.com>, linux-arm-kernel@lists.infradead.org
-References: <20240923151417.1665431-1-michal.vokac@ysoft.com>
- <20240923151417.1665431-3-michal.vokac@ysoft.com>
- <20240924071651.e2a3uxhzp3h5f722@pengutronix.de>
-Content-Language: en-US
-From: =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>
-In-Reply-To: <20240924071651.e2a3uxhzp3h5f722@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 24. 09. 24 9:16, Marco Felsch wrote:
-> Hi Michael,
-> 
-> thanks for the patch, please see below some notes but nothing crucial.
-> 
->> +
->> +&i2c1 {
->> +	clock-frequency = <400000>;
->> +	pinctrl-0 = <&pinctrl_i2c1>;
->> +	pinctrl-names = "default";
->> +	status = "okay";
->> +
->> +	pmic@25 {
->> +		compatible = "nxp,pca9450c";
->> +		reg = <0x25>;
->> +		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
->> +		interrupt-parent = <&gpio1>;
->> +		pinctrl-0 = <&pinctrl_pmic>;
->> +		pinctrl-names = "default";
->> +
->> +		regulators {
->> +			BUCK1 {
->> +				regulator-always-on;
-> 
-> All your PMIC rails are marked as regulator-always-on. I didn't expect
-> this from a (battery backed) IOT platform.
+Use ERR_PTR_PCPU() when returning error pointer in the percpu
+address space. Use IS_ERR_PCPU() and PTR_ERR_PCPU() when returning
+the error pointer from the percpu address space. These macros add
+intermediate cast to unsigned long when switching named address spaces.
 
-These are correct. I is not a battery backed device. It operates on 12V
-from wall power adapter. It is more like an Ethernet router/edge device
-for a B2B solution.
+The patch will avoid future build errors due to pointer address space
+mismatch with enabled strict percpu address space checks.
 
->> +				regulator-boot-on;
->> +				regulator-max-microvolt = <1000000>;
->> +				regulator-min-microvolt = <720000>;
->> +				regulator-name = "BUCK1";
->> +				regulator-ramp-delay = <3125>;
->> +			};
->> +
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: "Liang, Kan" <kan.liang@linux.intel.com>
+---
+ kernel/events/hw_breakpoint.c           | 4 ++--
+ samples/hw_breakpoint/data_breakpoint.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
+diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
+index 6c2cb4e4f48d..bc4a61029b6d 100644
+--- a/kernel/events/hw_breakpoint.c
++++ b/kernel/events/hw_breakpoint.c
+@@ -849,7 +849,7 @@ register_wide_hw_breakpoint(struct perf_event_attr *attr,
+ 
+ 	cpu_events = alloc_percpu(typeof(*cpu_events));
+ 	if (!cpu_events)
+-		return (void __percpu __force *)ERR_PTR(-ENOMEM);
++		return ERR_PTR_PCPU(-ENOMEM);
+ 
+ 	cpus_read_lock();
+ 	for_each_online_cpu(cpu) {
+@@ -868,7 +868,7 @@ register_wide_hw_breakpoint(struct perf_event_attr *attr,
+ 		return cpu_events;
+ 
+ 	unregister_wide_hw_breakpoint(cpu_events);
+-	return (void __percpu __force *)ERR_PTR(err);
++	return ERR_PTR_PCPU(err);
+ }
+ EXPORT_SYMBOL_GPL(register_wide_hw_breakpoint);
+ 
+diff --git a/samples/hw_breakpoint/data_breakpoint.c b/samples/hw_breakpoint/data_breakpoint.c
+index a2c831e89ce0..fbb03b66dcbd 100644
+--- a/samples/hw_breakpoint/data_breakpoint.c
++++ b/samples/hw_breakpoint/data_breakpoint.c
+@@ -52,8 +52,8 @@ static int __init hw_break_module_init(void)
+ 	attr.bp_type = HW_BREAKPOINT_W;
+ 
+ 	sample_hbp = register_wide_hw_breakpoint(&attr, sample_hbp_handler, NULL);
+-	if (IS_ERR((void __force *)sample_hbp)) {
+-		ret = PTR_ERR((void __force *)sample_hbp);
++	if (IS_ERR_PCPU(sample_hbp)) {
++		ret = PTR_ERR_PCPU(sample_hbp);
+ 		goto fail;
+ 	}
+ 
+-- 
+2.46.1
 
->> +
->> +&iomuxc {
-> 
-> Albeit we do sort the node names alphabetical we put the iomuxc at the
-> very end at least for the i.MX platforms. Maybe this is something
-> Frank's tool should be aware of in the future :)
-
-I am used to do it the way you say. I just accepted Frank's comment
-and that it is maybe a new standard to sort all nodes strictly alphabetically.
-
-OK, I will move the iomuxc node back to the end as usual.
-
->> +&usdhc3 {
->> +	assigned-clocks = <&clk IMX8MP_CLK_USDHC3>;
->> +	assigned-clock-rates = <400000000>;
->> +	bus-width = <8>;
->> +	non-removable;
-> 
-> Please move the bus-width and non-removeable properties below the
-> pinctrl-* properties.
-
-OK.
-
->> +	pinctrl-0 = <&pinctrl_usdhc3>;
->> +	pinctrl-1 = <&pinctrl_usdhc3_100mhz>;
->> +	pinctrl-2 = <&pinctrl_usdhc3_200mhz>;
->> +	pinctrl-names = "default", "state_100mhz", "state_200mhz";
->> +	status = "okay";
->> +};
->> +
->> +&wdog1 {
->> +	fsl,ext-reset-output;
-> 
-> This property should be put below the pinctrl-* properties.
-
-OK.
-
-Thank you for the review,
-Michal
-
->> +	pinctrl-0 = <&pinctrl_wdog>;
->> +	pinctrl-names = "default";
->> +	status = "okay";
->> +};
 
