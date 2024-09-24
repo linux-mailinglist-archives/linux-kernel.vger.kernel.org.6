@@ -1,722 +1,150 @@
-Return-Path: <linux-kernel+bounces-337687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10D64984D86
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:19:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD661984D84
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:18:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FE441F24D0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:19:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 112B9B22DE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1408C147C79;
-	Tue, 24 Sep 2024 22:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kolabnow.com header.i=@kolabnow.com header.b="keIZzdOg"
-Received: from mx.kolabnow.com (mx.kolabnow.com [212.103.80.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF1714B06E;
+	Tue, 24 Sep 2024 22:18:24 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A1C768FD;
-	Tue, 24 Sep 2024 22:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.103.80.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E291B768FD
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 22:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727216336; cv=none; b=u3ez7JiJo3nJF1sFwrdL4IZy0xvVI61GkkDXeRcTW9SMgvoTAkY3k3F0dqI6SkjYrvqux/yDZNdjImwiveoudZT1AoGsJQWFJ5KIg8dq8ysPWxB/R9NLFqcnDKR5Lyc3T90i/4Nv4Oekjs3ovK3ma0waRACOO9/7Wv4D0Su3FHU=
+	t=1727216304; cv=none; b=pDSU/aUk+KJWP36feh3JmixnIuPGNj4j2mYwP9PrAX95KzHjw7RogiEYdJuRdD2147ST6PGchdsxQYDCSFHMQwfvN96Zk0uMLHETnzRx5yyu9A7TR5kuvqPDynRTcysGmavSz69+36f2g67Xyc5ZQgfptA4JXCidFQ6HYRAMrmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727216336; c=relaxed/simple;
-	bh=AsXkJ3IVQZ164QbBWkTJAvmDC7/pAr8wclYKJxa5S4k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=CMKs+lQqqcjQkmp3zePIn7sl5TTCv8dQllLgbBI8Z4TilKgRuELWKAgh2cSd+LJ8LbXAtV3Q5M7OaeajSd3Y3LC4CSZ8TjfFSDS4o6/9/BehTUCocLTkfo3yJxvIOLo10sT1nExrNYCFODd8ogMFbTcYNWN0b+p38o/Tay6MZP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vaga.pv.it; spf=pass smtp.mailfrom=vaga.pv.it; dkim=pass (2048-bit key) header.d=kolabnow.com header.i=@kolabnow.com header.b=keIZzdOg; arc=none smtp.client-ip=212.103.80.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vaga.pv.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vaga.pv.it
-Received: from localhost (unknown [127.0.0.1])
-	by mx.kolabnow.com (Postfix) with ESMTP id 46729534A;
-	Wed, 25 Sep 2024 00:18:43 +0200 (CEST)
-Authentication-Results: ext-mx-out013.mykolab.com (amavis);
- dkim=pass (2048-bit key) reason="pass (just generated, assumed good)"
- header.d=kolabnow.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kolabnow.com; h=
-	content-transfer-encoding:content-type:content-type:mime-version
-	:message-id:date:date:subject:subject:from:from:received
-	:received:received; s=dkim20240523; t=1727216318; x=1729030719;
-	 bh=DJVAGIji7a/+VG79mKZBzSy9TrLsOR87ksga+6/vCo8=; b=keIZzdOg+Gi9
-	c64vpCf0MlX+Kx0HIG7smrsbd3guHXfe+04GLrifbPC1y0uBCT2AgBP+TkIBRoJw
-	2/MwZAhvRnOwnHUhZNdfMAI2/MnWyYV8KzZ6zdN42Lz/55r1D97yjrge4j0a6dYA
-	J5v/elBEEIqt9/BXNhoDLGNI/FwUPFyoZ8yLIiwj14Xy6P7Vv8T89svNC2WFfFiK
-	NKnK1ZROZDpcJoi7ls86lCcljpBaGu8PPPr/NlcENLKgCd21BeGuO2tOaG6iOGP7
-	nl58CFYy31hlEK6O4KnetI7c68xLw70eXXzJV8hV8Ku8b0etJZ5iJKEDZ3Mjdipo
-	em5fhbrL8A==
-X-Virus-Scanned: amavis at mykolab.com
-X-Spam-Flag: NO
-X-Spam-Score: -0.999
-X-Spam-Level:
-Received: from mx.kolabnow.com ([127.0.0.1])
- by localhost (ext-mx-out013.mykolab.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id nOeeFR88eWmJ; Wed, 25 Sep 2024 00:18:38 +0200 (CEST)
-Received: from int-mx011.mykolab.com (unknown [10.9.13.11])
-	by mx.kolabnow.com (Postfix) with ESMTPS id 2E3842E19BF;
-	Wed, 25 Sep 2024 00:18:37 +0200 (CEST)
-Received: from ext-subm010.mykolab.com (unknown [10.9.6.10])
-	by int-mx011.mykolab.com (Postfix) with ESMTPS id 4D34630851D9;
-	Wed, 25 Sep 2024 00:18:37 +0200 (CEST)
-From: Federico Vaga <federico.vaga@vaga.pv.it>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Federico Vaga <federico.vaga@vaga.pv.it>
-Subject: [PATCH] doc:it_IT: update documents in process/
-Date: Wed, 25 Sep 2024 00:18:16 +0200
-Message-Id: <20240924221816.19009-1-federico.vaga@vaga.pv.it>
+	s=arc-20240116; t=1727216304; c=relaxed/simple;
+	bh=mbMNaWBxsNf9sXQScznBlrSR9obFZSdoeRo1DCMhusY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=C/N1qb/MjiETxBig3og/iwd8Yzv9/IRnDZWlyRA1OZ//z1+5LxT8wcDAhh3RrlPXufjtMrYeyZoe7ulRV5FKbM/C9fiFJZRWGZ95mq1J7LN7gmQuNPB/JtnElOHgYnccZAUY94rbAio4pe2aOm/Bho2DG8ieh8aIV6//vpeB6jU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a0cc71ca7aso41074025ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 15:18:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727216302; x=1727821102;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bMuTEepIq0t9B9L7ttWRYuUpbo1Juj0UT6RiKDkd2Ao=;
+        b=sd9bbVtq9eIx71oHytt6L33nS2lxIjUIXK0xx3pi/L1BTkjPPxH1oqkiIBCMVoxSwb
+         Avsn6OBLWZQ71mORrsSkc8kKF+1mcjH247+CHBLIuZ9fB63bdDhqGvMQIrnML5u2jkV1
+         TyGOQqkid+nIF/OyDTwPB+VHzPFUNgIkA/1Tr6mJ+VLTLofST67yXOY1ww5FjdmoDHsu
+         NPxBUDqhOoD4jmp1gHTV1Jw9aV7YPxMfdXFv8sJL7+2SVuC9C2SNP+K93M+6/P+eL/lF
+         DrypXJJOXRz1pqNr7d1TJsQESu2vhdTDpB92djbBcrE70egv/pmysrO+eGnxTL3ngQfH
+         anoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUSFowVaMhclWxECY1VYrr49U+7HMM+WLPoko6TzpSwGVjkLqyPXizIowt4RE1nPYq54YW8cRWyNUQnsmU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYGfBCIV5+VAkQFPH7XrF/0iwpiU12FgmDJfV4fAZ8dfcYMmQj
+	PxexaCDaMlPTmTyeTiqlJ81E5zNpyU4z32w1hp2ftZQBKsZrKL0npWDAg7BjFWywrGD4YPesp2X
+	mu5ZwxYkGUm1Pbol1jCzlQrld7GYE0ke4ap7VCI0wk+3GGChwQNlpYXw=
+X-Google-Smtp-Source: AGHT+IEwidmnpzqHY8uI1Q6InGxNzhTsDc/xpIR11yJ0X1O8dHgN2WdhgNEiqQIxWY/49qLA2FnqohH1UDdCFqJAw27T1wgHR0ZY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1c8c:b0:3a0:922f:8e9a with SMTP id
+ e9e14a558f8ab-3a26d7be171mr11592935ab.17.1727216301945; Tue, 24 Sep 2024
+ 15:18:21 -0700 (PDT)
+Date: Tue, 24 Sep 2024 15:18:21 -0700
+In-Reply-To: <000000000000dbda9806203851ba@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f33aad.050a0220.457fc.0030.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] kernel BUG in vfs_get_tree
+From: syzbot <syzbot+c0360e8367d6d8d04a66@syzkaller.appspotmail.com>
+To: brauner@kernel.org, jack@suse.cz, jfs-discussion@lists.sourceforge.net, 
+	kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	shaggy@kernel.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-Update Italian translation following these changes under Documentation/process
+syzbot has found a reproducer for the following issue on:
 
-commit eb5ed2fae197 ("docs: submitting-patches: Advertise b4")
-commit 413e775efaec ("Documentation: fix links to mailing list services")
-commit 47c67ec1e8ef ("docs: submit-checklist: use subheadings")
-commit 5969fbf30274 ("docs: submit-checklist: structure by category")
-commit 5f99665ee8f4 ("kbuild: raise the minimum GNU Make requirement to 4.0")
-commit 627395716cc3 ("docs: document python version used for compilation")
-commit 7a23b027ec17 ("arm64: boot: Support Flat Image Tree")
-commit 56f64b370612 ("rust: upgrade to Rust 1.78.0")
-commit 82b8000c28b5 ("net: drop special comment style")
-commit 6813216bbdba ("Documentation: coding-style: ask function-like macros to evaluate parameters")
-commit 91031ca349ee ("docs: improve comment consistency in .muttrc example configuration")
-commit 7fe7de7be828 ("Docs/process/email-clients: Document HacKerMaiL")
-commit 9c03bc90c065 ("Documentation: process: Revert "Document suitability of Proton Mail for kernel development"")
-commit f9a4f4a0e1f5 ("Docs: Move magic-number from process to staging")
-commit 7400d25a0a5c ("Docs/process/index: Remove riscv/patch-acceptance from 'Other materi
-al' section")
+HEAD commit:    abf2050f51fd Merge tag 'media/v6.12-1' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11f08a80580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bc30a30374b0753
+dashboard link: https://syzkaller.appspot.com/bug?extid=c0360e8367d6d8d04a66
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15fad2a9980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17b7b107980000
 
-Signed-off-by: Federico Vaga <federico.vaga@vaga.pv.it>
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-abf2050f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2179ebeade58/vmlinux-abf2050f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f05289b5cf7c/bzImage-abf2050f.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/326532b68b88/mount_1.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c0360e8367d6d8d04a66@syzkaller.appspotmail.com
+
+bcachefs: bch2_fs_get_tree() error: EPERM
+Filesystem bcachefs get_tree() didn't set fc->root, returned 1
+------------[ cut here ]------------
+kernel BUG at fs/super.c:1810!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5200 Comm: syz-executor203 Not tainted 6.11.0-syzkaller-09959-gabf2050f51fd #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:vfs_get_tree+0x29f/0x2b0 fs/super.c:1810
+Code: 1e 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 14 c4 ec ff 48 8b 33 48 c7 c7 20 d4 18 8c 44 89 e2 e8 22 b3 ae 09 90 <0f> 0b 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 90 90 90 90 90
+RSP: 0018:ffffc9000b457d08 EFLAGS: 00010246
+RAX: 000000000000003e RBX: ffffffff8ef58520 RCX: 12995cb9c2040600
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: 1ffff11008249016 R08: ffffffff81746c8c R09: 1ffff11003f8519a
+R10: dffffc0000000000 R11: ffffed1003f8519b R12: 0000000000000001
+R13: dffffc0000000000 R14: ffff888041248098 R15: ffff8880412480b0
+FS:  0000555567b69480(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000555567b72918 CR3: 000000004ebe6000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4055 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ff4a950680a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 7e 09 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffdb635bea8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffdb635bec0 RCX: 00007ff4a950680a
+RDX: 0000000020005d80 RSI: 0000000020005dc0 RDI: 00007ffdb635bec0
+RBP: 0000000000000004 R08: 00007ffdb635bf00 R09: 0000000000005dc5
+R10: 0000000000000000 R11: 0000000000000282 R12: 0000000000000000
+R13: 00007ffdb635bf00 R14: 0000000000000003 R15: 0000000001000000
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:vfs_get_tree+0x29f/0x2b0 fs/super.c:1810
+Code: 1e 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 14 c4 ec ff 48 8b 33 48 c7 c7 20 d4 18 8c 44 89 e2 e8 22 b3 ae 09 90 <0f> 0b 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 90 90 90 90 90
+RSP: 0018:ffffc9000b457d08 EFLAGS: 00010246
+RAX: 000000000000003e RBX: ffffffff8ef58520 RCX: 12995cb9c2040600
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: 1ffff11008249016 R08: ffffffff81746c8c R09: 1ffff11003f8519a
+R10: dffffc0000000000 R11: ffffed1003f8519b R12: 0000000000000001
+R13: dffffc0000000000 R14: ffff888041248098 R15: ffff8880412480b0
+FS:  0000555567b69480(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ff4a1141000 CR3: 000000004ebe6000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
 ---
- .../{process => dev-tools}/clang-format.rst   |   0
- .../translations/it_IT/dev-tools/index.rst    |  17 ++
- Documentation/translations/it_IT/index.rst    |   8 +-
- .../translations/it_IT/process/2.Process.rst  |   6 +-
- .../translations/it_IT/process/changes.rst    |  33 +++-
- .../it_IT/process/coding-style.rst            |  35 ++--
- .../it_IT/process/email-clients.rst           |  33 +---
- .../translations/it_IT/process/howto.rst      |  10 +-
- .../translations/it_IT/process/index.rst      |  10 --
- .../it_IT/process/submit-checklist.rst        | 167 +++++++++---------
- .../it_IT/process/submitting-patches.rst      |  23 +--
- .../translations/it_IT/staging/index.rst      |  13 ++
- .../{process => staging}/magic-number.rst     |   0
- 13 files changed, 206 insertions(+), 149 deletions(-)
- rename Documentation/translations/it_IT/{process => dev-tools}/clang-format.rst (100%)
- create mode 100644 Documentation/translations/it_IT/dev-tools/index.rst
- create mode 100644 Documentation/translations/it_IT/staging/index.rst
- rename Documentation/translations/it_IT/{process => staging}/magic-number.rst (100%)
-
-diff --git a/Documentation/translations/it_IT/process/clang-format.rst b/Documentation/translations/it_IT/dev-tools/clang-format.rst
-similarity index 100%
-rename from Documentation/translations/it_IT/process/clang-format.rst
-rename to Documentation/translations/it_IT/dev-tools/clang-format.rst
-diff --git a/Documentation/translations/it_IT/dev-tools/index.rst b/Documentation/translations/it_IT/dev-tools/index.rst
-new file mode 100644
-index 000000000000..25e2a5f09add
---- /dev/null
-+++ b/Documentation/translations/it_IT/dev-tools/index.rst
-@@ -0,0 +1,17 @@
-+.. include:: ../disclaimer-ita.rst
-+
-+:Original: :ref:`Documentation/dev-tools/index.rst`
-+
-+===================================
-+Strumenti di sviluppo per il kernel
-+===================================
-+
-+Qui raccogliamo i vari documenti riguardanti gli strumenti di sviluppo che
-+possono essere usati per lavorare col kernel . Per ora, questa è una raccolta
-+senza un particolare struttura; si accettano patch!
-+
-+.. toctree::
-+   :caption: Tabella dei contenuti
-+   :maxdepth: 2
-+
-+   clang-format
-diff --git a/Documentation/translations/it_IT/index.rst b/Documentation/translations/it_IT/index.rst
-index 9220f65e30d1..afa680607750 100644
---- a/Documentation/translations/it_IT/index.rst
-+++ b/Documentation/translations/it_IT/index.rst
-@@ -103,9 +103,11 @@ sviluppatori del kernel.
- .. toctree::
-    :maxdepth: 1
- 
--   process/license-rules
--   doc-guide/index
--   kernel-hacking/index
-+   Regole sulle licenze <process/license-rules>
-+   Scrivere la documentazione <doc-guide/index>
-+   Strumenti di sviluppo <dev-tools/index>
-+   La guida all'*hacking*<kernel-hacking/index>
-+
- 
- Documentazione per gli utenti
- =============================
-diff --git a/Documentation/translations/it_IT/process/2.Process.rst b/Documentation/translations/it_IT/process/2.Process.rst
-index 0a62c0f33faf..6262c3908665 100644
---- a/Documentation/translations/it_IT/process/2.Process.rst
-+++ b/Documentation/translations/it_IT/process/2.Process.rst
-@@ -424,10 +424,10 @@ o entrambi.
- Molte delle liste di discussione del Kernel girano su vger.kernel.org;
- l'elenco principale lo si trova sul sito:
- 
--	http://vger.kernel.org/vger-lists.html
-+	https://subspace.kernel.org
- 
--Esistono liste gestite altrove; un certo numero di queste sono in
--redhat.com/mailman/listinfo.
-+Tuttavia, esistono liste gestite altrove; controllare il file MAINTAINERS per
-+trovare la lista relativa ad un sottosistema specifico.
- 
- La lista di discussione principale per lo sviluppo del kernel è, ovviamente,
- linux-kernel.  Questa lista è un luogo ostile dove trovarsi; i volumi possono
-diff --git a/Documentation/translations/it_IT/process/changes.rst b/Documentation/translations/it_IT/process/changes.rst
-index 0bcf8423cc80..c7d05e2fff15 100644
---- a/Documentation/translations/it_IT/process/changes.rst
-+++ b/Documentation/translations/it_IT/process/changes.rst
-@@ -34,9 +34,9 @@ PC Card, per esempio, probabilmente non dovreste preoccuparvi di pcmciautils.
- ====================== =================  ========================================
- GNU C                  5.1                gcc --version
- Clang/LLVM (optional)  13.0.0             clang --version
--Rust (opzionale)       1.76.0             rustc --version
-+Rust (opzionale)       1.78.0             rustc --version
- bindgen (opzionale)    0.65.1             bindgen --version
--GNU make               3.81               make --version
-+GNU make               4.0                make --version
- bash                   4.2                bash --version
- binutils               2.25               ld -v
- flex                   2.5.35             flex --version
-@@ -65,6 +65,8 @@ Sphinx\ [#f1]_         2.4.4              sphinx-build --version
- cpio                   any                cpio --version
- GNU tar                1.28               tar --version
- gtags (opzionale)      6.6.5              gtags --version
-+mkimage (opzionale)    2017.01            mkimage --version
-+Python (opzionale)     3.5.x              python3 --version
- ====================== =================  ========================================
- 
- .. [#f1] Sphinx è necessario solo per produrre la documentazione del Kernel
-@@ -88,10 +90,25 @@ potremmo rimuovere gli espedienti che abbiamo implementato per farli
- funzionare. Per maggiori informazioni
- :ref:`Building Linux with Clang/LLVM <kbuild_llvm>`.
- 
-+Rust (opzionale)
-+----------------
-+
-+È necessaria una versione recente del compilatore Rust.
-+
-+Verificate le istruzioni Documentation/rust/quick-start.rst su come soddisfare i
-+requisiti per compilare code Rust. In particolare, la regola ``rustavailable``
-+nel ``Makefile`` è utile per verificare perché gli strumenti di compilazione non
-+vengono trovati.
-+
-+bindgen (opzionale)
-+-------------------
-+
-+``bindgen`` viene usato per generare il collegamento (binding) da Rust al lato C del kernel. Dipende da ``libclang``.
-+
- Make
- ----
- 
--Per compilare il kernel vi servirà GNU make 3.81 o successivo.
-+Per compilare il kernel vi servirà GNU make 4.0 o successivo.
- 
- Bash
- ----
-@@ -168,6 +185,16 @@ Il programma GNU GLOBAL versione 6.6.5, o successiva, è necessario quando si
- vuole eseguire ``make gtags`` e generare i relativi indici. Internamente si fa
- uso del parametro gtags ``-C (--directory)`` che compare in questa versione.
- 
-+mkimage
-+-------
-+
-+Questo strumento viene usato per produrre un *Flat Image Tree* (FIT),
-+tipicamente usato su sistemi ARM. Questo strumento è disponibile tramite il
-+pacchetto ``u-boot-tools`` oppure può essere compilato dal codice sorgente di
-+U-Boot. Consultate le istruzioni
-+https://docs.u-boot.org/en/latest/build/tools.html#building-tools-for-linux
-+
-+
- Strumenti di sistema
- ********************
- 
-diff --git a/Documentation/translations/it_IT/process/coding-style.rst b/Documentation/translations/it_IT/process/coding-style.rst
-index a4b9f44081da..f75d4e3e5e55 100644
---- a/Documentation/translations/it_IT/process/coding-style.rst
-+++ b/Documentation/translations/it_IT/process/coding-style.rst
-@@ -620,18 +620,6 @@ Lo stile preferito per i commenti più lunghi (multi-riga) è:
- 	 * with beginning and ending almost-blank lines.
- 	 */
- 
--Per i file in net/ e in drivers/net/ lo stile preferito per i commenti
--più lunghi (multi-riga) è leggermente diverso.
--
--.. code-block:: c
--
--	/* The preferred comment style for files in net/ and drivers/net
--	 * looks like this.
--	 *
--	 * It is nearly the same as the generally preferred comment style,
--	 * but there is no initial almost-blank line.
--	 */
--
- È anche importante commentare i dati, sia per i tipi base che per tipi
- derivati.  A questo scopo, dichiarate un dato per riga (niente virgole
- per una dichiarazione multipla).  Questo vi lascerà spazio per un piccolo
-@@ -827,6 +815,29 @@ blocco do - while:
- 				do_this(b, c);		\
- 		} while (0)
- 
-+Le macro che sembrano funzioni con parametri non usati dovrebbero essere
-+sostituite da funzioni inline per evitare il problema.
-+
-+.. code-block:: c
-+
-+       static inline void fun(struct foo *foo)
-+       {
-+       }
-+
-+Per motivi storici, molti file usano ancora l'approccio "cast a (void)" per
-+valutare i parametri. Tuttavia, non è raccomandato. Le funzioni inline risolvono
-+i problemi di "espressioni con effetti avversi valutate più di una volta",
-+variabili non utilizzate, e in genere per qualche motivo sono documentate
-+meglio.
-+
-+.. code-block:: c
-+
-+       /*
-+        * Avoid doing this whenever possible and instead opt for static
-+        * inline functions
-+        */
-+       #define macrofun(foo) do { (void) (foo); } while (0)
-+
- Cose da evitare quando si usano le macro:
- 
- 1) le macro che hanno effetti sul flusso del codice:
-diff --git a/Documentation/translations/it_IT/process/email-clients.rst b/Documentation/translations/it_IT/process/email-clients.rst
-index 76ca3226c8cd..97173746d8c9 100644
---- a/Documentation/translations/it_IT/process/email-clients.rst
-+++ b/Documentation/translations/it_IT/process/email-clients.rst
-@@ -228,7 +228,7 @@ Mutt è molto personalizzabile. Qui di seguito trovate la configurazione minima
- per iniziare ad usare Mutt per inviare patch usando Gmail::
- 
-   # .muttrc
--  # ================  IMAP ====================
-+  # ================  IMAP  ====================
-   set imap_user = 'yourusername@gmail.com'
-   set imap_pass = 'yourpassword'
-   set spoolfile = imaps://imap.gmail.com/INBOX
-@@ -365,27 +365,12 @@ un editor esterno.
- Un altro problema è che Gmail usa la codifica base64 per tutti quei messaggi
- che contengono caratteri non ASCII. Questo include cose tipo i nomi europei.
- 
--Proton Mail
--***********
-+HacKerMaiL (TUI)
-+****************
- 
--Il servizio Proton Mail ha una funzionalità che cripta tutti i messaggi verso
--ogni destinatario per cui è possibile trovare una chiave usando il *Web Key
--Directory* (WKD). Il servizio kernel.org pubblica il WKD per ogni sviluppatore
--in possesso di un conto kernel.org. Di conseguenza, tutti i messaggi inviati
--usando Proton Mail verso indirizzi kernel.org verranno criptati.
--
--Proton Mail non fornisce alcun meccanismo per disabilitare questa funzionalità
--perché verrebbe considerato un problema per la riservatezza. Questa funzionalità
--è attiva anche quando si inviano messaggi usando il Proton Mail Bridge. Dunque
--tutta la posta in uscita verrà criptata, incluse le patch inviate con ``git
--send-email``.
--
--I messaggi criptati sono una fonte di problemi; altri sviluppatori potrebbero
--non aver configurato i loro programmi, o strumenti, per gestire messaggi
--criptati; inoltre, alcuni programmi di posta elettronica potrebbero criptare le
--risposte a messaggi criptati per tutti i partecipanti alla discussione, inclusa
--la lista di discussione stessa.
--
--A meno che non venga introdotta una maniera per disabilitare questa
--funzionalità, non è consigliato usare Proton Mail per contribuire allo sviluppo
--del kernel.
-+HacKerMaiL (hkml) è una semplice casella pubblica per la gestione dei messaggi
-+di posta che non richiede alcuna sottoscrizione ad una lista di discussione.
-+Viene sviluppato e mantenuto dal manutentore di DAMON e si pone come obiettivo
-+quello di gestire il processo di sviluppo semplice come quello di DAMON e più in
-+generale i sottosistemi del kernel. Per maggiori dettagli, fate riferimento al
-+documento README (https://github.com/sjp38/hackermail/blob/master/README.md).
-diff --git a/Documentation/translations/it_IT/process/howto.rst b/Documentation/translations/it_IT/process/howto.rst
-index 090941a0a898..f51288602ee3 100644
---- a/Documentation/translations/it_IT/process/howto.rst
-+++ b/Documentation/translations/it_IT/process/howto.rst
-@@ -344,7 +344,7 @@ principale 4.x, sarà necessario un test d'integrazione.
- A tale scopo, esiste un repositorio speciale di test nel quale virtualmente
- tutti i rami dei sottosistemi vengono inclusi su base quotidiana:
- 
--	https://git.kernel.org/?p=linux/kernel/git/next/linux-next.git
-+	https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
- 
- In questo modo, i kernel -next offrono uno sguardo riassuntivo su quello che
- ci si aspetterà essere nel kernel principale nel successivo periodo
-@@ -389,12 +389,12 @@ sviluppatori del kernel partecipano alla lista di discussione Linux Kernel.
- I dettagli su come iscriversi e disiscriversi dalla lista possono essere
- trovati al sito:
- 
--	http://vger.kernel.org/vger-lists.html#linux-kernel
-+	https://subspace.kernel.org/subscribing.html
- 
- Ci sono diversi archivi della lista di discussione. Usate un qualsiasi motore
- di ricerca per trovarli. Per esempio:
- 
--	https://lore.kernel.org/lkml/
-+	https://lore.kernel.org/linux-kernel/
- 
- É caldamente consigliata una ricerca in questi archivi sul tema che volete
- sollevare, prima di pubblicarlo sulla lista. Molte cose sono già state
-@@ -407,13 +407,13 @@ discussione e il loro uso.
- Molte di queste liste sono gestite su kernel.org. Per informazioni consultate
- la seguente pagina:
- 
--	http://vger.kernel.org/vger-lists.html
-+	https://subspace.kernel.org
- 
- Per favore ricordatevi della buona educazione quando utilizzate queste liste.
- Sebbene sia un pò dozzinale, il seguente URL contiene alcune semplici linee
- guida per interagire con la lista (o con qualsiasi altra lista):
- 
--	http://www.albion.com/netiquette/
-+	https://subspace.kernel.org/etiquette.html
- 
- Se diverse persone rispondo alla vostra mail, la lista dei riceventi (copia
- conoscenza) potrebbe diventare abbastanza lunga. Non cancellate nessuno dalla
-diff --git a/Documentation/translations/it_IT/process/index.rst b/Documentation/translations/it_IT/process/index.rst
-index c24500f74660..5a5214f5fd72 100644
---- a/Documentation/translations/it_IT/process/index.rst
-+++ b/Documentation/translations/it_IT/process/index.rst
-@@ -99,16 +99,6 @@ degli sviluppatori:
- 
-    kernel-docs
- 
--Ed infine, qui ci sono alcune guide più tecniche che son state messe qua solo
--perché non si è trovato un posto migliore.
--
--.. toctree::
--   :maxdepth: 1
--
--   magic-number
--   clang-format
--   ../arch/riscv/patch-acceptance
--
- .. only::  subproject and html
- 
-    Indices
-diff --git a/Documentation/translations/it_IT/process/submit-checklist.rst b/Documentation/translations/it_IT/process/submit-checklist.rst
-index 60ec660702fa..37bb28e8d57e 100644
---- a/Documentation/translations/it_IT/process/submit-checklist.rst
-+++ b/Documentation/translations/it_IT/process/submit-checklist.rst
-@@ -5,8 +5,9 @@
- 
- .. _it_submitchecklist:
- 
-+============================================================================
- Lista delle verifiche da fare prima di inviare una patch per il kernel Linux
--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+============================================================================
- 
- Qui troverete una lista di cose che uno sviluppatore dovrebbe fare per
- vedere le proprie patch accettate più rapidamente.
-@@ -15,118 +16,126 @@ Tutti questi punti integrano la documentazione fornita riguardo alla
- sottomissione delle patch, in particolare
- :ref:`Documentation/translations/it_IT/process/submitting-patches.rst <it_submittingpatches>`.
- 
-+Revisiona il tuo codice
-+=======================
-+
- 1) Se state usando delle funzionalità del kernel allora includete (#include)
-    i file che le dichiarano/definiscono.  Non dipendente dal fatto che un file
-    d'intestazione include anche quelli usati da voi.
- 
--2) Compilazione pulita:
--
--  a) con le opzioni ``CONFIG`` negli stati ``=y``, ``=m`` e ``=n``. Nessun
--     avviso/errore di ``gcc`` e nessun avviso/errore dal linker.
--
--  b) con ``allnoconfig``, ``allmodconfig``
--
--  c) quando si usa ``O=builddir``
--
--  d) Qualsiasi modifica in Documentation/ deve compilare con successo senza
--     avvisi o errori. Usare ``make htmldocs`` o ``make pdfdocs`` per verificare
--     e correggere i problemi
--
--3) Compilare per diverse architetture di processore usando strumenti per
--   la cross-compilazione o altri.
-+2) Controllate lo stile del codice della vostra patch secondo le direttive
-+   scritte in :ref:`Documentation/translations/it_IT/process/coding-style.rst <it_codingstyle>`.
- 
--4) Una buona architettura per la verifica della cross-compilazione è la ppc64
--   perché tende ad usare ``unsigned long`` per le quantità a 64-bit.
-+3) Tutte le barriere di sincronizzazione {per esempio, ``barrier()``,
-+   ``rmb()``, ``wmb()``} devono essere accompagnate da un commento nei
-+   sorgenti che ne spieghi la logica: cosa fanno e perché.
- 
--5) Controllate lo stile del codice della vostra patch secondo le direttive
--   scritte in :ref:`Documentation/translations/it_IT/process/coding-style.rst <it_codingstyle>`.
--   Prima dell'invio della patch, usate il verificatore di stile
--   (``script/checkpatch.pl``) per scovare le violazioni più semplici.
--   Dovreste essere in grado di giustificare tutte le violazioni rimanenti nella
--   vostra patch.
-+Revisionate i cambiamenti a Kconfig
-+===================================
- 
--6) Le opzioni ``CONFIG``, nuove o modificate, non scombussolano il menu
-+1) Le opzioni ``CONFIG``, nuove o modificate, non scombussolano il menu
-    di configurazione e sono preimpostate come disabilitate a meno che non
-    soddisfino i criteri descritti in ``Documentation/kbuild/kconfig-language.rst``
-    alla punto "Voci di menu: valori predefiniti".
- 
--7) Tutte le nuove opzioni ``Kconfig`` hanno un messaggio di aiuto.
-+2) Tutte le nuove opzioni ``Kconfig`` hanno un messaggio di aiuto.
- 
--8) La patch è stata accuratamente revisionata rispetto alle più importanti
-+3) La patch è stata accuratamente revisionata rispetto alle più importanti
-    configurazioni ``Kconfig``.  Questo è molto difficile da fare
-    correttamente - un buono lavoro di testa sarà utile.
- 
--9) Verificare con sparse.
-+Fornite documentazione
-+======================
- 
--10) Usare ``make checkstack`` e correggere tutti i problemi rilevati.
-+1) Includete :ref:`kernel-doc <kernel_doc>` per documentare API globali del
-+   kernel.
- 
--    .. note::
-+2) Tutti i nuovi elementi in ``/proc`` sono documentati in ``Documentation/``.
- 
--       ``checkstack`` non evidenzia esplicitamente i problemi, ma una funzione
--       che usa più di 512 byte sullo stack è una buona candidata per una
--       correzione.
-+3) Tutti i nuovi parametri d'avvio del kernel sono documentati in
-+    ``Documentation/admin-guide/kernel-parameters.rst``.
- 
--11) Includete commenti :ref:`kernel-doc <kernel_doc>` per documentare API
--    globali del kernel.  Usate ``make htmldocs`` o ``make pdfdocs`` per
--    verificare i commenti :ref:`kernel-doc <kernel_doc>` ed eventualmente
--    correggerli.
-+4) Tutti i nuovi parametri dei moduli sono documentati con ``MODULE_PARM_DESC()``.
- 
--12) La patch è stata verificata con le seguenti opzioni abilitate
--    contemporaneamente: ``CONFIG_PREEMPT``, ``CONFIG_DEBUG_PREEMPT``,
--    ``CONFIG_DEBUG_SLAB``, ``CONFIG_DEBUG_PAGEALLOC``, ``CONFIG_DEBUG_MUTEXES``,
--    ``CONFIG_DEBUG_SPINLOCK``, ``CONFIG_DEBUG_ATOMIC_SLEEP``,
--    ``CONFIG_PROVE_RCU`` e ``CONFIG_DEBUG_OBJECTS_RCU_HEAD``.
-+5) Tutte le nuove interfacce verso lo spazio utente sono documentate in
-+    ``Documentation/ABI/``.  Leggete ``Documentation/ABI/README`` per maggiori
-+    informazioni.  Le patch che modificano le interfacce utente dovrebbero
-+    essere inviate in copia anche a linux-api@vger.kernel.org.
- 
--13) La patch è stata compilata e verificata in esecuzione con, e senza,
--    le opzioni ``CONFIG_SMP`` e ``CONFIG_PREEMPT``.
-+6) Se la patch aggiunge nuove chiamate ioctl, allora aggiornate
-+    ``Documentation/userspace-api/ioctl/ioctl-number.rst``.
- 
--14) Se la patch ha effetti sull'IO dei dischi, eccetera: allora dev'essere
--    verificata con, e senza, l'opzione ``CONFIG_LBDAF``.
-+Verificate il vostro codice con gli strumenti
-+=============================================
- 
--15) Tutti i percorsi del codice sono stati verificati con tutte le funzionalità
--    di lockdep abilitate.
-+1) Prima dell'invio della patch, usate il verificatore di stile
-+   (``script/checkpatch.pl``) per scovare le violazioni più semplici.
-+   Dovreste essere in grado di giustificare tutte le violazioni rimanenti nella
-+   vostra patch.
- 
--16) Tutti i nuovi elementi in ``/proc`` sono documentati in ``Documentation/``.
-+2) Verificare il codice con sparse.
- 
--17) Tutti i nuovi parametri d'avvio del kernel sono documentati in
--    ``Documentation/admin-guide/kernel-parameters.rst``.
- 
--18) Tutti i nuovi parametri dei moduli sono documentati con ``MODULE_PARM_DESC()``.
-+3) Usare ``make checkstack`` e correggere tutti i problemi rilevati. Da notare
-+   che ``checkstack`` non evidenzia esplicitamente i problemi, ma una funzione
-+   che usa più di 512 byte sullo stack è una buona candidata per una correzione.
- 
--19) Tutte le nuove interfacce verso lo spazio utente sono documentate in
--    ``Documentation/ABI/``.  Leggete ``Documentation/ABI/README`` per maggiori
--    informazioni.  Le patch che modificano le interfacce utente dovrebbero
--    essere inviate in copia anche a linux-api@vger.kernel.org.
-+Compilare il codice
-+===================
-+
-+1) Compilazione pulita:
-+
-+  a) con le opzioni ``CONFIG`` negli stati ``=y``, ``=m`` e ``=n``. Nessun
-+     avviso/errore di ``gcc`` e nessun avviso/errore dal linker.
- 
--20) La patch è stata verificata con l'iniezione di fallimenti in slab e
--    nell'allocazione di pagine.  Vedere ``Documentation/dev-tools/fault-injection/``.
-+  b) con ``allnoconfig``, ``allmodconfig``
-+
-+  c) quando si usa ``O=builddir``
- 
--    Se il nuovo codice è corposo, potrebbe essere opportuno aggiungere
--    l'iniezione di fallimenti specifici per il sottosistema.
-+  d) Qualsiasi modifica in Documentation/ deve compilare con successo senza
-+     avvisi o errori. Usare ``make htmldocs`` o ``make pdfdocs`` per verificare
-+     e correggere i problemi
- 
--21) Il nuovo codice è stato compilato con ``gcc -W`` (usate
-+2) Compilare per diverse architetture di processore usando strumenti per la
-+   cross-compilazione o altri. Una buona architettura per la verifica della
-+   cross-compilazione è la ppc64 perché tende ad usare ``unsigned long`` per le
-+   quantità a 64-bit.
-+
-+3) Il nuovo codice è stato compilato con ``gcc -W`` (usate
-     ``make KCFLAGS=-W``).  Questo genererà molti avvisi, ma è ottimo
-     per scovare bachi come  "warning: comparison between signed and unsigned".
- 
--22) La patch è stata verificata dopo essere stata inclusa nella serie di patch
--    -mm; questo al fine di assicurarsi che continui a funzionare assieme a
--    tutte le altre patch in coda e i vari cambiamenti nei sottosistemi VM, VFS
--    e altri.
-+4) Se il codice che avete modificato dipende o usa una qualsiasi interfaccia o
-+   funzionalità del kernel che è associata a uno dei seguenti simboli
-+   ``Kconfig``, allora verificate che il kernel compili con diverse
-+   configurazioni dove i simboli sono disabilitati e/o ``=m`` (se c'è la
-+   possibilità) [non tutti contemporaneamente, solo diverse combinazioni
-+   casuali]:
- 
--23) Tutte le barriere di sincronizzazione {per esempio, ``barrier()``,
--    ``rmb()``, ``wmb()``} devono essere accompagnate da un commento nei
--    sorgenti che ne spieghi la logica: cosa fanno e perché.
-+   ``CONFIG_SMP``, ``CONFIG_SYSFS``, ``CONFIG_PROC_FS``, ``CONFIG_INPUT``,
-+   ``CONFIG_PCI``, ``CONFIG_BLOCK``, ``CONFIG_PM``, ``CONFIG_MAGIC_SYSRQ``,
-+   ``CONFIG_NET``, ``CONFIG_INET=n`` (ma l'ultimo con ``CONFIG_NET=y``).
- 
--24) Se la patch aggiunge nuove chiamate ioctl, allora aggiornate
--    ``Documentation/userspace-api/ioctl/ioctl-number.rst``.
-+Verificate il vostro codice
-+===========================
-+
-+1) La patch è stata verificata con le seguenti opzioni abilitate
-+   contemporaneamente: ``CONFIG_PREEMPT``, ``CONFIG_DEBUG_PREEMPT``,
-+   ``CONFIG_DEBUG_SLAB``, ``CONFIG_DEBUG_PAGEALLOC``, ``CONFIG_DEBUG_MUTEXES``,
-+   ``CONFIG_DEBUG_SPINLOCK``, ``CONFIG_DEBUG_ATOMIC_SLEEP``,
-+   ``CONFIG_PROVE_RCU`` e ``CONFIG_DEBUG_OBJECTS_RCU_HEAD``.
-+
-+2) La patch è stata compilata e verificata in esecuzione con, e senza,
-+   le opzioni ``CONFIG_SMP`` e ``CONFIG_PREEMPT``.
-+
-+3) Tutti i percorsi del codice sono stati verificati con tutte le funzionalità
-+   di lockdep abilitate.
- 
--25) Se il codice che avete modificato dipende o usa una qualsiasi interfaccia o
--    funzionalità del kernel che è associata a uno dei seguenti simboli
--    ``Kconfig``, allora verificate che il kernel compili con diverse
--    configurazioni dove i simboli sono disabilitati e/o ``=m`` (se c'è la
--    possibilità) [non tutti contemporaneamente, solo diverse combinazioni
--    casuali]:
-+4) La patch è stata verificata con l'iniezione di fallimenti in slab e
-+   nell'allocazione di pagine. Vedere ``Documentation/dev-tools/fault-injection/``.
-+   Se il nuovo codice è corposo, potrebbe essere opportuno aggiungere
-+   l'iniezione di fallimenti specifici per il sottosistema.
- 
--    ``CONFIG_SMP``, ``CONFIG_SYSFS``, ``CONFIG_PROC_FS``, ``CONFIG_INPUT``,
--    ``CONFIG_PCI``, ``CONFIG_BLOCK``, ``CONFIG_PM``, ``CONFIG_MAGIC_SYSRQ``,
--    ``CONFIG_NET``, ``CONFIG_INET=n`` (ma l'ultimo con ``CONFIG_NET=y``).
-+5) La patch è stata verificata sul tag più recente di linux-next per assicurarsi
-+   che funzioni assieme a tutte le altre patch in coda, assieme ai vari
-+   cambiamenti nei sottosistemi VM, VFS e altri.
-diff --git a/Documentation/translations/it_IT/process/submitting-patches.rst b/Documentation/translations/it_IT/process/submitting-patches.rst
-index a7252e73937a..1cc4808139ce 100644
---- a/Documentation/translations/it_IT/process/submitting-patches.rst
-+++ b/Documentation/translations/it_IT/process/submitting-patches.rst
-@@ -137,10 +137,10 @@ questione.
- 
- Quando volete fare riferimento ad una lista di discussione, preferite il
- servizio d'archiviazione lore.kernel.org. Per create un collegamento URL è
--sufficiente usare il campo ``Message-Id``, presente nell'intestazione del
-+sufficiente usare il campo ``Message-ID``, presente nell'intestazione del
- messaggio, senza parentesi angolari. Per esempio::
- 
--     Link: https://lore.kernel.org/r/30th.anniversary.repost@klaava.Helsinki.FI/
-+     Link: https://lore.kernel.org/30th.anniversary.repost@klaava.Helsinki.FI
- 
- Prima d'inviare il messaggio ricordatevi di verificare che il collegamento così
- creato funzioni e che indirizzi verso il messaggio desiderato.
-@@ -275,11 +275,9 @@ patch riceverà molta più attenzione. Tuttavia, per favore, non spammate le lis
- di discussione che non sono interessate al vostro lavoro.
- 
- Molte delle liste di discussione relative al kernel vengono ospitate su
--vger.kernel.org; potete trovare un loro elenco alla pagina
--http://vger.kernel.org/vger-lists.html.  Tuttavia, ci sono altre liste di
--discussione ospitate altrove.
--
--Non inviate più di 15 patch alla volta sulle liste di discussione vger!!!
-+kernel.org; potete trovare un loro elenco alla pagina
-+https://subspace.kernel.org. Tuttavia, ci sono altre liste di discussione
-+ospitate altrove.
- 
- L'ultimo giudizio sull'integrazione delle modifiche accettate spetta a
- Linux Torvalds.  Il suo indirizzo e-mail è <torvalds@linux-foundation.org>.
-@@ -891,6 +889,14 @@ Assicuratevi che il commit si basi su sorgenti ufficiali del
- manutentore/mainline e non su sorgenti interni, accessibile solo a voi,
- altrimenti sarebbe inutile.
- 
-+Strumenti
-+---------
-+
-+Molti degli aspetti più tecnici di questo processo possono essere automatizzati
-+usando b4, la cui documentazione è disponibile all'indirizzo
-+<https://b4.docs.kernel.org/en/latest/>. Può aiutare a tracciare la dipendenze,
-+eseguire checkpatch e con la formattazione e l'invio di messaggi di posta.
-+
- Riferimenti
- -----------
- 
-@@ -913,9 +919,6 @@ Greg Kroah-Hartman, "Come scocciare un manutentore di un sottosistema"
- 
-   <http://www.kroah.com/log/linux/maintainer-06.html>
- 
--No!!!! Basta gigantesche bombe patch alle persone sulla lista linux-kernel@vger.kernel.org!
--  <https://lore.kernel.org/r/20050711.125305.08322243.davem@davemloft.net>
--
- Kernel Documentation/translations/it_IT/process/coding-style.rst.
- 
- E-mail di Linus Torvalds sul formato canonico di una patch:
-diff --git a/Documentation/translations/it_IT/staging/index.rst b/Documentation/translations/it_IT/staging/index.rst
-new file mode 100644
-index 000000000000..6b56707f3a3a
---- /dev/null
-+++ b/Documentation/translations/it_IT/staging/index.rst
-@@ -0,0 +1,13 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+.. include:: ../disclaimer-ita.rst
-+
-+:Original: :ref:`Documentation/staging/index.rst <process_index>`
-+
-+Documenti in ordine sparso
-+==========================
-+
-+.. toctree::
-+   :maxdepth: 2
-+
-+   magic-number
-diff --git a/Documentation/translations/it_IT/process/magic-number.rst b/Documentation/translations/it_IT/staging/magic-number.rst
-similarity index 100%
-rename from Documentation/translations/it_IT/process/magic-number.rst
-rename to Documentation/translations/it_IT/staging/magic-number.rst
--- 
-2.39.5
-
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
