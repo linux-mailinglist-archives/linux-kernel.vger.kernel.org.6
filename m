@@ -1,273 +1,210 @@
-Return-Path: <linux-kernel+bounces-336880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5749C984206
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:25:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DEBA9841F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:22:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AE5B285FA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:25:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FEE21C2419F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE2DA16F0F0;
-	Tue, 24 Sep 2024 09:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="eIplAb5P";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="sKD/UN8e"
-Received: from smtpout144.security-mail.net (smtpout144.security-mail.net [85.31.212.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70DFD15C13F;
+	Tue, 24 Sep 2024 09:22:26 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD53156236
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=85.31.212.144
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727169907; cv=fail; b=B96lXtlVgyNk8jik2RTO37GryukEDoiS7bguUwQHU3F7L862BcWmJwvU9Ck0tC7dwtcJ3GzgpgT0wzoMurclefqZ1541TBsiDeyNn/aRDyC3DuVLSvlX9hpOy+XOXmKoa1e3w9jfQ97np+BOa5Vf0x9r8SD1E6WLK7yTGoe9q4s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727169907; c=relaxed/simple;
-	bh=T5uSHgkmAwvTJQWgMDrPyQnAF/YeHQaaCcpuB+cWki0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=vGPIUM6UAr3HRy1jlcwE9O+XaFjOlRu0d6d7zPdLC02y2o7KeSWPKOae7vqRs0nfW5S2YYvLtzj+sn6aCKx8kGFX4nGzTYzJ+pLTY4FyxQSxXhnzIIwXzEPiuSJ8GZetW0Ei31g+j5ClZWSmupgLt/wFTKWoovsRSW3bwr9rXZo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=eIplAb5P; dkim=fail (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=sKD/UN8e reason="signature verification failed"; arc=fail smtp.client-ip=85.31.212.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kalrayinc.com
-Received: from localhost (fx601.security-mail.net [127.0.0.1])
-	by fx601.security-mail.net (Postfix) with ESMTP id 5E1553497D3
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 11:23:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kalrayinc.com;
-	s=sec-sig-email; t=1727169782;
-	bh=T5uSHgkmAwvTJQWgMDrPyQnAF/YeHQaaCcpuB+cWki0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=eIplAb5PYMJiPhM+zEjD09Fe1nc9swQPwUK3u96zyo5CU26dnWpdESlHp+konHPjl
-	 wvdnhXoKuBVVfDD8vmXEMMpVdDPJlGAoRzJ+QMykXBVqePasYdRzM4/Zq1v9ut2Nkh
-	 +P5D+q38LAzwSIVGvLojwHid1gRqpg7SgHeKKa+U=
-Received: from fx601 (fx601.security-mail.net [127.0.0.1]) by
- fx601.security-mail.net (Postfix) with ESMTP id 2EBC134976F; Tue, 24 Sep
- 2024 11:23:02 +0200 (CEST)
-Received: from PAUP264CU001.outbound.protection.outlook.com
- (mail-francecentralazlp17011025.outbound.protection.outlook.com
- [40.93.76.25]) by fx601.security-mail.net (Postfix) with ESMTPS id
- 76B59349570; Tue, 24 Sep 2024 11:23:01 +0200 (CEST)
-Received: from PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:118::6)
- by MR1P264MB3073.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:3a::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.22; Tue, 24 Sep
- 2024 09:23:00 +0000
-Received: from PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM
- ([fe80::6fc2:2c8c:edc1:f626]) by PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM
- ([fe80::6fc2:2c8c:edc1:f626%4]) with mapi id 15.20.7982.022; Tue, 24 Sep
- 2024 09:23:00 +0000
-X-Secumail-id: <16471.66f284f5.74345.0>
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iR59ryZlXi0NOCk0VgPCx3yhA3ZpWbYdEkZ73RTimncbO+Ur1mugIQGAuyZTucXWbrSDCFa//sGiPdNWyVCgs3Y8bhj2VOme4tLCLWU7axglceAb8yUBTCLKoaAaEl+F6xkHFmCufAoCosi/qwhiWoMsMobU9QGN1A5QYUSiGrUbLhjAFGUUt/1+CL5YE97dWfzFuzkOmeWK7QfecVW7PDoJr9a7iHuMjsLlH6MqBDKgd1QHu3CjiROtW4wVneK2tV0IiPAaot4r+HzPOlaOecj+ptJqlvVtD3ERoB5Pqa/wjgIrdcuCHojuYzj1K66IHIdEc+ffiqtlJFsCh78Tsw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microsoft.com; s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ap33tf5qZZ62I8NJEWvBds9aSZQ+d7OzAL26H+fuCc8=;
- b=oHVV3G9reGkIsHSea1cr4vwcxmkVETdd6LqBTu4yAGtPbxv0pS7xop0XXhkATC0PGHEN+AfTr+lDeC8S9TmcOH6EvrlaqLrL5StIolVBUExkgjQHj6ayqtUCIqf9tyfGvMwjRbuDZa0bOVyWEjD4RObYM+uvoLj2H0cAW5ZlAhejb8sdtGv6MeXi4tZxytw/+rBUz6cWS0vwhK0WegGVHwTi4Ef4tdX+IMjgD47cVVYu0jsZnwfjAKbsykDi0/4lG9l/LVOG5EQrjdc4a4NyuczYxz2DLBN2hMV2wz/3oImunvt7uQSgXHLfMFHSoHmEpoKoQwPFIZk4Apcb+oo9Pw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=kalrayinc.com; dmarc=pass action=none
- header.from=kalrayinc.com; dkim=pass header.d=kalrayinc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalrayinc.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ap33tf5qZZ62I8NJEWvBds9aSZQ+d7OzAL26H+fuCc8=;
- b=sKD/UN8elYWrJHK0oreZ4rM1vqb/ihd0ZDcd539hImuqHoWDhv16W0P/V3XAbfdBnHSKnIYNobDoiFvGjhdtpc6WyAk5njsZvivm/1hKRop7OTk4kKrK3XlUzjJyLdbJ3+rGoKHN76Qt4T9R+OlbosLo/H7A4wg+W6VSFQhTczF6QmOFTnHQO3awwsLSod0PEdc488oCCk+cNjWNFmvF1gn+9WeB3f3xpP2+ZS421pxIS+5jU/yfi5ozfFbt3+S1JWPrUrzczdmywovsnRIDhvEQOPef7bvQTNwgtb8jeOANbEImpC3CqJoCmqlpStTsfpoQqiLMw7xFNNCaIlDrKQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=kalrayinc.com;
-From: Julian Vetter <jvetter@kalrayinc.com>
-To: Arnd Bergmann <arnd@arndb.de>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Guo Ren
- <guoren@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui
- <kernel@xen0n.name>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-csky@vger.kernel.org, loongarch@lists.linux.dev, Yann Sionneau
- <ysionneau@kalrayinc.com>, Julian Vetter <jvetter@kalrayinc.com>
-Subject: [PATCH v4 5/5] Use generic io memcpy functions on the loongarch
- architecture
-Date: Tue, 24 Sep 2024 11:22:23 +0200
-Message-ID: <20240924092223.534040-6-jvetter@kalrayinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240924092223.534040-1-jvetter@kalrayinc.com>
-References: <20240924092223.534040-1-jvetter@kalrayinc.com>
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: AS4P191CA0028.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:20b:5d9::20) To PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:102:118::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C71E84A50
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727169745; cv=none; b=Jf6bwMYcAFpnc2eLRZoeyREeWoscPb4MTgQDz0msTJTum/Bw/m53OMLQqb8HfuSAVFObbQcjFDuobX+vVLB03Jk/De2wxTNAJeswV/4IvSLM/0heTbCGgsJZdfglrgXRZd2ECMYJv1nEi+/pSNbZjDzE7JyU+4AsCPI5GO+i/OI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727169745; c=relaxed/simple;
+	bh=O+2h/gyclxOqfVSQVHLtJElx6w7RYBUophTNfQo0veo=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=NQlICuT8+Kra410YRbuVU17Aych3THgDuQmU53iXfYqaD9spNNWtaJZ4IwklG/41OeRYblHI1xQzQ1KXdW/zHpeZfOXgGeJXz+6s3ZsuRFPmeG/3KGmL4DCsN+yH7839OYZbkax6kvFzYYjN7maB2wxL8Yn9cjPAqviKnAbyCLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39f6f16ed00so55875215ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 02:22:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727169743; x=1727774543;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ljPaTEdcLQZpY9JQ2ZfDsBrXBURMa/3HCT2lU3cqgwc=;
+        b=FjTi6HvmFgj26SbVNcUIHKSjHDSwzSeH0YXxImVRtlikNcqc1HLQ8PY9i6BdpXBFST
+         nUQHQ8Tyr1Axt0y35DsdJjY9Gx2wShMqXdonp2jp06Ru+xeiNEUCSYf1sU/dN8VB1Uv3
+         u5I9stT3MXuoPnGTwMFkN7DSLV+Ac2wSZGLyd1lZoqCdUDGBc7DJQcbEjfvS3paAh1mn
+         B82Cyntn7/Hs3lmVQVD9fjqkweJC2iNIkNo2Wb+pO/4pSFmBw6qCFI1r3hZD0czgKtIO
+         Ktw0yCt4WvSLC1oISY7MD8Mk3PWTCfMiO9/OcPagJxiiCNRKE6er8FJyuemDPSjlCvhb
+         Pkqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWgzZKEptAqKUaF8zgWO1C7GviefLpdadnCk3+WwONqmr2Js132+Z9nLVPoZTLT/8l1YPMkyq2NwW2WlLg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAqNAsfHoj8lhXI5e8iDttvKxRl2qc70JPtL5zk0ErRSEJuYbl
+	ntwRpp8C/Z0ToWesE/qMYl5Tg793lln/uZ/wCCeC6PkhvWECttOAwi/+ziR/Cd+fNAmjyh+b0le
+	XvzfvmrmYl8zNz1i2a8QvZ196AKUvQB+GxKw75BaZRRbwoXxmDxgWtik=
+X-Google-Smtp-Source: AGHT+IHzxnCBsEVhoC4luupSAyrZvqemDVoz8bzFXU1TwEvgVdIUtGWPABvi488e192+TwGSWxtf+A5rFQ4rQ7i1VA1QoemgXibo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAYP264MB3766:EE_|MR1P264MB3073:EE_
-X-MS-Office365-Filtering-Correlation-Id: 557af0dd-54de-4834-96d1-08dcdc7a7bf3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|52116014|1800799024|376014|7416014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info: ClE0vi6dd6acGpZk7qmFmvVqn+jN1TesnT5i5M4nxDzFzyuizG6G6tIjesBY5zWKidmCQapMELWW9lnAIkMIpTDZP33SuB0JkhZjIHojs1inTIiVyFLZ84WUS0mDcrn08XkbntLz1QTtbK5aJr/X4+JoNXKT1qG+Hi/ww0xtb1EKpzBMigYe4ieB+7eIUGOYxc1lngwV80Gfm6rZJiTYJmp+MVbqnZeKAoKtXro+jE6ahhj9P4JThJCeEHY4w9SQ8SAiwAEFNXDaNGghEyL8PJkWA6GL/zEUa6vD/sKNBfYhUQzPdv9khoHBoZpGhJK8u9Rw/DkKP5QyIPVMMjgjI0UIixWDzQQtwnOxYCFvGE00tHnrE61dcAJe0mRdwrL+tcSY4qMGf53RWDGVqyF9QMMT76qAsnKnyf8gTWp7iB2YKbQWjpQexKZeyAC9Ml0xURmV0JTueIXMfISyCguAeVoR8azdqiTsrat8W4DZOculJMKC0SSpo4YxxQ4p6GERigXkzd7+xIOxCXEtKsulxhzAdLNQ+We2wfUFJP0njmS5ddo3ovBIQA019m7GGD4sNjmSn36NBohPj+c/SB5Aiqcc6EXpDa5pTrGvN7OvhPfwURvS7jv6COv3n00+2eRcchIL+vv0Q4+Xzt0ePT1dBHS1fC3sF8T/ML20bFSJFFM0iPg0Xt9AL3W9qTzBlhbLOiwnu39fPL9Cjt289VRIugeyTKWNwHJTapndU6VFmTadJ9okqQPNuN1KqeoMjdxSEoRYyyAWPX7tYRaeM0GceE06k1yKt6nr3U94qQTDaIWBcarreCVdbA8PsndBXL8ue62V7WxeovXaD/dNks13YgZHBcAGt5rj40yNMFE8BUuxH3i/71yVmslUIdQzmLdt1anvlflTaozfToeoRs6X/7qJepi8ZBfSTAeHpTlBHhWgKSjSzIDYR0sonFaXfxnzDcL
- mRLmjqY8OCPs9L2fWS3zPaN7/2Btk7mggf21nv0aOSgxtEXrXj48dfHQwwCnulZLhZCqjtDFP0vE+BdU8mD9qJ+esj+YqQYI/AHSnA+sjOJ0JHxFaGZDkAQE2vZnWwBS95MylrbWJFnrGR/nn+xdYkKG2L3iXTgC967VBro+Qsnn8vIMxMx0xmEqt37VfXODapFjFw75FBDW3iuMeN/L8S89V3Kp6QnGRIN38Z7vgMif/07gfqHX9intiumyjiAcFiQ5D1FfFyBLbZBSILMv9xr9GyLF0AYqRUI8xWHarSFmPqDREvgXcy8MLgqfcaYB/gnEGi5gAFaX/YmR3gfRzBrWIRQ6ygMk3UI36XWE+r22my1uMv5mDqYkXvhP5pWax+qg6M+bZcPdAHHWojw==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(376014)(7416014)(366016)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: AsHJ9KRUZvnsp6R8TOAgsuT6LUjM1H/t6yUHyAz9odBXCax2RYt5EGowLNpOwjUjtitL/nIuqcmwChI6u90lvjbsoZtngN99D4q+FXTb4r2NzomMDs2nCTun64RPbB88JzOTwWVB3iph1jLpZ+GOaP3bp+HHMGzjMGIRUD4a4IWyo8BglGXqlf9NzKy8XvdN0grfcPUrRmur2B0Ty+43ctqxXWo3jtmXkqsVKtT3Oe/Il4uJ/Amyzak21eKhJk54Vlk12PZIqhbTWjpG60gf8it2hU8pqnuwPQgtssxDOKnWajzX9f+Qz2VnJiCCrWh/uV9FSbD2QDgLw1Uq1aMNAx2NMtOQRwdfk+iV+Q/WrPBTDruwBpdAwqW2+qM9VoeOuWwq0tnl7Dm/c0aEjmdY749044WTCSq3bL8U0s0UB+XAwba0TO4+zyG2LDb43pF42LzqcYV1gZUgzgVGTaJ3AbyOyqaIfFBXciMlNcIM2YZqSkHsxg7zysLB5wmA9PJ19GQRWt4uHGmWqQIT+H0+i70Tp5tntUirNnlDEYbbljlg/HYdrm8l/4Fg41HS5Wo6CJHO/w4U9QtyM9s20XAWwyuKrjkofQARwbfvb0dBmZlT00YQTB5WJH9MGWc0G/sB+jtyqjM3BAMDWCwPbD21xYJr4SIz90kzkqaw6mtRnpH7X8k7qybqG0Cl+rskD5IdPKGVtN1lhUjQgzm+n0n6D5526VjvA+G0wjK12APfg2NEZnARVeAbgd1jS1bIVq88g/P8ogAF007L/kKskAk7VTrpqXO94LQqahbGkIp+8TdpLDxtuueY2H65zF3yoZP8hnL+OyfCRO/3nB9MkDcOrRctpdnkLGeEzpusZaeQgUjxYnY16feUhvEzqjH3zWN+4gRX/oTR3Vanf1MaX5nocnG92hsBXygwSmc+VYSruuOtKl2sbvXG9FimDyUbw1zu
- bHhm2gjMEoY4mNSnYSO2k1kN4i0Zp0Vt7Ei6jT0sIJlFJrOC4Jr11nJNkgemdsW0WIESUARRhkoaaE6K8dSNvgbnH7UPR2abx4i319dGq5p8HPT/kzXOdAUpldfKKfjQ1VD8jTkPfMojFy11jFkm+u5NtByVc0fQKYkn4C/BW1OqhJsRma+0s8zDZBGDin+qP1Hg7S7fB1sw17uec7cmJncS0Qh6d1Niig8L6SQdk52bRZZjPSkQMG8tDt7jc1UW/MsG1L4rXyuakAy4t10rqbCn7eZDHI76BbeY1056XdIZZ+rOXZctnFwR+e/sh3WdVYcBr1NlpNiNLWEcoPl8eAJAykHoPtquWQLuxEhZVM7iUXtmz3jASDUOqV/Bz0xjVryPqRfsvObP0+8Pz7M5Ums/c+BTq4gpuHc6dzJPe6EIkE3WRQBBbGUZVEpJz1Sma7qSp4aAWkwZ8h7rKyhmky5iHw5ODdYOyFxDaJJ4Zg5hA1/3ZnIos7wwXW0b3NnUzZg81W9kGFq6jw1lIrFXhHn+EhgJp7MJSiChOdzxzW7eqfruWTbd+qMMcTiQI0F6KUXjMU3Hi86bQI4xY3tpuQpCw2AsAnuZSvIHyIclMB9vgdNfaKsd9/aBbT2vqPAI
-X-OriginatorOrg: kalrayinc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 557af0dd-54de-4834-96d1-08dcdc7a7bf3
-X-MS-Exchange-CrossTenant-AuthSource: PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2024 09:23:00.4393
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8931925d-7620-4a64-b7fe-20afd86363d3
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: exUCptaH5lhbs5eJudIQlgtkq4fjqEX1fWKXrqtFJX7TLCV1tH8LoZm6n39ff5a8saBwmObIaU7U6TClNb8n3w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MR1P264MB3073
-Content-Type: text/plain; charset=utf-8
-X-ALTERMIMEV2_out: done
+X-Received: by 2002:a05:6e02:1d01:b0:3a0:ab86:9293 with SMTP id
+ e9e14a558f8ab-3a0c8d7408fmr110380955ab.26.1727169743343; Tue, 24 Sep 2024
+ 02:22:23 -0700 (PDT)
+Date: Tue, 24 Sep 2024 02:22:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f284cf.050a0220.c23dd.0025.GAE@google.com>
+Subject: [syzbot] [net?] BUG: unable to handle kernel paging request in __task_rq_lock
+From: syzbot <syzbot+5c756f98a0b65d89e058@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Use the generic __memcpy_{from,to}io and __memset_io functions on the
-loongarch processor architecture.
+Hello,
 
-Reviewed-by: Yann Sionneau <ysionneau@kalrayinc.com>
-Signed-off-by: Julian Vetter <jvetter@kalrayinc.com>
+syzbot found the following issue on:
+
+HEAD commit:    1868f9d0260e Merge tag 'for-linux-6.12-ofs1' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16cf0080580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d0b35925215243c6
+dashboard link: https://syzkaller.appspot.com/bug?extid=5c756f98a0b65d89e058
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/33fe6e091b43/disk-1868f9d0.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/204ed295990c/vmlinux-1868f9d0.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1b85324d921e/bzImage-1868f9d0.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5c756f98a0b65d89e058@syzkaller.appspotmail.com
+
+BUG: unable to handle page fault for address: fffffbfff35395f2
+#PF: supervisor read access in kernel mode
+#PF: error_code(0x0000) - not-present page
+PGD 23ffe4067 P4D 23ffe4067 PUD 23ffe3067 PMD 13fff0067 PTE 0
+Oops: Oops: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 1 UID: 0 PID: 5890 Comm: syz.4.41 Not tainted 6.11.0-syzkaller-07462-g1868f9d0260e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:bytes_is_nonzero mm/kasan/generic.c:87 [inline]
+RIP: 0010:memory_is_nonzero mm/kasan/generic.c:104 [inline]
+RIP: 0010:memory_is_poisoned_n mm/kasan/generic.c:129 [inline]
+RIP: 0010:memory_is_poisoned mm/kasan/generic.c:161 [inline]
+RIP: 0010:check_region_inline mm/kasan/generic.c:180 [inline]
+RIP: 0010:kasan_check_range+0x82/0x290 mm/kasan/generic.c:189
+Code: 01 00 00 00 00 fc ff df 4f 8d 3c 31 4c 89 fd 4c 29 dd 48 83 fd 10 7f 29 48 85 ed 0f 84 3e 01 00 00 4c 89 cd 48 f7 d5 48 01 dd <41> 80 3b 00 0f 85 c9 01 00 00 49 ff c3 48 ff c5 75 ee e9 1e 01 00
+RSP: 0018:ffffc900034ff200 EFLAGS: 00010086
+RAX: 0000000000cef701 RBX: 1ffffffff35395f2 RCX: ffffffff81703cdb
+RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffffffff9a9caf90
+RBP: ffffffffffffffff R08: ffffffff9a9caf97 R09: 1ffffffff35395f2
+R10: dffffc0000000000 R11: fffffbfff35395f2 R12: ffff8880207e3c00
+R13: ffff8880207e46d8 R14: dffffc0000000001 R15: fffffbfff35395f3
+FS:  00007f01a5cf36c0(0000) GS:ffff8880b8900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffbfff35395f2 CR3: 0000000068d60000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ instrument_atomic_read include/linux/instrumented.h:68 [inline]
+ _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
+ __lock_acquire+0xc8b/0x2050 kernel/locking/lockdep.c:5169
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
+ _raw_spin_lock_nested+0x31/0x40 kernel/locking/spinlock.c:378
+ raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:585
+ raw_spin_rq_lock kernel/sched/sched.h:1423 [inline]
+ __task_rq_lock+0xdf/0x3e0 kernel/sched/core.c:663
+ ttwu_runnable kernel/sched/core.c:3710 [inline]
+ try_to_wake_up+0x182/0x1480 kernel/sched/core.c:4153
+ autoremove_wake_function+0x16/0x110 kernel/sched/wait.c:384
+ __wake_up_common kernel/sched/wait.c:89 [inline]
+ __wake_up_common_lock+0x132/0x1e0 kernel/sched/wait.c:106
+ __unix_dgram_recvmsg+0x5f4/0x12f0 net/unix/af_unix.c:2462
+ sock_recvmsg_nosec+0x190/0x1d0 net/socket.c:1052
+ ____sys_recvmsg+0x3cd/0x480 net/socket.c:2820
+ ___sys_recvmsg net/socket.c:2864 [inline]
+ do_recvmmsg+0x46e/0xad0 net/socket.c:2958
+ __sys_recvmmsg net/socket.c:3037 [inline]
+ __do_sys_recvmmsg net/socket.c:3060 [inline]
+ __se_sys_recvmmsg net/socket.c:3053 [inline]
+ __x64_sys_recvmmsg+0x199/0x250 net/socket.c:3053
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f01a4f7def9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f01a5cf3038 EFLAGS: 00000246 ORIG_RAX: 000000000000012b
+RAX: ffffffffffffffda RBX: 00007f01a5136058 RCX: 00007f01a4f7def9
+RDX: 0000000000010106 RSI: 00000000200000c0 RDI: 0000000000000005
+RBP: 00007f01a4ff0b76 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000002 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007f01a5136058 R15: 00007ffd3423d908
+ </TASK>
+Modules linked in:
+CR2: fffffbfff35395f2
+---[ end trace 0000000000000000 ]---
+RIP: 0010:bytes_is_nonzero mm/kasan/generic.c:87 [inline]
+RIP: 0010:memory_is_nonzero mm/kasan/generic.c:104 [inline]
+RIP: 0010:memory_is_poisoned_n mm/kasan/generic.c:129 [inline]
+RIP: 0010:memory_is_poisoned mm/kasan/generic.c:161 [inline]
+RIP: 0010:check_region_inline mm/kasan/generic.c:180 [inline]
+RIP: 0010:kasan_check_range+0x82/0x290 mm/kasan/generic.c:189
+Code: 01 00 00 00 00 fc ff df 4f 8d 3c 31 4c 89 fd 4c 29 dd 48 83 fd 10 7f 29 48 85 ed 0f 84 3e 01 00 00 4c 89 cd 48 f7 d5 48 01 dd <41> 80 3b 00 0f 85 c9 01 00 00 49 ff c3 48 ff c5 75 ee e9 1e 01 00
+RSP: 0018:ffffc900034ff200 EFLAGS: 00010086
+RAX: 0000000000cef701 RBX: 1ffffffff35395f2 RCX: ffffffff81703cdb
+RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffffffff9a9caf90
+RBP: ffffffffffffffff R08: ffffffff9a9caf97 R09: 1ffffffff35395f2
+R10: dffffc0000000000 R11: fffffbfff35395f2 R12: ffff8880207e3c00
+R13: ffff8880207e46d8 R14: dffffc0000000001 R15: fffffbfff35395f3
+FS:  00007f01a5cf36c0(0000) GS:ffff8880b8900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffbfff35395f2 CR3: 0000000068d60000 CR4: 0000000000350ef0
+----------------
+Code disassembly (best guess), 7 bytes skipped:
+   0:	df 4f 8d             	fisttps -0x73(%rdi)
+   3:	3c 31                	cmp    $0x31,%al
+   5:	4c 89 fd             	mov    %r15,%rbp
+   8:	4c 29 dd             	sub    %r11,%rbp
+   b:	48 83 fd 10          	cmp    $0x10,%rbp
+   f:	7f 29                	jg     0x3a
+  11:	48 85 ed             	test   %rbp,%rbp
+  14:	0f 84 3e 01 00 00    	je     0x158
+  1a:	4c 89 cd             	mov    %r9,%rbp
+  1d:	48 f7 d5             	not    %rbp
+  20:	48 01 dd             	add    %rbx,%rbp
+* 23:	41 80 3b 00          	cmpb   $0x0,(%r11) <-- trapping instruction
+  27:	0f 85 c9 01 00 00    	jne    0x1f6
+  2d:	49 ff c3             	inc    %r11
+  30:	48 ff c5             	inc    %rbp
+  33:	75 ee                	jne    0x23
+  35:	e9                   	.byte 0xe9
+  36:	1e                   	(bad)
+  37:	01 00                	add    %eax,(%rax)
+
+
 ---
- arch/loongarch/Kconfig         |  1 +
- arch/loongarch/kernel/Makefile |  2 +-
- arch/loongarch/kernel/io.c     | 94 ----------------------------------
- 3 files changed, 2 insertions(+), 95 deletions(-)
- delete mode 100644 arch/loongarch/kernel/io.c
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-index 70f169210b52..bc97b09efd16 100644
---- a/arch/loongarch/Kconfig
-+++ b/arch/loongarch/Kconfig
-@@ -84,6 +84,7 @@ config LOONGARCH
- 	select GENERIC_CPU_DEVICES
- 	select GENERIC_ENTRY
- 	select GENERIC_GETTIMEOFDAY
-+	select GENERIC_IO_COPY
- 	select GENERIC_IOREMAP if !ARCH_IOREMAP
- 	select GENERIC_IRQ_MULTI_HANDLER
- 	select GENERIC_IRQ_PROBE
-diff --git a/arch/loongarch/kernel/Makefile b/arch/loongarch/kernel/Makefile
-index c9bfeda89e40..9497968ee158 100644
---- a/arch/loongarch/kernel/Makefile
-+++ b/arch/loongarch/kernel/Makefile
-@@ -8,7 +8,7 @@ OBJECT_FILES_NON_STANDARD_head.o := y
- extra-y		:= vmlinux.lds
- 
- obj-y		+= head.o cpu-probe.o cacheinfo.o env.o setup.o entry.o genex.o \
--		   traps.o irq.o idle.o process.o dma.o mem.o io.o reset.o switch.o \
-+		   traps.o irq.o idle.o process.o dma.o mem.o reset.o switch.o \
- 		   elf.o syscall.o signal.o time.o topology.o inst.o ptrace.o vdso.o \
- 		   alternative.o unwind.o
- 
-diff --git a/arch/loongarch/kernel/io.c b/arch/loongarch/kernel/io.c
-deleted file mode 100644
-index cb85bda5a6ad..000000000000
---- a/arch/loongarch/kernel/io.c
-+++ /dev/null
-@@ -1,94 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Copyright (C) 2020-2022 Loongson Technology Corporation Limited
-- */
--#include <linux/export.h>
--#include <linux/types.h>
--#include <linux/io.h>
--
--/*
-- * Copy data from IO memory space to "real" memory space.
-- */
--void __memcpy_fromio(void *to, const volatile void __iomem *from, size_t count)
--{
--	while (count && !IS_ALIGNED((unsigned long)from, 8)) {
--		*(u8 *)to = __raw_readb(from);
--		from++;
--		to++;
--		count--;
--	}
--
--	while (count >= 8) {
--		*(u64 *)to = __raw_readq(from);
--		from += 8;
--		to += 8;
--		count -= 8;
--	}
--
--	while (count) {
--		*(u8 *)to = __raw_readb(from);
--		from++;
--		to++;
--		count--;
--	}
--}
--EXPORT_SYMBOL(__memcpy_fromio);
--
--/*
-- * Copy data from "real" memory space to IO memory space.
-- */
--void __memcpy_toio(volatile void __iomem *to, const void *from, size_t count)
--{
--	while (count && !IS_ALIGNED((unsigned long)to, 8)) {
--		__raw_writeb(*(u8 *)from, to);
--		from++;
--		to++;
--		count--;
--	}
--
--	while (count >= 8) {
--		__raw_writeq(*(u64 *)from, to);
--		from += 8;
--		to += 8;
--		count -= 8;
--	}
--
--	while (count) {
--		__raw_writeb(*(u8 *)from, to);
--		from++;
--		to++;
--		count--;
--	}
--}
--EXPORT_SYMBOL(__memcpy_toio);
--
--/*
-- * "memset" on IO memory space.
-- */
--void __memset_io(volatile void __iomem *dst, int c, size_t count)
--{
--	u64 qc = (u8)c;
--
--	qc |= qc << 8;
--	qc |= qc << 16;
--	qc |= qc << 32;
--
--	while (count && !IS_ALIGNED((unsigned long)dst, 8)) {
--		__raw_writeb(c, dst);
--		dst++;
--		count--;
--	}
--
--	while (count >= 8) {
--		__raw_writeq(qc, dst);
--		dst += 8;
--		count -= 8;
--	}
--
--	while (count) {
--		__raw_writeb(c, dst);
--		dst++;
--		count--;
--	}
--}
--EXPORT_SYMBOL(__memset_io);
--- 
-2.34.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-
+If you want to undo deduplication, reply with:
+#syz undup
 
