@@ -1,75 +1,117 @@
-Return-Path: <linux-kernel+bounces-337725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E4BE984E04
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:43:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC485984D5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:08:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EFF51C24274
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:43:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09C161C22A49
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C601474A5;
-	Tue, 24 Sep 2024 22:43:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E371A725D;
+	Tue, 24 Sep 2024 22:07:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicksendemail77.com header.i=@quicksendemail77.com header.b="VqFrNahE"
-Received: from mail.quicksendemail77.com (mail.quicksendemail77.com [193.226.76.72])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="b5UJcmth"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3147313212A
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 22:43:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.226.76.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26F5148318;
+	Tue, 24 Sep 2024 22:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727217790; cv=none; b=e2n/2rbFQQyDZt2DYpsf3edYTFydQaJRnDvqdkNiT/+h3kLbIT4MkLWtjjKTdpLFV7GuqCKa0bh7rct+mqzu9nCmNdVO4/Hd0f8xgreHOIMruFSbfDJXaEDn+vVyl0jSV+sskuo+0J0fbWkLDub0x3RzLOY4h6HY8n107N1agmQ=
+	t=1727215679; cv=none; b=Rar7OdrQMY7gaLiTkNMnERYrIGEXDkE1O3xHWYX20WmcZiWcjzwhRVMRORkbElIIiVLQ46gsvWjaF5BFtuqzU1wFnds1VwCFADJnZWxzhDYmXLjRrOwxEUqHir/D8UPGj78AXbOtNPvl2Fso4Gsh04XMXNMsnmRYpPoNO8IFC3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727217790; c=relaxed/simple;
-	bh=mdmDx+mkcETnr3PocvmPYOZmGv/ZhygpJopukOqZTvg=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Qx4f0UGiYjbyUyTZcLzaygefJcnhlsl2uIYNNDIOqGqThNdy38vg3S7TKokrRmqXSdS4sb8PYkQyjw7p8tT97WC2OWhj8GYwt9drKJuAkoI3wo1WOXnIm6M+n6s0dBO3Gwx0XAz88BC0qv2B+VuVDYrRwANzKQipDvBxcBhwYII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=quicksendemail77.com; spf=pass smtp.mailfrom=quicksendemail77.com; dkim=pass (2048-bit key) header.d=quicksendemail77.com header.i=@quicksendemail77.com header.b=VqFrNahE; arc=none smtp.client-ip=193.226.76.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=quicksendemail77.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicksendemail77.com
-Received: from quicksendemail77.com (unknown [172.245.243.31])
-	by mail.quicksendemail77.com (Postfix) with ESMTPSA id B415056D26
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 03:32:05 +0530 (IST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.quicksendemail77.com B415056D26
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=quicksendemail77.com; s=202408; t=1727215327;
-	bh=mdmDx+mkcETnr3PocvmPYOZmGv/ZhygpJopukOqZTvg=;
-	h=Reply-To:From:To:Subject:Date:From;
-	b=VqFrNahEtbM22FfXrnP5Wsk1UfWTQzz5yj5QIZlle7645XOhiV+UgGkb3AcH+w4Mc
-	 TgtSaz2DCFswKmwXkNUMJLzGCPpvc23hvUdlCM1fRsibUXU4fit8eqbJnwOVqpev5P
-	 t/IunM5wAt5TWJ+hMdRjKHq10E7W2pEGgu8Y+T/aJ5sTS33l+hrwr1+TRrCYrmsVBj
-	 ie5BvZhsJ1MmD5xds00uVS7DX/FnVCNfLrLXddy/cUju4IJxP+i6J5MKxOUzTcaPH3
-	 s74TMGXepwTuIkTe3xUHCT5zp0oIJ7FOeHmsa8hUbq0pgu17lgFqcQd+wuAffqR0s9
-	 FBA0+c4voDSGw==
-Reply-To: info@marvin-group.net
-From: Marvin Jack<info@quicksendemail77.com>
-To: linux-kernel@vger.kernel.org
-Subject: New order
-Date: 24 Sep 2024 13:02:05 -0900
-Message-ID: <20240924130205.CBD6D2F4135CF03E@quicksendemail77.com>
+	s=arc-20240116; t=1727215679; c=relaxed/simple;
+	bh=qyJXB6XtGsnhwAscLTJHdsYASer9Z8FVyGOAJPtx2Fs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ixQjKpCNo81jaFKNgTKfip/T9jSii0LWQTM64FSbVuukCPxsFxtKd7PqYv4XPRBVTXlzW5ewz6BT9Rr2PiDxRmTHyIBNKGRisYR/1bANruaqpK5XLKiPJJJO8gze9pqCqTG0co+liafApmSseZDxfwlcKBFx7wVlOtSqaD/88lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=b5UJcmth; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48OM72Wl054734;
+	Tue, 24 Sep 2024 17:07:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1727215622;
+	bh=BXKvnXDLj7jSM6JjMTT9Viqz6Jqilrg95I9/ydv1LQc=;
+	h=From:To:CC:Subject:Date;
+	b=b5UJcmth3e1ruxRlqhciXlGjOysTVlGIXfST8g6pcEv88J7XwzO6vbxQXFNdQAQJc
+	 7EyWF8JZ+m99fXKq6f2v1XjziklVd/ifcoy1PhGDiBwYXf++DpI7rzZ3m4HDXQFz/2
+	 DDYBDVylCBlC9QJPXRaHR5q5rKyHF/Cv0Rdg1YWg=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48OM72g2019399
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 24 Sep 2024 17:07:02 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 24
+ Sep 2024 17:07:02 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 24 Sep 2024 17:07:02 -0500
+Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48OM72lR037639;
+	Tue, 24 Sep 2024 17:07:02 -0500
+From: Judith Mendez <jm@ti.com>
+To: William Breathitt Gray <wbg@kernel.org>
+CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>, Nishanth Menon <nm@ti.com>,
+        Tero Kristo <kristo@kernel.org>, David Lechner
+	<david@lechnology.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-iio@vger.kernel.org>,
+        Judith Mendez <jm@ti.com>
+Subject: [PATCH v6 0/5] Enable eQEP DT support for Sitara K3 platforms
+Date: Tue, 24 Sep 2024 17:06:55 -0500
+Message-ID: <20240924220700.886313-1-jm@ti.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.4 (mail.quicksendemail77.com [0.0.0.0]); Wed, 25 Sep 2024 03:32:07 +0530 (IST)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Dear linux-kernel , .
+Git rebased the series since due to merge conflicts, part of the
+series was not merged. Also dropped the patches that were already
+merged.
 
-Please email us your company's most recent catalog. We would like
-to make a purchase from you.
-Looking forward to hearing from you.
+This patch series adds eQEP DT nodes for K3 Sitara devices:
+- AM62x
+- AM62ax
+- AM62px
+- AM64x
 
-Marvin Jack
-Export Manager=20
-MARVINSGROUP NL
-Zeekant 125 - 3151=20
-HW - Hoek van Holland
-Tel.: +31 75 7112400
+Changes since v5:
+- Drop patch 1/8, 2/8, 8/8 since they have been merged
+
+v5: https://lore.kernel.org/linux-devicetree/20240612135538.2447938-1-jm@ti.com/
+v4: https://lore.kernel.org/linux-devicetree/20240610144637.477954-1-jm@ti.com/
+v3: https://lore.kernel.org/linux-devicetree/20240607162755.366144-1-jm@ti.com/
+v2: https://lore.kernel.org/linux-devicetree/20240523231516.545085-1-jm@ti.com/
+v1: https://lore.kernel.org/linux-devicetree/20240418221417.1592787-1-jm@ti.com/
+
+Judith Mendez (5):
+  arm64: dts: ti: k3-am62-main: Add eQEP nodes
+  arm64: dts: ti: k3-am62a-main: Add eQEP nodes
+  arm64: dts: ti: k3-am62p-main: Add eQEP nodes
+  arm64: dts: ti: k3-am64-main: Add eQEP nodes
+  arm64: dts: ti: k3-am64x-sk: Enable eQEP
+
+ arch/arm64/boot/dts/ti/k3-am62-main.dtsi      | 27 +++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-am62a-main.dtsi     | 27 +++++++++++++++++++
+ .../dts/ti/k3-am62p-j722s-common-main.dtsi    | 27 +++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-am64-main.dtsi      | 27 +++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-am642-sk.dts        | 17 ++++++++++++
+ 5 files changed, 125 insertions(+)
+
+-- 
+2.46.0
+
 
