@@ -1,58 +1,64 @@
-Return-Path: <linux-kernel+bounces-336666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DC4F983E1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:18:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1A1B983F0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:25:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 019F22818CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:18:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A1FE1F2133F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:25:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CA3145B16;
-	Tue, 24 Sep 2024 07:18:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A875C145B22;
+	Tue, 24 Sep 2024 07:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cb07iLpg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M43dNRPO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD02126C0B;
-	Tue, 24 Sep 2024 07:18:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C093142E9F
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:25:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727162324; cv=none; b=rbd8mXxp5qP/Mc4QicuM7irHlG3YoS2f0NpWU4fW/T5Z6N9ZqnypRzrDhNYKfseM7XcnV1cDFZn8gALBK9XBbkOKFhGJ8twCyFLqFt6Vqexqs/CLJ5iI85NofuAR/R7/+Ts+7qpKydzZOOPOL0uo0F2pMKNyApiC92HGDi4uXXo=
+	t=1727162713; cv=none; b=HLYnrYtiGaTFnTjeZIF4nX/+MEBl73FfyngMIFOi1BWMBllot9eaHf82VQQsHz88XFaqdobKPI483ojV+7sFYnplH6ftZ6X5rkgBCncEzzspmN002DdpMR9GFIfZMo4aCE+Kz6VWyTidJJnfWFeUs3hI7jFyjtaWLtmIa1pKAFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727162324; c=relaxed/simple;
-	bh=WEWPWhg1iI44D8WkJyN4SmQUz83Q960xJ2LUu70HgMw=;
+	s=arc-20240116; t=1727162713; c=relaxed/simple;
+	bh=zWgWLNxr/ZBAMKCeXmf0mjEdKqz10YcSHKUA7MvAkQ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cj4bC5pj2dVoZDyIPLulUV+N1p+dgPMVYsNnQdnlz5Gj+Bn8G6L4SUXosyxWk5/93n+rpuYfzP5yIqY2kL3riGfnPvwqMzBc3a3XrEKR6DWczWLNStvZs94FxBjYP6TR9ntBWvfWRWWfROaIsCnWuzKdcBRlfxbMeHLtCvOklsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cb07iLpg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 233BDC4CEC6;
-	Tue, 24 Sep 2024 07:18:41 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ThcFuGNEH8E7Zl+zJSrd+rpNR81ZxP3JyMj0CFZPb5VanwK+Vr++uYj+Uzd+Qw7ZVZZRekqFyIQ73eEuBLezxfTTL0oaTpYTK8sfRCFJ0PZ7Nr0iZ2mIin8F9D9xRM5v8PQDhCjD5qKNeu7YfwOAGPP2WjHu/g4V2ETkFdhnwDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M43dNRPO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1897C4CEC4;
+	Tue, 24 Sep 2024 07:25:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727162324;
-	bh=WEWPWhg1iI44D8WkJyN4SmQUz83Q960xJ2LUu70HgMw=;
+	s=k20201202; t=1727162712;
+	bh=zWgWLNxr/ZBAMKCeXmf0mjEdKqz10YcSHKUA7MvAkQ4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Cb07iLpgPNMeKhhU1A0t8wvGbg4Ohx7PM7Kjrxh5GgMFqleEJE4Y+0KvIp2mnTHwO
-	 FoU83oFWCKD8MUohvCGNRtAo2Mb577lmfcp9d4Heg1ziJt2Pjf0NR4+K3ynv/arSbx
-	 QtK1/xnR6keHj2jxI5KMD3jWqwRqmGMbKU0VPmx+Fx/AAIk+T+RMdzHiwHjJ40kKHD
-	 TKiVtF9NSQ9ndcYATuNlumIYwjECEs/sitxgFaMg26xt1BHNYkTCofDDRWJQEPZa9s
-	 5K/ftKrK15D4j1AttU70gAonsDQmb4CSYvnRMMqak68onVT93ozcv3G6xANcC/qw2S
-	 O+gMK+UoMK+Fw==
-Date: Tue, 24 Sep 2024 08:18:39 +0100
-From: Simon Horman <horms@kernel.org>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
-	thomas.petazzoni@bootlin.com,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>
-Subject: Re: [PATCH net] net: pse-pd: tps23881: Fix boolean evaluation for
- bitmask checks
-Message-ID: <20240924071839.GD4029621@kernel.org>
-References: <20240923153427.2135263-1-kory.maincent@bootlin.com>
+	b=M43dNRPO/KgrOPJF2BUYyYB0U1xLWO6/n/dlUZgMKSJjbVdJ5qS5JofsO4WbQKeVy
+	 ECm/PDFWvrPV4vjIysvr9CP9DQqWsAz/NhvqigKcRbuZMFVMyyniR++Wc6oyAXE1zk
+	 A9fycO9fPew8AQVhMHevfWf0DAnDKB4AORm8A+LEI8VK3bKHMDwsL1PLoZWvIYQUDY
+	 3QOPd/wy19wpeGadXk2mwXKt/0HJUO9Z7ick3jfb8gXRujKQA1YPlJZXfg6HOoQuvu
+	 nYK8jYZ27PgCLr+JEzftBES9B/K1/S8jeHsEPiEzwTbr2CnaYUUtAzQYt5QX6SHsYv
+	 P0xEN30A0Xhwg==
+Date: Tue, 24 Sep 2024 10:22:02 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jinjie Ruan <ruanjinjie@huawei.com>, linux-kernel@vger.kernel.org,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Liu Shixin <liushixin2@huawei.com>
+Subject: Re: [PATCH] static_call: Handle module init failure correctly in
+ static_call_del_module()
+Message-ID: <ZvJomuNWjtHYDcsW@kernel.org>
+References: <87cylj7v6x.ffs@tglx>
+ <3e158999-c93a-a4e3-85a9-2d6bfc1ccee7@huawei.com>
+ <877cbr7qed.ffs@tglx>
+ <50551f21-6e90-3556-7a3d-8b81a042f99c@huawei.com>
+ <87a5gm5tb3.ffs@tglx>
+ <ZtuPSIFsV8C3UZW8@bombadil.infradead.org>
+ <Zuv0nmFblHUwuT8v@bombadil.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,23 +67,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240923153427.2135263-1-kory.maincent@bootlin.com>
+In-Reply-To: <Zuv0nmFblHUwuT8v@bombadil.infradead.org>
 
-On Mon, Sep 23, 2024 at 05:34:26PM +0200, Kory Maincent wrote:
-> Fixed potential incorrect boolean evaluation when checking bitmask values.
-> The existing code assigned the result of bitwise operations directly to
-> boolean variables, which could lead to unexpected values.
-> This has been corrected by explicitly converting the results to booleans
-> using the !! operator.
+On Thu, Sep 19, 2024 at 02:53:34AM -0700, Luis Chamberlain wrote:
+> On Fri, Sep 06, 2024 at 04:24:56PM -0700, Luis Chamberlain wrote:
+> > On Thu, Sep 05, 2024 at 11:44:00AM +0200, Thomas Gleixner wrote:
+> > > Now you at least provided the information that the missing cleanup in
+> > > the init() function is not the problem. So the obvious place to look is
+> > > in the module core code whether there is a failure path _after_
+> > > module->init() returned success.
+> > > 
+> > > do_init_module()
+> > >         ret = do_one_initcall(mod->init);
+> > >         ...
+> > > 	ret = module_enable_rodata_ro(mod, true);
+> > > 	if (ret)
+> > > 		goto fail_mutex_unlock;
+> > > 
+> > > and that error path does _not_ invoke module->exit(), which is obviously
+> > > not correct. Luis?
+> > 
+> > You're spot on this needs fixing.
 > 
-> Fixes: 20e6d190ffe1 ("net: pse-pd: Add TI TPS23881 PSE controller driver")
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+> Christophe, this is a regression caused by the second hunk of your commit
+> d1909c0221739 ("module: Don't ignore errors from set_memory_XX()") on v6.9.
+> Sadly there are a few issues with trying to get to call mod->exit():
+> 
+> - We should try try_stop_module()  and that can fail
+> - source_list may not be empty and that would block removal
+> - mod->exit may not exist
+> 
+> I'm wondering if instead we should try to do the module_enable_rodata_ro()
+> before the init, but that requires a bit more careful evaluation...
 
-Thanks Kory,
+There is ro_after_init section, we can't really make it RO before ->init()
+ 
+>   Luis
 
-I agree that these changes are correct.
-But are they fixes; can this manifest in a bug?
-(If so, I suspect the Kernel is riddled with such bugs.)
-
-...
+-- 
+Sincerely yours,
+Mike.
 
