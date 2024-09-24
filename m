@@ -1,87 +1,76 @@
-Return-Path: <linux-kernel+bounces-336543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA7A0983C25
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 06:51:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12799983C28
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 06:57:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72E20282826
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 04:51:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B9C8282CD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 04:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70982EAE6;
-	Tue, 24 Sep 2024 04:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XgMU9Qur"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654C42E62C;
+	Tue, 24 Sep 2024 04:57:31 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DAA4199B9;
-	Tue, 24 Sep 2024 04:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA771B85D1
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 04:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727153460; cv=none; b=k1Inwj+XDboLWhir1AZU8UvBYkdVOgvbp8GDCrN1eAaZVgyC/GR05lBjJ3C2DsCa/WsSwy7ijaalCpCQtU3uaZFi2zoxW+scy++KhQ0svfiPq0T+thXCIsEFEOuFvjWqEE2PON16O8vdt+wNJGOO/Gk5h0SSE7erTf6n4Qt0EOI=
+	t=1727153851; cv=none; b=R6OfwWyBcjPW7K+yxBUUKwIhz/2pYibHmilo6wRpOmauiKnEhTcCRUTKmWAKYA7uWeQfZBKeDK3rmbn+BxxO1gxxSbLVzqUnHJVLO+4FgkzsCMeDog5qFnVAXoC1n/ne6MIi9xUY3c7kGJKhwNt2HyUsGzbKZ1yIKWbzwpoXa/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727153460; c=relaxed/simple;
-	bh=ZxP3jvFza5gTRFKWXe9ArnGEx0T/ScydPvF5bCORiVo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nAOX5JKwz42buIJ3Y26zmrhe5MxHB2CMneKigGRRcJJKRSOy/RPuFBM1peskeHZDKwn8n2/vye7VDP2jRskmrkxx/d6BR8rHnjAh3vvJizjQJmLBTsd2y8r6NoUBLMBt9KzNEFzXoP3QlFkNJ4Tgl5Qn+agu4EH07J14mZpRut0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XgMU9Qur; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C62CDC4CEC4;
-	Tue, 24 Sep 2024 04:50:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727153460;
-	bh=ZxP3jvFza5gTRFKWXe9ArnGEx0T/ScydPvF5bCORiVo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=XgMU9Qurpprch1/7YpPoyoGfKxVUcPxTM1Yh+GsjF9Nf8d2y/FkzrbNU6SLaHK4A6
-	 E16hbCCOkAswkHTJc7yg4n7culsPJA4llVYa6KnpwRUOGt0ThtLVfRQtpAhjVFmyP4
-	 BAWKPhjO72XecRG/r0fVkZGWVAqfYfKWAZStqLJzTNYeYorjPu0wSwohWyX1SGMpXg
-	 q+g/PZYBCTWUqrxXR1Oz/A9eAaf1sGuCD5/WbCsey88cH7+gFnaaKZ3n1W97jURlOU
-	 j2aZcRwSqBI3zJ3SAkMZjgf8iBYV2PmmC5Tn9dD2xXRdfmYVnO6l174wKpjsD2qdCA
-	 RN85pBw5C1ZoA==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Stanislav Jakubek <stano.jakubek@gmail.com>
-Subject: [GIT PULL] hwspinlock update for v6.12
-Date: Mon, 23 Sep 2024 21:54:19 -0700
-Message-ID: <20240924045422.3080022-1-andersson@kernel.org>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1727153851; c=relaxed/simple;
+	bh=PekNu6Q5nDU7BTkzWZjSbDMvG5SBVeX5+A035HWD7SY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=V3NNDjKNzJ22lzAHi881vIOVn+kTnUvdsywGou0ltq8yzZ9kC5SwV63kXzXWLiZ0t7b9VyN46e7nyPAffs9dJJ/HvL+lR+S6IFsae15nwX3s4nyMWwj+XR+nybyD0OAU+5c6AfDO0hNaT/uOucxQBCfiEK3oYgJLSvQVL6a+pmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a0a2c95e81so58169925ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 21:57:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727153849; x=1727758649;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PekNu6Q5nDU7BTkzWZjSbDMvG5SBVeX5+A035HWD7SY=;
+        b=XNTYtrS3oGAYj6gZth+oHfAVXwA8T30WnRzGLEQSo9DygVmS6SUJn7DvDpXvaxnaUX
+         URTils6L4+PenwDcTQylM1HeMGfte6+mAa+0tPuTUROX4LA9Gs/sMPoj3KaR+JFPsx1H
+         rDm+DjEgSRvtXMt3C+UyV+i3j8AIUYyy+bCdjjXWUmepwMF/yil1sd2DmIIL3ZaEd6zB
+         N4gWXOfw5Q6v/4bOUkd8lAiweygIif+593+0KcThtikG0vJqiXnu4dyLw/LRla4S8NWu
+         2Vj+y7wkKOadu7Pu32NlAP3lE85t95dKbHLf3xi0W3sm+wOOKKlSbIINM1YvVOUEM1GO
+         PATA==
+X-Gm-Message-State: AOJu0YxNlONVHMlUToZjryu3xakuVVCNrIn8LmJ4U6YHbiwb5CVtBILZ
+	II6Ck8KWyOgszPLY9af+/yjf31boAxkF5dhtV++3F0KtKAsRUO9GRgMrv3zyJKoN1ALtQJZYwB0
+	KPXvUHrKXSo5kJCopQSufeRN2B3v7AGghKHybYpaR1qZqatWm7TJ9G8c=
+X-Google-Smtp-Source: AGHT+IHR2h4sQYz1U4dEY43SUuBOxOCRBmsoYTsQh+kBEA0gAxTH6o0/ME6Y790UgWFCxgDx8MZFRKDnRroS9b6eCsSYL9KU91Jf
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:219d:b0:3a0:9952:5fcb with SMTP id
+ e9e14a558f8ab-3a0c8d1602fmr136627145ab.17.1727153848828; Mon, 23 Sep 2024
+ 21:57:28 -0700 (PDT)
+Date: Mon, 23 Sep 2024 21:57:28 -0700
+In-Reply-To: <000000000000372171061cf4ecb5@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f246b8.050a0220.c23dd.001b.GAE@google.com>
+Subject: Re: [syzbot] Marking report as fixed
+From: syzbot <syzbot+808f3f84407f08a93022@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+***
 
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+Subject: Marking report as fixed
+Author: ghanshyam1898@gmail.com
 
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/hwlock-v6.12
-
-for you to fetch changes up to 8dc1bffd6e15da727f7cd07e2d2e7aea728f42ff:
-
-  dt-bindings: hwlock: sprd-hwspinlock: convert to YAML (2024-08-12 15:27:14 -0700)
-
-----------------------------------------------------------------
-hwspinlock update for v6.12
-
-This converts the Spreadtrum hardware spinlock DeviceTree binding to
-YAML, to allow validation of related DeviceTree source.
-
-----------------------------------------------------------------
-Stanislav Jakubek (1):
-      dt-bindings: hwlock: sprd-hwspinlock: convert to YAML
-
- .../bindings/hwlock/sprd,hwspinlock-r3p0.yaml      | 50 ++++++++++++++++++++++
- .../devicetree/bindings/hwlock/sprd-hwspinlock.txt | 23 ----------
- 2 files changed, 50 insertions(+), 23 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/hwlock/sprd,hwspinlock-r3p0.yaml
- delete mode 100644 Documentation/devicetree/bindings/hwlock/sprd-hwspinlock.txt
+#syz fix: jfs: fix out-of-bounds in dbNextAG() and diAlloc()
 
