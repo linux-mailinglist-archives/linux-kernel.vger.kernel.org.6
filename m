@@ -1,60 +1,58 @@
-Return-Path: <linux-kernel+bounces-337495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F878984AC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:15:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64397984AD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:23:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23FAF1F20CA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:15:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 958C41C227EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D2E91AC8B0;
-	Tue, 24 Sep 2024 18:15:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC041AC884;
+	Tue, 24 Sep 2024 18:22:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OoGf1bi9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0C11AC893;
-	Tue, 24 Sep 2024 18:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Dk6pALFL"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6334E11CA0;
+	Tue, 24 Sep 2024 18:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727201702; cv=none; b=Z1p/KQ7NI1wFlRgjOE1+Zwmp+eJQBVBAeokl/sNB+RFPAN3Jx+VdFFSI83auqLZD27Lb7MkAtARhv1Lz2WPoUJht7UOg1dJ8iEoS6U5DlH4IJIU/IeTTJ6OCmF1307WuP7uIP57Kd/Tb0ksIO9E8xOaCIBV3+SxRhplS2GozTXw=
+	t=1727202177; cv=none; b=Y4drxIuHuoB08X/a+jt6GEcG5c3hCDQVToYDNXFqIfSHne4HBqwOFY6VFWpSHjz4VsLTZmbJHdK0q4WmBiX5Pt5LE2do5VK5NTtjabPWMPnotK+EwLMr7xUNj6N7qofuvxV0dDTJAvDWQusUPOY1gaKevN96UTmP5eA24mG2jF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727201702; c=relaxed/simple;
-	bh=4NJYnhYjz8H6JcjJo0q0NaNrHHKGrQ0s1uLOHzKZJFo=;
+	s=arc-20240116; t=1727202177; c=relaxed/simple;
+	bh=TUwq8CJ3h1KyuGejnrJdKWp5w35wORDJxiEqbkcXqnY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mGmJvLrCG2cQhplJprVF9c+61DttLPl365+FhleLzufOFcX4mKHitA8iFVLfG0v7eWUR2TQM64fnBvnu5cDDupmIonzTpBK2A+CDI9rXW9DV0y6ZlLZBS+Yv598dzhjKVlUguJxY3Txp0lsTmJ1eD/2qpKY0rhyw3kcdMAUvfCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OoGf1bi9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F4A6C4CECD;
-	Tue, 24 Sep 2024 18:15:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727201702;
-	bh=4NJYnhYjz8H6JcjJo0q0NaNrHHKGrQ0s1uLOHzKZJFo=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=EK9QwXiMtA2zwgTM8xScoanFL4+8hl4NdfxD6IT4MDB0QXp4JFwY3V6H0ZKpO45MJsV9QP0ARCSEGpuogx5b54O2F724g8OscASZdIRcGbG8YBJYNihQTuLW6hkf3Tma+TQ94vnZgN8l2xnHvlNiPzOdOh78aprSo1ZHJeSFBqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Dk6pALFL; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1127)
+	id 17AB120C6497; Tue, 24 Sep 2024 11:22:50 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 17AB120C6497
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1727202170;
+	bh=Sp511I3MRZE6mycvGCLM5CjDhuHrm3NCeyezfu9e2+o=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OoGf1bi93XVUDaiUVdkPEIzks70L9pzREccheV1NS1RGBUBa0oFoWogXuSgpCcgDz
-	 ORbJnaW18WagKlzKTZsiV+ZPerMCcurj6vq5mHVhYvKJ1+X2RkiVLRuSf1i7Ic7DvF
-	 piEucDFBMacs7dGTYGM1HVGc+IYC4aPZjJmx/i+cwbK9GuHLLvjrejz0OPt86DLK5X
-	 tcm6d3SeU8s4kmEGdP27eww6N1u1YeEcsd8EdwXpu2hT71cJJzIeINuj03Y8Rn6qHW
-	 oT2NLGUkuqmfsTdPs5AvIlnCfhBSFDwakriTZgzoqaQONNhfOOyP7/QOGIYk2SqbO9
-	 k6l0pKDupVM4w==
-Date: Tue, 24 Sep 2024 19:14:58 +0100
-From: Simon Horman <horms@kernel.org>
-To: Dipendra Khadka <kdipendra88@gmail.com>
-Cc: sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
-	hkelam@marvell.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: ethernet: marvell: octeontx2: nic: Add error
- pointer check in otx2_ethtool.c
-Message-ID: <20240924181458.GT4029621@kernel.org>
-References: <20240923113135.4366-1-kdipendra88@gmail.com>
- <20240924071026.GB4029621@kernel.org>
- <CAEKBCKPw=uwN+MCLenOe6ZkLBYiwSg35eQ_rk_YeNBMOuqvVOw@mail.gmail.com>
- <20240924155812.GR4029621@kernel.org>
- <CAEKBCKO45g4kLm-YPZHpbcS5AMUaqo6JHoDxo8QobaP_kxQn=w@mail.gmail.com>
+	b=Dk6pALFL+0XgJD6mtcKlYy+XqoazUImW8ZPyXrCT5YyZywaYLlvTmQHtKwubRRrdX
+	 XFhofekAZSJATBqycvP+mI6/Ya8nd5jTS2KvGoH8Ni+b5kd7gk999Y5cB3DchYoBJQ
+	 0ik1rCzIMNu+KuOH17sZ1QvECYIbA6wZK1z/ctlQ=
+Date: Tue, 24 Sep 2024 11:22:50 -0700
+From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
+To: Dexuan Cui <decui@microsoft.com>
+Cc: KY Srinivasan <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Long Li <longli@microsoft.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"open list:Hyper-V/Azure CORE AND DRIVERS" <linux-hyperv@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH] tools: hv: Fix a complier warning in the fcopy uio daemon
+Message-ID: <20240924182250.GA14242@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <20240910004433.50254-1-decui@microsoft.com>
+ <20240913073058.GA24840@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <SA1PR21MB13172712A02F3C9EEB156131BF6D2@SA1PR21MB1317.namprd21.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,71 +61,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAEKBCKO45g4kLm-YPZHpbcS5AMUaqo6JHoDxo8QobaP_kxQn=w@mail.gmail.com>
+In-Reply-To: <SA1PR21MB13172712A02F3C9EEB156131BF6D2@SA1PR21MB1317.namprd21.prod.outlook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-On Tue, Sep 24, 2024 at 11:42:58PM +0545, Dipendra Khadka wrote:
-> Hi Simon,
+On Sat, Sep 21, 2024 at 01:23:09AM +0000, Dexuan Cui wrote:
+> > From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
+> > Sent: Friday, September 13, 2024 12:31 AM
+> > To: Dexuan Cui <decui@microsoft.com>
+> > Cc: KY Srinivasan <kys@microsoft.com>; Haiyang Zhang
+> > <haiyangz@microsoft.com>; Wei Liu <wei.liu@kernel.org>; Long Li
+> > <longli@microsoft.com>; Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org>; open list:Hyper-V/Azure CORE AND DRIVERS
+> > <linux-hyperv@vger.kernel.org>; open list <linux-kernel@vger.kernel.org>;
+> > stable@vger.kernel.org
+> > Subject: Re: [PATCH] tools: hv: Fix a complier warning in the fcopy uio
+> > daemon
+> > 
+> > On Tue, Sep 10, 2024 at 12:44:32AM +0000, Dexuan Cui wrote:
+> > > hv_fcopy_uio_daemon.c:436:53: warning: '%s' directive output may be
+> > truncated
+> > > writing up to 14 bytes into a region of size 10 [-Wformat-truncation=]
+> > >   436 |  snprintf(uio_dev_path, sizeof(uio_dev_path), "/dev/%s",
+> > uio_name);
+> > 
+> > Makefile today doesn't have -Wformat-truncation flag enabled, I tried to add
+> > -Wformat-truncation=2 but I don't see any error in this file.
+> > 
+> > Do you mind sharing more details how you get this error ?
+> > 
+> > - Saurabh
 > 
-> On Tue, 24 Sept 2024 at 21:43, Simon Horman <horms@kernel.org> wrote:
-> >
-> > On Tue, Sep 24, 2024 at 08:39:47PM +0545, Dipendra Khadka wrote:
-> > > Hi Simon,
-> > >
-> > > On Tue, 24 Sept 2024 at 12:55, Simon Horman <horms@kernel.org> wrote:
-> > > >
-> > > > On Mon, Sep 23, 2024 at 11:31:34AM +0000, Dipendra Khadka wrote:
-> > > > > Add error pointer check after calling otx2_mbox_get_rsp().
-> > > > >
-> > > >
-> > > > Hi Dipendra,
-> > > >
-> > > > Please add a fixes tag here (no blank line between it and your
-> > > > Signed-off-by line).
-> > > > > Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
-> > > >
-> > > > As you have posted more than one patch for this driver, with very similar,
-> > > > not overly complex or verbose changes, it might make sense to combine them
-> > > > into a single patch. Or, if not, to bundle them up into a patch-set with a
-> > > > cover letter.
-> > > >
-> > > > Regarding the patch subject, looking at git history, I think
-> > > > an appropriate prefix would be 'octeontx2-pf:'. I would go for
-> > > > something like this:
-> > > >
-> > > >   Subject: [PATCH net v2] octeontx2-pf: handle otx2_mbox_get_rsp errors
-> > > >
-> > >
-> > > If I bundle all the patches for the
-> > > drivers/net/ethernet/marvell/octeontx2/ , will this subject without v2
-> > > work? Or do I need to change anything? I don't know how to send the
-> > > patch-set with the cover letter.
-> >
-> > Given that one of the patches is already at v2, probably v3 is best.
-> >
-> > If you use b4, it should send a cover letter if the series has more than 1
-> > patch.  You can use various options to b4 prep to set the prefix
-> > (net-next), version, and edit the cover (letter).  And you can use various
-> > options to b4 send, such as -d, to test your submission before sending it
-> > to the netdev ML.
-> >
+> This repros in a Ubuntu 20.04 VM:
 > 
-> I did not get this -d and testing? testing in net-next and sending to net?
-
-I meant that b4 prep -d allows you to see the emails that would be sent
-without actually sending them. I find this quite useful myself.
-
+> root@decui-u2004-2024-0920:~/linux/tools/hv# cat /etc/os-release
+> NAME="Ubuntu"
+> VERSION="20.04.6 LTS (Focal Fossa)"
+> ...
 > 
-> > Alternatively the following command will output 3 files: a cover letter and
-> > a file for each of two patches, with v3 and net-next in the subject of each
-> > file. You can edit these files and send them using git send-email.
-> >
-> > git format-patch --cover-letter -2 -v3 --subject-prefix="PATCH net-next"
-> >
+> root@decui-u2004-2024-0920:~/linux/tools/hv# gcc --version
+> gcc (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0
+> Copyright (C) 2019 Free Software Foundation, Inc.
+> This is free software; see the source for copying conditions.  There is NO
+> warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 > 
-> Should I send it to net-next or net?
+> root@decui-u2004-2024-0920:~/linux/tools/hv# make clean; make
+> ...
+> make -f /root/linux/tools/build/Makefile.build dir=. obj=hv_fcopy_uio_daemon
+> make[1]: Entering directory '/root/linux/tools/hv'
+>   CC      hv_fcopy_uio_daemon.o
+> hv_fcopy_uio_daemon.c: In function 'main':
+> hv_fcopy_uio_daemon.c:443:53: warning: '%s' directive output may be truncated writing up to 14 bytes into a region of size 10 [-Wformat-truncation=]
+>   443 |  snprintf(uio_dev_path, sizeof(uio_dev_path), "/dev/%s", uio_name);
+>       |                                                     ^~   ~~~~~~~~
+> In file included from /usr/include/stdio.h:867,
+>                  from hv_fcopy_uio_daemon.c:20:
+> /usr/include/x86_64-linux-gnu/bits/stdio2.h:67:10: note: '__builtin___snprintf_chk' output between 6 and 20 bytes into a destination of size 15
+>    67 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+>       |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>    68 |        __bos (__s), __fmt, __va_arg_pack ());
+>       |        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>   CC      vmbus_bufring.o
+>   LD      hv_fcopy_uio_daemon-in.o
+> make[1]: Leaving directory '/root/linux/tools/hv'
+>   LINK    hv_fcopy_uio_daemon
 
-Sorry for the confusion. I wrote net-next in my example,
-but I think this patch-set would be for net.
+Thanks for the details. Looks this is the behaviour of old gcc versions.
+How about fixing it like this :
 
-...
+--- a/tools/hv/hv_fcopy_uio_daemon.c
++++ b/tools/hv/hv_fcopy_uio_daemon.c
+@@ -35,7 +35,7 @@
+ #define WIN8_SRV_MINOR         1
+ #define WIN8_SRV_VERSION       (WIN8_SRV_MAJOR << 16 | WIN8_SRV_MINOR)
+
+-#define MAX_FOLDER_NAME                15
++#define MAX_FOLDER_NAME                10
+ #define MAX_PATH_LEN           15
+
+
+- Saurabh
+
 
