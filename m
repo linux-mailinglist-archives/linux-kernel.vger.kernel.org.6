@@ -1,179 +1,248 @@
-Return-Path: <linux-kernel+bounces-337141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8753D9845E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:26:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BFF89845E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:28:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DFA21F214CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:26:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C5EAB223A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E05C1A705D;
-	Tue, 24 Sep 2024 12:26:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C184B3F9D5;
-	Tue, 24 Sep 2024 12:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D6A1A7070;
+	Tue, 24 Sep 2024 12:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cBG385Wo"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C533F9D5;
+	Tue, 24 Sep 2024 12:27:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727180785; cv=none; b=PWC9MVGRrVjSwSL1gAfFMl7GdUtqeGboSoSyAHzuTjBWi5NkGPRGcTBA5Ue7LhXxac0F7+unw4B/a7UgBCCSFzXL4C8SHRLPb9F6D1BeFtRWuSNRD0VHefXAR9OH4PwL2oP7Ugaza/ORMLXvep7yx+QszFcSvOJ2abaySHxqAmQ=
+	t=1727180876; cv=none; b=KOh1BJ8fSl7Glw5g6zLpNDMBSsmLSOdbksPtLmOWuvIF2+MRf3HVEB6F8K6k7TSu/H5Lot98HSbN78+qHfslP52dkN6S0DR1Nwku+QoymqEBd7y51LPmQTlJosOBbE2zGzNi+9WZ8SCQRWVj+fS4Ftf7jMQVzej+49+hbyZpKaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727180785; c=relaxed/simple;
-	bh=ZvJfiEwfNuvwZtXC2ii8kT4EZLzx/AHELisWsC/69po=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m0KgSxY7fVBrH2mZOLWWu/jY1ZIVo6qNadtow9lIAakXHEPelDTfk/JrCwBF/Y5ioHeA+yEnSUn3ooV/Ap+XUlxnPEW1CP51qx7euUG4hXfqKFAKbmiv+SR+YIA3fhAHe/vGNvQc4khViSHLX2Xv6D7RVnyn8lOtKuyS5kYVBj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9BDC4DA7;
-	Tue, 24 Sep 2024 05:26:52 -0700 (PDT)
-Received: from [10.1.32.221] (R90XJLFY.arm.com [10.1.32.221])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 658753F64C;
-	Tue, 24 Sep 2024 05:26:21 -0700 (PDT)
-Message-ID: <b9367e1c-f339-46e1-8c44-d20f112a857a@arm.com>
-Date: Tue, 24 Sep 2024 13:26:20 +0100
+	s=arc-20240116; t=1727180876; c=relaxed/simple;
+	bh=ywLGceDCYf4x1vFhs+LV/hfPBu8Rv0mc+L+v9FY7oKk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Yt196lsp45cVkXe7JuCcj/VvWAY/A5ImoGNCn3rh1vCYLaTBza1KX9E7Fr76lKXTLvL1eBQExZQfRPd50HIrffAW6t5/mlpQ7c/akg/gxWtxs8NlRbCNaOkpws8hamA7ll+WI2hLpx0/XYw+0Ye6kUMcSrfSuZZYcMH8xkk1MyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cBG385Wo; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a90349aa7e5so815971166b.0;
+        Tue, 24 Sep 2024 05:27:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727180873; x=1727785673; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ywLGceDCYf4x1vFhs+LV/hfPBu8Rv0mc+L+v9FY7oKk=;
+        b=cBG385WouZeWbaaYWNqg9SQhVk+gpvVIXOS20GER9oCZEu9fGhwXAQfa5Kp/8qbOao
+         ePlga3cwem1O0kQIPHEGZD4rNW37d2KVaES5TvhohgdLNBrRjDqYiiORxSJNEIaQy1Zg
+         dFmCygJ8gzJ4TpFvr33iGpoy29z05sZn1JujWGFDYEqLArNvQha9KaMdKDFvKRPSC3qB
+         UmdpHsHQuJSJd9g6cTXpgvIb0hWkuN8/tOmKHpV5CDr+ys0vUor/vCqOdM5O/STCEcKl
+         GbeV6mLPf8sV9lL6+vJLhJhkHzueNc1lPoadJXSWC4cwtvSHaoMVigw6Z5UhnYqNGg9L
+         +4vQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727180873; x=1727785673;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ywLGceDCYf4x1vFhs+LV/hfPBu8Rv0mc+L+v9FY7oKk=;
+        b=Q5fJ8FQ0Ftm6doiOwlRoY6rcAiPgC2I//xkoop+RrzGvwq7vSIkYwRyt2skZJ2mnsb
+         J56pFoTLL22xc9Obl55hZHOY2xTT7e97TCJwru4WwT8d0tzPqypy/dS3A97sbpfcIX08
+         bB2CEVtURWyQ3RN5SoYvOVp3fV320+ul5lle4xImlkwfcT+3cRPQhBXYx9TEZuEpnOcS
+         MAlacAHhZu0unXGRkv4dXTOx/PZdenYT2saKNwsMP+xaN+o97t8GupccZnyREQAY0CHL
+         AvA71kw/8iObpuUYy4QUQoXBC/MImsu8Mr3C5zZse1CM1OoEjIkVTOhL4yKFRUHouD1K
+         xeQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUXRQXcyn6pxQVv1Yu2TV9IiTlMfg9mg0I+1yQPqf59Ad2g0DBwbSAO6wT8supIvjWUHOmR8QSmG48w@vger.kernel.org, AJvYcCVzDgPZTBsvl0X47URz9mqBEWMtTrB4tCNX1oSOaUHfI0sTfh+Yw6tf8uASNu3TCs1JdvLFiDAGFyPm@vger.kernel.org, AJvYcCX8CMZgEHEcMnpZBqu/xD1it15iP5cyPkNmudzIL3PpVNc4XIM8UBr4qovS8vQ0VbBBBp1kN6VXd1H7mPdk@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9pQJiHx3ZynYqlMS5BcLBca6dyWSNYtSk3MAtCQazhxbmetx+
+	ITcMoFq6QLxxE2HG4CV6iMBCz55zXrGQ3NU7qOuBRnkzqcrIs8d+
+X-Google-Smtp-Source: AGHT+IGC8mmHOtQXnCx9XFDEgguEDQcdTSD4aC6zAZs1r6ZrSKYGlkIjk8hEZUHlw5byqkTSB3wEZg==
+X-Received: by 2002:a17:907:982:b0:a86:b923:4a04 with SMTP id a640c23a62f3a-a90d5924f6emr1525492166b.50.1727180872327;
+        Tue, 24 Sep 2024 05:27:52 -0700 (PDT)
+Received: from ?IPv6:2001:a61:341e:1201:c434:b5b1:98a6:efed? ([2001:a61:341e:1201:c434:b5b1:98a6:efed])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9392f340a0sm78853366b.38.2024.09.24.05.27.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2024 05:27:51 -0700 (PDT)
+Message-ID: <0279203b6cd9f1312d9c03654c262c04ac12fbd9.camel@gmail.com>
+Subject: Re: [PATCH v3 04/10] dt-bindings: iio: dac: ad3552r: add io-backend
+ support
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Angelo Dureghello
+	 <adureghello@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, Jonathan
+ Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Olivier
+ Moysan <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ dlechner@baylibre.com
+Date: Tue, 24 Sep 2024 14:27:51 +0200
+In-Reply-To: <e8af0f3f-a09c-42d7-b8ca-dd633539af73@kernel.org>
+References: 
+	<20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-0-a17b9b3d05d9@baylibre.com>
+	 <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-4-a17b9b3d05d9@baylibre.com>
+	 <gojq6ardhvt6vcs2kawdhdn2cj6qbpzp4p5mjjgwsypuatm5eo@3u6k4q7le46s>
+	 <418a8a9b-3bcf-4b8f-92a0-619a3bf26ab5@baylibre.com>
+	 <e8af0f3f-a09c-42d7-b8ca-dd633539af73@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] KVM: selftests: Allow slot modification stress
- test with quirk disabled
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: rick.p.edgecombe@intel.com, kai.huang@intel.com,
- isaku.yamahata@intel.com, dmatlack@google.com, sagis@google.com,
- erdemaktas@google.com, graf@amazon.com, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, seanjc@google.com,
- Mark Brown <broonie@kernel.org>, Naresh Kamboju <naresh.kamboju@linaro.org>
-References: <20240703020921.13855-1-yan.y.zhao@intel.com>
- <20240703021206.13923-1-yan.y.zhao@intel.com>
-Content-Language: en-US
-From: Aishwarya TCV <aishwarya.tcv@arm.com>
-In-Reply-To: <20240703021206.13923-1-yan.y.zhao@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
+On Tue, 2024-09-24 at 10:02 +0200, Krzysztof Kozlowski wrote:
+> On 23/09/2024 17:50, Angelo Dureghello wrote:
+> > Hi Krzysztof,
+> >=20
+> > On 22/09/24 23:02, Krzysztof Kozlowski wrote:
+> > > On Thu, Sep 19, 2024 at 11:20:00AM +0200, Angelo Dureghello wrote:
+> > > > From: Angelo Dureghello <adureghello@baylibre.com>
+> > > >=20
+> > > > There is a version AXI DAC IP block (for FPGAs) that provides
+> > > > a physical bus for AD3552R and similar chips, and acts as
+> > > > an SPI controller.
+> > > >=20
+> > > > For this case, the binding is modified to include some
+> > > > additional properties.
+> > > >=20
+> > > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> > > > ---
+> > > > =C2=A0 .../devicetree/bindings/iio/dac/adi,ad3552r.yaml=C2=A0=C2=A0=
+ | 42
+> > > > ++++++++++++++++++++++
+> > > > =C2=A0 1 file changed, 42 insertions(+)
+> > > >=20
+> > > > diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.=
+yaml
+> > > > b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
+> > > > index 41fe00034742..aca4a41c2633 100644
+> > > > --- a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
+> > > > +++ b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
+> > > > @@ -60,6 +60,18 @@ properties:
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/definitio=
+ns/uint32
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum: [0, 1, 2, 3]
+> > > > =C2=A0=20
+> > > > +=C2=A0 io-backends:
+> > > > +=C2=A0=C2=A0=C2=A0 description: The iio backend reference.
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 An example backend can be found at
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
+> > > > https://analogdevicesinc.github.io/hdl/library/axi_ad3552r/index.ht=
+ml
+> > > > +=C2=A0=C2=A0=C2=A0 maxItems: 1
+> > > > +
+> > > > +=C2=A0 adi,synchronous-mode:
+> > > > +=C2=A0=C2=A0=C2=A0 description: Enable waiting for external synchr=
+onization signal.
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Some AXI IP configuration can imple=
+ment a dual-IP layout, with
+> > > > internal
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 wirings for streaming synchronizati=
+on.
+> > > > +=C2=A0=C2=A0=C2=A0 type: boolean
+> > > > +
+> > > > =C2=A0=C2=A0=C2=A0 '#address-cells':
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const: 1
+> > > > =C2=A0=20
+> > > > @@ -128,6 +140,7 @@ patternProperties:
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+- custom-output-range-config
+> > > > =C2=A0=20
+> > > > =C2=A0 allOf:
+> > > > +=C2=A0 - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> > > > =C2=A0=C2=A0=C2=A0 - if:
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible:
+> > > > @@ -238,4 +251,33 @@ examples:
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 };
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 };
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 };
+> > > > +
+> > > > +=C2=A0 - |
+> > > > +=C2=A0=C2=A0=C2=A0 axi_dac: spi@44a70000 {
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible =3D "adi,axi=
+-ad3552r";
+> > > That is either redundant or entire example should go to the parent no=
+de,
+> > > if this device is fixed child of complex device (IOW, adi,ad3552r can=
+not
+> > > be used outside of adi,axi-ad3552r).
+> >=20
+> > ad3552r can still be used by a generic "classic" spi
+> > controller (SCLK/CS/MISO) but at a slower samplerate, fpga
+> > controller only (axi-ad3552r) can reach 33MUPS.
+>=20
+> OK, then this is just redundant. Drop the node. Parent example should
+> contain the children, though.
+> >=20
+> > >=20
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg =3D <0x44a70000 0x1=
+000>;
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dmas =3D <&dac_tx_dma 0=
+>;
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dma-names =3D "tx";
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #io-backend-cells =3D <=
+0>;
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clocks =3D <&ref_clk>;
+> > > > +
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #address-cells =3D <1>;
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #size-cells =3D <0>;
+> > > > +
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dac@0 {
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ compatible =3D "adi,ad3552r";
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ reg =3D <0>;
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ reset-gpios =3D <&gpio0 92 0>;
+> > > Use standard defines for GPIO flags.
+> >=20
+> > fixed, thanks
+> >=20
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ io-backends =3D <&axi_dac>;
+> > > Why do you need to point to the parent? How much coupled are these
+> > > devices? Child pointing to parent is not usually expected, because
+> > > that's obvious.
+> >=20
+> >=20
+> > "io-backends" is actually the way to refer to the backend module,
+> > (used already for i.e. ad9739a),
+> > it is needed because the backend is not only acting as spi-controller,
+> > but is also providing some APIs for synchronization and bus setup suppo=
+rt.
+>=20
+>=20
+> But if backend is the parent, then this is redundant. You can take it
+> from the child-parent relationship. Is this pointing to other devices
+> (non-parent) in other ad3552r configurations?
+>=20
 
+The backend is a provider-consumer type of API. On the consumer side (which=
+ is the
+driver the child node will probe on), we need to call devm_iio_backend_get(=
+) to get
+the backend object (which obviously is the parent). For that, 'io-backends'=
+ is being
+used. We do have another API called __devm_iio_backend_get_from_fwnode_look=
+up() that
+could be used with the parent fwnode and should work. However that was only=
+ added to
+keep backward compatibility in the first user of the IIO backend framework =
+and it's
+not really meant to be used again. We are aware this is awkward at the very=
+ least [1]
+but hopefully still acceptable.
 
-On 03/07/2024 03:12, Yan Zhao wrote:
-> Add a new user option to memslot_modification_stress_test to allow testing
-> with slot zap quirk KVM_X86_QUIRK_SLOT_ZAP_ALL disabled.
-> 
-> Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
-> ---
->  .../kvm/memslot_modification_stress_test.c    | 19 +++++++++++++++++--
-Hi Yan,
-
-When building kselftest-kvm config against next-20240924 kernel with
-Arm64 an error "'KVM_X86_QUIRK_SLOT_ZAP_ALL' undeclared" is observed.
-
-A bisect identified 218f6415004a881d116e254eeb837358aced55ab as the
-first bad commit. Bisected it on the tag "next-20240923" at repo
-"https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git".
-Reverting the change seems to fix it.
-
-This works fine on Linux version 6.11
-
-Failure log
-------------
-https://storage.kernelci.org/next/master/next-20240924/arm64/defconfig+kselftest/gcc-12/logs/kselftest.log
-
-In file included from include/kvm_util.h:8,
-                 from include/memstress.h:13,
-                 from memslot_modification_stress_test.c:21:
-memslot_modification_stress_test.c: In function ‘main’:
-memslot_modification_stress_test.c:176:38: error:
-‘KVM_X86_QUIRK_SLOT_ZAP_ALL’ undeclared (first use in this function)
-  176 |                                      KVM_X86_QUIRK_SLOT_ZAP_ALL);
-      |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~
-include/test_util.h:41:15: note: in definition of macro ‘__TEST_REQUIRE’
-   41 |         if (!(f))                                               \
-      |               ^
-memslot_modification_stress_test.c:175:25: note: in expansion of macro
-‘TEST_REQUIRE’
-  175 |
-TEST_REQUIRE(kvm_check_cap(KVM_CAP_DISABLE_QUIRKS2) &
-      |                         ^~~~~~~~~~~~
-memslot_modification_stress_test.c:176:38: note: each undeclared
-identifier is reported only once for each function it appears in
-  176 |                                      KVM_X86_QUIRK_SLOT_ZAP_ALL);
-      |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~
-include/test_util.h:41:15: note: in definition of macro ‘__TEST_REQUIRE’
-   41 |         if (!(f))                                               \
-      |               ^
-memslot_modification_stress_test.c:175:25: note: in expansion of macro
-‘TEST_REQUIRE’
-  175 |
-TEST_REQUIRE(kvm_check_cap(KVM_CAP_DISABLE_QUIRKS2) &
-      |                         ^~~~~~~~~~~~
-At top level:
-cc1: note: unrecognized command-line option
-‘-Wno-gnu-variable-sized-type-not-at-end’ may have been intended to
-silence earlier diagnostics
-make[4]: *** [Makefile:300:
-/tmp/kci/linux/build/kselftest/kvm/memslot_modification_stress_test.o]
-Error 1
-make[4]: Leaving directory '/tmp/kci/linux/tools/testing/selftests/kvm'
-
-
-Bisect log:
-----------
-
-git bisect start
-# good: [98f7e32f20d28ec452afb208f9cffc08448a2652] Linux 6.11
-git bisect good 98f7e32f20d28ec452afb208f9cffc08448a2652
-# bad: [ef545bc03a65438cabe87beb1b9a15b0ffcb6ace] Add linux-next
-specific files for 20240923
-git bisect bad ef545bc03a65438cabe87beb1b9a15b0ffcb6ace
-# good: [176000734ee2978121fde22a954eb1eabb204329] Merge tag
-'ata-6.12-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/libata/linux
-git bisect good 176000734ee2978121fde22a954eb1eabb204329
-# good: [f55bf3fb11d7fe32a37b8d625744d22891c02e5e] Merge branch
-'at91-next' of git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git
-git bisect good f55bf3fb11d7fe32a37b8d625744d22891c02e5e
-# good: [1340ff0aa9e6dcb9c8ac5f86472eb78ba524b14a] Merge branch
-'for-next' of git://git.kernel.dk/linux-block.git
-git bisect good 1340ff0aa9e6dcb9c8ac5f86472eb78ba524b14a
-# bad: [51d98f15885e036a06fef35c396c987e80c47a27] Merge branch
-'char-misc-next' of
-git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git
-git bisect bad 51d98f15885e036a06fef35c396c987e80c47a27
-# bad: [4f216a17ef0dc3bf99c28902abbc6c70fb7798a0] Merge branch
-'usb-next' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git
-git bisect bad 4f216a17ef0dc3bf99c28902abbc6c70fb7798a0
-# bad: [b11ba58b0ef5c932303dac5ce96e17d96c127870] Merge branch 'next' of
-git://git.kernel.org/pub/scm/virt/kvm/kvm.git
-git bisect bad b11ba58b0ef5c932303dac5ce96e17d96c127870
-# good: [b7ba28772e5709196e3efffb9341c7fd698b2497] Merge branch
-'for-next' of
-git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-git bisect good b7ba28772e5709196e3efffb9341c7fd698b2497
-# bad: [c345344e8317176944be33f46e18812c0343dc63] Merge tag
-'kvm-x86-selftests-6.12' of https://github.com/kvm-x86/linux into HEAD
-git bisect bad c345344e8317176944be33f46e18812c0343dc63
-# bad: [7056c4e2a13a61f4e8a9e8ce27cd499f27e0e63b] Merge tag
-'kvm-x86-generic-6.12' of https://github.com/kvm-x86/linux into HEAD
-git bisect bad 7056c4e2a13a61f4e8a9e8ce27cd499f27e0e63b
-# bad: [590b09b1d88e18ae57f89930a6f7b89795d2e9f3] KVM: x86: Register
-"emergency disable" callbacks when virt is enabled
-git bisect bad 590b09b1d88e18ae57f89930a6f7b89795d2e9f3
-# bad: [70c0194337d38dd29533e63e3cb07620f8c5eae1] KVM: Rename symbols
-related to enabling virtualization hardware
-git bisect bad 70c0194337d38dd29533e63e3cb07620f8c5eae1
-# bad: [218f6415004a881d116e254eeb837358aced55ab] KVM: selftests: Allow
-slot modification stress test with quirk disabled
-git bisect bad 218f6415004a881d116e254eeb837358aced55ab
-# good: [b4ed2c67d275b85b2ab07d54f88bebd5998d61d8] KVM: selftests: Test
-slot move/delete with slot zap quirk enabled/disabled
-git bisect good b4ed2c67d275b85b2ab07d54f88bebd5998d61d8
-# first bad commit: [218f6415004a881d116e254eeb837358aced55ab] KVM:
-selftests: Allow slot modification stress test with quirk disabled
-
-Thanks,
-Aishwarya
-
+[1]: https://lore.kernel.org/linux-iio/20240903203935.358a1423@jic23-huawei=
+/
+- Nuno S=C3=A1
 
