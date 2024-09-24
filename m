@@ -1,188 +1,236 @@
-Return-Path: <linux-kernel+bounces-336459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 768E1983B1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 04:16:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 076C2983B24
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 04:17:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37F6A281A52
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 02:16:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBD30283BFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 02:17:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D15BE46;
-	Tue, 24 Sep 2024 02:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D6A517BA0;
+	Tue, 24 Sep 2024 02:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e6SBuxSq"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="DkYWqHwS"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3C71FB4
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 02:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F80011CAF
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 02:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727144188; cv=none; b=Yc3OkrDzLKQgHRhBGcKFjvReU4drgk3H2z8wbwyNDhzh5DEoVtN9xIqkpfbVbfAkgrqYiKt/hepBpFjZv/8epIGdReldi5idBFkyGxXpRoxSTQirw7YwRoZeSp1rE2Lu2t11rXQG7TnhumXTqJmoOsEnxIFhTS9dju06k4BWpTQ=
+	t=1727144247; cv=none; b=WZcnv5XBS6ncvWMgz1dqJArgYoRziPLwbNMWOhHaTAAvwwbpWS94Ps/fhsKn9R9ZEWTsELOYUeGbvOvWTDjFGSxI6QheB0rzQtbJCysgml5skTHSSxVEHEHTlUtYoVhTjgVeH0rWjYYtdh1ohOzosn9AQU3VbS2qnb81i/Dee1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727144188; c=relaxed/simple;
-	bh=plsBfA14qjax7fKN3MmIiXJIE/hOVCFotOeEkkQUn3E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=foviGEiM28WCl0EZRWqyVd8bZe2SIy4NUOCa19CiBcujU+kK3kwIfdflqm3S+BB4lxoxtsKrW3B0tQhqoSdcRCxp7YCA7BjfkMK8ICYvUl4Xhj/mOwUrqGvviHe81fiPEWr7AWoIAWLVI/mTGMQpqwpEUPfMGrwFO+ynUpmTcVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e6SBuxSq; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a8d51a7d6f5so746362166b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 19:16:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727144184; x=1727748984; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0k1FN4MxEmeH8y9wuYWDQg/1jQnyip2ukqCSef53R4k=;
-        b=e6SBuxSqxuz0kvV5pZB+DQq244SSJFts/0NlunLAKeawvqdhT9tMoQ2h4tM8ZnUxW4
-         t8krjy2srXqew0K7kbyGgM5n2HpkUkYuZOeSYhAvayQ7vAXClaGHy9q98TSdmC+VwS+F
-         CZPJq9KqydacPj1vY9SouWwmTQy232V6fIhFcIUv2YiphXEKlmoLZUP7n41s4v8yfwTG
-         Cuy1B95qcGTXvVDoDJjHesYGkJfKEWpeZcU9SoPiveMqSFOIxKGSupXSqggLYuZiLKWl
-         Ia+LKIw4EK5C+bSWwfjDMit3wVtMf9Udk2UoNi0DGwBjghFhRtnStRdeoikAyv1umcPq
-         mRBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727144184; x=1727748984;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0k1FN4MxEmeH8y9wuYWDQg/1jQnyip2ukqCSef53R4k=;
-        b=Dg6QQHgfkTE69MurQgVh+ivvRNNxIJjR+k2L4JSyDVsv6Y6Z/ZhJTnDSN7uQulg0y8
-         RzwHBV21dMaWvp697MA/szVDP03cVvqyWfwYAIus1unoY1yEkuup+4uy7VsVMLn+/v31
-         vLgp3xMdyNx3ENQXRtJb/k1eH6MSgRkOAAQFh9sXM2asPpBN6Sd0Y01TttoyXYvGqn10
-         W3OrpjcEjHlsNdQqpQj8KPAahba+NF3SBKwqtmFf2VCwo6P4n01TaWimJuL5eLpm1iKe
-         hnOmtbkGXKfsw2U5vz7gHxUSmXOblBjOIEOCRdH10C26aVL8iJqk/lgHabWhOgJESeFv
-         LGrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXSURHoZXhRuqnTw54AZbWs08fL9g/kH/TMIyqXaL/rC4cEAF1aNy5UJ4y3p77LpolvoahKmC1taMvuAlU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEAqjj76yZ/GAxFXBy99iZJueR39VVeL/uub4vmJdqE14Z/GmQ
-	LjCyxwd6bcgJ+GBQMtaeQTnDSDgVTAWIutfOX9Lmy0VA66s55bwb4XWAeWmqTlHw2Mr/Q9KJvgY
-	NlUNULC5R7UuffyvTxleSKxkteHACFySnmgsd
-X-Google-Smtp-Source: AGHT+IHae7upEiBlqxLXCl/vPI4DXcCUvTiJ/wdUkT34X2pIpquKBp57tEW3ErNn+Mag6pVUk7mxHJ21ZhE1zZOW8NY=
-X-Received: by 2002:a17:906:bc12:b0:a8f:f799:e7d1 with SMTP id
- a640c23a62f3a-a90d503430cmr1239116266b.38.1727144184322; Mon, 23 Sep 2024
- 19:16:24 -0700 (PDT)
+	s=arc-20240116; t=1727144247; c=relaxed/simple;
+	bh=/98/X/1TQko0fk2o2qTQZdODpUNx9qGthglVwr99660=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=hZhrh7PI2DUbpdGyP+RaxBQjLRrK6lCAcKDXhDtvLriW5qrUx5uB5dqWLXUO8FHFLxSVDQyLBTiNDBCo0+PR2hb5JSe/lZMf5zflqD5Bp7wAnfluE/p32Q9ZgOPL2u++I8eo5+eswWvOgodLk7tLep3hFLIbZZKJ2oOW7FHIoQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=DkYWqHwS; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240924021717epoutp0157fc70dbbabcf3c0e47ffbca3a6f1653~4DIhtMvt12546025460epoutp01G
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 02:17:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240924021717epoutp0157fc70dbbabcf3c0e47ffbca3a6f1653~4DIhtMvt12546025460epoutp01G
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1727144237;
+	bh=0qkUJwYUsUzYOS/o+iFENz/vUnaM4sHEQ79KnQB9MKs=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=DkYWqHwSicTgPenw9k42Ybe++5SxPENvXodkL1PU26VLYyj+6NDsi4GApxcR6pWWt
+	 bjNDZ6771+vItbizmRLNQWJYuATY5ydyLfdT05kjBS53S8gihEv04pDp2aefF3YoaM
+	 MSGhujsrTQvNDHdaU4Ofj7lc72yJacbpvVa2+RdI=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+	20240924021716epcas1p35c5ef8acbf0f00700000239ece6ea1db~4DIhMfgL70485904859epcas1p3D;
+	Tue, 24 Sep 2024 02:17:16 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.36.225]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4XCNmD22YXz4x9Pv; Tue, 24 Sep
+	2024 02:17:16 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+	epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+	D6.1E.10258.C2122F66; Tue, 24 Sep 2024 11:17:16 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240924021715epcas1p1a9fdb7ead8080969f615ba755534fe21~4DIgTep1Q1634116341epcas1p1x;
+	Tue, 24 Sep 2024 02:17:15 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240924021715epsmtrp1e1b22bf58674c4e45857ed62aef0884a~4DIgSf6ML1087310873epsmtrp1r;
+	Tue, 24 Sep 2024 02:17:15 +0000 (GMT)
+X-AuditID: b6c32a38-995ff70000002812-80-66f2212c80d2
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	1C.13.07567.B2122F66; Tue, 24 Sep 2024 11:17:15 +0900 (KST)
+Received: from sh8267baek02 (unknown [10.253.99.49]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240924021715epsmtip229b2252294dc4a3f9965fb57c2a6076b~4DIgEW9z02569525695epsmtip28;
+	Tue, 24 Sep 2024 02:17:15 +0000 (GMT)
+From: "Seunghwan Baek" <sh8267.baek@samsung.com>
+To: "'Bart Van Assche'" <bvanassche@acm.org>,
+	<linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+	<martin.petersen@oracle.com>, <James.Bottomley@HansenPartnership.com>,
+	<avri.altman@wdc.com>, <alim.akhtar@samsung.com>
+Cc: <grant.jung@samsung.com>, <jt77.jang@samsung.com>,
+	<junwoo80.lee@samsung.com>, <dh0421.hwang@samsung.com>,
+	<jangsub.yi@samsung.com>, <sh043.lee@samsung.com>, <cw9316.lee@samsung.com>,
+	<wkon.kim@samsung.com>, <stable@vger.kernel.org>
+In-Reply-To: <fa8a4c1a-e583-496b-a0a2-bd86f86af508@acm.org>
+Subject: RE: [PATCH v1 1/1] ufs: core: set SDEV_OFFLINE when ufs shutdown.
+Date: Tue, 24 Sep 2024 11:17:15 +0900
+Message-ID: <003201db0e27$df93f250$9ebbd6f0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240923231142.4155415-1-nphamcs@gmail.com> <4d38c65d-760c-43a5-bb47-8e0235c13a51@linux.alibaba.com>
-In-Reply-To: <4d38c65d-760c-43a5-bb47-8e0235c13a51@linux.alibaba.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Mon, 23 Sep 2024 19:15:47 -0700
-Message-ID: <CAJD7tkamKcaqHR5V+4+9ixmFc3dC2NnGcu7YzdXqxqNEe8FqqA@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/2] remove SWAP_MAP_SHMEM
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: Nhat Pham <nphamcs@gmail.com>, akpm@linux-foundation.org, hannes@cmpxchg.org, 
-	hughd@google.com, shakeel.butt@linux.dev, ryan.roberts@arm.com, 
-	ying.huang@intel.com, chrisl@kernel.org, david@redhat.com, kasong@tencent.com, 
-	willy@infradead.org, viro@zeniv.linux.org.uk, baohua@kernel.org, 
-	chengming.zhou@linux.dev, linux-mm@kvack.org, kernel-team@meta.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQITd6wvsWq6bg+5ypABxh1kBxxfMwHy7pIVAtyJc3gCDAIdK7G+gjWA
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFJsWRmVeSWpSXmKPExsWy7bCmnq6O4qc0gw03eCwezNvGZvHy51U2
+	i2kffjJbzDjVxmqx79pJdotff9ezW2zs57Do2DqZyWLH8zPsFrv+NjNZXN41h82i+/oONovl
+	x/8xWTT92cdisWDjI0aLzZe+sTgIeFy+4u0xbdIpNo+PT2+xePRtWcXo8XmTnEf7gW6mALao
+	bJuM1MSU1CKF1Lzk/JTMvHRbJe/geOd4UzMDQ11DSwtzJYW8xNxUWyUXnwBdt8wcoLOVFMoS
+	c0qBQgGJxcVK+nY2RfmlJakKGfnFJbZKqQUpOQVmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZ
+	8+8+Zy3YJ1mx5v9dlgbG5SJdjJwcEgImEm2HpzF3MXJxCAnsYJR4/fsGO4TziVHi/LN/jBDO
+	N0aJQ9c6WWFaDi6bAZXYyyjROOUZG4TzklFiydVbbCBVbAIGEs0/DoLNEgFJ7NhynQXEYQYZ
+	vOXPMRaQKk4Ba4mF2+4xgdjCAl4SP7adALNZBFQl3t/5wQxi8wpYShx6tRHKFpQ4OfMJWC+z
+	gLbEsoWvmSFuUpD4+XQZ2H0iAm4Sb2dNZYaoEZGY3dkG9p6EwAMOidWX5gE1cwA5LhJ/XqhC
+	9ApLvDq+hR3ClpJ42d8GZRdLLNw4iQWit4VR4vryP4wQCXuJ5tZmNpA5zAKaEut36UPs4pN4
+	97WHFWI8r0RHmxBEtarEqQ1boTqlJa43N0CD0UNi47r9zBMYFWch+WwWks9mIflgFsKyBYws
+	qxjFUguKc9NTiw0LTODxnZyfu4kRnKi1LHYwzn37Qe8QIxMH4yFGCQ5mJRHeSTc/pgnxpiRW
+	VqUW5ccXleakFh9iNAWG9URmKdHkfGCuyCuJNzSxNDAxMzKxMLY0NlMS5z1zpSxVSCA9sSQ1
+	OzW1ILUIpo+Jg1OqgamKwUVc6cfjaZESH3WufbDzqd1cOeXH28WFvW23ZLcdusN0K2Gpm9Hm
+	/omRgTviF/eumXWuVZXBScirlu3MycvqWZuSrz6Y35sf1nPrlLdDVvrdjf5qQpf1jyjN0J50
+	hGHWa27jFSYXw5afbZjyo+pCTcju/V1zUlXv3Xlx8RTrMq3f/SZrTHYfvK94/6LC6/0X1Xe4
+	V8j87u2bYjN76Y5sxuVvJprarbnvI7ziR8P1RL9/xvc/Lf13g5+9YsGNRXHPftofMJn8OK37
+	s3zfhA8lvtq+/y5oZ2/kepZ1IvnU273z5FuXunMqtia0vFuzTOjqOoNfj72nNLv7SoY0LQpw
+	vS02ud+fr4slc+H+hlXTlViKMxINtZiLihMBisOeSF0EAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKIsWRmVeSWpSXmKPExsWy7bCSvK624qc0g20LlC0ezNvGZvHy51U2
+	i2kffjJbzDjVxmqx79pJdotff9ezW2zs57Do2DqZyWLH8zPsFrv+NjNZXN41h82i+/oONovl
+	x/8xWTT92cdisWDjI0aLzZe+sTgIeFy+4u0xbdIpNo+PT2+xePRtWcXo8XmTnEf7gW6mALYo
+	LpuU1JzMstQifbsEroyla/rYC5olKw4tX8XUwPhOuIuRk0NCwETi4LIZjF2MXBxCArsZJfav
+	3MIOkZCWeHzgJVCCA8gWljh8uBii5jmjxIa+72A1bAIGEs0/DrKDJEQE3jNKHP+zDsxhFvjD
+	KDHn3GQ2iJY3jBKPpuxgAWnhFLCWWLjtHhOILSzgJfFj2wkwm0VAVeL9nR/MIDavgKXEoVcb
+	oWxBiZMzn4D1MgtoS/Q+bGWEsZctfM0McaqCxM+ny1hBbBEBN4m3s6YyQ9SISMzubGOewCg8
+	C8moWUhGzUIyahaSlgWMLKsYJVMLinPTc5MNCwzzUsv1ihNzi0vz0vWS83M3MYJjVktjB+O9
+	+f/0DjEycTAeYpTgYFYS4Z1082OaEG9KYmVValF+fFFpTmrxIUZpDhYlcV7DGbNThATSE0tS
+	s1NTC1KLYLJMHJxSDUx33He9mSZ3ui/a4eait+dtDCdf97XQOPjn3tUfPBcP/ynVyOTdN73v
+	xYvPD/vyso7KJfeXBtVuU76+6eXauw3vpzz0zIvwEZ/XJs/flfM4tlwwyIJ/X+GWTS83GzGs
+	THfzOf3CLt784qEai0tHOeKzzsjvF5qzo+a95O3P9/Udd6nptD442iGumq9TW5q5InqD1krR
+	P4JrLNfbru9wLXOZ3vW1NbRN5XHJmT3P5IWbF26Yqh5s6nZUmdue4egkN78J+/N2d6zor/JI
+	OlZts/1/+ob7JZflQvcoTI/X22cWenHd/Tqd4xvY2s2fXovy/PX3dN1Pte7dl+7bKua0yGwI
+	yXn45uiniR2W7knqPXlKLMUZiYZazEXFiQBl8ulbSAMAAA==
+X-CMS-MailID: 20240924021715epcas1p1a9fdb7ead8080969f615ba755534fe21
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240829093921epcas1p35d28696b0f79e2ae39d8e3690f088e64
+References: <20240829093913.6282-1-sh8267.baek@samsung.com>
+	<CGME20240829093921epcas1p35d28696b0f79e2ae39d8e3690f088e64@epcas1p3.samsung.com>
+	<20240829093913.6282-2-sh8267.baek@samsung.com>
+	<fa8a4c1a-e583-496b-a0a2-bd86f86af508@acm.org>
 
-On Mon, Sep 23, 2024 at 6:55=E2=80=AFPM Baolin Wang
-<baolin.wang@linux.alibaba.com> wrote:
->
->
->
-> On 2024/9/24 07:11, Nhat Pham wrote:
-> > The SWAP_MAP_SHMEM state was originally introduced in the commit
-> > aaa468653b4a ("swap_info: note SWAP_MAP_SHMEM"), to quickly determine i=
-f a
-> > swap entry belongs to shmem during swapoff.
-> >
-> > However, swapoff has since been rewritten drastically in the commit
-> > b56a2d8af914 ("mm: rid swapoff of quadratic complexity"). Now
-> > having swap count =3D=3D SWAP_MAP_SHMEM value is basically the same as =
-having
-> > swap count =3D=3D 1, and swap_shmem_alloc() behaves analogously to
-> > swap_duplicate()
-> >
-> > This RFC proposes the removal of this state and the associated helper t=
-o
-> > simplify the state machine (both mentally and code-wise). We will also
-> > have an extra state/special value that can be repurposed (for swap entr=
-ies
-> > that never gets re-duplicated).
-> >
-> > Another motivation (albeit a bit premature at the moment) is the new sw=
-ap
-> > abstraction I am currently working on, that would allow for swap/zswap
-> > decoupling, swapoff optimization, etc. The fewer states and swap API
-> > functions there are, the simpler the conversion will be.
-> >
-> > I am sending this series first as an RFC, just in case I missed somethi=
-ng
-> > or misunderstood this state, or if someone has a swap optimization in m=
-ind
-> > for shmem that would require this special state.
->
-> The idea makes sense to me. I did a quick test with shmem mTHP, and
-> encountered the following warning which is triggered by
-> 'VM_WARN_ON(usage =3D=3D 1 && nr > 1)' in __swap_duplicate().
+> On 8/29/24 2:39 AM, Seunghwan Baek wrote:
+> > diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+> > index a6f818cdef0e..4ac1492787c2 100644
+> > --- a/drivers/ufs/core/ufshcd.c
+> > +++ b/drivers/ufs/core/ufshcd.c
+> > =40=40 -10215,7 +10215,9 =40=40 static void ufshcd_wl_shutdown(struct d=
+evice
+> *dev)
+> >   	shost_for_each_device(sdev, hba->host) =7B
+> >   		if (sdev =3D=3D hba->ufs_device_wlun)
+> >   			continue;
+> > -		scsi_device_quiesce(sdev);
+> > +		mutex_lock(&sdev->state_mutex);
+> > +		scsi_device_set_state(sdev, SDEV_OFFLINE);
+> > +		mutex_unlock(&sdev->state_mutex);
+> >   	=7D
+> >   	__ufshcd_wl_suspend(hba, UFS_SHUTDOWN_PM);
+>=20
+> Why to keep one scsi_device_quiesce() call and convert the other call?
+> Please consider something like this change:
+>=20
+> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c index
+> e808350c6774..914770dff18f 100644
+> --- a/drivers/ufs/core/ufshcd.c
+> +++ b/drivers/ufs/core/ufshcd.c
+> =40=40 -10134,11 +10134,10 =40=40 static void ufshcd_wl_shutdown(struct d=
+evice
+> *dev)
+>=20
+>   	/* Turn on everything while shutting down */
+>   	ufshcd_rpm_get_sync(hba);
+> -	scsi_device_quiesce(sdev);
+>   	shost_for_each_device(sdev, hba->host) =7B
+> -		if (sdev =3D=3D hba->ufs_device_wlun)
+> -			continue;
+> -		scsi_device_quiesce(sdev);
+> +		mutex_lock(&sdev->state_mutex);
+> +		scsi_device_set_state(sdev, SDEV_OFFLINE);
+> +		mutex_unlock(&sdev->state_mutex);
+>   	=7D
+>   	__ufshcd_wl_suspend(hba, UFS_SHUTDOWN_PM);
+>=20
+> Thanks,
+>=20
+> Bart.
 
-Apparently __swap_duplicate() does not currently handle increasing the
-swap count for multiple swap entries by 1 (i.e. usage =3D=3D 1) because it
-does not handle rolling back count increases when
-swap_count_continued() fails.
+That's because SSU (Start Stop Unit) command must be sent during shutdown p=
+rocess.
+If SDEV_OFFLINE is set for wlun, SSU command cannot be sent because it is r=
+ejected
+by the scsi layer. Therefore, we consider to set SDEV_QUIESCE for wlun, and=
+ set
+SDEV_OFFLINE for other lus.
 
-I guess this voids my Reviewed-by until we sort this out. Technically
-swap_count_continued() won't ever be called for shmem because we only
-ever increment the count by 1, but there is no way to know this in
-__swap_duplicate() without SWAP_HAS_SHMEM.
+static int ufshcd_execute_start_stop(struct scsi_device *sdev,
+				     enum ufs_dev_pwr_mode pwr_mode,
+				     struct scsi_sense_hdr *sshdr)
+=7B
+	const unsigned char cdb=5B6=5D =3D =7B START_STOP, 0, 0, 0, pwr_mode << 4,=
+ 0 =7D;
+	const struct scsi_exec_args args =3D =7B
+		.sshdr =3D sshdr,
+		.req_flags =3D BLK_MQ_REQ_PM,            <<< set REQ_PM flag
+		.scmd_flags =3D SCMD_FAIL_IF_RECOVERING,
+	=7D;
 
->
-> [   81.064967] ------------[ cut here ]------------
-> [   81.064968] WARNING: CPU: 4 PID: 6852 at mm/swapfile.c:3623
-> __swap_duplicate+0x1d0/0x2e0
-> [   81.064994] pstate: 23400005 (nzCv daif +PAN -UAO +TCO +DIT -SSBS
-> BTYPE=3D--)
-> [   81.064995] pc : __swap_duplicate+0x1d0/0x2e0
-> [   81.064997] lr : swap_duplicate_nr+0x30/0x70
-> [......]
-> [   81.065019] Call trace:
-> [   81.065019]  __swap_duplicate+0x1d0/0x2e0
-> [   81.065021]  swap_duplicate_nr+0x30/0x70
-> [   81.065022]  shmem_writepage+0x24c/0x438
-> [   81.065024]  pageout+0x104/0x2e0
-> [   81.065026]  shrink_folio_list+0x7f0/0xe60
-> [   81.065027]  reclaim_folio_list+0x90/0x178
-> [   81.065029]  reclaim_pages+0x128/0x1a8
-> [   81.065030]  madvise_cold_or_pageout_pte_range+0x80c/0xd10
-> [   81.065031]  walk_pmd_range.isra.0+0x1b8/0x3a0
-> [   81.065033]  walk_pud_range+0x120/0x1b0
-> [   81.065035]  walk_pgd_range+0x150/0x1a8
-> [   81.065036]  __walk_page_range+0xa4/0xb8
-> [   81.065038]  walk_page_range+0x1c8/0x250
-> [   81.065039]  madvise_pageout+0xf4/0x280
-> [   81.065041]  madvise_vma_behavior+0x268/0x3f0
-> [   81.065042]  madvise_walk_vmas.constprop.0+0xb8/0x128
-> [   81.065043]  do_madvise.part.0+0xe8/0x2a0
-> [   81.065044]  __arm64_sys_madvise+0x64/0x78
-> [   81.065046]  invoke_syscall.constprop.0+0x54/0xe8
-> [   81.065048]  do_el0_svc+0xa4/0xc0
-> [   81.065050]  el0_svc+0x2c/0xb0
-> [   81.065052]  el0t_64_sync_handler+0xb8/0xc0
-> [   81.065054]  el0t_64_sync+0x14c/0x150
->
-> > Swap experts, let me know if I'm mistaken :) Otherwise if there is no
-> > objection I will resend this patch series again for merging.
-> >
-> > Nhat Pham (2):
-> >    swapfile: add a batched variant for swap_duplicate()
-> >    swap: shmem: remove SWAP_MAP_SHMEM
-> >
-> >   include/linux/swap.h | 16 ++++++++--------
-> >   mm/shmem.c           |  2 +-
-> >   mm/swapfile.c        | 28 +++++++++-------------------
-> >   3 files changed, 18 insertions(+), 28 deletions(-)
-> >
-> >
-> > base-commit: acfabf7e197f7a5bedf4749dac1f39551417b049
+	return scsi_execute_cmd(sdev, cdb, REQ_OP_DRV_IN, /*buffer=3D*/NULL,
+			/*bufflen=3D*/0, /*timeout=3D*/10 * HZ, /*retries=3D*/0,
+			&args);
+=7D
+
+static blk_status_t
+scsi_device_state_check(struct scsi_device *sdev, struct request *req)
+=7B
+	case SDEV_OFFLINE:
+	case SDEV_TRANSPORT_OFFLINE:             <<< Refuse all commands
+		/*
+		 * If the device is offline we refuse to process any
+		 * commands.  The device must be brought online
+		 * before trying any recovery commands.
+		 */
+		if (=21sdev->offline_already) =7B
+			sdev->offline_already =3D true;
+			sdev_printk(KERN_ERR, sdev,
+				    =22rejecting I/O to offline device=5Cn=22);
+		=7D
+		return BLK_STS_IOERR;
+	case SDEV_QUIESCE:                       <<< Refuse all commands except RE=
+Q_PM flag
+		/*
+		 * If the device is blocked we only accept power management
+		 * commands.
+		 */
+		if (req && WARN_ON_ONCE(=21(req->rq_flags & RQF_PM)))
+			return BLK_STS_RESOURCE;
+		return BLK_STS_OK;
+
 
