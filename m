@@ -1,225 +1,163 @@
-Return-Path: <linux-kernel+bounces-337415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2705F9849CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:41:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDE639849D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:41:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59798284DAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:40:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CC0B1C20AE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB1C1AB6F4;
-	Tue, 24 Sep 2024 16:40:54 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A981AC436;
+	Tue, 24 Sep 2024 16:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nmoPLdUa"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E151AAE0D
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 16:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254FF1AB6EC;
+	Tue, 24 Sep 2024 16:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727196054; cv=none; b=NyWUJhGQz4rs+P9Rt79XMgfXvT6tpdLrWCRqAWoWbIrD1hiPpxsLIFaF7+9fUCsySxldEjB4K0uqZcobT5Iff6QgWGvtHk591a4YanNGePcSLYmDLfZBN0FY9hQj18zExc76B+j8nLgBynRr7v5VGwa2ygfB2CSKzBQo2VGdMAk=
+	t=1727196055; cv=none; b=bM33kWBWYXNKYX0loBXox1l1zVgSvfqKLl9Y9G9kmmW6N7qlUqtWzZFDphB3FnAeIsNDo4B+KLT2IuByStr9kQxGi+kQd2e44OGSlugUMybhBWOcQGMxT8l0UYGTKiDtwEGHDdEmtGFXYAkJxW++BJbECpsnUbMWAr/ZIBiB72Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727196054; c=relaxed/simple;
-	bh=eqmOGMQRVtWIYluqhXcdHzrBfzLr8lW9oWtQeMCeU7Y=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o7EcI+1Ot74B2Bb79azRlDrmZufNZuVy28UMRX9lev/+/2Sgk4nzMNbHpbQGzmGZtbzZpmudFXt8t3hkL+L8w1PiXuyeSm78HpX5H1Ya5Jp673Ban5ptFeXLIJz1qFmAWyxw1ip9B4y1nqDDL+32LWyIt9EspUf5K3YITCLDh0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XClr35b8vz6L75c;
-	Wed, 25 Sep 2024 00:36:51 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 872211400D4;
-	Wed, 25 Sep 2024 00:40:48 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 24 Sep
- 2024 18:40:48 +0200
-Date: Tue, 24 Sep 2024 17:40:46 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Gowthami Thiagarajan <gthiagarajan@marvell.com>
-CC: <will@kernel.org>, <mark.rutland@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<andrew@lunn.ch>, <sgoutham@marvell.com>, <lcherian@marvell.com>,
-	<gcherian@marvell.com>
-Subject: Re: [PATCH v8] perf/marvell: Marvell PEM performance monitor
- support
-Message-ID: <20240924174046.0000242d@Huawei.com>
-In-Reply-To: <20240924063126.460219-1-gthiagarajan@marvell.com>
-References: <20240924063126.460219-1-gthiagarajan@marvell.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1727196055; c=relaxed/simple;
+	bh=c4/FXaABwTV61KcHglbl6e2JQeLbds1ZzvF3ocQXVAs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DyTJnZgYVb5YLueqpgpRjS/3nA0KUePMJt04I+aQwnlQUywSNSgB/jr6I0nWeuQoq+vT+tw/8DpY4qEkYsWji4X6cGFM8mTJ0BQesIo//C6SID/D+ixPLB0yo75VZYhSjFcpzivm5wELrP1h5jZp9/9V2rp4FOS/kvJjYV6f5ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nmoPLdUa; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48O8H3YN021730;
+	Tue, 24 Sep 2024 16:40:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=1aXdEYh5NFr5tG7RMivDvlqL
+	RnRj5TY7endHsnkXyH0=; b=nmoPLdUaBwvQZYy/MS5xYORaUMxgDJ/0eI+V7akD
+	IyKWAheosOW0VkaJbQxvmkgp5akhoE/Sum/Yz7Tn9hV3EXuauL0ACC8WtChCpfQf
+	zGGHRCDzAXzbx6NTSvDmnVDtteNMmpJ7Y6q/2qQ+Y3LDB2m6bQ9e0u6nowhI34fZ
+	fmkf3Dza0d71ayLCjNcqpbJ7VZABVeVdvRGcbBZe12vfqtop5/Ff8paMRI5LduXn
+	r9GxLQbEf7FsWk3lJuFbj00QW8UAlsVQEFDDxySmsyFq1NnLe/oI3OJagd/XOQNA
+	jse3WmjGTZPemKmz6YFqbiFM1s1U9EGRWmJzD6sNKPHS5w==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sqe9920h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Sep 2024 16:40:49 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48OGenZ1016815
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Sep 2024 16:40:49 GMT
+Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 24 Sep 2024 09:40:48 -0700
+Date: Tue, 24 Sep 2024 09:40:47 -0700
+From: Bjorn Andersson <quic_bjorande@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Chris Lew <quic_clew@quicinc.com>, Johan Hovold <johan@kernel.org>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Stephan Gerhold <stephan.gerhold@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>
+Subject: Re: [PATCH] soc: qcom: pd_mapper: fix ADSP PD maps
+Message-ID: <ZvLrj+gYaBzgwdLu@hu-bjorande-lv.qualcomm.com>
+References: <20240918-x1e-fix-pdm-pdr-v1-1-cefc79bb33d1@linaro.org>
+ <Zu0wb-RSwnlb0Lma@hovoldconsulting.com>
+ <sziblrb4ggjzehl7fqwrh3bnedvwizh2vgymxu56zmls2whkup@yziunmooga7b>
+ <Zu06HiEpA--LbaoU@hovoldconsulting.com>
+ <18e971c6-a0ef-4d48-a592-ec035b05d2b7@quicinc.com>
+ <5pl7cewea6bfweqcnratmcb7r2plyzwyofsmcjixtkzwx7aih5@tm5c34mmzzb7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <5pl7cewea6bfweqcnratmcb7r2plyzwyofsmcjixtkzwx7aih5@tm5c34mmzzb7>
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: IE5gG0BAvEar2M4iPUOUCp5ZQjuGtk_c
+X-Proofpoint-GUID: IE5gG0BAvEar2M4iPUOUCp5ZQjuGtk_c
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=999 spamscore=0 lowpriorityscore=0 adultscore=0 mlxscore=0
+ suspectscore=0 malwarescore=0 phishscore=0 impostorscore=0 clxscore=1011
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409240119
 
-On Tue, 24 Sep 2024 12:01:26 +0530
-Gowthami Thiagarajan <gthiagarajan@marvell.com> wrote:
-
-> PCI Express Interface PMU includes various performance counters
-> to monitor the data that is transmitted over the PCIe link. The
-> counters track various inbound and outbound transactions which
-> includes separate counters for posted/non-posted/completion TLPs.
-> Also, inbound and outbound memory read requests along with their
-> latencies can also be monitored. Address Translation Services(ATS)events
-> such as ATS Translation, ATS Page Request, ATS Invalidation along with
-> their corresponding latencies are also supported.
+On Fri, Sep 20, 2024 at 05:07:13PM +0300, Dmitry Baryshkov wrote:
+> On Fri, Sep 20, 2024 at 07:00:11AM GMT, Chris Lew wrote:
+> > 
+> > 
+> > On 9/20/2024 2:02 AM, Johan Hovold wrote:
+> > > On Fri, Sep 20, 2024 at 11:49:46AM +0300, Dmitry Baryshkov wrote:
+> > > > On Fri, Sep 20, 2024 at 10:21:03AM GMT, Johan Hovold wrote:
+> > > > > On Wed, Sep 18, 2024 at 04:02:39PM +0300, Dmitry Baryshkov wrote:
+> > > > > > On X1E8 devices root ADSP domain should have tms/pdr_enabled registered.
+> > > > > > Change the PDM domain data that is used for X1E80100 ADSP.
+> > > > > 
+> > > > > Please expand the commit message so that it explains why this is
+> > > > > needed and not just describes what the patch does.
+> > > > 
+> > > > Unfortunately in this case I have no idea. It marks the domain as
+> > > > restartable (?), this is what json files for CRD and T14s do. Maybe
+> > > > Chris can comment more.
+> > > 
+> > > Chris, could you help sort out if and why this change is needed?
+> > > 
+> > > 	https://lore.kernel.org/all/20240918-x1e-fix-pdm-pdr-v1-1-cefc79bb33d1@linaro.org/	
+> > > 
+> > 
+> > I don't think this change would help with the issue reported by Johan. From
+> > a quick glance, I couldn't find where exactly the restartable attribute is
+> > used, but this type of change would only matter when the ChargerPD is
+> > started or restarted.
 > 
-> The performance counters are 64 bits wide.
+> This raises a question: should we care at all about the pdr_enabled? Is
+> it fine to drop it fromm all PD maps?
 > 
-> For instance,
-> perf stat -e ib_tlp_pr <workload>
-> tracks the inbound posted TLPs for the workload.
+
+There's definitely benefits to pdr_enabled. I'd expect you could have
+examples such as audio firmware restarting without USB Type-C being
+reset.
+
+So, the appropriate path forward would be to figure out how we can
+properly test the various levels of restarts in a continuous fashion and
+make sure it's enabled where it can be...
+
+Regards,
+Bjorn
+
+> > 
+> > The PMIC_GLINK channel probing in rpmsg is dependent on ChargerPD starting,
+> > so we know ChargerPD can start with or without this change.
+> > 
+> > I can give this change a try next week to help give a better analysis.
+> > 
+> > > > > What is the expected impact of this and is there any chance that this is
+> > > > > related to some of the in-kernel pd-mapper regression I've reported
+> > > > > (e.g. audio not being registered and failing with a PDR error)?
+> > > > > 
+> > > > > 	https://lore.kernel.org/all/ZthVTC8dt1kSdjMb@hovoldconsulting.com/
+> > > > 
+> > > > Still debugging this, sidetracked by OSS / LPC.
+> > > 
+> > > Johan
 > 
-> Signed-off-by: Gowthami Thiagarajan <gthiagarajan@marvell.com>
-
-A few quick comments inline from a superficial look.
-
-Jonathan
-
-
-> diff --git a/drivers/perf/marvell_pem_pmu.c b/drivers/perf/marvell_pem_pmu.c
-> new file mode 100644
-> index 000000000000..d3aca94278fb
-> --- /dev/null
-> +++ b/drivers/perf/marvell_pem_pmu.c
-> @@ -0,0 +1,427 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Marvell PEM(PCIe RC) Performance Monitor Driver
-> + *
-> + * Copyright (C) 2024 Marvell.
-> + */
-> +
-> +#include <linux/acpi.h>
-> +#include <linux/init.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/perf_event.h>
-> +#include <linux/platform_device.h>
-> +
-> +/*
-> + * Each of these events maps to a free running 64 bit counter
-> + * with no event control, but can be reset.
-> + *
-
-This blank line adds nothing. I'd drop it.
-
-> + */
-> +enum pem_events {
-> +	IB_TLP_NPR,
-> +	IB_TLP_PR,
-> +	IB_TLP_CPL,
-> +	IB_TLP_DWORDS_NPR,
-> +	IB_TLP_DWORDS_PR,
-> +	IB_TLP_DWORDS_CPL,
-> +	IB_INFLIGHT,
-> +	IB_READS,
-> +	IB_REQ_NO_RO_NCB,
-> +	IB_REQ_NO_RO_EBUS,
-> +	OB_TLP_NPR,
-> +	OB_TLP_PR,
-> +	OB_TLP_CPL,
-> +	OB_TLP_DWORDS_NPR,
-> +	OB_TLP_DWORDS_PR,
-> +	OB_TLP_DWORDS_CPL,
-> +	OB_INFLIGHT,
-> +	OB_READS,
-> +	OB_MERGES_NPR,
-> +	OB_MERGES_PR,
-> +	OB_MERGES_CPL,
-> +	ATS_TRANS,
-> +	ATS_TRANS_LATENCY,
-> +	ATS_PRI,
-> +	ATS_PRI_LATENCY,
-> +	ATS_INV,
-> +	ATS_INV_LATENCY,
-> +	PEM_EVENTIDS_MAX,
-
-A comma after a MAX entry rarely makes sense. I'd drop it.
-
-> +};
-
-
-
-> +static int pem_pmu_offline_cpu(unsigned int cpu, struct hlist_node *node)
-> +{
-> +	struct pem_pmu *pmu = hlist_entry_safe(node, struct pem_pmu,
-> +					       node);
-
-Why wrap? It's under 80 chars anyway.
-
-> +	unsigned int target;
-> +
-> +	if (cpu != pmu->cpu)
-> +		return 0;
-> +
-> +	target = cpumask_any_but(cpu_online_mask, cpu);
-> +	if (target >= nr_cpu_ids)
-> +		return 0;
-> +
-> +	perf_pmu_migrate_context(&pmu->pmu, cpu, target);
-> +	pmu->cpu = target;
-> +	return 0;
-> +}
-
-> +
-> +#ifdef CONFIG_ACPI
-> +static const struct acpi_device_id pem_pmu_acpi_match[] = {
-> +	{"MRVL000E", 0},
-> +	{},
-
-No need for trailing comma.
-
-> +};
-> +MODULE_DEVICE_TABLE(acpi, pem_pmu_acpi_match);
-> +#endif
-> +
-> +static struct platform_driver pem_pmu_driver = {
-> +	.driver	= {
-> +		.name   = "pem-pmu",
-> +		.acpi_match_table = ACPI_PTR(pem_pmu_acpi_match),
-
-Drop the ACPI_PTR() protection and the ifdefs.
-
-They provide very little advantage and hurt readabilty.
-Maybe make sense if the driver supports dt binding but this
-one doesn't.
-
-> +		.suppress_bind_attrs = true,
-> +	},
-> +	.probe		= pem_perf_probe,
-> +	.remove		= pem_perf_remove,
-> +};
-
-> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-> index 9316c39260e0..254491a6d09b 100644
-> --- a/include/linux/cpuhotplug.h
-> +++ b/include/linux/cpuhotplug.h
-> @@ -228,6 +228,7 @@ enum cpuhp_state {
->  	CPUHP_AP_PERF_ARM_APM_XGENE_ONLINE,
->  	CPUHP_AP_PERF_ARM_CAVIUM_TX2_UNCORE_ONLINE,
->  	CPUHP_AP_PERF_ARM_MARVELL_CN10K_DDR_ONLINE,
-> +	CPUHP_AP_PERF_ARM_MRVL_PEM_ONLINE,
-
-Silly question but which of the rules at: 
-https://elixir.bootlin.com/linux/v6.11/source/include/linux/cpuhotplug.h#L45
-means this can't use CPUHP_AP_ONLINE_DYN?
-
-Quite a few recent PMU drivers have used that without issues.
-
->  	CPUHP_AP_PERF_POWERPC_NEST_IMC_ONLINE,
->  	CPUHP_AP_PERF_POWERPC_CORE_IMC_ONLINE,
->  	CPUHP_AP_PERF_POWERPC_THREAD_IMC_ONLINE,
-
+> -- 
+> With best wishes
+> Dmitry
+> 
+> 
 
