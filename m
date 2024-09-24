@@ -1,148 +1,142 @@
-Return-Path: <linux-kernel+bounces-336530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76FD1983BFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 06:08:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB18E983C00
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 06:09:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A76D91C22147
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 04:08:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D3511F22992
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 04:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF522E859;
-	Tue, 24 Sep 2024 04:08:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD18288D1;
+	Tue, 24 Sep 2024 04:09:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="SnivXRzQ"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S9ILyjp5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3787A28F3;
-	Tue, 24 Sep 2024 04:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04EEE40879;
+	Tue, 24 Sep 2024 04:09:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727150897; cv=none; b=VXLeXJ4n0Nb5BA63jU24gBvhKeQod0QTIk94dRTum9acN6OrY4I0X+4NyG/7FGuqd/Lhyk7NfS8gHyRXdDbTOSLPyCPurVudZj+H3KhUWQwMMAo4l4IuFgXi8aOb69t2Myz22PryGpLHUW+sXtoVgFvMe3vbfqezXPEnP4balGw=
+	t=1727150941; cv=none; b=AdW699mVBuBq9ZwtuAlFD1D1aIOovfsPOoVdCYSaOFoTS2xVGpqr7Pn12aKTDvjX9pAp4n47FvkDLTd1DX3o5HHMNbT+MV4/zyjSDRVs+K3JCD4Pqlglw5uV4cdmSXaF9qqs3fn7GEYMMfyFOMove/N1DnfMgM6vhrLdf875GLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727150897; c=relaxed/simple;
-	bh=e3HOsa5pozp8OHR4hKQFX/TQIkoaPX58rjFNrHaMCrM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=P0REdOPoPvbLQnGMmmhMUnuVh45P5DLV5oqOjdy2KPRoejrSk+2yyRWGY3jEGTqrEfrx9qE9NQqOX4g9jKRSFad3kPMxM91KzePvyWTp/QvpI2PtFoJXmOm+mvstflQrqGJSZcH/5hyEtTHUBAakO7MHoTSYZCSWDxjm23Tnyrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=SnivXRzQ; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 9afaa75a7a2a11ef8b96093e013ec31c-20240924
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=lhUlNSypZsjISyjSJbKAwiwST2xLdo0AkzrMaosZ+hw=;
-	b=SnivXRzQZDfgxzfNDJRYLh3r62m/7G9YGNiVgpAxNubVPECQH4wmKoKZ82ldWRUJf31gDkW3ItX0JOacl6RpHOD/qrmmHRt9Zdqu4H3nQjnV0921gLDqH6SylPUw/OOOe3yXYVEbIyr+/iejOsx7kWfBuUqy+EWiqtz8QUe/T2c=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:3d9e494d-2a69-4ae1-849b-3bdb24fe7561,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:97a6759e-8e9a-4ac1-b510-390a86b53c0a,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 9afaa75a7a2a11ef8b96093e013ec31c-20240924
-Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw02.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1931946160; Tue, 24 Sep 2024 12:08:07 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Tue, 24 Sep 2024 12:08:06 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkmbs13n2.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
- Transport; Tue, 24 Sep 2024 12:08:05 +0800
-Message-ID: <0748868d-4789-fcaa-e70f-6a4508411b36@mediatek.com>
-Date: Tue, 24 Sep 2024 12:08:04 +0800
+	s=arc-20240116; t=1727150941; c=relaxed/simple;
+	bh=VSg+xYwh7vuATm3RgZoGtJJQ6JPcfXKhzrjI28R9qDo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iPZk8enqtn6ENucz0M4Im1U2UhZFvKsDOWiLspb3pB4SLnDf539kRbqzyWAt2JvvjKPExVyOWunvozgfbUPRiUauvg/0pPPeXVNl+m3QV0yaC4RIZIn4ZqRElbZWyCdSf7ya8tUN1QjhaFqwCABG8Cg9mtOWek0RPn7bYQvnelQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S9ILyjp5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 866B7C4CECD;
+	Tue, 24 Sep 2024 04:09:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727150940;
+	bh=VSg+xYwh7vuATm3RgZoGtJJQ6JPcfXKhzrjI28R9qDo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=S9ILyjp52jT29UAWwXRwCEMcX7NnP2Agxzt2AzxxofsGzDLVoAYebWFa22QkX01OZ
+	 6pv3YaBq3z0NrXYU+9eNOqDVRXJmz81BpjtkHJXlPQ6OLP2r1rLGFR70Xy2uJAKJeu
+	 kMsjEPRjtEIH7yzfAVpe/wy8Fe3YmJpwXiSDyc0buy9sukC6n93xHFQfKWD0+qUBgi
+	 rRh5TfFU21UmPvGyMshHKS5J9gF0hfxakrfnNPWSy4TqVrD39ruxW3IPFWdFGFW94m
+	 a9mKYGHwcCQ2ER6jydE10cdhaG4MXaUvEbNXCGmVZp3tf17DnGdkOd0K6n4OF24eik
+	 lczv2kySANTIw==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5369f1c7cb8so6345298e87.1;
+        Mon, 23 Sep 2024 21:09:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU6nyHbQ6yhXnrGBZwXhIdz5iexi3/vmjpS9EIUSas6+iqqniIwlkt7o382iQqDyMLNfD1gGf7XhnsHv0s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpKICyC0ZYssY3+NoCAn6tmBUwPlNZv/invPMASsxdg9gFW5HN
+	OU80WiBNS3tAv/Anrtfzui22tB4bc7TXlJYBlYfetqteZFhU0KVrs1QoCZod9Yy39N0KOES4KiF
+	5gx5TgU2TDww+Kss6X4P3sLh183w=
+X-Google-Smtp-Source: AGHT+IGQSFHEKGlRq3xI5Rkg/U68fHFp7vBIKsPDQpCfNHVhossCvHjHYghMtOgzUeeJYnXSPYaI58qsAWhv8jDBP0s=
+X-Received: by 2002:a05:6512:3d86:b0:536:54c2:fb83 with SMTP id
+ 2adb3069b0e04-536ac2e0ecbmr7141665e87.23.1727150939223; Mon, 23 Sep 2024
+ 21:08:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v1 2/3] rtc: mt6359: Add RTC hardware range and add
- support for start-year
-Content-Language: en-US
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	<lee@kernel.org>, <ZhanZhan.ge@mediatek.com>
-CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<matthias.bgg@gmail.com>, <eddie.huang@mediatek.com>,
-	<sean.wang@mediatek.com>, <alexandre.belloni@bootlin.com>,
-	<sen.chu@mediatek.com>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-rtc@vger.kernel.org>,
-	<kernel@collabora.com>, <yong.mao@mediatek.com>
-References: <20240923100010.97470-1-angelogioacchino.delregno@collabora.com>
- <20240923100010.97470-3-angelogioacchino.delregno@collabora.com>
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-In-Reply-To: <20240923100010.97470-3-angelogioacchino.delregno@collabora.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240913171205.22126-1-david.hunter.linux@gmail.com> <20240913171205.22126-7-david.hunter.linux@gmail.com>
+In-Reply-To: <20240913171205.22126-7-david.hunter.linux@gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Tue, 24 Sep 2024 13:08:23 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARNteNvrbTeNTz71XTFjjL4XjLC-CT2UjVsGRpP_ToPKg@mail.gmail.com>
+Message-ID: <CAK7LNARNteNvrbTeNTz71XTFjjL4XjLC-CT2UjVsGRpP_ToPKg@mail.gmail.com>
+Subject: Re: [PATCH 6/7] linux-kbuild: fix: configs with defaults do not need
+ a prompt
+To: David Hunter <david.hunter.linux@gmail.com>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	shuah@kernel.org, javier.carrasco.cruz@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Seems fine if you fix the subject prefix
+and reword it in imperative mood.
 
 
-On 9/23/24 18:00, AngeloGioacchino Del Regno wrote:
-> Add the RTC hardware range parameters to enable the possibility
-> of using the `start-year` devicetree property which, if present,
-> will set the start_secs parameter by overriding the defaults
-> that this driver is setting;
-> 
-> To keep compatibility with (hence have the same date/time reading
-> as) the old behavior, set:
->   - range_min to 1900-01-01 00:00:00
->   - range_max to 2027-12-31 23:59:59 (HW year max range is 0-127)
->   - start_secs defaulting to 1968-01-02 00:00:00
-> 
-> Please note that the oddness of starting from January 2nd is not
-> a hardware quirk and it's done only to get the same date/time
-> reading as an RTC which time was set before this commit.
-> 
-> Also remove the RTC_MIN_YEAR_OFFSET addition and subtraction in
-> callbacks set_time() and read_time() respectively, as now this
-> is already done by the API.
-> 
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+On Sat, Sep 14, 2024 at 2:12=E2=80=AFAM David Hunter
+<david.hunter.linux@gmail.com> wrote:
+>
+> Ignore process select warnings for config entries that have a default
+> option. Some config entries have no prompt and nothing selects them, but
+> these config options are okay because they have a default option.
+>
+> Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
 > ---
->   drivers/rtc/rtc-mt6397.c | 13 ++++---------
->   1 file changed, 4 insertions(+), 9 deletions(-)
+>  scripts/kconfig/streamline_config.pl | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
+>
+> diff --git a/scripts/kconfig/streamline_config.pl b/scripts/kconfig/strea=
+mline_config.pl
+> index 593df824ead7..948437aac535 100755
+> --- a/scripts/kconfig/streamline_config.pl
+> +++ b/scripts/kconfig/streamline_config.pl
+> @@ -144,6 +144,7 @@ my %selects;
+>  my %prompts;
+>  my %objects;
+>  my %config2kfile;
+> +my %defaults;
+>  my $var;
+>  my $iflevel =3D 0;
+>  my @ifdeps;
+> @@ -239,6 +240,7 @@ sub read_kconfig {
+>             $depends{$config} .=3D " " . $1;
+>         } elsif (($state eq "DEP" || $state eq "NEW") && /^\s*def(_(bool|=
+tristate)|ault)\s+(\S.*)$/) {
+>             my $dep =3D $3;
+> +            $defaults{$config} =3D 1 ;
+>             if ($dep !~ /^\s*(y|m|n)\s*$/) {
+>                 $dep =3D~ s/.*\sif\s+//;
+>                 $depends{$config} .=3D " " . $dep;
+> @@ -561,8 +563,16 @@ sub parse_config_selects
+>
+>      # If no possible config selected this, then something happened.
+>      if (!defined($next_config)) {
+> -       print STDERR "WARNING: $config is required, but nothing in the\n"=
+;
+> -       print STDERR "  current config selects it.\n";
+> +
+> +       # Some config options have no prompt, and nothing selects them, b=
+ut
+> +       # they stay turned on once the final checks for the configs
+> +       # are done. These configs have a default option, so turn off the
+> +       # warnings for configs with default options.
+> +       if(!defined($defaults{$config})) {
+> +           print STDERR "WARNING: $config is required, but nothing in th=
+e\n";
+> +           print STDERR "  current config selects it.\n";
+> +       }
+> +
+>         return;
+>      }
+>
+> --
+> 2.43.0
+>
 
-[snip]
 
-Thanks for helping add new patch fix for RTC.
-
-> @@ -302,6 +293,10 @@ static int mtk_rtc_probe(struct platform_device *pdev)
->   	device_init_wakeup(&pdev->dev, 1);
->   
->   	rtc->rtc_dev->ops = &mtk_rtc_ops;
-> +	rtc->rtc_dev->range_min = RTC_TIMESTAMP_BEGIN_1900;
-> +	rtc->rtc_dev->range_max = mktime64(2027, 12, 31, 23, 59, 59);
-> +	rtc->rtc_dev->start_secs = mktime64(1968, 1, 2, 0, 0, 0);
-> +	rtc->rtc_dev->set_start_time = true;
->   
->   	return devm_rtc_register_device(rtc->rtc_dev);
->   }
-
-Dear @Zhanhan, Please help to leave comment if you think there is 
-something need to be clarify. For example, I've found some relate origin 
-defines
-in "include/linux/mfd/mt6397/rtc.h"
-#define RTC_MIN_YEAR	1968
-#define RTC_BASE_YEAR	1900
-#define RTC_NUM_YEAR	128
-#define RTC_MIN_YEAR_OFFSET	(RTC_MIN_YEAR - RTC_BASE_YEAR)
-
-Should MediaTek remove RTC_MIN_YEAR and RTC_BASE_YEAR in next patch?
-And since there may not exist any smartphone/tablet/TV using mt6397
-RTC earlier than 2010? Is it possible to change
-RTC_TIMESTAMP_BEGIN_1900 to RTC_TIMESTAMP_BEGIN_2000 without breaking
-compatibility for these devices?
-
-Thanks
-Macpaul Lin
+--=20
+Best Regards
+Masahiro Yamada
 
