@@ -1,221 +1,106 @@
-Return-Path: <linux-kernel+bounces-337061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5D6D9844D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:35:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F16F89844D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:35:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35C101F2622D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:35:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3117282782
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AAF1ABEAF;
-	Tue, 24 Sep 2024 11:31:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6BA21AC8BD;
+	Tue, 24 Sep 2024 11:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N8MC4evF"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="zCS3VJGy"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9C61AC436;
-	Tue, 24 Sep 2024 11:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E361AC8AE;
+	Tue, 24 Sep 2024 11:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727177461; cv=none; b=bGFI9Sj2XZb5lTf2L7IlnBxCyuM7Uwm0VapbVFwuUjgZZydsuQJiG6hArBSHnlL/zIDoyp2cX+UtyDNKbmBHJYgUqtCEF5tmJbARUzDG8XQcn6nrLwEwrIVEWcrjM5DdOGjhMrWQ8UvGalFsEdbOHVnC0Fez3CoF136EbMFyA1M=
+	t=1727177470; cv=none; b=iXD1b7/kKvp9727MDox7c8oUauoKX1skmdaIHJt5/rSYN5yCT7M7o/UAPUvKmRpVd815+2tu64tpmWkuJTsEqmMILErJVVmnhHNa1KjeRRYHnwhlXwoGu7JarjA1h/l4cis6i8W17QMW14weLlOFIQo25ygZW+GCdSIrNKG9Z2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727177461; c=relaxed/simple;
-	bh=8km0caqw4X9w5WLWDqoPcdYkk+OV9Jah8JF02dHf5Ug=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=biPh62jxNtazmjP61C/jSAg4RqmJDilRjb3YVnHLXN5J79foI2hauu2LR4uck3PIXaEzAENVDHINfZnQF+/htnP9iUhGBlsN1NF/G16+VIiyE5dYUWLdHIObrVDWH/ajbQdKmv/z11ei5pwnLHiuZDIVbntXOm5mZwdP23PCpBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N8MC4evF; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c24ebaa427so9787940a12.1;
-        Tue, 24 Sep 2024 04:30:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727177458; x=1727782258; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=t1y38+8CPxsqSfGk+vokQebE6afY4tdr6oHCYyS40ak=;
-        b=N8MC4evFXIkYbdQLXKJoQKhY9BLG20SPi7wMvi8rsSoXXWqPWo2I4BKCa8h3I551id
-         eJfbYJDBIxPlODcwd3xooehPAYUO4IYO4xsctyiwXx5wSWtN5pSnNIBQoHvMlhn0KN3j
-         Jx1m6vAcjdjZAaJElq1z0I+YUvPIUtQrkJwOBiNrni7cjkIxdb8lpeSTxTMJl6VNhZbG
-         8ZpFKi6uNnKfWOAyApsISSCYqgVotn90loC+dAE0+Abs4vF/5d7JMjzeJcizWE2Nsu68
-         8oP+D7+6cSK9qe1TOUwfpDYosiAT9hbDqbOeET5KznJK9iBxRzIOc52Mf5DHtkNbnbq/
-         0XFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727177458; x=1727782258;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t1y38+8CPxsqSfGk+vokQebE6afY4tdr6oHCYyS40ak=;
-        b=s58YpntCD/L8oUSXl/SCo1FwOAMeu7FX7sgxnjNaGi2dl1n2WQatU1uYwVm3mdxkot
-         oCKfD+2ZWRvuvAN4bfQuvQE5D1HcR7Kw3dw/0kqGDbiVB7Kk+jwCgQNEYJsRolaWPePB
-         UpeZG04sTrBGlNwPCj/TCvkz2rgkUqRGsjDNhNrXhgtHb6OyqcHdoPcEbN0H9G6Mlgm/
-         fEsWXHzBcI+iiqJ5dMj1JRRUk/+1ykSe0/+UmdVQv6UX+IZtlxhTMOR4grA1poUQzTnn
-         GzK+FhUxOrqnIN8BqHDm1qb6f5/uY2HgxwBXJXH1PWSV2RKxj/m7aH3wKQATuFTl1YCd
-         IUKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVoBuCFOdQooEcspaaiXBGAbuJDVDSQKP8+ck9ROiGehTENjmzUFRm1j6uxpWnmCqmzwW8+gvxvZnA=@vger.kernel.org, AJvYcCVxaPiHG7m4eOCF+9TdDy1xBPyNcKfXbIePUPML9dn+9c4uGhKW0/4lSkSAV8yymPlXPxyFfYwXAXFPSsOR@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVjL3dkI/oIhIjixD2sazB3qTyQPosGTaxXVJK2PlYJPskCoZw
-	SQUp2inTvw9ha8QgiBzx+wO3ZsSOunnhq7FJT0QynkoMBcVvB1KHedTnQDKT
-X-Google-Smtp-Source: AGHT+IEISR9dLxHLz87EmIuJIK9QGIXqeioaCOzkFZkYnK3EgrHJXeDRIPzWKUWlvSpSMxhF1AkwRA==
-X-Received: by 2002:a17:906:dac6:b0:a72:7ede:4d12 with SMTP id a640c23a62f3a-a92c47f94c7mr381369066b.5.1727177457841;
-        Tue, 24 Sep 2024 04:30:57 -0700 (PDT)
-Received: from [192.168.1.17] (host-87-7-171-42.retail.telecomitalia.it. [87.7.171.42])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93930cae0fsm72612766b.120.2024.09.24.04.30.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 04:30:57 -0700 (PDT)
-From: Antonino Maniscalco <antomani103@gmail.com>
-Date: Tue, 24 Sep 2024 13:30:46 +0200
-Subject: [PATCH v5 11/11] Documentation: document adreno preemption
+	s=arc-20240116; t=1727177470; c=relaxed/simple;
+	bh=kqCqFpN9v1FXTe8H78fB6N26x+fwYBvAdWQ5hsLRXio=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NnYdG6EAChlKxQGYoAI+GvXmv0AcqpWkptO8o59tb/jrylTIOV+ElCxFuZgl0tpDS3jiSvYYmyGfqQra/S1VGyETDaSAvlFqvejl1Irh8fruui1fVv6Po6YDKTvuluCxq+9mkTMlAjZw4xe8jDGcMzb5okNmav0cJ2/iNvZLyIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=zCS3VJGy; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 4C7861FA9A;
+	Tue, 24 Sep 2024 13:30:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1727177458;
+	bh=X3I5T6N+k8mSALDhWBHQ9Qrvz6O/s/wkn4hZqV7Itoo=; h=From:To:Subject;
+	b=zCS3VJGyFfy7X4BGsCNd4Xr9M+LrXKbduGCMSfjH+Oxr51KR6VVx9CGmx3oUot74X
+	 RnnboGxF6a0ZfbyonF9ZQYN0jOgTfu+cvcyONG3tC4aImR94/dGcBbBzC4ni3b5zdV
+	 3rwA5lkXskrJE2US+Nj8ee3TqYYej8GwZXz8fS57qCIRch97tVIbDbhaGax/JNI4Gh
+	 0iUQBCMKKicy9ixmE08z1qiZxw8x8XV1tyfvFtRIEoN6vua/EROExU4xWcQDEHCtDF
+	 P7JZfV+o8ZPkWjhFuDiLgG4yUaVfG4vfzp0fz5kj3HvaJDqaPcNEConIDUvjimV8Fa
+	 +WqakWiD0IjFg==
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: =?UTF-8?q?Jo=C3=A3o=20Paulo=20Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Francesco Dolcini <francesco.dolcini@toradex.com>
+Subject: [PATCH v1 2/3] arm64: dts: freescale: imx8mm-verdin: add label to som adc node
+Date: Tue, 24 Sep 2024 13:30:47 +0200
+Message-Id: <20240924113048.125761-3-francesco@dolcini.it>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20240924113048.125761-1-francesco@dolcini.it>
+References: <20240924113048.125761-1-francesco@dolcini.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240924-preemption-a750-t-v5-11-0be2bf81c187@gmail.com>
-References: <20240924-preemption-a750-t-v5-0-0be2bf81c187@gmail.com>
-In-Reply-To: <20240924-preemption-a750-t-v5-0-0be2bf81c187@gmail.com>
-To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Jonathan Corbet <corbet@lwn.net>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-doc@vger.kernel.org, Antonino Maniscalco <antomani103@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1727177437; l=5024;
- i=antomani103@gmail.com; s=20240815; h=from:subject:message-id;
- bh=8km0caqw4X9w5WLWDqoPcdYkk+OV9Jah8JF02dHf5Ug=;
- b=gOQrYcb2klrgrDfkFVbEmFs8BClJ+yPGIugEYSqY3lJhHXAp6QKTwhZG0gjLyMoQeJgXt9LVi
- Hoy6fOd8W/TCz3TUEAyUTaLkat/5VqrFViffv0OG34XZDGQQcnYDo4l
-X-Developer-Key: i=antomani103@gmail.com; a=ed25519;
- pk=0zicFb38tVla+iHRo4kWpOMsmtUrpGBEa7LkFF81lyY=
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Add documentation about the preemption feature supported by the msm
-driver.
+From: João Paulo Gonçalves <joao.goncalves@toradex.com>
 
-Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
+Add a label to ti-ads1015 node to make it easier to reference it
+from other nodes.
+
+Signed-off-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
+Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
 ---
- Documentation/gpu/msm-preemption.rst | 99 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 99 insertions(+)
+ arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/gpu/msm-preemption.rst b/Documentation/gpu/msm-preemption.rst
-new file mode 100644
-index 0000000000000000000000000000000000000000..e9b5d7bc7dc6c7740a0e8ba75d3a74e9ad267b90
---- /dev/null
-+++ b/Documentation/gpu/msm-preemption.rst
-@@ -0,0 +1,99 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+:orphan:
-+
-+=============
-+MSM Preemtion
-+=============
-+
-+Preemption allows Adreno GPUs to switch to an higher priority ring when work is
-+pushed to it, reducing latency for high priority submissions.
-+
-+When preemption is enabled 4 rings are initialized, corresponding to different
-+priority levels. Having multiple rings is purely a software concept as the GPU
-+only has registers to keep track of one graphics ring.
-+The kernel is able to switch which ring is currently being processed by
-+requesting preemption. When certain conditions are met, depending on the
-+priority level, the GPU will save its current state in a series of buffers,
-+then restores state from a similar set of buffers specified by the kernel. It
-+then resumes execution and fires an IRQ to let the kernel know the context
-+switch has completed.
-+
-+This mechanism can be used by the kernel to switch between rings. Whenever a
-+submission occurs the kernel finds the highest priority ring which isn't empty
-+and preempts to it if said ring is not the one being currently executed. This is
-+also done whenever a submission completes to make sure execution resumes on a
-+lower priority ring when a higher priority ring is done.
-+
-+Preemption levels
-+-----------------
-+
-+Preemption can only occur at certain boundaries. The exact conditions can be
-+configured by changing the preemption level, this allows to compromise between
-+latency (ie. the time that passes between when the kernel requests preemption
-+and when the SQE begins saving state) and overhead (the amount of state that
-+needs to be saved).
-+
-+The GPU offers 3 levels:
-+
-+Level 0
-+  Preemption only occurs at the submission level. This requires the least amount
-+  of state to be saved as the execution of userspace submitted IBs is never
-+  interrupted, however it offers very little benefit compared to not enabling
-+  preemption of any kind.
-+
-+Level 1
-+  Preemption occurs at either bin level, if using GMEM rendering, or draw level
-+  in the sysmem rendering case.
-+
-+Level 2
-+  Preemption occurs at draw level.
-+
-+Level 1 is the mode that is used by the msm driver.
-+
-+Additionally the GPU allows to specify a `skip_save_restore` option. This
-+disables the saving and restoring of all registers except those relating to the
-+operation of the SQE itself, reducing overhead. Saving and restoring is only
-+skipped when using GMEM with Level 1 preemption. When enabling this userspace is
-+expected to set the state that isn't preserved whenever preemption occurs which
-+is done by specifying preamble and postambles. Those are IBs that are executed
-+before and after preemption.
-+
-+Preemption buffers
-+------------------
-+
-+A series of buffers are necessary to store the state of rings while they are not
-+being executed. There are different kinds of preemption records and most of
-+those require one buffer per ring. This is because preemption never occurs
-+between submissions on the same ring, which always run in sequence when the ring
-+is active. This means that only one context per ring is effectively active.
-+
-+SMMU_INFO
-+  This buffer contains info about the current SMMU configuration such as the
-+  ttbr0 register. The SQE firmware isn't actually able to save this record.
-+  As a result SMMU info must be saved manually from the CP to a buffer and the
-+  SMMU record updated with info from said buffer before triggering
-+  preemption.
-+
-+NON_SECURE
-+  This is the main preemption record where most state is saved. It is mostly
-+  opaque to the kernel except for the first few words that must be initialized
-+  by the kernel.
-+
-+SECURE
-+  This saves state related to the GPU's secure mode.
-+
-+NON_PRIV
-+  The intended purpose of this record is unknown. The SQE firmware actually
-+  ignores it and therefore msm doesn't handle it.
-+
-+COUNTER
-+  This record is used to save and restore performance counters.
-+
-+Handling the permissions of those buffers is critical for security. All but the
-+NON_PRIV records need to be inaccessible from userspace, so they must be mapped
-+in the kernel address space with the MSM_BO_MAP_PRIV flag.
-+For example, making the NON_SECURE record accessible from userspace would allow
-+any process to manipulate a saved ring's RPTR which can be used to skip the
-+execution of some packets in a ring and execute user commands with higher
-+privileges.
-
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi b/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
+index 5fa395914191..c20c2da17524 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
+@@ -483,11 +483,12 @@ rtc_i2c: rtc@32 {
+ 		reg = <0x32>;
+ 	};
+ 
+-	adc@49 {
++	verdin_som_adc: adc@49 {
+ 		compatible = "ti,ads1015";
+ 		reg = <0x49>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
++		#io-channel-cells = <1>;
+ 
+ 		/* Verdin I2C_1 (ADC_4 - ADC_3) */
+ 		channel@0 {
 -- 
-2.46.1
+2.39.5
 
 
