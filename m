@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-336758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7E9298406C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:25:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52AA798406E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:25:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D0B41F24499
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:25:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 683931C20AE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC54B14E2CC;
-	Tue, 24 Sep 2024 08:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27A414B084;
+	Tue, 24 Sep 2024 08:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oAjlgUP/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QFQ2touq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4531314AD02;
-	Tue, 24 Sep 2024 08:25:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E401487FE;
+	Tue, 24 Sep 2024 08:25:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727166330; cv=none; b=NFiuT5CDK8H+AWOcuFFCssLurjFMiD1/TxVvqN0FFrY/IMcHeA/ChCwdVx7vyySXlO9rSmUclFrjBjhStV4BviPkSfxYWx1h30FZ+oqbsIr4++zaUZ7ywLUTWzVz4W//C1/gwWYsFmDzY4xhSrs6iXszcshZlipN8rl+dYrD7Vo=
+	t=1727166347; cv=none; b=CevVz4i3HapHZpnWE7Z/3Ql35eeXH/AuHTBm69jzKMZM7yuVkKBwYY0Iw7kH1dQhnAdisJpamfxeIrA7JZOYMrQUSFP8bIQFoABAjp6h3bcvUjrrQy5MhbGZfpuMpjtN1koCslr0Vr+VlDiMQBKnClYRikfO8c0CxsHziwAKW8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727166330; c=relaxed/simple;
-	bh=/gYlrcDZdMKSsmLO9X92V4sEhv3bi4liYec0hiD2jos=;
+	s=arc-20240116; t=1727166347; c=relaxed/simple;
+	bh=5mGOZpNJ/bja2+6hNkRNk7XOc/UJU79VQE5FqAWjMpE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aYcylsCyZnGmCQb3zhAq4n/a1xbkGna4B1N88PikAZ4RDUSa0tWNjwxnkxxVlApb13PRELJg7WfNk7OQHjlqb2bAopkKY3g7hLpXI0V/WjP2zOmwl+efVgAD2VwLUEurTKhF2qI/6Bxg0e28aSbVR3M8LcMBWH2ENW6gfaWnYfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oAjlgUP/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C32ADC4CEC4;
-	Tue, 24 Sep 2024 08:25:21 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=NFZKauGHnXsVsGchv5ynmD4tnbCGTLRXAq2EpPbBlHm2PkAtZYP9NetgGh1lemh9lzVAmjLStFctc2kYLS0W18S6uJxFF3L9lk9Dgaxw35CyizxeiV+bZN9c3mFCy57t9+qZycP0Nu9jrPKzV0KhZZev0qXgcuBZM4jgcSe3gjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QFQ2touq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDFEAC4CEC4;
+	Tue, 24 Sep 2024 08:25:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727166329;
-	bh=/gYlrcDZdMKSsmLO9X92V4sEhv3bi4liYec0hiD2jos=;
+	s=k20201202; t=1727166346;
+	bh=5mGOZpNJ/bja2+6hNkRNk7XOc/UJU79VQE5FqAWjMpE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oAjlgUP/Sz9sssdhTF2qPPhG2CrmenC7fq/enAgvjwybiLh04bthenLHkcKUVTuG6
-	 TaNMMtuwc/vaYcJV9K8aI86GPD3Jnn673xv30ygQb1VRf87e/+g4LrjMIRQXZ7/5g0
-	 KkqBiQvaKO/RFh5HcT2c98Lu7yMzhc9iFQngG+zBlp4jU2WrWZhS771XDApyRbQsPT
-	 zN7L2xYNgGh8XZhLptilFVlkNuSSCjC37HiDwgJ2BDjbje5Sdc1bl6Dkwi1BFY73i+
-	 fnc457PEx8NYUvE9P47u+nF5ey4a3bC0eY7LMLF1JMgeYvwaAfS1k/IEmHvu1/UYg7
-	 A3guuyHDp2epw==
-Message-ID: <5dfa7fb9-5b0e-424e-bf53-74a9eaa25bb1@kernel.org>
-Date: Tue, 24 Sep 2024 10:25:18 +0200
+	b=QFQ2touqFzoAFNreTFb2wOIJ9wn5D+52ggin1bwgCXbf4sBdNykCxdO0NJqDZWQIa
+	 zzOhAE4QO6Cq54vhkr0AVYoCqUc/ixVpwXindX4qmlvmGvtSvPVGiudm6hVl9j1lHx
+	 MoVmx6Idb8RAfAIouWF34Bo6RgNWFt7UyRVMWsvM6or2QHmFTRbEqPPyQWMyPah9n7
+	 cIVC+4bU8nF7Wmyo7oh4KwiysVDeSL7aXXLK8vBpUSVci6vmAsEZM3o7KuQKNhvshx
+	 J771plFpHucFeaST0MGzGYoM7PzS47XJV2VedmFig+G5c2CPSWGJGH35uiQpWOLujg
+	 wUTgNuBVq3QqQ==
+Message-ID: <0b723c28-4a77-4a6c-b733-47de5ae91960@kernel.org>
+Date: Tue, 24 Sep 2024 10:25:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [patch v2 2/3] dt-bindings: riscv: starfive: add
- deepcomputing,fm7110
+Subject: Re: [patch v2 1/3] dt-bindings: vendor: add deepcomputing
 To: Sandie Cao <sandie.cao@deepcomputing.io>, Conor Dooley <conor@kernel.org>
 Cc: Emil Renner Berthing <kernel@esmil.dk>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -64,7 +63,7 @@ Cc: Emil Renner Berthing <kernel@esmil.dk>, Rob Herring <robh@kernel.org>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dhs@frame.work,
  ams@frame.work, gregkh@linuxfoundation.org, yuning.liang@deepcomputing.io,
  huiming.qiu@deepcomputing.io
-References: <20240924080650.1345485-3-sandie.cao@deepcomputing.io>
+References: <20240924080650.1345485-2-sandie.cao@deepcomputing.io>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -110,16 +109,37 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240924080650.1345485-3-sandie.cao@deepcomputing.io>
+In-Reply-To: <20240924080650.1345485-2-sandie.cao@deepcomputing.io>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 24/09/2024 10:06, Sandie Cao wrote:
-> Add deepcomputing,fm7110 into compatible list.
-
-This we see from the diff. And commit subject. Describe here the hardware.
+> Add deepcomputing into vendor list.
 > 
 > Signed-off-by: Sandie Cao <sandie.cao@deepcomputing.io>
+
+
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+
+---
+
+<form letter>
+This is an automated instruction, just in case, because many review tags
+are being ignored. If you know the process, you can skip it (please do
+not feel offended by me posting it here - no bad intentions intended).
+If you do not know the process, here is a short explanation:
+
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tag is "received", when
+provided in a message replied to you on the mailing list. Tools like b4
+can help here. However, there's no need to repost patches *only* to add
+the tags. The upstream maintainer will do that for tags received on the
+version they apply.
+
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+</form letter>
+
 
 Best regards,
 Krzysztof
