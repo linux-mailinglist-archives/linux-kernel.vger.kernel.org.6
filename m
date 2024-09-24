@@ -1,84 +1,77 @@
-Return-Path: <linux-kernel+bounces-336961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AB0B984347
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:15:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69C6598436A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:18:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32B4F1C20B54
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:15:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99DBD1C20932
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:18:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0D2F17ADFA;
-	Tue, 24 Sep 2024 10:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9505B17BB3A;
+	Tue, 24 Sep 2024 10:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EwQMXeO7"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="OWY9avjv"
+Received: from esa11.hc1455-7.c3s2.iphmx.com (esa11.hc1455-7.c3s2.iphmx.com [207.54.90.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0A31714D9;
-	Tue, 24 Sep 2024 10:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F8C170A3D
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 10:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.54.90.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727172901; cv=none; b=k5P6br6cf41jiRED14FdKqcjnC6K+dqbZprUDOt2XOCMIskABUJdBjrx0n2OYTh/15Y9oq1hPBv0hufFTZt3T2i+ioYCI8/b1BSsbpcS+jh95bSUwdtGd6byzRE6A2f5sK6enncCwezfFPJ5Wp6pimu1/YNvHUM3fLA9CtpExgU=
+	t=1727173037; cv=none; b=g7Nr1bEPlOWO/3x5Wvu/hxopWcoSEOz3PCQ68lxhI44fsTcDDz6SbeDRkNR/bwnzlNnTRf4OlAbC/HmJs0YE4EhePXWjAnCPy7uvoVTAtTrPzUDnS1OShyw1dX9eXjWXegEHap/nOrs5r4yRqPnhBYt75dz5a9pZqiVRh6y+lsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727172901; c=relaxed/simple;
-	bh=tSc/5jKYwHOo80LzJTmceHoRtIhcvCiHgAqHKczEVyI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sELXAxgNNmaYeBk4UhvXdnzwN5i4jxz142VIqZkParyYDweav69wsUz5rwLFEe9xDimEdakV39LNglD9CDfDehYiUPTkyIA8k8zw6Val7iVRSUrJT+neBRieHN3yVfFjDLafdhWOUP5sWdLtWS913UwFCCbQwiGpIup+1InKd4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EwQMXeO7; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48O6jNfX004886;
-	Tue, 24 Sep 2024 10:14:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=HI9fqOFrJ8d
-	NwCtjPwqcyklQ/dgCKqxAQalyfBfSw6g=; b=EwQMXeO7ykuL5JgghSrgKCjYpkW
-	i75m8/UaPgzh1bS2FuQHR1eopzTiCv7Y59oK/co6IXaJY7FYVRoU9vYAkzmhaa0U
-	UB4sVKYtr+eQde16BjqwyNTVa+rNZr0bRhxfBd5emC2iG7/LwXZZyJnSUohvTQEj
-	gCnTxnzeX4NURdJukNt0dZ75slVBaQB540YWvJPpQtFAvLo07nxhAt90cinSWaY1
-	s2khG4jSA0AOqCy+iA2cLf/Q/V2eiFN3FE8zIbZDL6wbakbWCzKhJrvlpvKat6yQ
-	t5z8+dI4gO6CKtGiEL8s7b8QjTY9d03Ezbb4I2hCOD0aAJ8Ej+AJ27TffTQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sqe97xr5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Sep 2024 10:14:52 +0000 (GMT)
-Received: from pps.filterd (NALASPPMTA04.qualcomm.com [127.0.0.1])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 48OAEBNj005190;
-	Tue, 24 Sep 2024 10:14:52 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by NALASPPMTA04.qualcomm.com (PPS) with ESMTPS id 41urt1hx6b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Sep 2024 10:14:52 +0000
-Received: from NALASPPMTA04.qualcomm.com (NALASPPMTA04.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 48OAEAlY005169;
-	Tue, 24 Sep 2024 10:14:51 GMT
-Received: from hu-devc-lv-u22-c.qualcomm.com (hu-qianyu-lv.qualcomm.com [10.81.25.114])
-	by NALASPPMTA04.qualcomm.com (PPS) with ESMTPS id 48OAEpLq005513
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Sep 2024 10:14:51 +0000
-Received: by hu-devc-lv-u22-c.qualcomm.com (Postfix, from userid 4098150)
-	id B9A4865F; Tue, 24 Sep 2024 03:14:51 -0700 (PDT)
-From: Qiang Yu <quic_qianyu@quicinc.com>
-To: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org,
-        robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, abel.vesa@linaro.org, quic_msarkar@quicinc.com,
-        quic_devipriy@quicinc.com
-Cc: dmitry.baryshkov@linaro.org, kw@linux.com, lpieralisi@kernel.org,
-        neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, Qiang Yu <quic_qianyu@quicinc.com>
-Subject: [PATCH v4 6/6] arm64: dts: qcom: x1e80100: Add support for PCIe3 on x1e80100
-Date: Tue, 24 Sep 2024 03:14:44 -0700
-Message-Id: <20240924101444.3933828-7-quic_qianyu@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240924101444.3933828-1-quic_qianyu@quicinc.com>
-References: <20240924101444.3933828-1-quic_qianyu@quicinc.com>
+	s=arc-20240116; t=1727173037; c=relaxed/simple;
+	bh=NrioGdwCtDf6v9Dyob9Lgl6+b8tepoKpj4yVA6ow5xs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=J67nHwBqNQ6CoBrGNUM0I9/gzZhzY6MiW9WjKUjDEog3D6UdGC7xLhOpIopzIg29IhuaMjT693MGMOad+qqSc7YujyKq0vO/ygpIWECZuQ0Pj8SXa886DPYNG/Mpj5zs4iYrtHXyaoCOgoPvI3L9+kfLg+FXqHEMsQAk/sZRV4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=OWY9avjv; arc=none smtp.client-ip=207.54.90.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
+  t=1727173034; x=1758709034;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=NrioGdwCtDf6v9Dyob9Lgl6+b8tepoKpj4yVA6ow5xs=;
+  b=OWY9avjvs9X/lraSu7Yik9PKQuwdr7UfeUu2gWkil80DmRubh0Bz5yA4
+   WA3RyGASN1zIxvHWLdVi/Ydwt90pn0Rg6FpI1GDuljcwd0IFUJkSU5774
+   hNNkvhodPx/PDM+RbXeahSKj5RCw0Kl1pufNMhaAq9x8xB+uyHjCapJ7M
+   nGZVHYKHMQFL5tsiYi6yVY0hAknYE29ftX68c5YhjuT5PxbqxDFB+4nqG
+   eWcQSYi3ZBc0P67F2VDymFxLrfWOQ+Nbjn5WJvJdxLjE11d/rwHEOnjo0
+   cL5sXQinIbo1crFJ3mMCz2XOYfbdM6+2wbiIUB2IJs9z79+Rr3wM866T9
+   w==;
+X-CSE-ConnectionGUID: dPbHytZdRYy6Mof1nehtwQ==
+X-CSE-MsgGUID: ZjOjiBRxRtKx024mY794gQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="154039039"
+X-IronPort-AV: E=Sophos;i="6.10,254,1719846000"; 
+   d="scan'208";a="154039039"
+Received: from unknown (HELO oym-r1.gw.nic.fujitsu.com) ([210.162.30.89])
+  by esa11.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 19:16:02 +0900
+Received: from oym-m2.gw.nic.fujitsu.com (oym-nat-oym-m2.gw.nic.fujitsu.com [192.168.87.59])
+	by oym-r1.gw.nic.fujitsu.com (Postfix) with ESMTP id 30724CC145
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 19:16:00 +0900 (JST)
+Received: from kws-ab3.gw.nic.fujitsu.com (kws-ab3.gw.nic.fujitsu.com [192.51.206.21])
+	by oym-m2.gw.nic.fujitsu.com (Postfix) with ESMTP id 7CB02BF3C8
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 19:15:59 +0900 (JST)
+Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
+	by kws-ab3.gw.nic.fujitsu.com (Postfix) with ESMTP id 0C97B20081301
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 19:15:59 +0900 (JST)
+Received: from localhost.localdomain (unknown [10.167.135.44])
+	by edo.cn.fujitsu.com (Postfix) with ESMTP id 1EDF81A000B;
+	Tue, 24 Sep 2024 18:15:58 +0800 (CST)
+From: Li Zhijian <lizhijian@fujitsu.com>
+To: linux-mm@kvack.org
+Cc: David Hildenbrand <david@redhat.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org,
+	Li Zhijian <lizhijian@fujitsu.com>
+Subject: [PATCH] mm/memory_hotplug: Print the correct pfn in do_migrate_range()
+Date: Tue, 24 Sep 2024 18:15:54 +0800
+Message-Id: <20240924101555.327091-1-lizhijian@fujitsu.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,253 +79,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: JRJUx05yqHcMIABHa1rXoORBa6YFxc0K
-X-Proofpoint-GUID: JRJUx05yqHcMIABHa1rXoORBa6YFxc0K
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=999 spamscore=0 lowpriorityscore=0 adultscore=0 mlxscore=0
- suspectscore=0 malwarescore=0 phishscore=0 impostorscore=0 clxscore=1015
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409240071
+X-TM-AS-GCONF: 00
+X-TM-AS-Product-Ver: IMSS-9.1.0.1417-9.0.0.1002-28684.007
+X-TM-AS-User-Approved-Sender: Yes
+X-TMASE-Version: IMSS-9.1.0.1417-9.0.1002-28684.007
+X-TMASE-Result: 10--0.154800-10.000000
+X-TMASE-MatchedRID: Se4t54mhS/0bO59FK9BdmLrbxxduc6FPTfK5j0EZbytaer+1iaJkEL8F
+	Hrw7frluf146W0iUu2uN6fDbnTu0nx8TzIzimOwPlpYqKNmWxsHZs3HUcS/scCq2rl3dzGQ1z31
+	4VDF21MZTpjF0LDVmji87Lr8mlOQu3wv5/qh65H4GsUZRlmOtWBm3sy14XQEUEjPZKdhSZs8mt4
+	OYpJRnCTbenjOGpCfJUR9ws8a0/88VxRB/din+uJ07T8ZSLiAVvR84/OmB1wQp4n8eQBnwiw==
+X-TMASE-SNAP-Result: 1.821001.0001-0-1-22:0,33:0,34:0-0
 
-Describe PCIe3 controller and PHY. Also add required system resources like
-regulators, clocks, interrupts and registers configuration for PCIe3.
+The pfn value needs to be retrieved correctly when PageTransHuge(page)
+is true. Fix it by replacing the usage of 'pfn' with 'page_to_pfn(page)'
+to ensure the correct pfn is printed in warning messages when isolation
+fails.
 
-Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
 ---
- arch/arm64/boot/dts/qcom/x1e80100.dtsi | 204 ++++++++++++++++++++++++-
- 1 file changed, 203 insertions(+), 1 deletion(-)
+ mm/memory_hotplug.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-index a36076e3c56b..c615c930cf0c 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-@@ -744,7 +744,7 @@ gcc: clock-controller@100000 {
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 26790c8d5b43..000430406a9e 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1829,7 +1829,7 @@ static void do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
  
- 			clocks = <&bi_tcxo_div2>,
- 				 <&sleep_clk>,
--				 <0>,
-+				 <&pcie3_phy>,
- 				 <&pcie4_phy>,
- 				 <&pcie5_phy>,
- 				 <&pcie6a_phy>,
-@@ -2907,6 +2907,208 @@ mmss_noc: interconnect@1780000 {
- 			#interconnect-cells = <2>;
- 		};
- 
-+		pcie3: pcie@1bd0000 {
-+			device_type = "pci";
-+			compatible = "qcom,pcie-x1e80100";
-+			reg = <0x0 0x01bd0000 0x0 0x3000>,
-+			      <0x0 0x78000000 0x0 0xf1d>,
-+			      <0x0 0x78000f40 0x0 0xa8>,
-+			      <0x0 0x78001000 0x0 0x1000>,
-+			      <0x0 0x78100000 0x0 0x100000>,
-+			      <0x0 0x01bd3000 0x0 0x1000>;
-+			reg-names = "parf",
-+				    "dbi",
-+				    "elbi",
-+				    "atu",
-+				    "config",
-+				    "mhi";
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			ranges = <0x01000000 0x0 0x00000000 0x0 0x78200000 0x0 0x100000>,
-+				 <0x02000000 0x0 0x78300000 0x0 0x78300000 0x0 0x3d00000>,
-+				 <0x03000000 0x7 0x40000000 0x7 0x40000000 0x0 0x40000000>;
-+			bus-range = <0x00 0xff>;
-+
-+			dma-coherent;
-+
-+			linux,pci-domain = <3>;
-+			num-lanes = <8>;
-+
-+			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 769 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 836 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 671 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "msi0",
-+					  "msi1",
-+					  "msi2",
-+					  "msi3",
-+					  "msi4",
-+					  "msi5",
-+					  "msi6",
-+					  "msi7",
-+					  "global";
-+
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 0x7>;
-+			interrupt-map = <0 0 0 1 &intc 0 0 GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 2 &intc 0 0 GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 3 &intc 0 0 GIC_SPI 237 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 4 &intc 0 0 GIC_SPI 238 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			clocks = <&gcc GCC_PCIE_3_AUX_CLK>,
-+				 <&gcc GCC_PCIE_3_CFG_AHB_CLK>,
-+				 <&gcc GCC_PCIE_3_MSTR_AXI_CLK>,
-+				 <&gcc GCC_PCIE_3_SLV_AXI_CLK>,
-+				 <&gcc GCC_PCIE_3_SLV_Q2A_AXI_CLK>,
-+				 <&gcc GCC_CFG_NOC_PCIE_ANOC_NORTH_AHB_CLK>,
-+				 <&gcc GCC_CNOC_PCIE_NORTH_SF_AXI_CLK>;
-+			clock-names = "aux",
-+				      "cfg",
-+				      "bus_master",
-+				      "bus_slave",
-+				      "slave_q2a",
-+				      "noc_aggr",
-+				      "cnoc_sf_axi";
-+
-+			assigned-clocks = <&gcc GCC_PCIE_3_AUX_CLK>;
-+			assigned-clock-rates = <19200000>;
-+
-+			interconnects = <&pcie_south_anoc MASTER_PCIE_3 QCOM_ICC_TAG_ALWAYS
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-+					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-+					 &cnoc_main SLAVE_PCIE_3 QCOM_ICC_TAG_ALWAYS>;
-+			interconnect-names = "pcie-mem",
-+					     "cpu-pcie";
-+
-+			resets = <&gcc GCC_PCIE_3_BCR>,
-+				 <&gcc GCC_PCIE_3_LINK_DOWN_BCR>;
-+			reset-names = "pci",
-+				      "link_down";
-+
-+			power-domains = <&gcc GCC_PCIE_3_GDSC>;
-+
-+			phys = <&pcie3_phy>;
-+			phy-names = "pciephy";
-+
-+			operating-points-v2 = <&pcie3_opp_table>;
-+
-+			status = "disabled";
-+
-+			pcie3_opp_table: opp-table {
-+				compatible = "operating-points-v2";
-+
-+				/* GEN 1 x1 */
-+				opp-2500000 {
-+					opp-hz = /bits/ 64 <2500000>;
-+					required-opps = <&rpmhpd_opp_low_svs>;
-+					opp-peak-kBps = <250000 1>;
-+				};
-+
-+				/* GEN 1 x2 and GEN 2 x1 */
-+				opp-5000000 {
-+					opp-hz = /bits/ 64 <5000000>;
-+					required-opps = <&rpmhpd_opp_low_svs>;
-+					opp-peak-kBps = <500000 1>;
-+				};
-+
-+				/* GEN 1 x4 and GEN 2 x2 */
-+				opp-10000000 {
-+					opp-hz = /bits/ 64 <10000000>;
-+					required-opps = <&rpmhpd_opp_low_svs>;
-+					opp-peak-kBps = <1000000 1>;
-+				};
-+
-+				/* GEN 1 x8 and GEN 2 x4 */
-+				opp-20000000 {
-+					opp-hz = /bits/ 64 <20000000>;
-+					required-opps = <&rpmhpd_opp_low_svs>;
-+					opp-peak-kBps = <2000000 1>;
-+				};
-+
-+				/* GEN 2 x8 */
-+				opp-40000000 {
-+					opp-hz = /bits/ 64 <40000000>;
-+					required-opps = <&rpmhpd_opp_low_svs>;
-+					opp-peak-kBps = <4000000 1>;
-+				};
-+
-+				/* GEN 3 x1 */
-+				opp-8000000 {
-+					opp-hz = /bits/ 64 <8000000>;
-+					required-opps = <&rpmhpd_opp_svs>;
-+					opp-peak-kBps = <984500 1>;
-+				};
-+
-+				/* GEN 3 x2 and GEN 4 x1 */
-+				opp-16000000 {
-+					opp-hz = /bits/ 64 <16000000>;
-+					required-opps = <&rpmhpd_opp_svs>;
-+					opp-peak-kBps = <1969000 1>;
-+				};
-+
-+				/* GEN 3 x4 and GEN 4 x2 */
-+				opp-32000000 {
-+					opp-hz = /bits/ 64 <32000000>;
-+					required-opps = <&rpmhpd_opp_svs>;
-+					opp-peak-kBps = <3938000 1>;
-+				};
-+
-+				/* GEN 3 x8 and GEN 4 x4 */
-+				opp-64000000 {
-+					opp-hz = /bits/ 64 <64000000>;
-+					required-opps = <&rpmhpd_opp_svs>;
-+					opp-peak-kBps = <7876000 1>;
-+				};
-+
-+				/* GEN 4 x8 */
-+				opp-128000000 {
-+					opp-hz = /bits/ 64 <128000000>;
-+					required-opps = <&rpmhpd_opp_svs>;
-+					opp-peak-kBps = <15753000 1>;
-+				};
-+			};
-+		};
-+
-+		pcie3_phy: phy@1be0000 {
-+			compatible = "qcom,x1e80100-qmp-gen4x8-pcie-phy";
-+			reg = <0 0x01be0000 0 0x10000>;
-+
-+			clocks = <&gcc GCC_PCIE_3_PHY_AUX_CLK>,
-+				 <&gcc GCC_PCIE_3_CFG_AHB_CLK>,
-+				 <&tcsr TCSR_PCIE_8L_CLKREF_EN>,
-+				 <&gcc GCC_PCIE_3_PHY_RCHNG_CLK>,
-+				 <&gcc GCC_PCIE_3_PIPE_CLK>,
-+				 <&gcc GCC_PCIE_3_PIPEDIV2_CLK>;
-+			clock-names = "aux",
-+				      "cfg_ahb",
-+				      "ref",
-+				      "rchng",
-+				      "pipe",
-+				      "pipediv2";
-+
-+			resets = <&gcc GCC_PCIE_3_PHY_BCR>,
-+				 <&gcc GCC_PCIE_3_NOCSR_COM_PHY_BCR>;
-+			reset-names = "phy",
-+				      "phy_nocsr";
-+
-+			assigned-clocks = <&gcc GCC_PCIE_3_PHY_RCHNG_CLK>;
-+			assigned-clock-rates = <100000000>;
-+
-+			power-domains = <&gcc GCC_PCIE_3_PHY_GDSC>;
-+
-+			#clock-cells = <0>;
-+			clock-output-names = "pcie3_pipe_clk";
-+
-+			#phy-cells = <0>;
-+
-+			status = "disabled";
-+		};
-+
- 		pcie6a: pci@1bf8000 {
- 			device_type = "pci";
- 			compatible = "qcom,pcie-x1e80100";
+ 		} else {
+ 			if (__ratelimit(&migrate_rs)) {
+-				pr_warn("failed to isolate pfn %lx\n", pfn);
++				pr_warn("failed to isolate pfn %lx\n", page_to_pfn(page));
+ 				dump_page(page, "isolation failed");
+ 			}
+ 		}
 -- 
-2.34.1
+2.29.2
 
 
