@@ -1,129 +1,99 @@
-Return-Path: <linux-kernel+bounces-336464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5A60983B31
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 04:26:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 990EA983B33
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 04:26:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71E18282FDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 02:26:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EDF628313B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 02:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2CFFDDCD;
-	Tue, 24 Sep 2024 02:26:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E0218D;
+	Tue, 24 Sep 2024 02:26:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="I6FlfQQJ"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rZfh1b+E"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57DDD1B85DF;
-	Tue, 24 Sep 2024 02:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8701311CAF;
+	Tue, 24 Sep 2024 02:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727144781; cv=none; b=IvjaCe7Py2J+tGYd2JI4a0vhbDyVZnBCi8El5viGBJZw+vLjeHtU46tDU1T7vH1Jhcd54z9w4wTPPwRY00WRHKt+wI+ehNX83V+1eyUUBDzLrQwUwzASJmd/597e59x/BCJhWVDYOxBYdFF9E+9KS530xeVCdNnVOwOK9jTSLAs=
+	t=1727144786; cv=none; b=au+V/fqpJeHqguIIH28vBHgiVIq95bv1AAb/iLPejxbHG/EH4z2mO6eM95O1tyhSBT3ADP3vj25H6Y2ryPtCfLg0zsOjMK67OQJ/MGWxiIek4tBevDdU4VsKnPOn+Te14j8exr2ZSawU2yrqzysQopFCn70b41zUNjD5+LMxMH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727144781; c=relaxed/simple;
-	bh=bVBlh+fY6Ig9uXlKnweewNbRdJcBCdmmmBM3MYgyfkc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tu2G+lTjLbRYbwhvjuOteiATHcN/c5uOhbuptd0NK15QGoRzDB0bAz08Xk+RtvBfTSIWO8t3du4YIf0i7smJ7W6jda1whc1Oj9F6l2jd/c5TsC6ko1tTo4ZBYOYptEqY1H3TT7PFlObek8j2t6ROjXuSNJp1m0ZshejaCCQfu0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=I6FlfQQJ; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727144777;
-	bh=bVBlh+fY6Ig9uXlKnweewNbRdJcBCdmmmBM3MYgyfkc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=I6FlfQQJLJgS0B4GYHreTcgkphmT0mtS/izy2z6fKSS7SM/YLiUDuQFlVGy/mj+BV
-	 LAJ5Z6OzVK7XlKTu8ty7d5B8lKWjrOvTfhYxuS2lGgxDMgwRhHeUh7zm+vBW/smVbC
-	 Lh9cVPMXsPLsFyyrDTIyHDkgs2vabkhVEfSxOnu4vKWN/Wk5xbz+iG7hP43duNJhhq
-	 RDxF4v0iGL0s4K00QMKKfxunJksIA+2M8LnIE854C+pIIKC3EfPWYcizvciDBHaP69
-	 s0b33b7a0NOtNEuAz5lPT4Chepeo/Zztl/y2h8GLSNs+QJry4OgRR2BW0VhQ/VipCC
-	 MEAHSNEfkemDA==
-Received: from localhost.localdomain (unknown [171.76.80.125])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: vignesh)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1187A17E0EC1;
-	Tue, 24 Sep 2024 04:26:13 +0200 (CEST)
-From: Vignesh Raman <vignesh.raman@collabora.com>
-To: dri-devel@lists.freedesktop.org
-Cc: daniels@collabora.com,
-	helen.koike@collabora.com,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	robdclark@gmail.com,
-	guilherme.gallo@collabora.com,
-	sergi.blanch.torne@collabora.com,
-	deborah.brouwer@collabora.com,
-	dmitry.baryshkov@linaro.org,
-	mripard@kernel.org,
-	rodrigo.vivi@intel.com,
-	linux-mediatek@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	amd-gfx@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] docs/gpu: ci: update flake tests requirements
-Date: Tue, 24 Sep 2024 07:55:58 +0530
-Message-ID: <20240924022600.1441969-1-vignesh.raman@collabora.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1727144786; c=relaxed/simple;
+	bh=S2wndQObTp59VMkKCdY91fovzsanXHA44Yw9SIbI8Ho=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n59mFapb0SKfcoLqitvo6QJPAVzcv5ONHOO8R1bGm6m8M0aSH+Lf8WPzg5GXuptgTwbDu+RYArPTc6Yc71jlfkrfYg29rgVGlk0MSTKB39FrCRca8vQfBnTK77HcRPZxgDevVbaC2thOXKVDSsmicRwk48+RqUYj3Povq4YfNqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rZfh1b+E; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=ZDTM9dgz3joIOALKhYHslbayqUZJuS6PKZj5p9gHktU=; b=rZfh1b+E7V34Xo+laExYEWrKfh
+	kKwq0PjG6UHW8YGhbWgVBfkH38g5uUGy6SSiolrvneBDmK2THVCDutrGeGxNkC9JJGHiTnzsVwdoV
+	RSN/hyapHRfyu1Eigx1/0RQHmiSY0GFZxJbgWLinbKVKg2m6FGCixOeE+Q03o3wB+VEO5UpaNd3m2
+	ubctfg0hs651ObHGNqu8Q13JBE2fTpWd7MD5uFwUcqOPfX6UZF0lvQK2/oMC3KiASU61PBkuO1+YF
+	nGpD+i/VWerlXH2a/AxqF/Rp0DK6EbOuixfd6PvNVWPBObGi1gM1/TlHpXwLZQiAEBORrjCZ+32cZ
+	vy8OLjSA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1ssvFl-00000000BB7-3eH4;
+	Tue, 24 Sep 2024 02:26:13 +0000
+Date: Tue, 24 Sep 2024 03:26:13 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
+	wangkefeng.wang@huawei.com, ziy@nvidia.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	syzbot <syzkaller@googlegroups.com>
+Subject: Re: [PATCH] mm: migrate: fix data-race in migrate_folio_unmap()
+Message-ID: <ZvIjRZgyAGLmys7c@casper.infradead.org>
+References: <ZvHIK80Hxd6DK2jw@casper.infradead.org>
+ <B1FCFC88-1242-4472-BCED-71BA9530B639@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <B1FCFC88-1242-4472-BCED-71BA9530B639@gmail.com>
 
-Update the documentation to require linking to a relevant GitLab
-issue for each new flake entry instead of an email report. Added
-specific GitLab issue URLs for i915, xe and other drivers.
+On Tue, Sep 24, 2024 at 09:28:44AM +0900, Jeongjun Park wrote:
+> > Matthew Wilcox <willy@infradead.org> wrote:
+> > 
+> > ﻿On Mon, Sep 23, 2024 at 05:56:40PM +0200, David Hildenbrand wrote:
+> >>> On 22.09.24 17:17, Jeongjun Park wrote:
+> >>> I found a report from syzbot [1]
+> >>> 
+> >>> When __folio_test_movable() is called in migrate_folio_unmap() to read
+> >>> folio->mapping, a data race occurs because the folio is read without
+> >>> protecting it with folio_lock.
+> >>> 
+> >>> This can cause unintended behavior because folio->mapping is initialized
+> >>> to a NULL value. Therefore, I think it is appropriate to call
+> >>> __folio_test_movable() under the protection of folio_lock to prevent
+> >>> data-race.
+> >> 
+> >> We hold a folio reference, would we really see PAGE_MAPPING_MOVABLE flip?
+> >> Hmm
+> > 
+> > No; this shows a page cache folio getting truncated.  It's fine; really
+> > a false alarm from the tool.  I don't think the proposed patch
+> > introduces any problems, but it's all a bit meh.
+> > 
+> 
+> Well, I still don't understand why it's okay to read folio->mapping 
+> without folio_lock .
 
-Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
----
- Documentation/gpu/automated_testing.rst | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
-
-diff --git a/Documentation/gpu/automated_testing.rst b/Documentation/gpu/automated_testing.rst
-index 2d5a28866afe..f73b8939dc3a 100644
---- a/Documentation/gpu/automated_testing.rst
-+++ b/Documentation/gpu/automated_testing.rst
-@@ -67,20 +67,25 @@ Lists the tests that for a given driver on a specific hardware revision are
- known to behave unreliably. These tests won't cause a job to fail regardless of
- the result. They will still be run.
- 
--Each new flake entry must be associated with a link to the email reporting the
--bug to the author of the affected driver, the board name or Device Tree name of
--the board, the first kernel version affected, the IGT version used for tests,
--and an approximation of the failure rate.
-+Each new flake entry must include a link to the relevant GitLab issue, the board
-+name or Device Tree name, the first kernel version affected, the IGT version used
-+for tests and an approximation of the failure rate.
- 
- They should be provided under the following format::
- 
--  # Bug Report: $LORE_OR_PATCHWORK_URL
-+  # Bug Report: $GITLAB_ISSUE
-   # Board Name: broken-board.dtb
-   # Linux Version: 6.6-rc1
-   # IGT Version: 1.28-gd2af13d9f
-   # Failure Rate: 100
-   flaky-test
- 
-+The GitLab issue must include the logs and the pipeline link. Use the appropriate
-+link below to create an issue.
-+https://gitlab.freedesktop.org/drm/i915/kernel/-/issues/ for i915 drivers
-+https://gitlab.freedesktop.org/drm/xe/kernel/-/issues/ for xe drivers
-+https://gitlab.freedesktop.org/drm/misc/kernel/-/issues for other drivers
-+
- drivers/gpu/drm/ci/${DRIVER_NAME}-${HW_REVISION}-skips.txt
- -----------------------------------------------------------
- 
--- 
-2.43.0
+Because it can't be changed in a way which changes the value of
+__folio_test_movable().  We have a refcount on the folio at this point,
+so it can't be freed.  And __folio_set_movable() happens at allocation.
 
 
