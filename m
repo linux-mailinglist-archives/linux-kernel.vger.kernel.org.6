@@ -1,65 +1,228 @@
-Return-Path: <linux-kernel+bounces-336533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 891B3983C02
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 06:14:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 866B9983C08
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 06:18:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EF14284DD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 04:14:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9E881C223EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 04:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBCDD2F855;
-	Tue, 24 Sep 2024 04:14:47 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E5928F3;
-	Tue, 24 Sep 2024 04:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727151287; cv=none; b=fNLL5rBJKMCqDEMFpH/a4Tm5IKneMqYZoEBe+eyOcG5Bp96g7prFa1pXh1N9qyXcTg86AQT6UMB6dv8wbt7SN0oq0xeeBU6RjUyu0+vyBaGQDL0VBlHmJyXg9nssArBId7tNPQO4+zyp849DZUKFgKYtE8RNEFry9Nw/bb2OeC0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727151287; c=relaxed/simple;
-	bh=4wA7LJby5MMAlW2VOcDYEOB3y6sEwWK36cno40AV8Cw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ByObMBqPNnLSlX7lLAn7pa4j+79fpORjiQvCbZee/meLAdZ49+qzrWT/IeeooHcYQJycl95LxCnI+Zp3B33iDzI/QFvqMcZPBbPLECX4ZsH3dYv4BDZuP5nokAx5HmTDDyU2PrC1XYnTtdJN2JXrvMJJqQ4ID8Vrxz1d5uwKBrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 542D7DA7;
-	Mon, 23 Sep 2024 21:15:14 -0700 (PDT)
-Received: from [10.162.43.15] (e116581.arm.com [10.162.43.15])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 84A1E3F6A8;
-	Mon, 23 Sep 2024 21:14:42 -0700 (PDT)
-Message-ID: <240f982a-a119-4205-b724-605fd627cd03@arm.com>
-Date: Tue, 24 Sep 2024 09:44:35 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 416812F870;
+	Tue, 24 Sep 2024 04:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="cjdckGcn"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2046.outbound.protection.outlook.com [40.107.255.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969061B85F3;
+	Tue, 24 Sep 2024 04:18:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727151522; cv=fail; b=D0WFhgYz2tgO2s+25JLI401E4mooUrzwqfFC3yyy4RVNdnl04ggmqgexJAlk+s8qJcGAyNUetxSA3u8AGZ6CPXXzuMKAnqx8Qvzv5YkUAFRizhdE3NDP+cKah3szS6XDmcbu0fLFUZpb7+nzYcv+QznHfhCBypjUrOHN3qu8iTk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727151522; c=relaxed/simple;
+	bh=l2zntLg+PUJmVJ63whG+Kb6xbrxkBksWG/eac4rY4tg=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=r6nRudHtTEARote4hmXtNZmRpAvqb3rmjDE4/6LYOJfYN/cievZ9Y3NL7NYAMNfCxeFDVqjOkLx5Hb3DO5pq7JXZWRZxfYsHrrFMcliqCKmfr5ipr9Ke8yWjHgEbUcqY5iAdvNA9jPsYVM3a+IEXyhmon9GTrgCVQrdvDkK5TvY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=cjdckGcn; arc=fail smtp.client-ip=40.107.255.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WCP9Yut6zKsXulo4yJKHb1+JU71fJSralPky5a6EdhhnMcWVR6iJRWlZv9FtYSmR+1e0Hsaq9NUeUXzr0uaGOQV5NefBt8BMhG8IdisPjrseWSwjLWXQFCCGrC7dRWnPVqXlH+RkpelPRQ9JG5bj4WPxA2RGuHzw3RJDh+gE+C5UeUv3HYosQLfC5ft5LtY8roNIST+KhOLsj5oGjr9BElaL2s1YeziVcPIpHpjrC2e15P86bIQZ000Uo2G3XE8SRs2USJtn4vTdCXJq1cTkL5KhcDmT1P2RVRxFMHzxi1PxqI70IvW1FqsErProt7IkjL39jTJd/iLUOEvZZ6J0WA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VSPlbPlmmyRDuthkhQzvnNNo366mmvO9ugZaq9OtXnU=;
+ b=wbmtosMrycYo3Le252ZxesCvZ4iOk4e5OXEFumqYsBsbhlR+Mw9wkkGpj7oPijZ3FpbtBVWZgmh0rJ7tIuako/ilfc0F2nsqG1ztENnWsP35ZL8GC6tvWkJLfwUuNMRho9Cp1RE3is7Pp7dQhDkwij/ND5DY/7ZbtsM30JVx1j+RuOhf/AfGV6ugg+k7EuZ4M0H653HOmqKb39qAn/3VptpR5higfOjJ5rdsjSwPTZ6SzgTr10TaqpuHEQikHEBqnnZOrlOwEH+SWIQr3Juy1dnV/V0Z4VxP6K5beiBDTtiv+h09I2tob8tMzpSusox2iPWKFkYRDNvrD+bHcwA8Kg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VSPlbPlmmyRDuthkhQzvnNNo366mmvO9ugZaq9OtXnU=;
+ b=cjdckGcnLWpbR8TSUckMrFnSlW6MUjsLguFKMM1FDxCaGyO0o8lrX0mC3WL8+J8XxlrqKeb2JJAcf5IHQqKtMAjkRHohb1xDLziYUaWyHwDN0bYh3553M6nfUnZc85Y8ICCCCwTNbnkKeLTvtdjAlJOJ/GFlbwdTXPoPhCa29aW2fpaKaDPvYpHjI08VO4rlxuOKjWkM9IiFZOzHBAsz19uBjQa+cvAWZf2/QtB81/O52xS3elkRiofUDj4wmC9MSWj7Bpy1TuVcp/EmBnfSbzNB2QY4JV0FL5SP8F/RIiZI+87M2mXewVvywHKtSCDYcGb0x/fI4WQetR4B3MuBXA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TYZPR06MB4461.apcprd06.prod.outlook.com (2603:1096:400:82::8)
+ by SEZPR06MB7228.apcprd06.prod.outlook.com (2603:1096:101:229::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.25; Tue, 24 Sep
+ 2024 04:18:36 +0000
+Received: from TYZPR06MB4461.apcprd06.prod.outlook.com
+ ([fe80::9c62:d1f5:ede3:1b70]) by TYZPR06MB4461.apcprd06.prod.outlook.com
+ ([fe80::9c62:d1f5:ede3:1b70%5]) with mapi id 15.20.7982.022; Tue, 24 Sep 2024
+ 04:18:36 +0000
+From: Yu Jiaoliang <yujiaoliang@vivo.com>
+To: Vinod Koul <vkoul@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Pavel Hofman <pavel.hofman@ivitera.com>,
+	alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com
+Subject: [PATCH v2] ALSA: Fix typos in comments across various files
+Date: Tue, 24 Sep 2024 12:17:45 +0800
+Message-Id: <20240924041749.3125507-1-yujiaoliang@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR04CA0016.apcprd04.prod.outlook.com
+ (2603:1096:4:197::7) To TYZPR06MB4461.apcprd06.prod.outlook.com
+ (2603:1096:400:82::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] selftests/damon/access_memory_even: remove unused
- variables
-To: Ba Jing <bajing@cmss.chinamobile.com>, sj@kernel.org
-Cc: shuah@kernel.org, damon@lists.linux.dev, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240924021426.1980-1-bajing@cmss.chinamobile.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <20240924021426.1980-1-bajing@cmss.chinamobile.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR06MB4461:EE_|SEZPR06MB7228:EE_
+X-MS-Office365-Filtering-Correlation-Id: ac585089-aa0d-4f07-5223-08dcdc4ff598
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|52116014|7416014|366016|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?6nHZwstgIEs5+6mNaeJTdgOQvG7NvfZZio7E+LXMfxOVJ2jpdvylobsRdoHB?=
+ =?us-ascii?Q?XwFFFaGi6ZUV5Ezf8zJ+CWM+jn+p9fqKaN0ujyoA5oPYW7N+A8EZM6yJQGBF?=
+ =?us-ascii?Q?1JY+OOM8A+jdDIykBM5mb8TVMY+LJ+Cze+vy2OWmRjeecYlR3l3BcUrtaA7m?=
+ =?us-ascii?Q?2Xl77U972j72dCH89BLXoybYTIDUqAVT5KHj3IOMFn+Fh3Ut9DGRHNSLQEzR?=
+ =?us-ascii?Q?HKTm5qjCsIinobVb70czUp5+cnSP7NlrJHZGXZSrbL+L8Z7dBdK9++6NQgeH?=
+ =?us-ascii?Q?FJBKg0z8PVfQuIkvkQfHAM86maBEV++FgLmsAGbwhvZABVsQGsNCpGfbajB9?=
+ =?us-ascii?Q?65JmiwQQ6bnlDGcj6rLekPjC6iFghb2O/PZggmeXXLGc8MVnwG9TZPb4tyJy?=
+ =?us-ascii?Q?SzMSNMByoNRF75rlNAF9me+XCCSvQGCK/zQvwx+0B4CeXsdD+SgU7DQH0K8X?=
+ =?us-ascii?Q?4M/tfYfbfguBzVerB1UgxqHQ50+Qv9r0v6trvL8OfXki2VKjvmclJohiLuZH?=
+ =?us-ascii?Q?/TQFSEhHfqt7nuMzPdUeyJ7U4ySQpUxRSaFOxl/l8nUdDgN7G11QSBrpgLHB?=
+ =?us-ascii?Q?bF6y/JgpC8vdj/9yAaHRgXt+STCdqeUZWS38vEENYd1TyU3jQ5T6+TkRv+1K?=
+ =?us-ascii?Q?1XVL6OOrsKp5a7eUl3Wbenig9Tak7CfoTyF9zVEeFWgXuzLTW4DUmTRdVsqy?=
+ =?us-ascii?Q?1NfFDwyTCqhpfmSrFuPIaAd1nQZHujTEWpjmjLpXnxb9QmC7qqt9CMObA/W4?=
+ =?us-ascii?Q?OlWcqeMi1KLzcqsSTLXL6Vpik2vCudDkLjjSbDh4mSAjYj8YSUxNDwlM6fjs?=
+ =?us-ascii?Q?WVx1wRjTzt7J4et7KNz9X9ZXZXwjU9iJHdlkZW9VpbJGvF2f6pr+4zwrxfTN?=
+ =?us-ascii?Q?7zDBMAMyEZAwcY3cgeTVB/8B/CMG6m4ddj12oRxxDMhGQUs6kavGQfv2jI7A?=
+ =?us-ascii?Q?zLp8NMThQzD8eYME1bx4CJGouem0z1kSh0ZTyUGlBgEIeDlGt80DMm/Xx07K?=
+ =?us-ascii?Q?utJBLN0K300AEM8DeNaxi36oXZqt80vYgVi9fOnMy+wglxtpXGE2WygtxpL/?=
+ =?us-ascii?Q?41hu1Mn9d+6QYVoNpczcdizA1Vbdb+ZW9NckAVvpND4Gpb5tvO9XaUmhf6F9?=
+ =?us-ascii?Q?Ain+QIbWvGLQC09R0kJ43RvUHqijijOcolLkMfYjQ5J6MxnuLDbCdc5u1cXb?=
+ =?us-ascii?Q?ZRFuUPBY/7atzJS9LiOSvR1e57AWahKPBnj5p/CirfPniVrIof5rORAlKgjE?=
+ =?us-ascii?Q?7tnYMVS0Pz5igEugY4HJ6zo13H2erm3rzPLaIc9GUdaV0AWUEnQu3J+2njj0?=
+ =?us-ascii?Q?3Y2aRXqE25E7zpGbKz72C80miZQnID23zmBzOxUaCOtF6mjC5youQATEeZu+?=
+ =?us-ascii?Q?BeOkQEU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB4461.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(7416014)(366016)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?SHS0IhxAbO6hdnhSJd5N/G0hkIliaPbBdBg3v7zdB7lKIMxDTOVGK9Pk1+9s?=
+ =?us-ascii?Q?X0IFns2hn8SfbFMkUQXjYLagaH86diuXS/ssnrvkAYfu3UXV/PSIsJty4HjG?=
+ =?us-ascii?Q?9sr5UiebWkOZ2HzJRnmdg+ZT7cujP8GBdEHnpX6xFsoUjRivXnocp5g0QcgV?=
+ =?us-ascii?Q?d2h7AGP7zaNmbXh6UtgnR3hRYx+iy/Bx3WizPQGevxmq3eZBPB1MsqYZRbBq?=
+ =?us-ascii?Q?tTl2KvHZetNQVOjXZG0NAesSsHDMsyAmdRLJ7nczrk4dGeUkGvpkPg6TdvR7?=
+ =?us-ascii?Q?4hQKmTpLG+/hUaImkAma2CBO/AopGRijc2aHpK1uXQhzB80cplvqklSSK7yr?=
+ =?us-ascii?Q?yr+1WEvgRWC7wd6gpjNH68yunuZErgvFgn9uklMDd2bF+w39l8DrvvpHy65G?=
+ =?us-ascii?Q?K49EFzt0aNKMKKBLvRaoHgbKa80PGbAAMyJgQFK5mZZz8qSejHX+r48gHB3c?=
+ =?us-ascii?Q?b63uFFOBbafITh4fAe0PQwqypMSgn/rZQsJaxw9CVc/RpR1S9pzUuBQjgnnP?=
+ =?us-ascii?Q?HB7O1RubkjSYFn+VanFZ06WCicCKuSwxRwsD31mjlaCVe+58AlGs17GvmqRW?=
+ =?us-ascii?Q?9OissxV3jjwDUkP/fgjcFFkyIAiepcM3cQrMAovIh96/TgsbcVBE1u7+Vz9j?=
+ =?us-ascii?Q?/RyMXqkFy7BOTpK1e/Fm/xGGsAeBjcKhO+/epzMH6itdtr5Bior7oHwrVE8P?=
+ =?us-ascii?Q?lyWCDQBxKEmcOzrKYuK4nFN/D5/HvPm0IT5t0/aYEwzrnjOEcRCf2zU713GB?=
+ =?us-ascii?Q?Fto0vED7iJGkcceIGC4dxh5tdjeBALPN1QozOBogPgRuJsV79ugtvJPPdLdZ?=
+ =?us-ascii?Q?3u8/VHQzQZSdrkKJJEHhq1T5pV78aH+WpwhQAACmYIH5EXHucCqJDb7Cd2iB?=
+ =?us-ascii?Q?5UG6EV+DdeDtM4Vxt4K7DmKXe437Q/RallTfp0L1YEZ9DDCmQaMNZ3eUk9Eq?=
+ =?us-ascii?Q?v3kP7Ak7g2i/UMvAhUUy9oOk9dxBG0f73oWJHVc+Ta7ql5nbfw+jAwgvPT+l?=
+ =?us-ascii?Q?jd2W5v98n69v6p015qQ3Li49uAHsfcF1tpa/5df47VbhhFRFxLZUsxnJn6H0?=
+ =?us-ascii?Q?b8xu7F6PCXoPbuNKcj0IFOggp8udIumw1uLOVQwog46DGrWYtq5HHn+jTG3X?=
+ =?us-ascii?Q?yVNOnfIVSBiM1OnmXoygj1FGc2UJ89P96v6fJM9J6Z6EEQ3pCrZcf3J7SSUo?=
+ =?us-ascii?Q?U+mXzIV7PDDQUJX2b2a8reSQt857SZbWgfrEFWWFLTBy2G70UXgLvnLUDD4o?=
+ =?us-ascii?Q?AVp46vCHeNbyK9g82bgJyf5WdlYi26KaClxClaCp2nQKSJl7sIxAtEPM9ww+?=
+ =?us-ascii?Q?HgxV7kIDbAj/VJPvS3stESamt2WxbzVst2/7tudoRoBn5uQ0v+JU8frJqX9o?=
+ =?us-ascii?Q?mvLEdZinWNMUlnanFh4KXlgCeywtX+i+P3FyYafhjE/It9BOqWEYuAkddRQ4?=
+ =?us-ascii?Q?xtQbfmhV7zATsLzpuy1UYFuArQmOTDG/tPxb7AdgmwRMsN53riBhxZD0pTo2?=
+ =?us-ascii?Q?AMspF0iZ0e2vEAf5c+4uTgl9UN7ULezHwCsyyynIAZSpA3Xo93q5qgiIjADz?=
+ =?us-ascii?Q?DSl0F5fpijKnDlJxunZ3TBw7hydYupHrh3rYIXJb?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ac585089-aa0d-4f07-5223-08dcdc4ff598
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB4461.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2024 04:18:36.2089
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: duYl9BUm7BJQEQnFTavPACCHa9mDBX4a/HMv5YDx+cfpvE4HkjnaUMO0/awmvapvz1xXcxRj6hb4DycE6CR3RQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB7228
 
+This patch fixes typos in comments within the ALSA subsystem.
+These changes improve code readability without affecting
+functionality.
 
-On 9/24/24 07:44, Ba Jing wrote:
-> By reading the code, I found these variables are never
-> referenced in the code. Just remove them.
->
-> Signed-off-by: Ba Jing <bajing@cmss.chinamobile.com>
+Signed-off-by: Yu Jiaoliang <yujiaoliang@vivo.com>
+---
+v2: Update commit message.
+---
+ sound/core/compress_offload.c | 2 +-
+ sound/core/oss/rate.c         | 2 +-
+ sound/core/pcm_native.c       | 2 +-
+ sound/core/sound.c            | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-Reviewed-by: Dev Jain <dev.jain@arm.com>
+diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
+index b8c0d6edbdd1..bdf1d78de833 100644
+--- a/sound/core/compress_offload.c
++++ b/sound/core/compress_offload.c
+@@ -288,7 +288,7 @@ static ssize_t snd_compr_write(struct file *f, const char __user *buf,
+ 
+ 	stream = &data->stream;
+ 	guard(mutex)(&stream->device->lock);
+-	/* write is allowed when stream is running or has been steup */
++	/* write is allowed when stream is running or has been setup */
+ 	switch (stream->runtime->state) {
+ 	case SNDRV_PCM_STATE_SETUP:
+ 	case SNDRV_PCM_STATE_PREPARED:
+diff --git a/sound/core/oss/rate.c b/sound/core/oss/rate.c
+index 98269119347f..b56eeda5e30e 100644
+--- a/sound/core/oss/rate.c
++++ b/sound/core/oss/rate.c
+@@ -294,7 +294,7 @@ static int rate_action(struct snd_pcm_plugin *plugin,
+ 	default:
+ 		break;
+ 	}
+-	return 0;	/* silenty ignore other actions */
++	return 0;	/* silently ignore other actions */
+ }
+ 
+ int snd_pcm_plugin_build_rate(struct snd_pcm_substream *plug,
+diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
+index 99e39b5359cc..b49bc89c0758 100644
+--- a/sound/core/pcm_native.c
++++ b/sound/core/pcm_native.c
+@@ -3115,7 +3115,7 @@ struct snd_pcm_sync_ptr32 {
+ 	} c;
+ } __packed;
+ 
+-/* recalcuate the boundary within 32bit */
++/* recalculate the boundary within 32bit */
+ static snd_pcm_uframes_t recalculate_boundary(struct snd_pcm_runtime *runtime)
+ {
+ 	snd_pcm_uframes_t boundary;
+diff --git a/sound/core/sound.c b/sound/core/sound.c
+index b9db9aa0bfcb..6531a67f13b3 100644
+--- a/sound/core/sound.c
++++ b/sound/core/sound.c
+@@ -133,7 +133,7 @@ static struct snd_minor *autoload_device(unsigned int minor)
+ 		/* /dev/aloadSEQ */
+ 		snd_request_other(minor);
+ 	}
+-	mutex_lock(&sound_mutex); /* reacuire lock */
++	mutex_lock(&sound_mutex); /* reacquire lock */
+ 	return snd_minors[minor];
+ }
+ #else /* !CONFIG_MODULES */
+-- 
+2.34.1
 
 
