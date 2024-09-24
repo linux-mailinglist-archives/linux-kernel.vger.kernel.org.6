@@ -1,308 +1,179 @@
-Return-Path: <linux-kernel+bounces-337313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EFF4984889
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:23:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A22C798488C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:23:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 348711C21884
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:23:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6084F2860A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:23:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CFB31AB52C;
-	Tue, 24 Sep 2024 15:23:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E571FDD;
+	Tue, 24 Sep 2024 15:23:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OVkwwJeP"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Kz4/Low5"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2067.outbound.protection.outlook.com [40.107.22.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68B41FDD;
-	Tue, 24 Sep 2024 15:23:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727191399; cv=none; b=XmvwaG2cOXh/KgrrcPoLyncNM7xr1Ev9mYxYBeYtak9TgXVjh9nPhlnTaRfqGG77g/WYI9H3XQTY3xeyTopqi0VGQWJ4ouEFSjlP9QdB91NYb0mUrpXSPjzDs6QuTg6FmTo0uG/goXUDvewg7M82ggcjXdQbVhEFy6t9y7j7V0Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727191399; c=relaxed/simple;
-	bh=s2zWSD7Wfzq/qbhc4BrTlARXStcimWhIU5wjYoAQY5I=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZA4t1YT96EyYbDIyckJfBm2sRpQCd0AxABmNr6HDYFoi//Mi4UsL29v7IrPm0r314hLIWDqZlSWv5z2M6FLvNrd4P8YfRcNCJwdcObr+In0vPCHgfKo4uuUB6iKyoCHU15S4J0cf1TzMHJfuGKXN+IEJhlkEClZA6A8F5hZLYbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OVkwwJeP; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48O7dqv8024167;
-	Tue, 24 Sep 2024 15:22:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	daqGuTN1gbac8T66RCCgehmJvQXJmb+nqPqmmmC/GRA=; b=OVkwwJePsiqmfhbX
-	n5zzJybdM2OkQs6PhTdPIx6F6gNZrSEhjqU39jws2bwOKqvrePCCMqgUqUX0yxJR
-	gLvcoJi0KHFj4NzinBwTlvwtBpaKZNb9mOUxiNk1rzplc3l7CU3TO7DyydifjMCb
-	XvJ84jUZgXMSMWpOWdVk/XaO7jC19QWQoG5nsqXWe4TZE/hUIGW3V0B2xPoxf2qE
-	rydHHqHAxYIqN6K5vzIwZt0sYsdKCqIZHK3tRynU4WaivY2SEZdI3rYnunXDzZUe
-	e98oSHgCzR9eNuxoCE2NtIIqkVh7p7/UFFW6XeStObD2qqRlKXrF2b6YrVmA3yDh
-	AlVx3g==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41spwersm5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Sep 2024 15:22:36 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48OFMZnR012304
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Sep 2024 15:22:35 GMT
-Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 24 Sep 2024 08:22:29 -0700
-Date: Tue, 24 Sep 2024 20:52:25 +0530
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-To: Rob Clark <robdclark@gmail.com>
-CC: Antonino Maniscalco <antomani103@gmail.com>,
-        Neil Armstrong
-	<neil.armstrong@linaro.org>,
-        Sean Paul <sean@poorly.run>, Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Daniel
- Vetter" <daniel@ffwll.ch>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Jonathan Corbet <corbet@lwn.net>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        Sharat Masetty <smasetty@codeaurora.org>
-Subject: Re: [PATCH v4 00/11] Preemption support for A7XX
-Message-ID: <20240924152225.tf6etddoiuiusber@hu-akhilpo-hyd.qualcomm.com>
-References: <20240917-preemption-a750-t-v4-0-95d48012e0ac@gmail.com>
- <c70392bb-bda1-48c7-824e-23d6f92f54ef@linaro.org>
- <20240920170949.vp3642gghhey3pjb@hu-akhilpo-hyd.qualcomm.com>
- <29fee642-440a-4b68-909b-a7c391d5a842@gmail.com>
- <CAF6AEGsuduEZDAg3nMpEiaA8nMO4fR8cH8j3k+K160+CvzaO6Q@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595461AB6D9;
+	Tue, 24 Sep 2024 15:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727191406; cv=fail; b=UcnXXJKkbbknfQmiy0bkPd3q9To1N9fQqfYmgfP710sLqR54qp2iW517VGZfmR8ah2vF8Tqcd/tAaxHtpb6/JO7C5FosWAxUmm0WGerDtdvhMSjMz0BQ4qJgFwSTwDF6OGeLFcCyzLuMZ7mz3Ans987sNX2qQqB7OFNaXkfFoes=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727191406; c=relaxed/simple;
+	bh=4TZpAVrhwHZkdJBJ2PyNAuWVVRAo0VqXDMh+iNl9c/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=pTH3N6vEgXDGFc3qxHT74o7wZ9azSCxPJlUUOGB45CHM1km4+WoULocTwBrhYsD194j4UwECRkK1QH4+hAykJC1LaN+6Ys7IlMYpazzr5O1I42mEhp82i5z6vegl6ozalGiiZ1DBVGU5tMMqf4KQ5Is43HwproO1YNiYrG924NI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Kz4/Low5; arc=fail smtp.client-ip=40.107.22.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xJ8iFh5T68tWIj3m+80yPlUQfgx+nTqQaeKg8i1wPRKLuAhhGeOYFuKPFjfQbRW00bcChSKuft9DbpL9j436r4012E+LZ2GO8+L9Y6C91IeYEfrkxakNTiZmN2fAyyBbCsf0d9CEj0XukjmsYDUiojWEff5cK1DpE3DA37IAqmcDOStRew21aHJlwB2RU4K0bv0rL0XQKhSCW2sWhRlc1gH0mci/SESSo8NtFZLFm/mM2yswGb38QnpndD6KjcIj0eQX6viQ0EcjK6OFNIz+1oM+CREKLWiNEUDnAeiVNUva/JBByabDWI7mRm1G5Y+fFKV2Anq4PB3VKc1dnzRoLA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4TZpAVrhwHZkdJBJ2PyNAuWVVRAo0VqXDMh+iNl9c/g=;
+ b=IjeUqzGHnja7FLuYqg6SKjxzX0G3fnGD1tLhQO5tWFP2aThYwNp7nBWlfR2xX7yoW/DYKxEpLpznWIWP3sgNBa4rw/FaJDHhbrrILXZtBXqoUO9XD+aQzmANWVdOEXBo5BS8j3jkubY6Tj1Svd0B66SRhbaS8GcuVcODE8ZvwPOnyZFzIfx3D415W5OkP12jIQC/KJASsKvCL/ghg5QKi9XFqUzsLL4inZ/IWm6CTCpFHr1/HusikrYRFU47CthI0vwcyzwJIi4cOpd3O1AiBXx5yuHXP23eDswhT7ZfBH703wmYJJT1xdpqGm5kdawyUE0cQI9hF6EO4Yga+FAuGg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4TZpAVrhwHZkdJBJ2PyNAuWVVRAo0VqXDMh+iNl9c/g=;
+ b=Kz4/Low5PFDaWc82LXaCwOfLcvTWWS9qSBAZ36UBmyffR+VSjjQAjwbHJHbtN8h0yq1njsPUJPEXpJwHKOT2qykzpWfM0KGLHGC2Yyrfgda1ElO30gKwmoN1QGHMXSiYg2ekaNQBaEnahdl7ramhNI0O+TPeCQ8EMEdF4rfYxUeEorqkpeFrmjX+Pjvm9xdLze7yYep/NpRg89nh4Mwphrvk5QMXvaQhclzGDIIJhNqDG8z9+v6/W21bmJdpT6UAlUKTJT9hg4fH5Ixo8982qhfQvk2r+VK0ld+/xT2/hmjw/l5I1qzg5RLCC9vRpIlGF2ll+rmEqCceUa0h/rWHyA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AM7PR04MB7031.eurprd04.prod.outlook.com (2603:10a6:20b:116::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.27; Tue, 24 Sep
+ 2024 15:23:17 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7982.022; Tue, 24 Sep 2024
+ 15:23:17 +0000
+Date: Tue, 24 Sep 2024 11:23:06 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Richard Zhu <hongxing.zhu@nxp.com>, l.stach@pengutronix.de,
+	kwilczynski@kernel.org, bhelgaas@google.com, lpieralisi@kernel.org,
+	robh+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, festevam@gmail.com,
+	s.hauer@pengutronix.de, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, kernel@pengutronix.de,
+	imx@lists.linux.dev
+Subject: Re: [PATCH v1 1/9] dt-bindings: imx6q-pcie: Add ref clock for i.MX95
+ PCIe
+Message-ID: <ZvLZWqRFnAtgFo3B@lizhi-Precision-Tower-5810>
+References: <1727148464-14341-1-git-send-email-hongxing.zhu@nxp.com>
+ <1727148464-14341-2-git-send-email-hongxing.zhu@nxp.com>
+ <20240924-ended-unlaced-cc7ddf87af90@spud>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240924-ended-unlaced-cc7ddf87af90@spud>
+X-ClientProxiedBy: BY3PR10CA0019.namprd10.prod.outlook.com
+ (2603:10b6:a03:255::24) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAF6AEGsuduEZDAg3nMpEiaA8nMO4fR8cH8j3k+K160+CvzaO6Q@mail.gmail.com>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: o5_Emvc4l-Wd9fqfjaPwjt0mjCEns-6X
-X-Proofpoint-ORIG-GUID: o5_Emvc4l-Wd9fqfjaPwjt0mjCEns-6X
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 adultscore=0 priorityscore=1501 clxscore=1015
- malwarescore=0 mlxscore=0 mlxlogscore=999 impostorscore=0 phishscore=0
- spamscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409240110
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM7PR04MB7031:EE_
+X-MS-Office365-Filtering-Correlation-Id: 03d1426d-44c3-4695-f4d9-08dcdcacd0ac
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|366016|1800799024|376014|7416014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?qGBure/UFF09csTgJ5ssLyRGnDW+bUoFL6SxmUQ1oWpZYzywCF3I4nR8mzc4?=
+ =?us-ascii?Q?TIb559YjnejHAE5UkS2IdPKvRFKdK/pjrWhtpRAv3SMOmiTlHEcgp26BAzj/?=
+ =?us-ascii?Q?fY0wc6wzZZMFXfnQddytFkUV5fOMki5H5h05UWJr9hev4+NrXSRN3IBheVRx?=
+ =?us-ascii?Q?E/uxJ6m90BEoBVFKOXqLWtyQIq5TB9/1E33MeVOfT07DjCv6RPAXhcW4ZgoD?=
+ =?us-ascii?Q?W0qV94XLB0r8h8YE37+KlrBIXNMsXTYEChuUfHkKtGQ0pT8wJX+KHlk7jjgb?=
+ =?us-ascii?Q?Q/dcI9CgExIttWOKAgJ2JHGkelY1E6TrHN5vTRBby5MeuYzFnMWye20jUmR0?=
+ =?us-ascii?Q?ksfvLPtULyaO/9hK38okZN/X1MIzRZVQFIsSTV4BUSNqlWtNXkaRqNP4qjoa?=
+ =?us-ascii?Q?twW2buvWPm9XRTfUtP5Kd5f4qE9Wpy7UQN2C252CvnmofTukKQId1eM0Ursj?=
+ =?us-ascii?Q?J+knQNQ/XgJyJhML2+vvcxmhCF33uA2BWZgsgy9bBLRRuo0ehmnRomPsX7p4?=
+ =?us-ascii?Q?quNjLj0DKany1DJCkUIkyX6xJ2c8ES4AVErRTIHs/Gzq2EyARq9Kfe8++Fli?=
+ =?us-ascii?Q?bCm4cfbTepCYBR/uBwbrO3O/MxhLK4faJKeeL2ilVV01hZXrmQuZg79gsDgX?=
+ =?us-ascii?Q?wth9MU50zAEdvm7jskzYEXVFrMVz+tRgLv1iteqof1lHs9XG/khjNBqMqW/H?=
+ =?us-ascii?Q?rL3Oy792Yf1iFonHCcWQTmAY/NAa5+WfBuQGNrofNqCD3/+lWIHZt9Fn0yOG?=
+ =?us-ascii?Q?GKbBQRE9GGJvLMV4M2+cRn5wfA0UKN08uVtLRe++KXlXjgRuoNeFaxfU/ufr?=
+ =?us-ascii?Q?Zc4sSVf4NFxTwIWwa+C8rPoQQhH4AtkLhQrQZTVcSLQMQYn1Ch05CB/Z1EE3?=
+ =?us-ascii?Q?RDKJ7qb0Oln0y7F0ksmRv2nu/tGBAftzzMoYGZdnpRWciDiUNR8+VChD0Ym4?=
+ =?us-ascii?Q?S1pNjhNgJ9O56ZODc+nE4eYx2ynQ77A4oFVkiG7sz24cNcny9x4BzNlZJ6p8?=
+ =?us-ascii?Q?uWi7ZrXFz56bX2VJ9FWsqevm/xU2POJq8sP/0kCmFge2gLCpTE320g39p8vk?=
+ =?us-ascii?Q?NpiCt/Fm2VlMmLbdc2hm0SqVSAL+kKVCQK4BBucoYDoan2F+JkpQAxjSPZI1?=
+ =?us-ascii?Q?DDIoPs0UxBMdv4pNQ4E2h6vwVO5xzD84xiFqKY4+mWLXhLUeYitklNuDPNIg?=
+ =?us-ascii?Q?iDEprNXC4WAU1VZiEagm7B1BM0PKFbwjaxOoBeFMwQymen4zIRBNe2EH4cf3?=
+ =?us-ascii?Q?GdQdOnteKLT3lORJvx2XU58N998LwWrBUD1y9BVCElVZj9PAEC9uWBWE1ubn?=
+ =?us-ascii?Q?BFqg1Azh8fYLdM3IcD1TMTD5KRGdI7oc1c2hii3boiC+cg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(1800799024)(376014)(7416014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?iEfocwVFdFK1uiQcW+XGTzkzfscoc+e9SkMs1oFSrpirJWMhXFxZmUvan3dw?=
+ =?us-ascii?Q?A89r7iVPeSjmeEJusUstnha50UVQ8BvidcsTmhcCRb+GGRrxDpc6mTRT1tjn?=
+ =?us-ascii?Q?oP1VEzs6bK+783B2TPijD7hlJR8wUvgD7i63L+tqTQdmrg9M2s47fY1SonZi?=
+ =?us-ascii?Q?DY47M+v9BFO2IijC136AOE5cogfkGXtKEPSHGGB+/tb5KEhnfwRMn+Nnd+Gg?=
+ =?us-ascii?Q?B9BCGfl1tK++dEKDFdPVVeBJoPX/FE2nLrJgikpoCiNWGoK5+2Gn/yGDf+2s?=
+ =?us-ascii?Q?VPTA9z8vh1EslyalTyVXLitmBhpbRq5XM9yR+HKYLBtlfyHOfXMqzjzCR0Te?=
+ =?us-ascii?Q?V34Xte24U7ny8xT149D97Chr/igg7VbdZd1MnXTx0Jcsd2tGZy4+a3w2H/jH?=
+ =?us-ascii?Q?UpWBj5r++byrgMXsiV2sH2QuWmUfhvZiZTjH6vOhW5bOiNRbZMaAgWcjLkp5?=
+ =?us-ascii?Q?WiS6rcl9IPjMw4LpW2fwGpLMU8L+/s0zeJklYiwHi2bi58ZYzMzK6GLUJqX/?=
+ =?us-ascii?Q?EhiL6+Nc2Nsc54ey1UYvcwKieDs1Z7VLP85KmtKWzZisfxvFw0gjZGFNu3i6?=
+ =?us-ascii?Q?OzPtXTaw/QvdjYbPT+HvAy+mLPKGHYZlm86jTrIgEghC8uMLRdwDT+xkXAw7?=
+ =?us-ascii?Q?rXgYLWebLX9O80BjYNozjcg9u0r+r3gRJo5aFdjJ/9RWxq1SVHsXhO1wSRWV?=
+ =?us-ascii?Q?0IjLPIKvfkgmj50O5pwxL+9+5Ka3VZycm1RKkkqaMREhYnTiHfoNlli7SHrF?=
+ =?us-ascii?Q?Kja/CybD14C15A6qDx+Foki6/KyhJiCEuifnbg0g38OFWyYh7rp/De3QZcAQ?=
+ =?us-ascii?Q?iFfgbYStKXNL93CSiU9YV43AcblehobW9v27vOsG8HEeDIRULOYObJImb+4m?=
+ =?us-ascii?Q?6IEOnS19rcl0m/DXOr8K57v1pBwlLnW1px2jTko8vRj53ymV+wTduSOGFVXb?=
+ =?us-ascii?Q?0gemRhArMuJkbIBhRvcTjHQUdNNXbRef0d6dwpakd95ycbpuiSCj8GQL92a5?=
+ =?us-ascii?Q?egOB/oRvpQJkJ2JSLQEkqGDHFlqzNzYwDS+qNKD5BqMSFeEQEzFd5yAtYvdC?=
+ =?us-ascii?Q?wTodZV99synAdGrZ9tEa3ULK1JwUcg/JkPdZijmjk+B6lwVSo8qa6JJoP7g9?=
+ =?us-ascii?Q?YKkL3EckCz89dZ1PTp+l8Os6iGfPNTQXgJj/6zoYCh2jLKVOYfL8UjTi5+Mf?=
+ =?us-ascii?Q?qHa4Asqeb2r6Q6wN+GKCFR5dLrZTg5kpgHrcUiDyz4u88/z7Og4fwskPlgAT?=
+ =?us-ascii?Q?br5FG3iGZ99IgEkSMBjp1x1UaV017j0s6R29GMNFaurS295MsBETIah9n9Yb?=
+ =?us-ascii?Q?Px9YzLDmbGdGH+4r/GXD7NDhbA84l/8/enC2f3m9pX6M8rlsxrlWL9iQSpZ8?=
+ =?us-ascii?Q?2cZjnonAK4F9qijgKQmbjcOs+Ts4CDl6Qkdh5o2apVvddhjMOHw83eo7Ak+F?=
+ =?us-ascii?Q?yRWLhMM4fCL2t+sJKlihHZLzFTfB4rtwU2yjCAquCJlxl3/PoQPfqb0RIf31?=
+ =?us-ascii?Q?vqXidXREtMF8b1MfAVFZtyUzBcLXk9EpW4CqYAoEBg/qq1gsi4x+RO3nUDSm?=
+ =?us-ascii?Q?H90ZMWRSa0Ovd62PI2Hiyp7NbZbEDUWg5Y4TdhkT?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 03d1426d-44c3-4695-f4d9-08dcdcacd0ac
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2024 15:23:17.4646
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 906+pRakrIQODf8ZwYKZ/w2/e10AGgs4u5Vx6zDh6q1uXFGe+DDcnht5ACSN7yOLAJL+eRFH/Jh9/Khba2FsyA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB7031
 
-On Tue, Sep 24, 2024 at 07:47:12AM -0700, Rob Clark wrote:
-> On Tue, Sep 24, 2024 at 4:54 AM Antonino Maniscalco
-> <antomani103@gmail.com> wrote:
+On Tue, Sep 24, 2024 at 11:08:20AM +0100, Conor Dooley wrote:
+> On Tue, Sep 24, 2024 at 11:27:36AM +0800, Richard Zhu wrote:
+> > Add one ref clock for i.MX95 PCIe. Increase clocks' maxItems to 5 and
+> > keep the same restriction with other compatible string.
 > >
-> > On 9/20/24 7:09 PM, Akhil P Oommen wrote:
-> > > On Wed, Sep 18, 2024 at 09:46:33AM +0200, Neil Armstrong wrote:
-> > >> Hi,
-> > >>
-> > >> On 17/09/2024 13:14, Antonino Maniscalco wrote:
-> > >>> This series implements preemption for A7XX targets, which allows the GPU to
-> > >>> switch to an higher priority ring when work is pushed to it, reducing latency
-> > >>> for high priority submissions.
-> > >>>
-> > >>> This series enables L1 preemption with skip_save_restore which requires
-> > >>> the following userspace patches to function:
-> > >>>
-> > >>> https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/30544
-> > >>>
-> > >>> A flag is added to `msm_submitqueue_create` to only allow submissions
-> > >>> from compatible userspace to be preempted, therefore maintaining
-> > >>> compatibility.
-> > >>>
-> > >>> Preemption is currently only enabled by default on A750, it can be
-> > >>> enabled on other targets through the `enable_preemption` module
-> > >>> parameter. This is because more testing is required on other targets.
-> > >>>
-> > >>> For testing on other HW it is sufficient to set that parameter to a
-> > >>> value of 1, then using the branch of mesa linked above, `TU_DEBUG=hiprio`
-> > >>> allows to run any application as high priority therefore preempting
-> > >>> submissions from other applications.
-> > >>>
-> > >>> The `msm_gpu_preemption_trigger` and `msm_gpu_preemption_irq` traces
-> > >>> added in this series can be used to observe preemption's behavior as
-> > >>> well as measuring preemption latency.
-> > >>>
-> > >>> Some commits from this series are based on a previous series to enable
-> > >>> preemption on A6XX targets:
-> > >>>
-> > >>> https://lkml.kernel.org/1520489185-21828-1-git-send-email-smasetty@codeaurora.org
-> > >>>
-> > >>> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
-> > >>> ---
-> > >>> Changes in v4:
-> > >>> - Added missing register in pwrup list
-> > >>> - Removed and rearrange barriers
-> > >>> - Renamed `skip_inline_wptr` to `restore_wptr`
-> > >>> - Track ctx seqno per ring
-> > >>> - Removed secure preempt context
-> > >>> - NOP out postamble to disable it instantly
-> > >>> - Only emit pwrup reglist once
-> > >>> - Document bv_rptr_addr
-> > >>> - Removed unused A6XX_PREEMPT_USER_RECORD_SIZE
-> > >>> - Set name on preempt record buffer
-> > >>> - Link to v3: https://lore.kernel.org/r/20240905-preemption-a750-t-v3-0-fd947699f7bc@gmail.com
-> > >>>
-> > >>> Changes in v3:
-> > >>> - Added documentation about preemption
-> > >>> - Use quirks to determine which target supports preemption
-> > >>> - Add a module parameter to force disabling or enabling preemption
-> > >>> - Clear postamble when profiling
-> > >>> - Define A6XX_CP_CONTEXT_SWITCH_CNTL_LEVEL fields in a6xx.xml
-> > >>> - Make preemption records MAP_PRIV
-> > >>> - Removed user ctx record (NON_PRIV) and patch 2/9 as it's not needed
-> > >>>     anymore
-> > >>> - Link to v2: https://lore.kernel.org/r/20240830-preemption-a750-t-v2-0-86aeead2cd80@gmail.com
-> > >>>
-> > >>> Changes in v2:
-> > >>> - Added preept_record_size for X185 in PATCH 3/7
-> > >>> - Added patches to reset perf counters
-> > >>> - Dropped unused defines
-> > >>> - Dropped unused variable (fixes warning)
-> > >>> - Only enable preemption on a750
-> > >>> - Reject MSM_SUBMITQUEUE_ALLOW_PREEMPT for unsupported targets
-> > >>> - Added Akhil's Reviewed-By tags to patches 1/9,2/9,3/9
-> > >>> - Added Neil's Tested-By tags
-> > >>> - Added explanation for UAPI changes in commit message
-> > >>> - Link to v1: https://lore.kernel.org/r/20240815-preemption-a750-t-v1-0-7bda26c34037@gmail.com
-> > >>>
-> > >>> ---
-> > >>> Antonino Maniscalco (11):
-> > >>>         drm/msm: Fix bv_fence being used as bv_rptr
-> > >>>         drm/msm/A6XX: Track current_ctx_seqno per ring
-> > >>>         drm/msm: Add a `preempt_record_size` field
-> > >>>         drm/msm: Add CONTEXT_SWITCH_CNTL bitfields
-> > >>>         drm/msm/A6xx: Implement preemption for A7XX targets
-> > >>>         drm/msm/A6xx: Sync relevant adreno_pm4.xml changes
-> > >>>         drm/msm/A6xx: Use posamble to reset counters on preemption
-> > >>>         drm/msm/A6xx: Add traces for preemption
-> > >>>         drm/msm/A6XX: Add a flag to allow preemption to submitqueue_create
-> > >>>         drm/msm/A6xx: Enable preemption for A750
-> > >>>         Documentation: document adreno preemption
-> > >>>
-> > >>>    Documentation/gpu/msm-preemption.rst               |  98 +++++
-> > >>>    drivers/gpu/drm/msm/Makefile                       |   1 +
-> > >>>    drivers/gpu/drm/msm/adreno/a2xx_gpu.c              |   2 +-
-> > >>>    drivers/gpu/drm/msm/adreno/a3xx_gpu.c              |   2 +-
-> > >>>    drivers/gpu/drm/msm/adreno/a4xx_gpu.c              |   2 +-
-> > >>>    drivers/gpu/drm/msm/adreno/a5xx_gpu.c              |   6 +-
-> > >>>    drivers/gpu/drm/msm/adreno/a6xx_catalog.c          |   7 +-
-> > >>>    drivers/gpu/drm/msm/adreno/a6xx_gpu.c              | 325 ++++++++++++++-
-> > >>>    drivers/gpu/drm/msm/adreno/a6xx_gpu.h              | 174 ++++++++
-> > >>>    drivers/gpu/drm/msm/adreno/a6xx_preempt.c          | 440 +++++++++++++++++++++
-> > >>>    drivers/gpu/drm/msm/adreno/adreno_gpu.h            |   9 +-
-> > >>>    drivers/gpu/drm/msm/msm_drv.c                      |   4 +
-> > >>>    drivers/gpu/drm/msm/msm_gpu.c                      |   2 +-
-> > >>>    drivers/gpu/drm/msm/msm_gpu.h                      |  11 -
-> > >>>    drivers/gpu/drm/msm/msm_gpu_trace.h                |  28 ++
-> > >>>    drivers/gpu/drm/msm/msm_ringbuffer.h               |  18 +
-> > >>>    drivers/gpu/drm/msm/msm_submitqueue.c              |   3 +
-> > >>>    drivers/gpu/drm/msm/registers/adreno/a6xx.xml      |   7 +-
-> > >>>    .../gpu/drm/msm/registers/adreno/adreno_pm4.xml    |  39 +-
-> > >>>    include/uapi/drm/msm_drm.h                         |   5 +-
-> > >>>    20 files changed, 1117 insertions(+), 66 deletions(-)
-> > >>> ---
-> > >>> base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
-> > >>> change-id: 20240815-preemption-a750-t-fcee9a844b39
-> > >>>
-> > >>> Best regards,
-> > >>
-> > >> I've been running vulkan-cts (1.3.7.3-0-gd71a36db16d98313c431829432a136dbda692a08 from Yocto)
-> > >> on SM8650-QRD, SM8550-QRD & SM8450-HDK boards with enable_preemption in default value
-> > >> and forced to 1, and I've seen no regression so far
-> > >>
-> > >> On SM8550, I've seen a few:
-> > >> platform 3d6a000.gmu: [drm:a6xx_hfi_send_msg.constprop.0 [msm]] *ERROR* Message HFI_H2F_MSG_GX_BW_PERF_VOTE id 2743 timed out waiting for response
-> > >> platform 3d6a000.gmu: [drm:a6xx_hfi_send_msg.constprop.0 [msm]] *ERROR* Unexpected message id 2743 on the response queue
-> > >> but it's unrelated to preempt
-> > >>
-> > >> and on SM8450:
-> > >> platform 3d6a000.gmu: [drm:a6xx_gmu_set_oob [msm]] *ERROR* Timeout waiting for GMU OOB set GPU_SET: 0x0
-> > >> msm_dpu ae01000.display-controller: [drm:hangcheck_handler [msm]] *ERROR* 7.3.0.1: hangcheck detected gpu lockup rb 0!
-> > >> msm_dpu ae01000.display-controller: [drm:hangcheck_handler [msm]] *ERROR* 7.3.0.1:     completed fence: 331235
-> > >> msm_dpu ae01000.display-controller: [drm:hangcheck_handler [msm]] *ERROR* 7.3.0.1:     submitted fence: 331236
-> > >> adreno 3d00000.gpu: [drm:a6xx_irq [msm]] *ERROR* gpu fault ring 0 fence 50de4 status 00800005 rb 0000/0699 ib1 0000000000000000/0000 ib2 0000000000000000/0000
-> > >> msm_dpu ae01000.display-controller: [drm:recover_worker [msm]] *ERROR* 7.3.0.1: hangcheck recover!
-> > >> msm_dpu ae01000.display-controller: [drm:recover_worker [msm]] *ERROR* 7.3.0.1: offending task: deqp-vk (/usr/lib/vulkan-cts/deqp-vk)
-> > >> msm_dpu ae01000.display-controller: [drm:recover_worker [msm]] *ERROR* 7.3.0.1: hangcheck recover!
-> > >> leading to a VK_ERROR_DEVICE_LOST, but again unrelated to preempt support.
-> > >>
-> > >> So you can also add:
-> > >> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD
-> > >> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8450-HDK
-> > >>
-> > >
-> > > Niel,
-> > >
-> > > On my x1e device, all submissions were somehow going into only a single
-> > > ring, even the compositor's. Not sure why. So effectively preemption was
-> > > not really exercised. I had to force one of the two benchmark I ran
-> > > using the "highprio" mesa debug flag force submittions to ring 0.
-> >
-> > I think that is because GL applications (so most compositors) run
-> > through zink which does not forward GL preemption to vulkan so yeah, for
-> > GL applications the only way of getting preemption is the debug flag.
-> 
-> I guess if it is mesa 24.2.x or newer it would be using the gallium
-> driver.  Which I guess would need xAMBLE stuff wired up.  Outside of
-> fd6_emit_restore() and fd6_gmem.cc there isn't really any state emit
-> in IB1, so I guess it probably wouldn't be too hard to get preemption
-> support wired up.
-> 
-> BR,
-> -R
-> 
-> > Unfortunately this is not easy to fix in Zink because it creates one
-> > VkDevice at screen creation and uses it for all GL contexts. Since GL
-> > priority is provided per context and at context creation time Zink has
-> > no way of handling this.
-> >
-> > Once TU will support more than one queue it will be possible for Zink to
-> > create one queue per priority then pick one at context creation time.
-> > Doing so would require a new vulkan extension for per queue global
-> > priority. I had started working on this some time ago
-> > https://gitlab.freedesktop.org/antonino/mesa/-/tree/priority_ext?ref_type=heads
-> > but this solution will only be viable once TU can expose more than one
-> > queue.
-> >
+> > Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+>
+> It'd be really good to mention why this clock is appearing now, when it
+> did not before. You're just explaining what you've done, which can be
+> seen in the diff, but not why you did it.
 
-Thanks, both of you for the clarification. Glad about the
-improvements planned for both freedreno and zink.
+Previous reference clock of i.MX95 is on when system boot to kernel. But
+boot firmware change the behavor, so it is off when boot. So it need be
+turn on when it use. Also it need be turn off/on when suspend and resume.
+Previous miss this feature.
 
--Akhil.
+Frank
 
-> > >
-> > > If possible it is a good idea to check the new preemption traces to
-> > > ensure preemption kicks in.
-> > >
-> > > -Akhil
-> > >
-> > >> Thanks,
-> > >> Neil
-> >
-> >
-> > Best regards,
-> > --
-> > Antonino Maniscalco <antomani103@gmail.com>
 
