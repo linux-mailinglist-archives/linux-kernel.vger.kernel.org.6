@@ -1,155 +1,177 @@
-Return-Path: <linux-kernel+bounces-337118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 962B19845A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:11:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD7B698459D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:11:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2281B23A5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:11:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 989172832D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:11:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9527F1A727D;
-	Tue, 24 Sep 2024 12:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDFC1A7074;
+	Tue, 24 Sep 2024 12:11:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PGQs6pD4"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aGbd0FLy"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5741A7261;
-	Tue, 24 Sep 2024 12:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0F217BBF;
+	Tue, 24 Sep 2024 12:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727179884; cv=none; b=X1YCCxO2maMgF+e+4mTX66ft5CVVhFZrWNSY945jj9mQTwjvKvGsscRQy0ma8JzeueINRZnLdgi5/jqzZlAcOpiDXNM1lWDtWmGbEFrVVW5xnF7ePaZ4KiRoLPLCzIHSgJMuGjpkNxj8KSd4ktL7fRqT7ylpS4jUaTUARvYMPNA=
+	t=1727179878; cv=none; b=XaXqhXJtTNV+Mwm7HyZ2XFDAg2mdDES5T8nwPWTFF6TcgVtsBnAUbCG1SOKNopBJHP+oo1jYczxeyOqfkQb/2zm2lv/9WguStXPFSsAXP0ahWqPcPQi/Ud+pf3Bo6oshjDYvJ0+5ifJVaN3wHeenT6k6x4iHdfgsdpnbV0jTymw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727179884; c=relaxed/simple;
-	bh=S+5ZTdN1pPJa9IuFwdIuX2jtdc1wF/KYf3fatFFndeE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=PqKzPOBx3sLCW7WJOS3Sk4dCA/fW3q4TCri6bmba6y1NV0ItQezH9Wh25WZYKLiqkvjDMJqoZ/kPi7AanuyKlZEQ97G02vK6F0JhLdKRWiisSMwSthlyJHovjcu/0myrH3lI+ZTBHje1HOwHDNmepW125CZmMXoIZj9zJ7ifmDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PGQs6pD4; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48O9fAkp017406;
-	Tue, 24 Sep 2024 12:11:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vvNGpzffxQxSM2lHDEfUn4zL+xA1sFHMMkiqkZlU+qo=; b=PGQs6pD4D7IRQ4C8
-	KhmnSJkukKR099RoCamN4s1/ox3gmKy9GjpOdKCNLPETVi08G73gOXwcer9ly6Zp
-	38EfOuRIUreY9OCh39falA8hlZ+ZMeuXJa6ZcIZgwqJWVEf8HbTj/kaEhce6JBZv
-	0MxcSWYSMjS3QWbyYPqmm7fI/WyjOAZ437q+LxMVpLv5SDJh7C4TYUJqMvj8xdaY
-	VsFlhJoEhdPs4J97X5X46mCRybYUbQf4Wm+EGPOfRXIm21uafSjoVNxmg8J8E5aM
-	xoh5IFTW7wGFBFmyj1xyF3cfE6FQZ8tROYvegA5Iu3CHcJYZP6jg2PJgLW2hn4PC
-	zNFFIQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41snqygjnb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Sep 2024 12:11:04 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48OCB22u011774
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Sep 2024 12:11:02 GMT
-Received: from [10.151.37.100] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 24 Sep
- 2024 05:10:55 -0700
-Message-ID: <30fdcb3e-a7ff-4764-bed5-39494c3e3326@quicinc.com>
-Date: Tue, 24 Sep 2024 17:40:52 +0530
+	s=arc-20240116; t=1727179878; c=relaxed/simple;
+	bh=dTad2rqpcko2TGpyvtRSd9oTstyIASGq7zS6vS0Dg9U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=cWt5m06AOeLWvG6CykbNLvjoPtQk6qrhJol4IHVvdQRSmE5F5VRnQQb4hJMGrSFPUtdvffLBSMJnjtve9rOLczh7IwNRYyRQ/s+r3EIMX6h71SRjMtTcmAvvoAFIIQfBNZN9WY6C9B69dZLXyx5HL/bM9WozujXjO63/mHFWR7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aGbd0FLy; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727179877; x=1758715877;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=dTad2rqpcko2TGpyvtRSd9oTstyIASGq7zS6vS0Dg9U=;
+  b=aGbd0FLytC5WcM9SqO3ccj7M+6q1um/CHrhIMG0YlLXyjgFPMhW6AkIQ
+   wGmt6aD1j2WtrsezoMuedBHAmT/2CWB48mUaWG8ckNc2vt4vdA87jPVqR
+   fkTdAZariqXuty9xQPhg5D4oE9m6/3jqshqm6XgoFHj4Mn1TqYXfctrdY
+   CFKa5bcNSl61GyVuJj7sIhvVQrICVWn0uSbLJh8bH6V5NPqd6qL6Dyt71
+   yguKarOfuP3dtnU/Yze+tmhUk+6VCPQlJuO2lKE+dXElTw3IV9iXyqOkj
+   EcCT5a2Icp9N9rW22FlQURIlbL8tSjqVdvR7SF0tCpIpn1LmkoETtRS5R
+   w==;
+X-CSE-ConnectionGUID: On+UWo6eQUWK98NnpvYrtQ==
+X-CSE-MsgGUID: kvCGu/vaTnaQvnVwaW1GJw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="26265035"
+X-IronPort-AV: E=Sophos;i="6.10,254,1719903600"; 
+   d="scan'208";a="26265035"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 05:11:17 -0700
+X-CSE-ConnectionGUID: H3KdpKbwRua8SWIdpicqLQ==
+X-CSE-MsgGUID: M3YEhQRFSpKiwBoJ2gYEMg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,254,1719903600"; 
+   d="scan'208";a="75790881"
+Received: from sschumil-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.183])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 05:11:12 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: George Rurikov <g.ryurikov@securitycode.ru>
+Cc: George Rurikov <g.ryurikov@securitycode.ru>, Rodrigo Vivi
+ <rodrigo.vivi@intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+Subject: Re: [PATCH] drm: Add check for encoder in intel_get_crtc_new_encoder()
+In-Reply-To: <87tte545pc.fsf@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240924114004.1084283-1-g.ryurikov@securitycode.ru>
+ <87tte545pc.fsf@intel.com>
+Date: Tue, 24 Sep 2024 15:11:08 +0300
+Message-ID: <87o74d45gj.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-Subject: Re: [PATCH 1/8] dt-bindings: clock: Add Qualcomm IPQ5424 GCC
-To: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <ulf.hansson@linaro.org>, <linus.walleij@linaro.org>,
-        <catalin.marinas@arm.com>, <p.zabel@pengutronix.de>,
-        <geert+renesas@glider.be>, <dmitry.baryshkov@linaro.org>,
-        <neil.armstrong@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: <quic_varada@quicinc.com>
-References: <20240913121250.2995351-1-quic_srichara@quicinc.com>
- <20240913121250.2995351-2-quic_srichara@quicinc.com>
- <4cd3d3f8-7d73-4171-bb35-aba975cdc11a@kernel.org>
- <9f2ccf3d-fa71-4784-b6d2-2b12ed50bdd2@quicinc.com>
- <91392141-af8b-4161-8e76-6f461aaba42a@kernel.org>
-Content-Language: en-US
-In-Reply-To: <91392141-af8b-4161-8e76-6f461aaba42a@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Njq9SLglo7LSV5tU12g90qC4kLC3UrBc
-X-Proofpoint-ORIG-GUID: Njq9SLglo7LSV5tU12g90qC4kLC3UrBc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 adultscore=0 bulkscore=0 phishscore=0 mlxlogscore=949
- spamscore=0 lowpriorityscore=0 clxscore=1015 mlxscore=0 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409240085
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 9/20/2024 6:14 PM, Krzysztof Kozlowski wrote:
-> On 20/09/2024 13:56, Sricharan Ramabadhran wrote:
+On Tue, 24 Sep 2024, Jani Nikula <jani.nikula@linux.intel.com> wrote:
+> On Tue, 24 Sep 2024, George Rurikov <g.ryurikov@securitycode.ru> wrote:
+>> If the video card driver could not find the connector assigned to the
+>> current video controller, or if the hardware status has changed so that
+>> a pre-existing connector is no longer active, none of the state
+>> connectors will meet the assignment criteria for the current crtc video
+>> controller.
 >>
->>>> +
->>>> +allOf:
->>>> +  - $ref: qcom,gcc.yaml#
->>>> +
->>>> +properties:
->>>> +  compatible:
->>>> +    const: qcom,ipq5424-gcc
->>>
->>> So everything i sthe same as 5332? Why not adding it there?
->>>
->> infact, ipq5332 has 1 dual lane and 1 single lane pcie, whereas
->> ipq5424 has 2 dual lane and 2 single lane pcie. will update the
->> bindings in v2 accordingly.
-> 
-> Hm? What is the difference in the bindings? I don't see. Maybe some diff
-> would help.
-> 
+>> In the drm_WARN function, encoder->base.dev is called, so
+>> '&encoder->base.dev' will be dereferenced since encoder will still be
+>> initialized NULL.
+>
+> encoder is not dereferenced there.
 
-For IPQ5424, clocks items is like this
+Looks like the issue was there ages ago, and was fixed in v6.5 by commit
+3b6692357f70 ("drm/i915: Make intel_get_crtc_new_encoder() less oopsy").
 
-       - description: Board XO clock source
-       - description: Sleep clock source
-       - description: PCIE 2lane PHY0 pipe clock source
-       - description: PCIE 2lane PHY1 pipe clock source
-       - description: PCIE 2lane PHY2 pipe clock source
-       - description: PCIE 2lane PHY3 pipe clock source
-       - description: USB PCIE wrapper pipe clock source
+Please run your analysis on recent kernels.
+
+BR,
+Jani.
 
 
-For IPQ5332, its like this,
+>
+>> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+>>
+>> Fixes: e12d6218fda2 ("drm/i915: Reduce bigjoiner special casing")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: George Rurikov <g.ryurikov@securitycode.ru>
+>> ---
+>>  drivers/gpu/drm/i915/display/intel_display.c | 4 +++-
+>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/i915/display/intel_display.c b/drivers/gpu/=
+drm/i915/display/intel_display.c
+>> index b4ef4d59da1a..1f25b12e5f67 100644
+>> --- a/drivers/gpu/drm/i915/display/intel_display.c
+>> +++ b/drivers/gpu/drm/i915/display/intel_display.c
+>> @@ -819,9 +819,11 @@ intel_get_crtc_new_encoder(const struct intel_atomi=
+c_state *state,
+>>                 num_encoders++;
+>>         }
+>>
+>> -       drm_WARN(state->base.dev, num_encoders !=3D 1,
+>> +       if (encoder) {
+>> +               drm_WARN(state->base.dev, num_encoders !=3D 1,
+>>                  "%d encoders for pipe %c\n",
+>>                  num_encoders, pipe_name(primary_crtc->pipe));
+>> +       }
+>>
+>>         return encoder;
+>>  }
+>> --
+>> 2.34.1
+>>
+>> =D0=97=D0=B0=D1=8F=D0=B2=D0=BB=D0=B5=D0=BD=D0=B8=D0=B5 =D0=BE =D0=BA=D0=
+=BE=D0=BD=D1=84=D0=B8=D0=B4=D0=B5=D0=BD=D1=86=D0=B8=D0=B0=D0=BB=D1=8C=D0=BD=
+=D0=BE=D1=81=D1=82=D0=B8
+>>
+>> =D0=94=D0=B0=D0=BD=D0=BD=D0=BE=D0=B5 =D1=8D=D0=BB=D0=B5=D0=BA=D1=82=D1=
+=80=D0=BE=D0=BD=D0=BD=D0=BE=D0=B5 =D0=BF=D0=B8=D1=81=D1=8C=D0=BC=D0=BE =D0=
+=B8 =D0=BB=D1=8E=D0=B1=D1=8B=D0=B5 =D0=BF=D1=80=D0=B8=D0=BB=D0=BE=D0=B6=D0=
+=B5=D0=BD=D0=B8=D1=8F =D0=BA =D0=BD=D0=B5=D0=BC=D1=83 =D1=8F=D0=B2=D0=BB=D1=
+=8F=D1=8E=D1=82=D1=81=D1=8F =D0=BA=D0=BE=D0=BD=D1=84=D0=B8=D0=B4=D0=B5=D0=
+=BD=D1=86=D0=B8=D0=B0=D0=BB=D1=8C=D0=BD=D1=8B=D0=BC=D0=B8 =D0=B8 =D0=BF=D1=
+=80=D0=B5=D0=B4=D0=BD=D0=B0=D0=B7=D0=BD=D0=B0=D1=87=D0=B5=D0=BD=D1=8B =D0=
+=B8=D1=81=D0=BA=D0=BB=D1=8E=D1=87=D0=B8=D1=82=D0=B5=D0=BB=D1=8C=D0=BD=D0=BE=
+ =D0=B4=D0=BB=D1=8F =D0=B0=D0=B4=D1=80=D0=B5=D1=81=D0=B0=D1=82=D0=B0. =D0=
+=95=D1=81=D0=BB=D0=B8 =D0=92=D1=8B =D0=BD=D0=B5 =D1=8F=D0=B2=D0=BB=D1=8F=D0=
+=B5=D1=82=D0=B5=D1=81=D1=8C =D0=B0=D0=B4=D1=80=D0=B5=D1=81=D0=B0=D1=82=D0=
+=BE=D0=BC =D0=B4=D0=B0=D0=BD=D0=BD=D0=BE=D0=B3=D0=BE =D0=BF=D0=B8=D1=81=D1=
+=8C=D0=BC=D0=B0, =D0=BF=D0=BE=D0=B6=D0=B0=D0=BB=D1=83=D0=B9=D1=81=D1=82=D0=
+=B0, =D1=83=D0=B2=D0=B5=D0=B4=D0=BE=D0=BC=D0=B8=D1=82=D0=B5 =D0=BD=D0=B5=D0=
+=BC=D0=B5=D0=B4=D0=BB=D0=B5=D0=BD=D0=BD=D0=BE =D0=BE=D1=82=D0=BF=D1=80=D0=
+=B0=D0=B2=D0=B8=D1=82=D0=B5=D0=BB=D1=8F, =D0=BD=D0=B5 =D1=80=D0=B0=D1=81=D0=
+=BA=D1=80=D1=8B=D0=B2=D0=B0=D0=B9=D1=82=D0=B5 =D1=81=D0=BE=D0=B4=D0=B5=D1=
+=80=D0=B6=D0=B0=D0=BD=D0=B8=D0=B5 =D0=B4=D1=80=D1=83=D0=B3=D0=B8=D0=BC =D0=
+=BB=D0=B8=D1=86=D0=B0=D0=BC, =D0=BD=D0=B5 =D0=B8=D1=81=D0=BF=D0=BE=D0=BB=D1=
+=8C=D0=B7=D1=83=D0=B9=D1=82=D0=B5 =D0=B5=D0=B3=D0=BE =D0=B2 =D0=BA=D0=B0=D0=
+=BA=D0=B8=D1=85-=D0=BB=D0=B8=D0=B1=D0=BE =D1=86=D0=B5=D0=BB=D1=8F=D1=85, =
+=D0=BD=D0=B5 =D1=85=D1=80=D0=B0=D0=BD=D0=B8=D1=82=D0=B5 =D0=B8 =D0=BD=D0=B5=
+ =D0=BA=D0=BE=D0=BF=D0=B8=D1=80=D1=83=D0=B9=D1=82=D0=B5 =D0=B8=D0=BD=D1=84=
+=D0=BE=D1=80=D0=BC=D0=B0=D1=86=D0=B8=D1=8E =D0=BB=D1=8E=D0=B1=D1=8B=D0=BC =
+=D1=81=D0=BF=D0=BE=D1=81=D0=BE=D0=B1=D0=BE=D0=BC.
+>
+> Sorry, we can't accept patches with that boilerplate anyway.
+>
+> BR,
+> Jani.
 
-       - description: Board XO clock source
-       - description: Sleep clock source
-       - description: PCIE 2lane PHY pipe clock source
-       - description: PCIE 2lane x1 PHY pipe clock source
-       - description: USB PCIE wrapper pipe clock source
-
-So for IPQ5424, there are 2 additional PCI phy's.
-
-So would it be fine to add the new IPQ5424 compatible to
-IPQ5322 file itself with a 'if:' of compatibles ?
-
-Regards,
-  Sricharan
-
-
+--=20
+Jani Nikula, Intel
 
