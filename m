@@ -1,132 +1,101 @@
-Return-Path: <linux-kernel+bounces-336654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50585983D9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:10:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5619C983D9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:12:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06F051F23AAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:10:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 862881C20C79
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E95812D1F1;
-	Tue, 24 Sep 2024 07:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48BB112D1F1;
+	Tue, 24 Sep 2024 07:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dzhmkftn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fJoY7Og5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7337784E0D;
-	Tue, 24 Sep 2024 07:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F1A84A3E;
+	Tue, 24 Sep 2024 07:12:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727161832; cv=none; b=Ca+rfZOjxLO1ErWeeYMxvZWA2Gh+fjqwJrWQQHaI7/+yCwdgGYVRSfAQe2+ZOkbDNH2liZmVe35HpAUJeimHKulRUJ5Epp1erGJgvKaKbvj+YfgpARsXgTYneLfirh+BtIqNU7rmTyWW5uNdOu9Qexn4CYkbh1z31m5PD0wyPMY=
+	t=1727161946; cv=none; b=rlvb9EQ+w6c0tmUbpYPAjMBMi+L1bctpWLAjuL5n1wAJ0Npnli+z/KGTBAl3/sP7ZiUMFaiPui2sVje8T9hM7Ip9G7K2hX4vOBdRphU4TyFtN5tQOebnEMKpuMB8rUJOHPbrqMEHPtC57k97OJdhWQWdx3RmCZKTZwNBJMb5zjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727161832; c=relaxed/simple;
-	bh=J1Mzwbb6R+Of/FLiZzU4w2OfGxlCEp/duydxpK93YbY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VpOSTTyKbPTIdAXsjvv1pNSb3ClkFVtC5sLPd03IzZmhUJdh0qYtqoND7NYYNNH/FoJGXp5/6MJct/bgUTW5UhaOb3rJutIZaLd7sa9YQJNneMex0LEARIcMBaRT35ezp4KcTnZXO1Yzru5o4Lh31B80+qY77u3BFdg3z5oM9Fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dzhmkftn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B627BC4CEC4;
-	Tue, 24 Sep 2024 07:10:28 +0000 (UTC)
+	s=arc-20240116; t=1727161946; c=relaxed/simple;
+	bh=odpEEdkbCbe9L+HLJkxfdzxxlD6QYySuZAMQL5T9aaY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pbtaPfvkYKViiq1tuK/8V7yWVh3laCEldI0s9Tnmy2AGloAWN9YKaDGk9NsksPYWYWCAm2+vuwzHBOy4fW75gcyXTq8+DR4Sj09CFhVy/IOnboHhpFujxYsP936F6FJYCgnehBHlIJ922x/nK4UQ7fK++Eto7gFE7XBZIE5kGZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fJoY7Og5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F2F3C4CED1;
+	Tue, 24 Sep 2024 07:12:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727161830;
-	bh=J1Mzwbb6R+Of/FLiZzU4w2OfGxlCEp/duydxpK93YbY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dzhmkftnPKk/hCG2MVaGu6gTydQ6IRQ0CUBzv+4WDO4lYzzIZBTlK7n1uFY1B0f8G
-	 zKTMSxQ1ADbSb9pHrWoc2CZYsATpSqm7l/q6n1sv3sJMScAJO6fJ7+XyTeG8Rx69Gc
-	 YjPERNla8AWsk04+4vyQEbN+8FYwsAOa8zDd8Ve+6Rp/QTVWJBX48IadQIFGzEWEbE
-	 pKsHgomi9UD0GGb5BASIEUvPF+c5IWXmeZNSC8xG2ZEqE3BGG6KNyK4+NaBXHBsfCz
-	 4+ViVU5gOuIS9wL8tPb0joq+5VH2fCyC6YNFuFdAQgRCDsMCs2AOZ0ELT5n2us2iwx
-	 D0vxw3vdUBHpA==
-Date: Tue, 24 Sep 2024 08:10:26 +0100
-From: Simon Horman <horms@kernel.org>
-To: Dipendra Khadka <kdipendra88@gmail.com>
-Cc: sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
-	hkelam@marvell.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: ethernet: marvell: octeontx2: nic: Add error
- pointer check in otx2_ethtool.c
-Message-ID: <20240924071026.GB4029621@kernel.org>
-References: <20240923113135.4366-1-kdipendra88@gmail.com>
+	s=k20201202; t=1727161946;
+	bh=odpEEdkbCbe9L+HLJkxfdzxxlD6QYySuZAMQL5T9aaY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fJoY7Og5B/yc51XOlC9Cj2eEbVAGNsFzyztP9FCgEswCojEFvruGfcTwmxN+nqfbd
+	 udQ/H5Vkhy7SklpQBH+wmBaNQqurCle4/3jcLkICBfUYR9Lvyo6F8asn3nJpJyZGrj
+	 6oyQpNCB01G6WjLze+DcIozYwQyJNWfu9ZtHU1TI08+8YZJhchs5hQDKgFKMgfELIg
+	 Ydn6RPujMfMtmMPCDEzqvi688W8Hhk5suJAuH3rZv4R4VOGXpEi+jRMLLVP9ieqU2J
+	 BFNlMu8OLT/AfwtMOSYHZcN42xFK5rhv8FWdD19Ew5glBsdykp7/mtsdJmfLkNQygf
+	 2WM7nkPt+k4fA==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5365c512b00so6146467e87.3;
+        Tue, 24 Sep 2024 00:12:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUsVaGksIlFJ76n2e0o//THgvTrrBlU0+K+VggsaSn6AKG/yDRhnG4qGtYZJ7ABKMEpaNiODJReiZXFSBQ=@vger.kernel.org, AJvYcCVBImAFUiKc6kzJ9w+1DtykISNZAIwJpMPp+Axj77l4dBIaQH2hWVBH0wKWrKGtCco9W+1wt9o5QsNqZ9Wm@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9IK2iybh4pwNNx6XV7lXz2lEv+SrE+LCqZnh/AfsIEoRnCm9j
+	c6QOtZAh6XvV/9oS85+wkFk/tuXKwB9M67ggG7eW72cBxLv1U/DtFA7J5tCgAc5Wx1BG7sFt9OG
+	4Yf6Bw7tqk8UICFc6hBgEKwcWEro=
+X-Google-Smtp-Source: AGHT+IH/dUwV4LEcLPyeJ+21mBsE7rrtW1nyiTymOC/tMLvSpXC2dXArmXNw04XA4nMxOGY9JuhnMiBurWENoAJoAZU=
+X-Received: by 2002:a05:6512:acd:b0:535:65ce:e901 with SMTP id
+ 2adb3069b0e04-536ac2d6791mr7595449e87.4.1727161944567; Tue, 24 Sep 2024
+ 00:12:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240923113135.4366-1-kdipendra88@gmail.com>
+References: <20240919091359.7023-1-xry111@xry111.site> <CAAhV-H68HOsX4=yZAmnCMW0VWf5SsqEckcHJQytSzjK8dHHW6g@mail.gmail.com>
+ <b9bc6db245775b0a2e990467f414071e82b06a29.camel@xry111.site> <ZvFji_xpV0tWxZIn@zx2c4.com>
+In-Reply-To: <ZvFji_xpV0tWxZIn@zx2c4.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 24 Sep 2024 15:12:11 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5FfbgH_7Cy_OTzjxEYJ_y9UKBXavk2D7Sy+-SAxQqvZw@mail.gmail.com>
+Message-ID: <CAAhV-H5FfbgH_7Cy_OTzjxEYJ_y9UKBXavk2D7Sy+-SAxQqvZw@mail.gmail.com>
+Subject: Re: [PATCH] LoongArch: vDSO: Tune the chacha20 implementation
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Xi Ruoyao <xry111@xry111.site>, WANG Xuerui <kernel@xen0n.name>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, linux-crypto@vger.kernel.org, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Jinyang He <hejinyang@loongson.cn>, Tiezhu Yang <yangtiezhu@loongson.cn>, 
+	Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 23, 2024 at 11:31:34AM +0000, Dipendra Khadka wrote:
-> Add error pointer check after calling otx2_mbox_get_rsp().
-> 
+Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
 
-Hi Dipendra,
-
-Please add a fixes tag here (no blank line between it and your
-Signed-off-by line).
-> Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
-
-As you have posted more than one patch for this driver, with very similar,
-not overly complex or verbose changes, it might make sense to combine them
-into a single patch. Or, if not, to bundle them up into a patch-set with a
-cover letter.
-
-Regarding the patch subject, looking at git history, I think
-an appropriate prefix would be 'octeontx2-pf:'. I would go for
-something like this:
-
-  Subject: [PATCH net v2] octeontx2-pf: handle otx2_mbox_get_rsp errors
-
-As for the code changes themselves, module the nits below, I agree the
-error handling is consistent with that elsewhere in the same functions, and
-is correct.
-
-> ---
->  .../ethernet/marvell/octeontx2/nic/otx2_ethtool.c    | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
-> index 0db62eb0dab3..36a08303752f 100644
-> --- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
-> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
-> @@ -343,6 +343,12 @@ static void otx2_get_pauseparam(struct net_device *netdev,
->  	if (!otx2_sync_mbox_msg(&pfvf->mbox)) {
->  		rsp = (struct cgx_pause_frm_cfg *)
->  		       otx2_mbox_get_rsp(&pfvf->mbox.mbox, 0, &req->hdr);
-> +
-
-nit: No blank line here.
-
-> +		if (IS_ERR(rsp)) {
-> +			mutex_unlock(&pfvf->mbox.lock);
-> +			return;
-> +		}
-> +
->  		pause->rx_pause = rsp->rx_pause;
->  		pause->tx_pause = rsp->tx_pause;
->  	}
-> @@ -1074,6 +1080,12 @@ static int otx2_set_fecparam(struct net_device *netdev,
->  
->  	rsp = (struct fec_mode *)otx2_mbox_get_rsp(&pfvf->mbox.mbox,
->  						   0, &req->hdr);
-> +
-
-Ditto.
-
-> +	if (IS_ERR(rsp)) {
-> +		err = PTR_ERR(rsp);
-> +		goto end;
-> +	}
-> +
->  	if (rsp->fec >= 0)
->  		pfvf->linfo.fec = rsp->fec;
->  	else
-
--- 
-pw-bot: changes-requested
+On Mon, Sep 23, 2024 at 8:48=E2=80=AFPM Jason A. Donenfeld <Jason@zx2c4.com=
+> wrote:
+>
+> On Mon, Sep 23, 2024 at 04:06:41PM +0800, Xi Ruoyao wrote:
+> > On Mon, 2024-09-23 at 15:15 +0800, Huacai Chen wrote:
+> > > > +#define line3          state12, state13, state14, state15
+> > > > +
+> > > > +#define        line1_perm      state5, state6, state7, state4
+> > > > +#define        line2_perm      state10, state11, state8, state9
+> > > > +#define        line3_perm      state15, state12, state13, state14
+> > > > +
+> > > > +#define        copy            copy0, copy1, copy2, copy3
+> > > The indentation here is strange, it seems some of them are spaces and
+> > > some of them are tabs.
+> >
+> > Oops indeed.  The tabs after "#define" should be a space instead.
+> >
+> > Jason: can you edit it for me or do you want a new revision of the patc=
+h
+>
+> I've fixed it in tree.
+>
+> Jason
 
