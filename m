@@ -1,68 +1,72 @@
-Return-Path: <linux-kernel+bounces-337693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 274B9984DBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:26:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 216F4984DC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:27:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A71F6B22BAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:26:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB6401F240E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:27:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D059C149E1A;
-	Tue, 24 Sep 2024 22:26:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48C5149E1A;
+	Tue, 24 Sep 2024 22:27:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KW+5rx58"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cYjUIZuo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC1B13C9D9;
-	Tue, 24 Sep 2024 22:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60ECA146D76
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 22:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727216787; cv=none; b=XxJSY9KHRri/4+JrTVjnXYEKEG+vsPYWHwBaIueiVSOcjlA0DXYe9nl7uCKqmhRWHZEjm+RA4X+PTyT+Cu1Nt6bQg1sXl3qn9PLPzRf7aa09VFUAPgM19dVbWOKpiWmei8+UesGHfPRgYe/F5GiX1VLNsrE1Q3P5pf2v46JtsPg=
+	t=1727216870; cv=none; b=Q2Oeu8pwa5f8wtCjxTwIayFufxQeaSWlITJMED5ZdYYXiGlFBaPeuEq69d3YMfmHvsGb+Hg+PVemA/BTRgCydJlGP6rIjiZvaRH6jbU9SSFfFFZHnn9d1+ocXgUMg++girvenqRbilf+G7n52Fcj5S/Bq51iqM2BJ0JMT9R5OuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727216787; c=relaxed/simple;
-	bh=YmYTBESt0EqQFqhnzMaFyGYpmk/68DRvs5SHo7cxNSY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Px3S9n/yI3eC1KqJ4jtL3McggnUsQ5Fn3XHYK/fqQ6khp/SxTMk6swLXW/x6WP861aKIBqwRlExRIIEIcBV9vkiaIpbIlHYdH2eFmSDttmTKO3bdAKQM2UACeJ2uDHD+ycF8MEoY9XJ3xHneaukkmztHOxBICpO8VlBy0zg/BP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KW+5rx58; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CF21C4CEC4;
-	Tue, 24 Sep 2024 22:26:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727216786;
-	bh=YmYTBESt0EqQFqhnzMaFyGYpmk/68DRvs5SHo7cxNSY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KW+5rx58Am0dAtvner/unXsVDmx0QycmxdReU8qVh9hd8J2qXt/8xXa+AE2mT669A
-	 nM449DLPXw8eQONRvfIrSVc6HOzA2z+5vj9PwU1qWRvY7780Pmixy56hQte1iFE99J
-	 gqq5yqYsatOS+m9/7mdkTsn2R6+SKq950WwRTgZqTNxZFOyZ3GICGBtC4GXvOW+ac6
-	 3wc/vy2ttKQs2glG0L1bG6zj/XjLvBPebBlFVlPexRp6ne922um0WB2Wf2NK5HaiFN
-	 6ANRkMEOdZPrq50mxAiQS1Pg10OAD0VyioSQa6fnsrRT/GmWTXErnlK/IEKZ3lzpkZ
-	 wIwvBuegE0xow==
-Date: Tue, 24 Sep 2024 17:26:25 -0500
-From: Rob Herring <robh@kernel.org>
-To: Chanh Nguyen <chanh@amperemail.onmicrosoft.com>
-Cc: Conor Dooley <conor@kernel.org>,
-	Chanh Nguyen <chanh@os.amperecomputing.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Peter Yin <peteryin.openbmc@gmail.com>,
-	Noah Wang <noahwang.wang@outlook.com>, Marek Vasut <marex@denx.de>,
-	Fabio Estevam <festevam@gmail.com>, Lukas Wunner <lukas@wunner.de>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-	Phong Vo <phong@os.amperecomputing.com>,
-	Thang Nguyen <thang@os.amperecomputing.com>,
-	Quan Nguyen <quan@os.amperecomputing.com>,
-	Khanh Pham <khpham@amperecomputing.com>,
-	Open Source Submission <patches@amperecomputing.com>
-Subject: Re: [PATCH v2] dt-bindings: trivial-devices: add onnn,adt7462
-Message-ID: <20240924222625.GA403554-robh@kernel.org>
-References: <20240923093800.892949-1-chanh@os.amperecomputing.com>
- <20240923-private-grower-af6a7c1fca09@spud>
- <c536f43a-56f8-4cbf-99a0-fe3b54a42886@amperemail.onmicrosoft.com>
+	s=arc-20240116; t=1727216870; c=relaxed/simple;
+	bh=1KT8JsF7dFmWaU1E+MmbaZVahSXzssNF4xnvWizLijg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ZVyznlnP4l31sOiCwTpRgBXedrnSPtsLwZI7dyZGzkOdtLJ0qfV2+qs+FT6dGugjxFDt76hInVZhCb9pMVY7xzHbf804rhPuz9InVC3lVYM0hyRT0/PhFmFRDCV4fKNWvCF1YBf0qkt0DxiuZBODQozzJbVAGTk2bbpM2wsODN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cYjUIZuo; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727216869; x=1758752869;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=1KT8JsF7dFmWaU1E+MmbaZVahSXzssNF4xnvWizLijg=;
+  b=cYjUIZuoyiXAhLMixi229KOWn2UhfiRIPn4jT6ePnLtVRN3ZtoLc23M8
+   tajuNjuCDP2PoUqQvMUMqAY5TwsRMs+d+eg1KC9gOcly43v2S6jnN1cRE
+   ilSxBjnpqPfHJLDU99PMqyweroAduxExLgCFOaoNm6IWOaoMfKxwQprGI
+   aNfZgTfFr29ADkf7WbKck2RqQu/eBDw49E9ZWNq3qiABcrqoIjdMN8D9+
+   OuWRPnCXOWbzoQ9glgpSoGt1VqT00W8SQi3/rjPGYkENi75k9UXIVzIIL
+   OY08XAm1eQtl3QQbRNKR9JZNqwE9Iqb37NrjyWfKG0eRfQUbGegLdovdc
+   Q==;
+X-CSE-ConnectionGUID: g/u74lfKTJehQ0709jG8lA==
+X-CSE-MsgGUID: w/B3rAa/RzuIsTOzhvnOvQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="25715479"
+X-IronPort-AV: E=Sophos;i="6.10,255,1719903600"; 
+   d="scan'208";a="25715479"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 15:27:46 -0700
+X-CSE-ConnectionGUID: kCEQysbWRNGajWreGhXAzw==
+X-CSE-MsgGUID: EwXPbwzLTy+kFZKXT2M4Wg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,255,1719903600"; 
+   d="scan'208";a="72020142"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 24 Sep 2024 15:27:44 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1stE0T-000Itt-0w;
+	Tue, 24 Sep 2024 22:27:41 +0000
+Date: Wed, 25 Sep 2024 06:27:21 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: drivers/thermal/testing/thermal-testing.o: warning: objtool:
+ .text.tt_add_tz: unexpected end of section
+Message-ID: <202409250637.5QiiHNph-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,49 +75,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c536f43a-56f8-4cbf-99a0-fe3b54a42886@amperemail.onmicrosoft.com>
 
-On Tue, Sep 24, 2024 at 11:17:53AM +0700, Chanh Nguyen wrote:
-> On 24/09/2024 04:23, Conor Dooley wrote:
-> > On Mon, Sep 23, 2024 at 09:38:00AM +0000, Chanh Nguyen wrote:
-> > > The adt7462 supports monitoring and controlling up to
-> > > four PWM Fan drive outputs and eight TACH inputs measures.
-> > > The adt7462 supports reading a single on chip temperature
-> > > sensor and three remote temperature sensors. There are up
-> > > to 13 voltage monitoring inputs.
-> > > 
-> > > Add device tree bindings for the adt7462 device.
-> > > 
-> > > Signed-off-by: Chanh Nguyen <chanh@os.amperecomputing.com>
-> > > ---
-> > > Change in v2:
-> > >     - Add onnn,adt7462 to the list of trivial devices       [Guenter]
-> > 
-> > Is this really a trivial device? If it monitors and controls fans, how
-> > come those do not need to be represented in the devicetree? How is it
-> > possible to tell the difference between monitoring 1 and 4 fans without
-> > the extra detail?
-> > 
-> 
-> Hi Conor, Thank you for your comments!
-> 
-> The chip is old. The driver was added back in 2008.
-> 
-> Really, this is such an old chip that it would make more sense to just leave
-> its driver alone unless there is a problem with it; this is viewpoint from
-> Guenter.
-> 
-> I'm using the driver and the device tree with only the "compatible" and
-> "reg" properties; now it's being good for me without any extra detail.
-> 
-> Guenter, Rob, Krzysztof, and I discussed making the decision to add this
-> device to the list of trivial devices. You can get more information at
-> thread
-> https://lore.kernel.org/lkml/20240918220553.GA2216504-robh@kernel.org/T/
-> (Because the commit title changed between v1 and v2, it's so hard for
-> everyone to find it. Sorry! I missed mentioning the link to pacth v1).
+Hi Rafael,
 
-It's fine. I'll apply this after the merge window.
+First bad commit (maybe != root cause):
 
-Rob
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   68e5c7d4cefb66de3953a874e670ec8f1ce86a24
+commit: f6a034f2df426e279f1ecad53626bab80c04796a thermal: Introduce a debugfs-based testing facility
+date:   5 weeks ago
+config: x86_64-randconfig-122-20240925 (https://download.01.org/0day-ci/archive/20240925/202409250637.5QiiHNph-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240925/202409250637.5QiiHNph-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409250637.5QiiHNph-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/thermal/testing/thermal-testing.o: warning: objtool: .text.tt_add_tz: unexpected end of section
+>> drivers/thermal/testing/thermal-testing.o: warning: objtool: .text.tt_del_tz: unexpected end of section
+>> drivers/thermal/testing/thermal-testing.o: warning: objtool: .text.tt_zone_add_trip: unexpected end of section
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
