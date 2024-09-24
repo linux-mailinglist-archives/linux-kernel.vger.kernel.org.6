@@ -1,107 +1,164 @@
-Return-Path: <linux-kernel+bounces-336928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F303C9842B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:53:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 316949842BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:54:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D9541C228BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:53:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DADE8288186
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72EF415DBBA;
-	Tue, 24 Sep 2024 09:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F2215CD52;
+	Tue, 24 Sep 2024 09:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qeZCj5vA"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Xu2XRwxZ"
+Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2C981AB6
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE87B768FD;
+	Tue, 24 Sep 2024 09:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.21.196.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727171601; cv=none; b=ULUd3bH+1stejw1CfPcTX7DO06ri02CpAjMaxjkCZuaHdsQNmImY7fTlM3vLGtYY4SwB6OlF+XQZEriVHu94hSzVxcqtEj+ToLoo1Xt+mE0ZyZV/0fD5WYxH0ZtARmQb+y046WB8ODMtWLDjDwLXDCnOtGqAUuMQEPGBwZF9LqI=
+	t=1727171670; cv=none; b=SUpqLFzgSgZ95l5FtEULJTSnandrMaDsCNGPYHNW0eh6dmZyEW+hoFQEbZ1ht6xJEqUpNIQk9b1QmqZA3Jl3jbzfX3HvqkjJYSiMKjxbJ3m/S/yIHJIsX8IfiREPoByn4LvZlbn1hCfO4BYaVx5JaAbu3KY/etVDLpUGjPGDSdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727171601; c=relaxed/simple;
-	bh=gpDa5jV7LLHIboyhuFDseiP0jRBBnTJL6fUDy3U7O84=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U2sqYTrmruUSKrzlqDiRoMTB5w86oXwTqFEGJIr5oeUJ6kMUYka667C9RWBI+1cZxCXWGPdisxFE561TZsE0CMNV1LGCg1Ri1n0dnyuTHK9Yd/LNOjftTSbHjV3OxH8kZqht/CgFGdiLKzHzvtyVtXqntDeCSc2SXMuqMPXIC+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qeZCj5vA; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-537a2a2c74fso1623216e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 02:53:19 -0700 (PDT)
+	s=arc-20240116; t=1727171670; c=relaxed/simple;
+	bh=Gkrrud4kuXvxvQ6MtiC443Wd3/2RFLqYqDIQsc6zefM=;
+	h=Subject:Date:From:To:CC:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZALwv90ddnTqUZBkw7EEwGhMyMpxHVKLksUUXr32NySWV17zrtRGEN8pGL36XE9/LesaurtuTQatutCn2bcyolIGgoqgGK+lwSSIfP3IEdXxU3bzNPtdB0Kzvq31SaMobbu9Van6CIdJqQuxMnMi3IoKhf5boaSxsxw3zZN2KQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Xu2XRwxZ; arc=none smtp.client-ip=72.21.196.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727171598; x=1727776398; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1B1OazfrIYcqDgljo11L7/3HINNwsrbuT9cs/Fij7g4=;
-        b=qeZCj5vAQdf64bvrMuQ7CaDVhk9mK8IQswL/+0AuVTTt8EHEtFt5eEub3RHN3j6mXB
-         8pno29XkqGafZOx/pbwXjlE/O9MQOCJVCZKFSMU2pRkWw1Ng0FdEO3/AC/OkgQi7/W12
-         qrf20KXcXnT5Dk7tIHrBEE4l7PSIvunIRg34KcabPxkIvSdlQNyS5UmdjxrXymPGpHm4
-         n7MKuFWb6y8KfzYmWVkXXXNHaJ2ujOvirV7kwV+L/vgzB8HlUNDyy1HHFlLMjEYgoXmp
-         e67ZWQZwahKhep5IpRVmFk0wHA5la+lFs9lhbYmMUDR5FtFLM+M9X3d4ceQW0mr6KCiP
-         wT0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727171598; x=1727776398;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1B1OazfrIYcqDgljo11L7/3HINNwsrbuT9cs/Fij7g4=;
-        b=YusJe1xT6wc6mrZeDt4mc9skThIAlkJPLCQygb4DFgkaT7Lwyl4S4vctve/I1KoLXh
-         kWLubqcS9jvWXLMymzeAyqXrNOn9XIQoDYL2BNOJj6rMELHWafwIgRvoa000Nc1f8xtP
-         TXg93pnGw+K2je2zeoI+uC76ZstVyI+J45u8wNkoMa9dCQdc3C2axvG4WJDk96W8CpCj
-         3/jptL8r/edNFdzvNtpwWc8+l0yeaanmT3ACjHgQWvmtTnIJZR4v7OGXcCNPMZ75jPdY
-         ybrR0L4xsAMJZlnAMGOgeoVO+q7XVnphHR9frzoMXfg59OZAc6bnD62jTFL2qSVASFVU
-         KevA==
-X-Forwarded-Encrypted: i=1; AJvYcCV/3ZJECVhouyaF4bee9xJZg5zWBmuoitEnRZURbgRpi4xFswGf7d4p665N7UCPXJtXjfC+m9dpseIZun4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSYn2Kwisg+E8L9gS8nvEstA90HKt9uvD44R8YwgPf9gdOTDdN
-	1Af7l4kOkIFj/YzpcJrfOSjUfgf+hrciMSZT9JbjkrT+BTwpbeYub9PH7ofrU1s=
-X-Google-Smtp-Source: AGHT+IHNdJNovm4z94ZHcR5kxQYpSRslhVpX6h8NUrYQWYFmX6wptEro/DaYvlFqeizDV/AiP8vjQw==
-X-Received: by 2002:a05:6512:696:b0:52e:fef4:2cab with SMTP id 2adb3069b0e04-537a6512cd0mr866098e87.2.1727171598188;
-        Tue, 24 Sep 2024 02:53:18 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-537a86490dcsm155318e87.239.2024.09.24.02.53.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 02:53:16 -0700 (PDT)
-Date: Tue, 24 Sep 2024 12:53:15 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Esben Haabendal <esben@geanix.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/3] drm/panel: ili9881c: Add JMO LCM-JM800WX support
-Message-ID: <bplvcvwvtwzxa4drmohvb7qac7j5cyucpww5paru4e4drlexoe@hzvabm5tgxcd>
-References: <20240814-drm-panel-ili9881c-lcm-jm800wx-v1-0-22a5e58599be@geanix.com>
- <20240814-drm-panel-ili9881c-lcm-jm800wx-v1-3-22a5e58599be@geanix.com>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1727171669; x=1758707669;
+  h=date:from:to:cc:message-id:references:mime-version:
+   in-reply-to:subject;
+  bh=K8LrR0vVZyaYFA7OwHUo5vxCOF7p2lb3YoI5XYN1fhE=;
+  b=Xu2XRwxZXG6GyjUuyraR4GiLpFna3N0KrKCPGoTe/0IMmbDNgM+IvqUc
+   6Ep8Dt6k6gRpcynkh/3+vWUlF81HOkl1yaMMLZyAIwC7hyBUKlSMVRtPs
+   bqlRDOicq8eJEZVY9RWtlHMx/AVBFOJbcuTXY8qPfvPoh00Ce3J15OVlh
+   U=;
+X-IronPort-AV: E=Sophos;i="6.10,254,1719878400"; 
+   d="scan'208";a="429947790"
+Subject: Re: [PATCH 0/4] Process some MMIO-related errors without KVM exit
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 09:54:26 +0000
+Received: from EX19MTAEUA002.ant.amazon.com [10.0.10.100:46744]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.45.76:2525] with esmtp (Farcaster)
+ id bdfbeaad-b03b-481b-a8e4-94c2c0fe622e; Tue, 24 Sep 2024 09:54:25 +0000 (UTC)
+X-Farcaster-Flow-ID: bdfbeaad-b03b-481b-a8e4-94c2c0fe622e
+Received: from EX19D033EUB004.ant.amazon.com (10.252.61.103) by
+ EX19MTAEUA002.ant.amazon.com (10.252.50.126) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Tue, 24 Sep 2024 09:54:24 +0000
+Received: from EX19MTAUWA001.ant.amazon.com (10.250.64.204) by
+ EX19D033EUB004.ant.amazon.com (10.252.61.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Tue, 24 Sep 2024 09:54:24 +0000
+Received: from email-imr-corp-prod-iad-all-1a-f1af3bd3.us-east-1.amazon.com
+ (10.25.36.214) by mail-relay.amazon.com (10.250.64.204) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1258.34 via Frontend Transport; Tue, 24 Sep 2024 09:54:23 +0000
+Received: from dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com (dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com [10.253.74.38])
+	by email-imr-corp-prod-iad-all-1a-f1af3bd3.us-east-1.amazon.com (Postfix) with ESMTP id 0F60740359;
+	Tue, 24 Sep 2024 09:54:23 +0000 (UTC)
+Received: by dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com (Postfix, from userid 29210185)
+	id C01BE8A04; Tue, 24 Sep 2024 09:54:22 +0000 (UTC)
+Date: Tue, 24 Sep 2024 09:54:22 +0000
+From: Ivan Orlov <iorlov@amazon.com>
+To: Sean Christopherson <seanjc@google.com>
+CC: Jack Allister <jalliste@amazon.co.uk>, Ivan Orlov <iorlov@amazon.co.uk>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"bp@alien8.de" <bp@alien8.de>, "dave.hansen@linux.intel.com"
+	<dave.hansen@linux.intel.com>, "hpa@zytor.com" <hpa@zytor.com>,
+	"mingo@redhat.com" <mingo@redhat.com>, "tglx@linutronix.de"
+	<tglx@linutronix.de>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"nh-open-source@amazon.com" <nh-open-source@amazon.com>, "shuah@kernel.org"
+	<shuah@kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>
+Message-ID: <20240924095422.GA66922@dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com>
+References: <20240923141810.76331-1-iorlov@amazon.com>
+ <ZvGfnARMqZS0mkg-@google.com>
+ <cb06b33acdad04bef8c9541b4247a36f51cf2d36.camel@amazon.co.uk>
+ <ZvHhqRWW04jmk8TW@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20240814-drm-panel-ili9881c-lcm-jm800wx-v1-3-22a5e58599be@geanix.com>
+In-Reply-To: <ZvHhqRWW04jmk8TW@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-On Wed, Aug 14, 2024 at 03:10:37PM GMT, Esben Haabendal wrote:
-> Add support for the LCM-JM800WX panel from JMO Tech.
+On Mon, Sep 23, 2024 at 02:46:17PM -0700, Sean Christopherson wrote:
+ > >
+> > > No.  This is not architectural behavior.  It's not even remotely
+> > > close to
+> > > architectural behavior.  KVM's behavior isn't great, but making up
+> > > _guest visible_
+> > > behavior is not going to happen.
+> >
+> > Is this a no to the whole series or from the cover letter?
 > 
-> The init commands are based on information from vendor.
+> The whole series.
 > 
-> Signed-off-by: Esben Haabendal <esben@geanix.com>
-> ---
->  drivers/gpu/drm/panel/panel-ilitek-ili9881c.c | 228 ++++++++++++++++++++++++++
->  1 file changed, 228 insertions(+)
+> > For patch 1 we have observed that if a guest has incorrectly set it's
+> > IDT base to point inside of an MMIO region it will result in a triple
+> > fault (bare metal Cascake Lake Intel).
 > 
+> That happens because the IDT is garbage and/or the CPU is getting master abort
+> semantics back, not because anything in the x86 architectures says that accessing
+> MMIO during exception vectoring goes straight to shutdown.
+>
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Hi Sean, thank you for the detailed reply.
 
--- 
-With best wishes
-Dmitry
+Yes, I ran the reproducer on my AMD Ryzen 5 once again, and it seems like
+pointing the IDT descriptor base to a framebuffer works perfectly fine,
+without any triple faults, so injecting it into guest is not a correct
+solution.
+
+However, I believe KVM should demonstrate consistent behaviour in
+handling MMIO during event delivery on vmx/svm, so either by returning
+an event delivery error in both cases or going into infinite loop in
+both cases. I'm going to test the kvm/next with the commits you
+mentioned, and send a fix if it still hits an infinite loop on SVM.
+
+Also, I reckon as detecting such an issue on the KVM level doesn't
+introduce much complexity, returning a sane error flag would be nice. For
+instance, we could set one of the 'internal.data' elements to identify
+that the problem occured due to MMIO during event delivery
+
+> > Yes a sane operating system is not really going to be doing setting it's IDT
+> > or GDT base to point into an MMIO region, but we've seen occurrences.
+> > Normally when other external things have gone horribly wrong.
+> >
+> > Ivan can clarify as to what's been seen on AMD platforms regarding the
+> > infinite loop for patch one. This was also tested on bare metal
+> > hardware. Injection of the #UD within patch 2 may be debatable but I
+> > believe Ivan has some more data from experiments backing this up.
+> 
+> I have no problems improving KVM's handling of scenarios that KVM can't emulate,
+> but there needs to be reasonable justification for taking on complexity, and KVM
+> must not make up guest visible behavior.
+
+Regarding the #UD-related change: the way how I formulated it in the
+cover letter and the patch is confusing, sorry. We are _alredy_ enqueuing
+an #UD when fetching from MMIO, so I believe it is already architecturally
+incorrect (see handle_emulation_failure in arch/x86/kvm/x86.c). However,
+we return an emulation failure after that, and I believe how we do this
+is debatable. I maintain we should either set a flag in emulation_failure.flags
+to indicate that the error happened due to fetch from mmio (to give more
+information to VMM), or we shouldn't return an error at all... Maybe it
+should be KVM_EXIT_MMIO with some flag set? What do you think?
+
+Thank you!
+
+Kind regards,
+Ivan Orlov
 
