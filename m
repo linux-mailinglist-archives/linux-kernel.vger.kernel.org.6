@@ -1,134 +1,89 @@
-Return-Path: <linux-kernel+bounces-337646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40B3D984CDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:25:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA990984CE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:26:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB0171F24BEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:25:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F5341F24BB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:26:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D00BE146A87;
-	Tue, 24 Sep 2024 21:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3CC1494DC;
+	Tue, 24 Sep 2024 21:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ye3C+TBq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GSpF9X1a"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CFF1145B1B
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 21:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D4E13E043;
+	Tue, 24 Sep 2024 21:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727213043; cv=none; b=MyaY2SMIimn8M0ChjaPNm1cJg2208HV4aZjYNZlcGTuchbK8Oltky4ypA1DjTg9J1P6/BhzCgbS+Wg88R31uhV4umNQ489VatmP3a7sylfH4paG8ngCcUFc/L9WukCpzeZiiWwHXXr/anhqv/QT2VmyaxXKBwWm6rPTwdOPux/s=
+	t=1727213089; cv=none; b=K1L4zOW9TJh6a0DiN1ENwiN0pvSpwTAlqD+H3RnNFdFJSpk5xOYHNmStoKQKiAFznWNAu/fyrBDQsYfT87Mt1QPzZuKifmMyQhp4u/ZUYogt1mWmEyEJx0CMsKjvp6egLuhkGNnnduNGdO5XKeJRlupECqsxSeIAaHV4GayN4/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727213043; c=relaxed/simple;
-	bh=VpaCwH0tvpXrXrqkogXmPmUbk2lTJRh3kdaMbA97Y8M=;
+	s=arc-20240116; t=1727213089; c=relaxed/simple;
+	bh=Se2SeyxPn1YF8ln96fxH093MbqW12GotKj2gD9ytgGE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Dr/qzK9eKaUpJwtFLW+jGkuNELBRv3SX/hHzoggxZOGYd6jTlUXAULKuAa5k8shz9tDeiD7NhVX5qPTwzsxwIUr1jg5a9DY27a6uoyr6RBMzX35mLQTx05XVEIbBDehJqsFOgMq2etiMXlpDeb+A0GoZ+nDpZA5fe509B3sn0NE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ye3C+TBq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEB2CC4CEC4
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 21:24:02 +0000 (UTC)
+	 To:Cc:Content-Type; b=BtQyR3xG3L4KIgISzBJi8pdqFz/pQJdqBwil59yLXZXWl8ozeUX1V+2THHj0zGa1fHaQfJ4XGlz4WouvZsQC8CRidO5FWM1ni2t7dVjHRaqF9XvGmut1/O/cDZvGv7a7pHWQcZVMZcSUEaVzqXBfJEEr2b2aNTU9nTbqMRDqswM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GSpF9X1a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4994AC4AF0D;
+	Tue, 24 Sep 2024 21:24:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727213042;
-	bh=VpaCwH0tvpXrXrqkogXmPmUbk2lTJRh3kdaMbA97Y8M=;
+	s=k20201202; t=1727213089;
+	bh=Se2SeyxPn1YF8ln96fxH093MbqW12GotKj2gD9ytgGE=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Ye3C+TBqO2z28f9G+01yXiwDWDNezz/i3gR0S7qXDKT+HUckDoPLS7QkWOp3Kg+vA
-	 LbK6pb7/cJYtC5R45U6KsDj8Rwu07zkYYxMEl+3sYj4ZOHTHKDlLmwXfcL850OJ1JM
-	 XUE4ROHnfCSOChjWjcYGp3wb8p6y9rene/s8tthh+fIdqUv8YyWpNgKX0yn2NAvYfg
-	 0yA9w1AlvrcbG8l84opfdWTQmgalYQxQ0NarhAMIwHkm61UWQe+xvuf4M53iuN10JM
-	 5Ih831YA7bIApjTiB1YglwVbZbl6JTs+4rckrCGfE6K+fiTlmPsVX9kBkWJoCS0lQJ
-	 PRmPV20boLRNQ==
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6dfff346a83so38169217b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 14:24:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVQW7qJLgZfL8MrH4AmAtQy6Indb0ZtzU1a+KVuySean+UCll0P2CE7DEnkbStuc54C3DllRZ7qv56DiQc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw58UvoTEYgmGv5Av4B3lqnvE7EmyV/hiH4MfXqHq5gXRm8aIZ7
-	sDesu1wyf+U38R/VFQ5sp0BQInzuXYSBJ10IqN6J5yl6w/qeHNBZEHZJ86nYzoi9zv5Cjazm4OZ
-	W2/LrV0LBpNzS3+MPBenCYR4xIUNJp/1+fgAfvA==
-X-Google-Smtp-Source: AGHT+IG+4wSBU/xx18St6qUUR5v1Snuoo4O4LMphOaTpEffHhcTiiuv0BSr6OU9e4wyoFlnXXYJtKNh0D27cNf0+7/k=
-X-Received: by 2002:a05:690c:f8f:b0:6dd:f9ea:895f with SMTP id
- 00721157ae682-6e21d70072amr8708607b3.12.1727213042128; Tue, 24 Sep 2024
- 14:24:02 -0700 (PDT)
+	b=GSpF9X1aEP5ShwEMMdwzFGiXnTFSHDwRhYQxUZDvuKGB/nIhnq2QKeyZ9+FgwI3J1
+	 MzQ6/uVcTfvB3PunJtfDAdrckXJdkweDYmb75mBHb+PiQZz0P+vQ4oTcdHPV7I8PTQ
+	 U/OXAIrJR/DibW16WO9FY8cpcYnDJSZcIbo5quVX2XOjRmUmk4o4s5pMKCl090hgck
+	 VFknEatVJilOvb8vOgbZF0SwLEHhhvQ039Asq0/OE/krJKYdA+DKDq/OEJ6mKWkxFs
+	 +BQHRQqBvW70ZPVC34LghNYRoq02iWd5vrnHO9uhOXdzqEfb6ghfw1gJ1vxAslohq2
+	 LyrgXavyywJ3g==
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3a046d4c465so19598485ab.3;
+        Tue, 24 Sep 2024 14:24:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWMG3gCgnoh2ApWXsrulmFYAh8ELLf9pr7p9li1YtpeIu++rqwpyeH89XT7FXCUzimkw/UUd4l8KwwxMw==@vger.kernel.org, AJvYcCWMcsn0ym0ta8u8VP8HfomgOi03Hheord3pwi+i/za5a1S3FXtTIf9sWKeZZx7al8vERcc+NP0MoX8cpDFj@vger.kernel.org, AJvYcCWSrXYeVYYmqsGG6hj4m/FOYru4ezU665TP8WshYKYe4mP55+hAVfmJt5V1tmZACFWNxaw47jnsNH7uhaM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywb5O+pJeUXcVkUYFJH406R7EFZXmVYnfqP83hDVajnptsZ06Z/
+	QhrTsec0142rSb2kQERjfIlu0ITRPnuAMK5eFVpxfkUs5rSo2JM0BSCI1i7nwPAJY8nBNkzi+nz
+	RqW9t1xN6vbRMTb0iz5MnOUhZE68=
+X-Google-Smtp-Source: AGHT+IGDkW7WD2/JzFxCpyUwRB5/+sUMgv4hqELdvS0oE8C8Gvs3vzZAdADEd3f3M3MN9EO5an1dEVTf2Q18Yg4o5dM=
+X-Received: by 2002:a05:6e02:174a:b0:3a0:aa15:3497 with SMTP id
+ e9e14a558f8ab-3a26d6d97acmr10177795ab.1.1727213088499; Tue, 24 Sep 2024
+ 14:24:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240905-lru-flag-v2-1-8a2d9046c594@kernel.org>
-In-Reply-To: <20240905-lru-flag-v2-1-8a2d9046c594@kernel.org>
-From: Chris Li <chrisl@kernel.org>
-Date: Tue, 24 Sep 2024 14:23:51 -0700
-X-Gmail-Original-Message-ID: <CACePvbV6mqi7A0AhCYP1umejz6QBR91ueTSH_enJZoLe=N_pWw@mail.gmail.com>
-Message-ID: <CACePvbV6mqi7A0AhCYP1umejz6QBR91ueTSH_enJZoLe=N_pWw@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: vmscan.c: fix OOM on swap stress test
-To: Andrew Morton <akpm@linux-foundation.org>, yangge <yangge1116@126.com>
-Cc: Yu Zhao <yuzhao@google.com>, David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
-	baolin.wang@linux.alibaba.com, Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20240924091733.8370-1-shenlichuan@vivo.com> <d95d7419-7bac-802f-a5d6-456900539c32@redhat.com>
+In-Reply-To: <d95d7419-7bac-802f-a5d6-456900539c32@redhat.com>
+From: Song Liu <song@kernel.org>
+Date: Tue, 24 Sep 2024 14:24:37 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW51S=WfyNoP_cWvNVq3rPW0+iBrhzRVaKK=q3PLRA94UA@mail.gmail.com>
+Message-ID: <CAPhsuW51S=WfyNoP_cWvNVq3rPW0+iBrhzRVaKK=q3PLRA94UA@mail.gmail.com>
+Subject: Re: [PATCH v1] md: Correct typos in multiple comments across various files
+To: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Shen Lichuan <shenlichuan@vivo.com>, colyli@suse.de, kent.overstreet@linux.dev, 
+	agk@redhat.com, snitzer@kernel.org, yukuai3@huawei.com, 
+	linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	dm-devel@lists.linux.dev, linux-raid@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-I forgot to CC stable on this fix.
+Hi Mikulas,
 
-Chris
+On Tue, Sep 24, 2024 at 6:30=E2=80=AFAM Mikulas Patocka <mpatocka@redhat.co=
+m> wrote:
+>
+> Hi
+>
+> I've applied the device mapper part of the patch.
 
-On Thu, Sep 5, 2024 at 1:08=E2=80=AFAM Chris Li <chrisl@kernel.org> wrote:
->
-> I found a regression on mm-unstable during my swap stress test,
-> using tmpfs to compile linux. The test OOM very soon after
-> the make spawns many cc processes.
->
-> It bisects down to this change: 33dfe9204f29b415bbc0abb1a50642d1ba94f5e9
-> (mm/gup: clear the LRU flag of a page before adding to LRU batch)
->
-> Yu Zhao propose the fix: "I think this is one of the potential side
-> effects -- Huge mentioned earlier about isolate_lru_folios():"
->
-> I test that with it the swap stress test no longer OOM.
->
-> Link: https://lore.kernel.org/r/CAOUHufYi9h0kz5uW3LHHS3ZrVwEq-kKp8S6N-MZU=
-mErNAXoXmw@mail.gmail.com/
-> Fixes: 33dfe9204f29 ("mm/gup: clear the LRU flag of a page before adding =
-to LRU batch")
-> Suggested-by: Yu Zhao <yuzhao@google.com>
-> Suggested-by: Hugh Dickins <hughd@google.com>
-> Tested-by: Chris Li <chrisl@kernel.org>
-> Closes: https://lore.kernel.org/all/CAF8kJuNP5iTj2p07QgHSGOJsiUfYpJ2f4R1Q=
-5-3BN9JiD9W_KA@mail.gmail.com/
-> Signed-off-by: Chris Li <chrisl@kernel.org>
-> ---
-> Changes in v2:
-> - Add Closes tag suggested by Yu and Thorsten.
-> - Link to v1: https://lore.kernel.org/r/20240904-lru-flag-v1-1-36638d6a52=
-4c@kernel.org
-> ---
->  mm/vmscan.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index a9b6a8196f95..96abf4a52382 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -4323,7 +4323,7 @@ static bool sort_folio(struct lruvec *lruvec, struc=
-t folio *folio, struct scan_c
->         }
->
->         /* ineligible */
-> -       if (zone > sc->reclaim_idx) {
-> +       if (!folio_test_lru(folio) || zone > sc->reclaim_idx) {
->                 gen =3D folio_inc_gen(lruvec, folio, false);
->                 list_move_tail(&folio->lru, &lrugen->folios[gen][type][zo=
-ne]);
->                 return true;
->
-> ---
-> base-commit: 756ca36d643324d028b325a170e73e392b9590cd
-> change-id: 20240904-lru-flag-2af2f955740e
->
-> Best regards,
-> --
-> Chris Li <chrisl@kernel.org>
->
+Would you mind taking the whole patch instead? You can add
+
+Acked-by: Song Liu <song@kernel.org>
+
+Thanks,
+Song
 
