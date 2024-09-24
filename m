@@ -1,111 +1,163 @@
-Return-Path: <linux-kernel+bounces-336703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1DBF983F97
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:45:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 892CB983F98
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:46:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B2AA1F241C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:45:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E9072846CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45DA0126C15;
-	Tue, 24 Sep 2024 07:45:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v5zsaygw"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4E6149C6F;
+	Tue, 24 Sep 2024 07:45:53 +0000 (UTC)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 166BE1803A
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050371803A;
+	Tue, 24 Sep 2024 07:45:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727163947; cv=none; b=R2Y96ie8aWf11LCxEksNF+C8uk+B8DEJnNv68aGWowWHhO2b33KOAr9JDLHbdwFktSxFqxlqUp5ZFJ6u5pcxeIwY7bPRLv7s5Af8IAsqvTc/3rmc3ABICjGiybwgfi87+r0FhwjuY5iqmEgtGk1s4UI8xRVcntbAND+AhsjmrFU=
+	t=1727163953; cv=none; b=ZZ8FRZUzkHdjifrpoEr5QLcakyO2EgtIkiSD7BTtS6LiX06mGEbVliiiGJD7spprWzwoVWGs2R+rfX+9sg4eHaFGgPaVsTb7+qbMJDtbcYvImaG88dM2Z+pcFU22lNxlj45hBvSWXbNzgh5Qzr+SlY7PjttDEimsUPBApx7suuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727163947; c=relaxed/simple;
-	bh=MqhA2gxS9MTxmqX69mbrOYHAL9N8LKtrtunB9LWCxLw=;
+	s=arc-20240116; t=1727163953; c=relaxed/simple;
+	bh=2c9qY0zOKSHy6fPePBLlrhvns/MQJha4cFe8EOydcRE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=quJpjiXpxQwJQ72t88iVu2l4YE9DrTW0cP7cF+kWRJNfmQNojq3Nys1l1E6v8aJtOY3JwXpdRpdOd+TxjYSsvEdLyWHQ8Zuz83qj0sjYYRkNr5anqSmItxwlNfRkq964p/s24z0ociNe67nmRToON5/aCuBC+ZuLgqtFhk1t1nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v5zsaygw; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-535694d67eeso5359365e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 00:45:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727163943; x=1727768743; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MqhA2gxS9MTxmqX69mbrOYHAL9N8LKtrtunB9LWCxLw=;
-        b=v5zsaygw55t6J8yCFDIQpwzyIClLUVNB5Um1Gsxzf1Yn0/QnuCne9JF5yOTK/7q6ns
-         ESf8b+0GbBTUAV/NQd2QCRZJAb+Mk2dY/aQPHYX64q9jnb982/GLiXhZ0xVstNPZq0Bd
-         5wK0+RoMcoc7Ixb1C9shlMA1jDybIHos+39UVR6OLCEG6D6wn4YcZzom40P27fd3l2Vu
-         8Ryoz6RNesjihCKyPeF/p0BIJ73rHX2PkLTYCEqNjgFfjEPCFbiuu67ySj6pl4iiMLEN
-         zWUl2Ftte31xs9Pg9MfYdLZiJdhZKGDKABFnzQ/DixyDu6L+0S6Ao6QuR2QlgBJiQSTq
-         wTkw==
+	 To:Cc:Content-Type; b=NI1UeUQk4hpbVudWOrFhMkS/90vqpYDniQOSEWiYuo0hrMSKxAUP/qZ3eFLOwWvjTjGGh0UoQTr5Qp7J2ppqL54MBbVZKiHmDc3KY4t1iJzeQiPihkDbMCc+0Mjk3F3MpDVkTiQuNWbmzNJtYTGiW5bCSSpypB2j94AvNyR+p9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e1d4368ad91so4792976276.0;
+        Tue, 24 Sep 2024 00:45:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727163943; x=1727768743;
+        d=1e100.net; s=20230601; t=1727163948; x=1727768748;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MqhA2gxS9MTxmqX69mbrOYHAL9N8LKtrtunB9LWCxLw=;
-        b=vOEGIfjvSe1BgM9otjQFA2scIn451hMs+6Ac/lVrPYT6zCZ7tPhUK3MAfJP348QyQ2
-         lloOyeFw62ced+ngQVe/CaZ46yzeIN5qO7HacJjjqDpHJRQP0xvdvlH3gLgMuRYCK+MV
-         QE6p+uLh6yAmqB4vqroYePKhTFEwvOIGSNUFdJHA18IBgekQzLiMNIRUhu3No3FxxXZ0
-         W4w82lwHXxqBASXPSgg+my0gZJK4Qj51aF1gi6OCvWI/m7TY52h1q7GZjoR59BF6RzlN
-         cn7tIIAfairv+FEl1k7VCda3z0Lditmo6XlQHYh8yHbQMJeO2tHWcFuizKjnVDI+bR1V
-         TW0g==
-X-Forwarded-Encrypted: i=1; AJvYcCVi5G864n0ezpijdtcir3zAwKM4o6RcFTh+6Y6VqjAHuFkRqAvXm8gVaSSbu0TYLsxzVeWRRVLtwaWKukY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywb+QZJNJMOPncfE8H9BSf1BCM5/pO5oZ9ETM2Sm4YJQ8NQ1GJ6
-	boAqvJqKoPwlTZU1BXBYLkoJ44eh83M+A1uHrbsVb/lZ5lrLeK4VuTYrDb6KxcCHx4AUqm8h4eE
-	rawuUnXsWaoMqzXhhrIkysLXE5IFNhqiZyel0LA==
-X-Google-Smtp-Source: AGHT+IFSnhi2g8RCS4Pf7Wrz3+5o1CeBJkl9cOue8TFxLcfAoHEaLB+jSarR5GR30yYmfSCZziuzfKQojHEPSL+b7Q8=
-X-Received: by 2002:a05:6512:1150:b0:533:1d4:546d with SMTP id
- 2adb3069b0e04-537a651ac4amr734820e87.7.1727163943165; Tue, 24 Sep 2024
- 00:45:43 -0700 (PDT)
+        bh=HF4eApvG4Dr17TRVbWAn/oqbrhes5tsWNdoiUFvIyHk=;
+        b=QDggGpWBR1npF8lxRv8uupebeDZgjdND7cKthQoFl3Z4OI7cx1qjKSc8vyAM8m7KRs
+         rnmtiIaoyNVSLj21CswZXP5Y68B/m6P8EW30BJeKdBaBLzpM7KhbjzF2n0/vKoShjFUA
+         qZdh1kUwXgCEnxsZ8EmEN9L8pjuelJtnqwcFp4nLK9j37x0oiT3QR52Tak/y9VwHHsHK
+         q8iwvEyLHY3Lf0Z7OYXZRS6C/VVeAEVhHpxu9LZ9JW2Q8pFtWx173C8K1CmFetlInEug
+         uKUjyJz04uNqrIVG/Rhtncnm1hV/NquFLvBc9BBs4IsGnG3LUiMOsKLHjsAFRsMzs7dB
+         0Rww==
+X-Forwarded-Encrypted: i=1; AJvYcCWsq5l9sQf9my9GBXbwRyV+TW6UhpIN2eHpDKvf6a7RnU/ISTp5UsZrAQ553EV810U1yZEQjze967FrzUXb@vger.kernel.org, AJvYcCXV8XrvXJMHWTclm22UTVWsWIHh6vOsoWZOWX5apz3WpTXSWQb6LpMgkXxzUjV3Jp6/XE2P9itgB+3gYQg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPoH94xBS2rT6E47n6AlWUdnDEmOVOy0moYLszCULZjIaqCfdY
+	7Cbgsugu5yr4YzfmbwxxDB8AiYjpFBNuPdecLLVbpdfBZH5xoacRmK1FgS6P
+X-Google-Smtp-Source: AGHT+IGYTXkx4veSbuiLQWrePPtz4BomdwGszxruZmZrd0xO1U8j5vRoq4WsevDexee0JbIjGnZLiw==
+X-Received: by 2002:a05:6902:2e89:b0:e1a:b0a1:3406 with SMTP id 3f1490d57ef6-e24978657b8mr1721415276.4.1727163948309;
+        Tue, 24 Sep 2024 00:45:48 -0700 (PDT)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e2499c77eb2sm167923276.60.2024.09.24.00.45.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Sep 2024 00:45:47 -0700 (PDT)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6ddca648c26so42056527b3.1;
+        Tue, 24 Sep 2024 00:45:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVBZoooPeqCfQTYfId+D55/gjjVikypsquz1x4SdtW9PddfdqewLh2T8ACAdlAj+K8CEv3OhI6WsO9ZmfE=@vger.kernel.org, AJvYcCXvIs2aiZcy+etDMTJWe7eRGfUV6WlSNpuilPTiyPqVyNifRqe8bd4Q4mDJ+9t/KoNRmtTKGhsG7P9N/7p+@vger.kernel.org
+X-Received: by 2002:a05:690c:94:b0:6dd:ddf6:90aa with SMTP id
+ 00721157ae682-6e2085653fbmr16769677b3.5.1727163946854; Tue, 24 Sep 2024
+ 00:45:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240506-imx-pinctrl-optional-v2-0-bdff75085156@geanix.com> <20240506-imx-pinctrl-optional-v2-1-bdff75085156@geanix.com>
-In-Reply-To: <20240506-imx-pinctrl-optional-v2-1-bdff75085156@geanix.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 24 Sep 2024 09:45:32 +0200
-Message-ID: <CACRpkdaW14PgLXTRPHUjaLNKfCMRs+hpHrYyMiNaqSs+m0rhqw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] ARM: imx: Allow user to disable pinctrl
-To: Esben Haabendal <esben@geanix.com>
-Cc: Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Rasmus Villemoes <rasmus.villemoes@prevas.dk>, 
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+References: <20240923142533.1197982-1-linux@roeck-us.net> <f15ff981-e725-40f0-8d2f-856b4b6a65b3@redhat.com>
+ <4c2cdf84-9794-4722-8417-cf924f890797@roeck-us.net> <203f0d01-d25e-4436-b769-b89edb1b57d9@roeck-us.net>
+In-Reply-To: <203f0d01-d25e-4436-b769-b89edb1b57d9@roeck-us.net>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 24 Sep 2024 09:45:34 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWfsgnCRLhCkvJBn8Prdd4M=HvwtsPT0BeRPtA-nFHzYQ@mail.gmail.com>
+Message-ID: <CAMuHMdWfsgnCRLhCkvJBn8Prdd4M=HvwtsPT0BeRPtA-nFHzYQ@mail.gmail.com>
+Subject: Re: [PATCH] mm: Make SPLIT_PTE_PTLOCKS depend on the existence of NR_CPUS
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: David Hildenbrand <david@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>, 
+	linux-kbuild <linux-kbuild@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 6, 2024 at 12:24=E2=80=AFPM Esben Haabendal <esben@geanix.com> =
+Hi G=C3=BCnter,
+
+CC kbuild
+
+I have two comments...
+
+On Tue, Sep 24, 2024 at 1:52=E2=80=AFAM Guenter Roeck <linux@roeck-us.net> =
 wrote:
+> On 9/23/24 15:08, Guenter Roeck wrote:
+> > On 9/23/24 08:23, David Hildenbrand wrote:
+> >> On 23.09.24 16:25, Guenter Roeck wrote:
+> >>> SPLIT_PTE_PTLOCKS already depends on "NR_CPUS >=3D 4", but that evalu=
+ates
+> >>> to true if there is no NR_CPUS configuration option (such as for m68k=
+).
+> >>> This results in CONFIG_SPLIT_PTE_PTLOCKS=3Dy for mac_defconfig.
+> >>> This in turn causes the m68k "q800" machine to crash in qemu.
 
-> Making pinctrl drivers and subsequently the pinctrl framework
-> user-controllable, allows building a kernel without this.
-> While in many (most) cases, this could make the system unbootable, it
-> does allow building smaller kernels for those situations where picntrl
-> is not needed.
+Should this be fixed in Kconfig (too)?
+
+> >> Oh, that's why my compile tests still worked ... I even removed the ad=
+ditional NR_CPUS check, assuming it's not required ...
+> >>
+> >> Thanks for debugging and fixing!
+> >>
+> >> Acked-by: David Hildenbrand <david@redhat.com>
+> >>
+> >
+> > Apparently it wasn't that simple :-(. 0-day reports a build failure
+> > with s390 builds.
+> >
+> > arch/s390/mm/gmap.c:357:16: error: implicit declaration of function 'pm=
+d_pgtable_page'.
+> >
+> > Turns out that
+> >      depends on NR_CPUS && NR_CPUS >=3D 4
+> >
+> > doesn't work and disables SPLIT_PTE_PTLOCKS even if NR_CPUS _is_ define=
+d.
+> > I have no idea how to declare the dependency correctly.
+> > Sorry, I did not expect that.
 >
-> One such situation is when building a kernel for NXP LS1021A systems,
-> which does not have run-time controllable pinctrl, so pinctrl framework
-> and drivers are 100% dead-weight.
->
->
-> Signed-off-by: Esben Haabendal <esben@geanix.com>
+> The only solution I found was to define NR_CPUS for m68k. That seems to b=
+e
+> the only architecture not defining it, so hopefully that is an acceptable
+> solution. I'll send v2 of the patch shortly.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+My first thought was to agree, as m68k is indeed the only architecture
+that does not define NR_CPUS. Upon closer look, most architectures
+have NR_CPUS depend on SMP, hence I assume the issue could happen for
+those too (although I didn't manage to create such a config on anything
+but m68k)?  So the simple solution would be to add a dependency on
+SMP to SPLIT_PTE_PTLOCKS.
 
-I guess this needs to be merged through the SoC tree.
+BTW, the list of excluded architectures looks fragile to me:
 
-Yours,
-Linus Walleij
+    config SPLIT_PTE_PTLOCKS
+            def_bool y
+            depends on MMU
+            depends on NR_CPUS >=3D 4
+            depends on !ARM || CPU_CACHE_VIPT
+            depends on !PARISC || PA20
+            depends on !SPARC32
+
+If this can't be handled in a generic way, perhaps this should be
+changed from opt-out to opt-in (i.e. select gate symbol in arch-specific
+Kconfig)?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
