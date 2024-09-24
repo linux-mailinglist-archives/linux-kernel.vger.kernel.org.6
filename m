@@ -1,144 +1,118 @@
-Return-Path: <linux-kernel+bounces-337251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BF4198479F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:24:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E81539847A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:24:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D0FB1C20BC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:24:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 242D51C20A32
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:24:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C2E1AAE1C;
-	Tue, 24 Sep 2024 14:24:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46CB1AAE27;
+	Tue, 24 Sep 2024 14:24:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UX4oksCB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="JIjOCBXZ"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53B11A76AA;
-	Tue, 24 Sep 2024 14:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386B81A7AFD
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 14:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727187851; cv=none; b=ldoeXQBXiEtRI0lYEQ/2v8CVVTHqW/jzFLvVSlwPkndbQ667FE3iNhS5fQuCPjiMqx2jzgzDqaCzdGL7/sXGABR4jd7uyiOJee+4M5y0j0c6BWc+lhQloMYX8YNh68VnogpJttCe6SS0HjdrhGgPL53edZ7Qm5jxLEYhm6JyUpw=
+	t=1727187891; cv=none; b=ubrcSo7AGcJyi91C3lzUltuCsf8PXw7VE6VF70TVt0sbuxBL/7csrvpX83oIYA8WtVdF8t2IabYM5WykGEKze4WZ3omlLFubiQglnm7d/wx7cM5OKE8WuSTMSHZa6TajQIqfSNy6R6SOVaWMySbNavHgtdMXVnP++6y9W+1YYvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727187851; c=relaxed/simple;
-	bh=eDjkYhrp2qDszuhAQze4q3yPzfugiLc1fa/3oUbFswQ=;
+	s=arc-20240116; t=1727187891; c=relaxed/simple;
+	bh=pY3SHint/mcnx94L9QuqHG4SLLg6BljxoPHrIFGTE84=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wj4x2A1QmY/INxhjNJWpI6qsYR1ZjDRCo5z07d+JD/5AdaDSNbDL1OsKwexSTAXeuBb2bQGlov5/7HuCnFiBHPZpSJdenQz7mmNK3NxKGlA/+gFfWr9UYR1FkFNCQA04CLeVserwgvmzhMOOGkVO5ezE3VttdDW4l6/vLHGgyTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UX4oksCB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F7F8C4CEC4;
-	Tue, 24 Sep 2024 14:24:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727187850;
-	bh=eDjkYhrp2qDszuhAQze4q3yPzfugiLc1fa/3oUbFswQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UX4oksCB9dZheqfOm1ahuij8QMP7ywPy24eGPJb6u1UinK4sQ31gaK/7w9pNjyIwO
-	 C5BmFtpQWYZOydoGocqzOGn8Dnnty0iKORbAmQqxzOxpMLwl6aTiW6ACwMLMPHPSs+
-	 BOgdK13F1uF1pVUDjzH8O83cL6CnoAzexu4qFHEhbxJS5urVFr8LCmQJyXf8mqua/L
-	 N2G4LQmO6n4qmSnALavTnAAPMycW8Grc04t9GQ9a+9UiDYnIdKsNqPBdntUTIgVCJ9
-	 vzrkDAD98NnecKZBFp8qTJAcUfFh+Rbn9gsIDD4lZXLqhG6mbqWd/IuAFNakaO5LbS
-	 yfgt6iiM5Vq2w==
-Date: Tue, 24 Sep 2024 15:24:05 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chester Lin <chester62515@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Christophe Lizzi <clizzi@redhat.com>,
-	Alberto Ruiz <aruizrui@redhat.com>,
-	Enric Balletbo <eballetb@redhat.com>
-Subject: Re: [PATCH 1/2] dt-bindings: linflexuart: add clock definitions
-Message-ID: <20240924-twitch-embody-0ffb3ab7fd26@spud>
-References: <20240924141247.132455-1-ciprianmarian.costea@oss.nxp.com>
- <20240924141247.132455-2-ciprianmarian.costea@oss.nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ibcWtqKH54Xp5TSwBSi9NaDR3Hi3nm0gayNa4VKf10Rd6Y9KNG6gX4FCmvBjEUA6YUGWDwywNjZCe5RpNwOjj6osOJpYfXSj8UxdAKBjtTwHTR/F9oQRGzdt2VtvfdjrQyLOOEwtx65ebzuS1JkOZ1Ls4Lj/gKVWSmmwP0WeYOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=JIjOCBXZ; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=pY3S
+	Hint/mcnx94L9QuqHG4SLLg6BljxoPHrIFGTE84=; b=JIjOCBXZaXtSLxZc7aVZ
+	xHwTq58QFJdnx39Mgc887WPxPaMR1VyUWBAaZeYZIqLE2Lco67M1zAY54p4MlX6Q
+	scXHbwx1cbUpl/QbLSP0Ziw3GiYivkbgh0YA+dTDociOrP/Qn6q5S1teNtHAbj2p
+	WQOK519P1Zhm1dlMbuxRGNjPw/IJOzN2Ef/cgqaSrVYWe1F+MjZHIedZhtGAkRhQ
+	cayOAq4tcT40hJS/sY8cq0cqb7qoKttBI6A1dydKdRYYJOFcx1mc8iwbWfj7YbG5
+	soB0QG4CD5MpBm4AtIGWdbnuirkeiqdaMdG0lAeg4ds3zRp2plN9pUNSrM+uUoNl
+	Rg==
+Received: (qmail 278259 invoked from network); 24 Sep 2024 16:24:38 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 24 Sep 2024 16:24:38 +0200
+X-UD-Smtp-Session: l3s3148p1@O97qQ94iSuy5aIod
+Date: Tue, 24 Sep 2024 16:24:32 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Wolfram Sang <wsa@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: Re: [PULL REQUEST] i2c-for-6.12-rc1
+Message-ID: <ZvLLoH-Xk_9iVNVY@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Wolfram Sang <wsa@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
+References: <ZvEaHWH0IndyeMvs@shikoro>
+ <CAHk-=wghWmpCT9Drh6wLXW04THfr=ZrHonRLDUdy=ou2Cmv9gA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="KdzJUyee3swyRYRO"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3Eom38cNtuNYhetF"
 Content-Disposition: inline
-In-Reply-To: <20240924141247.132455-2-ciprianmarian.costea@oss.nxp.com>
+In-Reply-To: <CAHk-=wghWmpCT9Drh6wLXW04THfr=ZrHonRLDUdy=ou2Cmv9gA@mail.gmail.com>
 
 
---KdzJUyee3swyRYRO
+--3Eom38cNtuNYhetF
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 24, 2024 at 05:12:46PM +0300, Ciprian Costea wrote:
-> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
->=20
-> Add clock definitions for NXP LINFlexD UART bindings
-> and update the binding examples with S32G2 node.
->=20
-> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-> ---
->  .../bindings/serial/fsl,s32-linflexuart.yaml  | 21 +++++++++++++++++++
->  1 file changed, 21 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/serial/fsl,s32-linflexuart=
-=2Eyaml b/Documentation/devicetree/bindings/serial/fsl,s32-linflexuart.yaml
-> index 4171f524a928..45fcab9e186d 100644
-> --- a/Documentation/devicetree/bindings/serial/fsl,s32-linflexuart.yaml
-> +++ b/Documentation/devicetree/bindings/serial/fsl,s32-linflexuart.yaml
-> @@ -34,6 +34,14 @@ properties:
->    interrupts:
->      maxItems: 1
-> =20
-> +  clocks:
-> +    maxItems: 2
-> +
-> +  clock-names:
-> +    items:
-> +      - const: ipg
-> +      - const: lin
 
-Can all devices have 2 clocks, or just the s32g2?
+> Stop describing pointless noise. The pull request - and the resulting
+> merge message - is about USEFUL INFORMATION.
 
-> +
->  required:
->    - compatible
->    - reg
-> @@ -48,3 +56,16 @@ examples:
->          reg =3D <0x40053000 0x1000>;
->          interrupts =3D <0 59 4>;
->      };
-> +
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    serial@401c8000 {
-> +        compatible =3D "nxp,s32g2-linflexuart",
-> +                     "fsl,s32v234-linflexuart";
-> +        reg =3D <0x401c8000 0x3000>;
-> +        interrupts =3D <GIC_SPI 82 IRQ_TYPE_EDGE_RISING>;
-> +        clocks =3D <&clks 14>, <&clks 13>;
-> +        clock-names =3D "lin", "ipg";
-> +    };
-> --=20
-> 2.45.2
->=20
+Noted, accepted. We will do better in the future...
 
---KdzJUyee3swyRYRO
+> Is this some broken attempt at AI summary? Because it sure isn't real
+> intelligence.
+
+... but this comment is too much. We have a new maintainer here (Andi)
+trying very hard to get up to speed. And one maintainer who could have
+known better (me), sending this pull request a little hastly during the
+short time I had during my holidays.
+
+So, the pull request looked like this because we *are* humans, and not
+because we are not humans.
+
+
+--3Eom38cNtuNYhetF
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvLLhQAKCRB4tDGHoIJi
-0j4FAQDvg2vhrJwZpxiGWWETc88E2AiRaP2vkjp9KFP0xycZIgD+MvjP7VHVcvce
-DtRBZvY3wG3nwUQJlWjDFbr2O3ytEAk=
-=Mw5z
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmbyy6AACgkQFA3kzBSg
+Kba0jA//WAc5tjxfy1vqmtK8TJvdjAI3xggaqJUeMooFH9wG2lqmnnSTyrAltpHY
+tsMOb3hJN0nJzFyT+QxI9BE5+Ky1ywfUaKPPXy62vbkDdzI5fBFM1Pdjs7xGjFcu
+KP7OodTTDveRGdJWKkZE5wDLeHyGULBzRDDg44mhJ33y8yhBBK4ZtZu7+NuB9w72
+kCfK2+PgczYrWIWX6CAit2XDN7mIkZi2MpaTwSFP5nx+woC/FeO1v1kgT7jcg1mK
+lK4AuXqvb3Bje2tvvwHXbsVb8xJf1Y0Qst4DXDxSkUmVHlteIXVm4PLcTfrPMSDc
+vlsKh87Tsjs1d78nPvyy7qV4iN8SHaWFliLdbAL0CUpHrf6XJWPfMF448/ELUWZB
+NKip5bpOfWFsyfWxGuqt29JCeIn1IM/ODERcZLJaBZxLXL7ILv0/DgKEZZxJp7z5
+IYM9r8/4J83TW66ObeFqziTcQOH/t8A5SVYd20xY73u3PH/MQ8rR5Ln10NWdMXrv
+5WP60P7YsThWhQrelqsr/447xURNWHYes0vAtiae2KBa86VXmdvfP/s2e8TBjubw
+c/B+Z2/H+P2XrMwBQ0U+vXQ17uGMq1oKCYt2d44geMan3ptPCWhdFDM1WCLTxeoe
+jvbf73PLUk/tCLREJuG5i8c42DuaGdfp2gIzu/T6Z3DoyKP2UXE=
+=+oTu
 -----END PGP SIGNATURE-----
 
---KdzJUyee3swyRYRO--
+--3Eom38cNtuNYhetF--
 
