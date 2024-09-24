@@ -1,145 +1,182 @@
-Return-Path: <linux-kernel+bounces-336414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D6FB983A93
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 02:21:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0665983A95
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 02:27:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5EEB1F2338C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 00:21:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DC131F2347F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 00:27:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5171B85CF;
-	Tue, 24 Sep 2024 00:21:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 757378BF0;
+	Tue, 24 Sep 2024 00:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jMdD4rFb"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="d4fT87Xp"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C7038C
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 00:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E3938C
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 00:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727137299; cv=none; b=hKJf80WsaPL5SSZT4Gb0aMhSnySLviutJYxKShMMaFdT8I67Do3gOwQlwIfuq4pbgSsC2JKs5iFW5YAV3tec/nXAJQTadushp2mf5LO/TjHLF6hIWPBcSHcrlxdbFP86mkum5stY3DazWWe0XAWi7WY5W6F3Xgon+RI32s4HLrA=
+	t=1727137622; cv=none; b=qj/nl/tr3C9sCj1l7JHRFCF0T9P2RhN1pgXne7NEYxIjq9MSt4BDZfKZZKbGO3Zf5ObOzz6LN5bwI4GnIVYs76Fyv37t8yyGqDFGBuKJJBpEHdJxCmNCZG1/9IJqfTpONtBanzoGudLbtBveqbdtM/EDtdbzCSpVSJ8YVDwWC2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727137299; c=relaxed/simple;
-	bh=RraPfnkGYA8VputFOH+7STgBUnygY7VlpnAMNOz+hfs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I0MUoh7sZa1ZncmdDPNKw17YjAMHoFkB+CnDcgkFgxkwaMsdVixm6CS6KDhxyb9DAsGcILjbNR3b/za5N8bbk49gWAGh5D36H2Mu/czmucRvQO2Jm8OclRduOsd08ajlKYgVB4T2o6JZf85tND/ENlBZo8BN2+ltWjzz6w9acnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jMdD4rFb; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a8d43657255so780213866b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 17:21:37 -0700 (PDT)
+	s=arc-20240116; t=1727137622; c=relaxed/simple;
+	bh=MiqrNSlg+44f01IzPJi9mHsBBi1DomNGgqfbi3VVwEQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Anjn3vBxrRht6tRoE7thdfCdeXICPt9IJdWkTVBaw08CsbIODJNqC2y9qkMDqp45NV8DibKFqVCLPenxNKQTrR7g92BxU5slOVZ0yyKBNrHnt9d2/bG0qRi3+PlObN90UPTt3Si8aor9i0i+iYCGEQhD/3xJ7iN6WUNNy2XL6MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=d4fT87Xp; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7d4fbe62bf5so2849037a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 17:27:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727137296; x=1727742096; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Au0uzoSbH2ElJzaMeNmhVwvwewgLeaPK4IrgkIjA0rA=;
-        b=jMdD4rFbiUg7gFihGnhOXvltIoJD6UzUqtG+Vi7K3SaJ/eNSsFkfcACJ5ydrodYGsa
-         DQjNJ6R6k6LXsQsJTjgXzMTswQZHAzzcFYUgJ7ptXwrYrztawqgeADdRr2FQmOsjHdQV
-         0zVWIxxFZcBeYJ36gPLSum6aBFJIv86fQLcSJGLZo1QGK2m8JUETTjPw9Cf24SgwTLCh
-         j74AEJxvMqa+scpT8vwQte/WQIePGIuoxcmj599kqskXjLRL8acob3udQtetroXZ7BXo
-         ofz556ipGKpg9pqYaKv75S5mujV4MOFbS93zUuTTPsnhdW2luVtKABG4zmgmpCjw33TW
-         H8HA==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1727137620; x=1727742420; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JK4Kr1m/oVIakm4mWT76ufbvRCh+HsuClIHKd5DZ0t4=;
+        b=d4fT87XpnoKp18EmzEM9Mc5z+04sJ51i8Z4d9vUWzpZthe56O2Lixsk9q+AigWOguS
+         0fca5dpfMyrSyyf8bDvUzEGSdoy4lFPgo7c357zzJSQh3oQEtsnuscLlA1zkvfzhHFHP
+         yuwFU0CynhesGxAtG72vvlw97a3hZTOjLsolmTPkYnfiwHGgVbQBcqbbaR30FHMPBI/z
+         bzKi88jIcRUudvufe1LViAl/eOtjuD2ReL4z18IqfgMdOyA3RjJ/LkGrC0tmD2Ns+Q3u
+         4TDEerAy3HpwXf2QZzYF68ZsBFQIPoQkskaDG0Q+3Arm4NrbuzaRQFirOyjmPZY9pPS9
+         u67w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727137296; x=1727742096;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Au0uzoSbH2ElJzaMeNmhVwvwewgLeaPK4IrgkIjA0rA=;
-        b=u2nY0Dw9YuWbFUYD6qQQBo6mmtxOw+IHfEv8UuTfzvFxspFUY1ATqHhnMAJEyUOU1P
-         mxtXd+1RcAmShxUC+18ZaEUJNSEge4bGbmXAkCNp5Ic8YIxchYL4kLLb06A9a77QmQQ7
-         17nAruOkqAWxxqYBkq5N6Cz7ri4/bdZ80daMOf9Me04JlTLIIhGboSUdynbE9hhqW9RF
-         h6Om8pcyHwqT47Fpf6QwEBCX21aCF7IeiIte2mLCq5p+89xBGLXY2xJ5nAvUjDMP2Mra
-         RX87GZwHpI5hWYxGxlvvqH+uliPEO0kgSyIkHtoq+MH8GC7Q9SuNGxQuWuQkZEBIhwyH
-         ycrg==
-X-Forwarded-Encrypted: i=1; AJvYcCWgjeFo/8Ec5qBniiRh3wnQ3c8UMzXt2mtckjScPu0+1oKKVmVWIyXvsxmMik3BWWPZhuNj4ETLN7G+h/Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5xYYsxXCpesUZ27eZDFa0LZkpQLvIp3pX1sfZBThS9mwruPQI
-	S+awbZFOUHs3rijetZVJR4I3sa0clg8fx0HJnLSgGWDVHvy0rAOywc75rH1k7UDX6pVvW6IkBg8
-	tv1gi35AeeEyYPcvc9axFFPMVbyMGgDRD7otO
-X-Google-Smtp-Source: AGHT+IE5iLzSstIhHpa898vVT2SsIC0B/KYygGCt0eGc0G0jTBqYSwXADuL3GomFoCiTYr/rjIhxtbaxkzyqEgn0jq8=
-X-Received: by 2002:a17:907:e612:b0:a8d:3e29:a82d with SMTP id
- a640c23a62f3a-a90d5000fa9mr1132574166b.37.1727137295406; Mon, 23 Sep 2024
- 17:21:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727137620; x=1727742420;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JK4Kr1m/oVIakm4mWT76ufbvRCh+HsuClIHKd5DZ0t4=;
+        b=WA4UJgJZ6PXKd/cgNdVUXn3FuCI9HFQzgkCYtskQQciP7IzHaV6dTSbu0HSORKKSlQ
+         0Qg/xmYFH0xBzYpmXcEU/b8sb1SUtw2zOzD3wDRrXunXnRzxUMM/khHYkOycmfHuRYr9
+         XrWIGMk7fzW+/sPggFLPPc8yZAJViiYVUPWqGrQ8zizdDANxobhcuuO8M+fi5L1DtVGg
+         uijNh1U6NTai0AairqkF+jNGRFNjBITJiOv63Tu89kCNhPwdgdMmha/4XVmqZbpEZq6f
+         KSV16abefF43zTmRu8pPdiB6GfsQ5XylBG+ADhmGhypxntTUh5rlNcgzfGYROPiCFc9e
+         ZtDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUizH8lHL8KzVi6eHU8ebPSUTXacGWjBwEbYU5g3mUyHJH9I5aCY2+6wcxAw/3LhZK/CljLbtHNV/JNipA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz7skFSj3iZGn4QteXIwGyohRuFDma/tstwmK5dKYkVQaFpopo
+	UeB9Lnwdp/ZxW8GwBBSqKwJ+Z6gww65DVzfWk34ZpjrT5wmU1OppOEzRvUv9w9w=
+X-Google-Smtp-Source: AGHT+IE+8TYB1lIrpzLxFc760Tit5J+12CfpY8WVHSS7floKFRr87w5lnmGZpStHzJ2yd9xn4qqYHQ==
+X-Received: by 2002:a17:90b:4b83:b0:2d3:d68e:e8d8 with SMTP id 98e67ed59e1d1-2dd7f752757mr13245883a91.40.1727137620231;
+        Mon, 23 Sep 2024 17:27:00 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dd6ee984f0sm10099112a91.19.2024.09.23.17.26.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2024 17:26:59 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sstOK-009Ckm-2u;
+	Tue, 24 Sep 2024 10:26:56 +1000
+Date: Tue, 24 Sep 2024 10:26:56 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
+Subject: Re: [GIT PULL] bcachefs changes for 6.12-rc1
+Message-ID: <ZvIHUL+3iO3ZXtw7@dread.disaster.area>
+References: <dtolpfivc4fvdfbqgmljygycyqfqoranpsjty4sle7ouydycez@aw7v34oibdhm>
+ <CAHk-=whQTx4xmWp9nGiFofSC-T0U_zfZ9L8yt9mG5Qvx8w=_RQ@mail.gmail.com>
+ <6vizzdoktqzzkyyvxqupr6jgzqcd4cclc24pujgx53irxtsy4h@lzevj646ccmg>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240923231142.4155415-1-nphamcs@gmail.com>
-In-Reply-To: <20240923231142.4155415-1-nphamcs@gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Mon, 23 Sep 2024 17:20:58 -0700
-Message-ID: <CAJD7tkbjr14JbbPOadacjbUmKEPyqPwAjikFO1xRCkOkLhN8LA@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/2] remove SWAP_MAP_SHMEM
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, hughd@google.com, 
-	shakeel.butt@linux.dev, ryan.roberts@arm.com, ying.huang@intel.com, 
-	chrisl@kernel.org, david@redhat.com, kasong@tencent.com, willy@infradead.org, 
-	viro@zeniv.linux.org.uk, baohua@kernel.org, chengming.zhou@linux.dev, 
-	linux-mm@kvack.org, kernel-team@meta.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6vizzdoktqzzkyyvxqupr6jgzqcd4cclc24pujgx53irxtsy4h@lzevj646ccmg>
 
-On Mon, Sep 23, 2024 at 4:11=E2=80=AFPM Nhat Pham <nphamcs@gmail.com> wrote=
-:
->
-> The SWAP_MAP_SHMEM state was originally introduced in the commit
-> aaa468653b4a ("swap_info: note SWAP_MAP_SHMEM"), to quickly determine if =
-a
-> swap entry belongs to shmem during swapoff.
->
-> However, swapoff has since been rewritten drastically in the commit
-> b56a2d8af914 ("mm: rid swapoff of quadratic complexity"). Now
-> having swap count =3D=3D SWAP_MAP_SHMEM value is basically the same as ha=
-ving
-> swap count =3D=3D 1, and swap_shmem_alloc() behaves analogously to
-> swap_duplicate()
->
-> This RFC proposes the removal of this state and the associated helper to
-> simplify the state machine (both mentally and code-wise). We will also
-> have an extra state/special value that can be repurposed (for swap entrie=
-s
-> that never gets re-duplicated).
->
-> Another motivation (albeit a bit premature at the moment) is the new swap
-> abstraction I am currently working on, that would allow for swap/zswap
-> decoupling, swapoff optimization, etc. The fewer states and swap API
-> functions there are, the simpler the conversion will be.
->
-> I am sending this series first as an RFC, just in case I missed something
-> or misunderstood this state, or if someone has a swap optimization in min=
-d
-> for shmem that would require this special state.
+On Mon, Sep 23, 2024 at 03:56:50PM -0400, Kent Overstreet wrote:
+> On Mon, Sep 23, 2024 at 10:18:57AM GMT, Linus Torvalds wrote:
+> > On Sat, 21 Sept 2024 at 12:28, Kent Overstreet
+> > <kent.overstreet@linux.dev> wrote:
+> > >
+> > > We're now using an rhashtable instead of the system inode hash table;
+> > > this is another significant performance improvement on multithreaded
+> > > metadata workloads, eliminating more lock contention.
+> > 
+> > So I've pulled this, but I reacted to this issue - what is the load
+> > where the inode hash table is actually causing issues?
+> > 
+> > Because honestly, the reason we're using that "one single lock" for
+> > the inode hash table is that nobody has ever bothered.
+> > 
+> > In particular, it *should* be reasonably straightforward (lots of
+> > small details, but not fundamentally hard) to just make the inode hash
+> > table be a "bl" hash - with the locking done per-bucket, not using one
+> > global lock.
+> 
+> Dave was working on that - he posted patches and it seemed like they
+> were mostly done, not sure what happened with those.
 
-I have the same patch sitting in a tree somewhere from when I tried
-working on swap abstraction, except then swap_shmem_alloc() did not
-take a 'nr' argument so I did not need swap_duplicate_nr(). I was
-going to send it out with other swap code cleanups I had, but I ended
-up deciding to do nothing.
+I lost interest in that patchset a long while ago. The last posting
+I did was largely as a community service to get the completed,
+lockdep and RTPREEMPT compatible version of the hashbl
+infrastructure it needed out there for other people to be able to
+easily push this forward if they needed it. That was here:
 
-So for what it's worth I think this is correct:
-Reviewed-by: Yosry Ahmed <yosryahmed@google.com>
+https://lore.kernel.org/linux-fsdevel/20231206060629.2827226-1-david@fromorbit.com/
 
->
-> Swap experts, let me know if I'm mistaken :) Otherwise if there is no
-> objection I will resend this patch series again for merging.
->
-> Nhat Pham (2):
->   swapfile: add a batched variant for swap_duplicate()
->   swap: shmem: remove SWAP_MAP_SHMEM
->
->  include/linux/swap.h | 16 ++++++++--------
->  mm/shmem.c           |  2 +-
->  mm/swapfile.c        | 28 +++++++++-------------------
->  3 files changed, 18 insertions(+), 28 deletions(-)
->
->
-> base-commit: acfabf7e197f7a5bedf4749dac1f39551417b049
-> --
-> 2.43.5
+and I posted it because Kent was asking about it because his
+attempts to convert the inode hash to use rhashtables wasn't
+working.
+
+I've suggested multiple times since then when people have asked me
+about that patch set that they are free to pick it up and finish it
+off themselves. Unfortunately, that usually results in silence, a
+comment of "I don't have time for that", and/or they go off and hack
+around the issue in some other way....
+
+> > But nobody has ever seemed to care before. Because the inode hash just
+> > isn't all that heavily used, since normal loads don't look up inodes
+> > directly (they look up dentries, and you find the inodes off those -
+> > and the *dentry* hash scales well thanks to both RCU and doing the
+> > bucket lock thing).
+
+Not entirely true.
+
+Yes, the dentry cache protects the inode hash from contention when
+the workload repeatedly hits cached dentries.
+
+However, the problematic workload is cold cache operations where
+the dentry cache repeatedly misses. This places all the operational
+concurrency directly on the inode hash as new inodes are inserted
+into the hash. Add memory reclaim and that adds contention as it
+removes inodes from the hash on eviction.
+
+This happens in workloads that cycle lots of inode through memory.
+Concurrent cold cache lookups, create and unlink hammer the global
+filesystem inode hash lock at more than 4 active tasks, especially
+when there is also concurrent memory reclaim running evicting inodes
+from the inode hash.
+
+This inode cache miss contention issue was sort-of hacked around
+recently by commit 7180f8d91fcb ("vfs: add rcu-based find_inode
+variants for iget ops"). This allowed filesystems filesystems to use
+-partially- RCU-based lookups rather fully locked lookups. In the
+case of a hit, it will be an RCU operation, but as you state, cache
+hits on the inode hash are the rare case, not the common case.
+
+I say "sort-of hacked around" because the RCU lookup only avoids the
+inode hash lock on the initial lookup that misses. Then insert is
+still done under the inode_hash_lock and so inode_hash_lock
+contention still definitely exists in this path. All the above
+commit did was move the catastrophic cacheline contention breakdown
+point to be higher than the test workload that was being run could
+hit.
+
+In review of that commit, I suggested that the inode hash_bl
+conversion patches be finished off instead, but the response was "I
+don't have time for that".
+
+And so here we are again....
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
