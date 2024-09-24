@@ -1,79 +1,129 @@
-Return-Path: <linux-kernel+bounces-336950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83A7098431E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:08:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95D28984322
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:08:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DD62B29EEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:07:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF9DC1F2238D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ACC5170853;
-	Tue, 24 Sep 2024 10:07:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3F316F84F;
+	Tue, 24 Sep 2024 10:08:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uqgDsw8Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lU91nqye"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D9B13B780;
-	Tue, 24 Sep 2024 10:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3D9335A5;
+	Tue, 24 Sep 2024 10:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727172423; cv=none; b=m2IXwPWmkKTr7G8nKomoJMBdptF9G8/r5AICkY0Sputy21ssthEQAY+9vasLScSQqgp4Xf2pzUr6rSXm+Qpc/R/7IwSAQfx85vryLZEoFTjw6//QsZ1CWBqChe6+Ryy5eP37DSgK63xLAyKoVmFFbywAVG7bbdWvcTLm2LTLE7Y=
+	t=1727172486; cv=none; b=AWOkb7g0JREW1nUcRog1PfdkRFYEIIASZzf5/pLZD1vtW0Ld45OpNQbNOEbvAhRosj5mxLW2RCms/ThR/faGlfN+BQ670C0V28cFSJp/U21CVv/GlTZx90jOA72YJbTkRmdy6Ly8l4vCSmtttuUAPfwh+vDYSnqQM9+VdHbW4I0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727172423; c=relaxed/simple;
-	bh=NNpPCDCmogO6p91duNeLKDWJxcotWnDmbCaTck59iZM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HDEt/6jHibVEb5NnU1Y74u5X3HdhLXwBUKnvcbuO5j+t9umOCATV8oE03PitC6Ee+9rSrbIbVGwRYvwczOrRpkK+LRZpimv5II7R9mBivs3OSTht1JCQ1WfybbAXz1+mf5/VYKatDdHYlVNPo8MTOCUPzkObVVaEyhTtx/rwtNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uqgDsw8Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99722C4CEC4;
-	Tue, 24 Sep 2024 10:07:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727172423;
-	bh=NNpPCDCmogO6p91duNeLKDWJxcotWnDmbCaTck59iZM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uqgDsw8ZqWOGpuh418XARAbynPCGbqKqK3fsdDARIafYmZjr16YTCmoPrkn1MAW/m
-	 gfRDYAk0KpNY/V50Rc6LAuGGRwQMYexiOQObC5C1EdcUgiHKbeZHT283FsUim2QNO7
-	 puebPJBZqxvOEeZK7d4f1/8jNkcg5qI4vgHAR/a5ewoy7qIqQNd4vcw8aLZRQdpfPs
-	 hVaDQIcpk62r+lUXazDJsvXoIO9SdFrASEHJYgN38fLuBedE0/Y5rsvVPo64j5o2t5
-	 y51nAL+gkMW9qwcv9sqJQs2pquo2GX0BSsZXkqUZyFUtsGIBBpYypICJk69R4/LfX2
-	 Fn0WDJdqheLEQ==
-Date: Tue, 24 Sep 2024 12:06:59 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Rishi Gupta <gupt21@gmail.com>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v2 04/10] dt-bindings: iio: light: veml6030: add
- vdd-supply property
-Message-ID: <s7ylc7uxh376hmessk3mnuxsmjpmgnvgnxbu7vxect3evqjsfp@ifou7lugbxae>
-References: <20240923-veml6035-v2-0-58c72a0df31c@gmail.com>
- <20240923-veml6035-v2-4-58c72a0df31c@gmail.com>
+	s=arc-20240116; t=1727172486; c=relaxed/simple;
+	bh=dum2UZw5u45jGA7jOzzKQH0gHD9VusTAOoNOIk3xWFI=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=Vs1AC7HUCYMbKeGVAJ1b8DJGijT3NhA0R1LtoHfp839bhY8rR9oVI1gz+ZjTlaZkzctZ5YpARgz+9sZKwY3CuMm/93N9TxQQQutNZwqMt81pMLMnERJ+fBvBMEjgpU0gQIJZu78vhnmHwZ7cKbnl6mrFLAKM3uvPZETTcEIz260=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lU91nqye; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48O8YQYv001340;
+	Tue, 24 Sep 2024 10:08:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=OiJ+Kefl6SWfraq/+UKIbD
+	rSHkH1C3yH8HUudt4yucA=; b=lU91nqyeJcc0npJUOCHye3icb1bQnLBU/BCxRF
+	BieeqkwMI29c7jvjG/MV3INOmtzqH5SqChAJluXR3Emitv+hEiaMy+oFkOJFeW+Y
+	TvogVl5hdfkzsVYUqmDO37mRIngs4Bh0uDQ0awFpuiGFwdaHCguqxWo0lAyguEi1
+	Elx/92o5ZTrGhudLrcmSOd9ekoYVO1TUIm/sfjx8ZEBSrdspGrZiBwtytj6R0Gq4
+	OxkWC0TUtQK1wR36fgzaqC2PtiZseGvHeYC1cz3gCyj6ZxamV+VGo/R2UjboAE9T
+	Vc8QcG7VNI8FKyCx6UY5y255NG42gP77hTpDAJrRli2lc6rg==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41spweqvq2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Sep 2024 10:08:02 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48OA811P017517
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Sep 2024 10:08:01 GMT
+Received: from songxue-gv.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 24 Sep 2024 03:07:56 -0700
+From: Song Xue <quic_songxue@quicinc.com>
+Subject: [PATCH 0/2] soc: qcom: llcc: Add LLCC support for the QCS615
+ platform
+Date: Tue, 24 Sep 2024 18:07:10 +0800
+Message-ID: <20240924-add_llcc_support_for_qcs615-v1-0-a9f3289760d3@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240923-veml6035-v2-4-58c72a0df31c@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE+P8mYC/x3MUQqDMAwA0KtIvi20pcrcVYYUSaMGxHaJjoF49
+ 5V9vp93gZIwKTybC4Q+rJz3Ctc2gOu0L2Q4VYO3PtjBBzOlFLcNMepZSpYjzlniG7V3nRk6Ioc
+ 20KMnqEMRmvn731/jff8A3wgnjm0AAAA=
+X-Change-ID: 20240924-add_llcc_support_for_qcs615-95ee1c04e86e
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Conor Dooley <conor@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Song Xue
+	<quic_songxue@quicinc.com>
+X-Mailer: b4 0.15-dev-88a27
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727172476; l=766;
+ i=quic_songxue@quicinc.com; s=20240911; h=from:subject:message-id;
+ bh=dum2UZw5u45jGA7jOzzKQH0gHD9VusTAOoNOIk3xWFI=;
+ b=l9Lp2H90/vVKdIwgbTPhXI828lzjLdOe6aEc1AJ5LthRbwcPlB5Bm9WYelIc22AatS8Ght4I9
+ NVLjVhp85HPAuXB7YB640URkEPoQJY7nLyJAHr8U1LL265n8MIpSUM+
+X-Developer-Key: i=quic_songxue@quicinc.com; a=ed25519;
+ pk=Z6tjs+BBbyg1kYqhBq0EfW2Pl/yZdOPXutG9TOVA1yc=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: rVLItgvwgyIMdYldChksf_YYajOO9bPQ
+X-Proofpoint-ORIG-GUID: rVLItgvwgyIMdYldChksf_YYajOO9bPQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 adultscore=0 priorityscore=1501 clxscore=1011
+ malwarescore=0 mlxscore=0 mlxlogscore=806 impostorscore=0 phishscore=0
+ spamscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409240071
 
-On Mon, Sep 23, 2024 at 12:17:52AM +0200, Javier Carrasco wrote:
-> Add vdd-supply to account for the sensor's power source.
-> 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> ---
->  Documentation/devicetree/bindings/iio/light/vishay,veml6030.yaml | 3 +++
->  1 file changed, 3 insertions(+)
+The QCS615 platform has LLCC(Last Level Cache Controller) as the system
+cache controller. It includes 1 LLCC instance and 1 LLCC broadcast
+interface.
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Add Bindings and LLCC tables for the QCS615 platform.
+
+Signed-off-by: Song Xue <quic_songxue@quicinc.com>
+---
+Song Xue (2):
+      dt-bindings: cache: qcom,llcc: Document the QCS615 LLCC
+      soc: qcom: llcc: Add configuration data for QCS615
+
+ .../devicetree/bindings/cache/qcom,llcc.yaml       |  2 ++
+ drivers/soc/qcom/llcc-qcom.c                       | 23 ++++++++++++++++++++++
+ 2 files changed, 25 insertions(+)
+---
+base-commit: ef545bc03a65438cabe87beb1b9a15b0ffcb6ace
+change-id: 20240924-add_llcc_support_for_qcs615-95ee1c04e86e
 
 Best regards,
-Krzysztof
+-- 
+Song Xue <quic_songxue@quicinc.com>
 
 
