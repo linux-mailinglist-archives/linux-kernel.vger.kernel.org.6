@@ -1,107 +1,173 @@
-Return-Path: <linux-kernel+bounces-337112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17D5B98457F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:06:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C3CE984590
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:08:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D47EC282F83
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:06:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8EEBB222B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152BA1A7255;
-	Tue, 24 Sep 2024 12:06:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484151A7243;
+	Tue, 24 Sep 2024 12:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dcGRmoAT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="BaGed3Th"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6980D1A7070;
-	Tue, 24 Sep 2024 12:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED9C1A3AB7;
+	Tue, 24 Sep 2024 12:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727179564; cv=none; b=IPkL2Af7wlDsLikK7GtGLTh3U0uVWy3rPb/nyuQuc+oud1WR20zt8MIwhgiavYLyWBEuG4qfejo8I3WsKKXSk6WsKEhk8KZqaznoYTcpbv7aWrHKFEFnHVp9EVj95IqpyCtMZ6x7bZ17JAYdxO/sbBJYOYSevCrWSp9zrIUrZoA=
+	t=1727179684; cv=none; b=glh9izLwOsJ/6piTKqrvfdaej23gpz7JRpNf0IDuNMYNqVEUZ7l1k7J+YgiO4gaYw0M6JpQ6/ZfAkoacwflQtAzwJ7lTNJ7gqSkivvo4IN1lm2dYRDJkOIbDQGJJLHbpq6jrTDLLrjyaKr7vUt+SAIB9CdflAwVQlfQutt67VVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727179564; c=relaxed/simple;
-	bh=LBRldiJIOcrY+GP5MEjXsrQ804qeSK1W9On1aa+/+XM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iVudwi3Zcd5QTcIXP2IAOS8a6TdrH9kV4cOXb2XsQHs2UH1ZN15oQpXOZF7e2n8n97ghUQ5ISZDuZrpINqtDXsS8oEUSTFDDsQlBLx8wzcemBMlEODSgtcibeKvpxbE7S3pgqy+s4rcD/6cIW60p6WyKY0hJOfo9wMREK5zx/ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dcGRmoAT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10BE8C4CEC7;
-	Tue, 24 Sep 2024 12:06:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727179564;
-	bh=LBRldiJIOcrY+GP5MEjXsrQ804qeSK1W9On1aa+/+XM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dcGRmoAT3CedDgrL64QYhquF/99N1h92a+oStk9s0T2+NNXKo6BZnLwFGc13qEC4Q
-	 rHQH3XbvSShxU5vtNX2N4AEm9f0JsubU1MhmNjuNlixrJ0tOQhv+0Uq3keNhWuD2C1
-	 mmmg17yYGxBibA61PpACNoT0StTkba8LnfUN61C11G9ziw2f6xsb5Ij5PnJmHXrBgd
-	 e7NyOZLvtS5ji2RIrufma7BAACZuiH94pJw4KdogK/p6uvXpNczfqfX//lxuPTQZcM
-	 R6st9Wz+3GXpC7skvwHakXVL1zQMP+8bAI1DEagcJu2MelwCnR2Ea265NEnhz8C5ld
-	 NNijYSPdL4/Pw==
-Date: Tue, 24 Sep 2024 14:05:59 +0200
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: amergnat@baylibre.com, Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-	Nicolas Belin <nbelin@baylibre.com>
-Subject: Re: [PATCH v8 1/5] ASoC: codecs: add MT6357 support
-Message-ID: <ZvKrJx0sMXIxCfBZ@finisterre.sirena.org.uk>
-References: <20240226-audio-i350-v8-0-e80a57d026ce@baylibre.com>
- <20240226-audio-i350-v8-1-e80a57d026ce@baylibre.com>
- <CAMuHMdXtm+jGbbLXnCjPZZu_ZwpR-tCRuwbz0iQxUPkXG=g09A@mail.gmail.com>
+	s=arc-20240116; t=1727179684; c=relaxed/simple;
+	bh=nNz2+oId6mzXmRk2C0COQrwvkJHEdReK3I1joI2vNaA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nQm7wVwhDkXjQG4MeAhxoZD9cnhhwE+FqxR2wBlsBcTJqX/awtPtu98/FfprNXSUDqgcmY+LwWxz/dksx+Mi/45UTX2vi8o/5MzcWk9rgZ9iRt3xmgXgHG3a/tD9iWGlS8dkzRZP4sc3SBOxCQGO9m8t0pvdQeLmDcmvWodx9p4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=BaGed3Th; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48OBaauT008661;
+	Tue, 24 Sep 2024 12:07:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=x
+	Nc7cw9Kq0ynPaYqsSVBD/YgCtnZUZCRP85lFxbVEl0=; b=BaGed3ThF2vbJ0d8f
+	EOCd+L3gUzV5NgBca4evb1dDyhz19cRlxbAoPbkxHXJNqzqWThG417Ojaopr8YeT
+	BXluXH89AN41tLne0N9g9ASgN65xxk8KfleBD7/oPo7x2lbKXsQLWqlu33gcc8Hr
+	S6+M5529EsCjJ5QAMzaiZvXGZNdq9PDi4adVRnGj2gBVVUqOqV5jEsokougOBUkT
+	zzX6tNIhM4e4Ss7P66BsVEwN1+9sAFBgs3rYSh+B/185JncA7xcjD2iaUXM82hPO
+	HLxxN4BvpCzPHEemC+Bz95Uw9E+xlYcQ7yikhavF4Rgkj14qcER0D+CH0vdaLhhq
+	87qHg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41skjrhv72-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Sep 2024 12:07:53 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48OC7qS5000857;
+	Tue, 24 Sep 2024 12:07:53 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41skjrhv6y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Sep 2024 12:07:52 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48OAHoNU000668;
+	Tue, 24 Sep 2024 12:07:52 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 41t8fum2dd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Sep 2024 12:07:52 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48OC7maI57999680
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 24 Sep 2024 12:07:48 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C7B1E20049;
+	Tue, 24 Sep 2024 12:07:48 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4EFE220040;
+	Tue, 24 Sep 2024 12:07:48 +0000 (GMT)
+Received: from [9.171.10.137] (unknown [9.171.10.137])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 24 Sep 2024 12:07:48 +0000 (GMT)
+Message-ID: <1302ec9f-ed6a-4606-a823-a4e0eb306698@linux.ibm.com>
+Date: Tue, 24 Sep 2024 14:07:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="09XdXeePKsAeqisk"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXtm+jGbbLXnCjPZZu_ZwpR-tCRuwbz0iQxUPkXG=g09A@mail.gmail.com>
-X-Cookie: Editing is a rewording activity.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/5] KVM: s390: selftests: Add regression tests for CPU
+ subfunctions
+To: Hariharan Mari <hari55@linux.ibm.com>, linux-kselftest@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, shuah@kernel.org,
+        borntraeger@linux.ibm.com, imbrenda@linux.ibm.com, david@redhat.com,
+        pbonzini@redhat.com, schlameuss@linux.ibm.com
+References: <20240823130947.38323-1-hari55@linux.ibm.com>
+Content-Language: en-US
+From: Janosch Frank <frankja@linux.ibm.com>
+Autocrypt: addr=frankja@linux.ibm.com; keydata=
+ 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
+In-Reply-To: <20240823130947.38323-1-hari55@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: JpBo8Wu1IcBHHquAqXtNtiSS0ABzr1Pl
+X-Proofpoint-ORIG-GUID: Dz0idRleiCKeDKGA9KR00AmR7-hXYnuJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-24_02,2024-09-24_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
+ spamscore=0 adultscore=0 lowpriorityscore=0 impostorscore=0 phishscore=0
+ clxscore=1011 malwarescore=0 mlxlogscore=583 bulkscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409240084
 
+On 8/23/24 3:05 PM, Hariharan Mari wrote:
+> This patch series introduces a set of regression tests for various s390x
+> CPU subfunctions in KVM. The tests ensure that the KVM implementation accurately
+> reflects the behavior of actual CPU instructions for these subfunctions.
+> 
+> The series adds tests for a total of 15 instructions across five patches,
+> covering a range of operations including sorting, compression, and various
+> cryptographic functions. Each patch follows a consistent testing pattern:
+> 
+> 1. Obtain the KVM_S390_VM_CPU_MACHINE_SUBFUNC attribute for the VM.
+> 2. Execute the relevant asm instructions.
+> 3. Compare KVM-reported results with direct instruction execution results.
+> 
+> Testing has been performed on s390x hardware with KVM support. All tests
+> pass successfully, verifying the correct implementation of these
+> subfunctions in KVM.
 
---09XdXeePKsAeqisk
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I've picked this up but seem to have missed adding it to 6.12 since I 
+have a lot going on.
 
-On Tue, Sep 24, 2024 at 01:44:05PM +0200, Geert Uytterhoeven wrote:
-> On Thu, Sep 5, 2024 at 11:08=E2=80=AFAM <amergnat@baylibre.com> wrote:
-
-> > +config SND_SOC_MT6357
-> > +       tristate "MediaTek MT6357 Codec"
-
-> Does this need dependencies?  The driver uses regmap, but it's not
-> immediately clear to me what is the backend (SPI?).
-
-It's a MFD so it'll be whatever the MFD for the device is.
-
---09XdXeePKsAeqisk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbyqxkACgkQJNaLcl1U
-h9Aeegf+JlTmfotEapBhCwzCkHyhP4vzPARCPqemBP0WpYEFPPpC/tpJ+APyZYKd
-YLrBxlIJuHmEv9wDQiP7Yimltm2/e7iEV5ktOKbMtRtai5ELWUu10HBbuyVFhExm
-dERrGNUi+7PDaO58V30yMlwb1jg/1cq4UcvsAYyNWLTfgyJpD/0LvOuy/Hdxu1SL
-CZoS/ED1dSbObIAlLSDbHtwyljTJpMitkhSaqID293jpeg4XDbpy8VUpj+Hkg3wH
-cE06JgnWqwMjIw+Ft6GaCvrrIHMSoIQAfJasq1K8LPU/KLm7Uw6QpdZadU7exPiG
-pKxXuXApL4U03KfdsV9J9a7VAdzwkQ==
-=NlQ4
------END PGP SIGNATURE-----
-
---09XdXeePKsAeqisk--
+It will be in 6.13 though.
 
