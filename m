@@ -1,209 +1,149 @@
-Return-Path: <linux-kernel+bounces-337652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ADE1984CF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:36:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC4B4984CF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:37:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DE111F24C0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:36:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21A451C21F24
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:37:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C022513D25E;
-	Tue, 24 Sep 2024 21:36:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE53E13D518;
+	Tue, 24 Sep 2024 21:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OpToGHe/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E1wU9e5+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D7E17557;
-	Tue, 24 Sep 2024 21:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1572613B792;
+	Tue, 24 Sep 2024 21:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727213810; cv=none; b=LTVfGhLXrDEVsSu8/OdYgyCZlWml1Rut7L0/N5789FDsyul/0JsyUtFUya/sdOsyUZNWIm3rDKHe/Bvlam5JTUhN2ajueNMXRZVHCJ77uFuy7516bNFnUONLa8MDqWyuiVzffAnBfpXt9JPgqdCoHFJDohhjbFF1eS9HdB4yKf0=
+	t=1727213834; cv=none; b=ASarooNAgzQsNvfj88hkO1I7ZOa9wf6GqyRV1wON3rgu4IhKYszDuxUH9RUQC8fx9v93gQJQ4TysXtodCdAQ+a6RigyaP33yRNxVip3+Rs22XoWv5c6U0B/F5k5Wjucu0v18rBQHCSe2V/UMCaSoqjPAyD/a+oo1HDZNUGSe1XQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727213810; c=relaxed/simple;
-	bh=Z65PsAKwI1GgVgDDn6er4XvhvS+mdH1KyI7xlqoSGII=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rB4LHriU8nH2ETYE/4NRUxkHLLFqHizYvMRd6nv7fiIVSujSSys6md/m4F9R7SywvD4LSuk0KNRsFzLL49brmTQ8atCufoTS6ZeSvlN6EkeiE9oT9YwjTS6tvQjGZT7x/Dmsz41CvdSzH6b/gA8Mjhopb3dKogCBsBSml1OUt7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OpToGHe/; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727213807; x=1758749807;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Z65PsAKwI1GgVgDDn6er4XvhvS+mdH1KyI7xlqoSGII=;
-  b=OpToGHe/KAvXfU8H35EnGGe0K6Pqn+k09V2NGYEOvaYUZSiU98HC5tIi
-   cnWb/v2Rp/JSs45unp2O67b0f0bk0TA2r8FnOpYfaMZZD9HqXDfNi+5/w
-   fdTZMuNKG+9qx5gADcIZgDf08aoFwLjuoNy4vb2MhHlatJQyQ5wSSQ2g2
-   OGxURrz16ln/ALvOiv+kaxkkUY0EI1hFE0F9LIyfR/hYxfwAC331z+6ws
-   p9Cj792NblWnUNzqdvIIHBycXn81T2kOghoEfuJtShq0BxCz6BgbD2BQ3
-   8/DA7Bp/2dtBgVN8yzZXnpDZ9fVLLRA4oa8SqoncakBD1i+NmIsrsR1uL
-   Q==;
-X-CSE-ConnectionGUID: +8tort2NSKqvBq7chh7dKA==
-X-CSE-MsgGUID: 4sNQMccCQiq7F4yKR7QTTg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="26330481"
-X-IronPort-AV: E=Sophos;i="6.10,255,1719903600"; 
-   d="scan'208";a="26330481"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 14:36:45 -0700
-X-CSE-ConnectionGUID: Vamjv89xSvqqWhS7/4X3TA==
-X-CSE-MsgGUID: 6y+Hcj66SNeL6isxIORLQw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,255,1719903600"; 
-   d="scan'208";a="94889792"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 24 Sep 2024 14:36:41 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1stDD4-000IrZ-28;
-	Tue, 24 Sep 2024 21:36:38 +0000
-Date: Wed, 25 Sep 2024 05:36:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: Julian Vetter <jvetter@kalrayinc.com>, Arnd Bergmann <arnd@arndb.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
-	Yann Sionneau <ysionneau@kalrayinc.com>,
-	Julian Vetter <jvetter@kalrayinc.com>
-Subject: Re: [PATCH v5 1/5] Consolidate __memcpy_{to,from}io and __memset_io
- into iomap_copy.c
-Message-ID: <202409250555.Ey0vV3Df-lkp@intel.com>
-References: <20240924121432.798655-2-jvetter@kalrayinc.com>
+	s=arc-20240116; t=1727213834; c=relaxed/simple;
+	bh=NtcrugAuxPs+bS2qbXsCsi/0ivuoPlB+E91MIF93xHM=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=mddBwf6HsVXbYvCKZoTrNvBX9VLoMwoALh8Z0OpB2fo/nZpGqvaQzPlQF0Rb5HfhwDUJuwuvt70MJG54w0q7njlSkdtPXd96cc4R760ehHKbabGxQgyrlkve9VBfft4T32opQVN4+WfU6HdBH65O0cJaaOY3chkr4Rqp2LOs7mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E1wU9e5+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9D76C4CEC4;
+	Tue, 24 Sep 2024 21:37:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727213833;
+	bh=NtcrugAuxPs+bS2qbXsCsi/0ivuoPlB+E91MIF93xHM=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=E1wU9e5+Uxs1EPbT3y1RQHBRU4n8g2E0EpNj535Lxwq4CeSfBXXuCqWXpuvOmkZ9K
+	 HsVfsDabyS+BRUlmrfhayYio9AhH3Q4iFQ5JN4BzMg1WJXRiu7uvNsn9cMi0XIKslQ
+	 YHWgyJbyH6fSVsRn+4ryQy0bnFuy8E/NSTuq51hnTNQBpdKF+viHNgxj5xLAdsrIcw
+	 kfWYhhwHre4ROvWcDWkP0dT5Ty9XH0lni8CFkd+wSjYZ2k8z0asV513mjpcBrrqa/M
+	 DsJsSQDmxfjF1wXIG01zLkuTkbAl8AFhaQvNHsVWa0fkxTLb4/5+HpFEKqIghLbZhz
+	 wwNoqesepyRag==
+Date: Tue, 24 Sep 2024 14:37:13 -0700
+From: Kees Cook <kees@kernel.org>
+To: "Eric W. Biederman" <ebiederm@xmission.com>,
+ Tycho Andersen <tycho@tycho.pizza>
+CC: Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
+ Alexander Aring <alex.aring@gmail.com>, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Tycho Andersen <tandersen@netflix.com>,
+ =?UTF-8?Q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
+ Aleksa Sarai <cyphar@cyphar.com>
+Subject: Re: [RFC] exec: add a flag for "reasonable" execveat() comm
+User-Agent: K-9 Mail for Android
+In-Reply-To: <87msjx9ciw.fsf@email.froward.int.ebiederm.org>
+References: <20240924141001.116584-1-tycho@tycho.pizza> <87msjx9ciw.fsf@email.froward.int.ebiederm.org>
+Message-ID: <8D545969-2EFA-419A-B988-74AD0C26020C@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240924121432.798655-2-jvetter@kalrayinc.com>
-
-Hi Julian,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on arnd-asm-generic/master]
-[also build test ERROR on soc/for-next akpm-mm/mm-nonmm-unstable arm64/for-next/core linus/master v6.11 next-20240924]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Julian-Vetter/Consolidate-__memcpy_-to-from-io-and-__memset_io-into-iomap_copy-c/20240924-202154
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git master
-patch link:    https://lore.kernel.org/r/20240924121432.798655-2-jvetter%40kalrayinc.com
-patch subject: [PATCH v5 1/5] Consolidate __memcpy_{to,from}io and __memset_io into iomap_copy.c
-config: arm-am200epdkit_defconfig (https://download.01.org/0day-ci/archive/20240925/202409250555.Ey0vV3Df-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240925/202409250555.Ey0vV3Df-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409250555.Ey0vV3Df-lkp@intel.com/
-
-All error/warnings (new ones prefixed by >>):
-
-   lib/iomap_copy.c: In function '__memcpy_fromio':
->> lib/iomap_copy.c:89:26: error: implicit declaration of function 'IS_ALIGNED' [-Wimplicit-function-declaration]
-      89 |         while (count && !IS_ALIGNED((unsigned long)from, NATIVE_STORE_SIZE)) {
-         |                          ^~~~~~~~~~
-   lib/iomap_copy.c: In function '__memset_io':
->> lib/iomap_copy.c:159:26: warning: left shift count >= width of type [-Wshift-count-overflow]
-     159 |                 qc |= qc << 32;
-         |                          ^~
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
 
-vim +/IS_ALIGNED +89 lib/iomap_copy.c
 
-    84	
-    85	
-    86	#ifndef __memcpy_fromio
-    87	void __memcpy_fromio(void *to, const volatile void __iomem *from, size_t count)
-    88	{
-  > 89		while (count && !IS_ALIGNED((unsigned long)from, NATIVE_STORE_SIZE)) {
-    90			*(u8 *)to = __raw_readb(from);
-    91			from++;
-    92			to++;
-    93			count--;
-    94		}
-    95	
-    96		while (count >= NATIVE_STORE_SIZE) {
-    97	#ifdef CONFIG_64BIT
-    98				put_unaligned(__raw_readq(from), (uintptr_t *)to);
-    99	#else
-   100				put_unaligned(__raw_readl(from), (uintptr_t *)to);
-   101	#endif
-   102	
-   103			from += NATIVE_STORE_SIZE;
-   104			to += NATIVE_STORE_SIZE;
-   105			count -= NATIVE_STORE_SIZE;
-   106		}
-   107	
-   108		while (count) {
-   109			*(u8 *)to = __raw_readb(from);
-   110			from++;
-   111			to++;
-   112			count--;
-   113		}
-   114	}
-   115	EXPORT_SYMBOL(__memcpy_fromio);
-   116	#endif
-   117	
-   118	#ifndef __memcpy_toio
-   119	void __memcpy_toio(volatile void __iomem *to, const void *from, size_t count)
-   120	{
-   121		while (count && !IS_ALIGNED((unsigned long)to, NATIVE_STORE_SIZE)) {
-   122			__raw_writeb(*(u8 *)from, to);
-   123			from++;
-   124			to++;
-   125			count--;
-   126		}
-   127	
-   128		while (count >= NATIVE_STORE_SIZE) {
-   129	#ifdef CONFIG_64BIT
-   130				__raw_writeq(get_unaligned((uintptr_t *)from), to);
-   131	#else
-   132				__raw_writel(get_unaligned((uintptr_t *)from), to);
-   133	#endif
-   134	
-   135			from += NATIVE_STORE_SIZE;
-   136			to += NATIVE_STORE_SIZE;
-   137			count -= NATIVE_STORE_SIZE;
-   138		}
-   139	
-   140		while (count) {
-   141			__raw_writeb(*(u8 *)from, to);
-   142			from++;
-   143			to++;
-   144			count--;
-   145		}
-   146	}
-   147	EXPORT_SYMBOL(__memcpy_toio);
-   148	#endif
-   149	
-   150	#ifndef __memset_io
-   151	void __memset_io(volatile void __iomem *dst, int c, size_t count)
-   152	{
-   153		uintptr_t qc = (u8)c;
-   154	
-   155		qc |= qc << 8;
-   156		qc |= qc << 16;
-   157	
-   158		if (IS_ENABLED(CONFIG_64BIT))
- > 159			qc |= qc << 32;
+On September 24, 2024 10:39:35 AM PDT, "Eric W=2E Biederman" <ebiederm@xmi=
+ssion=2Ecom> wrote:
+>Tycho Andersen <tycho@tycho=2Epizza> writes:
+>
+>> From: Tycho Andersen <tandersen@netflix=2Ecom>
+>>
+>> Zbigniew mentioned at Linux Plumber's that systemd is interested in
+>> switching to execveat() for service execution, but can't, because the
+>> contents of /proc/pid/comm are the file descriptor which was used,
+>> instead of the path to the binary=2E This makes the output of tools lik=
+e
+>> top and ps useless, especially in a world where most fds are opened
+>> CLOEXEC so the number is truly meaningless=2E
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+And just to double check: systemd's use would be entirely cosmetic, yes?
+
+>>
+>> This patch adds an AT_ flag to fix up /proc/pid/comm to instead be the
+>> contents of argv[0], instead of the fdno=2E
+>
+>The kernel allows prctl(PR_SET_NAME, =2E=2E=2E)  without any permission
+>checks so adding an AT_ flat to use argv[0] instead of the execed
+>filename seems reasonable=2E
+>
+>Maybe the flag should be called AT_NAME_ARGV0=2E
+
+If we add an AT flag I like this name=2E
+
+>
+>
+>That said I am trying to remember why we picked /dev/fd/N, as the
+>filename=2E
+>
+>My memory is that we couldn't think of anything more reasonable to use=2E
+>Looking at commit 51f39a1f0cea ("syscalls: implement execveat() system
+>call") unfortunately doesn't clarify anything for me, except that
+>/dev/fd/N was a reasonable choice=2E
+>
+>I am thinking the code could reasonably try:
+>	get_fs_root_rcu(current->fs, &root);
+>	path =3D __d_path(file->f_path, root, buf, buflen);
+>
+>To see if a path to the file from the current root directory can be
+>found=2E  For files that are not reachable from the current root the code
+>still need to fallback to /dev/fd/N=2E
+>
+>Do you think you can investigate that and see if that would generate
+>a reasonable task->comm?
+>
+>If for no other reason than because it would generate a usable result
+>for #! scripts, without /proc mounted=2E
+>
+>
+>It looks like a reasonable case can be made that while /dev/fd/N is
+>a good path for interpreters, it is never a good choice for comm,
+>so perhaps we could always use argv[0] if the fdpath is of the
+>form /dev/fd/N=2E
+
+I haven't had a chance to go look closely yet, but this was the same thoug=
+ht I had when I first read this RFC=2E Nobody really wants a dev path in co=
+mm=2E Can we do this unconditionally? (And if argv0 is empty, use dev path=
+=2E=2E=2E)
+
+>All of that said I am not a fan of the implementation below as it has
+>the side effect of replacing /dev/fd/N with a filename that is not
+>usable by #! interpreters=2E  So I suggest an implementation that affects
+>task->comm and not brpm->filename=2E
+
+Also agreed=2E There is already enough fiddly usage of the bprm filename/i=
+nterpreter/fdpath members -- the argv0 stuff should be distinct=2E Perhaps =
+store a pointer to argv0 during arg copy? I need to go look but I'm still A=
+FK/OoO=2E=2E=2E
+
+-Kees
+
+--=20
+Kees Cook
 
