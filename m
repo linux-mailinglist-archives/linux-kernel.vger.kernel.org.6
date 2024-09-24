@@ -1,170 +1,99 @@
-Return-Path: <linux-kernel+bounces-337428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60377984A00
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:51:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E829849FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:50:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B839A1F2259C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:50:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 242302832F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9656A1AC431;
-	Tue, 24 Sep 2024 16:50:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1D41ABEDA;
+	Tue, 24 Sep 2024 16:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H6309Luf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bR1UpUG1"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0D41AC428
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 16:50:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D561A265D
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 16:50:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727196638; cv=none; b=K71MbNsZbSX0IuGgttOu/1gemYnens3/k8fuBDNGyL237HawMqWk5GH2UKVnW8s4N6J2Xa2sQacA3L0pjqaRm0Gy+9Pd8vyTCRJMGFbTetYKArZMziHpxs5sxOkYWnQnmad/+eWUyyiB3Q6VgwrUsNW7mB96iXvgG//fQaCMh7o=
+	t=1727196627; cv=none; b=WlZ5QE+0GQq6zLTM7KlkTjyP6t1jkz2XRoIPr1JCIi6hs7yTnVhdXoDnQTStmIRFEDezx9mqADP4po+0knBZCXPYNTep58SiG9z8p6nH77ysPRWBXxJcReknSIPnhZ/173Pv2/kaQxE0474iA4vHryRBB0RFeGuo8/n6xxbQ/HI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727196638; c=relaxed/simple;
-	bh=3w5AXESH6xIZJewtYq5MpPk4X8VvNrZSufuTd7GGFi0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qOTnPv5VKlOb/DmqGMCw47+q3zETrX0UIipjdU8nWQR1eAlU6occ6Q7PtPBJprtaej5PIiqTVjUysffCBoascZg2eZumF9lu7l2kHKjG5TQP5z88vPlw1/O71ZfgDkZw0xJWChDw+ln/hDXz6fmyFHLynVxOQc9atT0N7rSy9xM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H6309Luf; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727196637; x=1758732637;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3w5AXESH6xIZJewtYq5MpPk4X8VvNrZSufuTd7GGFi0=;
-  b=H6309Luf1K/ZLqcHEZjzYZIH3+mUsmp/mOs0xd4GEP5DBs96cNftrE9D
-   jcIbR8/CJAuUMPKE50srxriV2m8Z8dj6+m+sNFgGgj45NFGzWVM5LwPN4
-   qu8RiAIGRRLa2k/T/j4fU7+ntOl3Q2mOlRb67gdnhyK6wLWnB/Gjopi/p
-   Crj4ckT+Cfe91VC49aZgIEKu1PusyhmtyqZe40VT3IK7k4LYL3ysnL3/U
-   brzXwwGQUqRd/yIfeHEN6Xd9AHdW5CeQ8JUT8LHaG/1gvMmqW+nSq54yT
-   F2TPbipIrjxu/0QvdAs7wUn8Bg+NLdDVNwiMRty4aCjjNrJEasAoEnmjo
-   A==;
-X-CSE-ConnectionGUID: i6JC/u+VSEmRAt9r20JAPw==
-X-CSE-MsgGUID: /NMCnR1VTReCY2OON+CEhA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="43726049"
-X-IronPort-AV: E=Sophos;i="6.10,255,1719903600"; 
-   d="scan'208";a="43726049"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 09:50:34 -0700
-X-CSE-ConnectionGUID: GL6BARl6T0azW8KCeXdlPg==
-X-CSE-MsgGUID: DBunaQknS52czotfk8RTag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,255,1719903600"; 
-   d="scan'208";a="71919109"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 24 Sep 2024 09:50:31 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1st8k8-000Ick-39;
-	Tue, 24 Sep 2024 16:50:28 +0000
-Date: Wed, 25 Sep 2024 00:49:57 +0800
-From: kernel test robot <lkp@intel.com>
-To: Martin Kletzander <nert.pinx@gmail.com>,
-	Fenghua Yu <fenghua.yu@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v3] x86/resctrl: Avoid overflow in MB settings in
- bw_validate()
-Message-ID: <202409250046.1Kk0NXVZ-lkp@intel.com>
-References: <8d028c5f6f23e92fb83cbf20599366e896abc5b5.1727167989.git.nert.pinx@gmail.com>
+	s=arc-20240116; t=1727196627; c=relaxed/simple;
+	bh=TSqucCneXLlY2w5/bcNfl7wgMjyFfK9mOWImRFyUeZM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bnmbQa59gHCqXIpkHeHig8cPmPiEqAYG83K8Tafkc/DqclW2RfdzsAaD0ZPDkC2k5or0xG9GQPDfIPs8YMFjnB75Bg4V9GsdpLOFpUslhLfOJeKhY9FMIgyOf+6FzOZ7l1WmXGTi6jHZ2yeqhxHZlSCEhbAJ9Qm/OcGvypDJxw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bR1UpUG1; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6c36ff6e981so47290876d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:50:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727196624; x=1727801424; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TSqucCneXLlY2w5/bcNfl7wgMjyFfK9mOWImRFyUeZM=;
+        b=bR1UpUG1FspwMkWyBzG4sWiW7Tzii6HtMzG8lZgFPS1fY7Lsa7UGyrx8ziTTkvpowt
+         vLgxNx4aae1AwRHBfoLC+7VIzh4bWnvW9ZtMpwPgare8DVyAG/lEKHiC6K2o+fwjYVdu
+         bGIGhaYuapQU1GctXnw0HGu3RRrnBogQRR8yS/JVGDTvdnDya7/NyJLz25te4w4ysvmF
+         6xF8AElGUjULeeUg++lZY73IJNtl43iwGEIjhghyC7VQhbDgZDPxnBgasnSFZHJDh22U
+         iVFh0sw64PWeWNgXyYnaxMKCalBk+7ZF5dKFcOx26HN+N/r4EM7/fPTLWgRwopXU4IlC
+         EsVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727196624; x=1727801424;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TSqucCneXLlY2w5/bcNfl7wgMjyFfK9mOWImRFyUeZM=;
+        b=gymC5Mn4S6RFMFr/8Bgpv7bboQtPKMTzw1OWc4sETP9UVp65fLhzXNJ7OAktHNmxux
+         UFtvwtbrs31ZHiaIujiswyz92w8dJMuDMvUsHEfNtGd/YhyDCnpNmZp9ubZKWvxkWw2t
+         jKu2YquFCQTO02BGrIH+qqLoWquuTk42wI0uy/VZrUq1go2wFVHejsqMkDwnGgvu5S9r
+         fRT38VNlRS2Fzw0dD0LaTU5kjzSv6xVdyH+Qzo2RJrnOHJkX/HYPsq4v8Vso3hOIFX5X
+         syrKgjoNo6ODJb/XOmlBEm+UillRmffrflNYHQpf0dsOwHKR7WQP8JQH45Gz0xOekgtq
+         hZSw==
+X-Gm-Message-State: AOJu0YzB2owgrDS9tQju/8ztjHeOrZuGArJk7hgC/FA8lDEVolqCJ+w1
+	1BO5EJ95/QncsMHzW0TI+xUJhyQliRaEndwEu8z2kKF7f6TQHRcdd0oBZn2dF77BYen/1lF5O6N
+	QwZEO3Xvkz9xNEyAnCHT9Xuzi6xM=
+X-Google-Smtp-Source: AGHT+IF1CUbhLsOTO+WUH+jMHIcoMo99qhJHmAP2tLaOGmtMskkZA+zR52UHnBMkTFXX6RgcmVm12SXkTsSngPy1Ykg=
+X-Received: by 2002:a05:6214:4a8d:b0:6c5:a41b:231d with SMTP id
+ 6a1803df08f44-6c7bc838547mr279717676d6.44.1727196624369; Tue, 24 Sep 2024
+ 09:50:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8d028c5f6f23e92fb83cbf20599366e896abc5b5.1727167989.git.nert.pinx@gmail.com>
+References: <20240924011709.7037-1-kanchana.p.sridhar@intel.com> <20240924011709.7037-3-kanchana.p.sridhar@intel.com>
+In-Reply-To: <20240924011709.7037-3-kanchana.p.sridhar@intel.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Tue, 24 Sep 2024 09:50:13 -0700
+Message-ID: <CAKEwX=Ogw3aR0McCPbdi+90U6+5u5e+-Lc41LtshTzt8q0WDVg@mail.gmail.com>
+Subject: Re: [PATCH v7 2/8] mm: zswap: Modify zswap_compress() to accept a
+ page instead of a folio.
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
+	yosryahmed@google.com, chengming.zhou@linux.dev, usamaarif642@gmail.com, 
+	shakeel.butt@linux.dev, ryan.roberts@arm.com, ying.huang@intel.com, 
+	21cnbao@gmail.com, akpm@linux-foundation.org, nanhai.zou@intel.com, 
+	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Martin,
+On Mon, Sep 23, 2024 at 6:17=E2=80=AFPM Kanchana P Sridhar
+<kanchana.p.sridhar@intel.com> wrote:
+>
+> For zswap_store() to be able to store an mTHP by compressing
+> it one page at a time, zswap_compress() needs to accept a page
+> as input. This will allow us to iterate through each page in
+> the mTHP in zswap_store(), compress it and store it in the zpool.
+>
+> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on tip/x86/core]
-[also build test WARNING on linus/master v6.11 next-20240924]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Martin-Kletzander/x86-resctrl-Avoid-overflow-in-MB-settings-in-bw_validate/20240924-165510
-base:   tip/x86/core
-patch link:    https://lore.kernel.org/r/8d028c5f6f23e92fb83cbf20599366e896abc5b5.1727167989.git.nert.pinx%40gmail.com
-patch subject: [PATCH v3] x86/resctrl: Avoid overflow in MB settings in bw_validate()
-config: x86_64-buildonly-randconfig-001-20240924 (https://download.01.org/0day-ci/archive/20240925/202409250046.1Kk0NXVZ-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240925/202409250046.1Kk0NXVZ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409250046.1Kk0NXVZ-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   arch/x86/kernel/cpu/resctrl/ctrlmondata.c: In function 'bw_validate':
->> arch/x86/kernel/cpu/resctrl/ctrlmondata.c:58:49: warning: format '%ld' expects argument of type 'long int', but argument 2 has type 'u32' {aka 'unsigned int'} [-Wformat=]
-      58 |                 rdt_last_cmd_printf("MB value %ld out of range [%d,%d]\n", bw,
-         |                                               ~~^                          ~~
-         |                                                 |                          |
-         |                                                 long int                   u32 {aka unsigned int}
-         |                                               %d
-
-
-vim +58 arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-
-60ec2440c63dea arch/x86/kernel/cpu/intel_rdt_schemata.c    Tony Luck         2016-10-28  25  
-64e8ed3d4a6dcd arch/x86/kernel/cpu/intel_rdt_schemata.c    Vikas Shivappa    2017-04-07  26  /*
-64e8ed3d4a6dcd arch/x86/kernel/cpu/intel_rdt_schemata.c    Vikas Shivappa    2017-04-07  27   * Check whether MBA bandwidth percentage value is correct. The value is
-64e8ed3d4a6dcd arch/x86/kernel/cpu/intel_rdt_schemata.c    Vikas Shivappa    2017-04-07  28   * checked against the minimum and max bandwidth values specified by the
-64e8ed3d4a6dcd arch/x86/kernel/cpu/intel_rdt_schemata.c    Vikas Shivappa    2017-04-07  29   * hardware. The allocated bandwidth percentage is rounded to the next
-64e8ed3d4a6dcd arch/x86/kernel/cpu/intel_rdt_schemata.c    Vikas Shivappa    2017-04-07  30   * control step available on the hardware.
-64e8ed3d4a6dcd arch/x86/kernel/cpu/intel_rdt_schemata.c    Vikas Shivappa    2017-04-07  31   */
-be99ce3b7dd7ba arch/x86/kernel/cpu/resctrl/ctrlmondata.c   Martin Kletzander 2024-09-24  32  static bool bw_validate(char *buf, u32 *data, struct rdt_resource *r)
-64e8ed3d4a6dcd arch/x86/kernel/cpu/intel_rdt_schemata.c    Vikas Shivappa    2017-04-07  33  {
-64e8ed3d4a6dcd arch/x86/kernel/cpu/intel_rdt_schemata.c    Vikas Shivappa    2017-04-07  34  	int ret;
-be99ce3b7dd7ba arch/x86/kernel/cpu/resctrl/ctrlmondata.c   Martin Kletzander 2024-09-24  35  	u32 bw;
-64e8ed3d4a6dcd arch/x86/kernel/cpu/intel_rdt_schemata.c    Vikas Shivappa    2017-04-07  36  
-64e8ed3d4a6dcd arch/x86/kernel/cpu/intel_rdt_schemata.c    Vikas Shivappa    2017-04-07  37  	/*
-64e8ed3d4a6dcd arch/x86/kernel/cpu/intel_rdt_schemata.c    Vikas Shivappa    2017-04-07  38  	 * Only linear delay values is supported for current Intel SKUs.
-64e8ed3d4a6dcd arch/x86/kernel/cpu/intel_rdt_schemata.c    Vikas Shivappa    2017-04-07  39  	 */
-41215b7947f1b1 arch/x86/kernel/cpu/resctrl/ctrlmondata.c   James Morse       2020-07-08  40  	if (!r->membw.delay_linear && r->membw.arch_needs_linear) {
-c377dcfbee808e arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c Tony Luck         2017-09-25  41  		rdt_last_cmd_puts("No support for non-linear MB domains\n");
-64e8ed3d4a6dcd arch/x86/kernel/cpu/intel_rdt_schemata.c    Vikas Shivappa    2017-04-07  42  		return false;
-c377dcfbee808e arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c Tony Luck         2017-09-25  43  	}
-64e8ed3d4a6dcd arch/x86/kernel/cpu/intel_rdt_schemata.c    Vikas Shivappa    2017-04-07  44  
-be99ce3b7dd7ba arch/x86/kernel/cpu/resctrl/ctrlmondata.c   Martin Kletzander 2024-09-24  45  	ret = kstrtou32(buf, 10, &bw);
-c377dcfbee808e arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c Tony Luck         2017-09-25  46  	if (ret) {
-be99ce3b7dd7ba arch/x86/kernel/cpu/resctrl/ctrlmondata.c   Martin Kletzander 2024-09-24  47  		rdt_last_cmd_printf("Invalid MB value %s\n", buf);
-64e8ed3d4a6dcd arch/x86/kernel/cpu/intel_rdt_schemata.c    Vikas Shivappa    2017-04-07  48  		return false;
-c377dcfbee808e arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c Tony Luck         2017-09-25  49  	}
-64e8ed3d4a6dcd arch/x86/kernel/cpu/intel_rdt_schemata.c    Vikas Shivappa    2017-04-07  50  
-be99ce3b7dd7ba arch/x86/kernel/cpu/resctrl/ctrlmondata.c   Martin Kletzander 2024-09-24  51  	/* Nothing else to do if software controller is enabled. */
-be99ce3b7dd7ba arch/x86/kernel/cpu/resctrl/ctrlmondata.c   Martin Kletzander 2024-09-24  52  	if (is_mba_sc(r)) {
-be99ce3b7dd7ba arch/x86/kernel/cpu/resctrl/ctrlmondata.c   Martin Kletzander 2024-09-24  53  		*data = bw;
-be99ce3b7dd7ba arch/x86/kernel/cpu/resctrl/ctrlmondata.c   Martin Kletzander 2024-09-24  54  		return true;
-be99ce3b7dd7ba arch/x86/kernel/cpu/resctrl/ctrlmondata.c   Martin Kletzander 2024-09-24  55  	}
-be99ce3b7dd7ba arch/x86/kernel/cpu/resctrl/ctrlmondata.c   Martin Kletzander 2024-09-24  56  
-be99ce3b7dd7ba arch/x86/kernel/cpu/resctrl/ctrlmondata.c   Martin Kletzander 2024-09-24  57  	if (bw < r->membw.min_bw || bw > r->default_ctrl) {
-c377dcfbee808e arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c Tony Luck         2017-09-25 @58  		rdt_last_cmd_printf("MB value %ld out of range [%d,%d]\n", bw,
-c377dcfbee808e arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c Tony Luck         2017-09-25  59  				    r->membw.min_bw, r->default_ctrl);
-64e8ed3d4a6dcd arch/x86/kernel/cpu/intel_rdt_schemata.c    Vikas Shivappa    2017-04-07  60  		return false;
-c377dcfbee808e arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c Tony Luck         2017-09-25  61  	}
-64e8ed3d4a6dcd arch/x86/kernel/cpu/intel_rdt_schemata.c    Vikas Shivappa    2017-04-07  62  
-64e8ed3d4a6dcd arch/x86/kernel/cpu/intel_rdt_schemata.c    Vikas Shivappa    2017-04-07  63  	*data = roundup(bw, (unsigned long)r->membw.bw_gran);
-64e8ed3d4a6dcd arch/x86/kernel/cpu/intel_rdt_schemata.c    Vikas Shivappa    2017-04-07  64  	return true;
-64e8ed3d4a6dcd arch/x86/kernel/cpu/intel_rdt_schemata.c    Vikas Shivappa    2017-04-07  65  }
-64e8ed3d4a6dcd arch/x86/kernel/cpu/intel_rdt_schemata.c    Vikas Shivappa    2017-04-07  66  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Reviewed-by: Nhat Pham <nphamcs@gmail.com>
 
