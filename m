@@ -1,144 +1,129 @@
-Return-Path: <linux-kernel+bounces-337807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDEF5984F37
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:59:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91CE5984F39
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FC2E284354
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:59:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CC01284D78
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610DD189B81;
-	Tue, 24 Sep 2024 23:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14490189BB8;
+	Tue, 24 Sep 2024 23:59:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="TRHdvqKY"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C1s8JMVQ"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4C280C04
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 23:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB57183CA1
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 23:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727222376; cv=none; b=fC4x8uW05h38tWVOtQe+puRsNlbrLImFZK/FKz+tYQSvKCRhgW3haZn8TgfGfyRPjQImbCymRh2qD6lPnPkKqyG4s1Luc7kRkgFCIQfJnoBVYSjfWBUL+gfZsw1cJbXLOQF+eN2q4o9lBFRxujkVwb30zAg9Tjq/YJgxqzCqaPU=
+	t=1727222378; cv=none; b=gvCVjEwGGnrLi9cCW8PHH+niB3JbnY1rvngBXm2blLQOqxcpTCUY9ofmpRl2hQWGBPDKlKh4RxpodpNZM2yNVF2AYSpcQnWSO8M2fgAeuJxBHl9V4iMCZB8kKarIfmffolgaOF1TaYV5GPhefjPc7htOrFM+EM6psvoAaN/jgQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727222376; c=relaxed/simple;
-	bh=80O5HoKlFOXLyt3+ci5WN+9I9yGxVQpDpPe4ZezkeSw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SwYIvxAmt2RpDP2shd2b7SRr7ySv8L7Bzmi5MEiGKA7Q/R70AmkKdqRgjCm2DA0G8oThcwe6+bJJDFP1vfpY3TfCC4IX5PYqEDmr+lJFfElwcrvbYFI+ups6PTZ/lxdtH8xc0WNhwqvWsV5uoEF9iNZMD8jpxMeWIEjDz7cItRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=TRHdvqKY; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=KnkPkShAJnJABVLM8tVZtzLNR3Lj0DvaOqN+FYM6Vbo=; b=TRHdvqKYXB+j4l2H3rK0qWQ5gD
-	p/se91807EjW7EMQGJs8IvFjOgBOxjylo1cSlHQMrlp6oOK/S+gDnA6ZszMyApgfmkLvjPmmh/JU0
-	YGDU84P24tOqk10Eoy3AfjLij9n6uBs/B5qblVR5sQmJsi9FtUZZE/Hpdjpl+nDUSg3SVN8dgtrEr
-	CB7mmb0195k4AAzlSJn8EuY64FF0hgqVrVDWadWIrPuqMa6aJFmQilyKZ5+d+K5V3XEj6ilxmJVZN
-	RyzvB4bFQowHRdO7snqIO4S252Tk0Kv2AVCA6OaWLgzgYi8qRgrzTjPZezlqByCimgZoCWTcRk7Yg
-	Bu4xkyFQ==;
-Received: from [187.36.213.55] (helo=[192.168.1.212])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1stFRE-000eye-II; Wed, 25 Sep 2024 01:59:24 +0200
-Message-ID: <70f98efb-728d-4a20-9b6d-04f0aff41cac@igalia.com>
-Date: Tue, 24 Sep 2024 20:59:18 -0300
+	s=arc-20240116; t=1727222378; c=relaxed/simple;
+	bh=NPBhGsZGXeHhMhqBrOs0lKj/hQr4Of+6SHrSbODGWf4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WsMfV/gS9x3rRatNE4ejDvZMDssZTzAU44WsytSvEyhkUjCcEBXj01oB9ea8m1RqKAQ6w1jcR1JOMiUyT1FFGn6XN10d39qDcUV/O8AFZWmEgEbTBSiE4SGr4h+Oj07JHnsJeuMDRcD9aqXqP9GcvAdcgtUAnWB6ZLbRxTLrrXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C1s8JMVQ; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c4146c7b28so7665682a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 16:59:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727222375; x=1727827175; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kI/ysPTxQWzKUDDa2gWjdjf1UvW+7XakeF8GyEGFOL4=;
+        b=C1s8JMVQK72Or/DSqyLJddljAAr1GPC6xpU4g8GQH/zuuTw+Uq1U/eIevT0wvc8bnk
+         CnPH1pzbq8lNTEQn09jeX1oOwydIX6kHmQkF2/Bret20o2Qf2ylxjJryk4GRCgfCvaL/
+         USsz5xUSIkRUIDnLV9HwohaOM09bNWGy1Trtooh6tmrVkk5/fLoGz5OXxkbOy2DhpFLs
+         H3C4gPzmg9THz/thIC7obNyinBGQ4hKMgwA4d1NceBGAR4Z46JErp0keHP/FMBVsRr8a
+         oi5ld/RnpkgbXM9ATBYvVU3ep3o5jjeXOPBSIxyAWBdvc3jzjNC/+AcVchpCZ0p984e2
+         D/4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727222375; x=1727827175;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kI/ysPTxQWzKUDDa2gWjdjf1UvW+7XakeF8GyEGFOL4=;
+        b=mf+tQK7SUrBUypQmjncJpzoXF9ksp39YqN53+nOO9xtwO+sVkd4bHeVFURGT1mAHKO
+         IRZIzhQXdQTyXFcV0ubLxh4fyDNw69rWf79G/7GGclI1huE0JCWQBkt1oXU8Od89FGUi
+         hjk51sQDS+yAf2FsUG0Dua7qDM0PjtqhhyF5SCZNduESYZZ+ngCgC92BN1aJ28KHbEwQ
+         McCKQywcJxX9HZay1x7gJOHLT8G9s5STGnf/Gn95/O+LBcpdEdElsSsLe+p0A1KVc+t2
+         eWPiuj8D8TH7NsnJcJV1NHhQiMhXTq25MVkHD9Dk6HmFJ8qHOj4izPH4esZ1aX2qYj2L
+         XuDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUd0/jJjRG/SJtvvHzjwsL3eL7bwq89MfYEVoNcBYAWU0sGFk2zu01OTsxZK1kPxPAqd/5FSEa3yIGLiKc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlAQhBKGCfhhen3FB4q0mRzgd+JzokYXTGiCbUtG0d2RmGvDcx
+	bU3PdIWANFe6cJOX9VyGUVyFOgh9AC0Pli3pPXaMjHJm1w1A7W1huIjQopnkYjCh8dZr2yPmw6c
+	Qd8Y2+fEip3E2m4HzDed4ASubqS8169XZjUo=
+X-Google-Smtp-Source: AGHT+IEFAG3wub9OvDEOs3FiLz5OFqv+WsMgtvScIRg52xRzRH+AwJSsf6BAU1gkGTOMfniTFrgvm8bolZPFDbB+GIQ=
+X-Received: by 2002:a17:907:7d9f:b0:a77:b01b:f949 with SMTP id
+ a640c23a62f3a-a93a03e3726mr75990466b.35.1727222374772; Tue, 24 Sep 2024
+ 16:59:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/vkms: Suppress context imbalance sparse warning
-To: Louis Chauvet <louis.chauvet@bootlin.com>,
- Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
- Haneen Mohammed <hamohammed.sa@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Melissa Wen <melissa.srw@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>
-Cc: thomas.petazzoni@bootlin.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20240912-vkms-warnings-v1-1-59f3e13ea8e5@bootlin.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-Autocrypt: addr=mcanal@igalia.com; keydata=
- xjMEZIsaeRYJKwYBBAHaRw8BAQdAGU6aY8oojw61KS5rGGMrlcilFqR6p6ID45IZ6ovX0h3N
- H01haXJhIENhbmFsIDxtY2FuYWxAaWdhbGlhLmNvbT7CjwQTFggANxYhBDMCqFtIvFKVRJZQ
- hDSPnHLaGFVuBQJkixp5BQkFo5qAAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQNI+cctoYVW5u
- GAEAwpaC5rI3wD8zqETKwGVoXd6+AbmGfZuVD40xepy7z/8BAM5w95/oyPsHUqOsg/xUTlNp
- rlbhA+WWoaOXA3XgR+wCzjgEZIsaeRIKKwYBBAGXVQEFAQEHQGoOK0jgh0IorMAacx6WUUWb
- s3RLiJYWUU6iNrk5wWUbAwEIB8J+BBgWCAAmFiEEMwKoW0i8UpVEllCENI+cctoYVW4FAmSL
- GnkFCQWjmoACGwwACgkQNI+cctoYVW6cqwD/Q9R98msvkhgRvi18fzUPFDwwogn+F+gQJJ6o
- pwpgFkAA/R2zOfla3IT6G3SBoV5ucdpdCpnIXFpQLbmfHK7dXsAC
-In-Reply-To: <20240912-vkms-warnings-v1-1-59f3e13ea8e5@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <cover.1727191485.git.skhan@linuxfoundation.org> <f797bc704d8eb03234a3447c77fa7b704339f89a.1727191485.git.skhan@linuxfoundation.org>
+In-Reply-To: <f797bc704d8eb03234a3447c77fa7b704339f89a.1727191485.git.skhan@linuxfoundation.org>
+From: John Stultz <jstultz@google.com>
+Date: Tue, 24 Sep 2024 16:59:22 -0700
+Message-ID: <CANDhNCpsEQL+S8gadXMjvbE-6r8c6owzz+_DhN6JAVqQ8Hg=_g@mail.gmail.com>
+Subject: Re: [PATCH 2/2] selftests: timers: Remove local NSEC_PER_SEC and
+ USEC_PER_SEC defines
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: tglx@linutronix.de, sboyd@kernel.org, shuah@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Louis,
+On Tue, Sep 24, 2024 at 8:57=E2=80=AFAM Shuah Khan <skhan@linuxfoundation.o=
+rg> wrote:
+>
+> Remove local NSEC_PER_SEC and USEC_PER_SEC defines. Pick them up from
+> include/vdso/time64.h. This requires -I $(top_srcdir) to the timers
+> Makefile to include the include/vdso/time64.h.
+>
+> posix_timers test names the defines NSECS_PER_SEC and USECS_PER_SEC.
+> Include the include/vdso/time64.h and change NSECS_PER_SEC and
+> USECS_PER_SEC references to NSEC_PER_SEC and USEC_PER_SEC respectively.
 
-On 9/12/24 12:25, Louis Chauvet wrote:
-> The functions `vkms_crtc_atomic_begin` and `vkms_crtc_atomic_flush` are
-> responsible for locking and unlocking a mutex, respectively. Add the
-> `__acquires` and `__releases` annotations to these functions to prevent
-> the associated sparse warning about context imbalance.
-> 
-> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+Nit: You got the last bit switched there. This patch changes local
+NSEC_PER_SEC to the upstream defined NSECS_PER_SEC.
 
-When I was applying this patch, I got the following warning:
+Overall no objection from me. I've always pushed to have the tests be
+mostly self-contained so they can be built outside of the kernel
+source, but at this point the current kselftest.h dependencies means
+it already takes some work, so this isn't introducing an undue
+hardship.
 
-137f51649b04 (HEAD -> drm-misc-next) drm/vkms: Suppress context 
-imbalance sparse warning
--:4: WARNING:EMAIL_SUBJECT: A patch subject line should describe the 
-change not the tool that found it
-#4:
-Subject: [PATCH] drm/vkms: Suppress context imbalance sparse warning
+Other then the nit,
+  Acked-by: John Stultz <jstultz@google.com>
 
-total: 0 errors, 1 warnings, 0 checks, 14 lines checked
+> diff --git a/tools/testing/selftests/timers/adjtick.c b/tools/testing/sel=
+ftests/timers/adjtick.c
+> index 205b76a4abb4..cb9a30f54662 100644
+> --- a/tools/testing/selftests/timers/adjtick.c
+> +++ b/tools/testing/selftests/timers/adjtick.c
+> @@ -22,14 +22,12 @@
+>  #include <sys/time.h>
+>  #include <sys/timex.h>
+>  #include <time.h>
+> +#include <include/vdso/time64.h>
+>
+>  #include "../kselftest.h"
+>
+>  #define CLOCK_MONOTONIC_RAW    4
 
-Therefore, before pushing the patch, I changed the commit title to
-"drm/vkms: Suppress context imbalance detected by sparse warning". Hope
-you don't mind.
+I suspect CLOCK_MONOTONIC_RAW (and the other clockid definitions)
+could be similarly removed here as well in a future patch?
 
-Applied to misc/kernel.git (drm-misc-next).
-
-Best Regards,
-- Maíra
-
-> ---
->   drivers/gpu/drm/vkms/vkms_crtc.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/vkms/vkms_crtc.c b/drivers/gpu/drm/vkms/vkms_crtc.c
-> index 40b4d084e3ceef9e1e24b7338efdd9253afee8d6..2ad164b518fb93f5b6b86948116ff7ed97770b60 100644
-> --- a/drivers/gpu/drm/vkms/vkms_crtc.c
-> +++ b/drivers/gpu/drm/vkms/vkms_crtc.c
-> @@ -232,6 +232,7 @@ static void vkms_crtc_atomic_disable(struct drm_crtc *crtc,
->   
->   static void vkms_crtc_atomic_begin(struct drm_crtc *crtc,
->   				   struct drm_atomic_state *state)
-> +	__acquires(&vkms_output->lock)
->   {
->   	struct vkms_output *vkms_output = drm_crtc_to_vkms_output(crtc);
->   
-> @@ -243,6 +244,7 @@ static void vkms_crtc_atomic_begin(struct drm_crtc *crtc,
->   
->   static void vkms_crtc_atomic_flush(struct drm_crtc *crtc,
->   				   struct drm_atomic_state *state)
-> +	__releases(&vkms_output->lock)
->   {
->   	struct vkms_output *vkms_output = drm_crtc_to_vkms_output(crtc);
->   
-> 
-> ---
-> base-commit: d2194256049910d286cd6c308c2689df521d8842
-> change-id: 20240912-vkms-warnings-e0e331bc5e6d
-> 
-> Best regards,
+thanks
+-john
 
