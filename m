@@ -1,247 +1,237 @@
-Return-Path: <linux-kernel+bounces-337038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6B1498447C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:28:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A444F984482
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:29:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9CD31C23AD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:28:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F1141F240DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFECD1A4F20;
-	Tue, 24 Sep 2024 11:28:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB841A4F34;
+	Tue, 24 Sep 2024 11:29:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QcI40u8C"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vi29J1IF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2948B1A704A
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 11:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B155481B7;
+	Tue, 24 Sep 2024 11:29:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727177284; cv=none; b=ojojnObsVHjr/piA/iQkN6pbCs4wxx1SD3KbakJ+9lQREkheIqeAb5tGdRwFj/MQUlMNxN+nxFb3UJHok2MiC5hz7bWAQj1INcIleNDig8kbchO95T+bUJLFGOtPZliAjmVjP3jzhCUq9HpbQLdmzD1+254TNj3LOcNVx9BXS3c=
+	t=1727177352; cv=none; b=Ar3PjcxtkMiX7Hh62lxXjQlQmhkK8mPe/Un8i1A2wLx0ypMVyOWyvZCaBRhbFq6rHPy6/uQChtVHFz6/xFYyliHl6X5VQbsy9BZXgTGqcoTcbIc3dEVEF2TCb0EMQPNBV3/a/glaQYHnAcYRM9rHEeWdS+cxCL/vS/YyDSeMV3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727177284; c=relaxed/simple;
-	bh=Vj/+h4clW39HO9NfY4+281e9vNVIw+9TDYWQv30La4U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iOMgIHdr47IgFrB7Zu7p4Wb6sh95dZwCiI85N/qnS9STCwVpdH+R34tiaL6T0fjD8vmDpg3tf/hxWbjzFInNLBP4PQuSdoJJAwE5X2BEeJc+tEjjR1C7ltjYV5zXoTTwJQGhKkJk960ft+on9NHZE161DTLY1f9LKzcvCI3ua2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QcI40u8C; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a8d0d0aea3cso729425466b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 04:28:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1727177280; x=1727782080; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4XoewAAgRhjyjtS5SRLJsJLIBsaq3XcQDP2Zckj9flo=;
-        b=QcI40u8CJogk78EbCWL+mBQL/RbWnhCQH2yXPEglwTUVEeVmRAgMT+Nmo3sUs4y271
-         CHdJAEXaNBJTsvYNz1m3c4jtZRbDKB8vN6iCXBaVAli4BMnk/eM8RycvA19zy4YMxKVp
-         gtdu3GggnqwOCnFe9tKll+PXkMbqLqR2GIMLVhu/mqr4LVSfD8GdJRvsK/3K3OKxRsSG
-         8YcvjtBhjhUj6Oa7cBEI7ia+4RqrXg1iC0OnS7k2tz0qOzc6P5bVvQV3KSNjBQEmeb/7
-         2hymPrfR6pCq2Lcf9I3w7QkvEA3xtzV/bcdZ8CJEeZdSR/BXe5E93Wxl7UVnBUMtoFQ5
-         yKEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727177280; x=1727782080;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4XoewAAgRhjyjtS5SRLJsJLIBsaq3XcQDP2Zckj9flo=;
-        b=QXL9IOe4Aj6EQCOGqAh56aQyOx/Y/t5LkNYxzx3nB07SnL9nA4nBdUkaLk+X90QXcV
-         m3ZpZ6TQWBx++J7xwlQDfNt3eRY871AezaP2+16RgekfjIfyS2GeXCLQdKBAc+v+1q49
-         RL92uKJsh9OU6NzYDAS3cgO6osGsMsqMmEPlYJ9vLyua5CrIPfYmZeThxwDsrYKVCK5/
-         i/pvc3KHmXyC4ay/qtLR/ZcEF/OlRYggR4r4DH3v+Q+wez++81Pe5+tm0qL6JP/4OtT/
-         WeJhsOukl+togR7zWG3BNXfNsZPLm2AgImfLdy9HWf5brQufo/0YIl0UQkXodqrXp+b/
-         NFXg==
-X-Forwarded-Encrypted: i=1; AJvYcCXLt4JTAYQPQhSTJBCsB3qHeLds8moA/Y4qxGOWhZf7xbbwgsIHXoN7HPAo+jQ/RJd2CRZD6aZWyVoMu/U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzY4n9nCvSo3qefp+p29KwhONyQfPs0HPoVGdUFQ2uwzaUE48Li
-	i6xC2tjGgR7ZjspEPLEtZuxe6Fo16wpeEZyQtN+/OmYjw1sWbpyW6HIp1G7oSJg=
-X-Google-Smtp-Source: AGHT+IHT85zGFTdU3hUBRoI5YQMowHkk2n04uYM4pFq5OpuNGRvYWq9HAfjJCQZ3r8HL3+OJaiZIhQ==
-X-Received: by 2002:a17:907:d3dc:b0:a7d:e956:ad51 with SMTP id a640c23a62f3a-a90d4ffe2a3mr1325730466b.21.1727177280584;
-        Tue, 24 Sep 2024 04:28:00 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9392f541b8sm73018066b.84.2024.09.24.04.28.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 04:28:00 -0700 (PDT)
-Date: Tue, 24 Sep 2024 13:27:58 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Wardenjohn <zhangwarden@gmail.com>
-Cc: jpoimboe@kernel.org, mbenes@suse.cz, jikos@kernel.org,
-	joe.lawrence@redhat.com, live-patching@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] livepatch: introduce 'order' sysfs interface to
- klp_patch
-Message-ID: <ZvKiPvID1K0dAHnq@pathway.suse.cz>
-References: <20240920090404.52153-1-zhangwarden@gmail.com>
- <20240920090404.52153-2-zhangwarden@gmail.com>
+	s=arc-20240116; t=1727177352; c=relaxed/simple;
+	bh=pTY6EiBLAO2sBwhggT/SdJs0KbneImnJpjH7syKs+90=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZmLf/X6zqrFKjswt078C+9rBrBTKDHQnOU3FjYITTPkrfgruUXv+8KlUvmVoiAICLkrjpWm1THCQlmWjM6NjvnOjbtoDvz8HvMFur23b4Ipk2wQk2wjWZXLc1cyCeA/XUzfMLkRI1kYMmmk0S8HZwhqhR0qU985snSLjO4LEQ38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vi29J1IF; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727177350; x=1758713350;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=pTY6EiBLAO2sBwhggT/SdJs0KbneImnJpjH7syKs+90=;
+  b=Vi29J1IFHyygjXLNJtuajQSB9dXPKeHaZhZ5rs6LrgqyYhPNQGTiEuS7
+   i5fuLv4azCMmiZXXVRHuwRnhHzPIIZiTMH7LxmwcftDNGOOddhqPldSMd
+   rurKghkgV+3nKkM+3sjBfSRf7ipc7M03e4qDwuIYKZL5EOFT9Y7p/cKtQ
+   9fy0v3Ri2Vdj5gEiAQ6cfDdoOAArIXz8XIUGm6N7irrwBtR1RH3beMr9y
+   HI2UKauJxXXfB9nbGvxrkaLmsQ8lNbuKrkHWlSNtf68qYVmAeLY4vZ9yC
+   mRqShWAo5bfmTOzKVxB7hMD8bn2NEPH8lXkzrT4kBsAiBj1QQqVk0OmOS
+   Q==;
+X-CSE-ConnectionGUID: PP4As7UYQz6GW95ww2455A==
+X-CSE-MsgGUID: /qpt6OIFRam7b9CIkweAwA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="43686458"
+X-IronPort-AV: E=Sophos;i="6.10,254,1719903600"; 
+   d="scan'208";a="43686458"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 04:29:09 -0700
+X-CSE-ConnectionGUID: Tm6BfJeXQXynBJ7FVydvgw==
+X-CSE-MsgGUID: sOkTD/LXSl6N36p7WQ2Ogg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,254,1719903600"; 
+   d="scan'208";a="70994542"
+Received: from ccbilbre-mobl3.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.124.221.10])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 04:29:06 -0700
+From: Kai Huang <kai.huang@intel.com>
+To: dave.hansen@intel.com,
+	kirill.shutemov@linux.intel.com,
+	tglx@linutronix.de,
+	bp@alien8.de,
+	peterz@infradead.org,
+	mingo@redhat.com,
+	hpa@zytor.com,
+	dan.j.williams@intel.com,
+	seanjc@google.com,
+	pbonzini@redhat.com
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org,
+	rick.p.edgecombe@intel.com,
+	isaku.yamahata@intel.com,
+	adrian.hunter@intel.com,
+	nik.borisov@suse.com,
+	kai.huang@intel.com
+Subject: [PATCH v4 0/8] TDX host: metadata reading tweaks, bug fix and info dump
+Date: Tue, 24 Sep 2024 23:28:27 +1200
+Message-ID: <cover.1727173372.git.kai.huang@intel.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240920090404.52153-2-zhangwarden@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri 2024-09-20 17:04:03, Wardenjohn wrote:
-> This feature can provide livepatch patch order information.
-> With the order of sysfs interface of one klp_patch, we can
-> use patch order to find out which function of the patch is
-> now activate.
-> 
-> After the discussion, we decided that patch-level sysfs
-> interface is the only accaptable way to introduce this
-> information.
-> 
-> This feature is like:
-> cat /sys/kernel/livepatch/livepatch_1/order -> 1
-> means this livepatch_1 module is the 1st klp patch applied.
-> 
-> cat /sys/kernel/livepatch/livepatch_module/order -> N
-> means this lviepatch_module is the Nth klp patch applied
-> to the system.
->
-> --- a/kernel/livepatch/transition.c
-> +++ b/kernel/livepatch/transition.c
-> @@ -46,6 +46,15 @@ EXPORT_SYMBOL(klp_sched_try_switch_key);
->  
->  #endif /* CONFIG_PREEMPT_DYNAMIC && CONFIG_HAVE_PREEMPT_DYNAMIC_CALL */
->  
-> +static inline int klp_get_patch_order(struct klp_patch *patch)
-> +{
-> +	int order = 0;
-> +
-> +	klp_for_each_patch(patch)
-> +		order = order + 1;
-> +	return order;
-> +}
+TL;DR:
 
-This does not work well. It uses the order on the stack when
-the livepatch is being loaded. It is not updated when any livepatch gets
-removed. It might create wrong values.
+This series does necessary tweaks to TDX host "global metadata" reading
+code to fix some immediate issues in the TDX module initialization code,
+with intention to also provide a flexible code base to support sharing
+global metadata to KVM (and other kernel components) for future needs.
 
-I have even tried to reproduce this:
+This series, and additional patches to initialize TDX when loading KVM
+module and read essential metadata fields for KVM TDX can be found at
+[1].
 
-	# modprobe livepatch-sample
-	# modprobe livepatch-shadow-fix1
-	# cat /sys/kernel/livepatch/livepatch_sample/order
-	1
-	# cat /sys/kernel/livepatch/livepatch_shadow_fix1/order
-	2
+Hi Dave (and maintainers),
 
-	# echo 0 >/sys/kernel/livepatch/livepatch_sample/enabled
-	# rmmod livepatch_sample
-	# cat /sys/kernel/livepatch/livepatch_shadow_fix1/order
-	2
+This series targets x86 tip.  Also add Dan, KVM maintainers and KVM list
+so people can also review and comment.
 
-	# modprobe livepatch-sample
-	# cat /sys/kernel/livepatch/livepatch_shadow_fix1/order
-	2
-	# cat /sys/kernel/livepatch/livepatch_sample/order
-	2
+This is a pre-work of the "quite near future" KVM TDX support (see the
+kvm-coco-queue branch [2], which already includes all the patches in the
+v2 of this series).  I appreciate if you can review, comment and take
+this series if the patches look good to you.
 
-BANG: The livepatches have the same order.
+v3 -> v4:
+  - Change to add a build_sysmd_read(_size) macro to build one primitive
+    for each metadata field element size, similar to build_mmio_read()
+    macro -- Dan.
 
-I suggest to replace this with a global load counter. Something like:
+    https://lore.kernel.org/kvm/66db75497a213_22a2294b@dwillia2-xfh.jf.intel.com.notmuch/
 
-diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
-index 51a258c24ff5..44a8887573bb 100644
---- a/include/linux/livepatch.h
-+++ b/include/linux/livepatch.h
-@@ -150,10 +150,12 @@ struct klp_state {
-  * @list:	list node for global list of actively used patches
-  * @kobj:	kobject for sysfs resources
-  * @obj_list:	dynamic list of the object entries
-+ * @load_counter sequence counter in which the patch is loaded
-  * @enabled:	the patch is enabled (but operation may be incomplete)
-  * @forced:	was involved in a forced transition
-  * @free_work:	patch cleanup from workqueue-context
-  * @finish:	for waiting till it is safe to remove the patch module
-+ * @order:	the order of this patch applied to the system
-  */
- struct klp_patch {
- 	/* external */
-@@ -166,6 +168,7 @@ struct klp_patch {
- 	struct list_head list;
- 	struct kobject kobj;
- 	struct list_head obj_list;
-+	int load_counter;
- 	bool enabled;
- 	bool forced;
- 	struct work_struct free_work;
-diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-index 3c21c31796db..3a858477ae02 100644
---- a/kernel/livepatch/core.c
-+++ b/kernel/livepatch/core.c
-@@ -44,6 +44,9 @@ DEFINE_MUTEX(klp_mutex);
-  */
- LIST_HEAD(klp_patches);
- 
-+/* The counter is incremented everytime a new livepatch is being loaded. */
-+static int klp_load_counter;
-+
- static struct kobject *klp_root_kobj;
- 
- static bool klp_is_module(struct klp_object *obj)
-@@ -347,6 +350,7 @@ int klp_apply_section_relocs(struct module *pmod, Elf_Shdr *sechdrs,
-  * /sys/kernel/livepatch/<patch>/transition
-  * /sys/kernel/livepatch/<patch>/force
-  * /sys/kernel/livepatch/<patch>/replace
-+ * /sys/kernel/livepatch/<patch>/load_counter
-  * /sys/kernel/livepatch/<patch>/<object>
-  * /sys/kernel/livepatch/<patch>/<object>/patched
-  * /sys/kernel/livepatch/<patch>/<object>/<function,sympos>
-@@ -452,15 +456,26 @@ static ssize_t replace_show(struct kobject *kobj,
- 	return sysfs_emit(buf, "%d\n", patch->replace);
- }
- 
-+static ssize_t load_counter_show(struct kobject *kobj,
-+			struct kobj_attribute *attr, char *buf)
-+{
-+	struct klp_patch *patch;
-+
-+	patch = container_of(kobj, struct klp_patch, kobj);
-+	return sysfs_emit(buf, "%d\n", patch->load_counter);
-+}
-+
- static struct kobj_attribute enabled_kobj_attr = __ATTR_RW(enabled);
- static struct kobj_attribute transition_kobj_attr = __ATTR_RO(transition);
- static struct kobj_attribute force_kobj_attr = __ATTR_WO(force);
- static struct kobj_attribute replace_kobj_attr = __ATTR_RO(replace);
-+static struct kobj_attribute load_counter_kobj_attr = __ATTR_RO(load_counter);
- static struct attribute *klp_patch_attrs[] = {
- 	&enabled_kobj_attr.attr,
- 	&transition_kobj_attr.attr,
- 	&force_kobj_attr.attr,
- 	&replace_kobj_attr.attr,
-+	&load_counter_kobj_attr.attr,
- 	NULL
- };
- ATTRIBUTE_GROUPS(klp_patch);
-@@ -934,6 +949,7 @@ static void klp_init_patch_early(struct klp_patch *patch)
- 	INIT_LIST_HEAD(&patch->list);
- 	INIT_LIST_HEAD(&patch->obj_list);
- 	kobject_init(&patch->kobj, &klp_ktype_patch);
-+	patch->load_counter = klp_load_counter + 1;
- 	patch->enabled = false;
- 	patch->forced = false;
- 	INIT_WORK(&patch->free_work, klp_free_patch_work_fn);
-@@ -1050,6 +1066,7 @@ static int __klp_enable_patch(struct klp_patch *patch)
- 	}
- 
- 	klp_start_transition();
-+	klp_load_counter++;
- 	patch->enabled = true;
- 	klp_try_complete_transition();
- 
+  - Replace TD_SYSINFO_MAP() with READ_SYS_INFO() and #undef it after
+    use -- Adrian, Dan.
+
+    https://lore.kernel.org/kvm/66db7469dbfdd_22a2294c0@dwillia2-xfh.jf.intel.com.notmuch/
+
+  - Use permalink in the changelog -- Dan.
+  - Other comments from Dan, Adrian and Nikolay.  Please see individual
+    patches.
+  - Collect tags from Dan, Adrian, Nikolay (Thanks!).
+
+ v3: https://lore.kernel.org/kvm/5235e05e-1d73-4f70-9b5d-b8648b1f4524@intel.com/T/
+
+v2 -> v3 (address comments from Dan):
+  - Replace the first couple of "metadata reading tweaks" patches with
+    two new patches using a different approach (removin the 'struct
+    field_mapping' and reimplement the TD_SYSINFO_MAP()):
+
+    https://lore.kernel.org/kvm/a107b067-861d-43f4-86b5-29271cb93dad@intel.com/T/#m7cfb3c146214d94b24e978eeb8708d92c0b14ac6
+    https://lore.kernel.org/kvm/a107b067-861d-43f4-86b5-29271cb93dad@intel.com/T/#mbe65f0903ff7835bc418a907f0d02d7a9e0b78be
+    https://lore.kernel.org/kvm/a107b067-861d-43f4-86b5-29271cb93dad@intel.com/T/#m80cde5e6504b3af74d933ea0cbfc3ca9d24697d3
+
+  - Split out the renaming of 'struct tdx_tdmr_sysinfo' as a separate
+    patch and place it at the beginning of this series.
+
+    https://lore.kernel.org/kvm/cover.1721186590.git.kai.huang@intel.com/T/#m8fec7c429242d640cf5e756eb68e3b822e6dff8b
+
+  - Refine this cover letter ("More info" section)
+
+    https://lore.kernel.org/kvm/cover.1721186590.git.kai.huang@intel.com/T/#m11868c9f486dcc4cfbbb690c7c18dfa4570e433f
+
+  - Address other comments.  See changelog of individual patches.
+
+ v2: https://lore.kernel.org/kvm/cover.1721186590.git.kai.huang@intel.com/T/
+
+v1 -> v2:
+  - Fix comments from Chao and Nikolay.
+  - A new patch to refine an out-dated comment by Nikolay.
+  - Collect tags from Nikolay (thanks!).
+
+ v1: https://lore.kernel.org/linux-kernel/cover.1718538552.git.kai.huang@intel.com/T/
+
+=== More info ===
+
+TDX module provides a set of "global metadata fields" for software to
+query.  They report things like TDX module version, supported features
+fields required for creating TDX guests and so on.
+
+Today the TDX host code already reads "TD Memory Region" (TDMR) related
+metadata fields for module initialization.  There are immediate needs
+that require TDX host code to read more metadata fields:
+
+ - Dump basic TDX module info [3];
+ - Reject module with no NO_RBP_MOD feature support [4];
+ - Read CMR info to fix a module initialization failure bug [5].
+
+Also, the "quite near future" KVM TDX support requires to read more
+global metadata fields.  In the longer term, the TDX Connect [6] (which
+supports assigning trusted IO devices to TDX guest) may also require
+other kernel components (e.g., pci/vt-d) to access more metadata.
+
+To meet all of those, the idea is the TDX host core-kernel to provide a
+centralized, canonical, and read-only structure to contain all global
+metadata that comes out of TDX module for all kernel components to use.
+
+An alternative way is to expose metadata reading API(s) for in-kernel
+TDX users to use, but the reasons of choosing to provide a centural
+structure are, quoted from Dan:
+
+  The idea that x86 gets to review growth to this structure over time is
+  an asset for maintainability and oversight of what is happening in the
+  downstream consumers like KVM and TSM (for TDX Connect).
+
+  A dynamic retrieval API removes that natural auditing of data structure
+  patches from tip.git.
+
+  Yes, it requires more touches than letting use cases consume new
+  metadata fields at will, but that's net positive for maintainence of
+  the kernel and the feedback loop to the TDX module.
+
+This series starts to track all global metadata fields into a single
+'struct tdx_sys_info', and reads more metadata fields to that structure
+to address the immediate needs as mentioned above.
+
+More fields will be added to support KVM TDX.  For the initial support
+all metadata fields are populated in this single structure and shared to
+KVM via a 'const pointer' to that structure (see last patches in [1]).
+
+
+[1] https://github.com/intel/tdx/commits/kvm-tdxinit-host-metadata-v4/
+[2] https://git.kernel.org/pub/scm/virt/kvm/kvm.git/log/?h=kvm-coco-queue
+[3] https://lore.kernel.org/lkml/4b3adb59-50ea-419e-ad02-e19e8ca20dee@intel.com/
+[4] https://lore.kernel.org/lkml/fc0e8ab7-86d4-4428-be31-82e1ece6dd21@intel.com/
+[5] https://github.com/canonical/tdx/issues/135#issuecomment-2151570238
+[6] https://cdrdv2.intel.com/v1/dl/getContent/773614
+
+
+
+Kai Huang (8):
+  x86/virt/tdx: Rename 'struct tdx_tdmr_sysinfo' to reflect the spec
+    better
+  x86/virt/tdx: Rework TD_SYSINFO_MAP to support build-time verification
+  x86/virt/tdx: Prepare to support reading other global metadata fields
+  x86/virt/tdx: Refine a comment to reflect the latest TDX spec
+  x86/virt/tdx: Start to track all global metadata in one structure
+  x86/virt/tdx: Print TDX module version
+  x86/virt/tdx: Require the module to assert it has the NO_RBP_MOD
+    mitigation
+  x86/virt/tdx: Reduce TDMR's reserved areas by using CMRs to find
+    memory holes
+
+ arch/x86/virt/vmx/tdx/tdx.c | 282 +++++++++++++++++++++++++++---------
+ arch/x86/virt/vmx/tdx/tdx.h |  85 ++++++++++-
+ 2 files changed, 294 insertions(+), 73 deletions(-)
+
+
+base-commit: a6f489fee2633f8595934a850981bd4284abdbba
 -- 
-2.46.1
+2.46.0
 
-Any better (shorter) name would be appreciated ;-)
-
-Best Regards,
-Petr
 
