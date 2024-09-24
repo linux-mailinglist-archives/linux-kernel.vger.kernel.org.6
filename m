@@ -1,204 +1,233 @@
-Return-Path: <linux-kernel+bounces-336562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9F6D983C5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:31:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77D57983C67
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:38:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FBD4283C46
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 05:31:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A8CB1C21B20
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 05:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8829F39ACC;
-	Tue, 24 Sep 2024 05:31:28 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2430A4642D;
+	Tue, 24 Sep 2024 05:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="aEibO+SK"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2059.outbound.protection.outlook.com [40.107.102.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A4F1B85DB
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 05:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727155888; cv=none; b=LSv7Ml/sJK6davpW64f9h7lMCnoCr9bqT/GpO4dFBEAlMp6sj5phNDX/iLfXVQqjDzv5Yp6zI3quDEwwh2YdNB5xO85xqU5YFvj5BzY6zmI+Gk+6QLefgQ2bVS2vzl04I87UBQiGbJHEUOb6B4HodDLDissOf/1DCkpWAohSMb4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727155888; c=relaxed/simple;
-	bh=R2V0e9FEXed2L/7xTmU6LuaMnvhpXnyOxXltXB8p6X8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=JDkJ8u6EJGaBCeM7b52eFal0vu9P+rnUfOsdue0nWBylNpCGsdVefPn3qJmxIKwdcbXipAdwBad36VjVGOGsl/yM8rAEXW9yg00g9L6qUuyRrtVtfAyq35m3tuAA4KUeZCxWZIkHUuoMU111hl2QxA1xWfSkHfVns89QWtUEHkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39f6f16ed00so54252905ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 22:31:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727155885; x=1727760685;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Q3TIXU1ErVxNr9c4jDbjvWr5jcW27kWn5wluIIcPfBw=;
-        b=I7xga6L32ygBD9CDMlr3OKBDdoMLaYF7ANR1882POMcIMvg5s+lpSLisZyrC302Nkl
-         JF2iU6Fm8rkSz6aobuRzQMPH5M1sz1B4mmMG81KBn+nmKWvYSyDreZbYQE7VnK08jDPd
-         VhKVt1fvEw8kTeM/NiYvVParMbmwTJ6399EvE6sjNXVK1TosK5pQ3aJFljl5aom4zXf0
-         zj5muCccUTYT6hVjmThz5EhWebqO4c2YmrXvCbseTtUtOGY51+hVW1ZrJOpMB0V67aEk
-         k8dKnKDXuqyFY2XgwxDIsrIg9rpV/X631By64guEBGBAqSEWQt9wHm/lz3/MYXvu1k9d
-         HNfg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8lck/e7pTTSqxkN7WlY9RWjuR7Btj/xaiuz/+rzDN4nbIIQV7POB8WysGdTBUcRDlhNlQyUObqHEXV6M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/nHrYk0xjBYNMrSwc0b6LAGebaLWCQsMvQWHlEngidtxA2EPr
-	d1VpbQ8OlHvEbwCZ49cblG69uj3CCKXFWGP0gugQ9WHLxf8SPT0kymGSEHk/DHnxmo7i4+o2WCv
-	6pK8c5db2SSpNL4IM7Iogcaf6p1Uk0FadaoDVt7m+otACfa0C6kAQjUk=
-X-Google-Smtp-Source: AGHT+IEFFhkNDQoxk5ZxpQqlM0T7+36cV7ch6J+J8pKGSd0bAGhU73gwd2lHO5CEIxR7aWwOhG7KhDK/QacGvqaBqJPkWrh5mOWW
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A314D2E859;
+	Tue, 24 Sep 2024 05:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727156291; cv=fail; b=j3iHxEkHeQg84e1wBbc43fKaxP4Xfse/hlnjzvYWFGuEGF/4dj6ix7879jTObkcwHTI0bYdsiWgLcL8ZxuGtYch5b7Vdl/bAOxja8YTN2m0rRL8cE3PtlPZ2PHVx+DfR3nJ64YoOOdnVPoU80HBkv7Eiyt+uoLWo98BrmaJCV2g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727156291; c=relaxed/simple;
+	bh=iWeHYOkEHdfZUZRbZzNP5WgYUqYShhIUPKcADkKyDRE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=VpRzS8sdsSSSiVLb2qivAmy9kZuVM+U2yTwqFbEJ3ooLxEGAGluiuc3RUxIYhNUU4xrji0eUwpQNdzVUiEmT+/rcN4hApDX4qhnGedOE4qaOJD+weuC9xM4nQ/Jx277xqgp+9ZKHa7/JSIXuQM3vddb8hTrmJcSs/AhqD/MwIyk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=aEibO+SK; arc=fail smtp.client-ip=40.107.102.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KJTunqjaA4uhxDPIIeFZVWtnk6aNphbGmOaI5HrtXwRVKtLvjN7oGarsOSs740tLJYu+yzpwUf/7XGpQuW+baa1Ez8mBwKjaXOlRRDDnXtBhjBRWt5Nqi65XXKfLp2IEY+4OBk0A+hg58qzg/DgQobKto0x5DTWg/hG7payY1Tb6Yln45RC+0IXL2PWrC1FFUy05FMryiQQPW/vlIOrZA44Bpx9Gec7vqzyODL8qV1On/VTL2ZEjX/bHCuvZovTBN+4oPo6QYBdtDhw1ZNf1SGmnn35Rm9a4YrEaMILf9l5ut9y0Bkhfqy/uC6LlTQyLlisChkf3MLv+LQLpgCswfw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xIkFgwiNWgrY+5tC9pYdxh4q6c/acw9YDpYngqrJ6qI=;
+ b=mONgKkbmcb4r6wlLvV5Csr03epjdcBg7O8/3wvbPW9uc3TI+nC8PgUMlPqu/8mE3299Xf8lYzJ/NOS4GL24Gjv/t9W1St8MKZTigx/J5c/AIg+XEBwycg+FitcHBor8+UVGY+2H79qdfm+ZbhF/qiVsikjpgwz43zNqh2nH3VMUh8F3gac46/J8cmugpe4ozPI0Hv7gEB8p+TFbobGte1p5ZFCqgAnQGQMT/gXSyyDjFdiklLo53cxHWW0aCSMua+o2w7sPmsHw5b/M8a3dJsmGpPRPdiXL4zzZYPqIbh3O3JbPE4wDagZycrP8DIxXvXcMfqghne6cW921BrF8OnQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xIkFgwiNWgrY+5tC9pYdxh4q6c/acw9YDpYngqrJ6qI=;
+ b=aEibO+SKUwJM96mt5zaOQaPVnkqI9BbEJJLz0x44GDvHcKeVyxINZCpI3YTTmIjLaS3wrpy8e812saUl4Fg1hMDgniEU5+TxjuoLNfi1dNAj7T+t8i74Hz+FVCP3jXo7oI7zFRtMpOPlkr/fTwULasGZ9BQexlq7A9Jol96Bu14aPD5z6s+93KVn+Cy6trqPBIklXimyTJUOj0VaSFIKjgv3ozAVhtSvtFzartXMkOLGTsn4I36EDOVyNv5EY2vS+9SFwNeIamfbTSDrG7VJUZekkvB/TbS5vlUpLA3ah4RSWflrBhAsuKCgimIsIf6eq2asCWwr2JDZRtrDnXiWCQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM4PR12MB6399.namprd12.prod.outlook.com (2603:10b6:8:b7::15) by
+ DS0PR12MB8368.namprd12.prod.outlook.com (2603:10b6:8:fe::20) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7982.25; Tue, 24 Sep 2024 05:38:07 +0000
+Received: from DM4PR12MB6399.namprd12.prod.outlook.com
+ ([fe80::a909:22d1:b276:7c12]) by DM4PR12MB6399.namprd12.prod.outlook.com
+ ([fe80::a909:22d1:b276:7c12%4]) with mapi id 15.20.7982.022; Tue, 24 Sep 2024
+ 05:38:06 +0000
+Message-ID: <8c92ef18-6648-4348-9008-4f646d8b6956@nvidia.com>
+Date: Tue, 24 Sep 2024 13:37:58 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] selftest: rtc: Check if could access /dev/rtc0 before
+ testing
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: "shuah@kernel.org" <shuah@kernel.org>,
+ "avagin@google.com" <avagin@google.com>,
+ "amir73il@gmail.com" <amir73il@gmail.com>,
+ "brauner@kernel.org" <brauner@kernel.org>, Matt Ochs <mochs@nvidia.com>,
+ Koba Ko <kobak@nvidia.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+ "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20240524013807.154338-1-jjang@nvidia.com>
+ <20240524013807.154338-3-jjang@nvidia.com>
+ <202406201937464fc96b1c@mail.local>
+Content-Language: en-US
+From: Joseph Jang <jjang@nvidia.com>
+In-Reply-To: <202406201937464fc96b1c@mail.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR02CA0072.apcprd02.prod.outlook.com
+ (2603:1096:4:54::36) To DM4PR12MB6399.namprd12.prod.outlook.com
+ (2603:10b6:8:b7::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b26:b0:3a0:9b27:7d52 with SMTP id
- e9e14a558f8ab-3a0c8d39690mr109208215ab.20.1727155885548; Mon, 23 Sep 2024
- 22:31:25 -0700 (PDT)
-Date: Mon, 23 Sep 2024 22:31:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f24ead.050a0220.c23dd.001d.GAE@google.com>
-Subject: [syzbot] [ide?] general protection fault in ata_msense_control_spgt2
-From: syzbot <syzbot+fb415bc0af1b572478e1@syzkaller.appspotmail.com>
-To: cassel@kernel.org, dlemoal@kernel.org, linux-ide@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6399:EE_|DS0PR12MB8368:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7cc41fa0-2429-4d26-6763-08dcdc5b10f8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cUhnemJ4VEg5clhPbXpPT1Y0WDd6UFdZc05NWlZZTkxjTnNoeEJxUXprZmd2?=
+ =?utf-8?B?aTcrTzVVSWJCV3R0cytIY0gwQjJoaHVhOXhIUURKM29qMHFFcHFFbzBaU01E?=
+ =?utf-8?B?U3hkYXRIV0kvTnBxdVNJY0lrUEdNcE5sZlRYb0R4QngrNHFhZ0piUWlBaVR6?=
+ =?utf-8?B?WU9SQVg4T085MngvaThEdGl2a3JhVHh1dkdqZWtQcm5sbjRvb0o4MGU4bVdY?=
+ =?utf-8?B?U0hjcG5CK2Jab01iTmUyTWE1NGtBeHo5ZUdXbXI5QnZwa1dYT21Nem96MUow?=
+ =?utf-8?B?c2pqOWpMa1Mzam5TRmRMQXlCOUpFNGsxazkxa3MwYmJNRkhXRWd6UmpIbnRJ?=
+ =?utf-8?B?WFFZa0NyTlZjekhKbWF0cWI5ZkV5bno1NFFQQjNiU3BhYWIxaUNWNHBhbjRO?=
+ =?utf-8?B?QkJ6SEJuM1RGS0g5SFVNQ3JFMElPRXllbUpnaGRweVR2bFBMSU1RSU5CQnFJ?=
+ =?utf-8?B?eDdiZUk3U3Ewdkh4RVNhVjVodUNnYlJMaXlHbFRrMm04SWdGOGhDcUxVckU5?=
+ =?utf-8?B?MEFZS3FnZ083eElvRENEcWZzM0dXcHlLWWI0bDZQWDdRR3djSGRQbm1iOHU0?=
+ =?utf-8?B?bGJlOEZaekNhV2V4TkRSZjRPUjNCVUhIYjRnVlF0ZVlZRHVhdGJlemJhUkpw?=
+ =?utf-8?B?V3BmQlFjUXNGTUsxRVMzNm80QTllMldEYzFhN3A2SkZoUmxEbFZqdGpBUHV5?=
+ =?utf-8?B?ZHJlamtrNDc0aS9kZmdZd2U3TmpXZWRnd2JoMmhJSjFSNEdRYnc5bmE4NkVK?=
+ =?utf-8?B?V3ZDR2ZVMGViRXdzeHhKQVdMaUgwMlVsZjJBYXg3dmNmeGd1VFBja0FtcFI3?=
+ =?utf-8?B?S01jM3FvZjJlK1dHNjhiN1l4dy9RSmFmcjRJSXVsRWw5ZlpGYU9lMnlPTXVN?=
+ =?utf-8?B?ZUZ4WkJWdFVzdGZzWlM2cGp3d0ErdW5KcW5MY1dQaEVyR3l4VlIxazlwZ0Fx?=
+ =?utf-8?B?SHNiK0lmdnNWb2F4SURXMExiTE9LSUVHR3d5bjhDamhYNEVVMnNwQ0dlWndZ?=
+ =?utf-8?B?MVFiWWQvc3lXQjVtUFZXQzM3Tm1FYTczL0crNE03VEUyZ2xLZ1V2U3ZKMkE5?=
+ =?utf-8?B?UndTVUlWSlFQSitLRk5lenNzYm5KbVI4K2Y5c3RkTGYyK3NGSTNKMGFZN3dM?=
+ =?utf-8?B?UVNQT0VhRlBxSWdmTXg0L1dsNzMrdzBnTmRyYXJhcUl4WkZjb3VXNWkzcUlU?=
+ =?utf-8?B?QVJ2QU93SXpCK0Z6ZEY0cVA4RUExdnVhK3ovWDdFVkVQblpnQTQwaloxdzZF?=
+ =?utf-8?B?RUVGaGh3NDRxcVdQTitsamJHejl5dEhMYjRLcm9CMUs4TVJIYzdlZlhOUHRr?=
+ =?utf-8?B?bzd1K09tOEkvK1lFVUthbmorNjFNTlVEeEFrd1JjL1BNN2dWUFJ2SHNsbUFQ?=
+ =?utf-8?B?ekY4RjlEUVpTUkxyZ3hGelluOVJGUGx6eFcwcHpISWZjNUJkMExnQklCYkw1?=
+ =?utf-8?B?blFYRDhvK2NpRnFHQk85dXBtNzlnSDhRQmtkcitGQTBlNDJlTHNzdmlLTkxs?=
+ =?utf-8?B?cXNjOHkwd211R0M5aHRFbGZFTzArTHhSQnBsUnpYRjkwZlpTb3YyTUxFMXAw?=
+ =?utf-8?B?Tkc2M0wyZCszZWlHeENOa0ZIM0lkNVNXSXIrSjNFckNtdEwyU3o4a1dTY1Bu?=
+ =?utf-8?B?azJFeHFGeENETmtpVzAyWmxVVWNQTTdWWFlvWEU3UmtKcDJvUmphaXpDdm1D?=
+ =?utf-8?B?Z2VBUVYvWWJDL3ZvQXRkTXVGOEVCUHQ4cXhiclFIaFdFSklVRzVpbFh3PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6399.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Z2FJY3haSk1KR04ySFk0S3RrV2JzU1ZMTkx4SEZmaDhFbDR5a3RDQnNkMEhz?=
+ =?utf-8?B?YUp2SUUxanR4WU8rNUMyWmhqOWdGcUYvL0RkeWpLMHpzWW5wekVqYTBxTDFv?=
+ =?utf-8?B?a3kxejJxbVlSb0w1alJoWVlOKzI5RDMrRWxHcjRCUGZwWGpobENGbjhvZDRz?=
+ =?utf-8?B?dnhGQitzN0RJUjUvOXpLT1NUT2drWHFYUld3eldoNmpySGFZUGRBcUE0Ykdz?=
+ =?utf-8?B?RGx0VEh0aUp6NTVPWTFldHcxdkVITVVBejhmOWJ6OEpJNnpJMFMvRnZtMHdY?=
+ =?utf-8?B?UXRUQitVeDJhTGNMVnRGZzhhaitRZ3g1S05LV0RDRUFYdDhIcWdLMHlJVTBp?=
+ =?utf-8?B?TTRCeHFuUEFCZEZVS2RmV3J2aGYxWDBTYkdmOER0VGNocld2RTJWS25VR1RE?=
+ =?utf-8?B?VjhtYk85aGwvaTFZZ292dW9VODJHNGpCQUZuR3Q4ZzNlNERWdE9HMWFqb0Fa?=
+ =?utf-8?B?OHpQN3k2NW9zMVdocExvc3VVUm9POHN4eDg2bDFvTVUzOTEwdEpKZ2JsQkhz?=
+ =?utf-8?B?QThld25TL3lLYzJqOVVTNEpvVTduRzhWc2d2NHo2Sm5XZVNqRWtYOWdaV2tt?=
+ =?utf-8?B?MGVXTitEUGFidVg1WklUYllrZmpnV3E1cTlDNDBIMStqTkptQ1lEU1FZNEFT?=
+ =?utf-8?B?S3ExYmpTUnV1MVJyV1lySml1Vks1U1hwcVBZWWpTS3ZiUEdpbmVWUi80a2Zz?=
+ =?utf-8?B?YktxaWlpNzhmb3owUGJFZFhON3JJcUxFUmpsOGYxMGxVeGhEM0RBRHBYRGdT?=
+ =?utf-8?B?ZldkRkVZa1A3V3FRVENkUDFJSzJwYUpueUZtL210aW9sdThBVjZ0RWdQM0pl?=
+ =?utf-8?B?Q2hoL3oxaWhtZHMvUUllRkpDamYyMlNNNnlsbjJrRVRMcFYyQjIwVG0xdGFP?=
+ =?utf-8?B?M0d3dmtXaU1OUW44enMxa3VRa3BQZmNuaGZZbzdvUXhFb2pLMEwvNGlwbXQ5?=
+ =?utf-8?B?WTN1WHVSTmxOTkVuVjFQajZOYVhOY2g4bSs5cnhleEo0WUczZTJTNHJtMHFC?=
+ =?utf-8?B?OHVJM1BjN3ZmUEtsSlQrSUlRbnlpL3dhQ2xTamNnYWFQQktiVHdzcnl4a1Y0?=
+ =?utf-8?B?aUFwTmVuUWZJUGw0ZkRHN0hBSTRtTDdJYWJ4TTRHaDNMc21LY0c4RzBONXhu?=
+ =?utf-8?B?em5JS1I0S3lYd0RHL0xGeEhBSzVaK2VrSVk3OWxlUHBJY1FhdS8yQjNVSmEz?=
+ =?utf-8?B?MnExMEV0MUUzVnd1cWtnOUR6SGpramFlUVNWenNWZnRRMnBKYm4xY2dycXc0?=
+ =?utf-8?B?UU9XRGt1SlJuVmJSc2YxZ3BFQWMvbmpkRUVYMVVZY0puV0dwUVRFL2tjZFIv?=
+ =?utf-8?B?SzdPc3lRTkNCS0lsM3ppZXFwc3VWV2hMOHlUTGxabHRhcmFZL1dmVGNRRGtR?=
+ =?utf-8?B?dThxTVNTTkU3VnJVc21lbFZUR2dKU1RLV01zK1N1ZDJ1OHd6VktWcWJnVklh?=
+ =?utf-8?B?L3drTFcrRnhST05lakhpTXREMWJzS1BQaEZvYlFWclRYS3R2M3lNWU9UczRw?=
+ =?utf-8?B?bHBnTXcxL2lMT0Q0YWdpNFRmTHN2dUVTeVdjZkNManJRZ3UyK0JZWG82MVZL?=
+ =?utf-8?B?MXdOMGJjUXk3N1lYOUtqVzJhenFxVVBOZDdKZWZUdDFtUklXQm5DSGJsSEJW?=
+ =?utf-8?B?ZDB0VTJKMnNkZTN6REkxRmJVUGM2LzBkRUtGR3pheCszS0hRMHQxQmF1RGJm?=
+ =?utf-8?B?ZjVNRTJPbmM4OTBkcEsraFNuSjE1ejhTU25obEFnVXI3TVBjK1lGQjcxeGtu?=
+ =?utf-8?B?TnpSeW9GTVBkZlZvWkdPZ0lpSnlGemFXd1FNSUg0TlpxUUwrQkZJb1c5bGg3?=
+ =?utf-8?B?ODhBa1lVRmdsbkY5YjhlZmUxZ2k1M2x1cXE0WUNQZkFFOFFBQXczblQ5Wk1w?=
+ =?utf-8?B?VmV0SEsvWTlqbk5na05SM3JncGthRjZMVHlzcGxQYkxrbzFyM2s5aDhNZzNW?=
+ =?utf-8?B?ZHNuaWIwdldOYnB3SEhKTk5ZR3MyRTlYZjd3RkFjT0FWa2dRMm1raytvR3hZ?=
+ =?utf-8?B?SUpPNFF3NU5lbXBFQUZyMlY1YWd3dlFibU9XRDhVTExRUW9HcUovR2crNjRu?=
+ =?utf-8?B?Q3hqV014WXB0VGRtWjJsRVhISm9aeXFtUmhZWHF2WlVPQjQwdHd6K0hRTjhx?=
+ =?utf-8?Q?ckglvZbvzhyhUu9JhUXO2Xkka?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7cc41fa0-2429-4d26-6763-08dcdc5b10f8
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6399.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2024 05:38:06.5816
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lFlEPQ2JikwBZjf5SEtFg/zvdrFt3SXWhIi7sWZ2iDuFycodbFydvvJsuuWj5gSMRsjIdK0rzvRS/rpWicHB7A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8368
 
-Hello,
+Hi Alexandre,
 
-syzbot found the following issue on:
+Thank you for looking at the rtc patch.
+I saw you Acked the [PATCH 2/2], not sure when could we see the patch
+in kernel master or next branch ?
 
-HEAD commit:    baeb9a7d8b60 Merge tag 'sched-rt-2024-09-17' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=129b7f00580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5d3981d50a2855c2
-dashboard link: https://syzkaller.appspot.com/bug?extid=fb415bc0af1b572478e1
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+Thank you,
+Joseph.
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-baeb9a7d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/02c319355ed9/vmlinux-baeb9a7d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/41f9f78e928c/bzImage-baeb9a7d.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+fb415bc0af1b572478e1@syzkaller.appspotmail.com
-
-program syz.1.2960 is using a deprecated SCSI ioctl, please convert it to SG_IO
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 3 UID: 0 PID: 13886 Comm: syz.1.2960 Not tainted 6.11.0-syzkaller-07341-gbaeb9a7d8b60 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:ata_msense_control_spgt2.isra.0+0x4ce/0x610 drivers/ata/libata-scsi.c:2276
-Code: 00 48 83 c4 08 5b 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc e8 23 70 92 fb 4c 89 e2 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <0f> b6 04 02 4c 89 e2 83 e2 07 38 d0 7f 08 84 c0 0f 85 12 01 00 00
-RSP: 0018:ffffc900034d74f0 EFLAGS: 00010046
-RAX: dffffc0000000000 RBX: ffffffff9a8cbffc RCX: ffffc900062e1000
-RDX: 0000000000000000 RSI: ffffffff85fa94fd RDI: 0000000000000001
-RBP: 0000000000000007 R08: 0000000000000001 R09: 0000000000000007
-R10: 0000000000000007 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000007 R14: ffff888026e72df8 R15: 00000000000000ff
-FS:  00007f42191ff6c0(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000110c3efc33 CR3: 000000002a25a000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ata_msense_control+0x1a4/0x6e0 drivers/ata/libata-scsi.c:2358
- ata_scsiop_mode_sense drivers/ata/libata-scsi.c:2474 [inline]
- ata_scsi_rbuf_fill drivers/ata/libata-scsi.c:1815 [inline]
- ata_scsi_simulate+0xcff/0x34c0 drivers/ata/libata-scsi.c:4316
- __ata_scsi_queuecmd+0xb35/0x13c0 drivers/ata/libata-scsi.c:4191
- ata_scsi_queuecmd+0xac/0x160 drivers/ata/libata-scsi.c:4234
- scsi_dispatch_cmd drivers/scsi/scsi_lib.c:1608 [inline]
- scsi_queue_rq+0x1273/0x3650 drivers/scsi/scsi_lib.c:1850
- blk_mq_dispatch_rq_list+0x443/0x1dc0 block/blk-mq.c:2032
- __blk_mq_sched_dispatch_requests+0x219/0x1620 block/blk-mq-sched.c:301
- blk_mq_sched_dispatch_requests+0xd4/0x150 block/blk-mq-sched.c:331
- blk_mq_run_hw_queue+0x645/0x9a0 block/blk-mq.c:2245
- blk_execute_rq+0x198/0x410 block/blk-mq.c:1398
- sg_scsi_ioctl drivers/scsi/scsi_ioctl.c:593 [inline]
- scsi_ioctl+0x983/0x1840 drivers/scsi/scsi_ioctl.c:901
- sg_ioctl_common drivers/scsi/sg.c:1109 [inline]
- sg_ioctl+0xaf3/0x2750 drivers/scsi/sg.c:1163
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl fs/ioctl.c:893 [inline]
- __x64_sys_ioctl+0x18d/0x210 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f421977def9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f42191ff038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f4219935f80 RCX: 00007f421977def9
-RDX: 0000000020000380 RSI: 0000000000000001 RDI: 0000000000000001
-RBP: 00007f42197f0b76 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f4219935f80 R15: 00007ffcd901abf8
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:ata_msense_control_spgt2.isra.0+0x4ce/0x610 drivers/ata/libata-scsi.c:2276
-Code: 00 48 83 c4 08 5b 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc e8 23 70 92 fb 4c 89 e2 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <0f> b6 04 02 4c 89 e2 83 e2 07 38 d0 7f 08 84 c0 0f 85 12 01 00 00
-RSP: 0018:ffffc900034d74f0 EFLAGS: 00010046
-RAX: dffffc0000000000 RBX: ffffffff9a8cbffc RCX: ffffc900062e1000
-RDX: 0000000000000000 RSI: ffffffff85fa94fd RDI: 0000000000000001
-RBP: 0000000000000007 R08: 0000000000000001 R09: 0000000000000007
-R10: 0000000000000007 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000007 R14: ffff888026e72df8 R15: 00000000000000ff
-FS:  00007f42191ff6c0(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000110c3efc33 CR3: 000000002a25a000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess), 1 bytes skipped:
-   0:	48 83 c4 08          	add    $0x8,%rsp
-   4:	5b                   	pop    %rbx
-   5:	5d                   	pop    %rbp
-   6:	41 5c                	pop    %r12
-   8:	41 5d                	pop    %r13
-   a:	41 5e                	pop    %r14
-   c:	41 5f                	pop    %r15
-   e:	c3                   	ret
-   f:	cc                   	int3
-  10:	cc                   	int3
-  11:	cc                   	int3
-  12:	cc                   	int3
-  13:	e8 23 70 92 fb       	call   0xfb92703b
-  18:	4c 89 e2             	mov    %r12,%rdx
-  1b:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
-  22:	fc ff df
-  25:	48 c1 ea 03          	shr    $0x3,%rdx
-* 29:	0f b6 04 02          	movzbl (%rdx,%rax,1),%eax <-- trapping instruction
-  2d:	4c 89 e2             	mov    %r12,%rdx
-  30:	83 e2 07             	and    $0x7,%edx
-  33:	38 d0                	cmp    %dl,%al
-  35:	7f 08                	jg     0x3f
-  37:	84 c0                	test   %al,%al
-  39:	0f 85 12 01 00 00    	jne    0x151
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+On 2024/6/21 3:37 AM, Alexandre Belloni wrote:
+> On 23/05/2024 18:38:07-0700, Joseph Jang wrote:
+>> The rtctest requires the read permission on /dev/rtc0. The rtctest will
+>> be skipped if the /dev/rtc0 is not readable.
+>>
+>> Reviewed-by: Koba Ko <kobak@nvidia.com>
+>> Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
+>> Signed-off-by: Joseph Jang <jjang@nvidia.com>
+> 
+> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> 
+>> ---
+>>   tools/testing/selftests/rtc/rtctest.c | 11 ++++++++++-
+>>   1 file changed, 10 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/tools/testing/selftests/rtc/rtctest.c b/tools/testing/selftests/rtc/rtctest.c
+>> index 2b12497eb30d..d104f5326cf4 100644
+>> --- a/tools/testing/selftests/rtc/rtctest.c
+>> +++ b/tools/testing/selftests/rtc/rtctest.c
+>> @@ -483,6 +483,8 @@ __constructor_order_last(void)
+>>   
+>>   int main(int argc, char **argv)
+>>   {
+>> +	int ret = -1;
+>> +
+>>   	switch (argc) {
+>>   	case 2:
+>>   		rtc_file = argv[1];
+>> @@ -494,5 +496,12 @@ int main(int argc, char **argv)
+>>   		return 1;
+>>   	}
+>>   
+>> -	return test_harness_run(argc, argv);
+>> +	/* Run the test if rtc_file is accessible */
+>> +	if (access(rtc_file, R_OK) == 0)
+>> +		ret = test_harness_run(argc, argv);
+>> +	else
+>> +		ksft_exit_skip("[SKIP]: Cannot access rtc file %s - Exiting\n",
+>> +						rtc_file);
+>> +
+>> +	return ret;
+>>   }
+>> -- 
+>> 2.34.1
+>>
+> 
 
