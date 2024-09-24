@@ -1,68 +1,70 @@
-Return-Path: <linux-kernel+bounces-336579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 374B8983CAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:10:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01288983CB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:10:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA6852826C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 06:10:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 769421F230DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 06:10:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715694EB38;
-	Tue, 24 Sep 2024 06:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB70B5FEE4;
+	Tue, 24 Sep 2024 06:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="DCJLCb7i"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="gn+5kId8"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE73442A8F
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 06:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392A142A8F
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 06:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727158230; cv=none; b=OUaMb3OZs4fwPZJXnllPm5Ry5J/LadPZc80iWrCDWw3LpsO6Vbb/+EWvS2vga51CGtuEiMXU3i3maBNbZ0gQ37rqB/l9ITAHBX7fdvL7MqKahXN83me0n/JuW8VTNTikHVRkoPSVrsw1YsfdVkDSmg7l2FGrTv0rU48nC56hbls=
+	t=1727158237; cv=none; b=sJYbN4Cde2eWor4suFhC39pOoWOSPg1lRW3P864c5Rgt2BnOYfcZzFxIpKX/xWNN+DCMvPkyCVFXDe6juuOCTQxAgPnqLn0+6Ha9ABTnTuaA5bO6fQuvsDWOa1vMRJ5Q7KY4IPlx/FRdcmqiyzryzSSyrMxdSSmuKYXh3jwunTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727158230; c=relaxed/simple;
-	bh=5EJ1wM44oSW6caNwnYJYPQHyJBSYal/0hk2KJQmEe0c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cQTwPTHYY7FYszg4uP/8YF/cDVkIqsYSU3eVALcj8DHuGoKRCrl+JDC1INXH69Nh8zOQffMJJlFg06LuTffNy9e2RSWW9VmqGRbacct+kL6po9vMdlk5tfg5ydqakYS/bf7vixxTE7D6ShF4NDLNdE5gC24gdHbtnwswYaBLXe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=DCJLCb7i; arc=none smtp.client-ip=209.85.214.170
+	s=arc-20240116; t=1727158237; c=relaxed/simple;
+	bh=ZbaeWw3Cvpk7pq6FuZm+ealD8Sv3/4DHQMcnViX1FcU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=i/2lJoF9RERihrcoHdXv6EV0Cv6IWc2VWAiuLt4CAPlV7cFjaAisfgHdS4k/8FsS4Qw4rmnKyqy7EcbqAm1+O9R2sMwRj33I2xSKXIkib2RBfNX/+WEGMx3QY7icTtIk7IsHiPBxUWSN7yUJCExK1lzyb5Y2VhwyYuQHs4tfXkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=gn+5kId8; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-206aee40676so41319185ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 23:10:28 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2057c6c57b5so30983215ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 23:10:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1727158228; x=1727763028; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FZ+6J9fpvc8LtEIEryLlJSsbAdd45v7edjcT5rDHpkU=;
-        b=DCJLCb7ircptpUM3YsFiOL1CgkMqzPQdLPapedFhddmdlq64bSC/REli0/hMSwP6Sx
-         eR9ZabrJla1AVpfzyoIIgUcpfoGG+KJgzFd1NM727fF/ZGiPM6m2hAIC6e8vxZhFkr33
-         hzdVF6Qp1fJnRTyrnKZ3RFH9wEmvMocd3Hoy8ASgDkg9wb6SHMcJRh9EOd//RXpaSy9l
-         6y6sH5Tkb4oVox7EdVkWfxKM9b7AFKnTLNVaDpuD6tnQRR5s+bTlPDWjPkC3/jfoPg3/
-         feSSg7fVIQ7cL4uzqtxvBUuzzTYx8njGVj48RvthKLegd50g7+mwZs6aqORSakYKPVNg
-         VPiw==
+        d=bytedance.com; s=google; t=1727158234; x=1727763034; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wFV2Gg1HPn9r0uTPIEIMJioMCNlgr9zWJ7S9CBl14ro=;
+        b=gn+5kId81ccBpHvWdF97g6P4FqzaOivDPrrQTDybkP8N12qzRJxR8ldChPpOVXLT0Z
+         d+GGLXYnknKm3K0QG5jPY6M9PkYVLJj45LW7WVlKnfnME0AhqZocvDwRVn0rOfE2LjP6
+         FjIkvrVoN7T8NvUdGRgTM5fRuHSS+UHcIC+e7Crh1gut3VIzF+nHNreSvZZixBd++cSX
+         KRFR2HEpXuQ56UnT5Vx7slr7JVYHi6iUQemD1lzMGUcQAxUaIs85s+GmBDJ+v/W93tJs
+         8NgtK13umGb7M8v1f9vKzsEpZQ8uqUlc9NEtkqUpsc4bRUOtrrZ2EDKgDfLwvhzaoU2B
+         Gq7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727158228; x=1727763028;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FZ+6J9fpvc8LtEIEryLlJSsbAdd45v7edjcT5rDHpkU=;
-        b=TYsoVt6qjf1sXandQKUPMF62UHdHFppLq/CgUXsOQY1ebtwMcJ6NAkPjgIs60NhIFR
-         aQIm6uv9cqFX9peZ0HVn5D+QGX8CK/q8yCRjyPGzb4agz+gggtAKnIc9sNq8R0HbUn+D
-         QQBdVrtMfdLVOYpT3FMVQWGMZ3LuBGTw/LSFFCa4uwQ9UJ5miARFTFTiwuOU6LNFDIUl
-         AI6TUdbdIXdePjhtWY6xmu9y3qwStEEDVV1ctJjC+NdIH9pBg4ILPJOAbRDIU4G1jUgV
-         qQ5kN+U7ujjRl0liNTCmrPTYhJfscFHkCge3yJNbLFdqpIemzQ36FMrOZbK/KAiWicqv
-         4ALQ==
-X-Gm-Message-State: AOJu0Yxol6zQGzW2kzcNW7VaBPXJuS6atZV8FD906qw//SGdIqgzfdZf
-	7TMlxPGTRRaS8mniU5nWctL14baiPfqb4pGCDFIe3OpLNZ7CVtUUJpHspYIyFjU=
-X-Google-Smtp-Source: AGHT+IE3JgWdRJx6WCYXen89wPhryGlCmdGWyOg8hF+XH/7tbK6pMmGNNEBSXyybrad6ihXB6X7r6g==
-X-Received: by 2002:a17:903:22c7:b0:206:a1ea:f4fe with SMTP id d9443c01a7336-208d832a9c8mr174328585ad.10.1727158228146;
-        Mon, 23 Sep 2024 23:10:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727158234; x=1727763034;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wFV2Gg1HPn9r0uTPIEIMJioMCNlgr9zWJ7S9CBl14ro=;
+        b=imXHp+dfdEz8b+VBJH1HFgm7UmTSGJ9BmQhtpgKqeZsgZu9tSYUjOlIWUt/DXEPs1B
+         0HSCL8W+QpLLxZAchj30mvbk1VlXzymeHwb3KHDsag3XHCs5lJDmxHB2NPtr0JHL0gg3
+         +rf27unlc/ZnhGwQdJWm5ixCDxAvUNaH+pmoHuvbPjjlB39ti0Cfd9KPZ6ff0hOPQk3X
+         0XA67wBLgB0mEFj/GfafqKpiANl7okfIjk7dZ77zpDNQ0kYNYe+uDLQs4ilwuHtl5A8T
+         jV0cOOuXnycjTmc6FmgBGBpaxk7Wa2HuzV6Jzo8B7MSww5LT8Ppo/zLJtmCHWdvKe6uJ
+         9/lA==
+X-Gm-Message-State: AOJu0Yyb9M2077hjA0OyqvQRExBIPg7Q7+hZBpfWASUkAPBY200fEirb
+	zix9PLo1K+0pokX9jrmc0hR0gVFZm0KNcNjVVPppnSYcDXQvxKk9k3fv8nicz9I=
+X-Google-Smtp-Source: AGHT+IFurxEbSfxWnkgUvSmQpfQ7iOb3of4fLdIGxM8iu8OEamvgIzhTlXEYzcUx/o7HLvoMu2wctg==
+X-Received: by 2002:a17:902:ce8c:b0:207:6d2:1aa5 with SMTP id d9443c01a7336-20aed0b299cmr27872445ad.13.1727158234439;
+        Mon, 23 Sep 2024 23:10:34 -0700 (PDT)
 Received: from C02DW0BEMD6R.bytedance.net ([63.216.146.178])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af17229c9sm4344885ad.85.2024.09.23.23.10.22
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af17229c9sm4344885ad.85.2024.09.23.23.10.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 23:10:27 -0700 (PDT)
+        Mon, 23 Sep 2024 23:10:33 -0700 (PDT)
 From: Qi Zheng <zhengqi.arch@bytedance.com>
 To: david@redhat.com,
 	hughd@google.com,
@@ -80,10 +82,12 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linuxppc-dev@lists.ozlabs.org,
 	Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: [PATCH v4 00/13] introduce pte_offset_map_{ro|rw}_nolock()
-Date: Tue, 24 Sep 2024 14:09:52 +0800
-Message-Id: <cover.1727148662.git.zhengqi.arch@bytedance.com>
+Subject: [PATCH v4 01/13] mm: pgtable: introduce pte_offset_map_{ro|rw}_nolock()
+Date: Tue, 24 Sep 2024 14:09:53 +0800
+Message-Id: <1a4fea06f8cada72553a8d8992a92e9c09f2c9d4.1727148662.git.zhengqi.arch@bytedance.com>
 X-Mailer: git-send-email 2.24.3 (Apple Git-128)
+In-Reply-To: <cover.1727148662.git.zhengqi.arch@bytedance.com>
+References: <cover.1727148662.git.zhengqi.arch@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,108 +96,143 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Changes in v4:
- - arm: adjust_pte() use pte_offset_map_rw_nolock()
-   (use ptl != vmf->ptl to check if we are using split PTE locks)
-   mm: khugepaged: collapse_pte_mapped_thp() use pte_offset_map_rw_nolock()
-   (move the pte_unmap() backward)
-   mm: copy_pte_range() use pte_offset_map_rw_nolock()
-   (remove pmd_same() check)
-   mm: mremap: move_ptes() use pte_offset_map_rw_nolock()
-   (remove pmd_same() check)
-   mm: page_vma_mapped_walk: map_pte() use pte_offset_map_rw_nolock()
-   (move the assignment to pvmw->ptl backward)
- - remove [PATCH v3 14/14] (will be sent as a separate patch)
- - reorder patches
- - collect the Reviewed-bys
- - rebase onto the next-20240923
+Currently, the usage of pte_offset_map_nolock() can be divided into the
+following two cases:
 
-Changes in v3:
- - change to use VM_WARN_ON_ONCE() instead of BUG_ON() in pte_offset_map_rw_nolock()
-   (David Hildenbrand)
- - modify the comment above the pte_offset_map_lock() in [PATCH v2 01/14]
-   (David Hildenbrand and Muchun Song)
- - modify the comment above the pte_offset_map_rw_nolock() in [PATCH v2 06/14]
-   (David Hildenbrand and Muchun Song)
- - also perform a pmd_same() check in [PATCH v2 08/14] and [PATCH v2 09/14]
-   (since we may free the PTE page in retract_page_tables() without holding the
-    read lock of mmap_lock)
- - collect the Acked-bys and Reviewed-bys
- - rebase onto the next-20240904
+1) After acquiring PTL, only read-only operations are performed on the PTE
+   page. In this case, the RCU lock in pte_offset_map_nolock() will ensure
+   that the PTE page will not be freed, and there is no need to worry
+   about whether the pmd entry is modified.
 
-Changes in v2:
- - rename pte_offset_map_{readonly|maywrite}_nolock() to
-   pte_offset_map_{ro|rw}_nolock() (LEROY Christophe)
- - make pte_offset_map_rw_nolock() not accept NULL parameters
-   (David Hildenbrand)
- - rebase onto the next-20240822
+2) After acquiring PTL, the pte or pmd entries may be modified. At this
+   time, we need to ensure that the pmd entry has not been modified
+   concurrently.
 
-Hi all,
+To more clearing distinguish between these two cases, this commit
+introduces two new helper functions to replace pte_offset_map_nolock().
+For 1), just rename it to pte_offset_map_ro_nolock(). For 2), in addition
+to changing the name to pte_offset_map_rw_nolock(), it also outputs the
+pmdval when successful. It is applicable for may-write cases where any
+modification operations to the page table may happen after the
+corresponding spinlock is held afterwards. But the users should make sure
+the page table is stable like checking pte_same() or checking pmd_same()
+by using the output pmdval before performing the write operations.
 
-As proposed by David Hildenbrand [1], this series introduces the following two
-new helper functions to replace pte_offset_map_nolock().
+Note: "RO" / "RW" expresses the intended semantics, not that the *kmap*
+will be read-only/read-write protected.
 
-1. pte_offset_map_ro_nolock()
-2. pte_offset_map_rw_nolock()
+Subsequent commits will convert pte_offset_map_nolock() into the above
+two functions one by one, and finally completely delete it.
 
-As the name suggests, pte_offset_map_ro_nolock() is used for read-only
-case. In this case, only read-only operations will be performed on PTE page
-after the PTL is held. The RCU lock in pte_offset_map_nolock() will ensure that
-the PTE page will not be freed, and there is no need to worry about whether the
-pmd entry is modified. Therefore pte_offset_map_ro_nolock() is just a renamed
-version of pte_offset_map_nolock().
+Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+---
+ Documentation/mm/split_page_table_lock.rst |  7 +++
+ include/linux/mm.h                         |  5 +++
+ mm/pgtable-generic.c                       | 50 ++++++++++++++++++++++
+ 3 files changed, 62 insertions(+)
 
-pte_offset_map_rw_nolock() is used for may-write case. In this case, the pte or
-pmd entry may be modified after the PTL is held, so we need to ensure that the
-pmd entry has not been modified concurrently. So in addition to the name change,
-it also outputs the pmdval when successful. The users should make sure the page
-table is stable like checking pte_same() or checking pmd_same() by using the
-output pmdval before performing the write operations.
-
-This series will convert all pte_offset_map_nolock() into the above two helper
-functions one by one, and finally completely delete it.
-
-This also a preparation for reclaiming the empty user PTE page table pages.
-
-This series is based on the next-20240923.
-
-Comments and suggestions are welcome!
-
-Thanks,
-Qi
-
-Qi Zheng (13):
-  mm: pgtable: introduce pte_offset_map_{ro|rw}_nolock()
-  powerpc: assert_pte_locked() use pte_offset_map_ro_nolock()
-  mm: filemap: filemap_fault_recheck_pte_none() use
-    pte_offset_map_ro_nolock()
-  mm: khugepaged: __collapse_huge_page_swapin() use
-    pte_offset_map_ro_nolock()
-  arm: adjust_pte() use pte_offset_map_rw_nolock()
-  mm: handle_pte_fault() use pte_offset_map_rw_nolock()
-  mm: khugepaged: collapse_pte_mapped_thp() use
-    pte_offset_map_rw_nolock()
-  mm: copy_pte_range() use pte_offset_map_rw_nolock()
-  mm: mremap: move_ptes() use pte_offset_map_rw_nolock()
-  mm: page_vma_mapped_walk: map_pte() use pte_offset_map_rw_nolock()
-  mm: userfaultfd: move_pages_pte() use pte_offset_map_rw_nolock()
-  mm: multi-gen LRU: walk_pte_range() use pte_offset_map_rw_nolock()
-  mm: pgtable: remove pte_offset_map_nolock()
-
- Documentation/mm/split_page_table_lock.rst |  6 ++-
- arch/arm/mm/fault-armv.c                   | 53 +++++++++-------------
- arch/powerpc/mm/pgtable.c                  |  2 +-
- include/linux/mm.h                         |  7 ++-
- mm/filemap.c                               |  4 +-
- mm/khugepaged.c                            | 20 ++++++--
- mm/memory.c                                | 25 ++++++++--
- mm/mremap.c                                | 11 ++++-
- mm/page_vma_mapped.c                       | 25 ++++++++--
- mm/pgtable-generic.c                       | 43 +++++++++++++++---
- mm/userfaultfd.c                           | 15 ++++--
- mm/vmscan.c                                |  9 +++-
- 12 files changed, 159 insertions(+), 61 deletions(-)
-
+diff --git a/Documentation/mm/split_page_table_lock.rst b/Documentation/mm/split_page_table_lock.rst
+index e4f6972eb6c04..08d0e706a32db 100644
+--- a/Documentation/mm/split_page_table_lock.rst
++++ b/Documentation/mm/split_page_table_lock.rst
+@@ -19,6 +19,13 @@ There are helpers to lock/unlock a table and other accessor functions:
+  - pte_offset_map_nolock()
+ 	maps PTE, returns pointer to PTE with pointer to its PTE table
+ 	lock (not taken), or returns NULL if no PTE table;
++ - pte_offset_map_ro_nolock()
++	maps PTE, returns pointer to PTE with pointer to its PTE table
++	lock (not taken), or returns NULL if no PTE table;
++ - pte_offset_map_rw_nolock()
++	maps PTE, returns pointer to PTE with pointer to its PTE table
++	lock (not taken) and the value of its pmd entry, or returns NULL
++	if no PTE table;
+  - pte_offset_map()
+ 	maps PTE, returns pointer to PTE, or returns NULL if no PTE table;
+  - pte_unmap()
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 546a9406859ad..9a4550cd830c9 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -3017,6 +3017,11 @@ static inline pte_t *pte_offset_map_lock(struct mm_struct *mm, pmd_t *pmd,
+ 
+ pte_t *pte_offset_map_nolock(struct mm_struct *mm, pmd_t *pmd,
+ 			unsigned long addr, spinlock_t **ptlp);
++pte_t *pte_offset_map_ro_nolock(struct mm_struct *mm, pmd_t *pmd,
++				unsigned long addr, spinlock_t **ptlp);
++pte_t *pte_offset_map_rw_nolock(struct mm_struct *mm, pmd_t *pmd,
++				unsigned long addr, pmd_t *pmdvalp,
++				spinlock_t **ptlp);
+ 
+ #define pte_unmap_unlock(pte, ptl)	do {		\
+ 	spin_unlock(ptl);				\
+diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
+index a78a4adf711ac..262b7065a5a2e 100644
+--- a/mm/pgtable-generic.c
++++ b/mm/pgtable-generic.c
+@@ -317,6 +317,33 @@ pte_t *pte_offset_map_nolock(struct mm_struct *mm, pmd_t *pmd,
+ 	return pte;
+ }
+ 
++pte_t *pte_offset_map_ro_nolock(struct mm_struct *mm, pmd_t *pmd,
++				unsigned long addr, spinlock_t **ptlp)
++{
++	pmd_t pmdval;
++	pte_t *pte;
++
++	pte = __pte_offset_map(pmd, addr, &pmdval);
++	if (likely(pte))
++		*ptlp = pte_lockptr(mm, &pmdval);
++	return pte;
++}
++
++pte_t *pte_offset_map_rw_nolock(struct mm_struct *mm, pmd_t *pmd,
++				unsigned long addr, pmd_t *pmdvalp,
++				spinlock_t **ptlp)
++{
++	pmd_t pmdval;
++	pte_t *pte;
++
++	VM_WARN_ON_ONCE(!pmdvalp);
++	pte = __pte_offset_map(pmd, addr, &pmdval);
++	if (likely(pte))
++		*ptlp = pte_lockptr(mm, &pmdval);
++	*pmdvalp = pmdval;
++	return pte;
++}
++
+ /*
+  * pte_offset_map_lock(mm, pmd, addr, ptlp), and its internal implementation
+  * __pte_offset_map_lock() below, is usually called with the pmd pointer for
+@@ -356,6 +383,29 @@ pte_t *pte_offset_map_nolock(struct mm_struct *mm, pmd_t *pmd,
+  * recheck *pmd once the lock is taken; in practice, no callsite needs that -
+  * either the mmap_lock for write, or pte_same() check on contents, is enough.
+  *
++ * pte_offset_map_ro_nolock(mm, pmd, addr, ptlp), above, is like pte_offset_map();
++ * but when successful, it also outputs a pointer to the spinlock in ptlp - as
++ * pte_offset_map_lock() does, but in this case without locking it.  This helps
++ * the caller to avoid a later pte_lockptr(mm, *pmd), which might by that time
++ * act on a changed *pmd: pte_offset_map_ro_nolock() provides the correct spinlock
++ * pointer for the page table that it returns. Even after grabbing the spinlock,
++ * we might be looking either at a page table that is still mapped or one that
++ * was unmapped and is about to get freed. But for R/O access this is sufficient.
++ * So it is only applicable for read-only cases where any modification operations
++ * to the page table are not allowed even if the corresponding spinlock is held
++ * afterwards.
++ *
++ * pte_offset_map_rw_nolock(mm, pmd, addr, pmdvalp, ptlp), above, is like
++ * pte_offset_map_ro_nolock(); but when successful, it also outputs the pdmval.
++ * It is applicable for may-write cases where any modification operations to the
++ * page table may happen after the corresponding spinlock is held afterwards.
++ * But the users should make sure the page table is stable like checking pte_same()
++ * or checking pmd_same() by using the output pmdval before performing the write
++ * operations.
++ *
++ * Note: "RO" / "RW" expresses the intended semantics, not that the *kmap* will
++ * be read-only/read-write protected.
++ *
+  * Note that free_pgtables(), used after unmapping detached vmas, or when
+  * exiting the whole mm, does not take page table lock before freeing a page
+  * table, and may not use RCU at all: "outsiders" like khugepaged should avoid
 -- 
 2.20.1
 
