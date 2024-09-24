@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-337102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0247984562
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:01:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96ECB984564
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:01:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C4C61C227C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:01:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5764E284F68
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEACD19F461;
-	Tue, 24 Sep 2024 12:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB0881A76B4;
+	Tue, 24 Sep 2024 12:00:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="QuHHnZmK"
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="Fk4Xwgpl"
 Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3CEF1A7065;
-	Tue, 24 Sep 2024 12:00:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC841A7076;
+	Tue, 24 Sep 2024 12:00:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727179256; cv=none; b=GvXmHje94KnsUYxY7oxkhYzHAbCIRCbUJniJbkTcfvttZlVbDOjM1WEvOArSRboo9b2xGzKUoHmjfogpwOVs/aDaI50WisqDBrEqtWEFw1ys/UkKY9IboH68+Anjr5qwrCexDcIV7QyCVn9TPsXv3hyqrPcZd7cUVmM8vkR7Upk=
+	t=1727179256; cv=none; b=KGUflYB4mAs3IWITlOZYWg3vWJEq2gLt0bZBKxTiLkMtgk8gRH+gDVmkp+9ycHH7YjMJW6VaW4uBWUXfJc4Zp7rQq2njt3wiqlmxCO7nj1LI34QpEH6nvqsuXPhgz01LDDFmGrJr/GJcAjHCh9v3GJZHwGIqtC2Hf3SKhzvC8VE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727179256; c=relaxed/simple;
-	bh=pZtEHuroQ3lImXKIkOrOFDdvY//VNDZOb08qRCaADKo=;
+	bh=deUJAjdAGboF/GhxfYhYZFPDUsUAeF267+D1HmmE+l8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Na9Qa5FiV4A+wwxuSH7Zn875i/Md03GIA/oI4y0deVTvENnMP3E07VmN8M0jdJfM0n6dhuVG8E7/2g27os2RXOv+6abxAifB9tyWP0A/eekEKFgpqqh2LuGr/dxKuWGfrpNzkYJsHPvhM40ov2HIftDJ0bp9OEMLwWoxj8CfOUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=QuHHnZmK; arc=none smtp.client-ip=217.194.8.81
+	 MIME-Version:Content-Type; b=B51pGsrB0/ZnuBq+NNH7pDZK5+ZSU6fM31O0no2AIdxtns+uiIuuN67c7AKDfu2Tg5dmQrKOwAMqCkIdnZPTvEZxQmhBd70zveu+77lDPJKSGA7KSFRcNvto44Xq7iludcxnzQYXH5IyM/cZD37qOZI5PYE9UOPDu41VDsdEztM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=Fk4Xwgpl; arc=none smtp.client-ip=217.194.8.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
 Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 8C7291FA77;
-	Tue, 24 Sep 2024 14:00:51 +0200 (CEST)
+	by mail11.truemail.it (Postfix) with ESMTPA id 217461FA9A;
+	Tue, 24 Sep 2024 14:00:52 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
 	s=default; t=1727179252;
-	bh=MtzPmwKAbHgGy1gd3FKq8h1DiCbQ/07mXflFH/Co0EI=; h=From:To:Subject;
-	b=QuHHnZmKVQY5n7s6Q+0AzGHOI6IA0iLru/VoqtiemdMzB5ahuR0M8xe1QkgX7vY0a
-	 P9R4jimwkU4NvCiCOwYUNI1p5+vEv38I0SPHhgk66XXZkOs+18QXZupHLHsLRkABrz
-	 QIvlfu+f81Cq/R/HdsWsyXVdXYeli0wLD8B+6s4xOhYh0SZlvD0g7PobIFIRtQb8Ne
-	 kF76nHT2TYS5Llvc5U1ZGvDioCM97qjQ1FiS1xqcaGHjeg5SsppYpU9Y7+sLoVSXFD
-	 GwUuAWV29BqGl5H9pC/k9miEW4hQDTL4cX8EAOFcwe+bJaOfUgrmyTUy4PJugHElBl
-	 EysIz7awfw57w==
+	bh=EjPWzXl7rDK0JYOcHtpL2hmasFXrdLp8PHKoWAEtCZM=; h=From:To:Subject;
+	b=Fk4XwgplXhSqDuL1aHB+OVJ0gBct/7H+VcEqP9XtRkRral7RiwVntmTFJ6RjP+KLP
+	 Ka7HKoR6+lC4DcQGQZkKj4NHPJ451MRC1uJft68TZXFPH358A689A1dtGxUemm1tf8
+	 punFxCk5xm6OyuiREiEouy3GNlwl0SsNQ7Y/GtObxh8mPY7pM+o+AF5s0Nu7pN06jA
+	 BuLs/XZ0d/hu2UBWHo0nh6r8zStoSZWGfpHAfFiAA3pRjueIBnKMY+JmIaQcpJNE+4
+	 YlB0YuIOoRdr60TPgv8rPbtOXpJjqmeKF1RnDGogIjcpHFBPNHqzqcvV/mt1oTv1io
+	 Er3KCUlAKJ3gA==
 From: Francesco Dolcini <francesco@dolcini.it>
 To: Nishanth Menon <nm@ti.com>,
 	Vignesh Raghavendra <vigneshr@ti.com>,
@@ -54,9 +54,9 @@ Cc: =?UTF-8?q?Jo=C3=A3o=20Paulo=20Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: [PATCH v1 2/3] arm64: dts: ti: k3-am62-verdin: add label to som adc node
-Date: Tue, 24 Sep 2024 14:00:43 +0200
-Message-Id: <20240924120044.130913-3-francesco@dolcini.it>
+Subject: [PATCH v1 3/3] arm64: dts: ti: k3-am62-verdin: Add Ivy carrier board
+Date: Tue, 24 Sep 2024 14:00:44 +0200
+Message-Id: <20240924120044.130913-4-francesco@dolcini.it>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20240924120044.130913-1-francesco@dolcini.it>
 References: <20240924120044.130913-1-francesco@dolcini.it>
@@ -71,33 +71,801 @@ Content-Transfer-Encoding: 8bit
 
 From: João Paulo Gonçalves <joao.goncalves@toradex.com>
 
-Add a label to ti-ads1015 node to make it easier to reference it
-from other nodes.
+Add Toradex Verdin Ivy carrier board support. One notable feature of Ivy
+is the analog inputs. These inputs are multiplexed, allowing the same
+input to measure either voltage or current. For current measurements,
+a GPIO switch enables or disables the shunt resistor. This process is
+automatically managed by the Linux kernel using the IIO and MUX
+subsystems. Voltage measurement is always enabled, but the voltage
+measured by the ADC is scaled by a cascade voltage divider. In the
+device tree, the equivalent gain of the voltage divider is used, which
+can be calculated as follows:
+
+	   ------------
+	   +          |
+		     .-.
+	  R1=30K     | |
+		     | |
+		     '-'
+		      |-------------------
+Analog Input (AIN)    |         	 |
+		     .-.       		.-.
+	      R2=10K | |       	 R3=30K | |
+		     | |       		| |
+		     '-'       		'-'
+		      |         	 |
+		      |         	 |--------
+		      |        		.-.      +
+		      |  	 R4=10K | |
+		      |        		| |      ADC Input (Channels 0 and 1)
+		      |        		'-'
+	   -          |         	 |       -
+	   -----------|         	 |--------
+		     ===       		===
+		     GND       		GND
+
+Vin  = Analog Input (AIN)
+Vout = ADC Input
+Rth  = Thevenin Equiv. Resistance
+Vth  = Thevenin Equiv. Voltage
+RL   = Load Resistor
+
+R1 = 30K, R2 = 10K, R3 = 30K, R4 = 10K
+RL = R4 = 10K
+
+Rth  = (R1 // R2) + R3 = 37500 Ohms
+Vth  = (Vin * R2) / (R1 + R2) = Vin/4;
+Vout = (Vth * RL)/ (Rth + RL) = Vth/4.75 = Vin/19
+Gain = Vout/Vin = 1/19
+
+https://www.toradex.com/products/carrier-board/ivy-carrier-board
 
 Signed-off-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
 Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
 ---
- arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/ti/Makefile               |   2 +
+ .../arm64/boot/dts/ti/k3-am62-verdin-ivy.dtsi | 655 ++++++++++++++++++
+ .../dts/ti/k3-am625-verdin-nonwifi-ivy.dts    |  22 +
+ .../boot/dts/ti/k3-am625-verdin-wifi-ivy.dts  |  22 +
+ 4 files changed, 701 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am62-verdin-ivy.dtsi
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-ivy.dts
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-ivy.dts
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi b/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
-index 5bef31b8577b..7b63eb0287af 100644
---- a/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
-@@ -1219,11 +1219,12 @@ sensor@48 {
- 		reg = <0x48>;
- 	};
- 
--	adc@49 {
-+	verdin_som_adc: adc@49 {
- 		compatible = "ti,ads1015";
- 		reg = <0x49>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
+index bcd392c3206e..72a4d576c719 100644
+--- a/arch/arm64/boot/dts/ti/Makefile
++++ b/arch/arm64/boot/dts/ti/Makefile
+@@ -16,10 +16,12 @@ dtb-$(CONFIG_ARCH_K3) += k3-am625-phyboard-lyra-rdk.dtb
+ dtb-$(CONFIG_ARCH_K3) += k3-am625-sk.dtb
+ dtb-$(CONFIG_ARCH_K3) += k3-am625-verdin-nonwifi-dahlia.dtb
+ dtb-$(CONFIG_ARCH_K3) += k3-am625-verdin-nonwifi-dev.dtb
++dtb-$(CONFIG_ARCH_K3) += k3-am625-verdin-nonwifi-ivy.dtb
+ dtb-$(CONFIG_ARCH_K3) += k3-am625-verdin-nonwifi-mallow.dtb
+ dtb-$(CONFIG_ARCH_K3) += k3-am625-verdin-nonwifi-yavia.dtb
+ dtb-$(CONFIG_ARCH_K3) += k3-am625-verdin-wifi-dahlia.dtb
+ dtb-$(CONFIG_ARCH_K3) += k3-am625-verdin-wifi-dev.dtb
++dtb-$(CONFIG_ARCH_K3) += k3-am625-verdin-wifi-ivy.dtb
+ dtb-$(CONFIG_ARCH_K3) += k3-am625-verdin-wifi-mallow.dtb
+ dtb-$(CONFIG_ARCH_K3) += k3-am625-verdin-wifi-yavia.dtb
+ dtb-$(CONFIG_ARCH_K3) += k3-am625-phyboard-lyra-1-4-ghz-opp.dtbo
+diff --git a/arch/arm64/boot/dts/ti/k3-am62-verdin-ivy.dtsi b/arch/arm64/boot/dts/ti/k3-am62-verdin-ivy.dtsi
+new file mode 100644
+index 000000000000..71c29eab0eee
+--- /dev/null
++++ b/arch/arm64/boot/dts/ti/k3-am62-verdin-ivy.dtsi
+@@ -0,0 +1,655 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
++/*
++ * Copyright 2024 Toradex
++ *
++ * Common dtsi for Verdin AM62 SoM on Ivy carrier board
++ *
++ * https://www.toradex.com/computer-on-modules/verdin-arm-family/ti-am62
++ * https://www.toradex.com/products/carrier-board/ivy-carrier-board
++ */
++
++#include <dt-bindings/mux/mux.h>
++#include <dt-bindings/leds/common.h>
++#include <dt-bindings/net/ti-dp83867.h>
++
++/ {
++	/* AIN1 Voltage w/o AIN1_MODE gpio control */
++	ain1_voltage_unmanaged: voltage-divider-ain1 {
++		compatible = "voltage-divider";
 +		#io-channel-cells = <1>;
- 
- 		/* Verdin PMIC_I2C (ADC_4 - ADC_3) */
- 		channel@0 {
++		io-channels = <&ivy_adc1 0>;
++		full-ohms = <19>;
++		output-ohms = <1>;
++	};
++
++	/* AIN1 Current w/o AIN1_MODE gpio control */
++	ain1_current_unmanaged: current-sense-shunt-ain1 {
++		compatible = "current-sense-shunt";
++		#io-channel-cells = <0>;
++		io-channels = <&ivy_adc1 1>;
++		shunt-resistor-micro-ohms = <100000000>;
++	};
++
++	/* AIN1_MODE - SODIMM 216 */
++	ain1_mode_mux_ctrl: mux-controller-0 {
++		compatible = "gpio-mux";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_gpio_5>;
++		#mux-control-cells = <0>;
++		mux-gpios = <&main_gpio0 40 GPIO_ACTIVE_HIGH>;
++	};
++
++	ain1-voltage {
++		compatible = "io-channel-mux";
++		channels = "ain1_voltage", "";
++		io-channels = <&ain1_voltage_unmanaged 0>;
++		io-channel-names = "parent";
++		mux-controls = <&ain1_mode_mux_ctrl>;
++		settle-time-us = <1000>;
++	};
++
++	ain1-current {
++		compatible = "io-channel-mux";
++		channels = "", "ain1_current";
++		io-channels = <&ain1_current_unmanaged>;
++		io-channel-names = "parent";
++		mux-controls = <&ain1_mode_mux_ctrl>;
++		settle-time-us = <1000>;
++	};
++
++	/* AIN2 Voltage w/o AIN2_MODE gpio control */
++	ain2_voltage_unmanaged: voltage-divider-ain2 {
++		compatible = "voltage-divider";
++		#io-channel-cells = <1>;
++		io-channels = <&ivy_adc2 0>;
++		full-ohms = <19>;
++		output-ohms = <1>;
++	};
++
++	/* AIN2 Current w/o AIN2_MODE gpio control */
++	ain2_current_unmanaged: current-sense-shunt-ain2 {
++		compatible = "current-sense-shunt";
++		#io-channel-cells = <0>;
++		io-channels = <&ivy_adc2 1>;
++		shunt-resistor-micro-ohms = <100000000>;
++	};
++
++	/* AIN2_MODE - SODIMM 218 */
++	ain2_mode_mux_ctrl: mux-controller-1 {
++		compatible = "gpio-mux";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_gpio_6>;
++		#mux-control-cells = <0>;
++		mux-gpios = <&main_gpio0 36 GPIO_ACTIVE_HIGH>;
++	};
++
++	ain2-voltage {
++		compatible = "io-channel-mux";
++		channels = "ain2_voltage", "";
++		io-channels = <&ain2_voltage_unmanaged 0>;
++		io-channel-names = "parent";
++		mux-controls = <&ain2_mode_mux_ctrl>;
++		settle-time-us = <1000>;
++	};
++
++	ain2-current {
++		compatible = "io-channel-mux";
++		channels = "", "ain2_current";
++		io-channels = <&ain2_current_unmanaged>;
++		io-channel-names = "parent";
++		mux-controls = <&ain2_mode_mux_ctrl>;
++		settle-time-us = <1000>;
++	};
++
++	leds {
++		compatible = "gpio-leds";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_ivy_leds>;
++
++		/* D7 Blue - SODIMM 30 - LEDs.GPIO1 */
++		led-0 {
++			color = <LED_COLOR_ID_BLUE>;
++			default-state = "off";
++			function = LED_FUNCTION_STATUS;
++			function-enumerator = <1>;
++			gpios = <&main_gpio1 11 GPIO_ACTIVE_HIGH>;
++		};
++
++		/* D7 Green - SODIMM 32 - LEDs.GPIO2 */
++		led-1 {
++			color = <LED_COLOR_ID_GREEN>;
++			default-state = "off";
++			function = LED_FUNCTION_STATUS;
++			function-enumerator = <1>;
++			gpios = <&main_gpio1 12 GPIO_ACTIVE_HIGH>;
++		};
++
++		/* D7 Red - SODIMM 34 - LEDs.GPIO3 */
++		led-2 {
++			color = <LED_COLOR_ID_RED>;
++			default-state = "off";
++			function = LED_FUNCTION_STATUS;
++			function-enumerator = <1>;
++			gpios = <&main_gpio1 10 GPIO_ACTIVE_HIGH>;
++		};
++
++		/* D8 Blue - SODIMM 36 - LEDs.GPIO4 */
++		led-3 {
++			color = <LED_COLOR_ID_BLUE>;
++			default-state = "off";
++			function = LED_FUNCTION_STATUS;
++			function-enumerator = <2>;
++			gpios = <&main_gpio1 9 GPIO_ACTIVE_HIGH>;
++		};
++
++		/* D8 Green - SODIMM 54 - LEDs.GPIO5 */
++		led-4 {
++			color = <LED_COLOR_ID_GREEN>;
++			default-state = "off";
++			function = LED_FUNCTION_STATUS;
++			function-enumerator = <2>;
++			gpios = <&main_gpio0 11 GPIO_ACTIVE_HIGH>;
++		};
++
++		/* D8 Red - SODIMM 44 - LEDs.GPIO6 */
++		led-5 {
++			color = <LED_COLOR_ID_RED>;
++			default-state = "off";
++			function = LED_FUNCTION_STATUS;
++			function-enumerator = <2>;
++			gpios = <&main_gpio0 37 GPIO_ACTIVE_HIGH>;
++		};
++
++		/* D9 Blue - SODIMM 46 - LEDs.GPIO7 */
++		led-6 {
++			color = <LED_COLOR_ID_BLUE>;
++			default-state = "off";
++			function = LED_FUNCTION_STATUS;
++			function-enumerator = <3>;
++			gpios = <&main_gpio0 34 GPIO_ACTIVE_HIGH>;
++		};
++
++		/* D9 Red - SODIMM 48 - LEDs.GPIO8 */
++		led-7 {
++			color = <LED_COLOR_ID_RED>;
++			default-state = "off";
++			function = LED_FUNCTION_STATUS;
++			function-enumerator = <3>;
++			gpios = <&main_gpio0 33 GPIO_ACTIVE_HIGH>;
++		};
++	};
++
++	reg_3v2_ain1: regulator-3v2-ain1 {
++		compatible = "regulator-fixed";
++		regulator-max-microvolt = <3200000>;
++		regulator-min-microvolt = <3200000>;
++		regulator-name = "+3V2_AIN1";
++	};
++
++	reg_3v2_ain2: regulator-3v2-ain2 {
++		compatible = "regulator-fixed";
++		regulator-max-microvolt = <3200000>;
++		regulator-min-microvolt = <3200000>;
++		regulator-name = "+3V2_AIN2";
++	};
++
++	/* Ivy Power Supply Input Voltage */
++	ivy-input-voltage {
++		compatible = "voltage-divider";
++		/* Verdin ADC_1 */
++		io-channels = <&verdin_som_adc 7>;
++		full-ohms = <204700>; /* 200K + 4.7K */
++		output-ohms = <4700>;
++	};
++
++	ivy-5v-voltage {
++		compatible = "voltage-divider";
++		/* Verdin ADC_2 */
++		io-channels = <&verdin_som_adc 6>;
++		full-ohms = <39000>; /* 27K + 12K */
++		output-ohms = <12000>;
++	};
++
++	ivy-3v3-voltage {
++		compatible = "voltage-divider";
++		/* Verdin ADC_3 */
++		io-channels = <&verdin_som_adc 5>;
++		full-ohms = <54000>; /* 27K + 27K */
++		output-ohms = <27000>;
++	};
++
++	ivy-1v8-voltage {
++		compatible = "voltage-divider";
++		/* Verdin ADC_4 */
++		io-channels = <&verdin_som_adc 4>;
++		full-ohms = <39000>; /* 12K + 27K */
++		output-ohms = <27000>;
++	};
++};
++
++&main_pmx0 {
++	pinctrl_ivy_leds: ivy-leds-default-pins {
++		pinctrl-single,pins =
++			<AM62X_IOPAD(0x019c, PIN_INPUT, 7)>, /* (B18) MCASP0_AXR1.GPIO1_9    */ /* SODIMM 36 */
++			<AM62X_IOPAD(0x01a0, PIN_INPUT, 7)>, /* (B20) MCASP0_AXR0.GPIO1_10   */ /* SODIMM 34 */
++			<AM62X_IOPAD(0x01a4, PIN_INPUT, 7)>, /* (A19) MCASP0_ACLKX.GPIO1_11  */ /* SODIMM 30 */
++			<AM62X_IOPAD(0x01a8, PIN_INPUT, 7)>, /* (A20) MCASP0_AFSX.GPIO1_12   */ /* SODIMM 32 */
++			<AM62X_IOPAD(0x0088, PIN_INPUT, 7)>, /* (L17) GPMC0_OEn_REn.GPIO0_33 */ /* SODIMM 48 */
++			<AM62X_IOPAD(0x0098, PIN_INPUT, 7)>, /* (R18) GPMC0_WAIT0.GPIO0_37   */ /* SODIMM 44 */
++			<AM62X_IOPAD(0x008c, PIN_INPUT, 7)>, /* (L25) GPMC0_WEn.GPIO0_34     */ /* SODIMM 46 */
++			<AM62X_IOPAD(0x002c, PIN_INPUT, 7)>; /* (F23) OSPI0_CSn0.GPIO0_11    */ /* SODIMM 54 */
++	};
++};
++
++/* Verdin ETH */
++&cpsw3g {
++	status = "okay";
++};
++
++/* MDIO, shared by Verdin ETH_1 (On-module PHY) and Verdin ETH_2_RGMII */
++&cpsw3g_mdio {
++	status = "okay";
++
++	cpsw3g_phy1: ethernet-phy@2 {
++		reg = <2>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_eth2_rgmii_int>;
++		interrupt-parent = <&main_gpio0>;
++		interrupts = <38 IRQ_TYPE_EDGE_FALLING>;
++		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
++	};
++};
++
++/* Verdin ETH_1*/
++&cpsw_port1 {
++	status = "okay";
++};
++
++/* Verdin ETH_2_RGMII */
++&cpsw_port2 {
++	phy-handle = <&cpsw3g_phy1>;
++	phy-mode = "rgmii-rxid";
++	status = "okay";
++};
++
++&main_gpio0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_ctrl_sleep_moci>,
++		    <&pinctrl_qspi1_cs2_gpio>,
++		    <&pinctrl_qspi1_io0_gpio>,
++		    <&pinctrl_qspi1_io1_gpio>,
++		    <&pinctrl_qspi1_io2_gpio>,
++		    <&pinctrl_qspi1_io3_gpio>;
++	gpio-line-names =
++		"", /* 0 */
++		"",
++		"",
++		"DIGI_1", /* SODIMM 56 */
++		"DIGI_2", /* SODIMM 58 */
++		"REL1",   /* SODIMM 60 */
++		"REL2",   /* SODIMM 62 */
++		"",
++		"",
++		"",
++		"", /* 10 */
++		"",
++		"REL3", /* SODIMM 64 */
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"", /* 20 */
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"", /* 30 */
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"", /* 40 */
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"", /* 50 */
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"", /* 60 */
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"", /* 70 */
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"", /* 80 */
++		"",
++		"",
++		"",
++		"",
++		"",
++		"";
++};
++
++&main_gpio1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_qspi1_dqs_gpio>;
++	gpio-line-names =
++		"", /* 0 */
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"", /* 10 */
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"REL4", /* SODIMM 66 */
++		"",
++		"", /* 20 */
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"", /* 30 */
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"", /* 40 */
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"", /* 50 */
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"", /* 60 */
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"", /* 70 */
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"", /* 80 */
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"";
++};
++
++/* Verdin I2C_1 */
++&main_i2c1 {
++	status = "okay";
++
++	temperature-sensor@4f {
++		compatible = "ti,tmp1075";
++		reg = <0x4f>;
++	};
++
++	eeprom@57 {
++		compatible = "st,24c02", "atmel,24c02";
++		reg = <0x57>;
++		pagesize = <16>;
++	};
++};
++
++/* Verdin I2C_4 CSI */
++&main_i2c3 {
++	status = "okay";
++
++	ivy_adc1: adc@40 {
++		compatible = "ti,ads1119";
++		reg = <0x40>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_gpio_7>;
++		interrupt-parent = <&main_gpio0>;
++		interrupts = <41 IRQ_TYPE_EDGE_FALLING>;
++		avdd-supply = <&reg_3v2_ain1>;
++		dvdd-supply = <&reg_3v2_ain1>;
++		vref-supply = <&reg_3v2_ain1>;
++		#address-cells = <1>;
++		#io-channel-cells = <1>;
++		#size-cells = <0>;
++
++		/* AIN1 0-33V Voltage Input */
++		channel@0 {
++			reg = <0>;
++			diff-channels = <0 1>;
++		};
++
++		/* AIN1 0-20mA Current Input */
++		channel@1 {
++			reg = <1>;
++			diff-channels = <2 3>;
++		};
++	};
++
++	ivy_adc2: adc@41 {
++		compatible = "ti,ads1119";
++		reg = <0x41>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_gpio_8>;
++		interrupt-parent = <&main_gpio0>;
++		interrupts = <42 IRQ_TYPE_EDGE_FALLING>;
++		avdd-supply = <&reg_3v2_ain2>;
++		dvdd-supply = <&reg_3v2_ain2>;
++		vref-supply = <&reg_3v2_ain2>;
++		#address-cells = <1>;
++		#io-channel-cells = <1>;
++		#size-cells = <0>;
++
++		/* AIN2 0-33V Voltage Input */
++		channel@0 {
++			reg = <0>;
++			diff-channels = <0 1>;
++		};
++
++		/* AIN2 0-20mA Current Input */
++		channel@1 {
++			reg = <1>;
++			diff-channels = <2 3>;
++		};
++	};
++};
++
++/* Verdin CAN_1 */
++&main_mcan0 {
++	status = "okay";
++};
++
++/* Verdin SPI_1 */
++&main_spi1 {
++	pinctrl-0 = <&pinctrl_spi1>,
++		    <&pinctrl_spi1_cs0>,
++		    <&pinctrl_gpio_1>,
++		    <&pinctrl_gpio_4>;
++	cs-gpios = <0>,
++		   <&mcu_gpio0 1 GPIO_ACTIVE_LOW>,
++		   <&mcu_gpio0 4 GPIO_ACTIVE_LOW>;
++	status = "okay";
++
++	tpm@1 {
++		compatible = "infineon,slb9670", "tcg,tpm_tis-spi";
++		reg = <1>;
++		spi-max-frequency = <18500000>;
++	};
++
++	fram@2 {
++		compatible = "fujitsu,mb85rs256", "atmel,at25";
++		reg = <2>;
++		address-width = <16>;
++		size = <32768>;
++		spi-max-frequency = <33000000>;
++		pagesize = <1>;
++	};
++};
++
++/* Verdin UART_3 */
++&main_uart0 {
++	status = "okay";
++};
++
++/* Verdin UART_1 */
++&main_uart1 {
++	status = "okay";
++};
++
++&mcu_gpio0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_gpio_2>,
++		    <&pinctrl_gpio_3>,
++		    <&pinctrl_pcie_1_reset>;
++	gpio-line-names =
++		"",
++		"",
++		"GPIO2", /* Verdin GPIO_2 - SODIMM 208 */
++		"GPIO3", /* Verdin GPIO_3 - SODIMM 210 */
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"",
++		"";
++};
++
++/* Verdin CAN_2 */
++&mcu_mcan0 {
++	status = "okay";
++};
++
++/* Verdin SD_1 */
++&sdhci1 {
++	status = "okay";
++};
++
++/* Verdin USB_1*/
++&usbss0 {
++	status = "okay";
++};
++
++&usb0 {
++	status = "okay";
++};
++
++/* Verdin USB_2 */
++&usbss1 {
++	status = "okay";
++};
++
++&usb1 {
++	status = "okay";
++};
++
++/* Verdin PCIE_1_RESET# */
++&verdin_pcie_1_reset_hog {
++	status = "okay";
++};
++
++/* Verdin UART_2 */
++&wkup_uart0 {
++	linux,rs485-enabled-at-boot-time;
++	rs485-rts-active-low;
++	rs485-rx-during-tx;
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-ivy.dts b/arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-ivy.dts
+new file mode 100644
+index 000000000000..48798bf3da4f
+--- /dev/null
++++ b/arch/arm64/boot/dts/ti/k3-am625-verdin-nonwifi-ivy.dts
+@@ -0,0 +1,22 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
++/*
++ * Copyright 2024 Toradex
++ *
++ * https://www.toradex.com/computer-on-modules/verdin-arm-family/ti-am62
++ * https://www.toradex.com/products/carrier-board/ivy-carrier-board
++ */
++
++/dts-v1/;
++
++#include "k3-am625.dtsi"
++#include "k3-am62-verdin.dtsi"
++#include "k3-am62-verdin-nonwifi.dtsi"
++#include "k3-am62-verdin-ivy.dtsi"
++
++/ {
++	model = "Toradex Verdin AM62 on Ivy Board";
++	compatible = "toradex,verdin-am62-nonwifi-ivy",
++		     "toradex,verdin-am62-nonwifi",
++		     "toradex,verdin-am62",
++		     "ti,am625";
++};
+diff --git a/arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-ivy.dts b/arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-ivy.dts
+new file mode 100644
+index 000000000000..d96d8a0ebd86
+--- /dev/null
++++ b/arch/arm64/boot/dts/ti/k3-am625-verdin-wifi-ivy.dts
+@@ -0,0 +1,22 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
++/*
++ * Copyright 2024 Toradex
++ *
++ * https://www.toradex.com/computer-on-modules/verdin-arm-family/ti-am62
++ * https://www.toradex.com/products/carrier-board/ivy-carrier-board
++ */
++
++/dts-v1/;
++
++#include "k3-am625.dtsi"
++#include "k3-am62-verdin.dtsi"
++#include "k3-am62-verdin-wifi.dtsi"
++#include "k3-am62-verdin-ivy.dtsi"
++
++/ {
++	model = "Toradex Verdin AM62 WB on Ivy Board";
++	compatible = "toradex,verdin-am62-wifi-ivy",
++		     "toradex,verdin-am62-wifi",
++		     "toradex,verdin-am62",
++		     "ti,am625";
++};
 -- 
 2.39.5
 
