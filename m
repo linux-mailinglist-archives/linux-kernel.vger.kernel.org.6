@@ -1,141 +1,157 @@
-Return-Path: <linux-kernel+bounces-337658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1842984D0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:51:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0B7B984D11
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:51:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8606E1F24581
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:51:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A00E328447D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2066A146A6B;
-	Tue, 24 Sep 2024 21:51:23 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD72146018;
+	Tue, 24 Sep 2024 21:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="kxQorgTc";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="kxQorgTc"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B35813D25E
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 21:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC3413F43B;
+	Tue, 24 Sep 2024 21:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727214682; cv=none; b=HFGuQAbAe9jfK9V/nY8loLJpha97xbhqq+ju7FguIdXWp4hPL3a7tMXFiiXfAcM/OM2TngcDBeCLwwxV/f/2svzILoNM+vY4L52l0yrzZgaUcW+7B+eVNuqUkhqUFqODwc0Eb54W638Y4Kv9D6PolVT19tSmYBwOrbLtzulYaJI=
+	t=1727214703; cv=none; b=GshpaFCU6kQo1WaTQNZgyhqwjm8f6OL01sdASkjbrXnkAcBa38s0hfN7BVNYKDbWdSbf7LPZfTwIFZnsiMzwDzhPFtLHvHef8DrDVbNnVvdiv3sXfGIbRMkwBfwHnrKzu0klNRhFZ1dv/TLjPfOPN+tChGIYD38hrVoA49kPqzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727214682; c=relaxed/simple;
-	bh=7nkYi9mRI6Nh6vUspfF6r4G+OKqgvF1CfuUEK8XrRrg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ugzyQambluxH3e87MTCrF98viWvJk34+J/wxMJ6Npf89wwZnrPMlG4CtLhQ1n43tfNr5Cdde/q7u+CqyEyR+cgp63RmDWFH5nqEPlRT7OQdhDZoVQNKeAc/LzHzKS/4/LcEiOQJiBk8pv0Lgty+ap/+SUGWzJdFrKp8DXDm9d3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-82aa94d4683so884371239f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 14:51:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727214680; x=1727819480;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5GLXPP8gloWEkHs7/dRo22kxqeF7ht3rRUiVq991l8g=;
-        b=CY8daLl8zByRasYlC8opfP7YbAFI4O/29Wp7/+nkrJxrhpb17x3l2DrTAt3XtYKFRj
-         cx5KwlIYmXd65ifYIueMtENpOnrdHHrhn2Rsut5WUPrd0jE95d6uK6lREd1UcmnMPdpA
-         Rqyn8V8WcFJ3liC8l9FfRfdZUjf1l/xKskXN7u+1pN12EMIdcxD+Cu9YAhCw43OBInlR
-         5sXCjtvA/9w9iNSkdBFLipePITwMIUexR4P54mJ+rVtYzB8BoXUzNTOSoFsMeoX0oLiP
-         fKoZ8nWhKBQ00uWxteZN2mEK9z3S/VvHu40zlqDEnvntaSHH880d42BbGooNNpR9iN7T
-         2hPw==
-X-Forwarded-Encrypted: i=1; AJvYcCXNxTlPyui1fEbOko5/vUlvA0IVsk6C6a+i0bqznvElvfYDQqOSHfj3M126YiirBziZvB6Pd/ohsvJ8TOQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzlv0MM0mruLfoyQZzNMV5oUUvU+I2LKG0ZGxl27YLo25wvFMZt
-	TGvN3ZRZ37HLj3aCr2rzp7ZN8xgI3KqvaskLlX5X1fY3/43+N1JoTIfnH2GSkrnJJBbxC7wUB9i
-	SobPfihVczk5KUk68weEKuFo/ErUkslxskTruHuRaoxYTSOPWpvw/+cA=
-X-Google-Smtp-Source: AGHT+IEMTTjR3dYhXKua/OTKRfkCZwu+4yRP9qDdp+MaoIt93J1zWlRRc5Apel76dVoHwX826H3pVjxNlRYPn1nfXLV9IDbHzKfF
+	s=arc-20240116; t=1727214703; c=relaxed/simple;
+	bh=WvrlGdS7gZqfl1m7PPSjfpZgCon5PYfxv6FOC15+ljk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UxulwtRoKk9k8xAtDoGj5J09RdFWoOrUrTiEugftzIzgICCFTLZi+PWUQrGpZMN+sUZtDwKGM4K874Dx6d18S+9ICs4EhcnNlicTSZnH0FcfqJPgIUm5zV0qBWMV+at57YNn+K6OBsBLE0UKtXcXnwIAYN6LrEZtuBVQgnciw5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=kxQorgTc; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=kxQorgTc; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1727214700;
+	bh=WvrlGdS7gZqfl1m7PPSjfpZgCon5PYfxv6FOC15+ljk=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=kxQorgTcqLizcCjdwi3KoQDLZK42hxn5WPfMoTQXMcZ3+vaeoySfij3mfVmB8Tcds
+	 xRnCpBoEWOu4ZFy8QPAdSIvKJufkerMp7nfMJSr29nab/nrsfjY5ujLXDauTwapBXO
+	 5zPLC7mBxLmWkXwJgY3lrOuJUDLNWEE2RvnrDxNI=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 97432128746A;
+	Tue, 24 Sep 2024 17:51:40 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id nadPx_b3Iijt; Tue, 24 Sep 2024 17:51:40 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1727214700;
+	bh=WvrlGdS7gZqfl1m7PPSjfpZgCon5PYfxv6FOC15+ljk=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=kxQorgTcqLizcCjdwi3KoQDLZK42hxn5WPfMoTQXMcZ3+vaeoySfij3mfVmB8Tcds
+	 xRnCpBoEWOu4ZFy8QPAdSIvKJufkerMp7nfMJSr29nab/nrsfjY5ujLXDauTwapBXO
+	 5zPLC7mBxLmWkXwJgY3lrOuJUDLNWEE2RvnrDxNI=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 27F4E12873CB;
+	Tue, 24 Sep 2024 17:51:39 -0400 (EDT)
+Message-ID: <2b4c10ca905070158a4bc2fb78d5d5b0f32950ad.camel@HansenPartnership.com>
+Subject: Re: [PATCH v5 5/5] tpm: flush the auth session only when /dev/tpm0
+ is open
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org
+Cc: roberto.sassu@huawei.com, mapengyu@gmail.com, stable@vger.kernel.org,
+ Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>, Paul
+ Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, Peter Huewe <peterhuewe@gmx.de>, Jason
+ Gunthorpe <jgg@ziepe.ca>, keyrings@vger.kernel.org,
+ linux-security-module@vger.kernel.org,  linux-kernel@vger.kernel.org
+Date: Tue, 24 Sep 2024 17:51:36 -0400
+In-Reply-To: <D4EU5PQLA7BO.2J5MI195F8CIF@kernel.org>
+References: <20240921120811.1264985-1-jarkko@kernel.org>
+	 <20240921120811.1264985-6-jarkko@kernel.org>
+	 <00cf0bdb3ebfaec7c4607c8c09e55f2e538402f1.camel@HansenPartnership.com>
+	 <D4EPQPFA8RGN.2PO6UNTDFI6IT@kernel.org>
+	 <f9e2072909d462af72a9f3833b2d76e50894e70a.camel@HansenPartnership.com>
+	 <D4EU5PQLA7BO.2J5MI195F8CIF@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:190b:b0:3a0:91e7:67cc with SMTP id
- e9e14a558f8ab-3a26d7747famr11393505ab.13.1727214680184; Tue, 24 Sep 2024
- 14:51:20 -0700 (PDT)
-Date: Tue, 24 Sep 2024 14:51:20 -0700
-In-Reply-To: <00000000000088906d0622445beb@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f33458.050a0220.457fc.001e.GAE@google.com>
-Subject: Re: [syzbot] [net?] UBSAN: shift-out-of-bounds in xfrm_selector_match (2)
-From: syzbot <syzbot+cc39f136925517aed571@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, herbert@gondor.apana.org.au, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, steffen.klassert@secunet.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-syzbot has found a reproducer for the following issue on:
+On Wed, 2024-09-25 at 00:35 +0300, Jarkko Sakkinen wrote:
+> On Tue Sep 24, 2024 at 9:40 PM EEST, James Bottomley wrote:
+> > On Tue, 2024-09-24 at 21:07 +0300, Jarkko Sakkinen wrote:
+> > > On Tue Sep 24, 2024 at 4:43 PM EEST, James Bottomley wrote:
+> > > > On Sat, 2024-09-21 at 15:08 +0300, Jarkko Sakkinen wrote:
+> > > > > Instead of flushing and reloading the auth session for every
+> > > > > single transaction, keep the session open unless /dev/tpm0 is
+> > > > > used. In practice this means applying
+> > > > > TPM2_SA_CONTINUE_SESSION to the session attributes. Flush the
+> > > > > session always when /dev/tpm0 is written.
+> > > > 
+> > > > Patch looks fine but this description is way too terse to
+> > > > explain how it works.
+> > > > 
+> > > > I would suggest:
+> > > > 
+> > > > Boot time elongation as a result of adding sessions has been
+> > > > reported as an issue in
+> > > > https://bugzilla.kernel.org/show_bug.cgi?id=219229
+> > > > 
+> > > > The root cause is the addition of session overhead to
+> > > > tpm2_pcr_extend().  This overhead can be reduced by not
+> > > > creating and destroying a session for each invocation of the
+> > > > function. Do this by keeping a session resident in the TPM for
+> > > > reuse by any session based TPM command.  The current flow of
+> > > > TPM commands in the kernel supports this because
+> > > > tpm2_end_session() is only called for tpm errors because most
+> > > > commands don't continue the session and expect the session to
+> > > > be flushed on success.  Thus we can add the continue session
+> > > > flag to session creation to ensure the session won't be flushed
+> > > > except on error, which is a rare case.
+> > > 
+> > > I need to disagree on this as I don't even have PCR extends in my
+> > > boot sequence and it still adds overhead. Have you verified this
+> > > from the reporter?
+> > > 
+> > > There's bunch of things that use auth session, like trusted keys.
+> > > Making such claim that PCR extend is the reason is nonsense.
+> > 
+> > Well, the bug report does say it's the commit adding sessions to
+> > the PCR extends that causes the delay:
+> > 
+> > https://bugzilla.kernel.org/show_bug.cgi?id=219229#c5
+> > 
+> > I don't know what else to tell you.
+> 
+> As far as I've tested this bug I've been able to generate similar
+> costs with anything using HMAC encryption. PCR extend op itself
+> should have same cost with or without encryption AFAIK.
 
-HEAD commit:    151ac45348af net: sparx5: Fix invalid timestamps
-git tree:       net-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=15808a80580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=37c006d80708398d
-dashboard link: https://syzkaller.appspot.com/bug?extid=cc39f136925517aed571
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=122ad2a9980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1387b107980000
+That's true, but the only significant TPM operation in the secure boot
+path is the PCR extend for IMA.  The RNG stuff is there a bit, but
+there are other significant delays in seeding the entropy pool.  During
+boot with IMA enabled, you can do hundreds of binary measurements,
+hence the slow down.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/81152b131cff/disk-151ac453.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/013d9758c594/vmlinux-151ac453.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9ff7505093fc/bzImage-151ac453.xz
+> I guess I need provide benchmarks on this to prove that PCR extend is
+> not the only site that is affected.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+cc39f136925517aed571@syzkaller.appspotmail.com
+Well, on the per operation figures, it's obviously not, a standard TPM
+operation gets a significant overhead because of sessions. However, it
+is the only site that causes a large boot slowdown because of the
+number of the number of measurements IMA does on boot.
 
-------------[ cut here ]------------
-UBSAN: shift-out-of-bounds in ./include/net/xfrm.h:900:23
-shift exponent -96 is negative
-CPU: 0 UID: 0 PID: 5231 Comm: syz-executor893 Not tainted 6.11.0-syzkaller-01459-g151ac45348af #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- ubsan_epilogue lib/ubsan.c:231 [inline]
- __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:468
- addr4_match include/net/xfrm.h:900 [inline]
- __xfrm4_selector_match net/xfrm/xfrm_policy.c:222 [inline]
- xfrm_selector_match+0xe9b/0x1030 net/xfrm/xfrm_policy.c:247
- xfrm_state_look_at+0xe8/0x480 net/xfrm/xfrm_state.c:1172
- xfrm_state_find+0x199f/0x4d70 net/xfrm/xfrm_state.c:1280
- xfrm_tmpl_resolve_one net/xfrm/xfrm_policy.c:2481 [inline]
- xfrm_tmpl_resolve net/xfrm/xfrm_policy.c:2532 [inline]
- xfrm_resolve_and_create_bundle+0x6d2/0x2c90 net/xfrm/xfrm_policy.c:2826
- xfrm_lookup_with_ifid+0x334/0x1ee0 net/xfrm/xfrm_policy.c:3160
- xfrm_lookup net/xfrm/xfrm_policy.c:3289 [inline]
- xfrm_lookup_route+0x3c/0x1c0 net/xfrm/xfrm_policy.c:3300
- ip_route_connect include/net/route.h:333 [inline]
- __ip4_datagram_connect+0x96c/0x1260 net/ipv4/datagram.c:49
- __ip6_datagram_connect+0x194/0x1230
- ip6_datagram_connect net/ipv6/datagram.c:279 [inline]
- ip6_datagram_connect_v6_only+0x63/0xa0 net/ipv6/datagram.c:291
- __sys_connect_file net/socket.c:2067 [inline]
- __sys_connect+0x2df/0x310 net/socket.c:2084
- __do_sys_connect net/socket.c:2094 [inline]
- __se_sys_connect net/socket.c:2091 [inline]
- __x64_sys_connect+0x7a/0x90 net/socket.c:2091
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fb0cdb8e8a9
-Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffdce8cd648 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
-RAX: ffffffffffffffda RBX: 00007ffdce8cd818 RCX: 00007fb0cdb8e8a9
-RDX: 000000000000001c RSI: 0000000020000000 RDI: 0000000000000004
-RBP: 00007fb0cdc01610 R08: 000000000000000a R09: 00007ffdce8cd818
-R10: 00000000000000e8 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007ffdce8cd808 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
----[ end trace ]---
+Regards,
 
+James
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
