@@ -1,160 +1,315 @@
-Return-Path: <linux-kernel+bounces-336902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08ED3984252
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:37:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A73EE98425A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:38:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D46D281677
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:37:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27B5B1F21FC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45B5156C69;
-	Tue, 24 Sep 2024 09:37:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2700C15D5B7;
+	Tue, 24 Sep 2024 09:38:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="RH1UbJYp"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qkZXd1oK"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB051422C7;
-	Tue, 24 Sep 2024 09:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C8F15884D
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727170662; cv=none; b=fNu5+xCfNf9syLepaHKlhURv2KFXTl6BwcMg/87+UJP3+OUgWgxo1VM0FbcjNsVzywV2QfJNK24Y5nYBKF4VyUEz1Kh6HAQj5y/X/o6VaNAvqmtPf4LK0ZBEq+m1lkR4jAkUBOyvoak2jVMXMji5dpecyKujgNh+PoByeay3rV4=
+	t=1727170714; cv=none; b=BRW3prUNpqVTOIPu/pio4IIskxBc3DE1ZWg+hyoxkMrexArT9tIlKzthWW/Lzl1pNiEl5TTxF3qHfjhN/WyVfLqWzONhxKTC+YY3BMB7HO3hUz7bgn59y15cpv8OZGaWH0YgG4052grCYZzV24Y8ujcOF5svCnT7lwgRaJWnhP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727170662; c=relaxed/simple;
-	bh=yTTNa2QMtuCCueY2sh3DWgOl3ij0zht4q8WPO6UaB6k=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UaPIWsEWY7QCizZVooshLOSsfCOCGcpOS5ZglGZ53WtPVjwH+aPsJm55IDSMFF8X/bI3zIgH++RdOiILmyrXyMYpUtLLX7xCuYEM7DNjJglpEz1eYecfJ2620YWXi7dSWBTKUB+Idw/uQXTRA+acGFgXv22JaC34LJMMOmMzmxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=RH1UbJYp; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id F12DCA0C05;
-	Tue, 24 Sep 2024 11:37:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=RM2Bx6e9nFaFc6AnqSX0
-	YhK80LFLycZfvGoIpk5yHlk=; b=RH1UbJYpqUZFXNWJGntasiGmHvgl6chT6ZNn
-	+HrXPcCWo8fxTHq6TGSM34BuyqA/sDbThVnQuCX9modOEmpGUk3c8AyZKatd0Jtr
-	C3a9E+MuIn3hocSqIkLrqnR6gJMGG5Wt7iLHwR2YuG6zGuw1+MUmbTHuAQvnRVpn
-	o5zIOXoUY1pxM5//fM5f/SMZgM8Kih1yfnmlK860tX/b1KGSOnEvCqqHf74ac0F1
-	Rp8uuZIu3SIreFf5y4CITw246Mt0NlN8O7T9t+tjN2XP9jlZj81iuPBR3MvxJZoz
-	k658DQdPpC2rS4ubCPWwDYqfuTsdrf/+Gat1R+9ReMEzKhrS62THYK0h6lCPd6so
-	+vrftuRLfc42jRxuG0RNUd5UPbDGM8HI6qfIjHn6hvggqTyQbTBh+/rqWRfK8xuN
-	6ylHF1tEjtipqe0b+US00J6oiNnSTKmzZ5q1Q3KgQdsyUoMRR078UUZZ538Atntt
-	A82HL7fwLbMSRsIc7Gm7Vvlhh1DiarzdcgfDtQG/NqyLfvlEZ6AkPtBNMGGQCzD/
-	UBXkkUQwU3l8m03tv4vup0749Bls88/wm+z/pmMx83t+lQCXlCUOO+lwOwdSRe1T
-	0uy/NI+yAPVaF6/pv7KWvRk9CsihNjliKmP1HccsSFTxW4Ae6IyGNsi6xgz683iL
-	z+VxYwQ=
-From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
-To: Frank Li <Frank.Li@freescale.com>, "David S. Miller"
-	<davem@davemloft.net>, <imx@lists.linux.dev>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>, Wei Fang
-	<wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, Clark Wang
-	<xiaoning.wang@nxp.com>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Richard Cochran
-	<richardcochran@gmail.com>
-Subject: [PATCH net 2/2] net: fec: Reload PTP registers after link-state change
-Date: Tue, 24 Sep 2024 11:37:06 +0200
-Message-ID: <20240924093705.2897329-2-csokas.bence@prolan.hu>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240924093705.2897329-1-csokas.bence@prolan.hu>
-References: <20240924093705.2897329-1-csokas.bence@prolan.hu>
+	s=arc-20240116; t=1727170714; c=relaxed/simple;
+	bh=XiEp6M6uQ1zDT7UyK/xawymV8aQtHN8rxZbBRUXgg0M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KAHi7V9k9x9p2D5fMd+8pXCSd1zdndYqWx6Is5FkQiwx9cugfxrENwuMuaYZZaovA7q9hZtolVlqbTl6gLqtBWVZxv6K0OYuyhcr9FazWl2g5IhbHek1563TVnvamv0PiOovTDQOV1fEVzNBf4whY6YnfI/ww9Z1eWy1fb5V75s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qkZXd1oK; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f74e468baeso56987761fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 02:38:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727170710; x=1727775510; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=/nisFp8RKAs/gX3FD0xOUvyQj0aIVN5DLGlMJinQ3Dk=;
+        b=qkZXd1oK+2sg90pISrwHRMS65OaHCLIOtEnRisXoK2pe4bYzpbSQs9W7gg8jqh/KiD
+         rvHn8+NetCVxVGYpkJStI1redkf58rIzXX4w7vrcY9yJ8zdIO/5L8GjUOCHOJpedBA1Z
+         C8ZpW/fNdB62dtTTCm4slO2Y0UPX16fdJq6DJ6YXDEsyytOZEQfg8a1Begw6gEXFyaLb
+         v9GuCxzqdimDZK4WYDzldshLzWhBCbMiLZKTFD9X4wbSdTgf5cqJ6R5O71/ogCJjdS9n
+         0dXYCwDnWSTfmaBWnJTdrviFYMvAipGWL8aNkq4fbfdw3n1Jqj1uxlOlbHsAXvBLy3/q
+         MzyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727170710; x=1727775510;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/nisFp8RKAs/gX3FD0xOUvyQj0aIVN5DLGlMJinQ3Dk=;
+        b=LA1CRSkaMcu7AadsnTz6pQETSycyc93TL9uAN0W2ZGNmMVPf71/3DlQsDVCwOGD3+H
+         pELn02eSfSFOcktWtVuxvkO4d6whJLtBm6xs/sJWSMzhEuBfiJxZPMExhSb4OhyaeIcO
+         IWS5wmqnw9i4TumY2icTh+hjEUqoNYKnMg5gweF3U8pPhIHMo0wfC0AvgiZhErQgQLze
+         iZ492/FNfE3MPaArj9WPw81HXQ2XzF4raDM1OIZYqzh2U13APKsS6QVJpOKmBqniMJVr
+         KN1Uqh6Vzjofv4zYWITHV1EkBrP6ViqMA9/wMjUENXF0NNh7MmClJtyk/fRXefRoqp7W
+         SU+g==
+X-Forwarded-Encrypted: i=1; AJvYcCWZWNj8AnqKWnq0Gqg5/0k83sbqZwOvFg8/pFrtrC2ZbBESUX/EMMTcThaLEqd9S699WrDShjakYkvQ9Ic=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4kkEx5O9NCbdc4HNQHTXkqi9eD9Nd1SUj8RcADEGbGY0mkV9b
+	ZGls1x96J33uQ/RoeQZ94cEC7BwTkUOsmvqEZXi4H+W+06ghTaUDS7umgIuGuiw=
+X-Google-Smtp-Source: AGHT+IEVkdo9IU3eIpJK0EZxoXqGXjm1n93E9m6udz7QEOiMd5oLT7l8JD5yFadH+lkhJgbpkNuuYA==
+X-Received: by 2002:a2e:bea1:0:b0:2f7:4f58:4a9c with SMTP id 38308e7fff4ca-2f7cb2eda53mr79119231fa.16.1727170709926;
+        Tue, 24 Sep 2024 02:38:29 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f8d28b5c15sm1627151fa.133.2024.09.24.02.38.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2024 02:38:29 -0700 (PDT)
+Date: Tue, 24 Sep 2024 12:38:26 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Sandor Yu <sandor.yu@nxp.com>
+Cc: Maxime Ripard <mripard@kernel.org>, 
+	"andrzej.hajda@intel.com" <andrzej.hajda@intel.com>, "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "jonas@kwiboo.se" <jonas@kwiboo.se>, 
+	"jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>, "airlied@gmail.com" <airlied@gmail.com>, 
+	"daniel@ffwll.ch" <daniel@ffwll.ch>, "robh+dt@kernel.org" <robh+dt@kernel.org>, 
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, 
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>, 
+	"vkoul@kernel.org" <vkoul@kernel.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, 
+	dl-linux-imx <linux-imx@nxp.com>, Oliver Brown <oliver.brown@nxp.com>, 
+	"alexander.stein@ew.tq-group.com" <alexander.stein@ew.tq-group.com>, "sam@ravnborg.org" <sam@ravnborg.org>
+Subject: Re: [EXT] Re: [PATCH v16 4/8] drm: bridge: Cadence: Add MHDP8501
+ DP/HDMI driver
+Message-ID: <3z53w7kzwnsn3pg5elp5fbueid323t47yyhub67muidd6k47me@assca4bckdt5>
+References: <cover.1719903904.git.Sandor.yu@nxp.com>
+ <359914108b879e995d4a39de32a33310009f0fab.1719903904.git.Sandor.yu@nxp.com>
+ <20240702-quartz-salamander-of-culture-eec264@houat>
+ <PAXPR04MB94480AB0490BBF00D2BA17BBF4932@PAXPR04MB9448.eurprd04.prod.outlook.com>
+ <20240903-gay-capable-hound-3cbef2@houat>
+ <PAXPR04MB9448EF507CB5C18A43239A80F49E2@PAXPR04MB9448.eurprd04.prod.outlook.com>
+ <20240912-zippy-mongoose-of-domination-2ebc1d@houat>
+ <PAXPR04MB94484D86A71A7527ADD42EA4F4652@PAXPR04MB9448.eurprd04.prod.outlook.com>
+ <CAA8EJpphegHmBFgH1-n9PEkrr-Ys+HCvekKGNYRp=xQxgmC0Cw@mail.gmail.com>
+ <PAXPR04MB94481627922756E892C37B7DF4682@PAXPR04MB9448.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1727170658;VERSION=7976;MC=678376640;ID=205351;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2980D948546C7764
+In-Reply-To: <PAXPR04MB94481627922756E892C37B7DF4682@PAXPR04MB9448.eurprd04.prod.outlook.com>
 
-On link-state change, the controller gets reset,
-which clears all PTP registers, including PHC time,
-calibrated clock correction values etc. For correct
-IEEE 1588 operation we need to restore these after
-the reset.
+On Tue, Sep 24, 2024 at 07:04:58AM GMT, Sandor Yu wrote:
+>  
+> > 
+> > On Fri, 13 Sept 2024 at 11:46, Sandor Yu <sandor.yu@nxp.com> wrote:
+> > >
+> > >
+> > > > Subject: Re: [EXT] Re: [PATCH v16 4/8] drm: bridge: Cadence: Add
+> > > > MHDP8501 DP/HDMI driver
+> > > >
+> > > > On Fri, Sep 06, 2024 at 02:50:08AM GMT, Sandor Yu wrote:
+> > > > > > On Tue, Sep 03, 2024 at 06:07:25AM GMT, Sandor Yu wrote:
+> > > > > > > > -----Original Message-----
+> > > > > > > > From: dri-devel <dri-devel-bounces@lists.freedesktop.org> On
+> > > > > > > > Behalf Of Maxime Ripard
+> > > > > > > > Sent: 2024年7月2日 21:25
+> > > > > > > > To: Sandor Yu <sandor.yu@nxp.com>
+> > > > > > > > Cc: dmitry.baryshkov@linaro.org; andrzej.hajda@intel.com;
+> > > > > > > > neil.armstrong@linaro.org; Laurent Pinchart
+> > > > > > > > <laurent.pinchart@ideasonboard.com>; jonas@kwiboo.se;
+> > > > > > > > jernej.skrabec@gmail.com; airlied@gmail.com;
+> > > > > > > > daniel@ffwll.ch;
+> > > > > > > > robh+dt@kernel.org; krzysztof.kozlowski+dt@linaro.org;
+> > > > > > > > shawnguo@kernel.org; s.hauer@pengutronix.de;
+> > > > festevam@gmail.com;
+> > > > > > > > vkoul@kernel.org; dri-devel@lists.freedesktop.org;
+> > > > > > > > devicetree@vger.kernel.org;
+> > > > > > > > linux-arm-kernel@lists.infradead.org;
+> > > > > > > > linux-kernel@vger.kernel.org; linux-phy@lists.infradead.org;
+> > > > > > > > kernel@pengutronix.de; dl-linux-imx <linux-imx@nxp.com>;
+> > > > > > > > Oliver Brown <oliver.brown@nxp.com>;
+> > > > > > > > alexander.stein@ew.tq-group.com; sam@ravnborg.org
+> > > > > > > > Subject: [EXT] Re: [PATCH v16 4/8] drm: bridge: Cadence: Add
+> > > > > > > > MHDP8501 DP/HDMI driver
+> > > > > > > >
+> > > > > > > > Hi,
+> > > > > > > >
+> > > > > > > > There's still the scrambler issue we discussed on v15, but I
+> > > > > > > > have some more comments.
+> > > > > > > >
+> > > > > > > > On Tue, Jul 02, 2024 at 08:22:36PM GMT, Sandor Yu wrote:
+> > > > > > > > > +enum drm_connector_status cdns_mhdp8501_detect(struct
+> > > > > > > > > +cdns_mhdp8501_device *mhdp) {
+> > > > > > > > > +   u8 hpd = 0xf;
+> > > > > > > > > +
+> > > > > > > > > +   hpd = cdns_mhdp8501_read_hpd(mhdp);
+> > > > > > > > > +   if (hpd == 1)
+> > > > > > > > > +           return connector_status_connected;
+> > > > > > > > > +   else if (hpd == 0)
+> > > > > > > > > +           return connector_status_disconnected;
+> > > > > > > > > +
+> > > > > > > > > +   dev_warn(mhdp->dev, "Unknown cable status, hdp=%u\n",
+> > > > hpd);
+> > > > > > > > > +   return connector_status_unknown; }
+> > > > > > > > > +
+> > > > > > > > > +static void hotplug_work_func(struct work_struct *work) {
+> > > > > > > > > +   struct cdns_mhdp8501_device *mhdp = container_of(work,
+> > > > > > > > > +                                                struct
+> > cdns_mhdp8501_device,
+> > > > > > > > > +
+> > hotplug_work.work);
+> > > > > > > > > +   enum drm_connector_status status =
+> > > > > > cdns_mhdp8501_detect(mhdp);
+> > > > > > > > > +
+> > > > > > > > > +   drm_bridge_hpd_notify(&mhdp->bridge, status);
+> > > > > > > > > +
+> > > > > > > > > +   if (status == connector_status_connected) {
+> > > > > > > > > +           /* Cable connected  */
+> > > > > > > > > +           DRM_INFO("HDMI/DP Cable Plug In\n");
+> > > > > > > > > +           enable_irq(mhdp->irq[IRQ_OUT]);
+> > > > > > > > > +   } else if (status == connector_status_disconnected) {
+> > > > > > > > > +           /* Cable Disconnected  */
+> > > > > > > > > +           DRM_INFO("HDMI/DP Cable Plug Out\n");
+> > > > > > > > > +           enable_irq(mhdp->irq[IRQ_IN]);
+> > > > > > > > > +   }
+> > > > > > > > > +}
+> > > > > > > >
+> > > > > > > > You shouldn't play with the interrupt being enabled here:
+> > > > > > > > hotplug interrupts should always enabled.
+> > > > > > > >
+> > > > > > > > If you can't for some reason, the reason should be
+> > > > > > > > documented in your
+> > > > > > driver.
+> > > > > > >
+> > > > > > > iMX8MQ have two HPD interrupters, one for plugout and the
+> > > > > > > other for plugin, because they could not be masked, so we have
+> > > > > > > to enable one and
+> > > > > > disable the other.
+> > > > > > > I will add more comments here.
+> > > > > >
+> > > > > > Right, but why do you need to enable and disable them? Do you
+> > > > > > get spurious interrupts?
+> > > > >
+> > > > > They don't have status registers and cannot be masked. If they are
+> > > > > not disabled, they will continuously generate interrupts.
+> > > > > Therefore, I have to
+> > > > disable one and enable the other.
+> > > >
+> > > > Sorry, I still don't get it. How can it be useful to detect hotplug
+> > > > interrupts if it constantly sends spurious interrupts when it's enabled?
+> > >
+> > > Yes, this interrupt is different from a normal one; it's likely a design flaw.
+> > > For instance, the plugin interrupt is continuously generated as long
+> > > as the cable is plugged in, only stopping when the cable is unplugged.
+> > > That's why two interrupts are used to detect cable plugout and plugin
+> > separately.
+> > > If interrupts aren't used, the only option is polling.
+> > 
+> > I think I've seen such strange design on other platforms, level interrupt for HPD,
+> > which needs to be disabled via disable_irq().
+> > 
+> > >
+> > > >
+> > > > > > > > > +   /* Mailbox protect for HDMI PHY access */
+> > > > > > > > > +   mutex_lock(&mhdp->mbox_mutex);
+> > > > > > > > > +   ret = phy_init(mhdp->phy);
+> > > > > > > > > +   mutex_unlock(&mhdp->mbox_mutex);
+> > > > > > > > > +   if (ret) {
+> > > > > > > > > +           dev_err(dev, "Failed to initialize PHY: %d\n", ret);
+> > > > > > > > > +           goto clk_disable;
+> > > > > > > > > +   }
+> > > > > > > > > +
+> > > > > > > > > +   /* Mailbox protect for HDMI PHY access */
+> > > > > > > > > +   mutex_lock(&mhdp->mbox_mutex);
+> > > > > > > > > +   ret = phy_set_mode(mhdp->phy, phy_mode);
+> > > > > > > > > +   mutex_unlock(&mhdp->mbox_mutex);
+> > > > > > > > > +   if (ret) {
+> > > > > > > > > +           dev_err(dev, "Failed to configure PHY: %d\n", ret);
+> > > > > > > > > +           goto clk_disable;
+> > > > > > > > > +   }
+> > > > > > > >
+> > > > > > > > Why do you need a shared mutex between the phy and HDMI
+> > > > controller?
+> > > > > > >
+> > > > > > > Both PHY and HDMI controller could access to the HDMI firmware
+> > > > > > > by mailbox, So add mutex to avoid race condition.
+> > > > > >
+> > > > > > That should be handled at either the phy or mailbox level, not
+> > > > > > in your hdmi driver.
+> > > > >
+> > > > > In both HDMI driver and PHY driver, every mailbox access had
+> > > > > protected by its owns mutex. However, this mutex can only protect
+> > > > > each mailbox access within their respective drivers, and it cannot
+> > > > > provide protection for access between the HDMI and PHY drivers.
+> > > > >
+> > > > > The PHY driver only provides two API functions, and these
+> > > > > functions are only called in the HDMI driver. Therefore, when
+> > > > > accessing these functions, we use a mutex to protect them. This
+> > > > > ensures that mailbox access is protected across different PHY and HDMI
+> > drivers.
+> > > >
+> > > > It's really about abstraction. You're using a publicly defined API,
+> > > > and change the semantics for your driver only, and that's not ok.
+> > > >
+> > > > Why can't the mailbox driver itself serialize the accesses from any
+> > > > user, HDMI and PHY drivers included?
+> > > >
+> > >
+> > > In the current code implementation, cdns-mhdp-helper.c isn't a standalone
+> > driver but rather a library.
+> > > It provides fundamental mailbox access functions and basic register
+> > read/write operations that rely on the mailbox.
+> > > These functions are highly reusable across MHDP8501 and MHDP8546 and
+> > can be leveraged by future MHDP versions.
+> > >
+> > > However, most MHDP firmware interactions involve a sequence of mailbox
+> > accesses, including sending commands and receiving firmware responses.
+> > > These commands constitute a significant portion of all firmware interactions,
+> > encompassing operations like EDID reading and DP link training.
+> > > Unfortunately, these commands cannot be reused between MHDP8501 and
+> > MHDP8546.
+> > >
+> > > Creating a dedicated mailbox driver with its own mutex would effectively
+> > address race conditions.
+> > > However, this would necessitate relocating all mailbox-related functions to
+> > this driver.
+> > > Including these non-reusable functions would defeat the purpose of code
+> > reuse.
+> > >
+> > > To strike a balance between code reusability and race condition mitigation,
+> > adding mutexes to PHY access functions seems like a reasonable solution.
+> > 
+> > You seem to have two kinds of scenarios when talking to MHDP: just
+> > cdns_mhdp_mailbox_send(), no response needed and then the
+> > cdns_mhdp_mailbox_send() /  cdns_mhdp_mailbox_recv_header() /
+> > cdns_mhdp_mailbox_recv_data() sequence. Extract those + the mutex access
+> > to separate functions, add a mutex to those sequences and use them as a
+> > high-level API for your HDMI and PHY drivers.
+> > 
+> > Adding mutexes around phy_foo() calls doesn't look like a proper solution _at_
+> > _all_.
+> > 
+> Because the sequence cdns_mhdp_mailbox_send() / cdns_mhdp_mailbox_recv_header() / cdns_mhdp_mailbox_recv_data() cannot be reused by different drivers, 
+> it's not suitable to abstract them into a separate function.
 
-Fixes: 6605b730c061 ("FEC: Add time stamping code and a PTP hardware clock")
-Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
----
- drivers/net/ethernet/freescale/fec.h     |  3 +++
- drivers/net/ethernet/freescale/fec_ptp.c | 20 ++++++++++++++++++++
- 2 files changed, 23 insertions(+)
+Why is it so? In the end, even if one driver uses it and another driver
+uses other functions (while holding the mutex), please move generic
+versions of those functions to your helper code. It should abstract
+_types_ of hardware access (and send/recv_header/recv_data is such an
+abstraction).
 
-diff --git a/drivers/net/ethernet/freescale/fec.h b/drivers/net/ethernet/freescale/fec.h
-index 0552317a2554..1cca0425d493 100644
---- a/drivers/net/ethernet/freescale/fec.h
-+++ b/drivers/net/ethernet/freescale/fec.h
-@@ -693,6 +693,9 @@ struct fec_enet_private {
- 
- 	struct {
- 		int pps_enable;
-+		u64 ns_sys, ns_phc;
-+		u32 at_corr;
-+		u8 at_inc_corr;
- 	} ptp_saved_state;
- 
- 	u64 ethtool_stats[];
-diff --git a/drivers/net/ethernet/freescale/fec_ptp.c b/drivers/net/ethernet/freescale/fec_ptp.c
-index df1ef023493b..a4eb6edb850a 100644
---- a/drivers/net/ethernet/freescale/fec_ptp.c
-+++ b/drivers/net/ethernet/freescale/fec_ptp.c
-@@ -767,24 +767,44 @@ void fec_ptp_init(struct platform_device *pdev, int irq_idx)
- void fec_ptp_save_state(struct fec_enet_private *fep)
- {
- 	unsigned long flags;
-+	u32 atime_inc_corr;
- 
- 	spin_lock_irqsave(&fep->tmreg_lock, flags);
- 
- 	fep->ptp_saved_state.pps_enable = fep->pps_enable;
- 
-+	fep->ptp_saved_state.ns_phc = timecounter_read(&fep->tc);
-+	fep->ptp_saved_state.ns_sys = ktime_get_ns();
-+
-+	fep->ptp_saved_state.at_corr = readl(fep->hwp + FEC_ATIME_CORR);
-+	atime_inc_corr = readl(fep->hwp + FEC_ATIME_INC) & FEC_T_INC_CORR_MASK;
-+	fep->ptp_saved_state.at_inc_corr = (u8)(atime_inc_corr >> FEC_T_INC_CORR_OFFSET);
-+
- 	spin_unlock_irqrestore(&fep->tmreg_lock, flags);
- }
- 
- /* Restore PTP functionality after a reset */
- void fec_ptp_restore_state(struct fec_enet_private *fep)
- {
-+	u32 atime_inc = readl(fep->hwp + FEC_ATIME_INC) & FEC_T_INC_MASK;
- 	unsigned long flags;
-+	u32 counter;
-+	u64 ns;
- 
- 	spin_lock_irqsave(&fep->tmreg_lock, flags);
- 
- 	/* Reset turned it off, so adjust our status flag */
- 	fep->pps_enable = 0;
- 
-+	writel(fep->ptp_saved_state.at_corr, fep->hwp + FEC_ATIME_CORR);
-+	atime_inc |= ((u32)fep->ptp_saved_state.at_inc_corr) << FEC_T_INC_CORR_OFFSET;
-+	writel(atime_inc, fep->hwp + FEC_ATIME_INC);
-+
-+	ns = ktime_get_ns() - fep->ptp_saved_state.ns_sys + fep->ptp_saved_state.ns_phc;
-+	counter = ns & fep->cc.mask;
-+	writel(counter, fep->hwp + FEC_ATIME);
-+	timecounter_init(&fep->tc, &fep->cc, ns);
-+
- 	spin_unlock_irqrestore(&fep->tmreg_lock, flags);
- 
- 	/* Restart PPS if needed */
+> I've noticed some Linux kernel drivers use global mutexes, which can solve the current race conditions problem. 
+> I'll implement this in the next version.
+
 -- 
-2.34.1
-
-
+With best wishes
+Dmitry
 
