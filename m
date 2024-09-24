@@ -1,138 +1,128 @@
-Return-Path: <linux-kernel+bounces-336621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 756BA983D25
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:28:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76BDE983D1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:27:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A3681F22F9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 06:28:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A73A61C20B54
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 06:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED018811EB;
-	Tue, 24 Sep 2024 06:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uG6kKxTj"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E33C953373
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 06:27:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71FA67A724;
+	Tue, 24 Sep 2024 06:27:17 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527B0768FD
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 06:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727159266; cv=none; b=uCltQfKVfLh22jNqCUDycRhW6Gee1Iy1xiR2cefodZLe7ZndGlMM5jw8Kkj9b8kyUQDb/A/leqE68++iV09GiWQo17PsnX+FLxNRLY2Q7LMGwrrH9vUAESWsC8DfRk014jyDWe/pW9tJmwvtEEGHk5pZjOiXEeirtrbL/dhLpMs=
+	t=1727159237; cv=none; b=VFB9h/8pEgvFxoXUPZwtB+jFU/7UDhJoNPV1PBNVETdg9PHoKBNlagMpdopfF6Ve/gJuNiUIVytouWDqJUg48q/4+nuyt7cVhb9OEVTHNQjKNPtOHApvV86pUB+bo3P8GAOdzd58LIRG9QfOJu7ypI1hFtUKOOubbgPV0HOmQ3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727159266; c=relaxed/simple;
-	bh=Fq1eeBVCVo8skENTGGXSVFjvxg6ebjriCPrvVo2SiL0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RMjauRkAUJdV/Dx1g2AGJ0XHtFw1enGCbETiYAkM8pEADDRme1T3rsNoXHTgnBRyyZIPpD9Tra2BrtK+txr01EOOIsaurPWwsMB3xO5RQHDGkDVsS6WX0ITvgY1iwv9NKwZi8DUGjWWFJ92FpcZwbftEbfwDajU+meCi1E22e1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uG6kKxTj; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7163489149eso4171705a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 23:27:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727159264; x=1727764064; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fq1eeBVCVo8skENTGGXSVFjvxg6ebjriCPrvVo2SiL0=;
-        b=uG6kKxTj4XU+RUsuqpnsvfW5md5RmkaOJmFOkcYjRJk4TNoXRsIFvnW9OmwqwU2qzo
-         s4nb7D++m9xiy/47B2ss5gi8ZY7NqQHEan6u+8pY693mPKXXXstZvbD4B2HrUde+e5mq
-         p4ZuN2AhZ6NyZVhFyuQgG4o8kVW2ZX5BG30xoJ7N7Y9a3pPQe7Boqk43dSYj+uO/RIv5
-         JGicl5l8hZT0ijVgZoWrsclWJMIJpEncdfXCAyGJKlDEfr0uXfOpUOGs0KKARveHqZCc
-         PDlwqN0Q/swdwy3+4YfQUEvoQa5Ez7tO/zu2JeFG9TBhGv41pI8pdiOwAxcA1ts8uJQZ
-         4vdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727159264; x=1727764064;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Fq1eeBVCVo8skENTGGXSVFjvxg6ebjriCPrvVo2SiL0=;
-        b=j6VdFo+4OxWzEs4DlcvPbU2sF9cAsMAfgaj675X62e9Wp6CyDb/ip8FFPCS9rHAO6z
-         lA3BVarn6uHv8yaGEmsSgda1N2Zc4UkD+SLjX07Jmf2h6w3/TUD/QR3mePuuAePASEu6
-         o1IUJCMdENLYFFEffIeELGxKPEiZVAnnSYLvYaTVu5c3RThYBKjbyZFDuCHPLMSAOirp
-         hLRC7gm4UCZopwAtIdSpPBdmK+l6Qq9TaxTZ/5a7tYEju7lL+Ek+mOOmuwLsNYXRqN5K
-         D7W50o+ES2MnWI3JBJaejlxub2RUxSe6SbiTPtwgcEMWPleAA/KnTq0KldTqXtm/qTcB
-         DPYw==
-X-Forwarded-Encrypted: i=1; AJvYcCVTEzK/0SI5FMP9zODElL2mxE2vpPOeXA/SvUg/7Yz6imCuadLuP88IIT3a5C9tlLqKZa9XXHX+Qjwf+4Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywCkTpOgnAt5mrqE4A9pBYojx44XU8vnjXXdNqYM2SRyCnC+XA
-	RdYhL7nhe4VTfhjmzdXhMBtmKfRvMtlYMMyBY/z+EKelX1ixGUtGvztwxTId1brtHbn/1NzwcK1
-	63xqFc4Ry0wa1W4dUc3mHMzyv4nOqNtSut8Fwew==
-X-Google-Smtp-Source: AGHT+IHPN9LFslQTM1gMYN4tKKonS0hsjh0tam1Zi62PvgetLTo885uAHaByvQOqprrT+VS/gMQK9GARTq8LGeXeZ6c=
-X-Received: by 2002:a05:6a21:9217:b0:1cf:3461:2970 with SMTP id
- adf61e73a8af0-1d30a9bf6dfmr20527541637.41.1727159264301; Mon, 23 Sep 2024
- 23:27:44 -0700 (PDT)
+	s=arc-20240116; t=1727159237; c=relaxed/simple;
+	bh=pkIADc2o+Wa2YtBSR4SF6m7MEBBU+Gki0tVYNX/dZbU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IW86Et7+Vjr4tnnpLTG6pthH4sC3AL8//o4s1vnNMVFrWF+wwwfvqym84Yr47T7cvZ/WWozWllcRhzOfVn7SYRMG1C0s7b/s6Hk+lN06H7yLV4lV9tn8PFv7nYm4bj2aTKgsKsINBfq6nNu5Rc/+ebHTHCLQqBb5EyX1x3vg2WA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8BxPOrAW_Jm_74NAA--.31979S3;
+	Tue, 24 Sep 2024 14:27:12 +0800 (CST)
+Received: from linux.localdomain (unknown [113.200.148.30])
+	by front2 (Coremail) with SMTP id qciowMCxSsa_W_Jmzn0QAA--.1714S2;
+	Tue, 24 Sep 2024 14:27:12 +0800 (CST)
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] compiler.h: Specify correct attribute for .rodata..c_jump_table
+Date: Tue, 24 Sep 2024 14:27:10 +0800
+Message-ID: <20240924062710.1243-1-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240918111826.863596-1-linyunsheng@huawei.com>
- <20240918111826.863596-3-linyunsheng@huawei.com> <CAC_iWjK=G7Oo5=pN2QunhasgDC6NyC1L+96jigX7u9ad+PbYng@mail.gmail.com>
- <894a3c2c-22f9-45b9-a82b-de7320066b42@kernel.org> <cdfecd37-31d7-42d2-a8d8-92008285b42e@huawei.com>
- <0e8c7a7a-0e2a-42ec-adbc-b29f6a514517@kernel.org> <CAC_iWj+3JvPY2oqVOdu0T1Wt6-ukoy=dLc72u1f55yY23uOTbA@mail.gmail.com>
- <2c5ccfff-6ab4-4aea-bff6-3679ff72cc9a@huawei.com> <20240923175226.GC9634@ziepe.ca>
-In-Reply-To: <20240923175226.GC9634@ziepe.ca>
-From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Date: Tue, 24 Sep 2024 09:27:07 +0300
-Message-ID: <CAC_iWjLmWtN51eLnnuPtL5vzTBQF2v43zyoV1+AZqUmuSD1DGg@mail.gmail.com>
-Subject: Re: [PATCH net 2/2] page_pool: fix IOMMU crash when driver has
- already unbound
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Yunsheng Lin <linyunsheng@huawei.com>, Jesper Dangaard Brouer <hawk@kernel.org>, davem@davemloft.net, 
-	kuba@kernel.org, pabeni@redhat.com, liuyonglong@huawei.com, 
-	fanghaiqing@huawei.com, zhangkun09@huawei.com, 
-	Robin Murphy <robin.murphy@arm.com>, Alexander Duyck <alexander.duyck@gmail.com>, 
-	IOMMU <iommu@lists.linux.dev>, Wei Fang <wei.fang@nxp.com>, 
-	Shenwei Wang <shenwei.wang@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>, 
-	Eric Dumazet <edumazet@google.com>, Tony Nguyen <anthony.l.nguyen@intel.com>, 
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
-	Alexander Lobakin <aleksander.lobakin@intel.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, 
-	Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>, 
-	Shayne Chen <shayne.chen@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, 
-	Kalle Valo <kvalo@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, imx@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, intel-wired-lan@lists.osuosl.org, 
-	bpf@vger.kernel.org, linux-rdma@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qciowMCxSsa_W_Jmzn0QAA--.1714S2
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7Kw15CryxJFWrtw1DWr1xZwc_yoW8KFy8pF
+	4DCryqgrs5Zr15uw47Xw1akr13Aw42yF1UCrWDtr1UAw15JF1kG3WktrsxKayUKry5tr4x
+	twn7tryUKa4xZ3gCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUU9Yb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+	AVWUtwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7V
+	AKI48JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v2
+	6r1Y6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17
+	CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF
+	0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIx
+	AIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIev
+	Ja73UjIFyTuYvjxUc0eHDUUUU
 
-Hi Jason,
+Currently, there is an assembler message when generating kernel/bpf/core.o
+under CONFIG_OBJTOOL with LoongArch compiler toolchain:
 
-On Mon, 23 Sept 2024 at 20:52, Jason Gunthorpe <jgg@ziepe.ca> wrote:
->
-> On Fri, Sep 20, 2024 at 02:14:02PM +0800, Yunsheng Lin wrote:
->
-> > I am not sure what dose the API that allows netdev to "give" struct device
-> > to page_pool look like or how to implement the API yet, but the obvious way
-> > to stall the calling of device_del() is to wait for the inflight
-> > page to
->
-> It is not device_del() you need to stall, but the remove() function of
-> the device driver.
->
-> Once all drivers have been unbound the DMA API can be reconfigured and
-> all existing DMA mappings must be concluded before this happens,
-> otherwise there will be problems.
->
-> So, stalling something like unregister_netdevice() would be a better
-> target - though stalling forever on driver unbind would not be
-> acceptable.
+  Warning: setting incorrect section attributes for .rodata..c_jump_table
 
-TBH, I have doubts that even stalling it for small amounts of time is
-going to disrupt userspace and people are going to yell at us.
-I am gonna repeat myself here, but I think keeping a list of the
-inflight SKBs that we need to unmap when the interface goes down, is
-the most complex, but less disruptive solution
+This is because the section ".rodata..c_jump_table" should be readonly,
+but there is a "W" (writable) part of the flags:
 
-Thanks
-/Ilias
->
-> Jason
+  $ readelf -S kernel/bpf/core.o | grep -A 1 "rodata..c"
+  [34] .rodata..c_j[...] PROGBITS         0000000000000000  0000d2e0
+       0000000000000800  0000000000000000  WA       0     0     8
+
+There is no above issue on x86 due to the generated section flag is only
+"A" (allocatable). In order to silence the warning on LoongArch, specify
+the attribute like ".rodata..c_jump_table,\"a\",@progbits #" explicitly,
+then the section attribute of ".rodata..c_jump_table" must be readonly
+in the kernel/bpf/core.o file.
+
+Before:
+
+  $ objdump -h kernel/bpf/core.o | grep -A 1 "rodata..c"
+   21 .rodata..c_jump_table 00000800  0000000000000000  0000000000000000  0000d2e0  2**3
+                  CONTENTS, ALLOC, LOAD, RELOC, DATA
+
+After:
+
+  $ objdump -h kernel/bpf/core.o | grep -A 1 "rodata..c"
+   21 .rodata..c_jump_table 00000800  0000000000000000  0000000000000000  0000d2e0  2**3
+                  CONTENTS, ALLOC, LOAD, RELOC, READONLY, DATA
+
+By the way, AFAICT, maybe the root cause is related with the different
+compiler behavior of various archs, so to some extent this change is a
+workaround for LoongArch, and also there is no effect for x86 which is
+the only port supported by objtool before LoongArch with this patch.
+
+Cc: stable@vger.kernel.org # 6.9+
+Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+---
+ include/linux/compiler.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index ec55bcce4146..4d4e23b6e3e7 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -133,7 +133,7 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+ #define annotate_unreachable() __annotate_unreachable(__COUNTER__)
+ 
+ /* Annotate a C jump table to allow objtool to follow the code flow */
+-#define __annotate_jump_table __section(".rodata..c_jump_table")
++#define __annotate_jump_table __section(".rodata..c_jump_table,\"a\",@progbits #")
+ 
+ #else /* !CONFIG_OBJTOOL */
+ #define annotate_reachable()
+-- 
+2.42.0
+
 
