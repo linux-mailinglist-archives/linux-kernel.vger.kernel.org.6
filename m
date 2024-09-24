@@ -1,53 +1,86 @@
-Return-Path: <linux-kernel+bounces-336980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A35498439E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:29:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11FC49843AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:32:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4AA21F239F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:29:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBCC11F23B04
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:32:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE6317BB2A;
-	Tue, 24 Sep 2024 10:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA2B19C575;
+	Tue, 24 Sep 2024 10:32:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lQdwNACK"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="LPQFp9dd"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61EEC17B508
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 10:29:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFB019B3D8;
+	Tue, 24 Sep 2024 10:32:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727173751; cv=none; b=SRsY/IlsrwfjLLGokoxiZFWlr6PPOd6oL+UNmbTmtcnX0fXim4MLWZRoymID6LEQjTqPCUsKQ7xZl1sXmzyJhU/oVrnoA8BLWYaoKk4eHQUA2hCjX9CFTlMrqqLEzHxBtP87BOaqN3qE8vtz61nLPi8ExTIf7Opv4eOZE9luHuc=
+	t=1727173934; cv=none; b=t+6CrBjzjx/N/+YBI0uAcBXOY3ap2Mnp2eBLB792BXNXdxPqX0jeRhYozQ3YMxkaVRs1rr02kr9CtdoQ4dNXNIsb3wjFCw++3XdCJL2ojlJ+btA72NPTBs/9KQKSSJeeRLV38yywYe6H8xCzbtNUYsnv4rnDwkc2LhtdSiG+wwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727173751; c=relaxed/simple;
-	bh=kqEknAlBnR/VaEa2dNt4LCU5GTDKzHcS0DL54BwSoHQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OIJ3Hxr2uiHekM4E7nDduf2XUpBWaj/k0UnuLJV1UcUYJezPDJDm1wjQKJ1JAtfS8oONrz3Oxsk2Mrrq0O4ae3TlYTPXDCx7Jj7YBx72ouLvWJdco74QE7DINgD/g/X1YDIwcG3D19CYqTzbkNgS8DV+WpAmQ2u7oJUHK/9ldA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lQdwNACK; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727173747;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=/vV73Ujg2kdpt2Xjvs7nGirCJKlS64rCSJatuWlU+cY=;
-	b=lQdwNACKDxDxUIZ2BpzJ9Z0cjPOaXwxBRpKrJAFwmi4PIoqVVYe3qethJctPr/Y/XeX+A3
-	h/ksDHzwGCrqojSdaZsK9A5B3mFk95JfSORcKf1UIdyzsNq4M0cx+5JS/9ho2AfHEYslV1
-	zi/wYAo774HPDeuZJhJ8gX6Nf4MujM0=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] f2fs: Use struct_size() helper to improve f2fs_acl_clone()
-Date: Tue, 24 Sep 2024 12:28:01 +0200
-Message-ID: <20240924102800.240209-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1727173934; c=relaxed/simple;
+	bh=wWgpjFRfAn45x1WkNW3OVLSZGYTwHVoGVQ8Rd73tUZg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ImMwrddNH+yrThKdVdK6wYnQyEbRjk2OLO6rgXtDzI9FxqbZAx1eBDc6HcnU8z6KNHUDTd+Fc/5Pgi6Zi+b57Yxqk0M6DUV2228sbPOuIh0sjNAIQsstX+NX3V9RVzCc20hdYFnbm/K27/Q1JMWLZmWgZCL3T+ZVf8uwk9G7Nxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=LPQFp9dd; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 3e7888ea7a6011ef8b96093e013ec31c-20240924
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=eh/E3ZrNXgATRJoFQt41TWCKe2iYdT2V0P2tx1qtG6k=;
+	b=LPQFp9ddTvkCF2RfpV8JiJSu+ZVZsgwfWrU0Lc8NOabtBSnJk+wZda3OhSND3M6EgGSALARsL9C27Q6WtkaNi5KXkoPkjCzQn8PlOIPIVg0XSCPN8rcSmiJW0lm7vUBineHQc+HQ/qOSx1SWMSbn8vhAzz4Daijh77COSiVU4Xg=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:0f6e347d-9a81-4313-9a49-409f71c73cf5,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:b67eafd0-7921-4900-88a1-3aef019a55ce,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 3e7888ea7a6011ef8b96093e013ec31c-20240924
+Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw02.mediatek.com
+	(envelope-from <macpaul.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1423011262; Tue, 24 Sep 2024 18:32:05 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Tue, 24 Sep 2024 18:32:04 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Tue, 24 Sep 2024 18:32:04 +0800
+From: Macpaul Lin <macpaul.lin@mediatek.com>
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel
+	<p.zabel@pengutronix.de>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Yong Wu
+	<yong.wu@mediatek.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon
+	<will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, <dri-devel@lists.freedesktop.org>,
+	<linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, Alexandre Mergnat
+	<amergnat@baylibre.com>
+CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+	Macpaul Lin <macpaul.lin@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, Sen
+ Chu <sen.chu@mediatek.com>, Chris-qj chen <chris-qj.chen@mediatek.com>,
+	MediaTek Chromebook Upstream
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai
+	<wenst@chromium.org>
+Subject: [PATCH 1/6] arm64: dts: mt8195: Fix dtbs_check error for infracfg_ao node
+Date: Tue, 24 Sep 2024 18:31:51 +0800
+Message-ID: <20240924103156.13119-1-macpaul.lin@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,33 +88,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
+X-MTK: N
 
-Use struct_size() to calculate the number of bytes to allocate for a
-cloned acl.
+The infracfg_ao node in mt8195.dtsi was causing a dtbs_check error.
+The error message was:
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+syscon@10001000: compatible: ['mediatek,mt8195-infracfg_ao', 'syscon',
+                 'simple-mfd'] is too long
+
+To resolve this, remove 'simple-mfd' from the 'compatible' property of the
+infracfg_ao node.
+
+Fixes: 37f2582883be ("arm64: dts: Add mediatek SoC mt8195 and evaluation board")
+Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
 ---
- fs/f2fs/acl.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/mediatek/mt8195.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
-index 8bffdeccdbc3..1fbc0607363b 100644
---- a/fs/f2fs/acl.c
-+++ b/fs/f2fs/acl.c
-@@ -296,9 +296,8 @@ static struct posix_acl *f2fs_acl_clone(const struct posix_acl *acl,
- 	struct posix_acl *clone = NULL;
+diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+index e89ba384c4aa..2e1b41359b43 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+@@ -487,7 +487,7 @@ topckgen: syscon@10000000 {
+ 		};
  
- 	if (acl) {
--		int size = sizeof(struct posix_acl) + acl->a_count *
--				sizeof(struct posix_acl_entry);
--		clone = kmemdup(acl, size, flags);
-+		clone = kmemdup(acl, struct_size(acl, a_entries, acl->a_count),
-+				flags);
- 		if (clone)
- 			refcount_set(&clone->a_refcount, 1);
- 	}
+ 		infracfg_ao: syscon@10001000 {
+-			compatible = "mediatek,mt8195-infracfg_ao", "syscon", "simple-mfd";
++			compatible = "mediatek,mt8195-infracfg_ao", "syscon";
+ 			reg = <0 0x10001000 0 0x1000>;
+ 			#clock-cells = <1>;
+ 			#reset-cells = <1>;
 -- 
-2.46.1
+2.45.2
 
 
