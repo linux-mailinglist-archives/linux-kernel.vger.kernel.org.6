@@ -1,60 +1,61 @@
-Return-Path: <linux-kernel+bounces-337543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EAB3984B8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:27:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE69E984B8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:27:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA4E7283808
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:27:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12B30B22AB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430C11ACE00;
-	Tue, 24 Sep 2024 19:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A52713B2AF;
+	Tue, 24 Sep 2024 19:27:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="pnNWKtZq";
-	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="QUwC5IrD"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="nIot1445";
+	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="TrXAzbuB"
 Received: from e3i110.smtp2go.com (e3i110.smtp2go.com [158.120.84.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C770013B2A4
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 19:27:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C531AC896
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 19:27:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.120.84.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727206053; cv=none; b=KzCK8KPV11DZiZYsTPlvUeSDDv3867K3EEOtjCgx2kRnM1Wn+QSz65GKtqcfSNxSlv+xBnVh2cUuS2UfzidsxSQtBNnZpSVWEZTxrhKHPooo+pyVU65N4dc7zlES6KGdnmtz66pAIwlqTjjhA3aQW+hwf9n44dKcUPFUOPRfDvA=
+	t=1727206051; cv=none; b=Q0nbmVWsff3GEz74U3J5ZSDKb/12RCicZmSJz8Hgf/Clg7r66mmLOwLvE7wQLY2E5hxISRiKdjVYHx1uTrFTcxiI0TlvX6rUoPNxwY9473lQyHvuw3ugxvBLoMtWC8XhN4nvCoZmwr9ySJ9qfQ5FU2S7yqyJi9ZdgrIwU0ImSvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727206053; c=relaxed/simple;
-	bh=DTFUn5D+GS+8oAKFg96mSbEnHq7VklLZgnN8eBHLIVM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=M1OZPrhnuHVWecaTxD7/3W/Avn3DTH/kszV2dPmccWFUtIhPvdfDmQIpE09lB/rj4OmXarLFN6dewytlS7w6iz7mavQhAkdJhPfA8p4OEs1KV9O/UnUCn8A4QW+eROkLQkz+X9tYYzClPahaDOqvu8IOIDajMZ2PV8+ayHSyOQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=pass (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=pnNWKtZq; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=QUwC5IrD; arc=none smtp.client-ip=158.120.84.110
+	s=arc-20240116; t=1727206051; c=relaxed/simple;
+	bh=o9AheMXyJ5Cmyc7lZF52KShBkTdeQHX7e9sg1eH8R50=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=QoIU+/bWkXsHw+cb5hThRV6+uOh/m6DSixKPN1WqUEDeU+XHq3BpjiYD21DCS0/msXk0x6N4HlvVncSsDuwtbmkV/z7Xcth/b8xl7VcVmaDPdcAHU8vplunENcWEYcL9zj9AYK9ZK1uImxsBh5jLEp5M+RAb1ueekxNRiLkDXYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=pass (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=nIot1445; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=TrXAzbuB; arc=none smtp.client-ip=158.120.84.110
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smtpservice.net;
- i=@smtpservice.net; q=dns/txt; s=a1-4; t=1727206040; h=feedback-id :
+ i=@smtpservice.net; q=dns/txt; s=a1-4; t=1727206039; h=feedback-id :
  x-smtpcorp-track : date : message-id : to : subject : from : reply-to
  : sender : list-unsubscribe : list-unsubscribe-post;
- bh=DmPsxQ6uevwu4jCwUKgsQ7AW+OZEseqHR4yN51XYYYw=;
- b=pnNWKtZqt2Us294O3mxRH86aFItcq/EFn79E6mFwOIKIOdhlBVj+ayluBmTUCqk2WBJc1
- EKrtf1J6KZTWXYVhN97UVajJGOxNSVOtMRcHT7cor2nMdlfqXRum9uVS/OgH0FjF4DnLLc6
- umZIQ1ryk8jUJ70gXPJhKBLzGTbNI98S8/a9jWjvq20CiJH9v3gQEXwOWBLXzsdGX1b4D0F
- l/e4Cc4OotzgBjDoIVs8QH1D5HZsUqgexwjTeD/ALRODDauF6Z1O0b9VhynibFb+GBOJKb/
- fE9vEY067WpUhPZfr0m3xiu0X5Qn+ak5m9FI9wkG1+aldkKxsQ2YmAG4gs4g==
+ bh=jHlTPG4NgHWnOrGLqSDIw8d/8MpR/1AQpbQk+oiNe2Q=;
+ b=nIot1445T3M2Go+ukBYkDAcsg0qn/aNKs97xbdnvzfoFWbcRJiHFuuHJtBSSSURGukr6W
+ EOi3qw/kyICkoI66FG21bcP2gqKmx7kyJy+Upwx2r2O9LIo8bjFvtkWq++OkzrTaeIor4co
+ 6Dvz6g7cDOfyXd2A6IdjUEgej8HeNynaJIsJJvqBWaRq1nXzP+c9NfWWsZ4WBCjCLbdiRT5
+ C8LKZmSOOX9WSpLQQYBLX5tYQujNBTBm1GMNwXnJ+cNMEyUxeo2l6msEhLkKPpHVxxU0/I2
+ cyYFiaXneQnLiHX7ygKqXeLXnHL73DIHJrQGc4Ghf9RHcObEvAC81Z9+WXNw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
- i=@triplefau.lt; q=dns/txt; s=s510616; t=1727206040; h=from : subject
+ i=@triplefau.lt; q=dns/txt; s=s510616; t=1727206039; h=from : subject
  : to : message-id : date;
- bh=DmPsxQ6uevwu4jCwUKgsQ7AW+OZEseqHR4yN51XYYYw=;
- b=QUwC5IrDX99c8Ds690LsijO/OAsOuqM2oxoZjVy9VZwyN2H3/qVLz11ksQNcBOXCf37VY
- IkPB4zKz/eeNQ7szHhPDZ2smb32bk91yMvBihhsLnn+AZjdv+Wi1xC8ZfqYA0z7pF5LiZG0
- VPtNLOksayf6ut/nG/gh0KjTaJ2QSngXYKWxpIknbRLxBkNv4bdJj+Cy+jegkO6tZ/q4cjr
- SJNqz3COMg2niV5Thk3sVG0DsLNVxKAUM4jrm71r46u25QDtbfncPRjonM+yw5Lp2lqhik6
- MIZCz8OJ/EnSpPdckML13n04v06nkbJxC/Hp3T0P7w+lsg5iRT1qG/w8thog==
+ bh=jHlTPG4NgHWnOrGLqSDIw8d/8MpR/1AQpbQk+oiNe2Q=;
+ b=TrXAzbuBNvNR3psAVDd+bQ9Loa3xIAPl7kuOuSVaOyzLJdyhMHXld3U8lkPgDnFwg1R6z
+ OjffqFjcoNh35Pr//Tnr4ot5ani6XaRTbXj40cWXKMTFeeRmX/wys/AMMByVTTeIPc+0ouk
+ 4rfjdXd7Lz9DJutdPH13T0rI1ZTcJr/cysi9uDe5K0XHATWETwEJlWgm2zhDDHw2dEiVmpe
+ fkLAJ1j9vd9U8nEqkDtrWC61nxbtOG6ZGn+l0n3x4cVShSINZHBGQXOM2hUE9Rmaudxm2IK
+ lMzSb8TRxgko3Fe307Qg/8cmuq3lZ146Hy5g0Nuxgth6WBqes+bSoYVoIcew==
 Received: from [10.12.239.196] (helo=localhost)
 	by smtpcorp.com with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
 	(Exim 4.97.1-S2G)
 	(envelope-from <repk@triplefau.lt>)
-	id 1stBBr-FnQW0hPyonv-mJZE;
-	Tue, 24 Sep 2024 19:27:15 +0000
+	id 1stBBs-4o5NDgrlCD5-plB2;
+	Tue, 24 Sep 2024 19:27:16 +0000
 From: Remi Pommarel <repk@triplefau.lt>
 To: linux-wireless@vger.kernel.org,
 	linux-kernel@vger.kernel.org
@@ -62,10 +63,12 @@ Cc: Johannes Berg <johannes@sipsolutions.net>,
 	Nicolas Cavallari <Nicolas.Cavallari@green-communications.fr>,
 	Nicolas Escande <nescande@freebox.fr>,
 	Remi Pommarel <repk@triplefau.lt>
-Subject: [PATCH 0/2] Fix ieee80211_color_collision_detection_work() locking
-Date: Tue, 24 Sep 2024 21:28:03 +0200
-Message-Id: <20240924192805.13859-1-repk@triplefau.lt>
+Subject: [PATCH 1/2] wifi: cfg80211: Add wiphy_delayed_work_pending()
+Date: Tue, 24 Sep 2024 21:28:04 +0200
+Message-Id: <20240924192805.13859-2-repk@triplefau.lt>
 X-Mailer: git-send-email 2.40.0
+In-Reply-To: <20240924192805.13859-1-repk@triplefau.lt>
+References: <20240924192805.13859-1-repk@triplefau.lt>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,46 +77,92 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Report-Abuse: Please forward a copy of this message, including all headers, to <abuse-report@smtp2go.com>
-Feedback-ID: 510616m:510616apGKSTK:510616sLKtpkydaK
-X-smtpcorp-track: 46rzRkMVzA-v.poVWMCrxAnXf.cL--pQBpyp_
+Feedback-ID: 510616m:510616apGKSTK:510616sPHEybd7wU
+X-smtpcorp-track: zzz-q7KFr31j.cexLJDwcJWnW.dJj51AiTsyY
 
-Call to ieee80211_color_collision_detection_work() needs wiphy lock to be
-held. This lock cannot be taken directly in the delayed work because it
-would cause a potential deadlock. Indeed ieee80211_link_stop() is calling
-cancel_delayed_work_sync() with the lock held. To avoid such deadlock one
-can use a wiphy delayed work instead.
+Add wiphy_delayed_work_pending() to check if any delayed work timer is
+pending, that can be used to be sure that wiphy_delayed_work_queue()
+won't postpone an already pending delayed work.
 
-Thus this patchset convert ieee80211_color_collision_detection_work() to
-use wiphy delayed work instead of classical delayed work. But because
-this work is used to ratelimit cfg80211_obss_color_collision_notify() a
-way to tell if it has already been scheduled is needed as discussed in
-[0]. In this thread three different solutions has been considered:
+Signed-off-by: Remi Pommarel <repk@triplefau.lt>
+---
+ include/net/cfg80211.h | 44 ++++++++++++++++++++++++++++++++++++++++++
+ net/wireless/core.c    |  7 +++++++
+ 2 files changed, 51 insertions(+)
 
-  - Implementing wiphy_delayed_work_pending() to detect if work can be
-    queued without postponing a previous schedule
-
-  - Using a __ratelimit or an equivalent to queue the work
-
-  - Modifying wiphy_delayed_work_queue() to mimic queue_delayed_work() by
-    not queuing the work if already queued (while also possibly having to
-    add wiphy_delayed_work_mod() for those who need the mod_delayed_work()
-    behavior).
-
-This patchset implement the first solution.
-
-[0]: https://lore.kernel.org/linux-wireless/D4A40Q44OAY2.W3SIF6UEPBUN@freebox.fr/
-
-Remi Pommarel (2):
-  wifi: cfg80211: Add wiphy_delayed_work_pending()
-  wifi: mac80211: Convert color collision detection to wiphy work
-
- include/net/cfg80211.h     | 44 ++++++++++++++++++++++++++++++++++++++
- net/mac80211/cfg.c         | 17 ++++++++-------
- net/mac80211/ieee80211_i.h |  5 +++--
- net/mac80211/link.c        |  7 +++---
- net/wireless/core.c        |  7 ++++++
- 5 files changed, 67 insertions(+), 13 deletions(-)
-
+diff --git a/include/net/cfg80211.h b/include/net/cfg80211.h
+index 192d72c8b465..01697b624095 100644
+--- a/include/net/cfg80211.h
++++ b/include/net/cfg80211.h
+@@ -6129,6 +6129,50 @@ void wiphy_delayed_work_cancel(struct wiphy *wiphy,
+ void wiphy_delayed_work_flush(struct wiphy *wiphy,
+ 			      struct wiphy_delayed_work *dwork);
+ 
++/**
++ * wiphy_delayed_work_pending - Find out whether a wiphy delayable
++ * work item is currently pending.
++ *
++ * @wiphy: the wiphy, for debug purposes
++ * @dwork: the delayed work in question
++ *
++ * return value: true if timer is pending, false otherwise
++ *
++ * How wiphy_delayed_work_queue() works is by setting a timer which
++ * when it expires calls wiphy_work_queue() to queue the wiphy work.
++ * Because wiphy_delayed_work_queue() uses mod_timer(), if it is
++ * called twice and the second call happens before the first call
++ * deadline, the work will rescheduled for the second deadline and
++ * won't run before that.
++ *
++ * wiphy_delayed_work_pending() can be used to detect if calling
++ * wiphy_work_delayed_work_queue() would start a new work schedule
++ * or delayed a previous one. As seen below it cannot be used to
++ * detect precisely if the work has finished to execute nor if it
++ * is currently executing.
++ *
++ *      CPU0                                CPU1
++ * wiphy_delayed_work_queue(wk)
++ *  mod_timer(wk->timer)
++ *                                     wiphy_delayed_work_pending(wk) -> true
++ *
++ * [...]
++ * expire_timers(wk->timer)
++ *  detach_timer(wk->timer)
++ *                                     wiphy_delayed_work_pending(wk) -> false
++ *  wk->timer->function()                          |
++ *   wiphy_work_queue(wk)                          | delayed work pending
++ *    list_add_tail()                              | returns false but
++ *    queue_work(cfg80211_wiphy_work)              | wk->func() has not
++ *                                                 | been run yet
++ * [...]                                           |
++ *  cfg80211_wiphy_work()                          |
++ *   wk->func()                                    V
++ *
++ */
++bool wiphy_delayed_work_pending(struct wiphy *wiphy,
++				struct wiphy_delayed_work *dwork);
++
+ /**
+  * enum ieee80211_ap_reg_power - regulatory power for an Access Point
+  *
+diff --git a/net/wireless/core.c b/net/wireless/core.c
+index 4d5d351bd0b5..c9a1158dbdd1 100644
+--- a/net/wireless/core.c
++++ b/net/wireless/core.c
+@@ -1704,6 +1704,13 @@ void wiphy_delayed_work_flush(struct wiphy *wiphy,
+ }
+ EXPORT_SYMBOL_GPL(wiphy_delayed_work_flush);
+ 
++bool wiphy_delayed_work_pending(struct wiphy *wiphy,
++				struct wiphy_delayed_work *dwork)
++{
++	return timer_pending(&dwork->timer);
++}
++EXPORT_SYMBOL_GPL(wiphy_delayed_work_pending);
++
+ static int __init cfg80211_init(void)
+ {
+ 	int err;
 -- 
 2.46.0
 
