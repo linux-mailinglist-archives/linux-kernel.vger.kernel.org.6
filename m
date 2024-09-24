@@ -1,109 +1,118 @@
-Return-Path: <linux-kernel+bounces-337512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65F8F984B34
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:43:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D16A984B3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:44:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CBF01F23F8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:43:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06F691F223CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A1DD1AC8A6;
-	Tue, 24 Sep 2024 18:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91DD01AD3FD;
+	Tue, 24 Sep 2024 18:44:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UvxwJMmK"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ICCYT+6T"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707691A4F0C;
-	Tue, 24 Sep 2024 18:42:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FBC1AD3EB
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 18:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727203378; cv=none; b=i9zCCEgkXhnyHlwNFXsZ3U6RxY5OxmS2rItHq4mTKMzM8Ys/pzMQhU5lbo6UMd0u0rV3XPlWITnCpntRx8vAZQL4j1KtuUgmjh4YPMO1EKtzEWfkGju93T4YmeXAJuI2x597norOF03U4TNOWV6ZrEZEi/oKuqxht0b5xWZ8R9c=
+	t=1727203451; cv=none; b=LMKX3QRGl++s+k+JMkAybRicrpGcc1llVDJC5ponnfpVpuLynA5wP5kxisDBjrE/KOUVFfEtlTbYvISnbANpezXBtKkniU6MWJOBSxq1Pk2hBmLfrTmgUdqwDE6BPCvlqrE7La/LSJW+A/a1TKiq5Yl6y8Qyfzahu8u5ECo8ZR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727203378; c=relaxed/simple;
-	bh=qem24K8hDJtqOZflZxzGoBu2Q9HuUP6RNgJ8qSOhPoQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WRcots78mpBnKsQ0T+QiEtK91tAVbID1QNmnOQbrPZuJmYOVEYvt0gM/hNgLYYirNDOv88G1d7ho9lVTYR/yOEgqS1wwGOo8ptUehcuT0QWcN4/f5uPQGzg5mxW8MP9JPCP8a4clMXMz2xXZd0gpo6NdDOmgGvpzj4llIgSs+1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UvxwJMmK; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2d8afdd62e8so1072419a91.3;
-        Tue, 24 Sep 2024 11:42:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727203376; x=1727808176; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AfURFzn65sh6X2dItLUMd07O5TuGvYCWV/xXT4OYjhY=;
-        b=UvxwJMmKk/1fHqe++25JLeGaQoTYzxu8qozRHm1QJvW0IIErPMm5/5nHTuecF7VcJh
-         Q8T3Q223Da0Brj+LzWmH0raxeOtYVddVRGVG1qzRVN5XUUd0Muq4SOlunyK9SeGSuTGh
-         PPihLjZrAlXsjLkrmf28tYmAbxHEUpn/HJCOTiKlj2r6GHgYFPFEnDLrnzt+AyLaEPk3
-         bjwL4F5N8GdZkCcASaKyW6dsOD83VsHIyZiojZbRiQrCTWqvBv1pymKiVptsYgEllLgZ
-         pUWrr6BZSqPUChBRKlmT1GWhkepJwXv5E1rmi+cyeVYpE6o6MTgA0+XqCs0vuoLK9SCs
-         pnmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727203376; x=1727808176;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AfURFzn65sh6X2dItLUMd07O5TuGvYCWV/xXT4OYjhY=;
-        b=obBkmd5YElShTnVmQDj6ElXg2wg2cuDtBa+5GNjcIQud/XBAYlkn4vS5JSwYADeloL
-         AFG47NdE9VknXTQVu9d2pgl5vGHBz8PH3zHA4kdkzRwmPBA17XTMQ5fSzVro9hvNPHxe
-         v8MqoxeRdZZ2VOWIdfYizzZ9X5TqjtNb5nU25FVHPFbF483ExcRnVJLR4c5L404PhV/s
-         Tv7V2QYvEJH//T8ZanucBHiWXcNOOM4S93TxsjV+Lq5r0ISf/N6zEVzmE8Xs1Tza35ae
-         lUoKvk9K6LT/kt7wY1lTWZcgTrexZQuXMwNjKA8Zx6+4dYjq2J+/UlvnujtD+fILGO5d
-         guEg==
-X-Forwarded-Encrypted: i=1; AJvYcCV/7ryEaB7gVehSy23PsoMhgb4EGCadzgXJBvFWD0j+SHA5ezNd9uCMgqJ7qcn7pveMUfL3Cqq6vyCF5BqL910=@vger.kernel.org, AJvYcCVdFtPWae8ardJ+eJt6x9Giq294vQjkZBGJfCl5V3YvWg5qmmb8PI1WtdHKVEJalIFrzv5cmWL09zpbrKI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLIWvrfe4BjxRlIsnoUBNCkgRAYVRVA0uGk5XHO0Iuwp6B6ZFM
-	J6fE/JjywqBhzb4kG4yBuuPSyNL3dhzLtDH93ROl3yCQAGeLI5NsadCdpudGvcpbcnM63HIYrul
-	0pmnMtNSoR8g86w03Jy8SbTrw2zU=
-X-Google-Smtp-Source: AGHT+IGRLgHGVhSijck+qaah7MB5r4zyIKNkXh5xMY4YGSKcSP21XOEKI+3jbVBEVqm+Ow49sg6OJYTpkozSDQXoWdw=
-X-Received: by 2002:a17:90b:1c11:b0:2d8:b071:e10e with SMTP id
- 98e67ed59e1d1-2e06ae2605emr63840a91.1.1727203376556; Tue, 24 Sep 2024
- 11:42:56 -0700 (PDT)
+	s=arc-20240116; t=1727203451; c=relaxed/simple;
+	bh=K4ipj/F3NB0jOguIlNsqwGp8ZR4U5A/NO4flIB98um4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XAsvkQDI1wfiuyOyzjIIPPn49XeEIzJXYsQiSYET8d/Z30yqJkBuC3AjHLbaV/QDNkrEj8HlO83Y3VmaNLyIm9+BZ2BxhKCgCla/JUV+w+P1GR1CpqzmoGNvGqpS+CsHormoGLEs9v5H/q9FovFUePYfuCabKElpvml0v74XkLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ICCYT+6T; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 38642C8E;
+	Tue, 24 Sep 2024 20:42:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1727203360;
+	bh=K4ipj/F3NB0jOguIlNsqwGp8ZR4U5A/NO4flIB98um4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ICCYT+6ThZOw3owTfXdSqxF4IZSxMyxUJLLDOtHbdWlQ4IVSqIrqKPdQrMWq/a143
+	 0mTCvwf7SNgIOb1+Ry2g6nYPg9zAedDLXWbZoK6rBzc4zCZ7EAnbCVTjF2TFtitSvc
+	 lsAg/yUVTQEXGCqLXcxNeOxiVqnvugcO6Pxl+6ic=
+Date: Tue, 24 Sep 2024 21:43:35 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: lists@steffen.cc
+Cc: dri-devel@lists.freedesktop.org,
+	Steffen Dirkwinkel <s.dirkwinkel@beckhoff.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Michal Simek <michal.simek@amd.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm: xlnx: zynqmp_dpsub: also call
+ drm_helper_hpd_irq_event
+Message-ID: <20240924184335.GJ30551@pendragon.ideasonboard.com>
+References: <20240923074803.10306-1-lists@steffen.cc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240913180622.1327656-1-masahiroy@kernel.org>
-In-Reply-To: <20240913180622.1327656-1-masahiroy@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 24 Sep 2024 20:42:43 +0200
-Message-ID: <CANiq72=ynULSpiBwvpau62ym0cx+WDd99T-4LBh5V_h1YCfeag@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: remove unnecessary export of RUST_LIB_SRC
-To: Masahiro Yamada <masahiroy@kernel.org>, Fiona Behrens <me@kloenk.de>
-Cc: linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Alice Ryhl <aliceryhl@google.com>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Benno Lossin <benno.lossin@proton.me>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240923074803.10306-1-lists@steffen.cc>
 
-On Fri, Sep 13, 2024 at 8:06=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.o=
-rg> wrote:
->
-> This code was added by this commit:
->
->   https://github.com/Rust-for-Linux/linux/commit/3f46885dc03ed2d750085b22=
-37078a1628323964
->
-> Please me know if I am missing something.
+Hi Steffen,
 
-I think it is OK -- unless Fiona recalls something:
+Thank you for the patch.
 
-Acked-by: Miguel Ojeda <ojeda@kernel.org>
-Tested-by: Miguel Ojeda <ojeda@kernel.org>
+On Mon, Sep 23, 2024 at 09:48:03AM +0200, lists@steffen.cc wrote:
+> From: Steffen Dirkwinkel <s.dirkwinkel@beckhoff.com>
+> 
+> With hpd going through the bridge as of commit eb2d64bfcc17
+> ("drm: xlnx: zynqmp_dpsub: Report HPD through the bridge")
+> we don't get hotplug events in userspace on zynqmp hardware.
+> Also sending hotplug events with drm_helper_hpd_irq_event works.
 
-Thanks Masahiro for the simplification!
+Why does the driver need to call both drm_helper_hpd_irq_event() and
+drm_bridge_hpd_notify() ? The latter should end up calling
+drm_kms_helper_connector_hotplug_event(), which is the same function
+that drm_helper_hpd_irq_event() calls.
 
-Cheers,
-Miguel
+> Fixes: eb2d64bfcc17 ("drm: xlnx: zynqmp_dpsub: Report HPD through the bridge")
+> Signed-off-by: Steffen Dirkwinkel <s.dirkwinkel@beckhoff.com>
+> ---
+>  drivers/gpu/drm/xlnx/zynqmp_dp.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/xlnx/zynqmp_dp.c b/drivers/gpu/drm/xlnx/zynqmp_dp.c
+> index 1846c4971fd8..cb823540a412 100644
+> --- a/drivers/gpu/drm/xlnx/zynqmp_dp.c
+> +++ b/drivers/gpu/drm/xlnx/zynqmp_dp.c
+> @@ -17,6 +17,7 @@
+>  #include <drm/drm_fourcc.h>
+>  #include <drm/drm_modes.h>
+>  #include <drm/drm_of.h>
+> +#include <drm/drm_probe_helper.h>
+>  
+>  #include <linux/clk.h>
+>  #include <linux/delay.h>
+> @@ -1614,6 +1615,9 @@ static void zynqmp_dp_hpd_work_func(struct work_struct *work)
+>  					    hpd_work.work);
+>  	enum drm_connector_status status;
+>  
+> +	if (dp->bridge.dev)
+> +		drm_helper_hpd_irq_event(dp->bridge.dev);
+> +
+>  	status = zynqmp_dp_bridge_detect(&dp->bridge);
+>  	drm_bridge_hpd_notify(&dp->bridge, status);
+>  }
+
+-- 
+Regards,
+
+Laurent Pinchart
 
