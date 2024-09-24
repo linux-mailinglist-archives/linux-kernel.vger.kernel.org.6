@@ -1,135 +1,215 @@
-Return-Path: <linux-kernel+bounces-337447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6E91984A3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:21:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E0B4984A3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:25:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41BE2B23CA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:21:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD74F286BAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:25:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 348071ABEDA;
-	Tue, 24 Sep 2024 17:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FD951AC437;
+	Tue, 24 Sep 2024 17:25:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bqol5too"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="CnZHShTU"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4358A2941B
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 17:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085961ABECE;
+	Tue, 24 Sep 2024 17:24:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727198483; cv=none; b=uw/2LCcTXI/4xa3JyutdO9xzEJ6maGiwKj1VcAMa3JdsLY4IVT/VvJonCj49iyuciA0Sv6p57FYEoVZslDI3OQ1o2insh4UisuG01UquAPj2pOYHmOIBs4Cloo4OVEGv+wUi98xzxAs8nXJAqRDyCieC2NxIUiBD2rpKZ2KuzUs=
+	t=1727198699; cv=none; b=WHfVmi+x+xQq6lBrwAKdfGjNUthrhuA67zPbmw/7d33NM4RKWAF8CIi3gjqh501X91CqQ16v2OKkvGsFSPyGm0p927lRmXzfc4trFgdwjjQ8imR9GBC5e1gdd6U8AT4ONA3XDdYN7S0UtFYHOw5frfP7YsN2zZAxdZ/e0amW7fI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727198483; c=relaxed/simple;
-	bh=6fEBRh9H68HPsNWugw0lAVBDQm1QZQdp9Vj3XoF3QKA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EZkx5wkCsQCI2drF2nIw9/tS+TWhH0Pp6GX5uFfmQRPP4VHUkCT2pjpiWcvghNNX3HEU+VB7LMkHS6cUodws7tTHGsxk4WvGE6wng22b4OKEHeYn9JVnsqGaxgVrPnTzKkNL1VNTdRgiKA4s0C1KFycOAKlwUALTQQw+U6oSzac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bqol5too; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2dee7861015so314739a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 10:21:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727198481; x=1727803281; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2mocP745BB1IDkQ7YwcXnRT+my6+xFIbpinyWL0W5Dc=;
-        b=Bqol5tooLk88bbzUC5G/2rrmHDcC/F/RyoE8+X6rSac7iKLnGlVVB80nCttW21azA4
-         575bKYbwqsdqI8lcSCumiYMLRkJ36FJgpVn3VcS0KpXdwlBsdmJKyPGTCti4NUq8k9Da
-         fbvOJgNjTiL0n04/JAF6NGy/z4od1IQEyssmQAfXzOA32aepBUywbTudj8xixjaKsFI+
-         kzFZmQ8wxcFWlv4KhmHg9PwqCnxVI7GQoIkAU0x2+Vfx3xsEksIw3Q++otx4BH8hA1DC
-         qbHdDWQxk4xsogu16+M1cL4DqCBltkHGmz0ex4x7kWolDkbZrs0ikdb93EimUFLif6hZ
-         PcpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727198481; x=1727803281;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2mocP745BB1IDkQ7YwcXnRT+my6+xFIbpinyWL0W5Dc=;
-        b=cViOy7zdbZL8pePtvDdmipaqU/YjN8YhBTxE+jJfs1Rvn4XfwQnQ5iyj5n4fjA7udY
-         M6M1js6Qi9snGdD8+rqFwcTrt65SmNl4pSWyd1HCwrJ4JAQjctgTGhYNQGiVU1MxpkWG
-         fvXxBJ2axfmTViWUXErlmiK4QYPtrMKpJrfseseW+k0CkzHv9vfaSlsEFZpArZzRwkoK
-         h4/D81IJcWEm9qNQbNyd4i2tafUqy20i3hIaM+G2OYffOt2UsLsjCqjuFHXVvFu8jP58
-         tQgm12Nt7woRgQ+SnTyegJYjWYANpAM5tumnpRI+QV7gX+Z7Az2DDM7T9ip3KWiNqvTB
-         Oppw==
-X-Forwarded-Encrypted: i=1; AJvYcCVTkk7rpVj2/49pr0gtzMnHjoZSscQ1qh595fnTRJcYEq/XWCXuaFgl8aJ4N4c7zgepXS94XlV/ETpfxSc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcmjzLq1ScJo6KnfJmIWs2hGFRlgOZEgMV5/MILdVul/RIgvch
-	YDSrq9g1F6gdrY7/NK8Gm2o8TQRZYDCYfqak2K/j40S3jkiDEgefAx255W4Z3xsODIyz/SQ2C2U
-	qZiOJCJ6fkzu3x03dPKXuuG2ygW8=
-X-Google-Smtp-Source: AGHT+IHEl4SS56wI++33QaNSBNtB60zwXtFiDHBzKILClZ4/hNBTywoIIXCFIyvWbSsaSHcbIXKL/NIMn2uEBdwHNxY=
-X-Received: by 2002:a17:90b:4f43:b0:2d8:f13c:55d4 with SMTP id
- 98e67ed59e1d1-2dd7f5be591mr7851541a91.5.1727198481441; Tue, 24 Sep 2024
- 10:21:21 -0700 (PDT)
+	s=arc-20240116; t=1727198699; c=relaxed/simple;
+	bh=/9n6n8U1pSyEI53YdQBEQ4ZeotAN7YihFxgM3QNfvCY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CA2SLzCS8iuGXI5LRoydoCFM9+NvJMYU69KWjKAqyAF2buYKrwd0VwvjpbJfevgKxGZ0sr1YfeeTOk6uN4uj9JzzL6JGreAM/FOWVSB4lsdF3a+lwqXuK787ZEYW8EwPd6jH7YfmT5zH9kzZyjQ88tVVbn+j+VS6aMtoEsm0zCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=CnZHShTU; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E427719BA;
+	Tue, 24 Sep 2024 19:23:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1727198609;
+	bh=/9n6n8U1pSyEI53YdQBEQ4ZeotAN7YihFxgM3QNfvCY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CnZHShTUweVijTAVpojYstJMY4ZtlCaWcqN6qhZobKy8u2ziP08cJ51gx/m0lplFn
+	 K0aPeDooX61IhGK+xafsO82iZwlAnkRmXgGgLmi7jIWZd/GsKqUTWZpAB8ymW/6GGr
+	 JZ+ipLo9/ChE9AiN7YH9miKiDcd7/opxusY1TKhY=
+Date: Tue, 24 Sep 2024 20:24:23 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Subject: Re: [PATCH 3/4] media: renesas: Use state cleanup macros
+Message-ID: <20240924172423.GF30551@pendragon.ideasonboard.com>
+References: <20240917-scoped-state-v1-0-b8ba3fbe5952@ideasonboard.com>
+ <20240917-scoped-state-v1-3-b8ba3fbe5952@ideasonboard.com>
+ <20240922101519.GA3490560@ragnatech.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <71d8f8448d29c3ce5a7fd883e56c0edeb2f4106b.1727185783.git.geert+renesas@glider.be>
-In-Reply-To: <71d8f8448d29c3ce5a7fd883e56c0edeb2f4106b.1727185783.git.geert+renesas@glider.be>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 24 Sep 2024 19:21:08 +0200
-Message-ID: <CANiq72kqVFs5rfS_y0a40ZAygE5S+vkyb2Fv+B5BNzvuAa_hiQ@mail.gmail.com>
-Subject: Re: [PATCH] compiler-gcc.h: Disable __retain on gcc-11
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Tony Ambardar <tony.ambardar@gmail.com>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Miguel Ojeda <ojeda@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240922101519.GA3490560@ragnatech.se>
 
-On Tue, Sep 24, 2024 at 3:55=E2=80=AFPM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
->
-> All my gcc-11 compilers (Ubuntu 11.4.0-1ubuntu1~22.04) claim to support
-> the __retain__ attribute, but only riscv64-linux-gnu-gcc-11 and
-> x86_64-linux-gnu-gcc-11 (not x86_64-linux-gnux32-gcc-11!) actually do.
-> The arm-linux-gnueabi-gcc-11.5.0 compiler from kernel.org crosstool
-> fails in the same way:
->
->     error: =E2=80=98retain=E2=80=99 attribute ignored [-Werror=3Dattribut=
-es]
+On Sun, Sep 22, 2024 at 12:15:19PM +0200, Niklas Söderlund wrote:
+> Hi Tomi,
+> 
+> Thanks for your work. I like the scoped management.
+> 
+> On 2024-09-17 17:09:31 +0300, Tomi Valkeinen wrote:
+> > From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> > 
+> > Use the new subdev state cleanup macros.
+> > 
+> > Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> > ---
+> >  drivers/media/platform/renesas/rcar-csi2.c            | 14 ++++----------
+> >  drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c |  9 ++++-----
+> >  drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c   |  9 ++-------
+> >  3 files changed, 10 insertions(+), 22 deletions(-)
+> > 
+> > diff --git a/drivers/media/platform/renesas/rcar-csi2.c b/drivers/media/platform/renesas/rcar-csi2.c
+> > index c419ddb4c5a2..03ef6566271f 100644
+> > --- a/drivers/media/platform/renesas/rcar-csi2.c
+> > +++ b/drivers/media/platform/renesas/rcar-csi2.c
+> > @@ -1163,27 +1163,24 @@ static void rcsi2_stop(struct rcar_csi2 *priv)
+> >  static int rcsi2_s_stream(struct v4l2_subdev *sd, int enable)
+> >  {
+> >  	struct rcar_csi2 *priv = sd_to_csi2(sd);
+> > -	struct v4l2_subdev_state *state;
+> >  	int ret = 0;
+> >  
+> >  	if (!priv->remote)
+> >  		return -ENODEV;
+> >  
+> > -	state = v4l2_subdev_lock_and_get_active_state(&priv->subdev);
+> > +	CLASS(v4l2_subdev_lock_and_get_active_state, state)(&priv->subdev);
+> >  
+> >  	if (enable && priv->stream_count == 0) {
+> >  		ret = rcsi2_start(priv, state);
+> >  		if (ret)
+> > -			goto out;
+> > +			return ret;
+> 
+> As ret is now only used in this branch maybe we can move the declaration 
+> of it here? At least I think you should remove the assignment to 0 above 
+> as that behavior is not needed anymore but, at lest to me, keeping it 
+> indicates there is an intent in initializing it.
+> 
+> With that fixed,
+> 
+> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> 
+> >  	} else if (!enable && priv->stream_count == 1) {
+> >  		rcsi2_stop(priv);
+> >  	}
+> >  
+> >  	priv->stream_count += enable ? 1 : -1;
+> > -out:
+> > -	v4l2_subdev_unlock_state(state);
+> >  
+> > -	return ret;
+> > +	return 0;
+> >  }
+> >  
+> >  static int rcsi2_set_pad_format(struct v4l2_subdev *sd,
+> > @@ -1274,18 +1271,15 @@ static irqreturn_t rcsi2_irq(int irq, void *data)
+> >  
+> >  static irqreturn_t rcsi2_irq_thread(int irq, void *data)
+> >  {
+> > -	struct v4l2_subdev_state *state;
+> >  	struct rcar_csi2 *priv = data;
+> >  
+> > -	state = v4l2_subdev_lock_and_get_active_state(&priv->subdev);
+> > +	CLASS(v4l2_subdev_lock_and_get_active_state, state)(&priv->subdev);
+> >  
+> >  	rcsi2_stop(priv);
+> >  	usleep_range(1000, 2000);
+> >  	if (rcsi2_start(priv, state))
+> >  		dev_warn(priv->dev, "Failed to restart CSI-2 receiver\n");
+> >  
+> > -	v4l2_subdev_unlock_state(state);
+> > -
+> >  	return IRQ_HANDLED;
+> >  }
+> >  
+> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
+> > index e68fcdaea207..63b846f3e468 100644
+> > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
+> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
+> > @@ -238,7 +238,6 @@ static int rzg2l_csi2_calc_mbps(struct rzg2l_csi2 *csi2)
+> >  	struct v4l2_subdev *source = csi2->remote_source;
+> >  	const struct rzg2l_csi2_format *format;
+> >  	const struct v4l2_mbus_framefmt *fmt;
+> > -	struct v4l2_subdev_state *state;
+> >  	struct v4l2_ctrl *ctrl;
+> >  	u64 mbps;
+> >  
+> > @@ -250,10 +249,10 @@ static int rzg2l_csi2_calc_mbps(struct rzg2l_csi2 *csi2)
+> >  		return -EINVAL;
+> >  	}
+> >  
+> > -	state = v4l2_subdev_lock_and_get_active_state(&csi2->subdev);
+> > -	fmt = v4l2_subdev_state_get_format(state, RZG2L_CSI2_SINK);
+> > -	format = rzg2l_csi2_code_to_fmt(fmt->code);
+> > -	v4l2_subdev_unlock_state(state);
+> > +	scoped_v4l2_subdev_lock_and_get_active_state(&csi2->subdev) {
+> > +		fmt = v4l2_subdev_state_get_format(state, RZG2L_CSI2_SINK);
 
-That appears to be the case indeed:
+fmt could also become a local variable.
 
-    https://godbolt.org/z/78Gj94vMW
+Now that I'm looking at this, another issue with
+scoped_v4l2_subdev_lock_and_get_active_state() is that it creates a
+non-const state variable, while there are use cases for const states.
+I'm increasingly thinking we should use __free(), as neither the
+scoped_* macro nor CLASS() allow the caller to indicate if the local
+variable should be const or not.
 
-The `.section` does not get emitted, so the warning appears to be
-right, but we cannot trust `__has_attribute` for this :(
+> > +		format = rzg2l_csi2_code_to_fmt(fmt->code);
+> > +	}
+> >  
+> >  	/*
+> >  	 * Calculate hsfreq in Mbps
+> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
+> > index ac8ebae4ed07..0b9e8a7cf22a 100644
+> > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
+> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
+> > @@ -36,14 +36,9 @@ static const struct rzg2l_cru_ip_format *rzg2l_cru_ip_code_to_fmt(unsigned int c
+> >  
+> >  struct v4l2_mbus_framefmt *rzg2l_cru_ip_get_src_fmt(struct rzg2l_cru_dev *cru)
+> >  {
+> > -	struct v4l2_subdev_state *state;
+> > -	struct v4l2_mbus_framefmt *fmt;
+> > +	CLASS(v4l2_subdev_lock_and_get_active_state, state)(&cru->ip.subdev);
+> >  
+> > -	state = v4l2_subdev_lock_and_get_active_state(&cru->ip.subdev);
+> > -	fmt = v4l2_subdev_state_get_format(state, 1);
+> > -	v4l2_subdev_unlock_state(state);
+> > -
+> > -	return fmt;
+> > +	return v4l2_subdev_state_get_format(state, 1);
+> >  }
+> >  
+> >  static int rzg2l_cru_ip_s_stream(struct v4l2_subdev *sd, int enable)
+> > 
 
-> Fixes: 0a5d3258d7c97295 ("compiler_types.h: Define __retain for __attribu=
-te__((__retain__))")
+-- 
+Regards,
 
-Nit: 12 char hash.
-
-> +/*
-> + * Most 11.x compilers claim to support it, but only riscv64-linux-gnu-g=
-cc and
-> + * x86_64-linux-gnu-gcc actually do.
-> + */
-
-Just to confirm: did you try all? If not, perhaps we should say "at
-least X does not work" instead.
-
-> +#if GCC_VERSION < 120000
-> +#undef __retain
-> +#define __retain
-> +#endif
-
-Should this go into the conditional in `compiler_types.h` instead? And
-perhaps the `__has__attribute` test removed for GCC?
-
-Even if we keep it here, I think at least a comment there should be
-added, since it says GCC >=3D 11 supports it, which can be confusing if
-one is not aware of this other thing in this file.
-
-Thanks!
-
-Cheers,
-Miguel
+Laurent Pinchart
 
