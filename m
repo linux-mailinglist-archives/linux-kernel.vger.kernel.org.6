@@ -1,104 +1,106 @@
-Return-Path: <linux-kernel+bounces-337333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD7F99848C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:35:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D18EE9848C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:39:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE12E1C225AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:35:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FAF21F22736
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:39:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDDD51AB6C0;
-	Tue, 24 Sep 2024 15:35:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D3E1AB6C0;
+	Tue, 24 Sep 2024 15:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="OO/D7jvj"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FF6Vz2Pz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF141AAE2E
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 15:35:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002B927735;
+	Tue, 24 Sep 2024 15:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727192131; cv=none; b=fh5nIax/NUZXw+H2kh6i5bXRLGfjugSnJt+X5i5924YJdSRWr2FXBegHhyYbg2FmtoX233k1xeKioxmMSpkGPzKfHWuWTccTkosmnBfg23sRBSp1+djtOxCw/jXv3ZgafcbzPc6BeUupuMkGNOA4U1gjg/Jf0qYVF1W66GbkIz8=
+	t=1727192366; cv=none; b=EwhQyJksQOoEfQRxUKtFEwMom4L9pS6heUb0r1KlxGq9QaP8Ebtf6FX0+h0oBajMEPGEinNNYel5s1MQOPHuLwcwaYjIa5mqPkSfM2kS3RTIMGIGqOb/bqfraZveKdSjuWjt+jfPYoCWSEYY4lyFfTAfZZf5nZ9OEXBfTU7xSyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727192131; c=relaxed/simple;
-	bh=9oXraljCgJmncIczkzC8b/I6XBliaW4OOWquEdQehlE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X1MRZ7OMv2naLaCI8hEMTicHaeLYCnN7bN+zaVNmvGgO4vfLryJ9kYJ0QbOoILUvoEVEOECEawiETXsVRJeeWtLBP30+PkOQtONafvPCAjOde44cB55ELaNWyXiP3gB8uv+Wa/pYreHUiixxRq+O/3wz9HyAnmdhtF9qU3x8v/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=OO/D7jvj; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c25f01879fso7195718a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 08:35:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1727192127; x=1727796927; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=t1x55u8/wbiYT+Evq+gKxO2ziL9+ftLVFxuXuV1/aLY=;
-        b=OO/D7jvjD52XzA56eMSLDbdjV40xl9HvDdIlnPm3TwR7WXi5lKp5CZiSsFbtw5jRYd
-         IDCCoMvfOjxc4cGJnehELIsdWA228ksWLdSWseemuCC6UP8UJQ1tSiK18WgiUOlKIGIg
-         FzwRatahxp73q2kUvgsWJLj+JLl/Jsg57miBoKUlLgDcz3SBJ++jzGa769fKqLERfhY/
-         sOc66iNACk3x8X2ZUclNSZ4xoZcHRtDdEFq3zw4gCErHlpic3b/gxey5cJZbekqZtwfU
-         RBGXg9pSnZNkSUyYLSAdgh0sh6a7kZ3X1CnThlOGGimhegX+wV6s/MgYd8AWqz8im8LD
-         XHYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727192127; x=1727796927;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t1x55u8/wbiYT+Evq+gKxO2ziL9+ftLVFxuXuV1/aLY=;
-        b=JnLcOG7QsxpZ4Dcub1Vnl+KbKpN3RwMCyMIOrrzDxF3pwO57ZQ2v7477uI1rueKcJj
-         phRs/VbJf0dHuoTsO/kw/dg2sVNA9aOJWMHXNJ/HzMZREDninoy7lSPHh63a5aemFBRV
-         feuG9+4TwhSlV8TJ80izMJAZXxdctKRHDCKmM/N6u5hwT6bZoUqRcjbU3tJlhDjy74kJ
-         prUXtUTj/4IzOlRZMbwVFBzYE8Rw48mRCwp5ITOkASASRxOzagoAiMy9nczNZjQacr7L
-         DcQyO31E2TrkAelfi9zLdN2o1u45dF/8HkxCSWfIhykTQGVI1chAvm5lXfmDMBFiImZ1
-         twZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUeYsZV0Oj8RV00Nd5Swj7qlYbtcLlFaxKIUYo4TgSveDozH8Nu6uvYkefmQvezm6Ts0s22INc6qDT+RlA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyo2n73eJKAMbQLPN/Ktzk/0UFeKpeO4kKebj8M+ROC3WwoaBt5
-	wEd6TJr4XHoV8FYVH3YBUMDYhWWIu8bxpMLtFpibjnsFSZdq3qnaFS9SAdfRSsY=
-X-Google-Smtp-Source: AGHT+IFFXrP2XviAfUkcRMlJcRsqbCqZF870pQJD+m6daRgki1vAq8sSqhb4YmIhtcqENfUh5aXc8A==
-X-Received: by 2002:a17:906:f59f:b0:a86:743a:a716 with SMTP id a640c23a62f3a-a90d511b060mr1654222566b.53.1727192127351;
-        Tue, 24 Sep 2024 08:35:27 -0700 (PDT)
-Received: from ghost ([185.30.83.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93930cafb5sm96637366b.132.2024.09.24.08.35.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 08:35:26 -0700 (PDT)
-Date: Tue, 24 Sep 2024 17:35:24 +0200
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Christian =?iso-8859-1?Q?G=F6ttsche?= <cgzones@googlemail.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs/xattr: add *at family syscalls to common syscall.tbl
-Message-ID: <ZvLcPDyv8Q3gv9e3@ghost>
-References: <20240904-xattr_standard_functions-v1-1-60ccfa9d41e0@rivosinc.com>
- <c607a122-ebd7-4da1-96a6-be153258f0f4@app.fastmail.com>
+	s=arc-20240116; t=1727192366; c=relaxed/simple;
+	bh=uYOGtuS1GH0n1hKTHBjFXo28BM9xtKgYiatxl2C25fg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uWchvVVUdde3ZNZbdS06M4RguEvP6ZWSHf4N3D4/+5RdZxhCisStpSm8y3v9ZA7x9//0ajdecEDdEqn3j0AIn3ZxoIqFYk/LAyt1VBPR0w9XL6v2ePKA6AlKu+H3dc6bBan4tsW3XJiRirGKcz1+rVdZ8immAhA/1k5OB8Rkw6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FF6Vz2Pz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F731C4CEC4;
+	Tue, 24 Sep 2024 15:39:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727192365;
+	bh=uYOGtuS1GH0n1hKTHBjFXo28BM9xtKgYiatxl2C25fg=;
+	h=From:Date:Subject:To:Cc:From;
+	b=FF6Vz2PznCg6tglOutn3gIE6VSWq/Elctny4fQsxWLehuu+uwMK9XOCzjlNPPAjmG
+	 XgLMSwwP9ohCDs5SmLlNXBkKMHS5VGTwznA5cQDDJekBn4HBzxr9rEbF1edffX14eu
+	 jk6JCEFmfkFtZAKoh+XA5E4MTlddXa7O4vxxgYr4DWnIykKS8V6NAAfexGbUCGr5Fs
+	 YyMrnzoJR/5H6blxtvQ2WgsnncQHSzN0Biqa8u8mD9kMMqrXCht4tNlcZI0pdRj8TK
+	 N9z1FuJBhaVXwjMTto/5lsLv+gZMJpw0b+hYWwdfztS6sMbDXnAA1e24xtMyCWJhOn
+	 xQhB/mJADorhg==
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 24 Sep 2024 17:39:18 +0200
+Subject: [PATCH] pinctrl: sx150x: Use maple tree register cache
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c607a122-ebd7-4da1-96a6-be153258f0f4@app.fastmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240924-pinctl-sx150x-maple-v1-1-17dcfefefd17@kernel.org>
+X-B4-Tracking: v=1; b=H4sIACXd8mYC/x3MQQqAIBBA0avErBtQsciuEi3MphooE40QorsnL
+ d/i/wcSRaYEffVApJsTn75A1hW4zfqVkOdiUEJpYZTGwN5dO6YsG5HxsGEnnDsnF91MplUGShk
+ iLZz/6zC+7wcSx/eLZQAAAA==
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1101; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=uYOGtuS1GH0n1hKTHBjFXo28BM9xtKgYiatxl2C25fg=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBm8t0rqtZFaXSNN0LZDtkBCH3BPzzlev3DXYZIQ
+ vtrN0BPh6uJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZvLdKwAKCRAk1otyXVSH
+ 0JjLB/0VU5y6mBu4TYbcQXhvSykE+PiyQIptW3o2RECM5I+4DN5yltR24UUqCR0NxzSQUhuFqrb
+ rtM9u5br9gEk/J0TI+4QmSEg3HRwKkYJb7ZFumjKP8y8OpWwzO3LUM4yMfHaFtN+W7Q0h/+8DM4
+ CF3tkDzJjX7G9dvPSzljrTSIJ6ni7C8uPeGbtNKK5O/PBL99DpJuUw2KQp9yvA2zdTWFHfWihzp
+ Dd4mmB4vosGenQs5gF0qGPFvrKpU9zMHhOXlKgVF0FmfeC+vgQcjYcK5IPCJffBwnp8q8k2Om28
+ gWawMwIYiud9js0WPnJpJqpcxKiYT3s1/pobNG5KQHdo+y+C
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Wed, Sep 04, 2024 at 07:27:53PM +0000, Arnd Bergmann wrote:
-> On Wed, Sep 4, 2024, at 19:03, Charlie Jenkins wrote:
-> > Commit 6a7fb6ebe371 ("fs/xattr: add *at family syscalls") didn't add the
-> > syscalls to the common scripts/syscall.tbl that was also recently
-> > introduced in commit 4fe53bf2ba0a ("syscalls: add generic
-> > scripts/syscall.tbl") which a handful of architectures use.
-> >
-> > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> 
-> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+The sx150x driver uses a rbtree register cache with no obvious reason for
+specifically preferring it. The maple tree register cache is based on a
+more modern data structure and makes implementation decisions more suitable
+for modern systems so let's switch the driver to use that. No functional
+change.
 
-Can this be picked up? It would be nice if the *at family syscalls were
-able to be used by architectures that use the common syscall table.
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/pinctrl/pinctrl-sx150x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-- Charlie
+diff --git a/drivers/pinctrl/pinctrl-sx150x.c b/drivers/pinctrl/pinctrl-sx150x.c
+index fd0331a87cda..ab87de319ad8 100644
+--- a/drivers/pinctrl/pinctrl-sx150x.c
++++ b/drivers/pinctrl/pinctrl-sx150x.c
+@@ -1105,7 +1105,7 @@ static const struct regmap_config sx150x_regmap_config = {
+ 	.reg_bits = 8,
+ 	.val_bits = 32,
+ 
+-	.cache_type = REGCACHE_RBTREE,
++	.cache_type = REGCACHE_MAPLE,
+ 
+ 	.reg_read = sx150x_regmap_reg_read,
+ 	.reg_write = sx150x_regmap_reg_write,
+
+---
+base-commit: 98f7e32f20d28ec452afb208f9cffc08448a2652
+change-id: 20240924-pinctl-sx150x-maple-d8c1f45b9629
+
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
 
 
