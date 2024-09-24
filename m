@@ -1,100 +1,146 @@
-Return-Path: <linux-kernel+bounces-337498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 000D1984AD4
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:25:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 312D2984AD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:25:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF461282FEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:25:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEED21F23D4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:25:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654FE1AC890;
-	Tue, 24 Sep 2024 18:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9971AC890;
+	Tue, 24 Sep 2024 18:25:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="xIjA5nAE"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vh1bZEKZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD3111CA0;
-	Tue, 24 Sep 2024 18:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6461AC433;
+	Tue, 24 Sep 2024 18:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727202306; cv=none; b=AMi8LKluqaaY0x+4Rz47guW+yf7feGcpxcMtJaLkzOkhuIvI4KxSFS+bb+bAizkrecSgMcjpBmdOoBu2xHu7OYSZDo4i3diw4yDnLA+JNbVrnbabv+IwLZSxz2Z8MRD1uuWtN5s0lteaBc1mCWT/e1awxeRzCaFeCqTE6pn0LVo=
+	t=1727202332; cv=none; b=Vjhs+Gc2o4OoTu4Zz5oyJC1ly4nQYi21c3lUzjqAAx2Qr6cR/F0shJ/dcifbO+LGQRmWaBnAfy6/yxgov6+rKUnLAGEXl0PpE1McMMMQhFoZzsEq7DyFmuBggRGTPOUNSc2T8pGOBhkYibvdcbQD5eAdPteQ25X5e8I9GO6dkdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727202306; c=relaxed/simple;
-	bh=rgLearlYjzMnQfkJz/s3WeZnp9Ywf6QnlUcddXy54bE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c6Ym6a4idUYPzLVqDI/UnQqYC7gY7ThuWEKgduKlwr9kgZbtXc53qtRQ23Ht34wTijIoCOQr6IgMlvhuWx+uQVzHhn4I+0UX3QEZHrxgg0Sm+8K9rekKGF2wCouLZz/kBzkkaNvr5EXr+KQuVwgicYQn151WVc4dKiu320uybds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=xIjA5nAE; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4XCpDp2nrmz6ClY9X;
-	Tue, 24 Sep 2024 18:24:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1727202293; x=1729794294; bh=ka1L/rTl/2S2yfrGC6e0Apm9
-	4DZy23YfTKQUPFek9FQ=; b=xIjA5nAEchXHvqDuOAhcmxGDXr2wBmjI+90m8hbL
-	ac678sRb1E5freXs3xcnYO6+5z9n2e9PKH1imyuMy1mvr7G28w4vMv6QjlYfUoHV
-	GV68dTiOG9okWzwD8/dmWXgRub2SRdZdFjdgduGVkChMTebJwggY5Oxul3ZpeIpo
-	uqacwWeG0g7ngfJX6/diyLAJPw03gPDEOTyapxOuxfNVwA0aNLrpAjYli1lSmqiY
-	pmgWSYQGnOkKAUG2clTtdBF3mxQAZGIpMBwY88zCCQFtsf0I3gFmZvy5Kvz1r4ky
-	WfQgi8bKiNUxp8dWGEs2VFFTyuVy5RS5rQxvhUIjDDLKRg==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id lHziY71Vt7vE; Tue, 24 Sep 2024 18:24:53 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4XCpDg5X6zz6ClY9W;
-	Tue, 24 Sep 2024 18:24:51 +0000 (UTC)
-Message-ID: <1845f326-e9eb-4351-9ed1-fce373c82cb0@acm.org>
-Date: Tue, 24 Sep 2024 11:24:50 -0700
+	s=arc-20240116; t=1727202332; c=relaxed/simple;
+	bh=y/m8XbD9fsa6X/SrLt/Xwc5xcmo/U88a+EAvRh4A4mk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PPH0MsgAae69qrv+rBSZFHP73if+O5rcBPBkUzzJAG11GM0RUEVr/kollbNLiEajgI0NVTF0oSD4j6sr12Z0St9oR3y5uLy4tvts3FjkrTKpUKMT/hc3MQHO+FQPAwiruNzB6m7igbdRnpD2vdkC2sMLlGG75ZZC9y2lCv8Sa9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vh1bZEKZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7241AC4CEC4;
+	Tue, 24 Sep 2024 18:25:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727202332;
+	bh=y/m8XbD9fsa6X/SrLt/Xwc5xcmo/U88a+EAvRh4A4mk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Vh1bZEKZnJRo77KBEed+UCQ9aay21hk3PPolCzuveTf440CikQVXlOFguQDyBHdrO
+	 Pe5FA6nLsx1pPm3ZUmvN9+jE67FIHkoFaguYs2ucgb0D5UhZ4n23OR5IMj4YeN0XAW
+	 7QOZ2fx6Qoh48Rsf1bOj9qxXCqIcstgsu4sS7pDblugwoszKcm4uHNVk+vyPC9/r4E
+	 ZNcrO5QPnwaJ2cUYTwEoJwb1wPK64Bd/e1BG2VwdUJS3FBcaT8ahC5dL4Q32P1lrUO
+	 V4JUIoNNze3JLAvnZfeO+H4UWxxf8D0KWHZWyudxfsbDHP3zDbz67G5ZJQ6dMsrXt3
+	 Xa3WbnF8NsPZg==
+Date: Tue, 24 Sep 2024 11:25:30 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Kajol Jain <kjain@linux.ibm.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	"Steinar H. Gunderson" <sesse@google.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Hemant Kumar <hemant@linux.vnet.ibm.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Yang Jihong <yangjihong@bytedance.com>, leo.yan@arm.com
+Subject: Re: [PATCH v1 0/3] 2 memory fixes and a build fix
+Message-ID: <ZvMEGn5RIWMZNvFc@google.com>
+References: <20240924003720.617258-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] ufs: core: set SDEV_OFFLINE when ufs shutdown.
-To: Seunghwan Baek <sh8267.baek@samsung.com>, linux-kernel@vger.kernel.org,
- linux-scsi@vger.kernel.org, martin.petersen@oracle.com,
- James.Bottomley@HansenPartnership.com, avri.altman@wdc.com,
- alim.akhtar@samsung.com
-Cc: grant.jung@samsung.com, jt77.jang@samsung.com, junwoo80.lee@samsung.com,
- dh0421.hwang@samsung.com, jangsub.yi@samsung.com, sh043.lee@samsung.com,
- cw9316.lee@samsung.com, wkon.kim@samsung.com, stable@vger.kernel.org
-References: <20240829093913.6282-1-sh8267.baek@samsung.com>
- <CGME20240829093921epcas1p35d28696b0f79e2ae39d8e3690f088e64@epcas1p3.samsung.com>
- <20240829093913.6282-2-sh8267.baek@samsung.com>
- <fa8a4c1a-e583-496b-a0a2-bd86f86af508@acm.org>
- <003201db0e27$df93f250$9ebbd6f0$@samsung.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <003201db0e27$df93f250$9ebbd6f0$@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240924003720.617258-1-irogers@google.com>
 
+On Mon, Sep 23, 2024 at 05:37:17PM -0700, Ian Rogers wrote:
+> I was looking into some lsan regressions and a latent issue with
+> libdw, creating these fixes.
+> 
+> A thought, we should probably simplify the libdw logic but rather than
+> do it here I'll do it as a separate series on top of these. The issues
+> I see are:
+> 
+> 1) dwfl_thread_getframes is used to test for the presence of
+>    libdw-dwarf-unwind. The blame date on this function is
+>    2013-05-30. As the function is 10 years old I think having libdw
+>    implies having dwfl_thread_getframes and so we can just merge the
+>    two pieces of logic instead of having different feature tests and
+>    ifdefs.
+> 
+> 2) similarly, dwarf_getlocations has a blame date of 2013-08-23 so
+>    let's just make libdw tests test for this and make having libdw
+>    imply dwarf_getlocations support.
+> 
+> 3) similarly, dwarf_getcfi has a blame date of 2009-06-24 so let's
+>    just make libdw tests test for this and make having libdw imply
+>    dwarf_getcfi support.
+> 
+> 4) in Makefie.config feature-dwarf is a synonym for libdw support. I
+>    think using the name libdw is more intention revealing as dwarf can
+>    mean multiple things. Let's change HAVE_DWARF_SUPPORT to
+>    HAVE_LIBDW_SUPPORT and all similar dwarf vs libdw names.
+> 
+> 5) We have "#if _ELFUTILS_PREREQ(0, 142)" testing for elfutils version
+>    0.142. Elfutils 0.142 was released around 2009-06-13 (via git blame
+>    on the NEWS file). Let's remove the #if and ensure elfutils feature
+>    tests for at least 0.142. If someone were using an incredibly old
+>    version then they'd lose some elfutils support, but given the 15
+>    year old age of the library I find it unlikely anyone is doing
+>    this. They can also just move to a newer version.
 
-On 9/23/24 7:17 PM, Seunghwan Baek wrote:> That's because SSU (Start 
-Stop Unit) command must be sent during
-> shutdown process. If SDEV_OFFLINE is set for wlun, SSU command cannot
-> be sent because it is rejected by the scsi layer. Therefore, we
-> consider to set SDEV_QUIESCE for wlun, and set SDEV_OFFLINE for other
-> lus.
-Right. Since ufshcd_wl_shutdown() is expected to stop all DMA related to
-the UFS host, shouldn't there be a scsi_device_quiesce(sdev) call after
-the __ufshcd_wl_suspend(hba, UFS_SHUTDOWN_PM) call?
+Looking at the map file in libdw, the latest addition was 0.158 for
+dwfl_thread_getframes().  Probably we can add the version check to the
+feature test to make sure if it has all the required APIs.
+
+https://sourceware.org/git/?p=elfutils.git;a=blob;f=libdw/libdw.map;h=552588a94c0c1a1f2fd5b973553c784026e6de14;hb=HEAD#l274
+
+> 
+> From the mailing list I notice also overlap with the last patch and
+> this series:
+> https://lore.kernel.org/lkml/20240919013513.118527-1-yangjihong@bytedance.com/
+> Simplifying the libdw support will address some of those issues too.
+
+Yeah I noticed that too and feel like it should go to perf-tools tree.
+Probably it doesn't clash with this so I think it's ok to have this in
+perf-tools-next.
 
 Thanks,
+Namhyung
 
-Bart.
+> 
+> Ian Rogers (3):
+>   perf disasm: Fix capstone memory leak
+>   perf probe: Fix libdw memory leak
+>   perf build: Fix !HAVE_DWARF_GETLOCATIONS_SUPPORT
+> 
+>  tools/perf/Makefile.config     |  6 ++++++
+>  tools/perf/util/disasm.c       | 11 +++++++----
+>  tools/perf/util/dwarf-aux.h    |  1 +
+>  tools/perf/util/probe-finder.c |  5 +++++
+>  4 files changed, 19 insertions(+), 4 deletions(-)
+> 
+> -- 
+> 2.46.0.792.g87dc391469-goog
+> 
 
