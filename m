@@ -1,160 +1,95 @@
-Return-Path: <linux-kernel+bounces-336936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 948919842CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:59:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67B959842EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:03:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F067288822
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:59:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2671428713E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B3F715D5B7;
-	Tue, 24 Sep 2024 09:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="dihltmfE"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5B516DEDF;
+	Tue, 24 Sep 2024 10:03:46 +0000 (UTC)
+Received: from weierstrass.telenet-ops.be (weierstrass.telenet-ops.be [195.130.137.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165941487DC
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B59335A5
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 10:03:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727171932; cv=none; b=ufgfM/sHSmTCuBPjAi68ROgzoWs4PRNGh6aTYVd+SGzJjTuDUCm78cyc7XqBln5KNZUjNB8k4qtJVYhkR7EF/JBTWtPMSiqF3U4nWnDeGUvWKWYedWhvJ+NabyYvdewlAVaCK9hpqYFexZbsVbyXPIekDt/W/hHKh9n7HJ/PsMA=
+	t=1727172226; cv=none; b=WPYtC5FUw25GylinFvpiHwTKZ4oZGzr9mxOqEyi61cuegEwIrcC6AICPLMf//TCmTjHRkXxJzojJDfSr3gGE2kwrR0SjXTeVSq6BlYwyQxjYSctZN6fIiYNsebV+0YvZvg8vV/MPMSldb7xrOx4VEuLemmwz2bLv+m4GosjZTHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727171932; c=relaxed/simple;
-	bh=tlETOa6+vWMIAxq2Cm1TSBMmx3VjIIaigi8ooiVQInw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SteU34zgzz0s7vWSeof1+UVN5+KVnXeUcgPbcMGFxPDLJeXlyQlyGYkE6cKyx2OO3oya5E89tca0G6kHiCGdNB8p47xHviarli0KYosbTiaUUHduKeCPmC8thI6o/c7mx/8cjrLDJ2o//ryhl+ho+RJ9KhV9y8A2IiFCtc39OO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=dihltmfE; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c3d20eed0bso5907857a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 02:58:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1727171929; x=1727776729; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NuBTHx/9cOhiI07dj9MDxTsrK6YcRc3R8bANsyntmZU=;
-        b=dihltmfE2RZVcKSI2a7wJrW8basTlTju21k95ZwGG8WW69EYvXPZlLJ9Ze3oBXKjfr
-         N3rfMxsb2eTpE2XNh2gbA06gZlk2h+ssBo0g1sGOIZVtnnb4fExO5KiVoHT6a638vKB4
-         5DpPUS+lyRV6w8+m2sYwngUGlS0q2aQEINmF8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727171929; x=1727776729;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NuBTHx/9cOhiI07dj9MDxTsrK6YcRc3R8bANsyntmZU=;
-        b=YhqoIUOC/a2Vn2GMn0iqV2DGti1GuP9M2A6q47N3qNKDtZzGkkdbBO0eoTwJ52z1Fi
-         qNs7xxm1I4K40nNlWVN+w81xMtmQ8yF8+Nxy2mxbXTgbXjlSIL6ptjLdLyK9cbwcZH5c
-         a4TxzLclLbVLYrLGr59SnmGXLknMWuccH0PeLdYiCqev6jC/blmsHc16o0NPVf6m4GoA
-         ngb30aT1QTO5yaWtFKG1ewI3NBlIolvV1N0fV4kabAV5pyim50HGDCIRCfdyc6ibCyTz
-         ntNgy0Vgw/HWly7alxMskpRD6To5udSezSg5u6AmnsKa0I6d56vseInWAkEZOPY1VF5E
-         raag==
-X-Forwarded-Encrypted: i=1; AJvYcCWaQTz0o8IIOoDuv/G3PIEB1pOTeqJt1qvvX+Z8pmYcf3syLWOhMlG/Man0eRISVxqfxK0hnwsVj0XbRmQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yym5jCtmT0xWtcwd8WKwgnGj/V5flEHByFGCyF58G8H/HiaJQBq
-	oNw6brkSU3za6TpRECLras3ydC5eNrKZCCzheTLC+EA/ttzK+ylJWVmIww6kcHE=
-X-Google-Smtp-Source: AGHT+IFM64nYYVrUwnbpbJ2SOxxynSNBbuHUUVEvl48F1dF3eRESGEumW9pE32wjRYZgIjjhpvjLHg==
-X-Received: by 2002:a05:6402:2788:b0:5c5:cb49:30cd with SMTP id 4fb4d7f45d1cf-5c5cb493109mr2902878a12.9.1727171928949;
-        Tue, 24 Sep 2024 02:58:48 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c5cf48c437sm587972a12.5.2024.09.24.02.58.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 02:58:48 -0700 (PDT)
-Date: Tue, 24 Sep 2024 11:58:46 +0200
-From: Simona Vetter <simona.vetter@ffwll.ch>
-To: Qiu-ji Chen <chenqiuji666@gmail.com>
-Cc: mripard@kernel.org, dave.stevenson@raspberrypi.com,
-	kernel-list@raspberrypi.com, maarten.lankhorst@linux.intel.com,
-	tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	baijiaju1990@gmail.com, stable@vger.kernel.org
-Subject: Re: [PATCH] drm/vc4: Fix atomicity violation in
- vc4_crtc_send_vblank()
-Message-ID: <ZvKNVut_V9fiiaaT@phenom.ffwll.local>
-Mail-Followup-To: Qiu-ji Chen <chenqiuji666@gmail.com>, mripard@kernel.org,
-	dave.stevenson@raspberrypi.com, kernel-list@raspberrypi.com,
-	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de,
-	airlied@gmail.com, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, baijiaju1990@gmail.com,
-	stable@vger.kernel.org
-References: <20240913091053.14220-1-chenqiuji666@gmail.com>
+	s=arc-20240116; t=1727172226; c=relaxed/simple;
+	bh=Qe5gsGLUKgpWeMR6yMlL8INVF8e5OomKcG92fxXpQ9c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bfEla30c6tnZPBsdUFLDOKR17RaVoQfW/a95tlZgdFVNvCRzxFho6llI1UujTVd+W0tbc7Y056izlkKeA5ZBFon3V8h7VsZt80MNMCUg9beO5OIyr9eP1XYYxJN46FsnY6T7k/Z8DvRtnvPg/dbFMCrd05cK+vk6qRVVJk6h67k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+	by weierstrass.telenet-ops.be (Postfix) with ESMTPS id 4XCb6Q2WXcz4xMhZ
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 12:03:42 +0200 (CEST)
+Received: from ramsan.of.borg ([84.195.187.55])
+	by baptiste.telenet-ops.be with cmsmtp
+	id GA3Z2D00H1C8whw01A3ZkG; Tue, 24 Sep 2024 12:03:35 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1st2K3-000Sir-BC;
+	Tue, 24 Sep 2024 11:59:11 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1st2K7-002HH6-7Z;
+	Tue, 24 Sep 2024 11:59:11 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Daniel Machon <daniel.machon@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	=?UTF-8?q?Jens=20Emil=20Schulz=20=C3=98stergaard?= <jensemil.schulzostergaard@microchip.com>,
+	Steen Hegelund <Steen.Hegelund@microchip.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] net: microchip: Make FDMA config symbol invisible
+Date: Tue, 24 Sep 2024 11:59:09 +0200
+Message-Id: <8e2bcd8899c417a962b7ee3f75b29f35b25d7933.1727171879.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240913091053.14220-1-chenqiuji666@gmail.com>
-X-Operating-System: Linux phenom 6.10.6-amd64 
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 13, 2024 at 05:10:53PM +0800, Qiu-ji Chen wrote:
-> Atomicity violation occurs when the vc4_crtc_send_vblank function is
-> executed simultaneously with modifications to crtc->state or
-> crtc->state->event. Consider a scenario where both crtc->state and
-> crtc->state->event are non-null. They can pass the validity check, but at
-> the same time, crtc->state or crtc->state->event could be set to null. In
-> this case, the validity check in vc4_crtc_send_vblank might act on the old
-> crtc->state and crtc->state->event (before locking), allowing invalid
-> values to pass the validity check, leading to null pointer dereference.
-> 
-> To address this issue, it is recommended to include the validity check of
-> crtc->state and crtc->state->event within the locking section of the
-> function. This modification ensures that the values of crtc->state->event
-> and crtc->state do not change during the validation process, maintaining
-> their valid conditions.
-> 
-> This possible bug is found by an experimental static analysis tool
-> developed by our team. This tool analyzes the locking APIs
-> to extract function pairs that can be concurrently executed, and then
-> analyzes the instructions in the paired functions to identify possible
-> concurrency bugs including data races and atomicity violations.
-> 
-> Fixes: 68e4a69aec4d ("drm/vc4: crtc: Create vblank reporting function")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Qiu-ji Chen <chenqiuji666@gmail.com>
-> ---
->  drivers/gpu/drm/vc4/vc4_crtc.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/vc4/vc4_crtc.c b/drivers/gpu/drm/vc4/vc4_crtc.c
-> index 8b5a7e5eb146..98885f519827 100644
-> --- a/drivers/gpu/drm/vc4/vc4_crtc.c
-> +++ b/drivers/gpu/drm/vc4/vc4_crtc.c
-> @@ -575,10 +575,12 @@ void vc4_crtc_send_vblank(struct drm_crtc *crtc)
->  	struct drm_device *dev = crtc->dev;
->  	unsigned long flags;
->  
-> -	if (!crtc->state || !crtc->state->event)
-> +	spin_lock_irqsave(&dev->event_lock, flags);
+There is no need to ask the user about enabling Microchip FDMA
+functionality, as all drivers that use it select the FDMA symbol.
+Hence make the symbol invisible, unless when compile-testing.
 
-crtc->state isn't protected by this spinlock, which also points at the
-more fundamental bug here: We need to pass the crtc_state from the caller,
-because those have it (or well, can look it up with
-drm_atomic_get_new_crtc_state). Then we also do not need a spinlock to
-protect access to state->event, because in both callers we are the owners
-of this struct field.
--Sima
+Fixes: 30e48a75df9c6ead ("net: microchip: add FDMA library")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/net/ethernet/microchip/fdma/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +	if (!crtc->state || !crtc->state->event) {
-> +		spin_unlock_irqrestore(&dev->event_lock, flags);
->  		return;
-> +	}
->  
-> -	spin_lock_irqsave(&dev->event_lock, flags);
->  	drm_crtc_send_vblank_event(crtc, crtc->state->event);
->  	crtc->state->event = NULL;
->  	spin_unlock_irqrestore(&dev->event_lock, flags);
-> -- 
-> 2.34.1
-> 
-
+diff --git a/drivers/net/ethernet/microchip/fdma/Kconfig b/drivers/net/ethernet/microchip/fdma/Kconfig
+index 59159ad6701ad50b..ec228c0613517ec3 100644
+--- a/drivers/net/ethernet/microchip/fdma/Kconfig
++++ b/drivers/net/ethernet/microchip/fdma/Kconfig
+@@ -6,7 +6,7 @@
+ if NET_VENDOR_MICROCHIP
+ 
+ config FDMA
+-	bool "FDMA API"
++	bool "FDMA API" if COMPILE_TEST
+ 	help
+ 	  Provides the basic FDMA functionality for multiple Microchip
+ 	  switchcores.
 -- 
-Simona Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.34.1
+
 
