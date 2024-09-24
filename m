@@ -1,76 +1,57 @@
-Return-Path: <linux-kernel+bounces-336665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4D21983E0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:18:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ECB4983DA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:15:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A0AD1F215E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:18:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2B89B247C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:15:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1FD145B03;
-	Tue, 24 Sep 2024 07:18:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67F8145B1D;
+	Tue, 24 Sep 2024 07:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QNvH2NIL"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lf7qzpNe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9871A270;
-	Tue, 24 Sep 2024 07:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5B11448DC;
+	Tue, 24 Sep 2024 07:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727162312; cv=none; b=KKXJ46rk0ga1yfP1scaJse+WFd6q2AU68Sa9zTKYTIkLB7f4e5f2U6/7MA1Moig95DhoMm32zxoPTX+vlchyH6Ydie990mIbWa+45z33okLfFQ0HjgxSQ0I6FgH6VdFkt/+AAk/osf9G76wYUw19iwGROL1WGBMfGpbokl3O3Cg=
+	t=1727162142; cv=none; b=BheUaJjjG4evXq7i2JzpPHUyjQ2XbsQTb2dZcJ5r6jVgqsk1PdZy+jmiBLuez13XinWtmdorkv4IURCaXxCi7PY1WtMuDPAbBbR7n+mNtCQ8MUcyaErMt1XeXwLdk7C7//pm+G/lsuT6aR3IPF8zgVgkTHn+n7nHef1XG7oTEqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727162312; c=relaxed/simple;
-	bh=13W/S/960G9LH0E9Svih4veY12utj/2kO1lJZ5f++Zc=;
+	s=arc-20240116; t=1727162142; c=relaxed/simple;
+	bh=+3WJUhhtf5BZnaLhD5R1AYzUor/yGx2LgUXKhT+ewAk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a4SjlZ1Wf/eWh6ySWdEbD4yFjo9N3BckW/CQsbnAdY3H0y+C9aoZTSmMyXlq0dXcPPIT/G+QqpDxomG5I/3nc9sZpX1oEXIj4TcBNzyJSflBpXFxG+qc3oCCWUVpsxmpFGAxuqXqsyuPIzFSvmxQKh/hW3pdpxPO5I5q7JHmDAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QNvH2NIL; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727162311; x=1758698311;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=13W/S/960G9LH0E9Svih4veY12utj/2kO1lJZ5f++Zc=;
-  b=QNvH2NILzk3WId/sf5Bt2zgmVxqR99PL1ZCybble8Dex5S4XATuFxkCj
-   01J19/u1Kx7yhOQdX+Q5m4M5h0FIxrQqpl4YuRm+51fcBu/ZFVWwdkulO
-   ExOg6UYQ0xItJ3TvIFwSnjh6jkEDppX0g4vTGpVQ4shszIdQ2a3VG1WGL
-   yRSGy1xi+962gZYGJbJYklDFjlPDzeV7XmJFvm32uv54qGOV6sJvrdOVk
-   do0FUIitVX9sQj98vXirIaYmax2z5ozYKgUFz5sRFMNBGNFirgg7EtDxn
-   4rmv+nOxCPt7B9Ju/GN92cEBqSXOJrrLKJgFpFC44LCk4QFdFVqHBezvD
-   g==;
-X-CSE-ConnectionGUID: Ofq8ZvD8SNSKGlg1E7m5cA==
-X-CSE-MsgGUID: 6l3QP7hCTIGb0WQSFh9T3g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="43609262"
-X-IronPort-AV: E=Sophos;i="6.10,253,1719903600"; 
-   d="scan'208";a="43609262"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 00:18:21 -0700
-X-CSE-ConnectionGUID: SkMfx9QNTiyf2DADT11LzQ==
-X-CSE-MsgGUID: QknmVD9hT8Gu9DiQtT+PyQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,253,1719903600"; 
-   d="scan'208";a="71327431"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by fmviesa009.fm.intel.com with ESMTP; 24 Sep 2024 00:18:17 -0700
-Date: Tue, 24 Sep 2024 15:15:23 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Peter Colberg <peter.colberg@intel.com>
-Cc: Wu Hao <hao.wu@intel.com>, Tom Rix <trix@redhat.com>,
-	Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>,
-	linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Russ Weight <russ.weight@linux.dev>,
-	Marco Pagani <marpagan@redhat.com>,
-	Matthew Gerlach <matthew.gerlach@linux.intel.com>
-Subject: Re: [PATCH v3 6/9] fpga: dfl: factor out feature data creation from
- build_info_commit_dev()
-Message-ID: <ZvJnC7hHISkbOo2n@yilunxu-OptiPlex-7050>
-References: <20240919203430.1278067-1-peter.colberg@intel.com>
- <20240919203430.1278067-7-peter.colberg@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=krk6dcYZ81y9x+KkW7ZXRmFP4tifFcJUE0aJ81TVyhvDW9tJNi1GgrsiqKdXoQmFPYon4nDUt6xjuJQdDQXmpwYEUF9bJe2pvoJA64u86D2lSG7OSO4Ghxy7634j4KWZa/8sIdGr/4O2dBzw0LMgZEu8K8fUxKRolhqbrm4t8ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lf7qzpNe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74605C4CEC4;
+	Tue, 24 Sep 2024 07:15:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727162141;
+	bh=+3WJUhhtf5BZnaLhD5R1AYzUor/yGx2LgUXKhT+ewAk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Lf7qzpNeQemiYgC2PW3vgA2ell1wHs3qgY509b/3p/HMf0FZEFG/gyi3Iv6Zgooj5
+	 s0tmKiqfJTKFvdPIGOTqqLerhaen8cBDRC7n63De+nvPOePEIiYud5RMujEn6Zl1wx
+	 lL/nAgP+rbcF7OxcsK38Y51eNXostlU7lW/7NP8d4xVw6+SbQjog44VXG/rbgRpges
+	 pdimngUa7TaNAE84ufMKTzmuvVgtsFO0+RlRDXPTpzXu84+I5Waqq2ve9GNIP1ihGa
+	 rvo2BmHkh+UMxHcTqiUVWQ9Fk7Rxmw//GFvtIQVtRDjJGOGwSMIwt4EGySKWZLZLvn
+	 BqPXjdwK5NMxA==
+Date: Tue, 24 Sep 2024 08:15:37 +0100
+From: Simon Horman <horms@kernel.org>
+To: Dipendra Khadka <kdipendra88@gmail.com>
+Cc: sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
+	hkelam@marvell.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH v2 net] net: ethernet: marvell: octeontx2: nic: Add error
+ pointer check in otx2_common.c
+Message-ID: <20240924071537.GC4029621@kernel.org>
+References: <20240923161738.4988-1-kdipendra88@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,90 +60,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240919203430.1278067-7-peter.colberg@intel.com>
+In-Reply-To: <20240923161738.4988-1-kdipendra88@gmail.com>
 
-On Thu, Sep 19, 2024 at 04:34:27PM -0400, Peter Colberg wrote:
-> Add a separate function binfo_create_feature_dev_data() which allocates
-> and populates the feature platform data, and call the function from
-> build_info_commit_dev() which registers the feature platform device.
++ Maxime Chevallier
+
+On Mon, Sep 23, 2024 at 04:17:37PM +0000, Dipendra Khadka wrote:
+> Adding error pointer check after calling otx2_mbox_get_rsp().
 > 
-> Signed-off-by: Peter Colberg <peter.colberg@intel.com>
-> Reviewed-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
+> Fixes: ab58a416c93f ("octeontx2-pf: cn10k: Get max mtu supported from admin function")
+> Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
 > ---
->  drivers/fpga/dfl.c | 74 ++++++++++++++++++++++++++--------------------
->  1 file changed, 42 insertions(+), 32 deletions(-)
+> v2:
+>  - Added Fixes: tag.
+>  - Changed the return logic to follow the existing return path.
+> v1: https://lore.kernel.org/all/20240923110633.3782-1-kdipendra88@gmail.com/
+>  drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+
+Hi Dipendra,
+
+Thanks for the updates,
+
+I agree that this addresses Maxime's changes.  I've CCed him here, please
+consider CCing people who comment on earlier revisions of patches.
+
+My only nit about this patch is that, as per mo comment on [1], I think the
+prefix in the subject should be 'octeontx2-pf: '.
+
+[1] https://lore.kernel.org/netdev/20240924071026.GB4029621@kernel.org/
+
 > 
-> diff --git a/drivers/fpga/dfl.c b/drivers/fpga/dfl.c
-> index 4c79d433d216..e644eb9fde39 100644
-> --- a/drivers/fpga/dfl.c
-> +++ b/drivers/fpga/dfl.c
-> @@ -749,12 +749,8 @@ static void dfl_fpga_cdev_add_port_data(struct dfl_fpga_cdev *cdev,
->  	mutex_unlock(&cdev->lock);
->  }
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
+> index 87d5776e3b88..e4bde38eebda 100644
+> --- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
+> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
+> @@ -1837,6 +1837,10 @@ u16 otx2_get_max_mtu(struct otx2_nic *pfvf)
+>  	if (!rc) {
+>  		rsp = (struct nix_hw_info *)
+>  		       otx2_mbox_get_rsp(&pfvf->mbox.mbox, 0, &req->hdr);
+> +		if (IS_ERR(rsp)) {
+> +			rc = PTR_ERR(rsp);
+> +			goto out;
+> +		}
 >  
-> -/*
-> - * register current feature device, it is called when we need to switch to
-> - * another feature parsing or we have parsed all features on given device
-> - * feature list.
-> - */
-> -static int build_info_commit_dev(struct build_feature_devs_info *binfo)
-> +static struct dfl_feature_platform_data *
-> +binfo_create_feature_dev_data(struct build_feature_devs_info *binfo)
->  {
->  	struct platform_device *fdev = binfo->feature_dev;
->  	struct dfl_feature_platform_data *pdata;
-> @@ -764,7 +760,7 @@ static int build_info_commit_dev(struct build_feature_devs_info *binfo)
->  
->  	type = feature_dev_id_type(fdev);
->  	if (WARN_ON_ONCE(type >= DFL_ID_MAX))
-> -		return -EINVAL;
-> +		return ERR_PTR(-EINVAL);
->  
->  	/*
->  	 * we do not need to care for the memory which is associated with
-> @@ -774,7 +770,7 @@ static int build_info_commit_dev(struct build_feature_devs_info *binfo)
->  	 */
->  	pdata = kzalloc(struct_size(pdata, features, binfo->feature_num), GFP_KERNEL);
->  	if (!pdata)
-> -		return -ENOMEM;
-> +		return ERR_PTR(-ENOMEM);
->  
->  	pdata->dev = fdev;
->  	pdata->num = binfo->feature_num;
-> @@ -799,7 +795,7 @@ static int build_info_commit_dev(struct build_feature_devs_info *binfo)
->  	fdev->resource = kcalloc(binfo->feature_num, sizeof(*fdev->resource),
->  				 GFP_KERNEL);
->  	if (!fdev->resource)
-> -		return -ENOMEM;
-> +		return ERR_PTR(-ENOMEM);
->  
->  	/* fill features and resource information for feature dev */
->  	list_for_each_entry_safe(finfo, p, &binfo->sub_features, node) {
-> @@ -818,7 +814,7 @@ static int build_info_commit_dev(struct build_feature_devs_info *binfo)
->  						       finfo->params, finfo->param_size,
->  						       GFP_KERNEL);
->  			if (!feature->params)
-> -				return -ENOMEM;
-> +				return ERR_PTR(-ENOMEM);
->  
->  			feature->param_size = finfo->param_size;
->  		}
-> @@ -834,8 +830,10 @@ static int build_info_commit_dev(struct build_feature_devs_info *binfo)
->  			feature->ioaddr =
->  				devm_ioremap_resource(binfo->dev,
->  						      &finfo->mmio_res);
-> -			if (IS_ERR(feature->ioaddr))
-> -				return PTR_ERR(feature->ioaddr);
-> +			if (IS_ERR(feature->ioaddr)) {
-> +				ret = PTR_ERR(feature->ioaddr);
-> +				return ERR_PTR(ret);
+>  		/* HW counts VLAN insertion bytes (8 for double tag)
+>  		 * irrespective of whether SQE is requesting to insert VLAN
 
-Why change the type back and forth?
-
-  return feature->ioaddr;
-
-is it OK?
-
-Thanks,
-Yilun
+-- 
+pw-bot: changes-requested
 
