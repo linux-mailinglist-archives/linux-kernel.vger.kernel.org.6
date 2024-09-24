@@ -1,176 +1,153 @@
-Return-Path: <linux-kernel+bounces-337802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B8CF984F26
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:54:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F019F984F29
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:55:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E46AC282CE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:54:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D3D61C230C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA83189B88;
-	Tue, 24 Sep 2024 23:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371B818953F;
+	Tue, 24 Sep 2024 23:55:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EjD+JZbj"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="sDwmszgT"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F26880C04;
-	Tue, 24 Sep 2024 23:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9DB80C04
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 23:55:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727222037; cv=none; b=F+8A5bSugt5M9+Pz+L9+rNggdJJtONPSXowwCE66cu+Oe6o6/7LCtsN0hmHMefftrIzes/dwtKj3tKCMkmd/S6W42FKVez8kQdeyj2ZiXlbokyFc2+LoBrdqqVcatAj9P+fO8RugMs+sjdlw1UodiRieOkWi3D0v6ABS/0gy9BY=
+	t=1727222116; cv=none; b=kuSDvTZ45+pOVPFsS7SLxFO+FG9ay3X/Zq2ggYQ/OrRHD2hKKygTkX7A7Nd/AiaDogMaf3fsxZG2C9qTOZvFUTnUBHyZYyok9czmnddY8XDPTHf6PAWOQfXyTyPxxRuDDhwpspKLdzV90EosSLp1Ek8GuqEEHrgQhQAHyawZ2VU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727222037; c=relaxed/simple;
-	bh=ioXQba4GXAbNLNUCL1H1LSF5SCjlINxCoJ0c++sczwE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=srcyveaar/dUzPru+nJRxwd8NMvvIO/4ZALgH0ALNgtjLFtC3BjPcs5Yk+SVwGlXqZp66CFQ5D3cLG8gCrSTKIdmXtAF3k3nanN1qC161HvTbk2J6ALP64FYlQgITG8D3HihIHGzU6NVIEPPoGU9omeujAmn5k33Dr/NqJn+Zc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EjD+JZbj; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f75c205e4aso62287051fa.0;
-        Tue, 24 Sep 2024 16:53:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727222033; x=1727826833; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sJMon77dDufEnoUS5VuyUWRJ/WzBSutK0jQD7Rp3ECQ=;
-        b=EjD+JZbjVDoJFCszYpEh7CUoEvxKZ79ldWzVM8eAHeqnTnMCWTI+4NCuOvRXVuW1EH
-         eHREt7hvLL9Vke2WAqleqx1EpDX8fp+DuJB5HJQLEH5mNF8zTUnONEg86w9gi90iucH0
-         06BT+2PxSgjaqsijgmMvjfvqKGf1Od3SJBjo4qk2EhYxWqSBtMfxlONkMEkHRAG6DgY1
-         gXLtHzqKmUEgHPEMiZYczB9STaiZoVk68cHSCZfNEi9SxBvXreMNxdHGs+6u4x5b2E2d
-         RVPNuaBIFXq3A/a8qANQ7G2ZopHshPBguBFYKD0cs3CO6r0Oysmw5q8MaN1R72TMeKqJ
-         W0UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727222033; x=1727826833;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sJMon77dDufEnoUS5VuyUWRJ/WzBSutK0jQD7Rp3ECQ=;
-        b=Y18yw0dZCKQtu7SRz8aUHbs14mpCuNMYYOm4Z6Q3NP9y4xVoyC3cLRLmPZGAJpRMUN
-         qNtqCknijQQtaT7Qz5hq/BDhx+c5REnxPePtElhrdccls1dqFtZpKbjKAuGRf+5uBT3A
-         D3ZgLs907nyQrKa09eKRCUBBSYAY/OBpUuDE91v7q27iSyfYAkCUJJWQkxv9Vk7NQyd3
-         cNQggMqUfGXSU+MyTipzK6BHgwyx5EURdCA13DjUFqMJtkMEQQp/2LFMBtUTkJ2hvbnL
-         5oc9ZUDqDjt2rVzGBzXRnObt34c1CSRoWdA7YzoGPlCXKdhFY8XE1kiaWbFmtX3Yt8ld
-         nUBw==
-X-Forwarded-Encrypted: i=1; AJvYcCX9h1GU2R2tZ72x13kZ55dyZl04kdz0IV6pvyPwk61tceR5vbD2W2C31jg+VeHya55PfKBZXpNxrYMtmYk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6BrR1R75bHxd0eOtIMYnZZ+l8fdTh4/We85YsdZZZHzUcSRmt
-	ld3NE2k3hXgILy+KrdTsk/DKP5fxPFEitnM3PoVpKFhoABRN0DB+ozkiStYaME4=
-X-Google-Smtp-Source: AGHT+IHyJZboCu/YgJ4RHKXNQDZUxEnV9BPMK7Wh1iSRITXTTVWzaxLma7KdhnbIuFbh8f8GoEjn0Q==
-X-Received: by 2002:a2e:bc22:0:b0:2f7:4bf7:e046 with SMTP id 38308e7fff4ca-2f91ca422admr5359201fa.34.1727222032603;
-        Tue, 24 Sep 2024 16:53:52 -0700 (PDT)
-Received: from dau-work-pc.zonatelecom.ru ([185.149.163.197])
-        by smtp.googlemail.com with ESMTPSA id 38308e7fff4ca-2f8d28b5a65sm3583011fa.136.2024.09.24.16.53.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 16:53:51 -0700 (PDT)
-From: Anton Danilov <littlesmilingcloud@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Anton Danilov <littlesmilingcloud@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Shigeru Yoshida <syoshida@redhat.com>,
-	Suman Ghosh <sumang@marvell.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net v3] ipv4: ip_gre: Fix drops of small packets in ipgre_xmit
-Date: Wed, 25 Sep 2024 02:51:59 +0300
-Message-Id: <20240924235158.106062-1-littlesmilingcloud@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1727222116; c=relaxed/simple;
+	bh=GJtnJzORqAh6/E7jfXQMZl0jxCwqSXhHzjjLqk8cQLw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IDFjJ8psAFbQ6aJOJGsJEyGGjU1fv57gFEBCPac9AZtMCx/RFPZMF7qXi6lAlVBVWzP4Vd/zZFVocKcCIPd1K2CGhE2rOpq/3m18jHPyr/4sF1YB8myxjmN6fTp5J8ega1v+m+2s5SZP9+B7lRHb22UxB3fDXrjmA9qT2ZFB924=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=sDwmszgT; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=gAdoxsJnaX+NHAHvP7D1xgUfSXboS41UK2Hpt4Od49M=; b=sDwmszgTsnKZQOCZQKL0QrqgR5
+	P4aAWM/2d5i+ERVcssvTmKMVnFlr6WEWxiZFjG0Y6cg+Q73Kly3D5LjOai+xltBSfbDDz2oaFVSlO
+	z8rKJCdPvZtvH47b62NjpVRDJDXujewt9sdZgpPwb+nnmLD8MwYUM+zGDBj2MUfhOhOgGNEYJnPC7
+	axvzxH2pXch1g4RumqPADlCcmqQmxrbOLnOMh1idGtOaNIZ+ydwrCLYMazYu6+7Xo2dzqgMXmrd8G
+	XF6/+LBdsTFn9Ft1nz4SedL8L8QDsa0VaEf0AJXAtpVvqdSx9OuI7b4/hM5O3SxbiBGoG4wro75Nb
+	YegaYfnw==;
+Received: from [187.36.213.55] (helo=[192.168.1.212])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1stFN2-000euF-VI; Wed, 25 Sep 2024 01:55:05 +0200
+Message-ID: <55fa8756-1082-45b9-8edb-5b3fd6722e08@igalia.com>
+Date: Tue, 24 Sep 2024 20:54:58 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MAINTAINERS: Add myself as VKMS Maintainer
+To: Louis Chauvet <louis.chauvet@bootlin.com>, rodrigosiqueiramelo@gmail.com,
+ melissa.srw@gmail.com, hamohammed.sa@gmail.com, daniel@ffwll.ch,
+ dri-devel@lists.freedesktop.org, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, sean@poorly.run
+Cc: thomas.petazzoni@bootlin.com, linux-kernel@vger.kernel.org,
+ seanpaul@google.com
+References: <20240910-vkms-maintainer-v1-1-e7a6c7a4ae71@bootlin.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+Autocrypt: addr=mcanal@igalia.com; keydata=
+ xjMEZIsaeRYJKwYBBAHaRw8BAQdAGU6aY8oojw61KS5rGGMrlcilFqR6p6ID45IZ6ovX0h3N
+ H01haXJhIENhbmFsIDxtY2FuYWxAaWdhbGlhLmNvbT7CjwQTFggANxYhBDMCqFtIvFKVRJZQ
+ hDSPnHLaGFVuBQJkixp5BQkFo5qAAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQNI+cctoYVW5u
+ GAEAwpaC5rI3wD8zqETKwGVoXd6+AbmGfZuVD40xepy7z/8BAM5w95/oyPsHUqOsg/xUTlNp
+ rlbhA+WWoaOXA3XgR+wCzjgEZIsaeRIKKwYBBAGXVQEFAQEHQGoOK0jgh0IorMAacx6WUUWb
+ s3RLiJYWUU6iNrk5wWUbAwEIB8J+BBgWCAAmFiEEMwKoW0i8UpVEllCENI+cctoYVW4FAmSL
+ GnkFCQWjmoACGwwACgkQNI+cctoYVW6cqwD/Q9R98msvkhgRvi18fzUPFDwwogn+F+gQJJ6o
+ pwpgFkAA/R2zOfla3IT6G3SBoV5ucdpdCpnIXFpQLbmfHK7dXsAC
+In-Reply-To: <20240910-vkms-maintainer-v1-1-e7a6c7a4ae71@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Regression Description:
+Hi Louis,
 
-Depending on the options specified for the GRE tunnel device, small
-packets may be dropped. This occurs because the pskb_network_may_pull
-function fails due to the packet's insufficient length.
+On 9/10/24 12:10, Louis Chauvet wrote:
+> I've been actively working on VKMS to provide new features and
+> participated in reviews and testing. To help Maìra with her work, add
+> myself as co-maintainer of VKMS.
+> 
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
-For example, if only the okey option is specified for the tunnel device,
-original (before encapsulation) packets smaller than 28 bytes (including
-the IPv4 header) will be dropped. This happens because the required
-length is calculated relative to the network header, not the skb->head.
+I see that you're now a developer in the drm/misc repo. Therefore, I
+applied this patch to misc/kernel.git (drm-misc-next).
 
-Here is how the required length is computed and checked:
+Thanks for volunteering!
 
-* The pull_len variable is set to 28 bytes, consisting of:
-  * IPv4 header: 20 bytes
-  * GRE header with Key field: 8 bytes
+Best Regards,
+- Maíra
 
-* The pskb_network_may_pull function adds the network offset, shifting
-the checkable space further to the beginning of the network header and
-extending it to the beginning of the packet. As a result, the end of
-the checkable space occurs beyond the actual end of the packet.
-
-Instead of ensuring that 28 bytes are present in skb->head, the function
-is requesting these 28 bytes starting from the network header. For small
-packets, this requested length exceeds the actual packet size, causing
-the check to fail and the packets to be dropped.
-
-This issue affects both locally originated and forwarded packets in
-DMVPN-like setups.
-
-How to reproduce (for local originated packets):
-
-  ip link add dev gre1 type gre ikey 1.9.8.4 okey 1.9.8.4 \
-          local <your-ip> remote 0.0.0.0
-
-  ip link set mtu 1400 dev gre1
-  ip link set up dev gre1
-  ip address add 192.168.13.1/24 dev gre1
-  ip neighbor add 192.168.13.2 lladdr <remote-ip> dev gre1
-  ping -s 1374 -c 10 192.168.13.2
-  tcpdump -vni gre1
-  tcpdump -vni <your-ext-iface> 'ip proto 47'
-  ip -s -s -d link show dev gre1
-
-Solution:
-
-Use the pskb_may_pull function instead the pskb_network_may_pull.
-
-Fixes: 80d875cfc9d3 ("ipv4: ip_gre: Avoid skb_pull() failure in ipgre_xmit()")
-
-Signed-off-by: Anton Danilov <littlesmilingcloud@gmail.com>
-
----
-v2 -> v3 :
-- More accurate and detailed explanation
-v1 -> v2 :
-- Fix the reproduce commands
-- Mov out the 'tnl_params' assignment line to the more suitable place
-with Eric's suggestion
-https://lore.kernel.org/netdev/CANn89iJoMcxe6xAOE=QGfqmOa1p+_ssSr_2y4KUJr-Qap3xk0Q@mail.gmail.com/
----
- net/ipv4/ip_gre.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/net/ipv4/ip_gre.c b/net/ipv4/ip_gre.c
-index 5f6fd382af38..f1f31ebfc793 100644
---- a/net/ipv4/ip_gre.c
-+++ b/net/ipv4/ip_gre.c
-@@ -662,11 +662,11 @@ static netdev_tx_t ipgre_xmit(struct sk_buff *skb,
- 		if (skb_cow_head(skb, 0))
- 			goto free_skb;
- 
--		tnl_params = (const struct iphdr *)skb->data;
--
--		if (!pskb_network_may_pull(skb, pull_len))
-+		if (!pskb_may_pull(skb, pull_len))
- 			goto free_skb;
- 
-+		tnl_params = (const struct iphdr *)skb->data;
-+
- 		/* ip_tunnel_xmit() needs skb->data pointing to gre header. */
- 		skb_pull(skb, pull_len);
- 		skb_reset_mac_header(skb);
--- 
-2.39.2
-
+> ---
+> Hi everyone,
+> 
+> This series [1] has been waiting for a while now, it was proposed first in
+> February. The first iterations had few reactions (thanks to Arthur, Pekka,
+> Maìra, ...), but since v8 (in May) no major issues were reported, Maìra
+> seemed satisfied, and only minor cosmetic changes were reported. Two other
+> series ([2] and [3]), that I submitted first in May, did not have receive
+> any reactions.
+> 
+> In addition, there is also some significant addition to VKMS being
+> proposed, such as ConfigFS support, and without a clear maintainer having
+> the time to review and approve these changes, these changes have very
+> little changes to get in.
+> 
+> VKMS is not a fundamental driver for "normal" Linux users, but I had some
+> feedback from userspace developpers that VKMS could be a very good testing
+> tool if only it had more features (I think P0xx formats were asked to
+> test HDR for example). This could also help to detect issues in DRM core
+> by emulating a wide range of configurations.
+> 
+> I believe the only active maintainer is Maìra, but as she's mentioned before,
+> she doesn't have much time to work on VKMS. So, I'd like to volunteer as a
+> maintainer. I have plenty of time to dedicate to VKMS.
+> 
+> I hope I've gained enough understanding of VKMS to be helful with this role.
+> I am eager to move forward and improve this subsystem. I've also talked to Sean
+> about this, and he agrees that it would be good if I could commit code to
+> drm-misc.
+> 
+> [1]: https://lore.kernel.org/all/20240809-yuv-v10-0-1a7c764166f7@bootlin.com/
+> [2]: https://lore.kernel.org/all/20240814-b4-new-color-formats-v2-0-8b3499cfe90e@bootlin.com/
+> [3]: https://lore.kernel.org/all/20240814-writeback_line_by_line-v2-0-36541c717569@bootlin.com/
+> ---
+>   MAINTAINERS | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 10430778c998b57944c1a6c5f07d676127e47faa..62f10356e11ab7fa9c8f79ba63b335eb6580d0a8 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -7340,6 +7340,7 @@ DRM DRIVER FOR VIRTUAL KERNEL MODESETTING (VKMS)
+>   M:	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+>   M:	Melissa Wen <melissa.srw@gmail.com>
+>   M:	Maíra Canal <mairacanal@riseup.net>
+> +M:	Louis Chauvet <louis.chauvet@bootlin.com>
+>   R:	Haneen Mohammed <hamohammed.sa@gmail.com>
+>   R:	Daniel Vetter <daniel@ffwll.ch>
+>   L:	dri-devel@lists.freedesktop.org
+> 
+> ---
+> base-commit: da3ea35007d0af457a0afc87e84fddaebc4e0b63
+> change-id: 20240910-vkms-maintainer-7b3d2210cc1b
+> 
+> Best regards,
 
