@@ -1,124 +1,140 @@
-Return-Path: <linux-kernel+bounces-337552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6D2E984B9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:31:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B654984B9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 609BF1F20D6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:31:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB9BE1C230AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C31F13790B;
-	Tue, 24 Sep 2024 19:31:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6857136328;
+	Tue, 24 Sep 2024 19:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RyH2pleh"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="MZBGDP9p"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A763D40BF2
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 19:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B962440BF2
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 19:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727206306; cv=none; b=Nwytwz/AeTCG5GoG+4363xqOV76UCpdk4yQgMilrnuotgYsn2vThq7CbxfAD47VBUVymEVngHXtYCbYLkYOqjv7COmLx9AznAaoRGkiG9uw+awcBjwmIqECfDBXbqsI4X8C7QNf7rZi7vGyE0bHC328jAuRyQ0U67XUGX3sY0s8=
+	t=1727206414; cv=none; b=VKTKRTrNMAf0b6YnYznU8+7rMInDY9bDNAP5xQz1MiZTGq6ivUrTzPo/b/3yC0JciDTpAPhjfrOy6Hi0YBFHU/sw1tgGMUAkTu5LclGZUfI1Cli3Rz+UnS3V9iD2ahUQqpxYDgkXKhJhLfR+K9ZpKos4dHCW6rEU3SMaakGo4Gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727206306; c=relaxed/simple;
-	bh=mNzFKIMr4tsr5PKoLQ3M5UW7dlN0zeCTDohuqUPWGvw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FIznSaeAtM9MrvXVtuX/UqZLG5A/VjWr+nbc7brJz6djS4pt4LntMPd/C6LcQF76TRcYUf91l4dTKM/0CpF5vhzqmRfzBYyA19Z2e7R2eB5Hc5BysUzZXsA2GsTyPOp27eEoLLiPZCnUtW+9tmRxXCMpMs7fA5AGkn7vBGQArnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=RyH2pleh; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a8d0d82e76aso564830766b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 12:31:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1727206303; x=1727811103; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/dLA+3q+2Raow4F8VzPJxYHtFvWf+R0tKMvdhGOxhyI=;
-        b=RyH2plehzwfmLeIIr4lMOcGO1z9d64+QQ7nEQDaM5w8dA6oaUjEROQLMgRHfoNgw2j
-         9zTGh2XHhLlbl8WOz5fgTGfUDJg/Ec7GWV2iVad8tBDcAhRb55uOF+3bXU6A8uEdFudO
-         byTljPCK42GeNjgQjJne9Dgy42PCk7GDv8EQs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727206303; x=1727811103;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/dLA+3q+2Raow4F8VzPJxYHtFvWf+R0tKMvdhGOxhyI=;
-        b=CiOVQTXJU/00QWeurEFDEzlP8nlT25zpcy5tF30XPaQ0xyYTNJeLtzAAFY8lVEO4jo
-         7l4DIHRvGrKonfqVC1Jmncbewm5BYQUOGhXPTuy+lq5F6qdyXr/m2VdcubRGzZpxjr59
-         ZyLhd2J4o9qXJwPGp8Zh84cqnwugZjFUe6UOeGbw0kwk7wZjaz9tvZEEULGFedXPeRky
-         DcVD0dgqc6K/vfhz6QYDu/TT0wbmGi14jOD75KLTTa3tPy4luqoE4mrfm/y6mRVVKiAg
-         Ngr8RSPb3umiVbsUrgviMYsBHnDy2vJvBgk1uFUU+QnPccmSKt2rWYv2WQDPnrQvQOm+
-         kW0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV4qF4sS14NFzzDYMZaaPuFDmSFZlJE1/1KPkfT1mrYJSqe8fw6p8Gm/yzIjcT4nk/t3N2n0yTzKo324rU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiUzYx5ax3h0zOTAv5irGmRKKHJ8Low268yQpFaPUAXzHWvEMJ
-	YL6btsjCYV0v1UlOmn7jlgXA7g4rNEtVivKbB7U59uFEZ05Rfq702HM7KwUYvIZjR1ehf3MNK+3
-	pAluK5g==
-X-Google-Smtp-Source: AGHT+IFghEurxG0MUEymt/ZSqXZTJl0GqTGCHokYL4mbSflUPJ2WRA80mMHHfuEv2Sn+SP2Ja1CceQ==
-X-Received: by 2002:a17:907:9307:b0:a90:1ed4:dec6 with SMTP id a640c23a62f3a-a93a061b852mr31377566b.43.1727206302644;
-        Tue, 24 Sep 2024 12:31:42 -0700 (PDT)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93930caf21sm122172166b.98.2024.09.24.12.31.40
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Sep 2024 12:31:41 -0700 (PDT)
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8d4093722bso506159866b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 12:31:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUdiax0WrZ3ah1OTfZ/AvXOpV+hkuIu3mkHSye+Sw3dQAdkekpPGZIYsR/dZ/dZ6LHJ3yJ0S4CXaaNPa8k=@vger.kernel.org
-X-Received: by 2002:a17:907:7204:b0:a80:d913:be07 with SMTP id
- a640c23a62f3a-a93a03e08ecmr34079966b.36.1727206300263; Tue, 24 Sep 2024
- 12:31:40 -0700 (PDT)
+	s=arc-20240116; t=1727206414; c=relaxed/simple;
+	bh=xYIluz4MQgZnS0PvbaO7h7TVpf/Zheu9pqJDwzbG2lc=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=aTlwnBwn/gc4jOHH07R/0tT6E5hNvqkJx+i0Mtw6hjfN3lXZ/+oiDN8J6CRzv4HmynjQn0xGi97pq3oA8ZBlW2ijWrekmVRlyu35hGB8zEh39C4qKTWzl4OU/PekGM4whrkq33POhwYYPBu9Fu3IldwZP5PgQrtMwJeAWdHJexI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=MZBGDP9p; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727206408;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yLR6bhEI1FdlD20fqnApTL+T+S9SCIn4Pwas1mbHVQo=;
+	b=MZBGDP9pEt+xC4TsJzKgcT4vLyrQJYv8odCUfWhib8pYAIJFMVQBP+mcbAebUAYEslzBu8
+	5+xMOYydPsgzjil3RJQ9iG3+opMgUvtkmjS2C5sOe+81vYdc3okYo6V0JLWoVCf0lRehYv
+	iVWSzuUo8PNbBg6Uo5isCGJCkjlcOIk=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240924044741.3078097-1-andersson@kernel.org>
-In-Reply-To: <20240924044741.3078097-1-andersson@kernel.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 24 Sep 2024 12:31:24 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wieXpmx=+gEuhQSEEZLyQHFLDk5=59j0OtOF==mQdVjYA@mail.gmail.com>
-Message-ID: <CAHk-=wieXpmx=+gEuhQSEEZLyQHFLDk5=59j0OtOF==mQdVjYA@mail.gmail.com>
-Subject: Re: [GIT PULL] remoteproc updates for v6.12
-To: Bjorn Andersson <andersson@kernel.org>, Martyn Welch <martyn.welch@collabora.com>, 
-	Hari Nagalla <hnagalla@ti.com>, Andrew Davis <afd@ti.com>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Peng Fan <peng.fan@nxp.com>, Beleswar Padhi <b-padhi@ti.com>, Zhang Zekun <zhangzekun11@huawei.com>, 
-	Naina Mehta <quic_nainmeht@quicinc.com>, Jan Kiszka <jan.kiszka@siemens.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Tanmay Shah <tanmay.shah@amd.com>, Tengfei Fan <quic_tengfan@quicinc.com>, 
-	Udit Kumar <u-kumar1@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [PATCH] ksmbd: Annotate struct copychunk_ioctl_req with
+ __counted_by_le()
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <d6341fc4-1d9d-46af-b809-f30430b30455@talpey.com>
+Date: Tue, 24 Sep 2024 21:33:15 +0200
+Cc: Namjae Jeon <linkinjeon@kernel.org>,
+ Steve French <sfrench@samba.org>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ linux-cifs@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <C22D945F-4C40-4C0E-8074-07747C944C99@linux.dev>
+References: <20240924102243.239811-2-thorsten.blum@linux.dev>
+ <d6341fc4-1d9d-46af-b809-f30430b30455@talpey.com>
+To: Tom Talpey <tom@talpey.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, 23 Sept 2024 at 21:44, Bjorn Andersson <andersson@kernel.org> wrote:
->
-> remoteproc updates for v6.12
+Hi Tom,
 
-Grr. I didn't immediately notice this new Kconfig warning, so now it's
-in my tree:
+> On 24. Sep 2024, at 20:05, Tom Talpey <tom@talpey.com> wrote:
+> On 9/24/2024 6:22 AM, Thorsten Blum wrote:
+>> Add the __counted_by_le compiler attribute to the flexible array =
+member
+>> Chunks to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+>> CONFIG_FORTIFY_SOURCE.
+>> Read Chunks[0] after checking that ChunkCount is not 0.
+>> Compile-tested only.
+>> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+>> ---
+>>  fs/smb/server/smb2pdu.c | 2 +-
+>>  fs/smb/server/smb2pdu.h | 2 +-
+>>  2 files changed, 2 insertions(+), 2 deletions(-)
+>> diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+>> index 461c4fc682ac..0670bdf3e167 100644
+>> --- a/fs/smb/server/smb2pdu.c
+>> +++ b/fs/smb/server/smb2pdu.c
+>> @@ -7565,7 +7565,6 @@ static int fsctl_copychunk(struct ksmbd_work =
+*work,
+>>   ci_rsp->TotalBytesWritten =3D
+>>   cpu_to_le32(ksmbd_server_side_copy_max_total_size());
+>>  - chunks =3D (struct srv_copychunk *)&ci_req->Chunks[0];
+>>   chunk_count =3D le32_to_cpu(ci_req->ChunkCount);
+>>   if (chunk_count =3D=3D 0)
+>>   goto out;
+>> @@ -7579,6 +7578,7 @@ static int fsctl_copychunk(struct ksmbd_work =
+*work,
+>>   return -EINVAL;
+>>   }
+>>  + chunks =3D (struct srv_copychunk *)&ci_req->Chunks[0];
+>>   for (i =3D 0; i < chunk_count; i++) {
+>>   if (le32_to_cpu(chunks[i].Length) =3D=3D 0 ||
+>>      le32_to_cpu(chunks[i].Length) > =
+ksmbd_server_side_copy_max_chunk_size())
+>> diff --git a/fs/smb/server/smb2pdu.h b/fs/smb/server/smb2pdu.h
+>> index 73aff20e22d0..f01121dbf358 100644
+>> --- a/fs/smb/server/smb2pdu.h
+>> +++ b/fs/smb/server/smb2pdu.h
+>> @@ -194,7 +194,7 @@ struct copychunk_ioctl_req {
+>>   __le64 ResumeKey[3];
+>>   __le32 ChunkCount;
+>>   __le32 Reserved;
+>> - __u8 Chunks[]; /* array of srv_copychunk */
+>> + __u8 Chunks[] __counted_by_le(ChunkCount); /* array of =
+srv_copychunk */
+>>  } __packed;
+>> =20
+>=20
+> This isn't correct. The u8 is just a raw buffer, copychunk structs are
+> marshaled into it, and they're 24 bytes each.
 
-  WARNING: unmet direct dependencies detected for OMAP2PLUS_MBOX
-    Depends on [n]: MAILBOX [=y] && (ARCH_OMAP2PLUS || ARCH_K3)
-    Selected by [m]:
-    - TI_K3_M4_REMOTEPROC [=m] && REMOTEPROC [=y] && (ARCH_K3 ||
-COMPILE_TEST [=y])
+Hm, I see.
 
-this happens with a regular "make allmodconfig" on x86-64.
+How does this for-loop work then? It iterates over ci_req->ChunkCount
+and expects a srv_copychunk at each ci_req->Chunks[i]?
 
-This seems to have been introduced in commit ebcf9008a895
-("remoteproc: k3-m4: Add a remoteproc driver for M4F subsystem") that
-added the TI K3 M4 remoteproc support, which does
+for (i =3D 0; i < chunk_count; i++) {
+	if (le32_to_cpu(chunks[i].Length) =3D=3D 0 ||
+	    le32_to_cpu(chunks[i].Length) > =
+ksmbd_server_side_copy_max_chunk_size())
+		break;
+	total_size_written +=3D le32_to_cpu(chunks[i].Length);
+}
 
-        select OMAP2PLUS_MBOX
-
-but does not actually contain the proper dependencies that
-OMAP2PLUS_MBOX requires..
-
-It's in my tree now, but please fix asap.
-
-             Linus
+Thanks,
+Thorsten=
 
