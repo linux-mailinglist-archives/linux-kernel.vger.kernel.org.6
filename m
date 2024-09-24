@@ -1,128 +1,133 @@
-Return-Path: <linux-kernel+bounces-337494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78DFE984AC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:14:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F878984AC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DB531C23076
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:14:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23FAF1F20CA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:15:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A721ACDF5;
-	Tue, 24 Sep 2024 18:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D2E91AC8B0;
+	Tue, 24 Sep 2024 18:15:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oXwAE6cO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OoGf1bi9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8F21AC8AC;
-	Tue, 24 Sep 2024 18:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0C11AC893;
+	Tue, 24 Sep 2024 18:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727201636; cv=none; b=OM48sbxkMZ9T13hnRVO1REsaBZtpJX/5ISZGileeiN3IaXiebJHdlMUWbytOKflYzsdHzJIdCQVF+f+51A3T0vboOiAN0P4iSWG61Lc15iAkaLnbMAzKeXPd8CE+oMQgIumLi0EJ8V2spQETAlW1NAWojnxuHMdibfcz+wU++cM=
+	t=1727201702; cv=none; b=Z1p/KQ7NI1wFlRgjOE1+Zwmp+eJQBVBAeokl/sNB+RFPAN3Jx+VdFFSI83auqLZD27Lb7MkAtARhv1Lz2WPoUJht7UOg1dJ8iEoS6U5DlH4IJIU/IeTTJ6OCmF1307WuP7uIP57Kd/Tb0ksIO9E8xOaCIBV3+SxRhplS2GozTXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727201636; c=relaxed/simple;
-	bh=OCs5Cqpje9S80KFQv8p9Oyg1vEGfixvfhJk33BIA/Yo=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=VmcfKcFri66xA4e08f57pbNpSAprzVhUc73a+doQ58yNoQsdsx48C9LczbNaLdzk6QFRcHzclFR9yIgcJ+mTIueqUj0pUwhSc5a4WMbVylVkY7GSUf5GPW/b62ITQEFuFh0AGn4URbSo1XP8cCO2vDUhL3cqRJI19QJ6udAJ2WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oXwAE6cO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A363CC4CECF;
-	Tue, 24 Sep 2024 18:13:55 +0000 (UTC)
+	s=arc-20240116; t=1727201702; c=relaxed/simple;
+	bh=4NJYnhYjz8H6JcjJo0q0NaNrHHKGrQ0s1uLOHzKZJFo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mGmJvLrCG2cQhplJprVF9c+61DttLPl365+FhleLzufOFcX4mKHitA8iFVLfG0v7eWUR2TQM64fnBvnu5cDDupmIonzTpBK2A+CDI9rXW9DV0y6ZlLZBS+Yv598dzhjKVlUguJxY3Txp0lsTmJ1eD/2qpKY0rhyw3kcdMAUvfCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OoGf1bi9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F4A6C4CECD;
+	Tue, 24 Sep 2024 18:15:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727201636;
-	bh=OCs5Cqpje9S80KFQv8p9Oyg1vEGfixvfhJk33BIA/Yo=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=oXwAE6cOdDZMZ72nGMSAI/qrKVqOOjIrZgljPNUpSl+bNiJH3H9S5aDjXxztfnHNt
-	 m9PlQjwNItAKrFXWKQfIX2opxvrVOP3Z0W3Rmy7fwXRbnrORUImnHCBA2/OyFqzZsU
-	 EuGd6OsAkpqLmK1Co1k+1B9ceYWwLNWHfUSxtI6iHnJZ1tuQuljHZJs4lmO2t1kD4N
-	 PPQYTVeaqgNEI7fhTgdwkGfKKpml2AiCcJp+F1oQzDXyclppznJ0lR54TLHdjkrsi4
-	 0TfjWryYYaMzNapt2zsQUpv7Um1U/0Stwf6gFxQYWJTIv2LteGUGGL0lwvNdZTmeEn
-	 XWxtcCMqDbkaQ==
+	s=k20201202; t=1727201702;
+	bh=4NJYnhYjz8H6JcjJo0q0NaNrHHKGrQ0s1uLOHzKZJFo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OoGf1bi93XVUDaiUVdkPEIzks70L9pzREccheV1NS1RGBUBa0oFoWogXuSgpCcgDz
+	 ORbJnaW18WagKlzKTZsiV+ZPerMCcurj6vq5mHVhYvKJ1+X2RkiVLRuSf1i7Ic7DvF
+	 piEucDFBMacs7dGTYGM1HVGc+IYC4aPZjJmx/i+cwbK9GuHLLvjrejz0OPt86DLK5X
+	 tcm6d3SeU8s4kmEGdP27eww6N1u1YeEcsd8EdwXpu2hT71cJJzIeINuj03Y8Rn6qHW
+	 oT2NLGUkuqmfsTdPs5AvIlnCfhBSFDwakriTZgzoqaQONNhfOOyP7/QOGIYk2SqbO9
+	 k6l0pKDupVM4w==
+Date: Tue, 24 Sep 2024 19:14:58 +0100
+From: Simon Horman <horms@kernel.org>
+To: Dipendra Khadka <kdipendra88@gmail.com>
+Cc: sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
+	hkelam@marvell.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: ethernet: marvell: octeontx2: nic: Add error
+ pointer check in otx2_ethtool.c
+Message-ID: <20240924181458.GT4029621@kernel.org>
+References: <20240923113135.4366-1-kdipendra88@gmail.com>
+ <20240924071026.GB4029621@kernel.org>
+ <CAEKBCKPw=uwN+MCLenOe6ZkLBYiwSg35eQ_rk_YeNBMOuqvVOw@mail.gmail.com>
+ <20240924155812.GR4029621@kernel.org>
+ <CAEKBCKO45g4kLm-YPZHpbcS5AMUaqo6JHoDxo8QobaP_kxQn=w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 24 Sep 2024 21:13:52 +0300
-Message-Id: <D4EPVO0KWRLK.2RQK9L93QM4VB@kernel.org>
-To: "James Bottomley" <James.Bottomley@HansenPartnership.com>,
- <linux-integrity@vger.kernel.org>
-Cc: <roberto.sassu@huawei.com>, <mapengyu@gmail.com>,
- <stable@vger.kernel.org>, "Mimi Zohar" <zohar@linux.ibm.com>, "David
- Howells" <dhowells@redhat.com>, "Paul Moore" <paul@paul-moore.com>, "James
- Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, "Peter
- Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>,
- <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 4/5] tpm: Allocate chip->auth in
- tpm2_start_auth_session()
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-X-Mailer: aerc 0.18.2
-References: <20240921120811.1264985-1-jarkko@kernel.org>
- <20240921120811.1264985-5-jarkko@kernel.org>
- <12e17497239dd9b47059b03a0273e2d995371278.camel@HansenPartnership.com>
-In-Reply-To: <12e17497239dd9b47059b03a0273e2d995371278.camel@HansenPartnership.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEKBCKO45g4kLm-YPZHpbcS5AMUaqo6JHoDxo8QobaP_kxQn=w@mail.gmail.com>
 
-On Tue Sep 24, 2024 at 4:33 PM EEST, James Bottomley wrote:
-> On Sat, 2024-09-21 at 15:08 +0300, Jarkko Sakkinen wrote:
-> > Move allocation of chip->auth to tpm2_start_auth_session() so that
-> > the field can be used as flag to tell whether auth session is active
-> > or not.
-> >=20
-> > Cc: stable@vger.kernel.org=C2=A0# v6.10+
-> > Fixes: 699e3efd6c64 ("tpm: Add HMAC session start and end functions")
-> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > ---
-> > v5:
-> > - No changes.
-> > v4:
-> > - Change to bug.
-> > v3:
-> > - No changes.
-> > v2:
-> > - A new patch.
-> > ---
-> > =C2=A0drivers/char/tpm/tpm2-sessions.c | 43 +++++++++++++++++++--------=
----
-> > --
-> > =C2=A01 file changed, 25 insertions(+), 18 deletions(-)
-> >=20
-> > diff --git a/drivers/char/tpm/tpm2-sessions.c
-> > b/drivers/char/tpm/tpm2-sessions.c
-> > index 1aef5b1f9c90..a8d3d5d52178 100644
-> > --- a/drivers/char/tpm/tpm2-sessions.c
-> > +++ b/drivers/char/tpm/tpm2-sessions.c
-> > @@ -484,7 +484,8 @@ static void tpm2_KDFe(u8 z[EC_PT_SZ], const char
-> > *str, u8 *pt_u, u8 *pt_v,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0sha256_final(&sctx, out=
-);
-> > =C2=A0}
-> > =C2=A0
-> > -static void tpm_buf_append_salt(struct tpm_buf *buf, struct tpm_chip
-> > *chip)
-> > +static void tpm_buf_append_salt(struct tpm_buf *buf, struct tpm_chip
-> > *chip,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct tpm2_auth *auth)
->
-> This addition of auth as an argument is a bit unnecessary.  You can set
-> chip->auth before calling this and it will all function.  Since there's
-> no error leg in tpm2_start_auth_session unless the session creation
-> itself fails and the guarantee of the ops lock is single threading this
-> chip->auth can be nulled again in that error leg.
->
-> If you want to keep the flow proposed in the patch, the change from how
-> it works now to how it works with this patch needs documenting in the
-> change log
+On Tue, Sep 24, 2024 at 11:42:58PM +0545, Dipendra Khadka wrote:
+> Hi Simon,
+> 
+> On Tue, 24 Sept 2024 at 21:43, Simon Horman <horms@kernel.org> wrote:
+> >
+> > On Tue, Sep 24, 2024 at 08:39:47PM +0545, Dipendra Khadka wrote:
+> > > Hi Simon,
+> > >
+> > > On Tue, 24 Sept 2024 at 12:55, Simon Horman <horms@kernel.org> wrote:
+> > > >
+> > > > On Mon, Sep 23, 2024 at 11:31:34AM +0000, Dipendra Khadka wrote:
+> > > > > Add error pointer check after calling otx2_mbox_get_rsp().
+> > > > >
+> > > >
+> > > > Hi Dipendra,
+> > > >
+> > > > Please add a fixes tag here (no blank line between it and your
+> > > > Signed-off-by line).
+> > > > > Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
+> > > >
+> > > > As you have posted more than one patch for this driver, with very similar,
+> > > > not overly complex or verbose changes, it might make sense to combine them
+> > > > into a single patch. Or, if not, to bundle them up into a patch-set with a
+> > > > cover letter.
+> > > >
+> > > > Regarding the patch subject, looking at git history, I think
+> > > > an appropriate prefix would be 'octeontx2-pf:'. I would go for
+> > > > something like this:
+> > > >
+> > > >   Subject: [PATCH net v2] octeontx2-pf: handle otx2_mbox_get_rsp errors
+> > > >
+> > >
+> > > If I bundle all the patches for the
+> > > drivers/net/ethernet/marvell/octeontx2/ , will this subject without v2
+> > > work? Or do I need to change anything? I don't know how to send the
+> > > patch-set with the cover letter.
+> >
+> > Given that one of the patches is already at v2, probably v3 is best.
+> >
+> > If you use b4, it should send a cover letter if the series has more than 1
+> > patch.  You can use various options to b4 prep to set the prefix
+> > (net-next), version, and edit the cover (letter).  And you can use various
+> > options to b4 send, such as -d, to test your submission before sending it
+> > to the netdev ML.
+> >
+> 
+> I did not get this -d and testing? testing in net-next and sending to net?
 
-I checked this through and have to disagree with it. We don't want
-to set chip->auth before the whole start auth session is successful
+I meant that b4 prep -d allows you to see the emails that would be sent
+without actually sending them. I find this quite useful myself.
 
-BR, Jarkko
+> 
+> > Alternatively the following command will output 3 files: a cover letter and
+> > a file for each of two patches, with v3 and net-next in the subject of each
+> > file. You can edit these files and send them using git send-email.
+> >
+> > git format-patch --cover-letter -2 -v3 --subject-prefix="PATCH net-next"
+> >
+> 
+> Should I send it to net-next or net?
+
+Sorry for the confusion. I wrote net-next in my example,
+but I think this patch-set would be for net.
+
+...
 
