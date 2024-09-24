@@ -1,225 +1,188 @@
-Return-Path: <linux-kernel+bounces-336898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BCFC984246
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:35:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6215D984250
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:37:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E7FA1C23D73
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:35:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82B08B25B82
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5056015539D;
-	Tue, 24 Sep 2024 09:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=wolfvision.net header.i=@wolfvision.net header.b="irmrX5RH"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2093.outbound.protection.outlook.com [40.107.20.93])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1013115574F;
+	Tue, 24 Sep 2024 09:35:55 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2C828370;
-	Tue, 24 Sep 2024 09:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.93
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727170505; cv=fail; b=fiFOCzNwUr8DyTA1rhtCCkQ7X6IOtYGpI+2YdrAVTx1OtKLSSxaE5EWnoYviiouVXqMZ8UWFmq957GjqkF6qAPspRMUkmLG2ZSGBFY+A5KFUPEEL76kMvDQ8faUgTQne8jW1zIf4xPyqfXl7blSk/Kma+kS0IGhsc9dwqCYDBsA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727170505; c=relaxed/simple;
-	bh=YWACsfT+r1av/FG/ZK5cmdoaKvokkVoQCOr6oe5TC2E=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=hfqSWq2fIf2Opin5WEaQuO5Lqozf7LNuSSjGxLZnCrngTx0t7p8wTO42C43ZgVwL+e3EoJmGg28Qr+IbaCVjqDS6yuflidnZaWs5cF2Gl0iE0IeLHs4xJ2chewrkLHuXIPiR0UY90iqEStmiTGvLOqO+bzUHsAv9D9eL5Y7dXkM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wolfvision.net; spf=pass smtp.mailfrom=wolfvision.net; dkim=pass (1024-bit key) header.d=wolfvision.net header.i=@wolfvision.net header.b=irmrX5RH; arc=fail smtp.client-ip=40.107.20.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wolfvision.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wolfvision.net
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ng8pHfO7QppxAkZ6iZVuxIp/CpoGEizQHSPw154K7E4NWtbzetqJFTsVMcj4UGCK1YfFvCaCw2uG1d8pIfgLUpawLBWUa6ZfGsKaWeMKvd0fiGcXJmmjcdTeTo1K9dyoPOdy4cdH6Wgq1EEUuF4rM4DrMaBGK3vEdIvbPLAnIT64x60sFcBJxKdk2T23FGxRxaqmKlkiKAYjALBXQ3pY5m1bfuM/snFj0w3CYsG7TVcQiZ5JBlN4ckLrfZnS4eFhljMD3oPa+q6m4gjLcdio0u/uT/XhD+Wj3VaM8Fr8VIkBrC6Z4jVAOVyKCrRdEswzyCxUkZ+8Vh9/zgnxkEWizw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CCUNrfiazM84VPvOvcPC3ySxzvUaRvBpRG2jNIOjJIU=;
- b=FUqZdYbfIUreESSF8+OdHTUh2qIQOVXf2PJtm7fV4c55hHV923foYm4uez9dWC6fQIU8ktDuAHJ03VZPUUDbMGfuZ2iQq0rkSvkqzkEjUEoBBUdVEe15Pe5TfOoclAJhYodHh30U/qLATmywOqLUr7X4KZYr5wMnQkQsYVMG1mEmG+l/URxGANqoHdvfXaful8eSC9kJdT2yt2abB+1W5/Orsr9LrO2mZxfAlb+bZ7EXxQF9PNC+eU2Qjy2HaXh3wromBHmTwg1Dg2E+vIT2fviLpOluw01RAyARX+EhQNdfDS/hDMxueojsDHYSGveSMjUKFbJg9C83tN6DN29Sag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wolfvision.net; dmarc=pass action=none
- header.from=wolfvision.net; dkim=pass header.d=wolfvision.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wolfvision.net;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CCUNrfiazM84VPvOvcPC3ySxzvUaRvBpRG2jNIOjJIU=;
- b=irmrX5RHCi10Bqv7FeAohqIWzcizdyu2kCPwTu5MPZtRpSryYAR3JWA51AeqPRRXfO/ybIGWFzYpeM4uwkslxOUuGGh+rTFzqZtsjO3FSvF5mVxDk7xCRlbasJ+ZIdxtfzX7xYAKT5Mqct07qR0HEOMK7gNe//HeLuiLU+zA0fs=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wolfvision.net;
-Received: from DU0PR08MB9155.eurprd08.prod.outlook.com (2603:10a6:10:416::5)
- by AS8PR08MB9621.eurprd08.prod.outlook.com (2603:10a6:20b:61a::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.13; Tue, 24 Sep
- 2024 09:34:55 +0000
-Received: from DU0PR08MB9155.eurprd08.prod.outlook.com
- ([fe80::4e72:c5d4:488e:f16d]) by DU0PR08MB9155.eurprd08.prod.outlook.com
- ([fe80::4e72:c5d4:488e:f16d%4]) with mapi id 15.20.8005.010; Tue, 24 Sep 2024
- 09:34:55 +0000
-Message-ID: <3dfe0855-3f58-432f-922d-4c936f36c731@wolfvision.net>
-Date: Tue, 24 Sep 2024 11:34:52 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/15] VOP Support for rk3576
-To: Andy Yan <andyshrk@163.com>, heiko@sntech.de
-Cc: hjc@rock-chips.com, krzk+dt@kernel.org, robh@kernel.org,
- conor+dt@kernel.org, s.hauer@pengutronix.de, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
- derek.foreman@collabora.com, minhuadotchen@gmail.com,
- detlev.casanova@collabora.com, Andy Yan <andy.yan@rock-chips.com>
-References: <20240920081626.6433-1-andyshrk@163.com>
-Content-Language: en-US
-From: Michael Riesch <michael.riesch@wolfvision.net>
-Organization: WolfVision GmbH
-In-Reply-To: <20240920081626.6433-1-andyshrk@163.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: VI1P195CA0050.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:802:5a::39) To DU0PR08MB9155.eurprd08.prod.outlook.com
- (2603:10a6:10:416::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B847B1422C7;
+	Tue, 24 Sep 2024 09:35:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727170554; cv=none; b=XBDZJkjlnATe5Pa4DzUjuOREjGJy5R6kxLaYy02aKpvNJ5zJ01vpnvdFLhjcBpFumcRFLwksjIKX4tBNxt4Or6UN0ZgY7b0gg6PZ+oIYS+TIEh6V6Ai82hs25QOlF0g2Tmrvqxoz+fen2iz4wtJO70iKlBUBM9+r8PPWFLt29Uk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727170554; c=relaxed/simple;
+	bh=zPcedgoPJ9O6BbQqhG8N6YI19JNIwyacV6RDM+/CkiA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J4hj+YPz7mdhbzlwnOC6Iv15fd7Ecj9IN7jKQ1IqBmixBx2g4bvbvjMrc0tip2q4rxMpDVxP7Isvj3sUouPMRB0t9f8mUcdaF0FO7S829B++Hp6NR9lLDYv6ZWUhEaE7nnaCNXc99PzHn2dG8BONZ1uzZpXfTiacbzLh91d3roI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 59e4fe227a5811efa216b1d71e6e1362-20240924
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:599dba75-6e72-4351-91b7-31056297c24b,IP:0,U
+	RL:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:25
+X-CID-META: VersionHash:82c5f88,CLOUDID:a749591d2d36256fd9de1b6933d8ce27,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:5,IP:nil,URL:0,
+	File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:N
+	O,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 59e4fe227a5811efa216b1d71e6e1362-20240924
+Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
+	(envelope-from <xialonglong@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 103612167; Tue, 24 Sep 2024 17:35:35 +0800
+Received: from node4.com.cn (localhost [127.0.0.1])
+	by node4.com.cn (NSMail) with SMTP id 677A716002082;
+	Tue, 24 Sep 2024 17:35:35 +0800 (CST)
+X-ns-mid: postfix-66F287E6-734403861
+Received: from kylin-pc.. (unknown [172.25.130.133])
+	by node4.com.cn (NSMail) with ESMTPA id 335E416002082;
+	Tue, 24 Sep 2024 09:35:33 +0000 (UTC)
+From: Longlong Xia <xialonglong@kylinos.cn>
+To: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Longlong Xia <xialonglong@kylinos.cn>
+Subject: [PATCH 1/1] tty: n_gsm: Fix use-after-free in gsm_cleanup_mux
+Date: Tue, 24 Sep 2024 17:35:18 +0800
+Message-ID: <20240924093519.767036-1-xialonglong@kylinos.cn>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR08MB9155:EE_|AS8PR08MB9621:EE_
-X-MS-Office365-Filtering-Correlation-Id: 61482539-9e03-4d6a-60d8-08dcdc7c260e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NlpuNXd4bDFqaVc1b3NGaUN2WVAxMmtFYnBOVHBGcnlwZjRLeGNZUjdPbG9Q?=
- =?utf-8?B?dGdHSUlqU2VTQWJJT3FvNDl5UFJRZHJzd2NaajZsZEh3THBwRmgvdmZTMXNw?=
- =?utf-8?B?bE85ZzZveGhEWklrSWY1eEI4bUxxS1ZOeng5S1F4V0F4SGhDRkRURlI2RXhl?=
- =?utf-8?B?KzR2MjZrUmdZYjB0QUgrdFZuRk1wUWp4VCtQMWFvcE5Sb1NSTUtTMU5NVnVB?=
- =?utf-8?B?OE1rd3NlN3JlY1dPdU4zRk0xTHB6eVF0dnBncVdOc2J0M00wNDhMdjgzZTZY?=
- =?utf-8?B?N1A0ZkpZMTJZMmVxazhLMys1UHVhYmRCZUJSR0QrWXFqSUg3MC9sdTc2Z2FG?=
- =?utf-8?B?SnVYS25BYkIwb2pJZDJTR3lPVko2UG5RK3dFR01XVEpUeGg4elcxVzdHMzZY?=
- =?utf-8?B?My9JdmtKYyt1Tk9WVEVFWkxRamlTRFNMeXpCbjNiSUFWc2pFT3FBeE54NGRG?=
- =?utf-8?B?Mm9sb1BRVXVjQzZoQThwcFRLZXlVbWN1OFE3Sy9wNld4K0l0bnAxWmdLRXQ1?=
- =?utf-8?B?RDI4WWRVYTRMYjRGSy9vSWJxZkNlZm9hWHM1VE5VZWMza0hSMkplYm9JTEtD?=
- =?utf-8?B?N1cyckhLSnFLQ29xVU1YdHFZVkdHMk1wdTBYdityVERLS1BHZHNVcWsvM2Fi?=
- =?utf-8?B?QzRMdTF6RHZmRGt3UG0rVVBFWWdoS0QxL21aVWNzWnc1ekhtSlFSWnVMWEwz?=
- =?utf-8?B?VG1uRkR5blQ4YlJ5MUxtZXZkL2xZWEJwbHF4TzJacm1jaGtYTE1LMVN5bGVS?=
- =?utf-8?B?KzFJZkZCWThJd0lURDFzRDV0RmlyTTFmcFFyZG5XbDN1SklrR3FrdE5kUnE0?=
- =?utf-8?B?blBQSzNkT2VLKzRyMTRSRmRhSk4vYzNNVFRDaGtUUjJuczBJaGRTaFdIWE5K?=
- =?utf-8?B?VnFGSG4xUzJpcDNTWnZST0ZwVGVraXhkTUhmSGY1WUVJQlpBaWozblo1WXUz?=
- =?utf-8?B?T1VLV0NhU25mNWFvU01Well0SUhYT3pnV2xlcy83bE9hKzI4QTg4WS9WdTUv?=
- =?utf-8?B?UTQwb3ByYzhPSFBEenlKeStYRC8rNStRWjh3RWsxTXFnQzdEZENxY2ZORDdv?=
- =?utf-8?B?K0NPZ2FBbXppYWYyaDM0NTYvbjlremVUWGJZVDRyUFhud1ZFUW9odUFUajFJ?=
- =?utf-8?B?eWdpeERDcElZdGR1d0hQSFp6K0hOVUt6dEh2WXltbllqOUFib1Q1eU5QdGJh?=
- =?utf-8?B?RHZCN0ZGcEROeHlHcHlST3ZGRzZLNVVEMEk2MXU2TDRUanVvaG5ZK05KN3pP?=
- =?utf-8?B?U1U1SWwzLzl2RC8rajRUdGxuRFRsUUIwNm8yU1pVVy9VVHkrUkhHbUVTSHVM?=
- =?utf-8?B?Um9WM3c1VmpVMUM1V0UveEpNL3lSVlltQXZJSzZpRmJlbWlSMmpkNHp5S08x?=
- =?utf-8?B?dVhhYVdBNmxwT0QvbEJyNmdmSmdGNWpkVTU2a3RjSklIc1E3M2xWZDAyOEQ3?=
- =?utf-8?B?alFzdkR3TjBUY2lmU0ZuS1ljdzZDUUhkYmJtVWE2NkY1QjRpQS9hWG42QXZa?=
- =?utf-8?B?emdNQkhET0M2WFBPVE1qRHlWU25jWlkyKzE5cXM5b09USEdWeEhEbEliQXZJ?=
- =?utf-8?B?Qm5YTEdRWEsxYS9hN2ZmVFJYNXNQWG91cjVyRyt4VGt4Y0d3UkYrQnhIYzd1?=
- =?utf-8?B?Tk9aL0gvaEROOS9xc1V6dG1jdzZ1N2V3NEFFZ0dhS1h3K0dMd1RMNmlDZ3Z4?=
- =?utf-8?B?WWlKODRObGdpZ01NWEUxaXhTR1BxT2JNVjF2V2pWanFtNzcxZFVqQ2J3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR08MB9155.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?N0lzR3NudVhJdlBlOWtWT1hNZ2NCVkxTQ09pSFBjS3FIVUkzQ252bldoVm9D?=
- =?utf-8?B?WHNNcC8wd0pEWFVQZkRYUXJaUStEOGZkOXdhMmR0eWREaTVBeVg1aHlNWWRp?=
- =?utf-8?B?MDEvc3czK2MzbDhXenFKaDV0NkQxL3NqZjFqOVZWcGsydEQwMGE4ZlpGR0hU?=
- =?utf-8?B?cENaSHJvaE1wY0l1NnkwZmNsTjdhSVJVVWtrbzdtWENnL3c4SG9Ec3k5S0cz?=
- =?utf-8?B?NFlKRnZUU2JOMjhTc1ZQTVdaaXVJOFJRbE5TcHB3RkZqejgxdSs1MitRZGJY?=
- =?utf-8?B?RkVQZXdMcVlvT0NCWFpSdlk1eXRicmhWSFl3WDJ6Z0ZWNnAyeERaNjRJdmhE?=
- =?utf-8?B?ajhtbjJVYzdCN1QwTXNad1hzZUNFd0JNRklvWjE2RlYrbndpUTZ6NlV1bi9L?=
- =?utf-8?B?RFk3SEZBNHE0Yjg2b09YTmNESE02emxPOHY2QnFmVnlCRmZWdXNvWmxNaXJr?=
- =?utf-8?B?eEFVMGJIZU1mQVRsWXFRNGNKdVRYU1hkMmQzRFVzSUNhbXpKVXF4S1pvLytl?=
- =?utf-8?B?c1VBZ29GRnhtN3owUXU2ZUZBV2FidG9uVVBkTGE3aHpyaVBSbnpoS0hZb1ZK?=
- =?utf-8?B?RFY4VjBRa083SXRJdDdRSFAxYlI4akFsaUZDOTUvYTRXcllZR2ZyaTNFc0pC?=
- =?utf-8?B?SzlqZjdnY2tGL2pKTjVhaDE4U3pUZGRlRlFNMEwwWmlIWitlM1VPeC9YVHAy?=
- =?utf-8?B?UW9jV3VWVHhnODlwaUJVOHBXeHZYNVplRWNFSHR4eGtlNm5tL0FYSUZqakxS?=
- =?utf-8?B?czdWTHpIRGRTakZSNElzOFBsV2MyejV5U1NpaDlBb09hUnFSZ0tJOE9DeEo0?=
- =?utf-8?B?bXlhM05nVFhCR2pRNG84NS9tdHowTXhrM1d1UEtDVlRVRmVGbS84eDNVWUtX?=
- =?utf-8?B?SzVqdGluYU1DNVR0U1R6MEpLUkV4L01pL0p1N2J1Z3ZRcG1QdkUwR2RhVnpt?=
- =?utf-8?B?NE5Kanl0V2xrUjl2TWpEOVhzSjZpVWM4UEdra2FFaWpGZWliZjVZUTlxa1dm?=
- =?utf-8?B?Z3BsSU5mcHhhMDRZQnpvNzQ0VmNqdXg5MHJaeUZXTkxIdjhrKzlzRTFlY05V?=
- =?utf-8?B?blVkMExBdXlvczFMZG5pZURMbFQwUFo2UjBYUk5vbjAvY0tvcVNiY1oxMTY1?=
- =?utf-8?B?UHJjMUlJM0cyKzhDTzJXckc0TUNiSXlNU3krUEptdEtzdGx6L3cvdkZaVlh3?=
- =?utf-8?B?eGhIa2ErNUU5ZkxWbnQ5QTN0N2RoWXA2OEh3MHA5NzVlYmFGbVZmRjMzTWpp?=
- =?utf-8?B?OXJsQ0plYmd2WjVBSVgxNVIrdFVNY2Q2SFBleGpGQ1A1dGR4K0E3TTR2czVq?=
- =?utf-8?B?dGtEMlNPQkdpRk9UNmkyTzRqa1QrS0xWVW1mNHoxM3NxS1NjM2NRMjRPdmx2?=
- =?utf-8?B?UUwwNWRzbnhYNFlCRk15bWE2Yy9mc0F2VTBtNTJ4cDFJZEd2QTQxMnpsNVQv?=
- =?utf-8?B?MGxSSlpZbTk0ZHNkbXI5TTdQdDRuUVQ1dGJlUEJlZmFDbm8yWGVMWHNQbzdo?=
- =?utf-8?B?ZmlRZHdTQ3NtUmFaT293Z0xybGJBdHp4MUZqUitJaGtPUndLM1RyMUpGTmFS?=
- =?utf-8?B?RENLVlZ5ZUtLQ3I1T3ZRb0NOdWRScDBucDQrbnBadW01dUlkUC96b2E2ZFRD?=
- =?utf-8?B?ZDZQcXUxeXZLNi83Z3lBRUxMZHc0ZHFydXBSbXh0NDhpS3o4YkxSdWpjYVR1?=
- =?utf-8?B?ZS9SL01DZkdXYUdqb1JJTEcyVG5VSnhFRXhlTE9uaHhyYmpNNjRXaExEbyt1?=
- =?utf-8?B?UXJkeEpNK3laeWtUT0xJSFplUmxSSGNpRHBiNVV1TmptVU9pNmsrR3c3Z1Y3?=
- =?utf-8?B?dmd1ZlpyMWhXUEJKdUtCd3RGdUQyUnV5SFVya0RFclRSZXNWVmQvODhpY2c3?=
- =?utf-8?B?RXFDaThmVEVPZWU2ZFVTWWRuODFodklCQjZmTkpQeFA4UWg0ZGMxYVRTd0t2?=
- =?utf-8?B?YXNGdDllNTVZS2l5L3owa3JGSFpkczJsaEl5Z2VjRDFLdFB0VW50dVNpSWhz?=
- =?utf-8?B?QzZxbjF3VnB1cTFFcThvRnNXRGhKclpMQkxVVnpOR3JKaXZNcC9Semo4UVpN?=
- =?utf-8?B?OTVabVMveTlqUVl2SmJrZXgxVWF2RVpYVUpqMHJNVG9rSVRqSk9MMDFOcUZJ?=
- =?utf-8?B?eFZLamdBNWlTbURSdFJoUWNRQW1tV0x5bG1pc3BRWlJSRUIvaUxEemoyTnJV?=
- =?utf-8?B?S1E9PQ==?=
-X-OriginatorOrg: wolfvision.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: 61482539-9e03-4d6a-60d8-08dcdc7c260e
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR08MB9155.eurprd08.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2024 09:34:55.3425
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: e94ec9da-9183-471e-83b3-51baa8eb804f
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lZKwVGOi7B6kPVC8VwulneXY9bJPec9y2wxGUaO+voc3qPisSdHLbKD6Fbsz6pfkXuqg/PxmePJC8QpggylGqMnxaBwfnSDxYulz6tX5Ic0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB9621
+Content-Transfer-Encoding: quoted-printable
 
-Hi Andy,
+BUG: KASAN: slab-use-after-free in gsm_cleanup_mux+0x7e5/0x820 [n_gsm]
+Read of size 8 at addr ffff88814941c700 by task poc/3395
 
-On 9/20/24 10:16, Andy Yan wrote:
-> [...]
+CPU: 0 UID: 0 PID: 3395 Comm: poc Not tainted 6.11.0+ #46
+Hardware name: VMware, Inc. VMware Virtual Platform/440BX
+Desktop Reference Platform, BIOS 6.00 11/12/2020
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x6c/0x90
+ print_report+0xce/0x610
+ kasan_complete_mode_report_info+0x5d/0x1e0
+ gsm_cleanup_mux+0x7e5/0x820 [n_gsm]
+ kasan_report+0xbd/0xf0
+ gsm_cleanup_mux+0x7e5/0x820 [n_gsm]
+ __asan_report_load8_noabort+0x14/0x20
+ gsm_cleanup_mux+0x7e5/0x820 [n_gsm]
+ __pfx_gsm_cleanup_mux+0x10/0x10 [n_gsm]
+ __rseq_handle_notify_resume+0x188/0xc50
+ __kasan_check_write+0x14/0x20
+ gsmld_ioctl+0x3c3/0x15b0 [n_gsm]
+ __kasan_check_write+0x14/0x20
+ __pfx_gsmld_ioctl+0x10/0x10 [n_gsm]
+ do_syscall_64+0x88/0x160
+ __kasan_check_write+0x14/0x20
+ ldsem_down_read+0x94/0x4e0
+ __pfx_ldsem_down_read+0x10/0x10
+ __pfx___rseq_handle_notify_resume+0x10/0x10
+ switch_fpu_return+0xed/0x200
+ tty_ioctl+0x660/0x1260
+ __pfx___handle_mm_fault+0x10/0x10
+ __pfx_tty_ioctl+0x10/0x10
+ __count_memcg_events+0xf5/0x3d0
+ fdget+0x2de/0x4f0
+ __x64_sys_ioctl+0x132/0x1b0
+ x64_sys_call+0x1205/0x20d0
+ do_syscall_64+0x7c/0x160
+ clear_bhb_loop+0x15/0x70
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-A few minor nitpicks:
+Allocated by task 808:
+ kasan_save_stack+0x28/0x50
+ kasan_save_track+0x14/0x30
+ kasan_save_alloc_info+0x36/0x40
+ __kasan_kmalloc+0xb1/0xc0
+ __kmalloc_noprof+0x1f6/0x4b0
+ gsm_data_alloc.constprop.0+0x2e/0x1a0 [n_gsm]
+ gsm_send+0x2f/0x5d0 [n_gsm]
+ gsm_queue+0x522/0x730 [n_gsm]
+ gsm1_receive+0x58b/0xb70 [n_gsm]
+ gsmld_receive_buf+0x173/0x2a0 [n_gsm]
+ tty_ldisc_receive_buf+0x115/0x1e0
+ tty_port_default_receive_buf+0x66/0xa0
+ flush_to_ldisc+0x1b0/0x7c0
+ process_scheduled_works+0x2bc/0x10c0
+ worker_thread+0x3d4/0x970
+ kthread+0x2b6/0x390
+ ret_from_fork+0x39/0x80
+ ret_from_fork_asm+0x1a/0x30
 
-> Andy Yan (15):
->   drm/rockchip: vop2: Add debugfs support
+Freed by task 3377:
+ kasan_save_stack+0x28/0x50
+ kasan_save_track+0x14/0x30
+ kasan_save_free_info+0x3a/0x50
+ __kasan_slab_free+0x54/0x70
+ kfree+0x126/0x420
+ gsm_cleanup_mux+0x3ae/0x820 [n_gsm]
+ gsmld_ioctl+0x3c3/0x15b0 [n_gsm]
+ tty_ioctl+0x660/0x1260
+ __x64_sys_ioctl+0x132/0x1b0
+ x64_sys_call+0x1205/0x20d0
+ do_syscall_64+0x7c/0x160
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-There is an extra space in the extended commit message ("...summary:
-dump..." -> "...summary: dump...".
+[Analysis]
+gsm_msg on the tx_ctrl_list or tx_data_list of gsm_mux
+can be freed by multi threads through ioctl,which leads
+to the occurrence of uaf. Protect it by gsm tx lock.
 
->   drm/rockchip: Set dma mask to 64 bit
->   drm/rockchip: vop2: Fix cluster windows alpha ctrl regsiters offset
+Signed-off-by: Longlong Xia <xialonglong@kylinos.cn>
+---
+ drivers/tty/n_gsm.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Typo "regsiters" -> "registers".
+diff --git a/drivers/tty/n_gsm.c b/drivers/tty/n_gsm.c
+index 5d37a0984916..1ed68a6aba4e 100644
+--- a/drivers/tty/n_gsm.c
++++ b/drivers/tty/n_gsm.c
+@@ -3125,6 +3125,7 @@ static void gsm_cleanup_mux(struct gsm_mux *gsm, bo=
+ol disc)
+ 	int i;
+ 	struct gsm_dlci *dlci;
+ 	struct gsm_msg *txq, *ntxq;
++	unsigned long flags;
+=20
+ 	gsm->dead =3D true;
+ 	mutex_lock(&gsm->mutex);
+@@ -3157,12 +3158,15 @@ static void gsm_cleanup_mux(struct gsm_mux *gsm, =
+bool disc)
+ 	mutex_unlock(&gsm->mutex);
+ 	/* Now wipe the queues */
+ 	tty_ldisc_flush(gsm->tty);
++
++	spin_lock_irqsave(&gsm->tx_lock, flags);
+ 	list_for_each_entry_safe(txq, ntxq, &gsm->tx_ctrl_list, list)
+ 		kfree(txq);
+ 	INIT_LIST_HEAD(&gsm->tx_ctrl_list);
+ 	list_for_each_entry_safe(txq, ntxq, &gsm->tx_data_list, list)
+ 		kfree(txq);
+ 	INIT_LIST_HEAD(&gsm->tx_data_list);
++	spin_unlock_irqrestore(&gsm->tx_lock, flags);
+ }
+=20
+ /**
+--=20
+2.45.2
 
->   drm/rockchip: vop2: Fix the mixer alpha setup for layer 0
->   drm/rockchip: vop2: Fix the windows switch between different layers
->   drm/rockchip: vop2: include rockchip_drm_drv.h
->   drm/rockchip: vop2: Support 32x8 superblock afbc
->   drm/rockchip: vop2: Add platform specific callback
->   drm/rockchip: vop2: Support for different layer selet configuration
-
-Typo "selet" -> "select"?
-
->     between VPs
->   drm/rockchip: vop2: Introduce vop hardware version
->   drm/rockchip: vop2: Register the primary plane and overlay plane
->     separately
->   drm/rockchip: vop2: Set plane possible crtcs by possible vp mask
->   drm/rockchip: vop2: Add uv swap for cluster window
->   dt-bindings: display: vop2: Add rk3576 support
->   drm/rockchip: vop2: Add support for rk3576
-> 
->  .../display/rockchip/rockchip-vop2.yaml       |   13 +-
->  drivers/gpu/drm/rockchip/rockchip_drm_drv.c   |    4 +-
->  drivers/gpu/drm/rockchip/rockchip_drm_vop2.c  | 1572 ++++---------
->  drivers/gpu/drm/rockchip/rockchip_drm_vop2.h  |  274 ++-
->  drivers/gpu/drm/rockchip/rockchip_vop2_reg.c  | 1948 ++++++++++++++++-
->  5 files changed, 2683 insertions(+), 1128 deletions(-)
-
-I gave your changes a quick test on my RK3568 device and did not find
-any regressions ->
-
-Tested-by: Michael Riesch <michael.riesch@wolfvision.net> # on RK3568
-
-Thanks and best regards,
-Michael
 
