@@ -1,202 +1,174 @@
-Return-Path: <linux-kernel+bounces-337405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E03D898499E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:29:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8482D9849A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:29:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 318F4B23A78
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:29:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B40101C209F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1BD01AB6E9;
-	Tue, 24 Sep 2024 16:29:00 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9081ABEA4;
+	Tue, 24 Sep 2024 16:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aXTw8RmA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854601B85D2
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 16:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49033D531;
+	Tue, 24 Sep 2024 16:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727195340; cv=none; b=SAE5tizZ+HQf8PWKduCA265wDI5gf5nndTl9NP7ZjKfufcjW9CKZ9161vxtc6TjA8cHjepiL7Hrm3f/hGdM3CgaQQKqTv07LBaGQjz8GRMD1WlPXk9k5cOUWDjFu7wsbuUYI3fr7HQZzzx/ZHs30atQGzB28gCYw098jKMDjBXs=
+	t=1727195365; cv=none; b=KdvlU0xeeiqbZ3/jEJQL0stOG7Ixg8FN6r8zt1iS73YB0B5g4E9llk3mmnA5qITfNj9b62bqWFxU3SWKBkFyTxAFY4dROcv5VdH/bjJrkjiR7K9xFeXG9Il2QSmS6sMj+IivbEd4KQ8pFfDvW6ItRhpk0vmxdxzZuFlTZR7wte8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727195340; c=relaxed/simple;
-	bh=0EJ4H0VGxNnTz37z2THiHhAONQCTq6KAKm8c2hv4+4M=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OrsA5S1IDrtXzhPW2MAjepBV7zrygcbjHdkuFAxrRSHXhAjNI6bbuURd6To2AR0zGHh8Xxi9krwjkWgnr3ggP78ji8bY88XxNLzKwPSInuWOQXWG3ihrbs5oj7OYmo8Q6nwnVZPGQ742p29lbvmLUXknJhz1hJpYt6jNdUOAERI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XClYc2X8Bz6K5rf;
-	Wed, 25 Sep 2024 00:24:20 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0AED01401F3;
-	Wed, 25 Sep 2024 00:28:55 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 24 Sep
- 2024 18:28:54 +0200
-Date: Tue, 24 Sep 2024 17:28:53 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Gowthami Thiagarajan <gthiagarajan@marvell.com>
-CC: <will@kernel.org>, <mark.rutland@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<gcherian@marvell.com>, <bbhushan2@marvell.com>, <sgoutham@marvell.com>
-Subject: Re: [PATCH v8 4/6] perf/marvell: Odyssey DDR Performance monitor
- support
-Message-ID: <20240924172853.0000647e@Huawei.com>
-In-Reply-To: <20240919074717.3276854-5-gthiagarajan@marvell.com>
-References: <20240919074717.3276854-1-gthiagarajan@marvell.com>
-	<20240919074717.3276854-5-gthiagarajan@marvell.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1727195365; c=relaxed/simple;
+	bh=e5QIhvKs5LENAO7Bu7T9ljRq0OrFUzWyWsn/utgn7Y4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Qt0pE+QXxpDSQHoJDY1fxTVAIiJZcZRMApcikdaYbVm17fDnI0UGWlXuzHWrgKPP/HsPVxWze4gIZ8nXYAcy/v3uHqbCvNDO/+JLXeeUB4o0iIfcxZq+bZZrFjidrLBsDfFogCoRz4cuDlorPapGCdDj9UfcTy08jd9fkN1GOCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aXTw8RmA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C480C4CEC4;
+	Tue, 24 Sep 2024 16:29:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727195364;
+	bh=e5QIhvKs5LENAO7Bu7T9ljRq0OrFUzWyWsn/utgn7Y4=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=aXTw8RmA1WzEtnUAjUC+dX8A273IPQZ+4Bh7+4RL3hlCBg7tnNV6cRD097rulmZ7B
+	 UUZjI+4gH0GduKgyS65VZnpo/5GRoC4WUtrjA6D2AUgmMSK0GHuPYOJHbRGGrrJiPM
+	 9CTcjF0Op75nb3a+npqjMSuGF4NzmdiIDcIchF0zFpUu6nt++jRIC7yTh9swLXFvy2
+	 M49j/Y6YOEPiniPcifAEFRoj8kF5O4sqet/Bkmgo9s5fKyPWcKRzqtbWK6EWYJvWVn
+	 weUpm8jv7QJzOCYwfIsWlatm6UpcFyGL7vz6C++dcXVVund0NepmD1eSnq612447Mw
+	 7NXkdC0RW1Z6Q==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 24 Sep 2024 19:29:21 +0300
+Message-Id: <D4ENNN25NKBE.87NXHTTEWZY@kernel.org>
+Cc: <roberto.sassu@huawei.com>, <mapengyu@gmail.com>, "Mimi Zohar"
+ <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
+ <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, "Peter Huewe" <peterhuewe@gmx.de>, "Jason
+ Gunthorpe" <jgg@ziepe.ca>, <keyrings@vger.kernel.org>,
+ <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 0/5] Lazy flush for the auth session
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "James Bottomley" <James.Bottomley@HansenPartnership.com>,
+ <linux-integrity@vger.kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20240921120811.1264985-1-jarkko@kernel.org>
+ <D4D05FKB9VSG.33COYTJHUX6EM@kernel.org>
+ <c26a295d96b14173b5693c5933e92bbda84764cc.camel@HansenPartnership.com>
+In-Reply-To: <c26a295d96b14173b5693c5933e92bbda84764cc.camel@HansenPartnership.com>
 
-On Thu, 19 Sep 2024 13:17:15 +0530
-Gowthami Thiagarajan <gthiagarajan@marvell.com> wrote:
+On Tue Sep 24, 2024 at 4:48 PM EEST, James Bottomley wrote:
+> On Sun, 2024-09-22 at 20:51 +0300, Jarkko Sakkinen wrote:
+> > On Sat Sep 21, 2024 at 3:08 PM EEST, Jarkko Sakkinen wrote:
+> > > This patch set aims to fix:
+> > > https://bugzilla.kernel.org/show_bug.cgi?id=3D219229.
+> > >=20
+> > > The baseline for the series is the v6.11 tag.
+> > >=20
+> > > v4:
+> > > https://lore.kernel.org/linux-integrity/20240918203559.192605-1-jarkk=
+o@kernel.org/
+> > > v3:
+> > > https://lore.kernel.org/linux-integrity/20240917154444.702370-1-jarkk=
+o@kernel.org/
+> > > v2:
+> > > https://lore.kernel.org/linux-integrity/20240916110714.1396407-1-jark=
+ko@kernel.org/
+> > > v1:
+> > > https://lore.kernel.org/linux-integrity/20240915180448.2030115-1-jark=
+ko@kernel.org/
+> > >=20
+> > > Jarkko Sakkinen (5):
+> > > =C2=A0 tpm: Return on tpm2_create_null_primary() failure
+> > > =C2=A0 tpm: Implement tpm2_load_null() rollback
+> > > =C2=A0 tpm: flush the null key only when /dev/tpm0 is accessed
+> > > =C2=A0 tpm: Allocate chip->auth in tpm2_start_auth_session()
+> > > =C2=A0 tpm: flush the auth session only when /dev/tpm0 is open
+> > >=20
+> > > =C2=A0drivers/char/tpm/tpm-chip.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ |=C2=A0 14 ++++
+> > > =C2=A0drivers/char/tpm/tpm-dev-common.c |=C2=A0=C2=A0 8 +++
+> > > =C2=A0drivers/char/tpm/tpm-interface.c=C2=A0 |=C2=A0 10 ++-
+> > > =C2=A0drivers/char/tpm/tpm2-cmd.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ |=C2=A0=C2=A0 3 +
+> > > =C2=A0drivers/char/tpm/tpm2-sessions.c=C2=A0 | 109 ++++++++++++++++++=
+--------
+> > > ----
+> > > =C2=A0include/linux/tpm.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 2 +
+> > > =C2=A06 files changed, 102 insertions(+), 44 deletions(-)
+> >=20
+> >=20
+> > Roberto, James, speaking of digest cache. This patch set has no aim
+> > to fix those issues but I do believe that it should improve also that
+> > feature.
+> >=20
+> > If I don't get soon patch reviews for the patch set, I'll pick the
+> > 2nd best option: disable bus encryption on all architectures
+> > including x86 and ARM64 (being by default on).
+> >=20
+> > It's a force majeure situation. I know this would sort out the issue
+> > but I really cannot send these as a pull request with zero reviewe-
+> > by's.
+> >=20
+> > I expect this to be closed by tomorrow.
+>
+> Hey come on, you knew I was running plumbers last week so I had all the
+> lead up and teardown stuff to do as well.  I'm only just digging
+> through accumulated email.
 
-> Odyssey DRAM Subsystem supports eight counters for monitoring performance
-> and software can program those counters to monitor any of the defined
-> performance events. Supported performance events include those counted
-> at the interface between the DDR controller and the PHY, interface between
-> the DDR Controller and the CHI interconnect, or within the DDR Controller.
-> 
-> Additionally DSS also supports two fixed performance event counters, one
-> for ddr reads and the other for ddr writes.
-> 
-> Signed-off-by: Gowthami Thiagarajan <gthiagarajan@marvell.com>
-Follow on comments. Given I'm late to the game and none of this
-is critical, you can ignore if maintainers think current code
-is fine.
-
-Jonathan
-
-> ---
->  Documentation/admin-guide/perf/index.rst      |   1 +
->  .../admin-guide/perf/mrvl-odyssey-ddr-pmu.rst |  80 ++++++
->  drivers/perf/marvell_cn10k_ddr_pmu.c          | 257 +++++++++++++++++-
->  3 files changed, 335 insertions(+), 3 deletions(-)
->  create mode 100644 Documentation/admin-guide/perf/mrvl-odyssey-ddr-pmu.rst
-> 
-> diff --git a/Documentation/admin-guide/perf/index.rst b/Documentation/admin-guide/perf/index.rst
-> index 7eb3dcd6f4da..d673ccfea903 100644
-> --- a/Documentation/admin-guide/perf/index.rst
-> +++ b/Documentation/admin-guide/perf/index.rst
-> @@ -14,6 +14,7 @@ Performance monitor support
->     qcom_l2_pmu
->     qcom_l3_pmu
->     starfive_starlink_pmu
-> +   mrvl-odyssey-ddr-pmu
->     arm-ccn
->     arm-cmn
->     xgene-pmu
-> diff --git a/Documentation/admin-guide/perf/mrvl-odyssey-ddr-pmu.rst b/Documentation/admin-guide/perf/mrvl-odyssey-ddr-pmu.rst
-> new file mode 100644
-> index 000000000000..2e817593a4d9
-> --- /dev/null
-> +++ b/Documentation/admin-guide/perf/mrvl-odyssey-ddr-pmu.rst
-...
-
-> diff --git a/drivers/perf/marvell_cn10k_ddr_pmu.c b/drivers/perf/marvell_cn10k_ddr_pmu.c
-> index 65422fd5ddd2..95818bc035e4 100644
-> --- a/drivers/perf/marvell_cn10k_ddr_pmu.c
-> +++ b/drivers/perf/marvell_cn10k_ddr_pmu.c
-
-> -static int ddr_perf_get_event_bitmap(int eventid, u64 *event_bitmap)
-> +static int ddr_perf_get_event_bitmap(int eventid, u64 *event_bitmap,
-> +				     struct cn10k_ddr_pmu *ddr_pmu)
->  {
->  	switch (eventid) {
->  	case EVENT_HIF_RD_OR_WR ... EVENT_WAW_HAZARD:
->  	case EVENT_OP_IS_REFRESH ... EVENT_OP_IS_ZQLATCH:
->  		*event_bitmap = (1ULL << (eventid - 1));
->  		break;
-> +	case EVENT_DFI_PARITY_POISON ...EVENT_DFI_CMD_IS_RETRY:
-> +		if (ddr_pmu->version == DDR_PMU_V2)
-> +			*event_bitmap = (1ULL << (eventid - 1));
-> +		else
-> +			goto err;
-> +		break;
->  	case EVENT_OP_IS_ENTER_SELFREF:
->  	case EVENT_OP_IS_ENTER_POWERDOWN:
->  	case EVENT_OP_IS_ENTER_MPSM:
->  		*event_bitmap = (0xFULL << (eventid - 1));
->  		break;
->  	default:
-> -		pr_err("%s Invalid eventid %d\n", __func__, eventid);
-> +err:		pr_err("%s Invalid eventid %d\n", __func__, eventid);
-
-Hmm. Not pretty. I'd print that the event is not supported prior to
-v2 in where you have goto err above.
-
->  		return -EINVAL;
->  	}
->  
-c void cn10k_ddr_perf_event_start(struct perf_event *event, int flags)
->  {
->  	struct cn10k_ddr_pmu *pmu = to_cn10k_ddr_pmu(event->pmu);
-> +	u64 ctrl_reg = pmu->p_data->ddrc_perf_cnt_op_mode_ctrl;
->  	struct hw_perf_event *hwc = &event->hw;
->  	int counter = hwc->idx;
->  
->  	local64_set(&hwc->prev_count, 0);
->  
->  	cn10k_ddr_perf_counter_enable(pmu, counter, true);
-> +	if (pmu->version == DDR_PMU_V2) {
-As below.  Just use a flag for whether to do this.
-That flag can give it a clear name rather than basing it on 
-a magic version number.
-
-> +	/* Setup the PMU counter to work in manual mode */
-> +		writeq_relaxed(OP_MODE_CTRL_VAL_MANUAL, pmu->base +
-> +			       DDRC_PERF_REG(ctrl_reg, counter));
-> +
-> +		cn10k_ddr_perf_counter_start(pmu, counter);
-> +	}
->  
->  	hwc->state = 0;
->  }
-> @@ -495,7 +636,7 @@ static int cn10k_ddr_perf_event_add(struct perf_event *event, int flags)
->  	if (counter < DDRC_PERF_NUM_GEN_COUNTERS) {
->  		/* Generic counters, configure event id */
->  		reg_offset = DDRC_PERF_CFG(p_data->ddrc_perf_cfg_base, counter);
-> -		ret = ddr_perf_get_event_bitmap(config, &val);
-> +		ret = ddr_perf_get_event_bitmap(config, &val, pmu);
->  		if (ret)
->  			return ret;
->  
-> @@ -524,6 +665,9 @@ static void cn10k_ddr_perf_event_stop(struct perf_event *event, int flags)
->  
->  	cn10k_ddr_perf_counter_enable(pmu, counter, false);
->  
-> +	if (pmu->version == DDR_PMU_V2)
-> +		cn10k_ddr_perf_counter_stop(pmu, counter);
-Use a flag in pdata to decide if this needs doing, not a version check.
-Versions are just not flexible enough once a significant number of
-them exist and there is very little cost in avoiding them in the first place.
-
-Also, use device names not v1 and v2.
+Fair enough, I actually do not want to disable the feature. That
+was my main concern here. Now if we get this fixed we might be
+able to revisit earlier decisions on defconfig and widen the
+support eventually, not shrink it.
 
 
-Jonathan
+>
+> Patches 1-2 are fully irrelevant to the bug, so I ignored them on the
+> grounds that improvement to the error flow could be done through the
+> normal patch process
 
-> +
->  	if (flags & PERF_EF_UPDATE)
->  		cn10k_ddr_perf_event_update(event);
->  
-> @@ -640,6 +784,66 @@ static void ddr_pmu_overflow_hander(struct cn10k_ddr_pmu *pmu, int evt_idx)
->  	cn10k_ddr_perf_pmu_enable(&pmu->pmu);
->  }
-> 
+Hmm.. I'll revisit this for v6. Not sure what to say on this yet
+because I need to address the other remarks and based on that
+reflect. So might drop or keep them but not 100% sure yet.
+
+
+> Patch 3 is completely unnecessary: the null key is only used to salt
+> the session and is not required to be resident while the session is
+> used (so can be flushed after session creation) therefore keeping it
+> around serves no purpose once the session is created and simply
+> clutters up the TPM volatile handle slots. (I don't know of a case
+> where we use all the slots in a kernel operation, but since we don't
+> need it lets not find out when we get one).  So I advise dropping patch
+> 3.
+
+Let's go this through just to check I'm understanding.
+
+Holding null key had radical effect on boot time: it cut it down by
+5 secons down to 15 seconds:
+
+https://lore.kernel.org/linux-integrity/CALSz7m1WG7fZ9UuO0URgCZEDG7r_wB4Ev_=
+4mOHJThH_d1Ed1nw@mail.gmail.com/
+
+Then in subsequent version I implemented lazy auth session and boot
+time went down to 9.7 seconds.
+
+So is the point you're trying to make that since auth session is=20
+already held as long as we can and they flushed in synchronous
+point too, I can just as well drop patch 3?
+
+I think I reach your point but just want to check that I do it
+for the matching reasons. It is evolutionary cruft in the patch
+set :-)
+
+BR, Jarkko
 
