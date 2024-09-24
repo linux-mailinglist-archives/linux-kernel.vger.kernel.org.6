@@ -1,93 +1,96 @@
-Return-Path: <linux-kernel+bounces-336754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A67B498405B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:24:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BB64984057
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:22:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D6BD1F225D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:24:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF937B20A0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD7A14B084;
-	Tue, 24 Sep 2024 08:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA02114D44D;
+	Tue, 24 Sep 2024 08:22:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="gESwmPYe"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iWEVrvSy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E27145B0F
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 08:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D16822315;
+	Tue, 24 Sep 2024 08:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727166239; cv=none; b=Yex6vCfFK6ShGQMlYKaONgKyqQyaqTVxYZo8QQLgF+Fv72dlIM2flr99LcV91228IZp+Zyme095s5mREdgJeOZgG3bRiqJwSQfuCLb4ifxnjzIO4Wm/2muY+oQel87Oo1GlCHWivUtGDg04Qy+WLKfCQCI4pyS04JQAqDQnLWx8=
+	t=1727166165; cv=none; b=aUVcF6rThLc/MycFmaHopfAd1O6Pl7ojuj2boEo494lKCoy+dDQlVdrvAyFlug926pDVba+oQDPeVOStNzcdIH5QG+r1d2nBekx+pkD4nkJiWqqKyTW9EccqLzRaTUcJaxLx30zgVKbYxZO2P6rfg2pXzFKzEtEYRRGGrbCWX8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727166239; c=relaxed/simple;
-	bh=uv/F0+QNX21Vcc4ZV33nCNk1otifWMjv/1o/svQYAlc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dCiEGBMfKjThBDtI+/Un2IjydgRUTTfjok8hZ3VQX5pmQkxNB/3EpAoWtUHADenZWVdoNaRoCkl8JBFs5mVy1OaWJ75Of7sqVQEMt31JONwsX12kE2xsB4gNRZMJdkqH+WNC3jobN2BT8kao4721yRiDwGFLk802F6p2xXeiU9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=gESwmPYe; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1727166234;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=/zOw2Fx9GEN9HIlLC3EoOVa+hkvhGF6/jf2SXzGj3+U=;
-	b=gESwmPYehYrhyRhxgZ298xHiwXGLK/mG4AW0Gq/ByKpQefZTT/pgD6uiwjQ9er/DzOgtcP
-	ZfBFlpoPPVrjfAf4OsxPSibPddCiLh8nmfBNj9w800gtnvKIpiHGrU8wzcJO/4LxjD91Sk
-	FHrfgZso9B8KnCDX1HjMQNDsJYIpw+w3hoGFQskYPWLIV0Pqm5UsTKW4sX34ZwTKdgArd3
-	PNkqUMzAFvVMuQJsDw8NzGc6N69UzfndLVRG9Gv5VdC6ja3AbfuvQAgXXQ8SoKnRCwP/F4
-	OTvTL5yfz8KEmun9EBX38z9vOFqlOmKnuCnpB4zVAr6JWuc+5P3LnhmkOtsp3Q==
-From: Diederik de Haas <didi.debian@cknow.org>
-To: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Diederik de Haas <didi.debian@cknow.org>
-Subject: [PATCH v2] mm/damon/Kconfig: Update DAMON doc URL
-Date: Tue, 24 Sep 2024 10:21:46 +0200
-Message-ID: <20240924082331.11499-1-didi.debian@cknow.org>
+	s=arc-20240116; t=1727166165; c=relaxed/simple;
+	bh=1k2BvdlSnKvudqdu6QNfjXKlDapz+vpyQHbc72gBgqs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ij05jGMFdNLEHuEybbFaysXx0BwdbFbLJOCNNL1Gasx88qHuRmOwv5SBSW2RUMcOiJxSSG0jJlKLcz8Ugbcn6VVu6yFyl4XV3rKp6+EkIq0N/LVGixDdNh8ZZ0dmi/9H2v/hVGmE5Yx7ZcRzpHJEL7TO7XLcTUTuNW5M637EbCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iWEVrvSy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EF33C4CEC4;
+	Tue, 24 Sep 2024 08:22:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727166164;
+	bh=1k2BvdlSnKvudqdu6QNfjXKlDapz+vpyQHbc72gBgqs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iWEVrvSyYOCIUtt0WwFq55vgbUxepj9MO1pdJZtO6UdbpZ4GHA9XYtT0RTVAURm8o
+	 EVE6tV2eIMMPhNztX7rm061OslHAWVPFc5rd+TDoqbIK1Qgm7djByqzpt2h6L/NGe4
+	 rZX5odGgjvlM92gRMMsMs98FHIJ20aRtxBiyTLmaDSsC3dhUgCoO333a4me8Qu/NlH
+	 oj42sgqspBzafTLtr7NxvUuoeHg11fmH+1DV1VvEmEwxTcRlkPPCAEGbsekfCXXbR8
+	 esOjnp9DIBNtIkl1egIyJ61sYDezhXRx2r+HmyUJR2AHMXetCcPqVYr3Qmf1VRD8Dq
+	 bmlJW0DvPsmKA==
+Date: Tue, 24 Sep 2024 10:22:40 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Petr Benes <petr.benes@ysoft.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Herburger <gregor.herburger@ew.tq-group.com>, Hiago De Franco <hiago.franco@toradex.com>, 
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>, Joao Paulo Goncalves <joao.goncalves@toradex.com>, 
+	Michael Walle <mwalle@kernel.org>, Alexander Stein <alexander.stein@ew.tq-group.com>, 
+	Mathieu Othacehe <m.othacehe@gmail.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 0/4] Add support for new IMX8MP based board
+Message-ID: <vghktkih6pdjrui7sjs2gn2elfcdlplh37ahzcm2xnqin3rh4g@cck4xniyourm>
+References: <20240923151417.1665431-1-michal.vokac@ysoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240923151417.1665431-1-michal.vokac@ysoft.com>
 
-The old URL doesn't really work anymore and as the documentation has
-been integrated in the main kernel documentation site, change the URL to
-point to that.
+On Mon, Sep 23, 2024 at 05:14:13PM +0200, Michal Vok=C3=A1=C4=8D wrote:
+> Hi,
+>=20
+> this series adds support for a new member in our IOTA=C2=A0platform.
+> The board is based on the i.MX8MP SoC. The first two patches
+> add support for most of the board functionality except USB Type-C
+> port and some other minor things.
+>=20
+> [PATCH 3] adds new device tree binding for a Diodes Incorporated
+> PI5USB30213A Type-C Controller and [PATCH 4] enables that port on
+> the IOTA2 Lumpy board.
+>=20
+> We also wrote a driver for that Type-C port controller. I would like
+> to get that driver upstream as well but I expect it will take much
+> more iterations and effort to get it into mainline-ready shape so
+> I intentionally excluded it from this series. AFAIK it should not
+> be a problem to accept a device tree binding for a HW that does not
+> have a driver in the kernel yet.
 
-Reviewed-by: SeongJae Park <sj@kernel.org>
-Signed-off-by: Diederik de Haas <didi.debian@cknow.org>
----
-Changes v1 -> v2:
-- Add 'Kconfig' to subject
-- collect R-b tag
+It's unusual but okay. It will be however more difficult for you - any
+changes in the binding in the future (when writing driver) will be
+rejected on basis of breaking ABI, even if Linux does not use that ABI.
 
- mm/damon/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/damon/Kconfig b/mm/damon/Kconfig
-index fecb8172410c..35b72f88983a 100644
---- a/mm/damon/Kconfig
-+++ b/mm/damon/Kconfig
-@@ -9,7 +9,7 @@ config DAMON
- 	  access frequency of each memory region. The information can be useful
- 	  for performance-centric DRAM level memory management.
- 
--	  See https://damonitor.github.io/doc/html/latest-damon/index.html for
-+	  See https://www.kernel.org/doc/html/latest/mm/damon/index.html for
- 	  more information.
- 
- config DAMON_KUNIT_TEST
--- 
-2.45.2
+Best regards,
+Krzysztof
 
 
