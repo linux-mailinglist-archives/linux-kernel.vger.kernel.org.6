@@ -1,142 +1,148 @@
-Return-Path: <linux-kernel+bounces-337345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CDD79848ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:57:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37E579848F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7E2E1F23ACC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:57:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D31C21F23C70
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3289B1AB6F7;
-	Tue, 24 Sep 2024 15:57:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B929C1AB6D0;
+	Tue, 24 Sep 2024 15:58:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Er/ATWYF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g885dQ23"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88FEA1AB6D3
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 15:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233C219B3F3;
+	Tue, 24 Sep 2024 15:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727193426; cv=none; b=Qn7YRiLmiMkjoibsVpxHKFOVa39E5RUq5FYXTPQFsRDd7s9/q3vtau4jHCoV/FVfMcmVsnI/hd5GouCDU5b+z4oK03/rH+iUV4AEvgl3rGB3K3eeo2VScJ8EA/ii4UslKiqHY6810Rggrl1ORKRNueUCOn+pEGRnEvY7d0SNv3U=
+	t=1727193499; cv=none; b=G+ft7l6GACgIrC3UK7Ck/S09HuiCrSVufdc+TvlxNkq1EVXMz1ZODmtD2W0eEtHrqBpQ88RqLXbZy1C2v/9lxgb6hkGujt+DQ7flqeziICHWMU2Tn+e7RbVsu8HLuXbCghLqwd0IiFXu3b4dZctoGNXccYqYJOeiTKktE2FZxhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727193426; c=relaxed/simple;
-	bh=HfF3xPBwgBMdFWUNMEBPlkO/CLzT2biAhM9nyeIBxAs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RM42y3ztAWcDa9Bhm+wuJqz5lybEdmesupQV6RbjZlLyDCpcNr8IaEbqDTcGqmLpoOrwOh0yrMbNDJlBM0FEeRjU7z4EMAeWvB8tySiVtKEfHEDkbaj0T5qVSyC9cT+Z2wSE0JSX6tFSixEWLHXVSt/kbLPX/2AFb1hI1Mgabj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Er/ATWYF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E569C4CED2
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 15:57:06 +0000 (UTC)
+	s=arc-20240116; t=1727193499; c=relaxed/simple;
+	bh=PrDU0r5qgwugy9ISMu35of0gcKQmKy3/K4ukA80gwXQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AhFKDpJi1CpXfZQogS17heYqPWJ7/gARZYVhHKNB4TJ7x0qoEaXOojuZREkQzAyySZVMWJRf+3UKzFy/kyBHsvC8sr4Qi3w6Kl3ZIRWKk+EyD5WSHwwc2hp0L/KgKYLGp5uFI8Lsm1ovQMJVJUOLsFsoy8F2auIpgmi1QkMV/j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g885dQ23; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E7D2C4CEC4;
+	Tue, 24 Sep 2024 15:58:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727193426;
-	bh=HfF3xPBwgBMdFWUNMEBPlkO/CLzT2biAhM9nyeIBxAs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Er/ATWYF25DQ5EMXmBBdjFjYHEloJ+8ThqmcC1CTgDus+lQITMObwmgX5uWWOTdtX
-	 Lq4YfC5wOS8q2kTq7Tp3DPOgbqrEwwsErqj4mTkSewTfkqv2qp1AdAYxc49n4FTpGM
-	 X+p3/ApjuYJIA2OiRFVAtWQE8/rsjZV0X2vsh8gy4w6GWsnFxZHky6LeKyJOofRKlI
-	 uHL0HBNLClaS/bMoTEG7OTQIg+ReHZmMstXtWrqtq0dd79rlbS3tWL5o4CHJJkJKC8
-	 q5E0YMG7cBLVLHHLIRQWIQ+yQ59a6BdexZK8Pzl3jDYYdw80Z3LXexZLzdySWxu1Vf
-	 S96xvagkzkKTQ==
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3a0cb892c6aso370425ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 08:57:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXtUVSZH7k0r0zUP4N/39aXnDYNLpqDsW3KgAjXgN/lnzADt98F35gWnBv7gFIVloi1zKLrpuV+pzWTfTY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzODp9X3JPWok2fw9n3a5YoBnQIiMA92Xik/prRzOulMJ6aaSfm
-	Txw1JmPypJH9unN3ViWNeZ+K0L5sqGv7zMkTHx5CHVWc91nuJF2UrYgOzWcUZFL3Nv8IZALVKLM
-	GgoREvDnP2dmaDfq5ioVLpq+E14KiHz8daa+w
-X-Google-Smtp-Source: AGHT+IFFOwTDXsu4A4fHpVGUiYA0bVv8HJZIgQPpTJqUoEUUT6DNdj2eWGxCsubcYJjsTuRrETuq9awjmoQukbkLzT4=
-X-Received: by 2002:a05:6e02:1d8f:b0:3a0:b643:7892 with SMTP id
- e9e14a558f8ab-3a1a50878d0mr3543175ab.21.1727193425424; Tue, 24 Sep 2024
- 08:57:05 -0700 (PDT)
+	s=k20201202; t=1727193497;
+	bh=PrDU0r5qgwugy9ISMu35of0gcKQmKy3/K4ukA80gwXQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g885dQ237skZYaWx4dwAdSpg4p26u4moNDxKnnCl+TS46uRaqD1nn82Y0rL/T9pZV
+	 uZocJOTdc9GQK/VJcsFyiwETvvly+DnVAUfOr5Hwvgyiy5q4eatlSuMjrneYcYs+Iz
+	 Uy/aEQ2Z4m5OiXxrRPe9ADjIwzt0O+aRDgXjAWDHBJZYKYX9t86MWulyVWWed4Yrru
+	 yEkJ0tu5Q/nPM2F27flMcN7HqyP0JcSkn/q0PeWqw7PLTVmEVTvv47u9zO3evXzsbw
+	 m4CB0N08YERS1ltJyMyYsHfVW/4JIlonscUb1JUayUUjsWHSyf9b9s1tMFp05cCl0C
+	 4lu2Vxp5WwI+g==
+Date: Tue, 24 Sep 2024 16:58:12 +0100
+From: Simon Horman <horms@kernel.org>
+To: Dipendra Khadka <kdipendra88@gmail.com>
+Cc: sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
+	hkelam@marvell.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: ethernet: marvell: octeontx2: nic: Add error
+ pointer check in otx2_ethtool.c
+Message-ID: <20240924155812.GR4029621@kernel.org>
+References: <20240923113135.4366-1-kdipendra88@gmail.com>
+ <20240924071026.GB4029621@kernel.org>
+ <CAEKBCKPw=uwN+MCLenOe6ZkLBYiwSg35eQ_rk_YeNBMOuqvVOw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240923164843.1117010-1-andrej.skvortzov@gmail.com>
- <20240924014241.GH38742@google.com> <d22cff1a-701d-4078-867d-d82caa943bab@linux.vnet.ibm.com>
-In-Reply-To: <d22cff1a-701d-4078-867d-d82caa943bab@linux.vnet.ibm.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Tue, 24 Sep 2024 08:56:53 -0700
-X-Gmail-Original-Message-ID: <CAF8kJuPEg1yKNmVvPbEYGME8HRoTXdHTANm+OKOZwX9B6uEtmw@mail.gmail.com>
-Message-ID: <CAF8kJuPEg1yKNmVvPbEYGME8HRoTXdHTANm+OKOZwX9B6uEtmw@mail.gmail.com>
-Subject: Re: [PATCH v3] zram: don't free statically defined names
-To: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Andrey Skvortsov <andrej.skvortzov@gmail.com>, Minchan Kim <minchan@kernel.org>, 
-	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
-	stable@vger.kernel.org, Sachin Sant <sachinp@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEKBCKPw=uwN+MCLenOe6ZkLBYiwSg35eQ_rk_YeNBMOuqvVOw@mail.gmail.com>
 
-Hi,
+On Tue, Sep 24, 2024 at 08:39:47PM +0545, Dipendra Khadka wrote:
+> Hi Simon,
+> 
+> On Tue, 24 Sept 2024 at 12:55, Simon Horman <horms@kernel.org> wrote:
+> >
+> > On Mon, Sep 23, 2024 at 11:31:34AM +0000, Dipendra Khadka wrote:
+> > > Add error pointer check after calling otx2_mbox_get_rsp().
+> > >
+> >
+> > Hi Dipendra,
+> >
+> > Please add a fixes tag here (no blank line between it and your
+> > Signed-off-by line).
+> > > Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
+> >
+> > As you have posted more than one patch for this driver, with very similar,
+> > not overly complex or verbose changes, it might make sense to combine them
+> > into a single patch. Or, if not, to bundle them up into a patch-set with a
+> > cover letter.
+> >
+> > Regarding the patch subject, looking at git history, I think
+> > an appropriate prefix would be 'octeontx2-pf:'. I would go for
+> > something like this:
+> >
+> >   Subject: [PATCH net v2] octeontx2-pf: handle otx2_mbox_get_rsp errors
+> >
+> 
+> If I bundle all the patches for the
+> drivers/net/ethernet/marvell/octeontx2/ , will this subject without v2
+> work? Or do I need to change anything? I don't know how to send the
+> patch-set with the cover letter.
 
-I also hit this problem in my swap stress test. Sergey pointed me to
-this thread.
+Given that one of the patches is already at v2, probably v3 is best.
 
-Just want to add that the fixes works for my setup as well:
+If you use b4, it should send a cover letter if the series has more than 1
+patch.  You can use various options to b4 prep to set the prefix
+(net-next), version, and edit the cover (letter).  And you can use various
+options to b4 send, such as -d, to test your submission before sending it
+to the netdev ML.
 
-Tested-by: Chris Li <chrisl@kernel.org>
+Alternatively the following command will output 3 files: a cover letter and
+a file for each of two patches, with v3 and net-next in the subject of each
+file. You can edit these files and send them using git send-email.
 
-Chris
+git format-patch --cover-letter -2 -v3 --subject-prefix="PATCH net-next"
 
+> 
+> > As for the code changes themselves, module the nits below, I agree the
+> > error handling is consistent with that elsewhere in the same functions, and
+> > is correct.
+> >
+> > > ---
+> > >  .../ethernet/marvell/octeontx2/nic/otx2_ethtool.c    | 12 ++++++++++++
+> > >  1 file changed, 12 insertions(+)
+> > >
+> > > diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
+> > > index 0db62eb0dab3..36a08303752f 100644
+> > > --- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
+> > > +++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
+> > > @@ -343,6 +343,12 @@ static void otx2_get_pauseparam(struct net_device *netdev,
+> > >       if (!otx2_sync_mbox_msg(&pfvf->mbox)) {
+> > >               rsp = (struct cgx_pause_frm_cfg *)
+> > >                      otx2_mbox_get_rsp(&pfvf->mbox.mbox, 0, &req->hdr);
+> > > +
+> >
+> > nit: No blank line here.
+> >
+> > > +             if (IS_ERR(rsp)) {
+> > > +                     mutex_unlock(&pfvf->mbox.lock);
+> > > +                     return;
+> > > +             }
+> > > +
+> 
+> If the above blank line after the check is ok or do I have to remove
+> this as well?
 
-On Tue, Sep 24, 2024 at 1:16=E2=80=AFAM Venkat Rao Bagalkote
-<venkat88@linux.vnet.ibm.com> wrote:
->
-> Please add below tages to the patch.
->
-> Reported-by: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
->
-> Tested-by: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
->
-> Refer:
-> https://lore.kernel.org/lkml/57130e48-dbb6-4047-a8c7-ebf5aaea93f4@linux.v=
-net.ibm.com/
->
-> Regards,
->
-> Venkat.
->
-> On 24/09/24 7:12 am, Sergey Senozhatsky wrote:
-> > On (24/09/23 19:48), Andrey Skvortsov wrote:
-> >> When CONFIG_ZRAM_MULTI_COMP isn't set ZRAM_SECONDARY_COMP can hold
-> >> default_compressor, because it's the same offset as ZRAM_PRIMARY_COMP,
-> >> so we need to make sure that we don't attempt to kfree() the
-> >> statically defined compressor name.
-> >>
-> >> This is detected by KASAN.
-> >>
-> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >>    Call trace:
-> >>     kfree+0x60/0x3a0
-> >>     zram_destroy_comps+0x98/0x198 [zram]
-> >>     zram_reset_device+0x22c/0x4a8 [zram]
-> >>     reset_store+0x1bc/0x2d8 [zram]
-> >>     dev_attr_store+0x44/0x80
-> >>     sysfs_kf_write+0xfc/0x188
-> >>     kernfs_fop_write_iter+0x28c/0x428
-> >>     vfs_write+0x4dc/0x9b8
-> >>     ksys_write+0x100/0x1f8
-> >>     __arm64_sys_write+0x74/0xb8
-> >>     invoke_syscall+0xd8/0x260
-> >>     el0_svc_common.constprop.0+0xb4/0x240
-> >>     do_el0_svc+0x48/0x68
-> >>     el0_svc+0x40/0xc8
-> >>     el0t_64_sync_handler+0x120/0x130
-> >>     el0t_64_sync+0x190/0x198
-> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >>
-> >> Signed-off-by: Andrey Skvortsov <andrej.skvortzov@gmail.com>
-> >> Fixes: 684826f8271a ("zram: free secondary algorithms names")
-> >> Cc: <stable@vger.kernel.org>
-> > Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
->
+Please leave the blank line after the check (here).
+
+> 
+> > >               pause->rx_pause = rsp->rx_pause;
+> > >               pause->tx_pause = rsp->tx_pause;
+> > >       }
 
