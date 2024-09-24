@@ -1,366 +1,142 @@
-Return-Path: <linux-kernel+bounces-337347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F1559848F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:57:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CDD79848ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:57:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A8CFB208C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:57:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7E2E1F23ACC
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714E41ABECE;
-	Tue, 24 Sep 2024 15:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3289B1AB6F7;
+	Tue, 24 Sep 2024 15:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YHcrU7zC"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Er/ATWYF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54F21ABEA9
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 15:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88FEA1AB6D3
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 15:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727193439; cv=none; b=XaRxpyRueQu/yJhYAdYfQebNxH2YkiQuGurCLlqCP29CS6boSeCpblWpDEXlM0ueT1NwIGkTD+pGQdjxlSJWzRK67s/vrKHDU4xpYLZXa4co9aKyS5lLzbqRKx0v9GJMpmCQqxIaXnGjWmNHiyjbJyXuxW2V1hygRE45BS9rryM=
+	t=1727193426; cv=none; b=Qn7YRiLmiMkjoibsVpxHKFOVa39E5RUq5FYXTPQFsRDd7s9/q3vtau4jHCoV/FVfMcmVsnI/hd5GouCDU5b+z4oK03/rH+iUV4AEvgl3rGB3K3eeo2VScJ8EA/ii4UslKiqHY6810Rggrl1ORKRNueUCOn+pEGRnEvY7d0SNv3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727193439; c=relaxed/simple;
-	bh=/5F68H2WHyHuyiG699Xxk67Rx4hgdRsscfaURuGqd2c=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=J4z3TryufQOlKtW6nUHEKOkDgu7ot3pCbEP2xxhjlqXBWJV1OuBkUrisBKX9rLsiPRnmUmC+oYiTt6VgwF+28EyKByIoSePT0p40RjMFKQxA7ZYT9y6U9HdqvyBqFIVCX8uboHB1/k2j5WEpJNjx4mwQGtLnyVGnNSUMDe8u7wU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YHcrU7zC; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3a0c8b81b4eso20400215ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 08:57:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1727193436; x=1727798236; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=53AWYMV3y98vy7YqJ237N2ZTEc/DzjoF7oupBD8L8xA=;
-        b=YHcrU7zCEKw5x0uyMgVFsG8i5x53CTM26bmjOkQcgPLwazALxxVMMXDXpPJdqqhB3M
-         Saac0iB4+GTf49Lx99yWQoFgg93ryPYX6gPkTnYfk1Y69J38hJn6UR8tavxKFYkELuFM
-         c7hDJmzox0hqaPGc5seoz9AsIlqJk5V7Ige4s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727193436; x=1727798236;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=53AWYMV3y98vy7YqJ237N2ZTEc/DzjoF7oupBD8L8xA=;
-        b=cWrNLwtdvVU58kTnHIXEYYlV97UcOfpT7GvPx0Z1F5zAECjn28FGkGXETtXXgBPCej
-         p0tu8J1kJlkUVGQTEcAQcEfjhjIntwN4HjKWCQzZrCJCt6DdbbVv+l6kvXh41BWsKOzI
-         WpiKMrBH5XCyudZaY0Xr+Vb0G3i+DhJP6gdrQ2ewTQzp0iLYipKjqXRsSGcnKDLNkDr1
-         pZgsLOg2TPDM433i04rBomQaso06NhbFuQs98JEwch5jAo/5C4f29AWW3k1KDFSzkmaI
-         lYV8ZfEbtn3Yn9u0Q2KtdUV5mvqd8kRMXah8lIHrPeN0DZfYW1GsrFBrIK1s5dZe5lLO
-         saHw==
-X-Forwarded-Encrypted: i=1; AJvYcCXFlg2codiVZcjV1mvObPuUgUjk6khzPycNb5X4tZYW7n71rMugPqXfpesF71QOmq/S9SnI4OmhcVz9TAw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2bwgNSIBceHve/lrybzBPbiJtPI12eemuBkayHOF3sqKPCsCe
-	nT7dNb4qtAXp/dTbUloqInAueppEQSwFT8bgWoO9sVtveorO2KXKK+4X3WhM/EhCI/opUJtzOuG
-	6
-X-Google-Smtp-Source: AGHT+IEklgHT9dpWQRJxz1ElVFna2TN0was+5e+f5zgBUGOIrvtxsRvWEwABxvdFXIu2DgNklS5fzw==
-X-Received: by 2002:a05:6e02:184e:b0:39f:6180:afca with SMTP id e9e14a558f8ab-3a0c8cd7625mr153791675ab.13.1727193435794;
-        Tue, 24 Sep 2024 08:57:15 -0700 (PDT)
-Received: from localhost.localdomain ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a1a5713b64sm4492035ab.58.2024.09.24.08.57.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 08:57:15 -0700 (PDT)
-From: Shuah Khan <skhan@linuxfoundation.org>
-To: jstultz@google.com,
-	tglx@linutronix.de,
-	sboyd@kernel.org,
-	shuah@kernel.org
-Cc: Shuah Khan <skhan@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH 2/2] selftests: timers: Remove local NSEC_PER_SEC and USEC_PER_SEC defines
-Date: Tue, 24 Sep 2024 09:56:47 -0600
-Message-Id: <f797bc704d8eb03234a3447c77fa7b704339f89a.1727191485.git.skhan@linuxfoundation.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <cover.1727191485.git.skhan@linuxfoundation.org>
-References: <cover.1727191485.git.skhan@linuxfoundation.org>
+	s=arc-20240116; t=1727193426; c=relaxed/simple;
+	bh=HfF3xPBwgBMdFWUNMEBPlkO/CLzT2biAhM9nyeIBxAs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RM42y3ztAWcDa9Bhm+wuJqz5lybEdmesupQV6RbjZlLyDCpcNr8IaEbqDTcGqmLpoOrwOh0yrMbNDJlBM0FEeRjU7z4EMAeWvB8tySiVtKEfHEDkbaj0T5qVSyC9cT+Z2wSE0JSX6tFSixEWLHXVSt/kbLPX/2AFb1hI1Mgabj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Er/ATWYF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E569C4CED2
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 15:57:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727193426;
+	bh=HfF3xPBwgBMdFWUNMEBPlkO/CLzT2biAhM9nyeIBxAs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Er/ATWYF25DQ5EMXmBBdjFjYHEloJ+8ThqmcC1CTgDus+lQITMObwmgX5uWWOTdtX
+	 Lq4YfC5wOS8q2kTq7Tp3DPOgbqrEwwsErqj4mTkSewTfkqv2qp1AdAYxc49n4FTpGM
+	 X+p3/ApjuYJIA2OiRFVAtWQE8/rsjZV0X2vsh8gy4w6GWsnFxZHky6LeKyJOofRKlI
+	 uHL0HBNLClaS/bMoTEG7OTQIg+ReHZmMstXtWrqtq0dd79rlbS3tWL5o4CHJJkJKC8
+	 q5E0YMG7cBLVLHHLIRQWIQ+yQ59a6BdexZK8Pzl3jDYYdw80Z3LXexZLzdySWxu1Vf
+	 S96xvagkzkKTQ==
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3a0cb892c6aso370425ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 08:57:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXtUVSZH7k0r0zUP4N/39aXnDYNLpqDsW3KgAjXgN/lnzADt98F35gWnBv7gFIVloi1zKLrpuV+pzWTfTY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzODp9X3JPWok2fw9n3a5YoBnQIiMA92Xik/prRzOulMJ6aaSfm
+	Txw1JmPypJH9unN3ViWNeZ+K0L5sqGv7zMkTHx5CHVWc91nuJF2UrYgOzWcUZFL3Nv8IZALVKLM
+	GgoREvDnP2dmaDfq5ioVLpq+E14KiHz8daa+w
+X-Google-Smtp-Source: AGHT+IFFOwTDXsu4A4fHpVGUiYA0bVv8HJZIgQPpTJqUoEUUT6DNdj2eWGxCsubcYJjsTuRrETuq9awjmoQukbkLzT4=
+X-Received: by 2002:a05:6e02:1d8f:b0:3a0:b643:7892 with SMTP id
+ e9e14a558f8ab-3a1a50878d0mr3543175ab.21.1727193425424; Tue, 24 Sep 2024
+ 08:57:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240923164843.1117010-1-andrej.skvortzov@gmail.com>
+ <20240924014241.GH38742@google.com> <d22cff1a-701d-4078-867d-d82caa943bab@linux.vnet.ibm.com>
+In-Reply-To: <d22cff1a-701d-4078-867d-d82caa943bab@linux.vnet.ibm.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Tue, 24 Sep 2024 08:56:53 -0700
+X-Gmail-Original-Message-ID: <CAF8kJuPEg1yKNmVvPbEYGME8HRoTXdHTANm+OKOZwX9B6uEtmw@mail.gmail.com>
+Message-ID: <CAF8kJuPEg1yKNmVvPbEYGME8HRoTXdHTANm+OKOZwX9B6uEtmw@mail.gmail.com>
+Subject: Re: [PATCH v3] zram: don't free statically defined names
+To: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Andrey Skvortsov <andrej.skvortzov@gmail.com>, Minchan Kim <minchan@kernel.org>, 
+	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
+	stable@vger.kernel.org, Sachin Sant <sachinp@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Remove local NSEC_PER_SEC and USEC_PER_SEC defines. Pick them up from
-include/vdso/time64.h. This requires -I $(top_srcdir) to the timers
-Makefile to include the include/vdso/time64.h.
+Hi,
 
-posix_timers test names the defines NSECS_PER_SEC and USECS_PER_SEC.
-Include the include/vdso/time64.h and change NSECS_PER_SEC and
-USECS_PER_SEC references to NSEC_PER_SEC and USEC_PER_SEC respectively.
+I also hit this problem in my swap stress test. Sergey pointed me to
+this thread.
 
-Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
----
- tools/testing/selftests/timers/Makefile           |  2 +-
- tools/testing/selftests/timers/adjtick.c          |  4 +---
- .../testing/selftests/timers/alarmtimer-suspend.c |  2 +-
- .../selftests/timers/inconsistency-check.c        |  2 +-
- tools/testing/selftests/timers/leap-a-day.c       |  2 +-
- tools/testing/selftests/timers/mqueue-lat.c       |  2 +-
- tools/testing/selftests/timers/nanosleep.c        |  3 +--
- tools/testing/selftests/timers/posix_timers.c     | 15 +++++++--------
- tools/testing/selftests/timers/raw_skew.c         |  2 +-
- tools/testing/selftests/timers/set-2038.c         |  3 +--
- tools/testing/selftests/timers/set-timer-lat.c    |  3 +--
- tools/testing/selftests/timers/valid-adjtimex.c   |  4 +---
- 12 files changed, 18 insertions(+), 26 deletions(-)
+Just want to add that the fixes works for my setup as well:
 
-diff --git a/tools/testing/selftests/timers/Makefile b/tools/testing/selftests/timers/Makefile
-index 0e73a16874c4..32203593c62e 100644
---- a/tools/testing/selftests/timers/Makefile
-+++ b/tools/testing/selftests/timers/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
--CFLAGS += -O3 -Wl,-no-as-needed -Wall
-+CFLAGS += -O3 -Wl,-no-as-needed -Wall -I $(top_srcdir)
- LDLIBS += -lrt -lpthread -lm
- 
- # these are all "safe" tests that don't modify
-diff --git a/tools/testing/selftests/timers/adjtick.c b/tools/testing/selftests/timers/adjtick.c
-index 205b76a4abb4..cb9a30f54662 100644
---- a/tools/testing/selftests/timers/adjtick.c
-+++ b/tools/testing/selftests/timers/adjtick.c
-@@ -22,14 +22,12 @@
- #include <sys/time.h>
- #include <sys/timex.h>
- #include <time.h>
-+#include <include/vdso/time64.h>
- 
- #include "../kselftest.h"
- 
- #define CLOCK_MONOTONIC_RAW	4
- 
--#define NSEC_PER_SEC		1000000000LL
--#define USEC_PER_SEC		1000000
--
- #define MILLION			1000000
- 
- long systick;
-diff --git a/tools/testing/selftests/timers/alarmtimer-suspend.c b/tools/testing/selftests/timers/alarmtimer-suspend.c
-index ad52e608b88e..62da2a3f949e 100644
---- a/tools/testing/selftests/timers/alarmtimer-suspend.c
-+++ b/tools/testing/selftests/timers/alarmtimer-suspend.c
-@@ -28,6 +28,7 @@
- #include <signal.h>
- #include <stdlib.h>
- #include <pthread.h>
-+#include <include/vdso/time64.h>
- #include "../kselftest.h"
- 
- #define CLOCK_REALTIME			0
-@@ -45,7 +46,6 @@
- #define NR_CLOCKIDS			12
- 
- 
--#define NSEC_PER_SEC 1000000000ULL
- #define UNREASONABLE_LAT (NSEC_PER_SEC * 5) /* hopefully we resume in 5 secs */
- 
- #define SUSPEND_SECS 15
-diff --git a/tools/testing/selftests/timers/inconsistency-check.c b/tools/testing/selftests/timers/inconsistency-check.c
-index 36a49fba6c9b..75650cf0503f 100644
---- a/tools/testing/selftests/timers/inconsistency-check.c
-+++ b/tools/testing/selftests/timers/inconsistency-check.c
-@@ -28,10 +28,10 @@
- #include <sys/timex.h>
- #include <string.h>
- #include <signal.h>
-+#include <include/vdso/time64.h>
- #include "../kselftest.h"
- 
- #define CALLS_PER_LOOP 64
--#define NSEC_PER_SEC 1000000000ULL
- 
- #define CLOCK_REALTIME			0
- #define CLOCK_MONOTONIC			1
-diff --git a/tools/testing/selftests/timers/leap-a-day.c b/tools/testing/selftests/timers/leap-a-day.c
-index 986abbdb1521..04004a7c0934 100644
---- a/tools/testing/selftests/timers/leap-a-day.c
-+++ b/tools/testing/selftests/timers/leap-a-day.c
-@@ -48,9 +48,9 @@
- #include <string.h>
- #include <signal.h>
- #include <unistd.h>
-+#include <include/vdso/time64.h>
- #include "../kselftest.h"
- 
--#define NSEC_PER_SEC 1000000000ULL
- #define CLOCK_TAI 11
- 
- time_t next_leap;
-diff --git a/tools/testing/selftests/timers/mqueue-lat.c b/tools/testing/selftests/timers/mqueue-lat.c
-index f3179a605bba..63de2334a291 100644
---- a/tools/testing/selftests/timers/mqueue-lat.c
-+++ b/tools/testing/selftests/timers/mqueue-lat.c
-@@ -29,9 +29,9 @@
- #include <signal.h>
- #include <errno.h>
- #include <mqueue.h>
-+#include <include/vdso/time64.h>
- #include "../kselftest.h"
- 
--#define NSEC_PER_SEC 1000000000ULL
- 
- #define TARGET_TIMEOUT		100000000	/* 100ms in nanoseconds */
- #define UNRESONABLE_LATENCY	40000000	/* 40ms in nanosecs */
-diff --git a/tools/testing/selftests/timers/nanosleep.c b/tools/testing/selftests/timers/nanosleep.c
-index df1d03516e7b..9a354e38a569 100644
---- a/tools/testing/selftests/timers/nanosleep.c
-+++ b/tools/testing/selftests/timers/nanosleep.c
-@@ -27,10 +27,9 @@
- #include <sys/timex.h>
- #include <string.h>
- #include <signal.h>
-+#include <include/vdso/time64.h>
- #include "../kselftest.h"
- 
--#define NSEC_PER_SEC 1000000000ULL
--
- #define CLOCK_REALTIME			0
- #define CLOCK_MONOTONIC			1
- #define CLOCK_PROCESS_CPUTIME_ID	2
-diff --git a/tools/testing/selftests/timers/posix_timers.c b/tools/testing/selftests/timers/posix_timers.c
-index ddb1cebc844e..9814b3a1c77d 100644
---- a/tools/testing/selftests/timers/posix_timers.c
-+++ b/tools/testing/selftests/timers/posix_timers.c
-@@ -15,13 +15,12 @@
- #include <string.h>
- #include <unistd.h>
- #include <time.h>
-+#include <include/vdso/time64.h>
- #include <pthread.h>
- 
- #include "../kselftest.h"
- 
- #define DELAY 2
--#define USECS_PER_SEC 1000000
--#define NSECS_PER_SEC 1000000000
- 
- static void __fatal_error(const char *test, const char *name, const char *what)
- {
-@@ -86,9 +85,9 @@ static int check_diff(struct timeval start, struct timeval end)
- 	long long diff;
- 
- 	diff = end.tv_usec - start.tv_usec;
--	diff += (end.tv_sec - start.tv_sec) * USECS_PER_SEC;
-+	diff += (end.tv_sec - start.tv_sec) * USEC_PER_SEC;
- 
--	if (llabs(diff - DELAY * USECS_PER_SEC) > USECS_PER_SEC / 2) {
-+	if (llabs(diff - DELAY * USEC_PER_SEC) > USEC_PER_SEC / 2) {
- 		printf("Diff too high: %lld..", diff);
- 		return -1;
- 	}
-@@ -448,7 +447,7 @@ static inline int64_t calcdiff_ns(struct timespec t1, struct timespec t2)
- {
- 	int64_t diff;
- 
--	diff = NSECS_PER_SEC * (int64_t)((int) t1.tv_sec - (int) t2.tv_sec);
-+	diff = NSEC_PER_SEC * (int64_t)((int) t1.tv_sec - (int) t2.tv_sec);
- 	diff += ((int) t1.tv_nsec - (int) t2.tv_nsec);
- 	return diff;
- }
-@@ -479,7 +478,7 @@ static void check_sigev_none(int which, const char *name)
- 	do {
- 		if (clock_gettime(which, &now))
- 			fatal_error(name, "clock_gettime()");
--	} while (calcdiff_ns(now, start) < NSECS_PER_SEC);
-+	} while (calcdiff_ns(now, start) < NSEC_PER_SEC);
- 
- 	if (timer_gettime(timerid, &its))
- 		fatal_error(name, "timer_gettime()");
-@@ -536,7 +535,7 @@ static void check_gettime(int which, const char *name)
- 			wraps++;
- 		prev = its;
- 
--	} while (calcdiff_ns(now, start) < NSECS_PER_SEC);
-+	} while (calcdiff_ns(now, start) < NSEC_PER_SEC);
- 
- 	if (timer_delete(timerid))
- 		fatal_error(name, "timer_delete()");
-@@ -587,7 +586,7 @@ static void check_overrun(int which, const char *name)
- 	do {
- 		if (clock_gettime(which, &now))
- 			fatal_error(name, "clock_gettime()");
--	} while (calcdiff_ns(now, start) < NSECS_PER_SEC);
-+	} while (calcdiff_ns(now, start) < NSEC_PER_SEC);
- 
- 	/* Unblock it, which should deliver a signal */
- 	if (sigprocmask(SIG_UNBLOCK, &set, NULL))
-diff --git a/tools/testing/selftests/timers/raw_skew.c b/tools/testing/selftests/timers/raw_skew.c
-index 030143eb09b4..ea50e4efc422 100644
---- a/tools/testing/selftests/timers/raw_skew.c
-+++ b/tools/testing/selftests/timers/raw_skew.c
-@@ -25,10 +25,10 @@
- #include <sys/time.h>
- #include <sys/timex.h>
- #include <time.h>
-+#include <include/vdso/time64.h>
- #include "../kselftest.h"
- 
- #define CLOCK_MONOTONIC_RAW		4
--#define NSEC_PER_SEC 1000000000LL
- 
- #define shift_right(x, s) ({		\
- 	__typeof__(x) __x = (x);	\
-diff --git a/tools/testing/selftests/timers/set-2038.c b/tools/testing/selftests/timers/set-2038.c
-index f7d978721b9e..ed244315e11c 100644
---- a/tools/testing/selftests/timers/set-2038.c
-+++ b/tools/testing/selftests/timers/set-2038.c
-@@ -27,10 +27,9 @@
- #include <unistd.h>
- #include <time.h>
- #include <sys/time.h>
-+#include <include/vdso/time64.h>
- #include "../kselftest.h"
- 
--#define NSEC_PER_SEC 1000000000LL
--
- #define KTIME_MAX	((long long)~((unsigned long long)1 << 63))
- #define KTIME_SEC_MAX	(KTIME_MAX / NSEC_PER_SEC)
- 
-diff --git a/tools/testing/selftests/timers/set-timer-lat.c b/tools/testing/selftests/timers/set-timer-lat.c
-index 7ce240c89b21..5365e9ae61c3 100644
---- a/tools/testing/selftests/timers/set-timer-lat.c
-+++ b/tools/testing/selftests/timers/set-timer-lat.c
-@@ -28,6 +28,7 @@
- #include <signal.h>
- #include <stdlib.h>
- #include <pthread.h>
-+#include <include/vdso/time64.h>
- #include "../kselftest.h"
- 
- #define CLOCK_REALTIME			0
-@@ -44,8 +45,6 @@
- #define CLOCK_TAI			11
- #define NR_CLOCKIDS			12
- 
--
--#define NSEC_PER_SEC 1000000000ULL
- #define UNRESONABLE_LATENCY 40000000 /* 40ms in nanosecs */
- 
- #define TIMER_SECS 1
-diff --git a/tools/testing/selftests/timers/valid-adjtimex.c b/tools/testing/selftests/timers/valid-adjtimex.c
-index d500884801d8..6b7801055ad1 100644
---- a/tools/testing/selftests/timers/valid-adjtimex.c
-+++ b/tools/testing/selftests/timers/valid-adjtimex.c
-@@ -29,11 +29,9 @@
- #include <string.h>
- #include <signal.h>
- #include <unistd.h>
-+#include <include/vdso/time64.h>
- #include "../kselftest.h"
- 
--#define NSEC_PER_SEC 1000000000LL
--#define USEC_PER_SEC 1000000LL
--
- #define ADJ_SETOFFSET 0x0100
- 
- #include <sys/syscall.h>
--- 
-2.40.1
+Tested-by: Chris Li <chrisl@kernel.org>
 
+Chris
+
+
+On Tue, Sep 24, 2024 at 1:16=E2=80=AFAM Venkat Rao Bagalkote
+<venkat88@linux.vnet.ibm.com> wrote:
+>
+> Please add below tages to the patch.
+>
+> Reported-by: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
+>
+> Tested-by: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
+>
+> Refer:
+> https://lore.kernel.org/lkml/57130e48-dbb6-4047-a8c7-ebf5aaea93f4@linux.v=
+net.ibm.com/
+>
+> Regards,
+>
+> Venkat.
+>
+> On 24/09/24 7:12 am, Sergey Senozhatsky wrote:
+> > On (24/09/23 19:48), Andrey Skvortsov wrote:
+> >> When CONFIG_ZRAM_MULTI_COMP isn't set ZRAM_SECONDARY_COMP can hold
+> >> default_compressor, because it's the same offset as ZRAM_PRIMARY_COMP,
+> >> so we need to make sure that we don't attempt to kfree() the
+> >> statically defined compressor name.
+> >>
+> >> This is detected by KASAN.
+> >>
+> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >>    Call trace:
+> >>     kfree+0x60/0x3a0
+> >>     zram_destroy_comps+0x98/0x198 [zram]
+> >>     zram_reset_device+0x22c/0x4a8 [zram]
+> >>     reset_store+0x1bc/0x2d8 [zram]
+> >>     dev_attr_store+0x44/0x80
+> >>     sysfs_kf_write+0xfc/0x188
+> >>     kernfs_fop_write_iter+0x28c/0x428
+> >>     vfs_write+0x4dc/0x9b8
+> >>     ksys_write+0x100/0x1f8
+> >>     __arm64_sys_write+0x74/0xb8
+> >>     invoke_syscall+0xd8/0x260
+> >>     el0_svc_common.constprop.0+0xb4/0x240
+> >>     do_el0_svc+0x48/0x68
+> >>     el0_svc+0x40/0xc8
+> >>     el0t_64_sync_handler+0x120/0x130
+> >>     el0t_64_sync+0x190/0x198
+> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >>
+> >> Signed-off-by: Andrey Skvortsov <andrej.skvortzov@gmail.com>
+> >> Fixes: 684826f8271a ("zram: free secondary algorithms names")
+> >> Cc: <stable@vger.kernel.org>
+> > Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+>
 
