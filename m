@@ -1,151 +1,178 @@
-Return-Path: <linux-kernel+bounces-337231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE780984750
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:08:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13A33984756
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:09:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DFC0282E13
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:08:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 437C71C22B1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF211A7059;
-	Tue, 24 Sep 2024 14:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ADCB1A76DD;
+	Tue, 24 Sep 2024 14:09:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y/TCBL0g"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WO9ZP1B/"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00DF1474A4
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 14:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3778A1B85D5
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 14:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727186913; cv=none; b=n3ncmLFJpD1gqsgitnydhvN1KZS8UXh0UrsiobaLT/HXQrN+QBtp3hKO9kng2xlddmAI8COk51LlMjjnjloqN5IwADqRAP2C3Xl96YxfVrTlq6EksKDLBj0QehU/7NJRr8J9uk3UDw43ry+7vcvK2F6Fl66tfgopemgQfb8No5k=
+	t=1727186981; cv=none; b=lmZ5E9/OhWKQR6yXvEdMq6w4YjzBZ9qkXAg/HOHftr+zCh7tRwWP4sFhRoAMUzapCCvdIS5HI+fEEKmmrs+PXHL6JA2WztG5j2nap2fZnHJh/H9x+ni6uJjeGR9jYi6BZIDAKXpsDQpt4nTCmUPvYYt0NQl7pl95meHDWUeJyRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727186913; c=relaxed/simple;
-	bh=/fZq1LO55PhzPQor2iRagt/VVrgJjkHC0YieILTN/OM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PRcL4BK9Rfx+hG373h+hyZQ/o++XE9a+2xch34LDEo8vD0pni+N+Xm0uXEg6Z8vjVZcCWhdNafFKqHJQMLbd844a9nD1sIEjzN7TG6Yu8I5oHhUEdEfZmb46wFHLxhq2Mcs5jubu1B1crHODx6zS2eCWwTXolCEGPMxwPcGtpO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y/TCBL0g; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42e5e758093so48694155e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:08:31 -0700 (PDT)
+	s=arc-20240116; t=1727186981; c=relaxed/simple;
+	bh=OBLErykB3NOifdAG6kiHF8mypDg+/GNYUE+gK2oxT6w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dVc5YDofmueHLdVGKWENo6fH7yMXVdMBWQkUnh9r/AocoIZo04c5IcgplsRRr/WZEC5Mjr3pNW2aIGrj3JVI2FTSmViEgksMn+q1sU/DL8RNzl2/H8tbQsGtbZiws+CIKwcVyBwWl9uxaCi/PolCryVk/JLIOEA9DVnW7Va1ptg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WO9ZP1B/; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71afb729f24so624618b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:09:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727186910; x=1727791710; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=40piiJGTfM7ZQA0UedJryDRvdqrWepuUZqLPtNOH3VQ=;
-        b=y/TCBL0gSQnqiTj1DOKSUfYmt2fXay7UAAnAaCQkf1+hFHWmYEAOL/Uf8UhA2STMMA
-         IxAfFP/e9cC6sWdFyWahli28tqwx1YR/Sg2d2cUsQnrnLt0xBGTAdveBOaELx9faKyn+
-         M8u/9y/5LsrPy4yzy0zuoc5WRvh8L/cVgt/vsnf+gFZLRBld+j2DxevmM5STLYLrDMxk
-         wqpoTeDMGCVqDsbEzlh709NyVWP9y697xrdH1JAmYMusOsJYerS/fFUArgPDBU+HWRii
-         wQiRcpG2DQZH6zat6v+xGh5qcUO0cLfqAv6ASdhs3Ta48u52vyp4XM8hy9pfg9ULUpj1
-         kFqQ==
+        d=gmail.com; s=20230601; t=1727186979; x=1727791779; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=DWPPsseQZtFXVrMTipU0htzgSzrx3BRYWs4uJMipp8A=;
+        b=WO9ZP1B/lDGKzG0N6bcAT1g+biXVPOWaPkhUANTgmlb1+SDbRzsajz3aTB6HAQOFlT
+         ANu3lwC6tX5C+RtrBadHTdnZxQrr+TXcynMC0mVrwzyOJWDkROJf2On/xr2VD9+iSo9C
+         VXwRTk3rhbTffC8p/b/TFOo/IaW+mkXGgwke24JBzkXO2SIxXVRxkmezYK6BbMl3YFUt
+         o3VMz3p+Qetty8m1Q7rYj+YKsZsHuso1GerTOJ0nvCmY1srPoW+NQ6hnIrRQlV5qXskK
+         RbBVjOTNNBcJTpw6K4i3Kw3GTtXLYAu/tjK6rqmZtH64pI6AAi/9T4d49vW+fY2HYJZT
+         BdEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727186910; x=1727791710;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=40piiJGTfM7ZQA0UedJryDRvdqrWepuUZqLPtNOH3VQ=;
-        b=A85SQJjTDrbb638P9AWNqknbK73dxKh10ey98k0bqpEHv2UN9vVMqpOr4//yhSaTaH
-         iL+h6ZZZVwzZreUdf07k/1IuDp7ciYguqa7sYRZYA5SX912Dqcky6uqIGDwnW/HOOqjo
-         7CnJr3O1uNemyrvU1O431FxvrXn5YbXtKOiOELtUe9uLRxMo1YhKF5ib65PJuJG8Y1wx
-         sXYOQY22Pxajnp/+p8O02HPhw2tJgaUtb45iTON7DCtxDUERs2d7IYfOkOtsgzhRjt1d
-         o3JO1v4Evyq0+IUfosLlTvWLZ3l2impiuzpUUuPO9mXEu1/RhuzkzRLLCLW2MRGtxe2j
-         QIEg==
-X-Forwarded-Encrypted: i=1; AJvYcCWc5DXtLA9ymPD60ZpslO82BEqti4TQLCAkcbuLkyJBDidVxs4Kb+PFzE2cVjQkCFBUvVjlPD8MsrTlCPs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5+GhlgkgiHpmJ9LupV5pVHwLqhhJCAhfJEEmF56cFFHWCTXsB
-	05Fs6v/SxnS7PC1FA6kIyXe5Gj5idL7Ev9/HH++P8qp2hRUgQ1ERYpEFqXPzaw==
-X-Google-Smtp-Source: AGHT+IH4WW0ZIOSHklIzJiL/X3r6M9oWzL4NBPDdU5VWxfP/mCN0bTHEJd5jEIb+qLxFYKJld/AuBQ==
-X-Received: by 2002:a5d:6189:0:b0:371:c518:6f54 with SMTP id ffacd0b85a97d-37a422c02acmr8022006f8f.29.1727186910055;
-        Tue, 24 Sep 2024 07:08:30 -0700 (PDT)
-Received: from thinkpad ([80.66.138.17])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cbc3187e6sm1684265f8f.92.2024.09.24.07.08.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 07:08:29 -0700 (PDT)
-Date: Tue, 24 Sep 2024 16:08:28 +0200
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Qiang Yu <quic_qianyu@quicinc.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
-	andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-	abel.vesa@linaro.org, quic_msarkar@quicinc.com,
-	quic_devipriy@quicinc.com, dmitry.baryshkov@linaro.org,
-	kw@linux.com, lpieralisi@kernel.org, neil.armstrong@linaro.org,
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 2/6] dt-bindings: PCI: qcom: Move OPP table to
- qcom,pcie-common.yaml
-Message-ID: <20240924140828.mz5vjcicygsj4eb4@thinkpad>
-References: <20240924101444.3933828-1-quic_qianyu@quicinc.com>
- <20240924101444.3933828-3-quic_qianyu@quicinc.com>
+        d=1e100.net; s=20230601; t=1727186979; x=1727791779;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DWPPsseQZtFXVrMTipU0htzgSzrx3BRYWs4uJMipp8A=;
+        b=mxzrrzzLxNeUtp30saDk0jGGL8GFfdOyXoq59EfwG+c9wrqlk7X9lJijc5H7TClcU0
+         9CjgHBtEzlzXwa2+v8XMz4jMT+9ZHu1H7+Vp96Guc94iNkQUqBXJRmQJKzeh+GATjL82
+         6NbcZ80ZC4+QsiUgoWhkS0g5RL56+JXN6/JmYHdV0o5VhGJqm3P9I1UL6vMlL5C7sYxW
+         GWNhvUBS6EsKf58ixEHxZT54dZjgOuw3SoD4nyjtSGaD/+9rwA/vJYnGLSpSeijtZMu7
+         mRPB6RjwhWk81qIH8XpKoz+aHQqHKiyqUYSBMYZvukZis3ABR/K6h5Uv0D4Hic3sSn9R
+         yGIw==
+X-Forwarded-Encrypted: i=1; AJvYcCWoLuGGTowNofsGNPEWvDqYKRR38Ydp5EYRdDWahS7Nnb0ribaVk5f5QZFcL6A17qRSWU7c8IbLx2Vaxeo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEiXLUZzaHL9H96FTjjIDyFhZuz36fe7k5CC19e3Fl5Ar0SHzt
+	AYW8ge+2fhpaC+ycRUeIL7v6b8aZXTGqm3V+vbJ084VKbZeZntBYBcWNIg==
+X-Google-Smtp-Source: AGHT+IGF+wfnHvrOK3/zlRD1zZC8yPevZNLcT0wZYNnlg/JsZuxLWplkxeRUKnvuukxbi8U/uV0oDw==
+X-Received: by 2002:a05:6a20:c908:b0:1d2:e888:386f with SMTP id adf61e73a8af0-1d30cb4f76cmr21255493637.42.1727186979412;
+        Tue, 24 Sep 2024 07:09:39 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6b7c4e33bsm1224442a12.40.2024.09.24.07.09.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Sep 2024 07:09:38 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <2ffaf46e-2ed4-49c1-ba0d-82e69b54773a@roeck-us.net>
+Date: Tue, 24 Sep 2024 07:09:37 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] m68k: Define NR_CPUS
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+ David Hildenbrand <david@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+References: <20240923235617.1584056-1-linux@roeck-us.net>
+ <CAMuHMdUkMWjzT_vT3E7yLgopPWWP=BS_G8Ui22M_b8sZaCWSxQ@mail.gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <CAMuHMdUkMWjzT_vT3E7yLgopPWWP=BS_G8Ui22M_b8sZaCWSxQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240924101444.3933828-3-quic_qianyu@quicinc.com>
 
-On Tue, Sep 24, 2024 at 03:14:40AM -0700, Qiang Yu wrote:
-
-> OPP table is a generic property that is also required by other qcom
-> platforms. Hence move this property to qcom,pcie-common.yaml so that PCIe
-> on other qcom platforms is able to adjust power domain performance state
-> and ICC peak bw according to PCIe gen speed and link width.
+On 9/24/24 00:47, Geert Uytterhoeven wrote:
+> Hi Günter,
 > 
-> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-- Mani
-
-> ---
->  Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml | 4 ++++
->  Documentation/devicetree/bindings/pci/qcom,pcie-sm8450.yaml | 4 ----
->  2 files changed, 4 insertions(+), 4 deletions(-)
+> Thanks for your patch!
 > 
-> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml
-> index 704c0f58eea5..3c6430fe9331 100644
-> --- a/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml
-> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml
-> @@ -78,6 +78,10 @@ properties:
->      description: GPIO controlled connection to WAKE# signal
->      maxItems: 1
->  
-> +  operating-points-v2: true
-> +  opp-table:
-> +    type: object
-> +
->  required:
->    - reg
->    - reg-names
-> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-sm8450.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-sm8450.yaml
-> index 46bd59eefadb..6e0a6d8f0ed0 100644
-> --- a/Documentation/devicetree/bindings/pci/qcom,pcie-sm8450.yaml
-> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-sm8450.yaml
-> @@ -70,10 +70,6 @@ properties:
->        - const: msi7
->        - const: global
->  
-> -  operating-points-v2: true
-> -  opp-table:
-> -    type: object
-> -
->    resets:
->      maxItems: 1
->  
-> -- 
-> 2.34.1
+> On Tue, Sep 24, 2024 at 1:56 AM Guenter Roeck <linux@roeck-us.net> wrote:
+>> SPLIT_PTE_PTLOCKS depends on "NR_CPUS >= 4". Unfortunately, that evaluates
+>> to true if there is no NR_CPUS configuration option. This results in
+>> CONFIG_SPLIT_PTE_PTLOCKS=y for mac_defconfig. This in turn causes the m68k
+>> "q800" and "virt" machines to crash in qemu if debugging options are
+>> enabled.
+>>
+>> Making CONFIG_SPLIT_PTE_PTLOCKS dependent on the existence of NR_CPUS
+>> does not work since a dependency on the existence of a numeric Kconfig
+>> entry always evaluates to false. Example:
+>>
+>> config HAVE_NO_NR_CPUS
+>>         def_bool y
+>>         depends on !NR_CPUS
+>>
+>> After adding this to a Kconfig file, "make defconfig" includes:
+>> $ grep NR_CPUS .config
+>> CONFIG_NR_CPUS=64
+>> CONFIG_HAVE_NO_NR_CPUS=y
+>>
+>> Define NR_CPUS for m68k instead to solve the problem.
+>>
+>> Fixes: 394290cba966 ("mm: turn USE_SPLIT_PTE_PTLOCKS / USE_SPLIT_PTE_PTLOCKS into Kconfig options")
+>> Cc: David Hildenbrand <david@redhat.com>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+>> Acked-by: David Hildenbrand <david@redhat.com>
+> 
+> I think it's a bit premature to add David's tag, as v2 is completely
+> different from v1.
 > 
 
--- 
-மணிவண்ணன் சதாசிவம்
+Ups, sorry, that was an unintentional carryover. Anyway, looks like it
+may need v3 anyway.
+
+Guenter
+
 
