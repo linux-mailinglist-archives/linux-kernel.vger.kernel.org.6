@@ -1,456 +1,1164 @@
-Return-Path: <linux-kernel+bounces-336454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F725983B0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 04:00:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2F09983B17
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 04:11:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C4242837F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 02:00:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B3EF1F230EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 02:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07648BA41;
-	Tue, 24 Sep 2024 02:00:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E45BDC152;
+	Tue, 24 Sep 2024 02:11:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SpDQFM25"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z8Sv5L/j"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30CFE18D;
-	Tue, 24 Sep 2024 02:00:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70560184E;
+	Tue, 24 Sep 2024 02:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727143215; cv=none; b=j2/UAGeBsRfjdFp4CprXWSmgmqeFHDQHlxSVbELh05vP4NtCo/ftxZfSL3qiM4vB4QQ6NIPRE9dV8XXFESPDD0kIHxNKVCDXpudY8+z78do5/yEIpBbyIZcAH3KVZtv1FPTTuOlqN7uJFbZ2xQ7BnUdCd2eAh6m0IbD1rW42CS4=
+	t=1727143868; cv=none; b=SAxdcoz8lVOpa/o2l/nPcXa7VXMWGLr0uvSiSwxbJRRnSCgQtyf6h1y2ujD6clY0yw92EsQIHXFDFgcaCYEx7RWS4MZj+awbuWcgZApp1BP8lxerCX1JyZckQdfEa3lCZtAVELTuvWKV+lJNjo1TRF5PDWzgmHy2k0erB+CtllE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727143215; c=relaxed/simple;
-	bh=EBSVoXYS18vq7YcSsk6afMCuVS9FvOIDNWpAkc+H7f0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JzC+V5EQsozHA4YtiLqLfwMlr3Jn1lDUDdyL9rIoH/gp8mgunhUyGBEMAQ3qFJCAHnqVXF5JhQv2mzf3XlPtTuXZ0esVtYLLCdwenAEZ+lnKvgUbvmAbhzHYDfz+51AlKEW4Yc8FpL7z11KwWxbN9q+jpR11RlVaYvxR5Dpz3rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SpDQFM25; arc=none smtp.client-ip=209.85.219.173
+	s=arc-20240116; t=1727143868; c=relaxed/simple;
+	bh=rh98KOOgeL+xy2OsNNs0KKczXf2350dhEIqqTk05Wr8=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ZkCW7CQ5UG7W0tk/3oQ5Wh2a4h7QLDsvxX8B2nUnwcpEg/YccC2y+DFG5Ojs3j7KzH3e+5rP8rOaeCIxmd3H67WW1U0hRIP6vBzzIPBpca5rBx8V/HdD7/jiARrxjC2zKNmdU0JVDr+3P0RIVxR1xqV35DNvsOLrmb61Wvd2UAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z8Sv5L/j; arc=none smtp.client-ip=209.85.216.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e1a74ee4c75so4325843276.3;
-        Mon, 23 Sep 2024 19:00:12 -0700 (PDT)
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2d8881850d9so4067788a91.3;
+        Mon, 23 Sep 2024 19:11:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727143212; x=1727748012; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1cfEYI8tuV0hVZvq3nQX3SHtgV0+LNYwu33ROyIi1CA=;
-        b=SpDQFM25D6ol+oK0FvnykXJ1ZioOaUvufjyEXX+KEaF7ESc6dRZjkg+0M2fX8iPZqb
-         JM9bKP+MHJQRufkT1cFxvi7kU8P9kVnV9/Lxe7izXSA/o8e/NKW/NVr0d9MlgRejtHB5
-         UcO9aSo/oXnG3Uvba3JBuB2kDwgJ/47bqv6sK08VNocvNjXFfIuSCp9JXc4PsfiW8bqS
-         N9/fPq3R2AzPfBXCnakZIpXJfNNPwQonyEANUSJzu+sS2db5731LmU4Fozcs5LazTKG6
-         wC6jAK12Y+6pE/4Vat96fg1vB/UnF6XX/rhRBfXAi4L8e2ZSDnu/ouKj9rlRDKBGlEFv
-         /Rig==
+        d=gmail.com; s=20230601; t=1727143865; x=1727748665; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=MTghj6bvAa3uTIr2E3jEnQ3yheH0zcVOelUirwrOCp8=;
+        b=Z8Sv5L/jdemCtsDp+R8EUxWWEbZp4h4VrajHdilJkRb7PB3RiRqqJj/i/EhTOjDXyQ
+         1cjxoVRn60MUaTjJ56donDt6McZ0ZzFPgZtYXW08KG697eJYID19rCSKuOO3GLvBLwup
+         gcKoziq6kO/KQIJkbfjNuHNDkQKQbNTaGdXZJI+6ttGcWjIjHn82FXcld5eVUBm4igjM
+         40/FvNtlXTvPTqYgQ977dQmK9quXIY8XApyrzX3TNM3xw7sb0fD6hSzlu245oiMOpGXU
+         j6K0B0Wyv1Gh3jtO/1wEggJYmqJtDrR0PPbMPey/5JL7fvlZyoJG5DycnAFzdXlb/hgS
+         mr+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727143212; x=1727748012;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1cfEYI8tuV0hVZvq3nQX3SHtgV0+LNYwu33ROyIi1CA=;
-        b=MXLUv7jIVexaj8Fp2R0eBxz8PfBQ3iLyd/4jIKfJQ868XF5BbLm+dWp/bVD4HaDzDx
-         DG8wN1T/uc1FAdXUKmSpHboaaJhm7ldXyZTi7em+NbYCfVRT1zk5BZm7rrpUJAQO/cOB
-         dclWJ3qQX/meBrPgGPnCsgB6vj8WkPQDRWZZZZPejDl1UCSulzRWrFbtnye/eh0YpWUc
-         8NzdGkZnPbSoK0fttRRnZ9yXnPN2SmLa1bsfXeoDlqVktnKktcifPgMsaHC/IG3b6W5R
-         Go1cQuyOOCM1pu7/Mur1MOJZ5V2xA30ICdRJAAr3TK2FxELGYk9U7HEOOms/QQc4AX/T
-         26cA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDiToTp9k88+CmJ2DmS3NtK9B2SJwfxGhjWGOB9np7uUO/TIBRwENWgnikG4GUD7UMTQ2miTTlR2aBP8o=@vger.kernel.org, AJvYcCWyEd0x38mBnJStciBz8pMuKSLdq8TCbDxJsAblvA5sSRSkw9pmjHgpGzrG8nVif+nZ1xdQBSc+Fijc8zgrG0VyzQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6J3LLICO+8WL0zIC/ZuQYemRBNqmgPB+r5JIj7A6EMXQyLjkl
-	5o17k/4puQ9ttqO9RCYHQ5fpjg437X1cLN+BKbYslQlNyblXLQrjpxUikm5YcTMH2eHcGj+9J35
-	cUqeSTBzeihbsCtk+6Tx1V5EfQjQ=
-X-Google-Smtp-Source: AGHT+IGLDF2HxHcDHkykY0kQbNGOcq1idQC5h2qQHQaQ7hCZL4TYQL4UimFuPpS0i/uzZoHD6qf59RIu28xTPXROw/M=
-X-Received: by 2002:a05:6902:110c:b0:e1d:96:dfd7 with SMTP id
- 3f1490d57ef6-e2250ccb135mr9070525276.56.1727143211823; Mon, 23 Sep 2024
- 19:00:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727143865; x=1727748665;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MTghj6bvAa3uTIr2E3jEnQ3yheH0zcVOelUirwrOCp8=;
+        b=nOPv+cWS0XF73fv/NUaFd9DiVMwZNA3ty0vij7aZNaFEp8nNUnH0UJwFfJokZbBt1W
+         j8zZfLSlSwb8jgXFdU6XbfgYTPD2VmrVWP+lFTlE3bXVcVp8zD8/KHm7fe5biNSdP1VM
+         nR3UxkwQIVqZgc/SSPA2nmpC9zo0B6sSMILlcUKNe3D1lEvDD08zTaydJchjmZu1a8lF
+         j6Lto+FncPFDZE2YrcBx+0d7iKcUieGqf8jRAhYHuV3ke7HWsebuQjpYoXQeFHbPCxG4
+         2WBwnzQlmAhOU37gZzm8VC4Hc0LWPHgf5j65oYMTDguxifG7pE2zQpfKEmnE7bIKEln1
+         0E8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUT5vIKkZbL2jWpJqjSyeZc9k+e9FTrf2hc4ljE4grrCHXjQ1eT4XGVxOroFNQ9wpQVfFGdi0cX27zckS9F@vger.kernel.org, AJvYcCVGIuGjws0dUKDRFohyoeUcZTjhAwidgWnbGIJs2Qu2e1dWsAuJyjqnjIdMORwNd7w1fOI1MX/Xxpxj@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxeI5LQBpx7A38nftb0NQ82Ngq81LIMMBHoE6sM2iWuoo26ndb
+	nh0DiqaJR9lloEAZips8+AWpKJyzTfLJ5ChmSdU5Xr4cRk8kTM3U
+X-Google-Smtp-Source: AGHT+IE12W/bnAEJEpD/a7yrR2vTbVjpbk7uf6IylcE9XRBWy88tEVPr5uuHJIIPvrb12J+i9A7chg==
+X-Received: by 2002:a17:90b:4b0d:b0:2d8:f3e7:a177 with SMTP id 98e67ed59e1d1-2dd7f37f504mr15489550a91.6.1727143864402;
+        Mon, 23 Sep 2024 19:11:04 -0700 (PDT)
+Received: from [172.19.1.53] (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6b7c400e4sm200387a12.23.2024.09.23.19.11.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Sep 2024 19:11:03 -0700 (PDT)
+Message-ID: <1ae1a989-ea81-42bc-b8aa-f01d2b1d069b@gmail.com>
+Date: Tue, 24 Sep 2024 10:11:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZuGL9ROeTV2uXoSp@x1> <caad2d84-a8ff-4304-b8ab-04642ea18323@linaro.org>
- <ZuL_0V5jgaaEUOY_@x1> <49fe18ff-827a-429b-9d74-9d8ed02ac409@linaro.org>
- <CA+JHD936J-q0-7LANQ3aW2G-PEmFP8PnXQ-TF-AMs9MtrCqfew@mail.gmail.com>
- <CAH0uvojUEXiT2mk1pknLS1nc-gA3Py+AjmEW22ETiCCyOLLr8Q@mail.gmail.com> <CAH0uvogXyYP1LqF3fbjZGHHDL6BFZ2ZKu5JAASnK_brgnymf0w@mail.gmail.com>
-In-Reply-To: <CAH0uvogXyYP1LqF3fbjZGHHDL6BFZ2ZKu5JAASnK_brgnymf0w@mail.gmail.com>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Mon, 23 Sep 2024 19:00:00 -0700
-Message-ID: <CAH0uvohEozKixjDM9_jJ5FFxYK7agsqVO-BrAsm=4hCTDQAx2A@mail.gmail.com>
-Subject: Re: [PATCH 1/1] perf build: Require at least clang 16.0.6 to build
- BPF skeletons
-To: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc: James Clark <james.clark@linaro.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Alan Maguire <alan.maguire@oracle.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Kan Liang <kan.liang@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	linux-perf-users <linux-perf-users@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Hui-Ping Chen <hpchen0nvt@gmail.com>
+Subject: Re: [PATCH v5 2/2] mtd: rawnand: nuvoton: add new driver for the
+ Nuvoton MA35 SoC
+To: Amit Singh Tomar <amitsinght@marvell.com>, miquel.raynal@bootlin.com,
+ richard@nod.at, vigneshr@ti.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, esben@geanix.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-mtd@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240920063749.475604-1-hpchen0nvt@gmail.com>
+ <20240920063749.475604-3-hpchen0nvt@gmail.com>
+ <9245120b-9901-45c3-9a6e-600653f94bba@marvell.com>
+Content-Language: en-US
+In-Reply-To: <9245120b-9901-45c3-9a6e-600653f94bba@marvell.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Hi Amit,
 
-I got some good news:
+Thank you for your reply.
 
-Not being able to pass the BPF verifier is solely (or bi-solely)
-caused by these two functions:
 
-SEC("tp/syscalls/sys_enter_rename")
-int sys_enter_rename(struct syscall_enter_args *args)
 
-SEC("tp/syscalls/sys_enter_renameat2")
-int sys_enter_renameat2(struct syscall_enter_args *args)
+On 2024/9/23 上午 03:49, Amit Singh Tomar wrote:
+> Hi,
+>
+>>
+>> Nuvoton MA35 SoCs NAND Flash Interface Controller
+>> supports 2kiB, 4kiB and 8kiB page size, and up to
+>> 8-bit, 12-bit, and 24-bit hardware ECC calculation
+>> circuit to protect data.
+>>
+>> Signed-off-by: Hui-Ping Chen <hpchen0nvt@gmail.com>
+>> ---
+>>    drivers/mtd/nand/raw/Kconfig               |   8 +
+>>    drivers/mtd/nand/raw/Makefile              |   1 +
+>>    drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c | 886 
+>> +++++++++++++++++++++
+>>    3 files changed, 895 insertions(+)
+>>    create mode 100644 drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c
+>>
+>> diff --git a/drivers/mtd/nand/raw/Kconfig b/drivers/mtd/nand/raw/Kconfig
+>> index 614257308516..a95d91e61c42 100644
+>> --- a/drivers/mtd/nand/raw/Kconfig
+>> +++ b/drivers/mtd/nand/raw/Kconfig
+>> @@ -448,6 +448,14 @@ config MTD_NAND_RENESAS
+>>          Enables support for the NAND controller found on Renesas R-Car
+>>          Gen3 and RZ/N1 SoC families.
+>>    +config MTD_NAND_NUVOTON_MA35
+>> +    tristate "Nuvoton MA35 SoC NAND controller"
+>> +    depends on ARCH_MA35 || COMPILE_TEST
+>> +    depends on OF
+>> +    help
+>> +      Enables support for the NAND controller found on
+>> +      the Nuvoton MA35 series SoCs.
+>> +
+>>    comment "Misc"
+>>       config MTD_SM_COMMON
+>> diff --git a/drivers/mtd/nand/raw/Makefile 
+>> b/drivers/mtd/nand/raw/Makefile
+>> index 25120a4afada..b8e1b3af6942 100644
+>> --- a/drivers/mtd/nand/raw/Makefile
+>> +++ b/drivers/mtd/nand/raw/Makefile
+>> @@ -57,6 +57,7 @@ obj-$(CONFIG_MTD_NAND_INTEL_LGM)    += 
+>> intel-nand-controller.o
+>>    obj-$(CONFIG_MTD_NAND_ROCKCHIP)        += rockchip-nand-controller.o
+>>    obj-$(CONFIG_MTD_NAND_PL35X)        += pl35x-nand-controller.o
+>>    obj-$(CONFIG_MTD_NAND_RENESAS)        += renesas-nand-controller.o
+>> +obj-$(CONFIG_MTD_NAND_NUVOTON_MA35)    += nuvoton_ma35d1_nand.o
+>>       nand-objs := nand_base.o nand_legacy.o nand_bbt.o 
+>> nand_timings.o nand_ids.o
+>>    nand-objs += nand_onfi.o
+>> diff --git a/drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c 
+>> b/drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c
+>> new file mode 100644
+>> index 000000000000..5b53b7f0b9cb
+>> --- /dev/null
+>> +++ b/drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c
+>> @@ -0,0 +1,886 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) 2024 Nuvoton Technology Corp.
+>> + */
+>> +#include <linux/clk.h>
+>> +#include <linux/delay.h>
+>> +#include <linux/dma-mapping.h>
+>> +#include <linux/dmaengine.h>
+>> +#include <linux/err.h>
+>> +#include <linux/init.h>
+>> +#include <linux/interrupt.h>
+>> +#include <linux/io.h>
+>> +#include <linux/iopoll.h>
+>> +#include <linux/module.h>
+>> +#include <linux/mtd/mtd.h>
+>> +#include <linux/mtd/partitions.h>
+>> +#include <linux/mtd/rawnand.h>
+>> +#include <linux/of.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/slab.h>
+>> +
+>> +
+> nit: Unnecessary new line.
 
-The problem with it is double-string augmentation, but I haven't
-figured out how to solve it. Can you please take a look please,
-Arnaldo? Now I just commented these two BPF functions and perf trace
-runs no problem, built by clang that's older than clang 16, for
-example clang 15.0.7.
+I will check and remove it.
 
-perf $ clang -v
-Ubuntu clang version 15.0.7
-Target: x86_64-pc-linux-gnu
-Thread model: posix
-InstalledDir: /bin
-Found candidate GCC installation: /bin/../lib/gcc/x86_64-linux-gnu/13
-Selected GCC installation: /bin/../lib/gcc/x86_64-linux-gnu/13
-Candidate multilib: .;@m64
-Selected multilib: .;@m64
-perf $ ./perf trace -e write --max-events=3D1
-     0.000 ( 0.008 ms): gmain/2173 write(fd: 4, buf: \1\0\0\0\0\0\0\0,
-count: 8)                         =3D
 
-But plot twist, it won't build on clang-14
+>> +/* NFI Registers */
+>> +#define MA35_NFI_REG_DMACTL        0x400
+>> +#define   DMA_EN                BIT(0)
+>> +#define   DMA_RST                BIT(1)
+>> +#define   DMA_BUSY                BIT(9)
+>> +
+>> +#define MA35_NFI_REG_DMASA        0x408
+>> +#define MA35_NFI_REG_GCTL        0x800
+>> +#define   NAND_EN                BIT(3)
+>> +
+>> +#define MA35_NFI_REG_NANDCTL        0x8A0
+>> +#define   SWRST                BIT(0)
+>> +#define   DMA_R_EN                BIT(1)
+>> +#define   DMA_W_EN                BIT(2)
+>> +#define   ECC_CHK                BIT(7)
+>> +#define   PROT3BEN                BIT(8)
+>> +#define   PSIZE_2K                BIT(16)
+>> +#define   PSIZE_4K                BIT(17)
+>> +#define   PSIZE_8K                GENMASK(17, 16)
+>> +#define   PSIZE_MASK                GENMASK(17, 16)
+>> +#define   BCH_T24                BIT(18)
+>> +#define   BCH_T8                BIT(20)
+>> +#define   BCH_T12                BIT(21)
+>> +#define   BCH_NONE                (0x0)
+>> +#define   BCH_MASK                GENMASK(22, 18)
+>> +#define   ECC_EN                BIT(23)
+>> +#define   DISABLE_CS0                BIT(25)
+>> +
+>> +#define MA35_NFI_REG_NANDINTEN    0x8A8
+>> +#define MA35_NFI_REG_NANDINTSTS    0x8AC
+>> +#define   INT_DMA                BIT(0)
+>> +#define   INT_ECC                BIT(2)
+>> +#define   INT_RB0                BIT(10)
+>> +#define   INT_RB0_STS                BIT(18)
+>> +
+>> +#define MA35_NFI_REG_NANDCMD        0x8B0
+>> +#define MA35_NFI_REG_NANDADDR        0x8B4
+>> +#define   ENDADDR                BIT(31)
+>> +
+>> +#define MA35_NFI_REG_NANDDATA        0x8B8
+>> +#define MA35_NFI_REG_NANDRACTL    0x8BC
+>> +#define MA35_NFI_REG_NANDECTL        0x8C0
+>> +#define   ENABLE_WP                0x0
+>> +#define   DISABLE_WP                BIT(0)
+>> +
+>> +#define MA35_NFI_REG_NANDECCES0    0x8D0
+>> +#define   ECC_STATUS_MASK            GENMASK(1, 0)
+>> +#define   ECC_ERR_CNT_MASK            GENMASK(4, 0)
+>> +
+>> +#define MA35_NFI_REG_NANDECCEA0    0x900
+>> +#define MA35_NFI_REG_NANDECCED0    0x960
+>> +#define MA35_NFI_REG_NANDRA0        0xA00
+>> +
+>> +
+> nit: Unnecessary new line.
 
-perf $ clang -v
-Ubuntu clang version 14.0.6
-Target: x86_64-pc-linux-gnu
-Thread model: posix
-InstalledDir: /bin
-Found candidate GCC installation: /bin/../lib/gcc/x86_64-linux-gnu/13
-Selected GCC installation: /bin/../lib/gcc/x86_64-linux-gnu/13
-Candidate multilib: .;@m64
-Selected multilib: .;@m64
-perf $ ./perf trace -e write --max-events=3D1
-libbpf: prog 'sys_enter': BPF program load failed: Invalid argument
-libbpf: prog 'sys_enter': -- BEGIN PROG LOAD LOG --
-0: R1=3Dctx() R10=3Dfp0
-; int sys_enter(struct syscall_enter_args *args) @
-augmented_raw_syscalls.bpf.c:509
-0: (bf) r7 =3D r1                       ; R1=3Dctx() R7_w=3Dctx()
+I will check and remove it.
 
-This time the problem is my code in BTF general collector:
 
-; payload_offset +=3D written; @ augmented_raw_syscalls.bpf.c:497
 
-I'll resolve this.
+>> +/* Define for the BCH hardware ECC engine */
+>> +/* define the total padding bytes for 512/1024 data segment */
+>> +#define MA35_BCH_PADDING_512    32
+>> +#define MA35_BCH_PADDING_1024    64
+>> +/* define the BCH parity code length for 512 bytes data pattern */
+>> +#define MA35_PARITY_BCH8    15
+>> +#define MA35_PARITY_BCH12    23
+>> +/* define the BCH parity code length for 1024 bytes data pattern */
+>> +#define MA35_PARITY_BCH24    45
+>> +
+>> +
+> nit: Unnecessary new line.
 
-Thanks,
-Howard
+I will check and remove it.
 
-On Wed, Sep 18, 2024 at 8:13=E2=80=AFPM Howard Chu <howardchu95@gmail.com> =
-wrote:
+
+
+>> +struct ma35_nand_info {
+>> +    struct nand_controller controller;
+>> +    struct nand_chip chip;
+>> +    struct device *dev;
+>> +    void __iomem *regs;
+>> +    int irq;
+>> +    struct clk *clk;
+>> +    struct completion complete;
+>> +
+>> +    u32 bch;
+>> +    u32 bitflips;
+>> +    u8 *ecc_buf;
+>> +};
+>> +
+>> +static int ma35_ooblayout_ecc(struct mtd_info *mtd, int section,
+>> +                  struct mtd_oob_region *oobregion)
+>> +{
+>> +    struct nand_chip *chip = mtd_to_nand(mtd);
+>> +
+>> +    if (section)
+>> +        return -ERANGE;
+>> +
+>> +    oobregion->length = chip->ecc.total;
+>> +    oobregion->offset = mtd->oobsize - oobregion->length;
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +static int ma35_ooblayout_free(struct mtd_info *mtd, int section,
+>> +                   struct mtd_oob_region *oobregion)
+>> +{
+>> +    struct nand_chip *chip = mtd_to_nand(mtd);
+>> +
+>> +    if (section)
+>> +        return -ERANGE;
+>> +
+>> +    oobregion->length = mtd->oobsize - chip->ecc.total - 2;
+>> +    oobregion->offset = 2;
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +static const struct mtd_ooblayout_ops ma35_ooblayout_ops = {
+>> +    .free = ma35_ooblayout_free,
+>> +    .ecc = ma35_ooblayout_ecc,
+>> +};
+>> +
+>> +static inline void ma35_clear_spare(struct nand_chip *chip, int size)
+>> +{
+>> +    struct ma35_nand_info *nand = nand_get_controller_data(chip);
+>> +    int i;
+>> +
+>> +    for (i = 0; i < size/4; i++)
+>> +        writel(0xff, nand->regs + MA35_NFI_REG_NANDRA0);
+>> +}
+>> +
+>> +static inline void read_remaining_bytes(struct ma35_nand_info *nand, 
+>> u32 *buf,
+>> +                        u32 offset, int size)
+>> +{
+>> +    u32 value = readl(nand->regs + MA35_NFI_REG_NANDRA0 + offset);
+>> +    u8 *ptr = (u8 *)buf;
+>> +    int i;
+>> +
+>> +    for (i = 0; i < size; i++)
+>> +        ptr[i] = (value >> (i * 8)) & 0xff;
+>> +}
+>> +
+>> +
+>> +static inline void ma35_read_spare(struct nand_chip *chip, int size, 
+>> u32 *buf, u32 offset)
+>> +{
+>> +    struct ma35_nand_info *nand = nand_get_controller_data(chip);
+>> +    int i, j;
+>> +
+>> +    if ((offset % 4) == 0) {
+>> +        for (i = 0, j = 0; i < size / 4; i++, j += 4)
+>> +            *buf++ = readl(nand->regs + MA35_NFI_REG_NANDRA0 + 
+>> offset + j);
+>> +
+>> +        read_remaining_bytes(nand, buf, offset + j, size % 4);
+>> +    } else {
+>> +        read_remaining_bytes(nand, buf, offset, 4 - (offset % 4));
+>> +        offset += 4;
+>> +        size -= (4 - (offset % 4));
+>> +
+>> +        for (i = 0, j = 0; i < size / 4; i++, j += 4)
+>> +            *buf++ = readl(nand->regs + MA35_NFI_REG_NANDRA0 + 
+>> offset + j);
+>> +
+>> +        read_remaining_bytes(nand, buf, offset + j, size % 4);
+>> +    }
+>> +}
+>> +
+>> +static inline void ma35_write_spare(struct nand_chip *chip, int 
+>> size, u32 *buf)
+>> +{
+>> +    struct ma35_nand_info *nand = nand_get_controller_data(chip);
+>> +    u32 value;
+>> +    int i, j;
+>> +    u8 *ptr;
+>> +
+>> +    for (i = 0, j = 0; i < size / 4; i++, j += 4)
+>> +        writel(*buf++, nand->regs + MA35_NFI_REG_NANDRA0 + j);
+>> +
+>> +    ptr = (u8 *)buf;
+>> +    switch (size % 4) {
+>> +    case 1:
+>> +        writel(*ptr, nand->regs + MA35_NFI_REG_NANDRA0 + j);
+>> +        break;
+>> +    case 2:
+>> +        value = *ptr | (*(ptr+1) << 8);
+>> +        writel(value, nand->regs + MA35_NFI_REG_NANDRA0 + j);
+>> +        break;
+>> +    case 3:
+>> +        value = *ptr | (*(ptr+1) << 8) | (*(ptr+2) << 16);
+>> +        writel(value, nand->regs + MA35_NFI_REG_NANDRA0 + j);
+>> +        break;
+>> +    default:
+>> +        break;
+>> +    }
+>> +}
+>> +
+>> +static inline void ma35_nand_target_enable(struct ma35_nand_info *nand)
+>> +{
+>> +    writel(readl(nand->regs + MA35_NFI_REG_NANDCTL) & (~DISABLE_CS0),
+>> +        nand->regs+MA35_NFI_REG_NANDCTL);
+>> +}
+>> +
+>> +static inline void ma35_nand_target_disable(struct ma35_nand_info 
+>> *nand)
+>> +{
+>> +    writel(readl(nand->regs + MA35_NFI_REG_NANDCTL) | DISABLE_CS0,
+>> +        nand->regs + MA35_NFI_REG_NANDCTL);
+>> +}
+>> +
+>> +
+>> +static void ma35_nand_hwecc_init(struct ma35_nand_info *nand)
+>> +{
+>> +    struct mtd_info *mtd = nand_to_mtd(&nand->chip);
+>> +    u32 reg;
+>> +
+>> +    /* resets the internal state machine and counters */
+>> +    reg = readl(nand->regs + MA35_NFI_REG_NANDCTL);
+>> +    reg |= SWRST;
+>> +    writel(reg, nand->regs + MA35_NFI_REG_NANDCTL);
+>> +    while (readl(nand->regs + MA35_NFI_REG_NANDCTL) & SWRST)
+>> +        ;
+> Shouldn't there be a timeout?
+
+This bit is the reset state machine.
+
+The hardware will automatically clear this bit after a few clock cycles,
+
+so there is no timeout added.
+
+
+
+>> +
+>> +    /* Redundant area size */
+>> +    writel(mtd->oobsize, nand->regs + MA35_NFI_REG_NANDRACTL);
+>> +
+>> +    /* Protect redundant 3 bytes */
+>> +    reg = readl(nand->regs + MA35_NFI_REG_NANDCTL);
+>> +    reg |= (PROT3BEN | ECC_CHK);
+>> +    writel(reg, nand->regs + MA35_NFI_REG_NANDCTL);
+>> +
+>> +    if (nand->bch == BCH_NONE) {
+>> +        /* Disable H/W ECC, ECC parity check enable bit during read 
+>> page */
+>> +        writel(readl(nand->regs + MA35_NFI_REG_NANDCTL) & (~ECC_EN),
+>> +            nand->regs + MA35_NFI_REG_NANDCTL);
+>> +    } else {
+>> +        /* Set BCH algorithm */
+>> +        writel((readl(nand->regs + MA35_NFI_REG_NANDCTL) & 
+>> (~BCH_MASK)) |
+>> +            nand->bch, nand->regs + MA35_NFI_REG_NANDCTL);
+>> +
+>> +        /* Enable H/W ECC, ECC parity check enable bit during read 
+>> page */
+>> +        writel(readl(nand->regs + MA35_NFI_REG_NANDCTL) | ECC_EN,
+>> +            nand->regs + MA35_NFI_REG_NANDCTL);
+>> +    }
+>> +}
+>> +
+>> +
+> nit: Unnecessary new line.
+
+I will check and remove it.
+
+
+
+>> +/* Correct data by BCH alrogithm */
+>> +static void ma35_nfi_correct(struct ma35_nand_info *nand, u8 index,
+>> +                 u8 err_cnt, u8 *addr)
+>> +{
+>> +    u32 temp_data[24], temp_addr[24];
+>> +    u32 padding_len, parity_len;
+>> +    u32 value, offset, remain;
+>> +    u32 err_data[6];
+>> +    u8  i, j;
+>> +
+>> +    /* configurations */
+>> +    switch (nand->bch) {
+>> +    case BCH_T24:
+>> +        parity_len = MA35_PARITY_BCH24;
+>> +        padding_len = MA35_BCH_PADDING_1024;
+>> +        break;
+>> +    case BCH_T12:
+>> +        parity_len = MA35_PARITY_BCH12;
+>> +        padding_len = MA35_BCH_PADDING_512;
+>> +        break;
+>> +    case BCH_T8:
+>> +        parity_len = MA35_PARITY_BCH8;
+>> +        padding_len = MA35_BCH_PADDING_512;
+>> +        break;
+>> +    default:
+>> +        dev_warn(nand->dev, "NAND ERROR: invalid SMCR_BCH_TSEL = 
+>> 0x%08X\n",
+>> +            (u32)(readl(nand->regs + MA35_NFI_REG_NANDCTL) & 
+>> BCH_MASK));
+>> +        return;
+>> +    }
+>> +
+>> +    /* got valid BCH_ECC_DATAx and parse them to temp_data[]
+>> +     * got the valid register number of BCH_ECC_DATAx since
+>> +     * one register include 4 error bytes
+>> +     */
+>> +    j = (err_cnt + 3) / 4;
+>> +    j = (j > 6) ? 6 : j;
+>> +    for (i = 0; i < j; i++)
+>> +        err_data[i] = readl(nand->regs + MA35_NFI_REG_NANDECCED0 + i 
+>> * 4);
+>> +
+>> +    for (i = 0; i < j; i++) {
+>> +        temp_data[i*4+0] = err_data[i] & 0xff;
+>> +        temp_data[i*4+1] = (err_data[i] >> 8) & 0xff;
+>> +        temp_data[i*4+2] = (err_data[i] >> 16) & 0xff;
+>> +        temp_data[i*4+3] = (err_data[i] >> 24) & 0xff;
+>> +    }
+>> +
+>> +    /* got valid REG_BCH_ECC_ADDRx and parse them to temp_addr[]
+>> +     * got the valid register number of REG_BCH_ECC_ADDRx since
+>> +     * one register include 2 error addresses
+>> +     */
+>> +    j = (err_cnt + 1) / 2;
+>> +    j = (j > 12) ? 12 : j;
+>> +    for (i = 0; i < j; i++) {
+>> +        temp_addr[i*2+0] = readl(nand->regs + 
+>> MA35_NFI_REG_NANDECCEA0 + i * 4)
+>> +                    & 0x07ff;
+>> +        temp_addr[i*2+1] = (readl(nand->regs + 
+>> MA35_NFI_REG_NANDECCEA0 + i * 4)
+>> +                    >> 16) & 0x07ff;
+>> +    }
+>> +
+>> +    /* pointer to begin address of field that with data error */
+>> +    addr += index * nand->chip.ecc.steps;
+>> +
+>> +    /* correct each error bytes */
+>> +    for (i = 0; i < err_cnt; i++) {
+>> +        u32 corrected_index = temp_addr[i];
+>> +
+>> +        /* for wrong data in field */
+>> +        if (corrected_index < nand->chip.ecc.steps)
+>> +            *(addr + corrected_index) ^= temp_data[i];
+>> +
+>> +        /* for wrong first-3-bytes in redundancy area */
+>> +        else if (corrected_index < (nand->chip.ecc.steps + 3)) {
+>> +            corrected_index -= nand->chip.ecc.steps;
+>> +            temp_addr[i] += (parity_len * index);    /* field offset */
+>> +
+>> +            value = readl(nand->regs + MA35_NFI_REG_NANDRA0);
+>> +            value ^= temp_data[i] << (8 * corrected_index);
+>> +            writel(value, nand->regs + MA35_NFI_REG_NANDRA0);
+>> +        }
+>> +        /* for wrong parity code in redundancy area
+>> +         * BCH_ERR_ADDRx = [data in field] + [3 bytes] + [xx] + 
+>> [parity code]
+>> +         *                                   |<-- padding bytes      
+>> -->|
+>> +         * The BCH_ERR_ADDRx for last parity code always = field 
+>> size + padding size.
+>> +         * So, the first parity code = field size + padding size - 
+>> parity code length.
+>> +         * For example, for BCH T12, the first parity code = 512 + 
+>> 32 - 23 = 521.
+>> +         * That is, error byte address offset within field is
+>> +         */
+>> +        else {
+>> +            corrected_index -= (nand->chip.ecc.steps + padding_len - 
+>> parity_len);
+>> +
+>> +            /* final address = first parity code of first field +
+>> +             *                 offset of fields +
+>> +             *                 offset within field
+>> +             */
+>> +            offset = (readl(nand->regs + MA35_NFI_REG_NANDRACTL) & 
+>> 0x1ff) -
+>> +                (parity_len * nand->chip.ecc.steps) +
+>> +                (parity_len * index) + corrected_index;
+>> +
+>> +            remain = offset % 4;
+>> +            value = readl(nand->regs + MA35_NFI_REG_NANDRA0 + offset 
+>> - remain);
+>> +            value ^= temp_data[i] << (8 * remain);
+>> +            writel(value, nand->regs + MA35_NFI_REG_NANDRA0 + offset 
+>> - remain);
+>> +        }
+>> +    }
+>> +}
+>> +
+>> +static int ma35_nfi_ecc_check(struct nand_chip *chip, u8 *addr)
+>> +{
+>> +    struct ma35_nand_info *nand = nand_get_controller_data(chip);
+>> +    struct mtd_info *mtd = nand_to_mtd(chip);
+>> +    int i, j, nchunks = 0;
+>> +    int report_err = 0;
+>> +    int err_cnt = 0;
+>> +    u32 status;
+>> +
+>> +    nchunks = mtd->writesize / chip->ecc.steps;
+>> +    if (nchunks < 4)
+>> +        nchunks = 1;
+>> +    else
+>> +        nchunks /= 4;
+>> +
+>> +    for (j = 0; j < nchunks; j++) {
+>> +        status = readl(nand->regs + MA35_NFI_REG_NANDECCES0 + j * 4);
+>> +        if (!status)
+>> +            continue;
+>> +
+>> +        for (i = 0; i < 4; i++) {
+>> +            if (!(status & ECC_STATUS_MASK)) {
+>> +                /* No error */
+>> +                status >>= 8;
+>> +                continue;
+>> +
+>> +            } else if ((status & ECC_STATUS_MASK) == 0x01) {
+>> +                /* Correctable error */
+>> +                err_cnt = (status >> 2) & ECC_ERR_CNT_MASK;
+>> +                ma35_nfi_correct(nand, j*4+i, err_cnt, addr);
+>> +                report_err += err_cnt;
+>> +
+>> +            } else {
+>> +                /* uncorrectable error */
+>> +                dev_warn(nand->dev, "uncorrectable error! 0x%4x\n", 
+>> status);
+>> +                return -1;
+>> +            }
+>> +            status >>= 8;
+>> +        }
+>> +    }
+>> +    return report_err;
+>> +}
+>> +
+>> +
+>> +static void ma35_nand_dmac_init(struct ma35_nand_info *nand)
+>> +{
+>> +    /* DMAC reset and enable */
+>> +    writel(DMA_RST | DMA_EN, nand->regs + MA35_NFI_REG_DMACTL);
+>> +    writel(DMA_EN, nand->regs + MA35_NFI_REG_DMACTL);
+>> +
+>> +    /* Clear DMA finished flag */
+>> +    writel(INT_DMA | INT_ECC, nand->regs + MA35_NFI_REG_NANDINTSTS);
+>> +
+>> +    init_completion(&nand->complete);
+>> +}
+>> +
+>> +
+>> +static int ma35_nand_do_write(struct nand_chip *chip, const u8 
+>> *addr, u32 len)
+>> +{
+>> +    struct ma35_nand_info *nand = nand_get_controller_data(chip);
+>> +    struct mtd_info *mtd = nand_to_mtd(chip);
+>> +    dma_addr_t dma_addr;
+>> +    int ret = 0, i;
+>> +    u32 reg;
+>> +
+>> +    if (len != mtd->writesize) {
+>> +        for (i = 0; i < len; i++)
+>> +            writel(addr[i], nand->regs + MA35_NFI_REG_NANDDATA);
+>> +        return 0;
+>> +    }
+>> +
+>> +    ma35_nand_dmac_init(nand);
+>> +
+>> +    writel(mtd->oobsize, nand->regs + MA35_NFI_REG_NANDRACTL);
+>> +
+>> +    writel(INT_DMA, nand->regs + MA35_NFI_REG_NANDINTEN);
+>> +    /* To mark this page as dirty. */
+>> +    reg = readl(nand->regs + MA35_NFI_REG_NANDRA0);
+>> +    if (reg & 0xffff0000)
+>> +        writel(reg & 0xffff, nand->regs + MA35_NFI_REG_NANDRA0);
+>> +
+>> +    dma_addr = dma_map_single(nand->dev, (void *)addr, len, 
+>> DMA_TO_DEVICE);
+>> +    ret = dma_mapping_error(nand->dev, dma_addr);
+>> +    if (ret) {
+>> +        dev_err(nand->dev, "dma mapping error\n");
+>> +        return -EINVAL;
+> Shouldn't this return -ENOMEM or simply ret when there's an error? 
+> Also, should we consider unmapping the page with dma_unmap_single in 
+> that case?
+
+Sascha has explained this issue.
+
+Thanks Sascha.
+
+
+
+>> +    }
+>> +    dma_sync_single_for_device(nand->dev, dma_addr, len, 
+>> DMA_TO_DEVICE);
+>> +
+>> +    writel((unsigned long)dma_addr, nand->regs + MA35_NFI_REG_DMASA);
+>> +    writel(readl(nand->regs + MA35_NFI_REG_NANDCTL) | DMA_W_EN,
+>> +        nand->regs + MA35_NFI_REG_NANDCTL);
+>> +    ret = wait_for_completion_timeout(&nand->complete, 
+>> msecs_to_jiffies(1000));
+>> +    if (!ret) {
+>> +        dev_err(nand->dev, "write timeout\n");
+>> +        ret = -ETIMEDOUT;
+>> +    }
+>> +
+>> +    dma_unmap_single(nand->dev, dma_addr, len, DMA_TO_DEVICE);
+>> +
+>> +    return ret;
+>> +}
+>> +
+>> +static int ma35_nand_do_read(struct nand_chip *chip, u8 *addr, u32 len)
+>> +{
+>> +    struct ma35_nand_info *nand = nand_get_controller_data(chip);
+>> +    struct mtd_info *mtd = nand_to_mtd(chip);
+>> +    int ret = 0, cnt = 0, i;
+>> +    dma_addr_t dma_addr;
+>> +    u32 reg;
+>> +
+>> +    if (len != mtd->writesize) {
+>> +        for (i = 0; i < len; i++)
+>> +            *(addr+i) = (u8)readl(nand->regs + MA35_NFI_REG_NANDDATA);
+>> +        return 0;
+>> +    }
+>> +
+>> +    ma35_nand_dmac_init(nand);
+>> +
+>> +    writel(mtd->oobsize, nand->regs + MA35_NFI_REG_NANDRACTL);
+>> +
+>> +    /* setup and start DMA using dma_addr */
+>> +    dma_addr = dma_map_single(nand->dev, (void *)addr, len, 
+>> DMA_FROM_DEVICE);
+>> +    ret = dma_mapping_error(nand->dev, dma_addr);
+>> +    if (ret) {
+>> +        dev_err(nand->dev, "dma mapping error\n");
+>> +        return -EINVAL;
+> Same as above.
+
+As above.
+
+
+>> +    }
+>> +
+>> +    writel((unsigned long)dma_addr, nand->regs + MA35_NFI_REG_DMASA);
+>> +    writel(readl(nand->regs + MA35_NFI_REG_NANDCTL) | DMA_R_EN,
+>> +        nand->regs + MA35_NFI_REG_NANDCTL);
+>> +    ret = wait_for_completion_timeout(&nand->complete, 
+>> msecs_to_jiffies(1000));
+>> +    if (!ret) {
+>> +        dev_err(nand->dev, "read timeout\n");
+>> +        ret = -ETIMEDOUT;
+>> +    }
+>> +
+>> +    dma_unmap_single(nand->dev, dma_addr, len, DMA_FROM_DEVICE);
+>> +
+>> +    reg = readl(nand->regs + MA35_NFI_REG_NANDINTSTS);
+>> +    if (reg & INT_ECC) {
+>> +        cnt = ma35_nfi_ecc_check(&nand->chip, addr);
+>> +        if (cnt < 0) {
+>> +            mtd->ecc_stats.failed++;
+>> +            writel(DMA_RST | DMA_EN, nand->regs + MA35_NFI_REG_DMACTL);
+>> +            writel(readl(nand->regs + MA35_NFI_REG_NANDCTL) | SWRST,
+>> +                nand->regs + MA35_NFI_REG_NANDCTL);
+>> +        } else {
+>> +            mtd->ecc_stats.corrected += cnt;
+>> +            nand->bitflips = cnt;
+>> +        }
+>> +        writel(INT_ECC, nand->regs + MA35_NFI_REG_NANDINTSTS);
+>> +    }
+>> +
+>> +    return ret;
+>> +}
+>> +
+>> +
+>> +static int ma35_nand_write_page_hwecc(struct nand_chip *chip, const 
+>> u8 *buf,
+>> +                      int oob_required, int page)
+>> +{
+>> +    struct mtd_info *mtd = nand_to_mtd(chip);
+>> +    void *ecc_calc = chip->ecc.calc_buf;
+>> +
+>> +    ma35_clear_spare(chip, mtd->oobsize);
+>> +    ma35_write_spare(chip, mtd->oobsize - chip->ecc.total,
+>> +            (u32 *)chip->oob_poi);
+>> +
+>> +    nand_prog_page_begin_op(chip, page, 0, buf, mtd->writesize);
+>> +    nand_prog_page_end_op(chip);
+>> +
+>> +    /* Copy parity code in NANDRA to calc */
+>> +    ma35_read_spare(chip, chip->ecc.total, (u32 *)ecc_calc,
+>> +            mtd->oobsize - chip->ecc.total);
+>> +
+>> +    /* Copy parity code in calc to oob_poi */
+>> +    memcpy(chip->oob_poi + (mtd->oobsize - chip->ecc.total),
+>> +        ecc_calc, chip->ecc.total);
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +static int ma35_nand_read_page_hwecc(struct nand_chip *chip, u8 *buf,
+>> +                    int oob_required, int page)
+>> +{
+>> +    struct ma35_nand_info *nand = nand_get_controller_data(chip);
+>> +    struct mtd_info *mtd = nand_to_mtd(chip);
+>> +    u32 reg;
+>> +
+>> +    /* read the OOB area  */
+>> +    nand_read_oob_op(chip, page, 0, chip->oob_poi, mtd->oobsize);
+>> +    nand->bitflips = 0;
+>> +
+>> +    /* copy OOB data to NANDRA for page read */
+>> +    ma35_write_spare(chip, mtd->oobsize, (u32 *)chip->oob_poi);
+>> +
+>> +    reg = readl(nand->regs + MA35_NFI_REG_NANDRA0);
+>> +    if (reg & 0xffff0000)
+>> +        memset((void *)buf, 0xff, mtd->writesize);
+> If only one branch of a conditional statement contains a single 
+> statement, you should use braces in both branches.
 >
-> Hello,
+> if (condition) {
+>          do_this();
+>          do_that();
+> } else {
+>          otherwise();
+> }
 >
-> I'm able to reproduce it on Ubuntu 24.
+I will fix it.
+
+
+
+>> +    else {
+>> +        /* read data from nand */
+>> +        nand_read_page_op(chip, page, 0, buf, mtd->writesize);
+>> +
+>> +        /* restore OOB data from SMRA */
+>> +        ma35_read_spare(chip, mtd->oobsize, (u32 *)chip->oob_poi, 0);
+>> +    }
+>> +
+>> +    return nand->bitflips;
+>> +}
+>> +
+>> +
+>> +static int ma35_nand_read_oob_hwecc(struct nand_chip *chip, int page)
+>> +{
+>> +    struct ma35_nand_info *nand = nand_get_controller_data(chip);
+>> +    struct mtd_info *mtd = nand_to_mtd(chip);
+>> +    u32 reg;
+>> +
+>> +    nand_read_oob_op(chip, page, 0, chip->oob_poi, mtd->oobsize);
+>> +
+>> +    /* copy OOB data to NANDRA for page read */
+>> +    ma35_write_spare(chip, mtd->oobsize, (u32 *)chip->oob_poi);
+>> +
+>> +    reg = readl(nand->regs + MA35_NFI_REG_NANDRA0);
+>> +    if (reg & 0xffff0000)
+>> +        memset((void *)chip->oob_poi, 0xff, mtd->oobsize);
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +static irqreturn_t ma35_nand_irq(int irq, void *id)
+>> +{
+>> +    struct ma35_nand_info *nand = (struct ma35_nand_info *)id;
+>> +    u32 isr;
+>> +
+>> +    isr = readl(nand->regs + MA35_NFI_REG_NANDINTSTS);
+>> +    if (isr & INT_DMA) {
+>> +        writel(INT_DMA, nand->regs + MA35_NFI_REG_NANDINTSTS);
+>> +        complete(&nand->complete);
+>> +    }
+>> +
+>> +    return IRQ_HANDLED;
+>> +}
+>> +
+>> +static int ma35_nand_attach_chip(struct nand_chip *chip)
+>> +{
+>> +    struct ma35_nand_info *nand = nand_get_controller_data(chip);
+>> +    struct mtd_info *mtd = nand_to_mtd(chip);
+>> +    unsigned int reg;
+>> +
+>> +    if (chip->options & NAND_BUSWIDTH_16) {
+>> +        dev_err(nand->dev, "16 bits bus width not supported");
+>> +        return -EINVAL;
+>> +    }
+>> +
+>> +    /* support only ecc hw mode */
+>> +    if (chip->ecc.engine_type != NAND_ECC_ENGINE_TYPE_ON_HOST) {
+>> +        dev_err(nand->dev, "ecc.engine_type not supported\n");
+>> +        return -EINVAL;
+>> +    }
+>> +
+>> +    nand->ecc_buf = devm_kzalloc(nand->dev, mtd->writesize + 
+>> mtd->oobsize,
+>> +                    GFP_KERNEL);
+>> +    if (!nand->ecc_buf)
+>> +        return  -ENOMEM;
+>> +    chip->ecc.calc_buf = nand->ecc_buf;
+>> +
+>> +    /* Set PSize */
+>> +    reg = readl(nand->regs + MA35_NFI_REG_NANDCTL) & (~PSIZE_MASK);
+>> +    if (mtd->writesize == 2048)
+>> +        writel(reg | PSIZE_2K, nand->regs + MA35_NFI_REG_NANDCTL);
+>> +    else if (mtd->writesize == 4096)
+>> +        writel(reg | PSIZE_4K, nand->regs + MA35_NFI_REG_NANDCTL);
+>> +    else if (mtd->writesize == 8192)
+>> +        writel(reg | PSIZE_8K, nand->regs + MA35_NFI_REG_NANDCTL);
+>> +
+>> +    chip->ecc.steps = mtd->writesize / chip->ecc.size;
+>> +    if (chip->ecc.strength == 0) {
+>> +        nand->bch = BCH_NONE; /* No ECC */
+>> +        chip->ecc.total = 0;
+>> +
+> nit: New line is not really needed here.
+
+I will check and remove it.
+
+
+
+>> +    } else if (chip->ecc.strength <= 8) {
+>> +        nand->bch = BCH_T8; /* T8 */
+>> +        chip->ecc.total = chip->ecc.steps * MA35_PARITY_BCH8;
+>> +
+>> +    } else if (chip->ecc.strength <= 12) {
+>> +        nand->bch = BCH_T12; /* T12 */
+>> +        chip->ecc.total = chip->ecc.steps * MA35_PARITY_BCH12;
+>> +
+>> +    } else if (chip->ecc.strength <= 24) {
+>> +        nand->bch = BCH_T24; /* T24 */
+>> +        chip->ecc.total = chip->ecc.steps * MA35_PARITY_BCH24;
+>> +
+>> +    } else {
+>> +        dev_warn(nand->dev, "NAND Controller is not support this 
+>> flash. (%d, %d)\n",
+>> +            mtd->writesize, mtd->oobsize);
+>> +    }
+>> +
+>> +    chip->ecc.bytes = chip->ecc.total / chip->ecc.steps;
+>> +    mtd_set_ooblayout(mtd, &ma35_ooblayout_ops);
+>> +
+>> +    /* add mtd-id. The string should same as uboot definition */
+>> +    mtd->name = "nand0";
+>> +
+>> +    ma35_nand_hwecc_init(nand);
+>> +
+>> +    writel(DISABLE_WP, nand->regs + MA35_NFI_REG_NANDECTL);
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +
+>> +static int ma35_nfc_exec_instr(struct nand_chip *chip,
+>> +                  const struct nand_op_instr *instr)
+>> +{
+>> +    struct ma35_nand_info *nand = nand_get_controller_data(chip);
+>> +    unsigned int i;
+>> +    u32 status;
+>> +
+>> +    switch (instr->type) {
+>> +    case NAND_OP_CMD_INSTR:
+>> +        writel(instr->ctx.cmd.opcode, nand->regs + 
+>> MA35_NFI_REG_NANDCMD);
+>> +        return 0;
+>> +
+>> +    case NAND_OP_ADDR_INSTR:
+>> +        for (i = 0; i < instr->ctx.addr.naddrs; i++) {
+>> +            if (i == (instr->ctx.addr.naddrs - 1))
+>> +                writel(instr->ctx.addr.addrs[i] | ENDADDR,
+>> +                    nand->regs + MA35_NFI_REG_NANDADDR);
+>> +            else
+>> +                writel(instr->ctx.addr.addrs[i],
+>> +                    nand->regs + MA35_NFI_REG_NANDADDR);
+>> +        }
+>> +        return 0;
+>> +
+> nit: New line is not really needed after return statement.
+
+I will check and remove it.
+
+
+
+>> +    case NAND_OP_DATA_IN_INSTR:
+>> +        ma35_nand_do_read(chip, instr->ctx.data.buf.in, 
+>> instr->ctx.data.len);
+>> +        return 0;
+>> +
+>> +    case NAND_OP_DATA_OUT_INSTR:
+>> +        ma35_nand_do_write(chip, instr->ctx.data.buf.out, 
+>> instr->ctx.data.len);
+>> +        return 0;
+>> +
+>> +    case NAND_OP_WAITRDY_INSTR:
+>> +        return readl_poll_timeout(nand->regs + 
+>> MA35_NFI_REG_NANDINTSTS, status,
+>> +                      status & INT_RB0, 20,
+>> +                      instr->ctx.waitrdy.timeout_ms * 1000);
+>> +    default:
+>> +        break;
+>> +    }
+>> +
+>> +    return -EINVAL;
+>> +}
+>> +
+>> +
+>> +static int ma35_nfc_exec_op(struct nand_chip *chip,
+>> +              const struct nand_operation *op,
+>> +              bool check_only)
+>> +{
+>> +    struct ma35_nand_info *nand = nand_get_controller_data(chip);
+>> +    u32 i, reg;
+>> +    int ret = 0;
+>> +
+>> +    if (check_only)
+>> +        return 0;
+>> +
+>> +    ma35_nand_target_enable(nand);
+>> +
+>> +    reg = readl(nand->regs + MA35_NFI_REG_NANDINTSTS);
+>> +    reg |= INT_RB0;
+>> +    writel(reg, nand->regs + MA35_NFI_REG_NANDINTSTS);
+>> +
+>> +    for (i = 0; i < op->ninstrs; i++) {
+>> +        ret = ma35_nfc_exec_instr(chip, &op->instrs[i]);
+>> +        if (ret)
+>> +            break;
+>> +    }
+>> +
+>> +    ma35_nand_target_disable(nand);
+>> +
+>> +    return ret;
+>> +}
+>> +
+>> +
+>> +static const struct nand_controller_ops ma35_nfc_ops = {
+>> +    .attach_chip = ma35_nand_attach_chip,
+>> +    .exec_op = ma35_nfc_exec_op,
+>> +};
+>> +
+>> +static int ma35_nand_probe(struct platform_device *pdev)
+>> +{
+>> +    struct ma35_nand_info *nand;
+>> +    struct nand_chip *chip;
+>> +    struct mtd_info *mtd;
+>> +    int ret = 0;
+>> +
+>> +    nand = devm_kzalloc(&pdev->dev, sizeof(*nand), GFP_KERNEL);
+>> +    if (!nand)
+>> +        return -ENOMEM;
+>> +
+>> +    nand_controller_init(&nand->controller);
+>> +    nand->controller.ops = &ma35_nfc_ops;
+>> +
+>> +    nand->regs = devm_platform_ioremap_resource(pdev, 0);
+>> +    if (IS_ERR(nand->regs))
+>> +        return PTR_ERR(nand->regs);
+>> +
+>> +    nand->dev = &pdev->dev;
+>> +    chip = &nand->chip;
+>> +    nand_set_controller_data(chip, nand);
+>> +    nand_set_flash_node(chip, pdev->dev.of_node);
+>> +
+>> +    nand->clk = devm_clk_get_enabled(&pdev->dev, "nand_gate");
+>> +    if (IS_ERR(nand->clk))
+>> +        return dev_err_probe(&pdev->dev, PTR_ERR(nand->clk),
+>> +                     "failed to find nand clock\n");
+>> +
+>> +    nand->irq = platform_get_irq(pdev, 0);
+>> +    if (nand->irq < 0)
+>> +        return dev_err_probe(&pdev->dev, nand->irq,
+>> +                     "failed to get platform irq\n");
+>> +
+>> +    ret = devm_request_irq(&pdev->dev, nand->irq, ma35_nand_irq,
+>> +                  IRQF_TRIGGER_HIGH, "ma35d1-nand", nand);
+>> +    if (ret) {
+>> +        dev_err(&pdev->dev, "failed to request NAND irq\n");
+>> +        return -ENXIO;
+>> +    }
+>> +
+>> +    nand->chip.controller = &nand->controller;
+>> +    platform_set_drvdata(pdev, nand);
+>> +
+>> +    chip->options |= NAND_NO_SUBPAGE_WRITE | NAND_USES_DMA;
+>> +
+>> +    chip->ecc.engine_type = NAND_ECC_ENGINE_TYPE_ON_HOST;
+>> +    chip->ecc.write_page = ma35_nand_write_page_hwecc;
+>> +    chip->ecc.read_page  = ma35_nand_read_page_hwecc;
+>> +    chip->ecc.read_oob   = ma35_nand_read_oob_hwecc;
+>> +
+>> +    mtd = nand_to_mtd(chip);
+>> +    mtd->priv = chip;
+>> +    mtd->owner = THIS_MODULE;
+>> +    mtd->dev.parent = &pdev->dev;
+>> +
+>> +    writel(NAND_EN, nand->regs + MA35_NFI_REG_GCTL);
+>> +
+>> +    ret = nand_scan(chip, 1);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    ret = mtd_device_register(mtd, NULL, 0);
+>> +    if (ret) {
+>> +        nand_cleanup(chip);
+>> +        return ret;
+>> +    }
+>> +
+>> +    return ret;
+>> +}
+>> +
+>> +static void ma35_nand_remove(struct platform_device *pdev)
+>> +{
+>> +    struct ma35_nand_info *nand = platform_get_drvdata(pdev);
+>> +    int ret;
+>> +
+>> +    ret = mtd_device_unregister(nand_to_mtd(&nand->chip));
+>> +    WARN_ON(ret);
+>> +    nand_cleanup(&nand->chip);
+>> +}
+>> +
+>> +/* PM Support */
+>> +#ifdef CONFIG_PM
+>> +static int ma35_nand_suspend(struct platform_device *pdev, 
+>> pm_message_t pm)
+>> +{
+>> +    struct ma35_nand_info *nand = platform_get_drvdata(pdev);
+>> +    int ret = 0;
+>> +    u32 val;
+>> +
+>> +    /* wait DMAC to ready */
+>> +    ret = readl_poll_timeout(nand->regs + MA35_NFI_REG_DMACTL, val,
+>> +                 !(val & DMA_BUSY), 50, HZ/2);
+>> +    if (ret)
+>> +        dev_warn(&pdev->dev, "dma busy\n");
+>> +
+>> +    clk_disable(nand->clk);
+>> +
+>> +    return ret;
+>> +}
+>> +
+>> +static int ma35_nand_resume(struct platform_device *pdev)
+>> +{
+>> +    struct ma35_nand_info *nand = platform_get_drvdata(pdev);
+>> +
+>> +    clk_enable(nand->clk);
+>> +    ma35_nand_hwecc_init(nand);
+>> +    ma35_nand_dmac_init(nand);
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +#else
+>> +#define ma35_nand_suspend NULL
+>> +#define ma35_nand_resume NULL
+>> +#endif
+>> +
+>> +static const struct of_device_id ma35_nfi_of_match[] = {
+>> +    { .compatible = "nuvoton,ma35d1-nand" },
+>> +    {},
+>> +};
+>> +MODULE_DEVICE_TABLE(of, ma35_nfi_of_match);
+>> +
+>> +static struct platform_driver ma35_nand_driver = {
+>> +    .driver = {
+>> +        .name = "ma35d1-nand",
+>> +        .of_match_table = ma35_nfi_of_match,
+>> +    },
+>> +    .probe = ma35_nand_probe,
+>> +    .remove = ma35_nand_remove,
+>> +    .suspend = ma35_nand_suspend,
+>> +    .resume = ma35_nand_resume,
+>> +};
+>> +
+>> +module_platform_driver(ma35_nand_driver);
+>> +
+>> +MODULE_DESCRIPTION("Nuvoton ma35 NAND driver");
+>> +MODULE_AUTHOR("Hui-Ping Chen <hpchen0nvt@gmail.com>");
+>> +MODULE_LICENSE("GPL");
+>> -- 
+>> 2.25.1
+>>
+>>
 >
-> perf $ cat /etc/os-release
-> PRETTY_NAME=3D"Ubuntu 24.04.1 LTS"
-> NAME=3D"Ubuntu"
-> VERSION_ID=3D"24.04"
-> VERSION=3D"24.04.1 LTS (Noble Numbat)"
-> VERSION_CODENAME=3Dnoble
-> ID=3Dubuntu
-> ID_LIKE=3Ddebian
-> HOME_URL=3D"https://www.ubuntu.com/"
-> SUPPORT_URL=3D"https://help.ubuntu.com/"
-> BUG_REPORT_URL=3D"https://bugs.launchpad.net/ubuntu/"
-> PRIVACY_POLICY_URL=3D"https://www.ubuntu.com/legal/terms-and-policies/pri=
-vacy-policy"
-> UBUNTU_CODENAME=3Dnoble
-> LOGO=3Dubuntu-logo
->
-> perf $ uname -r
-> 6.11.0-061100-generic
->
-> perf $ git log
-> commit 4c1af9bf97eb56d069421c3233ce61608458d5c8 (HEAD)
-> Author: Arnaldo Carvalho de Melo <acme@redhat.com>
-> Date:   Tue Sep 10 13:54:23 2024 -0300
->
->     perf trace: If a syscall arg is marked as 'const', assume it is
-> coming _from_ userspace
->
->
-> perf $ clang -v
-> Ubuntu clang version 15.0.7
-> Target: x86_64-pc-linux-gnu
-> Thread model: posix
-> InstalledDir: /bin
-> Found candidate GCC installation: /bin/../lib/gcc/x86_64-linux-gnu/13
-> Selected GCC installation: /bin/../lib/gcc/x86_64-linux-gnu/13
-> Candidate multilib: .;@m64
-> Selected multilib: .;@m64
->
-> perf $ ./perf trace -e write --max-events=3D1
-> libbpf: prog 'sys_enter_rename': BPF program load failed: Permission deni=
-ed
-> libbpf: prog 'sys_enter_rename': -- BEGIN PROG LOAD LOG --
-> 0: R1=3Dctx() R10=3Dfp0
-> ; int sys_enter_rename(struct syscall_enter_args *args) @
-> augmented_raw_syscalls.bpf.c:275
->
->
-> With clang-16:
->
-> perf $ clang -v
-> Ubuntu clang version 16.0.6 (23ubuntu4)
-> Target: x86_64-pc-linux-gnu
-> Thread model: posix
-> InstalledDir: /bin
-> Found candidate GCC installation: /bin/../lib/gcc/x86_64-linux-gnu/13
-> Selected GCC installation: /bin/../lib/gcc/x86_64-linux-gnu/13
-> Candidate multilib: .;@m64
-> Selected multilib: .;@m64
->
-> perf $ ./perf trace -e write --max-events=3D1
->      0.000 ( 0.021 ms): sudo/4741 write(fd: 8, buf:
-> \27[?25l\27[37m\27[48;5;96m\27[H[trace] , count: 205) =3D
->
-> > I'll try to build it and see. But Ubuntu 22 only has clang 11 to 15 so
-> > making 16 the minimum could be an issue.
->
-> Yes, I think disabling any distro that doesn't come with clang 16
-> (released in 2023) is not a good idea. I'll try to tame the BPF
-> verifier.
->
-> Thanks,
-> Howard
->
-> On Tue, Sep 17, 2024 at 10:37=E2=80=AFAM Howard Chu <howardchu95@gmail.co=
-m> wrote:
-> >
-> > Hello James and Arnaldo,
-> >
-> > On Fri, Sep 13, 2024 at 3:42=E2=80=AFAM Arnaldo Carvalho de Melo
-> > <arnaldo.melo@gmail.com> wrote:
-> > >
-> > >
-> > >
-> > > On Fri, Sep 13, 2024, 7:20=E2=80=AFAM James Clark <james.clark@linaro=
-.org> wrote:
-> > >>
-> > >>
-> > >>
-> > >> On 12/09/2024 15:50, Arnaldo Carvalho de Melo wrote:
-> > >> > On Thu, Sep 12, 2024 at 03:40:32PM +0100, James Clark wrote:
-> > >> >> On 11/09/2024 13:24, Arnaldo Carvalho de Melo wrote:
-> > >> >>> Howard reported problems using perf features that use BPF:
-> > >> >
-> > >> >>>     perf $ clang -v
-> > >> >>>     Debian clang version 15.0.6
-> > >> >>>     Target: x86_64-pc-linux-gnu
-> > >> >>>     Thread model: posix
-> > >> >>>     InstalledDir: /bin
-> > >> >>>     Found candidate GCC installation: /bin/../lib/gcc/x86_64-lin=
-ux-gnu/12
-> > >> >>>     Selected GCC installation: /bin/../lib/gcc/x86_64-linux-gnu/=
-12
-> > >> >>>     Candidate multilib: .;@m64
-> > >> >>>     Selected multilib: .;@m64
-> > >> >>>     perf $ ./perf trace -e write --max-events=3D1
-> > >> >>>     libbpf: prog 'sys_enter_rename': BPF program load failed: Pe=
-rmission denied
-> > >> >>>     libbpf: prog 'sys_enter_rename': -- BEGIN PROG LOAD LOG --
-> > >> >>>     0: R1=3Dctx() R10=3Dfp0
-> > >> >>>
-> > >> >>> But it works with:
-> > >> >>>
-> > >> >>>     perf $ clang -v
-> > >> >>>     Debian clang version 16.0.6 (15~deb12u1)
-> > >> >>>     Target: x86_64-pc-linux-gnu
-> > >> >>>     Thread model: posix
-> > >> >>>     InstalledDir: /bin
-> > >> >>>     Found candidate GCC installation: /bin/../lib/gcc/x86_64-lin=
-ux-gnu/12
-> > >> >>>     Selected GCC installation: /bin/../lib/gcc/x86_64-linux-gnu/=
-12
-> > >> >>>     Candidate multilib: .;@m64
-> > >> >>>     Selected multilib: .;@m64
-> > >> >>>     perf $ ./perf trace -e write --max-events=3D1
-> > >> >>>          0.000 ( 0.009 ms): gmain/1448 write(fd: 4, buf: \1\0\0\=
-0\0\0\0\0, count: 8)                         =3D 8 (kworker/0:0-eve)
-> > >> >>>     perf $
-> > >> >>>
-> > >> >>> So lets make that the required version, if you happen to have a =
-slightly
-> > >> >>> older version where this work, please report so that we can adju=
-st the
-> > >> >>> minimum required version.
-> > >> >
-> > >> >> I wasn't able to reproduce the issue with either of these version=
-s. But I
-> > >> >> suppose it could be an issue with only 15.0.6.
-> > >> >
-> > >> > Interesting, that complicates things, probably the best way then i=
-s to
-> > >> > try to build it, if it fails, mention that 15.0.6 is known to be
-> > >> > problematic and suggest working versions?
-> > >> >
-> > >> > - Arnaldo
-> > >>
-> > >> I still wasn't able to reproduce it with 15.0.6. And I double checke=
-d
-> > >> with V=3D1 that the build was using the right clang. I suppose it co=
-uld be
-> > >> a build configuration issue, or maybe with a different kernel versio=
-n?
-> > >
-> > >
-> > > Howard? If not reproducible we can revert it.
-> > >
-> > > - Arnaldo
-> > >
-> > >
-> > >>
-> > >> $  uname --kernel-release
-> > >> 6.8.0-76060800daily20240311-generic
-> > >>
-> > >> $ ../../llvm-project/build/bin/clang -v
-> > >> clang version 15.0.6 (https://github.com/llvm/llvm-project.git
-> > >> 088f33605d8a61ff519c580a71b1dd57d16a03f8)
-> > >> Target: x86_64-unknown-linux-gnu
-> > >> Thread model: posix
-> > >> InstalledDir: /home/james/workspace/linux/linux/../../llvm-project/b=
-uild/bin
-> > >> Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/11
-> > >> Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/12
-> > >> Selected GCC installation: /usr/lib/gcc/x86_64-linux-gnu/12
-> > >> Candidate multilib: .;@m64
-> > >> Selected multilib: .;@m64
-> > >>
-> > >> $ git log
-> > >> commit 003265bb6f028d7bcd7cbd92d6ba2b4e26382796
-> > >> (perf-tools-next/perf-tools-next)
-> > >>
-> > >> $ make O=3D../build/local/ CLANG=3D../../llvm-project/build/bin/clan=
-g -C \
-> > >>    tools/perf
-> > >>
-> > >> $ perf trace -e write --max-events=3D1
-> > >>
-> > >>       0.000 ( 0.026 ms): gnome-shell/5454 write(fd: 5, buf:
-> > >>         0x7fffa102d9b0, count: 8)                           =3D 8
-> >
-> > Thanks for the effort! But this output seems to be unaugmented? I
-> > think you are testing the perf/perf-tools-next branch that's slightly
-> > older (perf mem: Fix the wrong reference in parse_record_events()
-> > 003265bb6f028d7bcd7cbd92d6ba2b4e26382796), and I think that doesn't
-> > have the new perf trace feature yet...
-> >
-> > That's why the perf trace output looks like:
-> >
-> > >> $ perf trace -e write --max-events=3D1
-> > >>
-> > >>       0.000 ( 0.026 ms): gnome-shell/5454 write(fd: 5, buf:
-> > >>         0x7fffa102d9b0, count: 8)
-> >
-> > With the new buffer augmentation it should look like this:
-> >
-> > perf $ ./perf trace -e write --max-events=3D1
-> >      0.000 ( 0.011 ms): gmain/1408 write(fd: 4, buf: \1\0\0\0\0\0\0\0,
-> > count: 8)                         =3D
-> >
-> > The new perf trace can be found on
-> > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
-t/
-> > perf-tools-next
-> >
-> > perf $ git log
-> > commit 1de5b5dcb8353f36581c963df2d359a5f151a0be (HEAD ->
-> > struct-aug-arnaldo-2, perf/perf-tools-next)
-> >
-> > Also, if you want to test the clang, you may want to checkout to the
-> > commit before the clang-16 guard (otherwise you can't test different
-> > clang version).
-> >
-> > perf $ git log --oneline
-> > 1de5b5dcb835 (HEAD -> struct-aug-arnaldo-2, perf/perf-tools-next) perf
-> > trace: Mark the 'head' arg in the set_robust_list syscall as coming
-> > from user space
-> > 0c1019e3463b perf trace: Mark the 'rseq' arg in the rseq syscall as
-> > coming from user space
-> > edf3ce0ed38e perf env: Find correct branch counter info on hybrid
-> > 9953807c9e01 perf evlist: Print hint for group
-> > eb9b9a6f5ab3 tools: Drop nonsensical -O6
-> > 89c0a55e550e perf pmu: To info add event_type_desc
-> > f08cc258431d perf evsel: Add accessor for tool_event
-> > 925320737ae2 perf pmus: Fake PMU clean up
-> > d3d5c1a00fcd perf list: Avoid potential out of bounds memory read
-> > 4ae354d73a8e perf help: Fix a typo ("bellow")
-> > 74298dd8acb8 perf ftrace: Detect whether ftrace is enabled on system
-> > 83420d5f5863 perf test shell probe_vfs_getname: Remove extraneous '=3D'
-> > from probe line number regex
-> > 9327f0ecad48 perf build: Require at least clang 16.0.6 to build BPF
-> > skeletons. **********[[[[[[[[[[[[!!!!(This is the clang
-> > guard)]]]]]]]]]]*****
-> > 4c1af9bf97eb perf trace: If a syscall arg is marked as 'const', assume
-> > it is coming _from_ userspace
-> > e37b315c17df perf parse-events: Remove duplicated include in parse-even=
-ts.c
-> >
-> > My machine is debian 12, and I cannot build perf trace with the new
-> > augmentation feature on clang-13, clang-14, and clang-15.
-> >
-> > perf $ uname -r
-> > 6.11.0-061100rc7-generic
-> >
-> > perf $ git log
-> > commit 4c1af9bf97eb56d069421c3233ce61608458d5c8 (HEAD)
-> >
-> > perf $ make CLANG=3D/bin/clang-13 && ./perf trace -e write --max-events=
-=3D1
-> > ...
-> > libbpf: prog 'sys_enter': BPF program load failed: Invalid argument
-> > libbpf: prog 'sys_enter': -- BEGIN PROG LOAD LOG --
-> > 0: R1=3Dctx() R10=3Dfp0
-> > ; int sys_enter(struct syscall_enter_args *args) @
-> > augmented_raw_syscalls.bpf.c:509
-> > 0: (bf) r7 =3D r1                       ; R1=3Dctx() R7_w=3Dctx()
-> >
-> >
-> > perf $ make CLANG=3D/bin/clang-14 && ./perf trace -e write --max-events=
-=3D1
-> > ...
-> > libbpf: prog 'sys_enter': BPF program load failed: Invalid argument
-> > libbpf: prog 'sys_enter': -- BEGIN PROG LOAD LOG --
-> > 0: R1=3Dctx() R10=3Dfp0
-> > ; int sys_enter(struct syscall_enter_args *args) @
-> > augmented_raw_syscalls.bpf.c:509
-> >
-> >
-> > perf $ make CLANG=3D/bin/clang-15 && ./perf trace -e write --max-events=
-=3D1
-> > libbpf: prog 'sys_enter': BPF program load failed: Invalid argument
-> > libbpf: prog 'sys_enter': -- BEGIN PROG LOAD LOG --
-> > 0: R1=3Dctx() R10=3Dfp0
-> >
-> >
-> > perf $ make CLANG=3D/bin/clang-16 && ./perf trace -e write --max-events=
-=3D1
-> >      0.000 ( 0.010 ms): gmain/1408 write(fd: 4, buf: \1\0\0\0\0\0\0\0,
-> > count: 8)                         =3D
-> >
-> >
-> > Anyway thank you so much, I'll try to reproduce it on Ubuntu, like you
-> > mentioned.
-> >
-> > Thanks,
-> > Howard
-> >
-> >
-> > >>
+Best regards,
+
+Hui-Ping Chen
+
+
 
