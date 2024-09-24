@@ -1,286 +1,248 @@
-Return-Path: <linux-kernel+bounces-336930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20FEF9842BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:55:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72AB89842BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:56:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B4B51C219AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:55:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 187F21F21ECA
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0056C15667D;
-	Tue, 24 Sep 2024 09:55:27 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D79A158DD4;
+	Tue, 24 Sep 2024 09:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Ll9qjpSH"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2081.outbound.protection.outlook.com [40.107.117.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F1481741
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:55:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727171726; cv=none; b=gvIlNZrrHAsNmp8jIMdz8Y/3n+LjN47bZjRs1WIlQDsiqg62kJ78XgwziW/6yGx0vG9DzblIjdcM0vEacqAUm51Y2JddqupVz9lMultKsjqISnf17TdASlmOOxtUOfjYts4AcgNeEGjrFZjcr366uSpf1bllmTop+V++eXMbmZc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727171726; c=relaxed/simple;
-	bh=yFvKR2sGhE0+kxDoQ+6dSgI1whRDI7/WaDxLGjGa9wA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=GQqDDAyy6D2VPKtrcdqFk/dbuh9MZWOcDdYisElBrK3YU5JBEQAd0qkifzKABAz+8lM57spIb1TQk7KkPWgf+0Y4DPAqhhrk+VC52lRUkpdGI2ugF+tNzERHu2InW6eEIRLO5mpNkeSEJeOnWATY5YFbz8avHxs9JYR8xcFDPb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82cd9c20b2bso730967439f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 02:55:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727171724; x=1727776524;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HHG6tr2pgwfTXV9tJzIhznVuSbyduy3fmuYBlcIRvW8=;
-        b=GmxL6aMWsV3EiF/i1TQtOMy9fjwoWPUifQW160mfIyK7KihA+/IixhuiFx5cYlWcY4
-         QfoiRPFUFfcBJyS+KEXh7n8cVL1gMT4AT9qTwRp2Y4DQoWR3gjr2yjgbC7SRXaj6jQ5t
-         vVk0V7r7oXGp3AMpf2+eKMxy4avHHEDiWAlZR29rZEfIFASpreN6miI445Sz7weSsgmG
-         oWtLM0xoxMOTQvwpiPtoKc+pfX0yxQeta3Kh4EYLxSidU4WJ99YYhP87Bhy3Q/G6nYMX
-         vPTVgFTrPygf2i0xSEB5jO/OP+1PsmGFzqKce7/u8dQHCQwC2KQDqIoW90ivwLJAXUDb
-         rpKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9W8Y/0qUbGMnxcDy8kanWfM8ESpaDpHEr2p1jPxlJWOManYDbtEANwfsmOGvty2e9n58Jz9Kj2oYN69A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZuMCoCW4ecvFFivBf9fqLmRJV0215P9uX5hbz3r+54xeh6tSw
-	DzvbRhHGOlVoq/o14Z03x35kQunChNLVAf60GiJfbJmxzse02Wpu3btn2AljbczzhH5EsR1x7e0
-	EqrYqQn8Aj9byo96vN4Z4BqhMEUBib2Bi8Ir8tF8tjbxrtKzW24u4b24=
-X-Google-Smtp-Source: AGHT+IHA7AuE5ACxSmnWHiZF8xgdFVhF6pLFnfdeALjzQVb94LCp3O8U0f4lVsinU+Gb7HRPyzln0+IU/eMXBCgSnZI+rraPVl1q
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15811487DC
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:56:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727171810; cv=fail; b=kWujAlTJpUohjPLL5ANCUGcDndsXV12I+5keqap1LlrfPWxKJZRxpcRLgr4g4+Tj0KixAR82b/sLvjtELN8PrP9pqRYWuiu+uP4u0p6dD7m2/Pxn8umNwsH4ywgC4v0IIdQLMDI0/TjEIESdm67xBKJzIvorEgxwiuTto4GFtco=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727171810; c=relaxed/simple;
+	bh=ksVwK1VH/Y2dU/M92UC0rcRvwJscR3c35Axwgs4OzoU=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=VYqOuJEDGc2sHFhHpWptzPhN7h9fqcyv2gzf5S2U3NWo3pRTipciUyMJKWeti1KZJjYEPIVFX1CLoerc9DLXVEzYKpf26ZKEHoTYp2SFP8kFKYEUMGNa9R2dV19nxUbNchEuO+aYWDeChWEy6JM0e6HDP+0piCZeQogq5vkUfdY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Ll9qjpSH; arc=fail smtp.client-ip=40.107.117.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wuiIg44iJb/YzonZLYFnZFqr70jmsRQZ+eBchwRVYRjUoJr22XSpC+BC4IxYmMva1IetnI9xnCqpXafloEj6rzja7o0NLZ5vZor8Cm4K8SLIRQrZCx6LPmdPPcUDtk5frg949nVRqQRtlqBDOnkn6l8a3cQxgG1B00kH4MfFIrOc9fKPUEo7/ZhStygRRkXBgQCPB/ClCLmGpKRx34QiLmmb3AqjJTwSQvcE+sttDV2h2RM1GYGNTbEdVXJ57o2iBA2Asqnj3gnjc9kI8pssrOHAj5NTBpWNhqEI3CEb/Ne0X7dxFd1oavxmTFkKdrtNTzwkXMZxSBbkH6RnN7szmQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rxVstS/tsmft28TiJt82p9fPxgOqFdFZeDzVMSpD8pQ=;
+ b=osyx0F5YNInox2bMwmNA7Q+nG6xuQowd4HFxfh/iNvXloxrbSbxBC3nfEjK/usQe8OcfjQhjHGU9aW6tR0fYlbZYNd3bNnTHi2YbCsA1SY9LUNoGyvwqunYo+PmJT3tZ8sDOS2V3I22t13K/yprCwcQd1nJvqUQRSmFpWedwJyddGEXQMKIfNy0upxbLFg9/PrctZnxdKzA6aBLGvU5LFJAJDm19Ykf74NsLPDkDmXmuIVAUCPf5y0nTVo6C+HRgg25BnpfYoqlsl+Q98EZEfYwV506rYKmIC715GG2jcaKRykTIsWQSkVKcZ4vTR04/IKhz0a3sFRImZFxQQwDkWQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rxVstS/tsmft28TiJt82p9fPxgOqFdFZeDzVMSpD8pQ=;
+ b=Ll9qjpSHD1G/eFSGZb3ScYDzNNfzrpm8ftJ3OOXUewjXQIA//a8Rg0MvsVKp8RqJx8u6PMO2oz0KSGacSyvWKnHq+aNv5c4FrHfiQdx0Cci3DXUZ5PnKhqb/Pb4MAP44NemLjwO+V9FxSWiBj1P8qHuLixXWkG5f38BUYeKXj2r3y7YsEWX5yTBQAz54Ag6b0gmRXko/6eHuRc5D0g75qfsc9JD8tjcCcU+vT48f2I/p7W1+iiGlWlEQxeNAvOGstYJW864wWNRgg9z7zlq5Ve52u5UFjomtEoQaXh0kSBUpvEMmmN/bZ632FRhuMbQobCC80wQS6FXwMVJp8sA07Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
+ by TYZPR06MB5482.apcprd06.prod.outlook.com (2603:1096:400:287::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.25; Tue, 24 Sep
+ 2024 09:56:45 +0000
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6%4]) with mapi id 15.20.7982.022; Tue, 24 Sep 2024
+ 09:56:45 +0000
+From: Liao Yuanhong <liaoyuanhong@vivo.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>,
+	Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Liao Yuanhong <liaoyuanhong@vivo.com>
+Subject: [PATCH] f2fs-tools:provide a more reasonable ovp rate for manually setting rsvd
+Date: Tue, 24 Sep 2024 17:56:36 +0800
+Message-Id: <20240924095636.19457-1-liaoyuanhong@vivo.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYAPR04CA0007.apcprd04.prod.outlook.com
+ (2603:1096:404:15::19) To SEZPR06MB5576.apcprd06.prod.outlook.com
+ (2603:1096:101:c9::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:17cc:b0:3a0:9238:d38 with SMTP id
- e9e14a558f8ab-3a0c8ca4dfbmr139817965ab.10.1727171723830; Tue, 24 Sep 2024
- 02:55:23 -0700 (PDT)
-Date: Tue, 24 Sep 2024 02:55:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f28c8b.050a0220.c23dd.0027.GAE@google.com>
-Subject: [syzbot] [gfs2?] possible deadlock in gfs2_trans_begin
-From: syzbot <syzbot+5baab0d4d584f7b68982@syzkaller.appspotmail.com>
-To: agruenba@redhat.com, gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|TYZPR06MB5482:EE_
+X-MS-Office365-Filtering-Correlation-Id: a6fdcd25-b9dc-4bc3-216a-08dcdc7f32d1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?jfMAblKeb3R4k+D7AwxTdwCajL6k7ak9L8cP2szBJiW3gLv8IRRsOukS9C3K?=
+ =?us-ascii?Q?oH0vpkQldtxPK4wUVAMHnnimPvtv6BM24C9x5yFXOWQAa0YCnmwkgDM+UAgy?=
+ =?us-ascii?Q?G4vSf5Pzw3Rr+INKNNhcS5UnA3h8ylkoJoadQ+akh+vfecnChipUTKNb2sP8?=
+ =?us-ascii?Q?SMcgkPD7zEdpEmyme5gHMDw4X3zkSbwwm55RhxCBwdmgFtu368igBGOiJBhW?=
+ =?us-ascii?Q?GJq6gUcd9pz4jYcC8XFx5g/IAUTJ3tZ0PeFKX3GG6OFnFvWWma6I9rTjJI/x?=
+ =?us-ascii?Q?cnGofrirT4gp5jWIzxDhy4dnoZqnSpEGJK3knsmsq5GGNKdCU6Ryc7gJH4ME?=
+ =?us-ascii?Q?kCGPbHdd0+RMfKbFLp4ay6s83AT0fCcBZ1aqXqaRPYg/sl6lYDVa/h1M3UiL?=
+ =?us-ascii?Q?Tds4MBrugRU5/1OwVSHrnuTRwFsXWWeB4GBo1Sp/lBnaMpOnWX/gKuTrl1BZ?=
+ =?us-ascii?Q?A9VulLAKEc4vkGoQRNqVvBg87PXwXOHTqTQ6I+qFu9t6XL1VTB9gH8qvlZtx?=
+ =?us-ascii?Q?YqafJ0e3GJfkE/lGo0HO5sd0e177vdHKWzU24d/lxasBzEQXnCieg6mh9g7A?=
+ =?us-ascii?Q?aESVfdZWBeKow/+hCT0J1sPyXDECDo/pTA9pP9IxZe20dbWYCdxLmiy7MKG4?=
+ =?us-ascii?Q?RNg67aAVtBvH1DR+2iMW5WMO4rLPeuviB74Y7yr7UxWM4SwJgUs1ogxL96oX?=
+ =?us-ascii?Q?NM53LO2uw9naB3kCBQ3LTzBMhDSTzuNKPmxfUlVdJNby7JDI0LKKnbxDdrn+?=
+ =?us-ascii?Q?GKXD2wEB1M6u75OQgO7wsB0nBm9OO0Wfir5UtuuAcILnrpnz+vW/zAKI9847?=
+ =?us-ascii?Q?o+6J6mzM33V384uRZQGYNRM9ktLb0hy161NM4Qq9SNjNbShdh6RYxeBfj3Qk?=
+ =?us-ascii?Q?Mpsxq7cjBb78bYMZaRGOY0YqnB+g93ZP7IQGBcvzJmKpMYjxWNaSqMIKMKG/?=
+ =?us-ascii?Q?3Et5Wo18zn9x+4e0odxxqRMelA/4OFS5cBJJfniGLTNwn+SAabIqenIS5bb5?=
+ =?us-ascii?Q?trM/XsHHgBOqXPYa/zViH9wRfSG006nDavd/cUlfhCl6eLGk3jUNpjaAcuTf?=
+ =?us-ascii?Q?cIYHsmTWcvolbqWPO/VKoqfMOo1UfVJ/wOdBVSzSwjXzK+WutYM3siT/vg+s?=
+ =?us-ascii?Q?R1GWG+9ZmOpq7g4Zns+vmKeZKbFBy5P96AM8hCiigVDqPC1xViLqyhM4xdeF?=
+ =?us-ascii?Q?9FvShQh5qQlvikPJOkbqs4+pWDF00D0HkVyYA5We3xwoB9Pb6drEz0rjrplI?=
+ =?us-ascii?Q?4gfLl7UsXShgshu5Gnd4qmIJYkKPQbdEkzYOmEZ7ujdckgBM3Qkj+hnR20DO?=
+ =?us-ascii?Q?LqpgXycb7L7YSTXDKmndf54vclr+LFz9NQ+ObUKYDzWaiw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?tWcFZ0Gg1RRk5oNDU4Qwc6iqw++84qqqaTkcDrYDjrjWJb4Mz1vKS5VYLtUD?=
+ =?us-ascii?Q?NeB7Oo2uB+mlDZzOoUs1Gy77VIqhCk7faZEaIdkB89Mrx3vl0zQSHN8MqrOc?=
+ =?us-ascii?Q?PPdtz2kY835KQhqVU5oRcURTILkxQ6IcWfaf13HmFmzNAbLkvFkRA+8sHooV?=
+ =?us-ascii?Q?kwx/4H/N/TYY61jal+QhInpRlCz7SZEZ/oxSgXehhJQn+cOH9/9o1ch5BM4x?=
+ =?us-ascii?Q?+zxUHb6I5CEvJYzIKKYdCCpLSjxkQXBqIAARudmZGyXXpqv4Ng7t6uuPAOuT?=
+ =?us-ascii?Q?Jnd7oMzGLsDPUSCHZWyx+oIRRsZ1ucazHpP17uw9cUGX6dH+PUXjHqe5Fqmb?=
+ =?us-ascii?Q?2ysXGM92s3FoNsnN8N9fO1e2UEXdfci9jdPVnXVCxhTJPo/ugEGnByGmewLZ?=
+ =?us-ascii?Q?hRKwmb6EYdyw/GjfdRRR2c08Uccb/ucYO0Xi9IEJPB66nxu9CmPH9+IjLCX6?=
+ =?us-ascii?Q?/Qx4/4lJyQf1+PI5cWRN2Ej3YaYgO/m6E42E2EhKEXxR92BbKDw9iUF2DR4I?=
+ =?us-ascii?Q?1tNMbcodhp5JpSiOC0Wk6Y0D+OYwDmUEpXBT55hxmhKBkUGicE7bN5vdOaGj?=
+ =?us-ascii?Q?eoAX7AdAjgZionA3qJGjCVjtqSZwUCbjKR1jRcSpmwBMCTZwF/GkyPYGrKmE?=
+ =?us-ascii?Q?2Y6Auqn+bywGbG9kXz/XxujHFNf6j8grrz8L3tYYiWyB6oG22Tpfvkk6odYY?=
+ =?us-ascii?Q?3YjS5jNpbbvJla9VxP7NQD9bicsyGm79K5bZ8v+VMAmeIBV/X2HGqbwjfiVd?=
+ =?us-ascii?Q?tdJ4UEcfdMWXXxbkHjYQ7DcK6Cve1A9nJ4XTbkd5PSuBXrOH2MIPVbIsCwSm?=
+ =?us-ascii?Q?XTDiWTn1z1NXgCIjgdSROQJalXaPBBkyEvq7kOXOb2h1+F/HTxV7D4WvpqlB?=
+ =?us-ascii?Q?/z9D2PhTvtiFP/oXouCxrsrcgomzyHjKPE1Xthf1pDVQNZAPHlzkjrD1FLTi?=
+ =?us-ascii?Q?OhDPQJjsorkzZtp/EDDd/a7KAX5n5GL7xjhulx9MSA6e2X4YM73vimUMPRuI?=
+ =?us-ascii?Q?+i6bR3JAQjiV5HahUhAZL6bOm6nTCFC+h0WDUlEyvoBkdlenC9/WunP5d/Bi?=
+ =?us-ascii?Q?N5kMZ+T4yXQedTF5wTrcLT5J4E2pz3wSpAECkKuHtVj89yXNfBIfRhd7z27l?=
+ =?us-ascii?Q?kwk7rSS4WohtuINo8mHVXDm/dAENKiD3jHrrXJBrfC7akP7pY/+UIQjzfQCh?=
+ =?us-ascii?Q?bdo7rOBtdU2LpMLW8wB/N/qIfHgSH4PMav/QqtNiecU4VvHTZVuEXEaMySt2?=
+ =?us-ascii?Q?aaYZArzmLYL3ZH7Zj8Of3D53HDpMMAwv93Ie1l8Hk2HwibmbAej1MMXhKGRi?=
+ =?us-ascii?Q?BtrZhEqIkUhCBEf113dL33FUQRgV0HQscyvK7eIUIeWbsbmseR0V5o1QvZvg?=
+ =?us-ascii?Q?xeWlWrQB4JiG1lzwbTGFCmDr6b9iMJwiaXq07K3YOUpBtyRat+FNHvP67BfA?=
+ =?us-ascii?Q?5+fVR1eyrDP9MCHsCeK+qcAVdIOJbcdjE6t9ZTFf2RYBqjmtjiZU0Jyzm/Yk?=
+ =?us-ascii?Q?YBl8MoDwDGl2/hBG5GtiBIXsHx+PC6EBAFojttgegrDInQCMKs/tiU/JHYmE?=
+ =?us-ascii?Q?ijRZdAvWnE9fjN72UFUfi/8ScBbAJmST/tQCdZMa?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a6fdcd25-b9dc-4bc3-216a-08dcdc7f32d1
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2024 09:56:45.2700
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WR4CU+V+W8CKaJbx3U56b0qEgwlaspIhKXIH+jy9EiyHsFgaQsFxZFVYbaqcx6XZxQ+YlkbqeJnQJIf0nvHjOw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB5482
 
-Hello,
+The f2fs-tools support manual configuration of rsvd and ovp rate. In cases
+where only a small rsvd is set, the automatically calculated ovp rate can
+be very large, resulting in the reserved space of the entire file system
+being almost the same as before, failing to achieve the goal of reducing
+space usage. Therefore, for cases where only rsvd is set and ovp rate is
+not, we will provide the same ovp rate as in normal situations, which
+exceeds overprovision_segment_buffer, and does not occupy additional space.
 
-syzbot found the following issue on:
-
-HEAD commit:    1868f9d0260e Merge tag 'for-linux-6.12-ofs1' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14b11e9f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d0b35925215243c6
-dashboard link: https://syzkaller.appspot.com/bug?extid=5baab0d4d584f7b68982
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-1868f9d0.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/79ecea60635a/vmlinux-1868f9d0.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2e88a1660d19/bzImage-1868f9d0.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5baab0d4d584f7b68982@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.11.0-syzkaller-07462-g1868f9d0260e #0 Not tainted
-------------------------------------------------------
-kswapd0/78 is trying to acquire lock:
-ffff88801fe9a610 (sb_internal#2){.+.+}-{0:0}, at: gfs2_trans_begin+0x71/0xe0 fs/gfs2/trans.c:118
-
-but task is already holding lock:
-ffffffff8ea369a0 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:6821 [inline]
-ffffffff8ea369a0 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbf1/0x3720 mm/vmscan.c:7203
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #3 (fs_reclaim){+.+.}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
-       __fs_reclaim_acquire mm/page_alloc.c:3825 [inline]
-       fs_reclaim_acquire+0x88/0x140 mm/page_alloc.c:3839
-       might_alloc include/linux/sched/mm.h:334 [inline]
-       prepare_alloc_pages+0x147/0x5d0 mm/page_alloc.c:4473
-       __alloc_pages_noprof+0x166/0x6c0 mm/page_alloc.c:4691
-       alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2263
-       alloc_pages_noprof mm/mempolicy.c:2343 [inline]
-       folio_alloc_noprof+0x128/0x180 mm/mempolicy.c:2350
-       filemap_alloc_folio_noprof+0xdf/0x500 mm/filemap.c:1010
-       __filemap_get_folio+0x446/0xbd0 mm/filemap.c:1952
-       filemap_grab_folio include/linux/pagemap.h:806 [inline]
-       gfs2_unstuff_dinode+0xfb/0x15e0 fs/gfs2/bmap.c:162
-       fallocate_chunk fs/gfs2/file.c:1190 [inline]
-       __gfs2_fallocate+0xf4e/0x1e00 fs/gfs2/file.c:1337
-       gfs2_fallocate+0x35c/0x490 fs/gfs2/file.c:1401
-       vfs_fallocate+0x569/0x6e0 fs/open.c:333
-       ksys_fallocate fs/open.c:356 [inline]
-       __do_sys_fallocate fs/open.c:364 [inline]
-       __se_sys_fallocate fs/open.c:362 [inline]
-       __x64_sys_fallocate+0xbd/0x110 fs/open.c:362
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #2 (&ip->i_rw_mutex){++++}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
-       down_write+0x99/0x220 kernel/locking/rwsem.c:1579
-       gfs2_unstuff_dinode+0xa0/0x15e0 fs/gfs2/bmap.c:161
-       fallocate_chunk fs/gfs2/file.c:1190 [inline]
-       __gfs2_fallocate+0xf4e/0x1e00 fs/gfs2/file.c:1337
-       gfs2_fallocate+0x35c/0x490 fs/gfs2/file.c:1401
-       vfs_fallocate+0x569/0x6e0 fs/open.c:333
-       ksys_fallocate fs/open.c:356 [inline]
-       __do_sys_fallocate fs/open.c:364 [inline]
-       __se_sys_fallocate fs/open.c:362 [inline]
-       __x64_sys_fallocate+0xbd/0x110 fs/open.c:362
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (&sdp->sd_log_flush_lock){++++}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
-       down_read+0xb1/0xa40 kernel/locking/rwsem.c:1526
-       __gfs2_trans_begin+0x55d/0x950 fs/gfs2/trans.c:87
-       gfs2_trans_begin+0x71/0xe0 fs/gfs2/trans.c:118
-       alloc_dinode+0x2ef/0x5e0 fs/gfs2/inode.c:418
-       gfs2_create_inode+0xf39/0x1b30 fs/gfs2/inode.c:739
-       gfs2_atomic_open+0xe5/0x230 fs/gfs2/inode.c:1315
-       atomic_open fs/namei.c:3455 [inline]
-       lookup_open fs/namei.c:3566 [inline]
-       open_last_lookups fs/namei.c:3694 [inline]
-       path_openat+0x101b/0x3590 fs/namei.c:3930
-       do_filp_open+0x235/0x490 fs/namei.c:3960
-       do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
-       do_sys_open fs/open.c:1430 [inline]
-       __do_sys_creat fs/open.c:1506 [inline]
-       __se_sys_creat fs/open.c:1500 [inline]
-       __x64_sys_creat+0x123/0x170 fs/open.c:1500
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (sb_internal#2){.+.+}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3158 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3277 [inline]
-       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3901
-       __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5199
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write include/linux/fs.h:1715 [inline]
-       sb_start_intwrite include/linux/fs.h:1898 [inline]
-       __gfs2_trans_begin+0x471/0x950 fs/gfs2/trans.c:76
-       gfs2_trans_begin+0x71/0xe0 fs/gfs2/trans.c:118
-       gfs2_dirty_inode+0x3e0/0x6b0 fs/gfs2/super.c:520
-       __mark_inode_dirty+0x2ee/0xe90 fs/fs-writeback.c:2493
-       mark_inode_dirty_sync include/linux/fs.h:2478 [inline]
-       iput+0x1f1/0xa50 fs/inode.c:1906
-       __dentry_kill+0x20d/0x630 fs/dcache.c:615
-       shrink_kill+0xa9/0x2c0 fs/dcache.c:1060
-       shrink_dentry_list+0x2c0/0x5b0 fs/dcache.c:1087
-       prune_dcache_sb+0x10f/0x180 fs/dcache.c:1168
-       super_cache_scan+0x34f/0x4b0 fs/super.c:221
-       do_shrink_slab+0x701/0x1160 mm/shrinker.c:435
-       shrink_slab+0x1093/0x14d0 mm/shrinker.c:662
-       shrink_one+0x43b/0x850 mm/vmscan.c:4795
-       shrink_many mm/vmscan.c:4856 [inline]
-       lru_gen_shrink_node mm/vmscan.c:4934 [inline]
-       shrink_node+0x3799/0x3de0 mm/vmscan.c:5914
-       kswapd_shrink_node mm/vmscan.c:6742 [inline]
-       balance_pgdat mm/vmscan.c:6934 [inline]
-       kswapd+0x1cbc/0x3720 mm/vmscan.c:7203
-       kthread+0x2f0/0x390 kernel/kthread.c:389
-       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-other info that might help us debug this:
-
-Chain exists of:
-  sb_internal#2 --> &ip->i_rw_mutex --> fs_reclaim
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(fs_reclaim);
-                               lock(&ip->i_rw_mutex);
-                               lock(fs_reclaim);
-  rlock(sb_internal#2);
-
- *** DEADLOCK ***
-
-2 locks held by kswapd0/78:
- #0: ffffffff8ea369a0 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:6821 [inline]
- #0: ffffffff8ea369a0 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbf1/0x3720 mm/vmscan.c:7203
- #1: ffff88801fe9a0e0 (&type->s_umount_key#47){.+.+}-{3:3}, at: super_trylock_shared fs/super.c:562 [inline]
- #1: ffff88801fe9a0e0 (&type->s_umount_key#47){.+.+}-{3:3}, at: super_cache_scan+0x94/0x4b0 fs/super.c:196
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 78 Comm: kswapd0 Not tainted 6.11.0-syzkaller-07462-g1868f9d0260e #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2203
- check_prev_add kernel/locking/lockdep.c:3158 [inline]
- check_prevs_add kernel/locking/lockdep.c:3277 [inline]
- validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3901
- __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5199
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
- percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
- __sb_start_write include/linux/fs.h:1715 [inline]
- sb_start_intwrite include/linux/fs.h:1898 [inline]
- __gfs2_trans_begin+0x471/0x950 fs/gfs2/trans.c:76
- gfs2_trans_begin+0x71/0xe0 fs/gfs2/trans.c:118
- gfs2_dirty_inode+0x3e0/0x6b0 fs/gfs2/super.c:520
- __mark_inode_dirty+0x2ee/0xe90 fs/fs-writeback.c:2493
- mark_inode_dirty_sync include/linux/fs.h:2478 [inline]
- iput+0x1f1/0xa50 fs/inode.c:1906
- __dentry_kill+0x20d/0x630 fs/dcache.c:615
- shrink_kill+0xa9/0x2c0 fs/dcache.c:1060
- shrink_dentry_list+0x2c0/0x5b0 fs/dcache.c:1087
- prune_dcache_sb+0x10f/0x180 fs/dcache.c:1168
- super_cache_scan+0x34f/0x4b0 fs/super.c:221
- do_shrink_slab+0x701/0x1160 mm/shrinker.c:435
- shrink_slab+0x1093/0x14d0 mm/shrinker.c:662
- shrink_one+0x43b/0x850 mm/vmscan.c:4795
- shrink_many mm/vmscan.c:4856 [inline]
- lru_gen_shrink_node mm/vmscan.c:4934 [inline]
- shrink_node+0x3799/0x3de0 mm/vmscan.c:5914
- kswapd_shrink_node mm/vmscan.c:6742 [inline]
- balance_pgdat mm/vmscan.c:6934 [inline]
- kswapd+0x1cbc/0x3720 mm/vmscan.c:7203
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
+Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ fsck/resize.c      |  2 +-
+ include/f2fs_fs.h  |  8 ++++----
+ mkfs/f2fs_format.c | 15 ++++++++++++---
+ 3 files changed, 17 insertions(+), 8 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/fsck/resize.c b/fsck/resize.c
+index 049ddd3..eca6555 100644
+--- a/fsck/resize.c
++++ b/fsck/resize.c
+@@ -147,7 +147,7 @@ safe_resize:
+ 
+ 	/* Let's determine the best reserved and overprovisioned space */
+ 	if (c.new_overprovision == 0)
+-		c.new_overprovision = get_best_overprovision(sb);
++		c.new_overprovision = get_best_overprovision(sb, true);
+ 
+ 	c.new_reserved_segments =
+ 		(100 / c.new_overprovision + 1 + NR_CURSEG_TYPE) *
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index 870a6e4..038002a 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -1760,13 +1760,13 @@ extern uint32_t f2fs_get_usable_segments(struct f2fs_super_block *sb);
+ #define ZONE_ALIGN(blks)	SIZE_ALIGN(blks, c.blks_per_seg * \
+ 					c.segs_per_zone)
+ 
+-static inline uint32_t get_reserved(struct f2fs_super_block *sb, double ovp)
++static inline uint32_t get_reserved(struct f2fs_super_block *sb, double ovp, bool conf_reserved)
+ {
+ 	uint32_t usable_main_segs = f2fs_get_usable_segments(sb);
+ 	uint32_t segs_per_sec = round_up(usable_main_segs, get_sb(section_count));
+ 	uint32_t reserved;
+ 
+-	if (c.conf_reserved_sections)
++	if (c.conf_reserved_sections && conf_reserved)
+ 		reserved = c.conf_reserved_sections * segs_per_sec;
+ 	else
+ 		reserved = (100 / ovp + 1 + NR_CURSEG_TYPE) * segs_per_sec;
+@@ -1781,7 +1781,7 @@ static inline uint32_t overprovision_segment_buffer(struct f2fs_super_block *sb)
+ 	return 6 * get_sb(segs_per_sec);
+ }
+ 
+-static inline double get_best_overprovision(struct f2fs_super_block *sb)
++static inline double get_best_overprovision(struct f2fs_super_block *sb, bool conf_reserved)
+ {
+ 	double ovp, candidate, end, diff, space;
+ 	double max_ovp = 0, max_space = 0;
+@@ -1799,7 +1799,7 @@ static inline double get_best_overprovision(struct f2fs_super_block *sb)
+ 	}
+ 
+ 	for (; candidate <= end; candidate += diff) {
+-		reserved = get_reserved(sb, candidate);
++		reserved = get_reserved(sb, candidate, conf_reserved);
+ 		ovp = (usable_main_segs - reserved) * candidate / 100;
+ 		if (ovp < 0)
+ 			continue;
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index e26a513..9c917c9 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -480,10 +480,19 @@ static int f2fs_prepare_super_block(void)
+ 	 * overprovision ratio and reserved seg count based on avg usable
+ 	 * segs_per_sec.
+ 	 */
+-	if (c.overprovision == 0)
+-		c.overprovision = get_best_overprovision(sb);
++	if (c.overprovision == 0) {
+ 
+-	c.reserved_segments = get_reserved(sb, c.overprovision);
++		/*
++		 * If rsvd is manually set but ovp rate is not,
++		 * provide the same ovp rate as in normal allocation.
++		 */
++		if (c.conf_reserved_sections)
++			c.overprovision = get_best_overprovision(sb, false);
++		else
++			c.overprovision = get_best_overprovision(sb, true);
++	}
++
++	c.reserved_segments = get_reserved(sb, c.overprovision, true);
+ 
+ 	if (c.feature & F2FS_FEATURE_RO) {
+ 		c.overprovision = 0;
+-- 
+2.25.1
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
