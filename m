@@ -1,152 +1,167 @@
-Return-Path: <linux-kernel+bounces-336659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6237983DA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:15:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EDCA983DA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:15:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56DDE282931
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:15:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0E3F1C22641
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B72145B1B;
-	Tue, 24 Sep 2024 07:15:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE535143725;
+	Tue, 24 Sep 2024 07:15:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GvYaS4II"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="jstRXiqJ"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525A813F42A
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F8A143723
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727162116; cv=none; b=fxNB1uO9PyVbuzkKJxvo+DR/b7f7SDEFqwq+tSSvoGcFaNUD8CFTGNTAPb6EY4I9X2tO1oWSfMKTLZLYBIjgiWls6OKmnViToADjGFJeLEpJkkKnoIdL9wb73s4IrEyuNe/k4cv2gSMhyDHuGhk4x0ibMUvBMpBZaef1rgAId5U=
+	t=1727162117; cv=none; b=A23aUGM1xT9JLuASc9QUO3CKqMvphknyHmxRsCA28wxOVqhuNO5iK9/XxiAj2zCnU6JAzHCnwAHh1jT+XCOp/ejJGhO7f/U2c4ahmebf5GRQMlfjmnKN96xr+R5nBNjf++m95EJjUS73t1SmQI1snx3OkEIC7HpDnaawdrZWr4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727162116; c=relaxed/simple;
-	bh=4N2kpRy1useREFPbJn9t5g5N8Pk7h3iVO0H8S/NCqeQ=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Cc:Date:
-	 Message-Id:References:To; b=Q3tfHlJUPvskxWb7cN7qig0L4W76y+REbhs99MPovMgU/lFctZcXJZWfVE8QiQhzTIwsr0fY9xov5rmS3l2C3uskMPXNQe7zZ6NWS5Zd3SkUkdvkCzZH0W41tflnNBcLLZVWkE9hudH0y0ozvcNUA6iFP/zDKvNVzYgc6jzTxNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GvYaS4II; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain; charset=utf-8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727162106;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zp82X1gEUMsH0cTyMFodXGf6d6eN6K2y3H6Zo3CY6V4=;
-	b=GvYaS4II90o9GYK0iIC3QYuCKDMNOPlhACCwBTXmCWQBvZjlyKPBPGlCFb0RWXghLLfHZW
-	IhHdZAjaAOJhJfaIc+yWwY5pxLcX1yMPuxnDbZQ5WHYWUhOj2e9vlBrFcoz7xCj+XQZOdE
-	O9XuikCg+BwKGuiqghMOTI64McSTg2E=
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1727162117; c=relaxed/simple;
+	bh=dFHsUcuwdml9tPy/a9bwGm7XZBafs188fpXgCrVxH9c=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=BHuMowWSglGhDyV3FcH6nDTm5rJ16GR5SDijEPi5XiMmNAmOquGBZxv9hADBUbwor2nLvPi7gu/WI3W5APxqiSD+3lRqktSSztPNiP1deHkl7wdIhqWR/q54IPk1ce1yxIPzUjv8ZiXsm47FuRXe0YFLKXkUhbQKVLlg7VQVEH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=jstRXiqJ; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c46680a71bso4347700a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 00:15:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1727162114; x=1727766914; darn=vger.kernel.org;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cajhmBCXQZKSrLAVt9O9VA7lCZwJirG7AeVDIGrh7f8=;
+        b=jstRXiqJ1wnBKtZn1QUTenz8LvoUrqmiizVkDpARYWWwyPAvnpkChkDys+rnhMZUjh
+         Pxo4FlpGVy/H5m+9FWSPmgliaeqXqq7AKthpJ6qfoDwd/bDcL5FkmqAoM5dHD8weg7c5
+         dwLre0B/J4Ad9ngM9Iw0LeOdJ7uIn/raUjPbjeAk4M4oJdPDC4y+S5WTrG0RtiwV7Xb3
+         2KJHHU7JCBBGKMPBoiqEKCBzGiBmtKb4EX9bwPfDwhyqevYHDny72PUFeqEs2ZBKObnW
+         TydhUntGkuGyamviNiVu2pi8DiKef/HSQdexhEMYwIKzvo/qOjp17jqbw0ekNWnF6VXm
+         2QVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727162114; x=1727766914;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=cajhmBCXQZKSrLAVt9O9VA7lCZwJirG7AeVDIGrh7f8=;
+        b=Z/FfJkUnu3S53WiSuQuyKDUrwiFXgGWPz6i2zMW3K5ZkKRUvR7k/xKqUrgw1/809Hp
+         OT+eeMcqwuqp6ak7G8yIdWn95z43N9X4FZJDNPBMZZvxuXEHJFLAA/4CBGwHly9gFRLk
+         E15SZpQaMMVzyQMudaD7RdFfUJ+8W3eZtuX9/xnaHSjhWuOStEfEkeL4krx26jEBvzcI
+         00/oRICyn5Kn+xQWKvoQABDtedrF+Fs8WCHlNsps1jYMGlo4QpzEFrYuoyrEAtokS8Fk
+         Y283/AcenbT0cttOtedA3ijZvy7pvQfDKd7WbRbahJB4XwFUwxSOdr3tvF8Xli29WD3+
+         VWYg==
+X-Forwarded-Encrypted: i=1; AJvYcCX6XO7EdnJz7noA4s04qANtGVWwRPdJnZyQD8E2Y24LbvQX/4V2z4MQa37LJYcmCGG9jtV8lEuVDBBm+ZY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsPSV3/2D3ettUGC3FNYSrpsnZ7yPE2aErM6RVO0F/mvOCZDtj
+	/sb1rZkZzZtAXLIr3jWNwTAIjC/Zym9qM6KOQvMTWwrNZVs8ajYf2AJPnJBHHaA=
+X-Google-Smtp-Source: AGHT+IGhzrOQvSNMdXNtOt+4i5dURer+xNowHaBG6b65R80TgOhirmqf/gL94bvXn9ou3bbm+OVdUQ==
+X-Received: by 2002:a05:6402:34d1:b0:5c3:c548:ab3a with SMTP id 4fb4d7f45d1cf-5c4646640bfmr11854683a12.2.1727162113821;
+        Tue, 24 Sep 2024 00:15:13 -0700 (PDT)
+Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c5cf4d77d9sm445370a12.94.2024.09.24.00.15.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Sep 2024 00:15:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v4 07/13] mm: khugepaged: collapse_pte_mapped_thp() use pte_offset_map_rw_nolock()
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <07d975c50fe09c246e087303b39998430b1a66bd.1727148662.git.zhengqi.arch@bytedance.com>
-Cc: david@redhat.com, hughd@google.com, willy@infradead.org, vbabka@kernel.org,
- akpm@linux-foundation.org, rppt@kernel.org, vishal.moola@gmail.com,
- peterx@redhat.com, ryan.roberts@arm.com,
- christophe.leroy2@cs-soprasteria.com, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org
-Date: Tue, 24 Sep 2024 15:14:25 +0800
-Message-Id: <79699B24-0D99-4051-91F3-5695D32D62AC@linux.dev>
-References: <07d975c50fe09c246e087303b39998430b1a66bd.1727148662.git.zhengqi.arch@bytedance.com>
-To: Qi Zheng <zhengqi.arch@bytedance.com>
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 24 Sep 2024 09:15:12 +0200
+Message-Id: <D4EBVCYB1A56.21TT1WFRGCYGN@fairphone.com>
+Subject: Re: [PATCH RFC 07/11] arm64: dts: qcom: sm6350: Affirm IDR0.CCTW on
+ apps_smmu
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Konrad Dybcio" <konradybcio@kernel.org>, "Bjorn Andersson"
+ <andersson@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ <cros-qcom-dts-watchers@chromium.org>
+Cc: "Marijn Suijten" <marijn.suijten@somainline.org>,
+ <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Konrad Dybcio" <quic_kdybcio@quicinc.com>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20240919-topic-apps_smmu_coherent-v1-0-5b3a8662403d@quicinc.com> <20240919-topic-apps_smmu_coherent-v1-7-5b3a8662403d@quicinc.com>
+In-Reply-To: <20240919-topic-apps_smmu_coherent-v1-7-5b3a8662403d@quicinc.com>
+
+On Thu Sep 19, 2024 at 12:57 AM CEST, Konrad Dybcio wrote:
+> From: Konrad Dybcio <quic_kdybcio@quicinc.com>
+>
+> On RPMh-based SoCs, the APPS SMMU advertizes support for cache-coherent
+> pagetable walk via the IDR0 register. This however is not respected by
+> the arm-smmu driver unless dma-coherent is set.
+>
+> Mark the node as dma-coherent to ensure this (and other) implementations
+> take this coherency into account.
+
+Hi Konrad!
+
+Similar to [0] everything seems to look fine on SM7225 Fairphone 4.
+
+[    0.190433] arm-smmu 15000000.iommu: probing hardware configuration...
+[    0.190459] arm-smmu 15000000.iommu: SMMUv2 with:
+[    0.190499] arm-smmu 15000000.iommu:         stage 1 translation
+[    0.190515] arm-smmu 15000000.iommu:         coherent table walk
+[    0.190531] arm-smmu 15000000.iommu:         stream matching with 71 reg=
+ister groups
+[    0.190560] arm-smmu 15000000.iommu:         63 context banks (0 stage-2=
+ only)
+[    0.191097] arm-smmu 15000000.iommu:         Supported page sizes: 0x613=
+11000
+[    0.191114] arm-smmu 15000000.iommu:         Stage-1: 36-bit VA -> 36-bi=
+t IPA
+[    0.191299] arm-smmu 15000000.iommu:         preserved 0 boot mappings
+
+The Adreno SMMU still has non-coherent table walk.
+
+[    1.141215] arm-smmu 3d40000.iommu: probing hardware configuration...
+[    1.141243] arm-smmu 3d40000.iommu: SMMUv2 with:
+[    1.141270] arm-smmu 3d40000.iommu:  stage 1 translation
+[    1.141279] arm-smmu 3d40000.iommu:  address translation ops
+[    1.141288] arm-smmu 3d40000.iommu:  non-coherent table walk
+[    1.141296] arm-smmu 3d40000.iommu:  (IDR0.CTTW overridden by FW configu=
+ration)
+[    1.141307] arm-smmu 3d40000.iommu:  stream matching with 5 register gro=
+ups
+[    1.141326] arm-smmu 3d40000.iommu:  5 context banks (0 stage-2 only)
+[    1.141347] arm-smmu 3d40000.iommu:  Supported page sizes: 0x63315000
+[    1.141356] arm-smmu 3d40000.iommu:  Stage-1: 48-bit VA -> 36-bit IPA
+[    1.141568] arm-smmu 3d40000.iommu:  preserved 0 boot mappings
 
 
+Tested-by: Luca Weiss <luca.weiss@fairphone.com> # sm7225-fairphone-fp4
 
-> On Sep 24, 2024, at 14:11, Qi Zheng <zhengqi.arch@bytedance.com> wrote:
-> =EF=BB=BFIn collapse_pte_mapped_thp(), we may modify the pte and pmd entry=
- after
-> acquring the ptl, so convert it to using pte_offset_map_rw_nolock(). At
-> this time, the pte_same() check is not performed after the PTL held. So we=
+[0] https://lore.kernel.org/linux-arm-msm/CAD=3DFV=3DXrbe1NO+trk1SJ30gHm5jL=
+Fjd0bAeG3H46gD+vNFZa1w@mail.gmail.com/
 
-> should get pgt_pmd and do pmd_same() check after the ptl held.
->=20
-> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+Regards
+Luca
+
+>
+> Signed-off-by: Konrad Dybcio <quic_kdybcio@quicinc.com>
 > ---
-> mm/khugepaged.c | 14 +++++++++++---
-> 1 file changed, 11 insertions(+), 3 deletions(-)
->=20
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index 6498721d4783a..8ab79c13d077f 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -1605,7 +1605,7 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, un=
-signed long addr,
->    if (userfaultfd_armed(vma) && !(vma->vm_flags & VM_SHARED))
->        pml =3D pmd_lock(mm, pmd);
->=20
-> -    start_pte =3D pte_offset_map_nolock(mm, pmd, haddr, &ptl);
-> +    start_pte =3D pte_offset_map_rw_nolock(mm, pmd, haddr, &pgt_pmd, &ptl=
-);
->    if (!start_pte)        /* mmap_lock + page lock should prevent this */
->        goto abort;
->    if (!pml)
-> @@ -1613,6 +1613,9 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, un=
-signed long addr,
->    else if (ptl !=3D pml)
->        spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
->=20
-> +    if (unlikely(!pmd_same(pgt_pmd, pmdp_get_lockless(pmd))))
-> +        goto abort;
-> +
->    /* step 2: clear page table and adjust rmap */
->    for (i =3D 0, addr =3D haddr, pte =3D start_pte;
->         i < HPAGE_PMD_NR; i++, addr +=3D PAGE_SIZE, pte++) {
-> @@ -1645,7 +1648,6 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, un=
-signed long addr,
->        nr_ptes++;
->    }
->=20
-> -    pte_unmap(start_pte);
->    if (!pml)
->        spin_unlock(ptl);
->=20
-> @@ -1658,13 +1660,19 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, u=
-nsigned long addr,
->    /* step 4: remove empty page table */
->    if (!pml) {
->        pml =3D pmd_lock(mm, pmd);
-> -        if (ptl !=3D pml)
-> +        if (ptl !=3D pml) {
->            spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
-> +            if (unlikely(!pmd_same(pgt_pmd, pmdp_get_lockless(pmd)))) {
-> +                spin_unlock(pml);
-> +                goto abort;
+>  arch/arm64/boot/dts/qcom/sm6350.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/sm6350.dtsi b/arch/arm64/boot/dts/q=
+com/sm6350.dtsi
+> index 7986ddb30f6e8ce6ceeb0f90772b0243aed6bffe..54cfe99006613f8ccc5bf6d83=
+bcb4bf8e72f3cfe 100644
+> --- a/arch/arm64/boot/dts/qcom/sm6350.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm6350.dtsi
+> @@ -2685,6 +2685,7 @@ apps_smmu: iommu@15000000 {
+>  				     <GIC_SPI 411 IRQ_TYPE_LEVEL_HIGH>,
+>  				     <GIC_SPI 412 IRQ_TYPE_LEVEL_HIGH>,
+>  				     <GIC_SPI 413 IRQ_TYPE_LEVEL_HIGH>;
+> +			dma-coherent;
+>  		};
+> =20
+>  		intc: interrupt-controller@17a00000 {
 
-Drop the reference of folio and the mm counter twice at the label of abort a=
-nd the step 3.
-
-> +            }
-> +        }
->    }
->    pgt_pmd =3D pmdp_collapse_flush(vma, haddr, pmd);
->    pmdp_get_lockless_sync();
->    if (ptl !=3D pml)
->        spin_unlock(ptl);
-> +    pte_unmap(start_pte);
->    spin_unlock(pml);
-
-Why not?
-
-pte_unmap_unlock(start_pte, ptl);
-if (pml !=3D ptl)
-        spin_unlock(pml);
-
->=20
->    mmu_notifier_invalidate_range_end(&range);
-> --
-> 2.20.1
 
