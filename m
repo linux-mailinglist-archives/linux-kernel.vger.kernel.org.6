@@ -1,277 +1,107 @@
-Return-Path: <linux-kernel+bounces-336925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFFD39842B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:54:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F303C9842B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:53:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88108B27784
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:52:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D9541C228BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83CC17BEA2;
-	Tue, 24 Sep 2024 09:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72EF415DBBA;
+	Tue, 24 Sep 2024 09:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UIsLSSX+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qeZCj5vA"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBBE5176FA5;
-	Tue, 24 Sep 2024 09:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2C981AB6
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727171490; cv=none; b=fIN4S3o6mO0VSOYuDOITfjSpzSjOALbQ+rXYyRSlFgGRgIggnZzVqH8yMthEZPc4l/b0q1RbyguPtuVUa1XAH8wlxVqg8Pf0iwbKsRgVEDRMtQNhQMiODgMrgfGL52EhIcQlbaw0CVslSheSqGq5zj/RhDx1AL0XSrLN7DH/oas=
+	t=1727171601; cv=none; b=ULUd3bH+1stejw1CfPcTX7DO06ri02CpAjMaxjkCZuaHdsQNmImY7fTlM3vLGtYY4SwB6OlF+XQZEriVHu94hSzVxcqtEj+ToLoo1Xt+mE0ZyZV/0fD5WYxH0ZtARmQb+y046WB8ODMtWLDjDwLXDCnOtGqAUuMQEPGBwZF9LqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727171490; c=relaxed/simple;
-	bh=igw/EcSOODy/LuZ3kSdwJEjQbI05MZlb8fOw+iDBQ10=;
+	s=arc-20240116; t=1727171601; c=relaxed/simple;
+	bh=gpDa5jV7LLHIboyhuFDseiP0jRBBnTJL6fUDy3U7O84=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jclP2K6jJ4ESsJfjb9xC00vNjWQnAoicjTiDr4FlUWV+RB1K7JnpvU16lYCw2uBqaSmeuRptf3MIXhGp45RcIEDCmBPSQVo4Y4tR23Czhy1nF8WdG9Z7rOZl+3JpLiELOJl2YCO5TxiOB+vvV5cIevW24NiOR5M0ULcmyA+diME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UIsLSSX+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E90C6C4CECD;
-	Tue, 24 Sep 2024 09:51:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727171490;
-	bh=igw/EcSOODy/LuZ3kSdwJEjQbI05MZlb8fOw+iDBQ10=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UIsLSSX+nXBqbSWZR962dQohzcly2VG9rNrMaeeBD2aHgWfJ66UPifMCiKz3cXv/F
-	 Uepiftc12uPR2DlUR50fgAdiwQp1NZaj5KkLBpNCQXFA7/HVn7Lc+I6pK4Z4ag3hM1
-	 7cqMYUqg7ZdbJKdP1CvEs85+4TwolzV0x0CPNjYu7NCknJNcaVZq75KAMmNg6w6yZ2
-	 TuhlMiYVUMKQM5VSIdWT5QaNIul4V+9TVJP7hokDBVbenX0bVlvglzZqaYkBo9Pa1A
-	 6K1uPMtSfAqJlnoe5lCFelxPt+QWxeGjine4xmrkc2KxdLRh+G2rwmhp//6o2cOBs7
-	 Tty1bEVDpaTLA==
-Date: Tue, 24 Sep 2024 11:51:27 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Sandor Yu <sandor.yu@nxp.com>
-Cc: "dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>, 
-	"andrzej.hajda@intel.com" <andrzej.hajda@intel.com>, "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "jonas@kwiboo.se" <jonas@kwiboo.se>, 
-	"jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>, "airlied@gmail.com" <airlied@gmail.com>, 
-	"daniel@ffwll.ch" <daniel@ffwll.ch>, "robh+dt@kernel.org" <robh+dt@kernel.org>, 
-	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, 
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>, 
-	"vkoul@kernel.org" <vkoul@kernel.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, 
-	dl-linux-imx <linux-imx@nxp.com>, Oliver Brown <oliver.brown@nxp.com>, 
-	"alexander.stein@ew.tq-group.com" <alexander.stein@ew.tq-group.com>, "sam@ravnborg.org" <sam@ravnborg.org>
-Subject: Re: [EXT] Re: [PATCH v16 4/8] drm: bridge: Cadence: Add MHDP8501
- DP/HDMI driver
-Message-ID: <20240924-miniature-jade-gibbon-c9a226@houat>
-References: <cover.1719903904.git.Sandor.yu@nxp.com>
- <359914108b879e995d4a39de32a33310009f0fab.1719903904.git.Sandor.yu@nxp.com>
- <20240702-quartz-salamander-of-culture-eec264@houat>
- <PAXPR04MB94480AB0490BBF00D2BA17BBF4932@PAXPR04MB9448.eurprd04.prod.outlook.com>
- <20240903-gay-capable-hound-3cbef2@houat>
- <PAXPR04MB9448EF507CB5C18A43239A80F49E2@PAXPR04MB9448.eurprd04.prod.outlook.com>
- <20240912-zippy-mongoose-of-domination-2ebc1d@houat>
- <PAXPR04MB94484D86A71A7527ADD42EA4F4652@PAXPR04MB9448.eurprd04.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=U2sqYTrmruUSKrzlqDiRoMTB5w86oXwTqFEGJIr5oeUJ6kMUYka667C9RWBI+1cZxCXWGPdisxFE561TZsE0CMNV1LGCg1Ri1n0dnyuTHK9Yd/LNOjftTSbHjV3OxH8kZqht/CgFGdiLKzHzvtyVtXqntDeCSc2SXMuqMPXIC+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qeZCj5vA; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-537a2a2c74fso1623216e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 02:53:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727171598; x=1727776398; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1B1OazfrIYcqDgljo11L7/3HINNwsrbuT9cs/Fij7g4=;
+        b=qeZCj5vAQdf64bvrMuQ7CaDVhk9mK8IQswL/+0AuVTTt8EHEtFt5eEub3RHN3j6mXB
+         8pno29XkqGafZOx/pbwXjlE/O9MQOCJVCZKFSMU2pRkWw1Ng0FdEO3/AC/OkgQi7/W12
+         qrf20KXcXnT5Dk7tIHrBEE4l7PSIvunIRg34KcabPxkIvSdlQNyS5UmdjxrXymPGpHm4
+         n7MKuFWb6y8KfzYmWVkXXXNHaJ2ujOvirV7kwV+L/vgzB8HlUNDyy1HHFlLMjEYgoXmp
+         e67ZWQZwahKhep5IpRVmFk0wHA5la+lFs9lhbYmMUDR5FtFLM+M9X3d4ceQW0mr6KCiP
+         wT0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727171598; x=1727776398;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1B1OazfrIYcqDgljo11L7/3HINNwsrbuT9cs/Fij7g4=;
+        b=YusJe1xT6wc6mrZeDt4mc9skThIAlkJPLCQygb4DFgkaT7Lwyl4S4vctve/I1KoLXh
+         kWLubqcS9jvWXLMymzeAyqXrNOn9XIQoDYL2BNOJj6rMELHWafwIgRvoa000Nc1f8xtP
+         TXg93pnGw+K2je2zeoI+uC76ZstVyI+J45u8wNkoMa9dCQdc3C2axvG4WJDk96W8CpCj
+         3/jptL8r/edNFdzvNtpwWc8+l0yeaanmT3ACjHgQWvmtTnIJZR4v7OGXcCNPMZ75jPdY
+         ybrR0L4xsAMJZlnAMGOgeoVO+q7XVnphHR9frzoMXfg59OZAc6bnD62jTFL2qSVASFVU
+         KevA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/3ZJECVhouyaF4bee9xJZg5zWBmuoitEnRZURbgRpi4xFswGf7d4p665N7UCPXJtXjfC+m9dpseIZun4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSYn2Kwisg+E8L9gS8nvEstA90HKt9uvD44R8YwgPf9gdOTDdN
+	1Af7l4kOkIFj/YzpcJrfOSjUfgf+hrciMSZT9JbjkrT+BTwpbeYub9PH7ofrU1s=
+X-Google-Smtp-Source: AGHT+IHNdJNovm4z94ZHcR5kxQYpSRslhVpX6h8NUrYQWYFmX6wptEro/DaYvlFqeizDV/AiP8vjQw==
+X-Received: by 2002:a05:6512:696:b0:52e:fef4:2cab with SMTP id 2adb3069b0e04-537a6512cd0mr866098e87.2.1727171598188;
+        Tue, 24 Sep 2024 02:53:18 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-537a86490dcsm155318e87.239.2024.09.24.02.53.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2024 02:53:16 -0700 (PDT)
+Date: Tue, 24 Sep 2024 12:53:15 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Esben Haabendal <esben@geanix.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 3/3] drm/panel: ili9881c: Add JMO LCM-JM800WX support
+Message-ID: <bplvcvwvtwzxa4drmohvb7qac7j5cyucpww5paru4e4drlexoe@hzvabm5tgxcd>
+References: <20240814-drm-panel-ili9881c-lcm-jm800wx-v1-0-22a5e58599be@geanix.com>
+ <20240814-drm-panel-ili9881c-lcm-jm800wx-v1-3-22a5e58599be@geanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="j43latycugo6x7f7"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <PAXPR04MB94484D86A71A7527ADD42EA4F4652@PAXPR04MB9448.eurprd04.prod.outlook.com>
+In-Reply-To: <20240814-drm-panel-ili9881c-lcm-jm800wx-v1-3-22a5e58599be@geanix.com>
 
+On Wed, Aug 14, 2024 at 03:10:37PM GMT, Esben Haabendal wrote:
+> Add support for the LCM-JM800WX panel from JMO Tech.
+> 
+> The init commands are based on information from vendor.
+> 
+> Signed-off-by: Esben Haabendal <esben@geanix.com>
+> ---
+>  drivers/gpu/drm/panel/panel-ilitek-ili9881c.c | 228 ++++++++++++++++++++++++++
+>  1 file changed, 228 insertions(+)
+> 
 
---j43latycugo6x7f7
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-On Fri, Sep 13, 2024 at 09:46:12AM GMT, Sandor Yu wrote:
-> > Subject: Re: [EXT] Re: [PATCH v16 4/8] drm: bridge: Cadence: Add MHDP85=
-01
-> > DP/HDMI driver
-> >=20
-> > On Fri, Sep 06, 2024 at 02:50:08AM GMT, Sandor Yu wrote:
-> > > > On Tue, Sep 03, 2024 at 06:07:25AM GMT, Sandor Yu wrote:
-> > > > > > -----Original Message-----
-> > > > > > From: dri-devel <dri-devel-bounces@lists.freedesktop.org> On
-> > > > > > Behalf Of Maxime Ripard
-> > > > > > Sent: 2024=E5=B9=B47=E6=9C=882=E6=97=A5 21:25
-> > > > > > To: Sandor Yu <sandor.yu@nxp.com>
-> > > > > > Cc: dmitry.baryshkov@linaro.org; andrzej.hajda@intel.com;
-> > > > > > neil.armstrong@linaro.org; Laurent Pinchart
-> > > > > > <laurent.pinchart@ideasonboard.com>; jonas@kwiboo.se;
-> > > > > > jernej.skrabec@gmail.com; airlied@gmail.com; daniel@ffwll.ch;
-> > > > > > robh+dt@kernel.org; krzysztof.kozlowski+dt@linaro.org;
-> > > > > > shawnguo@kernel.org; s.hauer@pengutronix.de;
-> > festevam@gmail.com;
-> > > > > > vkoul@kernel.org; dri-devel@lists.freedesktop.org;
-> > > > > > devicetree@vger.kernel.org;
-> > > > > > linux-arm-kernel@lists.infradead.org;
-> > > > > > linux-kernel@vger.kernel.org; linux-phy@lists.infradead.org;
-> > > > > > kernel@pengutronix.de; dl-linux-imx <linux-imx@nxp.com>; Oliver
-> > > > > > Brown <oliver.brown@nxp.com>; alexander.stein@ew.tq-group.com;
-> > > > > > sam@ravnborg.org
-> > > > > > Subject: [EXT] Re: [PATCH v16 4/8] drm: bridge: Cadence: Add
-> > > > > > MHDP8501 DP/HDMI driver
-> > > > > >
-> > > > > > Hi,
-> > > > > >
-> > > > > > There's still the scrambler issue we discussed on v15, but I
-> > > > > > have some more comments.
-> > > > > >
-> > > > > > On Tue, Jul 02, 2024 at 08:22:36PM GMT, Sandor Yu wrote:
-> > > > > > > +enum drm_connector_status cdns_mhdp8501_detect(struct
-> > > > > > > +cdns_mhdp8501_device *mhdp) {
-> > > > > > > +	u8 hpd =3D 0xf;
-> > > > > > > +
-> > > > > > > +	hpd =3D cdns_mhdp8501_read_hpd(mhdp);
-> > > > > > > +	if (hpd =3D=3D 1)
-> > > > > > > +		return connector_status_connected;
-> > > > > > > +	else if (hpd =3D=3D 0)
-> > > > > > > +		return connector_status_disconnected;
-> > > > > > > +
-> > > > > > > +	dev_warn(mhdp->dev, "Unknown cable status, hdp=3D%u\n",
-> > hpd);
-> > > > > > > +	return connector_status_unknown; }
-> > > > > > > +
-> > > > > > > +static void hotplug_work_func(struct work_struct *work) {
-> > > > > > > +	struct cdns_mhdp8501_device *mhdp =3D container_of(work,
-> > > > > > > +						     struct cdns_mhdp8501_device,
-> > > > > > > +						     hotplug_work.work);
-> > > > > > > +	enum drm_connector_status status =3D
-> > > > cdns_mhdp8501_detect(mhdp);
-> > > > > > > +
-> > > > > > > +	drm_bridge_hpd_notify(&mhdp->bridge, status);
-> > > > > > > +
-> > > > > > > +	if (status =3D=3D connector_status_connected) {
-> > > > > > > +		/* Cable connected  */
-> > > > > > > +		DRM_INFO("HDMI/DP Cable Plug In\n");
-> > > > > > > +		enable_irq(mhdp->irq[IRQ_OUT]);
-> > > > > > > +	} else if (status =3D=3D connector_status_disconnected) {
-> > > > > > > +		/* Cable Disconnected  */
-> > > > > > > +		DRM_INFO("HDMI/DP Cable Plug Out\n");
-> > > > > > > +		enable_irq(mhdp->irq[IRQ_IN]);
-> > > > > > > +	}
-> > > > > > > +}
-> > > > > >
-> > > > > > You shouldn't play with the interrupt being enabled here:
-> > > > > > hotplug interrupts should always enabled.
-> > > > > >
-> > > > > > If you can't for some reason, the reason should be documented in
-> > > > > > your
-> > > > driver.
-> > > > >
-> > > > > iMX8MQ have two HPD interrupters, one for plugout and the other
-> > > > > for plugin, because they could not be masked, so we have to enable
-> > > > > one and
-> > > > disable the other.
-> > > > > I will add more comments here.
-> > > >
-> > > > Right, but why do you need to enable and disable them? Do you get
-> > > > spurious interrupts?
-> > >
-> > > They don't have status registers and cannot be masked. If they are not
-> > > disabled, they will continuously generate interrupts. Therefore, I ha=
-ve to
-> > disable one and enable the other.
-> >=20
-> > Sorry, I still don't get it. How can it be useful to detect hotplug int=
-errupts if it
-> > constantly sends spurious interrupts when it's enabled?
->=20
-> Yes, this interrupt is different from a normal one; it's likely a design =
-flaw.=20
-> For instance, the plugin interrupt is continuously generated as long as t=
-he cable is plugged in,
-> only stopping when the cable is unplugged.
->
-> That's why two interrupts are used to detect cable plugout and plugin
-> separately. If interrupts aren't used, the only option is polling.
-
-Urgh. Ok. At least, you should document that in your code then.
-
-> > > > > > > +	/* Mailbox protect for HDMI PHY access */
-> > > > > > > +	mutex_lock(&mhdp->mbox_mutex);
-> > > > > > > +	ret =3D phy_init(mhdp->phy);
-> > > > > > > +	mutex_unlock(&mhdp->mbox_mutex);
-> > > > > > > +	if (ret) {
-> > > > > > > +		dev_err(dev, "Failed to initialize PHY: %d\n", ret);
-> > > > > > > +		goto clk_disable;
-> > > > > > > +	}
-> > > > > > > +
-> > > > > > > +	/* Mailbox protect for HDMI PHY access */
-> > > > > > > +	mutex_lock(&mhdp->mbox_mutex);
-> > > > > > > +	ret =3D phy_set_mode(mhdp->phy, phy_mode);
-> > > > > > > +	mutex_unlock(&mhdp->mbox_mutex);
-> > > > > > > +	if (ret) {
-> > > > > > > +		dev_err(dev, "Failed to configure PHY: %d\n", ret);
-> > > > > > > +		goto clk_disable;
-> > > > > > > +	}
-> > > > > >
-> > > > > > Why do you need a shared mutex between the phy and HDMI
-> > controller?
-> > > > >
-> > > > > Both PHY and HDMI controller could access to the HDMI firmware by
-> > > > > mailbox, So add mutex to avoid race condition.
-> > > >
-> > > > That should be handled at either the phy or mailbox level, not in
-> > > > your hdmi driver.
-> > >
-> > > In both HDMI driver and PHY driver, every mailbox access had protected
-> > > by its owns mutex. However, this mutex can only protect each mailbox
-> > > access within their respective drivers, and it cannot provide
-> > > protection for access between the HDMI and PHY drivers.
-> > >
-> > > The PHY driver only provides two API functions, and these functions
-> > > are only called in the HDMI driver. Therefore, when accessing these
-> > > functions, we use a mutex to protect them. This ensures that mailbox
-> > > access is protected across different PHY and HDMI drivers.
-> >=20
-> > It's really about abstraction. You're using a publicly defined API, and=
- change
-> > the semantics for your driver only, and that's not ok.
-> >=20
-> > Why can't the mailbox driver itself serialize the accesses from any use=
-r, HDMI
-> > and PHY drivers included?
->
-> In the current code implementation, cdns-mhdp-helper.c isn't a
-> standalone driver but rather a library. It provides fundamental
-> mailbox access functions and basic register read/write operations that
-> rely on the mailbox. These functions are highly reusable across
-> MHDP8501 and MHDP8546 and can be leveraged by future MHDP versions.
->=20
-> However, most MHDP firmware interactions involve a sequence of mailbox
-> accesses, including sending commands and receiving firmware responses.
-> These commands constitute a significant portion of all firmware
-> interactions, encompassing operations like EDID reading and DP link
-> training. Unfortunately, these commands cannot be reused between
-> MHDP8501 and MHDP8546.
->=20
-> Creating a dedicated mailbox driver with its own mutex would
-> effectively address race conditions. However, this would necessitate
-> relocating all mailbox-related functions to this driver. Including
-> these non-reusable functions would defeat the purpose of code reuse.
->=20
-> To strike a balance between code reusability and race condition
-> mitigation, adding mutexes to PHY access functions seems like a
-> reasonable solution.
-
-No, it's really not. You need to address this in some other way. Why
-can't you put the mutex in cdns-mhdp-helper.c calls?
-
-Maxime
-
---j43latycugo6x7f7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZvKLmgAKCRAnX84Zoj2+
-dtgDAYC97zkBZ6FfRAm8/ipveqsjGvff9RhcY4+DzDuxWXPeqHpKVh9OqdCydnSX
-r6One7QBgOTBHfSvZQZ3vk/xJyl+2i8RitQVgCIesR+Yvhb1d0OuKPFpsy0YFZrP
-afxoHqnoXg==
-=QCHa
------END PGP SIGNATURE-----
-
---j43latycugo6x7f7--
+-- 
+With best wishes
+Dmitry
 
