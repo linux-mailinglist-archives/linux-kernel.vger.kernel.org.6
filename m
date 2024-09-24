@@ -1,226 +1,90 @@
-Return-Path: <linux-kernel+bounces-337740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0235984E34
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:56:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9FEE984E39
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:57:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA3D41C23464
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:56:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8621D1F242FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A27183CB5;
-	Tue, 24 Sep 2024 22:55:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8F3183CB1;
+	Tue, 24 Sep 2024 22:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JZTGJLWz"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mp6EwC+0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0679918308A;
-	Tue, 24 Sep 2024 22:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7973818308A;
+	Tue, 24 Sep 2024 22:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727218551; cv=none; b=F6se4msT/g2UhvaK/U3nE0ltU4Px5v6hHbpSG/m+cBik7xG6DABVxP19IAlO28nq2QysJNPvcKTLAPWygFHaUXoTFqX0SYBt7ACcPRKVeaGlFvcy22CyGr9GATSJMVwFGkJQy/IIhut3Na+Q8deBQuVzMIsfl12pKvV1EGeN7GE=
+	t=1727218635; cv=none; b=C+aMgpCF9xv4eL7OeVz24829vplT36VSHBHkCHhjCWTP3qKBsdhr4yDc9r8L0v9FK5eAReQEDLoXZl5Avn0Yh/ZU2cWrsteycYayYM14GOM6ygfFZeni2MAOOv6xfUinl7Of3EUkh1Qdew7WNNCGpE3L51q+mMsVWumWkHwCgHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727218551; c=relaxed/simple;
-	bh=NN1DjooGHxfFNdIG/PuNIR/rBiHxbIazdx8EsEzgGrQ=;
+	s=arc-20240116; t=1727218635; c=relaxed/simple;
+	bh=7TOMyGnNRfS07fDKrf9aztT10/hMmF0NI01sY3HZEsQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WZEok8yJNORBnoDdB1M6iP8snC+KoxjMc+VFSGnMXeEdyyvLAjXW+2RuDQqPotDvv5B+2LMo5sR4mw6EapGMNlzAsy9s09UDHGoF9ibwpcMo6AlyuVoSFXNRRbVbyzc8iYgHO0mcXN0nyPDzIsvm/KInnNUL08WiAk4m4LGIcmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JZTGJLWz; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E51567E2;
-	Wed, 25 Sep 2024 00:54:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1727218461;
-	bh=NN1DjooGHxfFNdIG/PuNIR/rBiHxbIazdx8EsEzgGrQ=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=I3YcGUAfYG7BneQPY3Xk/ALxXoNFK780tLJAJ1Yp2DetsLzynptkR/wlWwdYt3O0Ek+yGNHiLMcV1D3lkCyxKSbPtQcTmoSgx6NgirvYp9GfvcODeA9ilG7I56SO1p7XKvYp3PP265pwZlKj7udd8psmpnW2pQjUtrAEzO9H5jI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mp6EwC+0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 332CEC4CEC4;
+	Tue, 24 Sep 2024 22:57:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727218635;
+	bh=7TOMyGnNRfS07fDKrf9aztT10/hMmF0NI01sY3HZEsQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JZTGJLWzgxiRXrRktII0RhCJrNAPotrT3wwLyQSu2xDNif4zo7fq6VKmAmUA0/b3q
-	 rKutEcFNxAEHRbSRGtI32EDs7gJRlM6vaqYV5UaSplonGl3OAV4hbm/qsBVF40c9dm
-	 6aR69fL7wpqtl4+poxSDhz+YZ64dErlJHKZjf+5s=
-Date: Wed, 25 Sep 2024 01:55:15 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v2 08/11] media: i2c: ov5645: Switch to
- {enable,disable}_streams
-Message-ID: <20240924225515.GQ7165@pendragon.ideasonboard.com>
-References: <20240910170610.226189-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240910170610.226189-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	b=mp6EwC+08tvRjigKaxyJ0SgygzO2X+itRiyuGjzwyDO3asFTYZXXsTplobETHh3tv
+	 GX9H0Q94sHa0EQR6zMcsS69k3CPXnMn7fsaR80H33xTdnyVw744cqvOqJZvy1bt3sE
+	 UvA3gPXxNjzwVzDVxujk62sq9gIXVJcGtZ+On8TSvGOjt0dHf6zAsuoJ0dYYpOSm3E
+	 D/ojir7uhxPXDvqslcjeF4NkgEY/IyeGvUkcnWJ+A2auex1H/itCpG+ob3OOonMvPB
+	 gi2sryBW6y7IYilQrnCWwxkdPt0s0Ep98KmA+noVQ8SOPF5tXu5lox0ouXHmUKawZ6
+	 JYfoz4Orlj1EA==
+Date: Tue, 24 Sep 2024 17:57:14 -0500
+From: Rob Herring <robh@kernel.org>
+To: Marek Vasut <marex@denx.de>
+Cc: Lukasz Majewski <lukma@denx.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Stefan Agner <stefan@agner.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: lcdif: Add support for specifying display
+ with timings
+Message-ID: <20240924225714.GA441530-robh@kernel.org>
+References: <20240923135744.2813712-1-lukma@denx.de>
+ <0e72b574-14ec-4369-b899-30d5c615d238@denx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240910170610.226189-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <0e72b574-14ec-4369-b899-30d5c615d238@denx.de>
 
-Hi Prabhakar,
-
-Thank you for the patch.
-
-On Tue, Sep 10, 2024 at 06:06:07PM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Mon, Sep 23, 2024 at 07:53:57PM +0200, Marek Vasut wrote:
+> On 9/23/24 3:57 PM, Lukasz Majewski wrote:
+> > Up till now the fsl,lcdif.yaml was requiring the "port" property as a
+> > must have to specify the display interface on iMX devices.
+> > 
+> > However, it shall also be possible to specify the display only with
+> > passing its timing parameters (h* and v* ones) via "display" property:
+> > (as in
+> > Documentation/devicetree/bindings/display/panel/display-timings.yaml).
 > 
-> Switch from s_stream to enable_streams and disable_streams callbacks.
-
-Here too you should explain why. The "why" is the most important part of
-any commit message.
-
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
-> ---
->  drivers/media/i2c/ov5645.c | 90 +++++++++++++++++++-------------------
->  1 file changed, 46 insertions(+), 44 deletions(-)
+> Timings should go into panel node, not into scanout engine node.
 > 
-> diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
-> index 9497ec737cb7..dc93514608ee 100644
-> --- a/drivers/media/i2c/ov5645.c
-> +++ b/drivers/media/i2c/ov5645.c
-> @@ -923,71 +923,71 @@ static int ov5645_get_selection(struct v4l2_subdev *sd,
->  	return 0;
->  }
->  
-> -static int ov5645_s_stream(struct v4l2_subdev *subdev, int enable)
-> +static int ov5645_enable_streams(struct v4l2_subdev *sd,
-> +				 struct v4l2_subdev_state *state, u32 pad,
-> +				 u64 streams_mask)
->  {
-> -	struct ov5645 *ov5645 = to_ov5645(subdev);
-> -	struct v4l2_subdev_state *state;
-> +	struct ov5645 *ov5645 = to_ov5645(sd);
->  	int ret;
->  
-> -	state = v4l2_subdev_lock_and_get_active_state(&ov5645->sd);
-> -
-> -	if (enable) {
-> -		ret = pm_runtime_resume_and_get(ov5645->dev);
-> -		if (ret < 0) {
-> -			v4l2_subdev_unlock_state(state);
-> -			return ret;
-> -		}
-> +	ret = pm_runtime_resume_and_get(ov5645->dev);
-> +	if (ret < 0)
-> +		return ret;
->  
-> -		ret = ov5645_set_register_array(ov5645,
-> +	ret = ov5645_set_register_array(ov5645,
->  					ov5645->current_mode->data,
->  					ov5645->current_mode->data_size);
-> -		if (ret < 0) {
-> -			dev_err(ov5645->dev, "could not set mode %dx%d\n",
-> -				ov5645->current_mode->width,
-> -				ov5645->current_mode->height);
-> -			goto err_rpm_put;
-> -		}
-> -		ret = __v4l2_ctrl_handler_setup(&ov5645->ctrls);
-> -		if (ret < 0) {
-> -			dev_err(ov5645->dev, "could not sync v4l2 controls\n");
-> -			goto err_rpm_put;
-> -		}
-> -
-> -		ret = ov5645_write_reg(ov5645, OV5645_IO_MIPI_CTRL00, 0x45);
-> -		if (ret < 0)
-> -			goto err_rpm_put;
-> -
-> -		ret = ov5645_write_reg(ov5645, OV5645_SYSTEM_CTRL0,
-> -				       OV5645_SYSTEM_CTRL0_START);
-> -		if (ret < 0)
-> -			goto err_rpm_put;
-> -	} else {
-> -		ret = ov5645_write_reg(ov5645, OV5645_IO_MIPI_CTRL00, 0x40);
-> -		if (ret < 0)
-> -			goto stream_off_rpm_put;
-> +	if (ret < 0) {
-> +		dev_err(ov5645->dev, "could not set mode %dx%d\n",
-> +			ov5645->current_mode->width,
-> +			ov5645->current_mode->height);
-> +		goto err_rpm_put;
-> +	}
-> +	ret = __v4l2_ctrl_handler_setup(&ov5645->ctrls);
-> +	if (ret < 0) {
-> +		dev_err(ov5645->dev, "could not sync v4l2 controls\n");
-> +		goto err_rpm_put;
-> +	}
->  
-> -		ret = ov5645_write_reg(ov5645, OV5645_SYSTEM_CTRL0,
-> -				       OV5645_SYSTEM_CTRL0_STOP);
-> +	ret = ov5645_write_reg(ov5645, OV5645_IO_MIPI_CTRL00, 0x45);
-> +	if (ret < 0)
-> +		goto err_rpm_put;
->  
-> -		goto stream_off_rpm_put;
-> -	}
-> +	ret = ov5645_write_reg(ov5645, OV5645_SYSTEM_CTRL0,
-> +			       OV5645_SYSTEM_CTRL0_START);
-> +	if (ret < 0)
-> +		goto err_rpm_put;
->  
-> -	v4l2_subdev_unlock_state(state);
->  	return 0;
->  
->  err_rpm_put:
->  	pm_runtime_put_sync(ov5645->dev);
->  	return ret;
-> +}
-> +
-> +static int ov5645_disable_streams(struct v4l2_subdev *sd,
-> +				  struct v4l2_subdev_state *state, u32 pad,
-> +				  u64 streams_mask)
-> +{
-> +	struct ov5645 *ov5645 = to_ov5645(sd);
-> +	int ret;
-> +
-> +	ret = ov5645_write_reg(ov5645, OV5645_IO_MIPI_CTRL00, 0x40);
-> +	if (ret < 0)
-> +		goto rpm_put;
-> +
-> +	ret = ov5645_write_reg(ov5645, OV5645_SYSTEM_CTRL0,
-> +			       OV5645_SYSTEM_CTRL0_STOP);
->  
-> -stream_off_rpm_put:
-> +rpm_put:
->  	pm_runtime_mark_last_busy(ov5645->dev);
->  	pm_runtime_put_autosuspend(ov5645->dev);
-> -	v4l2_subdev_unlock_state(state);
-> +
->  	return ret;
->  }
->  
->  static const struct v4l2_subdev_video_ops ov5645_video_ops = {
-> -	.s_stream = ov5645_s_stream,
-> +	.s_stream = v4l2_subdev_s_stream_helper,
->  };
->  
->  static const struct v4l2_subdev_pad_ops ov5645_subdev_pad_ops = {
-> @@ -996,6 +996,8 @@ static const struct v4l2_subdev_pad_ops ov5645_subdev_pad_ops = {
->  	.get_fmt = v4l2_subdev_get_fmt,
->  	.set_fmt = ov5645_set_format,
->  	.get_selection = ov5645_get_selection,
-> +	.enable_streams = ov5645_enable_streams,
-> +	.disable_streams = ov5645_disable_streams,
->  };
->  
->  static const struct v4l2_subdev_core_ops ov5645_core_ops = {
+> See e.g. panel-timings in arch/arm64/boot/dts/freescale/imx8mm-phg.dts , in
+> your case the compatible might be "panel-dpi" .
 
--- 
-Regards,
+I agree, but if this is already in use, we should allow it. We can mark 
+it deprecated though.
 
-Laurent Pinchart
+Rob
 
