@@ -1,110 +1,99 @@
-Return-Path: <linux-kernel+bounces-337189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 201199846A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:21:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A833A9846A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:21:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D69A7284B01
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:21:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D0121F21450
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4ED01A7261;
-	Tue, 24 Sep 2024 13:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA0871A76DC;
+	Tue, 24 Sep 2024 13:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cNQclWBy"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lJTRJiK2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4681A706F
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 13:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5492E1A7063;
+	Tue, 24 Sep 2024 13:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727184068; cv=none; b=Vt/33Huk5rbXZlCUZW4iWlTj/srapgQKB8Rjac9Z76AanuWwtbtvhFdFoBAjh3SeoXK93b0NLUSvPTu/m2ewqeGEcziEb/L460s3Zm0akKqPW9vA4kOIo5NLplmZsj1ydPmTEJK8fXAMQ+9uY5U+HrARd50gtsGtLtuiQnTLBgI=
+	t=1727184074; cv=none; b=LO9Q9acqaMKRk7vqnclgUFDdGjR4lzVqQjsQicG3pxPOgeub9/oNixn39KehwkcloqoBsIe5vC9WEMe3IVnYKM7i9AuS5aR4jTu5xH6XD9HOyPsU8Q6naA8LKdKUwvLiTOT32LdVUPheuuxWjP1K99KV4t2BP00Cqa4KsHT8WkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727184068; c=relaxed/simple;
-	bh=fpzyu68RGtD1Helde8RRnH9eX5OdhQx0n7YcUkSo4dI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d2y2toe9GzVoEjQs5MDcyIUdwQjHo0LHgz79FLgFcraZiIL82CSDrsqfxh631Y+L/5RvJMDJM2z73mbYbNlVjcsSo700083+h1/K51d81Fvwt9zR4GDHdp3cKT2LOMbecLsJOMqypNBXrYdkQcIGhmEpT8VENJ92iqDZmoRdS0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cNQclWBy; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53659867cbdso7940221e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 06:21:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727184064; x=1727788864; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HGiHdBTqLysw0OjzmqeOkmIi8HPVvmwCEfeNLRDsfSY=;
-        b=cNQclWByUVuqjr4nMuWmbYvYlfkISl7kF9HxJ+4uz1Y5gg84si3yLObpseOd7tWM5h
-         G2+2PwMPfHKLOcJI5QVA5HiZp7w0e3sBqhY/UvDmwttJ7PTaD818MPQ+2CBmIRgZZFMR
-         DVssh64nMbdN8mizc8ZhJ3twWbyaxKlJy7Z3hxQmPstWN9Hlw21iOnp4A9OiVOrXwEjP
-         bCj89PpG4NK3atufSJ9XQBBvQhVKtIfTz0HSI7znFFJHnvoVPZPPcTIj7Kb3QK9HX0B7
-         IetFDaeTL4wAQ26//t5IodD9o88plJ9D0rgy9WFYS/wD9xEiyczOMyAg4FzOCGtMyomF
-         xprg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727184064; x=1727788864;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HGiHdBTqLysw0OjzmqeOkmIi8HPVvmwCEfeNLRDsfSY=;
-        b=Xn6kZ902+2ZnmeywmTrOSQeT7n9rvqs5PvkK8W14xfOQYOCSWfjm9It4AsU5QWGn4E
-         64M5ro/f/QO5OonEI7hr/WlvJ3cnAIDeRLDLKoopgnHtPYXd3jk4njPD1DZ9rPQLC4wC
-         Bom4BTHN5WYLyFs0DkAkQVw99AURsVTMO3Un+71FndYybY6uJshzM71jJ22Xg9Vyg2d0
-         H7kaulReHt9m8UVAcHtWsaQVuH7TT2xuTPUgcj+91wFk2RzT/WNuiuoGC0mznD98hE2Y
-         dWMPt8nPSiXmlgTXwNKzl8xLfBcNeAAhPw4zv0j9lehL4O8ZQIjwMyFUWIXHruw5Rro0
-         faow==
-X-Forwarded-Encrypted: i=1; AJvYcCUugml1mMLOPsbr2hAgaBeWwhl1MjGpSO/FFJbv7m8QGrGISlsYfARMnc784hE5LHKW8u9AZ4XG2DGIlqk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeDQDQ5V9B9iXa9Lm3woA/fu/cSBVANv8PSsXNLwedVR3UPoXe
-	imiKRmM5jUFAaYdyAr06rEet8A3CDOaxjNM0sAkRSgjFv+ZRZcmStWA0EnDY
-X-Google-Smtp-Source: AGHT+IES6841pfRu7wJ1fE8tkWFVUP5yKx2Qsc59u66WH3eAZk+D5jBuwd6qXnDnBFP0nUtZ0Rx0xw==
-X-Received: by 2002:a05:6512:1196:b0:52e:933f:f1fa with SMTP id 2adb3069b0e04-536ac3464a8mr9490004e87.61.1727184064078;
-        Tue, 24 Sep 2024 06:21:04 -0700 (PDT)
-Received: from alessandro-pc.station (net-37-119-39-155.cust.vodafonedsl.it. [37.119.39.155])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93930f7b90sm83978866b.175.2024.09.24.06.21.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 06:21:03 -0700 (PDT)
-From: Alessandro Zanni <alessandro.zanni87@gmail.com>
-To: nm@ti.com,
-	ssantosh@kernel.org
-Cc: Alessandro Zanni <alessandro.zanni87@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	skhan@linuxfoundation.org,
-	anupnewsmail@gmail.com
-Subject: [PATCH] soc: ti: knav_qmss_queue: remove useless statement
-Date: Tue, 24 Sep 2024 15:20:23 +0200
-Message-ID: <20240924132025.22046-1-alessandro.zanni87@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1727184074; c=relaxed/simple;
+	bh=HIgbNKlAg3/uEnoKTvuGqqCOsEeXLEcwJ/goJOQTiV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ItJCTmIxHMhBBkYrQESQ81q4jnDPD1kLh/TSDqMYW29rmVJw4ZGIpxcSdxLk1YzHtcuIHPXO28gLY7M8D7BsHRu075Ujri/vomuQXmTMYDpO6lfzoyFCOah7j1FHc/GcZLLzzzoOLsaR/cXbenaQ7xvVvyekTxB6K0/4868lUm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lJTRJiK2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14B7CC4CEC7;
+	Tue, 24 Sep 2024 13:21:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727184073;
+	bh=HIgbNKlAg3/uEnoKTvuGqqCOsEeXLEcwJ/goJOQTiV0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lJTRJiK2ZdxEvoSqCqNjX6jRxuHsw6j1Vw9IAMfPcW7kNFaDiDW8LSzWuvHZtgNT3
+	 MfozzTqUKhqAwsLCZ3OQGcJQIkagtvUpyt204pK+D9sJER2Gmd8T3/fnZD683dYj18
+	 +zomZtEGWEQIt+ISWK3R1bsg8ngYkoUWtuDIjhbCng5NXsWZMhuEPOK/TSoP7iNwZ3
+	 zvV0uGc+e14CwzBAOoKAcilfY0EG4+vfx6BGdt/pho5cwrYzJByattdbDiLl2WbZM9
+	 wah9enhMSnmjbAOQa42LV8nngIS1DFICPwE2k1RSeZJ9OFMVhXjGfUX4d0w0TO9bbT
+	 qEA/SUZ5WvRvg==
+Date: Tue, 24 Sep 2024 14:21:09 +0100
+From: Simon Horman <horms@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: ethernet: Make OA_TC6 config symbol invisible
+Message-ID: <20240924132109.GK4029621@kernel.org>
+References: <9ebc58517c35a3afc4b19c3844da74984c561268.1727173168.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9ebc58517c35a3afc4b19c3844da74984c561268.1727173168.git.geert+renesas@glider.be>
 
-Remove the statement "continue" at the end of the loop where it
-becomes useless.
+On Tue, Sep 24, 2024 at 12:20:32PM +0200, Geert Uytterhoeven wrote:
+> There is no need to ask the user about enabling OPEN Alliance TC6
+> 10BASE-T1x MAC-PHY support, as all drivers that use this library select
+> the OA_TC6 symbol.  Hence make the symbol invisible, unless when
+> compile-testing.
+> 
+> Fixes: aa58bec064ab1622 ("net: ethernet: oa_tc6: implement register write operation")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/net/ethernet/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
----
- drivers/soc/ti/knav_qmss_queue.c | 1 -
- 1 file changed, 1 deletion(-)
+Hi Geert,
 
-diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
-index 6c98738e548a..1cc54905b398 100644
---- a/drivers/soc/ti/knav_qmss_queue.c
-+++ b/drivers/soc/ti/knav_qmss_queue.c
-@@ -723,7 +723,6 @@ static void kdesc_empty_pool(struct knav_pool *pool)
- 		if (!desc) {
- 			dev_dbg(pool->kdev->dev,
- 				"couldn't unmap desc, continuing\n");
--			continue;
- 		}
- 	}
- 	WARN_ON(i != pool->num_desc);
+I'm not really convinced this is a fix rather than an enhancement for
+net-next.  So my suggestion would be to repost, targeted at net-next, and
+without a Fixes tag.
+
+	Subject: [PATCH net-next] ...
+
+In that scenario, if you wish to refer to the commit that introduced this
+problem, then you can use the following in the commit message instead
+of the Fixes tag. Unlike the fixes tag, I believe it can be line-wrapped.
+
+commit aa58bec064a ("net: ethernet: oa_tc6: implement register write operation")
+
+As it happens, net-next is currently closed for the v6.12 merge window. And
+non-RFC patches for net-next should be posted after it re-opens. Which is
+scheduled for after the release of v6.12-rc1.
+
+Sorry for all the process nits :^)
+
 -- 
-2.43.0
-
+pw-bot: defer
 
