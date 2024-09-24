@@ -1,162 +1,190 @@
-Return-Path: <linux-kernel+bounces-336937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1E879842CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:59:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0BC79842D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:00:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EC0B28888C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:59:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DD911F22C5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4891158DD4;
-	Tue, 24 Sep 2024 09:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vBG4oiO+"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C6D161302;
+	Tue, 24 Sep 2024 10:00:29 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5731F1487DC
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37D7158DD9
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 10:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727171969; cv=none; b=CzV5ZhCBMX2kIHofMsrHSzhyMV8Sq5CHAFr1y3XLhLf9swH9XyJvhTS78Y672XZefRbse73h95yc8GY9to0WtRVS/CwzfurDZ4RQJnTLdbUO34F2O4y9Ljum5TR6jvgaZ0YLjIQwaEqgtx4RojSXPUZ2inYCcOL7JgHO7oeI3XM=
+	t=1727172029; cv=none; b=CBAc53cyTA1kDHjMzQY577i6feTmnxt65/ybxOQwPMi37xuY7RWgOiXc3svNe/nYbRw4dyhJYtM+8XFV2QQRZHHSB9oWyDbcbim29V+AHK/QqzgteIzyeDGJ4Uvv44nkpkSCYoYg8300+lrNndvh4pd1J4AO2W2yV34NT17HYCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727171969; c=relaxed/simple;
-	bh=PA/C6FmzUtv/YQcdxurT27+fTDeXiW1YI2RPuTYD7o0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i+AeGN8eCsKzQID4Kk0GvwZJ4Z7LjgEpgnPajbW9Qm0E03m9XU58K6q5z2TbGXD+t9spMR2cX+5N8+qT+cOxnzBiFtsAv+27Vd4UoQxwNHNgCeYEEzLcRDLrXHcaEr5ZPy1VmQ8wYxtpPJti1B2sWiBGfL7li81jFZXD/w9FYJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vBG4oiO+; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f74e468baeso57205981fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 02:59:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727171965; x=1727776765; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cue4W9TL93NwHbM6aNpd7v3/ibP9k+0QyUerPzS+jBk=;
-        b=vBG4oiO+svXRlXoVMOnl2iEGGSapajL6t2Mnq87glfy8qdev7RyLWy5Vbz+8G7JJxy
-         M05CSQPE/8+eoC5InJuGLBbZoTvm9xkZe7BbFtL0wSQ+omq6iEw8PzD/JYPM0HFAgrix
-         m/vpw8M6hOy66lW5tlIJfMsBFeAxsXAcvmkSgCP9qcMky9hAaZcv+wwdb7zfOr0aNJsw
-         NziEq69C3esW/LtbO6e5kXhWOCxuK+HVkhoEDE+me5UAWwqzslmthyndRhBqiVp1G36F
-         k7yR3bVywdMvfBtPTnc+FDfubj3Jn2vI37fPY2eHhIPrRkqD3Bmyw0pGOobxd06SaxIA
-         ctUA==
+	s=arc-20240116; t=1727172029; c=relaxed/simple;
+	bh=MW7uAMBxOxYvLczeiayMBeBe4tJ6ZSEA1YN1+9gK99E=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=s0jwRdqSZcD7nAhuHmiKz1OnFUUsD1svQn54B/nwNVkZN8qb0SPax4JXxGG1SrQcmIbAsy4ydlXvxbyEvrO3QTxsejmvWSSHUB7pBja+gTBWRaAoX+p543ZyI9vHA0ehZb3nmomYeyzcI3Aha6dLNQsEO6bohodNiqeobLjfqXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a1957c7cf3so28627855ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 03:00:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727171965; x=1727776765;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cue4W9TL93NwHbM6aNpd7v3/ibP9k+0QyUerPzS+jBk=;
-        b=R5iKAVHpC3c/3xKuL+E5OsCgN7iSsDmKjJbFJ+B02dPHvbg0vblwivoQf+z5Irkvxy
-         DHpufht5QobJk/S3u0ueSia/dVJ86rBg94k6yKS7BJRyi4mYTvGz+4ejULTcVisPdjhy
-         wkSM+QgTaUJm22zhNDTBn40grUPAdnG2L+ohq+LeXVcIGGFXUtcqpX7NImaxJpjW74gB
-         dZCqbpQaEdmVH6nbu5Gn/+ysU2fmg67BW5+ZHC5DTNXeC+/7FDGW5VvL6AumD94igAn6
-         JIZrzGu2pc8FO08mSAsUkThEwCeHzRDt9pz099utVEwF6RyYmlexORM56QZqThIk9cNO
-         iXdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWCnaOn8PCgpi2f81FMr/5Be87BJzvU8dGBYH77fxpL9hWHU9FOy4BLUsMo8b+9PsVHWAm8amjH6AvjHYw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBulLNrWcKrzglkXJkYGu3wbnIlyFMIMFuevdgOe9R5y29RrAM
-	Rd7QCVK6QMqFJsce6LhqKjeNHQH+C5abVawHSxinYENUE/cPQBSTWvoplf5nlK4=
-X-Google-Smtp-Source: AGHT+IGxXBr3ISMNgRfS1/EiFBTfON23QMpcYn/pHSiLqk0vW/L3gbH5rzPUZk7NUx4bYMaTwS6m/g==
-X-Received: by 2002:a05:651c:2206:b0:2f7:5914:c22e with SMTP id 38308e7fff4ca-2f7cb2cfe6bmr79444711fa.6.1727171965324;
-        Tue, 24 Sep 2024 02:59:25 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f8d289b533sm1714211fa.106.2024.09.24.02.59.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 02:59:23 -0700 (PDT)
-Date: Tue, 24 Sep 2024 12:59:21 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Hermes.Wu@ite.com.tw
-Cc: treapking@chromium.org, Kenneth.Hung@ite.com.tw, 
-	andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
-	simona@ffwll.ch, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] drm/bridge: it6505: Add MCCS support
-Message-ID: <lxh4anqlrrfqs5iljf5iughavosvqt6dzcff6flcoruimxgeq2@d5ig536voy5q>
-References: <20240923094826.13471-1-Hermes.Wu@ite.com.tw>
- <20240923094826.13471-4-Hermes.Wu@ite.com.tw>
- <x4eixnu3kta6u2xqf6mn7ons2pupr7oe5fzjur2pfhgppmozoq@lgmk7zwqhcqm>
- <217c3d82f89040e7b29465ea71080cd2@ite.com.tw>
+        d=1e100.net; s=20230601; t=1727172027; x=1727776827;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=a01in42YpZacjQNq2gwoU1Xzi0dMyhrMcy5fwZ6YU+0=;
+        b=scJrblikCXXyZIEuoKZFpcD2YAdR/SiyrWNE0uWtYA6HJU9KueM4milMZyPZWZOvln
+         r+RrODP8R8XjuPl0XhCmIxMuqx+o2vkFsItQ6hnq3+8+p+m8n53Ed61DR4i7g3JtO/VM
+         Vcy7rOAJMmG998cQR422XlchPddpL0ourCPCW1HipPKMItC2uDpx02g2djYTPN9FJakb
+         7JuyfHE40mhgmedGF85+Yw0RkoVBBkpMcKoKsywRDWN6sw34zHGOwqKX4Q9xCDIoj9/1
+         uA09biPjR6RIwG0k6/mVJQ4uRTnQvlrsG8onpBaYOTkbknPbfa7hkJ7vrbFZYQKRfd2P
+         FggQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUTgyhysdLyZGSaWVVqdxlagOWHEvKaFXWSlQnMWRyiIVjipcs0xumdJ3g4KTtGXeDrqX/CGecKlxzuHno=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5R+SrcVeswbuC773s2b7WBPfffzdmUC2Kw+oxsXOvoFjf0Y9n
+	0y5rf3+wmPXR+vNN8LO0o7FYQJzE/sGY+oaBr31OWgUcLDa1RaxqWKNHLOctxe5QrD6at5KpXlI
+	dfYH7sHVNM7DsIKNB63UpcLmlKfCoJm/uy89SZ1e91GWQk9+zUGDsVQo=
+X-Google-Smtp-Source: AGHT+IFEyPIqDOU0BgXapvNJ0AprH4g0Xhtxo+g/M18pZBOlY2RfqAs7/63imA7TvnWzXPr2FXqpLW98eVcT5vclBsQfy1g3Zgnj
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <217c3d82f89040e7b29465ea71080cd2@ite.com.tw>
+X-Received: by 2002:a05:6e02:1789:b0:3a0:bc39:2d8c with SMTP id
+ e9e14a558f8ab-3a0c8d2e653mr99327325ab.25.1727172027017; Tue, 24 Sep 2024
+ 03:00:27 -0700 (PDT)
+Date: Tue, 24 Sep 2024 03:00:26 -0700
+In-Reply-To: <0000000000005b6b0e0622220846@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f28dba.050a0220.3eed3.0028.GAE@google.com>
+Subject: Re: [syzbot] [ntfs3?] kernel panic: corrupted stack end in
+ kernel_init (2)
+From: syzbot <syzbot+ec17b78de14721dd3bdc@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, almaz.alexandrovich@paragon-software.com, 
+	ardb@kernel.org, linux-block@vger.kernel.org, linux-efi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com, virtualization@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 24, 2024 at 03:52:34AM GMT, Hermes.Wu@ite.com.tw wrote:
-> >On Mon, Sep 23, 2024 at 05:48:29PM GMT, Hermes Wu wrote:
-> >> From: Hermes Wu <Hermes.wu@ite.com.tw>
-> >> 
-> >> Changes in v3:
-> >>  -remove non used definition for aux i2x cmd reply
-> >> 
-> >> Add Aux-I2C functionality to support MCCS.
-> >> 
-> >> Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
-> >> ---
-> >>  drivers/gpu/drm/bridge/ite-it6505.c | 174 
-> >> +++++++++++++++++++++++++++-
-> >>  1 file changed, 172 insertions(+), 2 deletions(-)
-> >> 
-> >> diff --git a/drivers/gpu/drm/bridge/ite-it6505.c 
-> >> b/drivers/gpu/drm/bridge/ite-it6505.c
-> >> index 156440c6517e..5aedc5570739 100644
-> >> --- a/drivers/gpu/drm/bridge/ite-it6505.c
-> >> +++ b/drivers/gpu/drm/bridge/ite-it6505.c
-> >> @@ -125,6 +125,9 @@
-> >>  #define REG_AUX_ADR_16_19 0x26
-> >>  #define REG_AUX_OUT_DATA0 0x27
-> >>  
-> >> +#define REG_AUX_I2C_ADR 0x25
-> >> +#define REG_AUX_I2C_OP 0x26
-> >> +
-> >
-> >Are these registers CMD-specific? Because I see that you already have defines for 0x25 and 0x26.
-> >
-> 
-> The AUX packet i2c into aux transfer frames,
-> and I think it's easier to understand how it6505_aux_i2c_operation() packet i2c request into aux frame.
+syzbot has found a reproducer for the following issue on:
 
-I'm really sorry, but I don't think I can parse this or how this answers
-my question. If for the user I2C a part of the register space gets
-repurposed, please comment that before the defines (and maybe separate
-such defines so that it's obvious to anybody reading the driver).
+HEAD commit:    5f5673607153 Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=1298499f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=dedbcb1ff4387972
+dashboard link: https://syzkaller.appspot.com/bug?extid=ec17b78de14721dd3bdc
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11323107980000
 
-> 
-> >>  #define REG_AUX_CMD_REQ 0x2B
-> >>  #define AUX_BUSY BIT(5)
-> >>  
-> >> @@ -266,6 +269,19 @@
-> >>  #define REG_SSC_CTRL1 0x189
-> >>  #define REG_SSC_CTRL2 0x18A
-> >>  
-> >> +#define REG_AUX_USER_CTRL 0x190
-> >> +#define EN_USER_AUX BIT(0)
-> >> +#define USER_AUX_DONE BIT(1)
-> >> +#define AUX_EVENT BIT(4)
-> >> +
-> >> +#define REG_AUX_USER_DATA_REC 0x191
-> >> +#define M_AUX_IN_REC   0xF0
-> >> +#define M_AUX_OUT_REC  0x0F
-> >> +
-> >> +#define REG_AUX_USER_TXB 0x190
-> >
-> >And two defines for 0x190 too.
-> >
-> >> +#define REG_AUX_USER_REPLY 0x19A
-> >> +#define REG_AUX_USER_RXB(n) (n + 0x19B)
-> >> +
-> >>  #define RBR DP_LINK_BW_1_62
-> >>  #define HBR DP_LINK_BW_2_7
-> >>  #define HBR2 DP_LINK_BW_5_4
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/40172aed5414/disk-5f567360.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/58372f305e9d/vmlinux-5f567360.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d2aae6fa798f/Image-5f567360.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/33ba6e22aaa5/mount_0.gz
 
--- 
-With best wishes
-Dmitry
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ec17b78de14721dd3bdc@syzkaller.appspotmail.com
+
+x8 : 8f1719b15e27f800 x7 : 0000000000000000 x6 : 0000000000000000
+x5 : 0000000000000000 x4 : 0000000000000008 x3 : 0000000000000000
+x2 : ffff0000d7975ac0 x1 : 0000000000000000 x0 : ffff800080872848
+Kernel panic - not syncing: kernel stack overflow
+CPU: 1 UID: 0 PID: 16523 Comm: syz.3.4916 Not tainted 6.11.0-rc7-syzkaller-g5f5673607153 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Call trace:
+ dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:319
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:326
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:119
+ dump_stack+0x1c/0x28 lib/dump_stack.c:128
+ panic+0x300/0x884 kernel/panic.c:354
+ nmi_panic+0x11c/0x23c kernel/panic.c:205
+ panic_bad_stack+0x200/0x28c arch/arm64/kernel/traps.c:917
+ enter_from_kernel_mode+0x0/0x74 arch/arm64/kernel/entry-common.c:928
+ __bad_stack+0x78/0x7c arch/arm64/kernel/entry.S:566
+ el1h_64_sync+0x0/0x68 arch/arm64/kernel/entry.S:591
+SMP: stopping secondary CPUs
+Kernel Offset: disabled
+CPU features: 0x10,00000207,00200128,42017203
+Memory Limit: none
+
+================================
+WARNING: inconsistent lock state
+6.11.0-rc7-syzkaller-g5f5673607153 #0 Not tainted
+--------------------------------
+inconsistent {INITIAL USE} -> {IN-NMI} usage.
+syz.3.4916/16523 [HC1[1]:SC0[0]:HE0:SE1] takes:
+ffff800091c892b8 ((efivars_lock).lock){....}-{2:2}, at: down_trylock+0x28/0xd8 kernel/locking/semaphore.c:139
+{INITIAL USE} state was registered at:
+  lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5759
+  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+  _raw_spin_lock_irqsave+0x5c/0x7c kernel/locking/spinlock.c:162
+  down_interruptible+0x3c/0xfc kernel/locking/semaphore.c:83
+  efivars_register+0x2c/0x10c drivers/firmware/efi/vars.c:68
+  generic_ops_register drivers/firmware/efi/efi.c:229 [inline]
+  efisubsys_init+0x414/0x5f8 drivers/firmware/efi/efi.c:433
+  do_one_initcall+0x24c/0x9c0 init/main.c:1267
+  do_initcall_level+0x154/0x214 init/main.c:1329
+  do_initcalls+0x58/0xac init/main.c:1345
+  do_basic_setup+0x8c/0xa0 init/main.c:1364
+  kernel_init_freeable+0x324/0x478 init/main.c:1578
+  kernel_init+0x24/0x2a0 init/main.c:1467
+  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+irq event stamp: 10106
+hardirqs last  enabled at (10105): [<ffff80008b3388f8>] __exit_to_kernel_mode arch/arm64/kernel/entry-common.c:85 [inline]
+hardirqs last  enabled at (10105): [<ffff80008b3388f8>] exit_to_kernel_mode+0xdc/0x10c arch/arm64/kernel/entry-common.c:95
+hardirqs last disabled at (10106): [<ffff80008b42e1b4>] __raw_spin_lock_irq include/linux/spinlock_api_smp.h:117 [inline]
+hardirqs last disabled at (10106): [<ffff80008b42e1b4>] _raw_spin_lock_irq+0x28/0x70 kernel/locking/spinlock.c:170
+softirqs last  enabled at (8930): [<ffff8000800307f8>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
+softirqs last disabled at (8928): [<ffff8000800307c4>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock((efivars_lock).lock);
+  <Interrupt>
+    lock((efivars_lock).lock);
+
+ *** DEADLOCK ***
+
+1 lock held by syz.3.4916/16523:
+ #0: ffff0000ef1b60e0 (&type->s_umount_key#52/1){+.+.}-{3:3}, at: alloc_super+0x1b0/0x83c fs/super.c:344
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 16523 Comm: syz.3.4916 Not tainted 6.11.0-rc7-syzkaller-g5f5673607153 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Call trace:
+ dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:319
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:326
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:119
+ dump_stack+0x1c/0x28 lib/dump_stack.c:128
+ print_usage_bug+0x698/0x9ac kernel/locking/lockdep.c:4000
+ verify_lock_unused+0xc0/0x114 kernel/locking/lockdep.c:5691
+ lock_acquire+0x3b0/0x728 kernel/locking/lockdep.c:5750
+ __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+ _raw_spin_lock_irqsave+0x5c/0x7c kernel/locking/spinlock.c:162
+ down_trylock+0x28/0xd8 kernel/locking/semaphore.c:139
+ efivar_trylock+0x20/0xa0 drivers/firmware/efi/vars.c:160
+ efi_pstore_write+0x21c/0x63c drivers/firmware/efi/efi-pstore.c:223
+ pstore_dump+0x764/0xad0 fs/pstore/platform.c:354
+ kmsg_dump+0x17c/0x274 kernel/printk/printk.c:4214
+ panic+0x34c/0x884 kernel/panic.c:385
+ nmi_panic+0x11c/0x23c kernel/panic.c:205
+ panic_bad_stack+0x200/0x28c arch/arm64/kernel/traps.c:917
+ enter_from_kernel_mode+0x0/0x74 arch/arm64/kernel/entry-common.c:928
+ __bad_stack+0x78/0x7c arch/arm64/kernel/entry.S:566
+ el1h_64_sync+0x0/0x68 arch/arm64/kernel/entry.S:591
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
