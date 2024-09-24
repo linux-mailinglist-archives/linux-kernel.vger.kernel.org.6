@@ -1,132 +1,168 @@
-Return-Path: <linux-kernel+bounces-337509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9CB4984B2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:41:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49B01984B31
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:41:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71AF61F23E66
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:41:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09BBE280123
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:41:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFEB61ACDF6;
-	Tue, 24 Sep 2024 18:40:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BE11AD5C1;
+	Tue, 24 Sep 2024 18:40:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="GHjq1k/X";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="GHjq1k/X"
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SvXpO0HL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44911AC8BD;
-	Tue, 24 Sep 2024 18:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828281AD400;
+	Tue, 24 Sep 2024 18:40:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727203234; cv=none; b=Z6ssXapbESmeoqOZ8NXFTsZbME8itxqK4J40r8erNK4xKqOLvb7RgzqQfRdw9w53Vic1YHlwUfickFgtRp8+oTO9ZVyW8FWqYxT6wddegGNtKOAa11eKflCUNDWy0V7IdwjImOoMOXSXPGXf0G1tuYY/HFQ/VncLX+hpSIDJnrU=
+	t=1727203241; cv=none; b=BW6axvW/hALM403DHamhzPxeUF7YLgVYJc/RqaSWf1qgtHYD9ADVi1qFCfbEd+PzXzP0JedV2l7eWZDsdn9zJsipjFXpaxmJWEgMf7MUX3fpbEShXawwUGyx+jA/Ce/g96Hh0soExDy4KkiHQ+udo6YsAISOg2aQpprreieqr2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727203234; c=relaxed/simple;
-	bh=G1+iYIMXKAAhu1gUsBdeajNa7W5sVJ0o6F2+3mbKOXE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NQABsTEAxQJBgjxaaJszbojo77WTRMir3YCy+GVJrtJ97mt6cVaGjDCRMkLaase8vn+OOaMG/feMbVF3Te9hCo94A8nOz+uMXu8bxHqEH7bjXw6kWxnBDO0dCgkB2FJFLyKiQcj0NAdCqI+SB3mABmbOjDQ4+01E9YcT7nkxtrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=GHjq1k/X; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=GHjq1k/X; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1727203231;
-	bh=G1+iYIMXKAAhu1gUsBdeajNa7W5sVJ0o6F2+3mbKOXE=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=GHjq1k/XXWOKXVMctBEZ82cIt2RE9mZ2W72rTFazLDck4JZ4cvMa8kDy0Sx5HjW9T
-	 Lu4R3wCNSpsG4B3VJ0XU+pxui0QCh2+LRNsXvMgywSb11SPemeISuFtpWsOg+idsmG
-	 XRyqjGA96IMn7Qr4lb5o33hkV2VKYCdoZcQQ9ZOM=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 961441280EA1;
-	Tue, 24 Sep 2024 14:40:31 -0400 (EDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id HHszksyqbAgN; Tue, 24 Sep 2024 14:40:31 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1727203231;
-	bh=G1+iYIMXKAAhu1gUsBdeajNa7W5sVJ0o6F2+3mbKOXE=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=GHjq1k/XXWOKXVMctBEZ82cIt2RE9mZ2W72rTFazLDck4JZ4cvMa8kDy0Sx5HjW9T
-	 Lu4R3wCNSpsG4B3VJ0XU+pxui0QCh2+LRNsXvMgywSb11SPemeISuFtpWsOg+idsmG
-	 XRyqjGA96IMn7Qr4lb5o33hkV2VKYCdoZcQQ9ZOM=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 1E0291280300;
-	Tue, 24 Sep 2024 14:40:30 -0400 (EDT)
-Message-ID: <f9e2072909d462af72a9f3833b2d76e50894e70a.camel@HansenPartnership.com>
-Subject: Re: [PATCH v5 5/5] tpm: flush the auth session only when /dev/tpm0
- is open
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org
-Cc: roberto.sassu@huawei.com, mapengyu@gmail.com, stable@vger.kernel.org,
- Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>, Paul
- Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, Peter Huewe <peterhuewe@gmx.de>, Jason
- Gunthorpe <jgg@ziepe.ca>, keyrings@vger.kernel.org,
- linux-security-module@vger.kernel.org,  linux-kernel@vger.kernel.org
-Date: Tue, 24 Sep 2024 14:40:28 -0400
-In-Reply-To: <D4EPQPFA8RGN.2PO6UNTDFI6IT@kernel.org>
-References: <20240921120811.1264985-1-jarkko@kernel.org>
-	 <20240921120811.1264985-6-jarkko@kernel.org>
-	 <00cf0bdb3ebfaec7c4607c8c09e55f2e538402f1.camel@HansenPartnership.com>
-	 <D4EPQPFA8RGN.2PO6UNTDFI6IT@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1727203241; c=relaxed/simple;
+	bh=2F2V13UnE1xlQc+PHBTB36hG+E3sC+XhLSCiNOaBPpI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qw6eQIVX0BHcTxMVmSB02j81dtVa9yHsRLRUxPc7MYUH2EFXi+WVxm6qtqgodBh+VO5goijsbtAQI6g2p17wHayf8X5CVzqvEB0cJsNReuBiXICEorFJygAOxzo7hSkyIF/OysPMy2O6sgIup1PMAHdt0IjUwF2lc1MCvGyzpKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SvXpO0HL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9861BC4CEC4;
+	Tue, 24 Sep 2024 18:40:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727203241;
+	bh=2F2V13UnE1xlQc+PHBTB36hG+E3sC+XhLSCiNOaBPpI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SvXpO0HLdXBJGdO4ssDnGvf27zq+pMt1Mx+RucyvANVr81Cuv03rdZ7ylXlDlDABO
+	 06GDFM8I381tSSDq+Aw/CIOP3vBECbxlP9DQCpgTgFs5pwTxYklg6ZV8mcwYYB6LoH
+	 5RzcC5OLVkjO3+U0MhbK77yjVY2kewNMA/KivQifoS9RdqJwxW/n3/bivOWpAuFk1n
+	 Fj2fJhEyDrdnIpoQ450K9DXR2Q3SNWNfMDQVPi1vRoJud7hULzAWrwtLcLsQy9CccW
+	 dbXXNybiUK2G/GUDThzWz2sqZkXyjRd5dpgOqGnzV7OyHoVgoJ1ickJ3EDDdATj9ao
+	 1mZNSp9r3yDsw==
+Message-ID: <ce90574a-6be8-4415-9943-b559d274cf04@kernel.org>
+Date: Tue, 24 Sep 2024 20:40:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch v2 3/3] riscv: dts: starfive: add framework dts
+To: =?UTF-8?B?5pu554+K54+K?= <sandie.cao@deepcomputing.io>
+Cc: Conor Dooley <conor@kernel.org>, Emil Renner Berthing <kernel@esmil.dk>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Heiko Stuebner <heiko.stuebner@cherry.de>,
+ Neil Armstrong <neil.armstrong@linaro.org>, rafal@milecki.pl,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Michael Zhu <michael.zhu@starfivetech.com>,
+ Drew Fustini <drew@beagleboard.org>, linux-riscv@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dhs@frame.work,
+ ams@frame.work, gregkh@linuxfoundation.org, yuning.liang@deepcomputing.io,
+ huiming.qiu@deepcomputing.io
+References: <20240924080650.1345485-4-sandie.cao@deepcomputing.io>
+ <edfbcf43-60ae-438f-8348-f6a2e6fa31cf@kernel.org>
+ <407ce3d77416bb2522b7906b0df3d5adf02c27ee.5065befe.6789.4275.a840.52c113c23eb9@feishu.cn>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <407ce3d77416bb2522b7906b0df3d5adf02c27ee.5065befe.6789.4275.a840.52c113c23eb9@feishu.cn>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On Tue, 2024-09-24 at 21:07 +0300, Jarkko Sakkinen wrote:
-> On Tue Sep 24, 2024 at 4:43 PM EEST, James Bottomley wrote:
-> > On Sat, 2024-09-21 at 15:08 +0300, Jarkko Sakkinen wrote:
-> > > Instead of flushing and reloading the auth session for every
-> > > single transaction, keep the session open unless /dev/tpm0 is
-> > > used. In practice this means applying TPM2_SA_CONTINUE_SESSION to
-> > > the session attributes. Flush the session always when /dev/tpm0
-> > > is written.
-> > 
-> > Patch looks fine but this description is way too terse to explain
-> > how it works.
-> > 
-> > I would suggest:
-> > 
-> > Boot time elongation as a result of adding sessions has been
-> > reported as an issue in
-> > https://bugzilla.kernel.org/show_bug.cgi?id=219229
-> > 
-> > The root cause is the addition of session overhead to
-> > tpm2_pcr_extend().  This overhead can be reduced by not creating
-> > and destroying a session for each invocation of the function.  Do
-> > this by keeping a session resident in the TPM for reuse by any
-> > session based TPM command.  The current flow of TPM commands in the
-> > kernel supports this because tpm2_end_session() is only called for
-> > tpm errors because most commands don't continue the session and
-> > expect the session to be flushed on success.  Thus we can add the
-> > continue session flag to session creation to ensure the session
-> > won't be flushed except on error, which is a rare case.
+On 24/09/2024 10:52, 曹珊珊 wrote:
+> Hi Krzysztof,
 > 
-> I need to disagree on this as I don't even have PCR extends in my
-> boot sequence and it still adds overhead. Have you verified this
-> from the reporter?
+> Thanks for your time.
 > 
-> There's bunch of things that use auth session, like trusted keys.
-> Making such claim that PCR extend is the reason is nonsense.
+> A: jh7110-common.dtsi is also used by other boards. Likes: milkv-mars, 
+> pine64-star64. So I can only disable them in jh7110-framework.dts. 
+> Or I need to create a new common.dtsi. 
+> 
+> Q: Why PCIE0 is enabled in the DTSI in the first place? The same questions
+> about MACs.
+> 
+> Regards,
+> Sandie
+> 
+> On 24/09/2024 10:06, Sandie Cao wrote:
+>> Add framework dts to support RISC-V Framework Laptop 13 Mainboard.
+>>  
+>> Signed-off-by: Sandie Cao <sandie.cao@deepcomputing.io>
+>> ---
+>>   arch/riscv/boot/dts/starfive/Makefile         |  1 +
+>>   .../boot/dts/starfive/jh7110-framework.dts    | 34 +++++++++++++++++++
+>>   2 files changed, 35 insertions(+)
+>>   create mode 100644 arch/riscv/boot/dts/starfive/jh7110-framework.dts
+> 
+> Your threading is entirely broken making applying process more difficult.
 
-Well, the bug report does say it's the commit adding sessions to the
-PCR extends that causes the delay:
+So I am talking with myself?
 
-https://bugzilla.kernel.org/show_bug.cgi?id=219229#c5
+...
 
-I don't know what else to tell you.
+>> +        status = "disabled";
+>> +};
+>> +
+>> +&pcie0 {
+>> +        status = "disabled";
+> 
+> Why PCIE0 is enabled in the DTSI in the first place? The same questions
+> about MACs.
+> 
+> Best regards,
+> Krzysztof
 
-James
+And sending myself regards?
+
+Sorry, no clue what's going on here.
+
+Best regards,
+Krzysztof
 
 
