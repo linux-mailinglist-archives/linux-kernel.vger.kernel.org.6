@@ -1,723 +1,132 @@
-Return-Path: <linux-kernel+bounces-337081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B38FE984504
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:41:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD9EB98450A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:42:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0F6F1C229DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:41:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 634DCB2592B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E396A1A76A3;
-	Tue, 24 Sep 2024 11:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5F411A706C;
+	Tue, 24 Sep 2024 11:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="Z6yekC4H"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lKwpgVkh"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811641A4F2E;
-	Tue, 24 Sep 2024 11:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C6C1A3AA7
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 11:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727178063; cv=none; b=KtdNVWKqCobVm6T8jHPzF/9DM1bz88NHFj+3yrhfcXeXHG1eRr9VZwU+WfhZtlPj95AsSxjAu/8SH4Jw/I2IgrHrTFwucCZu6YXTASJMTVJd5Pto/iuS4yNBYgRqt9pE/aS3T84u4VqnrMYRK3cciPBPO9/6fZLDSCUtqj8Cflw=
+	t=1727178096; cv=none; b=dIAyO2XHHNUBFlKe85OqCNO4rj4i93ywKwMlJR7G913AR0dRiW0gD29CJMG+DPgUraIofM76jIszODOZwBgrnCAmFfSx8aUKy9SCEipH10bcGBcBbtLQDXpH+6NWfYPx+qc+xMq1J8b5Z5cDcSNOnwcClsVwBKHD3T4z/xEGfNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727178063; c=relaxed/simple;
-	bh=Z7GXB1hY9yuFlRj//hULDFZ3X0jhxOLu1qz2jpKJkBM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pnKSk5afdBjGzDT0zm30syGlD9VZsiW4Wo5pyzhZLR8n/+TrMVpQZkJYLoA6a5pcO7ztppyv8dLPeGN+vsvk6aQp9qQflireLwWoIicHOH0GvlH39h0eaHz/ZKqJn2bIOgDC5ZgPKXP2M4mWBWxshVgW4re3/KEdWl72U0iC2Ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=Z6yekC4H; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 363D21FAA3;
-	Tue, 24 Sep 2024 13:40:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1727178059;
-	bh=zQ63Mq2IZ4t8UXdTtqZXmEF+p6OTi0tAeDBrubJaU9M=; h=From:To:Subject;
-	b=Z6yekC4HJWhnan1BakOXtRuOxd4velaQwpgd6sIF8W+HleBoVHVo0lLE1+h/Mbzgj
-	 h72nhWemp2meHJi3cju7+y9HJ/VZ2Txoq5cS5VdG6rOlQctD0fa9MZMa8Bk9vOkPlg
-	 RlbbCEgLx8R7BeypbjW+6NTKqVvrunbmu9vKAV8zn/EXnOl0ejeA3xf2ZApoY/CfvO
-	 E+dvLjXX9aMge7eWFFXNVOhostZ5+kNvBLSd+cuxZsy/IOBdKlq3Pu/hq+b9Wn8pDD
-	 9tGrs7NL3YmzymW/tpHGCBmi+RNA/9Gr+kvnN79fIdK2vPv+p/t3TG2wNYymx4ebAc
-	 32RW46tCbO/Dg==
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: =?UTF-8?q?Jo=C3=A3o=20Paulo=20Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: [PATCH v1 3/3] arm64: dts: freescale: imx8mp-verdin: Add Ivy carrier board
-Date: Tue, 24 Sep 2024 13:40:53 +0200
-Message-Id: <20240924114053.127737-4-francesco@dolcini.it>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20240924114053.127737-1-francesco@dolcini.it>
-References: <20240924114053.127737-1-francesco@dolcini.it>
+	s=arc-20240116; t=1727178096; c=relaxed/simple;
+	bh=9b9AIM0D0WQUMIffHpOBsByjwEElnQ05FKM2vCnaOXw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uFODMLjsZbp3VgC2Mp0JNCbUFq11GVa0PfNEOzyVKeKcYwW+HmxZ7OPROyewt2cHw14VB7NPe5g9Og6WAQtdvkV1PxLWne3Hqw74EAL5b0ET7VTY0UdyBqIHnZYdOEykMBjrYLU2CvppnB26Fny4Mz7JolzWIwk9fLDQwk+CPjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lKwpgVkh; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53661ac5ba1so5725447e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 04:41:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727178092; x=1727782892; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m9fc57nlwLbQdQ2sAc2oCWAZfOvWwEj+gafnpAGtImk=;
+        b=lKwpgVkh6wH5S2enMDs0MvorEO9GJnJXbagQ2FiPvfeybOb9f3NOqxPY82UiLrHZBX
+         c/V+38u63ZguOWJLkALg7RAlX/iXybdiIRd5ddZnMQwTwOk0lCXR+etWQ3vW1Lizjuj1
+         XpW/SKAWR8W32X8ieCW3+xdClhVlEx5nxTxZpv0K0q4ySxPevr0xa4XU2k3laFrfV+zB
+         pos/yK45yFad7d4zIdAbpTm46IG4sWJJEG3z/pJmxsLWpjngykA5WpFBB4Dx2nyskga+
+         m0Lytac0YAnHF087yo9N9XNJxE6SoiDcsdNS3euyds25sL3ISSliVWFnYl4RRCsb0ZdN
+         vatg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727178092; x=1727782892;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m9fc57nlwLbQdQ2sAc2oCWAZfOvWwEj+gafnpAGtImk=;
+        b=vWf3IG2/EL+a5GRaRfXB8f6C3nWxc7Dq5Rf0RxM1n2QKNKdlVeh+u2phH2ZyUbHNoy
+         tVBYD6Ldl78/wB04ZodqYfDML+a96C756bugSD63snV6lNySKtTIt72tnwvfoRPfBGLf
+         AnMlKZ31IW56UtyCWsTb9ZysEyEh5MmbKhlmDvJuBeK+FseaVtMOwYww5IlafKSGXLDR
+         ycLbFKQzCMTDhyOair8HTCjiSUC+H4ssOuNxEj7ZvnNNCmK6nB9GlOYwabZAcEeX9uhx
+         gN85zGsodPdfgfHYEEueh8fWCed3H0FvlsBoIDUrdjG/+KEv6WqXmBmCrFtiKPmurQ3O
+         nfMA==
+X-Forwarded-Encrypted: i=1; AJvYcCWohRlQcvJ2JDfYSgxupsf0kW736gJMPYLFCNt8oxqkpXb7lLqoeYyEzlVAqRI9ptaVA1oE7GxqnefNQ5s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxghS8sq5qQ8UVULi6RZleGWqbqSZbS32yQmGQs8sacz9aFeZzc
+	+Y6WddxRsZRuICzoiNmJcfb3zUi7Zg0KhTVvnTsiQV3X8b9eUAcAklviyhrplfAYIQReT45CAfC
+	74pa+EVoR6tc1UzI42u7LZjDZlR8n5LFGHTZn
+X-Google-Smtp-Source: AGHT+IFj8cqiMiY1AXVRvhe8rwF6DcWkYvkXpBkf6ecfSJZUFkRYRRAZL4pwU0vfwWYZ0ZEAuIkQNbltGVrr7/auBdY=
+X-Received: by 2002:ac2:4c48:0:b0:536:54df:bffc with SMTP id
+ 2adb3069b0e04-536ac3201c7mr8557051e87.42.1727178091961; Tue, 24 Sep 2024
+ 04:41:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240924013039.29200-1-littlesmilingcloud@gmail.com>
+In-Reply-To: <20240924013039.29200-1-littlesmilingcloud@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 24 Sep 2024 13:41:20 +0200
+Message-ID: <CANn89i+Mg56hG_Z4N0KnJ=9c2mTHQAHTQEJ1dbagBpjhijAoxQ@mail.gmail.com>
+Subject: Re: [RFC PATCH net v2] ipv4: ip_gre: Fix drops of small packets in ipgre_xmit
+To: Anton Danilov <littlesmilingcloud@gmail.com>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
+	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Shigeru Yoshida <syoshida@redhat.com>, Suman Ghosh <sumang@marvell.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: João Paulo Gonçalves <joao.goncalves@toradex.com>
+On Tue, Sep 24, 2024 at 3:31=E2=80=AFAM Anton Danilov
+<littlesmilingcloud@gmail.com> wrote:
+>
+> Regression Description:
+>
+> Depending on the GRE tunnel device options, small packets are being
+> dropped. This occurs because the pskb_network_may_pull function fails due
+> to insufficient space in the network header.
 
-Add Toradex Verdin Ivy carrier board support. One notable feature of Ivy
-is the analog inputs. These inputs are multiplexed, allowing the same
-input to measure either voltage or current. For current measurements,
-a GPIO switch enables or disables the shunt resistor. This process is
-automatically managed by the Linux kernel using the IIO and MUX
-subsystems. Voltage measurement is always enabled, but the voltage
-measured by the ADC is scaled by a cascade voltage divider. In the
-device tree, the equivalent gain of the voltage divider is used, which
-can be calculated as follows:
+I find this a bit confusing.
 
-               ------------
-               +          |
-                         .-.
-                  R1=30K | |
-                         | |
-                         '-'
-                          |-------------------
-    Analog Input (AIN)    |                  |
-                         .-.                .-.
-                  R2=10K | |         R3=30K | |
-                         | |                | |
-                         '-'                '-'
-                          |                  |
-                          |                  |--------
-                          |                 .-.      +
-                          |          R4=10K | |
-                          |                 | |      ADC Input (Channels 0 and 1)
-                          |                 '-'
-               -          |                  |       -
-               -----------|                  |--------
-                         ===                ===
-                         GND                GND
+Perhaps explain that pskb_network_may_pull() is adding 20 extra bytes,
+to the 28 needed bytes (20 for the IPv4 header, 8 bytes for GRE)
 
-Vin  = Analog Input (AIN)
-Vout = ADC Input
-Rth  = Thevenin Equiv. Resistance
-Vth  = Thevenin Equiv. Voltage
-RL   = Load Resistor
+So, instead of making sure 28 bytes were present in skb->head, we were
+requesting 48
+bytes. For small packets, this was failing.
 
-R1 = 30K, R2 = 10K, R3 = 30K, R4 = 10K
-RL = R4 = 10K
+> For example, if only the key
+> option is specified for the tunnel device, packets of sizes up to 27
+> (including the IPv4 header itself) will be dropped. This affects both
+> locally originated and forwarded packets in the DMVPN-like setups.
+>
+> How to reproduce (for local originated packets):
+>
+>   ip link add dev gre1 type gre ikey 1.9.8.4 okey 1.9.8.4 \
+>           local <your-ip> remote 0.0.0.0
+>
+>   ip link set mtu 1400 dev gre1
+>   ip link set up dev gre1
+>   ip address add 192.168.13.1/24 dev gre1
+>   ip neighbor add 192.168.13.2 lladdr <remote-ip> dev gre1
+>   ping -s 1374 -c 10 192.168.13.2
+>   tcpdump -vni gre1
+>   tcpdump -vni <your-ext-iface> 'ip proto 47'
+>   ip -s -s -d link show dev gre1
+>
+> Solution:
+>
+> Use the pskb_may_pull function instead the pskb_network_may_pull.
+>
+> Fixes: 80d875cfc9d3 ("ipv4: ip_gre: Avoid skb_pull() failure in ipgre_xmi=
+t()")
+> Signed-off-by: Anton Danilov <littlesmilingcloud@gmail.com>
 
-Rth  = (R1 // R2) + R3 = 37500 Ohms
-Vth  = (Vin * R2) / (R1 + R2) = Vin/4;
-Vout = (Vth * RL)/ (Rth + RL) = Vth/4.75 = Vin/19
-Gain = Vout/Vin = 1/19
-
-https://www.toradex.com/products/carrier-board/ivy-carrier-board
-
-Signed-off-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
-Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
----
- arch/arm64/boot/dts/freescale/Makefile        |   2 +
- .../boot/dts/freescale/imx8mp-verdin-ivy.dtsi | 512 ++++++++++++++++++
- .../freescale/imx8mp-verdin-nonwifi-ivy.dts   |  18 +
- .../dts/freescale/imx8mp-verdin-wifi-ivy.dts  |  18 +
- 4 files changed, 550 insertions(+)
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-verdin-ivy.dtsi
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-verdin-nonwifi-ivy.dts
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-verdin-wifi-ivy.dts
-
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index 9d3df8b218a2..349ff1af0361 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -189,10 +189,12 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-venice-gw74xx.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-venice-gw75xx-2x.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-verdin-nonwifi-dahlia.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-verdin-nonwifi-dev.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx8mp-verdin-nonwifi-ivy.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-verdin-nonwifi-mallow.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-verdin-nonwifi-yavia.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-verdin-wifi-dahlia.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-verdin-wifi-dev.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx8mp-verdin-wifi-ivy.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-verdin-wifi-mallow.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-verdin-wifi-yavia.dtb
- 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-verdin-ivy.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-verdin-ivy.dtsi
-new file mode 100644
-index 000000000000..db1b4ee7728c
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-verdin-ivy.dtsi
-@@ -0,0 +1,512 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/*
-+ * Copyright 2024 Toradex
-+ *
-+ * Common dtsi for Verdin IMX8MP SoM on Ivy carrier board
-+ *
-+ * https://www.toradex.com/computer-on-modules/verdin-arm-family/nxp-imx-8m-plus
-+ * https://www.toradex.com/products/carrier-board/ivy-carrier-board
-+ */
-+
-+#include <dt-bindings/mux/mux.h>
-+#include <dt-bindings/leds/common.h>
-+#include <dt-bindings/net/ti-dp83867.h>
-+
-+/ {
-+	/* AIN1 Voltage w/o AIN1_MODE gpio control */
-+	ain1_voltage_unmanaged: voltage-divider-ain1 {
-+		compatible = "voltage-divider";
-+		#io-channel-cells = <1>;
-+		io-channels = <&ivy_adc1 0>;
-+		full-ohms = <19>;
-+		output-ohms = <1>;
-+	};
-+
-+	/* AIN1 Current w/o AIN1_MODE gpio control */
-+	ain1_current_unmanaged: current-sense-shunt-ain1 {
-+		compatible = "current-sense-shunt";
-+		#io-channel-cells = <0>;
-+		io-channels = <&ivy_adc1 1>;
-+		shunt-resistor-micro-ohms = <100000000>;
-+	};
-+
-+	/* AIN1_MODE - SODIMM 216 */
-+	ain1_mode_mux_ctrl: mux-controller-0 {
-+		compatible = "gpio-mux";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_gpio5>;
-+		#mux-control-cells = <0>;
-+		mux-gpios = <&gpio1 7 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	ain1-voltage {
-+		compatible = "io-channel-mux";
-+		channels = "ain1_voltage", "";
-+		io-channels = <&ain1_voltage_unmanaged 0>;
-+		io-channel-names = "parent";
-+		mux-controls = <&ain1_mode_mux_ctrl>;
-+		settle-time-us = <1000>;
-+	};
-+
-+	ain1-current {
-+		compatible = "io-channel-mux";
-+		channels = "", "ain1_current";
-+		io-channels = <&ain1_current_unmanaged>;
-+		io-channel-names = "parent";
-+		mux-controls = <&ain1_mode_mux_ctrl>;
-+		settle-time-us = <1000>;
-+	};
-+
-+	/* AIN2 Voltage w/o AIN2_MODE gpio control */
-+	ain2_voltage_unmanaged: voltage-divider-ain2 {
-+		compatible = "voltage-divider";
-+		#io-channel-cells = <1>;
-+		io-channels = <&ivy_adc2 0>;
-+		full-ohms = <19>;
-+		output-ohms = <1>;
-+	};
-+
-+	/* AIN2 Current w/o AIN2_MODE gpio control */
-+	ain2_current_unmanaged: current-sense-shunt-ain2 {
-+		compatible = "current-sense-shunt";
-+		#io-channel-cells = <0>;
-+		io-channels = <&ivy_adc2 1>;
-+		shunt-resistor-micro-ohms = <100000000>;
-+	};
-+
-+	/* AIN2_MODE - SODIMM 218 */
-+	ain2_mode_mux_ctrl: mux-controller-1 {
-+		compatible = "gpio-mux";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_gpio6>;
-+		#mux-control-cells = <0>;
-+		mux-gpios = <&gpio1 8 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	ain2-voltage {
-+		compatible = "io-channel-mux";
-+		channels = "ain2_voltage", "";
-+		io-channels = <&ain2_voltage_unmanaged 0>;
-+		io-channel-names = "parent";
-+		mux-controls = <&ain2_mode_mux_ctrl>;
-+		settle-time-us = <1000>;
-+	};
-+
-+	ain2-current {
-+		compatible = "io-channel-mux";
-+		channels = "", "ain2_current";
-+		io-channels = <&ain2_current_unmanaged>;
-+		io-channel-names = "parent";
-+		mux-controls = <&ain2_mode_mux_ctrl>;
-+		settle-time-us = <1000>;
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_ivy_leds>;
-+
-+		/* D7 Blue - SODIMM 30 - LEDs.GPIO1 */
-+		led-0 {
-+			color = <LED_COLOR_ID_BLUE>;
-+			default-state = "off";
-+			function = LED_FUNCTION_STATUS;
-+			function-enumerator = <1>;
-+			gpios = <&gpio3 25 GPIO_ACTIVE_HIGH>;
-+		};
-+
-+		/* D7 Green - SODIMM 32 - LEDs.GPIO2 */
-+		led-1 {
-+			color = <LED_COLOR_ID_GREEN>;
-+			default-state = "off";
-+			function = LED_FUNCTION_STATUS;
-+			function-enumerator = <1>;
-+			gpios = <&gpio3 22 GPIO_ACTIVE_HIGH>;
-+		};
-+
-+		/* D7 Red - SODIMM 34 - LEDs.GPIO3 */
-+		led-2 {
-+			color = <LED_COLOR_ID_RED>;
-+			default-state = "off";
-+			function = LED_FUNCTION_STATUS;
-+			function-enumerator = <1>;
-+			gpios = <&gpio3 19 GPIO_ACTIVE_HIGH>;
-+		};
-+
-+		/* D8 Blue - SODIMM 36 - LEDs.GPIO4 */
-+		led-3 {
-+			color = <LED_COLOR_ID_BLUE>;
-+			default-state = "off";
-+			function = LED_FUNCTION_STATUS;
-+			function-enumerator = <2>;
-+			gpios = <&gpio4 2 GPIO_ACTIVE_HIGH>;
-+		};
-+
-+		/* D8 Green - SODIMM 54 - LEDs.GPIO5 */
-+		led-4 {
-+			color = <LED_COLOR_ID_GREEN>;
-+			default-state = "off";
-+			function = LED_FUNCTION_STATUS;
-+			function-enumerator = <2>;
-+			gpios = <&gpio3 1 GPIO_ACTIVE_HIGH>;
-+		};
-+
-+		/* D8 Red - SODIMM 44 - LEDs.GPIO6 */
-+		led-5 {
-+			color = <LED_COLOR_ID_RED>;
-+			default-state = "off";
-+			function = LED_FUNCTION_STATUS;
-+			function-enumerator = <2>;
-+			gpios = <&gpio4 31 GPIO_ACTIVE_HIGH>;
-+		};
-+
-+		/* D9 Blue - SODIMM 46 - LEDs.GPIO7 */
-+		led-6 {
-+			color = <LED_COLOR_ID_BLUE>;
-+			default-state = "off";
-+			function = LED_FUNCTION_STATUS;
-+			function-enumerator = <3>;
-+			gpios = <&gpio5 01 GPIO_ACTIVE_HIGH>;
-+		};
-+
-+		/* D9 Red - SODIMM 48 - LEDs.GPIO8 */
-+		led-7 {
-+			color = <LED_COLOR_ID_RED>;
-+			default-state = "off";
-+			function = LED_FUNCTION_STATUS;
-+			function-enumerator = <3>;
-+			gpios = <&gpio4 30 GPIO_ACTIVE_HIGH>;
-+		};
-+	};
-+
-+	reg_3v2_ain1: regulator-3v2-ain1 {
-+		compatible = "regulator-fixed";
-+		regulator-max-microvolt = <3200000>;
-+		regulator-min-microvolt = <3200000>;
-+		regulator-name = "+3V2_AIN1";
-+	};
-+
-+	reg_3v2_ain2: regulator-3v2-ain2 {
-+		compatible = "regulator-fixed";
-+		regulator-max-microvolt = <3200000>;
-+		regulator-min-microvolt = <3200000>;
-+		regulator-name = "+3V2_AIN2";
-+	};
-+
-+	/* Ivy Power Supply Input Voltage */
-+	ivy-input-voltage {
-+		compatible = "voltage-divider";
-+		/* Verdin ADC_1 */
-+		io-channels = <&verdin_som_adc 7>;
-+		full-ohms = <204700>; /* 200k + 4.7k */
-+		output-ohms = <4700>;
-+	};
-+
-+	ivy-5v-voltage {
-+		compatible = "voltage-divider";
-+		/* Verdin ADC_2 */
-+		io-channels = <&verdin_som_adc 6>;
-+		full-ohms = <39000>; /* 27k + 12k */
-+		output-ohms = <12000>;
-+	};
-+
-+	ivy-3v3-voltage {
-+		compatible = "voltage-divider";
-+		/* Verdin ADC_3 */
-+		io-channels = <&verdin_som_adc 5>;
-+		full-ohms = <54000>; /* 27k + 27k */
-+		output-ohms = <27000>;
-+	};
-+
-+	ivy-1v8-voltage {
-+		compatible = "voltage-divider";
-+		/* Verdin ADC_4 */
-+		io-channels = <&verdin_som_adc 4>;
-+		full-ohms = <39000>; /* 12k + 27k */
-+		output-ohms = <27000>;
-+	};
-+};
-+
-+/* Verdin SPI_1 */
-+&ecspi1 {
-+	pinctrl-0 = <&pinctrl_ecspi1>,
-+		    <&pinctrl_gpio1>,
-+		    <&pinctrl_gpio4>;
-+	cs-gpios = <&gpio5 9 GPIO_ACTIVE_LOW>,
-+		   <&gpio1 0 GPIO_ACTIVE_LOW>,
-+		   <&gpio1 6 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+
-+	tpm@1 {
-+		compatible = "infineon,slb9670", "tcg,tpm_tis-spi";
-+		reg = <1>;
-+		spi-max-frequency = <18500000>;
-+	};
-+
-+	fram@2 {
-+		compatible = "fujitsu,mb85rs256", "atmel,at25";
-+		reg = <2>;
-+		address-width = <16>;
-+		size = <32768>;
-+		spi-max-frequency = <33000000>;
-+		pagesize = <1>;
-+	};
-+};
-+
-+/* EEPROM on Ivy */
-+&eeprom_carrier_board {
-+	status = "okay";
-+};
-+
-+/* Verdin ETH_1 */
-+&eqos {
-+	status = "okay";
-+};
-+
-+/* Verdin ETH_2 */
-+&fec {
-+	phy-handle = <&ethphy2>;
-+	phy-mode = "rgmii-id";
-+	status = "okay";
-+};
-+
-+&verdin_eth2_mdio {
-+	ethphy2: ethernet-phy@2 {
-+		reg = <2>;
-+		interrupt-parent = <&gpio4>;
-+		interrupts = <18 IRQ_TYPE_LEVEL_LOW>;
-+		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
-+		ti,tx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
-+	};
-+};
-+
-+/* Verdin CAN_1 */
-+&flexcan1 {
-+	status = "okay";
-+};
-+
-+/* Verdin CAN_2 */
-+&flexcan2 {
-+	status = "okay";
-+};
-+
-+&gpio1 {
-+	gpio-line-names =
-+		"", /* 0 */
-+		"GPIO2", /* Verdin GPIO_2 - SODIMM 208 */
-+		"",
-+		"",
-+		"",
-+		"GPIO3", /* Verdin GPIO_3 - SODIMM 210 */
-+		"",
-+		"",
-+		"",
-+		"",
-+		"",
-+		"", /* 10 */
-+		"",
-+		"",
-+		"",
-+		"",
-+		"",
-+		"",
-+		"",
-+		"",
-+		"",
-+		"", /* 20 */
-+		"",
-+		"",
-+		"",
-+		"",
-+		"",
-+		"",
-+		"",
-+		"",
-+		"";
-+};
-+
-+&gpio3 {
-+	gpio-line-names =
-+		"", /* 0 */
-+		"",
-+		"",
-+		"",
-+		"",
-+		"",
-+		"DIG_1", /* SODIMM 56 */
-+		"DIG_2", /* SODIMM 58 */
-+		"REL1",  /* SODIMM 60 */
-+		"REL2",  /* SODIMM 62 */
-+		"", /* 10 */
-+		"",
-+		"",
-+		"",
-+		"REL4", /* SODIMM 66 */
-+		"",
-+		"REL3", /* SODIMM 64 */
-+		"",
-+		"",
-+		"",
-+		"", /* 20 */
-+		"",
-+		"",
-+		"",
-+		"",
-+		"",
-+		"",
-+		"",
-+		"",
-+		"";
-+};
-+
-+/* Temperature sensor on Ivy */
-+&hwmon_temp {
-+	compatible = "ti,tmp1075";
-+	status = "okay";
-+};
-+
-+/* Verdin I2C_4 CSI */
-+&i2c3 {
-+	status = "okay";
-+
-+	ivy_adc1: adc@40 {
-+		compatible = "ti,ads1119";
-+		reg = <0x40>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_gpio7>;
-+		interrupt-parent = <&gpio4>;
-+		interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
-+		avdd-supply = <&reg_3v2_ain1>;
-+		dvdd-supply = <&reg_3v2_ain1>;
-+		vref-supply = <&reg_3v2_ain1>;
-+		#address-cells = <1>;
-+		#io-channel-cells = <1>;
-+		#size-cells = <0>;
-+
-+		/* AIN1 0-33V Voltage Input */
-+		channel@0 {
-+			reg = <0>;
-+			diff-channels = <0 1>;
-+		};
-+
-+		/* AIN1 0-20mA Current Input */
-+		channel@1 {
-+			reg = <1>;
-+			diff-channels = <2 3>;
-+		};
-+	};
-+
-+	ivy_adc2: adc@41 {
-+		compatible = "ti,ads1119";
-+		reg = <0x41>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_gpio8>;
-+		interrupt-parent = <&gpio4>;
-+		interrupts = <1 IRQ_TYPE_EDGE_FALLING>;
-+		avdd-supply = <&reg_3v2_ain2>;
-+		dvdd-supply = <&reg_3v2_ain2>;
-+		vref-supply = <&reg_3v2_ain2>;
-+		#address-cells = <1>;
-+		#io-channel-cells = <1>;
-+		#size-cells = <0>;
-+
-+		/* AIN2 0-33V Voltage Input */
-+		channel@0 {
-+			reg = <0>;
-+			diff-channels = <0 1>;
-+		};
-+
-+		/* AIN2 0-20mA Current Input */
-+		channel@1 {
-+			reg = <1>;
-+			diff-channels = <2 3>;
-+		};
-+	};
-+};
-+
-+/* Verdin I2C_1 */
-+&i2c4 {
-+	status = "okay";
-+};
-+
-+/* Verdin PCIE_1 */
-+&pcie {
-+	status = "okay";
-+};
-+
-+&pcie_phy {
-+	status = "okay";
-+};
-+
-+/* Verdin UART_1 */
-+&uart1 {
-+	status = "okay";
-+};
-+
-+/* Verdin UART_2 */
-+&uart2 {
-+	linux,rs485-enabled-at-boot-time;
-+	rs485-rx-during-tx;
-+	status = "okay";
-+};
-+
-+/* Verdin UART_3 */
-+&uart3 {
-+	status = "okay";
-+};
-+
-+/* Verdin USB_1 */
-+&usb3_0 {
-+	status = "okay";
-+};
-+
-+&usb3_phy0 {
-+	status = "okay";
-+};
-+
-+/* Verdin USB_2 */
-+&usb3_1 {
-+	status = "okay";
-+};
-+
-+&usb3_phy1 {
-+	status = "okay";
-+};
-+
-+/* Verdin SD_1 */
-+&usdhc2 {
-+	status = "okay";
-+};
-+
-+&iomuxc {
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_gpio2>, <&pinctrl_gpio3>,
-+		    <&pinctrl_ivy_dig_inputs>, <&pinctrl_ivy_relays>;
-+
-+	pinctrl_ivy_dig_inputs: ivydiginputsgrp {
-+		fsl,pins =
-+			<MX8MP_IOMUXC_NAND_DATA00__GPIO3_IO06	0x96>, /* SODIMM 56 */
-+			<MX8MP_IOMUXC_NAND_DATA01__GPIO3_IO07	0x96>; /* SODIMM 58 */
-+	};
-+
-+	pinctrl_ivy_leds: ivyledsgrp {
-+		fsl,pins =
-+			<MX8MP_IOMUXC_SAI5_MCLK__GPIO3_IO25	0x16>, /* SODIMM 30 */
-+			<MX8MP_IOMUXC_SAI5_RXD1__GPIO3_IO22	0x16>, /* SODIMM 32 */
-+			<MX8MP_IOMUXC_SAI5_RXFS__GPIO3_IO19	0x16>, /* SODIMM 34 */
-+			<MX8MP_IOMUXC_SAI1_RXD0__GPIO4_IO02	0x16>, /* SODIMM 36 */
-+			<MX8MP_IOMUXC_SAI3_TXFS__GPIO4_IO31	0x16>, /* SODIMM 44 */
-+			<MX8MP_IOMUXC_SAI3_TXD__GPIO5_IO01	0x16>, /* SODIMM 46 */
-+			<MX8MP_IOMUXC_SAI3_RXD__GPIO4_IO30	0x16>, /* SODIMM 48 */
-+			<MX8MP_IOMUXC_NAND_CE0_B__GPIO3_IO01	0x16>; /* SODIMM 54 */
-+	};
-+
-+	pinctrl_ivy_relays: ivyrelaysgrp {
-+		fsl,pins =
-+			<MX8MP_IOMUXC_NAND_DATA02__GPIO3_IO08	0x16>, /* SODIMM 60 */
-+			<MX8MP_IOMUXC_NAND_DATA03__GPIO3_IO09	0x16>, /* SODIMM 62 */
-+			<MX8MP_IOMUXC_NAND_READY_B__GPIO3_IO16	0x16>, /* SODIMM 64 */
-+			<MX8MP_IOMUXC_NAND_DQS__GPIO3_IO14	0x16>; /* SODIMM 66 */
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-verdin-nonwifi-ivy.dts b/arch/arm64/boot/dts/freescale/imx8mp-verdin-nonwifi-ivy.dts
-new file mode 100644
-index 000000000000..cb49690050ff
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-verdin-nonwifi-ivy.dts
-@@ -0,0 +1,18 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/*
-+ * Copyright 2024 Toradex
-+ */
-+
-+/dts-v1/;
-+
-+#include "imx8mp-verdin.dtsi"
-+#include "imx8mp-verdin-nonwifi.dtsi"
-+#include "imx8mp-verdin-ivy.dtsi"
-+
-+/ {
-+	model = "Toradex Verdin iMX8M Plus on Ivy";
-+	compatible = "toradex,verdin-imx8mp-nonwifi-ivy",
-+		     "toradex,verdin-imx8mp-nonwifi",
-+		     "toradex,verdin-imx8mp",
-+		     "fsl,imx8mp";
-+};
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-verdin-wifi-ivy.dts b/arch/arm64/boot/dts/freescale/imx8mp-verdin-wifi-ivy.dts
-new file mode 100644
-index 000000000000..22b8fe70b36d
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-verdin-wifi-ivy.dts
-@@ -0,0 +1,18 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/*
-+ * Copyright 2024 Toradex
-+ */
-+
-+/dts-v1/;
-+
-+#include "imx8mp-verdin.dtsi"
-+#include "imx8mp-verdin-wifi.dtsi"
-+#include "imx8mp-verdin-ivy.dtsi"
-+
-+/ {
-+	model = "Toradex Verdin iMX8M Plus WB on Ivy";
-+	compatible = "toradex,verdin-imx8mp-wifi-ivy",
-+		     "toradex,verdin-imx8mp-wifi",
-+		     "toradex,verdin-imx8mp",
-+		     "fsl,imx8mp";
-+};
--- 
-2.39.5
-
+Please send a V3 without the RFC tag in the title.
 
