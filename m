@@ -1,167 +1,170 @@
-Return-Path: <linux-kernel+bounces-337387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80A9498496C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:17:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8B3098496F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:18:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFD8FB2378C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:17:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAA751C22ECD
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C84481AAE24;
-	Tue, 24 Sep 2024 16:17:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F191ABECA;
+	Tue, 24 Sep 2024 16:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S/zTa+QS"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="q2M6gTvx"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F79C1B85D6
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 16:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3997D1B85D6;
+	Tue, 24 Sep 2024 16:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727194657; cv=none; b=M50zNjGZ98e58+fzeJ+FNtjktBIWFSoqKB9nVyaupLsaxrN4kDf7x0Aw7oqbqGGCjNIftOg1FY5g7VItJ6r+FZycZDggNy8tkn9aVjV7/FU9T+3I/PnYy8fbtzqQCxvQVJ7cYb1Uvktovu4yTDho3duCE3arSrDP/gbndNV7Ih8=
+	t=1727194702; cv=none; b=UB5fUi4Q3kYRq1x77y+kv9U4thc5tfJQbUYCY+fS0VEWADRXozzMb3CvIKUTddAvapTfuGMeLd94iOqVw5vIl4NGkjH6QRucEVraAfVr0khQzbeNIt9YkXvFuTsb5l8qUfYrbqAxBpnvmko2FvgzQ3/uSQDwhSxvSJfeaZxxPU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727194657; c=relaxed/simple;
-	bh=vKaiyS+UyhOvXDkE3P9rbcqydY01BV3qBK9nQ5kCbJg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N42Xrzz5kDa6k9aBDo7vlyUGfvrHgIBz56b89PlS9PORPPewquKB5ERxE0pNMPi5cZKtQG0jPpIJLK6RStRW452g+tX8V9RjsoN6wji4NGBf5FFkkCmWFm3dUPQlbppbRBDlrucancJmvKloGjasKCVCUES/uFG2d3K8FFmo/pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S/zTa+QS; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2058ba82fbfso2936195ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:17:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727194655; x=1727799455; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kssHnqH80Xc0+QcoY5MDsbuxwut+7UFnPYXFFQ2LW3w=;
-        b=S/zTa+QSAH86Lm6BSZ8CYN6VZ/E5dnX8OJl8PxGZuvyKCzJ3X8gBQ8ouUnqah82/lE
-         V+iP5i5tJAlhcTfbxDNs21MMgs/mnPFyo5n8Akj63VNgbH+qnkZkfb4bHL2VElt/g/Gv
-         WP/N545i6xWUcsYRX2pa67f+OvDYpn3yNg7b/gouHeU3zbGhZAcZvzTARTyKjAJYZJRU
-         sF9de83QLkGpmSpPQebOCAyqA9ee3wTMb/JxSfAcK9oGeFIdJxvxdgRYOy0zMOY7nonH
-         vpUFOGXLGIAeFD2jLJsrKhiDcpX5gQk42ZpQXPjwKbxBDxG2IMqbDp1Q1hCuy4jbsVuE
-         iSoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727194655; x=1727799455;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kssHnqH80Xc0+QcoY5MDsbuxwut+7UFnPYXFFQ2LW3w=;
-        b=XJc6h9kYi2ERnrvUjkaLOwX0f9g6Go2nsKpLMMg77cc9vJhY2sKXWGn4j/MiGGRg/N
-         oZnBQ5syEl7WuoJCPXDarYyOiZF3VcLtF0F3sCik7hjZB9PGlEexgJ7BuY7x+i8yoKeH
-         jeLV0Ql3QXokW3FyZyKvrPmNZRezKgt//HU4f/kKjPClVl+mwSVCpSniv20/dwyV2R+t
-         7oTLzQ7n6KUYcQ/uhfqWByNvmGszU+COx4sNBt2q54aTWt8qf3xNvZGGi6DwwXL/RKLH
-         ubdW34yLbjEv+L6jTxmOeyO11E+VSJ343PXXI5i/fSvXu+JJoR1Pj9VxHz9E00WeK3JY
-         rJjw==
-X-Forwarded-Encrypted: i=1; AJvYcCXoyuOx9rPYp9a9WxxhJWVhw+Q7gtzEbhuKnrXDegA6hQKigg0st9NQs3utmzwWQHpK/0uRBRRs61SSiuQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhjjOMzNFvnNoxRASsp/IZbbmozPj68T2Gbfz+y6nCew+cET0r
-	Y2QQxXjXxGivgvFZ3gyA3Qz5/0CT1vqaGCZVncudhB+dOFFt1K7l3FQzCCDGpg4FbnbJWTN3LdM
-	wjJECy9wl5T/9Dt981cnXG/yXCAU=
-X-Google-Smtp-Source: AGHT+IEjr/ZA9arb2W1VbQpNXq7KzjZDWz97ypC8TzPzWYevu/QK1ETv4A5nORi+wHtGJbAGUWsP406zUHHotaNpYEo=
-X-Received: by 2002:a17:902:ec8b:b0:205:8820:fe1c with SMTP id
- d9443c01a7336-208d83dff51mr99001215ad.5.1727194654872; Tue, 24 Sep 2024
- 09:17:34 -0700 (PDT)
+	s=arc-20240116; t=1727194702; c=relaxed/simple;
+	bh=PT0lyLWCzDMg6e0IygWA/ME0OBNzsZloIN855opPfks=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=ZF6qPswznI+V0G9gHQKI6SllSNY2WGdYgxSpk2LmEv2r41dZfUXLh/cLeapWf4NLYrnAxV0+Ba2kbOQebyCHynbjvFrldCP6+pC1PymKJO1m6DXUxG3yJwximD847aeK5U8JUX01jhAgXbW+8VccN5wrTniO8UKtAEcJLT27F0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=q2M6gTvx; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727194690; x=1727799490; i=markus.elfring@web.de;
+	bh=ef1H5okpnW0lEveexTopGosOnwOLDCpTvbhsBXFDoPo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=q2M6gTvxITcDmRxd7UG1Ym9WqeMC42JZrCamYcv0S1rP6InEhKDFISUxwhU8H/Zf
+	 KlMOvXxuF5je+DTQkVH0Zl2PFO5Hisgyql7VkTk9rj5brnpfwAJh6Td67xrW8dcTJ
+	 VZoW6xSgYi9LIWLTwfCWNbYg9kdhHBVwhIOezTcyKoQqi4jQ/KSS7CLObUP3rNw5f
+	 Pkd7jU6CUX3Kkoz7+fbjuLFEkDtXpKREkxTG4eqIQleZGYl9beaqIkozfuz/ldOzf
+	 Kwg9f/JUdzs4bJRcce2llUh+dAGMaZcsFuGm0aICkn7JARhPW+EX5zzihQUG5lfWR
+	 YFLkSX1mB/rN0YSM8g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MfKxV-1sHLaM3S9L-00f75B; Tue, 24
+ Sep 2024 18:18:09 +0200
+Message-ID: <e549c508-b3a2-4cba-b5ec-1a113286981c@web.de>
+Date: Tue, 24 Sep 2024 18:18:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240920214342.14792-1-v.shevtsov@maxima.ru>
-In-Reply-To: <20240920214342.14792-1-v.shevtsov@maxima.ru>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Tue, 24 Sep 2024 12:17:23 -0400
-Message-ID: <CADnq5_OQShrB_RbYVVfFfQjTYZ=DfooH6B-BeMZ3DZt3OPxgMg@mail.gmail.com>
-Subject: Re: [PATCH] drm/amd/display: fix typos in several function pointer checks
-To: Vitaliy Shevtsov <v.shevtsov@maxima.ru>
-Cc: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Alvin Lee <alvin.lee2@amd.com>, Charlene Liu <Charlene.Liu@amd.com>, Wayne Lin <wayne.lin@amd.com>, 
-	Dillon Varone <dillon.varone@amd.com>, yi-lchen <yi-lchen@amd.com>, Alex Hung <alex.hung@amd.com>, 
-	Chris Park <chris.park@amd.com>, Wenjing Liu <wenjing.liu@amd.com>, 
-	Tom Chung <chiahsuan.chung@amd.com>, George Shen <george.shen@amd.com>, 
-	Hamza Mahfooz <hamza.mahfooz@amd.com>, Samson Tam <samson.tam@amd.com>, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: linux-s390@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+ =?UTF-8?Q?Christian_Borntr=C3=A4ger?= <borntraeger@linux.ibm.com>,
+ Harald Freudenberger <freude@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Holger Dengler <dengler@linux.ibm.com>,
+ Ingo Franzki <ifranzki@linux.ibm.com>, Jules Irenge <jbi.octave@gmail.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] s390/pkey: Use common error handling code in
+ pkey_ioctl_kblob2protk3()
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:T9V2NY01eZ6b4e5LqzatdtR82eOcCFSV8v2LsfcIyRcNRDocfnz
+ uaEvDaZbck9c24GSHLEUHrlTFogCuS6uo+oXoEJmoi2Tp86x0G1IloBJu6hDpzIsfHYlwPB
+ VfqW8LhpxG4FDL+8yNTPW/cX1Satf6A1Gnf0PhVra6S1KhbOrye5P3TLyVnxaMfKWNgqlql
+ XFJnGOZU1YuGIRSEfA8VQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:cmVKnXCKAxU=;9DDYlYrgOp0KuzBLnmUU9MTYX+j
+ xcFYwSTGjkGYmCAvDKlvmCXVTCKJlWt/PInZ73bFs8ihnCT4GOnPDpaUEv2Q7cqg/4We0lXnh
+ t/V3Mg4rA1j+8YQiYgxYPAUSVWgPubu3ytOWSTvnM/3Tu46/if6zGag5uuRqbOte/Qh/vR7SW
+ 9c3sXYTvkaSTDlvsmgZW49Y54Ll0rHWjExtEXhpVa+v0rdxKz/pcT+Ggu1oBG7/ZqFqQu36B5
+ YWcAKvOYRpjT1D91GnwXoORvqHnkHzyp/6yrnPq007CA0el4FWw+hxSVpNqdOq9+CNyDQMftv
+ QsNKQN1Ku6VML0rqULQGiZspmr+sNl0YgW5XFhoM4nHcQPhkqM5yEpFxb+CE/TBp8hJX3hlxa
+ sm6iduXpLP+Io3is5bsej2atvKVQZxVArrlyCIAlmN/HkurRoIbmZAo972QW6AKojYoRnYcg7
+ /+nbAetOCtEcoF6snzS7nAwBzZMuQyiTPxqhuSea08VeIJlX7GLkkVCIzZfeNCLvddVeYZuLU
+ hlupVE1Aima2HsA5AdiBVtyiI8xQW7ftvTupq5TbDinR6H5SP0YpXEDg6GsldKNRUFacqCBTi
+ dETGifs/mGaVKaxdEG6b7DeCWdBIEeSU1WwiQzvhA53nlaSFp3S6+dLn/E/PfN66GSAXTkjFO
+ SSZ+Bxl1qQjiiKsRB54P+W+YCpkNVRJo4XlwgeccTXIK7+oEg+On1Cmy1Xi3a9EERU5YactoY
+ kijGR3ME7m9eqrIHRofgQuRvQdprkfGH+NzLA0C8byM9dphqrPILJkzjHq7T0JMD5/m26edh8
+ ibvokzNBOJBY3XKQeZNMyfYg==
 
-Applied.  Thanks!
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 24 Sep 2024 18:04:56 +0200
 
-On Sat, Sep 21, 2024 at 3:48=E2=80=AFAM Vitaliy Shevtsov <v.shevtsov@maxima=
-.ru> wrote:
->
-> Fix several copypaste mistakes in *_disable_link_output() functions where
-> an improper function pointer is checked before dereference.
->
-> Found by Linux Verification Center (linuxtesting.org) with Svace.
->
-> Signed-off-by: Vitaliy Shevtsov <v.shevtsov@maxima.ru>
-> ---
->  drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c | 2 +-
->  drivers/gpu/drm/amd/display/dc/hwss/dcn314/dcn314_hwseq.c | 2 +-
->  drivers/gpu/drm/amd/display/dc/hwss/dcn32/dcn32_hwseq.c   | 4 ++--
->  3 files changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c b/=
-drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c
-> index d52ce58c6a98..c2364cb66d0b 100644
-> --- a/drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c
-> +++ b/drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c
-> @@ -3258,7 +3258,7 @@ void dce110_disable_link_output(struct dc_link *lin=
-k,
->          * from enable/disable link output and only call edp panel contro=
-l
->          * in enable_link_dp and disable_link_dp once.
->          */
-> -       if (dmcu !=3D NULL && dmcu->funcs->lock_phy)
-> +       if (dmcu !=3D NULL && dmcu->funcs->unlock_phy)
->                 dmcu->funcs->unlock_phy(dmcu);
->         dc->link_srv->dp_trace_source_sequence(link, DPCD_SOURCE_SEQ_AFTE=
-R_DISABLE_LINK_PHY);
->  }
-> diff --git a/drivers/gpu/drm/amd/display/dc/hwss/dcn314/dcn314_hwseq.c b/=
-drivers/gpu/drm/amd/display/dc/hwss/dcn314/dcn314_hwseq.c
-> index 4e93eeedfc1b..5b6cf2a8e38d 100644
-> --- a/drivers/gpu/drm/amd/display/dc/hwss/dcn314/dcn314_hwseq.c
-> +++ b/drivers/gpu/drm/amd/display/dc/hwss/dcn314/dcn314_hwseq.c
-> @@ -478,7 +478,7 @@ void dcn314_disable_link_output(struct dc_link *link,
->          * from enable/disable link output and only call edp panel contro=
-l
->          * in enable_link_dp and disable_link_dp once.
->          */
-> -       if (dmcu !=3D NULL && dmcu->funcs->lock_phy)
-> +       if (dmcu !=3D NULL && dmcu->funcs->unlock_phy)
->                 dmcu->funcs->unlock_phy(dmcu);
->         dc->link_srv->dp_trace_source_sequence(link, DPCD_SOURCE_SEQ_AFTE=
-R_DISABLE_LINK_PHY);
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/hwss/dcn32/dcn32_hwseq.c b/dr=
-ivers/gpu/drm/amd/display/dc/hwss/dcn32/dcn32_hwseq.c
-> index a36e11606f90..84153682af1a 100644
-> --- a/drivers/gpu/drm/amd/display/dc/hwss/dcn32/dcn32_hwseq.c
-> +++ b/drivers/gpu/drm/amd/display/dc/hwss/dcn32/dcn32_hwseq.c
-> @@ -1384,10 +1384,10 @@ void dcn32_disable_link_output(struct dc_link *li=
-nk,
->         link->phy_state.symclk_state =3D SYMCLK_OFF_TX_OFF;
->
->         if (signal =3D=3D SIGNAL_TYPE_EDP &&
-> -                       link->dc->hwss.edp_backlight_control &&
-> +                       link->dc->hwss.edp_power_control &&
->                         !link->skip_implict_edp_power_control)
->                 link->dc->hwss.edp_power_control(link, false);
-> -       else if (dmcu !=3D NULL && dmcu->funcs->lock_phy)
-> +       else if (dmcu !=3D NULL && dmcu->funcs->unlock_phy)
->                 dmcu->funcs->unlock_phy(dmcu);
->
->         dc->link_srv->dp_trace_source_sequence(link, DPCD_SOURCE_SEQ_AFTE=
-R_DISABLE_LINK_PHY);
-> --
-> 2.46.1
->
+Add jump targets so that a bit of exception handling can be better reused
+at the end of this function implementation.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/s390/crypto/pkey_api.c | 31 +++++++++++++++++++------------
+ 1 file changed, 19 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/s390/crypto/pkey_api.c b/drivers/s390/crypto/pkey_api=
+.c
+index c20251e00cf9..78be7a633bf1 100644
+=2D-- a/drivers/s390/crypto/pkey_api.c
++++ b/drivers/s390/crypto/pkey_api.c
+@@ -668,32 +668,31 @@ static int pkey_ioctl_kblob2protk3(struct pkey_kblob=
+2pkey3 __user *utp)
+ 		return PTR_ERR(apqns);
+ 	kkey =3D _copy_key_from_user(ktp.key, ktp.keylen);
+ 	if (IS_ERR(kkey)) {
+-		kfree(apqns);
+-		return PTR_ERR(kkey);
++		rc =3D PTR_ERR(kkey);
++		goto free_apqns;
+ 	}
+ 	protkey =3D kmalloc(protkeylen, GFP_KERNEL);
+ 	if (!protkey) {
+-		kfree(apqns);
+ 		kfree_sensitive(kkey);
+-		return -ENOMEM;
++		rc =3D -ENOMEM;
++		goto free_apqns;
+ 	}
+ 	rc =3D key2protkey(apqns, ktp.apqn_entries, kkey, ktp.keylen,
+ 			 protkey, &protkeylen, &ktp.pkeytype);
+ 	pr_debug("key2protkey()=3D%d\n", rc);
+ 	kfree(apqns);
+ 	kfree_sensitive(kkey);
+-	if (rc) {
+-		kfree_sensitive(protkey);
+-		return rc;
+-	}
++	if (rc)
++		goto free_protkey;
++
+ 	if (ktp.pkey && ktp.pkeylen) {
+ 		if (protkeylen > ktp.pkeylen) {
+-			kfree_sensitive(protkey);
+-			return -EINVAL;
++			rc =3D -EINVAL;
++			goto free_protkey;
+ 		}
+ 		if (copy_to_user(ktp.pkey, protkey, protkeylen)) {
+-			kfree_sensitive(protkey);
+-			return -EFAULT;
++			rc =3D -EFAULT;
++			goto free_protkey;
+ 		}
+ 	}
+ 	kfree_sensitive(protkey);
+@@ -702,6 +701,14 @@ static int pkey_ioctl_kblob2protk3(struct pkey_kblob2=
+pkey3 __user *utp)
+ 		return -EFAULT;
+
+ 	return 0;
++
++free_apqns:
++	kfree(apqns);
++	return rc;
++
++free_protkey:
++	kfree_sensitive(protkey);
++	return rc;
+ }
+
+ static long pkey_unlocked_ioctl(struct file *filp, unsigned int cmd,
+=2D-
+2.46.1
+
 
