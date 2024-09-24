@@ -1,96 +1,91 @@
-Return-Path: <linux-kernel+bounces-337193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C41A9846BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:30:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C66D49846C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:31:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E66112853B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:30:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C5CE1F23F09
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 066101A76DB;
-	Tue, 24 Sep 2024 13:30:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A3E1A76A8;
+	Tue, 24 Sep 2024 13:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="myk3k4tT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="owxnGKyh"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C0341A4F16;
-	Tue, 24 Sep 2024 13:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4B11A3A9C;
+	Tue, 24 Sep 2024 13:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727184628; cv=none; b=CiFaXpuOhPvGfS54D9ZpdeBhbPGbmB+v1z7+xbX2FSOyP5D4tJOXR6a3kUEFqQ6q3SZRTP8ZjHn63DKIP0itkVDAeNs5xoq57JLaOPRRxHN9NvaPlf6wQoeFbEK2bGzQ/lXpWMZumFTkrTmIXE2H3vhjSiCz0Z+05xj0ihdmGHI=
+	t=1727184656; cv=none; b=LIeLz0AyWtPPlVouMx8LDJaz6weh3oqsuwyys7BvYirU/f9GrWbDRqHy0DTiTycEbKZQlBb2XSsTyhQDqLoWEN5PLUDrjhDup/8G0KysAMbvO/EhzcXJKfWYlDF5NY2WtJqAmz4KEtvfd7ilexeX8HxKHWGJdNhKqmMP0NEg4o0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727184628; c=relaxed/simple;
-	bh=ULygnSo9N6FSEiQI0drmADzkn/pdLfT7Cqv503+L33s=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=JaiN/Pr20VPVfLk+wJSX/zIHlVZneXBWQLjVNv10eFS8p1r1idKTWVyY0iKF9cHpFPUdbJK7xjSqyrJFgrrq3+fXE9+SO6Y2q6xg2bNB2tjdhDmodpap0Rg91vqiJdCH7asCoWY1ZkBEE8g9jqko5fekHIf3oxna0T4BoLL1B80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=myk3k4tT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE4B4C4CEC4;
-	Tue, 24 Sep 2024 13:30:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727184627;
-	bh=ULygnSo9N6FSEiQI0drmADzkn/pdLfT7Cqv503+L33s=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=myk3k4tT0LBKO3HLsOytA9XL8XYSVaZOdEAJMbH9a0gZCNJv3Bi4KQMoxy4TzPrMS
-	 rHWsUbC6XC1IHmMKeADWxq+kKhkLibRESO7etqVMmfld4haMxkTn7Qm5hSfWtsVMyK
-	 CyMSDrNQH6tZUvUR1w3iG37VdPcyHfPULG8/ZGG80gO/Y8TqVmFvRYjBcohjyeHkoh
-	 G+3EbJKiuns6VhfVTG/SIRD090EPylsE0FDSeO3Ryr4SElYPGCMBdJYe2LkZhgXvz7
-	 8wW5x2mDINxVQExVh0RSqc3TKfkvW30vAyp+msyrCkkj8qHDj8SMBPmq25U6lStXqe
-	 ecS/jj/Zt2A+A==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 715B33806655;
-	Tue, 24 Sep 2024 13:30:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1727184656; c=relaxed/simple;
+	bh=Zzmag5B4d9rMI5KRInab3TIef9RWWex2VD4e5f7PNFY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eCHf/GckEDQcfHBidS5666aA156e/Gsu3xDS6bq+9mBVbWvUkK5xOAu+BU8MsrMjKKAO/qBQzJhlNOOkOxXJehJ8ZGcQgfZFwG/OLv0t1MOmkCQ1jrRo4o7V7z7F/2VjuQghSU6lc+rfxnD5aRQOrXPbClEQJMvOt97KFYi/Hgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=owxnGKyh; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=qzNhgBZN/5wjd+yDm2cjASGFuH1G1TFsEgliMH/h3wU=; b=owxnGKyhYfbroz8DQpbpVmxOAt
+	4QLOvDuzLQb8mPz3b/Nb5EanhpCGdMmRAxe2gcMmz/W6Iq9xjuECbQ96XqColG6HKP3Yvtarbxqgs
+	L2Nxtskf93tfN4LHu+VADYNTIpQl6Jb8x66i97rfYVDVhicU3xkVBYRq+rop2eHxJ0QMjMrEL7iaz
+	tFxgWMabaj82s5PfocyURJWsPADk4Egn0qHd/vqO8h5GfP5fBCEpFsQ6bF+dCvORZxWmD0bii+wIL
+	0buwVkLe4X6D8rxlA2vs2k5RFy/ObHpY9+B+r3MAWKsE3N96XGhp17kYQnBqJKtF5WyLIRB6wO4S8
+	5ur7MyUQ==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1st5Sr-004LDo-2R;
+	Tue, 24 Sep 2024 21:30:40 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 24 Sep 2024 21:30:39 +0800
+Date: Tue, 24 Sep 2024 21:30:39 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: LTP List <ltp@lists.linux.it>, open list <linux-kernel@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	lkft-triage@lists.linaro.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>, chrubis <chrubis@suse.cz>
+Subject: Re: af_alg01.c:36: TFAIL: instantiated nested hmac algorithm
+ ('hmac(hmac(md5))')!
+Message-ID: <ZvK-_5QKQ2e0S2Sd@gondor.apana.org.au>
+References: <CA+G9fYtu-h_pp_hNfmx1pBg48oGeRiEDnEc4b-r3AiC_QfWiKg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v3] bonding: Fix unnecessary warnings and logs from
- bond_xdp_get_xmit_slave()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172718463027.4036037.10024447642848017933.git-patchwork-notify@kernel.org>
-Date: Tue, 24 Sep 2024 13:30:30 +0000
-References: <20240918140602.18644-1-jiwonaid0@gmail.com>
-In-Reply-To: <20240918140602.18644-1-jiwonaid0@gmail.com>
-To: Jiwon Kim <jiwonaid0@gmail.com>
-Cc: razor@blackwall.org, jv@jvosburgh.net, andy@greyhouse.net,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org,
- john.fastabend@gmail.com, joamaki@gmail.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- syzbot+c187823a52ed505b2257@syzkaller.appspotmail.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYtu-h_pp_hNfmx1pBg48oGeRiEDnEc4b-r3AiC_QfWiKg@mail.gmail.com>
 
-Hello:
+On Tue, Sep 24, 2024 at 03:16:09PM +0530, Naresh Kamboju wrote:
+>
+> Warning log:
+> ----------
+> tst_test.c:1617: TINFO: Timeout per run is 0h 02m 30s
+> af_alg01.c:36: TFAIL: instantiated nested hmac algorithm ('hmac(hmac(md5))')!
+> tst_af_alg.c:46: TBROK: unexpected error binding AF_ALG socket to hash
+> algorithm 'hmac(hmac(md5))': EINVAL (22)
 
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+This is expected.  You need to fix the test to not treat this as an
+error.
 
-On Wed, 18 Sep 2024 14:06:02 +0000 you wrote:
-> syzbot reported a WARNING in bond_xdp_get_xmit_slave. To reproduce
-> this[1], one bond device (bond1) has xdpdrv, which increases
-> bpf_master_redirect_enabled_key. Another bond device (bond0) which is
-> unsupported by XDP but its slave (veth3) has xdpgeneric that returns
-> XDP_TX. This triggers WARN_ON_ONCE() from the xdp_master_redirect().
-> To reduce unnecessary warnings and improve log management, we need to
-> delete the WARN_ON_ONCE() and add ratelimit to the netdev_err().
-> 
-> [...]
-
-Here is the summary with links:
-  - [net,v3] bonding: Fix unnecessary warnings and logs from bond_xdp_get_xmit_slave()
-    https://git.kernel.org/netdev/net/c/0cbfd45fbcf0
-
-You are awesome, thank you!
+Cheers,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
