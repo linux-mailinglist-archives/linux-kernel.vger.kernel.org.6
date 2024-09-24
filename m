@@ -1,454 +1,229 @@
-Return-Path: <linux-kernel+bounces-337048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DB219844AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:31:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8007C9844AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:32:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80ABC1C23F22
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:31:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DEA61F25C07
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8501AB512;
-	Tue, 24 Sep 2024 11:29:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1A41A4F29;
+	Tue, 24 Sep 2024 11:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hiaSN855"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lORBRXs7"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC9B1AAE3D;
-	Tue, 24 Sep 2024 11:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4290517BBF;
+	Tue, 24 Sep 2024 11:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727177380; cv=none; b=dAISCB+W227kxw6qLQAisI4JS3I5S85EMYcc8WZFezfcXMCMHEBwthxlP1xfJJQqBFl1hWsr4H86QunWzyJ0hXNmQkd46PScyj1cS3vB+x7WzXxRFIeAUBB8CkKOfa1YQKsHBVXYVz8qsKZeAz6IChILXXjSFPvPe0p42zpVBGE=
+	t=1727177443; cv=none; b=SZApfKk5/ne44DgltYzobSw7WqQoPt5ZHimcMZmY9StqYjblqu7BNYrqpv3Dc8g+07q4y9ScLsGL0k4Dt6w6Ox02yEJ7xWBL08CCeq9SPqpKwktjKFD+CUM8NI01KWnpjFQrsGheZPojMTLIsmb35e0X8kejzGINdflFus4sIQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727177380; c=relaxed/simple;
-	bh=b2Zpu6bNVNvwiXpYcKr+Aro9HlSAW2yxucUmtiP7yD8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dci5oYPAvqMZPvLRoLngzE5Lgx4jg8pPOSeiNQVW1flpI5wUVH7m/m2cwe/7AMC9Wovf4UIEptAmcwHE7K5yJn8ypBajq/wYFDFdPOTY7oRDGSX0vgfisNGfdJNjVlAFTA3MURhRW1E9c0hpngNjQkO086l0fQLllLfnDr8MLPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hiaSN855; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727177378; x=1758713378;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=b2Zpu6bNVNvwiXpYcKr+Aro9HlSAW2yxucUmtiP7yD8=;
-  b=hiaSN855IA+of+5sGP49URBzwMXk0dzG9LL6oB9xVpc2+TsK592PKe75
-   Y0rCA6da2bEEcxe1Zf59h4fsDRaGcGlKOCbn/Bbfqz3ZnqyAXkfvZhlOP
-   YqiMLM/R5K5mgngCFhsgyS60uX7bd6CGUodA/1fxTs8FiPwVemBIwR4hW
-   o+S0QM2tJnDy1QKffgQkItHLZ3PevPxNwk6aWOcaUj3rt7gnw8rBtseFo
-   gzLJAhJeVkW7LkiW++YayXNHHXfwOZfTC81/gtRRSCyGubSKuykcSNZdF
-   NQlNiPkog5hCfQCvlODNhMX7bMkPNxVVX17Mj+c8LsRpRY7U8RNfSwCaF
-   Q==;
-X-CSE-ConnectionGUID: QYw4k441QhGB6eN0kM7Q5w==
-X-CSE-MsgGUID: 8ZX2Th8SQ8Sxsxk+eNBFqQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="43686597"
-X-IronPort-AV: E=Sophos;i="6.10,254,1719903600"; 
-   d="scan'208";a="43686597"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 04:29:38 -0700
-X-CSE-ConnectionGUID: obuwKZQYQCyMlZnl98vG/w==
-X-CSE-MsgGUID: 0Wbw5c+HS+uRb+9buEmUOQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,254,1719903600"; 
-   d="scan'208";a="70994703"
-Received: from ccbilbre-mobl3.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.124.221.10])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 04:29:34 -0700
-From: Kai Huang <kai.huang@intel.com>
-To: dave.hansen@intel.com,
-	kirill.shutemov@linux.intel.com,
-	tglx@linutronix.de,
-	bp@alien8.de,
-	peterz@infradead.org,
-	mingo@redhat.com,
-	hpa@zytor.com,
-	dan.j.williams@intel.com,
-	seanjc@google.com,
-	pbonzini@redhat.com
-Cc: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	rick.p.edgecombe@intel.com,
-	isaku.yamahata@intel.com,
-	adrian.hunter@intel.com,
-	nik.borisov@suse.com,
-	kai.huang@intel.com
-Subject: [PATCH v4 8/8] x86/virt/tdx: Reduce TDMR's reserved areas by using CMRs to find memory holes
-Date: Tue, 24 Sep 2024 23:28:35 +1200
-Message-ID: <708d6c9d4d3ed9d47f62760f6d8bd88a3f16dd78.1727173372.git.kai.huang@intel.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <cover.1727173372.git.kai.huang@intel.com>
-References: <cover.1727173372.git.kai.huang@intel.com>
+	s=arc-20240116; t=1727177443; c=relaxed/simple;
+	bh=9rr2GCwL3Qg4YWNVnVnRFvrFIjI+pbL6A2yKODpAQSk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=U8BSvhDp+vQ8dPZlhryXgOf+8ILu4Fu5yVslFp95Db1T8SeaH57WZZTloPCFVusbtsi/n2D3Bmu6xSaQtIYsL5qeAYouySXHZxTzoAfyJ+p5FZ8ttKRHb6OmywckdBCj2FqOi2HSca0Cm77iNfDfH5XjHlcsGnlezuBfYcMq5XQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lORBRXs7; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c24c92f699so5350843a12.2;
+        Tue, 24 Sep 2024 04:30:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727177439; x=1727782239; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8RXumhNxnjiM8fBrcvv7yn8BmJXvo9F+xKOIxhcGDnA=;
+        b=lORBRXs7GKWsOYE+GiGQa3iKnshT/BCbtb0O/Q/vLKzRmFu14yZqg57N1LEkBu0Aqy
+         0kQ+fd4G2M0AImGgaBWIJDOubN9+vxpTftOpPzRkkF19fUa6qr7/Zt+RzbR92I8y0ppP
+         7+rokvUymtwbd49HoyCIvS9Kk95dCUz5NYcmJD1xInLfPvwvYexx0jSzMydPz9Yv6vxP
+         c5XO4yd83D1GuRJSMhlMDDeCjmlLXUqRXsmyeQhs1CREPDWOpiBy4auLRMwdg4+Y0YEe
+         8PSJy/G6gIvDXXLvrtx4AQkuPV5FYlwcHa/Fgs6DvKZsPZC7hhp4vmhCV7AeJWCm/zof
+         PxCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727177439; x=1727782239;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8RXumhNxnjiM8fBrcvv7yn8BmJXvo9F+xKOIxhcGDnA=;
+        b=rsg3SPHY1+/7KyWoxsJaIkNNn+LcNTaSDrekWO3I/eNoscMBACJfGi2cC6N4LVmeYq
+         neJ9JJQ9ghmORhxpSjMcYe0DaWWWKfEnd4T48fSGAXh0japHgiYJSrtw6fgVMDaEiMUE
+         Z0LFqvxaCPvbSWxA26k1XoUaIyda8uooyUhwFe6eTckkmY852xj03jLBChsYYhVXGJcn
+         XloqX1MBSiYV+KuQqyziUYxh3vpCOw0EYvPiUhpRfZg/5asAZfiLsfXqqPAW6U/laz2D
+         Zi04Gy8UfVHUf250RTw4hOVaMqRQSoeZIgRa6zBEAf+Jm864JW4C2InEjTXRCcIa47Jw
+         onhA==
+X-Forwarded-Encrypted: i=1; AJvYcCVpgviIe1OGNtfnTUupbQHjLz7LXv0CE5mj7nIk1uOUp8SHFu8eNWDui6S5N6k0INHJiS2dJXju6vc=@vger.kernel.org, AJvYcCXqzNUlRyXHnFCzsWfBX5OK4J15UvrYYkAL1SZk0bJ6RO2bXs5kCfYRJ779hqhoL1X/8IvuJRmIyOE8NRAa@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrQu9U0M31ly9SPhMIeFiaVdqKgZ+uuu9Oxv/BEgfnHgnYaQfs
+	Vfd2ZVS8SbbnQUwPqyOlGPE7QR2wnTmA8uQbq3DlGKX/MiXaeH5wl/zjdGvW
+X-Google-Smtp-Source: AGHT+IEBtVEm1LDZ0kRkzH8QS7YqE8JYo+ci0cKJTv5Zn9UNARVwylj8VWa96xVxdKuQaz0TzZsNPQ==
+X-Received: by 2002:a17:907:e6d5:b0:a8a:926a:d027 with SMTP id a640c23a62f3a-a90d577d59fmr1328908966b.45.1727177439233;
+        Tue, 24 Sep 2024 04:30:39 -0700 (PDT)
+Received: from [192.168.1.17] (host-87-7-171-42.retail.telecomitalia.it. [87.7.171.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93930cae0fsm72612766b.120.2024.09.24.04.30.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2024 04:30:38 -0700 (PDT)
+From: Antonino Maniscalco <antomani103@gmail.com>
+Subject: [PATCH v5 00/11] Preemption support for A7XX
+Date: Tue, 24 Sep 2024 13:30:35 +0200
+Message-Id: <20240924-preemption-a750-t-v5-0-0be2bf81c187@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANui8mYC/33Oyw6CMBAF0F8xXVszfUBbV/6HcVHaQZrII0CIx
+ vDvjmxEQ1zeyZ0z82QD9gkHdtw9WY9TGlLbUMj2OxYq31yRp0iZSZAarMh41yPW3Ug17k0GfOR
+ lQHTeal0ox2iPGmW6L+b5QrlKw9j2j+XEJN7Tf9okOHBTRC/zoDQoc7rWPt0Ooa3ZW5vkSlCwJ
+ UgSbO4RfZQhWvgV1EdwsPmDIqGMTpvcudIU4VfQK0GYLUGT4LKoLQiJ4L+EeZ5f370H3ngBAAA
+ =
+X-Change-ID: 20240815-preemption-a750-t-fcee9a844b39
+To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Jonathan Corbet <corbet@lwn.net>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ linux-doc@vger.kernel.org, Antonino Maniscalco <antomani103@gmail.com>, 
+ Akhil P Oommen <quic_akhilpo@quicinc.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Sharat Masetty <smasetty@codeaurora.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727177437; l=5397;
+ i=antomani103@gmail.com; s=20240815; h=from:subject:message-id;
+ bh=9rr2GCwL3Qg4YWNVnVnRFvrFIjI+pbL6A2yKODpAQSk=;
+ b=YiBcgR/NhSCrzzgoQcRNq9pKYkW+N8cr+UBt257xG9wRFvx7pi6bmHk+0FTwwz4iLX96FkNVM
+ lskgfjLyAKPBZ6BJ8HjcHcwJyk3vTpM/UfvjoIkJRPOTiDAvfAs0Q3m
+X-Developer-Key: i=antomani103@gmail.com; a=ed25519;
+ pk=0zicFb38tVla+iHRo4kWpOMsmtUrpGBEa7LkFF81lyY=
 
-A TDX module initialization failure was reported on a Emerald Rapids
-platform:
+This series implements preemption for A7XX targets, which allows the GPU to
+switch to an higher priority ring when work is pushed to it, reducing latency
+for high priority submissions.
 
-  virt/tdx: initialization failed: TDMR [0x0, 0x80000000): reserved areas exhausted.
-  virt/tdx: module initialization failed (-28)
+This series enables L1 preemption with skip_save_restore which requires
+the following userspace patches to function:
 
-As part of initializing the TDX module, the kernel informs the TDX
-module of all "TDX-usable memory regions" using an array of TDX defined
-structure "TD Memory Region" (TDMR).  Each TDMR must be in 1GB aligned
-and in 1GB granularity, and all "non-TDX-usable memory holes" within a
-given TDMR are marked as "reserved areas".  The TDX module reports a
-maximum number of reserved areas that can be supported per TDMR (16).
+https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/30544
 
-The kernel builds the "TDX-usable memory regions" based on memblocks
-(which reflects e820), and uses this list to find all "reserved areas"
-for each TDMR.
+A flag is added to `msm_submitqueue_create` to only allow submissions
+from compatible userspace to be preempted, therefore maintaining
+compatibility.
 
-It turns out that the kernel's view of memory holes is too fine grained
-and sometimes exceeds the number of holes that the TDX module can track
-per TDMR [1], resulting in the above failure.
+Preemption is currently only enabled by default on A750, it can be
+enabled on other targets through the `enable_preemption` module
+parameter. This is because more testing is required on other targets.
 
-Thankfully the module also lists memory that is potentially convertible
-in a list of "Convertible Memory Regions" (CMRs).  That coarser grained
-CMR list tends to track usable memory in the memory map even if it might
-be reserved for host usage like 'ACPI data' [2].
+For testing on other HW it is sufficient to set that parameter to a
+value of 1, then using the branch of mesa linked above, `TU_DEBUG=hiprio`
+allows to run any application as high priority therefore preempting
+submissions from other applications.
 
-Use that list to relax what the kernel considers unusable memory.  If it
-falls in a CMR no need to instantiate a hole, and rely on the fact that
-kernel will keep what it considers 'reserved' out of the page allocator.
+The `msm_gpu_preemption_trigger` and `msm_gpu_preemption_irq` traces
+added in this series can be used to observe preemption's behavior as
+well as measuring preemption latency.
 
-Also dump the CMRs in dmesg.  They are helpful when something goes wrong
-around "constructing the TDMRs and configuring the TDX module with
-them".  Note there are no existing userspace tools that the user can get
-CMRs since they can only be read via SEAMCALL (no CPUID, MSR etc).
+Some commits from this series are based on a previous series to enable
+preemption on A6XX targets:
 
-[1] BIOS-E820 table of the problematic platform:
+https://lkml.kernel.org/1520489185-21828-1-git-send-email-smasetty@codeaurora.org
 
-  BIOS-e820: [mem 0x0000000000000000-0x000000000009efff] usable
-  BIOS-e820: [mem 0x000000000009f000-0x00000000000fffff] reserved
-  BIOS-e820: [mem 0x0000000000100000-0x000000005d168fff] usable
-  BIOS-e820: [mem 0x000000005d169000-0x000000005d22afff] ACPI data
-  BIOS-e820: [mem 0x000000005d22b000-0x000000005d3cefff] usable
-  BIOS-e820: [mem 0x000000005d3cf000-0x000000005d469fff] reserved
-  BIOS-e820: [mem 0x000000005d46a000-0x000000005e5b2fff] usable
-  BIOS-e820: [mem 0x000000005e5b3000-0x000000005e5c2fff] reserved
-  BIOS-e820: [mem 0x000000005e5c3000-0x000000005e5d2fff] usable
-  BIOS-e820: [mem 0x000000005e5d3000-0x000000005e5e4fff] reserved
-  BIOS-e820: [mem 0x000000005e5e5000-0x000000005eb57fff] usable
-  BIOS-e820: [mem 0x000000005eb58000-0x0000000061357fff] ACPI NVS
-  BIOS-e820: [mem 0x0000000061358000-0x000000006172afff] usable
-  BIOS-e820: [mem 0x000000006172b000-0x0000000061794fff] ACPI data
-  BIOS-e820: [mem 0x0000000061795000-0x00000000617fefff] usable
-  BIOS-e820: [mem 0x00000000617ff000-0x0000000061912fff] ACPI data
-  BIOS-e820: [mem 0x0000000061913000-0x0000000061998fff] usable
-  BIOS-e820: [mem 0x0000000061999000-0x00000000619dffff] ACPI data
-  BIOS-e820: [mem 0x00000000619e0000-0x00000000619e1fff] usable
-  BIOS-e820: [mem 0x00000000619e2000-0x00000000619e9fff] reserved
-  BIOS-e820: [mem 0x00000000619ea000-0x0000000061a26fff] usable
-  BIOS-e820: [mem 0x0000000061a27000-0x0000000061baefff] ACPI data
-  BIOS-e820: [mem 0x0000000061baf000-0x00000000623c2fff] usable
-  BIOS-e820: [mem 0x00000000623c3000-0x0000000062471fff] reserved
-  BIOS-e820: [mem 0x0000000062472000-0x0000000062823fff] usable
-  BIOS-e820: [mem 0x0000000062824000-0x0000000063a24fff] reserved
-  BIOS-e820: [mem 0x0000000063a25000-0x0000000063d57fff] usable
-  BIOS-e820: [mem 0x0000000063d58000-0x0000000064157fff] reserved
-  BIOS-e820: [mem 0x0000000064158000-0x0000000064158fff] usable
-  BIOS-e820: [mem 0x0000000064159000-0x0000000064194fff] reserved
-  BIOS-e820: [mem 0x0000000064195000-0x000000006e9cefff] usable
-  BIOS-e820: [mem 0x000000006e9cf000-0x000000006eccefff] reserved
-  BIOS-e820: [mem 0x000000006eccf000-0x000000006f6fefff] ACPI NVS
-  BIOS-e820: [mem 0x000000006f6ff000-0x000000006f7fefff] ACPI data
-  BIOS-e820: [mem 0x000000006f7ff000-0x000000006f7fffff] usable
-  BIOS-e820: [mem 0x000000006f800000-0x000000008fffffff] reserved
-  ......
-
-[2] Convertible Memory Regions of the problematic platform:
-
-  virt/tdx: CMR: [0x100000, 0x6f800000)
-  virt/tdx: CMR: [0x100000000, 0x107a000000)
-  virt/tdx: CMR: [0x1080000000, 0x207c000000)
-  virt/tdx: CMR: [0x2080000000, 0x307c000000)
-  virt/tdx: CMR: [0x3080000000, 0x407c000000)
-
-Fixes: dde3b60d572c ("x86/virt/tdx: Designate reserved areas for all TDMRs")
-Signed-off-by: Kai Huang <kai.huang@intel.com>
+Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
 ---
+Changes in v5:
+- Made preemption documentation more detailed
+- Added ring ID to preempt_record BO name
+- Added Neil's Tested-By tags
+- Added Akhil's Reviewed-By tags
+- Moved preemption module params to adreno_device.c
+- Link to v4: https://lore.kernel.org/r/20240917-preemption-a750-t-v4-0-95d48012e0ac@gmail.com
 
-v3 -> v4:
- - Trim down changelog - Dan.
- - "must be marked as reserved areas" -> "are marked as reserved areas" - Ardian.
- - Remove all WARN_ON_ONCE() for CMR sanity checks, and clarify in the
-   comment that CMRs are verified by MCHECK before it enables TDX so we
-   can trust hardware.
- - Change CMR_BASE(i) macro back to just define CMR_BASE and do the
-   "+i" in the code.
+Changes in v4:
+- Added missing register in pwrup list 
+- Removed and rearrange barriers
+- Renamed `skip_inline_wptr` to `restore_wptr`
+- Track ctx seqno per ring
+- Removed secure preempt context
+- NOP out postamble to disable it instantly
+- Only emit pwrup reglist once
+- Document bv_rptr_addr
+- Removed unused A6XX_PREEMPT_USER_RECORD_SIZE
+- Set name on preempt record buffer
+- Link to v3: https://lore.kernel.org/r/20240905-preemption-a750-t-v3-0-fd947699f7bc@gmail.com
 
-v2 -> v3:
+Changes in v3:
+- Added documentation about preemption
+- Use quirks to determine which target supports preemption
+- Add a module parameter to force disabling or enabling preemption
+- Clear postamble when profiling
+- Define A6XX_CP_CONTEXT_SWITCH_CNTL_LEVEL fields in a6xx.xml
+- Make preemption records MAP_PRIV
+- Removed user ctx record (NON_PRIV) and patch 2/9 as it's not needed
+  anymore
+- Link to v2: https://lore.kernel.org/r/20240830-preemption-a750-t-v2-0-86aeead2cd80@gmail.com
 
- - Add the Fixes tag, although this patch depends on previous patches.
- - CMR_BASE0 -> CMR_BASE(_i), CMR_SIZE0 -> CMR_SIZE(_i) to silence the
-   build-check error.
-
-v1 -> v2:
- - Change to walk over CMRs directly to find out memory holes, instead
-   of walking over TDX memory blocks and explicitly check whether a hole
-   is subregion of CMR.  (Chao)
- - Mention any constant macro definitions in global metadata structures
-   are TDX architectural. (Binbin)
- - Slightly improve the changelog.
-
+Changes in v2:
+- Added preept_record_size for X185 in PATCH 3/7
+- Added patches to reset perf counters
+- Dropped unused defines
+- Dropped unused variable (fixes warning)
+- Only enable preemption on a750
+- Reject MSM_SUBMITQUEUE_ALLOW_PREEMPT for unsupported targets
+- Added Akhil's Reviewed-By tags to patches 1/9,2/9,3/9
+- Added Neil's Tested-By tags
+- Added explanation for UAPI changes in commit message
+- Link to v1: https://lore.kernel.org/r/20240815-preemption-a750-t-v1-0-7bda26c34037@gmail.com
 
 ---
- arch/x86/virt/vmx/tdx/tdx.c | 103 ++++++++++++++++++++++++++++++------
- arch/x86/virt/vmx/tdx/tdx.h |  12 +++++
- 2 files changed, 99 insertions(+), 16 deletions(-)
+Antonino Maniscalco (11):
+      drm/msm: Fix bv_fence being used as bv_rptr
+      drm/msm/A6XX: Track current_ctx_seqno per ring
+      drm/msm: Add a `preempt_record_size` field
+      drm/msm: Add CONTEXT_SWITCH_CNTL bitfields
+      drm/msm/A6xx: Implement preemption for A7XX targets
+      drm/msm/A6xx: Sync relevant adreno_pm4.xml changes
+      drm/msm/A6xx: Use posamble to reset counters on preemption
+      drm/msm/A6xx: Add traces for preemption
+      drm/msm/A6XX: Add a flag to allow preemption to submitqueue_create
+      drm/msm/A6xx: Enable preemption for A750
+      Documentation: document adreno preemption
 
-diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-index cd8cca5139ac..aac13c3c10f5 100644
---- a/arch/x86/virt/vmx/tdx/tdx.c
-+++ b/arch/x86/virt/vmx/tdx/tdx.c
-@@ -332,6 +332,58 @@ static int get_tdx_sys_info_version(struct tdx_sys_info_version *sysinfo_version
- 	return ret;
- }
- 
-+/* Update the @sysinfo_cmr->num_cmrs to trim tail empty CMRs */
-+static void trim_empty_tail_cmrs(struct tdx_sys_info_cmr *sysinfo_cmr)
-+{
-+	int i;
-+
-+	/*
-+	 * The TDX module may report the maximum number of CMRs that
-+	 * TDX architecturally supports as the actual number of CMRs,
-+	 * despite the latter is smaller.  In this case all the tail
-+	 * CMRs will be empty.  Trim them away.
-+	 *
-+	 * Note MCHECK verifies CMRs before enabling TDX on hardware.
-+	 * Skip other sanity checks (e.g., verify CMR is 4KB aligned)
-+	 * but trust MCHECK to work properly.  CMRs are printed later
-+	 * anyway, and the worst case is module fails to initialize.
-+	 */
-+	for (i = 0; i < sysinfo_cmr->num_cmrs; i++)
-+		if (!sysinfo_cmr->cmr_size[i])
-+			break;
-+
-+	sysinfo_cmr->num_cmrs = i;
-+}
-+
-+static int get_tdx_sys_info_cmr(struct tdx_sys_info_cmr *sysinfo_cmr)
-+{
-+	int ret = 0;
-+	u16 i;
-+
-+#define READ_SYS_INFO(_field_id, _member, _size)			\
-+	ret = ret ?: read_sys_metadata_field(MD_FIELD_ID_##_field_id,	\
-+					&sysinfo_cmr->_member, _size)
-+
-+	READ_SYS_INFO(NUM_CMRS, num_cmrs, 16);
-+
-+	if (ret)
-+		return ret;
-+
-+	for (i = 0; i < sysinfo_cmr->num_cmrs; i++) {
-+		READ_SYS_INFO(CMR_BASE + i, cmr_base[i], 64);
-+		READ_SYS_INFO(CMR_SIZE + i, cmr_size[i], 64);
-+	}
-+
-+	if (ret)
-+		return ret;
-+
-+	trim_empty_tail_cmrs(sysinfo_cmr);
-+
-+#undef READ_SYS_INFO
-+
-+	return 0;
-+}
-+
- static int get_tdx_sys_info_tdmr(struct tdx_sys_info_tdmr *sysinfo_tdmr)
- {
- 	int ret = 0;
-@@ -363,6 +415,10 @@ static int get_tdx_sys_info(struct tdx_sys_info *sysinfo)
- 	if (ret)
- 		return ret;
- 
-+	ret = get_tdx_sys_info_cmr(&sysinfo->cmr);
-+	if (ret)
-+		return ret;
-+
- 	return get_tdx_sys_info_tdmr(&sysinfo->tdmr);
- }
- 
-@@ -383,9 +439,23 @@ static void print_sys_info_version(struct tdx_sys_info_version *version)
- 			version->build_date);
- }
- 
-+static void print_sys_info_cmr(struct tdx_sys_info_cmr *sysinfo_cmr)
-+{
-+	int i;
-+
-+	for (i = 0; i < sysinfo_cmr->num_cmrs; i++) {
-+		u64 cmr_base = sysinfo_cmr->cmr_base[i];
-+		u64 cmr_size = sysinfo_cmr->cmr_size[i];
-+
-+		pr_info("CMR[%d]: [0x%llx, 0x%llx)\n", i, cmr_base,
-+				cmr_base + cmr_size);
-+	}
-+}
-+
- static void print_basic_sys_info(struct tdx_sys_info *sysinfo)
- {
- 	print_sys_info_version(&sysinfo->version);
-+	print_sys_info_cmr(&sysinfo->cmr);
- }
- 
- static int check_features(struct tdx_sys_info *sysinfo)
-@@ -821,29 +891,28 @@ static int tdmr_add_rsvd_area(struct tdmr_info *tdmr, int *p_idx, u64 addr,
- }
- 
- /*
-- * Go through @tmb_list to find holes between memory areas.  If any of
-+ * Go through all CMRs in @sysinfo_cmr to find memory holes.  If any of
-  * those holes fall within @tdmr, set up a TDMR reserved area to cover
-  * the hole.
-  */
--static int tdmr_populate_rsvd_holes(struct list_head *tmb_list,
-+static int tdmr_populate_rsvd_holes(struct tdx_sys_info_cmr *sysinfo_cmr,
- 				    struct tdmr_info *tdmr,
- 				    int *rsvd_idx,
- 				    u16 max_reserved_per_tdmr)
- {
--	struct tdx_memblock *tmb;
- 	u64 prev_end;
--	int ret;
-+	int i, ret;
- 
- 	/*
- 	 * Start looking for reserved blocks at the
- 	 * beginning of the TDMR.
- 	 */
- 	prev_end = tdmr->base;
--	list_for_each_entry(tmb, tmb_list, list) {
-+	for (i = 0; i < sysinfo_cmr->num_cmrs; i++) {
- 		u64 start, end;
- 
--		start = PFN_PHYS(tmb->start_pfn);
--		end   = PFN_PHYS(tmb->end_pfn);
-+		start = sysinfo_cmr->cmr_base[i];
-+		end   = start + sysinfo_cmr->cmr_size[i];
- 
- 		/* Break if this region is after the TDMR */
- 		if (start >= tdmr_end(tdmr))
-@@ -944,16 +1013,16 @@ static int rsvd_area_cmp_func(const void *a, const void *b)
- 
- /*
-  * Populate reserved areas for the given @tdmr, including memory holes
-- * (via @tmb_list) and PAMTs (via @tdmr_list).
-+ * (via @sysinfo_cmr) and PAMTs (via @tdmr_list).
-  */
- static int tdmr_populate_rsvd_areas(struct tdmr_info *tdmr,
--				    struct list_head *tmb_list,
-+				    struct tdx_sys_info_cmr *sysinfo_cmr,
- 				    struct tdmr_info_list *tdmr_list,
- 				    u16 max_reserved_per_tdmr)
- {
- 	int ret, rsvd_idx = 0;
- 
--	ret = tdmr_populate_rsvd_holes(tmb_list, tdmr, &rsvd_idx,
-+	ret = tdmr_populate_rsvd_holes(sysinfo_cmr, tdmr, &rsvd_idx,
- 			max_reserved_per_tdmr);
- 	if (ret)
- 		return ret;
-@@ -972,10 +1041,10 @@ static int tdmr_populate_rsvd_areas(struct tdmr_info *tdmr,
- 
- /*
-  * Populate reserved areas for all TDMRs in @tdmr_list, including memory
-- * holes (via @tmb_list) and PAMTs.
-+ * holes (via @sysinfo_cmr) and PAMTs.
-  */
- static int tdmrs_populate_rsvd_areas_all(struct tdmr_info_list *tdmr_list,
--					 struct list_head *tmb_list,
-+					 struct tdx_sys_info_cmr *sysinfo_cmr,
- 					 u16 max_reserved_per_tdmr)
- {
- 	int i;
-@@ -984,7 +1053,7 @@ static int tdmrs_populate_rsvd_areas_all(struct tdmr_info_list *tdmr_list,
- 		int ret;
- 
- 		ret = tdmr_populate_rsvd_areas(tdmr_entry(tdmr_list, i),
--				tmb_list, tdmr_list, max_reserved_per_tdmr);
-+				sysinfo_cmr, tdmr_list, max_reserved_per_tdmr);
- 		if (ret)
- 			return ret;
- 	}
-@@ -999,7 +1068,8 @@ static int tdmrs_populate_rsvd_areas_all(struct tdmr_info_list *tdmr_list,
-  */
- static int construct_tdmrs(struct list_head *tmb_list,
- 			   struct tdmr_info_list *tdmr_list,
--			   struct tdx_sys_info_tdmr *sysinfo_tdmr)
-+			   struct tdx_sys_info_tdmr *sysinfo_tdmr,
-+			   struct tdx_sys_info_cmr *sysinfo_cmr)
- {
- 	int ret;
- 
-@@ -1012,7 +1082,7 @@ static int construct_tdmrs(struct list_head *tmb_list,
- 	if (ret)
- 		return ret;
- 
--	ret = tdmrs_populate_rsvd_areas_all(tdmr_list, tmb_list,
-+	ret = tdmrs_populate_rsvd_areas_all(tdmr_list, sysinfo_cmr,
- 			sysinfo_tdmr->max_reserved_per_tdmr);
- 	if (ret)
- 		tdmrs_free_pamt_all(tdmr_list);
-@@ -1208,7 +1278,8 @@ static int init_tdx_module(void)
- 		goto err_free_tdxmem;
- 
- 	/* Cover all TDX-usable memory regions in TDMRs */
--	ret = construct_tdmrs(&tdx_memlist, &tdx_tdmr_list, &sysinfo.tdmr);
-+	ret = construct_tdmrs(&tdx_memlist, &tdx_tdmr_list, &sysinfo.tdmr,
-+			&sysinfo.cmr);
- 	if (ret)
- 		goto err_free_tdmrs;
- 
-diff --git a/arch/x86/virt/vmx/tdx/tdx.h b/arch/x86/virt/vmx/tdx/tdx.h
-index 9314f6ecbcb5..b933abefe8b4 100644
---- a/arch/x86/virt/vmx/tdx/tdx.h
-+++ b/arch/x86/virt/vmx/tdx/tdx.h
-@@ -43,6 +43,9 @@
- #define MD_FIELD_ID_PAMT_4K_ENTRY_SIZE		0x9100000100000010ULL
- #define MD_FIELD_ID_PAMT_2M_ENTRY_SIZE		0x9100000100000011ULL
- #define MD_FIELD_ID_PAMT_1G_ENTRY_SIZE		0x9100000100000012ULL
-+#define MD_FIELD_ID_NUM_CMRS			0x9000000100000000ULL
-+#define MD_FIELD_ID_CMR_BASE			0x9000000300000080ULL
-+#define MD_FIELD_ID_CMR_SIZE			0x9000000300000100ULL
- 
- /*
-  * Sub-field definition of metadata field ID.
-@@ -131,6 +134,14 @@ struct tdx_sys_info_version {
- 	u32 build_date;
- };
- 
-+/* Class "CMR Info" */
-+#define TDX_MAX_CMRS	32
-+struct tdx_sys_info_cmr {
-+	u16 num_cmrs;
-+	u64 cmr_base[TDX_MAX_CMRS];
-+	u64 cmr_size[TDX_MAX_CMRS];
-+};
-+
- /* Class "TDMR info" */
- struct tdx_sys_info_tdmr {
- 	u16 max_tdmrs;
-@@ -141,6 +152,7 @@ struct tdx_sys_info_tdmr {
- struct tdx_sys_info {
- 	struct tdx_sys_info_features	features;
- 	struct tdx_sys_info_version	version;
-+	struct tdx_sys_info_cmr		cmr;
- 	struct tdx_sys_info_tdmr	tdmr;
- };
- 
+ Documentation/gpu/msm-preemption.rst               |  99 +++++
+ drivers/gpu/drm/msm/Makefile                       |   1 +
+ drivers/gpu/drm/msm/adreno/a2xx_gpu.c              |   2 +-
+ drivers/gpu/drm/msm/adreno/a3xx_gpu.c              |   2 +-
+ drivers/gpu/drm/msm/adreno/a4xx_gpu.c              |   2 +-
+ drivers/gpu/drm/msm/adreno/a5xx_gpu.c              |   6 +-
+ drivers/gpu/drm/msm/adreno/a6xx_catalog.c          |   7 +-
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.c              | 325 ++++++++++++++-
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.h              | 174 ++++++++
+ drivers/gpu/drm/msm/adreno/a6xx_preempt.c          | 440 +++++++++++++++++++++
+ drivers/gpu/drm/msm/adreno/adreno_device.c         |   4 +
+ drivers/gpu/drm/msm/adreno/adreno_gpu.h            |   9 +-
+ drivers/gpu/drm/msm/msm_gpu.c                      |   2 +-
+ drivers/gpu/drm/msm/msm_gpu.h                      |  11 -
+ drivers/gpu/drm/msm/msm_gpu_trace.h                |  28 ++
+ drivers/gpu/drm/msm/msm_ringbuffer.h               |  18 +
+ drivers/gpu/drm/msm/msm_submitqueue.c              |   3 +
+ drivers/gpu/drm/msm/registers/adreno/a6xx.xml      |   7 +-
+ .../gpu/drm/msm/registers/adreno/adreno_pm4.xml    |  39 +-
+ include/uapi/drm/msm_drm.h                         |   5 +-
+ 20 files changed, 1118 insertions(+), 66 deletions(-)
+---
+base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
+change-id: 20240815-preemption-a750-t-fcee9a844b39
+
+Best regards,
 -- 
-2.46.0
+Antonino Maniscalco <antomani103@gmail.com>
 
 
