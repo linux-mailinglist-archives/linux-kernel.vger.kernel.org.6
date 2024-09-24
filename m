@@ -1,99 +1,160 @@
-Return-Path: <linux-kernel+bounces-337426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E829849FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:50:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23E6A9849FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:50:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 242302832F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:50:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 472251C20BDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1D41ABEDA;
-	Tue, 24 Sep 2024 16:50:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160DB1ABEBB;
+	Tue, 24 Sep 2024 16:50:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bR1UpUG1"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VnN4wpEf"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D561A265D
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 16:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D761ABEA0;
+	Tue, 24 Sep 2024 16:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727196627; cv=none; b=WlZ5QE+0GQq6zLTM7KlkTjyP6t1jkz2XRoIPr1JCIi6hs7yTnVhdXoDnQTStmIRFEDezx9mqADP4po+0knBZCXPYNTep58SiG9z8p6nH77ysPRWBXxJcReknSIPnhZ/173Pv2/kaQxE0474iA4vHryRBB0RFeGuo8/n6xxbQ/HI=
+	t=1727196631; cv=none; b=h1soKE7KG7llKq6bvQGVZO0IOJAs+FkGSjibE9Eikz0LX6ZE0HcC8ADMab1LmMc2366N7wkDnR6Y2FaCT6FRId+2hKYc3HJNI3gn82lVCTwzo/65E3Gw695xc+SbtKYhrIRIh59L6MxY9y9PozdS4kwz7wkYVy7gZyy9xEFYdgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727196627; c=relaxed/simple;
-	bh=TSqucCneXLlY2w5/bcNfl7wgMjyFfK9mOWImRFyUeZM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bnmbQa59gHCqXIpkHeHig8cPmPiEqAYG83K8Tafkc/DqclW2RfdzsAaD0ZPDkC2k5or0xG9GQPDfIPs8YMFjnB75Bg4V9GsdpLOFpUslhLfOJeKhY9FMIgyOf+6FzOZ7l1WmXGTi6jHZ2yeqhxHZlSCEhbAJ9Qm/OcGvypDJxw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bR1UpUG1; arc=none smtp.client-ip=209.85.219.42
+	s=arc-20240116; t=1727196631; c=relaxed/simple;
+	bh=k4z37PBBqp5fmyzET3BqDMVMHN1TqYd2jjf2Z4433yI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GFnv2+SCPj++NGjN/FtL8EZDJhTiUldGNIv2/y7Gzwpt8ZgEcJvRslm9C/4O5TNY1ev6sZzw5pfvVLNkjwFNfAB6ZcjKqKP1M92mjhE71TKkzuw7hRiVwJGnSh18SDGL9mP5XbpNCsElRFx9d8hRU3CnZHhKFE/jsrG16w3pL3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VnN4wpEf; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6c36ff6e981so47290876d6.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:50:25 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-206b9455460so520745ad.0;
+        Tue, 24 Sep 2024 09:50:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727196624; x=1727801424; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TSqucCneXLlY2w5/bcNfl7wgMjyFfK9mOWImRFyUeZM=;
-        b=bR1UpUG1FspwMkWyBzG4sWiW7Tzii6HtMzG8lZgFPS1fY7Lsa7UGyrx8ziTTkvpowt
-         vLgxNx4aae1AwRHBfoLC+7VIzh4bWnvW9ZtMpwPgare8DVyAG/lEKHiC6K2o+fwjYVdu
-         bGIGhaYuapQU1GctXnw0HGu3RRrnBogQRR8yS/JVGDTvdnDya7/NyJLz25te4w4ysvmF
-         6xF8AElGUjULeeUg++lZY73IJNtl43iwGEIjhghyC7VQhbDgZDPxnBgasnSFZHJDh22U
-         iVFh0sw64PWeWNgXyYnaxMKCalBk+7ZF5dKFcOx26HN+N/r4EM7/fPTLWgRwopXU4IlC
-         EsVw==
+        d=gmail.com; s=20230601; t=1727196629; x=1727801429; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=XrLxPgkgKOiPm2BGxnQytFvFW36owhoRBcwb0NgVun8=;
+        b=VnN4wpEf3bgCg14QoXnT9UoqX+uybS9BUBoTKb+OXO8DfzHsmDFu6bIP9fpU1/0INi
+         CNo4EPebJ+0P8zToRft3TBZZhOjhyFNGYf9F6ZXmAprQERgtuM9wmrzvF2YsptRZzJc4
+         SBJKDhmp754ekBv1KL9Vm7ddfqx4NHFHGiliwmfKY0YcVgtmZWUjVOqNhsdxqzcEBsaZ
+         Sm1v7jPqcM0a2zEy13GxPuRpZfpDIv77C4BVH3D3zM4rjvc6evQHYNlxJc/v8QArNsPW
+         QU638bdLgkcgfhWiD85cNob6Y4+KX5STvelBYTIsXRbudIT8p0VecpwZizDTJs5UYLHe
+         LjDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727196624; x=1727801424;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TSqucCneXLlY2w5/bcNfl7wgMjyFfK9mOWImRFyUeZM=;
-        b=gymC5Mn4S6RFMFr/8Bgpv7bboQtPKMTzw1OWc4sETP9UVp65fLhzXNJ7OAktHNmxux
-         UFtvwtbrs31ZHiaIujiswyz92w8dJMuDMvUsHEfNtGd/YhyDCnpNmZp9ubZKWvxkWw2t
-         jKu2YquFCQTO02BGrIH+qqLoWquuTk42wI0uy/VZrUq1go2wFVHejsqMkDwnGgvu5S9r
-         fRT38VNlRS2Fzw0dD0LaTU5kjzSv6xVdyH+Qzo2RJrnOHJkX/HYPsq4v8Vso3hOIFX5X
-         syrKgjoNo6ODJb/XOmlBEm+UillRmffrflNYHQpf0dsOwHKR7WQP8JQH45Gz0xOekgtq
-         hZSw==
-X-Gm-Message-State: AOJu0YzB2owgrDS9tQju/8ztjHeOrZuGArJk7hgC/FA8lDEVolqCJ+w1
-	1BO5EJ95/QncsMHzW0TI+xUJhyQliRaEndwEu8z2kKF7f6TQHRcdd0oBZn2dF77BYen/1lF5O6N
-	QwZEO3Xvkz9xNEyAnCHT9Xuzi6xM=
-X-Google-Smtp-Source: AGHT+IF1CUbhLsOTO+WUH+jMHIcoMo99qhJHmAP2tLaOGmtMskkZA+zR52UHnBMkTFXX6RgcmVm12SXkTsSngPy1Ykg=
-X-Received: by 2002:a05:6214:4a8d:b0:6c5:a41b:231d with SMTP id
- 6a1803df08f44-6c7bc838547mr279717676d6.44.1727196624369; Tue, 24 Sep 2024
- 09:50:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727196629; x=1727801429;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XrLxPgkgKOiPm2BGxnQytFvFW36owhoRBcwb0NgVun8=;
+        b=o+AKg/zxl7ll36dm0BPcwkjuehnkEXd5YB1SgLOMsWi659kEALNoPIfG9sM3FJU/ff
+         iq01UllKNMf+JFiO8bwifl6p3Mr0yAuAhYoH/V3icSKJFXyPvH+MfNv6chtAWCeZ0IKZ
+         nfpiGw89KARdZx7OU2MOwGzKgIHnyF/4RV7YTNDOSAu8hsMhxr1h8zsUx5XmTpNyYzxO
+         7kkYLferXHBDIFHYgdPtmkv7j9NEcMyi2rLOEwPj0fKy1Ju1FjQgZgHV5pc7cFYZbTwP
+         G8XSZkcEfG1Jqk6cwMPixS2UhS6f1h/89w0wQxiwF/9O2VqnYjemZnKfYlpn8lH4uMC+
+         kQVw==
+X-Forwarded-Encrypted: i=1; AJvYcCUva3UvuX4oQZV7XTXz3evD4mH4Um2gjY+GLBjG5goY/d5fPbeY4CdRaKMR2rFyyKQP5bkRu06+NM4oO9tQ@vger.kernel.org, AJvYcCWoPh7cKOB+ZFBXMxiD0eElBrKI0fdMkBhuFzJp8gkztbRvienzIOa5zDlL7Im4e3fYEGIX8aydHpeT@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz64YpXGWtkE6+IQ6GQYotfkS9dh3+cP+UIlmA+UWO3BxHH9U79
+	gpRh6dLIJwxcysKyBPvwoSElQ0kwaqgq1YRlCXWB9IOCxjg3yHdn
+X-Google-Smtp-Source: AGHT+IFqfUUaDOPnE1y9rGSkTZU20gXomlidJ6gg6vYqzx/bbHaIxhoy3MT4T10BvyOIE84H7hgXng==
+X-Received: by 2002:a17:902:f60a:b0:205:5d71:561e with SMTP id d9443c01a7336-20aed13c417mr58688885ad.26.1727196629208;
+        Tue, 24 Sep 2024 09:50:29 -0700 (PDT)
+Received: from joaog-nb ([67.159.246.222])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af17dfeedsm12290045ad.147.2024.09.24.09.50.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2024 09:50:28 -0700 (PDT)
+Date: Tue, 24 Sep 2024 13:50:21 -0300
+From: =?utf-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Francesco Dolcini <francesco@dolcini.it>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?utf-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Francesco Dolcini <francesco.dolcini@toradex.com>
+Subject: Re: [PATCH v1 3/3] arm64: dts: freescale: imx8mp-verdin: Add Ivy
+ carrier board
+Message-ID: <20240924165021.n6lln424llsfzhtu@joaog-nb>
+References: <20240924114053.127737-1-francesco@dolcini.it>
+ <20240924114053.127737-4-francesco@dolcini.it>
+ <ZvLWP62Gw0nygxaF@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240924011709.7037-1-kanchana.p.sridhar@intel.com> <20240924011709.7037-3-kanchana.p.sridhar@intel.com>
-In-Reply-To: <20240924011709.7037-3-kanchana.p.sridhar@intel.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Tue, 24 Sep 2024 09:50:13 -0700
-Message-ID: <CAKEwX=Ogw3aR0McCPbdi+90U6+5u5e+-Lc41LtshTzt8q0WDVg@mail.gmail.com>
-Subject: Re: [PATCH v7 2/8] mm: zswap: Modify zswap_compress() to accept a
- page instead of a folio.
-To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
-	yosryahmed@google.com, chengming.zhou@linux.dev, usamaarif642@gmail.com, 
-	shakeel.butt@linux.dev, ryan.roberts@arm.com, ying.huang@intel.com, 
-	21cnbao@gmail.com, akpm@linux-foundation.org, nanhai.zou@intel.com, 
-	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZvLWP62Gw0nygxaF@lizhi-Precision-Tower-5810>
 
-On Mon, Sep 23, 2024 at 6:17=E2=80=AFPM Kanchana P Sridhar
-<kanchana.p.sridhar@intel.com> wrote:
->
-> For zswap_store() to be able to store an mTHP by compressing
-> it one page at a time, zswap_compress() needs to accept a page
-> as input. This will allow us to iterate through each page in
-> the mTHP in zswap_store(), compress it and store it in the zpool.
->
-> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Hi Frank,
 
-Reviewed-by: Nhat Pham <nphamcs@gmail.com>
+On Tue, Sep 24, 2024 at 11:09:51AM -0400, Frank Li wrote:
+> On Tue, Sep 24, 2024 at 01:40:53PM +0200, Francesco Dolcini wrote:
+> > From: João Paulo Gonçalves <joao.goncalves@toradex.com>
+> >
+> > Add Toradex Verdin Ivy carrier board support. One notable feature of Ivy
+> > is the analog inputs. These inputs are multiplexed, allowing the same
+> > input to measure either voltage or current. For current measurements,
+> > a GPIO switch enables or disables the shunt resistor. This process is
+> > automatically managed by the Linux kernel using the IIO and MUX
+> > subsystems. Voltage measurement is always enabled, but the voltage
+> > measured by the ADC is scaled by a cascade voltage divider. In the
+> > device tree, the equivalent gain of the voltage divider is used, which
+> > can be calculated as follows:
+> >
+> >                ------------
+> >                +          |
+> >                          .-.
+> >                   R1=30K | |
+> >                          | |
+> >                          '-'
+> >                           |-------------------
+> >     Analog Input (AIN)    |                  |
+> >                          .-.                .-.
+> >                   R2=10K | |         R3=30K | |
+> >                          | |                | |
+> >                          '-'                '-'
+> >                           |                  |
+> >                           |                  |--------
+> >                           |                 .-.      +
+> >                           |          R4=10K | |
+> >                           |                 | |      ADC Input (Channels 0 and 1)
+> >                           |                 '-'
+> >                -          |                  |       -
+> >                -----------|                  |--------
+> >                          ===                ===
+> >                          GND                GND
+> >
+> > Vin  = Analog Input (AIN)
+> > Vout = ADC Input
+> > Rth  = Thevenin Equiv. Resistance
+> > Vth  = Thevenin Equiv. Voltage
+> > RL   = Load Resistor
+> >
+> > R1 = 30K, R2 = 10K, R3 = 30K, R4 = 10K
+> > RL = R4 = 10K
+> >
+> > Rth  = (R1 // R2) + R3 = 37500 Ohms
+> > Vth  = (Vin * R2) / (R1 + R2) = Vin/4;
+> > Vout = (Vth * RL)/ (Rth + RL) = Vth/4.75 = Vin/19
+> > Gain = Vout/Vin = 1/19
+> 
+> which properties related these value?
+
+The gain value is used on the "ain1_voltage_unmanaged" node for the full-ohms
+and output-ohms properties.
+
+Best Regards,
+João Paulo Gonçalves
 
