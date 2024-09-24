@@ -1,109 +1,102 @@
-Return-Path: <linux-kernel+bounces-336741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BAFE984014
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:13:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B460C984015
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:14:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39C4A2840FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:13:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D4D41F24039
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:14:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457DA14A639;
-	Tue, 24 Sep 2024 08:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B28A14A4F7;
+	Tue, 24 Sep 2024 08:14:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="TcVn2Sdm"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="upH3tzoR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D27A1C32;
-	Tue, 24 Sep 2024 08:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0561C32
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 08:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727165606; cv=none; b=BPeLv2r0TLFLzBh1wU295bVK0XmjwVdIOxXpMc4tYPAjlt5GZfE5+ilEuVm+oWtY7AMPMb2kKw0zMlPqrGSpmMcesNWuOjWJJEw2ABLc7Y7/mI1//qoQhDtKtA7zFEGLvRAdjy4Tjdo8as4jV3Z0AQFGQNuk61MnrDKEBVbLw2k=
+	t=1727165642; cv=none; b=dV8vCP2I2sQraF1cubbGnMEcKB1LrvSmDzPgHdi4S8fhG1eMa3DYcUT3R5KWSbPHm1VNGqM74rdwAu4kkqURkXuQotJs9ByXNNy+o8znXrKtc32xHekQ3ADTnPAdnYamKlyp9txueSus1PMem6eFVzgh5DLNjlEHYPrW8iucCdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727165606; c=relaxed/simple;
-	bh=GZc63eXCJHLz2doVRvuGzvZovQYn0B8xHq46bwGnFE4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HV52QFDCIlb3orTrSZZFwnqCjTm64WqywK1wo4l57kSHaKEEjvdKnICBrmMUz9naMkBPB3pm2hyLdu9QSbK5pLMT9eearxkjwqY/prMN5iHtSJ6YKo2MHj/9yUZKL3RTLmQKSzXfKPL7uxlD8wsU5pBxJ5DQ2rXFYXI9WZlcduA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=TcVn2Sdm; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1727165604; x=1758701604;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=GZc63eXCJHLz2doVRvuGzvZovQYn0B8xHq46bwGnFE4=;
-  b=TcVn2SdmNHc8IRo7qJzJSxzCexNSOr3dF1keIJ24Szlo4bi805OlUQK8
-   w4tagHycUFzZPQJ4acIb0FERp/MN+gOtHiTCEK/n5vQAuhKR0pKOF5ukT
-   uBzpMmrCkWlksR/yHbStJ68mnqGAfGZmqJG7r27PtJA7grvzT/Lezmxoe
-   gjL6N0virqaU5yqCGVO8N81eM5yjllzTL+UmLE8cfSe7qAYa/v8z+Jhck
-   p8TyyUtJE/JEwtNTnIXrBvb79El3cqcZpTeJ69FsbMGPregqM8B7fYEtn
-   FnInUGqg/PFsx4AyHIqevJ9265Z8AXpBfpPK6UDkQinYYrufr6ufDAoLf
-   g==;
-X-CSE-ConnectionGUID: az7ICeymT/y/jLAHNtXqzg==
-X-CSE-MsgGUID: qObPW9fWTl6T45AWPAfa/g==
-X-IronPort-AV: E=Sophos;i="6.10,253,1719903600"; 
-   d="scan'208";a="32031723"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Sep 2024 01:13:22 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 24 Sep 2024 01:12:59 -0700
-Received: from ROB-ULT-M76677.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Tue, 24 Sep 2024 01:12:57 -0700
-From: Andrei Simion <andrei.simion@microchip.com>
-To: <claudiu.beznea@tuxon.dev>, <lgirdwood@gmail.com>, <broonie@kernel.org>,
-	<perex@perex.cz>, <tiwai@suse.com>, <nicolas.ferre@microchip.com>,
-	<alexandre.belloni@bootlin.com>
-CC: <alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	Andrei Simion <andrei.simion@microchip.com>
-Subject: [PATCH] ASoC: atmel: mchp-pdmc: Skip ALSA restoration if substream runtime is uninitialized
-Date: Tue, 24 Sep 2024 11:12:38 +0300
-Message-ID: <20240924081237.50046-1-andrei.simion@microchip.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727165642; c=relaxed/simple;
+	bh=8pr9rwGUcErk0NL8euoTFsgHFRvnvjovv9UPeQmYg1o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sdq6HfIS5wr2eL2DWiOyW+PGOAG2q6wnqmz44E+5aSTb2UHYICNLA0gw+WnCuooYsw9Gx6MWo0lemMwM3OUuCqK7JkkH1Cd0mlmVDqdWWNDzxyJ/B82fQt++MMcZ+CHrptk6pTz/C6s9AmpwoTOQJFSobrkrrhr8MZOu8JaEyQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=upH3tzoR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F7A2C4CEC4;
+	Tue, 24 Sep 2024 08:14:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727165641;
+	bh=8pr9rwGUcErk0NL8euoTFsgHFRvnvjovv9UPeQmYg1o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=upH3tzoRvGSTfA/S3/uoDAri7K5T2HcRtihukbyOp+n2MqV4dyqkp164O/lPIFlXY
+	 xQpOW0P/ZrBpF7kAsIEp/7/BNy4RI/f8dsf0BbqeR9+PTGmC0He99RSiZTJw+UdODG
+	 3LU8TIAKu5gSihgypekPpJPm4y5QZo0bv6h0RmqbSvW7hRJv00CdXBh08n2yA024nP
+	 4CgHFQrK1+Rm4TKM5YfU3OP5CBC+8vYgCB2qV/euwGouy3F2WHS34DALTi1hEZAeN/
+	 s8G5hkto6mVx537PRNrMTHSr86kxP5R+fttqdSaGCgUSU+E6uVt21cr/xYc8gnEWoA
+	 1GnzCZTasg/Fg==
+Date: Tue, 24 Sep 2024 10:13:54 +0200
+From: Mark Brown <broonie@kernel.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] regulator: do not ignore provided init_data
+Message-ID: <ZvJ0wgeztxijv14i@finisterre.sirena.org.uk>
+References: <20240920-regulator-ignored-data-v1-1-7ea4abfe1b0a@baylibre.com>
+ <ZvF49CZhRc2rrPQ0@finisterre.sirena.org.uk>
+ <1jbk0ez546.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bQFZvieR5FOHp+Er"
+Content-Disposition: inline
+In-Reply-To: <1jbk0ez546.fsf@starbuckisacylon.baylibre.com>
+X-Cookie: Editing is a rewording activity.
 
-Update the driver to prevent alsa-restore.service from failing when
-reading data from /var/lib/alsa/asound.state at boot. Ensure that the
-restoration of ALSA mixer configurations is skipped if substream->runtime
-is NULL.
 
-Fixes: 50291652af52 ("ASoC: atmel: mchp-pdmc: add PDMC driver")
-Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
----
- sound/soc/atmel/mchp-pdmc.c | 3 +++
- 1 file changed, 3 insertions(+)
+--bQFZvieR5FOHp+Er
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/sound/soc/atmel/mchp-pdmc.c b/sound/soc/atmel/mchp-pdmc.c
-index 939cd44ebc8a..06dc3c48e7e8 100644
---- a/sound/soc/atmel/mchp-pdmc.c
-+++ b/sound/soc/atmel/mchp-pdmc.c
-@@ -302,6 +302,9 @@ static int mchp_pdmc_chmap_ctl_put(struct snd_kcontrol *kcontrol,
- 	if (!substream)
- 		return -ENODEV;
- 
-+	if (!substream->runtime)
-+		return 0; /* just for avoiding error from alsactl restore */
-+
- 	map = mchp_pdmc_chmap_get(substream, info);
- 	if (!map)
- 		return -EINVAL;
+On Mon, Sep 23, 2024 at 06:50:33PM +0200, Jerome Brunet wrote:
+> On Mon 23 Sep 2024 at 16:19, Mark Brown <broonie@kernel.org> wrote:
 
-base-commit: 4d0326b60bb753627437fff0f76bf1525bcda422
--- 
-2.34.1
+> > That probably means checking if regulator_of_get_init_node() can find
+> > something and warning if that's the case.
 
+> We could warn if both init_data and desc->of_match are set ?
+
+> Setting desc->of_match is an indication regulator is expected to search
+> DT, is'nt it ? Having both set be the indicaction of the conflict.
+
+> Maybe the warn is enough then. Do you prefer if I keep the change of v1
+> or drop it ?
+
+Yes, that'd detect problems.  There's some older drivers that don't use
+of_match but it'd cover most things quite cheaply.
+
+--bQFZvieR5FOHp+Er
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbydMEACgkQJNaLcl1U
+h9AqCgf/ZH4VYz7Hya9TeVNiqa8uVQ9nq7HiuXUu0YUX63mkKm7Q+q/SKlZnBgfe
+sjU5iQFBYO8DHUwe3IyLU6yOu7rBjksO5gBnsyp32MCu18oX5dGmjghEox9YFJns
+p2+OrA4LrUOox3xNXCIur+3uLYuodEchA50hLsDORTOYadcC2pvZF3sUYadekZ6i
+5WSdSDxfo7f+ZVBStkeWwtrlix8YIYSQ0ApTCl0VIOYZfgf/Ch7webM1owQBMVan
+mNJsohmotN3Kk9HxrSW6/AyxLajoXVm6cNzzyP6qMatGeY5ejL+IXMpUAi5Bzu/c
+E3MDChHqw23Kd8IT9ggGo9nOh8H0cA==
+=rdIW
+-----END PGP SIGNATURE-----
+
+--bQFZvieR5FOHp+Er--
 
