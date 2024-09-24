@@ -1,146 +1,164 @@
-Return-Path: <linux-kernel+bounces-337477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55A5A984A95
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:02:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24130984A96
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:02:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 916112810A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:02:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53D221C22BEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31C81AC88B;
-	Tue, 24 Sep 2024 18:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JYks/4c+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F291ABEC8;
+	Tue, 24 Sep 2024 18:02:25 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7891AB6D5;
-	Tue, 24 Sep 2024 18:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5D749641
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 18:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727200912; cv=none; b=rHlWzcnzWQfKC+YbWep2n2DMqqXPQYn9Q5Q41C4eK/0eIK8AGpupsGip/k2JRNq2z9fUabpOiwqM1QBK9wFJ/OSEmUwrqx59RJ8ePrkpMkyWwyhGmv/9KuflRVJGBb7rFp1du3jkBVV924CaIZK+hVZiloO3Prwp7pDlFtUOcvo=
+	t=1727200945; cv=none; b=Dl0LsVRBHtAz12+gq/dvSUXeRqdYQXD2BQzoY2ghmDHLkdxDf90Be0UrFF/lkwcT5xnFk7wtasbGBMcHrGHj4BjOvvFLIJUlE/7QqFwq7cLSVknhh7yFOFinLFcbFHlq3xDvp62voo7cCqTkh7nt5+0Kqgf+8zKTd6Mzt4s1Wa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727200912; c=relaxed/simple;
-	bh=nRYqYr8uPKGBxUG4dinLI08bF2q953i8FPyf2NS0ZC8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=DrGJvHzzgD1pV4TdQ6bkLV9CeGMyBVYZwSIg+dWc0hD8K6mi612M2OXmbT2Iz/e8MTSkdYb4kvBmbSiNnmz1Dpr4XhfY57mEQipybfF7cC4Atb0PO8OeyYLanbeSQyM94W0evmbhW0oSOLPpFGIh7Dk95rMD5S28YvVEo7rHR2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JYks/4c+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43CB5C4CEC4;
-	Tue, 24 Sep 2024 18:01:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727200911;
-	bh=nRYqYr8uPKGBxUG4dinLI08bF2q953i8FPyf2NS0ZC8=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=JYks/4c+aCXjggcUHwb2uF0yOoZhUvFYiDg1+vBsjK/Yf/sR/e8z66eyUXmuZ74b7
-	 l5LrF3gWNU9NEwFjSFhMWxgm3JltYOmW9TpOyeVbMOv972V7acS9P30HPfs5pvKx8R
-	 pwya+emZ5/MBa+SlgpXDfPhp4aI7tq9ke3Gp2KSps/DABMDPeFo2+6mXih1VhvhZmO
-	 jbaLjpQCXHh4Zp1SwIit1Lw4zrkUEqXiXaaO+9ea1oMsQqUCfGzex7BAvtBte3eSid
-	 fsH+aDLWtXbO7cUjxOGoDwiWojuxX9EQrN7nzX6sgGB4xJ/TS1xlKdEVK9bc/0ywQE
-	 MaGLg3o1ED+yw==
+	s=arc-20240116; t=1727200945; c=relaxed/simple;
+	bh=6W6Y+kifFqrN7M+nduK5Yxd3rGxzXysHmSQTcLRAt/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TjkBQHPWg/Gt946cxAAKnj/uAIcFaTzhKefBIvogDmSpMLsCE4x6lecmjI8+mc4cmRzhLKGu4whzJq1zO118XJIOVKgLA3ftAhX1xRP4eCggYNFGeyonEnX9sslg9y/MHKGsflbXbj2ZMlPHduOPM2Z3qhgdUjF8JDYJlem0+/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+X-CSE-ConnectionGUID: K9Ns0OmjTEmft7F+Rh7dyw==
+X-CSE-MsgGUID: 8TFgLXt5R1qm0GN+GqOl5g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="26087013"
+X-IronPort-AV: E=Sophos;i="6.10,255,1719903600"; 
+   d="scan'208";a="26087013"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 11:02:05 -0700
+X-CSE-ConnectionGUID: y8hQ46MLTTaRKpEYf6C2EA==
+X-CSE-MsgGUID: wQnRmF4eRDiKXtTzSBR1NQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,255,1719903600"; 
+   d="scan'208";a="71386831"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 11:02:03 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy.shevchenko@gmail.com>)
+	id 1st9rM-0000000CXCh-1rpP;
+	Tue, 24 Sep 2024 21:02:00 +0300
+Date: Tue, 24 Sep 2024 21:02:00 +0300
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+To: Zhang Ning <zhangn1985@outlook.com>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org,
+	linux-kernel@vger.kernel.org, lee@kernel.org
+Subject: Re: mfd: intel_soc_pmic_bxtwc: irq 0 issue, tmu and typec components
+ fail to probe.
+Message-ID: <ZvL-mBZxqGg6fi1G@smile.fi.intel.com>
+References: <TY2PR01MB3322FEDCDC048B7D3794F922CDBA2@TY2PR01MB3322.jpnprd01.prod.outlook.com>
+ <ZrYMne34hVa33qKf@smile.fi.intel.com>
+ <TY2PR01MB33222D8BE4B1107EB3A1917FCDBA2@TY2PR01MB3322.jpnprd01.prod.outlook.com>
+ <ZrYjLdPryElDubaM@smile.fi.intel.com>
+ <TY2PR01MB33224CE088EF01D57DE1BABFCD9C2@TY2PR01MB3322.jpnprd01.prod.outlook.com>
+ <CAHp75VeMp9C04iDW5_c9owq3HP=5wvccoOuHwrSQ5SFeV+SRVA@mail.gmail.com>
+ <TY2PR01MB3322699682DBE2F13F919F80CD9D2@TY2PR01MB3322.jpnprd01.prod.outlook.com>
+ <ZtmlCh4NScc25tS2@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 24 Sep 2024 21:01:47 +0300
-Message-Id: <D4EPMF7G3E05.1VHS9CVG3DZDE@kernel.org>
-Cc: <roberto.sassu@huawei.com>, <mapengyu@gmail.com>, "Mimi Zohar"
- <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, "Peter Huewe" <peterhuewe@gmx.de>, "Jason
- Gunthorpe" <jgg@ziepe.ca>, <keyrings@vger.kernel.org>,
- <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 0/5] Lazy flush for the auth session
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, <linux-integrity@vger.kernel.org>
-X-Mailer: aerc 0.18.2
-References: <20240921120811.1264985-1-jarkko@kernel.org>
- <D4D05FKB9VSG.33COYTJHUX6EM@kernel.org>
- <c26a295d96b14173b5693c5933e92bbda84764cc.camel@HansenPartnership.com>
- <D4ENNN25NKBE.87NXHTTEWZY@kernel.org>
- <19a242eeabaa72dcc159c9c24fb412e3f68f8e7e.camel@HansenPartnership.com>
- <D4ENT15WZFRI.HA0FFVBWVISI@kernel.org>
- <D4EOVMA9YR3W.1X1ARMW6APFPP@kernel.org>
- <D4EOWZYNG3AS.1NW958Y0FK6NS@kernel.org>
-In-Reply-To: <D4EOWZYNG3AS.1NW958Y0FK6NS@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZtmlCh4NScc25tS2@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue Sep 24, 2024 at 8:28 PM EEST, Jarkko Sakkinen wrote:
-> On Tue Sep 24, 2024 at 8:26 PM EEST, Jarkko Sakkinen wrote:
-> > On Tue Sep 24, 2024 at 7:36 PM EEST, Jarkko Sakkinen wrote:
-> > > On Tue Sep 24, 2024 at 7:33 PM EEST, James Bottomley wrote:
-> > > > On Tue, 2024-09-24 at 19:29 +0300, Jarkko Sakkinen wrote:
-> > > > > On Tue Sep 24, 2024 at 4:48 PM EEST, James Bottomley wrote:
-> > > > [...]
-> > > > > > Patch 3 is completely unnecessary: the null key is only used to
-> > > > > > salt the session and is not required to be resident while the
-> > > > > > session is used (so can be flushed after session creation)
-> > > > > > therefore keeping it around serves no purpose once the session =
-is
-> > > > > > created and simply clutters up the TPM volatile handle slots. (=
-I
-> > > > > > don't know of a case where we use all the slots in a kernel
-> > > > > > operation, but since we don't need it lets not find out when we=
- get
-> > > > > > one).=C2=A0 So I advise dropping patch 3.
-> > > > >=20
-> > > > > Let's go this through just to check I'm understanding.
-> > > > >=20
-> > > > > Holding null key had radical effect on boot time: it cut it down =
-by
-> > > > > 5 secons down to 15 seconds:
-> > > > >=20
-> > > > > https://lore.kernel.org/linux-integrity/CALSz7m1WG7fZ9UuO0URgCZED=
-G7r_wB4Ev_4mOHJThH_d1Ed1nw@mail.gmail.com/
-> > > > >=20
-> > > > > Then in subsequent version I implemented lazy auth session and bo=
-ot
-> > > > > time went down to 9.7 seconds.
-> > > > >=20
-> > > > > So is the point you're trying to make that since auth session is=
-=20
-> > > > > already held as long as we can and they flushed in synchronous
-> > > > > point too, I can just as well drop patch 3?
-> > > >
-> > > > Yes, because the null key is only used in session generation which =
-is
-> > > > now lazy, it adds or subtracts nothing from the timings.  When you'=
-re
-> > > > forced to flush the session, the null key goes too, so you again ha=
-ve
-> > > > to restore it from the context.  When you can keep the session you
-> > > > don't need the null key because you're not regenerating it.
-> > >
-> > > Yeah, OK, then we're in sync with this. It's evolutionary cruft.
-> > >
-> > > Just had to check that the logic matches how I projected your earlier
-> > > comment because these are sensitive changes.
-> >
-> > I'm definitely going keeep 1/5 and 2/5 as they are still bug fixes.
-> >
-> > So they will appear in v6 unchanged and perf fixes (which are not
-> > functional fixes) should not be built on top of broken code.
->
-> And 3/5 is actually required because it saves of doing flush during
-> the boot if nothing else.
->
-> We are wasting more time so I don't want to waste it for nothing.
+On Thu, Sep 05, 2024 at 03:33:14PM +0300, Andy Shevchenko wrote:
+> On Thu, Sep 05, 2024 at 07:27:25PM +0800, Zhang Ning wrote:
+> > On Wed, Sep 04, 2024 at 05:36:35PM +0300, Andy Shevchenko wrote:
+> > > On Wed, Sep 4, 2024 at 5:29 PM Zhang Ning <zhangn1985@outlook.com> wrote:
+> > > > On Fri, Aug 09, 2024 at 05:09:49PM +0300, Andy Shevchenko wrote:
+> > > > > On Fri, Aug 09, 2024 at 08:53:24PM +0800, Zhang Ning wrote:
+> > > > > > On Fri, Aug 09, 2024 at 03:33:33PM +0300, Andy Shevchenko wrote:
+> > > > > > > On Fri, Aug 09, 2024 at 08:02:43PM +0800, Zhang Ning wrote:
+> > > > > > > > Hi, Greg & Rafael
+> > > > > > > >
+> > > > > > > > recently, when I try to enable mfd components for intel_soc_pmic_bxtwc
+> > > > > > > > for debian kernel[0]. I find tmu and typec failed to probe.
+> > > > > > > >
+> > > > > > > > after check source code, I find irq for these two devices are 0, when
+> > > > > > > > use platform_get_irq, it will alway fail.
+> > > > > > > >
+> > > > > > > >         if (WARN(!ret, "0 is an invalid IRQ number\n"))
+> > > > > > > >                 return -EINVAL;
+> > > > > > > >         return ret;
+> > > > > > > >
+> > > > > > > > My workaround for debian is to hardcode irq to 0, instead to use api.
+> > > > > > > >
+> > > > > > > > I don't know how to write a good solution, thus send an email to you.
+> > > > > > >
+> > > > > > > Hold on, how the heck you got 0 in the first place?A
+> > > > > >
+> > > > > > use tmu as an example
+> > > > > >
+> > > > > > enum bxtwc_irqs_tmu {
+> > > > > >         BXTWC_TMU_IRQ = 0,
+> > > > > > };
+> > > > > >
+> > > > > > static const struct regmap_irq bxtwc_regmap_irqs_tmu[] = {
+> > > > > >         REGMAP_IRQ_REG(BXTWC_TMU_IRQ, 0, GENMASK(2, 1)),
+> > > > > > };
+> > > > > >
+> > > > > > static const struct resource tmu_resources[] = {
+> > > > > >         DEFINE_RES_IRQ_NAMED(BXTWC_TMU_IRQ, "TMU"),
+> > > > > > };
+> > > > > >
+> > > > > >         {
+> > > > > >                 .name = "bxt_wcove_tmu",
+> > > > > >                 .num_resources = ARRAY_SIZE(tmu_resources),
+> > > > > >                 .resources = tmu_resources,
+> > > > > >         },
+> > > > > >
+> > > > > > this is why I got 0, and I don't do any hack.
+> > > > >
+> > > > > Thanks for elaboration, I will look at this a bit later (may be next or one
+> > > > > after next week, just returned from vacations).
+> > > 
+> > > >    could you share the patch link to the fix? then I could port it to
+> > > >    debian.
+> > > 
+> > > Sorry I was busy with other stuff (as well), I am still in the middle
+> > > of debugging that.
+> > > The issue is that the leaf drivers for some reason do not request
+> > > proper vIRQ (that should come from the secondary IRQ chip). OTOH there
+> > > is only one _similar_ design in the kernel besides this one. And when
+> > > I tried to test the version where all this appears, I couldn't boot
+> > > (yeah, I spent some time on bisecting things) the board I have (One of
+> > > pre-production variants of Intel Joule SoM).
+> > 
+> > Yes, me too. I'm trying to enable Joule on Debian. thus found this
+> > issue. you can use debian sid with linux 6.11 to debug this issue.
+> > 
+> > and another issue is Joule HDA pci id is removed from Linux kernel, thus
+> > no sound, but I don't plan to submit an issue.
+> > 
+> > > Do you have any (most recent) kernel version that works as expected?
+> > I don't try any old kernel, but from git log, I think bad commit is:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=57129044f5044dcd73c22d91491906104bd331fd`
+> 
+> No, it does the right thing from architectural point of view. It might be that
+> it was never tested or it was a regression somewhere. That's why I wanted to find
+> the newest possible kernel that works on that machine.
+> 
+> > > > > > > > [0]: https://salsa.debian.org/kernel-team/linux/-/merge_requests/1156/diffs
 
-Anything beyong 50 ms matters and that flush certainly costs more than
-that. As I already stated in earlier version, we need to find more of
-these "50 ms and 100 ms there sites.
+I guess I now know all the story, hopefully I will come up with the fix this or
+next week. Stay tuned!
 
-The functional fixes are required because perf fix is always *less
-critical* than perf fix.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Please pay more attention to proper error rollback next time, that's
-all I can say on that. It's not my fault that it is broken.
 
-BR, Jarkko
 
