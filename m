@@ -1,148 +1,127 @@
-Return-Path: <linux-kernel+bounces-337617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0AD8984C7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:57:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FBC8984C79
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 922D61F2492D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:57:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 468AC283C59
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D00513CA8A;
-	Tue, 24 Sep 2024 20:57:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F81312FF72;
+	Tue, 24 Sep 2024 20:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lsLbBMuC"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="gMTjTzBe"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3785512FF72
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 20:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B35913AD0F
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 20:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727211431; cv=none; b=LuEmDPBDMJ6sjDYCgCYy7qdyRrISYTp/nk8y5fAnwfs4h3MhqRpPQ1f6cEW+PF9OFdkRl4PiAoEEjmcte54K4ouwKRQdpuTBXpph2A3/yZv0eI1nxCh1/3gjJYgXbzUz8x8ccNpkpY89IuW604DYY3mW0yjJKV65dSUEE6s3Tb0=
+	t=1727211420; cv=none; b=BYm2ZPieZSyRJUnU5v88iX+S3jlKkILGKhLGRCoXsXZ2jEn9GcHnryp78VrKGdoYbknC/xBUaV9xGOHTtfcCNO/w9SVoRoVlZYhclqTN6uLZFK5QC6J4YfZl96zlkbFbf2bqABHEroo526Hbi3ZRF/NKPgbzH7YZc6c0+ISccR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727211431; c=relaxed/simple;
-	bh=UaKB8Un+Q1vwKe8+AS7CMQ4fzALGIusOYY+CofvVRPc=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=pKPPUyyvjdJHL3UxREtRXIRtJIVoM0BH6Vb5FP2RVXxjH04HsqnAv9/g3Sd8lzOUeaGrKt+EJDIvRV78TyS2YsLAOkXwSen7+m1VXzzX9GR9rgbqIDnxhxE8dwgtZGqUiGfY66CBVMR/YQ6b66bPlpNdz8Vx8JaF5qeYoNfvQD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lsLbBMuC; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727211426;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=so/tx8p9gJQk2GUcGb8sLZGfdc/Csod3rlNxGWYEDS8=;
-	b=lsLbBMuCapcqI3qPYQlf8h426A5YYPDPQ4raIm0wVRYA8CM3u/54gqpysJMY9LkTIyqENc
-	JfULAlZEim6YAD134MF5ambObR6DJzml2LqE+1uPqzk9AOmUfIyjEdvdceeu/vs5sv7NU5
-	iH3XgioIKw9/+D1Ww51viINHzFdiovU=
+	s=arc-20240116; t=1727211420; c=relaxed/simple;
+	bh=5LECSNW6fv1cDVKhCeoMBVMTuSrSAgRgVc4bmYLHtoU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ttvkkxlwzH5CtWj20+Yed2kLsBtUotQqLQOFmbgviPGPqHY+msKAQJVyMQl0gjNYuYAypzR0mG2TZ8BQsd+dC0zPTr6yre0xylZK++UE3lODluOCqSGUo4l6CvDh4hFeOaoBtr9GnfwAH1dhxXhH5absGbRlDbaDWOp6AYz+cy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=gMTjTzBe; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id CA3282C05DB;
+	Wed, 25 Sep 2024 08:56:55 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1727211415;
+	bh=5LECSNW6fv1cDVKhCeoMBVMTuSrSAgRgVc4bmYLHtoU=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+	b=gMTjTzBeRorMr1krJHUFp2F+T0mrKeF3/kle2FKELegRpE0wwFyLCx4NQFNFVEQ8x
+	 whVnmn0UihhHAXSyBhhQfG3Z67C2Gv3g6DQuwZ4XzG7KKkg0AITVS4BLtAjGEZnBWY
+	 JNnA7/aWVPgt88E8J1bhAgaFlvPoo+8+5XV/zR3Dl20B0zSE4abu1yiBc0u3nfE2oZ
+	 Tuon8/P0yKPoYjPUwSpn8fMoePl3rVCFj3RXfr12y94nCFf5f4XFMRZherA7Nzk/BB
+	 OFNc6rJQDSkbtqqayffleGL2NEXBBMox0pXT7+hssIeDY47R1KpttdCADVdMu1OnI/
+	 EnBr428+qLIpw==
+Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B66f327970001>; Wed, 25 Sep 2024 08:56:55 +1200
+Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
+ svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.1544.11; Wed, 25 Sep 2024 08:56:55 +1200
+Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
+ svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with Microsoft
+ SMTP Server (TLS) id 15.0.1497.48; Wed, 25 Sep 2024 08:56:55 +1200
+Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
+ svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
+ 15.02.1544.011; Wed, 25 Sep 2024 08:56:55 +1200
+From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: "lee@kernel.org" <lee@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, "tsbogend@alpha.franken.de"
+	<tsbogend@alpha.franken.de>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-mips@vger.kernel.org"
+	<linux-mips@vger.kernel.org>
+Subject: Re: [PATCH v4 1/3] dt-bindings: mfd: Add Realtek switch
+Thread-Topic: [PATCH v4 1/3] dt-bindings: mfd: Add Realtek switch
+Thread-Index: AQHbDgvzhbdNFG2sg0ehrCGDVMn7d7Jl1V+AgAADPQCAAMqzAA==
+Date: Tue, 24 Sep 2024 20:56:55 +0000
+Message-ID: <9abd5e65-da40-4283-b60e-46be5f89e858@alliedtelesis.co.nz>
+References: <20240923225719.2999821-1-chris.packham@alliedtelesis.co.nz>
+ <20240923225719.2999821-2-chris.packham@alliedtelesis.co.nz>
+ <jdqmrbjngrcmxtow2khhplvhhv6oh4msts4lggogfbgjj7fyfn@dve6dxeijywz>
+ <1c19de70-abab-469b-afd0-f585cc807e04@kernel.org>
+In-Reply-To: <1c19de70-abab-469b-afd0-f585cc807e04@kernel.org>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <1309A5C53DC05F46BA21FE841CC085FF@atlnz.lc>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH] ksmbd: Annotate struct copychunk_ioctl_req with
- __counted_by_le()
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Thorsten Blum <thorsten.blum@linux.dev>
-In-Reply-To: <C22D945F-4C40-4C0E-8074-07747C944C99@linux.dev>
-Date: Tue, 24 Sep 2024 22:56:50 +0200
-Cc: Namjae Jeon <linkinjeon@kernel.org>,
- Steve French <sfrench@samba.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- linux-cifs@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <4B489C2C-5463-4776-8182-F878BAD1754A@linux.dev>
-References: <20240924102243.239811-2-thorsten.blum@linux.dev>
- <d6341fc4-1d9d-46af-b809-f30430b30455@talpey.com>
- <C22D945F-4C40-4C0E-8074-07747C944C99@linux.dev>
-To: Tom Talpey <tom@talpey.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=Id0kWnqa c=1 sm=1 tr=0 ts=66f32797 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=oKJsc7D3gJEA:10 a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=VwQbUJbxAAAA:8 a=BiIpO-xpuzJpd5a7trwA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-SEG-SpamProfiler-Score: 0
 
-On 24. Sep 2024, at 21:33, Thorsten Blum <thorsten.blum@linux.dev> =
-wrote:
->> On 24. Sep 2024, at 20:05, Tom Talpey <tom@talpey.com> wrote:
->> On 9/24/2024 6:22 AM, Thorsten Blum wrote:
->>> Add the __counted_by_le compiler attribute to the flexible array =
-member
->>> Chunks to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
->>> CONFIG_FORTIFY_SOURCE.
->>> Read Chunks[0] after checking that ChunkCount is not 0.
->>> Compile-tested only.
->>> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
->>> ---
->>> fs/smb/server/smb2pdu.c | 2 +-
->>> fs/smb/server/smb2pdu.h | 2 +-
->>> 2 files changed, 2 insertions(+), 2 deletions(-)
->>> diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
->>> index 461c4fc682ac..0670bdf3e167 100644
->>> --- a/fs/smb/server/smb2pdu.c
->>> +++ b/fs/smb/server/smb2pdu.c
->>> @@ -7565,7 +7565,6 @@ static int fsctl_copychunk(struct ksmbd_work =
-*work,
->>>  ci_rsp->TotalBytesWritten =3D
->>>  cpu_to_le32(ksmbd_server_side_copy_max_total_size());
->>> - chunks =3D (struct srv_copychunk *)&ci_req->Chunks[0];
->>>  chunk_count =3D le32_to_cpu(ci_req->ChunkCount);
->>>  if (chunk_count =3D=3D 0)
->>>  goto out;
->>> @@ -7579,6 +7578,7 @@ static int fsctl_copychunk(struct ksmbd_work =
-*work,
->>>  return -EINVAL;
->>>  }
->>> + chunks =3D (struct srv_copychunk *)&ci_req->Chunks[0];
->>>  for (i =3D 0; i < chunk_count; i++) {
->>>  if (le32_to_cpu(chunks[i].Length) =3D=3D 0 ||
->>>     le32_to_cpu(chunks[i].Length) > =
-ksmbd_server_side_copy_max_chunk_size())
->>> diff --git a/fs/smb/server/smb2pdu.h b/fs/smb/server/smb2pdu.h
->>> index 73aff20e22d0..f01121dbf358 100644
->>> --- a/fs/smb/server/smb2pdu.h
->>> +++ b/fs/smb/server/smb2pdu.h
->>> @@ -194,7 +194,7 @@ struct copychunk_ioctl_req {
->>>  __le64 ResumeKey[3];
->>>  __le32 ChunkCount;
->>>  __le32 Reserved;
->>> - __u8 Chunks[]; /* array of srv_copychunk */
->>> + __u8 Chunks[] __counted_by_le(ChunkCount); /* array of =
-srv_copychunk */
->>> } __packed;
->>>=20
->>=20
->> This isn't correct. The u8 is just a raw buffer, copychunk structs =
-are
->> marshaled into it, and they're 24 bytes each.
->=20
-> Hm, I see.
->=20
-> How does this for-loop work then? It iterates over ci_req->ChunkCount
-> and expects a srv_copychunk at each ci_req->Chunks[i]?
->=20
-> for (i =3D 0; i < chunk_count; i++) {
-> if (le32_to_cpu(chunks[i].Length) =3D=3D 0 ||
->     le32_to_cpu(chunks[i].Length) > =
-ksmbd_server_side_copy_max_chunk_size())
-> break;
-> total_size_written +=3D le32_to_cpu(chunks[i].Length);
-> }
-
-Never mind, I just realized that the pointer arithmetic takes the array
-offset into account.
-
-A srv_copychunk takes up 24 bytes and therefore 24 __u8[] slots. The
-__counted_by annotation is essentially off by a factor of 24.
-
-Thanks,
-Thorsten=
+SGkgS3J6eXN6dG9mLA0KDQpPbiAyNC8wOS8yNCAyMDo1MSwgS3J6eXN6dG9mIEtvemxvd3NraSB3
+cm90ZToNCj4gT24gMjQvMDkvMjAyNCAxMDozOSwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToN
+Cj4+IE9uIFR1ZSwgU2VwIDI0LCAyMDI0IGF0IDEwOjU3OjE3QU0gKzEyMDAsIENocmlzIFBhY2to
+YW0gd3JvdGU6DQo+Pj4gQWRkIGRldmljZSB0cmVlIHNjaGVtYSBmb3IgdGhlIFJlYWx0ZWsgc3dp
+dGNoLiBDdXJyZW50bHkgdGhlIG9ubHkNCj4+PiBzdXBwb3J0ZWQgZmVhdHVyZSBpcyB0aGUgc3lz
+Y29uLXJlYm9vdCB3aGljaCBpcyBuZWVkZWQgdG8gYmUgYWJsZSB0bw0KPj4+IHJlYm9vdCB0aGUg
+Ym9hcmQuDQo+Pj4NCj4+PiBTaWduZWQtb2ZmLWJ5OiBDaHJpcyBQYWNraGFtIDxjaHJpcy5wYWNr
+aGFtQGFsbGllZHRlbGVzaXMuY28ubno+DQo+Pj4gLS0tDQo+PiBSZXZpZXdlZC1ieTogS3J6eXN6
+dG9mIEtvemxvd3NraSA8a3J6a0BrZXJuZWwub3JnPg0KPj4NCj4gVW5yZXZpZXdlZCAtIGl0IGlz
+IGluY29tcGxldGUhDQo+DQo+IE5vLCB3ZSBzYWlkIG11bHRpcGxlIHRpbWVzLCB5b3UgbXVzdCBz
+ZW5kIGNvbXBsZXRlIGJpbmRpbmcuIFNlbmRpbmcNCj4gcGllY2VzIGZvciByZXZpZXcgZG9lcyBu
+b3QgZ2l2ZSB1cyBmdWxsIHBpY3R1cmUgYW5kIGhpZGVzIHBhcnRzIG9mIHRoZQ0KPiBjb250cm92
+ZXJzaWFsIGRlY2lzaW9ucy4gSWYgeW91IHdhbnQgdG8gZ28gdGhpcyB3YXksIG5leHQgdGltZSB5
+b3Ugd2lsbA0KPiBnZXQgTkFLIHdoZW4gYWRkaW5nIGkyY0AwLTcgdG8gcGFyZW50IGJpbmRpbmcu
+DQo+DQpGYWlyIGVub3VnaC4NCg0KSSBkaWQgYWxyZWFkeSBnZXQgbXlzZWxmIHRpZWQgaW4ga25v
+dHMgdHJ5aW5nIHRvIGp1Z2dsZSB0d28gZGVwZW5kZW50IA0Kc2VyaWVzLiBJIHRob3VnaHQgSSB3
+YXMgbWFraW5nIHRoaW5ncyBlYXNpZXIgdG8gcmV2aWV3IGJ5IHNlbmRpbmcgdGhlbSANCmluIHNt
+YWxsZXIgY2h1bmtzIGJ1dCBvYnZpb3VzbHkgSSdtIGhvbGRpbmcgdGhpbmdzIGJhY2sgdGhhdCBh
+cmUgDQpyZWxldmFudCBmb3IgY29udGV4dC4NCg0KU28ganVzdCB0byBiZSBjbGVhciwgb25lIGJp
+bmRpbmcgaW4gbWZkIHRoYXQgY292ZXJzIHRoZSByZWJvb3QgYW5kIGkyYyANCmZvciB0aGUgNCB2
+YXJpYW50cz8gVGhhdCdzIGFib3V0IGFzIG11Y2ggYXMgSSBjYW4gYWN0dWFsbHkgdGVzdCBkcml2
+ZXIgd2lzZS4NCg0KSSBjb3VsZCBhZGQgdGhlIG1kaW8gYW5kIHN3aXRjaCBwb3J0cyBidXQgSSdt
+IG5vdCBhdCBhIHBvaW50IHdoZXJlIEkgDQpjb3VsZCByZWFsbHkgdGVzdCB0aGVtIHByb3Blcmx5
+LiBJIGtub3cgdGhlIGJpbmRpbmcgZG9lc24ndCBuZWNlc3NhcmlseSANCm5lZWQgY29kZSB0byBi
+ZSBhYmxlIHRvIGRlc2NyaWJlIHRoZSBoYXJkd2FyZSBidXQgaXQgZG9lcyBydW4gdGhlIHJpc2sg
+DQp0aGF0IEkgbWlnaHQgbWlzcyBzb21ldGhpbmcgaW4gdGhlIGJpbmRpbmcgdGhhdCBJIG5lZWQg
+d2hlbiBJIGRvIGdldCB0byANCnRoZSBkcml2ZXIgY29kZS4NCg0KSSBhbHNvIGRpZCB3YW50IHRv
+IHNheSB0aGFua3MgZm9yIHlvdXIgcGF0aWVuY2UuIEl0IG1heSBub3Qgc2VlbSBsaWtlIGl0IA0K
+YnV0IEkgcmVhbGx5IGRvIGFwcHJlY2lhdGUgeW91ciBmZWVkYmFjayBhbmQgSSBkbyB0cnkgdG8g
+dGFrZSBpdCBhbGwgb24gDQpib2FyZC4NCg0KPiBCZXN0IHJlZ2FyZHMsDQo+IEtyenlzenRvZg0K
+Pg==
 
