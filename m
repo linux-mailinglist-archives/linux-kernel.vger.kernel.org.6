@@ -1,149 +1,172 @@
-Return-Path: <linux-kernel+bounces-337653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC4B4984CF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:37:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ACEC984CF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:38:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21A451C21F24
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:37:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CD351C2321F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE53E13D518;
-	Tue, 24 Sep 2024 21:37:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6307146018;
+	Tue, 24 Sep 2024 21:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E1wU9e5+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ysEvRu6N"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1572613B792;
-	Tue, 24 Sep 2024 21:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF5313D518
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 21:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727213834; cv=none; b=ASarooNAgzQsNvfj88hkO1I7ZOa9wf6GqyRV1wON3rgu4IhKYszDuxUH9RUQC8fx9v93gQJQ4TysXtodCdAQ+a6RigyaP33yRNxVip3+Rs22XoWv5c6U0B/F5k5Wjucu0v18rBQHCSe2V/UMCaSoqjPAyD/a+oo1HDZNUGSe1XQ=
+	t=1727213922; cv=none; b=khzOCFqX/O4JXo02FTuufEDkPgzBXsqApBvMV9JV6oK/aEvkCR+oiOZQNMHvv5NXuoNedR4KBEPJnYhcqnHftjfG4yiODvtT07knE6xRXb0U623ZoXBnTf+9My4/g4W6kgiNZ5onnmOOTy5C0BYpm8LsolMbAJTCLtBVyD+3g7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727213834; c=relaxed/simple;
-	bh=NtcrugAuxPs+bS2qbXsCsi/0ivuoPlB+E91MIF93xHM=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=mddBwf6HsVXbYvCKZoTrNvBX9VLoMwoALh8Z0OpB2fo/nZpGqvaQzPlQF0Rb5HfhwDUJuwuvt70MJG54w0q7njlSkdtPXd96cc4R760ehHKbabGxQgyrlkve9VBfft4T32opQVN4+WfU6HdBH65O0cJaaOY3chkr4Rqp2LOs7mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E1wU9e5+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9D76C4CEC4;
-	Tue, 24 Sep 2024 21:37:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727213833;
-	bh=NtcrugAuxPs+bS2qbXsCsi/0ivuoPlB+E91MIF93xHM=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=E1wU9e5+Uxs1EPbT3y1RQHBRU4n8g2E0EpNj535Lxwq4CeSfBXXuCqWXpuvOmkZ9K
-	 HsVfsDabyS+BRUlmrfhayYio9AhH3Q4iFQ5JN4BzMg1WJXRiu7uvNsn9cMi0XIKslQ
-	 YHWgyJbyH6fSVsRn+4ryQy0bnFuy8E/NSTuq51hnTNQBpdKF+viHNgxj5xLAdsrIcw
-	 kfWYhhwHre4ROvWcDWkP0dT5Ty9XH0lni8CFkd+wSjYZ2k8z0asV513mjpcBrrqa/M
-	 DsJsSQDmxfjF1wXIG01zLkuTkbAl8AFhaQvNHsVWa0fkxTLb4/5+HpFEKqIghLbZhz
-	 wwNoqesepyRag==
-Date: Tue, 24 Sep 2024 14:37:13 -0700
-From: Kees Cook <kees@kernel.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>,
- Tycho Andersen <tycho@tycho.pizza>
-CC: Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
- Alexander Aring <alex.aring@gmail.com>, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Tycho Andersen <tandersen@netflix.com>,
- =?UTF-8?Q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
- Aleksa Sarai <cyphar@cyphar.com>
-Subject: Re: [RFC] exec: add a flag for "reasonable" execveat() comm
-User-Agent: K-9 Mail for Android
-In-Reply-To: <87msjx9ciw.fsf@email.froward.int.ebiederm.org>
-References: <20240924141001.116584-1-tycho@tycho.pizza> <87msjx9ciw.fsf@email.froward.int.ebiederm.org>
-Message-ID: <8D545969-2EFA-419A-B988-74AD0C26020C@kernel.org>
+	s=arc-20240116; t=1727213922; c=relaxed/simple;
+	bh=ozoQZZObFZv1yOfVBJhZ+kmgx62mKlG4i5tmwzryp/Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JOsCLVMLvxUuBuZLBM2XPlVolM2iyKxb7HaUrJsmlPXFMv7avZpAw/t9cpiH/kEoBC/X3tH7QiAXPjtMkFElSpyDyPIZS2k8qUG0PVK2J3XKZJxgy6s2u6PlJbRfXVD9TO9RjVr7y2wQKZnh/8mRTHVTtfJ1hT5rxj87NffMrnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ysEvRu6N; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c42384c517so7343868a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 14:38:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727213918; x=1727818718; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0LU6c6CF0GzjYRCInPnHkkX8mDRzVLIkYu1GL6EK21U=;
+        b=ysEvRu6NBNd/AcChRq40///g1RJX4u0SknAfT5OaEUQHW8Hwj+tQM7CcGaj4vnuTD9
+         HkTClrm4CafBV3n/196yBErvWK8pow16WFOKZKZbYkH3TWrp5H1/GcUanyHclvprtN68
+         DY7nJNl3YNXIdB7HSiI4vElplNzVVJgw53g4yYGYtSCZW6H0n2CQjesNZCKL2lEd5JxX
+         bqExCLkloIQtbocLalA1t9SoB49NKXRwrjOX2CMdgE5j0l4y6qb+N423IarNLezjEtTf
+         wqvIWadJQlPGUmMbSOPBK1ltmOqndNeIVz2R0LSnuUm3DcJnsOxaP8QWYQhEMkw0XoMk
+         CysQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727213918; x=1727818718;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0LU6c6CF0GzjYRCInPnHkkX8mDRzVLIkYu1GL6EK21U=;
+        b=WZIiKP6eXLWGm8Wb2lUTx79nsVQOyO6oupUAhkZZVyXKIHfdJB+DTt/+T10fyyRglb
+         3vdtwJbuDR3WmzroC3o3K3wp3HAP3yN4dnkNLpcfUAWT/olPg4cY9QtnoQooLzBNddXV
+         obEv6gMVDtXVSHJJDe0AMM1lDiYK2TIgzyHxbMElKU/D+L8SZUhMYwfajTnyKD0kIwH1
+         0Y1pvzxYC8+xGoP08/dnpCkOm6THTX7tZlC3PhGTZrTmMzPO4qJLnTtjXz+9D1OyEkBK
+         h7ZJfQUGKJ6wMUc4ZnThXR2ShfV56lIFplbWhNZ7t9Ss6fkpLf7F9ShOlOtf4MufDkxL
+         KBsw==
+X-Forwarded-Encrypted: i=1; AJvYcCUVMf7EjOYUvflsyLRhN2XBkM5R/AszWCTWwRbC8+tKsrZBIKVMdkDPLC82b2xGhf0PI+06AetsGdoxEWk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLD+DILa5g8HQdr1/fhfCruE5rMFu6n7jVdlufBYd1/paRfI+G
+	n9Ig6snyMewvbQcXPwscuKO9Saf1gPvSp3CNszw117ylyjeMBkL0cqsARqzmZxpPjXifPDhVwdJ
+	Zd6qn8PihGyLUUjMvs0TfjgjCooEIxJVED/ZJ
+X-Google-Smtp-Source: AGHT+IHtceRrJ0msQPdS0aETwSLXd+v7dkQ50Ac2Rrp7RKGIHW4YCyLCPHXApNCX5AzVjGPOPr4TojuoYGkwUVDgzO8=
+X-Received: by 2002:a17:907:1c1f:b0:a8a:926a:d02a with SMTP id
+ a640c23a62f3a-a93a05e7ea0mr49373066b.49.1727213918103; Tue, 24 Sep 2024
+ 14:38:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+References: <20240924011709.7037-1-kanchana.p.sridhar@intel.com>
+ <20240924011709.7037-7-kanchana.p.sridhar@intel.com> <CAJD7tkbd=H+=wx0gnu8sh44hOmx7BE3G3oSxi7zt+o3HKJthkA@mail.gmail.com>
+ <CAKEwX=O4PJmLRLog3NGzy+r6+1XTXs_r9Nxs73CJeFeN0pcr+Q@mail.gmail.com>
+In-Reply-To: <CAKEwX=O4PJmLRLog3NGzy+r6+1XTXs_r9Nxs73CJeFeN0pcr+Q@mail.gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Tue, 24 Sep 2024 14:38:00 -0700
+Message-ID: <CAJD7tkYCXexrP_2xjXqFDpJALCgi84aA7wGOo=6mfuUSpMO-ng@mail.gmail.com>
+Subject: Re: [PATCH v7 6/8] mm: zswap: Support mTHP swapout in zswap_store().
+To: Nhat Pham <nphamcs@gmail.com>
+Cc: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, hannes@cmpxchg.org, chengming.zhou@linux.dev, 
+	usamaarif642@gmail.com, shakeel.butt@linux.dev, ryan.roberts@arm.com, 
+	ying.huang@intel.com, 21cnbao@gmail.com, akpm@linux-foundation.org, 
+	nanhai.zou@intel.com, wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-
-
-On September 24, 2024 10:39:35 AM PDT, "Eric W=2E Biederman" <ebiederm@xmi=
-ssion=2Ecom> wrote:
->Tycho Andersen <tycho@tycho=2Epizza> writes:
+On Tue, Sep 24, 2024 at 1:51=E2=80=AFPM Nhat Pham <nphamcs@gmail.com> wrote=
+:
 >
->> From: Tycho Andersen <tandersen@netflix=2Ecom>
->>
->> Zbigniew mentioned at Linux Plumber's that systemd is interested in
->> switching to execveat() for service execution, but can't, because the
->> contents of /proc/pid/comm are the file descriptor which was used,
->> instead of the path to the binary=2E This makes the output of tools lik=
+> On Tue, Sep 24, 2024 at 12:39=E2=80=AFPM Yosry Ahmed <yosryahmed@google.c=
+om> wrote:
+> >
+> > On Mon, Sep 23, 2024 at 6:17=E2=80=AFPM Kanchana P Sridhar
+> > > +        * The cgroup zswap limit check is done once at the beginning=
+ of an
+> > > +        * mTHP store, and not within zswap_store_page() for each pag=
 e
->> top and ps useless, especially in a world where most fds are opened
->> CLOEXEC so the number is truly meaningless=2E
+> > > +        * in the mTHP. We do however check the zswap pool limits at =
+the
+> > > +        * start of zswap_store_page(). What this means is, the cgrou=
+p
+> > > +        * could go over the limits by at most (HPAGE_PMD_NR - 1) pag=
+es.
+> > > +        * However, the per-store-page zswap pool limits check should
+> > > +        * hopefully trigger the cgroup aware and zswap LRU aware glo=
+bal
+> > > +        * reclaim implemented in the shrinker. If this assumption ho=
+lds,
+> > > +        * the cgroup exceeding the zswap limits could potentially be
+> > > +        * resolved before the next zswap_store, and if it is not, th=
+e next
+> > > +        * zswap_store would fail the cgroup zswap limit check at the=
+ start.
+> > > +        */
+> >
+> > I do not really like this. Allowing going one page above the limit is
+> > one thing, but one THP above the limit seems too much. I also don't
+>
+> Hmm what if you have multiple concurrent zswap stores, from different
+> tasks but the same cgroup? If none of them has charged, they would all
+> get greenlit, and charge towards the cgroup...
+>
+> So technically the zswap limit checking is already best-effort only.
+> But now, instead of one page per violation, it's 512 pages per
+> violation :)
 
-And just to double check: systemd's use would be entirely cosmetic, yes?
-
->>
->> This patch adds an AT_ flag to fix up /proc/pid/comm to instead be the
->> contents of argv[0], instead of the fdno=2E
->
->The kernel allows prctl(PR_SET_NAME, =2E=2E=2E)  without any permission
->checks so adding an AT_ flat to use argv[0] instead of the execed
->filename seems reasonable=2E
->
->Maybe the flag should be called AT_NAME_ARGV0=2E
-
-If we add an AT flag I like this name=2E
+Yeah good point about concurrent operations, we can go 512 pages above
+limit * number of concurrent swapouts. That can be a lot of memory.
 
 >
+> Yeah this can be bad. I think this is only safe if you only use
+> zswap.max as a binary knob (0 or max)...
 >
->That said I am trying to remember why we picked /dev/fd/N, as the
->filename=2E
+> > like relying on the repeated limit checking in zswap_store_page(), if
+> > anything I think that should be batched too.
+> >
+> > Is it too unreasonable to maintain the average compression ratio and
+> > use that to estimate limit checking for both memcg and global limits?
+> > Johannes, Nhat, any thoughts on this?
 >
->My memory is that we couldn't think of anything more reasonable to use=2E
->Looking at commit 51f39a1f0cea ("syscalls: implement execveat() system
->call") unfortunately doesn't clarify anything for me, except that
->/dev/fd/N was a reasonable choice=2E
+> I remember asking about this, but past Nhat might have relented :)
 >
->I am thinking the code could reasonably try:
->	get_fs_root_rcu(current->fs, &root);
->	path =3D __d_path(file->f_path, root, buf, buflen);
+> https://lore.kernel.org/linux-mm/CAKEwX=3DPfAMZ2qJtwKwJsVx3TZWxV5z2ZaU1Ep=
+k1UD=3DDBdMsjFA@mail.gmail.com/
 >
->To see if a path to the file from the current root directory can be
->found=2E  For files that are not reachable from the current root the code
->still need to fallback to /dev/fd/N=2E
+> We can do limit checking and charging after compression is done, but
+> that's a lot of code change (might not even be possible)... It will,
+> however, allow us to do charging + checking in one go (rather than
+> doing it 8, 16, or 512 times)
 >
->Do you think you can investigate that and see if that would generate
->a reasonable task->comm?
+> Another thing we can do is to register a zswap writeback after the
+> zswap store attempts to clean up excess capacity. Not sure what will
+> happen if zswap writeback is disabled for the cgroup though :)
 >
->If for no other reason than because it would generate a usable result
->for #! scripts, without /proc mounted=2E
->
->
->It looks like a reasonable case can be made that while /dev/fd/N is
->a good path for interpreters, it is never a good choice for comm,
->so perhaps we could always use argv[0] if the fdpath is of the
->form /dev/fd/N=2E
+> If it's too hard, the average estimate could be a decent compromise,
+> until we figure something smarter.
 
-I haven't had a chance to go look closely yet, but this was the same thoug=
-ht I had when I first read this RFC=2E Nobody really wants a dev path in co=
-mm=2E Can we do this unconditionally? (And if argv0 is empty, use dev path=
-=2E=2E=2E)
+We can also do what we discussed before about double charging. The
+pages that are being reclaimed are already charged, so technically we
+don't need to charge them again. We can uncharge the difference
+between compressed and uncompressed sizes after compression and call
+it a day. This fixes the limit checking and the double charging in one
+go.
 
->All of that said I am not a fan of the implementation below as it has
->the side effect of replacing /dev/fd/N with a filename that is not
->usable by #! interpreters=2E  So I suggest an implementation that affects
->task->comm and not brpm->filename=2E
-
-Also agreed=2E There is already enough fiddly usage of the bprm filename/i=
-nterpreter/fdpath members -- the argv0 stuff should be distinct=2E Perhaps =
-store a pointer to argv0 during arg copy? I need to go look but I'm still A=
-FK/OoO=2E=2E=2E
-
--Kees
-
---=20
-Kees Cook
+I am a little bit nervous though about zswap uncharing the pages from
+under reclaim, there are likely further accesses of the page memcg
+after zswap. Maybe we can plumb the info back to reclaim or set a flag
+on the page to avoid uncharging it when it's freed.
 
