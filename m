@@ -1,185 +1,152 @@
-Return-Path: <linux-kernel+bounces-336668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AECC9983F07
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:24:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6237983DA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:15:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32BAC1F22901
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:24:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56DDE282931
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:15:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB79145B24;
-	Tue, 24 Sep 2024 07:24:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B72145B1B;
+	Tue, 24 Sep 2024 07:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b="Z7Am/Vyq"
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GvYaS4II"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D15145B22
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525A813F42A
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727162649; cv=none; b=CSoONF4ziw0rLDZfuRISUl4Gj0/yJb1QWWfjwybKXBrg+Er+rYLOhvXP9xw8l6eKwLIuXlLpUiwl3NQHKfeByk1S4V4pwQHhVjAAK2FNvSdYlJFKHqVrrbQNKnkua9g4lwS3p1SQDbMFYO0hQY5/fptHUEFGVGZtj+IP+1DbrC8=
+	t=1727162116; cv=none; b=fxNB1uO9PyVbuzkKJxvo+DR/b7f7SDEFqwq+tSSvoGcFaNUD8CFTGNTAPb6EY4I9X2tO1oWSfMKTLZLYBIjgiWls6OKmnViToADjGFJeLEpJkkKnoIdL9wb73s4IrEyuNe/k4cv2gSMhyDHuGhk4x0ibMUvBMpBZaef1rgAId5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727162649; c=relaxed/simple;
-	bh=/kR8Y+aQ/hoCK+GI5dTp0cvDs3+d+f/zp1O4+MFbywU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cTvgCWqj/b8MP9Dkw5IawSMMky9uvrmZvgInQIG0ymy0iNdehpMowAxcTw38nDC4AvnOZbzyc1N6W6sNDc3lkAopyVsqgxb7m7jlWitTehDPOdJnH9SaPMWD5CNIs8NQB215UXZOgQ2uvRajWOMbldPxDfJtdUlwUBsmFjlcYos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org; spf=pass smtp.mailfrom=endlessos.org; dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b=Z7Am/Vyq; arc=none smtp.client-ip=209.85.167.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=endlessos.org
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3e042f4636dso3073302b6e.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 00:24:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessos.org; s=google; t=1727162647; x=1727767447; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4LU6Uewc0Mc72sE2KkcnJ2E4+BrFGvMvKo0jKAieZwk=;
-        b=Z7Am/VyqG5eryauQHR/0K3VIVDkloYGRxBs3Sod+jwoKUu0hm1NMKYaJ7QkV+8rt2a
-         J961QCjtB0MVyVNkmMd0enE8W7FSnxVflJKX/L6PfMLetYo101HyxIuUcn9Gk4bqvx7o
-         g+W5z+AbOKRR14oSOztGdWkmnblBLD1yN0tKWUBVHlZPb40MlLAPXh3ehGBfkGQC+sPr
-         FrVbhm4YJxSTGALVklzyHWfbIgxQE9ZgBvm8h/7XG8oNK0SUVG7hgfoEQmly95vW7pQ9
-         4k7FrfwTBWVgMwmrNn4oIFJibzebhLyayQg/Cn+ktllepvn1LrDIReJloqzrstzxvTan
-         68EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727162647; x=1727767447;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4LU6Uewc0Mc72sE2KkcnJ2E4+BrFGvMvKo0jKAieZwk=;
-        b=NORNb56tVFmGNOY/kAuwF7DtZR15rX8/xOjzhQuQbCy68if2HAV6WHQEqV4hnZ78vS
-         tjF6oSnFrmNXZver5TKFEelfa5dUg3LlWShTzC+BZrHaaenDDxFr0iT/aM/JmiZ1HhOK
-         PGJIJZQll4/h0o9+xc+INS8Zf0pyaMF2nrzkmbKUm5Vu995RqhnpTi8vspxJPupHPGVC
-         EHf9CddWVh63CUD8qQzaDARgSEteTZg5NBg1Atu3LArbFgLff9TXnGMtSLiZG+YIJPMx
-         TNPioRgwR6Rc4WZXRHXJt4rDnwNVBfUz4l2cpQciArI34qxQD5ybKhnSTXE3OyeBqVVc
-         kFTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVA/+kirq4o4NJBrcbZEHZSQHWiMgSTSJf87MjJtqCC5Tx4/nYNZL1srMdiniUUrsibks/N1m6EIY2R0gM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzknvQ9PWdNUXYet29Au/+KrT7302KebUrb7BJpepdJwqaLguwg
-	DB091J3cSzZhMxqQ+S/3qVtdfJVBgIELu6Ftq7h0ikNKmn5OpwOobWiMHm+l4dcGXbt7JK0a2hQ
-	q
-X-Google-Smtp-Source: AGHT+IGadQg5IXmezactvoif7KfUxM+L9h4qHNoX87Y/FzZtP8aQ7na2cHB8Cu0x/pJ33tZPRInQeg==
-X-Received: by 2002:a05:6808:3389:b0:3e0:3547:b0a with SMTP id 5614622812f47-3e271ce046emr8037918b6e.35.1727162647220;
-        Tue, 24 Sep 2024 00:24:07 -0700 (PDT)
-Received: from localhost.localdomain ([123.51.167.56])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7e6b7c8675esm599530a12.92.2024.09.24.00.24.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 00:24:06 -0700 (PDT)
-From: Jian-Hong Pan <jhp@endlessos.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>,
-	David Box <david.e.box@linux.intel.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Nirmal Patel <nirmal.patel@linux.intel.com>,
-	Jonathan Derrick <jonathan.derrick@linux.dev>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux@endlessos.org,
-	Jian-Hong Pan <jhp@endlessos.org>
-Subject: [PATCH v9 1/3] PCI: vmd: Set PCI devices to D0 before enable PCI PM's L1 substates
-Date: Tue, 24 Sep 2024 15:14:20 +0800
-Message-ID: <20240924071419.15350-2-jhp@endlessos.org>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20240924070551.14976-2-jhp@endlessos.org>
-References: <20240924070551.14976-2-jhp@endlessos.org>
+	s=arc-20240116; t=1727162116; c=relaxed/simple;
+	bh=4N2kpRy1useREFPbJn9t5g5N8Pk7h3iVO0H8S/NCqeQ=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Cc:Date:
+	 Message-Id:References:To; b=Q3tfHlJUPvskxWb7cN7qig0L4W76y+REbhs99MPovMgU/lFctZcXJZWfVE8QiQhzTIwsr0fY9xov5rmS3l2C3uskMPXNQe7zZ6NWS5Zd3SkUkdvkCzZH0W41tflnNBcLLZVWkE9hudH0y0ozvcNUA6iFP/zDKvNVzYgc6jzTxNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GvYaS4II; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain; charset=utf-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727162106;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Zp82X1gEUMsH0cTyMFodXGf6d6eN6K2y3H6Zo3CY6V4=;
+	b=GvYaS4II90o9GYK0iIC3QYuCKDMNOPlhACCwBTXmCWQBvZjlyKPBPGlCFb0RWXghLLfHZW
+	IhHdZAjaAOJhJfaIc+yWwY5pxLcX1yMPuxnDbZQ5WHYWUhOj2e9vlBrFcoz7xCj+XQZOdE
+	O9XuikCg+BwKGuiqghMOTI64McSTg2E=
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v4 07/13] mm: khugepaged: collapse_pte_mapped_thp() use pte_offset_map_rw_nolock()
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <07d975c50fe09c246e087303b39998430b1a66bd.1727148662.git.zhengqi.arch@bytedance.com>
+Cc: david@redhat.com, hughd@google.com, willy@infradead.org, vbabka@kernel.org,
+ akpm@linux-foundation.org, rppt@kernel.org, vishal.moola@gmail.com,
+ peterx@redhat.com, ryan.roberts@arm.com,
+ christophe.leroy2@cs-soprasteria.com, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org
+Date: Tue, 24 Sep 2024 15:14:25 +0800
+Message-Id: <79699B24-0D99-4051-91F3-5695D32D62AC@linux.dev>
+References: <07d975c50fe09c246e087303b39998430b1a66bd.1727148662.git.zhengqi.arch@bytedance.com>
+To: Qi Zheng <zhengqi.arch@bytedance.com>
+X-Migadu-Flow: FLOW_OUT
 
-The remapped PCIe Root Port and the child device have PCI PM L1 substates
-capability, but they are disabled originally.
 
-Here is a failed example on ASUS B1400CEAE:
 
-Capabilities: [900 v1] L1 PM Substates
-	L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1- L1_PM_Substates+
-		  PortCommonModeRestoreTime=32us PortTPowerOnTime=10us
-	L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
-		   T_CommonMode=0us LTR1.2_Threshold=101376ns
-	L1SubCtl2: T_PwrOn=50us
+> On Sep 24, 2024, at 14:11, Qi Zheng <zhengqi.arch@bytedance.com> wrote:
+> =EF=BB=BFIn collapse_pte_mapped_thp(), we may modify the pte and pmd entry=
+ after
+> acquring the ptl, so convert it to using pte_offset_map_rw_nolock(). At
+> this time, the pte_same() check is not performed after the PTL held. So we=
 
-Power on all of the VMD remapped PCI devices to D0 before enable PCI-PM L1
-PM Substates by following "PCIe r6.0, sec 5.5.4".
+> should get pgt_pmd and do pmd_same() check after the ptl held.
+>=20
+> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+> ---
+> mm/khugepaged.c | 14 +++++++++++---
+> 1 file changed, 11 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index 6498721d4783a..8ab79c13d077f 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -1605,7 +1605,7 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, un=
+signed long addr,
+>    if (userfaultfd_armed(vma) && !(vma->vm_flags & VM_SHARED))
+>        pml =3D pmd_lock(mm, pmd);
+>=20
+> -    start_pte =3D pte_offset_map_nolock(mm, pmd, haddr, &ptl);
+> +    start_pte =3D pte_offset_map_rw_nolock(mm, pmd, haddr, &pgt_pmd, &ptl=
+);
+>    if (!start_pte)        /* mmap_lock + page lock should prevent this */
+>        goto abort;
+>    if (!pml)
+> @@ -1613,6 +1613,9 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, un=
+signed long addr,
+>    else if (ptl !=3D pml)
+>        spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
+>=20
+> +    if (unlikely(!pmd_same(pgt_pmd, pmdp_get_lockless(pmd))))
+> +        goto abort;
+> +
+>    /* step 2: clear page table and adjust rmap */
+>    for (i =3D 0, addr =3D haddr, pte =3D start_pte;
+>         i < HPAGE_PMD_NR; i++, addr +=3D PAGE_SIZE, pte++) {
+> @@ -1645,7 +1648,6 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, un=
+signed long addr,
+>        nr_ptes++;
+>    }
+>=20
+> -    pte_unmap(start_pte);
+>    if (!pml)
+>        spin_unlock(ptl);
+>=20
+> @@ -1658,13 +1660,19 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, u=
+nsigned long addr,
+>    /* step 4: remove empty page table */
+>    if (!pml) {
+>        pml =3D pmd_lock(mm, pmd);
+> -        if (ptl !=3D pml)
+> +        if (ptl !=3D pml) {
+>            spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
+> +            if (unlikely(!pmd_same(pgt_pmd, pmdp_get_lockless(pmd)))) {
+> +                spin_unlock(pml);
+> +                goto abort;
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=218394
-Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
----
-v2:
-- Power on the VMD remapped devices with pci_set_power_state_locked()
-- Prepare the PCIe LTR parameters before enable L1 Substates
-- Add note into the comments of both pci_enable_link_state() and
-  pci_enable_link_state_locked() for kernel-doc.
-- The original patch set can be split as individual patches.
+Drop the reference of folio and the mm counter twice at the label of abort a=
+nd the step 3.
 
-v3:
-- Re-send for the missed version information.
-- Split drivers/pci/pcie/aspm.c modification into following patches.
-- Fix the comment for enasuring the PCI devices in D0.
+> +            }
+> +        }
+>    }
+>    pgt_pmd =3D pmdp_collapse_flush(vma, haddr, pmd);
+>    pmdp_get_lockless_sync();
+>    if (ptl !=3D pml)
+>        spin_unlock(ptl);
+> +    pte_unmap(start_pte);
+>    spin_unlock(pml);
 
-v4:
-- The same
+Why not?
 
-v5:
-- Tweak the commit title and message
-- Change the goto label from out_enable_link_state to out_state_change
+pte_unmap_unlock(start_pte, ptl);
+if (pml !=3D ptl)
+        spin_unlock(pml);
 
-v6~8:
-- The same
-
-v9:
-- Update L1 PM Substates information against kernel v6.11 in commit message
-
- drivers/pci/controller/vmd.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
-index 264a180403a0..11870d1fc818 100644
---- a/drivers/pci/controller/vmd.c
-+++ b/drivers/pci/controller/vmd.c
-@@ -740,11 +740,9 @@ static int vmd_pm_enable_quirk(struct pci_dev *pdev, void *userdata)
- 	if (!(features & VMD_FEAT_BIOS_PM_QUIRK))
- 		return 0;
- 
--	pci_enable_link_state_locked(pdev, PCIE_LINK_STATE_ALL);
--
- 	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_LTR);
- 	if (!pos)
--		return 0;
-+		goto out_state_change;
- 
- 	/*
- 	 * Skip if the max snoop LTR is non-zero, indicating BIOS has set it
-@@ -752,7 +750,7 @@ static int vmd_pm_enable_quirk(struct pci_dev *pdev, void *userdata)
- 	 */
- 	pci_read_config_dword(pdev, pos + PCI_LTR_MAX_SNOOP_LAT, &ltr_reg);
- 	if (!!(ltr_reg & (PCI_LTR_VALUE_MASK | PCI_LTR_SCALE_MASK)))
--		return 0;
-+		goto out_state_change;
- 
- 	/*
- 	 * Set the default values to the maximum required by the platform to
-@@ -764,6 +762,13 @@ static int vmd_pm_enable_quirk(struct pci_dev *pdev, void *userdata)
- 	pci_write_config_dword(pdev, pos + PCI_LTR_MAX_SNOOP_LAT, ltr_reg);
- 	pci_info(pdev, "VMD: Default LTR value set by driver\n");
- 
-+out_state_change:
-+	/*
-+	 * Ensure devices are in D0 before enabling PCI-PM L1 PM Substates, per
-+	 * PCIe r6.0, sec 5.5.4.
-+	 */
-+	pci_set_power_state_locked(pdev, PCI_D0);
-+	pci_enable_link_state_locked(pdev, PCIE_LINK_STATE_ALL);
- 	return 0;
- }
- 
--- 
-2.46.1
-
+>=20
+>    mmu_notifier_invalidate_range_end(&range);
+> --
+> 2.20.1
 
