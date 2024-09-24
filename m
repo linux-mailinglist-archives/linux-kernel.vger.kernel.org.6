@@ -1,83 +1,74 @@
-Return-Path: <linux-kernel+bounces-337482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23253984A9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:04:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 691E7984A9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:04:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6A3B281B47
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:04:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28F8728247A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:04:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485491AC8A9;
-	Tue, 24 Sep 2024 18:04:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9241AD3EB;
+	Tue, 24 Sep 2024 18:04:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OxBL/Umo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Amx49iyP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E501AC435;
-	Tue, 24 Sep 2024 18:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F1C1ACDF9;
+	Tue, 24 Sep 2024 18:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727201043; cv=none; b=Mdy8C0pS0ovy57ioThkWUSn4ynYNR72+qN7eZVxeQu2DGnFNzri4Ti2zT0mBqQ5VVTUsbDzPN7FvbALj+hqVxrZH3aQmNRLJ2AiuncsMn3bguNf3m5wp3TAyeA/yQcv0bKpB0NMt8MDzn8IeHCM/iyqKH8KYtjH/TY8XRnRyY1w=
+	t=1727201045; cv=none; b=rSpwYAszDCyMRjf2M0WSYOnatGdXBrd7bISqv9fRTjXUDvN56ac170Ve5yxlTlqzQ4xJU1vLyQALcEQGcx3zl1G5eA25/Umhs+ogOt6whmEyiOI8iSTXORx/X5gIq/wA0wuh8hnoO9dB7ZvDZCdUWQW1fcHG+EaBo9dc+sE+jrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727201043; c=relaxed/simple;
-	bh=Nry20tYU/hvIHE+Fi9qXVD9G9iu1adf5oXjftGVvgAo=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=ekT1m881RFF3r2dTa/wyp35rklpyiCzkCHklOatQdBwkPs+FnT0UEKlwohVlmo3ISEV7NNx0a0dEoOECKMBOBjAHi60xQCgOP9u1woNlK60XXg8BPYUpymf+TCwVJkwRMf2M4Cya6dfwh2GZEWsDFChOYzzG7LeCeIXLJAH1cYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OxBL/Umo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88972C4CECD;
-	Tue, 24 Sep 2024 18:04:03 +0000 (UTC)
+	s=arc-20240116; t=1727201045; c=relaxed/simple;
+	bh=ZOKd2yre5cHdGfWT0XikzvYC1uwt4noY89tFw/b9l7I=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=BHXBqMmRGI0wUhjD1aP0LvKLl06F2UHU6T2IlMZ6wIniZuLDQC0v8/HT6mAm7Jb3k3Ix7VNyM239tmPmnBIDkz6s+wViAIuGasXMrJUHJwJ6jjt+Ff426p351ofMdqexlRND61p+//mjdQ1Nc48mI5y872c4pBS2G98Q9GpV5vU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Amx49iyP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5247DC4CED6;
+	Tue, 24 Sep 2024 18:04:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727201043;
-	bh=Nry20tYU/hvIHE+Fi9qXVD9G9iu1adf5oXjftGVvgAo=;
+	s=k20201202; t=1727201045;
+	bh=ZOKd2yre5cHdGfWT0XikzvYC1uwt4noY89tFw/b9l7I=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=OxBL/UmoF9vKT7O8qljIN2QcCswrDnqW/w2kKuMEcAirsebRv/FrGN4AQS7cDyF2b
-	 eUH6xrJ+xpNb1vK9WDc5HvcK44JNradoO+Y3Ivl8BWIDbX5za1WgcHUK6GZZV0GEIf
-	 7PvyEsC8RP/qa+hEEVWfleA6KQ1KtF6DY33RbGoslQgV27KaarIJwuBFLkCZB7lD4A
-	 sWT5rjRhEtAAU5Tt+iS1I1eEeallit7Zhn8F5YeHBuVE6IGZFHkHwSel0/68JcigJX
-	 WCHsbGawuv1TNA8aOr6F1dngP/2dn8kJPP9+UPH9RnW6WSBXyVC4UgUZAiCYCNYJ1J
-	 l6OkcA1w0gEnQ==
+	b=Amx49iyPX/Hs15U402DclMNVk5CqL/dFOD+sC0m/izmmEOaNDbZT7btMp2XMRxw7a
+	 5kUOv084P2msuezTSzf59o+6TGNuEXQ10YrnwpJ5Pe0KXOOraBbkJhU3xZ/OPp4pv9
+	 HjqAlXZ0VHLNFH+nUCuN3/mh2naz10bg0l3EEu+Jt1nB4makDTY84o44RfNhUvk8aa
+	 L06RS3tGoR3lUVl5OyQCftNaEKpWhRKv5Y4hUbEDY8AvT32fWopgK1Pw29hTIsIA/T
+	 XyfreIcTBJAO8/0tWPDDG8M/7HBsJIh5lsIcR36+vhaN0g2ieqEmCFO2W97yY2fpQa
+	 YGhVmEgoUExoA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D673806656;
-	Tue, 24 Sep 2024 18:04:07 +0000 (UTC)
-Subject: Re: [GIT PULL] Crypto Fixes for 6.12
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB2903806656;
+	Tue, 24 Sep 2024 18:04:08 +0000 (UTC)
+Subject: Re: [GIT PULL] Landlock updates for v6.12
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <ZvDbn6lSNdWG9P6f@gondor.apana.org.au>
-References: <Y5mGGrBJaDL6mnQJ@gondor.apana.org.au>
- <Y/MDmL02XYfSz8XX@gondor.apana.org.au>
- <ZEYLC6QsKnqlEQzW@gondor.apana.org.au>
- <ZJ0RSuWLwzikFr9r@gondor.apana.org.au>
- <ZOxnTFhchkTvKpZV@gondor.apana.org.au>
- <ZUNIBcBJ0VeZRmT9@gondor.apana.org.au>
- <ZZ3F/Pp1pxkdqfiD@gondor.apana.org.au>
- <ZbstBewmaIfrFocE@gondor.apana.org.au>
- <ZgFIP3x1w294DIxQ@gondor.apana.org.au>
- <ZkrC8u1NmwpldTOH@gondor.apana.org.au> <ZvDbn6lSNdWG9P6f@gondor.apana.org.au>
+In-Reply-To: <20240923184251.153123-1-mic@digikod.net>
+References: <20240923184251.153123-1-mic@digikod.net>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <ZvDbn6lSNdWG9P6f@gondor.apana.org.au>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git v6.12-p2
-X-PR-Tracked-Commit-Id: 44ac4625ea002deecd0c227336c95b724206c698
+X-PR-Tracked-Message-Id: <20240923184251.153123-1-mic@digikod.net>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.12-rc1
+X-PR-Tracked-Commit-Id: 1ca980815e1f284dddcb5e678c91bbd3e3f3a6a6
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 1cfb46051db9ddb68e297eaf17270e09874ec5f3
-Message-Id: <172720104593.4145686.7072222308128375599.pr-tracker-bot@kernel.org>
-Date: Tue, 24 Sep 2024 18:04:05 +0000
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+X-PR-Merge-Commit-Id: e1b061b444fb01c237838f0d8238653afe6a8094
+Message-Id: <172720104756.4145686.7649698495456697922.pr-tracker-bot@kernel.org>
+Date: Tue, 24 Sep 2024 18:04:07 +0000
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>, =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>, Jann Horn <jannh@google.com>, Paul Moore <paul@paul-moore.com>, Tahera Fahimi <fahimitahera@gmail.com>, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, outreachy@lists.linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Mon, 23 Sep 2024 11:08:15 +0800:
+The pull request you sent on Mon, 23 Sep 2024 20:42:51 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git v6.12-p2
+> https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.12-rc1
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/1cfb46051db9ddb68e297eaf17270e09874ec5f3
+https://git.kernel.org/torvalds/c/e1b061b444fb01c237838f0d8238653afe6a8094
 
 Thank you!
 
