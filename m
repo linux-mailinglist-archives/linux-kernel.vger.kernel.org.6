@@ -1,127 +1,110 @@
-Return-Path: <linux-kernel+bounces-337069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8035B9844E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:37:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED4749844E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:37:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13671B278CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:37:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11E4FB23A57
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:37:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92811A76A6;
-	Tue, 24 Sep 2024 11:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F021A704D;
+	Tue, 24 Sep 2024 11:35:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="hYqDPRjj"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="mM3hg5r2"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA6B17ADE9;
-	Tue, 24 Sep 2024 11:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D87B1A7274
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 11:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727177714; cv=none; b=qMJ1dp5dX+oDRnJExcSS+EiMLsCLloCBl6usFU7iKzP+D2gZzi7/tt1dFASv0VRvWY9bHyjtQatj4QE8jp3i48m1367wNJ88LwARKU7IHsqDfABawEtNuYcDj6DywODR1aX7lQfaGZusJxgD3vz6DKrEUyp4S9Pe6ZlEEgy+5mk=
+	t=1727177741; cv=none; b=JO+m77D19pa75IjtPGQZqsk8fekPWTeVMJ4BlhCmFt1sIbSFEzbCYOTC2EU22bceGjfQkgw+hawUEqBu9q0Bv2+n8V47gexivR/4inYXxDUXmko/TITl9wlrHoDrssHOlUSUwbrBYENlhkDoU6jCJQ7WamYgWFv1FI3lWEaVsVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727177714; c=relaxed/simple;
-	bh=dz/SludDC2pUK4X7YSuOpt9ecp3pGUsyl248hHckQec=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=JBUpBa/3xLMv8Bq3opr5kHBhyto2v6MdSj9q/LK6c97DXsHC23kxUWbfaM2yO7zfpnDf+FMGmzJ5sn7+o3WpEToapNVW2hhWHSm4YPeIYHWIL/oLp1vMXFRdi+XMrOs0RyunDzXUzqjJawtbfBAyteBh5A69L/XOsUSVcmcADHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=hYqDPRjj; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727177686; x=1727782486; i=markus.elfring@web.de;
-	bh=qnJoj23YlAnI/8ta3vC+QQ5dYZyF2XfNfXgGjgBnawE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=hYqDPRjjiO+n4HqUV+4+bTwNECR/EUp/+aqZJggZ61LMHbBUCjaaSN59TNRKJeEK
-	 MQCsznIXLmUEkA6ZsYbAQ/0hFOIpS3JWDJfgmuhDx3jt483zYtP2igJ6kQCluhmkR
-	 Q7GqyFqw4Lt+y/f/lbAkzua50HUc2J/smqQLmqLFeXiHFIGdcHoBGawd5JPxNMaVk
-	 H3gmYAB9o9BUEQr5bTuNSqc5hDOEehtd+fNxNRlY2hozTeU45bPqDjwrZxgGkKaiW
-	 rGCRq5blESrAQ0WJMSHwtzj+v67T+2QZcbmTg6kPT+ErHWk5PtKw+BiGn8KP7n6RR
-	 xKwA4BVGqH3dgWimDg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MjBVh-1sGiih1iGD-00dqHG; Tue, 24
- Sep 2024 13:34:46 +0200
-Message-ID: <f9d7a026-a67a-4164-80f4-578b1fbf71ac@web.de>
-Date: Tue, 24 Sep 2024 13:34:45 +0200
+	s=arc-20240116; t=1727177741; c=relaxed/simple;
+	bh=x/u1koTvDCmqCThGPPy59+E4Zy/cnzm9qG2d855Hew4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=hV66fOWS8Kn5KQl2mzfGHOerAk1TI590UiEypCPKhR9ZbzIJv7orjW4CfiK0go3QrvXJK4ZdEOD+5zZv1t39DOeE7GbPSHKHXeFhrCDr+xvW1fAgI9ry3Tc1W3iMIZmGSvpHhoB4m62fUQmqpbF+nvBBLdJfgQX8snrlaYSdu9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=mM3hg5r2; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e1d22ecf2a6so4717943276.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 04:35:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1727177738; x=1727782538; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p9DP3Lm5+ROAG/jDrE9OpwrxcYIAGIlPA1Z5y5IHY7g=;
+        b=mM3hg5r2tgwHdKJuE24/5MMo6bp2wsV5oKbZe57HDXpinwPPtATMVna+MPnd7YdSEN
+         /eGCn9uMC0Ga7bUDmhuKH+jVYNp7DyVya7WGgfYvvorSdYk1XskVCiqU0BkyAArgWFUT
+         eCACTpo4oVjM4hOpOI/GPiUpDocE1zP5zYmrEzeOSaaGLV/NUoGUG6cI91jU7lVIVQDk
+         wW7hc+ExuQGZYpoF6J+4ZlQxbHKuQA5idvuFof+siZ+jvN6wNTWheXGMo4kErr5svwrS
+         qVCURy5N+GYbQogdxqRGa7T3sK5FPUtEeZq6T+ZzBGeHN2ibWA7JoDO8ArsLLKfiAiqZ
+         upAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727177738; x=1727782538;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p9DP3Lm5+ROAG/jDrE9OpwrxcYIAGIlPA1Z5y5IHY7g=;
+        b=QhBUAWmbSPLR16cgXF0x602kYw7rmBGr7eGDEcBmlz+FPG85IBF9lhgZywEOQ8S0Oa
+         DMeaquAxxiBdOVarkcrImyujme8ZiwhSd4zqg87/P+ByegvVojbqi+lNHA+BwBiXEI2j
+         xjd4u2Rhk2QqXYUmOoTH0jouWH1qdtl2Uf2xm1lWdn/l8E3xtcnWfOveSP+cwtILVrJo
+         oXGZNnDBO4gvL4kPlufJ5VciYsZ1EGcLjz93ry8T/E0ybdADljWS7iQOigfa5wwsTQXp
+         jVGgg/HRfV+LMHbNCvgvbB0F6AnqZeVcfKyGHqfRTAN2AquLqut7YhohP3W3DBZWkY5S
+         hkUg==
+X-Forwarded-Encrypted: i=1; AJvYcCVGt7ImE/Ph5Xd3F+8GdwJrK1hjyhLgrGe8ExtztCEt2YfWhB4wcpRLaxR4lXs7aQMeOd3ykeUcayohaIw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPw81UOoV12bX9xcJPf2OR/1gT0KOu7bKJAstXUvcMTcoJd3z1
+	DEkEr2IvGUMcEuNJf/UYlhM5zdJxZyn+0Behylwdi9vuGEEVyCkhpapWsTvlujM=
+X-Google-Smtp-Source: AGHT+IG5v/WDo0X228QOoEmf9XlGtrph2Vebs5aFKzaxpljA5Saz3tLvVyTDbM05eyOURW1/FQKsPA==
+X-Received: by 2002:a05:690c:b:b0:6ae:486c:59f with SMTP id 00721157ae682-6dfeeec5994mr113669047b3.29.1727177738118;
+        Tue, 24 Sep 2024 04:35:38 -0700 (PDT)
+Received: from [127.0.0.1] ([2600:381:1d13:f852:a731:c08e:e897:179a])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e20d15b40bsm2085807b3.81.2024.09.24.04.35.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2024 04:35:37 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Pavel Begunkov <asml.silence@gmail.com>, 
+ Min-Hua Chen <minhuadotchen@gmail.com>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240922104132.157055-1-minhuadotchen@gmail.com>
+References: <20240922104132.157055-1-minhuadotchen@gmail.com>
+Subject: Re: [PATCH] io_uring: fix casts to io_req_flags_t
+Message-Id: <172717773603.81807.5961891557675583068.b4-ty@kernel.dk>
+Date: Tue, 24 Sep 2024 05:35:36 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-GB
-To: kernel-janitors@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] regulator: Call of_node_put() only once in
- rzg2l_usb_vbus_regulator_probe()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:mVjUISKgkQLPmyTzZOx6rE9jdjtSGH222JbkjvyMEtZ5f24wXY6
- 75H08/RGE1N7fu9frCv0JxxJpelXRg2fb7xANUKhd4XLWt3yP8CjQveD4JkmsfX3xaXlVXj
- wVWX7DozmkNieO/kjSZ6sYX0y398Y2eYvA/lUrroU1ANNKZqMQcuAzlxmZbOhPruRiqD4T5
- qgF//XSw6briuBiNM/zhw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:e+unhALJO8s=;gAjz+6V2Is0hI7cWCScgWqSOyQm
- 3EG/kXIARbHE58KeC4y39SHuZUd8iue1Mlw07HxXDjIlxiBFj+F3JR1KE2pMqYnZ/0UCTijSi
- 4yPKIl1M9Hxn757+Q4jJJ6Fakb79mLdoinlgipExIVqFwC/8hhHCu1jEvw2tdCOGXu9BjAxtf
- YGMiH/kb/d4WOc1VX2K5ir35iMRDBGcJ0oYdrCqlLJhFclnB48ta/wHwhNmwLnaTzo5Vfonlb
- HCFdxLa+9ss/JMHzD5xwoiDiKF1NsdKyGAA9AnpT1Qf2w7yrAs6O/00hWavoS8J77L57s/vok
- 2vG/jhxlM+hva2jizJnicFhWPyY25ubjdHKSYSL1rZXbNl2VEROE2fGBdGQI95uOkNHLdpU7y
- 0uE2GskH6jPUizeaFOsxyQhRLhYwwYOWVMJj3W13DV2F+4vF6tCzJse0BL2RuKapKZ4pH4aa5
- /JYQd0EoHecK1FKHfhyibjdNTl5rRhIZ1gtltBorGoDKpVsYObYBiFUXo5rWf74NBJL5yxcCA
- ZzFe6BfcKzY0FZIWDalZu+rtQ6r4HRmOngFEq3Muwa3ThaJBIUearFDbVDF9/RZ7+s0yq8buh
- ZjmRT0XwE6pNm7hFIuvWlRQOGEDPWX4BSIClSxvVhGyN8G913GtHxGCAM/Lc9dQ5Ov/wGw7DO
- NculDzc6yD0f/p7wLVV2DR23JXTzzoTwog5+eifx4QC3FaCjnhtIOu+3ZnaJzXBuaPhQXzGW9
- ITZaZ/3CG1b4EjK5SDdmgX8JN1OYZiLYFstk/tySWRBDdVnsxqn15k4D8E5InKK3JXwi1OQt7
- iQ4uUiz8wGUUu1O+KIk4e0bA==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2-dev-648c7
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Sep 2024 13:21:52 +0200
 
-An of_node_put(config.of_node) call was immediately used after a pointer
-check for a devm_regulator_register() call in this function implementation=
-.
-Thus call such a function only once instead directly before the check.
+On Sun, 22 Sep 2024 18:41:29 +0800, Min-Hua Chen wrote:
+> Apply __force cast to restricted io_req_flags_t type to fix
+> the following sparse warning:
+> 
+> io_uring/io_uring.c:2026:23: sparse: warning: cast to restricted io_req_flags_t
+> 
+> No functional changes intended.
+> 
+> [...]
 
-This issue was transformed by using the Coccinelle software.
+Applied, thanks!
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/regulator/renesas-usb-vbus-regulator.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+[1/1] io_uring: fix casts to io_req_flags_t
+      commit: 5dc4669c80354d3d7fdf87ac853bd1246928f2b7
 
-diff --git a/drivers/regulator/renesas-usb-vbus-regulator.c b/drivers/regu=
-lator/renesas-usb-vbus-regulator.c
-index 4eceb6b54497..dec7cac5e8d5 100644
-=2D-- a/drivers/regulator/renesas-usb-vbus-regulator.c
-+++ b/drivers/regulator/renesas-usb-vbus-regulator.c
-@@ -49,13 +49,10 @@ static int rzg2l_usb_vbus_regulator_probe(struct platf=
-orm_device *pdev)
- 		return dev_err_probe(dev, -ENODEV, "regulator node not found\n");
+Best regards,
+-- 
+Jens Axboe
 
- 	rdev =3D devm_regulator_register(dev, &rzg2l_usb_vbus_rdesc, &config);
--	if (IS_ERR(rdev)) {
--		of_node_put(config.of_node);
-+	of_node_put(config.of_node);
-+	if (IS_ERR(rdev))
- 		return dev_err_probe(dev, PTR_ERR(rdev),
- 				     "not able to register vbus regulator\n");
--	}
--
--	of_node_put(config.of_node);
 
- 	return 0;
- }
-=2D-
-2.46.1
 
 
