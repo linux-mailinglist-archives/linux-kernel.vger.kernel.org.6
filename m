@@ -1,145 +1,275 @@
-Return-Path: <linux-kernel+bounces-336584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47696983CBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:11:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF0E8983CD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:14:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3B9F1F23226
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 06:11:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69DC71F23948
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 06:14:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055E581745;
-	Tue, 24 Sep 2024 06:10:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5BA6EB4A;
+	Tue, 24 Sep 2024 06:14:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="E90eYb5P"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YZ66UYj2"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5514E77104;
-	Tue, 24 Sep 2024 06:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10AD4779F
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 06:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727158258; cv=none; b=BONIMYmTZHQPAMuUWmHzHSTqrT8PeIP+bDst0Lu8Nfjm3fCYuOlOhGZavlzA4ydv30m4t5pbbYD3OiYsGXquy4A5PDOSjkwFQv2DZUuCvh7Dqex2z8LzUAcKu1jweU5zYb7lWeTZ1QiJaVAz3peCjUVzpvDGTKgqjk3ZWJrm77U=
+	t=1727158472; cv=none; b=brrCgBparvZmGWg48a6GZr+tUZeoQ+6y8+/oDqW21yDMtwjA78M9tOOKRKt3uiDz7AnBdsmdYOzlXmTA6dSN6FZxA8jqIhhWiGTL4FN3M7hnTNPY/ERtMOzlpDaIZTBIi7R0j+wRBw9QbR1ExoG6XEF089Rrqdd3f/Hoa7GiESE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727158258; c=relaxed/simple;
-	bh=TD6pAib6dE+VMMQwUFyZPy+NtgjTK80jpeya+pkA1kE=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=MwoVQ5Kcs6dkeL3xGM5tEP+kiKyO26diahGA9aAqTu3oaS6TC3QnriSGkV+5ixRf9MLiRz9qFwJ9Kz9jKUS1dZwSWj0Qu60tj9uht75CFaFmoJ1UcuFHs68EQEywdRtjF3aVfkOEGe4Da6MQUIBoshohWC/WmXhaLCDQGSnsQs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=E90eYb5P; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727158253;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c9t7lQoHcHfAf+J7NuASpai8ucCshnv8Mc8AC5MWNPU=;
-	b=E90eYb5PCWu6N7LwZU/TJ7EBi7/c7qRe1YxV0TtfNHlV3YGTW+tTLR6/Dws4RX2ekx/AcK
-	pcQBqAbD7VNftyI2YGWOFAkft+vpi+DKdqvGo7pWmrMOE0zOPxnR8LCCuDX3oontZzMkgA
-	ZNySLGEtIoF5QkIh4/0oY6gTQQ7aTJw=
+	s=arc-20240116; t=1727158472; c=relaxed/simple;
+	bh=Qr8m1yo5fCudhrN8+J3AFsSeYbvPSLy4ErAplDL01hw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tssCaOoT9+pOZAme2QKXWivuxcZ0nfPoRRJSPddXEkhHo638BD7B5O/MTBKOqCoynTSqCsdCAOz1DmqoUVRGYspEBpWQN1efKE+RGaGJOHDnT4eJyyRP5yQSKBCqoW+kjOlKEwzhBWrzlCIxlRW7EZq+srNhMdJCt0qtMsuSezk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YZ66UYj2; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6ddd758aaf4so36961837b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 23:14:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727158468; x=1727763268; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/VjSBYA8cGtVWX7UwzKIdqqC/5t90VWcah768k+1m10=;
+        b=YZ66UYj2uXdOVOkcQuTgymnvckjIi/8Oe5L3V02N2hxkdI+78bjpT9T8SRdPJt5uN6
+         7tmQ7o6ryGK4lLm6Anq5IqpIyqFNVBvA2vA77e6sdnRdJg06VW8SPOnnqIxcjpC1DPzY
+         W2G09X70RGFISyb/4BhgKSDdoA93Gw1pnV7JgBC9HTLJfx81XxmBIv05K04I1C9+vm7r
+         GnBhIgJpavEKww7oiCeAJSgDVegcFH7i2OHvtqB7alcXA1WZL3HoyLgWNfq+8wLjX+uS
+         6uY2cMJ0rLRGiU4LRPtnqPf9SSl0NYf3ZGcQptegOYFCP9GbFjVnJlmE5Y8HXfIVWSmR
+         4LlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727158468; x=1727763268;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/VjSBYA8cGtVWX7UwzKIdqqC/5t90VWcah768k+1m10=;
+        b=Oiozb3Z3S1swmV2EmvJddDnYDtg0zxruJRgm/QlIwj4sNKZ1aomF3ww7pm2nJ28FF1
+         ZH9AMFhU2RfGriTTSbFjwQBFGSo9cpVAzIGmCK4hMDA3QRMrOQCGxbqyUCQPaaA2CKFi
+         LBjYfXujLJLP7l2SaHC695nrlkJrdfPHXRGt6Dz5sP3PB7sNnEK+a6FEzDU6HfSrnzL1
+         fO4PwbdxXy40aC1LP+Iyxlvf9MFLjtFjilrTYKWQNGDe1U7cFR8OmzSRyNu/Sx1o7FL4
+         QMKxVjVDlJL8PvtkCgUzGFJRKkVRijor7YikKTU3FyK7RoTEvYO1AERSj75SVyR5y1f0
+         Ed3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWXlyRf2MDcTiU3/i/rl2LHNRBU/FIOFXFD4bVwP9E/HylZzMvEQUyrhMwmLb5yDQ1T2ZWyVIz4r6HnU5Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+UDizguYUckGr2g0U5KsTbx3DrBgY46LM6lqZMHqYbZLvA7LX
+	xcNvt9s4S4v3aycozkzn5Oha4wyK7l2lKcSq/f8hX12NRP7IE99IKTGOg/DYSyWjeguIjhFFKGO
+	acnHXPDDX6YKXBRutqcZKQm9XOgG/MF7T5k7lOQ==
+X-Google-Smtp-Source: AGHT+IG72jBrJpCMbV8xmaTG1rW1NrWV8soeY10kze37FjgyQ6JCaV/IOnv2E1o6c7zVnMf1sRd7+1dpErtm2GfwguA=
+X-Received: by 2002:a05:690c:f0a:b0:6dd:d34b:373f with SMTP id
+ 00721157ae682-6dfeed222ebmr130914267b3.8.1727158468586; Mon, 23 Sep 2024
+ 23:14:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
-Subject: Re: [PATCH v3 0/3] Fix some starvation problems in block layer
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <20240914072844.18150-1-songmuchun@bytedance.com>
-Date: Tue, 24 Sep 2024 14:10:06 +0800
-Cc: ming.lei@redhat.com,
- Muchun Song <songmuchun@bytedance.com>,
- linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <C70283DE-699F-41BF-8C64-4155DD00D976@linux.dev>
-References: <20240914072844.18150-1-songmuchun@bytedance.com>
-To: axboe@kernel.dk
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+References: <20240918-a663-gpu-support-v1-0-25fea3f3d64d@quicinc.com>
+ <20240918-a663-gpu-support-v1-3-25fea3f3d64d@quicinc.com> <udt76i3sl7zekhudqpnvhvhfxchvixwoinz7metuwfrpynl47k@wlpforwv7mcf>
+ <20240923200537.q5rcw66wmqnwmtpk@hu-akhilpo-hyd.qualcomm.com>
+In-Reply-To: <20240923200537.q5rcw66wmqnwmtpk@hu-akhilpo-hyd.qualcomm.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 24 Sep 2024 08:14:17 +0200
+Message-ID: <CAA8EJpqNXb+pJp0OQXi5Pn7d2u2zGeJmVkTvsgFXzvkHn6FjqA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: sa8775p: Add gpu and gmu nodes
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+
+On Mon, 23 Sept 2024 at 22:05, Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
+>
+> On Wed, Sep 18, 2024 at 12:27:03AM +0300, Dmitry Baryshkov wrote:
+> > On Wed, Sep 18, 2024 at 02:08:43AM GMT, Akhil P Oommen wrote:
+> > > From: Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>
+> > >
+> > > Add gpu and gmu nodes for sa8775p based platforms.
+> >
+> > Which platforms? The commit adds nodes to the SoC and the single RIDE
+> > platform.
+> >
+> > >
+> > > Signed-off-by: Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>
+> > > Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+> > > ---
+> > >  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi |  8 ++++
+> > >  arch/arm64/boot/dts/qcom/sa8775p.dtsi      | 75 ++++++++++++++++++++++++++++++
+> > >  2 files changed, 83 insertions(+)
+> > >
+> > > diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> > > index 2a6170623ea9..a01e6675c4bb 100644
+> > > --- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> > > +++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> > > @@ -407,6 +407,14 @@ queue3 {
+> > >     };
+> > >  };
+> > >
+> > > +&gpu {
+> > > +   status = "okay";
+> > > +
+> > > +   zap-shader {
+> >
+> > It's easier to add gpu_zap_shader_link label in the DTSI file and then
+> > reference it instead of using the subnode again.
+> >
+> > > +           firmware-name = "qcom/sa8775p/a663_zap.mbn";
+> > > +   };
+> > > +};
+> >
+> > Separate patch, please.
+> >
+> > > +
+> > >  &i2c11 {
+> > >     clock-frequency = <400000>;
+> > >     pinctrl-0 = <&qup_i2c11_default>;
+> > > diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> > > index 23f1b2e5e624..12c79135a303 100644
+> > > --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> > > +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> > > @@ -2824,6 +2824,81 @@ tcsr_mutex: hwlock@1f40000 {
+> > >                     #hwlock-cells = <1>;
+> > >             };
+> > >
+> > > +           gpu: gpu@3d00000 {
+> > > +                   compatible = "qcom,adreno-663.0", "qcom,adreno";
+> > > +                   reg = <0 0x03d00000 0 0x40000>,
+> > > +                         <0 0x03d9e000 0 0x1000>,
+> > > +                         <0 0x03d61000 0 0x800>;
+> >
+> > I think it's suggested to use 0x0 now
+> >
+> > > +                   reg-names = "kgsl_3d0_reg_memory",
+> > > +                               "cx_mem",
+> > > +                               "cx_dbgc";
+> > > +                   interrupts = <GIC_SPI 300 IRQ_TYPE_LEVEL_HIGH>;
+> > > +                   iommus = <&adreno_smmu 0 0xc00>,
+> > > +                            <&adreno_smmu 1 0xc00>;
+> > > +                   operating-points-v2 = <&gpu_opp_table>;
+> > > +                   qcom,gmu = <&gmu>;
+> > > +                   interconnects = <&gem_noc MASTER_GFX3D 0 &mc_virt SLAVE_EBI1 0>;
+> >
+> > QCOM_ICC_TAG_ALWAYS instead of 0
+> >
+> > > +                   interconnect-names = "gfx-mem";
+> > > +                   #cooling-cells = <2>;
+> >
+> > No speed bins?
+>
+> Thanks for the review. Agree on all comments.
+>
+> Speedbins were missed because we are sharing these changes early in the
+> developement cycle, sort of like what we did for chromeos develeopment.
+> Will try to pick it up in the next patchset.
+
+Ack. If you mention this in the commit message, that would be great!
+
+>
+> -Akhil
+>
+> >
+> > > +
+> > > +                   status = "disabled";
+> > > +
+> > > +                   zap-shader {
+> >
+> > gpu_zap_shader: zap-shader
+> >
+> > > +                           memory-region = <&pil_gpu_mem>;
+> > > +                   };
+> > > +
+> > > +                   gpu_opp_table: opp-table {
+> > > +                           compatible = "operating-points-v2";
+> > > +
+> > > +                           opp-405000000 {
+> >
+> > Just a single freq?
+> >
+> > > +                                   opp-hz = /bits/ 64 <405000000>;
+> > > +                                   opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
+> > > +                                   opp-peak-kBps = <8368000>;
+> > > +                           };
+> > > +
+> >
+> > Drop the empty line, please.
+> >
+> > > +                   };
+> > > +           };
+> > > +
+> > > +           gmu: gmu@3d6a000 {
+> > > +                   compatible = "qcom,adreno-gmu-663.0", "qcom,adreno-gmu";
+> > > +                   reg = <0 0x03d6a000 0 0x34000>,
+> > > +                           <0 0x3de0000 0 0x10000>,
+> > > +                           <0 0x0b290000 0 0x10000>;
+> >
+> > Wrong indentation, please align to the angle bracket.
+> > Also I think it's suggested to use 0x0 now
+> >
+> > > +                   reg-names = "gmu", "rscc", "gmu_pdc";
+> > > +                   interrupts = <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
+> > > +                                   <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
+> >
+> > And here
+> >
+> > > +                   interrupt-names = "hfi", "gmu";
+> > > +                   clocks = <&gpucc GPU_CC_CX_GMU_CLK>,
+> > > +                            <&gpucc GPU_CC_CXO_CLK>,
+> > > +                            <&gcc GCC_DDRSS_GPU_AXI_CLK>,
+> > > +                            <&gcc GCC_GPU_MEMNOC_GFX_CLK>,
+> > > +                            <&gpucc GPU_CC_AHB_CLK>,
+> > > +                            <&gpucc GPU_CC_HUB_CX_INT_CLK>,
+> > > +                            <&gpucc GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK>;
+> > > +                   clock-names = "gmu",
+> > > +                                 "cxo",
+> > > +                                 "axi",
+> > > +                                 "memnoc",
+> > > +                                 "ahb",
+> > > +                                 "hub",
+> > > +                                 "smmu_vote";
+> > > +                   power-domains = <&gpucc GPU_CC_CX_GDSC>,
+> > > +                                   <&gpucc GPU_CC_GX_GDSC>;
+> > > +                   power-domain-names = "cx",
+> > > +                                        "gx";
+> > > +                   iommus = <&adreno_smmu 5 0xc00>;
+> > > +                   operating-points-v2 = <&gmu_opp_table>;
+> > > +
+> > > +                   gmu_opp_table: opp-table {
+> > > +                           compatible = "operating-points-v2";
+> > > +
+> > > +                           opp-200000000 {
+> > > +                                   opp-hz = /bits/ 64 <200000000>;
+> > > +                                   opp-level = <RPMH_REGULATOR_LEVEL_MIN_SVS>;
+> > > +                           };
+> > > +                   };
+> > > +           };
+> > > +
+> > >             gpucc: clock-controller@3d90000 {
+> > >                     compatible = "qcom,sa8775p-gpucc";
+> > >                     reg = <0x0 0x03d90000 0x0 0xa000>;
+> > >
+> > > --
+> > > 2.45.2
+> > >
+> >
+> > --
+> > With best wishes
+> > Dmitry
 
 
 
-> On Sep 14, 2024, at 15:28, Muchun Song <songmuchun@bytedance.com> wrote:
-> 
-> We encounter a problem on our servers where hundreds of UNINTERRUPTED
-> processes are all waiting in the WBT wait queue. And the IO hung detector
-> logged so many messages about "blocked for more than 122 seconds". The
-> call trace is as follows:
-> 
->    Call Trace:
->        __schedule+0x959/0xee0
->        schedule+0x40/0xb0
->        io_schedule+0x12/0x40
->        rq_qos_wait+0xaf/0x140
->        wbt_wait+0x92/0xc0
->        __rq_qos_throttle+0x20/0x30
->        blk_mq_make_request+0x12a/0x5c0
->        generic_make_request_nocheck+0x172/0x3f0
->        submit_bio+0x42/0x1c0
->        ...
-> 
-> The WBT module is used to throttle buffered writeback, which will block
-> any buffered writeback IO request until the previous inflight IOs have
-> been completed. So I checked the inflight IO counter. That was one meaning
-> one IO request was submitted to the downstream interface like block core
-> layer or device driver (virtio_blk driver in our case). We need to figure
-> out why the inflight IO is not completed in time. I confirmed that all
-> the virtio ring buffers of virtio_blk are empty and the hardware dispatch
-> list had one IO request, so the root cause is not related to the block
-> device or the virtio_blk driver since the driver has never received that
-> IO request.
-> 
-> We know that block core layer could submit IO requests to the driver
-> through kworker (the callback function is blk_mq_run_work_fn). I thought
-> maybe the kworker was blocked by some other resources causing the callback
-> to not be evoked in time. So I checked all the kworkers and workqueues and
-> confirmed there was no pending work on any kworker or workqueue.
-> 
-> Integrate all the investigation information, the problem should be in the
-> block core layer missing a chance to submit that IO request. After
-> some investigation of code, I found some scenarios which could cause the
-> problem.
-> 
-> Changes in v3:
->  - Collect RB tag from Ming Lei.
->  - Adjust text to fit maximum 74 chars per line from Jens Axboe.
-
-Hi Jens,
-
-Friendly ping... Do you have any concerns regarding this version?
-
-Muchun,
-Thanks.
-
-> 
-> Changes in v2:
->  - Collect RB tag from Ming Lei.
->  - Use barrier-less approach to fix QUEUE_FLAG_QUIESCED ordering problem
->    suggested by Ming Lei.
->  - Apply new approach to fix BLK_MQ_S_STOPPED ordering for easier
->    maintenance.
->  - Add Fixes tag to each patch.
-> 
-> Muchun Song (3):
->  block: fix missing dispatching request when queue is started or
->    unquiesced
->  block: fix ordering between checking QUEUE_FLAG_QUIESCED and adding
->    requests
->  block: fix ordering between checking BLK_MQ_S_STOPPED and adding
->    requests
-> 
-> block/blk-mq.c | 55 ++++++++++++++++++++++++++++++++++++++------------
-> block/blk-mq.h | 13 ++++++++++++
-> 2 files changed, 55 insertions(+), 13 deletions(-)
-> 
-> -- 
-> 2.20.1
-> 
-
+-- 
+With best wishes
+Dmitry
 
