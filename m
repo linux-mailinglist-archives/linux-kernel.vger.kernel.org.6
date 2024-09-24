@@ -1,132 +1,102 @@
-Return-Path: <linux-kernel+bounces-337215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89426984712
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:51:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53AD2984719
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:55:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51BCF2841AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:51:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF70BB22D24
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:55:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF8E1A727F;
-	Tue, 24 Sep 2024 13:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CfM9I2ot"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9411A76A6;
+	Tue, 24 Sep 2024 13:55:27 +0000 (UTC)
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834781EEF9;
-	Tue, 24 Sep 2024 13:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33D21DDEA
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 13:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727185867; cv=none; b=WhSkcLLQkwIGa9rnUh3AAm+JWsGJINUDh5G26O4luaY8oyfKN8t+IthAyVUKVveVePvLLQ4xGBJQ0p0/x9dW1fl7tbMERU0VraFXuhlP/H+Gj3hM2eRuQYEMFAGDIBucNHVjuEo4QifmI2FTSU6ki6brY1UFVd2eJzFDZ4Mmwho=
+	t=1727186127; cv=none; b=VcyRlFVw7VJHCPIp7ZI8FI7gaQ0h883cLAt1GvD92+DJQgjobW6MfGH5dmGcR7ijbzzMf/QFdom7YNiwZ8xoEecL9VF90nu5Z7jdyKdg+eOcDy6MyLUj3n7FVEz/lJj6NsN4xXqZuAge2n/V+9mT/GRKPFMfZG3+0t/DbNHkWQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727185867; c=relaxed/simple;
-	bh=BbVN8rQgOMlXyrzQZgmaR26p8GbGnfgzzWiaex2l7EI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QwnCo65PFIP+wxQZsAkPz0bxeqpZ2Ut08G8PCGWMp9iGYtcfNkZYpJ8LqGdXmLSIyb7vRwogwGL8fg9QcNjoLN5DI6hy9eq5AAYtI97v+WDKWa2xnjfhl9Z0cRoNItNfYCWPl+FGDidlYdDLdt8t+xi1nr7ILK2cXgVEfiy+H84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CfM9I2ot; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727185866; x=1758721866;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=BbVN8rQgOMlXyrzQZgmaR26p8GbGnfgzzWiaex2l7EI=;
-  b=CfM9I2otsboyV2Fb5V0xx1x6tu3NmNQmSPi6GXUmq2J2+D9Fhw7hlSrn
-   VlYJMUIvZQ9u1E6dm++2AodpdplU+4VWH51c7t9M2BXV6xEmSPg44WavN
-   f2NtNWnU6hR7c+i/CLUDvBZNnf/qHFAb3E/R306ifTMGCr3Fpoi6f/ISS
-   97n3ZLhFpUnXVpd8x/uLbtnBd6wJ1Mdsge3ujLwO8GU05OfxKy4j3CIk8
-   0zFuI/N/zvZVjHCan0ulmbzzJ99l0cBvONDaDzA2tt7i8U8rhfL49RdBS
-   xelMr4sSibBbZIHLernC4b7u9BrwzYaDgm5cFcwfX4bIlLzQKdCbYcj50
-   Q==;
-X-CSE-ConnectionGUID: S1MZJLgvQBqyGdswELa0fw==
-X-CSE-MsgGUID: b94PNUKhTBqqQhVzBXbMQg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="25999334"
-X-IronPort-AV: E=Sophos;i="6.10,254,1719903600"; 
-   d="scan'208";a="25999334"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 06:51:05 -0700
-X-CSE-ConnectionGUID: ffx8M899Rt2GwK/sFxC51g==
-X-CSE-MsgGUID: 726Ow3IvT+i5x3txCUe+Gg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,254,1719903600"; 
-   d="scan'208";a="71753888"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 06:51:05 -0700
-Received: from [10.212.70.53] (kliang2-mobl1.ccr.corp.intel.com [10.212.70.53])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 7855420CFEEC;
-	Tue, 24 Sep 2024 06:51:02 -0700 (PDT)
-Message-ID: <73e999cd-93c3-49e0-bac2-0e2c6efe4110@linux.intel.com>
-Date: Tue, 24 Sep 2024 09:51:01 -0400
+	s=arc-20240116; t=1727186127; c=relaxed/simple;
+	bh=o9UQOkjoQY/GowfiJxlEdWUS4wvKv0K+HCXp/DEHfy0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=BrmLgGU76HIbzV0+uP7MSjr95wIrESU207Nu0vI1liYi/x130guBK2z3doFIplQ+Q8bT5D2pM1oBiAJNcJm/HIgyPUD5+EznNsoIRZoNEr2A3fE1eWx1tD0ZcGBdI28PBOS6UDcCmo7ELav9cZ83Nb6/c8PCrkoQLKtmpvYG8tY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:beb3:bbd4:b9cd:84ae])
+	by xavier.telenet-ops.be with cmsmtp
+	id GDvP2D00N3rtkie01DvPhP; Tue, 24 Sep 2024 15:55:23 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1st60d-000Syp-1K;
+	Tue, 24 Sep 2024 15:55:23 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1st60g-005zKO-TC;
+	Tue, 24 Sep 2024 15:55:22 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Tony Ambardar <tony.ambardar@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] compiler-gcc.h: Disable __retain on gcc-11
+Date: Tue, 24 Sep 2024 15:55:20 +0200
+Message-Id: <71d8f8448d29c3ce5a7fd883e56c0edeb2f4106b.1727185783.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf/x86/intel/uncore: Enable uncore on vCPUs when using
- uncore discovery
-To: =?UTF-8?B?6ZmI5Z+56bi/KOS5mOm4vyk=?= <chenpeihong.cph@alibaba-inc.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, Thomas Gleixner
- <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86 <x86@kernel.org>,
- "H. Peter Anvin" <hpa@zytor.com>,
- linux-perf-users <linux-perf-users@vger.kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>
-Cc: =?UTF-8?B?6YOR57+UKOato+e/lCk=?= <zx283061@alibaba-inc.com>,
- =?UTF-8?B?6LW155Sf6b6Z?= <shenglong.zsl@alibaba-inc.com>
-References: <d420bcf0-5651-41f7-81c9-1c8155bd6bcc.chenpeihong.cph@alibaba-inc.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <d420bcf0-5651-41f7-81c9-1c8155bd6bcc.chenpeihong.cph@alibaba-inc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+All my gcc-11 compilers (Ubuntu 11.4.0-1ubuntu1~22.04) claim to support
+the __retain__ attribute, but only riscv64-linux-gnu-gcc-11 and
+x86_64-linux-gnu-gcc-11 (not x86_64-linux-gnux32-gcc-11!) actually do.
+The arm-linux-gnueabi-gcc-11.5.0 compiler from kernel.org crosstool
+fails in the same way:
 
+    error: ‘retain’ attribute ignored [-Werror=attributes]
 
-On 2024-09-23 10:47 p.m., 陈培鸿(乘鸿) wrote:
-> With uncore discovery, kvm can choose to expose a subset of
-> uncore related MSRs it wants to guest by emulate the uncore
-> discovery device. 
+All my gcc-12 compilers seem to support the attribute.
 
-I don't hear that the KVM has started to support uncore vPMU.
-Can you please point me to patches?
+Play it safe, and disable __retain unconditionally on gcc-11.
 
-The default of uncore_no_discover is 0. So it bypasses the HYPERVISOR
-check unless the user specially sets the value. It could be a problem
-for the earlier platforms which don't support discovery
-table. How do you plan to emulate the devices on earlier platforms?
+Fixes: 0a5d3258d7c97295 ("compiler_types.h: Define __retain for __attribute__((__retain__))")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ include/linux/compiler-gcc.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Thanks,
-Kan
-> So we can enable uncore on virtualized CPUs
-> when uncore discovery is using.
-> Signed-off-by: Cheng Hong <chenpeihong.cph@alibaba-inc.com>
-> ---
->  arch/x86/events/intel/uncore.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
-> index d98fac567684..33776df95aa4 100644
-> --- a/arch/x86/events/intel/uncore.c
-> +++ b/arch/x86/events/intel/uncore.c
-> @@ -1920,7 +1920,7 @@ static int __init intel_uncore_init(void)
->  struct intel_uncore_init_fun *uncore_init;
->  int pret = 0, cret = 0, mret = 0, ret;
-> - if (boot_cpu_has(X86_FEATURE_HYPERVISOR))
-> + if (uncore_no_discover && boot_cpu_has(X86_FEATURE_HYPERVISOR))
->  return -ENODEV;
->  __uncore_max_dies =
+diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
+index f805adaa316e9a21..bedeb76b63a34745 100644
+--- a/include/linux/compiler-gcc.h
++++ b/include/linux/compiler-gcc.h
+@@ -145,3 +145,12 @@
+ #if GCC_VERSION < 90100
+ #undef __alloc_size__
+ #endif
++
++/*
++ * Most 11.x compilers claim to support it, but only riscv64-linux-gnu-gcc and
++ * x86_64-linux-gnu-gcc actually do.
++ */
++#if GCC_VERSION < 120000
++#undef __retain
++#define __retain
++#endif
+-- 
+2.34.1
+
 
