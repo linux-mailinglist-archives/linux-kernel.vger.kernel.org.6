@@ -1,97 +1,190 @@
-Return-Path: <linux-kernel+bounces-337055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1F7F9844C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:33:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 597449844CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E898B264A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:33:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CE8D1C22825
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F57E1AB6D2;
-	Tue, 24 Sep 2024 11:30:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151FF1AC420;
+	Tue, 24 Sep 2024 11:30:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qc4XrnvM"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EDQSfeeA"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3A21AB519
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 11:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BFAA1ABEAF;
+	Tue, 24 Sep 2024 11:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727177452; cv=none; b=cyfbUYL69NqnN1WCBP7cufc/cQXvcSxUpxjiAhzul+gsvDvdnH/61lmWc2P8sZtbn9uMfEmHueEm5BQpreqZtwm2idzvTe4Yz0tcv5EES/BQnerxjDO+fScA07MfunB6q6oiSSRkrLq+xzbYRbGLpwUATwTF/g+C0dzjgN6sqAE=
+	t=1727177458; cv=none; b=ARbqdhFtx20Cp7YvVxyhvT0Wmax8yWLgTyJPIcofYZdiHcCnkizGXr+dKHuYpCcuB7+WCwewtpcwv0kdKpdnIdotQ0SacHbxM6eDU9tJHJ1dCmmN1NLbR0UIfqeBF+dFSP9tUELptG0UZzUEnAxKJZIfP6VbYlYEK3ehA5AhVNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727177452; c=relaxed/simple;
-	bh=Shdw5+tuYhqBZZnfhahbhFln3ahbwdhU6psYPvqOax4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yq5AOu4mOxetUXjP23ZGR+UTF4Nh4MJSr513rejBxZgeOsh96PsdNQKduJ7e0fzUlcQOrZGnKrlbFQOZueH1LK5dilhfGR0nnzYRBQxfANGEffrAPzSE4CHHDowXPcT+5QJHlXh8/6IhqjRxVXwIlLlEIvj2v8KB6sNGkSbCRHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qc4XrnvM; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 24 Sep 2024 07:30:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727177448;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NSx3Xo84OH/LH1yr/oPGKWLdMOfPbNYZydCjHW4ozKI=;
-	b=qc4XrnvMRuL6995S/MFuIHmqJBUfbTlAaZ4qr7UZ/EI1+5vEQAEOFdU9/EHpL3I88La/r4
-	JMY9BBz2IQFk/trmOfpurfjIa+7FY+4ois7UGVyznQ9lNOYN/5AKpTJevxXpFRRwOykciY
-	xnYR/3tUOvNMjpgFfEBTBu04KAdSr80=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: David Wang <00107082@163.com>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [BUG?] bcachefs performance: read is way too slow when a file
- has no overwrite.
-Message-ID: <q4jjkhgpahmrr3z7d5qn7qhml3kqtj3roybuykkhfefxlezdbf@y4lbf6ut4siw>
-References: <20240907103437.71139-1-00107082@163.com>
- <20240924110807.28788-1-00107082@163.com>
+	s=arc-20240116; t=1727177458; c=relaxed/simple;
+	bh=hkIxVGWeKmryC2eLYVINRVq4p3WNWoRnKE3ce5L9CRg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=QCfeDx6eYpAllfJoz4kFUnQl0acvMnPkIynVal+yWPnlHQDfULJZBTvrFbUIden2ZWMMTE6h6gaK9X9a9dKKK9d+Sb8UrRXiiiVr4BGwQ52UK9Sg3+8B/uTT9+lVki2eQozOuItLoum/N+iZz2w/Oz96q6jyx1ih7fNq7pZuQgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EDQSfeeA; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c44e1cde53so6865559a12.0;
+        Tue, 24 Sep 2024 04:30:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727177455; x=1727782255; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3lXuDq8mG8Oox8ReUlOYfBHI57TTAdm6VM/42FD3opk=;
+        b=EDQSfeeA7qpgp/rgLcmmSPPkdJ5GdVmZ6Q2DNcgufl54PqboVlqtXuad44PRu45EYM
+         gfq/dqK/j3TBfeY72hHM8RjO8g7PMWouTmRfve2DECFzhQBSzi5GgoyYvdzueNJ+j4ZC
+         wkHiHajvcyt/qibd7sVc8MgCK68aYfJ3WeCeQyLh0foGktzw+qOefThi1CGOfComXAkU
+         YY0MoAxtQ7M2SuuwASGP67S/pPtwfb4Aw4wG2MjKSanKonCO5mlSFBDs6WnWI9sKr/MQ
+         RIPCVlILTvmLGAhjZirObJodu83miqD65o0e3ZPo6arVW5EbB0+s4uC/uIK/sdwOvaqu
+         J+vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727177455; x=1727782255;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3lXuDq8mG8Oox8ReUlOYfBHI57TTAdm6VM/42FD3opk=;
+        b=BA+5gPO9f+wXqyDGKmAxOJBFMjnTHFuxjJWfo3u7yxtDBOBctCHCc6c1BM0T0bVHZP
+         cUP+lpGjUXNvKvMqIx2q6INMZf+JRdKm1H53MnprwkExhu2PVu+PqxylfLUmGhjZEYuC
+         IIT+YfGHHDY+GZgJE5VgTL+UE+xMU4M0q4ekmlrLtMF1DrN0hDL1INKm6g5dpZ2fux+5
+         6NNlvJMZeCpixzlZLBWBtEDwCJ7dqO0PQOUqdosekZHuolx3AhyNF5dxqcQJXjYmrP0J
+         CTaVpFTpPcHLvHquOIk5dag5qJWJ5JV3DY9VWq/CwsCfIXcCxDuSX9+2LgC6u2M/NK7k
+         G7MQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVdkVjrxXUmSnh64qkpB1CmBGO7GeamC1b/dgUoACxxq4JnhBVDHNnKoOfsx9TEhl5BUMzzJcuZdm9IA4aE@vger.kernel.org, AJvYcCWiEWBy16EisHIYLCQXcKX3lzOnUI4/EykiyItXGNydojpUCOhUgRv4PFBgpwaz/x1EbRxPe0mnE2s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNczA+OnT+PFr+zxM4nYIxsVHkxF6mj1Uo5sabTRA/I+UO/VmW
+	22b3oMlCx5BdZz912KgecvuttshwwpDn3fOygPbq1MStD+mpkMtVvzhmGIIg
+X-Google-Smtp-Source: AGHT+IGu8AttCAIBHfv1YZLNJdKkGKNVsZjY6wH+lgr+bfXwxH+gFnbtz84q2ql3MMebddfRAKG26g==
+X-Received: by 2002:a17:907:d3e7:b0:a8d:250a:52a8 with SMTP id a640c23a62f3a-a90d4fdef2dmr1569419366b.3.1727177454688;
+        Tue, 24 Sep 2024 04:30:54 -0700 (PDT)
+Received: from [192.168.1.17] (host-87-7-171-42.retail.telecomitalia.it. [87.7.171.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93930cae0fsm72612766b.120.2024.09.24.04.30.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2024 04:30:54 -0700 (PDT)
+From: Antonino Maniscalco <antomani103@gmail.com>
+Date: Tue, 24 Sep 2024 13:30:44 +0200
+Subject: [PATCH v5 09/11] drm/msm/A6XX: Add a flag to allow preemption to
+ submitqueue_create
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240924110807.28788-1-00107082@163.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240924-preemption-a750-t-v5-9-0be2bf81c187@gmail.com>
+References: <20240924-preemption-a750-t-v5-0-0be2bf81c187@gmail.com>
+In-Reply-To: <20240924-preemption-a750-t-v5-0-0be2bf81c187@gmail.com>
+To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Jonathan Corbet <corbet@lwn.net>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ linux-doc@vger.kernel.org, Antonino Maniscalco <antomani103@gmail.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727177437; l=3416;
+ i=antomani103@gmail.com; s=20240815; h=from:subject:message-id;
+ bh=hkIxVGWeKmryC2eLYVINRVq4p3WNWoRnKE3ce5L9CRg=;
+ b=Vi0qPyqWGnrGlNn+hFPyJvdZHwCxpOKUhTamx90KhXi066loDgG9kVNR4wqG1ZaEzkxQBEsg0
+ FL7cRelkg/hCed0Zzokcufmgj6lKbaQMN0/+7JfuNwQ1GVMAy4c7e3L
+X-Developer-Key: i=antomani103@gmail.com; a=ed25519;
+ pk=0zicFb38tVla+iHRo4kWpOMsmtUrpGBEa7LkFF81lyY=
 
-On Tue, Sep 24, 2024 at 07:08:07PM GMT, David Wang wrote:
-> Hi, 
-> 
-> At 2024-09-07 18:34:37, "David Wang" <00107082@163.com> wrote:
-> >At 2024-09-07 01:38:11, "Kent Overstreet" <kent.overstreet@linux.dev> wrote:
-> >>That's because checksums are at extent granularity, not block: if you're
-> >>doing O_DIRECT reads that are smaller than the writes the data was
-> >>written with, performance will be bad because we have to read the entire
-> >>extent to verify the checksum.
-> >
-> >
-> 
-> >Based on the result:
-> >1. The row with prepare-write size 4K stands out, here.
-> >When files were prepaired with write size 4K, the afterwards
-> > read performance is worse.  (I did double check the result,
-> >but it is possible that I miss some affecting factors.);
-> >2. Without O_DIRECT, read performance seems correlated with the difference
-> > between read size and prepare write size, but with O_DIRECT, correlation is not obvious.
-> >
-> >And, to mention it again, if I overwrite the files **thoroughly** with fio write test
-> >(using same size), the read performance afterwards would be very good:
-> >
-> 
-> Update some IO pattern (bio start address and size, in sectors, address&=-address),
-> between bcachefs and block layer:
-> 
-> 4K-Direct-Read a file created by loop of `write(fd, buf, 1024*4)`:
+Some userspace changes are necessary so add a flag for userspace to
+advertise support for preemption when creating the submitqueue.
 
-You're still testing small reads to big extents. Flip off data
-checksumming if you want to test that, or wait for block granular
-checksums to land.
+When this flag is not set preemption will not be allowed in the middle
+of the submitted IBs therefore mantaining compatibility with older
+userspace.
 
-I already explained what's going on, so this isn't very helpful.
+The flag is rejected if preemption is not supported on the target, this
+allows userspace to know whether preemption is supported.
+
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8450-HDK
+Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
+---
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 12 ++++++++----
+ drivers/gpu/drm/msm/msm_submitqueue.c |  3 +++
+ include/uapi/drm/msm_drm.h            |  5 ++++-
+ 3 files changed, 15 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+index 736f475d696f1133c9e55d16aa80e73fd46cb835..edbcb6d229ba614be910ee70e75731538116e4a4 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+@@ -430,8 +430,10 @@ static void a7xx_submit(struct msm_gpu *gpu, struct msm_gem_submit *submit)
+ 	OUT_PKT7(ring, CP_SET_MARKER, 1);
+ 	OUT_RING(ring, 0x101); /* IFPC disable */
+ 
+-	OUT_PKT7(ring, CP_SET_MARKER, 1);
+-	OUT_RING(ring, 0x00d); /* IB1LIST start */
++	if (submit->queue->flags & MSM_SUBMITQUEUE_ALLOW_PREEMPT) {
++		OUT_PKT7(ring, CP_SET_MARKER, 1);
++		OUT_RING(ring, 0x00d); /* IB1LIST start */
++	}
+ 
+ 	/* Submit the commands */
+ 	for (i = 0; i < submit->nr_cmds; i++) {
+@@ -462,8 +464,10 @@ static void a7xx_submit(struct msm_gpu *gpu, struct msm_gem_submit *submit)
+ 			update_shadow_rptr(gpu, ring);
+ 	}
+ 
+-	OUT_PKT7(ring, CP_SET_MARKER, 1);
+-	OUT_RING(ring, 0x00e); /* IB1LIST end */
++	if (submit->queue->flags & MSM_SUBMITQUEUE_ALLOW_PREEMPT) {
++		OUT_PKT7(ring, CP_SET_MARKER, 1);
++		OUT_RING(ring, 0x00e); /* IB1LIST end */
++	}
+ 
+ 	get_stats_counter(ring, REG_A7XX_RBBM_PERFCTR_CP(0),
+ 		rbmemptr_stats(ring, index, cpcycles_end));
+diff --git a/drivers/gpu/drm/msm/msm_submitqueue.c b/drivers/gpu/drm/msm/msm_submitqueue.c
+index 0e803125a325aa67639406ef413aaeb6a9f08cee..9b3ffca3f3b471f509918edd4a2fdb0f80dfeb06 100644
+--- a/drivers/gpu/drm/msm/msm_submitqueue.c
++++ b/drivers/gpu/drm/msm/msm_submitqueue.c
+@@ -170,6 +170,9 @@ int msm_submitqueue_create(struct drm_device *drm, struct msm_file_private *ctx,
+ 	if (!priv->gpu)
+ 		return -ENODEV;
+ 
++	if (flags & MSM_SUBMITQUEUE_ALLOW_PREEMPT && priv->gpu->nr_rings == 1)
++		return -EINVAL;
++
+ 	ret = msm_gpu_convert_priority(priv->gpu, prio, &ring_nr, &sched_prio);
+ 	if (ret)
+ 		return ret;
+diff --git a/include/uapi/drm/msm_drm.h b/include/uapi/drm/msm_drm.h
+index 3fca72f738614a3e229e1017fe4f2ab61cd98bdf..f37858db34e602ce8b92dceccb60d4b6bdcda877 100644
+--- a/include/uapi/drm/msm_drm.h
++++ b/include/uapi/drm/msm_drm.h
+@@ -345,7 +345,10 @@ struct drm_msm_gem_madvise {
+  * backwards compatibility as a "default" submitqueue
+  */
+ 
+-#define MSM_SUBMITQUEUE_FLAGS (0)
++#define MSM_SUBMITQUEUE_ALLOW_PREEMPT	0x00000001
++#define MSM_SUBMITQUEUE_FLAGS		    ( \
++		MSM_SUBMITQUEUE_ALLOW_PREEMPT | \
++		0)
+ 
+ /*
+  * The submitqueue priority should be between 0 and MSM_PARAM_PRIORITIES-1,
+
+-- 
+2.46.1
+
 
