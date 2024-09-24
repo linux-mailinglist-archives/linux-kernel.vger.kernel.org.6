@@ -1,143 +1,136 @@
-Return-Path: <linux-kernel+bounces-337210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03A079846FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:46:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB3BD984703
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:47:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33ECA1C2283E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:46:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27E281C209F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48BC31EEF9;
-	Tue, 24 Sep 2024 13:46:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD641A7279;
+	Tue, 24 Sep 2024 13:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YtQObYR/"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RLzaxAAz"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E0E1EB31
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 13:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8C21B85EC
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 13:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727185594; cv=none; b=NK14DGLLF45X4qoLz2Ajmy3+cN2xlE8GNEM5PoedHs5Z6Cz5H+faWBR941mRb8Kua9CXiuPlW1g2wcpk+OkDmwjFdNwDWlCBBTyyS9NoPCIXnYCVqqf0mL9d1HxjwB5PDro8FQQUaH24fnn/Oj1P4ruBfgNlaOeBdw1h5wbgszM=
+	t=1727185673; cv=none; b=XFcyaszf1uCRl/nqwk+a0RjvWd4JW4632ZmztiUH3oCWlR1ltdXiwkwOupbaXA0xqJs4Drh58mSrFTPCu3Qk9DwuIuzQcS8wgBbh6BvWedUjUxhyofLPMvqdON+5SiHbfZwXR6YpmMO8meyuxPrxB1X+4L3qOXfYsIElNVbfkko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727185594; c=relaxed/simple;
-	bh=QVtL+3KVFqPq/oSf1Yw5Zipj+SQqfOMkPscBopyOfok=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P6J6TrwKOklseap0jVLw7UB96sgs9Z9p9OwF767Omet3XBewMwGnILwRQY/YDMbJk2k52l5P7D+DsnkcvCvJ+X5Za+bG/2VMT4Kfv+UYVyjZUdshOYbVLLAzlDmxunM8y1WKaI6H6UpBSJyaI6ZwPYRvxGYENCzFy1M65eqgKcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YtQObYR/; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8d446adf6eso857641766b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 06:46:32 -0700 (PDT)
+	s=arc-20240116; t=1727185673; c=relaxed/simple;
+	bh=MYbiObRfNL9nYVzpNyq7zpldpI/7VuEmR/UvTj7hEOM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kTkyf8Y7ZZjfBIjj7P0JIFTx6VGt3uXkq8QydKmXi8hcq1mEKtrQVvtgERjlsP8fXTpgumTZjaLN9s4Rn2jn6d7LXsSEYJgVjSwp73O8+IPIBVnirD0B6SiTTSrQX0sHNXJCxQLz27R/H4QsT1mKmGpZcfmhadb7+iKCLUj5RQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RLzaxAAz; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5356aa9a0afso8738125e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 06:47:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727185591; x=1727790391; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BS+n6lf0ewZ4C9NqB0m2FPDZKb3ZOgpjWOZUUqgRpHA=;
-        b=YtQObYR/4/b4SR3neujDuSjFfzdbwQxGrUsJVtoLZ9HnF78i3ZK+Q902irt+yR5Qko
-         3470zp1g5tURfNsgX/hH/hdDH2+SaN227/ahqtxrmOIuNq6A84Tk1CGGlrrG/WFrINOX
-         nndXaui8hpn7ffw8t964lbOrerjBW02jqUTzFD+BMqJQncynuP8FYzhIiFJreC+viLHJ
-         74GA1nmOYxMQJuLrsqZiUAhfHTAOSxCefukrMw4HABTKceNEIWODyn1qZ8JM7IRnCjhX
-         ifo/sX8C8gDyCkg+E8OMtkO+VYtcX8CybyKA/ph8oOi6MAJDVXo2Stn/klpKBlDkS4jk
-         nITA==
+        d=linaro.org; s=google; t=1727185670; x=1727790470; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kBt3x6ALV42ewF+LrxPLGBD5z1fDXU5VRBYVjXfLHqA=;
+        b=RLzaxAAz0YRVVPGa1qEgmI+PI8iobIX1vvml7tJjYYShhTswBb7ciflQmvUf01/QpK
+         fLoknXEUMa96aC2OWC+rY6KHfzoDwOiUBzeyzm6ct4B8lvqg/OZx9cC7DPhSFji6AnzI
+         52Vv9ZM7xkANuaV38gWnUl4aES2O1UumZuS5XUi+SIKMoozOaxj4okELTfma3qFsHASW
+         y/bYdPLt93KkBOy5hqpSEZm8TkybURRtTJqfV/sOhoHGkCq2PbgPDrAL7Hnem9z+05jS
+         ea6SszUa/y/jOEDEFigCDVdeOo16nZVptbldJfF+y4HQOkuv9Q62piJSXd5amxD/+oWR
+         pXPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727185591; x=1727790391;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BS+n6lf0ewZ4C9NqB0m2FPDZKb3ZOgpjWOZUUqgRpHA=;
-        b=orc6MyUQ4b/NXcu5YJoizARRJGrsyLHJWG5wbpHRJX9W6eypCzyKIATgnoVsX/VAUq
-         r9Di3i/fozRHZVN2Ni5pQyrYuaRNFL+T+Z70BjyO1iGeCVw8b9mfXhUKtWh3wzFE9Nmb
-         TtJR4OR39QUMRQLLXh8plgzh6aAkRyXIiHu/DG9d+LC27euGOrco1Kh9oRSwZyL9Qiyj
-         DU01tsV5LQkiUoSeXaHNIgAFVEasv4+gvOKRGXqAvV6N7Z4LHgosFZfRdrSdX2S3SJlD
-         7YvZNuTZzJtym4krlocbMU9DVCcUvySOwt4rXcFc9BubZJ5huHyhm9BhYlKydXBOD7Ve
-         NhXA==
-X-Forwarded-Encrypted: i=1; AJvYcCUX0nttO4axxSJdwrHK2L/sVuOsEFQ2d7AmRwfsa8HeGhpLAiN8RZwuuHEjKCdm1VB/cXu9M8HUFG8EF5U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDuGM2q/Vfv+bWG60BIo/sQByoJ1H+e4quIhS08iQJBSlBtL5t
-	H77hgl4XUBJ6JJ796UruRhenbe3wOVo9NdRkKVGEcrlgXGZTOoCM2/ZG9I1glEUrtCjALFodh8n
-	aQF79XMdhdwoY4ppOIllDLr+YH2V2EuYScT7w
-X-Google-Smtp-Source: AGHT+IFfDvU0QoxZl9U8yx2iVrPx9Ckr9pP18sGwnClBif5QuPOwDAhR+U/DPatMes1QIHSjN3FU6qPJ59E6u4F8PNU=
-X-Received: by 2002:a17:906:dc8d:b0:a86:ac05:2112 with SMTP id
- a640c23a62f3a-a90d50e1eeemr1406536066b.51.1727185590419; Tue, 24 Sep 2024
- 06:46:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727185670; x=1727790470;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kBt3x6ALV42ewF+LrxPLGBD5z1fDXU5VRBYVjXfLHqA=;
+        b=SHcMA89siTYZZle+iIKRqRaj1ljSjmVA3TMmMtuZoxvQrYs3t9cKEuT3LDIuC9yaFr
+         2KsRTw5W17MHnRdzFN2l4HuMLamNmxUTdTMmKDoL7g2QH79DJr3c8957am4f4M9RylTP
+         ZwZpmFP29iLE4hgfkzW42hypiqA/MUP8I8etbTbyMYhoMqtZhx3ez+RgY25coALj+7CX
+         XoNzkqMW9IMlqug8AQBroqF7+hPInazcOLtizY8KN/Mgmllt3zf4j/HXaLQip5NcdmRg
+         mixOojGhbrab2ybEK8CN5NgA2r1OLx+JvsLF3N9q9kG8BrxMqGEswFPdiHWT6kz/6Sw7
+         7ffQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVln9xIDZu/vn4KEFSltkPENOYInWkUZkiN+P9fMTDVH48pCtB0Mjlg0F03V7CQpxd6JR9zyTN7vT1GYqc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXbOKOOtce561YkbArRZ0U0aKhvqF4pzA/pVC9qMvmFIBhzqnN
+	Do/P3g+q6eSiYaNRfe0TtTIDilD/8MbVcPMa1to3zoCQFQOHkwgh27YcUJyJhl0=
+X-Google-Smtp-Source: AGHT+IGJKZpf6QQ+S8K3ti23EiAXeRY+081fsTj6EyFFUngV4d81tjNwb7xcXTbrQdu0LscMt/VsWQ==
+X-Received: by 2002:a05:6512:3048:b0:533:4785:82ab with SMTP id 2adb3069b0e04-536ac2d6a6bmr9755530e87.1.1727185669530;
+        Tue, 24 Sep 2024 06:47:49 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-537a86408cesm233908e87.149.2024.09.24.06.47.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2024 06:47:48 -0700 (PDT)
+Date: Tue, 24 Sep 2024 16:47:45 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Sandor Yu <Sandor.yu@nxp.com>, andrzej.hajda@intel.com, 
+	neil.armstrong@linaro.org, Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, 
+	jernej.skrabec@gmail.com, airlied@gmail.com, daniel@ffwll.ch, robh+dt@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com, 
+	vkoul@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
+	kernel@pengutronix.de, linux-imx@nxp.com, oliver.brown@nxp.com, 
+	alexander.stein@ew.tq-group.com, sam@ravnborg.org
+Subject: Re: [PATCH v17 4/8] drm: bridge: Cadence: Add MHDP8501 DP/HDMI driver
+Message-ID: <2mug3ii2vi735sk7nwwu2rcj63d3mlgazlhg4sydcxb6uf5nsc@qi5ut5pmajsv>
+References: <cover.1727159906.git.Sandor.yu@nxp.com>
+ <8bdf573bfd7e3feb45d7ccb53765a978a685ce2d.1727159906.git.Sandor.yu@nxp.com>
+ <20240924-mottled-psychedelic-lorikeet-ef8f4c@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <14BD7E92B23BF276+20240924090906.157995-1-yushengjin@uniontech.com>
- <20240924063258.1edfb590@fedora>
-In-Reply-To: <20240924063258.1edfb590@fedora>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 24 Sep 2024 15:46:17 +0200
-Message-ID: <CANn89iLoBYjMmot=6e_WJrtEhcAzWikU2eV0eQExHPj7+ObGKA@mail.gmail.com>
-Subject: Re: [PATCH v3] net/bridge: Optimizing read-write locks in ebtables.c
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: yushengjin <yushengjin@uniontech.com>, pablo@netfilter.org, kadlec@netfilter.org, 
-	roopa@nvidia.com, razor@blackwall.org, davem@davemloft.net, kuba@kernel.org, 
-	pabeni@redhat.com, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
-	bridge@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240924-mottled-psychedelic-lorikeet-ef8f4c@houat>
 
-On Tue, Sep 24, 2024 at 3:33=E2=80=AFPM Stephen Hemminger
-<stephen@networkplumber.org> wrote:
->
-> On Tue, 24 Sep 2024 17:09:06 +0800
-> yushengjin <yushengjin@uniontech.com> wrote:
->
-> > When conducting WRK testing, the CPU usage rate of the testing machine =
-was
-> > 100%. forwarding through a bridge, if the network load is too high, it =
-may
-> > cause abnormal load on the ebt_do_table of the kernel ebtable module, l=
-eading
-> > to excessive soft interrupts and sometimes even directly causing CPU so=
-ft
-> > deadlocks.
-> >
-> > After analysis, it was found that the code of ebtables had not been opt=
-imized
-> > for a long time, and the read-write locks inside still existed. However=
-, other
-> > arp/ip/ip6 tables had already been optimized a lot, and performance bot=
-tlenecks
-> > in read-write locks had been discovered a long time ago.
-> >
-> > Ref link: https://lore.kernel.org/lkml/20090428092411.5331c4a1@nehalam/
-> >
-> > So I referred to arp/ip/ip6 modification methods to optimize the read-w=
-rite
-> > lock in ebtables.c.
->
-> What about doing RCU instead, faster and safer.
+On Tue, Sep 24, 2024 at 12:16:27PM GMT, Maxime Ripard wrote:
+> On Tue, Sep 24, 2024 at 03:36:49PM GMT, Sandor Yu wrote:
+> > +static int cdns_mhdp8501_read_hpd(struct cdns_mhdp8501_device *mhdp)
+> > +{
+> > +	u8 status;
+> > +	int ret;
+> > +
+> > +	mutex_lock(&mhdp_mailbox_mutex);
+> > +
+> > +	ret = cdns_mhdp_mailbox_send(&mhdp->base, MB_MODULE_ID_GENERAL,
+> > +				     GENERAL_GET_HPD_STATE, 0, NULL);
+> > +	if (ret)
+> > +		goto err_get_hpd;
+> > +
+> > +	ret = cdns_mhdp_mailbox_recv_header(&mhdp->base, MB_MODULE_ID_GENERAL,
+> > +					    GENERAL_GET_HPD_STATE,
+> > +					    sizeof(status));
+> > +	if (ret)
+> > +		goto err_get_hpd;
+> > +
+> > +	ret = cdns_mhdp_mailbox_recv_data(&mhdp->base, &status, sizeof(status));
+> > +	if (ret)
+> > +		goto err_get_hpd;
+> > +
+> > +	mutex_unlock(&mhdp_mailbox_mutex);
+> 
+> That's better I guess, but it's still not a good API design. If you
+> can't have concurrent accesses, then cdns_mhdp_mailbox_send et al.
+> should take the mutex themselves.
 
-Safer ? How so ?
+I think that a proper API might be:
 
-Stephen, we have used this stuff already in other netfilter components
-since 2011
+int cdns_mhdp_mailbox_send_recv(struct cdns_mhdp_device *mhdp,
+			u8 module_id, u8 opcode,
+			u16 size, const u8 *message,
+			u16 buf_size, u8 *buf);
 
-No performance issue at all.
+Internally it should take the lock, exchange the data, then return.
 
-Honestly, this old link (
-https://lore.kernel.org/lkml/20090428092411.5331c4a1@nehalam/ ) is
-quite confusing,
-please yushengjin do not include it next time, or we will get outdated feed=
-back.
-
-Instead, point to the real useful commit :
-
-commit 7f5c6d4f665bb57a19a34ce1fb16cc708c04f219
-    netfilter: get rid of atomic ops in fast path
-
-This is the useful commit, because this ebtable patch simply adopts
-the solution already used in iptables.
-
-And please compile your patch, and boot it, test it before sending it again=
-.
+-- 
+With best wishes
+Dmitry
 
