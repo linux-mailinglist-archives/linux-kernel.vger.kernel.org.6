@@ -1,97 +1,127 @@
-Return-Path: <linux-kernel+bounces-336883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80A7F984228
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:31:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A03C9841D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:16:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 314D4B29800
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:27:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E07B285E44
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F02E31714C4;
-	Tue, 24 Sep 2024 09:26:25 +0000 (UTC)
-Received: from weierstrass.telenet-ops.be (weierstrass.telenet-ops.be [195.130.137.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD8313B5B7;
+	Tue, 24 Sep 2024 09:16:13 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A751714B7
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1D9839F4
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:16:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727169985; cv=none; b=q7TBg3o63iA0pEpITmqBsTwrGekP6CaZyfNCTEo35nN74bkBqsSTOJgezkE5ba3qKsixX623hSmvinnJzg15V0t7AT++JAXSOWlgUki8UdcO3xidU3lMJFnKDn9la51gblaqQLYuUC55hj/IrmJFb7UtY3FoE1DqgS8+uAHxbuU=
+	t=1727169373; cv=none; b=iBeOgPBcyV2jxlf0EYyyhQu7JSjbP4BBPvLazxhzqS/TU4N/6qQV3rFr/HV1SaQr3pO6rK2gBzjqyu5io7/eHk6nK4NgvMFpMZxoEbogT/sckmdCNs+ZzwCOxEfoAIzpW5oymmJ7/OqxkBtrcbHMjb+vwMvmtMZUAg6jotVM4Ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727169985; c=relaxed/simple;
-	bh=Rpiia7W171dhBiA2KDt3R+l32OjCdJgEQC5KzQ/YRWc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=M09t89b3E1kbRnQYkWHMlI/gaAY1gE2b/NqvL1zMDPT86Xt7DsUgGNDd0w+YdZZxMItXcApKmsjOw6cMV65XAl1fM/8CKZvUT5wAaEpRbayxOEk//AMGkJyO343A8u9NvRaiHBTNSa3dwvP0RzTQsQZ7W/Svrf5qef7uPU5aOD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-	by weierstrass.telenet-ops.be (Postfix) with ESMTPS id 4XCZ893kPNz4x9fm
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 11:20:09 +0200 (CEST)
-Received: from ramsan.of.borg ([84.195.187.55])
-	by laurent.telenet-ops.be with cmsmtp
-	id G9Kw2D00J1C8whw019Kw7X; Tue, 24 Sep 2024 11:20:02 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1st1dq-000ShT-KK;
-	Tue, 24 Sep 2024 11:15:34 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1st1du-0003Zv-Gj;
-	Tue, 24 Sep 2024 11:15:34 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Marc Kleine-Budde <mkl@pengutronix.de>,
-	kernel@pengutronix.de,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Cc: "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-can@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
+	s=arc-20240116; t=1727169373; c=relaxed/simple;
+	bh=9MiJvEl6JwaKymL0CdKN1ckrEVQ+QTEnKrcWM3BO1s4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qfWKuMOb4bJNel2gbTZkCAhVjjVkoxDDGXykXVKm0MVo2a+a4yD0k8Jx9+9HuN86J5FSMs41D8ARg0EUfxgnwZ+YV3WxX8crOiMuAD1jo5p/VV92uVZm87oTF6HzPuV0QhNTc5W/YoHbUa9DzQlsRmphsz2XrH88U7/Si0Cjau4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1st1eA-00018k-37; Tue, 24 Sep 2024 11:15:50 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1st1e8-001Axq-DO; Tue, 24 Sep 2024 11:15:48 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1st1e8-009OzZ-0z;
+	Tue, 24 Sep 2024 11:15:48 +0200
+Date: Tue, 24 Sep 2024 11:15:48 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Shawn Guo <shawnguo@kernel.org>, Petr Benes <petr.benes@ysoft.com>,
+	devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
+	Michael Walle <mwalle@kernel.org>, imx@lists.linux.dev,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Mathieu Othacehe <m.othacehe@gmail.com>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
 	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] can: CAN_ROCKCHIP_CANFD should depend on ARCH_ROCKCHIP
-Date: Tue, 24 Sep 2024 11:15:31 +0200
-Message-Id: <a4b3c8c1cca9515e67adac83af5ba1b1fab2fcbc.1727169288.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	Hiago De Franco <hiago.franco@toradex.com>,
+	Herburger <gregor.herburger@ew.tq-group.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Joao Paulo Goncalves <joao.goncalves@toradex.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 3/4] dt-bindings: usb: Add Diodes Incorporated
+ PI5USB30213A Type-C Controller
+Message-ID: <20240924091548.zekl4tmxbnnusjpx@pengutronix.de>
+References: <20240923151417.1665431-1-michal.vokac@ysoft.com>
+ <20240923151417.1665431-4-michal.vokac@ysoft.com>
+ <20240924072436.gya7hvmlpb7fk5ou@pengutronix.de>
+ <6hy6sl53ducvdjuppzg3xebh6oyxvs75vz4ua2qe2jhuuoowhp@h5jbfu2wqysc>
+ <2ee4d89e-ad8e-49ff-9121-feab57e2acf1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <2ee4d89e-ad8e-49ff-9121-feab57e2acf1@kernel.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-The Rockchip CAN-FD controller is only present on Rockchip SoCs.  Hence
-add a dependency on ARCH_ROCKCHIP, to prevent asking the user about this
-driver when configuring a kernel without Rockchip platform support.
+On 24-09-24, Krzysztof Kozlowski wrote:
+> On 24/09/2024 10:21, Krzysztof Kozlowski wrote:
+> > On Tue, Sep 24, 2024 at 09:24:36AM +0200, Marco Felsch wrote:
+> >> On 24-09-23, Michal Vokáč wrote:
+> >>> From: Petr Benes <petr.benes@ysoft.com>
+> >>>
+> >>> Diodes Incorporated PI5USB30213A Type-C Controller supports host,
+> >>> device, and dual-role mode based on voltage levels detected on CC
+> >>> pin. Supports dual differential channel, 2:1 USB 3.0 Mux/Demux,
+> >>> USB Type-C specification 1.1.
+> >>>
+> >>> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> >>> Signed-off-by: Petr Benes <petr.benes@ysoft.com>
+> >>> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
+> >>> ---
+> >>> v3:
+> >>> - Collected R-b tag from Krzysztof.
+> >>> v2:
+> >>> - Moved maintainers before description: block.
+> >>> - Used full paths for references.
+> >>> - Removed unneeded items form connector property.
+> >>> - Fixed example.
+> >>>
+> >>>  .../bindings/usb/diodes,pi5usb30213a.yaml     | 88 +++++++++++++++++++
+> >>
+> >> I suppose the driver is part of an other patchset?
+> > 
+> > Hm, indeed, where is the driver?
+> > 
+> > This patch should not be here.
+> 
+> I found remark in the cover letter. It's fine.
 
-Fixes: ff60bfbaf67f219c ("can: rockchip_canfd: add driver for Rockchip CAN-FD controller")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/net/can/rockchip/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Thanks for the hint, should have read the cover letter more carefully :/
 
-diff --git a/drivers/net/can/rockchip/Kconfig b/drivers/net/can/rockchip/Kconfig
-index e029e2a3ca4b04df..fd8d9f5eeaa434ac 100644
---- a/drivers/net/can/rockchip/Kconfig
-+++ b/drivers/net/can/rockchip/Kconfig
-@@ -3,6 +3,7 @@
- config CAN_ROCKCHIP_CANFD
- 	tristate "Rockchip CAN-FD controller"
- 	depends on OF || COMPILE_TEST
-+	depends on ARCH_ROCKCHIP || COMPILE_TEST
- 	select CAN_RX_OFFLOAD
- 	help
- 	  Say Y here if you want to use CAN-FD controller found on
--- 
-2.34.1
-
+Regards,
+  Marco
 
