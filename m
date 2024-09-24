@@ -1,176 +1,227 @@
-Return-Path: <linux-kernel+bounces-336469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FB47983B40
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 04:33:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD862983B46
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 04:42:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B11C4B224CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 02:33:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C09C1C227B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 02:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD05DDDC;
-	Tue, 24 Sep 2024 02:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB13EAD7;
+	Tue, 24 Sep 2024 02:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eMOQ8RyW"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="G3XPtZ1h"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2068.outbound.protection.outlook.com [40.107.117.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2731A1B85E2;
-	Tue, 24 Sep 2024 02:33:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727145192; cv=none; b=YSISUsZb4KAdqONE3CuEC+n+baEqjKUZIwgjIq7wavIuPXtCPVlnYS3mK+SaCsfeAhXhczYMfRO21qEnde1a2BXcAmlk/X+CtOjR4Hj90gXPss6G7VizSFH/sE4vRWhpKwnMj0k3kWur6J53QZ1cHSLt7agKrD50ctRoQxa9+tk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727145192; c=relaxed/simple;
-	bh=fSWKpyrDtbfGlcyDOCQAati8/wwNmKaz4bBmsWzvIl4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t7iW+2zDKXkYGlZhxpAzuaF7L7qSBKBNMQMCBn4e5NCcYE2L7jRy1QfCfTvsbl6WoAJn+dO6SX40vq3y6BQtv5J+RXL+jBlGQ1O+Aq7+o3fNkTAKZgniMRHEg6dSJaHXPXBE45wphgCzOPaEYzA6+HHGI+Vg5x8pI9/V3viBR7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eMOQ8RyW; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71971d2099cso3821434b3a.2;
-        Mon, 23 Sep 2024 19:33:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727145190; x=1727749990; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9sz24t9DaFcJ/J9khgquQwJaacywf5cMp9UGIeKwXsA=;
-        b=eMOQ8RyW4zdoF99M8tJ6ldht5BoGWzbK2o4XfrsOvEdFxYly0hWhrx0VYMrfLWXPR/
-         YxGPG/qhVaAnKR9slkUyDnWNfgu8vAeBkubyhyao/nkkGajUBePoO1bthVuFjjBEKWBm
-         m+VKcDwlnk/McuaCzR6wWKuFr05IBBtEz8oK8wS3lT1s8K68hs2r4m7opbDAIKuymr2o
-         PXUBFcQj7mrro1oWruyeDDr35EHUzvYIFmVW9UJCOK90zqTPNCweUy3J05S2AAjhYajg
-         fqwbx0lGCDS/iowZ2rG/n+zzpHl9dWG2mEKbF/UF6nfetK/2NepDdoKsF6X+5emZNS8S
-         Watg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727145190; x=1727749990;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9sz24t9DaFcJ/J9khgquQwJaacywf5cMp9UGIeKwXsA=;
-        b=EyeVDNBmbdl5y6d+oMZ4RSuHfrluT/JFLBYM6uowte14H0JbNLVNdpeOoS9pRjoFCo
-         89B3M2xfTEj3i67dPqOhsz6PSh54Hw6xMWayZ1KfuPC5xWhFX57pZoVpz9TsKu+Xe5ib
-         5upCTc2tPMBxWsqXMlBJrOrxNAL0J9hc6F3ZIcFv+byedHlcrgpudO5Rc4Ht10Xw8UC2
-         XVThsDWDz4Gt1VgfMD1fiBpPAUgVuXdgP/wWwOJo5ECIs/BdKSFdtH5ngoxpniLwypdn
-         6yyFJzZ4nT9ligTj4ygnj2+2pGfkBqLjJ7WECNSBDCw8RBCT3pjql0q0lkZgydMHwr2S
-         EhAA==
-X-Forwarded-Encrypted: i=1; AJvYcCUmrTFRPygAg7tYweMSCElwJc/Yd4Bi9krhxwuad8nAC1O2hc7VJ0PImg6BpnGRV1vN+1ytlHoeSWX0@vger.kernel.org, AJvYcCV73ChdygS5qdChDsaL7JOsUi4KnZPwLutHfRI/dFW5xYf8YihVx+i4bEXXTnzTaZuWvumDsPsxToOctwMvwC6X@vger.kernel.org, AJvYcCVcCz3S6UUrAkw4kPOa4wTeoIhXdJzIagACgSeGgwRr2aDlLCleTpwCOyf5yVxlWMdFrCNo84zQPZ7JAz9R@vger.kernel.org, AJvYcCXLISiFISzibUzscbpq+DJb5urFtPZI20wdbJ8Tx+U67w0QmYAm5aGwvUYOQj/YzVHyVKfAf8bIGmiu@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6PTNvAaFMpaPrPF+eltOQ6tziHl5cjlgHNQOu8ZVNc1gaBFbM
-	rkhkWYxjvP503/tWGGVl2GyFz6r4AvSxb0nwl+qc1TJzOVmE9jsh
-X-Google-Smtp-Source: AGHT+IFff0oxYvwZTNJKVB9E1Su/vyAp8+fLbEvC4GJfDf6oLpmBS0eQHCHQefYBbC/olvp27zHs1A==
-X-Received: by 2002:a05:6a00:18a8:b0:717:87d6:fdd2 with SMTP id d2e1a72fcca58-7199c9392a8mr21643938b3a.4.1727145190308;
-        Mon, 23 Sep 2024 19:33:10 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6b7c3f161sm214194a12.27.2024.09.23.19.33.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 19:33:09 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Mon, 23 Sep 2024 19:33:08 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	patches@lists.linux.dev, kunit-dev@googlegroups.com,
-	linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Daniel Latypov <dlatypov@google.com>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Ripard <maxime@cerno.tech>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH v8 5/8] platform: Add test managed platform_device/driver
- APIs
-Message-ID: <1ccfca2b-5f17-4f1e-92ae-1426c6d2352f@roeck-us.net>
-References: <20240718210513.3801024-1-sboyd@kernel.org>
- <20240718210513.3801024-6-sboyd@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF211B85DA;
+	Tue, 24 Sep 2024 02:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727145734; cv=fail; b=qU3J0eYL4fZ3RoFHBMdTOWbqx993c+UOwo6tMpcEjzv95n6lr39xYHCxlRT0kZ9GPeKdLCGjL9O5ndC2aTjSF9pAWeli2z+wZLkxSUXVMAkDO50cF4pgIHateeXJBj3oOkjo0anIIjX0NyCbRrKVMrNsTvwC+SyD64Kjtue/0as=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727145734; c=relaxed/simple;
+	bh=SPANKhWU8lqTYt8W/N1bKYFzZIIhFX8Guz1TUxUoWBM=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=NLypQcKdI74E+yOuoASeqGwwuDa2XTk5wm3eWyqo8+fHl5ywMaCL4AXDBicW0rxvVxx6i3+paiN2+X6s5PpG8E6vt1IV0RG/GbLsCZSuN/ZQZcdG+As5Ys7HPv6JhYU+9g7s7fYvenC3c9wFgZkVkg712v7i3x2GcL15bs9tzpk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=G3XPtZ1h; arc=fail smtp.client-ip=40.107.117.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AFnEgrSokmvAM+yvZedSbsLLNhxmMGv1bNXMM64cQrbiYOFN0AXyBC0hdD76sqKepJQht+00y0KaB7eG77VEQydfCxBJwjiKoiTjzfRzyEk6IM36rshknPZ98W/zMW6gxoI68nVVxyRreNathpodryqtmdLexoYn5C5OsBfjhv46jMTfLpLZ4McF478mTfKFV5AaUsGr/H5F6iwvs1E+asM64xQSsqUXZizc5PWcq7NqgQZ7pq6FjHsxJ4xoG7cl/BuqS2Psl9U+JdMZ1RcKf3ROA60WB3Q2RGmPZUlreazJXLQ29EWvpF7YWBtSca7/T8OPEZGtm3jNdMIKNB7Cxg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0bzR3n8X/8QqJRca3f+pWkgulxC61xKcDwinnePL110=;
+ b=at6LylI9hMKwDQ2rY9yP7aTKeDdxhCDyBYge0z72GK82KvCfGxw3XbA+Rg/bVENHzVYmPqH+EJtbBf5ZDU2osuMqxAuls7TfRWcQh/S1bATzlgMFMw0KY5qvktIrUHsun2K4UdNm6cNnlijNSGjMTjnbDTkGxEg6rn6tYrR13A6Oe6DTSlAkX2Y3Y79lJNgvj3UvM8wXsl8542FpI10lhiWBC44jawzzHj/OYabpoPZma1L1Y9dOhYzTW/w7Zk3yuPCwH4lodjdxN4IDcsFoYdoDI8C4KkpW3nnkAu2g/xC4Alk1zTaX9UyVElh9nrLyO18sYIOUTi22mO9I+5fe8w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0bzR3n8X/8QqJRca3f+pWkgulxC61xKcDwinnePL110=;
+ b=G3XPtZ1h0af/T2ETQfOSTDF0cpxESvVwbr7yyYp7fNf4FLZdN3REzGWZMoKK3VNeOSNrET/+LxySPuuojmp3RKcdv/ZvCKGXE2K5JOJq/7BWFqmmnGlP5RukjZYGtekoUjlBsjFSGVDZNihvnfA+k7hK337rQSUTVZLv+jCybgSrYmgh0L/vcMU+Vs+TW1LyG6FBOqTnQlUYpr5oQq1B/ufPNsxUSvdu6kFjlRlcY5CgKo7kWcH/HvRzlntaYyJ0Jo65WTLbmvPEfAkh3IDnut4EB11gmJGZIt3e6DoTGNa+YaNvMRynxzLC3GMfaQ4yEB6Wxw7uE6PLGlLVOF+64g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TYZPR06MB4461.apcprd06.prod.outlook.com (2603:1096:400:82::8)
+ by SEYPR06MB6061.apcprd06.prod.outlook.com (2603:1096:101:d3::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.27; Tue, 24 Sep
+ 2024 02:41:49 +0000
+Received: from TYZPR06MB4461.apcprd06.prod.outlook.com
+ ([fe80::9c62:d1f5:ede3:1b70]) by TYZPR06MB4461.apcprd06.prod.outlook.com
+ ([fe80::9c62:d1f5:ede3:1b70%5]) with mapi id 15.20.7982.022; Tue, 24 Sep 2024
+ 02:41:49 +0000
+From: Yu Jiaoliang <yujiaoliang@vivo.com>
+To: Vinod Koul <vkoul@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Mark Brown <broonie@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	Pavel Hofman <pavel.hofman@ivitera.com>,
+	alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com
+Subject: [PATCH v1] ALSA: Fix typos in comments across various files
+Date: Tue, 24 Sep 2024 10:41:26 +0800
+Message-Id: <20240924024131.3121958-1-yujiaoliang@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0005.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:26c::9) To TYZPR06MB4461.apcprd06.prod.outlook.com
+ (2603:1096:400:82::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240718210513.3801024-6-sboyd@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR06MB4461:EE_|SEYPR06MB6061:EE_
+X-MS-Office365-Filtering-Correlation-Id: e2f71901-6928-4125-1aed-08dcdc4270aa
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|52116014|1800799024|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?n6TA/3iJP1AxZB1P0DB58QQfY+I/o8JJzG7pByODpZJvMeXdRTiAyLpIB23o?=
+ =?us-ascii?Q?P82bz8eYQH+zM5i2yVQsvKorg+8kvPZ6EUggJ8s2QdHLEqgwQaz5OvrsouLZ?=
+ =?us-ascii?Q?aniOOJeNTmE+WSXhIGiR1Pi6IVpyl9XZhn17eY3PS50Pzem7TLOGBlmb+M9s?=
+ =?us-ascii?Q?PayQcLBf57FM/mmmsGNYZ1isCjqlc7SVg1kNnGqRMOlM5YP0NDl46vbY2KH0?=
+ =?us-ascii?Q?b2efCwKnlm5t+yzdFoxt8jeWlORcYofNbKop/Tafv6UE3CMMxFwiei98kZyE?=
+ =?us-ascii?Q?34DG6VAX+7LVIq9RJHXG4gdNkpbVoJwHDtxz+dxDfHFouEizznRKT7J1WbBc?=
+ =?us-ascii?Q?noKhqeQWExF14ABAkTKr5l0S79Jz5yEH47TQVAXffakKvVp2fxLt0WwGuxgv?=
+ =?us-ascii?Q?3cSlfI7m8pMBVixLFbHXETQ+VZ+Vpa+R7YOx9Pli3ZlF8RcCiyxDxJT6L2Py?=
+ =?us-ascii?Q?K6PlOCJVHhOe44AeDI60wxVKPZKBiReH6LeqeZNF5oTTGuoIj5CPlFDhAiIy?=
+ =?us-ascii?Q?CJbvUYFydnR7VnzI/hJpDmIqUtSbzsnzAYHu3Q812dANsccat3W9k5AnZlF7?=
+ =?us-ascii?Q?TscbHbAQJpOoUGukh3ExI0A8RZMWRYBLejQPtX6i1+SuvyCU1OrQQrfA8Xwi?=
+ =?us-ascii?Q?2Dw1qD8a1Y255xpt1m2+kVCWgE3iR+s1VlIfBvL5yYMAplVTwVwTWsJpLOBd?=
+ =?us-ascii?Q?BJjb6aItgOFeaFiPfxVoCY/4WZEarcis3MbLvaMQOgA/83nB9Ts/9PugRckT?=
+ =?us-ascii?Q?S1VZAtL34y+YRr9r4k7d2Pbkj4c9ljPdABo7o7xrLmj3odqMzGfLFOK2XQO7?=
+ =?us-ascii?Q?GLKCbb5NBDoISYB0fFGgJkh/mCjJEyLtGz3KjpMRhOTSMI6Ponr0nBO5G5zR?=
+ =?us-ascii?Q?hQKA+CPg3i1+xZp5x5s8q0rErhRvy9RBMd7E3cT7T5HyIsTOpay/n2FQ6FGY?=
+ =?us-ascii?Q?TM59PKTjPg8C4ri+pOR//oqDo9gg5G+0xOs+W74u34gn3ll/m5XTrZbtmLRe?=
+ =?us-ascii?Q?SPkXT4L4m8pMn2N5tIHjOD2qDuiJRQub+bTakbMAjxNhzzGMazMF4fbZMUzt?=
+ =?us-ascii?Q?Uup4qnebE2O3UVyksGUiyGiGl0C5abaY1XyH+K1eWaOJnKd7mlhMhcwLdOpK?=
+ =?us-ascii?Q?Z2WpXImukw5ScsVwRzhOJ3ydsK8kY35Wj66nl60Z9H7VlaXwEK5jtAfElJu/?=
+ =?us-ascii?Q?YEdvb6+qBhzJY3Q9jZN9yHq8hhLIXjnnPz3vSC4VfaTL4iU+8BTdjJ46YZpm?=
+ =?us-ascii?Q?sj0s+LRLxvDcccBUYhBlYrCBnXZSiqlufJYoh3FETZZOX2G5RQFm3BaRqzKW?=
+ =?us-ascii?Q?/hfjcebf+zwSeBR1p4v3MhQQH9iRkoF4gkTqknbGFKHEPZX6K4ozqElIRKaf?=
+ =?us-ascii?Q?+cWShvGo08q0pPSPImLjXuhLzLsQw5FhrgU77Cmdd5TXD0DQST7m9+ug2C3n?=
+ =?us-ascii?Q?aNb9mjY0Mbc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB4461.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(52116014)(1800799024)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?BoS1OmR9V5m+Jt/HjctZ+9X3VfhTrHuRiSwkEeNLaAkt9EAguiRjUtTt2AG2?=
+ =?us-ascii?Q?6LR7Ki+W+N0bLM2LRDgqO+2v3oFN223YA0pWkQWSzrZ7FSoUBuVR8OwgEOGC?=
+ =?us-ascii?Q?Nuxsj12ZhxRS0RJ8JSZqbgCvz5k3K3glks6CXJAXQIezPhUx/yeiTOuzlnnG?=
+ =?us-ascii?Q?mqw2sYofPyrP5EsUSpUDnjhqkrE2UvFBe2X+4EeXbUcufempNYgdNrv8g+xB?=
+ =?us-ascii?Q?DKu/RZObR7X1nqT8z1fuLWPIlUt+Bt5GAseMOUctgraXoun0C02cDqw6rUwJ?=
+ =?us-ascii?Q?8yn/v70oKXj0nlG5wpoiDs4+Z9sFM79ZTfBcFQwGtwAMYIdggZfQ8oX88a/I?=
+ =?us-ascii?Q?hzYKi0YV0s8zjnM+pD2+P3yYsyQof1tw1/3WBMs3LGpA32SO8uYBey+iJbNk?=
+ =?us-ascii?Q?c/3icsSyiQqpi+bTiAe+DwJYxsuxBHAZJAsvvezqHkzS1YQibUwBoBbIrerC?=
+ =?us-ascii?Q?q4sS+wNoEWf3hX88VapwNScLNF4aYQtXu8DCVUOJOlwr635es8hZGsgPhkE8?=
+ =?us-ascii?Q?wi2cUjzZqQIG0AxCymCEqMVQ/vtsuYa6iyjl/UTwDyH8KexXQeznGfhqWUK9?=
+ =?us-ascii?Q?xd9lN1xDom/uLq6MPROEz7EPNI7CAXm5c2Llnw4KT+if+RCI3UbaSfrICyO1?=
+ =?us-ascii?Q?ZObxy9HoZQbwak+jTCv1eVcuBUXlCglp4ILSnfbXSWRfuTboW3vnCoJ5FHsv?=
+ =?us-ascii?Q?l/YrEwTV0zYFic4B1N0iMQUoD4+rIJNIvuNQ99vsu9SfgPn6zVlKnW6qLtmV?=
+ =?us-ascii?Q?I2+Hyj1AAC8ESh1aSdQ3y06lRoGZsvRoNtJHrRglmUiwYl2amvoNfhjpOXuu?=
+ =?us-ascii?Q?vvY/5Bsg6IzevzLnQ4JZSqnOHVyrWwb3EUcxqDNngb2cRZGsPckNFJyxcJxa?=
+ =?us-ascii?Q?aWDNz3TR+rgO43HG+TN3EO3Xv/fBec+Ogm4c1tlVX+Pm4pscm14Ppgrf+l0v?=
+ =?us-ascii?Q?UkXYFvRi3x7D+x17Mg8HuUF9vldtAV/Ou+42y2OYW5V7Cu7Md/RHTQT3mDvv?=
+ =?us-ascii?Q?zF9u2BjbVLAX38eHBXatZm5xUE/YEFBAUlJmU6DaJfl7c0cFukI2FeQz7ALG?=
+ =?us-ascii?Q?m3JUCIL+bQIWLY/qWlllFO3iSNQD7O2oY8fc7pfeUmMx1UMhsdOIVhMC/gZm?=
+ =?us-ascii?Q?orQoPBNtFvTd5oNnQHIZLOq8rBfBbOG5BVbX4z3DxpfP0ZeCyIgLiEhDML0g?=
+ =?us-ascii?Q?M0BCSgEAhBlkbRej3tYhdl8xujOsh6EXFTY6MbvmnlQZmALiYkqIs845EQou?=
+ =?us-ascii?Q?n4DAIIWQo6F5QUSwhC4Hy9JVYCY9Oa6nWRjVpF4rVEBGkN3On/rwnuhN7mVj?=
+ =?us-ascii?Q?0OTkUZypMonP9ayGApx814rmsEENNQdvjbdLZToDHL70l8NpawyR8shMJBTu?=
+ =?us-ascii?Q?DWJiqpRdWhbgMm2dYr1Vyi1IaaIfKbtDhc7H3dIejj/VYsEZbefdBg5tMUiA?=
+ =?us-ascii?Q?PnUlnX4nTCyXq9w20kjJHXb6UxQ/nciC2+XQZW0Ej4NhCg1xnICdR7sTy/zG?=
+ =?us-ascii?Q?LWNGCxFN/f3vfVKPO/e3gXKsE9mhltQd02KbopPLfZRiI0yb65Aiy47T52Y7?=
+ =?us-ascii?Q?wXviXsEHLHWRz35SDCkxiu7tj7F0UJ5A/qva+m1N?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e2f71901-6928-4125-1aed-08dcdc4270aa
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB4461.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2024 02:41:49.7384
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: udiQkzqiBVMHTrSTfXvBa/GXiWJApD4mDBAEs2qPfy7FJJS0Yb1KeS3q4+h9WT5u1wvXI8wIMv3v3Wfhuod2IQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6061
 
-On Thu, Jul 18, 2024 at 02:05:04PM -0700, Stephen Boyd wrote:
-> Introduce KUnit resource wrappers around platform_driver_register(),
-> platform_device_alloc(), and platform_device_add() so that test authors
-> can register platform drivers/devices from their tests and have the
-> drivers/devices automatically be unregistered when the test is done.
-> 
-> This makes test setup code simpler when a platform driver or platform
-> device is needed. Add a few test cases at the same time to make sure the
-> APIs work as intended.
-> 
-> Cc: Brendan Higgins <brendan.higgins@linux.dev>
-> Reviewed-by: David Gow <davidgow@google.com>
-> Cc: Rae Moar <rmoar@google.com>
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+This patch fixes typos in comments in the atomisp driver.
+These changes improve code readability without affecting
+functionality.
 
-This patch adds another intentional warning traceback seen whenever
-CONFIG_KUNIT_TEST is enabled.
+Signed-off-by: Yu Jiaoliang <yujiaoliang@vivo.com>
+---
+ sound/core/compress_offload.c | 2 +-
+ sound/core/oss/rate.c         | 2 +-
+ sound/core/pcm_native.c       | 2 +-
+ sound/core/sound.c            | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-sysfs: cannot create duplicate filename '/devices/platform/kunit-platform-add-2'
-CPU: 0 UID: 0 PID: 421 Comm: kunit_try_catch Tainted: G                 N 6.11.0-mac-09967-g2ece55614b92 #1
-Tainted: [N]=TEST
-Stack from 015a9de0:
-        015a9de0 006168ac 006168ac 0158c000 026e8ea0 00c4a6b8 004bbe32 006168ac
-        00166cd4 005fa210 0158c000 026e8ea0 ffffffef 00c4a6b8 0067a18c 00166dc0
-        00c4a6b8 026e8ea0 01a6ac0e 006cb3c8 01a6ac0a 006cb3c8 00000000 00000000
-        0049b6de 01a6ac0a 00000000 01a6ac0a 00000000 006cb3c8 01a6ac0a 006cb3c8
-        01a6ac0a 015a9e78 0049b8b4 01a6ac0a 01a6ac00 01a6ac0a 0001bbfa 00321592
-        01a6ac0a 006cb3c8 00000000 01a6ac00 00000000 0067a18c 0002d21c 00000000
-Call Trace: [<004bbe32>] dump_stack+0xc/0x10
- [<00166cd4>] sysfs_warn_dup+0x52/0x64
- [<00166dc0>] sysfs_create_dir_ns+0x9a/0xac
- [<0049b6de>] kobject_add_internal+0xdc/0x238
- [<0049b8b4>] kobject_add+0x7a/0x7e
- [<0001bbfa>] insert_resource+0x0/0x1a
- [<00321592>] device_add+0x104/0x588
- [<0002d21c>] list_del_init+0x0/0x2a
- [<0001bbfa>] insert_resource+0x0/0x1a
- [<00326358>] platform_device_add+0x58/0x180
- [<00326378>] platform_device_add+0x78/0x180
- [<00273234>] IS_ERR_OR_NULL+0x0/0x1c
- [<00270c58>] kunit_platform_device_add+0x14/0x118
- [<0002d21c>] list_del_init+0x0/0x2a
- [<00270c44>] kunit_platform_device_add+0x0/0x118
- [<00273234>] IS_ERR_OR_NULL+0x0/0x1c
- [<002733de>] kunit_platform_device_add_twice_fails_test+0x118/0x170
- [<00050e44>] ktime_get_ts64+0x0/0xd8
- [<00050e44>] ktime_get_ts64+0x0/0xd8
- [<004b04d0>] memset+0x0/0x8c
- [<0026cc3e>] kunit_try_run_case+0xa0/0x176
- [<0002d21c>] list_del_init+0x0/0x2a
- [<0002cfaa>] kthread_exit+0x0/0x14
- [<0026e3d0>] kunit_generic_run_threadfn_adapter+0x0/0x2a
- [<0026e3e6>] kunit_generic_run_threadfn_adapter+0x16/0x2a
- [<0002d2d6>] kthread+0x90/0x9a
- [<0002d246>] kthread+0x0/0x9a
- [<0000252c>] ret_from_kernel_thread+0xc/0x14
-kobject: kobject_add_internal failed for kunit-platform-add-2 with -EEXIST, don't try to register things with the same name in the same directory.
-    # kunit_platform_device_add_twice_fails_test: pass:1 fail:0 skip:0 total:1
-    ok 3 kunit_platform_device_add_twice_fails_test
-    # kunit_platform_device_add_cleans_up: pass:1 fail:0 skip:0 total:1
-    ok 4 kunit_platform_device_add_cleans_up
-# kunit_platform_device: pass:4 fail:0 skip:0 total:4
+diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
+index b8c0d6edbdd1..bdf1d78de833 100644
+--- a/sound/core/compress_offload.c
++++ b/sound/core/compress_offload.c
+@@ -288,7 +288,7 @@ static ssize_t snd_compr_write(struct file *f, const char __user *buf,
+ 
+ 	stream = &data->stream;
+ 	guard(mutex)(&stream->device->lock);
+-	/* write is allowed when stream is running or has been steup */
++	/* write is allowed when stream is running or has been setup */
+ 	switch (stream->runtime->state) {
+ 	case SNDRV_PCM_STATE_SETUP:
+ 	case SNDRV_PCM_STATE_PREPARED:
+diff --git a/sound/core/oss/rate.c b/sound/core/oss/rate.c
+index 98269119347f..b56eeda5e30e 100644
+--- a/sound/core/oss/rate.c
++++ b/sound/core/oss/rate.c
+@@ -294,7 +294,7 @@ static int rate_action(struct snd_pcm_plugin *plugin,
+ 	default:
+ 		break;
+ 	}
+-	return 0;	/* silenty ignore other actions */
++	return 0;	/* silently ignore other actions */
+ }
+ 
+ int snd_pcm_plugin_build_rate(struct snd_pcm_substream *plug,
+diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
+index 99e39b5359cc..b49bc89c0758 100644
+--- a/sound/core/pcm_native.c
++++ b/sound/core/pcm_native.c
+@@ -3115,7 +3115,7 @@ struct snd_pcm_sync_ptr32 {
+ 	} c;
+ } __packed;
+ 
+-/* recalcuate the boundary within 32bit */
++/* recalculate the boundary within 32bit */
+ static snd_pcm_uframes_t recalculate_boundary(struct snd_pcm_runtime *runtime)
+ {
+ 	snd_pcm_uframes_t boundary;
+diff --git a/sound/core/sound.c b/sound/core/sound.c
+index b9db9aa0bfcb..6531a67f13b3 100644
+--- a/sound/core/sound.c
++++ b/sound/core/sound.c
+@@ -133,7 +133,7 @@ static struct snd_minor *autoload_device(unsigned int minor)
+ 		/* /dev/aloadSEQ */
+ 		snd_request_other(minor);
+ 	}
+-	mutex_lock(&sound_mutex); /* reacuire lock */
++	mutex_lock(&sound_mutex); /* reacquire lock */
+ 	return snd_minors[minor];
+ }
+ #else /* !CONFIG_MODULES */
+-- 
+2.34.1
 
-I have said several times that my test system can and will not handle
-intentional warning backtraces. I strongly believe that it is wrong to
-expect that testbed maintainers have to keep track of intentional
-backtraces. That means that I now also disabled CONFIG_KUNIT_TEST
-in my testbed.
-
-Guenter
 
