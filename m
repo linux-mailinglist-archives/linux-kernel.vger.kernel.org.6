@@ -1,337 +1,112 @@
-Return-Path: <linux-kernel+bounces-337362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B54C5984912
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:06:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2B57984907
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:04:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72BDD2848A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:06:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EECA1C22C48
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F1B1ACDFA;
-	Tue, 24 Sep 2024 16:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0101AB6F3;
+	Tue, 24 Sep 2024 16:04:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AdLbtznz"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pJ4yEG9b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CD4E1ACDF9
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 16:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35E91E49B;
+	Tue, 24 Sep 2024 16:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727193905; cv=none; b=sO1+IOWRlB4zityHyOcoxxIhPlzjJz1++Zo2XIuxldaCI3uMn5rUUbZKli94imjZs/955kiQbBWFRGKw5NewhBmfMn5Q1HrGYSknA18BK41urtG/DCM2pG6pJnEQBrbdViBBx2DtwhpnHCTYdLTqXLw7AXu9cRhMdd0jBztg7RQ=
+	t=1727193863; cv=none; b=b4dYwTtqYvvQ/f3cOuCWgBT1/ZI0U01RsE/oGb4qcm1kf9GNp6JNEMZbGSnckcgL1th8zQH6UBRj247RatNUNU4t40Ssk0J+vewLYM97H0g4wt5vj0UiIbI3762KvwHgtZNddkHGUrOCQquEocQA7JxXV6HATV0vmN9dPPZdjpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727193905; c=relaxed/simple;
-	bh=qfUmU5IPdNn5x1J9BUsLpX16sUAVrH6InykTvYOOEXU=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=u8kdHqRb9Mssv+ZJpWehD7K5gdHKxg77EcGn3WB1DRmrQsg9eqS7MF6pP7BiA2hNbvvWGhBEN5vfC4ZmTm4ts4O6Iz0wifDcKZdcsKBqsZ1+f97tn+HM+D9CJnTKFkfgoWqsUZoTDMFmiMX/dxaxfPMtLszYVQoypHZYozsizcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AdLbtznz; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6d3e062dbeeso216007b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:05:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727193902; x=1727798702; darn=vger.kernel.org;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ml+3WQr7BKPbaQN1lshaRre+L540nby+DWGQ2gTmC3U=;
-        b=AdLbtznzQkX18ip+Wj92o5TsqoidKx8NKjjk0uxvOSoZrS09C3BJ53Ia37mAngvsiB
-         oPR2M3FkybHd4CESitZuLYGk/dzXOxBfW6B3vGaPbbW+ZZoAtAqbTiKYYV/UsZXXOn2a
-         UQgSccIMdyrSwyfPd2lUg9nPH9EXxKwcqBukPHwYqXDXHfmpfzzPcvyiWGJm1d+At35C
-         xppRrxBSXO4m4xSQN+t16uxvdsBCjAaqP7gnnsLOuYXyF/odObjWIrnbPWDypKOdwMws
-         JZkB5BibPWcvu7OzJd/ttcM2ml9LkkVDA+HT5I0z3Z4SzPeyJtkSnDExk1lhxqpYccdS
-         2WuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727193902; x=1727798702;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ml+3WQr7BKPbaQN1lshaRre+L540nby+DWGQ2gTmC3U=;
-        b=fm4W9RUgfHmRisr7BaTh+c2t5jfzioe4mCt5hCkbyUcyShLtbzrMeqTP7gFhKil7Oz
-         yh9FuLHe86e2gk3CeuPUfOvpK95ISXfV1pou7x30+h6y51zeZnpgBwEKTmupj0xeAIiZ
-         knQHD02df7v4pHQZBSC8SQRxWMb0tRQ2MjzcA9vgg8vlZpt6aggYl3a0P5nv/kUeOZ2x
-         k9aCLFScaqx6CDFP48yFR5cVZBE7OzUjiy+7NtcNDvvN10oWHBBx7yHLXZvgXF+ITO8m
-         NuUryAEXRTfz4pvtmKC8rapXVJc2LXll225CcGh4Y6T4nGSFdXcVGMevBkRYHaS1KU8l
-         CJ6A==
-X-Forwarded-Encrypted: i=1; AJvYcCWQsh/NjPjKugffJHS0/FpLBYKNrf63wWym3pPdYJ2UGO/S7LdMx1PstY1uYQNq8YxtDgJuQXFdDkdvlN0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywfur7xqjvkke0btmk3v9Itk3VfSvWmCNQH7TCAe8TKXxVuxqhe
-	fIv4f2inXnt3awFeevxLrmtU3MGlAALOXVN4gHwKOnlhCjZ3IpMvTxwpFf/NKPrgoELhSfhxF+F
-	Z9qxGcQ==
-X-Google-Smtp-Source: AGHT+IEe9B1OQkne7xCk8DGhm2mrb3Vo8p+rzBDKMxPB6WY62DtPht4AHjRJ05DOcWqdooPzywfKFvkii8V4
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:61a6:b27c:a1cd:e6a0])
- (user=irogers job=sendgmr) by 2002:a81:c105:0:b0:6d3:e7e6:8462 with SMTP id
- 00721157ae682-6e2084c1e25mr840357b3.1.1727193901900; Tue, 24 Sep 2024
- 09:05:01 -0700 (PDT)
-Date: Tue, 24 Sep 2024 09:04:15 -0700
-In-Reply-To: <20240924160418.1391100-1-irogers@google.com>
-Message-Id: <20240924160418.1391100-9-irogers@google.com>
+	s=arc-20240116; t=1727193863; c=relaxed/simple;
+	bh=U92bSuEAZjnU4w+FGU/py+Q//Fe1SulLSbofqyLyPhg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T6zkgSfnsr+sG8yg30oRKKMHlODM6SWnkt3/Qr9MlCCAqO0pmoghRFBYoAxWH5p0Y8ELHJCS9mmvG5bH5VoXh9ycOEBkvTUZiPF08eyOhR5ixNOBoEeDp6dUgm/2a7yl/ZkvXmsnX2YvkU5kMVaqWhGyuhqD7r7w5lYOz5j+cNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pJ4yEG9b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19A4CC4CEC7;
+	Tue, 24 Sep 2024 16:04:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727193863;
+	bh=U92bSuEAZjnU4w+FGU/py+Q//Fe1SulLSbofqyLyPhg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pJ4yEG9beL4nwlPOLmbryx5h75ub112hfFpa8teutRosJNeJVXJ0kWmX0xXWXITf0
+	 bFJPKsJKg9Ks9T1cbndwhb8va9OCsjSgICncZG0raZWYqy0Ai6lGKts2zE8o6XrKZS
+	 exvhIKnqi4iXflPDvO/ZKhFYOfPphrg8nK3xfZ76hr+XHfe239Hjq98QlqeQ3tDHZS
+	 gg8HL9p4wSZChyjMFsh4sLv2yOAb77WsZ5E6kJP7c1JP2mvDlgHswDjq69vdMKb4eg
+	 mCKQ4ZOLPCGWAEp8nbhOaR5y3Lk2KprJlVzJNlil4Ywhp6TPSJkbaMBTZVlUzkoCpe
+	 0tVVNVvhCV3Jw==
+Date: Tue, 24 Sep 2024 17:04:18 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Richard Zhu <hongxing.zhu@nxp.com>, l.stach@pengutronix.de,
+	kwilczynski@kernel.org, bhelgaas@google.com, lpieralisi@kernel.org,
+	robh+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, festevam@gmail.com,
+	s.hauer@pengutronix.de, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, kernel@pengutronix.de,
+	imx@lists.linux.dev
+Subject: Re: [PATCH v1 1/9] dt-bindings: imx6q-pcie: Add ref clock for i.MX95
+ PCIe
+Message-ID: <20240924-spoilage-fanfare-357c65b8418e@spud>
+References: <1727148464-14341-1-git-send-email-hongxing.zhu@nxp.com>
+ <1727148464-14341-2-git-send-email-hongxing.zhu@nxp.com>
+ <20240924-ended-unlaced-cc7ddf87af90@spud>
+ <ZvLZWqRFnAtgFo3B@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240924160418.1391100-1-irogers@google.com>
-X-Mailer: git-send-email 2.46.0.792.g87dc391469-goog
-Subject: [PATCH v1 08/11] perf libdw: Remove unnecessary defines
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>, 
-	Will Deacon <will@kernel.org>, James Clark <james.clark@linaro.org>, 
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, Guo Ren <guoren@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Nick Terrell <terrelln@fb.com>, 
-	Guilherme Amadio <amadio@gentoo.org>, Changbin Du <changbin.du@huawei.com>, 
-	"Steinar H. Gunderson" <sesse@google.com>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
-	Aditya Gupta <adityag@linux.ibm.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, 
-	Bibo Mao <maobibo@loongson.cn>, Kajol Jain <kjain@linux.ibm.com>, 
-	Anup Patel <anup@brainfault.org>, Shenlin Liang <liangshenlin@eswincomputing.com>, 
-	Atish Patra <atishp@rivosinc.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Chen Pei <cp0613@linux.alibaba.com>, Dima Kogan <dima@secretsauce.net>, 
-	Alexander Lobakin <aleksander.lobakin@intel.com>, "David S. Miller" <davem@davemloft.net>, 
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, Yang Jihong <yangjihong@bytedance.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="2y7ZEn7oTFy8mHq6"
+Content-Disposition: inline
+In-Reply-To: <ZvLZWqRFnAtgFo3B@lizhi-Precision-Tower-5810>
 
-As HAVE_DWARF_GETLOCATIONS_SUPPORT and HAVE_DWARF_CFI_SUPPORT always
-match HAVE_DWARF_SUPPORT remove the macros and use
-HAVE_DWARF_SUPPORT. If building the file is guarded by CONFIG_DWARF
-then remove all ifs.
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/Documentation/perf-check.txt |  2 +-
- tools/perf/Makefile.config              |  3 --
- tools/perf/builtin-annotate.c           |  2 +-
- tools/perf/builtin-check.c              |  2 +-
- tools/perf/builtin-report.c             |  2 +-
- tools/perf/util/dwarf-aux.c             |  6 ---
- tools/perf/util/dwarf-aux.h             | 54 -------------------------
- tools/perf/util/probe-finder.c          |  4 --
- 8 files changed, 4 insertions(+), 71 deletions(-)
+--2y7ZEn7oTFy8mHq6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/tools/perf/Documentation/perf-check.txt b/tools/perf/Documentation/perf-check.txt
-index 10f69fb6850b..45101a8e4154 100644
---- a/tools/perf/Documentation/perf-check.txt
-+++ b/tools/perf/Documentation/perf-check.txt
-@@ -48,7 +48,7 @@ feature::
-                 bpf_skeletons           /  HAVE_BPF_SKEL
-                 debuginfod              /  HAVE_DEBUGINFOD_SUPPORT
-                 dwarf                   /  HAVE_DWARF_SUPPORT
--                dwarf_getlocations      /  HAVE_DWARF_GETLOCATIONS_SUPPORT
-+                dwarf_getlocations      /  HAVE_DWARF_SUPPORT
-                 dwarf-unwind            /  HAVE_DWARF_UNWIND_SUPPORT
-                 auxtrace                /  HAVE_AUXTRACE_SUPPORT
-                 libaudit                /  HAVE_LIBAUDIT_SUPPORT
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index 9da0dc001d98..db79b25ada6f 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -463,9 +463,6 @@ else
-         $(warning No libdw.h found or old libdw.h found or elfutils is older than 0.157, disables dwarf support. Please install new elfutils-devel/libdw-dev)
-         NO_LIBDW := 1
-       endif
--    else
--      CFLAGS += -DHAVE_DWARF_GETLOCATIONS_SUPPORT
--      CFLAGS += -DHAVE_DWARF_CFI_SUPPORT
-     endif # Dwarf support
-   endif # libelf support
- endif # NO_LIBELF
-diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
-index 3dc6197ef3fa..04af13eb4a4c 100644
---- a/tools/perf/builtin-annotate.c
-+++ b/tools/perf/builtin-annotate.c
-@@ -840,7 +840,7 @@ int cmd_annotate(int argc, const char **argv)
- 	}
- #endif
- 
--#ifndef HAVE_DWARF_GETLOCATIONS_SUPPORT
-+#ifndef HAVE_DWARF_SUPPORT
- 	if (annotate.data_type) {
- 		pr_err("Error: Data type profiling is disabled due to missing DWARF support\n");
- 		return -ENOTSUP;
-diff --git a/tools/perf/builtin-check.c b/tools/perf/builtin-check.c
-index 0b76b6e42b78..18c0a815243b 100644
---- a/tools/perf/builtin-check.c
-+++ b/tools/perf/builtin-check.c
-@@ -28,7 +28,7 @@ struct feature_status supported_features[] = {
- 	FEATURE_STATUS("bpf_skeletons", HAVE_BPF_SKEL),
- 	FEATURE_STATUS("debuginfod", HAVE_DEBUGINFOD_SUPPORT),
- 	FEATURE_STATUS("dwarf", HAVE_DWARF_SUPPORT),
--	FEATURE_STATUS("dwarf_getlocations", HAVE_DWARF_GETLOCATIONS_SUPPORT),
-+	FEATURE_STATUS("dwarf_getlocations", HAVE_DWARF_SUPPORT),
- 	FEATURE_STATUS("dwarf-unwind", HAVE_DWARF_UNWIND_SUPPORT),
- 	FEATURE_STATUS("auxtrace", HAVE_AUXTRACE_SUPPORT),
- 	FEATURE_STATUS("libaudit", HAVE_LIBAUDIT_SUPPORT),
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index 5dc17ffee27a..426cbc9110d1 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -1701,7 +1701,7 @@ int cmd_report(int argc, const char **argv)
- 		report.data_type = true;
- 		annotate_opts.annotate_src = false;
- 
--#ifndef HAVE_DWARF_GETLOCATIONS_SUPPORT
-+#ifndef HAVE_DWARF_SUPPORT
- 		pr_err("Error: Data type profiling is disabled due to missing DWARF support\n");
- 		goto error;
- #endif
-diff --git a/tools/perf/util/dwarf-aux.c b/tools/perf/util/dwarf-aux.c
-index 92eb9c8dc3e5..559c953ca172 100644
---- a/tools/perf/util/dwarf-aux.c
-+++ b/tools/perf/util/dwarf-aux.c
-@@ -1182,7 +1182,6 @@ int die_get_varname(Dwarf_Die *vr_die, struct strbuf *buf)
- 	return ret < 0 ? ret : strbuf_addf(buf, "\t%s", dwarf_diename(vr_die));
- }
- 
--#if defined(HAVE_DWARF_GETLOCATIONS_SUPPORT) || defined(HAVE_DWARF_CFI_SUPPORT)
- static int reg_from_dwarf_op(Dwarf_Op *op)
- {
- 	switch (op->atom) {
-@@ -1245,9 +1244,7 @@ static bool check_allowed_ops(Dwarf_Op *ops, size_t nops)
- 	}
- 	return true;
- }
--#endif /* HAVE_DWARF_GETLOCATIONS_SUPPORT || HAVE_DWARF_CFI_SUPPORT */
- 
--#ifdef HAVE_DWARF_GETLOCATIONS_SUPPORT
- /**
-  * die_get_var_innermost_scope - Get innermost scope range of given variable DIE
-  * @sp_die: a subprogram DIE
-@@ -1697,9 +1694,7 @@ void die_collect_global_vars(Dwarf_Die *cu_die, struct die_var_type **var_types)
- 
- 	die_find_child(cu_die, __die_collect_global_vars_cb, (void *)var_types, &die_mem);
- }
--#endif /* HAVE_DWARF_GETLOCATIONS_SUPPORT */
- 
--#ifdef HAVE_DWARF_CFI_SUPPORT
- /**
-  * die_get_cfa - Get frame base information
-  * @dwarf: a Dwarf info
-@@ -1732,7 +1727,6 @@ int die_get_cfa(Dwarf *dwarf, u64 pc, int *preg, int *poffset)
- 	}
- 	return -1;
- }
--#endif /* HAVE_DWARF_CFI_SUPPORT */
- 
- /*
-  * die_has_loclist - Check if DW_AT_location of @vr_die is a location list
-diff --git a/tools/perf/util/dwarf-aux.h b/tools/perf/util/dwarf-aux.h
-index 925a9bb9fb15..892c8c5c23fc 100644
---- a/tools/perf/util/dwarf-aux.h
-+++ b/tools/perf/util/dwarf-aux.h
-@@ -156,8 +156,6 @@ Dwarf_Die *die_get_member_type(Dwarf_Die *type_die, int offset, Dwarf_Die *die_m
- /* Return type info where the pointer and offset point to */
- Dwarf_Die *die_deref_ptr_type(Dwarf_Die *ptr_die, int offset, Dwarf_Die *die_mem);
- 
--#ifdef HAVE_DWARF_GETLOCATIONS_SUPPORT
--
- /* Get byte offset range of given variable DIE */
- int die_get_var_range(Dwarf_Die *sp_die, Dwarf_Die *vr_die, struct strbuf *buf);
- 
-@@ -176,59 +174,7 @@ void die_collect_vars(Dwarf_Die *sc_die, struct die_var_type **var_types);
- /* Save all global variables in this CU */
- void die_collect_global_vars(Dwarf_Die *cu_die, struct die_var_type **var_types);
- 
--#else /*  HAVE_DWARF_GETLOCATIONS_SUPPORT */
--#include <errno.h>
--
--static inline int die_get_var_range(Dwarf_Die *sp_die __maybe_unused,
--				    Dwarf_Die *vr_die __maybe_unused,
--				    struct strbuf *buf __maybe_unused)
--{
--	return -ENOTSUP;
--}
--
--static inline Dwarf_Die *die_find_variable_by_reg(Dwarf_Die *sc_die __maybe_unused,
--						  Dwarf_Addr pc __maybe_unused,
--						  int reg __maybe_unused,
--						  int *poffset __maybe_unused,
--						  bool is_fbreg __maybe_unused,
--						  Dwarf_Die *die_mem __maybe_unused)
--{
--	return NULL;
--}
--
--static inline Dwarf_Die *die_find_variable_by_addr(Dwarf_Die *sc_die __maybe_unused,
--						   Dwarf_Addr addr __maybe_unused,
--						   Dwarf_Die *die_mem __maybe_unused,
--						   int *offset __maybe_unused)
--{
--	return NULL;
--}
--
--static inline void die_collect_vars(Dwarf_Die *sc_die __maybe_unused,
--				    struct die_var_type **var_types __maybe_unused)
--{
--}
--
--static inline void die_collect_global_vars(Dwarf_Die *cu_die __maybe_unused,
--					   struct die_var_type **var_types __maybe_unused)
--{
--}
--
--#endif /* HAVE_DWARF_GETLOCATIONS_SUPPORT */
--
--#ifdef HAVE_DWARF_CFI_SUPPORT
--
- /* Get the frame base information from CFA */
- int die_get_cfa(Dwarf *dwarf, u64 pc, int *preg, int *poffset);
- 
--#else /* HAVE_DWARF_CFI_SUPPORT */
--
--static inline int die_get_cfa(Dwarf *dwarf __maybe_unused, u64 pc __maybe_unused,
--			      int *preg __maybe_unused, int *poffset __maybe_unused)
--{
--	return -1;
--}
--
--#endif /* HAVE_DWARF_CFI_SUPPORT */
--
- #endif /* _DWARF_AUX_H */
-diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
-index 7434b38596b9..8019d232f515 100644
---- a/tools/perf/util/probe-finder.c
-+++ b/tools/perf/util/probe-finder.c
-@@ -602,7 +602,6 @@ static int call_probe_finder(Dwarf_Die *sc_die, struct probe_finder *pf)
- 	ret = dwarf_getlocation_addr(&fb_attr, pf->addr, &pf->fb_ops, &nops, 1);
- 	if (ret <= 0 || nops == 0) {
- 		pf->fb_ops = NULL;
--#ifdef HAVE_DWARF_CFI_SUPPORT
- 	} else if (nops == 1 && pf->fb_ops[0].atom == DW_OP_call_frame_cfa &&
- 		   (pf->cfi_eh != NULL || pf->cfi_dbg != NULL)) {
- 		if ((dwarf_cfi_addrframe(pf->cfi_eh, pf->addr, &frame) != 0 &&
-@@ -613,7 +612,6 @@ static int call_probe_finder(Dwarf_Die *sc_die, struct probe_finder *pf)
- 			free(frame);
- 			return -ENOENT;
- 		}
--#endif /* HAVE_DWARF_CFI_SUPPORT */
- 	}
- 
- 	/* Call finder's callback handler */
-@@ -1138,7 +1136,6 @@ static int debuginfo__find_probes(struct debuginfo *dbg,
- 
- 	pf->machine = ehdr.e_machine;
- 
--#ifdef HAVE_DWARF_CFI_SUPPORT
- 	do {
- 		GElf_Shdr shdr;
- 
-@@ -1148,7 +1145,6 @@ static int debuginfo__find_probes(struct debuginfo *dbg,
- 
- 		pf->cfi_dbg = dwarf_getcfi(dbg->dbg);
- 	} while (0);
--#endif /* HAVE_DWARF_CFI_SUPPORT */
- 
- 	ret = debuginfo__find_probe_location(dbg, pf);
- 	return ret;
--- 
-2.46.0.792.g87dc391469-goog
+On Tue, Sep 24, 2024 at 11:23:06AM -0400, Frank Li wrote:
+> On Tue, Sep 24, 2024 at 11:08:20AM +0100, Conor Dooley wrote:
+> > On Tue, Sep 24, 2024 at 11:27:36AM +0800, Richard Zhu wrote:
+> > > Add one ref clock for i.MX95 PCIe. Increase clocks' maxItems to 5 and
+> > > keep the same restriction with other compatible string.
+> > >
+> > > Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> >
+> > It'd be really good to mention why this clock is appearing now, when it
+> > did not before. You're just explaining what you've done, which can be
+> > seen in the diff, but not why you did it.
+>=20
+> Previous reference clock of i.MX95 is on when system boot to kernel. But
+> boot firmware change the behavor, so it is off when boot. So it need be
+> turn on when it use. Also it need be turn off/on when suspend and resume.
+> Previous miss this feature.
 
+Please put this in the commit message Richard.
+
+Thanks,
+Conor.
+
+--2y7ZEn7oTFy8mHq6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvLjAQAKCRB4tDGHoIJi
+0hOYAP0XcNVPuI7V62UHF/QiRSFVkV0CAHFfd9a51umMSxHx9wEAtYpToWp7Adbl
+rLzKRXA23fuI970EAdxYZ8ZzmkY9rA4=
+=Rfph
+-----END PGP SIGNATURE-----
+
+--2y7ZEn7oTFy8mHq6--
 
