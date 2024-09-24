@@ -1,125 +1,154 @@
-Return-Path: <linux-kernel+bounces-337467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CD6B984A72
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:49:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6493984A73
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:53:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 377B41F25757
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:49:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53A861F245AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:53:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512BA4AEEA;
-	Tue, 24 Sep 2024 17:49:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B8C1AB6D9;
+	Tue, 24 Sep 2024 17:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KyeNYO2L"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="THPZiS+v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFE951B85CC
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 17:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D030E1B85CC;
+	Tue, 24 Sep 2024 17:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727200142; cv=none; b=oMTwU2wQjJZ8I9kUr8t4S+bnKSBAH4e78KSHGNt5OVLMd0M3uHLBetsdX0sAuzSG3UkxLR5lz2Us9waC10j+tXYzpf3EwiLXDUglcED/PSKXVjlwaicgtG1FwtL5td5T37HrO2A6cEXhyj7HmfVHlvmn+C+GLw4p4W9FQp9N6kw=
+	t=1727200386; cv=none; b=EqlwV4NLjBpWRkUuEw1BJ6ffUvABSESH5YSUnkgITnf5/vVAet823OFdFB1IhVOzq8N8vCPKlUtkAk/dJD4hRekODink9Wk8V/V4jddVLa6DUAq7AeaNn2QsPMa1FVj+Xil9mXsEDbfXQ1pbnCKfW+HXgHDt/qs/qIP7lw9P6bQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727200142; c=relaxed/simple;
-	bh=v6+1tMSPXdX+e7aqvVNDBI/94dfcqthc8RiI5QbNKDU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sxRUIJPXSm9O7RzOL/JVORpjP1kaDmgka7HnghP1ItjLI4/xFUbrsjptcKne58DB7B6VRTGuELUGE9d1iKPYX9By5QhPqJ7kMBWRcXUMsLc2I46XmvqQw+iLL+abojcSyj/YpYML6x7P22XtCC5Rn9PrBJxpq8i0tkKnBCY21Dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=KyeNYO2L; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53659c8d688so81534e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 10:49:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727200136; x=1727804936; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v6+1tMSPXdX+e7aqvVNDBI/94dfcqthc8RiI5QbNKDU=;
-        b=KyeNYO2LxgUBcRVwBLDIgCjHYW0V8PaYl1udNsSR1ugkR5ZFkJYLHfuNT3/s2b3tPB
-         ilWFhOnwUMZGgB7dn6Ljd7jmpOPK1XVZ7MIArROD5oCgI3quFL8oE4IeraREzyaHLxsA
-         egN6cfBf+qaRy2eNVpZNELymHxn/9C3OtV8SU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727200136; x=1727804936;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v6+1tMSPXdX+e7aqvVNDBI/94dfcqthc8RiI5QbNKDU=;
-        b=BJYRgJD0nhDfEnuNpSjKtwvnNCzxHGCp6vrhgraXq1nSirZtHQ8zbZJBHKxm3HdJ2d
-         WFAr0PkC6ihpkY5TCVsHyMLHWGNU17ybq9QXapHm4YH4lxg+jC6Y2r1Zkz2h5rH9uAcw
-         kax7xl2RENofqTVfSNbjfzNsS1bKfeiazd8X9m0fu8YQzDbowY7Bp5/mlQlNfvLfPgdD
-         sH76eROwHj7njtDZaOn1wxESJl8F/PBNFzWgQXM/pm4zX883RwHYMUyG6GNGxLfcp5be
-         G518WhTjPvRCdBQJoTqvxlQhpUbiN6OthsvVuXus/uTLMFiUp61tDdaF/17JJmZLjcBU
-         RKqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVp/jKb8cA0S3ZUWfX4+HzhTFTB3oqKc2Na0m5mn6QRjE80YPFI1M3LV/ksOqhMABHDIy9/gSkNR5Cj8Ss=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5IEqSx2ptWkah/+G9NBXjbIfOYm1xQcuMcYHL1JlN7pLgv5oY
-	gmHjG2rzbsv6VFCGDPQvXz8bsfSrE8VS8+zyxquA5BMxTXxquUMx/z1SMoCzkm8DEPgLqa6UjK5
-	Q2t0R
-X-Google-Smtp-Source: AGHT+IGncUUPI6IGs7S6b9ryViqZK8YNadAc0IN+suGgagN6DCbJe4aCh3aGxpYc+z+tPM2dDJE2GA==
-X-Received: by 2002:a05:6512:3d1f:b0:536:5e7d:6ab3 with SMTP id 2adb3069b0e04-537a69215ecmr1423582e87.27.1727200135868;
-        Tue, 24 Sep 2024 10:48:55 -0700 (PDT)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-537a85f064asm293528e87.99.2024.09.24.10.48.54
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Sep 2024 10:48:55 -0700 (PDT)
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f7529203ddso1119121fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 10:48:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVwComSDY6udM2OQ4u176eib8dgb3buHPGcgn8ym5Q7Z1AB2dQ74CsZp++oW1qluehGSfX+Q/R7pJgz9qU=@vger.kernel.org
-X-Received: by 2002:a2e:bc15:0:b0:2f2:b5c6:ccca with SMTP id
- 38308e7fff4ca-2f8d0bc22d9mr14867861fa.14.1727200133930; Tue, 24 Sep 2024
- 10:48:53 -0700 (PDT)
+	s=arc-20240116; t=1727200386; c=relaxed/simple;
+	bh=POs2HK6kTTolY7xaUcSVPRXzi118N9fp0b/+xerp1wA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h7G3p0UC6bLNP6pRJgHVuEp52j/2y6Tb4/TXbBxZLIqDFHZ2VITMii6oh6iY9xb9YCzO35U/Bo/Hcc9MpGIAx30oKZ3JXHQs37coek9ADIYDAUt7QhKdKn83oyYq4UBEujxPO0FSCPq42+LKl8MKrlMOvoNlPt7qh3NvGzmRr1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=THPZiS+v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5936C4CEC4;
+	Tue, 24 Sep 2024 17:53:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727200386;
+	bh=POs2HK6kTTolY7xaUcSVPRXzi118N9fp0b/+xerp1wA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=THPZiS+vIs0qgmO/2MeLNZ/ZqOJxR3RO1/zx4o5GN+BiGNCfStw4/D3dzzFad0qsl
+	 up3h2IeWem1sr1TXYZYjtr6TSqUJ7HGqwL0kwMhyMAP8mIzU0i1AUDk4GU/tv81912
+	 Wwc5lDCVt0IvXJlYu5chCkXz0/8QRbkfgBVaJAnGhEzOsplbUk/T/8ivAiWX4RVrz1
+	 HXWFrVdjsx3Vmyf62S+zhUcESsSDwqUx0zuSaktmISjkCa4xae/aCJAluUfW06ExOk
+	 9U7nOj/ufDq1Xy0wqNPqcSKz0iIH6P/MJsDUGMXR4Kohl4JWs0qgnpgoHvm54QKj/o
+	 gCLINtAhYGr1w==
+Date: Tue, 24 Sep 2024 10:53:04 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Charlie Jenkins <charlie@rivosinc.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Howard Chu <howardchu95@gmail.com>,
+	David Abdurachmanov <davidlt@rivosinc.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH] perf syscalltbl: Add syscalltbl__id_at_idx() with no
+ syscall table support
+Message-ID: <ZvL8gAy07ekBJZ_H@google.com>
+References: <20240830-perf_syscalltbl_fix-v1-1-e2ff61ee5e8e@rivosinc.com>
+ <ZvLaGy7jRa9Q/5fQ@ghost>
+ <CAP-5=fVWFUA4LpchM1MZdMhDvSFhTUtqdVR-s59WtAcpj1fO=g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240924035231.1163670-1-treapking@chromium.org> <20240924035231.1163670-3-treapking@chromium.org>
-In-Reply-To: <20240924035231.1163670-3-treapking@chromium.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 24 Sep 2024 10:48:37 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=X2V+LQ1XOo_eJ1Vv3Pn+E309kvyY9FOzaZP_j8ToXM2g@mail.gmail.com>
-Message-ID: <CAD=FV=X2V+LQ1XOo_eJ1Vv3Pn+E309kvyY9FOzaZP_j8ToXM2g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] drm/bridge: it6505: Drop EDID cache on bridge power off
-To: Pin-yen Lin <treapking@chromium.org>
-Cc: Xin Ji <xji@analogixsemi.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, linux-kernel@vger.kernel.org, 
-	Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fVWFUA4LpchM1MZdMhDvSFhTUtqdVR-s59WtAcpj1fO=g@mail.gmail.com>
 
-Hi,
+On Tue, Sep 24, 2024 at 09:11:41AM -0700, Ian Rogers wrote:
+> On Tue, Sep 24, 2024 at 8:26 AM Charlie Jenkins <charlie@rivosinc.com> wrote:
+> >
+> > On Fri, Aug 30, 2024 at 09:30:50PM -0700, Charlie Jenkins wrote:
+> > > When HAVE_SYSCALL_TABLE_SUPPORT is not defined, neither is
+> > > syscalltbl__id_at_idx(). However, this function is expected to be
+> > > defined when HAVE_BPF_SKEL is defined.
+> > >
+> > > Return -1 from syscalltbl__id_at_idx() to match the other functions when
+> > > HAVE_SYSCALL_TABLE_SUPPORT is not defined.
+> > >
+> > > Without this, compiling perf on riscv when libtraceevents, libelf, and
+> > > clang are available will cause the functions trying to call
+> > > syscalltbl__id_at_idx() to be compiled. This results in the following
+> > > error:
+> > >
+> > > /usr/bin/ld: perf-in.o: in function `.L0 ':
+> > > builtin-trace.c:(.text+0x60b14): undefined reference to `syscalltbl__id_at_idx'
+> > > /usr/bin/ld: builtin-trace.c:(.text+0x60c6c): undefined reference to `syscalltbl__id_at_idx'
+> > > /usr/bin/ld: perf-in.o: in function `.L2564':
+> > > builtin-trace.c:(.text+0x60cb6): undefined reference to `syscalltbl__id_at_idx'
+> > > collect2: error: ld returned 1 exit status
+> > > make[2]: *** [Makefile.perf:793: perf] Error 1
+> > > make[1]: *** [Makefile.perf:290: sub-make] Error 2
+> > > make: *** [Makefile:70: all] Error 2
+> > > make: Leaving directory '/src/linux-6.11-rc5/tools/perf'
+> > >
+> > > This patch resolves this issue for all architectures which do not define
+> > > HAVE_SYSCALL_TABLE_SUPPORT.
+> > >
+> > > $ ./perf trace -e syscalls:sys_enter_mmap --max-events=1 ls
+> > > 0.000 ls/287 syscalls:sys_enter_mmap(__syscall_nr: 222, len: 9939, prot: READ, flags: PRIVATE, fd: 3)
+> > >
+> > > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> > > Reported-by: David Abdurachmanov <davidlt@rivosinc.com>
+> > > Suggested-by: David Abdurachmanov <davidlt@rivosinc.com>
+> > > Fixes: 7a2fb5619cc1 ("perf trace: Fix iteration of syscall ids in syscalltbl->entries")
+> > > ---
+> > >  tools/perf/util/syscalltbl.c | 5 +++++
+> > >  1 file changed, 5 insertions(+)
+> > >
+> > > diff --git a/tools/perf/util/syscalltbl.c b/tools/perf/util/syscalltbl.c
+> > > index 0dd26b991b3f..12654460428f 100644
+> > > --- a/tools/perf/util/syscalltbl.c
+> > > +++ b/tools/perf/util/syscalltbl.c
+> > > @@ -188,4 +188,9 @@ int syscalltbl__strglobmatch_first(struct syscalltbl *tbl, const char *syscall_g
+> > >  {
+> > >       return syscalltbl__strglobmatch_next(tbl, syscall_glob, idx);
+> > >  }
+> > > +
+> > > +int syscalltbl__id_at_idx(struct syscalltbl *tbl __always_unused, int idx __always_unused)
+> > > +{
+> > > +     return -1;
+> > > +}
+> > >  #endif /* HAVE_SYSCALL_TABLE_SUPPORT */
+> > >
+> > > ---
+> > > base-commit: 985bf40edf4343dcb04c33f58b40b4a85c1776d4
+> > > change-id: 20240830-perf_syscalltbl_fix-4f586221795e
+> > > --
+> > > - Charlie
+> > >
+> >
+> > Can this please be picked up? Compilation on riscv (along with any of
+> > the other architectures that don't have syscall table support) is
+> > broken. The long term solution is to add support for the syscall table
+> > on riscv. I will send out a patch for that, but in the meantime it would
+> > be great to have this in the tree.
+> 
+> I thought something had been done:
+> https://lore.kernel.org/lkml/739001a4-4df1-4dec-a141-926c78c5c07e@kernel.org/
+> Not sure what's happened.
 
-On Mon, Sep 23, 2024 at 8:53=E2=80=AFPM Pin-yen Lin <treapking@chromium.org=
-> wrote:
->
-> The bridge might miss the display change events when it's powered off.
-> This happens when a user changes the external monitor when the system
-> is suspended and the embedded controller doesn't not wake AP up.
->
-> It's also observed that one DP-to-HDMI bridge doesn't work correctly
-> when there is no EDID read after it is powered on.
->
-> Drop the cache to force an EDID read after system resume to fix this.
->
-> Fixes: 11feaef69d0c ("drm/bridge: it6505: Add caching for EDID")
-> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+Hi Arnaldo, can you clarify what's going on here?
 
-Ah, I guess this answers my question in the previous patch about
-whether caching was important even for external displays since this
-driver only supports external DP and the commit you mention in "Fixes"
-says that caching was important.
+Thanks,
+Namhyung
 
-So this looks reasonable. One thing I wonder is if you're totally
-guaranteed to get a PM Runtime suspend whenever you get an unplug /
-replug of a display. I tried to dig a little bit but I'm not super
-familiar with this bridge and it looks complicated enough that I guess
-I'll have to trust that it's fine. So...
-
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
