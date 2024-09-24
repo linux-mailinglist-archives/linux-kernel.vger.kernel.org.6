@@ -1,326 +1,168 @@
-Return-Path: <linux-kernel+bounces-337738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C629984E28
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:52:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 021D0984E32
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:53:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C60341F24C6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:52:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6678CB24A88
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14E117ADF0;
-	Tue, 24 Sep 2024 22:52:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7CDE17BB26;
+	Tue, 24 Sep 2024 22:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="fypOK7dN"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i7aMvoOr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5379C1459F7;
-	Tue, 24 Sep 2024 22:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B4E146D45;
+	Tue, 24 Sep 2024 22:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727218327; cv=none; b=F6s3tIAxGYCo49l81Ky5TBzjy3MB+0hzniWOtwPAEbd6s70YAHC49vqkT9wgFLh2SXEue+qMGRIyGxTtpErMby0N15xXgLqmiUlkbqWFyuF9GC0n38MFEOhwxrXTeESPahbVFmupoFMNpcl8mvnMNevnrdexVU93Bts9pY8tBUE=
+	t=1727218424; cv=none; b=lgSgBZKg0cQX8x2oYVTKwVwuPRscWNUvriUeFnTbNE+x8V8vAZJZB0B2TDJmxzCtkJcE3zZ4NdzqbFkVABSGfCse8o/bENk0jMXRwOU/VKtpoiYReSpJzTh5zbCgy3Z+Pf4GzslQJx6Rd4qMIttGcnpvccVL9puvog1KNXrNs9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727218327; c=relaxed/simple;
-	bh=Ko8uiLSRLuvtEahkAkR8UddgQT7IIieyfCJMAkP3F5s=;
+	s=arc-20240116; t=1727218424; c=relaxed/simple;
+	bh=HoKonSrSZvECoNi9zyjpJDqIafnrRE2PE9Rf0LooWAM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SdYcaMV16PlhPStrx8v5sPufBlPAesqduj0aEOaIYBxwMl+kS9HmgQuQb/qFeVPWAvgI2mFPRg8rVBc63ZQM/WW9ceCxHc9rqTLokRpntBCCc2TkS5jsoSc6IHcLLcGaRCpwEUW90jHvhXlmoZpV1sQ18Aotwg6ayGnZz2tsS1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=fypOK7dN; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1D71B7E2;
-	Wed, 25 Sep 2024 00:50:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1727218236;
-	bh=Ko8uiLSRLuvtEahkAkR8UddgQT7IIieyfCJMAkP3F5s=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=CZyAPWlT0OgC3d5gWW2/FhMD8i3zfvaY1IZYZMDg/dF0K5LlImmGykY+dRK1f4asxaMwKpZBvAiRsuEq/NfnvLp8VOIH8cp6BnlOvhTsf22wRxHOB2nRIk5uUorZBYt9XgQQEB9HzhwvHpbRbPSrgK73UrPh608aTUu8GuCidn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i7aMvoOr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3F99C4CEC4;
+	Tue, 24 Sep 2024 22:53:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727218424;
+	bh=HoKonSrSZvECoNi9zyjpJDqIafnrRE2PE9Rf0LooWAM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fypOK7dN5y7qhby01OatzSiz0vXTDvAEgNezbH7B22Z3UXYjgmpXRUqdUBM+TOP7f
-	 ztzRxbYhaQvlhHjPlvyCTcKeyxQoNsbEONmJ7Vt7i3D91T9YqHtfd/WmVv7GHEOpC3
-	 3RkL9XXN0Wae+YaqC4EjVdbb8K08aj1U/JdfPnw0=
-Date: Wed, 25 Sep 2024 01:51:29 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v2 07/11] media: i2c: ov5645: Use subdev active state
-Message-ID: <20240924225129.GP7165@pendragon.ideasonboard.com>
-References: <20240910170610.226189-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240910170610.226189-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	b=i7aMvoOrqN1PhSj7sH+w4Qxn3eO0hOF/URnIPfrJ3mldH3a1bSrqFhPr/5il/wN+d
+	 fFsEtrhb43Ve9r6o0G63Ba7XicO5aTY1bQAcUtOHqzB54RbjcDmIOh1vBWaSCgCFmv
+	 XZd3VkDeoQBHLzHL1zYDAl8CZSr+0lVJY+E+Pdw5yb+4uRarwIOh3ZEV8nQK+9aLGy
+	 JBV05yp9mSAP+z22wABAtryYhzUs01YjjbfXEOVSciwtNqaTVG1g8TYEQZCUXJhKq9
+	 KVuwI6EEjcnkGqLJjqLxi8JBqEFU26unJx2zkqj+RuOuqTWBkbCyQ46fmpH1/ZU+5o
+	 5v0COFRir9vCQ==
+Date: Tue, 24 Sep 2024 17:53:43 -0500
+From: Rob Herring <robh@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	INAGAKI Hiroshi <musashino.open@gmail.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>, Ming Lei <ming.lei@redhat.com>,
+	Li Lingfeng <lilingfeng3@huawei.com>,
+	Christian Heusel <christian@heusel.eu>, linux-block@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>
+Subject: Re: [RFC PATCH 4/4] dt-bindings: mmc: Document support for partition
+ table in mmc-card
+Message-ID: <20240924225343.GA413172-robh@kernel.org>
+References: <20240923105937.4374-1-ansuelsmth@gmail.com>
+ <20240923105937.4374-5-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240910170610.226189-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240923105937.4374-5-ansuelsmth@gmail.com>
 
-Hi Prabhakar,
-
-Thank you for the patch.
-
-On Tue, Sep 10, 2024 at 06:06:06PM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Mon, Sep 23, 2024 at 12:59:33PM +0200, Christian Marangi wrote:
+> Document support for defining a partition table in the mmc-card node.
 > 
-> Port the ov5645 sensor driver to use the subdev active state.
-> 
-> Move all the format configuration to the subdevice state and simplify
-> the format handling, locking and initialization.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> This is needed if the eMMC doesn't have a partition table written and
+> the bootloader of the device load data by using absolute offset of the
+> block device. This is common on embedded device that have eMMC installed
+> to save space and have non removable block devices.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+What if the partition table is written? What does one use? One of them 
+or both and merge them?
 
+> eMMC provide a generic disk for user data and if supported also provide
+> one or two additional disk (boot0 and boot1) for special usage of boot
+> operation where normally is stored the bootloader or boot info.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 > ---
->  drivers/media/i2c/ov5645.c | 109 +++++++++++++------------------------
->  1 file changed, 39 insertions(+), 70 deletions(-)
+>  .../devicetree/bindings/mmc/mmc-card.yaml     | 75 +++++++++++++++++++
+>  1 file changed, 75 insertions(+)
 > 
-> diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
-> index 25c60afcc0ec..9497ec737cb7 100644
-> --- a/drivers/media/i2c/ov5645.c
-> +++ b/drivers/media/i2c/ov5645.c
-> @@ -89,7 +89,6 @@ struct ov5645 {
->  	struct v4l2_subdev sd;
->  	struct media_pad pad;
->  	struct v4l2_fwnode_endpoint ep;
-> -	struct v4l2_mbus_framefmt fmt;
->  	struct v4l2_rect crop;
->  	struct clk *xclk;
+> diff --git a/Documentation/devicetree/bindings/mmc/mmc-card.yaml b/Documentation/devicetree/bindings/mmc/mmc-card.yaml
+> index fd347126449a..fab9fa5c170a 100644
+> --- a/Documentation/devicetree/bindings/mmc/mmc-card.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/mmc-card.yaml
+> @@ -13,6 +13,10 @@ description: |
+>    This documents describes the devicetree bindings for a mmc-host controller
+>    child node describing a mmc-card / an eMMC.
 >  
-> @@ -850,49 +849,6 @@ static int ov5645_enum_frame_size(struct v4l2_subdev *subdev,
->  	return 0;
->  }
->  
-> -static struct v4l2_mbus_framefmt *
-> -__ov5645_get_pad_format(struct ov5645 *ov5645,
-> -			struct v4l2_subdev_state *sd_state,
-> -			unsigned int pad,
-> -			enum v4l2_subdev_format_whence which)
-> -{
-> -	switch (which) {
-> -	case V4L2_SUBDEV_FORMAT_TRY:
-> -		return v4l2_subdev_state_get_format(sd_state, pad);
-> -	case V4L2_SUBDEV_FORMAT_ACTIVE:
-> -		return &ov5645->fmt;
-> -	default:
-> -		return NULL;
-> -	}
-> -}
-> -
-> -static int ov5645_get_format(struct v4l2_subdev *sd,
-> -			     struct v4l2_subdev_state *sd_state,
-> -			     struct v4l2_subdev_format *format)
-> -{
-> -	struct ov5645 *ov5645 = to_ov5645(sd);
-> -
-> -	format->format = *__ov5645_get_pad_format(ov5645, sd_state,
-> -						  format->pad,
-> -						  format->which);
-> -	return 0;
-> -}
-> -
-> -static struct v4l2_rect *
-> -__ov5645_get_pad_crop(struct ov5645 *ov5645,
-> -		      struct v4l2_subdev_state *sd_state,
-> -		      unsigned int pad, enum v4l2_subdev_format_whence which)
-> -{
-> -	switch (which) {
-> -	case V4L2_SUBDEV_FORMAT_TRY:
-> -		return v4l2_subdev_state_get_crop(sd_state, pad);
-> -	case V4L2_SUBDEV_FORMAT_ACTIVE:
-> -		return &ov5645->crop;
-> -	default:
-> -		return NULL;
-> -	}
-> -}
-> -
->  static int ov5645_set_format(struct v4l2_subdev *sd,
->  			     struct v4l2_subdev_state *sd_state,
->  			     struct v4l2_subdev_format *format)
-> @@ -903,33 +859,30 @@ static int ov5645_set_format(struct v4l2_subdev *sd,
->  	const struct ov5645_mode_info *new_mode;
->  	int ret;
->  
-> -	__crop = __ov5645_get_pad_crop(ov5645, sd_state, format->pad,
-> -				       format->which);
-> -
-> +	__crop = v4l2_subdev_state_get_crop(sd_state, 0);
->  	new_mode = v4l2_find_nearest_size(ov5645_mode_info_data,
-> -			       ARRAY_SIZE(ov5645_mode_info_data),
-> -			       width, height,
-> -			       format->format.width, format->format.height);
-> +					  ARRAY_SIZE(ov5645_mode_info_data),
-> +					  width, height, format->format.width,
-> +					  format->format.height);
->  
->  	__crop->width = new_mode->width;
->  	__crop->height = new_mode->height;
->  
->  	if (format->which == V4L2_SUBDEV_FORMAT_ACTIVE) {
-> -		ret = v4l2_ctrl_s_ctrl_int64(ov5645->pixel_clock,
-> -					     new_mode->pixel_clock);
-> +		ret = __v4l2_ctrl_s_ctrl_int64(ov5645->pixel_clock,
-> +					       new_mode->pixel_clock);
->  		if (ret < 0)
->  			return ret;
->  
-> -		ret = v4l2_ctrl_s_ctrl(ov5645->link_freq,
-> -				       new_mode->link_freq);
-> +		ret = __v4l2_ctrl_s_ctrl(ov5645->link_freq,
-> +					 new_mode->link_freq);
->  		if (ret < 0)
->  			return ret;
->  
->  		ov5645->current_mode = new_mode;
->  	}
->  
-> -	__format = __ov5645_get_pad_format(ov5645, sd_state, format->pad,
-> -					   format->which);
-> +	__format = v4l2_subdev_state_get_format(sd_state, 0);
->  	__format->width = __crop->width;
->  	__format->height = __crop->height;
->  	__format->code = MEDIA_BUS_FMT_UYVY8_1X16;
-> @@ -944,11 +897,15 @@ static int ov5645_set_format(struct v4l2_subdev *sd,
->  static int ov5645_init_state(struct v4l2_subdev *subdev,
->  			     struct v4l2_subdev_state *sd_state)
->  {
-> -	struct v4l2_subdev_format fmt = { 0 };
-> -
-> -	fmt.which = sd_state ? V4L2_SUBDEV_FORMAT_TRY : V4L2_SUBDEV_FORMAT_ACTIVE;
-> -	fmt.format.width = 1920;
-> -	fmt.format.height = 1080;
-> +	struct v4l2_subdev_format fmt = {
-> +		.which = V4L2_SUBDEV_FORMAT_TRY,
-> +		.pad = 0,
-> +		.format = {
-> +			.code = MEDIA_BUS_FMT_UYVY8_1X16,
-> +			.width = ov5645_mode_info_data[1].width,
-> +			.height = ov5645_mode_info_data[1].height,
-> +		},
-> +	};
->  
->  	ov5645_set_format(subdev, sd_state, &fmt);
->  
-> @@ -959,25 +916,27 @@ static int ov5645_get_selection(struct v4l2_subdev *sd,
->  			   struct v4l2_subdev_state *sd_state,
->  			   struct v4l2_subdev_selection *sel)
->  {
-> -	struct ov5645 *ov5645 = to_ov5645(sd);
-> -
->  	if (sel->target != V4L2_SEL_TGT_CROP)
->  		return -EINVAL;
->  
-> -	sel->r = *__ov5645_get_pad_crop(ov5645, sd_state, sel->pad,
-> -					sel->which);
-> +	sel->r = *v4l2_subdev_state_get_crop(sd_state, 0);
->  	return 0;
->  }
->  
->  static int ov5645_s_stream(struct v4l2_subdev *subdev, int enable)
->  {
->  	struct ov5645 *ov5645 = to_ov5645(subdev);
-> +	struct v4l2_subdev_state *state;
->  	int ret;
->  
-> +	state = v4l2_subdev_lock_and_get_active_state(&ov5645->sd);
+> +  It's possible to define a fixed partition table for an eMMC for the user
+> +  partition and one of the 2 boot partition (boot0/boot1) if supported by the
+> +  eMMC.
 > +
->  	if (enable) {
->  		ret = pm_runtime_resume_and_get(ov5645->dev);
-> -		if (ret < 0)
-> +		if (ret < 0) {
-> +			v4l2_subdev_unlock_state(state);
->  			return ret;
-> +		}
+>  properties:
+>    compatible:
+>      const: mmc-card
+> @@ -26,6 +30,48 @@ properties:
+>        Use this to indicate that the mmc-card has a broken hpi
+>        implementation, and that hpi should not be used.
 >  
->  		ret = ov5645_set_register_array(ov5645,
->  					ov5645->current_mode->data,
-> @@ -988,7 +947,7 @@ static int ov5645_s_stream(struct v4l2_subdev *subdev, int enable)
->  				ov5645->current_mode->height);
->  			goto err_rpm_put;
->  		}
-> -		ret = v4l2_ctrl_handler_setup(&ov5645->ctrls);
-> +		ret = __v4l2_ctrl_handler_setup(&ov5645->ctrls);
->  		if (ret < 0) {
->  			dev_err(ov5645->dev, "could not sync v4l2 controls\n");
->  			goto err_rpm_put;
-> @@ -1013,6 +972,7 @@ static int ov5645_s_stream(struct v4l2_subdev *subdev, int enable)
->  		goto stream_off_rpm_put;
->  	}
->  
-> +	v4l2_subdev_unlock_state(state);
->  	return 0;
->  
->  err_rpm_put:
-> @@ -1022,6 +982,7 @@ static int ov5645_s_stream(struct v4l2_subdev *subdev, int enable)
->  stream_off_rpm_put:
->  	pm_runtime_mark_last_busy(ov5645->dev);
->  	pm_runtime_put_autosuspend(ov5645->dev);
-> +	v4l2_subdev_unlock_state(state);
->  	return ret;
->  }
->  
-> @@ -1032,7 +993,7 @@ static const struct v4l2_subdev_video_ops ov5645_video_ops = {
->  static const struct v4l2_subdev_pad_ops ov5645_subdev_pad_ops = {
->  	.enum_mbus_code = ov5645_enum_mbus_code,
->  	.enum_frame_size = ov5645_enum_frame_size,
-> -	.get_fmt = ov5645_get_format,
-> +	.get_fmt = v4l2_subdev_get_fmt,
->  	.set_fmt = ov5645_set_format,
->  	.get_selection = ov5645_get_selection,
->  };
-> @@ -1213,12 +1174,17 @@ static int ov5645_probe(struct i2c_client *client)
->  		goto power_down;
->  	}
->  
-> -	ov5645_init_state(&ov5645->sd, NULL);
-> +	ov5645->sd.state_lock = ov5645->ctrls.lock;
-> +	ret = v4l2_subdev_init_finalize(&ov5645->sd);
-> +	if (ret < 0) {
-> +		dev_err_probe(dev, ret, "subdev init error\n");
-> +		goto power_down;
-> +	}
->  
->  	ret = v4l2_async_register_subdev_sensor(&ov5645->sd);
->  	if (ret < 0) {
->  		dev_err_probe(dev, ret, "could not register v4l2 device\n");
-> -		goto power_down;
-> +		goto error_subdev_cleanup;
->  	}
->  
->  	pm_runtime_set_active(dev);
-> @@ -1231,6 +1197,8 @@ static int ov5645_probe(struct i2c_client *client)
->  
->  	return 0;
->  
-> +error_subdev_cleanup:
-> +	v4l2_subdev_cleanup(&ov5645->sd);
->  power_down:
->  	ov5645_set_power_off(dev);
->  free_entity:
-> @@ -1247,6 +1215,7 @@ static void ov5645_remove(struct i2c_client *client)
->  	struct ov5645 *ov5645 = to_ov5645(sd);
->  
->  	v4l2_async_unregister_subdev(&ov5645->sd);
-> +	v4l2_subdev_cleanup(sd);
->  	media_entity_cleanup(&ov5645->sd.entity);
->  	v4l2_ctrl_handler_free(&ov5645->ctrls);
->  	pm_runtime_disable(ov5645->dev);
+> +  "#address-cells": true
+> +
+> +  "#size-cells": true
+> +
+> +patternProperties:
+> +  "^partitions(-boot[01])?$":
+> +    type: object
 
--- 
-Regards,
+You don't define this is fixed partitions with a fixed-partitions 
+compatible. Why not reuse that? Then this all goes away with a 
+reference to it.
 
-Laurent Pinchart
+> +
+> +    properties:
+> +      "#address-cells": true
+> +
+> +      "#size-cells": true
+> +
+> +    patternProperties:
+> +      "@[0-9a-f]+$":
+> +        type: object
+> +
+> +        properties:
+> +          reg:
+> +            description: partition's offset and size within the flash (in sector
+> +              block, 512byte)
+
+Units are sectors? Use bytes instead because everything else does in DT. 
+
+> +            maxItems: 1
+> +
+> +
+> +          label:
+> +            description: The label / name for this partition.
+> +
+> +          read-only:
+> +            description: This parameter, if present, is a hint that this partition
+> +              should only be mounted read-only. This is usually used for flash
+> +              partitions containing early-boot firmware images or data which should
+> +              not be clobbered.
+> +            type: boolean
+> +
+> +        required:
+> +          - reg
+> +          - label
+> +
+> +        additionalProperties: false
+> +
+> +    additionalProperties: false
+
+Put the indented cases of additionalProperties/unevaluatedProperties 
+before 'properties'. Easier to see what they apply to that way.
+
+Rob
 
