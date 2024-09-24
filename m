@@ -1,124 +1,215 @@
-Return-Path: <linux-kernel+bounces-337174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6183A98464C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:00:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFF1398464F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:01:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 064721F241A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:00:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E27F1F2443C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CDE19F12F;
-	Tue, 24 Sep 2024 13:00:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB771A7AC6;
+	Tue, 24 Sep 2024 13:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m/S4wPm6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mn88kQhM"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770811A76B4
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 13:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD551A7265
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 13:01:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727182819; cv=none; b=q9NjxsB2hHHb7vskJzTZNrxgvxa8RbexPdt5eDQSULonHWdfGi9fiuJlzfO3Gg2FaLEwjyFKAndB9DB2O6Lrj8YmoMpVAolkxJ51u5mWbKMwU9YZedFeIq8QmzjUswrS7LNfs9Rsjng5WU5jbwZPwHEw+QaK+ZWnQUamPEXE1Tg=
+	t=1727182868; cv=none; b=FO7ySbheedMftWKBJeIoAcXqOEG86mkWVONYLloU9MOqk/tL6uvLPx1q5f3hzFZTI/o7/o+AbZ6QqfjY4hfwMhuvG56mFRjwlI/yeuy4ESihMancB7egpCrI5jnf+b9yU7IvIltIKgDAAgybw2mWvsFYY3B11ZBUZytVY6lOySo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727182819; c=relaxed/simple;
-	bh=XhT2pXIZ+/NQQhlgXLA+4UivQekPRug6Jme2Zf+Uk6U=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=q0BxjCGkR0pRtaoGzyTHbuQH4OSz+RyTP9VZ5ubAzkS0YhwjnjQwt4dWtWy7w1+p0GE0ZI7dKf7VTM9T1iOPJZIg9YFpxUOpM3YfCv9c6YCf9yLD+nIsVsT4NFH1YuIN2DxgKfzjBkYRil3Y0vhoNRYn6srosLZXxnonKRxYz24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m/S4wPm6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49526C4CEC4
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 13:00:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727182819;
-	bh=XhT2pXIZ+/NQQhlgXLA+4UivQekPRug6Jme2Zf+Uk6U=;
-	h=From:Date:Subject:To:Cc:From;
-	b=m/S4wPm6rTYGbsxJ1cQdhyt7r4YxLrNOxtMw7Pdrq+JuNPuEA5zRGIbSrIn+mAlbh
-	 25/wQ0YiqMD0mKChNLtKt0ojvsVR93+Vmar7681cAFv+JvkvIg/wq6PaFNwUQ7BsSc
-	 lAlUz4LYlc7UWSivdm5JnWjE3oyAQTEmwu47HMVGQtXnQjRk0/oOnmhqRmJ7w2WuLh
-	 3o0b/6uvrI73qbYu313EiLStCojrRXPHyoZs7FQkXhfYZgxmAqvMIrwiyz/EHhMxDJ
-	 q3bEX8zj21Y5LW6T2FBEHJvq5k7l4bTo8Ziq7CooHTa3Zy8hkYV5dChAkoFsa/htFk
-	 IOPXaBl2MQPeQ==
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-710e910dd7dso2996495a34.2
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 06:00:19 -0700 (PDT)
-X-Gm-Message-State: AOJu0YwlhFQJ0FITpGxRCY3BDpBj5jbGfJwEQ6QQtPdCPHn7LA7brce4
-	uNZTLZj4qzIww67LOwPffvKlZXNh19TZ87US5Pn4OkzI7S/P2GyDRz7U2v8UmTiBA35Feci9veS
-	yR0Ri9qEmaTdhvhcwkSD2dY+csl8=
-X-Google-Smtp-Source: AGHT+IFqBcr7FjbbsuCBDLP0K5jsHQrGvgBYFV1ej8pXe/cVvaGldv+vSwz1uxWclKpuI7zMwEoK1t4GLaR5sTf1UVk=
-X-Received: by 2002:a05:6870:a901:b0:27b:5a02:f940 with SMTP id
- 586e51a60fabf-2803cfa6789mr8541055fac.23.1727182818621; Tue, 24 Sep 2024
- 06:00:18 -0700 (PDT)
+	s=arc-20240116; t=1727182868; c=relaxed/simple;
+	bh=qw22qbkopgs2Th+vBhrRAbcNFBETeab0zxWc1kdzaQw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TgrivF/WPT//3NXgL25KcwqQRJqIDX25MDHsGtv/q+3lByNu/m4JrrMQOgRsrb17baWA0VaCApB1as8f0hISy3fqRayvgpP9DujGKer5hsdGFdYAhteMlS0o2r79msQ/lKO7A33VkMPL3RjHKchr/BOuSP7dPE24K2se0j+hVIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mn88kQhM; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2da55ea8163so3590399a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 06:01:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727182866; x=1727787666; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=htWWLJM4EsHdz/pR2CIXXvdnZw2zxHmQSomoN2+D/tk=;
+        b=mn88kQhMTaQyRDbs4jTexNe7lkvCRZmFq/HpV/bNtpZabWJYS0fWcR6bnrSliu1l7R
+         SvXHPERgkD2WGtBCM/7/ogkjGn40c0LiGIqbm5WD8KhAXV+yp8RsqJ3CHPtJNnPDN4Ag
+         065/X0M2040Rui/uNVXtL9c/lPoc0Gzr8gA2uSey1pgdk6PFgLgcQcF/Hz8zYF41tDas
+         x7G8bVma+qMHPT2D6XrGFF8x6iqnA0UjQwjKIhWykZvcd4VtmNv59k6L7zGaOToTZ2+1
+         rZ8Pi+lPDVdKfCh+/Dhs3dxJMWzChABtcE8htffLiyYyvfF49qgK/ySFnmvnD88h3/qf
+         i5Nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727182866; x=1727787666;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=htWWLJM4EsHdz/pR2CIXXvdnZw2zxHmQSomoN2+D/tk=;
+        b=EigXDdhqRjXtUqXNvgHaNSyIj33ShZ6dBuZDL3qnI5nwhEbCBZZnHjbxZFe4tUUo4g
+         h08UIoglHztT+JzelQrU30FCr0wJ6XFw6YA0k6Cay1qnXYYB3K819ouE2Z/nChKaPeID
+         hKMArpYob4uLCb8YR1cu/WlhcPvPXDBfyh0dRxFZaoT452FdRIHy9EFO9lXeF37zSCmw
+         KjTbzIs+54CxGjuFT06bvS5HVxV9iDuch5bXU9FEXGJDCi1Hv+bXXTW1IDT5IjCy5dtJ
+         2TiOAHgOP5ik7h8/jtPRZdoNQvZvqkSFYKbIT7tDWejV53EI7Y9X1cK20ruaNALsLMvD
+         gZkA==
+X-Forwarded-Encrypted: i=1; AJvYcCXgs6SQHelQ/nYyfjQNDcmMEqcJVWG+yvj/wN+J+Wo3rKyBPqHfMqRepssFXtSXLQW2yG+XNOp3fh5lYgg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAt3/1OwglBy/JUySkDE1R5z6JU/XMaHr3p9j51AYYc1NesY8s
+	XFikGLmORePI4ujuL7r30mP3HgclwtGwYavceV89X9St20XqtUJ+lXJD4j0ukKLMuUtJTmd3IoS
+	auqMn8nWQhbIssNcD0lOAqMFWvI20kPT/dbJe9A==
+X-Google-Smtp-Source: AGHT+IE0MHK9d/IYdNSmedh0leD/l3s4TzyfJ49CSx2TV+btNyB4bEqpM/R38wi+CjO3hKBLN7+BcSKug/SAFaRN0qo=
+X-Received: by 2002:a17:90a:c70d:b0:2dd:4f6b:6394 with SMTP id
+ 98e67ed59e1d1-2dd80c7ecc7mr18695546a91.19.1727182865892; Tue, 24 Sep 2024
+ 06:01:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Tue, 24 Sep 2024 22:00:06 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd9NGv1D0A-B7T67nK1Md1XYeLH2hjC-H1q=9jF4rFPcUQ@mail.gmail.com>
-Message-ID: <CAKYAXd9NGv1D0A-B7T67nK1Md1XYeLH2hjC-H1q=9jF4rFPcUQ@mail.gmail.com>
-Subject: [GIT PULL] exfat update for 6.12-rc1
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sungjong Seo <sj1557.seo@samsung.com>, 
-	"Yuezhang.Mo" <Yuezhang.Mo@sony.com>
+References: <20240830130309.2141697-1-vincent.guittot@linaro.org>
+ <20240830130309.2141697-6-vincent.guittot@linaro.org> <ff2be1d5-ace4-4d8a-9894-4ccc16c84d06@arm.com>
+In-Reply-To: <ff2be1d5-ace4-4d8a-9894-4ccc16c84d06@arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 24 Sep 2024 15:00:52 +0200
+Message-ID: <CAKfTPtCEM4A+-6FWEb1ncMSObgqBbcs7EWc5Xwk+KpHJBRRw9A@mail.gmail.com>
+Subject: Re: [RFC PATCH 5/5] sched/fair: Add push task callback for EAS
+To: Pierre Gondois <pierre.gondois@arm.com>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+	mgorman@suse.de, vschneid@redhat.com, lukasz.luba@arm.com, 
+	rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org, qyousef@layalina.io, 
+	hongyan.xia2@arm.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Linus,
+On Fri, 13 Sept 2024 at 18:08, Pierre Gondois <pierre.gondois@arm.com> wrote:
+>
+> Hello Vincent,
+>
+> On 8/30/24 15:03, Vincent Guittot wrote:
+> > EAS is based on wakeup events to efficiently place tasks on the system, but
+> > there are cases where a task will not have wakeup events anymore or at a
+> > far too low pace. For such situation, we can take advantage of the task
+> > being put back in the enqueued list to check if it should be migrated on
+> > another CPU. When the task is the only one running on the CPU, the tick
+> > will check it the task is stuck on this CPU and should migrate on another
+> > one.
+> >
+> > Wake up events remain the main way to migrate tasks but we now detect
+> > situation where a task is stuck on a CPU by checking that its utilization
+> > is larger than the max available compute capacity (max cpu capacity or
+> > uclamp max setting)
+> >
+> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > ---
+> >   kernel/sched/fair.c  | 211 +++++++++++++++++++++++++++++++++++++++++++
+> >   kernel/sched/sched.h |   2 +
+> >   2 files changed, 213 insertions(+)
+> >
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index e46af2416159..41fb18ac118b 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+>
+> [...]
+>
+> > +
+> > +static inline void check_misfit_cpu(struct task_struct *p, struct rq *rq)
+> > +{
+> > +     int new_cpu, cpu = cpu_of(rq);
+> > +
+> > +     if (!sched_energy_enabled())
+> > +             return;
+> > +
+> > +     if (WARN_ON(!p))
+> > +             return;
+> > +
+> > +     if (WARN_ON(p != rq->curr))
+> > +             return;
+> > +
+> > +     if (is_migration_disabled(p))
+> > +             return;
+> > +
+> > +     if ((rq->nr_running > 1) || (p->nr_cpus_allowed == 1))
+>
+> If the goal is to detect tasks that should be migrated to bigger CPUs,
 
-This is exfat update pull request for v6.12-rc1. I add description of
-this pull request on below. Please pull exfat with following ones.
+We don't want the tick to try to do active migration for the running
+task if the task can't run on another CPU than this one. This is not
+related to the migration to bigger CPUs that is done by
+update_misfit_status().
 
-Thanks!
+> couldn't the check be changed from:
+> -  (p->nr_cpus_allowed == 1)
+> to
+> - (p->max_allowed_capacity == arch_scale_cpu_capacity(cpu))
+> to avoid the case where a task is bound to the little cluster for instance ?
 
-The following changes since commit a430d95c5efa2b545d26a094eb5f624e36732af0:
+I was about to say yes, but the condition
+(arch_scale_cpu_capacity(cpu) == p->max_allowed_capacity) is too large
+and prevents migrating to a smaller cpu which is one case that we want
+to handle here.  That being said I have an internal patch that
+includes the check done by update_misfit_status() for push callback
+mechanism but I didn't add it in this version to not add to much
+change in the same serie.
 
-  Merge tag 'lsm-pr-20240911' of
-git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm (2024-09-16
-18:19:47 +0200)
+>
+> Similar question for update_misfit_status(), doesn't:
+> - (arch_scale_cpu_capacity(cpu) == p->max_allowed_capacity)
+> include this case:
+> - (p->nr_cpus_allowed == 1)
 
-are available in the Git repository at:
+For update_misfit_status, you are right
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/linkinjeon/exfat.git
-tags/exfat-for-6.12-rc1
+>
+>
+> > +             return;
+> > +
+> > +     if (!task_misfit_cpu(p, cpu))
+> > +             return;
+>
+> task_misfit_cpu() intends to check whether the task will have an opportunity
+> to run feec() though wakeups/push-pull.
+>
+> Shouldn't we check whether the task fits the CPU with the 20% margin
+> with task_fits_cpu() aswell ? This would allow to migrate the task
+> faster than the load_balancer.
 
-for you to fetch changes up to cb7d85014fb1ca3387f7ff5f6067337b3d7f3c5a:
+As mentioned above I have a patch that I didn't send that adds the
+update_misfit_status() condition in the push call. I agree that should
+speedup some migrations of misfit task to bigger cpu without waking up
+an idle CPU to do the load balance and pull the task on a potentially
+3rd CPU
 
-  MAINTAINERS: exfat: add myself as reviewer (2024-09-23 21:38:15 +0900)
-
-----------------------------------------------------------------
-Description for this pull request:
-- Clean-up unnecessary codes as ->valid_size is supported.
-- buffered-IO fallback is no longer needed when using direct-IO.
-- Move ->valid_size extension from mmap to ->page_mkwrite.
-  This improves the overhead caused by unnecessary zero-out during mmap.
-- Fix memleaks from exfat_load_bitmap() and exfat_create_upcase_table().
-- Add sops->shutdown and ioctl.
-- Add Yuezhang Mo as a reviwer.
-
-----------------------------------------------------------------
-Daniel Yang (1):
-      exfat: resolve memory leak from exfat_create_upcase_table()
-
-Dongliang Cui (1):
-      exfat: Implement sops->shutdown and ioctl
-
-Yuezhang Mo (5):
-      exfat: drop ->i_size_ondisk
-      exfat: do not fallback to buffered write
-      exfat: fix memory leak in exfat_load_bitmap()
-      exfat: move extend valid_size into ->page_mkwrite()
-      MAINTAINERS: exfat: add myself as reviewer
-
- MAINTAINERS                |   1 +
- fs/exfat/balloc.c          |  10 ++---
- fs/exfat/exfat_fs.h        |  24 +++++++---
- fs/exfat/file.c            | 110 ++++++++++++++++++++++++++++-----------------
- fs/exfat/inode.c           |  94 +++++++++++---------------------------
- fs/exfat/namei.c           |  17 ++++++-
- fs/exfat/nls.c             |   5 ++-
- fs/exfat/super.c           |  41 ++++++++++++++++-
- include/uapi/linux/exfat.h |  25 +++++++++++
- 9 files changed, 200 insertions(+), 127 deletions(-)
- create mode 100644 include/uapi/linux/exfat.h
+>
+>
+> > +
+> > +     new_cpu = find_energy_efficient_cpu(p, cpu);
+> > +
+> > +     if (new_cpu == cpu)
+> > +             return;
+> > +
+> > +     /*
+> > +      * ->active_balance synchronizes accesses to
+> > +      * ->active_balance_work.  Once set, it's cleared
+> > +      * only after active load balance is finished.
+> > +      */
+> > +     if (!rq->active_balance) {
+> > +             rq->active_balance = 1;
+> > +             rq->push_cpu = new_cpu;
+> > +     } else
+> > +             return;
+> > +
+> > +     raw_spin_rq_unlock(rq);
+> > +     stop_one_cpu_nowait(cpu,
+> > +             active_load_balance_cpu_stop, rq,
+> > +             &rq->active_balance_work);
+> > +     raw_spin_rq_lock(rq);
+> > +}
+> > +
+>
+> Regards,
+> Pierre
 
