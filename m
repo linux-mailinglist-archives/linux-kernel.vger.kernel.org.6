@@ -1,228 +1,330 @@
-Return-Path: <linux-kernel+bounces-337487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8D20984AAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:05:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B473984AA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:05:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CDF1B2479D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:05:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 084671F21281
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:05:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5914D1AC8A5;
-	Tue, 24 Sep 2024 18:05:34 +0000 (UTC)
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2095.outbound.protection.outlook.com [40.107.223.95])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD601AC43B;
+	Tue, 24 Sep 2024 18:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aLpzZ3q1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0711ABEC6;
-	Tue, 24 Sep 2024 18:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727201133; cv=fail; b=p899c+jwjiiG/BZ0kCsiHUlmYsWVkYelv+lry4lP/ATcTQwwB5X7p7EIq0cKFYt8uLLssdSoQ2U+dn+jfLrW3h3S1QW56u1L5vQttbUIngfVJzm2Dor/s9ExWzVHrjuim3/EuzBlPvp6kkFWm3s2/13AJdVe5NF/fEgV59IO4Rg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727201133; c=relaxed/simple;
-	bh=MeUsmJW7hpkynhUTcjUAHLMED7L/VZuMtyUKyCal1ME=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=m8djWDlPbZD5z4vr07tqF1Ri5LKjrdgcuWh+DXbGNQ0BT9F8FxmrjQ/YUWvD2OaD4a5EA4QrYxfFk33WiXKYtpzTtw7WqhdY5xWXZc7va+PbUypVQZCx5Z1kApgLZKD7BrH2LOtVk6V76YRhj/istU8Ainpyk987vCs9DgOh7yA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com; spf=pass smtp.mailfrom=talpey.com; arc=fail smtp.client-ip=40.107.223.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=talpey.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pXsMqj6R3M7TcAqyxFxBeWtYTIJIS5RHOAFi9FoLvvPo0Bbi+pq5WqYtweEvuIQ+wFUcnMX2Gg6SvH8pA0Xum808Z1EbRRztJNDJkIILpFXuAm8s+35KZYTmjqoduZI8g/80CUqnlHAF5n7E8ZBhb/uMwWRkArV9/Koi3eg6zVVVH5Iv0COeKd7Y2XxY1Dad4aIbn1dKk7SYgHzux2LOTplzGKvX5vD4UuZ49MVmuv33rSrj7cPBAG9UqU+LD1gMEyVyBp+pxbQKPg6itHyWznMviyZJq3Hj2S0mkDRw/IA+mYA8GlMQPCm0VUy9D36M2ER0ImCwnJYithzy9Iu2FQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fvNcUZRfpTP8EdAsa2fGUWsl2RUGQQIz5ZlST4PytcI=;
- b=lSFetjSngNi0DFL8LMns8S2peQnhoipPhmFHwZ6KVC5DDbCHTWME4+IlRZUgRpEHedY3WHvGOmW7aopat9PYiRNE7NY8boJ6dGqyKBXBluuhPeWKEaX7BoAam6w4vqdTRldDMkHxGD2MNMCon+UbpzdTDX3yV+SV/Hhm5HH8Xt/4Nn/lW5Dq/mY2ElICrlzFTCEJ9htjmX8lJKCeKaG6YyFixUhwmkRHimutebBODIA1ggGPLuTnOxR7D0uVT37RfwL398l1ySVzO2x0zW6wVEEzK5VX4NcVvBbBFp+f6Ha6tZQKsSF23eFbS2TGqXQaze2faXdB8meTmUGFkHKcIg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=talpey.com; dmarc=pass action=none header.from=talpey.com;
- dkim=pass header.d=talpey.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=talpey.com;
-Received: from SN6PR01MB4016.prod.exchangelabs.com (2603:10b6:805:aa::28) by
- DS7PR01MB7854.prod.exchangelabs.com (2603:10b6:8:81::18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7982.25; Tue, 24 Sep 2024 18:05:26 +0000
-Received: from SN6PR01MB4016.prod.exchangelabs.com
- ([fe80::1fcb:ca70:b1b0:8ce5]) by SN6PR01MB4016.prod.exchangelabs.com
- ([fe80::1fcb:ca70:b1b0:8ce5%6]) with mapi id 15.20.7982.022; Tue, 24 Sep 2024
- 18:05:26 +0000
-Message-ID: <d6341fc4-1d9d-46af-b809-f30430b30455@talpey.com>
-Date: Tue, 24 Sep 2024 14:05:18 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ksmbd: Annotate struct copychunk_ioctl_req with
- __counted_by_le()
-To: Thorsten Blum <thorsten.blum@linux.dev>,
- Namjae Jeon <linkinjeon@kernel.org>, Steve French <sfrench@samba.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>, Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <20240924102243.239811-2-thorsten.blum@linux.dev>
-Content-Language: en-US
-From: Tom Talpey <tom@talpey.com>
-In-Reply-To: <20240924102243.239811-2-thorsten.blum@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BN9PR03CA0954.namprd03.prod.outlook.com
- (2603:10b6:408:108::29) To SN6PR01MB4016.prod.exchangelabs.com
- (2603:10b6:805:aa::28)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA9A49641
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 18:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727201131; cv=none; b=X0TWQhijOHedwgU9O8WvNC/IP6vaE5qdi7qQ86Wdo8F8RBNI+yVGtxqr5euy9xE1ZIQhBbUC+JjRI8HehEN+j4Ik/jurzyGfxKjD9PPAm8vpyiaYIckuxuII4VKGsUHFbrb2haN/pRl+J7WeZp9V/40SiqqnnvsmXMnqKNrJ3k4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727201131; c=relaxed/simple;
+	bh=IoL0K7SoAmIEnbpyrBb6nLNcf+yUtu86/h/QkT1f2Pg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Vvev0Ud7eo38GA9R03cAN47PlYfCy5uPnQ6c3dk3Ih5ijxgq7WhT965AgxC+hWTcUjSFxn6grQVUrfCxDAWJTIRwzqKON+0jHFOqc0VMxwYslI0D+WmrB42k8XoV00cRwUxv0D248z6ENyERTVk5SZG0NaBG23zNdKaCbrly9Fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aLpzZ3q1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEB47C4CECD
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 18:05:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727201131;
+	bh=IoL0K7SoAmIEnbpyrBb6nLNcf+yUtu86/h/QkT1f2Pg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=aLpzZ3q1efpvQnA3KWSkCU+clRzSZ23zg7bJ1W3jZxOjmDwcpv+URv/nwy55MKyS8
+	 g4x6OsXXhlytjBqZ93s3q1blDfK2zhy16kw4qnIeTUqiJyB4nAZ3Pj8PCaEzlPKWGp
+	 Qiedm9ZCKyIE0vJ/bjVFEUmXmUguRczO59u3L38Pq3w/pQXX/ANAU0H040ScMqIlRL
+	 /CLAfw8VpawA91Of8bK2m3jQFGXaC3ZW+SbFrUdgNmhcM/CQpuVmD4IbLaOZU1+3f3
+	 VQv5e6FYm64mtNDNgRt7PYV36MVJ++ULTF0EtvDrCZbqjNUkH1Pd4IKv9j5ywsmW1k
+	 jFMD86nHj+DXw==
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3a1a662a633so17955ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 11:05:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUImhp49vpr0HtLRVLmUXPOlOey9EV7wITwIAdcdy6vkquXjlEfUH0q3rTGr0n/yVWwbKQ3ft5nAiporqI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhlXR6GKGsnkhxDXdTg2O0Ninplcv5AJKc5R70qMszPiVBR6j9
+	X8bpa1Q3nrdWj1GJ3ni9/UCzbwFSGRgYyUHQUeLVjeDC5t68IycLHBQSl62ly+h+hyIYoI7zLLS
+	p4shCR7fMRnv2OnCVIjbm3v8SpFmVs6TY7nKl
+X-Google-Smtp-Source: AGHT+IGs2BTudAGVHjmlsME4YVTNJeCt8bYbLI+hDkSJuedrUBVqX1EPis2ENWKJDS4YM5hMDAJfifODYye8uoCiz3E=
+X-Received: by 2002:a92:c244:0:b0:39a:f5a7:50ef with SMTP id
+ e9e14a558f8ab-3a26e2c5696mr222005ab.4.1727201130844; Tue, 24 Sep 2024
+ 11:05:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN6PR01MB4016:EE_|DS7PR01MB7854:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2b582ff1-a81d-4cc1-2849-08dcdcc3779b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cGVZVDJQWVVUL3VmaUN1RmpEcDJoTXVWMzA3Y2hNbVNPMERmWnhUZzVuTW9k?=
- =?utf-8?B?cFlpWXJtUEhEdTFZdzZGdTdDdXhxNkRaVjB4K2dReDRQSHp4S1NrWEhublQr?=
- =?utf-8?B?ZXpIWDNtUHRhS2t4aGxQQWVmcFJFU3ZvOXN5cEhYMzN6ZThxMVphVEJBVXJX?=
- =?utf-8?B?NURCdHFtc1d0bHFUL05iNEFQWHNYOURSc0dYQk1ya0ZRbzQwQWJiKzRNUUNl?=
- =?utf-8?B?TjluV3VDUm5UVXNNaUxxaURZa3Fid2RQUFVZdDA2MjA3N3VxMTVWMFhQbHhv?=
- =?utf-8?B?VEVlU0tDUitxc2NVZGd5NUFzZE9hQlNxaURDWHVIMFRTWVhUalprV1lacW9r?=
- =?utf-8?B?Zkk5N3M0c2dBUmZXZmo1QTNUQTJoZWhscWdwTk5VdjRLa3V3cXpOcjlQZU53?=
- =?utf-8?B?aGw5cGpUNG0zaUdnQnprWk5FMG9raFhkQ2FCSWVEVVJtL0xINkV2ODg2c3hq?=
- =?utf-8?B?UXBtekNrYkc3cXh0Z2s1TlRkbHV4ei9oQ2RXR3dmTGVoOGtmWkl0SElzb2cr?=
- =?utf-8?B?dnM3Qy9DUzhoeDk4NGY2T1YwVHZ5MllCQ0hKSDZ3ZGpVeUsxQ3pIWlNXMjRT?=
- =?utf-8?B?S2tDb3kxT0JtWnFRL0lRSE5DcmdRSjBTaHFPbElhZHh2RVU0SDZJcmdSWG8v?=
- =?utf-8?B?OFp3SVlFR1FsMFpSOGhrUTJ4TVNiSVZoUGppQlZJdGFGNjFOQmhYRndQYlAw?=
- =?utf-8?B?aUpCYjRQcjhwL3lhdFRzTWtQeFlNaEc1cnRDT0YyN2p0YlJHMkRoa0ZNVVZS?=
- =?utf-8?B?UUlpeCtMNmNDZkZyU21pdC9MbVYyY1BjRHdrWGIwSm0vdHJ3UWRkc1RyRndL?=
- =?utf-8?B?Ui8rUHBseXNYR0crM3I2R0MrTjFob2w0aTdlVkRUOE90ZVJCYk1wTDFRSWNp?=
- =?utf-8?B?VVAxZ3JveVE2NlN3YXlSYmN1cHg4aVEybHZkbFdCVWVaV2xmenRNL0RPZ2Jo?=
- =?utf-8?B?U3RkWUNnVm8ycGZEZ2IwNFlxcEtDRGZEUFJNY0Y2dHR5c0EwNndkZkQ5YWtU?=
- =?utf-8?B?bDVTaThaOFpUdUdpY05YT1dOWnVYdFEvWkFxWTh0czBldU1VY2Zub05Qd1k1?=
- =?utf-8?B?bWdFbE4zWll6R3MvOFh3Tkx1cGJqamptQitMNnFOMi93NFhEOGQrQlQzbS9V?=
- =?utf-8?B?YkVrQThJb0wrNzBhTTV3VDV1WHZxTUVVR25NWU5GeHBHWEFIemNSU0dqM2VQ?=
- =?utf-8?B?T1Qwajk0elN5T1FsVkNKamNtR20zc3pQMk1LMXFibUNnWG5ZMkhxNWFaVUov?=
- =?utf-8?B?eTRyRDlVZTJ1QXU4SjFOenpMeU5pc0UwQ0hLTnhPNG9zTnhyR01vZlRhQnFO?=
- =?utf-8?B?L0pJSUdBLzdLNzNyRzdmaVdLSEFGaHFad0Z3K1VaYVovV3hacmRGVUJjU0Zn?=
- =?utf-8?B?RE1xNHhjME0rd2xWK3B0Ui9GaldEVy9OV0JWUWxWUUpZOUVlOHdNVGRHM2ZP?=
- =?utf-8?B?ajd1NmNnbGRLL0E5dmh0bXplMGUyR3dVR3E4aW1vSDBpZlBPdWZBbG5FaGdV?=
- =?utf-8?B?c0RiaXVPbm9USDA1U3FNb2l3TzEyWnRFNFY0eVNJZXdrbG9tTlBpM3NpMktS?=
- =?utf-8?B?OWhUcGhlUUZ5SWM4ZFU4ejFHajNTaTF5dFRhaHJzNHVTUGJObThXZHZSTFR6?=
- =?utf-8?B?QmVBd3p5QXhqbjMvWnhHRTUwQ1ZjSk1aQjdKaVVTSTRka0tXbU5lWDZ6YUcr?=
- =?utf-8?B?NHdubUw1QTRDbEJ3NTA0VFh2L2IxSDFjVXhhbHpQNFhMcHlSM21VR29kT1dV?=
- =?utf-8?B?WGdFTHhvSWFOMXg3c2ExL0dQaUM1TFM5THJoeVFSd01JRi9zbFpwZGpZQkhZ?=
- =?utf-8?B?Ym5tVW9kODdkdEoxekJLQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR01MB4016.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?d3BuaEI1d05XcW9wbXhQUGRoWFRCVmluN1Yydm1TbXAyY2tBZ1dRNVVwcWVq?=
- =?utf-8?B?ekdFUHIzelhYSC9LVWJSOU91TmZMWUNpQWRTVlpnN2ZVTzhLNVMrSWp5SjNJ?=
- =?utf-8?B?ampySkhOSmF5SzNDNGNuREYvUXorS0NvTS85VzkybjRIcVBmcFZwK0Iwa3lI?=
- =?utf-8?B?Y0IzTyt6SW50aC9mcUtadE9LbmEyZmNnUjFlcU52MjBpakI4OGVERFFaaG1G?=
- =?utf-8?B?enlKTGxRK2VuQVIvbHlBM1pBd21XU0hvZGJhd1NtcnBjVE15Sm91YjlZQXlo?=
- =?utf-8?B?MmJrb0diMmhTOVNnZDlQOGxDMjdUeXdxUVNKTVNjWUovc0VHMTltWWdMa2xK?=
- =?utf-8?B?T3l4MXhHbVQ4Z0RLbCsycHRJbGwwV2pJUDQ2eWpKU05lWEtJcFN5ZWd2R09H?=
- =?utf-8?B?WWJieWdHcnBPWWo1UXdMaUU0RWRYRkh3YU1menY4cjVjSEMxNy94NHl5OGdh?=
- =?utf-8?B?SEV1enFUbVhuTmo1N0tpN0ZrT1dwMCs5Q29oZ2pMM3Rydnk0RmpkMXlwcmNr?=
- =?utf-8?B?aVhCbVlaQkhiaXRHMVoxOEkrYzB1a09JRzR2UzJSYlJ6K2k4MjltaGZadDVQ?=
- =?utf-8?B?MHlNZHJDRGtHSjRZcS9kdSs0Mnh0YUdlNXRPc0F6ODQrc3lscEtrTlg5V0tp?=
- =?utf-8?B?enpFQmFWTE0xdWNmQ2Zkd01OTnJHRElqZFFYS0lGVHZmV012bnBZYjg0R0FY?=
- =?utf-8?B?VkdBTHoveFV6bFZ1eWVzRTRRZS84U0g5QllhY0M4amtrSXE5Si9INEYwMnk1?=
- =?utf-8?B?MURRWi9ueEg5SWlObUp3bFlVRytJMWN6M3l0M3YvQUhpZGl4WjNwVzNSbWll?=
- =?utf-8?B?YzdGNTNnYVpHYkltLzFYTnhqMHQ2WFlhRG1rS2J5MzY5Skx2QXV1dmFJQ2Q4?=
- =?utf-8?B?d1I2L3JwWXZIejhDYzgzcjA3Y1plT0dDOGdQNndsd2NaZ1QxR0t0eHlsVDdI?=
- =?utf-8?B?ZmsyYXhnNzE1TDhLSmwxc0lzTzkySXBvQ296QlZ0UmtnVXdabDJBVGpoLzFW?=
- =?utf-8?B?QzVKMGwxTTJtZUVwVzN2MFlLSGlTNlU1bGEyNk9oNmFKTVNuTVZkM1lHVkQ2?=
- =?utf-8?B?OHJjUWNWNTF6UXNZTjM4R0J0U0hxcWlHMjh2TVVIR1pWbXJ1TEtDV01TclZx?=
- =?utf-8?B?RktkMEpCeTdaZk5JNk4xaUhqNDMxMldDNHlobnBiU3JocU9iS2NFYlRibnh6?=
- =?utf-8?B?cWVvZFNSeGRCc0JlSFUrczRjd0w1RS90dzduc2xFazV2N0l0V1RTenlSWFdT?=
- =?utf-8?B?TnVjaW81N05DcDVYdjI4UWZVQys3Tlhxd0wxdFdQTSsyRzBQZlgrNHVhcHNj?=
- =?utf-8?B?NUdrU296ckxNeDBXU0xrVHlpc1dXVGgvVEFNR0hqQ0Y2STdBcEhJSTVwOVhL?=
- =?utf-8?B?M2JRZnQvOWJHTllTVXRGYkZIMFVIbE1aanpUWENtQ3MxT3RjeFNybHBMTjQv?=
- =?utf-8?B?SGppcmhxUDFucWNmTDEyandpaUFwN3JyQ3BSTWNnc0lnQzBMR1FrQk5pcG15?=
- =?utf-8?B?bUVHUWhCd1h1NDVNT0FZNVhqVlBlWkNaaFVGZ2hYK01saDlidENPQXRjYlNi?=
- =?utf-8?B?SjczSkxqdFJlb1BpdGFpa0xhWHljNlcrQ1FUOVVpdlhXdEx2RmpyOXAvVHFl?=
- =?utf-8?B?aUJFeHRaMkZ5L211ckp3WlR1OUNQYXpsOVNwVGtMb1QreVRYQ3RuSXNlME5z?=
- =?utf-8?B?QkhnNDN2YzBHOGd4NnJDcFoxNndFYWR5d0pvR2p1WjA2STNvOWpHMGJBWW5N?=
- =?utf-8?B?d3F5MUJIOHNZNFgxbjNhZ3ZSak1ENko4bDlld1F1VVdoMFdOMkxDd1duTHZo?=
- =?utf-8?B?OEZ6VVFSY2xydUdxK3pOTi8xQkJUM3N1Q0dPeXdtR2UyaXBRcThxYzViZHZW?=
- =?utf-8?B?cmpJZ1BLK2V2R0ZzYW1aOVVTQUt6RWdFYjYzdnpZQURyV0dzZVdFZCtWMmpo?=
- =?utf-8?B?SFZXZjlYYldBQi9TUUxFQ0p3dmluQjZ6aGpUZzBUNkNoZmFHOGtHb1FjOUdI?=
- =?utf-8?B?S0xUcEJDdmgvYXhOaStCSDI1bUJSeWRXRmpPdnZxT3lDWTAzUTkrQVNEcktr?=
- =?utf-8?B?Qko1amNEL2ZKUXpRenR3c3lIaXpVcjZQRVZuVi9iaVVQRHhCQ0ZIUDZ4eFBo?=
- =?utf-8?Q?q3KI=3D?=
-X-OriginatorOrg: talpey.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2b582ff1-a81d-4cc1-2849-08dcdcc3779b
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR01MB4016.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2024 18:05:26.4576
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 2b2dcae7-2555-4add-bc80-48756da031d5
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pGKIqxStzkEc50IPgdVk6QA7CwE/p+X9BuFjlxkwffysGaBjAtSyG3ZtxZTUbmPj
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR01MB7854
+References: <20240911025600.3681789-1-senozhatsky@chromium.org>
+ <20240917013021.868769-1-senozhatsky@chromium.org> <CAF8kJuPq+JwvwrG+H+XU23Xz+Do+qy8RPJBBVRsL0YGQzZpfrQ@mail.gmail.com>
+ <CAF8kJuMQqib-2qhjNTFzKdUdJoUhTOuhv5GtgLnSsUStMHbwdw@mail.gmail.com>
+In-Reply-To: <CAF8kJuMQqib-2qhjNTFzKdUdJoUhTOuhv5GtgLnSsUStMHbwdw@mail.gmail.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Tue, 24 Sep 2024 11:05:18 -0700
+X-Gmail-Original-Message-ID: <CAF8kJuNeTmzANESWSOcRrGFR-Db=bxp5n29Pw-BX8Nwya0odXA@mail.gmail.com>
+Message-ID: <CAF8kJuNeTmzANESWSOcRrGFR-Db=bxp5n29Pw-BX8Nwya0odXA@mail.gmail.com>
+Subject: Re: [PATCHv2] zram: free secondary algorithms names
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Minchan Kim <minchan@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-mm <linux-mm@kvack.org>, 
+	Kairui Song <ryncsn@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/24/2024 6:22 AM, Thorsten Blum wrote:
-> Add the __counted_by_le compiler attribute to the flexible array member
-> Chunks to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-> CONFIG_FORTIFY_SOURCE.
-> 
-> Read Chunks[0] after checking that ChunkCount is not 0.
-> 
-> Compile-tested only.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->   fs/smb/server/smb2pdu.c | 2 +-
->   fs/smb/server/smb2pdu.h | 2 +-
->   2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-> index 461c4fc682ac..0670bdf3e167 100644
-> --- a/fs/smb/server/smb2pdu.c
-> +++ b/fs/smb/server/smb2pdu.c
-> @@ -7565,7 +7565,6 @@ static int fsctl_copychunk(struct ksmbd_work *work,
->   	ci_rsp->TotalBytesWritten =
->   		cpu_to_le32(ksmbd_server_side_copy_max_total_size());
->   
-> -	chunks = (struct srv_copychunk *)&ci_req->Chunks[0];
->   	chunk_count = le32_to_cpu(ci_req->ChunkCount);
->   	if (chunk_count == 0)
->   		goto out;
-> @@ -7579,6 +7578,7 @@ static int fsctl_copychunk(struct ksmbd_work *work,
->   		return -EINVAL;
->   	}
->   
-> +	chunks = (struct srv_copychunk *)&ci_req->Chunks[0];
->   	for (i = 0; i < chunk_count; i++) {
->   		if (le32_to_cpu(chunks[i].Length) == 0 ||
->   		    le32_to_cpu(chunks[i].Length) > ksmbd_server_side_copy_max_chunk_size())
-> diff --git a/fs/smb/server/smb2pdu.h b/fs/smb/server/smb2pdu.h
-> index 73aff20e22d0..f01121dbf358 100644
-> --- a/fs/smb/server/smb2pdu.h
-> +++ b/fs/smb/server/smb2pdu.h
-> @@ -194,7 +194,7 @@ struct copychunk_ioctl_req {
->   	__le64 ResumeKey[3];
->   	__le32 ChunkCount;
->   	__le32 Reserved;
-> -	__u8 Chunks[]; /* array of srv_copychunk */
-> +	__u8 Chunks[] __counted_by_le(ChunkCount); /* array of srv_copychunk */
->   } __packed;
->   
+On Tue, Sep 24, 2024 at 8:52=E2=80=AFAM Chris Li <chriscli@google.com> wrot=
+e:
+>
+> Hi Sergey,
+>
+> On Tue, Sep 24, 2024 at 8:36=E2=80=AFAM Chris Li <chrisl@kernel.org> wrot=
+e:
+> >
+> > Hi Sergey,
+> >
+> > The current mm-unstable is breaking my swap stress test again. While th=
+ere seems to be multiple bad commits that cause it. I have bisected into th=
+is commit causing kernel warning and followed by BUG().
+> >
+> > [   56.630032] zswap: loaded using pool lzo/zsmalloc
+> > [   56.718027] zram0: detected capacity change from 16777216 to 0
+> > [   56.725492] zram: Removed device: zram0
+> > [   56.740125] ------------[ cut here ]------------
+> > [   56.744616] WARNING: CPU: 2 PID: 1894 at mm/slub.c:4556 free_large_k=
+malloc+0x4d/0x80
+> > [   56.745119] Modules linked in:
+> > [   56.749551] CPU: 2 UID: 0 PID: 1894 Comm: zram-generator Tainted: G =
+S                 6.11.0-rc6+ #33
+> > [   56.750129] Tainted: [S]=3DCPU_OUT_OF_SPEC
+> > [   56.750908] Hardware name: HP ProLiant DL360 Gen9/ProLiant DL360 Gen=
+9, BIOS P89 09/21/2023
+> > [   56.751354] RIP: 0010:free_large_kmalloc+0x4d/0x80
+> > [   56.756120] Code: 00 10 00 00 48 d3 e0 f7 d8 81 e2 c0 00 00 00 75 2f=
+ 89 c6 48 89 df e8 82 ff ff ff f0 ff 4b 34 0f 85 e
+> > 9 7d f5 00 e9 eb 7d f5 00 <0f> 0b 80 3d a8 f3 9b 02 00 0f 84 bd 7d f5 0=
+0 b8 00 f0 ff ff eb d1
+> > [   56.761370] RSP: 0018:ffffaeaaa3657b20 EFLAGS: 00010246
+> > [   56.761676] RAX: 0057ffffc0002000 RBX: ffffece0c1f40e80 RCX: 0000000=
+08040003f
+> > [   56.766293] RDX: ffffece0c1f40e88 RSI: ffffffff9a03a131 RDI: ffffece=
+0c1f40e80
+> > [   56.770931] RBP: 0000000000200000 R08: ffff95571d256480 R09: 0000000=
+08040003f
+> > [   56.775540] R10: 000000008040003f R11: 000000000000032c R12: 0000000=
+000200000
+> > [   56.780212] R13: ffff953787c71e40 R14: 0000000000000047 R15: ffff953=
+79b2e3e20
+> > [   56.784943] FS:  00007fb0f1d58bc0(0000) GS:ffff95567ed00000(0000) kn=
+lGS:0000000000000000
+> > [   56.785403] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [   56.789937] CR2: 00007f35b6449050 CR3: 00000001112ac006 CR4: 0000000=
+0001706f0
+> > [   56.794784] Call Trace:
+> > [   56.794941]  <TASK>
+> > [   56.799377]  ? free_large_kmalloc+0x4d/0x80
+> > [   56.799598]  ? __warn.cold+0x8e/0xe8
+> > [   56.799842]  ? free_large_kmalloc+0x4d/0x80
+> > [   56.800065]  ? report_bug+0xff/0x140
+> > [   56.800296]  ? handle_bug+0x3c/0x80
+> > [   56.804703]  ? exc_invalid_op+0x17/0x70
+> > [   56.804912]  ? asm_exc_invalid_op+0x1a/0x20
+> > [   56.805132]  ? free_large_kmalloc+0x4d/0x80
+> > [   56.805344]  zram_destroy_comps+0x32/0x70
+> > [   56.805568]  zram_reset_device+0x102/0x190
+> > [   56.805812]  reset_store+0xa6/0x110
+> > [   56.810207]  kernfs_fop_write_iter+0x141/0x1f0
+> > [   56.814689]  vfs_write+0x294/0x460
+> > [   56.819106]  ksys_write+0x6d/0xf0
+> > [   56.823550]  do_syscall_64+0x82/0x160
+> > [   56.823827]  ? __pfx_kfree_link+0x10/0x10
+> > [   56.824051]  ? do_sys_openat2+0x9c/0xe0
+> > [   56.824263]  ? __handle_mm_fault+0xb34/0xfb0
+> > [   56.828752]  ? syscall_exit_to_user_mode+0x10/0x220
+> > [   56.833220]  ? do_syscall_64+0x8e/0x160
+> > [   56.833429]  ? __count_memcg_events+0x77/0x130
+> > [   56.838021]  ? count_memcg_events.constprop.0+0x1a/0x30
+> > [   56.838318]  ? handle_mm_fault+0x1bb/0x2c0
+> > [   56.838542]  ? do_user_addr_fault+0x55a/0x7b0
+> > [   56.843014]  ? exc_page_fault+0x7e/0x180
+> > [   56.843228]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > [   56.843831] RIP: 0033:0x7fb0f1f7a984
+> > [   56.844045] Code: c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84=
+ 00 00 00 00 00 f3 0f 1e fa 80 3d c5 06 0e 00 00 7
+> > 4 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 55 48 8=
+9 e5 48 83 ec 20 48 89
+> > [   56.849247] RSP: 002b:00007ffc7db8fde8 EFLAGS: 00000202 ORIG_RAX: 00=
+00000000000001
+> > [   56.853889] RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007fb=
+0f1f7a984
+> > [   56.858482] RDX: 0000000000000001 RSI: 0000560df4e4ea65 RDI: 0000000=
+000000004
+> > [   56.863154] RBP: 0000000000000004 R08: 0000560e0e417010 R09: 0000000=
+000000007
+> > [   56.867794] R10: 00000000000001b6 R11: 0000000000000202 R12: 7ffffff=
+fffffffff
+> > [   56.872980] R13: 00007fb0f1f7a970 R14: 0000560df4e4ea65 R15: 0000560=
+df4e71bd0
+> > [   56.878043]  </TASK>
+> > [   56.878555] ---[ end trace 0000000000000000 ]---
+> > [   56.883420] object pointer: 0x00000000f38e5ae7
+> > [   56.888235] BUG: Bad page state in process zram-generator  pfn:407d0=
+3a
+> > [   56.889026] page: refcount:0 mapcount:0 mapping:0000000000000000 ind=
+ex:0x0 pfn:0x407d03a
+> > [   56.889877] flags: 0x57ffffc0002000(reserved|node=3D1|zone=3D2|lastc=
+pupid=3D0x1fffff)
+> > [   56.894915] raw: 0057ffffc0002000 ffffece0c1f40e88 ffffece0c1f40e88 =
+0000000000000000
+> > [   56.895771] raw: 0000000000000000 0000000000000000 00000000ffffffff =
+0000000000000000
+> > [   56.896562] page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) se=
+t
+> > [   56.897332] Modules linked in:
+> > [   56.902165] CPU: 2 UID: 0 PID: 1894 Comm: zram-generator Tainted: G =
+S      W          6.11.0-rc6+ #33
+> > [   56.903155] Tainted: [S]=3DCPU_OUT_OF_SPEC, [W]=3DWARN
+> > [   56.908082] Hardware name: HP ProLiant DL360 Gen9/ProLiant DL360 Gen=
+9, BIOS P89 09/21/2023
+> > [   56.908918] Call Trace:
+> > [   56.909484]  <TASK>
+> > [   56.914148]  dump_stack_lvl+0x5d/0x80
+> > [   56.914747]  bad_page.cold+0x7a/0x91
+> > [   56.915318]  free_unref_page+0x344/0x520
+> > [   56.915975]  zram_destroy_comps+0x32/0x70
+> > [   56.916452]  zram_reset_device+0x102/0x190
+> > [   56.917057]  reset_store+0xa6/0x110
+> > [   56.921874]  kernfs_fop_write_iter+0x141/0x1f0
+> > [   56.926685]  vfs_write+0x294/0x460
+> > [   56.931385]  ksys_write+0x6d/0xf0
+> > [   56.936087]  do_syscall_64+0x82/0x160
+> > [   56.936656]  ? __pfx_kfree_link+0x10/0x10
+> > [   56.937257]  ? do_sys_openat2+0x9c/0xe0
+> > [   56.937810]  ? __handle_mm_fault+0xb34/0xfb0
+> > [   56.942593]  ? syscall_exit_to_user_mode+0x10/0x220
+> > [   56.947362]  ? do_syscall_64+0x8e/0x160
+> > [   56.947974]  ? __count_memcg_events+0x77/0x130
+> > [   56.952762]  ? count_memcg_events.constprop.0+0x1a/0x30
+> > [   56.953356]  ? handle_mm_fault+0x1bb/0x2c0
+> > [   56.953937]  ? do_user_addr_fault+0x55a/0x7b0
+> > [   56.958999]  ? exc_page_fault+0x7e/0x180
+> > [   56.959523]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > [   56.960163] RIP: 0033:0x7fb0f1f7a984
+> > [   56.960731] Code: c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84=
+ 00 00 00 00 00 f3 0f 1e fa 80 3d c5 06 0e 00 00 7
+> > 4 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 55 48 8=
+9 e5 48 83 ec 20 48 89
+> > [   56.966840] RSP: 002b:00007ffc7db8fde8 EFLAGS: 00000202 ORIG_RAX: 00=
+00000000000001
+> > [   56.971903] RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007fb=
+0f1f7a984
+> > [   56.976953] RDX: 0000000000000001 RSI: 0000560df4e4ea65 RDI: 0000000=
+000000004
+> > [   56.981946] RBP: 0000000000000004 R08: 0000560e0e417010 R09: 0000000=
+000000007
+> > [   56.986980] R10: 00000000000001b6 R11: 0000000000000202 R12: 7ffffff=
+fffffffff
+> > [   56.991985] R13: 00007fb0f1f7a970 R14: 0000560df4e4ea65 R15: 0000560=
+df4e71bd0
+> > [   56.996963]  </TASK>
+> > [   56.997533] Disabling lock debugging due to kernel taint
+> > [   57.037759] zram: Added device: zram0
+> > [   57.088669] zram: Added device: zram1
+> > [   57.249105] zram0: detected capacity change from 0 to 6553600
+> > [   57.320547] zram1: detected capacity change from 0 to 40960000
+> > [   57.443012] Adding 3276796k swap on /dev/zram0.  Priority:100 extent=
+s:1 across:3276796k SS
+> > [   57.470295] Adding 20479996k swap on /dev/zram1.  Priority:0 extents=
+:1 across:20479996k SS
+> >
+> > Here is the bisect log:
+> >
+> > $ git bisect log
+> > # bad: [684826f8271ad97580b138b9ffd462005e470b99] zram: free secondary =
+algorithms names
+> > # good: [2cacbdfdee65b18f9952620e762eab043d71b564] mm: swap: add a adap=
+tive full cluster cache reclaim
+> > git bisect start 'mm-stable' 'HEAD'
+> > # good: [9bfbaa5e44c52422a046ce291469c8ebeb6c475d] mm/damon: move kunit=
+ tests to tests/ subdirectory with _kunit suffix
+> > git bisect good 9bfbaa5e44c52422a046ce291469c8ebeb6c475d
+> > # good: [1e673c8cf7f9c1156f615b7c00f224a8110070da] zram: add dictionary=
+ support to lz4hc
+> > git bisect good 1e673c8cf7f9c1156f615b7c00f224a8110070da
+> > # good: [3c8e44c9b369b3d422516b3f2bf47a6e3c61d1ea] mm: mark special bit=
+s for huge pfn mappings when inject
+> > git bisect good 3c8e44c9b369b3d422516b3f2bf47a6e3c61d1ea
+> > # good: [f9e54c3a2f5b79ecc57c7bc7d0d3521e461a2101] vfio/pci: implement =
+huge_fault support
+> > git bisect good f9e54c3a2f5b79ecc57c7bc7d0d3521e461a2101
+> > # good: [659c55ef981bb63355a65ffc3b3b5cad562b806a] mm/vma: return the e=
+xact errno in vms_gather_munmap_vmas()
+> > git bisect good 659c55ef981bb63355a65ffc3b3b5cad562b806a
+> > # good: [325efb16da2c840e165d9b620fec8049d4d664cc] mm: add nr argument =
+in mem_cgroup_swapin_uncharge_swap() helper to support large folios
+> > git bisect good 325efb16da2c840e165d9b620fec8049d4d664cc
+> > # good: [ed8d5b0ce1d738e13c60d6b1a901a56d832e5070] Revert "uprobes: use=
+ vm_special_mapping close() functionality"
+> > git bisect good ed8d5b0ce1d738e13c60d6b1a901a56d832e5070
+> > # good: [2abbcc099ec60844ca7c15214ab12955d3c11e68] uprobes: turn xol_ar=
+ea->pages[2] into xol_area->page
+> > git bisect good 2abbcc099ec60844ca7c15214ab12955d3c11e68
+> > # first bad commit: [684826f8271ad97580b138b9ffd462005e470b99] zram: fr=
+ee secondary algorithms names
+> >
+> > Sergey told me there is a fix on the way:
+> > https://lore.kernel.org/all/20240923164843.1117010-1-andrej.skvortzov@g=
+mail.com/
+>
+> Confirm the fix in the above thread to fix the kernel oops for me.
+>
+> Tested-by: Chris Li <chrisl@kernel.org>
 
-This isn't correct. The u8 is just a raw buffer, copychunk structs are
-marshaled into it, and they're 24 bytes each.
+Sorry I have to withdraw that Tested-by.  Turns out the initial
+warning and oops disappear, the swap stress test got oom killed.
+I should have waited for the test to complete before sending out emails.
 
-The better fix would be to type the buffer contents properly, but that
-will have protocol implications and should be thoroughly tested.
+Will report more detail of the oom kill in that email thread.
 
-NAK on this change for now.
+Chris
 
-Tom.
-
-
->   struct srv_copychunk {
-
+>
+>
+> Chris
+>
+>
+> > On Mon, Sep 16, 2024 at 6:30=E2=80=AFPM Sergey Senozhatsky <senozhatsky=
+@chromium.org> wrote:
+> >>
+> >> We need to kfree() secondary algorithms names when reset
+> >> zram device that had multi-streams, otherwise we leak memory.
+> >>
+> >> Fixes: 001d92735701 ("zram: add recompression algorithm sysfs knob")
+> >> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+> >> ---
+> >>  drivers/block/zram/zram_drv.c | 5 +++++
+> >>  1 file changed, 5 insertions(+)
+> >>
+> >> diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_d=
+rv.c
+> >> index f8206ba6cbbb..c3d245617083 100644
+> >> --- a/drivers/block/zram/zram_drv.c
+> >> +++ b/drivers/block/zram/zram_drv.c
+> >> @@ -2115,6 +2115,11 @@ static void zram_destroy_comps(struct zram *zra=
+m)
+> >>                 zram->num_active_comps--;
+> >>         }
+> >>
+> >> +       for (prio =3D ZRAM_SECONDARY_COMP; prio < ZRAM_MAX_COMPS; prio=
+++) {
+> >> +               kfree(zram->comp_algs[prio]);
+> >> +               zram->comp_algs[prio] =3D NULL;
+> >> +       }
+> >> +
+> >>         zram_comp_params_reset(zram);
+> >>  }
+> >>
+> >> --
+> >> 2.46.0.662.g92d0881bb0-goog
+> >>
+> >>
 
