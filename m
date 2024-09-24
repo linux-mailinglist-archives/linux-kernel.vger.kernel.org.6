@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-337152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51CEF9845FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:33:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F8F79845FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:33:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F86B2844C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:33:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E37A61F213A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B91721A76B2;
-	Tue, 24 Sep 2024 12:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37BD41A7AF5;
+	Tue, 24 Sep 2024 12:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d6lEXzGV"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jg5xyrGB"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E2C1A7AF5
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 12:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373192907
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 12:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727181158; cv=none; b=Xzj7Q3RGE04OJFhluSB51imxipl1DgRNxT270fH+7GYeGNB/4a+6pltCV3X9VyGaXnp5aCahE6xYpFWSd2bxSKFN4m+gq8bV7Wc5JkpvStKWZ3akRYq/7hR5tYZ/WOmrBd51Ih2bs3c4wuydYLQcxrWp6Vni6BXd8+3w1zYBojw=
+	t=1727181163; cv=none; b=q7LIEzNUnzDyJOpo8vnv0Bex3nEtFL9bv54aaF0fGZwWLSJb80/k8RdGSf4cjhZvMACJLtMEPIJ5v/Ejx8pm8UCjUURtnJGmuyKJ9N9bU8boingXU0WwTg35ButFr8psVS0ZvkncerNc/8KLJXJepHaQLzpTY8FztJwdsmyWjI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727181158; c=relaxed/simple;
-	bh=ihUrjom1CVLpewOUxHxXnQDiC74uuQESPKR49w6+r30=;
+	s=arc-20240116; t=1727181163; c=relaxed/simple;
+	bh=p+SlC9+iWsoYOkzR6USkIX63Q4voGnHbuqMuTP5Qk6A=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bDvk7cCgwjzKi3kOqjWA2BGawzdGF0uCZSzVvjqNQf/VqAFn6X6xsPuh4xzzeuXNciV6V2P+g2yan+Z5yPSEmxnIlJ5SoCa+rArBgMDPleJfabIm5pLLqmN800G9tdRyDm5tK6uFEe0y8qO/3GNRYtHleabh5n1gdPAK5krppos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d6lEXzGV; arc=none smtp.client-ip=209.85.210.173
+	 MIME-Version; b=Y7qISKNWFPAIZUpcuiI/vTdjjm0mcNAMZp1TzpaOpAtk9uLq99CWRNemcYcNLEUJzGNY2jrGwc0OfIhGk242Jrn3Q5+LpOXlmAIuTDibrmfCuPmyFNZ//6sZ7uCegRfHLP0uXDekybUqYsMx5kcXR1Gj/9CUamMQfXDlRY6OW6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jg5xyrGB; arc=none smtp.client-ip=209.85.210.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-718d606726cso3682806b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 05:32:36 -0700 (PDT)
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71b070ff24dso114194b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 05:32:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727181156; x=1727785956; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1727181160; x=1727785960; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+HTEls9oNKfjurlW/7JQf2pxCuaRhIqDrMhYGPg6XCE=;
-        b=d6lEXzGVhlZODC4c71978IG8+zwWUWaMXRu07J8BQgyYg0Xkw+fbMCC5PJbGdLLZ+W
-         DPNN39Xls/oAtHrFi6J8xj17ySp6o/KgTRcl1qMI9c8AE9eC+6BVLGCPMQ1eK3iElm0p
-         vd8JlPqZB/4NbIUnwCkN7ERN4BOZLxTdbSP0DFODrsMdQt6Hz+ZRK7W7IbVbHwdcNOq1
-         vz1sB3Fdrpx5l0HZdBK4Ymm34fJaglv9nxSOXTCYSyKteHij1R/K7Y4yBZnuub6IjPh/
-         Ohy+ntgELZdNoFnn5MHo2ox+sV3LvKay8xDszzCqPNCuCOb0pnTjapm4VMya35ymdMYq
-         Ubzg==
+        bh=g2CQ3g+a9Pxs3bYyycBG+VPiOxu/RQcJ2VdogNTviFY=;
+        b=jg5xyrGBHT3DIGyvTvleYW6tz1THZZhtdnYFyuzpLIIwwKpsnDoPt65QYG6a618E7E
+         jU8trfJAIV7hMbomUUM0KemDQ/Y55UL0X8kB56wt/52di7RTkhSh77Oc3e9rFe00gXhF
+         xn+OdcKO6LzUZxx1PsIR8kRBvcK1HxklLsKPXYQXWDpV0TY/sT208qFP6EOOR6x9VZfS
+         LnfWVe1sbkQM7F0KEoc323i15cBJgLJ7SM0a0QKuXM+IsL81S0kUJuY3QWuRJzcgfOiv
+         n6VkdTim4h+9Qfy+IVAnFyGkZF0+JnKd8rURF4B2Ew2rI9dofdWhBDZskTIDaAFUPjQ3
+         xRpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727181156; x=1727785956;
+        d=1e100.net; s=20230601; t=1727181160; x=1727785960;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+HTEls9oNKfjurlW/7JQf2pxCuaRhIqDrMhYGPg6XCE=;
-        b=ZNudnmkgOglcXCke+dczU4hpyfo1IqjqVrbsqjS2LWUOeS3o0iRlbJGA2LElwVj6+T
-         qNHh3vLvDETSSWmPFb/TYbTPBi2bE9kRVCdgBh7zPksiaTiRt9CXxQlSTaP55CpOTyp+
-         FqIbS9WSGt8cTudzEoWkbDmMjBUoZE9Vs8dXSmEv8YMtIi1bBJweO7TJ+ro7RKi7xvS6
-         eOijLRZpRxkq0xI9meaK5XZhZk8eHAuhzjtKMvDI+XoNOs6mJRMCJ6+FjB7PsVg1OmTk
-         z4O7X0AlujKhwOlAT/+gtb1D1oF7Ok618kIrat+Dc030nPEEqrQaVJvKM6+5T+xqoWQG
-         S0bg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzvTvC+2kCgXNopxV2y06OE+FI011nA2Q+QskPlAjJFvPZlE7dH0A6eNi4KOVyC4t1+5GYARUu9VkOo+4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwN2L3v1z4sPvtLgCdzoAMJHanl3UerUBwUc5WnfAbGnR/h1xCs
-	0qxQw9zIe/AMq8Nkr+ihaLYNY4rdvDMXTVKfGbjOa69Th1Vowp73
-X-Google-Smtp-Source: AGHT+IGDCkwZpNocsyz0AWFpALmNxVSU6O0yLt8LNXOO4zrtUvGJA4rbuajl7pvGROR/U99U4Oaixg==
-X-Received: by 2002:a05:6a20:4388:b0:1d2:e78a:36a2 with SMTP id adf61e73a8af0-1d30c9891d1mr21687125637.8.1727181155920;
-        Tue, 24 Sep 2024 05:32:35 -0700 (PDT)
+        bh=g2CQ3g+a9Pxs3bYyycBG+VPiOxu/RQcJ2VdogNTviFY=;
+        b=ug+0UaAPRn3Or3WDfi2vY5zPF5VnO4b9QcgN85W8uc8ywrpz/PTAIhc8RuZhP23aru
+         5rF6CAy8GZ+9pj7WUc1X2nk4b5prw7dyUj6YcIRWM039ILCOaekw0Q6lPmCpjMH1R0ld
+         1E/4/HfmegS4oXPPoBmwRBWiSDgLdTsufK2sOCFuGnu6Mu22rmpY4OKb/LAEX7K8qY1Q
+         O1BZZz5a8drWC93jzfN2uW5Ipq+MF3CXuNlAiD89Gs2wawz+TlG0h4KAjeYMV4PVAfrC
+         if2Dj8kM3XzQzY+shT89eAyG/Y2zK9nuM7MdCLFhqWG8Z+THB8/lI1d5S4CU+1n5UWO7
+         UbqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUz74V+D4der33227g8unthYI7bP3fQ1JtCybJoveHZg7FUhGIenp7bTQGyWlkYEc08JqliJSVbAuTH1LU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxsfx5720xg/o0llcJD/i6cWo2DVcv0cQMdt2JPqOt7RLK4ujHi
+	GO2eBjsW9ZF9ZFeewhA819AforHnDOM3uExDW+FlAn/8QCQJV0pS
+X-Google-Smtp-Source: AGHT+IEmU39wcdMD7Hu+761mCwaWe1nxzhCQtivLc6GjEntFU8SDmx+NYyq927LMPvKJT+boqhoojg==
+X-Received: by 2002:a05:6a00:4650:b0:717:8d81:e548 with SMTP id d2e1a72fcca58-7199c939056mr22079935b3a.1.1727181160349;
+        Tue, 24 Sep 2024 05:32:40 -0700 (PDT)
 Received: from localhost.localdomain (ec2-13-113-80-70.ap-northeast-1.compute.amazonaws.com. [13.113.80.70])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71afc9c5ad4sm1115566b3a.188.2024.09.24.05.32.32
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71afc9c5ad4sm1115566b3a.188.2024.09.24.05.32.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 05:32:35 -0700 (PDT)
+        Tue, 24 Sep 2024 05:32:39 -0700 (PDT)
 From: Zhang Boyang <zhangboyang.id@gmail.com>
 To: Linus Torvalds <torvalds@linux-foundation.org>,
 	linux-kernel@vger.kernel.org
@@ -74,9 +74,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	Kees Cook <keescook@chromium.org>,
 	Randy Dunlap <rdunlap@infradead.org>,
 	Zhang Boyang <zhangboyang.id@gmail.com>
-Subject: [PATCH 3/5] rslib: Fix wrong result if gffunc(0) != 1
-Date: Tue, 24 Sep 2024 20:31:39 +0800
-Message-Id: <20240924123141.16962-4-zhangboyang.id@gmail.com>
+Subject: [PATCH 4/5] rslib: Improve the performance of encode_rs.c
+Date: Tue, 24 Sep 2024 20:31:40 +0800
+Message-Id: <20240924123141.16962-5-zhangboyang.id@gmail.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20240924123141.16962-1-zhangboyang.id@gmail.com>
 References: <20240924123141.16962-1-zhangboyang.id@gmail.com>
@@ -88,59 +88,90 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The rslib allows customizing the finite field by the `gffunc' parameter
-of init_rs_non_canonical(). However, there are several places in rslib
-use hard-coded 1, leading to errors if gffunc(0) != 1. This patch
-replaces hard-coded 1 with alpha_to[0] to fix this problem. One of such
-`gffunc' might be gffunc'(x) = swab16(gffunc(swab16(x))), as
-gffunc'(0) = swab16(1). This special gffunc'(x) is useful when
-implementing RS coder for 16 bit foreign-endian symbols.
+This patch enhances the performance of RS encoder by following points:
 
-Fixes: d7e5a5462f68 ("[RSLIB] Support non-canonical GF representations")
+1) Avoid memmove(). The shifting operation done by memmove() can be
+   merged into the calculation loop above.
+
+2) Introduce rs_modnn_fast(). The original rs_modnn() contains a loop
+   which may be slow. Since (fb + genpoly[...]) is always strictly less
+   than (2 * rs->nn), we can use a ternary operator to do the same
+   calculation. The new faster function is named rs_modnn_fast(). The
+   new rs_modnn_fast(x) requires 0 <= x < 2*nn, in contrast, original
+   rs_modnn(x) only requires x >= 0. To make things clear, the
+   documentation of original rs_modnn() is also updated.
+
 Signed-off-by: Zhang Boyang <zhangboyang.id@gmail.com>
 ---
- lib/reed_solomon/decode_rs.c    | 4 ++--
- lib/reed_solomon/reed_solomon.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ include/linux/rslib.h        | 15 ++++++++++++++-
+ lib/reed_solomon/encode_rs.c | 21 ++++++++++-----------
+ 2 files changed, 24 insertions(+), 12 deletions(-)
 
-diff --git a/lib/reed_solomon/decode_rs.c b/lib/reed_solomon/decode_rs.c
-index 805de84ae83d..6c1d53d1b702 100644
---- a/lib/reed_solomon/decode_rs.c
-+++ b/lib/reed_solomon/decode_rs.c
-@@ -104,7 +104,7 @@
+diff --git a/include/linux/rslib.h b/include/linux/rslib.h
+index 908bf7d0eb58..d228ece01069 100644
+--- a/include/linux/rslib.h
++++ b/include/linux/rslib.h
+@@ -110,7 +110,7 @@ void free_rs(struct rs_control *rs);
+  * rs_modnn() - Modulo replacement for galois field arithmetics
+  *
+  *  @rs:	Pointer to the RS codec
+- *  @x:		the value to reduce
++ *  @x:		the value to reduce (requires x >= 0)
+  *
+  *  where
+  *  rs->mm = number of bits per symbol
+@@ -127,4 +127,17 @@ static inline int rs_modnn(struct rs_codec *rs, int x)
+ 	return x;
+ }
  
-  decode:
- 	memset(&lambda[1], 0, nroots * sizeof(lambda[0]));
--	lambda[0] = 1;
-+	lambda[0] = alpha_to[0];
++/**
++ * rs_modnn_fast() - Modulo replacement for galois field arithmetics
++ *
++ *  @rs:	Pointer to the RS codec
++ *  @x:		the value to reduce (requires 0 <= x < 2*nn)
++ *
++ *  Same as rs_modnn(x), but faster, at the cost of limited value range of @x
++*/
++static inline int rs_modnn_fast(struct rs_codec *rs, int x)
++{
++	return x - rs->nn < 0 ? x : x - rs->nn;
++}
++
+ #endif
+diff --git a/lib/reed_solomon/encode_rs.c b/lib/reed_solomon/encode_rs.c
+index 9112d46e869e..6e3847b17ad4 100644
+--- a/lib/reed_solomon/encode_rs.c
++++ b/lib/reed_solomon/encode_rs.c
+@@ -27,19 +27,18 @@
  
- 	if (no_eras > 0) {
- 		/* Init lambda to be the erasure locator polynomial */
-@@ -198,7 +198,7 @@
- 	memcpy(&reg[1], &lambda[1], nroots * sizeof(reg[0]));
- 	count = 0;		/* Number of roots of lambda(x) */
- 	for (i = 1, k = iprim - 1; i <= nn; i++, k = rs_modnn(rs, k + iprim)) {
--		q = 1;		/* lambda[0] is always 0 */
-+		q = alpha_to[0];	/* lambda[0] is always 0 */
- 		for (j = deg_lambda; j > 0; j--) {
- 			if (reg[j] != nn) {
- 				reg[j] = rs_modnn(rs, reg[j] + j);
-diff --git a/lib/reed_solomon/reed_solomon.c b/lib/reed_solomon/reed_solomon.c
-index bbc01bad3053..bb4f44c8edba 100644
---- a/lib/reed_solomon/reed_solomon.c
-+++ b/lib/reed_solomon/reed_solomon.c
-@@ -131,9 +131,9 @@ static struct rs_codec *codec_init(int symsize, int gfpoly, int (*gffunc)(int),
- 	rs->iprim = iprim / prim;
- 
- 	/* Form RS code generator polynomial from its roots */
--	rs->genpoly[0] = 1;
-+	rs->genpoly[0] = rs->alpha_to[0];
- 	for (i = 0, root = fcr * prim; i < nroots; i++, root += prim) {
--		rs->genpoly[i + 1] = 1;
-+		rs->genpoly[i + 1] = rs->alpha_to[0];
- 		/* Multiply rs->genpoly[] by  @**(root + x) */
- 		for (j = i; j > 0; j--) {
- 			if (rs->genpoly[j] != 0) {
+ 	for (i = 0; i < len; i++) {
+ 		fb = index_of[((((uint16_t) data[i])^invmsk) & msk) ^ par[0]];
+-		/* feedback term is non-zero */
+ 		if (fb != nn) {
+-			for (j = 1; j < nroots; j++) {
+-				par[j] ^= alpha_to[rs_modnn(rs, fb +
+-							 genpoly[nroots - j])];
+-			}
+-		}
+-		/* Shift */
+-		memmove(&par[0], &par[1], sizeof(uint16_t) * (nroots - 1));
+-		if (fb != nn) {
+-			par[nroots - 1] = alpha_to[rs_modnn(rs,
+-							    fb + genpoly[0])];
++			/* feedback term is non-zero */
++			for (j = 1; j < nroots; j++)
++				par[j - 1] = par[j] ^ alpha_to[rs_modnn_fast(rs,
++						      fb +
++						      genpoly[nroots - j])];
++			par[nroots - 1] = alpha_to[rs_modnn_fast(rs,
++					  fb +
++					  genpoly[0])];
+ 		} else {
++			for (j = 1; j < nroots; j++)
++				par[j - 1] = par[j];
+ 			par[nroots - 1] = 0;
+ 		}
+ 	}
 -- 
 2.30.2
 
