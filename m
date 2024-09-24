@@ -1,197 +1,155 @@
-Return-Path: <linux-kernel+bounces-336750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6E73984047
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:20:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E083E98404A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:20:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1E88284DF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:20:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A346B283CBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4873915442A;
-	Tue, 24 Sep 2024 08:19:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064CB14BF8D;
+	Tue, 24 Sep 2024 08:20:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="zeEuSYYy"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2058.outbound.protection.outlook.com [40.107.95.58])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DpjNFQn+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1174A14EC4A;
-	Tue, 24 Sep 2024 08:19:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727165969; cv=fail; b=AoytMNQCYvro8bQTD4lrjICEiPV1M4Z2oMMKlZBPNC5xLTgqU+4rV+PhOus3+hAQit7le+sHBTmAxhvrTExdUDgbhx0yBHpbE/Yfk+eJa5f8QPW+XBb9rNTW1XSE0sdmorNVSQ/svqOI6geSu3s8W+4p3VJfPhdJ9OtFDuHsKbk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727165969; c=relaxed/simple;
-	bh=cDXdtJKNEBqO3/or1G8DkQjgnZNHsQ+/7sDW2RCEbAE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IXD8y4rYDMiFz4s0I9IoOH+jlFVtWRNU9K0rfBs6SS2vz9yGAJq0VDwyR/GYmn7BUxPZEAkkKcv2lBWcIH4hSsfj2y4LJEdyYkKD/eWoP2fcVHvSon1VwSz+HY2tWmpgD40/fL1QUOpyRMqGIUG8BYkBlVXVXsyuLw4M3culJJs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=zeEuSYYy; arc=fail smtp.client-ip=40.107.95.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PQnDB4MzY+dvIyyC5SaB1uYuvYkDJj/cBYhAkytDmlPEY92IK14hMIPZaNGRmCEVqc9ZTwV9JPEEmqJCtWKD450oXMJcjGNrePxOkLXsiLIaJfMUMWps7q96Frh7QVLWPLetYSz3Lu4RDrzNKxG9GOzlffLkgrxyhjaoFAolK2ROjqJD483sDO2Sb3vz+f0sniTcpYuYEmhnyMELcGpL8AoiUOPxPzaLICrKpSdfw0SnT573FWl6eGv/rYAwLQQgwrXzacKxjorHJ/avaL+mrl7Bz1IqYoG+85Z6nQy73G0Tt6XR3cthAJfdaO0uuxammjYvITZiNjCmSNZXPMFqNQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VKy9wUhG3WaIs92o7Z0M5iYudKb8D/yEP3pJH3z3TcQ=;
- b=CTy5NQ5oMyL1L0l+xTWwSNMW+bfqJ1v8QxkFaSpTyQwdkuNsYqZ6GQzDmfebakqdzDI7c7XFnmior4pstR8MIE/l7fV4GOFSwcoUCa4SifrhzDXBxpLEM4stVH68XslGEslKAX8zQU82e3f9UVomwaK/qyqwh7SuK0toLGeaxCWtCIblNZx1v0FnxD9qwux+hiHSvFTsUYGes5aTJlWuovADHSpo4UUobGzUe6RLnXohsQZmI1ECgcjEv4QR0k+JAC4XzQ5kLIq5eK/J6/thezWx7LhzMfp7hqmKtaw2IxN0fU3idZJknd3GxMRkSWlMD2glqTgE4d6KciMN64O4YQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VKy9wUhG3WaIs92o7Z0M5iYudKb8D/yEP3pJH3z3TcQ=;
- b=zeEuSYYyZqeNDck+3H4ZbziaRh2+CsVOl9t+ntxUM2oVZsOqfVDFZmTvJZy0jwVJ2cXTDlrqk7eC6hfxZuWXK32TlspVcfqiG+Ttiti2Vx8zxBFrS8pgZMjWJZG+H1y8+KtP2Gu17emIkfN2as7Stam42+7DXLAmV8nR1WOnIAw=
-Received: from DS7PR03CA0100.namprd03.prod.outlook.com (2603:10b6:5:3b7::15)
- by IA1PR12MB6484.namprd12.prod.outlook.com (2603:10b6:208:3a7::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.25; Tue, 24 Sep
- 2024 08:19:25 +0000
-Received: from DS3PEPF000099D3.namprd04.prod.outlook.com
- (2603:10b6:5:3b7:cafe::f8) by DS7PR03CA0100.outlook.office365.com
- (2603:10b6:5:3b7::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.17 via Frontend
- Transport; Tue, 24 Sep 2024 08:19:24 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS3PEPF000099D3.mail.protection.outlook.com (10.167.17.4) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8005.15 via Frontend Transport; Tue, 24 Sep 2024 08:19:24 +0000
-Received: from vijendar-X570-GAMING-X.amd.com (10.180.168.240) by
- SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 24 Sep 2024 03:19:18 -0500
-From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-To: <broonie@kernel.org>, <vkoul@kernel.org>
-CC: <alsa-devel@alsa-project.org>, <pierre-louis.bossart@linux.dev>,
-	<yung-chuan.liao@linux.intel.com>, <lgirdwood@gmail.com>, <perex@perex.cz>,
-	<tiwai@suse.com>, <Basavaraj.Hiregoudar@amd.com>,
-	<Sunil-kumar.Dommati@amd.com>, <venkataprasad.potturu@amd.com>,
-	<linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Vijendar
- Mukunda" <Vijendar.Mukunda@amd.com>
-Subject: [PATCH 4/4] ASoC: amd: ps: pass acp pci revision id as soundwire resource data
-Date: Tue, 24 Sep 2024 13:48:46 +0530
-Message-ID: <20240924081846.1834612-5-Vijendar.Mukunda@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240924081846.1834612-1-Vijendar.Mukunda@amd.com>
-References: <20240924081846.1834612-1-Vijendar.Mukunda@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B0622315;
+	Tue, 24 Sep 2024 08:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727166021; cv=none; b=o82BKv3e1PF2KYCeG6LvvGl6Hw3N2spAF7FGXgZBqHCNS4CxnQ4MPSDStkNUixvRxEKkiEPyRa1Z+RA+kDcyt2u/0YLy67gz4UKB6M6FOOvghJeJ8pv61Rpe97bDUzCKT4nRd0vSd9vC6i4wauBqYs4lfvBoYXpgLblcMlZeSfc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727166021; c=relaxed/simple;
+	bh=/o4tq8GeAOgaegwo22vFwkM2pGqReKxFBgBPuAuwIho=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d0wH68GDiHjmR0quNeYLZhIwflY2+FB3P8ZZn7I/TFpqDntQjxfhphFRvyOvnQA4MpPxrUzHbVc8bai9EQmCkcI+3l7NPoa94AHTPQpVJ0RouThVL9erZ/DqF/MjNlYi1D7v4JFaRT2rkigzdF1I12w9XlRL6cB5s4Zry0ZDGCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DpjNFQn+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5357BC4CEC4;
+	Tue, 24 Sep 2024 08:20:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727166020;
+	bh=/o4tq8GeAOgaegwo22vFwkM2pGqReKxFBgBPuAuwIho=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DpjNFQn+uUzAjAh4nIFRsrG+uZe4M8K2GVNT4q56yCaGhQPbSeN2chrsAfRLJijD5
+	 TB+NxUN6cQ4j3rgQUaqO/bewcgu5S7aNhSgGYAYBSoeuR9h4ImQTVtzJAONPabzvmP
+	 a+qLw15wrQUdw0X+aAB7nqLiWaHLtnObUdfvn8CRkN6NUu7dOjomhdeRcMlRs7tr0m
+	 Lm4Q6KHhxI1oqDcPWSpoOwtgKG6xZi81mL5LaLARuS16ZeAn9jP4mhlhNMRK6drqLO
+	 RzAGiI9TuFAr/OL6QqEmIBHWAuBpcuScurI4+ph/oVEkEQ04qeNXsWy63hfqQAJBFL
+	 Jowgqc2KuFZJg==
+Date: Tue, 24 Sep 2024 09:20:15 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Chanh Nguyen <chanh@amperemail.onmicrosoft.com>,
+	Chanh Nguyen <chanh@os.amperecomputing.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Peter Yin <peteryin.openbmc@gmail.com>,
+	Noah Wang <noahwang.wang@outlook.com>, Marek Vasut <marex@denx.de>,
+	Fabio Estevam <festevam@gmail.com>, Lukas Wunner <lukas@wunner.de>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+	Phong Vo <phong@os.amperecomputing.com>,
+	Thang Nguyen <thang@os.amperecomputing.com>,
+	Quan Nguyen <quan@os.amperecomputing.com>,
+	Khanh Pham <khpham@amperecomputing.com>,
+	Open Source Submission <patches@amperecomputing.com>
+Subject: Re: [PATCH v2] dt-bindings: trivial-devices: add onnn,adt7462
+Message-ID: <20240924-cringe-puma-67798ccadc66@spud>
+References: <20240923093800.892949-1-chanh@os.amperecomputing.com>
+ <20240923-private-grower-af6a7c1fca09@spud>
+ <c536f43a-56f8-4cbf-99a0-fe3b54a42886@amperemail.onmicrosoft.com>
+ <56b7aec6-bf8c-4547-bec2-e0df25489f77@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF000099D3:EE_|IA1PR12MB6484:EE_
-X-MS-Office365-Filtering-Correlation-Id: d3793c00-c10f-499c-1c90-08dcdc71999c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?nCphI8Uum9P72+4AntUpTsq6TmY+2TpPFDyJJ6aQdP/toZX8HeVN8k3GkO9R?=
- =?us-ascii?Q?yfr+r/IzymSjGENaUUf/hH2nhcaqZNAiVL2fLZIYEMR4VcaYMu2Sno/bGvbE?=
- =?us-ascii?Q?G217+6TOVEwLBmGXR3ZiwW8J9T0oSLhds9wXySLYoQlZoP2fj8P2TLOMwRZo?=
- =?us-ascii?Q?uRarpZzyIu8+6RTgWxqKniUZwPc4p75fg3cz9QO4thGIIyJdebualex43Foy?=
- =?us-ascii?Q?BudrRvmMo8VGVz0gwXmZMdYD+Nm3EPrm/+fwyqd/mOmAN2jFmBQ+FIz7yxP4?=
- =?us-ascii?Q?p6abZWIwkMWqJPO9rJPa4btJ6ND6AmUZT25AuLOIO9hiUCpVHJyu71WHHD0y?=
- =?us-ascii?Q?xgg0m/yWLkkHJuvRCfnFbGsr9zJ06/6yKUh622HzNKKZmU0RIXqPV+K5RzCp?=
- =?us-ascii?Q?KbuLtPM54n8LCYQdM/zhE59PrxA00jn+vMQbLODRl3fdQe4UqWVWOjCUg76f?=
- =?us-ascii?Q?apA3A3LriTPJKo06BaKEXV1fSQAWw4VkLyVqMIDBigmjKFd0pAK2SYIZY6FL?=
- =?us-ascii?Q?QoB3XygqGMCApUDn5GICQF0czrGcjjxMqk+uPqrib7f9iAG6N1uoaAt2cR11?=
- =?us-ascii?Q?51/a8uoGLJ9IxATXu0yXdxKVsRkGYq/sKmtdTxfCth1NK9l3CVZjAywWtjMN?=
- =?us-ascii?Q?fDtbZErZDB6UHAwWSJPPP0kUrcsrTblZrmdQwS6CxDiwlL2p9eb53Lnvavfw?=
- =?us-ascii?Q?zo1L5RWrBsaWadoCtwWaxfMOfX9I5sJ7luRroK1DyFcEcwcT/LkvdFTxAd7K?=
- =?us-ascii?Q?jS6wVl+hRLO233VZI+HiveIE+qrLyp83s/kWwj804sCLOIz+8EB4r5Cglb7+?=
- =?us-ascii?Q?uaqAsK46yiEPkjaHJSZtOs4M820o5Jv20vVeqMvNyuZDI366TtRAa2aZEUq0?=
- =?us-ascii?Q?a1BnJxm8G9LeahxDqt9CjM2nARXjN949/LFxP07ypXwu/sWsGBPd/z2fOctr?=
- =?us-ascii?Q?/N13quPmzpgSHI1p/Q2b1wZYkxicaMqISvsWMjhW+jxKwicuOzOfTUPfZ9C1?=
- =?us-ascii?Q?21/ycdI/az06xTzXvfJX3LuQwZiSy4AwFnPlymnnpxwn1hKVZZa1lPgzBabF?=
- =?us-ascii?Q?FUGgqlDJiO8MvkjjtT23wyt5zH9MFqAEAjx9pTYetC1qAMeN38TRm6vAJYye?=
- =?us-ascii?Q?wKr+t2bOB7ZRYKEfnZ3/YBQfRZtVWn2qIfjyhL7C1Ow4KynK72vY9CzL8/5V?=
- =?us-ascii?Q?5jBq3+7jTEaBEtTIP9bWxBq2WLow6xmMaLgBgZ3LMAoteMIYhx1AEoGHW9DV?=
- =?us-ascii?Q?ltT+M95HZkIgcvLP9ILTNdkwHBHrSfpoDhOf36unfkL6kOfcZBlQlT5N3Cpp?=
- =?us-ascii?Q?4eQslapbYu/M6kQ7m5iH0ig3uuO+lxV9jwn+VcYi2oIQGe8Vvn6RnQ0+cOmk?=
- =?us-ascii?Q?fNhtTrfhC7BhVgFxqxKETuMUHTniWwvPjwR2nAEs/fc1MjID5UobdZtY1cBQ?=
- =?us-ascii?Q?PRM6LUfsonf/ds6hZ05yEKk7IBGAumSx?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2024 08:19:24.5390
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d3793c00-c10f-499c-1c90-08dcdc71999c
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS3PEPF000099D3.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6484
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="kbruAPx8FvGXJzyx"
+Content-Disposition: inline
+In-Reply-To: <56b7aec6-bf8c-4547-bec2-e0df25489f77@roeck-us.net>
 
-Add acp_rev as structure member in acp pci driver private data structure
-to store acp pci revision id and assign this variable to SoundWire resource
-data acp_rev variable.
 
-Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
----
- sound/soc/amd/ps/acp63.h  | 2 ++
- sound/soc/amd/ps/pci-ps.c | 2 ++
- 2 files changed, 4 insertions(+)
+--kbruAPx8FvGXJzyx
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/sound/soc/amd/ps/acp63.h b/sound/soc/amd/ps/acp63.h
-index 39208305dd6c..e54eabaa4d3e 100644
---- a/sound/soc/amd/ps/acp63.h
-+++ b/sound/soc/amd/ps/acp63.h
-@@ -231,6 +231,7 @@ struct sdw_dma_ring_buf_reg {
-  * @sdw_en_stat: flag set to true when any one of the SoundWire manager instance is enabled
-  * @addr: pci ioremap address
-  * @reg_range: ACP reigister range
-+ * @acp_rev: ACP PCI revision id
-  * @sdw0-dma_intr_stat: DMA interrupt status array for SoundWire manager-SW0 instance
-  * @sdw_dma_intr_stat: DMA interrupt status array for SoundWire manager-SW1 instance
-  */
-@@ -254,6 +255,7 @@ struct acp63_dev_data {
- 	bool sdw_en_stat;
- 	u32 addr;
- 	u32 reg_range;
-+	u32 acp_rev;
- 	u16 sdw0_dma_intr_stat[ACP63_SDW0_DMA_MAX_STREAMS];
- 	u16 sdw1_dma_intr_stat[ACP63_SDW1_DMA_MAX_STREAMS];
- };
-diff --git a/sound/soc/amd/ps/pci-ps.c b/sound/soc/amd/ps/pci-ps.c
-index c72d666d51bd..0c3bb1da5097 100644
---- a/sound/soc/amd/ps/pci-ps.c
-+++ b/sound/soc/amd/ps/pci-ps.c
-@@ -267,6 +267,7 @@ static int amd_sdw_probe(struct device *dev)
- 	sdw_res.acp_lock = &acp_data->acp_lock;
- 	sdw_res.count = acp_data->info.count;
- 	sdw_res.mmio_base = acp_data->acp63_base;
-+	sdw_res.acp_rev = acp_data->acp_rev;
- 	sdw_res.link_mask = acp_data->info.link_mask;
- 	ret = sdw_amd_probe(&sdw_res, &acp_data->sdw);
- 	if (ret)
-@@ -576,6 +577,7 @@ static int snd_acp63_probe(struct pci_dev *pci,
- 	}
- 	adata->addr = addr;
- 	adata->reg_range = ACP63_REG_END - ACP63_REG_START;
-+	adata->acp_rev = pci->revision;
- 	pci_set_master(pci);
- 	pci_set_drvdata(pci, adata);
- 	mutex_init(&adata->acp_lock);
--- 
-2.34.1
+On Mon, Sep 23, 2024 at 10:39:20PM -0700, Guenter Roeck wrote:
+> On 9/23/24 21:17, Chanh Nguyen wrote:
+> > On 24/09/2024 04:23, Conor Dooley wrote:
+> > > On Mon, Sep 23, 2024 at 09:38:00AM +0000, Chanh Nguyen wrote:
+> > > > The adt7462 supports monitoring and controlling up to
+> > > > four PWM Fan drive outputs and eight TACH inputs measures.
+> > > > The adt7462 supports reading a single on chip temperature
+> > > > sensor and three remote temperature sensors. There are up
+> > > > to 13 voltage monitoring inputs.
+> > > >=20
+> > > > Add device tree bindings for the adt7462 device.
+> > > >=20
+> > > > Signed-off-by: Chanh Nguyen <chanh@os.amperecomputing.com>
+> > > > ---
+> > > > Change in v2:
+> > > > =A0=A0=A0 - Add onnn,adt7462 to the list of trivial devices=A0=A0=
+=A0=A0=A0=A0 [Guenter]
+> > >=20
+> > > Is this really a trivial device? If it monitors and controls fans, how
+> > > come those do not need to be represented in the devicetree? How is it
+> > > possible to tell the difference between monitoring 1 and 4 fans witho=
+ut
+> > > the extra detail?
+> > >=20
+> >=20
+> > Hi Conor, Thank you for your comments!
+> >=20
+> > The chip is old. The driver was added back in 2008.
+> >=20
+> > Really, this is such an old chip that it would make more sense to just =
+leave its driver alone unless there is a problem with it; this is viewpoint=
+ from Guenter.
+> >=20
+> > I'm using the driver and the device tree with only the "compatible" and=
+ "reg" properties; now it's being good for me without any extra detail.
+> >=20
+> > Guenter, Rob, Krzysztof, and I discussed making the decision to add thi=
+s device to the list of trivial devices. You can get more information at th=
+read https://lore.kernel.org/lkml/20240918220553.GA2216504-robh@kernel.org/=
+T/ (Because the commit title changed between v1 and v2, it's so hard for ev=
+eryone to find it. Sorry! I missed mentioning the link to pacth v1).
+> >=20
+> > Guenter, who supported the driver development before, he suggested me a=
+dd this device to the list of trivial devices.
+> >=20
+>=20
+> Historically it was ok to add an entry into trivial devices and extending
+> it later if/when needed. That was still widely done at least until very
+> recently. Maybe that changed recently. If so, sorry for bringing up the i=
+dea.
+> I did not envision that this might be a problem.
+>=20
+> Can you live with no devicetree entry at all for the chip ? That is of
+> course less than perfect, but it seems better than trying to design a
+> devicetree description for the chip only to never implement it.
 
+Since it sounds like Krzysztof assented to it, I'll just leave it for
+him to ack.
+
+--kbruAPx8FvGXJzyx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvJ2PwAKCRB4tDGHoIJi
+0qlDAP9+P62X1kDzM9QPlANL1YF/JSXwpvKvPEsHZwVg9ZeJzwEAsWev7egfyb/C
+zr3uxdKQgJZ/Okt35MKmzZM+eHBk2QY=
+=4L8j
+-----END PGP SIGNATURE-----
+
+--kbruAPx8FvGXJzyx--
 
