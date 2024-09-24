@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-336717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84A9B983FC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:56:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCBF7983FC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:58:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F9B21C21C00
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:56:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CA651F23C12
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:58:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7321494CE;
-	Tue, 24 Sep 2024 07:56:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6901149C4A;
+	Tue, 24 Sep 2024 07:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aCQIQvq2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i2etuIi9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7EB71B85E7;
-	Tue, 24 Sep 2024 07:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025931B85E7;
+	Tue, 24 Sep 2024 07:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727164609; cv=none; b=rihVkT62we0Lwpe9mhx6Zcb02VvoBptLqc8hhq6xpb+3llwxXcdxOfwIbmWHxQCW02qs5/kO5YTSu6Cb0fgrhY2CJgWgm0FbBeCE82picB4szPjVV8xWprJmM/msD1+1VCVOkTUHkyxbFUlFqrTHOS15WPQwsbQmpWaVRkIDeKo=
+	t=1727164715; cv=none; b=LYh771e/K7o60lgRTtNFfs1g4bi8dmIMKzhjocJevyYbW1yQxQShnx40ISbuw2wURRcJhrI+8QNTUAdZMCUECVaUntO1mlxq88FvTXygYoCCPrFWOHVktE/N9g38L8YrpLhjvcH3UdjBkrXGJS8ppGalZbhSi8SGwXNAmGcviSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727164609; c=relaxed/simple;
-	bh=kzUHa3F8g7HzmaY7eIKodTFvZiEfnXtOihHzuIcg0Vw=;
+	s=arc-20240116; t=1727164715; c=relaxed/simple;
+	bh=YZweGbLvQ86kElEW+MFo0mV9Gf/M/IeYsg6iu18HBVY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xqo6i1R/6amR6Tq47Pra33OZYjN2w933gfjpaVXbStHTRELlrBA6whgYpy95GTqItfBUX4BaTHlWv8SC9vPYoPMShnfZLCy3Ic56p9YQ37bBEZR6ugJRHgQ3D2FHV5W34WcpvZWWlBURzFuVmpp4i2NGhtfU2oOYaZJ/O26cAgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aCQIQvq2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFED8C4CEC4;
-	Tue, 24 Sep 2024 07:56:43 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=ByDBahtpseO92jy74rk5jZ5KY04YxjjfTZWd4ZnFC8vezyPqTZJugs/Gu4NBuI6L8ESpppCkKYw/1Cof6S48UoZUZJhc86KrevF1nNJuMDF1fKXkebFU9CCmzL/Ta866clGJ4a36K6DbRYM3u4lAc38uW/c718n3gg2YmIrZU+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i2etuIi9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD3B4C4CEC5;
+	Tue, 24 Sep 2024 07:58:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727164609;
-	bh=kzUHa3F8g7HzmaY7eIKodTFvZiEfnXtOihHzuIcg0Vw=;
+	s=k20201202; t=1727164714;
+	bh=YZweGbLvQ86kElEW+MFo0mV9Gf/M/IeYsg6iu18HBVY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aCQIQvq2FMrjjooDgWTx27eXRecH0zbuJBRPuDLpDwJTKEkFbeJtGu+RW3ErnWh7v
-	 yyPx5LzrfJ/9j7MpkkGLZoEzkSmvHlwtq1kp0HZOxRDDgAWrueHc5yHq69+3F1Qp8t
-	 2LeK79guRYR3mFDyaLjxvATI72a8ulJJKB4THrxfOwL784uTSJ0w9vod0reCmV3woz
-	 2ZNqVInOXU0CF25ed2fnEiJ5T7JToB1XD4XstzN70QUH2rcxP7aVVynNwF+Q2RdX7g
-	 jFO/KS7CJ24RmfmunmsxMrZbGq0FC1mEc9CxR3j7TfD3hgxSzz2YT0AUG3zDAOJcj9
-	 lKEnHI/5YA0sg==
-Message-ID: <e77cab18-155a-4174-bca0-5ff1ce1d2b6f@kernel.org>
-Date: Tue, 24 Sep 2024 09:56:41 +0200
+	b=i2etuIi9XYJUvraJKfHPkd4pTh8ep3ha+udKLQVadxzGzOvIiW2Hm9MqXlGCcxcRI
+	 Yf2YQ1i+WH+qZYHSG7NMQuKzyFp9ty32j58SsV02BpwruyPjZvWhR3KBrAvwPWOSNv
+	 XiFiAk314UQuy2qA+yDq9EamGuWEd0n14PU/8Z9Ob83E1amJxwsj/3BlH5W7fZsraz
+	 ATi1C2IaJgkJwH3Rur+iOQZInSDW8cZLrIStZfGfBermlmqiG3jSuKeeRdT2FVIPt9
+	 dPfFxwTeoKZpubdBSnUu/VNE4SmLsG6fm5Ie2j9lLtavnb6+J1eze3EO/yWXsC/Hdl
+	 2wE9A9/oahkFg==
+Message-ID: <e5954cb6-7889-40c4-82b0-6df95d09d54a@kernel.org>
+Date: Tue, 24 Sep 2024 09:58:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH 1/2] dt-bindings: phy: rockchip,inno-usb2phy: add
- rk3576
-To: Frank Wang <frank.wang@rock-chips.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, heiko@sntech.de, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
- william.wu@rock-chips.com, tim.chen@rock-chips.com, wmc@rock-chips.com
-References: <20240923025326.10467-1-frank.wang@rock-chips.com>
- <snccizbw6thn3lhwad4xppp7vqii4p56ttl2gufwc3ke7vfckf@e4b7nvwwtdfr>
- <1f996322-e6f6-4dd5-a1d7-c2bde92c876b@rock-chips.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: i2c: Add RTL9300 I2C controller
+To: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+Cc: "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "tsbogend@alpha.franken.de" <tsbogend@alpha.franken.de>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
+References: <20240920000930.1828086-1-chris.packham@alliedtelesis.co.nz>
+ <20240920000930.1828086-2-chris.packham@alliedtelesis.co.nz>
+ <6hlfdtbdf7yhkaoiuglhk4gksgzpahewzjf4cseedon7x2tx3s@m6c23rqxwkyu>
+ <ab5c995c-b7b6-4435-9f6e-8b0e37add2e9@alliedtelesis.co.nz>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,76 +108,125 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <1f996322-e6f6-4dd5-a1d7-c2bde92c876b@rock-chips.com>
+In-Reply-To: <ab5c995c-b7b6-4435-9f6e-8b0e37add2e9@alliedtelesis.co.nz>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 24/09/2024 04:24, Frank Wang wrote:
-> Hi Krzysztof,
-> On 2024/9/23 17:31, Krzysztof Kozlowski wrote:
->> On Mon, Sep 23, 2024 at 10:53:25AM +0800, Frank Wang wrote:
->>> Add compatible for the USB2 phy in the Rockchip RK3576 SoC.
+On 23/09/2024 23:09, Chris Packham wrote:
+> Hi Krzyzstof,
+> 
+> On 23/09/24 08:25, Krzysztof Kozlowski wrote:
+>> On Fri, Sep 20, 2024 at 12:09:28PM +1200, Chris Packham wrote:
+>>> Add dtschema for the I2C controller on the RTL9300 SoC. The I2C
+>>> controllers on this SoC are part of the "switch" block which is
+>>> represented here as a syscon node. The SCL pins are dependent on the I2C
+>>> controller (GPIO8 for the first controller, GPIO 17 for the second). The
+>>> SDA pins can be assigned to either one of the I2C controllers (but not
+>>> both).
 >>>
->>> Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
+>>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 >>> ---
->>>   .../devicetree/bindings/phy/rockchip,inno-usb2phy.yaml | 10 +++++++++-
->>>   1 file changed, 9 insertions(+), 1 deletion(-)
 >>>
->>> diff --git a/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml b/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
->>> index 5254413137c64..214917e55c0b6 100644
->>> --- a/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
->>> +++ b/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
->>> @@ -20,6 +20,7 @@ properties:
->>>         - rockchip,rk3366-usb2phy
->>>         - rockchip,rk3399-usb2phy
->>>         - rockchip,rk3568-usb2phy
->>> +      - rockchip,rk3576-usb2phy
->>>         - rockchip,rk3588-usb2phy
->>>         - rockchip,rv1108-usb2phy
->>>   
->>> @@ -34,10 +35,16 @@ properties:
->>>       const: 0
->>>   
->>>     clocks:
->>> -    maxItems: 1
->>> +    minItems: 1
->>> +    items:
->>> +      - description: phyclk - PHY input reference clocks.
->>> +      - description: aclk and aclk_slv are optional and used for USB MMU.
->>>   
->>>     clock-names:
->>> +    minItems: 1
->>>       const: phyclk
->>> +    const: aclk
->>> +    const: aclk_slv
->> Please test... Not sure what you wanted to achieve here, but maybe
->> oneOf?
+>>> Notes:
+>>>      Changes in v2:
+>>>      - Use reg property for controller registers
+>>>      - Remove global-control-offset (will be hard coded in driver)
+>>>      - Integrated the multiplexing function. Child nodes now represent the
+>>>        available SDA lines
+>>>
+>>>   .../bindings/i2c/realtek,rtl9300-i2c.yaml     | 82 +++++++++++++++++++
+>>>   MAINTAINERS                                   |  6 ++
+>>>   2 files changed, 88 insertions(+)
+>>>   create mode 100644 Documentation/devicetree/bindings/i2c/realtek,rtl9300-i2c.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/i2c/realtek,rtl9300-i2c.yaml b/Documentation/devicetree/bindings/i2c/realtek,rtl9300-i2c.yaml
+>>> new file mode 100644
+>>> index 000000000000..e8c37239b299
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/i2c/realtek,rtl9300-i2c.yaml
+>>> @@ -0,0 +1,82 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://scanmail.trustwave.com/?c=20988&d=2_3w5qdKawcvw7Bv6K3mA_v4JF1rlxddN3AhCekStg&u=http%3a%2f%2fdevicetree%2eorg%2fschemas%2fi2c%2frealtek%2crtl9300-i2c%2eyaml%23
+>>> +$schema: http://scanmail.trustwave.com/?c=20988&d=2_3w5qdKawcvw7Bv6K3mA_v4JF1rlxddNyJxDbgXsw&u=http%3a%2f%2fdevicetree%2eorg%2fmeta-schemas%2fcore%2eyaml%23
+>>> +
+>>> +title: Realtek RTL I2C Controller
+>>> +
+>>> +maintainers:
+>>> +  - Chris Packham <chris.packham@alliedtelesis.co.nz>
+>>> +
+>>> +description:
+>>> +  The RTL9300 SoC has two I2C controllers. Each of these has an SCL line (which
+>>> +  if not-used for SCL can be a GPIO). There are 8 common SDA lines that can be
+>>> +  assigned to either I2C controller.
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    const: realtek,rtl9300-i2c
+>>> +
+>>> +  reg:
+>>> +    description: Register offset and size this I2C controller.
+>>> +
+>>> +patternProperties:
+>>> +  '^i2c@[0-7]$':
+>>> +    $ref: /schemas/i2c/i2c-controller.yaml
+>>> +    unevaluatedProperties: false
+>>> +
+>>> +    properties:
+>>> +      reg:
+>>> +        description: The SDA pin associated with the I2C bus.
+>>> +        maxItems: 1
+>>> +
+>>> +    required:
+>>> +      - reg
+>>> +
+>>> +unevaluatedProperties: false
+>> This goes after "required:" block.
+> Ack.
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +  - reg
+>>> +
+>>> +examples:
+>>> +  - |
+>>> +    switch@1b000000 {
+>>> +      compatible = "realtek,rtl9302c-switch", "syscon", "simple-mfd";
+>> Drop... or put entire example in the parent device node.
 > 
-> The "aclk" and "aclk_slv" clocks are new in RK3576, you mean the changes 
-> should be like the below?
+> OK I'll drop it.
 > 
-> @@ -34,10 +35,20 @@ properties:
->       const: 0
+>>
+>>> +      reg = <0x1b000000 0x10000>;
+>>> +      #address-cells = <1>;
+>>> +      #size-cells = <1>;
+>>> +
+>>> +      i2c@36c {
+>>> +        compatible = "realtek,rtl9300-i2c";
+>> Parent is 9302c, but this is 9300?
 > 
->     clocks:
-> -    maxItems: 1
-> +    minItems: 1
-> +    maxItems: 3
-> 
->     clock-names:
-> -    const: phyclk
-> +    minItems: 1
-> +    maxItems: 3
-> +    items:
-> +      oneOf:
-> +        - description: PHY input reference clocks.
-> +          const: phyclk
-> +        - description: aclk for USB MMU.
-> +          const: aclk
-> +        - description: aclk_slv for USB MMU.
-> +          const: aclk_slv
+> The RTL9302C is one of a series of switch chips with integrated CPUs. 
+> There is also the RTL9301, RTL9302B and RTL9303 (there my be others but 
+> those are the 4 I know about). The differences are all around the switch 
+> port/SERDES. The documentation uses "RTL9300" when referring to things 
+> common across the family. There's even an app note titled 
+> "RTL9300_I2C_Application_Note_V1.1(83)". So I'd really like to use 
+> "rtl9300" when talking about the SoC peripherals but use the specific 
+> chip compatible when talking about the Ethernet switch or the overall 
+> chip. I'm also tempted to add the other variants to my other in-flight 
+> patch series.
 
-Nope, you just messed the order. Order is strict.
+Using family variant alone is in general not accepted. You need SoC
+specific compatible in the front.
+
+> 
+> "realtek,rtl9300-i2c" also happens to be what openwrt is using, but I'm 
+> not sure that that helps my argument as the binding is now quite different.
+
+Does not matter. They could be using
+"realtek,we-like-to-use-whatever-we-invented-soc", but that does not
+mean we should accept it.
 
 Best regards,
 Krzysztof
