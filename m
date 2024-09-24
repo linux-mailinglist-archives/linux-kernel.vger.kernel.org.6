@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-336733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2085D983FFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:09:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74E12983FF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:07:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0C7D1F23E60
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:09:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4C601C2271F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A88D14BF9B;
-	Tue, 24 Sep 2024 08:08:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D5614BF85;
+	Tue, 24 Sep 2024 08:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=deepcomputing-io.20200927.dkim.feishu.cn header.i=@deepcomputing-io.20200927.dkim.feishu.cn header.b="uNmGaYTq"
-Received: from lf-1-20.ptr.blmpb.com (lf-1-20.ptr.blmpb.com [103.149.242.20])
+	dkim=pass (2048-bit key) header.d=deepcomputing-io.20200927.dkim.feishu.cn header.i=@deepcomputing-io.20200927.dkim.feishu.cn header.b="CRG2h/L0"
+Received: from va-2-40.ptr.blmpb.com (va-2-40.ptr.blmpb.com [209.127.231.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB1F814883F
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 08:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.149.242.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE6014A4DC
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 08:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.127.231.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727165338; cv=none; b=Xe0eYpR55KqPhWufkbliB11+1RYOeefopMKshXb25pPFbgqU/tb0n69NcHoE5UN7HLAl2CgppfjF7YK0QniZSneCTFN6Efl4Lpc8I2Mh1cbdxZzCjTQ0oGNmTfGuYb46SRj128E5oJcOkj6VHuWE81IldVTkxStih8ptd5t9sBM=
+	t=1727165265; cv=none; b=Z2oQfE6UFWI8cR8PtPXRw3xzj4YbJbqmO6SiaH10k6VAEhE62OBzCMN/MHpKAqNjfr5KhgvJJDpFzgL9aohwr6xOuzdBWpxwQ9cuTBG2qK+XxaBvuWQzdz3/c8O/RbM5OhfgKmhURY6fM/psGcYprhIxxyPigQFnACg+9DCM0E0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727165338; c=relaxed/simple;
-	bh=Jwg/VxDBpz9Eh5EMmXdQ5ngAAoQm03jMY7e4YlUGtuc=;
-	h=To:From:Date:Message-Id:Cc:Subject:Content-Type:Mime-Version; b=ZdN7QJ+Cd9mV+9gAQW2CPc/Jk3b4oYp5wAvFcxaoq7hNvo2LP70S/wXmpjNJIN81SMvITKzXvYboQeTU/ZgY8l4jDXN+RvRUKSxUb252rzsv8g8nuyinyn+XI5xbT2KHfdKGPAW0zBtSqidYTWC5zqGj8GdnEHSssIxrC3oD8lQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=deepcomputing.io; spf=pass smtp.mailfrom=deepcomputing.io; dkim=pass (2048-bit key) header.d=deepcomputing-io.20200927.dkim.feishu.cn header.i=@deepcomputing-io.20200927.dkim.feishu.cn header.b=uNmGaYTq; arc=none smtp.client-ip=103.149.242.20
+	s=arc-20240116; t=1727165265; c=relaxed/simple;
+	bh=Jy4y33f822G6BldXT3sO4gcQyEV+/nl2+A3mQ/vQCiA=;
+	h=Message-Id:Content-Type:To:Cc:From:Subject:Mime-Version:Date; b=s+nn4v4gNlN/+exW56Xe3pFB4Y9HKjBHszSvrjaagOIyGWVgIJXtClVJp9/D3u+Wzh/G/B+Zh4ri8/8E2pNOmv/sasHpcjQHYQm8TWrxRztOBZvC0mAq+dvuHLSIch3fb65HkyzCyST9iimLqTlAVR+lwLmMwsQrhvi6ts+9hHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=deepcomputing.io; spf=pass smtp.mailfrom=deepcomputing.io; dkim=pass (2048-bit key) header.d=deepcomputing-io.20200927.dkim.feishu.cn header.i=@deepcomputing-io.20200927.dkim.feishu.cn header.b=CRG2h/L0; arc=none smtp.client-ip=209.127.231.40
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=deepcomputing.io
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deepcomputing.io
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=s1; d=deepcomputing-io.20200927.dkim.feishu.cn; t=1727165242;
+ s=s1; d=deepcomputing-io.20200927.dkim.feishu.cn; t=1727165246;
   h=from:subject:mime-version:from:date:message-id:subject:to:cc:
  reply-to:content-type:mime-version:in-reply-to:message-id;
- bh=n4FlAamSfqVt7limHNsws50tZuvmPfsWIXOGbBiq7G8=;
- b=uNmGaYTqp79rjXBU1Ek0/0V+x6R2P+forSk2/Uvf68Fs4fbqQ37H+bHYWZ4IVA0eMN1stU
- xhjllKkfWgFo4LCCGG8b+9O2lthmtJ7jgSmo9crUW9bdl+DyTXXdKEXZ4k+fMU2v5CYxed
- 2PuGUdkhqlxV2XsL2gX2Gb8g2PlEJrIcIdsIN0wTfbqh8ubrHtfJDt1vhci1M3RnYBziHS
- 93s0gHOY79GwLVgWQXUGl6qXHFHnXzE/5I6YB7jqxrz04tOtT5EUfN3YiUZxWDQpiK2AZU
- ap6d0Kh7M9PLhUiDHq2x7bj4QpXE7sOTjJyBdtwB4why7W9pXcfZbzpdHEYNRQ==
+ bh=oB/VU3FI/FnFWz9K+uig7hfrJEDRFlku8hT2eEzdBzo=;
+ b=CRG2h/L0bBUN/UsrxJVVtSo/Xxa0sEFeDOtByr8dsb+ZK0TcO5qG3/7fLZWfCB9pjAL8sm
+ qkEM2i2Hd/4uN2RfUZZ6s6kCRZjO80aZC8Ly59vRahQRR5+6hmC5e7md/B9Giy0R5Trver
+ Mp2H9tlJwGX4CKNd+ZnVycirqJToOwQjib57yetnP8S3ns/LLpMA6Qhda1lsbYu0kNQkFP
+ luE3yEoFlSS3oIIc4r0Hz/brctXK1G18U12jsRhd+6aX08rurG5RIO+Z+FXaE02QJXQ3gU
+ vElY0XYyLyG+cfdsn6hAbitOhVwnfeCteFr15uKc2ALOF2QWbZmNjU6bD7CFKw==
+Message-Id: <20240924080650.1345485-3-sandie.cao@deepcomputing.io>
+X-Original-From: Sandie Cao <sandie.cao@deepcomputing.io>
+Received: from roma-MacBookPro.. ([61.141.249.39]) by smtp.feishu.cn with ESMTPS; Tue, 24 Sep 2024 16:07:24 +0800
+Content-Type: text/plain; charset=UTF-8
 To: "Conor Dooley" <conor@kernel.org>
-From: "Sandie Cao" <sandie.cao@deepcomputing.io>
-Date: Tue, 24 Sep 2024 16:06:48 +0800
-Message-Id: <20240924080650.1345485-2-sandie.cao@deepcomputing.io>
-X-Mailer: git-send-email 2.34.1
 Cc: "Emil Renner Berthing" <kernel@esmil.dk>, 
 	"Rob Herring" <robh@kernel.org>, 
 	"Krzysztof Kozlowski" <krzk+dt@kernel.org>, 
@@ -59,39 +59,38 @@ Cc: "Emil Renner Berthing" <kernel@esmil.dk>,
 	<dhs@frame.work>, <ams@frame.work>, <gregkh@linuxfoundation.org>, 
 	<yuning.liang@deepcomputing.io>, <huiming.qiu@deepcomputing.io>, 
 	"Sandie Cao" <sandie.cao@deepcomputing.io>
-X-Original-From: Sandie Cao <sandie.cao@deepcomputing.io>
-Subject: [patch v2 1/3] dt-bindings: vendor: add deepcomputing
-Received: from roma-MacBookPro.. ([61.141.249.39]) by smtp.feishu.cn with ESMTPS; Tue, 24 Sep 2024 16:07:21 +0800
-X-Lms-Return-Path: <lba+266f2733a+730aeb+vger.kernel.org+sandie.cao@deepcomputing.io>
-Content-Type: text/plain; charset=UTF-8
+From: "Sandie Cao" <sandie.cao@deepcomputing.io>
+Subject: [patch v2 2/3] dt-bindings: riscv: starfive: add deepcomputing,fm7110
+Content-Transfer-Encoding: 7bit
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+X-Lms-Return-Path: <lba+266f2733d+691095+vger.kernel.org+sandie.cao@deepcomputing.io>
+Date: Tue, 24 Sep 2024 16:06:49 +0800
 
-Add deepcomputing into vendor list.
+Add deepcomputing,fm7110 into compatible list.
 
 Signed-off-by: Sandie Cao <sandie.cao@deepcomputing.io>
 ---
- Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ Documentation/devicetree/bindings/riscv/starfive.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index 56d180f9c1cc..7803b53e9a6a 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -356,6 +356,8 @@ patternProperties:
-     description: DataImage, Inc.
-   "^davicom,.*":
-     description: DAVICOM Semiconductor, Inc.
-+  "^deepcomputing,.*":
-+    description: DeepComputing (HK) Limited
-   "^dell,.*":
-     description: Dell Inc.
-   "^delta,.*":
+diff --git a/Documentation/devicetree/bindings/riscv/starfive.yaml b/Documentation/devicetree/bindings/riscv/starfive.yaml
+index 4d5c857b3cac..778617e1dc43 100644
+--- a/Documentation/devicetree/bindings/riscv/starfive.yaml
++++ b/Documentation/devicetree/bindings/riscv/starfive.yaml
+@@ -26,6 +26,7 @@ properties:
+ 
+       - items:
+           - enum:
++              - deepcomputing,fm7110
+               - milkv,mars
+               - pine64,star64
+               - starfive,visionfive-2-v1.2a
 -- 
 2.34.1
 
