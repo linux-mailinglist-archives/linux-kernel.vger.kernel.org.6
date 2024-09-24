@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-337702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0623984DD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:32:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 472CF984DD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:32:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8464B1F21C5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:32:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77AA91C2354F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:32:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46C431474A5;
-	Tue, 24 Sep 2024 22:32:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F321AC45A;
+	Tue, 24 Sep 2024 22:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WfVj78TD"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C39WWmGg"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00554146A6C;
-	Tue, 24 Sep 2024 22:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF338146019;
+	Tue, 24 Sep 2024 22:32:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727217126; cv=none; b=JTGDADw2L3jX/ya4lmsGtGr+gGNrEegp870oKlTxlKauF/QJNANMwn7IDcBvrwOvxix0oZayDawp13byTvkx5oZlWYu697yflTvxoy+J8oETQkKpZdLI/9NXAjOrChavX/eD29IcCDUzb6tCToFeb6JSGUC2KkRfQZfoEhpPFPs=
+	t=1727217128; cv=none; b=nlNMXDxFs8UkLn/z/NlTlwp9IhLr3834+ndHFxIRcxGh2XA4LLY88NHo5duSw6b+AxaexkAymZEohg37kRfCxtk+mQB0LlDOWOQ5POT6qn1jbJJ7ViEZRsObkJvjGq2gtGANlsANtDQGi7svWueQO3wWmQlaQBMQWdnx7ge1KU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727217126; c=relaxed/simple;
-	bh=zWD3/hrw9NBGVzXNUXaFiaMtx2BgEk+Qq27PFVjELSk=;
+	s=arc-20240116; t=1727217128; c=relaxed/simple;
+	bh=JHP0kucEu5cNf6IEZdyNVnwiW4oeLVhE0jcwDKFRP2g=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WwRU6JwDpppwNIpBTdENVZ6bcJm46Dr1e6qjC4rwdjqn2shE0Dcqc1IJfWgd3nnd+rZ8oddpZhLl80V4ycx7rYQwH8jCUjhd3xw6yT6rhcVCvFXgQTSqFtbwWtvmlEHDBEGJTp+8U9KdzLJv7ZKeYGc3CGPkk/kuumUFfbpK2pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WfVj78TD; arc=none smtp.client-ip=192.198.163.9
+	 MIME-Version; b=YXDIfoXAt6DVBqAD8GZb30YaKuEMRXOeKpWPcNEfG0lpQT2UgqutRLQNhrLcjAQVMV/CiQ6fQnNcupufuwC47gFmR1z2K+5Pr4hYY9hl+ycFuLy5ZCADUexlh8mOWNEKS3XKFouafK+3GNAufeY7fyfUV/9zh8M6Ujv9Ms8Wmsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C39WWmGg; arc=none smtp.client-ip=192.198.163.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727217125; x=1758753125;
+  t=1727217127; x=1758753127;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=zWD3/hrw9NBGVzXNUXaFiaMtx2BgEk+Qq27PFVjELSk=;
-  b=WfVj78TDxSiUi1z3gq67FObECse0HPZXMd3HZxWqCXRzpNxWSZQiGT8v
-   6KCqik+7DSglF73t73G5BwJXtNYxLQsw8IN9x3aWSwfqYXF0TZHXTdR2f
-   fok1rYUhqlzyoB/hOThMGw3swMLM7XjCQXo2yFNHxL9ksHnE6p1x9h4Um
-   83N3CpCT1iA22pGIoZDJOWJhhxMMjSi5+8KRS1+YEZsTGeNbP7PVCqYHE
-   oitp4EODxQSiqffSg/+bHFI+sbJHIHOBxGcAomptPNYvHOphoxvs63Vc+
-   MfIWv9fUMOg3Zu5dMz0WaV3I5YFvntEm4PWbvMmkXi+Hhh9DNx8GkETEs
-   w==;
-X-CSE-ConnectionGUID: BBALKv7HTOe+G7j5gEjugA==
-X-CSE-MsgGUID: Nbp4fyjdSviAx/Shb8zmnw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="36908043"
+  bh=JHP0kucEu5cNf6IEZdyNVnwiW4oeLVhE0jcwDKFRP2g=;
+  b=C39WWmGgrLBDQfDO86yvaq69TCdxY9DqS3NCdVYheKSZP6N3HWPm0Wga
+   hdta2jDfROH/LRUC+LcC34JNXgzxwG6i3oEKvoKKj0RqUOol+ZE54UmnJ
+   YL3j52lUv6WycNAsjJC+5PWL0+cpRH+GiJ0CtKfURnsEtUwvwGxQPZ2IX
+   CnYxdIbhxhkOwxELlit4xWQEEL4ILhO0DEFdmNdmLZtwcPhSFWKxH3mB6
+   4qzHP9dSvsvgDnnOE1bOU8HSPXEJkfnBaRVXDgxqdo5oDjwDKZ7RKhOUq
+   PzfYiKrWaNE8zk31g3+RD/g/Qb/Ymv9LaXa19r9bh2RFmOW+AHZjOGlDB
+   Q==;
+X-CSE-ConnectionGUID: swIGsEUwQ5+mAS+BvieOtg==
+X-CSE-MsgGUID: aIVcd1IXQf6CVP8kx+XKyQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="36908054"
 X-IronPort-AV: E=Sophos;i="6.10,255,1719903600"; 
-   d="scan'208";a="36908043"
+   d="scan'208";a="36908054"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 15:31:52 -0700
-X-CSE-ConnectionGUID: lIDJBlAYTZm0OwxbQXV2XQ==
-X-CSE-MsgGUID: 0TdwgHPBQ1OuLqRzui+wmg==
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 15:31:54 -0700
+X-CSE-ConnectionGUID: YWmSlBm4T3+2j1quPKRsHg==
+X-CSE-MsgGUID: dx6f5LTfSGeRmGXbU44K1w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,255,1719903600"; 
-   d="scan'208";a="102384766"
+   d="scan'208";a="102384786"
 Received: from laijusti-mobl.amr.corp.intel.com (HELO dsneddon-desk.sneddon.lan) ([10.125.17.198])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 15:31:51 -0700
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 15:31:52 -0700
 From: Daniel Sneddon <daniel.sneddon@linux.intel.com>
 To: Jonathan Corbet <corbet@lwn.net>,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -70,9 +70,9 @@ Cc: hpa@zytor.com,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	pawan.kumar.gupta@linux.intel.com
-Subject: [PATCH 1/6] x86/bugs: Create single parameter for VERW based mitigations
-Date: Tue, 24 Sep 2024 15:31:35 -0700
-Message-Id: <20240924223140.1054918-2-daniel.sneddon@linux.intel.com>
+Subject: [PATCH 2/6] x86/bugs: Remove MDS command line
+Date: Tue, 24 Sep 2024 15:31:36 -0700
+Message-Id: <20240924223140.1054918-3-daniel.sneddon@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240924223140.1054918-1-daniel.sneddon@linux.intel.com>
 References: <20240924223140.1054918-1-daniel.sneddon@linux.intel.com>
@@ -84,99 +84,90 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There are currently 4 mitigations that use VERW to flush different cpu
-buffers. This can cause confusion when trying to disable all the
-different VERW mitigations. Simplify enabling/disabling these
-mitigations by creating a single parameter for controlling them.
-
-Future work will focus on combining similar code used in selecting
-these mitigations to further simplify.
+Remove MDS command line option since it can be set using the common
+clar_cpu_buffers parameter.
 
 Signed-off-by: Daniel Sneddon <daniel.sneddon@linux.intel.com>
 ---
- .../admin-guide/kernel-parameters.txt         | 16 +++++++++
- arch/x86/kernel/cpu/bugs.c                    | 34 +++++++++++++++++++
- 2 files changed, 50 insertions(+)
+ .../admin-guide/kernel-parameters.txt         | 32 -------------------
+ arch/x86/kernel/cpu/bugs.c                    | 21 ------------
+ 2 files changed, 53 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 09126bb8cc9f..66b567c4dce5 100644
+index 66b567c4dce5..2753a1e51da5 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -628,6 +628,21 @@
- 	cio_ignore=	[S390]
- 			See Documentation/arch/s390/common_io.rst for details.
+@@ -3231,38 +3231,6 @@
+ 			Format: <first>,<last>
+ 			Specifies range of consoles to be captured by the MDA.
  
-+	clear_cpu_buffers=
-+			[X86]
-+			Controls the mitigations that use
-+			X86_FEATURE_CLEAR_CPU_BUF, namely
-+			Micro-architectrual Data Sampling (MDS)
-+			MMIO Stale Data
-+			TSX Async Abort (TAA)
-+			Register File Data Sampling (RFDS)
-+
-+			The options are:
-+			on		- Enable cpu buffer clearing
-+			on,nosmt	- Enable cpu buffer clearing and disable
-+					  SMT
-+			off		- Disables cpu buffer clearing
-+
- 	clearcpuid=X[,X...] [X86]
- 			Disable CPUID feature X for the kernel. See
- 			arch/x86/include/asm/cpufeatures.h for the valid bit
-@@ -3461,6 +3476,7 @@
- 				improves system performance, but it may also
- 				expose users to several CPU vulnerabilities.
- 				Equivalent to: if nokaslr then kpti=0 [ARM64]
-+					       clear_cpu_buffers=off [X86]
- 					       gather_data_sampling=off [X86]
- 					       kvm.nx_huge_pages=off [X86]
- 					       l1tf=off [X86]
+-	mds=		[X86,INTEL,EARLY]
+-			Control mitigation for the Micro-architectural Data
+-			Sampling (MDS) vulnerability.
+-
+-			Certain CPUs are vulnerable to an exploit against CPU
+-			internal buffers which can forward information to a
+-			disclosure gadget under certain conditions.
+-
+-			In vulnerable processors, the speculatively
+-			forwarded data can be used in a cache side channel
+-			attack, to access data to which the attacker does
+-			not have direct access.
+-
+-			This parameter controls the MDS mitigation. The
+-			options are:
+-
+-			full       - Enable MDS mitigation on vulnerable CPUs
+-			full,nosmt - Enable MDS mitigation and disable
+-				     SMT on vulnerable CPUs
+-			off        - Unconditionally disable MDS mitigation
+-
+-			On TAA-affected machines, mds=off can be prevented by
+-			an active TAA mitigation as both vulnerabilities are
+-			mitigated with the same mechanism so in order to disable
+-			this mitigation, you need to specify tsx_async_abort=off
+-			too.
+-
+-			Not specifying this option is equivalent to
+-			mds=full.
+-
+-			For details see: Documentation/admin-guide/hw-vuln/mds.rst
+-
+ 	mem=nn[KMG]	[HEXAGON,EARLY] Set the memory size.
+ 			Must be specified, otherwise memory size will be 0.
+ 
 diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 45675da354f3..b3c9e1eede12 100644
+index b3c9e1eede12..ed5524bc3ee4 100644
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -531,6 +531,40 @@ early_param("reg_file_data_sampling", rfds_parse_cmdline);
- #undef pr_fmt
- #define pr_fmt(fmt)     "" fmt
+@@ -261,27 +261,6 @@ static void __init mds_select_mitigation(void)
+ 	}
+ }
  
-+static int __init clear_cpu_buffers_cmdline(char *str)
-+{
-+	if (!str)
-+		return -EINVAL;
-+
-+	if (!boot_cpu_has_bug(X86_BUG_MDS) &&
-+	    !boot_cpu_has_bug(X86_BUG_TAA) &&
-+	    !boot_cpu_has_bug(X86_BUG_MMIO_STALE_DATA) &&
-+	    !boot_cpu_has_bug(X86_BUG_RFDS))
-+		return 0;
-+
-+	if (!strcmp(str, "off")) {
-+		mds_mitigation = MDS_MITIGATION_OFF;
-+		taa_mitigation = TAA_MITIGATION_OFF;
-+		mmio_mitigation = MMIO_MITIGATION_OFF;
-+		rfds_mitigation = RFDS_MITIGATION_OFF;
-+	} else if (!strcmp(str, "on")) {
-+		mds_mitigation = MDS_MITIGATION_FULL;
-+		taa_mitigation = TAA_MITIGATION_VERW;
-+		mmio_mitigation = MMIO_MITIGATION_VERW;
-+		rfds_mitigation = RFDS_MITIGATION_VERW;
-+	} else if (!strcmp(str, "on,nosmt")) {
-+		mds_mitigation = MDS_MITIGATION_FULL;
-+		taa_mitigation = TAA_MITIGATION_VERW;
-+		mmio_mitigation = MMIO_MITIGATION_VERW;
-+		rfds_mitigation = RFDS_MITIGATION_VERW;
-+		mds_nosmt = true;
-+		taa_nosmt = true;
-+		mmio_nosmt = true;
-+	}
-+	return 0;
-+}
-+early_param("clear_cpu_buffers", clear_cpu_buffers_cmdline);
-+
- static void __init md_clear_update_mitigation(void)
- {
- 	if (cpu_mitigations_off())
+-static int __init mds_cmdline(char *str)
+-{
+-	if (!boot_cpu_has_bug(X86_BUG_MDS))
+-		return 0;
+-
+-	if (!str)
+-		return -EINVAL;
+-
+-	if (!strcmp(str, "off"))
+-		mds_mitigation = MDS_MITIGATION_OFF;
+-	else if (!strcmp(str, "full"))
+-		mds_mitigation = MDS_MITIGATION_FULL;
+-	else if (!strcmp(str, "full,nosmt")) {
+-		mds_mitigation = MDS_MITIGATION_FULL;
+-		mds_nosmt = true;
+-	}
+-
+-	return 0;
+-}
+-early_param("mds", mds_cmdline);
+-
+ #undef pr_fmt
+ #define pr_fmt(fmt)	"TAA: " fmt
+ 
 -- 
 2.25.1
 
