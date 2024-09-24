@@ -1,147 +1,105 @@
-Return-Path: <linux-kernel+bounces-337496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE9F5984AC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:15:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5F13984AAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:07:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E2D51F23419
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:15:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67E791F21E44
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A8C1AC880;
-	Tue, 24 Sep 2024 18:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3341AC88A;
+	Tue, 24 Sep 2024 18:07:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b="dNfBQWeT"
-Received: from mx0b-00190b01.pphosted.com (mx0b-00190b01.pphosted.com [67.231.157.127])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lZOcuDMh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588B11B85DB;
-	Tue, 24 Sep 2024 18:15:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.157.127
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B2E1581F8;
+	Tue, 24 Sep 2024 18:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727201740; cv=none; b=gxNWdSckDm0bHTryw6B4lv16U1RERWNRFaiLoGBpkd/kqwWBd5UBmXj6vXoGmcCSzDvV+/yEQzD4vIKHiVenM4uYelRPhh6M2bTmyROnQBIuckOoQqXnIx/S7OvD6xfLVarM1spKDiEOPg4Uk3gLENNNY3yGw2KyZfeQG4WZh1c=
+	t=1727201247; cv=none; b=u+rpkSBRQ6gW9hdDxR3xbth6RGtYjZ5MXZvnkXrzSIMXtenGoDpc99BLrIFy34ix4NN6+1tFibEafn7nXejyQF68BLKaIOngXQVCw7eqzxz5uEKI/zEPxyK3o17Y/tCHu/8fet3f8iCG9viTtDmGuoehJ8O4/thFO9Pw7uhWoq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727201740; c=relaxed/simple;
-	bh=Y69CBXft/89RYiJGygxLvDjUaUSw6b6AY050W+oUenE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fv/K8bn2WCChqbYXtEpeOnWhVfnhXmPSbslrptvG0IvD0tKLA0tbszViLOOycFUtSrwY5a12cRcZOnFX71MetzqIeeou/MFbGlTufwZzpxTcwxRpf1UwuV840xgfgY5vafTDPzCPtlUFxDADpVNzgdj6yHeyBc4TCeTBHIOgp2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com; spf=pass smtp.mailfrom=akamai.com; dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b=dNfBQWeT; arc=none smtp.client-ip=67.231.157.127
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=akamai.com
-Received: from pps.filterd (m0409411.ppops.net [127.0.0.1])
-	by m0409411.ppops.net-00190b01. (8.18.1.2/8.18.1.2) with ESMTP id 48OBYEIc020297;
-	Tue, 24 Sep 2024 18:26:21 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=jan2016.eng;
-	 bh=YtazcCjHaC02mUMlP90lNJBe1ZmJSaC1m+oIlkc1uhA=; b=dNfBQWeTDbPO
-	w/YW+ArCoshbaphO2iHDjzrG+D5o+ny4vC9rswCZ4dtOvlVOLcfPDeJbRsD+x4Ry
-	aH4OtiMzSpKyOcHiTWi+z+fyd/onWKHnlJvic1V1SX9jgmRRAmoV9jj0CcQaJD1m
-	kbwQmKKAatZwRNIvYGsz/pVs9KD5YDqjt/9XHCw1C4lBgKJ+uUBA/Sme7WqOWqTx
-	Wnv8VOI4hM4ZexmysqnFMRILJCthZ5LeLY3CRp/D3L2dj3c9qQmetxHBav8gZnhS
-	nHBWodHBnQq/J7lAfy2zvnS8nfh/n8ZIRTJANOUUmSsRFFdyUk8VHDVyA5kyKNC+
-	HWbmLSUlLw==
-Received: from prod-mail-ppoint7 (a72-247-45-33.deploy.static.akamaitechnologies.com [72.247.45.33] (may be forged))
-	by m0409411.ppops.net-00190b01. (PPS) with ESMTPS id 41t7gbjudj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Sep 2024 18:26:21 +0100 (BST)
-Received: from pps.filterd (prod-mail-ppoint7.akamai.com [127.0.0.1])
-	by prod-mail-ppoint7.akamai.com (8.18.1.2/8.18.1.2) with ESMTP id 48OFSiDx025042;
-	Tue, 24 Sep 2024 13:26:20 -0400
-Received: from prod-mail-relay19.dfw02.corp.akamai.com ([172.27.165.173])
-	by prod-mail-ppoint7.akamai.com (PPS) with ESMTP id 41ssg1pvr6-1;
-	Tue, 24 Sep 2024 13:26:19 -0400
-Received: from [100.64.0.1] (prod-aoa-dallas2clt14.dfw02.corp.akamai.com [172.27.166.123])
-	by prod-mail-relay19.dfw02.corp.akamai.com (Postfix) with ESMTP id 60F91636F5;
-	Tue, 24 Sep 2024 17:26:18 +0000 (GMT)
-Message-ID: <1fbd0d02-6c34-4bb4-b9b8-66e121ff67e3@akamai.com>
-Date: Tue, 24 Sep 2024 10:26:17 -0700
+	s=arc-20240116; t=1727201247; c=relaxed/simple;
+	bh=r0Qo7isWNui7uOUPcqe/GIVDS+0O7xChj8EAgM3CfL4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=leheBKrIrwIBwSWu/rE1SrKl53eOFQuVdPKB8/8oq2S/+dH2WGLx62ilae21ZALNgsQsnoVgQVw3LVVvjCSKDR3ursNhAdc4CSZAnjKVmAGQTaWjjhaxH8qdq5UYAeP3SINdbw2+rU8uyaLFnqgrD6erAakrKLECtQzZrV0Ko0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lZOcuDMh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C879FC4CEC4;
+	Tue, 24 Sep 2024 18:07:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727201247;
+	bh=r0Qo7isWNui7uOUPcqe/GIVDS+0O7xChj8EAgM3CfL4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lZOcuDMhxbB1s/qyEZ8igBAUEiz7OhlJ3PVgm70oWsmkfJvU/w2LaRlIuqMUZtsGZ
+	 U2UB7gFzauQoUe9hovN/7MSUuvkukYSkmEMRvHNK7RBMVY6Ch/N0QJocsbm3OvZ+LO
+	 ZE2KoutzxG8KTMkm7YAr0i/09DcjTMarmjClZ88SHalWjbQWTGgKZG0jNoXyVdPN+Q
+	 d+S3i7cXfgH9C6UPLTsZO57kiodxg6T6Eh2Ahf6y/9vNkFPMlF6Tgbt1hZzY+IP1IQ
+	 bBa3C7pTZp8p/ZgL2Z9enTkkz8YDzprUCHpXqR8bUreg2Yb9YExLMZKyt+2ipeMI/n
+	 MP3PSheqMiGyQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v3] tcp: check skb is non-NULL in tcp_rto_delta_us()
-To: Paolo Abeni <pabeni@redhat.com>, edumazet@google.com, davem@davemloft.net,
-        kuba@kernel.org, netdev@vger.kernel.org, ncardwell@google.com
-Cc: linux-kernel@vger.kernel.org
-References: <20240910190822.2407606-1-johunt@akamai.com>
- <5632e043-bdba-4d75-bc7e-bf58014492fd@redhat.com>
-Content-Language: en-US
-From: Josh Hunt <johunt@akamai.com>
-In-Reply-To: <5632e043-bdba-4d75-bc7e-bf58014492fd@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-24_02,2024-09-24_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 mlxlogscore=999
- malwarescore=0 adultscore=0 suspectscore=0 phishscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2408220000
- definitions=main-2409240123
-X-Proofpoint-GUID: qkZLFQFukI6XARHdmMKJbaj6CyuY2jP7
-X-Proofpoint-ORIG-GUID: qkZLFQFukI6XARHdmMKJbaj6CyuY2jP7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 lowpriorityscore=0
- suspectscore=0 phishscore=0 mlxscore=0 adultscore=0 impostorscore=0
- spamscore=0 priorityscore=1501 mlxlogscore=999 bulkscore=0 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409240124
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 24 Sep 2024 21:07:23 +0300
+Message-Id: <D4EPQPFA8RGN.2PO6UNTDFI6IT@kernel.org>
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "James Bottomley" <James.Bottomley@HansenPartnership.com>,
+ <linux-integrity@vger.kernel.org>
+Cc: <roberto.sassu@huawei.com>, <mapengyu@gmail.com>,
+ <stable@vger.kernel.org>, "Mimi Zohar" <zohar@linux.ibm.com>, "David
+ Howells" <dhowells@redhat.com>, "Paul Moore" <paul@paul-moore.com>, "James
+ Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, "Peter
+ Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>,
+ <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 5/5] tpm: flush the auth session only when /dev/tpm0
+ is open
+X-Mailer: aerc 0.18.2
+References: <20240921120811.1264985-1-jarkko@kernel.org>
+ <20240921120811.1264985-6-jarkko@kernel.org>
+ <00cf0bdb3ebfaec7c4607c8c09e55f2e538402f1.camel@HansenPartnership.com>
+In-Reply-To: <00cf0bdb3ebfaec7c4607c8c09e55f2e538402f1.camel@HansenPartnership.com>
 
-On 9/19/24 2:05 AM, Paolo Abeni wrote:
-> !-------------------------------------------------------------------|
->   This Message Is From an External Sender
->   This message came from outside your organization.
-> |-------------------------------------------------------------------!
-> 
-> On 9/10/24 21:08, Josh Hunt wrote:
->> diff --git a/include/net/tcp.h b/include/net/tcp.h
->> index 2aac11e7e1cc..196c148fce8a 100644
->> --- a/include/net/tcp.h
->> +++ b/include/net/tcp.h
->> @@ -2434,9 +2434,26 @@ static inline s64 tcp_rto_delta_us(const struct 
->> sock *sk)
->>   {
->>       const struct sk_buff *skb = tcp_rtx_queue_head(sk);
->>       u32 rto = inet_csk(sk)->icsk_rto;
->> -    u64 rto_time_stamp_us = tcp_skb_timestamp_us(skb) + 
->> jiffies_to_usecs(rto);
->> -    return rto_time_stamp_us - tcp_sk(sk)->tcp_mstamp;
->> +    if (likely(skb)) {
->> +        u64 rto_time_stamp_us = tcp_skb_timestamp_us(skb) + 
->> jiffies_to_usecs(rto);
->> +
->> +        return rto_time_stamp_us - tcp_sk(sk)->tcp_mstamp;
->> +    } else {
->> +        WARN_ONCE(1,
->> +            "rtx queue emtpy: "
->> +            "out:%u sacked:%u lost:%u retrans:%u "
->> +            "tlp_high_seq:%u sk_state:%u ca_state:%u "
->> +            "advmss:%u mss_cache:%u pmtu:%u\n",
->> +            tcp_sk(sk)->packets_out, tcp_sk(sk)->sacked_out,
->> +            tcp_sk(sk)->lost_out, tcp_sk(sk)->retrans_out,
->> +            tcp_sk(sk)->tlp_high_seq, sk->sk_state,
->> +            inet_csk(sk)->icsk_ca_state,
->> +            tcp_sk(sk)->advmss, tcp_sk(sk)->mss_cache,
->> +            inet_csk(sk)->icsk_pmtu_cookie);
-> 
-> As the underlying issue here share the same root cause as the one 
-> covered by the WARN_ONCE() in tcp_send_loss_probe(), I'm wondering if it 
-> would make sense do move the info dumping in a common helper, so that we 
-> get the verbose warning on either cases.
-> 
-> Thanks,
-> 
-> Paolo
+On Tue Sep 24, 2024 at 4:43 PM EEST, James Bottomley wrote:
+> On Sat, 2024-09-21 at 15:08 +0300, Jarkko Sakkinen wrote:
+> > Instead of flushing and reloading the auth session for every single
+> > transaction, keep the session open unless /dev/tpm0 is used. In
+> > practice this means applying TPM2_SA_CONTINUE_SESSION to the session
+> > attributes. Flush the session always when /dev/tpm0 is written.
+>
+> Patch looks fine but this description is way too terse to explain how
+> it works.
+>
+> I would suggest:
+>
+> Boot time elongation as a result of adding sessions has been reported
+> as an issue in https://bugzilla.kernel.org/show_bug.cgi?id=3D219229
+>
+> The root cause is the addition of session overhead to
+> tpm2_pcr_extend().  This overhead can be reduced by not creating and
+> destroying a session for each invocation of the function.  Do this by
+> keeping a session resident in the TPM for reuse by any session based
+> TPM command.  The current flow of TPM commands in the kernel supports
+> this because tpm2_end_session() is only called for tpm errors because
+> most commands don't continue the session and expect the session to be
+> flushed on success.  Thus we can add the continue session flag to
+> session creation to ensure the session won't be flushed except on
+> error, which is a rare case.
 
-Thanks for the review Paolo. Sorry for the delay in replying I was OOO. 
-I can send a follow-up commit to create a common helper.
+I need to disagree on this as I don't even have PCR extends in my
+boot sequence and it still adds overhead. Have you verified this
+from the reporter?
 
-Josh
+There's bunch of things that use auth session, like trusted keys.
+Making such claim that PCR extend is the reason is nonsense.
+
+BR, Jarkko
 
