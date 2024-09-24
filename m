@@ -1,91 +1,124 @@
-Return-Path: <linux-kernel+bounces-337001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 877939843EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:44:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CB649843FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:48:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFB1B1F23E82
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:44:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60BF32885F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5BC19E977;
-	Tue, 24 Sep 2024 10:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="dqM8Tq1u"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8CF1A3AA3;
+	Tue, 24 Sep 2024 10:48:10 +0000 (UTC)
+Received: from MSK-MAILEDGE.securitycode.ru (msk-mailedge.securitycode.ru [195.133.217.143])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C88B19D886;
-	Tue, 24 Sep 2024 10:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018E919E972;
+	Tue, 24 Sep 2024 10:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.133.217.143
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727174678; cv=none; b=UD/gsNU/ooFkJHH6ar56JAwXK4pPdziNL09Rc3Hw5O7O/j5031S7aSR6gNZb92dgTLJZL471g+y7B6dc3mBsj9hmknZpWYbpX8HukIYWvnOtIdjCX8Bp0idmtvKFchT0esdXu+7nLZEyA6KnXznAIENV5H6Hkj7FV7oQ2alAMuw=
+	t=1727174889; cv=none; b=iKMPpfM1o68a6NfObiVK70iDlJOgLXXleYaC994vQoA7mWFexFPRxu0ZdQ4zzeR5KfqIIabuLpJciKtaY31Klt4ZlqUKcKi5fHNXd353hDBjyBMOEwSGB/AIAA3Y8Q1nzvEOBdBdukZL6DVGEE6TGZ6z5mNi2IIEfBQ48rJYfp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727174678; c=relaxed/simple;
-	bh=ADSIUCCjjcb2OIUtOAndet+U1NHJFFj9wfQ+Cn4WBsI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F+o+hn7THyV863HefHy4dNFjZ9HQGo8nHfr4Oo0130ZpzHdLEEcFlYXifuwFVOU7tNsxgg0ySnrqEkxpYyc/YxZUM9MjnQ+zfCUaZOdWtskoBfvhKsOSt5dw5nqPfJ1VzmySLQYFQc36YEwo4cvdMYnltXQSWEPG0nMbIKn3luU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=dqM8Tq1u; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1727174677; x=1758710677;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ADSIUCCjjcb2OIUtOAndet+U1NHJFFj9wfQ+Cn4WBsI=;
-  b=dqM8Tq1uqWgwAR1ZcSVN6DNN9cnLiMCTG2nBZd/QPHJGFrXiB4LP+pc0
-   KF6Hh0QMsZ4iWDv0BtGFsztjo2LWdSyjwlfmFHQKVbFNuZqQfD3h5uklM
-   3hhRTIpmQn/Omxjzlay4SXnHL61vpi6vA27MQxMbkpTVxhi1oZPCKSCLu
-   LTYNVkzvdyFCBpuRwYCO6eSJxbChdBA1V7lPEl9gxFEjP9Jc4EOu++u5u
-   zOQY6AgkyF2jZVDDhmU3paLV2wTSb1eOyqpfEemOutZZgsEkq9sHPdChp
-   40KgcABVTAfSYDHPjmcNWeFU3mqdbCcAODCYuP1Jd7S1zqu50fYTSUWRU
-   A==;
-X-CSE-ConnectionGUID: S9IVD7eVSNKmiRVsjE9LDA==
-X-CSE-MsgGUID: uGZHp0hCRNaA9YGPnbeqSA==
-X-IronPort-AV: E=Sophos;i="6.10,254,1719903600"; 
-   d="scan'208";a="32165508"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Sep 2024 03:44:36 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 24 Sep 2024 03:44:05 -0700
-Received: from DEN-DL-M70577 (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Tue, 24 Sep 2024 03:44:03 -0700
-Date: Tue, 24 Sep 2024 10:44:02 +0000
-From: Daniel Machon <daniel.machon@microchip.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-CC: "David S . Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, "Jens
- Emil Schulz =?utf-8?Q?=C3=98stergaard?="
-	<jensemil.schulzostergaard@microchip.com>, Steen Hegelund
-	<Steen.Hegelund@microchip.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] net: microchip: Make FDMA config symbol invisible
-Message-ID: <20240924104402.ab73u2ayks2h7amz@DEN-DL-M70577>
-References: <8e2bcd8899c417a962b7ee3f75b29f35b25d7933.1727171879.git.geert+renesas@glider.be>
+	s=arc-20240116; t=1727174889; c=relaxed/simple;
+	bh=GKn+W0VDsGgKD/6+iLR+VS9JVxXQWyiz/c9pZjsf4Dw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JNrjexjb9OcM0PAtETmBvZYd7H1WEkUGLF96uvwWKzKBrgv7mCR5v71wdaXYxX/X7hUYzaIX+8aqHTIMeJaAS4bbB7UgKZuC7I4LmL4Waz7xugaUvKzyj+GkBnVKQbNwAb3VCFCrN8BH2nyOpVnvuFqpHyHe38FD1RVHvWyRZG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=securitycode.ru; spf=pass smtp.mailfrom=securitycode.ru; arc=none smtp.client-ip=195.133.217.143
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=securitycode.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=securitycode.ru
+From: George Rurikov <g.ryurikov@securitycode.ru>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+CC: George Rurikov <g.ryurikov@securitycode.ru>, Rodrigo Vivi
+	<rodrigo.vivi@intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, <intel-gfx@lists.freedesktop.org>,
+	<intel-xe@lists.freedesktop.org>, <dri-devel@lists.freedesktop.og>,
+	<linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: [PATCH] drm: Add check for encoder in intel_get_crtc_new_encoder()
+Date: Tue, 24 Sep 2024 13:47:22 +0300
+Message-ID: <20240924104722.1049588-1-g.ryurikov@securitycode.ru>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <8e2bcd8899c417a962b7ee3f75b29f35b25d7933.1727171879.git.geert+renesas@glider.be>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: SPB-EX2.Securitycode.ru (172.16.24.92) To
+ MSK-EX2.Securitycode.ru (172.17.8.92)
 
-> There is no need to ask the user about enabling Microchip FDMA
-> functionality, as all drivers that use it select the FDMA symbol.
-> Hence make the symbol invisible, unless when compile-testing.
-> 
-> Fixes: 30e48a75df9c6ead ("net: microchip: add FDMA library")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+If the video card driver could not find the connector assigned to the
+current video controller, or if the hardware status has changed so that
+a pre-existing connector is no longer active, none of the state
+connectors will meet the assignment criteria for the current crtc video
+controller.
 
-Reviewed-by: Daniel Machon <daniel.machon@microchip.com>
+In the drm_WARN function, encoder->base.dev is called, so
+'&encoder->base.dev' will be dereferenced since encoder will still be
+initialized NULL.
+
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Fixes: e12d6218fda2 ("drm/i915: Reduce bigjoiner special casing")
+Cc: stable@vger.kernel.org
+Signed-off-by: George Rurikov <g.ryurikov@securitycode.ru>
+---
+ drivers/gpu/drm/i915/display/intel_display.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/i915/display/intel_display.c b/drivers/gpu/drm=
+/i915/display/intel_display.c
+index b4ef4d59da1a..a5e24d64f909 100644
+--- a/drivers/gpu/drm/i915/display/intel_display.c
++++ b/drivers/gpu/drm/i915/display/intel_display.c
+@@ -819,9 +819,10 @@ intel_get_crtc_new_encoder(const struct intel_atomic_s=
+tate *state,
+                num_encoders++;
+        }
+
+-       drm_WARN(state->base.dev, num_encoders !=3D 1,
+-                "%d encoders for pipe %c\n",
+-                num_encoders, pipe_name(primary_crtc->pipe));
++       if (encoder)
++               drm_WARN(state->base.dev, num_encoders !=3D 1,
++                       "%d encoders for pipe %c\n",
++                       num_encoders, pipe_name(primary_crtc->pipe));
+
+        return encoder;
+ }
+--
+2.34.1
+
+=D0=97=D0=B0=D1=8F=D0=B2=D0=BB=D0=B5=D0=BD=D0=B8=D0=B5 =D0=BE =D0=BA=D0=BE=
+=D0=BD=D1=84=D0=B8=D0=B4=D0=B5=D0=BD=D1=86=D0=B8=D0=B0=D0=BB=D1=8C=D0=BD=D0=
+=BE=D1=81=D1=82=D0=B8
+
+=D0=94=D0=B0=D0=BD=D0=BD=D0=BE=D0=B5 =D1=8D=D0=BB=D0=B5=D0=BA=D1=82=D1=80=
+=D0=BE=D0=BD=D0=BD=D0=BE=D0=B5 =D0=BF=D0=B8=D1=81=D1=8C=D0=BC=D0=BE =D0=B8 =
+=D0=BB=D1=8E=D0=B1=D1=8B=D0=B5 =D0=BF=D1=80=D0=B8=D0=BB=D0=BE=D0=B6=D0=B5=
+=D0=BD=D0=B8=D1=8F =D0=BA =D0=BD=D0=B5=D0=BC=D1=83 =D1=8F=D0=B2=D0=BB=D1=8F=
+=D1=8E=D1=82=D1=81=D1=8F =D0=BA=D0=BE=D0=BD=D1=84=D0=B8=D0=B4=D0=B5=D0=BD=
+=D1=86=D0=B8=D0=B0=D0=BB=D1=8C=D0=BD=D1=8B=D0=BC=D0=B8 =D0=B8 =D0=BF=D1=80=
+=D0=B5=D0=B4=D0=BD=D0=B0=D0=B7=D0=BD=D0=B0=D1=87=D0=B5=D0=BD=D1=8B =D0=B8=
+=D1=81=D0=BA=D0=BB=D1=8E=D1=87=D0=B8=D1=82=D0=B5=D0=BB=D1=8C=D0=BD=D0=BE =
+=D0=B4=D0=BB=D1=8F =D0=B0=D0=B4=D1=80=D0=B5=D1=81=D0=B0=D1=82=D0=B0. =D0=95=
+=D1=81=D0=BB=D0=B8 =D0=92=D1=8B =D0=BD=D0=B5 =D1=8F=D0=B2=D0=BB=D1=8F=D0=B5=
+=D1=82=D0=B5=D1=81=D1=8C =D0=B0=D0=B4=D1=80=D0=B5=D1=81=D0=B0=D1=82=D0=BE=
+=D0=BC =D0=B4=D0=B0=D0=BD=D0=BD=D0=BE=D0=B3=D0=BE =D0=BF=D0=B8=D1=81=D1=8C=
+=D0=BC=D0=B0, =D0=BF=D0=BE=D0=B6=D0=B0=D0=BB=D1=83=D0=B9=D1=81=D1=82=D0=B0,=
+ =D1=83=D0=B2=D0=B5=D0=B4=D0=BE=D0=BC=D0=B8=D1=82=D0=B5 =D0=BD=D0=B5=D0=BC=
+=D0=B5=D0=B4=D0=BB=D0=B5=D0=BD=D0=BD=D0=BE =D0=BE=D1=82=D0=BF=D1=80=D0=B0=
+=D0=B2=D0=B8=D1=82=D0=B5=D0=BB=D1=8F, =D0=BD=D0=B5 =D1=80=D0=B0=D1=81=D0=BA=
+=D1=80=D1=8B=D0=B2=D0=B0=D0=B9=D1=82=D0=B5 =D1=81=D0=BE=D0=B4=D0=B5=D1=80=
+=D0=B6=D0=B0=D0=BD=D0=B8=D0=B5 =D0=B4=D1=80=D1=83=D0=B3=D0=B8=D0=BC =D0=BB=
+=D0=B8=D1=86=D0=B0=D0=BC, =D0=BD=D0=B5 =D0=B8=D1=81=D0=BF=D0=BE=D0=BB=D1=8C=
+=D0=B7=D1=83=D0=B9=D1=82=D0=B5 =D0=B5=D0=B3=D0=BE =D0=B2 =D0=BA=D0=B0=D0=BA=
+=D0=B8=D1=85-=D0=BB=D0=B8=D0=B1=D0=BE =D1=86=D0=B5=D0=BB=D1=8F=D1=85, =D0=
+=BD=D0=B5 =D1=85=D1=80=D0=B0=D0=BD=D0=B8=D1=82=D0=B5 =D0=B8 =D0=BD=D0=B5 =
+=D0=BA=D0=BE=D0=BF=D0=B8=D1=80=D1=83=D0=B9=D1=82=D0=B5 =D0=B8=D0=BD=D1=84=
+=D0=BE=D1=80=D0=BC=D0=B0=D1=86=D0=B8=D1=8E =D0=BB=D1=8E=D0=B1=D1=8B=D0=BC =
+=D1=81=D0=BF=D0=BE=D1=81=D0=BE=D0=B1=D0=BE=D0=BC.
 
