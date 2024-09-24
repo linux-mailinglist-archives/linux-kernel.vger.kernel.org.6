@@ -1,136 +1,271 @@
-Return-Path: <linux-kernel+bounces-336699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80C41983F85
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:43:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58FA9983F9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:46:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FFA3281084
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:43:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD0F81F24195
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871B71487FE;
-	Tue, 24 Sep 2024 07:43:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD4A14EC4A;
+	Tue, 24 Sep 2024 07:46:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AtuGKMV2"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E9lZaGYI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F04E14830D
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D8E1494A3;
+	Tue, 24 Sep 2024 07:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727163794; cv=none; b=cZm4oXbPxPHp+qaSV3sOljbnFTS5a+io+hU0loh94FXhBkmfijijV0QWLqDscxr+IJPK0xZY3ufbwAgCf/MC6C+GN3A5Hjon0ujB0FlvqDR38ahiI3MrqAX6Z88mLeCJhMPfYidwgUyvMFJWND2I4CT01E7/y/ZOfD4yWrMgHpw=
+	t=1727163960; cv=none; b=PCC68L5DQV8O1hLkJq+7t232oCmMSfi7F6xatG8GV+Cn2z3gIpv6r5/wtNQrOzpOgkeVuHhOAvrUNmrmkPpMxiuiMzIe/LYxiTd2qX7hz8M4rwhi1/thMLTb8vcXxsQq6fiCluu35YNYQzZDT/wZy/KCCwUreOUCbCPhhfbx9W0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727163794; c=relaxed/simple;
-	bh=kjTCESWnozCNSO+5LxU4Dr2NZahYWHk5AXqlWRQen54=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hv3rJgKHqtXZPsi2/I1lXKeKrc+fPbuZD8ZvZtBButH4qoSgwa65YWIjU3l97kQyKHk8oO+Trb+rtV9KMyQ2uAe7FWrQ0UIo5FfGxREnOy0vmz1LRWe95dJ/lS2TaX85LzntHFfRnDCyTZxYbKRWdVUcX9hya8MVcXvVvcYbw/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AtuGKMV2; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53659867cbdso7329402e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 00:43:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727163789; x=1727768589; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v4AE3wT085nmxLHX+pXqyuEkqB9MSe4BJ3vsxOltPm0=;
-        b=AtuGKMV22o08HvhV00HTWp+aaMtEXvAXgvPSj3PSaY76YkJqhz+cSIZiDkrjEYdA9S
-         0WzMM7FDs5QXaT0tuYDCpjSspkfxPR0BuNtOmKrL5zuOqRvzOmXggX961M6xL7r6K426
-         nb1dGL276nTTvITh2U+eH/UY1xODD39wOoWRC71I+BX0TMP1oIV64uG+sUVnDHnZAU7I
-         KZ1w+VbLtAqNk9SB5IYDtX8ZnoduDXFPVl3cjG7rLyT8/VSvCtw94j+pJQOm/ujZ0Qi8
-         SOCBUwwCgi8f3vE/HTnbfWsR03KN6jQrFJ04zUPaYHrkXqVyhAp5t/Dihsl8Moyumsnt
-         y+KQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727163789; x=1727768589;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v4AE3wT085nmxLHX+pXqyuEkqB9MSe4BJ3vsxOltPm0=;
-        b=EDAxpO8PN1DH77YRkRXjxZ+nwr0jOBsZk2uIsozwESxQcr7cheZuee1KqqfjKHcTri
-         b2RoFoVF/VmLHY3rPTFfmsGkRw7Q7lozcWI8CtnM9AXmyBt++fzDw3GZa3Skey3/La5h
-         SmG6u84iRTC07mNpydYwJoBzu4QDg/CFJ/lT0F9iDP1yPz/p5BgjChCGMatKcl84fqFJ
-         5DUuVNKgFg7TJIy5ltj9sTVX7B0klUBGSow7hynefXCsQYH9j8Naqjgbx0g3B/lVN9tg
-         ZuanQmNLnKOWDJmuPkmFH1+mUepNn/O05c+DfJkUYSZawWWqo7tZsZc+saQ/L74+D70E
-         6jvg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEYayuneTq3Th0GUGOPH16B3jtVF81C5R4qlDk172IyQzm7SdXg+nEHwSXTufSW6WLtCJ/S+Wvb2x5MsA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzE6Nv5MgI4tj21FyuyV7Bhs9m9cYmHYWA0ekTy7NUmbdVFqvlY
-	0ebaW7dja3J4+9eLIO0ygi91cjSQ2mkLrzt2mb5Jox8sb5Y6059ensJhYfQ5vgOO72fWWitoxp+
-	oGcPgRQNnsjN9FEsk8JfhwdvVUUfgyHEeiWQSDQ==
-X-Google-Smtp-Source: AGHT+IGtM+ap0Bn1i9jACAwLBdGvwwbEYgZPkKvWofN4DPWUUPOGUFpOvQIXuOiqye/dyccJwkvrUhqRM2fBBjeGj6s=
-X-Received: by 2002:a05:6512:31d5:b0:530:dfab:9315 with SMTP id
- 2adb3069b0e04-536ac2d91bemr10172249e87.10.1727163789373; Tue, 24 Sep 2024
- 00:43:09 -0700 (PDT)
+	s=arc-20240116; t=1727163960; c=relaxed/simple;
+	bh=zN/s5ZIuAhecqLXbsRHCxK97tt/OADzp9Qo3Ga1kqYM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qMyIS8zC7hfnn1wuyXombQVmjmEbtatdz81a4v+ad4u1vpHoMWnvHLJXcwZEwBYKznWiegx0N1MdPFMPD+TGplomVhiBUCgnyqb/sMd/b6L8RRDXuOHzldWkwEWEAQ0xfQkZWjkO+ZRyDLFmMD5ImuonTMsP2zZONw/OBOimBfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E9lZaGYI; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727163958; x=1758699958;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zN/s5ZIuAhecqLXbsRHCxK97tt/OADzp9Qo3Ga1kqYM=;
+  b=E9lZaGYIrgIMN5hI8Ev3vu1XYZwTianqO6hVO6Jo0IekYRkzkYdA2maM
+   HktYTrns0vzWiX3H95nLoW/L5pVKu4NnZ/eLA3SlmDFykfjT0aZ7fI8Zo
+   nEgtVzclCca5RZGh6lK3bPbIVnnluwT/a48JrvBelO9/9vGWZqroyVJQb
+   8EXL2z0rQxJfp8yeiesL/mOblspWxRtxOXfgGT2GYgfdZ/Yvn8wDFRiWl
+   eT64VNDTEhHflwga5r0vJOwhdKThV/1GwmOWPqnXl31zJVKkf0QL0L3th
+   D+GugaSBl8aYFvaRRVlkfxxW1+2gFoad2xabkGAenIKvJqbVBZ74WP6+N
+   Q==;
+X-CSE-ConnectionGUID: IrwE/AGHTDGCTgUuq4pEfg==
+X-CSE-MsgGUID: KBg6q63fSv2XWaMm9+Rz5w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="43660619"
+X-IronPort-AV: E=Sophos;i="6.10,253,1719903600"; 
+   d="scan'208";a="43660619"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 00:45:56 -0700
+X-CSE-ConnectionGUID: MDrG7BL6RjOAvTqv1E7zgw==
+X-CSE-MsgGUID: vS2IO8SjQAi3TO+4Q6HetQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,253,1719903600"; 
+   d="scan'208";a="71476361"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmviesa008.fm.intel.com with ESMTP; 24 Sep 2024 00:45:54 -0700
+Date: Tue, 24 Sep 2024 15:42:59 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Peter Colberg <peter.colberg@intel.com>
+Cc: Wu Hao <hao.wu@intel.com>, Tom Rix <trix@redhat.com>,
+	Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>,
+	linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Russ Weight <russ.weight@linux.dev>,
+	Marco Pagani <marpagan@redhat.com>,
+	Matthew Gerlach <matthew.gerlach@linux.intel.com>
+Subject: Re: [PATCH v3 7/9] fpga: dfl: store FIU type in feature platform data
+Message-ID: <ZvJtg/IFmZAiaJBT@yilunxu-OptiPlex-7050>
+References: <20240919203430.1278067-1-peter.colberg@intel.com>
+ <20240919203430.1278067-8-peter.colberg@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912142447.981590-1-quic_mojha@quicinc.com>
-In-Reply-To: <20240912142447.981590-1-quic_mojha@quicinc.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 24 Sep 2024 09:42:58 +0200
-Message-ID: <CACRpkdZxu34btYm-ibkgEqWfau97DjuKGib=-xd-WYL2PN_KYA@mail.gmail.com>
-Subject: Re: [RFC PATCH] pinmux: Use sequential access to access desc->pinmux data
-To: Mukesh Ojha <quic_mojha@quicinc.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240919203430.1278067-8-peter.colberg@intel.com>
 
-On Thu, Sep 12, 2024 at 4:25=E2=80=AFPM Mukesh Ojha <quic_mojha@quicinc.com=
-> wrote:
+On Thu, Sep 19, 2024 at 04:34:28PM -0400, Peter Colberg wrote:
+> Remove the local function feature_dev_id_type() in favour of persisting
+> the FIU type in struct dfl_feature_platform_data. Add type to struct
+> build_feature_devs_info and drop argument to build_info_create_dev().
+> 
+> Signed-off-by: Peter Colberg <peter.colberg@intel.com>
+> Reviewed-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
+> ---
+>  drivers/fpga/dfl.c | 57 ++++++++++++++++++++++------------------------
+>  drivers/fpga/dfl.h |  3 +++
+>  2 files changed, 30 insertions(+), 30 deletions(-)
+> 
+> diff --git a/drivers/fpga/dfl.c b/drivers/fpga/dfl.c
+> index e644eb9fde39..9610ef1ec2ff 100644
+> --- a/drivers/fpga/dfl.c
+> +++ b/drivers/fpga/dfl.c
+> @@ -119,17 +119,6 @@ static void dfl_id_free(enum dfl_id_type type, int id)
+>  	mutex_unlock(&dfl_id_mutex);
+>  }
+>  
+> -static enum dfl_id_type feature_dev_id_type(struct platform_device *pdev)
+> -{
+> -	int i;
+> -
+> -	for (i = 0; i < ARRAY_SIZE(dfl_devs); i++)
+> -		if (!strcmp(dfl_devs[i].name, pdev->name))
+> -			return i;
+> -
+> -	return DFL_ID_MAX;
+> -}
+> -
+>  static enum dfl_id_type dfh_id_to_type(u16 id)
+>  {
+>  	int i;
+> @@ -379,7 +368,7 @@ dfl_dev_add(struct dfl_feature_platform_data *pdata,
+>  	if (ret)
+>  		goto put_dev;
+>  
+> -	ddev->type = feature_dev_id_type(pdev);
+> +	ddev->type = pdata->type;
+>  	ddev->feature_id = feature->id;
+>  	ddev->revision = feature->revision;
+>  	ddev->dfh_version = feature->dfh_version;
+> @@ -693,6 +682,7 @@ EXPORT_SYMBOL_GPL(dfl_fpga_dev_ops_unregister);
+>   * @irq_table: Linux IRQ numbers for all irqs, indexed by local irq index of
+>   *	       this device.
+>   * @feature_dev: current feature device.
+> + * @type: the current FIU type.
+>   * @ioaddr: header register region address of current FIU in enumeration.
+>   * @start: register resource start of current FIU.
+>   * @len: max register resource length of current FIU.
+> @@ -706,6 +696,7 @@ struct build_feature_devs_info {
+>  	int *irq_table;
+>  
+>  	struct platform_device *feature_dev;
+> +	enum dfl_id_type type;
+>  	void __iomem *ioaddr;
+>  	resource_size_t start;
+>  	resource_size_t len;
+> @@ -752,13 +743,12 @@ static void dfl_fpga_cdev_add_port_data(struct dfl_fpga_cdev *cdev,
+>  static struct dfl_feature_platform_data *
+>  binfo_create_feature_dev_data(struct build_feature_devs_info *binfo)
+>  {
+> +	enum dfl_id_type type = binfo->type;
+>  	struct platform_device *fdev = binfo->feature_dev;
+>  	struct dfl_feature_platform_data *pdata;
+>  	struct dfl_feature_info *finfo, *p;
+> -	enum dfl_id_type type;
 
-> When two client of the same gpio call pinctrl_select_state() for the
-> same functionality, we are seeing NULL pointer issue while accessing
-> desc->mux_owner.
+Move this line up breaks the reverse Xmas tree, seems no need.
 
-Uh-oh it looks like a very real issue, weird that we didn't run into
-it earlier.
+>  	int ret, index = 0, res_idx = 0;
+>  
+> -	type = feature_dev_id_type(fdev);
+>  	if (WARN_ON_ONCE(type >= DFL_ID_MAX))
+>  		return ERR_PTR(-EINVAL);
+>  
+> @@ -773,6 +763,7 @@ binfo_create_feature_dev_data(struct build_feature_devs_info *binfo)
+>  		return ERR_PTR(-ENOMEM);
+>  
+>  	pdata->dev = fdev;
+> +	pdata->type = type;
+>  	pdata->num = binfo->feature_num;
+>  	pdata->dfl_cdev = binfo->cdev;
+>  	pdata->id = FEATURE_DEV_ID_UNUSED;
+> @@ -861,14 +852,11 @@ binfo_create_feature_dev_data(struct build_feature_devs_info *binfo)
+>  }
+>  
+>  static int
+> -build_info_create_dev(struct build_feature_devs_info *binfo,
+> -		      enum dfl_id_type type)
+> +build_info_create_dev(struct build_feature_devs_info *binfo)
+>  {
+> +	enum dfl_id_type type = binfo->type;
+>  	struct platform_device *fdev;
+>  
+> -	if (type >= DFL_ID_MAX)
+> -		return -EINVAL;
+> -
+>  	/*
+>  	 * we use -ENODEV as the initialization indicator which indicates
+>  	 * whether the id need to be reclaimed
+> @@ -905,7 +893,7 @@ static int build_info_commit_dev(struct build_feature_devs_info *binfo)
+>  	if (ret)
+>  		return ret;
+>  
+> -	if (feature_dev_id_type(binfo->feature_dev) == PORT_ID)
+> +	if (binfo->type == PORT_ID)
+>  		dfl_fpga_cdev_add_port_data(binfo->cdev, pdata);
+>  	else
+>  		binfo->cdev->fme_dev = get_device(&binfo->feature_dev->dev);
+> @@ -919,6 +907,9 @@ static int build_info_commit_dev(struct build_feature_devs_info *binfo)
+>  	 */
+>  	binfo->feature_dev = NULL;
+>  
+> +	/* reset the binfo for next FIU */
+> +	binfo->type = DFL_ID_MAX;
+> +
+>  	return 0;
+>  }
+>  
+> @@ -931,8 +922,7 @@ static void build_info_free(struct build_feature_devs_info *binfo)
+>  	 * build_info_create_dev()
+>  	 */
+>  	if (binfo->feature_dev && binfo->feature_dev->id >= 0) {
+> -		dfl_id_free(feature_dev_id_type(binfo->feature_dev),
+> -			    binfo->feature_dev->id);
+> +		dfl_id_free(binfo->type, binfo->feature_dev->id);
+>  
+>  		list_for_each_entry_safe(finfo, p, &binfo->sub_features, node) {
+>  			list_del(&finfo->node);
+> @@ -1030,7 +1020,7 @@ static int parse_feature_irqs(struct build_feature_devs_info *binfo,
+>  		 * Instead, features with interrupt functionality provide
+>  		 * the information in feature specific registers.
+>  		 */
+> -		type = feature_dev_id_type(binfo->feature_dev);
+> +		type = binfo->type;
+>  		if (type == PORT_ID) {
+>  			switch (fid) {
+>  			case PORT_FEATURE_ID_UINT:
+> @@ -1222,7 +1212,7 @@ static int parse_feature_port_afu(struct build_feature_devs_info *binfo,
+>  	return create_feature_instance(binfo, ofst, size, FEATURE_ID_AFU);
+>  }
+>  
+> -#define is_feature_dev_detected(binfo) (!!(binfo)->feature_dev)
+> +#define is_feature_dev_detected(binfo) ((binfo)->type != DFL_ID_MAX)
 
-I guess we were not parallelizing probe so much in the past so it
-didn't happen for that reason.
+Seems too early to make this change. The 2 fields don't always align in
+this phase ..
 
->         /* Set owner */
->         pindesc->pctldev =3D pctldev;
-> +#ifdef CONFIG_PINMUX
-> +       spin_lock_init(&pindesc->lock);
-> +#endif
+>  
+>  static int parse_feature_afu(struct build_feature_devs_info *binfo,
+>  			     resource_size_t ofst)
+> @@ -1232,7 +1222,7 @@ static int parse_feature_afu(struct build_feature_devs_info *binfo,
+>  		return -EINVAL;
+>  	}
+>  
+> -	switch (feature_dev_id_type(binfo->feature_dev)) {
+> +	switch (binfo->type) {
+>  	case PORT_ID:
+>  		return parse_feature_port_afu(binfo, ofst);
+>  	default:
+> @@ -1278,6 +1268,7 @@ static void build_info_complete(struct build_feature_devs_info *binfo)
+>  static int parse_feature_fiu(struct build_feature_devs_info *binfo,
+>  			     resource_size_t ofst)
+>  {
+> +	enum dfl_id_type type;
+>  	int ret = 0;
+>  	u32 offset;
+>  	u16 id;
+> @@ -1299,8 +1290,14 @@ static int parse_feature_fiu(struct build_feature_devs_info *binfo,
+>  	v = readq(binfo->ioaddr + DFH);
+>  	id = FIELD_GET(DFH_ID, v);
+>  
+> +	type = dfh_id_to_type(id);
+> +	if (type >= DFL_ID_MAX)
+> +		return -EINVAL;
+> +
+> +	binfo->type = type;
+> +
+>  	/* create platform device for dfl feature dev */
+> -	ret = build_info_create_dev(binfo, dfh_id_to_type(id));
+> +	ret = build_info_create_dev(binfo);
 
-Can we rename it "mux_lock" so it is clear what it is locking?
+.. like here, binfo->type is valid but binfo->feature_dev may not.
 
-> @@ -115,6 +115,7 @@ static int pin_request(struct pinctrl_dev *pctldev,
->         struct pin_desc *desc;
->         const struct pinmux_ops *ops =3D pctldev->desc->pmxops;
->         int status =3D -EINVAL;
-> +       unsigned long flags;
->
->         desc =3D pin_desc_get(pctldev, pin);
->         if (desc =3D=3D NULL) {
-> @@ -127,6 +128,7 @@ static int pin_request(struct pinctrl_dev *pctldev,
->         dev_dbg(pctldev->dev, "request pin %d (%s) for %s\n",
->                 pin, desc->name, owner);
->
-> +       spin_lock_irqsave(&desc->lock, flags);
-
-Could you please rewrite all of these using scoped guards as that
-avoids a lot of possible bugs?
-
-#include <linux/cleanup.h>
-
-guard(spinlock_irqsave)(&desc->mux_lock);
-
-This means the lock will be released when you exit the
-function .
-
-tighter locks around a block of code are possible with:
-scoped_guard(spinlock_irqsave, &desc->mux_lock) { ... }
-
-It also removes the need to define a flags variable.
-
-Yours,
-Linus Walleij
+Thanks,
+Yilun
 
