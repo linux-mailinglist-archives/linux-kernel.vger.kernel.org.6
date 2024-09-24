@@ -1,347 +1,279 @@
-Return-Path: <linux-kernel+bounces-337679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B8DF984D71
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:11:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BA92984D72
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:11:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC9E01C20E39
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:11:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DDFA1C20955
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00833146D76;
-	Tue, 24 Sep 2024 22:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB38146A87;
+	Tue, 24 Sep 2024 22:11:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R2srPkut"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RICPc7KC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157036E614;
-	Tue, 24 Sep 2024 22:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838F113D8A3
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 22:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727215865; cv=none; b=VKTVjQZGWFeOx72hZu+JhkIalmEe/p3CIw366far64SLo+xh5j+X9dugPvwsvWMf4dctVaJtBgIDxbUJ2hYzbbPpkkm2BMOdZ9q8g29aLH+oSaswKm5ga4u2/O1XC1HHY2RfiQ0XBB8NkKuKdgHolDRbGynmi7J4pyDM9462v80=
+	t=1727215905; cv=none; b=N6zubQk0Y1Oka/PILVWnJOk9PZTRLR5YQKjUT0xz8vp8Ngw6KC8LSpf5li/x8BqWNtgAtr/JydHoZ6n0G4cNA9HzsC3oBMhI2alOFuMupg9mZOo0BABZopBUSWHc9G1z5qbZZ2mpAzoRpfRqTTIosr/j1vva0gFppgv7qYMOelk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727215865; c=relaxed/simple;
-	bh=Yt/sMjEffMjjPuTPQdKdC6kHuAqr5rF7lMy0jLkO11M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mta2CkegbVi7CQ095/KDgt6bWQNfkhjxvy1wAfRpsx02z2Qf4DDOfbMBhAgiJ38b7AP1oeG7X4/+MRiQuIC+N2JbTByTnCpRb4fAbmAih6FqOPjhkqlBkEhJsYAbjSRocYattSfeesDxVtsLs8y+G2fj8I7CC4BeZYyNQyfqt9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R2srPkut; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FB5CC4CEC4;
-	Tue, 24 Sep 2024 22:11:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727215864;
-	bh=Yt/sMjEffMjjPuTPQdKdC6kHuAqr5rF7lMy0jLkO11M=;
-	h=From:To:Cc:Subject:Date:From;
-	b=R2srPkut3uBbw7TBjeI7pX6Mha/C6MoKdaWsXAN/tSnz0IAl968PzSd5yzrAoF4d7
-	 /6hB1wRqsfnIrheRblV9xN8unkRp2dGNnDZg2dmmz1+pkYXfYV9s+agtOmZE4yzs/o
-	 Mi0A6D2nlhunULg4ZkJFbjI8ydV7qoC7bABo3qV+u3cqi0jg0QWvPEWBWR6HCGAeIy
-	 r25ugSGol0o24dHKrckTuY+7w/vS4Xt8mSimnXODUXTk7PNb84jIf3vsiQxiKI1SiH
-	 RtXQM+v21ODVhbDG09gDn10E1Lcd/xETf6fU16u59QVmYoxbf6L9Utf0frrcvUxL3I
-	 Ze3s8rnEcJDIw==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Rust for 6.12
-Date: Wed, 25 Sep 2024 00:10:23 +0200
-Message-ID: <20240924221023.197610-1-ojeda@kernel.org>
+	s=arc-20240116; t=1727215905; c=relaxed/simple;
+	bh=b5Y3fRI5lNKGzSZs6OraoqB7OFbY3CzZvCgi3yPNvI8=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=k7wPgvWQz6z45RW7zqUBXJT2yMbjU94KwbVoBHZTeYk1FYrdEOJk29b3U0ylZfkxKA8VvHhIGAdunuILiIxug3IybCgDJ1hTsfQZriC6EW8rzPtbKrJj961j4pNwKZaaSrrZ+uAT4vfEm2cli4A0mRR49SO0tKTSkSsGctjn2Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RICPc7KC; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727215904; x=1758751904;
+  h=date:from:to:cc:subject:message-id;
+  bh=b5Y3fRI5lNKGzSZs6OraoqB7OFbY3CzZvCgi3yPNvI8=;
+  b=RICPc7KCEMC/eWta7QXN0WSzFrfilvXD9qYFV6kXqK3KOR4umdjLWz/f
+   tjeeByf7Zfo9iG681gYt4yM6v9fYJgwlsu1pkEJ9gR9tS2L4C3fXV7hxM
+   Tjkp2TmuzLTkpdoKy8XrWYs4hMIKDLdH2SlxBbtM6TuRc2vANZdcPK2jH
+   xEVsqxQ3qiLP/ixHqA0Jjfp/J7dLFwFON3VrMCPZhpbax48gHYnh3HlFe
+   llnr270hRx4vfCzNaVBrRXEYhQgVS7K+aY0/XfSyByeJJmKmsbOpm2Kl0
+   hDuITVC5NAUmqIcCUYXRorHnx4wS1y5chMxavptXQYEhUINDxjkAqpkwx
+   A==;
+X-CSE-ConnectionGUID: gmlFZQLpTSe52uCfVZJ4VQ==
+X-CSE-MsgGUID: M9qUogqxRzOtO6gLEaEvJg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="29127932"
+X-IronPort-AV: E=Sophos;i="6.10,255,1719903600"; 
+   d="scan'208";a="29127932"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 15:11:43 -0700
+X-CSE-ConnectionGUID: by1TDT64SP2egrGteBK8nA==
+X-CSE-MsgGUID: EgpjOSsUQya3r1ZyKFQ9Pg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,255,1719903600"; 
+   d="scan'208";a="76073107"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 24 Sep 2024 15:11:42 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1stDkx-000Isz-1S;
+	Tue, 24 Sep 2024 22:11:39 +0000
+Date: Wed, 25 Sep 2024 06:11:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:master] BUILD SUCCESS
+ a6f489fee2633f8595934a850981bd4284abdbba
+Message-ID: <202409250632.Mjhza48d-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
+branch HEAD: a6f489fee2633f8595934a850981bd4284abdbba  Merge branch into tip/master: 'x86/splitlock'
 
-This is the next round of the Rust support.
+elapsed time: 779m
 
-Quite late, but all the commits have been in linux-next for at least a
-week (most have been for a few weeks).
+configs tested: 187
+configs skipped: 9
 
-This PR is a bit more involved than the usual ones -- the relevant
-maintainers were OK with us carrying the patches since there were a few
-interdependencies.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Three simple conflicts expected. Please note that akpm and I carried
-the same patch ("kasan: simplify and clarify Makefile").
+tested configs:
+alpha                             allnoconfig    gcc-14.1.0
+alpha                            allyesconfig    clang-20
+alpha                            allyesconfig    gcc-13.3.0
+alpha                               defconfig    gcc-14.1.0
+arc                              allmodconfig    clang-20
+arc                               allnoconfig    gcc-14.1.0
+arc                              allyesconfig    clang-20
+arc                                 defconfig    gcc-14.1.0
+arc                   randconfig-001-20240924    gcc-13.2.0
+arc                   randconfig-001-20240924    gcc-14.1.0
+arc                   randconfig-002-20240924    gcc-13.2.0
+arc                   randconfig-002-20240924    gcc-14.1.0
+arm                              allmodconfig    clang-20
+arm                               allnoconfig    gcc-14.1.0
+arm                              allyesconfig    clang-20
+arm                                 defconfig    gcc-14.1.0
+arm                      footbridge_defconfig    gcc-14.1.0
+arm                   randconfig-001-20240924    clang-20
+arm                   randconfig-001-20240924    gcc-14.1.0
+arm                   randconfig-002-20240924    gcc-14.1.0
+arm                   randconfig-003-20240924    gcc-14.1.0
+arm                   randconfig-004-20240924    gcc-14.1.0
+arm                         s3c6400_defconfig    gcc-14.1.0
+arm                         s5pv210_defconfig    gcc-14.1.0
+arm                        spear3xx_defconfig    gcc-14.1.0
+arm                        vexpress_defconfig    gcc-14.1.0
+arm64                            allmodconfig    clang-20
+arm64                             allnoconfig    gcc-14.1.0
+arm64                               defconfig    gcc-14.1.0
+arm64                 randconfig-001-20240924    gcc-14.1.0
+arm64                 randconfig-002-20240924    gcc-14.1.0
+arm64                 randconfig-003-20240924    gcc-14.1.0
+arm64                 randconfig-004-20240924    clang-14
+arm64                 randconfig-004-20240924    gcc-14.1.0
+csky                              allnoconfig    gcc-14.1.0
+csky                                defconfig    gcc-14.1.0
+csky                  randconfig-001-20240924    gcc-14.1.0
+csky                  randconfig-002-20240924    gcc-14.1.0
+hexagon                          allmodconfig    clang-20
+hexagon                           allnoconfig    gcc-14.1.0
+hexagon                          allyesconfig    clang-20
+hexagon                             defconfig    gcc-14.1.0
+hexagon               randconfig-001-20240924    clang-20
+hexagon               randconfig-001-20240924    gcc-14.1.0
+hexagon               randconfig-002-20240924    clang-20
+hexagon               randconfig-002-20240924    gcc-14.1.0
+i386                             allmodconfig    clang-18
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    clang-18
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    clang-18
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20240924    gcc-12
+i386        buildonly-randconfig-002-20240924    gcc-12
+i386        buildonly-randconfig-003-20240924    gcc-12
+i386        buildonly-randconfig-004-20240924    gcc-12
+i386        buildonly-randconfig-005-20240924    gcc-12
+i386        buildonly-randconfig-006-20240924    gcc-12
+i386                                defconfig    clang-18
+i386                  randconfig-001-20240924    gcc-12
+i386                  randconfig-002-20240924    gcc-12
+i386                  randconfig-003-20240924    gcc-12
+i386                  randconfig-004-20240924    gcc-12
+i386                  randconfig-005-20240924    gcc-12
+i386                  randconfig-006-20240924    gcc-12
+i386                  randconfig-011-20240924    gcc-12
+i386                  randconfig-012-20240924    gcc-12
+i386                  randconfig-013-20240924    gcc-12
+i386                  randconfig-014-20240924    gcc-12
+i386                  randconfig-015-20240924    gcc-12
+i386                  randconfig-016-20240924    gcc-12
+loongarch                        allmodconfig    gcc-14.1.0
+loongarch                         allnoconfig    gcc-14.1.0
+loongarch                           defconfig    gcc-14.1.0
+loongarch             randconfig-001-20240924    gcc-14.1.0
+loongarch             randconfig-002-20240924    gcc-14.1.0
+m68k                             alldefconfig    gcc-14.1.0
+m68k                             allmodconfig    gcc-14.1.0
+m68k                              allnoconfig    gcc-14.1.0
+m68k                             allyesconfig    gcc-14.1.0
+m68k                                defconfig    gcc-14.1.0
+microblaze                       allmodconfig    gcc-14.1.0
+microblaze                        allnoconfig    gcc-14.1.0
+microblaze                       allyesconfig    gcc-14.1.0
+microblaze                          defconfig    gcc-14.1.0
+mips                              allnoconfig    gcc-14.1.0
+mips                        qi_lb60_defconfig    gcc-14.1.0
+mips                   sb1250_swarm_defconfig    gcc-14.1.0
+nios2                             allnoconfig    gcc-14.1.0
+nios2                               defconfig    gcc-14.1.0
+nios2                 randconfig-001-20240924    gcc-14.1.0
+nios2                 randconfig-002-20240924    gcc-14.1.0
+openrisc                          allnoconfig    clang-20
+openrisc                         allyesconfig    gcc-14.1.0
+openrisc                            defconfig    gcc-12
+parisc                           allmodconfig    gcc-14.1.0
+parisc                            allnoconfig    clang-20
+parisc                           allyesconfig    gcc-14.1.0
+parisc                              defconfig    gcc-12
+parisc                randconfig-001-20240924    gcc-14.1.0
+parisc                randconfig-002-20240924    gcc-14.1.0
+parisc64                            defconfig    gcc-14.1.0
+powerpc                          allmodconfig    gcc-14.1.0
+powerpc                           allnoconfig    clang-20
+powerpc                          allyesconfig    gcc-14.1.0
+powerpc                        icon_defconfig    gcc-14.1.0
+powerpc                 linkstation_defconfig    gcc-14.1.0
+powerpc                     skiroot_defconfig    gcc-14.1.0
+powerpc                     tqm8540_defconfig    gcc-14.1.0
+powerpc64             randconfig-001-20240924    gcc-14.1.0
+powerpc64             randconfig-002-20240924    gcc-14.1.0
+powerpc64             randconfig-003-20240924    gcc-14.1.0
+riscv                            allmodconfig    gcc-14.1.0
+riscv                             allnoconfig    clang-20
+riscv                            allyesconfig    gcc-14.1.0
+riscv                               defconfig    gcc-12
+riscv                 randconfig-001-20240924    gcc-14.1.0
+riscv                 randconfig-002-20240924    gcc-14.1.0
+s390                             allmodconfig    clang-20
+s390                             allmodconfig    gcc-14.1.0
+s390                              allnoconfig    clang-20
+s390                             allyesconfig    gcc-14.1.0
+s390                                defconfig    gcc-12
+s390                  randconfig-001-20240924    clang-20
+s390                  randconfig-001-20240924    gcc-14.1.0
+s390                  randconfig-002-20240924    clang-20
+s390                  randconfig-002-20240924    gcc-14.1.0
+sh                               allmodconfig    gcc-14.1.0
+sh                                allnoconfig    gcc-14.1.0
+sh                               allyesconfig    gcc-14.1.0
+sh                         ap325rxa_defconfig    gcc-14.1.0
+sh                                  defconfig    gcc-12
+sh                    randconfig-001-20240924    gcc-14.1.0
+sh                    randconfig-002-20240924    gcc-14.1.0
+sh                      rts7751r2d1_defconfig    gcc-14.1.0
+sh                            titan_defconfig    gcc-14.1.0
+sparc                            allmodconfig    gcc-14.1.0
+sparc64                             defconfig    gcc-12
+sparc64               randconfig-001-20240924    gcc-14.1.0
+sparc64               randconfig-002-20240924    gcc-14.1.0
+um                               allmodconfig    clang-20
+um                                allnoconfig    clang-20
+um                               allyesconfig    clang-20
+um                               allyesconfig    gcc-12
+um                                  defconfig    gcc-12
+um                             i386_defconfig    gcc-12
+um                    randconfig-001-20240924    gcc-12
+um                    randconfig-001-20240924    gcc-14.1.0
+um                    randconfig-002-20240924    gcc-12
+um                    randconfig-002-20240924    gcc-14.1.0
+um                           x86_64_defconfig    gcc-12
+x86_64                            allnoconfig    clang-18
+x86_64                           allyesconfig    clang-18
+x86_64      buildonly-randconfig-001-20240924    clang-18
+x86_64      buildonly-randconfig-002-20240924    clang-18
+x86_64      buildonly-randconfig-003-20240924    clang-18
+x86_64      buildonly-randconfig-004-20240924    clang-18
+x86_64      buildonly-randconfig-005-20240924    clang-18
+x86_64      buildonly-randconfig-006-20240924    clang-18
+x86_64                              defconfig    clang-18
+x86_64                              defconfig    gcc-11
+x86_64                                  kexec    clang-18
+x86_64                                  kexec    gcc-12
+x86_64                randconfig-001-20240924    clang-18
+x86_64                randconfig-002-20240924    clang-18
+x86_64                randconfig-003-20240924    clang-18
+x86_64                randconfig-004-20240924    clang-18
+x86_64                randconfig-005-20240924    clang-18
+x86_64                randconfig-006-20240924    clang-18
+x86_64                randconfig-011-20240924    clang-18
+x86_64                randconfig-012-20240924    clang-18
+x86_64                randconfig-013-20240924    clang-18
+x86_64                randconfig-014-20240924    clang-18
+x86_64                randconfig-015-20240924    clang-18
+x86_64                randconfig-016-20240924    clang-18
+x86_64                randconfig-071-20240924    clang-18
+x86_64                randconfig-072-20240924    clang-18
+x86_64                randconfig-073-20240924    clang-18
+x86_64                randconfig-074-20240924    clang-18
+x86_64                randconfig-075-20240924    clang-18
+x86_64                randconfig-076-20240924    clang-18
+x86_64                               rhel-8.3    gcc-12
+x86_64                          rhel-8.3-rust    clang-18
+xtensa                            allnoconfig    gcc-14.1.0
+xtensa                  nommu_kc705_defconfig    gcc-14.1.0
+xtensa                randconfig-001-20240924    gcc-14.1.0
+xtensa                randconfig-002-20240924    gcc-14.1.0
 
-Regarding Rust-related things: you already merged the QR code panic
-screen via DRM, the Applied Micro QT2025 PHY driver (with a new `sizes`
-module) via netdev, a `k{v,}realloc()` patch via mm and two selftest
-config fixes. You have also got a firmware code doc fix via asoc.
-
-Please pull for v6.12 -- thanks!
-
-Cheers,
-Miguel
-
-The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
-
-  Linux 6.11-rc4 (2024-08-18 13:17:27 -0700)
-
-are available in the Git repository at:
-
-  https://github.com/Rust-for-Linux/linux.git tags/rust-6.12
-
-for you to fetch changes up to a2f11547052001bd448ccec81dd1e68409078fbb:
-
-  kasan: rust: Add KASAN smoke test via UAF (2024-09-16 18:04:37 +0200)
-
-----------------------------------------------------------------
-Rust changes for v6.12
-
-Toolchain and infrastructure:
-
- - Support 'MITIGATION_{RETHUNK,RETPOLINE,SLS}' (which cleans up objtool
-   warnings), teach objtool about 'noreturn' Rust symbols and mimic
-   '___ADDRESSABLE()' for 'module_{init,exit}'. With that, we should be
-   objtool-warning-free, so enable it to run for all Rust object files.
-
- - KASAN (no 'SW_TAGS'), KCFI and shadow call sanitizer support.
-
- - Support 'RUSTC_VERSION', including re-config and re-build on change.
-
- - Split helpers file into several files in a folder, to avoid conflicts
-   in it. Eventually those files will be moved to the right places with
-   the new build system. In addition, remove the need to manually export
-   the symbols defined there, reusing existing machinery for that.
-
- - Relax restriction on configurations with Rust + GCC plugins to just
-   the RANDSTRUCT plugin.
-
-'kernel' crate:
-
- - New 'list' module: doubly-linked linked list for use with reference
-   counted values, which is heavily used by the upcoming Rust Binder.
-   This includes 'ListArc' (a wrapper around 'Arc' that is guaranteed
-   unique for the given ID), 'AtomicTracker' (tracks whether a 'ListArc'
-   exists using an atomic), 'ListLinks' (the prev/next pointers for an
-   item in a linked list), 'List' (the linked list itself), 'Iter' (an
-   iterator over a 'List'), 'Cursor' (a cursor into a 'List' that allows
-   to remove elements), 'ListArcField' (a field exclusively owned by a
-   'ListArc'), as well as support for heterogeneous lists.
-
- - New 'rbtree' module: red-black tree abstractions used by the upcoming
-   Rust Binder. This includes 'RBTree' (the red-black tree itself),
-   'RBTreeNode' (a node), 'RBTreeNodeReservation' (a memory reservation
-   for a node), 'Iter' and 'IterMut' (immutable and mutable iterators),
-   'Cursor' (bidirectional cursor that allows to remove elements), as
-   well as an entry API similar to the Rust standard library one.
-
- - 'init' module: add 'write_[pin_]init' methods and the 'InPlaceWrite'
-   trait. Add the 'assert_pinned!' macro.
-
- - 'sync' module: implement the 'InPlaceInit' trait for 'Arc' by
-   introducing an associated type in the trait.
-
- - 'alloc' module: add 'drop_contents' method to 'BoxExt'.
-
- - 'types' module: implement the 'ForeignOwnable' trait for
-   'Pin<Box<T>>' and improve the trait's documentation. In addition,
-   add the 'into_raw' method to the 'ARef' type.
-
- - 'error' module: in preparation for the upcoming Rust support for
-   32-bit architectures, like arm, locally allow Clippy lint for those.
-
-Documentation:
-
- - https://rust.docs.kernel.org has been announced, so link to it.
-
- - Enable rustdoc's "jump to definition" feature, making its output a
-   bit closer to the experience in a cross-referencer.
-
- - Debian Testing now also provides recent Rust releases (outside of
-   the freeze period), so add it to the list.
-
-MAINTAINERS:
-
- - Trevor is joining as reviewer of the "RUST" entry.
-
-And a few other small bits.
-
-----------------------------------------------------------------
-Alex Mantel (1):
-      rust: Implement the smart pointer `InPlaceInit` for `Arc`
-
-Alice Ryhl (14):
-      rust: implement ForeignOwnable for Pin<Box<T>>
-      rust: sort blk includes in bindings_helper.h
-      rust: list: add ListArc
-      rust: list: add tracking for ListArc
-      rust: list: add struct with prev/next pointers
-      rust: list: add macro for implementing ListItem
-      rust: list: add List
-      rust: list: add iterators
-      rust: list: add cursor
-      rust: list: support heterogeneous lists
-      rust: list: add ListArcField
-      rust: rbtree: add `RBTree::entry`
-      rust: support for shadow call stack sanitizer
-      cfi: add CONFIG_CFI_ICALL_NORMALIZE_INTEGERS
-
-Andreas Hindborg (1):
-      rust: kbuild: split up helpers.c
-
-Andrey Konovalov (1):
-      kasan: simplify and clarify Makefile
-
-Benno Lossin (4):
-      rust: types: improve `ForeignOwnable` documentation
-      rust: kernel: add `drop_contents` to `BoxExt`
-      rust: init: add `write_[pin_]init` functions
-      rust: init: add `assert_pinned` macro
-
-Gary Guo (1):
-      rust: kbuild: auto generate helper exports
-
-Kartik Prajapati (1):
-      rust: types: add `ARef::into_raw`
-
-Matt Gilbride (1):
-      rust: rbtree: add cursor
-
-Matthew Maurer (6):
-      rust: support arrays in target JSON
-      rust: cfi: add support for CFI_CLANG with Rust
-      kbuild: rust: Define probing macros for rustc
-      rust: kasan: Rust does not support KHWASAN
-      kbuild: rust: Enable KASAN support
-      kasan: rust: Add KASAN smoke test via UAF
-
-Michael Vetter (1):
-      rust: kernel: use docs.kernel.org links in code documentation
-
-Miguel Ojeda (19):
-      rust: error: allow `useless_conversion` for 32-bit builds
-      rust: module: add static pointer to `{init,cleanup}_module()`
-      x86/rust: support MITIGATION_RETPOLINE
-      x86/rust: support MITIGATION_RETHUNK
-      x86/rust: support MITIGATION_SLS
-      objtool/rust: list `noreturn` Rust functions
-      objtool/kbuild/rust: enable objtool for Rust
-      rust: enable bindgen's `--enable-function-attribute-detection` flag
-      docs: rust: quick-start: add Debian Testing
-      docs: rust: link to https://rust.docs.kernel.org
-      docs: rust: improve main page introducing a "Code documentation" section
-      rust: enable rustdoc's `--generate-link-to-definition`
-      MAINTAINERS: add Trevor Gross as Rust reviewer
-      rust: avoid `box_uninit_write` feature
-      kbuild: rust: add `CONFIG_RUSTC_VERSION`
-      kbuild: rust: re-run Kconfig if the version text changes
-      kbuild: rust: rebuild if the version text changes
-      kbuild: rust: replace proc macros dependency on `core.o` with the version text
-      docs: rust: include other expressions in conditional compilation section
-
-Neal Gompa (1):
-      init/Kconfig: Only block on RANDSTRUCT for RUST
-
-Wedson Almeida Filho (3):
-      rust: rbtree: add red-black tree implementation backed by the C version
-      rust: rbtree: add iterator
-      rust: rbtree: add mutable iterator
-
- Documentation/rust/general-information.rst |   27 +-
- Documentation/rust/index.rst               |   18 +-
- Documentation/rust/quick-start.rst         |    4 +-
- MAINTAINERS                                |    1 +
- Makefile                                   |   19 +-
- arch/Kconfig                               |   16 +
- arch/arm64/Kconfig                         |   14 +-
- arch/arm64/Makefile                        |    3 +
- arch/riscv/Kconfig                         |    9 +-
- arch/x86/Makefile                          |   11 +-
- init/Kconfig                               |   19 +-
- mm/kasan/Makefile                          |    8 +-
- mm/kasan/kasan.h                           |    6 +
- mm/kasan/{kasan_test.c => kasan_test_c.c}  |   11 +
- mm/kasan/kasan_test_rust.rs                |   21 +
- rust/Makefile                              |   56 +-
- rust/bindings/bindings_helper.h            |    2 +-
- rust/exports.c                             |    1 +
- rust/helpers.c                             |  239 ------
- rust/helpers/blk.c                         |   14 +
- rust/helpers/bug.c                         |    8 +
- rust/helpers/build_assert.c                |   25 +
- rust/helpers/build_bug.c                   |    9 +
- rust/helpers/err.c                         |   19 +
- rust/helpers/helpers.c                     |   26 +
- rust/helpers/kunit.c                       |    9 +
- rust/helpers/mutex.c                       |    9 +
- rust/helpers/page.c                        |   19 +
- rust/helpers/rbtree.c                      |    9 +
- rust/helpers/refcount.c                    |   19 +
- rust/helpers/signal.c                      |    9 +
- rust/helpers/slab.c                        |    9 +
- rust/helpers/spinlock.c                    |   24 +
- rust/helpers/task.c                        |   19 +
- rust/helpers/uaccess.c                     |   15 +
- rust/helpers/wait.c                        |    9 +
- rust/helpers/workqueue.c                   |   15 +
- rust/kernel/alloc/box_ext.rs               |   33 +-
- rust/kernel/error.rs                       |    5 +-
- rust/kernel/init.rs                        |  191 ++++-
- rust/kernel/init/__internal.rs             |   29 +
- rust/kernel/lib.rs                         |    2 +
- rust/kernel/list.rs                        |  686 +++++++++++++++
- rust/kernel/list/arc.rs                    |  521 ++++++++++++
- rust/kernel/list/arc_field.rs              |   96 +++
- rust/kernel/list/impl_list_item_mod.rs     |  274 ++++++
- rust/kernel/prelude.rs                     |    2 +-
- rust/kernel/print.rs                       |   20 +-
- rust/kernel/rbtree.rs                      | 1278 ++++++++++++++++++++++++++++
- rust/kernel/std_vendor.rs                  |    2 +-
- rust/kernel/sync/arc.rs                    |   25 +-
- rust/kernel/types.rs                       |   63 +-
- rust/macros/lib.rs                         |    4 +
- rust/macros/module.rs                      |   12 +
- scripts/Kconfig.include                    |    8 +
- scripts/Makefile.build                     |    9 +-
- scripts/Makefile.compiler                  |   15 +
- scripts/Makefile.kasan                     |   84 +-
- scripts/Makefile.lib                       |    3 +
- scripts/generate_rust_target.rs            |   98 ++-
- scripts/rustc-version.sh                   |   26 +
- tools/objtool/check.c                      |   52 +-
- tools/objtool/noreturns.h                  |    2 +
- 63 files changed, 3884 insertions(+), 407 deletions(-)
- rename mm/kasan/{kasan_test.c => kasan_test_c.c} (99%)
- create mode 100644 mm/kasan/kasan_test_rust.rs
- delete mode 100644 rust/helpers.c
- create mode 100644 rust/helpers/blk.c
- create mode 100644 rust/helpers/bug.c
- create mode 100644 rust/helpers/build_assert.c
- create mode 100644 rust/helpers/build_bug.c
- create mode 100644 rust/helpers/err.c
- create mode 100644 rust/helpers/helpers.c
- create mode 100644 rust/helpers/kunit.c
- create mode 100644 rust/helpers/mutex.c
- create mode 100644 rust/helpers/page.c
- create mode 100644 rust/helpers/rbtree.c
- create mode 100644 rust/helpers/refcount.c
- create mode 100644 rust/helpers/signal.c
- create mode 100644 rust/helpers/slab.c
- create mode 100644 rust/helpers/spinlock.c
- create mode 100644 rust/helpers/task.c
- create mode 100644 rust/helpers/uaccess.c
- create mode 100644 rust/helpers/wait.c
- create mode 100644 rust/helpers/workqueue.c
- create mode 100644 rust/kernel/list.rs
- create mode 100644 rust/kernel/list/arc.rs
- create mode 100644 rust/kernel/list/arc_field.rs
- create mode 100644 rust/kernel/list/impl_list_item_mod.rs
- create mode 100644 rust/kernel/rbtree.rs
- create mode 100755 scripts/rustc-version.sh
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
