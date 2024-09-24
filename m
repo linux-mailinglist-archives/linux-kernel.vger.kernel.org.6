@@ -1,85 +1,111 @@
-Return-Path: <linux-kernel+bounces-336539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C624C983C1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 06:44:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AB16983C1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 06:46:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 029071C22605
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 04:44:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BCDF1C225E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 04:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D73A3EA9A;
-	Tue, 24 Sep 2024 04:44:23 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BF86374F1;
+	Tue, 24 Sep 2024 04:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="mR9yz2Eb"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2EEF347C7;
-	Tue, 24 Sep 2024 04:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B78031B85CF;
+	Tue, 24 Sep 2024 04:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727153062; cv=none; b=oZQ/y3ckQEyOcaIaarOZumRBNVHGetNkCJuJqOMUJv/trUqP92eZ2wB7rDNSbaDkM5wtxhLinooS5mcBB4mJCn2M/PKniOmRc89rX/HyRLYkAFki9vY7BF2/w3yu4sY9gEyTrc5brLThymAZ9/JQM30moWGd1SoqnjueBZODljk=
+	t=1727153193; cv=none; b=BT91frV8Aj4nKq5A/ipqkjO65ZTEIg8+uCI6WTtTHJiujtutOoiiPSsc2Rmpo4bEGJIgczdk6ATDJ252PIIE9472V1ZQwUSkEilcVpjsHanFdhpcLQoWoq3aGlOXcpGMiYa3nuKkeQrDaIUbhwKsChf9HkX7LRyt7+AkDSDpTzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727153062; c=relaxed/simple;
-	bh=g2mPIipiJlH4tYYn+yl6Vjn4Dkwd+g5d/jiNPSYfRDU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=pi+39PKBoeMnBpB3xGWgZFSZs92+JrVQsYeQ9pHXYrWbIKf9X8L6D1QhkRH4Q1PoIocclK1Tc5H6sdc6W7xVt9IETSSptBhVmy2eepMN8qkP06UoUeGJWpy9RBFe6T+6Dt3gHOekVGcZGxlV82tzxYFUJNGaTiznUYoUR1WNTrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E45CC4CEC6;
-	Tue, 24 Sep 2024 04:44:20 +0000 (UTC)
-Message-ID: <f9dfef64-a4fe-406c-9daf-1bf46cd23d65@linux-m68k.org>
-Date: Tue, 24 Sep 2024 14:44:18 +1000
+	s=arc-20240116; t=1727153193; c=relaxed/simple;
+	bh=Uv98T+R53KNCg7QExl800hN4g2ywFhjy5HhJLVPvHEI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=oS6DJWok80NsNwSEAsZ++f0q059jlxLRJbVp2mTTheHv1vbJkz5q7AyXXeg9b9BjtTo1dXldn6IGRn3wL6EoMqknci4ghG5BSWxLkeeBOi6+2COQ9SZ6nmYuKLy8uxnciwjvzhWGKRi0saPOy1Ug2zmWMAevGXbFYH+UEfSmzT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=mR9yz2Eb; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1727153186;
+	bh=9P3s7knmsd3pjZsQ/5LZqhO9PKFdM8ZTtkNb22tKDQY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=mR9yz2Eb9KzvgWTLVOQ7QaU4S5ZFJoXi4mnjSCx5D6p2CBWc7iGhBcti8U90onhsb
+	 sJxvNblNtL4FnZsZ3K+T07lmyusRLRMsjWBXjSl2e0q9UIRNdy5zBWgI0V7ZmAUmeq
+	 3PL2q/lgPtwv1as+vlJ92VXC+TSFM6pkfcMKXrR5zoNB9oWEQkDwNB2O97WxawUZ8i
+	 CPe64nOfJrfD/1h/X8ZTo45uEdJMUI8nJAdfU+HWrGQWtRt6sndxX7bToR3jYcplXV
+	 9o005npqR3P48ZWfyp0m+UG7TIpoNlYPbApAn8zUclQevsDsDYddsWaruaAujebC4d
+	 tMbw8EIr4n4Mg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XCS4L4K0tz4wd0;
+	Tue, 24 Sep 2024 14:46:26 +1000 (AEST)
+Date: Tue, 24 Sep 2024 14:46:26 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Anna Schumaker <anna@kernel.org>, Trond Myklebust <trondmy@gmail.com>
+Cc: Anna Schumaker <anna.schumaker@oracle.com>, Mike Snitzer
+ <snitzer@kernel.org>, NFS Mailing List <linux-nfs@vger.kernel.org>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the nfs-anna tree
+Message-ID: <20240924144626.3b374ff3@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Greg Ungerer <gerg@linux-m68k.org>
-Subject: [git pull] m68knommu changes for v6.12
-To: torvalds@linux-foundation.org
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Linux/m68k <linux-m68k@vger.kernel.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>, gerg@kernel.org
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/r0oBXvhLC2vXhPzgkA=HOlx";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi Linus,
+--Sig_/r0oBXvhLC2vXhPzgkA=HOlx
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Please pull the m68knommu git tree changes for v6.12.
+Hi all,
 
-Only a single change, cleaning up white space in debug message.
+After merging the nfs-anna tree, today's linux-next build (htmldocs)
+produced this warning:
 
-Regards
-Greg
+Documentation/filesystems/nfs/localio.rst:43: ERROR: Unexpected indentation.
+Documentation/filesystems/nfs/localio.rst:56: ERROR: Unexpected indentation.
+Documentation/filesystems/nfs/localio.rst:179: WARNING: Inline emphasis sta=
+rt-string without end-string.
+Documentation/filesystems/nfs/localio.rst:190: WARNING: Definition list end=
+s without a blank line; unexpected unindent.
+Documentation/filesystems/nfs/localio.rst:191: WARNING: Definition list end=
+s without a blank line; unexpected unindent.
+Documentation/filesystems/nfs/localio.rst: WARNING: document isn't included=
+ in any toctree
 
+Introduced by commit
 
+  92945bd81ca4 ("nfs: add Documentation/filesystems/nfs/localio.rst")
 
+--=20
+Cheers,
+Stephen Rothwell
 
-The following changes since commit da3ea35007d0af457a0afc87e84fddaebc4e0b63:
+--Sig_/r0oBXvhLC2vXhPzgkA=HOlx
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-   Linux 6.11-rc7 (2024-09-08 14:50:28 -0700)
+-----BEGIN PGP SIGNATURE-----
 
-are available in the Git repository at:
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbyRCIACgkQAVBC80lX
+0Gw1Kwf9FvKj3y06mibaU6Lj2oEoXICyPp2qQwwu/BxYdNV3MuLOSgQvvUMji3Mm
+9xuQ80v/P2lsXPzwK525EDBDZWXR6Re23WfbvTYaHpZ2TB7GZog5HXV4XGMAV6ve
+cSFUEnHYPBY6XWahSNHKl+tw+WxhlocjqcsAlsIlcSHMBN/j0/1lKDd4G3a4QSAi
+H6M4Ug0rCaz8Y8ktq4HVMz3XMgf1kIE32oz8ChBd53ZtRJ3DG8MwLS1iBiwneipZ
+OeN+hI4L1DMfiMCY6wnp7z6zH68knBVKuRxKVx6+KUJ17kk9wNbSPhjVaH4TUQeD
+zr6G8QhtfPURWoqASBRKAWpCFshSug==
+=0KI7
+-----END PGP SIGNATURE-----
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/gerg/m68knommu.git tags/m68knommu-for-v6.12
-
-for you to fetch changes up to aa99969ef591ca44cbafb320ceceb106792baee3:
-
-   m68k: remove trailing space after \n newline (2024-09-09 08:33:35 +1000)
-
-----------------------------------------------------------------
-m68knommu: updates and fixes for v6.12
-
-Fixes include:
-. remove trailing space in pr_debug message
-
-----------------------------------------------------------------
-Colin Ian King (1):
-       m68k: remove trailing space after \n newline
-
-  arch/m68k/kernel/setup_no.c | 2 +-
-  1 file changed, 1 insertion(+), 1 deletion(-)
+--Sig_/r0oBXvhLC2vXhPzgkA=HOlx--
 
