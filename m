@@ -1,190 +1,202 @@
-Return-Path: <linux-kernel+bounces-336682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9278E983F3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:37:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FF8B983F56
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:39:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2F39B20E7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:37:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E2A82829C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028E11487E5;
-	Tue, 24 Sep 2024 07:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C3214C5AF;
+	Tue, 24 Sep 2024 07:38:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="q4QjoN/q"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2F2xhpmz"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05C41482E9
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7590D148FF7
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727163425; cv=none; b=LbcLkayTp19dKPUyhUiOPqbj1RB6XzC0VdP6c2Zt/Lmo2e0OGL4lA3GD5wVMlcOf8eR1UZR6azACzdIZDeam2lji3zHOBMK+3jgUMXWvBhO+WUMkzsuUDC35N92jwuB/XOf0f4uuYqkinDW6cXlGfJ/KRcRt05NYOIs+B81nLc4=
+	t=1727163517; cv=none; b=sxzwq1FlHaoH637SOODwhGVqMBJIFY7PdExaRgmd1/JQvYnmkZsS7EjGVTSueap/M9cVB8Jb1osBQ4aV+F1A2ezH9kMNcjz77wTzgpH9ejjklS/o18/EQ6B4ecYH+xr9I55kPiaTwzXwTXg0ykF9kTqRojhMQ2tT9V8S1rZP3Kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727163425; c=relaxed/simple;
-	bh=z8LfvfJtrZ1r93cSNJ3Z+VfCUZ8yTsfwCoDNDLygQ4Q=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=ODVcpzNRuoNpiwQ8UHvfFEqQuPrxhWznIrqrnRKu/0+P8zAkHxs9mgf5GXcxlxVa2eXMrd8jkaDSZuWiCtK4bBncucD+zz2beEpqdlB5mLQ37lTT7feg3aBlU1q3VTkLNv15wWY9qtB5rkfDixhSC/n+w87NFqRsUpJkj06lFP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=q4QjoN/q; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c40942358eso8581522a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 00:37:03 -0700 (PDT)
+	s=arc-20240116; t=1727163517; c=relaxed/simple;
+	bh=MDgohN12nsf9M2mRFuJEw+fa/KxZISPlzEO6ManVUSY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=WbbhXqgk362VgH78XgPWDrRBzaO95ums84yBdHHints+m9/YpZk1806jzsSvlCP9qCQbHyeC4L4UtVD61MKqaMIiAb0oIU+K5dYIxYy1pbyptg/tYjvcKq8ddEgLLP3SbOne7OD7ygkgSf2PqZQEgsPRvVoTOvDqSeLrz6HavAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2F2xhpmz; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-718d6ad6105so8733296b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 00:38:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1727163422; x=1727768222; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4Uz+xx89fkl/W06ZQR0o2BcvVOxUxvsFcA4Ij/yTAAU=;
-        b=q4QjoN/qegW5NUH5egbvzys10Su0VmW/pMDVpNqfmiiwSQi4foj47AnYVyWKGSQ7cN
-         p2umqD9ujLOpyVSli62EcqAehZhzMEj9w3gImmSEwJTpFUA18f3fEStxh31BYjkkfjLL
-         tBGVVsmhF/sIA6sIPfWC0p3boDmw4PEaWLlpKdSW/1QOzTmqaHARtM3a7K5wr7oaMmqB
-         dTaIPNaQi8ixEvRvCSEfag9EKTerv36HpgiCeCe+Fpcllg3AlfxLRy68khHplrisjL2h
-         pATzPr8VjpjYVVIlsAAqotZbLKSGVf3h4PVOodyMIe6OPvSoufB6Q/vo7eJuNW2kSEVB
-         zFqA==
+        d=google.com; s=20230601; t=1727163516; x=1727768316; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4ZkYWJqNf6eoiBM6WqGlfzoIuo2kVyjLaKv1M7ETX4c=;
+        b=2F2xhpmzxYNgUcnhbQ9PTCZaxurWsu0umOflsfFz74AbdO5sDj/KY1SKzHcHBIazlr
+         orfjRUrn7AlklQLN98ybwVisBwAfu7uAtgxIREmHdrLvHadkq46bgYQSV1dxogb62hwq
+         bzIsqxt1RP04bcOwhRk7Tgstp1FXdpFKZK3NrtVCKVlhQlILhBhfWPpr7XAOEbKsZZGS
+         taw08TmnTK2+UQZxwGTn5Xl31EzZvUY+5lfHUd6ex/JIAXOCTk0jzFL053l97FgbdXLh
+         nUJigFDo95DEMOyOtnfqG9AkYjMYfE5INpFUBMeDD4e/f6g++dnGX9wSZOn/VkcovRkN
+         p9vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727163422; x=1727768222;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4Uz+xx89fkl/W06ZQR0o2BcvVOxUxvsFcA4Ij/yTAAU=;
-        b=sELVBAGGn4NI80n1W/L9TcJXTsp93vwK1qjJpBZDDPVk/gLEnJjPI43jT9s5fw8n9u
-         1XO5d65He+MyV6rSw1qQn9hfcVkZ1ZsyIJ1x1dIsaaRObcsDmcyPTC6CfRLTQRNkAAr3
-         N97UCKEwXWbT1S/bHubfMp5H99RL9UIdrfgKjHNiTEvvNdnsEw/SJeW8t7Tc3la3IamY
-         K125UlDLu4HenSaqt69buC2QzQcrGyqYoepTbFcyQfKdWcAIBRnhFDY+AGTPc/pUFQJJ
-         pg4wTm7cHzxyz6tQmHkORCXxkbmeApwRV2kvXOH8/V+nY/1YNTMHGEIq1jVNVmZfWp6A
-         nmwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVgoW/vW8lNUD8J2xps4SX92uwcKkC8J+Vz6wKSjVtxg77yNa//EPqNckNBV7t7/1YhTQbZAdNDra8Q7B8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt3rj+0UQzVBY/1+NyE2V7EQpli18L0TX0j9n9iduDL1f/L2j/
-	hTqQlYpkHHVwJ0tQ45qtkasz1TVdowamsDRY8Orwhbz+WujxdUxyTVubuhb2vuM=
-X-Google-Smtp-Source: AGHT+IHBCTye5uGE8IjsvAkEbPjYaurpvXwGgj8RC+DFxFi8soKD8YSl7Tx2Na4Tu6ExG7xO92fKkQ==
-X-Received: by 2002:a05:6402:380b:b0:5c4:178a:7162 with SMTP id 4fb4d7f45d1cf-5c5cdfd7cf2mr1901837a12.19.1727163422045;
-        Tue, 24 Sep 2024 00:37:02 -0700 (PDT)
-Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c5cf4973c5sm467420a12.35.2024.09.24.00.37.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Sep 2024 00:37:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727163516; x=1727768316;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=4ZkYWJqNf6eoiBM6WqGlfzoIuo2kVyjLaKv1M7ETX4c=;
+        b=pzKr2OadHJR5KDoXnhAzcBDeCp3mhicaDsnnU7ir0m9Y9oMbsyVCcv0lKGorkOFmRa
+         cCsK/dOw+bhl+HiVyqZVD6PocS3TguhrkMog6Vn8GgjdfH3yVq6j1sF8dfyCre3M47Hh
+         HtG5lw7pR2KN+92aUmII+6zOPgmJuZEKvR/XS1bv1yobPNRMllw0JSREnd77OPSKSb7m
+         fEqglTnO2xnKEbZMzUna6h7F40hqRtkfCMxfn5xwd8VheLSDj8pKZucgteAiEFC7yW5t
+         iilKYZK33YLibb9dwPzHV+dME6UdianA7BMfrWuSWkqXwfmgNUM6EHi90jGSsSyQIDnn
+         Cmyw==
+X-Forwarded-Encrypted: i=1; AJvYcCUo1yjvFRogSJCvqP3j/0HXxw0x14RsyOTI2kAqmRXJdqlVyh60K8gVgeDs/4J6dPdBjQFESRlrAsptyts=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxL9X7HoL3GqlSmHUv425Ulatt6Y7ip5Ahqy7W5Bhjc1haNwqnN
+	i5gAjWQmr4KAbzh0xdbcSASr8DNUxEXSvdjKCYf7brHKHBtO1PVz3PcrjJFTbcLdkvETPVFWvD+
+	cag==
+X-Google-Smtp-Source: AGHT+IGqaVfCjWT7w9L72pzk8ZvtxcHt2q2D2SKW8JkbXsTB6bk6jQAflozKkKgLgVrGHRgS43NAgT8SMao=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:66d1:b0:717:8e0f:3e5c with SMTP id
+ d2e1a72fcca58-7199caac6b7mr20285b3a.5.1727163515356; Tue, 24 Sep 2024
+ 00:38:35 -0700 (PDT)
+Date: Tue, 24 Sep 2024 00:38:33 -0700
+In-Reply-To: <cb06b33acdad04bef8c9541b4247a36f51cf2d36.camel@amazon.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20240923141810.76331-1-iorlov@amazon.com> <ZvGfnARMqZS0mkg-@google.com>
+ <cb06b33acdad04bef8c9541b4247a36f51cf2d36.camel@amazon.co.uk>
+Message-ID: <ZvJseVoT7gN_GBG3@google.com>
+Subject: Re: [PATCH 0/4] Process some MMIO-related errors without KVM exit
+From: Sean Christopherson <seanjc@google.com>
+To: Jack Allister <jalliste@amazon.co.uk>
+Cc: Ivan Orlov <iorlov@amazon.co.uk>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, "bp@alien8.de" <bp@alien8.de>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "hpa@zytor.com" <hpa@zytor.com>, 
+	"mingo@redhat.com" <mingo@redhat.com>, "tglx@linutronix.de" <tglx@linutronix.de>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	"nh-open-source@amazon.com" <nh-open-source@amazon.com>, "shuah@kernel.org" <shuah@kernel.org>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 24 Sep 2024 09:37:01 +0200
-Message-Id: <D4ECC1Y7MLX2.2072IIRC7SJV3@fairphone.com>
-Subject: Re: [PATCH RFC 07/11] arm64: dts: qcom: sm6350: Affirm IDR0.CCTW on
- apps_smmu
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Luca Weiss" <luca.weiss@fairphone.com>, "Konrad Dybcio"
- <konradybcio@kernel.org>, "Bjorn Andersson" <andersson@kernel.org>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, <cros-qcom-dts-watchers@chromium.org>
-Cc: "Marijn Suijten" <marijn.suijten@somainline.org>,
- <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Konrad Dybcio" <quic_kdybcio@quicinc.com>
-X-Mailer: aerc 0.18.2-0-ge037c095a049
-References: <20240919-topic-apps_smmu_coherent-v1-0-5b3a8662403d@quicinc.com> <20240919-topic-apps_smmu_coherent-v1-7-5b3a8662403d@quicinc.com> <D4EBVCYB1A56.21TT1WFRGCYGN@fairphone.com>
-In-Reply-To: <D4EBVCYB1A56.21TT1WFRGCYGN@fairphone.com>
 
-On Tue Sep 24, 2024 at 9:15 AM CEST, Luca Weiss wrote:
-> On Thu Sep 19, 2024 at 12:57 AM CEST, Konrad Dybcio wrote:
-> > From: Konrad Dybcio <quic_kdybcio@quicinc.com>
-> >
-> > On RPMh-based SoCs, the APPS SMMU advertizes support for cache-coherent
-> > pagetable walk via the IDR0 register. This however is not respected by
-> > the arm-smmu driver unless dma-coherent is set.
-> >
-> > Mark the node as dma-coherent to ensure this (and other) implementation=
-s
-> > take this coherency into account.
->
-> Hi Konrad!
->
-> Similar to [0] everything seems to look fine on SM7225 Fairphone 4.
->
-> [    0.190433] arm-smmu 15000000.iommu: probing hardware configuration...
-> [    0.190459] arm-smmu 15000000.iommu: SMMUv2 with:
-> [    0.190499] arm-smmu 15000000.iommu:         stage 1 translation
-> [    0.190515] arm-smmu 15000000.iommu:         coherent table walk
-> [    0.190531] arm-smmu 15000000.iommu:         stream matching with 71 r=
-egister groups
-> [    0.190560] arm-smmu 15000000.iommu:         63 context banks (0 stage=
--2 only)
-> [    0.191097] arm-smmu 15000000.iommu:         Supported page sizes: 0x6=
-1311000
-> [    0.191114] arm-smmu 15000000.iommu:         Stage-1: 36-bit VA -> 36-=
-bit IPA
-> [    0.191299] arm-smmu 15000000.iommu:         preserved 0 boot mappings
->
-> The Adreno SMMU still has non-coherent table walk.
->
-> [    1.141215] arm-smmu 3d40000.iommu: probing hardware configuration...
-> [    1.141243] arm-smmu 3d40000.iommu: SMMUv2 with:
-> [    1.141270] arm-smmu 3d40000.iommu:  stage 1 translation
-> [    1.141279] arm-smmu 3d40000.iommu:  address translation ops
-> [    1.141288] arm-smmu 3d40000.iommu:  non-coherent table walk
-> [    1.141296] arm-smmu 3d40000.iommu:  (IDR0.CTTW overridden by FW confi=
-guration)
-> [    1.141307] arm-smmu 3d40000.iommu:  stream matching with 5 register g=
-roups
-> [    1.141326] arm-smmu 3d40000.iommu:  5 context banks (0 stage-2 only)
-> [    1.141347] arm-smmu 3d40000.iommu:  Supported page sizes: 0x63315000
-> [    1.141356] arm-smmu 3d40000.iommu:  Stage-1: 48-bit VA -> 36-bit IPA
-> [    1.141568] arm-smmu 3d40000.iommu:  preserved 0 boot mappings
->
->
-> Tested-by: Luca Weiss <luca.weiss@fairphone.com> # sm7225-fairphone-fp4
->
-> [0] https://lore.kernel.org/linux-arm-msm/CAD=3DFV=3DXrbe1NO+trk1SJ30gHm5=
-jLFjd0bAeG3H46gD+vNFZa1w@mail.gmail.com/
+On Mon, Sep 23, 2024, Jack Allister wrote:
+> On Mon, 2024-09-23 at 10:04 -0700, Sean Christopherson wrote:
+> >=20
+> > On Mon, Sep 23, 2024, Ivan Orlov wrote:
+> > > Currently, KVM may return a variety of internal errors to VMM when
+> > > accessing MMIO, and some of them could be gracefully handled on the
+> > > KVM
+> > > level instead. Moreover, some of the MMIO-related errors are
+> > > handled
+> > > differently in VMX in comparison with SVM, which produces certain
+> > > inconsistency and should be fixed. This patch series introduces
+> > > KVM-level handling for the following situations:
+> > >=20
+> > > 1) Guest is accessing MMIO during event delivery: triple fault
+> > > instead
+> > > of internal error on VMX and infinite loop on SVM
+> > >=20
+> > > 2) Guest fetches an instruction from MMIO: inject #UD and resume
+> > > guest
+> > > execution without internal error
+> >=20
+> > No.=C2=A0 This is not architectural behavior.=C2=A0 It's not even remot=
+ely close to
+> > architectural behavior.=C2=A0 KVM's behavior isn't great, but making up=
+ _guest
+> > visible_ behavior is not going to happen.
+>=20
+> Is this a no to the whole series or from the cover letter?=C2=A0
 
-FWIW adding 'dma-coherent;' to &adreno_smmu also doesn't seem to
-explode:
+The whole series.
 
-[    1.451965] arm-smmu 3d40000.iommu: probing hardware configuration...
-[    1.455547] arm-smmu 3d40000.iommu: SMMUv2 with:
-[    1.459041] arm-smmu 3d40000.iommu:  stage 1 translation
-[    1.462446] arm-smmu 3d40000.iommu:  address translation ops
-[    1.465843] arm-smmu 3d40000.iommu:  coherent table walk
-[    1.469216] arm-smmu 3d40000.iommu:  stream matching with 5 register gro=
-ups
-[    1.472645] arm-smmu 3d40000.iommu:  5 context banks (0 stage-2 only)
-[    1.476067] arm-smmu 3d40000.iommu:  Supported page sizes: 0x63315000
-[    1.479458] arm-smmu 3d40000.iommu:  Stage-1: 48-bit VA -> 36-bit IPA
-[    1.483152] arm-smmu 3d40000.iommu:  preserved 0 boot mappings
+> For patch 1 we have observed that if a guest has incorrectly set it's
+> IDT base to point inside=C2=A0of an MMIO region it will result in a tripl=
+e
+> fault (bare metal Cascake Lake Intel).
 
-And kmscube still runs as expected.
+The triple fault occurs because the MMIO read returns garbage, e.g. because=
+ it
+gets back master abort semantics.
 
-Regards
-Luca
+> Yes a sane operating system is not really going to be doing setting it's =
+IDT
+> or GDT base to point into an MMIO region, but we've seen occurrences.
 
->
-> Regards
-> Luca
->
-> >
-> > Signed-off-by: Konrad Dybcio <quic_kdybcio@quicinc.com>
-> > ---
-> >  arch/arm64/boot/dts/qcom/sm6350.dtsi | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/sm6350.dtsi b/arch/arm64/boot/dts=
-/qcom/sm6350.dtsi
-> > index 7986ddb30f6e8ce6ceeb0f90772b0243aed6bffe..54cfe99006613f8ccc5bf6d=
-83bcb4bf8e72f3cfe 100644
-> > --- a/arch/arm64/boot/dts/qcom/sm6350.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/sm6350.dtsi
-> > @@ -2685,6 +2685,7 @@ apps_smmu: iommu@15000000 {
-> >  				     <GIC_SPI 411 IRQ_TYPE_LEVEL_HIGH>,
-> >  				     <GIC_SPI 412 IRQ_TYPE_LEVEL_HIGH>,
-> >  				     <GIC_SPI 413 IRQ_TYPE_LEVEL_HIGH>;
-> > +			dma-coherent;
-> >  		};
-> > =20
-> >  		intc: interrupt-controller@17a00000 {
+Sure, but that doesn't make it architecturally correct to synthesize arbitr=
+ary
+faults.
 
+> Normally when other external things have gone horribly wrong.
+>=20
+> Ivan can clarify as to what's been seen on AMD platforms regarding the
+> infinite loop for patch one.
+
+So it sounds like what you really want to do is not put the vCPU into an in=
+finite
+loop.  Have you tried kvm/next or kvm-x86/next, which has fixes for infinit=
+e
+loops on TDP faults?  Specifically, these commits:
+
+  98a69b96caca3e07aff57ca91fd7cc3a3853871a KVM: x86/mmu: WARN on MMIO cache=
+ hit when emulating write-protected gfn
+  d859b16161c81ee929b7b02a85227b8e3250bc97 KVM: x86/mmu: Detect if unprotec=
+t will do anything based on invalid_list
+  6b3dcabc10911711eba15816d808e2a18f130406 KVM: x86/mmu: Subsume kvm_mmu_un=
+protect_page() into the and_retry() version
+  2876624e1adcd9a3a3ffa8c4fe3bf8dbba969d95 KVM: x86: Rename reexecute_instr=
+uction()=3D>kvm_unprotect_and_retry_on_failure()
+  4df685664bed04794ad72b58d8af1fa4fcc60261 KVM: x86: Update retry protectio=
+n fields when forcing retry on emulation failure
+  dabc4ff70c35756bc107bc5d035d0f0746396a9a KVM: x86: Apply retry protection=
+ to "unprotect on failure" path
+  19ab2c8be070160be70a88027b3b93106fef7b89 KVM: x86: Check EMULTYPE_WRITE_P=
+F_TO_SP before unprotecting gfn
+  620525739521376a65a690df899e1596d56791f8 KVM: x86: Remove manual pfn look=
+up when retrying #PF after failed emulation
+  b299c273c06f005976cdc1b9e9299d492527607e KVM: x86/mmu: Move event re-inje=
+ction unprotect+retry into common path
+  29e495bdf847ac6ad0e0d03e5db39a3ed9f12858 KVM: x86/mmu: Always walk guest =
+PTEs with WRITE access when unprotecting
+  b7e948898e772ac900950c0dac4ca90e905cd0c0 KVM: x86/mmu: Don't try to unpro=
+tect an INVALID_GPA
+  2df354e37c1398a85bb43cbbf1f913eb3f91d035 KVM: x86: Fold retry_instruction=
+() into x86_emulate_instruction()
+  41e6e367d576ce1801dc5c2b106e14cde35e3c80 KVM: x86: Move EMULTYPE_ALLOW_RE=
+TRY_PF to x86_emulate_instruction()
+  dfaae8447c53819749cf3ba10ce24d3c609752e3 KVM: x86/mmu: Try "unprotect for=
+ retry" iff there are indirect SPs
+  01dd4d319207c4cfd51a1c9a1812909e944d8c86 KVM: x86/mmu: Apply retry protec=
+tion to "fast nTDP unprotect" path
+  9c19129e535bfff85bdfcb5a804e19e5aae935b2 KVM: x86: Store gpa as gpa_t, no=
+t unsigned long, when unprotecting for retry
+  019f3f84a40c88b68ca4d455306b92c20733e784 KVM: x86: Get RIP from vCPU stat=
+e when storing it to last_retry_eip
+  c1edcc41c3603c65f34000ae031a20971f4e56f9 KVM: x86: Retry to-be-emulated i=
+nsn in "slow" unprotect path iff sp is zapped
+  2fb2b7877b3a4cac4de070ef92437b38f13559b0 KVM: x86/mmu: Skip emulation on =
+page fault iff 1+ SPs were unprotected
+  989a84c93f592e6b288fb3b96d2eeec827d75bef KVM: x86/mmu: Trigger unprotect =
+logic only on write-protection page faults
+  4ececec19a0914873634ad69bbaca5557c33e855 KVM: x86/mmu: Replace PFERR_NEST=
+ED_GUEST_PAGE with a more descriptive helper
+
+> This was also tested on bare metal hardware. Injection of the #UD within
+> patch 2 may be debatable but I believe Ivan has some more data from
+> experiments backing this up.
+
+Heh, it's not debatable.  Fetching from MMIO is perfectly legal.  Again, an=
+y #UD
+you see on bare metal is all but guaranteed to be due to fetching garbage.
 
