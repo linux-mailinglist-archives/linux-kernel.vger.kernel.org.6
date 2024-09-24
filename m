@@ -1,89 +1,105 @@
-Return-Path: <linux-kernel+bounces-336940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 426EA9842DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:01:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84FBD9842DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 792EE1C233CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:01:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BEF9B28B94
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7022C16E886;
-	Tue, 24 Sep 2024 10:01:14 +0000 (UTC)
-Received: from proxima.lasnet.de (proxima.lasnet.de [78.47.171.185])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32C716C444;
+	Tue, 24 Sep 2024 10:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="EDEzJDOv"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B385C15624C;
-	Tue, 24 Sep 2024 10:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.47.171.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56AC214BF9B;
+	Tue, 24 Sep 2024 10:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727172074; cv=none; b=l1++Dddd/OZyYpY0T3qEDxpA8SVsYIHbPHjr2GcOoXPPaT5xv6iBxiMoLs7FawfRVIpjh/DlJbDzq2Wnw9sRH4hRXx1vUjiveCbI/2AIAUEBrGZVQPA1EzawM+gqys9l47Uu1hsdBP/HRKe2aZEMK2WpFgkUq0WCzrMT+g1woMQ=
+	t=1727172090; cv=none; b=LkX5w/OSIX7Q9qwtyWi3MNM/FCIB9kQOqIIwolpO52YA0yjEucRu4XTPPouHGSlqzxmxEdtK52XcYb6tFebVX0CAfqVI2y0q8mO+HWPGhbaESZFsR/CCcSmR7SBw+f1OuSmluJQAYsjDdoT3hxCZZYLneahrnAR826kLJ68XJHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727172074; c=relaxed/simple;
-	bh=lXodk2MXvxPraZRmssIQ5FJJdSMd0JgYfi6RvY8ziAY=;
+	s=arc-20240116; t=1727172090; c=relaxed/simple;
+	bh=8EkwCtL1pMLPJpFVyhCEcC4yr0fijNXf5bHbvdG9SaE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rHiqPwfdglYiOAi6z8OGiKL828An/gpvHfx7Iwc/Hs74SL1lL7eeYmQDzEBoXPcOJu9oio8W5zOLnnxreKVs46iJbw8iCKfnCx5tT5ckbXAoAvO511mLNOzAnSte+mIM6cGGqDdOuuLcJCgzC7McX2QBeMBjQplz4NLoMzAb+V8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=datenfreihafen.org; spf=pass smtp.mailfrom=datenfreihafen.org; arc=none smtp.client-ip=78.47.171.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=datenfreihafen.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=datenfreihafen.org
-Received: from localhost.localdomain (unknown [45.118.184.53])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: stefan@sostec.de)
-	by proxima.lasnet.de (Postfix) with ESMTPSA id B6E03C0525;
-	Tue, 24 Sep 2024 12:01:04 +0200 (CEST)
-From: Stefan Schmidt <stefan@datenfreihafen.org>
-To: Jiawei Ye <jiawei.ye@foxmail.com>
-Cc: Stefan Schmidt <stefan@datenfreihafen.org>,
-	alex.aring@gmail.com,
-	davem@davemloft.net,
-	david.girault@qorvo.com,
-	edumazet@google.com,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-wpan@vger.kernel.org,
-	miquel.raynal@bootlin.com,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	przemyslaw.kitszel@intel.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v3] mac802154: Fix potential RCU dereference issue in mac802154_scan_worker
-Date: Tue, 24 Sep 2024 12:00:39 +0200
-Message-ID: <172717177514.3057794.16241311556115087833.b4-ty@datenfreihafen.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <tencent_3B2F4F2B4DA30FAE2F51A9634A16B3AD4908@qq.com>
-References: <tencent_3B2F4F2B4DA30FAE2F51A9634A16B3AD4908@qq.com>
+	 MIME-Version:Content-Type; b=WzdA1PoOhwKIXKLa3E08m0YBPjrx/Y1VM9DckwVvTH4FflR31Nx449jPYD33SKBA3hDSofSDzvgd8SSo1FLkNkf97yTGoWpcH5uVrkEbNBAKau+4fYqr0PM51aG4EfN6+XbH7gdl+6m/Ply+WgH01Dp1MhOy5O2enOsUo4LkPHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=EDEzJDOv; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=qHRSPWckHafEtxyIwPf3zZU4QzTnqXjXtDJvuDWNGxY=; b=EDEzJDOvTIqfDKu/h0+VACmGM+
+	d6J1krWZp1rP+U/h2l7/YVcCVDjpu9xLJnRT0jmDbF5p1YBo6G9JlgZrdjjkLx63koYHZA0U6V/cE
+	CPLGZkv012RDB9CdDejb5zLOx4r66xa0wDi2FuozwTUXhViqdsJeJVnCFK+e+Nrw3LjyEaZ6TpiPE
+	0zeywkM2krVYU0Lv3u1KRpVQGTvWkxded/eEXWFmo3RttahcJEGMm/OBM9kh9W1va46iz9g53mMUQ
+	JPSFdBsauXBiSDWYaicBVVOaF+G9CrvW0YgpA7nGn0f71bZjQPphw41KIyudHvZrhJKdEz7sI5TMJ
+	O9fETzxQ==;
+Received: from 90-177-212-167.rck.o2.cz ([90.177.212.167] helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1st2MH-0000xL-2Y; Tue, 24 Sep 2024 12:01:25 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, Frank Wang <frawang.cn@gmail.com>
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, william.wu@rock-chips.com,
+ tim.chen@rock-chips.com, wmc@rock-chips.com,
+ Frank Wang <frank.wang@rock-chips.com>
+Subject:
+ Re: [PATCH v2 2/2] phy: rockchip: inno-usb2: Add usb2 phys support for rk3576
+Date: Tue, 24 Sep 2024 12:01:23 +0200
+Message-ID: <15288441.JCcGWNJJiE@phil>
+In-Reply-To: <20240924085510.20863-2-frawang.cn@gmail.com>
+References:
+ <20240924085510.20863-1-frawang.cn@gmail.com>
+ <20240924085510.20863-2-frawang.cn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Hello Jiawei Ye.
-
-On Tue, 24 Sep 2024 06:58:05 +0000, Jiawei Ye wrote:
-> In the `mac802154_scan_worker` function, the `scan_req->type` field was
-> accessed after the RCU read-side critical section was unlocked. According
-> to RCU usage rules, this is illegal and can lead to unpredictable
-> behavior, such as accessing memory that has been updated or causing
-> use-after-free issues.
+Am Dienstag, 24. September 2024, 10:55:10 CEST schrieb Frank Wang:
+> From: William Wu <william.wu@rock-chips.com>
 > 
-> This possible bug was identified using a static analysis tool developed
-> by myself, specifically designed to detect RCU-related issues.
-> 
-> [...]
+> The RK3576 SoC has two independent USB2.0 PHYs, and
+> each PHY has one port.
 
-Applied to wpan/wpan.git, thanks!
+Can you please split the content into "converting to clk_bulk" (see
+additional comment below) and "add rk3576" please?
 
-[1/1] mac802154: Fix potential RCU dereference issue in mac802154_scan_worker
-      https://git.kernel.org/wpan/wpan/c/bff1709b3980
+That would make the patch a lot cleaner.
 
-regards,
-Stefan Schmidt
+
+> @@ -376,6 +378,7 @@ rockchip_usb2phy_clk480m_register(struct rockchip_usb2phy *rphy)
+>  {
+>  	struct device_node *node = rphy->dev->of_node;
+>  	struct clk_init_data init;
+> +	struct clk *refclk = of_clk_get_by_name(node, "phyclk");
+
+Doesn't this create an imbalance - with the missing put?
+I think ideally just define clk_bulk_data structs for the
+1-clock and 3-clock variant, attach that to the device-data
+and then use the regular devm_clk_bulk_get ?
+
+That way you can then retrieve the clock from that struct?
+
+
+Thanks
+Heiko
+
+
 
