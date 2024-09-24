@@ -1,166 +1,123 @@
-Return-Path: <linux-kernel+bounces-337462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C92A1984A5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:40:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7CDB984A5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:41:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80A04285BCB
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:40:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EFB71F221F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D2591DFFB;
-	Tue, 24 Sep 2024 17:40:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D021AC43B;
+	Tue, 24 Sep 2024 17:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="hgeKtJwS"
-Received: from mail-43166.protonmail.ch (mail-43166.protonmail.ch [185.70.43.166])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iIscf1Ip"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1CB1ABEB5
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 17:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7151DFFB
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 17:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727199653; cv=none; b=tjvkimRzIvlXgpaoHG7J1jDzhHCahMQuR0KcobNBlERNWNNqdmMqVZMzpPnlNKqbw3pvel7Uj8biXYagACegVUJu4J5wa55OL1NHNmoaUSo6cyEaeb0zQtoX94eIGGgroHeyiYLo5UzzAqNtG90MLIbEpFN/tB2pkGvBHy8tBjU=
+	t=1727199696; cv=none; b=jTG/wXJG+UOdo2/0eJrH+4VVpkhOT+6XCkz2/laPErbmQOYDB5Ut8UrZsdbIvZGuceV7TA6by206eWVL/4RWeQlz5A5tClTtwoIb/w+3G3wyl7l8c0POut5gi2hkDQlpArZLAo6sFvGQ3AzJJXrN6tdwTmgoD3/1T2CgxfkybNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727199653; c=relaxed/simple;
-	bh=XAZ0n7me/6NPjiNvYD8nNQcWE0/mBtl5dFitgfUhxhQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=km/cZW2JbJ+c3/b83eDf1da0oaW56T9n7QzKKyYE/aTAKGZyuwgjp2OZygba5ydZwd/Qvw8wErl+o57hR1Ma43yoBHRG96ze677jAKD8LI9/U/OtZRT/1t9TG/Y4ttz6teCH+ZeMP8yL6oaAfHiQwVu1B+nQxW2Ut+vPr5zJjx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=hgeKtJwS; arc=none smtp.client-ip=185.70.43.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1727199642; x=1727458842;
-	bh=dbdxFo/zq070cXxVD/uDF6R4O2yzs/xwmmWLCvvKMOI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=hgeKtJwSzA+8k3B42nJA9HBWZzeP35dDOA5101vs67lkfPdwnzyenxltnJ9Lq/9va
-	 6YLqdo28O3BCFI4M2LgIfWS998Vvrr4eU6AuPRd+Df0RVn3HHPCRkbXeEzWSzLsK6W
-	 D3Jzvpc2m9Gixv2GY8FNHFTMfx7miSXURxzVxdD2IHWslgj33rXL3odlW4xuWHna8P
-	 yBDTecKSxwgY2/ETvMKCxFvOh48vUNNb5U8bVnYePG996DTHrYm58h/QFUfSdr82YJ
-	 4tSen88TLYSQPXf/d0mhdlBdwsMzSK9qDsxtOM0uhdGocLEHPFjuV6B1m/qo6KVKx1
-	 aTARj1zLwC3ug==
-Date: Tue, 24 Sep 2024 17:40:36 +0000
-To: kernel test robot <oliver.sang@intel.com>
-From: John <therealgraysky@proton.me>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, Unknown <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH] x86: add more x86-64 micro-architecture levels
-Message-ID: <4_u6ZNYPbaK36xkLt8ApRhiRTyWp_-NExHCH_tTFO_fanDglEmcbfowmiB505heI4md2AuR9hS-VSkf4s90sXb5--AnNTOwvPaTmcgzRYSY=@proton.me>
-In-Reply-To: <202409241436.b37a069e-oliver.sang@intel.com>
-References: <202409241436.b37a069e-oliver.sang@intel.com>
-Feedback-ID: 47473199:user:proton
-X-Pm-Message-ID: 95154c7c9cfeaff9d0db5c7987d82ecfb85c9d89
+	s=arc-20240116; t=1727199696; c=relaxed/simple;
+	bh=hy8T1XGBz3Ygj8AVhFZ6UIZ2sfC7wXQMgFjj8l1x3Ao=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=un0NwCskP02nVTwGInBZIsL4TmWJD7TdxtPoX6YoDnHQYovvf1WIfQcy3cw3oOyiU5BzchPtbOxAViWtJnoE/2i1bxtkF3N5FiubCVwrrsEVkQkeYszjYm5nY3ZSYe8ZCduwAlreN/MO8jIcI/V1K8cG52YdiB4yk6+rP7loEg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iIscf1Ip; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727199695; x=1758735695;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=hy8T1XGBz3Ygj8AVhFZ6UIZ2sfC7wXQMgFjj8l1x3Ao=;
+  b=iIscf1Ip2A6lsrkhhDqj26Y3BcH+WYryyG77fTlTt1xo8gXgYZWiRvOf
+   3Xkoi+QoSmbDJH5mgBfXar40LYKaKJZA4s/SfuiYS6+ywNAxMM1DQNgKg
+   ywR72HAmGUdqqEuLlCFAzTUZsJsuQHoJe1tjgNaaAWOXg8/5MeHBTw6l5
+   RHqQ4TMVzHY+Qx/+nYCpMeJV8lokGedrARxDHSlyDHoltUK17+Ph+ZH3B
+   tRl/DL85M+qkMJ1r1hD75ZSjUY9fYhSvpEnnRZvQ1zVr+6tg8psY9oslS
+   bM1nGCMeMB6121gcZq8fRR/3zfXxSD+Lz0u1CSv8GywZI8Az88qwWRlhV
+   w==;
+X-CSE-ConnectionGUID: Yo1mBz+OS3Gi3z0GHCdSfQ==
+X-CSE-MsgGUID: UsUkzhm6TlG1fhmsrPwTUQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="26359067"
+X-IronPort-AV: E=Sophos;i="6.10,255,1719903600"; 
+   d="scan'208";a="26359067"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 10:41:34 -0700
+X-CSE-ConnectionGUID: ZXUgU7qXRb+7AGbvkff/hA==
+X-CSE-MsgGUID: Dv7S9i33RuWAawwVSIFQ1w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,255,1719903600"; 
+   d="scan'208";a="72338152"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 24 Sep 2024 10:41:32 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1st9XW-000Ief-06;
+	Tue, 24 Sep 2024 17:41:30 +0000
+Date: Wed, 25 Sep 2024 01:41:18 +0800
+From: kernel test robot <lkp@intel.com>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Andrey Skvortsov <andrej.skvortzov@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCHv2] mm: do not export const kfree and kstrdup variants
+Message-ID: <202409250157.TXezi0Gp-lkp@intel.com>
+References: <20240924050937.697118-1-senozhatsky@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="b1_9XyeUgEfIWwwNaqU6g6Bs8aSo79lqIO9p4wecrpCc"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240924050937.697118-1-senozhatsky@chromium.org>
 
-This is a multi-part message in MIME format.
+Hi Sergey,
 
---b1_9XyeUgEfIWwwNaqU6g6Bs8aSo79lqIO9p4wecrpCc
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+kernel test robot noticed the following build errors:
 
-On Tuesday, September 24th, 2024 at 3:00 AM, kernel test robot <oliver.sang=
-@intel.com> wrote:
+[auto build test ERROR on akpm-mm/mm-everything]
 
-> early crash happens 70 times out of 500 runs.
-> for parent, keeps clean when we run same tests almost 1000 times.
+url:    https://github.com/intel-lab-lkp/linux/commits/Sergey-Senozhatsky/mm-do-not-export-const-kfree-and-kstrdup-variants/20240924-131016
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20240924050937.697118-1-senozhatsky%40chromium.org
+patch subject: [PATCHv2] mm: do not export const kfree and kstrdup variants
+config: loongarch-randconfig-r061-20240924 (https://download.01.org/0day-ci/archive/20240925/202409250157.TXezi0Gp-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240925/202409250157.TXezi0Gp-lkp@intel.com/reproduce)
 
-Many thanks for this rigorous testing.  Would you mind using the current re=
-vision of this patch (attached) or accessible at my github linked below?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409250157.TXezi0Gp-lkp@intel.com/
 
-https://github.com/graysky2/kernel_compiler_patch
---b1_9XyeUgEfIWwwNaqU6g6Bs8aSo79lqIO9p4wecrpCc
-Content-Type: text/x-patch; name=lite-more-x86-64-ISA-levels-for-kernel-6.8-rc4+.patch
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename=lite-more-x86-64-ISA-levels-for-kernel-6.8-rc4+.patch
+All errors (new ones prefixed by >>, old ones prefixed by <<):
 
-RnJvbSA3MTgxNTVlNjE2NGI0YmVjNDViY2JhODgxNGMzZjgyZTg0ZjM2ZGIwIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBncmF5c2t5IDx0aGVyZWFsZ3JheXNreSBBVCBwcm90b24gRE9U
-IG1lPgpEYXRlOiBNb24sIDE2IFNlcCAyMDI0IDE0OjQ3OjAzIC0wNDAwCgpGRUFUVVJFUwpUaGlz
-IHBhdGNoIGFkZHMgYWRkaXRpb25hbCB0dW5pbmdzIHZpYSBuZXcgeDg2LTY0IElTQSBsZXZlbHMg
-dG8gdGhlCkxpbnV4IGtlcm5lbC4KClRoZXNlIGFyZSBzZWxlY3RhYmxlIHVuZGVyOgoJUHJvY2Vz
-c29yIHR5cGUgYW5kIGZlYXR1cmVzIC0tLT4geDg2LTY0IGNvbXBpbGVyIElTQSBsZXZlbAoK4oCi
-IHg4Ni02NCAgICAgQSB2YWx1ZSBvZiAoMSkgaXMgdGhlIGRlZmF1bHQK4oCiIHg4Ni02NC12MiAg
-QSB2YWx1ZSBvZiAoMikgYnJpbmdzIHN1cHBvcnQgZm9yIHZlY3RvcgogICAgICAgICAgICAgaW5z
-dHJ1Y3Rpb25zIHVwIHRvIFN0cmVhbWluZyBTSU1EIEV4dGVuc2lvbnMgNC4yIChTU0U0LjIpCgkg
-ICAgIGFuZCBTdXBwbGVtZW50YWwgU3RyZWFtaW5nIFNJTUQgRXh0ZW5zaW9ucyAzIChTU1NFMyks
-IHRoZQoJICAgICBQT1BDTlQgaW5zdHJ1Y3Rpb24sIGFuZCBDTVBYQ0hHMTZCLgrigKIgeDg2LTY0
-LXYzICBBIHZhbHVlIG9mICgzKSBhZGRzIHZlY3RvciBpbnN0cnVjdGlvbnMgdXAgdG8gQVZYMiwg
-TU9WQkUsCiAgICAgICAgICAgICBhbmQgYWRkaXRpb25hbCBiaXQtbWFuaXB1bGF0aW9uIGluc3Ry
-dWN0aW9ucy4KClRoZXJlIGlzIGFsc28geDg2LTY0LXY0IGJ1dCBpbmNsdWRpbmcgdGhpcyBtYWtl
-cyBsaXR0bGUgc2Vuc2UgYXMKdGhlIGtlcm5lbCBkb2VzIG5vdCB1c2UgYW55IG9mIHRoZSBBVlg1
-MTIgaW5zdHJ1Y3Rpb25zIGFueXdheS4KClVzZXJzIG9mIGdsaWJjIDIuMzMgYW5kIGFib3ZlIGNh
-biBzZWUgd2hpY2ggbGV2ZWwgaXMgc3VwcG9ydGVkIGJ5IHJ1bm5pbmc6CgkvbGliL2xkLWxpbnV4
-LXg4Ni02NC5zby4yIC0taGVscCB8IGdyZXAgc3VwcG9ydGVkCk9yCgkvbGliNjQvbGQtbGludXgt
-eDg2LTY0LnNvLjIgLS1oZWxwIHwgZ3JlcCBzdXBwb3J0ZWQKCkJFTkVGSVRTClNtYWxsIGJ1dCBy
-ZWFsIHNwZWVkIGluY3JlYXNlcyBhcmUgbWVhc3VyYWJsZSB1c2luZyBhIG1ha2UgZW5kcG9pbnQg
-Y29tcGFyaW5nCmEgZ2VuZXJpYyBrZXJuZWwgdG8gb25lIGJ1aWx0IHdpdGggb25lIG9mIHRoZSBy
-ZXNwZWN0aXZlIG1pY3JvYXJjaHMuCgpTZWUgdGhlIGZvbGxvd2luZyBleHBlcmltZW50YWwgZXZp
-ZGVuY2Ugc3VwcG9ydGluZyB0aGlzIHN0YXRlbWVudDoKaHR0cHM6Ly9naXRodWIuY29tL2dyYXlz
-a3kyL2tlcm5lbF9jb21waWxlcl9wYXRjaD90YWI9cmVhZG1lLW92LWZpbGUjYmVuY2htYXJrcwoK
-UkVRVUlSRU1FTlRTCmxpbnV4IHZlcnNpb24gNi44LXJjMysKZ2NjIHZlcnNpb24gPj05LjAgb3Ig
-Y2xhbmcgdmVyc2lvbiA+PTkuMAoKQUNLTk9XTEVER01FTlRTClRoaXMgcGF0Y2ggYnVpbGRzIG9u
-IHRoZSBzZW1pbmFsIHdvcmsgYnkgSmVyb2VuLlsyXQoKUkVGRVJFTkNFUwoxLiAgaHR0cHM6Ly9n
-aXRsYWIuY29tL3g4Ni1wc0FCSXMveDg2LTY0LUFCSS8tL2NvbW1pdC83NzU2NmViMDNiYzZhMzI2
-ODExY2I3ZTkKMi4gIGh0dHA6Ly93d3cubGludXhmb3JnZS5uZXQvZG9jcy9saW51eC9saW51eC1n
-Y2MucGhwCgotLS0KIGFyY2gveDg2L0tjb25maWcuY3B1IHwgMjQgKysrKysrKysrKysrKysrKysr
-KysrKysrCiBhcmNoL3g4Ni9NYWtlZmlsZSAgICB8IDExICsrKysrKysrKy0tCiAyIGZpbGVzIGNo
-YW5nZWQsIDMzIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvYXJj
-aC94ODYvS2NvbmZpZy5jcHUgYi9hcmNoL3g4Ni9LY29uZmlnLmNwdQppbmRleCAyYTcyNzlkODA0
-NjAuLjU2MmEyNzNiZTIyMiAxMDA2NDQKLS0tIGEvYXJjaC94ODYvS2NvbmZpZy5jcHUKKysrIGIv
-YXJjaC94ODYvS2NvbmZpZy5jcHUKQEAgLTMwOCw2ICszMDgsMzAgQEAgY29uZmlnIFg4Nl9HRU5F
-UklDCiAJICBUaGlzIGlzIHJlYWxseSBpbnRlbmRlZCBmb3IgZGlzdHJpYnV0b3JzIHdobyBuZWVk
-IG1vcmUKIAkgIGdlbmVyaWMgb3B0aW1pemF0aW9ucy4KCitjb25maWcgWDg2XzY0X1ZFUlNJT04K
-KwlpbnQgIng4Ni02NCBjb21waWxlciBJU0EgbGV2ZWwiCisJcmFuZ2UgMSAzCisJZGVwZW5kcyBv
-biAoQ0NfSVNfR0NDICYmIEdDQ19WRVJTSU9OID4gMTEwMDAwKSB8fCAoQ0NfSVNfQ0xBTkcgJiYg
-Q0xBTkdfVkVSU0lPTiA+PSAxMjAwMDApCisJZGVwZW5kcyBvbiBYODZfNjQgJiYgR0VORVJJQ19D
-UFUKKwloZWxwCisJICBTcGVjaWZ5IGEgc3BlY2lmaWMgeDg2LTY0IGNvbXBpbGVyIElTQSBsZXZl
-bC4KKworCSAgVGhlcmUgYXJlIHRocmVlIHg4Ni02NCBJU0EgbGV2ZWxzIHRoYXQgd29yayBvbiB0
-b3Agb2YKKwkgIHRoZSB4ODYtNjQgYmFzZWxpbmUsIG5hbWVseTogeDg2LTY0LXYyLCB4ODYtNjQt
-djMsIGFuZCB4ODYtNjQtdjQuCisKKwkgIHg4Ni02NC12MiBicmluZ3Mgc3VwcG9ydCBmb3IgdmVj
-dG9yIGluc3RydWN0aW9ucyB1cCB0byBTdHJlYW1pbmcgU0lNRAorCSAgRXh0ZW5zaW9ucyA0LjIg
-KFNTRTQuMikgYW5kIFN1cHBsZW1lbnRhbCBTdHJlYW1pbmcgU0lNRCBFeHRlbnNpb25zIDMKKwkg
-IChTU1NFMyksIHRoZSBQT1BDTlQgaW5zdHJ1Y3Rpb24sIGFuZCBDTVBYQ0hHMTZCLgorCisJICB4
-ODYtNjQtdjMgYWRkcyB2ZWN0b3IgaW5zdHJ1Y3Rpb25zIHVwIHRvIEFWWDIsIE1PVkJFLCBhbmQg
-YWRkaXRpb25hbAorCSAgYml0LW1hbmlwdWxhdGlvbiBpbnN0cnVjdGlvbnMuCisKKwkgIHg4Ni02
-NC12NCBpcyBub3QgaW5jbHVkZWQgc2luY2UgdGhlIGtlcm5lbCBkb2VzIG5vdCB1c2UgQVZYNTEy
-IGluc3RydWN0aW9ucworCisJICBZb3UgY2FuIGZpbmQgdGhlIGJlc3QgdmVyc2lvbiBmb3IgeW91
-ciBDUFUgYnkgcnVubmluZyBvbmUgb2YgdGhlIGZvbGxvd2luZzoKKwkgIC9saWIvbGQtbGludXgt
-eDg2LTY0LnNvLjIgLS1oZWxwIHwgZ3JlcCBzdXBwb3J0ZWQKKwkgIC9saWI2NC9sZC1saW51eC14
-ODYtNjQuc28uMiAtLWhlbHAgfCBncmVwIHN1cHBvcnRlZAorCiAjCiAjIERlZmluZSBpbXBsaWVk
-IG9wdGlvbnMgZnJvbSB0aGUgQ1BVIHNlbGVjdGlvbiBoZXJlCiBjb25maWcgWDg2X0lOVEVSTk9E
-RV9DQUNIRV9TSElGVApkaWZmIC0tZ2l0IGEvYXJjaC94ODYvTWFrZWZpbGUgYi9hcmNoL3g4Ni9N
-YWtlZmlsZQppbmRleCA4MDFmZDg1YzNlZjYuLmUxZjg4Zjg0NmJlZCAxMDA2NDQKLS0tIGEvYXJj
-aC94ODYvTWFrZWZpbGUKKysrIGIvYXJjaC94ODYvTWFrZWZpbGUKQEAgLTE3OCwxNCArMTc4LDIx
-IEBAIGVsc2UKICAgICAgICAgY2ZsYWdzLSQoQ09ORklHX01QU0MpCQkrPSAtbWFyY2g9bm9jb25h
-CiAgICAgICAgIGNmbGFncy0kKENPTkZJR19NQ09SRTIpCQkrPSAtbWFyY2g9Y29yZTIKICAgICAg
-ICAgY2ZsYWdzLSQoQ09ORklHX01BVE9NKQkJKz0gLW1hcmNoPWF0b20KLSAgICAgICAgY2ZsYWdz
-LSQoQ09ORklHX0dFTkVSSUNfQ1BVKQkrPSAtbXR1bmU9Z2VuZXJpYworICAgICAgICBpZmVxICgk
-KENPTkZJR19YODZfNjRfVkVSU0lPTiksMSkKKyAgICAgICAgICBjZmxhZ3MtJChDT05GSUdfR0VO
-RVJJQ19DUFUpCQkrPSAtbXR1bmU9Z2VuZXJpYworICAgICAgICAgIHJ1c3RmbGFncy0kKENPTkZJ
-R19HRU5FUklDX0NQVSkJKz0gLVp0dW5lLWNwdT1nZW5lcmljCisgICAgICAgIGVsc2UKKyAgICAg
-ICAgICBjZmxhZ3MtJChDT05GSUdfR0VORVJJQ19DUFUpCQkrPSAtbWFyY2g9eDg2LTY0LXYkKENP
-TkZJR19YODZfNjRfVkVSU0lPTikKKyAgICAgICAgICBydXN0ZmxhZ3MtJChDT05GSUdfR0VORVJJ
-Q19DUFUpCSs9IC1DdGFyZ2V0LWNwdT14ODYtNjQtdiQoQ09ORklHX1g4Nl82NF9WRVJTSU9OKQor
-ICAgICAgICBlbmRpZgorICAgICAgICBjZmxhZ3MtJChDT05GSUdfTUFUT00pIAkrPSAtbWFyY2g9
-Ym9ubmVsbAorICAgICAgICBjZmxhZ3MtJChDT05GSUdfTUNPUkUyKSAJKz0gLW1hcmNoPWNvcmUy
-CiAgICAgICAgIEtCVUlMRF9DRkxBR1MgKz0gJChjZmxhZ3MteSkKCiAgICAgICAgIHJ1c3RmbGFn
-cy0kKENPTkZJR19NSzgpCQkrPSAtQ3RhcmdldC1jcHU9azgKICAgICAgICAgcnVzdGZsYWdzLSQo
-Q09ORklHX01QU0MpCSs9IC1DdGFyZ2V0LWNwdT1ub2NvbmEKICAgICAgICAgcnVzdGZsYWdzLSQo
-Q09ORklHX01DT1JFMikJKz0gLUN0YXJnZXQtY3B1PWNvcmUyCiAgICAgICAgIHJ1c3RmbGFncy0k
-KENPTkZJR19NQVRPTSkJKz0gLUN0YXJnZXQtY3B1PWF0b20KLSAgICAgICAgcnVzdGZsYWdzLSQo
-Q09ORklHX0dFTkVSSUNfQ1BVKQkrPSAtWnR1bmUtY3B1PWdlbmVyaWMKICAgICAgICAgS0JVSUxE
-X1JVU1RGTEFHUyArPSAkKHJ1c3RmbGFncy15KQoKICAgICAgICAgS0JVSUxEX0NGTEFHUyArPSAt
-bW5vLXJlZC16b25lCi0tCjIuNDYuMQoK
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/zlib_inflate/zlib_inflate.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_powersave.o
+>> ERROR: modpost: "kstrdup_const" [drivers/dax/kmem.ko] undefined!
+>> ERROR: modpost: "kfree_const" [drivers/dax/kmem.ko] undefined!
+>> ERROR: modpost: "kfree_const" [drivers/input/touchscreen/chipone_icn8505.ko] undefined!
+>> ERROR: modpost: "kstrdup_const" [drivers/power/sequencing/pwrseq-core.ko] undefined!
+>> ERROR: modpost: "kfree_const" [drivers/power/sequencing/pwrseq-core.ko] undefined!
+>> ERROR: modpost: "kfree_const" [drivers/memstick/core/memstick.ko] undefined!
+>> ERROR: modpost: "kfree_const" [net/bluetooth/bluetooth.ko] undefined!
+>> ERROR: modpost: "kstrdup_const" [net/nfc/hci/hci.ko] undefined!
+>> ERROR: modpost: "kfree_const" [net/nfc/hci/hci.ko] undefined!
 
---b1_9XyeUgEfIWwwNaqU6g6Bs8aSo79lqIO9p4wecrpCc--
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
