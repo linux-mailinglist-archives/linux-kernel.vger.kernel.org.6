@@ -1,122 +1,111 @@
-Return-Path: <linux-kernel+bounces-337476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEB9A984A90
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:01:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98014984A8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:01:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F5D51F245A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:01:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C75751C22FB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95AF1ABED5;
-	Tue, 24 Sep 2024 18:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6EC21AC898;
+	Tue, 24 Sep 2024 18:01:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xW2GnKWp"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aAqnMEyE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E56C1B85CA
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 18:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1258D31A60;
+	Tue, 24 Sep 2024 18:01:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727200874; cv=none; b=a/WTdlHR+In10QYSOiCoNb2YHe6spQM196suZUJ0mgDOVSykWWMzjU+Z/283vt5j+8HCb5uksPWoYGhmDXwjMndt2Js9Alh4MGg+UQVDNm14kmHFPEKL/wgS1CLs6np3OqFnnxkcotsvv2ai9Po5C3oXRFrQxcT2twAXJF2NPSQ=
+	t=1727200868; cv=none; b=EyeZIhK4NqS92uUTsVTuP2dKkyR7ca3xGYxuvyhoU5AsohURpLqvN9TxcBXgzA7Iv/YNR3NCHgeM6n5CByefhk8HkDFQhP+i0JNivoYAK/TYsdUkJkYzapTubJj4SyxGTDYfG//5EWMT6oIscT/50yVNEA+Iaa7M8B/+RR3VqNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727200874; c=relaxed/simple;
-	bh=A15kpu7Y1O25FNXdv/Y2yPmP7X/PnOCFalZNHC+1jXE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gpTwYG4sVNUGbPsGA1X21SKreZwd7Gi//bbYml4XDRu2CVpq+83Ftjcmglqwz5gBSFUmA0T0IU1lxksZxxeFOKp1q3gpVqgthXtszjZASKCuSY51Dn5lSku7YTUpPMmk33EJEw99rGQP+L6COYTW3ytILzmLvufd7DF2HAeGYbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xW2GnKWp; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c247dd0899so2620a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 11:01:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727200871; x=1727805671; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cjhiFYP9ZLzgH4eZvCkFY1gAOy9o8UQ0O08H+0Dp/FU=;
-        b=xW2GnKWp+peKeWhGjxYJN/23TVphx7aPdHUqBzBf7C6FesYkKu2X+lEuU+Hl06ASu2
-         kj7bwYa3RMHwxWPcZ6ZjbpxyPdsosaLPBW31M3nuvwFou4KLvXgJpQzKFmF70iukukGc
-         dGNf47puZ16G6qTtLT/YJ58F2DDwwiH1ytMwkqlOjigm5i66nFPspS8xK5gi28Y9Ildo
-         D3ysdCSLyn7m1esqMJ2020vTlaDf7vlmFF4C2HtOrM3FmfGAAkMfyacfmTyUlHstrXfl
-         +SVtxbbmP/jc8kHB75YE4/oD0ERvAp9MsZJljZH9LmFhxTanMnR3JXVQq9FKF24p8bQN
-         pN5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727200871; x=1727805671;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cjhiFYP9ZLzgH4eZvCkFY1gAOy9o8UQ0O08H+0Dp/FU=;
-        b=HUhdfo1DxN3KVLfNVvl3OzsuW6JWW0GJmnd6zd/2Ey8BAPI8QX4NUjN1RM7FGzdafx
-         kWBIbkkq6++7bXz/ZrGYasrlHXxXgtIqetdt9QWKIDU+22LSQ4g9RW8bAFE9ItIl/kAR
-         udzQXS2Rf4zItVVzAFi9wFxpwyz1LnNUOy23vC3lbTsMxuOVSOMbS/6jK/Ji6ObmYyA1
-         hRNp+nyGv5G9/vSF+InewzUQjU+jZkJwDFib/mTCq5O5Soy97w7fR3ZZPvG8mGsLrwBz
-         1dROj8WscCK4nl126kJWVF9eLX0IFIacNENLWw79A27HkULXG1Opnm2dObpad2ltZdaJ
-         cuAw==
-X-Forwarded-Encrypted: i=1; AJvYcCVUAJodETbizGP3Z69VKkFxo11ck1g2HdL47QC7uoK9+RptqyuSLh9fG24dPNwy8spMZssgghvrsIlbz8c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJCFc7OMDssbtASHN8+I4du3eqaauxQDAXunuS7j4T7RlbMM/y
-	Wr2YNhAA0uevK/3uD70zpKzjt7CCXMzIg4WU6bLtYsbRMI9fS6uqInZRHhVv7FheGy+DVD/+nOC
-	E7lnGBHUM1EfM8vSM7waahEBzQNuhCSsn84Nd
-X-Google-Smtp-Source: AGHT+IGauZmcTAmbWAYK0JUSi5/BirlMPx1JVwLFWuHaMRUoRmepOtiQ7z74xNp5Rgwdm/FNTBH4pFL40akueNX7x10=
-X-Received: by 2002:a05:6402:26d3:b0:5c5:c5fb:d3f0 with SMTP id
- 4fb4d7f45d1cf-5c7209c91fcmr22261a12.4.1727200870366; Tue, 24 Sep 2024
- 11:01:10 -0700 (PDT)
+	s=arc-20240116; t=1727200868; c=relaxed/simple;
+	bh=vE8pGVYwDVIrlIjKoF6T0212mB8n6SPYkRCwr61rAUw=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=BAY9QLHtdYuwqujfw9HqYsL/l8tX/hn2/AKW+86iABT5m/PERZwIGIzxyXZPJjg+kkvhyX9JXDsRqE58UzqQIkRrLe+7lCJyrFEfXfKWcPUFaoYy9spmQ5t+o84v1FcszrpbtD5f32hF/ufQ9jmGtAFXVxOR3in8er+nDGdmD8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aAqnMEyE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92A3FC4CEC4;
+	Tue, 24 Sep 2024 18:01:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727200866;
+	bh=vE8pGVYwDVIrlIjKoF6T0212mB8n6SPYkRCwr61rAUw=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=aAqnMEyEu0uCAmz3kn+7IUO3/RB2QOyeS8oYiE9bDkCZXnPdlkSCkZxg53/BA8NXm
+	 9iI/dz08QotnMxwXZY53r0cEaGM3YM/FX1UQmPw0A0yQjOWL7InId3K4E2Kz+cLfil
+	 Zae2E9R+y0ofIaIoU3xQPPgxCvTOQJ1TGYP8YBCjp2SGn/8we61MDb70v7KqJW6v0h
+	 5012T6eLvZ3ZgjKXNyCVjCEpGAYqkEOSWHZuqtirKTDf6Hm8Y7PNO3UJsIqKyBPc9W
+	 jTzOKtSstllbY5a7lhpC2Jv5v4v9UFtEKJwcnrI4JDo17ek7KkPsJJ2PI7UosP0fho
+	 CIO2/qMpUxs9Q==
+Date: Tue, 24 Sep 2024 13:01:05 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJuCfpFFqqUWYOob_WYG_aY=PurnKvZjxznnx7V0=ESbNzHr_w@mail.gmail.com>
- <20240912210222.186542-1-surenb@google.com> <CAG48ez131NJWvo_RrxL7Ss0p4jd_aKOu71z1vm9wfaH7Qjn+qw@mail.gmail.com>
- <ZvLzueEY9Sbyz1H4@casper.infradead.org>
-In-Reply-To: <ZvLzueEY9Sbyz1H4@casper.infradead.org>
-From: Jann Horn <jannh@google.com>
-Date: Tue, 24 Sep 2024 20:00:32 +0200
-Message-ID: <CAG48ez0c=ExHdoxQWqDN9hFAhwUKab8vgk-nJ-JGqTUm4xVUsw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] mm: introduce mmap_lock_speculation_{start|end}
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Suren Baghdasaryan <surenb@google.com>, linux-trace-kernel@vger.kernel.org, 
-	peterz@infradead.org, oleg@redhat.com, rostedt@goodmis.org, 
-	mhiramat@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	jolsa@kernel.org, paulmck@kernel.org, akpm@linux-foundation.org, 
-	linux-mm@kvack.org, mjguzik@gmail.com, brauner@kernel.org, andrii@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Hal Feng <hal.feng@starfivetech.com>
+Cc: "David S . Miller" <davem@davemloft.net>, 
+ Jakub Kicinski <kuba@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Palmer Dabbelt <palmer@dabbelt.com>, 
+ Marc Kleine-Budde <mkl@pengutronix.de>, 
+ William Qiu <william.qiu@starfivetech.com>, 
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+ netdev@vger.kernel.org, linux-can@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+In-Reply-To: <20240922145151.130999-3-hal.feng@starfivetech.com>
+References: <20240922145151.130999-1-hal.feng@starfivetech.com>
+ <20240922145151.130999-3-hal.feng@starfivetech.com>
+Message-Id: <172720086189.2892.16772874968651869906.robh@kernel.org>
+Subject: Re: [PATCH v2 2/4] dt-bindings: can: Add CAST CAN Bus Controller
 
-On Tue, Sep 24, 2024 at 7:15=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
-> wrote:
-> On Fri, Sep 13, 2024 at 12:52:39AM +0200, Jann Horn wrote:
-> > FWIW, I would still feel happier if this was a 64-bit number, though I
-> > guess at least with uprobes the attack surface is not that large even
-> > if you can wrap that counter... 2^31 counter increments are not all
-> > that much, especially if someone introduces a kernel path in the
-> > future that lets you repeatedly take the mmap_lock for writing within
-> > a single syscall without doing much work, or maybe on some machine
-> > where syscalls are really fast. I really don't like hinging memory
-> > safety on how fast or slow some piece of code can run, unless we can
-> > make strong arguments about it based on how many memory writes a CPU
-> > core is capable of doing per second or stuff like that.
->
-> You could repeatedly call munmap(1, 0) which will take the
-> mmap_write_lock, do no work and call mmap_write_unlock().  We could
-> fix that by moving the start/len validation outside the
-> mmap_write_lock(), but it won't increase the path length by much.
-> How many syscalls can we do per second?
-> https://blogs.oracle.com/linux/post/syscall-latency suggests 217ns per
-> syscall, so we'll be close to 4.6m syscalls/second or 466 seconds (7
-> minutes, 46 seconds).
 
-Yeah, that seems like a pretty reasonable guess.
+On Sun, 22 Sep 2024 22:51:48 +0800, Hal Feng wrote:
+> From: William Qiu <william.qiu@starfivetech.com>
+> 
+> Add bindings for CAST CAN Bus Controller.
+> 
+> Signed-off-by: William Qiu <william.qiu@starfivetech.com>
+> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+> ---
+>  .../bindings/net/can/cast,can-ctrl.yaml       | 106 ++++++++++++++++++
+>  1 file changed, 106 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/can/cast,can-ctrl.yaml
+> 
 
-One method that may or may not be faster would be to use an io-uring
-worker to dispatch a bunch of IORING_OP_MADVISE operations - that
-would save on syscall entry overhead but in exchange you'd have to
-worry about feeding a constant stream of work into the worker thread
-in a cache-efficient way, maybe by having one CPU constantly switch
-back and forth between a userspace thread and a uring worker or
-something like that.
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/net/can/cast,can-ctrl.yaml:27:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
+
+dtschema/dtc warnings/errors:
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240922145151.130999-3-hal.feng@starfivetech.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
