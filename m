@@ -1,128 +1,182 @@
-Return-Path: <linux-kernel+bounces-336718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4372B983FC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:57:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84A9B983FC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:56:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5B3FB22074
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:57:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F9B21C21C00
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501CF1494CA;
-	Tue, 24 Sep 2024 07:57:23 +0000 (UTC)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7321494CE;
+	Tue, 24 Sep 2024 07:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aCQIQvq2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61DAA1474A4
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7EB71B85E7;
+	Tue, 24 Sep 2024 07:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727164643; cv=none; b=koEHjEuKuwpUSM8nJf+Ej40wPkG5Vlv0RNkmt/24iG+G5QPVE4nIXkfDcEeZmaoIKPmeDIHKQJz0fx4lEetca8OwFU7kwGYmD79qfzwNqzToyKC5X6J3DLMfT0Bi171uM8WiEcMWoyFH5BG7w7s8MYcNgTZjGbLny1joJm2SlJs=
+	t=1727164609; cv=none; b=rihVkT62we0Lwpe9mhx6Zcb02VvoBptLqc8hhq6xpb+3llwxXcdxOfwIbmWHxQCW02qs5/kO5YTSu6Cb0fgrhY2CJgWgm0FbBeCE82picB4szPjVV8xWprJmM/msD1+1VCVOkTUHkyxbFUlFqrTHOS15WPQwsbQmpWaVRkIDeKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727164643; c=relaxed/simple;
-	bh=RKowt0FFc8x3wRCchLfYX7XfexyNF5l2SWwQCM7MR7U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E5Mf14XjoUIR1/sTkqWt176AVN4gKkOx+D5IM6b53YTg27FbAYIvfUKG9SCdMiU7ELiY9uEZiIwNl9jhmPBors4475dbGRW3XVUp6PTeC1/KxtHNMKO51pPFL7atCUozlyniX9RyqyRvLMK/DKDl/d4O9gSspJ3Encblqrs0fa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6ddca648c26so42116397b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 00:57:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727164639; x=1727769439;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6T6lrXrdJ42dj8UMvWJFA38sI0OSrxm8jLvhOl2iNKc=;
-        b=vq6OBU5dOTDVJd05m+MM6kMnbLfsqYzhGdoeYNkKdP34hgNE+cM72t7n8DtKWugYAJ
-         q6EvKvHgzS0oIJ/jQsuniLbKq0FxRBMpk0ZsshJAZaiUuCU9ZRXDflOqasNyLeW5aUvp
-         Jp1gEPAa+4MBBm8Fra8vcoZRZv3nvcBC/xNBXj8fAJ+R92eLyA62ybB428eC8XxZ/rfl
-         nMFbrP5gYXZ3sqgR7keFsZJ8c3mNzkHjW3c4e6X2XakbpcjGf13KoGLx0WuykX1/IzX7
-         FWWHVeFSJXpfAWQrZ9jswHWoC/cRv5QkuhnotaV1KSleAV7m1aC+YTkVQRGac1kP37TT
-         BTYg==
-X-Forwarded-Encrypted: i=1; AJvYcCUsfi56N508FcEr4eXyqWWyneiFBAM+ATchoHZUMTLV9FfOHq1llKQ7raLIery2mzYf1GLV8oX8xzaQVa8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyn0LeMs72R6fQjXJxxAK5X/bZyZRIzHMs0mnhWvv7b2pkN3e4f
-	Eyb7wUgXtBzH+djXgM2YRq5gc65h2mPVAR3kJOz+6pcXg3seIy1RIQ2LNizk
-X-Google-Smtp-Source: AGHT+IEWVCBrJtPBKr+VWNWjdQNs9c5OwKoLSb6c5eMDqjEPH48R70HMD0JilgBDydkpVEp1XaJvxg==
-X-Received: by 2002:a05:690c:dc4:b0:6db:cea9:6ed9 with SMTP id 00721157ae682-6e2085506e5mr18421807b3.4.1727164639560;
-        Tue, 24 Sep 2024 00:57:19 -0700 (PDT)
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com. [209.85.128.172])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e20ce8857dsm1777907b3.0.2024.09.24.00.57.18
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Sep 2024 00:57:18 -0700 (PDT)
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6dddca05a60so54771957b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 00:57:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW/kbn+AUELjuIQv09faTBdqsZNhtvWnUTFwKUt2Nu1T3T0aqsYcKR1gjDClNUBYn2vr5Jq2xq6cd+K1JM=@vger.kernel.org
-X-Received: by 2002:a05:690c:2508:b0:652:e900:550a with SMTP id
- 00721157ae682-6e20886da73mr15435207b3.19.1727164638275; Tue, 24 Sep 2024
- 00:57:18 -0700 (PDT)
+	s=arc-20240116; t=1727164609; c=relaxed/simple;
+	bh=kzUHa3F8g7HzmaY7eIKodTFvZiEfnXtOihHzuIcg0Vw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Xqo6i1R/6amR6Tq47Pra33OZYjN2w933gfjpaVXbStHTRELlrBA6whgYpy95GTqItfBUX4BaTHlWv8SC9vPYoPMShnfZLCy3Ic56p9YQ37bBEZR6ugJRHgQ3D2FHV5W34WcpvZWWlBURzFuVmpp4i2NGhtfU2oOYaZJ/O26cAgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aCQIQvq2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFED8C4CEC4;
+	Tue, 24 Sep 2024 07:56:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727164609;
+	bh=kzUHa3F8g7HzmaY7eIKodTFvZiEfnXtOihHzuIcg0Vw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aCQIQvq2FMrjjooDgWTx27eXRecH0zbuJBRPuDLpDwJTKEkFbeJtGu+RW3ErnWh7v
+	 yyPx5LzrfJ/9j7MpkkGLZoEzkSmvHlwtq1kp0HZOxRDDgAWrueHc5yHq69+3F1Qp8t
+	 2LeK79guRYR3mFDyaLjxvATI72a8ulJJKB4THrxfOwL784uTSJ0w9vod0reCmV3woz
+	 2ZNqVInOXU0CF25ed2fnEiJ5T7JToB1XD4XstzN70QUH2rcxP7aVVynNwF+Q2RdX7g
+	 jFO/KS7CJ24RmfmunmsxMrZbGq0FC1mEc9CxR3j7TfD3hgxSzz2YT0AUG3zDAOJcj9
+	 lKEnHI/5YA0sg==
+Message-ID: <e77cab18-155a-4174-bca0-5ff1ce1d2b6f@kernel.org>
+Date: Tue, 24 Sep 2024 09:56:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240922225041.603186-1-linux@roeck-us.net> <CAMuHMdWAuQcFQaQNy2EP_u9vk13g2C3sb3FFBCMAUPyGMgZ+hg@mail.gmail.com>
- <435dc218-f7ea-4697-b3ef-6a786e8d1b2c@roeck-us.net> <87msjxu9qr.fsf@yhuang6-desk2.ccr.corp.intel.com>
-In-Reply-To: <87msjxu9qr.fsf@yhuang6-desk2.ccr.corp.intel.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 24 Sep 2024 09:56:35 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXBbBKskY+TXswaw-oHvLANzoVJGWAjWQDy4HPMuZwasA@mail.gmail.com>
-Message-ID: <CAMuHMdXBbBKskY+TXswaw-oHvLANzoVJGWAjWQDy4HPMuZwasA@mail.gmail.com>
-Subject: Re: [PATCH] resource, kunit: add dependency on SPARSEMEM
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH 1/2] dt-bindings: phy: rockchip,inno-usb2phy: add
+ rk3576
+To: Frank Wang <frank.wang@rock-chips.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, heiko@sntech.de, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ william.wu@rock-chips.com, tim.chen@rock-chips.com, wmc@rock-chips.com
+References: <20240923025326.10467-1-frank.wang@rock-chips.com>
+ <snccizbw6thn3lhwad4xppp7vqii4p56ttl2gufwc3ke7vfckf@e4b7nvwwtdfr>
+ <1f996322-e6f6-4dd5-a1d7-c2bde92c876b@rock-chips.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <1f996322-e6f6-4dd5-a1d7-c2bde92c876b@rock-chips.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Huang,
+On 24/09/2024 04:24, Frank Wang wrote:
+> Hi Krzysztof,
+> On 2024/9/23 17:31, Krzysztof Kozlowski wrote:
+>> On Mon, Sep 23, 2024 at 10:53:25AM +0800, Frank Wang wrote:
+>>> Add compatible for the USB2 phy in the Rockchip RK3576 SoC.
+>>>
+>>> Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
+>>> ---
+>>>   .../devicetree/bindings/phy/rockchip,inno-usb2phy.yaml | 10 +++++++++-
+>>>   1 file changed, 9 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml b/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
+>>> index 5254413137c64..214917e55c0b6 100644
+>>> --- a/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
+>>> +++ b/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
+>>> @@ -20,6 +20,7 @@ properties:
+>>>         - rockchip,rk3366-usb2phy
+>>>         - rockchip,rk3399-usb2phy
+>>>         - rockchip,rk3568-usb2phy
+>>> +      - rockchip,rk3576-usb2phy
+>>>         - rockchip,rk3588-usb2phy
+>>>         - rockchip,rv1108-usb2phy
+>>>   
+>>> @@ -34,10 +35,16 @@ properties:
+>>>       const: 0
+>>>   
+>>>     clocks:
+>>> -    maxItems: 1
+>>> +    minItems: 1
+>>> +    items:
+>>> +      - description: phyclk - PHY input reference clocks.
+>>> +      - description: aclk and aclk_slv are optional and used for USB MMU.
+>>>   
+>>>     clock-names:
+>>> +    minItems: 1
+>>>       const: phyclk
+>>> +    const: aclk
+>>> +    const: aclk_slv
+>> Please test... Not sure what you wanted to achieve here, but maybe
+>> oneOf?
+> 
+> The "aclk" and "aclk_slv" clocks are new in RK3576, you mean the changes 
+> should be like the below?
+> 
+> @@ -34,10 +35,20 @@ properties:
+>       const: 0
+> 
+>     clocks:
+> -    maxItems: 1
+> +    minItems: 1
+> +    maxItems: 3
+> 
+>     clock-names:
+> -    const: phyclk
+> +    minItems: 1
+> +    maxItems: 3
+> +    items:
+> +      oneOf:
+> +        - description: PHY input reference clocks.
+> +          const: phyclk
+> +        - description: aclk for USB MMU.
+> +          const: aclk
+> +        - description: aclk_slv for USB MMU.
+> +          const: aclk_slv
 
-On Tue, Sep 24, 2024 at 3:25=E2=80=AFAM Huang, Ying <ying.huang@intel.com> =
-wrote:
-> Guenter Roeck <linux@roeck-us.net> writes:
-> > On 9/23/24 05:58, Geert Uytterhoeven wrote:
-> >> Hi G=C3=BCnter,
-> >> On Mon, Sep 23, 2024 at 12:50=E2=80=AFAM Guenter Roeck <linux@roeck-us=
-.net>
-> >> wrote:
-> >>> Building allmodconfig images on systems with SPARSEMEM=3Dn results in
-> >>> the following message.
-> >>>
-> >>> WARNING: unmet direct dependencies detected for GET_FREE_REGION
-> >>>    Depends on [n]: SPARSEMEM [=3Dn]
-> >>>    Selected by [m]:
-> >>>    - RESOURCE_KUNIT_TEST [=3Dm] && RUNTIME_TESTING_MENU [=3Dy] && KUN=
-IT [=3Dm]
+Nope, you just messed the order. Order is strict.
 
-> After Linus' fix for PHYSMEM_END, GET_FREE_REGION doesn't need to depend
-> on SPARSEMEM anymore.  So, I think we can remove the dependency.  Can
-> you check whether the following patch work for you on top of latest
-> upstream kernel (with Linus' fix).
+Best regards,
+Krzysztof
 
-Yes it does, thanks!
-
-One remaining issue is that RESOURCE_KUNIT_TEST selects GET_FREE_REGION.
-IMHO merely enabling a test should not enable extra functionality
-in the kernel.  Can the individual test(s) that do depend on
-GET_FREE_REGION be protected by #ifdef CONFIG_GET_FREE_REGION instead?
-
-Thanks again!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
