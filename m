@@ -1,110 +1,100 @@
-Return-Path: <linux-kernel+bounces-337795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDB89984F11
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:43:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AADF4984F15
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:44:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DE9BB214DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:43:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BC09280E10
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:44:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6F918950C;
-	Tue, 24 Sep 2024 23:43:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46C52189516;
+	Tue, 24 Sep 2024 23:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nbHLOuqM"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="KpAHvQ49"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F354B188CD5
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 23:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1AC4188CD5;
+	Tue, 24 Sep 2024 23:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727221416; cv=none; b=Au8/ZsoXOywNSn0FzMBbIILfHlavFCYElcFMG2Lxs2W/T2nuYWL4dtoxA4GnDNXG5tf+oNCrEDHBgQxSU6tXt1crB/E0uHi/BsxPGD7llmpY7vXZA1lwXX6xry5pBIFhSSNqSSUc94pJxjYdc6aOXIOJqTVpnsYf3b3txqVyGNM=
+	t=1727221459; cv=none; b=JWmErSOs6c/sT8mrc/mEUNuQk49pjnp+rCarg4qpL+YHZDK68HrD21dFrta4dWEOHY8odZXU0ed4NhPNah3NosJZLtAptddTe9RE+8K+0jypbcss/U4YP0RQMNQAqAmN6NVbTVZNa/Wi1srVKYM+7Uow3BFqeyy1IcqugruZ73E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727221416; c=relaxed/simple;
-	bh=wCY4lL+HUJZAjX1alFGOPiuA6ZGTGOj7gpmXEpAgBKg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ABWirdXTXFabte7MWB+Zu7V7bYb4jw5oI1F0me4CvPGLmr9BBaEDogScGqITWZ4/tKC4ffSRE4b3VQz69YR6kRsJsTHllSs+r0FGwhvEYUsqRhGb6LYcK8ec2gyzbX/cEAoQ0MNMP0Jgz13cFskuwL1QrkjHLuDRtJxvL0zAWvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nbHLOuqM; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f75de9a503so57197641fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 16:43:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727221412; x=1727826212; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aaB904nJswzSJ9sroCAmof81VYvbvVS4ZH/0WuYrOVM=;
-        b=nbHLOuqM2uwVhiTPz+sPnLDcbZMvYuH2GfnvgkmyM1isDNCaZArr8pZEt43EUV54F4
-         Kz/+EK5QLCxkqDw3jisj/Ji2ohgy6sSMwvyNYTppDesyTD2BexGsvuE4tafpiBgl9AXu
-         Tahk0iYJ7rDVqBN3AJCP2uxQfVEFfB28dsoqsPUgN628UdUK+TpkoaqXbuFk04/pOTSK
-         ffjNLysFi14NhBDrSFlOpcvPJtqFXUvz28IbzDFm6AFb1ErXT2k8lKttlxQmqudN3+3U
-         YxG3cEzl3fVpe3owgZMIhnojTCx0NVIF4bxFGQDlVEKGfRn9c3pEnR1IvadO10RHW4Sc
-         3T3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727221412; x=1727826212;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aaB904nJswzSJ9sroCAmof81VYvbvVS4ZH/0WuYrOVM=;
-        b=agsaenrR8KLMDOJms+KSa4vqSx47ytGcap4sHuotmZ2ME3M06IPSOK4Rk8ft+lrcNM
-         WsOWvpgIn22HbPCWJK7M8Jmw3tL75f+JLAEiJhVuGdypLC3tAvEa4SA3WphNGfomvmQK
-         XallO+FUGsd0hF6dM6CfU8JTOyhp18PG+r8kbvgitlqFCpxremdSMGtCplwDaMGgFgfl
-         wMPV1ckIF6RIJRaIMq/MbSEG9yyLkxOeZJQyG3PFFo0M6C4CSie2u88v+CuYU75mpXQT
-         foRiQolUPyXaDuALFlzjXkJVbOTFRxLvnvl10bpOCqngRwSYgUHavHaZzCib/xL/BWpy
-         15Jw==
-X-Forwarded-Encrypted: i=1; AJvYcCWBTRwxM/Sst6N2d4EU5M7fZ6NX9ZwXWr6Ef9gfRasM4227VKCf8KpjJnTLlHjR+GRQ9tEJbnBawCHCsck=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEKgp/ykGo7vpEpeblZRQ8wrsnYCM6SB/HZcWayQvoO7EtNIpq
-	iI8h43fY69XepgDcy6wK5VtwqeUk0g0wpSmyAHMWKGjwh4b2JNtz24Fp83maq4w=
-X-Google-Smtp-Source: AGHT+IHJcmuOaUBwvlkEtZIKbGrA0Cs0d2P3fusjeaeBp5b7mIzG6VP9t/3bUVtxs0ZpUjKmoSc57g==
-X-Received: by 2002:a2e:743:0:b0:2ef:2d3a:e70a with SMTP id 38308e7fff4ca-2f915ff4b51mr3422621fa.18.1727221411893;
-        Tue, 24 Sep 2024 16:43:31 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f8d288e03fsm3521031fa.91.2024.09.24.16.43.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 16:43:30 -0700 (PDT)
-Date: Wed, 25 Sep 2024 02:43:28 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jessica Zhang <quic_jesszhan@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, quic_abhinavk@quicinc.com, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, quic_ebharadw@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Rob Clark <robdclark@chromium.org>, Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Subject: Re: [PATCH v2 20/22] drm/msm/dpu: Skip trigger flush and start for
- CWB
-Message-ID: <tl4flcgmup2cdbbi4uiihkij4sqr7uscdfal6sw6443uixhhz5@z6jyokawiwh2>
-References: <20240924-concurrent-wb-v2-0-7849f900e863@quicinc.com>
- <20240924-concurrent-wb-v2-20-7849f900e863@quicinc.com>
+	s=arc-20240116; t=1727221459; c=relaxed/simple;
+	bh=AotKFPH7QXcrobDMlW4cjwINVaM1enlUOmrAycDyfIc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gCXg8RbYyYdQb9AJNTyoQj65wVFJzXA3xcWmsYzHQz8/z3EaOxG2IoXSpYsvhYf8xR2NCWmid70jh81lNY654OO7iWWsTNuGMR/2Nq9VnG3+E2BM4YgZXoB2HOqPDsVcbeNnIuiSDjXIpR+agDmXB2pD6CqgLzuztFzFqAlrtj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=KpAHvQ49; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 3007188B14;
+	Wed, 25 Sep 2024 01:44:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1727221456;
+	bh=JcziicMMJvzimVi9UgPNdctmny3nPPC0wqwUTrVG/Cw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KpAHvQ49SvyQev5x4UdCcIavnk/TP8DonOJcyWmsVSvF4wwviGK4aqu/hDVhU+RMJ
+	 Pfn9wR+holwkMRsKh/kYAAlJNlIcebgKrlLbx44mn2fKHSsYVcP5LpytSnQQwuDC02
+	 Oaj4Gyl4Krm3Sz1xJpuhSYY+1dy+G0ORJHw0vZJr0P1/IIPy9wx0tjmeO5nvxEY35Z
+	 grAno1wJGdCh860VysfvPPnI+hLXzzb8TPrKMBVVrIYAPxpk8b4EbH1Hq2s6pFkYBq
+	 nBBxXYjFu3qOtTVSeqNp8cv4UAfi3a7LAVr73/xM4F4bpBHGnd2x/deKQ3Vsvw1U8g
+	 LQhg28dvPT0Jg==
+Message-ID: <16316a89-04f8-4a63-b453-45562e4294d7@denx.de>
+Date: Wed, 25 Sep 2024 01:44:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240924-concurrent-wb-v2-20-7849f900e863@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: lcdif: Add support for specifying display
+ with timings
+To: Rob Herring <robh@kernel.org>
+Cc: Lukasz Majewski <lukma@denx.de>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Stefan Agner <stefan@agner.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Fabio Estevam <festevam@gmail.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240923135744.2813712-1-lukma@denx.de>
+ <0e72b574-14ec-4369-b899-30d5c615d238@denx.de>
+ <20240924225714.GA441530-robh@kernel.org>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <20240924225714.GA441530-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Tue, Sep 24, 2024 at 03:59:36PM GMT, Jessica Zhang wrote:
-> For concurrent writeback, the real time encoder is responsible for
-> trigger flush and trigger start. Return early for trigger start and
-> trigger flush for the concurrent writeback encoders.
+On 9/25/24 12:57 AM, Rob Herring wrote:
+> On Mon, Sep 23, 2024 at 07:53:57PM +0200, Marek Vasut wrote:
+>> On 9/23/24 3:57 PM, Lukasz Majewski wrote:
+>>> Up till now the fsl,lcdif.yaml was requiring the "port" property as a
+>>> must have to specify the display interface on iMX devices.
+>>>
+>>> However, it shall also be possible to specify the display only with
+>>> passing its timing parameters (h* and v* ones) via "display" property:
+>>> (as in
+>>> Documentation/devicetree/bindings/display/panel/display-timings.yaml).
+>>
+>> Timings should go into panel node, not into scanout engine node.
+>>
+>> See e.g. panel-timings in arch/arm64/boot/dts/freescale/imx8mm-phg.dts , in
+>> your case the compatible might be "panel-dpi" .
 > 
-> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
-
--- 
-With best wishes
-Dmitry
+> I agree, but if this is already in use, we should allow it. We can mark
+> it deprecated though.
+I don't think it is in use yet, at least not in upstream, so let's not 
+allow this.
 
