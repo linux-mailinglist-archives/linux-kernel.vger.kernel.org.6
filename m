@@ -1,136 +1,134 @@
-Return-Path: <linux-kernel+bounces-336508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E5E2983BA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 05:44:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39AEE983BA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 05:45:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46D3C283DA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 03:44:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 027DD2831C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 03:45:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DABD1CFBC;
-	Tue, 24 Sep 2024 03:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B0E1BC3F;
+	Tue, 24 Sep 2024 03:45:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Eos4ZXoO"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SsxV5sMW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B004A1B85D0;
-	Tue, 24 Sep 2024 03:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3274818D;
+	Tue, 24 Sep 2024 03:45:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727149473; cv=none; b=JcZsrhQYTvwFSJykHUrypMQPJOq0aLM0N0HjXiip9G3ECigoZukQjW2OqkkMl0p6dhmSpWInNsyfegshkv9aBhOAo65OI9XTpPYv6xh3Z1e/8eTY/Tu8FWyVUfy+IMzoJvxrLNfylNDxQmd+Q/tYHzBmQbcs/SEVufDeNk2HfQA=
+	t=1727149551; cv=none; b=RbRfsjI+LOYF01MjQrVkd/EYjzYQa81RSEU3Y/NiTgKhee9YlLPk1d/pdWuzwi/0FI+JWrIpfl1wKuo8ubPQqVPmxHebqxup6Uw3xrEEB+4QSRam3tA2nHFhpt9jMZqEw9R6zi/DF4ESmd6Oxr3lLal0NYJSVNn19QEr4BiQsSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727149473; c=relaxed/simple;
-	bh=emO77E2EVvCmNLtl3xie0zn9Lo/O2GECe8fTKjaJXPM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=mEKYYyq3AZ1xZIae19nXVLIhCv1Q8FOY1BNpchSbRgOgKoeVYi4RCZm6F+D9fuZihZ2d3YnUSZwUWSxq7W0eNHdAFitn0zP9vBQZ1Icv5qXOVq9o0H5GWFg0EuS0njRzn99f4/P9ZwDhiJ4QiIvN54u/jb+OlLUhGwTid93d19A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Eos4ZXoO; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1727149467;
-	bh=P5vZfM/lrcisDFYTToXc0ksdmeJAJd6iM1cGDFHLUx0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Eos4ZXoOXNlj8zZkh1NoDETB6fkkA53s9xkzCpSs0sxHbOLQ9b3VFAdkDDztOy9Zn
-	 qX/fyajqHFIHAzNMlgzpOaO0450JHbcSUzejW8bjZGYr+8fW5iGXVF8PLvfL7A++w2
-	 Dn+K+I0zVWDikk5sAqHiNhofQu/PocBVWGcngCsuAO2Zn+X2AV51yJibURnlCwXKpq
-	 muOx2Cfd+3CYBvIgX513uBMvJ+pQo8faF8R/CHNH9T/2If7SavZfVw5OlBh2xCMvAq
-	 4hVeq2QkjhB0gUVU6U9ivV7DXoG3AT2fFHvIuJAy5SUEAfnCiIGfozIF3J+0vETwwl
-	 vNM9GFoQ3l9CQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XCQhp1qpmz4x7F;
-	Tue, 24 Sep 2024 13:44:26 +1000 (AEST)
-Date: Tue, 24 Sep 2024 13:44:25 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, Heiko Carstens
- <hca@linux.ibm.com>, "Jason A. Donenfeld" <Jason@zx2c4.com>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Vasily Gorbik <gor@linux.ibm.com>, Wei Yang
- <richard.weiyang@gmail.com>
-Subject: linux-next: manual merge of the memblock tree with Linus' tree
-Message-ID: <20240924134425.077c9402@canb.auug.org.au>
+	s=arc-20240116; t=1727149551; c=relaxed/simple;
+	bh=cJVd9whhQgDlLPzOIzpUix7GLADxCGQwJAV2g4rhswA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X+5Oj+H0m8yLe/Z98fmVKjs1cpWuG60ybsIeGYndF7kFdCg5zrdp8xwQ4wMoN3P+kxGYn2rezfBUVYHEgyraFAoT22djapjoXxCjH+pDoUDMFkRtPMN/Aws5/JBNjJ7MJ0Rg1EPDQ6h9nHBdLtQu2Sup+7nv0H3tExIYP6ivKSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SsxV5sMW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 997AAC4CEC4;
+	Tue, 24 Sep 2024 03:45:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727149550;
+	bh=cJVd9whhQgDlLPzOIzpUix7GLADxCGQwJAV2g4rhswA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=SsxV5sMWB8BCCyTGqOdmmW4N3BPYOrSr4VIBp735xE86zt4thPQPBvWKcS7CptaqE
+	 7RA+zUtfn1v7GktsT3b/h34p/ddkp74CAaEF8tRS8F8Dip35PguHG0WXUc4LXGRGbo
+	 zklYIj1zkENIOSD0YL+KoeoUk1b7J2k2SA+3HLLpBBsWxyulwAkW4fF9NezW/Arocd
+	 3mvEVlRT7rmxsmXfFo4DmUA7HAw8q6JoCMOoXxlq23Q+sZoW/+QrjiqbGAQgGDpAZz
+	 BKjLlcX9KO73/sVZxdN4so+YwgeoJwgZ3Dv+bT9Tu2PitnPuGjKVIbZSs1peHLSMYV
+	 ug6XRdVbnnU2A==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5365cf5de24so6146815e87.1;
+        Mon, 23 Sep 2024 20:45:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVAQLp7O6tn6CaM5SPtyxp07a0c9+rvJ6Zuk0mU88LiTp/HIarBBOtNVeqv0VwcIacUaSuEZ1pcPSfLvm4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeHHZWHcAUe1qwxDo/qYx5wo51IT8Is6vCguT/+tVQJOeJlEq0
+	+D4ZTpqEox5kqD62KczdlmWQCKalX/iYE5BdfxcEMmch2d7Gvz3s9pe9rdMEnOaIMrwIo1MzH7q
+	t5qNFYDbl32JzUD1DwY22pgfa67g=
+X-Google-Smtp-Source: AGHT+IFeZjWHkMSBMG3jkf2b0/kliWSpFR6DS7PTuVwgxV8s+V/GDZOYUbCSp1tRFV8veuKsnaw+8//+pUbRXb9OJIc=
+X-Received: by 2002:a05:6512:3c99:b0:52e:97dd:327b with SMTP id
+ 2adb3069b0e04-536ad17e97fmr7555793e87.23.1727149549327; Mon, 23 Sep 2024
+ 20:45:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/8650Sg8FsFJ23ru1k.Uum+U";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/8650Sg8FsFJ23ru1k.Uum+U
-Content-Type: text/plain; charset=US-ASCII
+References: <20240913171205.22126-1-david.hunter.linux@gmail.com> <20240913171205.22126-5-david.hunter.linux@gmail.com>
+In-Reply-To: <20240913171205.22126-5-david.hunter.linux@gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Tue, 24 Sep 2024 12:45:12 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARdzUro3A00wU7XScXa=582vtY+nZ5-zkN89_3mS70Fag@mail.gmail.com>
+Message-ID: <CAK7LNARdzUro3A00wU7XScXa=582vtY+nZ5-zkN89_3mS70Fag@mail.gmail.com>
+Subject: Re: [PATCH 4/7] linux-kbuild: fix: ensure selected configs were
+ turned on in original
+To: David Hunter <david.hunter.linux@gmail.com>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	shuah@kernel.org, javier.carrasco.cruz@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Sat, Sep 14, 2024 at 2:12=E2=80=AFAM David Hunter
+<david.hunter.linux@gmail.com> wrote:
+>
+> Ensure that only modules that were turned on in the original config are
+> turned on in the new config file. When ensuring that the config
+> dependencies are met, turning on the config options in the new config
+> leads to warnings and errors later in this script, especially for badly
+> constructed original config files.
+>
+> One example could be a config option that is depended on by a module
+> needed in the new config but is not turned on in the original config
+> file. If this config needs to be selected, warnings will show up in the
+> standard output.
+>
+> Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
+> ---
+>  scripts/kconfig/streamline_config.pl | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/scripts/kconfig/streamline_config.pl b/scripts/kconfig/strea=
+mline_config.pl
+> index bb1f19a1ab5e..26e544744579 100755
+> --- a/scripts/kconfig/streamline_config.pl
+> +++ b/scripts/kconfig/streamline_config.pl
+> @@ -459,7 +459,9 @@ sub parse_config_depends
+>                 next;
+>             }
+>
+> -           if (!defined($configs{$conf})) {
+> +           # This script does not turn on any modules, so make sure the =
+config
+> +           # options are on in the original.
+> +           if (!defined($configs{$conf}) && defined($orig_configs{$conf}=
+)) {
+>                 # We must make sure that this config has its
+>                 # dependencies met.
+>                 $repeat =3D 1; # do again
 
-Today's linux-next merge of the memblock tree got a conflict in:
 
-  tools/include/linux/linkage.h
 
-between commits:
+I believe defined($orig_configs{$conf} is always true here
+because it was already checked a few lines above.
 
-  f8d92fc527ff ("selftests: vDSO: fix include order in build of test_vdso_c=
-hacha")
-  e08ec2692855 ("tools: Add additional SYM_*() stubs to linkage.h")
 
-from Linus' tree and commit:
+    # We only need to process if the depend config is a module
+    if (!defined($orig_configs{$conf}) || $orig_configs{$conf} eq "y") {
+        next;
+    }
 
-  d68c08173b70 ("memblock tests: include export.h in linkage.h as kernel do=
-se")
 
-from the memblock tree.
+If $conf is not present in the original .config,
+the 'next' statement skips the current iteration.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
 
---=20
-Cheers,
-Stephen Rothwell
 
-diff --cc tools/include/linux/linkage.h
-index a89620c550ed,20dee24d7e1b..000000000000
---- a/tools/include/linux/linkage.h
-+++ b/tools/include/linux/linkage.h
-@@@ -1,10 -1,6 +1,12 @@@
-  #ifndef _TOOLS_INCLUDE_LINUX_LINKAGE_H
-  #define _TOOLS_INCLUDE_LINUX_LINKAGE_H
- =20
-+ #include <linux/export.h>
-+=20
- +#define SYM_FUNC_START(x) .globl x; x:
- +#define SYM_FUNC_END(x)
- +#define SYM_DATA_START(x) .globl x; x:
- +#define SYM_DATA_START_LOCAL(x) x:
- +#define SYM_DATA_END(x)
- +
-  #endif /* _TOOLS_INCLUDE_LINUX_LINKAGE_H */
 
---Sig_/8650Sg8FsFJ23ru1k.Uum+U
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbyNZkACgkQAVBC80lX
-0GxcaQgAkNpxVQX88hxniYLTKFXExWz/zqgBmybVygV2jOnfI+WeHJCEQkuLTvbk
-bBBNh7ZkP5IgiyYKcoJGVwMlfm0DUFJw+FlwLrDOdsACc8BMmRdn4ulBY8jbUpgH
-ITVEqeFpChIuXyNoEkN8MBs1FRVpdYMQR1RIwd/Exsje9cuU+nUjSEJnDEFqwT3i
-KWjzukp0erTvKj+GyPmu4ZlXmsMSAzaJQkugIyWM8LoXTY2gH4NqZAm4E0veoSPy
-VtO2RIQQvEa9wmM3wy/CHpc1GeGICE9m0IA4gzU5vZM86F5S7DMd9EXN21Wa9by7
-NyN1987uY2obBi8qTYTSzZ7rX1ubEA==
-=3OLs
------END PGP SIGNATURE-----
-
---Sig_/8650Sg8FsFJ23ru1k.Uum+U--
+--
+Best Regards
+Masahiro Yamada
 
