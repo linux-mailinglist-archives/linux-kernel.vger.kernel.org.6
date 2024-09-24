@@ -1,204 +1,158 @@
-Return-Path: <linux-kernel+bounces-336471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A750983B44
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 04:40:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FB66983B53
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 04:46:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17691281B88
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 02:40:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D04581C21C51
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 02:46:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C051AEAD7;
-	Tue, 24 Sep 2024 02:40:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E22D17991;
+	Tue, 24 Sep 2024 02:46:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P0ItYPpy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CXbc8IZr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED9FC8CE;
-	Tue, 24 Sep 2024 02:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE0D1B85DA;
+	Tue, 24 Sep 2024 02:46:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727145616; cv=none; b=QWEmwfXcydOsEDtR2tE+nhxqysZf/g9LiQySG9FRLpqc5QVBU7zUlS5ylYQF7eV2+rYFwL0zTpowEkbWFXZJVgypwtBSa7U9qKKZCHri8uKSMb9XEg1a4d9R5csj51c9xbUy1+VcX9D3yDFRACNAccFBdINhlt5aaGjYlPy4AlA=
+	t=1727145997; cv=none; b=JWd7GHHyXM7HWInQJYVy02vFhAgitTQ/q9YcTus3ga77f/JO2v5Z9zVgUCFCkihi4fdAiJxU+GDxxcCJfS8rgjD+6SWfGrT/ltyr+yrApKM6/b9X326kdXlRshXB8HrFXxpX+vIrZTWg1NfSSPJ2ki9EPElOpERKYG2skW09PRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727145616; c=relaxed/simple;
-	bh=AxIeSno/1DoU++XQOIvkR6IyM7d89vGa8e+sDw3eF1g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nqakfc4CJyA5shCLCN2XE+9U4+1hv6hEANqWnciFKO7KvINOja0IOPTUTlv3hWr7CLUzDQCohI1EmpuE7dQwIa2Cx7wzRrXWv9zzRcUcTkLUn4b71PYF7/8vCRnGWURFsGNpzMXR/4haX9TSaMFqrW62sj15FGCtZTPjXyzlN/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P0ItYPpy; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727145615; x=1758681615;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=AxIeSno/1DoU++XQOIvkR6IyM7d89vGa8e+sDw3eF1g=;
-  b=P0ItYPpyWPw5kG1QsCmzjvAw0EQ7pfbn5kpUJdCjjAMA4pSKeO0Cml+O
-   B1vF25gvlhJ09tYfwdoOVrUmYi9oSiSZXYLs/wLFHvPT9ezEXgTd7Rgil
-   pKSm4jDKdiKxHD7ie3gHbF69iZma+mYNVaEfh/4P/UHIIcra1VKJYqXJz
-   GuiqhDYve0P0+kglpkfb5w/ETbl1ZG9RCBKBJIkxWlwkg0X6tEI0Ab2An
-   6dyS8rUpUdTiJDdpOV9rZ92s0YwwdVOtSMKTotJqbTjTbXmRFXnNQseTn
-   kIc3JgyyWNOJDTZrceF/bq88LZ1iGQPjS1g/rW8xAS4oxHHoPm0oDzIwM
-   g==;
-X-CSE-ConnectionGUID: aoapjH3tTFONNgf2+ZF4gA==
-X-CSE-MsgGUID: DHUMkAZwRcCURcWzntHP9Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="29835816"
-X-IronPort-AV: E=Sophos;i="6.10,253,1719903600"; 
-   d="scan'208";a="29835816"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 19:40:14 -0700
-X-CSE-ConnectionGUID: 7aoVqqMLRMutRrlIwUo6hg==
-X-CSE-MsgGUID: 5yg3wsnDQOGGUZY47dBnjg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,253,1719903600"; 
-   d="scan'208";a="70857713"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 19:40:13 -0700
-Date: Mon, 23 Sep 2024 19:45:51 -0700
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Cc: "Zhang, Rui" <rui.zhang@intel.com>,
-	"regressions@leemhuis.info" <regressions@leemhuis.info>,
-	"Neri, Ricardo" <ricardo.neri@intel.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"Gupta, Pawan Kumar" <pawan.kumar.gupta@intel.com>,
-	"regressions@lists.linux.dev" <regressions@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Luck, Tony" <tony.luck@intel.com>,
-	"thomas.lindroth@gmail.com" <thomas.lindroth@gmail.com>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [STABLE REGRESSION] Possible missing backport of x86_match_cpu()
- change in v6.1.96
-Message-ID: <20240924024551.GA13538@ranerica-svr.sc.intel.com>
-References: <eb709d67-2a8d-412f-905d-f3777d897bfa@gmail.com>
- <a79fa3cc-73ef-4546-b110-1f448480e3e6@leemhuis.info>
- <2024081217-putt-conform-4b53@gregkh>
- <05ced22b5b68e338795c8937abb8141d9fa188e6.camel@intel.com>
- <2024091900-unimpeded-catalyst-b09f@gregkh>
+	s=arc-20240116; t=1727145997; c=relaxed/simple;
+	bh=saapds3Tco5OXwRJK6gEwmbqTm5hd9R5EEGQWhxcueg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qyOAfFgzCYU8EisbdYa8/H+uNkLE9RJ+tyILs9HjHHJityjhj5nH7XcCG5kQgzCGiiEDui9ckqzRUG+2WixUTpe2FYDI5vo3BjvVo6SAq6kLOTWihNK8eGFoX5mZieBsK9EBpsEPlTDYC30dMgC6uDJ9tLVsNLI/FsaDreMDfmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CXbc8IZr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34100C4CEDA;
+	Tue, 24 Sep 2024 02:46:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727145997;
+	bh=saapds3Tco5OXwRJK6gEwmbqTm5hd9R5EEGQWhxcueg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CXbc8IZrs+le1x6K8gPklyx59P7UO2MaFH+aBs6qULAOOByQjWz2EwDcFxVQwMXR8
+	 uDC4rvtiiFp1YHSpIIi29Vyf5Xk9vyunyVGL0G9cl9ifmzROQ7XhuRrCY9E2V8NhBk
+	 NDzmD2DsOyPUjbix144H2Z24mARaXizk1TP49VwMXmKKfHfmAtmYD4+5Ro9/+walcc
+	 8e/UpjKbHbslIF1BtWRTkehIxG8ySOToyaah2hOXVz/SmYL/DEtbJVH0X1Y9bKwZHm
+	 s2J769cmRTcYSDwtMzoQbzlIuCXMMyW1wQ6anVZgK2E+vY6MsMycmVCSN0RP/pMgWi
+	 nHBBJxy7ma/AQ==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53660856a21so4826564e87.2;
+        Mon, 23 Sep 2024 19:46:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUVJXZ8o2fiFRGN34OFI7v4marGFjwMO4b9/YdDkndTX1SJR9PrrDV/uupJfNVvInOYbBwlbnxISIRTKw==@vger.kernel.org, AJvYcCV4qnhlXmd/pNtynF6EoKBLlofyH2WNGeaWZdYcDMDWO1rP70Yx44MSZYDcQ3wPWrQp0HxUNUcLswtD@vger.kernel.org, AJvYcCV8sJpN9/p5r1bthDfvVl05PMAS5ortaswtv0Lv6ySiT324sU8rj4O7XAdtFU4qxR6/EvYetQtSXzsQy/HF@vger.kernel.org, AJvYcCVe0322POMCrVO5cX7/fFNKZseqmP/a2N+6gAG+uknz6i7yxpWtloHo+ctB+ZZBjp5nFJgb7tui/PVY@vger.kernel.org, AJvYcCWc3DP4gCs7l9SHGJDIMKfQ6kLqkhxjKjtfqhi1o7n7uZ7XiIX6gRcd8ZwaammH7u2h8NNCHU2T5TJzkQ==@vger.kernel.org, AJvYcCX7hS7NeoYQHliRuUPyPgSliNiX06FLRz4PI13Lw7xjMxnxKIGE3bafucD8zeR0X953ufD2xYCZsbBG9ODX@vger.kernel.org, AJvYcCXIX6+z9AYMUrgZA6PSF5cAdZFktVUAvNR6vrvu1/Je4+icsqo/glaHp87I9w17aG9e+vQ6QtyS@vger.kernel.org, AJvYcCXTMkWqeZ8UBi7wEXPSjzraiuobgkP94FtHaoXaRSU/x6cw4Wd9uIheSsi4IrIioFs57vDjv8RH7Edx@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIjQmszHN58JgXnSDBpAbIiugia5Jx9c+tkCI5yRRHl9Fdr/JH
+	Daai9wOchvMNlFc/5QCY8QBv4NMu0pG2xrrg0B/nv7QZ1OJKvPAE4D1NEgbSBjh8Bon5vtGZ1tl
+	Tyv8yAHTYU6fZrCR2YvbbDmsFKng=
+X-Google-Smtp-Source: AGHT+IGbFPw/bTRm+UErpcrDrhXiYrSHOwzSiG4p3e4jUUEDfOTfASqMN5Pcr7Ww2ei18DiP8qOt5I2z7sBy9E6rsKI=
+X-Received: by 2002:a05:6512:158e:b0:533:d3e:16f5 with SMTP id
+ 2adb3069b0e04-536ac334255mr7477512e87.38.1727145995657; Mon, 23 Sep 2024
+ 19:46:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2024091900-unimpeded-catalyst-b09f@gregkh>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <cover.1724159867.git.andrea.porta@suse.com> <12d0909b1612fb6d2caa42b4fda5e5ae63d623a3.1724159867.git.andrea.porta@suse.com>
+ <2113b8df52164733a0ee3860bb793d6e.sboyd@kernel.org> <ZtcBHvI9JxgH9iFT@apocalypse>
+ <d87530b846d0dc9e78789234cfcb602a.sboyd@kernel.org> <CAK7LNAQEx52BYMYfNu+xj8sNmdtH9XfPapdhJDrsbDo43aD3Dg@mail.gmail.com>
+ <146d3866ec57e963713cd07b9eaf5a71.sboyd@kernel.org>
+In-Reply-To: <146d3866ec57e963713cd07b9eaf5a71.sboyd@kernel.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Tue, 24 Sep 2024 11:45:58 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQ1oUvuMcHs-idZcPxE-c4fJgMDt-cURATsrVkjjFPNWg@mail.gmail.com>
+Message-ID: <CAK7LNAQ1oUvuMcHs-idZcPxE-c4fJgMDt-cURATsrVkjjFPNWg@mail.gmail.com>
+Subject: Re: [PATCH 05/11] vmlinux.lds.h: Preserve DTB sections from being
+ discarded after init
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>, Andrew Lunn <andrew@lunn.ch>, Arnd Bergmann <arnd@arndb.de>, 
+	Bjorn Helgaas <bhelgaas@google.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Conor Dooley <conor+dt@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+	Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, 
+	Eric Dumazet <edumazet@google.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jakub Kicinski <kuba@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Stefan Wahren <wahrenst@gmx.net>, 
+	Will Deacon <will@kernel.org>, devicetree@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+	netdev@vger.kernel.org, linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 19, 2024 at 01:19:27PM +0200, gregkh@linuxfoundation.org wrote:
-> On Wed, Sep 18, 2024 at 06:54:33AM +0000, Zhang, Rui wrote:
-> > On Mon, 2024-08-12 at 14:11 +0200, Greg KH wrote:
-> > > On Wed, Aug 07, 2024 at 10:15:23AM +0200, Thorsten Leemhuis wrote:
-> > > > [CCing the x86 folks, Greg, and the regressions list]
-> > > > 
-> > > > Hi, Thorsten here, the Linux kernel's regression tracker.
-> > > > 
-> > > > On 30.07.24 18:41, Thomas Lindroth wrote:
-> > > > > I upgraded from kernel 6.1.94 to 6.1.99 on one of my machines and
-> > > > > noticed that
-> > > > > the dmesg line "Incomplete global flushes, disabling PCID" had
-> > > > > disappeared from
-> > > > > the log.
-> > > > 
-> > > > Thomas, thx for the report. FWIW, mainline developers like the x86
-> > > > folks
-> > > > or Tony are free to focus on mainline and leave stable/longterm
-> > > > series
-> > > > to other people -- some nevertheless help out regularly or
-> > > > occasionally.
-> > > > So with a bit of luck this mail will make one of them care enough
-> > > > to
-> > > > provide a 6.1 version of what you afaics called the "existing fix"
-> > > > in
-> > > > mainline (2eda374e883ad2 ("x86/mm: Switch to new Intel CPU model
-> > > > defines") [v6.10-rc1]) that seems to be missing in 6.1.y. But if
-> > > > not I
-> > > > suspect it might be up to you to prepare and submit a 6.1.y variant
-> > > > of
-> > > > that fix, as you seem to care and are able to test the patch.
-> > > 
-> > > Needs to go to 6.6.y first, right?  But even then, it does not apply
-> > > to
-> > > 6.1.y cleanly, so someone needs to send a backported (and tested)
-> > > series
-> > > to us at stable@vger.kernel.org and we will be glad to queue them up
-> > > then.
-> > > 
-> > > thanks,
-> > > 
-> > > greg k-h
-> > 
-> > There are three commits involved.
-> > 
-> > commit A:
-> >    4db64279bc2b (""x86/cpu: Switch to new Intel CPU model defines"") 
-> >    This commit replaces
-> >       X86_MATCH_INTEL_FAM6_MODEL(ANY, 1),             /* SNC */
-> >    with
-> >       X86_MATCH_VFM(INTEL_ANY,         1),    /* SNC */
-> >    This is a functional change because the family info is replaced with
-> > 0. And this exposes a x86_match_cpu() problem that it breaks when the
-> > vendor/family/model/stepping/feature fields are all zeros.
-> > 
-> > commit B:
-> >    93022482b294 ("x86/cpu: Fix x86_match_cpu() to match just
-> > X86_VENDOR_INTEL")
-> >    It addresses the x86_match_cpu() problem by introducing a valid flag
-> > and set the flag in the Intel CPU model defines.
-> >    This fixes commit A, but it actually breaks the x86_cpu_id
-> > structures that are constructed without using the Intel CPU model
-> > defines, like arch/x86/mm/init.c.
-> > 
-> > commit C:
-> >    2eda374e883a ("x86/mm: Switch to new Intel CPU model defines")
-> >    arch/x86/mm/init.c: broke by commit B but fixed by using the new
-> > Intel CPU model defines
-> > 
-> > In 6.1.99,
-> > commit A is missing
-> > commit B is there
-> > commit C is missing
-> > 
-> > In 6.6.50,
-> > commit A is missing
-> > commit B is there
-> > commit C is missing
-> > 
-> > Now we can fix the problem in stable kernel, by converting
-> > arch/x86/mm/init.c to use the CPU model defines (even the old style
-> > ones). But before that, I'm wondering if we need to backport commit B
-> > in 6.1 and 6.6 stable kernel because only commit A can expose this
-> > problem.
-> 
-> If so, can you submit the needed backports for us to apply?  That's the
-> easiest way for us to take them, thanks.
+On Tue, Sep 24, 2024 at 3:13=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> wro=
+te:
+>
+> Quoting Masahiro Yamada (2024-09-22 01:14:12)
+> >
+> > Rather, I'd modify my patch as follows:
+> >
+> > --- a/scripts/Makefile.dtbs
+> > +++ b/scripts/Makefile.dtbs
+> > @@ -34,12 +34,14 @@ $(obj)/dtbs-list: $(dtb-y) FORCE
+> >  # Assembly file to wrap dtb(o)
+> >  # --------------------------------------------------------------------=
+-------
+> >
+> > +builtin-dtb-section =3D $(if $(filter arch/%, $(obj)),.dtb.init.rodata=
+,.rodata)
+>
+> I think we want to free the empty root dtb that's always builtin. That
+> is in drivers/of/ right?
 
-I audited all the uses of x86_match_cpu(match). All callers that construct
-the `match` argument using the family of X86_MATCH_* macros from arch/x86/
-include/asm/cpu_device_id.h function correctly because the commit B has
-been backported to v6.1.99 and to v6.6.50 -- 93022482b294 ("x86/cpu: Fix
-x86_match_cpu() to match just X86_VENDOR_INTEL").
 
-Only those callers that use their own thing to compose the `match` argument
-are buggy:
-    * arch/x86/mm/init.c
-    * drivers/powercap/intel_rapl_msr.c (only in 6.1.99)
+drivers/of/empty_root.dts is really small.
 
-Summarizing, v6.1.99 needs these two commits from mainline
-    * d05b5e0baf42 ("powercap: RAPL: fix invalid initialization for
-      pl4_supported field")
-    * 2eda374e883a ("x86/mm: Switch to new Intel CPU model defines")
+That is not a big deal even if empty_root.dtb
+remains in the .rodata section.
 
-v6.6.50 only needs the second commit.
 
-I will submit these backports.
 
-Thanks and BR,
-Ricardo
+> And I worry that an overlay could be in arch/
+> and then this breaks again. That's why it feels more correct to treat
+> dtbo.o vs. dtb.o differently. Perhaps we can check $(obj) for dtbo vs
+> dtb?
+
+
+This is not a problem either.
+
+
+Checking $(obj)/ is temporary.
+
+See this later patch:
+
+https://lore.kernel.org/linux-kbuild/20240904234803.698424-16-masahiroy@ker=
+nel.org/T/#u
+
+After my work is completed, DTB and DTBO will go
+to the .rodata section unconditionally.
+
+
+
+> Also, modpost code looks for .init* named sections and treats them as
+> initdata already. Can we rename .dtb.init.rodata to .init.dtb.rodata so
+> that modpost can find that?
+
+
+My previous patch checked .dtb.init.rodata.
+
+I do not mind renaming it to .init.dtb.rodata.
+
+
+
+
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
