@@ -1,54 +1,73 @@
-Return-Path: <linux-kernel+bounces-337073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14CCD9844F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:38:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 954949844F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:38:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF8CA1F26FFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:38:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 233F0B239F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0571C1A4F29;
-	Tue, 24 Sep 2024 11:37:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448811A725F;
+	Tue, 24 Sep 2024 11:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="W9b7sxjj"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="y7bxKniK"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4BE1A4E94;
-	Tue, 24 Sep 2024 11:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408451A7255
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 11:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727177877; cv=none; b=fhbEW9xo6SUwB3jtKveHaiaUpK090ysX/3vGccT0O9u9MLGAHSW1YRtkFFwzon4m58zE+eLqWnmRK3fyBkDxsZx8rKLV39bmLBfPoa/5uPHFdWmLGpn3coVFf9naQfmbc/NmrIYbXr2JooS1DLOyov0YCJgIsv3+bxNw9qGPkcY=
+	t=1727177881; cv=none; b=tHJRtjuCXpC4tRLseF5Zc5rqwGmgXCYKZsanlsrWeC24pvkaz0Z6eBcSGSMyw/HTQ/UO56NeuHFwOADr3OqdmxaK1WYEtVO/3atfAObbiMtCvsis1/Ej/myvhTUe/BNxKhKMk8pt2lVpDOFx8K/aG0a4hEwTWt8+8wL0wvvkvUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727177877; c=relaxed/simple;
-	bh=HL+IJGvaPoYFWnbwstJlsZ+C2p9dZZSdwImP0j4Q+2k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ggCqkdmHenhCiWYLSlt/6oWn5fspYqS2rrper4lyhgzo+tlZycvpy3SAVawTgEI29NjA2ByQ6oqmyQ75yEQ8j8NtgK71xAR1bhbUNEyErjf9teRuYOT5s1RbdnCuIexuKKSn6nT2bl+r9rujaiC4GZHQnxY2S5f43guhW/sQbps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=W9b7sxjj; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727177874;
-	bh=HL+IJGvaPoYFWnbwstJlsZ+C2p9dZZSdwImP0j4Q+2k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=W9b7sxjjLGQQX/tO6qWHLxOd6mGb3NzsoNvqpaV4Ve+SCj/ZHb7qw772sM3TRNNUJ
-	 WklzCbkTRP32y+X8sND1JSnBfXce4jyeyh1R780DNuA2x5dO3vM1KI7g68u9huAJva
-	 Sn3TPKTx41FgYSR+OZT1O6RuwYpMCj8tB+Uu3bXPRDVWursmJ4QGHDWaarhg9xbThc
-	 /SXbadtQVTbvTe1o8SdPviC9wUsaACeIf66hvcoHsNIduFdnVQQ8N4SbOhQiu6NQlo
-	 lJIAtvxoLAceu73B9vsbFdaA+Pn0nrgVdyJznELi0ZJDC6fL/uyS10wnNNnM3iKR63
-	 QKYSiyNpEfa7Q==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id A41EB17E1245;
-	Tue, 24 Sep 2024 13:37:53 +0200 (CEST)
-Message-ID: <2a74df47-c393-4a3c-bbc0-332c716c9a81@collabora.com>
-Date: Tue, 24 Sep 2024 13:37:53 +0200
+	s=arc-20240116; t=1727177881; c=relaxed/simple;
+	bh=p0BdZAZh1ZxjNZymKWKLfbu3HHT15r/YJntFkUJ/mJk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=T/lKiKzGizKYz8pWjCyliX95KofZoCZfr+2vdGh+GMLFlnULTUwJ7kZfl8CvxBTBIDgeS1YjtXmfw1wjdytmdraIvQXWu9tKf41WCLQjMAa7FMVrH8fy4Eh9jfuu0xKxv/nLKfbq43mJnSjftUwMb46nMU7/MfR+8FKVCCO4nsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=y7bxKniK; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6de05b9fd0bso43553537b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 04:37:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1727177879; x=1727782679; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=zibiU5NcjA/42kDb+GdOf+oExsB2oKos9l/xA59FG+c=;
+        b=y7bxKniKY86y9PZuE6yQEkskNbx8nfWZ2NE/oxrJgZqg+RL71Xeq+cnRA43X49s/cp
+         cUbUPc2pN2V3UKg6FiDL3tDdBfLt9jB9r3tn/oFHr/5C4k5PcHIOsprtrRa/Tfyi04dc
+         Z4AyQs7kv5lBC7zY5cq+/U4CxgYLsccwsApl60wzTOjfKSp4domyR5MgR7g8H0pXG/2q
+         KoTcq/BgvARjjMy7tL7HG9C2eXtNlZFK7lwiDJmeC77jC3IdEvOx1/ZwAF/AUXaIeKlS
+         lmo91TBPx3oy/MuoiFsZ4ztom1oewLyQv8AoKEgHivKrv17Bjjk22eMd9Newrm22oXk7
+         ASOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727177879; x=1727782679;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zibiU5NcjA/42kDb+GdOf+oExsB2oKos9l/xA59FG+c=;
+        b=D6ekCyZ85qYxrN4Yre3qs5oV0p6xy2kWXc4cWHvKLS47CoNNfvxq46q9YEnhl5Fxs6
+         F2HZ7TmlShPN1Q9817bwlQro/p8u1QZFLOSj4DNV+uYxceymkcRCE0qu+b1mJgITsxYD
+         jfKljQmFDesH0XSxoRFOT/44bdSiTmienSYbCgruFti5S9Q770lKNkOWsUBABTuHpIg1
+         eJfJXx7lbgdeL93HLvWY0uY38kb6MKOTP5l3g/i5u/V8YmVkFECK93+iqKaka9UUqEFW
+         lyumE3qmVkbMI76KR3UkaTPdq5p7f2KI1dkwcH6I1aGD5iaWRos0mIQRN5y2aGHdI/1v
+         QLuw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGXIdD6U35ggluzz6ihgqc+4zykcC5yDmUswDgkW1mf7NRNIiNHbvEVkYszarKBA7pKunhTontzMca1Gs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWsWvUwTZj2BZTPYuaDI113rha1TGh2K6NfmlJlWXYJ04+yFcy
+	sGqy9ggrLT1X2LmV0ItKaQ+UkyA0srHmTAtdgxCXXQRS+Vsp+Wzrk09jlXYd2sU=
+X-Google-Smtp-Source: AGHT+IFwnf64MjHXe48n9DmAsLZlpXhJrVcdnslHAZm20aRIy+bhv3thVqdhppairRNPU4E0vI3utg==
+X-Received: by 2002:a05:690c:4243:b0:6dc:d556:aef7 with SMTP id 00721157ae682-6dff2b1b2b8mr84275797b3.41.1727177879192;
+        Tue, 24 Sep 2024 04:37:59 -0700 (PDT)
+Received: from ?IPV6:2600:381:1d13:f852:a731:c08e:e897:179a? ([2600:381:1d13:f852:a731:c08e:e897:179a])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e20d27d2d2sm2104957b3.117.2024.09.24.04.37.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Sep 2024 04:37:58 -0700 (PDT)
+Message-ID: <b0140219-56f8-427d-9ca1-d3eee127a5e4@kernel.dk>
+Date: Tue, 24 Sep 2024 05:37:55 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,27 +75,22 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] arm64: dts: mediatek: mt8186: add FHCTL node
-To: Max Weng <max_weng@compal.corp-partner.google.com>,
- linux-kernel@vger.kernel.org
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- matthias.bgg@gmail.com, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20240924101559.879167-1-max_weng@compal.corp-partner.google.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [syzbot] [io-uring?] WARNING in io_sq_offload_create
+To: syzbot <syzbot+71b95eda637a2088bd6b@syzkaller.appspotmail.com>,
+ asml.silence@gmail.com, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <66ed6edc.050a0220.2abe4d.0014.GAE@google.com>
 Content-Language: en-US
-In-Reply-To: <20240924101559.879167-1-max_weng@compal.corp-partner.google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <66ed6edc.050a0220.2abe4d.0014.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Il 24/09/24 12:15, Max Weng ha scritto:
-> From: max_weng <max_weng@compal.corp-partner.google.com>
-> 
-> add FHCTL device node for Frequency Hopping and Spread Spectrum clock function.
-> 
-> Signed-off-by: Max Weng <max_weng@compal.corp-partner.google.com>
+This is a dupe of something that was already supported and fixed, it's
+been sent to Linus 2 days ago:
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+#syz fix: io_uring/sqpoll: retain test for whether the CPU is valid
 
-
+-- 
+Jens Axboe
 
