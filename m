@@ -1,167 +1,168 @@
-Return-Path: <linux-kernel+bounces-336660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EDCA983DA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:15:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4D21983E0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:18:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0E3F1C22641
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:15:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A0AD1F215E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE535143725;
-	Tue, 24 Sep 2024 07:15:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1FD145B03;
+	Tue, 24 Sep 2024 07:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="jstRXiqJ"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QNvH2NIL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F8A143723
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:15:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9871A270;
+	Tue, 24 Sep 2024 07:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727162117; cv=none; b=A23aUGM1xT9JLuASc9QUO3CKqMvphknyHmxRsCA28wxOVqhuNO5iK9/XxiAj2zCnU6JAzHCnwAHh1jT+XCOp/ejJGhO7f/U2c4ahmebf5GRQMlfjmnKN96xr+R5nBNjf++m95EJjUS73t1SmQI1snx3OkEIC7HpDnaawdrZWr4I=
+	t=1727162312; cv=none; b=KKXJ46rk0ga1yfP1scaJse+WFd6q2AU68Sa9zTKYTIkLB7f4e5f2U6/7MA1Moig95DhoMm32zxoPTX+vlchyH6Ydie990mIbWa+45z33okLfFQ0HjgxSQ0I6FgH6VdFkt/+AAk/osf9G76wYUw19iwGROL1WGBMfGpbokl3O3Cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727162117; c=relaxed/simple;
-	bh=dFHsUcuwdml9tPy/a9bwGm7XZBafs188fpXgCrVxH9c=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=BHuMowWSglGhDyV3FcH6nDTm5rJ16GR5SDijEPi5XiMmNAmOquGBZxv9hADBUbwor2nLvPi7gu/WI3W5APxqiSD+3lRqktSSztPNiP1deHkl7wdIhqWR/q54IPk1ce1yxIPzUjv8ZiXsm47FuRXe0YFLKXkUhbQKVLlg7VQVEH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=jstRXiqJ; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c46680a71bso4347700a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 00:15:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1727162114; x=1727766914; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cajhmBCXQZKSrLAVt9O9VA7lCZwJirG7AeVDIGrh7f8=;
-        b=jstRXiqJ1wnBKtZn1QUTenz8LvoUrqmiizVkDpARYWWwyPAvnpkChkDys+rnhMZUjh
-         Pxo4FlpGVy/H5m+9FWSPmgliaeqXqq7AKthpJ6qfoDwd/bDcL5FkmqAoM5dHD8weg7c5
-         dwLre0B/J4Ad9ngM9Iw0LeOdJ7uIn/raUjPbjeAk4M4oJdPDC4y+S5WTrG0RtiwV7Xb3
-         2KJHHU7JCBBGKMPBoiqEKCBzGiBmtKb4EX9bwPfDwhyqevYHDny72PUFeqEs2ZBKObnW
-         TydhUntGkuGyamviNiVu2pi8DiKef/HSQdexhEMYwIKzvo/qOjp17jqbw0ekNWnF6VXm
-         2QVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727162114; x=1727766914;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=cajhmBCXQZKSrLAVt9O9VA7lCZwJirG7AeVDIGrh7f8=;
-        b=Z/FfJkUnu3S53WiSuQuyKDUrwiFXgGWPz6i2zMW3K5ZkKRUvR7k/xKqUrgw1/809Hp
-         OT+eeMcqwuqp6ak7G8yIdWn95z43N9X4FZJDNPBMZZvxuXEHJFLAA/4CBGwHly9gFRLk
-         E15SZpQaMMVzyQMudaD7RdFfUJ+8W3eZtuX9/xnaHSjhWuOStEfEkeL4krx26jEBvzcI
-         00/oRICyn5Kn+xQWKvoQABDtedrF+Fs8WCHlNsps1jYMGlo4QpzEFrYuoyrEAtokS8Fk
-         Y283/AcenbT0cttOtedA3ijZvy7pvQfDKd7WbRbahJB4XwFUwxSOdr3tvF8Xli29WD3+
-         VWYg==
-X-Forwarded-Encrypted: i=1; AJvYcCX6XO7EdnJz7noA4s04qANtGVWwRPdJnZyQD8E2Y24LbvQX/4V2z4MQa37LJYcmCGG9jtV8lEuVDBBm+ZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsPSV3/2D3ettUGC3FNYSrpsnZ7yPE2aErM6RVO0F/mvOCZDtj
-	/sb1rZkZzZtAXLIr3jWNwTAIjC/Zym9qM6KOQvMTWwrNZVs8ajYf2AJPnJBHHaA=
-X-Google-Smtp-Source: AGHT+IGhzrOQvSNMdXNtOt+4i5dURer+xNowHaBG6b65R80TgOhirmqf/gL94bvXn9ou3bbm+OVdUQ==
-X-Received: by 2002:a05:6402:34d1:b0:5c3:c548:ab3a with SMTP id 4fb4d7f45d1cf-5c4646640bfmr11854683a12.2.1727162113821;
-        Tue, 24 Sep 2024 00:15:13 -0700 (PDT)
-Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c5cf4d77d9sm445370a12.94.2024.09.24.00.15.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Sep 2024 00:15:13 -0700 (PDT)
+	s=arc-20240116; t=1727162312; c=relaxed/simple;
+	bh=13W/S/960G9LH0E9Svih4veY12utj/2kO1lJZ5f++Zc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a4SjlZ1Wf/eWh6ySWdEbD4yFjo9N3BckW/CQsbnAdY3H0y+C9aoZTSmMyXlq0dXcPPIT/G+QqpDxomG5I/3nc9sZpX1oEXIj4TcBNzyJSflBpXFxG+qc3oCCWUVpsxmpFGAxuqXqsyuPIzFSvmxQKh/hW3pdpxPO5I5q7JHmDAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QNvH2NIL; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727162311; x=1758698311;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=13W/S/960G9LH0E9Svih4veY12utj/2kO1lJZ5f++Zc=;
+  b=QNvH2NILzk3WId/sf5Bt2zgmVxqR99PL1ZCybble8Dex5S4XATuFxkCj
+   01J19/u1Kx7yhOQdX+Q5m4M5h0FIxrQqpl4YuRm+51fcBu/ZFVWwdkulO
+   ExOg6UYQ0xItJ3TvIFwSnjh6jkEDppX0g4vTGpVQ4shszIdQ2a3VG1WGL
+   yRSGy1xi+962gZYGJbJYklDFjlPDzeV7XmJFvm32uv54qGOV6sJvrdOVk
+   do0FUIitVX9sQj98vXirIaYmax2z5ozYKgUFz5sRFMNBGNFirgg7EtDxn
+   4rmv+nOxCPt7B9Ju/GN92cEBqSXOJrrLKJgFpFC44LCk4QFdFVqHBezvD
+   g==;
+X-CSE-ConnectionGUID: Ofq8ZvD8SNSKGlg1E7m5cA==
+X-CSE-MsgGUID: 6l3QP7hCTIGb0WQSFh9T3g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="43609262"
+X-IronPort-AV: E=Sophos;i="6.10,253,1719903600"; 
+   d="scan'208";a="43609262"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 00:18:21 -0700
+X-CSE-ConnectionGUID: SkMfx9QNTiyf2DADT11LzQ==
+X-CSE-MsgGUID: QknmVD9hT8Gu9DiQtT+PyQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,253,1719903600"; 
+   d="scan'208";a="71327431"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmviesa009.fm.intel.com with ESMTP; 24 Sep 2024 00:18:17 -0700
+Date: Tue, 24 Sep 2024 15:15:23 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Peter Colberg <peter.colberg@intel.com>
+Cc: Wu Hao <hao.wu@intel.com>, Tom Rix <trix@redhat.com>,
+	Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>,
+	linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Russ Weight <russ.weight@linux.dev>,
+	Marco Pagani <marpagan@redhat.com>,
+	Matthew Gerlach <matthew.gerlach@linux.intel.com>
+Subject: Re: [PATCH v3 6/9] fpga: dfl: factor out feature data creation from
+ build_info_commit_dev()
+Message-ID: <ZvJnC7hHISkbOo2n@yilunxu-OptiPlex-7050>
+References: <20240919203430.1278067-1-peter.colberg@intel.com>
+ <20240919203430.1278067-7-peter.colberg@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 24 Sep 2024 09:15:12 +0200
-Message-Id: <D4EBVCYB1A56.21TT1WFRGCYGN@fairphone.com>
-Subject: Re: [PATCH RFC 07/11] arm64: dts: qcom: sm6350: Affirm IDR0.CCTW on
- apps_smmu
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Konrad Dybcio" <konradybcio@kernel.org>, "Bjorn Andersson"
- <andersson@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- <cros-qcom-dts-watchers@chromium.org>
-Cc: "Marijn Suijten" <marijn.suijten@somainline.org>,
- <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Konrad Dybcio" <quic_kdybcio@quicinc.com>
-X-Mailer: aerc 0.18.2-0-ge037c095a049
-References: <20240919-topic-apps_smmu_coherent-v1-0-5b3a8662403d@quicinc.com> <20240919-topic-apps_smmu_coherent-v1-7-5b3a8662403d@quicinc.com>
-In-Reply-To: <20240919-topic-apps_smmu_coherent-v1-7-5b3a8662403d@quicinc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240919203430.1278067-7-peter.colberg@intel.com>
 
-On Thu Sep 19, 2024 at 12:57 AM CEST, Konrad Dybcio wrote:
-> From: Konrad Dybcio <quic_kdybcio@quicinc.com>
->
-> On RPMh-based SoCs, the APPS SMMU advertizes support for cache-coherent
-> pagetable walk via the IDR0 register. This however is not respected by
-> the arm-smmu driver unless dma-coherent is set.
->
-> Mark the node as dma-coherent to ensure this (and other) implementations
-> take this coherency into account.
-
-Hi Konrad!
-
-Similar to [0] everything seems to look fine on SM7225 Fairphone 4.
-
-[    0.190433] arm-smmu 15000000.iommu: probing hardware configuration...
-[    0.190459] arm-smmu 15000000.iommu: SMMUv2 with:
-[    0.190499] arm-smmu 15000000.iommu:         stage 1 translation
-[    0.190515] arm-smmu 15000000.iommu:         coherent table walk
-[    0.190531] arm-smmu 15000000.iommu:         stream matching with 71 reg=
-ister groups
-[    0.190560] arm-smmu 15000000.iommu:         63 context banks (0 stage-2=
- only)
-[    0.191097] arm-smmu 15000000.iommu:         Supported page sizes: 0x613=
-11000
-[    0.191114] arm-smmu 15000000.iommu:         Stage-1: 36-bit VA -> 36-bi=
-t IPA
-[    0.191299] arm-smmu 15000000.iommu:         preserved 0 boot mappings
-
-The Adreno SMMU still has non-coherent table walk.
-
-[    1.141215] arm-smmu 3d40000.iommu: probing hardware configuration...
-[    1.141243] arm-smmu 3d40000.iommu: SMMUv2 with:
-[    1.141270] arm-smmu 3d40000.iommu:  stage 1 translation
-[    1.141279] arm-smmu 3d40000.iommu:  address translation ops
-[    1.141288] arm-smmu 3d40000.iommu:  non-coherent table walk
-[    1.141296] arm-smmu 3d40000.iommu:  (IDR0.CTTW overridden by FW configu=
-ration)
-[    1.141307] arm-smmu 3d40000.iommu:  stream matching with 5 register gro=
-ups
-[    1.141326] arm-smmu 3d40000.iommu:  5 context banks (0 stage-2 only)
-[    1.141347] arm-smmu 3d40000.iommu:  Supported page sizes: 0x63315000
-[    1.141356] arm-smmu 3d40000.iommu:  Stage-1: 48-bit VA -> 36-bit IPA
-[    1.141568] arm-smmu 3d40000.iommu:  preserved 0 boot mappings
-
-
-Tested-by: Luca Weiss <luca.weiss@fairphone.com> # sm7225-fairphone-fp4
-
-[0] https://lore.kernel.org/linux-arm-msm/CAD=3DFV=3DXrbe1NO+trk1SJ30gHm5jL=
-Fjd0bAeG3H46gD+vNFZa1w@mail.gmail.com/
-
-Regards
-Luca
-
->
-> Signed-off-by: Konrad Dybcio <quic_kdybcio@quicinc.com>
+On Thu, Sep 19, 2024 at 04:34:27PM -0400, Peter Colberg wrote:
+> Add a separate function binfo_create_feature_dev_data() which allocates
+> and populates the feature platform data, and call the function from
+> build_info_commit_dev() which registers the feature platform device.
+> 
+> Signed-off-by: Peter Colberg <peter.colberg@intel.com>
+> Reviewed-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
 > ---
->  arch/arm64/boot/dts/qcom/sm6350.dtsi | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/arm64/boot/dts/qcom/sm6350.dtsi b/arch/arm64/boot/dts/q=
-com/sm6350.dtsi
-> index 7986ddb30f6e8ce6ceeb0f90772b0243aed6bffe..54cfe99006613f8ccc5bf6d83=
-bcb4bf8e72f3cfe 100644
-> --- a/arch/arm64/boot/dts/qcom/sm6350.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sm6350.dtsi
-> @@ -2685,6 +2685,7 @@ apps_smmu: iommu@15000000 {
->  				     <GIC_SPI 411 IRQ_TYPE_LEVEL_HIGH>,
->  				     <GIC_SPI 412 IRQ_TYPE_LEVEL_HIGH>,
->  				     <GIC_SPI 413 IRQ_TYPE_LEVEL_HIGH>;
-> +			dma-coherent;
->  		};
-> =20
->  		intc: interrupt-controller@17a00000 {
+>  drivers/fpga/dfl.c | 74 ++++++++++++++++++++++++++--------------------
+>  1 file changed, 42 insertions(+), 32 deletions(-)
+> 
+> diff --git a/drivers/fpga/dfl.c b/drivers/fpga/dfl.c
+> index 4c79d433d216..e644eb9fde39 100644
+> --- a/drivers/fpga/dfl.c
+> +++ b/drivers/fpga/dfl.c
+> @@ -749,12 +749,8 @@ static void dfl_fpga_cdev_add_port_data(struct dfl_fpga_cdev *cdev,
+>  	mutex_unlock(&cdev->lock);
+>  }
+>  
+> -/*
+> - * register current feature device, it is called when we need to switch to
+> - * another feature parsing or we have parsed all features on given device
+> - * feature list.
+> - */
+> -static int build_info_commit_dev(struct build_feature_devs_info *binfo)
+> +static struct dfl_feature_platform_data *
+> +binfo_create_feature_dev_data(struct build_feature_devs_info *binfo)
+>  {
+>  	struct platform_device *fdev = binfo->feature_dev;
+>  	struct dfl_feature_platform_data *pdata;
+> @@ -764,7 +760,7 @@ static int build_info_commit_dev(struct build_feature_devs_info *binfo)
+>  
+>  	type = feature_dev_id_type(fdev);
+>  	if (WARN_ON_ONCE(type >= DFL_ID_MAX))
+> -		return -EINVAL;
+> +		return ERR_PTR(-EINVAL);
+>  
+>  	/*
+>  	 * we do not need to care for the memory which is associated with
+> @@ -774,7 +770,7 @@ static int build_info_commit_dev(struct build_feature_devs_info *binfo)
+>  	 */
+>  	pdata = kzalloc(struct_size(pdata, features, binfo->feature_num), GFP_KERNEL);
+>  	if (!pdata)
+> -		return -ENOMEM;
+> +		return ERR_PTR(-ENOMEM);
+>  
+>  	pdata->dev = fdev;
+>  	pdata->num = binfo->feature_num;
+> @@ -799,7 +795,7 @@ static int build_info_commit_dev(struct build_feature_devs_info *binfo)
+>  	fdev->resource = kcalloc(binfo->feature_num, sizeof(*fdev->resource),
+>  				 GFP_KERNEL);
+>  	if (!fdev->resource)
+> -		return -ENOMEM;
+> +		return ERR_PTR(-ENOMEM);
+>  
+>  	/* fill features and resource information for feature dev */
+>  	list_for_each_entry_safe(finfo, p, &binfo->sub_features, node) {
+> @@ -818,7 +814,7 @@ static int build_info_commit_dev(struct build_feature_devs_info *binfo)
+>  						       finfo->params, finfo->param_size,
+>  						       GFP_KERNEL);
+>  			if (!feature->params)
+> -				return -ENOMEM;
+> +				return ERR_PTR(-ENOMEM);
+>  
+>  			feature->param_size = finfo->param_size;
+>  		}
+> @@ -834,8 +830,10 @@ static int build_info_commit_dev(struct build_feature_devs_info *binfo)
+>  			feature->ioaddr =
+>  				devm_ioremap_resource(binfo->dev,
+>  						      &finfo->mmio_res);
+> -			if (IS_ERR(feature->ioaddr))
+> -				return PTR_ERR(feature->ioaddr);
+> +			if (IS_ERR(feature->ioaddr)) {
+> +				ret = PTR_ERR(feature->ioaddr);
+> +				return ERR_PTR(ret);
 
+Why change the type back and forth?
+
+  return feature->ioaddr;
+
+is it OK?
+
+Thanks,
+Yilun
 
