@@ -1,330 +1,147 @@
-Return-Path: <linux-kernel+bounces-337486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B473984AA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:05:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE9F5984AC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:15:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 084671F21281
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:05:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E2D51F23419
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:15:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD601AC43B;
-	Tue, 24 Sep 2024 18:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A8C1AC880;
+	Tue, 24 Sep 2024 18:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aLpzZ3q1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b="dNfBQWeT"
+Received: from mx0b-00190b01.pphosted.com (mx0b-00190b01.pphosted.com [67.231.157.127])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA9A49641
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 18:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588B11B85DB;
+	Tue, 24 Sep 2024 18:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.157.127
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727201131; cv=none; b=X0TWQhijOHedwgU9O8WvNC/IP6vaE5qdi7qQ86Wdo8F8RBNI+yVGtxqr5euy9xE1ZIQhBbUC+JjRI8HehEN+j4Ik/jurzyGfxKjD9PPAm8vpyiaYIckuxuII4VKGsUHFbrb2haN/pRl+J7WeZp9V/40SiqqnnvsmXMnqKNrJ3k4=
+	t=1727201740; cv=none; b=gxNWdSckDm0bHTryw6B4lv16U1RERWNRFaiLoGBpkd/kqwWBd5UBmXj6vXoGmcCSzDvV+/yEQzD4vIKHiVenM4uYelRPhh6M2bTmyROnQBIuckOoQqXnIx/S7OvD6xfLVarM1spKDiEOPg4Uk3gLENNNY3yGw2KyZfeQG4WZh1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727201131; c=relaxed/simple;
-	bh=IoL0K7SoAmIEnbpyrBb6nLNcf+yUtu86/h/QkT1f2Pg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vvev0Ud7eo38GA9R03cAN47PlYfCy5uPnQ6c3dk3Ih5ijxgq7WhT965AgxC+hWTcUjSFxn6grQVUrfCxDAWJTIRwzqKON+0jHFOqc0VMxwYslI0D+WmrB42k8XoV00cRwUxv0D248z6ENyERTVk5SZG0NaBG23zNdKaCbrly9Fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aLpzZ3q1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEB47C4CECD
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 18:05:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727201131;
-	bh=IoL0K7SoAmIEnbpyrBb6nLNcf+yUtu86/h/QkT1f2Pg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=aLpzZ3q1efpvQnA3KWSkCU+clRzSZ23zg7bJ1W3jZxOjmDwcpv+URv/nwy55MKyS8
-	 g4x6OsXXhlytjBqZ93s3q1blDfK2zhy16kw4qnIeTUqiJyB4nAZ3Pj8PCaEzlPKWGp
-	 Qiedm9ZCKyIE0vJ/bjVFEUmXmUguRczO59u3L38Pq3w/pQXX/ANAU0H040ScMqIlRL
-	 /CLAfw8VpawA91Of8bK2m3jQFGXaC3ZW+SbFrUdgNmhcM/CQpuVmD4IbLaOZU1+3f3
-	 VQv5e6FYm64mtNDNgRt7PYV36MVJ++ULTF0EtvDrCZbqjNUkH1Pd4IKv9j5ywsmW1k
-	 jFMD86nHj+DXw==
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3a1a662a633so17955ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 11:05:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUImhp49vpr0HtLRVLmUXPOlOey9EV7wITwIAdcdy6vkquXjlEfUH0q3rTGr0n/yVWwbKQ3ft5nAiporqI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhlXR6GKGsnkhxDXdTg2O0Ninplcv5AJKc5R70qMszPiVBR6j9
-	X8bpa1Q3nrdWj1GJ3ni9/UCzbwFSGRgYyUHQUeLVjeDC5t68IycLHBQSl62ly+h+hyIYoI7zLLS
-	p4shCR7fMRnv2OnCVIjbm3v8SpFmVs6TY7nKl
-X-Google-Smtp-Source: AGHT+IGs2BTudAGVHjmlsME4YVTNJeCt8bYbLI+hDkSJuedrUBVqX1EPis2ENWKJDS4YM5hMDAJfifODYye8uoCiz3E=
-X-Received: by 2002:a92:c244:0:b0:39a:f5a7:50ef with SMTP id
- e9e14a558f8ab-3a26e2c5696mr222005ab.4.1727201130844; Tue, 24 Sep 2024
- 11:05:30 -0700 (PDT)
+	s=arc-20240116; t=1727201740; c=relaxed/simple;
+	bh=Y69CBXft/89RYiJGygxLvDjUaUSw6b6AY050W+oUenE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fv/K8bn2WCChqbYXtEpeOnWhVfnhXmPSbslrptvG0IvD0tKLA0tbszViLOOycFUtSrwY5a12cRcZOnFX71MetzqIeeou/MFbGlTufwZzpxTcwxRpf1UwuV840xgfgY5vafTDPzCPtlUFxDADpVNzgdj6yHeyBc4TCeTBHIOgp2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com; spf=pass smtp.mailfrom=akamai.com; dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b=dNfBQWeT; arc=none smtp.client-ip=67.231.157.127
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=akamai.com
+Received: from pps.filterd (m0409411.ppops.net [127.0.0.1])
+	by m0409411.ppops.net-00190b01. (8.18.1.2/8.18.1.2) with ESMTP id 48OBYEIc020297;
+	Tue, 24 Sep 2024 18:26:21 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=jan2016.eng;
+	 bh=YtazcCjHaC02mUMlP90lNJBe1ZmJSaC1m+oIlkc1uhA=; b=dNfBQWeTDbPO
+	w/YW+ArCoshbaphO2iHDjzrG+D5o+ny4vC9rswCZ4dtOvlVOLcfPDeJbRsD+x4Ry
+	aH4OtiMzSpKyOcHiTWi+z+fyd/onWKHnlJvic1V1SX9jgmRRAmoV9jj0CcQaJD1m
+	kbwQmKKAatZwRNIvYGsz/pVs9KD5YDqjt/9XHCw1C4lBgKJ+uUBA/Sme7WqOWqTx
+	Wnv8VOI4hM4ZexmysqnFMRILJCthZ5LeLY3CRp/D3L2dj3c9qQmetxHBav8gZnhS
+	nHBWodHBnQq/J7lAfy2zvnS8nfh/n8ZIRTJANOUUmSsRFFdyUk8VHDVyA5kyKNC+
+	HWbmLSUlLw==
+Received: from prod-mail-ppoint7 (a72-247-45-33.deploy.static.akamaitechnologies.com [72.247.45.33] (may be forged))
+	by m0409411.ppops.net-00190b01. (PPS) with ESMTPS id 41t7gbjudj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Sep 2024 18:26:21 +0100 (BST)
+Received: from pps.filterd (prod-mail-ppoint7.akamai.com [127.0.0.1])
+	by prod-mail-ppoint7.akamai.com (8.18.1.2/8.18.1.2) with ESMTP id 48OFSiDx025042;
+	Tue, 24 Sep 2024 13:26:20 -0400
+Received: from prod-mail-relay19.dfw02.corp.akamai.com ([172.27.165.173])
+	by prod-mail-ppoint7.akamai.com (PPS) with ESMTP id 41ssg1pvr6-1;
+	Tue, 24 Sep 2024 13:26:19 -0400
+Received: from [100.64.0.1] (prod-aoa-dallas2clt14.dfw02.corp.akamai.com [172.27.166.123])
+	by prod-mail-relay19.dfw02.corp.akamai.com (Postfix) with ESMTP id 60F91636F5;
+	Tue, 24 Sep 2024 17:26:18 +0000 (GMT)
+Message-ID: <1fbd0d02-6c34-4bb4-b9b8-66e121ff67e3@akamai.com>
+Date: Tue, 24 Sep 2024 10:26:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911025600.3681789-1-senozhatsky@chromium.org>
- <20240917013021.868769-1-senozhatsky@chromium.org> <CAF8kJuPq+JwvwrG+H+XU23Xz+Do+qy8RPJBBVRsL0YGQzZpfrQ@mail.gmail.com>
- <CAF8kJuMQqib-2qhjNTFzKdUdJoUhTOuhv5GtgLnSsUStMHbwdw@mail.gmail.com>
-In-Reply-To: <CAF8kJuMQqib-2qhjNTFzKdUdJoUhTOuhv5GtgLnSsUStMHbwdw@mail.gmail.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Tue, 24 Sep 2024 11:05:18 -0700
-X-Gmail-Original-Message-ID: <CAF8kJuNeTmzANESWSOcRrGFR-Db=bxp5n29Pw-BX8Nwya0odXA@mail.gmail.com>
-Message-ID: <CAF8kJuNeTmzANESWSOcRrGFR-Db=bxp5n29Pw-BX8Nwya0odXA@mail.gmail.com>
-Subject: Re: [PATCHv2] zram: free secondary algorithms names
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Minchan Kim <minchan@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-mm <linux-mm@kvack.org>, 
-	Kairui Song <ryncsn@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v3] tcp: check skb is non-NULL in tcp_rto_delta_us()
+To: Paolo Abeni <pabeni@redhat.com>, edumazet@google.com, davem@davemloft.net,
+        kuba@kernel.org, netdev@vger.kernel.org, ncardwell@google.com
+Cc: linux-kernel@vger.kernel.org
+References: <20240910190822.2407606-1-johunt@akamai.com>
+ <5632e043-bdba-4d75-bc7e-bf58014492fd@redhat.com>
+Content-Language: en-US
+From: Josh Hunt <johunt@akamai.com>
+In-Reply-To: <5632e043-bdba-4d75-bc7e-bf58014492fd@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-24_02,2024-09-24_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 mlxlogscore=999
+ malwarescore=0 adultscore=0 suspectscore=0 phishscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2408220000
+ definitions=main-2409240123
+X-Proofpoint-GUID: qkZLFQFukI6XARHdmMKJbaj6CyuY2jP7
+X-Proofpoint-ORIG-GUID: qkZLFQFukI6XARHdmMKJbaj6CyuY2jP7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 lowpriorityscore=0
+ suspectscore=0 phishscore=0 mlxscore=0 adultscore=0 impostorscore=0
+ spamscore=0 priorityscore=1501 mlxlogscore=999 bulkscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409240124
 
-On Tue, Sep 24, 2024 at 8:52=E2=80=AFAM Chris Li <chriscli@google.com> wrot=
-e:
->
-> Hi Sergey,
->
-> On Tue, Sep 24, 2024 at 8:36=E2=80=AFAM Chris Li <chrisl@kernel.org> wrot=
-e:
-> >
-> > Hi Sergey,
-> >
-> > The current mm-unstable is breaking my swap stress test again. While th=
-ere seems to be multiple bad commits that cause it. I have bisected into th=
-is commit causing kernel warning and followed by BUG().
-> >
-> > [   56.630032] zswap: loaded using pool lzo/zsmalloc
-> > [   56.718027] zram0: detected capacity change from 16777216 to 0
-> > [   56.725492] zram: Removed device: zram0
-> > [   56.740125] ------------[ cut here ]------------
-> > [   56.744616] WARNING: CPU: 2 PID: 1894 at mm/slub.c:4556 free_large_k=
-malloc+0x4d/0x80
-> > [   56.745119] Modules linked in:
-> > [   56.749551] CPU: 2 UID: 0 PID: 1894 Comm: zram-generator Tainted: G =
-S                 6.11.0-rc6+ #33
-> > [   56.750129] Tainted: [S]=3DCPU_OUT_OF_SPEC
-> > [   56.750908] Hardware name: HP ProLiant DL360 Gen9/ProLiant DL360 Gen=
-9, BIOS P89 09/21/2023
-> > [   56.751354] RIP: 0010:free_large_kmalloc+0x4d/0x80
-> > [   56.756120] Code: 00 10 00 00 48 d3 e0 f7 d8 81 e2 c0 00 00 00 75 2f=
- 89 c6 48 89 df e8 82 ff ff ff f0 ff 4b 34 0f 85 e
-> > 9 7d f5 00 e9 eb 7d f5 00 <0f> 0b 80 3d a8 f3 9b 02 00 0f 84 bd 7d f5 0=
-0 b8 00 f0 ff ff eb d1
-> > [   56.761370] RSP: 0018:ffffaeaaa3657b20 EFLAGS: 00010246
-> > [   56.761676] RAX: 0057ffffc0002000 RBX: ffffece0c1f40e80 RCX: 0000000=
-08040003f
-> > [   56.766293] RDX: ffffece0c1f40e88 RSI: ffffffff9a03a131 RDI: ffffece=
-0c1f40e80
-> > [   56.770931] RBP: 0000000000200000 R08: ffff95571d256480 R09: 0000000=
-08040003f
-> > [   56.775540] R10: 000000008040003f R11: 000000000000032c R12: 0000000=
-000200000
-> > [   56.780212] R13: ffff953787c71e40 R14: 0000000000000047 R15: ffff953=
-79b2e3e20
-> > [   56.784943] FS:  00007fb0f1d58bc0(0000) GS:ffff95567ed00000(0000) kn=
-lGS:0000000000000000
-> > [   56.785403] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > [   56.789937] CR2: 00007f35b6449050 CR3: 00000001112ac006 CR4: 0000000=
-0001706f0
-> > [   56.794784] Call Trace:
-> > [   56.794941]  <TASK>
-> > [   56.799377]  ? free_large_kmalloc+0x4d/0x80
-> > [   56.799598]  ? __warn.cold+0x8e/0xe8
-> > [   56.799842]  ? free_large_kmalloc+0x4d/0x80
-> > [   56.800065]  ? report_bug+0xff/0x140
-> > [   56.800296]  ? handle_bug+0x3c/0x80
-> > [   56.804703]  ? exc_invalid_op+0x17/0x70
-> > [   56.804912]  ? asm_exc_invalid_op+0x1a/0x20
-> > [   56.805132]  ? free_large_kmalloc+0x4d/0x80
-> > [   56.805344]  zram_destroy_comps+0x32/0x70
-> > [   56.805568]  zram_reset_device+0x102/0x190
-> > [   56.805812]  reset_store+0xa6/0x110
-> > [   56.810207]  kernfs_fop_write_iter+0x141/0x1f0
-> > [   56.814689]  vfs_write+0x294/0x460
-> > [   56.819106]  ksys_write+0x6d/0xf0
-> > [   56.823550]  do_syscall_64+0x82/0x160
-> > [   56.823827]  ? __pfx_kfree_link+0x10/0x10
-> > [   56.824051]  ? do_sys_openat2+0x9c/0xe0
-> > [   56.824263]  ? __handle_mm_fault+0xb34/0xfb0
-> > [   56.828752]  ? syscall_exit_to_user_mode+0x10/0x220
-> > [   56.833220]  ? do_syscall_64+0x8e/0x160
-> > [   56.833429]  ? __count_memcg_events+0x77/0x130
-> > [   56.838021]  ? count_memcg_events.constprop.0+0x1a/0x30
-> > [   56.838318]  ? handle_mm_fault+0x1bb/0x2c0
-> > [   56.838542]  ? do_user_addr_fault+0x55a/0x7b0
-> > [   56.843014]  ? exc_page_fault+0x7e/0x180
-> > [   56.843228]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> > [   56.843831] RIP: 0033:0x7fb0f1f7a984
-> > [   56.844045] Code: c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84=
- 00 00 00 00 00 f3 0f 1e fa 80 3d c5 06 0e 00 00 7
-> > 4 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 55 48 8=
-9 e5 48 83 ec 20 48 89
-> > [   56.849247] RSP: 002b:00007ffc7db8fde8 EFLAGS: 00000202 ORIG_RAX: 00=
-00000000000001
-> > [   56.853889] RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007fb=
-0f1f7a984
-> > [   56.858482] RDX: 0000000000000001 RSI: 0000560df4e4ea65 RDI: 0000000=
-000000004
-> > [   56.863154] RBP: 0000000000000004 R08: 0000560e0e417010 R09: 0000000=
-000000007
-> > [   56.867794] R10: 00000000000001b6 R11: 0000000000000202 R12: 7ffffff=
-fffffffff
-> > [   56.872980] R13: 00007fb0f1f7a970 R14: 0000560df4e4ea65 R15: 0000560=
-df4e71bd0
-> > [   56.878043]  </TASK>
-> > [   56.878555] ---[ end trace 0000000000000000 ]---
-> > [   56.883420] object pointer: 0x00000000f38e5ae7
-> > [   56.888235] BUG: Bad page state in process zram-generator  pfn:407d0=
-3a
-> > [   56.889026] page: refcount:0 mapcount:0 mapping:0000000000000000 ind=
-ex:0x0 pfn:0x407d03a
-> > [   56.889877] flags: 0x57ffffc0002000(reserved|node=3D1|zone=3D2|lastc=
-pupid=3D0x1fffff)
-> > [   56.894915] raw: 0057ffffc0002000 ffffece0c1f40e88 ffffece0c1f40e88 =
-0000000000000000
-> > [   56.895771] raw: 0000000000000000 0000000000000000 00000000ffffffff =
-0000000000000000
-> > [   56.896562] page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) se=
-t
-> > [   56.897332] Modules linked in:
-> > [   56.902165] CPU: 2 UID: 0 PID: 1894 Comm: zram-generator Tainted: G =
-S      W          6.11.0-rc6+ #33
-> > [   56.903155] Tainted: [S]=3DCPU_OUT_OF_SPEC, [W]=3DWARN
-> > [   56.908082] Hardware name: HP ProLiant DL360 Gen9/ProLiant DL360 Gen=
-9, BIOS P89 09/21/2023
-> > [   56.908918] Call Trace:
-> > [   56.909484]  <TASK>
-> > [   56.914148]  dump_stack_lvl+0x5d/0x80
-> > [   56.914747]  bad_page.cold+0x7a/0x91
-> > [   56.915318]  free_unref_page+0x344/0x520
-> > [   56.915975]  zram_destroy_comps+0x32/0x70
-> > [   56.916452]  zram_reset_device+0x102/0x190
-> > [   56.917057]  reset_store+0xa6/0x110
-> > [   56.921874]  kernfs_fop_write_iter+0x141/0x1f0
-> > [   56.926685]  vfs_write+0x294/0x460
-> > [   56.931385]  ksys_write+0x6d/0xf0
-> > [   56.936087]  do_syscall_64+0x82/0x160
-> > [   56.936656]  ? __pfx_kfree_link+0x10/0x10
-> > [   56.937257]  ? do_sys_openat2+0x9c/0xe0
-> > [   56.937810]  ? __handle_mm_fault+0xb34/0xfb0
-> > [   56.942593]  ? syscall_exit_to_user_mode+0x10/0x220
-> > [   56.947362]  ? do_syscall_64+0x8e/0x160
-> > [   56.947974]  ? __count_memcg_events+0x77/0x130
-> > [   56.952762]  ? count_memcg_events.constprop.0+0x1a/0x30
-> > [   56.953356]  ? handle_mm_fault+0x1bb/0x2c0
-> > [   56.953937]  ? do_user_addr_fault+0x55a/0x7b0
-> > [   56.958999]  ? exc_page_fault+0x7e/0x180
-> > [   56.959523]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> > [   56.960163] RIP: 0033:0x7fb0f1f7a984
-> > [   56.960731] Code: c7 00 16 00 00 00 b8 ff ff ff ff c3 66 2e 0f 1f 84=
- 00 00 00 00 00 f3 0f 1e fa 80 3d c5 06 0e 00 00 7
-> > 4 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 55 48 8=
-9 e5 48 83 ec 20 48 89
-> > [   56.966840] RSP: 002b:00007ffc7db8fde8 EFLAGS: 00000202 ORIG_RAX: 00=
-00000000000001
-> > [   56.971903] RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007fb=
-0f1f7a984
-> > [   56.976953] RDX: 0000000000000001 RSI: 0000560df4e4ea65 RDI: 0000000=
-000000004
-> > [   56.981946] RBP: 0000000000000004 R08: 0000560e0e417010 R09: 0000000=
-000000007
-> > [   56.986980] R10: 00000000000001b6 R11: 0000000000000202 R12: 7ffffff=
-fffffffff
-> > [   56.991985] R13: 00007fb0f1f7a970 R14: 0000560df4e4ea65 R15: 0000560=
-df4e71bd0
-> > [   56.996963]  </TASK>
-> > [   56.997533] Disabling lock debugging due to kernel taint
-> > [   57.037759] zram: Added device: zram0
-> > [   57.088669] zram: Added device: zram1
-> > [   57.249105] zram0: detected capacity change from 0 to 6553600
-> > [   57.320547] zram1: detected capacity change from 0 to 40960000
-> > [   57.443012] Adding 3276796k swap on /dev/zram0.  Priority:100 extent=
-s:1 across:3276796k SS
-> > [   57.470295] Adding 20479996k swap on /dev/zram1.  Priority:0 extents=
-:1 across:20479996k SS
-> >
-> > Here is the bisect log:
-> >
-> > $ git bisect log
-> > # bad: [684826f8271ad97580b138b9ffd462005e470b99] zram: free secondary =
-algorithms names
-> > # good: [2cacbdfdee65b18f9952620e762eab043d71b564] mm: swap: add a adap=
-tive full cluster cache reclaim
-> > git bisect start 'mm-stable' 'HEAD'
-> > # good: [9bfbaa5e44c52422a046ce291469c8ebeb6c475d] mm/damon: move kunit=
- tests to tests/ subdirectory with _kunit suffix
-> > git bisect good 9bfbaa5e44c52422a046ce291469c8ebeb6c475d
-> > # good: [1e673c8cf7f9c1156f615b7c00f224a8110070da] zram: add dictionary=
- support to lz4hc
-> > git bisect good 1e673c8cf7f9c1156f615b7c00f224a8110070da
-> > # good: [3c8e44c9b369b3d422516b3f2bf47a6e3c61d1ea] mm: mark special bit=
-s for huge pfn mappings when inject
-> > git bisect good 3c8e44c9b369b3d422516b3f2bf47a6e3c61d1ea
-> > # good: [f9e54c3a2f5b79ecc57c7bc7d0d3521e461a2101] vfio/pci: implement =
-huge_fault support
-> > git bisect good f9e54c3a2f5b79ecc57c7bc7d0d3521e461a2101
-> > # good: [659c55ef981bb63355a65ffc3b3b5cad562b806a] mm/vma: return the e=
-xact errno in vms_gather_munmap_vmas()
-> > git bisect good 659c55ef981bb63355a65ffc3b3b5cad562b806a
-> > # good: [325efb16da2c840e165d9b620fec8049d4d664cc] mm: add nr argument =
-in mem_cgroup_swapin_uncharge_swap() helper to support large folios
-> > git bisect good 325efb16da2c840e165d9b620fec8049d4d664cc
-> > # good: [ed8d5b0ce1d738e13c60d6b1a901a56d832e5070] Revert "uprobes: use=
- vm_special_mapping close() functionality"
-> > git bisect good ed8d5b0ce1d738e13c60d6b1a901a56d832e5070
-> > # good: [2abbcc099ec60844ca7c15214ab12955d3c11e68] uprobes: turn xol_ar=
-ea->pages[2] into xol_area->page
-> > git bisect good 2abbcc099ec60844ca7c15214ab12955d3c11e68
-> > # first bad commit: [684826f8271ad97580b138b9ffd462005e470b99] zram: fr=
-ee secondary algorithms names
-> >
-> > Sergey told me there is a fix on the way:
-> > https://lore.kernel.org/all/20240923164843.1117010-1-andrej.skvortzov@g=
-mail.com/
->
-> Confirm the fix in the above thread to fix the kernel oops for me.
->
-> Tested-by: Chris Li <chrisl@kernel.org>
+On 9/19/24 2:05 AM, Paolo Abeni wrote:
+> !-------------------------------------------------------------------|
+>   This Message Is From an External Sender
+>   This message came from outside your organization.
+> |-------------------------------------------------------------------!
+> 
+> On 9/10/24 21:08, Josh Hunt wrote:
+>> diff --git a/include/net/tcp.h b/include/net/tcp.h
+>> index 2aac11e7e1cc..196c148fce8a 100644
+>> --- a/include/net/tcp.h
+>> +++ b/include/net/tcp.h
+>> @@ -2434,9 +2434,26 @@ static inline s64 tcp_rto_delta_us(const struct 
+>> sock *sk)
+>>   {
+>>       const struct sk_buff *skb = tcp_rtx_queue_head(sk);
+>>       u32 rto = inet_csk(sk)->icsk_rto;
+>> -    u64 rto_time_stamp_us = tcp_skb_timestamp_us(skb) + 
+>> jiffies_to_usecs(rto);
+>> -    return rto_time_stamp_us - tcp_sk(sk)->tcp_mstamp;
+>> +    if (likely(skb)) {
+>> +        u64 rto_time_stamp_us = tcp_skb_timestamp_us(skb) + 
+>> jiffies_to_usecs(rto);
+>> +
+>> +        return rto_time_stamp_us - tcp_sk(sk)->tcp_mstamp;
+>> +    } else {
+>> +        WARN_ONCE(1,
+>> +            "rtx queue emtpy: "
+>> +            "out:%u sacked:%u lost:%u retrans:%u "
+>> +            "tlp_high_seq:%u sk_state:%u ca_state:%u "
+>> +            "advmss:%u mss_cache:%u pmtu:%u\n",
+>> +            tcp_sk(sk)->packets_out, tcp_sk(sk)->sacked_out,
+>> +            tcp_sk(sk)->lost_out, tcp_sk(sk)->retrans_out,
+>> +            tcp_sk(sk)->tlp_high_seq, sk->sk_state,
+>> +            inet_csk(sk)->icsk_ca_state,
+>> +            tcp_sk(sk)->advmss, tcp_sk(sk)->mss_cache,
+>> +            inet_csk(sk)->icsk_pmtu_cookie);
+> 
+> As the underlying issue here share the same root cause as the one 
+> covered by the WARN_ONCE() in tcp_send_loss_probe(), I'm wondering if it 
+> would make sense do move the info dumping in a common helper, so that we 
+> get the verbose warning on either cases.
+> 
+> Thanks,
+> 
+> Paolo
 
-Sorry I have to withdraw that Tested-by.  Turns out the initial
-warning and oops disappear, the swap stress test got oom killed.
-I should have waited for the test to complete before sending out emails.
+Thanks for the review Paolo. Sorry for the delay in replying I was OOO. 
+I can send a follow-up commit to create a common helper.
 
-Will report more detail of the oom kill in that email thread.
-
-Chris
-
->
->
-> Chris
->
->
-> > On Mon, Sep 16, 2024 at 6:30=E2=80=AFPM Sergey Senozhatsky <senozhatsky=
-@chromium.org> wrote:
-> >>
-> >> We need to kfree() secondary algorithms names when reset
-> >> zram device that had multi-streams, otherwise we leak memory.
-> >>
-> >> Fixes: 001d92735701 ("zram: add recompression algorithm sysfs knob")
-> >> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-> >> ---
-> >>  drivers/block/zram/zram_drv.c | 5 +++++
-> >>  1 file changed, 5 insertions(+)
-> >>
-> >> diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_d=
-rv.c
-> >> index f8206ba6cbbb..c3d245617083 100644
-> >> --- a/drivers/block/zram/zram_drv.c
-> >> +++ b/drivers/block/zram/zram_drv.c
-> >> @@ -2115,6 +2115,11 @@ static void zram_destroy_comps(struct zram *zra=
-m)
-> >>                 zram->num_active_comps--;
-> >>         }
-> >>
-> >> +       for (prio =3D ZRAM_SECONDARY_COMP; prio < ZRAM_MAX_COMPS; prio=
-++) {
-> >> +               kfree(zram->comp_algs[prio]);
-> >> +               zram->comp_algs[prio] =3D NULL;
-> >> +       }
-> >> +
-> >>         zram_comp_params_reset(zram);
-> >>  }
-> >>
-> >> --
-> >> 2.46.0.662.g92d0881bb0-goog
-> >>
-> >>
+Josh
 
