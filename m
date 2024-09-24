@@ -1,105 +1,131 @@
-Return-Path: <linux-kernel+bounces-336485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A53F983B64
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 04:56:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 119DB983B68
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 04:57:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B4891C223AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 02:56:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC2FD281683
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 02:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C9615E96;
-	Tue, 24 Sep 2024 02:56:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A2F12B93;
+	Tue, 24 Sep 2024 02:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=outgoing.csail.mit.edu header.i=@outgoing.csail.mit.edu header.b="UQrCDYTV"
-Received: from outgoing2021.csail.mit.edu (outgoing2021.csail.mit.edu [128.30.2.78])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b="bkSV6P5W"
+Received: from ironport.ite.com.tw (HC210-202-87-179.vdslpro.static.apol.com.tw [210.202.87.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 166761B85FF
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 02:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.30.2.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F31A3B1A4
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 02:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.202.87.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727146591; cv=none; b=BSk/KxhE74xzuh8EV/JjdUXpvHeKyix/uQeptnXu0tJw1Ip57KnlYS5CKJPB/j//7c9hD699ACLzj8Or74uub3xGbk3ttYZapufH8xl+1wb5hRsUSW7qTs22VyVByiYtzjjfzundpVh0614ias0VpGfDsVkIxyIjrw+gtm67+tA=
+	t=1727146640; cv=none; b=qMF43nK1Cd9P9V3ZeiDZZzSfA5IM5E9357ML4/f79UT96xb/fa4ZDALvBc9wLbVB1M+SUXem72SZGdUH4wQDcLSmD6maviEzE8p1i+2ctblJsqQSu2EcusHPHCtwyTKNrmikMfcOb8i5EC027tiUAO6jxaSG+f86YSa/Geg8MCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727146591; c=relaxed/simple;
-	bh=3r9orr/TrGhIkbJIar7PT7lPiK/7NZX5wnJT5ck+f0s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JeMt3QuV5/H+FDhW8n4uBB72Ckyo9VGaQXehyZk2tm5Ea0x8ZLWywsJsf8LZiEWyeL3mSwvabMF4bm9D/048OyvLZXNvL3xjSB5sXrijR5XEwrLkshaAmEo+SadvMbSqzpxk33aKZWElQC7MSku808xRdfaKlPVDcPtWBYbQRRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csail.mit.edu; spf=pass smtp.mailfrom=csail.mit.edu; dkim=pass (2048-bit key) header.d=outgoing.csail.mit.edu header.i=@outgoing.csail.mit.edu header.b=UQrCDYTV; arc=none smtp.client-ip=128.30.2.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csail.mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csail.mit.edu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=outgoing.csail.mit.edu; s=test20231205; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=PNlnOtKzcBaTIBUSLwkMlSQRovYatJq4wqgn4uBydq8=; t=1727146589; x=1728010589; 
-	b=UQrCDYTVb6wvflmJzFrdHxKc3Tzv8OceHhkmlrIYvGCJgpx5TuKWeVOruK1NciS4/7OSTfbWMhB
-	nZZlzVjboc5gMbInRr53GbtqrC7RL4jOeUrImWJEhHTwn9zKoL0VxQ2NjRoF7BUS74ARCvvg6kK1d
-	5fb0NYHv63DwVqdVYXWl9iEXqhChL2naXcHx5KrrdOljr68lBzNP7+GDqApJCCFvVjGuobwrNIGwg
-	FAgLinbyivV4dPnVE5H47AgmEHCCBAVDO+4gtLEIK+IIr8e8Bo63xvbWxmcI5/P4fIGooWoXA/J8D
-	JJ00y8Rb/lr+7Rg9GaO8OAQA9WHeVlGp82ww==;
-Received: from [49.207.232.169] (helo=[192.168.0.101])
-	by outgoing2021.csail.mit.edu with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.95)
-	(envelope-from <srivatsa@csail.mit.edu>)
-	id 1ssvit-00EpJN-C9;
-	Mon, 23 Sep 2024 22:56:19 -0400
-Message-ID: <8ca7bf74-c6c7-405f-baff-adebd8957620@csail.mit.edu>
-Date: Tue, 24 Sep 2024 08:26:12 +0530
+	s=arc-20240116; t=1727146640; c=relaxed/simple;
+	bh=Pez01GVTI+nAGe+V0h/GEhDzn9cAbuhuFih04e9gyZg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=LqTyWiK+AkKJM6ZbiozSrCiMSXgXqX00UqOAkLxuvgeGLh7bbvwZEy6p3p2p5N/FV2RJV4UAlC4ubZMOfkFoDAp13+sa7tCMPk5IQtonPYOiN7BQT6t9K8uUlXyzCrZw/5GuxnypFIFEPWKXUqvXA/GoMSIwR8vG7V3Ru9q3HwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw; spf=pass smtp.mailfrom=ite.com.tw; dkim=fail (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b=bkSV6P5W reason="key not found in DNS"; arc=none smtp.client-ip=210.202.87.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ite.com.tw
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=ite.com.tw; s=dkim;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=Pez01GVTI+nAGe+V0h/GEhDzn9cAbuhuFih04e9gyZg=;
+  b=bkSV6P5WH8MtzHUbwFejbkvodV2vsiKPVcwG57eX0HEs0w/VpoWX01oy
+   lfM0G77K/erZKT8VI9QcBJEJ5cQhp+BBIebeSMJRaCA7SPZSuaYvJR+tA
+   Uu1HOcG+tD+8z2IXzmy/2AbfdPndEjWPmfnMkhNNiM0RdQKZ2/+cyA5V/
+   NoUqfaf3Xu93ZXD6SgxzrgScyeszH4ofr2o5Kc7tV45cPg9ZLM5xmGYQp
+   GztSThc6n62sW9qDfUeNo00rLeIUVzLm0tCCPneHcIDBoEJdqhDUbHiAq
+   o6ee/57YvaIxt98eNo0wlLbaSfAUQV5acRWRr7lq+i7QlOlJnnuhfilb0
+   w==;
+X-CSE-ConnectionGUID: hfp7j/ybSnG3IkO9gu66Sw==
+X-CSE-MsgGUID: sTBYZWO7Q0uIwBMJBz/iww==
+Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
+  by ironport.ite.com.tw with ESMTP; 24 Sep 2024 10:57:15 +0800
+Received: from tpemail1.internal.ite.com.tw (TPEMAIL1.internal.ite.com.tw [192.168.15.58])
+	by mse.ite.com.tw with ESMTP id 48O2vBOJ047817;
+	Tue, 24 Sep 2024 10:57:11 +0800 (GMT-8)
+	(envelope-from Hermes.Wu@ite.com.tw)
+Received: from TPEMAIL1.internal.ite.com.tw (192.168.15.58) by
+ TPEMAIL1.internal.ite.com.tw (192.168.15.58) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 24 Sep 2024 10:57:10 +0800
+Received: from TPEMAIL1.internal.ite.com.tw ([fe80::dd6d:92:8773:b68]) by
+ TPEMAIL1.internal.ite.com.tw ([fe80::dd6d:92:8773:b68%6]) with mapi id
+ 15.01.2507.039; Tue, 24 Sep 2024 10:57:10 +0800
+From: <Hermes.Wu@ite.com.tw>
+To: <dmitry.baryshkov@linaro.org>
+CC: <treapking@chromium.org>, <Kenneth.Hung@ite.com.tw>,
+        <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
+        <rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>,
+        <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
+        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+        <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v3 2/3] drm/bridge: it6505: HDCP CTS fail on repeater
+ items
+Thread-Topic: [PATCH v3 2/3] drm/bridge: it6505: HDCP CTS fail on repeater
+ items
+Thread-Index: AQHbDaFxMxnMHj2GkEGHdgKCDl4eaLJlMDIw//+LvQCAAYOEgA==
+Date: Tue, 24 Sep 2024 02:57:10 +0000
+Message-ID: <169c171660ac4897903aef5befc780db@ite.com.tw>
+References: <20240923094826.13471-1-Hermes.Wu@ite.com.tw>
+ <20240923094826.13471-3-Hermes.Wu@ite.com.tw>
+ <4viir5prnuvpp76npblwmdrwlttm5daumvdnocipdsn6geyxvf@2yfcytjb3ono>
+ <a0a8f862018b4c9aa689672551e7a492@ite.com.tw>
+ <mkx63gnb2fobxxc5jc2f326d2oviix7dahyoh4sfeuiyypucln@hnklvrtv4q2u>
+In-Reply-To: <mkx63gnb2fobxxc5jc2f326d2oviix7dahyoh4sfeuiyypucln@hnklvrtv4q2u>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-tm-snts-smtp: 349B6BE6289B44C8306504438E8113A17A71BD20F204424E7C03870435E6C8B52002:8
+Content-Type: text/plain; charset="big5"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm/vmstat: Defer the refresh_zone_stat_thresholds
- after all CPUs bringup
-Content-Language: en-GB
-To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Saurabh Singh Sengar <ssengar@microsoft.com>,
- Saurabh Sengar <ssengar@linux.microsoft.com>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "wei.liu@kernel.org" <wei.liu@kernel.org>,
- "mgorman@techsingularity.net" <mgorman@techsingularity.net>
-References: <1723443220-20623-1-git-send-email-ssengar@linux.microsoft.com>
- <TYZP153MB07963DDE4B7E01C575B143E2BE882@TYZP153MB0796.APCP153.PROD.OUTLOOK.COM>
- <TYZP153MB0796B44322EAE4C712883201BE882@TYZP153MB0796.APCP153.PROD.OUTLOOK.COM>
- <SEZP153MB0791CB961FF0D1512DC47164BE632@SEZP153MB0791.APCP153.PROD.OUTLOOK.COM>
- <20240920011618.bb2d2a247ae59810aee6c39c@linux-foundation.org>
- <Zu0/nKB5oRF8Yvdk@csail.mit.edu>
- <529015dc-403c-7cc0-5b66-95739e1c78d2@gentwo.org>
-From: "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
-In-Reply-To: <529015dc-403c-7cc0-5b66-95739e1c78d2@gentwo.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MAIL:mse.ite.com.tw 48O2vBOJ047817
 
-On 24-09-2024 01:47, Christoph Lameter (Ampere) wrote:
-> On Fri, 20 Sep 2024, Srivatsa S. Bhat wrote:
-> 
->> @Christoph, would you mind giving your Ack if this patch v2 looks good
->> to you, or kindly point out if there are any lingering concerns?
-> 
-> V2 looks good to me (unitialized pcp values result in slow operation but
-> no negative other effects) and the late_initcall() is always executed.
-> 
-> Acked-by: Christoph Lameter <cl@linux.com>
-
-Thanks a lot Christoph!
-
-Andrew, could you please consider picking up the patch for the next release,
-now that all the review comments have been addressed? Thank you very much!
-
-Also, I'd like to add to this patch v2:
-
-Reviewed-by: Srivatsa S. Bhat (Microsoft) <srivatsa@csail.mit.edu>
- 
-Regards,
-Srivatsa
+Pk9uIE1vbiwgU2VwIDIzLCAyMDI0IGF0IDEwOjQ1OjQ5QU0gR01ULCBIZXJtZXMuV3VAaXRlLmNv
+bS50dyB3cm90ZToNCj4+ID5PbiBNb24sIFNlcCAyMywgMjAyNCBhdCAwNTo0ODoyOFBNIEdNVCwg
+SGVybWVzIFd1IHdyb3RlOg0KPj4gPj4gRnJvbTogSGVybWVzIFd1IDxIZXJtZXMud3VAaXRlLmNv
+bS50dz4NCj4+ID4+IA0KPj4gPj4gQ2hhbmdlcyBpbiB2MzoNCj4+ID4+ICAtYWRkIGRldGlhbHMg
+YWJvdXQgZmFpbCBpdGVtIGFuZCBjaGFuZ2VzLg0KPj4gPj4gDQo+PiA+PiANCj4+ID4+IEZpeCBI
+RENQIENUUyBmYWlsIGl0ZW1zIG9uIFVOSUdSQUYgRFJQLTEwMA0KPj4gPj4gDQo+PiA+PiBEVVQg
+bXVzdCBTdXBwb3J0IDEyNyBkZXZpY2VzLg0KPj4gPj4gRFVUIG11c3QgY2hlY2sgQlNUQVRVUyB3
+aGVuIHJlY2VpdmUgQ1BfSVJRLg0KPj4gPj4gRFVUIG11c3QgZW5hYmxlIGVuY3J5cHRpb24gd2hl
+biBSMCcgaXMgcmVhZHkuDQo+PiA+PiBEVVQgbXVzdCByZXRyeSBWJyBjaGVjayAzIHRpbWVzLg0K
+Pj4gPj4gaXQ2NTA1IG11c3QgcmVhZCBEUlAtMTAwIEtTViBGSUZPIGJ5IEZJRk8gbW9kZS4NCj4+
+ID4+IGl0NjUwNSBzaG91bGQgcmVzdGFydCBIRENQIHdpdGhpbiA1cyBpZiBLU1Ygbm90IHJlYWR5
+Lg0KPj4gPg0KPj4gPlN0aWxsIG5vdCByZWFkYWJsZS4NCj4+ID4NCj4+ID5FbmdsaXNoIHRleHQs
+IHBsZWFzZS4gU3BsaXQgdGhlIHBhdGNoIHRvIGZpeCBvbmUgaXNzdWUgYXQgYSB0aW1lLg0KPj4g
+PkRlc2NyaWJlIHRoZSBfcmVhc29uXyBmb3IgdGhlIGNoYW5nZS4gQW5ub3RhdGUgZml4ZXMgd2l0
+aCBGaXhlcyB0YWdzLg0KPj4gPg0KPj4gDQo+PiB3aXRoIGZpeGVzIHRhZyBpbmNsdWRlIGRybS9i
+cmlkZ2UgbGlrZSB0aGlzID8gID0+ICJGaXhlczogZHJtL2JyaWRnZTogaXQ2NTA1OiBIRENQIENU
+UyBmYWlsIDFCLXh4Ig0KPg0KPk5vLiBQbGVhc2UgcmVhZCB0aGUgZG9jdW1lbnQgdGhhdCBJIGhh
+dmUgYmVlbiBwb2ludGluZyB5b3UgdG8uIEl0IGRlc2NyaWJlcyBhbGwgdGhlIHRhZ3MgYW5kIHBy
+b2NlZHVyZXMuDQo+DQo+PiANCj4+IEFib3V0IHRoZSByZWFzb24gYWJvdXQgYnVnIGZpeGVzLiAN
+Cj4+IA0KPj4gZm9yIGV4YW1wbGUsIHRoZSAxQi0wMSBkZXZpY2UgY291bnQuDQo+PiB3aWxsIHRo
+aXMgcmVhZGFibGU/DQo+PiANCj4+ICIgV2hlbiBjb25uZWN0IHRvIEhEQ1AgcmVwZWF0ZXIsIGl0
+NjUwNSBtdXN0IHN1cHBvcnQgMTI3IGRvd25zdHJlYW0gZGV2aWNlcy4gIg0KPj4gDQo+PiBBbmQg
+dGhpcyB3aWxsIGJlIG9ubHkgb25lIGNoYW5nZSBpbiBhIHBhdGNoPw0KPg0KPkxldCBtZSByZXBl
+YXQgdGhlIHBocmFzZSB0aGF0IHlvdSBoYXZlIHF1b3RlZCBmZXcgbGluZXMgYWJvdmUuICJTcGxp
+dCB0aGUgcGF0Y2ggdG8gZml4IG9uZSBpc3N1ZSBhdCBhIHRpbWUuIiBTbywgbm8sIHRoaXMgd2ls
+bCBub3QgYmUgdGhlIG9ubHkgY2hhbmdlIGluIHRoZSBwYXRjaC4NCj4NCg0KVGhlIEhEQ1AgQ1RT
+IGluY2x1ZGUgc2VydmFsIGl0ZW1zLCBJIHNob3VsZCBzcGxpdCBlYWNoIGZhaWx1cmUgaXRlbSBm
+aXhlcyBpbnRvIGRpZmZlcmVudCBwYXRjaD8NCg0KDQo+PiANCj4+ID4+IA0KPj4gPj4gU2lnbmVk
+LW9mZi1ieTogSGVybWVzIFd1IDxIZXJtZXMud3VAaXRlLmNvbS50dz4NCj4+ID4+IC0tLQ0KPj4g
+Pj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvaXRlLWl0NjUwNS5jIHwgMTEyIA0KPj4gPj4gKysr
+KysrKysrKysrKysrKysrLS0tLS0tLS0tLQ0KPj4gPj4gIDEgZmlsZSBjaGFuZ2VkLCA3NCBpbnNl
+cnRpb25zKCspLCAzOCBkZWxldGlvbnMoLSkNCj4+ID4NCj4+ID4tLQ0KPj4gPldpdGggYmVzdCB3
+aXNoZXMNCj4+ID5EbWl0cnkNCj4+IA0KPj4gQlIsDQo+PiBIZXJtZXMNCj4NCj4tLQ0KPldpdGgg
+YmVzdCB3aXNoZXMNCj5EbWl0cnkNCg==
 
