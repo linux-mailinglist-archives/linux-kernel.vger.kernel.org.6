@@ -1,204 +1,332 @@
-Return-Path: <linux-kernel+bounces-337234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 546D5984757
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:10:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 069CE984759
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:11:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B03CC1F2581A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:10:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2874B1C2276D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C2E1AAE17;
-	Tue, 24 Sep 2024 14:09:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8943A1A7AEC;
+	Tue, 24 Sep 2024 14:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Eh+9JvWw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b="kgb/UtcD";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="g2HqVTqL"
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6151AAE16
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 14:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42B91A7268;
+	Tue, 24 Sep 2024 14:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727186986; cv=none; b=DIJHD4+JXiAxV0GpV7Veg3MgPEH0j77QK7/vbocnC4jbWE2jP0EM6pMoW81mDTqE50ZcPOtO458w341EQTZtIsjlHTjqiq4UwtcFBBRc59nJ2Cf3kTbjDlkX2Iy6bwMY1FYwZQxMET+s1cnniB/nYlXAsONbuBTLmyW0H44b+i4=
+	t=1727187055; cv=none; b=ip/NEIIsjES7lm+S58e1oBQM1NlbT//RmmCYdvQlyfLtTmaOpbGK/8Bm58EVJmc3N0HJJt8nzY4UAZxj0OFLohPAAK23mc0I13v1OvnV3VRjRa9PbSDGMDsggoqLlzH49P1A9xF04vEP9zG5hgkKVI1n4jR9gXw5QIQBIQ8B5vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727186986; c=relaxed/simple;
-	bh=UTlEcYePs5Ui6AW/0MA9t1tGC1sOWBXq5wGZY8QXJLs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ilBAlxxMwWYXK2p+i1hpnL1wM8z96/Jf2F6IAin2fIGPh28jjyStgLpir1Xjr0i8ZpplaU8vgYofb2AmJ4BxKQaqRFbHroxwSe7dAGRYc5nZvPU4vVq4wRUa2qhCwF9BkYLB/8qOForwpL9ySQSUrq13zg4MVOrdOXd/+LL2hjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Eh+9JvWw; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727186983;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=KrZH+B1ofaYLMWpc1paGyv1Xahql732tMdxzbmsVAJk=;
-	b=Eh+9JvWwxvHzFKlHOXaOijodtpYZdbqSEqcfmVRbM0Hqdugu4ptg1THBm3gB+ahQYEtNKw
-	zYD4qGfdYVt8bdj+u3jcmYtC4PdK7cJt6Uko5GVzTFUS55Sn/702QcV6GWGS4M7xaiCCWm
-	MqocAAellv28e8eSgzS4XMJGDxlveLU=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-628-Mbww95AYPBaMJu4_KC_IIw-1; Tue, 24 Sep 2024 10:09:42 -0400
-X-MC-Unique: Mbww95AYPBaMJu4_KC_IIw-1
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6c518ae847dso102752466d6.2
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:09:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727186982; x=1727791782;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KrZH+B1ofaYLMWpc1paGyv1Xahql732tMdxzbmsVAJk=;
-        b=HTySiSs7NTiYtoF6JYjXD+g9fbo1Vn0oh4bailMvpuXbjRjS+Ie1MVFApVprN6z+Wd
-         XZ20/ZIMOBJcwmE4FVVWezAg/W2c4s7tcsaYnxnRjvyPECsS9LUn55u9rt7wCzpqlkPP
-         Igr6+lDESguqrmbKWmP5U70cxD6floOAftH9HyVSEhBNQ8dbgsgRAzs5W9neN8z+Cwyg
-         P7glIy1R9ZyHSiWTIzU3Tjbr6OYUbWoinfcItRpRhs6EdTwWcEjXc+ar9RIzSDbLuwQI
-         puItmYvQV//cQFLj2UNa3aeuYrC0HVn8rf7yzVffOwql83PYidW/th7JO5RIqwFnSA94
-         aqOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW5+z7dIdt+6GtRrpWbpi1vkPc385Yy9JW+1gvpRqNSHRpKBycRGZrWj57vPJaLvEcXHw0XE00DidSH3+g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yws/b82Nv6YynldI6/fliPXEVz7jL9d8+1Pi/qbcoS/a7EugHz4
-	Gq/TDxG0pQDrhS2fvaaCe8gnokTH6ALNJ7ujDmjzCPQ31x/GvhZe0V7uOYiR52w7S9kOB+Regop
-	eDx+493smPyOxozK6jk37ZCJA1wm8LrTSoJFTvs6JyfiULPGPDJSToc46tYbweJSnNHkElSY0
-X-Received: by 2002:a05:6214:3201:b0:6c5:540c:82b0 with SMTP id 6a1803df08f44-6c7bd46ca96mr234626426d6.4.1727186982053;
-        Tue, 24 Sep 2024 07:09:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEgdYrqhNM7zbX//kVqb7CIeppgFQ1D2M2Fpx6ezdfRUM3/pICCFyPp40f/R+UO3UQ1QpUE6Q==
-X-Received: by 2002:a05:6214:3201:b0:6c5:540c:82b0 with SMTP id 6a1803df08f44-6c7bd46ca96mr234626066d6.4.1727186981661;
-        Tue, 24 Sep 2024 07:09:41 -0700 (PDT)
-Received: from [10.202.151.204] (nat-pool-brq-u.redhat.com. [213.175.37.12])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb0f4e1c5fsm6768746d6.64.2024.09.24.07.09.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Sep 2024 07:09:41 -0700 (PDT)
-Message-ID: <65959acc-c59b-4aca-8ab4-5d0603d22110@redhat.com>
-Date: Tue, 24 Sep 2024 16:09:39 +0200
+	s=arc-20240116; t=1727187055; c=relaxed/simple;
+	bh=h6m2AKGgFDfrxKtkF45nKprZZJanRQKBHxtROCbEo6U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=nT0J85sNGeza/WLh5DNAgSegT0mzCEoWb03JAY5OWwLoVKlS6tY4zlGzizXXItbOTs2/zqVM5wLx9akXSqTOjyNxZvVZ7FvF8hzu+1Ok2v9hzfAEQW+4fYTrlBhNANnDL8s68oJEkc+OEaC49t7/aknNTwf2LJz7I+OwqJbdMb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza; spf=pass smtp.mailfrom=tycho.pizza; dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b=kgb/UtcD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=g2HqVTqL; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tycho.pizza
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfout.phl.internal (Postfix) with ESMTP id 9BF1813800C5;
+	Tue, 24 Sep 2024 10:10:51 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-09.internal (MEProxy); Tue, 24 Sep 2024 10:10:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm1; t=1727187051; x=1727273451; bh=Bm
+	NudCcPUMExrTG7jtodHLWWbD8+3DLdgabiD4b+0DM=; b=kgb/UtcDTPZ0Yf4zoX
+	C6KyHCptn0rYO7ROZlMts9/dqx/dl7/h730DzFPfmaX57JfKNcRZ9TnD8IPWwrmQ
+	evTa4HaSmztkte6f5N0wdbx4rqjQny8cTtAdy4Io4g6E6CXUYKkBj9cbJbmJ2j7p
+	Ze+48DHIqdD/W0Ub970jwqSbmyp0JTPMx3ZGYpK0PsdPcMFPLixUfJyI54gaNK7w
+	pFL5Z8adDQ+d2sWaYJDIAoBGhBcpXP39GYBoylPjees5ObStnzKxG+QUd6+gBrfL
+	jf72zxtbhEHdJ4AFz81mzs/dtJf+1ICjNuTTvDhvAx+kcgrAxtXRnPBBJLEhvRFZ
+	sgYg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm2; t=1727187051; x=1727273451; bh=BmNudCcPUMExr
+	TG7jtodHLWWbD8+3DLdgabiD4b+0DM=; b=g2HqVTqLftczY2ubxtNaKxmuTOmyY
+	da90KGFdzxsNeJnzFAOaLOQ+WqAQi2DdPRyK6muvnQXRJPVoT70AHv3kL/KGRSMB
+	CFlzL88/0wfWGnlHrLUfoYlvyQLuLaRz8Gg5E5GgMvmIkrOQv9VGPYIOculDDzs8
+	pFhxZB0B3u4VAiW5QMZy89lrc6ZgWwqrFvoW1VGS1jEX5bjneCzk+QV6Pwc6yPWh
+	21Mo9mzBgv4wr6JDHF4QGNU4JC1n21lSwD4v3yDB5M6uGMTOyFmwJkjoRTQPjV0E
+	CtOg/ApUZ0A7EpaA8sNPqpexGo76CayCG8V8Ji126k3dZEEHJm58IvNUg==
+X-ME-Sender: <xms:asjyZpAA-YYWHjRT8M_TTzW8j6EYO-_dU411YPiql9NM8hbONf04wQ>
+    <xme:asjyZni5PNuci5-sD6wvAb00ZnTLhI783EebViJPvvLO-vA6tKew-h78sgFEK36dC
+    lIuWi-Z2OO-q9UFr90>
+X-ME-Received: <xmr:asjyZkkgfelbrUGV_xX0LJ3nFRP0L0wiH7gwCGwH1J54dyTHBu67KEXMCyJBACRcz-fo4Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtfedguddtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhephffvvefufffkofggtgfgsehtkeertdertdejnecu
+    hfhrohhmpefvhigthhhoucetnhguvghrshgvnhcuoehthigthhhosehthigthhhordhpih
+    iiiigrqeenucggtffrrghtthgvrhhnpeeujeevvdelueeuuedvvdekvdetieehkefgfeet
+    lefhvdeikeevveejvdfgteehieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpehthigthhhosehthigthhhordhpihiiiigrpdhnsggprhgtphht
+    thhopeduhedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepvhhirhhoseiivghnih
+    hvrdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopehjrggtkhesshhushgvrdgtiidprhgtphhtthhopegvsg
+    hivgguvghrmhesgihmihhsshhiohhnrdgtohhmpdhrtghpthhtohepkhgvvghssehkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopehjlhgrhihtohhnsehkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopegthhhutghkrdhlvghvvghrsehorhgrtghlvgdrtghomhdprhgtphhtthho
+    pegrlhgvgidrrghrihhnghesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqd
+    hfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:asjyZjzBdyuImKUS8yEllfYEe7NobcDGRCJemLXnlbdN6JvJprnfYw>
+    <xmx:asjyZuTyLIGtSqtQh78hbVXK6kU7eS93l-lmm6upQd0AEPPwW28jwQ>
+    <xmx:asjyZmbfcoWR0EP2u18QR2lfZvit_HD4nK9dKaOayE7EDmrVW7ea8g>
+    <xmx:asjyZvRTRN-F1rQFFBD8wNrZf-AHmGp46j0fBcu5Sm7JJll8CPKE4Q>
+    <xmx:a8jyZjig-itBT3Bh1BOFDU6Zu2Fykq7B5g2ygeEnLdzicJAEWaNxPbZC>
+Feedback-ID: i21f147d5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 24 Sep 2024 10:10:48 -0400 (EDT)
+From: Tycho Andersen <tycho@tycho.pizza>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Kees Cook <kees@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Alexander Aring <alex.aring@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Tycho Andersen <tycho@tycho.pizza>,
+	Tycho Andersen <tandersen@netflix.com>,
+	=?UTF-8?q?Zbigniew=20J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
+	Aleksa Sarai <cyphar@cyphar.com>
+Subject: [RFC] exec: add a flag for "reasonable" execveat() comm
+Date: Tue, 24 Sep 2024 08:10:01 -0600
+Message-Id: <20240924141001.116584-1-tycho@tycho.pizza>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] m68k: Define NR_CPUS
-To: Guenter Roeck <linux@roeck-us.net>,
- Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>
-References: <20240923235617.1584056-1-linux@roeck-us.net>
- <aa23abe3-7236-4b9e-b237-3b822ac9d186@redhat.com>
- <CAMuHMdVEfPtwps0A29WvHcwgo3f+3nTBiGn1PFxoYy1dxPsUMA@mail.gmail.com>
- <bf98fa37-461f-47ce-8d4c-bcb69f225a9c@roeck-us.net>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <bf98fa37-461f-47ce-8d4c-bcb69f225a9c@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 24.09.24 16:04, Guenter Roeck wrote:
-> On 9/24/24 00:48, Geert Uytterhoeven wrote:
->> Hi David,
->>
->> On Tue, Sep 24, 2024 at 9:34 AM David Hildenbrand <david@redhat.com> wrote:
->>> On 24.09.24 01:56, Guenter Roeck wrote:
->>>> v2: Instead of trying to make SPLIT_PTE_PTLOCKS depend on the
->>>>        existence of NR_CPUS, define NR_CPUS for m68k.
->>>
->>> Okay, looks like we're cleaning up CONFIG_NR_CPUS for good.
->>>
->>> I'm back from conference travel tomorrow; I'll then throw in the following
->>> into cross compilers and fixup any other arch that needs attention:
->>>
->>>
->>> diff --git a/include/linux/threads.h b/include/linux/threads.h
->>> index 1674a471b0b4..e31715e6746b 100644
->>> --- a/include/linux/threads.h
->>> +++ b/include/linux/threads.h
->>> @@ -13,8 +13,7 @@
->>>      * bit of memory.  Use nr_cpu_ids instead of this except for static bitmaps.
->>>      */
->>>     #ifndef CONFIG_NR_CPUS
->>> -/* FIXME: This should be fixed in the arch's Kconfig */
->>> -#define CONFIG_NR_CPUS 1
->>> +#error "CONFIG_NR_CPUS not defined"
->>>     #endif
->>>
->>>     /* Places which use this should consider cpumask_var_t. */
->>
->> This is gonna trigger on almost all architectures if CONFIG_SMP=n.
->>
-> 
-> Guess that means that my patch won't work either. Any better ideas ?
+From: Tycho Andersen <tandersen@netflix.com>
 
-As discussed,
+Zbigniew mentioned at Linux Plumber's that systemd is interested in
+switching to execveat() for service execution, but can't, because the
+contents of /proc/pid/comm are the file descriptor which was used,
+instead of the path to the binary. This makes the output of tools like
+top and ps useless, especially in a world where most fds are opened
+CLOEXEC so the number is truly meaningless.
 
-diff --git a/mm/Kconfig b/mm/Kconfig
-index 09aebca1cae3..4c9f5ea13271 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -595,6 +595,7 @@ config ARCH_MHP_MEMMAP_ON_MEMORY_ENABLE
-  config SPLIT_PTE_PTLOCKS
-         def_bool y
-         depends on MMU
-+       depends on SMP
-         depends on NR_CPUS >= 4
-         depends on !ARM || CPU_CACHE_VIPT
-         depends on !PARISC || PA20
+This patch adds an AT_ flag to fix up /proc/pid/comm to instead be the
+contents of argv[0], instead of the fdno.
 
+Signed-off-by: Tycho Andersen <tandersen@netflix.com>
+Suggested-by: Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl>
+CC: Aleksa Sarai <cyphar@cyphar.com>
+---
+There is some question about what to name the flag; it seems to me that
+"everyone wants this" instead of the fdno, but probably "REASONABLE" is not
+a good choice.
 
-Might work for the time being.
+Also, requiring the arg to alloc_bprm() is a bit ugly: kernel-based execs
+will never use this, so they just have to pass an empty thing. We could
+introduce a bprm_fixup_comm() to do the munging there, but then the code
+paths start to diverge, which is maybe not nice. I left it this way because
+this is the smallest patch in terms of size, but I'm happy to change it.
 
+Finally, here is a small set of test programs, I'm happy to turn them into
+kselftests if we agree on an API
 
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
+int main(void)
+{
+	int fd;
+	char buf[128];
+
+	fd = open("/proc/self/comm", O_RDONLY);
+	if (fd < 0) {
+		perror("open comm");
+		exit(1);
+	}
+
+	if (read(fd, buf, 128) < 0) {
+		perror("read");
+		exit(1);
+	}
+
+	printf("comm: %s", buf);
+	exit(0);
+}
+
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <syscall.h>
+#include <stdbool.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <sys/wait.h>
+
+#ifndef AT_EMPTY_PATH
+#define AT_EMPTY_PATH                        0x1000  /* Allow empty relative */
+#endif
+
+#ifndef AT_EXEC_REASONABLE_COMM
+#define AT_EXEC_REASONABLE_COMM         0x200
+#endif
+
+int main(int argc, char *argv[])
+{
+	pid_t pid;
+	int status;
+	bool wants_reasonable_comm = argc > 1;
+
+	pid = fork();
+	if (pid < 0) {
+		perror("fork");
+		exit(1);
+	}
+
+	if (pid == 0) {
+		int fd;
+		long ret, flags;
+
+		fd = open("./catprocselfcomm", O_PATH);
+		if (fd < 0) {
+			perror("open catprocselfname");
+			exit(1);
+		}
+
+		flags = AT_EMPTY_PATH;
+		if (wants_reasonable_comm)
+			flags |= AT_EXEC_REASONABLE_COMM;
+		syscall(__NR_execveat, fd, "", (char *[]){"./catprocselfcomm", NULL}, NULL, flags);
+		fprintf(stderr, "execveat failed %d\n", errno);
+		exit(1);
+	}
+
+	if (waitpid(pid, &status, 0) != pid) {
+		fprintf(stderr, "wrong child\n");
+		exit(1);
+	}
+
+	if (!WIFEXITED(status)) {
+		fprintf(stderr, "exit status %x\n", status);
+		exit(1);
+	}
+
+	if (WEXITSTATUS(status) != 0) {
+		fprintf(stderr, "child failed\n");
+		exit(1);
+	}
+
+	return 0;
+}
+---
+ fs/exec.c                  | 22 ++++++++++++++++++----
+ include/uapi/linux/fcntl.h |  3 ++-
+ 2 files changed, 20 insertions(+), 5 deletions(-)
+
+diff --git a/fs/exec.c b/fs/exec.c
+index dad402d55681..36434feddb7b 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1569,11 +1569,15 @@ static void free_bprm(struct linux_binprm *bprm)
+ 	kfree(bprm);
+ }
+ 
+-static struct linux_binprm *alloc_bprm(int fd, struct filename *filename, int flags)
++static struct linux_binprm *alloc_bprm(int fd, struct filename *filename,
++				       struct user_arg_ptr argv, int flags)
+ {
+ 	struct linux_binprm *bprm;
+ 	struct file *file;
+ 	int retval = -ENOMEM;
++	bool needs_comm_fixup = flags & AT_EXEC_REASONABLE_COMM;
++
++	flags &= ~AT_EXEC_REASONABLE_COMM;
+ 
+ 	file = do_open_execat(fd, filename, flags);
+ 	if (IS_ERR(file))
+@@ -1590,11 +1594,20 @@ static struct linux_binprm *alloc_bprm(int fd, struct filename *filename, int fl
+ 	if (fd == AT_FDCWD || filename->name[0] == '/') {
+ 		bprm->filename = filename->name;
+ 	} else {
+-		if (filename->name[0] == '\0')
++		if (needs_comm_fixup) {
++			const char __user *p = get_user_arg_ptr(argv, 0);
++
++			retval = -EFAULT;
++			if (!p)
++				goto out_free;
++
++			bprm->fdpath = strndup_user(p, MAX_ARG_STRLEN);
++		} else if (filename->name[0] == '\0')
+ 			bprm->fdpath = kasprintf(GFP_KERNEL, "/dev/fd/%d", fd);
+ 		else
+ 			bprm->fdpath = kasprintf(GFP_KERNEL, "/dev/fd/%d/%s",
+ 						  fd, filename->name);
++		retval = -ENOMEM;
+ 		if (!bprm->fdpath)
+ 			goto out_free;
+ 
+@@ -1969,7 +1982,7 @@ static int do_execveat_common(int fd, struct filename *filename,
+ 	 * further execve() calls fail. */
+ 	current->flags &= ~PF_NPROC_EXCEEDED;
+ 
+-	bprm = alloc_bprm(fd, filename, flags);
++	bprm = alloc_bprm(fd, filename, argv, flags);
+ 	if (IS_ERR(bprm)) {
+ 		retval = PTR_ERR(bprm);
+ 		goto out_ret;
+@@ -2034,6 +2047,7 @@ int kernel_execve(const char *kernel_filename,
+ 	struct linux_binprm *bprm;
+ 	int fd = AT_FDCWD;
+ 	int retval;
++	struct user_arg_ptr user_argv = {};
+ 
+ 	/* It is non-sense for kernel threads to call execve */
+ 	if (WARN_ON_ONCE(current->flags & PF_KTHREAD))
+@@ -2043,7 +2057,7 @@ int kernel_execve(const char *kernel_filename,
+ 	if (IS_ERR(filename))
+ 		return PTR_ERR(filename);
+ 
+-	bprm = alloc_bprm(fd, filename, 0);
++	bprm = alloc_bprm(fd, filename, user_argv, 0);
+ 	if (IS_ERR(bprm)) {
+ 		retval = PTR_ERR(bprm);
+ 		goto out_ret;
+diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+index 87e2dec79fea..7178d1e4a3de 100644
+--- a/include/uapi/linux/fcntl.h
++++ b/include/uapi/linux/fcntl.h
+@@ -100,7 +100,8 @@
+ /* Reserved for per-syscall flags	0xff. */
+ #define AT_SYMLINK_NOFOLLOW		0x100   /* Do not follow symbolic
+ 						   links. */
+-/* Reserved for per-syscall flags	0x200 */
++#define AT_EXEC_REASONABLE_COMM		0x200   /* Use argv[0] for comm in
++						   execveat */
+ #define AT_SYMLINK_FOLLOW		0x400   /* Follow symbolic links. */
+ #define AT_NO_AUTOMOUNT			0x800	/* Suppress terminal automount
+ 						   traversal. */
+
+base-commit: baeb9a7d8b60b021d907127509c44507539c15e5
 -- 
-Cheers,
-
-David / dhildenb
+2.34.1
 
 
