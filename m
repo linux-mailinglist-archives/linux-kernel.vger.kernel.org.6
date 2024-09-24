@@ -1,109 +1,152 @@
-Return-Path: <linux-kernel+bounces-337649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41B62984CEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:33:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 527FF984CEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:35:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF8D61F24629
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:33:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15F8D284F62
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:35:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9EC13C695;
-	Tue, 24 Sep 2024 21:33:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980E613C3C2;
+	Tue, 24 Sep 2024 21:34:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="Y1jY88Na"
-Received: from mx1.riseup.net (mx1.riseup.net [198.252.153.129])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ssSaWvxA"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB2A17557;
-	Tue, 24 Sep 2024 21:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5344917557
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 21:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727213606; cv=none; b=NFzOcA7MCCR7qHrBFGTFxmicGf/zfu8EuqvUAl2ERwnQpPXWfQIzmZjZogYmiEDbzk6UT5cdtG7UDmfTGnOZRSLwWPe9P1F4gBOes5yyNcXVGEEGl0pYgbsRUNsdLmedhgULnFnx4SMSRu+dwCMxSHaqHVrWMMxnVo0JHI46EcM=
+	t=1727213699; cv=none; b=EBKHDPfCX1oVrHwKRIsDjcghx6NtuxzSGecsFihHq5Ryl7dGTMlyfF8G4MachYOjBxvtv/qyKcLaelkvEq21MMEdgK9lSxZXbRNy/VOtQJzxgUffzL1CML1wUSf6sRKiCPl/Nq+iVojxZoZbvLXNyzDrww7Goiz8WVsbEPvHMKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727213606; c=relaxed/simple;
-	bh=OjF0ucnfYYvF6CDeHwrxxqODXeaTRoOBgmqktmPAVy4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=MxLGpUBsOcWek6TrU5Nvt1TmACsaEHOFy9yJcHuSHGhJqr7ICKzUS/KLcsoBffirXGBdOIw50d9miIg4F2EQ/Hp4As5zMBk8jhrMP0I6TamovNjbHUqrYRG3rcunnB108VSNDAIzqxzfWp2aja5oVuCHPhoEEBkauLXsxSz7LEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=Y1jY88Na; arc=none smtp.client-ip=198.252.153.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
-Received: from mx0.riseup.net (mx0-pn.riseup.net [10.0.1.42])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx1.riseup.net (Postfix) with ESMTPS id 4XCtQD5WL7zDqQ3;
-	Tue, 24 Sep 2024 21:33:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
-	t=1727213604; bh=OjF0ucnfYYvF6CDeHwrxxqODXeaTRoOBgmqktmPAVy4=;
-	h=Date:Subject:To:References:Cc:From:In-Reply-To:From;
-	b=Y1jY88NayE7/5gs3HMNYueAX+fXyo3eHnkI6L5Ka6PkYkJQnQNLRZSpqaaIbyABgJ
-	 qHTYjSY14ESWUNOW30tkBOuQ04ApPG7xIJQ2vdQ0psZOcsY8nYxfbUkSrS4hyzEHDv
-	 /9jEhmXkqIyyRAuVU2xk7g8bP8m8RiaciqOZpgtU=
-Received: from fews01-sea.riseup.net (fews01-sea-pn.riseup.net [10.0.1.109])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx0.riseup.net (Postfix) with ESMTPS id 4XCtQ61P7Mz9w0h;
-	Tue, 24 Sep 2024 21:33:18 +0000 (UTC)
-X-Riseup-User-ID: 22C5D9AB7542B38831EC3FCDFD435E6CD26FEACDE9C2BA0FE9A1A50B109603EE
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	 by fews01-sea.riseup.net (Postfix) with ESMTPSA id 4XCtQ31nsjzJrrG;
-	Tue, 24 Sep 2024 21:33:15 +0000 (UTC)
-Message-ID: <8291c6eb-750a-4ab2-8904-65d723d034dd@riseup.net>
-Date: Tue, 24 Sep 2024 23:33:13 +0200
+	s=arc-20240116; t=1727213699; c=relaxed/simple;
+	bh=Ihhqm8m5Qh/kMpRgCqE3tbP5xFH8qdU26SE9syYFc2A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b4kQKKIrmycOlnl2XwBM5Qgm4HnpcT420qvFyT843ckWS2WnZLYfP0/qO3Dg0UHw4mjJwalDfIzj5k0GvZRqF1cDv9K7MQ6t6TcKkCBNjYlVUj6OVDq4y7wYD1H5DSY8VLqBq5QKMn3bvxrUc7CjEmx8eDGRK/fYoOarye+6B5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ssSaWvxA; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a8d56155f51so723128466b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 14:34:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727213695; x=1727818495; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ihhqm8m5Qh/kMpRgCqE3tbP5xFH8qdU26SE9syYFc2A=;
+        b=ssSaWvxAnauuVcYlyH1d00I+dDJionR+Ld27NkFcRBFGXBXEQy4Tb/Lqe9O2bvYjIQ
+         Lf6Rg1bIZKnExJfTOAGXmSLidLvCUzFxhvqUK+052FzU2RzLR26WlVkc6Q2BIm0xmol7
+         PeUfoEXC7gLGJJVNK+tv5g4bjduYIW2GG8KkF045M1QZkFmh3jEV3X7KdpZApN0IiZMW
+         QCFX2ECU1M9HL9/hYZawouh5REhzy0hewDMKFXJv039+GcolXVBrDx0aqL0ur1ofsbZF
+         XIrbyWwoHuhIlOeDjHAyBA69VGxdtqnl038UcVZIhZSjVtwqgkOIyOHVj888wcXMrvCZ
+         y6CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727213695; x=1727818495;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ihhqm8m5Qh/kMpRgCqE3tbP5xFH8qdU26SE9syYFc2A=;
+        b=ZmNyEAx0E6MHAG6awkZGwNHHERyn8SzJVWcmXwoNxO2YwuuKwOFq6ExcOmejH0VBB2
+         XL36phTjLul74I3X04X2TIeWZ9k9XIekfiHOC1Iy3rB9157RtHUVEGbiVM3xkNAenUhC
+         j7P4lKz3DSPE2f/ZNEjIqmQb+fcaK2af6CdHza0QIrP4TSHURGxUK43APqPDFXwc6NMB
+         8JqgfMgNLBTWzo+h3GrmlPBmH5bwt6sK7kNq0AN0g9R0P5ZYbv8UvxyzSGAWARUKubUD
+         xZmFfu/q1NHDlE/I+PM8f2YUpR1Z45xYHGpmNwVTg73esHTRLD08gbURwfbqqpmwlXDj
+         Jz6A==
+X-Forwarded-Encrypted: i=1; AJvYcCX7HcUEwXKkItVLM+xz6/KaO0YSfMijt4shVRGl1PZUWUxAe2jTbz+SXf8OYMRAQPEf3iVQoax6TgCTTfY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycLqq5gAWI7T19zM5lHYbX/9CNy/y1hwlwvHx7mvmtQS+smZCw
+	Y/R+5I0KoiKhrf/edrl3Cqa9/+VgivYBhK9/DnaiSBUrHgoBb0efwn2iV6nSwnUtruvcxRac13r
+	E1AF26hmpPwjvBiXWs/5Sk3UxmZ7e7721I/3a
+X-Google-Smtp-Source: AGHT+IFGjImsKTq8f4NzlhA/wTzA9/r023kIBe/p8GR8g/F0krWD4o68iWS1PDRX+N2NPRHUxMgS4wne5FmDfDOExdE=
+X-Received: by 2002:a17:907:1ca7:b0:a86:7cac:f871 with SMTP id
+ a640c23a62f3a-a93a06b5943mr52905366b.54.1727213695314; Tue, 24 Sep 2024
+ 14:34:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 0/1] Add KUnit tests for lib/crc16.c
-To: Vinicius Peixoto <vpeixoto@lkcamp.dev>
-References: <20240922232643.535329-1-vpeixoto@lkcamp.dev>
-Content-Language: en-US
-Cc: Brendan Higgins <brendan.higgins@linux.dev>, ~lkcamp/patches@lists.sr.ht,
- Rae Moar <rmoar@google.com>, David Gow <davidgow@google.com>,
- Andrew Morton <akpm@linux-foundation.org>, kunit-dev@googlegroups.com,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@riseup.net>
-In-Reply-To: <20240922232643.535329-1-vpeixoto@lkcamp.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240924011709.7037-1-kanchana.p.sridhar@intel.com>
+ <20240924011709.7037-7-kanchana.p.sridhar@intel.com> <CAKEwX=Nw_ax0RRSaD9n3h1vqbu+5PEuur3RqXrMrYyvOPuzB3Q@mail.gmail.com>
+ <SJ0PR11MB56785712C0EF98B7BE558720C9682@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <CAKEwX=MgpP_w6JFC5ahVN-erCWK2NDGSbxNdLxKg9P4yd01Unw@mail.gmail.com>
+In-Reply-To: <CAKEwX=MgpP_w6JFC5ahVN-erCWK2NDGSbxNdLxKg9P4yd01Unw@mail.gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Tue, 24 Sep 2024 14:34:19 -0700
+Message-ID: <CAJD7tkasC4n+mE=q+L9cjf4342eSkOQPeeV1wzBKxTp39wnZJA@mail.gmail.com>
+Subject: Re: [PATCH v7 6/8] mm: zswap: Support mTHP swapout in zswap_store().
+To: Nhat Pham <nphamcs@gmail.com>
+Cc: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, 
+	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "shakeel.butt@linux.dev" <shakeel.butt@linux.dev>, 
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>, "Huang, Ying" <ying.huang@intel.com>, 
+	"21cnbao@gmail.com" <21cnbao@gmail.com>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
+	"Zou, Nanhai" <nanhai.zou@intel.com>, "Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, 
+	"Gopal, Vinodh" <vinodh.gopal@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hey!
+On Tue, Sep 24, 2024 at 2:08=E2=80=AFPM Nhat Pham <nphamcs@gmail.com> wrote=
+:
+>
+> On Tue, Sep 24, 2024 at 1:51=E2=80=AFPM Sridhar, Kanchana P
+> <kanchana.p.sridhar@intel.com> wrote:
+> >
+> >
+> > This is an excellent point. Thanks Nhat for catching this! I can see tw=
+o
+> > options to solving this:
+> >
+> > Option 1: If zswap_mthp_enabled is "false", delete all stored offsets
+> > for the mTHP in zswap before exiting. This could race with writeback
+> > (either one or more subpages could be written back before zswap_store
+> > acquires the tree lock), however, I don't think it will cause data inco=
+nsistencies.
+> > Any offsets for subpages not written back will be deleted from zswap,
+> > zswap_store() will return false, and the backing swap device's subseque=
+nt
+> > swapout will over-write the zswap write-back data. Could anything go wr=
+ong
+> > with this?
+>
+> I think this should be safe, albeit a bit awkward.
+>
+> At this point (zswap_store()), we should have the folio added to to
+> swap cache, and locked. All the associated swap entries will point to
+> this same (large) folio.
+>
+> Any concurrent zswap writeback attempt, even on a tail page, should
+> get that folio when it calls __read_swap_cache_async(), and with
+> page_allocated =3D=3D false, and should short circuit.
+>
+> So I don't think we will race with zswap_writeback().
+>
+> Yosry, Chengming, Johannes, any thoughts?
 
-On 9/23/24 01:26, Vinicius Peixoto wrote:
-> Hi all,
+Why can't we just handle it the same way as we handle zswap
+disablement? If it is disabled, we invalidate any old entries for the
+offsets and return false to swapout to disk.
+
+Taking a step back, why do we need the runtime knob and config option?
+Are there cases where we think zswapout of mTHPs will perform badly,
+or is it just due to lack of confidence in the feature?
+
 >
-> This patch was developed during a hackathon organized by LKCAMP [1],
-> with the objective of writing KUnit tests, both to introduce people to
-> the kernel development process and to learn about different subsystems
-> (with the positive side effect of improving the kernel test coverage, of
-> course).
+> >
+> > Option 2: Only provide a build config option,
+> > CONFIG_ZSWAP_STORE_THP_DEFAULT_ON, that cannot be dynamically changed.
 >
-> We noticed there were tests for CRC32 in lib/crc32test.c and thought it
-> would be nice to have something similar for CRC16, since it seems to be
-> widely used in network drivers (as well as in some ext4 code).
+> This can be a last resort thing, if the above doesn't work. Not the
+> end of the world, but not ideal :)
 >
-> Although this patch turned out quite big, most of the LOCs come from
-> tables containing randomly-generated test data that we use to validate
-> the kernel's implementation of CRC-16.
-Can you share how you created the tables? Given that is impossible to 
-review the table itself, at least people will be able to see how they 
-got created at least.
-> We would really appreciate any feedback/suggestions on how to improve
-> this. Thanks! :-)
->
-> Vinicius Peixoto (1):
->    lib/crc16_kunit.c: add KUnit tests for crc16
->
->   lib/Kconfig.debug |   8 +
->   lib/Makefile      |   1 +
->   lib/crc16_kunit.c | 715 ++++++++++++++++++++++++++++++++++++++++++++++
->   3 files changed, 724 insertions(+)
->   create mode 100644 lib/crc16_kunit.c
->
+> >
+> > Would appreciate suggestions on these, and other potential solutions.
+> >
+> > Thanks,
+> > Kanchana
 
