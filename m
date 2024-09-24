@@ -1,88 +1,76 @@
-Return-Path: <linux-kernel+bounces-336837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 775CC984199
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:06:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F46698419B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:06:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE9C4B2592F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:06:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 329CD287266
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB38153828;
-	Tue, 24 Sep 2024 09:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="140cO1Hu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B560C16F0F0;
+	Tue, 24 Sep 2024 09:04:12 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78DAD149C69
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 083C014D28C
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727168621; cv=none; b=qEuPqcLGka3hseNQBN7w5mR0di0GkkExFNQyNmHo8F2dGEilbTz9wJxDuOZwazytfnze8AiVhQZjhdi9RmSobWVxC3PIHnOqflOCb2hxXl6iZ4i3Ti4hdmfQN2qudDFrJgwpCfFjXDM19MUBMIF25RUay9bP1wpsjFOyoKUZkQw=
+	t=1727168652; cv=none; b=EQCrvYkmdYsZCHwpHT0gMAVRI7iOPiwu9Z/2KuKj96ZQYrmtOCSd/S+nJ2HeccyCI3KL2+VvILO0WoPUx3wN3U/MZxt5BpNhY5ZdRlPBeFgn/MQsnTjCyo6IQMbXzgXF9u3b/QP/Wb4mpsRlHqQdD781V297wJi7vr48JNh6rMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727168621; c=relaxed/simple;
-	bh=p8nbCGai57reXfPOXsWJ7pPJbBAt7uEKGiLBqdJnJps=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MGU540JfkkuitZgjA5zb6/YdGHqzFIhrH7GoPMekTw8PObgNKDDR+ik+JGMgTNdvMcz1NvO/p6f5CLvAUy7KQY6wqmjiBVjtoU7KP50efonsxrrjEaV9Q7ic4vVesD3BeMUo2F5giWqJUlXArsep+Q+DkabLLeb/gmqIJ4fwf8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=140cO1Hu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 376AEC4CEC5;
-	Tue, 24 Sep 2024 09:03:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1727168621;
-	bh=p8nbCGai57reXfPOXsWJ7pPJbBAt7uEKGiLBqdJnJps=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=140cO1HuzU17XCk2Y8kQ6+GmhGG3ySdC/KGE/xseZ0a/vZna3mgv0FIumfY/vMrBt
-	 WsVPSm4+r4cY7PbTomDIXBJWqVateWuRdY7TAA42/ERP8hqfRT7zQ0njmjpKkwUtRV
-	 RJlsYRNOhnRHDlYfBSXm7MWCuneR6GOdPd/XJYa0=
-Date: Tue, 24 Sep 2024 11:03:36 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: yangerkun@huawei.com, chuck.lever@oracle.com, brauner@kernel.org,
-	sashal@kernel.org, Coly Li <colyli@suse.de>,
-	"yukuai (C)" <yukuai3@huawei.com>, linux-kernel@vger.kernel.org,
-	cve@kernel.org
-Subject: Re: CVE-2024-46701: libfs: fix infinite directory reads for offset
- dir
-Message-ID: <2024092400-appointee-sensation-ddb1@gregkh>
-References: <b378c634-102f-e115-e925-0a20dc450ff7@huaweicloud.com>
+	s=arc-20240116; t=1727168652; c=relaxed/simple;
+	bh=ZuDa8PgCetHZz3azjtXB+wao/HQzxIr2s70KrXIXXdQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=eYDfXF6CP6cmu+q2Lfv8wq+k9DlFEl/haumlZbRePHeLsYmdg7TquMnN9C8jTFqHL7kbbKl88mRbWx7Mltq7xMQycepY3/AT0rI62p5IcmKPnC6lWyRcShaK1JkXeyDt40o2msLdoH6jf48onOFHIZUXBhThA/4FA4PtXy3K8Sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-831e873e4e4so505411139f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 02:04:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727168650; x=1727773450;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZuDa8PgCetHZz3azjtXB+wao/HQzxIr2s70KrXIXXdQ=;
+        b=u+MDNWJUeI+fP+3YPG4uiJGJ4c0sMj0whsYyJCUhsMFyjFcHyUa4amlF86k40W+Vfs
+         /qYnevFLGjYPOJJHcYIVJql+G9nQvHmRBQqEBhCj2gCdyJhh4LN/3kw+uFPQ6YqiRmMm
+         Xiv46CbkAvFzs5UPI5sowDxzW0ajmHBm1IXgOnqqMvVta7zYCJDivtTXyQLVIeT0sr6h
+         FTcPKl/d4GWHnsD9U8QTCym8cfsbE81Quq6++GuFsIhS1Rs9ptCCsaSfbHubB9QWk5UO
+         vxXsFMCWl5gEi4I7+jtRUfc6tPVB47/Xi3+Y9FCV8jajxzPaKcavNk3tZ26Jd+uSsA+i
+         LeNA==
+X-Gm-Message-State: AOJu0YyA/jg6IfMfuIAGT7QZivfT72Y7t1psL+v1AImm2QPcPYch6cYr
+	CBo+oPJSrLaORP+sXynBk6o9ME9kvLjLYEw6dbqAzI/7JnTlGM0oS7AN4se6K1BUnZHmQBF19Xr
+	Pb6HD4n/lslbrbg0CQU06uMV6LY3DapWmFq+CP0J54b6F0v5z0EVpyZY=
+X-Google-Smtp-Source: AGHT+IEw6Ty7ZUHeNbVxII+8J09l8fpQh0jSNEwEs32FwEPdBj/c08hRJvhoVnoL5zXGLEA5DaXqmf2kKNhhb+1UiQmj2z+FykRf
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b378c634-102f-e115-e925-0a20dc450ff7@huaweicloud.com>
+X-Received: by 2002:a05:6e02:1c86:b0:3a0:52f9:9170 with SMTP id
+ e9e14a558f8ab-3a0c9cd0b0dmr126058895ab.1.1727168650044; Tue, 24 Sep 2024
+ 02:04:10 -0700 (PDT)
+Date: Tue, 24 Sep 2024 02:04:10 -0700
+In-Reply-To: <000000000000e28810061fb68dd0@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f2808a.050a0220.3eed3.0026.GAE@google.com>
+Subject: Re: [syzbot] possible deadlock in ocfs2_get_system_file_inode
+From: syzbot <syzbot+e0055ea09f1f5e6fabdd@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 24, 2024 at 03:35:33PM +0800, Yu Kuai wrote:
-> Hi, all!
-> 
-> This is a request to close this CVE.
-> 
-> First of all, I think this really is not a kernel BUG, the deadloop
-> only exist in user side and user must rename between each readdir
-> syscall:
-> 
-> while (readdr() > 0)
-> 	rename()
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Sounds like a real thing that users can do, so why does this not fit the
-definition of "vulnerability" as documented by cve.org?
+***
 
-> On the other hand, v6.6 is affected by this CVE, and this fix can't
-> be backported to v6.6 because the patchset [1] must be backported first
-> to expand offset from 32-bit to 64-bit.(This kind of refactor will
-> break kabi, hence it's not acceptable in our downstream kernels)
+Subject: possible deadlock in ocfs2_get_system_file_inode
+Author: pvmohammedanees2003@gmail.com
 
-That's your business decision, and does not affect if we do, or do not,
-assign a CVE at all.  Go work with your management if you wish to change
-this as it does not pertain to the community in any way.
-
-thanks,
-
-greg k-h
+#syz test
 
