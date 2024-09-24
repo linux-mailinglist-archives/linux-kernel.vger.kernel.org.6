@@ -1,225 +1,169 @@
-Return-Path: <linux-kernel+bounces-337121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1734D9845AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:14:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 598EB9845B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:16:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9C5A28403C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:14:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 173802842BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:16:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0892B1A7258;
-	Tue, 24 Sep 2024 12:14:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ECB81A7248;
+	Tue, 24 Sep 2024 12:14:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FGMno/o1"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="dAHdPo2W";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="qldkJg+5"
+Received: from smtpout143.security-mail.net (smtpout143.security-mail.net [85.31.212.143])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D373D1A4F2F
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 12:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727180048; cv=none; b=gYL+D1A1Wj1XaMd/HJ3OaewbGNZsIYrUOMAUFCNGHz0T3jLfdND7D0oPkmE8OjMXsVIG4VIa9SlnafU+rSSiY42JQsetYVZxc+EhxQ39omuZTVlOxMeagHe0lJzfseD0mYPOZ1YbP4l4C4C7rH0vb7Z8g8eMbgtjYnCtFeQLe28=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727180048; c=relaxed/simple;
-	bh=GpNCWs+j5gAVZLBCxIb/uryxUevBALvUmx2eAkY2VA0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uhC5uutylS2CgnozhjVLAGVkHFiqFaao3p0CBjaYOZAziL+K11+Jxj93+HYEXbTzNTZDTOhIcdPo020jmu548AuiyH+zr9g4HlUsl4n2vDaETnLnHtCoXgy3rPZBGW8r8+q+Jdo+y5vAUbeMpB8hSXmFvNAad4SGIQHiSe02yPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FGMno/o1; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20570b42f24so59730605ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 05:14:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727180046; x=1727784846; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ij5K39dJNQXaF5oy09H6p72Y/tNdpzczJu65QWM5JEs=;
-        b=FGMno/o17pYeVlMV8lDSdhPGqUxb/Wj91ak3VWs3X+t+hfNHR4Fft+PSQPozkPLF86
-         KAKe7IxV8BVA+4pv8qyUSPc9M2pgUMmgpfyO+ePIheMCG3deIJZwULk3f9Pk7Qb4ZLx+
-         u/GyIhHhBfboCZbStLfvppsFAN5f7yLoQUPZozDYUDSZwsWGl8gNIZgN9eG7FAoZjYRK
-         GwuBYX6vOfvysiMAGBpmCVtcF82GOWkbTixC8xZqar6f9ioUciQy3Q2886zWJKpdRYoi
-         xpHjBSqDWlf3Nx/0aWGXef5CvgasONjFOAS1Z4WS3GkNN9YOtF5AGtjI4Ah3RnSbEtZZ
-         uWFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727180046; x=1727784846;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ij5K39dJNQXaF5oy09H6p72Y/tNdpzczJu65QWM5JEs=;
-        b=bjmgG7oHuSUvqIgsbJfOXuxv6nQxtxukBEmRmse+TGzfKtbCIQFYNqa49B4njYYZxY
-         8Zguz2e4krfZBzgvtwKMjohuWof4YcJxkiVklNQWi+K3hSYnAjZ6vQJqexKzxRyV++/6
-         1pc9ws8juobUeQse5ILre7PUUqnSB5rajbRtjVMhlp7rcfeYMJ1qBZGt3sWFh1oTF7hu
-         7KYhx7o+Ud53MfnEk5cj2tSxeOaBcgBAWKwXzBTUbau1D3D2xpPwkuZcqFz01LLg+vLf
-         nhG+QDGCCr38uNFXPRr4P555tW05Qp1Ecl5Cvmo+js0UceN/VaGZ0EQXrDCpYEn+BZ1Y
-         NNbg==
-X-Forwarded-Encrypted: i=1; AJvYcCV4bYnAHewDRr7OGFHRrwnomky/LHdkRtXTRJkQTK52YsQc2CNuTJ2zV86Ywmi6hk/qM7Dd53mHwl+iDZ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyT6sUULixp31mkdSPy8s5RHDVXGwBjrkeUKeNwkSU8vTeG9mRz
-	rWXFuvHRT0YlDG/s+UBSfhzdZwcdUxpaERR9KiE5F7t0bviNk1zi
-X-Google-Smtp-Source: AGHT+IFl2YN+Zdem7CJHs6GwVNYDS5112EOg21IFqM3FwWmvFL3Hw4hVFLA+svs4H5kW/Q1BtNZyPA==
-X-Received: by 2002:a17:903:2309:b0:205:627c:8001 with SMTP id d9443c01a7336-208d8303cd2mr194458185ad.5.1727180045897;
-        Tue, 24 Sep 2024 05:14:05 -0700 (PDT)
-Received: from localhost.localdomain ([14.116.239.35])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af1867c1dsm9430045ad.303.2024.09.24.05.14.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 05:14:05 -0700 (PDT)
-From: Jingxiang Zeng <jingxiangzeng.cas@gmail.com>
-To: linux-mm@kvack.org
-Cc: akpm@linux-foundation.org,
-	kasong@tencent.com,
-	linuszeng@tencent.com,
-	linux-kernel@vger.kernel.org,
-	tjmercier@google.com,
-	weixugc@google.com,
-	yuzhao@google.com
-Subject: [PATCH V3] mm/vmscan: wake up flushers conditionally to avoid cgroup OOM
-Date: Tue, 24 Sep 2024 20:13:58 +0800
-Message-ID: <20240924121358.30685-1-jingxiangzeng.cas@gmail.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <Jingxiang Zeng <linuszeng@tencent.com>
-References: <Jingxiang Zeng <linuszeng@tencent.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF0D1A76B4
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 12:14:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=85.31.212.143
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727180090; cv=fail; b=MPyc7Wj+mX0YIHxOwQMoD6iUNwsn11AFncGdwV1HSObVGp4xOTQDkkBTj2uyzGaEWuw+k3XwFR/HNn7gDXMxtFxpUnnQyVcc/2Q9zfMta6cp3QCcYieRGNsTfOvJtv4ZndEN7TnJZtdMyFNr5/fimdq2agaCUvf48hvRAucswM4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727180090; c=relaxed/simple;
+	bh=3ECi8fHQVDRG+KsymMA1Fxv2KmgGeKalYuq4swiCZGM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=haRrREX33GFovjgpOYbPJ8gnd/b7UCOTs5c6YglAui4TdUqTK0v0dGy7elTsImx+poop8qUzvNY9NXjVJnw/sGPGETpG4wddBysfsaBldcWRczGzBdu3VU9OuefjR8C70LpfmOlXdVB2KLy3K4H36nyC/dd+ng7hxpOqj63bP28=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=dAHdPo2W; dkim=fail (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=qldkJg+5 reason="signature verification failed"; arc=fail smtp.client-ip=85.31.212.143
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kalrayinc.com
+Received: from localhost (localhost [127.0.0.1])
+	by fx403.security-mail.net (Postfix) with ESMTP id 42146903A36
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 14:14:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kalrayinc.com;
+	s=sec-sig-email; t=1727180086;
+	bh=3ECi8fHQVDRG+KsymMA1Fxv2KmgGeKalYuq4swiCZGM=;
+	h=From:To:Cc:Subject:Date;
+	b=dAHdPo2W8/YcgzYc710G2KvdKjxy+sRDNEClWzpkRifg2luh1ebSzm9L2mfYPMgBu
+	 n3hABaZ/A6Kj6heduD13XEutt6zY4bOWego293fIyGypOh2DYepUpBbAWhmEtVbCnr
+	 TNgUSYyd4dkwbeM04yZMjEvBL3aG09lK5SCxLF/8=
+Received: from fx403 (localhost [127.0.0.1]) by fx403.security-mail.net
+ (Postfix) with ESMTP id F3E1F903B1E; Tue, 24 Sep 2024 14:14:45 +0200 (CEST)
+Received: from PAUP264CU001.outbound.protection.outlook.com
+ (mail-francecentralazlp17011029.outbound.protection.outlook.com
+ [40.93.76.29]) by fx403.security-mail.net (Postfix) with ESMTPS id
+ 11C8A90327A; Tue, 24 Sep 2024 14:14:45 +0200 (CEST)
+Received: from PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:118::6)
+ by PR0P264MB2391.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:1e2::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.27; Tue, 24 Sep
+ 2024 12:14:43 +0000
+Received: from PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::6fc2:2c8c:edc1:f626]) by PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::6fc2:2c8c:edc1:f626%4]) with mapi id 15.20.7982.022; Tue, 24 Sep
+ 2024 12:14:43 +0000
+X-Secumail-id: <183d4.66f2ad35.febb.0>
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UT7v7ix5dGjWofkygb0HxAzhpW46PBc+oSNpOzqb+zmcMg/c8ysq2d4nGgnjtVSIBM3hA9usXdvsTH+c3+e9yW7voAdUacDVQL5grS8OXFkqeVSJa9tH5hooADtDOieUUdh6QtjgAUzc5GQkVo4atiNl0aD7nnviUyBgFec7P+EiJ1PZLVRBavR5W3BeUygiw3P649WU12NtTbB4x2QowThZ43N/PjC79PFSekJjb0+2hXFnb2kPfjG4mgjqXIUioLTFK871FUXrVzCf4dAs74Dj5QTHIP+fkaXcjZPF1FaH65yqutBvci1b+kW1n3KWxmyLk6b1DLrnWncCqGhKNg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microsoft.com; s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xMTQCS6YqrcBW2B3U1sogQqmX0jrdwYKxadXhJpwyik=;
+ b=HAak/zhvdLK+aMVbq5iNwee5gC2JMMci7gUBr6gZbg8ICNqe3d10QUgZnfC7iJ0sKlJpd77MsSNMgqHyW36lgJsN8KesnkjgFLSbLuCW6TYHtQ8fjF+27wsCG250QYpr852j0NR96KxyVWZQSAxFykSArmDTiW+xbN29uSG1P8uMWkragLxNuA2jAV7Ur9Mt21MLg4wwRnL8CW0acqUgVnQc0hbqSFg//tKVQvn49/jcl2PmsIqna6RomLsoJSbddBDVbaohZfM6fmLD09jaDTRi04gKvoXHI9dJVxUG4iROeX27POeqjidvLkZMWE0J+g8vOjJwU6sgrrqBDiqe+A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=kalrayinc.com; dmarc=pass action=none
+ header.from=kalrayinc.com; dkim=pass header.d=kalrayinc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalrayinc.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xMTQCS6YqrcBW2B3U1sogQqmX0jrdwYKxadXhJpwyik=;
+ b=qldkJg+50aeAv+p0Iisxpb4aVYrAd5lo/wgrcWca4CYhsnLlKPpJUkpEw8CtuukDY2PCSCBlohw6ANzfuGlz99Zgwk6c3X1IttpTsTlsPgKHx9xclitdKeWf6U6dJAvYctm/B/nzK4IIOx99PlXQD6acqVCMxlYaGFpSWkD6Qu8EAVR343iPmvFmWUjYLdDeBaw9JKjn7YGq+v0hSoGp8Lbfv0yEtqr9kt2ZJYrbTOdF8uZwaQA2/SDq7geeSKG659segnshF/dnX5GNDyrs0y9edIr4Cxw2W9WuldNPg4qPuGPJQtQkc029oKiUhPyoJBFkgMBV8alr6rZSTGwb8w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=kalrayinc.com;
+From: Julian Vetter <jvetter@kalrayinc.com>
+To: Arnd Bergmann <arnd@arndb.de>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Guo Ren
+ <guoren@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui
+ <kernel@xen0n.name>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-csky@vger.kernel.org, loongarch@lists.linux.dev, Yann Sionneau
+ <ysionneau@kalrayinc.com>, Julian Vetter <jvetter@kalrayinc.com>
+Subject: [PATCH v5 0/5] Consolidate IO memcpy functions
+Date: Tue, 24 Sep 2024 14:14:27 +0200
+Message-ID: <20240924121432.798655-1-jvetter@kalrayinc.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PR3P195CA0005.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:102:b6::10) To PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:118::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAYP264MB3766:EE_|PR0P264MB2391:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9e28ec95-4b41-4e99-423f-08dcdc92790d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info: 3bELz1oyao4EPwaJLdsIWaBY4vJ6aBSYWiL9VbP5tsLWEKyKcZKqzFERcabcd/HTrCKXJufmSYwt919uk/PeicdS2mOFm6iJt2nBRXaUyql5VkHkT6i04QXh497QEXbJO0G3QOJqMn35ph7vLq7+rj8Z7SlvPZZQJ4OyNIeJea1BqKneYt31cHrU2JTUiShzzDJuW9+2NdMdiYpqouLO09k7fa4LOAOLgUXqv9p3HcWicgKVa57qf6+nipYjArQlDst8QIBlmHITjKXucrAVJaCt+8WhcnB54BBrrzE5jKgc0mSIe2Xrg5/tERWBNTvzqO4yc0/h+TkiVyTYXJQjL9gxU5cdhjibrnfLKY9N/OITXBYBhEelablr/5xLgjw5V7U1A5a2AGbs/QD3AoGpTs0mTds8MPtJgYlRvJ0xwKiGORYRQ9uNuUvr9C9FCTEj8lS+4LaSjUDZBoKYc0AZDL6iDvAHGONtXTya5W0Du7Zp98P433MN4Qu01zWJUk3c9o6sjDqEX5Ui3lkLRDZsiMQSXTJrXabfV7Za3hlpcBHl6Q5nOUD6Y3uZlRv+UoldWsUeJ2pFyouOCGM4XgI7QvP//JzQhZVZSTKW6bUcqLgArvZN6Vd1FEM2x/TsgPDstVL2HQFyyOb1cG9QXQ3FdjcwvqoHGuh0NIknAfFBC7YtG3J0CaqnkP8ldcdxya0W8w3DambzvQr4K3/JlSTTblbVPmzR6mtMukciLVCmZ9nWDo0qk660lXauwDe9B2OKH+4zwMFlVP7AhhMHAcFrUS8nNruRjx1VdXP8AjLCngYLP5bMx0gRhezic9/FmWOcvkNF7zHgCnCVpky/WTbpcVcCD57Qn4uYzh0JUTNHcn/gRxU1jiKPoVZOrZCN4KGuk74e8nal0FH4teOUaAktJeDy6VHQDjd1rbMmEIoM9i4x2j3CEL5yKs0IKjDdwc4FzaC
+ uRuaq40usIlHWBdkUe97V5PFIqmV4bzcnBquHIekj184MYMKlzpcO/UZewICXNErTlCIqii36PCfiY8jGNe4npypGxrOeyXinH70k7CZ5sqPxuicm8wj6iVLrUH8MRlZrCci4YQ9o7I9Pz1AU4epuVUJNlPbj29Pmp7AMFKeRCqvQPSA2DE2y+PucZ1nNlrsAr504wmO5jWDgP1z41T79zxxVqg90Cg1eK0GL0ohdUBAlsD2D+QbwkHczKFwQGmtPU3mEX5pWeoEMmJmrNfGysWov7PTaO8C3JalwhHbgSxOZ6AYYG04iSaHm9yRJUZntG3N6uOYy4pEh8iDh1W4RJCpx+wd7PZPLfZoCNVLT2Z7R/+Fl1muxaD+G4bzctryR3WdOHL8OKnEqwvOy6xlHMPbryxriwxcxi0tzVLcE426R7514MRXnblJF9tmQUBXywJOYwszDd6mJW6M0IQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(52116014)(376014)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: ThJq4zjTb6O6YzLlVHk1s//HUvTFipnjTAjRK2+OAcA7dmC7R9AGtjokeweX/SDNXACO/7CWe6WXpbYftGQsLiVgA3cXK0G6k3KRaf4QfTx6mHvk+dhN8QC9lK83dIZSHs/9sfp8kIaKd9JUZAlMa6Mjy3BDhVijsSiwHEpzQ8LUk+CxBQJfEgQNqdh/9lhbJgPCU7u8cqZNzq+kwukF9s6UzLOBwKK3MhhS7qT2KECTdyR2zdiOCDdYjaFVp8IgUy1AYqrfzCWPvq6uhHKjHfvTERX1sw24O0i6IuPqoAV3LfkxJof+57tV4KilAbRZoEnhGo2QEhgKRTKAs5Ly5MlprMz3h6pFSp1UYcdkLOhias+Z1C5z9+nUlEcZDJ4uOjsYlTOhkQokS7dUNiarew5E05mPwW0cM1PRpEXTt0biLcemkvsdhVTPX8vnsXrIIuTpfLi0/g0k7mJPm316UpFggFqh4s79CBIAoYRvDgZD0GuVDFOKZ/HHs4Xkpk5yCqnAE2Cd6baaqOgjCR03Futg9WS/xUR17bH5+oLCOFqLB2gR/at6M8caqCwzWqKU5j95fCyek6ZYQQqbCyzyJh0bmpswLhbslL7AOopqRwMO6CaUVBMN88520JvFCLQIOn6fSiUTvkN2qSI+Vn45SeGJCF7UYtlJF1bEOW3sqNKrgcHVM/Tfg11/ZRVmbpiJ9EcZiqZcHTUSofHMExVma1tYEvWLodFywUF/qkS6KKAGYUuK4T1ypZuh3MQ1sDVb77AbKzPpWmFxpwUkhvjf2tyGO7tfc43xHNy6Sd1mmWJ8Kf9/qyQEZ0991tqdPhqor/4zNe9Kf1+r07YIruzD1fj4YoEEiISwiEn0pcomyMbJb/RhjZWz8dxzRxvkcxe5IgHtkC+Frb7+mVMDKaj2Wh9Ai25SS9iLe2Lye7itqmf8hpFxMdnGc757Thel2Gkp
+ 4yFwQtMbMIPbNyP3Zt45yPfuikTruWS3V/jWKs1T8t/kAfdNelEnj0xrnAMOWvdkuPHi0L1plTzyWwEuOklr/40/gfJEdzS5Z75xHkjzQWuv8IzbzY7DJDwYmpXlnYOGeQUZYliY2DYZzqz2m+FAho8yx/HRRmsGq5+84KhdqD4aHNIgWtN/yUHdC116iQ0PYPyG8G46DxtfSqoliTFm8kOdsfys3TjVfwX9OIoRMyW5Q250ktbkRKNABrmhisoRjB8bySWRjfx8BJESkaDwitlGF1bZFIXawbDA/Ca3q4iLEnz1SxIUFlTSsOIwaHVG+idQS+g+ZX6+vVS7fsPjnCs9rbDYhXuEYst7ECGC14WbDQCwQI/GRqwFlB//bT7SN7D4dakuNlQGtQs6vKjJsaMPCYiKGuTXl8vVq0nXtmqHmqgbQpbSdW9rvu/9ICZmyFLwpev30pjtNqgmBEkWzxfKg3JY+XK77xHh1A+NsUzTqW6wPaWhiq9n/sLc0WkCuSomQNg9e/R/u1RQLZTKG5+HDfral1nYvWVSdqbvXzhuGChePwO1rYB8YWkC34VWR4pia9mSv3En4DuPLUD8UjLLAMc6VRQvJJtX2WhJG74Tc64FZGtxa7EN5wsFiu79x2cxHdM5RHlxZfAqaZ9adw==
+X-OriginatorOrg: kalrayinc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e28ec95-4b41-4e99-423f-08dcdc92790d
+X-MS-Exchange-CrossTenant-AuthSource: PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2024 12:14:43.4870
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8931925d-7620-4a64-b7fe-20afd86363d3
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: u9/X+tddNIVPad1FnoqqDsL96NxkAd5MZzQ+vNRrVpDENdaTpys1iFeZsXF5/6NS+8Mv68D692+ZLh08yiEIGw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR0P264MB2391
+Content-Type: text/plain; charset=utf-8
+X-ALTERMIMEV2_out: done
 
-From: Zeng Jingxiang <linuszeng@tencent.com>
+Sorry for spaming the mailinglist with new patches. But please forget my
+previous patchset. It was broken. I didn't fully understand your
+previous comments/feedback. Now, I added the new functions to
+iomap_copy.c (as you proposed before already). I guard all of them with
+an '#ifndef __memcpy_toio', etc. So, if an architecture already has its
+own implementation it will use it. If not, it will either call the new
+'__memcpy_{to,from}io' and '__memset_io functions' from 'iomap_copy.c'
+or directly the 'memcpy_{to,from}io' and 'memset_io' functions from
+'asm-generic/io.h' which are just a wrappers around the __xxx functions.
 
-Commit 14aa8b2d5c2e ("mm/mglru: don't sync disk for each aging cycle")
-removed the opportunity to wake up flushers during the MGLRU page
-reclamation process can lead to an increased likelihood of triggering OOM
-when encountering many dirty pages during reclamation on MGLRU.
-
-This leads to premature OOM if there are too many dirty pages in cgroup:
-Killed
-
-dd invoked oom-killer: gfp_mask=0x101cca(GFP_HIGHUSER_MOVABLE|__GFP_WRITE),
-order=0, oom_score_adj=0
-
-Call Trace:
-  <TASK>
-  dump_stack_lvl+0x5f/0x80
-  dump_stack+0x14/0x20
-  dump_header+0x46/0x1b0
-  oom_kill_process+0x104/0x220
-  out_of_memory+0x112/0x5a0
-  mem_cgroup_out_of_memory+0x13b/0x150
-  try_charge_memcg+0x44f/0x5c0
-  charge_memcg+0x34/0x50
-  __mem_cgroup_charge+0x31/0x90
-  filemap_add_folio+0x4b/0xf0
-  __filemap_get_folio+0x1a4/0x5b0
-  ? srso_return_thunk+0x5/0x5f
-  ? __block_commit_write+0x82/0xb0
-  ext4_da_write_begin+0xe5/0x270
-  generic_perform_write+0x134/0x2b0
-  ext4_buffered_write_iter+0x57/0xd0
-  ext4_file_write_iter+0x76/0x7d0
-  ? selinux_file_permission+0x119/0x150
-  ? srso_return_thunk+0x5/0x5f
-  ? srso_return_thunk+0x5/0x5f
-  vfs_write+0x30c/0x440
-  ksys_write+0x65/0xe0
-  __x64_sys_write+0x1e/0x30
-  x64_sys_call+0x11c2/0x1d50
-  do_syscall_64+0x47/0x110
-  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
- memory: usage 308224kB, limit 308224kB, failcnt 2589
- swap: usage 0kB, limit 9007199254740988kB, failcnt 0
-
-  ...
-  file_dirty 303247360
-  file_writeback 0
-  ...
-
-oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=test,
-mems_allowed=0,oom_memcg=/test,task_memcg=/test,task=dd,pid=4404,uid=0
-Memory cgroup out of memory: Killed process 4404 (dd) total-vm:10512kB,
-anon-rss:1152kB, file-rss:1824kB, shmem-rss:0kB, UID:0 pgtables:76kB
-oom_score_adj:0
-
-The flusher wake up was removed to decrease SSD wearing, but if we are
-seeing all dirty folios at the tail of an LRU, not waking up the flusher
-could lead to thrashing easily.  So wake it up when a mem cgroups is about
-to OOM due to dirty caches.
-
-Link: https://lkml.kernel.org/r/20240829102543.189453-1-jingxiangzeng.cas@gmail.com
-Link: https://lkml.kernel.org/r/20240913084506.3606292-1-jingxiangzeng.cas@gmail.com
-Fixes: 14aa8b2d5c2e ("mm/mglru: don't sync disk for each aging cycle")
-Signed-off-by: Zeng Jingxiang <linuszeng@tencent.com>
-Signed-off-by: Kairui Song <kasong@tencent.com>
-Cc: T.J. Mercier <tjmercier@google.com>
-Cc: Wei Xu <weixugc@google.com>
-Cc: Yu Zhao <yuzhao@google.com>
+Signed-off-by: Julian Vetter <jvetter@kalrayinc.com>
 ---
-Changes from v2:
-- Acquire the lock before calling the folio_check_dirty_writeback
-  function.
-- Link to v2: https://lore.kernel.org/all/20240913084506.3606292-1-jingxiangzeng.cas@gmail.com/
-Changes from v1:
-- Add code to count the number of unqueued_dirty in the sort_folio
-  function.
-- Link to v1: https://lore.kernel.org/all/20240829102543.189453-1-jingxiangzeng.cas@gmail.com/
+Changes for v5:
+- Added functions to iomap_copy.c as proposed by Arndt
+- Removed again the new io_copy.c and related objects
+- Removed GENERIC_IO_COPY symbol and instead rely on the existing
+  HAS_IOMEM symbol
+- Added prototypes of __memcpy_{to,from}io and __memset_io functions to
+  asm-generic/io.h
 ---
- mm/vmscan.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+Julian Vetter (5):
+  Consolidate __memcpy_{to,from}io and __memset_io into iomap_copy.c
+  Replace generic memcpy and memset by IO memcpy functions
+  Use generic io memcpy functions on the arm64 architecture
+  Use generic io memcpy functions on the csky architecture
+  Use generic io memcpy functions on the loongarch architecture
 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 749cdc110c74..12c285a96353 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -4290,6 +4290,8 @@ static bool sort_folio(struct lruvec *lruvec, struct folio *folio, struct scan_c
- 	int delta = folio_nr_pages(folio);
- 	int refs = folio_lru_refs(folio);
- 	int tier = lru_tier_from_refs(refs);
-+	bool dirty = folio_test_dirty(folio);
-+	bool writeback = folio_test_writeback(folio);
- 	struct lru_gen_folio *lrugen = &lruvec->lrugen;
- 
- 	VM_WARN_ON_ONCE_FOLIO(gen >= MAX_NR_GENS, folio);
-@@ -4330,8 +4332,10 @@ static bool sort_folio(struct lruvec *lruvec, struct folio *folio, struct scan_c
- 	}
- 
- 	/* waiting for writeback */
--	if (folio_test_locked(folio) || folio_test_writeback(folio) ||
--	    (type == LRU_GEN_FILE && folio_test_dirty(folio))) {
-+	if (folio_test_locked(folio) || dirty ||
-+	    (type == LRU_GEN_FILE && writeback)) {
-+		if (type == LRU_GEN_FILE && dirty && !writeback)
-+			sc->nr.unqueued_dirty += delta;
- 		gen = folio_inc_gen(lruvec, folio, true);
- 		list_move(&folio->lru, &lrugen->folios[gen][type][zone]);
- 		return true;
-@@ -4448,6 +4452,7 @@ static int scan_folios(struct lruvec *lruvec, struct scan_control *sc,
- 				scanned, skipped, isolated,
- 				type ? LRU_INACTIVE_FILE : LRU_INACTIVE_ANON);
- 
-+	sc->nr.taken += isolated;
- 	/*
- 	 * There might not be eligible folios due to reclaim_idx. Check the
- 	 * remaining to prevent livelock if it's not making progress.
-@@ -4920,6 +4925,13 @@ static void lru_gen_shrink_lruvec(struct lruvec *lruvec, struct scan_control *sc
- 	if (try_to_shrink_lruvec(lruvec, sc))
- 		lru_gen_rotate_memcg(lruvec, MEMCG_LRU_YOUNG);
- 
-+	/*
-+	 * If too many pages in the coldest generation that cannot
-+	 * be isolated, wake up flusher.
-+	 */
-+	if (sc->nr.unqueued_dirty > sc->nr.taken)
-+		wakeup_flusher_threads(WB_REASON_VMSCAN);
-+
- 	clear_mm_walk();
- 
- 	blk_finish_plug(&plug);
+ arch/arm64/kernel/io.c         |  87 ---------------------------
+ arch/csky/kernel/Makefile      |   2 +-
+ arch/csky/kernel/io.c          |  91 ----------------------------
+ arch/loongarch/kernel/Makefile |   2 +-
+ arch/loongarch/kernel/io.c     |  94 -----------------------------
+ include/asm-generic/io.h       |  18 +++++-
+ lib/iomap_copy.c               | 107 +++++++++++++++++++++++++++++++++
+ 7 files changed, 124 insertions(+), 277 deletions(-)
+ delete mode 100644 arch/csky/kernel/io.c
+ delete mode 100644 arch/loongarch/kernel/io.c
+
 -- 
-2.43.5
+2.34.1
+
+
+
+
 
 
