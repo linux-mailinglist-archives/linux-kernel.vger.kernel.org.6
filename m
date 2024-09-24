@@ -1,123 +1,97 @@
-Return-Path: <linux-kernel+bounces-336857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 856B79841CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:15:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80A7F984228
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:31:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A85F281794
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:15:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 314D4B29800
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22BB015539F;
-	Tue, 24 Sep 2024 09:15:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dtkeOj0J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F02E31714C4;
+	Tue, 24 Sep 2024 09:26:25 +0000 (UTC)
+Received: from weierstrass.telenet-ops.be (weierstrass.telenet-ops.be [195.130.137.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC541552ED;
-	Tue, 24 Sep 2024 09:15:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A751714B7
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727169313; cv=none; b=D7eGDemPbY5Ek7+OES6/VyRWVujZSS17OfATn8quHi7xTRWNcJoLFgv21FtM/13rKw4HnPei+aJGASQrkkmofLJN6U/qzNQtuyuAmXsB8DHDQXB1yIKQcbyh/GVyFMD4DGLJCNgwV81tmBs2qnaN40Cab730R4PM4WfTiURlHOg=
+	t=1727169985; cv=none; b=q7TBg3o63iA0pEpITmqBsTwrGekP6CaZyfNCTEo35nN74bkBqsSTOJgezkE5ba3qKsixX623hSmvinnJzg15V0t7AT++JAXSOWlgUki8UdcO3xidU3lMJFnKDn9la51gblaqQLYuUC55hj/IrmJFb7UtY3FoE1DqgS8+uAHxbuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727169313; c=relaxed/simple;
-	bh=2KVuSiYdwxbydC/A7uEWSSCNb1LsPPeJVYNuNNT1jtQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LHWB83K2O400G7YNi9jQVsglAwn26Qq7SlRU4P64Xl+Mfsok10fPVq4aNr9BYr2PBGgDSy+FfXc/CaULBcTWtg33XSn8Tdgkyd7vMY22EK18aRDxvatjMdKH4sVlVicUR+jnCZBo/0EXjg7+Iq6U6YaXkBW70fx6IQtUsmTbs4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dtkeOj0J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1575C4CEC4;
-	Tue, 24 Sep 2024 09:15:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727169313;
-	bh=2KVuSiYdwxbydC/A7uEWSSCNb1LsPPeJVYNuNNT1jtQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dtkeOj0JCO59riq3o9U7q6HoDynCZ1sHI7fJLReBh3tlc1BFCSnjKd3DU2py+0Gdl
-	 MJnTRjoRAPJdvcxv0U6KK7S63atk/TaGkYF4PClyYuDbWPBJcWp7EVpSQXsutDNMB8
-	 mBLnYOQ3XZXMn+Rsr/TDCpSGmP0+wreQyaeKuWMjyHyP3JTiIyGaGHrEVAuUCpSRQe
-	 Mekys1F9NomtKLjEFb3fenl3Agt40AD9Ettn/OjTuiL1IeFmHnbZGg7DB+GmOY/TgB
-	 YeeQZB5ccTK4+Ee3UXz7TSKohcXZdX2lhAe9zmV7fTjVKlyWB47nEHu3riDwPaXy+w
-	 MBrUwq7FEa1cQ==
-Date: Tue, 24 Sep 2024 11:15:09 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] dt-bindings: mmc: document mmc-slot
-Message-ID: <5o2q5kmchnr3e4opmtp2xq3xqlzkq2hudecd5fszamoav4twhb@o3kcftkoxwzg>
-References: <20240920-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v2-0-5aa8bdfe01af@linaro.org>
- <20240920-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v2-2-5aa8bdfe01af@linaro.org>
+	s=arc-20240116; t=1727169985; c=relaxed/simple;
+	bh=Rpiia7W171dhBiA2KDt3R+l32OjCdJgEQC5KzQ/YRWc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=M09t89b3E1kbRnQYkWHMlI/gaAY1gE2b/NqvL1zMDPT86Xt7DsUgGNDd0w+YdZZxMItXcApKmsjOw6cMV65XAl1fM/8CKZvUT5wAaEpRbayxOEk//AMGkJyO343A8u9NvRaiHBTNSa3dwvP0RzTQsQZ7W/Svrf5qef7uPU5aOD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+	by weierstrass.telenet-ops.be (Postfix) with ESMTPS id 4XCZ893kPNz4x9fm
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 11:20:09 +0200 (CEST)
+Received: from ramsan.of.borg ([84.195.187.55])
+	by laurent.telenet-ops.be with cmsmtp
+	id G9Kw2D00J1C8whw019Kw7X; Tue, 24 Sep 2024 11:20:02 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1st1dq-000ShT-KK;
+	Tue, 24 Sep 2024 11:15:34 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1st1du-0003Zv-Gj;
+	Tue, 24 Sep 2024 11:15:34 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Marc Kleine-Budde <mkl@pengutronix.de>,
+	kernel@pengutronix.de,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-can@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] can: CAN_ROCKCHIP_CANFD should depend on ARCH_ROCKCHIP
+Date: Tue, 24 Sep 2024 11:15:31 +0200
+Message-Id: <a4b3c8c1cca9515e67adac83af5ba1b1fab2fcbc.1727169288.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240920-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v2-2-5aa8bdfe01af@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 20, 2024 at 10:38:04AM +0200, Neil Armstrong wrote:
-> Document the mmc-slot, which is a subnode of a multi-slot
-> MMC controlle, each slot is represented as a full MMC controller,
+The Rockchip CAN-FD controller is only present on Rockchip SoCs.  Hence
+add a dependency on ARCH_ROCKCHIP, to prevent asking the user about this
+driver when configuring a kernel without Rockchip platform support.
 
-typo: controller
+Fixes: ff60bfbaf67f219c ("can: rockchip_canfd: add driver for Rockchip CAN-FD controller")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/net/can/rockchip/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-> the top node handling all the shared resources and slot mux.
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  .../devicetree/bindings/mmc/mmc-slot.yaml          | 40 ++++++++++++++++++++++
->  1 file changed, 40 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/mmc-slot.yaml b/Documentation/devicetree/bindings/mmc/mmc-slot.yaml
-> new file mode 100644
-> index 000000000000..c30eda4fd2a6
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mmc/mmc-slot.yaml
-> @@ -0,0 +1,40 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mmc/mmc-slot.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MMC/SD/SDIO slot of a multi-slot controller
-> +
-> +maintainers:
-> +  - Ulf Hansson <ulf.hansson@linaro.org>
-> +
-
-description here saying what is the MMC slot, e.g. what you wrote in
-commit msg.
-
-> +allOf:
-> +  - $ref: mmc-controller.yaml
-> +
-
-Just to be sure - the slots do not have dedicated resources like clocks,
-resets, power supplies, right? IOW, it is indeed one device which
-exposes multiple controllers?
-
-> +properties:
-> +  compatible:
-> +    const: mmc-slot
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +unevaluatedProperties: false
-
-Best regards,
-Krzysztof
+diff --git a/drivers/net/can/rockchip/Kconfig b/drivers/net/can/rockchip/Kconfig
+index e029e2a3ca4b04df..fd8d9f5eeaa434ac 100644
+--- a/drivers/net/can/rockchip/Kconfig
++++ b/drivers/net/can/rockchip/Kconfig
+@@ -3,6 +3,7 @@
+ config CAN_ROCKCHIP_CANFD
+ 	tristate "Rockchip CAN-FD controller"
+ 	depends on OF || COMPILE_TEST
++	depends on ARCH_ROCKCHIP || COMPILE_TEST
+ 	select CAN_RX_OFFLOAD
+ 	help
+ 	  Say Y here if you want to use CAN-FD controller found on
+-- 
+2.34.1
 
 
