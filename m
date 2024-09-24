@@ -1,291 +1,722 @@
-Return-Path: <linux-kernel+bounces-337685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1738984D82
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:17:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10D64984D86
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:19:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 915A2285684
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:17:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FE441F24D0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA1D146A87;
-	Tue, 24 Sep 2024 22:17:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1408C147C79;
+	Tue, 24 Sep 2024 22:18:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CyBc8Tiw"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kolabnow.com header.i=@kolabnow.com header.b="keIZzdOg"
+Received: from mx.kolabnow.com (mx.kolabnow.com [212.103.80.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97BE2768FD
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 22:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727216230; cv=fail; b=OQWlZj3UA6cnIU+w73QmVEp+YycMUkfAi3Ye2PWHotSrTMQnAsjDwp/53Owtk2DtZ1gofERUNe6pHMJUxZVk37yU+9ukOemtu7Wh6ThI7rMF3Iqy3iGBAw3CMrEi8v/BhRX0MrI8NHqHSeA5IY6ps8eqPsIqtdmbYNJdz6lFBRM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727216230; c=relaxed/simple;
-	bh=c4/xAjAG0osIgk9BVT5s7knns/+J5qGB0i2H1s4+IZo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=sZIVkwMhhJaWaFlvaRaAHdtfoTXnNM6YF2MJfScU+aiTPfbPbuqnRidk9QxgnYXX0FGhT6h9YEVCLR+47gr+8FtikJDTU1+51wMOFnENtB5/eAkFIEH9GS0L1vHDfDbxEZBQoMzE6cKAHaWCR86JUXcDjq4an7bmQEpnfdZxih4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CyBc8Tiw; arc=fail smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727216229; x=1758752229;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=c4/xAjAG0osIgk9BVT5s7knns/+J5qGB0i2H1s4+IZo=;
-  b=CyBc8TiwpYsp88l52sZ2lWdx3dT/qQK2s305bfXwJAKqOscqVH029n4h
-   duTq8q0Dd7Fh2c8nzXQ6nWeHxnJi9R2vXoXm4mlU8cOJyvVPQiXWnm419
-   ekhoO7i7ltql/vBFfbeKqnj9CVsWDPoof2OyYO8G6jZcEylq6d7/X1h3y
-   dfweKPqmd+kjtynZHs3MtvfwqKbXSA/RIVS54JP4jvOjnH9CyfZ4E/a9t
-   13CprRhPFcYESIECfBIZ/slqB0MptuKiASLj2HZixUhh434RGiGFhqlpd
-   RpX4FOr4tdgOKQQAf3hWZBSChAf4giA/Urz88Xx6g/U5hpJ8Pkeu7uG+x
-   A==;
-X-CSE-ConnectionGUID: y6rrIW/mRkaNsqI++M/w6A==
-X-CSE-MsgGUID: m/9NAEvBR8mpoe9zXwPDaQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="25753170"
-X-IronPort-AV: E=Sophos;i="6.10,255,1719903600"; 
-   d="scan'208";a="25753170"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 15:17:08 -0700
-X-CSE-ConnectionGUID: +mKfX7XWTfCH5KBKnZSIag==
-X-CSE-MsgGUID: e96aqNZPTp+1m3LJDzQoGg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,255,1719903600"; 
-   d="scan'208";a="71439595"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 24 Sep 2024 15:17:07 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 24 Sep 2024 15:17:06 -0700
-Received: from fmsmsx602.amr.corp.intel.com (10.18.126.82) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 24 Sep 2024 15:17:06 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 24 Sep 2024 15:17:06 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.40) by
- edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 24 Sep 2024 15:17:06 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iuZb8gLfhIbI7DGJz9pzen+Q6NOZ6BjoNMNwIxXot6YanBaSh4KGHkwq99V8jgz+aCX36aOQnQJz5mNZWyVbXUOQwDK11CQbSrS+Zxjps5t2BfL/Jlx6Sbmppwzt0Ua2ujHV+t5TvY0Gy3eglhkE0rRcHlTbMxBbsEwbw80asivlRUoa35f67L/59HnKCbZmNZj5FhLpdH9rOWSk+/S8H+qh9WgRCbMrXYJFpBn8FjZvqcCv/l180bSCQG0hgvzQQhGSaP02Frntb58SJxPlabMaaBVcJu57RjNeHxZeDwOW2bUgeUv6K+akpWHCd21T4y5CbdihYTnki9FfTqkYQg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=c4/xAjAG0osIgk9BVT5s7knns/+J5qGB0i2H1s4+IZo=;
- b=zR2zNzLhs9Kg9sT4WpKwPKqJQsICRFh8KaY0xC48Sjy5rvNMdZXpuVJmVCV/INW3DkYb4kaqo/bEahFR60XEsCCnokqz3g+BYninlIUDqkNlVffClAonYfdQWaBzq9c3b2WJIH7I+b9khJ/8a/W/nCpH7CYyDYUSeu9pHwuixDLsZC4r0TiJ+v+HbcXlhdZhLDTyqbRNDpLlY3Bh2/FRpNDNUod2VCr3rXpXgFpy3dNf3od6mSbcZT6KtwCNGDAX9sttV2ydeOWdzs+234TnqrsuVGE12sQCyteu4gHKxotiIBQBgmIIJYaCvFB5v1zkyQVXnsJgPkdilUkeaQch5Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from SJ0PR11MB5678.namprd11.prod.outlook.com (2603:10b6:a03:3b8::22)
- by MN0PR11MB6110.namprd11.prod.outlook.com (2603:10b6:208:3ce::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.25; Tue, 24 Sep
- 2024 22:17:03 +0000
-Received: from SJ0PR11MB5678.namprd11.prod.outlook.com
- ([fe80::812:6f53:13d:609c]) by SJ0PR11MB5678.namprd11.prod.outlook.com
- ([fe80::812:6f53:13d:609c%4]) with mapi id 15.20.7982.022; Tue, 24 Sep 2024
- 22:17:03 +0000
-From: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-To: Yosry Ahmed <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "hannes@cmpxchg.org"
-	<hannes@cmpxchg.org>, "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
-	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "shakeel.butt@linux.dev"
-	<shakeel.butt@linux.dev>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
-	"Huang, Ying" <ying.huang@intel.com>, "21cnbao@gmail.com"
-	<21cnbao@gmail.com>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"Zou, Nanhai" <nanhai.zou@intel.com>, "Feghali, Wajdi K"
-	<wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>,
-	"Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-Subject: RE: [PATCH v7 6/8] mm: zswap: Support mTHP swapout in zswap_store().
-Thread-Topic: [PATCH v7 6/8] mm: zswap: Support mTHP swapout in zswap_store().
-Thread-Index: AQHbDh+C+ZYgIzdq4EuvViy0xt7aPLJnM4MAgAA0ncCAAAdQgIAAB1eAgAAG+3A=
-Date: Tue, 24 Sep 2024 22:17:02 +0000
-Message-ID: <SJ0PR11MB5678558D6728055819B06C61C9682@SJ0PR11MB5678.namprd11.prod.outlook.com>
-References: <20240924011709.7037-1-kanchana.p.sridhar@intel.com>
- <20240924011709.7037-7-kanchana.p.sridhar@intel.com>
- <CAKEwX=Nw_ax0RRSaD9n3h1vqbu+5PEuur3RqXrMrYyvOPuzB3Q@mail.gmail.com>
- <SJ0PR11MB56785712C0EF98B7BE558720C9682@SJ0PR11MB5678.namprd11.prod.outlook.com>
- <CAKEwX=MgpP_w6JFC5ahVN-erCWK2NDGSbxNdLxKg9P4yd01Unw@mail.gmail.com>
- <CAJD7tkasC4n+mE=q+L9cjf4342eSkOQPeeV1wzBKxTp39wnZJA@mail.gmail.com>
-In-Reply-To: <CAJD7tkasC4n+mE=q+L9cjf4342eSkOQPeeV1wzBKxTp39wnZJA@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ0PR11MB5678:EE_|MN0PR11MB6110:EE_
-x-ms-office365-filtering-correlation-id: e58e26d2-89e6-47d6-b453-08dcdce69df4
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?TmUvK2xLTXkrQlRBU2JKQStINzJiMzlmR2tmMGVCcTR3anNRamtpcU9zbk5o?=
- =?utf-8?B?cG82OFM1Z1NZMm5aZkk3TFgwZ3AyaGJ5WnJTSHAxcUVYMWxycVF5TWJKenZS?=
- =?utf-8?B?R3BHUXptQzR6RDdqaHZOZG85UmdzLzF5MTlsMTBxR2hkNS9aNHFaS1NDK1Zr?=
- =?utf-8?B?YWZMb1BXendTVTNkT0VZdTBodEQ5VUt2ZThSQVJmU0w2aFV3K2hYc0NlU1l5?=
- =?utf-8?B?R0JTa0o1aEF4Mzg4SWU3NytmS2s0cXFwTHZXbDNUUWFvTVpvclg3OFVVd0Vh?=
- =?utf-8?B?emp3NHVDdjNUdjdlOTNRRms1TEdPQXFmdjF0Wi9MWUpWOVVGd1g0eG9uekda?=
- =?utf-8?B?RlZHRStacGM1NGhtSTNRcnNvNmZ0aFNJT0N5RHpRVXRJT0xPMHZGcEhQUVQ4?=
- =?utf-8?B?Sm1CbkZyaDEvdVFJSTlLS0liTWlZVFBBVjBJN2FkNTJTUDVMcHRPamErcENS?=
- =?utf-8?B?WGJuYVJtVUlNdzhxUHYxUzdPbTgraHlqVlZBcWtxYzd1dDg0a3VoV0pWTVN1?=
- =?utf-8?B?VjBaQ2NrMVkwazM0amJ0bncyUElEWHRwdEFjQnJjcXFhNXIxbXk2UGJwQ0dh?=
- =?utf-8?B?czg1dHRva3BYTGF2YnBYQlRwazRNM0oxT21EbGNEMEFPY3VQQVVrS1hheGF0?=
- =?utf-8?B?RjR0Qnh5aFJ5UmVvc01PWFpLLzRmZnY2b3ZKMThDMlBnWWZhbzhCVVZQN2Np?=
- =?utf-8?B?QmNGdVRSYjh1UDVLVURJRy9DWmlCd01tb3VIZUs3dVNrTDRaMFU3WHluNnpU?=
- =?utf-8?B?SmsxdEZiSHp3RnU5d0hJeHYxbU1HQlF0NFZ0VEVYcUhtRjFaVldONXhWVVNy?=
- =?utf-8?B?Qm5GZzZtS3hGOGVJZEZuYncxenBraEVjZlNXM0ZXY2J0N1dqcWFEbSt2YlVJ?=
- =?utf-8?B?ZldXYytoZDZOb1VBK1NkY3Bmd2xYdjNYNTByOC9wNG5oUVo3MVB0Z0RsQ0lu?=
- =?utf-8?B?alFjOWRUU3FRQkIreUhQVExaU0ZhYVlKd2xZUEJUZ2paVlZwSGRMUXY0ZTJU?=
- =?utf-8?B?dElHZjJPOEhDMnlxN25FS1N1Q2JlS1pFb3hwcThESytXWmdtZkZ0S0kwMmhT?=
- =?utf-8?B?dEZqdzYzckgrRjVyakFCYU9sL09xbTdoNnRnd1hCYlBCQk5Tblc5UXBMMjV5?=
- =?utf-8?B?ZUdub2JFK1RvZXVBRDNyZkJYUVNjU1NWNWJjTDFzdFA3WHNkTTc3RmRHZHA4?=
- =?utf-8?B?OENoblFoSS9lL3lkTmxkNnRFMEUwS3R3Y255dFpkUVI5aUFFL0s0Vld6d3VK?=
- =?utf-8?B?TzhuREZGK3BJK0RsaCtvMjZLakVETWhZQVZpdGlERFVIeHVYUzc0aE5lZjB6?=
- =?utf-8?B?WEJBRDFGRnpQWm50OFFJemtjZUJTd1A2ZkYwNGQwWlcrWFpQMmY1MzdpcGlF?=
- =?utf-8?B?M2dhZ0llRFdzVURRQVkyYXpiNEcrWG92ZGtTK0ZRUHUzZytFUzVVMnY2bHNo?=
- =?utf-8?B?VXoyY0FiZTZMYWJ6L2UwYXFCWFZ0T0ZpOTd0YWtFQmYrOWZxejc3a0h6dGZp?=
- =?utf-8?B?T0dTS2NGbFN2STl0Sy9jczZraUhEZVZFK0t0TDVnbzZ5a0RlTTQzckU5UUds?=
- =?utf-8?B?SXRqdUVEOFVINkpHbUVJSExVQmtnV1BRK3pOcGRRRGpSZ3p2TVNBZGtWSXk3?=
- =?utf-8?B?OURmZ0pwS1N5ZHZiQ043U2RDdzdRemtrdDhaaE04OWZFTGVkbFE1dGQ5cSty?=
- =?utf-8?B?RllaZHVJckw0bmxvUkJGWW8wVU5DampPTGovZ1ZzQXUxQWQ1WHNHUzhkQmpj?=
- =?utf-8?B?ZnhKcWFFUjc3RDk3di9zNFowS2pKaWpxUHRjWFY5bmpVVUhMN2FueTJycUgw?=
- =?utf-8?B?bGlEZ0JOMjQxQ0ttclRkRUN4ekZIVE9pY0J5Z2ZiK2kwbVRWbms1OUlPY3Bs?=
- =?utf-8?B?NC9LcWRGaDRDczFDK2hxcHVzSlNnZW1NTUJuR2luSkZXWEE9PQ==?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR11MB5678.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?WlRXUjZjaEdHZlcxOC9WeXNzVnhxNU0rSDl3ZFBIYTV2K0xlQnNyejUwZUFW?=
- =?utf-8?B?eGxjc2cvaGpMVkFNU3JrSm82K1JqazRrV0ZjUnFPek5QeGZzTzVFNFpTeklj?=
- =?utf-8?B?ZHRNMWRkNWFSQmQwSzRZek9ZZkRybW1HbjZPWGtKT2IyMW5kbE5tRWEyNW1n?=
- =?utf-8?B?Yy9EbS8yd0xjMWwzWXZjT1JPWDh5emI2RGk4eWltU0FLQkVsa2RIZW1Pc1Nt?=
- =?utf-8?B?RG5ubUczUm9RWmlBSkNlR1JOM096S2o1eDJvNis2T2gwQnhha3Zmb2hUUWwz?=
- =?utf-8?B?b0w1TjlYUzJJdElrRFZEeHlwbUFlSTZ3MjljdW5iN3l5Rm9ndnYweVFubjUw?=
- =?utf-8?B?aEpiREdyVUVnanNWSTcxMWtjWHJRTUc3MkNyNnBIWVh6eEFDOEtZYjg2OXBp?=
- =?utf-8?B?OFppUGVxd2FPTnI5TjdtQ3oyVlBpN2prYnUwUW1aNm00eXdMaHVycGNncjZn?=
- =?utf-8?B?WnJOejgvT2QrVkE3VzdJUTIySzRoOU9iR09nRFVzWmdEQXZjejU4ZUY5NHlJ?=
- =?utf-8?B?blBUeVVZRDFoSE1PQVIzclcycVB3bWRqTHlRUE0zcHlad0xZWkxGRmZiK3BE?=
- =?utf-8?B?Z1ZsOW9aZThtdDJKL2xsV3ByT01jOXg1Vm1ROGZvR08reFBEQk9aYkdJVFlz?=
- =?utf-8?B?aTJZWmVsdVBTRURyVi9aUDVUaVkwMyt5WExKd3p5YWNtQTRHdXF0UUEwQjFm?=
- =?utf-8?B?UHFrNzFiWnY0OVBNbFVqSUwvRWlPRlJnT2ZqUzJrZUJCYnFEUXZuc3NWVjNK?=
- =?utf-8?B?UkdydExGMkVZeS9Gc2M5SWNleFZoWkxOQmF0RkJ2eG1ZUDRvTmROSEtYa1hw?=
- =?utf-8?B?M1dKUDlXUnJIdEI0WG1XbGw3WHhlTU8wMkxydFhOUHhuS2ZBWkMwSmxXTitj?=
- =?utf-8?B?MmtwMkJiT3FWcVlTVEtZekQwbUNKNXMvS0tKOE5GTHh3WHMzdGRyeFBVNXpG?=
- =?utf-8?B?VXhDRUQyczhGYy8rQUJuMElUampHSVRpTllLKzRGMkdydGZ6a0JnUTFMcmRw?=
- =?utf-8?B?QXFVajdOVHRpSTBCOVF3QVVjakJrOGNEN1BEQnFaQ3dUUlV1Y0pxd0FJbWQ0?=
- =?utf-8?B?Z3piRWE1WFF6YVZpelRWbjdiWFdiMkl0K212ZXo3VEpmQUVFODFGMEtGMFdI?=
- =?utf-8?B?czVhZDhRMzRNMUlCbGt0aVRWUTkyejhHbGpNRXBPcTNXSXd3OHVwd21UUW9G?=
- =?utf-8?B?MFh0d252RXB6RzJ0emxHVUJuL1R6VDVRKzhhUEx3aWJ3WWhoRXJ6R2hOYnB0?=
- =?utf-8?B?cDErVDJHT3o5SnZkS0lURW4zeWs4N2FvRDNJZnk4ckdSZXI2SEFXL2ZSdTlv?=
- =?utf-8?B?QU5HV3dCRkF0ZXJzTXZFMjFTeC8vODY1ZHY1alR3MkVFRE03TDhzcElKTkhk?=
- =?utf-8?B?K0hJUU1YRzRsL1ZEMzJUTEZhNUlwZHNFU0NPaWxpT3NiRHlwZ04wWnozZk5L?=
- =?utf-8?B?aUw3YnRFamJJZzNWOWFnUHhNWmlnaFZaMHlmM3AvVXo3QXFNTEw0MkhXQlVJ?=
- =?utf-8?B?QTdWZUVnWlJiRWhMU3dXWkFNNEppeDllRG1CSUxBWWtaVkM1Zzd4QWtjUzQr?=
- =?utf-8?B?OG5acWVvV1hXcVVsWTdJbTFFekhNMmhzbWdOSk9Pa0RvY3lmb0tHY2o3dmJH?=
- =?utf-8?B?d1U3T25xUE41NGpEY0JkNEMxTXJacUl5aVN1Vi9yVzVwVFFHa2U2eHo4WGQz?=
- =?utf-8?B?bFlYTnFEanRHa1NQR1hJSnYwZjdXVWpYSzlGYWpLWkdVSjVPS1lEdWp4VEgx?=
- =?utf-8?B?aDA3SkhubmtKSE03YWZQNUhUTFVyRmc0K2VoRW5BNStvSXZRaUlGbTBzaXlG?=
- =?utf-8?B?V3BtYjlIOFhzMHF0VStqY1ZLV2Z3TGkvUVFiSUROaXBJeVE5MzJPbjVweTZF?=
- =?utf-8?B?Z21KWVFrTjgzWG5jRllUZDFkbkNJSUx4YWdNUFFrQTd4SGoxclNFcWQ1VTFT?=
- =?utf-8?B?N2JkZEk5cjVwTlBEWFBzMm51ek9TL3Nsa29wRWZiZWNkU1YzdkgyeC9mRmUw?=
- =?utf-8?B?MytrZXNobVlvKytRakdjOVJ6aTI3RlY4TWhzdWtiL1BqVkZZMHJRbUhtMVh3?=
- =?utf-8?B?NXV5QndIbksxb2JnR0ZQQ1BNc3B5WVI5NlBUN1N2UkFHTEVxb2pCVUZFeXh3?=
- =?utf-8?B?V0dCN09hb0I1djZyL2l5WnJ5bExsMGMwSzE5TGo2a2gxYUEweFJtcXNnRkhW?=
- =?utf-8?B?Wnc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A1C768FD;
+	Tue, 24 Sep 2024 22:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.103.80.153
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727216336; cv=none; b=u3ez7JiJo3nJF1sFwrdL4IZy0xvVI61GkkDXeRcTW9SMgvoTAkY3k3F0dqI6SkjYrvqux/yDZNdjImwiveoudZT1AoGsJQWFJ5KIg8dq8ysPWxB/R9NLFqcnDKR5Lyc3T90i/4Nv4Oekjs3ovK3ma0waRACOO9/7Wv4D0Su3FHU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727216336; c=relaxed/simple;
+	bh=AsXkJ3IVQZ164QbBWkTJAvmDC7/pAr8wclYKJxa5S4k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=CMKs+lQqqcjQkmp3zePIn7sl5TTCv8dQllLgbBI8Z4TilKgRuELWKAgh2cSd+LJ8LbXAtV3Q5M7OaeajSd3Y3LC4CSZ8TjfFSDS4o6/9/BehTUCocLTkfo3yJxvIOLo10sT1nExrNYCFODd8ogMFbTcYNWN0b+p38o/Tay6MZP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vaga.pv.it; spf=pass smtp.mailfrom=vaga.pv.it; dkim=pass (2048-bit key) header.d=kolabnow.com header.i=@kolabnow.com header.b=keIZzdOg; arc=none smtp.client-ip=212.103.80.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vaga.pv.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vaga.pv.it
+Received: from localhost (unknown [127.0.0.1])
+	by mx.kolabnow.com (Postfix) with ESMTP id 46729534A;
+	Wed, 25 Sep 2024 00:18:43 +0200 (CEST)
+Authentication-Results: ext-mx-out013.mykolab.com (amavis);
+ dkim=pass (2048-bit key) reason="pass (just generated, assumed good)"
+ header.d=kolabnow.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kolabnow.com; h=
+	content-transfer-encoding:content-type:content-type:mime-version
+	:message-id:date:date:subject:subject:from:from:received
+	:received:received; s=dkim20240523; t=1727216318; x=1729030719;
+	 bh=DJVAGIji7a/+VG79mKZBzSy9TrLsOR87ksga+6/vCo8=; b=keIZzdOg+Gi9
+	c64vpCf0MlX+Kx0HIG7smrsbd3guHXfe+04GLrifbPC1y0uBCT2AgBP+TkIBRoJw
+	2/MwZAhvRnOwnHUhZNdfMAI2/MnWyYV8KzZ6zdN42Lz/55r1D97yjrge4j0a6dYA
+	J5v/elBEEIqt9/BXNhoDLGNI/FwUPFyoZ8yLIiwj14Xy6P7Vv8T89svNC2WFfFiK
+	NKnK1ZROZDpcJoi7ls86lCcljpBaGu8PPPr/NlcENLKgCd21BeGuO2tOaG6iOGP7
+	nl58CFYy31hlEK6O4KnetI7c68xLw70eXXzJV8hV8Ku8b0etJZ5iJKEDZ3Mjdipo
+	em5fhbrL8A==
+X-Virus-Scanned: amavis at mykolab.com
+X-Spam-Flag: NO
+X-Spam-Score: -0.999
+X-Spam-Level:
+Received: from mx.kolabnow.com ([127.0.0.1])
+ by localhost (ext-mx-out013.mykolab.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id nOeeFR88eWmJ; Wed, 25 Sep 2024 00:18:38 +0200 (CEST)
+Received: from int-mx011.mykolab.com (unknown [10.9.13.11])
+	by mx.kolabnow.com (Postfix) with ESMTPS id 2E3842E19BF;
+	Wed, 25 Sep 2024 00:18:37 +0200 (CEST)
+Received: from ext-subm010.mykolab.com (unknown [10.9.6.10])
+	by int-mx011.mykolab.com (Postfix) with ESMTPS id 4D34630851D9;
+	Wed, 25 Sep 2024 00:18:37 +0200 (CEST)
+From: Federico Vaga <federico.vaga@vaga.pv.it>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Federico Vaga <federico.vaga@vaga.pv.it>
+Subject: [PATCH] doc:it_IT: update documents in process/
+Date: Wed, 25 Sep 2024 00:18:16 +0200
+Message-Id: <20240924221816.19009-1-federico.vaga@vaga.pv.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB5678.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e58e26d2-89e6-47d6-b453-08dcdce69df4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2024 22:17:03.0024
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 98C+GbOmuLiGNLFdQAhN2NwlgA1GwRfqxz7TMK/CaNQqbGKtX9PTkEfR+jMVSryRJ8EBWuMPtZefYRRK4lLWc571bKdBNLuDEUxZKV2VwP0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR11MB6110
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFlvc3J5IEFobWVkIDx5b3Ny
-eWFobWVkQGdvb2dsZS5jb20+DQo+IFNlbnQ6IFR1ZXNkYXksIFNlcHRlbWJlciAyNCwgMjAyNCAy
-OjM0IFBNDQo+IFRvOiBOaGF0IFBoYW0gPG5waGFtY3NAZ21haWwuY29tPg0KPiBDYzogU3JpZGhh
-ciwgS2FuY2hhbmEgUCA8a2FuY2hhbmEucC5zcmlkaGFyQGludGVsLmNvbT47IGxpbnV4LQ0KPiBr
-ZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC1tbUBrdmFjay5vcmc7IGhhbm5lc0BjbXB4Y2hn
-Lm9yZzsNCj4gY2hlbmdtaW5nLnpob3VAbGludXguZGV2OyB1c2FtYWFyaWY2NDJAZ21haWwuY29t
-Ow0KPiBzaGFrZWVsLmJ1dHRAbGludXguZGV2OyByeWFuLnJvYmVydHNAYXJtLmNvbTsgSHVhbmcs
-IFlpbmcNCj4gPHlpbmcuaHVhbmdAaW50ZWwuY29tPjsgMjFjbmJhb0BnbWFpbC5jb207IGFrcG1A
-bGludXgtZm91bmRhdGlvbi5vcmc7DQo+IFpvdSwgTmFuaGFpIDxuYW5oYWkuem91QGludGVsLmNv
-bT47IEZlZ2hhbGksIFdhamRpIEsNCj4gPHdhamRpLmsuZmVnaGFsaUBpbnRlbC5jb20+OyBHb3Bh
-bCwgVmlub2RoIDx2aW5vZGguZ29wYWxAaW50ZWwuY29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENI
-IHY3IDYvOF0gbW06IHpzd2FwOiBTdXBwb3J0IG1USFAgc3dhcG91dCBpbg0KPiB6c3dhcF9zdG9y
-ZSgpLg0KPiANCj4gT24gVHVlLCBTZXAgMjQsIDIwMjQgYXQgMjowOOKAr1BNIE5oYXQgUGhhbSA8
-bnBoYW1jc0BnbWFpbC5jb20+IHdyb3RlOg0KPiA+DQo+ID4gT24gVHVlLCBTZXAgMjQsIDIwMjQg
-YXQgMTo1MeKAr1BNIFNyaWRoYXIsIEthbmNoYW5hIFANCj4gPiA8a2FuY2hhbmEucC5zcmlkaGFy
-QGludGVsLmNvbT4gd3JvdGU6DQo+ID4gPg0KPiA+ID4NCj4gPiA+IFRoaXMgaXMgYW4gZXhjZWxs
-ZW50IHBvaW50LiBUaGFua3MgTmhhdCBmb3IgY2F0Y2hpbmcgdGhpcyEgSSBjYW4gc2VlIHR3bw0K
-PiA+ID4gb3B0aW9ucyB0byBzb2x2aW5nIHRoaXM6DQo+ID4gPg0KPiA+ID4gT3B0aW9uIDE6IElm
-IHpzd2FwX210aHBfZW5hYmxlZCBpcyAiZmFsc2UiLCBkZWxldGUgYWxsIHN0b3JlZCBvZmZzZXRz
-DQo+ID4gPiBmb3IgdGhlIG1USFAgaW4genN3YXAgYmVmb3JlIGV4aXRpbmcuIFRoaXMgY291bGQg
-cmFjZSB3aXRoIHdyaXRlYmFjaw0KPiA+ID4gKGVpdGhlciBvbmUgb3IgbW9yZSBzdWJwYWdlcyBj
-b3VsZCBiZSB3cml0dGVuIGJhY2sgYmVmb3JlIHpzd2FwX3N0b3JlDQo+ID4gPiBhY3F1aXJlcyB0
-aGUgdHJlZSBsb2NrKSwgaG93ZXZlciwgSSBkb24ndCB0aGluayBpdCB3aWxsIGNhdXNlIGRhdGEN
-Cj4gaW5jb25zaXN0ZW5jaWVzLg0KPiA+ID4gQW55IG9mZnNldHMgZm9yIHN1YnBhZ2VzIG5vdCB3
-cml0dGVuIGJhY2sgd2lsbCBiZSBkZWxldGVkIGZyb20genN3YXAsDQo+ID4gPiB6c3dhcF9zdG9y
-ZSgpIHdpbGwgcmV0dXJuIGZhbHNlLCBhbmQgdGhlIGJhY2tpbmcgc3dhcCBkZXZpY2UncyBzdWJz
-ZXF1ZW50DQo+ID4gPiBzd2Fwb3V0IHdpbGwgb3Zlci13cml0ZSB0aGUgenN3YXAgd3JpdGUtYmFj
-ayBkYXRhLiBDb3VsZCBhbnl0aGluZyBnbw0KPiB3cm9uZw0KPiA+ID4gd2l0aCB0aGlzPw0KPiA+
-DQo+ID4gSSB0aGluayB0aGlzIHNob3VsZCBiZSBzYWZlLCBhbGJlaXQgYSBiaXQgYXdrd2FyZC4N
-Cj4gPg0KPiA+IEF0IHRoaXMgcG9pbnQgKHpzd2FwX3N0b3JlKCkpLCB3ZSBzaG91bGQgaGF2ZSB0
-aGUgZm9saW8gYWRkZWQgdG8gdG8NCj4gPiBzd2FwIGNhY2hlLCBhbmQgbG9ja2VkLiBBbGwgdGhl
-IGFzc29jaWF0ZWQgc3dhcCBlbnRyaWVzIHdpbGwgcG9pbnQgdG8NCj4gPiB0aGlzIHNhbWUgKGxh
-cmdlKSBmb2xpby4NCj4gPg0KPiA+IEFueSBjb25jdXJyZW50IHpzd2FwIHdyaXRlYmFjayBhdHRl
-bXB0LCBldmVuIG9uIGEgdGFpbCBwYWdlLCBzaG91bGQNCj4gPiBnZXQgdGhhdCBmb2xpbyB3aGVu
-IGl0IGNhbGxzIF9fcmVhZF9zd2FwX2NhY2hlX2FzeW5jKCksIGFuZCB3aXRoDQo+ID4gcGFnZV9h
-bGxvY2F0ZWQgPT0gZmFsc2UsIGFuZCBzaG91bGQgc2hvcnQgY2lyY3VpdC4NCj4gPg0KPiA+IFNv
-IEkgZG9uJ3QgdGhpbmsgd2Ugd2lsbCByYWNlIHdpdGggenN3YXBfd3JpdGViYWNrKCkuDQo+ID4N
-Cj4gPiBZb3NyeSwgQ2hlbmdtaW5nLCBKb2hhbm5lcywgYW55IHRob3VnaHRzPw0KPiANCj4gV2h5
-IGNhbid0IHdlIGp1c3QgaGFuZGxlIGl0IHRoZSBzYW1lIHdheSBhcyB3ZSBoYW5kbGUgenN3YXAN
-Cj4gZGlzYWJsZW1lbnQ/IElmIGl0IGlzIGRpc2FibGVkLCB3ZSBpbnZhbGlkYXRlIGFueSBvbGQg
-ZW50cmllcyBmb3IgdGhlDQo+IG9mZnNldHMgYW5kIHJldHVybiBmYWxzZSB0byBzd2Fwb3V0IHRv
-IGRpc2suDQo+IA0KPiBUYWtpbmcgYSBzdGVwIGJhY2ssIHdoeSBkbyB3ZSBuZWVkIHRoZSBydW50
-aW1lIGtub2IgYW5kIGNvbmZpZyBvcHRpb24/DQo+IEFyZSB0aGVyZSBjYXNlcyB3aGVyZSB3ZSB0
-aGluayB6c3dhcG91dCBvZiBtVEhQcyB3aWxsIHBlcmZvcm0gYmFkbHksDQo+IG9yIGlzIGl0IGp1
-c3QgZHVlIHRvIGxhY2sgb2YgY29uZmlkZW5jZSBpbiB0aGUgZmVhdHVyZT8NCg0KVGhhbmtzIE5o
-YXQgYW5kIFlvc3J5IGZvciB0aGUgc3VnZ2VzdGlvbnMvY29tbWVudHMuDQoNCklmIEkgcmVjYWxs
-IGNvcnJlY3RseSwgdGhlIHRvcGljIG9mIGFkZGluZyBhIGNvbmZpZyBvcHRpb24va25vYiBjYW1l
-IHVwDQpiYXNlZCBvbiBlYXJsaWVyIGRhdGEgSSBoYWQgY29sbGVjdGVkIHdpdGggYSB6cmFtIGJh
-Y2tpbmcgZGV2aWNlIHNldHVwLA0Kd2hpY2ggc2hvd2VkIGEgcGVyZm9ybWFuY2UgZGVncmFkYXRp
-b24gd2l0aCB6c3RkLCBidXQgbm90IHdpdGggZGVmbGF0ZS1pYWEuDQoNClNpbmNlIHRoZSB2NyBk
-YXRhIGNvbGxlY3RlZCB3aXRoIGFuIDgyM0cgU1NEIHN3YXAgZGlzayBwYXJ0aXRpb24gaW5kaWNh
-dGVzDQp0aGF0IHdlIGdldCBnb29kIHRocm91Z2hwdXQgYW5kIGxhdGVuY3kgaW1wcm92ZW1lbnRz
-IHdpdGggenN3YXAtbVRIUA0Kd2l0aCB6c3RkIGFuZCBkZWZsYXRlLWlhYSwgSSBhbSBub3Qgc3Vy
-ZSBpZiB0aGUga25vYiBpcyBzdGlsbCByZXF1aXJlZCAoaWYgdGhpcw0KaXMgcmVwcmVzZW50YXRp
-dmUgb2YgbW9zdCBvZiB0aGUgc2V0dXBzIHRoYXQgdXNlIG1USFApLg0KDQpJIGFtIGNvbmZpZGVu
-dCBhYm91dCB0aGUgenN3YXAtbVRIUCBmZWF0dXJlIGl0c2VsZiwgYW5kIGRvbuKAmXQgdGhpbmsg
-dGhlDQprbm9iIGlzIG5lZWRlZCBmcm9tIHRoYXQgcGVyc3BlY3RpdmUuIEkgdGhpbmsgdGhlIHF1
-ZXN0aW9uIGlzIHJlYWxseSBhYm91dA0KaGF2aW5nIHRoZSBhYmlsaXR5IHRvIGRpc2FibGUgenN3
-YXAtbVRIUCBpbiBzb21lIGV4aXN0aW5nIHNldHVwIHdoZXJlDQpoYXZpbmcgbVRIUCBlbmFibGVk
-IHBlcmZvcm1zIHdvcnNlIHdpdGggdGhpcyBwYXRjaHNldCB0aGFuIHdpdGhvdXQuDQoNCkkgYW0g
-T2sgd2l0aCBoYXZpbmcgdGhlIGtub2IgYW5kIGhhbmRsaW5nIGl0IHVzaW5nIE9wdGlvbiAxLCBv
-ciwgbm90DQpoYXZpbmcgYSBrbm9iLg0KDQpUaGFua3MsDQpLYW5jaGFuYSANCg0KPiANCj4gPg0K
-PiA+ID4NCj4gPiA+IE9wdGlvbiAyOiBPbmx5IHByb3ZpZGUgYSBidWlsZCBjb25maWcgb3B0aW9u
-LA0KPiA+ID4gQ09ORklHX1pTV0FQX1NUT1JFX1RIUF9ERUZBVUxUX09OLCB0aGF0IGNhbm5vdCBi
-ZSBkeW5hbWljYWxseQ0KPiBjaGFuZ2VkLg0KPiA+DQo+ID4gVGhpcyBjYW4gYmUgYSBsYXN0IHJl
-c29ydCB0aGluZywgaWYgdGhlIGFib3ZlIGRvZXNuJ3Qgd29yay4gTm90IHRoZQ0KPiA+IGVuZCBv
-ZiB0aGUgd29ybGQsIGJ1dCBub3QgaWRlYWwgOikNCj4gPg0KPiA+ID4NCj4gPiA+IFdvdWxkIGFw
-cHJlY2lhdGUgc3VnZ2VzdGlvbnMgb24gdGhlc2UsIGFuZCBvdGhlciBwb3RlbnRpYWwgc29sdXRp
-b25zLg0KPiA+ID4NCj4gPiA+IFRoYW5rcywNCj4gPiA+IEthbmNoYW5hDQo=
+Update Italian translation following these changes under Documentation/process
+
+commit eb5ed2fae197 ("docs: submitting-patches: Advertise b4")
+commit 413e775efaec ("Documentation: fix links to mailing list services")
+commit 47c67ec1e8ef ("docs: submit-checklist: use subheadings")
+commit 5969fbf30274 ("docs: submit-checklist: structure by category")
+commit 5f99665ee8f4 ("kbuild: raise the minimum GNU Make requirement to 4.0")
+commit 627395716cc3 ("docs: document python version used for compilation")
+commit 7a23b027ec17 ("arm64: boot: Support Flat Image Tree")
+commit 56f64b370612 ("rust: upgrade to Rust 1.78.0")
+commit 82b8000c28b5 ("net: drop special comment style")
+commit 6813216bbdba ("Documentation: coding-style: ask function-like macros to evaluate parameters")
+commit 91031ca349ee ("docs: improve comment consistency in .muttrc example configuration")
+commit 7fe7de7be828 ("Docs/process/email-clients: Document HacKerMaiL")
+commit 9c03bc90c065 ("Documentation: process: Revert "Document suitability of Proton Mail for kernel development"")
+commit f9a4f4a0e1f5 ("Docs: Move magic-number from process to staging")
+commit 7400d25a0a5c ("Docs/process/index: Remove riscv/patch-acceptance from 'Other materi
+al' section")
+
+Signed-off-by: Federico Vaga <federico.vaga@vaga.pv.it>
+---
+ .../{process => dev-tools}/clang-format.rst   |   0
+ .../translations/it_IT/dev-tools/index.rst    |  17 ++
+ Documentation/translations/it_IT/index.rst    |   8 +-
+ .../translations/it_IT/process/2.Process.rst  |   6 +-
+ .../translations/it_IT/process/changes.rst    |  33 +++-
+ .../it_IT/process/coding-style.rst            |  35 ++--
+ .../it_IT/process/email-clients.rst           |  33 +---
+ .../translations/it_IT/process/howto.rst      |  10 +-
+ .../translations/it_IT/process/index.rst      |  10 --
+ .../it_IT/process/submit-checklist.rst        | 167 +++++++++---------
+ .../it_IT/process/submitting-patches.rst      |  23 +--
+ .../translations/it_IT/staging/index.rst      |  13 ++
+ .../{process => staging}/magic-number.rst     |   0
+ 13 files changed, 206 insertions(+), 149 deletions(-)
+ rename Documentation/translations/it_IT/{process => dev-tools}/clang-format.rst (100%)
+ create mode 100644 Documentation/translations/it_IT/dev-tools/index.rst
+ create mode 100644 Documentation/translations/it_IT/staging/index.rst
+ rename Documentation/translations/it_IT/{process => staging}/magic-number.rst (100%)
+
+diff --git a/Documentation/translations/it_IT/process/clang-format.rst b/Documentation/translations/it_IT/dev-tools/clang-format.rst
+similarity index 100%
+rename from Documentation/translations/it_IT/process/clang-format.rst
+rename to Documentation/translations/it_IT/dev-tools/clang-format.rst
+diff --git a/Documentation/translations/it_IT/dev-tools/index.rst b/Documentation/translations/it_IT/dev-tools/index.rst
+new file mode 100644
+index 000000000000..25e2a5f09add
+--- /dev/null
++++ b/Documentation/translations/it_IT/dev-tools/index.rst
+@@ -0,0 +1,17 @@
++.. include:: ../disclaimer-ita.rst
++
++:Original: :ref:`Documentation/dev-tools/index.rst`
++
++===================================
++Strumenti di sviluppo per il kernel
++===================================
++
++Qui raccogliamo i vari documenti riguardanti gli strumenti di sviluppo che
++possono essere usati per lavorare col kernel . Per ora, questa è una raccolta
++senza un particolare struttura; si accettano patch!
++
++.. toctree::
++   :caption: Tabella dei contenuti
++   :maxdepth: 2
++
++   clang-format
+diff --git a/Documentation/translations/it_IT/index.rst b/Documentation/translations/it_IT/index.rst
+index 9220f65e30d1..afa680607750 100644
+--- a/Documentation/translations/it_IT/index.rst
++++ b/Documentation/translations/it_IT/index.rst
+@@ -103,9 +103,11 @@ sviluppatori del kernel.
+ .. toctree::
+    :maxdepth: 1
+ 
+-   process/license-rules
+-   doc-guide/index
+-   kernel-hacking/index
++   Regole sulle licenze <process/license-rules>
++   Scrivere la documentazione <doc-guide/index>
++   Strumenti di sviluppo <dev-tools/index>
++   La guida all'*hacking*<kernel-hacking/index>
++
+ 
+ Documentazione per gli utenti
+ =============================
+diff --git a/Documentation/translations/it_IT/process/2.Process.rst b/Documentation/translations/it_IT/process/2.Process.rst
+index 0a62c0f33faf..6262c3908665 100644
+--- a/Documentation/translations/it_IT/process/2.Process.rst
++++ b/Documentation/translations/it_IT/process/2.Process.rst
+@@ -424,10 +424,10 @@ o entrambi.
+ Molte delle liste di discussione del Kernel girano su vger.kernel.org;
+ l'elenco principale lo si trova sul sito:
+ 
+-	http://vger.kernel.org/vger-lists.html
++	https://subspace.kernel.org
+ 
+-Esistono liste gestite altrove; un certo numero di queste sono in
+-redhat.com/mailman/listinfo.
++Tuttavia, esistono liste gestite altrove; controllare il file MAINTAINERS per
++trovare la lista relativa ad un sottosistema specifico.
+ 
+ La lista di discussione principale per lo sviluppo del kernel è, ovviamente,
+ linux-kernel.  Questa lista è un luogo ostile dove trovarsi; i volumi possono
+diff --git a/Documentation/translations/it_IT/process/changes.rst b/Documentation/translations/it_IT/process/changes.rst
+index 0bcf8423cc80..c7d05e2fff15 100644
+--- a/Documentation/translations/it_IT/process/changes.rst
++++ b/Documentation/translations/it_IT/process/changes.rst
+@@ -34,9 +34,9 @@ PC Card, per esempio, probabilmente non dovreste preoccuparvi di pcmciautils.
+ ====================== =================  ========================================
+ GNU C                  5.1                gcc --version
+ Clang/LLVM (optional)  13.0.0             clang --version
+-Rust (opzionale)       1.76.0             rustc --version
++Rust (opzionale)       1.78.0             rustc --version
+ bindgen (opzionale)    0.65.1             bindgen --version
+-GNU make               3.81               make --version
++GNU make               4.0                make --version
+ bash                   4.2                bash --version
+ binutils               2.25               ld -v
+ flex                   2.5.35             flex --version
+@@ -65,6 +65,8 @@ Sphinx\ [#f1]_         2.4.4              sphinx-build --version
+ cpio                   any                cpio --version
+ GNU tar                1.28               tar --version
+ gtags (opzionale)      6.6.5              gtags --version
++mkimage (opzionale)    2017.01            mkimage --version
++Python (opzionale)     3.5.x              python3 --version
+ ====================== =================  ========================================
+ 
+ .. [#f1] Sphinx è necessario solo per produrre la documentazione del Kernel
+@@ -88,10 +90,25 @@ potremmo rimuovere gli espedienti che abbiamo implementato per farli
+ funzionare. Per maggiori informazioni
+ :ref:`Building Linux with Clang/LLVM <kbuild_llvm>`.
+ 
++Rust (opzionale)
++----------------
++
++È necessaria una versione recente del compilatore Rust.
++
++Verificate le istruzioni Documentation/rust/quick-start.rst su come soddisfare i
++requisiti per compilare code Rust. In particolare, la regola ``rustavailable``
++nel ``Makefile`` è utile per verificare perché gli strumenti di compilazione non
++vengono trovati.
++
++bindgen (opzionale)
++-------------------
++
++``bindgen`` viene usato per generare il collegamento (binding) da Rust al lato C del kernel. Dipende da ``libclang``.
++
+ Make
+ ----
+ 
+-Per compilare il kernel vi servirà GNU make 3.81 o successivo.
++Per compilare il kernel vi servirà GNU make 4.0 o successivo.
+ 
+ Bash
+ ----
+@@ -168,6 +185,16 @@ Il programma GNU GLOBAL versione 6.6.5, o successiva, è necessario quando si
+ vuole eseguire ``make gtags`` e generare i relativi indici. Internamente si fa
+ uso del parametro gtags ``-C (--directory)`` che compare in questa versione.
+ 
++mkimage
++-------
++
++Questo strumento viene usato per produrre un *Flat Image Tree* (FIT),
++tipicamente usato su sistemi ARM. Questo strumento è disponibile tramite il
++pacchetto ``u-boot-tools`` oppure può essere compilato dal codice sorgente di
++U-Boot. Consultate le istruzioni
++https://docs.u-boot.org/en/latest/build/tools.html#building-tools-for-linux
++
++
+ Strumenti di sistema
+ ********************
+ 
+diff --git a/Documentation/translations/it_IT/process/coding-style.rst b/Documentation/translations/it_IT/process/coding-style.rst
+index a4b9f44081da..f75d4e3e5e55 100644
+--- a/Documentation/translations/it_IT/process/coding-style.rst
++++ b/Documentation/translations/it_IT/process/coding-style.rst
+@@ -620,18 +620,6 @@ Lo stile preferito per i commenti più lunghi (multi-riga) è:
+ 	 * with beginning and ending almost-blank lines.
+ 	 */
+ 
+-Per i file in net/ e in drivers/net/ lo stile preferito per i commenti
+-più lunghi (multi-riga) è leggermente diverso.
+-
+-.. code-block:: c
+-
+-	/* The preferred comment style for files in net/ and drivers/net
+-	 * looks like this.
+-	 *
+-	 * It is nearly the same as the generally preferred comment style,
+-	 * but there is no initial almost-blank line.
+-	 */
+-
+ È anche importante commentare i dati, sia per i tipi base che per tipi
+ derivati.  A questo scopo, dichiarate un dato per riga (niente virgole
+ per una dichiarazione multipla).  Questo vi lascerà spazio per un piccolo
+@@ -827,6 +815,29 @@ blocco do - while:
+ 				do_this(b, c);		\
+ 		} while (0)
+ 
++Le macro che sembrano funzioni con parametri non usati dovrebbero essere
++sostituite da funzioni inline per evitare il problema.
++
++.. code-block:: c
++
++       static inline void fun(struct foo *foo)
++       {
++       }
++
++Per motivi storici, molti file usano ancora l'approccio "cast a (void)" per
++valutare i parametri. Tuttavia, non è raccomandato. Le funzioni inline risolvono
++i problemi di "espressioni con effetti avversi valutate più di una volta",
++variabili non utilizzate, e in genere per qualche motivo sono documentate
++meglio.
++
++.. code-block:: c
++
++       /*
++        * Avoid doing this whenever possible and instead opt for static
++        * inline functions
++        */
++       #define macrofun(foo) do { (void) (foo); } while (0)
++
+ Cose da evitare quando si usano le macro:
+ 
+ 1) le macro che hanno effetti sul flusso del codice:
+diff --git a/Documentation/translations/it_IT/process/email-clients.rst b/Documentation/translations/it_IT/process/email-clients.rst
+index 76ca3226c8cd..97173746d8c9 100644
+--- a/Documentation/translations/it_IT/process/email-clients.rst
++++ b/Documentation/translations/it_IT/process/email-clients.rst
+@@ -228,7 +228,7 @@ Mutt è molto personalizzabile. Qui di seguito trovate la configurazione minima
+ per iniziare ad usare Mutt per inviare patch usando Gmail::
+ 
+   # .muttrc
+-  # ================  IMAP ====================
++  # ================  IMAP  ====================
+   set imap_user = 'yourusername@gmail.com'
+   set imap_pass = 'yourpassword'
+   set spoolfile = imaps://imap.gmail.com/INBOX
+@@ -365,27 +365,12 @@ un editor esterno.
+ Un altro problema è che Gmail usa la codifica base64 per tutti quei messaggi
+ che contengono caratteri non ASCII. Questo include cose tipo i nomi europei.
+ 
+-Proton Mail
+-***********
++HacKerMaiL (TUI)
++****************
+ 
+-Il servizio Proton Mail ha una funzionalità che cripta tutti i messaggi verso
+-ogni destinatario per cui è possibile trovare una chiave usando il *Web Key
+-Directory* (WKD). Il servizio kernel.org pubblica il WKD per ogni sviluppatore
+-in possesso di un conto kernel.org. Di conseguenza, tutti i messaggi inviati
+-usando Proton Mail verso indirizzi kernel.org verranno criptati.
+-
+-Proton Mail non fornisce alcun meccanismo per disabilitare questa funzionalità
+-perché verrebbe considerato un problema per la riservatezza. Questa funzionalità
+-è attiva anche quando si inviano messaggi usando il Proton Mail Bridge. Dunque
+-tutta la posta in uscita verrà criptata, incluse le patch inviate con ``git
+-send-email``.
+-
+-I messaggi criptati sono una fonte di problemi; altri sviluppatori potrebbero
+-non aver configurato i loro programmi, o strumenti, per gestire messaggi
+-criptati; inoltre, alcuni programmi di posta elettronica potrebbero criptare le
+-risposte a messaggi criptati per tutti i partecipanti alla discussione, inclusa
+-la lista di discussione stessa.
+-
+-A meno che non venga introdotta una maniera per disabilitare questa
+-funzionalità, non è consigliato usare Proton Mail per contribuire allo sviluppo
+-del kernel.
++HacKerMaiL (hkml) è una semplice casella pubblica per la gestione dei messaggi
++di posta che non richiede alcuna sottoscrizione ad una lista di discussione.
++Viene sviluppato e mantenuto dal manutentore di DAMON e si pone come obiettivo
++quello di gestire il processo di sviluppo semplice come quello di DAMON e più in
++generale i sottosistemi del kernel. Per maggiori dettagli, fate riferimento al
++documento README (https://github.com/sjp38/hackermail/blob/master/README.md).
+diff --git a/Documentation/translations/it_IT/process/howto.rst b/Documentation/translations/it_IT/process/howto.rst
+index 090941a0a898..f51288602ee3 100644
+--- a/Documentation/translations/it_IT/process/howto.rst
++++ b/Documentation/translations/it_IT/process/howto.rst
+@@ -344,7 +344,7 @@ principale 4.x, sarà necessario un test d'integrazione.
+ A tale scopo, esiste un repositorio speciale di test nel quale virtualmente
+ tutti i rami dei sottosistemi vengono inclusi su base quotidiana:
+ 
+-	https://git.kernel.org/?p=linux/kernel/git/next/linux-next.git
++	https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+ 
+ In questo modo, i kernel -next offrono uno sguardo riassuntivo su quello che
+ ci si aspetterà essere nel kernel principale nel successivo periodo
+@@ -389,12 +389,12 @@ sviluppatori del kernel partecipano alla lista di discussione Linux Kernel.
+ I dettagli su come iscriversi e disiscriversi dalla lista possono essere
+ trovati al sito:
+ 
+-	http://vger.kernel.org/vger-lists.html#linux-kernel
++	https://subspace.kernel.org/subscribing.html
+ 
+ Ci sono diversi archivi della lista di discussione. Usate un qualsiasi motore
+ di ricerca per trovarli. Per esempio:
+ 
+-	https://lore.kernel.org/lkml/
++	https://lore.kernel.org/linux-kernel/
+ 
+ É caldamente consigliata una ricerca in questi archivi sul tema che volete
+ sollevare, prima di pubblicarlo sulla lista. Molte cose sono già state
+@@ -407,13 +407,13 @@ discussione e il loro uso.
+ Molte di queste liste sono gestite su kernel.org. Per informazioni consultate
+ la seguente pagina:
+ 
+-	http://vger.kernel.org/vger-lists.html
++	https://subspace.kernel.org
+ 
+ Per favore ricordatevi della buona educazione quando utilizzate queste liste.
+ Sebbene sia un pò dozzinale, il seguente URL contiene alcune semplici linee
+ guida per interagire con la lista (o con qualsiasi altra lista):
+ 
+-	http://www.albion.com/netiquette/
++	https://subspace.kernel.org/etiquette.html
+ 
+ Se diverse persone rispondo alla vostra mail, la lista dei riceventi (copia
+ conoscenza) potrebbe diventare abbastanza lunga. Non cancellate nessuno dalla
+diff --git a/Documentation/translations/it_IT/process/index.rst b/Documentation/translations/it_IT/process/index.rst
+index c24500f74660..5a5214f5fd72 100644
+--- a/Documentation/translations/it_IT/process/index.rst
++++ b/Documentation/translations/it_IT/process/index.rst
+@@ -99,16 +99,6 @@ degli sviluppatori:
+ 
+    kernel-docs
+ 
+-Ed infine, qui ci sono alcune guide più tecniche che son state messe qua solo
+-perché non si è trovato un posto migliore.
+-
+-.. toctree::
+-   :maxdepth: 1
+-
+-   magic-number
+-   clang-format
+-   ../arch/riscv/patch-acceptance
+-
+ .. only::  subproject and html
+ 
+    Indices
+diff --git a/Documentation/translations/it_IT/process/submit-checklist.rst b/Documentation/translations/it_IT/process/submit-checklist.rst
+index 60ec660702fa..37bb28e8d57e 100644
+--- a/Documentation/translations/it_IT/process/submit-checklist.rst
++++ b/Documentation/translations/it_IT/process/submit-checklist.rst
+@@ -5,8 +5,9 @@
+ 
+ .. _it_submitchecklist:
+ 
++============================================================================
+ Lista delle verifiche da fare prima di inviare una patch per il kernel Linux
+-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++============================================================================
+ 
+ Qui troverete una lista di cose che uno sviluppatore dovrebbe fare per
+ vedere le proprie patch accettate più rapidamente.
+@@ -15,118 +16,126 @@ Tutti questi punti integrano la documentazione fornita riguardo alla
+ sottomissione delle patch, in particolare
+ :ref:`Documentation/translations/it_IT/process/submitting-patches.rst <it_submittingpatches>`.
+ 
++Revisiona il tuo codice
++=======================
++
+ 1) Se state usando delle funzionalità del kernel allora includete (#include)
+    i file che le dichiarano/definiscono.  Non dipendente dal fatto che un file
+    d'intestazione include anche quelli usati da voi.
+ 
+-2) Compilazione pulita:
+-
+-  a) con le opzioni ``CONFIG`` negli stati ``=y``, ``=m`` e ``=n``. Nessun
+-     avviso/errore di ``gcc`` e nessun avviso/errore dal linker.
+-
+-  b) con ``allnoconfig``, ``allmodconfig``
+-
+-  c) quando si usa ``O=builddir``
+-
+-  d) Qualsiasi modifica in Documentation/ deve compilare con successo senza
+-     avvisi o errori. Usare ``make htmldocs`` o ``make pdfdocs`` per verificare
+-     e correggere i problemi
+-
+-3) Compilare per diverse architetture di processore usando strumenti per
+-   la cross-compilazione o altri.
++2) Controllate lo stile del codice della vostra patch secondo le direttive
++   scritte in :ref:`Documentation/translations/it_IT/process/coding-style.rst <it_codingstyle>`.
+ 
+-4) Una buona architettura per la verifica della cross-compilazione è la ppc64
+-   perché tende ad usare ``unsigned long`` per le quantità a 64-bit.
++3) Tutte le barriere di sincronizzazione {per esempio, ``barrier()``,
++   ``rmb()``, ``wmb()``} devono essere accompagnate da un commento nei
++   sorgenti che ne spieghi la logica: cosa fanno e perché.
+ 
+-5) Controllate lo stile del codice della vostra patch secondo le direttive
+-   scritte in :ref:`Documentation/translations/it_IT/process/coding-style.rst <it_codingstyle>`.
+-   Prima dell'invio della patch, usate il verificatore di stile
+-   (``script/checkpatch.pl``) per scovare le violazioni più semplici.
+-   Dovreste essere in grado di giustificare tutte le violazioni rimanenti nella
+-   vostra patch.
++Revisionate i cambiamenti a Kconfig
++===================================
+ 
+-6) Le opzioni ``CONFIG``, nuove o modificate, non scombussolano il menu
++1) Le opzioni ``CONFIG``, nuove o modificate, non scombussolano il menu
+    di configurazione e sono preimpostate come disabilitate a meno che non
+    soddisfino i criteri descritti in ``Documentation/kbuild/kconfig-language.rst``
+    alla punto "Voci di menu: valori predefiniti".
+ 
+-7) Tutte le nuove opzioni ``Kconfig`` hanno un messaggio di aiuto.
++2) Tutte le nuove opzioni ``Kconfig`` hanno un messaggio di aiuto.
+ 
+-8) La patch è stata accuratamente revisionata rispetto alle più importanti
++3) La patch è stata accuratamente revisionata rispetto alle più importanti
+    configurazioni ``Kconfig``.  Questo è molto difficile da fare
+    correttamente - un buono lavoro di testa sarà utile.
+ 
+-9) Verificare con sparse.
++Fornite documentazione
++======================
+ 
+-10) Usare ``make checkstack`` e correggere tutti i problemi rilevati.
++1) Includete :ref:`kernel-doc <kernel_doc>` per documentare API globali del
++   kernel.
+ 
+-    .. note::
++2) Tutti i nuovi elementi in ``/proc`` sono documentati in ``Documentation/``.
+ 
+-       ``checkstack`` non evidenzia esplicitamente i problemi, ma una funzione
+-       che usa più di 512 byte sullo stack è una buona candidata per una
+-       correzione.
++3) Tutti i nuovi parametri d'avvio del kernel sono documentati in
++    ``Documentation/admin-guide/kernel-parameters.rst``.
+ 
+-11) Includete commenti :ref:`kernel-doc <kernel_doc>` per documentare API
+-    globali del kernel.  Usate ``make htmldocs`` o ``make pdfdocs`` per
+-    verificare i commenti :ref:`kernel-doc <kernel_doc>` ed eventualmente
+-    correggerli.
++4) Tutti i nuovi parametri dei moduli sono documentati con ``MODULE_PARM_DESC()``.
+ 
+-12) La patch è stata verificata con le seguenti opzioni abilitate
+-    contemporaneamente: ``CONFIG_PREEMPT``, ``CONFIG_DEBUG_PREEMPT``,
+-    ``CONFIG_DEBUG_SLAB``, ``CONFIG_DEBUG_PAGEALLOC``, ``CONFIG_DEBUG_MUTEXES``,
+-    ``CONFIG_DEBUG_SPINLOCK``, ``CONFIG_DEBUG_ATOMIC_SLEEP``,
+-    ``CONFIG_PROVE_RCU`` e ``CONFIG_DEBUG_OBJECTS_RCU_HEAD``.
++5) Tutte le nuove interfacce verso lo spazio utente sono documentate in
++    ``Documentation/ABI/``.  Leggete ``Documentation/ABI/README`` per maggiori
++    informazioni.  Le patch che modificano le interfacce utente dovrebbero
++    essere inviate in copia anche a linux-api@vger.kernel.org.
+ 
+-13) La patch è stata compilata e verificata in esecuzione con, e senza,
+-    le opzioni ``CONFIG_SMP`` e ``CONFIG_PREEMPT``.
++6) Se la patch aggiunge nuove chiamate ioctl, allora aggiornate
++    ``Documentation/userspace-api/ioctl/ioctl-number.rst``.
+ 
+-14) Se la patch ha effetti sull'IO dei dischi, eccetera: allora dev'essere
+-    verificata con, e senza, l'opzione ``CONFIG_LBDAF``.
++Verificate il vostro codice con gli strumenti
++=============================================
+ 
+-15) Tutti i percorsi del codice sono stati verificati con tutte le funzionalità
+-    di lockdep abilitate.
++1) Prima dell'invio della patch, usate il verificatore di stile
++   (``script/checkpatch.pl``) per scovare le violazioni più semplici.
++   Dovreste essere in grado di giustificare tutte le violazioni rimanenti nella
++   vostra patch.
+ 
+-16) Tutti i nuovi elementi in ``/proc`` sono documentati in ``Documentation/``.
++2) Verificare il codice con sparse.
+ 
+-17) Tutti i nuovi parametri d'avvio del kernel sono documentati in
+-    ``Documentation/admin-guide/kernel-parameters.rst``.
+ 
+-18) Tutti i nuovi parametri dei moduli sono documentati con ``MODULE_PARM_DESC()``.
++3) Usare ``make checkstack`` e correggere tutti i problemi rilevati. Da notare
++   che ``checkstack`` non evidenzia esplicitamente i problemi, ma una funzione
++   che usa più di 512 byte sullo stack è una buona candidata per una correzione.
+ 
+-19) Tutte le nuove interfacce verso lo spazio utente sono documentate in
+-    ``Documentation/ABI/``.  Leggete ``Documentation/ABI/README`` per maggiori
+-    informazioni.  Le patch che modificano le interfacce utente dovrebbero
+-    essere inviate in copia anche a linux-api@vger.kernel.org.
++Compilare il codice
++===================
++
++1) Compilazione pulita:
++
++  a) con le opzioni ``CONFIG`` negli stati ``=y``, ``=m`` e ``=n``. Nessun
++     avviso/errore di ``gcc`` e nessun avviso/errore dal linker.
+ 
+-20) La patch è stata verificata con l'iniezione di fallimenti in slab e
+-    nell'allocazione di pagine.  Vedere ``Documentation/dev-tools/fault-injection/``.
++  b) con ``allnoconfig``, ``allmodconfig``
++
++  c) quando si usa ``O=builddir``
+ 
+-    Se il nuovo codice è corposo, potrebbe essere opportuno aggiungere
+-    l'iniezione di fallimenti specifici per il sottosistema.
++  d) Qualsiasi modifica in Documentation/ deve compilare con successo senza
++     avvisi o errori. Usare ``make htmldocs`` o ``make pdfdocs`` per verificare
++     e correggere i problemi
+ 
+-21) Il nuovo codice è stato compilato con ``gcc -W`` (usate
++2) Compilare per diverse architetture di processore usando strumenti per la
++   cross-compilazione o altri. Una buona architettura per la verifica della
++   cross-compilazione è la ppc64 perché tende ad usare ``unsigned long`` per le
++   quantità a 64-bit.
++
++3) Il nuovo codice è stato compilato con ``gcc -W`` (usate
+     ``make KCFLAGS=-W``).  Questo genererà molti avvisi, ma è ottimo
+     per scovare bachi come  "warning: comparison between signed and unsigned".
+ 
+-22) La patch è stata verificata dopo essere stata inclusa nella serie di patch
+-    -mm; questo al fine di assicurarsi che continui a funzionare assieme a
+-    tutte le altre patch in coda e i vari cambiamenti nei sottosistemi VM, VFS
+-    e altri.
++4) Se il codice che avete modificato dipende o usa una qualsiasi interfaccia o
++   funzionalità del kernel che è associata a uno dei seguenti simboli
++   ``Kconfig``, allora verificate che il kernel compili con diverse
++   configurazioni dove i simboli sono disabilitati e/o ``=m`` (se c'è la
++   possibilità) [non tutti contemporaneamente, solo diverse combinazioni
++   casuali]:
+ 
+-23) Tutte le barriere di sincronizzazione {per esempio, ``barrier()``,
+-    ``rmb()``, ``wmb()``} devono essere accompagnate da un commento nei
+-    sorgenti che ne spieghi la logica: cosa fanno e perché.
++   ``CONFIG_SMP``, ``CONFIG_SYSFS``, ``CONFIG_PROC_FS``, ``CONFIG_INPUT``,
++   ``CONFIG_PCI``, ``CONFIG_BLOCK``, ``CONFIG_PM``, ``CONFIG_MAGIC_SYSRQ``,
++   ``CONFIG_NET``, ``CONFIG_INET=n`` (ma l'ultimo con ``CONFIG_NET=y``).
+ 
+-24) Se la patch aggiunge nuove chiamate ioctl, allora aggiornate
+-    ``Documentation/userspace-api/ioctl/ioctl-number.rst``.
++Verificate il vostro codice
++===========================
++
++1) La patch è stata verificata con le seguenti opzioni abilitate
++   contemporaneamente: ``CONFIG_PREEMPT``, ``CONFIG_DEBUG_PREEMPT``,
++   ``CONFIG_DEBUG_SLAB``, ``CONFIG_DEBUG_PAGEALLOC``, ``CONFIG_DEBUG_MUTEXES``,
++   ``CONFIG_DEBUG_SPINLOCK``, ``CONFIG_DEBUG_ATOMIC_SLEEP``,
++   ``CONFIG_PROVE_RCU`` e ``CONFIG_DEBUG_OBJECTS_RCU_HEAD``.
++
++2) La patch è stata compilata e verificata in esecuzione con, e senza,
++   le opzioni ``CONFIG_SMP`` e ``CONFIG_PREEMPT``.
++
++3) Tutti i percorsi del codice sono stati verificati con tutte le funzionalità
++   di lockdep abilitate.
+ 
+-25) Se il codice che avete modificato dipende o usa una qualsiasi interfaccia o
+-    funzionalità del kernel che è associata a uno dei seguenti simboli
+-    ``Kconfig``, allora verificate che il kernel compili con diverse
+-    configurazioni dove i simboli sono disabilitati e/o ``=m`` (se c'è la
+-    possibilità) [non tutti contemporaneamente, solo diverse combinazioni
+-    casuali]:
++4) La patch è stata verificata con l'iniezione di fallimenti in slab e
++   nell'allocazione di pagine. Vedere ``Documentation/dev-tools/fault-injection/``.
++   Se il nuovo codice è corposo, potrebbe essere opportuno aggiungere
++   l'iniezione di fallimenti specifici per il sottosistema.
+ 
+-    ``CONFIG_SMP``, ``CONFIG_SYSFS``, ``CONFIG_PROC_FS``, ``CONFIG_INPUT``,
+-    ``CONFIG_PCI``, ``CONFIG_BLOCK``, ``CONFIG_PM``, ``CONFIG_MAGIC_SYSRQ``,
+-    ``CONFIG_NET``, ``CONFIG_INET=n`` (ma l'ultimo con ``CONFIG_NET=y``).
++5) La patch è stata verificata sul tag più recente di linux-next per assicurarsi
++   che funzioni assieme a tutte le altre patch in coda, assieme ai vari
++   cambiamenti nei sottosistemi VM, VFS e altri.
+diff --git a/Documentation/translations/it_IT/process/submitting-patches.rst b/Documentation/translations/it_IT/process/submitting-patches.rst
+index a7252e73937a..1cc4808139ce 100644
+--- a/Documentation/translations/it_IT/process/submitting-patches.rst
++++ b/Documentation/translations/it_IT/process/submitting-patches.rst
+@@ -137,10 +137,10 @@ questione.
+ 
+ Quando volete fare riferimento ad una lista di discussione, preferite il
+ servizio d'archiviazione lore.kernel.org. Per create un collegamento URL è
+-sufficiente usare il campo ``Message-Id``, presente nell'intestazione del
++sufficiente usare il campo ``Message-ID``, presente nell'intestazione del
+ messaggio, senza parentesi angolari. Per esempio::
+ 
+-     Link: https://lore.kernel.org/r/30th.anniversary.repost@klaava.Helsinki.FI/
++     Link: https://lore.kernel.org/30th.anniversary.repost@klaava.Helsinki.FI
+ 
+ Prima d'inviare il messaggio ricordatevi di verificare che il collegamento così
+ creato funzioni e che indirizzi verso il messaggio desiderato.
+@@ -275,11 +275,9 @@ patch riceverà molta più attenzione. Tuttavia, per favore, non spammate le lis
+ di discussione che non sono interessate al vostro lavoro.
+ 
+ Molte delle liste di discussione relative al kernel vengono ospitate su
+-vger.kernel.org; potete trovare un loro elenco alla pagina
+-http://vger.kernel.org/vger-lists.html.  Tuttavia, ci sono altre liste di
+-discussione ospitate altrove.
+-
+-Non inviate più di 15 patch alla volta sulle liste di discussione vger!!!
++kernel.org; potete trovare un loro elenco alla pagina
++https://subspace.kernel.org. Tuttavia, ci sono altre liste di discussione
++ospitate altrove.
+ 
+ L'ultimo giudizio sull'integrazione delle modifiche accettate spetta a
+ Linux Torvalds.  Il suo indirizzo e-mail è <torvalds@linux-foundation.org>.
+@@ -891,6 +889,14 @@ Assicuratevi che il commit si basi su sorgenti ufficiali del
+ manutentore/mainline e non su sorgenti interni, accessibile solo a voi,
+ altrimenti sarebbe inutile.
+ 
++Strumenti
++---------
++
++Molti degli aspetti più tecnici di questo processo possono essere automatizzati
++usando b4, la cui documentazione è disponibile all'indirizzo
++<https://b4.docs.kernel.org/en/latest/>. Può aiutare a tracciare la dipendenze,
++eseguire checkpatch e con la formattazione e l'invio di messaggi di posta.
++
+ Riferimenti
+ -----------
+ 
+@@ -913,9 +919,6 @@ Greg Kroah-Hartman, "Come scocciare un manutentore di un sottosistema"
+ 
+   <http://www.kroah.com/log/linux/maintainer-06.html>
+ 
+-No!!!! Basta gigantesche bombe patch alle persone sulla lista linux-kernel@vger.kernel.org!
+-  <https://lore.kernel.org/r/20050711.125305.08322243.davem@davemloft.net>
+-
+ Kernel Documentation/translations/it_IT/process/coding-style.rst.
+ 
+ E-mail di Linus Torvalds sul formato canonico di una patch:
+diff --git a/Documentation/translations/it_IT/staging/index.rst b/Documentation/translations/it_IT/staging/index.rst
+new file mode 100644
+index 000000000000..6b56707f3a3a
+--- /dev/null
++++ b/Documentation/translations/it_IT/staging/index.rst
+@@ -0,0 +1,13 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++.. include:: ../disclaimer-ita.rst
++
++:Original: :ref:`Documentation/staging/index.rst <process_index>`
++
++Documenti in ordine sparso
++==========================
++
++.. toctree::
++   :maxdepth: 2
++
++   magic-number
+diff --git a/Documentation/translations/it_IT/process/magic-number.rst b/Documentation/translations/it_IT/staging/magic-number.rst
+similarity index 100%
+rename from Documentation/translations/it_IT/process/magic-number.rst
+rename to Documentation/translations/it_IT/staging/magic-number.rst
+-- 
+2.39.5
+
 
