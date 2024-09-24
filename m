@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-336719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCBF7983FC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:58:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 759B1983FCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:00:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CA651F23C12
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:58:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 307E828360D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:00:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6901149C4A;
-	Tue, 24 Sep 2024 07:58:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B35149E17;
+	Tue, 24 Sep 2024 08:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i2etuIi9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fmj8fq4g"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025931B85E7;
-	Tue, 24 Sep 2024 07:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA32B26ACD;
+	Tue, 24 Sep 2024 08:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727164715; cv=none; b=LYh771e/K7o60lgRTtNFfs1g4bi8dmIMKzhjocJevyYbW1yQxQShnx40ISbuw2wURRcJhrI+8QNTUAdZMCUECVaUntO1mlxq88FvTXygYoCCPrFWOHVktE/N9g38L8YrpLhjvcH3UdjBkrXGJS8ppGalZbhSi8SGwXNAmGcviSY=
+	t=1727164822; cv=none; b=VZZx7xnPJszlt8iNilHIeI0y56JruekrOAsHk3PmaKzuiE2wuJuYTMf/JuguvCp5tjQ0SB6+ARvveZ7XHT3iLPlOSOolyjFtrE/k46TmFUKjnW/pA+z/gkUjsceoh6R2gIhhAKOs9EBKjnYLMWj3qpBwxo2HZVVuj7saA8MYaDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727164715; c=relaxed/simple;
-	bh=YZweGbLvQ86kElEW+MFo0mV9Gf/M/IeYsg6iu18HBVY=;
+	s=arc-20240116; t=1727164822; c=relaxed/simple;
+	bh=e5ow4XVnYNxwjbMxir0xB1ZMgfGmjaUgrP9iBzdyjes=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ByDBahtpseO92jy74rk5jZ5KY04YxjjfTZWd4ZnFC8vezyPqTZJugs/Gu4NBuI6L8ESpppCkKYw/1Cof6S48UoZUZJhc86KrevF1nNJuMDF1fKXkebFU9CCmzL/Ta866clGJ4a36K6DbRYM3u4lAc38uW/c718n3gg2YmIrZU+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i2etuIi9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD3B4C4CEC5;
-	Tue, 24 Sep 2024 07:58:30 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=aCS5Ridsw8uhgsERDI+QPqjofQ8hOOoN+/pEtlw7z2ZsNkkcfEzSE4Et8EYqytqvsBd9b3fQwzy7oPh/nyiCXY2gX3Halo/LytMLK5N3W/gSwz7uDFYCbicvLejDNByo0rZQJRxtzgpU5vaQpg38jDADQ4b4x/MAUrSvGB4RGuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fmj8fq4g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0D8CC4CEC4;
+	Tue, 24 Sep 2024 08:00:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727164714;
-	bh=YZweGbLvQ86kElEW+MFo0mV9Gf/M/IeYsg6iu18HBVY=;
+	s=k20201202; t=1727164821;
+	bh=e5ow4XVnYNxwjbMxir0xB1ZMgfGmjaUgrP9iBzdyjes=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=i2etuIi9XYJUvraJKfHPkd4pTh8ep3ha+udKLQVadxzGzOvIiW2Hm9MqXlGCcxcRI
-	 Yf2YQ1i+WH+qZYHSG7NMQuKzyFp9ty32j58SsV02BpwruyPjZvWhR3KBrAvwPWOSNv
-	 XiFiAk314UQuy2qA+yDq9EamGuWEd0n14PU/8Z9Ob83E1amJxwsj/3BlH5W7fZsraz
-	 ATi1C2IaJgkJwH3Rur+iOQZInSDW8cZLrIStZfGfBermlmqiG3jSuKeeRdT2FVIPt9
-	 dPfFxwTeoKZpubdBSnUu/VNE4SmLsG6fm5Ie2j9lLtavnb6+J1eze3EO/yWXsC/Hdl
-	 2wE9A9/oahkFg==
-Message-ID: <e5954cb6-7889-40c4-82b0-6df95d09d54a@kernel.org>
-Date: Tue, 24 Sep 2024 09:58:28 +0200
+	b=Fmj8fq4gdiRwRWd+4aN2uM3smxmE+033f3tsJdjopGqGGi38YhT1Pyl4hhyzc+ooh
+	 czRkJZrE/DaYoWOCXrSFJoYXtmvrz1aEdRFoItuQmRcJFJK6XkUY2T32zDWfQ+bh5e
+	 +zMdS4t3vvpcqy+WC5ReueFfU0SVnUgB1fGEOcm3IqBCV2lJyFT9+tk1GYbtDMZGNx
+	 KZ6J2oQUP978nTdP5LiV6H/HYE7qulKBN6SWyN8iWzyg7tRGipWbAnGP/59wmvEzFB
+	 tiHzy1PlBQbguL5nqA5bfeiGcZ2VnwclpnHMiu1oYxn25qOsBsYSUbCte4Nfcl74O5
+	 fS+m3RsccBz7A==
+Message-ID: <bc646127-04d6-4e79-b294-643d7879ee1b@kernel.org>
+Date: Tue, 24 Sep 2024 10:00:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,20 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: i2c: Add RTL9300 I2C controller
-To: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-Cc: "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "tsbogend@alpha.franken.de" <tsbogend@alpha.franken.de>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
-References: <20240920000930.1828086-1-chris.packham@alliedtelesis.co.nz>
- <20240920000930.1828086-2-chris.packham@alliedtelesis.co.nz>
- <6hlfdtbdf7yhkaoiuglhk4gksgzpahewzjf4cseedon7x2tx3s@m6c23rqxwkyu>
- <ab5c995c-b7b6-4435-9f6e-8b0e37add2e9@alliedtelesis.co.nz>
+Subject: Re: [PATCH 3/3] power: supply: initial support for TWL6030/32
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: tony@atomide.com, Sebastian Reichel <sre@kernel.org>,
+ linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+ Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org
+References: <20240918084132.928295-1-andreas@kemnade.info>
+ <20240918084132.928295-4-andreas@kemnade.info>
+ <89a7e86b-8866-4148-9f9e-13ca84c1aede@kernel.org>
+ <20240923182948.571eaa59@akair>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,125 +105,77 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <ab5c995c-b7b6-4435-9f6e-8b0e37add2e9@alliedtelesis.co.nz>
+In-Reply-To: <20240923182948.571eaa59@akair>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 23/09/2024 23:09, Chris Packham wrote:
-> Hi Krzyzstof,
+On 23/09/2024 18:29, Andreas Kemnade wrote:
+> Am Wed, 18 Sep 2024 12:43:01 +0200
+> schrieb Krzysztof Kozlowski <krzk@kernel.org>:
 > 
-> On 23/09/24 08:25, Krzysztof Kozlowski wrote:
->> On Fri, Sep 20, 2024 at 12:09:28PM +1200, Chris Packham wrote:
->>> Add dtschema for the I2C controller on the RTL9300 SoC. The I2C
->>> controllers on this SoC are part of the "switch" block which is
->>> represented here as a syscon node. The SCL pins are dependent on the I2C
->>> controller (GPIO8 for the first controller, GPIO 17 for the second). The
->>> SDA pins can be assigned to either one of the I2C controllers (but not
->>> both).
+>> On 18/09/2024 10:41, Andreas Kemnade wrote:
+>>> Add a driver for the charger in the TWL6030/32. For now it does not
+>>> report much in sysfs but parameters are set up for USB, charging is
+>>> enabled with the specified parameters. It stops charging when full
+>>> and also restarts charging.
+>>> This prevents ending up in a system setup where you run out of
+>>> battery although a charger is plugged in after precharge completed.
 >>>
->>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+>>> Battery voltage behavior was checked via the GPADC.
+>>>   
+>>
+>> Few stylistic comments below.
+>>
+>>> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 >>> ---
+>>>  drivers/power/supply/Kconfig           |  10 +
+>>>  drivers/power/supply/Makefile          |   1 +
+>>>  drivers/power/supply/twl6030_charger.c | 566
+>>> +++++++++++++++++++++++++ 3 files changed, 577 insertions(+)
+>>>  create mode 100644 drivers/power/supply/twl6030_charger.c
 >>>
->>> Notes:
->>>      Changes in v2:
->>>      - Use reg property for controller registers
->>>      - Remove global-control-offset (will be hard coded in driver)
->>>      - Integrated the multiplexing function. Child nodes now represent the
->>>        available SDA lines
->>>
->>>   .../bindings/i2c/realtek,rtl9300-i2c.yaml     | 82 +++++++++++++++++++
->>>   MAINTAINERS                                   |  6 ++
->>>   2 files changed, 88 insertions(+)
->>>   create mode 100644 Documentation/devicetree/bindings/i2c/realtek,rtl9300-i2c.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/i2c/realtek,rtl9300-i2c.yaml b/Documentation/devicetree/bindings/i2c/realtek,rtl9300-i2c.yaml
->>> new file mode 100644
->>> index 000000000000..e8c37239b299
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/i2c/realtek,rtl9300-i2c.yaml
->>> @@ -0,0 +1,82 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://scanmail.trustwave.com/?c=20988&d=2_3w5qdKawcvw7Bv6K3mA_v4JF1rlxddN3AhCekStg&u=http%3a%2f%2fdevicetree%2eorg%2fschemas%2fi2c%2frealtek%2crtl9300-i2c%2eyaml%23
->>> +$schema: http://scanmail.trustwave.com/?c=20988&d=2_3w5qdKawcvw7Bv6K3mA_v4JF1rlxddNyJxDbgXsw&u=http%3a%2f%2fdevicetree%2eorg%2fmeta-schemas%2fcore%2eyaml%23
->>> +
->>> +title: Realtek RTL I2C Controller
->>> +
->>> +maintainers:
->>> +  - Chris Packham <chris.packham@alliedtelesis.co.nz>
->>> +
->>> +description:
->>> +  The RTL9300 SoC has two I2C controllers. Each of these has an SCL line (which
->>> +  if not-used for SCL can be a GPIO). There are 8 common SDA lines that can be
->>> +  assigned to either I2C controller.
->>> +
->>> +properties:
->>> +  compatible:
->>> +    const: realtek,rtl9300-i2c
->>> +
->>> +  reg:
->>> +    description: Register offset and size this I2C controller.
->>> +
->>> +patternProperties:
->>> +  '^i2c@[0-7]$':
->>> +    $ref: /schemas/i2c/i2c-controller.yaml
->>> +    unevaluatedProperties: false
->>> +
->>> +    properties:
->>> +      reg:
->>> +        description: The SDA pin associated with the I2C bus.
->>> +        maxItems: 1
->>> +
->>> +    required:
->>> +      - reg
->>> +
->>> +unevaluatedProperties: false
->> This goes after "required:" block.
-> Ack.
->>> +
->>> +required:
->>> +  - compatible
->>> +  - reg
->>> +
->>> +examples:
->>> +  - |
->>> +    switch@1b000000 {
->>> +      compatible = "realtek,rtl9302c-switch", "syscon", "simple-mfd";
->> Drop... or put entire example in the parent device node.
-> 
-> OK I'll drop it.
+>>> diff --git a/drivers/power/supply/Kconfig
+>>> b/drivers/power/supply/Kconfig index bcfa63fb9f1e2..9f2eef6787f7a
+>>> 100644 --- a/drivers/power/supply/Kconfig
+>>> +++ b/drivers/power/supply/Kconfig
+>>> @@ -493,6 +493,16 @@ config CHARGER_TWL4030
+>>>  	help
+>>>  	  Say Y here to enable support for TWL4030 Battery Charge
+>>> Interface. 
+>>> +config CHARGER_TWL6030
+>>> +	tristate "OMAP TWL6030 BCI charger driver"
+>>> +	depends on IIO && TWL4030_CORE  
+>>
+>> || COMPILE_TEST, at least for TWL part
+>> (but please test first)
+>>
+> ERROR: modpost: "twl_i2c_write"
+> [drivers/power/supply/twl6030_charger.ko] undefined! ERROR: modpost:
+> "twl_i2c_read" [drivers/power/supply/twl6030_charger.ko] undefined!
+
+ok
+
 > 
 >>
->>> +      reg = <0x1b000000 0x10000>;
->>> +      #address-cells = <1>;
->>> +      #size-cells = <1>;
+>>> +	{ }
+>>> +};
+>>> +MODULE_DEVICE_TABLE(of, twl_charger_of_match);
 >>> +
->>> +      i2c@36c {
->>> +        compatible = "realtek,rtl9300-i2c";
->> Parent is 9302c, but this is 9300?
-> 
-> The RTL9302C is one of a series of switch chips with integrated CPUs. 
-> There is also the RTL9301, RTL9302B and RTL9303 (there my be others but 
-> those are the 4 I know about). The differences are all around the switch 
-> port/SERDES. The documentation uses "RTL9300" when referring to things 
-> common across the family. There's even an app note titled 
-> "RTL9300_I2C_Application_Note_V1.1(83)". So I'd really like to use 
-> "rtl9300" when talking about the SoC peripherals but use the specific 
-> chip compatible when talking about the Ethernet switch or the overall 
-> chip. I'm also tempted to add the other variants to my other in-flight 
-> patch series.
+>>> +static struct platform_driver twl6030_charger_driver = {
+>>> +	.probe = twl6030_charger_probe,
+>>> +	.driver	= {
+>>> +		.name	= "twl6030_charger",
+>>> +		.of_match_table =
+>>> of_match_ptr(twl_charger_of_match),  
+>>
+>> I propose to drop of_match_ptr and maybe_unused, so this won't be
+>> restricted only to OF
+>>
+> so that more things get compile-tested without OF? But I see no reason
+> why .probe would be optimized away (and with it a lot more things) by
+> the compiler.
 
-Using family variant alone is in general not accepted. You need SoC
-specific compatible in the front.
-
-> 
-> "realtek,rtl9300-i2c" also happens to be what openwrt is using, but I'm 
-> not sure that that helps my argument as the binding is now quite different.
-
-Does not matter. They could be using
-"realtek,we-like-to-use-whatever-we-invented-soc", but that does not
-mean we should accept it.
+No, it is not probe related by ACPI PRP0001
 
 Best regards,
 Krzysztof
