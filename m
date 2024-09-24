@@ -1,579 +1,163 @@
-Return-Path: <linux-kernel+bounces-336663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49D36983DB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:17:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1337D983DB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:17:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C9751C2165A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:17:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1CA528188E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:17:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D48145B35;
-	Tue, 24 Sep 2024 07:17:23 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C562D145B16;
+	Tue, 24 Sep 2024 07:17:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GisfYX3B"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C5C145B0F
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2F3143C7E
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727162243; cv=none; b=V1qXUHZDEMY64ZNyDW66CQ5H96BAPeoOxDtLAVTMwHS63Wpgodn5rzA3wdpeOAd7IXje8xcWFrJWHmTE0hOCAZ570Z4nfmZNf9QXkcL/fS3f4CiwIuLD1nfgjtPr0sqjI0zP0T179akvApwdnoCRnpmkWQ8iadNMkFUpvOFqb9g=
+	t=1727162254; cv=none; b=i73m4avykJFW0LcOTrOi4WL/WPjWbJj6dXbEl2NFU1hIHqdSV0Q2L9LwUP8sjDPWY2HHD1JdOjuceCxf0UV54//PGMWjRjZLLfZCzsxVXQPoE60AuTWHEqIShmG2dKEb4MmVP7qKAh/zoFUzONxbUjpJN70JownrX4ve0OSxFcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727162243; c=relaxed/simple;
-	bh=Q058BwyCvsRI9k0jDGTVS1Qilawa5eiQ0Y4l6SKLrdg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n54NHrmQtTWxSp4nIoEa8/x4z/NKIUljKObvd/myYuDJUXaOsy5SqTk7UYdQIqa5gybp/VzhYpHsXC23Nbxuw3ov0PfmZ6sZESH97CNorZnxP4Fr1jBxOzXQwgHTf5orvsaIokALKgRmkMsaTEVvL3hS4aOgiduSiL6XkmljlWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sszn3-0007ck-FS; Tue, 24 Sep 2024 09:16:53 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sszn1-0018km-RF; Tue, 24 Sep 2024 09:16:51 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sszn1-009Mdf-2N;
-	Tue, 24 Sep 2024 09:16:51 +0200
-Date: Tue, 24 Sep 2024 09:16:51 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Shawn Guo <shawnguo@kernel.org>, Petr Benes <petr.benes@ysoft.com>,
-	devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
-	Michael Walle <mwalle@kernel.org>, imx@lists.linux.dev,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Mathieu Othacehe <m.othacehe@gmail.com>,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	linux-kernel@vger.kernel.org,
-	Hiago De Franco <hiago.franco@toradex.com>,
-	Herburger <gregor.herburger@ew.tq-group.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Joao Paulo Goncalves <joao.goncalves@toradex.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 2/4] arm64: dts: imx: Add imx8mp-iota2-lumpy board
-Message-ID: <20240924071651.e2a3uxhzp3h5f722@pengutronix.de>
-References: <20240923151417.1665431-1-michal.vokac@ysoft.com>
- <20240923151417.1665431-3-michal.vokac@ysoft.com>
+	s=arc-20240116; t=1727162254; c=relaxed/simple;
+	bh=bRAvfOb88mqhRhXnBxTTbylscfuGQFLmSZLP8MqeiaE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=RQOMYmNjUKSJgTPjbP0Djtcq5Dgv9371GBl4+6mS3HvcjJGt8h2ORS8Tzzu15iPcxZ42muhON29p/PNiRKrSP57j4SDY557K9KgYtwf/w0aSVNbV1ItkKukkLoX7n1hVaEsuz3PWMFavpgek7SggwxSSMIxvFPp40k8UwXMZ/OE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GisfYX3B; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42cb5b3c57eso51717835e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 00:17:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727162249; x=1727767049; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=je3cqWSYer77yEubCNKAdoGpIIKvbkuX5RJOi++fMR0=;
+        b=GisfYX3BAEnfQwJQ+ZiwwPiGs5Koscx1RhlwSRwFjC6cKWNgXJ909WHiyCG+1I/wPH
+         AKe0A65/nJSniKEoA+tpMjlCetTb1+aLPK5UDmh6MfHZO2FDSWt2snYHW8EM7YHpjySc
+         wq5nztGFSOBO2pxIf3+Cbl2pp721oVJpd2owkhN48qKjltvJwps1Ds+96phqRwrPiDtH
+         jHecqp3XbjapzzyiFr7UigCF7UESlxHIiEkh8m2JhnTDN7NLs4ZxSaa3lZKpqYtRQS1o
+         pyje2/iLL4kt/nTyQOIpOB73iKp737Y++0hXsnyTdJ1jay1H/ifEIAvfSEHX45TGywc1
+         I22g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727162249; x=1727767049;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=je3cqWSYer77yEubCNKAdoGpIIKvbkuX5RJOi++fMR0=;
+        b=RdqsR4dxlOZ+fsFC56gGeyed8QBuZoHZBE792Rrzil/n8kj40apifdCaDNl9D5eFyf
+         QV+QdaASq1DcuDt5qARMukTINCd0L1hfKW8nt82ChCvRDcISyldhlw8lOoRYtMuGedeB
+         F1BSQbgRHuE+TcaQRtWdevfssZzR/ixJlymZOcMCt/rJCSJQkK8ivghkCK3sZsBvi8eO
+         MTBLBJZAJWabpWoUsSD+phtHKBk56D75OOd5xjzhqiC7E7GMpao7OINLit2ZQdT75VaU
+         UrQLbKCTxghxAN++ZANDQ+ywAQ0Udrkw0ysZn9UzgQi3G7/PSCcDpQem95uYRxUZk/eW
+         W2LA==
+X-Forwarded-Encrypted: i=1; AJvYcCVLubHCVaOeT2Hk/mEucyGKX2QfdoAJEN8JrBd1FWgupApJTYw4SCzL6qPFopWbuVbzP27/kY73ywuUT54=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNHt0E0jVOQ+N6dM1QDSJDOyQSJ5t79gmFnbf0ygmA/ylKCZvo
+	vqdw0+GRGb5VGe5oGiwskhYE2seQOdztJdEbjRC0XPj63uJAlfoNa8WTljIVNbU=
+X-Google-Smtp-Source: AGHT+IFn3k7mkPSmRC3eeu9UzsnDrRRDgq+BPkVZJpkFWFDCdEc479FolGZTOf6O5SCCYMyFII7RsA==
+X-Received: by 2002:a05:600c:1913:b0:42b:8a35:1acf with SMTP id 5b1f17b1804b1-42e7c19bba1mr106144965e9.25.1727162249062;
+        Tue, 24 Sep 2024 00:17:29 -0700 (PDT)
+Received: from [192.168.0.157] ([79.115.63.20])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e90298f14sm12365895e9.19.2024.09.24.00.17.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Sep 2024 00:17:28 -0700 (PDT)
+Message-ID: <79406f2b-8411-4059-b959-9e543944fb9c@linaro.org>
+Date: Tue, 24 Sep 2024 08:17:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 6/6] mtd: spi-nor: add support for Macronix Octal flash
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+To: Alvin Zhou <alvinzhou.tw@gmail.com>
+Cc: linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, pratyush@kernel.org, mwalle@kernel.org,
+ miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+ broonie@kernel.org, chengminglin@mxic.com.tw, leoyu@mxic.com.tw,
+ AlvinZhou <alvinzhou@mxic.com.tw>, JaimeLiao <jaimeliao@mxic.com.tw>,
+ Bough Chen <haibo.chen@nxp.com>
+References: <20240718034614.484018-1-alvinzhou.tw@gmail.com>
+ <20240718034614.484018-7-alvinzhou.tw@gmail.com>
+ <97134efb-398d-4c21-a915-87a5b4f1b29a@linaro.org>
+ <CAPhrvRR3U9=0DuG_FQ81ZJq+RLe6Bn9YO831Mx2n3NkeV3MCdA@mail.gmail.com>
+ <368cd6fb-cab1-44ad-af46-651d9323bc19@linaro.org>
+ <618e4514-791b-4a73-a1ba-45170a21e453@linaro.org>
+Content-Language: en-US
+In-Reply-To: <618e4514-791b-4a73-a1ba-45170a21e453@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240923151417.1665431-3-michal.vokac@ysoft.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Michael,
 
-thanks for the patch, please see below some notes but nothing crucial.
 
-On 24-09-23, Michal Vokáč wrote:
-> The IOTA2 Lumpy board is based on the i.MX8MPlus EVK.
-> 
-> Basic features are:
-> - 4GB LPDDR4
-> - 64GB eMMC
-> - 2x 1GB Ethernet
-> - USB 3.0 Type-C dual role port, without power delivery
-> - USB 3.0 Type-A host port
-> - RGB LED - PWM driven
-> - speaker - PWM driven
-> - RTC with super capacitor backup
-> 
-> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
-> ---
-> v3:
-> - Dropped pinctrl-names property from &usb_dwc3_1 node.
-> v2:
-> - Dropped unused property from pwm4 node.
-> - Sorted all nodes and properties using dt-format tool from Frank.
-> 
->  arch/arm64/boot/dts/freescale/Makefile        |   1 +
->  .../boot/dts/freescale/imx8mp-iota2-lumpy.dts | 423 ++++++++++++++++++
->  2 files changed, 424 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-> index 9d3df8b218a2..aa26a50b7bb4 100644
-> --- a/arch/arm64/boot/dts/freescale/Makefile
-> +++ b/arch/arm64/boot/dts/freescale/Makefile
-> @@ -171,6 +171,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-dhcom-pdk2.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mp-dhcom-pdk3.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mp-evk.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mp-icore-mx8mp-edimm2.2.dtb
-> +dtb-$(CONFIG_ARCH_MXC) += imx8mp-iota2-lumpy.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mp-msc-sm2s-ep1.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mp-navqp.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-rdk.dtb
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts b/arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts
-> new file mode 100644
-> index 000000000000..120e6b87a000
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts
-> @@ -0,0 +1,423 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright 2023 Y Soft
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "imx8mp.dtsi"
-> +
-> +/ {
-> +	compatible = "ysoft,imx8mp-iota2-lumpy", "fsl,imx8mp";
-> +	model = "Y Soft i.MX8MPlus IOTA2 Lumpy board";
-> +
-> +	beeper {
-> +		compatible = "pwm-beeper";
-> +		pwms = <&pwm4 0 500000 0>;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = &uart2;
-> +	};
-> +
-> +	gpio_keys: gpio-keys {
-> +		compatible = "gpio-keys";
-> +		pinctrl-0 = <&pinctrl_gpio_keys>;
-> +		pinctrl-names = "default";
-> +
-> +		button-reset {
-> +			gpios = <&gpio1 7 GPIO_ACTIVE_LOW>;
-> +			label = "Factory RESET";
-> +			linux,code = <BTN_0>;
-> +		};
-> +	};
-> +
-> +	reg_usb_host: regulator-usb-host {
-> +		compatible = "regulator-fixed";
-> +		enable-active-high;
-> +		gpio = <&gpio1 14 GPIO_ACTIVE_HIGH>;
-> +		pinctrl-0 = <&pinctrl_usb_host_vbus>;
-> +		pinctrl-names = "default";
-> +		regulator-max-microvolt = <5000000>;
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-name = "usb-host";
-> +	};
-> +
-> +	memory@40000000 {
-> +		reg = <0x0 0x40000000 0 0x80000000>,
-> +		      <0x1 0x00000000 0 0x80000000>;
-> +		device_type = "memory";
-> +	};
-> +};
-> +
-> +&A53_0 {
-> +	cpu-supply = <&reg_arm>;
-> +};
-> +
-> +&A53_1 {
-> +	cpu-supply = <&reg_arm>;
-> +};
-> +
-> +&A53_2 {
-> +	cpu-supply = <&reg_arm>;
-> +};
-> +
-> +&A53_3 {
-> +	cpu-supply = <&reg_arm>;
-> +};
-> +
-> +&eqos {
-> +	phy-handle = <&ethphy0>;
-> +	phy-mode = "rgmii-id";
-> +	pinctrl-0 = <&pinctrl_eqos>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +
-> +	mdio {
-> +		compatible = "snps,dwmac-mdio";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		ethphy0: ethernet-phy@0 {
-> +			reg = <0>;
-> +			interrupts = <21 IRQ_TYPE_LEVEL_LOW>;
-> +			interrupt-parent = <&gpio3>;
-> +			micrel,led-mode = <0>;
-> +			pinctrl-0 = <&pinctrl_ethphy0>;
-> +			pinctrl-names = "default";
-> +			reset-assert-us = <1000>;
-> +			reset-deassert-us = <1000>;
-> +			reset-gpios = <&gpio3 22 GPIO_ACTIVE_LOW>;
-> +		};
-> +	};
-> +};
-> +
-> +&fec {
-> +	fsl,magic-packet;
-> +	phy-handle = <&ethphy1>;
-> +	phy-mode = "rgmii-id";
-> +	pinctrl-0 = <&pinctrl_fec>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +
-> +	mdio {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		ethphy1: ethernet-phy@0 {
-> +			reg = <0>;
-> +			interrupts = <19 IRQ_TYPE_LEVEL_LOW>;
-> +			interrupt-parent = <&gpio3>;
-> +			micrel,led-mode = <0>;
-> +			pinctrl-0 = <&pinctrl_ethphy1>;
-> +			pinctrl-names = "default";
-> +			reset-assert-us = <1000>;
-> +			reset-deassert-us = <1000>;
-> +			reset-gpios = <&gpio3 20 GPIO_ACTIVE_LOW>;
-> +		};
-> +	};
-> +};
-> +
-> +&i2c1 {
-> +	clock-frequency = <400000>;
-> +	pinctrl-0 = <&pinctrl_i2c1>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +
-> +	pmic@25 {
-> +		compatible = "nxp,pca9450c";
-> +		reg = <0x25>;
-> +		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
-> +		interrupt-parent = <&gpio1>;
-> +		pinctrl-0 = <&pinctrl_pmic>;
-> +		pinctrl-names = "default";
-> +
-> +		regulators {
-> +			BUCK1 {
-> +				regulator-always-on;
-
-All your PMIC rails are marked as regulator-always-on. I didn't expect
-this from a (battery backed) IOT platform.
-
-> +				regulator-boot-on;
-> +				regulator-max-microvolt = <1000000>;
-> +				regulator-min-microvolt = <720000>;
-> +				regulator-name = "BUCK1";
-> +				regulator-ramp-delay = <3125>;
-> +			};
-> +
-> +			reg_arm: BUCK2 {
-> +				nxp,dvs-run-voltage = <950000>;
-> +				nxp,dvs-standby-voltage = <850000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-max-microvolt = <1025000>;
-> +				regulator-min-microvolt = <720000>;
-> +				regulator-name = "BUCK2";
-> +				regulator-ramp-delay = <3125>;
-> +			};
-> +
-> +			BUCK4 {
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-max-microvolt = <3600000>;
-> +				regulator-min-microvolt = <3000000>;
-> +				regulator-name = "BUCK4";
-> +			};
-> +
-> +			BUCK5 {
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-max-microvolt = <1950000>;
-> +				regulator-min-microvolt = <1650000>;
-> +				regulator-name = "BUCK5";
-> +			};
-> +
-> +			BUCK6 {
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-max-microvolt = <1155000>;
-> +				regulator-min-microvolt = <1045000>;
-> +				regulator-name = "BUCK6";
-> +			};
-> +
-> +			LDO1 {
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-max-microvolt = <1950000>;
-> +				regulator-min-microvolt = <1650000>;
-> +				regulator-name = "LDO1";
-> +			};
-> +
-> +			LDO3 {
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-max-microvolt = <1890000>;
-> +				regulator-min-microvolt = <1710000>;
-> +				regulator-name = "LDO3";
-> +			};
-> +
-> +			LDO4 {
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-max-microvolt = <950000>;
-> +				regulator-min-microvolt = <850000>;
-> +				regulator-name = "LDO4";
-> +			};
-> +
-> +			LDO5 {
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-max-microvolt = <3300000>;
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-name = "LDO5";
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&i2c2 {
-> +	clock-frequency = <400000>;
-> +	pinctrl-0 = <&pinctrl_i2c2>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +
-> +	rtc: rtc@68 {
-> +		compatible = "dallas,ds1341";
-> +		reg = <0x68>;
-> +	};
-> +};
-> +
-> +&iomuxc {
-
-Albeit we do sort the node names alphabetical we put the iomuxc at the
-very end at least for the i.MX platforms. Maybe this is something
-Frank's tool should be aware of in the future :)
-
-> +	pinctrl_eqos: eqosgrp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_ENET_MDC__ENET_QOS_MDC		0x2
-> +			MX8MP_IOMUXC_ENET_MDIO__ENET_QOS_MDIO		0x2
-> +			MX8MP_IOMUXC_ENET_RD0__ENET_QOS_RGMII_RD0	0x90
-> +			MX8MP_IOMUXC_ENET_RD1__ENET_QOS_RGMII_RD1	0x90
-> +			MX8MP_IOMUXC_ENET_RD2__ENET_QOS_RGMII_RD2	0x90
-> +			MX8MP_IOMUXC_ENET_RD3__ENET_QOS_RGMII_RD3	0x90
-> +			MX8MP_IOMUXC_ENET_RX_CTL__ENET_QOS_RGMII_RX_CTL	0x90
-> +			MX8MP_IOMUXC_ENET_RXC__CCM_ENET_QOS_CLOCK_GENERATE_RX_CLK	0x90
-> +			MX8MP_IOMUXC_ENET_TD0__ENET_QOS_RGMII_TD0	0x16
-> +			MX8MP_IOMUXC_ENET_TD1__ENET_QOS_RGMII_TD1	0x16
-> +			MX8MP_IOMUXC_ENET_TD2__ENET_QOS_RGMII_TD2	0x16
-> +			MX8MP_IOMUXC_ENET_TD3__ENET_QOS_RGMII_TD3	0x16
-> +			MX8MP_IOMUXC_ENET_TX_CTL__ENET_QOS_RGMII_TX_CTL	0x16
-> +			MX8MP_IOMUXC_ENET_TXC__CCM_ENET_QOS_CLOCK_GENERATE_TX_CLK	0x16
-> +		>;
-> +	};
-> +
-> +	pinctrl_ethphy0: ethphy0grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_SAI5_RXD0__GPIO3_IO21		0x10
-> +			MX8MP_IOMUXC_SAI5_RXD1__GPIO3_IO22		0x10
-> +		>;
-> +	};
-> +
-> +	pinctrl_ethphy1: ethphy1grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_SAI5_RXFS__GPIO3_IO19		0x10
-> +			MX8MP_IOMUXC_SAI5_RXC__GPIO3_IO20		0x10
-> +		>;
-> +	};
-> +
-> +	pinctrl_fec: fecgrp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_SAI1_RXD2__ENET1_MDC		0x2
-> +			MX8MP_IOMUXC_SAI1_RXD3__ENET1_MDIO		0x2
-> +			MX8MP_IOMUXC_SAI1_RXD4__ENET1_RGMII_RD0		0x90
-> +			MX8MP_IOMUXC_SAI1_RXD5__ENET1_RGMII_RD1		0x90
-> +			MX8MP_IOMUXC_SAI1_RXD6__ENET1_RGMII_RD2		0x90
-> +			MX8MP_IOMUXC_SAI1_RXD7__ENET1_RGMII_RD3		0x90
-> +			MX8MP_IOMUXC_SAI1_TXC__ENET1_RGMII_RXC		0x90
-> +			MX8MP_IOMUXC_SAI1_TXFS__ENET1_RGMII_RX_CTL	0x90
-> +			MX8MP_IOMUXC_SAI1_TXD0__ENET1_RGMII_TD0		0x16
-> +			MX8MP_IOMUXC_SAI1_TXD1__ENET1_RGMII_TD1		0x16
-> +			MX8MP_IOMUXC_SAI1_TXD2__ENET1_RGMII_TD2		0x16
-> +			MX8MP_IOMUXC_SAI1_TXD3__ENET1_RGMII_TD3		0x16
-> +			MX8MP_IOMUXC_SAI1_TXD4__ENET1_RGMII_TX_CTL	0x16
-> +			MX8MP_IOMUXC_SAI1_TXD5__ENET1_RGMII_TXC		0x16
-> +		>;
-> +	};
-> +
-> +	pinctrl_gpio_keys: gpiokeysgrp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_GPIO1_IO07__GPIO1_IO07	0x80
-> +		>;
-> +	};
-> +
-> +	pinctrl_i2c1: i2c1grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_I2C1_SCL__I2C1_SCL		0x400001c2
-> +			MX8MP_IOMUXC_I2C1_SDA__I2C1_SDA		0x400001c2
-> +		>;
-> +	};
-> +
-> +	pinctrl_i2c2: i2c2grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_I2C2_SCL__I2C2_SCL		0x400001c2
-> +			MX8MP_IOMUXC_I2C2_SDA__I2C2_SDA		0x400001c2
-> +		>;
-> +	};
-> +
-> +	pinctrl_pmic: pmicgrp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_GPIO1_IO03__GPIO1_IO03	0x1c0
-> +		>;
-> +	};
-> +
-> +	pinctrl_pwm4: pwm4grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_SAI3_MCLK__PWM4_OUT	0x102
-> +		>;
-> +	};
-> +
-> +	pinctrl_uart2: uart2grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_UART2_RXD__UART2_DCE_RX	0x0
-> +			MX8MP_IOMUXC_UART2_TXD__UART2_DCE_TX	0x0
-> +		>;
-> +	};
-> +
-> +	pinctrl_usb_host_vbus: usb1grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_GPIO1_IO14__USB2_OTG_PWR	0x0
-> +		>;
-> +	};
-> +
-> +	pinctrl_usdhc3_100mhz: usdhc3-100mhzgrp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_NAND_WE_B__USDHC3_CLK	0x194
-> +			MX8MP_IOMUXC_NAND_WP_B__USDHC3_CMD	0x1d4
-> +			MX8MP_IOMUXC_NAND_DATA04__USDHC3_DATA0	0x1d4
-> +			MX8MP_IOMUXC_NAND_DATA05__USDHC3_DATA1	0x1d4
-> +			MX8MP_IOMUXC_NAND_DATA06__USDHC3_DATA2	0x1d4
-> +			MX8MP_IOMUXC_NAND_DATA07__USDHC3_DATA3	0x1d4
-> +			MX8MP_IOMUXC_NAND_RE_B__USDHC3_DATA4	0x1d4
-> +			MX8MP_IOMUXC_NAND_CE2_B__USDHC3_DATA5	0x1d4
-> +			MX8MP_IOMUXC_NAND_CE3_B__USDHC3_DATA6	0x1d4
-> +			MX8MP_IOMUXC_NAND_CLE__USDHC3_DATA7	0x1d4
-> +			MX8MP_IOMUXC_NAND_CE1_B__USDHC3_STROBE	0x194
-> +		>;
-> +	};
-> +
-> +	pinctrl_usdhc3_200mhz: usdhc3-200mhzgrp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_NAND_WE_B__USDHC3_CLK	0x196
-> +			MX8MP_IOMUXC_NAND_WP_B__USDHC3_CMD	0x1d6
-> +			MX8MP_IOMUXC_NAND_DATA04__USDHC3_DATA0	0x1d6
-> +			MX8MP_IOMUXC_NAND_DATA05__USDHC3_DATA1	0x1d6
-> +			MX8MP_IOMUXC_NAND_DATA06__USDHC3_DATA2	0x1d6
-> +			MX8MP_IOMUXC_NAND_DATA07__USDHC3_DATA3	0x1d6
-> +			MX8MP_IOMUXC_NAND_RE_B__USDHC3_DATA4	0x1d6
-> +			MX8MP_IOMUXC_NAND_CE2_B__USDHC3_DATA5	0x1d6
-> +			MX8MP_IOMUXC_NAND_CE3_B__USDHC3_DATA6	0x1d6
-> +			MX8MP_IOMUXC_NAND_CLE__USDHC3_DATA7	0x1d6
-> +			MX8MP_IOMUXC_NAND_CE1_B__USDHC3_STROBE	0x196
-> +		>;
-> +	};
-> +
-> +	pinctrl_usdhc3: usdhc3grp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_NAND_WE_B__USDHC3_CLK	0x190
-> +			MX8MP_IOMUXC_NAND_WP_B__USDHC3_CMD	0x1d0
-> +			MX8MP_IOMUXC_NAND_DATA04__USDHC3_DATA0	0x1d0
-> +			MX8MP_IOMUXC_NAND_DATA05__USDHC3_DATA1	0x1d0
-> +			MX8MP_IOMUXC_NAND_DATA06__USDHC3_DATA2	0x1d0
-> +			MX8MP_IOMUXC_NAND_DATA07__USDHC3_DATA3	0x1d0
-> +			MX8MP_IOMUXC_NAND_RE_B__USDHC3_DATA4	0x1d0
-> +			MX8MP_IOMUXC_NAND_CE2_B__USDHC3_DATA5	0x1d0
-> +			MX8MP_IOMUXC_NAND_CE3_B__USDHC3_DATA6	0x1d0
-> +			MX8MP_IOMUXC_NAND_CLE__USDHC3_DATA7	0x1d0
-> +			MX8MP_IOMUXC_NAND_CE1_B__USDHC3_STROBE	0x190
-> +		>;
-> +	};
-> +
-> +	pinctrl_wdog: wdoggrp {
-> +		fsl,pins = <
-> +			MX8MP_IOMUXC_GPIO1_IO02__WDOG1_WDOG_B	0x166
-> +		>;
-> +	};
-> +};
-> +
-> +&pwm4 {
-> +	pinctrl-0 = <&pinctrl_pwm4>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +};
-> +
-> +&uart2 {
-> +	pinctrl-0 = <&pinctrl_uart2>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +};
-> +
-> +&usb3_1 {
-> +	status = "okay";
-> +};
-> +
-> +&usb3_phy1 {
-> +	vbus-supply = <&reg_usb_host>;
-> +	status = "okay";
-> +};
-> +
-> +&usb_dwc3_1 {
-> +	dr_mode = "host";
-> +	status = "okay";
-> +};
-> +
-> +&usdhc3 {
-> +	assigned-clocks = <&clk IMX8MP_CLK_USDHC3>;
-> +	assigned-clock-rates = <400000000>;
-> +	bus-width = <8>;
-> +	non-removable;
-
-Please move the bus-width and non-removeable properties below the
-pinctrl-* properties.
-
-> +	pinctrl-0 = <&pinctrl_usdhc3>;
-> +	pinctrl-1 = <&pinctrl_usdhc3_100mhz>;
-> +	pinctrl-2 = <&pinctrl_usdhc3_200mhz>;
-> +	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-> +	status = "okay";
-> +};
-> +
-> +&wdog1 {
-> +	fsl,ext-reset-output;
-
-This property should be put below the pinctrl-* properties.
-
-Regards,
-  Marco
-
-> +	pinctrl-0 = <&pinctrl_wdog>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +};
-> -- 
-> 2.43.0
+On 9/24/24 7:36 AM, Tudor Ambarus wrote:
 > 
 > 
+> On 9/24/24 7:26 AM, Tudor Ambarus wrote:
+>>
+>>
+>> On 9/24/24 4:25 AM, Alvin Zhou wrote:
+>>> Hi Tudor,
+>>>
+>>> Tudor Ambarus <tudor.ambarus@linaro.org> 於 2024年9月23日 週一 下午2:54寫道：
+>>>>
+>>>> Hi, Alvin,
+>>>>
+>>>> I quickly skimmed over the previous 5 patches and they are looking fine.
+>>>>
+>>>> I don't get this patch however.
+>>>>
+>>>> On 7/18/24 4:46 AM, AlvinZhou wrote:
+>>>>> From: AlvinZhou <alvinzhou@mxic.com.tw>
+>>>>>
+>>>>> Adding Manufacture ID 0xC2 in last of ID table because of
+>>>>> Octal Flash need manufacturer fixup for enabling/disabling
+>>>>> Octal DTR mode.
+>>>>>
+>>>>> Signed-off-by: JaimeLiao <jaimeliao@mxic.com.tw>
+>>>>> Signed-off-by: AlvinZhou <alvinzhou@mxic.com.tw>
+>>>>> ---
+>>>>>  drivers/mtd/spi-nor/macronix.c | 4 +++-
+>>>>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/mtd/spi-nor/macronix.c b/drivers/mtd/spi-nor/macronix.c
+>>>>> index f039819a5252..1a8ccebdfe0e 100644
+>>>>> --- a/drivers/mtd/spi-nor/macronix.c
+>>>>> +++ b/drivers/mtd/spi-nor/macronix.c
+>>>>> @@ -200,7 +200,9 @@ static const struct flash_info macronix_nor_parts[] = {
+>>>>>               .name = "mx25l3255e",
+>>>>>               .size = SZ_4M,
+>>>>>               .no_sfdp_flags = SECT_4K,
+>>>>> -     }
+>>>>> +     },
+>>>>> +     /* Need the manufacturer fixups, Keep this last */
+>>>>> +     { .id = SNOR_ID(0xc2) }
+>>>>>  };
+>>>>>
+>>>>
+>>>> Could you please elaborate why you need just the manufacturer id here? I
+>>>> would have expected to see a specific flash entry instead.
+>>>
+>>> Grateful to Michael for the valuable suggestion. This addition of the
+>>> Macronix manufacturer ID enables the fixup functions such as
+>>> macronix_nor_set_octal_dtr to be executed without the need to
+>>> create separate ID entries for each Octal DTR NOR Flash in the
+>>> flash_info.
+>>>
+>>
+>> Ah, nice. Okay then. I'm going to review the rest of the patches. They
+>> look promising ;).
 > 
+> ah, but then you'll always have a matched ID, so you break the generic
+> flash probing for macronix. Is that correct?
+
+Answering myself: it's fine. Generic flash probe just fills a name,
+which we don't really care about.
 
