@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-336720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 759B1983FCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:00:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 132D9983FD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:02:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 307E828360D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:00:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C8521F23AD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:02:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B35149E17;
-	Tue, 24 Sep 2024 08:00:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 817F4149C69;
+	Tue, 24 Sep 2024 08:02:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fmj8fq4g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lNpqkS8G"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA32B26ACD;
-	Tue, 24 Sep 2024 08:00:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB38F26ACD;
+	Tue, 24 Sep 2024 08:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727164822; cv=none; b=VZZx7xnPJszlt8iNilHIeI0y56JruekrOAsHk3PmaKzuiE2wuJuYTMf/JuguvCp5tjQ0SB6+ARvveZ7XHT3iLPlOSOolyjFtrE/k46TmFUKjnW/pA+z/gkUjsceoh6R2gIhhAKOs9EBKjnYLMWj3qpBwxo2HZVVuj7saA8MYaDo=
+	t=1727164964; cv=none; b=oWnIA+Q/++TBiJ6r5uE9k9BzvE+T8t8Um8EMG5PW78tVTW4Gchijabqd09FDOrGkm6qhWMJvnS218RXKZrNduwAo+t1LQ6r+PKGmOEbFV8zxY57yefEy1VZCQUY7WTIGB0Xkmm1H4NpbuftZcfRMN7MjVn52hrjJ+ZzZqPInfGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727164822; c=relaxed/simple;
-	bh=e5ow4XVnYNxwjbMxir0xB1ZMgfGmjaUgrP9iBzdyjes=;
+	s=arc-20240116; t=1727164964; c=relaxed/simple;
+	bh=GwIj96U0zgt0NA9cPDbtRvwRw9+4p1LybTpIOFcn+yY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aCS5Ridsw8uhgsERDI+QPqjofQ8hOOoN+/pEtlw7z2ZsNkkcfEzSE4Et8EYqytqvsBd9b3fQwzy7oPh/nyiCXY2gX3Halo/LytMLK5N3W/gSwz7uDFYCbicvLejDNByo0rZQJRxtzgpU5vaQpg38jDADQ4b4x/MAUrSvGB4RGuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fmj8fq4g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0D8CC4CEC4;
-	Tue, 24 Sep 2024 08:00:18 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=NaizhAVegAiLzDF+1YLZ7TfeVXo9OzUfclG3nz576MNI3IOGP1KTFoe00kL6fdr7NH648halMzeGJZxmY+248Uv2Za/B5TkX88DZXw/tVHjdUAb6mmOmhVLvaXdDLen7YfK1IoixoIveVzoQJ1ZipgXazKJYOFYy+bNDMi57UhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lNpqkS8G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE837C4CEC4;
+	Tue, 24 Sep 2024 08:02:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727164821;
-	bh=e5ow4XVnYNxwjbMxir0xB1ZMgfGmjaUgrP9iBzdyjes=;
+	s=k20201202; t=1727164964;
+	bh=GwIj96U0zgt0NA9cPDbtRvwRw9+4p1LybTpIOFcn+yY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Fmj8fq4gdiRwRWd+4aN2uM3smxmE+033f3tsJdjopGqGGi38YhT1Pyl4hhyzc+ooh
-	 czRkJZrE/DaYoWOCXrSFJoYXtmvrz1aEdRFoItuQmRcJFJK6XkUY2T32zDWfQ+bh5e
-	 +zMdS4t3vvpcqy+WC5ReueFfU0SVnUgB1fGEOcm3IqBCV2lJyFT9+tk1GYbtDMZGNx
-	 KZ6J2oQUP978nTdP5LiV6H/HYE7qulKBN6SWyN8iWzyg7tRGipWbAnGP/59wmvEzFB
-	 tiHzy1PlBQbguL5nqA5bfeiGcZ2VnwclpnHMiu1oYxn25qOsBsYSUbCte4Nfcl74O5
-	 fS+m3RsccBz7A==
-Message-ID: <bc646127-04d6-4e79-b294-643d7879ee1b@kernel.org>
-Date: Tue, 24 Sep 2024 10:00:16 +0200
+	b=lNpqkS8Gxtwy24wUEf8d5qRmy/zorF2N+KTvAahjIXx4j2U5UFK3Z0rfkFo9Xdx+U
+	 Wdo04oGYf08qZy7p2T46iQeBYH9xrlJb8NaGe8xbXQCQaEnr2o5QNJ1EtlliIe2DkR
+	 McbvStXOUcvYp+I5d3v9Bon625b1aIGVyT/Qblh7kIJXkXG/vf1Etlu8CCUW2PPCpQ
+	 i6dT1sgUNfGAOrfjWIb/T6b97w36yOx/g+Vkf1Psb7Ex8RhKV3tPeTY0R+rayddhdx
+	 Pw8XEoW7sebiM0y0GNPyRlEoXfwDoqEeyTFDcToQMBW7BPTzN5CBa8LQN5OnsixtNL
+	 V9QH4Gj28UdJA==
+Message-ID: <e8af0f3f-a09c-42d7-b8ca-dd633539af73@kernel.org>
+Date: Tue, 24 Sep 2024 10:02:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] power: supply: initial support for TWL6030/32
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: tony@atomide.com, Sebastian Reichel <sre@kernel.org>,
- linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
- Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org
-References: <20240918084132.928295-1-andreas@kemnade.info>
- <20240918084132.928295-4-andreas@kemnade.info>
- <89a7e86b-8866-4148-9f9e-13ca84c1aede@kernel.org>
- <20240923182948.571eaa59@akair>
+Subject: Re: [PATCH v3 04/10] dt-bindings: iio: dac: ad3552r: add io-backend
+ support
+To: Angelo Dureghello <adureghello@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Nuno Sa <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Olivier Moysan <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ dlechner@baylibre.com
+References: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-0-a17b9b3d05d9@baylibre.com>
+ <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-4-a17b9b3d05d9@baylibre.com>
+ <gojq6ardhvt6vcs2kawdhdn2cj6qbpzp4p5mjjgwsypuatm5eo@3u6k4q7le46s>
+ <418a8a9b-3bcf-4b8f-92a0-619a3bf26ab5@baylibre.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,77 +109,112 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240923182948.571eaa59@akair>
+In-Reply-To: <418a8a9b-3bcf-4b8f-92a0-619a3bf26ab5@baylibre.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 23/09/2024 18:29, Andreas Kemnade wrote:
-> Am Wed, 18 Sep 2024 12:43:01 +0200
-> schrieb Krzysztof Kozlowski <krzk@kernel.org>:
+On 23/09/2024 17:50, Angelo Dureghello wrote:
+> Hi Krzysztof,
 > 
->> On 18/09/2024 10:41, Andreas Kemnade wrote:
->>> Add a driver for the charger in the TWL6030/32. For now it does not
->>> report much in sysfs but parameters are set up for USB, charging is
->>> enabled with the specified parameters. It stops charging when full
->>> and also restarts charging.
->>> This prevents ending up in a system setup where you run out of
->>> battery although a charger is plugged in after precharge completed.
+> On 22/09/24 23:02, Krzysztof Kozlowski wrote:
+>> On Thu, Sep 19, 2024 at 11:20:00AM +0200, Angelo Dureghello wrote:
+>>> From: Angelo Dureghello <adureghello@baylibre.com>
 >>>
->>> Battery voltage behavior was checked via the GPADC.
->>>   
->>
->> Few stylistic comments below.
->>
->>> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+>>> There is a version AXI DAC IP block (for FPGAs) that provides
+>>> a physical bus for AD3552R and similar chips, and acts as
+>>> an SPI controller.
+>>>
+>>> For this case, the binding is modified to include some
+>>> additional properties.
+>>>
+>>> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
 >>> ---
->>>  drivers/power/supply/Kconfig           |  10 +
->>>  drivers/power/supply/Makefile          |   1 +
->>>  drivers/power/supply/twl6030_charger.c | 566
->>> +++++++++++++++++++++++++ 3 files changed, 577 insertions(+)
->>>  create mode 100644 drivers/power/supply/twl6030_charger.c
+>>>   .../devicetree/bindings/iio/dac/adi,ad3552r.yaml   | 42 ++++++++++++++++++++++
+>>>   1 file changed, 42 insertions(+)
 >>>
->>> diff --git a/drivers/power/supply/Kconfig
->>> b/drivers/power/supply/Kconfig index bcfa63fb9f1e2..9f2eef6787f7a
->>> 100644 --- a/drivers/power/supply/Kconfig
->>> +++ b/drivers/power/supply/Kconfig
->>> @@ -493,6 +493,16 @@ config CHARGER_TWL4030
->>>  	help
->>>  	  Say Y here to enable support for TWL4030 Battery Charge
->>> Interface. 
->>> +config CHARGER_TWL6030
->>> +	tristate "OMAP TWL6030 BCI charger driver"
->>> +	depends on IIO && TWL4030_CORE  
->>
->> || COMPILE_TEST, at least for TWL part
->> (but please test first)
->>
-> ERROR: modpost: "twl_i2c_write"
-> [drivers/power/supply/twl6030_charger.ko] undefined! ERROR: modpost:
-> "twl_i2c_read" [drivers/power/supply/twl6030_charger.ko] undefined!
+>>> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
+>>> index 41fe00034742..aca4a41c2633 100644
+>>> --- a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
+>>> +++ b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
+>>> @@ -60,6 +60,18 @@ properties:
+>>>       $ref: /schemas/types.yaml#/definitions/uint32
+>>>       enum: [0, 1, 2, 3]
+>>>   
+>>> +  io-backends:
+>>> +    description: The iio backend reference.
+>>> +      An example backend can be found at
+>>> +        https://analogdevicesinc.github.io/hdl/library/axi_ad3552r/index.html
+>>> +    maxItems: 1
+>>> +
+>>> +  adi,synchronous-mode:
+>>> +    description: Enable waiting for external synchronization signal.
+>>> +      Some AXI IP configuration can implement a dual-IP layout, with internal
+>>> +      wirings for streaming synchronization.
+>>> +    type: boolean
+>>> +
+>>>     '#address-cells':
+>>>       const: 1
+>>>   
+>>> @@ -128,6 +140,7 @@ patternProperties:
+>>>             - custom-output-range-config
+>>>   
+>>>   allOf:
+>>> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+>>>     - if:
+>>>         properties:
+>>>           compatible:
+>>> @@ -238,4 +251,33 @@ examples:
+>>>               };
+>>>           };
+>>>       };
+>>> +
+>>> +  - |
+>>> +    axi_dac: spi@44a70000 {
+>>> +        compatible = "adi,axi-ad3552r";
+>> That is either redundant or entire example should go to the parent node,
+>> if this device is fixed child of complex device (IOW, adi,ad3552r cannot
+>> be used outside of adi,axi-ad3552r).
+> 
+> ad3552r can still be used by a generic "classic" spi
+> controller (SCLK/CS/MISO) but at a slower samplerate, fpga
+> controller only (axi-ad3552r) can reach 33MUPS.
 
-ok
-
+OK, then this is just redundant. Drop the node. Parent example should
+contain the children, though.
 > 
 >>
->>> +	{ }
->>> +};
->>> +MODULE_DEVICE_TABLE(of, twl_charger_of_match);
+>>> +        reg = <0x44a70000 0x1000>;
+>>> +        dmas = <&dac_tx_dma 0>;
+>>> +        dma-names = "tx";
+>>> +        #io-backend-cells = <0>;
+>>> +        clocks = <&ref_clk>;
 >>> +
->>> +static struct platform_driver twl6030_charger_driver = {
->>> +	.probe = twl6030_charger_probe,
->>> +	.driver	= {
->>> +		.name	= "twl6030_charger",
->>> +		.of_match_table =
->>> of_match_ptr(twl_charger_of_match),  
->>
->> I propose to drop of_match_ptr and maybe_unused, so this won't be
->> restricted only to OF
->>
-> so that more things get compile-tested without OF? But I see no reason
-> why .probe would be optimized away (and with it a lot more things) by
-> the compiler.
+>>> +        #address-cells = <1>;
+>>> +        #size-cells = <0>;
+>>> +
+>>> +        dac@0 {
+>>> +            compatible = "adi,ad3552r";
+>>> +            reg = <0>;
+>>> +            reset-gpios = <&gpio0 92 0>;
+>> Use standard defines for GPIO flags.
+> 
+> fixed, thanks
+> 
+>>> +            io-backends = <&axi_dac>;
+>> Why do you need to point to the parent? How much coupled are these
+>> devices? Child pointing to parent is not usually expected, because
+>> that's obvious.
+> 
+> 
+> "io-backends" is actually the way to refer to the backend module,
+> (used already for i.e. ad9739a),
+> it is needed because the backend is not only acting as spi-controller,
+> but is also providing some APIs for synchronization and bus setup support.
 
-No, it is not probe related by ACPI PRP0001
+
+But if backend is the parent, then this is redundant. You can take it
+from the child-parent relationship. Is this pointing to other devices
+(non-parent) in other ad3552r configurations?
 
 Best regards,
 Krzysztof
