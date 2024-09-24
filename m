@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-337269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BACEE9847E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:42:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5886A9847E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:42:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D1C3285F42
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:42:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87EE71C22F69
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25AC51AAE0F;
-	Tue, 24 Sep 2024 14:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB401AB539;
+	Tue, 24 Sep 2024 14:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="U7rY0Xzx"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bZPvUkci"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3B31AAE27
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 14:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958F21AAE3C
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 14:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727188917; cv=none; b=Qoxx9Iz73vXh/xRRZf4tRnuoCdyfVYQ7/w3gs/2Tm3mDgdIkefp1hJFRsKVwUS0w0PnXQBt9ektLFNCkPE564JlXo6oVVfbbzDjAHIJd+NadASFx19/0ILKPyDLphv1Gvs/yep/O6dWO8cLeIInWF9BHyT4lfWBTmid5CF/3YqA=
+	t=1727188919; cv=none; b=NOxRUIU3HcSKSPVY9ZaNxdKRU0RdYpe4I6bbbbLYjzQGaptxPiYOsR2kgA8/4J4oTRfFkTzb23+/5i/8Q3+N0uwSwnuinK9m0Wuc1pRFVX9dZUyfry/baZU9KkIi64tbz+3o9GoetHx9q9aCDbWsQp9x/xuwRVPmIy4kHDZk+EY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727188917; c=relaxed/simple;
-	bh=bYB6sGjl6OVpPbQmVT28nlrtD0q2IZNJFbiVeu2P4QM=;
+	s=arc-20240116; t=1727188919; c=relaxed/simple;
+	bh=775K+b4JojCj/aYOX4tvR3/Nx57JHTr4617eywulfZw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IVWJSe6VdHYIDvZdYbWTtqSSQWCD5Bxjc3NWnCCytRPC3aV038v/e07xn4ITQxJ7U0lxQ/qedBYwcSHPP4TR1EZyIWXYRLoAeR7nvtnEDbymsD9O3SSVgXoKyQ0+TA7SXzCpG1dQUBe++w9ASDsqCpE1M+EKO6CjW9L/UTCBDDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=U7rY0Xzx; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42cba8340beso40893505e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:41:54 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=tIqwYEuesIQ3QfMW1PHH6ulZs1y92gJ7HoBbgwjZezQkN+RvyEAVOiXnS6fgYUUxmNPBcsjonrcGUk467UBSBp6CHG9DWeAe60mgUmd8p09XDhbmGlyZSPa5xjyt7zaiFHwEd2PcYKt7lNvCtAdEpde7Ranqlmn1kWuYl0fiqZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bZPvUkci; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c24ebaa427so10155444a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:41:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727188913; x=1727793713; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1727188915; x=1727793715; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=mZI5U1pschJSs8BzcO25TabRksZf6E5sGIBvFGZUMG4=;
-        b=U7rY0Xzxp5qUIBOHjB/KdjSy3pXBs3ONP+ht5a10bxfEKmXJil3IUiDN2rFkI7/Sn3
-         7qOo7+xJQW+7MAx0V+JN5pxhuIfGpWtJ50Lqi8DZ7MkIBImuuGBJ8xPnIBxctUlcLHUa
-         RCtgPr0ffBa0Lht9k7IEHLhkEiEcWArJYtZ3ksZlo10WtVczlnVb9U6xMtsOCyClpH7L
-         iFBKsbjAcjg3znnby1b913MDatxzoOUqK6BYt/bxI2MOXCccowlIBwLK5zDuHzn3MPMW
-         4ANueQs0HtrxXcz3Ojy2wBdmkVIGdmRpSyDF0YjTupzyYuyFHASj9csHlx5lsPu+QkSk
-         Z5AA==
+        bh=KplL6YVGYXmQtdrD19h01dJIHQ5EglFyVNmxCWcimXo=;
+        b=bZPvUkciaA5RKtn6y1i4Z407UmJm3vzI9+LxJbHy5Z/SM6kVl50LETZMvD5yINPo+T
+         9O9q1SclIZ3dt42YeFeVWctmvJ52Wo6nXSk9St6LUCTwf0uKga/GiRLZt+UH8z66VkX9
+         3tJT5mwFCHXvMnJfNMWou0r0KTxNGFuKE8MDS/Cs821NXNbs7OTs9eTcdNWK3tCRfv5n
+         KBRtZ29OjhxRWKX4+Cn57z1zHeuFQ014CNssSXjy2+D4dTDvxVzavfQVk6E18gQYfny5
+         Z0MASe20seIoW6ZlRAbeiosPo0W5gtZKirvdOiamJqNtBrk7OGek6/GXQ0eqxokb390U
+         ZL+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727188913; x=1727793713;
+        d=1e100.net; s=20230601; t=1727188915; x=1727793715;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mZI5U1pschJSs8BzcO25TabRksZf6E5sGIBvFGZUMG4=;
-        b=bnyQlt2XSJDFimq00Gt3W+DE+pt4P4rpQXLkbmy4rlC2H8rdgJEp5NRBQ7C1YVbOtL
-         j9t4sn67pLVGYcbNrTHXe1qhhHA/9+Ndam3Y2dacwW71NOthKZyr4sZwoDqFD3Ow3G82
-         SiSAE3CNy2dBZKA0sv9aJ4foIX2i/7Q1dU8aRWbmJBMasWczexW1BVtA6Vf0KjGt37Ir
-         wY1Wl9U7M4B1eEWyLJzBRbtwir1M+noQrDkeVlk16O3Kvg5YGEHMWGS6n3HcT5a+l7Tj
-         emx5014pU9f4Qed/5RlVU1fIfMgxmN6j/meK6LoFpYrh7UXV7Ekl5qWgSIm8+z+Oyzu+
-         BQlw==
-X-Forwarded-Encrypted: i=1; AJvYcCWkWKOybV7xgs+egQGp/86jtZpkCzQ+PSatYH9fh0gy2BSKjJRMVM4zSArqerkO0PdkpqSX2Ms7+bEWT4k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzI4SdVp62rwqAmpy45UrS/wyFHemahjPfxr7zbR6xuBcFqloWK
-	NjmLpPpETpCEJmPpL7zfslY0JLKVbOjfdlPCV9sHrc0Qarl97KJzckhUf4Uk/i0=
-X-Google-Smtp-Source: AGHT+IE54V4mWS0E1fGBaRhuYszEux79BQYQMRS6jlkq3ZgzaXmmKTdVDlYlx0Pt83jGSNgZCcuilQ==
-X-Received: by 2002:adf:a193:0:b0:374:cb84:13d3 with SMTP id ffacd0b85a97d-37c7ebab09bmr2110323f8f.12.1727188912452;
-        Tue, 24 Sep 2024 07:41:52 -0700 (PDT)
-Received: from [10.2.5.161] (amontpellier-556-1-151-252.w109-210.abo.wanadoo.fr. [109.210.7.252])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e90291ebbsm24907615e9.10.2024.09.24.07.41.51
+        bh=KplL6YVGYXmQtdrD19h01dJIHQ5EglFyVNmxCWcimXo=;
+        b=wFKG99n/6We3R/meMw8evX5a1U1ONr7cQeT4tMbvXFTX4D/SiWCwIXZBjIztCuydCh
+         hkm+LzGVEYY0pkGdIpTkmHdNGgNS88L5i1inKxXMUCv9NzQsUxP29cpuo61Wo7J3yoWy
+         E3K0wbXSlAP6Lq80zhBjUCQLaYVTccKbr5P4PvXysF+tT1ztelqX4nJ1Hwt+r9ZWlh/Z
+         4X+h0UURMcBX5zi9cphMrT8y7KSUYXmjWAn5S6yFeAckeH2y0xcvjqExo+3rkkYuC2zG
+         2xtLw2SmswWn1Hr3rml52ZFOOr0Zu7sYkkgR7yC76eEhnJB7DoW9FeIR7pr+hXf2Bns/
+         CNCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWMeAbPyL4hYMSHhhrBpWusvSDIccq4HJ4NZa+SsJOrzHpCGO6XZZDJ6r8mZBjS76XhE7hqcKQ54URGsA4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxo2I5Kcb82jON0R2hlN0NCLpwdfZgOPhEjsRBq+TByqd9qVCcS
+	ALMxpyEisWWpK6nQS1jrbV2pChELDWolsAP43PsdShdP7GRRr3t3sZCf+WG3+O8=
+X-Google-Smtp-Source: AGHT+IHVIgjdWmVivneDu/IWQdwJLHd3+dXBGBtzlAEoXQdjjxX+Bmh4LZe7IZ+GpYb6vzMVaaPjmA==
+X-Received: by 2002:a17:906:db05:b0:a8d:3ee9:12fd with SMTP id a640c23a62f3a-a92b11fa6e8mr378550366b.0.1727188914825;
+        Tue, 24 Sep 2024 07:41:54 -0700 (PDT)
+Received: from [192.168.0.25] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9392f541b8sm91425966b.84.2024.09.24.07.41.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Sep 2024 07:41:52 -0700 (PDT)
-Message-ID: <56090167-15a0-4386-89a6-c379d70faae6@baylibre.com>
-Date: Tue, 24 Sep 2024 16:41:50 +0200
+        Tue, 24 Sep 2024 07:41:54 -0700 (PDT)
+Message-ID: <78fbe221-57c3-495b-a9d8-2e40a1612e40@linaro.org>
+Date: Tue, 24 Sep 2024 15:41:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,113 +75,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/10] dt-bindings: iio: adc: ad7606: Make corrections
- on spi conditions
-To: Conor Dooley <conor@kernel.org>
-Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH v3 12/29] media: iris: implement s_fmt, g_fmt and try_fmt
+ ioctls
+To: quic_dikshita@quicinc.com, Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- aardelean@baylibre.com, dlechner@baylibre.com, jstephan@baylibre.com
-References: <20240920-ad7606_add_iio_backend_support-v2-0-0e78782ae7d0@baylibre.com>
- <20240920-ad7606_add_iio_backend_support-v2-2-0e78782ae7d0@baylibre.com>
- <20240921-playgroup-regally-f26c17be26dc@spud>
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Vedang Nagar <quic_vnagar@quicinc.com>
+References: <20240827-iris_v3-v3-0-c5fdbbe65e70@quicinc.com>
+ <20240827-iris_v3-v3-12-c5fdbbe65e70@quicinc.com>
 Content-Language: en-US
-From: Guillaume Stols <gstols@baylibre.com>
-In-Reply-To: <20240921-playgroup-regally-f26c17be26dc@spud>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20240827-iris_v3-v3-12-c5fdbbe65e70@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
+On 27/08/2024 11:05, Dikshita Agarwal via B4 Relay wrote:
+> From: Vedang Nagar <quic_vnagar@quicinc.com>
+> 
+> Implement s_fmt, g_fmt and try_fmt IOCTL ops in
+> the driver with necessary hooks.
+> 
+> Signed-off-by: Vedang Nagar <quic_vnagar@quicinc.com>
+> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
 
-On 9/21/24 23:55, Conor Dooley wrote:
-> On Fri, Sep 20, 2024 at 05:33:22PM +0000, Guillaume Stols wrote:
->> The SPI conditions are not always required, because there is also a
->> parallel interface. The way used to detect that the SPI interface is
->> used is to check if the reg value is between 0 and 256.
-> And, yaknow, not that the bus you're on is a spi bus? I don't think this
-> comment is relevant to the binding, especially given you have a property
-> for it.
+> +
+> +	src_q = v4l2_m2m_get_src_vq(m2m_ctx);
+> +	memset(pixmp->reserved, 0, sizeof(pixmp->reserved));
+> +	if (V4L2_TYPE_IS_OUTPUT(f->type)) {
+> +		if (f->fmt.pix_mp.pixelformat != V4L2_PIX_FMT_H264) {
+> +			f_inst = inst->fmt_src;
+> +			f->fmt.pix_mp.width = f_inst->fmt.pix_mp.width;
+> +			f->fmt.pix_mp.height = f_inst->fmt.pix_mp.height;
+> +			f->fmt.pix_mp.pixelformat = f_inst->fmt.pix_mp.pixelformat;
+> +		}
+> +	} else if (V4L2_TYPE_IS_CAPTURE(f->type)) {
+> +		if (f->fmt.pix_mp.pixelformat != V4L2_PIX_FMT_NV12) {
+> +			f_inst = inst->fmt_dst;
+> +			f->fmt.pix_mp.pixelformat = f_inst->fmt.pix_mp.pixelformat;
+> +			f->fmt.pix_mp.width = f_inst->fmt.pix_mp.width;
+> +			f->fmt.pix_mp.height = f_inst->fmt.pix_mp.height;
+> +		}
+> +		if (vb2_is_streaming(src_q)) {
+> +			f_inst = inst->fmt_src;
+> +			f->fmt.pix_mp.height = f_inst->fmt.pix_mp.height;
+> +			f->fmt.pix_mp.width = f_inst->fmt.pix_mp.width;
+> +		}
+> +	} else {
+> +		return -EINVAL;
+> +	}
+> +
 
-Apologies, I missed to change the commit message, it will be fixed in 
-the next series.
+<snip>
 
-Since Jonathan did not like very much inferring the interface with the 
-reg's value that I used i the previous verison, I introduced this flag.
+> +int iris_vdec_s_fmt(struct iris_inst *inst, struct v4l2_format *f)
+> +{
+> +	struct v4l2_format *fmt, *output_fmt;
+> +	struct vb2_queue *q;
+> +	u32 codec_align;
+> +
+> +	int ret = 0;
+> +
+> +	q = v4l2_m2m_get_vq(inst->m2m_ctx, f->type);
+> +	if (!q)
+> +		return -EINVAL;
+> +
+> +	iris_vdec_try_fmt(inst, f);
+> +
+> +	if (V4L2_TYPE_IS_OUTPUT(f->type)) {
 
-However this is only intended to be use in bindings, to determine 
-whether or not spi properties should be added.
+<snip>
 
-In the driver side of things, the bus interface is inferred by the 
-parent's node (SPI driver is an module_spi_driver while parallel driver 
-is module_platform_driver).
+> +		
+> +	} else if (V4L2_TYPE_IS_CAPTURE(f->type)) {
 
->
->> There is also a correction on the spi-cpha that is not required when SPI
->> interface is selected, while spi-cpol is.
-> I don't see this change in your patch, there's no cpha in the before.
->
-Again a problem with the commit message, this belongs now to another commit.
->> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
->> ---
->>   .../devicetree/bindings/iio/adc/adi,ad7606.yaml      | 20 +++++++++++++++++---
->>   1 file changed, 17 insertions(+), 3 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
->> index 75334a033539..12995ebcddc2 100644
->> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
->> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
->> @@ -112,18 +112,32 @@ properties:
->>         assumed that the pins are hardwired to VDD.
->>       type: boolean
->>   
->> +  parallel-interface:
->> +    description:
->> +      If the parallel interface is used, be it directly or through a backend,
->> +      this property must be defined.
->> +    type: boolean
-> The type you would want here is actually "flag", but I'm not sure why a
-> property is needed. If you're using the parallel interface, why would
-> you still be on a spi bus? I think I'm a bit confused here as to how
-> this interface is supposed to be used.
->
-> Thanks,
-> Conor.
->
->> +
->>   required:
->>     - compatible
->>     - reg
->> -  - spi-cpol
->>     - avcc-supply
->>     - vdrive-supply
->>     - interrupts
->>     - adi,conversion-start-gpios
->>   
->> -allOf:
->> -  - $ref: /schemas/spi/spi-peripheral-props.yaml#
->> +oneOf:
->> +  - required:
->> +      - parallel-interface
->> +  - allOf:
->> +      - properties:
->> +          parallel-interface: false
->> +          spi-cpol: true
->> +      - $ref: /schemas/spi/spi-peripheral-props.yaml#
->> +      - required:
->> +          - spi-cpol
->>   
->> +allOf:
->>     - if:
->>         properties:
->>           compatible:
->>
->> -- 
->> 2.34.1
->>
+<snip>
+> +	} else {
+> +		return -EINVAL;
+> +	}
+
+I'd switch this instead of if/elsing.
+
+A blanket comment for this series.
+
+
 
