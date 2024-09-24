@@ -1,96 +1,128 @@
-Return-Path: <linux-kernel+bounces-337090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62341984523
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:50:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF33298451B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 856FC1C22D18
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:50:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72EB11F22E12
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FFC14B092;
-	Tue, 24 Sep 2024 11:50:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9C013174B;
+	Tue, 24 Sep 2024 11:48:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="iHFYVVVL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="I4IKKd5H"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08DA912BF25;
-	Tue, 24 Sep 2024 11:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4573F9D5;
+	Tue, 24 Sep 2024 11:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727178616; cv=none; b=qIxCLBSZ7Iv1rrtOVovpPnPIyjLNTkl5PmR8vuC6kOLqBe2sopVjB5+VCe5+paLGS6RRbNE8QLkjvwWZ1sT3W/eQ0LzAnUAw5H7R8/uew/GSWlC28acwTiu6fm6EcT4IQAZSo9YfpX2YXT1NuV9Mzm8T3BxPvsBSuCWKvA0yV5o=
+	t=1727178505; cv=none; b=ZwPKTP+6TdPUZV9j5EHIUnA088jMmwHXG1Igb7INBJaC8lQVxGbiMvXhMS4efrhntkQXQrvJUDGS+JVlQpCAFl2eGDS8x+3PtO/DRhK6TsyNclg1Bd+EbH0AQ59FX7BXQ2++tO3v+I/ekQklDUCJ+d1hm4zWQVrVvzKhpF0j7m8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727178616; c=relaxed/simple;
-	bh=B0vGTGuGETOSe4/CrulkHq90ReEW/9D1uyFMYsYhYFk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YJp6lSxU0+S4G8xoSeA66MvcGKceFej4XfAShLRvPlHmAwFc89MQN/z7Of//FrIWxwGQ500/xJTxTYWb3mZLW8kJM4C7KZL4roHmuLCXJXxodXu4y16JJh4gKGgv013z2q+anOSiE9LmsEybWDhI62vTodcL8El1Y0tGHv/Y4ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=iHFYVVVL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4AE3C4CEC4;
-	Tue, 24 Sep 2024 11:50:14 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="iHFYVVVL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1727178612;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7o71oK5hozmjw/7c4MUUMAtZ3Jk8dSM5xTWF5ssidyw=;
-	b=iHFYVVVLVpYaUgy/T0qXm50B5e/1eF9YN4TQxUJwustv/MzWTgl0tY8ugG3EBf9eXpZU7C
-	Kyj5kW4MbLeAxXFEa0YhaER9goXFpaBGiWeUNnVGfUDCoMDnE9IzbBc0u/ZKvfa0b7G/1N
-	KIkpiYK2vTjnQ/NF7AgKWHZUg/9qCEM=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 8c0faff3 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Tue, 24 Sep 2024 11:50:12 +0000 (UTC)
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: christophe.leroy@csgroup.eu,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
-	kernel test robot <oliver.sang@intel.com>
-Subject: [PATCH] selftests: vDSO: align stack for O2-optimized memcpy
-Date: Tue, 24 Sep 2024 13:47:23 +0200
-Message-ID: <20240924115001.916112-1-Jason@zx2c4.com>
-In-Reply-To: <202409241558.98e13f6f-oliver.sang@intel.com>
-References: <202409241558.98e13f6f-oliver.sang@intel.com>
+	s=arc-20240116; t=1727178505; c=relaxed/simple;
+	bh=hbs0QfvrCF5e6YpC+UbZ6TJfsmRJxVnWq7hDZ1/K6Ks=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R6sHBQowZAl0n+BJgbUG2f6f/fNII1Ox3yj/Ud8TfWLGwZUwub1TIznHQbTensw4paCzl8KpW4Y1TqOehYiootIx9e22uq59CKj1VIwVNev8XCuTXLT+Y6iQnfAMKIJguK6bCnoMr4GeUvCT5X5Ah0pxHFye8eoIgEOLrNjxULE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=I4IKKd5H; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1727178501;
+	bh=hbs0QfvrCF5e6YpC+UbZ6TJfsmRJxVnWq7hDZ1/K6Ks=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=I4IKKd5H3566701rXcsWtf+cZdAG0lkh+4wD0qQKkxBgWEHwR5Mxvgx/LCeOuzN3N
+	 GHSO0cieZrRzaX83JAamBT8rHuNeEdFTENuf9OpBT4f15sXRMIzgD+wVOYKpoF3fTu
+	 NMkqqthmzC8Jq9BbhjTG3boBZKd7hNM8oSbdZhkPpIu1iZtD4hqeDp3FyxVWP3v+kM
+	 WDkJ/td9ArfFdeJ0mOZHUHK0Ys1WrZGxceXB0bmp1PwumaN5uZf89EI0OmJ3FIMoN5
+	 5oCoxuvorVJobi5dn5pLv3fv62Z+70EOC73ka6MnHqzT6p4rmfla1GkiyjR+gZL6K+
+	 EtTtBLAHHVfdg==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id AA93E17E125E;
+	Tue, 24 Sep 2024 13:48:18 +0200 (CEST)
+Message-ID: <ed0c25ba-2816-4d4b-9023-2e07976f4341@collabora.com>
+Date: Tue, 24 Sep 2024 13:48:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/6] dt-bindings: display: mediatek: dpi: Add mt8195
+ support in power domains
+To: Macpaul Lin <macpaul.lin@mediatek.com>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Yong Wu <yong.wu@mediatek.com>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>, dri-devel@lists.freedesktop.org,
+ linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org,
+ Alexandre Mergnat <amergnat@baylibre.com>
+Cc: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+ Macpaul Lin <macpaul@gmail.com>, Sen Chu <sen.chu@mediatek.com>,
+ Chris-qj chen <chris-qj.chen@mediatek.com>,
+ MediaTek Chromebook Upstream
+ <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+ Chen-Yu Tsai <wenst@chromium.org>
+References: <20240924103156.13119-1-macpaul.lin@mediatek.com>
+ <20240924103156.13119-6-macpaul.lin@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240924103156.13119-6-macpaul.lin@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-When switching on -O2, gcc generates SSE2 instructions that assume a
-16-byte aligned stack, which the standalone test's start point wasn't
-aligning. Fix this with the usual alignnent sequence.
+Il 24/09/24 12:31, Macpaul Lin ha scritto:
+> Add power domain binding to the mediatek DPI controller for MT8185.
+> 
+> The dpi node in mt8195.dtsi was triggering a dtbs_check error:
+>    dp-intf@1c113000: power-domains: False schema does not allow [[44, 18]]
+> 
+> Fixes: 5474d49b2f79 ("dt-bindings: display: mediatek: dpi: Add power domains")
+> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+> ---
+>   .../devicetree/bindings/display/mediatek/mediatek,dpi.yaml       | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
+> index 3a82aec9021c..07acc8a76bfc 100644
+> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
+> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
+> @@ -89,6 +89,7 @@ allOf:
+>                   - mediatek,mt6795-dpi
+>                   - mediatek,mt8173-dpi
+>                   - mediatek,mt8186-dpi
+> +                - mediatek,mt8195-dp-intf
 
-Fixes: ecb8bd70d51 ("selftests: vDSO: build tests with O2 optimization")
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202409241558.98e13f6f-oliver.sang@intel.com
-Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
----
- tools/testing/selftests/vDSO/vdso_standalone_test_x86.c | 2 ++
- 1 file changed, 2 insertions(+)
+The dp_intf1 block has a power domain (VDOSYS1)... so that will break the check
+for the other one.
 
-diff --git a/tools/testing/selftests/vDSO/vdso_standalone_test_x86.c b/tools/testing/selftests/vDSO/vdso_standalone_test_x86.c
-index 27f6fdf11969..644915862af8 100644
---- a/tools/testing/selftests/vDSO/vdso_standalone_test_x86.c
-+++ b/tools/testing/selftests/vDSO/vdso_standalone_test_x86.c
-@@ -131,6 +131,8 @@ asm (
- 	"_start:\n\t"
- #ifdef __x86_64__
- 	"mov %rsp,%rdi\n\t"
-+	"and $-16,%rsp\n\t"
-+	"sub $8,%rsp\n\t"
- 	"jmp c_main"
- #else
- 	"push %esp\n\t"
--- 
-2.46.0
+Besides, I'm fairly sure that the right fix is to actually add the missing VDOSYS0
+power domain to dp_intf0 instead, as that block is indeed in VDO0.
+
+So.. for this patch: nak.
+
+Cheers,
+Angelo
+
+>       then:
+>         properties:
+>           power-domains: false
+
 
 
