@@ -1,311 +1,230 @@
-Return-Path: <linux-kernel+bounces-336797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7246B9840FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:47:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D417B9840E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:46:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94D331C2267B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:47:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6074D1F21749
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:46:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E781547CE;
-	Tue, 24 Sep 2024 08:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4CFD1527AC;
+	Tue, 24 Sep 2024 08:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b="bXqBIc9R"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aK1WCTjR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3028158DD4;
-	Tue, 24 Sep 2024 08:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727167593; cv=pass; b=mgpG4TSMpiLJLpm2897aQiJ+2qWElcmfXAjIt6oyMst109bS4iEx3j1yY+LvAwoImW5UYP9IfDjLn4fuKUJmDAE6l8YTLTxXKxShNT/H6aUcVyfWD83R/vBzcleRAzKx1L4w30E92cKDCF7BSmDN+nrxbUm7rb7bvl/vQGoapnE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727167593; c=relaxed/simple;
-	bh=po5NJZt3jrD7xtPpFLubKUK9l5jPK5lSkJwH5Hc6ERg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=N+oeiAuctA39p2OjgF83gGoLyoREG5z3gtcSabq+Fjn6FezCgV0OcRhE9g1cJAmen1B0N+sOqeiG57CvNQMe4sYZTgZLlzAceA7QZNl8RAlWZ99e5dYflr+cmvQfSSbe00mMFIRJGdmgXo57LfS+8+qssbtT9uxkTWiCVz174lI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b=bXqBIc9R; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1727167580; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=iRXtW9d7+497VXCoLeNTo5ficc9zEpanVsPHAPYNwzr5Dh6rJ21q85IpyAT0LDYlG3qN/g/noOhpjSYkCTMZTPT+orv8Bv4CpLaYMdj5gtlOCEcVjs+D7NpMequ+mbfjfKyb9oZYYmvmQlK9aYkqtl6+vmb3w3iy0QkBnyQoQl8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1727167580; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=q3oWApHbcp8oyyobWeD5nMvlKWjpy2UT/CxElHmtVlo=; 
-	b=haOc4Ms0edw8FOTGEmRWXeGyqfDGrn11m1x11B7QocVU3HxrVBjMqjW8F2yYroE+liyXe8c0Ame7IRCLGbED6tvNgU9keMUEySr2kefS9/n+tCz5uGitiEA7EhGN9ZSskh7pKJx9BTQSg2GG/4VsTXHdo9iuTlsPm7pkaX/LAu0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.fricke@collabora.com;
-	dmarc=pass header.from=<sebastian.fricke@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1727167580;
-	s=zohomail; d=collabora.com; i=sebastian.fricke@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=q3oWApHbcp8oyyobWeD5nMvlKWjpy2UT/CxElHmtVlo=;
-	b=bXqBIc9R9DwkgFnqOi7jzIfLyfKeMFF1H2CPYVDhkNX2EzXkYNQG+uIPElh3aDe7
-	i+V1ua+67bXr35hbQ+n+k+yllXZ4Vh1zWbK1wLczsqHBK7eYcLeIjkZ4aLTlHoqHSy9
-	jY0+UIxun9GAFh4BfV83Sv2erlJPKeW2tdhd8oEE=
-Received: by mx.zohomail.com with SMTPS id 1727167578119426.33679518370786;
-	Tue, 24 Sep 2024 01:46:18 -0700 (PDT)
-From: Sebastian Fricke <sebastian.fricke@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22DCB2C9D
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 08:46:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727167569; cv=none; b=LaUyADHRkx79fOOlTui5t2qPvKGX+43IHk66mfVI3t8DcFL9cBq6V7LgLNFJbSHB+BbpeIrgFJ2ipCeMljV/iB9eh+1OCjZTNBX4PUYMw5J0F8yDqZRkbADj+KGW0P/aj+zwIratmvn5TzsegwqpluyEuv7xKhQU1sxWFMTT8J0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727167569; c=relaxed/simple;
+	bh=qp/a/vQR5ClY7NjqLsvgXcavLMzhEkXYi5R3RbwLaeQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JlVAp8X2LZGbRMv5GbBQC5cdiDrs9+A4GsIrM/KKWCKkLj0UvHeL99EtCtNrGXGZEytyZaPGV0HBsL0w/Vc1CkUrl8xWrOy8AjvtS6Z3XpVjV3M2rbWM7a+rpbagijd7cKndcqrq4xjG1ocpCo6F8uZ2xJtV7A5QrKP1djoWAig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aK1WCTjR; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727167564;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5PnCAWGz8PeZWF1X8+l5uBsiOi3BTXYC+xfyDwdBet4=;
+	b=aK1WCTjRFNc+iKtwJ0PtHnyX6tTeblntx9JIqguZOSuhcZ2aShex5Mmdvxm8EgqSkjS6G2
+	wTJa9QzQhppwhRCZeTActFUtcpTS2ApIhPuc0iJjgKxaf20zoDm/pja7gP7bj8jyWR6Uq4
+	jHdZK0p6hryuOni/UCPpsf1/4zVMTXs=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-630-t26nr_UZNdClSEVeoAki0g-1; Tue, 24 Sep 2024 04:46:02 -0400
+X-MC-Unique: t26nr_UZNdClSEVeoAki0g-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-374c301db60so1896071f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 01:46:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727167562; x=1727772362;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5PnCAWGz8PeZWF1X8+l5uBsiOi3BTXYC+xfyDwdBet4=;
+        b=sNOHchLs8dYHnDTPyy5CLtt3+dlWo8xtZvdJ4A0gakjoifxHw9cGEI2bU3cvQNByiN
+         MHNdtoG47mEOej3o4FVOv5NO5540IH9qKsbLPLTM3gL5KBnZTyyI7kFflaapObRYbgYc
+         /iRC2aUSnCPp3uIHYHo//DU8eKMrbggU2Q5lzN+We4oRmZOqfpiDGrH+OsiYpTSVzOkJ
+         zr5gLL9JQfW1426ZyssMS2Tcgce5JW3IxrE6oHHkT3Ug2v3zg8ktPgg688XPOVF2CW8j
+         myt5w/KERGU/MJoqkOzRFWB2HjkO7SfgpSnYeh7JrbY45OTk/8JcFxMaBQ8ETTCViJEX
+         JXNg==
+X-Forwarded-Encrypted: i=1; AJvYcCWpLCOZe56WrI1Ag74wNWOn6IYApl4I5LZxVq7ISiMs3gT7y7F4z4l+yGf/8X4lCN8aJLFLwPEfi6XL/Yc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiBnyzwAa0fdBPTWZn5A2il6jd3CMmYBmSv83Rkwr7ZIWfh5Qb
+	WphH6Kgq27bllrzPVhLwwa425BxCJ9GCrBQH5RHf+ItZHzh3ru96K3+Jd+AlPHa6C702qyOd+NF
+	/EDVixjsKMo+Wrifdzaj3vyKAZMT8T+F6bwIJb7LQZyWbXnbVw3GJ+wjqRsVxJQ==
+X-Received: by 2002:a05:6000:186c:b0:368:5bb4:169b with SMTP id ffacd0b85a97d-37a43128c93mr10082590f8f.4.1727167561598;
+        Tue, 24 Sep 2024 01:46:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFySot47CwfCxg2Of9DQE79eD+88I4k6G5yvDEIsoBCKsYMMcveHmbBKcR9ocx0PWDRIF9ZNA==
+X-Received: by 2002:a05:6000:186c:b0:368:5bb4:169b with SMTP id ffacd0b85a97d-37a43128c93mr10082576f8f.4.1727167561206;
+        Tue, 24 Sep 2024 01:46:01 -0700 (PDT)
+Received: from ?IPV6:2a0d:3341:b089:3810:f39e:a72d:6cbc:c72b? ([2a0d:3341:b089:3810:f39e:a72d:6cbc:c72b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cbc2cf138sm975156f8f.58.2024.09.24.01.45.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Sep 2024 01:46:00 -0700 (PDT)
+Message-ID: <b9ae8575-f903-425f-aa42-0c2a7605aa94@redhat.com>
 Date: Tue, 24 Sep 2024 10:45:59 +0200
-Subject:
- [PATCH RFC v2 3/3] docs: media: Debugging guide for the media subsystem
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v2] octeon_ep: Add SKB allocation failures handling in
+ __octep_oq_process_rx()
+To: Aleksandr Mishin <amishin@t-argos.ru>,
+ Veerasenareddy Burru <vburru@marvell.com>
+Cc: Sathesh Edara <sedara@marvell.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Abhijit Ayarekar <aayarekar@marvell.com>,
+ Satananda Burla <sburla@marvell.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+References: <20240916060212.12393-1-amishin@t-argos.ru>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20240916060212.12393-1-amishin@t-argos.ru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240529-b4-media_docs_improve-v2-3-66318b2da726@collabora.com>
-References: <20240529-b4-media_docs_improve-v2-0-66318b2da726@collabora.com>
-In-Reply-To: <20240529-b4-media_docs_improve-v2-0-66318b2da726@collabora.com>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, laurent.pinchart@ideasonboard.com,
- hverkuil-cisco@xs4all.nl, mauro.chehab@linux.intel.com, kernel@collabora.com,
- bob.beckett@collabora.com, nicolas.dufresne@collabora.com,
- Sebastian Fricke <sebastian.fricke@collabora.com>
-X-Mailer: b4 0.11.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1727167560; l=9004;
- i=sebastian.fricke@collabora.com; s=linux-media; h=from:subject:message-id;
- bh=po5NJZt3jrD7xtPpFLubKUK9l5jPK5lSkJwH5Hc6ERg=;
- b=cFLrdBlwdChnzCrtmBsR9xfPiFeXHFXdLUrUO8H5nyegMs9f26ulMFSKdg4h5YocA2GGMhTP7RGc
- FqVPC3WRC3Gsq39BcsmI/uxSkPE80TKHUEsnTax430NJ4kwXt2r+
-X-Developer-Key: i=sebastian.fricke@collabora.com; a=ed25519;
- pk=pYXedPwrTtErcj7ERYeo/IpTrpe4QbJuEzSB52fslBg=
-X-ZohoMailClient: External
 
-Create a guides section for all documentation material, that isn't
-strictly related to a specific piece of code.
+On 9/16/24 08:02, Aleksandr Mishin wrote:
+> build_skb() returns NULL in case of a memory allocation failure so handle
+> it inside __octep_oq_process_rx() to avoid NULL pointer dereference.
+> 
+> __octep_oq_process_rx() is called during NAPI polling by the driver. If
+> skb allocation fails, keep on pulling packets out of the Rx DMA queue: we
+> shouldn't break the polling immediately and thus falsely indicate to the
+> octep_napi_poll() that the Rx pressure is going down. As there is no
+> associated skb in this case, don't process the packets and don't push them
+> up the network stack - they are skipped.
+> 
+> The common code with skb and some index manipulations is extracted to make
+> the fix more readable and avoid code duplication. Also helper function is
+> implemented to unmmap/flush all the fragment buffers used by the dropped
+> packet. 'alloc_failures' counter is incremented to mark the skb allocation
+> error in driver statistics.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Fixes: 37d79d059606 ("octeon_ep: add Tx/Rx processing and interrupt support")
+> Suggested-by: Paolo Abeni <pabeni@redhat.com>
+> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+> ---
+> A similar situation is present in the __octep_vf_oq_process_rx() of the
+> Octeon VF driver. First we want to try the fix on __octep_oq_process_rx().
+> 
+> There are some doubts about increasing the 'rx_bytes'. On the one hand,
+> the data has not been processed, therefore, the counter does not need to
+> be increased. On the other hand, this counter is used to estimate the
+> bandwidth at the card's input.
+> In octeon_droq_fast_process_packet() from the Liquidio driver in
+> 'droq->stats.bytes_received += total_len' everything that was received
+> from the device is considered.
+> /* Output Queue statistics. Each output queue has four stats fields. */
+> struct octep_oq_stats {
+> 	/* Number of packets received from the Device. */
+> 	u64 packets;
+> 	/* Number of bytes received from the Device. */
+> 	u64 bytes;
+> 	/* Number of times failed to allocate buffers. */
+> 	u64 alloc_failures;
+> };
+> 
+> Compile tested only.
+> 
+> v2:
+>    - Implement helper instead of adding multiple checks for '!skb' and
+>      remove 'rx_bytes' increasing in case of packet dropping as suggested
+>      by Paolo
+>      (https://lore.kernel.org/all/ba514498-3706-413b-a09f-f577861eef28@redhat.com/)
+> v1: https://lore.kernel.org/all/20240906063907.9591-1-amishin@t-argos.ru/
+> 
+>   .../net/ethernet/marvell/octeon_ep/octep_rx.c | 80 +++++++++++++++----
+>   1 file changed, 64 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_rx.c b/drivers/net/ethernet/marvell/octeon_ep/octep_rx.c
+> index 4746a6b258f0..6b665263b9be 100644
+> --- a/drivers/net/ethernet/marvell/octeon_ep/octep_rx.c
+> +++ b/drivers/net/ethernet/marvell/octeon_ep/octep_rx.c
+> @@ -336,6 +336,51 @@ static int octep_oq_check_hw_for_pkts(struct octep_device *oct,
+>   	return new_pkts;
+>   }
+>   
+> +/**
+> + * octep_oq_drop_rx() - Free the resources associated with a packet.
+> + *
+> + * @oq: Octeon Rx queue data structure.
+> + * @buff_info: Current packet buffer info.
+> + * @read_idx: Current packet index in the ring.
+> + * @desc_used: Current packet descriptor number.
+> + *
+> + */
+> +static void octep_oq_drop_rx(struct octep_oq *oq,
+> +			     struct octep_rx_buffer *buff_info,
+> +			     u32 *read_idx, u32 *desc_used)
+> +{
+> +	dma_unmap_page(oq->dev, oq->desc_ring[*read_idx].buffer_ptr,
+> +		       PAGE_SIZE, DMA_FROM_DEVICE);
+> +	buff_info->page = NULL;
+> +	(*read_idx)++;
+> +	(*desc_used)++;
+> +	if (*read_idx == oq->max_count)
+> +		*read_idx = 0;
+> +
+> +	if (buff_info->len > oq->max_single_buffer_size) {
+> +		u16 data_len;
+> +		/* Head fragment includes response header(s);
+> +		 * subsequent fragments contains only data.
+> +		 */
+> +		data_len = buff_info->len - oq->max_single_buffer_size;
+> +		while (data_len) {
+> +			dma_unmap_page(oq->dev, oq->desc_ring[*read_idx].buffer_ptr,
+> +				       PAGE_SIZE, DMA_FROM_DEVICE);
+> +			buff_info = (struct octep_rx_buffer *)
+> +				     &oq->buff_info[*read_idx];
+> +			if (data_len < oq->buffer_size)
+> +				data_len = 0;
+> +			else
+> +				data_len -= oq->buffer_size;
+> +			buff_info->page = NULL;
+> +			(*read_idx)++;
+> +			(*desc_used)++;
+> +			if (*read_idx == oq->max_count)
+> +				*read_idx = 0;
+> +		}
+> +	}
+> +}
 
-Provide a guide for developers on how to debug code with a focus on the
-media subsystem. This document aims to provide a rough overview over the
-possibilities and a rational to help choosing the right tool for the
-given circumstances.
+I *think* you can simplify this helper always looping:
 
-Signed-off-by: Sebastian Fricke <sebastian.fricke@collabora.com>
----
- Documentation/media/guides/debugging_issues.rst | 174 ++++++++++++++++++++++++
- Documentation/media/guides/index.rst            |  11 ++
- Documentation/media/index.rst                   |   1 +
- 3 files changed, 186 insertions(+)
+	int data_len = buff_info->len - oq->max_single_buffer_size;
 
-diff --git a/Documentation/media/guides/debugging_issues.rst b/Documentation/media/guides/debugging_issues.rst
-new file mode 100644
-index 000000000000..5f37801dd4ba
---- /dev/null
-+++ b/Documentation/media/guides/debugging_issues.rst
-@@ -0,0 +1,174 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+.. include:: <isonum.txt>
-+
-+============================================
-+Debugging and tracing in the media subsystem
-+============================================
-+
-+This document serves as a starting point and lookup for debugging device
-+drivers in the media subsystem.
-+
-+.. contents::
-+    :depth: 3
-+
-+General debugging advice
-+========================
-+
-+For general advice see the `general-debugging-guide <../../debugging/index.html>`__.
-+
-+Available tools
-+===============
-+
-+dev_debug module parameter
-+--------------------------
-+
-+For a general overview please see the `driver-development-debugging-guide <../../debugging/driver_development_debugging_guide.html>`__.
-+
-+Every video device provides a `dev_debug` parameter, which allows to get further insights into the IOCTLs in the background.
-+::
-+
-+  # cat /sys/class/video4linux/video3/name
-+  rkvdec
-+  # echo 0xff > /sys/class/video4linux/video3/dev_debug
-+  # dmesg -wH
-+  [...] videodev: v4l2_open: video3: open (0)
-+  [  +0.000036] video3: VIDIOC_QUERYCAP: driver=rkvdec, card=rkvdec, bus=platform:rkvdec, version=0x00060900, capabilities=0x84204000, device_caps=0x04204000
-+
-+`Full documentation <../../driver-api/media/v4l2-dev.html#video-device-debugging>`__
-+
-+dev_dbg / v4l2_dbg
-+------------------
-+
-+- Difference between both?
-+
-+  - v4l2_dbg utilizes v4l2_printk under the hood, which further uses printk directly, thus it cannot be targeted by dynamic debug
-+  - dev_dbg can be targeted by dynamic debug
-+  - v4l2_dbg has a more specific prefix format for the media subsystem, while dev_dbg only highlights the driver name and the location of the log
-+
-+Dynamic debug
-+-------------
-+
-+For general advice see the `userspace-debugging-guide <../../debugging/userspace_debugging_guide.html>`__.
-+
-+Here is one example, that enables all available `pr_debug()`'s within the file:
-+::
-+
-+  $ alias ddcmd='echo $* > /proc/dynamic_debug/control'
-+  $ ddcmd '-p; file v4l2-h264.c +p'
-+  $ grep =p /proc/dynamic_debug/control
-+   drivers/media/v4l2-core/v4l2-h264.c:372 [v4l2_h264]print_ref_list_b =p "ref_pic_list_b%u (cur_poc %u%c) %s"
-+   drivers/media/v4l2-core/v4l2-h264.c:333 [v4l2_h264]print_ref_list_p =p "ref_pic_list_p (cur_poc %u%c) %s\n"
-+
-+Ftrace
-+------
-+
-+For general advice see the `userspace-debugging-guide <../../debugging/userspace_debugging_guide.html>`__.
-+
-+Trace whenever the `rkvdec_try_ctrl` function is called
-+::
-+
-+  $ cd /sys/kernel/tracing
-+  $ echo function > /sys/kernel/tracing/current_tracer
-+  $ echo rkvdec_try_ctrl > set_ftrace_filter
-+  $ echo 1 > tracing_on
-+  $ cat trace
-+   h264parse0:sink-6359    [001] ...1. 172714.547523: rkvdec_try_ctrl <-try_or_set_cluster
-+   h264parse0:sink-6359    [005] ...1. 172714.567386: rkvdec_try_ctrl <-try_or_set_cluster
-+
-+Find out from where the calls originate
-+::
-+
-+  $ echo 1 > options/func_stack_trace
-+   h264parse0:sink-6715    [002] ..... 172837.967762: rkvdec_try_ctrl <-try_or_set_cluster
-+   h264parse0:sink-6715    [002] ..... 172837.967773: <stack trace>
-+   => rkvdec_try_ctrl
-+   => try_or_set_cluster
-+   => try_set_ext_ctrls_common
-+   => try_set_ext_ctrls
-+   => v4l2_s_ext_ctrls
-+   => v4l_s_ext_ctrls
-+   ...
-+   h264parse0:sink-6715    [004] ..... 172837.985747: rkvdec_try_ctrl <-try_or_set_cluster
-+   h264parse0:sink-6715    [004] ..... 172837.985750: <stack trace>
-+   => rkvdec_try_ctrl
-+   => try_or_set_cluster
-+   => v4l2_ctrl_request_setup
-+   => rkvdec_run_preamble
-+   => rkvdec_h264_run
-+   => rkvdec_device_run
-+   ...
-+
-+Trace the children of a function call and show the return values (requires config `FUNCTION_GRAPH_RETVAL`)
-+::
-+
-+  echo function_graph > current_tracer
-+  echo rkvdec_h264_run > set_graph_function
-+  echo 4 > max_graph_depth
-+  echo do_interrupt_handler mutex_* > set_graph_notrace
-+  echo 1 > options/funcgraph-retval
-+   ...
-+   4)               |  rkvdec_h264_run [rockchip_vdec]() {
-+   4)               |    v4l2_ctrl_find [videodev]() {
-+   ...
-+   4)               |    rkvdec_run_preamble [rockchip_vdec]() {
-+   4)   4.666 us    |      v4l2_m2m_next_buf [v4l2_mem2mem](); /* = 0xffff000005782000 */
-+   ...
-+   4)               |      v4l2_ctrl_request_setup [videodev]() {
-+   4)   4.667 us    |        media_request_object_find [mc](); /* = 0xffff000005e3aa98 */
-+   4)   1.750 us    |        find_ref [videodev](); /* = 0xffff00000833b2a0 */
-+   ...
-+   4)   1.750 us    |      v4l2_m2m_buf_copy_metadata [v4l2_mem2mem](); /* = 0x0 */
-+   4) ! 114.333 us  |    } /* rkvdec_run_preamble [rockchip_vdec] = 0x0 */
-+   4)   2.334 us    |    v4l2_h264_init_reflist_builder [v4l2_h264](); /* = 0x3e */
-+   ...
-+   4)               |    v4l2_h264_build_b_ref_lists [v4l2_h264]() {
-+   ...
-+   4)               |    rkvdec_run_postamble [rockchip_vdec]() {
-+   ...
-+   4) ! 444.208 us  |  } /* rkvdec_h264_run [rockchip_vdec] = 0x0 */
-+
-+DebugFS
-+-------
-+
-+For general advice see the `driver-development-debugging-guide <../../debugging/driver_development_debugging_guide.html>`__.
-+
-+Perf & alternatives
-+-------------------
-+
-+For general advice see the `userspace-debugging-guide <../../debugging/userspace_debugging_guide.html>`__.
-+
-+Example for media devices:
-+
-+Gather statistics data for a decoding job: (This example is on a RK3399 SoC with the rkvdec codec driver using the `fluster test suite <https://github.com/fluendo/fluster>`__)
-+::
-+
-+  perf stat -d python3 fluster.py run -d GStreamer-H.264-V4L2SL-Gst1.0 -ts JVT-AVC_V1 -tv AUD_MW_E -j1
-+  ...
-+  Performance counter stats for 'python3 fluster.py run -d GStreamer-H.264-V4L2SL-Gst1.0 -ts JVT-AVC_V1 -tv AUD_MW_E -j1 -v':
-+
-+           7794.23 msec task-clock:u                     #    0.697 CPUs utilized
-+                 0      context-switches:u               #    0.000 /sec
-+                 0      cpu-migrations:u                 #    0.000 /sec
-+             11901      page-faults:u                    #    1.527 K/sec
-+         882671556      cycles:u                         #    0.113 GHz                         (95.79%)
-+         711708695      instructions:u                   #    0.81  insn per cycle              (95.79%)
-+          10581935      branches:u                       #    1.358 M/sec                       (15.13%)
-+           6871144      branch-misses:u                  #   64.93% of all branches             (95.79%)
-+         281716547      L1-dcache-loads:u                #   36.144 M/sec                       (95.79%)
-+           9019581      L1-dcache-load-misses:u          #    3.20% of all L1-dcache accesses   (95.79%)
-+   <not supported>      LLC-loads:u
-+   <not supported>      LLC-load-misses:u
-+
-+      11.180830431 seconds time elapsed
-+
-+       1.502318000 seconds user
-+       6.377221000 seconds sys
-+
-+The availability of events and metrics depends on the system you are running.
-+
-+Error checking & panic analysis
-+-------------------------------
-+
-+For general advice see the `driver-development-debugging-guide <../../debugging/driver_development_debugging_guide.html>`__.
-+
-+**Copyright** |copy| 2024 : Collabora
-diff --git a/Documentation/media/guides/index.rst b/Documentation/media/guides/index.rst
-new file mode 100644
-index 000000000000..0008966c0862
---- /dev/null
-+++ b/Documentation/media/guides/index.rst
-@@ -0,0 +1,11 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+============
-+Media Guides
-+============
-+
-+.. toctree::
-+    :caption: Table of Contents
-+    :maxdepth: 1
-+
-+    debugging_issues
-diff --git a/Documentation/media/index.rst b/Documentation/media/index.rst
-index d056a9e99dca..5461876fc401 100644
---- a/Documentation/media/index.rst
-+++ b/Documentation/media/index.rst
-@@ -7,6 +7,7 @@ Media Subsystem Documentation
- .. toctree::
-    :maxdepth: 2
- 
-+   guides/index
-    ../userspace-api/media/index
-    ../driver-api/media/index.rst
-    ../admin-guide/media/index
+	do {
+		dma_unmap_page(oq->dev,
+			oq->desc_ring[*read_idx].buffer_ptr,
+			PAGE_SIZE, DMA_FROM_DEVICE);
+		buff_info = (struct octep_rx_buffer *)
+			     &oq->buff_info[*read_idx];
+		data_len -= oq->buffer_size;
+		buff_info->page = NULL;
+		(*read_idx)++;
+		(*desc_used)++;
+		if (*read_idx == oq->max_count)
+			*read_idx = 0;
+	} while (data_len > 0);
 
--- 
-2.25.1
+Thanks,
+
+Paolo
+
 
