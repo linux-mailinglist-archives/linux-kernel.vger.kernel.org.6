@@ -1,218 +1,130 @@
-Return-Path: <linux-kernel+bounces-337724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34C87984E03
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:42:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 187F3984DF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:41:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40CCF1C23FF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:42:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0F61B24B63
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CCB11AB6E7;
-	Tue, 24 Sep 2024 22:41:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE74C154BFE;
+	Tue, 24 Sep 2024 22:41:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="A2XnA0FG"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SLqyPgRt"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FBE01AB6E8
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 22:41:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1DE61474A5
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 22:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727217714; cv=none; b=f0LtQp/2ex/e6Z9IKkrms8tMxwsrDSDTKTD30y7YwM++OmhesW/Znq0UvGfGFLtLPeKJ+yhjewNhi6juW+NzQMs+CDV7N7HeTW36tUIPjnLLsaxXEC9Xrlh52gM6YdfvjJGSLWBmN17bDB0tzA9ZM7AIeEuHufl0LXz5s6WUdgg=
+	t=1727217668; cv=none; b=gFh7a2HzaUchUTxVgBg6tAR6pdJKFnZCQy4SUjiozKPlZ+OJ+tqCnUsmAYBvj7C8UA6+yw0VgmUeRVoUnyddf97zrD12QHErUqrfCOwUqdxv9+UY9BHfjmehv19KETToUMNGMCQfKZFyn0lkLdOVxwrIAgp8UD7OBUArCY62J1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727217714; c=relaxed/simple;
-	bh=Rdr8TSS4Iwh4qeHM/cdtAjEt19818xzhxC0cUa9WajM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=klqCJe85N+dgqERjLX5T34pnyufD5tyhZw5mLz/jBxQQ88XDGr8LoLbltlz/H690gaTY/xdazvtfkjOW+fkRUNbbIxN++bQ1nccq54nS63njLSsF2bHg3XT33KvATwJ/dMeErCBITmkDkzmLst1omDUb7XlJ0yJDeur6tyopdYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=A2XnA0FG; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7a9aa913442so604519285a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 15:41:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1727217712; x=1727822512; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u/a9bPAvhWH1p+W4Rny/nJHlIlCLE5pbW2+6lAK0+Ac=;
-        b=A2XnA0FGluxqnTk1jg9eAjMDDk8Czcq47vc6ET1Dr4OAokDAqyjLDX24KV22XKxlZQ
-         mfkGlSCOUO9odQOAru7xTLyoRAsdRvUqDJ7lKfVPNJABqU757Rjgg4dD9TtbVtMP8tEq
-         SGYeunoU0uo7nG0KUG7fvMG2D5t9f2dqWdCMc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727217712; x=1727822512;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u/a9bPAvhWH1p+W4Rny/nJHlIlCLE5pbW2+6lAK0+Ac=;
-        b=XDuLKYqhXCovaDOrcvcR7NcnuI9J3UGEHB1O1qTwcajx6z9fRvjQNx12Ujk+EnK//6
-         O5SmXRkQCeZ7rnQuSCUbJwKDyvRmhoYkEGUqA+GytZVWJ5uoGfytcU01LWxHh5CO4iFX
-         E6w2J9lrELyLijA8k/y6LHkswRi0IPGf/8my+/bp43u9s/2DRQBokcJdRLXADsIdDD+v
-         et0ZVMS5XhlDry4GAh2VrSqovLeY6jZ0Wyq8CfHjkRsvUoUmEM86txBo8VM8wG7QnvF+
-         vOQk9ULorvoPmvdZqmvNveBFJVHDeQ2u3wpuJWBlNJrhYMb45OQ5LU2qGOI6bo8EDJzQ
-         /Vug==
-X-Forwarded-Encrypted: i=1; AJvYcCWAZ0XYuNTtp0a5n8mvqJ5v6yEnYEMnjmPMDINZ1iABpEsuRZdjxSSV2tD3ujVX7Fw/I+9ku3loSpJbm7c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+N+eWaI4rtMY/G1/txqDCulV3s59OXr39JUqZVhYssA8mLUs3
-	BI6INxewbR7E1QLVhjby+kgoygBiFGz8j2faHvWORyeiOTFBz3hNgoRuTzXtdudy7xJMq4cBcV2
-	3D5Za
-X-Google-Smtp-Source: AGHT+IHtrHM9uSFNGuTueIdUjBDfNePVRPHZDWy5NLhLxjIwwHImFGO4nwimLqt9qoFoZHpVX/ayOQ==
-X-Received: by 2002:a05:620a:190f:b0:7a9:aba6:d012 with SMTP id af79cd13be357-7ace73ff065mr116593685a.22.1727217711792;
-        Tue, 24 Sep 2024 15:41:51 -0700 (PDT)
-Received: from ubuntu-vm.dhcp.broadcom.net ([192.19.144.250])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7acde53d6d3sm114843285a.42.2024.09.24.15.41.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 15:41:50 -0700 (PDT)
-From: Kuntal Nayak <kuntal.nayak@broadcom.com>
-To: leah.rumancik@gmail.com,
-	jwong@kernel.org,
-	linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org
-Cc: ajay.kaher@broadcom.com,
-	alexey.makhalov@broadcom.com,
-	vasavi.sirnapalli@broadcom.com,
-	lei lu <llfamsec@gmail.com>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	Chandan Babu R <chandanbabu@kernel.org>,
-	Kuntal Nayak <kuntal.nayak@broadcom.com>
-Subject: [PATCH v5.10] xfs: don't walk off the end of a directory data block
-Date: Tue, 24 Sep 2024 15:39:58 -0700
-Message-Id: <20240924223958.347475-3-kuntal.nayak@broadcom.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240924223958.347475-1-kuntal.nayak@broadcom.com>
-References: <20240924223958.347475-1-kuntal.nayak@broadcom.com>
+	s=arc-20240116; t=1727217668; c=relaxed/simple;
+	bh=NhMixv5kl+9QH6xYXoXAIcF/J3IXlleAgXvIX0252z8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oS2bx264Mq+xiffIYjtKNoRbsKLmqsxv+2hQL/Esy2Nht2O90XXiT6mBUzS1Jz0eV9WS/yrsxmrCkNtUIBzA+GZKmpDJKpLcIQw1C74hWRUZS77wA5HhpwKqsu66Km/FzLrjTyNR1PBWknpwmNNR/lWHOGlvUy8CDQXG4b8wkk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SLqyPgRt; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <c7c16253-eff3-4d34-80c3-884790ecfdb4@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727217663;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D/3ql7hSu6hfJ6OUqVAGGrToVQdofg7CuYaFZlYBk80=;
+	b=SLqyPgRtLkk/M3T3thMFA4Fk9htRI6ziWWflbkjrvNW+jLBX6iVw63Kg2ZVUh+c6tbkWgP
+	GVAB6wHaVDQijoBgFZclOYkd22LPH2GX6TUK7HEr9HQm3yldyj9S/BbIczOBrPWqRi4188
+	1IgMXcJqtnKIYjKEqhuEFpd70PjRN3k=
+Date: Tue, 24 Sep 2024 15:40:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf-next v1] selftests/bpf:Enhance bpf ability to detect
+ ksym read error by libcap
+To: Lin Yikai <yikai.lin@vivo.com>
+Cc: bpf@vger.kernel.org, opensource.kernel@vivo.com,
+ Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
+ Mykola Lysenko <mykolal@fb.com>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev
+References: <20240914092426.431066-1-yikai.lin@vivo.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Martin KaFai Lau <martin.lau@linux.dev>
+In-Reply-To: <20240914092426.431066-1-yikai.lin@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-From: lei lu <llfamsec@gmail.com>
+On 9/14/24 11:24 AM, Lin Yikai wrote:
+> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
+> index 04716a5e43f1..369c5ad8fc4a 100644
+> --- a/tools/testing/selftests/bpf/Makefile
+> +++ b/tools/testing/selftests/bpf/Makefile
+> @@ -183,7 +183,7 @@ NON_CHECK_FEAT_TARGETS := clean docs-clean
+>   CHECK_FEAT := $(filter-out $(NON_CHECK_FEAT_TARGETS),$(or $(MAKECMDGOALS), "none"))
+>   ifneq ($(CHECK_FEAT),)
+>   FEATURE_USER := .selftests
+> -FEATURE_TESTS := llvm
+> +FEATURE_TESTS := llvm libcap
+>   FEATURE_DISPLAY := $(FEATURE_TESTS)
+>   
+>   # Makefile.feature expects OUTPUT to end with a slash
+> @@ -208,6 +208,11 @@ ifeq ($(feature-llvm),1)
+>     LLVM_LDFLAGS += $(shell $(LLVM_CONFIG) --ldflags)
+>   endif
+>   
+> +ifeq ($(feature-libcap), 1)
+> +  CFLAGS += -DHAVE_LIBCAP_SUPPORT
+> +  LDLIBS += -lcap
+> +endif
+> +
 
-[ Upstream commit 0c7fcdb6d06cdf8b19b57c17605215b06afa864a ]
+[ ... ]
 
-This adds sanity checks for xfs_dir2_data_unused and xfs_dir2_data_entry
-to make sure don't stray beyond valid memory region. Before patching, the
-loop simply checks that the start offset of the dup and dep is within the
-range. So in a crafted image, if last entry is xfs_dir2_data_unused, we
-can change dup->length to dup->length-1 and leave 1 byte of space. In the
-next traversal, this space will be considered as dup or dep. We may
-encounter an out of bound read when accessing the fixed members.
+> @@ -31,6 +35,55 @@ struct ksyms {
+>   static struct ksyms *ksyms;
+>   static pthread_mutex_t ksyms_mutex = PTHREAD_MUTEX_INITIALIZER;
+>   
+> +#ifdef HAVE_LIBCAP_SUPPORT
+> +#include <sys/capability.h>
+> +static bool bpf_cap__capable(cap_value_t cap)
+> +{
+> +	cap_flag_value_t val;
+> +	cap_t caps = cap_get_proc();
+> +
+> +	if (!caps)
+> +		return false;
+> +
+> +	if (cap_get_flag(caps, cap, CAP_EFFECTIVE, &val) != 0)
 
-In the patch, we make sure that the remaining bytes large enough to hold
-an unused entry before accessing xfs_dir2_data_unused and
-xfs_dir2_data_unused is XFS_DIR2_DATA_ALIGN byte aligned. We also make
-sure that the remaining bytes large enough to hold a dirent with a
-single-byte name before accessing xfs_dir2_data_entry.
+Instead of adding new dependency on libcap, please check if capget() can 
+directly be used. Take a look at tools/testing/selftests/bpf/cap_helpers.c.
 
-Signed-off-by: lei lu <llfamsec@gmail.com>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-Signed-off-by: Chandan Babu R <chandanbabu@kernel.org>
-Signed-off-by: Kuntal Nayak <kuntal.nayak@broadcom.com>
----
- fs/xfs/libxfs/xfs_dir2_data.c | 31 ++++++++++++++++++++++++++-----
- fs/xfs/libxfs/xfs_dir2_priv.h |  7 +++++++
- 2 files changed, 33 insertions(+), 5 deletions(-)
+pw-bot: cr
 
-diff --git a/fs/xfs/libxfs/xfs_dir2_data.c b/fs/xfs/libxfs/xfs_dir2_data.c
-index e67fa086f..72e4c3678 100644
---- a/fs/xfs/libxfs/xfs_dir2_data.c
-+++ b/fs/xfs/libxfs/xfs_dir2_data.c
-@@ -177,6 +177,14 @@ __xfs_dir3_data_check(
- 	while (offset < end) {
- 		struct xfs_dir2_data_unused	*dup = bp->b_addr + offset;
- 		struct xfs_dir2_data_entry	*dep = bp->b_addr + offset;
-+		unsigned int	reclen;
-+
-+		/*
-+		 * Are the remaining bytes large enough to hold an
-+		 * unused entry?
-+		 */
-+		if (offset > end - xfs_dir2_data_unusedsize(1))
-+			return __this_address;
- 
- 		/*
- 		 * If it's unused, look for the space in the bestfree table.
-@@ -186,9 +194,13 @@ __xfs_dir3_data_check(
- 		if (be16_to_cpu(dup->freetag) == XFS_DIR2_DATA_FREE_TAG) {
- 			xfs_failaddr_t	fa;
- 
-+			reclen = xfs_dir2_data_unusedsize(
-+					be16_to_cpu(dup->length));
- 			if (lastfree != 0)
- 				return __this_address;
--			if (offset + be16_to_cpu(dup->length) > end)
-+			if (be16_to_cpu(dup->length) != reclen)
-+				return __this_address;
-+			if (offset + reclen > end)
- 				return __this_address;
- 			if (be16_to_cpu(*xfs_dir2_data_unused_tag_p(dup)) !=
- 			    offset)
-@@ -206,10 +218,18 @@ __xfs_dir3_data_check(
- 				    be16_to_cpu(bf[2].length))
- 					return __this_address;
- 			}
--			offset += be16_to_cpu(dup->length);
-+			offset += reclen;
- 			lastfree = 1;
- 			continue;
- 		}
-+
-+		/*
-+		 * This is not an unused entry. Are the remaining bytes
-+		 * large enough for a dirent with a single-byte name?
-+		 */
-+		if (offset > end - xfs_dir2_data_entsize(mp, 1))
-+			return __this_address;
-+
- 		/*
- 		 * It's a real entry.  Validate the fields.
- 		 * If this is a block directory then make sure it's
-@@ -218,9 +238,10 @@ __xfs_dir3_data_check(
- 		 */
- 		if (dep->namelen == 0)
- 			return __this_address;
--		if (!xfs_verify_dir_ino(mp, be64_to_cpu(dep->inumber)))
-+		reclen = xfs_dir2_data_entsize(mp, dep->namelen);
-+		if (offset + reclen > end)
- 			return __this_address;
--		if (offset + xfs_dir2_data_entsize(mp, dep->namelen) > end)
-+		if (!xfs_verify_dir_ino(mp, be64_to_cpu(dep->inumber)))
- 			return __this_address;
- 		if (be16_to_cpu(*xfs_dir2_data_entry_tag_p(mp, dep)) != offset)
- 			return __this_address;
-@@ -244,7 +265,7 @@ __xfs_dir3_data_check(
- 			if (i >= be32_to_cpu(btp->count))
- 				return __this_address;
- 		}
--		offset += xfs_dir2_data_entsize(mp, dep->namelen);
-+		offset += reclen;
- 	}
- 	/*
- 	 * Need to have seen all the entries and all the bestfree slots.
-diff --git a/fs/xfs/libxfs/xfs_dir2_priv.h b/fs/xfs/libxfs/xfs_dir2_priv.h
-index 44c6a77cb..e46063cde 100644
---- a/fs/xfs/libxfs/xfs_dir2_priv.h
-+++ b/fs/xfs/libxfs/xfs_dir2_priv.h
-@@ -186,6 +186,13 @@ void xfs_dir2_sf_put_ftype(struct xfs_mount *mp,
- extern int xfs_readdir(struct xfs_trans *tp, struct xfs_inode *dp,
- 		       struct dir_context *ctx, size_t bufsize);
- 
-+static inline unsigned int
-+xfs_dir2_data_unusedsize(
-+	unsigned int	len)
-+{
-+	return round_up(len, XFS_DIR2_DATA_ALIGN);
-+}
-+
- static inline unsigned int
- xfs_dir2_data_entsize(
- 	struct xfs_mount	*mp,
--- 
-2.39.3
-
+> +		val = CAP_CLEAR;
+> +
+> +	if (cap_free(caps) != 0)
+> +		return false;
+> +
+> +	return val == CAP_SET;
+> +}
 
