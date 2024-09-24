@@ -1,77 +1,116 @@
-Return-Path: <linux-kernel+bounces-337550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD59F984B99
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:31:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F32D984B7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:24:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A895281943
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:31:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB6E31C23039
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC0213A3FF;
-	Tue, 24 Sep 2024 19:31:16 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA8E137775
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 19:31:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91FD313BACB;
+	Tue, 24 Sep 2024 19:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="vQk6gcxW"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E4E1B85F1;
+	Tue, 24 Sep 2024 19:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727206276; cv=none; b=iGyILDru1vZpYAJdJZKbTTFCfoGsRT0rD1f990Vi4Wgg8s5/Po5gLL4C0SEKNKl7y8xMCqr5RQFZ6wy13bMB3QgkIwr8LaoGGc8UzZ1hhlfSaLparOF6VdacRaSnu5h3QvZb6+VBgOisSt+vPPyg0b+hbjci/fVhMmAi8YT21zo=
+	t=1727205846; cv=none; b=ZFKra+/JLkuRv4wcem+Cqv9y6vj4i0HEONEriBFV9S4f1EjdypI5eML4Zwbmrea1QQZnUWrQwaXKLODQKbDEFh9OZR1PxxHe5QCLVaW4Dc5chnnW0YWn15T2Ee2otNsMH9PCyMTFVfIC8MlYbCIEzO4MVySik67Y1AJ6BQNCP0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727206276; c=relaxed/simple;
-	bh=uuVl6MBaXlHZbPcy1TEcgr1GjBMcSriG1UXSxHvSc/Y=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=l415uGTsMSsaUe+FK71VKvAaWm9MbFROnndq79VxhZaaknHo+fqBP0rDnzBd5cT5+YHIJk1x5B49RzXqsK5vWKM6UP3BMH2gA8+NSjJJa7e6xxSoAiBGP5BqirD79SN9q7o3iWPS+gJOpGETshjOZ22XpMEmmCnbqI7A3rsn9YE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 2EEB292009C; Tue, 24 Sep 2024 21:23:21 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 2083292009B;
-	Tue, 24 Sep 2024 20:23:21 +0100 (BST)
-Date: Tue, 24 Sep 2024 20:23:21 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: David Hildenbrand <david@redhat.com>
-cc: Guenter Roeck <linux@roeck-us.net>, 
-    Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k@lists.linux-m68k.org, 
-    linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v2] m68k: Define NR_CPUS
-In-Reply-To: <65959acc-c59b-4aca-8ab4-5d0603d22110@redhat.com>
-Message-ID: <alpine.DEB.2.21.2409242018160.3358@angie.orcam.me.uk>
-References: <20240923235617.1584056-1-linux@roeck-us.net> <aa23abe3-7236-4b9e-b237-3b822ac9d186@redhat.com> <CAMuHMdVEfPtwps0A29WvHcwgo3f+3nTBiGn1PFxoYy1dxPsUMA@mail.gmail.com> <bf98fa37-461f-47ce-8d4c-bcb69f225a9c@roeck-us.net>
- <65959acc-c59b-4aca-8ab4-5d0603d22110@redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1727205846; c=relaxed/simple;
+	bh=NDG6ALr1R5N6nYXJ1mUALoq8v7Z6f/xPQjOScNhTEyU=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=gG3GBH9X6S/zdhJC8QOpWbxZA2JfIwJ0ncZYf77gil7wk9DL9/0115/+VGlOYUY2XS0zX6vsc4la4z5dyaLcrHIBRI+4t7xG0k98QmEFo++oWxFg3Zk5I/o+2u6WhShCDtHi2WYB18rTTQRqXdMYcGbBTdS9GX8XRnKhGdx/J0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=vQk6gcxW; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4XCqXw0Vt4z9tjc;
+	Tue, 24 Sep 2024 21:24:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1727205840;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=17WJMeltX8R2P17eHC1mKHMp6fqbwE3q9+yXZvGUQ2g=;
+	b=vQk6gcxW3DP8rDJl7tkU4Z1ma6xPXDGpAGqwngp8Xu7t693wOfnxXRmhpSjRM72BVX0SyP
+	VkUx/foV1Xvi6q1+quo+lpfoXy9+5tU2reelB7gdI+0OX4f0EqRnzEgNxVMSWE17BK60w4
+	aK2t3McrWYQ14D7Wc1JQHqEtnZXoOCvIHti1z86BAdF/lYIQ2i/SDKR1MTisyhMRj3dbtC
+	VYIXltQFxqjGToLJPSVJ7M1mcbRTP59rS4begZ0avh7QRZWDBxRCzeeZjK7qzRmVkXsmaf
+	KwEGRnalRYaAc/ms8hnIKpUJEIjaE+FqVMywx0QHlDwBJwPfdlYVsY8Y3EIuXQ==
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: willy@infradead.org,
+	mcgrof@kernel.org,
+	gost.dev@samsung.com,
+	akpm@linux-foundation.org,
+	kernel@pankajraghav.com,
+	Christian Brauner <brauner@kernel.org>,
+	Pankaj Raghav <p.raghav@samsung.com>
+Subject: [PATCH 0/2] add block size > page size support to ramfs
+Date: Tue, 24 Sep 2024 21:23:49 +0200
+Message-ID: <20240924192351.74728-1-kernel@pankajraghav.com>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 
-On Tue, 24 Sep 2024, David Hildenbrand wrote:
+From: Pankaj Raghav <p.raghav@samsung.com>
 
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index 09aebca1cae3..4c9f5ea13271 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -595,6 +595,7 @@ config ARCH_MHP_MEMMAP_ON_MEMORY_ENABLE
->  config SPLIT_PTE_PTLOCKS
->         def_bool y
->         depends on MMU
-> +       depends on SMP
->         depends on NR_CPUS >= 4
+Add block size > page size to ramfs as we support minimum folio order
+allocation in the page cache. The changes are very minimal, and this is
+also a nice way to stress test just the page cache changes for minimum
+folio order.
 
- I think it might be more intuitive if written as:
+I tested the changes from blocksize 4k to 2M with ltp's fsx on an x86
+machine.
 
-	depends on SMP && NR_CPUS >= 4
+I ran a basic perf test with dd as follows:
+$ mount ramfs -t ramfs -o blocksize=$bs /media/test/
+$ dd if=/mnt/rand of="/media/test/rand" bs=2M count=2048
 
-(with a note in the change description to the effect that NR_CPUS will 
-have been unset and the condition won't work as expected unless SMP).
++------+----------+
+|  bs  | BW(GB/s) |
++------+----------+
+| 4k   |      1.7 |
+| 8k   |      2.4 |
+| 16k  |      3.2 |
+| 32k  |      4.0 |
+| 64k  |      4.5 |
+| 128k |      4.8 |
+| 256k |      5.3 |
+| 512k |      5.5 |
+| 1M   |      5.6 |
+| 2M   |      5.6 |
++------+----------+
 
- FWIW,
+We get better performance for larger bs as we allocate larger folios
+instead of multiple smaller folios when there is no memory fragmentation
+and pressure.
 
-  Maciej
+Pankaj Raghav (2):
+  ramfs: add blocksize mount option
+  ramfs: enable block size > page size
+
+ fs/ramfs/inode.c | 27 +++++++++++++++++++++++++--
+ 1 file changed, 25 insertions(+), 2 deletions(-)
+
+
+base-commit: 4d0326b60bb753627437fff0f76bf1525bcda422
+-- 
+2.44.1
+
 
