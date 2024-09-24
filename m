@@ -1,101 +1,336 @@
-Return-Path: <linux-kernel+bounces-337158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D8BE98460D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:39:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FBAC984611
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:43:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B36021F23BA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:39:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CADA52844DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:43:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37C61A7247;
-	Tue, 24 Sep 2024 12:38:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152781A724E;
+	Tue, 24 Sep 2024 12:43:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="Qf2HxapK"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9E52907;
-	Tue, 24 Sep 2024 12:38:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jnr7kgX3";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="KgENYhyr";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jnr7kgX3";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="KgENYhyr"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 546F21E492
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 12:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727181534; cv=none; b=QLj0xmQgNueZiFH3poravN64GBsTlEDfEet8j8J8x1YsEEFjEeu94KRRGx/AZ8l5hzbSpgCYVCUiR01Ju0se5jGfw1QtATTWPNJDEtwp0OebAjsIqMdLoYfr2SsWwMoFz+V5dO4KIP7BTEDsvU3l7i5oUoA+7lSAbQ/8D0q89gY=
+	t=1727181780; cv=none; b=lK9YOcaocjECtOalsb6UsDIiqvwsrunD9XP8AazJYm/NSNj4P4RXGQrOfwUxyyfl+RMZohzS/ldPhXmn/GqzNTfpuzQ2gsqhV+p3T9LhK6/nacsU/Z2fcEvfzM9p2d1ZazKEiuvspxoMENKryuBLxfOvMW0D/05EfMRaxEYV30I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727181534; c=relaxed/simple;
-	bh=faa6imd7lE6BcMFqO48/o3cyjsA9elv/WkwLO0G3rGU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=mrSe+elOZZOeUAdOsz/PULrqPBsUFHCWtBgblFdxApNPIozZgJ8C4PxO+86q7QwOfHxDYvmlZfql+N8FXZxqqF1NmQBxqpEbvOHMJ4owFOk+ZqUedVqWe7UPkRWU28x/Q9xbSTkzp9quJV3ZkTPn0Bj6dwVQbGUUUHzRf4zigao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=Qf2HxapK reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=DIfNVk5CauZ6NK2yNcaBXApRTZBwvdPRcS24YcB8ZlY=; b=Q
-	f2HxapKSw5RvNjGLAWQ0IhQg+k4PxwUsoPF/Ck9rzaw0AG7QNzNp0ubx2T75v/NN
-	4BZ3k9QEndoMaw+UVBwzQTxFdixZNyrn6BPKHaVPMKvAqC0SFH1QlBeQF6Rv7Yuu
-	a8nwnwdCz0F0J1ubG7So/S8j5LoQY1/o1GzWn5BF9Y=
-Received: from 00107082$163.com ( [111.35.191.143] ) by
- ajax-webmail-wmsvr-40-136 (Coremail) ; Tue, 24 Sep 2024 20:38:29 +0800
- (CST)
-Date: Tue, 24 Sep 2024 20:38:29 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: "Kent Overstreet" <kent.overstreet@linux.dev>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [BUG?] bcachefs performance: read is way too slow when a file
- has no overwrite.
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <q4jjkhgpahmrr3z7d5qn7qhml3kqtj3roybuykkhfefxlezdbf@y4lbf6ut4siw>
-References: <20240907103437.71139-1-00107082@163.com>
- <20240924110807.28788-1-00107082@163.com>
- <q4jjkhgpahmrr3z7d5qn7qhml3kqtj3roybuykkhfefxlezdbf@y4lbf6ut4siw>
-X-NTES-SC: AL_Qu2ZBf2Tvk0r7ymbZekXn0oTju85XMCzuv8j3YJeN500sSbm9woBcnBPI0rd4sO3LQmSvxeHTDFj9MBTbZFxdKRiQxhXPHdX4AuZULBqA4TO
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1727181780; c=relaxed/simple;
+	bh=gviDB0jIO3qPA3mOK/78Nd9OTk6+zbAM1bShHLZXmPY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=rc4MJxhxxLBkHjzmQO1EjCcFA0rUQVQDrlWfmGdkYAsPJhXcclAcuyivYKNWbfEKjXcrvymxMqwI7qA2LDtjeqInmCLewItjLqwEVhtQiYqwF1rmerh/uSEilPkZ9S9mcE1FpMCYoLmaF/ST94sElgvqhj/Hb5/Z0nr0KEBmUrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jnr7kgX3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=KgENYhyr; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jnr7kgX3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=KgENYhyr; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9BC7D1F79E;
+	Tue, 24 Sep 2024 12:42:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1727181776; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=EI7qTn1RlYJ0W9mEO7GKHtI/jesQjHhGQ2xip/gkpjQ=;
+	b=jnr7kgX3d88132Jgy7uz1aF1sC6zmm4K42R1szqQmFoK1vLpNN2se2YmXGek0ltf8i8+em
+	gkqnYVp+hVkBf18Q76ipPDlXxrdLesFgr1sUGAVF3yfkVlS3l/v2SORFHYKqNuYHbL7KvO
+	6UnhsjDLgxZKoy8KAKI3CefpCOSSh2U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1727181776;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=EI7qTn1RlYJ0W9mEO7GKHtI/jesQjHhGQ2xip/gkpjQ=;
+	b=KgENYhyrPGdUk7/JUhzsrBY0TOS2pB27MAoCcIe0s3vE71650+XMQLBptcYpxEjOLBTwsK
+	RKc0LUzXgE84G3Aw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1727181776; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=EI7qTn1RlYJ0W9mEO7GKHtI/jesQjHhGQ2xip/gkpjQ=;
+	b=jnr7kgX3d88132Jgy7uz1aF1sC6zmm4K42R1szqQmFoK1vLpNN2se2YmXGek0ltf8i8+em
+	gkqnYVp+hVkBf18Q76ipPDlXxrdLesFgr1sUGAVF3yfkVlS3l/v2SORFHYKqNuYHbL7KvO
+	6UnhsjDLgxZKoy8KAKI3CefpCOSSh2U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1727181776;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=EI7qTn1RlYJ0W9mEO7GKHtI/jesQjHhGQ2xip/gkpjQ=;
+	b=KgENYhyrPGdUk7/JUhzsrBY0TOS2pB27MAoCcIe0s3vE71650+XMQLBptcYpxEjOLBTwsK
+	RKc0LUzXgE84G3Aw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4C0EE1386E;
+	Tue, 24 Sep 2024 12:42:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id qxJIEdCz8mbhRwAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Tue, 24 Sep 2024 12:42:56 +0000
+Message-ID: <c960dc48-0a05-4cad-b86b-33ad59923bc3@suse.de>
+Date: Tue, 24 Sep 2024 14:42:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <6aecd8b7.bb5e.192240a5533.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:iCgvCgD333HGsvJm_QwAAA--.716W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiMwRkqmbyorkFCAAFs+
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+User-Agent: Mozilla Thunderbird
+Subject: Re: radeon ARUBA NULL pointer dereference
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Arthur Marsh <arthur.marsh@internode.on.net>
+Cc: Xinhui.Pan@amd.com, airlied@gmail.com, alexander.deucher@amd.com,
+ amd-gfx@lists.freedesktop.org, christian.koenig@amd.com, daniel@ffwll.ch,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ wuhoipok@gmail.com, iommu@lists.linux.dev,
+ the arch/x86 maintainers <x86@kernel.org>
+References: <20240919165641.4632-1-user@am64>
+ <20240924020824.6264-1-user@am64>
+ <8eb45005-c6fb-4baa-a44a-243958a3a1ba@suse.de>
+Content-Language: en-US
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <8eb45005-c6fb-4baa-a44a-243958a3a1ba@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,internode.on.net];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	FREEMAIL_TO(0.00)[internode.on.net];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[amd.com,gmail.com,lists.freedesktop.org,ffwll.ch,vger.kernel.org,lists.linux.dev,kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[bootlin.com:url,suse.de:mid]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-CgpBdCAyMDI0LTA5LTI0IDE5OjMwOjQ0LCAiS2VudCBPdmVyc3RyZWV0IiA8a2VudC5vdmVyc3Ry
-ZWV0QGxpbnV4LmRldj4gd3JvdGU6Cj5PbiBUdWUsIFNlcCAyNCwgMjAyNCBhdCAwNzowODowN1BN
-IEdNVCwgRGF2aWQgV2FuZyB3cm90ZToKPj4gSGksIAo+PiAKPj4gQXQgMjAyNC0wOS0wNyAxODoz
-NDozNywgIkRhdmlkIFdhbmciIDwwMDEwNzA4MkAxNjMuY29tPiB3cm90ZToKPj4gPkF0IDIwMjQt
-MDktMDcgMDE6Mzg6MTEsICJLZW50IE92ZXJzdHJlZXQiIDxrZW50Lm92ZXJzdHJlZXRAbGludXgu
-ZGV2PiB3cm90ZToKPj4gPj5UaGF0J3MgYmVjYXVzZSBjaGVja3N1bXMgYXJlIGF0IGV4dGVudCBn
-cmFudWxhcml0eSwgbm90IGJsb2NrOiBpZiB5b3UncmUKPj4gPj5kb2luZyBPX0RJUkVDVCByZWFk
-cyB0aGF0IGFyZSBzbWFsbGVyIHRoYW4gdGhlIHdyaXRlcyB0aGUgZGF0YSB3YXMKPj4gPj53cml0
-dGVuIHdpdGgsIHBlcmZvcm1hbmNlIHdpbGwgYmUgYmFkIGJlY2F1c2Ugd2UgaGF2ZSB0byByZWFk
-IHRoZSBlbnRpcmUKPj4gPj5leHRlbnQgdG8gdmVyaWZ5IHRoZSBjaGVja3N1bS4KPj4gPgo+PiA+
-Cj4+IAo+PiA+QmFzZWQgb24gdGhlIHJlc3VsdDoKPj4gPjEuIFRoZSByb3cgd2l0aCBwcmVwYXJl
-LXdyaXRlIHNpemUgNEsgc3RhbmRzIG91dCwgaGVyZS4KPj4gPldoZW4gZmlsZXMgd2VyZSBwcmVw
-YWlyZWQgd2l0aCB3cml0ZSBzaXplIDRLLCB0aGUgYWZ0ZXJ3YXJkcwo+PiA+IHJlYWQgcGVyZm9y
-bWFuY2UgaXMgd29yc2UuICAoSSBkaWQgZG91YmxlIGNoZWNrIHRoZSByZXN1bHQsCj4+ID5idXQg
-aXQgaXMgcG9zc2libGUgdGhhdCBJIG1pc3Mgc29tZSBhZmZlY3RpbmcgZmFjdG9ycy4pOwo+PiA+
-Mi4gV2l0aG91dCBPX0RJUkVDVCwgcmVhZCBwZXJmb3JtYW5jZSBzZWVtcyBjb3JyZWxhdGVkIHdp
-dGggdGhlIGRpZmZlcmVuY2UKPj4gPiBiZXR3ZWVuIHJlYWQgc2l6ZSBhbmQgcHJlcGFyZSB3cml0
-ZSBzaXplLCBidXQgd2l0aCBPX0RJUkVDVCwgY29ycmVsYXRpb24gaXMgbm90IG9idmlvdXMuCj4+
-ID4KPj4gPkFuZCwgdG8gbWVudGlvbiBpdCBhZ2FpbiwgaWYgSSBvdmVyd3JpdGUgdGhlIGZpbGVz
-ICoqdGhvcm91Z2hseSoqIHdpdGggZmlvIHdyaXRlIHRlc3QKPj4gPih1c2luZyBzYW1lIHNpemUp
-LCB0aGUgcmVhZCBwZXJmb3JtYW5jZSBhZnRlcndhcmRzIHdvdWxkIGJlIHZlcnkgZ29vZDoKPj4g
-Pgo+PiAKPj4gVXBkYXRlIHNvbWUgSU8gcGF0dGVybiAoYmlvIHN0YXJ0IGFkZHJlc3MgYW5kIHNp
-emUsIGluIHNlY3RvcnMsIGFkZHJlc3MmPS1hZGRyZXNzKSwKPj4gYmV0d2VlbiBiY2FjaGVmcyBh
-bmQgYmxvY2sgbGF5ZXI6Cj4+IAo+PiA0Sy1EaXJlY3QtUmVhZCBhIGZpbGUgY3JlYXRlZCBieSBs
-b29wIG9mIGB3cml0ZShmZCwgYnVmLCAxMDI0KjQpYDoKPgo+WW91J3JlIHN0aWxsIHRlc3Rpbmcg
-c21hbGwgcmVhZHMgdG8gYmlnIGV4dGVudHMuIEZsaXAgb2ZmIGRhdGEKPmNoZWNrc3VtbWluZyBp
-ZiB5b3Ugd2FudCB0byB0ZXN0IHRoYXQsIG9yIHdhaXQgZm9yIGJsb2NrIGdyYW51bGFyCj5jaGVj
-a3N1bXMgdG8gbGFuZC4KPgo+SSBhbHJlYWR5IGV4cGxhaW5lZCB3aGF0J3MgZ29pbmcgb24sIHNv
-IHRoaXMgaXNuJ3QgdmVyeSBoZWxwZnVsLgoKSGksIAoKSSBkbyB1bmRlcnN0YW5kIGl0IG5vdywg
-c29ycnkgZm9yIGJvdGhlcmluZy4KTW9zdGx5IEkgd2FudGVkIHRvIGV4cGxhaW4gdG8gbXlzZWxm
-IHdoeSB0aGUgZGlmZmVyZW5jZS4uLi4gCgpCZXNpZGUgdGhhdCwganVzdCB3YW50IHRvIG1lbnRp
-b24gdGhlcmUgaXMgc29tZSBpbyBzaXplIG9mICcxIHNlY3RvcicsIGZlZWwgc3RyYW5nZSBhYm91
-dCBpdC4uLgoKCkRhdmlkCg==
+
+
+Am 24.09.24 um 14:20 schrieb Thomas Zimmermann:
+> (cc: DMA and x86 folks)
+>
+> Hi
+>
+> Am 24.09.24 um 04:08 schrieb Arthur Marsh:
+>> Using current Linus git head kernel, I was able to save the dmesg 
+>> output:
+>>
+>> [   17.218724] [drm] radeon kernel modesetting enabled.
+>> [   17.218778] radeon 0000:00:01.0: vgaarb: deactivate vga console
+>> [   17.219509] Console: switching to colour dummy device 80x25
+>> [   17.219700] [drm] initializing kernel modesetting (ARUBA 
+>> 0x1002:0x990C 0x1002:0x0123 0x00).
+>> [   17.219773] ATOM BIOS: 113
+>> [   17.219838] radeon 0000:00:01.0: VRAM: 768M 0x0000000000000000 - 
+>> 0x000000002FFFFFFF (768M used)
+>> [   17.219841] radeon 0000:00:01.0: GTT: 1024M 0x0000000030000000 - 
+>> 0x000000006FFFFFFF
+>> [   17.219844] [drm] Detected VRAM RAM=768M, BAR=256M
+>> [   17.219845] [drm] RAM width 64bits DDR
+>> [   17.219851] BUG: kernel NULL pointer dereference, address: 
+>> 00000000000000a0
+>
+> This is 160 bytes behind NULL, which indicates a field within a struct.
+>
+>> [   17.219852] #PF: supervisor read access in kernel mode
+>> [   17.219853] #PF: error_code(0x0000) - not-present page
+>> [   17.219854] PGD 0 P4D 0
+>> [   17.219856] Oops: Oops: 0000 [#1] PREEMPT_RT SMP NOPTI
+>> [   17.219858] CPU: 0 UID: 0 PID: 451 Comm: udevd Not tainted 6.11.0+ 
+>> #6121
+>> [   17.219860] Hardware name: Gigabyte Technology Co., Ltd. To be 
+>> filled by O.E.M./F2A78M-HD2, BIOS F2 05/28/2014
+>> [   17.219862] RIP: 0010:dma_get_required_mask+0x11/0x50
+>> [   17.219868] Code: 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 
+>> 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 48 8b 87 68 02 00 00 48 85 
+>> c0 74 11 <48> 8b 80 a0 00 00 00 48 85 c0 74 1f e9 ee ed 94 00 f6 87 
+>> 2c 03 00
+>> [   17.219870] RSP: 0018:ffffa54bc13a7b00 EFLAGS: 00010202
+>> [   17.219871] RAX: 0000000000000000 RBX: 000000ffffffffff RCX: 
+>> 0000000000000000
+>> [   17.219872] RDX: 0000000000000000 RSI: 0000000000000027 RDI: 
+>> ffff976f44e720c8
+>> [   17.219873] RBP: ffff976f44e720c8 R08: 00000000ffffefff R09: 
+>> ffffffffab2aab08
+>> [   17.219874] R10: 00000000fffff000 R11: 0000000000000002 R12: 
+>> 0000000000000000
+>> [   17.219875] R13: ffff976f48a4aa30 R14: 0000000000000000 R15: 
+>> 0000000000000028
+>> [   17.219876] FS:  00007f59a070d840(0000) GS:ffff97726f800000(0000) 
+>> knlGS:0000000000000000
+>> [   17.219878] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> [   17.219879] CR2: 00000000000000a0 CR3: 00000001053b4000 CR4: 
+>> 00000000000406f0
+>> [   17.219880] Call Trace:
+>> [   17.219881]  <TASK>
+>> [   17.219882]  ? __die_body.cold+0x19/0x1e
+>> [   17.219885]  ? page_fault_oops+0xa8/0x230
+>> [   17.219889]  ? search_module_extables+0x4f/0x90
+>> [   17.219891]  ? fixup_exception+0x36/0x2f0
+>> [   17.219894]  ? exc_page_fault+0x88/0x1b0
+>> [   17.219897]  ? asm_exc_page_fault+0x22/0x30
+>> [   17.219900]  ? dma_get_required_mask+0x11/0x50
+>
+> This is not in the radeon driver but the DMA code. I'd say it's at 
+> [1], as get_required_mask is 160 bytes within struct drm_map_ops. The 
+> call to get_arch_dma_ops() probably returns NULL.
+
+And indeed, when I added
+
+     pr_warn("dev dma ops: 0x%p\n", pdev->dev.dma_ops);
+     pr_warn("arch dma ops: 0x%p\n", get_arch_dma_ops());
+
+to radeon_pci_probe(), I got
+
+[   22.325657] dev dma ops: 0x0000000000000000
+[   22.342921] arch dma ops: 0x0000000000000000
+
+as a result.
+
+Best regards
+Thomas
+
+>
+> Best regards
+> Thomas
+>
+> [1] 
+> https://elixir.bootlin.com/linux/v6.11/source/kernel/dma/mapping.c#L523
+> [2] 
+> https://elixir.bootlin.com/linux/v6.11/source/include/linux/dma-map-ops.h#L98
+>
+>> [   17.219902] dma_addressing_limited+0x6c/0xb0
+>> [   17.219905]  radeon_ttm_init+0x3f/0x210 [radeon]
+>> [   17.219977]  cayman_init+0x97/0x290 [radeon]
+>> [   17.220057]  radeon_device_init+0x5e9/0xb40 [radeon]
+>> [   17.220115]  radeon_driver_load_kms+0xb0/0x260 [radeon]
+>> [   17.220174]  radeon_pci_probe+0xff/0x170 [radeon]
+>> [   17.220231]  pci_device_probe+0xbe/0x1a0
+>> [   17.220234]  really_probe+0xde/0x350
+>> [   17.220237]  ? pm_runtime_barrier+0x61/0xb0
+>> [   17.220240]  ? __pfx___driver_attach+0x10/0x10
+>> [   17.220242]  __driver_probe_device+0x78/0x110
+>> [   17.220245]  driver_probe_device+0x2d/0xc0
+>> [   17.220247]  __driver_attach+0xc9/0x1c0
+>> [   17.220249]  bus_for_each_dev+0x6a/0xb0
+>> [   17.220251]  ? migrate_enable+0xbf/0xf0
+>> [   17.220254]  bus_add_driver+0x139/0x220
+>> [   17.220256]  driver_register+0x6e/0xc0
+>> [   17.220258]  ? __pfx_radeon_module_init+0x10/0x10 [radeon]
+>> [   17.220315]  do_one_initcall+0x42/0x210
+>> [   17.220318]  ? __kmalloc_cache_noprof+0x89/0x230
+>> [   17.220321]  do_init_module+0x60/0x210
+>> [   17.220324]  init_module_from_file+0x89/0xc0
+>> [   17.220326]  __x64_sys_finit_module+0x142/0x390
+>> [   17.220329]  do_syscall_64+0x47/0x110
+>> [   17.220331]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>> [   17.220334] RIP: 0033:0x7f59a0625279
+>> [   17.220336] Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 
+>> 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 
+>> 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 77 6b 0d 00 f7 d8 64 
+>> 89 01 48
+>> [   17.220337] RSP: 002b:00007ffd15ee7df8 EFLAGS: 00000246 ORIG_RAX: 
+>> 0000000000000139
+>> [   17.220339] RAX: ffffffffffffffda RBX: 00005578ae660840 RCX: 
+>> 00007f59a0625279
+>> [   17.220340] RDX: 0000000000000000 RSI: 00005578ae677fc0 RDI: 
+>> 0000000000000011
+>> [   17.220341] RBP: 0000000000000000 R08: 00007f59a06fcb20 R09: 
+>> 00005578ae640550
+>> [   17.220342] R10: 0000000000000040 R11: 0000000000000246 R12: 
+>> 00005578ae677fc0
+>> [   17.220342] R13: 0000000000020000 R14: 00005578ae651750 R15: 
+>> 0000000000000000
+>> [   17.220344]  </TASK>
+>> [   17.220345] Modules linked in: radeon(+) snd_hda_codec_hdmi 
+>> snd_seq_midi snd_seq_midi_event snd_seq snd_hda_intel 
+>> snd_intel_dspcfg snd_emu10k1 snd_hda_codec drm_ttm_helper ttm 
+>> snd_util_mem drm_suballoc_helper snd_ac97_codec snd_hda_core 
+>> drm_display_helper ac97_bus snd_rawmidi snd_hwdep snd_seq_device 
+>> snd_pcm drm_kms_helper edac_mce_amd sha512_ssse3 sha512_generic 
+>> k10temp sha256_ssse3 sha1_ssse3 drm aesni_intel snd_timer gf128mul 
+>> crypto_simd cryptd acpi_cpufreq evdev pcspkr serio_raw emu10k1_gp 
+>> gameport at24 regmap_i2c i2c_algo_bit snd video soundcore wmi button 
+>> sp5100_tco ext4 crc32c_generic crc16 mbcache jbd2 uas usb_storage 
+>> hid_generic usbhid hid sg sr_mod sd_mod cdrom ata_generic 
+>> firewire_ohci crc32_pclmul crc32c_intel firewire_core crc_itu_t 
+>> pata_atiixp i2c_piix4 i2c_smbus ahci r8169 libahci xhci_pci ohci_pci 
+>> realtek libata mdio_devres ehci_pci ohci_hcd xhci_hcd scsi_mod 
+>> ehci_hcd scsi_common usbcore libphy usb_common
+>> [   17.220388] CR2: 00000000000000a0
+>> [   17.220390] ---[ end trace 0000000000000000 ]---
+>>
+>> Happy to provide additional information and run tests.
+>>
+>> Regards,
+>>
+>> Arthur Marsh.
+>
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
