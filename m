@@ -1,89 +1,256 @@
-Return-Path: <linux-kernel+bounces-337003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06D1D984400
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:50:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CE8D98440D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:58:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3109E1C22D4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:50:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E4CF1C22CC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4680C1A3A9A;
-	Tue, 24 Sep 2024 10:50:21 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A3F158538
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 10:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99DB817BEB9;
+	Tue, 24 Sep 2024 10:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c7+Cd1Ey"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139A91B85DD
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 10:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727175020; cv=none; b=ebqhL+HBDidHvFgs1jf6Iw3IGN0bpJkLwYrEAO6p9lL2QPzeFuHWVB5kAu89/JoLwpXxcgVI9oiE9itoqGCWKwqhmTe4cKZWkwEazfq7y0AtI+31LHso5UVHa+UmaO88dYeF7ANiNejSsvpzH1V2NFiLOZnGqOozN61nKilHUs0=
+	t=1727175511; cv=none; b=MRqzUsr1L4zKFWR4fc5rpM0pLymUPrtObUgfKGdwlFegDVvNeVdO9UQ8xAdSExMYE4u5c48E7M3e7hu7RF6w9s2bnjkWkG1Sb3lXchcNRhQDBWNAehEjCMdWAWf0pmZxJ0evBKrDnR3qabEiSmPD46Dp5wJ+IYP4zhPUYYOAaDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727175020; c=relaxed/simple;
-	bh=84eavi6gbHEDYMv/1Ntg1zLnJaypCt4R7XFJ2bLFqmo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s3Ee0LHVar5qnKnu9ef1NhxI6BQWv3eZZu7STAa09u5yA84M31Fu4oLbJ/5nTQMiozJwEp88YtIJv6rClDJMAH/HCT8F7RUP4iq01CTmX9Wf67XlwA0DOxJiI24VebXtCsKmqah/9PZ0fih0VASnAfLOx1rS1MUWM6nJMf8COZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 07105DA7;
-	Tue, 24 Sep 2024 03:50:48 -0700 (PDT)
-Received: from [10.163.37.113] (unknown [10.163.37.113])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9FA4A3F528;
-	Tue, 24 Sep 2024 03:50:16 -0700 (PDT)
-Message-ID: <42545fc6-8c91-4f20-9959-2416b9e112c2@arm.com>
-Date: Tue, 24 Sep 2024 16:20:13 +0530
+	s=arc-20240116; t=1727175511; c=relaxed/simple;
+	bh=zRWbzv/HNUuew4/oKYm2yE0AwOYhSJnvFb26F2BIHiA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LO1Sr2UQjf5b2Xi2sqCTzRZIz7DjwGcCRXvmJQ2Viq8Lw40GCgwrj/9OMLJVJhpy4gICKar4csNpnoVDBpj7WDXukWL9vY0A/TTj5tO6iyMh61wUUyLIUvxlhhVEHv6u/a4K17V5r8Uyl+10BiiI6/roOfsckdZ/CctxSjbNmSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c7+Cd1Ey; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-374c4d4f219so2965469f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 03:58:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727175508; x=1727780308; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7Yf5sBQQiLzo6FyM+cKoz/GaI/yLKqyAOWzkNvkuwOI=;
+        b=c7+Cd1EyHxRFMEeZITE0fq7s1fLABRjyt7ecGY7n0qSUDnzh7YZnmaVnT8Fwig1KLa
+         OfjOAnlsmxGqUxiWCjg5CnZTDtPJspjAjp8GoDgldJP02zSjsGwAluFGyl6t23vTCO+Y
+         yvhEP7GaxR8P72H9lZekcoFrKbOxvW95ERTD9S1hZH0AS/DDy/lvtHq7+jLlEoXmTc6N
+         HuePPjQi9AneeElwnLZp5PS031HhShcjRl1ljs5DGFIJci89qKSgvgU8z6bfjharA29/
+         kbyvkk9Mcw4idgXGg7umchA8zrqB7AOUYPSkQSeadUDzuaZGInPCpT/tiUVfknAqzlhn
+         tNQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727175508; x=1727780308;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7Yf5sBQQiLzo6FyM+cKoz/GaI/yLKqyAOWzkNvkuwOI=;
+        b=MfiJgmPeaqcnxfsr7CsMcakyYIm4UFP2B1l54BnNL1okfAa9f96KPxV4kcxOuClS4M
+         UyagOkLpCmrHesOOXwguZzS+WBe9w/FV1GOT6EKACv74vjvhSJJNGnmLH8RGuOijwy7M
+         o9qNTwfn03TrlTFmC6rHT2gwqpHz+Fo5zaiKHgpMp8Edk4RnIRl3N8ip/BejVRtVct50
+         ww9Oge4tEDLrdCBftS8xyvZFEkwe7KyUq7Y9lzHkEkzbQoEugSS+EC80A2/HFGlTMMaN
+         jRZx2Xg5PYBU7vlpV1eZxCkIebfrxQgOz1fawL9CQStuWbu+eNjJuODgHBCttR3NR3xr
+         PKIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUcrsXlTMFVQEUouJmVf0wCBdcRinZNF3FJgzb/jIhH4o3Ogbe7xKQjrz6Fh3dp5QNlDrfpZ3GXmdzI5wE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBP8dUX8Cq4CqlAH4eGX4yv4I12NO7FVFA3wqvyeSHjYPHtdpp
+	Y1h7MrLQmVE7jKdNB/p6bAcERGYHD7GDEdtfpzY0Sxhbjgru1/52cb4v35hlM/Y=
+X-Google-Smtp-Source: AGHT+IGJdVQiQGePfNnBEGo3AyJuCcLEqG7amQfxgyFE+6YcDH58sfrrifWG705xBswhBd9I2HKtJQ==
+X-Received: by 2002:adf:f10c:0:b0:371:8e0d:c1d9 with SMTP id ffacd0b85a97d-37a42271a38mr8104333f8f.19.1727175508255;
+        Tue, 24 Sep 2024 03:58:28 -0700 (PDT)
+Received: from linaro.org ([82.77.84.93])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cbc2a8ac3sm1276479f8f.8.2024.09.24.03.58.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2024 03:58:27 -0700 (PDT)
+Date: Tue, 24 Sep 2024 13:58:26 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Trilok Soni <quic_tsoni@quicinc.com>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: x1e80100-crd: Enable external DP
+ support
+Message-ID: <ZvKbUhTxEb50nWEZ@linaro.org>
+References: <20240902-x1e80100-crd-dts-add-external-dp-support-v1-0-899c264c0eb7@linaro.org>
+ <20240902-x1e80100-crd-dts-add-external-dp-support-v1-1-899c264c0eb7@linaro.org>
+ <Zta2QJr6jIJcNdUg@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/memory_hotplug: Print the correct pfn in
- do_migrate_range()
-To: Li Zhijian <lizhijian@fujitsu.com>, linux-mm@kvack.org
-Cc: David Hildenbrand <david@redhat.com>, Oscar Salvador <osalvador@suse.de>,
- Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
-References: <20240924101555.327091-1-lizhijian@fujitsu.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20240924101555.327091-1-lizhijian@fujitsu.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zta2QJr6jIJcNdUg@hovoldconsulting.com>
 
-
-
-On 9/24/24 15:45, Li Zhijian wrote:
-> The pfn value needs to be retrieved correctly when PageTransHuge(page)
- 
-Where the pfn could have been modified with
-
-pfn = page_to_pfn(head) + compound_nr(head) - 1
-
-So retrieving from page will get the original pfn value ?
-
-> is true. Fix it by replacing the usage of 'pfn' with 'page_to_pfn(page)'
-> to ensure the correct pfn is printed in warning messages when isolation
-> fails.
+On 24-09-03 09:09:52, Johan Hovold wrote:
+> On Mon, Sep 02, 2024 at 06:01:35PM +0300, Abel Vesa wrote:
+> > The Qualcomm Snapdragon X Elite CRD board has 3 USB Type-C ports,
+> > all of them supporting external DP altmode. Between each QMP
+> > combo PHY and the corresponding Type-C port, sits one Parade PS8830
+> > retimer which handles both orientation and SBU muxing. Add nodes for
+> > each retimer, fix the graphs between connectors and the PHYs accordingly,
+> > add the voltage regulators needed by each retimer and then enable all
+> > 3 remaining DPUs.
+> > 
+> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> > ---
+> >  arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 414 +++++++++++++++++++++++++++++-
+> >  1 file changed, 408 insertions(+), 6 deletions(-)
 > 
-> Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
-> ---
->  mm/memory_hotplug.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> > @@ -288,6 +312,134 @@ vreg_edp_3p3: regulator-edp-3p3 {
+> >  		regulator-boot-on;
+> >  	};
+> >  
+> > +	vreg_rtmr0_1p15: regulator-rtmr0-1p15 {
+> > +		compatible = "regulator-fixed";
+> > +
+> > +		regulator-name = "VREG_RTMR0_1P15";
+> > +		regulator-min-microvolt = <1150000>;
+> > +		regulator-max-microvolt = <1150000>;
+> > +
+> > +		gpio = <&pm8550ve_8_gpios 8 GPIO_ACTIVE_HIGH>;
+> > +		enable-active-high;
+> > +
+> > +		pinctrl-0 = <&rtmr0_1p15_reg_en>;
+> > +		pinctrl-names = "default";
+> > +	};
 > 
-> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> index 26790c8d5b43..000430406a9e 100644
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -1829,7 +1829,7 @@ static void do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
+> > +	vreg_rtmr2_3p3: regulator-rtmr2-3p3 {
+> > +		compatible = "regulator-fixed";
+> > +
+> > +		regulator-name = "VREG_RTMR2_3P3";
+> > +		regulator-min-microvolt = <3300000>;
+> > +		regulator-max-microvolt = <3300000>;
+> > +
+> > +		gpio = <&tlmm 187 GPIO_ACTIVE_HIGH>;
+> > +		enable-active-high;
+> > +
+> > +		pinctrl-names = "default";
+> > +		pinctrl-0 = <&rtmr2_3p3_reg_en>;
+> > +	};
+> > +
+> > +
+> > +
+> 
+> Double stray newline.
+> 
+> Also move these nodes below the nvme one to maintain sort order.
+> 
+
+Will do.
+
+> >  	vreg_nvme: regulator-nvme {
+> >  		compatible = "regulator-fixed";
+> >  
+> > @@ -709,6 +861,163 @@ keyboard@3a {
+> >  	};
+> >  };
+> 
+> > +&i2c7 {
+> > +	clock-frequency = <400000>;
+> > +
+> > +	status = "okay";
+> > +
+> > +	typec-mux@8 {
+> > +		compatible = "parade,ps8830";
+> > +		reg = <0x8>;
+> > +
+> > +		clocks = <&rpmhcc RPMH_RF_CLK4>;
+> > +		clock-names = "xo";
+> > +
+> > +		vdd15-supply = <&vreg_rtmr1_1p15>;
+> > +		vdd18-supply = <&vreg_rtmr1_1p8>;
+> > +		vdd33-supply = <&vreg_rtmr1_3p3>;
+> > +
+> > +		reset-gpios = <&tlmm 176 GPIO_ACTIVE_HIGH>;
+> > +
+> > +		retimer-switch;
+> > +		orientation-switch;
+> > +
+> > +		ports {
+> > +			#address-cells = <1>;
+> > +			#size-cells = <0>;
+> > +
+> > +			port@0 {
+> > +				reg = <0>;
+> > +
+> > +				retimer_ss1_ss_out: endpoint {
+> > +					remote-endpoint = <&pmic_glink_ss1_ss_in>;
+> > +				};
+> > +			};
+> > +
+> > +			port@1 {
+> > +				reg = <1>;
+> > +
+> > +				retimer_ss1_ss_in: endpoint {
+> > +					remote-endpoint = <&usb_1_ss1_qmpphy_out>;
+> > +				};
+> > +			};
+> > +
+> > +			port@2 {
+> > +				reg = <2>;
+> > +
+> > +				retimer_ss1_con_sbu_out: endpoint {
+> > +					remote-endpoint = <&pmic_glink_ss1_con_sbu_in>;
+> > +				};
+> > +			};
+> > +
+> 
+> Stray newline.
+> 
+
+Will drop.
+
+> > +		};
+> > +	};
+> > +};
 >  
->  		} else {
->  			if (__ratelimit(&migrate_rs)) {
-> -				pr_warn("failed to isolate pfn %lx\n", pfn);
-> +				pr_warn("failed to isolate pfn %lx\n", page_to_pfn(page));
->  				dump_page(page, "isolation failed");
->  			}
->  		}
+> > +&pm8550_gpios {
+> > +	rtmr0_3p3_reg_en: rtmr0-3p3-reg-en-state {
+> > +		pins = "gpio11";
+> > +		function = "func1";
+> > +		input-disable;
+> > +		output-enable;
+> > +	};
+> > +};
+> > +
+> > +&pm8550ve_8_gpios {
+> > +	rtmr0_1p15_reg_en: rtmr0-1p15-reg-en-state {
+> > +		pins = "gpio8";
+> > +		function = "func1";
+> > +		input-disable;
+> > +		output-enable;
+> > +	};
+> > +};
+> > +
+> > +&pm8550ve_9_gpios {
+> > +	rtmr0_1p8_reg_en: rtmr0-1p8-reg-en-state {
+> > +		pins = "gpio8";
+> > +		function = "func1";
+> > +		input-disable;
+> > +		output-enable;
+> > +	};
+> > +};
+> 
+> Shouldn't you specify the drive strength here as well? (Same on T14s).
+> 
+
+Will do.
+
+> Johan
+
+Thanks for reviewing.
+
+Abel
+
 
