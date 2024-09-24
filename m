@@ -1,200 +1,167 @@
-Return-Path: <linux-kernel+bounces-336872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99E1B9841F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:22:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08176984210
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:27:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCA111C23B72
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:22:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B803A286C10
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F75155743;
-	Tue, 24 Sep 2024 09:22:16 +0000 (UTC)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4A115E5D3;
+	Tue, 24 Sep 2024 09:25:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="LxmGRXYX";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="WF+iLKSI"
+Received: from smtpout143.security-mail.net (smtpout143.security-mail.net [85.31.212.143])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67F8D84A50;
-	Tue, 24 Sep 2024 09:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727169736; cv=none; b=aRJhvDz7470x9BfnrdXySsX9IE/o0G7vVLiZMB4gLnPkScXUEbDRGNgXx7cSCnu08OXXJKsrB2IhdUjoBXUxfVtxXqZsK6fd4cED9WbGCN9IHtlwKO/flsNC8yDc+oXXj748/YAWD/s5tXQCH0u9VReIEQITWGfiUo/ZlZE70r0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727169736; c=relaxed/simple;
-	bh=mNZpzHYocrxxSBhWTUitiiBlrxI0MDt3X+nyc3PncTs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sIEmwOoP8CGzMyPCod3IigdtBnqaNGenEL3HNIUr33nr/diwGZ/RSnYal2N+RJArYhfXjNiVdv2iGV7Fg7EJ/5T0uDv0nw/Bqom0XZl3OR7Irs1TTC43T0dwRC4LonsMZ4dMUIWDakJmi1Ypeggh/YIVIJnlmLx/wSiXTItdC6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6ddd758aaf4so38128877b3.2;
-        Tue, 24 Sep 2024 02:22:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727169733; x=1727774533;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ezXFARLli0XopvazaZI4WJPLJgg9ymKuou4RbS/PT28=;
-        b=BASM3ESNk4+AURqP5PX3rY8sSmfohwiSIqhzf2gOU+/A4AGpq8ZuAsN6y0m7lufyy0
-         jrzUqy/hkgy9DVAHuICkF6C5N84oTIfO6gNleWDT61teTGjnDS0bhw3S5eHJsCr2+iFd
-         wY5lVkX0UG/CW/sxnvFrA8mxb5M/kqlT/gOu4i8CE7IEalv7l9GqJSM0hp1ZTSTLdYS9
-         4YzFNEIBoTz/GZQ+a6iv2Xq6+bW4TQ8kypyaOaERlEE5gNTGGNh/oPJpNYkF8vxg+lRE
-         aiUpP1NYo7zyTmf/ChYAKnDhDtlsU+42Q1ag+W49dpU8CGQQHcT810gDxbyKyf+Vg1/u
-         4uBA==
-X-Forwarded-Encrypted: i=1; AJvYcCUKzGx2Ri4vV0e4G6tQVqffJDb4hs2ibKtEnLFEnMRanyK8UVfIoLWX5Paq922iC7cFiu/O1023/8UemC5D@vger.kernel.org, AJvYcCWVaxP/UA9UrKS+053AULZgnDPilwrMyc6KwVNieXppLHT4oUVw+1X8fJxrf9o0fwUmJ6EfSwEKHqbqGbLO@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/JQmlnkfmtAh+nb34K7Lomt4O93aI6kDNMJE0MjqFz8iBRGJe
-	nJYImQwRhzRiPqmbZjSH3vTlzdbpEXIVlN9xbe/zkTAjxIZj6nw9xBHq+qsY
-X-Google-Smtp-Source: AGHT+IHmHwNQEz4rHjfTONxzEAP97+r7PhVrpf90lh2Cxe1bGCm77sjOD4YfMdX/V5RazydmbRd5Ug==
-X-Received: by 2002:a05:690c:6604:b0:6e2:12e5:35b4 with SMTP id 00721157ae682-6e212e55256mr6036607b3.0.1727169732651;
-        Tue, 24 Sep 2024 02:22:12 -0700 (PDT)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e20d2a44b3sm1819777b3.131.2024.09.24.02.22.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Sep 2024 02:22:11 -0700 (PDT)
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6dffe3fe4fcso28550687b3.1;
-        Tue, 24 Sep 2024 02:22:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVvmPClUN2qx7v2fOM37rjrViZ1rpgGiGLHI5AzK4XlE+3lCS3GAJFNtcY18tItd9E9Tj3MHcS7d2ru9Q1H@vger.kernel.org, AJvYcCWTa3xsUDF9XCr40oXXUajwq1oPVAv5rseY79qpEzjVVPc94wtKPBScZpo8pAGCAEd0pv1HwgW83lCxkQlP@vger.kernel.org
-X-Received: by 2002:a05:690c:fc1:b0:6e2:ffd:c123 with SMTP id
- 00721157ae682-6e20ffdc6ffmr10422617b3.7.1727169731405; Tue, 24 Sep 2024
- 02:22:11 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AF5015574F
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=85.31.212.143
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727169947; cv=fail; b=C0wuupb5XrVIKw1aGESlFMCW5aWv6mn3MTXkMevl8VBmXxpxenSHzMEUzg3IScCI5VoUTSA7AvU/JmjiThEwTxuiFzsfLf6IC8hpK+LuBZj8AsiVNpbzgSXh4zimC0ZXqg7ioebRR4DhnB1FZaLjHwoJv8f6zGGkNe3hDHwBQlY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727169947; c=relaxed/simple;
+	bh=Sa6Z9JmPstN0uE49orm4pHgrd+JYXTZCci5kRiY18p0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LBtSmmqP3BwWJArOxai+1kfJXxEy2CQ7s/A/YpOtd9W/PtSVPmWfToDWfLL8OYNReNktCIUZRpd79QSyueb0rOOXuK6aTvf9zzSPvx5AIi3zNW5MrdLzoUFAhx+crXCQsy/DUarL4E1mPQ7WM4xH9i/rWOnkZUiVf1Gr2KiaxMY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=LxmGRXYX; dkim=fail (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=WF+iLKSI reason="signature verification failed"; arc=fail smtp.client-ip=85.31.212.143
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kalrayinc.com
+Received: from localhost (localhost [127.0.0.1])
+	by fx403.security-mail.net (Postfix) with ESMTP id 346A98EAF31
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 11:23:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kalrayinc.com;
+	s=sec-sig-email; t=1727169780;
+	bh=Sa6Z9JmPstN0uE49orm4pHgrd+JYXTZCci5kRiY18p0=;
+	h=From:To:Cc:Subject:Date;
+	b=LxmGRXYXtdV2V8Eq3vGO0YDz61teav1lBDDSAw0ieFGRM36AZRhVVZ0DUpTe7z2kJ
+	 2mwNf/ujdENcnIrZCkbLIobeLGufy77V1bB/wAmTweBHhz/mgB6gr1aXNAzZMJ/HTP
+	 o8OquYPlmlZXOyK9An7eKIA4e81O2cctFjIBvY8A=
+Received: from fx403 (localhost [127.0.0.1]) by fx403.security-mail.net
+ (Postfix) with ESMTP id B01158EB39C; Tue, 24 Sep 2024 11:22:59 +0200 (CEST)
+Received: from PA5P264CU001.outbound.protection.outlook.com
+ (mail-francecentralazlp17010005.outbound.protection.outlook.com
+ [40.93.76.5]) by fx403.security-mail.net (Postfix) with ESMTPS id
+ B19A68EACB6; Tue, 24 Sep 2024 11:22:58 +0200 (CEST)
+Received: from PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:118::6)
+ by MR1P264MB3073.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:3a::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.22; Tue, 24 Sep
+ 2024 09:22:57 +0000
+Received: from PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::6fc2:2c8c:edc1:f626]) by PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::6fc2:2c8c:edc1:f626%4]) with mapi id 15.20.7982.022; Tue, 24 Sep
+ 2024 09:22:57 +0000
+X-Secumail-id: <4fca.66f284f2.aebed.0>
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hE4tZ6dGQk7R0NGCDVv/o3gW3+z4DNm04c2Z7ulTUX06BuSO53yyar4t6JqFaV+L5Z3fwRKdY/lje2mrbiAisOx6RAdssB2S10VNh7Fvf+s5usUe4LJLR10+5viZl0Qo/X4IZmrDjHHaK7Y3LA7vUpqwJx7lDRXaLoQdPlcIbedlDTsT0MJKhBWHaIjNE/q0lT7pjdD3v14jYsQAJegZWnRIhXZ7rL6Ut96PUKjsbZH3DZQ7TDjwUUFJnTMQWLIPnoFUyaj2NSGJSgSNg1Q5V4tesZXV0O7tf8uIUzdZpsqVlujGDV+9Ickg49rZQMiJcfNscFzGXMgTEQ/bq5lG7A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microsoft.com; s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=si6Vj4qUg6X0mSSRLN+6z+Qu/oIHq66tRZ3JiDKOS1c=;
+ b=jaVqHpBH3R1libBDU9LcQRliQREoOzTTD/akYjEk3wbaOrFTrWZyMOYJdlZjFjz5nX4yHLAapPCRC3/eWV0zmBxmbdpOUzRmdkm+n+/DK0SwYEjOTaz23SYUQbQiaJyiwExEOOtaEU7akO5QvXQPH9/g5wj4pGK1fPpfwVjyETZG+hj8jl/HzS31NHppvZSGTesGqKOCu4ujanMMQC2POa5S6LZrqKRL6RLcNl3C/h+mtldTfgZr2tClGGzzO1d0dpb4MJPmjhqaNGgcs1OI+y3Yd6Qc1jAMWS9qY3QgV1vtdRnxbTQ0g+ad3l06FzGXBI1GRMtNndE2ZwAPTzrN0Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=kalrayinc.com; dmarc=pass action=none
+ header.from=kalrayinc.com; dkim=pass header.d=kalrayinc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalrayinc.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=si6Vj4qUg6X0mSSRLN+6z+Qu/oIHq66tRZ3JiDKOS1c=;
+ b=WF+iLKSIB81YoloBBkv59Hf3Ns6O8j+1GNYE7ts6MCH5NJKmFmmaPbIIRQ57MUKCZLx+UGQLtUtBbwF/5Z7+ZahjKgRR+sKFGxa58202bRNJlxDSfpNXKuDGmID406xmRHYr+8K68hAnUcxXA71U3kBt4E7mocbIOLDzIYt4Qgw3+AlK6JKmMiy6whrfPvl+sFZKBYStmHrrFIPASf/oBanPKZ/1F1AGC6DWTBcShqsR2sbGMVZI9CtA95EaGsf+HT9X6MZklAfylM4gmc7MOj2mBLat19vesUySG0KORJ2H0Ndw3bLrv4kDSKC8Jic/EUmQuoNG7LoUQ0OYO5Jcdg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=kalrayinc.com;
+From: Julian Vetter <jvetter@kalrayinc.com>
+To: Arnd Bergmann <arnd@arndb.de>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Guo Ren
+ <guoren@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui
+ <kernel@xen0n.name>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-csky@vger.kernel.org, loongarch@lists.linux.dev, Yann Sionneau
+ <ysionneau@kalrayinc.com>, Julian Vetter <jvetter@kalrayinc.com>
+Subject: [PATCH v4 0/5] Consolidate IO memcpy functions
+Date: Tue, 24 Sep 2024 11:22:18 +0200
+Message-ID: <20240924092223.534040-1-jvetter@kalrayinc.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AS4P191CA0028.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5d9::20) To PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:118::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830032840.3783206-1-hsiangkao@linux.alibaba.com>
-In-Reply-To: <20240830032840.3783206-1-hsiangkao@linux.alibaba.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 24 Sep 2024 11:21:59 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVqa2Mjqtqv0q=uuhBY1EfTaa+X6WkG7E2tEnKXJbTkNg@mail.gmail.com>
-Message-ID: <CAMuHMdVqa2Mjqtqv0q=uuhBY1EfTaa+X6WkG7E2tEnKXJbTkNg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] erofs: add file-backed mount support
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAYP264MB3766:EE_|MR1P264MB3073:EE_
+X-MS-Office365-Filtering-Correlation-Id: c318327a-d7c4-4436-f5e2-08dcdc7a79cd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|52116014|1800799024|376014|7416014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info: 2ipsg2wqSZhhGQRbdHBu900xhV/LmSaJb301GdiQmQZ9DuzntkXKY4K5cb1Ku6x/9lFMAeRvfxE3BkYE1KD9DdzH1dRcaU/zQdnGlh5m6WkV0YAhWiPCWuMuxYs+ryeECMDCRe99dVH0Is578eNROlvNk/Ay7NC8Z5NvDPMNN+DT6lm98yMc7x5bQeWvZgpfzCg5Nn01Vg0RGm72Fbj6LxfDVnacxwAj840GumFSlZfkXVgQJdMJzW3+E8G2lBU5RwpykMBNr86+wec93YnXHzt87CnbD81MBdskriD07cSKwFA37Q2mO2GiXTrR8gyNN2nvHVuFVqkYL1p4XJx3ARIYsUTvE4E3zJZXJ57g1xElDMMVga50LEnw9qvPtEGuPFJcQpEL5tjf6D46Z7/f59Lp57B87hV+JyTOjlxwKyJfU9h1dPfO7UxCDGHHQf8XKgvCWWpC7Ud9c2EE6KMH5SE/36OgxzHjpuowKMTflsDIE47zbdQKgoAGepXEWTESl8p05f9eBb/i5gmUk3MQ3BVAd6unRCgK4xhai6z7vwsNomFXIECxQVw071ejQSQKK1HeQhlDL6k6udpwml0OgzkXLY5sskzxKSzQaSyWCHu6r0HnDjNGb6I/mwQch3VTjNvJPN2b3SJLXpnxB3ngaunM7y6mGOZxj5Bq1M1lyqFgZbZF1l96/KTq6ruZdvH8kcpqjz+O5FZCk257NXWW9uYuL0S8kmsHnUx9sSwaicHVaLxO5LaD5O+1gH+O9T9L+NiKJ7Ftf4cXOwUKcioo7UlUhdmvzJGRWUhcJGuhL5/l+mFVM1ziBkYn56nuqvuKR/mny9OzIk2jvh9PSg6l5EiYsIu9pKw2tDRJxCqJbxpa6XPES74Mhel0nN14lEpXRCL2E+dOoTDBsMyKAPGdSl+sDSxE2Et/lLZ515u2VNhEmP8DQ0la6TM4cMuggS6RWZR
+ JxTku/UQZtqjnesD6+sP4sAwEGAK7DrYyIXgnT0TuTuykY20CRIzJQ3KodciXV2hzNHc1IvKO+b6/3oD1zvoOZd++G//SYaIspCQBpAxeTkmq1uXPQ0qaNG6Misj8368QAhg1xGcE0XOpsA0T0TqlCiZqU0zJF9lfZiKCpmhkprOx5q5y0Bikh6yeB4PHL+n73bDEDbxpwPlEuWfl5Tf8s1GZfg2Q1uO5NWlxMhTGXahscJu+YW+UrH48MBIvWaGHRC/msl6lNlzXqN1KbDKH3+q1S3GqggpUdaOiSB9Wv/Zkq0LkTgj6J730+EZG3/+bDXaffwyBq+/gDPpAKTLn+yQnBdsNwYrvm1RH8wBubCwZ1+u3iJmAl1h5zQpA3K1Ow5RFkbRr+n0ez8d1rg==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(376014)(7416014)(366016)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: ZGP0vHlMa4mATeOi4pGP2NSbyDX8ZURnmwUAF3WQurfvIWpzKlwLCBP2Dk3qsyTyvm85Ds1a/HTCcvdMewqv72/FgwErTe7Vdl0Cg3QeSkqBFpUXOPh1vbWEN5F7RMUHwQebVudurfSQtZNUFpR4TaPEAXtrSYu6MTXijcWh4DC6FXFRxh/scvR41nLflOhtqi4f0bdXvTni9lkPHbKL/PWy9eBebq2ax8kpMar31Lz13lflKvDRfqCHqRe+sRhFbuEbBVtqGrdMXK3R194W+PkmdS4FrwkGftmLz4UayWWZHss2L91ddfLeQTfuDgUP389qmFZnBAiHgNHwaZ5hnJ04E9gmhplZgZdQIxg/2vf8ZvXpnmoW9hW9yo6J18HVJvHtlJoeaFEoPHjnerEsLrwUv6ffkxqyWKQE0H174V8IxPJaH7Jx9HQzgT6kGXkz8yrhe8XiYrFlOJZgDEjS84lswmMl5bW//Uci9B/Qw3lNsDBQnpY27X/IKZF7eQrdtmyReYmvdWLKZXXOyE/DhatU1CIFECHaMOtmPOCJlxFHvD6Ho1VVtyAqq0m9vBlaRuvWoXL+fS3HC2L2MekD3kP2OOVrVGtblM9HGF0L0vNF38gOrf/urS0ggscv1pcNfq587NxzoikOHqRHV2FS0xUVQgSRpCcqfAdR6N3wokFpWpKZxrB40JYGpGXgwHY/U90AejFUnvhoMI1D2B++FoDdVa3tH7+u9jPCLYyd5LRLa9iD23vepSE/UShDNbqzmAcSjyC3vbaMPtZkh/UIhNZE2mxbwUDLgBja2QF+aZWAZUzfQcY/ihuhiMfbDA1phJHUFiHk4njG0hHPFQiNOLbjVxz8szSLuv0zqJhkjdQmXLCWu8kJeIjv+FHp0wRcPwSwp86j4VfgIoocY+wJlW3/6xPx+w/aloKDjIpOfGYfFzTIHBa+FicOn0KHc92a
+ stCz4yDDLg2WmhgxJDX5mlnTx8yGNOhf5/b4p2g3tTgXY0OrF5mx910Fw72o+obYYx7Skw5OCO6/LJzFGCLqSp8kQgsqdnwN0koiFqZTHeKoa77AGhv04h3mTriYkOzT3X1s288Yj/HEpY+D5t1ISXZ3ZI88GGe3pLfaYUGZdbttDOdMNNyIpxfj9k2G0pARkKQ7hI8dxxCVSBK+6FVP8JBn/ObxDGF4PWUEeWtx9N/5HHnBH6usSdjDgfKAicSRhg/RjvRBNI1Bb2nAdA4/9x7dL/4YntsvhhVN/R7xNi5hSeTcCHAhIdk4TjXf4gQh6Mu7DSsVrCWhVEYTqMntwp/7BbMbK3y8BWpE2IgH45kqFdwDRsK5oUVJ/1QEdyGWPemt0A1oloVS8fQZpdlxWVr7NjoNVnyFwYlX8FUnpysXuM8/ZbJw4UnjB296Std7jEE/+esWak7C8qxtXlcwxqnS8KH9KzI9WPA72DpLsg07cEVIcHP8Op3xj62gYc/dvGaxk5vRNIVCREEYtAR/b46APBS6TCSm8JBKXfXOq+Fe58gF2BlcyMkCzNfR/pIjDZB+2r9zCMZ2bcaG82GVv0cHGGh3wWkS+sF4o92ntoZ4yxMUvo6KLBrtMmHDTGhe
+X-OriginatorOrg: kalrayinc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c318327a-d7c4-4436-f5e2-08dcdc7a79cd
+X-MS-Exchange-CrossTenant-AuthSource: PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2024 09:22:56.9499
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8931925d-7620-4a64-b7fe-20afd86363d3
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: sYELGBPTjIw8ns0pjuUoP2zl6caKnGZ3y4INoJuZOyT+qBDiwcseWLrWMIAztg2sd3mPXfzl6ZU9kuu0NBLq1Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MR1P264MB3073
+Content-Type: text/plain; charset=utf-8
+X-ALTERMIMEV2_out: done
 
-Hi Gao,
+Thank you again for your feedback. Sorry for the delay, I didn't see the
+remarks you made on v2 of the patchset in regards to the
+asm-generic/io.h. This patchset takes your remarks on v2 into account.
 
-CC vfs
+Signed-off-by: Julian Vetter <jvetter@kalrayinc.com>
 
-On Fri, Aug 30, 2024 at 5:29=E2=80=AFAM Gao Xiang <hsiangkao@linux.alibaba.=
-com> wrote:
-> It actually has been around for years: For containers and other sandbox
-> use cases, there will be thousands (and even more) of authenticated
-> (sub)images running on the same host, unlike OS images.
->
-> Of course, all scenarios can use the same EROFS on-disk format, but
-> bdev-backed mounts just work well for OS images since golden data is
-> dumped into real block devices.  However, it's somewhat hard for
-> container runtimes to manage and isolate so many unnecessary virtual
-> block devices safely and efficiently [1]: they just look like a burden
-> to orchestrators and file-backed mounts are preferred indeed.  There
-> were already enough attempts such as Incremental FS, the original
-> ComposeFS and PuzzleFS acting in the same way for immutable fses.  As
-> for current EROFS users, ComposeFS, containerd and Android APEXs will
-> be directly benefited from it.
->
-> On the other hand, previous experimental feature "erofs over fscache"
-> was once also intended to provide a similar solution (inspired by
-> Incremental FS discussion [2]), but the following facts show file-backed
-> mounts will be a better approach:
->  - Fscache infrastructure has recently been moved into new Netfslib
->    which is an unexpected dependency to EROFS really, although it
->    originally claims "it could be used for caching other things such as
->    ISO9660 filesystems too." [3]
->
->  - It takes an unexpectedly long time to upstream Fscache/Cachefiles
->    enhancements.  For example, the failover feature took more than
->    one year, and the deamonless feature is still far behind now;
->
->  - Ongoing HSM "fanotify pre-content hooks" [4] together with this will
->    perfectly supersede "erofs over fscache" in a simpler way since
->    developers (mainly containerd folks) could leverage their existing
->    caching mechanism entirely in userspace instead of strictly following
->    the predefined in-kernel caching tree hierarchy.
->
-> After "fanotify pre-content hooks" lands upstream to provide the same
-> functionality, "erofs over fscache" will be removed then (as an EROFS
-> internal improvement and EROFS will not have to bother with on-demand
-> fetching and/or caching improvements anymore.)
->
-> [1] https://github.com/containers/storage/pull/2039
-> [2] https://lore.kernel.org/r/CAOQ4uxjbVxnubaPjVaGYiSwoGDTdpWbB=3Dw_AeM6Y=
-M=3DzVixsUfQ@mail.gmail.com
-> [3] https://docs.kernel.org/filesystems/caching/fscache.html
-> [4] https://lore.kernel.org/r/cover.1723670362.git.josef@toxicpanda.com
->
-> Closes: https://github.com/containers/composefs/issues/144
-> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+---
+Changes for v4:
+- Replaced memcpy/memset in asm-generic/io.h by the new
+  __memcpy_{to,from}io and __memset_io, so individual architectures can
+  use it instead of using their own implementation.
+---
+Julian Vetter (5):
+  Consolidate __memcpy_{to,from}io and __memset_io into a single lib
+  Replace generic memcpy and memset by IO memcpy functions
+  Use generic io memcpy functions on the arm64 architecture
+  Use generic io memcpy functions on the csky architecture
+  Use generic io memcpy functions on the loongarch architecture
 
-Thanks for your patch, which is now commit fb176750266a3d7f
-("erofs: add file-backed mount support").
+ arch/arm64/Kconfig             |   1 +
+ arch/arm64/kernel/io.c         |  87 --------------------------
+ arch/csky/Kconfig              |   1 +
+ arch/csky/kernel/Makefile      |   2 +-
+ arch/csky/kernel/io.c          |  91 ---------------------------
+ arch/loongarch/Kconfig         |   1 +
+ arch/loongarch/kernel/Makefile |   2 +-
+ arch/loongarch/kernel/io.c     |  94 ----------------------------
+ include/asm-generic/io.h       |   6 +-
+ lib/Kconfig                    |   3 +
+ lib/Makefile                   |   1 +
+ lib/io_copy.c                  | 110 +++++++++++++++++++++++++++++++++
+ 12 files changed, 122 insertions(+), 277 deletions(-)
+ delete mode 100644 arch/csky/kernel/io.c
+ delete mode 100644 arch/loongarch/kernel/io.c
+ create mode 100644 lib/io_copy.c
 
-> ---
-> v2:
->  - should use kill_anon_super();
->  - add O_LARGEFILE to support large files.
->
->  fs/erofs/Kconfig    | 17 ++++++++++
->  fs/erofs/data.c     | 35 ++++++++++++---------
->  fs/erofs/inode.c    |  5 ++-
->  fs/erofs/internal.h | 11 +++++--
->  fs/erofs/super.c    | 76 +++++++++++++++++++++++++++++----------------
->  5 files changed, 100 insertions(+), 44 deletions(-)
->
-> diff --git a/fs/erofs/Kconfig b/fs/erofs/Kconfig
-> index 7dcdce660cac..1428d0530e1c 100644
-> --- a/fs/erofs/Kconfig
-> +++ b/fs/erofs/Kconfig
-> @@ -74,6 +74,23 @@ config EROFS_FS_SECURITY
->
->           If you are not using a security module, say N.
->
-> +config EROFS_FS_BACKED_BY_FILE
-> +       bool "File-backed EROFS filesystem support"
-> +       depends on EROFS_FS
-> +       default y
+-- 
+2.34.1
 
-I am a bit reluctant to have this default to y, without an ack from
-the VFS maintainers.
 
-> +       help
-> +         This allows EROFS to use filesystem image files directly, witho=
-ut
-> +         the intercession of loopback block devices or likewise. It is
-> +         particularly useful for container images with numerous blobs an=
-d
-> +         other sandboxes, where loop devices behave intricately.  It can=
- also
-> +         be used to simplify error-prone lifetime management of unnecess=
-ary
-> +         virtual block devices.
-> +
-> +         Note that this feature, along with ongoing fanotify pre-content
-> +         hooks, will eventually replace "EROFS over fscache."
-> +
-> +         If you don't want to enable this feature, say N.
-> +
->  config EROFS_FS_ZIP
->         bool "EROFS Data Compression Support"
->         depends on EROFS_FS
 
-Gr{oetje,eeting}s,
 
-                        Geert
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
