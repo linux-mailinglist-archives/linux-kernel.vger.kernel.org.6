@@ -1,183 +1,122 @@
-Return-Path: <linux-kernel+bounces-337472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 155C0984A84
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:58:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEB9A984A90
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:01:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD6FD1C22CCB
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:58:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F5D51F245A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:01:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2F441AC442;
-	Tue, 24 Sep 2024 17:58:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95AF1ABED5;
+	Tue, 24 Sep 2024 18:01:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S/JBRZer"
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xW2GnKWp"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3E12941B;
-	Tue, 24 Sep 2024 17:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E56C1B85CA
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 18:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727200692; cv=none; b=guVUw/zQ3XT/dcdMQA+6ZC4CQkd9LqvzOo1ee8/XEX5rSBjy7mWDE05zrwxokC26fCmub11YqVt+VczbI7vd63q8fx1P5MH9tOmaO4wwz+l2a5AGlXcbp6SJwWYC5pynRtUPRQleJwSIQAryVyBQ31wtRnIVknUAv9kmv7t8eno=
+	t=1727200874; cv=none; b=a/WTdlHR+In10QYSOiCoNb2YHe6spQM196suZUJ0mgDOVSykWWMzjU+Z/283vt5j+8HCb5uksPWoYGhmDXwjMndt2Js9Alh4MGg+UQVDNm14kmHFPEKL/wgS1CLs6np3OqFnnxkcotsvv2ai9Po5C3oXRFrQxcT2twAXJF2NPSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727200692; c=relaxed/simple;
-	bh=5qoAn6EfJFUQhsx4AB+LfGTHNmgBhfUi3D7JY5kPiYo=;
+	s=arc-20240116; t=1727200874; c=relaxed/simple;
+	bh=A15kpu7Y1O25FNXdv/Y2yPmP7X/PnOCFalZNHC+1jXE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YeeBb0qmiOEuIa68NE6Q25XUIYQStU/k/UnchMfDqyb0lCe/xIzGgmKbmMhjxNSAAOR/vjSOmB85afW+rVIF7Iz8qCuqWj4CzynvWN65yWwLwHPV6cIsN6twEYR7PQID0U2LaWI/Xum7Y3oBMLwiQniXexdP+IilOkRWSkxnKFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S/JBRZer; arc=none smtp.client-ip=209.85.221.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-503f946d65fso1156369e0c.2;
-        Tue, 24 Sep 2024 10:58:10 -0700 (PDT)
+	 To:Cc:Content-Type; b=gpTwYG4sVNUGbPsGA1X21SKreZwd7Gi//bbYml4XDRu2CVpq+83Ftjcmglqwz5gBSFUmA0T0IU1lxksZxxeFOKp1q3gpVqgthXtszjZASKCuSY51Dn5lSku7YTUpPMmk33EJEw99rGQP+L6COYTW3ytILzmLvufd7DF2HAeGYbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xW2GnKWp; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c247dd0899so2620a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 11:01:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727200689; x=1727805489; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=FtOisPFrz8MMfOlJEmHPyj/gSIdJaZPCZi0Wwdfvah0=;
-        b=S/JBRZerLjFEW3H6Jx+aHCpd4CjmTqSJHrhnliPEqIVISS84zLLPJmQFsXOaM37oG/
-         rGuMsGIhZSznuvao5onDFy3CyQSB6X5Vam3G4o4jNO0Lz5q8s2YkgySB60VIJ4VoWRvn
-         Rb9dtuHSS/BtVvhDuEsJjhNnZX8MF9i5Irtlbg/hFl9ghPGGnEnJCF+rlg5+J5k4NYTG
-         cxXUB9whzN23GVIrN2US5H0NjfH80Hx8gS7k2PqJKUATtnAWaXTMPDr1+GlSPBJSxAvq
-         jSqK3mwBODijUHKePeg8oPS3ZLGhsOzDGCJDq/29swpihQQgppp17GiH/AvcC0qQs2Uu
-         MMYQ==
+        d=google.com; s=20230601; t=1727200871; x=1727805671; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cjhiFYP9ZLzgH4eZvCkFY1gAOy9o8UQ0O08H+0Dp/FU=;
+        b=xW2GnKWp+peKeWhGjxYJN/23TVphx7aPdHUqBzBf7C6FesYkKu2X+lEuU+Hl06ASu2
+         kj7bwYa3RMHwxWPcZ6ZjbpxyPdsosaLPBW31M3nuvwFou4KLvXgJpQzKFmF70iukukGc
+         dGNf47puZ16G6qTtLT/YJ58F2DDwwiH1ytMwkqlOjigm5i66nFPspS8xK5gi28Y9Ildo
+         D3ysdCSLyn7m1esqMJ2020vTlaDf7vlmFF4C2HtOrM3FmfGAAkMfyacfmTyUlHstrXfl
+         +SVtxbbmP/jc8kHB75YE4/oD0ERvAp9MsZJljZH9LmFhxTanMnR3JXVQq9FKF24p8bQN
+         pN5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727200689; x=1727805489;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FtOisPFrz8MMfOlJEmHPyj/gSIdJaZPCZi0Wwdfvah0=;
-        b=C9m2WmtYfVMcQcoEm2amhmNrmFuhPWpLE5eQ1tSaNQ/Vz8EIyMJXWX8UnfULf19jZG
-         cv3xEEEsQAYBHX78vP4OHGKxHf/TeRuWzxv51QTqCrrTGmz6jnchrt2YAQpzFdZW1pcX
-         3t2CnELlMDxHYATtx2FaiOOEr21Ad47jctjPNNHd00FO85qLVzFuRgxAzb28ZjvduUly
-         +t7e4ibkXMm1xn9hFOkw9LUKv8Kv4ZDaddfgz99TnuKaaTyKYpZ8gQrw7CcLvmh3JX1B
-         l1cOCRlnpRNk0T5RYXMfPbJNvKUtUgOzmZmMDi4UyX/5G3W9wEH31t6uXLm8jt2/nI4L
-         PdbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXOp0Tg7nP2eh6Uj+GFiE9m6+dsGJF/Ijyxxz5pQPG0fqLINp8e27vNtjZBvEmSNWPo0yzaDuBj@vger.kernel.org, AJvYcCXT7qoElIw9T5495FWjhcgXYdsh8wUIZZH+6D69W7Ooe9TCjRTO3XKQAEsOqiwmPopNZK0naZaNm7aZM6k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjQTiheY8uzPFH0YQdFH4M/DaYI1Nv4ipCwl/naQN3+C0HfIRL
-	lRJjYnzqTpb4EhGmk9BrvPcPVY4aoKv9KgQrxOXD7O2nbFJn+lVnNbwPIlhBYdqeKGOIS9HOKId
-	1KjZcfke/cIBKv5wCC8CdTj9GM6k=
-X-Google-Smtp-Source: AGHT+IHTkZU201Le5J6WJGmsaV/AnRUFdExdQ5YWxRBcW7uyOlLkprgUHHCmAs2qAuOVDPD8lY+75pyaYgLeE6pU3OU=
-X-Received: by 2002:a05:6122:50b:b0:503:d875:6a26 with SMTP id
- 71dfb90a1353d-505c1d82ce3mr385826e0c.5.1727200689247; Tue, 24 Sep 2024
- 10:58:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727200871; x=1727805671;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cjhiFYP9ZLzgH4eZvCkFY1gAOy9o8UQ0O08H+0Dp/FU=;
+        b=HUhdfo1DxN3KVLfNVvl3OzsuW6JWW0GJmnd6zd/2Ey8BAPI8QX4NUjN1RM7FGzdafx
+         kWBIbkkq6++7bXz/ZrGYasrlHXxXgtIqetdt9QWKIDU+22LSQ4g9RW8bAFE9ItIl/kAR
+         udzQXS2Rf4zItVVzAFi9wFxpwyz1LnNUOy23vC3lbTsMxuOVSOMbS/6jK/Ji6ObmYyA1
+         hRNp+nyGv5G9/vSF+InewzUQjU+jZkJwDFib/mTCq5O5Soy97w7fR3ZZPvG8mGsLrwBz
+         1dROj8WscCK4nl126kJWVF9eLX0IFIacNENLWw79A27HkULXG1Opnm2dObpad2ltZdaJ
+         cuAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVUAJodETbizGP3Z69VKkFxo11ck1g2HdL47QC7uoK9+RptqyuSLh9fG24dPNwy8spMZssgghvrsIlbz8c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJCFc7OMDssbtASHN8+I4du3eqaauxQDAXunuS7j4T7RlbMM/y
+	Wr2YNhAA0uevK/3uD70zpKzjt7CCXMzIg4WU6bLtYsbRMI9fS6uqInZRHhVv7FheGy+DVD/+nOC
+	E7lnGBHUM1EfM8vSM7waahEBzQNuhCSsn84Nd
+X-Google-Smtp-Source: AGHT+IGauZmcTAmbWAYK0JUSi5/BirlMPx1JVwLFWuHaMRUoRmepOtiQ7z74xNp5Rgwdm/FNTBH4pFL40akueNX7x10=
+X-Received: by 2002:a05:6402:26d3:b0:5c5:c5fb:d3f0 with SMTP id
+ 4fb4d7f45d1cf-5c7209c91fcmr22261a12.4.1727200870366; Tue, 24 Sep 2024
+ 11:01:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240923113135.4366-1-kdipendra88@gmail.com> <20240924071026.GB4029621@kernel.org>
- <CAEKBCKPw=uwN+MCLenOe6ZkLBYiwSg35eQ_rk_YeNBMOuqvVOw@mail.gmail.com> <20240924155812.GR4029621@kernel.org>
-In-Reply-To: <20240924155812.GR4029621@kernel.org>
-From: Dipendra Khadka <kdipendra88@gmail.com>
-Date: Tue, 24 Sep 2024 23:42:58 +0545
-Message-ID: <CAEKBCKO45g4kLm-YPZHpbcS5AMUaqo6JHoDxo8QobaP_kxQn=w@mail.gmail.com>
-Subject: Re: [PATCH net] net: ethernet: marvell: octeontx2: nic: Add error
- pointer check in otx2_ethtool.c
-To: Simon Horman <horms@kernel.org>
-Cc: sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com, 
-	hkelam@marvell.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CAJuCfpFFqqUWYOob_WYG_aY=PurnKvZjxznnx7V0=ESbNzHr_w@mail.gmail.com>
+ <20240912210222.186542-1-surenb@google.com> <CAG48ez131NJWvo_RrxL7Ss0p4jd_aKOu71z1vm9wfaH7Qjn+qw@mail.gmail.com>
+ <ZvLzueEY9Sbyz1H4@casper.infradead.org>
+In-Reply-To: <ZvLzueEY9Sbyz1H4@casper.infradead.org>
+From: Jann Horn <jannh@google.com>
+Date: Tue, 24 Sep 2024 20:00:32 +0200
+Message-ID: <CAG48ez0c=ExHdoxQWqDN9hFAhwUKab8vgk-nJ-JGqTUm4xVUsw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] mm: introduce mmap_lock_speculation_{start|end}
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Suren Baghdasaryan <surenb@google.com>, linux-trace-kernel@vger.kernel.org, 
+	peterz@infradead.org, oleg@redhat.com, rostedt@goodmis.org, 
+	mhiramat@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jolsa@kernel.org, paulmck@kernel.org, akpm@linux-foundation.org, 
+	linux-mm@kvack.org, mjguzik@gmail.com, brauner@kernel.org, andrii@kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Simon,
+On Tue, Sep 24, 2024 at 7:15=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
+> wrote:
+> On Fri, Sep 13, 2024 at 12:52:39AM +0200, Jann Horn wrote:
+> > FWIW, I would still feel happier if this was a 64-bit number, though I
+> > guess at least with uprobes the attack surface is not that large even
+> > if you can wrap that counter... 2^31 counter increments are not all
+> > that much, especially if someone introduces a kernel path in the
+> > future that lets you repeatedly take the mmap_lock for writing within
+> > a single syscall without doing much work, or maybe on some machine
+> > where syscalls are really fast. I really don't like hinging memory
+> > safety on how fast or slow some piece of code can run, unless we can
+> > make strong arguments about it based on how many memory writes a CPU
+> > core is capable of doing per second or stuff like that.
+>
+> You could repeatedly call munmap(1, 0) which will take the
+> mmap_write_lock, do no work and call mmap_write_unlock().  We could
+> fix that by moving the start/len validation outside the
+> mmap_write_lock(), but it won't increase the path length by much.
+> How many syscalls can we do per second?
+> https://blogs.oracle.com/linux/post/syscall-latency suggests 217ns per
+> syscall, so we'll be close to 4.6m syscalls/second or 466 seconds (7
+> minutes, 46 seconds).
 
-On Tue, 24 Sept 2024 at 21:43, Simon Horman <horms@kernel.org> wrote:
->
-> On Tue, Sep 24, 2024 at 08:39:47PM +0545, Dipendra Khadka wrote:
-> > Hi Simon,
-> >
-> > On Tue, 24 Sept 2024 at 12:55, Simon Horman <horms@kernel.org> wrote:
-> > >
-> > > On Mon, Sep 23, 2024 at 11:31:34AM +0000, Dipendra Khadka wrote:
-> > > > Add error pointer check after calling otx2_mbox_get_rsp().
-> > > >
-> > >
-> > > Hi Dipendra,
-> > >
-> > > Please add a fixes tag here (no blank line between it and your
-> > > Signed-off-by line).
-> > > > Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
-> > >
-> > > As you have posted more than one patch for this driver, with very similar,
-> > > not overly complex or verbose changes, it might make sense to combine them
-> > > into a single patch. Or, if not, to bundle them up into a patch-set with a
-> > > cover letter.
-> > >
-> > > Regarding the patch subject, looking at git history, I think
-> > > an appropriate prefix would be 'octeontx2-pf:'. I would go for
-> > > something like this:
-> > >
-> > >   Subject: [PATCH net v2] octeontx2-pf: handle otx2_mbox_get_rsp errors
-> > >
-> >
-> > If I bundle all the patches for the
-> > drivers/net/ethernet/marvell/octeontx2/ , will this subject without v2
-> > work? Or do I need to change anything? I don't know how to send the
-> > patch-set with the cover letter.
->
-> Given that one of the patches is already at v2, probably v3 is best.
->
-> If you use b4, it should send a cover letter if the series has more than 1
-> patch.  You can use various options to b4 prep to set the prefix
-> (net-next), version, and edit the cover (letter).  And you can use various
-> options to b4 send, such as -d, to test your submission before sending it
-> to the netdev ML.
->
+Yeah, that seems like a pretty reasonable guess.
 
-I did not get this -d and testing? testing in net-next and sending to net?
-
-> Alternatively the following command will output 3 files: a cover letter and
-> a file for each of two patches, with v3 and net-next in the subject of each
-> file. You can edit these files and send them using git send-email.
->
-> git format-patch --cover-letter -2 -v3 --subject-prefix="PATCH net-next"
->
-
-Should I send it to net-next or net?
-
-Thank you so much for teaching me all these.
-
-> >
-> > > As for the code changes themselves, module the nits below, I agree the
-> > > error handling is consistent with that elsewhere in the same functions, and
-> > > is correct.
-> > >
-> > > > ---
-> > > >  .../ethernet/marvell/octeontx2/nic/otx2_ethtool.c    | 12 ++++++++++++
-> > > >  1 file changed, 12 insertions(+)
-> > > >
-> > > > diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
-> > > > index 0db62eb0dab3..36a08303752f 100644
-> > > > --- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
-> > > > +++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
-> > > > @@ -343,6 +343,12 @@ static void otx2_get_pauseparam(struct net_device *netdev,
-> > > >       if (!otx2_sync_mbox_msg(&pfvf->mbox)) {
-> > > >               rsp = (struct cgx_pause_frm_cfg *)
-> > > >                      otx2_mbox_get_rsp(&pfvf->mbox.mbox, 0, &req->hdr);
-> > > > +
-> > >
-> > > nit: No blank line here.
-> > >
-> > > > +             if (IS_ERR(rsp)) {
-> > > > +                     mutex_unlock(&pfvf->mbox.lock);
-> > > > +                     return;
-> > > > +             }
-> > > > +
-> >
-> > If the above blank line after the check is ok or do I have to remove
-> > this as well?
->
-> Please leave the blank line after the check (here).
->
-> >
-> > > >               pause->rx_pause = rsp->rx_pause;
-> > > >               pause->tx_pause = rsp->tx_pause;
-> > > >       }
-
-Best regards,
-Dipendra Khadka
+One method that may or may not be faster would be to use an io-uring
+worker to dispatch a bunch of IORING_OP_MADVISE operations - that
+would save on syscall entry overhead but in exchange you'd have to
+worry about feeding a constant stream of work into the worker thread
+in a cache-efficient way, maybe by having one CPU constantly switch
+back and forth between a userspace thread and a uring worker or
+something like that.
 
