@@ -1,113 +1,151 @@
-Return-Path: <linux-kernel+bounces-336899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C642984248
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:35:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA72F984221
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:30:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F9F028435D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:35:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1783F1C23377
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50AC2155CAC;
-	Tue, 24 Sep 2024 09:35:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22B23155C94;
+	Tue, 24 Sep 2024 09:30:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="P3vFb5rY"
-Received: from forward501d.mail.yandex.net (forward501d.mail.yandex.net [178.154.239.209])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="JmAz/RIM"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3435126C0B;
-	Tue, 24 Sep 2024 09:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC85684A2C;
+	Tue, 24 Sep 2024 09:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727170528; cv=none; b=RZJhaqMzj+/KllYts6HA8EGVQCB1ik0+aBHpJMFpJKD64RMM6Uck368C0k0uM9HQRTMKABD5/op5Rg4mu89hrOx6/QYWbBfnkWrOcSfRHlHRtOLbr9LS3/9KQ5P8VF7h3fHTG2wdp5mHYffRFAydDreMYbuG7CdUNUS4tF7pfnY=
+	t=1727170230; cv=none; b=BG7HEuL6zAmceOzZXUn/pLR+Ilk/0hWD5wSd5D49k/oLB2QMFLvO+M8kcb6IIBE1qXlsP0h7xqFy1+Q/R3LX1iGPDuSyOABdIbmM54AveSiYCPfOJz4ODpCt5US8mBtF+8q6CU3HjTTWu3VwcVeDZjvdwlclqfm9ZFzx0STpZxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727170528; c=relaxed/simple;
-	bh=Lb2KsVVVaTMN3KohSpkn8V7UrH3zKzLtjp8hlZHmE9k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XjK4G5j4YR0URUVC6KhVYh8KNQTA0R7GlyZ3aXrR9MrhCm11WwnxRonM/G6oX9eiyFUGNhB/ECP2FSstByDhbsTiParCNdl8741XUbG+oQpZPZG+0xxX3iGiu+xTf/sPf7FNo6TK+83WbOFM/6r+rNIgyV4ivn3pvB8H79d5Dvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me; spf=pass smtp.mailfrom=maquefel.me; dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b=P3vFb5rY; arc=none smtp.client-ip=178.154.239.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maquefel.me
-Received: from mail-nwsmtp-smtp-production-main-47.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-47.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:8f4f:0:640:c72e:0])
-	by forward501d.mail.yandex.net (Yandex) with ESMTPS id 4126D612E0;
-	Tue, 24 Sep 2024 12:30:02 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-47.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 0UP8338Z0qM0-hynlEMjE;
-	Tue, 24 Sep 2024 12:30:01 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail;
-	t=1727170201; bh=Lb2KsVVVaTMN3KohSpkn8V7UrH3zKzLtjp8hlZHmE9k=;
-	h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
-	b=P3vFb5rYQj4PNXwXDXwqol7bsbhX0wHv+Y9/ve/DM2xmC0C9Hc94xeDM49P0PRvke
-	 dX0qdgH7c1IyGzJjvPm450GFC2n2IfomKNvc+tPa1mxXpOeNO7xPjPRu0XAkUtEKJD
-	 Y8Q330wZKfQFwTtiH2Qce5sahpMZP76+jgndavE0=
-Authentication-Results: mail-nwsmtp-smtp-production-main-47.klg.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
-Message-ID: <be5d4d09e9e4a6adffd934878697679797c9ce33.camel@maquefel.me>
-Subject: Re: [PATCH] soc: ep93xx: drop reference to removed
- EP93XX_SOC_COMMON config
-From: Nikita Shubin <nikita.shubin@maquefel.me>
-To: Lukas Bulwahn <lbulwahn@redhat.com>, Alexander Sverdlin
-	 <alexander.sverdlin@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Arnd Bergmann
-	 <arnd@arndb.de>, soc@kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas
-	Bulwahn <lukas.bulwahn@redhat.com>
-Date: Tue, 24 Sep 2024 12:30:01 +0300
-In-Reply-To: <20240924092423.50734-1-lukas.bulwahn@redhat.com>
-References: <20240924092423.50734-1-lukas.bulwahn@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 
+	s=arc-20240116; t=1727170230; c=relaxed/simple;
+	bh=yYGyQa85Hiy1PX0vqwd7dAOmJNDEEsVqTrx6k8biPY0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KOFpATO8Tvrcu1agb6Tsv5kkJZrpXhWQFCBp5c10Cr0Zz5yuOvewec1evBpXnH2PCgRaqEBAIBs9IuNhTz8dH31zcMDIcDbq7sOiPfBxUPQdAMx+iN8tZw8gfgaPFXLODXS0re3f+vZAoQPwiXnXx3cSMQvvsYc6Cszqr8+wYrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=JmAz/RIM; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1727170226;
+	bh=yYGyQa85Hiy1PX0vqwd7dAOmJNDEEsVqTrx6k8biPY0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JmAz/RIMcfvnkfrzc76Ve42Qwh1mrdn89jlizJg0cYIOINFLr+kOfLxDbtn0fs3u8
+	 4C5At/kPvKrNwaHCBU90aVOFzE03G6vd9Wo4u+Q7SZula5SDL7lMK1rjztXLm5l7QZ
+	 DmhRUtN0KEP/DlFZULU20Gz8ucEb7FEGqaQYPd852giT16O8fXik2ff3BQT72XIBd8
+	 zbiNL9HGNPhpTvZaplBZmMo0vipYN72q3OckbhUEOjALMmeax5aR4k0ACtshCC2vPL
+	 3KbUCcuc5xfh3VwzuWx57oXXpu3VIa7a9vH/9skGPjGJXhw9rN2LieXPc+Raab7uiQ
+	 kzxm9x570OxHQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2E1AA17E10AA;
+	Tue, 24 Sep 2024 11:30:26 +0200 (CEST)
+Message-ID: <72ce817e-63de-40a7-b7e9-a5b44b67e207@collabora.com>
+Date: Tue, 24 Sep 2024 11:30:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/3] rtc: mt6359: Add RTC hardware range and add
+ support for start-year
+To: Macpaul Lin <macpaul.lin@mediatek.com>, lee@kernel.org,
+ ZhanZhan.ge@mediatek.com
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ matthias.bgg@gmail.com, eddie.huang@mediatek.com, sean.wang@mediatek.com,
+ alexandre.belloni@bootlin.com, sen.chu@mediatek.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-rtc@vger.kernel.org, kernel@collabora.com, yong.mao@mediatek.com
+References: <20240923100010.97470-1-angelogioacchino.delregno@collabora.com>
+ <20240923100010.97470-3-angelogioacchino.delregno@collabora.com>
+ <0748868d-4789-fcaa-e70f-6a4508411b36@mediatek.com>
+ <247abc15-d82f-3e8f-5202-edc6099707df@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <247abc15-d82f-3e8f-5202-edc6099707df@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Lukas!
+Il 24/09/24 09:05, Macpaul Lin ha scritto:
+> 
+> On 9/24/24 12:08, Macpaul Lin wrote:
+>>
+>> On 9/23/24 18:00, AngeloGioacchino Del Regno wrote:
+>>> Add the RTC hardware range parameters to enable the possibility
+>>> of using the `start-year` devicetree property which, if present,
+>>> will set the start_secs parameter by overriding the defaults
+>>> that this driver is setting;
+>>>
+>>> To keep compatibility with (hence have the same date/time reading
+>>> as) the old behavior, set:
+>>>   - range_min to 1900-01-01 00:00:00
+>>>   - range_max to 2027-12-31 23:59:59 (HW year max range is 0-127)
+>>>   - start_secs defaulting to 1968-01-02 00:00:00
+>>>
+>>> Please note that the oddness of starting from January 2nd is not
+>>> a hardware quirk and it's done only to get the same date/time
+>>> reading as an RTC which time was set before this commit.
+>>>
+>>> Also remove the RTC_MIN_YEAR_OFFSET addition and subtraction in
+>>> callbacks set_time() and read_time() respectively, as now this
+>>> is already done by the API.
+>>>
+>>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>>> ---
+>>>   drivers/rtc/rtc-mt6397.c | 13 ++++---------
+>>>   1 file changed, 4 insertions(+), 9 deletions(-)
+>>
+>> [snip]
+>>
+>> Thanks for helping add new patch fix for RTC.
+>>
+>>> @@ -302,6 +293,10 @@ static int mtk_rtc_probe(struct platform_device *pdev)
+>>>       device_init_wakeup(&pdev->dev, 1);
+>>>       rtc->rtc_dev->ops = &mtk_rtc_ops;
+>>> +    rtc->rtc_dev->range_min = RTC_TIMESTAMP_BEGIN_1900;
+>>> +    rtc->rtc_dev->range_max = mktime64(2027, 12, 31, 23, 59, 59);
+>>> +    rtc->rtc_dev->start_secs = mktime64(1968, 1, 2, 0, 0, 0);
+>>> +    rtc->rtc_dev->set_start_time = true;
+>>>       return devm_rtc_register_device(rtc->rtc_dev);
+>>>   }
+>>
+>> Dear @Zhanhan, Please help to leave comment if you think there is something need 
+>> to be clarify. For example, I've found some relate origin defines
+>> in "include/linux/mfd/mt6397/rtc.h"
+>> #define RTC_MIN_YEAR    1968
+>> #define RTC_BASE_YEAR    1900
+>> #define RTC_NUM_YEAR    128
+>> #define RTC_MIN_YEAR_OFFSET    (RTC_MIN_YEAR - RTC_BASE_YEAR)
+>>
+>> Should MediaTek remove RTC_MIN_YEAR and RTC_BASE_YEAR in next patch?
+>> And since there may not exist any smartphone/tablet/TV using mt6397
+>> RTC earlier than 2010? Is it possible to change
+>> RTC_TIMESTAMP_BEGIN_1900 to RTC_TIMESTAMP_BEGIN_2000 without breaking
+>> compatibility for these devices?
+>>
+>> Thanks
+>> Macpaul Lin
+>>
+> 
+> After discussing these change with ZhanZhan, MediaTek think use 
+> RTC_TIMESTAMP_BEGIN_1900 and the other changes are okay.
+> 
+> Reviewed-by: Macpaul Lin <macpaul.lin@mediatek.com>
+> Reviewed-by: ZhanZhan Ge <zhanzhan.ge@mediatek.com>
+> 
 
-Thank you for catching this!
+Thank you Macpaul, ZhanZhan :-)
 
-Reviewed-by: Nikita Shubin <nikita.shubin@maquefel.me>
-
-On Tue, 2024-09-24 at 11:24 +0200, Lukas Bulwahn wrote:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
->=20
-> Commit 6eab0ce6e1c6 ("soc: Add SoC driver for Cirrus ep93xx") adds
-> the
-> config EP93XX_SOC referring to the config EP93XX_SOC_COMMON.
->=20
-> Within the same patch series of the commit above, the commit
-> 046322f1e1d9
-> ("ARM: ep93xx: DT for the Cirrus ep93xx SoC platforms") then removes
-> the
-> config EP93XX_SOC_COMMON. With that the reference to this config is
-> obsolete.
->=20
-> Simplify the expression in the EP93XX_SOC config definition.
->=20
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> ---
-> =C2=A0drivers/soc/cirrus/Kconfig | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/soc/cirrus/Kconfig b/drivers/soc/cirrus/Kconfig
-> index f2fd0e16a196..d8b3b1e68998 100644
-> --- a/drivers/soc/cirrus/Kconfig
-> +++ b/drivers/soc/cirrus/Kconfig
-> @@ -6,7 +6,7 @@ config EP93XX_SOC
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0bool "Cirrus EP93xx chips=
- SoC"
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0select SOC_BUS
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0select AUXILIARY_BUS
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0default y if !EP93XX_SOC_COMMO=
-N
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0default y
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0help
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Enable support SoC=
- for Cirrus EP93xx chips.
-> =C2=A0
-
+Cheers,
+Angelo
 
