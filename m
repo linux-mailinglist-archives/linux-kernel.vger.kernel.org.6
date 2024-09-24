@@ -1,237 +1,496 @@
-Return-Path: <linux-kernel+bounces-337544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19AB9984B8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:28:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AD0A984B8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:29:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CABB0280ECC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:28:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BA8E1F21A13
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C519A1AD3F2;
-	Tue, 24 Sep 2024 19:27:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A401130AF6;
+	Tue, 24 Sep 2024 19:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="OU/kdyrq";
-	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="T7ZRvlbf"
-Received: from e3i110.smtp2go.com (e3i110.smtp2go.com [158.120.84.110])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="m6N/uYVc"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2067.outbound.protection.outlook.com [40.107.212.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1116E1ACDF5
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 19:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.120.84.110
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727206056; cv=none; b=SOLN5vnVG0go3LrUY63Nn2QTQ4uGeVnNse2jZ+IdgLiVbh94rqrqXAvYXC5MDmmnY5jC60Yh2hOkdXGp9WUFMTtZf/KDY486readtBGx07gC3982co3Fzitpxk5kUob27KLKpXcrNVYsk5LXlafO58RGmMYI1cUXFq1GdRsKyb8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727206056; c=relaxed/simple;
-	bh=9gCvAmkQ+McMEqsM1XwBcX6PfPT1TaDQAb9TmK5M5vA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AKpKTPM0fgNA4oQDL89HQUNnFIgS+Ge4PhgTDpg3MsnxrNELH7Y0CBqNiKZvxGLcg4CUYoxQLoGPaEUxVT9RFK1q2vH6Nvy00uKKFzjXXz6nYX1A1WwdTbdYle6eFFsS5QMIqsdDPBMxnFGj3GT+x168KFZUWcYa8jYUmHf0slo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=pass (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=OU/kdyrq; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=T7ZRvlbf; arc=none smtp.client-ip=158.120.84.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smtpservice.net;
- i=@smtpservice.net; q=dns/txt; s=a1-4; t=1727206040; h=feedback-id :
- x-smtpcorp-track : date : message-id : to : subject : from : reply-to
- : sender : list-unsubscribe : list-unsubscribe-post;
- bh=r7mBfgbkSHPGjlsNaa8FSid+n6LiX6fLZWRk2WuEUPE=;
- b=OU/kdyrqcK4hmHOd/RcKybqtqED5Jr/fc4xA1swTuckpyKaOqYRQtFPSx1+JPirEF6sOB
- 4L3TFlEXTs10Lfk/2rxNtDCbASgv7CPH8F2Z7FxbmktQIKt1yj5upPS3raQfvy4bA2IB0af
- wUKwhJcwq3XYXu+hIGqM6E/bkqGc+BGvQD14O5hvVrRi6qu/nGNgjbVKd5DGoYCPop1Sy5r
- 4735uawmEWSQGzCbUejGiJHjxqvPHcSrVuW11Gs12UFyhufIkKu28fmP34sM1r6/Fr3NQ4N
- 7o+Rrrpz/7WEF45vcueNmC1nqfLkblOj9oJH9phKww0r/3EagFR63yAhf3GQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
- i=@triplefau.lt; q=dns/txt; s=s510616; t=1727206040; h=from : subject
- : to : message-id : date;
- bh=r7mBfgbkSHPGjlsNaa8FSid+n6LiX6fLZWRk2WuEUPE=;
- b=T7ZRvlbfHIXed7ECFGz8qrYT7kDX/NitBexnJyjuoOT66rDhsBH7vRQ06HIZyNOtJ0Up+
- aUY4q8TJb4e1z5SAVMwEjj75QmOjvPUul3kytSEtGAL9ySWg5k3GZmKN9WT0UFKLjif1mEo
- kdwa8rbqLbkf0GUJgKSqkbOULjhGvCUXzEGfq0J5+vEQdOdX1puSqF/rVgj57W7ukfQyzPv
- Znq1XP8V3uTE0QkpkaQhZkprZ6CEAKOohVPhBUUnN13Ex2ZMlBMRE+KlkboQElwQrloviMp
- +4n6RiJizPf5Z1HoPorL1+qABadG3YtpWm3bwCE7CPechFScSPYg5n6WbLrw==
-Received: from [10.12.239.196] (helo=localhost)
-	by smtpcorp.com with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.97.1-S2G)
-	(envelope-from <repk@triplefau.lt>)
-	id 1stBBs-4o5NDgruoYJ-mxiC;
-	Tue, 24 Sep 2024 19:27:16 +0000
-From: Remi Pommarel <repk@triplefau.lt>
-To: linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Johannes Berg <johannes@sipsolutions.net>,
-	Nicolas Cavallari <Nicolas.Cavallari@green-communications.fr>,
-	Nicolas Escande <nescande@freebox.fr>,
-	Remi Pommarel <repk@triplefau.lt>
-Subject: [PATCH 2/2] wifi: mac80211: Convert color collision detection to wiphy work
-Date: Tue, 24 Sep 2024 21:28:05 +0200
-Message-Id: <20240924192805.13859-3-repk@triplefau.lt>
-X-Mailer: git-send-email 2.40.0
-In-Reply-To: <20240924192805.13859-1-repk@triplefau.lt>
-References: <20240924192805.13859-1-repk@triplefau.lt>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7981B85F1
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 19:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727206147; cv=fail; b=NLYsJXn8WPoUQrbDQQS/vUCU/qdHcL0436byZlpWeT2Vnv+If8YPW0VgEPlpgIsXJOgZsDVq5ldTjDG3qo1k5bcNL9tRIA6zj5U9Rx4ko3aHHW0en+nknJ76mPS2WGUcLDtY+YBcXMiwStDtraNPlaerDeBxDquIqaHhdY3ezz8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727206147; c=relaxed/simple;
+	bh=cV6fQFBLLtHMUBbH3Oc9/pNu6P5giyxw5DxLlQzb75k=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=qWIH0Oujvq4OfWGYaLEFnIMlnt4hTYRKs+o50Ap1h9BAADIwjQVgPtVL6gpZKsvRyCK3Vn8V43LVojxmBIb88HyDVHXVzfn2037WOcFT/PS1erQ0kRrToWzYQpu25qBBER6tzR+Flgig9GL6Jub+My34ExnXYQeg5IGwzNa+azI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=m6N/uYVc; arc=fail smtp.client-ip=40.107.212.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Fh9txYOHMiMaWl4UbhfUHdqUmx58GLLLGlfb3xgwU8t1f2XDluus1sXTXAwCZKu2Wnkt1KwRtfDFBP7tAezOO5+IDmlCBOghEPj61LvCO5X5afkv30f9czkI/8D9QwgvY6Q0BFx+C9zaHj5AlNAT6Y4zFX1u5Ux56/4snf7YH9iNlARtI2UQDmK/B0qBg9hc9rNCBp2NShquHKOwQirKpg+VggagGpuSTStvy3wcj09ptXLCld/qzqyKDW28waMkOmDaKzVHKr8/mIvg+XhgtcTFPP7gMdenkpeuVHKISnXBJIUJGVcWuT9sx/PGc4PPXz4cFu7OmjqvOAKhrKxFAA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fBsOyY8IsKj+CzcjRbc4FOOHbAXO5CRPbrhnG3ux2EM=;
+ b=vZf/oCCIaB7VMGJcRg49xsgLEtAFbc3Zf99ECgJfBewL6UYhODaxwkiScygkN69cLb1jDbANotyKJpeM4O5K9Ti8B98gnM7lqVFZ5U1fM+7+3U5FAOiqaVOcsQO6Y47rKVKjspozVtGrpL6RZiZad2aMEcAqAoDNWyXi14Y9CyM4SMhKEpnWLF7mkKe/wVh1+BywOlBSZBe4fVkDJA+j+sNFRMn0Zf733jwPUc3UzFHxmK8hPN8hXD3xebTylUHDP0RgD2X/muiQgX/jOaQoUbIU6PcltVwXe1+CFrofh0JqIOgtZ0NiwcWV+uKmzWsKbI/qLQcoHgh0EOIsXZbOUA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fBsOyY8IsKj+CzcjRbc4FOOHbAXO5CRPbrhnG3ux2EM=;
+ b=m6N/uYVcQWtMEsbT6KgEBp5MGghxAN8+NRzz4GPgBJqp239TuJfFVx5TgyJuQRL4NBCdlKA8FMDj5OsVe/Puw/mQufCWloYlQ26Ko+tB74gxGIJrPfjdwIeycgvK9DT6bhrGVt16eSM/r8pmMdkAKCKuCQJf1Wu+tGJwCYFH8Aw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BN9PR12MB5115.namprd12.prod.outlook.com (2603:10b6:408:118::14)
+ by SA1PR12MB8986.namprd12.prod.outlook.com (2603:10b6:806:375::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.25; Tue, 24 Sep
+ 2024 19:29:01 +0000
+Received: from BN9PR12MB5115.namprd12.prod.outlook.com
+ ([fe80::9269:317f:e85:cf81]) by BN9PR12MB5115.namprd12.prod.outlook.com
+ ([fe80::9269:317f:e85:cf81%2]) with mapi id 15.20.7982.022; Tue, 24 Sep 2024
+ 19:29:01 +0000
+Message-ID: <a04fbec0-650a-40a5-86b4-a1b9170baf87@amd.com>
+Date: Tue, 24 Sep 2024 15:28:55 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] mm/migrate: Trylock device page in do_swap_page
+To: Matthew Brost <matthew.brost@intel.com>,
+ Simona Vetter <simona.vetter@ffwll.ch>
+Cc: Alistair Popple <apopple@nvidia.com>, intel-xe@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Philip.Yang@amd.com,
+ akpm@linux-foundation.org, christian.koenig@amd.com
+References: <20240911030337.870160-1-matthew.brost@intel.com>
+ <20240911030337.870160-2-matthew.brost@intel.com>
+ <87mskehjtc.fsf@nvdebian.thelocal>
+ <ZuS/NH/P8Fl+qptx@DUT025-TGLU.fm.intel.com>
+ <87msk5our1.fsf@nvdebian.thelocal>
+ <ece41917-2ea7-4571-83a5-a50c776c6587@amd.com>
+ <Zu3n3MmtdlEDaXnF@DUT025-TGLU.fm.intel.com>
+ <9a3e62e0-cb62-4d73-9694-7be8893f7206@amd.com>
+ <Zu3wV9FJSTs1E5Vx@DUT025-TGLU.fm.intel.com>
+ <ZvKnDT_bdx_PhAcG@phenom.ffwll.local>
+ <ZvLr66F3VqpMyLlS@DUT025-TGLU.fm.intel.com>
+Content-Language: en-US
+From: Felix Kuehling <felix.kuehling@amd.com>
+In-Reply-To: <ZvLr66F3VqpMyLlS@DUT025-TGLU.fm.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: YT4PR01CA0449.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:10d::21) To BN9PR12MB5115.namprd12.prod.outlook.com
+ (2603:10b6:408:118::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Report-Abuse: Please forward a copy of this message, including all headers, to <abuse-report@smtp2go.com>
-Feedback-ID: 510616m:510616apGKSTK:510616seT2XkfLmR
-X-smtpcorp-track: c5kmSiwqy1Hx.EupDPlyQkV7g.cRffBw6dr2J
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN9PR12MB5115:EE_|SA1PR12MB8986:EE_
+X-MS-Office365-Filtering-Correlation-Id: d902fc13-8b74-42e9-7f98-08dcdccf24bd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cEVNTFExbXViRW5TRXlEbDRrN1pES1praVdMdnpKV25MM2gzU3EvZG95ZGdV?=
+ =?utf-8?B?dHQzNUVwY3M2dS9sSWRScEdPWkY5L2ZqK1lkeE5rWXovb3ZQQ0Nwd1NkZjlL?=
+ =?utf-8?B?d0xYUU9zWDBqb2ZMeDRXOHpCZnlxNUZEeVdtUnZtanZxVHpsQnFwMG5QYUI4?=
+ =?utf-8?B?ZHlTc3lJb3VIZjgyMVJKWlNLcytVemRNS0pWQi9ETWVscXpoMmI2TVFHTkFO?=
+ =?utf-8?B?eEo0Vlo1Q2VmV0ZoOHFOQjBIT2xGVFdtbGJqQXM1L3ZWN0t0V29jZ2k0Z3dN?=
+ =?utf-8?B?K2xIMldpWkI2bytTSzd6eFo4Sm9kdFlqS1d1RVI1d3NjamN3RTBOa25mOHBm?=
+ =?utf-8?B?SXo5REdNRVhmTFlmYVFaNi9DdmhJcll4c2tCWkJVU1hrcXA3byt6OTdvWVdw?=
+ =?utf-8?B?cFQzZUNSMHB5VXF2YkNpMmFwWExEYUgvVER4blVQL3FBRzNmVG9DTk9NNlV0?=
+ =?utf-8?B?VUpnU1lXWDBYaXlBbE9RRnNGb1ZyS0g2QlRQOWQ2enpGY3hIc2I3cXF1OEE1?=
+ =?utf-8?B?SmErMDJNcGc4aUZnalIwcWF3bmtHV09CQVdwdmFId2dVRzVscllmUVFmWjRo?=
+ =?utf-8?B?N0UwZmZvcExKdkZOOTQ5NDcyUCtvZUtGSDhmRklkN0hycVBkd3YwbTFZZWNH?=
+ =?utf-8?B?N0VtZkthRzFUajhXekRvTmN1R3pLaklMamd6cWhXWTJ2QVYyTGdHb0RaWThG?=
+ =?utf-8?B?em1aK1JuLzIySzZQTEN6SHpDbDg2Vy9TQXdWanVpVm1FZ2pVeVBIK2crc2g0?=
+ =?utf-8?B?RWZsbkhEMlNaOUR0U1F2NkdxODFyeTV1d0hqeGwzNnNBcGJ2bWdDWHM2WGVH?=
+ =?utf-8?B?MmNzWHluTVluTEw5em9JeWNKc2c1cjV2UlpmT2txUkpnS3hIcTdjVW1aUXdV?=
+ =?utf-8?B?ZmxwZ09YMzhOa3o0R2RRV3pqQnhJeWIxZ2ZTK0hVWk5mZTFMOHJkQVA5OUVI?=
+ =?utf-8?B?dEp5SHRRQkJEVmVLbG40L0QrN0IyWHpsbFp2TzZjT3FrbldKTVA3WlM3aU5i?=
+ =?utf-8?B?bCtCTGFHT3lFeWw0YmtockFyb0MvWVJpWEFuU2Zjb004ZDgySzBETlpaY1E5?=
+ =?utf-8?B?UHRHZlMwNGxkaU9KckZKTHRlTThwRytNZkxMRnhFZTJQL04xeUFpZ3FSOFBm?=
+ =?utf-8?B?SXpMZkI3Vk9SNXpNZ3gxQldvVGhUZkdiSG5IWTgzNEg2d3ZIRlpadWh0UWRL?=
+ =?utf-8?B?ejcrZnVjNDB0TzRqcldLOEN1djFQOXBVM29DdVBocDRzZlN6am93VytuaGFW?=
+ =?utf-8?B?UFI5VVZlQzhPWld4azRndWhkZDEzQTdBcDRKVlRKdU13K3MyUTV4ZWV6UkNk?=
+ =?utf-8?B?QnJhRUNZRHhkZ2drQUoyQWNsUTJSQ1Y3SWJnTjVMQ1VYSVE1ekpqaUpxQ1Zu?=
+ =?utf-8?B?YnpjQ21MVGtXMGRuSTdqVFF6VFF6RitUYlVucDl0TU9UMDl4RDVJVHVzQWE4?=
+ =?utf-8?B?cHBiRUdqdWZJMCtqT0s4T3Z0bFN6UG42NjFNM0dPV2xnenZ3QkpWNGRkVFdu?=
+ =?utf-8?B?dldzQnVHWG14Znd5d3M0UVY3eExFaGR2V3hMQ2dBaGNSMXdiOVZ6VC9sMjRw?=
+ =?utf-8?B?M0Y3Q0xjVkZIT2p2a3hZLzI1dUw3dkdoWTQzUS83ZHN2TXBtZFRvNWVMOGVG?=
+ =?utf-8?B?bWN5ZEdsM25QWjQ0ZlZ1ZU00QzFxdE1UdU8vQUc0emZhNkdKdFI3K0RSbzRQ?=
+ =?utf-8?B?Q3o5NENlaEtsd3pmYnJKbFNLczh5OFFaa29rZFpjQWVMdkR1R0ptQ0d6NXZz?=
+ =?utf-8?Q?Aozl6qm6bQYhXOvysU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR12MB5115.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cEZKcTI4akdJdlA4RTd3WFlVTWthY2NUamkwN2RkQ2ZxVFRZRDVFbWY4eGlP?=
+ =?utf-8?B?MVJRZHdLdk14SDFpL2wvUEtUUDZMb1lEbC9XdjVlV0tZV3dEaVAyTHFXU0hY?=
+ =?utf-8?B?eTZwSnduYTBuTXY3R3UyS1lZS0NqUHdqQVhCb3FTUjRGQVRKNmhUQWNkWlZI?=
+ =?utf-8?B?cklXeFFTR2Q3SngzdGNaVWhPbGJYUUE0QmdYakJnNHdZRHUwSnBYZml2YnFl?=
+ =?utf-8?B?dVNrV1c0cHJVNDZZWUZtSUswRHJGMEN5a3F4ZHdYdW8xM3JGVUVzQVBOYU51?=
+ =?utf-8?B?UGxQMmFEL2RTVW1RbzFvSUhBa0FXcXU0akJjVVVuZHgxSy9PQlMwdWFOTG1q?=
+ =?utf-8?B?cS95eW9vT0w0dHVuMDhpbUZFZ3ZtRFRGU2NIK05kTGt4elNmMGQrRDFNNCtn?=
+ =?utf-8?B?UHRId0pHWlQ0dnRjdHA4dG1pNHZmWE4ybzNzSDVaaDNSWTR6SHZlcys4NEtD?=
+ =?utf-8?B?MFI4U1RURTNITXc1Snl0THo4dDlqTGpsVk50UER3WlFnTnp6L05uME5odnBD?=
+ =?utf-8?B?ZDVCZmdXL0F4MGJNWlk1Z0NqbmgyWEdzZnlZTmNhaXNQMWc0ajBxNkd0QmxQ?=
+ =?utf-8?B?bGZvVVRycGkxYUNMcE1SWm44TVdma09ZU0RuRlJkdHAwdHlCMkYvUWZVZ3pr?=
+ =?utf-8?B?bFExSGpldGNDL3MvMzJEbkZUYlJLeGtHVTluaDZjZ3hJQ2hnbEprMzdiWU0v?=
+ =?utf-8?B?allPTUJXdGhuK2VjQ2NSRkFVTGg0c2VKSXF5YzhsdmU2bm15dWMwY29FYk5E?=
+ =?utf-8?B?dXVZU0pZS08vYm5WRUdrNUEzSVBxenprYXd5cG1lSjQ1MlV1STBCbE83VlI4?=
+ =?utf-8?B?WnVkUGdTR1pINlh4Y21RSEtLaVFuUXB5NnZTbVVXa2k3czhNVDQ0ZlNrS0dH?=
+ =?utf-8?B?di82SThLbW8xN0o0SjQvbWtrd056YitlZWhhVGZKS01VNlNOK2ptd2hYZU5L?=
+ =?utf-8?B?c3NIRUQ1TnVkUW9LZHBTZHJVS2J0bTZucktXOS9UVUZndmdlOFc2ZmZQcjF0?=
+ =?utf-8?B?SUNaNmdhbW0wV3NnOWtDUlVLa1ZzNWxXNzZ5c1d3Q1NtQ25UMXlNbDc2VkZJ?=
+ =?utf-8?B?Sm1GbDhGRTY3bXZTT2lDSWIvY2FuNElNTnlZRzdCMy9QczViZUprVEZzdzRT?=
+ =?utf-8?B?cXJIMTBsNDBvOXlnUXFsYTdFTGpDTEFYK1BRVm10ZFgrQ1RLSnhCN3J3NHJP?=
+ =?utf-8?B?TFRtMGQ4OXFPWmNUeGZCRjk5Y2tXOElLbGJYYmplVTlVZ0JrU2xmSTBtUDBt?=
+ =?utf-8?B?OW5qTjFYVWZlSC9WVUxkbjZlVDBwWnFLT3lmZEF0TXRWU0E4aElnNnJGeU5N?=
+ =?utf-8?B?dHk5cTJkYnNnOWR2aVhrQmNqTGEzdzFIWjNoZmRDdmgrRzJwci9QVGNWb3hN?=
+ =?utf-8?B?Ri9mSVd0VXNOa2hMa2pOTW96K21td21jKzZZM2xUVGFzYzFhS1ZEN2kvb3Y0?=
+ =?utf-8?B?YmE5YitzWVNHNmRQUENueVdhWS9YTDl6WXVqUHJGbmhQaExGTVN2U09Qek4x?=
+ =?utf-8?B?cGx2VmNTVm5lK2NnaTBVbjd5TlZLeW83SkNNMVA3YmgyVnc3LzNIMUVIbkRu?=
+ =?utf-8?B?RFpYYStDeVB4bU9ocFo3djFhcWZkQy9XdGd4eVJzQjJEUU5SZ1ZsOTBPWk5O?=
+ =?utf-8?B?bFY2VFNrdFBEb24rbTh6YXg0NVo4TkFQRnA5emRPcXRqYXJTdE40ZHpCNUhw?=
+ =?utf-8?B?UVFlaFIyeEVtSWFvNFpZY1F2N2dLZkNmZEZyRzF2ME9lMFVMMS80YXdzbGdI?=
+ =?utf-8?B?cXMwUmpYdDlxSmMySmtpejdJNjVDeEVTcE56ZjAyQUEzMlVMWWRhN2pmbDZh?=
+ =?utf-8?B?eEo2ejg2bjNKSXltTmlENVBocjZFQVRKVHQvUkkwdzloY09LQmd6NUhFcmQ3?=
+ =?utf-8?B?alhVVDJoZURjQVBrVXZubDZTVzh4R3JQSm9GdEtibzdlWExJUHp4cjNGMFZt?=
+ =?utf-8?B?aHFWL2VrMXdZeTR3dHpucWVoWlJCR000U01RcHcwcEMyK3YwK2tKMGZ1U2Uw?=
+ =?utf-8?B?azFHbjQ0UmxUSi9TU2IyaG9lcHZlb056enBKQmUvQzJ0YlZlVCtMUGllMjFy?=
+ =?utf-8?B?cDBYZkFGTDVZaG9lb05Ra0hnRTN6dVdHQ29TMVJQOUl4OU1vVHhqMzB1Qzcv?=
+ =?utf-8?Q?mBnlGfjVbH22l5fyU/YKts/Ku?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d902fc13-8b74-42e9-7f98-08dcdccf24bd
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5115.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2024 19:29:01.4154
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5ansfXOtV1w/IvesHG+qo6Rgva3s7agbkCBLT0fsYLRf+FKXXSPjZGkmXFWFDAPbJblWMhpDQnTohK1p6lfvNA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8986
 
-Call to ieee80211_color_collision_detection_work() needs wiphy lock to
-be held (see lockdep assert in cfg80211_bss_color_notify()). Not locking
-wiphy causes the following lockdep error:
 
-  WARNING: CPU: 2 PID: 42 at net/wireless/nl80211.c:19505 cfg80211_bss_color_notify+0x1a4/0x25c
-  Modules linked in:
-  CPU: 2 PID: 42 Comm: kworker/u8:3 Tainted: G        W          6.4.0-02327-g36c6cb260481 #1048
-  Hardware name:
-  Workqueue: phy1 ieee80211_color_collision_detection_work
-  pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-  pc : cfg80211_bss_color_notify+0x1a4/0x25c
-  lr : cfg80211_bss_color_notify+0x1a0/0x25c
-  sp : ffff000002947d00
-  x29: ffff000002947d00 x28: ffff800008e1a000 x27: ffff000002bd4705
-  x26: ffff00000d034000 x25: ffff80000903cf40 x24: 0000000000000000
-  x23: ffff00000cb70720 x22: 0000000000800000 x21: ffff800008dfb008
-  x20: 000000000000008d x19: ffff00000d035fa8 x18: 0000000000000010
-  x17: 0000000000000001 x16: 000003564b1ce96a x15: 000d69696d057970
-  x14: 000000000000003b x13: 0000000000000001 x12: 0000000000040000
-  x11: 0000000000000001 x10: ffff80000978f9c0 x9 : ffff0000028d3174
-  x8 : ffff800008e30000 x7 : 0000000000000000 x6 : 0000000000000028
-  x5 : 000000000002f498 x4 : ffff00000d034a80 x3 : 0000000000800000
-  x2 : ffff800016143000 x1 : 0000000000000000 x0 : 0000000000000000
-  Call trace:
-   cfg80211_bss_color_notify+0x1a4/0x25c
-   ieee80211_color_collision_detection_work+0x20/0x118
-   process_one_work+0x294/0x554
-   worker_thread+0x70/0x440
-   kthread+0xf4/0xf8
-   ret_from_fork+0x10/0x20
-  irq event stamp: 77372
-  hardirqs last  enabled at (77371): [<ffff800008a346fc>] _raw_spin_unlock_irq+0x2c/0x4c
-  hardirqs last disabled at (77372): [<ffff800008a28754>] el1_dbg+0x20/0x48
-  softirqs last  enabled at (77350): [<ffff8000089e120c>] batadv_send_outstanding_bcast_packet+0xb8/0x120
-  softirqs last disabled at (77348): [<ffff8000089e11d4>] batadv_send_outstanding_bcast_packet+0x80/0x120
+On 2024-09-24 12:42, Matthew Brost wrote:
+> On Tue, Sep 24, 2024 at 01:48:29PM +0200, Simona Vetter wrote:
+>> On Fri, Sep 20, 2024 at 09:59:51PM +0000, Matthew Brost wrote:
+>>> On Fri, Sep 20, 2024 at 05:50:10PM -0400, Felix Kuehling wrote:
+>>>>
+>>>> On 2024-09-20 17:23, Matthew Brost wrote:
+>>>>> On Fri, Sep 20, 2024 at 04:26:50PM -0400, Felix Kuehling wrote:
+>>>>>> On 2024-09-18 11:10, Alistair Popple wrote:
+>>>>>>> Matthew Brost <matthew.brost@intel.com> writes:
+>>>>>>>
+>>>>>>>> On Wed, Sep 11, 2024 at 02:53:31PM +1000, Alistair Popple wrote:
+>>>>>>>>> Matthew Brost <matthew.brost@intel.com> writes:
+>>>>>>>>>
+>>>>>>>>> I haven't seen the same in the NVIDIA UVM driver (out-of-tree, I know)
+>>>>>>>> Still a driver.
+>>>>>>> Indeed, and I'm happy to answer any questions about our implementation.
+>>>>>>>
+>>>>>>>>> but theoretically it seems like it should be possible. However we
+>>>>>>>>> serialize migrations of the same virtual address range to avoid these
+>>>>>>>>> kind of issues as they can happen the other way too (ie. multiple
+>>>>>>>>> threads trying to migrate to GPU).
+>>>>>>>>>
+>>>>>>>>> So I suspect what happens in UVM is that one thread wins and installs
+>>>>>>>>> the migration entry while the others fail to get the driver migration
+>>>>>>>>> lock and bail out sufficiently early in the fault path to avoid the
+>>>>>>>>> live-lock.
+>>>>>>>>>
+>>>>>>>> I had to try hard to show this, doubt an actual user could trigger this.
+>>>>>>>>
+>>>>>>>> I wrote a test which kicked 8 threads, each thread did a pthread join,
+>>>>>>>> and then tried to read the same page. This repeats in loop for like 512
+>>>>>>>> pages or something. I needed an exclusive lock in migrate_to_ram vfunc
+>>>>>>>> for it to livelock. Without an exclusive lock I think on average I saw
+>>>>>>>> about 32k retries (i.e. migrate_to_ram calls on the same page) before a
+>>>>>>>> thread won this race.
+>>>>>>>>
+>>>>>>>>   From reading UVM, pretty sure if you tried hard enough you could trigger
+>>>>>>>> a livelock given it appears you take excluvise locks in migrate_to_ram.
+>>>>>>> Yes, I suspect you're correct here and that we just haven't tried hard
+>>>>>>> enough to trigger it.
+>>>>>>>
+>>>>>>>>>> Cc: Philip Yang <Philip.Yang@amd.com>
+>>>>>>>>>> Cc: Felix Kuehling <felix.kuehling@amd.com>
+>>>>>>>>>> Cc: Christian König <christian.koenig@amd.com>
+>>>>>>>>>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>>>>>>>>>> Suggessted-by: Simona Vetter <simona.vetter@ffwll.ch>
+>>>>>>>>>> Signed-off-by: Matthew Brost <matthew.brost@intel.com>
+>>>>>>>>>> ---
+>>>>>>>>>>    mm/memory.c         | 13 +++++++---
+>>>>>>>>>>    mm/migrate_device.c | 60 +++++++++++++++++++++++++++++++--------------
+>>>>>>>>>>    2 files changed, 50 insertions(+), 23 deletions(-)
+>>>>>>>>>>
+>>>>>>>>>> diff --git a/mm/memory.c b/mm/memory.c
+>>>>>>>>>> index 3c01d68065be..bbd97d16a96a 100644
+>>>>>>>>>> --- a/mm/memory.c
+>>>>>>>>>> +++ b/mm/memory.c
+>>>>>>>>>> @@ -4046,10 +4046,15 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>>>>>>>>>>    			 * Get a page reference while we know the page can't be
+>>>>>>>>>>    			 * freed.
+>>>>>>>>>>    			 */
+>>>>>>>>>> -			get_page(vmf->page);
+>>>>>>>>>> -			pte_unmap_unlock(vmf->pte, vmf->ptl);
+>>>>>>>>>> -			ret = vmf->page->pgmap->ops->migrate_to_ram(vmf);
+>>>>>>>>>> -			put_page(vmf->page);
+>>>>>>>>>> +			if (trylock_page(vmf->page)) {
+>>>>>>>>>> +				get_page(vmf->page);
+>>>>>>>>>> +				pte_unmap_unlock(vmf->pte, vmf->ptl);
+>>>>>>>>> This is all beginning to look a lot like migrate_vma_collect_pmd(). So
+>>>>>>>>> rather than do this and then have to pass all this context
+>>>>>>>>> (ie. fault_page) down to the migrate_vma_* functions could we instead
+>>>>>>>>> just do what migrate_vma_collect_pmd() does here? Ie. we already have
+>>>>>>>>> the PTL and the page lock so there's no reason we couldn't just setup
+>>>>>>>>> the migration entry prior to calling migrate_to_ram().
+>>>>>>>>>
+>>>>>>>>> Obviously calling migrate_vma_setup() would show the page as not
+>>>>>>>>> migrating, but drivers could easily just fill in the src_pfn info after
+>>>>>>>>> calling migrate_vma_setup().
+>>>>>>>>>
+>>>>>>>>> This would eliminate the whole fault_page ugliness.
+>>>>>>>>>
+>>>>>>>> This seems like it would work and agree it likely be cleaner. Let me
+>>>>>>>> play around with this and see what I come up with. Multi-tasking a bit
+>>>>>>>> so expect a bit of delay here.
+>>>>>>>>
+>>>>>>>> Thanks for the input,
+>>>>>>>> Matt
+>>>>>> Thanks! Sorry, I'm late catching up after a vacation. Please keep Philip,
+>>>>>> Christian and myself in the loop with future patches in this area.
+>>>>>>
+>>>>> Will do. Already have another local patch set which helps drivers dma
+>>>>> map 2M pages for migrations if SRAM is physically contiguous. Seems
+>>>>> helpful for performance on Intel hardware. Probably post that soon for
+>>>>> early feedack.
+>>>>
+>>>> OK.
+>>>>
+>>>>
+>>>>>
+>>>>> Longer term I thinking 2M migration entries, 2M device pages, and being
+>>>>> able to install 2M THP on VRAM -> SRAM could be really helpful. I'm
+>>>>> finding migrate_vma_* functions take up like 80-90% of the time in the
+>>>>> CPU / GPU fault handlers on a fault (or prefetch) which doesn't seem
+>>>>> ideal. Seems like 2M entries for everything would really help here. No
+>>>>> idea how feasible this is as the core MM stuff gets confusing fast. Any
+>>>>> input on this idea?
+>>>>
+>>>> I agree with your observations. We found that the migrate_vma_* code was the
+>>>> bottle neck for migration performance as well, and not breaking 2M pages
+>>>> could reduce that overhead a lot. I don't have any specific ideas. I'm not
+>>>> familiar with the details of that code myself. Philip has looked at this
+>>>> (and some old NVidia patches from a few years ago) in the past but never had
+>>>> enough uninterrupted time to make it past prototyping.
+>>>>
+>>>
+>>> Cool good to know this isn't some crazy idea. Doubt it happen anytime
+>>> soon as I need to get a working baseline in before anything then start
+>>> applying optimizations and help in get other features to get the design
+>>> complete. But eventually will probably try to look at this. May ping
+>>> Philip and Nvidia when I have time to dig in here.
+>>
+>> I think the big step will be moving hmm.c and migrate.c apis over from
+>> struct page to folios. That should also give us some nice benefits on the
+>> gpu side, since instead of 4k pages to track we could allocate 2m gpu
+>> pages.
+>>
+> 
+> I think was thinking just encode the order in the migration PFN like HMM
+> does. Really only Nth order entry in the page array needs to be
+> populated then - HMM populates every entry though which doesn't seem
+> like that is required. Maybe having a folio API makes more sense?
+> 
+>> Once we have folios at the driver/core mm api level doing all the fancy
+>> thp stuff should be at least a well-contained problem. But I might be
+>> dellusionally optimistic here :-)
+> 
+> I think it contained in the sense is the DRM SVM layer just allocates a
+> THP or large continous device memory and hands it off to migrate layer
+> and that layer does the right thing. The 'right thing' here I believe is
+> a decent amount of core MM work though.
 
-The wiphy lock cannot be taken directly from color collision detection
-delayed work (ieee80211_color_collision_detection_work()) because this
-work is cancel_delayed_work_sync() under this wiphy lock causing a
-potential deadlock( see [0] for details).
+Whether or not you allocate contiguous device memory doesn't need to depend on the page size in system memory. You can migrate 2MB of scattered system memory into a contiguous 2MB block of VRAM. The AMD driver does this already. The problem (as I see it) is all the extra book-keeping with 4KB granularity in the migrate_vma_* helpers when the source data is actually contiguous.
 
-To fix that ieee80211_color_collision_detection_work() could be
-converted to a wiphy work and cancel_delayed_work_sync() can be simply
-replaced by wiphy_delayed_work_cancel() serving the same purpose under
-wiphy lock.
+Regards,
+  Felix
 
-This could potentially fix [1].
-
-[0]: https://lore.kernel.org/linux-wireless/D4A40Q44OAY2.W3SIF6UEPBUN@freebox.fr/
-[1]: https://lore.kernel.org/lkml/000000000000612f290618eee3e5@google.com/
-
-Reported-by: Nicolas Escande <nescande@freebox.fr>
-Signed-off-by: Remi Pommarel <repk@triplefau.lt>
----
- net/mac80211/cfg.c         | 17 +++++++++--------
- net/mac80211/ieee80211_i.h |  5 +++--
- net/mac80211/link.c        |  7 ++++---
- 3 files changed, 16 insertions(+), 13 deletions(-)
-
-diff --git a/net/mac80211/cfg.c b/net/mac80211/cfg.c
-index b02b84ce2130..09025d59cdbe 100644
---- a/net/mac80211/cfg.c
-+++ b/net/mac80211/cfg.c
-@@ -4819,12 +4819,12 @@ void ieee80211_color_change_finalize_work(struct wiphy *wiphy,
- 	ieee80211_color_change_finalize(link);
- }
- 
--void ieee80211_color_collision_detection_work(struct work_struct *work)
-+void ieee80211_color_collision_detection_work(struct wiphy *wiphy,
-+					      struct wiphy_work *work)
- {
--	struct delayed_work *delayed_work = to_delayed_work(work);
- 	struct ieee80211_link_data *link =
--		container_of(delayed_work, struct ieee80211_link_data,
--			     color_collision_detect_work);
-+		container_of(work, struct ieee80211_link_data,
-+			     color_collision_detect_work.work);
- 	struct ieee80211_sub_if_data *sdata = link->sdata;
- 
- 	cfg80211_obss_color_collision_notify(sdata->dev, link->color_bitmap,
-@@ -4877,7 +4877,8 @@ ieee80211_obss_color_collision_notify(struct ieee80211_vif *vif,
- 		return;
- 	}
- 
--	if (delayed_work_pending(&link->color_collision_detect_work)) {
-+	if (wiphy_delayed_work_pending(sdata->local->hw.wiphy,
-+				       &link->color_collision_detect_work)) {
- 		rcu_read_unlock();
- 		return;
- 	}
-@@ -4886,9 +4887,9 @@ ieee80211_obss_color_collision_notify(struct ieee80211_vif *vif,
- 	/* queue the color collision detection event every 500 ms in order to
- 	 * avoid sending too much netlink messages to userspace.
- 	 */
--	ieee80211_queue_delayed_work(&sdata->local->hw,
--				     &link->color_collision_detect_work,
--				     msecs_to_jiffies(500));
-+	wiphy_delayed_work_queue(sdata->local->hw.wiphy,
-+				 &link->color_collision_detect_work,
-+				 msecs_to_jiffies(500));
- 
- 	rcu_read_unlock();
- }
-diff --git a/net/mac80211/ieee80211_i.h b/net/mac80211/ieee80211_i.h
-index a3485e4c6132..8650b3e8f1a9 100644
---- a/net/mac80211/ieee80211_i.h
-+++ b/net/mac80211/ieee80211_i.h
-@@ -1051,7 +1051,7 @@ struct ieee80211_link_data {
- 	} csa;
- 
- 	struct wiphy_work color_change_finalize_work;
--	struct delayed_work color_collision_detect_work;
-+	struct wiphy_delayed_work color_collision_detect_work;
- 	u64 color_bitmap;
- 
- 	/* context reservation -- protected with wiphy mutex */
-@@ -2004,7 +2004,8 @@ int ieee80211_channel_switch(struct wiphy *wiphy, struct net_device *dev,
- /* color change handling */
- void ieee80211_color_change_finalize_work(struct wiphy *wiphy,
- 					  struct wiphy_work *work);
--void ieee80211_color_collision_detection_work(struct work_struct *work);
-+void ieee80211_color_collision_detection_work(struct wiphy *wiphy,
-+					      struct wiphy_work *work);
- 
- /* interface handling */
- #define MAC80211_SUPPORTED_FEATURES_TX	(NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM | \
-diff --git a/net/mac80211/link.c b/net/mac80211/link.c
-index 1a211b8d4057..67f65ff79a71 100644
---- a/net/mac80211/link.c
-+++ b/net/mac80211/link.c
-@@ -41,8 +41,8 @@ void ieee80211_link_init(struct ieee80211_sub_if_data *sdata,
- 			ieee80211_csa_finalize_work);
- 	wiphy_work_init(&link->color_change_finalize_work,
- 			ieee80211_color_change_finalize_work);
--	INIT_DELAYED_WORK(&link->color_collision_detect_work,
--			  ieee80211_color_collision_detection_work);
-+	wiphy_delayed_work_init(&link->color_collision_detect_work,
-+				ieee80211_color_collision_detection_work);
- 	INIT_LIST_HEAD(&link->assigned_chanctx_list);
- 	INIT_LIST_HEAD(&link->reserved_chanctx_list);
- 
-@@ -70,7 +70,8 @@ void ieee80211_link_stop(struct ieee80211_link_data *link)
- 	if (link->sdata->vif.type == NL80211_IFTYPE_STATION)
- 		ieee80211_mgd_stop_link(link);
- 
--	cancel_delayed_work_sync(&link->color_collision_detect_work);
-+	wiphy_delayed_work_cancel(link->sdata->local->hw.wiphy,
-+				  &link->color_collision_detect_work);
- 	wiphy_work_cancel(link->sdata->local->hw.wiphy,
- 			  &link->color_change_finalize_work);
- 	wiphy_work_cancel(link->sdata->local->hw.wiphy,
--- 
-2.46.0
-
+> 
+> Matt
+> 
+>> -Sima
+>>
+>>>
+>>> Matt
+>>>
+>>>> Regards,
+>>>>   Felix
+>>>>
+>>>>
+>>>>>
+>>>>> Matt
+>>>>>
+>>>>>> Regards,
+>>>>>>    Felix
+>>>>>>
+>>>>>>
+>>>>>>>>>> +				ret = vmf->page->pgmap->ops->migrate_to_ram(vmf);
+>>>>>>>>>> +				put_page(vmf->page);
+>>>>>>>>>> +				unlock_page(vmf->page);
+>>>>>>>>>> +			} else {
+>>>>>>>>>> +				pte_unmap_unlock(vmf->pte, vmf->ptl);
+>>>>>>>>>> +			}
+>>>>>>>>>>    		} else if (is_hwpoison_entry(entry)) {
+>>>>>>>>>>    			ret = VM_FAULT_HWPOISON;
+>>>>>>>>>>    		} else if (is_pte_marker_entry(entry)) {
+>>>>>>>>>> diff --git a/mm/migrate_device.c b/mm/migrate_device.c
+>>>>>>>>>> index 6d66dc1c6ffa..049893a5a179 100644
+>>>>>>>>>> --- a/mm/migrate_device.c
+>>>>>>>>>> +++ b/mm/migrate_device.c
+>>>>>>>>>> @@ -60,6 +60,8 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
+>>>>>>>>>>    				   struct mm_walk *walk)
+>>>>>>>>>>    {
+>>>>>>>>>>    	struct migrate_vma *migrate = walk->private;
+>>>>>>>>>> +	struct folio *fault_folio = migrate->fault_page ?
+>>>>>>>>>> +		page_folio(migrate->fault_page) : NULL;
+>>>>>>>>>>    	struct vm_area_struct *vma = walk->vma;
+>>>>>>>>>>    	struct mm_struct *mm = vma->vm_mm;
+>>>>>>>>>>    	unsigned long addr = start, unmapped = 0;
+>>>>>>>>>> @@ -88,11 +90,13 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
+>>>>>>>>>>    			folio_get(folio);
+>>>>>>>>>>    			spin_unlock(ptl);
+>>>>>>>>>> -			if (unlikely(!folio_trylock(folio)))
+>>>>>>>>>> +			if (unlikely(fault_folio != folio &&
+>>>>>>>>>> +				     !folio_trylock(folio)))
+>>>>>>>>>>    				return migrate_vma_collect_skip(start, end,
+>>>>>>>>>>    								walk);
+>>>>>>>>>>    			ret = split_folio(folio);
+>>>>>>>>>> -			folio_unlock(folio);
+>>>>>>>>>> +			if (fault_folio != folio)
+>>>>>>>>>> +				folio_unlock(folio);
+>>>>>>>>>>    			folio_put(folio);
+>>>>>>>>>>    			if (ret)
+>>>>>>>>>>    				return migrate_vma_collect_skip(start, end,
+>>>>>>>>>> @@ -192,7 +196,7 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
+>>>>>>>>>>    		 * optimisation to avoid walking the rmap later with
+>>>>>>>>>>    		 * try_to_migrate().
+>>>>>>>>>>    		 */
+>>>>>>>>>> -		if (folio_trylock(folio)) {
+>>>>>>>>>> +		if (fault_folio == folio || folio_trylock(folio)) {
+>>>>>>>>>>    			bool anon_exclusive;
+>>>>>>>>>>    			pte_t swp_pte;
+>>>>>>>>>> @@ -204,7 +208,8 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
+>>>>>>>>>>    				if (folio_try_share_anon_rmap_pte(folio, page)) {
+>>>>>>>>>>    					set_pte_at(mm, addr, ptep, pte);
+>>>>>>>>>> -					folio_unlock(folio);
+>>>>>>>>>> +					if (fault_folio != folio)
+>>>>>>>>>> +						folio_unlock(folio);
+>>>>>>>>>>    					folio_put(folio);
+>>>>>>>>>>    					mpfn = 0;
+>>>>>>>>>>    					goto next;
+>>>>>>>>>> @@ -363,6 +368,8 @@ static unsigned long migrate_device_unmap(unsigned long *src_pfns,
+>>>>>>>>>>    					  unsigned long npages,
+>>>>>>>>>>    					  struct page *fault_page)
+>>>>>>>>>>    {
+>>>>>>>>>> +	struct folio *fault_folio = fault_page ?
+>>>>>>>>>> +		page_folio(fault_page) : NULL;
+>>>>>>>>>>    	unsigned long i, restore = 0;
+>>>>>>>>>>    	bool allow_drain = true;
+>>>>>>>>>>    	unsigned long unmapped = 0;
+>>>>>>>>>> @@ -427,7 +434,8 @@ static unsigned long migrate_device_unmap(unsigned long *src_pfns,
+>>>>>>>>>>    		remove_migration_ptes(folio, folio, false);
+>>>>>>>>>>    		src_pfns[i] = 0;
+>>>>>>>>>> -		folio_unlock(folio);
+>>>>>>>>>> +		if (fault_folio != folio)
+>>>>>>>>>> +			folio_unlock(folio);
+>>>>>>>>>>    		folio_put(folio);
+>>>>>>>>>>    		restore--;
+>>>>>>>>>>    	}
+>>>>>>>>>> @@ -536,6 +544,8 @@ int migrate_vma_setup(struct migrate_vma *args)
+>>>>>>>>>>    		return -EINVAL;
+>>>>>>>>>>    	if (args->fault_page && !is_device_private_page(args->fault_page))
+>>>>>>>>>>    		return -EINVAL;
+>>>>>>>>>> +	if (args->fault_page && !PageLocked(args->fault_page))
+>>>>>>>>>> +		return -EINVAL;
+>>>>>>>>>>    	memset(args->src, 0, sizeof(*args->src) * nr_pages);
+>>>>>>>>>>    	args->cpages = 0;
+>>>>>>>>>> @@ -799,19 +809,13 @@ void migrate_vma_pages(struct migrate_vma *migrate)
+>>>>>>>>>>    }
+>>>>>>>>>>    EXPORT_SYMBOL(migrate_vma_pages);
+>>>>>>>>>> -/*
+>>>>>>>>>> - * migrate_device_finalize() - complete page migration
+>>>>>>>>>> - * @src_pfns: src_pfns returned from migrate_device_range()
+>>>>>>>>>> - * @dst_pfns: array of pfns allocated by the driver to migrate memory to
+>>>>>>>>>> - * @npages: number of pages in the range
+>>>>>>>>>> - *
+>>>>>>>>>> - * Completes migration of the page by removing special migration entries.
+>>>>>>>>>> - * Drivers must ensure copying of page data is complete and visible to the CPU
+>>>>>>>>>> - * before calling this.
+>>>>>>>>>> - */
+>>>>>>>>>> -void migrate_device_finalize(unsigned long *src_pfns,
+>>>>>>>>>> -			unsigned long *dst_pfns, unsigned long npages)
+>>>>>>>>>> +static void __migrate_device_finalize(unsigned long *src_pfns,
+>>>>>>>>>> +				      unsigned long *dst_pfns,
+>>>>>>>>>> +				      unsigned long npages,
+>>>>>>>>>> +				      struct page *fault_page)
+>>>>>>>>>>    {
+>>>>>>>>>> +	struct folio *fault_folio = fault_page ?
+>>>>>>>>>> +		page_folio(fault_page) : NULL;
+>>>>>>>>>>    	unsigned long i;
+>>>>>>>>>>    	for (i = 0; i < npages; i++) {
+>>>>>>>>>> @@ -838,7 +842,8 @@ void migrate_device_finalize(unsigned long *src_pfns,
+>>>>>>>>>>    		src = page_folio(page);
+>>>>>>>>>>    		dst = page_folio(newpage);
+>>>>>>>>>>    		remove_migration_ptes(src, dst, false);
+>>>>>>>>>> -		folio_unlock(src);
+>>>>>>>>>> +		if (fault_folio != src)
+>>>>>>>>>> +			folio_unlock(src);
+>>>>>>>>>>    		if (is_zone_device_page(page))
+>>>>>>>>>>    			put_page(page);
+>>>>>>>>>> @@ -854,6 +859,22 @@ void migrate_device_finalize(unsigned long *src_pfns,
+>>>>>>>>>>    		}
+>>>>>>>>>>    	}
+>>>>>>>>>>    }
+>>>>>>>>>> +
+>>>>>>>>>> +/*
+>>>>>>>>>> + * migrate_device_finalize() - complete page migration
+>>>>>>>>>> + * @src_pfns: src_pfns returned from migrate_device_range()
+>>>>>>>>>> + * @dst_pfns: array of pfns allocated by the driver to migrate memory to
+>>>>>>>>>> + * @npages: number of pages in the range
+>>>>>>>>>> + *
+>>>>>>>>>> + * Completes migration of the page by removing special migration entries.
+>>>>>>>>>> + * Drivers must ensure copying of page data is complete and visible to the CPU
+>>>>>>>>>> + * before calling this.
+>>>>>>>>>> + */
+>>>>>>>>>> +void migrate_device_finalize(unsigned long *src_pfns,
+>>>>>>>>>> +			unsigned long *dst_pfns, unsigned long npages)
+>>>>>>>>>> +{
+>>>>>>>>>> +	return __migrate_device_finalize(src_pfns, dst_pfns, npages, NULL);
+>>>>>>>>>> +}
+>>>>>>>>>>    EXPORT_SYMBOL(migrate_device_finalize);
+>>>>>>>>>>    /**
+>>>>>>>>>> @@ -869,7 +890,8 @@ EXPORT_SYMBOL(migrate_device_finalize);
+>>>>>>>>>>     */
+>>>>>>>>>>    void migrate_vma_finalize(struct migrate_vma *migrate)
+>>>>>>>>>>    {
+>>>>>>>>>> -	migrate_device_finalize(migrate->src, migrate->dst, migrate->npages);
+>>>>>>>>>> +	__migrate_device_finalize(migrate->src, migrate->dst, migrate->npages,
+>>>>>>>>>> +				  migrate->fault_page);
+>>>>>>>>>>    }
+>>>>>>>>>>    EXPORT_SYMBOL(migrate_vma_finalize);
+>>
+>> -- 
+>> Simona Vetter
+>> Software Engineer, Intel Corporation
+>> http://blog.ffwll.ch
 
