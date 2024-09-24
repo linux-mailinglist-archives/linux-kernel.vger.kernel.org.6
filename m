@@ -1,129 +1,116 @@
-Return-Path: <linux-kernel+bounces-337507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85EC5984B23
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:40:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B6F9984B2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:40:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BA7B1F240E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:40:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 252AF1C22E5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:40:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDAA51AE84C;
-	Tue, 24 Sep 2024 18:39:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 985F81AC8A7;
+	Tue, 24 Sep 2024 18:39:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fq4YZClR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q2WzohY5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A32D1AC8BE;
-	Tue, 24 Sep 2024 18:39:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02FAC1B85F5;
+	Tue, 24 Sep 2024 18:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727203170; cv=none; b=lKNRe+XJcSLiNK6DJqV8ky4OG4/5YxnyrSNKkST5vN1UsLwfjHGsDR6kry0VQAC9MJBBGQLDaMlJeDLgdb1F1EuoUIMPLDgHZDi41wG3uekq6o6TjJX35a5ZAGv4LNcpBEVaFWxV3XV5Qdlh3jV4LDJMVevLHsRxoWeua9xIehg=
+	t=1727203199; cv=none; b=S5o2rgI12IH8cvbFBWEHH6Ke/5Qd4FXRyrbnyJnFcu/lZgVFo7YyF5tRjI1bW73+J6l9aDhjdVso2kVzb84HTrowQy6HXxTNX3apg+lAm1fkYMxxk6RVWVYAQdc0msNe2tnTNUoLvh+AXo8fiEyQw0Ol5nTINGCnJZgHbH9ozLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727203170; c=relaxed/simple;
-	bh=wzehy+b1qqLL8OTawQ1M6yaZDocl+IDjT2tUky8lGqo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kkpatKyiY8S9yffcA+JgQWrfPfvletD7DGtHQKfEILpZbsZX4UruZqjhhIUttIpECcHnjZy3UvjRZNlTKKXwkXvXyGykMsvL9qjjHV4JZ7o4mwtAZF+T1Txez6dtnoH48gvOmB8MCCu14blNfQkgP/KGBxtehhGdHAG2RnzgYAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fq4YZClR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F03A1C4CEC5;
-	Tue, 24 Sep 2024 18:39:21 +0000 (UTC)
+	s=arc-20240116; t=1727203199; c=relaxed/simple;
+	bh=JhjrFkdpUJYeUmwJD3cUTzagKIJWPAaIKVgloH2Lt0I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RsVrkvZv0adghBPB71f3zGy//gbbQrSewQjWNC+GRZT721mrqqntNbIEDJbisakpTv2lNWxDmg6kIhGcQfvjda+zjoIX+3UccfPQWe3FkmgB20MUvLraa2+Soh975pPFAupyHZsZj2E2p1TvvDDEdq6GAR9C/w+GARtxtu8/JZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q2WzohY5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7C83C4CEC4;
+	Tue, 24 Sep 2024 18:39:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727203169;
-	bh=wzehy+b1qqLL8OTawQ1M6yaZDocl+IDjT2tUky8lGqo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fq4YZClR2OdQ6phVcGXx9vGCe426M6TIwMiaXPX02UhmNw6NlJLzucw8ZKNkpUjw6
-	 mHC9uADFtLPlJPI10x9Nitd8gpTeQ+VjBi4BMlQHksMLAU1X6yNma56Q+rnmLXauPG
-	 5114beqs6/qmN+kKDpFzu7lKoGPbLN8NA8gmmv2wRGmzXcdeRQ3y3/tr8vdXuoi1NE
-	 egOVBogMn+4df1mnzZ9pQLjLkk2R8wMT3ZXaJcmMDCovKCQm38l2it3OrpOoq9BhiD
-	 pXoQ4JuG9y/kevN2jK7YLZ7DgTSlBlwoxSeAwNqBkXtiLFHON5HQyg6tghcxGA3oTQ
-	 SX7ZeI5suWeFA==
-Message-ID: <50e0e837-1c70-4d6d-bb55-a68dec3dcd3b@kernel.org>
-Date: Tue, 24 Sep 2024 20:39:20 +0200
+	s=k20201202; t=1727203198;
+	bh=JhjrFkdpUJYeUmwJD3cUTzagKIJWPAaIKVgloH2Lt0I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=q2WzohY5fE/ILL5aSlnmLPAULJcSJWIh5S7Cq7bNRLnhVteMviu5jjnKheRk4MmaG
+	 zPzKi1qL2SaiyAhxSMbvqt+mqyqrbdtxTjEAhU//6FYQevf+6ulVSxRkDXuj4nu/Lt
+	 vMmpR+PN0DDNR1OVlfx92m+r9/mCUwlTb2CuhB0CiuRaqzwRNwYacVD3ZvxKtBlW35
+	 F/DeIXXC3/rBC2f/fqAESBnYQw8qvrigoiT/tsL4kkb2sTk0bxgorVGdvKEB4Zqk47
+	 Y27/Lf7TTL3/ydeWyQN3KEWQ4aEO5xRY0IunWBu6AnMYvN+D6CzYymhFFQPfjg6MWR
+	 0aD4ZXH2rV0eQ==
+Date: Tue, 24 Sep 2024 11:39:56 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: James Clark <james.clark@linaro.org>
+Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Kajol Jain <kjain@linux.ibm.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	"Steinar H. Gunderson" <sesse@google.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Hemant Kumar <hemant@linux.vnet.ibm.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Yang Jihong <yangjihong@bytedance.com>, leo.yan@arm.com
+Subject: Re: [PATCH v1 2/3] perf probe: Fix libdw memory leak
+Message-ID: <ZvMHfB1f_GbtRqSp@google.com>
+References: <20240924003720.617258-1-irogers@google.com>
+ <20240924003720.617258-3-irogers@google.com>
+ <de38a809-1968-4d6d-b1ed-1f47e8762ee2@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/6] dt-bindings: PCI: qcom: Move OPP table to
- qcom,pcie-common.yaml
-To: Qiang Yu <quic_qianyu@quicinc.com>, manivannan.sadhasivam@linaro.org,
- vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, andersson@kernel.org,
- konradybcio@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, abel.vesa@linaro.org,
- quic_msarkar@quicinc.com, quic_devipriy@quicinc.com
-Cc: dmitry.baryshkov@linaro.org, kw@linux.com, lpieralisi@kernel.org,
- neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20240924101444.3933828-1-quic_qianyu@quicinc.com>
- <20240924101444.3933828-3-quic_qianyu@quicinc.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240924101444.3933828-3-quic_qianyu@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <de38a809-1968-4d6d-b1ed-1f47e8762ee2@linaro.org>
 
-On 24/09/2024 12:14, Qiang Yu wrote:
-> OPP table is a generic property that is also required by other qcom
-> platforms. Hence move this property to qcom,pcie-common.yaml so that PCIe
-> on other qcom platforms is able to adjust power domain performance state
-> and ICC peak bw according to PCIe gen speed and link width.
+On Tue, Sep 24, 2024 at 10:17:08AM +0100, James Clark wrote:
 > 
-> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-> ---
+> 
+> On 24/09/2024 1:37 am, Ian Rogers wrote:
+> > Add missing dwarf_cfi_end to free memory associated with probe_finder
+> > cfi_eh or cfi_dbg. This addresses leak sanitizer issues seen in:
+> > tools/perf/tests/shell/test_uprobe_from_different_cu.sh
+> > 
+> > Fixes: 270bde1e76f4 ("perf probe: Search both .eh_frame and .debug_frame sections for probe location")
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> >   tools/perf/util/probe-finder.c | 5 +++++
+> >   1 file changed, 5 insertions(+)
+> > 
+> > diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
+> > index 630e16c54ed5..78f34fa0c391 100644
+> > --- a/tools/perf/util/probe-finder.c
+> > +++ b/tools/perf/util/probe-finder.c
+> > @@ -1379,6 +1379,11 @@ int debuginfo__find_trace_events(struct debuginfo *dbg,
+> >   	if (ret >= 0 && tf.pf.skip_empty_arg)
+> >   		ret = fill_empty_trace_arg(pev, tf.tevs, tf.ntevs);
+> > +#if _ELFUTILS_PREREQ(0, 142)
+> > +	dwarf_cfi_end(tf.pf.cfi_eh);
+> > +	dwarf_cfi_end(tf.pf.cfi_dbg);
+> > +#endif
+> > +
+> 
+> I noticed that c06547d converted an _ELFUTILS_PREREQ(0, 142) into
+> HAVE_DWARF_CFI_SUPPORT. But there is still a mixture of both in the code
+> (unrelated to this patch). The commit message doesn't say why it is better,
+> just that it could be changed, so I'm not sure which one is right.
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+I think HAVE_DWARF_CFI_SUPPORT is better since it reveals the intention
+clearly.
 
-Best regards,
-Krzysztof
-
+Thanks,
+Namhyung
 
