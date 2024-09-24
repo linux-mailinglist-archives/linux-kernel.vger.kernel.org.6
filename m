@@ -1,121 +1,96 @@
-Return-Path: <linux-kernel+bounces-336860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C27249841D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:17:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1725B9841D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:17:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 783621F22581
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:17:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AAB9B2753B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:16:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C7E155A21;
-	Tue, 24 Sep 2024 09:16:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4F8C153801;
+	Tue, 24 Sep 2024 09:16:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FUr4BhD3"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CyjSfPYC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01256155753
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9DD80C13;
+	Tue, 24 Sep 2024 09:16:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727169417; cv=none; b=f4pW638sPpwrRr16TwIuQblgNE6A9OGTUA9J9FovWKUW+d3h2dCkiBSyUTVHmSrfYDnYbuYY4d38uQPPaEH2Ufp4cV532QL43Xd6utZvJgpgDNF/VtfWI/+Km4hL2SkruptOSoAC7cgpzE8qhoNvkHVZGfExiBgFNREVRO1o1ec=
+	t=1727169413; cv=none; b=KDR7PCy+gaF0dv7me9GKi6STf/NkQxu0OHLoixUWZ5aSy4bGzNK/TgfHjcj2UQDIYQBRgxNT3+uwdpfxVtaiDkQnQ5QG0YFSZ25WzEbQZJHB5E4Na7j721whb0VAV4tmVvYTePUuRGwbWuvxmDZ6sAxUy2/QYCLQQAVJlm1FGLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727169417; c=relaxed/simple;
-	bh=C+LwmkyRKyyAe5zqhFuN67aHkoPhFaub3dYA2DiA+7w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AK4eyV3qiuzsoJaNcSgmnFKDDw9epe6xz6DaRLSvKhSCBHnds7nwIX/5b/8InfnQWlBvssPvsROHfS0w9C3JLBYlEA+eeidsMPnOCJiD4cEuvkgttm02YEouGongEjscLb2nFH1kpcBgp5CkP5/YTKx4GPP7iYSYGSZ7uwwnDCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FUr4BhD3; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c5bca59416so2971691a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 02:16:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727169414; x=1727774214; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gn80kJ0L6WBXHBbdNhas4oELBR7nvgAHYtPEyt6cEB4=;
-        b=FUr4BhD3+eyQMkpFecQ9kR5UhIk1gAlFr2Nzqv3GkR0IYMFTGCdF0tLKOYatmZyyNd
-         M5Ts9MFwH7iJXg/a8WiquERgSjH7X2Q58HbyHTJ4+pLQM9hR7rhSw2AZwvNOKcziEVfk
-         WKQ7HbwwElufcfnDueu36cE70L+g3u1a8JXn89xnIuQT7n4uRfSmRdwg6arHRMwfiZMB
-         Uw7uS/lojlM/Nc13PhWQhkPhBS8rU2UTeJoDD6/pjgJP6TX3/JBdavrMP+eIJXWCpFl9
-         q0uqPeARLECyKfpK7Rhc0nK/Q57G9rY9TjD5h3myOg5/6/LeX6FrJFLPbYwdfi0Ey3Se
-         4IpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727169414; x=1727774214;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Gn80kJ0L6WBXHBbdNhas4oELBR7nvgAHYtPEyt6cEB4=;
-        b=t3NbEsiGjlDkCcirNZ80q/7VUYaTLoyleAlad++C96a1X1dqL2crmb4lFjoIKwHyfo
-         R0JY3dlmIP5vgkTZ8Ec+XHbhHCH/iD4+fPgbuIXJrNUlaZp3vwzc51qcLWPu2ZVU4kff
-         0dLJijFFTPEdQX+k4rY9lM6TLVSwJz9/jHIfLWXED9v9sYy1tJ9LoZdDyDxdJ8eAruN0
-         zV/S3YDiuOYuFnzEdsUogyS9Fs4gd4yNyKuYTf8DmShxSbVt9cZSRBE758z+SSTBE4Im
-         TD7GM8DzG9Vr1BxMkSG8rXU2cjkE3D95B6wukyehyasnR2s2YmeIcOEqa3PJDVDvjnhp
-         ua/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUZjRFbieNnHSQcwngQtEjPApuoMqm7Tw/sAagmKkqN/oZPulXo/y+eYgS9fJ3QCAd+dBOE2HoM4UhdTow=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrcSFEsaiWwuyyGHZw/6/gkYQiSJG2bLZfkYW6M3yfP+VwmYw2
-	8AeHgCL1Fns0QIbJLdhbRS0sqoze2IXKVv9Yb1fVJ05vCFvnDKVU
-X-Google-Smtp-Source: AGHT+IFkYCw90G6l6dzmsPDKcl8ZKP1kVRPLXIw5kLjF1AmUmY1iV6wSkbCXuBChMv/JxBYOL6WShA==
-X-Received: by 2002:a05:6402:2707:b0:5c4:2e3b:1831 with SMTP id 4fb4d7f45d1cf-5c464df011fmr10003297a12.29.1727169414048;
-        Tue, 24 Sep 2024 02:16:54 -0700 (PDT)
-Received: from fedora.iskraemeco.si ([193.77.86.250])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c5cf4d77d9sm547069a12.94.2024.09.24.02.16.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 02:16:53 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: x86@kernel.org,
+	s=arc-20240116; t=1727169413; c=relaxed/simple;
+	bh=7gdoqhXNNZucpSkE8hBwdCZmsMRtwnSTv00X6OJRbPY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GYgveI3aQBp9hGuV8mYlFDbZ/b+jHBzzEM29+OzGList7Det36xWvYc9cioO+ZxUl4UIYFjo45Gmbbw3QVTJjbYogjwNiVOcONoOpQyHxsQEA0RMtrXrml4MYvk0LW+BaIAE8GLVKzLkR1uwbOhpOl3pw6n+l+bdVmPjjdqYUoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CyjSfPYC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EBEEC4CEC4;
+	Tue, 24 Sep 2024 09:16:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727169412;
+	bh=7gdoqhXNNZucpSkE8hBwdCZmsMRtwnSTv00X6OJRbPY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CyjSfPYC80yFtddcP80xN8xdKOpBOMSeeTwBzQNm6cDESN6lFDgELD1iAAJWi3vdq
+	 cXqf0gcNEeoi1tJhJC5XaYbZq58QQJK4TBdqmTGA4iDYNTxxYnbufCcCozBere/r4d
+	 uByVGXbRA3dVdtWZriBXZhueZAq5k/VcqTy4kNMCUz2vrqphaF9oxSG8G3pKX6U2ek
+	 0cUPIBWmpXIVHvU0A1Z0PAu5JveTbOUD5tiSKGWPwzDIU324KorqrBgkMy4bx0z+A1
+	 LTNPu0UElea6kvFui9Xi6cnZ+eufn6RmfQblT66qImVNspCKfiQqa1GepyqBdfTiBh
+	 Buz7va0CAN+Pw==
+Date: Tue, 24 Sep 2024 11:16:49 +0200
+From: Mark Brown <broonie@kernel.org>
+To: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+Cc: vkoul@kernel.org, alsa-devel@alsa-project.org,
+	pierre-louis.bossart@linux.dev, yung-chuan.liao@linux.intel.com,
+	lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+	Basavaraj.Hiregoudar@amd.com, Sunil-kumar.Dommati@amd.com,
+	venkataprasad.potturu@amd.com, linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH] x86/kgdb: Use IS_ERR_PCPU() macro
-Date: Tue, 24 Sep 2024 11:16:19 +0200
-Message-ID: <20240924091650.1354115-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.46.1
+Subject: Re: [PATCH 3/4] ASoC: SOF: amd: pass acp_rev as soundwire resource
+ data
+Message-ID: <ZvKDgcI0DN5Wd8S5@finisterre.sirena.org.uk>
+References: <20240924081846.1834612-1-Vijendar.Mukunda@amd.com>
+ <20240924081846.1834612-4-Vijendar.Mukunda@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="e+4U//sj5bbFZSnH"
+Content-Disposition: inline
+In-Reply-To: <20240924081846.1834612-4-Vijendar.Mukunda@amd.com>
+X-Cookie: Editing is a rewording activity.
 
-Use IS_ERR_PCPU() when checking the error pointer in the percpu
-address space. This macro adds intermediate cast to unsigned long
-when switching named address spaces.
 
-The patch will avoid future build errors due to pointer address space
-mismatch with enabled strict percpu address space checks.
+--e+4U//sj5bbFZSnH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
----
- arch/x86/kernel/kgdb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, Sep 24, 2024 at 01:48:45PM +0530, Vijendar Mukunda wrote:
+> Pass acp_rev(ACP pci revision id) as soundwire resource data
+> for SoundWire controller probe function.
 
-diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
-index 9c9faa1634fb..102641fd2172 100644
---- a/arch/x86/kernel/kgdb.c
-+++ b/arch/x86/kernel/kgdb.c
-@@ -655,7 +655,7 @@ void kgdb_arch_late(void)
- 		if (breakinfo[i].pev)
- 			continue;
- 		breakinfo[i].pev = register_wide_hw_breakpoint(&attr, NULL, NULL);
--		if (IS_ERR((void * __force)breakinfo[i].pev)) {
-+		if (IS_ERR_PCPU(breakinfo[i].pev)) {
- 			printk(KERN_ERR "kgdb: Could not allocate hw"
- 			       "breakpoints\nDisabling the kernel debugger\n");
- 			breakinfo[i].pev = NULL;
--- 
-2.46.1
+Acked-by: Mark Brown <broonie@kernel.org>
 
+--e+4U//sj5bbFZSnH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbyg4AACgkQJNaLcl1U
+h9AH2Af/W7IK5j+QknLLuZwKGFmupJs/fsjSLXQT1LifiQmhxGUeMtVUB1PB6npu
+xsqiCaKrTpB/cgEfo2XdvGVjE2zTU8dhYCxPBwgbR064wUvIWKFDL/CLb9s6Zl78
+uWk0ssKWC9GMiTn3QBwWC3+E5krBFlWHrR7e9fo+nOm8eYxtTfRgMq2USLj0rQSv
+RT1zD2b9WM+oRNMbcUtSnnv+mb3vw/X8ZXz94wiceARDg9LmCEVAHhstSMcV83dT
+frPvBjgENka4YLBvJEqdddO9M6a6cVfaHJBe+Y3UiQ/cbqm3YNikbwcKxO6EKupD
+HspJTY72/+wdYio1jYfxHFKRPCRx/g==
+=QKWK
+-----END PGP SIGNATURE-----
+
+--e+4U//sj5bbFZSnH--
 
