@@ -1,153 +1,147 @@
-Return-Path: <linux-kernel+bounces-336498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71B7D983B82
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 05:25:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06FA1983B88
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 05:26:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE329B226B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 03:25:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A65D91F22C1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 03:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140E71805A;
-	Tue, 24 Sep 2024 03:25:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E6438DE0;
+	Tue, 24 Sep 2024 03:26:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="RB3NW0sl"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xp6u31FX"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7608A1A270
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 03:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7129738394;
+	Tue, 24 Sep 2024 03:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727148316; cv=none; b=KMvAWUhs3kW0WMdzhVlW9XLvUtVHaxM5MzG3cY0SVOrXqMnjcP63TlySYjsXEuCojVGC0KtbNDPGztDkiNaIwAyVhbNneWHlPKaqzaRmTyt1My5r8hsFKDn9MF2npFD46aDWVQ+gkez6tVEBN6R5oldKxONWcfVXxoiZKpTtK0k=
+	t=1727148393; cv=none; b=ZOoAboTgQ4QwmM2OQ3YuwIsCYyKr10TTHJPS6aY+10xDOtN6Kb8r5brqjzNgk0v41JXMliz89lZIbOQOrFVlWSoari2OxcfQjN+MzQoJ68sXoxIt3xxB5yB/hFS821WMXtwEad5SOG2hjbXb2z3KlVfE/HDM0txap8S0ONhCcRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727148316; c=relaxed/simple;
-	bh=3n76I9EKpWg3hUf7TGZctF9Wa2N1dL4NmZc4zKhmtwo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QgNpCSHehpRBVfgNakRkh72PNq97P+ZL/pj5S2vjaqsrLmD3LDsfzfA5rgayy9NFdQsxerGQ2lc0IyjWpo7+deXQSSVrQSil+453RHN7lMxBVw9LWOWatYeS8cNt253uW+yPzIz9SLKVZFQhxiT0epWw+7JyI3HpEH0qcSE41rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=RB3NW0sl; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1727148311; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=gy4Xw5HcATj18wlOUR8GQnhv7MlnSmGkVGDSvlC2JMo=;
-	b=RB3NW0slL+bK1ntpEz0ZOKy0ROslnY9grjxht8YJkIfwcFWZLoLarHgY5RhujD5NkzloV2hSvWwRq6Gd4elh61Kw5oMoNGPXofKcp6KqumoZy9/IhM+9HbVBZhy+DF22MIimotL2Ng8u9eXkGBhjpnhISY+6roEulkvwpMedvNo=
-Received: from 30.74.144.117(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WFeKxuu_1727148308)
-          by smtp.aliyun-inc.com;
-          Tue, 24 Sep 2024 11:25:09 +0800
-Message-ID: <9a110f20-42ad-468b-96c6-683e162452a9@linux.alibaba.com>
-Date: Tue, 24 Sep 2024 11:25:08 +0800
+	s=arc-20240116; t=1727148393; c=relaxed/simple;
+	bh=w1eDQMS69JSGKWx1MEFGeoLJVt87GsVPOWmSaoAnaJ4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ql3VvgeYuFfIwPUMnvHmeY0jGJOyR3hkMeIxiYzIDz5Wjb72Y4i5jlnWnNgWe8Qnrk/F6F/1sy2Ntk+TLXy/dyBWwp9WBSXZtrRMDo051bYPQp0rjNl8shehKO3oU+PRmtkCzzCK4+dCMK22Z/PGbF0cfy4F/EiXxIHbaohEqjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xp6u31FX; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a8a7cdfdd80so714260966b.0;
+        Mon, 23 Sep 2024 20:26:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727148389; x=1727753189; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=56PjDxigXVOIzQ1oNphT+JNMfW878D/s9pl7IGdWoto=;
+        b=Xp6u31FXC4y21mu6S3ta2h8TVCYtgtXwGiNWlNJuqA0j/3zxW+xCUPMDZmXhsLDjWD
+         orrKLQY28Vgb7jdW0oZDdshbr5vzQz2TCfJPrKUrO2+SryOItw9f1PLlx4zETNiG6U8R
+         zCvr7Sva/FelulkzO5uDVcoA7XfKWl6yG6PT0pIVojciiqe8DqeGOM5cTygQY/dzEC39
+         HFDD3OU07QbuOq55tGCZptfIAXz/OdQGZNVcKKwbtTcfh8yU02A3mjYoJ3zE5znm3mdj
+         j5K1QKzInMjaridCpugnoOZZrKoLR5o5N6TWBsJEUoJIfcvnhXekxE7L84KTQ8VysQbT
+         qBbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727148389; x=1727753189;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=56PjDxigXVOIzQ1oNphT+JNMfW878D/s9pl7IGdWoto=;
+        b=M04T63MRZkmNlLz7o02wUNP7t7X5n+pykOLRb7wP7WXwSXNThLwxIEUP5iYXYRc+Sa
+         JnpwgWLNifL4Qq74uQBm3DMpkvCTqgCPQyOcCnZthRaTS5xAo2ZlhsMsOpsAOjoRauvQ
+         ZcVcWm0gJugXB+xGEXxT1k/4llkD94RtSxU238heEDj6LjUEx0Bl+KWCH00Jp2GcGRAP
+         gAc0OzXYHq02Yxd9sojgdS5fda8ilCPyZSr6hqgDKxx4XABrTysAMkSq7eAtHOaX40Ed
+         WjtF+fZM6ueboBfO5GtsljkKizb57DcqX6XSsf3F03osa0fDstCtSfynf3ySVpTIT4QF
+         TW5w==
+X-Forwarded-Encrypted: i=1; AJvYcCUtubXmAMz/sLzdcDqi0CMGvjhgesfRSgSRCqGlzSY8x8nmMBC5CAEp9cUg4j0A5kPcjerGmb34YXoL@vger.kernel.org, AJvYcCXp04b5YBLDtjEZQLYPGluhJsfBRs8bVopr8HYp98u5ORM1R3aFkE+bBzMZNjZrx3KrShh9gWuILgoMcGY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhMpTqpH0nPX6gE5SHw9ml/wZ9Stb/7WgS6wR/vvAdWWnatHDq
+	b/MmRPpLlCNVT1jSWLgerWyzvKBTR4q8jDl/4FnULzeZqQz+INgMtUFlP60X9E45RQuAC9wsX3k
+	5iS9axG7Axa1CHiwnf8Z3Sn6xwQeKo9ZY
+X-Google-Smtp-Source: AGHT+IGhbAJwqXzVtJkfn2cS/fzTwtEm2nUykTxtIPRIuWSQCFK/QHe70KrLsbuDrVEt9/2u3Glg6ejNSJlGt4J1q+k=
+X-Received: by 2002:a17:907:f148:b0:a86:700f:93c0 with SMTP id
+ a640c23a62f3a-a90d504f5c6mr1240193466b.35.1727148389175; Mon, 23 Sep 2024
+ 20:26:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/2] remove SWAP_MAP_SHMEM
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Nhat Pham <nphamcs@gmail.com>, akpm@linux-foundation.org,
- hannes@cmpxchg.org, hughd@google.com, shakeel.butt@linux.dev,
- ryan.roberts@arm.com, ying.huang@intel.com, chrisl@kernel.org,
- david@redhat.com, kasong@tencent.com, willy@infradead.org,
- viro@zeniv.linux.org.uk, baohua@kernel.org, chengming.zhou@linux.dev,
- linux-mm@kvack.org, kernel-team@meta.com, linux-kernel@vger.kernel.org
-References: <20240923231142.4155415-1-nphamcs@gmail.com>
- <4d38c65d-760c-43a5-bb47-8e0235c13a51@linux.alibaba.com>
- <CAJD7tkamKcaqHR5V+4+9ixmFc3dC2NnGcu7YzdXqxqNEe8FqqA@mail.gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <CAJD7tkamKcaqHR5V+4+9ixmFc3dC2NnGcu7YzdXqxqNEe8FqqA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240718034614.484018-1-alvinzhou.tw@gmail.com>
+ <20240718034614.484018-7-alvinzhou.tw@gmail.com> <97134efb-398d-4c21-a915-87a5b4f1b29a@linaro.org>
+In-Reply-To: <97134efb-398d-4c21-a915-87a5b4f1b29a@linaro.org>
+From: Alvin Zhou <alvinzhou.tw@gmail.com>
+Date: Tue, 24 Sep 2024 11:25:34 +0800
+Message-ID: <CAPhrvRR3U9=0DuG_FQ81ZJq+RLe6Bn9YO831Mx2n3NkeV3MCdA@mail.gmail.com>
+Subject: Re: [PATCH v9 6/6] mtd: spi-nor: add support for Macronix Octal flash
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, pratyush@kernel.org, mwalle@kernel.org, 
+	miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com, 
+	broonie@kernel.org, chengminglin@mxic.com.tw, leoyu@mxic.com.tw, 
+	AlvinZhou <alvinzhou@mxic.com.tw>, JaimeLiao <jaimeliao@mxic.com.tw>, 
+	Bough Chen <haibo.chen@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Tudor,
 
+Tudor Ambarus <tudor.ambarus@linaro.org> =E6=96=BC 2024=E5=B9=B49=E6=9C=882=
+3=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=882:54=E5=AF=AB=E9=81=93=EF=
+=BC=9A
+>
+> Hi, Alvin,
+>
+> I quickly skimmed over the previous 5 patches and they are looking fine.
+>
+> I don't get this patch however.
+>
+> On 7/18/24 4:46 AM, AlvinZhou wrote:
+> > From: AlvinZhou <alvinzhou@mxic.com.tw>
+> >
+> > Adding Manufacture ID 0xC2 in last of ID table because of
+> > Octal Flash need manufacturer fixup for enabling/disabling
+> > Octal DTR mode.
+> >
+> > Signed-off-by: JaimeLiao <jaimeliao@mxic.com.tw>
+> > Signed-off-by: AlvinZhou <alvinzhou@mxic.com.tw>
+> > ---
+> >  drivers/mtd/spi-nor/macronix.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/mtd/spi-nor/macronix.c b/drivers/mtd/spi-nor/macro=
+nix.c
+> > index f039819a5252..1a8ccebdfe0e 100644
+> > --- a/drivers/mtd/spi-nor/macronix.c
+> > +++ b/drivers/mtd/spi-nor/macronix.c
+> > @@ -200,7 +200,9 @@ static const struct flash_info macronix_nor_parts[]=
+ =3D {
+> >               .name =3D "mx25l3255e",
+> >               .size =3D SZ_4M,
+> >               .no_sfdp_flags =3D SECT_4K,
+> > -     }
+> > +     },
+> > +     /* Need the manufacturer fixups, Keep this last */
+> > +     { .id =3D SNOR_ID(0xc2) }
+> >  };
+> >
+>
+> Could you please elaborate why you need just the manufacturer id here? I
+> would have expected to see a specific flash entry instead.
 
-On 2024/9/24 10:15, Yosry Ahmed wrote:
-> On Mon, Sep 23, 2024 at 6:55 PM Baolin Wang
-> <baolin.wang@linux.alibaba.com> wrote:
->>
->>
->>
->> On 2024/9/24 07:11, Nhat Pham wrote:
->>> The SWAP_MAP_SHMEM state was originally introduced in the commit
->>> aaa468653b4a ("swap_info: note SWAP_MAP_SHMEM"), to quickly determine if a
->>> swap entry belongs to shmem during swapoff.
->>>
->>> However, swapoff has since been rewritten drastically in the commit
->>> b56a2d8af914 ("mm: rid swapoff of quadratic complexity"). Now
->>> having swap count == SWAP_MAP_SHMEM value is basically the same as having
->>> swap count == 1, and swap_shmem_alloc() behaves analogously to
->>> swap_duplicate()
->>>
->>> This RFC proposes the removal of this state and the associated helper to
->>> simplify the state machine (both mentally and code-wise). We will also
->>> have an extra state/special value that can be repurposed (for swap entries
->>> that never gets re-duplicated).
->>>
->>> Another motivation (albeit a bit premature at the moment) is the new swap
->>> abstraction I am currently working on, that would allow for swap/zswap
->>> decoupling, swapoff optimization, etc. The fewer states and swap API
->>> functions there are, the simpler the conversion will be.
->>>
->>> I am sending this series first as an RFC, just in case I missed something
->>> or misunderstood this state, or if someone has a swap optimization in mind
->>> for shmem that would require this special state.
->>
->> The idea makes sense to me. I did a quick test with shmem mTHP, and
->> encountered the following warning which is triggered by
->> 'VM_WARN_ON(usage == 1 && nr > 1)' in __swap_duplicate().
-> 
-> Apparently __swap_duplicate() does not currently handle increasing the
-> swap count for multiple swap entries by 1 (i.e. usage == 1) because it
-> does not handle rolling back count increases when
-> swap_count_continued() fails.
-> 
-> I guess this voids my Reviewed-by until we sort this out. Technically
-> swap_count_continued() won't ever be called for shmem because we only
-> ever increment the count by 1, but there is no way to know this in
-> __swap_duplicate() without SWAP_HAS_SHMEM.
+Grateful to Michael for the valuable suggestion. This addition of the
+Macronix manufacturer ID enables the fixup functions such as
+macronix_nor_set_octal_dtr to be executed without the need to
+create separate ID entries for each Octal DTR NOR Flash in the
+flash_info.
 
-Agreed. An easy solution might be to add a new boolean parameter to 
-indicate whether the SHMEM swap entry count is increasing?
+>
+> Thanks,
+> ta
 
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index cebc244ee60f..21f1eec2c30a 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -3607,7 +3607,7 @@ void si_swapinfo(struct sysinfo *val)
-   * - swap-cache reference is requested but the entry is not used. -> 
-ENOENT
-   * - swap-mapped reference requested but needs continued swap count. 
--> ENOMEM
-   */
--static int __swap_duplicate(swp_entry_t entry, unsigned char usage, int nr)
-+static int __swap_duplicate(swp_entry_t entry, unsigned char usage, int 
-nr, bool shmem)
-  {
-         struct swap_info_struct *si;
-         struct swap_cluster_info *ci;
-@@ -3620,7 +3620,7 @@ static int __swap_duplicate(swp_entry_t entry, 
-unsigned char usage, int nr)
-
-         offset = swp_offset(entry);
-         VM_WARN_ON(nr > SWAPFILE_CLUSTER - offset % SWAPFILE_CLUSTER);
--       VM_WARN_ON(usage == 1 && nr > 1);
-+       VM_WARN_ON(usage == 1 && nr > 1 && !shmem);
-         ci = lock_cluster_or_swap_info(si, offset);
-
-         err = 0;
-@@ -3661,7 +3661,7 @@ static int __swap_duplicate(swp_entry_t entry, 
-unsigned char usage, int nr)
-                         has_cache = SWAP_HAS_CACHE;
-                 else if ((count & ~COUNT_CONTINUED) < SWAP_MAP_MAX)
-                         count += usage;
--               else if (swap_count_continued(si, offset + i, count))
-+               else if (!shmem && swap_count_continued(si, offset + i, 
-count))
-                         count = COUNT_CONTINUED;
-                 else {
-                         /*
+Thanks,
+Alvin
 
