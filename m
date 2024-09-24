@@ -1,130 +1,151 @@
-Return-Path: <linux-kernel+bounces-337526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3523B984B5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:56:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD27F984B5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:57:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E81D3285464
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:56:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EDC0B22FA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A101AC89C;
-	Tue, 24 Sep 2024 18:56:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932CF1ACE12;
+	Tue, 24 Sep 2024 18:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pBEI3FVI"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QexDgS69"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1BF1B85F5;
-	Tue, 24 Sep 2024 18:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D8131AC89B;
+	Tue, 24 Sep 2024 18:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727204203; cv=none; b=S6+AW7xSLhEpiXRcntGCCwl0EzpvVXH8vncHwb92j7K53ku5oBv6Hjo7aYhThoBEvk8467WbKigDdrbtL5NG6FB2NDurHIqRCkPU2R7mqCBAQScKgrE9I1Yr66sqNu8YCWPcNwW1SmhE4DASn0dO7NdJG0jQelTv/PoB+8v0aIQ=
+	t=1727204205; cv=none; b=MR4zMWoB0ejKnlU5Of7Z+Hy3nrYZeXUZn/HD4CbfCVGyL93sbX9EVZXkUEUtiuAEYpoPsANNwNTiO80kGgO/oKLw2Dt9+okg1fR1WHxtmE3WfQ6mwgrOiaw3Zjz0/xwOMchXBLg7dwE9pUIdeEVZHxAFk+bx7uv8t9gJ2nuHJGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727204203; c=relaxed/simple;
-	bh=IE/J+hvgo3ewlVUG0R49ywG4iE/URV1ZJt7ABD6Zxcw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=utqCiSG4AhKEN00/wAjiZyfNzuyxbcfkb+5BMqRUG7iohnaEj32oeIl8OK1L/yD+tduiDH5fWjW2FVkiPZ8qB7VC97cpbj00jBd/DqyefPOBXld7u7NqF+qQleCTWT/IqfU6X19BprPuTXnYsFDpcYiFNA/xmrQBLBgqbAdfzg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pBEI3FVI; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727204171; x=1727808971; i=markus.elfring@web.de;
-	bh=xtgGbVbvQUG8PMEUJblOJ8LFdHNg6Vwo3Ynbfh+i3qM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=pBEI3FVIc1IfThbHLTs5fZWx+EyfCYbnXCIwbI9TYt2HvYap1b+FDPajviduVN9+
-	 6f7kgepm0b7olCGuxGYWuXRUc1hr4yGUhxKx8WwOiZl0W1qC/dGq48HJ56Nq56HF9
-	 mZcM5CDCZnN6I4p7tFU74N6YWtkfJcRMJ1mnxUrJAhWmttFW7h18DDRN17CB/svi9
-	 jRifesdsIwyvCzLPP0Rn8oGvjZqp4F5fx13CaxmlRUrkCky1tXpw2+tpUJSnfgpjt
-	 mG4YfnwYWwNVzFH7XOCApgOAMJVEj4+DZYDnd/WxhuRdEBB2DsMPlhmlz5kRyvgnS
-	 VSWxFLU7IEdOpLrBiQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MMGuC-1scC3J0dRW-00Jte0; Tue, 24
- Sep 2024 20:56:11 +0200
-Message-ID: <9e736d33-b07f-40a0-8fb6-8c3212593b77@web.de>
-Date: Tue, 24 Sep 2024 20:56:08 +0200
+	s=arc-20240116; t=1727204205; c=relaxed/simple;
+	bh=wFLt9rc4O/7yY6+mfWRmtwX1ysyWg5T6O/LDi8DovNg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=maArkmfH+NxTRkRvJDXT/G8pZ+Pu7SsxaQSG+xRWNmuCl4MqcQFoTupWJimBoO6tOcQqwgzUyJ9f+k2nHfEBxrKimeKbljW2uHio+T2k+E3v6ur70ZMCIM11NBXtGrYVnBhUR7Tssecn0rTFk2lIX/BZHlJp+rQ22MgcX6Z5VCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QexDgS69; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-718e9c8bd83so118044b3a.1;
+        Tue, 24 Sep 2024 11:56:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727204203; x=1727809003; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XGWBFebmpJmV+R26c0gSC6KtxYqFu9ytlyo4h+InHl8=;
+        b=QexDgS69Im07CYh/WUtXev26TUh0jKhmYenGBHBhdPxlJbnmK53oeGykhyCzNbllsq
+         zXWC2sVI3FqqrRD50c5++9cTYOp1D3K1MJHkeX7uAZxurelvaF2cPFVRgsaEzCDQlIhR
+         reoxsLf7k/1K78iVUakGetuGM/G8HW0Ha08atjrTPZMLHkN/B8NyIVdmgiML5EOXwfUX
+         3xV+NhKZtK1evtiEJy4wIUVvlyzbfm2qEr9pfuC3xOA5/CNy/LMFPl8OrY8HnV2lGeb1
+         SH8HNFdK8yBFiIrILwMQRVew0ACS8jy0fLuzK/9L2fSg5zTWZJEKKukvnKH2PalQySgP
+         vM3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727204203; x=1727809003;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XGWBFebmpJmV+R26c0gSC6KtxYqFu9ytlyo4h+InHl8=;
+        b=i73Hy3sLwvNp17tvbs9vUHcPBfkcgWHN+OZ+7zqBp+UHTFTemJojIqCna/O3dTBN6J
+         NKqX1ZMdok+JKiBLnfAmDeOA5A4XJSScwJck72o4BVXB+QeN33o/U6cyoMBy0S6OHzHD
+         iz3PmwqwivgR6GKSn80WrtIqeYlJKWB1NlaAq2djkKefwvjIWJJB8KNC0FtO9FlKJu4A
+         07gMLhhzgHSvEoE8jj2BmpQOvy8ic9dLxwS+9DvyVeWNyHToBbyrVSbXUvN+qpS4/d1X
+         tytHdBcQO8QvsfN6mx0xpbjG1H+4UpGRiYdlDL4i0Ay5MmzHLeQgp+wJq3gt34g5blG/
+         Lp6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUCM0Ckm271I4EtoGWCkGOjYUgctIytu6DJWXwOcLpi+OcxRuGZVsR56LqXeL+XoBMvkaY0ysUo@vger.kernel.org, AJvYcCVHcdtru0wB7weS6mw1jXH9cd3kh2msiAxFdY+xt/9nCj+7Tf9FPi06Zxkpsr9tyQA9XCPYBY69NzJn3eI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFbD5rj3HR2unIaSZuTZxmHAowtOajdtXFsPglFTkxji5ppSEb
+	qMkPHpdXuFkwg31YQDQcYDeUJPsq0H9pM7nPXTM48iJIXKwEsM8S3lBoAvaN
+X-Google-Smtp-Source: AGHT+IHAB1e9ZwWeTlYKqtVjDZLTkjbvhds4k0Z9YHj5Zj2Cdr3K0pjtv7WpkeDr4Kk4HYrI/Ey3xA==
+X-Received: by 2002:a05:6a00:17a1:b0:706:aa39:d5c1 with SMTP id d2e1a72fcca58-71b0b21dda5mr288843b3a.8.1727204202824;
+        Tue, 24 Sep 2024 11:56:42 -0700 (PDT)
+Received: from ubuntu.worldlink.com.np ([27.34.65.244])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71afc97c1f7sm1481932b3a.156.2024.09.24.11.56.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2024 11:56:42 -0700 (PDT)
+From: Dipendra Khadka <kdipendra88@gmail.com>
+To: florian.fainelli@broadcom.com,
+	bcm-kernel-feedback-list@broadcom.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	f.fainelli@gmail.com,
+	horms@kernel.org
+Cc: Dipendra Khadka <kdipendra88@gmail.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 net] net: systemport: Add error pointer checks in bcm_sysport_map_queues() and bcm_sysport_unmap_queues()
+Date: Tue, 24 Sep 2024 18:56:33 +0000
+Message-ID: <20240924185634.2358-1-kdipendra88@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-spi@vger.kernel.org,
- Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Leilk Liu <leilk.liu@mediatek.com>, Mark Brown <broonie@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] spi: slave-mt27xx: Call clk_disable_unprepare() only once in
- mtk_spi_slave_probe()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:lAmuIvmJ2DJWOgYJ5Dc3Jikut72syDFBPNFRoqxnjuz6Ujva0lB
- qiZZ+p9Wuxrm2ek3g7UBLIulwG6eCJEvYXPPIPxqBDMqtEXbDY94QGDrxQn5c5fjQoxxiGw
- Lwp3TOi9wLEY3G+3wgwtUeguwD6xYEG2ZBC+UXUbdvG3Srwb83eC9k+/gP71gaZud1wtsX/
- Hret41lADO+dIUB9dihyw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:P16q0sytqk8=;H2wCb/e128pNNd7DaC2wcQLJfUD
- ldEzgMl/8BflG0oXh31sV/bNA9hFclbt87UQtMPh52YFdLDaBekekaGAXks9PhdDaxCl5Flpj
- j1m+zimbcWy0Psdy7bKiK1p7ijljub/bkBaE6TKwMnhvt88rSVex80oCiBuqzdGE7KxK+G5/E
- 1sY201r6hljICeXuqGB+PuhWTxr7kX9+db+i275D7364JnV5iNUoDTFdshgCaSOake7rJNw6q
- Pd0S2JnVH/lk5BT5tCbJabKbOuBhIF5oOstzemrJQ6U1OPIkxStDzXCoIOr6dNz0KhnmKzXrn
- /cvWgeGg41nDFIv/PlpNsQXf7XphXgqNZbT1v1EMI+7IO74FbNFZmGae2/APxzVIxtMGlIEcd
- aFpL3lEqekkHpNVphjxjQnFYM2diBgb4vPxVkVQT2NvnM581eX4A9Szm/EtjXKh+9IjAwMMCN
- 9ZHgtw2yT10XVILFSKdMnv9PoB0ESpp3qgaESI/Nlq0L8FcsYLuvYwOZ5d5m/d4qYY+sn8ZEh
- /qdobvZZ7sirsFSoGqCW4t95Tu7bot7r02j65mKQlcrM5LhdlEN+/pu4+//5oQRj2Gpkc4dwm
- 0xnw+oRGhFh9/P9UKCoDv8CvzO/RPTkBo53dZOtRKqZ7vwevZ7nBPwjqpFUshTbbxDVrrWU4j
- HvQyUkG/IvjHNmPzj1EugMbJ3ZZglGk7omraGq9cWo+6IOV6t2aJzMC53s/UjkXO1+fv8fC1R
- fEMGxCu0dOHyGqcVpWZFYLqm68SAgkCwNlfxzEdMjpu2kmlpkfXFHcc06JY8V9mmYQIh4yoh6
- XQjnvY8mf2VL9iJiS0PgddWg==
+Content-Transfer-Encoding: 8bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Sep 2024 20:47:29 +0200
+Add error pointer checks in bcm_sysport_map_queues() and
+bcm_sysport_unmap_queues() after calling dsa_port_from_netdev().
 
-A clk_disable_unprepare(mdata->spi_clk) call was immediately used
-after a return value check for a devm_spi_register_controller() call
-in this function implementation.
-Thus call such a function only once instead directly before the check.
+Fixes: d156576362c0 ("net: systemport: Establish lower/upper queue mapping")
+Fixes: da106a140f9c ("net: systemport: Unmap queues upon DSA unregister event")
+Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
+---
+v3:
+ - Updated patch subject
+ - Updated patch description
+ - Added Fixes: tags
+ - Fixed typo from PRT_ERR to PTR_ERR
+ - Error is checked just after  assignment
+v2: https://lore.kernel.org/all/20240923053900.1310-1-kdipendra88@gmail.com/
+ - Change the subject of the patch to net
+v1: https://lore.kernel.org/all/20240922181739.50056-1-kdipendra88@gmail.com/
+ drivers/net/ethernet/broadcom/bcmsysport.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-This issue was transformed by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/spi/spi-slave-mt27xx.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/spi/spi-slave-mt27xx.c b/drivers/spi/spi-slave-mt27xx=
-.c
-index 4a91b7bae3c6..40e1e7de0742 100644
-=2D-- a/drivers/spi/spi-slave-mt27xx.c
-+++ b/drivers/spi/spi-slave-mt27xx.c
-@@ -455,15 +455,13 @@ static int mtk_spi_slave_probe(struct platform_devic=
-e *pdev)
- 	pm_runtime_enable(&pdev->dev);
-
- 	ret =3D devm_spi_register_controller(&pdev->dev, ctlr);
-+	clk_disable_unprepare(mdata->spi_clk);
- 	if (ret) {
- 		dev_err(&pdev->dev,
- 			"failed to register slave controller(%d)\n", ret);
--		clk_disable_unprepare(mdata->spi_clk);
- 		goto err_disable_runtime_pm;
- 	}
-
--	clk_disable_unprepare(mdata->spi_clk);
--
- 	return 0;
-
- err_disable_runtime_pm:
-=2D-
-2.46.1
+diff --git a/drivers/net/ethernet/broadcom/bcmsysport.c b/drivers/net/ethernet/broadcom/bcmsysport.c
+index c9faa8540859..493702fdabc3 100644
+--- a/drivers/net/ethernet/broadcom/bcmsysport.c
++++ b/drivers/net/ethernet/broadcom/bcmsysport.c
+@@ -2331,11 +2331,15 @@ static const struct net_device_ops bcm_sysport_netdev_ops = {
+ static int bcm_sysport_map_queues(struct net_device *dev,
+ 				  struct net_device *slave_dev)
+ {
+-	struct dsa_port *dp = dsa_port_from_netdev(slave_dev);
+ 	struct bcm_sysport_priv *priv = netdev_priv(dev);
+ 	struct bcm_sysport_tx_ring *ring;
+ 	unsigned int num_tx_queues;
+ 	unsigned int q, qp, port;
++	struct dsa_port *dp;
++
++	dp = dsa_port_from_netdev(slave_dev);
++	if (IS_ERR(dp))
++		return PTR_ERR(dp);
+ 
+ 	/* We can't be setting up queue inspection for non directly attached
+ 	 * switches
+@@ -2386,11 +2390,15 @@ static int bcm_sysport_map_queues(struct net_device *dev,
+ static int bcm_sysport_unmap_queues(struct net_device *dev,
+ 				    struct net_device *slave_dev)
+ {
+-	struct dsa_port *dp = dsa_port_from_netdev(slave_dev);
+ 	struct bcm_sysport_priv *priv = netdev_priv(dev);
+ 	struct bcm_sysport_tx_ring *ring;
+ 	unsigned int num_tx_queues;
+ 	unsigned int q, qp, port;
++	struct dsa_port *dp;
++
++	dp = dsa_port_from_netdev(slave_dev);
++	if (IS_ERR(dp))
++		return PTR_ERR(dp);
+ 
+ 	port = dp->index;
+ 
+-- 
+2.43.0
 
 
