@@ -1,90 +1,84 @@
-Return-Path: <linux-kernel+bounces-337771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BDD0984EAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:07:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42E03984EB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:07:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E183728520B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:07:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBA721F21C92
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE516146A7A;
-	Tue, 24 Sep 2024 23:05:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0501F185082;
+	Tue, 24 Sep 2024 23:06:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NoQChBSq"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xHKCM2pK"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C0184037
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 23:05:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8482184530
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 23:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727219150; cv=none; b=hqIP+1HXjm7uwzS1A/IxBZKKGX5Ok03aBxyQ8kFvzU8q1ytap40w1KZpter+8O248NMEvP5KpbbBQ8IsmkmhN/Hgey1fm9/b6ikTHN9CNUgJxlpeV9WG7VozHiEhJmPdJC+UDwl22QAZ2WgecozJQOcg//8++B/Z+69OVngOFVM=
+	t=1727219202; cv=none; b=SeeRzOKIqe7T26vSj4Hx51yVHnnFVz2dxuS24SfZAd6g1SHGuSo44AJvkj+iFC0Cw0mfP0T+3W+S/gcLoBqcabal7lW3Nijot6QviR3QhAdSXIP0s9OeKrTlfO6ITmHiz/j4rLDpaMJRYg7Q29mqahOS8D4zlgtk9g+r8n8b0vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727219150; c=relaxed/simple;
-	bh=ZSxYXI/cLSKK7N2XY4R5bIY5S6I40pu2Gg12y/BXK8U=;
+	s=arc-20240116; t=1727219202; c=relaxed/simple;
+	bh=yCWrkRvUvPKj8R8u9t2RlIAMJhzVku+24rs712str3M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QBtrRuc9amQmfVzGMnUz+kibEMoTWaFXmtbkKtm9dC3RpAkVJwmkD1Ae2EtfNhKmQb7WxhSHQOCdMIiq4VloO0uDWdQ77gzyhfq5p07rrf+lFKx5jHFc/Nd9U+SKt6HUlU6Z8EwSECz2TFfml8xIexg8NKtl46ufK8U6Kyjb4jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NoQChBSq; arc=none smtp.client-ip=209.85.208.172
+	 Content-Type:Content-Disposition:In-Reply-To; b=BPPBz33JK0seSEZxP1JCpJPJEI9IMk7xnw8RCuVoD4ZH2OPclxqjgogjqZfsS56Cv6QRFCuQAF42G/7nEqKGrlfcoBl5MJGVWd5jtvsKrccyILrpSa0cNd2ZkdxeedonWIgoimKaBxIpDbtraywXg8cjX4PVlOvCLez9msCGKNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xHKCM2pK; arc=none smtp.client-ip=209.85.167.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f75f116d11so61637171fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 16:05:48 -0700 (PDT)
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5356ab89665so7267980e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 16:06:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727219147; x=1727823947; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1727219199; x=1727823999; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9NzgyJCmofpDvlL2LY7vWR+4GwIElX0CvHm/QEXv8qs=;
-        b=NoQChBSqltFS8TJ3rcgmPAKNPlxM5zIyf9SEyKGJHkA25FLD12lVBsQBxGxnh3pOxn
-         ql0AYicmf3cHFlLm4eUgxstC3+kZ6NmeKCujdYRI1gHoG0n8c5bAxJxUkwAkA0Li8/jz
-         eVgLmxwMRgYKECTUzZ1nn2/GZTsFoxQYkPyg+OJnc0c80KHrmNNvueOkJ0jES6lMAjjl
-         fdT2v1X7SIcKnkvGcCiyUpvA7cg2LqLFPzKjhn3CH5LTXs+TNJu4lyp6Qp7XyX2YA/Mw
-         1eMU0o2wMd8tQqWZIpjqQWIvjn6CVq2yWkerLAQq2Qswf4Z8fc986c7Ag2CphOAEY2Lg
-         fMDg==
+        bh=Ot0UCcvaEAKPUSxY4CDMqGuFsrwzINAe5eEjab+YIEg=;
+        b=xHKCM2pK7mxGFVs/8Y7gPQKzbonOrQ32yasbmcih+RHtbPAwoRE3S9Ctlnp2cx5nVg
+         t7otzEmN/MSP1lHyW8KNvpcZh02qL9gezvdRQMTx6/vEeJI9aVPVyAO1mmjZZxy0wWnG
+         NUJK9QSoCZPOMabrhqEIGwL7aEjAN9Bf3l20m5qoh6Dgrrv8qhTT/3m3zeVsS/dtjY26
+         SzpO5GpXHkixc6kYuNsUdRO6+011B9t+D4sRJFs6hyVaOFckf7hhp5TpPyLPxvB2pYYc
+         oCs2EeBWOBSQ+WpBlUAOOHK7pOKIpFR6pqc7pAowJbKM8gw7OoLMfVdb/YDevuVv5LT3
+         8Pfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727219147; x=1727823947;
+        d=1e100.net; s=20230601; t=1727219199; x=1727823999;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9NzgyJCmofpDvlL2LY7vWR+4GwIElX0CvHm/QEXv8qs=;
-        b=rHcjASnbs/YuDF3o1azr+Tcs6/W2nb1CnDOL9as3zFTVj8ET1c8wev1NQUA9VBadzz
-         +Aj78ObuH8e72C88MXAJIgqOsj+JAgyiNbrKqwlTX9FN+uIEcti7AdjcA5WULqFUdtLr
-         KSs9yg377eaLxzPWJ8bx1e94LJy3D8iBqBP8W9Y7fGeOM6cTylB3fcF84AZlWVkJusMU
-         zufnMNasV9aEMh3AfZdiF5ZjGkZELcYLAVRu9mbBzQJYGCmCZpSgp8MgV6g3BNA2vjB9
-         HvKmJZAH/uCPjewabRJsL/oqIA+HsL2TLwQfkOTNIaUMddUp82vET8xoIRePB13+BNgM
-         GQ9w==
-X-Forwarded-Encrypted: i=1; AJvYcCWT3Zw03LkCwHL5GwiLw5xlhvnoZ8jUYHqrjwhn9YDOjoPkn0DK3rowgTGq7qvo68+vQAI7JEJbQRRkOtk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFLhMA58M6cvj/UdhSAHCabHkado2Dz8bG0sG1IOZJ8T5pU3pb
-	a3zYvDcwWeGrCjfX9zVaiUxysaJOPJIORMKqCT9+yeb0OURCjKnH8cl78HzJgmQ=
-X-Google-Smtp-Source: AGHT+IE5l1Rs+vPP0d46dRQ8kpFdT22PznwS2FzcBc27LRW1aZnDwn4h9lV6Lj8kxoQctlNMzBsynA==
-X-Received: by 2002:a05:651c:210c:b0:2f7:5cd3:7235 with SMTP id 38308e7fff4ca-2f904a6fc6bmr5492391fa.0.1727219146549;
-        Tue, 24 Sep 2024 16:05:46 -0700 (PDT)
+        bh=Ot0UCcvaEAKPUSxY4CDMqGuFsrwzINAe5eEjab+YIEg=;
+        b=rKgSE04D6N9orhYFOc2yZc5ZeBQesaHPfJql2TW7pvMZ+GKpUe/eoDnWVUbUgkHTxD
+         yDJvO5DczKXjtk2XwyeAfwrCaBVfwjT+hqgRBkU8jLjafV/bSvOWukQhnFcDkfxnyAQL
+         zoPUFVW4YOL8ctpW3yZ8GYEsUpJo8gjkWaUxzlc2Nn6F+MVtQRKGfXgaTkUYk6O90Saf
+         d5HIwS9qzx1wcOgPhdlSI3s4Kkhee4NeevacKaE5o0Ww4P4B6ELmQTMuRkjntETh3cdf
+         v9vPRGcuoQUyXujWHYscFRRc+3q+ZeascJkDMZU0XMxNxOWutsxzwcWT1lYrnMj7cUZL
+         ysFA==
+X-Forwarded-Encrypted: i=1; AJvYcCV21KmIlnzwgJ7EkxotKfZonbApGLb5d943GTvyF0zhhQ+CxpaV9ItPjpZ5mswAZ9eR9Eyk0sIqhgvY8+M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGrXmSNjOiBttYWSQfFlVdIV3DmPKkNoQCMnjsfC9xUs22Ozz0
+	8c4zE8GmasUm8ZTMhtI3DuG6a6B78CeRXNEQ/pdteo9zx50SZNG+Zne7jZIc8s0=
+X-Google-Smtp-Source: AGHT+IGdSmMW42umh+q5VuXZORxUx2TV5lqbdEctn2Rn3L/TYI6A/pArZFkotNwLnY3N3aHG3FKpiw==
+X-Received: by 2002:ac2:568c:0:b0:536:9ef0:d854 with SMTP id 2adb3069b0e04-53877530b7emr326255e87.32.1727219198658;
+        Tue, 24 Sep 2024 16:06:38 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f8d282fe23sm3485591fa.20.2024.09.24.16.05.43
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-537a864e26dsm354725e87.295.2024.09.24.16.06.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 16:05:45 -0700 (PDT)
-Date: Wed, 25 Sep 2024 02:05:42 +0300
+        Tue, 24 Sep 2024 16:06:38 -0700 (PDT)
+Date: Wed, 25 Sep 2024 02:06:35 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Andrew Davis <afd@ti.com>
-Cc: Jens Wiklander <jens.wiklander@linaro.org>, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, op-tee@lists.trustedfirmware.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	Olivier Masse <olivier.masse@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Yong Wu <yong.wu@mediatek.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, Sumit Garg <sumit.garg@linaro.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [RFC PATCH 0/4] Linaro restricted heap
-Message-ID: <mzur3odofwwrdqnystozjgf3qtvb73wqjm6g2vf5dfsqiehaxk@u67fcarhm6ge>
-References: <20240830070351.2855919-1-jens.wiklander@linaro.org>
- <dhxvyshwi4qmcmwceokhqey2ww4azjcs6qrpnkgivdj7tv5cke@r36srvvbof6q>
- <d8e0cb78-7cfb-42bf-b3a5-f765592e8dd4@ti.com>
+To: Jessica Zhang <quic_jesszhan@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, quic_abhinavk@quicinc.com, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, quic_ebharadw@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Rob Clark <robdclark@chromium.org>, Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Subject: Re: [PATCH v2 01/22] drm: add clone mode check for CRTC
+Message-ID: <y2apz5arp5d7jv2fqujh2qyl2gqovmpvkpvpvpxewitfcreke2@ihung7uzmcwu>
+References: <20240924-concurrent-wb-v2-0-7849f900e863@quicinc.com>
+ <20240924-concurrent-wb-v2-1-7849f900e863@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,202 +87,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d8e0cb78-7cfb-42bf-b3a5-f765592e8dd4@ti.com>
+In-Reply-To: <20240924-concurrent-wb-v2-1-7849f900e863@quicinc.com>
 
-On Tue, Sep 24, 2024 at 01:13:18PM GMT, Andrew Davis wrote:
-> On 9/23/24 1:33 AM, Dmitry Baryshkov wrote:
-> > Hi,
-> > 
-> > On Fri, Aug 30, 2024 at 09:03:47AM GMT, Jens Wiklander wrote:
-> > > Hi,
-> > > 
-> > > This patch set is based on top of Yong Wu's restricted heap patch set [1].
-> > > It's also a continuation on Olivier's Add dma-buf secure-heap patch set [2].
-> > > 
-> > > The Linaro restricted heap uses genalloc in the kernel to manage the heap
-> > > carvout. This is a difference from the Mediatek restricted heap which
-> > > relies on the secure world to manage the carveout.
-> > > 
-> > > I've tried to adress the comments on [2], but [1] introduces changes so I'm
-> > > afraid I've had to skip some comments.
-> > 
-> > I know I have raised the same question during LPC (in connection to
-> > Qualcomm's dma-heap implementation). Is there any reason why we are
-> > using generic heaps instead of allocating the dma-bufs on the device
-> > side?
-> > 
-> > In your case you already have TEE device, you can use it to allocate and
-> > export dma-bufs, which then get imported by the V4L and DRM drivers.
-> > 
+On Tue, Sep 24, 2024 at 03:59:17PM GMT, Jessica Zhang wrote:
+> Add helper to check if the given CRTC state is in clone mode
 > 
-> This goes to the heart of why we have dma-heaps in the first place.
-> We don't want to burden userspace with having to figure out the right
-> place to get a dma-buf for a given use-case on a given hardware.
-> That would be very non-portable, and fail at the core purpose of
-> a kernel: to abstract hardware specifics away.
-
-Unfortunately all proposals to use dma-buf heaps were moving in the
-described direction: let app select (somehow) from a platform- and
-vendor- specific list of dma-buf heaps. In the kernel we at least know
-the platform on which the system is running. Userspace generally doesn't
-(and shouldn't). As such, it seems better to me to keep the knowledge in
-the kernel and allow userspace do its job by calling into existing
-device drivers.
-
+> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+> ---
+>  include/drm/drm_crtc.h | 7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
-> Worse, the actual interface for dma-buf exporting changes from
-> framework to framework (getting a dma-buf from DRM is different
-> than V4L, and there would be yet another API for TEE, etc..)
+> diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
+> index 8b48a1974da3..ecb93e2c4afc 100644
+> --- a/include/drm/drm_crtc.h
+> +++ b/include/drm/drm_crtc.h
+> @@ -1323,5 +1323,12 @@ static inline struct drm_crtc *drm_crtc_find(struct drm_device *dev,
+>  
+>  int drm_crtc_create_scaling_filter_property(struct drm_crtc *crtc,
+>  					    unsigned int supported_filters);
 
-But if the app is working with the particular subsystem, then it already
-talks its language. Allocating a dma-buf is just another part of the
-interface, which the app already has to support.
+Missing kerneldoc
 
-> Most subsystem don't need an allocator, they work just fine
-> simply being only dma-bufs importers. Recent example being the
-> IIO subsystem[0], for which some early posting included an
-> allocator, but in the end, all that was needed was to consume
-> buffers.
+> +static inline bool drm_crtc_in_clone_mode(struct drm_crtc_state *crtc_state)
+> +{
+> +	if (!crtc_state)
+> +		return false;
+> +
+> +	return hweight32(crtc_state->encoder_mask) > 1;
+> +}
+>  
+>  #endif /* __DRM_CRTC_H__ */
 > 
-> For devices that don't actually contain memory there is no
-> reason to be an exporter. What most want is just to consume
-> normal system memory. Or system memory with some constraints
-> (e.g. contiguous, coherent, restricted, etc..).
-
-... secure, accessible only to the camera and video encoder, ... or
-accessible only to the video decoder and the display unit. Who specifies
-those restrictions? Can we express them in a platform-neutral way?
-
+> -- 
+> 2.34.1
 > 
-> > I have a feeling (I might be completely wrong here) that by using
-> > generic dma-buf heaps we can easily end up in a situation when the
-> > userspace depends heavily on the actual platform being used (to map the
-> > platform to heap names). I think we should instead depend on the
-> > existing devices (e.g. if there is a TEE device, use an IOCTL to
-> > allocate secured DMA BUF from it, otherwise check for QTEE device,
-> > otherwise check for some other vendor device).
-> > 
-> > The mental experiment to check if the API is correct is really simple:
-> > Can you use exactly the same rootfs on several devices without
-> > any additional tuning (e.g. your QEMU, HiKey, a Mediatek board, Qualcomm
-> > laptop, etc)?
-> > 
-> 
-> This is a great north star to follow. And exactly the reason we should
-> *not* be exposing device specific constraints to userspace. The constrains
-> change based on the platform. So a userspace would have to also pick
-> a different set of constraints based on each platform.
-
-Great, I totally agree here.
-
-> Userspace knows which subsystems it will attach a buffer, and the
-> kernel knows what constraints those devices have on a given platform.
-> Ideal case is then allocate from the one exporter, attach to various
-> devices, and have the constraints solved at map time by the exporter
-> based on the set of attached devices.
-> 
-> For example, on one platform the display needs contiguous buffers,
-> but on a different platform the display can scatter-gather. So
-> what heap should our generic application allocate from when it
-> wants a buffer consumable by the display, CMA or System?
-> Answer *should* be always use the generic exporter, and that
-> exporter then picks the right backing type based on the platform.
-
-The display can support scather-gather, the GPU needs bigger stride for
-this particular format and the video encoder decoder can not support SG.
-Which set of constraints and which buffer size should generic exporter
-select?
-
-> Userspace shouldn't be dealing with any of these constraints
-> (looking back, adding the CMA heap was probably incorrect,
-> and the System heap should have been the only one. Idea back
-> then was a userspace helper would show up to do the constraint
-> solving and pick the right heap. That has yet to materialize and
-> folks are still just hardcoding which heap to use..).
-> 
-> Same for this restricted heap, I'd like to explore if we can
-> enhance the System heap such that when attached to the TEE framework,
-> the backing memory is either made restricted by fire-walling,
-> or allocating from a TEE carveout (based on platform).
-
-Firewalling from which devices? Or rather allowing access from which
-devices? Is it possible to specify that somehow?
-
-> This will mean more inter-subsystem coordination, but we can
-> iterate on these in kernel interfaces. We cannot iterate on
-> userspace interfaces, those have to be correct the first time.
-> 
-> Andrew
-> 
-> [0] https://www.kernel.org/doc/html/next/iio/iio_dmabuf_api.html
-> 
-> > > 
-> > > This can be tested on QEMU with the following steps:
-> > > repo init -u https://github.com/jenswi-linaro/manifest.git -m qemu_v8.xml \
-> > >          -b prototype/sdp-v1
-> > > repo sync -j8
-> > > cd build
-> > > make toolchains -j4
-> > > make all -j$(nproc)
-> > > make run-only
-> > > # login and at the prompt:
-> > > xtest --sdp-basic
-> > > 
-> > > https://optee.readthedocs.io/en/latest/building/prerequisites.html
-> > > list dependencies needed to build the above.
-> > > 
-> > > The tests are pretty basic, mostly checking that a Trusted Application in
-> > > the secure world can access and manipulate the memory.
-> > 
-> > - Can we test that the system doesn't crash badly if user provides
-> >    non-secured memory to the users which expect a secure buffer?
-> > 
-> > - At the same time corresponding entities shouldn't decode data to the
-> >    buffers accessible to the rest of the sytem.
-> > 
-> > > 
-> > > Cheers,
-> > > Jens
-> > > 
-> > > [1] https://lore.kernel.org/dri-devel/20240515112308.10171-1-yong.wu@mediatek.com/
-> > > [2] https://lore.kernel.org/lkml/20220805135330.970-1-olivier.masse@nxp.com/
-> > > 
-> > > Changes since Olivier's post [2]:
-> > > * Based on Yong Wu's post [1] where much of dma-buf handling is done in
-> > >    the generic restricted heap
-> > > * Simplifications and cleanup
-> > > * New commit message for "dma-buf: heaps: add Linaro restricted dmabuf heap
-> > >    support"
-> > > * Replaced the word "secure" with "restricted" where applicable
-> > > 
-> > > Etienne Carriere (1):
-> > >    tee: new ioctl to a register tee_shm from a dmabuf file descriptor
-> > > 
-> > > Jens Wiklander (2):
-> > >    dma-buf: heaps: restricted_heap: add no_map attribute
-> > >    dma-buf: heaps: add Linaro restricted dmabuf heap support
-> > > 
-> > > Olivier Masse (1):
-> > >    dt-bindings: reserved-memory: add linaro,restricted-heap
-> > > 
-> > >   .../linaro,restricted-heap.yaml               |  56 ++++++
-> > >   drivers/dma-buf/heaps/Kconfig                 |  10 ++
-> > >   drivers/dma-buf/heaps/Makefile                |   1 +
-> > >   drivers/dma-buf/heaps/restricted_heap.c       |  17 +-
-> > >   drivers/dma-buf/heaps/restricted_heap.h       |   2 +
-> > >   .../dma-buf/heaps/restricted_heap_linaro.c    | 165 ++++++++++++++++++
-> > >   drivers/tee/tee_core.c                        |  38 ++++
-> > >   drivers/tee/tee_shm.c                         | 104 ++++++++++-
-> > >   include/linux/tee_drv.h                       |  11 ++
-> > >   include/uapi/linux/tee.h                      |  29 +++
-> > >   10 files changed, 426 insertions(+), 7 deletions(-)
-> > >   create mode 100644 Documentation/devicetree/bindings/reserved-memory/linaro,restricted-heap.yaml
-> > >   create mode 100644 drivers/dma-buf/heaps/restricted_heap_linaro.c
-> > > 
-> > > -- 
-> > > 2.34.1
-> > > 
-> > 
 
 -- 
 With best wishes
