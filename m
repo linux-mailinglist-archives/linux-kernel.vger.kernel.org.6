@@ -1,76 +1,58 @@
-Return-Path: <linux-kernel+bounces-336634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60019983D48
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:45:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54E1A983D40
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:43:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D7071F23C35
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 06:45:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D15528335F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 06:43:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C123E499;
-	Tue, 24 Sep 2024 06:44:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19C13B1A4;
+	Tue, 24 Sep 2024 06:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PLiYPo4p"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ka0uon2z"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC64481745;
-	Tue, 24 Sep 2024 06:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4824717993
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 06:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727160289; cv=none; b=Q0d+w0rWyfsd0chhJTS4mf5nGY0r51XTVpQavCWQOvDBrZro1SYgM2Y4/Zy8CvyuojKn9m6mc2OuCM5rHxaXJASVefqps82p1+FB+L8yS8XXDaBfgXwsNwa5Vgs86KsICzbhXitnvynr/l66JoiBPbHolH/SmwHP1TBW4nKijIs=
+	t=1727160199; cv=none; b=s4aYGK8dfUZu1FEHhdjNrKtdKe8jV3XeJbsz7IA/Li7SKNeqqFj2WZ7Du/8VxdpwAKzVk69N8+UObGB0gDXrF0yjhSv7o4cX/DCjAh5yoJPK7Y9OQyLRcsZjga8U8lXiRT0HYVaocwQO9OzWNGapHhR6KrFfBWGEbhNaGDqEWJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727160289; c=relaxed/simple;
-	bh=w6YX9s7qarswC+AVvU0XTJLTUutgn0bwti6HhT46QFo=;
+	s=arc-20240116; t=1727160199; c=relaxed/simple;
+	bh=GXR9er8nmP3Zb+bUoPtpmUnvLEXCY9mlWbpx1uuK9+E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r4RzmU0e5D5fl2xTBU52gleb5h+8hns+bUf34ldWzW5kxWMGkqm1arr3K2UKOMRVbiZCOQg8vCCwyp1QfJYiO+V1aR3GWXa+OX9GjkPBCE8Al0GtWEfndYiuDfOGgKS/l/cZfLwPRtfjWMxMJhXYxY2tM9llM6ELqx+mD/zDMek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PLiYPo4p; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727160288; x=1758696288;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=w6YX9s7qarswC+AVvU0XTJLTUutgn0bwti6HhT46QFo=;
-  b=PLiYPo4pmt1GtQgUl5rg3kU+YPbjHf1kqDDPoyOw4SlMjvxsHGgCFQCX
-   htoqnlSHC5B333TfyvTlRs51HckjxSgb9tTzb4IJHbSnjSSkONH0DWJIf
-   YnqrFTpPboRP3qrTsRu4s2ElD0pY7eI/IC0VeAgyP7JTyn1T3uGp3KqEW
-   fupcZCtG9n/CBVMPq14MHPocYlBwmKdwt7QMTnAPbyMcbkxEmHuqMqMwA
-   erZwm4zjA/zj6uuRVUql7rZ3lxkv5SxQ+BSEIJxrtK32jPxFYV249IP/S
-   gLOIBrEE5RF2/XIXeul9od5UFlPFLIiJ17qErQCwCciSrYPgonlKWOQAo
-   Q==;
-X-CSE-ConnectionGUID: xEZpQ+27QAy3n7lnPj1qSg==
-X-CSE-MsgGUID: Mzobj75RRX+kEgYLi4/Y3g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="25610812"
-X-IronPort-AV: E=Sophos;i="6.10,253,1719903600"; 
-   d="scan'208";a="25610812"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 23:44:47 -0700
-X-CSE-ConnectionGUID: BGFrQMOETBaIXA2loN/MmA==
-X-CSE-MsgGUID: 5jZrtRjRT+mdGeXGBpDpow==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,253,1719903600"; 
-   d="scan'208";a="71367109"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orviesa009.jf.intel.com with ESMTP; 23 Sep 2024 23:44:44 -0700
-Date: Tue, 24 Sep 2024 14:41:50 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Peter Colberg <peter.colberg@intel.com>
-Cc: Wu Hao <hao.wu@intel.com>, Tom Rix <trix@redhat.com>,
-	Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>,
-	linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Russ Weight <russ.weight@linux.dev>,
-	Marco Pagani <marpagan@redhat.com>,
-	Matthew Gerlach <matthew.gerlach@linux.intel.com>
-Subject: Re: [PATCH v3 2/9] fpga: dfl: omit unneeded null pointer check from
- {afu,fme}_open()
-Message-ID: <ZvJfLplAyNTrPz+E@yilunxu-OptiPlex-7050>
-References: <20240919203430.1278067-1-peter.colberg@intel.com>
- <20240919203430.1278067-3-peter.colberg@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ExR2nnYVpN+MITO+34t+pux8egmeK5arQy7L3wLpaL0pXP6WCu/CNSySZqYy3Gp3cqir/TQ6YelhJHRQhSBQ41DlCoMnw9/kD53s6+Zcko/JdXCqVtXOK3fVlBrQ1kEuNXiNy1zrun4jMZ/FeysGW/Hl1Uw1Io73I8iarnMFqLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ka0uon2z; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=3PbJzwROUpOmaLdozFnNNaDRLerBVFk8Lgsc+PwcLyc=; b=Ka0uon2zqIMJo0sNG4nL3Ikk2H
+	3aBSSz0O7w87unRL6Fy+MN7IAJTz1kLBOjbkckXSIWB9dXvDnHq2GmL0pAljx7ntG5TBydG2DJzea
+	Ppo2h/8WQmJEb/Bcum8x+2bH3tTV6pEUPmZDJpzXTC9v7HhA3SecoovwLMDwIIULdMGlI+qR1NASd
+	/oLBeDvkW8b/mxymEjgfcEI4g0v92/i/Wshpr5x4L+C4njE9nZqsGw+3tjXy1t9+OdsC4e+bIpI/P
+	K5DVUpFfkMPeUVJ8Uc5NuR4x3V9zTQXYAZ+fxXR9BVJBoAUHE5TgLpY3sqXySg1FtDpOGcN+v6yHf
+	OTu9nXpQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sszGW-00000001IVs-3QAI;
+	Tue, 24 Sep 2024 06:43:16 +0000
+Date: Mon, 23 Sep 2024 23:43:16 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Andrey Skvortsov <andrej.skvortzov@gmail.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2] mm: do not export const kfree and kstrdup variants
+Message-ID: <ZvJfhDrv-eArtU8Y@infradead.org>
+References: <20240924050937.697118-1-senozhatsky@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,93 +61,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240919203430.1278067-3-peter.colberg@intel.com>
+In-Reply-To: <20240924050937.697118-1-senozhatsky@chromium.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, Sep 19, 2024 at 04:34:23PM -0400, Peter Colberg wrote:
-> The feature platform device is guaranteed to have an associated platform
-> data. Refactor dfl_fpga_inode_to_feature_dev_data() to directly return
-> the platform data and retrieve the device from the data.
+On Tue, Sep 24, 2024 at 02:08:37PM +0900, Sergey Senozhatsky wrote:
+> Both kfree_const() and kstrdup_const() use __start_rodata
+> and __end_rodata, which do not work for modules.  This is
+> especially important for kfree_const().  Stop exporting
+> these functions, as they cannot be used in the modules.
 
-These changelog better describes the change, but the short log does not.
-Please update.
+Well, they do work when called from modules, they just don't work
+on constant data that is in modules.   There's also plenty of
+existing callers in modules.
 
-Thanks,
-Yilun
-
-> 
-> Signed-off-by: Peter Colberg <peter.colberg@intel.com>
-> Reviewed-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
-> ---
->  drivers/fpga/dfl-afu-main.c | 8 ++------
->  drivers/fpga/dfl-fme-main.c | 7 ++-----
->  drivers/fpga/dfl.h          | 6 +++---
->  3 files changed, 7 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/fpga/dfl-afu-main.c b/drivers/fpga/dfl-afu-main.c
-> index 6b97c073849e..6125e2faada8 100644
-> --- a/drivers/fpga/dfl-afu-main.c
-> +++ b/drivers/fpga/dfl-afu-main.c
-> @@ -595,14 +595,10 @@ static struct dfl_feature_driver port_feature_drvs[] = {
->  
->  static int afu_open(struct inode *inode, struct file *filp)
->  {
-> -	struct platform_device *fdev = dfl_fpga_inode_to_feature_dev(inode);
-> -	struct dfl_feature_platform_data *pdata;
-> +	struct dfl_feature_platform_data *pdata = dfl_fpga_inode_to_feature_dev_data(inode);
-> +	struct platform_device *fdev = pdata->dev;
->  	int ret;
->  
-> -	pdata = dev_get_platdata(&fdev->dev);
-> -	if (WARN_ON(!pdata))
-> -		return -ENODEV;
-> -
->  	mutex_lock(&pdata->lock);
->  	ret = dfl_feature_dev_use_begin(pdata, filp->f_flags & O_EXCL);
->  	if (!ret) {
-> diff --git a/drivers/fpga/dfl-fme-main.c b/drivers/fpga/dfl-fme-main.c
-> index 864924f68f5e..480a187289bb 100644
-> --- a/drivers/fpga/dfl-fme-main.c
-> +++ b/drivers/fpga/dfl-fme-main.c
-> @@ -598,13 +598,10 @@ static long fme_ioctl_check_extension(struct dfl_feature_platform_data *pdata,
->  
->  static int fme_open(struct inode *inode, struct file *filp)
->  {
-> -	struct platform_device *fdev = dfl_fpga_inode_to_feature_dev(inode);
-> -	struct dfl_feature_platform_data *pdata = dev_get_platdata(&fdev->dev);
-> +	struct dfl_feature_platform_data *pdata = dfl_fpga_inode_to_feature_dev_data(inode);
-> +	struct platform_device *fdev = pdata->dev;
->  	int ret;
->  
-> -	if (WARN_ON(!pdata))
-> -		return -ENODEV;
-> -
->  	mutex_lock(&pdata->lock);
->  	ret = dfl_feature_dev_use_begin(pdata, filp->f_flags & O_EXCL);
->  	if (!ret) {
-> diff --git a/drivers/fpga/dfl.h b/drivers/fpga/dfl.h
-> index 5063d73b0d82..2285215f444e 100644
-> --- a/drivers/fpga/dfl.h
-> +++ b/drivers/fpga/dfl.h
-> @@ -398,14 +398,14 @@ int dfl_fpga_dev_ops_register(struct platform_device *pdev,
->  			      struct module *owner);
->  void dfl_fpga_dev_ops_unregister(struct platform_device *pdev);
->  
-> -static inline
-> -struct platform_device *dfl_fpga_inode_to_feature_dev(struct inode *inode)
-> +static inline struct dfl_feature_platform_data *
-> +dfl_fpga_inode_to_feature_dev_data(struct inode *inode)
->  {
->  	struct dfl_feature_platform_data *pdata;
->  
->  	pdata = container_of(inode->i_cdev, struct dfl_feature_platform_data,
->  			     cdev);
-> -	return pdata->dev;
-> +	return pdata;
->  }
->  
->  #define dfl_fpga_dev_for_each_feature(pdata, feature)			    \
-> -- 
-> 2.46.1
-> 
-> 
+So just unexporting them is going to break.   The API is kinda
+horrible, but an implementation to check for constants in modules
+would also be quite horrible.  So I don't have a good answer here,
+but simply unexporting them is not going to cut it.
 
