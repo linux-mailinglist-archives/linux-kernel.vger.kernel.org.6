@@ -1,158 +1,225 @@
-Return-Path: <linux-kernel+bounces-337098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26D5798454B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:57:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19AC6984558
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 577BF1C22917
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:56:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B06DD1F24603
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76CB51A4F39;
-	Tue, 24 Sep 2024 11:56:53 +0000 (UTC)
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5D519F417;
+	Tue, 24 Sep 2024 12:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AmElPWox"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76838127E37;
-	Tue, 24 Sep 2024 11:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A233F3C099
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 12:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727179013; cv=none; b=s/+ol8Hh5+P4kWIVDdl5xiMh0Qln0L3kOfF18K+Mu9lkq0Oyehy4dR0u0FzwvM/nAaNiWCWzbzX4buiCxZUECmOQnILsZBQff3J+1kOLfAfsNG9H+yjXxPZEo18ASb6kfVjYm7MKQlaPo+kObv7IQ5xY9Dbq+dXly4flZUaU72Y=
+	t=1727179249; cv=none; b=dS7n5XYqi5uBS0M2/3egg4sKNNlQSKsWHq/ZxI4ifLzjS98TOmTo/71Ehdc4lXot886QwLJymPb4UswwGrVCagECLSc1EMrIZox2OzNQuTVgYNs/c192iw9vpS9OAxMZgZj2xYb8mBe4XO07QEEAfVIgPQw+CFjA16GP6OBLC/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727179013; c=relaxed/simple;
-	bh=rFVftdtkQDplhGIoAKaghKd1YHB9m6fXZoIJoeahTYo=;
+	s=arc-20240116; t=1727179249; c=relaxed/simple;
+	bh=JqheLCCoqYGtwvcdlh54h2PDm0NqgX9YM4xAWLX6omM=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HLBUSlrXW/uAJh/NWiTXf641J9RfpiiTTeImoqwjm9f2qN+7L/IXB294rNI37iqS6osXHPM4CPxXwoDSY9nK4WTvYdwrn0M8rwEazClG8i9lc08a6kfbskp4ByX3YQZ8rBs78X2T/IGV+L/6oNetUbxjsaXx/jHBpUysb7x1bXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4XCd9z6vfpz9v7NF;
-	Tue, 24 Sep 2024 19:36:55 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id C80CE140392;
-	Tue, 24 Sep 2024 19:56:33 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwD3hy_qqPJmpyWLAQ--.19651S2;
-	Tue, 24 Sep 2024 12:56:33 +0100 (CET)
-Message-ID: <d31e3e0e9e35523bb40b5dbbb29790c874e7627d.camel@huaweicloud.com>
-Subject: Re: [PATCH] evm: stop avoidably reading i_writecount in
- evm_file_release
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: zohar@linux.ibm.com, roberto.sassu@huawei.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, linux-kernel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org
-Date: Tue, 24 Sep 2024 13:56:23 +0200
-In-Reply-To: <CAGudoHGBTRJqKAE6Db3PyVne6rrJR4vsF2MNH2qKMy-44XReZw@mail.gmail.com>
-References: <20240806133607.869394-1-mjguzik@gmail.com>
-	 <3cd8019f03dae99c4e43b7613df869499ec72e66.camel@huaweicloud.com>
-	 <CAGudoHGBTRJqKAE6Db3PyVne6rrJR4vsF2MNH2qKMy-44XReZw@mail.gmail.com>
+	 Content-Type:MIME-Version; b=gdo3reemEQIEOo72YvibT5c/VvhJK2SQwx+LQy0LYFVAoOhRPmtqnFLpA14qiLC4xnJkPrAUkV8J4ZCEOrWsxA5Vv7Y8wW7KgD+qKtpWPz9kRw/SdVzCH982LexyNrW89Q3DwbMkXm7pqizWRdk1Q6UdngNd1iGsXQN7momLXsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AmElPWox; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48NMr9BV032411;
+	Tue, 24 Sep 2024 12:00:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:subject:from:to:cc:date:in-reply-to:references
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	RwFMD8Ypfw0fGR2m9HeXoyhUXFQQEhHzH0IdrC1xkaY=; b=AmElPWoxTCteLJIo
+	PVpRLyXVOhDlMwhPwnpf88WTDikRButu0eQq9uJstZw+DnU6yTA4HVIDkpOJC+0n
+	hHGEV4+zT1zhisMhQ7ZHyG6weNCQs2gvBkhXv5JbWVIVWQ4FAiVHwuaaoe7KKqCX
+	NnzRx1V7HCeRNIFjRa4w3RK0nlmpyWCHv8o3aQORn9WvMbZaHwSJHlmn9/A5T7wm
+	1gRH5C5yYj10/NYfBwPAl3Lu9Uop11nZiXBYz/cp0RBZtKV7yb5V6kC1EB2gCPPS
+	3Kx4sT4sfE+RDFep3Texa/wslByfTv2ZmJ4HzWnxvTTa1eRzHZdaiIXmJEE6qlwg
+	tDrzvA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41snvb1mrk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Sep 2024 12:00:41 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48OC0fcm030031;
+	Tue, 24 Sep 2024 12:00:41 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41snvb1mrc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Sep 2024 12:00:41 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48OA6dT3012489;
+	Tue, 24 Sep 2024 12:00:39 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41t9fpuuec-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Sep 2024 12:00:39 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48OC0d9824576622
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 24 Sep 2024 12:00:39 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 522135805A;
+	Tue, 24 Sep 2024 12:00:39 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 09A8B5806A;
+	Tue, 24 Sep 2024 12:00:37 +0000 (GMT)
+Received: from li-34d1fccc-27cd-11b2-a85c-c167793e56f7.ibm.com (unknown [9.204.200.131])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 24 Sep 2024 12:00:36 +0000 (GMT)
+Message-ID: <ab72231540149a7dd367cbf30d17b12af14c6387.camel@linux.ibm.com>
+Subject: Re: [sched_ext/for-6.11]: Issue with BPF Scheduler during CPU
+ Hotplug
+From: Aboorva Devarajan <aboorvad@linux.ibm.com>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Tejun Heo
+ <tj@kernel.org>
+Cc: David Vernet <void@manifault.com>, LKML <linux-kernel@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andrii@kernel.org>, hbathini@linux.ibm.com
+Date: Tue, 24 Sep 2024 17:30:35 +0530
+In-Reply-To: <CAADnVQ+OYuaS9wYa2_aF8XFo7LcaSKbCeLwfC_z9j1Qe-eV3nw@mail.gmail.com>
+References: <daf2370f5456cbf1660bbdc13621559fb3f2f6cc.camel@linux.ibm.com>
+	 <Zq1NksrG9blyN-KR@slm.duckdns.org>
+	 <e3069da05fb1676f8faad88b9a4dfc4a6cef4175.camel@linux.ibm.com>
+	 <Zru5_UmEmWhNaPyo@slm.duckdns.org>
+	 <fa56b39990dd0b90f971018f5abb7352c60af3b1.camel@linux.ibm.com>
+	 <ZsTwoWJQcnsJhYbe@slm.duckdns.org>
+	 <3da12c96daecaa055c478816f5e86c7b44a04d53.camel@linux.ibm.com>
+	 <ZszKI2GA-8yparh_@slm.duckdns.org> <Zul6l-S_JulEnDQw@mtj.duckdns.org>
+	 <516106abdf5c922ee19dffd9eb69ea3f9e20e54a.camel@linux.ibm.com>
+	 <ZvGxlcMwFOmUBfr9@slm.duckdns.org>
+	 <CAADnVQ+OYuaS9wYa2_aF8XFo7LcaSKbCeLwfC_z9j1Qe-eV3nw@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+X-Mailer: Evolution 3.28.5 (3.28.5-26.el8_10) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 8WN7JyW_mlJrw05Oxppd_FT9akIBGMft
+X-Proofpoint-GUID: wVMluckBf79xx0rEA-tgpCL6rmSSrCZL
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwD3hy_qqPJmpyWLAQ--.19651S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZF45ZrWUCFWrGr48GrWfXwb_yoW5Jr4fpF
-	Wxta1DJF1vqry7CF97t3ZxuFyF93y0qr1UZas5XF12vF90yr93tF40qr1j9as09rZ5CF1F
-	v3yI9a43Aw1DuaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
-	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8V
-	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
-	14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUOBMKDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAQBGbyIHwF5wAAs8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-24_02,2024-09-24_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ priorityscore=1501 phishscore=0 clxscore=1011 spamscore=0 mlxscore=0
+ adultscore=0 impostorscore=0 bulkscore=0 malwarescore=0 suspectscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409240084
 
-On Mon, 2024-09-23 at 07:26 +0200, Mateusz Guzik wrote:
-> On Fri, Aug 16, 2024 at 1:53=E2=80=AFPM Roberto Sassu
-> <roberto.sassu@huaweicloud.com> wrote:
-> >=20
-> > On Tue, 2024-08-06 at 15:36 +0200, Mateusz Guzik wrote:
-> > > The EVM_NEW_FILE flag is unset if the file already existed at the tim=
-e
-> > > of open and this can be checked without looking at i_writecount.
-> >=20
-> > Agreed. EVM_NEW_FILE is not going to be set during the open(), only
-> > before, in evm_post_path_mknod().
-> >=20
-> > Looks good to me.
-> >=20
-> > Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
-> >=20
-> > Thanks
->=20
-> thanks for the review
->=20
-> are there plans to pick this up for this merge window?
+On Tue, 2024-09-24 at 10:03 +0200, Alexei Starovoitov wrote:
+> On Mon, Sep 23, 2024 at 8:21 PM Tejun Heo <tj@kernel.org> wrote:
+> > Hello,
+> > 
+> > (cc'ing Alexei and Andrii for the BPF part)
+> > 
+> > On Mon, Sep 23, 2024 at 08:26:32PM +0530, Aboorva Devarajan wrote:
+> > > Sharing the crash logs observed in PowerPC here for general reference, FYI:
+> > > 
+> > > [ 8638.891964] Kernel attempted to read user page (a8) - exploit attempt? (uid: 0)
+> > > [ 8638.892002] BUG: Kernel NULL pointer dereference on read at 0x000000a8
+> > > [ 8638.892019] Faulting instruction address: 0xc0000000004e7cc0
+> > > [ 8638.892038] Oops: Kernel access of bad area, sig: 11 [#1]
+> > > [ 8638.892060] LE PAGE_SIZE=64K MMU=Radix SMP NR_CPUS=2048 NUMA PowerNV
+> > > [ 8638.892080] Modules linked in: nf_conntrack_netlink nfnetlink xfrm_user xfrm_algo xt_addrtype
+> > > br_netfilter xt_CHECKSUM xt_MASQUERADE xt_conntrack ipt_REJECT nf_reject_ipv4 xt_tcpudp
+> > >  ip6table_mangle ip6table_nat iptable_mangle iptable_nat nf_nat nf_conntrack nf_defrag_ipv6
+> > > nf_defrag_ipv4 ebtable_filter ebtables vhost_vsock vmw_vsock_virtio_transport_common ip6tabl
+> > > e_filter ip6_tables vhost vhost_iotlb iptable_filter vsock bridge stp llc kvm_hv kvm joydev
+> > > input_leds mac_hid at24 ofpart cmdlinepart uio_pdrv_genirq ibmpowernv opal_prd ipmi_powernv
+> > > powernv_flash uio binfmt_misc sch_fq_codel nfsd mtd ipmi_devintf ipmi_msghandler auth_rpcgss
+> > > jc42 ramoops reed_solomon ip_tables x_tables autofs4 raid10 raid456 async_raid6_recov async
+> > > _memcpy async_pq async_xor async_tx raid1 raid0 dm_mirror dm_region_hash dm_log mlx5_ib ib_uverbs
+> > > ib_core mlx5_core hid_generic usbhid hid ast i2c_algo_bit drm_shmem_helper drm_kms_hel
+> > > per vmx_crypto drm mlxfw crct10dif_vpmsum crc32c_vpmsum psample tls tg3 ahci libahci
+> > > drm_panel_orientation_quirks
+> > > [ 8638.892621] CPU: 62 UID: 0 PID: 5591 Comm: kworker/62:2 Not tainted 6.11.0-rc4+ #2
+> > > [ 8638.892663] Hardware name: 8335-GTW POWER9 0x4e1203 opal:skiboot-v6.5.3-35-g1851b2a06 PowerNV
+> > > [ 8638.892693] Workqueue: events bpf_prog_free_deferred
+> > > [ 8638.892735] NIP:  c0000000004e7cc0 LR: c0000000004e7bbc CTR: c0000000003a9b30
+> > > [ 8638.892798] REGS: c000000ea4cbf7f0 TRAP: 0300   Not tainted  (6.11.0-rc4+)
+> > > [ 8638.892862] MSR:  9000000000009033 <SF,HV,EE,ME,IR,DR,RI,LE>  CR: 42a00284  XER: 00000000
+> > > [ 8638.892915] CFAR: c0000000004e7bb8 DAR: 00000000000000a8 DSISR: 40000000 IRQMASK: 1
+> > > [ 8638.892915] GPR00: c0000000004e7bbc c000000ea4cbfa90 c000000002837f00 0000000000000005
+> > > [ 8638.892915] GPR04: 0000000000000015 0000000000000009 0000000000000009 c000000004840b00
+> > > [ 8638.892915] GPR08: ffffffffffffffff 00000000ffffe000 ffffffffffffffff 000001937b55db50
+> > > [ 8638.892915] GPR12: 0000000000200000 c000007ffdfac300 c0000000031b1fc8 0000000000010000
+> > > [ 8638.892915] GPR16: c00000000000018e 000000007fffffff 0000000000000000 000000000000e1c0
+> > > [ 8638.892915] GPR20: 61c8864680b583eb 0000000000000000 0000000000000000 00000000000de1d5
+> > > [ 8638.892915] GPR24: 0000000000000000 c000000003da4408 c000000003da4400 c000000003da43f8
+> > > [ 8638.892915] GPR24: 0000000000000000 c000000003da4408 c000000003da4400 c000000003da43f8
+> > > [ 8638.892915] GPR28: 0000000000000000 0000000000000000 0000000000000000 c000000ea4cbfa90
+> > > [ 8638.893350] NIP [c0000000004e7cc0] walk_to_pmd+0x80/0x240
+> > > [ 8638.893380] LR [c0000000004e7bbc] __get_locked_pte+0x4c/0xd0
+> > > [ 8638.893398] Call Trace:
+> > > [ 8638.893407] [c000000ea4cbfa90] [c000000ea4cbfb20] 0xc000000ea4cbfb20 (unreliable)
+> > > [ 8638.893429] [c000000ea4cbfaf0] [c0000000004e7bbc] __get_locked_pte+0x4c/0xd0
+> > > [ 8638.893457] [c000000ea4cbfb40] [c0000000000b1dd0] patch_instructions+0x130/0x630
+> > > [ 8638.893500] [c000000ea4cbfc10] [c000000000123180] bpf_arch_text_invalidate+0x80/0xd0
+> > > [ 8638.893552] [c000000ea4cbfc60] [c0000000003a7508] bpf_prog_pack_free+0x138/0x2f0
+> > > [ 8638.893584] [c000000ea4cbfd10] [c0000000003a7e38] bpf_jit_binary_pack_free+0x48/0xa0
+> > > [ 8638.893617] [c000000ea4cbfd50] [c000000000123258] bpf_jit_free+0x88/0x100
+> > > [ 8638.893667] [c000000ea4cbfd90] [c0000000003a9d70] bpf_prog_free_deferred+0x240/0x280
+> > > [ 8638.893725] [c000000ea4cbfde0] [c0000000001a6828] process_scheduled_works+0x268/0x520
+> > > [ 8638.893767] [c000000ea4cbfee0] [c0000000001a9ed0] worker_thread+0x3f0/0x590
+> > > [ 8638.893809] [c000000ea4cbff80] [c0000000001b37b0] kthread+0x1a0/0x1c0
+> > > [ 8638.893862] [c000000ea4cbffe0] [c00000000000d030] start_kernel_thread+0x14/0x18
+> > > [ 8638.893913] Code: 3cc20157 3b63c4f8 3b45c500 3929c510 3b26c508 3940ffff e87b0000 e8ba0000
+> > > 81290000 e8d90000 38830010 7d494830 <e87d00a8> 7ce42a14 7d2948f8 7d073214
+> > > [ 8638.894003] ---[ end trace 0000000000000000 ]---
+> > > [ 8639.098185] pstore: backend (nvram) writing error (-1)
+> > > [ 8639.098205]
+> > > [ 8639.098215] note: kworker/62:2[5591] exited with irqs disabled
+> > > [ 8798.806603] ------------[ cut here ]------------
+> > > [ 8798.806631] WARNING: CPU: 62 PID: 3769 at kernel/kthread.c:76 kthread_set_per_cpu+0x40/0xd0
+> > > [ 8798.806653] Modules linked in: nf_conntrack_netlink nfnetlink xfrm_user xfrm_algo xt_addrtype
+> > > br_netfilter xt_CHECKSUM xt_MASQUERADE xt_conntrack ipt_REJECT nf_reject_ipv4 xt_tcpudp ip6table_mangle
+> > > ip6table_nat iptable_mangle iptable_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv
+> > > ------------------------------------------------------------------------------------------
+> > > 
+> > > We will look at this issue as it is specific to PowerPC.
+> > 
+> > This does look like a bug in BPF proper.
+> 
+> powerpc doesn't have bpf trampolines, struct-ops and
+> all the plumbing necessary to run sched-ext.
+> 
 
-Welcome! Sorry, Mimi wants to do few more checks. It is more likely
-that we will pick this for the next version.
+Hi Alexei, 
 
-Roberto
+That's right, powerpc at the moment doesn't have support for BPF trampoline
+and struct ops.
 
-> >=20
-> > Roberto
-> >=20
-> > > Not accessing it reduces traffic on the cacheline during parallel ope=
-n
-> > > of the same file and drop the evm_file_release routine from second pl=
-ace
-> > > to bottom of the profile.
-> > >=20
-> > > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> > > ---
-> > >=20
-> > > The context is that I'm writing a patch which removes one lockref
-> > > get/put cycle on parallel open. An operational WIP reduces ping-pong =
-in
-> > > that area and made do_dentry_open skyrocket along with evm_file_relea=
-se,
-> > > due to i_writecount access. With the patch they go down again and
-> > > apparmor takes the rightful first place.
-> > >=20
-> > > The patch accounts for about 5% speed up at 20 cores running open3 fr=
-om
-> > > will-it-scale on top of the above wip. (the apparmor + lockref thing
-> > > really don't scale, that's next)
-> > >=20
-> > > I would provide better measurements, but the wip is not ready (as the
-> > > description suggests) and I need evm out of the way for the actual
-> > > patch.
-> > >=20
-> > >  security/integrity/evm/evm_main.c | 3 ++-
-> > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > >=20
-> > > diff --git a/security/integrity/evm/evm_main.c b/security/integrity/e=
-vm/evm_main.c
-> > > index 62fe66dd53ce..309630f319e2 100644
-> > > --- a/security/integrity/evm/evm_main.c
-> > > +++ b/security/integrity/evm/evm_main.c
-> > > @@ -1084,7 +1084,8 @@ static void evm_file_release(struct file *file)
-> > >       if (!S_ISREG(inode->i_mode) || !(mode & FMODE_WRITE))
-> > >               return;
-> > >=20
-> > > -     if (iint && atomic_read(&inode->i_writecount) =3D=3D 1)
-> > > +     if (iint && iint->flags & EVM_NEW_FILE &&
-> > > +         atomic_read(&inode->i_writecount) =3D=3D 1)
-> > >               iint->flags &=3D ~EVM_NEW_FILE;
-> > >  }
-> > >=20
-> >=20
->=20
->=20
+As mentioned in my previous message I have the patch series to support trampolie,
+struct_ops applied on top of Tejun's branch while running sched_ext on PowerPC
+which is the same series that you referenced.
+https://lore.kernel.org/all/20240915205648.830121-1-hbathini@linux.ibm.com/.
+
+However, I am seeing the above crash with this series applied.
+
+> Aboorva,
+> 
+> please help test this patch set instead that is trying to add it:
+> https://lore.kernel.org/all/20240915205648.830121-1-hbathini@linux.ibm.com/
+
+
+Sure, I will post more details and will continue the discussion in the below
+thread going forward.
+https://lore.kernel.org/all/20240915205648.830121-1-hbathini@linux.ibm.com/
+
+Thanks,
+Aboorva
 
 
