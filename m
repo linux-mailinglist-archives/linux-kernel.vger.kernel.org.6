@@ -1,268 +1,338 @@
-Return-Path: <linux-kernel+bounces-337666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC860984D30
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:00:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFC24984D41
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:02:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 498A01F21C81
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:00:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01F3BB20548
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 22:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E91BD146D40;
-	Tue, 24 Sep 2024 21:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38EA513D89D;
+	Tue, 24 Sep 2024 22:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Dyqz1MZr";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Bfbbc1YA"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SrdgFOgL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23AF713BC02;
-	Tue, 24 Sep 2024 21:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727215192; cv=fail; b=cqPPEuhrsn17DPNfY5cNP/Edr0dfYRZ/Ht9VnaYZpfKigFCkqDXfXt9QJTGNWIa4N3fjrO8laKlJ7bcHONT8eUFkHZ6omen4bngH6S7taLiqIT4EszQSC9IWkA7syk54AIv3FYYXJBnGtXhUxlt81n8G1fbbrhpC+hqUSaOEcRo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727215192; c=relaxed/simple;
-	bh=6W9fO8b4e9lZp71ZsmnLSggUgJ63SbHXOnYIKumQPA8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=RxUezaPXEhfoahGNeK7wmprCl37tJi+jng3C5wZVevGZTHJwltLnhNI8qppr9eGrBw97apGQBI/CsXrkuIcA86TFdNx8sWAFoAnKcdV/mwhMYWxkoCC6+qqsA+qfN9ZJud/jblqHXrrXaY2PJyuGvr3PQEZ0u/PIo3Y5pg3t6H4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Dyqz1MZr; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Bfbbc1YA; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48OHMZHP014722;
-	Tue, 24 Sep 2024 21:59:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=
-	corp-2023-11-20; bh=y6tVUU6yT/MVbiDI27S24s9c+H5Tv6Dqf4O412rhijA=; b=
-	Dyqz1MZrz24w5urMVowtwaF+HHMYdaRsdMt/bJdDtkv4s2ufN/xdT6Plu+9JC6Sm
-	d/yM/xpcKYpQopI9fPZJPAhp8+uVFEYIf788SYnhChy3qob1g9lAT05p56VEyGkO
-	vMfXcu8OU1WiMg7w+ArTmje0NWokMeXfGoDIC076Kr05QJasBl/g9Hky4ZTCAfUu
-	JKDATdB4iS/lPnjgZSV5vewBT45QQpZyearo63SDK6UlrqUeFE5u8v8+TDw/GJK/
-	d05u1kcM2FJJHudOD4bPNe+Z6ASbqs0x5wVlcDbqcW45GO1tIaQpzUsCY9qOGDN6
-	bViMMZQYHmEz5N9cIvZWIQ==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41sn2crse2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 24 Sep 2024 21:59:47 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48OKjqbJ026070;
-	Tue, 24 Sep 2024 21:59:46 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2049.outbound.protection.outlook.com [104.47.70.49])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41smk9ugah-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 24 Sep 2024 21:59:46 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yoiEBsSh+gILxQQKAtim8W5d6NSUlQNyp9LMDRZ8nO2uRBijc9hL/bxgBw6jIkw9RoBYfb6w4S4aSMWvl7v1ZvS1XBhTDUFkIruylgzsLSyInHt9GZLECQAvNJ2YFV/a253cjuipq6EsuOos+bWhQJ+scU0Cmjrq5uPvk8u8spXaAAovY3xHWIGVj/f2+LMZ4GkRXJVQ9kTQv5E3lpZ/z6lQN9JCEeockSMKx7ztC4An6Frw6HdvzSBdGSkZvcH9A8ySK/VKLm8dnZ7PCZ2QCAJwSasJh8NqzD+naBrp/2rAOIEH3H+OmZ9auw4RQXTx+Cs6JUQ/tkzRTUt5suWBnw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=y6tVUU6yT/MVbiDI27S24s9c+H5Tv6Dqf4O412rhijA=;
- b=O00D12OeCEJrRNC+zM0Tt8ujPiXIn6VMdeaFRg6/OPJTGsy63IAYCcO0NXTcGX94+MUtrA1/aDUQ8b8qE4smNCpDtDj+9xkt+xhEWeEk9E3XdS22kP85l6XxYODFig3Ptm9NalWJZvGaEGAZtX4XDAIGuqGWGwMDnEaTNyhbQ5SSNKz0ftIoCAMTxnmmTMEeyhPb9XWUGEdXQhL/2+SoBP+IvCYSb3UXi0v/FwrF8LIjOZ1Lj0MChCocLoA5bHDyWEuBM6xkdKydY6SmI7IwIG4LyiD3OkOt4wufWP9VtRjo1cnDWVtabuPIf85z17kcIN1JJATxS1RLV1jposZf0w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=y6tVUU6yT/MVbiDI27S24s9c+H5Tv6Dqf4O412rhijA=;
- b=Bfbbc1YAQ9ij4sV5H/cArVR+NG1Dfetkp7bQ7fH51O8ltYah3PeDAcSXoxI4v3JAh+liU7e1SdEI5fA3w3L43SGnv1adTUDIPnu979grPmsHJgWLR//eBL+w6lQvFB1PkD7u5rGq7F4pQOwjgbsUtun6W4fX9OcFo0PZxYlLHcY=
-Received: from BLAPR10MB5009.namprd10.prod.outlook.com (2603:10b6:208:321::10)
- by PH0PR10MB5546.namprd10.prod.outlook.com (2603:10b6:510:d9::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.11; Tue, 24 Sep
- 2024 21:59:43 +0000
-Received: from BLAPR10MB5009.namprd10.prod.outlook.com
- ([fe80::a088:b5e0:2c1:78a0]) by BLAPR10MB5009.namprd10.prod.outlook.com
- ([fe80::a088:b5e0:2c1:78a0%5]) with mapi id 15.20.8005.010; Tue, 24 Sep 2024
- 21:59:43 +0000
-Message-ID: <4274f9be-1c3d-4246-abe9-69c4d8ca8964@oracle.com>
-Date: Tue, 24 Sep 2024 17:59:39 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] KVM/x86: Do not clear SIPI while in SMM
-To: Igor Mammedov <imammedo@redhat.com>
-Cc: Sean Christopherson <seanjc@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Eric Mackay <eric.mackay@oracle.com>
-References: <20240416204729.2541743-1-boris.ostrovsky@oracle.com>
- <c7091688-8af5-4e70-b2d7-6d0a7134dbbe@redhat.com>
- <66cc2113-3417-42d0-bf47-d707816cbb53@oracle.com>
- <CABgObfZ-dFnWK46pyvuaO8TKEKC5pntqa1nXm-7Cwr0rpg5a3w@mail.gmail.com>
- <77fe7722-cbe9-4880-8096-e2c197c5b757@oracle.com>
- <Zh8G-AKzu0lvW2xb@google.com>
- <77f30c15-9cae-46c2-ba2c-121712479b1c@oracle.com>
- <20240417144041.1a493235@imammedo.users.ipa.redhat.com>
- <cdbd1e4e-a5a3-4c3f-92e5-deee8d26280b@oracle.com>
- <534247e4-76d6-41d2-86c7-0155406ccd80@oracle.com>
- <20240924114051.1d5f7470@imammedo.users.ipa.redhat.com>
-Content-Language: en-US
-From: boris.ostrovsky@oracle.com
-In-Reply-To: <20240924114051.1d5f7470@imammedo.users.ipa.redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BYAPR01CA0065.prod.exchangelabs.com (2603:10b6:a03:94::42)
- To BLAPR10MB5009.namprd10.prod.outlook.com (2603:10b6:208:321::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A548480043
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 22:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727215359; cv=none; b=pO83Y/S+Fn4sUwuv0Xcjazb18KYh9UyDIV/e/gUWkvJ+SD3PcXup41ZUEhyBocjmQTp1pZtk9YEccwtgf7I2L62dA3eK4yj71XTy4vefHemol1uf0jDAYReZQeCoe/F7XwdPKjD0P6mcYONFmaSuWC7K8ELHj/2+TOuBRlq7ZVM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727215359; c=relaxed/simple;
+	bh=pu5G5qXLTl3zSGB+7dQNsdrINE8JNYhjhl+yhhCbdIQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s23PnBMqVk1NFCNIyoSvPGjpJNGGEG1bAIwzzpvukAX8skORVAS9L0rn9oRybEKSZP/ZL0DXl/3vGOmyGG4h+qgFnKj+mhe9655dKf8iLym1fTftos345SG0Vb83D8HoO6O9MXVtqJz9PJ7sN0A1Q57gnBoKp8oRhE9M/nDuIr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SrdgFOgL; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727215356;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p08RO7jNAHbqAPJ0LfZ/6PkDLGb4/JJG3jEYdwRpx2U=;
+	b=SrdgFOgL5BteIT1bO+F6tZjNnKpy8qCk5Q/0g/tGX4bMZexV6vknR6LkigabOrIScQ+9j8
+	qS13kVpYO7adhWiQkYCXEaInud05RxWEKWY13m2WaCBHVUEo+T6fpWWjQ4671AHnfgQqZG
+	Ae09HBtaQCOswFkA8rOfMxrDfcDPdp8=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-175-ni67PjrKNpykW7H6zWP21A-1; Tue, 24 Sep 2024 18:02:35 -0400
+X-MC-Unique: ni67PjrKNpykW7H6zWP21A-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-378929f1a4eso3049293f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 15:02:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727215354; x=1727820154;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p08RO7jNAHbqAPJ0LfZ/6PkDLGb4/JJG3jEYdwRpx2U=;
+        b=ekjW1eedXyR92qm1P8DHTvYeaIM/G82dkYDzx4QV6rzf7AqxrWTZbyVCLVEh4voro2
+         4jLMxj2uSiTwcKq+qQ7hr9YXCXiOjd/XnRTk6dcxgfC/Ok5UlO6lTdS9Ce4NR7zHYWen
+         LSsrhHYOOg+SXnj77AqlQ9qXVKisuwh6QkvuViM4VzomqAy1L+toF1BjkTupWC3030oh
+         Ty6rKnfQFlYWuZOBsb9obqO8ksOuyQPl8x3dn0rHZ9WGFQI4UlItHvpnjpdSwP2P/EJu
+         dmudF45DsEXkSx4j0lNb5oZYONDToNf/9Dd3IQ4gedTKhEqZnDgicWGENogj3KpD7A35
+         +gPw==
+X-Forwarded-Encrypted: i=1; AJvYcCXRlJlsvOeDfpZtXiS14QF8J7wY3DNEQZmEg57bG48EzumnxiRPBLrW6yx5PZdQxSzwf0BkMm7LUkO74Uk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuVHDEXIpn1jVw0XKmrCTPxipaz4eO9sqvA9g447X1+YkOr2f3
+	5lYYHPuB9kKsMhwzftE6TaY+Psnhrc0itQIKJJPjPS3QHrcfEglEGuA+s7uemu3u8CejN2ZhkeC
+	H7666/6Ju6G6ykIus9nDjFbZ+jstEVn+e/ZRK+RrxL7XW/HLGlVvv1KXfpkXa3A==
+X-Received: by 2002:adf:c006:0:b0:374:c142:80e7 with SMTP id ffacd0b85a97d-37cc245c0d7mr469099f8f.1.1727215354152;
+        Tue, 24 Sep 2024 15:02:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE798q0O7Fe/wwcjVDfqt4MNQ2Rk3GAssMMKcDml1GPXBnju2SlRN5umha2Yafd8UUyK6orbQ==
+X-Received: by 2002:adf:c006:0:b0:374:c142:80e7 with SMTP id ffacd0b85a97d-37cc245c0d7mr469086f8f.1.1727215353661;
+        Tue, 24 Sep 2024 15:02:33 -0700 (PDT)
+Received: from redhat.com ([2a06:c701:7405:9900:56a3:401a:f419:5de9])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cbc2f96f6sm2496359f8f.87.2024.09.24.15.02.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2024 15:02:29 -0700 (PDT)
+Date: Tue, 24 Sep 2024 18:02:25 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Wenyu Huang <huangwenyu1998@gmail.com>
+Cc: jasowang@redhat.com, xuanzhuo@linux.alibaba.com,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] virtio: Make vring_new_virtqueue support for packed vring
+Message-ID: <20240924175414-mutt-send-email-mst@kernel.org>
+References: <20240920202141.89446-1-huangwenyuu@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BLAPR10MB5009:EE_|PH0PR10MB5546:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9a5d0809-6f18-4e85-26d0-08dcdce43243
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Nm5NejNEN2ZlSkhnOE5YZE1zSnJCajhIMVpnWFdyWjh2VDMxUFFlemZVSnVM?=
- =?utf-8?B?aHZLS1g4ZEY0dzMzOWEwbUNybU01aCtTcTk3T045TGUrZGdBWUFIM25rSVc5?=
- =?utf-8?B?TXM3VXJidm9oZUM3MmhUZUV2YkFVMnVQOXF0dGN6dE1ZR0ErSEZQdFJoNElt?=
- =?utf-8?B?Q0I4eG81RlFpQkMxV3RtNTZRYWpDNlMvbGFlUGRyQ1ZsVDU2bExqck1vaDBM?=
- =?utf-8?B?M2hFcUp6TkZIaGRiZTkvcGtqMDVsRi91RDJybmNWb08ra0Z1UWR1VGhSbmpJ?=
- =?utf-8?B?OEV5citvTnI4TzZ5QmJBb0NOMzZ4THJHdGE0c1M5b1FKZWQ1b3EvRnhKT0tD?=
- =?utf-8?B?TFN0azQwTlVhV1A1SmpjTGQ0SmwyY1lHcEMxcFpFRURRRll5L1llaEFkcDZ2?=
- =?utf-8?B?dGRuS2dpZkUwWTVaV1pGYldMMVJBODd3cHlyR20zUE1VOEhUOC9DOVZla0tt?=
- =?utf-8?B?aXFBK0wxTnNJeWtBRU5rUUlhY2VOcU0waTczN2MxUHVpYStBZlA5NkR0eHo1?=
- =?utf-8?B?STY3ZWZYYmg5UHk1ZmRtZ0MyNUJqY0FsY3E5c3lobTc5TFpveGRxSDVtL2dX?=
- =?utf-8?B?ZzB6ckJVSERvdW5qRW1kSDd4YUl1Y0s3UlFSOHBuUnhrdFloVnVVTGNIdGVP?=
- =?utf-8?B?NytpWXZoTDNuYUFNWTRERHhkNGxYb3lRZ0EyNkh4WE9iNmZTZGZ2eElqM3Z6?=
- =?utf-8?B?cXM0WThQaDlDRkpLT1F0cUFYek8vRXZTRWV2bktnQ25Hc3VsQTh0UGRORE9L?=
- =?utf-8?B?Mk1tdlZ5aXlKZmMvTG0xczhrVGtrY0tkS053TGpUVFllYTQ2MU0xemg1UHNr?=
- =?utf-8?B?bjg1dmtPQ0NSWnpRaTFHZUhPWHlwVkhBQUQrZmliQXVsbHpxRkdHQm1RcUpJ?=
- =?utf-8?B?cE9uRStBaEZZNStHaWZ6R0RuSDY1K2xzd1JTazhSaUQwR0ZaZURVVmRxTWd5?=
- =?utf-8?B?QU80K1puUnA3UE5hSlF3VGF5RVpIUDIzYzdqUWkvMGxKcUxtN1M5NjRhZy91?=
- =?utf-8?B?UmM1VjRUb0Q4U2hUbDlrYmVKZlNXZDBnblVZcFFxd044SERkaXYvK0hQWkJk?=
- =?utf-8?B?dVhIQ1l1SUlub3Rrdk9EeTg4eFBMNlZnWW9VdXMzMWphRVkwRGRDNFVNZnE2?=
- =?utf-8?B?OWlDVmVFMmhQTkExbjFjSXRncUdoaThOY2xJV3lBak0zdTQ3RmdhbUVKdDJp?=
- =?utf-8?B?eDBEZGtxVmtXZ1ZFSm92S29jNnphMk43NGcyNWJudlFoSGM4WW8ycTVrNy9K?=
- =?utf-8?B?cE1BdWZQTTdsOXNSbVVHc2o2ZmdaeWJLVTBraGI3cHRjcjNoTHNMUE9oQ3VZ?=
- =?utf-8?B?bCtabkt3ejVkSlJTdnFvbjJwZEtmUVNCZGVEbXFCeFAyaDlqRWdiOTA5VGdG?=
- =?utf-8?B?Zk03THl5N290MHQwYkZ6OGp6L2VpNG0zN3lwc3ZqNWRFdHpHMTRUUGMvaStD?=
- =?utf-8?B?OUx6OHZUTms0RmRPbXJpcTE5TWxFTDNEN0VVSnBvQkRYcnRxb01aci9PSzk0?=
- =?utf-8?B?U3BkMitZdGhLS2xWV0lTTit0NW1nQ3QzdGphSDkyeTVUdFJUNXRpVGZtT1di?=
- =?utf-8?B?b0paeXpma2twdlNMNFRJTjE4VWRLMXVuUVVmWldJTW9DMVJuUDhIUHNqaUho?=
- =?utf-8?B?Q2pNemdVbWRhWFZsZ0poNkxFc3V2c1EzVjFsWG0zdTBQZDRkUG1rQmFLOHBi?=
- =?utf-8?B?ZkFqMHkxUk5BYlZYQm45RUNTbU5QTDFNb1RHamJuZUhlZjVRaEFoaUdpSmRR?=
- =?utf-8?B?MXo1Y0hHOGY1dWc1djNzNG5hTmdPeTZaV0FlRnlHMExxdW1wSEFVc0Vreits?=
- =?utf-8?Q?rH48c+CfN76ZQBJRA2BvsoW8KvaAD6I0lm5Es=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BLAPR10MB5009.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cktpK3hDRDVlend3WWtPK0Fkc09PUEF5dXp3TDFnd3ZhZTNwTXJvWjNhNDI5?=
- =?utf-8?B?REhFL1QrckQ5L0tTM2VBKytMSU1vT3pjVGtEY0MwdmRhb2NpeHdTL1didms3?=
- =?utf-8?B?c3ZHS3pyRllHVUxiSStUTVQwckxCT0pZem01RVh4SnBzYUh1QU5kY3JsTWRY?=
- =?utf-8?B?VVFhaGFtQXR2ZkN4OWpMN3RxVTNZYlhRSDN5RUJuTk9aYnVRSk5kRGFzT0Vw?=
- =?utf-8?B?cnZWUXNOMjdlTStWaklvQ3Y5MmcxOWhzVGUvNm9VMHFQaUtmS3N6b3RlbFFt?=
- =?utf-8?B?OGNxQmxpUXVMZVlTeDE1TUYyWnZ5NFIzWHllN0I3bHBTOUxDc0p5SE9BRHNt?=
- =?utf-8?B?QjZMVFhTUXJWbHpRRzJrY251R2FrSVdzaWRLdHpiMlZjeHB6cy8yUDQyejRk?=
- =?utf-8?B?Y3RPRjNTNkZzTEpzM2N1eTcycGdtQjM4Um9UajdTQnY0UFpUNng1UlF5THdt?=
- =?utf-8?B?UjA5ZTNmS0g4TjZwNnNKSVU3Wm9TdUNQK3RLdXI2TzFPRlJPajBCYnR5RkhR?=
- =?utf-8?B?QzVZTmRGMnhXa3F2eGJHcHVIREQvNERuc1EwdXplRzNQQi9qekJkR3pYTDl5?=
- =?utf-8?B?MG05Nkw4cXFaSThhZjBUVk9GZGpaODNoUGxYaFBGUndLSUsvMW5IVGxaRWQ4?=
- =?utf-8?B?TzJyVm9uZks2RTZBb3B4Q2s1SmJSQko5VytrK2lCd3IvcS9HcEwySGdzYlhv?=
- =?utf-8?B?azN5L0t4Q3dYMzBGS3JpTWcvMXQwVzdXVnFMUFJYQXBLV0FZYkdocG5YaDJx?=
- =?utf-8?B?LzhiU3F6YnlmM3BLcVpnWmZIT3c5d0NsM1NjeUhpNGk3dktwalR5YmRQVFMx?=
- =?utf-8?B?dmRuN2UxUnBhNjlxSHd4ZkZOZUdhUXlhQktjaWFCWGMxWEozUkYyMzZBbC9i?=
- =?utf-8?B?d01BK0ZyYk4rRGJIKzBjQkFvTTF3MnM3OHVzbXJ3dVZPcUM3aFFMdDJEejVv?=
- =?utf-8?B?ODcvUThYSVV4SmJ3ZlQveC9EMHFyMjBBTC9oQVVkYzdreE4rTjhOWkFhSUZa?=
- =?utf-8?B?ZFBITG1BUmgwai9lRWtzeElvckF4WWxOeHdiWm12bWVtY2tjY1RqNDVNOXRz?=
- =?utf-8?B?dTZjSzZRdTI2ek45ZkowaGpPenE3ZUpHYXpYR3NOaE8xS1RHdXRVVWwvcTZZ?=
- =?utf-8?B?d0g0VTJCRC81L0ljNnhJZ2JvbGRMVnZ3Um93amdWSWd2bWVseE9DVTZ3MGY1?=
- =?utf-8?B?WXpSMkg2RUYxV0YzNVFOVkxYb095SEoxcjZTN0Z0TCt3eXlaMVZyb2k3L0ZR?=
- =?utf-8?B?Z0Yxc21YRXFRYTc2dGNMSVFYQjE1K3ZuTDh4SDFBa21lTlUyODFONkxxaWR6?=
- =?utf-8?B?SUw0cFhHN0sySDA5RFc4eXU4ZzZpN0FCdzRGTVYwVkZRaHJabXFRdERZUE5W?=
- =?utf-8?B?cEVBK0d5a2IrNlRnY3FueXd4MzNpUDRGUUNxdmY0bHF2NExpLzQyay82blBM?=
- =?utf-8?B?MjdkVzdQREUwZ0IyamdCUktnVCt6MHNxNnZwWU1hZ29Udm4wZ0loSzIrMGdD?=
- =?utf-8?B?MlQ2cURlOEpQTWRob1MrTkdCNWpWT0tLL2g5VXVQVjFiRXVGaVJmSWZyN0dO?=
- =?utf-8?B?T1lad1V5SFNLVWgxTkt5ZFo0M21IYkF6Rm1ZVnIxdG1sM1JPZWxCZGFTWE02?=
- =?utf-8?B?RGgwUTMvbFYwcjVobC9YSjZubjF6N2gwMkE2Zk04SEUwc1NYVExRa29HU3J1?=
- =?utf-8?B?VzFWOEg4MEYyeGUrTmtkQ3UzWjBFWjI3aE5LM1VDS1I0YW9nQWxVaDc2NDJ3?=
- =?utf-8?B?VGpMOXFBaS91NktWWU9TdWRqcmk5Y1Nnd0t4SXAxV3FtWkFLMTVnYzcxQWZB?=
- =?utf-8?B?bXRXOWg1ZHdzM1E0bmZkRFAwS2taYkNIdWVwUFZ4M1p1RDJ4Zis1TUJaK0Fp?=
- =?utf-8?B?ZVJ1ZE9RbXRydFlvMGNLNE1jOGlnTlNSVWlQM0ZtN0N5ZzNJTit1NkZYcDZ2?=
- =?utf-8?B?cUhlLzVoSmpVWkI0NStKWlJWcDR4eFJtelZCV3dvbkR3OUNCU3M0OVUxWkVa?=
- =?utf-8?B?ejJITEUxYm56SmJCQnQ0ek9yTG9TZzI5cyswbDFVSk5yMmVBNzBwTlhSWXkx?=
- =?utf-8?B?RUE0WGE2NE1BL2RnblpycE5vS3k1OFpERkdSMkdUSHNFWEhNKzBTMlNMa2VY?=
- =?utf-8?B?VUFPZkNTZkFqT0xGZFNDak81bHB5ZFJkTUtPOW03Mi9KSVZBcXdmcXl2UEVr?=
- =?utf-8?B?L0E9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	aGWSEChoz3QlDMbSaTZ/QF0DJmDKXVILUXCAHRWL0C+zLwXdHw2vJ7g7BWYyl3ypA30g9BBtsXIYEVQuXxwlCpqKG3mvz/K/bmXHfHFvD5EQVKMHRwIlZMD61nAxNqXQwRwEpB/o2IFbN0jWWh86tCBenwvluxXHuaW1NfdMQTc82bdjQ8ps7Tz8Z5hDu9/oIu2MPj3IiqOO+ncNzr87pf9uta7mvxUyyIIS8aFSHQAUpZoEtnao+sjYCWn7Y5NhWaFJF6MyJl3cZceFsRIfJb38BeuEHBGOzA5nWU6ntsyfoqfD8gsI6Wi+EpHdPL4JP/VePvegSq0/Wahj1E+5i0VTbjPiQK0+LCV8Ij9adkSkP7jpcC0NkmWuRTBLm5eIMZU9NPvXISPR/Cc4oGasbih+OdGTdWnUwdLhbymRwzawbAbTJkMU6NDDTlDKog1sBnBGxChg/WEJFj1Su1g+U6Ep9xEbZcvEQrdvc9Z8lTAWzp1m5GXRKt0cCgAvPAyxy598EAZ4A57DRy+/uXr/k7WK/alP/JwKh5rf4N8Jm2dSjL2wPCXofDQalEkE0yRtckxpdehU34tRtdVoRsf1TSj2qVt5CroKU34irmS5rp0=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9a5d0809-6f18-4e85-26d0-08dcdce43243
-X-MS-Exchange-CrossTenant-AuthSource: BLAPR10MB5009.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2024 21:59:43.5434
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eOIF4G4kFqzBD9O/Gjl1xJmneg9GX21si4bYIo9pyvh3FgZBtSE5p0ZnPdJo5GkcKgNskkBDSgeE/tNFGt7TfbD3wr3lq2/tjR7ovLOjAHI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB5546
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-24_02,2024-09-24_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
- phishscore=0 mlxscore=0 bulkscore=0 suspectscore=0 malwarescore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2408220000 definitions=main-2409240152
-X-Proofpoint-GUID: D6RwW44MfhvdR3az7Q8NE_drbHwGUXSM
-X-Proofpoint-ORIG-GUID: D6RwW44MfhvdR3az7Q8NE_drbHwGUXSM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240920202141.89446-1-huangwenyuu@outlook.com>
 
-
-
-On 9/24/24 5:40 AM, Igor Mammedov wrote:
-> On Fri, 19 Apr 2024 12:17:01 -0400
-> boris.ostrovsky@oracle.com wrote:
+On Sat, Sep 21, 2024 at 04:21:41AM +0800, Wenyu Huang wrote:
+> From: Wenyu Huang <huangwenyu1998@gmail.com>
 > 
->> On 4/17/24 9:58 AM, boris.ostrovsky@oracle.com wrote:
->>>
->>> I noticed that I was using a few months old qemu bits and now I am
->>> having trouble reproducing this on latest bits. Let me see if I can get
->>> this to fail with latest first and then try to trace why the processor
->>> is in this unexpected state.
->>
->> Looks like 012b170173bc "system/qdev-monitor: move drain_call_rcu call
->> under if (!dev) in qmp_device_add()" is what makes the test to stop failing.
->>
->> I need to understand whether lack of failures is a side effect of timing
->> changes that simply make hotplug fail less likely or if this is an
->> actual (but seemingly unintentional) fix.
+> It's also available for packed ring now.
 > 
-> Agreed, we should find out culprit of the problem.
+> Signed-off-by: Wenyu Huang <huangwenyu1998@gmail.com>
 
 
-I haven't been able to spend much time on this unfortunately, Eric is 
-now starting to look at this again.
+More specifically, what are you trying to address here?
+Which configuration did not work but does now?
 
-One of my theories was that ich9_apm_ctrl_changed() is sending SMIs to 
-vcpus serially while on HW my understanding is that this is done as a 
-broadcast so I thought this could cause a race. I had a quick test with 
-pausing and resuming all vcpus around the loop but that didn't help.
-
-
+> ---
+>  drivers/virtio/virtio_ring.c | 153 +++++++++++++++++++++--------------
+>  1 file changed, 92 insertions(+), 61 deletions(-)
 > 
-> PS:
-> also if you are using AMD host, there was a regression in OVMF
-> where where vCPU that OSPM was already online-ing, was yanked
-> from under OSMP feet by OVMF (which depending on timing could
-> manifest as lost SIPI).
-> 
-> edk2 commit that should fix it is:
->      https://github.com/tianocore/edk2/commit/1c19ccd5103b
-> 
-> Switching to Intel host should rule that out at least.
-> (or use fixed edk2-ovmf-20240524-5.el10.noarch package from centos,
-> if you are forced to use AMD host)
+> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> index be7309b1e860..664a0c40ee05 100644
+> --- a/drivers/virtio/virtio_ring.c
+> +++ b/drivers/virtio/virtio_ring.c
+> @@ -223,7 +223,7 @@ struct vring_virtqueue {
+>  #endif
+>  };
+>  
+> -static struct virtqueue *__vring_new_virtqueue(unsigned int index,
+> +static struct virtqueue *__vring_new_virtqueue_split(unsigned int index,
+>  					       struct vring_virtqueue_split *vring_split,
+>  					       struct virtio_device *vdev,
+>  					       bool weak_barriers,
+> @@ -232,6 +232,15 @@ static struct virtqueue *__vring_new_virtqueue(unsigned int index,
+>  					       void (*callback)(struct virtqueue *),
+>  					       const char *name,
+>  					       struct device *dma_dev);
+> +static struct virtqueue *__vring_new_virtqueue_packed(unsigned int index,
+> +					       struct vring_virtqueue_packed *vring_packed,
+> +					       struct virtio_device *vdev,
+> +					       bool weak_barriers,
+> +					       bool context,
+> +					       bool (*notify)(struct virtqueue *),
+> +					       void (*callback)(struct virtqueue *),
+> +					       const char *name,
+> +					       struct device *dma_dev);
+>  static struct vring_desc_extra *vring_alloc_desc_extra(unsigned int num);
+>  static void vring_free(struct virtqueue *_vq);
+>  
+> @@ -1160,7 +1169,7 @@ static struct virtqueue *vring_create_virtqueue_split(
+>  	if (err)
+>  		return NULL;
+>  
+> -	vq = __vring_new_virtqueue(index, &vring_split, vdev, weak_barriers,
+> +	vq = __vring_new_virtqueue_split(index, &vring_split, vdev, weak_barriers,
+>  				   context, notify, callback, name, dma_dev);
+>  	if (!vq) {
+>  		vring_free_split(&vring_split, vdev, dma_dev);
+> @@ -2064,62 +2073,21 @@ static struct virtqueue *vring_create_virtqueue_packed(
+>  	struct device *dma_dev)
+>  {
+>  	struct vring_virtqueue_packed vring_packed = {};
+> -	struct vring_virtqueue *vq;
+> -	int err;
+> +	struct virtqueue *vq;
+>  
+>  	if (vring_alloc_queue_packed(&vring_packed, vdev, num, dma_dev))
+> -		goto err_ring;
+> -
+> -	vq = kmalloc(sizeof(*vq), GFP_KERNEL);
+> -	if (!vq)
+> -		goto err_vq;
+> -
+> -	vq->vq.callback = callback;
+> -	vq->vq.vdev = vdev;
+> -	vq->vq.name = name;
+> -	vq->vq.index = index;
+> -	vq->vq.reset = false;
+> -	vq->we_own_ring = true;
+> -	vq->notify = notify;
+> -	vq->weak_barriers = weak_barriers;
+> -#ifdef CONFIG_VIRTIO_HARDEN_NOTIFICATION
+> -	vq->broken = true;
+> -#else
+> -	vq->broken = false;
+> -#endif
+> -	vq->packed_ring = true;
+> -	vq->dma_dev = dma_dev;
+> -	vq->use_dma_api = vring_use_dma_api(vdev);
+> -	vq->premapped = false;
+> -	vq->do_unmap = vq->use_dma_api;
+> -
+> -	vq->indirect = virtio_has_feature(vdev, VIRTIO_RING_F_INDIRECT_DESC) &&
+> -		!context;
+> -	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
+> -
+> -	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
+> -		vq->weak_barriers = false;
+> -
+> -	err = vring_alloc_state_extra_packed(&vring_packed);
+> -	if (err)
+> -		goto err_state_extra;
+> -
+> -	virtqueue_vring_init_packed(&vring_packed, !!callback);
+> +		return NULL;
+>  
+> -	virtqueue_init(vq, num);
+> -	virtqueue_vring_attach_packed(vq, &vring_packed);
+> +	vq = __vring_new_virtqueue_packed(index, &vring_packed, vdev, weak_barriers,
+> +					context, notify, callback, name, dma_dev);
+> +	if (!vq) {
+> +		vring_free_packed(&vring_packed, vdev, dma_dev);
+> +		return NULL;
+> +	}
+>  
+> -	spin_lock(&vdev->vqs_list_lock);
+> -	list_add_tail(&vq->vq.list, &vdev->vqs);
+> -	spin_unlock(&vdev->vqs_list_lock);
+> -	return &vq->vq;
+> +	to_vvq(vq)->we_own_ring = true;
+>  
+> -err_state_extra:
+> -	kfree(vq);
+> -err_vq:
+> -	vring_free_packed(&vring_packed, vdev, dma_dev);
+> -err_ring:
+> -	return NULL;
+> +	return vq;
+>  }
+>  
+>  static int virtqueue_resize_packed(struct virtqueue *_vq, u32 num)
+> @@ -2599,7 +2567,7 @@ irqreturn_t vring_interrupt(int irq, void *_vq)
+>  EXPORT_SYMBOL_GPL(vring_interrupt);
+>  
+>  /* Only available for split ring */
+> -static struct virtqueue *__vring_new_virtqueue(unsigned int index,
+> +static struct virtqueue *__vring_new_virtqueue_split(unsigned int index,
+>  					       struct vring_virtqueue_split *vring_split,
+>  					       struct virtio_device *vdev,
+>  					       bool weak_barriers,
+> @@ -2612,9 +2580,6 @@ static struct virtqueue *__vring_new_virtqueue(unsigned int index,
+>  	struct vring_virtqueue *vq;
+>  	int err;
+>  
+> -	if (virtio_has_feature(vdev, VIRTIO_F_RING_PACKED))
+> -		return NULL;
+> -
+>  	vq = kmalloc(sizeof(*vq), GFP_KERNEL);
+>  	if (!vq)
+>  		return NULL;
+> @@ -2662,6 +2627,66 @@ static struct virtqueue *__vring_new_virtqueue(unsigned int index,
+>  	return &vq->vq;
+>  }
+>  
+> +static struct virtqueue *__vring_new_virtqueue_packed(unsigned int index,
+> +					       struct vring_virtqueue_packed *vring_packed,
+> +					       struct virtio_device *vdev,
+> +					       bool weak_barriers,
+> +					       bool context,
+> +					       bool (*notify)(struct virtqueue *),
+> +					       void (*callback)(struct virtqueue *),
+> +					       const char *name,
+> +					       struct device *dma_dev)
+> +{
+> +	struct vring_virtqueue *vq;
+> +	int err;
+> +
+> +	vq = kmalloc(sizeof(*vq), GFP_KERNEL);
+> +	if (!vq)
+> +		return NULL;
+> +
+> +	vq->vq.callback = callback;
+> +	vq->vq.vdev = vdev;
+> +	vq->vq.name = name;
+> +	vq->vq.index = index;
+> +	vq->vq.reset = false;
+> +	vq->we_own_ring = false;
+> +	vq->notify = notify;
+> +	vq->weak_barriers = weak_barriers;
+> +#ifdef CONFIG_VIRTIO_HARDEN_NOTIFICATION
+> +	vq->broken = true;
+> +#else
+> +	vq->broken = false;
+> +#endif
+> +	vq->packed_ring = true;
+> +	vq->dma_dev = dma_dev;
+> +	vq->use_dma_api = vring_use_dma_api(vdev);
+> +	vq->premapped = false;
+> +	vq->do_unmap = vq->use_dma_api;
+> +
+> +	vq->indirect = virtio_has_feature(vdev, VIRTIO_RING_F_INDIRECT_DESC) &&
+> +		!context;
+> +	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
+> +
+> +	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
+> +		vq->weak_barriers = false;
+> +
+> +	err = vring_alloc_state_extra_packed(vring_packed);
+> +	if (err) {
+> +		kfree(vq);
+> +		return NULL;
+> +	}
+> +
+> +	virtqueue_vring_init_packed(vring_packed, !!callback);
+> +
+> +	virtqueue_init(vq, vring_packed->vring.num);
+> +	virtqueue_vring_attach_packed(vq, vring_packed);
+> +
+> +	spin_lock(&vdev->vqs_list_lock);
+> +	list_add_tail(&vq->vq.list, &vdev->vqs);
+> +	spin_unlock(&vdev->vqs_list_lock);
+> +	return &vq->vq;
+> +}
+> +
+>  struct virtqueue *vring_create_virtqueue(
+>  	unsigned int index,
+>  	unsigned int num,
+> @@ -2840,7 +2865,6 @@ int virtqueue_reset(struct virtqueue *_vq,
+>  }
+>  EXPORT_SYMBOL_GPL(virtqueue_reset);
+>  
+> -/* Only available for split ring */
+>  struct virtqueue *vring_new_virtqueue(unsigned int index,
+>  				      unsigned int num,
+>  				      unsigned int vring_align,
+> @@ -2853,12 +2877,19 @@ struct virtqueue *vring_new_virtqueue(unsigned int index,
+>  				      const char *name)
+>  {
+>  	struct vring_virtqueue_split vring_split = {};
+> +	struct vring_virtqueue_packed vring_packed = {};
+>  
+> -	if (virtio_has_feature(vdev, VIRTIO_F_RING_PACKED))
+> -		return NULL;
+> +	if (virtio_has_feature(vdev, VIRTIO_F_RING_PACKED)) {
+> +		vring_packed.vring.num = num;
+> +		vring_packed.vring.desc = pages;
+> +		return __vring_new_virtqueue_packed(index, &vring_packed,
+> +						    vdev, weak_barriers,
+> +						    context, notify, callback,
+> +						    name, vdev->dev.parent);
+> +	}
+>  
+>  	vring_init(&vring_split.vring, num, pages, vring_align);
+> -	return __vring_new_virtqueue(index, &vring_split, vdev, weak_barriers,
+> +	return __vring_new_virtqueue_split(index, &vring_split, vdev, weak_barriers,
+>  				     context, notify, callback, name,
+>  				     vdev->dev.parent);
+>  }
+> -- 
+> 2.43.0
 
-I just tried with latest bits that include this commit and still was 
-able to reproduce the problem.
-
-
--boris
 
