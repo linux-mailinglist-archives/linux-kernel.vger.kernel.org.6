@@ -1,154 +1,209 @@
-Return-Path: <linux-kernel+bounces-337431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34F46984A0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:57:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2411984A0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:57:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 640D428410F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:57:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 422251F22901
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E82411AC427;
-	Tue, 24 Sep 2024 16:57:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BA7A1AC423;
+	Tue, 24 Sep 2024 16:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VrPQLwkT"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UD7ku4q2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5BC1ABEBD
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 16:57:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB571AB6E2
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 16:57:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727197056; cv=none; b=XQMFXfCpSwOqP6wEwI9tFX/IVGTeAmjozxDerWD36AAFO3B0iD/rhby//E6KacJFSARQs2yuYz4c6xNyHw/6iLfndq4SBoWxauo/PRHzr234P4ftrMVyFaRIJih/TITIduCeYqW6fl0TeVxolzXvtQjrjngss3r8S+GDhkUkh+o=
+	t=1727197068; cv=none; b=TkLRvAu/G/TGCH4it1czS1JFU9auDiTFuqY7Nk1IEP2ZyFtwPB8NeU0CkW0xpZw6OiMsGF2ayhmHKVaxWt654RRfWLa6otKe4riupBF/g3otcDReCQqiiVaLmQeU4LLEJ359Mld0CxG+HnPqkGqzNlxWfeyAR6FkgZpqKJ5X7Ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727197056; c=relaxed/simple;
-	bh=bItl/gYVHfFmT4Id2cNUR3ZjWbNemA/mNpGur3LI3no=;
+	s=arc-20240116; t=1727197068; c=relaxed/simple;
+	bh=zstY32M94VZryIVPisbQkcDAiGXynfPJylInEQIvakc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=efvaPecOmZxha/2IpjFlwA8Haggpaq+PiDZzvUtEDhLbuT3EjKla734a6ZPiMBfdx0ff7WkUczF3MlJyTMk/GV4mTgIVgklpetoa1OYg6eHjpaWmmmcjIxhGgNvJrJHtM/eEpIbo2W4+dVS59upzL6S2YoXpdi4dhJP5tJur6K4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VrPQLwkT; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5356aa9a0afso9117093e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:57:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1727197052; x=1727801852; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=w+8VVnFC0UMbLhE2FStB9WxzHe1cGOTS795re4qbfvA=;
-        b=VrPQLwkTLJWDf5A1ZeJRkLu4IRiV1J0qtTctLtyDS78jB10NEP/IFyn6QYqpSGUnb5
-         jwkAsQxXDTUXM4WivzgtYVQmFKVI/Q7SQywvkUlsPjWi/yiBa94+UyGfbst703WVfMoz
-         G4WhqNuIlUnB/010eQSHbW8QJDnCqz2esGdFA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727197052; x=1727801852;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=w+8VVnFC0UMbLhE2FStB9WxzHe1cGOTS795re4qbfvA=;
-        b=CWz5U/xfsrfqQnXcLUzTCNV5FeE4PAXRVFt9cv2thUYoDeJS3krRQi/nLFr7Es/vFT
-         eG8DVUywv728f+qEiS0NxaOFv9GQmDu6GsskHhUKXNlRSMqlFDO0eqWfWdDfGvLdTETi
-         ywgTkvCZKc4w9lAs8S/tYGYguKqUIXHsPUZdePYg2SklDDgbYqClKPmpTUdwtGGpmHXY
-         0LgZJMsCbBE6dQVICoWPwY9KtU8zfzomhSlsnqOkC2CqsHjdbB6isXeJ/xykzS2yKqIf
-         SJ+CQ7qdsm8fkrpWXbG46fbioHeQRmBxlBrgIWHeu66ikxkXk6dHsEgCtAn3ZmfTguVn
-         c3Ow==
-X-Forwarded-Encrypted: i=1; AJvYcCUDDe7fMdmIH5j7WvrJJVKFyw5YYxq3TwB+OufAMNoiiIK1Iak4TqwNpSL4EfJVGAQzffRD8M8jShe9jqc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5CcdE3jQ3gFjpywGsABpSBtcSeQGT4Lty6N02ZLTN1+X1rJFE
-	SCM9aunuX+rqiZnWtuRSNDtpIWjE3UFjTwQLkm0siX+IBpOzSHVFSpZ12Z+y8V32dOgcBnAKPyW
-	5F+zkJA==
-X-Google-Smtp-Source: AGHT+IFS4LimzIZTv8vegFMvU/RvI0HJwR+d29L6S1e/h54V7nJgfXNI/Jq0rQQ9JyhZO6/D0lGsfw==
-X-Received: by 2002:a05:6512:2309:b0:536:5625:511f with SMTP id 2adb3069b0e04-536ac32f109mr11366343e87.45.1727197052164;
-        Tue, 24 Sep 2024 09:57:32 -0700 (PDT)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-537a85f0ffbsm280476e87.115.2024.09.24.09.57.30
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Sep 2024 09:57:30 -0700 (PDT)
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f8ca33ef19so32036521fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:57:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWvIVkTucDG/RFO8j9fiY2acd4SP52PInKgPHwfKH9omnv1b5sGkV02El3945NZzouBwYF69JlWaWyrJQ8=@vger.kernel.org
-X-Received: by 2002:a2e:d01:0:b0:2f7:712d:d08 with SMTP id 38308e7fff4ca-2f916002bf9mr453131fa.23.1727197050351;
- Tue, 24 Sep 2024 09:57:30 -0700 (PDT)
+	 To:Cc:Content-Type; b=cWpM42YdaIBUM2Uxx4nnXRA2ypHuNpLnbRVfyXGktfQaMytlOpv0uN++NMev0CKvB13MTdUBmKRkUYsrAneUqfSEk8rs/jV58V8Eelexs9ARt+RUGZV61O2M2Rk4hJklo8gfTQaIeKXtPkeVqKF7LZWczorHWMYRBqr6bzS8mhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UD7ku4q2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66D3BC4AF0B
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 16:57:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727197068;
+	bh=zstY32M94VZryIVPisbQkcDAiGXynfPJylInEQIvakc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=UD7ku4q29kQJ7PVzhQXRh30OEB/Goe74rsM8Gf0Go+qVGyEpJqnOiFWwGyaeiL/gm
+	 zJa3a3vZ2rlr0jq3FwFJeDxO+a75HCUAqHp50ANw3+YeT9VCBfX0Ge7xV9Py4kvs51
+	 4s9fyrD8Vg2p5IoE/5senBx+mWwAdnMcrdbcu3wrD9EAW9EXfkns2XtKKPaqzmJAjl
+	 67rQZo0fRhjRLE36STM4fT8ShuIrWtwov2cBhbuUVtkl6KMftJGCqQDyuIu7YsN7Xw
+	 Oa/rnUUiqCHzzx/iKgH4LHyKSx4d0jIXss+Qo3QHG0pOrFDdK6wlsHR/994Fuy/bo5
+	 WNPJdMC+tEp/A==
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3a0be4d803eso18179645ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:57:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVf4PYuWz3k+NxaQmg+ak3/VuMRTA7TrATRphlt1IZQGyyZ8bQ3OCFQ3cEw1+OFSWBHlZKAofeeF8GRN1M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9+0W8RFJxpOauuxSKj7hrdSLXy9P4BRnzvH8gd0q9qdpg3GpG
+	pXNyusDu263Ye2Df8R9iduUW0o2cGJT9qT13Kfzq6fcDQDRfPMnstpjELDUsAKMMdpHK4TsZvvQ
+	DadOS51/o0i9hTFScrKPJXLjIQFU=
+X-Google-Smtp-Source: AGHT+IEBtAtiHVV5tAquKBVykVcUtaeiBUT0zkN3jsxHxU4/FsR5cm8OwqgbdapeLQYpCRrEL3xnphhGhBHcYZZhcTY=
+X-Received: by 2002:a05:6e02:178d:b0:39e:6e47:814d with SMTP id
+ e9e14a558f8ab-3a26d6f98bcmr1675855ab.2.1727197067740; Tue, 24 Sep 2024
+ 09:57:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <dtolpfivc4fvdfbqgmljygycyqfqoranpsjty4sle7ouydycez@aw7v34oibdhm>
- <CAHk-=whQTx4xmWp9nGiFofSC-T0U_zfZ9L8yt9mG5Qvx8w=_RQ@mail.gmail.com>
- <6vizzdoktqzzkyyvxqupr6jgzqcd4cclc24pujgx53irxtsy4h@lzevj646ccmg>
- <ZvIHUL+3iO3ZXtw7@dread.disaster.area> <CAHk-=whbD0zwn-0RMNdgAw-8wjVJFQh4o_hGqffazAiW7DwXSQ@mail.gmail.com>
- <CAHk-=wh+atcBWa34mDdG1bFGRc28eJas3tP+9QrYXX6C7BX0JQ@mail.gmail.com> <ZvI4N55fzO7kg0W/@dread.disaster.area>
-In-Reply-To: <ZvI4N55fzO7kg0W/@dread.disaster.area>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 24 Sep 2024 09:57:13 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjNPE4Oz2Qn-w-mo1EJSUCQ+XJfeR3oSgQtM0JJid2zzg@mail.gmail.com>
-Message-ID: <CAHk-=wjNPE4Oz2Qn-w-mo1EJSUCQ+XJfeR3oSgQtM0JJid2zzg@mail.gmail.com>
-Subject: Re: [GIT PULL] bcachefs changes for 6.12-rc1
-To: Dave Chinner <david@fromorbit.com>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, linux-bcachefs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dave Chinner <dchinner@redhat.com>
+References: <daf2370f5456cbf1660bbdc13621559fb3f2f6cc.camel@linux.ibm.com>
+ <Zq1NksrG9blyN-KR@slm.duckdns.org> <e3069da05fb1676f8faad88b9a4dfc4a6cef4175.camel@linux.ibm.com>
+ <Zru5_UmEmWhNaPyo@slm.duckdns.org> <fa56b39990dd0b90f971018f5abb7352c60af3b1.camel@linux.ibm.com>
+ <ZsTwoWJQcnsJhYbe@slm.duckdns.org> <3da12c96daecaa055c478816f5e86c7b44a04d53.camel@linux.ibm.com>
+ <ZszKI2GA-8yparh_@slm.duckdns.org> <Zul6l-S_JulEnDQw@mtj.duckdns.org>
+ <516106abdf5c922ee19dffd9eb69ea3f9e20e54a.camel@linux.ibm.com>
+ <ZvGxlcMwFOmUBfr9@slm.duckdns.org> <CAADnVQ+OYuaS9wYa2_aF8XFo7LcaSKbCeLwfC_z9j1Qe-eV3nw@mail.gmail.com>
+ <ab72231540149a7dd367cbf30d17b12af14c6387.camel@linux.ibm.com>
+In-Reply-To: <ab72231540149a7dd367cbf30d17b12af14c6387.camel@linux.ibm.com>
+From: Song Liu <song@kernel.org>
+Date: Tue, 24 Sep 2024 09:57:36 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW4-rkKVwWeOLhkK5gX5zO0FND+bB4vR4dbT7O1G=ZJajg@mail.gmail.com>
+Message-ID: <CAPhsuW4-rkKVwWeOLhkK5gX5zO0FND+bB4vR4dbT7O1G=ZJajg@mail.gmail.com>
+Subject: Re: [sched_ext/for-6.11]: Issue with BPF Scheduler during CPU Hotplug
+To: Aboorva Devarajan <aboorvad@linux.ibm.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Tejun Heo <tj@kernel.org>, 
+	David Vernet <void@manifault.com>, LKML <linux-kernel@vger.kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, hbathini@linux.ibm.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 23 Sept 2024 at 20:55, Dave Chinner <david@fromorbit.com> wrote:
+On Tue, Sep 24, 2024 at 5:00=E2=80=AFAM Aboorva Devarajan
+<aboorvad@linux.ibm.com> wrote:
 >
-> That's effectively what the patch did - it added a spinlock per hash
-> list.
+> On Tue, 2024-09-24 at 10:03 +0200, Alexei Starovoitov wrote:
+> > On Mon, Sep 23, 2024 at 8:21=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote=
+:
+> > > Hello,
+> > >
+> > > (cc'ing Alexei and Andrii for the BPF part)
+> > >
+> > > On Mon, Sep 23, 2024 at 08:26:32PM +0530, Aboorva Devarajan wrote:
+> > > > Sharing the crash logs observed in PowerPC here for general referen=
+ce, FYI:
+> > > >
+> > > > [ 8638.891964] Kernel attempted to read user page (a8) - exploit at=
+tempt? (uid: 0)
+> > > > [ 8638.892002] BUG: Kernel NULL pointer dereference on read at 0x00=
+0000a8
+> > > > [ 8638.892019] Faulting instruction address: 0xc0000000004e7cc0
+> > > > [ 8638.892038] Oops: Kernel access of bad area, sig: 11 [#1]
+> > > > [ 8638.892060] LE PAGE_SIZE=3D64K MMU=3DRadix SMP NR_CPUS=3D2048 NU=
+MA PowerNV
+> > > > [ 8638.892080] Modules linked in: nf_conntrack_netlink nfnetlink xf=
+rm_user xfrm_algo xt_addrtype
+> > > > br_netfilter xt_CHECKSUM xt_MASQUERADE xt_conntrack ipt_REJECT nf_r=
+eject_ipv4 xt_tcpudp
+> > > >  ip6table_mangle ip6table_nat iptable_mangle iptable_nat nf_nat nf_=
+conntrack nf_defrag_ipv6
+> > > > nf_defrag_ipv4 ebtable_filter ebtables vhost_vsock vmw_vsock_virtio=
+_transport_common ip6tabl
+> > > > e_filter ip6_tables vhost vhost_iotlb iptable_filter vsock bridge s=
+tp llc kvm_hv kvm joydev
+> > > > input_leds mac_hid at24 ofpart cmdlinepart uio_pdrv_genirq ibmpower=
+nv opal_prd ipmi_powernv
+> > > > powernv_flash uio binfmt_misc sch_fq_codel nfsd mtd ipmi_devintf ip=
+mi_msghandler auth_rpcgss
+> > > > jc42 ramoops reed_solomon ip_tables x_tables autofs4 raid10 raid456=
+ async_raid6_recov async
+> > > > _memcpy async_pq async_xor async_tx raid1 raid0 dm_mirror dm_region=
+_hash dm_log mlx5_ib ib_uverbs
+> > > > ib_core mlx5_core hid_generic usbhid hid ast i2c_algo_bit drm_shmem=
+_helper drm_kms_hel
+> > > > per vmx_crypto drm mlxfw crct10dif_vpmsum crc32c_vpmsum psample tls=
+ tg3 ahci libahci
+> > > > drm_panel_orientation_quirks
+> > > > [ 8638.892621] CPU: 62 UID: 0 PID: 5591 Comm: kworker/62:2 Not tain=
+ted 6.11.0-rc4+ #2
+> > > > [ 8638.892663] Hardware name: 8335-GTW POWER9 0x4e1203 opal:skiboot=
+-v6.5.3-35-g1851b2a06 PowerNV
+> > > > [ 8638.892693] Workqueue: events bpf_prog_free_deferred
+> > > > [ 8638.892735] NIP:  c0000000004e7cc0 LR: c0000000004e7bbc CTR: c00=
+00000003a9b30
+> > > > [ 8638.892798] REGS: c000000ea4cbf7f0 TRAP: 0300   Not tainted  (6.=
+11.0-rc4+)
+> > > > [ 8638.892862] MSR:  9000000000009033 <SF,HV,EE,ME,IR,DR,RI,LE>  CR=
+: 42a00284  XER: 00000000
+> > > > [ 8638.892915] CFAR: c0000000004e7bb8 DAR: 00000000000000a8 DSISR: =
+40000000 IRQMASK: 1
+> > > > [ 8638.892915] GPR00: c0000000004e7bbc c000000ea4cbfa90 c0000000028=
+37f00 0000000000000005
+> > > > [ 8638.892915] GPR04: 0000000000000015 0000000000000009 00000000000=
+00009 c000000004840b00
+> > > > [ 8638.892915] GPR08: ffffffffffffffff 00000000ffffe000 fffffffffff=
+fffff 000001937b55db50
+> > > > [ 8638.892915] GPR12: 0000000000200000 c000007ffdfac300 c0000000031=
+b1fc8 0000000000010000
+> > > > [ 8638.892915] GPR16: c00000000000018e 000000007fffffff 00000000000=
+00000 000000000000e1c0
+> > > > [ 8638.892915] GPR20: 61c8864680b583eb 0000000000000000 00000000000=
+00000 00000000000de1d5
+> > > > [ 8638.892915] GPR24: 0000000000000000 c000000003da4408 c000000003d=
+a4400 c000000003da43f8
+> > > > [ 8638.892915] GPR24: 0000000000000000 c000000003da4408 c000000003d=
+a4400 c000000003da43f8
+> > > > [ 8638.892915] GPR28: 0000000000000000 0000000000000000 00000000000=
+00000 c000000ea4cbfa90
+> > > > [ 8638.893350] NIP [c0000000004e7cc0] walk_to_pmd+0x80/0x240
 
-Yeah, no, I like your patches, they all seem to be doing sane things
-and improve the code.
+With "BUG: Kernel NULL pointer dereference on read at 0x000000a8" (from abo=
+ve),
+it appears bpf_arch_text_invalidate() is racing with
+text_area_cpu_down_mm(), which
+sets cpu_patching_context.mm to NULL?
 
-The part I don't like is how the basic model that your patches improve
-seems quite a bit broken.
+Am I going in the right direction?
 
-For example, that whole superblock list lock contention just makes me
-go "Christ, that's stupid". Not because your patches to fix it with
-Waiman's fancy list would be wrong or bad, but because the whole pain
-is self-inflicted garbage.
+> > > > [ 8638.893380] LR [c0000000004e7bbc] __get_locked_pte+0x4c/0xd0
+> > > > [ 8638.893398] Call Trace:
+> > > > [ 8638.893407] [c000000ea4cbfa90] [c000000ea4cbfb20] 0xc000000ea4cb=
+fb20 (unreliable)
+> > > > [ 8638.893429] [c000000ea4cbfaf0] [c0000000004e7bbc] __get_locked_p=
+te+0x4c/0xd0
+> > > > [ 8638.893457] [c000000ea4cbfb40] [c0000000000b1dd0] patch_instruct=
+ions+0x130/0x630
+> > > > [ 8638.893500] [c000000ea4cbfc10] [c000000000123180] bpf_arch_text_=
+invalidate+0x80/0xd0
+> > > > [ 8638.893552] [c000000ea4cbfc60] [c0000000003a7508] bpf_prog_pack_=
+free+0x138/0x2f0
+> > > > [ 8638.893584] [c000000ea4cbfd10] [c0000000003a7e38] bpf_jit_binary=
+_pack_free+0x48/0xa0
+> > > > [ 8638.893617] [c000000ea4cbfd50] [c000000000123258] bpf_jit_free+0=
+x88/0x100
+> > > > [ 8638.893667] [c000000ea4cbfd90] [c0000000003a9d70] bpf_prog_free_=
+deferred+0x240/0x280
+> > > > [ 8638.893725] [c000000ea4cbfde0] [c0000000001a6828] process_schedu=
+led_works+0x268/0x520
+> > > > [ 8638.893767] [c000000ea4cbfee0] [c0000000001a9ed0] worker_thread+=
+0x3f0/0x590
+> > > > [ 8638.893809] [c000000ea4cbff80] [c0000000001b37b0] kthread+0x1a0/=
+0x1c0
+> > > > [ 8638.893862] [c000000ea4cbffe0] [c00000000000d030] start_kernel_t=
+hread+0x14/0x18
+> > > > [ 8638.893913] Code: 3cc20157 3b63c4f8 3b45c500 3929c510 3b26c508 3=
+940ffff e87b0000 e8ba0000
+> > > > 81290000 e8d90000 38830010 7d494830 <e87d00a8> 7ce42a14 7d2948f8 7d=
+073214
+> > > > [ 8638.894003] ---[ end trace 0000000000000000 ]---
+> > > > [ 8639.098185] pstore: backend (nvram) writing error (-1)
+> > > > [ 8639.098205]
+> > > > [ 8639.098215] note: kworker/62:2[5591] exited with irqs disabled
+> > > > [ 8798.806603] ------------[ cut here ]------------
+> > > > [ 8798.806631] WARNING: CPU: 62 PID: 3769 at kernel/kthread.c:76 kt=
+hread_set_per_cpu+0x40/0xd0
 
-And it's all historically very very understandable. It wasn't broken
-when it was written.
+This warning also seems relevant. Are running the work queue on a cpu
+that is going away?
 
-That singly linked list is 100% sane in the historical context of "we
-really don't want anything fancy for this". The whole list of inodes
-for a superblock is basically unimportant, and it's main use (only
-use?) is for the final "check that we don't have busy inodes at umount
-time, remove any pending stuff".
-
-So using a stupid linked list was absolutely the right thing to do,
-but now that just the *locking* for that list is a pain, it turns out
-that we probably shouldn't use a list at all. Not because the list was
-wrong, but because a flat list is such a pain for locking, since
-there's no hierarchy to spread the locking out over.
-
-(We used to have that kind of "flat lock" for the dcache too, but
-"dcache_lock" went away many moons ago, and good riddance - but the
-only reason it could go away is that the dcache has a hierarchy, so
-that you can always lock just the local dentry (or the parent dentry)
-if you are just careful).
-
-> [ filesystems doing their own optimized thing ]
->
-> IOWs, it's not clear to me that this is a caching model we really
-> want to persue in general because of a) the code duplication and b)
-> the issues such an inode life-cycle model has interacting with the
-> VFS life-cycle expectations...
-
-No, I'm sure you are right, and I'm just frustrated with this code
-that probably _should_ look a lot more like the dcache code, but
-doesn't.
-
-I get the very strong feeling that we should have a per-superblock
-hash table that we could also traverse the entries of. That way the
-superblock inode list would get some structure (the hash buckets) that
-would allow the locking to be distributed (and we'd only need one lock
-and just share it between the "hash inode" and "add it to the
-superblock list").
-
-But that would require something much more involved than "improve the
-current code".
-
-               Linus
+Thanks,
+Song
 
