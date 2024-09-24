@@ -1,126 +1,91 @@
-Return-Path: <linux-kernel+bounces-337452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E353984A4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:28:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB096984A5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:38:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FE9A286D13
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:28:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DB7A2861C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33AB1AC43E;
-	Tue, 24 Sep 2024 17:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="txKUjW7Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFAF31AC42A;
+	Tue, 24 Sep 2024 17:38:09 +0000 (UTC)
+Received: from mail-out.m-online.net (mail-out.m-online.net [212.18.0.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6E01AAE13;
-	Tue, 24 Sep 2024 17:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BED1DFFB
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 17:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.18.0.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727198920; cv=none; b=GAH7iq192f8PRnHiILoOHMrL36xa3UMU7Xo/wbyISkkBlwdId2XktcOCnLzDysDRefAZx+T6heX1NRLrJmkze5EAA8syk7mxmd4TShKex7UvQswiCZfcP9A0OpxDKvC7IulaD42WUqAXfNM5j2X8nBYKIxYJ9EvZ4XJpBtNX6B8=
+	t=1727199489; cv=none; b=FUX0XYqiwKD9MRBlmkhaIvkT1M4ZFaRZPUoo46SXCczwRtVXZaj9ldh6FWOGwzCiI8d+XO3r/kHzeO6rnZsFBeUk93gfon0hNgtQqrlDrt4O+uFgUBwyd1Kn1EJro9oAzr093o+PoE40jM54EPz52q7+HXNfwWTXgxQAlXiLa4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727198920; c=relaxed/simple;
-	bh=4rXJ3Ug+ChU6kKShl/7blrYhseVKhyBFt5ThHO8h0kA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=eCtuBUMWfAK2003ekKikSCBvVwycm/dqXBbSPcWSoaGbYs+U3qkA+xzbzNZ3OeZlrfmr7nX7QQZaVqTF+BKMbjuaNg94ppfPOyHPVchR9vjFXxiv3WjEWkg9Pof8Ek56W85hf0nAUiT5wKEb5huq98e3wlcNpnZJJCQdzqQIQQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=txKUjW7Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A659C4CEC4;
-	Tue, 24 Sep 2024 17:28:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727198919;
-	bh=4rXJ3Ug+ChU6kKShl/7blrYhseVKhyBFt5ThHO8h0kA=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=txKUjW7ZFaa57Y6T7xvWAGy+68LYLuEtBWkcjxgTdO+uNx6x8nIW2unJS5ndQRkn9
-	 r+HTaW1bh3s/6eUe6SSUvRj81shRjS5HH2qySLXrV9xi+zreNAf3oNVjY5W9jEAtJc
-	 5Q4c6ohu8TAUr55WmgAj8MW3+kIm2X7An9OQLytpl3+WBKwUBvhhmLj92ddeBTlNYD
-	 I/4jmj8PHnbrK2GHK95jPJZUR6OoQiCHG7IWGTwG5tRwCcexY4Gpb/bxa1THqFml4/
-	 35hW7/IjaxbA+UKnEylOrUFdLGNmw0lL+Fjs1D7v1/diUkVaZU0xiCVrbStx6hGjrY
-	 0mAj2StFkCxTQ==
+	s=arc-20240116; t=1727199489; c=relaxed/simple;
+	bh=N9W6KE7gEwcnjbOHS4aFtMGjuhz3vA/5voXxNGyHbus=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FJ4fYZbyhYx6/aNW7eItB0xGQyR13YXy4T57ZMTRSZIEEsHcyvabXyjLiQXacJypqB5hetUlXf0F7LTm485EapIT/3mlDWMR7J4wh3/7Nh9dvVIM5e/wrfP7v8WPxIQnB9lknzx3yn8LmXaoUo2PnIQWUkC+L+NbU6A2eCUSNmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=nefkom.net; arc=none smtp.client-ip=212.18.0.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nefkom.net
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+	by mail-out.m-online.net (Postfix) with ESMTP id 4XCn176mvRz1sB7f;
+	Tue, 24 Sep 2024 19:29:47 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.68])
+	by mail.m-online.net (Postfix) with ESMTP id 4XCn174F82z1qqlS;
+	Tue, 24 Sep 2024 19:29:47 +0200 (CEST)
+X-Virus-Scanned: amavis at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+ by localhost (dynscan1.mail.m-online.net [192.168.6.68]) (amavis, port 10024)
+ with ESMTP id eiIBmgS3VUyq; Tue, 24 Sep 2024 19:29:46 +0200 (CEST)
+X-Auth-Info: /EBdu7j+LPwEP8cbuGwU99idD/PbqmRwkq94ZtujynXb6g97VQOYiS5cz/OwqWDQ
+Received: from igel.home (aftr-62-216-205-79.dynamic.mnet-online.de [62.216.205.79])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.mnet-online.de (Postfix) with ESMTPSA;
+	Tue, 24 Sep 2024 19:29:46 +0200 (CEST)
+Received: by igel.home (Postfix, from userid 1000)
+	id 6DAC22C19CD; Tue, 24 Sep 2024 19:29:46 +0200 (CEST)
+From: Andreas Schwab <schwab@linux-m68k.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Tony Ambardar <tony.ambardar@gmail.com>,  Daniel Borkmann
+ <daniel@iogearbox.net>,  Miguel Ojeda <ojeda@kernel.org>,  Jiri Olsa
+ <jolsa@kernel.org>,  Andrew Morton <akpm@linux-foundation.org>,  Arnd
+ Bergmann <arnd@arndb.de>,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] compiler-gcc.h: Disable __retain on gcc-11
+In-Reply-To: <71d8f8448d29c3ce5a7fd883e56c0edeb2f4106b.1727185783.git.geert+renesas@glider.be>
+	(Geert Uytterhoeven's message of "Tue, 24 Sep 2024 15:55:20 +0200")
+References: <71d8f8448d29c3ce5a7fd883e56c0edeb2f4106b.1727185783.git.geert+renesas@glider.be>
+X-Yow: Don't hit me!!  I'm in the Twilight Zone!!!
+Date: Tue, 24 Sep 2024 19:29:46 +0200
+Message-ID: <87bk0d2c51.fsf@igel.home>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 24 Sep 2024 20:28:35 +0300
-Message-Id: <D4EOWZYNG3AS.1NW958Y0FK6NS@kernel.org>
-Cc: <roberto.sassu@huawei.com>, <mapengyu@gmail.com>, "Mimi Zohar"
- <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, "Peter Huewe" <peterhuewe@gmx.de>, "Jason
- Gunthorpe" <jgg@ziepe.ca>, <keyrings@vger.kernel.org>,
- <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 0/5] Lazy flush for the auth session
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, <linux-integrity@vger.kernel.org>
-X-Mailer: aerc 0.18.2
-References: <20240921120811.1264985-1-jarkko@kernel.org>
- <D4D05FKB9VSG.33COYTJHUX6EM@kernel.org>
- <c26a295d96b14173b5693c5933e92bbda84764cc.camel@HansenPartnership.com>
- <D4ENNN25NKBE.87NXHTTEWZY@kernel.org>
- <19a242eeabaa72dcc159c9c24fb412e3f68f8e7e.camel@HansenPartnership.com>
- <D4ENT15WZFRI.HA0FFVBWVISI@kernel.org>
- <D4EOVMA9YR3W.1X1ARMW6APFPP@kernel.org>
-In-Reply-To: <D4EOVMA9YR3W.1X1ARMW6APFPP@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 
-On Tue Sep 24, 2024 at 8:26 PM EEST, Jarkko Sakkinen wrote:
-> On Tue Sep 24, 2024 at 7:36 PM EEST, Jarkko Sakkinen wrote:
-> > On Tue Sep 24, 2024 at 7:33 PM EEST, James Bottomley wrote:
-> > > On Tue, 2024-09-24 at 19:29 +0300, Jarkko Sakkinen wrote:
-> > > > On Tue Sep 24, 2024 at 4:48 PM EEST, James Bottomley wrote:
-> > > [...]
-> > > > > Patch 3 is completely unnecessary: the null key is only used to
-> > > > > salt the session and is not required to be resident while the
-> > > > > session is used (so can be flushed after session creation)
-> > > > > therefore keeping it around serves no purpose once the session is
-> > > > > created and simply clutters up the TPM volatile handle slots. (I
-> > > > > don't know of a case where we use all the slots in a kernel
-> > > > > operation, but since we don't need it lets not find out when we g=
-et
-> > > > > one).=C2=A0 So I advise dropping patch 3.
-> > > >=20
-> > > > Let's go this through just to check I'm understanding.
-> > > >=20
-> > > > Holding null key had radical effect on boot time: it cut it down by
-> > > > 5 secons down to 15 seconds:
-> > > >=20
-> > > > https://lore.kernel.org/linux-integrity/CALSz7m1WG7fZ9UuO0URgCZEDG7=
-r_wB4Ev_4mOHJThH_d1Ed1nw@mail.gmail.com/
-> > > >=20
-> > > > Then in subsequent version I implemented lazy auth session and boot
-> > > > time went down to 9.7 seconds.
-> > > >=20
-> > > > So is the point you're trying to make that since auth session is=20
-> > > > already held as long as we can and they flushed in synchronous
-> > > > point too, I can just as well drop patch 3?
-> > >
-> > > Yes, because the null key is only used in session generation which is
-> > > now lazy, it adds or subtracts nothing from the timings.  When you're
-> > > forced to flush the session, the null key goes too, so you again have
-> > > to restore it from the context.  When you can keep the session you
-> > > don't need the null key because you're not regenerating it.
-> >
-> > Yeah, OK, then we're in sync with this. It's evolutionary cruft.
-> >
-> > Just had to check that the logic matches how I projected your earlier
-> > comment because these are sensitive changes.
+On Sep 24 2024, Geert Uytterhoeven wrote:
+
+> All my gcc-11 compilers (Ubuntu 11.4.0-1ubuntu1~22.04) claim to support
+> the __retain__ attribute, but only riscv64-linux-gnu-gcc-11 and
+> x86_64-linux-gnu-gcc-11 (not x86_64-linux-gnux32-gcc-11!) actually do.
+> The arm-linux-gnueabi-gcc-11.5.0 compiler from kernel.org crosstool
+> fails in the same way:
 >
-> I'm definitely going keeep 1/5 and 2/5 as they are still bug fixes.
+>     error: ‘retain’ attribute ignored [-Werror=attributes]
 >
-> So they will appear in v6 unchanged and perf fixes (which are not
-> functional fixes) should not be built on top of broken code.
+> All my gcc-12 compilers seem to support the attribute.
 
-And 3/5 is actually required because it saves of doing flush during
-the boot if nothing else.
+That ultimately depends on binutils support for SHF_GNU_RETAIN (2.36+).
 
-We are wasting more time so I don't want to waste it for nothing.
-
-BR, Jarkko
+-- 
+Andreas Schwab, schwab@linux-m68k.org
+GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
+"And now for something completely different."
 
