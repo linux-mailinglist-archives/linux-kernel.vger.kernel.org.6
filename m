@@ -1,210 +1,217 @@
-Return-Path: <linux-kernel+bounces-336506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC1F2983B9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 05:34:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 869D9983B9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 05:41:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E76EB2276E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 03:34:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60AC91C22070
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 03:41:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC4238DE0;
-	Tue, 24 Sep 2024 03:34:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B3CC1BC20;
+	Tue, 24 Sep 2024 03:41:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="YUpd9d/J"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="E7jlnefV"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2054.outbound.protection.outlook.com [40.107.212.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67CA11BC3F
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 03:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727148860; cv=none; b=Z/S3SXL5IoukUPOQRkfYF3qezoTepDON4+FEIkWz1SpMIcquxgwSpsaR9SXEihIjPb2TQFLHW/+GLq6Eng9Y616w7uUtBt7+2Ff15J1PUn0UTjsELwE9VFXNiv3bayqic69Cxjdj5dXXNFrbURlY/pic8BJxmHCn75hLLKDMofQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727148860; c=relaxed/simple;
-	bh=z1dOkhvrMWny0ohbL42mv6n+7Xdf2nXp1JIvTFKjenw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CZfyuaGuFD1IyigxXdsqhG5sajuIAT+6ck89iamm/FRqIHQesRROprC8xqxwrwqdvMj8PwVmgG3FTXkn14z3xaRlQZVcoxQT4tLZ2IbmUWx3aix9RYTgkt28XhhnlSlmWIUg/7GSjx1g4hE80xXIJxzg4phxGFhk/Z/0IlvQyhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=YUpd9d/J; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2054feabfc3so44918665ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 20:34:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1727148858; x=1727753658; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4/SKj4lWI1yJlZOtC07mR6A3SxW5HcZiLXldmOIyxwo=;
-        b=YUpd9d/JlzZtdSZt+6CIO3OiWz7shf2HDWMi8QMtLoPNe1QbAfHjHmAgBjrtq7ypQJ
-         GY6SBxFCJDUpcxV1rv+OOwQYS3XVjV4ffuyZmaAp54hx3SyTOCG6zukb691Tjh27pk4Q
-         jsctXYtIm4s6kdvIfLfyMZ/vCBuJJgtxMysNWujULBltquRUYw2m6Sz8faOHRVaucI55
-         3NHqhp3T+RYRCYPeir7bfZDfSTWKQsaVw5KLZ32i5jMwfF/gH+PTCTwVl7XuOTVFPUMr
-         /Ys3oI+fq25fEldvQOogVZaqRm37fXiBvA11LSy2x2ZOhIVgWfUMe8eP1Bbw9Nz3v9FQ
-         fcoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727148858; x=1727753658;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4/SKj4lWI1yJlZOtC07mR6A3SxW5HcZiLXldmOIyxwo=;
-        b=DpJQ+F1IdaA8jq5vKV60GmBR/CCyK4ZWt+/Nmub2wRm+GbJJUztGHpCZ6ZFUUqAw8j
-         vSwFLfKv+bM4+znnHoYxsh72gkpDrlF5J6TR1RAH0YDHe/IKxvrt9iVPpZSbqJ3aQI3j
-         lTv5xlv6UgR/Vsj4R607c2IJV8JwNZDBQS3VrnWXTHlGGT0xPWX0QCzyeWlSy9M2fDv2
-         GI7OGIo+2gdShMrEs/8CxYzMnrzjDLju5dfaM19qAjHph70CQhYHQzwZfYQFql54p2cT
-         +bN5PjEpXytPfZXiUnho0Ogw8pV63sRCzvi1rEikdg86LxN7xMEas9C3i8maVD8NUsNv
-         voXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvEuyXsDU0mg4xsS0diDUG+7DjlEf57TYnyj+enSDrPi/kV4IdPSNq6PADyzhYSGqVS2iib5ma+y91y8A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIXVKQ8+OqFUBrqf+rlvqw5SMHy4u1fLkg5/X4ji0N7NpxPW7b
-	fgEanodzkjrhEsUx9gwPkpsPzCN9R2fMut7/71Azs5HELV93NHeZttcPOlK/mwpVvNX691q9yrR
-	a
-X-Google-Smtp-Source: AGHT+IH3lRAeJYZlmh0xwaPd9RsTWL2j6QkCXJrNFRv9mB3OVeKtUOXeyHBewN2Wk8kyVcvwOLtk2Q==
-X-Received: by 2002:a17:902:d2d1:b0:205:40a6:115a with SMTP id d9443c01a7336-208d9872fc8mr201072425ad.48.1727148857727;
-        Mon, 23 Sep 2024 20:34:17 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af16e0435sm2435535ad.13.2024.09.23.20.34.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 20:34:17 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sswJa-009GFU-0W;
-	Tue, 24 Sep 2024 13:34:14 +1000
-Date: Tue, 24 Sep 2024 13:34:14 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
-Subject: Re: [GIT PULL] bcachefs changes for 6.12-rc1
-Message-ID: <ZvIzNlIPX4Dt8t6L@dread.disaster.area>
-References: <dtolpfivc4fvdfbqgmljygycyqfqoranpsjty4sle7ouydycez@aw7v34oibdhm>
- <CAHk-=whQTx4xmWp9nGiFofSC-T0U_zfZ9L8yt9mG5Qvx8w=_RQ@mail.gmail.com>
- <6vizzdoktqzzkyyvxqupr6jgzqcd4cclc24pujgx53irxtsy4h@lzevj646ccmg>
- <ZvIHUL+3iO3ZXtw7@dread.disaster.area>
- <CAHk-=whbD0zwn-0RMNdgAw-8wjVJFQh4o_hGqffazAiW7DwXSQ@mail.gmail.com>
- <74sgzrvtnry4wganaatcmxdsfwauv6r33qggxo27yvricrzxvq@77knsf6cfftl>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0501B85D0
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 03:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727149262; cv=fail; b=nLH/qzDXNgkSP5h+NlXp7Gez7wMFst/I/elN8gPFyVHYwtuGSF/fsh8/6/HvKtkn/wZv3HXBOzutQCKELHn8RP8o5T400tSj0oF8itE6ydPN85g+HqK7NK7Er1+Syni8rU9Y81R5dO7f6ZFpN2n2RylJh4gSa05Mco6hI7YF+9g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727149262; c=relaxed/simple;
+	bh=geQ1TIW+ncIPRNsTshQvW2plQXmZ7tgVXGwEAispYCY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=j5UBZaR2DrF/BKz9YsDhdTSHXbUHQchzaETcmCX08Uu1LBd7SSquvOpL8R96D+9U+Z5uWoeRl3zqmf3M7dRyQnaa4DRCrgOzf4OIzVE0CPkyyv4whuLVja/8KVvTvKqQgDWKEqbraIYAAvjJaBS3TieMMqU6y/HJXXQhoo6PWO8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=E7jlnefV; arc=fail smtp.client-ip=40.107.212.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=G3VGv/iBGAZJ8CLeme21H8yXkylR8U2arA19GW3gf/lZkmurGOaZzuiVr8PzAY/nivPUI4k9hMZgSQOFVbPV0WFCx22vTbONrK8BD2UFgHeaL/wfkVr6CqZKl2y/s9+1EhVY/vfmrnvo4SUImdZooQK+IDC9Ow/twcqb4oMg9QuK7RIiMBAIm2gSl+XN9ecqJJWh6v1uZSb5p21E46BFUDznCoqYjLBj0NJpNHIYgbz4qVYFUkoaeB/RVHUZboKRgU+pJ2at60laTImiBNojDYlnKtZrlq3Mg08vTwLYsKBO5yM3qFyL5JBvoviCJA+cavUUa7o2lXjaFoxHtvQ2Ew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=isHh1p9hDN5fR/PrBnjH2zkk1ngv1KfEE87sjsas5f0=;
+ b=hfTqqaSmvoRG0ieWFy50Iu7bpSuDkntpJq4KAYraGhw8EllZwt1IlLUe34A9xmtTxuNPeVPplviYhnuhrrCiZ5pwqpnM2RA/PRy8npl/auRPyRuhwYkaHkvpzmeMp/rSw+ORxRkYw/HcKuHtF+gGcBeGkFba0xu2N26zk/jF7UObW5htA/ZPsMUtfojYK77P3n3bwT18RFcrxcEX7WMLVrVdnW88RpmtETuJxVMCU/+tJ229R7x8s32odjueh4mPu61O9DWRxJ6tdcm9AHEHWutY+O9QTZo4sSJJnqTiSznBE0P+CRwj1z9jGVuzkV+5n1frjgISQklMU9APCyacMw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=isHh1p9hDN5fR/PrBnjH2zkk1ngv1KfEE87sjsas5f0=;
+ b=E7jlnefVPvtrBjYh7+FbH+vxmwCL/YLGM5DpZVJ8OLA8cNtrAFVm0hnaqq+HSMaENu/jxVv8EFrz0vvPg1f6wT2ipF7WjemX3FrLgFKtTuCcga4lztrRB4dzQ/MqsnqqJlx8cwPE6NBcGntI1hrtW6cj0GAon5GXcw++/l4z6X4=
+Received: from SJ2PR07CA0005.namprd07.prod.outlook.com (2603:10b6:a03:505::29)
+ by BY5PR12MB4068.namprd12.prod.outlook.com (2603:10b6:a03:203::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.27; Tue, 24 Sep
+ 2024 03:40:56 +0000
+Received: from SJ1PEPF0000231D.namprd03.prod.outlook.com
+ (2603:10b6:a03:505:cafe::1b) by SJ2PR07CA0005.outlook.office365.com
+ (2603:10b6:a03:505::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.27 via Frontend
+ Transport; Tue, 24 Sep 2024 03:40:56 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ1PEPF0000231D.mail.protection.outlook.com (10.167.242.234) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7918.13 via Frontend Transport; Tue, 24 Sep 2024 03:40:56 +0000
+Received: from [10.136.36.144] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 23 Sep
+ 2024 22:40:05 -0500
+Message-ID: <3e6fdedc-a87c-ff8a-a75c-5c1282a122b5@amd.com>
+Date: Tue, 24 Sep 2024 09:10:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <74sgzrvtnry4wganaatcmxdsfwauv6r33qggxo27yvricrzxvq@77knsf6cfftl>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.1
+Subject: Re: [PATCH sched_ext/for-6.12-fixes] Disable SM_IDLE/rq empty path
+ when scx_enabled
+Content-Language: en-US
+To: Tejun Heo <tj@kernel.org>
+CC: <void@manifault.com>, <linux-kernel@vger.kernel.org>,
+	<kernel-team@meta.com>, <sched-ext@meta.com>, <peterz@infradead.org>, Pat
+ Somaru <patso@likewhatevs.io>
+References: <20240920194159.158152-1-patso@likewhatevs.io>
+ <ZvGMjn1Va3aNbieH@slm.duckdns.org>
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <ZvGMjn1Va3aNbieH@slm.duckdns.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF0000231D:EE_|BY5PR12MB4068:EE_
+X-MS-Office365-Filtering-Correlation-Id: d7bd99bf-756c-431b-4fbb-08dcdc4ab2c4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?c3djOWNSbC9TK0JXSlU5Wmw2Q3ZHc3h0azRXemF0V0xHRTBkYnhWdThxemt2?=
+ =?utf-8?B?b1U0Uk5IU1hsQ2VpS09aUG44UE1GbTNHTEtaTU5PK3hYRGlZNGZNQ3RqWmRu?=
+ =?utf-8?B?dkordUhHQ2ZreVR3Uk5nZlVpdU9PdWcwbEorTGdJZDF0UFhLV2pKZitCY1Fa?=
+ =?utf-8?B?YitxT0JsdzY3VE0ycDg0S01TalB4OGZsRmk4SHFXRjdnbmROTzh4VXp4M1JO?=
+ =?utf-8?B?VlpxTGtGMnRSelltMFJjZ1d0WkZsQVVuL05aZ2IxNURZZGg0eldobXpaYmRK?=
+ =?utf-8?B?eHJsT1NFYXFZeTVwQmxDc09iM0RjUUFFdjBOYVpUT1hkWTMrUEFCWEhaWSs2?=
+ =?utf-8?B?ZWlBdTB2ajRBNzd2alVvbnJnWEE2MDlyZ2ZIaGNpU0tBQVpsZE5qek50ODNU?=
+ =?utf-8?B?WnhpK3Z5Z3JrSjRhUWN4dlpNUzZ3TnF2OTBaQSt6TXF1Z2RmSis2ekFRTkcw?=
+ =?utf-8?B?SnM0dmprc2tZc1BXbXZaWUQ4K0ZnUk9NVVdBekxUN1FMWlVRdWl4WWZudWw0?=
+ =?utf-8?B?VWxWWnk0L1FoWGw1YlFITjVwSlZKUU44ZjRCalF2VDBPQzZSb0oyMWxOb1lk?=
+ =?utf-8?B?RE9vZ0tGcFNjMGxWc0k3Qm0rbVcwWXNRN3NvdXBzZlVvb1ZBYW9RVlZRMXA1?=
+ =?utf-8?B?K0dGVHJWdzRIeURBN3NHd1k2a0QxeTFkNWpiYjJDc3pYdXpJYlhKTWVCcXRj?=
+ =?utf-8?B?QmVYRWkxeGFNNnFaR1MxR0h1a2dlc0Nha0hTcURhMU5zV1lBblFOd0JuMW0v?=
+ =?utf-8?B?K1k3THgyUjNVSGNSeFBNVkVuR0lJZFNSRlF4K1Y2TGVlb20zYktsc1lOemNi?=
+ =?utf-8?B?MWVBWXRxVDN0WHpaSmRtMVFUM1lPQXFFVDlvTm4rNlNyU0Z1cThOLyt2ZlpC?=
+ =?utf-8?B?Ujh1TjlwS0xXUm9UYVU4ZmQ4MlAxQXh1Nm1BZnBlQURRMGNKNjJINW5lOU5G?=
+ =?utf-8?B?ajhzRFNjZUpzYUJFSlk0YVVkQnB5dnBaU1pYNUNHb1JxeURpV3FEemdUV0x4?=
+ =?utf-8?B?YUlIazc3ZnVaUkxaWC9nS3pkbUtIVjNxcG45cWRMSHo1UDNzUzY3eFgyYTJO?=
+ =?utf-8?B?S0x5RC8yK1IzMERIRlluSUFGeEhuNm1RMEZMcDlBQ01IQW5hcnYzYXI1YzUy?=
+ =?utf-8?B?QjZqZ3ZQbWZkWi8vR3l6UGpOL2pxT05TWVVscnZkVzloZmlCbXZPSHNJRUJB?=
+ =?utf-8?B?Tzh0RlFibGZ0T0ptcmwzd2hhK0NVdGVGVTZMb0FpczlSR056OWpCK0lnT2Zv?=
+ =?utf-8?B?NWlLUmQ2bS9BTkJVTlZwSmFxZmhyZjdrQWhkem1vc0drTjVwUGg2WSs5QW1Q?=
+ =?utf-8?B?c2hGVWF3YUMySUM3Wmg4bUtMUXBKdlh0R3dIQnpZNGZoRUh3QzN6MU9NWkRP?=
+ =?utf-8?B?S0ZzZkdBaGRKMmxtbzFNM0YvV1RPbXlJQUoyWG9RbkNqTm9McFFqWUpqWFYv?=
+ =?utf-8?B?ODlrSUVmSTVpbW1mYkxrbHlicGw2NVIwWTJiS05nK1d0dG01UEg2cEY0c3Jp?=
+ =?utf-8?B?Uzl2WnFtNW1mbHFjaElpWGkzYUV1ZFMyMU9Ub1VlamVWeWVEUFY4amFSd2Zi?=
+ =?utf-8?B?TUhVL2F4bEQ0ajNxMHV0NGEvUDg0KzhVUkNhQ0MzaW0vT2JqWlpUTzUrREVW?=
+ =?utf-8?B?M1J5NlA3SHhFNDVoN1NobksrNTlCZHVxeitQSkRXWEtoMzkwRUdRbEJwNm10?=
+ =?utf-8?B?WEZ2VFMyMEdZZFBOZzF5Y0l5RFpIKzh5SlhHd0dhMmxLQ21NS2pnNS9ja1li?=
+ =?utf-8?B?VEN6RlRnOHpQc1pwdU0zc0htNm5zWHhCbWMzd3U5a3FXL3RKb2pKTW1XeVlO?=
+ =?utf-8?Q?yifDZx6C9sLLmY4IRQ8j7IlCzPbbe6o2QapAw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2024 03:40:56.3262
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d7bd99bf-756c-431b-4fbb-08dcdc4ab2c4
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF0000231D.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4068
 
-On Mon, Sep 23, 2024 at 10:55:57PM -0400, Kent Overstreet wrote:
-> On Mon, Sep 23, 2024 at 07:26:31PM GMT, Linus Torvalds wrote:
-> > On Mon, 23 Sept 2024 at 17:27, Dave Chinner <david@fromorbit.com> wrote:
-> > >
-> > > However, the problematic workload is cold cache operations where
-> > > the dentry cache repeatedly misses. This places all the operational
-> > > concurrency directly on the inode hash as new inodes are inserted
-> > > into the hash. Add memory reclaim and that adds contention as it
-> > > removes inodes from the hash on eviction.
-> > 
-> > Yeah, and then we spend all the time just adding the inodes to the
-> > hashes, and probably fairly seldom use them. Oh well.
-> > 
-> > And I had missed the issue with PREEMPT_RT and the fact that right now
-> > the inode hash lock is outside the inode lock, which is problematic.
-> > 
-> > So it's all a bit nasty.
-> > 
-> > But I also assume most of the bad issues end up mainly showing up on
-> > just fairly synthetic benchmarks with ramdisks, because even with a
-> > good SSD I suspect the IO for the cold cache would still dominate?
+Hello Tejun,
+
+Just seeking some clarification here; the reasoning to bypass SM_IDLE
+fast-path looks sound otherwise.
+
+On 9/23/2024 9:13 PM, Tejun Heo wrote:
+> Applied to sched_ext/for-6.12-fixes with minor edits:
+> ------ 8< ------
+>  From edf1c586e92675c4e0eb27758fcdb55a56838de1 Mon Sep 17 00:00:00 2001
+> From: Pat Somaru <patso@likewhatevs.io>
+> Date: Fri, 20 Sep 2024 15:41:59 -0400
+> Subject: [PATCH] sched, sched_ext: Disable SM_IDLE/rq empty path when
+>   scx_enabled()
 > 
-> Not for bcachefs, because filling into the vfs inode cache doesn't
-> require a disk read - they're cached in the inodes btree and much
-> smaller there. We use a varint encoding so they're typically 50-100
-> bytes, last I checked.
+> Disable the rq empty path when scx is enabled. SCX must consult the BPF
+> scheduler (via the dispatch path in balance) to determine if rq is empty.
 > 
-> Compare to ~1k, plus or minus, in the vfs inode cache.
+> This fixes stalls when scx is enabled.
 > 
-> Thomas Bertshinger has been working on applications at LANL where
-> avoiding pulling into the vfs inode cache seems to make a significant
-> difference (file indexing in his case) - it turns out there's an xattr
-> syscall that's missing, which I believe he'll be submitting a patch for.
+> Signed-off-by: Pat Somaru <patso@likewhatevs.io>
+> Fixes: 3dcac251b066 ("sched/core: Introduce SM_IDLE and an idle re-entry fast-path in __schedule()")
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> ---
+>   kernel/sched/core.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> But stat/statx always pulls into the vfs inode cache, and that's likely
-> worth fixing.
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index b6cc1cf499d6..43e453ab7e20 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -6591,7 +6591,8 @@ static void __sched notrace __schedule(int sched_mode)
+>   	 */
+>   	prev_state = READ_ONCE(prev->__state);
+>   	if (sched_mode == SM_IDLE) {
+> -		if (!rq->nr_running) {
+> +		/* SCX must consult the BPF scheduler to tell if rq is empty */
 
-No, let's not even consider going there.
+I was wondering if sched_ext case could simply do:
 
-Unlike most people, old time XFS developers have direct experience
-with the problems that "uncached" inode access for stat purposes.
+		if (scx_enabled())
+			prev_balance(rq, prev, rf);
 
-XFS has had the bulkstat API for a long, long time (i.e. since 1998
-on Irix). When it was first implemented on Irix, it was VFS cache
-coherent. But in the early 2000s, that caused problems with HSMs
-needing to scan billions inodes indexing petabytes of stored data
-with certain SLA guarantees (i.e. needing to scan at least a million
-inodes a second).  The CPU overhead of cache instantiation and
-teardown was too great to meet those performance targets on 500MHz
-MIPS CPUs.
+and use "rq->scx.flags" to skip balancing in balance_scx() later when
+__pick_next_task() calls prev_balance() but (and please correct me if
+I'm wrong here) balance_scx() calls balance_one() which can call
+consume_dispatch_q() to pick a task from global / user-defined dispatch
+queue, and in doing so, it does not update "rq->nr_running".
 
-So we converted bulkstat to run directly out of the XFS buffer cache
-(i.e. uncached from the perspective of the VFS). This reduced the
-CPU over per-inode substantially, allowing bulkstat rates to
-increase by a factor of 10. However, it introduced all sorts of
-coherency problems between cached inode state vs what was stored in
-the buffer cache. It was basically O_DIRECT for stat() and, as you'd
-expect from that description, the coherency problems were horrible.
-Detecting iallocated-but-not-yet-updated and
-unlinked-but-not-yet-freed inodes were particularly consistent
-sources of issues.
+I could only see add_nr_running() being called from enqueue_task_scx()
+and this is even before the ext core calls do_enqueue_task() which hooks
+into the bpf layer which makes the decision where the task actually
+goes.
 
-The only way to fix these coherency problems was to check the inode
-cache for a resident inode first, which basically defeated the
-entire purpose of bypassing the VFS cache in the first place.
+Is my understanding correct that whichever CPU is the target for the
+enqueue_task_scx() callback initially is the one that accounts the
+enqueue in "rq->nr_running" until the task is dequeued or did I miss
+something?
 
-So we went back to using coherent lookups once we stopped caring
-about the old SGI HSM SLA requirements back in 2010:
+> +		if (!rq->nr_running && !scx_enabled()) {
+>   			next = prev;
+>   			goto picked;
+>   		}
 
-commit 7dce11dbac54fce777eea0f5fb25b2694ccd7900
-Author: Christoph Hellwig <hch@lst.de>
-Date:   Wed Jun 23 18:11:11 2010 +1000
-
-    xfs: always use iget in bulkstat
-
-    The non-coherent bulkstat versionsthat look directly at the inode
-    buffers causes various problems with performance optimizations that
-    make increased use of just logging inodes.  This patch makes bulkstat
-    always use iget, which should be fast enough for normal use with the
-    radix-tree based inode cache introduced a while ago.
-
-    Signed-off-by: Christoph Hellwig <hch@lst.de>
-    Reviewed-by: Dave Chinner <dchinner@redhat.com>
-
-Essentially, we now always being inodes into cache as fully
-instantiated VFS inodes, and mark them with I_DONT_CACHE so they get
-torn down immediately after we've used them if they weren't already
-cached. (i.e. all accesses are done in a single task context with
-the inode hot in the CPU caches.)
-
-Without the patchset I pointed to, bulkstat maxxes out the VFS inode
-cache cycling on the sb->s_inodes_list_lock at about 700,000
-inodes/sec being cycled through the cache. With that patchset, it
-maxxed out the bandwidth of the NVMe SSDs I was using  at ~7GB/s
-read IO and cycling about 6 million inodes/sec through the VFS cache.
-
-IOWs, we can make the VFS inode cache scale way beyond what most
-users actually need right now.
-
-The lesson in all this?
-
-Don't hack around VFS scalability issues if it can be avoided.
-
-If we fix the problems properly in the first place, then most fs
-developers (let alone users!) won't even realise there was a
-scalability problem in the VFS to begin with. Users will, however,
-notice every inconsistency and/or corruption caused by fs developers
-trying to work around VFS cache limitations...
-
--Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Thanks and Regards,
+Prateek
 
