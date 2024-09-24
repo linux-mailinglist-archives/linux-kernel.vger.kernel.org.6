@@ -1,182 +1,137 @@
-Return-Path: <linux-kernel+bounces-336538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8E5C983C1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 06:44:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D648A983C23
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 06:50:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25AE2B22311
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 04:44:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F4D91C21B99
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 04:50:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB3D31A60;
-	Tue, 24 Sep 2024 04:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF1B335C7;
+	Tue, 24 Sep 2024 04:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/9kk41j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I1SKWmFw"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46D41805A;
-	Tue, 24 Sep 2024 04:44:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B45199B9;
+	Tue, 24 Sep 2024 04:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727153061; cv=none; b=r19Ro7tsHDqOPyIc6fKNi6EfT3h2OSDAkD3sDm5D1fUATAnQdWE70qbR6ANGfOO4s/fFs1EwM6Enaw16ulJ0rwrWzPKjqxBcyYdGfkapC/Iw1iGnQE88CNOmkFh1GDKcTApqd6+uJKA8xrObrrTDzQcFua2OIUp8vXKU15s3XRE=
+	t=1727153409; cv=none; b=ll+byymQPew2UI9jaRCPFP52A2faFre4OqNb/v5hH29NEMw7wE/ujQU83Zf+XJR+Ubr5+7k1oM+uOMZvQsGJCKgdyrKHzJjQ7UTvMoJ6OjA6vrL1awMbHKC3VyTXmt1hbWWu36Y5xd5igctaQ1HH/3HKGkI2YQgSQhBOVo7p37U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727153061; c=relaxed/simple;
-	bh=Dk+sxud92c3V59tI0lVfNjPWSYFft4rlNJ7x34uuYaE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gWT1YF1V6pDs4YH/6XTDmkE815JsespQ2QcFoaUMtWCA85q5wV3x/r3h2qnkYhX4OEarHNkIHttP2CuK6mAcsggKJaMruwPRxBDx/4iiMhFprfCPPVZQZNmAvMyy6iINjuEIIV/5AJzJiJWmwOy6Ubs4YzRoDDaaqam/hgDeg3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/9kk41j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 296A1C4CEC4;
-	Tue, 24 Sep 2024 04:44:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727153061;
-	bh=Dk+sxud92c3V59tI0lVfNjPWSYFft4rlNJ7x34uuYaE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=V/9kk41jKZ6k8C47KjWpXbegCENPrNrk7+kDNs6/kC1IerjcIOlsjb8JJVuRhUexR
-	 b15ARSMHla1cchoWPIAGsvlS7hXTM/WXBwlYm9uqkHh+mSVJzTZzmK1kQovY717igV
-	 15qlp2fZ75c9HPj2cv2ovqeAezZoOqDppn8/en9J4J3Hn28FKAgHmgI0e5i8zGiegI
-	 ujX2tDnFKz0ekujHaJhuDbyosVW5nAmhYj792XVrLmwbsHvWCb6AMjtFFSMR6Vd1Xh
-	 939wfxq6AP796Ea0pwY62IDHVWSNblXK+SByksgnCJyGTdq1ZNyXE3UQPO5sJ0os2g
-	 nmVZDkCW63Ijw==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>,
-	Andrew Davis <afd@ti.com>,
-	Beleswar Padhi <b-padhi@ti.com>,
-	Zhang Zekun <zhangzekun11@huawei.com>,
-	Naina Mehta <quic_nainmeht@quicinc.com>,
-	Hari Nagalla <hnagalla@ti.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Martyn Welch <martyn.welch@collabora.com>,
-	Rob Herring <robh@kernel.org>,
-	Tanmay Shah <tanmay.shah@amd.com>,
-	Tengfei Fan <quic_tengfan@quicinc.com>,
-	Udit Kumar <u-kumar1@ti.com>
-Subject: [GIT PULL] remoteproc updates for v6.12
-Date: Mon, 23 Sep 2024 21:47:40 -0700
-Message-ID: <20240924044741.3078097-1-andersson@kernel.org>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1727153409; c=relaxed/simple;
+	bh=DcTngQDtm8rPXKhB60uE0gMkwkb4YNyvUCNbGJ13rFg=;
+	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
+	 Cc:In-Reply-To:To; b=kjWUV80f8AdWLEFIkeohraKcOkJRReLEfEGPlWpZkgajENl2icSNV/0orXXpSkwWEfkkHtEW6Lu5sPgA/sQu6irCgPDlQM0Y75REa/PkeZp9e6zHWZYBAi2goZ7RqqJomuUSGgZp2Xu8RCW17i9F9FBdu0p52vz9HKV+opGLWqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I1SKWmFw; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71798a15ce5so4244397b3a.0;
+        Mon, 23 Sep 2024 21:50:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727153407; x=1727758207; darn=vger.kernel.org;
+        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
+         :from:content-transfer-encoding:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=d74Ho1WHawE+5XcSs6MQhq9EWssysWWKSXZfRcAZZ94=;
+        b=I1SKWmFwlfSddDVrJZLTYaXSx48l3mxVsGuNg46ptrXQ2WnkuklrpicVVlQii57Z4i
+         HZC3VzoIIqyekvfRGnQlbOt0AekQ6sFkhzy2TufhtILq1xd/B03aaSY9uDlD60ydLroe
+         h5Q+HoTa93538AG1F+5HpL9VkfXXaG/9Q4TKai083bFrr6cGsJojRwjgJot+OCa75jBT
+         Wv8l5o6/BacLE0Hc6+mDOlnwB9tUWdcsrHBpJA52lW4KMhjAr3P85WLRQob5E3fziZVN
+         pBB37fkFOuohp99h37dc6XA+csX4D+7Pofrkd0vyCqFlPzfJ247RJLBQI2NrbIfw9Ngu
+         gHpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727153407; x=1727758207;
+        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
+         :from:content-transfer-encoding:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d74Ho1WHawE+5XcSs6MQhq9EWssysWWKSXZfRcAZZ94=;
+        b=FQ/BwoMuoIu5VgbayhvLH8Mfwfwq0tj5i9S3HQXdetv6vz2tazgrHcrtTtG0ZcePPD
+         whXZ6kRz+vFshxK06+ikULXwp28vuW0kLnpwC+36YvlOwhpi+n6olaJWwNcKaGX8aJB3
+         WEESDx+t9C19wqVX7MqJkzzb1yneLGtGdohD/p2SkZeNokQUHki/lYbdK+TKECpHAL8y
+         a6Ytpk8Qm1zR4NFAjQSc8M732YEGNX2+heY2bw2lOwdq1s4p+qHWjyH1QnJ/mhsc6ul2
+         wSwTnIpqTsQ7AMixRKb3TaOsCbHBcpUlGb4yo0dByprqnIEjBrnIQp/ELlySvqjrkuzX
+         61XQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU395R7ydnRIuC5E1epfGFAlqK7M97V9RUn3PWj1y3nRPel74MJsLNGPDO087ofZUb7+QLPDn0R@vger.kernel.org, AJvYcCUnET1SX8t5IkNn83uIA737jOZ+i83aL/joD264KfZ9EsHFTNL1lt9V3s1tmuisMpfprTIgBtdSQIpDSgw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyxs6adiuN9JwHpZ++An9INFnB1BekM8f6tMl1UOBmDI1ZNOTia
+	de4zRXFV8rr8r7dSBn/XE5BTnI2fBpRRy0BajwpwIqjFEHHADuBzPzZ9bPSr
+X-Google-Smtp-Source: AGHT+IGxnjLeasV01GQR3c/k7jfMr6OFFpgVkxR0DbPq5BAGkfddsJeKaE8mJODv29DHO7DVMj2UaQ==
+X-Received: by 2002:a05:6a20:5520:b0:1cf:49a6:992a with SMTP id adf61e73a8af0-1d343cbab3cmr3086297637.21.1727153406852;
+        Mon, 23 Sep 2024 21:50:06 -0700 (PDT)
+Received: from smtpclient.apple ([2001:e60:a02a:7af0:89b:3903:a61c:1a89])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71afc9c7a8bsm399220b3a.201.2024.09.23.21.50.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Sep 2024 21:50:06 -0700 (PDT)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From: Jeongjun Park <aha310510@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH] mm: migrate: fix data-race in migrate_folio_unmap()
+Date: Tue, 24 Sep 2024 13:49:54 +0900
+Message-Id: <BE930CC0-7F11-44AE-BCFB-C18A292140FB@gmail.com>
+References: <ZvIjRZgyAGLmys7c@casper.infradead.org>
+Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
+ wangkefeng.wang@huawei.com, ziy@nvidia.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ syzbot <syzkaller@googlegroups.com>
+In-Reply-To: <ZvIjRZgyAGLmys7c@casper.infradead.org>
+To: Matthew Wilcox <willy@infradead.org>
+X-Mailer: iPhone Mail (21G93)
 
 
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+> Matthew Wilcox <willy@infradead.org> wrote:
+>=20
+> =EF=BB=BFOn Tue, Sep 24, 2024 at 09:28:44AM +0900, Jeongjun Park wrote:
+>>> Matthew Wilcox <willy@infradead.org> wrote:
+>>>=20
+>>> =EF=BB=BFOn Mon, Sep 23, 2024 at 05:56:40PM +0200, David Hildenbrand wro=
+te:
+>>>>>> On 22.09.24 17:17, Jeongjun Park wrote:
+>>>>>> I found a report from syzbot [1]
+>>>>>>=20
+>>>>>> When __folio_test_movable() is called in migrate_folio_unmap() to rea=
+d
+>>>>>> folio->mapping, a data race occurs because the folio is read without
+>>>>>> protecting it with folio_lock.
+>>>>>>=20
+>>>>>> This can cause unintended behavior because folio->mapping is initiali=
+zed
+>>>>>> to a NULL value. Therefore, I think it is appropriate to call
+>>>>>> __folio_test_movable() under the protection of folio_lock to prevent
+>>>>>> data-race.
+>>>>>=20
+>>>>> We hold a folio reference, would we really see PAGE_MAPPING_MOVABLE fl=
+ip?
+>>>>> Hmm
+>>>=20
+>>> No; this shows a page cache folio getting truncated.  It's fine; really
+>>> a false alarm from the tool.  I don't think the proposed patch
+>>> introduces any problems, but it's all a bit meh.
+>>>=20
+>>=20
+>> Well, I still don't understand why it's okay to read folio->mapping
+>> without folio_lock .
+>=20
+> Because it can't be changed in a way which changes the value of
+> __folio_test_movable().  We have a refcount on the folio at this point,
+> so it can't be freed.  And __folio_set_movable() happens at allocation.
+>=20
 
-are available in the Git repository at:
+Thanks for the explanation. Then it seems appropriate to annotate=20
+data-race in __folio_test_movable() so that KCSAN ignores it.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v6.12
+I will apply the change and send you a new patch.
 
-for you to fetch changes up to 38a0e38b31d3f967525f6414711bed6f14dfa15e:
-
-  remoteporc: ingenic: Use devm_platform_ioremap_resource_byname() (2024-09-09 09:50:54 -0600)
-
-----------------------------------------------------------------
-remoteproc updates for v6.12
-
-This adds remoteproc support for the Cortex M4F found in AM62x and AM64x
-of the TI K3 family, support for the modem remoteproc in the Qualcomm
-SDX75, and audio, compute and general-purpose DSPs of the Qualcomm
-SA8775P.
-
-The i.MX remoteproc driver gains support for blocking and non-blocking
-mailbox transmissions, followed by the implementation of poweroff and
-reboot mechanisms, using the same. This is followed by a few bug fixes
-and minor improvements.
-
-A few cleanups and bug fixes for the TI K3 DSP and R5F drivers are
-introduced.
-
-Support for mapping SRAM regions into the AMD-Xilinx Zynqmp R5 cores is
-added.
-
-The Ingenic, TI DA8xx, TI Keystone, TI K3, ST slim drivers are
-simplified using devres helpers for various allocations.
-
-Uses of of_{find,get}_property() are replaced with of_property_present()
-where possible.
-
-----------------------------------------------------------------
-Andrew Davis (3):
-      remoteproc: keystone: Use devm_kasprintf() to build name string
-      remoteproc: keystone: Use devm_rproc_alloc() helper
-      remoteproc: k3: Factor out TI-SCI processor control OF get function
-
-Beleswar Padhi (3):
-      remoteproc: k3-r5: Use devm_rproc_alloc() helper
-      remoteproc: k3-r5: Acquire mailbox handle during probe routine
-      remoteproc: k3-dsp: Acquire mailbox handle during probe routine
-
-Hari Nagalla (1):
-      dt-bindings: remoteproc: k3-m4f: Add K3 AM64x SoCs
-
-Jan Kiszka (1):
-      remoteproc: k3-r5: Fix error handling when power-up failed
-
-Krzysztof Kozlowski (1):
-      dt-bindings: remoteproc: xlnx,zynqmp-r5fss: Add missing "additionalProperties" on child nodes
-
-Martyn Welch (1):
-      remoteproc: k3-m4: Add a remoteproc driver for M4F subsystem
-
-Naina Mehta (2):
-      dt-bindings: remoteproc: qcom,sm8550-pas: document the SDX75 PAS
-      remoteproc: qcom: pas: Add SDX75 remoteproc support
-
-Peng Fan (6):
-      remoteproc: imx_rproc: Correct ddr alias for i.MX8M
-      remoteproc: imx_rproc: Use imx specific hook for find_loaded_rsc_table
-      remoteproc: imx_rproc: Initialize workqueue earlier
-      remoteproc: imx_rproc: Merge TCML/U
-      remoteproc: imx_rproc: Allow setting of the mailbox transmit mode
-      remoteproc: imx_rproc: Add support for poweroff and reboot
-
-Rob Herring (Arm) (1):
-      remoteproc: Use of_property_present()
-
-Tanmay Shah (1):
-      remoteproc: xlnx: Add sram support
-
-Tengfei Fan (1):
-      remoteproc: qcom: pas: Add support for SA8775p ADSP, CDSP and GPDSP
-
-Udit Kumar (1):
-      remoteproc: k3-r5: Delay notification of wakeup event
-
-Zhang Zekun (3):
-      remoteproc: st_slim: Use devm_platform_ioremap_resource_byname()
-      remoteproc: da8xx: Use devm_platform_ioremap_resource_byname()
-      remoteporc: ingenic: Use devm_platform_ioremap_resource_byname()
-
- .../bindings/remoteproc/qcom,sm8550-pas.yaml       |   3 +
- .../bindings/remoteproc/ti,k3-m4f-rproc.yaml       | 125 ++++
- .../bindings/remoteproc/xlnx,zynqmp-r5fss.yaml     |   1 +
- drivers/remoteproc/Kconfig                         |  13 +
- drivers/remoteproc/Makefile                        |   1 +
- drivers/remoteproc/da8xx_remoteproc.c              |  10 +-
- drivers/remoteproc/imx_dsp_rproc.c                 |   2 +-
- drivers/remoteproc/imx_rproc.c                     |  93 ++-
- drivers/remoteproc/imx_rproc.h                     |   4 +
- drivers/remoteproc/ingenic_rproc.c                 |   3 +-
- drivers/remoteproc/keystone_remoteproc.c           |  21 +-
- drivers/remoteproc/qcom_q6v5_pas.c                 |  93 +++
- drivers/remoteproc/st_slim_rproc.c                 |   6 +-
- drivers/remoteproc/ti_k3_dsp_remoteproc.c          | 108 +---
- drivers/remoteproc/ti_k3_m4_remoteproc.c           | 667 +++++++++++++++++++++
- drivers/remoteproc/ti_k3_r5_remoteproc.c           | 130 ++--
- drivers/remoteproc/ti_sci_proc.h                   |  26 +
- drivers/remoteproc/xlnx_r5_remoteproc.c            | 141 ++++-
- 18 files changed, 1225 insertions(+), 222 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
- create mode 100644 drivers/remoteproc/ti_k3_m4_remoteproc.c
+Regards,
+Jeongjun Park=
 
