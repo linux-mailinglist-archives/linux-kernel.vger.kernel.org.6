@@ -1,179 +1,179 @@
-Return-Path: <linux-kernel+bounces-337140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52A599845DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:24:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8753D9845E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:26:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 841141C22CA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:24:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DFA21F214CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:26:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C1A1A705D;
-	Tue, 24 Sep 2024 12:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SlyGxqDf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4870B3F9D5;
-	Tue, 24 Sep 2024 12:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E05C1A705D;
+	Tue, 24 Sep 2024 12:26:26 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C184B3F9D5;
+	Tue, 24 Sep 2024 12:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727180661; cv=none; b=QN+MnDi9rJWKpB5ZUugYzdnPNELtbwlTz4MiYtG9yne08hJF4AiCJxojURtvwn3SRJ/NcHEsYOwE471w3nn+eGYiQ7gs79T9vN/lh3oS5OE6us4G4TmEiOuNwiPfgkem1xydK6Ii+2+TsQua3doTraUCWoSs9hiO+njNmv5/618=
+	t=1727180785; cv=none; b=PWC9MVGRrVjSwSL1gAfFMl7GdUtqeGboSoSyAHzuTjBWi5NkGPRGcTBA5Ue7LhXxac0F7+unw4B/a7UgBCCSFzXL4C8SHRLPb9F6D1BeFtRWuSNRD0VHefXAR9OH4PwL2oP7Ugaza/ORMLXvep7yx+QszFcSvOJ2abaySHxqAmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727180661; c=relaxed/simple;
-	bh=FKNjfvHnnNhwzScnzuAJn6ULWo2QY+BQ9s4h92IJu7g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=okFbYWW1qR7oOl2vF+gpELs9BzEoDnPmhCAu32ZgjjzWzbKDpOB4LTxKNuZvySVaYxuY+I015b7yo8joRKbVzKFkURX1Y90CJ+9+7P4avJzz5DR+ykyofrs4+fSKtC+yDhi5a32D7TZcnKHpWQRGGNDsJ7O8exCMN9hx2KzWTI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SlyGxqDf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D872FC4CEC4;
-	Tue, 24 Sep 2024 12:24:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727180660;
-	bh=FKNjfvHnnNhwzScnzuAJn6ULWo2QY+BQ9s4h92IJu7g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SlyGxqDfjhGJkSTQcisVILZeXxSa1edRkJ/4QWRrCE8MHXXy45isCcBswgVR3AKEy
-	 aWreqsVZRsT8xtO2bCQQsjhvPbWlJk7kcr+11BvqsUZezHyixVE9RGmJPK4olCXRkt
-	 UODvBwuVY70icQDnLYexkGti9iYILqHJz00oPkOxdMo77zZpSRsIhLEdebAc0o48zi
-	 eOc0/2pkYYaXnFrXExBNTf6bK7iwsE4Y8Us0E9GAH6RGepsfqMvkPYcTlO6ogZJlGU
-	 mj9J6mBcyRx/DvjxCHcAcZcTi12twoncR+W5SufOAi8APADSS8QdqvjD7LXY0KH7b6
-	 ULYX86ChFl0dg==
-Date: Tue, 24 Sep 2024 14:24:16 +0200
-From: Mark Brown <broonie@kernel.org>
-To: Igor Prusov <ivprusov@salutedevices.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	kernel@salutedevices.com, prusovigor@gmail.com,
-	David Yang <yangxiaohua@everest-semi.com>,
-	Martin Kurbanov <mmkurbanov@salutedevices.com>
-Subject: Re: [PATCH v2 2/2] ASoC: codecs: add ES7243E ADC driver
-Message-ID: <ZvKvcBHJU2pKl809@finisterre.sirena.org.uk>
-References: <20240920-es7243e-adc-v2-0-0be019735b81@salutedevices.com>
- <20240920-es7243e-adc-v2-2-0be019735b81@salutedevices.com>
+	s=arc-20240116; t=1727180785; c=relaxed/simple;
+	bh=ZvJfiEwfNuvwZtXC2ii8kT4EZLzx/AHELisWsC/69po=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m0KgSxY7fVBrH2mZOLWWu/jY1ZIVo6qNadtow9lIAakXHEPelDTfk/JrCwBF/Y5ioHeA+yEnSUn3ooV/Ap+XUlxnPEW1CP51qx7euUG4hXfqKFAKbmiv+SR+YIA3fhAHe/vGNvQc4khViSHLX2Xv6D7RVnyn8lOtKuyS5kYVBj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9BDC4DA7;
+	Tue, 24 Sep 2024 05:26:52 -0700 (PDT)
+Received: from [10.1.32.221] (R90XJLFY.arm.com [10.1.32.221])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 658753F64C;
+	Tue, 24 Sep 2024 05:26:21 -0700 (PDT)
+Message-ID: <b9367e1c-f339-46e1-8c44-d20f112a857a@arm.com>
+Date: Tue, 24 Sep 2024 13:26:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="orxiphdiU9CDdCkg"
-Content-Disposition: inline
-In-Reply-To: <20240920-es7243e-adc-v2-2-0be019735b81@salutedevices.com>
-X-Cookie: Editing is a rewording activity.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/4] KVM: selftests: Allow slot modification stress
+ test with quirk disabled
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: rick.p.edgecombe@intel.com, kai.huang@intel.com,
+ isaku.yamahata@intel.com, dmatlack@google.com, sagis@google.com,
+ erdemaktas@google.com, graf@amazon.com, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, seanjc@google.com,
+ Mark Brown <broonie@kernel.org>, Naresh Kamboju <naresh.kamboju@linaro.org>
+References: <20240703020921.13855-1-yan.y.zhao@intel.com>
+ <20240703021206.13923-1-yan.y.zhao@intel.com>
+Content-Language: en-US
+From: Aishwarya TCV <aishwarya.tcv@arm.com>
+In-Reply-To: <20240703021206.13923-1-yan.y.zhao@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
---orxiphdiU9CDdCkg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Fri, Sep 20, 2024 at 06:41:08PM +0300, Igor Prusov wrote:
+On 03/07/2024 03:12, Yan Zhao wrote:
+> Add a new user option to memslot_modification_stress_test to allow testing
+> with slot zap quirk KVM_X86_QUIRK_SLOT_ZAP_ALL disabled.
+> 
+> Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+> ---
+>  .../kvm/memslot_modification_stress_test.c    | 19 +++++++++++++++++--
+Hi Yan,
 
-> +config SND_SOC_ES7243E
-> +	tristate "Everest Semi ES7243E CODEC"
-> +
+When building kselftest-kvm config against next-20240924 kernel with
+Arm64 an error "'KVM_X86_QUIRK_SLOT_ZAP_ALL' undeclared" is observed.
 
-This is an I2C device, it should depend on I2C.
+A bisect identified 218f6415004a881d116e254eeb837358aced55ab as the
+first bad commit. Bisected it on the tag "next-20240923" at repo
+"https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git".
+Reverting the change seems to fix it.
 
-> @@ -0,0 +1,693 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/**
-> + * es7243e.c - ASoC Everest Semiconductor ES7243E audio ADC driver
-> + *
+This works fine on Linux version 6.11
 
-Please make the enitre comment a C++ one so things look more
-intentional.
+Failure log
+------------
+https://storage.kernelci.org/next/master/next-20240924/arm64/defconfig+kselftest/gcc-12/logs/kselftest.log
 
-> + * Copyright (c) 2024, SaluteDevices. All Rights Reserved.
+In file included from include/kvm_util.h:8,
+                 from include/memstress.h:13,
+                 from memslot_modification_stress_test.c:21:
+memslot_modification_stress_test.c: In function ‘main’:
+memslot_modification_stress_test.c:176:38: error:
+‘KVM_X86_QUIRK_SLOT_ZAP_ALL’ undeclared (first use in this function)
+  176 |                                      KVM_X86_QUIRK_SLOT_ZAP_ALL);
+      |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+include/test_util.h:41:15: note: in definition of macro ‘__TEST_REQUIRE’
+   41 |         if (!(f))                                               \
+      |               ^
+memslot_modification_stress_test.c:175:25: note: in expansion of macro
+‘TEST_REQUIRE’
+  175 |
+TEST_REQUIRE(kvm_check_cap(KVM_CAP_DISABLE_QUIRKS2) &
+      |                         ^~~~~~~~~~~~
+memslot_modification_stress_test.c:176:38: note: each undeclared
+identifier is reported only once for each function it appears in
+  176 |                                      KVM_X86_QUIRK_SLOT_ZAP_ALL);
+      |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+include/test_util.h:41:15: note: in definition of macro ‘__TEST_REQUIRE’
+   41 |         if (!(f))                                               \
+      |               ^
+memslot_modification_stress_test.c:175:25: note: in expansion of macro
+‘TEST_REQUIRE’
+  175 |
+TEST_REQUIRE(kvm_check_cap(KVM_CAP_DISABLE_QUIRKS2) &
+      |                         ^~~~~~~~~~~~
+At top level:
+cc1: note: unrecognized command-line option
+‘-Wno-gnu-variable-sized-type-not-at-end’ may have been intended to
+silence earlier diagnostics
+make[4]: *** [Makefile:300:
+/tmp/kci/linux/build/kselftest/kvm/memslot_modification_stress_test.o]
+Error 1
+make[4]: Leaving directory '/tmp/kci/linux/tools/testing/selftests/kvm'
 
-All rights reserved?
 
-> +static const struct reg_sequence init_sequence[] = {
-> +	{ ES7243E_CLK2,			0x00 },
-> +	{ ES7243E_SDP,			0x00 },
-> +	{ ES7243E_TDM,			0x00 },
-> +
-> +	/* Set MCLK/LRCK ratio to 256 */
-> +	{ ES7243E_ADC_OSR,		0x20 },
+Bisect log:
+----------
 
-This should be dynamically configured rather than hard coded, provide
-set_bclk_ratio().
+git bisect start
+# good: [98f7e32f20d28ec452afb208f9cffc08448a2652] Linux 6.11
+git bisect good 98f7e32f20d28ec452afb208f9cffc08448a2652
+# bad: [ef545bc03a65438cabe87beb1b9a15b0ffcb6ace] Add linux-next
+specific files for 20240923
+git bisect bad ef545bc03a65438cabe87beb1b9a15b0ffcb6ace
+# good: [176000734ee2978121fde22a954eb1eabb204329] Merge tag
+'ata-6.12-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/libata/linux
+git bisect good 176000734ee2978121fde22a954eb1eabb204329
+# good: [f55bf3fb11d7fe32a37b8d625744d22891c02e5e] Merge branch
+'at91-next' of git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git
+git bisect good f55bf3fb11d7fe32a37b8d625744d22891c02e5e
+# good: [1340ff0aa9e6dcb9c8ac5f86472eb78ba524b14a] Merge branch
+'for-next' of git://git.kernel.dk/linux-block.git
+git bisect good 1340ff0aa9e6dcb9c8ac5f86472eb78ba524b14a
+# bad: [51d98f15885e036a06fef35c396c987e80c47a27] Merge branch
+'char-misc-next' of
+git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git
+git bisect bad 51d98f15885e036a06fef35c396c987e80c47a27
+# bad: [4f216a17ef0dc3bf99c28902abbc6c70fb7798a0] Merge branch
+'usb-next' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git
+git bisect bad 4f216a17ef0dc3bf99c28902abbc6c70fb7798a0
+# bad: [b11ba58b0ef5c932303dac5ce96e17d96c127870] Merge branch 'next' of
+git://git.kernel.org/pub/scm/virt/kvm/kvm.git
+git bisect bad b11ba58b0ef5c932303dac5ce96e17d96c127870
+# good: [b7ba28772e5709196e3efffb9341c7fd698b2497] Merge branch
+'for-next' of
+git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+git bisect good b7ba28772e5709196e3efffb9341c7fd698b2497
+# bad: [c345344e8317176944be33f46e18812c0343dc63] Merge tag
+'kvm-x86-selftests-6.12' of https://github.com/kvm-x86/linux into HEAD
+git bisect bad c345344e8317176944be33f46e18812c0343dc63
+# bad: [7056c4e2a13a61f4e8a9e8ce27cd499f27e0e63b] Merge tag
+'kvm-x86-generic-6.12' of https://github.com/kvm-x86/linux into HEAD
+git bisect bad 7056c4e2a13a61f4e8a9e8ce27cd499f27e0e63b
+# bad: [590b09b1d88e18ae57f89930a6f7b89795d2e9f3] KVM: x86: Register
+"emergency disable" callbacks when virt is enabled
+git bisect bad 590b09b1d88e18ae57f89930a6f7b89795d2e9f3
+# bad: [70c0194337d38dd29533e63e3cb07620f8c5eae1] KVM: Rename symbols
+related to enabling virtualization hardware
+git bisect bad 70c0194337d38dd29533e63e3cb07620f8c5eae1
+# bad: [218f6415004a881d116e254eeb837358aced55ab] KVM: selftests: Allow
+slot modification stress test with quirk disabled
+git bisect bad 218f6415004a881d116e254eeb837358aced55ab
+# good: [b4ed2c67d275b85b2ab07d54f88bebd5998d61d8] KVM: selftests: Test
+slot move/delete with slot zap quirk enabled/disabled
+git bisect good b4ed2c67d275b85b2ab07d54f88bebd5998d61d8
+# first bad commit: [218f6415004a881d116e254eeb837358aced55ab] KVM:
+selftests: Allow slot modification stress test with quirk disabled
 
-> +	/* Set ADC volume to 0dB */
-> +	{ ES7243E_ADC_VOL,		0xbf },
+Thanks,
+Aishwarya
 
-Most things should use the chip defaults, especially things like volumes
-- userspace can configure whatever it needs.
-
-> +static int es7243e_suspend(struct snd_soc_component *component)
-> +{
-> +	struct es7243e_priv *es7243e = snd_soc_component_get_drvdata(component);
-> +	int ret;
-> +	unsigned int val, mask;
-> +
-> +	val = FIELD_PREP(ES7243E_SDP_MUTE, 0);
-> +	ret = snd_soc_component_update_bits(component, ES7243E_SDP,
-> +					    ES7243E_SDP_MUTE, val);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	val = FIELD_PREP(ES7243E_PGA1_EN, 0);
-> +	snd_soc_component_update_bits(component, ES7243E_PGA1,
-> +				      ES7243E_PGA1_EN, val);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	val = FIELD_PREP(ES7243E_PGA2_EN, 0);
-> +	snd_soc_component_update_bits(component, ES7243E_PGA2,
-> +				      ES7243E_PGA2_EN, val);
-> +	if (ret < 0)
-> +		return ret;
-
-This looks a lot like you should be using DAPM with events on the PGAs,
-that will give power management at runtime as well.
-
-> +	ret = snd_soc_component_write(component, ES7243E_PDN, 0xff);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	mask = ES7243E_CLK1_ANA_ON | ES7243E_CLK1_ADC_ON;
-> +	ret = snd_soc_component_update_bits(component, ES7243E_CLK1, mask, 0);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	clk_disable_unprepare(es7243e->lrclk);
-> +	clk_disable_unprepare(es7243e->sclk);
-
-You could also use set_bias_level() for chip level power, it doesn't
-look like there's substantial delay.
-
-> +static int es7243e_resume(struct snd_soc_component *component)
-> +{
-> +	struct es7243e_priv *es7243e = snd_soc_component_get_drvdata(component);
-> +	int ret;
-> +	unsigned int val;
-
-This doesn't resync the cache so the user volume settings will be lost.
-
---orxiphdiU9CDdCkg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbyr28ACgkQJNaLcl1U
-h9C5Kwf/W16rrhnjO3Ye/WN7vpgpY8D0g+YSbt/PXAte3rc5FvsKyZNtqTXUlh2i
-fTlQRNZENEbs012in/83m4vs1eCFi1zJffeBQyBCgwX3J9SjY/iHIFVOnbnIrI9P
-ngQRinfzA+5RIJxka2MuJcESihk+HL/ZIw2tn4CN0DkarXBW/NnJoC84WC4BoEfY
-0jWQYK8S4yoIxSmx4gk+pKPaDwdPuwYC4GdTzmaRTH49xYuScrpRKVbUKxmD5zSp
-QPqpH40/6ub+HMq5yR7BZlCmhGb4V7C0CH5josObPNbakuxdLlcd2+FwkmZxWU/G
-2pdz0D/vynQx0OOYEjgI/v05xEqiLA==
-=QUE8
------END PGP SIGNATURE-----
-
---orxiphdiU9CDdCkg--
 
