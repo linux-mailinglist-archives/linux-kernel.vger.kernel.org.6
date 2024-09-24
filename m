@@ -1,68 +1,64 @@
-Return-Path: <linux-kernel+bounces-337285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 525CF984823
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:00:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C454984827
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:01:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6F2BB22F75
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:00:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCF872814AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D331AB536;
-	Tue, 24 Sep 2024 14:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8900C1AB501;
+	Tue, 24 Sep 2024 15:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NhpUpX7B"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="llLTLK9D"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2C1224D7;
-	Tue, 24 Sep 2024 14:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFFD4154C07;
+	Tue, 24 Sep 2024 15:01:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727189994; cv=none; b=DQ6m8TDxA0s3LdNE+Y4Poso1BFJporQCoWUYVc5k4z3LkrfLn14ehZ7d+XZB1kw5htQxvCcfs385Np3OAwvtc/a4LKmZch9/PjLTShXJ5DAhmshFq+8XkEuYzWE15I/qaIAW7OB2zH2vKNhfOkx6V1iDnd1xaPLgAV8RjQjZ/HA=
+	t=1727190104; cv=none; b=Co3U9for+2PYvNExrQdQOLdk3GtF2ql1zcL7lsApGl8QRSpM1riYEyYF6zQK21Uaw+Hg+NJnv2Y2qYS0+/XaqhI7xwWRMSTFNcz3QFQypmoUbdADqDTL7Phb+w+fnAPfc2+uc+GSwHeYza1DbxbhGSc9MNY3zprzkOtccifyM6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727189994; c=relaxed/simple;
-	bh=wLEhhCE0jdrFjf4Bccj8YSgM6u/n+FpUlXZY6C0JBYg=;
+	s=arc-20240116; t=1727190104; c=relaxed/simple;
+	bh=/+9qcSupVH3POPJZxwbHSgEWylRpVy/CmFKPvlY5QvM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qkEOGJotmw5LGrbr1EmHIN4h56yglz/eAumN5T49vNipIp2iAqVZDMs7df0INLNeM4xHt1JXp+KYzHFs5icLJiwVH2U5zwdFO7/E0mEXWMXGgRhPY9DY+Zs+Ws1iW5EiWcQ+LM29dhohvF1wsAk8Ld48X71KXoYsT7WsSJXgbA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NhpUpX7B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC706C4CEC4;
-	Tue, 24 Sep 2024 14:59:49 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=jGCmKpmBhkfSery2w4/zHWqrqpiHBAZWMTioUeZ48Jflr0pIyy/sKOXLXX/JgcM4VuWCqiWTBADX9Eajzsvj5Ej1F4zmHnR2Xo6G0i/oc67hXMNlp6VEFO0+dj6ZvEiKb5yDyGR9k9TfgK+E1LJd8BOYlQ4hM2fXah9+Q0fpnk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=llLTLK9D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0300AC4CEC4;
+	Tue, 24 Sep 2024 15:01:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727189993;
-	bh=wLEhhCE0jdrFjf4Bccj8YSgM6u/n+FpUlXZY6C0JBYg=;
+	s=k20201202; t=1727190103;
+	bh=/+9qcSupVH3POPJZxwbHSgEWylRpVy/CmFKPvlY5QvM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NhpUpX7BjCn3gO2OMSlZBWzdrgFE8Y7V3jn5JRJzs5TH50IeTW6W6ZZPicsdUcGMk
-	 +1Qkaxf1DKRKIrRwgvEn3q/jvz6F6/9LMZeGoXaMl5cGcgRuk7xr1jsyxicvC7qMQ6
-	 co7mtRuyBsEVcdNKDp6X+OhWPT80axS7pjQxsPRY/k308cC+InUI7efvUD0klmDXU1
-	 Jk0mBgdYI39K/nL8qkxdqRXJ1L4xIHr60YH52abxuOnE5SvuA1R6AHZDhN0hoktDoR
-	 eok2ubDCaPHP+jhimrJyiGOl0pPJkmlJAYU2cCmqetn3ZBeG9DnzY1AVX5kIUckQ0M
-	 Xh4aoKLeWYRZQ==
-Date: Tue, 24 Sep 2024 15:59:47 +0100
+	b=llLTLK9DJhRBXjXa3i7fBUNevVn7pZwH6LRArtH+yz0A5UXbN1KSR7ZoTzIzEoPZG
+	 6UaSOiK/JsDsdaYBNeT/AGyBDuL7vOuBwDY5iw823XZwuoLMZy7vqaUAvhPO3RbKhi
+	 599aAdfcc22AxoZtm6D+OB8MaY0eQY8eDMx45ElypeEAfWkqxhw+avUIBp1QKVYTWC
+	 DogNLIpVzK63oWbVx54k9fGr82/+d4i858/4qmicykjEzS9mRXOfcqnYSDGNaQeunH
+	 LP3V1uHFQ3dq+zbnUv6QImkFqf4HY6mOSdX9hnHWObtvhZ5mcEGjqORYVmvbmtiqsx
+	 QtkR9VeSfogkA==
+Date: Tue, 24 Sep 2024 16:01:38 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Guillaume Stols <gstols@baylibre.com>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+To: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-pwm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-doc@vger.kernel.org, aardelean@baylibre.com,
-	dlechner@baylibre.com, jstephan@baylibre.com
-Subject: Re: [PATCH v2 02/10] dt-bindings: iio: adc: ad7606: Make corrections
- on spi conditions
-Message-ID: <20240924-unvocal-playback-2753bbbb0e45@spud>
-References: <20240920-ad7606_add_iio_backend_support-v2-0-0e78782ae7d0@baylibre.com>
- <20240920-ad7606_add_iio_backend_support-v2-2-0e78782ae7d0@baylibre.com>
- <20240921-playgroup-regally-f26c17be26dc@spud>
- <56090167-15a0-4386-89a6-c379d70faae6@baylibre.com>
+	Chester Lin <chester62515@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Christophe Lizzi <clizzi@redhat.com>,
+	Alberto Ruiz <aruizrui@redhat.com>,
+	Enric Balletbo <eballetb@redhat.com>
+Subject: Re: [PATCH 1/2] dt-bindings: linflexuart: add clock definitions
+Message-ID: <20240924-exposure-juiciness-c0e9a0c54854@spud>
+References: <20240924141247.132455-1-ciprianmarian.costea@oss.nxp.com>
+ <20240924141247.132455-2-ciprianmarian.costea@oss.nxp.com>
+ <20240924-twitch-embody-0ffb3ab7fd26@spud>
+ <b8024c74-f5d7-4b56-96ea-dee5d8dd9a98@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,60 +66,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="LGfhlP19buc7EotU"
+	protocol="application/pgp-signature"; boundary="46w7wTFtPYBTpmqZ"
 Content-Disposition: inline
-In-Reply-To: <56090167-15a0-4386-89a6-c379d70faae6@baylibre.com>
+In-Reply-To: <b8024c74-f5d7-4b56-96ea-dee5d8dd9a98@oss.nxp.com>
 
 
---LGfhlP19buc7EotU
+--46w7wTFtPYBTpmqZ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 24, 2024 at 04:41:50PM +0200, Guillaume Stols wrote:
+On Tue, Sep 24, 2024 at 05:52:13PM +0300, Ciprian Marian Costea wrote:
+> On 9/24/2024 5:24 PM, Conor Dooley wrote:
+> > On Tue, Sep 24, 2024 at 05:12:46PM +0300, Ciprian Costea wrote:
+> > > From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+> > >=20
+> > > Add clock definitions for NXP LINFlexD UART bindings
+> > > and update the binding examples with S32G2 node.
+> > >=20
+> > > Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.co=
+m>
+> > > ---
+> > >   .../bindings/serial/fsl,s32-linflexuart.yaml  | 21 ++++++++++++++++=
++++
+> > >   1 file changed, 21 insertions(+)
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/serial/fsl,s32-linflex=
+uart.yaml b/Documentation/devicetree/bindings/serial/fsl,s32-linflexuart.ya=
+ml
+> > > index 4171f524a928..45fcab9e186d 100644
+> > > --- a/Documentation/devicetree/bindings/serial/fsl,s32-linflexuart.ya=
+ml
+> > > +++ b/Documentation/devicetree/bindings/serial/fsl,s32-linflexuart.ya=
+ml
+> > > @@ -34,6 +34,14 @@ properties:
+> > >     interrupts:
+> > >       maxItems: 1
+> > > +  clocks:
+> > > +    maxItems: 2
+> > > +
+> > > +  clock-names:
+> > > +    items:
+> > > +      - const: ipg
+> > > +      - const: lin
+> >=20
+> > Can all devices have 2 clocks, or just the s32g2?
+> >=20
 >=20
-> On 9/21/24 23:55, Conor Dooley wrote:
-> > On Fri, Sep 20, 2024 at 05:33:22PM +0000, Guillaume Stols wrote:
-> > > The SPI conditions are not always required, because there is also a
-> > > parallel interface. The way used to detect that the SPI interface is
-> > > used is to check if the reg value is between 0 and 256.
-> > And, yaknow, not that the bus you're on is a spi bus? I don't think this
-> > comment is relevant to the binding, especially given you have a property
-> > for it.
->=20
-> Apologies, I missed to change the commit message, it will be fixed in the
-> next series.
->=20
-> Since Jonathan did not like very much inferring the interface with the re=
-g's
-> value that I used i the previous verison, I introduced this flag.
->=20
-> However this is only intended to be use in bindings, to determine whether=
- or
-> not spi properties should be added.
+> All devices (S32G2, S32G3 and S32V234) have 2 clocks for LINFlexD module.
 
-To be honest, if it is not needed by software to understand what bus the
-device is on, it shouldn't be in the bindings at all. What was Jonathan
-opposed to? Doing an if reg < 1000: do y, otherwise do x?
-I'd not bother with any of that, and just make cpha (or w/e it was)
-optional with a description explaining the circumstances in which is it
-needed.
+I see. How come the driver is capable of working without them?
 
-> In the driver side of things, the bus interface is inferred by the parent=
-'s
-> node (SPI driver is an module_spi_driver while parallel driver is
-> module_platform_driver).
+> They are: "lin" which is the frequency of the baud clock and "ipg" which
+> drives the access to the LINFlexD iomapped registers.
 
---LGfhlP19buc7EotU
+It would be good to have an items list in the clocks property with that
+information.
+
+--46w7wTFtPYBTpmqZ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvLT4wAKCRB4tDGHoIJi
-0mCAAQDudOcnB4isEwsLcFNtTyQ31oYWCGB1e95rCdJm05qJ2wEA4xjzPpUt3/Qb
-TKW1SfNsOP2E71J9oya3wCXkKqNqrQY=
-=Mq6o
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvLUUgAKCRB4tDGHoIJi
+0mX/AQCI4qKclH3I0o00JjT999XdSMLRWn2oRUBUbbsO5mNWzAD/f6jV4BR/PlzD
+koL9ddZgVd/yRVWJpw0JYuG+n6lgYQ4=
+=pgIw
 -----END PGP SIGNATURE-----
 
---LGfhlP19buc7EotU--
+--46w7wTFtPYBTpmqZ--
 
