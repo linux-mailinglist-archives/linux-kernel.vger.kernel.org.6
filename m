@@ -1,163 +1,83 @@
-Return-Path: <linux-kernel+bounces-336664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1337D983DB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:17:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DC4F983E1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:18:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1CA528188E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:17:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 019F22818CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C562D145B16;
-	Tue, 24 Sep 2024 07:17:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CA3145B16;
+	Tue, 24 Sep 2024 07:18:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GisfYX3B"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cb07iLpg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2F3143C7E
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:17:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD02126C0B;
+	Tue, 24 Sep 2024 07:18:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727162254; cv=none; b=i73m4avykJFW0LcOTrOi4WL/WPjWbJj6dXbEl2NFU1hIHqdSV0Q2L9LwUP8sjDPWY2HHD1JdOjuceCxf0UV54//PGMWjRjZLLfZCzsxVXQPoE60AuTWHEqIShmG2dKEb4MmVP7qKAh/zoFUzONxbUjpJN70JownrX4ve0OSxFcY=
+	t=1727162324; cv=none; b=rbd8mXxp5qP/Mc4QicuM7irHlG3YoS2f0NpWU4fW/T5Z6N9ZqnypRzrDhNYKfseM7XcnV1cDFZn8gALBK9XBbkOKFhGJ8twCyFLqFt6Vqexqs/CLJ5iI85NofuAR/R7/+Ts+7qpKydzZOOPOL0uo0F2pMKNyApiC92HGDi4uXXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727162254; c=relaxed/simple;
-	bh=bRAvfOb88mqhRhXnBxTTbylscfuGQFLmSZLP8MqeiaE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=RQOMYmNjUKSJgTPjbP0Djtcq5Dgv9371GBl4+6mS3HvcjJGt8h2ORS8Tzzu15iPcxZ42muhON29p/PNiRKrSP57j4SDY557K9KgYtwf/w0aSVNbV1ItkKukkLoX7n1hVaEsuz3PWMFavpgek7SggwxSSMIxvFPp40k8UwXMZ/OE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GisfYX3B; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42cb5b3c57eso51717835e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 00:17:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727162249; x=1727767049; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=je3cqWSYer77yEubCNKAdoGpIIKvbkuX5RJOi++fMR0=;
-        b=GisfYX3BAEnfQwJQ+ZiwwPiGs5Koscx1RhlwSRwFjC6cKWNgXJ909WHiyCG+1I/wPH
-         AKe0A65/nJSniKEoA+tpMjlCetTb1+aLPK5UDmh6MfHZO2FDSWt2snYHW8EM7YHpjySc
-         wq5nztGFSOBO2pxIf3+Cbl2pp721oVJpd2owkhN48qKjltvJwps1Ds+96phqRwrPiDtH
-         jHecqp3XbjapzzyiFr7UigCF7UESlxHIiEkh8m2JhnTDN7NLs4ZxSaa3lZKpqYtRQS1o
-         pyje2/iLL4kt/nTyQOIpOB73iKp737Y++0hXsnyTdJ1jay1H/ifEIAvfSEHX45TGywc1
-         I22g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727162249; x=1727767049;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=je3cqWSYer77yEubCNKAdoGpIIKvbkuX5RJOi++fMR0=;
-        b=RdqsR4dxlOZ+fsFC56gGeyed8QBuZoHZBE792Rrzil/n8kj40apifdCaDNl9D5eFyf
-         QV+QdaASq1DcuDt5qARMukTINCd0L1hfKW8nt82ChCvRDcISyldhlw8lOoRYtMuGedeB
-         F1BSQbgRHuE+TcaQRtWdevfssZzR/ixJlymZOcMCt/rJCSJQkK8ivghkCK3sZsBvi8eO
-         MTBLBJZAJWabpWoUsSD+phtHKBk56D75OOd5xjzhqiC7E7GMpao7OINLit2ZQdT75VaU
-         UrQLbKCTxghxAN++ZANDQ+ywAQ0Udrkw0ysZn9UzgQi3G7/PSCcDpQem95uYRxUZk/eW
-         W2LA==
-X-Forwarded-Encrypted: i=1; AJvYcCVLubHCVaOeT2Hk/mEucyGKX2QfdoAJEN8JrBd1FWgupApJTYw4SCzL6qPFopWbuVbzP27/kY73ywuUT54=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNHt0E0jVOQ+N6dM1QDSJDOyQSJ5t79gmFnbf0ygmA/ylKCZvo
-	vqdw0+GRGb5VGe5oGiwskhYE2seQOdztJdEbjRC0XPj63uJAlfoNa8WTljIVNbU=
-X-Google-Smtp-Source: AGHT+IFn3k7mkPSmRC3eeu9UzsnDrRRDgq+BPkVZJpkFWFDCdEc479FolGZTOf6O5SCCYMyFII7RsA==
-X-Received: by 2002:a05:600c:1913:b0:42b:8a35:1acf with SMTP id 5b1f17b1804b1-42e7c19bba1mr106144965e9.25.1727162249062;
-        Tue, 24 Sep 2024 00:17:29 -0700 (PDT)
-Received: from [192.168.0.157] ([79.115.63.20])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e90298f14sm12365895e9.19.2024.09.24.00.17.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Sep 2024 00:17:28 -0700 (PDT)
-Message-ID: <79406f2b-8411-4059-b959-9e543944fb9c@linaro.org>
-Date: Tue, 24 Sep 2024 08:17:26 +0100
+	s=arc-20240116; t=1727162324; c=relaxed/simple;
+	bh=WEWPWhg1iI44D8WkJyN4SmQUz83Q960xJ2LUu70HgMw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cj4bC5pj2dVoZDyIPLulUV+N1p+dgPMVYsNnQdnlz5Gj+Bn8G6L4SUXosyxWk5/93n+rpuYfzP5yIqY2kL3riGfnPvwqMzBc3a3XrEKR6DWczWLNStvZs94FxBjYP6TR9ntBWvfWRWWfROaIsCnWuzKdcBRlfxbMeHLtCvOklsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cb07iLpg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 233BDC4CEC6;
+	Tue, 24 Sep 2024 07:18:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727162324;
+	bh=WEWPWhg1iI44D8WkJyN4SmQUz83Q960xJ2LUu70HgMw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Cb07iLpgPNMeKhhU1A0t8wvGbg4Ohx7PM7Kjrxh5GgMFqleEJE4Y+0KvIp2mnTHwO
+	 FoU83oFWCKD8MUohvCGNRtAo2Mb577lmfcp9d4Heg1ziJt2Pjf0NR4+K3ynv/arSbx
+	 QtK1/xnR6keHj2jxI5KMD3jWqwRqmGMbKU0VPmx+Fx/AAIk+T+RMdzHiwHjJ40kKHD
+	 TKiVtF9NSQ9ndcYATuNlumIYwjECEs/sitxgFaMg26xt1BHNYkTCofDDRWJQEPZa9s
+	 5K/ftKrK15D4j1AttU70gAonsDQmb4CSYvnRMMqak68onVT93ozcv3G6xANcC/qw2S
+	 O+gMK+UoMK+Fw==
+Date: Tue, 24 Sep 2024 08:18:39 +0100
+From: Simon Horman <horms@kernel.org>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
+	thomas.petazzoni@bootlin.com,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [PATCH net] net: pse-pd: tps23881: Fix boolean evaluation for
+ bitmask checks
+Message-ID: <20240924071839.GD4029621@kernel.org>
+References: <20240923153427.2135263-1-kory.maincent@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 6/6] mtd: spi-nor: add support for Macronix Octal flash
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: Alvin Zhou <alvinzhou.tw@gmail.com>
-Cc: linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
- linux-kernel@vger.kernel.org, pratyush@kernel.org, mwalle@kernel.org,
- miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
- broonie@kernel.org, chengminglin@mxic.com.tw, leoyu@mxic.com.tw,
- AlvinZhou <alvinzhou@mxic.com.tw>, JaimeLiao <jaimeliao@mxic.com.tw>,
- Bough Chen <haibo.chen@nxp.com>
-References: <20240718034614.484018-1-alvinzhou.tw@gmail.com>
- <20240718034614.484018-7-alvinzhou.tw@gmail.com>
- <97134efb-398d-4c21-a915-87a5b4f1b29a@linaro.org>
- <CAPhrvRR3U9=0DuG_FQ81ZJq+RLe6Bn9YO831Mx2n3NkeV3MCdA@mail.gmail.com>
- <368cd6fb-cab1-44ad-af46-651d9323bc19@linaro.org>
- <618e4514-791b-4a73-a1ba-45170a21e453@linaro.org>
-Content-Language: en-US
-In-Reply-To: <618e4514-791b-4a73-a1ba-45170a21e453@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240923153427.2135263-1-kory.maincent@bootlin.com>
 
-
-
-On 9/24/24 7:36 AM, Tudor Ambarus wrote:
+On Mon, Sep 23, 2024 at 05:34:26PM +0200, Kory Maincent wrote:
+> Fixed potential incorrect boolean evaluation when checking bitmask values.
+> The existing code assigned the result of bitwise operations directly to
+> boolean variables, which could lead to unexpected values.
+> This has been corrected by explicitly converting the results to booleans
+> using the !! operator.
 > 
-> 
-> On 9/24/24 7:26 AM, Tudor Ambarus wrote:
->>
->>
->> On 9/24/24 4:25 AM, Alvin Zhou wrote:
->>> Hi Tudor,
->>>
->>> Tudor Ambarus <tudor.ambarus@linaro.org> 於 2024年9月23日 週一 下午2:54寫道：
->>>>
->>>> Hi, Alvin,
->>>>
->>>> I quickly skimmed over the previous 5 patches and they are looking fine.
->>>>
->>>> I don't get this patch however.
->>>>
->>>> On 7/18/24 4:46 AM, AlvinZhou wrote:
->>>>> From: AlvinZhou <alvinzhou@mxic.com.tw>
->>>>>
->>>>> Adding Manufacture ID 0xC2 in last of ID table because of
->>>>> Octal Flash need manufacturer fixup for enabling/disabling
->>>>> Octal DTR mode.
->>>>>
->>>>> Signed-off-by: JaimeLiao <jaimeliao@mxic.com.tw>
->>>>> Signed-off-by: AlvinZhou <alvinzhou@mxic.com.tw>
->>>>> ---
->>>>>  drivers/mtd/spi-nor/macronix.c | 4 +++-
->>>>>  1 file changed, 3 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/mtd/spi-nor/macronix.c b/drivers/mtd/spi-nor/macronix.c
->>>>> index f039819a5252..1a8ccebdfe0e 100644
->>>>> --- a/drivers/mtd/spi-nor/macronix.c
->>>>> +++ b/drivers/mtd/spi-nor/macronix.c
->>>>> @@ -200,7 +200,9 @@ static const struct flash_info macronix_nor_parts[] = {
->>>>>               .name = "mx25l3255e",
->>>>>               .size = SZ_4M,
->>>>>               .no_sfdp_flags = SECT_4K,
->>>>> -     }
->>>>> +     },
->>>>> +     /* Need the manufacturer fixups, Keep this last */
->>>>> +     { .id = SNOR_ID(0xc2) }
->>>>>  };
->>>>>
->>>>
->>>> Could you please elaborate why you need just the manufacturer id here? I
->>>> would have expected to see a specific flash entry instead.
->>>
->>> Grateful to Michael for the valuable suggestion. This addition of the
->>> Macronix manufacturer ID enables the fixup functions such as
->>> macronix_nor_set_octal_dtr to be executed without the need to
->>> create separate ID entries for each Octal DTR NOR Flash in the
->>> flash_info.
->>>
->>
->> Ah, nice. Okay then. I'm going to review the rest of the patches. They
->> look promising ;).
-> 
-> ah, but then you'll always have a matched ID, so you break the generic
-> flash probing for macronix. Is that correct?
+> Fixes: 20e6d190ffe1 ("net: pse-pd: Add TI TPS23881 PSE controller driver")
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 
-Answering myself: it's fine. Generic flash probe just fills a name,
-which we don't really care about.
+Thanks Kory,
+
+I agree that these changes are correct.
+But are they fixes; can this manifest in a bug?
+(If so, I suspect the Kernel is riddled with such bugs.)
+
+...
 
