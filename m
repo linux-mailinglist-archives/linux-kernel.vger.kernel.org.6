@@ -1,135 +1,124 @@
-Return-Path: <linux-kernel+bounces-336705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30DD6983F9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:46:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCF2D983FAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:49:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D09B41F23C9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:46:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2CC12847AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:49:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7DD14AD38;
-	Tue, 24 Sep 2024 07:45:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5092149C69;
+	Tue, 24 Sep 2024 07:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nIjkFOgY"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="R0UG6jyM"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628941803A
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE66145B1F;
+	Tue, 24 Sep 2024 07:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727163957; cv=none; b=f/P+sDoaYG9o9cY03jwb/k6fXHFSbB+aX7D3p19bBGVOKd5EGFH2Ok77sPZNj8Mfrjb1ssFHrpXcfqbtLpFM6R2UUYflWJyQo5ZHujpdV9eT7t4TUnp0cB2HDnLIByBwLV6FF+NBX4MMCUeKJahGouMalO9LItlY4TwuV529GLw=
+	t=1727164149; cv=none; b=gSTP8kTk02V3aq7yopfUcxX+ZkjAm7bt6h9hHsw9LCvEd9eTPaHOYJPB4bxBgdQr5mpja3QRtvK3DqaDcpKI8SMpWkHZVb93p2UCieGRfS1a+Wurx/3yEjaKzKUFfeiVxSazsoYITeGBLEVuVC6U/j+XPp+l7ncMdCF7ZTVwvoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727163957; c=relaxed/simple;
-	bh=l08cQdXWihPaRKBPjiePc2JDBhMjEU+fAYF5sfdJpqw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=P+k0bRz3ni5Oh7cNqdRZ+JHQTI7h86uRx8AMuAjURAH9ipxWKfMK2rssmAYvWO26NolfD3v85CsIshrSpJZzAShBdrvmJ5D8iEIqc4a9N19Z56PavUYio3/bg5rNAidpbAwiiXYz3/g1snWQI1wPaEmNribUtZYTAbyGzc5vjl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nIjkFOgY; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2058456b864so90367145ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 00:45:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727163956; x=1727768756; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LPW+26/rhTFGTD1mqsdatrHifgyew0bOQKR7ZHJ/lKo=;
-        b=nIjkFOgY6o0917D+pPgsB90/DoMKptVBOJdB3Y/I5fcL6coyMgHDKsvkCST3hr3pd3
-         jhVsSDKjTnJ5qWfK1zc2eAj8ChQXbMHQqsagU3PJJurYmhwIZkS3+Y/10ah+efmWv/1f
-         7O9V+CmbStgMw51sEd9pUSOiO22YJkdkeU26MBa2NKOFwsyOMha0JUysWV7PqVDVT7wM
-         S8xzKWdtEVjbVfXxQt+qVNY3I6827U7xM1MFQEX5z2oeTIF7ei8ZPfNmKQGqY9fUsgLh
-         trvFnd7w7GoZFUJwbKYjrAr/0QjpeRSyPItAoofl0vn+yT2gWYbuZDQ4rSPN8u07d5yb
-         Nenw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727163956; x=1727768756;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LPW+26/rhTFGTD1mqsdatrHifgyew0bOQKR7ZHJ/lKo=;
-        b=CuL7WpkyB+y6Q21ed6o6vjM7x+dz7rn0n6lP1/FtAU0TyiNLPsJ1D2L66w/Sp2QuoE
-         Vb2eSkmlPq2gsdmbg/aMAUpor6gOeN3BXDFSMCjLagzJ+pXaEqUj5sCgbIAp+PbgzfNE
-         GWNFTtdLzqwIZLxfcHjZXHybylibpyxzHPgr+DdHVwD3Eg4bfm0ie9OFoiGi8xtEz9sc
-         fDWLybROz9a8Wi5rzJWzp9yGmi5Xb33n80Gej+2sZXNLjeP3/TKmNudU4VQ6inu5pwcc
-         wy3qTlj+cilB8J9MFSfK7HelDKjvc/eQzo3ZpCuCqyUOVUdre9BWovxli960OIq1mPgn
-         1x0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUEpckMZGTwzq2nSmXN4QmnvFefRq474iUFTJyF0cGbSyTY6pyWYbU88vlwp8JUZ+yDWmofaIkdxCwF81A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyI/c2NsbnfasfZmVThM9YeAFwjd4lajbOlEK2B2NaLFWin5eWb
-	lYFxfhEMk4D+E1R7pkDzRDh0bvaVVWIaHh4VdJ380O0pMKk8oRtLmzDC8OLjXAJJ9RjWCnL04VM
-	gMQ==
-X-Google-Smtp-Source: AGHT+IFTbqmJJfq29+DpJvy9XBe6WodScDx+dQjeroXmCCrwMNoNzJvWaB1qOa1AKJaWaQpzxTfiia20RNI=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:ecce:b0:206:a1c9:273 with SMTP id
- d9443c01a7336-208d83f5295mr5049535ad.7.1727163955519; Tue, 24 Sep 2024
- 00:45:55 -0700 (PDT)
-Date: Tue, 24 Sep 2024 00:45:52 -0700
-In-Reply-To: <ZvIOox8CncED/gSL@yzhao56-desk.sh.intel.com>
+	s=arc-20240116; t=1727164149; c=relaxed/simple;
+	bh=9Dplu3ANlhcOvdfaoJvBrPEgWOZPkJBXXZjPGPHDY94=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VS54TRw7E0Bc+RXWVYaXv6nPUSpA7s9jpoFsxYKivI7Hpcs+aVCN/XAVAzCBWcPoJerIAgc0997lvdIVqSEpoy9VhmWobWAS8NNqVnc2B6BtsNYnIHQq7QGFu+pZOoIMADwOHI6EF5Iou92pgYnGAtpGPnQ3Pyma8pSEz/YO6Ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=R0UG6jyM; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48O0TmRD031635;
+	Tue, 24 Sep 2024 09:48:32 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=selector1; bh=6sf8+ZK2uL9hpIXwXOaJNk4X
+	lwi0uROM4AHYO0w9Jro=; b=R0UG6jyMeMn3J6WOqkQgZ8fh9QhkYqMCsUOEpEgI
+	ghAWxHZoIUcT6dj6Xr9b6d7rMhv8WS3iLERiwBTAYFyU7MP4m5KzRJRHktNol7GN
+	BnesbvMXbNi7mfwtzODRMKNMaP8wOg29F7wk06nn55/im9VDhhhkkSW0mGxdCTxh
+	/vt61kxrQQrm0wRpPoED60Tc8rKwmRd228WO3a2TY7l5vUNcFRHaA2sj0KfdNYq/
+	TIYdgqewf0mxVz8FpCi3yb2rFUcycUKTmRA7Yp+g4WiEzal7lkPgfHpp4G0IGKbb
+	MdTbn5N+UhokRLaI74bV0IU1T8BQrdRHWVaOGdmgtdlEAQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 41t93j9yev-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Sep 2024 09:48:32 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 6DB1F4002D;
+	Tue, 24 Sep 2024 09:47:09 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 263BC25C94C;
+	Tue, 24 Sep 2024 09:46:21 +0200 (CEST)
+Received: from gnbcxd0016.gnb.st.com (10.129.178.213) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 24 Sep
+ 2024 09:46:20 +0200
+Date: Tue, 24 Sep 2024 09:46:15 +0200
+From: Alain Volmat <alain.volmat@foss.st.com>
+To: Ma Ke <make24@iscas.ac.cn>
+CC: <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+        <tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+        <benjamin.gaignard@linaro.org>, <vincent.abriou@st.com>,
+        <akpm@linux-foundation.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
+        <alain.volmat@foss.st.com>
+Subject: Re: [PATCH RESEND] drm/sti: avoid potential dereference of error
+ pointers in sti_gdp_atomic_check
+Message-ID: <20240924074615.GA463025@gnbcxd0016.gnb.st.com>
+References: <20240909063359.1197065-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240703020921.13855-1-yan.y.zhao@intel.com> <20240703021043.13881-1-yan.y.zhao@intel.com>
- <ZvG1Wki4GvIyVWqB@google.com> <ZvIOox8CncED/gSL@yzhao56-desk.sh.intel.com>
-Message-ID: <ZvJuMGmpYT60Qh6I@google.com>
-Subject: Re: [PATCH v2 1/4] KVM: x86/mmu: Introduce a quirk to control memslot
- zap behavior
-From: Sean Christopherson <seanjc@google.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: pbonzini@redhat.com, rick.p.edgecombe@intel.com, kai.huang@intel.com, 
-	isaku.yamahata@intel.com, dmatlack@google.com, sagis@google.com, 
-	erdemaktas@google.com, graf@amazon.com, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240909063359.1197065-1-make24@iscas.ac.cn>
+X-Disclaimer: ce message est personnel / this message is private
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Tue, Sep 24, 2024, Yan Zhao wrote:
-> On Mon, Sep 23, 2024 at 11:37:14AM -0700, Sean Christopherson wrote:
-> > > +static void kvm_mmu_zap_memslot_leafs(struct kvm *kvm, struct kvm_memory_slot *slot)
-> > > +{
-> > > +	struct kvm_gfn_range range = {
-> > > +		.slot = slot,
-> > > +		.start = slot->base_gfn,
-> > > +		.end = slot->base_gfn + slot->npages,
-> > > +		.may_block = true,
-> > > +	};
-> > > +	bool flush = false;
-> > > +
-> > > +	write_lock(&kvm->mmu_lock);
-> > > +
-> > > +	if (kvm_memslots_have_rmaps(kvm))
-> > > +		flush = kvm_handle_gfn_range(kvm, &range, kvm_zap_rmap);
-> > 
-> > This, and Paolo's merged variant, break shadow paging.  As was tried in commit
-> > 4e103134b862 ("KVM: x86/mmu: Zap only the relevant pages when removing a memslot"),
-> > all shadow pages, i.e. non-leaf SPTEs, need to be zapped.  All of the accounting
-> > for a shadow page is tied to the memslot, i.e. the shadow page holds a reference
-> > to the memslot, for all intents and purposes.  Deleting the memslot without removing
-> > all relevant shadow pages results in NULL pointer derefs when tearing down the VM.
-> > 
-> > Note, that commit is/was buggy, and I suspect my follow-up attempt[*] was as well.
-> > https://lore.kernel.org/all/20190820200318.GA15808@linux.intel.com
-> > 
-> > Rather than trying to get this functional for shadow paging (which includes nested
-> > TDP), I think we should scrap the quirk idea and simply make this the behavior for
-> > S-EPT and nothing else.
-> Ok. Thanks for identifying this error. Will change code to this way.
+Hi,
 
-For now, I think a full revert of the entire series makes sense.  Irrespective of
-this bug, I don't think KVM should commit to specific implementation behavior,
-i.e. KVM shouldn't explicitly say only leaf SPTEs are zapped.  The quirk docs
-should instead say that if the quirk is disabled, KVM will only guarantee that
-the delete memslot will be inaccessible.  That way, KVM can still do a fast zap
-when it makes sense, e.g. for large memslots, do a complete fast zap, and for
-small memslots, do a targeted zap of the TDP MMU but a fast zap of any shadow
-MMUs.
+On Mon, Sep 09, 2024 at 02:33:59PM +0800, Ma Ke wrote:
+> The return value of drm_atomic_get_crtc_state() needs to be
+> checked. To avoid use of error pointer 'crtc_state' in case
+> of the failure.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: dd86dc2f9ae1 ("drm/sti: implement atomic_check for the planes")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+>  drivers/gpu/drm/sti/sti_gdp.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/sti/sti_gdp.c b/drivers/gpu/drm/sti/sti_gdp.c
+> index 43c72c2604a0..f046f5f7ad25 100644
+> --- a/drivers/gpu/drm/sti/sti_gdp.c
+> +++ b/drivers/gpu/drm/sti/sti_gdp.c
+> @@ -638,6 +638,9 @@ static int sti_gdp_atomic_check(struct drm_plane *drm_plane,
+>  
+>  	mixer = to_sti_mixer(crtc);
+>  	crtc_state = drm_atomic_get_crtc_state(state, crtc);
+> +	if (IS_ERR(crtc_state))
+> +		return PTR_ERR(crtc_state);
+> +
+>  	mode = &crtc_state->mode;
+>  	dst_x = new_plane_state->crtc_x;
+>  	dst_y = new_plane_state->crtc_y;
+> -- 
+> 2.25.1
+> 
 
-> BTW: update some findings regarding to the previous bug with Nvidia GPU
-> assignment:
-> I found that after v5.19-rc1+, even with nx_huge_pages=N, the bug is not
-> reproducible when only leaf entries of memslot are zapped.
-> (no more detailed info due to limited time to debug).
+Thanks, patch applied.
 
-Heh, I've given up hope on ever finding a root cause for that issue.
+Regards,
+Alain
 
