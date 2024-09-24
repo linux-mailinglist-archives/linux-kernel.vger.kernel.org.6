@@ -1,47 +1,80 @@
-Return-Path: <linux-kernel+bounces-336727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38000983FEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:07:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1E24983FF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:07:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4265DB2270B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:07:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C30681C20B3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:07:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7F414B976;
-	Tue, 24 Sep 2024 08:07:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87DA14BF9B;
+	Tue, 24 Sep 2024 08:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tNRhIx7k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fZcW5iL3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24BF54FAD;
-	Tue, 24 Sep 2024 08:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799C154FAD
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 08:07:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727165228; cv=none; b=o2KP4U5JkTjRIUXvhTEWqM9iB6xBiYM49TI5nBxz8fMWk/JPbUv5+WtgT2YYrOW0guQQNfVZ3KN6VmTI8W/bj+/H7fNzRovq4pTSuyutWX8dAcQ5c6Xz0nS6ELIVwOLgK1WlmoMAPTyIcX8TECXRGFKaTrizN+FCzPq0EGxJdEw=
+	t=1727165266; cv=none; b=HHnlAoQhhV847aKQjZVptyzAvO4Eu6XQz/CnfDfrigGOztm/maYLXZxT8+/1CxLerwKXE6Fp1Vxzf0c+G9/Uo9xOnan1uOdeNUBuGL+ubirr4/ifecE99PeT/7pfVW4odWTe3W4Pqe8ld69euvv0gKLTIgqwQjgz1+3kEkfVWig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727165228; c=relaxed/simple;
-	bh=a2Dn3WT4VdIDoop+yzc4TcQvYYUfuBFPswfp8kYSdlM=;
+	s=arc-20240116; t=1727165266; c=relaxed/simple;
+	bh=bUDUnqY7WuAjtHUH3BhBUOdHZWQX1jkaA02EYXNzW/8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FBfH+lhwn6jJYIjmB+K6NNR7NqgJeSvDfyPtKjxPZtpjiGOZKOhSguc2NpXO9rBAjUtamXc8pKIlwTH8xwSxLCMMdkAHMVPUbQiSo8RAAoV+bMjZbn9tD5BR3caJ/c2XPtasGHAdzi5Orz1dhve3Uoa5gIeX21CwMqiUWmSeDGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tNRhIx7k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3692C4CEC4;
-	Tue, 24 Sep 2024 08:07:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727165227;
-	bh=a2Dn3WT4VdIDoop+yzc4TcQvYYUfuBFPswfp8kYSdlM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tNRhIx7khdwOILljzAB+UM3PQR51e0nrat4kCTr+65whkR5G7kBGajI7YJGcF/MRL
-	 kub2U8oNm5D3HToJhHR6GY1noDz7Uj1DIvO02N4MYbHLVV9DuLImufkyKRGl44yi45
-	 dEBWJTQf/ROLveFllr6TyRWgyJrPjLEhl3wYrUB8/nmyEuv3jYIrIHuAkM2AOSoyPy
-	 5bl2LwqKRVOXqEKH1S2fnNtapiP1GUX6VwC7lS/WMzF9BlTTJ8DGsYHu5HYBH4lYRI
-	 i5kKPORLKnjp3MWLCnyIT9nWqWAQGx+qdH0qks8d0tuvPpob9z1SFhLOvMDhz2BUKO
-	 KRO6K76Y85icQ==
-Message-ID: <1e79d94e-2f83-4762-b126-ed865142f1ed@kernel.org>
-Date: Tue, 24 Sep 2024 10:06:59 +0200
+	 In-Reply-To:Content-Type; b=pnu9kujdteRzbGm+RncFw8uJ0v5apJC5vFk2oNzlgpAuJqvqmy/U0YnYwOelDERsgvp9mRWSU6g1oEfJ6FBE4pywv9fsJOb1Na6X4/c5j3K6SI5YpWXl4c0elmlK/S00ktxaWciYQ7adjQ/TwX5ctr76Br/Y67+SSjcgOiWTw0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fZcW5iL3; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727165263;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=otybeEe4GpmIRdyihwrPRZdCQ/gO5EGD00lkw+BaG24=;
+	b=fZcW5iL3zSCUOAwHoEHScTgg0Ex3TtdgfTVVJCqVXyGpviPowT8ecSMQG69hEQUn/LJiXV
+	DBdZAJij0vztkAzfP+i8K5BzIjFaN/O1KAE72aAtTuB0ZMzQ2pL50XBTXevslbdFF7HuKj
+	GuZ+3JJZPFG1axgEj2OkZGN4bkvcbwo=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-15-LATcfNmlO7u0Q0sYTvGqMg-1; Tue, 24 Sep 2024 04:07:42 -0400
+X-MC-Unique: LATcfNmlO7u0Q0sYTvGqMg-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42cb0ed9072so48394255e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 01:07:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727165261; x=1727770061;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=otybeEe4GpmIRdyihwrPRZdCQ/gO5EGD00lkw+BaG24=;
+        b=Vuj8HaJ6vKy3qcBpjY93B9jbel9umLUqyDkwHNd7Z/UT2Vj3WqAuhwg8dnuG1/kGZd
+         RXoWVVZEbelGkv4r5bGY6iMNNAjqJMS06iddVxC/bpYBeOLYab4jAD4zVfg63W+sVP8h
+         lJhOvhOG8sITbkm6ojI9BM1qGKqGdba7RTIMK4v8TPNSwQzsL2qh6auU678WG61dZNvZ
+         u2OGm0IXXvYtlx1g1LhveqBXQ/T0Mxyi1o4vXWwxx3y/UmzpTlfmnKfO8tp0BVxaAGAS
+         kO9WQ+vvq8ldgExehbZfPMasfpJJl9cWki+ovkuLscbQ3I8oz3qAYCGGSDU4J68GfByW
+         hbTw==
+X-Forwarded-Encrypted: i=1; AJvYcCXr7fHpP0dJHnc69Omodj/tqbrdiVdL4+f5g+Y0h6hskKiwnkcVx8oXbBcVifpK1cf4y4vMy2atFuKlWHs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyltvkhJtVtWlMAzBcv/5dSRu1F3Ye2Ko4Xlwoj6W8gWi7CAiIn
+	Ygu81opyQm0Zob//dFWxc0arb82PvgIC4NYmxAMiX6yjOlG2+fuvdhQ75bS0Hxo9ws1pajH1Poh
+	ZlMQZq1Lm4qu0r/eWeKc053niYRXO0DvSsmbr6/bj3UF668sVrtEDei8DQraPJA==
+X-Received: by 2002:a05:600c:3ba4:b0:42c:bd4d:e8ab with SMTP id 5b1f17b1804b1-42e7abfcde6mr142274965e9.10.1727165260815;
+        Tue, 24 Sep 2024 01:07:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEajrlIu5dHxPp/lNmEyzt2+B013i1vx3XNnEIikYdXlc/rRnsJXTYaHpxiLgiex2FHEroyjQ==
+X-Received: by 2002:a05:600c:3ba4:b0:42c:bd4d:e8ab with SMTP id 5b1f17b1804b1-42e7abfcde6mr142274615e9.10.1727165260331;
+        Tue, 24 Sep 2024 01:07:40 -0700 (PDT)
+Received: from [10.202.151.204] (nat-pool-brq-u.redhat.com. [213.175.37.12])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e902984e0sm13641955e9.15.2024.09.24.01.07.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Sep 2024 01:07:39 -0700 (PDT)
+Message-ID: <66d5e0c1-a6f2-47fd-9a5b-7651457beb43@redhat.com>
+Date: Tue, 24 Sep 2024 10:07:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,203 +82,120 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2] dt-bindings: net: ath11k: document the inputs
- of the ath11k on WCN6855
-To: Jeff Johnson <quic_jjohnson@quicinc.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Kalle Valo <kvalo@kernel.org>
-Cc: "David S . Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
- linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, ath11k@lists.infradead.org,
- linux-kernel@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Arnd Bergmann <arnd@arndb.de>
-References: <20240814082301.8091-1-brgl@bgdev.pl>
- <83c562e9-2add-4086-86e7-6e956d2ee70f@kernel.org> <87msk49j8m.fsf@kernel.org>
- <ed6aceb6-4954-43ad-b631-6c6fda209411@kernel.org> <87a5g2bz6j.fsf@kernel.org>
- <CAMRc=MeLick_+Czy5MhkX=SxVvR4WCmUZ8CQ5hQBVTe2fscCPg@mail.gmail.com>
- <b7fdafd6-5029-4b80-b264-11943740b354@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2] m68k: Define NR_CPUS
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, linux-m68k@lists.linux-m68k.org,
+ linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+References: <20240923235617.1584056-1-linux@roeck-us.net>
+ <aa23abe3-7236-4b9e-b237-3b822ac9d186@redhat.com>
+ <CAMuHMdVEfPtwps0A29WvHcwgo3f+3nTBiGn1PFxoYy1dxPsUMA@mail.gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <b7fdafd6-5029-4b80-b264-11943740b354@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CAMuHMdVEfPtwps0A29WvHcwgo3f+3nTBiGn1PFxoYy1dxPsUMA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 20/09/2024 23:02, Jeff Johnson wrote:
-> On 9/20/2024 1:22 AM, Bartosz Golaszewski wrote:
->> On Fri, 20 Sep 2024 08:45:56 +0200, Kalle Valo <kvalo@kernel.org> said:
->>> Krzysztof Kozlowski <krzk@kernel.org> writes:
->>>
->>>> On 19/09/2024 09:48, Kalle Valo wrote:
->>>>> Krzysztof Kozlowski <krzk@kernel.org> writes:
->>>>>
->>>>>> On 14/08/2024 10:23, Bartosz Golaszewski wrote:
->>>>>>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>>>>>>
->>>>>>> Describe the inputs from the PMU of the ath11k module on WCN6855.
->>>>>>>
->>>>>>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>>>>>> ---
->>>>>>> v1 -> v2:
->>>>>>> - update the example
->>>>>>
->>>>>> I don't understand why this patch is no being picked up. The code
->>>>>> correct represents the piece of hardware. The supplies should be
->>>>>> required, because this one particular device - the one described in this
->>>>>> binding - cannot work without them.
->>>>>
->>>>> I have already explained the situation. With supplies changed to
->>>>> optional I'm happy take the patch.
->>>>
->>>> You did not provide any relevant argument to this case. Your concerns
->>>> described quite different case and are no applicable to DT based platforms.
->>>
->>> Ok, I'll try to explain my concerns one more time. I'll try to be
->>> thorough so will be a longer mail.
->>>
->>> In ath11k we have board files, it's basically board/product specific
->>> calibration data which is combined with the calibration data from chip's
->>> OTP. Choosing the correct board file is essential as otherwise the
->>> performance can be bad or the device doesn't work at all.
->>>
->>> The board files are stored in board-2.bin file in /lib/firmware. ath11k
->>> chooses the correct board file based on the information provided by the
->>> ath11k firmware and then transfers the board file to firmware. From
->>> board-2.bin the correct board file is search based on strings like this:
->>>
->>> bus=pci,vendor=17cb,device=1103,subsystem-vendor=105b,subsystem-device=e0ca,qmi-chip-id=2,qmi-board-id=255
->>> bus=pci,vendor=17cb,device=1103,subsystem-vendor=105b,subsystem-device=e0ca,qmi-chip-id=2,qmi-board-id=255,variant=HO_BNM
->>>
->>> But the firmware does not always provide unique enough information for
->>> choosing the correct board file and that's why we added the variant
->>> property (the second example above). This variant property gives us the
->>> means to name the board files uniquely and not have any conflicts. In
->>> x86 systems we retrieve it from SMBIOS and in DT systems using
->>> qcom,ath11k-calibration-variant property.
->>>
->>
->> No issues here.
->>
->>> If WCN6855 supplies are marked as required, it means that we cannot use
->>> qcom,ath11k-calibration-variant DT property anymore with WCN6855 M.2
->>> boards. So if we have devices which don't provide unique information
->>> then for those devices it's impossible to automatically to choose the
->>> correct board file.
->>>
->>
->> What you're really trying to say is: we cannot use the following snippet of
->> DTS anymore:
->>
->> 	&pcie4_port0 {
->> 		wifi@0 {
->> 			compatible = "pci17cb,1103";
->> 			reg = <0x10000 0x0 0x0 0x0 0x0>;
->>
->> 			qcom,ath11k-calibration-variant = "LE_X13S";
->> 		};
->> 	};
->>
->> First: it's not true. We are not allowed to break existing device-tree sources
->> and a change to the schema has no power to do so anyway. You will however no
->> longer be able to upstream just this as it will not pass make dtbs_check
->> anymore.
->>
->> Second: this bit is incomplete even if the WCN6855 package is on a detachable
->> M.2 card. When a DT property is defined as optional in schema, it doesn't
->> mean: "the driver will work fine without it". It means: "the *hardware* does
->> not actually need it to function". That's a huge difference. DTS is not a
->> configuration file for your convenience.
->>
->>> So based on this, to me the correct solution here is to make the
->>> supplies optional so that qcom,ath11k-calibration-variant DT property
->>> can continue to be used with WCN6855 M.2 boards.
->>>
->>
->> No, this is the convenient solution. The *correct* solution is to say how the
->> ath11k inside the WCN6855 package is really supplied. The dt-bindings should
->> define the correct representation, not the convenient one.
->>
->> Let me give you an analogy: we don't really need to have always-on, fixed
->> regulators in DTS. The drivers don't really need them. We do it for
->> completeness of the HW description.
+On 24.09.24 09:48, Geert Uytterhoeven wrote:
+> Hi David,
 > 
-> Again, since I'm a DT n00b:
-> Just to make sure I understand, you are saying that with this change any
-> existing .dts/.dtb files will still work with an updated driver, so the new
-> properties are not required to be populated on existing devices.
-
-Did you folks rejected patches acked by DT maintainers on basis of not
-understanding DT at all?
-
+> On Tue, Sep 24, 2024 at 9:34 AM David Hildenbrand <david@redhat.com> wrote:
+>> On 24.09.24 01:56, Guenter Roeck wrote:
+>>> v2: Instead of trying to make SPLIT_PTE_PTLOCKS depend on the
+>>>       existence of NR_CPUS, define NR_CPUS for m68k.
+>>
+>> Okay, looks like we're cleaning up CONFIG_NR_CPUS for good.
+>>
+>> I'm back from conference travel tomorrow; I'll then throw in the following
+>> into cross compilers and fixup any other arch that needs attention:
+>>
+>>
+>> diff --git a/include/linux/threads.h b/include/linux/threads.h
+>> index 1674a471b0b4..e31715e6746b 100644
+>> --- a/include/linux/threads.h
+>> +++ b/include/linux/threads.h
+>> @@ -13,8 +13,7 @@
+>>     * bit of memory.  Use nr_cpu_ids instead of this except for static bitmaps.
+>>     */
+>>    #ifndef CONFIG_NR_CPUS
+>> -/* FIXME: This should be fixed in the arch's Kconfig */
+>> -#define CONFIG_NR_CPUS 1
+>> +#error "CONFIG_NR_CPUS not defined"
+>>    #endif
+>>
+>>    /* Places which use this should consider cpumask_var_t. */
 > 
-> However a new driver with support for these properties will utilize them when
-> they are present, and the current ath11k .dts files will need to be updated to
+> This is gonna trigger on almost all architectures if CONFIG_SMP=n.
 
-It is not related to drivers at all. Nothing in this thread is related
-to drivers.
+Right, probably it's not as easy as:
 
-Can we entirely drop the drivers from the discussion?
+diff --git a/mm/Kconfig b/mm/Kconfig
+index 09aebca1cae3..b9566312fc9c 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -581,6 +581,13 @@ endif # MEMORY_HOTPLUG
+  config ARCH_MHP_MEMMAP_ON_MEMORY_ENABLE
+         bool
+  
++if !SMP
++
++config NR_CPUS
++       default 1
++
++endif # !SMP
++
+  # Heavily threaded applications may benefit from splitting the mm-wide
+  # page_table_lock, so that faults on different parts of the user address
+  # space can be handled with less contention: split it at this NR_CPUS.
 
-> include these properties for pci17cb,1103, i.e. the following needs updating:
-> arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-> &pcie4_port0 {
-> 	wifi@0 {
-> 		compatible = "pci17cb,1103";
-> 		reg = <0x10000 0x0 0x0 0x0 0x0>;
-> 
-> 		qcom,ath11k-calibration-variant = "LE_X13S";
-> 	};
-> };
-> 
-> 
 
-Best regards,
-Krzysztof
+-- 
+Cheers,
+
+David / dhildenb
 
 
