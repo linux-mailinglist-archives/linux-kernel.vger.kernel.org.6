@@ -1,166 +1,168 @@
-Return-Path: <linux-kernel+bounces-337570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C03D984BCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:50:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B499984BCD
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:51:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A47221F23B48
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:49:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD99F1C22689
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031CE137905;
-	Tue, 24 Sep 2024 19:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1421369AA;
+	Tue, 24 Sep 2024 19:51:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UtN0fbRT"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3j/t6Q6O"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C29881749
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 19:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F7012EBDB
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 19:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727207390; cv=none; b=BfLMLTFnSfmNCgl9KEGDfRbxSXtEZ+4ERjAXfvdhGjAzE/mZB/J8QKMJtIckbJ+h+zKkpAxgaR7IrWH5YMSLihqSgDY+la8kJWXhddKE6jjCco/26QwkZw3YuHu/vDH6a1gz8HZx7H807VmZUvJBN4zUlU+0fn6Z4eRrLcRSW/8=
+	t=1727207494; cv=none; b=EbcpoOjjkayJiwKetL5pMYyVp0Me2pZ+Guvb/KN6+8UGZLDi4JewyVzpqqVplLfiIYpThacMz5wxN1BBvnyE6PdFIYJpwg9a+grA3l7xIBuM7k8+xv8hkZCjqlfK6BcJdTal1je3BcSzjDRmXCmNdDRWRFH72RO655Nmn5hull0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727207390; c=relaxed/simple;
-	bh=yqpJS+KhJYLxK6OoVvTSrnYnrYtRpSyQL6/IbvXFFHQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hBCmFqBof0j6Qy09rK7Oxo3d3IxPfCGuOfpzUS1xAf/pKcyiKdFw2SiAhrCxpzFXAnAz+bTLy7xwsHjIhKdBlwGw9u+Sa+iyExwEJH+37p+JYloamQRmv+Y8TUJsKwRqD04jyuEV1dIYr1SdJDBiYX0hZ87v9JHgqNoNz7ciT/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UtN0fbRT; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f761cfa5e6so64655701fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 12:49:47 -0700 (PDT)
+	s=arc-20240116; t=1727207494; c=relaxed/simple;
+	bh=gKob+i2saQp48rnX7TTOD2WApJHduJmGU15H4aZagFQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=INEsTwb1x8mdCYuDAl1TMLNenbVgTn1if98NvX78q9Up1RKdBsOHqWD1CRidNmsN4pM4WFIUGFW5ALlh6yAMYyIEm1TgPqCOn8yHFaaEJ4vgkDfbw8wm55hfHIiWW6Iv1qJXWp0qZT6Q6jp3iT7kG0vg5IViKb/Mzs8Tjwf8V3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3j/t6Q6O; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3a045f08fd6so38345ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 12:51:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727207386; x=1727812186; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=k/dGUOExCYI9ma3C9NHHq3S03j3KfaoxW6Zsr+oPoic=;
-        b=UtN0fbRTlH03LIBPrLzsuVvoNkIGyeD3M0//9LwiXNnjSQEMYlSWaEkS0jcwb3ddEO
-         scgysvZSADl7T7zbMcb7dooZV0rP6fRmHwIOQwh2H/dHG9uUVIOAED1dkRS4ecploMd4
-         YORs50IeBGZ/1UWDskwrgFKZL/5TKUjEc2sfECJDGIpWT5Fn19Ur7URc5A1v02rPy3Y6
-         6/2Ys5UPDp5LzISS/bEASz+WoXc+vgKSk92BvGwd4pmXa+mqf/g+frOk7UEXJFxEzaEb
-         AsCozV+gCusEuet0tCqpE8odxYzN2HyGmQHtYmgSdZfCk2D4MTcjKeNF/4Oi5SpfHz3y
-         dB1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727207386; x=1727812186;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1727207492; x=1727812292; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=k/dGUOExCYI9ma3C9NHHq3S03j3KfaoxW6Zsr+oPoic=;
-        b=G1tKHREnYQ0yn4qob7wJm/S91tWcEoqsqvPS9rm4lJUSWWfvDDoev1r2+Qwq9iOfL3
-         0E95t9o5JG4ivg1P/jW65k8+et8geOUa8mS5UTKMfEhaX443ZRF4VrpXzHcNDO9kZpty
-         F9dGHq9tS6y9D1zrrt7PjBa5kKVaaDmMvBnm0F5vYUgaqlWhIcYQXThJCvxGaZQ8Uupl
-         Y0XUkpv7wLlxwa9bpRFITF79/8283pRPGCFdWms/PlpSiS+/p6wR9lju/PofQ+l/0/KT
-         73PW/TaEME0SFjKxBWUrvOUcKz8+l9w3aX9ZlA2xi1S+Ii3qYDY3iq/ahMtqXmoSMUSh
-         Jmgw==
-X-Forwarded-Encrypted: i=1; AJvYcCVEtMpSv423iw/G5mKleQ4NYw4AEBPcPO4IAZd+wxqztmeeybXOOx0/nD5x041tAig0mqyXW7t0p+LfnQI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrkR/iuAOCfgRCXNxtox3scNN7NUu2YxNkIft6fKAIFAFhNwd8
-	/q4wCMggrTLPWu8Qu1RzCLRtmANN+NuuFSYvRCm/V3vH1KW7Sbm/Y4Zaytu7gg8=
-X-Google-Smtp-Source: AGHT+IF9Vrp5F23MjW0sqPHOc45CN/oE/KimpqLNFA5AlE9guRs5rUgE0mmPmEVD0LZgx4xD8k2FRg==
-X-Received: by 2002:a2e:130a:0:b0:2f7:53b8:ca57 with SMTP id 38308e7fff4ca-2f915ff565bmr2545221fa.19.1727207385621;
-        Tue, 24 Sep 2024 12:49:45 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f8d282fcabsm3133401fa.23.2024.09.24.12.49.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 12:49:44 -0700 (PDT)
-Date: Tue, 24 Sep 2024 22:49:41 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Sibi Sankar <sibis@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>, 
-	kernel-janitors@vger.kernel.org, Sibi Sankar <quic_sibis@quicinc.com>
-Subject: Re: [PATCH] remoteproc: qcom: q6v5-mss: Use common error handling
- code in q6v5_mpss_load()
-Message-ID: <tn4kxsouzpgimregroywzzvi3sjib7pvnpcnkcvccer5b7woxk@yzaqjwjxeyki>
-References: <bea9842e-6910-4452-8f90-cb7482f3e76f@web.de>
+        bh=oTv5Kz1/nHcd+bzdeFJN5jUl+0y6XwDkMUQRA6INFWM=;
+        b=3j/t6Q6OrNv/JcDac//TmHFhmBHyJp+s1psxCcz75lnCeIFVa65HXxURjXEwpOcWJf
+         PdoCka4lumggFBmON8cKVwXpSBct0WSL5C8o6K/opjpx9Za43IY68uCJTOM2eSfpVJOU
+         AUC4XAK7Eiw6IEHthngSGyheY9TgIBA+y3gVwM+Pqu43NFshFHyY5OZga2UacPItcJf8
+         BsvIBvbP084Bc3/ZCNjCpReW7VLBIiBqLvfsEcQCHxkOFCmRPydbzxaanVhv5VEf6zdl
+         uPyKColJ3I0i3XUxtdWiW/izxQIT1IrxhEPDB3y1HI3hVZNzzne5FvRgrPI/kMmS8iwS
+         kYFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727207492; x=1727812292;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oTv5Kz1/nHcd+bzdeFJN5jUl+0y6XwDkMUQRA6INFWM=;
+        b=HRroubd9q/LvtweFdSYwn+d6d+1Rz/meMLmxT9731gijO7m98RZbRutYa6NMpukGkI
+         Tj7MWHO9iJwTcI/fMChgtq4hS1jsfQBb3Mka7p9aAOo/0yufL3J7cQL3FmxDFr5h2cfo
+         ZkNHxM7+rGOnoPKPc4q4nfPxG0iI9TrWmLCIgtUse7lA+q+a7KcAsuEp1JT4zsUWb15r
+         5PURp5jrNPtx1jbsOKdKmAI9pAbl3VJd6treJ8mGUlsWIHolYYopa8ut6yMA2cA0JBrd
+         rn55KW+LSVOUbsJGd+0AGVTD6E43pqngfxlk1MYayvb0Z/6zMj6E4wwOVgmq44t/s3kO
+         /Z9g==
+X-Forwarded-Encrypted: i=1; AJvYcCWtPxJld5NFRzqWvBroJYTwkCdWjDhf4Vr/yEdUcOd358xB7BdMPywQLJo4FyshZk7t7kJ4QZXD8F0MqLs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrXy/7aISEF0TT5BxrZ9QkjdfMmYyg0Xe0nXkTGgaz1hfGtpzX
+	jo7ZXx6x0j7FTo11S8+jfnkYYumyDrF/F0MQdPr+ByYAB+xTwBoWN9RHhVgtzeo29sFm48KX8/q
+	fWBvRi7XyPlkwyCWoY4WbZi7qV1hib+rxR79k
+X-Google-Smtp-Source: AGHT+IEGNxuRwBmOz4OpvXhgnkkEoLCghzrvyxA3kBY//Y5LIoKIdpd1P33eorPTibTURcjZ8kCIKwSU70w8KnK7sec=
+X-Received: by 2002:a05:6e02:164e:b0:3a0:44d1:dca4 with SMTP id
+ e9e14a558f8ab-3a26e2c4afemr702355ab.6.1727207491479; Tue, 24 Sep 2024
+ 12:51:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bea9842e-6910-4452-8f90-cb7482f3e76f@web.de>
+References: <20240924003720.617258-1-irogers@google.com> <20240924003720.617258-2-irogers@google.com>
+ <ZvMHHKKZwab2IhlL@google.com>
+In-Reply-To: <ZvMHHKKZwab2IhlL@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 24 Sep 2024 12:51:20 -0700
+Message-ID: <CAP-5=fUCbzz=bLY75DKfdPRNjW91yz6yAzywVe_QWDwK4d7R8g@mail.gmail.com>
+Subject: Re: [PATCH v1 1/3] perf disasm: Fix capstone memory leak
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Kajol Jain <kjain@linux.ibm.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
+	"Steinar H. Gunderson" <sesse@google.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
+	Alexander Lobakin <aleksander.lobakin@intel.com>, Hemant Kumar <hemant@linux.vnet.ibm.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yang Jihong <yangjihong@bytedance.com>, leo.yan@arm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 24, 2024 at 04:08:11PM GMT, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 24 Sep 2024 15:55:06 +0200
-> 
-> Add jump targets so that a bit of exception handling can be better reused
-> at the end of this function implementation.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/remoteproc/qcom_q6v5_mss.c | 17 +++++++++--------
->  1 file changed, 9 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-> index 2a42215ce8e0..b398ae3083a1 100644
-> --- a/drivers/remoteproc/qcom_q6v5_mss.c
-> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> @@ -1451,9 +1451,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
->  				dev_err(qproc->dev,
->  					"failed to load segment %d from truncated file %s\n",
->  					i, fw_name);
-> -				ret = -EINVAL;
+On Tue, Sep 24, 2024 at 11:38=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
+>
+> On Mon, Sep 23, 2024 at 05:37:18PM -0700, Ian Rogers wrote:
+> > The insn argument passed to cs_disasm needs freeing. To support
+> > accurately having count, add an additional free_count variable.
+> >
+> > Fixes: c5d60de1813a ("perf annotate: Add support to use libcapstone in =
+powerpc")
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> >  tools/perf/util/disasm.c | 11 +++++++----
+> >  1 file changed, 7 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
+> > index f05ba7739c1e..2c8063660f2e 100644
+> > --- a/tools/perf/util/disasm.c
+> > +++ b/tools/perf/util/disasm.c
+> > @@ -1627,12 +1627,12 @@ static int symbol__disassemble_capstone(char *f=
+ilename, struct symbol *sym,
+> >       u64 start =3D map__rip_2objdump(map, sym->start);
+> >       u64 len;
+> >       u64 offset;
+> > -     int i, count;
+> > +     int i, count, free_count;
+> >       bool is_64bit =3D false;
+> >       bool needs_cs_close =3D false;
+> >       u8 *buf =3D NULL;
+> >       csh handle;
+> > -     cs_insn *insn;
+> > +     cs_insn *insn =3D NULL;
+> >       char disasm_buf[512];
+> >       struct disasm_line *dl;
+> >
+> > @@ -1664,7 +1664,7 @@ static int symbol__disassemble_capstone(char *fil=
+ename, struct symbol *sym,
+> >
+> >       needs_cs_close =3D true;
+> >
+> > -     count =3D cs_disasm(handle, buf, len, start, len, &insn);
+> > +     free_count =3D count =3D cs_disasm(handle, buf, len, start, len, =
+&insn);
+> >       for (i =3D 0, offset =3D 0; i < count; i++) {
+> >               int printed;
+> >
+> > @@ -1702,8 +1702,11 @@ static int symbol__disassemble_capstone(char *fi=
+lename, struct symbol *sym,
+> >       }
+> >
+> >  out:
+> > -     if (needs_cs_close)
+> > +     if (needs_cs_close) {
+> >               cs_close(&handle);
+> > +             if (free_count > 0)
+> > +                     cs_free(insn, free_count);
+>
+> It seems cs_free() can handle NULL insn and 0 free_count (like regular fr=
+ee)
+> so we can call it unconditionally.
 
-Please keep error assignment where it is. It is much cleaner to read it
-this way, rather than checking the error-handling basement.
+No, on error from cs_disasm free_count gets assigned -1 and my
+experience was things crashing.
 
-> -				memunmap(ptr);
-> -				goto release_firmware;
-> +				goto e_inval_unmap;
->  			}
-> 
->  			memcpy(ptr, fw->data + phdr->p_offset, phdr->p_filesz);
-> @@ -1464,18 +1462,15 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
->  							ptr, phdr->p_filesz);
->  			if (ret) {
->  				dev_err(qproc->dev, "failed to load %s\n", fw_name);
-> -				memunmap(ptr);
-> -				goto release_firmware;
-> +				goto unmap_mem;
->  			}
-> 
->  			if (seg_fw->size != phdr->p_filesz) {
->  				dev_err(qproc->dev,
->  					"failed to load segment %d from truncated file %s\n",
->  					i, fw_name);
-> -				ret = -EINVAL;
->  				release_firmware(seg_fw);
-> -				memunmap(ptr);
-> -				goto release_firmware;
-> +				goto e_inval_unmap;
->  			}
-> 
->  			release_firmware(seg_fw);
-> @@ -1528,6 +1523,12 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
->  	kfree(fw_name);
-> 
->  	return ret < 0 ? ret : 0;
-> +
-> +e_inval_unmap:
-> +	ret = -EINVAL;
-> +unmap_mem:
-> +	memunmap(ptr);
-> +	goto release_firmware;
+Thanks,
+Ian
 
-Ugh. No. ptr should be a variable that is declared inside the loop.
-Calling memunmap outside of the for loop is incorrect. And goto just
-complicates things by adding non-linearity.
-
->  }
-> 
->  static void qcom_q6v5_dump_segment(struct rproc *rproc,
-> --
-> 2.46.1
-> 
-
--- 
-With best wishes
-Dmitry
+>
+> > +     }
+> >       free(buf);
+> >       return count < 0 ? count : 0;
+> >
+> > --
+> > 2.46.0.792.g87dc391469-goog
+> >
 
