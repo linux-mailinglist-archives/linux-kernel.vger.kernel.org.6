@@ -1,144 +1,141 @@
-Return-Path: <linux-kernel+bounces-337656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11768984D06
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:48:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1842984D0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:51:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C91F4283976
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:48:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8606E1F24581
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:51:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 623F3146D45;
-	Tue, 24 Sep 2024 21:48:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Gyb5F3Yu"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2066A146A6B;
+	Tue, 24 Sep 2024 21:51:23 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EACF582488;
-	Tue, 24 Sep 2024 21:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B35813D25E
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 21:51:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727214518; cv=none; b=GCY8APxdG8wuRYMjI7ZhLyAYN0z548hyIeqpCd+96btyXuSXFFgmRTDuQVnGW7FRcSzGebBlsFRej/quCTAshKPc8DuboPW+hDvbzhVPuEH2pZR/SPwqDwBDGqsTaeGA8wxVgw3VrZuOhpPPLJ9YzoNRFU/8SV7oX0QJnFhfTrg=
+	t=1727214682; cv=none; b=HFGuQAbAe9jfK9V/nY8loLJpha97xbhqq+ju7FguIdXWp4hPL3a7tMXFiiXfAcM/OM2TngcDBeCLwwxV/f/2svzILoNM+vY4L52l0yrzZgaUcW+7B+eVNuqUkhqUFqODwc0Eb54W638Y4Kv9D6PolVT19tSmYBwOrbLtzulYaJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727214518; c=relaxed/simple;
-	bh=ch1B+nC2XYty/18UmhZn1YTMQF1mkQxUCTtY9tk2Hzs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LHnmfE/DYkOan5yoef4UsUuWFS9nNIFAmMUZFA3lHrTRCyrXo+jI4gINsI+BpAT5lkFphw0PwqruJJvQW88gaEaUzPfZmb8tFYtKO/jbxpufAtfaNfXvtAF3NvBuEXEKLGUEa8Tn8XHxE8gGeqQP5DqAQMvR0Th4mfzC1u7XUw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Gyb5F3Yu; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48OHWcXS013004;
-	Tue, 24 Sep 2024 21:47:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ch1B+nC2XYty/18UmhZn1YTMQF1mkQxUCTtY9tk2Hzs=; b=Gyb5F3YugcXOHjzE
-	m5DpE3ezd3wXVDLsSZXbNge3FGmMWXVPXPwHeb9tBmVUZXr5K8d8hJMjLCRs9dM4
-	RR42dn8TIZu5NwOZOKEon7CroYMKhx7LvkprC9vdQT5I2NJTgYXexcJUBizRxMBT
-	J5AqWbgo8DCL6Zfiic8I5tp9FGB0Ysa9k4Ysp8c7BZMu/EC3RZAnrLn3/4s5pKlO
-	aUEqW5Qoawu7ZDqYv2iAaV2A+HSIOpsBHfQaZnG1tTLmzd2ApJaOLwUm3xZ5zgXx
-	xMucpwKhtKCrWdTeYoRBpzqBDGC2NgIQfn65ieuliTC7cbJ3681+pT1AgDqHPrV/
-	7TI+Hg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sqakhpa1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Sep 2024 21:47:57 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48OLluZR006391
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Sep 2024 21:47:56 GMT
-Received: from [10.110.20.217] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 24 Sep
- 2024 14:47:55 -0700
-Message-ID: <dec459d3-fa0d-4ed0-ad6b-4a976b0f9e49@quicinc.com>
-Date: Tue, 24 Sep 2024 14:47:54 -0700
+	s=arc-20240116; t=1727214682; c=relaxed/simple;
+	bh=7nkYi9mRI6Nh6vUspfF6r4G+OKqgvF1CfuUEK8XrRrg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ugzyQambluxH3e87MTCrF98viWvJk34+J/wxMJ6Npf89wwZnrPMlG4CtLhQ1n43tfNr5Cdde/q7u+CqyEyR+cgp63RmDWFH5nqEPlRT7OQdhDZoVQNKeAc/LzHzKS/4/LcEiOQJiBk8pv0Lgty+ap/+SUGWzJdFrKp8DXDm9d3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-82aa94d4683so884371239f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 14:51:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727214680; x=1727819480;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5GLXPP8gloWEkHs7/dRo22kxqeF7ht3rRUiVq991l8g=;
+        b=CY8daLl8zByRasYlC8opfP7YbAFI4O/29Wp7/+nkrJxrhpb17x3l2DrTAt3XtYKFRj
+         cx5KwlIYmXd65ifYIueMtENpOnrdHHrhn2Rsut5WUPrd0jE95d6uK6lREd1UcmnMPdpA
+         Rqyn8V8WcFJ3liC8l9FfRfdZUjf1l/xKskXN7u+1pN12EMIdcxD+Cu9YAhCw43OBInlR
+         5sXCjtvA/9w9iNSkdBFLipePITwMIUexR4P54mJ+rVtYzB8BoXUzNTOSoFsMeoX0oLiP
+         fKoZ8nWhKBQ00uWxteZN2mEK9z3S/VvHu40zlqDEnvntaSHH880d42BbGooNNpR9iN7T
+         2hPw==
+X-Forwarded-Encrypted: i=1; AJvYcCXNxTlPyui1fEbOko5/vUlvA0IVsk6C6a+i0bqznvElvfYDQqOSHfj3M126YiirBziZvB6Pd/ohsvJ8TOQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzlv0MM0mruLfoyQZzNMV5oUUvU+I2LKG0ZGxl27YLo25wvFMZt
+	TGvN3ZRZ37HLj3aCr2rzp7ZN8xgI3KqvaskLlX5X1fY3/43+N1JoTIfnH2GSkrnJJBbxC7wUB9i
+	SobPfihVczk5KUk68weEKuFo/ErUkslxskTruHuRaoxYTSOPWpvw/+cA=
+X-Google-Smtp-Source: AGHT+IEMTTjR3dYhXKua/OTKRfkCZwu+4yRP9qDdp+MaoIt93J1zWlRRc5Apel76dVoHwX826H3pVjxNlRYPn1nfXLV9IDbHzKfF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v27 01/32] xhci: add helper to stop endpoint and wait for
- completion
-To: =?UTF-8?Q?Micha=C5=82_Pecio?= <michal.pecio@gmail.com>
-CC: <mathias.nyman@linux.intel.com>, <Thinh.Nguyen@synopsys.com>,
-        <alsa-devel@alsa-project.org>, <bgoswami@quicinc.com>,
-        <broonie@kernel.org>, <conor+dt@kernel.org>, <corbet@lwn.net>,
-        <devicetree@vger.kernel.org>, <dmitry.torokhov@gmail.com>,
-        <gregkh@linuxfoundation.org>, <krzk+dt@kernel.org>,
-        <lgirdwood@gmail.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-sound@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <pierre-louis.bossart@linux.intel.com>,
-        <robh@kernel.org>, <srinivas.kandagatla@linaro.org>, <tiwai@suse.com>
-References: <20240913103237.2f5dc796@foxbook>
- <a9dcaa5a-4f5d-451a-93aa-7457798fc243@quicinc.com>
- <20240915095514.6b01fefb@foxbook>
- <182938da-da86-49a4-800a-446954cc6c60@quicinc.com>
- <20240923012328.1e4d0bc6@foxbook>
-Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <20240923012328.1e4d0bc6@foxbook>
+X-Received: by 2002:a05:6e02:190b:b0:3a0:91e7:67cc with SMTP id
+ e9e14a558f8ab-3a26d7747famr11393505ab.13.1727214680184; Tue, 24 Sep 2024
+ 14:51:20 -0700 (PDT)
+Date: Tue, 24 Sep 2024 14:51:20 -0700
+In-Reply-To: <00000000000088906d0622445beb@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f33458.050a0220.457fc.001e.GAE@google.com>
+Subject: Re: [syzbot] [net?] UBSAN: shift-out-of-bounds in xfrm_selector_match (2)
+From: syzbot <syzbot+cc39f136925517aed571@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, herbert@gondor.apana.org.au, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, steffen.klassert@secunet.com, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: qiPxEtCjhcoNN42tT5PhLvaywjB-iOC8
-X-Proofpoint-GUID: qiPxEtCjhcoNN42tT5PhLvaywjB-iOC8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
- bulkscore=0 impostorscore=0 suspectscore=0 phishscore=0 adultscore=0
- clxscore=1011 malwarescore=0 lowpriorityscore=0 mlxlogscore=999
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409240151
 
-Hi Michal
+syzbot has found a reproducer for the following issue on:
 
-On 9/22/2024 4:23 PM, Michał Pecio wrote:
-> Hi,
->
->> So what I ended up doing was to split off the context error handling
->> into a separate helper API, which can be also called for the sync ep
->> stop API.  From there, based on say....the helper re queuing the stop
->> EP command, it would return a specific value to signify that it has
->> done so.  The sync based API will then re-wait for the completion of
->> the subsequent stop endpoint command that was queued.
-> AFAIK retries are only necessary on buggy hardware. I don't see them on
-> my controllers except for two old ones, both with the same buggy chip.
->
->>  In all other context error cases, it'd return the error to the caller,
->> and its up to them to handle it accordingly.
-> For the record, all existing callers end up ignoring this return value.
->
-> Honestly, I don't know if improving this function is worth your effort
-> if it's working for you as-is. There are no users except xhci-sideband
-> and probably shouldn't be - besides failing to fix stalled endpoints,
-> this function also does nothing to prevent automatic restart of the EP
-> when new URBs are submitted through xhci_hcd, so it is mainly relevant
-> for sideband users who never submit URBs the usual way.
->
-> My issue with this function is that it is simply poorly documented what
-> it is or isn't expected to achieve (both here and in the calling code
-> in xhci-sideband.c), and the changelog message is wrong to suggest that
-> the default completion handler will run (unless somewhere there are
-> patches to make it happen), making it look like this code can do things
-> that it really cannot do. And this is apparently a public, exported API.
+HEAD commit:    151ac45348af net: sparx5: Fix invalid timestamps
+git tree:       net-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=15808a80580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=37c006d80708398d
+dashboard link: https://syzkaller.appspot.com/bug?extid=cc39f136925517aed571
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=122ad2a9980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1387b107980000
 
-Thanks for the clarifications.  Yes, unfortunately, I can't really test any scenarios where this would be exercised in the current path, so I will leave the code out for now, and just add some comments and updates to the commit message.  Can revisit when there is some other users for utilizing secondary interrupters.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/81152b131cff/disk-151ac453.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/013d9758c594/vmlinux-151ac453.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9ff7505093fc/bzImage-151ac453.xz
 
-Thanks
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+cc39f136925517aed571@syzkaller.appspotmail.com
 
-Wesley Cheng
+------------[ cut here ]------------
+UBSAN: shift-out-of-bounds in ./include/net/xfrm.h:900:23
+shift exponent -96 is negative
+CPU: 0 UID: 0 PID: 5231 Comm: syz-executor893 Not tainted 6.11.0-syzkaller-01459-g151ac45348af #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:468
+ addr4_match include/net/xfrm.h:900 [inline]
+ __xfrm4_selector_match net/xfrm/xfrm_policy.c:222 [inline]
+ xfrm_selector_match+0xe9b/0x1030 net/xfrm/xfrm_policy.c:247
+ xfrm_state_look_at+0xe8/0x480 net/xfrm/xfrm_state.c:1172
+ xfrm_state_find+0x199f/0x4d70 net/xfrm/xfrm_state.c:1280
+ xfrm_tmpl_resolve_one net/xfrm/xfrm_policy.c:2481 [inline]
+ xfrm_tmpl_resolve net/xfrm/xfrm_policy.c:2532 [inline]
+ xfrm_resolve_and_create_bundle+0x6d2/0x2c90 net/xfrm/xfrm_policy.c:2826
+ xfrm_lookup_with_ifid+0x334/0x1ee0 net/xfrm/xfrm_policy.c:3160
+ xfrm_lookup net/xfrm/xfrm_policy.c:3289 [inline]
+ xfrm_lookup_route+0x3c/0x1c0 net/xfrm/xfrm_policy.c:3300
+ ip_route_connect include/net/route.h:333 [inline]
+ __ip4_datagram_connect+0x96c/0x1260 net/ipv4/datagram.c:49
+ __ip6_datagram_connect+0x194/0x1230
+ ip6_datagram_connect net/ipv6/datagram.c:279 [inline]
+ ip6_datagram_connect_v6_only+0x63/0xa0 net/ipv6/datagram.c:291
+ __sys_connect_file net/socket.c:2067 [inline]
+ __sys_connect+0x2df/0x310 net/socket.c:2084
+ __do_sys_connect net/socket.c:2094 [inline]
+ __se_sys_connect net/socket.c:2091 [inline]
+ __x64_sys_connect+0x7a/0x90 net/socket.c:2091
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fb0cdb8e8a9
+Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffdce8cd648 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
+RAX: ffffffffffffffda RBX: 00007ffdce8cd818 RCX: 00007fb0cdb8e8a9
+RDX: 000000000000001c RSI: 0000000020000000 RDI: 0000000000000004
+RBP: 00007fb0cdc01610 R08: 000000000000000a R09: 00007ffdce8cd818
+R10: 00000000000000e8 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffdce8cd808 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+---[ end trace ]---
 
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
