@@ -1,106 +1,284 @@
-Return-Path: <linux-kernel+bounces-337029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC43C984464
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:19:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BC1C984465
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 13:20:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9244D28413D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:18:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DAD71C22FCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:20:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 146B31A4F11;
-	Tue, 24 Sep 2024 11:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WeoVvcXp"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83DF91A3AB6;
+	Tue, 24 Sep 2024 11:20:13 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3541A270;
-	Tue, 24 Sep 2024 11:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A8B1A270
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 11:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727176733; cv=none; b=e9vUdrdSYdKAl5t0FHftE5PhA8PdWY0wH/EovyKyRPU5sjC7uCnesW5I5l983ug3hkYCl+S5wjGWtVEIZ5xr7FUp9P3uHhz0H3MoazUpDgGMGIujTQL+iB0QulCl+Kmd6EcMe3DKpGQ/9g0uveD7IOo0OgpSWFUazDnzjrSWzng=
+	t=1727176813; cv=none; b=PtcZadhVC9h/Kj6YslyVwtvq/2sZuhZCY4DBiiiy64fw7wdd6iqzadkSLkhbVHJTrTftlgKweIbXYk33CfOgs2ZGjGA+ymBi71UzlW8pQ10GrAgecZHh3WIkiOmoRiFmKtY2qCxIhW4zEZt9PyTH4fBRp2Uff2Wp0qjUDBkqv1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727176733; c=relaxed/simple;
-	bh=YBAqfCr1rPGxWzSzMR4p/L3+lR7/ASXO7LooTM0/hqA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m50LHyyS0BAAXoh9wAQB4kCrL9wPOKlkzn4HqBQEUSGQ8h8bmiQASwRWui2esl++IArgEgGuq0p1KSA1NQ/Q9eLJcWFdS1vH6YL6v7Gi2LwsmNP+5/8BtQws4SutA2yAFs9C0hoe2qMxY3QPd0HpnZFVyW9O8eAHNk1VvQGaVQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WeoVvcXp; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e201f146cc8so4915915276.3;
-        Tue, 24 Sep 2024 04:18:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727176731; x=1727781531; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YBAqfCr1rPGxWzSzMR4p/L3+lR7/ASXO7LooTM0/hqA=;
-        b=WeoVvcXpupKfScfrTBA7vHp/YllamVH78ISwaKFJAaIFxbMvCXQFE+vlhTS+HHVLwh
-         vD86xPq6wb6BPW0xXrATm2TY5TwkXqq3e8OaCHTN9vNyl9+dg+BMX3v+OQLTs+FcUemX
-         XeOBs0vEGmUnF/KZQyEODH172b5w5Rq2C4rUhA85qsmQPM/ucC+aIctMNyL47YlNmDhq
-         OmzagC/UB8DhucFXxNEca0L+s+LmH2esQOXNWPXBVxYhCsQj9Z7sgHXmlXpcIOQBXSip
-         6rzy4BQZQijVEDf2OwrM20goQIec+6f7IoOFkxuZCxWp4BTyogCWa8hHkWNnSLGG6ThD
-         VZQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727176731; x=1727781531;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YBAqfCr1rPGxWzSzMR4p/L3+lR7/ASXO7LooTM0/hqA=;
-        b=uxWb6tqAJK6ZQlxyaavvyxCrp+dblQrdAc4sraUjnZr+sGj9UrMhTZpm7ey/DIbGkB
-         tHFlLh0m+S/AK7g+r46OI9v2SIXClpkBTzFvlmNDGv92jfrphtzhmrlt1rw6aUpbuYxc
-         IXqg4hnn5IbNO6cxtYFTqh/WvntUuyLc3CuoJy5/NEROaWNN/EtZqOiRjLDQV1fiIfMz
-         bXDVbF+HJ9sfABMIE/ODyan6gNhDG7aCr4vW4y2eWQFX5JIZtfFg9jSQRpY11okAasCn
-         RcviPlIKqeKWffZ94aqgRNvokAcOhn/CWRPtdDMiYOTHOxQcFy+2yla2rH2prDq96C3q
-         CSig==
-X-Forwarded-Encrypted: i=1; AJvYcCU/r5y9E42p9uKU3He6Ewh6w0mv0BBi7fuPgzpYXcPsejjqxIwjAJ7SCyqmlGQrK2UW4ErRXDdcJbB3@vger.kernel.org, AJvYcCXVnc+piefxwFTNPLR94OaUqhPZ+qSZWHIqZODrUBWZ0UDg0p2T0NgpzIYw7F+WiiSLfV6LZP7e3YyGTLVS@vger.kernel.org
-X-Gm-Message-State: AOJu0YydvxI74dw6ur+RwXwLwwh5ZFv+p6AJfZ0NmAENLc375AjfFO3E
-	OKWzvGUN7obNvfmkoq93uAzLh48ePsuFaXBYy74sTR/bbFb3r87ZespTgTsJjZ2UESzUZd4e/EX
-	lpR6QZt3MHQNdi+iWMY9RoMRwC4g=
-X-Google-Smtp-Source: AGHT+IHANp7+/BMwt988SLqyFK4IXfD9/zYPo0ZjUxhHBAeaZYv3Ys8UDFEPSo4JAjl/rljyKlox04YLEYQzEDwc4rk=
-X-Received: by 2002:a05:6902:2b91:b0:e1a:72e9:b243 with SMTP id
- 3f1490d57ef6-e2250c24a2cmr8718542276.9.1727176731047; Tue, 24 Sep 2024
- 04:18:51 -0700 (PDT)
+	s=arc-20240116; t=1727176813; c=relaxed/simple;
+	bh=/a0iPIlke0+jNVeuO7mM4SbTZ41CbTBfOI2HSMLU/Zs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nacHPe4ZOjjFZP5QW41XvOW9RAwluk56p0lVo3us4BOXA7RsJXeGfv3AF2qqM9vawd18xEauW0RfuJs+p7z3u9YxNv0BWbue7LLwH5us8VnyAPFEInpyN/K6N7xKRUWkEfu1qMHi3BTpTzTxrZvsFVMMIs86MCplWkFaa5J/im0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XCcp875KLz20pLy;
+	Tue, 24 Sep 2024 19:19:44 +0800 (CST)
+Received: from dggpemf100008.china.huawei.com (unknown [7.185.36.138])
+	by mail.maildlp.com (Postfix) with ESMTPS id 32DF6140119;
+	Tue, 24 Sep 2024 19:20:05 +0800 (CST)
+Received: from [10.174.177.243] (10.174.177.243) by
+ dggpemf100008.china.huawei.com (7.185.36.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 24 Sep 2024 19:20:04 +0800
+Message-ID: <61b16640-49e0-4f84-8587-ae9b90a78887@huawei.com>
+Date: Tue, 24 Sep 2024 19:20:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240915114311.75496-1-laurentiu.mihalcea@nxp.com>
- <20240915114311.75496-3-laurentiu.mihalcea@nxp.com> <CAOMZO5DR7xaEGj9=mzzFPy6wB0z7-SmvXkMnFH-wSjs01hp=WQ@mail.gmail.com>
-In-Reply-To: <CAOMZO5DR7xaEGj9=mzzFPy6wB0z7-SmvXkMnFH-wSjs01hp=WQ@mail.gmail.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Tue, 24 Sep 2024 08:18:38 -0300
-Message-ID: <CAOMZO5Cacne=7ZYQ3eSdO2RRd+QuPurziFN+mS_KU7kucXHBQA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] reset: add driver for imx8ulp SIM reset controller
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Liu Ying <victor.liu@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/2] mm: Abstract THP allocation
+To: Dev Jain <dev.jain@arm.com>, <akpm@linux-foundation.org>,
+	<david@redhat.com>, <willy@infradead.org>, <kirill.shutemov@linux.intel.com>
+CC: <ryan.roberts@arm.com>, <anshuman.khandual@arm.com>,
+	<catalin.marinas@arm.com>, <cl@gentwo.org>, <vbabka@suse.cz>,
+	<mhocko@suse.com>, <apopple@nvidia.com>, <dave.hansen@linux.intel.com>,
+	<will@kernel.org>, <baohua@kernel.org>, <jack@suse.cz>,
+	<mark.rutland@arm.com>, <hughd@google.com>, <aneesh.kumar@kernel.org>,
+	<yang@os.amperecomputing.com>, <peterx@redhat.com>, <ioworker0@gmail.com>,
+	<jglisse@google.com>, <ziy@nvidia.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>
+References: <20240924101654.1777697-1-dev.jain@arm.com>
+ <20240924101654.1777697-2-dev.jain@arm.com>
+Content-Language: en-US
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
+In-Reply-To: <20240924101654.1777697-2-dev.jain@arm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemf100008.china.huawei.com (7.185.36.138)
 
-On Tue, Sep 24, 2024 at 8:16=E2=80=AFAM Fabio Estevam <festevam@gmail.com> =
-wrote:
 
-> Who is the original author?
->
-> In the NXP kernel, the author is Liu Ying.
->
-> If that's still the case the Author field should contain Liu Ying's name.
->
-> Please double-check.
 
-Also, even if you are the author, there is still something wrong
-as reported by checkpatch:
+On 2024/9/24 18:16, Dev Jain wrote:
+> In preparation for the second patch, abstract away the THP allocation
+> logic present in the create_huge_pmd() path, which corresponds to the
+> faulting case when no page is present.
+> 
+> There should be no functional change as a result of applying this patch,
+> except that, as David notes at [1], a PMD-aligned address should
+> be passed to update_mmu_cache_pmd().
+> 
+> [1]: https://lore.kernel.org/all/ddd3fcd2-48b3-4170-bcaa-2fe66e093f43@redhat.com/
+> 
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Dev Jain <dev.jain@arm.com>
+> ---
+>   mm/huge_memory.c | 98 ++++++++++++++++++++++++++++--------------------
+>   1 file changed, 57 insertions(+), 41 deletions(-)
+> 
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 4e34b7f89daf..bdbf67c18f6c 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -1148,47 +1148,81 @@ unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
+>   }
+>   EXPORT_SYMBOL_GPL(thp_get_unmapped_area);
+>   
+> -static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf,
+> -			struct page *page, gfp_t gfp)
+> +static struct folio *vma_alloc_anon_folio_pmd(struct vm_area_struct *vma,
+> +					      unsigned long addr)
+>   {
+> -	struct vm_area_struct *vma = vmf->vma;
+> -	struct folio *folio = page_folio(page);
+> -	pgtable_t pgtable;
+> -	unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
+> -	vm_fault_t ret = 0;
+> +	unsigned long haddr = addr & HPAGE_PMD_MASK;
+> +	gfp_t gfp = vma_thp_gfp_mask(vma);
+> +	const int order = HPAGE_PMD_ORDER;
+> +	struct folio *folio = vma_alloc_folio(gfp, order, vma, haddr, true);
 
-WARNING: From:/Signed-off-by: email address mismatch: 'From: Laurentiu
-Mihalcea <laurentiumihalcea111@gmail.com>' !=3D 'Signed-off-by:
-Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>'
+There is a warning without NUMA,
+
+../mm/huge_memory.c: In function ‘vma_alloc_anon_folio_pmd’:
+../mm/huge_memory.c:1154:16: warning: unused variable ‘haddr’ 
+[-Wunused-variable]
+  1154 |  unsigned long haddr = addr & HPAGE_PMD_MASK;
+       |                ^~~~~
+
+
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index c584e77efe10..147a6e069c71 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -1151,11 +1151,11 @@ EXPORT_SYMBOL_GPL(thp_get_unmapped_area);
+  static struct folio *vma_alloc_anon_folio_pmd(struct vm_area_struct *vma,
+                                               unsigned long addr)
+  {
+-       unsigned long haddr = addr & HPAGE_PMD_MASK;
+         gfp_t gfp = vma_thp_gfp_mask(vma);
+         const int order = HPAGE_PMD_ORDER;
+-       struct folio *folio = vma_alloc_folio(gfp, order, vma, haddr, true);
++       struct folio *folio;
+
++       folio = vma_alloc_folio(gfp, order, vma, addr & HPAGE_PMD_MASK, 
+true);
+         if (unlikely(!folio)) {
+                 count_vm_event(THP_FAULT_FALLBACK);
+                 count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK);
+
+>   
+> -	VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
+> +	if (unlikely(!folio)) {
+> +		count_vm_event(THP_FAULT_FALLBACK);
+> +		count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK);
+> +		goto out;
+
+Maybe return NULL to omit the out?
+
+
+Reviewed-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+
+
+> +	}
+>   
+> +	VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
+>   	if (mem_cgroup_charge(folio, vma->vm_mm, gfp)) {
+>   		folio_put(folio);
+>   		count_vm_event(THP_FAULT_FALLBACK);
+>   		count_vm_event(THP_FAULT_FALLBACK_CHARGE);
+> -		count_mthp_stat(HPAGE_PMD_ORDER, MTHP_STAT_ANON_FAULT_FALLBACK);
+> -		count_mthp_stat(HPAGE_PMD_ORDER, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
+> -		return VM_FAULT_FALLBACK;
+> +		count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK);
+> +		count_mthp_stat(order, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
+> +		return NULL;
+>   	}
+>   	folio_throttle_swaprate(folio, gfp);
+>   
+> -	pgtable = pte_alloc_one(vma->vm_mm);
+> -	if (unlikely(!pgtable)) {
+> -		ret = VM_FAULT_OOM;
+> -		goto release;
+> -	}
+> -
+> -	folio_zero_user(folio, vmf->address);
+> +	folio_zero_user(folio, addr);
+>   	/*
+>   	 * The memory barrier inside __folio_mark_uptodate makes sure that
+>   	 * folio_zero_user writes become visible before the set_pmd_at()
+>   	 * write.
+>   	 */
+>   	__folio_mark_uptodate(folio);
+> +out:
+> +	return folio;
+> +}
+> +
+> +static void map_anon_folio_pmd(struct folio *folio, pmd_t *pmd,
+> +			       struct vm_area_struct *vma, unsigned long haddr)
+> +{
+> +	pmd_t entry;
+> +
+> +	entry = mk_huge_pmd(&folio->page, vma->vm_page_prot);
+> +	entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
+> +	folio_add_new_anon_rmap(folio, vma, haddr, RMAP_EXCLUSIVE);
+> +	folio_add_lru_vma(folio, vma);
+> +	set_pmd_at(vma->vm_mm, haddr, pmd, entry);
+> +	update_mmu_cache_pmd(vma, haddr, pmd);
+> +	add_mm_counter(vma->vm_mm, MM_ANONPAGES, HPAGE_PMD_NR);
+> +	count_vm_event(THP_FAULT_ALLOC);
+> +	count_mthp_stat(HPAGE_PMD_ORDER, MTHP_STAT_ANON_FAULT_ALLOC);
+> +	count_memcg_event_mm(vma->vm_mm, THP_FAULT_ALLOC);
+> +}
+> +
+> +static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf)
+> +{
+> +	unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
+> +	struct vm_area_struct *vma = vmf->vma;
+> +	struct folio *folio;
+> +	pgtable_t pgtable;
+> +	vm_fault_t ret = 0;
+> +
+> +	folio = vma_alloc_anon_folio_pmd(vma, vmf->address);
+> +	if (unlikely(!folio))
+> +		return VM_FAULT_FALLBACK;
+> +
+> +	pgtable = pte_alloc_one(vma->vm_mm);
+> +	if (unlikely(!pgtable)) {
+> +		ret = VM_FAULT_OOM;
+> +		goto release;
+> +	}
+>   
+>   	vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
+>   	if (unlikely(!pmd_none(*vmf->pmd))) {
+>   		goto unlock_release;
+>   	} else {
+> -		pmd_t entry;
+> -
+>   		ret = check_stable_address_space(vma->vm_mm);
+>   		if (ret)
+>   			goto unlock_release;
+> @@ -1202,21 +1236,11 @@ static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf,
+>   			VM_BUG_ON(ret & VM_FAULT_FALLBACK);
+>   			return ret;
+>   		}
+> -
+> -		entry = mk_huge_pmd(page, vma->vm_page_prot);
+> -		entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
+> -		folio_add_new_anon_rmap(folio, vma, haddr, RMAP_EXCLUSIVE);
+> -		folio_add_lru_vma(folio, vma);
+>   		pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, pgtable);
+> -		set_pmd_at(vma->vm_mm, haddr, vmf->pmd, entry);
+> -		update_mmu_cache_pmd(vma, vmf->address, vmf->pmd);
+> -		add_mm_counter(vma->vm_mm, MM_ANONPAGES, HPAGE_PMD_NR);
+> +		map_anon_folio_pmd(folio, vmf->pmd, vma, haddr);
+>   		mm_inc_nr_ptes(vma->vm_mm);
+>   		deferred_split_folio(folio, false);
+>   		spin_unlock(vmf->ptl);
+> -		count_vm_event(THP_FAULT_ALLOC);
+> -		count_mthp_stat(HPAGE_PMD_ORDER, MTHP_STAT_ANON_FAULT_ALLOC);
+> -		count_memcg_event_mm(vma->vm_mm, THP_FAULT_ALLOC);
+>   	}
+>   
+>   	return 0;
+> @@ -1283,8 +1307,6 @@ static void set_huge_zero_folio(pgtable_t pgtable, struct mm_struct *mm,
+>   vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf)
+>   {
+>   	struct vm_area_struct *vma = vmf->vma;
+> -	gfp_t gfp;
+> -	struct folio *folio;
+>   	unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
+>   	vm_fault_t ret;
+>   
+> @@ -1335,14 +1357,8 @@ vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf)
+>   		}
+>   		return ret;
+>   	}
+> -	gfp = vma_thp_gfp_mask(vma);
+> -	folio = vma_alloc_folio(gfp, HPAGE_PMD_ORDER, vma, haddr, true);
+> -	if (unlikely(!folio)) {
+> -		count_vm_event(THP_FAULT_FALLBACK);
+> -		count_mthp_stat(HPAGE_PMD_ORDER, MTHP_STAT_ANON_FAULT_FALLBACK);
+> -		return VM_FAULT_FALLBACK;
+> -	}
+> -	return __do_huge_pmd_anonymous_page(vmf, &folio->page, gfp);
+> +
+> +	return __do_huge_pmd_anonymous_page(vmf);
+>   }
+>   
+>   static void insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
+
 
