@@ -1,209 +1,186 @@
-Return-Path: <linux-kernel+bounces-337432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2411984A0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:57:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4A84984A12
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:59:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 422251F22901
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:57:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EEC22840C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BA7A1AC423;
-	Tue, 24 Sep 2024 16:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1921ABEDD;
+	Tue, 24 Sep 2024 16:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UD7ku4q2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="s2P1Ro51"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB571AB6E2
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 16:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7971AB6E2;
+	Tue, 24 Sep 2024 16:59:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727197068; cv=none; b=TkLRvAu/G/TGCH4it1czS1JFU9auDiTFuqY7Nk1IEP2ZyFtwPB8NeU0CkW0xpZw6OiMsGF2ayhmHKVaxWt654RRfWLa6otKe4riupBF/g3otcDReCQqiiVaLmQeU4LLEJ359Mld0CxG+HnPqkGqzNlxWfeyAR6FkgZpqKJ5X7Ik=
+	t=1727197176; cv=none; b=QpUeRiW+1RyZrBKjFmpT1yITmKXSWhqdGi4LO6rEX/beBgbY7Muhyo2nh8sX76CtKD3C13KqrrZ/GQYGDfRuMkayijLUO0ZJTVF5qfpG7ZzrP7mvGpuRMx1X7b+M1VPn6Vhpipn4mWNYAdHS2NCLox6Jm45i44m5CYzBQkaA/k4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727197068; c=relaxed/simple;
-	bh=zstY32M94VZryIVPisbQkcDAiGXynfPJylInEQIvakc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cWpM42YdaIBUM2Uxx4nnXRA2ypHuNpLnbRVfyXGktfQaMytlOpv0uN++NMev0CKvB13MTdUBmKRkUYsrAneUqfSEk8rs/jV58V8Eelexs9ARt+RUGZV61O2M2Rk4hJklo8gfTQaIeKXtPkeVqKF7LZWczorHWMYRBqr6bzS8mhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UD7ku4q2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66D3BC4AF0B
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 16:57:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727197068;
-	bh=zstY32M94VZryIVPisbQkcDAiGXynfPJylInEQIvakc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=UD7ku4q29kQJ7PVzhQXRh30OEB/Goe74rsM8Gf0Go+qVGyEpJqnOiFWwGyaeiL/gm
-	 zJa3a3vZ2rlr0jq3FwFJeDxO+a75HCUAqHp50ANw3+YeT9VCBfX0Ge7xV9Py4kvs51
-	 4s9fyrD8Vg2p5IoE/5senBx+mWwAdnMcrdbcu3wrD9EAW9EXfkns2XtKKPaqzmJAjl
-	 67rQZo0fRhjRLE36STM4fT8ShuIrWtwov2cBhbuUVtkl6KMftJGCqQDyuIu7YsN7Xw
-	 Oa/rnUUiqCHzzx/iKgH4LHyKSx4d0jIXss+Qo3QHG0pOrFDdK6wlsHR/994Fuy/bo5
-	 WNPJdMC+tEp/A==
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3a0be4d803eso18179645ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:57:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVf4PYuWz3k+NxaQmg+ak3/VuMRTA7TrATRphlt1IZQGyyZ8bQ3OCFQ3cEw1+OFSWBHlZKAofeeF8GRN1M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9+0W8RFJxpOauuxSKj7hrdSLXy9P4BRnzvH8gd0q9qdpg3GpG
-	pXNyusDu263Ye2Df8R9iduUW0o2cGJT9qT13Kfzq6fcDQDRfPMnstpjELDUsAKMMdpHK4TsZvvQ
-	DadOS51/o0i9hTFScrKPJXLjIQFU=
-X-Google-Smtp-Source: AGHT+IEBtAtiHVV5tAquKBVykVcUtaeiBUT0zkN3jsxHxU4/FsR5cm8OwqgbdapeLQYpCRrEL3xnphhGhBHcYZZhcTY=
-X-Received: by 2002:a05:6e02:178d:b0:39e:6e47:814d with SMTP id
- e9e14a558f8ab-3a26d6f98bcmr1675855ab.2.1727197067740; Tue, 24 Sep 2024
- 09:57:47 -0700 (PDT)
+	s=arc-20240116; t=1727197176; c=relaxed/simple;
+	bh=oUJRzNiB3mUMpsc9Pcs35ja7rDdxfiQC5n038332biQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d6h14yGxlkdiLSzJZ7SUP3awaHwluajKeILqVALyrDmc98HirAAgustm7iq/Xyj9a2QggTOpfRdIt/NINNyaq9xlPftFpqo1B9D7at6PHbF/tmg1Mkg3435QbugHdRuX+eybpIjY0apS1KQHiMBjhxJBZLvbraW5GSpb6MvRiag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=s2P1Ro51; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1727197163; x=1727801963; i=deller@gmx.de;
+	bh=HkhAwijJTEsqKDQraXRrb3AtBYPqsnWPxfHpbs7SLyg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=s2P1Ro516MDVOIbryznggDNAGIBvTW8ngyC44vGtmyWKeUsHT8AM5CrCQV483gjc
+	 kFep84ZnMW4Fs1KcGyBvVrI5fib/x/AK97uBWDYInOeej2SE+CaIBMfz+7yYbVvyb
+	 voLIQgRD6IWyE3e8usgdnEvaKbnnD9rCbw5yr893qjbgUvp9/g33eKbyAohJVW65a
+	 gcxUemeMWFSZYVM6S/gPMC5H2uPu2l2Y2xxaio8KXnRhHUsSvaiFaW8DKSGO1GIBG
+	 UHyeP8d7INafQssD4CAP5oMp3YZ1tyCbpuSx59FEOPlPWEL22yDmmHtHkEEjZBUyx
+	 X67Tv5sB6oV+x4xFhg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.55] ([109.250.63.79]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1N6bfw-1rrenF318Y-014Qhc; Tue, 24
+ Sep 2024 18:59:23 +0200
+Message-ID: <1b1a2d3c-ed4a-4d9b-b87a-8d05f3d6592e@gmx.de>
+Date: Tue, 24 Sep 2024 18:59:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <daf2370f5456cbf1660bbdc13621559fb3f2f6cc.camel@linux.ibm.com>
- <Zq1NksrG9blyN-KR@slm.duckdns.org> <e3069da05fb1676f8faad88b9a4dfc4a6cef4175.camel@linux.ibm.com>
- <Zru5_UmEmWhNaPyo@slm.duckdns.org> <fa56b39990dd0b90f971018f5abb7352c60af3b1.camel@linux.ibm.com>
- <ZsTwoWJQcnsJhYbe@slm.duckdns.org> <3da12c96daecaa055c478816f5e86c7b44a04d53.camel@linux.ibm.com>
- <ZszKI2GA-8yparh_@slm.duckdns.org> <Zul6l-S_JulEnDQw@mtj.duckdns.org>
- <516106abdf5c922ee19dffd9eb69ea3f9e20e54a.camel@linux.ibm.com>
- <ZvGxlcMwFOmUBfr9@slm.duckdns.org> <CAADnVQ+OYuaS9wYa2_aF8XFo7LcaSKbCeLwfC_z9j1Qe-eV3nw@mail.gmail.com>
- <ab72231540149a7dd367cbf30d17b12af14c6387.camel@linux.ibm.com>
-In-Reply-To: <ab72231540149a7dd367cbf30d17b12af14c6387.camel@linux.ibm.com>
-From: Song Liu <song@kernel.org>
-Date: Tue, 24 Sep 2024 09:57:36 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW4-rkKVwWeOLhkK5gX5zO0FND+bB4vR4dbT7O1G=ZJajg@mail.gmail.com>
-Message-ID: <CAPhsuW4-rkKVwWeOLhkK5gX5zO0FND+bB4vR4dbT7O1G=ZJajg@mail.gmail.com>
-Subject: Re: [sched_ext/for-6.11]: Issue with BPF Scheduler during CPU Hotplug
-To: Aboorva Devarajan <aboorvad@linux.ibm.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Tejun Heo <tj@kernel.org>, 
-	David Vernet <void@manifault.com>, LKML <linux-kernel@vger.kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, hbathini@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] fbcon: Fix a NULL pointer dereference issue in
+ fbcon_putcs
+To: Qianqiang Liu <qianqiang.liu@163.com>
+Cc: linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org,
+ syzbot+3d613ae53c031502687a@syzkaller.appspotmail.com
+References: <20240916011027.303875-1-qianqiang.liu@163.com>
+ <a57734e8-ffb9-4af1-be02-eb0c99507048@gmx.de> <ZvLlEpIMQnJcJsla@thinkpad>
+Content-Language: en-US
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+In-Reply-To: <ZvLlEpIMQnJcJsla@thinkpad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:/4OJj5GQZKDc2YsiJJu7Qk4LEzuZA3rnyRbYnLmS8aAuwBpIZ6F
+ kndz5WhgRpt98BKRw8KlEYC1Dm9DQYdzwVttyP6nX8OcIVnFaWoes7d/j64AJFLVW/QHhG2
+ xnv6qEkwWeEkTQ3X+j4+E1MFAE1L17hoC95CY63dH5t3p6VbEv8QxwwCH5RnISL5PFoF9cp
+ cjA3hqXhDKKgr1Qe83VSA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:3EUBHtEyex0=;PcGU7F3Z0lZnOAhisgg+CdyIMtf
+ 1LThAZw7cnAUqfMy8qZ86jgCpTWnMxq2mVyynHjfQkESelHdmd9rMn8wojIq5ypSKpyEOTHer
+ TSNm2s2CrVcZNKRyvtKRioElHUBHqPqMadiNPGZBv87fIK+mj+aqgdx0vEt+mW5Ew6X2Oc76M
+ CGI5hWenkJ89iyX4fluUOlvlqmz9dops0KUWiZiHCdaos5j8CBHBJDBsOXSxHTwhZ82oJagBG
+ i0sspTc9SDL1UK9Q7WagemquCTFqhoOhpvdx/uh5xBvDjg2e7flWnae3CXxvYwXxYJ4V481Az
+ S0BTx5Q6XUpZyg7GrUHJNPE0Cu9tdUfI12sIBAeQfo04Hx84hkBMudFCgxw2z4KlbJ8FQIcaV
+ yfc7E59suzL+F3Ro6gyImzn/6DLdeTfkT4q0kONO819xXBQVDXeU/9EjI6DsoVLYVUlE7pzcs
+ rZzf3pMvzS+S/Jdz3Jg1JH0EFSCiu4wOaPrphtF5CYkdbh6v8yOwHKeQ7VEsIIT73luy1VRhU
+ /+vMWOGnl8FdmOqEtfbCcPqlwi8LmMJVsK94dytdju4b/xUbr6awgbOJSeoSOC4grPP1Rl3bX
+ M53xhNqKAQp9ErWV7IU0YTvFjdRNY613ehvYXT5H8709AfGxr4MtCKZiz+u3YWpwNNmiSEvSk
+ gd/p73qxKY0apj3pVgGq7XnZJRzBBzPccaojFYrf/gYH0j67BDfD1OfhZHWnRBXYwiHCJipAJ
+ ubm9SLMTP9hVCAg8t+0dtRnT2OLJGevQ19Ls9jiwqqdcjKEYVxSfN5cc9QJXsJJ5wGbI+7v78
+ HDle35I2OfXSmTllIaSQ7T4g==
 
-On Tue, Sep 24, 2024 at 5:00=E2=80=AFAM Aboorva Devarajan
-<aboorvad@linux.ibm.com> wrote:
+Hi Qianqiang,
+
+On 9/24/24 18:13, Qianqiang Liu wrote:
+> syzbot has found a NULL pointer dereference bug in fbcon.
 >
-> On Tue, 2024-09-24 at 10:03 +0200, Alexei Starovoitov wrote:
-> > On Mon, Sep 23, 2024 at 8:21=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote=
-:
-> > > Hello,
-> > >
-> > > (cc'ing Alexei and Andrii for the BPF part)
-> > >
-> > > On Mon, Sep 23, 2024 at 08:26:32PM +0530, Aboorva Devarajan wrote:
-> > > > Sharing the crash logs observed in PowerPC here for general referen=
-ce, FYI:
-> > > >
-> > > > [ 8638.891964] Kernel attempted to read user page (a8) - exploit at=
-tempt? (uid: 0)
-> > > > [ 8638.892002] BUG: Kernel NULL pointer dereference on read at 0x00=
-0000a8
-> > > > [ 8638.892019] Faulting instruction address: 0xc0000000004e7cc0
-> > > > [ 8638.892038] Oops: Kernel access of bad area, sig: 11 [#1]
-> > > > [ 8638.892060] LE PAGE_SIZE=3D64K MMU=3DRadix SMP NR_CPUS=3D2048 NU=
-MA PowerNV
-> > > > [ 8638.892080] Modules linked in: nf_conntrack_netlink nfnetlink xf=
-rm_user xfrm_algo xt_addrtype
-> > > > br_netfilter xt_CHECKSUM xt_MASQUERADE xt_conntrack ipt_REJECT nf_r=
-eject_ipv4 xt_tcpudp
-> > > >  ip6table_mangle ip6table_nat iptable_mangle iptable_nat nf_nat nf_=
-conntrack nf_defrag_ipv6
-> > > > nf_defrag_ipv4 ebtable_filter ebtables vhost_vsock vmw_vsock_virtio=
-_transport_common ip6tabl
-> > > > e_filter ip6_tables vhost vhost_iotlb iptable_filter vsock bridge s=
-tp llc kvm_hv kvm joydev
-> > > > input_leds mac_hid at24 ofpart cmdlinepart uio_pdrv_genirq ibmpower=
-nv opal_prd ipmi_powernv
-> > > > powernv_flash uio binfmt_misc sch_fq_codel nfsd mtd ipmi_devintf ip=
-mi_msghandler auth_rpcgss
-> > > > jc42 ramoops reed_solomon ip_tables x_tables autofs4 raid10 raid456=
- async_raid6_recov async
-> > > > _memcpy async_pq async_xor async_tx raid1 raid0 dm_mirror dm_region=
-_hash dm_log mlx5_ib ib_uverbs
-> > > > ib_core mlx5_core hid_generic usbhid hid ast i2c_algo_bit drm_shmem=
-_helper drm_kms_hel
-> > > > per vmx_crypto drm mlxfw crct10dif_vpmsum crc32c_vpmsum psample tls=
- tg3 ahci libahci
-> > > > drm_panel_orientation_quirks
-> > > > [ 8638.892621] CPU: 62 UID: 0 PID: 5591 Comm: kworker/62:2 Not tain=
-ted 6.11.0-rc4+ #2
-> > > > [ 8638.892663] Hardware name: 8335-GTW POWER9 0x4e1203 opal:skiboot=
--v6.5.3-35-g1851b2a06 PowerNV
-> > > > [ 8638.892693] Workqueue: events bpf_prog_free_deferred
-> > > > [ 8638.892735] NIP:  c0000000004e7cc0 LR: c0000000004e7bbc CTR: c00=
-00000003a9b30
-> > > > [ 8638.892798] REGS: c000000ea4cbf7f0 TRAP: 0300   Not tainted  (6.=
-11.0-rc4+)
-> > > > [ 8638.892862] MSR:  9000000000009033 <SF,HV,EE,ME,IR,DR,RI,LE>  CR=
-: 42a00284  XER: 00000000
-> > > > [ 8638.892915] CFAR: c0000000004e7bb8 DAR: 00000000000000a8 DSISR: =
-40000000 IRQMASK: 1
-> > > > [ 8638.892915] GPR00: c0000000004e7bbc c000000ea4cbfa90 c0000000028=
-37f00 0000000000000005
-> > > > [ 8638.892915] GPR04: 0000000000000015 0000000000000009 00000000000=
-00009 c000000004840b00
-> > > > [ 8638.892915] GPR08: ffffffffffffffff 00000000ffffe000 fffffffffff=
-fffff 000001937b55db50
-> > > > [ 8638.892915] GPR12: 0000000000200000 c000007ffdfac300 c0000000031=
-b1fc8 0000000000010000
-> > > > [ 8638.892915] GPR16: c00000000000018e 000000007fffffff 00000000000=
-00000 000000000000e1c0
-> > > > [ 8638.892915] GPR20: 61c8864680b583eb 0000000000000000 00000000000=
-00000 00000000000de1d5
-> > > > [ 8638.892915] GPR24: 0000000000000000 c000000003da4408 c000000003d=
-a4400 c000000003da43f8
-> > > > [ 8638.892915] GPR24: 0000000000000000 c000000003da4408 c000000003d=
-a4400 c000000003da43f8
-> > > > [ 8638.892915] GPR28: 0000000000000000 0000000000000000 00000000000=
-00000 c000000ea4cbfa90
-> > > > [ 8638.893350] NIP [c0000000004e7cc0] walk_to_pmd+0x80/0x240
+> This issue is caused by ops->putcs being a NULL pointer.
+> We need to ensure it is initialized properly.
+>
+> Reported-by: syzbot+3d613ae53c031502687a@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3D3d613ae53c031502687a
+> Tested-by: syzbot+3d613ae53c031502687a@syzkaller.appspotmail.com
+> Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
+> ---
+>   Changes since v1:
+>   - Initialize ops->putcs by calling set_blitting_type()
 
-With "BUG: Kernel NULL pointer dereference on read at 0x000000a8" (from abo=
-ve),
-it appears bpf_arch_text_invalidate() is racing with
-text_area_cpu_down_mm(), which
-sets cpu_patching_context.mm to NULL?
+Thanks a lot tracking this issue down!
 
-Am I going in the right direction?
+At first sight your patch seems correct.
+But could you please document in the patch description what exactly (and w=
+hy)
+something goes wrong and how your patch fixes it?
+E.g. why was opt->putcs missed to be initialized even earlier and why does
+it need initialization now?
 
-> > > > [ 8638.893380] LR [c0000000004e7bbc] __get_locked_pte+0x4c/0xd0
-> > > > [ 8638.893398] Call Trace:
-> > > > [ 8638.893407] [c000000ea4cbfa90] [c000000ea4cbfb20] 0xc000000ea4cb=
-fb20 (unreliable)
-> > > > [ 8638.893429] [c000000ea4cbfaf0] [c0000000004e7bbc] __get_locked_p=
-te+0x4c/0xd0
-> > > > [ 8638.893457] [c000000ea4cbfb40] [c0000000000b1dd0] patch_instruct=
-ions+0x130/0x630
-> > > > [ 8638.893500] [c000000ea4cbfc10] [c000000000123180] bpf_arch_text_=
-invalidate+0x80/0xd0
-> > > > [ 8638.893552] [c000000ea4cbfc60] [c0000000003a7508] bpf_prog_pack_=
-free+0x138/0x2f0
-> > > > [ 8638.893584] [c000000ea4cbfd10] [c0000000003a7e38] bpf_jit_binary=
-_pack_free+0x48/0xa0
-> > > > [ 8638.893617] [c000000ea4cbfd50] [c000000000123258] bpf_jit_free+0=
-x88/0x100
-> > > > [ 8638.893667] [c000000ea4cbfd90] [c0000000003a9d70] bpf_prog_free_=
-deferred+0x240/0x280
-> > > > [ 8638.893725] [c000000ea4cbfde0] [c0000000001a6828] process_schedu=
-led_works+0x268/0x520
-> > > > [ 8638.893767] [c000000ea4cbfee0] [c0000000001a9ed0] worker_thread+=
-0x3f0/0x590
-> > > > [ 8638.893809] [c000000ea4cbff80] [c0000000001b37b0] kthread+0x1a0/=
-0x1c0
-> > > > [ 8638.893862] [c000000ea4cbffe0] [c00000000000d030] start_kernel_t=
-hread+0x14/0x18
-> > > > [ 8638.893913] Code: 3cc20157 3b63c4f8 3b45c500 3929c510 3b26c508 3=
-940ffff e87b0000 e8ba0000
-> > > > 81290000 e8d90000 38830010 7d494830 <e87d00a8> 7ce42a14 7d2948f8 7d=
-073214
-> > > > [ 8638.894003] ---[ end trace 0000000000000000 ]---
-> > > > [ 8639.098185] pstore: backend (nvram) writing error (-1)
-> > > > [ 8639.098205]
-> > > > [ 8639.098215] note: kworker/62:2[5591] exited with irqs disabled
-> > > > [ 8798.806603] ------------[ cut here ]------------
-> > > > [ 8798.806631] WARNING: CPU: 62 PID: 3769 at kernel/kthread.c:76 kt=
-hread_set_per_cpu+0x40/0xd0
+You did a good work in producing a reduced testcase.
+If it's quite small, it's a good idea to even include it in the
+commit message?
 
-This warning also seems relevant. Are running the work queue on a cpu
-that is going away?
+Helge
 
-Thanks,
-Song
+> ---
+>   drivers/video/fbdev/core/fbcon.c | 2 ++
+>   1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core=
+/fbcon.c
+> index 2e093535884b..d9abae2516d8 100644
+> --- a/drivers/video/fbdev/core/fbcon.c
+> +++ b/drivers/video/fbdev/core/fbcon.c
+> @@ -861,6 +861,8 @@ static int set_con2fb_map(int unit, int newidx, int =
+user)
+>   			return err;
+>
+>   		fbcon_add_cursor_work(info);
+> +	} else if (vc) {
+> +		set_blitting_type(vc, info);
+>   	}
+>
+>   	con2fb_map[unit] =3D newidx;
+
 
