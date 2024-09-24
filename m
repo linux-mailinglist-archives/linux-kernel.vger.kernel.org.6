@@ -1,90 +1,106 @@
-Return-Path: <linux-kernel+bounces-337442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A981F984A2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:15:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2CED984A2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:16:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BC51B231A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:15:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91A821F24348
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:16:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14471AC425;
-	Tue, 24 Sep 2024 17:15:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7AEE1AC437;
+	Tue, 24 Sep 2024 17:16:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FN6GP3SU"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qdys5jPX"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CCC41B85D2;
-	Tue, 24 Sep 2024 17:15:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DFD33612D;
+	Tue, 24 Sep 2024 17:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727198143; cv=none; b=FoZizrFJLEnkge/Hj6jhD91bYqO4y7yD7X9Ha9A0JoJVk2kOYnqPE/BLDzwFQiaojkhhJdcJm3cTNnsVi6S+z+RgdGPYd3JGCQIedIo1O9B0f3esS+ZhuDsvz1Sz7YhgJKGTgjkuQrI7WcTtoNcOrtRDSgUr42rlPNjbkaCt/ac=
+	t=1727198174; cv=none; b=FbFTahfe06H6zi5tkqcDbKWu4L7AFe6KgWmSGF1wYEN6sV7TSHpPGSK37ypmBp/VxgzCDy5kWq1R5IRonMiurkTiDOEhEijZifljG/D00pboZLuEaUVpG6qiQDcRsoUJcsHZ5SkK4jq3xUtYRe/iywOWYCp8bBKHovRoYbQwxOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727198143; c=relaxed/simple;
-	bh=qBXWmQulj4+bRaY1j5WtgTi0EYtaH2UYJLpcDVwM6qE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RLKc4LALs1AiEzub3NXiMCCqrW++A6wzdrxryauB0KjopdReQnK25bmXr+fVZRF+QekWNUUrO901YCeb3p3iyS3mqrl9HFnZ01YEzue0Lt3sIGafFSHzZaHrf5t0wRGsdCgg0KqXTR+3u7mlkvC75NulzVR/ykhcJtGRKrzEvT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FN6GP3SU; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=WJowBGyKSbxzXE1/4SfIgV1cnZ3niSXTshohFumyVyo=; b=FN6GP3SU7IBOOqvdNF+Slvk/CW
-	icGmhjkq8DxlxknZq1FtXL5hFEmEOuHet7Yc8T3Xmoc89NetMzgIjgkuIxyrKMCWJURKscgz4VWDh
-	01eRl3ZHrOt4DXCSKHJ23AnnZh4DRGlt12o3ma18+lZavmWoALXY6obv91jnEN7LfDxnbNdzOo8b+
-	1TMMXRdTdv3baEQrq/ryN8fjj7btYQg+SBPKAxYvGxJBdwq/X9j6Wbna+dH4rShmywnqbfQ3VXaWX
-	uxmA9xdOYlW7VuUZQtlbx8TvHaWZbbMjRoDh5vULaygl/Uf9weJ+0BADHCNR6BAH8XVA4XmjG0jJm
-	QlTxjDUQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1st98T-0000000253H-3S3Y;
-	Tue, 24 Sep 2024 17:15:37 +0000
-Date: Tue, 24 Sep 2024 18:15:37 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Jann Horn <jannh@google.com>
-Cc: Suren Baghdasaryan <surenb@google.com>,
-	linux-trace-kernel@vger.kernel.org, peterz@infradead.org,
-	oleg@redhat.com, rostedt@goodmis.org, mhiramat@kernel.org,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org,
-	paulmck@kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org,
-	mjguzik@gmail.com, brauner@kernel.org, andrii@kernel.org
-Subject: Re: [PATCH v2 1/1] mm: introduce mmap_lock_speculation_{start|end}
-Message-ID: <ZvLzueEY9Sbyz1H4@casper.infradead.org>
-References: <CAJuCfpFFqqUWYOob_WYG_aY=PurnKvZjxznnx7V0=ESbNzHr_w@mail.gmail.com>
- <20240912210222.186542-1-surenb@google.com>
- <CAG48ez131NJWvo_RrxL7Ss0p4jd_aKOu71z1vm9wfaH7Qjn+qw@mail.gmail.com>
+	s=arc-20240116; t=1727198174; c=relaxed/simple;
+	bh=aVrYjTE1AeKemCQUeLfIG9BcOy/UUIT0nHD5ul5c9J8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=iYv9l9lDa3qn9b6xeq4zEMNVQuD7H88PMhLOnEhADi32N59WDQL8ybIK8wmbZPZIWN2dk5QsdmXpO6b16las8oy/JkXVSPIaKtypSHcm+fNRcag+jo52wjFhl+809w7g6ozauuHnlNcZYcYipltxNjvGBDrHIVs/iqxES3cZzoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qdys5jPX; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-374c6187b6eso3239661f8f.0;
+        Tue, 24 Sep 2024 10:16:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727198170; x=1727802970; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=/uSghqd96C7l/OunFvy1iybnF5kbktIvJLSUNcyMiQQ=;
+        b=Qdys5jPXWSA8caWop5al7JJ/IgRUZuxzPm7i1hoVv7a6Eq6ZnAOaRtyl79sq/Z5OWF
+         FDInX7mnof2FRLPJz3dG1DxXIpp8fur0S9ijafkOqFRMGwqlYw9FKMz/cDKwiElhFtY4
+         VxMEo+3z0RGbUFvbekGLaa+lDPaEp+0ImUplNrqdJmOY0pS53Mb72P6NtA8OwIKMX/CZ
+         dzhRBrgVGNmZHNh74+5WZXkqiGsWp+6eJ6Z5kxg4sjFZ5icmTPJHSMj8J7vZU7XyR9fF
+         YiwwJhHVa4Uv/LlrPDIjj/RQABa1XEmoL35GWFpLeAgGAwgrciIRObqr9bZOsnY0/AtC
+         GgvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727198170; x=1727802970;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/uSghqd96C7l/OunFvy1iybnF5kbktIvJLSUNcyMiQQ=;
+        b=i4XoV6tl7FdxxYAuQ0vhL/E7lGve+2le1NNOJpD533CDVHM7B92mAZ7KcEkuhl0Knz
+         0UfS3GhsjnrzKBdB2CYcOkg8w8LWfTw0CBUSyd3daMR5xlsaeDDRNUFQLwsaAOMCUNY+
+         uUpXq64iFU9ShKigX8tk5uXoj4RAb1V4D7+ABGQ/aewo5neHGcBAK/6O6LocK+c1FEpk
+         HqCjHsx+B06CuWngyjwOYtH26VNNIsuAgH8fspFooom4NOaVVq9hivD/+pmrJYOB6kuP
+         he7BNHwuONUN2rA2/VLIRQxKy24dlMP0Lph9BFthN9k7OyFe3yLxpVQaV1LpeyY4+i2e
+         bEIw==
+X-Forwarded-Encrypted: i=1; AJvYcCWAhEgD1ufbgckxdeASwmGULWGQQwz93MOsxyPktUE+fN/Zn3o6WSBJJy/PfNWsW4p0Na1VYwcx8gxFMzQ7@vger.kernel.org, AJvYcCWxr+ye80YUIHxYiMbxlp5nVXj/2bomvcwfGaCEMVgLmx0M8fAa1X2EGjDFxZWx5rp6jV7FaDLH@vger.kernel.org, AJvYcCXGNBIPb5nBjPCOYkCp6BEBSBUHWwA3FI1rSwtfBVE91a8Z3xfecfYIKEtlkEGexvJ0P+PwuWz+NgWxycEr@vger.kernel.org
+X-Gm-Message-State: AOJu0YxejNc+VlHz9ZPhtC3qKDqaB/b0Vso0dA6w9i6Dd4Mrxrqc0n55
+	iVPwYymcScd72loTQQxUp7EGVET324WG3/OjIxjYJTKueE5zjJ8n
+X-Google-Smtp-Source: AGHT+IGqoUune5iXPKKrE7a8T7Chi+xhSRuKaoqHbtybfaTorDC397J1k7dDnr3YO2XslotYsrsflA==
+X-Received: by 2002:a5d:6089:0:b0:374:c03e:22d4 with SMTP id ffacd0b85a97d-37cc245b08emr111181f8f.1.1727198170241;
+        Tue, 24 Sep 2024 10:16:10 -0700 (PDT)
+Received: from [192.168.0.2] ([69.6.8.124])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cbc2a8c0esm2114876f8f.5.2024.09.24.10.16.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Sep 2024 10:16:09 -0700 (PDT)
+Message-ID: <95bdde5a-b09d-48ad-98a2-2bdeffc7a567@gmail.com>
+Date: Tue, 24 Sep 2024 20:16:27 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG48ez131NJWvo_RrxL7Ss0p4jd_aKOu71z1vm9wfaH7Qjn+qw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] net: wwan: qcom_bam_dmux: Fix missing
+ pm_runtime_disable()
+To: Jinjie Ruan <ruanjinjie@huawei.com>, stephan@gerhold.net,
+ loic.poulain@linaro.org, johannes@sipsolutions.net, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240923115743.3563079-1-ruanjinjie@huawei.com>
+Content-Language: en-US
+From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+In-Reply-To: <20240923115743.3563079-1-ruanjinjie@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 13, 2024 at 12:52:39AM +0200, Jann Horn wrote:
-> FWIW, I would still feel happier if this was a 64-bit number, though I
-> guess at least with uprobes the attack surface is not that large even
-> if you can wrap that counter... 2^31 counter increments are not all
-> that much, especially if someone introduces a kernel path in the
-> future that lets you repeatedly take the mmap_lock for writing within
-> a single syscall without doing much work, or maybe on some machine
-> where syscalls are really fast. I really don't like hinging memory
-> safety on how fast or slow some piece of code can run, unless we can
-> make strong arguments about it based on how many memory writes a CPU
-> core is capable of doing per second or stuff like that.
+On 23.09.2024 14:57, Jinjie Ruan wrote:
+> It's important to undo pm_runtime_use_autosuspend() with
+> pm_runtime_dont_use_autosuspend() at driver exit time.
+> 
+> But the pm_runtime_disable() and pm_runtime_dont_use_autosuspend()
+> is missing in the error path for bam_dmux_probe(). So add it.
+> 
+> Found by code review. Compile-tested only.
+> 
+> Fixes: 21a0ffd9b38c ("net: wwan: Add Qualcomm BAM-DMUX WWAN network driver")
+> Suggested-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 
-You could repeatedly call munmap(1, 0) which will take the
-mmap_write_lock, do no work and call mmap_write_unlock().  We could
-fix that by moving the start/len validation outside the
-mmap_write_lock(), but it won't increase the path length by much.
-How many syscalls can we do per second?
-https://blogs.oracle.com/linux/post/syscall-latency suggests 217ns per
-syscall, so we'll be close to 4.6m syscalls/second or 466 seconds (7
-minutes, 46 seconds).
+Reviewed-by: Sergey Ryazanov <ryazanov.s.a@gmail.com>
 
