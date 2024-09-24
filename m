@@ -1,212 +1,200 @@
-Return-Path: <linux-kernel+bounces-337287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65BC798482C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:03:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21AB1984837
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:05:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A80231F23409
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:03:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 957DC1F2354D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 15:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218161AB6DD;
-	Tue, 24 Sep 2024 15:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F5F81AB6CF;
+	Tue, 24 Sep 2024 15:05:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="gPQBk84T"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012033.outbound.protection.outlook.com [52.101.66.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VNg54uxr"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5886A1AB6D0;
-	Tue, 24 Sep 2024 15:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.33
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727190188; cv=fail; b=pNsvKIK7RvnJuyfe42QUuA1kXGmmI76qSVddVX52DKQEpGA25YCDc6VQIUy+HMA+LxR5AK2A2pknAEwHmRaoqZQrgpyCtYx2kvV4FQq8nPoG/jItuNaD/SjWv/9wKkT8yWowiVGF7aMZcbasZ8gHau33SmJx+A5I8zAFAshUrFA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727190188; c=relaxed/simple;
-	bh=Jt08BnrEH4d51maUCKg0zVJSkHAAdHFXsnI/soXM6To=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=UDo+72DAazyieHsurugWzkT0Lk1KQLMX/QMNNQ0l5UaYmX09lV8ZMz59mYovzDLGV/z7cEyMkHO24MudUv/YKN7a9ICJJHkQ+PwvIeTuORYJqCI0mxoOgdfk05csqnvzdSIvSyOslbjn9BFwN/eB1pfk2ksSxbOoF1YGzuKXAIY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=fail (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=gPQBk84T reason="signature verification failed"; arc=fail smtp.client-ip=52.101.66.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UJcXOb8uEc3r1DSN4A1NW2R+XuSmxn2n9UsM6zU4ksHOkyJLl8G0GuA3EgM/N60u8sxXaVCNHTFiEX6kGCft2g0zAWB6x8jfEXYwuWq6xku2cmnSQqXtGjuflKv+dcyED0IcmSeq63Cu6ANUe5Aw+OG/DAudBESIroPV0YNXjOCpvcC9P2FpzxHoCY9/m6q2wSvVUdiZUUsQ7WEFvJhKB37XZNCg2ZVo64te3eXWN10hmddE80EEKx42YwIeYlq5c1+/uXk/sv9AZuNVzoct6ShUSPcusx8itEgl0CzdGculv91EXkG8tXpV5F2J4Mg5+E2EOdgLP3+b6k/5M0z9bQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CcvrGXJ7NKhGf10CFVybgHx/goohiBqL+MwTBTeAgCk=;
- b=QLBVnw6LEfwmmcib2I5B220A8AbYwYZnoxrZJ0vu2hdv1rI074/tlRJ1HtP645jsSW/TIIYSHJjOEHjaCg3IbxP19J4MZWUXXRag0jemXKNKHEAChEWm9qQ9o2yereQ8BZMHNA2v+Km/DTzadf+mP/a8d+KkKjjgPlw4B/qbKtFcW2Ltp9ATgdMqFIq2gzaES49FfnBu3Td8YcLx0EvieuLKoUDqrGZiQb6TVcPGhFuKOwut0CJeAwGvGI9UdX/VKx/QnFPlGOD7CDj482OwYL3zST4Blcyl1vpw+QM+5EGFABwAgsSia09pzao0tb/gzgaBHkUeRFNNroVanvWOdg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CcvrGXJ7NKhGf10CFVybgHx/goohiBqL+MwTBTeAgCk=;
- b=gPQBk84T58vuIOUwFnzezBFYFK+a2Z9POQWZI7g9Ue81VIcKG+p2rS1dLoP1Gik/3Jt1Y2baqyvqQZDeB/Fjz5tLXQVf0R/00JpYnBl/Pby0yUsx77C9tvIotkmHiz3pDXS5XHpmc8hMPOMokvObjyUB+2X+yOO8r9hAqEJnPZl4yY9krBuOF2WxQ7vZEyfBEFGYiB0/DPleyzCJVhUri+cFi7MVy2v6QInBu29tnOls5FS+poPDtHyqxSXbnvMbDtxK/7EoHguKEnDQnI1tnQCa1yb+OTMeSHUf5eXhyrRFlE77JVgvBYUGJ11nBujsuRzIM7MEiDjoIc5NIrojUQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by VI2PR04MB10929.eurprd04.prod.outlook.com (2603:10a6:800:272::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.25; Tue, 24 Sep
- 2024 15:03:01 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7982.022; Tue, 24 Sep 2024
- 15:02:59 +0000
-Date: Tue, 24 Sep 2024 11:02:50 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: Re: [PATCH v1 2/3] arm64: dts: freescale: imx8mp-verdin: add labels
- to som nodes
-Message-ID: <ZvLUmqM5FWqKPxoi@lizhi-Precision-Tower-5810>
-References: <20240924114053.127737-1-francesco@dolcini.it>
- <20240924114053.127737-3-francesco@dolcini.it>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240924114053.127737-3-francesco@dolcini.it>
-X-ClientProxiedBy: SJ0PR03CA0332.namprd03.prod.outlook.com
- (2603:10b6:a03:39c::7) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581641AB52F
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 15:05:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727190353; cv=none; b=BWWFtQfW7pirAxh0XYvYnjol4KQvK7RQ4kYRorwsP3eFPQjOltc9OgIHQrthuJoxQntjy2RPYb7tHDLZCM/A1ZQ7aj4bNmleShUkCYhuqeS4qG6g1XJbGKdp7Qvkadji1lK2oreZwRCFKAyPR8+mWNZ7C3P/aHGfZCK/eiVtn7E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727190353; c=relaxed/simple;
+	bh=PCfy5KVVKya/2o8NL7D7kX9ER1/XY+e91M/AiirAvBM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=emN4w5ggNYyirUUZ8AA/EWSnN3agDPtHmCAXgTvjzcyo3206QN2u7jrmyXmu4Fcvn8tX3nIvc91lD7CbhkzCD+Uj0E2kMOyMhAbKZMKNBk9NYT7rp9kVCvvVaZwTwkYG+J3nT4t0KICiXE697p8h+ekjYIOAEygIqjZpd0mHhMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VNg54uxr; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c43003a667so7911715a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 08:05:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1727190348; x=1727795148; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=D2iTwpQZftFZk5BO85zj81zyNaojiHPKdJA92bcWkxY=;
+        b=VNg54uxr7bhImnv958TGDOnFvRW/nKAdJNgQXRETWs43xodC3DyQxY/k2CW4YVeI/w
+         tXhetpojnm3IpK/lhMp0hDbQk5PYdc/VnQ7OWuqjGD7hNlBWdryZYZZt9CwbJR5CEY0z
+         FOvdi15N0Ok9q2dH8fM9XzwkNbYAJlTGoaP8FeyCU4eLrM3EaRPG0JisEu8nk8JCPpSw
+         3vrie7YpuZ0/yrsiTp3W5pmCMqxiXSz6FFwYUF8BdQQ8x6UBpyNot12rUBWwks/5Jz8W
+         cyr+4ygtKZ/7K+z2XeVcRuY2WngNl8h681B0fjzoX1Z3HOrPKWGgMYEZJROXZplJV5vb
+         qQWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727190348; x=1727795148;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D2iTwpQZftFZk5BO85zj81zyNaojiHPKdJA92bcWkxY=;
+        b=DFqIfrBMHVhCUi2nJi52zlPKuhynAbqqUQ5isTVmyUdZd7PWIdIFEAYXaJu02ret7F
+         u86lWUP25GTwDE9WnMHeRYAUF4NDW8Q14ZT7ekEwPi5YC9nM1bCeZA4RDqajhm41KQyn
+         1wdEqAlueMhoh5Or4gGvr+wTSHe306UnN/9U8s0ZsVuAsUJnAzgjn7/RM+esMVVz1lxW
+         NWGEJ8nMflKH+Wi0T4Ou+aXQ6i+RXl9PobcTL5sAYA56nRJjEb+JykLE6hYulB3gT8y+
+         4Z/GjOcLx+e2KKLqyJs7SqfLKdYmKE2rh+lAu+UiFG/jataTXlM9iquDyCcLqs0Fp/yS
+         RXxA==
+X-Forwarded-Encrypted: i=1; AJvYcCX0WFe0CdDMbZTylQkImK+8hfZmxoROwWdb+82EUEdwiZ8hKguznRxHm10BcFZkK8ZpJRAjOBnVKnDUbiA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNDdSJf/AxvgPLT0CZ7rscHeCYvVLy6B5D9ljstrivaSUNDV7Z
+	CXNNja0dpL2e4O8ZPRzGvgfZyHWsfYBbnDYAsTIyQT+UcWPnwWZh2hFDNjIDtjc=
+X-Google-Smtp-Source: AGHT+IGDj42uHYf5JdWGadh2EeUma95TCLAbhJROOWqmECYWhhARn8GvnOmClPslhJxH0GdhwfAvSw==
+X-Received: by 2002:a05:6402:3219:b0:5c4:2fa2:93ed with SMTP id 4fb4d7f45d1cf-5c464a43a9fmr15392217a12.16.1727190348427;
+        Tue, 24 Sep 2024 08:05:48 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c5cf4c5264sm822845a12.74.2024.09.24.08.05.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2024 08:05:48 -0700 (PDT)
+Date: Tue, 24 Sep 2024 17:05:46 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Wardenjohn <zhangwarden@gmail.com>
+Cc: jpoimboe@kernel.org, mbenes@suse.cz, jikos@kernel.org,
+	joe.lawrence@redhat.com, live-patching@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] livepatch: introduce 'order' sysfs interface to
+ klp_patch
+Message-ID: <ZvLVSq7AQBFwVmsW@pathway.suse.cz>
+References: <20240920090404.52153-1-zhangwarden@gmail.com>
+ <20240920090404.52153-2-zhangwarden@gmail.com>
+ <ZvKiPvID1K0dAHnq@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI2PR04MB10929:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4a6a3442-d491-41c7-83d8-08dcdca9fa75
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|1800799024|366016|7416014|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?iso-8859-1?Q?F14ftD/3uyk6NLgsGYwa2Xrx+RWe7kaiSzG3XjxquQ/Zmah5a8thCBdJNV?=
- =?iso-8859-1?Q?QOad6u0V65p7an+FFSPV0xu2nVVw9VMBUN+erpNpuOZZwcGfOleJyIA3yI?=
- =?iso-8859-1?Q?m/Wb6XL05ZrtBeEaAuUCcyXFBjgZJSADWKPC9gtna8uhmE07sH6nISUAPS?=
- =?iso-8859-1?Q?7h/EfZUGmd8IcHRA18ipoNUPBV9hz2XO0TVxKsH/eUU3sYxHwot0+L5tGk?=
- =?iso-8859-1?Q?UfpmSoznbFxlQzT2o1B7+bRH9sQOYldncevaJ2NyiSEYietn88oXX88Sm2?=
- =?iso-8859-1?Q?avJol5h2mKxuAJOcNyrXwUXj83sTkAFd98ccR5IJMm9hK3bCf/xFGok5mo?=
- =?iso-8859-1?Q?bpA9J6HPh9jN1v67AdxwaNRwrGznvCts79HbV1gHhvKxTwzTWXwGjRntU5?=
- =?iso-8859-1?Q?UwVj+QoC7LkvU4BQHwedj7qEKz1oYNebPqLuqSmgJ0CbtT5C5wIdtwIw7B?=
- =?iso-8859-1?Q?KfGZMSHBpXt7WtyysqOdp4+oq0gaJx6MS4E8/oOHAstbyHm6ecfyo1sYd0?=
- =?iso-8859-1?Q?ChtzRCQeM8GsmDaNZLzBptflyY1dKoTWiw0Jd8jHzadFxXgpvo5UlJXOPS?=
- =?iso-8859-1?Q?n+tNTRAlxG0J29HiNXDj3WtN86C9jfe+OFh0FxBZ3sl23IPuAtohaSGkAC?=
- =?iso-8859-1?Q?NT5ltukpXKXGj/AzripTN0G7+qZkoCTyoivxZBCoyJUp11BE+vy+DNrEJy?=
- =?iso-8859-1?Q?sR32rnxvlTZ7+LwHPYX2SnG3Nsd5ORrip4/qq+7IUYasZsYKY3Ekak/jJW?=
- =?iso-8859-1?Q?uPdbG2mIZcEkx5Vpxw6H/IUvAsr3DeUdowuosn1KKlX02pJuQF6wbG8OAX?=
- =?iso-8859-1?Q?IaRmt31YmjkQU4M6AixAEFzw28/QA6hxNHywfq+ozjJVi2anQZKuhE7q+n?=
- =?iso-8859-1?Q?cqyeM2zvOfESU4aLJi6ZxaAGG20PuK+t7AdPYjhgwSf5tW4+yucgCZdPV3?=
- =?iso-8859-1?Q?wMZGgqCVawxA8daEC7+Jy0ENgUx8QE3ETBp1bx7gRA2HjIbdz2pqgzfXm6?=
- =?iso-8859-1?Q?ErqbY6fwwOSNKLbavGs8BAHVVutOKj3PuXJL5AuH9ViPgJBDuLUfVLhGsK?=
- =?iso-8859-1?Q?E5j8ivNXN3uurxU5NdbrlSXx5oK5XIxQchIOD5iWF2QxNmeXXF9QUXnyGc?=
- =?iso-8859-1?Q?hfxW8n04jP3xJZwKEuMuvBeYu/0dWNKfg8wNIU+tQTQg6ttom9b7oPUU6d?=
- =?iso-8859-1?Q?hMU4FIR4pg0r77ou6AaoJ1mrr/YZy0dsD77ZF590obdSObey7Dqwp/EFeC?=
- =?iso-8859-1?Q?QvOhZaDeilIaJKb8FmYLIsB3vvrSY/b019i3LJiUWTn9NwCAk3yF1G7cxE?=
- =?iso-8859-1?Q?ZHKeyKemiMLE55xmOk4TteHpFsBTDtT2VATsgE5wDQUgBjoPIWdjMHZeFT?=
- =?iso-8859-1?Q?SkJCil98xidLbSsQZ91Ekk8BQYgGio5A=3D=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?iso-8859-1?Q?lqdylvJAVWvE/Rtex9IkJX/bqkRzHK3MOeaRfVhLstKqccIijk/wQZwLQz?=
- =?iso-8859-1?Q?eT82io9FudHSqOSnNUMfH79Bd+wt45x6sVFBJche08p3P5BT8heESpTYYg?=
- =?iso-8859-1?Q?jEuDXaeMpScE2ls1OvZqN6G4QP+R/OTxxr8D/pmtSAWGZ2+2b8tnjkdFFR?=
- =?iso-8859-1?Q?DBkw4gIRhZrUuoKOzoPa6QSGu9r5z9cSfsgsc+ehW5S+jppWBUOrQdUwq3?=
- =?iso-8859-1?Q?P06XAEG8oblk9kAgwslwYjxxPUeYnpwmo0U/6tr6hC8ex8f9lV3Bdo8XWL?=
- =?iso-8859-1?Q?aNdB2lXDZYaC/MvTkmPqggJMwJeTRqTzmcanae5PIj0Fj9NL84Xt8qU5fW?=
- =?iso-8859-1?Q?or4Pbaj2ZCzf5ppf3AGL2cNBOBTYNdRXMUhbKZ10i5TCHIjuX3KC9YvIM7?=
- =?iso-8859-1?Q?kFpVuDQWGxLeFVmuefhwNs6cpHCWa/0hhy478e5+l+TrAzGJoONpMF11iH?=
- =?iso-8859-1?Q?0GUDrN4s1BFx6g84JHg8F3BiiFzZL6Ooudno62HJtE9gInxjAejdOSQEyT?=
- =?iso-8859-1?Q?EI9AkmcFLzKLfXhWIV/Ac6vG3Sd6jyoEx+ei23I2HLp4g/8skHPMJw7+li?=
- =?iso-8859-1?Q?uyquMp7Ofu4Wvhdi6fqfDC7Y3xSMyGRpIrj2HN18WxUjSqV3d1FuU7ybN7?=
- =?iso-8859-1?Q?xKekr/t6xCW0x7SgwezrhpxXd+of0QMwsZKns2tZWXpVpZ0KiOP5rlimh+?=
- =?iso-8859-1?Q?O85jOX8Xf7nGVKKoWyo5AAX8fHQZ4Jb7AQ8C6VFm0HYCvRo3+q0rFcI22N?=
- =?iso-8859-1?Q?f+TYjSZNmiIpXpjGCM+qdrsHj3tcIAJmme9ccShqk/tSR6xKnU6ay+A6R1?=
- =?iso-8859-1?Q?p1ZPapWmZ8B4x0FxB27q4kcJ0ghYNbYjCiGdyjB6MqwkS6SLKSp+LCHAg2?=
- =?iso-8859-1?Q?ocyi5nFlniQ5lffnu+IqGy+fp2iz0lPAuwOafXVqU8WSQ51XG7RHU8H3A7?=
- =?iso-8859-1?Q?pYF6m8e/YvfactVYG3LS6xyoh1Tjlnbn2IKoP77g0TnceRmXesTpMYn4VX?=
- =?iso-8859-1?Q?CxnX03CQdf5SgJWrqqZ5+d5m7uJLmizRtsj07ZVUIabQnyaj+GkCzgpqvA?=
- =?iso-8859-1?Q?fJMd6H3D6Nh763TqhoUpig+WY7JpRMMRqSPIJiIGBAHcIUHv4C3RqxYPpL?=
- =?iso-8859-1?Q?RrOUH7yYq0cg9/ki6PMLWIoDg/dA+LHiG1q2v1LzLcGAFHTE1yO5VzTaeQ?=
- =?iso-8859-1?Q?Dl9+AEK58sEQUtqfOyrL6Yo24Orp+8Cfl75nHXcbfzYgquL+UgvmUYrhsH?=
- =?iso-8859-1?Q?BAFUZp8WTnW1g49ZbjzzXPFxtfEzktynFpfLhUJ/7Kr9EgtO5Ggd/vALAN?=
- =?iso-8859-1?Q?i2yIlOTwzyrmyhbMIMsssPoSJXeurhY7lYqrLZOAbak1RUJau3Hc9exsiC?=
- =?iso-8859-1?Q?P+8HccGC/nOhah6mTcfg6TJg69IDCXTVW1oYz+chuzm/cvCY/3pk0u5+px?=
- =?iso-8859-1?Q?26e1z+8Z2ymXmUIR99bSMnTzivMfNhcrEAConblE10v3R1B768YqZ4+8+5?=
- =?iso-8859-1?Q?SVp9OPpMLLbju9DfhDNKPdI7sZIWa9MF/0jqimOtlMobDSZd9/hnY4ZaGb?=
- =?iso-8859-1?Q?gEK2W+xNTpObL33Ocntad5BATw7KYKrNGMnc3XxtT997dlWjrVoriwqiXQ?=
- =?iso-8859-1?Q?SxNptE9heRDCo=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4a6a3442-d491-41c7-83d8-08dcdca9fa75
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2024 15:02:59.1477
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kehHFDvdPTudida1+ncKk3XE91sl2ZkVyDwtrIbjHGAibPZaEew07j2oIMginCTG0RaPi7k7zxWfMHKOV8jhEw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10929
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZvKiPvID1K0dAHnq@pathway.suse.cz>
 
-On Tue, Sep 24, 2024 at 01:40:52PM +0200, Francesco Dolcini wrote:
-> From: João Paulo Gonçalves <joao.goncalves@toradex.com>
->
-> Add labels to ti-ads1015 and fec ethernet mdio node to make it easier to
-> reference them from other nodes.
->
-> Signed-off-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
-> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> ---
->  arch/arm64/boot/dts/freescale/imx8mp-verdin.dtsi | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-verdin.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-verdin.dtsi
-> index a19ad5ee7f79..e9518b7c7aa8 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mp-verdin.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp-verdin.dtsi
-> @@ -320,7 +320,7 @@ &fec {
->  	pinctrl-0 = <&pinctrl_fec>;
->  	pinctrl-1 = <&pinctrl_fec_sleep>;
->
-> -	mdio {
-> +	verdin_eth2_mdio: mdio {
->  		#address-cells = <1>;
->  		#size-cells = <0>;
->
-> @@ -591,11 +591,12 @@ hwmon_temp_module: sensor@48 {
->  		vs-supply = <&reg_vdd_1v8>;
->  	};
->
-> -	adc@49 {
-> +	verdin_som_adc: adc@49 {
->  		compatible = "ti,ads1015";
->  		reg = <0x49>;
->  		#address-cells = <1>;
->  		#size-cells = <0>;
-> +		#io-channel-cells = <1>;
+On Tue 2024-09-24 13:27:58, Petr Mladek wrote:
+> On Fri 2024-09-20 17:04:03, Wardenjohn wrote:
+> > This feature can provide livepatch patch order information.
+> > With the order of sysfs interface of one klp_patch, we can
+> > use patch order to find out which function of the patch is
+> > now activate.
+> > 
+> > After the discussion, we decided that patch-level sysfs
+> > interface is the only accaptable way to introduce this
+> > information.
+> > 
+> > This feature is like:
+> > cat /sys/kernel/livepatch/livepatch_1/order -> 1
+> > means this livepatch_1 module is the 1st klp patch applied.
+> > 
+> > cat /sys/kernel/livepatch/livepatch_module/order -> N
+> > means this lviepatch_module is the Nth klp patch applied
+> > to the system.
+> >
+> > --- a/kernel/livepatch/transition.c
+> > +++ b/kernel/livepatch/transition.c
+> > @@ -46,6 +46,15 @@ EXPORT_SYMBOL(klp_sched_try_switch_key);
+> >  
+> >  #endif /* CONFIG_PREEMPT_DYNAMIC && CONFIG_HAVE_PREEMPT_DYNAMIC_CALL */
+> >  
+> > +static inline int klp_get_patch_order(struct klp_patch *patch)
+> > +{
+> > +	int order = 0;
+> > +
+> > +	klp_for_each_patch(patch)
+> > +		order = order + 1;
+> > +	return order;
+> > +}
+> 
+> This does not work well. It uses the order on the stack when
+> the livepatch is being loaded. It is not updated when any livepatch gets
+> removed. It might create wrong values.
+> 
+> I have even tried to reproduce this:
+> 
+> 	# modprobe livepatch-sample
+> 	# modprobe livepatch-shadow-fix1
+> 	# cat /sys/kernel/livepatch/livepatch_sample/order
+> 	1
+> 	# cat /sys/kernel/livepatch/livepatch_shadow_fix1/order
+> 	2
+> 
+> 	# echo 0 >/sys/kernel/livepatch/livepatch_sample/enabled
+> 	# rmmod livepatch_sample
+> 	# cat /sys/kernel/livepatch/livepatch_shadow_fix1/order
+> 	2
+> 
+> 	# modprobe livepatch-sample
+> 	# cat /sys/kernel/livepatch/livepatch_shadow_fix1/order
+> 	2
+> 	# cat /sys/kernel/livepatch/livepatch_sample/order
+> 	2
+> 
+> BANG: The livepatches have the same order.
+> 
+> I suggest to replace this with a global load counter. Something like:
 
-Why add this? it is not related with what descript in commit message
+Wait! Miroslav asked me on chat about a possibility to use klp_mutex
+in the sysfs order_show() callback. It is a good point.
 
-Frank
+If I get it correctly then we actually could take klp_mutex in
+the sysfs callbacks associated with struct klp_patch, similar
+to enabled_store().
 
->
->  		/* Verdin I2C_1 (ADC_4 - ADC_3) */
->  		channel@0 {
-> --
-> 2.39.5
->
+It should be safe because the "final" kobject_put(&patch->kobj) is
+called without klp_mutex, see klp_free_patch_finish(). It was
+explicitly done this way to allow taking klp_mutex in
+enabled_store().
+
+Note that it was not safe to take klp_mutex in the sysfs callback
+associated with struct klp_func. The "final" kobject_put(&func->kobj)
+is called under klp_mutex, see __klp_free_funcs().
+
+
+Back to the order_show(). We could take klp_mutex there => we do not
+need to store the order in struct klp_patch. Instead, we could do
+something like:
+
+static ssize_t order_show(struct kobject *kobj,
+			struct kobj_attribute *attr, char *buf)
+{
+	struct klp_patch *this_patch, *patch;
+	int order;
+
+	this_patch = container_of(kobj, struct klp_patch, kobj);
+
+	mutex_lock(&klp_mutex);
+
+	order = 0;
+	klp_for_each_patch(patch) {
+		order++;
+		if (patch == this_patch)
+			break;
+	}
+
+	mutex_unlock(&klp_mutex);
+
+	return sysfs_emit(buf, "%d\n", order);
+}
+
+BTW: I would prefer to rename the attribute from "order" to "stack_order".
+     IMHO, it would make the meaning more clear.
+
+Best Regards,
+Petr
 
