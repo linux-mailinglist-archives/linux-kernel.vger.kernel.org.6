@@ -1,164 +1,78 @@
-Return-Path: <linux-kernel+bounces-337478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24130984A96
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:02:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 003CE984A99
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:03:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53D221C22BEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:02:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3D6F28214D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F291ABEC8;
-	Tue, 24 Sep 2024 18:02:25 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5BC1AC8AA;
+	Tue, 24 Sep 2024 18:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IoEPYdVG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5D749641
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 18:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 856561AC8A1
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 18:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727200945; cv=none; b=Dl0LsVRBHtAz12+gq/dvSUXeRqdYQXD2BQzoY2ghmDHLkdxDf90Be0UrFF/lkwcT5xnFk7wtasbGBMcHrGHj4BjOvvFLIJUlE/7QqFwq7cLSVknhh7yFOFinLFcbFHlq3xDvp62voo7cCqTkh7nt5+0Kqgf+8zKTd6Mzt4s1Wa0=
+	t=1727201025; cv=none; b=Bka6Gd1KwGIptore1phOm+3a2Sumjqg7du5LkxkajoKRO1nBpHDW3XjKWEFsh2GYw76YFkyZllV1dEHRU1kKJTliIsOVBeznxx3zXp96O3sfJRCwsRxLAFX0EnzSt8Wg4iqz1AjlHlBoYMaZ6zauoj1aty58yHPLDap2lQZGfQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727200945; c=relaxed/simple;
-	bh=6W6Y+kifFqrN7M+nduK5Yxd3rGxzXysHmSQTcLRAt/g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TjkBQHPWg/Gt946cxAAKnj/uAIcFaTzhKefBIvogDmSpMLsCE4x6lecmjI8+mc4cmRzhLKGu4whzJq1zO118XJIOVKgLA3ftAhX1xRP4eCggYNFGeyonEnX9sslg9y/MHKGsflbXbj2ZMlPHduOPM2Z3qhgdUjF8JDYJlem0+/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-X-CSE-ConnectionGUID: K9Ns0OmjTEmft7F+Rh7dyw==
-X-CSE-MsgGUID: 8TFgLXt5R1qm0GN+GqOl5g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="26087013"
-X-IronPort-AV: E=Sophos;i="6.10,255,1719903600"; 
-   d="scan'208";a="26087013"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 11:02:05 -0700
-X-CSE-ConnectionGUID: y8hQ46MLTTaRKpEYf6C2EA==
-X-CSE-MsgGUID: wQnRmF4eRDiKXtTzSBR1NQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,255,1719903600"; 
-   d="scan'208";a="71386831"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 11:02:03 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy.shevchenko@gmail.com>)
-	id 1st9rM-0000000CXCh-1rpP;
-	Tue, 24 Sep 2024 21:02:00 +0300
-Date: Tue, 24 Sep 2024 21:02:00 +0300
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-To: Zhang Ning <zhangn1985@outlook.com>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org,
-	linux-kernel@vger.kernel.org, lee@kernel.org
-Subject: Re: mfd: intel_soc_pmic_bxtwc: irq 0 issue, tmu and typec components
- fail to probe.
-Message-ID: <ZvL-mBZxqGg6fi1G@smile.fi.intel.com>
-References: <TY2PR01MB3322FEDCDC048B7D3794F922CDBA2@TY2PR01MB3322.jpnprd01.prod.outlook.com>
- <ZrYMne34hVa33qKf@smile.fi.intel.com>
- <TY2PR01MB33222D8BE4B1107EB3A1917FCDBA2@TY2PR01MB3322.jpnprd01.prod.outlook.com>
- <ZrYjLdPryElDubaM@smile.fi.intel.com>
- <TY2PR01MB33224CE088EF01D57DE1BABFCD9C2@TY2PR01MB3322.jpnprd01.prod.outlook.com>
- <CAHp75VeMp9C04iDW5_c9owq3HP=5wvccoOuHwrSQ5SFeV+SRVA@mail.gmail.com>
- <TY2PR01MB3322699682DBE2F13F919F80CD9D2@TY2PR01MB3322.jpnprd01.prod.outlook.com>
- <ZtmlCh4NScc25tS2@smile.fi.intel.com>
+	s=arc-20240116; t=1727201025; c=relaxed/simple;
+	bh=5GA3vak+vcskMnKFtGHLzUYkEuM3WWPC5NN6MPyg4Kk=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=ew1dKkx1c86I0mcy51TAw+Qg6VnQAcgOGCEU18Xhayc8D/aCVJcPWIUu+LjhLfCL0e/m9EFg5qTck/C8qI9Pj6pFfv13MhGU8jvn3QttegAZYCkWxbYUbi/jc63xk3xb5kkVT7BdOjbzkAMSWIFaqnezDfsu2IhmFMZMctaa/Lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IoEPYdVG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18845C4CEC4;
+	Tue, 24 Sep 2024 18:03:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727201025;
+	bh=5GA3vak+vcskMnKFtGHLzUYkEuM3WWPC5NN6MPyg4Kk=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=IoEPYdVGt3Ca0EdNEt7d0TZeUyXVAqXL7/i3i0Gg70FkMK5G96GQR26i4At4jhou1
+	 NpMs1LfCya2oCagxA5jq4bBMD6pD2JivfKjLPE1YC1mMw6+gnbOzDjRkVIZGngUlcz
+	 eGzeKM+LKG1lusy9y4H6kEMBm5rC57Qt2Ujex3998wNwHruQHgqlhsmqQgdV3YBTVA
+	 hXhst2/mXWi2eHUdJy7yT2/+lz9jpbURy48LRHejMF+jxiD4nadOI/4XTLQNhAFV2Z
+	 WYXQb9TyOgNS8MnTpQBzErddcOEOYOl7GqOWzxyK7IUUMEcUs22FsopbTdKOlTT1wP
+	 RufONa/pZ4OvA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADF213806656;
+	Tue, 24 Sep 2024 18:03:48 +0000 (UTC)
+Subject: Re: [GIT PULL] RISC-V Patches for the 6.12 Merge Window, Part 1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <mhng-664fc7b8-c82b-414e-9c10-8fe7840f2c76@palmer-ri-x1c9>
+References: <mhng-664fc7b8-c82b-414e-9c10-8fe7840f2c76@palmer-ri-x1c9>
+X-PR-Tracked-List-Id: <linux-riscv.lists.infradead.org>
+X-PR-Tracked-Message-Id: <mhng-664fc7b8-c82b-414e-9c10-8fe7840f2c76@palmer-ri-x1c9>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git tags/riscv-for-linus-6.12-mw1
+X-PR-Tracked-Commit-Id: b3f835cd7339919561866252a11831ead72e7073
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 97d8894b6f4c44762fd48f5d29e73358d6181dbb
+Message-Id: <172720102732.4145686.16906232207879534539.pr-tracker-bot@kernel.org>
+Date: Tue, 24 Sep 2024 18:03:47 +0000
+To: Palmer Dabbelt <palmer@rivosinc.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZtmlCh4NScc25tS2@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, Sep 05, 2024 at 03:33:14PM +0300, Andy Shevchenko wrote:
-> On Thu, Sep 05, 2024 at 07:27:25PM +0800, Zhang Ning wrote:
-> > On Wed, Sep 04, 2024 at 05:36:35PM +0300, Andy Shevchenko wrote:
-> > > On Wed, Sep 4, 2024 at 5:29 PM Zhang Ning <zhangn1985@outlook.com> wrote:
-> > > > On Fri, Aug 09, 2024 at 05:09:49PM +0300, Andy Shevchenko wrote:
-> > > > > On Fri, Aug 09, 2024 at 08:53:24PM +0800, Zhang Ning wrote:
-> > > > > > On Fri, Aug 09, 2024 at 03:33:33PM +0300, Andy Shevchenko wrote:
-> > > > > > > On Fri, Aug 09, 2024 at 08:02:43PM +0800, Zhang Ning wrote:
-> > > > > > > > Hi, Greg & Rafael
-> > > > > > > >
-> > > > > > > > recently, when I try to enable mfd components for intel_soc_pmic_bxtwc
-> > > > > > > > for debian kernel[0]. I find tmu and typec failed to probe.
-> > > > > > > >
-> > > > > > > > after check source code, I find irq for these two devices are 0, when
-> > > > > > > > use platform_get_irq, it will alway fail.
-> > > > > > > >
-> > > > > > > >         if (WARN(!ret, "0 is an invalid IRQ number\n"))
-> > > > > > > >                 return -EINVAL;
-> > > > > > > >         return ret;
-> > > > > > > >
-> > > > > > > > My workaround for debian is to hardcode irq to 0, instead to use api.
-> > > > > > > >
-> > > > > > > > I don't know how to write a good solution, thus send an email to you.
-> > > > > > >
-> > > > > > > Hold on, how the heck you got 0 in the first place?A
-> > > > > >
-> > > > > > use tmu as an example
-> > > > > >
-> > > > > > enum bxtwc_irqs_tmu {
-> > > > > >         BXTWC_TMU_IRQ = 0,
-> > > > > > };
-> > > > > >
-> > > > > > static const struct regmap_irq bxtwc_regmap_irqs_tmu[] = {
-> > > > > >         REGMAP_IRQ_REG(BXTWC_TMU_IRQ, 0, GENMASK(2, 1)),
-> > > > > > };
-> > > > > >
-> > > > > > static const struct resource tmu_resources[] = {
-> > > > > >         DEFINE_RES_IRQ_NAMED(BXTWC_TMU_IRQ, "TMU"),
-> > > > > > };
-> > > > > >
-> > > > > >         {
-> > > > > >                 .name = "bxt_wcove_tmu",
-> > > > > >                 .num_resources = ARRAY_SIZE(tmu_resources),
-> > > > > >                 .resources = tmu_resources,
-> > > > > >         },
-> > > > > >
-> > > > > > this is why I got 0, and I don't do any hack.
-> > > > >
-> > > > > Thanks for elaboration, I will look at this a bit later (may be next or one
-> > > > > after next week, just returned from vacations).
-> > > 
-> > > >    could you share the patch link to the fix? then I could port it to
-> > > >    debian.
-> > > 
-> > > Sorry I was busy with other stuff (as well), I am still in the middle
-> > > of debugging that.
-> > > The issue is that the leaf drivers for some reason do not request
-> > > proper vIRQ (that should come from the secondary IRQ chip). OTOH there
-> > > is only one _similar_ design in the kernel besides this one. And when
-> > > I tried to test the version where all this appears, I couldn't boot
-> > > (yeah, I spent some time on bisecting things) the board I have (One of
-> > > pre-production variants of Intel Joule SoM).
-> > 
-> > Yes, me too. I'm trying to enable Joule on Debian. thus found this
-> > issue. you can use debian sid with linux 6.11 to debug this issue.
-> > 
-> > and another issue is Joule HDA pci id is removed from Linux kernel, thus
-> > no sound, but I don't plan to submit an issue.
-> > 
-> > > Do you have any (most recent) kernel version that works as expected?
-> > I don't try any old kernel, but from git log, I think bad commit is:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=57129044f5044dcd73c22d91491906104bd331fd`
-> 
-> No, it does the right thing from architectural point of view. It might be that
-> it was never tested or it was a regression somewhere. That's why I wanted to find
-> the newest possible kernel that works on that machine.
-> 
-> > > > > > > > [0]: https://salsa.debian.org/kernel-team/linux/-/merge_requests/1156/diffs
+The pull request you sent on Tue, 24 Sep 2024 08:14:17 -0700 (PDT):
 
-I guess I now know all the story, hopefully I will come up with the fix this or
-next week. Stay tuned!
+> git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git tags/riscv-for-linus-6.12-mw1
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/97d8894b6f4c44762fd48f5d29e73358d6181dbb
+
+Thank you!
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
