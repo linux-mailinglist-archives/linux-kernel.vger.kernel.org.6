@@ -1,161 +1,136 @@
-Return-Path: <linux-kernel+bounces-336649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D2A3983D8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:06:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B6A7983D98
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:10:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B0F81C226FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:06:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C37C2817AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB0C12CDAE;
-	Tue, 24 Sep 2024 07:05:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E91DC12D1EA;
+	Tue, 24 Sep 2024 07:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="EBKOi5hl"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b="di5CXtYJ"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB452F870;
-	Tue, 24 Sep 2024 07:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D7D84E0D
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727161556; cv=none; b=E2VwayGmOgxgN39LY1Hhiv4+FUb2UO7Y3akjHl3ppgW4CKYUa4/inx48eyjVPKgoPl9Ahx/198PMod9gYEcVy6F/+pOoGaoYN+FmBNKNTkxZbV7XDuNA+cocdi97eWQs6BxeRuPO+NOsGFt1RxTOlfR7ZZ++MLJR+as38rjGLDo=
+	t=1727161805; cv=none; b=ULnMyHs86+oIp4uUHxvpiWB5IQuoiCpbp2qfouTMAWxn89il/LU3Yu5uaTxt2kHhQstAb9v6cK6REVAUxMNJ7+dnDO9oE/QkaHKy+b95Js9E85FnywCFDa05VQKLnNP1/j21CR6giZ4NUotiHYjMKAuXpiG2iQa7JZ3L59gsMyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727161556; c=relaxed/simple;
-	bh=4s/wkYBzbH81RjXm5yne18qvY7+qRD8BsB0vpcvRofM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=GFRMGTU08zUr/kcV5E8u0KgF7JPtzHeVsP4jzSyiytfT1gRWBLQaBiUsRMOvF66qq0NgdtX4Co6uAInrXdZrw+EHVIys/o4PRnJK9MjEwz5OhP+MnyUuegIc7vilEPf4QIX3ybGwsBLoDXhdVsIb+1aXKAfdNMz3LOSXkZUCrQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=EBKOi5hl; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 6978368e7a4311efb66947d174671e26-20240924
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:CC:To:From:Subject:MIME-Version:Date:Message-ID; bh=5FI73r9MTBVi/IDFAW9B1t0gui+ZP6buNt8HbOWdgsI=;
-	b=EBKOi5hlTTWPGnT8keZkDzfY8jYxUn996l0nADydciazd1DwnFMkVRPkAzk/D/qAm0U7gT+D8Q62LuDAkKIX1jnPvRe+Yk6hweoa3eso9bKt/7qXUAkjr4Y/hORPr+7fA6elJqpEdetvUbq9KCX59woLghIRF2ScFzwsFDp0mCw=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:29d07492-7f86-4fae-b30d-36115fb85beb,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:fe29acd0-7921-4900-88a1-3aef019a55ce,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:ni
-	l,URL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,
-	LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: 6978368e7a4311efb66947d174671e26-20240924
-Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw01.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 2111914969; Tue, 24 Sep 2024 15:05:42 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Tue, 24 Sep 2024 15:05:41 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkmbs11n1.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
- Transport; Tue, 24 Sep 2024 15:05:38 +0800
-Message-ID: <247abc15-d82f-3e8f-5202-edc6099707df@mediatek.com>
-Date: Tue, 24 Sep 2024 15:05:36 +0800
+	s=arc-20240116; t=1727161805; c=relaxed/simple;
+	bh=QPajdV22rZnihgKAIkWl2EaW7aKjLgMWaHnc9ibIl/U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pQpQfJd0fJ7/bxV20ClOF/HeHJxo2raSI/SyXnjpIK0+q5KRUM3hpun/FteK/fhn5cOBxHAEVe60iPw21I6yN38ePBKDn90Ti7ZRdcU/0kDGB+oq0WPUiUZcLp2QGsjjzalLtyEgaxWhqjxC2wDqOf4qoY1dEfxihkeNafRoTXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org; spf=pass smtp.mailfrom=endlessos.org; dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b=di5CXtYJ; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=endlessos.org
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2d87176316eso4394218a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 00:10:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessos.org; s=google; t=1727161802; x=1727766602; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yzo2H8d6ZWSTpRzfllRZ8YXEGlJS6NEXcuxM94LSSQE=;
+        b=di5CXtYJ0taivy5wJzYEafdQ9Fqkc5CqyEvPSMmSp7U2hMAtk/GFetL+2yw6BHu8CB
+         wigUkzJgJgRzQRF5Hga3NTRYmt7J3EMaMjOSw4gVaREXAXGJhsb81eiWa7cXl57H7w/9
+         4p1Hh/7rogBQxyxEf3UFZhK5AEZ9JSK0BFrqnrOI7iWkgWcEQSOWLUSxRXNCmzgnvnZ9
+         aAf35pjENAmsdqMsRdmTXKsJV0N5uQs4x1yIjHbF6rrZDHiju4KRf+jtFM9zDdc8nukf
+         b/7C4gHSsVkswENh5MfmTJFsXcVGVCZyzOzVIuqEbZFgEArO9oi75gfnUNpTp9+3Qbai
+         /9LQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727161802; x=1727766602;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Yzo2H8d6ZWSTpRzfllRZ8YXEGlJS6NEXcuxM94LSSQE=;
+        b=K0MLiOiY3eDxyb6rZDbHrnys1UxOX6CnZsBq+ZyC3Flsb7PtrmdN1xkceuIPx/2xeS
+         piPmNlt4kZABwMzarGzsCbcfDrX9+qfg85mMAhQS3B05vuxpwMt12HfKSXiRw3ksORLs
+         UQFhPrbchfiE/l0gKkXGmshVT/kdw8oh082ADIdwEQwVTiNcCpMtE6W4jZmJuAcVkqpx
+         T4wEOLMHkum5yHkE69NPSdWEzQ6ELUhEVNLb7w4rTebwrPOkJFrFR3UFR45/zAjv+891
+         jufI4pP1WbPQktQzMxVKpubdD1kReLgXGS22L9npZ4kV0EWD/rVcwOsoztYXFwB8e2oB
+         7QNA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0o8fZJzRudwLXeeuPhItUCfZhRQIRyL1Bnchl2ZZQyPMNJBLxiU13+Mw3Co7/oocGEF/RAXdyXo31GY4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzjg3bFOcIsIlKb4XDIXkftW5HYK9OL92f/cUfnV49a0Liv4n8U
+	eb7Mnc3S+Mkj0+8rjN2ckGjCfiTGf9CQzVj9hxS75ar55PQoa0aVAJHlP3Enj5A=
+X-Google-Smtp-Source: AGHT+IGAFKrprsXiQuE02+8ygPUIUIiNGbBL7e1XZs0OIl0s6BrWWlUm2V1FPuDQvpu3rjJNUiLviQ==
+X-Received: by 2002:a17:90a:8a8d:b0:2d8:e6d8:14c8 with SMTP id 98e67ed59e1d1-2e05686e640mr3358513a91.15.1727161801847;
+        Tue, 24 Sep 2024 00:10:01 -0700 (PDT)
+Received: from localhost.localdomain ([123.51.167.56])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2dd6ee98b8dsm10584472a91.16.2024.09.24.00.09.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2024 00:10:01 -0700 (PDT)
+From: Jian-Hong Pan <jhp@endlessos.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>,
+	David Box <david.e.box@linux.intel.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Nirmal Patel <nirmal.patel@linux.intel.com>,
+	Jonathan Derrick <jonathan.derrick@linux.dev>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux@endlessos.org,
+	Jian-Hong Pan <jhp@endlessos.org>
+Subject: [PATCH v9 0/3] PCI: vmd: Enable PCI PM's L1 substates of remapped PCIe Root Port and NVMe
+Date: Tue, 24 Sep 2024 15:05:52 +0800
+Message-ID: <20240924070551.14976-2-jhp@endlessos.org>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v1 2/3] rtc: mt6359: Add RTC hardware range and add
- support for start-year
-Content-Language: en-US
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	<lee@kernel.org>, <ZhanZhan.ge@mediatek.com>
-CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<matthias.bgg@gmail.com>, <eddie.huang@mediatek.com>,
-	<sean.wang@mediatek.com>, <alexandre.belloni@bootlin.com>,
-	<sen.chu@mediatek.com>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-rtc@vger.kernel.org>,
-	<kernel@collabora.com>, <yong.mao@mediatek.com>
-References: <20240923100010.97470-1-angelogioacchino.delregno@collabora.com>
- <20240923100010.97470-3-angelogioacchino.delregno@collabora.com>
- <0748868d-4789-fcaa-e70f-6a4508411b36@mediatek.com>
-In-Reply-To: <0748868d-4789-fcaa-e70f-6a4508411b36@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Notice the VMD remapped PCIe Root Port and NVMe have PCI PM L1 substates
+capability, but they are disabled originally.
 
-On 9/24/24 12:08, Macpaul Lin wrote:
-> 
-> On 9/23/24 18:00, AngeloGioacchino Del Regno wrote:
->> Add the RTC hardware range parameters to enable the possibility
->> of using the `start-year` devicetree property which, if present,
->> will set the start_secs parameter by overriding the defaults
->> that this driver is setting;
->>
->> To keep compatibility with (hence have the same date/time reading
->> as) the old behavior, set:
->>   - range_min to 1900-01-01 00:00:00
->>   - range_max to 2027-12-31 23:59:59 (HW year max range is 0-127)
->>   - start_secs defaulting to 1968-01-02 00:00:00
->>
->> Please note that the oddness of starting from January 2nd is not
->> a hardware quirk and it's done only to get the same date/time
->> reading as an RTC which time was set before this commit.
->>
->> Also remove the RTC_MIN_YEAR_OFFSET addition and subtraction in
->> callbacks set_time() and read_time() respectively, as now this
->> is already done by the API.
->>
->> Signed-off-by: AngeloGioacchino Del Regno 
->> <angelogioacchino.delregno@collabora.com>
->> ---
->>   drivers/rtc/rtc-mt6397.c | 13 ++++---------
->>   1 file changed, 4 insertions(+), 9 deletions(-)
-> 
-> [snip]
-> 
-> Thanks for helping add new patch fix for RTC.
-> 
->> @@ -302,6 +293,10 @@ static int mtk_rtc_probe(struct platform_device 
->> *pdev)
->>       device_init_wakeup(&pdev->dev, 1);
->>       rtc->rtc_dev->ops = &mtk_rtc_ops;
->> +    rtc->rtc_dev->range_min = RTC_TIMESTAMP_BEGIN_1900;
->> +    rtc->rtc_dev->range_max = mktime64(2027, 12, 31, 23, 59, 59);
->> +    rtc->rtc_dev->start_secs = mktime64(1968, 1, 2, 0, 0, 0);
->> +    rtc->rtc_dev->set_start_time = true;
->>       return devm_rtc_register_device(rtc->rtc_dev);
->>   }
-> 
-> Dear @Zhanhan, Please help to leave comment if you think there is 
-> something need to be clarify. For example, I've found some relate origin 
-> defines
-> in "include/linux/mfd/mt6397/rtc.h"
-> #define RTC_MIN_YEAR    1968
-> #define RTC_BASE_YEAR    1900
-> #define RTC_NUM_YEAR    128
-> #define RTC_MIN_YEAR_OFFSET    (RTC_MIN_YEAR - RTC_BASE_YEAR)
-> 
-> Should MediaTek remove RTC_MIN_YEAR and RTC_BASE_YEAR in next patch?
-> And since there may not exist any smartphone/tablet/TV using mt6397
-> RTC earlier than 2010? Is it possible to change
-> RTC_TIMESTAMP_BEGIN_1900 to RTC_TIMESTAMP_BEGIN_2000 without breaking
-> compatibility for these devices?
-> 
-> Thanks
-> Macpaul Lin
-> 
+Here is a failed example on ASUS B1400CEAE with enabled VMD:
 
-After discussing these change with ZhanZhan, MediaTek think use 
-RTC_TIMESTAMP_BEGIN_1900 and the other changes are okay.
+10000:e0:06.0 PCI bridge [0604]: Intel Corporation 11th Gen Core Processor PCIe Controller [8086:9a09] (rev 01) (prog-if 00 [Normal decode])
+    ...
+    Capabilities: [200 v1] L1 PM Substates
+        L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_Substates+
+                  PortCommonModeRestoreTime=45us PortTPowerOnTime=50us
+        L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
+                   T_CommonMode=0us LTR1.2_Threshold=0ns
+        L1SubCtl2: T_PwrOn=0us
 
-Reviewed-by: Macpaul Lin <macpaul.lin@mediatek.com>
-Reviewed-by: ZhanZhan Ge <zhanzhan.ge@mediatek.com>
+10000:e1:00.0 Non-Volatile memory controller [0108]: Sandisk Corp WD Blue SN550 NVMe SSD [15b7:5009] (rev 01) (prog-if 02 [NVM Express])
+    ...
+    Capabilities: [900 v1] L1 PM Substates
+        L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1- L1_PM_Substates+
+                  PortCommonModeRestoreTime=32us PortTPowerOnTime=10us
+        L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
+                   T_CommonMode=0us LTR1.2_Threshold=101376ns
+        L1SubCtl2: T_PwrOn=50us
 
-Thanks!
-Macpaul Lin
+According to "PCIe r6.0, sec 5.5.4", to config the link between the PCIe
+Root Port and the child device correctly:
+* Ensure both devices are in D0 before enabling PCI-PM L1 PM Substates.
+* Ensure L1.2 parameters: Common_Mode_Restore_Times, T_POWER_ON and
+  LTR_L1.2_THRESHOLD are programmed properly on both devices before enable
+  bits for L1.2.
+
+Prepare this series to fix that.
+
+Jian-Hong Pan (3):
+  PCI: vmd: Set PCI devices to D0 before enable PCI PM's L1 substates
+  PCI/ASPM: Add notes about enabling PCI-PM L1SS to
+    pci_enable_link_state(_locked)
+  PCI: vmd: Save/restore PCIe bridge states before/after pci_reset_bus()
+
+ drivers/pci/controller/vmd.c | 20 ++++++++++++++++----
+ drivers/pci/pcie/aspm.c      |  6 ++++++
+ 2 files changed, 22 insertions(+), 4 deletions(-)
+
+-- 
+2.46.1
+
 
