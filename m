@@ -1,347 +1,152 @@
-Return-Path: <linux-kernel+bounces-336886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4001098421C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:30:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94BA8984229
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:32:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62A3C1C22C20
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:30:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50928B29A46
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F77C15666D;
-	Tue, 24 Sep 2024 09:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F13E15B562;
+	Tue, 24 Sep 2024 09:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="K3ByFcJD"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OmkJApUU"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9371A155743
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F0C482D8
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:30:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727170202; cv=none; b=K5FAVAL8NaiqsQILFv3exjaI3FKWHiwYnhk4bfN1Q1aqIrQFgoPMbu+dMkJHUoajsAcbtBmCZkzZcrFg7qgBeL2lyQDNw8QMHFlM6nbIs/T0OkyvuBScqeo3fqx8uW9ZDfA2kqSPEJkI+nxmVb+XkX3J/w+p+9xjyg1wuhCFwEQ=
+	t=1727170211; cv=none; b=d4RUOh/WiXUs/YwT5fVNrkWtw8bMtdK7nJ+Mt/dTFJj8/TxLA6CigJQ0cC0cdwC0sCVR+n/pZPSm8YK74bfbJ6VYBBVzs8hzz7/HYupDcSuvSuWmi+RynvCPAg1xwZCDZ++DTClouZnL4YEb2WeyOVCHTILn+83DAlz2sEnrA1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727170202; c=relaxed/simple;
-	bh=wpNjdKQaKx8tNenN2uCAMN9pAjRg9DgHMqGVAJsCkaQ=;
+	s=arc-20240116; t=1727170211; c=relaxed/simple;
+	bh=D9EswOqiqhUmyazA4KSqUyleFgA9CFWsFjHCBSn5T18=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BJhsM469/cQvxjJEd5oK15OUMBZZJRptUW04nmgBUuw9GRzE5jvUQ+rxeD+QCxUgb40/a98Xfy9baoYOBUKcPPyJ4s27wxZw8QQLJc7Xa7WJOvvJM+70ztXrZqyZNc5lL/2Hh2hGSKo7VuMQAByFA9nz+Jq9jEiMLjFisBaFyDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=K3ByFcJD; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7d50e865b7aso4296560a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 02:30:00 -0700 (PDT)
+	 To:Cc:Content-Type; b=OGpafaLAhS6QBlbqjlofZyjG8VQUatPF3IyIabqqrkxSaZ+feFq41DDcbBYzJ/u2I2a3T6156pb00Q3Lu6POwsEyQRia6twRVJsR088CDH6cscwygWXRPTu41XduO3WszFk/1a9jNsEjVSvMApQGC3k8Vx0Ix5ZCEbgz0A8M88s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OmkJApUU; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6d6891012d5so41603707b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 02:30:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=9elements.com; s=google; t=1727170200; x=1727775000; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1727170209; x=1727775009; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=tkJvvTW+sDB+jA/+zeuc8QYof4EepbYZ4z6pWcmkal0=;
-        b=K3ByFcJDhSryO25DbdSRYE715T7lFTjuZ5wqFT8Pl/WcRBmv/PfIoZRC/fWCSqoPXt
-         cYdPcxth+KO4NqvP3+pojTAQatQ0OQGsYosDxWlBsPfTqSEWEFWvks3eIkhpC2s/KuLK
-         Hovjr7cUkEgQnnyLRLeBl9W8/eAwMIl71LZj8VNeHGqyFGUub48SZMi2qqZYWsOg27Ds
-         gfpis/YgR5s8kORU3kLgwEZpbOXn99z2YTsilxYe+OkhdkO5OmOz3W3vw7CsDeF5+OYP
-         d+QcDZJV0YJRqm2D9zNI4gU+0eFm4nVStp4VB3ekhYtGjqEHWSP1yqabUGoOv/qOz6+P
-         n8ww==
+        bh=8kwPgjt8pfHw9qOZJaljveWnx3eebWOuDbIf6OHB4mQ=;
+        b=OmkJApUUI4tDixiUq0zTR378PYtpZle/0QulXLWjKKO3IxCOcLjPbtQCIqaqGhKH62
+         YX7Rebvo7n/poRm4cluhWiXonnL1CFI8Fed0Rh7n2DVAhgL492G1eJtOSNLC36rl3/tm
+         5FmxRlbVyTPhO1vBBG1dQtt9FHwPRB8Nb+D1p5ZksnVWEG+0WGc1aDgw02d1p2TDSNo4
+         z9BUXVh9BAqixKL+U/fH/A5FW+aUzssKDMNFsYek+41OMk9AGquEnuKiLXN7tWSpBB/M
+         N0tm2PS0FqwLly2t+/j0r90GhlyYQcnGsy2qW8GGrUwEyrXAt/ROmb1Nk1VzYqMM3B79
+         WDNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727170200; x=1727775000;
+        d=1e100.net; s=20230601; t=1727170209; x=1727775009;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=tkJvvTW+sDB+jA/+zeuc8QYof4EepbYZ4z6pWcmkal0=;
-        b=fn/FKrwMM4aPjEZblSf9e6gcJSRLc2JA+wXE8ZOzYnDb7dGP/pWz6gFfv8cMnOuTE9
-         /sF7JHhlPjJntQvst3e2eazSQqZP7vaYSY9TX708HEbyl4Ol3XyPJrbqX9RmBl34meAH
-         CafN6ZpGFlyeCskrRDqjev4/rWgquotuN6OmIv4MwwqPHoyy6uY1/XRLfyieYyNXa1Pm
-         6lYuKZWGya6D5K+G603y7uKI4b2ASEcTZ16Bfek4lqjZJYHhru0Qmf7rHRcCRbRDbRK8
-         sEXeoB6hUzo9Iu6Xrb9XEA6/oyyZQtAYyQcYrDNtAMPmRQE7UTJl1wrxh31O1EUHjowU
-         ucOg==
-X-Forwarded-Encrypted: i=1; AJvYcCX2FcCZYh9+YHteU2rWj4maia4t9O735kEHNsVGt4TozIg+ETbE46QcVoOLnuv/s/tLurOfgSxO5NWtX2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoqodQ83dYmbmnGe8GLkN9HGwAKjF6O5DO4Jdr8upSGuajQUJv
-	CRhUOxjHMQ43brjNoIdBHMmLGdkmRzrHjxgiZJUr47sPrGLp8HSKwcCs/aoXjKb8KwkyqyjiUYS
-	QgWrb9SIN1tzqXpqJJxMRUF5YJ65a1a1F5z60Ks6BcU8zzPkxVBbrmQ==
-X-Google-Smtp-Source: AGHT+IEc1cYYLo7/FgIuLzY7ekLVjl8PL6R1iVUBBYv/Is+9e1Bu+QZWKpmVNc+VCqggPvmguFvOax/gl0r3beUp+Xs=
-X-Received: by 2002:a17:90a:fa8f:b0:2d8:53f8:77c0 with SMTP id
- 98e67ed59e1d1-2dd80c05452mr19791103a91.7.1727170199590; Tue, 24 Sep 2024
- 02:29:59 -0700 (PDT)
+        bh=8kwPgjt8pfHw9qOZJaljveWnx3eebWOuDbIf6OHB4mQ=;
+        b=NQTNmPZnDRricVGTZYrKOmsy+sesqmLA49haNiWWfKHkdCiK7FnKTtvzlJViicwwa5
+         E1K4UI/hCF2nEO5lVZE5k7u23d+Oxsu2aXyN7yo0M0BmOhc5Ve/yRTWbhssgmvgL0iVQ
+         0Ai1+6QsmMtz3MoTBVBRQSGPFj6Qe10j91cH2CGiob22lLByPA5EsOWQv2B6uBgNaFxe
+         O0s23ssotWCC7HbTnGZU8VP4WZP7lRq9bHuXbMMyC9A+5MHpGftGwpai+qcnkZE5KLYJ
+         JRCAmvXKLwUedvepe2RDG0/kuvmQ1oIr7Q/jEHFotDSilHiG+bMV03o/ZslqK83OYOAb
+         rL7g==
+X-Forwarded-Encrypted: i=1; AJvYcCU5am5a576BGXg+ulPv/EG0P/HrZyPEB+GUqsOGpzoPNZavyV/VAKghlAzRAGGmDRSVJbFHa94ZFDbLYIw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu1HD3o/m4kswJvxrctEWkG1DLvhF1FJ1x3PHtfFrApS11a+ZQ
+	eP3hPQAdq8tjGIU4QWQ2lQwjXWDhDR7BmAmh+pYiGJ4gFvYvrn+IzT00eV6A1b5yiybNp3MFomO
+	r1CszG8hzcsTJ+uFknJ1ysiCG5GVz4FbCqMheqg==
+X-Google-Smtp-Source: AGHT+IGGjL0PjmJwK+q9XNzEAEcnxsNe39x0IxIT+lUqKXaanQ7OpypWTWDtEP5guxmNY23cZA1AKXRyim1O0ks/Rlw=
+X-Received: by 2002:a05:690c:6f0d:b0:618:2381:2404 with SMTP id
+ 00721157ae682-6dff2d2ec2bmr131066837b3.44.1727170209158; Tue, 24 Sep 2024
+ 02:30:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240628115451.4169902-1-naresh.solanki@9elements.com> <349543e5-21b2-4725-9b33-1fcb4ae124f6@roeck-us.net>
-In-Reply-To: <349543e5-21b2-4725-9b33-1fcb4ae124f6@roeck-us.net>
-From: Naresh Solanki <naresh.solanki@9elements.com>
-Date: Tue, 24 Sep 2024 14:59:49 +0530
-Message-ID: <CABqG17hpqFG-PeyENXnGn9k7V2goBP+k6BtSURoMM7DgXtxWmA@mail.gmail.com>
-Subject: Re: [PATCH] hwmon: (max6639) : Add DT support
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org, 
-	linux-hwmon@vger.kernel.org
+References: <20240924092033.2626-1-quic_jinlmao@quicinc.com>
+In-Reply-To: <20240924092033.2626-1-quic_jinlmao@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 24 Sep 2024 11:29:58 +0200
+Message-ID: <CAA8EJppugcJC8nk8C0u9D=WcO8_MVE5aHC+1nNfxWNfCAvNBYQ@mail.gmail.com>
+Subject: Re: [PATCH v3] arm64: defconfig: Enable Ftrace and STM configs
+To: Mao Jinlong <quic_jinlmao@quicinc.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Bjorn Andersson <quic_bjorande@quicinc.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Arnd Bergmann <arnd@arndb.de>, =?UTF-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4gUHJhZG8=?= <nfraprado@collabora.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Guenter,
+On Tue, 24 Sept 2024 at 11:21, Mao Jinlong <quic_jinlmao@quicinc.com> wrote:
+>
+> To make software trace sources go through STM(System Trace Module),
+> need to enable STP (System Trace Protocol) protocols and stm sources.
+> Refer to Documentation/trace/stm.rst. Then software trace logs can be
+> captured by STM over TMC sink path. We can enable software trace(Ftrace,
+> console) logs along with HW trace of coresight component. The timestamp
+> of software trace logs and hw traces will be in sync which helps to
+> debug.
 
-Sorry for the late reply,
+It doesn't looks as if you've read the file that I've pointed out previously.
 
-On Fri, 28 Jun 2024 at 20:30, Guenter Roeck <linux@roeck-us.net> wrote:
->
-> On 6/28/24 04:54, Naresh Solanki wrote:
-> > Remove platform data & add devicetree support.
-> >
->
-> Unless I am missing something, this doesn't just add devicetree support,
-> it actually _mandates_ devicetree support. There are no defaults.
-> That is not acceptable.
-I agree with you. It is best to have some defaults & then overwrite
-based on DT properties.
-But in that case we would have to assume that all fans are enabled
-irrespective of their hardware connections in the schematics(example
-fan_enable).
+You must describe why your changes are to be enabled for a random user
+(not just for some kernel developer or hardware enabled). Do you need
+STM and FTRACE in your distro kernel running on your laptop which you
+use for the daily work?
 
-I'm not sure if that is fine. But if you feel that is alright then
-I'll rewrite the driver to assume
-everything is enabled with default values.
-Later based on DT properties, we just overwrite defaults to align with hardware.
-
-
-For commit message I'll update it as :
-hwmon: (max6639) : Configure based on DT property
-Remove platform data & initialize driver with defaults & overwrite based on
-DT properties.
->
-> More comments inline.
->
-> > Signed-off-by: Naresh Solanki <naresh.solanki@9elements.com>
-> > ---
-> >   drivers/hwmon/max6639.c               | 99 ++++++++++++++++++++-------
-> >   include/linux/platform_data/max6639.h | 15 ----
-> >   2 files changed, 73 insertions(+), 41 deletions(-)
-> >   delete mode 100644 include/linux/platform_data/max6639.h
-> >
-> > diff --git a/drivers/hwmon/max6639.c b/drivers/hwmon/max6639.c
-> > index f54720d3d2ce..9ae7aecb0737 100644
-> > --- a/drivers/hwmon/max6639.c
-> > +++ b/drivers/hwmon/max6639.c
-> > @@ -19,7 +19,6 @@
-> >   #include <linux/hwmon-sysfs.h>
-> >   #include <linux/err.h>
-> >   #include <linux/mutex.h>
-> > -#include <linux/platform_data/max6639.h>
-> >   #include <linux/regmap.h>
-> >   #include <linux/util_macros.h>
-> >
-> > @@ -81,6 +80,7 @@ struct max6639_data {
-> >       /* Register values initialized only once */
-> >       u8 ppr[MAX6639_NUM_CHANNELS];   /* Pulses per rotation 0..3 for 1..4 ppr */
-> >       u8 rpm_range[MAX6639_NUM_CHANNELS]; /* Index in above rpm_ranges table */
-> > +     bool fan_enable[MAX6639_NUM_CHANNELS];
-> >
-> >       /* Optional regulator for FAN supply */
-> >       struct regulator *reg;
-> > @@ -276,6 +276,11 @@ static int max6639_write_fan(struct device *dev, u32 attr, int channel,
-> >
-> >   static umode_t max6639_fan_is_visible(const void *_data, u32 attr, int channel)
-> >   {
-> > +     struct max6639_data *data = (struct max6639_data *)_data;
-> > +
-> > +     if (!data->fan_enable[channel])
-> > +             return 0;
-> > +
-> >       switch (attr) {
-> >       case hwmon_fan_input:
-> >       case hwmon_fan_fault:
-> > @@ -372,6 +377,11 @@ static int max6639_write_pwm(struct device *dev, u32 attr, int channel,
-> >
-> >   static umode_t max6639_pwm_is_visible(const void *_data, u32 attr, int channel)
-> >   {
-> > +     struct max6639_data *data = (struct max6639_data *)_data;
-> > +
-> > +     if (!data->fan_enable[channel])
-> > +             return 0;
-> > +
-> >       switch (attr) {
-> >       case hwmon_pwm_input:
-> >       case hwmon_pwm_freq:
-> > @@ -544,43 +554,85 @@ static int rpm_range_to_reg(int range)
-> >       int i;
-> >
-> >       for (i = 0; i < ARRAY_SIZE(rpm_ranges); i++) {
-> > -             if (rpm_ranges[i] == range)
-> > +             if (range <= rpm_ranges[i])
->
-> What does this change have to do with adding devicetree support,
-> why is it done, and what is its impact ?
->
-> So far the assumption was that only valid values would be accepted by
-> the function, returning a default if there was no match. The incoming
-> data is from devicetree, where the range should be well defined and
-> accurate. With that in mind, I don't see the point of accepting values
-> outside the supported ranges.
->
-> Flexible data makes sense for sysfs attributes, where we can not
-> expect users to know acceptable values. For those, it is acceptable
-> and even desirable to find a closest match. However, that does not apply
-> to data obtained from devicetree.
-Agree. Will remove this change.
->
-> >                       return i;
-> >       }
-> >
-> >       return 1; /* default: 4000 RPM */
-> >   }
-> >
-> > +static int max6639_probe_child_from_dt(struct i2c_client *client,
-> > +                                    struct device_node *child,
-> > +                                    struct max6639_data *data)
-> > +
-> > +{
-> > +     struct device *dev = &client->dev;
-> > +     u32 i, val;
-> > +     int err;
-> > +
-> > +     err = of_property_read_u32(child, "reg", &i);
-> > +     if (err) {
-> > +             dev_err(dev, "missing reg property of %pOFn\n", child);
-> > +             return err;
-> > +     }
-> > +
-> > +     if (i > 1) {
-> > +             dev_err(dev, "Invalid fan index reg %d\n", i);
-> > +             return -EINVAL;
-> > +     }
-> > +
-> > +     data->fan_enable[i] = true;
-> > +
-> > +     err = of_property_read_u32(child, "pulses-per-revolution", &val);
-> > +
-> > +     if (!err) {
-> > +             if (val < 0 || val > 5) {
->
-> Accepting 0 seems wrong. Also, val is u32 and will never be < 0.
-Ack.
-Will make variable 'i' as int.
-Also will update if check with:
-if (val < 1 || val > 5) {
->
-> > +                     dev_err(dev, "invalid pulses-per-revolution %d of %pOFn\n", val, child);
-> > +                     return -EINVAL;
-> > +             }
-> > +             data->ppr[i] = val;
-> > +     }
-> > +
-> > +     err = of_property_read_u32(child, "max-rpm", &val);
-> > +
-> > +     if (!err)
-> > +             data->rpm_range[i] = rpm_range_to_reg(val);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> >   static int max6639_init_client(struct i2c_client *client,
-> >                              struct max6639_data *data)
-> >   {
-> > -     struct max6639_platform_data *max6639_info =
-> > -             dev_get_platdata(&client->dev);
-> > -     int i;
-> > -     int rpm_range = 1; /* default: 4000 RPM */
-> > -     int err, ppr;
-> > +     struct device *dev = &client->dev;
-> > +     const struct device_node *np = dev->of_node;
-> > +     struct device_node *child;
-> > +     int i, err;
-> >
-> >       /* Reset chip to default values, see below for GCONFIG setup */
-> >       err = regmap_write(data->regmap, MAX6639_REG_GCONFIG, MAX6639_GCONFIG_POR);
-> >       if (err)
-> >               return err;
-> >
-> > -     /* Fans pulse per revolution is 2 by default */
-> > -     if (max6639_info && max6639_info->ppr > 0 &&
-> > -                     max6639_info->ppr < 5)
-> > -             ppr = max6639_info->ppr;
-> > -     else
-> > -             ppr = 2;
-> > -
-> > -     data->ppr[0] = ppr;
-> > -     data->ppr[1] = ppr;
->
-> As mentioned above, this may work for your use case, but it won't work
-> for existing users of this driver.
-Somewhere I was with the assumption that there is no active use of the driver
-as there is no reference to this driver.
-That is why I felt these changes will be good.
-i.e., DT property would indicate if Fan0 or Fan1 should be enabled or not
-instead of assuming that they are always enabled.
-
-I would need your input here to proceed further.
-
-Regards,
-Naresh
+For reference, CONFIG_FTRACE is enabled only in 2 defconfig files (and
+explicitly disabled in 70).
 
 >
-> > +     for_each_child_of_node(np, child) {
-> > +             if (strcmp(child->name, "fan"))
-> > +                     continue;
-> >
-> > -     if (max6639_info)
-> > -             rpm_range = rpm_range_to_reg(max6639_info->rpm_range);
-> > -     data->rpm_range[0] = rpm_range;
-> > -     data->rpm_range[1] = rpm_range;
-> > +             err = max6639_probe_child_from_dt(client, child, data);
-> > +             if (err) {
-> > +                     of_node_put(child);
-> > +                     return err;
-> > +             }
-> > +     }
-> >
-> >       for (i = 0; i < MAX6639_NUM_CHANNELS; i++) {
-> > +             if (!data->fan_enable[i])
-> > +                     err = regmap_set_bits(data->regmap, MAX6639_REG_OUTPUT_MASK, BIT(1 - i));
-> > +             else
-> > +                     err = regmap_clear_bits(data->regmap, MAX6639_REG_OUTPUT_MASK, BIT(1 - i));
-> > +             if (err)
-> > +                     return err;
-> > +
-> >               /* Set Fan pulse per revolution */
-> >               err = max6639_set_ppr(data, i, data->ppr[i]);
-> >               if (err)
-> > @@ -593,12 +645,7 @@ static int max6639_init_client(struct i2c_client *client,
-> >                       return err;
-> >
-> >               /* Fans PWM polarity high by default */
-> > -             if (max6639_info) {
-> > -                     if (max6639_info->pwm_polarity == 0)
-> > -                             err = regmap_write(data->regmap, MAX6639_REG_FAN_CONFIG2a(i), 0x00);
-> > -                     else
-> > -                             err = regmap_write(data->regmap, MAX6639_REG_FAN_CONFIG2a(i), 0x02);
-> > -             }
-> > +             err = regmap_write(data->regmap, MAX6639_REG_FAN_CONFIG2a(i), 0x00);
-> >               if (err)
-> >                       return err;
-> >
-> > diff --git a/include/linux/platform_data/max6639.h b/include/linux/platform_data/max6639.h
-> > deleted file mode 100644
-> > index 65bfdb4fdc15..000000000000
-> > --- a/include/linux/platform_data/max6639.h
-> > +++ /dev/null
-> > @@ -1,15 +0,0 @@
-> > -/* SPDX-License-Identifier: GPL-2.0 */
-> > -#ifndef _LINUX_MAX6639_H
-> > -#define _LINUX_MAX6639_H
-> > -
-> > -#include <linux/types.h>
-> > -
-> > -/* platform data for the MAX6639 temperature sensor and fan control */
-> > -
-> > -struct max6639_platform_data {
-> > -     bool pwm_polarity;      /* Polarity low (0) or high (1, default) */
-> > -     int ppr;                /* Pulses per rotation 1..4 (default == 2) */
-> > -     int rpm_range;          /* 2000, 4000 (default), 8000 or 16000 */
-> > -};
-> > -
-> > -#endif /* _LINUX_MAX6639_H */
-> >
-> > base-commit: 52c1e818d66bfed276bd371f9e7947be4055af87
+> Changes in v3:
+> - update commit message.
 >
+> Changes in v2:
+> - select ftrace config explicitly.
+>
+> Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
+> ---
+>  arch/arm64/configs/defconfig | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index 4a3999eefa67..c0a56e58e554 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -1554,6 +1554,12 @@ CONFIG_NVMEM_SNVS_LPGPR=y
+>  CONFIG_NVMEM_SPMI_SDAM=m
+>  CONFIG_NVMEM_SUNXI_SID=y
+>  CONFIG_NVMEM_UNIPHIER_EFUSE=y
+> +CONFIG_STM_PROTO_BASIC=m
+> +CONFIG_STM_PROTO_SYS_T=m
+> +CONFIG_STM_DUMMY=m
+> +CONFIG_STM_SOURCE_CONSOLE=m
+> +CONFIG_STM_SOURCE_HEARTBEAT=m
+> +CONFIG_STM_SOURCE_FTRACE=m
+>  CONFIG_FPGA=y
+>  CONFIG_FPGA_MGR_ALTERA_CVP=m
+>  CONFIG_FPGA_MGR_STRATIX10_SOC=m
+> @@ -1663,7 +1669,7 @@ CONFIG_DEBUG_INFO_REDUCED=y
+>  CONFIG_MAGIC_SYSRQ=y
+>  CONFIG_DEBUG_FS=y
+>  # CONFIG_SCHED_DEBUG is not set
+> -# CONFIG_FTRACE is not set
+> +CONFIG_FTRACE=y
+>  CONFIG_CORESIGHT=m
+>  CONFIG_CORESIGHT_LINK_AND_SINK_TMC=m
+>  CONFIG_CORESIGHT_CATU=m
+> --
+> 2.46.0
+>
+
+
+-- 
+With best wishes
+Dmitry
 
