@@ -1,124 +1,89 @@
-Return-Path: <linux-kernel+bounces-337002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CB649843FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:48:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06D1D984400
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:50:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60BF32885F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:48:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3109E1C22D4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8CF1A3AA3;
-	Tue, 24 Sep 2024 10:48:10 +0000 (UTC)
-Received: from MSK-MAILEDGE.securitycode.ru (msk-mailedge.securitycode.ru [195.133.217.143])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018E919E972;
-	Tue, 24 Sep 2024 10:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.133.217.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4680C1A3A9A;
+	Tue, 24 Sep 2024 10:50:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A3F158538
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 10:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727174889; cv=none; b=iKMPpfM1o68a6NfObiVK70iDlJOgLXXleYaC994vQoA7mWFexFPRxu0ZdQ4zzeR5KfqIIabuLpJciKtaY31Klt4ZlqUKcKi5fHNXd353hDBjyBMOEwSGB/AIAA3Y8Q1nzvEOBdBdukZL6DVGEE6TGZ6z5mNi2IIEfBQ48rJYfp4=
+	t=1727175020; cv=none; b=ebqhL+HBDidHvFgs1jf6Iw3IGN0bpJkLwYrEAO6p9lL2QPzeFuHWVB5kAu89/JoLwpXxcgVI9oiE9itoqGCWKwqhmTe4cKZWkwEazfq7y0AtI+31LHso5UVHa+UmaO88dYeF7ANiNejSsvpzH1V2NFiLOZnGqOozN61nKilHUs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727174889; c=relaxed/simple;
-	bh=GKn+W0VDsGgKD/6+iLR+VS9JVxXQWyiz/c9pZjsf4Dw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JNrjexjb9OcM0PAtETmBvZYd7H1WEkUGLF96uvwWKzKBrgv7mCR5v71wdaXYxX/X7hUYzaIX+8aqHTIMeJaAS4bbB7UgKZuC7I4LmL4Waz7xugaUvKzyj+GkBnVKQbNwAb3VCFCrN8BH2nyOpVnvuFqpHyHe38FD1RVHvWyRZG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=securitycode.ru; spf=pass smtp.mailfrom=securitycode.ru; arc=none smtp.client-ip=195.133.217.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=securitycode.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=securitycode.ru
-From: George Rurikov <g.ryurikov@securitycode.ru>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-CC: George Rurikov <g.ryurikov@securitycode.ru>, Rodrigo Vivi
-	<rodrigo.vivi@intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, <intel-gfx@lists.freedesktop.org>,
-	<intel-xe@lists.freedesktop.org>, <dri-devel@lists.freedesktop.og>,
-	<linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: [PATCH] drm: Add check for encoder in intel_get_crtc_new_encoder()
-Date: Tue, 24 Sep 2024 13:47:22 +0300
-Message-ID: <20240924104722.1049588-1-g.ryurikov@securitycode.ru>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727175020; c=relaxed/simple;
+	bh=84eavi6gbHEDYMv/1Ntg1zLnJaypCt4R7XFJ2bLFqmo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s3Ee0LHVar5qnKnu9ef1NhxI6BQWv3eZZu7STAa09u5yA84M31Fu4oLbJ/5nTQMiozJwEp88YtIJv6rClDJMAH/HCT8F7RUP4iq01CTmX9Wf67XlwA0DOxJiI24VebXtCsKmqah/9PZ0fih0VASnAfLOx1rS1MUWM6nJMf8COZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 07105DA7;
+	Tue, 24 Sep 2024 03:50:48 -0700 (PDT)
+Received: from [10.163.37.113] (unknown [10.163.37.113])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9FA4A3F528;
+	Tue, 24 Sep 2024 03:50:16 -0700 (PDT)
+Message-ID: <42545fc6-8c91-4f20-9959-2416b9e112c2@arm.com>
+Date: Tue, 24 Sep 2024 16:20:13 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: SPB-EX2.Securitycode.ru (172.16.24.92) To
- MSK-EX2.Securitycode.ru (172.17.8.92)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/memory_hotplug: Print the correct pfn in
+ do_migrate_range()
+To: Li Zhijian <lizhijian@fujitsu.com>, linux-mm@kvack.org
+Cc: David Hildenbrand <david@redhat.com>, Oscar Salvador <osalvador@suse.de>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
+References: <20240924101555.327091-1-lizhijian@fujitsu.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20240924101555.327091-1-lizhijian@fujitsu.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-If the video card driver could not find the connector assigned to the
-current video controller, or if the hardware status has changed so that
-a pre-existing connector is no longer active, none of the state
-connectors will meet the assignment criteria for the current crtc video
-controller.
 
-In the drm_WARN function, encoder->base.dev is called, so
-'&encoder->base.dev' will be dereferenced since encoder will still be
-initialized NULL.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+On 9/24/24 15:45, Li Zhijian wrote:
+> The pfn value needs to be retrieved correctly when PageTransHuge(page)
+ 
+Where the pfn could have been modified with
 
-Fixes: e12d6218fda2 ("drm/i915: Reduce bigjoiner special casing")
-Cc: stable@vger.kernel.org
-Signed-off-by: George Rurikov <g.ryurikov@securitycode.ru>
----
- drivers/gpu/drm/i915/display/intel_display.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+pfn = page_to_pfn(head) + compound_nr(head) - 1
 
-diff --git a/drivers/gpu/drm/i915/display/intel_display.c b/drivers/gpu/drm=
-/i915/display/intel_display.c
-index b4ef4d59da1a..a5e24d64f909 100644
---- a/drivers/gpu/drm/i915/display/intel_display.c
-+++ b/drivers/gpu/drm/i915/display/intel_display.c
-@@ -819,9 +819,10 @@ intel_get_crtc_new_encoder(const struct intel_atomic_s=
-tate *state,
-                num_encoders++;
-        }
+So retrieving from page will get the original pfn value ?
 
--       drm_WARN(state->base.dev, num_encoders !=3D 1,
--                "%d encoders for pipe %c\n",
--                num_encoders, pipe_name(primary_crtc->pipe));
-+       if (encoder)
-+               drm_WARN(state->base.dev, num_encoders !=3D 1,
-+                       "%d encoders for pipe %c\n",
-+                       num_encoders, pipe_name(primary_crtc->pipe));
-
-        return encoder;
- }
---
-2.34.1
-
-=D0=97=D0=B0=D1=8F=D0=B2=D0=BB=D0=B5=D0=BD=D0=B8=D0=B5 =D0=BE =D0=BA=D0=BE=
-=D0=BD=D1=84=D0=B8=D0=B4=D0=B5=D0=BD=D1=86=D0=B8=D0=B0=D0=BB=D1=8C=D0=BD=D0=
-=BE=D1=81=D1=82=D0=B8
-
-=D0=94=D0=B0=D0=BD=D0=BD=D0=BE=D0=B5 =D1=8D=D0=BB=D0=B5=D0=BA=D1=82=D1=80=
-=D0=BE=D0=BD=D0=BD=D0=BE=D0=B5 =D0=BF=D0=B8=D1=81=D1=8C=D0=BC=D0=BE =D0=B8 =
-=D0=BB=D1=8E=D0=B1=D1=8B=D0=B5 =D0=BF=D1=80=D0=B8=D0=BB=D0=BE=D0=B6=D0=B5=
-=D0=BD=D0=B8=D1=8F =D0=BA =D0=BD=D0=B5=D0=BC=D1=83 =D1=8F=D0=B2=D0=BB=D1=8F=
-=D1=8E=D1=82=D1=81=D1=8F =D0=BA=D0=BE=D0=BD=D1=84=D0=B8=D0=B4=D0=B5=D0=BD=
-=D1=86=D0=B8=D0=B0=D0=BB=D1=8C=D0=BD=D1=8B=D0=BC=D0=B8 =D0=B8 =D0=BF=D1=80=
-=D0=B5=D0=B4=D0=BD=D0=B0=D0=B7=D0=BD=D0=B0=D1=87=D0=B5=D0=BD=D1=8B =D0=B8=
-=D1=81=D0=BA=D0=BB=D1=8E=D1=87=D0=B8=D1=82=D0=B5=D0=BB=D1=8C=D0=BD=D0=BE =
-=D0=B4=D0=BB=D1=8F =D0=B0=D0=B4=D1=80=D0=B5=D1=81=D0=B0=D1=82=D0=B0. =D0=95=
-=D1=81=D0=BB=D0=B8 =D0=92=D1=8B =D0=BD=D0=B5 =D1=8F=D0=B2=D0=BB=D1=8F=D0=B5=
-=D1=82=D0=B5=D1=81=D1=8C =D0=B0=D0=B4=D1=80=D0=B5=D1=81=D0=B0=D1=82=D0=BE=
-=D0=BC =D0=B4=D0=B0=D0=BD=D0=BD=D0=BE=D0=B3=D0=BE =D0=BF=D0=B8=D1=81=D1=8C=
-=D0=BC=D0=B0, =D0=BF=D0=BE=D0=B6=D0=B0=D0=BB=D1=83=D0=B9=D1=81=D1=82=D0=B0,=
- =D1=83=D0=B2=D0=B5=D0=B4=D0=BE=D0=BC=D0=B8=D1=82=D0=B5 =D0=BD=D0=B5=D0=BC=
-=D0=B5=D0=B4=D0=BB=D0=B5=D0=BD=D0=BD=D0=BE =D0=BE=D1=82=D0=BF=D1=80=D0=B0=
-=D0=B2=D0=B8=D1=82=D0=B5=D0=BB=D1=8F, =D0=BD=D0=B5 =D1=80=D0=B0=D1=81=D0=BA=
-=D1=80=D1=8B=D0=B2=D0=B0=D0=B9=D1=82=D0=B5 =D1=81=D0=BE=D0=B4=D0=B5=D1=80=
-=D0=B6=D0=B0=D0=BD=D0=B8=D0=B5 =D0=B4=D1=80=D1=83=D0=B3=D0=B8=D0=BC =D0=BB=
-=D0=B8=D1=86=D0=B0=D0=BC, =D0=BD=D0=B5 =D0=B8=D1=81=D0=BF=D0=BE=D0=BB=D1=8C=
-=D0=B7=D1=83=D0=B9=D1=82=D0=B5 =D0=B5=D0=B3=D0=BE =D0=B2 =D0=BA=D0=B0=D0=BA=
-=D0=B8=D1=85-=D0=BB=D0=B8=D0=B1=D0=BE =D1=86=D0=B5=D0=BB=D1=8F=D1=85, =D0=
-=BD=D0=B5 =D1=85=D1=80=D0=B0=D0=BD=D0=B8=D1=82=D0=B5 =D0=B8 =D0=BD=D0=B5 =
-=D0=BA=D0=BE=D0=BF=D0=B8=D1=80=D1=83=D0=B9=D1=82=D0=B5 =D0=B8=D0=BD=D1=84=
-=D0=BE=D1=80=D0=BC=D0=B0=D1=86=D0=B8=D1=8E =D0=BB=D1=8E=D0=B1=D1=8B=D0=BC =
-=D1=81=D0=BF=D0=BE=D1=81=D0=BE=D0=B1=D0=BE=D0=BC.
+> is true. Fix it by replacing the usage of 'pfn' with 'page_to_pfn(page)'
+> to ensure the correct pfn is printed in warning messages when isolation
+> fails.
+> 
+> Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
+> ---
+>  mm/memory_hotplug.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index 26790c8d5b43..000430406a9e 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -1829,7 +1829,7 @@ static void do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
+>  
+>  		} else {
+>  			if (__ratelimit(&migrate_rs)) {
+> -				pr_warn("failed to isolate pfn %lx\n", pfn);
+> +				pr_warn("failed to isolate pfn %lx\n", page_to_pfn(page));
+>  				dump_page(page, "isolation failed");
+>  			}
+>  		}
 
