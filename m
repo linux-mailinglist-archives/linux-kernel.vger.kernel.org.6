@@ -1,175 +1,127 @@
-Return-Path: <linux-kernel+bounces-336760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A8B598406F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:26:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7E9298406C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 10:25:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B3661C20A20
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:25:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D0B41F24499
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7D1150981;
-	Tue, 24 Sep 2024 08:25:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC54B14E2CC;
+	Tue, 24 Sep 2024 08:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Tjp0P3kf"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oAjlgUP/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15781494DB
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 08:25:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4531314AD02;
+	Tue, 24 Sep 2024 08:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727166348; cv=none; b=Y4aXYUScUs1eVgusKyZxSyENoycVd3vyk4i41FLGwx7o19ZfaQ+PsY8t/BM4Xv3XCET5Yv2OVCQ2VzRI9a64C0yVlXmgOQ0CpAPiW1dYE4eBr+AuykuoNcEHOoh+7JtSGSlQGLLgpReBHiQiTMHB5L/BTKl3DQtQOXLqsoSSR+4=
+	t=1727166330; cv=none; b=NFiuT5CDK8H+AWOcuFFCssLurjFMiD1/TxVvqN0FFrY/IMcHeA/ChCwdVx7vyySXlO9rSmUclFrjBjhStV4BviPkSfxYWx1h30FZ+oqbsIr4++zaUZ7ywLUTWzVz4W//C1/gwWYsFmDzY4xhSrs6iXszcshZlipN8rl+dYrD7Vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727166348; c=relaxed/simple;
-	bh=nPceuxPVMeKjsBOAEIxSaXQWX78AoFC91ZOBWYM6Shk=;
-	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
-	 Cc:In-Reply-To:To; b=J5ISQb4ubc5c1tCWV5InkVWud81lJ0N9g1HK/9SRjqwHzA8kfVsy2jndANw0LR7iuEjLfX522MFaPLxwsvhEeyqIOz3p6C8HZ/ePCdv8Vb92VfuFmvoU7XQiECF8Ne1MwNDQDhRjBzwIa54AV/0TwDFXX00UopxfZn22d04EzDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Tjp0P3kf; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain; charset=utf-8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727166344;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1y5CwMb2yKa3w/NIt/ri0sQu3/1xDcimH4xSI7fLtgQ=;
-	b=Tjp0P3kfHa/lcIBU5PC1B0bQQCvLGfyq8015xxHclGgdFLLPxO/1pTOinxm0BDuczsBQUv
-	m5ZY1EvglHhF0Inymte3gC1+yKjYpSfigpVX8d8pHJhpC3jeMXjhqqORPMtLQ/ZViMl3ti
-	cU3EvV03qYBYxqNC+aDS+qZDaTycsVA=
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
+	s=arc-20240116; t=1727166330; c=relaxed/simple;
+	bh=/gYlrcDZdMKSsmLO9X92V4sEhv3bi4liYec0hiD2jos=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aYcylsCyZnGmCQb3zhAq4n/a1xbkGna4B1N88PikAZ4RDUSa0tWNjwxnkxxVlApb13PRELJg7WfNk7OQHjlqb2bAopkKY3g7hLpXI0V/WjP2zOmwl+efVgAD2VwLUEurTKhF2qI/6Bxg0e28aSbVR3M8LcMBWH2ENW6gfaWnYfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oAjlgUP/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C32ADC4CEC4;
+	Tue, 24 Sep 2024 08:25:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727166329;
+	bh=/gYlrcDZdMKSsmLO9X92V4sEhv3bi4liYec0hiD2jos=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oAjlgUP/Sz9sssdhTF2qPPhG2CrmenC7fq/enAgvjwybiLh04bthenLHkcKUVTuG6
+	 TaNMMtuwc/vaYcJV9K8aI86GPD3Jnn673xv30ygQb1VRf87e/+g4LrjMIRQXZ7/5g0
+	 KkqBiQvaKO/RFh5HcT2c98Lu7yMzhc9iFQngG+zBlp4jU2WrWZhS771XDApyRbQsPT
+	 zN7L2xYNgGh8XZhLptilFVlkNuSSCjC37HiDwgJ2BDjbje5Sdc1bl6Dkwi1BFY73i+
+	 fnc457PEx8NYUvE9P47u+nF5ey4a3bC0eY7LMLF1JMgeYvwaAfS1k/IEmHvu1/UYg7
+	 A3guuyHDp2epw==
+Message-ID: <5dfa7fb9-5b0e-424e-bf53-74a9eaa25bb1@kernel.org>
+Date: Tue, 24 Sep 2024 10:25:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v4 10/13] mm: page_vma_mapped_walk: map_pte() use pte_offset_map_rw_nolock()
-Date: Tue, 24 Sep 2024 16:25:06 +0800
-Message-Id: <E2AAD3DA-4C73-4785-939C-13164FA8543D@linux.dev>
-References: <ecffb7d71363fa79048c0a929780215e0fa93491.1727148662.git.zhengqi.arch@bytedance.com>
-Cc: david@redhat.com, hughd@google.com, willy@infradead.org, vbabka@kernel.org,
- akpm@linux-foundation.org, rppt@kernel.org, vishal.moola@gmail.com,
- peterx@redhat.com, ryan.roberts@arm.com,
- christophe.leroy2@cs-soprasteria.com, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org
-In-Reply-To: <ecffb7d71363fa79048c0a929780215e0fa93491.1727148662.git.zhengqi.arch@bytedance.com>
-To: Qi Zheng <zhengqi.arch@bytedance.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch v2 2/3] dt-bindings: riscv: starfive: add
+ deepcomputing,fm7110
+To: Sandie Cao <sandie.cao@deepcomputing.io>, Conor Dooley <conor@kernel.org>
+Cc: Emil Renner Berthing <kernel@esmil.dk>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Heiko Stuebner <heiko.stuebner@cherry.de>,
+ Neil Armstrong <neil.armstrong@linaro.org>, rafal@milecki.pl,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Michael Zhu <michael.zhu@starfivetech.com>,
+ Drew Fustini <drew@beagleboard.org>, linux-riscv@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dhs@frame.work,
+ ams@frame.work, gregkh@linuxfoundation.org, yuning.liang@deepcomputing.io,
+ huiming.qiu@deepcomputing.io
+References: <20240924080650.1345485-3-sandie.cao@deepcomputing.io>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240924080650.1345485-3-sandie.cao@deepcomputing.io>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 24/09/2024 10:06, Sandie Cao wrote:
+> Add deepcomputing,fm7110 into compatible list.
 
+This we see from the diff. And commit subject. Describe here the hardware.
+> 
+> Signed-off-by: Sandie Cao <sandie.cao@deepcomputing.io>
 
-> On Sep 24, 2024, at 14:11, Qi Zheng <zhengqi.arch@bytedance.com> wrote:
->=20
-> =EF=BB=BFIn the caller of map_pte(), we may modify the pvmw->pte after acq=
-uiring
-> the pvmw->ptl, so convert it to using pte_offset_map_rw_nolock(). At
-> this time, the pte_same() check is not performed after the pvmw->ptl held,=
+Best regards,
+Krzysztof
 
-> so we should get pmdval and do pmd_same() check to ensure the stability of=
-
-> pvmw->pmd.
->=20
-> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
-> ---
-> mm/page_vma_mapped.c | 25 ++++++++++++++++++++-----
-> 1 file changed, 20 insertions(+), 5 deletions(-)
->=20
-> diff --git a/mm/page_vma_mapped.c b/mm/page_vma_mapped.c
-> index ae5cc42aa2087..6410f29b37c1b 100644
-> --- a/mm/page_vma_mapped.c
-> +++ b/mm/page_vma_mapped.c
-> @@ -13,9 +13,11 @@ static inline bool not_found(struct page_vma_mapped_wal=
-k *pvmw)
->    return false;
-> }
->=20
-> -static bool map_pte(struct page_vma_mapped_walk *pvmw, spinlock_t **ptlp)=
-
-> +static bool map_pte(struct page_vma_mapped_walk *pvmw, pmd_t *pmdvalp,
-> +            spinlock_t **ptlp)
-> {
->    pte_t ptent;
-> +    pmd_t pmdval;
-
-Why declare a new variable? Can=E2=80=99t we use *pmdvalp instead?
-
->=20
->    if (pvmw->flags & PVMW_SYNC) {
->        /* Use the stricter lookup */
-> @@ -25,6 +27,7 @@ static bool map_pte(struct page_vma_mapped_walk *pvmw, s=
-pinlock_t **ptlp)
->        return !!pvmw->pte;
->    }
->=20
-> +again:
->    /*
->     * It is important to return the ptl corresponding to pte,
->     * in case *pvmw->pmd changes underneath us; so we need to
-> @@ -32,10 +35,11 @@ static bool map_pte(struct page_vma_mapped_walk *pvmw,=
- spinlock_t **ptlp)
->     * proceeds to loop over next ptes, and finds a match later.
->     * Though, in most cases, page lock already protects this.
->     */
-> -    pvmw->pte =3D pte_offset_map_nolock(pvmw->vma->vm_mm, pvmw->pmd,
-> -                      pvmw->address, ptlp);
-> +    pvmw->pte =3D pte_offset_map_rw_nolock(pvmw->vma->vm_mm, pvmw->pmd,
-> +                         pvmw->address, &pmdval, ptlp);
->    if (!pvmw->pte)
->        return false;
-> +    *pmdvalp =3D pmdval;
->=20
->    ptent =3D ptep_get(pvmw->pte);
->=20
-> @@ -67,8 +71,13 @@ static bool map_pte(struct page_vma_mapped_walk *pvmw, s=
-pinlock_t **ptlp)
->    } else if (!pte_present(ptent)) {
->        return false;
->    }
-> +    spin_lock(*ptlp);
-> +    if (unlikely(!pmd_same(pmdval, pmdp_get_lockless(pvmw->pmd)))) {
-> +        pte_unmap_unlock(pvmw->pte, *ptlp);
-> +        goto again;
-> +    }
->    pvmw->ptl =3D *ptlp;
-> -    spin_lock(pvmw->ptl);
-> +
->    return true;
-> }
->=20
-> @@ -278,7 +287,7 @@ bool page_vma_mapped_walk(struct page_vma_mapped_walk *=
-pvmw)
->            step_forward(pvmw, PMD_SIZE);
->            continue;
->        }
-> -        if (!map_pte(pvmw, &ptl)) {
-> +        if (!map_pte(pvmw, &pmde, &ptl)) {
->            if (!pvmw->pte)
->                goto restart;
->            goto next_pte;
-> @@ -307,6 +316,12 @@ bool page_vma_mapped_walk(struct page_vma_mapped_walk=
- *pvmw)
->        if (!pvmw->ptl) {
->            pvmw->ptl =3D ptl;
->            spin_lock(pvmw->ptl);
-> +            if (unlikely(!pmd_same(pmde, pmdp_get_lockless(pvmw->pmd)))) {=
-
-> +                pte_unmap_unlock(pvmw->pte, pvmw->ptl);
-> +                pvmw->ptl =3D NULL;
-> +                pvmw->pte =3D NULL;
-> +                goto restart;
-> +            }
->        }
->        goto this_pte;
->    } while (pvmw->address < end);
-> --
-> 2.20.1
->=20
 
