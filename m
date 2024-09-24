@@ -1,95 +1,77 @@
-Return-Path: <linux-kernel+bounces-337537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1B5A984B7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:23:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD59F984B99
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:31:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACA87284175
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:23:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A895281943
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E5C13B58F;
-	Tue, 24 Sep 2024 19:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b="mT5uwr6l"
-Received: from gimli.kloenk.de (gimli.kloenk.de [49.12.72.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9AA1B85F1;
-	Tue, 24 Sep 2024 19:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.72.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC0213A3FF;
+	Tue, 24 Sep 2024 19:31:16 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA8E137775
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 19:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727205799; cv=none; b=UrLp/DBT0a1jnHRybpMnOOEghwM7lZuhKC+0TgbyPy7ugnSGjlHkQUTxKZ2VQ87qBjZNDycJE6ZTPFcGnmYTCACzWBKKISIjCa7SIUCuc/M30gqt20uSDgSt3UrApnFNBbGTDp8dQfgk9phc610uYm8bCdzQWv7e8+zg+XS28Vg=
+	t=1727206276; cv=none; b=iGyILDru1vZpYAJdJZKbTTFCfoGsRT0rD1f990Vi4Wgg8s5/Po5gLL4C0SEKNKl7y8xMCqr5RQFZ6wy13bMB3QgkIwr8LaoGGc8UzZ1hhlfSaLparOF6VdacRaSnu5h3QvZb6+VBgOisSt+vPPyg0b+hbjci/fVhMmAi8YT21zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727205799; c=relaxed/simple;
-	bh=+FHMJ6hwPtvMrBdLQmrt8NWojAbBrIxp5Zb2NmvI6FQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SRqYt/LCIT4Uh+nK7TSkFgGXvdt/rL7dokJ7kgNVKnGmd6PasvooLNN8J+e9ZhLd6ABBn3lwSrtOHHJex5EeO9z+UE70NzGQXn8viarzpnDKue4d2RUg3udWrgB5ZSeeiE8kNLVkFSHm2FGdgHhO+tIkIkDhTPE7nruMODakPlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev; spf=pass smtp.mailfrom=kloenk.dev; dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b=mT5uwr6l; arc=none smtp.client-ip=49.12.72.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kloenk.dev
-From: Fiona Behrens <me@kloenk.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kloenk.dev; s=mail;
-	t=1727205783; bh=Kff+VYEu37RPJB/1j/mf3tSijU1+C9nLFtyrPFa3P7Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=mT5uwr6lwqqNZRkcV6aORlqwUs1djKRH5hDIgws/UsCUp9fvUAvKi4CcH46+S5SEE
-	 +m3bXkuirs+uvZEten8ky9Nmfc0r4E9CPeI5KHDhUPtY7hHaLxADK6qo78URsKfMTR
-	 f9aCIqRC3vB97PHR0S6JLZwBEzIzFbqSMY51nUSU=
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Fiona Behrens <me@kloenk.de>,
- linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>,
- Andreas Hindborg <a.hindborg@samsung.com>,
- Benno Lossin <benno.lossin@proton.me>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
-Subject: Re: [PATCH] kbuild: remove unnecessary export of RUST_LIB_SRC
-Date: Tue, 24 Sep 2024 21:23:02 +0200
-Message-ID: <BAFF7392-6FE9-41C0-869A-AE69A0EA9FEE@kloenk.dev>
-In-Reply-To: <CANiq72=ynULSpiBwvpau62ym0cx+WDd99T-4LBh5V_h1YCfeag@mail.gmail.com>
-References: <20240913180622.1327656-1-masahiroy@kernel.org>
- <CANiq72=ynULSpiBwvpau62ym0cx+WDd99T-4LBh5V_h1YCfeag@mail.gmail.com>
+	s=arc-20240116; t=1727206276; c=relaxed/simple;
+	bh=uuVl6MBaXlHZbPcy1TEcgr1GjBMcSriG1UXSxHvSc/Y=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=l415uGTsMSsaUe+FK71VKvAaWm9MbFROnndq79VxhZaaknHo+fqBP0rDnzBd5cT5+YHIJk1x5B49RzXqsK5vWKM6UP3BMH2gA8+NSjJJa7e6xxSoAiBGP5BqirD79SN9q7o3iWPS+gJOpGETshjOZ22XpMEmmCnbqI7A3rsn9YE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 2EEB292009C; Tue, 24 Sep 2024 21:23:21 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 2083292009B;
+	Tue, 24 Sep 2024 20:23:21 +0100 (BST)
+Date: Tue, 24 Sep 2024 20:23:21 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: David Hildenbrand <david@redhat.com>
+cc: Guenter Roeck <linux@roeck-us.net>, 
+    Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k@lists.linux-m68k.org, 
+    linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v2] m68k: Define NR_CPUS
+In-Reply-To: <65959acc-c59b-4aca-8ab4-5d0603d22110@redhat.com>
+Message-ID: <alpine.DEB.2.21.2409242018160.3358@angie.orcam.me.uk>
+References: <20240923235617.1584056-1-linux@roeck-us.net> <aa23abe3-7236-4b9e-b237-3b822ac9d186@redhat.com> <CAMuHMdVEfPtwps0A29WvHcwgo3f+3nTBiGn1PFxoYy1dxPsUMA@mail.gmail.com> <bf98fa37-461f-47ce-8d4c-bcb69f225a9c@roeck-us.net>
+ <65959acc-c59b-4aca-8ab4-5d0603d22110@redhat.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
+On Tue, 24 Sep 2024, David Hildenbrand wrote:
 
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index 09aebca1cae3..4c9f5ea13271 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -595,6 +595,7 @@ config ARCH_MHP_MEMMAP_ON_MEMORY_ENABLE
+>  config SPLIT_PTE_PTLOCKS
+>         def_bool y
+>         depends on MMU
+> +       depends on SMP
+>         depends on NR_CPUS >= 4
 
-On 24 Sep 2024, at 20:42, Miguel Ojeda wrote:
+ I think it might be more intuitive if written as:
 
-> On Fri, Sep 13, 2024 at 8:06=E2=80=AFPM Masahiro Yamada <masahiroy@kern=
-el.org> wrote:
->>
->> This code was added by this commit:
->>
->>  https://github.com/Rust-for-Linux/linux/commit/3f46885dc03ed2d750085b=
-2237078a1628323964
->>
->> Please me know if I am missing something.
->
-> I think it is OK -- unless Fiona recalls something:
+	depends on SMP && NR_CPUS >= 4
 
-As long as the export to rustc and the rust analyzer script works this lo=
-oks good.
+(with a note in the change description to the effect that NR_CPUS will 
+have been unset and the condition won't work as expected unless SMP).
 
-Acked-by: Fiona Behrens <me@kloenk.dev>
+ FWIW,
 
->
-> Acked-by: Miguel Ojeda <ojeda@kernel.org>
-> Tested-by: Miguel Ojeda <ojeda@kernel.org>
->
-> Thanks Masahiro for the simplification!
->
-> Cheers,
-> Miguel
+  Maciej
 
