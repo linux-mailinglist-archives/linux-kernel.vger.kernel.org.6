@@ -1,123 +1,124 @@
-Return-Path: <linux-kernel+bounces-337618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0396B984C7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:00:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3088984C82
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:01:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A59F11F23C4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:00:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 511702832D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 21:01:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A1B13BAD5;
-	Tue, 24 Sep 2024 20:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 870D413AD0F;
+	Tue, 24 Sep 2024 21:01:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="0Nd38scR"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P3mlY5Qo"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC94139579
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 20:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D291BC3F;
+	Tue, 24 Sep 2024 21:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727211596; cv=none; b=NLaUemk1JhwpoKQyR2ae8uIPWZyseCH8keW91az1neB9LgEGqgXcUgErZmKMn9EFEc6eEwQkRIY7HvK1/2IGGDpgAw3B5F2nZu6ReVbDA5MmfZBSu5BU6NNRiI+++t9JuEJa8CXyy4kZtX3GPPDTFs7qyMI7e1cRUNI4b7d3Ons=
+	t=1727211690; cv=none; b=CmYCpgT2RRFvULlpHDFpapfDr7zsIk+BX8s6PyXqGsI2bJdYL22NVLpMPdP11l7IZ8cUsgUypc82iN9NKFpQeQDMOvZDjaZm3ah2bNqhX+lstugjdCr1enP5ip3sfLD4G7ygA4zXjk1edjSTOuwpPF0VQlQ3vC04kxqACB6/hwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727211596; c=relaxed/simple;
-	bh=F0NySuw+1Mi/zwOeNou5xptnOdfV09UdfSmITN7TqXw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=lXbyNwPt0SmripXy5dD+j0EgQDxcaySk6+vDPNHuga2DsvMsz1QKJxnBvB/TccnCGIh7gWaPmKvhXCvQ5kdoOIA/muOdkntwU5nPdrpcWZjT4t45QFiZrEpSpNQ2xGdgFsL0fWTHwGu/ZWgTgn9CcB4az6wDb/RypmsmYy7njEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=0Nd38scR; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id ABF532C05DB;
-	Wed, 25 Sep 2024 08:59:51 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1727211591;
-	bh=F0NySuw+1Mi/zwOeNou5xptnOdfV09UdfSmITN7TqXw=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=0Nd38scRInGDpkjSvIiLokGjRONFeBZbx/lh03liIYmV3Bp3mFEmd1jeM6RW0fPI+
-	 PSeIX/IuIJXcBgyFKkeqCt8f9IyURosXixRk2EWAPYDF4mYER2C7FJLcJds3w5AeIQ
-	 LQjBKFiE+UOp525ZRq7NX+tcTxwtuJZwcUHiB3ek/ARBePvD8dRu16iTiYxzYTlBRD
-	 GSrh+/2j2zw3IHKDtFNfaURehEVc3gl5BWK5nvSJh/KpIIjuTDloWlGb5yOjygzxig
-	 K/dMVSzcN4kaA1k+Cc4W4PjsGAZIiXFtxqQdcmfzn1yGTjfZLwuKkOur/FNU6/Zx0r
-	 ++WOQ4N4itkJg==
-Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B66f328470001>; Wed, 25 Sep 2024 08:59:51 +1200
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
- svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.1544.11; Wed, 25 Sep 2024 08:59:51 +1200
-Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
- svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with Microsoft
- SMTP Server (TLS) id 15.0.1497.48; Wed, 25 Sep 2024 08:59:51 +1200
-Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
- svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
- 15.02.1544.011; Wed, 25 Sep 2024 08:59:51 +1200
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: "lee@kernel.org" <lee@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
-	<conor+dt@kernel.org>, "tsbogend@alpha.franken.de"
-	<tsbogend@alpha.franken.de>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-mips@vger.kernel.org"
-	<linux-mips@vger.kernel.org>
-Subject: Re: [PATCH v4 3/3] dt-bindings: mfd: Add more RTL9300 variants
-Thread-Topic: [PATCH v4 3/3] dt-bindings: mfd: Add more RTL9300 variants
-Thread-Index: AQHbDgvzHsRZE1+bAU2/6OUmALaMF7Jl1ZaAgADOiwA=
-Date: Tue, 24 Sep 2024 20:59:50 +0000
-Message-ID: <0886f3fb-4e05-4787-aecc-5a5b8a3b8d73@alliedtelesis.co.nz>
-References: <20240923225719.2999821-1-chris.packham@alliedtelesis.co.nz>
- <20240923225719.2999821-4-chris.packham@alliedtelesis.co.nz>
- <zir7rpbrq3c6kyn2guanmfnkbw6e36qb5r4onzwv7qgytt64if@jurnymcbgx2k>
-In-Reply-To: <zir7rpbrq3c6kyn2guanmfnkbw6e36qb5r4onzwv7qgytt64if@jurnymcbgx2k>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <2EB0FB5711EDED4287C2EC06293DE693@atlnz.lc>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1727211690; c=relaxed/simple;
+	bh=1QAxI24QNqyJlBVZFtXE8X2tAH9zh2VD1mXWlHuZ918=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G9r4gZklMjT7kKnLw23OERkYzDEttF+i2m1foKGxuidUxW45QjFXP/lvOGKLrDjS6UuVlj4HU5mx9bs6KhY9kppA33uBefc+xZqsmgBXKgPmKHy7GCrmUXsfK7yGNn42A8PsitWMz6HTeIY2Kn88NY3jEzUxlT3u61OufEQ4s3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P3mlY5Qo; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20551e2f1f8so70191105ad.2;
+        Tue, 24 Sep 2024 14:01:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727211688; x=1727816488; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=MsmwfGIxGDNHXFbLStjjpLFP1XK3C1AVuwxVxIWA5pc=;
+        b=P3mlY5Qov3wFf59Xsp2izLTp6jdD0weowXk0NJc801RaFrzmh/w+D9r/8wMgFGmyr2
+         UDNky1QD5hXhW4UnwubTicET7VrHP3eJQdhJ8oi7wX2G1T5QjhZ+DbvvxtnGITy/zjco
+         74wwRdLyNS2DytAnwblpq2Ck6PZcOb4lNSm0peAgOXa8cOch/vyAk8mKnVjdHRj3Bcwh
+         XOt7XNteG/ppA/ayXrKlVcJfKKckufO6R3iRNpOt+TCoczw5ormv1aMImNqxzgjygjVc
+         VXvR0w2+W5DS2C+5+ls6K/TK8T/Zrgb9CMYEkmwp7GpMfSVY7S4N40rvC+4qNRttYe1r
+         FKbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727211688; x=1727816488;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MsmwfGIxGDNHXFbLStjjpLFP1XK3C1AVuwxVxIWA5pc=;
+        b=b8rlGQWw9evZxbNJxUhAPKdUPNG7h5lHgh3iBA39nxgBXOD0oEHIWlBJ9ped8l15Fi
+         B5MK4XZfJBnKqyjM/idKXJroHDiyThccxZ3TjiEX7M1gNPcoyMt3DwvkvFrBskcWvr7c
+         xaU93ui6N6MOa5ddijG91QNEShG1hDk+N1GuP9PDuqKHA1o00qK/PvzC4mQCMyTPbXUE
+         iGjLD6Vh32dx6wLgoZCLQ2cz3WfB5ZhthDT2/HSr/SjkJNEgy9o/fofBNvkkC40SCesi
+         sAi2nj9OLpreci+hA3gSqKlJc/jLe0JAF9MFNUtMgtHtNfsuu3W9Zss3s3Gl2p0seM/S
+         Ecow==
+X-Forwarded-Encrypted: i=1; AJvYcCUANWYAn2CRRjKEzmmlrqtkX6+aJLNBk7BpoQrP11oHD05Tm2EMlvAKb90J9205dqBHYsnRQmeQ9kLjVQY=@vger.kernel.org, AJvYcCV6J4CRBMzF3P+1JLMfwyx4qPDdgQhRU+89IYj5vrEccPRwkwz9639By0hnwgrjfK63Hqlsuchhff6o@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxy89MgAnyEhwJJM9iuQMAE+uqxBVPfFdtFI/hzg4hX9StgpXnp
+	rU0h+XUpSyTpiaSOaF8b8SAWlXhrM5cbawrst039/9elEi9d5qgX
+X-Google-Smtp-Source: AGHT+IHGAgzTdiIMarbX1EfDyWZlQDo2yhTL6zFfq5FVYuejP7LnAB0RB0L9FOX9jUSKIwY3LsbBrg==
+X-Received: by 2002:a17:902:db0b:b0:205:76d0:563b with SMTP id d9443c01a7336-20afc2d215bmr7394685ad.0.1727211687547;
+        Tue, 24 Sep 2024 14:01:27 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af1724163sm13754305ad.66.2024.09.24.14.01.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2024 14:01:26 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Guenter Roeck <linux@roeck-us.net>,
+	Christoph Hellwig <hch@lst.de>,
+	Robin Murphy <robin.murphy@arm.com>
+Subject: [PATCH] mmc: core: Only set maximum DMA segment size if DMA is supported
+Date: Tue, 24 Sep 2024 14:01:23 -0700
+Message-ID: <20240924210123.2288529-1-linux@roeck-us.net>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=Id0kWnqa c=1 sm=1 tr=0 ts=66f32847 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=oKJsc7D3gJEA:10 a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=fVmL-KQr-q2pSxy-RWIA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-SEG-SpamProfiler-Score: 0
+Content-Transfer-Encoding: 8bit
 
-DQpPbiAyNC8wOS8yNCAyMDo0MCwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToNCj4gT24gVHVl
-LCBTZXAgMjQsIDIwMjQgYXQgMTA6NTc6MTlBTSArMTIwMCwgQ2hyaXMgUGFja2hhbSB3cm90ZToN
-Cj4+IEFkZCB0aGUgUlRMOTMwMSwgUlRMOTMwMEIgYW5kIFJUTDkzMDMuIFRoZXNlIGhhdmUgdGhl
-IHNhbWUgU29DIGFzIHRoZQ0KPj4gUlRMOTMwMkMgYnV0IGRpZmZlciBpbiB0aGUgRXRoZXJuZXQg
-c3dpdGNoL1NFUkRFUyBhcnJhbmdlbWVudC4NCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBDaHJpcyBQ
-YWNraGFtIDxjaHJpcy5wYWNraGFtQGFsbGllZHRlbGVzaXMuY28ubno+DQo+PiAtLS0NCj4+DQo+
-PiBOb3RlczoNCj4+ICAgICAgQ2hhbmdlcyBpbiB2NDoNCj4+ICAgICAgLSBOZXcNCj4+DQo+PiAg
-IC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL21mZC9yZWFsdGVrLHJ0bDkzMDJjLXN3aXRjaC55YW1s
-ICAgICAgIHwgMyArKysNCj4+ICAgMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKQ0KPj4N
-Cj4+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWZkL3Jl
-YWx0ZWsscnRsOTMwMmMtc3dpdGNoLnlhbWwgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
-ZGluZ3MvbWZkL3JlYWx0ZWsscnRsOTMwMmMtc3dpdGNoLnlhbWwNCj4+IGluZGV4IDJkMjBkZDA3
-YTdlOS4uYTNiYTZkOWJhY2FhIDEwMDY0NA0KPj4gLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0
-cmVlL2JpbmRpbmdzL21mZC9yZWFsdGVrLHJ0bDkzMDJjLXN3aXRjaC55YW1sDQo+PiArKysgYi9E
-b2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWZkL3JlYWx0ZWsscnRsOTMwMmMtc3dp
-dGNoLnlhbWwNCj4+IEBAIC0xOCw3ICsxOCwxMCBAQCBwcm9wZXJ0aWVzOg0KPj4gICAgIGNvbXBh
-dGlibGU6DQo+PiAgICAgICBpdGVtczoNCj4+ICAgICAgICAgLSBlbnVtOg0KPj4gKyAgICAgICAg
-ICAtIHJlYWx0ZWsscnRsOTMwMS1zd2l0Y2gNCj4+ICsgICAgICAgICAgLSByZWFsdGVrLHJ0bDkz
-MDJiLXN3aXRjaA0KPj4gICAgICAgICAgICAgLSByZWFsdGVrLHJ0bDkzMDJjLXN3aXRjaA0KPj4g
-KyAgICAgICAgICAtIHJlYWx0ZWsscnRsOTMwMy1zd2l0Y2gNCj4gVGhpcyBzaG91bGQgYmUgc3F1
-YXNoZWQuIE9uZSBsb2dpY2FsIGNoYW5nZSBpcyB0byBhZGQgYSBuZXcgYmluZGluZyBmb3INCj4g
-ZW50aXJlIGZhbWlseSwgbm90IGRldmljZS1ieS1kZXZpY2UuDQpZZXMgSSBkaWQgY29uc2lkZXIg
-dGhhdC4gVGhlIG1haW4gdGhpbmcgdGhhdCBnYXZlIG1lIHBhdXNlIGZvciB0aG91Z2h0IA0Kd2Fz
-IHRoZSBmaWxlIG5hbWluZyB0aGluZy4gSWYgSSBzcXVhc2ggdGhpcyBzaG91bGQgSSBzd2l0Y2gg
-YmFjayB0byB0aGUgDQpyZWFsdGVrLHJ0bDkzMDAtc3dpdGNoIGZpbGVuYW1lPyBJJ2xsIHByb2Jh
-Ymx5IGFkZCB0aGUgDQpyZWFsdGVrLHJ0bDkzMDAtc3dpdGNoIGZhbGxiYWNrIGFzIHdlbGwgKGFu
-ZCBhZGQgdGhlIGNoaXAgc3BlY2lmaWMgDQpjb21wYXRpYmxlcyBmb3IgdGhlIGkyYykuDQo+DQo+
-IEJlc3QgcmVnYXJkcywNCj4gS3J6eXN6dG9mDQo+
+Since upstream commit 334304ac2bac ("dma-mapping: don't return errors
+from dma_set_max_seg_size") calling dma_set_max_seg_size() on a device
+not supporting DMA results in a warning traceback. This is seen when
+booting the sifive_u machine from SD. The underlying SPI controller
+(sifive,spi0 compatible) explicitly sets dma_mask to NULL.
+
+Avoid the backtrace by only calling dma_set_max_seg_size() if DMA is
+supported.
+
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+ drivers/mmc/core/queue.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/core/queue.c b/drivers/mmc/core/queue.c
+index d0b3ca8a11f0..4d6844261912 100644
+--- a/drivers/mmc/core/queue.c
++++ b/drivers/mmc/core/queue.c
+@@ -388,7 +388,8 @@ static struct gendisk *mmc_alloc_disk(struct mmc_queue *mq,
+ 
+ 	blk_queue_rq_timeout(mq->queue, 60 * HZ);
+ 
+-	dma_set_max_seg_size(mmc_dev(host), queue_max_segment_size(mq->queue));
++	if (mmc_dev(host)->dma_parms)
++		dma_set_max_seg_size(mmc_dev(host), queue_max_segment_size(mq->queue));
+ 
+ 	INIT_WORK(&mq->recovery_work, mmc_mq_recovery_handler);
+ 	INIT_WORK(&mq->complete_work, mmc_blk_mq_complete_work);
+-- 
+2.45.2
+
 
