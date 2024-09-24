@@ -1,157 +1,337 @@
-Return-Path: <linux-kernel+bounces-337411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 285829849BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:35:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E6689849C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:36:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE3821F2557D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:35:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD5381C2324A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:36:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90D721ABEAF;
-	Tue, 24 Sep 2024 16:35:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61A01ABEB9;
+	Tue, 24 Sep 2024 16:36:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Zj88v0t1"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G/0Gxoly"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F711A4F22;
-	Tue, 24 Sep 2024 16:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108531AAE0D
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 16:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727195738; cv=none; b=HknWXG4eDwe1vs2arivJMImLOmCuYYDeowqhI/R0P/zHCfMqgiVRo111cooYKGKLmjVOovxj/1bInHFjUQjqjK2R13KF5pA34gyB9uJEaG32A31QG6KKJX/eBZv+cSi1dXp8naWov5rTeAT9HOoaxxwXBfMQTra79B596hKsYR4=
+	t=1727195777; cv=none; b=QQIRXKYX7yO26U5mVB3pemG2t9yDXuShM5sSSt50lN4WvLcKBuw0OQpb3I3ODffw5Q7+/oisWnooX7knOSKcbsiXP8n44aqPyilDeOYZ5vD9cBf5MpOo6Ede740OPECHslWQdcaAMzaWWUgrJFLqDML9goLJBwMRfGeyQCV1ho8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727195738; c=relaxed/simple;
-	bh=Lqr9ttKdTWKFzSzmRe08yrAUPtUn/VpHz6sP7K7/I7g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZF2wwPdNyjqccWMDbZQJ7feghKU/JZQE8K3hdrRXxuktb/NIpc4Wci9P2KazCDp0W8yLRs8DPjjS9E6Fkqda67wmtncHhCCMpZXhFkLttc92FCdy7MaeAZwWpZWw/yOhK+l9QcmjniQs67CW8FXvJXGX3qX69Ux4NVqbp3tiBfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Zj88v0t1; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=Wh1jAzeffZYy009nI33+/VcSQcTAyr6o4mJKc/jsMzk=; b=Zj88v0t1MY08AC1fTc/e1M+d67
-	0X+U4pGIrLH13AWv4CZQ39nUVuYW2aHHa+eIIePpw1hOmKPxjq6S68fzMe1HgZa1Un3GOjXALczmh
-	nz8KrbXP0IwG0LwcPjLCnVO628IgSgIIJ6DUbdPS/13i7cS+sUv/aXHEPVeZjtSLgjEWBXPKbb1Zo
-	N/8UlA1tme5VRGmt5FZ+DCRmOOuRhLzy/doIAqh848NvNjm/Y0zHJDl15W2LpPAL/wDrJJ2MJkKKR
-	tM5tFNfHqwPoa+NLI8JrAOfBlr5Dr1DiGmINErkgWPaM8freDCpJSI36yGk0oueuRX5U7zjE7NfzX
-	q0RS5uNw==;
-Received: from [50.53.2.24] (helo=[192.168.254.17])
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1st8VW-00000001reU-3Eva;
-	Tue, 24 Sep 2024 16:35:23 +0000
-Message-ID: <27bf8cff-83b6-4a41-923a-7713a847f979@infradead.org>
-Date: Tue, 24 Sep 2024 09:35:18 -0700
+	s=arc-20240116; t=1727195777; c=relaxed/simple;
+	bh=yOKDWrqMHDZcNXDx65GPLsC6nCA8U/1FHB/wST6tcQA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I7eom/mSVBEVL+szw8VPaylQE7tEO3ppkumYnJW0YFMl7ETzC+r5Q825KWeZCGaDOqNQWeAiQxD8XkRcuN3Sj27vwBmUEQuGOpSoPQy4kwBnI5VoVZqaScAo2R6pz5Hc3i9Z7/uFMDvXZhNS7iG6h11irI6XEVCLDym/Q4Z5xBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G/0Gxoly; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727195774;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XJe4D9rQuQ5l/vjHLU/ym5f3xPtTEEP3VLGt0qBDp8w=;
+	b=G/0GxolyNTqAtn1VQwocAa/SvpnMZjK3nxcLS91d7RPwOeYC4WlHYEqwILc+2uNDO+TH9G
+	zn23S0llbkc9Bq407BIcoUaZH29oYB9+zdPJyWhcjXRq+jfsMpQyavulbGaDwxLqmrBMev
+	lvyyqbK6BLZdvaLhbR4uN1cModsLdfw=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-232-u9FJwT3lMW6CQxYcljApMg-1; Tue, 24 Sep 2024 12:36:13 -0400
+X-MC-Unique: u9FJwT3lMW6CQxYcljApMg-1
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7a9b6181a13so1295250085a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:36:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727195772; x=1727800572;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XJe4D9rQuQ5l/vjHLU/ym5f3xPtTEEP3VLGt0qBDp8w=;
+        b=RV7NkMGkiGGzWPvIuEaPQzq4QgodLwArGyzTTSa1SbKxhNBkikJghfpI/FXpMO/tem
+         S6afZf1efLm1WSTXWooPur6nmECu4DvMgCVGvC6cqcMbGJ+skmO1Pe5VdqKjzmeAFYSI
+         PpVG4KwlhbsZEXO/9u33GqgYOxe6Q47TjgO1gJ1SeYsOWnY10934PVcLf9LxIUACGpMC
+         mdYx7hmuX0L4bxUfidl+q+435cwVP+9qdBL8ZT5Qnb9UMSPwCUp601pCEKtmGgMMWm/k
+         Y6ahYmIDWr3sGdgUR3ZVlNqjwQnykmP1tQ8S8Q+6abO/rfB49U37R6spycWZdW33bh0C
+         BR2w==
+X-Forwarded-Encrypted: i=1; AJvYcCU5r0bw9aC3B1J3sh5hVVoWMCTFSVyFaHkAechprlONhXe5h6cOIwoBnYHztiqhyHuuDhRaLmGtihpAXqA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiI2NnOvCdxtb+U73YcKg3/MHOOyPFB2YoWrmoa41fiwb+UX6a
+	Ko2PruiE+MF0yjchr4pG6KFyUpcEpyOI1z0DnjuxgfMo1W5twGMZJjOs2NqMBCFaqEd3giTpBO7
+	c5LcvdB4/wZs7JFcWd40qttv8aBbvtnSZjezdCZ3Kjh995BTbfce6b0lB1tLuLg==
+X-Received: by 2002:a05:6214:33c7:b0:6c3:665e:a1fa with SMTP id 6a1803df08f44-6c7bd4cf316mr310754926d6.11.1727195772542;
+        Tue, 24 Sep 2024 09:36:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGew2zuZt9ZSk16pZrqHOtQorzrABia/GALgdjyGkoRh1si8Hxu4SKK/UToMXIaBARoadMnVw==
+X-Received: by 2002:a05:6214:33c7:b0:6c3:665e:a1fa with SMTP id 6a1803df08f44-6c7bd4cf316mr310754546d6.11.1727195772191;
+        Tue, 24 Sep 2024 09:36:12 -0700 (PDT)
+Received: from x1gen2nano ([2600:1700:1ff0:d0e0::40])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb0f4e05c2sm7897726d6.60.2024.09.24.09.36.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2024 09:36:11 -0700 (PDT)
+Date: Tue, 24 Sep 2024 11:36:09 -0500
+From: Andrew Halaney <ahalaney@redhat.com>
+To: Sarosh Hasan <quic_sarohasa@quicinc.com>
+Cc: Suraj Jaiswal <jsuraj@qti.qualcomm.com>, 
+	"Suraj Jaiswal (QUIC)" <quic_jsuraj@quicinc.com>, Vinod Koul <vkoul@kernel.org>, 
+	"bhupesh.sharma@linaro.org" <bhupesh.sharma@linaro.org>, Andy Gross <agross@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
+	Rob Herring <robh@kernel.org>, kernel <kernel@quicinc.com>
+Subject: Re: [PATCH net] net: stmmac: Stop using a single dma_map() for
+ multiple descriptors
+Message-ID: <gbia6rqppcc53vmel5q5jvgdri3cmeowb64mxfk7jzo6ncuz2f@6kd7acqii62x>
+References: <20240902095436.3756093-1-quic_jsuraj@quicinc.com>
+ <yy2prsz3tjqwjwxgsrumt3qt2d62gdvjwqsti3favtfmf7m5qs@eychxx5qz25f>
+ <CYYPR02MB9788F524C9A5B3471871E055E79A2@CYYPR02MB9788.namprd02.prod.outlook.com>
+ <ypfbzhjyqqwwzciifkwvhimrolg6haiysqmxamkhnryez4npxx@l4blfw43sxgt>
+ <05909d17-0111-4080-97cc-82ed435728a7@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 8/8] block: Init for CBD(CXL Block Device) module
-To: Dongsheng Yang <dongsheng.yang@linux.dev>, axboe@kernel.dk,
- dan.j.williams@intel.com, gregory.price@memverge.com, John@groves.net,
- Jonathan.Cameron@Huawei.com, bbhushan2@marvell.com, chaitanyak@nvidia.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-cxl@vger.kernel.org, linux-bcache@vger.kernel.org
-References: <20240918101821.681118-1-dongsheng.yang@linux.dev>
- <20240918101821.681118-9-dongsheng.yang@linux.dev>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240918101821.681118-9-dongsheng.yang@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <05909d17-0111-4080-97cc-82ed435728a7@quicinc.com>
 
-Hi.
+On Tue, Sep 24, 2024 at 04:36:59PM GMT, Sarosh Hasan wrote:
+> 
+> 
+> On 9/10/2024 7:34 PM, Andrew Halaney wrote:
+> > Hey Suraj,
+> > 
+> > Your email client didn't seem to quote my response in your latest reply,
+> > so its difficult to figure out what you're writing vs me below. It also
+> > seems to have messed with the line breaks so I'm manually redoing those.
+> > 
+> > Please see if you can figure out how to make that happen for further
+> > replies!
+> > 
+> > More comments below...
+> > 
+> > On Tue, Sep 10, 2024 at 12:47:08PM GMT, Suraj Jaiswal wrote:
+> >>
+> >>
+> >> -----Original Message-----
+> >> From: Andrew Halaney <ahalaney@redhat.com> 
+> >> Sent: Wednesday, September 4, 2024 3:47 AM
+> >> To: Suraj Jaiswal (QUIC) <quic_jsuraj@quicinc.com>
+> >> Cc: Vinod Koul <vkoul@kernel.org>; bhupesh.sharma@linaro.org; Andy Gross <agross@kernel.org>; Bjorn Andersson <andersson@kernel.org>; Konrad Dybcio <konrad.dybcio@linaro.org>; David S. Miller <davem@davemloft.net>; Eric Dumazet <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Rob Herring <robh+dt@kernel.org>; Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>; Conor Dooley <conor+dt@kernel.org>; Alexandre Torgue <alexandre.torgue@foss.st.com>; Jose Abreu <joabreu@synopsys.com>; Maxime Coquelin <mcoquelin.stm32@gmail.com>; netdev@vger.kernel.org; linux-arm-msm@vger.kernel.org; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-stm32@st-md-mailman.stormreply.com; Prasad Sodagudi <psodagud@quicinc.com>; Rob Herring <robh@kernel.org>; kernel <kernel@quicinc.com>
+> >> Subject: Re: [PATCH net] net: stmmac: Stop using a single dma_map() for multiple descriptors
+> >>
+> >> WARNING: This email originated from outside of Qualcomm. Please be wary of any links or attachments, and do not enable macros.
+> >>
+> >> On Mon, Sep 02, 2024 at 03:24:36PM GMT, Suraj Jaiswal wrote:
+> >>> Currently same page address is shared
+> >>> between multiple buffer addresses and causing smmu fault for other 
+> >>> descriptor if address hold by one descriptor got cleaned.
+> >>> Allocate separate buffer address for each descriptor for TSO path so 
+> >>> that if one descriptor cleared it should not clean other descriptor 
+> >>> address.
+> > 
+> > snip...
+> > 
+> >>>
+> >>>  static void stmmac_flush_tx_descriptors(struct stmmac_priv *priv, int 
+> >>> queue) @@ -4351,25 +4380,17 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
+> >>>               pay_len = 0;
+> >>>       }
+> >>>
+> >>> -     stmmac_tso_allocator(priv, des, tmp_pay_len, (nfrags == 0), queue);
+> >>> +     if (stmmac_tso_allocator(priv, (skb->data + proto_hdr_len),
+> >>> +                              tmp_pay_len, nfrags == 0, queue, false))
+> >>> +             goto dma_map_err;
+> >>
+> >> Changing the second argument here is subtly changing the dma_cap.addr64 <= 32
+> >> case right before this. Is that intentional?
+> >>
+> >> i.e., prior, pretend des = 0 (side note but des is a very confusing variable
+> >> name for "dma address" when there's also mentions of desc meaning "descriptor"
+> >> in the DMA ring). In the <= 32 case, we'd call stmmac_tso_allocator(priv, 0)
+> >> and in the else case we'd call stmmac_tso_allocator(priv, 0 + proto_hdr_len).
+> >>
+> >> With this change in both cases its called with the (not-yet-dma-mapped)
+> >> skb->data + proto_hdr_len always (i.e. like the else case).
+> >>
+> >> Honestly, the <= 32 case reads weird to me without this patch. It seems some
+> >> of the buffer is filled but des is not properly incremented?
+> >>
+> >> I don't know how this hardware is supposed to be programmed (no databook
+> >> access) but that seems fishy (and like a separate bug, which would be nice to
+> >> squash if so in its own patch). Would you be able to explain the logic there
+> >> to me if it does make sense to you?
+> >>
+> > 
+> >> <Suraj> des can not be 0 . des 0 means dma_map_single() failed and it will return.
+> >> If we see if des calculation (first->des1 = cpu_to_le32(des + proto_hdr_len);)
+> >> and else case des calculator ( des += proto_hdr_len;) it is adding proto_hdr_len
+> >> to the memory that we after mapping skb->data using dma_map_single.
+> >> Same way we added proto_hdr_len in second argument . 
+> > 
+> > 
+> > 0 was just an example, and a confusing one, sorry. Let me paste the original
+> > fishy code that I think you've modified the behavior for. Here's the
+> > original:
+> > 
+> > 	if (priv->dma_cap.addr64 <= 32) {
+> > 		first->des0 = cpu_to_le32(des);
+> > 
+> > 		/* Fill start of payload in buff2 of first descriptor */
+> > 		if (pay_len)
+> > 			first->des1 = cpu_to_le32(des + proto_hdr_len);
+> > 
+> > 		/* If needed take extra descriptors to fill the remaining payload */
+> > 		tmp_pay_len = pay_len - TSO_MAX_BUFF_SIZE;
+> > 	} else {
+> > 		stmmac_set_desc_addr(priv, first, des);
+> > 		tmp_pay_len = pay_len;
+> > 		des += proto_hdr_len;
+> > 		pay_len = 0;
+> > 	}
+> > 
+> > 	stmmac_tso_allocator(priv, des, tmp_pay_len, (nfrags == 0), queue);
+> > 
+> > Imagine the <= 32 case. Let's say des is address 0 (just for simplicity
+> > sake, let's assume that's valid). That means:
+> > 
+> >     first->des0 = des;
+> >     first->des1 = des + proto_hdr_len;
+> >     stmmac_tso_allocator(priv, des, tmp_pay_len, (nfrags == 0), queue)
+> > 
+> >     if des is 0, proto_hdr_len is 64, then that means
+> > 
+> >     first->des0 = 0
+> >     first->des1 = 64
+> >     stmmac_tso_allocator(priv, 0, tmp_pay_len, (nfrags == 0), queue)
+> > 
+> > That seems fishy to me. We setup up the first descriptor with the
+> > beginning of des, and then the code goes and sets up more descriptors
+> > (stmmac_tso_allocator()) starting with the same des again?
+> tso_alloc is checking if more descriptor needed for packet . it is adding offset to get next
+> descriptor (curr_addr = des + (total_len - tmp_len)) and storing in des of next descriptor.
 
-On 9/18/24 3:18 AM, Dongsheng Yang wrote:
-> diff --git a/drivers/block/cbd/Kconfig b/drivers/block/cbd/Kconfig
-> new file mode 100644
-> index 000000000000..16ffcca058c5
-> --- /dev/null
-> +++ b/drivers/block/cbd/Kconfig
-> @@ -0,0 +1,45 @@
-> +config BLK_DEV_CBD
-> +	tristate "CXL Block Device (Experimental)"
-> +	depends on DEV_DAX && FS_DAX
-> +	help
-> +	  CBD allows you to register a persistent memory device as a CBD transport.
-> +	  You can use this persistent memory as a data cache to improve your block
-> +	  device performance. Additionally, if you enable CBD_MULTIHOST, cbd allows
+Yes, so in stmmac_tso_allocator() we currently have:
 
-s/cbd/CBD/ for consistency. Or does 'cbd' here explicitly refer to the loadable module
-name?
+	static void stmmac_tso_allocator(struct stmmac_priv *priv, dma_addr_t des,
+					 int total_len, bool last_segment, u32 queue)
+	{
+		struct stmmac_tx_queue *tx_q = &priv->dma_conf.tx_queue[queue];
+		struct dma_desc *desc;
+		u32 buff_size;
+		int tmp_len;
 
-> +	  you to access block devices on a remote host as if they were local disks.
-> +
-> +	  Select 'y' to build this module directly into the kernel.
-> +	  Select 'm' to build this module as a loadable kernel module.
-  +	  The module will be called cbd.
+		tmp_len = total_len;
 
-> +
-> +	  If unsure say 'N'.
-> +
-> +config CBD_CRC
-> +	bool "Enable CBD checksum"
-> +	default N
+		while (tmp_len > 0) {
+			dma_addr_t curr_addr;
 
-We usually omit 'default N' since that is the default default.
+			tx_q->cur_tx = STMMAC_GET_ENTRY(tx_q->cur_tx,
+							priv->dma_conf.dma_tx_size);
+			...
+			curr_addr = des + (total_len - tmp_len);
+			if (priv->dma_cap.addr64 <= 32)
+				desc->des0 = cpu_to_le32(curr_addr);
 
-> +	depends on BLK_DEV_CBD
-> +	help
-> +	  When CBD_CRC is enabled, all data sent by CBD will include
-> +	  a checksum. This includes a data checksum, a submit entry checksum,
-> +	  and a completion entry checksum. This ensures the integrity of the
-> +	  data transmitted through the CXL memory device.
-> +
-> +config CBD_DEBUG
-> +	bool "Enable CBD debug"
-> +	default N
+so on the first loop you've got:
+	tmp_len = total_len
+	...
+	curr_addr = des + total_len - temp_len
+	i.e.
+	curr_addr = des
+meaning with the "first" handling I've highlighted we've got
+	first->des0 = des
+	"next"->des0 = des
 
-Ditto.
+where "next" is the cur_tx descriptor in the first loop of
+stmmac_tso_allocator() (essentially the second descriptor).
+That seems broken to me, and was that way prior to this patch.
 
-> +	depends on BLK_DEV_CBD
-> +	help
-> +	  When CBD_DEBUG is enabled, cbd module will print more messages
-> +	  for debugging. But that will affact performance, so do not use it
+You've modified the behavior in this patch unintentionally. I think it
+needs modifying, but it should be done so explicitly in its own patch
+prior to this one. I also think the current modification in this patch
+isn't a fix. See prior reply below where I highlighted the programming as I
+understand it with this patch applied, which would result in something
+like.
 
-	                               affect
+first->des0 = des
+first->des1 = des + proto_hdr_len
+"next"->des0 = des + proto_hdr_len
 
-> +	  in production case.
-> +
-> +config CBD_MULTIHOST
-> +	bool "multi-hosts CXL Dlock Device"
+Which again seems wrong, two descriptors pointing to the same address
+isn't making sense to me.
 
-	                      Block
+Sorry to sound like a broken record, but I want to make sure we're on
+the same page! Sounds like you're looking into it based on the below
+comment, but some of these comments here made me think I didn't explain
+the situation well enough.
 
-> +	default N
-
-drop default line.
-
-> +	depends on BLK_DEV_CBD
-> +	help
-> +	  When CBD_MULTIHOST is enabled, cbd allows the use of a shared memory device
-
-cbd or CBD?
-
-> +	  as a cbd transport. In this mode, the blkdev and backends on different
-
-ditto.
-
-> +	  hosts can be connected through the shared memory device, enabling cross-node
-> +	  disk access.
-> +
-> +	  IMPORTANT: This Require your shared memory device support Hardware-consistency
-
-	                  requires                          supports
-
-> +	  as CXL 3.0 described.
-
-	  as described in CXL 3.0.
+> > 
+> > Should we be adding the payload length (TSO_MAX_BUFF_SIZE I suppose
+> > based on the tmp_pay_len = pay_len - TSO_MAX_BUFFSIZE above)? It seems
+> > that <= 32 results in duplicate data in both the "first" descriptor
+> > programmed above, and in the "second" descriptor programmed in
+> > stmmac_tso_allocator().
+> curr_addr = des + (total_len - tmp_len) is used in while loop in  tso_alloc to get address of all required descriptor . 
+> descriptor address will be updated finally in tso_alloc by below call .
+>  
+> if (priv->dma_cap.addr64 <= 32)
+>                                                desc->des0 = cpu_to_le32(curr_addr);
+>                                else
+>                                                stmmac_set_desc_addr(priv, desc, curr_addr);
+> 
+>  Also, since tmp_pay_len is decremented, but des
+> > isn't, it seems that stmmac_tso_allocator() would not put all of the
+> > buffer in the descriptors and would leave the last TSO_MAX_BUFF_SIZE
+> > bytes out?
+> > 
+> > I highlight all of this because with your change here we get the
+> > following now in the <= 32 case:
+> > 
+> >     first->des0 = des
+> >     first->des1 = des + proto_hdr_len
+> >     stmmac_tso_allocator(priv, des + proto_hdr_len, ...)
+> > 
+> > which is a subtle change in the call to stmmac_tso_allocator, meaning
+> > a subtle change in the descriptor programming.
+> > 
+> > Both seem wrong for the <= 32 case, but I'm "reading between the lines"
+> > with how these descriptors are programmed (I don't have the docs to back
+> > this up, I'm inferring from the code). It seems to me that in the <= 32
+> > case we should have:
+> > 
+> >     first->des0 = des
+> >     first->des1 = des + proto_hdr_len
+> >     stmmac_tso_allocator(priv, des + TSO_MAX_BUF_SIZE, ...)
+> 
+> let me check <=32 case only on setup and get back.
+> > 
+> > or similar depending on if that really makes sense with how des0/des1 is
+> > used (the handling is different in stmmac_tso_allocator() for <= 32,
+> > only des0 is used so I'm having a tough time figuring out how much of
+> > the des is actually programmed in des0 + des1 above without knowing the
+> > hardware better).
+> > 
+> > Does that make sense? The prior code seems fishy to me, your change
+> > seems to unintentionally change that fhsy part, but it still seems fishy
+> > to me. I don't think you should be changing that code's behavior in that
+> > patch, if you think it's right then we should continue with the current
+> > behavior prior to your patch, and if you think its wrong we should
+> > probably fix that *prior* to this patch in your series.
+> > 
+> > Thanks,
+> > Andrew
+> > 
+> 
 
 
