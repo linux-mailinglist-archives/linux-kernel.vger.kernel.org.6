@@ -1,139 +1,170 @@
-Return-Path: <linux-kernel+bounces-337505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 918BE984AE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:38:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07A76984AF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:39:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 554CB283ADD
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:38:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A9DA2838CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2581AC896;
-	Tue, 24 Sep 2024 18:38:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9FC1AD3F0;
+	Tue, 24 Sep 2024 18:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MRs35OhQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="REJayGTy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85FF2E419;
-	Tue, 24 Sep 2024 18:38:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CBBC1AC45A;
+	Tue, 24 Sep 2024 18:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727203102; cv=none; b=EZrzu7r0z056XnGO/YXGExF7GgGNK0RUYbh5Vq31jr3mMZFwLnV9ydhd27eYmu3CG5bN9I4NF5B3jQ/nrzt0rXGNdsYoAIWnHwgGsm12YbzB2cJeBdb+Am0GJMIHWd/SnVWdfWZAE8iThmeIod3Z35UWK5YPhaxc9fbs+WvNbek=
+	t=1727203145; cv=none; b=BSQ+OeOK0JSLrD6TcnAUT+6UkL3WPp9piREpURPLE2mklgLdZ8kIiM3EOFsc4Nd2/Td/6izwlKHdo9l6pITmQhSgQYJ2dtk++HFqyBNhLvP2VZLeH9WcMVXIpgm/6o1bmpe5RFI9qe2iMVrnQiu1m/eSk7p80A4B1njUpShToDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727203102; c=relaxed/simple;
-	bh=pOHALC1Fv7PRsfVelWfhPDd6u4Uu2yJ1MWdqaReyBBA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pwz/HyH37lP8oEkhePRjn0AkBqd+6gELsQzbx4KF8P9Povzk9Y6lNwOGp54r1vG3FQZRKHyS5JaNYBPkpLnKLOQXwO3W8wKx4XcEWI1sy/g+E90dxDAzXmHpLFZQFFo8f6BuHRW0xpj64dJXKnh3owfBDrZgk7izwDvTVZHt+jM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MRs35OhQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1072C4CEC4;
-	Tue, 24 Sep 2024 18:38:21 +0000 (UTC)
+	s=arc-20240116; t=1727203145; c=relaxed/simple;
+	bh=qlVpmiFg8i15nd6jTmVhMDRAo08ef/F5oFu+Ie4XXWU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a18bB8vyUEQUlhkh9pev6st07Xrl/1RJVD7h2j2GIqV/0PpQRlkfoe4KSnOSSC4VvuECXAGYAM7ua3J4nHmQEnJHzP+iTMUKFC0oSG1guCkS0S4ulPimA8TMODS9vP+wgK3vlVYTUDQC+tzpR9gsRH1YVKgdOQk1LiEOmyrEffw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=REJayGTy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B45C8C4CEC4;
+	Tue, 24 Sep 2024 18:38:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727203102;
-	bh=pOHALC1Fv7PRsfVelWfhPDd6u4Uu2yJ1MWdqaReyBBA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MRs35OhQ5vNPgPkQTkBfrC8KWWtdIhVaH3PEL91bUNZgep/hSWxxKgHqx8oO4FP7V
-	 bJDLpILqK0cHcLTqytl+751RIEWryIoF3DoEAdQ/4Et4j4Afr70r/PXLfJJDafC1Ol
-	 fB7JLsNvEurJCU2154CyYNeVWmuUeDnjpcvRcBEFTZIPOKe0wgIY7AmoQnEetW55Rm
-	 lpSwMHA1+NGNQ1V1jjit9EB/bjFIIwcwbO7Lu2KPWIHXgU0nESOIbwLDPgv57eVPEL
-	 jgoyFaUpNlfP+lDGhK79bn9GVlAVg7PuPGm5H9AF3kzigSihLjVf9TafHm8ktbfbLN
-	 XLDlHuIhS9wpQ==
-Date: Tue, 24 Sep 2024 11:38:20 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	"Steinar H. Gunderson" <sesse@google.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Hemant Kumar <hemant@linux.vnet.ibm.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Yang Jihong <yangjihong@bytedance.com>, leo.yan@arm.com
-Subject: Re: [PATCH v1 1/3] perf disasm: Fix capstone memory leak
-Message-ID: <ZvMHHKKZwab2IhlL@google.com>
-References: <20240924003720.617258-1-irogers@google.com>
- <20240924003720.617258-2-irogers@google.com>
+	s=k20201202; t=1727203144;
+	bh=qlVpmiFg8i15nd6jTmVhMDRAo08ef/F5oFu+Ie4XXWU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=REJayGTy8xykHFAGb/Xv8u89d6lVZBeu1JnaC+VcXSN0W830ViRMBbEu/QYTdbq21
+	 Okhe0DmMfWcSVtPD2SeQQwm93Vizrow+4CbxjNNbBo+0FwWYx4CcUqB4df4ve6eCfz
+	 quNZ45+rsC6NGYHJ4TxcpuAjdoZuVkXPtdYJTKRnGxMQLM49KdFtqLWyIgbGeZ6mre
+	 Ny+P7BwilrdvqXDBn6V5QCrHrWbUadUY7mMnreMTHWBh1MZxIiXznZz3qd7lF3MV3H
+	 s9awMR+y3fD8vyVXHYS4lGmDzWbVD9UOdiJ3WCWt8KVli5TWhn2E274Cw9Gd4zfaz6
+	 Q9gvJr/3/vW2Q==
+Message-ID: <823fe98e-eb80-4b6d-8c35-3c14cbb52dda@kernel.org>
+Date: Tue, 24 Sep 2024 20:38:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240924003720.617258-2-irogers@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/8] dt-bindings: clock: Add Qualcomm IPQ5424 GCC
+To: Sricharan Ramabadhran <quic_srichara@quicinc.com>, andersson@kernel.org,
+ konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ ulf.hansson@linaro.org, linus.walleij@linaro.org, catalin.marinas@arm.com,
+ p.zabel@pengutronix.de, geert+renesas@glider.be,
+ dmitry.baryshkov@linaro.org, neil.armstrong@linaro.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Cc: quic_varada@quicinc.com
+References: <20240913121250.2995351-1-quic_srichara@quicinc.com>
+ <20240913121250.2995351-2-quic_srichara@quicinc.com>
+ <4cd3d3f8-7d73-4171-bb35-aba975cdc11a@kernel.org>
+ <9f2ccf3d-fa71-4784-b6d2-2b12ed50bdd2@quicinc.com>
+ <91392141-af8b-4161-8e76-6f461aaba42a@kernel.org>
+ <30fdcb3e-a7ff-4764-bed5-39494c3e3326@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <30fdcb3e-a7ff-4764-bed5-39494c3e3326@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 23, 2024 at 05:37:18PM -0700, Ian Rogers wrote:
-> The insn argument passed to cs_disasm needs freeing. To support
-> accurately having count, add an additional free_count variable.
+On 24/09/2024 14:10, Sricharan Ramabadhran wrote:
 > 
-> Fixes: c5d60de1813a ("perf annotate: Add support to use libcapstone in powerpc")
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/util/disasm.c | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
 > 
-> diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
-> index f05ba7739c1e..2c8063660f2e 100644
-> --- a/tools/perf/util/disasm.c
-> +++ b/tools/perf/util/disasm.c
-> @@ -1627,12 +1627,12 @@ static int symbol__disassemble_capstone(char *filename, struct symbol *sym,
->  	u64 start = map__rip_2objdump(map, sym->start);
->  	u64 len;
->  	u64 offset;
-> -	int i, count;
-> +	int i, count, free_count;
->  	bool is_64bit = false;
->  	bool needs_cs_close = false;
->  	u8 *buf = NULL;
->  	csh handle;
-> -	cs_insn *insn;
-> +	cs_insn *insn = NULL;
->  	char disasm_buf[512];
->  	struct disasm_line *dl;
->  
-> @@ -1664,7 +1664,7 @@ static int symbol__disassemble_capstone(char *filename, struct symbol *sym,
->  
->  	needs_cs_close = true;
->  
-> -	count = cs_disasm(handle, buf, len, start, len, &insn);
-> +	free_count = count = cs_disasm(handle, buf, len, start, len, &insn);
->  	for (i = 0, offset = 0; i < count; i++) {
->  		int printed;
->  
-> @@ -1702,8 +1702,11 @@ static int symbol__disassemble_capstone(char *filename, struct symbol *sym,
->  	}
->  
->  out:
-> -	if (needs_cs_close)
-> +	if (needs_cs_close) {
->  		cs_close(&handle);
-> +		if (free_count > 0)
-> +			cs_free(insn, free_count);
-
-It seems cs_free() can handle NULL insn and 0 free_count (like regular free)
-so we can call it unconditionally.
-
-Thanks,
-Namhyung
-
-
-> +	}
->  	free(buf);
->  	return count < 0 ? count : 0;
->  
-> -- 
-> 2.46.0.792.g87dc391469-goog
+> On 9/20/2024 6:14 PM, Krzysztof Kozlowski wrote:
+>> On 20/09/2024 13:56, Sricharan Ramabadhran wrote:
+>>>
+>>>>> +
+>>>>> +allOf:
+>>>>> +  - $ref: qcom,gcc.yaml#
+>>>>> +
+>>>>> +properties:
+>>>>> +  compatible:
+>>>>> +    const: qcom,ipq5424-gcc
+>>>>
+>>>> So everything i sthe same as 5332? Why not adding it there?
+>>>>
+>>> infact, ipq5332 has 1 dual lane and 1 single lane pcie, whereas
+>>> ipq5424 has 2 dual lane and 2 single lane pcie. will update the
+>>> bindings in v2 accordingly.
+>>
+>> Hm? What is the difference in the bindings? I don't see. Maybe some diff
+>> would help.
+>>
 > 
+> For IPQ5424, clocks items is like this
+> 
+>        - description: Board XO clock source
+>        - description: Sleep clock source
+>        - description: PCIE 2lane PHY0 pipe clock source
+>        - description: PCIE 2lane PHY1 pipe clock source
+>        - description: PCIE 2lane PHY2 pipe clock source
+>        - description: PCIE 2lane PHY3 pipe clock source
+>        - description: USB PCIE wrapper pipe clock source
+
+But that's not true. Open your patch and look:
+
++  clocks:
++    items:
++      - description: Board XO clock source
++      - description: Sleep clock source
++      - description: PCIE 2lane PHY pipe clock source
++      - description: PCIE 2lane x1 PHY pipe clock source (For second lane)
++      - description: USB PCIE wrapper pipe clock source
+
+Either you sent incomplete binding or we talk about different things.
+Looks like first case, so the binding is just not ready. I am not going
+to review it.
+
+Best regards,
+Krzysztof
+
 
