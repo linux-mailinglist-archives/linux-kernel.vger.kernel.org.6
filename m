@@ -1,248 +1,230 @@
-Return-Path: <linux-kernel+bounces-337142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BFF89845E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:28:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72F5D9845E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:29:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C5EAB223A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:28:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3B5F1F23353
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 12:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D6A1A7070;
-	Tue, 24 Sep 2024 12:27:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A1B81A7248;
+	Tue, 24 Sep 2024 12:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cBG385Wo"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qVu7s6p8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C533F9D5;
-	Tue, 24 Sep 2024 12:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877253F9D5;
+	Tue, 24 Sep 2024 12:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727180876; cv=none; b=KOh1BJ8fSl7Glw5g6zLpNDMBSsmLSOdbksPtLmOWuvIF2+MRf3HVEB6F8K6k7TSu/H5Lot98HSbN78+qHfslP52dkN6S0DR1Nwku+QoymqEBd7y51LPmQTlJosOBbE2zGzNi+9WZ8SCQRWVj+fS4Ftf7jMQVzej+49+hbyZpKaU=
+	t=1727180948; cv=none; b=DUg5bdMNAocBP8VgXeRpQQakgenqzxRnPWKyx4JyWNc6Bv/wkIt6dNYA2CnFBPCry69OgQqn7wf0Tog4WpHBez/tj6QQe1O9XVyLPC90m4rZa8F1xnCbnJxKw/AN0QLDFmGZKRVgamCf0EWA+zEWEy1Rm7e5lwjNyGUDfxa+tws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727180876; c=relaxed/simple;
-	bh=ywLGceDCYf4x1vFhs+LV/hfPBu8Rv0mc+L+v9FY7oKk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Yt196lsp45cVkXe7JuCcj/VvWAY/A5ImoGNCn3rh1vCYLaTBza1KX9E7Fr76lKXTLvL1eBQExZQfRPd50HIrffAW6t5/mlpQ7c/akg/gxWtxs8NlRbCNaOkpws8hamA7ll+WI2hLpx0/XYw+0Ye6kUMcSrfSuZZYcMH8xkk1MyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cBG385Wo; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a90349aa7e5so815971166b.0;
-        Tue, 24 Sep 2024 05:27:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727180873; x=1727785673; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ywLGceDCYf4x1vFhs+LV/hfPBu8Rv0mc+L+v9FY7oKk=;
-        b=cBG385WouZeWbaaYWNqg9SQhVk+gpvVIXOS20GER9oCZEu9fGhwXAQfa5Kp/8qbOao
-         ePlga3cwem1O0kQIPHEGZD4rNW37d2KVaES5TvhohgdLNBrRjDqYiiORxSJNEIaQy1Zg
-         dFmCygJ8gzJ4TpFvr33iGpoy29z05sZn1JujWGFDYEqLArNvQha9KaMdKDFvKRPSC3qB
-         UmdpHsHQuJSJd9g6cTXpgvIb0hWkuN8/tOmKHpV5CDr+ys0vUor/vCqOdM5O/STCEcKl
-         GbeV6mLPf8sV9lL6+vJLhJhkHzueNc1lPoadJXSWC4cwtvSHaoMVigw6Z5UhnYqNGg9L
-         +4vQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727180873; x=1727785673;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ywLGceDCYf4x1vFhs+LV/hfPBu8Rv0mc+L+v9FY7oKk=;
-        b=Q5fJ8FQ0Ftm6doiOwlRoY6rcAiPgC2I//xkoop+RrzGvwq7vSIkYwRyt2skZJ2mnsb
-         J56pFoTLL22xc9Obl55hZHOY2xTT7e97TCJwru4WwT8d0tzPqypy/dS3A97sbpfcIX08
-         bB2CEVtURWyQ3RN5SoYvOVp3fV320+ul5lle4xImlkwfcT+3cRPQhBXYx9TEZuEpnOcS
-         MAlacAHhZu0unXGRkv4dXTOx/PZdenYT2saKNwsMP+xaN+o97t8GupccZnyREQAY0CHL
-         AvA71kw/8iObpuUYy4QUQoXBC/MImsu8Mr3C5zZse1CM1OoEjIkVTOhL4yKFRUHouD1K
-         xeQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUXRQXcyn6pxQVv1Yu2TV9IiTlMfg9mg0I+1yQPqf59Ad2g0DBwbSAO6wT8supIvjWUHOmR8QSmG48w@vger.kernel.org, AJvYcCVzDgPZTBsvl0X47URz9mqBEWMtTrB4tCNX1oSOaUHfI0sTfh+Yw6tf8uASNu3TCs1JdvLFiDAGFyPm@vger.kernel.org, AJvYcCX8CMZgEHEcMnpZBqu/xD1it15iP5cyPkNmudzIL3PpVNc4XIM8UBr4qovS8vQ0VbBBBp1kN6VXd1H7mPdk@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9pQJiHx3ZynYqlMS5BcLBca6dyWSNYtSk3MAtCQazhxbmetx+
-	ITcMoFq6QLxxE2HG4CV6iMBCz55zXrGQ3NU7qOuBRnkzqcrIs8d+
-X-Google-Smtp-Source: AGHT+IGC8mmHOtQXnCx9XFDEgguEDQcdTSD4aC6zAZs1r6ZrSKYGlkIjk8hEZUHlw5byqkTSB3wEZg==
-X-Received: by 2002:a17:907:982:b0:a86:b923:4a04 with SMTP id a640c23a62f3a-a90d5924f6emr1525492166b.50.1727180872327;
-        Tue, 24 Sep 2024 05:27:52 -0700 (PDT)
-Received: from ?IPv6:2001:a61:341e:1201:c434:b5b1:98a6:efed? ([2001:a61:341e:1201:c434:b5b1:98a6:efed])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9392f340a0sm78853366b.38.2024.09.24.05.27.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 05:27:51 -0700 (PDT)
-Message-ID: <0279203b6cd9f1312d9c03654c262c04ac12fbd9.camel@gmail.com>
-Subject: Re: [PATCH v3 04/10] dt-bindings: iio: dac: ad3552r: add io-backend
- support
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Angelo Dureghello
-	 <adureghello@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, Jonathan
- Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Olivier
- Moysan <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- dlechner@baylibre.com
-Date: Tue, 24 Sep 2024 14:27:51 +0200
-In-Reply-To: <e8af0f3f-a09c-42d7-b8ca-dd633539af73@kernel.org>
-References: 
-	<20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-0-a17b9b3d05d9@baylibre.com>
-	 <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-4-a17b9b3d05d9@baylibre.com>
-	 <gojq6ardhvt6vcs2kawdhdn2cj6qbpzp4p5mjjgwsypuatm5eo@3u6k4q7le46s>
-	 <418a8a9b-3bcf-4b8f-92a0-619a3bf26ab5@baylibre.com>
-	 <e8af0f3f-a09c-42d7-b8ca-dd633539af73@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1727180948; c=relaxed/simple;
+	bh=j4z0lX44fz/Sd7pRd8ALq4d+XegAN608GA7cOyTsM8E=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=VkA/VeagLmyVbS6t6Yc+XTnuuw3D/SnG9ywvVJ8TFWrMeCBH9d2z3lNen0hgSJdQ8i/3ztkgPrLJOaXH+h1NQQGwTrJJZCqBdIzVE8x4km/aL+/4tFxMKR3KMq3P6ix69hZ0NtHMAb2jHU0W7U/eG49XU0hJtR3gNqhM1j2qGJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qVu7s6p8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DAE9C4CEC4;
+	Tue, 24 Sep 2024 12:29:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727180948;
+	bh=j4z0lX44fz/Sd7pRd8ALq4d+XegAN608GA7cOyTsM8E=;
+	h=From:Date:Subject:To:Cc:From;
+	b=qVu7s6p8nbi3VajIJsqEswpWLGuhg71uIclSzX3H9S4SqoYChxRLxiFWGJ9UH/CxW
+	 i6+8J/GaFoU7gCnAilli7wsMdCVgT+VxrDPYvajY6b/fzztDnY9j/9bYsABpoZMh7v
+	 CDFzA7+bkmxrg0A/sek35GA4uCrljB2rPqI27FvU55g04FtiqzMPjNoErylO5+Qlgk
+	 woNZzVXnCptgmP/b1IDgK+d/5/auAqLkuS8tWRwrxS7fdu4y8F+fNcSM55yKyOjSzL
+	 qMNmWmJYfw5WMZZhZpapPEODR/FYRCBdFNwdtrmgxMaXT0waAzUlWoWAccU7gV/uM4
+	 Sf2ByMwiqmK0w==
+From: Roger Quadros <rogerq@kernel.org>
+Date: Tue, 24 Sep 2024 15:28:48 +0300
+Subject: [PATCH net] net: ethernet: ti: cpsw_ale: Fix warning on some
+ platforms
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240924-am65-cpsw-multi-rx-fix-v1-1-0ca3fa9a1398@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAH+w8mYC/x2MSwqEMBAFryK9ngaNUUavMriI8akNY5TEH4h3N
+ 7isgqqLArwgUJ1c5LFLkNlFyD4J2dG4ASxdZFKp0mmlcjZTWbBdwsHT9l+F/cm9nIxWf2F6qyu
+ UFOPFI+p3/COHlZr7fgA72Hm4bQAAAA==
+To: Siddharth Vadapalli <s-vadapalli@ti.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>
+Cc: linux-omap@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, srk@ti.com, 
+ Geert Uytterhoeven <geert@linux-m68k.org>, 
+ Roger Quadros <rogerq@kernel.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5815; i=rogerq@kernel.org;
+ h=from:subject:message-id; bh=j4z0lX44fz/Sd7pRd8ALq4d+XegAN608GA7cOyTsM8E=;
+ b=owEBbQKS/ZANAwAIAdJaa9O+djCTAcsmYgBm8rCN5OnVq+tKLHFO7qebc5JvbOtP+nlqhorcK
+ MffmXJ5iamJAjMEAAEIAB0WIQRBIWXUTJ9SeA+rEFjSWmvTvnYwkwUCZvKwjQAKCRDSWmvTvnYw
+ k1BsEACakksbQcenbrbugMW2XDKw/NdZ+s2xyMQ6Fwdla/P/463h3+Pp1nIadSj1asvVCMLPSvH
+ kFGnLlzfBX8FXQtM5MFFcXqiarE2tpse9Q+tFk42g27/fFodXUrN0MOfpMCYeG7Gx5lgwqsV4g8
+ kxXoNAuVLC5jk6LNFKol9ZFTz6itHAPYwZTomh7Ir3vwjeCydyZhiMzY2f5VajC0+oqAgmdTOla
+ zXVXt/hefEzY8dj5HNkgamXttkUpDZll3+A1ozcVxL+SVfSoYpEd+5+sT6rSzkd8lITAOmTaTe6
+ N0RfH0ipjE7sklXOwLz/HIabQCrvQ/8F1zKFtTIpU6PCBKc/2QV7uCbCVlpZ7Mt7fdmLdhITeVw
+ FZyIk65qqhaefEIZZsQ9RHJ7llXEBY8pIkO2lyUfHSMVfTrJluWoPiyNSJVWsZtesaRPK7w1Q5o
+ CDrm0B9/fD95cOcRCGRGbj07c4bggbrN8cApP/xShzwJsIc8wPYGTh/TNahhuF1Pqem8z2Ntlm8
+ 7rBdKb9uidc4KGYGUUj1+iMmR1Q9Ykum/0QUNNDp4zs27o9jaSsnlgMVJecOcBvoV3HRYDZImNB
+ Co16PLBxYFxN/uOJZMlCoSvHd0TPVG1cXKxSoJg4Zl1asg0nmgRETwEYtebI3002cFC5xg4xHss
+ EXVohPEbbMpXcLw==
+X-Developer-Key: i=rogerq@kernel.org; a=openpgp;
+ fpr=412165D44C9F52780FAB1058D25A6BD3BE763093
 
-On Tue, 2024-09-24 at 10:02 +0200, Krzysztof Kozlowski wrote:
-> On 23/09/2024 17:50, Angelo Dureghello wrote:
-> > Hi Krzysztof,
-> >=20
-> > On 22/09/24 23:02, Krzysztof Kozlowski wrote:
-> > > On Thu, Sep 19, 2024 at 11:20:00AM +0200, Angelo Dureghello wrote:
-> > > > From: Angelo Dureghello <adureghello@baylibre.com>
-> > > >=20
-> > > > There is a version AXI DAC IP block (for FPGAs) that provides
-> > > > a physical bus for AD3552R and similar chips, and acts as
-> > > > an SPI controller.
-> > > >=20
-> > > > For this case, the binding is modified to include some
-> > > > additional properties.
-> > > >=20
-> > > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> > > > ---
-> > > > =C2=A0 .../devicetree/bindings/iio/dac/adi,ad3552r.yaml=C2=A0=C2=A0=
- | 42
-> > > > ++++++++++++++++++++++
-> > > > =C2=A0 1 file changed, 42 insertions(+)
-> > > >=20
-> > > > diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.=
-yaml
-> > > > b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
-> > > > index 41fe00034742..aca4a41c2633 100644
-> > > > --- a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
-> > > > +++ b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
-> > > > @@ -60,6 +60,18 @@ properties:
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/definitio=
-ns/uint32
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum: [0, 1, 2, 3]
-> > > > =C2=A0=20
-> > > > +=C2=A0 io-backends:
-> > > > +=C2=A0=C2=A0=C2=A0 description: The iio backend reference.
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 An example backend can be found at
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
-> > > > https://analogdevicesinc.github.io/hdl/library/axi_ad3552r/index.ht=
-ml
-> > > > +=C2=A0=C2=A0=C2=A0 maxItems: 1
-> > > > +
-> > > > +=C2=A0 adi,synchronous-mode:
-> > > > +=C2=A0=C2=A0=C2=A0 description: Enable waiting for external synchr=
-onization signal.
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Some AXI IP configuration can imple=
-ment a dual-IP layout, with
-> > > > internal
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 wirings for streaming synchronizati=
-on.
-> > > > +=C2=A0=C2=A0=C2=A0 type: boolean
-> > > > +
-> > > > =C2=A0=C2=A0=C2=A0 '#address-cells':
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const: 1
-> > > > =C2=A0=20
-> > > > @@ -128,6 +140,7 @@ patternProperties:
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-- custom-output-range-config
-> > > > =C2=A0=20
-> > > > =C2=A0 allOf:
-> > > > +=C2=A0 - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> > > > =C2=A0=C2=A0=C2=A0 - if:
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible:
-> > > > @@ -238,4 +251,33 @@ examples:
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 };
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 };
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 };
-> > > > +
-> > > > +=C2=A0 - |
-> > > > +=C2=A0=C2=A0=C2=A0 axi_dac: spi@44a70000 {
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible =3D "adi,axi=
--ad3552r";
-> > > That is either redundant or entire example should go to the parent no=
-de,
-> > > if this device is fixed child of complex device (IOW, adi,ad3552r can=
-not
-> > > be used outside of adi,axi-ad3552r).
-> >=20
-> > ad3552r can still be used by a generic "classic" spi
-> > controller (SCLK/CS/MISO) but at a slower samplerate, fpga
-> > controller only (axi-ad3552r) can reach 33MUPS.
->=20
-> OK, then this is just redundant. Drop the node. Parent example should
-> contain the children, though.
-> >=20
-> > >=20
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg =3D <0x44a70000 0x1=
-000>;
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dmas =3D <&dac_tx_dma 0=
->;
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dma-names =3D "tx";
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #io-backend-cells =3D <=
-0>;
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clocks =3D <&ref_clk>;
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #address-cells =3D <1>;
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #size-cells =3D <0>;
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dac@0 {
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- compatible =3D "adi,ad3552r";
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- reg =3D <0>;
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- reset-gpios =3D <&gpio0 92 0>;
-> > > Use standard defines for GPIO flags.
-> >=20
-> > fixed, thanks
-> >=20
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- io-backends =3D <&axi_dac>;
-> > > Why do you need to point to the parent? How much coupled are these
-> > > devices? Child pointing to parent is not usually expected, because
-> > > that's obvious.
-> >=20
-> >=20
-> > "io-backends" is actually the way to refer to the backend module,
-> > (used already for i.e. ad9739a),
-> > it is needed because the backend is not only acting as spi-controller,
-> > but is also providing some APIs for synchronization and bus setup suppo=
-rt.
->=20
->=20
-> But if backend is the parent, then this is redundant. You can take it
-> from the child-parent relationship. Is this pointing to other devices
-> (non-parent) in other ad3552r configurations?
->=20
+The number of register fields cannot be assumed to be ALE_FIELDS_MAX
+as some platforms can have lesser fields.
 
-The backend is a provider-consumer type of API. On the consumer side (which=
- is the
-driver the child node will probe on), we need to call devm_iio_backend_get(=
-) to get
-the backend object (which obviously is the parent). For that, 'io-backends'=
- is being
-used. We do have another API called __devm_iio_backend_get_from_fwnode_look=
-up() that
-could be used with the parent fwnode and should work. However that was only=
- added to
-keep backward compatibility in the first user of the IIO backend framework =
-and it's
-not really meant to be used again. We are aware this is awkward at the very=
- least [1]
-but hopefully still acceptable.
+Solve this by embedding the actual number of fields available
+in platform data and use that instead of ALE_FIELDS_MAX.
 
-[1]: https://lore.kernel.org/linux-iio/20240903203935.358a1423@jic23-huawei=
-/
-- Nuno S=C3=A1
+Gets rid of the below warning on BeagleBone Black
+
+[    1.007735] WARNING: CPU: 0 PID: 33 at drivers/base/regmap/regmap.c:1208 regmap_field_init+0x88/0x9c
+[    1.007802] invalid empty mask defined
+[    1.007812] Modules linked in:
+[    1.007842] CPU: 0 UID: 0 PID: 33 Comm: kworker/u4:3 Not tainted 6.11.0-01459-g508403ab7b74-dirty #840
+[    1.007867] Hardware name: Generic AM33XX (Flattened Device Tree)
+[    1.007890] Workqueue: events_unbound deferred_probe_work_func
+[    1.007935] Call trace:
+[    1.007957]  unwind_backtrace from show_stack+0x10/0x14
+[    1.007999]  show_stack from dump_stack_lvl+0x50/0x64
+[    1.008033]  dump_stack_lvl from __warn+0x70/0x124
+[    1.008077]  __warn from warn_slowpath_fmt+0x194/0x1a8
+[    1.008113]  warn_slowpath_fmt from regmap_field_init+0x88/0x9c
+[    1.008154]  regmap_field_init from devm_regmap_field_alloc+0x48/0x64
+[    1.008193]  devm_regmap_field_alloc from cpsw_ale_create+0xfc/0x320
+[    1.008251]  cpsw_ale_create from cpsw_init_common+0x214/0x354
+[    1.008286]  cpsw_init_common from cpsw_probe+0x4ac/0xb88
+
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Closes: https://lore.kernel.org/netdev/CAMuHMdUf-tKRDzkz2_m8qdFTFutefddU0NTratVrEjRTzA3yQQ@mail.gmail.com/
+Fixes: 11cbcfeaa79e ("net: ethernet: ti: cpsw_ale: use regfields for number of Entries and Policers")
+Signed-off-by: Roger Quadros <rogerq@kernel.org>
+---
+ drivers/net/ethernet/ti/cpsw_ale.c | 12 +++++++++++-
+ drivers/net/ethernet/ti/cpsw_ale.h |  1 +
+ 2 files changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/ti/cpsw_ale.c b/drivers/net/ethernet/ti/cpsw_ale.c
+index 0d5d8917c70b..8d02d2b21429 100644
+--- a/drivers/net/ethernet/ti/cpsw_ale.c
++++ b/drivers/net/ethernet/ti/cpsw_ale.c
+@@ -96,6 +96,7 @@ enum {
+  * @features: features supported by ALE
+  * @tbl_entries: number of ALE entries
+  * @reg_fields: pointer to array of register field configuration
++ * @num_fields: number of fields in the reg_fields array
+  * @nu_switch_ale: NU Switch ALE
+  * @vlan_entry_tbl: ALE vlan entry fields description tbl
+  */
+@@ -104,6 +105,7 @@ struct cpsw_ale_dev_id {
+ 	u32 features;
+ 	u32 tbl_entries;
+ 	const struct reg_field *reg_fields;
++	int num_fields;
+ 	bool nu_switch_ale;
+ 	const struct ale_entry_fld *vlan_entry_tbl;
+ };
+@@ -1400,6 +1402,7 @@ static const struct cpsw_ale_dev_id cpsw_ale_id_match[] = {
+ 		.dev_id = "cpsw",
+ 		.tbl_entries = 1024,
+ 		.reg_fields = ale_fields_cpsw,
++		.num_fields = ARRAY_SIZE(ale_fields_cpsw),
+ 		.vlan_entry_tbl = vlan_entry_cpsw,
+ 	},
+ 	{
+@@ -1407,12 +1410,14 @@ static const struct cpsw_ale_dev_id cpsw_ale_id_match[] = {
+ 		.dev_id = "66ak2h-xgbe",
+ 		.tbl_entries = 2048,
+ 		.reg_fields = ale_fields_cpsw,
++		.num_fields = ARRAY_SIZE(ale_fields_cpsw),
+ 		.vlan_entry_tbl = vlan_entry_cpsw,
+ 	},
+ 	{
+ 		.dev_id = "66ak2el",
+ 		.features = CPSW_ALE_F_STATUS_REG,
+ 		.reg_fields = ale_fields_cpsw_nu,
++		.num_fields = ARRAY_SIZE(ale_fields_cpsw_nu),
+ 		.nu_switch_ale = true,
+ 		.vlan_entry_tbl = vlan_entry_nu,
+ 	},
+@@ -1421,6 +1426,7 @@ static const struct cpsw_ale_dev_id cpsw_ale_id_match[] = {
+ 		.features = CPSW_ALE_F_STATUS_REG,
+ 		.tbl_entries = 64,
+ 		.reg_fields = ale_fields_cpsw_nu,
++		.num_fields = ARRAY_SIZE(ale_fields_cpsw_nu),
+ 		.nu_switch_ale = true,
+ 		.vlan_entry_tbl = vlan_entry_nu,
+ 	},
+@@ -1429,6 +1435,7 @@ static const struct cpsw_ale_dev_id cpsw_ale_id_match[] = {
+ 		.features = CPSW_ALE_F_STATUS_REG | CPSW_ALE_F_HW_AUTOAGING,
+ 		.tbl_entries = 64,
+ 		.reg_fields = ale_fields_cpsw_nu,
++		.num_fields = ARRAY_SIZE(ale_fields_cpsw_nu),
+ 		.nu_switch_ale = true,
+ 		.vlan_entry_tbl = vlan_entry_nu,
+ 	},
+@@ -1436,12 +1443,14 @@ static const struct cpsw_ale_dev_id cpsw_ale_id_match[] = {
+ 		.dev_id = "j721e-cpswxg",
+ 		.features = CPSW_ALE_F_STATUS_REG | CPSW_ALE_F_HW_AUTOAGING,
+ 		.reg_fields = ale_fields_cpsw_nu,
++		.num_fields = ARRAY_SIZE(ale_fields_cpsw_nu),
+ 		.vlan_entry_tbl = vlan_entry_k3_cpswxg,
+ 	},
+ 	{
+ 		.dev_id = "am64-cpswxg",
+ 		.features = CPSW_ALE_F_STATUS_REG | CPSW_ALE_F_HW_AUTOAGING,
+ 		.reg_fields = ale_fields_cpsw_nu,
++		.num_fields = ARRAY_SIZE(ale_fields_cpsw_nu),
+ 		.vlan_entry_tbl = vlan_entry_k3_cpswxg,
+ 		.tbl_entries = 512,
+ 	},
+@@ -1477,7 +1486,7 @@ static int cpsw_ale_regfield_init(struct cpsw_ale *ale)
+ 	struct regmap *regmap = ale->regmap;
+ 	int i;
+ 
+-	for (i = 0; i < ALE_FIELDS_MAX; i++) {
++	for (i = 0; i < ale->params.num_fields; i++) {
+ 		ale->fields[i] = devm_regmap_field_alloc(dev, regmap,
+ 							 reg_fields[i]);
+ 		if (IS_ERR(ale->fields[i])) {
+@@ -1503,6 +1512,7 @@ struct cpsw_ale *cpsw_ale_create(struct cpsw_ale_params *params)
+ 	params->ale_entries = ale_dev_id->tbl_entries;
+ 	params->nu_switch_ale = ale_dev_id->nu_switch_ale;
+ 	params->reg_fields = ale_dev_id->reg_fields;
++	params->num_fields = ale_dev_id->num_fields;
+ 
+ 	ale = devm_kzalloc(params->dev, sizeof(*ale), GFP_KERNEL);
+ 	if (!ale)
+diff --git a/drivers/net/ethernet/ti/cpsw_ale.h b/drivers/net/ethernet/ti/cpsw_ale.h
+index 1e4e9a3dd234..87b7d1b3a34a 100644
+--- a/drivers/net/ethernet/ti/cpsw_ale.h
++++ b/drivers/net/ethernet/ti/cpsw_ale.h
+@@ -24,6 +24,7 @@ struct cpsw_ale_params {
+ 	 */
+ 	bool			nu_switch_ale;
+ 	const struct reg_field *reg_fields;
++	int			num_fields;
+ 	const char		*dev_id;
+ 	unsigned long		bus_freq;
+ };
+
+---
+base-commit: 9410645520e9b820069761f3450ef6661418e279
+change-id: 20240923-am65-cpsw-multi-rx-fix-eb48eafc49e6
+
+Best regards,
+-- 
+Roger Quadros <rogerq@kernel.org>
+
 
