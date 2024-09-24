@@ -1,367 +1,166 @@
-Return-Path: <linux-kernel+bounces-337473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3361984A87
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:00:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C92A1984A5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 19:40:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21D1EB225F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:00:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80A04285BCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 17:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4022F1AC8BF;
-	Tue, 24 Sep 2024 18:00:06 +0000 (UTC)
-Received: from out02.mta.xmission.com (out02.mta.xmission.com [166.70.13.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D2591DFFB;
+	Tue, 24 Sep 2024 17:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="hgeKtJwS"
+Received: from mail-43166.protonmail.ch (mail-43166.protonmail.ch [185.70.43.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91EF1AC45E;
-	Tue, 24 Sep 2024 18:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1CB1ABEB5
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 17:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727200805; cv=none; b=OgXwkMkCMRi1u2dt1uyqNQjDbs5BY9uU7+9R0/3dBNDVP7KUAbKWuPEfbDy+fy1EeDhYwLRDOSc2guptM3omUD8i2Q2vUNDdD7P5DX3yF7TkDqlAse4hfgfA7fWqWKnNab6RCBCh5o1l36A0o/ylsZDCeEP393araAaz9UgCtYk=
+	t=1727199653; cv=none; b=tjvkimRzIvlXgpaoHG7J1jDzhHCahMQuR0KcobNBlERNWNNqdmMqVZMzpPnlNKqbw3pvel7Uj8biXYagACegVUJu4J5wa55OL1NHNmoaUSo6cyEaeb0zQtoX94eIGGgroHeyiYLo5UzzAqNtG90MLIbEpFN/tB2pkGvBHy8tBjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727200805; c=relaxed/simple;
-	bh=DPUpuU4fGTqB9gqh9Pvq9fF3HhZb2/YHamHccF9iFsM=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=YaNaPu3ikhcEwwQ+LDATBTTy410FggrgwIs3sLSxYQ5p/08nuutC5x9LqoCP/j1Y2LsBWLekFVUzkfRGiwqDm3f8hBijNLr86oqnIK7XnHvWm+uBE+ivsLAHtUWr42iQPzWZL/tGXPk2tcl2Ksa9dRLVBBerNX9cdw8HK1BATDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in02.mta.xmission.com ([166.70.13.52]:55804)
-	by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1st9Wk-005D2q-Vn; Tue, 24 Sep 2024 11:40:43 -0600
-Received: from ip68-227-165-127.om.om.cox.net ([68.227.165.127]:34342 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1st9Wj-005TZN-MX; Tue, 24 Sep 2024 11:40:42 -0600
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Tycho Andersen <tycho@tycho.pizza>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,  Christian Brauner
- <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,  Kees Cook
- <kees@kernel.org>,  Jeff Layton <jlayton@kernel.org>,  Chuck Lever
- <chuck.lever@oracle.com>,  Alexander Aring <alex.aring@gmail.com>,
-  linux-fsdevel@vger.kernel.org,  linux-mm@kvack.org,
-  linux-kernel@vger.kernel.org,  Tycho Andersen <tandersen@netflix.com>,
-  Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,  Aleksa
- Sarai
- <cyphar@cyphar.com>
-References: <20240924141001.116584-1-tycho@tycho.pizza>
-Date: Tue, 24 Sep 2024 12:39:35 -0500
-In-Reply-To: <20240924141001.116584-1-tycho@tycho.pizza> (Tycho Andersen's
-	message of "Tue, 24 Sep 2024 08:10:01 -0600")
-Message-ID: <87msjx9ciw.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1727199653; c=relaxed/simple;
+	bh=XAZ0n7me/6NPjiNvYD8nNQcWE0/mBtl5dFitgfUhxhQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=km/cZW2JbJ+c3/b83eDf1da0oaW56T9n7QzKKyYE/aTAKGZyuwgjp2OZygba5ydZwd/Qvw8wErl+o57hR1Ma43yoBHRG96ze677jAKD8LI9/U/OtZRT/1t9TG/Y4ttz6teCH+ZeMP8yL6oaAfHiQwVu1B+nQxW2Ut+vPr5zJjx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=hgeKtJwS; arc=none smtp.client-ip=185.70.43.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1727199642; x=1727458842;
+	bh=dbdxFo/zq070cXxVD/uDF6R4O2yzs/xwmmWLCvvKMOI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=hgeKtJwSzA+8k3B42nJA9HBWZzeP35dDOA5101vs67lkfPdwnzyenxltnJ9Lq/9va
+	 6YLqdo28O3BCFI4M2LgIfWS998Vvrr4eU6AuPRd+Df0RVn3HHPCRkbXeEzWSzLsK6W
+	 D3Jzvpc2m9Gixv2GY8FNHFTMfx7miSXURxzVxdD2IHWslgj33rXL3odlW4xuWHna8P
+	 yBDTecKSxwgY2/ETvMKCxFvOh48vUNNb5U8bVnYePG996DTHrYm58h/QFUfSdr82YJ
+	 4tSen88TLYSQPXf/d0mhdlBdwsMzSK9qDsxtOM0uhdGocLEHPFjuV6B1m/qo6KVKx1
+	 aTARj1zLwC3ug==
+Date: Tue, 24 Sep 2024 17:40:36 +0000
+To: kernel test robot <oliver.sang@intel.com>
+From: John <therealgraysky@proton.me>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, Unknown <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH] x86: add more x86-64 micro-architecture levels
+Message-ID: <4_u6ZNYPbaK36xkLt8ApRhiRTyWp_-NExHCH_tTFO_fanDglEmcbfowmiB505heI4md2AuR9hS-VSkf4s90sXb5--AnNTOwvPaTmcgzRYSY=@proton.me>
+In-Reply-To: <202409241436.b37a069e-oliver.sang@intel.com>
+References: <202409241436.b37a069e-oliver.sang@intel.com>
+Feedback-ID: 47473199:user:proton
+X-Pm-Message-ID: 95154c7c9cfeaff9d0db5c7987d82ecfb85c9d89
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/mixed;
+ boundary="b1_9XyeUgEfIWwwNaqU6g6Bs8aSo79lqIO9p4wecrpCc"
+
+This is a multi-part message in MIME format.
+
+--b1_9XyeUgEfIWwwNaqU6g6Bs8aSo79lqIO9p4wecrpCc
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-X-XM-SPF: eid=1st9Wj-005TZN-MX;;;mid=<87msjx9ciw.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.165.127;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX1+fnbih3tUHG8eMw0G+LQU28U/qMv8L3Bk=
-X-Spam-Level: *******
-X-Spam-Report: 
-	*  7.0 XM_URI_RBL URI blacklisted in uri.bl.xmission.com
-	*      [URIs: waw.pl]
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.4613]
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	*  0.0 XM_B_Unicode BODY: Testing for specific types of unicode
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa08 1397; Body=1 Fuz1=1 Fuz2=1]
-	*  1.0 T_XMDrugObfuBody_08 obfuscated drug references
-	* -0.0 T_SCC_BODY_TEXT_LINE No description available.
-	*  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa08 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *******;Tycho Andersen <tycho@tycho.pizza>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 682 ms - load_scoreonly_sql: 0.06 (0.0%),
-	signal_user_changed: 12 (1.7%), b_tie_ro: 10 (1.4%), parse: 1.60
-	(0.2%), extract_message_metadata: 23 (3.4%), get_uri_detail_list: 5
-	(0.8%), tests_pri_-2000: 37 (5.4%), tests_pri_-1000: 2.8 (0.4%),
-	tests_pri_-950: 1.43 (0.2%), tests_pri_-900: 1.25 (0.2%),
-	tests_pri_-90: 141 (20.7%), check_bayes: 138 (20.3%), b_tokenize: 15
-	(2.2%), b_tok_get_all: 17 (2.5%), b_comp_prob: 5 (0.8%),
-	b_tok_touch_all: 95 (13.9%), b_finish: 1.49 (0.2%), tests_pri_0: 446
-	(65.4%), check_dkim_signature: 0.66 (0.1%), check_dkim_adsp: 3.3
-	(0.5%), poll_dns_idle: 1.41 (0.2%), tests_pri_10: 2.1 (0.3%),
-	tests_pri_500: 9 (1.4%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [RFC] exec: add a flag for "reasonable" execveat() comm
-X-SA-Exim-Connect-IP: 166.70.13.52
-X-SA-Exim-Rcpt-To: cyphar@cyphar.com, zbyszek@in.waw.pl, tandersen@netflix.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, alex.aring@gmail.com, chuck.lever@oracle.com, jlayton@kernel.org, kees@kernel.org, jack@suse.cz, brauner@kernel.org, viro@zeniv.linux.org.uk, tycho@tycho.pizza
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-SA-Exim-Scanned: No (on out02.mta.xmission.com); SAEximRunCond expanded to false
 
-Tycho Andersen <tycho@tycho.pizza> writes:
+On Tuesday, September 24th, 2024 at 3:00 AM, kernel test robot <oliver.sang=
+@intel.com> wrote:
 
-> From: Tycho Andersen <tandersen@netflix.com>
->
-> Zbigniew mentioned at Linux Plumber's that systemd is interested in
-> switching to execveat() for service execution, but can't, because the
-> contents of /proc/pid/comm are the file descriptor which was used,
-> instead of the path to the binary. This makes the output of tools like
-> top and ps useless, especially in a world where most fds are opened
-> CLOEXEC so the number is truly meaningless.
->
-> This patch adds an AT_ flag to fix up /proc/pid/comm to instead be the
-> contents of argv[0], instead of the fdno.
+> early crash happens 70 times out of 500 runs.
+> for parent, keeps clean when we run same tests almost 1000 times.
 
-The kernel allows prctl(PR_SET_NAME, ...)  without any permission
-checks so adding an AT_ flat to use argv[0] instead of the execed
-filename seems reasonable.
+Many thanks for this rigorous testing.  Would you mind using the current re=
+vision of this patch (attached) or accessible at my github linked below?
 
-Maybe the flag should be called AT_NAME_ARGV0.
+https://github.com/graysky2/kernel_compiler_patch
+--b1_9XyeUgEfIWwwNaqU6g6Bs8aSo79lqIO9p4wecrpCc
+Content-Type: text/x-patch; name=lite-more-x86-64-ISA-levels-for-kernel-6.8-rc4+.patch
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename=lite-more-x86-64-ISA-levels-for-kernel-6.8-rc4+.patch
 
+RnJvbSA3MTgxNTVlNjE2NGI0YmVjNDViY2JhODgxNGMzZjgyZTg0ZjM2ZGIwIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBncmF5c2t5IDx0aGVyZWFsZ3JheXNreSBBVCBwcm90b24gRE9U
+IG1lPgpEYXRlOiBNb24sIDE2IFNlcCAyMDI0IDE0OjQ3OjAzIC0wNDAwCgpGRUFUVVJFUwpUaGlz
+IHBhdGNoIGFkZHMgYWRkaXRpb25hbCB0dW5pbmdzIHZpYSBuZXcgeDg2LTY0IElTQSBsZXZlbHMg
+dG8gdGhlCkxpbnV4IGtlcm5lbC4KClRoZXNlIGFyZSBzZWxlY3RhYmxlIHVuZGVyOgoJUHJvY2Vz
+c29yIHR5cGUgYW5kIGZlYXR1cmVzIC0tLT4geDg2LTY0IGNvbXBpbGVyIElTQSBsZXZlbAoK4oCi
+IHg4Ni02NCAgICAgQSB2YWx1ZSBvZiAoMSkgaXMgdGhlIGRlZmF1bHQK4oCiIHg4Ni02NC12MiAg
+QSB2YWx1ZSBvZiAoMikgYnJpbmdzIHN1cHBvcnQgZm9yIHZlY3RvcgogICAgICAgICAgICAgaW5z
+dHJ1Y3Rpb25zIHVwIHRvIFN0cmVhbWluZyBTSU1EIEV4dGVuc2lvbnMgNC4yIChTU0U0LjIpCgkg
+ICAgIGFuZCBTdXBwbGVtZW50YWwgU3RyZWFtaW5nIFNJTUQgRXh0ZW5zaW9ucyAzIChTU1NFMyks
+IHRoZQoJICAgICBQT1BDTlQgaW5zdHJ1Y3Rpb24sIGFuZCBDTVBYQ0hHMTZCLgrigKIgeDg2LTY0
+LXYzICBBIHZhbHVlIG9mICgzKSBhZGRzIHZlY3RvciBpbnN0cnVjdGlvbnMgdXAgdG8gQVZYMiwg
+TU9WQkUsCiAgICAgICAgICAgICBhbmQgYWRkaXRpb25hbCBiaXQtbWFuaXB1bGF0aW9uIGluc3Ry
+dWN0aW9ucy4KClRoZXJlIGlzIGFsc28geDg2LTY0LXY0IGJ1dCBpbmNsdWRpbmcgdGhpcyBtYWtl
+cyBsaXR0bGUgc2Vuc2UgYXMKdGhlIGtlcm5lbCBkb2VzIG5vdCB1c2UgYW55IG9mIHRoZSBBVlg1
+MTIgaW5zdHJ1Y3Rpb25zIGFueXdheS4KClVzZXJzIG9mIGdsaWJjIDIuMzMgYW5kIGFib3ZlIGNh
+biBzZWUgd2hpY2ggbGV2ZWwgaXMgc3VwcG9ydGVkIGJ5IHJ1bm5pbmc6CgkvbGliL2xkLWxpbnV4
+LXg4Ni02NC5zby4yIC0taGVscCB8IGdyZXAgc3VwcG9ydGVkCk9yCgkvbGliNjQvbGQtbGludXgt
+eDg2LTY0LnNvLjIgLS1oZWxwIHwgZ3JlcCBzdXBwb3J0ZWQKCkJFTkVGSVRTClNtYWxsIGJ1dCBy
+ZWFsIHNwZWVkIGluY3JlYXNlcyBhcmUgbWVhc3VyYWJsZSB1c2luZyBhIG1ha2UgZW5kcG9pbnQg
+Y29tcGFyaW5nCmEgZ2VuZXJpYyBrZXJuZWwgdG8gb25lIGJ1aWx0IHdpdGggb25lIG9mIHRoZSBy
+ZXNwZWN0aXZlIG1pY3JvYXJjaHMuCgpTZWUgdGhlIGZvbGxvd2luZyBleHBlcmltZW50YWwgZXZp
+ZGVuY2Ugc3VwcG9ydGluZyB0aGlzIHN0YXRlbWVudDoKaHR0cHM6Ly9naXRodWIuY29tL2dyYXlz
+a3kyL2tlcm5lbF9jb21waWxlcl9wYXRjaD90YWI9cmVhZG1lLW92LWZpbGUjYmVuY2htYXJrcwoK
+UkVRVUlSRU1FTlRTCmxpbnV4IHZlcnNpb24gNi44LXJjMysKZ2NjIHZlcnNpb24gPj05LjAgb3Ig
+Y2xhbmcgdmVyc2lvbiA+PTkuMAoKQUNLTk9XTEVER01FTlRTClRoaXMgcGF0Y2ggYnVpbGRzIG9u
+IHRoZSBzZW1pbmFsIHdvcmsgYnkgSmVyb2VuLlsyXQoKUkVGRVJFTkNFUwoxLiAgaHR0cHM6Ly9n
+aXRsYWIuY29tL3g4Ni1wc0FCSXMveDg2LTY0LUFCSS8tL2NvbW1pdC83NzU2NmViMDNiYzZhMzI2
+ODExY2I3ZTkKMi4gIGh0dHA6Ly93d3cubGludXhmb3JnZS5uZXQvZG9jcy9saW51eC9saW51eC1n
+Y2MucGhwCgotLS0KIGFyY2gveDg2L0tjb25maWcuY3B1IHwgMjQgKysrKysrKysrKysrKysrKysr
+KysrKysrCiBhcmNoL3g4Ni9NYWtlZmlsZSAgICB8IDExICsrKysrKysrKy0tCiAyIGZpbGVzIGNo
+YW5nZWQsIDMzIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvYXJj
+aC94ODYvS2NvbmZpZy5jcHUgYi9hcmNoL3g4Ni9LY29uZmlnLmNwdQppbmRleCAyYTcyNzlkODA0
+NjAuLjU2MmEyNzNiZTIyMiAxMDA2NDQKLS0tIGEvYXJjaC94ODYvS2NvbmZpZy5jcHUKKysrIGIv
+YXJjaC94ODYvS2NvbmZpZy5jcHUKQEAgLTMwOCw2ICszMDgsMzAgQEAgY29uZmlnIFg4Nl9HRU5F
+UklDCiAJICBUaGlzIGlzIHJlYWxseSBpbnRlbmRlZCBmb3IgZGlzdHJpYnV0b3JzIHdobyBuZWVk
+IG1vcmUKIAkgIGdlbmVyaWMgb3B0aW1pemF0aW9ucy4KCitjb25maWcgWDg2XzY0X1ZFUlNJT04K
+KwlpbnQgIng4Ni02NCBjb21waWxlciBJU0EgbGV2ZWwiCisJcmFuZ2UgMSAzCisJZGVwZW5kcyBv
+biAoQ0NfSVNfR0NDICYmIEdDQ19WRVJTSU9OID4gMTEwMDAwKSB8fCAoQ0NfSVNfQ0xBTkcgJiYg
+Q0xBTkdfVkVSU0lPTiA+PSAxMjAwMDApCisJZGVwZW5kcyBvbiBYODZfNjQgJiYgR0VORVJJQ19D
+UFUKKwloZWxwCisJICBTcGVjaWZ5IGEgc3BlY2lmaWMgeDg2LTY0IGNvbXBpbGVyIElTQSBsZXZl
+bC4KKworCSAgVGhlcmUgYXJlIHRocmVlIHg4Ni02NCBJU0EgbGV2ZWxzIHRoYXQgd29yayBvbiB0
+b3Agb2YKKwkgIHRoZSB4ODYtNjQgYmFzZWxpbmUsIG5hbWVseTogeDg2LTY0LXYyLCB4ODYtNjQt
+djMsIGFuZCB4ODYtNjQtdjQuCisKKwkgIHg4Ni02NC12MiBicmluZ3Mgc3VwcG9ydCBmb3IgdmVj
+dG9yIGluc3RydWN0aW9ucyB1cCB0byBTdHJlYW1pbmcgU0lNRAorCSAgRXh0ZW5zaW9ucyA0LjIg
+KFNTRTQuMikgYW5kIFN1cHBsZW1lbnRhbCBTdHJlYW1pbmcgU0lNRCBFeHRlbnNpb25zIDMKKwkg
+IChTU1NFMyksIHRoZSBQT1BDTlQgaW5zdHJ1Y3Rpb24sIGFuZCBDTVBYQ0hHMTZCLgorCisJICB4
+ODYtNjQtdjMgYWRkcyB2ZWN0b3IgaW5zdHJ1Y3Rpb25zIHVwIHRvIEFWWDIsIE1PVkJFLCBhbmQg
+YWRkaXRpb25hbAorCSAgYml0LW1hbmlwdWxhdGlvbiBpbnN0cnVjdGlvbnMuCisKKwkgIHg4Ni02
+NC12NCBpcyBub3QgaW5jbHVkZWQgc2luY2UgdGhlIGtlcm5lbCBkb2VzIG5vdCB1c2UgQVZYNTEy
+IGluc3RydWN0aW9ucworCisJICBZb3UgY2FuIGZpbmQgdGhlIGJlc3QgdmVyc2lvbiBmb3IgeW91
+ciBDUFUgYnkgcnVubmluZyBvbmUgb2YgdGhlIGZvbGxvd2luZzoKKwkgIC9saWIvbGQtbGludXgt
+eDg2LTY0LnNvLjIgLS1oZWxwIHwgZ3JlcCBzdXBwb3J0ZWQKKwkgIC9saWI2NC9sZC1saW51eC14
+ODYtNjQuc28uMiAtLWhlbHAgfCBncmVwIHN1cHBvcnRlZAorCiAjCiAjIERlZmluZSBpbXBsaWVk
+IG9wdGlvbnMgZnJvbSB0aGUgQ1BVIHNlbGVjdGlvbiBoZXJlCiBjb25maWcgWDg2X0lOVEVSTk9E
+RV9DQUNIRV9TSElGVApkaWZmIC0tZ2l0IGEvYXJjaC94ODYvTWFrZWZpbGUgYi9hcmNoL3g4Ni9N
+YWtlZmlsZQppbmRleCA4MDFmZDg1YzNlZjYuLmUxZjg4Zjg0NmJlZCAxMDA2NDQKLS0tIGEvYXJj
+aC94ODYvTWFrZWZpbGUKKysrIGIvYXJjaC94ODYvTWFrZWZpbGUKQEAgLTE3OCwxNCArMTc4LDIx
+IEBAIGVsc2UKICAgICAgICAgY2ZsYWdzLSQoQ09ORklHX01QU0MpCQkrPSAtbWFyY2g9bm9jb25h
+CiAgICAgICAgIGNmbGFncy0kKENPTkZJR19NQ09SRTIpCQkrPSAtbWFyY2g9Y29yZTIKICAgICAg
+ICAgY2ZsYWdzLSQoQ09ORklHX01BVE9NKQkJKz0gLW1hcmNoPWF0b20KLSAgICAgICAgY2ZsYWdz
+LSQoQ09ORklHX0dFTkVSSUNfQ1BVKQkrPSAtbXR1bmU9Z2VuZXJpYworICAgICAgICBpZmVxICgk
+KENPTkZJR19YODZfNjRfVkVSU0lPTiksMSkKKyAgICAgICAgICBjZmxhZ3MtJChDT05GSUdfR0VO
+RVJJQ19DUFUpCQkrPSAtbXR1bmU9Z2VuZXJpYworICAgICAgICAgIHJ1c3RmbGFncy0kKENPTkZJ
+R19HRU5FUklDX0NQVSkJKz0gLVp0dW5lLWNwdT1nZW5lcmljCisgICAgICAgIGVsc2UKKyAgICAg
+ICAgICBjZmxhZ3MtJChDT05GSUdfR0VORVJJQ19DUFUpCQkrPSAtbWFyY2g9eDg2LTY0LXYkKENP
+TkZJR19YODZfNjRfVkVSU0lPTikKKyAgICAgICAgICBydXN0ZmxhZ3MtJChDT05GSUdfR0VORVJJ
+Q19DUFUpCSs9IC1DdGFyZ2V0LWNwdT14ODYtNjQtdiQoQ09ORklHX1g4Nl82NF9WRVJTSU9OKQor
+ICAgICAgICBlbmRpZgorICAgICAgICBjZmxhZ3MtJChDT05GSUdfTUFUT00pIAkrPSAtbWFyY2g9
+Ym9ubmVsbAorICAgICAgICBjZmxhZ3MtJChDT05GSUdfTUNPUkUyKSAJKz0gLW1hcmNoPWNvcmUy
+CiAgICAgICAgIEtCVUlMRF9DRkxBR1MgKz0gJChjZmxhZ3MteSkKCiAgICAgICAgIHJ1c3RmbGFn
+cy0kKENPTkZJR19NSzgpCQkrPSAtQ3RhcmdldC1jcHU9azgKICAgICAgICAgcnVzdGZsYWdzLSQo
+Q09ORklHX01QU0MpCSs9IC1DdGFyZ2V0LWNwdT1ub2NvbmEKICAgICAgICAgcnVzdGZsYWdzLSQo
+Q09ORklHX01DT1JFMikJKz0gLUN0YXJnZXQtY3B1PWNvcmUyCiAgICAgICAgIHJ1c3RmbGFncy0k
+KENPTkZJR19NQVRPTSkJKz0gLUN0YXJnZXQtY3B1PWF0b20KLSAgICAgICAgcnVzdGZsYWdzLSQo
+Q09ORklHX0dFTkVSSUNfQ1BVKQkrPSAtWnR1bmUtY3B1PWdlbmVyaWMKICAgICAgICAgS0JVSUxE
+X1JVU1RGTEFHUyArPSAkKHJ1c3RmbGFncy15KQoKICAgICAgICAgS0JVSUxEX0NGTEFHUyArPSAt
+bW5vLXJlZC16b25lCi0tCjIuNDYuMQoK
 
-That said I am trying to remember why we picked /dev/fd/N, as the
-filename.
+--b1_9XyeUgEfIWwwNaqU6g6Bs8aSo79lqIO9p4wecrpCc--
 
-My memory is that we couldn't think of anything more reasonable to use.
-Looking at commit 51f39a1f0cea ("syscalls: implement execveat() system
-call") unfortunately doesn't clarify anything for me, except that
-/dev/fd/N was a reasonable choice.
-
-I am thinking the code could reasonably try:
-	get_fs_root_rcu(current->fs, &root);
-	path =3D __d_path(file->f_path, root, buf, buflen);
-
-To see if a path to the file from the current root directory can be
-found.  For files that are not reachable from the current root the code
-still need to fallback to /dev/fd/N.
-
-Do you think you can investigate that and see if that would generate
-a reasonable task->comm?
-
-If for no other reason than because it would generate a usable result
-for #! scripts, without /proc mounted.
-
-
-
-It looks like a reasonable case can be made that while /dev/fd/N is
-a good path for interpreters, it is never a good choice for comm,
-so perhaps we could always use argv[0] if the fdpath is of the
-form /dev/fd/N.
-
-
-All of that said I am not a fan of the implementation below as it has
-the side effect of replacing /dev/fd/N with a filename that is not
-usable by #! interpreters.  So I suggest an implementation that affects
-task->comm and not brpm->filename.
-
-Eric
-
-
-> Signed-off-by: Tycho Andersen <tandersen@netflix.com>
-> Suggested-by: Zbigniew J=C4=99drzejewski-Szmek <zbyszek@in.waw.pl>
-> CC: Aleksa Sarai <cyphar@cyphar.com>
-> ---
-> There is some question about what to name the flag; it seems to me that
-> "everyone wants this" instead of the fdno, but probably "REASONABLE" is n=
-ot
-> a good choice.
->
-> Also, requiring the arg to alloc_bprm() is a bit ugly: kernel-based execs
-> will never use this, so they just have to pass an empty thing. We could
-> introduce a bprm_fixup_comm() to do the munging there, but then the code
-> paths start to diverge, which is maybe not nice. I left it this way becau=
-se
-> this is the smallest patch in terms of size, but I'm happy to change it.
->
-> Finally, here is a small set of test programs, I'm happy to turn them into
-> kselftests if we agree on an API
->
-> #include <stdio.h>
-> #include <unistd.h>
-> #include <stdlib.h>
-> #include <sys/types.h>
-> #include <sys/stat.h>
-> #include <fcntl.h>
->
-> int main(void)
-> {
-> 	int fd;
-> 	char buf[128];
->
-> 	fd =3D open("/proc/self/comm", O_RDONLY);
-> 	if (fd < 0) {
-> 		perror("open comm");
-> 		exit(1);
-> 	}
->
-> 	if (read(fd, buf, 128) < 0) {
-> 		perror("read");
-> 		exit(1);
-> 	}
->
-> 	printf("comm: %s", buf);
-> 	exit(0);
-> }
->
-> #define _GNU_SOURCE
-> #include <stdio.h>
-> #include <syscall.h>
-> #include <stdbool.h>
-> #include <unistd.h>
-> #include <fcntl.h>
-> #include <stdlib.h>
-> #include <errno.h>
-> #include <sys/wait.h>
->
-> #ifndef AT_EMPTY_PATH
-> #define AT_EMPTY_PATH                        0x1000  /* Allow empty relat=
-ive */
-> #endif
->
-> #ifndef AT_EXEC_REASONABLE_COMM
-> #define AT_EXEC_REASONABLE_COMM         0x200
-> #endif
->
-> int main(int argc, char *argv[])
-> {
-> 	pid_t pid;
-> 	int status;
-> 	bool wants_reasonable_comm =3D argc > 1;
->
-> 	pid =3D fork();
-> 	if (pid < 0) {
-> 		perror("fork");
-> 		exit(1);
-> 	}
->
-> 	if (pid =3D=3D 0) {
-> 		int fd;
-> 		long ret, flags;
->
-> 		fd =3D open("./catprocselfcomm", O_PATH);
-> 		if (fd < 0) {
-> 			perror("open catprocselfname");
-> 			exit(1);
-> 		}
->
-> 		flags =3D AT_EMPTY_PATH;
-> 		if (wants_reasonable_comm)
-> 			flags |=3D AT_EXEC_REASONABLE_COMM;
-> 		syscall(__NR_execveat, fd, "", (char *[]){"./catprocselfcomm", NULL}, N=
-ULL, flags);
-> 		fprintf(stderr, "execveat failed %d\n", errno);
-> 		exit(1);
-> 	}
->
-> 	if (waitpid(pid, &status, 0) !=3D pid) {
-> 		fprintf(stderr, "wrong child\n");
-> 		exit(1);
-> 	}
->
-> 	if (!WIFEXITED(status)) {
-> 		fprintf(stderr, "exit status %x\n", status);
-> 		exit(1);
-> 	}
->
-> 	if (WEXITSTATUS(status) !=3D 0) {
-> 		fprintf(stderr, "child failed\n");
-> 		exit(1);
-> 	}
->
-> 	return 0;
-> }
-> ---
->  fs/exec.c                  | 22 ++++++++++++++++++----
->  include/uapi/linux/fcntl.h |  3 ++-
->  2 files changed, 20 insertions(+), 5 deletions(-)
->
-> diff --git a/fs/exec.c b/fs/exec.c
-> index dad402d55681..36434feddb7b 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1569,11 +1569,15 @@ static void free_bprm(struct linux_binprm *bprm)
->  	kfree(bprm);
->  }
->=20=20
-> -static struct linux_binprm *alloc_bprm(int fd, struct filename *filename=
-, int flags)
-> +static struct linux_binprm *alloc_bprm(int fd, struct filename *filename,
-> +				       struct user_arg_ptr argv, int flags)
->  {
->  	struct linux_binprm *bprm;
->  	struct file *file;
->  	int retval =3D -ENOMEM;
-> +	bool needs_comm_fixup =3D flags & AT_EXEC_REASONABLE_COMM;
-> +
-> +	flags &=3D ~AT_EXEC_REASONABLE_COMM;
->=20=20
->  	file =3D do_open_execat(fd, filename, flags);
->  	if (IS_ERR(file))
-> @@ -1590,11 +1594,20 @@ static struct linux_binprm *alloc_bprm(int fd, st=
-ruct filename *filename, int fl
->  	if (fd =3D=3D AT_FDCWD || filename->name[0] =3D=3D '/') {
->  		bprm->filename =3D filename->name;
->  	} else {
-> -		if (filename->name[0] =3D=3D '\0')
-> +		if (needs_comm_fixup) {
-> +			const char __user *p =3D get_user_arg_ptr(argv, 0);
-> +
-> +			retval =3D -EFAULT;
-> +			if (!p)
-> +				goto out_free;
-> +
-> +			bprm->fdpath =3D strndup_user(p, MAX_ARG_STRLEN);
-> +		} else if (filename->name[0] =3D=3D '\0')
->  			bprm->fdpath =3D kasprintf(GFP_KERNEL, "/dev/fd/%d", fd);
->  		else
->  			bprm->fdpath =3D kasprintf(GFP_KERNEL, "/dev/fd/%d/%s",
->  						  fd, filename->name);
-> +		retval =3D -ENOMEM;
->  		if (!bprm->fdpath)
->  			goto out_free;
->=20=20
-> @@ -1969,7 +1982,7 @@ static int do_execveat_common(int fd, struct filena=
-me *filename,
->  	 * further execve() calls fail. */
->  	current->flags &=3D ~PF_NPROC_EXCEEDED;
->=20=20
-> -	bprm =3D alloc_bprm(fd, filename, flags);
-> +	bprm =3D alloc_bprm(fd, filename, argv, flags);
->  	if (IS_ERR(bprm)) {
->  		retval =3D PTR_ERR(bprm);
->  		goto out_ret;
-> @@ -2034,6 +2047,7 @@ int kernel_execve(const char *kernel_filename,
->  	struct linux_binprm *bprm;
->  	int fd =3D AT_FDCWD;
->  	int retval;
-> +	struct user_arg_ptr user_argv =3D {};
->=20=20
->  	/* It is non-sense for kernel threads to call execve */
->  	if (WARN_ON_ONCE(current->flags & PF_KTHREAD))
-> @@ -2043,7 +2057,7 @@ int kernel_execve(const char *kernel_filename,
->  	if (IS_ERR(filename))
->  		return PTR_ERR(filename);
->=20=20
-> -	bprm =3D alloc_bprm(fd, filename, 0);
-> +	bprm =3D alloc_bprm(fd, filename, user_argv, 0);
->  	if (IS_ERR(bprm)) {
->  		retval =3D PTR_ERR(bprm);
->  		goto out_ret;
-> diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-> index 87e2dec79fea..7178d1e4a3de 100644
-> --- a/include/uapi/linux/fcntl.h
-> +++ b/include/uapi/linux/fcntl.h
-> @@ -100,7 +100,8 @@
->  /* Reserved for per-syscall flags	0xff. */
->  #define AT_SYMLINK_NOFOLLOW		0x100   /* Do not follow symbolic
->  						   links. */
-> -/* Reserved for per-syscall flags	0x200 */
-> +#define AT_EXEC_REASONABLE_COMM		0x200   /* Use argv[0] for comm in
-> +						   execveat */
->  #define AT_SYMLINK_FOLLOW		0x400   /* Follow symbolic links. */
->  #define AT_NO_AUTOMOUNT			0x800	/* Suppress terminal automount
->  						   traversal. */
->
-> base-commit: baeb9a7d8b60b021d907127509c44507539c15e5
 
