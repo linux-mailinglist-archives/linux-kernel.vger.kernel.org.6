@@ -1,55 +1,73 @@
-Return-Path: <linux-kernel+bounces-337255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 491709847AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:28:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60C909847AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C82B2845D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:28:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF9F7B22422
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 14:29:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC6331AAE2A;
-	Tue, 24 Sep 2024 14:28:25 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A329B1AAE2A;
+	Tue, 24 Sep 2024 14:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MlFdBqfL"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993711AAE02;
-	Tue, 24 Sep 2024 14:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9811AAE02
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 14:29:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727188105; cv=none; b=O2wRf8l17yHAi5mfpOp03tuvs6UZU0UKMee9g5yzseEdKNiLqBwqvNiLeXeOMY8r9uKOoBTGNdzMHSJL2dJVxKfac3Y4bV8+zjB5gfmN72lWgPODrDdYQEwnigA7UHR8tRLvK53Yof+yPLRUIGlcEjo7cAEpe9Cdil9b9Qs3DuM=
+	t=1727188184; cv=none; b=FG/9dNTKdps97cWtX3lihrqx/OfLZiZ2ptSSOab105ZwyrZw+Nj+74+jPXJli1dq1ZKpHPIy5CTymvLvEBw0QIngTHPv/ClwKRH/JJ7ivg4Qz6xi1AjKTkUHR5W5dlcZDGJ7IbYRS22/jleNY7/BnK6ea6iJi34bpM0DOIz2SEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727188105; c=relaxed/simple;
-	bh=OMUtjr1Eu/jtX+GjVHvZet0AuJ7uPpMTCBj+4eqFAa4=;
+	s=arc-20240116; t=1727188184; c=relaxed/simple;
+	bh=FngZq51ki6qCptx3vUMPj1acgIGtnSKHuHPNES28BJw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=USH0KT95LLQ+7gyPNJJiqmw7h39YFVXQ8vfSZkpNpoIzqk+OQk1skZ321WZJNH5/c79c7YPK7B+5lQluVi1z8vxIVcUyQOqg3az1tWfi+zjUYS3xp8PWPvMd/x3MBkn2gZfBxb4pUGhNab35zzmKCcspZzfOtIUckPDtC7+V+wU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4XChzg06DTz9sSZ;
-	Tue, 24 Sep 2024 16:28:15 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id ki0JqHY4FxX6; Tue, 24 Sep 2024 16:28:14 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4XChzf6GBFz9sSK;
-	Tue, 24 Sep 2024 16:28:14 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id BC2948B76E;
-	Tue, 24 Sep 2024 16:28:14 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id T3IA0DH180bA; Tue, 24 Sep 2024 16:28:14 +0200 (CEST)
-Received: from [192.168.232.31] (unknown [192.168.232.31])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id DE98B8B763;
-	Tue, 24 Sep 2024 16:28:13 +0200 (CEST)
-Message-ID: <bfd5cc30-f5fd-465a-b2d8-f0b35c018cda@csgroup.eu>
-Date: Tue, 24 Sep 2024 16:28:13 +0200
+	 In-Reply-To:Content-Type; b=gPOa3Mhy+Q0KvjwXIAPMMLkej9dW3U1+DAgQF8FdPP821RKzPK0IhI69YyQJ7c19FNIU4Vvro5DMY/iKucCnmv1UaWlm3InpoGoKA8wU2X+R299J4WLPNvgwxchNFZAAYRc/mfTcE5Tag7ld2XXZUFZpfIiUnuuLANT2Xo8LodY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MlFdBqfL; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f759b87f83so59435391fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:29:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727188181; x=1727792981; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=f4cZlZAMjE0Ne1cxdgDT0MlDCgX/48/03XwVDrLKtwc=;
+        b=MlFdBqfLRXeILdMKeUFGE/O8MaqhrNmOjmgUwlL5luUrOzOst1O/oQ3ZMu65DgcMt2
+         2D1+nemtS0xsLtmzu/yRmFWOApL09KggFvsK1ZS8mSpuvHioswjcbP9516pccK8fpzm9
+         39JuTE9l4XatVybiasatkWeftvzaS2QjwKruRri2aBjNPAywkCwdnbEKhfyXt3zshwFY
+         F9dFwTDj4uFthNueThbKoHtyb6z6sPyK5SHG42PZMSDDG/BLj3frTe++Grk6vlw3EuL8
+         FCKlITs1tateGuR4/nb+xx25A0Da5zl1Wdnow90wHLs8kBmRPKo0fF1HWAiPq6QrYC+k
+         vMFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727188181; x=1727792981;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=f4cZlZAMjE0Ne1cxdgDT0MlDCgX/48/03XwVDrLKtwc=;
+        b=szJtrcqyaiiGle/6S9fn4BUdIcSJmLNY3R35uhzZ4lJNzxyRgJsENZKWqJPYPGsiAR
+         MioBnIbNJd/R3tstOk4P/TIGTrIm1c3wEljB6b81fRBz0QhqFqk1V1FL6FvlFsVRJH8F
+         2CV9yeAFAOO8ktarnlKUpf7s2pcmehl+MkpKAC/eb6CyjLPx5XdzRmGUjTnTfX5ItfwA
+         TVy3M1FdD1xxb1uR+g5xXnKYUffg+YbytEskfxXKz8IPGHnvfxzDG51771wUtSVQbOhi
+         nXzlvhAroQZF8SUAInfiZiBrOkDEzrmKUjP1mUiz+danQpW/KOedxBIlsm6gHeF/OLGO
+         MclQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUcgotY/651hvYR26U340RVZOcA6EM5J36gtqWBym6SoaB1Bflv5PLeboIK0AqxrKsqdVPdjQYiJQkcnv4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0u4sMCRYR0TrVMpg9sGflZghgN2k2ULL/g9/DehEYO8jVuPEv
+	7dsQb3/XFi1Fdj5jEufIqqtmHlG4jdRWvRt1Ilru9pCLgkdSL1CTkHTvaKXb+S4=
+X-Google-Smtp-Source: AGHT+IHqqbNSNbNJsHX8o3utWIHB/GoQ4Xc0CjtuLGIi0iI5bbvuRybVAXmwL11ncdRlK449c9p3oA==
+X-Received: by 2002:ac2:4e09:0:b0:532:fdba:e7bc with SMTP id 2adb3069b0e04-536ad3f168fmr7657143e87.57.1727188180585;
+        Tue, 24 Sep 2024 07:29:40 -0700 (PDT)
+Received: from [192.168.0.157] ([79.115.63.20])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93930cae67sm89840866b.121.2024.09.24.07.29.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Sep 2024 07:29:39 -0700 (PDT)
+Message-ID: <a87a159e-eff1-45c3-bf26-115d4ca5a9be@linaro.org>
+Date: Tue, 24 Sep 2024 15:29:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,130 +75,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/8] vdso: Introduce vdso/page.h
-To: Vincenzo Frascino <vincenzo.frascino@arm.com>,
- Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
- Linux-Arch <linux-arch@vger.kernel.org>, linux-mm@kvack.org
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
- Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <20240923141943.133551-1-vincenzo.frascino@arm.com>
- <20240923141943.133551-5-vincenzo.frascino@arm.com>
- <f8256ade-c17f-46d1-bd4a-4d01235be5a0@app.fastmail.com>
- <645e5f3f-debf-4f68-ad75-4fb749b07a5b@arm.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <645e5f3f-debf-4f68-ad75-4fb749b07a5b@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v9 5/6] spi: mxic: Add support for swapping byte
+To: Mark Brown <broonie@kernel.org>, AlvinZhou <alvinzhou.tw@gmail.com>
+Cc: linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, pratyush@kernel.org, mwalle@kernel.org,
+ miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+ chengminglin@mxic.com.tw, leoyu@mxic.com.tw,
+ AlvinZhou <alvinzhou@mxic.com.tw>, JaimeLiao <jaimeliao@mxic.com.tw>
+References: <20240718034614.484018-1-alvinzhou.tw@gmail.com>
+ <20240718034614.484018-6-alvinzhou.tw@gmail.com>
+ <ZvKktPc0luV9hItN@finisterre.sirena.org.uk>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <ZvKktPc0luV9hItN@finisterre.sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hi, Mark,
 
-
-Le 24/09/2024 à 16:10, Vincenzo Frascino a écrit :
-> 
-> 
-> On 23/09/2024 17:54, Arnd Bergmann wrote:
->> On Mon, Sep 23, 2024, at 14:19, Vincenzo Frascino wrote:
->>> The VDSO implementation includes headers from outside of the
->>> vdso/ namespace.
->>>
->>> Introduce vdso/page.h to make sure that the generic library
->>> uses only the allowed namespace.
->>>
->>> Cc: Andy Lutomirski <luto@kernel.org>
->>> Cc: Thomas Gleixner <tglx@linutronix.de>
->>> Cc: Jason A. Donenfeld <Jason@zx2c4.com>
->>> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+On 9/24/24 12:38 PM, Mark Brown wrote:
+> On Thu, Jul 18, 2024 at 11:46:13AM +0800, AlvinZhou wrote:
+>> From: AlvinZhou <alvinzhou@mxic.com.tw>
 >>
->> Thanks for the new version. This looks all good, just some
->> very minor ideas for how to possibly improve the new version:
->>
+>> Some SPI-NOR flash swap the bytes on a 16-bit boundary when
+>> configured in Octal DTR mode. It means data format D0 D1 D2 D3
+>> would be swapped to D1 D0 D3 D2. So that whether controller
+>> support swapping bytes should be checked before enable Octal
+>> DTR mode. Add swap byte support on a 16-bit boundary when
+>> configured in Octal DTR mode for Macronix xSPI host controller
+>> dirver.
 > 
-> Thanks Arnd.
-> 
->>> +/* PAGE_SHIFT determines the page size */
->>> +#define PAGE_SHIFT      CONFIG_PAGE_SHIFT
->>> +
->>> +#define PAGE_SIZE	(_AC(1,UL) << PAGE_SHIFT)
->>> +
->>> +#if defined(CONFIG_PHYS_ADDR_T_64BIT) && !defined(CONFIG_X86_64)
->>> +#define PAGE_MASK	(~((1 << PAGE_SHIFT) - 1))
->>> +#else
->>> +#define PAGE_MASK	(~(PAGE_SIZE-1))
->>> +#endif
->>
->> I would open-code the CONFIG_PAGE_SHIFT in PAGE_SIZE
->> and PAGE_MASK, just to avoid the extra indirection in the
->> preprocessor. This mainly has the benefit of slightly
->> shorter compiler warnings when all the macros get
->> traced back but can also slightly improve compile speed
->> in case this is used in deeply nested macros.
->>
-> 
-> I will fix it in the next iteration.
-> 
->> Without a comment, the special case for CONFIG_X86_64
->> not very clear, and probably not needed. If you are
->> worried about introducing an architecture specific
->> regression, I would suggest instead explaining the
->> possible issue in the patch description but using the
->> more generic and simpler #ifdef check.
->>
-> 
-> If I do not add the #ifdef, it does not build. But you are right, I should have
-> put a comment in the commit message.
-> 
-> Regression below:
-> 
-> drivers/gpu/drm/i915/gt/intel_gt_print.h:29:36: error: format ‘%lx’ expects
-> argument of type ‘long unsigned int’, but argument 6 has type ‘u32’ {aka
-> ‘unsigned int’} [-Werror=format=]
->     29 |         drm_dbg(&(_gt)->i915->drm, "GT%u: " _fmt, (_gt)->info.id,
-> ##__VA_ARGS__)
->        |                                    ^~~~~~~~
-> include/drm/drm_print.h:424:39: note: in definition of macro ‘drm_dev_dbg’
->    424 |         __drm_dev_dbg(NULL, dev, cat, fmt, ##__VA_ARGS__)
->        |                                       ^~~
-> include/drm/drm_print.h:524:33: note: in expansion of macro ‘drm_dbg_driver’
->    524 | #define drm_dbg(drm, fmt, ...)  drm_dbg_driver(drm, fmt, ##__VA_ARGS__)
->        |                                 ^~~~~~~~~~~~~~
-> linux/drivers/gpu/drm/i915/gt/intel_gt_print.h:29:9: note: in expansion of macro
-> ‘drm_dbg’
->     29 |         drm_dbg(&(_gt)->i915->drm, "GT%u: " _fmt, (_gt)->info.id,
-> ##__VA_ARGS__)
->        |         ^~~~~~~
-> drivers/gpu/drm/i915/gt/intel_gt.c:310:25: note: in expansion of macro ‘gt_dbg’
->    310 |                         gt_dbg(gt, "Unexpected fault\n"
->        |                         ^~~~~~
-> 
-> I am open to alternative suggestions.
-> 
+> driver
 
+I can amend that.
 
-'fault' is an 'u32' and 'mask' should be agnostic so the format should 
-be %x not %lx I think:
+> 
+> Acked-by: Mark Brown <broonie@kernel.org>
 
-diff --git a/drivers/gpu/drm/i915/gt/intel_gt.c 
-b/drivers/gpu/drm/i915/gt/intel_gt.c
-index a6c69a706fd7..352ef5e1c615 100644
---- a/drivers/gpu/drm/i915/gt/intel_gt.c
-+++ b/drivers/gpu/drm/i915/gt/intel_gt.c
-@@ -308,7 +308,7 @@ static void gen6_check_faults(struct intel_gt *gt)
-  		fault = GEN6_RING_FAULT_REG_READ(engine);
-  		if (fault & RING_FAULT_VALID) {
-  			gt_dbg(gt, "Unexpected fault\n"
--			       "\tAddr: 0x%08lx\n"
-+			       "\tAddr: 0x%08x\n"
-  			       "\tAddress space: %s\n"
-  			       "\tSource ID: %d\n"
-  			       "\tType: %d\n",
+I'm fine with the SPI bits as well. Shall I take the SPI/SPIMEM patches
+through mtd and provide you an immutable tag? I can do that after -rc1
+is out.
 
+Or you can take them directly through spi/, but I'll need an immutable tag.
 
-Christophe
+Thanks,
+ta
 
