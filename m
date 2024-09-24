@@ -1,163 +1,135 @@
-Return-Path: <linux-kernel+bounces-336704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 892CB983F98
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:46:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30DD6983F9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:46:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E9072846CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:46:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D09B41F23C9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 07:46:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4E6149C6F;
-	Tue, 24 Sep 2024 07:45:53 +0000 (UTC)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7DD14AD38;
+	Tue, 24 Sep 2024 07:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nIjkFOgY"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050371803A;
-	Tue, 24 Sep 2024 07:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628941803A
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 07:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727163953; cv=none; b=ZZ8FRZUzkHdjifrpoEr5QLcakyO2EgtIkiSD7BTtS6LiX06mGEbVliiiGJD7spprWzwoVWGs2R+rfX+9sg4eHaFGgPaVsTb7+qbMJDtbcYvImaG88dM2Z+pcFU22lNxlj45hBvSWXbNzgh5Qzr+SlY7PjttDEimsUPBApx7suuM=
+	t=1727163957; cv=none; b=f/P+sDoaYG9o9cY03jwb/k6fXHFSbB+aX7D3p19bBGVOKd5EGFH2Ok77sPZNj8Mfrjb1ssFHrpXcfqbtLpFM6R2UUYflWJyQo5ZHujpdV9eT7t4TUnp0cB2HDnLIByBwLV6FF+NBX4MMCUeKJahGouMalO9LItlY4TwuV529GLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727163953; c=relaxed/simple;
-	bh=2c9qY0zOKSHy6fPePBLlrhvns/MQJha4cFe8EOydcRE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NI1UeUQk4hpbVudWOrFhMkS/90vqpYDniQOSEWiYuo0hrMSKxAUP/qZ3eFLOwWvjTjGGh0UoQTr5Qp7J2ppqL54MBbVZKiHmDc3KY4t1iJzeQiPihkDbMCc+0Mjk3F3MpDVkTiQuNWbmzNJtYTGiW5bCSSpypB2j94AvNyR+p9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e1d4368ad91so4792976276.0;
-        Tue, 24 Sep 2024 00:45:50 -0700 (PDT)
+	s=arc-20240116; t=1727163957; c=relaxed/simple;
+	bh=l08cQdXWihPaRKBPjiePc2JDBhMjEU+fAYF5sfdJpqw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=P+k0bRz3ni5Oh7cNqdRZ+JHQTI7h86uRx8AMuAjURAH9ipxWKfMK2rssmAYvWO26NolfD3v85CsIshrSpJZzAShBdrvmJ5D8iEIqc4a9N19Z56PavUYio3/bg5rNAidpbAwiiXYz3/g1snWQI1wPaEmNribUtZYTAbyGzc5vjl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nIjkFOgY; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2058456b864so90367145ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 00:45:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727163956; x=1727768756; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LPW+26/rhTFGTD1mqsdatrHifgyew0bOQKR7ZHJ/lKo=;
+        b=nIjkFOgY6o0917D+pPgsB90/DoMKptVBOJdB3Y/I5fcL6coyMgHDKsvkCST3hr3pd3
+         jhVsSDKjTnJ5qWfK1zc2eAj8ChQXbMHQqsagU3PJJurYmhwIZkS3+Y/10ah+efmWv/1f
+         7O9V+CmbStgMw51sEd9pUSOiO22YJkdkeU26MBa2NKOFwsyOMha0JUysWV7PqVDVT7wM
+         S8xzKWdtEVjbVfXxQt+qVNY3I6827U7xM1MFQEX5z2oeTIF7ei8ZPfNmKQGqY9fUsgLh
+         trvFnd7w7GoZFUJwbKYjrAr/0QjpeRSyPItAoofl0vn+yT2gWYbuZDQ4rSPN8u07d5yb
+         Nenw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727163948; x=1727768748;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HF4eApvG4Dr17TRVbWAn/oqbrhes5tsWNdoiUFvIyHk=;
-        b=QDggGpWBR1npF8lxRv8uupebeDZgjdND7cKthQoFl3Z4OI7cx1qjKSc8vyAM8m7KRs
-         rnmtiIaoyNVSLj21CswZXP5Y68B/m6P8EW30BJeKdBaBLzpM7KhbjzF2n0/vKoShjFUA
-         qZdh1kUwXgCEnxsZ8EmEN9L8pjuelJtnqwcFp4nLK9j37x0oiT3QR52Tak/y9VwHHsHK
-         q8iwvEyLHY3Lf0Z7OYXZRS6C/VVeAEVhHpxu9LZ9JW2Q8pFtWx173C8K1CmFetlInEug
-         uKUjyJz04uNqrIVG/Rhtncnm1hV/NquFLvBc9BBs4IsGnG3LUiMOsKLHjsAFRsMzs7dB
-         0Rww==
-X-Forwarded-Encrypted: i=1; AJvYcCWsq5l9sQf9my9GBXbwRyV+TW6UhpIN2eHpDKvf6a7RnU/ISTp5UsZrAQ553EV810U1yZEQjze967FrzUXb@vger.kernel.org, AJvYcCXV8XrvXJMHWTclm22UTVWsWIHh6vOsoWZOWX5apz3WpTXSWQb6LpMgkXxzUjV3Jp6/XE2P9itgB+3gYQg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPoH94xBS2rT6E47n6AlWUdnDEmOVOy0moYLszCULZjIaqCfdY
-	7Cbgsugu5yr4YzfmbwxxDB8AiYjpFBNuPdecLLVbpdfBZH5xoacRmK1FgS6P
-X-Google-Smtp-Source: AGHT+IGYTXkx4veSbuiLQWrePPtz4BomdwGszxruZmZrd0xO1U8j5vRoq4WsevDexee0JbIjGnZLiw==
-X-Received: by 2002:a05:6902:2e89:b0:e1a:b0a1:3406 with SMTP id 3f1490d57ef6-e24978657b8mr1721415276.4.1727163948309;
-        Tue, 24 Sep 2024 00:45:48 -0700 (PDT)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e2499c77eb2sm167923276.60.2024.09.24.00.45.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Sep 2024 00:45:47 -0700 (PDT)
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6ddca648c26so42056527b3.1;
-        Tue, 24 Sep 2024 00:45:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVBZoooPeqCfQTYfId+D55/gjjVikypsquz1x4SdtW9PddfdqewLh2T8ACAdlAj+K8CEv3OhI6WsO9ZmfE=@vger.kernel.org, AJvYcCXvIs2aiZcy+etDMTJWe7eRGfUV6WlSNpuilPTiyPqVyNifRqe8bd4Q4mDJ+9t/KoNRmtTKGhsG7P9N/7p+@vger.kernel.org
-X-Received: by 2002:a05:690c:94:b0:6dd:ddf6:90aa with SMTP id
- 00721157ae682-6e2085653fbmr16769677b3.5.1727163946854; Tue, 24 Sep 2024
- 00:45:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727163956; x=1727768756;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LPW+26/rhTFGTD1mqsdatrHifgyew0bOQKR7ZHJ/lKo=;
+        b=CuL7WpkyB+y6Q21ed6o6vjM7x+dz7rn0n6lP1/FtAU0TyiNLPsJ1D2L66w/Sp2QuoE
+         Vb2eSkmlPq2gsdmbg/aMAUpor6gOeN3BXDFSMCjLagzJ+pXaEqUj5sCgbIAp+PbgzfNE
+         GWNFTtdLzqwIZLxfcHjZXHybylibpyxzHPgr+DdHVwD3Eg4bfm0ie9OFoiGi8xtEz9sc
+         fDWLybROz9a8Wi5rzJWzp9yGmi5Xb33n80Gej+2sZXNLjeP3/TKmNudU4VQ6inu5pwcc
+         wy3qTlj+cilB8J9MFSfK7HelDKjvc/eQzo3ZpCuCqyUOVUdre9BWovxli960OIq1mPgn
+         1x0w==
+X-Forwarded-Encrypted: i=1; AJvYcCUEpckMZGTwzq2nSmXN4QmnvFefRq474iUFTJyF0cGbSyTY6pyWYbU88vlwp8JUZ+yDWmofaIkdxCwF81A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyI/c2NsbnfasfZmVThM9YeAFwjd4lajbOlEK2B2NaLFWin5eWb
+	lYFxfhEMk4D+E1R7pkDzRDh0bvaVVWIaHh4VdJ380O0pMKk8oRtLmzDC8OLjXAJJ9RjWCnL04VM
+	gMQ==
+X-Google-Smtp-Source: AGHT+IFTbqmJJfq29+DpJvy9XBe6WodScDx+dQjeroXmCCrwMNoNzJvWaB1qOa1AKJaWaQpzxTfiia20RNI=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:ecce:b0:206:a1c9:273 with SMTP id
+ d9443c01a7336-208d83f5295mr5049535ad.7.1727163955519; Tue, 24 Sep 2024
+ 00:45:55 -0700 (PDT)
+Date: Tue, 24 Sep 2024 00:45:52 -0700
+In-Reply-To: <ZvIOox8CncED/gSL@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240923142533.1197982-1-linux@roeck-us.net> <f15ff981-e725-40f0-8d2f-856b4b6a65b3@redhat.com>
- <4c2cdf84-9794-4722-8417-cf924f890797@roeck-us.net> <203f0d01-d25e-4436-b769-b89edb1b57d9@roeck-us.net>
-In-Reply-To: <203f0d01-d25e-4436-b769-b89edb1b57d9@roeck-us.net>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 24 Sep 2024 09:45:34 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWfsgnCRLhCkvJBn8Prdd4M=HvwtsPT0BeRPtA-nFHzYQ@mail.gmail.com>
-Message-ID: <CAMuHMdWfsgnCRLhCkvJBn8Prdd4M=HvwtsPT0BeRPtA-nFHzYQ@mail.gmail.com>
-Subject: Re: [PATCH] mm: Make SPLIT_PTE_PTLOCKS depend on the existence of NR_CPUS
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: David Hildenbrand <david@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>, 
-	linux-kbuild <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20240703020921.13855-1-yan.y.zhao@intel.com> <20240703021043.13881-1-yan.y.zhao@intel.com>
+ <ZvG1Wki4GvIyVWqB@google.com> <ZvIOox8CncED/gSL@yzhao56-desk.sh.intel.com>
+Message-ID: <ZvJuMGmpYT60Qh6I@google.com>
+Subject: Re: [PATCH v2 1/4] KVM: x86/mmu: Introduce a quirk to control memslot
+ zap behavior
+From: Sean Christopherson <seanjc@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: pbonzini@redhat.com, rick.p.edgecombe@intel.com, kai.huang@intel.com, 
+	isaku.yamahata@intel.com, dmatlack@google.com, sagis@google.com, 
+	erdemaktas@google.com, graf@amazon.com, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-Hi G=C3=BCnter,
+On Tue, Sep 24, 2024, Yan Zhao wrote:
+> On Mon, Sep 23, 2024 at 11:37:14AM -0700, Sean Christopherson wrote:
+> > > +static void kvm_mmu_zap_memslot_leafs(struct kvm *kvm, struct kvm_memory_slot *slot)
+> > > +{
+> > > +	struct kvm_gfn_range range = {
+> > > +		.slot = slot,
+> > > +		.start = slot->base_gfn,
+> > > +		.end = slot->base_gfn + slot->npages,
+> > > +		.may_block = true,
+> > > +	};
+> > > +	bool flush = false;
+> > > +
+> > > +	write_lock(&kvm->mmu_lock);
+> > > +
+> > > +	if (kvm_memslots_have_rmaps(kvm))
+> > > +		flush = kvm_handle_gfn_range(kvm, &range, kvm_zap_rmap);
+> > 
+> > This, and Paolo's merged variant, break shadow paging.  As was tried in commit
+> > 4e103134b862 ("KVM: x86/mmu: Zap only the relevant pages when removing a memslot"),
+> > all shadow pages, i.e. non-leaf SPTEs, need to be zapped.  All of the accounting
+> > for a shadow page is tied to the memslot, i.e. the shadow page holds a reference
+> > to the memslot, for all intents and purposes.  Deleting the memslot without removing
+> > all relevant shadow pages results in NULL pointer derefs when tearing down the VM.
+> > 
+> > Note, that commit is/was buggy, and I suspect my follow-up attempt[*] was as well.
+> > https://lore.kernel.org/all/20190820200318.GA15808@linux.intel.com
+> > 
+> > Rather than trying to get this functional for shadow paging (which includes nested
+> > TDP), I think we should scrap the quirk idea and simply make this the behavior for
+> > S-EPT and nothing else.
+> Ok. Thanks for identifying this error. Will change code to this way.
 
-CC kbuild
+For now, I think a full revert of the entire series makes sense.  Irrespective of
+this bug, I don't think KVM should commit to specific implementation behavior,
+i.e. KVM shouldn't explicitly say only leaf SPTEs are zapped.  The quirk docs
+should instead say that if the quirk is disabled, KVM will only guarantee that
+the delete memslot will be inaccessible.  That way, KVM can still do a fast zap
+when it makes sense, e.g. for large memslots, do a complete fast zap, and for
+small memslots, do a targeted zap of the TDP MMU but a fast zap of any shadow
+MMUs.
 
-I have two comments...
+> BTW: update some findings regarding to the previous bug with Nvidia GPU
+> assignment:
+> I found that after v5.19-rc1+, even with nx_huge_pages=N, the bug is not
+> reproducible when only leaf entries of memslot are zapped.
+> (no more detailed info due to limited time to debug).
 
-On Tue, Sep 24, 2024 at 1:52=E2=80=AFAM Guenter Roeck <linux@roeck-us.net> =
-wrote:
-> On 9/23/24 15:08, Guenter Roeck wrote:
-> > On 9/23/24 08:23, David Hildenbrand wrote:
-> >> On 23.09.24 16:25, Guenter Roeck wrote:
-> >>> SPLIT_PTE_PTLOCKS already depends on "NR_CPUS >=3D 4", but that evalu=
-ates
-> >>> to true if there is no NR_CPUS configuration option (such as for m68k=
-).
-> >>> This results in CONFIG_SPLIT_PTE_PTLOCKS=3Dy for mac_defconfig.
-> >>> This in turn causes the m68k "q800" machine to crash in qemu.
-
-Should this be fixed in Kconfig (too)?
-
-> >> Oh, that's why my compile tests still worked ... I even removed the ad=
-ditional NR_CPUS check, assuming it's not required ...
-> >>
-> >> Thanks for debugging and fixing!
-> >>
-> >> Acked-by: David Hildenbrand <david@redhat.com>
-> >>
-> >
-> > Apparently it wasn't that simple :-(. 0-day reports a build failure
-> > with s390 builds.
-> >
-> > arch/s390/mm/gmap.c:357:16: error: implicit declaration of function 'pm=
-d_pgtable_page'.
-> >
-> > Turns out that
-> >      depends on NR_CPUS && NR_CPUS >=3D 4
-> >
-> > doesn't work and disables SPLIT_PTE_PTLOCKS even if NR_CPUS _is_ define=
-d.
-> > I have no idea how to declare the dependency correctly.
-> > Sorry, I did not expect that.
->
-> The only solution I found was to define NR_CPUS for m68k. That seems to b=
-e
-> the only architecture not defining it, so hopefully that is an acceptable
-> solution. I'll send v2 of the patch shortly.
-
-My first thought was to agree, as m68k is indeed the only architecture
-that does not define NR_CPUS. Upon closer look, most architectures
-have NR_CPUS depend on SMP, hence I assume the issue could happen for
-those too (although I didn't manage to create such a config on anything
-but m68k)?  So the simple solution would be to add a dependency on
-SMP to SPLIT_PTE_PTLOCKS.
-
-BTW, the list of excluded architectures looks fragile to me:
-
-    config SPLIT_PTE_PTLOCKS
-            def_bool y
-            depends on MMU
-            depends on NR_CPUS >=3D 4
-            depends on !ARM || CPU_CACHE_VIPT
-            depends on !PARISC || PA20
-            depends on !SPARC32
-
-If this can't be handled in a generic way, perhaps this should be
-changed from opt-out to opt-in (i.e. select gate symbol in arch-specific
-Kconfig)?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Heh, I've given up hope on ever finding a root cause for that issue.
 
