@@ -1,111 +1,178 @@
-Return-Path: <linux-kernel+bounces-337413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BA419849C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:36:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F25749849CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:37:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D3F41C23274
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:36:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 724401F2603D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 16:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43EC41ABECF;
-	Tue, 24 Sep 2024 16:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5BC91ABEB0;
+	Tue, 24 Sep 2024 16:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TJ8GcDQE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BZKeNpem"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9772D1AAE0D;
-	Tue, 24 Sep 2024 16:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AAF41AAE0D;
+	Tue, 24 Sep 2024 16:36:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727195787; cv=none; b=AhS6Qenaty+MAScdWF4kqI/5hByRWUUINGJ7eCGK1lPNX++MQB4sQOIKK7chz36yzMT21WLUbcY3Zs1FMdbYyfybJjhJlNWBZVLFIVB9qzqRLdFPdRLznS1LD21PhndjfLUlaxO5Zs5jdIIxyrU55nbzDfYUIK04lp0FOrD2guU=
+	t=1727195812; cv=none; b=PXf3vJFWpeRFgc+se91E8WMqrAwrBTxyTrzGfwD3dUuUn3UVvOMC0h4zPgFbJ2/8M0OnJBqPfW+9ayFQaP3lIKjGvzA4z78tUakep55PZCQumvV9EswMtDcLAMOFwcMJlhf77GGRLZzNBQ3gZXpXX1AtLrk+zG5r0d/RVlMHn/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727195787; c=relaxed/simple;
-	bh=HjBIuX5FaD8TNAF4/04sGMON9kjAruI8oBmc8dJVfzY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=nuvhDwdQXwWtHB/kQ7cHNId1azFG0hBTVhtyo/G6BOyAfcVBtgdQuefoWvHSwxT4ATXAxhsh4kV3cGgVh5dFMrHzwRO1SUFhjxRtbw+1HzMaki95mZW2zOOT8uMjoHh7TuzFeyFIFZHy6AR8+P62rynrcjogcblYimbfuMULvxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TJ8GcDQE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCD5FC4CEC4;
-	Tue, 24 Sep 2024 16:36:26 +0000 (UTC)
+	s=arc-20240116; t=1727195812; c=relaxed/simple;
+	bh=5VvhCMZaeNsBAmWJBTCSPhE8m0YS7fNLFTIYRz8hII0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vCIjeVvkNMc9mW3i19gcQHSpmPRSqBAwzAfUHr83+YOiVzDxsHMA3HnyFu/mcaSdFj1JpQ9a82zG8XRB1Qb/oqC7GtbSxr+q3PugjeC0FwF/s45e7Sv4u1Q6XW+QHGMyG+rlDJRw05Al1TYbbgLhhkoYLGnHVfS2wBRu00ko2y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BZKeNpem; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67D7BC4CEC4;
+	Tue, 24 Sep 2024 16:36:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727195787;
-	bh=HjBIuX5FaD8TNAF4/04sGMON9kjAruI8oBmc8dJVfzY=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=TJ8GcDQEebVn8OzKc+fZ2+176kojOeR6YzfVucATXXLG/hNRhnM+5nXVbjARs1eGg
-	 +duj7+mNc7DppMQcVXfKGz7OGF8dgxnuJEDM2rUswB0+BHyRnuufQsP6dXL/a9L4ng
-	 ZNEc3f0j3XTOdxZrPCiUfZC3Htbpm22t+YCVxjFjCB0WkxwO4w1FjYbqDQz2aFRumY
-	 C3TZZbgB7BklJ8+PT8Z60w6yQEmTQ79j44hp99fkvUz4MSgypbRbQN4Hv9pphHJAp7
-	 R5FfmuZo7UIz6zDSYjdityEZqEwWEtrlRO3AJIzEUUc/exdY7CPj5Ci8viN6MTF8JR
-	 rjrV5rSYn7qRw==
+	s=k20201202; t=1727195811;
+	bh=5VvhCMZaeNsBAmWJBTCSPhE8m0YS7fNLFTIYRz8hII0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BZKeNpemH38X1KDslf8fCc73trcmd1s7gfe4cWu9EtLSOMIAEvSFCtcn8mmMAvhUj
+	 g60Bl22v05/MRaNZOJnmM4lqbAk4FtU4t5Odeg1DsxjqUIVNXFtiudVoQr61635FkJ
+	 Fq/w+hE6/bhCo9vPnh1+aKLEOWOuvxNhFmcrPaGJQOVYa2bE/CjXvt/eVBJTggkW9e
+	 1FnPuWsUhiOE1rmdSCvu0alkUhBSks++HAOarNQXIlMbADtm4+aRWawhZ9EU6bkHcl
+	 Y/9YZ7z44o01GY6jhrn7QgjNo0cmScY7qnhNNA+c4O/VkYHbxC58noQF1Fhr3u2axb
+	 BfEUkdodOxFwA==
+Date: Tue, 24 Sep 2024 17:36:46 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+Cc: broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, michal.simek@amd.com,
+	linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	git@amd.com, amitrkcian2002@gmail.com
+Subject: Re: [PATCH] dt-bindings: spi: xilinx: Add clocks & clock-names
+ properties
+Message-ID: <20240924-impaired-starving-eef91b339f67@spud>
+References: <20240923123242.2101562-1-amit.kumar-mahapatra@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="TW6iJUl9SjJzFTPf"
+Content-Disposition: inline
+In-Reply-To: <20240923123242.2101562-1-amit.kumar-mahapatra@amd.com>
+
+
+--TW6iJUl9SjJzFTPf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 24 Sep 2024 19:36:23 +0300
-Message-Id: <D4ENT15WZFRI.HA0FFVBWVISI@kernel.org>
-Cc: <roberto.sassu@huawei.com>, <mapengyu@gmail.com>, "Mimi Zohar"
- <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, "Peter Huewe" <peterhuewe@gmx.de>, "Jason
- Gunthorpe" <jgg@ziepe.ca>, <keyrings@vger.kernel.org>,
- <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 0/5] Lazy flush for the auth session
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "James Bottomley" <James.Bottomley@HansenPartnership.com>,
- <linux-integrity@vger.kernel.org>
-X-Mailer: aerc 0.18.2
-References: <20240921120811.1264985-1-jarkko@kernel.org>
- <D4D05FKB9VSG.33COYTJHUX6EM@kernel.org>
- <c26a295d96b14173b5693c5933e92bbda84764cc.camel@HansenPartnership.com>
- <D4ENNN25NKBE.87NXHTTEWZY@kernel.org>
- <19a242eeabaa72dcc159c9c24fb412e3f68f8e7e.camel@HansenPartnership.com>
-In-Reply-To: <19a242eeabaa72dcc159c9c24fb412e3f68f8e7e.camel@HansenPartnership.com>
 
-On Tue Sep 24, 2024 at 7:33 PM EEST, James Bottomley wrote:
-> On Tue, 2024-09-24 at 19:29 +0300, Jarkko Sakkinen wrote:
-> > On Tue Sep 24, 2024 at 4:48 PM EEST, James Bottomley wrote:
-> [...]
-> > > Patch 3 is completely unnecessary: the null key is only used to
-> > > salt the session and is not required to be resident while the
-> > > session is used (so can be flushed after session creation)
-> > > therefore keeping it around serves no purpose once the session is
-> > > created and simply clutters up the TPM volatile handle slots. (I
-> > > don't know of a case where we use all the slots in a kernel
-> > > operation, but since we don't need it lets not find out when we get
-> > > one).=C2=A0 So I advise dropping patch 3.
-> >=20
-> > Let's go this through just to check I'm understanding.
-> >=20
-> > Holding null key had radical effect on boot time: it cut it down by
-> > 5 secons down to 15 seconds:
-> >=20
-> > https://lore.kernel.org/linux-integrity/CALSz7m1WG7fZ9UuO0URgCZEDG7r_wB=
-4Ev_4mOHJThH_d1Ed1nw@mail.gmail.com/
-> >=20
-> > Then in subsequent version I implemented lazy auth session and boot
-> > time went down to 9.7 seconds.
-> >=20
-> > So is the point you're trying to make that since auth session is=20
-> > already held as long as we can and they flushed in synchronous
-> > point too, I can just as well drop patch 3?
->
-> Yes, because the null key is only used in session generation which is
-> now lazy, it adds or subtracts nothing from the timings.  When you're
-> forced to flush the session, the null key goes too, so you again have
-> to restore it from the context.  When you can keep the session you
-> don't need the null key because you're not regenerating it.
+On Mon, Sep 23, 2024 at 06:02:42PM +0530, Amit Kumar Mahapatra wrote:
+> Include the 'clocks' and 'clock-names' properties in the AXI Quad-SPI
+> bindings. When the AXI4-Lite interface is enabled, the core operates in
+> legacy mode, maintaining backward compatibility with version 1.00, and
+> uses 's_axi_aclk' and 'ext_spi_clk'. For the AXI interface, it uses
+> 's_axi4_aclk' and 'ext_spi_clk'.
+>=20
+> Signed-off-by: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+> ---
+> BRANCH: for-next
+> ---
+>  .../devicetree/bindings/spi/spi-xilinx.yaml   | 29 +++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/spi/spi-xilinx.yaml b/Docu=
+mentation/devicetree/bindings/spi/spi-xilinx.yaml
+> index 4beb3af0416d..9dfec195ecd4 100644
+> --- a/Documentation/devicetree/bindings/spi/spi-xilinx.yaml
+> +++ b/Documentation/devicetree/bindings/spi/spi-xilinx.yaml
+> @@ -12,6 +12,25 @@ maintainers:
+>  allOf:
+>    - $ref: spi-controller.yaml#
 
-Yeah, OK, then we're in sync with this. It's evolutionary cruft.
+Please move the allOf block down to the end of the binding, after the
+property definitions.
 
-Just had to check that the logic matches how I projected your earlier
-comment because these are sensitive changes.
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: xlnx,axi-quad-spi-1.00.a
+> +    then:
+> +      properties:
+> +        clock-names:
+> +          items:
+> +            - const: s_axi_aclk
+> +            - const: ext_spi_clk
 
-BR, Jarkko
+These are all clocks, there should be no need to have "clk" in the
+names.
+
+> +
+> +    else:
+> +      properties:
+> +        clock-names:
+> +          items:
+> +            - const: s_axi4_aclk
+> +            - const: ext_spi_clk
+> +
+>  properties:
+>    compatible:
+>      enum:
+> @@ -25,6 +44,12 @@ properties:
+>    interrupts:
+>      maxItems: 1
+> =20
+> +  clocks:
+> +    maxItems: 2
+> +
+> +  clock-names:
+> +    maxItems: 2
+> +
+>    xlnx,num-ss-bits:
+>      description: Number of chip selects used.
+>      minimum: 1
+> @@ -39,6 +64,8 @@ required:
+>    - compatible
+>    - reg
+>    - interrupts
+> +  - clocks
+> +  - clock-names
+
+New required properties are an ABI break, where is the driver patch
+that makes use of these clocks?
+
+Cheers,
+Conor.
+
+> =20
+>  unevaluatedProperties: false
+> =20
+> @@ -49,6 +76,8 @@ examples:
+>        interrupt-parent =3D <&intc>;
+>        interrupts =3D <0 31 1>;
+>        reg =3D <0x41e00000 0x10000>;
+> +      clocks =3D <&clkc 72>, <&clkc 73>;
+> +      clock-names =3D "s_axi4_aclk", "ext_spi_clk";
+>        xlnx,num-ss-bits =3D <0x1>;
+>        xlnx,num-transfer-bits =3D <32>;
+>      };
+> --=20
+> 2.34.1
+>=20
+
+--TW6iJUl9SjJzFTPf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvLqngAKCRB4tDGHoIJi
+0jgQAP4qT9JElUko9VSDsRLLQWSll1SEQ7ZXTfbTFIke2mfMLQEAi65j4G/1poMs
+wXPxx+hlcO36bMcB6Ac4Pus+2JQInwY=
+=mVJ5
+-----END PGP SIGNATURE-----
+
+--TW6iJUl9SjJzFTPf--
 
