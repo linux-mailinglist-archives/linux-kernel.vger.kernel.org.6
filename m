@@ -1,168 +1,105 @@
-Return-Path: <linux-kernel+bounces-337510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49B01984B31
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:41:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51E4A984B32
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 20:42:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09BBE280123
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:41:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 728651C22EDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 18:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BE11AD5C1;
-	Tue, 24 Sep 2024 18:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7522A1AC895;
+	Tue, 24 Sep 2024 18:42:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SvXpO0HL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r99C9Vpk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828281AD400;
-	Tue, 24 Sep 2024 18:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C5B1B85F5;
+	Tue, 24 Sep 2024 18:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727203241; cv=none; b=BW6axvW/hALM403DHamhzPxeUF7YLgVYJc/RqaSWf1qgtHYD9ADVi1qFCfbEd+PzXzP0JedV2l7eWZDsdn9zJsipjFXpaxmJWEgMf7MUX3fpbEShXawwUGyx+jA/Ce/g96Hh0soExDy4KkiHQ+udo6YsAISOg2aQpprreieqr2I=
+	t=1727203337; cv=none; b=lgbC1Alml6HZZ9RcFiY1eZWYmwd9jwc6ZSDEwb6ieiRxTuzKwet0Yp/auqJsJApktfSKZrRaf7qphowqda1wFIcIASh1VDqX7tQHRSdXZByW/eM2n7brvcmeIWav0hF+oAhSx6tyCyR+YEfM3V2tRfBI549PLvx1GD4bfgafkqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727203241; c=relaxed/simple;
-	bh=2F2V13UnE1xlQc+PHBTB36hG+E3sC+XhLSCiNOaBPpI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qw6eQIVX0BHcTxMVmSB02j81dtVa9yHsRLRUxPc7MYUH2EFXi+WVxm6qtqgodBh+VO5goijsbtAQI6g2p17wHayf8X5CVzqvEB0cJsNReuBiXICEorFJygAOxzo7hSkyIF/OysPMy2O6sgIup1PMAHdt0IjUwF2lc1MCvGyzpKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SvXpO0HL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9861BC4CEC4;
-	Tue, 24 Sep 2024 18:40:34 +0000 (UTC)
+	s=arc-20240116; t=1727203337; c=relaxed/simple;
+	bh=y3OXYglhlp43kVHeV0em3+MF9/JdFVSnXc51Xo/43Q8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ai3PPjqdEfLWeEKa9//lvfMaMMRZU+sKVOg+rRlYmMHQlN4rSj6Q7u6N+CtMaOiHkJYBZ2lyiVZzB//eMCUgdD7Vh0QE6ZMqqKXPhNhTybWMIS/WVIZoI6VgI7xcFAycjKDrGLe8T9qgYonikDTW1/ddlDzEe8k6cEDxrBBDtQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r99C9Vpk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D4E5C4CEC4;
+	Tue, 24 Sep 2024 18:42:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727203241;
-	bh=2F2V13UnE1xlQc+PHBTB36hG+E3sC+XhLSCiNOaBPpI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SvXpO0HLdXBJGdO4ssDnGvf27zq+pMt1Mx+RucyvANVr81Cuv03rdZ7ylXlDlDABO
-	 06GDFM8I381tSSDq+Aw/CIOP3vBECbxlP9DQCpgTgFs5pwTxYklg6ZV8mcwYYB6LoH
-	 5RzcC5OLVkjO3+U0MhbK77yjVY2kewNMA/KivQifoS9RdqJwxW/n3/bivOWpAuFk1n
-	 Fj2fJhEyDrdnIpoQ450K9DXR2Q3SNWNfMDQVPi1vRoJud7hULzAWrwtLcLsQy9CccW
-	 dbXXNybiUK2G/GUDThzWz2sqZkXyjRd5dpgOqGnzV7OyHoVgoJ1ickJ3EDDdATj9ao
-	 1mZNSp9r3yDsw==
-Message-ID: <ce90574a-6be8-4415-9943-b559d274cf04@kernel.org>
-Date: Tue, 24 Sep 2024 20:40:32 +0200
+	s=k20201202; t=1727203337;
+	bh=y3OXYglhlp43kVHeV0em3+MF9/JdFVSnXc51Xo/43Q8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r99C9VpktgXTtWPwLrZhAvAzCHn4RS3SxjfdFcBI9QatPVRBKJbYicsEK9YGfk2WL
+	 A9guDhWuHfz82VR28cxDeOn3KxTun7TUDguvsNZWmDdxMR0qdUsOImAyhR+JUsMyBu
+	 XpE5kISj31J5wL0oWfuuQU61u0hC68KbwV+e7KsNTTL/IaukfIrXrrFp7yIR2QuKpA
+	 rjIjie+DRmlOa8MR+yv10mCHn9hwlEGKYQ4d3u/KSUdZK6SIKgiCzX0QF+F/t78v06
+	 s5x/mo/pC9dJfNE+ObFncno18qzKiWAVrOx1A+44k+P6Bv/s2AgEp9FoPcCJQ0NDxY
+	 5qE8SeXBMu9DA==
+Date: Tue, 24 Sep 2024 11:42:15 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: acme@kernel.org, Yang Jihong <yangjihong@bytedance.com>
+Cc: peterz@infradead.org, mingo@redhat.com, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, james.clark@arm.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	leo.yan@arm.com
+Subject: Re: [PATCH RESEND v3 0/3] perf: build: Minor fixes for build failures
+Message-ID: <ZvMIBxRzYSI5G7yU@google.com>
+References: <20240919013513.118527-1-yangjihong@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [patch v2 3/3] riscv: dts: starfive: add framework dts
-To: =?UTF-8?B?5pu554+K54+K?= <sandie.cao@deepcomputing.io>
-Cc: Conor Dooley <conor@kernel.org>, Emil Renner Berthing <kernel@esmil.dk>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Heiko Stuebner <heiko.stuebner@cherry.de>,
- Neil Armstrong <neil.armstrong@linaro.org>, rafal@milecki.pl,
- Linus Walleij <linus.walleij@linaro.org>,
- Michael Zhu <michael.zhu@starfivetech.com>,
- Drew Fustini <drew@beagleboard.org>, linux-riscv@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dhs@frame.work,
- ams@frame.work, gregkh@linuxfoundation.org, yuning.liang@deepcomputing.io,
- huiming.qiu@deepcomputing.io
-References: <20240924080650.1345485-4-sandie.cao@deepcomputing.io>
- <edfbcf43-60ae-438f-8348-f6a2e6fa31cf@kernel.org>
- <407ce3d77416bb2522b7906b0df3d5adf02c27ee.5065befe.6789.4275.a840.52c113c23eb9@feishu.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <407ce3d77416bb2522b7906b0df3d5adf02c27ee.5065befe.6789.4275.a840.52c113c23eb9@feishu.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240919013513.118527-1-yangjihong@bytedance.com>
 
-On 24/09/2024 10:52, 曹珊珊 wrote:
-> Hi Krzysztof,
+On Thu, Sep 19, 2024 at 09:35:10AM +0800, Yang Jihong wrote:
+> Changes since v3:
+>  - Add reviewed-by tag from Leo. (see Link[1])
+>  - Resend the patchset with no code changes.
 > 
-> Thanks for your time.
+> Link[1]: https://lore.kernel.org/all/b5688d4a-9389-4998-8031-3f002302311e@arm.com/
 > 
-> A: jh7110-common.dtsi is also used by other boards. Likes: milkv-mars, 
-> pine64-star64. So I can only disable them in jh7110-framework.dts. 
-> Or I need to create a new common.dtsi. 
+> Changes since v2:
+>  - patch1: change LIBDW_VERSION to follow up the style of
+>    LIBTRACEEVENT_VERSION. (by Leo's suggestion)
+>  - patch2: Use a new line for the -ldl dependency and with comment,
+>    synchronize tools/perf/Makefile.config. (by Leo's suggestion)
+>  - patch3: include header files in alphabetical order,
+>    add reviewed-by tag from Leo. (by Leo's suggestion)
 > 
-> Q: Why PCIE0 is enabled in the DTSI in the first place? The same questions
-> about MACs.
+> Changes since v1:
+>  - patch3: Remove UTF-8 characters from build failure logs
 > 
-> Regards,
-> Sandie
-> 
-> On 24/09/2024 10:06, Sandie Cao wrote:
->> Add framework dts to support RISC-V Framework Laptop 13 Mainboard.
->>  
->> Signed-off-by: Sandie Cao <sandie.cao@deepcomputing.io>
->> ---
->>   arch/riscv/boot/dts/starfive/Makefile         |  1 +
->>   .../boot/dts/starfive/jh7110-framework.dts    | 34 +++++++++++++++++++
->>   2 files changed, 35 insertions(+)
->>   create mode 100644 arch/riscv/boot/dts/starfive/jh7110-framework.dts
-> 
-> Your threading is entirely broken making applying process more difficult.
+> Yang Jihong (3):
+>   perf: build: Fix static compilation error when libdw is not installed
+>   perf: build: Fix build feature-dwarf_getlocations fail for old libdw
+>   perf dwarf-aux: Fix build fail when HAVE_DWARF_GETLOCATIONS_SUPPORT
+>     undefined
 
-So I am talking with myself?
+Acked-by: Namhyung Kim <namhyung@kernel.org>
 
-...
+Arnaldo, can you please pick this up to perf-tools tree?
 
->> +        status = "disabled";
->> +};
->> +
->> +&pcie0 {
->> +        status = "disabled";
+Thanks,
+Namhyung
+
 > 
-> Why PCIE0 is enabled in the DTSI in the first place? The same questions
-> about MACs.
+>  tools/build/feature/Makefile | 5 ++++-
+>  tools/perf/Makefile.config   | 7 +++++--
+>  tools/perf/util/dwarf-aux.h  | 1 +
+>  3 files changed, 10 insertions(+), 3 deletions(-)
 > 
-> Best regards,
-> Krzysztof
-
-And sending myself regards?
-
-Sorry, no clue what's going on here.
-
-Best regards,
-Krzysztof
-
+> -- 
+> 2.25.1
+> 
 
