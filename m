@@ -1,236 +1,148 @@
-Return-Path: <linux-kernel+bounces-336461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 076C2983B24
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 04:17:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56095983B23
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 04:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBD30283BFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 02:17:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2B031C223AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 02:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D6A517BA0;
-	Tue, 24 Sep 2024 02:17:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 995494414;
+	Tue, 24 Sep 2024 02:17:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="DkYWqHwS"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c6OkBVZR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F80011CAF
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 02:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8993D3D68;
+	Tue, 24 Sep 2024 02:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727144247; cv=none; b=WZcnv5XBS6ncvWMgz1dqJArgYoRziPLwbNMWOhHaTAAvwwbpWS94Ps/fhsKn9R9ZEWTsELOYUeGbvOvWTDjFGSxI6QheB0rzQtbJCysgml5skTHSSxVEHEHTlUtYoVhTjgVeH0rWjYYtdh1ohOzosn9AQU3VbS2qnb81i/Dee1w=
+	t=1727144244; cv=none; b=VnBh61Xa1I4+NFHFASWetXBy1HANqqnlKG5TEERf4q+tQB1YKXL6Dh7pBgdiIiFxYh2VoEqtjK/QbXFfpHs3x/6odyAi8V1SvtPbyPsy4+FzHGvSKegO58myXq95ddaJzX8kc7mpqw3cNBZxOAW21LTy3YmHxUPRnE50pHmZcrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727144247; c=relaxed/simple;
-	bh=/98/X/1TQko0fk2o2qTQZdODpUNx9qGthglVwr99660=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=hZhrh7PI2DUbpdGyP+RaxBQjLRrK6lCAcKDXhDtvLriW5qrUx5uB5dqWLXUO8FHFLxSVDQyLBTiNDBCo0+PR2hb5JSe/lZMf5zflqD5Bp7wAnfluE/p32Q9ZgOPL2u++I8eo5+eswWvOgodLk7tLep3hFLIbZZKJ2oOW7FHIoQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=DkYWqHwS; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240924021717epoutp0157fc70dbbabcf3c0e47ffbca3a6f1653~4DIhtMvt12546025460epoutp01G
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 02:17:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240924021717epoutp0157fc70dbbabcf3c0e47ffbca3a6f1653~4DIhtMvt12546025460epoutp01G
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1727144237;
-	bh=0qkUJwYUsUzYOS/o+iFENz/vUnaM4sHEQ79KnQB9MKs=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=DkYWqHwSicTgPenw9k42Ybe++5SxPENvXodkL1PU26VLYyj+6NDsi4GApxcR6pWWt
-	 bjNDZ6771+vItbizmRLNQWJYuATY5ydyLfdT05kjBS53S8gihEv04pDp2aefF3YoaM
-	 MSGhujsrTQvNDHdaU4Ofj7lc72yJacbpvVa2+RdI=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-	20240924021716epcas1p35c5ef8acbf0f00700000239ece6ea1db~4DIhMfgL70485904859epcas1p3D;
-	Tue, 24 Sep 2024 02:17:16 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.36.225]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4XCNmD22YXz4x9Pv; Tue, 24 Sep
-	2024 02:17:16 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-	epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-	D6.1E.10258.C2122F66; Tue, 24 Sep 2024 11:17:16 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240924021715epcas1p1a9fdb7ead8080969f615ba755534fe21~4DIgTep1Q1634116341epcas1p1x;
-	Tue, 24 Sep 2024 02:17:15 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240924021715epsmtrp1e1b22bf58674c4e45857ed62aef0884a~4DIgSf6ML1087310873epsmtrp1r;
-	Tue, 24 Sep 2024 02:17:15 +0000 (GMT)
-X-AuditID: b6c32a38-995ff70000002812-80-66f2212c80d2
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	1C.13.07567.B2122F66; Tue, 24 Sep 2024 11:17:15 +0900 (KST)
-Received: from sh8267baek02 (unknown [10.253.99.49]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240924021715epsmtip229b2252294dc4a3f9965fb57c2a6076b~4DIgEW9z02569525695epsmtip28;
-	Tue, 24 Sep 2024 02:17:15 +0000 (GMT)
-From: "Seunghwan Baek" <sh8267.baek@samsung.com>
-To: "'Bart Van Assche'" <bvanassche@acm.org>,
-	<linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-	<martin.petersen@oracle.com>, <James.Bottomley@HansenPartnership.com>,
-	<avri.altman@wdc.com>, <alim.akhtar@samsung.com>
-Cc: <grant.jung@samsung.com>, <jt77.jang@samsung.com>,
-	<junwoo80.lee@samsung.com>, <dh0421.hwang@samsung.com>,
-	<jangsub.yi@samsung.com>, <sh043.lee@samsung.com>, <cw9316.lee@samsung.com>,
-	<wkon.kim@samsung.com>, <stable@vger.kernel.org>
-In-Reply-To: <fa8a4c1a-e583-496b-a0a2-bd86f86af508@acm.org>
-Subject: RE: [PATCH v1 1/1] ufs: core: set SDEV_OFFLINE when ufs shutdown.
-Date: Tue, 24 Sep 2024 11:17:15 +0900
-Message-ID: <003201db0e27$df93f250$9ebbd6f0$@samsung.com>
+	s=arc-20240116; t=1727144244; c=relaxed/simple;
+	bh=A9Q7hnJsM3BUZjx0Y/8Kn9zSr7BbMf6xzZ7JNzV46JI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=igOLhuysuH1yVUs2oVzwaLQMWEiWjfJmTDMXcAxPO/evz+zIY6h4X1GhY5Ck+fHxIg5fK9JB6dkZedKe3zr04tgKLXaCNLJnbUf27jx3GITZw1uqurps+i1uOkum8i5fzOxSHPrRmihFu6++OMu/6L+iSOkiSw/r++iESbwKKqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c6OkBVZR; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727144242; x=1758680242;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=A9Q7hnJsM3BUZjx0Y/8Kn9zSr7BbMf6xzZ7JNzV46JI=;
+  b=c6OkBVZRj20VXxeeVMd5MMNUvILIBOp0TOdY6XdWpdYX11z7kGlTU1Nk
+   PBVpdbcgPLStpSU4cNLrI1aWKDCny4uxKBKD/LzswP9enRFYqWDdvKDGp
+   8ie+/h3KIXLCPDqyxZGxPXTLHWYI5CGBW6CY+Zn/6Oo0V8pI4ItVnPIF8
+   XxZ8uH1A7zTE7Sk9HMJBEGxgV8SPs7x49WDBRKoWV6Jk+eBj7s+SRDnKu
+   7UZ8iLRXJZhzhQABmxRma7UlfCUxOQHukPINqBgP+dhKxVbgrkxEJkEmr
+   B1q8CSPagwMKGwjtzLmBGtvSCPsyyqzWxuEyq9NrD+m+x3RbUgKcdgqCR
+   A==;
+X-CSE-ConnectionGUID: C2OzaIAMRDuzP6jNy9tHww==
+X-CSE-MsgGUID: dGDyrmoRTYCVW88Twu22Cg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="36706068"
+X-IronPort-AV: E=Sophos;i="6.10,253,1719903600"; 
+   d="scan'208";a="36706068"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 19:17:22 -0700
+X-CSE-ConnectionGUID: qvXSTN78RwixqbkWGpi0Iw==
+X-CSE-MsgGUID: 24QI5H8aTZO6rEb6t3ZREQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,253,1719903600"; 
+   d="scan'208";a="76034566"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.128]) ([10.124.245.128])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 19:17:20 -0700
+Message-ID: <196706e4-e892-4e73-8ba7-1fa939d8998b@linux.intel.com>
+Date: Tue, 24 Sep 2024 10:17:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQITd6wvsWq6bg+5ypABxh1kBxxfMwHy7pIVAtyJc3gCDAIdK7G+gjWA
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFJsWRmVeSWpSXmKPExsWy7bCmnq6O4qc0gw03eCwezNvGZvHy51U2
-	i2kffjJbzDjVxmqx79pJdotff9ezW2zs57Do2DqZyWLH8zPsFrv+NjNZXN41h82i+/oONovl
-	x/8xWTT92cdisWDjI0aLzZe+sTgIeFy+4u0xbdIpNo+PT2+xePRtWcXo8XmTnEf7gW6mALao
-	bJuM1MSU1CKF1Lzk/JTMvHRbJe/geOd4UzMDQ11DSwtzJYW8xNxUWyUXnwBdt8wcoLOVFMoS
-	c0qBQgGJxcVK+nY2RfmlJakKGfnFJbZKqQUpOQVmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZ
-	8+8+Zy3YJ1mx5v9dlgbG5SJdjJwcEgImEm2HpzF3MXJxCAnsYJR4/fsGO4TziVHi/LN/jBDO
-	N0aJQ9c6WWFaDi6bAZXYyyjROOUZG4TzklFiydVbbCBVbAIGEs0/DoLNEgFJ7NhynQXEYQYZ
-	vOXPMRaQKk4Ba4mF2+4xgdjCAl4SP7adALNZBFQl3t/5wQxi8wpYShx6tRHKFpQ4OfMJWC+z
-	gLbEsoWvmSFuUpD4+XQZ2H0iAm4Sb2dNZYaoEZGY3dkG9p6EwAMOidWX5gE1cwA5LhJ/XqhC
-	9ApLvDq+hR3ClpJ42d8GZRdLLNw4iQWit4VR4vryP4wQCXuJ5tZmNpA5zAKaEut36UPs4pN4
-	97WHFWI8r0RHmxBEtarEqQ1boTqlJa43N0CD0UNi47r9zBMYFWch+WwWks9mIflgFsKyBYws
-	qxjFUguKc9NTiw0LTODxnZyfu4kRnKi1LHYwzn37Qe8QIxMH4yFGCQ5mJRHeSTc/pgnxpiRW
-	VqUW5ccXleakFh9iNAWG9URmKdHkfGCuyCuJNzSxNDAxMzKxMLY0NlMS5z1zpSxVSCA9sSQ1
-	OzW1ILUIpo+Jg1OqgamKwUVc6cfjaZESH3WufbDzqd1cOeXH28WFvW23ZLcdusN0K2Gpm9Hm
-	/omRgTviF/eumXWuVZXBScirlu3MycvqWZuSrz6Y35sf1nPrlLdDVvrdjf5qQpf1jyjN0J50
-	hGHWa27jFSYXw5afbZjyo+pCTcju/V1zUlXv3Xlx8RTrMq3f/SZrTHYfvK94/6LC6/0X1Xe4
-	V8j87u2bYjN76Y5sxuVvJprarbnvI7ziR8P1RL9/xvc/Lf13g5+9YsGNRXHPftofMJn8OK37
-	s3zfhA8lvtq+/y5oZ2/kepZ1IvnU273z5FuXunMqtia0vFuzTOjqOoNfj72nNLv7SoY0LQpw
-	vS02ud+fr4slc+H+hlXTlViKMxINtZiLihMBisOeSF0EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKIsWRmVeSWpSXmKPExsWy7bCSvK624qc0g20LlC0ezNvGZvHy51U2
-	i2kffjJbzDjVxmqx79pJdotff9ezW2zs57Do2DqZyWLH8zPsFrv+NjNZXN41h82i+/oONovl
-	x/8xWTT92cdisWDjI0aLzZe+sTgIeFy+4u0xbdIpNo+PT2+xePRtWcXo8XmTnEf7gW6mALYo
-	LpuU1JzMstQifbsEroyla/rYC5olKw4tX8XUwPhOuIuRk0NCwETi4LIZjF2MXBxCArsZJfav
-	3MIOkZCWeHzgJVCCA8gWljh8uBii5jmjxIa+72A1bAIGEs0/DrKDJEQE3jNKHP+zDsxhFvjD
-	KDHn3GQ2iJY3jBKPpuxgAWnhFLCWWLjtHhOILSzgJfFj2wkwm0VAVeL9nR/MIDavgKXEoVcb
-	oWxBiZMzn4D1MgtoS/Q+bGWEsZctfM0McaqCxM+ny1hBbBEBN4m3s6YyQ9SISMzubGOewCg8
-	C8moWUhGzUIyahaSlgWMLKsYJVMLinPTc5MNCwzzUsv1ihNzi0vz0vWS83M3MYJjVktjB+O9
-	+f/0DjEycTAeYpTgYFYS4Z1082OaEG9KYmVValF+fFFpTmrxIUZpDhYlcV7DGbNThATSE0tS
-	s1NTC1KLYLJMHJxSDUx33He9mSZ3ui/a4eait+dtDCdf97XQOPjn3tUfPBcP/ynVyOTdN73v
-	xYvPD/vyso7KJfeXBtVuU76+6eXauw3vpzz0zIvwEZ/XJs/flfM4tlwwyIJ/X+GWTS83GzGs
-	THfzOf3CLt784qEai0tHOeKzzsjvF5qzo+a95O3P9/Udd6nptD442iGumq9TW5q5InqD1krR
-	P4JrLNfbru9wLXOZ3vW1NbRN5XHJmT3P5IWbF26Yqh5s6nZUmdue4egkN78J+/N2d6zor/JI
-	OlZts/1/+ob7JZflQvcoTI/X22cWenHd/Tqd4xvY2s2fXovy/PX3dN1Pte7dl+7bKua0yGwI
-	yXn45uiniR2W7knqPXlKLMUZiYZazEXFiQBl8ulbSAMAAA==
-X-CMS-MailID: 20240924021715epcas1p1a9fdb7ead8080969f615ba755534fe21
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240829093921epcas1p35d28696b0f79e2ae39d8e3690f088e64
-References: <20240829093913.6282-1-sh8267.baek@samsung.com>
-	<CGME20240829093921epcas1p35d28696b0f79e2ae39d8e3690f088e64@epcas1p3.samsung.com>
-	<20240829093913.6282-2-sh8267.baek@samsung.com>
-	<fa8a4c1a-e583-496b-a0a2-bd86f86af508@acm.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [linus:master] [perf/x86/intel] 25dfc9e357:
+ kvm-unit-tests-qemu.pmu.fail
+To: Oliver Sang <oliver.sang@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
+ Thomas Gleixner <tglx@linutronix.de>, Li Huafei <lihuafei1@huawei.com>,
+ linux-perf-users@vger.kernel.org
+References: <202409201525.4877023e-oliver.sang@intel.com>
+ <f272389f-8565-4bdc-8727-8b37eaa82821@linux.intel.com>
+ <ZvDvB98DW10Au8lo@xsang-OptiPlex-9020>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <ZvDvB98DW10Au8lo@xsang-OptiPlex-9020>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> On 8/29/24 2:39 AM, Seunghwan Baek wrote:
-> > diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-> > index a6f818cdef0e..4ac1492787c2 100644
-> > --- a/drivers/ufs/core/ufshcd.c
-> > +++ b/drivers/ufs/core/ufshcd.c
-> > =40=40 -10215,7 +10215,9 =40=40 static void ufshcd_wl_shutdown(struct d=
-evice
-> *dev)
-> >   	shost_for_each_device(sdev, hba->host) =7B
-> >   		if (sdev =3D=3D hba->ufs_device_wlun)
-> >   			continue;
-> > -		scsi_device_quiesce(sdev);
-> > +		mutex_lock(&sdev->state_mutex);
-> > +		scsi_device_set_state(sdev, SDEV_OFFLINE);
-> > +		mutex_unlock(&sdev->state_mutex);
-> >   	=7D
-> >   	__ufshcd_wl_suspend(hba, UFS_SHUTDOWN_PM);
->=20
-> Why to keep one scsi_device_quiesce() call and convert the other call?
-> Please consider something like this change:
->=20
-> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c index
-> e808350c6774..914770dff18f 100644
-> --- a/drivers/ufs/core/ufshcd.c
-> +++ b/drivers/ufs/core/ufshcd.c
-> =40=40 -10134,11 +10134,10 =40=40 static void ufshcd_wl_shutdown(struct d=
-evice
-> *dev)
->=20
->   	/* Turn on everything while shutting down */
->   	ufshcd_rpm_get_sync(hba);
-> -	scsi_device_quiesce(sdev);
->   	shost_for_each_device(sdev, hba->host) =7B
-> -		if (sdev =3D=3D hba->ufs_device_wlun)
-> -			continue;
-> -		scsi_device_quiesce(sdev);
-> +		mutex_lock(&sdev->state_mutex);
-> +		scsi_device_set_state(sdev, SDEV_OFFLINE);
-> +		mutex_unlock(&sdev->state_mutex);
->   	=7D
->   	__ufshcd_wl_suspend(hba, UFS_SHUTDOWN_PM);
->=20
-> Thanks,
->=20
-> Bart.
 
-That's because SSU (Start Stop Unit) command must be sent during shutdown p=
-rocess.
-If SDEV_OFFLINE is set for wlun, SSU command cannot be sent because it is r=
-ejected
-by the scsi layer. Therefore, we consider to set SDEV_QUIESCE for wlun, and=
- set
-SDEV_OFFLINE for other lus.
+On 9/23/2024 12:31 PM, Oliver Sang wrote:
+> hi, Kan,
+>
+> On Fri, Sep 20, 2024 at 09:27:06AM -0400, Liang, Kan wrote:
+>
+>>> ...
+>>> [32mPASS[0m msr (1836 tests)
+>>> [31mFAIL[0m pmu (143 tests, 24 unexpected failures, 14 skipped)  <---
+>> Is there a list to show which checks are failed?
+> I attached a pmu.log.
+>
+> below failed which can pass on parent (v6.11-rc5)
+>
+> FAIL: Intel: overflow: cntr-0
+> FAIL: Intel: overflow: status-0
+> FAIL: Intel: overflow: cntr-1
+> FAIL: Intel: overflow: status-1
+> FAIL: Intel: overflow: irq-1
+> FAIL: Intel: overflow: cntr-2
+> FAIL: Intel: overflow: status-2
+> FAIL: Intel: overflow: cntr-3
+> FAIL: Intel: overflow: status-3
+> FAIL: Intel: overflow: irq-3
+> FAIL: Intel: overflow: cntr-4
+> FAIL: Intel: overflow: status-4
+> FAIL: Intel: full-width writes: overflow: cntr-0
+> FAIL: Intel: full-width writes: overflow: status-0
+> FAIL: Intel: full-width writes: overflow: cntr-1
+> FAIL: Intel: full-width writes: overflow: status-1
+> FAIL: Intel: full-width writes: overflow: irq-1
+> FAIL: Intel: full-width writes: overflow: cntr-2
+> FAIL: Intel: full-width writes: overflow: status-2
+> FAIL: Intel: full-width writes: overflow: cntr-3
+> FAIL: Intel: full-width writes: overflow: status-3
+> FAIL: Intel: full-width writes: overflow: irq-3
+> FAIL: Intel: full-width writes: overflow: cntr-4
+> FAIL: Intel: full-width writes: overflow: status-4
 
-static int ufshcd_execute_start_stop(struct scsi_device *sdev,
-				     enum ufs_dev_pwr_mode pwr_mode,
-				     struct scsi_sense_hdr *sshdr)
-=7B
-	const unsigned char cdb=5B6=5D =3D =7B START_STOP, 0, 0, 0, pwr_mode << 4,=
- 0 =7D;
-	const struct scsi_exec_args args =3D =7B
-		.sshdr =3D sshdr,
-		.req_flags =3D BLK_MQ_REQ_PM,            <<< set REQ_PM flag
-		.scmd_flags =3D SCMD_FAIL_IF_RECOVERING,
-	=7D;
+Hi Oliver,
 
-	return scsi_execute_cmd(sdev, cdb, REQ_OP_DRV_IN, /*buffer=3D*/NULL,
-			/*bufflen=3D*/0, /*timeout=3D*/10 * HZ, /*retries=3D*/0,
-			&args);
-=7D
+What HW platform do you see this error on? If possible, could you please
+apply the previously mentioned KUT/pmu patchset and check if the issue can
+be fixed? Thanks.
 
-static blk_status_t
-scsi_device_state_check(struct scsi_device *sdev, struct request *req)
-=7B
-	case SDEV_OFFLINE:
-	case SDEV_TRANSPORT_OFFLINE:             <<< Refuse all commands
-		/*
-		 * If the device is offline we refuse to process any
-		 * commands.  The device must be brought online
-		 * before trying any recovery commands.
-		 */
-		if (=21sdev->offline_already) =7B
-			sdev->offline_already =3D true;
-			sdev_printk(KERN_ERR, sdev,
-				    =22rejecting I/O to offline device=5Cn=22);
-		=7D
-		return BLK_STS_IOERR;
-	case SDEV_QUIESCE:                       <<< Refuse all commands except RE=
-Q_PM flag
-		/*
-		 * If the device is blocked we only accept power management
-		 * commands.
-		 */
-		if (req && WARN_ON_ONCE(=21(req->rq_flags & RQF_PM)))
-			return BLK_STS_RESOURCE;
-		return BLK_STS_OK;
+Dapeng Mi
 
+>
+>
+>> Thanks,
+>> Kan
+>>
+>>> [32mPASS[0m pmu_lbr (3 tests)
+>>> [33mSKIP[0m pmu_pebs (1 tests, 1 skipped)
+>>> ...
+>>>
+>>>
+>>>
+>>> The kernel config and materials to reproduce are available at:
+>>> https://download.01.org/0day-ci/archive/20240920/202409201525.4877023e-oliver.sang@intel.com
+>>>
+>>>
+>>>
 
