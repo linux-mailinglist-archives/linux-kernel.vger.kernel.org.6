@@ -1,148 +1,330 @@
-Return-Path: <linux-kernel+bounces-336600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76618983CE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:16:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62F86983D09
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 08:21:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E29D1F211B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 06:16:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23AB82818F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 06:21:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E7945005;
-	Tue, 24 Sep 2024 06:16:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A976E614;
+	Tue, 24 Sep 2024 06:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BYr/ejGm"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="cNu3hMTT"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0640E40879
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 06:16:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE5257CAC
+	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 06:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727158577; cv=none; b=VNf896ru6Dl7xCT5lFp1VQq3UqRQ4LpscMTJe6Lfr4K0iLa/hppQWf5XiPCqucJ+DNJCKNrFL8il7vRywyZZ0C68/edplqbB/PztqYLEDGHQm4RcD0rUdNdlPqrjZI/xwBIDsfz7d0UmJgcftKbEymx1Cxu2a3jRVqnFIATHWpI=
+	t=1727158882; cv=none; b=XWmxOYsd2qnuiAS0b6DeICJZBKEGWmSkHc4GHau/B4Sl5i8vGPpapveCEpm96Q+VKLfAbN/BEq8tttkcClKEDEqJWOjqFGW5ZcFjrDlPVQ5Y563Y3v9ExIgCR210Pw52p53/XUXgVtbous+ukAf4QrS1RG1Bt9+F44sp38sxnj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727158577; c=relaxed/simple;
-	bh=UWkBmgjGskvL8GNtm+Gp4JAUuWrilvjBC9MJ9j+d30Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CwRL+akV+VsGbVRghBDn+jNAQLPlKUcCt9BkDmlatkWMkoA1fKeLdl3q+COEI1wbPAsUt3yp1TGDc87DLY/uiFSR7r33cFB6rWEQAkjT/QGs7LZTyNwDX6VnPSttZ9tIs1WdhMMEMya/DEqQEk7o3Txqh5UjXeq7nieS4jpJKpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BYr/ejGm; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e249807cf13so538937276.3
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 23:16:15 -0700 (PDT)
+	s=arc-20240116; t=1727158882; c=relaxed/simple;
+	bh=wRwKON423yZqXPqJ5rTGOSCIBIr9IskAzhplTcV4fdQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=i7kj0wwkCm+MQt3QcRJbVhfQPBvRWkjlH3WqEZsvL4G/8JkSo7UfAR5kn5Il6pnMawTJLfUxi3BsTVTTo3tivgpytoWHYynlD1Au9pm69Q3gMrHfZ1G3nop1+l6CeyrcTPBO1w0JrNFl6Cj1f892vt/qvRuaLfWPcpDWTPlIycc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=cNu3hMTT; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cd46f3a26so44216905e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 23:21:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727158575; x=1727763375; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZcweUFHFW/KJCW3gKD065UQS3lsmUsHAhy70Femt8O8=;
-        b=BYr/ejGmuqNAT62wgFzI47R26keNMk9vLsHqH42aF2M0vXmEJcJAzcvC+ZlCUsoPQD
-         PBc4Skfexg+x5YgfpMEmHKt9pvLdL+p7poyWLOZbhLGh/kxFnNHjAgqfAOe+FRHhCnWX
-         yXCNKJ2CcVRq/c0lnuvt2xQmJlKSOmm/nkiqtMbrVkxHa3aM4QCfuA9D8FxD+KJLdsZw
-         K7l83tVXCfXsK4sDkePNF8YAlTcATbVBCDNtLyoMuDLpxqy5wVTSX0YgVotciInua1RU
-         /mSOxzvJ2/AF8d9fv0YFczIRIjQp74AGcsRtkMR7BYig04UaWxU3assUm3U4wQCVzmuo
-         j2Zg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727158878; x=1727763678; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gk89L1Uzp22QgNm9C+CJpSMQA20Mf2rtUhzwasdOsN0=;
+        b=cNu3hMTTy3ECwrP4mAFN7jhkQfgMRHCeM13EZB1Py4LmRE65E0yl9puZZjqtWL0HXA
+         ofwDo81LcVp7xKTzi4XYc+v9QdwaKiribtwKGnafOi6dmUayr+ZVMZjaoNYdHtBwE5Sz
+         udXQmy1Z8auwSCnTayVP4UVp5J6sGEi4knd8Y8NXufM/OGVL5pcB8I0CwVefwRkdCsEO
+         5zab2QZ9+ENiqAGEJsVOb+A4p1cVbOvI6uG5KVY3KsHnDYvxp/iJbLJ4j1r65o6DlU/l
+         o3NJo9Z+N/xS43WfCXuez99RWwcdvXsh0LH6ILIqj+5rc5fsR6yKJk8/iiHuZd5y+Asg
+         9uew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727158575; x=1727763375;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZcweUFHFW/KJCW3gKD065UQS3lsmUsHAhy70Femt8O8=;
-        b=VYULKiDuxZkUxdsTHeGtqkygQbN7WyYCqXwbDdUAsigM9E/kcxcAZepp37zsLyx2JD
-         2+Bd3kWsGSHI0SQPtEqN/KGMJ87CxO5Nj1n+0qhmYjNNKBiKT0QBqwdQYEgOPD3EnFgv
-         Tntw2eSIDo28iBZXHwFz26XNV3NmHP0UMo7aGgSfJFe7qjENLssZQCYG3EOlATtlwbYq
-         8Nf+/SoE34A38meDMPZqba8DwxoOWOIXFi+TJNihblCtspUiKOWwgj40A9+8/Ma630By
-         cebEd/Qnv5MhOJhFXhSRLK+cfSdz/1BkTu0I9W137BEqS3unYIV81qjA4DywMV0HtGlP
-         fQJg==
-X-Forwarded-Encrypted: i=1; AJvYcCWy8FPP5Uef5xDz5ORN9ZmdnSTO6AGrFzhemhYsjNZT1fKJLP5sZZ08qATPAf5a54/zrnxYss2hhYzbYZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvHda5ycvf7P2/0mF4366lRzyG+o0zyM/71q7ZJwEcA2d/Fi7M
-	tFSgYamJnXNiw3qYS1Y6LEfjuLeUy3ZAZq9GXF/YMrm2UBcdHjjJg8L0hQECf2MQQ9zRaeYIWx/
-	HqJog3oseBt/G9JHVxaPG6t3pFIIfitxEzev3Bw==
-X-Google-Smtp-Source: AGHT+IEF5j0JkBVAgP1jTlkYufGIlKJxFTmmd49IaW+yK41rQF/NpMRTMvOPM1xHJnDTOa2dEHhH9wuEn2USXNPEeWM=
-X-Received: by 2002:a05:690c:89:b0:6b1:4948:f689 with SMTP id
- 00721157ae682-6dff290379dmr105980107b3.34.1727158574971; Mon, 23 Sep 2024
- 23:16:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727158878; x=1727763678;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gk89L1Uzp22QgNm9C+CJpSMQA20Mf2rtUhzwasdOsN0=;
+        b=Y0ndiQNTadutvBuI+eCot6jNuUoTUzxEF1pIV9kDz1GzBh3ZA3e6EZt6hteW3qK9am
+         Us7lt2uSZZfFdsSDkVSVwuQ/E0w7iQS3ehyBwlWnaa5g2k++dDiQ9q6WOqgQiHvOkLxu
+         XR8kpZMu29Ug/bV2tRg+DOsow1gTZZ3AJGASc6nS8nOhFCRWOoLQEphqHXAby+R3xb8A
+         Cz9gEJStfT201eUXgaX6RfJFb/vtGAOqAHG8lloe2OpNPAWrXBMuLmv3V16+XnTbzyUw
+         A8epsI7yCh+mRNEcmw2g1WQZQ+lD7FHYFfstWK3u7O3M/Ojt6CjrKO+vAnUTSINgsGYz
+         om8w==
+X-Forwarded-Encrypted: i=1; AJvYcCV0DOhJhjKSHp737QlofBqcglvBH5Vzk9bsqkuR8uZc5OAOOMQgQbjRgJy3QRFVVVjRwrZL6WBtuUYtxRU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1qlHXSxPksHEoHXm/6g8VuMWkeGH2GQsnJ5UUBL67nniehcSg
+	yXPX0uPlY0xM1tQUKBdK+iqLGzZdvtFPpS8Aih1IVFkmTKo0cJB16wXmDmOeHlw=
+X-Google-Smtp-Source: AGHT+IG84zxrtOVvKIUK7BWEiXaQEvq8dlgEmna+eHGCrpp8ivpSmnjxzyrcAtUQEjeDH4s/KoXwXA==
+X-Received: by 2002:a05:600c:3553:b0:426:689b:65b7 with SMTP id 5b1f17b1804b1-42e7ad92431mr111899425e9.25.1727158878387;
+        Mon, 23 Sep 2024 23:21:18 -0700 (PDT)
+Received: from blmsp.fritz.box ([2001:4091:a245:8155:f78b:11e0:5100:a478])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e754a6379sm147037375e9.35.2024.09.23.23.21.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2024 23:21:17 -0700 (PDT)
+From: Markus Schneider-Pargmann <msp@baylibre.com>
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+	Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Martin =?utf-8?Q?Hundeb=C3=B8ll?= <martin@geanix.com>,
+	"Felipe Balbi (Intel)" <balbi@kernel.org>,
+	Raymond Tan <raymond.tan@intel.com>,
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	linux-can@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux@ew.tq-group.com,
+	Markus Schneider-Pargmann <msp@baylibre.com>
+Subject: [PATCH DO_NOT_APPLY] net: can: m_can: Support tcan level with edge interrupts
+Date: Tue, 24 Sep 2024 08:16:22 +0200
+Message-ID: <20240924062100.2545714-1-msp@baylibre.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240923-tricky-bird-of-symmetry-68519b-mkl@pengutronix.de>
+References: <20240923-tricky-bird-of-symmetry-68519b-mkl@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240924022600.1441969-1-vignesh.raman@collabora.com>
-In-Reply-To: <20240924022600.1441969-1-vignesh.raman@collabora.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 24 Sep 2024 08:16:04 +0200
-Message-ID: <CAA8EJprUUUc0iDph-HPrW1anrdnzYju7+JERQdHbwxvznq=H4w@mail.gmail.com>
-Subject: Re: [PATCH v1] docs/gpu: ci: update flake tests requirements
-To: Vignesh Raman <vignesh.raman@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com, 
-	helen.koike@collabora.com, airlied@gmail.com, daniel@ffwll.ch, 
-	robdclark@gmail.com, guilherme.gallo@collabora.com, 
-	sergi.blanch.torne@collabora.com, deborah.brouwer@collabora.com, 
-	mripard@kernel.org, rodrigo.vivi@intel.com, 
-	linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, amd-gfx@lists.freedesktop.org, 
-	linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 24 Sept 2024 at 04:26, Vignesh Raman
-<vignesh.raman@collabora.com> wrote:
->
-> Update the documentation to require linking to a relevant GitLab
-> issue for each new flake entry instead of an email report. Added
-> specific GitLab issue URLs for i915, xe and other drivers.
->
-> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
-> ---
->  Documentation/gpu/automated_testing.rst | 15 ++++++++++-----
->  1 file changed, 10 insertions(+), 5 deletions(-)
->
-> diff --git a/Documentation/gpu/automated_testing.rst b/Documentation/gpu/automated_testing.rst
-> index 2d5a28866afe..f73b8939dc3a 100644
-> --- a/Documentation/gpu/automated_testing.rst
-> +++ b/Documentation/gpu/automated_testing.rst
-> @@ -67,20 +67,25 @@ Lists the tests that for a given driver on a specific hardware revision are
->  known to behave unreliably. These tests won't cause a job to fail regardless of
->  the result. They will still be run.
->
-> -Each new flake entry must be associated with a link to the email reporting the
-> -bug to the author of the affected driver, the board name or Device Tree name of
-> -the board, the first kernel version affected, the IGT version used for tests,
-> -and an approximation of the failure rate.
-> +Each new flake entry must include a link to the relevant GitLab issue, the board
-> +name or Device Tree name, the first kernel version affected, the IGT version used
-> +for tests and an approximation of the failure rate.
->
->  They should be provided under the following format::
->
-> -  # Bug Report: $LORE_OR_PATCHWORK_URL
-> +  # Bug Report: $GITLAB_ISSUE
->    # Board Name: broken-board.dtb
->    # Linux Version: 6.6-rc1
->    # IGT Version: 1.28-gd2af13d9f
->    # Failure Rate: 100
->    flaky-test
->
-> +The GitLab issue must include the logs and the pipeline link. Use the appropriate
-> +link below to create an issue.
-> +https://gitlab.freedesktop.org/drm/i915/kernel/-/issues/ for i915 drivers
-> +https://gitlab.freedesktop.org/drm/xe/kernel/-/issues/ for xe drivers
+The tcan chip has a low level interrupt line that needs to be used.
+There are some SoCs and components that do only support edge interrupts
+on GPIOs. In the exact example someone wired the tcan chip to a am62
+GPIO.
 
-drm/msm for msm driver, please. Otherwise we can easily miss such issues.
+This patch creates a workaround for these situations, enabling the use
+of tcan with a falling edge interrupt. Note that this is not the
+preferred way to wire a tcan chip to the SoC.
 
-> +https://gitlab.freedesktop.org/drm/misc/kernel/-/issues for other drivers
-> +
->  drivers/gpu/drm/ci/${DRIVER_NAME}-${HW_REVISION}-skips.txt
->  -----------------------------------------------------------
->
-> --
-> 2.43.0
->
+I am detecting the situation by reading the IRQ type. If it is a level
+interrupt everything stays the same. Otherwise these were my
+considerations and solutions:
 
+With falling edge interrupts we have following issues:
+- While handling a IRQF_ONESHOT interrupt the interrupt may be masked as
+  long as the interrupt is handled. So if a new interrupt hits during
+  the handling of the interrupt may be lost as it is masked. With level
+  interrupts that is not a problem because the interrupt line is still
+  active/low after the handler is unmasked so it will jump back into
+  handling interrupts afterwards. With edge interrupts we will just
+  loose the interrupt at this point as we do not see the edge while the
+  interrupt is masked. Solution here is to remove the IRQF_ONESHOT flag
+  in case edge interrupts are used.
+- Reading and clearing the interrupt register is not atomic. So the
+  interrupts we clear from the interrupt register may not result in a
+  completely cleared interrupt register and leave some unhandled
+  interrupt. Again this is fine for level based interrupts as they will
+  be causing a new call of the interrupt handler. With edge interrupts
+  we will be missing this interrupt. So we need to make sure that the
+  clearing of the interrupt register actually cleared it and the
+  interrupt line could have gone back to inactive/high. To do that the
+  interrupt register is read/cleared/handled repeatedly until it is 0.
 
+Updating the interrupts for coalescing is only done once at the end with
+all interrupts that were handled and not for every loop. We don't want
+to change interrupts multiple times here.
+
+Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
+---
+
+This is the draft that I had for edge interrupts. For am62 I will create
+a followup patch that covers minor things like IRQF_ONESHOT removal etc.
+
+Best
+Markus
+
+ drivers/net/can/m_can/m_can.c | 114 +++++++++++++++++++++-------------
+ drivers/net/can/m_can/m_can.h |   1 +
+ 2 files changed, 73 insertions(+), 42 deletions(-)
+
+diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
+index 663eb4247029..4b969f29ba55 100644
+--- a/drivers/net/can/m_can/m_can.c
++++ b/drivers/net/can/m_can/m_can.c
+@@ -1208,6 +1208,7 @@ static void m_can_coalescing_update(struct m_can_classdev *cdev, u32 ir)
+ static int m_can_interrupt_handler(struct m_can_classdev *cdev)
+ {
+ 	struct net_device *dev = cdev->net;
++	u32 all_interrupts = 0;
+ 	u32 ir;
+ 	int ret;
+ 
+@@ -1215,56 +1216,75 @@ static int m_can_interrupt_handler(struct m_can_classdev *cdev)
+ 		return IRQ_NONE;
+ 
+ 	ir = m_can_read(cdev, M_CAN_IR);
+-	m_can_coalescing_update(cdev, ir);
+-	if (!ir)
++	all_interrupts |= ir;
++	if (!ir) {
++		m_can_coalescing_update(cdev, 0);
+ 		return IRQ_NONE;
+-
+-	/* ACK all irqs */
+-	m_can_write(cdev, M_CAN_IR, ir);
+-
+-	if (cdev->ops->clear_interrupts)
+-		cdev->ops->clear_interrupts(cdev);
+-
+-	/* schedule NAPI in case of
+-	 * - rx IRQ
+-	 * - state change IRQ
+-	 * - bus error IRQ and bus error reporting
+-	 */
+-	if (ir & (IR_RF0N | IR_RF0W | IR_ERR_ALL_30X)) {
+-		cdev->irqstatus = ir;
+-		if (!cdev->is_peripheral) {
+-			m_can_disable_all_interrupts(cdev);
+-			napi_schedule(&cdev->napi);
+-		} else {
+-			ret = m_can_rx_handler(dev, NAPI_POLL_WEIGHT, ir);
+-			if (ret < 0)
+-				return ret;
+-		}
+ 	}
+ 
+-	if (cdev->version == 30) {
+-		if (ir & IR_TC) {
+-			/* Transmission Complete Interrupt*/
+-			u32 timestamp = 0;
+-			unsigned int frame_len;
++	do {
++		/* ACK all irqs */
++		m_can_write(cdev, M_CAN_IR, ir);
+ 
+-			if (cdev->is_peripheral)
+-				timestamp = m_can_get_timestamp(cdev);
+-			frame_len = m_can_tx_update_stats(cdev, 0, timestamp);
+-			m_can_finish_tx(cdev, 1, frame_len);
++		if (cdev->ops->clear_interrupts)
++			cdev->ops->clear_interrupts(cdev);
++
++		/* schedule NAPI in case of
++		 * - rx IRQ
++		 * - state change IRQ
++		 * - bus error IRQ and bus error reporting
++		 */
++		if (ir & (IR_RF0N | IR_RF0W | IR_ERR_ALL_30X)) {
++			cdev->irqstatus = ir;
++			if (!cdev->is_peripheral) {
++				m_can_disable_all_interrupts(cdev);
++				napi_schedule(&cdev->napi);
++			} else {
++				ret = m_can_rx_handler(dev, NAPI_POLL_WEIGHT, ir);
++				if (ret < 0)
++					return ret;
++			}
+ 		}
+-	} else  {
+-		if (ir & (IR_TEFN | IR_TEFW)) {
+-			/* New TX FIFO Element arrived */
+-			ret = m_can_echo_tx_event(dev);
+-			if (ret != 0)
+-				return ret;
++
++		if (cdev->version == 30) {
++			if (ir & IR_TC) {
++				/* Transmission Complete Interrupt*/
++				u32 timestamp = 0;
++				unsigned int frame_len;
++
++				if (cdev->is_peripheral)
++					timestamp = m_can_get_timestamp(cdev);
++				frame_len = m_can_tx_update_stats(cdev, 0, timestamp);
++				m_can_finish_tx(cdev, 1, frame_len);
++			}
++		} else  {
++			if (ir & (IR_TEFN | IR_TEFW)) {
++				/* New TX FIFO Element arrived */
++				ret = m_can_echo_tx_event(dev);
++				if (ret != 0)
++					return ret;
++			}
+ 		}
+-	}
++		if (!cdev->irq_type_edge)
++			break;
++
++
++		/* For edge interrupts we need to read the IR register again to
++		 * check that everything is cleared. If it is not, we can not
++		 * make sure the interrupt line is inactive again which is
++		 * required at this point to not miss any new interrupts. So in
++		 * case there are interrupts signaled in IR we repeat the
++		 * interrupt handling.
++		 */
++		ir = m_can_read(cdev, M_CAN_IR);
++		all_interrupts |= ir;
++	} while (ir);
+ 
+ 	if (cdev->is_peripheral)
+ 		can_rx_offload_threaded_irq_finish(&cdev->offload);
+ 
++	m_can_coalescing_update(cdev, all_interrupts);
++
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -2009,6 +2029,11 @@ static enum hrtimer_restart hrtimer_callback(struct hrtimer *timer)
+ 	return HRTIMER_RESTART;
+ }
+ 
++static irqreturn_t m_can_hardirq(int irq, void *dev_id)
++{
++	return IRQ_WAKE_THREAD;
++}
++
+ static int m_can_open(struct net_device *dev)
+ {
+ 	struct m_can_classdev *cdev = netdev_priv(dev);
+@@ -2034,6 +2059,9 @@ static int m_can_open(struct net_device *dev)
+ 
+ 	/* register interrupt handler */
+ 	if (cdev->is_peripheral) {
++		cdev->irq_type_edge = !(irq_get_trigger_type(dev->irq) &
++					IRQ_TYPE_LEVEL_MASK);
++
+ 		cdev->tx_wq = alloc_ordered_workqueue("mcan_wq",
+ 						      WQ_FREEZABLE | WQ_MEM_RECLAIM);
+ 		if (!cdev->tx_wq) {
+@@ -2046,9 +2074,11 @@ static int m_can_open(struct net_device *dev)
+ 			INIT_WORK(&cdev->tx_ops[i].work, m_can_tx_work_queue);
+ 		}
+ 
+-		err = request_threaded_irq(dev->irq, NULL, m_can_isr,
+-					   IRQF_ONESHOT,
++		err = request_threaded_irq(dev->irq, m_can_hardirq, m_can_isr,
++					   (cdev->irq_type_edge ? 0 : IRQF_ONESHOT),
+ 					   dev->name, dev);
++		if (cdev->irq_type_edge)
++			netdev_info(dev, "Operating a level interrupt chip with an edge interrupt.\n");
+ 	} else if (dev->irq) {
+ 		err = request_irq(dev->irq, m_can_isr, IRQF_SHARED, dev->name,
+ 				  dev);
+diff --git a/drivers/net/can/m_can/m_can.h b/drivers/net/can/m_can/m_can.h
+index 3a9edc292593..17de56056352 100644
+--- a/drivers/net/can/m_can/m_can.h
++++ b/drivers/net/can/m_can/m_can.h
+@@ -99,6 +99,7 @@ struct m_can_classdev {
+ 	int pm_clock_support;
+ 	int pm_wake_source;
+ 	int is_peripheral;
++	bool irq_type_edge;
+ 
+ 	// Cached M_CAN_IE register content
+ 	u32 active_interrupts;
 -- 
-With best wishes
-Dmitry
+2.45.2
+
 
