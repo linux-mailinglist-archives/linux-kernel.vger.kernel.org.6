@@ -1,115 +1,200 @@
-Return-Path: <linux-kernel+bounces-336870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DC139841ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:21:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99E1B9841F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 11:22:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C793A1C22799
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:21:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCA111C23B72
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 09:22:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2051215574F;
-	Tue, 24 Sep 2024 09:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Sxtk18py"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F75155743;
+	Tue, 24 Sep 2024 09:22:16 +0000 (UTC)
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E43153812
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 09:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67F8D84A50;
+	Tue, 24 Sep 2024 09:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727169666; cv=none; b=lPl3OzabYCt+cJGDZobu+xXJVrMnY2XGV5X544HueYfgDHpqYisExwRV4z48zop2WWwXl0bL4J78FDu1WSCNl8qJUXE81rLClIisDoMZjypGzaW7WKvuUPvAP0ljs6LPeUBdZ3Y3tej3SYi1yy+omVNfM/lhTVDEaLDk9s/EvJY=
+	t=1727169736; cv=none; b=aRJhvDz7470x9BfnrdXySsX9IE/o0G7vVLiZMB4gLnPkScXUEbDRGNgXx7cSCnu08OXXJKsrB2IhdUjoBXUxfVtxXqZsK6fd4cED9WbGCN9IHtlwKO/flsNC8yDc+oXXj748/YAWD/s5tXQCH0u9VReIEQITWGfiUo/ZlZE70r0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727169666; c=relaxed/simple;
-	bh=xh7XSoYZ2oivlOmfjdqhw2nRgpePSno/axJ6j2KR6+k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nffo+TjPlfpRZFI6s3LZeHa8FP4sSCIHSGUUxWazqHpgd5cqBaVXRPUJNpTU1f8hZ0kFcdb7UtOhgS9R/mkQWqcOGcNlCgH2OB8iMz2xMsugXMq1ayx5HltNnkTrOS4wX48eH+wRdLFfzxIA8ZJChXv6uqhbQ1X40q0aDjBPiMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Sxtk18py; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5365b6bd901so6135851e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 02:21:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1727169663; x=1727774463; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=H3qBjPt5bsYI9NwIxfpV0RgfHtSupq4ds9YTWbiy/Rk=;
-        b=Sxtk18pyr5bIJt30lq8tNvHnJq1bKhcUK5viTiNm5zQCZhIN32/prdcsYrKpOUNXbd
-         me/DlRcS9oHR3A/NYiSoygkKpSRoRsT5LzC64FRdZVawYPJmkiLFdAh39Z8NgCpS/hQQ
-         UdWnrfXEOnPmKDdh2zJK6ckZjC3izcTBXLiGrO94iB5rv6EKwoLIMV1CpC3IZTBoa9BH
-         nxEt8YtGzntTXZXJwIdMk0k6eLhiSvXcspGiJga48iO7W4Mx0viF1BRnQUSbgXBjRGss
-         alkWwrcfuGTWuyNng35/Pd2IV+J3NsUwQjl+abmFupCbBbQnq+thY/swnGW0SjWmZtO+
-         NJfQ==
+	s=arc-20240116; t=1727169736; c=relaxed/simple;
+	bh=mNZpzHYocrxxSBhWTUitiiBlrxI0MDt3X+nyc3PncTs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sIEmwOoP8CGzMyPCod3IigdtBnqaNGenEL3HNIUr33nr/diwGZ/RSnYal2N+RJArYhfXjNiVdv2iGV7Fg7EJ/5T0uDv0nw/Bqom0XZl3OR7Irs1TTC43T0dwRC4LonsMZ4dMUIWDakJmi1Ypeggh/YIVIJnlmLx/wSiXTItdC6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6ddd758aaf4so38128877b3.2;
+        Tue, 24 Sep 2024 02:22:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727169663; x=1727774463;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H3qBjPt5bsYI9NwIxfpV0RgfHtSupq4ds9YTWbiy/Rk=;
-        b=KIHXgW3qnHyU3qg75bI3Xhc1nwsBKSCEc2hlqRNr4Aza87OhG5sX/zG64jbtDBFE2i
-         xV8yuG9Oxvn8CIoQWupVyGcZKwjvRx7tkUQTCt7DsPNdpU0DRwXxxERLiGHo7bNglxU/
-         s4GF8SOKsWz8gt4pPOBVS5IwXtfS1zKh29cErhw/Ionk2nDiU6SqMVSsdUfF65iBQdFY
-         W36JxpFSOyjhw+MJBYHtnUYHEOMxo9CbXLXn/aPEpQvQ1jX+tQGhcMc8RmGdkMgJk/Rv
-         9HCv3I/lfS2UnvmKw/U2fS3x9qewQ3DstjIwuVR9oAQYwbaNy2nXf2RuN2J9MtvEfb7N
-         D5kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUWcmQAzPHX5KA848eDR/9Jk6FdlOGz1hAdDoaVRTJsiaohoypi/Ff1IANwTUTbyyqaITtchWc+7sQyH1I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUlCTnPaer4Wj75zLfnxxsC3EOAih6ENB1hV1Tri2EalUfDCCy
-	fvUt0RX6Q8g/4dCqZArqx96esmUHGS1vO4AhLUTfUW9ZSlAyYwXq5a/Wm2ehMK4=
-X-Google-Smtp-Source: AGHT+IErw3GA+vo1i4xCsMhmniR9BecY9KqTjqUd9o6GiDUh+NRMs6WxCikP47BYxeUa3OG4pELYYw==
-X-Received: by 2002:a05:6512:3e04:b0:536:5644:6086 with SMTP id 2adb3069b0e04-536ad3d50bdmr6935585e87.52.1727169662675;
-        Tue, 24 Sep 2024 02:21:02 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9392f4fb94sm61097566b.58.2024.09.24.02.21.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 02:21:01 -0700 (PDT)
-Date: Tue, 24 Sep 2024 11:21:00 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Marcos Paulo de Souza <mpdesouza@suse.com>,
-	Michael Vetter <mvetter@suse.com>, linux-kselftest@vger.kernel.org,
-	live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/3] selftests: livepatch: test livepatching a kprobed
- function
-Message-ID: <ZvKEfID8AxzeA7NL@pathway.suse.cz>
-References: <20240920115631.54142-1-mvetter@suse.com>
- <5e544e68ad83fcdeb3502f1273f18e3d33dc8804.camel@suse.com>
- <9abe1f61-3379-44b5-8b8a-517c3df34daa@linuxfoundation.org>
+        d=1e100.net; s=20230601; t=1727169733; x=1727774533;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ezXFARLli0XopvazaZI4WJPLJgg9ymKuou4RbS/PT28=;
+        b=BASM3ESNk4+AURqP5PX3rY8sSmfohwiSIqhzf2gOU+/A4AGpq8ZuAsN6y0m7lufyy0
+         jrzUqy/hkgy9DVAHuICkF6C5N84oTIfO6gNleWDT61teTGjnDS0bhw3S5eHJsCr2+iFd
+         wY5lVkX0UG/CW/sxnvFrA8mxb5M/kqlT/gOu4i8CE7IEalv7l9GqJSM0hp1ZTSTLdYS9
+         4YzFNEIBoTz/GZQ+a6iv2Xq6+bW4TQ8kypyaOaERlEE5gNTGGNh/oPJpNYkF8vxg+lRE
+         aiUpP1NYo7zyTmf/ChYAKnDhDtlsU+42Q1ag+W49dpU8CGQQHcT810gDxbyKyf+Vg1/u
+         4uBA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKzGx2Ri4vV0e4G6tQVqffJDb4hs2ibKtEnLFEnMRanyK8UVfIoLWX5Paq922iC7cFiu/O1023/8UemC5D@vger.kernel.org, AJvYcCWVaxP/UA9UrKS+053AULZgnDPilwrMyc6KwVNieXppLHT4oUVw+1X8fJxrf9o0fwUmJ6EfSwEKHqbqGbLO@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/JQmlnkfmtAh+nb34K7Lomt4O93aI6kDNMJE0MjqFz8iBRGJe
+	nJYImQwRhzRiPqmbZjSH3vTlzdbpEXIVlN9xbe/zkTAjxIZj6nw9xBHq+qsY
+X-Google-Smtp-Source: AGHT+IHmHwNQEz4rHjfTONxzEAP97+r7PhVrpf90lh2Cxe1bGCm77sjOD4YfMdX/V5RazydmbRd5Ug==
+X-Received: by 2002:a05:690c:6604:b0:6e2:12e5:35b4 with SMTP id 00721157ae682-6e212e55256mr6036607b3.0.1727169732651;
+        Tue, 24 Sep 2024 02:22:12 -0700 (PDT)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e20d2a44b3sm1819777b3.131.2024.09.24.02.22.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Sep 2024 02:22:11 -0700 (PDT)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6dffe3fe4fcso28550687b3.1;
+        Tue, 24 Sep 2024 02:22:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVvmPClUN2qx7v2fOM37rjrViZ1rpgGiGLHI5AzK4XlE+3lCS3GAJFNtcY18tItd9E9Tj3MHcS7d2ru9Q1H@vger.kernel.org, AJvYcCWTa3xsUDF9XCr40oXXUajwq1oPVAv5rseY79qpEzjVVPc94wtKPBScZpo8pAGCAEd0pv1HwgW83lCxkQlP@vger.kernel.org
+X-Received: by 2002:a05:690c:fc1:b0:6e2:ffd:c123 with SMTP id
+ 00721157ae682-6e20ffdc6ffmr10422617b3.7.1727169731405; Tue, 24 Sep 2024
+ 02:22:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9abe1f61-3379-44b5-8b8a-517c3df34daa@linuxfoundation.org>
+References: <20240830032840.3783206-1-hsiangkao@linux.alibaba.com>
+In-Reply-To: <20240830032840.3783206-1-hsiangkao@linux.alibaba.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 24 Sep 2024 11:21:59 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVqa2Mjqtqv0q=uuhBY1EfTaa+X6WkG7E2tEnKXJbTkNg@mail.gmail.com>
+Message-ID: <CAMuHMdVqa2Mjqtqv0q=uuhBY1EfTaa+X6WkG7E2tEnKXJbTkNg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] erofs: add file-backed mount support
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon 2024-09-23 10:16:29, Shuah Khan wrote:
-> On 9/23/24 08:45, Marcos Paulo de Souza wrote:
-> > On Fri, 2024-09-20 at 13:56 +0200, Michael Vetter wrote:
-> > > This patchset adds a test for livepatching a kprobed function.
-> > > 
-> > > Michael Vetter (3):
-> > >    selftests: livepatch: rename KLP_SYSFS_DIR to SYSFS_KLP_DIR
-> > >    selftests: livepatch: save and restore kprobe state
-> > >    selftests: livepatch: test livepatching a kprobed function
-> > > 
-> > 
-> 
-> Assuming this is going through livepatch tree:
+Hi Gao,
 
-Yup, I am going to take it via the livepatch tree.
-Though I am going to wait for more potential feedback a week or so.
+CC vfs
 
-> Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+On Fri, Aug 30, 2024 at 5:29=E2=80=AFAM Gao Xiang <hsiangkao@linux.alibaba.=
+com> wrote:
+> It actually has been around for years: For containers and other sandbox
+> use cases, there will be thousands (and even more) of authenticated
+> (sub)images running on the same host, unlike OS images.
+>
+> Of course, all scenarios can use the same EROFS on-disk format, but
+> bdev-backed mounts just work well for OS images since golden data is
+> dumped into real block devices.  However, it's somewhat hard for
+> container runtimes to manage and isolate so many unnecessary virtual
+> block devices safely and efficiently [1]: they just look like a burden
+> to orchestrators and file-backed mounts are preferred indeed.  There
+> were already enough attempts such as Incremental FS, the original
+> ComposeFS and PuzzleFS acting in the same way for immutable fses.  As
+> for current EROFS users, ComposeFS, containerd and Android APEXs will
+> be directly benefited from it.
+>
+> On the other hand, previous experimental feature "erofs over fscache"
+> was once also intended to provide a similar solution (inspired by
+> Incremental FS discussion [2]), but the following facts show file-backed
+> mounts will be a better approach:
+>  - Fscache infrastructure has recently been moved into new Netfslib
+>    which is an unexpected dependency to EROFS really, although it
+>    originally claims "it could be used for caching other things such as
+>    ISO9660 filesystems too." [3]
+>
+>  - It takes an unexpectedly long time to upstream Fscache/Cachefiles
+>    enhancements.  For example, the failover feature took more than
+>    one year, and the deamonless feature is still far behind now;
+>
+>  - Ongoing HSM "fanotify pre-content hooks" [4] together with this will
+>    perfectly supersede "erofs over fscache" in a simpler way since
+>    developers (mainly containerd folks) could leverage their existing
+>    caching mechanism entirely in userspace instead of strictly following
+>    the predefined in-kernel caching tree hierarchy.
+>
+> After "fanotify pre-content hooks" lands upstream to provide the same
+> functionality, "erofs over fscache" will be removed then (as an EROFS
+> internal improvement and EROFS will not have to bother with on-demand
+> fetching and/or caching improvements anymore.)
+>
+> [1] https://github.com/containers/storage/pull/2039
+> [2] https://lore.kernel.org/r/CAOQ4uxjbVxnubaPjVaGYiSwoGDTdpWbB=3Dw_AeM6Y=
+M=3DzVixsUfQ@mail.gmail.com
+> [3] https://docs.kernel.org/filesystems/caching/fscache.html
+> [4] https://lore.kernel.org/r/cover.1723670362.git.josef@toxicpanda.com
+>
+> Closes: https://github.com/containers/composefs/issues/144
+> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 
-Thanks for the review.
+Thanks for your patch, which is now commit fb176750266a3d7f
+("erofs: add file-backed mount support").
 
-Best Regards,
-Petr
+> ---
+> v2:
+>  - should use kill_anon_super();
+>  - add O_LARGEFILE to support large files.
+>
+>  fs/erofs/Kconfig    | 17 ++++++++++
+>  fs/erofs/data.c     | 35 ++++++++++++---------
+>  fs/erofs/inode.c    |  5 ++-
+>  fs/erofs/internal.h | 11 +++++--
+>  fs/erofs/super.c    | 76 +++++++++++++++++++++++++++++----------------
+>  5 files changed, 100 insertions(+), 44 deletions(-)
+>
+> diff --git a/fs/erofs/Kconfig b/fs/erofs/Kconfig
+> index 7dcdce660cac..1428d0530e1c 100644
+> --- a/fs/erofs/Kconfig
+> +++ b/fs/erofs/Kconfig
+> @@ -74,6 +74,23 @@ config EROFS_FS_SECURITY
+>
+>           If you are not using a security module, say N.
+>
+> +config EROFS_FS_BACKED_BY_FILE
+> +       bool "File-backed EROFS filesystem support"
+> +       depends on EROFS_FS
+> +       default y
+
+I am a bit reluctant to have this default to y, without an ack from
+the VFS maintainers.
+
+> +       help
+> +         This allows EROFS to use filesystem image files directly, witho=
+ut
+> +         the intercession of loopback block devices or likewise. It is
+> +         particularly useful for container images with numerous blobs an=
+d
+> +         other sandboxes, where loop devices behave intricately.  It can=
+ also
+> +         be used to simplify error-prone lifetime management of unnecess=
+ary
+> +         virtual block devices.
+> +
+> +         Note that this feature, along with ongoing fanotify pre-content
+> +         hooks, will eventually replace "EROFS over fscache."
+> +
+> +         If you don't want to enable this feature, say N.
+> +
+>  config EROFS_FS_ZIP
+>         bool "EROFS Data Compression Support"
+>         depends on EROFS_FS
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
