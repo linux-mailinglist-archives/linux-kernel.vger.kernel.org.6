@@ -1,118 +1,166 @@
-Return-Path: <linux-kernel+bounces-338093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14AA5985348
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:54:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3897998534A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:55:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C18221F24083
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 06:54:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42F691C23C4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 06:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA11156230;
-	Wed, 25 Sep 2024 06:54:29 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A10156230;
+	Wed, 25 Sep 2024 06:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TSFhwR7W"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB754155A25;
-	Wed, 25 Sep 2024 06:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A577155A25
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 06:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727247269; cv=none; b=MdxHxdFp3jSpjkAZ8m9O+Slpjfdk8HbDqzj0RfsZwvtOQC4hud+ECTCUToeFJyq3NnX7nCutG8Vk96FDH/JEg+yEOnUxAjDZfYpKYtgJaQMWt7X/hatS++kvCQikJj2bDWbY36ixFh9HfiChrcCZ2pSikfEmBhkxvSoqTR5R69M=
+	t=1727247305; cv=none; b=TSCK6t2LrFF6+A7Adrv8Qyu0Xx1S+UkNLD29ViFq+b4QJPFBe2D5saoGuRAKN9Qw17JhtozMqYkzI44nH/xPxXF1XVheYvbyb5OY8CU9pv3GOU61+7ob88ct0B7wcl1LI5SDUrTiB5hgE1b+RkGUNdGSGaQSWIWaDfScjv772ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727247269; c=relaxed/simple;
-	bh=cnZom9WUAnj+o4d2w5Fmh7xgq+O5Wf3Skrp+MJU9YMk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SAr0wu+SW3WznVf/a/OopQ2hHr+npNLKvvdnch06YNEhd7zB+xEkWgBHnMVEhiQAYdbwqPXn731/7Ou2ESKmWyAa6hHWib+1fdjjANdaChCzwtyQj1lYj9wtvmlW+mnKOF3mwPg9Mj4mKqwqMdEdfS9a1ABpbs5xgwC6nExPI8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4XD6sZ1ytSz9sSb;
-	Wed, 25 Sep 2024 08:54:26 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id RCZhElhrsOJI; Wed, 25 Sep 2024 08:54:26 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4XD6sZ17Drz9sSZ;
-	Wed, 25 Sep 2024 08:54:26 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 148C18B76E;
-	Wed, 25 Sep 2024 08:54:26 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id I0-xI-Gl0RIA; Wed, 25 Sep 2024 08:54:26 +0200 (CEST)
-Received: from [192.168.232.90] (PO27091.IDSI0.si.c-s.fr [192.168.232.90])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3E7628B763;
-	Wed, 25 Sep 2024 08:54:25 +0200 (CEST)
-Message-ID: <54a06327-1e4d-4718-bf50-be2c5afc9f24@csgroup.eu>
-Date: Wed, 25 Sep 2024 08:54:24 +0200
+	s=arc-20240116; t=1727247305; c=relaxed/simple;
+	bh=4gOKKEtz+0EI6rj3HqZT27xWK2qDolfvA8v4vKsZ6RU=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=QIj57VUgMo+XuaiyCwQmrBDGzNAPf960qysJEHShI44Ue3gPFSARYFtHTbli+oejh+5l6mf9nrIYPsNxo4CO/OAKBULFpvNSQcjYx6AXi6dU49b2nD2vEkb++0z4wdyq3oXrvmyziwe3YXUc4Gcb97HGtMJp+TsNeMgA4gzw61A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TSFhwR7W; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240925065501epoutp034d006ee57022f4fefa2c5bce919481d9~4akTnbY9V1105411054epoutp03t
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 06:55:01 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240925065501epoutp034d006ee57022f4fefa2c5bce919481d9~4akTnbY9V1105411054epoutp03t
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1727247301;
+	bh=npWzJrPmcJ7bQMNX0h6hcxv6OusSwWpLI++E+L4EUvU=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=TSFhwR7WVS85pq9Zo++PTL//bWIhraLamMrsIFsALm8sUybNg2gfxb5fqTomEiZb/
+	 Hu4dsUxgx4BZlKXk0APs+J/xKwZh1RblcB08Mdmz6c1Rbfti9i4MXt8f00Km7qG6aQ
+	 ZVrnwnInkr4oaTUdSRfCZFtSo98NOosOcmexkpwA=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240925065500epcas1p230985f5aa54f41a5df2549418f732a7c~4akTDSehl0821208212epcas1p2e;
+	Wed, 25 Sep 2024 06:55:00 +0000 (GMT)
+Received: from epsmgec1p1-new.samsung.com (unknown [182.195.38.243]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4XD6tD3zJkz4x9Q1; Wed, 25 Sep
+	2024 06:55:00 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+	epsmgec1p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	5E.6E.19509.4C3B3F66; Wed, 25 Sep 2024 15:55:00 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240925065459epcas1p3b8e701fd0228bc2670f22cf253a3b02f~4akSaJnxP2690826908epcas1p3I;
+	Wed, 25 Sep 2024 06:54:59 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240925065459epsmtrp2e39f8de490b2cc6f2afb472e175b4937~4akSZP00F1786117861epsmtrp26;
+	Wed, 25 Sep 2024 06:54:59 +0000 (GMT)
+X-AuditID: b6c32a4c-17bc070000004c35-0a-66f3b3c4a89b
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	7C.67.08456.3C3B3F66; Wed, 25 Sep 2024 15:54:59 +0900 (KST)
+Received: from sh8267baek02 (unknown [10.253.99.49]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240925065459epsmtip18e825fae86b1134e725dde1488ddc4da~4akSHH87I1980719807epsmtip1w;
+	Wed, 25 Sep 2024 06:54:59 +0000 (GMT)
+From: "Seunghwan Baek" <sh8267.baek@samsung.com>
+To: "'Bart Van Assche'" <bvanassche@acm.org>,
+	<linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+	<martin.petersen@oracle.com>, <James.Bottomley@HansenPartnership.com>,
+	<avri.altman@wdc.com>, <alim.akhtar@samsung.com>
+Cc: <grant.jung@samsung.com>, <jt77.jang@samsung.com>,
+	<junwoo80.lee@samsung.com>, <dh0421.hwang@samsung.com>,
+	<jangsub.yi@samsung.com>, <sh043.lee@samsung.com>, <cw9316.lee@samsung.com>,
+	<wkon.kim@samsung.com>, <stable@vger.kernel.org>
+In-Reply-To: <1845f326-e9eb-4351-9ed1-fce373c82cb0@acm.org>
+Subject: RE: [PATCH v1 1/1] ufs: core: set SDEV_OFFLINE when ufs shutdown.
+Date: Wed, 25 Sep 2024 15:54:59 +0900
+Message-ID: <08b901db0f17$d6a20b50$83e621f0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/8] vdso: Introduce vdso/mman.h
-To: Vincenzo Frascino <vincenzo.frascino@arm.com>,
- linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H . Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
- Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <20240923141943.133551-1-vincenzo.frascino@arm.com>
- <20240923141943.133551-4-vincenzo.frascino@arm.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20240923141943.133551-4-vincenzo.frascino@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQITd6wvsWq6bg+5ypABxh1kBxxfMwHy7pIVAtyJc3gCDAIdKwI4d05OAHuLQEuxqsQ7wA==
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHJsWRmVeSWpSXmKPExsWy7bCmvu6RzZ/TDJacl7F4MG8bm8XLn1fZ
+	LKZ9+MlsMeNUG6vFvmsn2S1+/V3PbrGxn8OiY+tkJosdz8+wW+z628xkcXnXHDaL7us72CyW
+	H//HZNH0Zx+LxYKNjxgtNl/6xuIg4HH5irfHtEmn2Dw+Pr3F4tG3ZRWjx+dNch7tB7qZAtii
+	sm0yUhNTUosUUvOS81My89JtlbyD453jTc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgM5WUihL
+	zCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak5BSYFegVJ+YWl+al6+WlllgZGhgYmQIVJmRn
+	fF5nUDCVs2Lzvz72BsbD7F2MnBwSAiYSZ5etZ+pi5OIQEtjDKDG/dxMLhPOJUWL3+hvsEM43
+	RonNbzczw7QcenUYKrGXUeLIxLuMEM5LRonT7YsYQarYBAwkmn8cBKsSAUns2HIdbDAzyOAt
+	f46xgFRxClhLPH+xgRXEFhbwkvix7QQTiM0ioCrx4Mg7sH28ApYS7/9sYoGwBSVOznwCZjML
+	yEtsfzsH6iYFiZ9Pl4HNEREIk1j69TgjRI2IxOzONmaQxRICdzgk9v07wAjR4CLRuLgFqllY
+	4tXxLdDwkJL4/G4vG4RdLLFw4yQWiOYWRonry/9ANdtLNLc2AxVxAG3QlFi/Sx9iGZ/Eu689
+	rCBhCQFeiY42IYhqVYlTG7ZCdUpLXG9uYIWwPSQ2rtvPPIFRcRaS12YheW0WkhdmISxbwMiy
+	ilEqtaA4Nz012bDAUDcvtRwe58n5uZsYwQlby2cH4/f1f/UOMTJxMB5ilOBgVhLhnXTzY5oQ
+	b0piZVVqUX58UWlOavEhRlNggE9klhJNzgfmjLySeEMTSwMTMyMTC2NLYzMlcd4zV8pShQTS
+	E0tSs1NTC1KLYPqYODilGph6Ex2DmA+tieu/c/dN80/+9iOT2q8d383+/Hfi2qI1+/ufqMnM
+	eBxa/jBW4fB3xkPXVphZ3/u0bsqLP58vp/ytPHlIveSFrGXwW//HeZLfrBlNmjh4jHN2vudc
+	pb9gUtth/mvFlxJr5nD8cS1aHBrGt1+9xGy2YwTbTIYGR7XLtyfebtVYcNw13k12vqrbdNfT
+	PKtKT9y+7tn/37MxdkbKJNHgkxd/3DCaEujWMm+/32G9hbXhEkE6Yee2XRd//MlelFvm7wIm
+	kaX5hxaa9y7Y37JRSbMnz6P7XovAyS0+qd/0J/il8h27t6fZ/2fvPY17P9Ls7vzTmh+u/PlS
+	enHiDhVLoUUsTyZHy0kJFHxWYinOSDTUYi4qTgQArUJSXmEEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCIsWRmVeSWpSXmKPExsWy7bCSnO7hzZ/TDC4dNrR4MG8bm8XLn1fZ
+	LKZ9+MlsMeNUG6vFvmsn2S1+/V3PbrGxn8OiY+tkJosdz8+wW+z628xkcXnXHDaL7us72CyW
+	H//HZNH0Zx+LxYKNjxgtNl/6xuIg4HH5irfHtEmn2Dw+Pr3F4tG3ZRWjx+dNch7tB7qZAtii
+	uGxSUnMyy1KL9O0SuDI+rzMomMpZsflfH3sD42H2LkZODgkBE4lDr0BsLg4hgd2MEpMmXGeD
+	SEhLPD7wkrGLkQPIFpY4fLgYouY5o8S9vQ2sIDVsAgYSzT8OgjWLCLxnlDj+Zx2Ywyzwh1Fi
+	zrnJbBAtJ5kkXk19ywTSwilgLfH8xQawdmEBL4kf206AxVkEVCUeHHnHDGLzClhKvP+ziQXC
+	FpQ4OfMJmM0soC3R+7CVEcKWl9j+dg4zxKkKEj+fLgObKSIQJrH063GoGhGJ2Z1tzBMYhWch
+	GTULyahZSEbNQtKygJFlFaNkakFxbnpusWGBUV5quV5xYm5xaV66XnJ+7iZGcMRqae1g3LPq
+	g94hRiYOxkOMEhzMSiK8k25+TBPiTUmsrEotyo8vKs1JLT7EKM3BoiTO++11b4qQQHpiSWp2
+	ampBahFMlomDU6qBac8Xx1WngyR77Tpf7nyc5hixz+2eSlrlzrm7PqmH7hRmOh+4dPb5vUrh
+	uQGueSkSgkJz3moptBwzrj67aV2lcovr6e0WrIz131Pmct3VC9NfsPytzB3l9xv/75h/UOWo
+	XizzYZazmhc3sOw72a05Y8diuyKm2tNs684cTt+d7+xgdU+rjavlaqmqh8PdK8b313ednHYu
+	gMeWseb3tDt/Viq+W2bzT4P7YJlfycGTb/Vqrnr11P4L8f91LmXzCk/NOoYH2RND5h/OYD9y
+	ud/kUKC2MUtz3+R60bV/duQGfltyfIpA+vcyfv9p2y8kRFpd6pmQG98/5fN/f6PGpblzFlkm
+	BE44zLQ38b/as4vNXkosxRmJhlrMRcWJAFEqB0ZHAwAA
+X-CMS-MailID: 20240925065459epcas1p3b8e701fd0228bc2670f22cf253a3b02f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240829093921epcas1p35d28696b0f79e2ae39d8e3690f088e64
+References: <20240829093913.6282-1-sh8267.baek@samsung.com>
+	<CGME20240829093921epcas1p35d28696b0f79e2ae39d8e3690f088e64@epcas1p3.samsung.com>
+	<20240829093913.6282-2-sh8267.baek@samsung.com>
+	<fa8a4c1a-e583-496b-a0a2-bd86f86af508@acm.org>
+	<003201db0e27$df93f250$9ebbd6f0$@samsung.com>
+	<1845f326-e9eb-4351-9ed1-fce373c82cb0@acm.org>
 
-
-
-Le 23/09/2024 à 16:19, Vincenzo Frascino a écrit :
-> The VDSO implementation includes headers from outside of the
-> vdso/ namespace.
+> On 9/23/24 7:17 PM, Seunghwan Baek wrote:> That's because SSU (Start Stop
+> Unit) command must be sent during
+> > shutdown process. If SDEV_OFFLINE is set for wlun, SSU command cannot
+> > be sent because it is rejected by the scsi layer. Therefore, we
+> > consider to set SDEV_QUIESCE for wlun, and set SDEV_OFFLINE for other
+> > lus.
+> Right. Since ufshcd_wl_shutdown() is expected to stop all DMA related to
+> the UFS host, shouldn't there be a scsi_device_quiesce(sdev) call after
+> the __ufshcd_wl_suspend(hba, UFS_SHUTDOWN_PM) call?
 > 
-> Introduce vdso/mman.h to make sure that the generic library
-> uses only the allowed namespace.
-
-I can't see the added value of this header.
-
-VDSO code can include <asm/vdso/mman.h> directly.
-
-Christophe
-
+> Thanks,
 > 
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Jason A. Donenfeld <Jason@zx2c4.com>
-> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-> ---
->   include/vdso/mman.h | 7 +++++++
->   1 file changed, 7 insertions(+)
->   create mode 100644 include/vdso/mman.h
-> 
-> diff --git a/include/vdso/mman.h b/include/vdso/mman.h
-> new file mode 100644
-> index 000000000000..95e3da714c64
-> --- /dev/null
-> +++ b/include/vdso/mman.h
-> @@ -0,0 +1,7 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __VDSO_MMAN_H
-> +#define __VDSO_MMAN_H
-> +
-> +#include <asm/vdso/mman.h>
-> +
-> +#endif	/* __VDSO_MMAN_H */
+> Bart.
+
+Yes. __ufshcd_wl_suspend(hba, UFS_SHUTDOWN_PM) should be called after
+scsi_device_quiesce(sdev). Generally, the SSU command is the last command
+before UFS power off. Therefore, if __ufshcd_wl_suspend is performed
+before scsi_device_quiesce, other commands may be performed after the SSU
+command and UFS may not guarantee the operation of the SSU command, which
+may cause other problems. This order must be guaranteed.
+
+And with SDEV_QUIESCE, deadlock issue cannot be avoided due to requeue.
+We need to return the i/o error with SDEV_OFFLINE to avoid the mentioned
+deadlock problem.
+
 
