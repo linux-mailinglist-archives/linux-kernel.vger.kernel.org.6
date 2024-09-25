@@ -1,146 +1,118 @@
-Return-Path: <linux-kernel+bounces-339287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4962F986229
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:08:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D285A98622E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:09:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2E741F270D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:08:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E07F1C27331
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F0FB188CD3;
-	Wed, 25 Sep 2024 14:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433AF188704;
+	Wed, 25 Sep 2024 14:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O9D7285x"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PxaooV7M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCB718455A;
-	Wed, 25 Sep 2024 14:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A24176FA5;
+	Wed, 25 Sep 2024 14:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727276114; cv=none; b=krO/RcqgeuFW0WCW5RcL9VcctQ/4i69ImxqDHrGYp08PWvl1y/eEIIRFb/TLa/ja/mn25CfWHoaK/p3+FdL/iw+wJpkUtTEeI2eS8+K0fqRe6SEA84SBRrqvLb70MlJoj1H8jGc0YZ86/Ftk/T7L/zn5eaDRi/V+2bIoriTilSM=
+	t=1727276239; cv=none; b=u7ofL/G016ov4beuCEQ1X/w1u3TK0zhTE/P1D6ZPXs/Gk+svnO5/Bw76HxxRZLmId1/qlrgcf6nkFv7H85BH/ywbsdSSMySLeWZE8WA8c//ZmPzLGB5XyksvjLDspgaTDTp18hE74gcmWbscsSEN91eRkWaGxFJNFJd/N7FfkwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727276114; c=relaxed/simple;
-	bh=mmtRiWz9Q+Py59z3Q6DAPlbdAQ0X3G+1ovoNyVQN8Ms=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gliu0VQwSgTZGjiYy3IVet4s41Buzk7Vq+bjtrHZO4xLLnf6QSTHIw2viplNaiq0Uk+EYuhDROeUMAbrubOmcHX7CT+hjDXK2DEFeyvg+fwWBF6FdZcxK8TSuvwGkxnc5CPb8D95All3rdlhzB23QXcrpLNDPGPKIGGl/vaeBpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O9D7285x; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2055a3f80a4so43352565ad.2;
-        Wed, 25 Sep 2024 07:55:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727276112; x=1727880912; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BlbDQsnCvB/FZmp4DNDzI/gUYmfcIsiNTu193rz6Dfw=;
-        b=O9D7285xpAZtfNjmCmMhDYuw/bCpH5YyxH/pCPaJ1NA+xkMoBstrP3gK/K8dh2Nscv
-         bdqa01axo3ERCQj+p5xwGEag61V9l6eETkIIdZqK+Q+pAwzYcAhidh2u0xFukTg3d/D3
-         6jzPB6WYx4Ra1q8sup0wVJN72ZocH0wyKea0ocGMucjWR2wqjK2PnSrQgbnEQoTPzMMo
-         lB/KacFABIuTMLdOXjM3HcTQZ8Xp0WUrIzZHzvXmFDTXehXEholtDkvZogq4MKm2hf4g
-         7f+2TZPX284hLsosz8bob13V6BkO1fAPhUckUmkdVqs5p3+3LIQBRrLru0NkKC+CzUu3
-         T0BQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727276112; x=1727880912;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=BlbDQsnCvB/FZmp4DNDzI/gUYmfcIsiNTu193rz6Dfw=;
-        b=kU5NU32E0DYqEp3WtCjK8atsxa1G/cWH/7D22ffQog7WCSP1ZgaSCr2d3kc7QSTdOJ
-         w8qtfNv+fzzAmglrNFWX2oucX4yejwprnLPH5KjmqsWpwX8OrNvOlVJEkR/dVlm4ZKDe
-         9Ulqc0fue1vlXZauJlTF1vpCEQqueICF7ILucBb9AYLtVZ6GJAVadZH8sXrZQn36eYh8
-         V9e6KU+jt4r+fk1z+/PL1jBge1b51a4FFpezay3QkzDqGThHXxv6b//OXzl/l7G5N5j8
-         pD9+P9Use69qISUCkd22BXSIl4I4QnNO5ZT6PT2aDx5WhxCJ4jzv8SDfNzE524wyd8ym
-         KCfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUmZ92q6ISZ9XeP2Eldr2kxKkNZ3c+eebOiSaKaCrI30mG7SdYju8r+BnS4LN9M9+h0Qv0=@vger.kernel.org, AJvYcCW33+/g0n/NQA5D13kMhwDDxltSME4B+apliass626M+4NMTs9BnjpBsPtn7nyTXyr5pl5wwbLcNKUqVy3f@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAiEiud798+M+jKKUrTeGbaxJUEN9KAFuUss75IjNCOubhx4WO
-	WFiketxK1F6KE7R6ELss7oOBl4nnUowZ5fd/qnhwgVExBvkjHfcE
-X-Google-Smtp-Source: AGHT+IFTkM7vEB+MGzSsdhuaBNY0NdKahQnrmcu+j8ktodfXOVJZuMa82j94ZQ8aScDtgu4rTuWTlg==
-X-Received: by 2002:a17:903:188:b0:206:b960:2e97 with SMTP id d9443c01a7336-20afc5e2c5amr33774985ad.45.1727276111587;
-        Wed, 25 Sep 2024 07:55:11 -0700 (PDT)
-Received: from [192.168.50.122] ([117.147.91.209])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af18584f4sm25361995ad.280.2024.09.25.07.55.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Sep 2024 07:55:11 -0700 (PDT)
-Message-ID: <680bbf09-6939-4056-bfc2-27138a93efe6@gmail.com>
-Date: Wed, 25 Sep 2024 22:55:00 +0800
+	s=arc-20240116; t=1727276239; c=relaxed/simple;
+	bh=9SYCC7mLQOM3OuiI7cpij+d1MGpKZ8J9VMN2/6n6G0k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hX1dGfW/H9mQVAa4x3mVtGm4noVy6SLIW3cSNAcQKLODz2UY1RfBYFZOSIGcfYHyRLyc994f8Ffy5gL8QnwprBNQii5NJvoAaXInMePW4Dy/d55IGY3unPTSEBzqQdALZrzqj5qMAUksJLNU2qpe9plakoNh1mG4xQdIj7jK1OY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PxaooV7M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E6D8C4CEC3;
+	Wed, 25 Sep 2024 14:57:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727276239;
+	bh=9SYCC7mLQOM3OuiI7cpij+d1MGpKZ8J9VMN2/6n6G0k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PxaooV7Mtx9r2NdPDWFS18359xSFnLg962Qnpl1y++JiS8j6cHBsCkZGWKjj88jJZ
+	 NudCyI0z1d7Tpk+ZX3PBiWH8hfM0A/vWJw7eOfL/NJIcQeaZmbqyS7ICjf1kRHHAjG
+	 WjNTKP3pR5Xx5f8DtOm8GUjCRxOYTcmtT6Ojkyj+WCFlME8IEuzeWlYqV74rXT7Huc
+	 1x1JWP6kwFyYJ0oYBJ+OUCFciiox1HwNuZJBrZI8HY/HGSyhIWLjAqT6KbvCkITz3v
+	 iPjfdLluRfPzIx/GSV0OR0p5zaZdwUimM5T0PyA5AAKPQNFVvHkjkKFiE96SduQLGL
+	 SUVFWFaWz4+wA==
+Date: Wed, 25 Sep 2024 15:57:15 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Lukasz Majewski <lukma@denx.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 1/2] dt-bindings: arm: Document the btt3 i.MX28 based
+ board
+Message-ID: <20240925-sulk-unsafe-2a175b3ae578@spud>
+References: <20240925143129.4081815-1-lukma@denx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v3] libbpf: Fix expected_attach_type set when
- kernel not support
-To: Daniel Borkmann <daniel@iogearbox.net>, Jiri Olsa <olsajiri@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
- <eddyz87@gmail.com>, Martin KaFai Lau <martin.lau@linux.dev>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240914154040.276933-1-chen.dylane@gmail.com>
- <ZvPl6Wo4cdihaQ0A@krava> <11e2ed15-b3a5-419a-9e9f-cbfe270d0fe8@iogearbox.net>
-From: Tao Chen <chen.dylane@gmail.com>
-In-Reply-To: <11e2ed15-b3a5-419a-9e9f-cbfe270d0fe8@iogearbox.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Ipq2zLzyU4Jp5GR6"
+Content-Disposition: inline
+In-Reply-To: <20240925143129.4081815-1-lukma@denx.de>
 
-在 2024/9/25 18:36, Daniel Borkmann 写道:
-> On 9/25/24 12:28 PM, Jiri Olsa wrote:
->> On Sat, Sep 14, 2024 at 11:40:40PM +0800, Tao Chen wrote:
->>> The commit "5902da6d8a52" set expected_attach_type again with
->>> field of bpf_program after libpf_prepare_prog_load, which makes
->>> expected_attach_type = 0 no sense when kenrel not support the
->>> attach_type feature, so fix it.
->>>
->>> Fixes: 5902da6d8a52 ("libbpf: Add uprobe multi link support to 
->>> bpf_program__attach_usdt")
->>> Suggested-by: Jiri Olsa <jolsa@kernel.org>
->>> Signed-off-by: Tao Chen <chen.dylane@gmail.com>
->>> ---
->>>   tools/lib/bpf/libbpf.c | 12 ++++++++----
->>>   1 file changed, 8 insertions(+), 4 deletions(-)
->>>
->>> Change list:
->>> - v2 -> v3:
->>>      - update BPF_TRACE_UPROBE_MULTI both in prog and opts suggedted by
->>>        Andrri
->>> - v1 -> v2:
->>>      - restore the original initialization way suggested by Jiri
->>>
->>> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
->>> index 219facd0e66e..a78e24ff354b 100644
->>> --- a/tools/lib/bpf/libbpf.c
->>> +++ b/tools/lib/bpf/libbpf.c
->>> @@ -7352,8 +7352,14 @@ static int libbpf_prepare_prog_load(struct 
->>> bpf_program *prog,
->>>           opts->prog_flags |= BPF_F_XDP_HAS_FRAGS;
->>>       /* special check for usdt to use uprobe_multi link */
->>> -    if ((def & SEC_USDT) && kernel_supports(prog->obj, 
->>> FEAT_UPROBE_MULTI_LINK))
->>> +    if ((def & SEC_USDT) && kernel_supports(prog->obj, 
->>> FEAT_UPROBE_MULTI_LINK)) {
->>> +        /* for BPF_TRACE_KPROBE_MULTI, user might want to query 
->>> exected_attach_type
->>> +         * in prog, and expected_attach_type we set in kenrel is 
->>> from opts, so we
->>> +         * update both.
->>> +         */
->> s/K/U/ in BPF_TRACE_KPROBE_MULTI in above comment and 'kenrel' typo
->>
->> Acked-by: Jiri Olsa <jolsa@kernel.org>
-> Same typo is also in commit desc, would be good to improve the commit
-> desc a bit if you spin v4 anyway. Thanks!
 
-Hi，Dnaiel，my bad，i will fix it in v4
+--Ipq2zLzyU4Jp5GR6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Best Regards
-Dylane Chen
+On Wed, Sep 25, 2024 at 04:31:28PM +0200, Lukasz Majewski wrote:
+> The imx287 based btt3 board is very similar to xea in terms of used SOM
+> module.
+>=20
+> Signed-off-by: Lukasz Majewski <lukma@denx.de>
+
+I already acked this:
+https://lore.kernel.org/all/20240912-hardcore-swagger-0d18494c5d56@spud/
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+> ---
+>  Documentation/devicetree/bindings/arm/fsl.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentati=
+on/devicetree/bindings/arm/fsl.yaml
+> index b39a7e031177..2b5c405d15ef 100644
+> --- a/Documentation/devicetree/bindings/arm/fsl.yaml
+> +++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+> @@ -97,6 +97,7 @@ properties:
+>                - i2se,duckbill
+>                - i2se,duckbill-2
+>                - karo,tx28                 # Ka-Ro electronics TX28 module
+> +              - lwn,imx28-btt3
+>                - lwn,imx28-xea
+>                - msr,m28cu3                # M28 SoM with custom base boa=
+rd
+>                - schulercontrol,imx28-sps1
+> --=20
+> 2.39.2
+>=20
+
+--Ipq2zLzyU4Jp5GR6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvQkygAKCRB4tDGHoIJi
+0uIsAQDoGp8ddfbMEMpRBAzjVk94DKxaTnXLF0f09XIc+EkDQAD9HKfgv0LRKcCn
+dx8tu2FLa8k1fTP4j4rFIl755oMsQAw=
+=TUpg
+-----END PGP SIGNATURE-----
+
+--Ipq2zLzyU4Jp5GR6--
 
