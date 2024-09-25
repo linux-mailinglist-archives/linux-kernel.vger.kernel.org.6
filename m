@@ -1,41 +1,74 @@
-Return-Path: <linux-kernel+bounces-339429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46E5C9864F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:40:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F17569864FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:41:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0190F285625
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:40:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A93A91F266E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:41:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2FCA446DC;
-	Wed, 25 Sep 2024 16:40:24 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D829A6F30E;
+	Wed, 25 Sep 2024 16:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XfsacRvG"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8B0D520
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 16:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47E312CD96;
+	Wed, 25 Sep 2024 16:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727282424; cv=none; b=jaNdK8JOgw8f5Ko5nNl/iyEW8skgXzndmk2RVK4+PSI/U1fZiz/vCmNL6GTNCGziy2/uk5/zeSjo3sLym/715azZdeVwiLw+hpUnxTFOxcHHa+jHoNZBQrOfYS/z7YQj4OejJk509neZC4d9ywLfhxHgqToi77Ih7z5AD2ZalV8=
+	t=1727282452; cv=none; b=AxGFcALiG5vzJ2CpKRcOuGQZQ7j2MIxlSEHfPgXIn1GiBMH4InJzKE2HfMcNqtZDKqHe3W4hAgz2vWf9Fl6dpcZRvV6ym5SKH+/XJTp0z5FmJpHK6j1cnJrGlYdYNEi7NIIXPUCBmYRLwmA6BWtyxRTbybP4SHKQ9W0DtY68dts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727282424; c=relaxed/simple;
-	bh=XJLI1q11MCzwrfN28X1pUSiRSb6Pv4ZsimpDyNVdQMo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jqqVupcK/7zMPEEbL99BYN5sCEaCQRhUi2lAmSILf1zf2+1lp39yVnhLVLUrNwDnrnpyQYg2TPSk8CV0zfeVSis6J1J4gajaF7huVC9kGKf7ZZ/EKcPvVx7KWymPYbnzJ5unk3GznL77eJWNg+OfLi26iJJYNSJV5WLM1SZ09hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1stV3r-00046t-NX; Wed, 25 Sep 2024 18:40:19 +0200
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Date: Wed, 25 Sep 2024 18:40:11 +0200
-Subject: [PATCH v2 3/3] reset: uniphier-glue: Use
- devm_reset_control_bulk_get_shared_deasserted()
+	s=arc-20240116; t=1727282452; c=relaxed/simple;
+	bh=dKUY+NDdPBarA9rG2rN224nqbqNSGCUQmvf/6by1y3E=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LjNhjwDS/nv+hrllomCTAP99SDzK5LdHeG+ZYFP4BV3gsFPF0CIm0o3bG06JHph22DcHUpt1tdDllcGY9pAvSSjTwvatDqB85XdgBa5nFa7laAmkCtIYrMBIPrsAre9bcL5oRTLEadkmkccaxuaBgLh1kHQYVudLU5cx3YzhjKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XfsacRvG; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20b1134a6b0so761835ad.2;
+        Wed, 25 Sep 2024 09:40:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727282450; x=1727887250; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DgjCKc70CkRB5QqKgf3dogwF/9emlO9ivUw8bHZSVvU=;
+        b=XfsacRvGoztpNjckdQgoFhS8LLzElHod69GtTuuD64zmld2HInYr6UYwzcXFj5SmHU
+         T3GV+2m9vG12JVbiktHnrmdvWgB5zj28+ypIqM9kqQOfFoS0ztgRexZ9nMZi3PUwWybQ
+         cA0Gu+1b583bKFwWLSrVVAnVrvlA6L2YrSllzqjaFEPfjanONWYIksCXztBbHYxKDm1l
+         O4Qbj7JvPIew/4/NG2uO7ZQiOzb2vfZYqmjTC74rwPJwAJAF5+Zof3Htw6kKzH3qD+vf
+         VydvKk7zjVBz1XLbV2+o49DtUdL4PqGg2nQQkTLbTmL0Z/OSX2uEawWu2iRR4c29FGGq
+         +wnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727282450; x=1727887250;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DgjCKc70CkRB5QqKgf3dogwF/9emlO9ivUw8bHZSVvU=;
+        b=PO6jX8JkXasZyOUfLN6cpuRdOGEhJQpyM9VqyMwWO4d+NBXJfkVI+co1xGQFFj3+cA
+         uHG0Ok0iWi52j4PkKcj+1O/JPHvlYN8nntZ6GK9jD+HxrUy4uIOPbz3AJ9lE2/2UhKdU
+         Qvi41X4WsIlYn3JmmZoLRTixJA/fyjhTEsDEJiovHySaYhY5f2za0rRLyvqd83Y4kKBh
+         BN5hcSGcbT0zf4cDhORJImp0rBtviPmUJ9mTJ1f1whaNlKfXrIQY8ydanAWYfJ/XGLX1
+         SxzYLNAHZ+G2J9AzZabuVFGD8XZAABGDn35rrTjmAXX5JYlVjgssmLMviAb40hRtE95O
+         +ryg==
+X-Forwarded-Encrypted: i=1; AJvYcCU4PA2fWnRq08J19nrbWdAB90SHMhkfy+zrdWFBzkHj5quMSzWTOLZ2suPgI1pqu662qDfrDNIJo6pz@vger.kernel.org, AJvYcCVATyezU4NkQon0pLwU87TtDElv6tGxcFoVivoS4lwitOwjGM/uR+EU9dSzsGktKX8HUjj7O4l4G/feBdek@vger.kernel.org
+X-Gm-Message-State: AOJu0YxX3+lD7RaX4tEuFPUNgQJ5gVkg4Mf5WGtA5f+7TSgWuNaStwHN
+	Zhq5US2Psh5xQ0aIfzobjze1/Gp3CIAacz/tqN0gtLR2bD0yCAlBQDeb4ara
+X-Google-Smtp-Source: AGHT+IFvtGCBdQP+Jbfz2R4VcD8SNUmIqhtygqkDNkasIPNjZSjubb+oyDU0kMLkWYmG2x6CDg+tYw==
+X-Received: by 2002:a17:902:ce89:b0:207:4734:2ca6 with SMTP id d9443c01a7336-20b1abfd200mr27575ad.10.1727282450077;
+        Wed, 25 Sep 2024 09:40:50 -0700 (PDT)
+Received: from [127.0.1.1] ([45.32.86.188])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e06e2bbecasm1726346a91.46.2024.09.25.09.40.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 09:40:49 -0700 (PDT)
+From: Yasin Lee <yasin.lee.x@gmail.com>
+Subject: [PATCH v2 0/2] iio: proximity: hx9023s: Add performance tuning
+ function
+Date: Thu, 26 Sep 2024 00:40:16 +0800
+Message-Id: <20240926-add-performance-tuning-configuration-v2-0-fdbb654f5767@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,83 +77,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240925-reset-get-deasserted-v2-3-b3601bbd0458@pengutronix.de>
-References: <20240925-reset-get-deasserted-v2-0-b3601bbd0458@pengutronix.de>
-In-Reply-To: <20240925-reset-get-deasserted-v2-0-b3601bbd0458@pengutronix.de>
-To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
- Masami Hiramatsu <mhiramat@kernel.org>, 
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- kernel@pengutronix.de, Philipp Zabel <p.zabel@pengutronix.de>
-X-Mailer: b4 0.15-dev-13183
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::54
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-B4-Tracking: v=1; b=H4sIAPA89GYC/5WNQQ6CMBAAv0J6dk1ZEZGT/zAcmnYpm0hLtkA0h
+ L9b+YHHmcPMphIJU1JtsSmhlRPHkAFPhbKDCZ6AXWaFGit9xwsY52Ai6aOMJliCeQkcPNgYeva
+ LmDkHgFCXNVWuJo0qpyahnt/H5tllHjjNUT7HdS1/9s/BWoKGa3ND1LYxZOnhR8Ovs42j6vZ9/
+ wJsMmQX2AAAAA==
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, yasin.lee.x@outlook.com
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Yasin Lee <yasin.lee.x@gmail.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1232; i=yasin.lee.x@gmail.com;
+ h=from:subject:message-id; bh=dKUY+NDdPBarA9rG2rN224nqbqNSGCUQmvf/6by1y3E=;
+ b=owGbwMvMwCEYyfeRr6Zs90zG02pJDGlfbJlbK99ftNolk/3NwekK/8af7r/5Cw2mvs3tvlJrK
+ Vyp4ri0o5SFQZCDQVZMkeXM6zes+aoP9wT/ds2AmcPKBDKEgYtTACYi/4+R4cjZ0kn2k5y3pAob
+ HV256tK9M/eMHOVLuN2m5z1lKNjalsLwh7N3nvsFUfGzH0768p3/8/iJSnz8DiaPQtcrp/6JJ4v
+ 23QUA
+X-Developer-Key: i=yasin.lee.x@gmail.com; a=openpgp;
+ fpr=CCEBEC056F25E1BC53FB4568590EF10E7C76BB99
 
-Replace the pattern devm_reset_control_bulk_get_shared() /
-reset_control_bulk_deassert() / devm_add_action_or_reset()
-with devm_reset_control_bulk_get_shared_deasserted() for
-some reduction in boilerplate.
+When hardware design introduces significant sensor data noise,
+performance can be improved by adjusting register settings.
 
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Yasin Lee <yasin.lee.x@gmail.com>
 ---
- drivers/reset/reset-uniphier-glue.c | 24 +++++-------------------
- 1 file changed, 5 insertions(+), 19 deletions(-)
+Changes in v2:
+- In the YAML file, boundary constraints have been applied to the `tyhx,performance-tuning` property, requiring the number of elements to be between 2 and 512. The description also informs users that the number of elements must be a multiple of 2.
+- In the function implementation, boundary checks have been added for this property, ensuring that the number of elements is even.
+- Link to v1: https://lore.kernel.org/r/20240923-add-performance-tuning-configuration-v1-0-587220c8aece@gmail.com
 
-diff --git a/drivers/reset/reset-uniphier-glue.c b/drivers/reset/reset-uniphier-glue.c
-index 5f9f2f7994c0..a2a262bf6bfc 100644
---- a/drivers/reset/reset-uniphier-glue.c
-+++ b/drivers/reset/reset-uniphier-glue.c
-@@ -35,13 +35,6 @@ static void uniphier_clk_disable(void *_priv)
- 	clk_bulk_disable_unprepare(priv->data->nclks, priv->clk);
- }
- 
--static void uniphier_rst_assert(void *_priv)
--{
--	struct uniphier_glue_reset_priv *priv = _priv;
--
--	reset_control_bulk_assert(priv->data->nrsts, priv->rst);
--}
--
- static int uniphier_glue_reset_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -68,13 +61,6 @@ static int uniphier_glue_reset_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	for (i = 0; i < priv->data->nrsts; i++)
--		priv->rst[i].id = priv->data->reset_names[i];
--	ret = devm_reset_control_bulk_get_shared(dev, priv->data->nrsts,
--						 priv->rst);
--	if (ret)
--		return ret;
--
- 	ret = clk_bulk_prepare_enable(priv->data->nclks, priv->clk);
- 	if (ret)
- 		return ret;
-@@ -83,11 +69,11 @@ static int uniphier_glue_reset_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	ret = reset_control_bulk_deassert(priv->data->nrsts, priv->rst);
--	if (ret)
--		return ret;
--
--	ret = devm_add_action_or_reset(dev, uniphier_rst_assert, priv);
-+	for (i = 0; i < priv->data->nrsts; i++)
-+		priv->rst[i].id = priv->data->reset_names[i];
-+	ret = devm_reset_control_bulk_get_shared_deasserted(dev,
-+							    priv->data->nrsts,
-+							    priv->rst);
- 	if (ret)
- 		return ret;
- 
+---
+Yasin Lee (2):
+      dt-bindings: iio: tyhx,hx9023s: Add performance tuning configuration
+      iio: proximity: hx9023s: Add performance tuning function
 
+ .../bindings/iio/proximity/tyhx,hx9023s.yaml       | 19 +++++++++
+ drivers/iio/proximity/hx9023s.c                    | 45 ++++++++++++++++++++++
+ 2 files changed, 64 insertions(+)
+---
+base-commit: 7f6f44a9e58cd19093b544423bc04e1d668ec341
+change-id: 20240923-add-performance-tuning-configuration-e2016e4d6e02
+
+Best regards,
 -- 
-2.39.5
+Yasin Lee <yasin.lee.x@gmail.com>
 
 
