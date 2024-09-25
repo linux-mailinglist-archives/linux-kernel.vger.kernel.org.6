@@ -1,279 +1,295 @@
-Return-Path: <linux-kernel+bounces-339289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60CB4986231
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:09:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6367698623A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:10:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 727D91F25308
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:09:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80C7D1C27382
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:10:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB021A702;
-	Wed, 25 Sep 2024 15:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 699ED4F5FB;
+	Wed, 25 Sep 2024 15:01:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="WKxJbdT4"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RGJA/BMx"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95FC1BDC8
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 15:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88E33D55D
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 15:01:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727276466; cv=none; b=Jhu2F2Qw0wbr7Q2HVltzJc7CSqgw31hsfHsPgeG0nIDOQ7XxQoPmrXFJ7euncjG83etSMCOjI+g3PcsucAuiEyIfQzERHk6XKEQVfD1ZzNyX3PxwXB1Fk65EmpyRBF8X5vInG7UeWQwscN+UypnR7n2GSpLOGlcawzzA98O6K+c=
+	t=1727276513; cv=none; b=E+ndCKFupLE64xRtsbZNd/vL0b/60H0PMF0iG0pgkeyK5Ra0Sf1y7yoWEM7ZsZTwllIdIGsWSmJUu6/6ejCUTaoJSAFiiTO9frydBhSez0yZs5aCCSenH6TSfhn4Nu6g+zpolaqkt9THjlzh62vwE75M3gfj+dIlOhJpIoU5rCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727276466; c=relaxed/simple;
-	bh=1jc+pSWqIGg4sdAMIp0BE6UyNagjlvMpmDe2YucAOwA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SkldEMoZY5mTP6sxB8D7Pza3ALj3NFWLe0pwr4Mkhxso5NiDSk52UJaAbIR4q+RMm27h7YqJOuLr3v7gQBnVkRKBirb4nLTKmGgE5RQHwJL2eeK6IbSQDH+dLDdE+Pnu84FMqyfqOsdIvVi3mSepF4DhkRzEUjl/HXJBJ6LT1Ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=WKxJbdT4; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37ccd50faafso105055f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:01:03 -0700 (PDT)
+	s=arc-20240116; t=1727276513; c=relaxed/simple;
+	bh=GyK5LYy4hT2Mza2Xl9rezrZ2kXob9EVtau0/Aicjkyk=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=eXZtcrZHMQKKJ9CPZ5+CzI5DScUZ1R1q7G6QwrKeoG85AkjSdYpz+7rQlTmriIU/HnPuFSTciSA7OJIA0IMgXJayHetUps5pS7OtHW13uLGVjoWkxvlpWbUQ7kwsMv67DIEzqZSJljS0wLykO8yXQjiDqF2yO6fkUoGdfO63r90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RGJA/BMx; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e165fc5d94fso10698635276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:01:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727276462; x=1727881262; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OFwaEjEcGbmOpy8y/A32031iEzvAr4b+8vGYpFCTIAQ=;
-        b=WKxJbdT4Q7CxaL2Gq8ilL5Am5n7xVDtSQzAzf4UPfWZmwDQqL9croaVnFr9dgD8XMe
-         rlVeOZlYk+OB8aKPDPqytz9jaztj/S8rqJ5+Z5K0Qzf91ayr1Rm0DuKBEMsjEDqY3r6i
-         UpoXKTZBIwmhZuUVAmgHcLLl3uF12woUVkAV45GmTkVGWS1NxAeHPCbmNUu7PDw0vFf+
-         cQQNeDWbV9+FS9cHV8754dhvRc4NUOgDljFssom2gAFYChlmTy/Np/tjJodqqljM1zvB
-         n6VvpE1Q49hxaeH/0ak7iqZ4iqltREq0XObNy7D8P4njI45K86Q9oSQm6Jb2Q17m8OzZ
-         ZSCA==
+        d=google.com; s=20230601; t=1727276510; x=1727881310; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6z7k17OsGZKMVFB80yPIaoy18RpZ7zGlccSFIk096uA=;
+        b=RGJA/BMxxkSg4S7VpMQX5Lp6k26FldIoRSKhm5fn3cspNfmr1JKHV3xUpHIfdbJIHP
+         wX1tbMwF3Ebw0EeNB55bdfEGKR3yhJOv84ZFVnsILfe0ZNWunfo1LN2EL7LeIVTRNBzf
+         tlSrNE6vtwp6/EHxyFj9/ReCAKkT/cUM0BplncT+FUd2G2ypuqnysmj0+kFpvcJtJIkw
+         UH9Kbm1cCX4B3eadU+nZ7KQ9ouj/dOVbeaADUXkkhsx43d9HYgijXC5jg35hWu8deBk5
+         9M8TSCl5BGITBrwMa7HD1lDeuXmiPSBnd3kvQY8nRO9zfHA1hqfFicFbtkoMZiQJf1lJ
+         FH4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727276462; x=1727881262;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OFwaEjEcGbmOpy8y/A32031iEzvAr4b+8vGYpFCTIAQ=;
-        b=PdtapTJefDYDQkR+5SazhTssLngIMujbQRvORUJRyHQqrxfiJsVeUuU07ncrRIhDtQ
-         UqRaYk3zg0CP6/gESlHZNGyTjAiEMOuqAVI/BsJ3ZoAv04wiS/fZRM6uUDwtML6LEFAf
-         fmapuVP5fRExgZCzlZq4RLGAh5vE1iaDpd2mhsMSn3JRyY+vZ9pFov6swe/ep8+2WsEt
-         tMd4DPoQEHmwSOQpMLUmoHduq5mZWZ/RUi3AC9ZTEUROpJq7yDj1X9eRlEhs78+AM/wV
-         gZAffzMzHZFSAi6EZ/DH5ENfFpRi9o6Tkd9TABad9LqV0X0edAqLlTOljqLIAEgta5Xp
-         6s+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ1rf80Q7D2VdLYq/0qNSZRCiEBVzKMzQtUHvvBB2qYI5HRophsPCXUKG2QzUC1iWjYRfogHDSj+zTBWU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwroBGOH80S1JbIHiPAHdXsCp2pEKVjWNCXo5iBGEWhsat8FVlC
-	ff7htcLwiIQJpNDwMaqaIvjqt9jug4kqtcUsmLe089YfHkA9Oyhr8kZSPFFeISc=
-X-Google-Smtp-Source: AGHT+IHD8vU/W6x0vrnctzoX3ajNrBx9dJukfD8SQWCnX830UdEgKBVYfapZ8BfJfjKWlfB6ECZW5A==
-X-Received: by 2002:adf:8b92:0:b0:374:c0f5:79f4 with SMTP id ffacd0b85a97d-37cc245ba71mr1926279f8f.7.1727276461732;
-        Wed, 25 Sep 2024 08:01:01 -0700 (PDT)
-Received: from localhost (amontpellier-556-1-151-252.w109-210.abo.wanadoo.fr. [109.210.7.252])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cbc2f9811sm4220353f8f.86.2024.09.25.08.01.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 08:01:01 -0700 (PDT)
-Date: Wed, 25 Sep 2024 17:00:59 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: kernel test robot <lkp@intel.com>
-Cc: Michael Hennerich <michael.hennerich@analog.com>, 
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Trevor Gamblin <tgamblin@baylibre.com>, llvm@lists.linux.dev, 
-	oe-kbuild-all@lists.linux.dev, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pwm: axi-pwmgen: Create a dedicated function for getting
- driver data from a chip
-Message-ID: <eodnwb352qkwukz4sgh3frk3e4porpzoz3wj3wqrp4t5wbxtqs@hkyjvxhdm4aq>
-References: <20240923125418.16558-2-u.kleine-koenig@baylibre.com>
- <202409252009.ZbXikiQJ-lkp@intel.com>
+        d=1e100.net; s=20230601; t=1727276510; x=1727881310;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6z7k17OsGZKMVFB80yPIaoy18RpZ7zGlccSFIk096uA=;
+        b=sDHh2ryYOu8BOTlmpKkTsqOo1lW/C98l346EXQ1awbeY29gGGCn3JtsqbJuL7A5tSL
+         faL4TkHzuOiTDLLTu7D8tjkKd9muGp3jpJcbVoJO3DHs9QD4pH7uhAKciz9n8+wa41kn
+         Fm2B+kBAMVTpHB3CcSyXlk6LR3rPzAe1qEC3aI2+Jh1sJ9wrxQQjIpwtXrFLY9a4sOuK
+         ANB2ltqpY8wsDphoyEwNF4fUZ02wlgRWxn1DnxcnTKeA4SndYZ8KYmoIfjz+zGo0cwAj
+         oeOvRiGfWPpH8uPj2V3beopaMloHHmi/u6Xb3pM32RD4+cnevm1acwSBclcXhPcJM5va
+         YAQQ==
+X-Gm-Message-State: AOJu0YxRS7jx5N9lAi/22L8wlfCk7wP7ZKWWBBwcfaoDp2MdAGtwrix3
+	bT/d2WFoG0SGkRxkO6LmfcRjs91jCvrii9dZGkE4EPnMr0T7W1CQop3fmWEpdV3tIZQ7i5f+zaj
+	Qg/956y3B1X4b8mluhAJPRR48kYv8Nx3FTiOQYcnmLiLd6R5ZvtnPs7acB9097hFESuQdX3O6wN
+	lDdYZne1wKCwDqQXJuOEUhxFuioGr2AQ==
+X-Google-Smtp-Source: AGHT+IGRJUFrs1DoPRrR5c+MJEZ6tG0DheITTu8FPFLiXZOk+NGplm3eXqMcHGaqBYVKwyJOtED+Rs3U
+X-Received: from palermo.c.googlers.com ([fda3:e722:ac3:cc00:7b:198d:ac11:8138])
+ (user=ardb job=sendgmr) by 2002:a25:d695:0:b0:e24:9ec4:7297 with SMTP id
+ 3f1490d57ef6-e24da58666emr14424276.11.1727276509248; Wed, 25 Sep 2024
+ 08:01:49 -0700 (PDT)
+Date: Wed, 25 Sep 2024 17:01:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ktev3ljfllbas3ib"
-Content-Disposition: inline
-In-Reply-To: <202409252009.ZbXikiQJ-lkp@intel.com>
+Mime-Version: 1.0
+X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9188; i=ardb@kernel.org;
+ h=from:subject; bh=vMX7ogGZLEc8VPljv97RuDVJFn/JAzUBXeH6mBcebRA=;
+ b=owGbwMvMwCFmkMcZplerG8N4Wi2JIe2L6pr9k37ZPn8uK8IvcW92T9PETT9Xrz4h19DckCOrf
+ uS7om11RykLgxgHg6yYIovA7L/vdp6eKFXrPEsWZg4rE8gQBi5OAZiIeBIjQ8cjt/vNFnlpcQoK
+ wSbqqaeUo8XjLsnZ2/zNu6XorPO9luG/9+LkrdV5d/tnvdg2VzHvwaxNexRvHney2v1TP02udn4 IIwA=
+X-Mailer: git-send-email 2.46.0.792.g87dc391469-goog
+Message-ID: <20240925150059.3955569-30-ardb+git@google.com>
+Subject: [RFC PATCH 00/28] x86: Rely on toolchain for relocatable code
+From: Ard Biesheuvel <ardb+git@google.com>
+To: linux-kernel@vger.kernel.org
+Cc: Ard Biesheuvel <ardb@kernel.org>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Uros Bizjak <ubizjak@gmail.com>, 
+	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Vitaly Kuznetsov <vkuznets@redhat.com>, Juergen Gross <jgross@suse.com>, 
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Keith Packard <keithp@keithp.com>, 
+	Justin Stitt <justinstitt@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, linux-doc@vger.kernel.org, 
+	linux-pm@vger.kernel.org, kvm@vger.kernel.org, xen-devel@lists.xenproject.org, 
+	linux-efi@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
+From: Ard Biesheuvel <ardb@kernel.org>
 
---ktev3ljfllbas3ib
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The x86_64 port has a number of historical quirks that result in a
+reliance on toolchain features that are either poorly specified or
+basically implementation details of the toolchain:
 
-On Wed, Sep 25, 2024 at 08:41:27PM +0800, kernel test robot wrote:
-> /202409252009.ZbXikiQJ-lkp@intel.com/reproduce)
->=20
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202409252009.ZbXikiQJ-lkp=
-@intel.com/
->=20
-> All errors (new ones prefixed by >>):
->=20
->    In file included from drivers/pwm/pwm-axi-pwmgen.c:25:
->    In file included from include/linux/io.h:14:
->    In file included from arch/s390/include/asm/io.h:93:
->    include/asm-generic/io.h:548:31: warning: performing pointer arithmeti=
-c on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->      548 |         val =3D __raw_readb(PCI_IOBASE + addr);
->          |                           ~~~~~~~~~~ ^
->    include/asm-generic/io.h:561:61: warning: performing pointer arithmeti=
-c on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->      561 |         val =3D __le16_to_cpu((__le16 __force)__raw_readw(PCI_=
-IOBASE + addr));
->          |                                                         ~~~~~~=
-~~~~ ^
->    include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from m=
-acro '__le16_to_cpu'
->       37 | #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
->          |                                                           ^
->    include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
->      102 | #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
->          |                                                      ^
->    In file included from drivers/pwm/pwm-axi-pwmgen.c:25:
->    In file included from include/linux/io.h:14:
->    In file included from arch/s390/include/asm/io.h:93:
->    include/asm-generic/io.h:574:61: warning: performing pointer arithmeti=
-c on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->      574 |         val =3D __le32_to_cpu((__le32 __force)__raw_readl(PCI_=
-IOBASE + addr));
->          |                                                         ~~~~~~=
-~~~~ ^
->    include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from m=
-acro '__le32_to_cpu'
->       35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
->          |                                                           ^
->    include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
->      115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
->          |                                                      ^
->    In file included from drivers/pwm/pwm-axi-pwmgen.c:25:
->    In file included from include/linux/io.h:14:
->    In file included from arch/s390/include/asm/io.h:93:
->    include/asm-generic/io.h:585:33: warning: performing pointer arithmeti=
-c on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->      585 |         __raw_writeb(value, PCI_IOBASE + addr);
->          |                             ~~~~~~~~~~ ^
->    include/asm-generic/io.h:595:59: warning: performing pointer arithmeti=
-c on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->      595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBA=
-SE + addr);
->          |                                                       ~~~~~~~~=
-~~ ^
->    include/asm-generic/io.h:605:59: warning: performing pointer arithmeti=
-c on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->      605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBA=
-SE + addr);
->          |                                                       ~~~~~~~~=
-~~ ^
->    include/asm-generic/io.h:693:20: warning: performing pointer arithmeti=
-c on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->      693 |         readsb(PCI_IOBASE + addr, buffer, count);
->          |                ~~~~~~~~~~ ^
->    include/asm-generic/io.h:701:20: warning: performing pointer arithmeti=
-c on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->      701 |         readsw(PCI_IOBASE + addr, buffer, count);
->          |                ~~~~~~~~~~ ^
->    include/asm-generic/io.h:709:20: warning: performing pointer arithmeti=
-c on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->      709 |         readsl(PCI_IOBASE + addr, buffer, count);
->          |                ~~~~~~~~~~ ^
->    include/asm-generic/io.h:718:21: warning: performing pointer arithmeti=
-c on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->      718 |         writesb(PCI_IOBASE + addr, buffer, count);
->          |                 ~~~~~~~~~~ ^
->    include/asm-generic/io.h:727:21: warning: performing pointer arithmeti=
-c on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->      727 |         writesw(PCI_IOBASE + addr, buffer, count);
->          |                 ~~~~~~~~~~ ^
->    include/asm-generic/io.h:736:21: warning: performing pointer arithmeti=
-c on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->      736 |         writesl(PCI_IOBASE + addr, buffer, count);
->          |                 ~~~~~~~~~~ ^
->    In file included from drivers/pwm/pwm-axi-pwmgen.c:26:
->    In file included from include/linux/module.h:19:
->    In file included from include/linux/elf.h:6:
->    In file included from arch/s390/include/asm/elf.h:181:
->    In file included from arch/s390/include/asm/mmu_context.h:11:
->    In file included from arch/s390/include/asm/pgalloc.h:18:
->    In file included from include/linux/mm.h:2213:
->    include/linux/vmstat.h:504:43: warning: arithmetic between different e=
-numeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-=
-enum-conversion]
->      504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
->          |                            ~~~~~~~~~~~~~~~~~~~~~ ^
->      505 |                            item];
->          |                            ~~~~
->    include/linux/vmstat.h:511:43: warning: arithmetic between different e=
-numeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-=
-enum-conversion]
->      511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
->          |                            ~~~~~~~~~~~~~~~~~~~~~ ^
->      512 |                            NR_VM_NUMA_EVENT_ITEMS +
->          |                            ~~~~~~~~~~~~~~~~~~~~~~
->    include/linux/vmstat.h:518:36: warning: arithmetic between different e=
-numeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-c=
-onversion]
->      518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip =
-"nr_"
->          |                               ~~~~~~~~~~~ ^ ~~~
->    include/linux/vmstat.h:524:43: warning: arithmetic between different e=
-numeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-=
-enum-conversion]
->      524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
->          |                            ~~~~~~~~~~~~~~~~~~~~~ ^
->      525 |                            NR_VM_NUMA_EVENT_ITEMS +
->          |                            ~~~~~~~~~~~~~~~~~~~~~~
-> >> drivers/pwm/pwm-axi-pwmgen.c:58:9: error: returning 'void *' from a fu=
-nction with incompatible result type 'struct axi_pwmgen_ddata'
->       58 |         return pwmchip_get_drvdata(chip);
->          |                ^~~~~~~~~~~~~~~~~~~~~~~~~
-> >> drivers/pwm/pwm-axi-pwmgen.c:64:27: error: initializing 'struct axi_pw=
-mgen_ddata *' with an expression of incompatible type 'struct axi_pwmgen_dd=
-ata'
->       64 |         struct axi_pwmgen_ddata *ddata =3D axi_pwmgen_ddata_fr=
-om_chip(chip);
->          |                                  ^       ~~~~~~~~~~~~~~~~~~~~~=
-~~~~~~~~~~~
->    drivers/pwm/pwm-axi-pwmgen.c:108:27: error: initializing 'struct axi_p=
-wmgen_ddata *' with an expression of incompatible type 'struct axi_pwmgen_d=
-data'
->      108 |         struct axi_pwmgen_ddata *ddata =3D axi_pwmgen_ddata_fr=
-om_chip(chip);
->          |                                  ^       ~~~~~~~~~~~~~~~~~~~~~=
-~~~~~~~~~~~
->    16 warnings and 3 errors generated.
->=20
-> Kconfig warnings: (for reference only)
->    WARNING: unmet direct dependencies detected for OMAP2PLUS_MBOX
->    Depends on [n]: MAILBOX [=3Dy] && (ARCH_OMAP2PLUS || ARCH_K3)
->    Selected by [m]:
->    - TI_K3_M4_REMOTEPROC [=3Dm] && REMOTEPROC [=3Dy] && (ARCH_K3 || COMPI=
-LE_TEST [=3Dy])
->=20
->=20
-> vim +58 drivers/pwm/pwm-axi-pwmgen.c
->=20
->     55=09
->     56	static struct axi_pwmgen_ddata axi_pwmgen_ddata_from_chip(struct p=
-wm_chip *chip)
+- the 'kernel' C model implemented by the compiler is intended for
+  position dependent code residing in the 'negative' 2 GiB of the
+  virtual address space, but is used to create a position independent
+  executable (for virtual KASLR);
 
-There is a * missing as the function returns a pointer to struct
-axi_pwmgen_ddata and not the actual struct. I remember having fixed that
-after a compile test, but it seems I sent out the change before I
-squashed that in the commit :-\
+- the 'kernel' C model has other properties that are not written down
+  anywhere, and may therefore deviate between compilers and versions,
+  which now includes the Rust compilers too (e.g., use %gs not %fs for
+  per-CPU references); 
 
-Best regards
-Uwe
+- the relocation format used to perform the PIE relocation at boot is
+  complicated and non-standard, as it deals with 3 types of
+  displacements, including 32-bit negative displacements for
+  RIP-relative per-CPU references that are not subject to relocation
+  fixups (as they are places in a separate, disjoint address space);
 
---ktev3ljfllbas3ib
-Content-Type: application/pgp-signature; name="signature.asc"
+- the relocation table is generated from static relocation metadata
+  taken from the ELF input objects into the linker, and these describe
+  the input not the output - relaxations or other linker tweaks may
+  result in a mismatch between the two, and GNU ld and LLD display
+  different behavior here;
 
------BEGIN PGP SIGNATURE-----
+- this disjoint per-CPU address space requires elaborate hacks in the
+  linker script and the startup code;
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmb0JZ4ACgkQj4D7WH0S
-/k4zHQgAld2KQZJoIhEG+Pa15lWXnqRx71awdY67dtiBuM8JA8y3KJWskxR7hw2N
-CCJXvmFCoqtawUoS9LxA3agkw5nF/cTU3NA+Iev27k0/msuPpi34fGULu6kkjQuh
-vLT8wjkqVN66evmG0aF7NuvPf1Ulias6L+SUbBlTNFN2Vczhtk5sx0oQRBrKYBIi
-ZPnWC2Qrk2TTBciSs3LyoBUxrGCbAIsAhOD1yVmDuqOFnbsUyorqIRHFurpqEgx5
-wKeccBlMmkXrFtPenKvWxG5JeOU7dtcuXL6JWd9jRJKs8F4xPgBv3sNZFDmqSxIm
-Ap8BpEwUTLPgs1HXHAdwvktw3BrNew==
-=zrim
------END PGP SIGNATURE-----
+- some of the startup code executes from a 1:1 mapping of memory, where
+  RIP-relative references are mandatory, whereas RIP-relative per-CPU
+  variable references can only work correctly from the kernel virtual
+  mapping (as they need to wrap around from the negative 2 GiB space
+  into the 0x0 based per-CPU region);
 
---ktev3ljfllbas3ib--
+The reason for this odd situation wrt per-CPU variable addressing is the
+fact that we rely on the user-space TLS arrangement for per-task stack
+cookies, and this was implemented using a fixed offset of 40 bytes from
+%GS. If we bump the minimum GCC version to 8.1, we can switch to symbol
+based stack cookie references, allowing the same arrangement to be
+adopted as on other architectures, i.e., where the CPU register carries
+the per-CPU offset, and UP or boot-time per-CPU references point into
+the per-CPU load area directly (using an offset of 0x0).
+
+With that out of the way, we can untangle this whole thing, and replace
+the bespoke tooling and relocation formats with ordinary, linker
+generated relocation tables, using the RELR format that reduces the
+memory footprint of the relocation table by 20x. The compilers can
+efficiently generate position independent code these days, without
+unnecessary indirections via the Global Object Table (GOT) except for a
+handful of special cases (see the KVM patch for an example where a
+GOT-based indirection is the best choice for pushing the absolute
+address of a symbol onto the stack in a position independent manner when
+there are no free GPRs)
+
+It also brings us much closer to the ordinary PIE relocation model used
+for most of user space, which is therefore much better supported and
+less likely to create problems as we increase the range of compilers and
+linkers that need to be supported.
+
+Tested on GCC 8 - 14 and Clang 15 - 17, using EFI and bare metal boot
+using a variety of entry points (decompressor, EFI stub, XenPV, PVH)
+ 
+Cc: x86@kernel.org
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Uros Bizjak <ubizjak@gmail.com>
+Cc: Dennis Zhou <dennis@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Kees Cook <kees@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>
+Cc: Keith Packard <keithp@keithp.com>
+Cc: Justin Stitt <justinstitt@google.com>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Kan Liang  <kan.liang@linux.intel.com>
+Cc: linux-doc@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
+Cc: kvm@vger.kernel.org
+Cc: xen-devel@lists.xenproject.org
+Cc: linux-efi@vger.kernel.org
+Cc: linux-arch@vger.kernel.org
+Cc: linux-sparse@vger.kernel.org
+Cc: linux-kbuild@vger.kernel.org
+Cc: linux-perf-users@vger.kernel.org
+Cc: rust-for-linux@vger.kernel.org
+Cc: llvm@lists.linux.dev
+
+Ard Biesheuvel (28):
+  x86/pvh: Call C code via the kernel virtual mapping
+  Documentation: Bump minimum GCC version to 8.1
+  x86/tools: Use mmap() to simplify relocs host tool
+  x86/boot: Permit GOTPCREL relocations for x86_64 builds
+  x86: Define the stack protector guard symbol explicitly
+  x86/percpu: Get rid of absolute per-CPU variable placement
+  scripts/kallsyms: Avoid 0x0 as the relative base
+  scripts/kallsyms: Remove support for absolute per-CPU variables
+  x86/tools: Remove special relocation handling for per-CPU variables
+  x86/xen: Avoid relocatable quantities in Xen ELF notes
+  x86/pvh: Avoid absolute symbol references in .head.text
+  x86/pm-trace: Use RIP-relative accesses for .tracedata
+  x86/kvm: Use RIP-relative addressing
+  x86/rethook: Use RIP-relative reference for return address
+  x86/sync_core: Use RIP-relative addressing
+  x86/entry_64: Use RIP-relative addressing
+  x86/hibernate: Prefer RIP-relative accesses
+  x86/boot/64: Determine VA/PA offset before entering C code
+  x86/boot/64: Avoid intentional absolute symbol references in
+    .head.text
+  x64/acpi: Use PIC-compatible references in wakeup_64.S
+  x86/head: Use PIC-compatible symbol references in startup code
+  asm-generic: Treat PIC .data.rel.ro sections as .rodata
+  tools/objtool: Mark generated sections as writable
+  tools/objtool: Treat indirect ftrace calls as direct calls
+  x86: Use PIE codegen for the core kernel
+  x86/boot: Implement support for ELF RELA/RELR relocations
+  x86/kernel: Switch to PIE linking for the core kernel
+  x86/tools: Drop x86_64 support from 'relocs' tool
+
+ Documentation/admin-guide/README.rst    |   2 +-
+ Documentation/arch/x86/zero-page.rst    |   3 +-
+ Documentation/process/changes.rst       |   2 +-
+ arch/x86/Kconfig                        |   3 +-
+ arch/x86/Makefile                       |  22 +-
+ arch/x86/boot/Makefile                  |   1 +
+ arch/x86/boot/compressed/Makefile       |   2 +-
+ arch/x86/boot/compressed/misc.c         |  16 +-
+ arch/x86/entry/calling.h                |   9 +-
+ arch/x86/entry/entry_64.S               |  12 +-
+ arch/x86/entry/vdso/Makefile            |   1 +
+ arch/x86/include/asm/desc.h             |   1 -
+ arch/x86/include/asm/init.h             |   2 +-
+ arch/x86/include/asm/percpu.h           |  22 -
+ arch/x86/include/asm/pm-trace.h         |   4 +-
+ arch/x86/include/asm/processor.h        |  14 +-
+ arch/x86/include/asm/setup.h            |   3 +-
+ arch/x86/include/asm/stackprotector.h   |   4 -
+ arch/x86/include/asm/sync_core.h        |   3 +-
+ arch/x86/include/uapi/asm/bootparam.h   |   2 +-
+ arch/x86/kernel/acpi/wakeup_64.S        |  11 +-
+ arch/x86/kernel/head64.c                |  76 +++-
+ arch/x86/kernel/head_64.S               |  40 +-
+ arch/x86/kernel/irq_64.c                |   1 -
+ arch/x86/kernel/kvm.c                   |   8 +-
+ arch/x86/kernel/relocate_kernel_64.S    |   6 +-
+ arch/x86/kernel/rethook.c               |   3 +-
+ arch/x86/kernel/setup_percpu.c          |   9 +-
+ arch/x86/kernel/vmlinux.lds.S           |  75 ++--
+ arch/x86/platform/pvh/head.S            |  57 ++-
+ arch/x86/power/hibernate_asm_64.S       |   4 +-
+ arch/x86/realmode/rm/Makefile           |   1 +
+ arch/x86/tools/Makefile                 |   2 +-
+ arch/x86/tools/relocs.c                 | 425 +++-----------------
+ arch/x86/tools/relocs.h                 |  11 +-
+ arch/x86/tools/relocs_64.c              |  18 -
+ arch/x86/tools/relocs_common.c          |  11 +-
+ arch/x86/xen/xen-head.S                 |  16 +-
+ drivers/base/power/trace.c              |   6 +-
+ drivers/firmware/efi/libstub/x86-stub.c |   2 +
+ include/asm-generic/vmlinux.lds.h       |  10 +-
+ include/linux/compiler.h                |   2 +-
+ init/Kconfig                            |   5 -
+ kernel/kallsyms.c                       |  12 +-
+ scripts/kallsyms.c                      |  53 +--
+ scripts/link-vmlinux.sh                 |   4 -
+ tools/objtool/check.c                   |  43 +-
+ tools/objtool/elf.c                     |   2 +-
+ tools/objtool/include/objtool/special.h |   2 +-
+ tools/perf/util/annotate.c              |   4 +-
+ 50 files changed, 380 insertions(+), 667 deletions(-)
+ delete mode 100644 arch/x86/tools/relocs_64.c
+
+-- 
+2.46.0.792.g87dc391469-goog
+
 
