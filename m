@@ -1,101 +1,100 @@
-Return-Path: <linux-kernel+bounces-338033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CC86985288
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:37:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E02DB985289
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:37:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 362682813A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 05:37:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 389ABB2311C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 05:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF530155C95;
-	Wed, 25 Sep 2024 05:36:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E0115749C;
+	Wed, 25 Sep 2024 05:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="sK34K4wU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ugTZHIFa";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1ig5IGE5";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TP3Qf3Lg"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JKCC8MLz";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="PylAPEUD";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JKCC8MLz";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="PylAPEUD"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8073115747D
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 05:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D53115574D
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 05:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727242576; cv=none; b=ZJo0AMDz/7L4MzQFp0KXKKvWy+4aNiYa+SDvL1RLyxpMxTzlvuimvMY6gO+ZHMN3gbj990uoi1gMwxhfghodBJLyddW1Q/azFroV5yYV2zl6lwRqGEszXhbQxN7j+sGbt0yrH66d6ZgF8+d7jmlnhnorudPLDO8B9nNzOTgQjHU=
+	t=1727242579; cv=none; b=TvMJM1faUH2dQw+8mHOOnyvLZM9dQPkD96RUSobNBstW0GY39QIVj4xdUxltCQrNNtGcdH1s6QKhSv0r+8dJNoMV3ABLcjP/rS3XeRHasapWEJnhnFoJjciPZCXHrLBDRJlJ8RVWaVd3F8wA22JtzcliGKqCw/q7utnN9sDekaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727242576; c=relaxed/simple;
-	bh=d06xgWgkQbMZwtnKU5C5cXUH1HsFJbDXxFWLbHzTy1A=;
+	s=arc-20240116; t=1727242579; c=relaxed/simple;
+	bh=Ok0FBSdPwSnmqEJ/Nk9GrxxOsJzZZpXDENy218IFJ0U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=D3Dd8TmYnlbRd+nIsUED7+nm91NI2/43wqM3IfFvR0EMhmqnU9Q7dzzJcYjs92R+jqXoIdtp6U4h20kyCnXTfNH8wiHQzc4HzoJigNKYbntejYclS7MbFCwQ2Eulw0LRs+70IhnF0bUzDELE4peNQaTU2TDYMnf4ocWem90BQg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=sK34K4wU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ugTZHIFa; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1ig5IGE5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TP3Qf3Lg; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version; b=FUPTyIsZrEWqcTvY4vQa6+Ss2qp5cBFJAXnxLdG9h+UzLNwzU4qRWALbe3Wzk5BTsiInFjffGfJe6gHE4xd9ro2M1jnwI3mRCrHvd2nUx77z0OKxBMHXTZZFTFUCyab50Xlm6yEo9CSKFWwxqATLJWbalLX3upi4NdcsHKod9yY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JKCC8MLz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=PylAPEUD; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JKCC8MLz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=PylAPEUD; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8B57321A6A;
-	Wed, 25 Sep 2024 05:36:11 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6B8E71FD30;
+	Wed, 25 Sep 2024 05:36:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1727242572; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1727242576; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vqEuJGyXxJQ9CYo6juFxRH005TpzRgjAm+F33eybZko=;
-	b=sK34K4wUS2Y7hOlPrBEfUAWRJQl5J6P7Sm7kURQwq5nw3IwntnwEO3oGZ2jwHz1KS84sxO
-	PZsW2xAWvMJfbTrQicURJWKrzeB0sdYR+D/NnPu0vPsNO1ooLk2DFWOPkUlCYXTDF+y1WQ
-	S9kwPo+XAs4G5ACrgssIxtZyuSOJzVY=
+	bh=lKw1JB4J5UZuj0DJxVaFneJSr819xZJRg3iiAi5BrmE=;
+	b=JKCC8MLzy7Jrxo3kAcFY4+XZHxD4sLBjB0Xzt6qOdJqDM5oG0dT1cII56aVpPSmnq8pec7
+	exGu8JtMvQX9RHDllSjPazJU57bG2BBfWeRA6QuQuolh9pZEvP2D2mwVef+SkEW52IHugP
+	ugmlu4iPEi6OVrQhg2HwW/nF3by1D5k=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1727242572;
+	s=susede2_ed25519; t=1727242576;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vqEuJGyXxJQ9CYo6juFxRH005TpzRgjAm+F33eybZko=;
-	b=ugTZHIFa0axJNUlufpIDGPbe7i7ByFk2QzphemU11XRPkMFPNXz+TWP2WvhgHcccjKcsIU
-	3Y2r4wEjor7YL+BA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=1ig5IGE5;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=TP3Qf3Lg
+	bh=lKw1JB4J5UZuj0DJxVaFneJSr819xZJRg3iiAi5BrmE=;
+	b=PylAPEUDNRdCyhbJ3t47Id/nl5Egk1IOSYxEfql4c1nonY5Qh+QGFsUVIhvQcSdktP4j8t
+	PBvaCtbmVo1D6vBw==
+Authentication-Results: smtp-out2.suse.de;
+	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1727242571; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1727242576; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vqEuJGyXxJQ9CYo6juFxRH005TpzRgjAm+F33eybZko=;
-	b=1ig5IGE5HGuwn8zw9Fs7bP9Fu0tQQvk1jJC5xgwQFKKPJKAvFjhjA/XTIGo5tinssNotzX
-	mEYLe7EMlwDhsAkMxkkN8T7oQIQwfqbr20A0BHCgHgMjASJ9fJpn6mLpbihCIUPXYAKlr5
-	rRcRqWNqGXjAb1L5S8x9hw60fAWCqB4=
+	bh=lKw1JB4J5UZuj0DJxVaFneJSr819xZJRg3iiAi5BrmE=;
+	b=JKCC8MLzy7Jrxo3kAcFY4+XZHxD4sLBjB0Xzt6qOdJqDM5oG0dT1cII56aVpPSmnq8pec7
+	exGu8JtMvQX9RHDllSjPazJU57bG2BBfWeRA6QuQuolh9pZEvP2D2mwVef+SkEW52IHugP
+	ugmlu4iPEi6OVrQhg2HwW/nF3by1D5k=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1727242571;
+	s=susede2_ed25519; t=1727242576;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vqEuJGyXxJQ9CYo6juFxRH005TpzRgjAm+F33eybZko=;
-	b=TP3Qf3Lg7Uzyogn45YaL5sKKYbI9h24GL5DJ6RQ2D52n4cBFTKe4CvqHnZGUvf384QpX7j
-	kkfF2WmOGeY4+sAA==
+	bh=lKw1JB4J5UZuj0DJxVaFneJSr819xZJRg3iiAi5BrmE=;
+	b=PylAPEUDNRdCyhbJ3t47Id/nl5Egk1IOSYxEfql4c1nonY5Qh+QGFsUVIhvQcSdktP4j8t
+	PBvaCtbmVo1D6vBw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 11EE913A66;
-	Wed, 25 Sep 2024 05:36:09 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E5B4613A66;
+	Wed, 25 Sep 2024 05:36:14 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id rUlbLkmh82ajUQAAD6G6ig
-	(envelope-from <neilb@suse.de>); Wed, 25 Sep 2024 05:36:09 +0000
+	id VyJrJk6h82aoUQAAD6G6ig
+	(envelope-from <neilb@suse.de>); Wed, 25 Sep 2024 05:36:14 +0000
 From: NeilBrown <neilb@suse.de>
 To: Ingo Molnar <mingo@redhat.com>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>
 Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 4/7] sched: Add test_and_clear_wake_up_bit() and atomic_dec_and_wake_up()
-Date: Wed, 25 Sep 2024 15:31:41 +1000
-Message-ID: <20240925053405.3960701-5-neilb@suse.de>
+Subject: [PATCH 5/7] sched: Add wait/wake interface for variable updated under a lock.
+Date: Wed, 25 Sep 2024 15:31:42 +1000
+Message-ID: <20240925053405.3960701-6-neilb@suse.de>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240925053405.3960701-1-neilb@suse.de>
 References: <20240925053405.3960701-1-neilb@suse.de>
@@ -106,127 +105,161 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 8B57321A6A
 X-Spam-Level: 
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
 	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
 	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
 	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
+	ARC_NA(0.00)[];
 	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
 	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Score: -2.80
 X-Spam-Flag: NO
 
-There are common patterns in the kernel of using test_and_clear_bit()
-before wake_up_bit(), and atomic_dec_and_test() before wake_up_var().
+Sometimes we need to wait for a condition to be true which must be
+testing while holding a lock.  Correspondingly the condition is made
+true while holding the lock and the wake up is sent under the lock.
 
-These combinations don't need extra barriers but sometimes include them
-unnecessarily.
-
-To help avoid the unnecessary barriers and to help discourage the
-general use of wake_up_bit/var (which is a fragile interface) introduce
-two combined functions which implement these patterns.
-
-Also add store_release_wake_up() which supports the task of simply
-setting a non-atomic variable and sending a wakeup.  This pattern
-requires barriers which are often omitted.
+This patch provides wake and wait interfaces which can be used for this
+situation when the lock is a mutex or a spinlock, or any other lock for
+which there are foo_lock() and foo_unlock() functions.
 
 Signed-off-by: NeilBrown <neilb@suse.de>
 ---
- include/linux/wait_bit.h | 60 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
+ include/linux/wait_bit.h | 106 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 106 insertions(+)
 
 diff --git a/include/linux/wait_bit.h b/include/linux/wait_bit.h
-index 06ec99b90bf3..0272629b590a 100644
+index 0272629b590a..6aea10efca3d 100644
 --- a/include/linux/wait_bit.h
 +++ b/include/linux/wait_bit.h
-@@ -419,4 +419,64 @@ static inline void clear_and_wake_up_bit(int bit, unsigned long *word)
- 	wake_up_bit(word, bit);
- }
+@@ -401,6 +401,112 @@ do {									\
+ 	__ret;								\
+ })
  
 +/**
-+ * test_and_clear_wake_up_bit - clear a bit if it was set: wake up anyone waiting on that bit
-+ * @bit: the bit of the word being waited on
-+ * @word: the address of memory containing that bit
++ * wait_var_event_any_lock - wait for a variable to be updated under a lock
++ * @var: the address of the variable being waited on
++ * @condition: condition to wait for
++ * @lock: the object that is locked to protect updates to the variable
++ * @type: prefix on lock and unlock operations
++ * @state: waiting state, %TASK_UNINTERRUPTIBLE etc.
 + *
-+ * If the bit is set and can be atomically cleared, any tasks waiting in
-+ * wait_on_bit() or similar will be woken.  This call has the same
-+ * complete ordering semantics as test_and_clear_bit().  Any changes to
-+ * memory made before this call are guaranteed to be visible after the
-+ * corresponding wait_on_bit() completes.
++ * Wait for a condition which can only be reliably tested while holding
++ * a lock.  The variables assessed in the condition will normal be updated
++ * under the same lock, and the wake up should be signalled with
++ * wake_up_var_locked() under the same lock.
 + *
-+ * Returns %true if the bit was successfully set and the wake up was sent.
++ * This is similar to wait_var_event(), but assumes a lock is held
++ * while calling this function and while updating the variable.
++ *
++ * This must be called while the given lock is held and the lock will be
++ * dropped when schedule() is called to wait for a wake up, and will be
++ * reclaimed before testing the condition again.  The functions used to
++ * unlock and lock the object are constructed by appending _unlock and _lock
++ * to @type.
++ *
++ * Return %-ERESTARTSYS if a signal arrives which is allowed to interrupt
++ * the wait according to @state.
 + */
-+static inline bool test_and_clear_wake_up_bit(int bit, unsigned long *word)
-+{
-+	if (!test_and_clear_bit(bit, word))
-+		return false;
-+	/* no extra barrier required */
-+	wake_up_bit(word, bit);
-+	return true;
-+}
++#define wait_var_event_any_lock(var, condition, lock, type, state)	\
++({									\
++	int __ret = 0;							\
++	if (!(condition))						\
++		__ret = ___wait_var_event(var, condition, state, 0, 0,	\
++					  type ## _unlock(lock);	\
++					  schedule();			\
++					  type ## _lock(lock));		\
++	__ret;								\
++})
 +
 +/**
-+ * atomic_dec_and_wake_up - decrement an atomic_t and if zero, wake up waiters
-+ * @var: the variable to dec and test
++ * wait_var_event_spinlock - wait for a variable to be updated under a spinlock
++ * @var: the address of the variable being waited on
++ * @condition: condition to wait for
++ * @lock: the spinlock which protects updates to the variable
 + *
-+ * Decrements the atomic variable and if it reaches zero, send a wake_up to any
-+ * processes waiting on the variable.
++ * Wait for a condition which can only be reliably tested while holding
++ * a spinlock.  The variables assessed in the condition will normal be updated
++ * under the same spinlock, and the wake up should be signalled with
++ * wake_up_var_locked() under the same spinlock.
 + *
-+ * This function has the same complete ordering semantics as atomic_dec_and_test.
++ * This is similar to wait_var_event(), but assumes a spinlock is held
++ * while calling this function and while updating the variable.
 + *
-+ * Returns %true is the variable reaches zero and the wake up was sent.
++ * This must be called while the given lock is held and the lock will be
++ * dropped when schedule() is called to wait for a wake up, and will be
++ * reclaimed before testing the condition again.
 + */
-+
-+static inline bool atomic_dec_and_wake_up(atomic_t *var)
-+{
-+	if (!atomic_dec_and_test(var))
-+		return false;
-+	/* No extra barrier required */
-+	wake_up_var(var);
-+	return true;
-+}
++#define wait_var_event_spinlock(var, condition, lock)			\
++	wait_var_event_any_lock(var, condition, lock, spin, TASK_UNINTERRUPTIBLE)
 +
 +/**
-+ * store_release_wake_up - update a variable and send a wake_up
-+ * @var: the address of the variable to be updated and woken
-+ * @val: the value to store in the variable.
++ * wait_var_event_mutex - wait for a variable to be updated under a mutex
++ * @var: the address of the variable being waited on
++ * @condition: condition to wait for
++ * @mutex: the mutex which protects updates to the variable
 + *
-+ * Store the given value in the variable send a wake up to any tasks
-+ * waiting on the variable.  All necessary barriers are included to ensure
-+ * the task calling wait_var_event() sees the new value and all values
-+ * written to memory before this call.
++ * Wait for a condition which can only be reliably tested while holding
++ * a mutex.  The variables assessed in the condition will normal be
++ * updated under the same mutex, and the wake up should be signalled
++ * with wake_up_var_locked() under the same mutex.
++ *
++ * This is similar to wait_var_event(), but assumes a mutex is held
++ * while calling this function and while updating the variable.
++ *
++ * This must be called while the given mutex is held and the mutex will be
++ * dropped when schedule() is called to wait for a wake up, and will be
++ * reclaimed before testing the condition again.
 + */
-+#define store_release_wake_up(var, val)					\
++#define wait_var_event_mutex(var, condition, lock)			\
++	wait_var_event_any_lock(var, condition, lock, mutex, TASK_UNINTERRUPTIBLE)
++
++/**
++ * wake_up_var_protected - wake up waiters for a variable asserting that it is safe
++ * @var: the address of the variable being waited on
++ * @cond: the condition which afirms this is safe
++ *
++ * When waking waiters which use wait_var_event_any_lock() the waker must be
++ * holding the reelvant lock to avoid races.  This version of wake_up_var()
++ * asserts that the relevant lock is held and so no barrier is needed.
++ * The @cond is only tested when CONFIG_LOCKDEP is enabled.
++ */
++#define wake_up_var_protected(var, cond)				\
 +do {									\
-+	smp_store_release(var, val);					\
-+	smp_mb();							\
++	lockdep_assert(cond);						\
 +	wake_up_var(var);						\
 +} while (0)
 +
- #endif /* _LINUX_WAIT_BIT_H */
++/**
++ * wake_up_var_locked - wake up waiters for a variable while holding a spinlock or mutex
++ * @var: the address of the variable being waited on
++ * @lock: The spinlock or mutex what protects the variable
++ *
++ * Send a wake up for the given variable which should be waited for with
++ * wait_var_event_spinlock() or wait_var_event_mutex().  Unlike wake_up_var(),
++ * no extra barriers are needed as the locking provides sufficient sequencing.
++ */
++#define wake_up_var_locked(var, lock)					\
++	wake_up_var_protected(var, lockdep_is_held(lock))
++
+ /**
+  * clear_and_wake_up_bit - clear a bit and wake up anyone waiting on that bit
+  * @bit: the bit of the word being waited on
 -- 
 2.46.0
 
