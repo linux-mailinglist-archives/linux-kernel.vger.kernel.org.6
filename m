@@ -1,78 +1,112 @@
-Return-Path: <linux-kernel+bounces-338709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26966985C18
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:38:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8C9B985C15
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:38:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E01D6287E98
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:38:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F6401F2695E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68424189536;
-	Wed, 25 Sep 2024 11:58:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C821A262A;
+	Wed, 25 Sep 2024 11:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="EeBzfBTJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i5cGB+My"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0037175D3A;
-	Wed, 25 Sep 2024 11:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E9121A1C;
+	Wed, 25 Sep 2024 11:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727265486; cv=none; b=aFZKsjrh32TU4+Nm4yG9E5h9q8661b4lfjOEUolyrVqRtY49hxwu71D0mqx84O1WBIPVQ0ZcKvgioy6xAPkrcwEqcw8/WnodyiVqAWXYX+q6F+oU+dw6WYdaJ6V5pqkKh1p5pmreiKYm+WpGU1EO2TGRku0Q0lt0By5dSKd/il4=
+	t=1727265461; cv=none; b=VnFosV+UlGpRHl33r7dGLnf2kBf7yh5pGRkLT18xe4mNGwlAIcT9FAtEw67bxSdYZ2fxy1DEDs+Tnv0xNm8i4syNsHmJX1XVYa8k6qOsoncPk35zSP+fj1Vjo74tTB0zfXAPnY4/8hMDx2s+4hLRxYpylNilBJdPQ9t/+OfovLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727265486; c=relaxed/simple;
-	bh=MqTIcPv2wreLQE3sRuPmqeOCVAS2j8QpUl+LEEm4tcg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OHKg/a3jEOCUgsHv/NqwarwMLfVLPEg0xf/sq1AqUdu4pfp0+8dahmeyvxJLHjisc8J/rMDH4T8oVZZQfsxIdzJ0HAivmR+snruOeTalkXAHFH9kB2A8Y5fKGhA0NUAgTia4FbC/KdpufepONGZq6Vk53CIfUX4V+pW2wCtnl8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=EeBzfBTJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2D67C4CECD;
-	Wed, 25 Sep 2024 11:58:05 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="EeBzfBTJ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1727265483;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MqTIcPv2wreLQE3sRuPmqeOCVAS2j8QpUl+LEEm4tcg=;
-	b=EeBzfBTJ+ITh6sX/NuexvuxAR5yN/i9p+ZrRu0+yHuhIE+twH/u/yju2SphvGwIDffUqB8
-	tDtH7Xzvilzug0qY7/9f2/MRNAk/QGfMXeYPl84IAoJ9oM7wJM3uoXcLE4GPwfeNbK1DDn
-	JcKn2v/PPjrwbs0ZmXF4G2gld6ns+fA=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 4ea3fbe4 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Wed, 25 Sep 2024 11:58:03 +0000 (UTC)
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-27ce4f37afeso2934774fac.0;
-        Wed, 25 Sep 2024 04:58:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWUs6/lDL5K6TCpSrd7pabLa9MSHH7g8jdWTMGrtpHp2zgzkjX0aBcxyNekXRNqYTLzrAfah9k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4c2s03/QvoAzmyeOqftI9hBwhM1DS/qOFddyoyp2Xoy3oP517
-	Mq+GrdPlUI3S+CVxe3pvvrp7lpY2RyI1Hxgh7wyF7eGDUqYPuphTY/IrICcXoLLvSU2YqrZav6O
-	ZMwKrqftjWeV5ebVYjIvFaf/D2sc=
-X-Google-Smtp-Source: AGHT+IGxIvGKqArXhhF632Oh/orpAmEfK2IA2kcdmHFIb+A7o8ZSTNFgTs6mycKZwfsvI7RzD05QedjIoJd06zCdqIE=
-X-Received: by 2002:a05:6870:ac1f:b0:27b:5abb:7def with SMTP id
- 586e51a60fabf-286e142bc36mr1766401fac.20.1727265481982; Wed, 25 Sep 2024
- 04:58:01 -0700 (PDT)
+	s=arc-20240116; t=1727265461; c=relaxed/simple;
+	bh=G5Td+WWrfizeS2lkkwKWDxaZwUm6k8aZ3N0P9CYmwEo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tzz1cUnYSaYnT2QpB+iWLKS/97wiTmYFatUmItGOuANsa3evpXF8F5mu+I3egVOnNefyA/wdVjSJO0kWL9hb9TzVE8xnFwyMxLjb/oEnWj85auacO7sB1842eFkFCMrOPdGqfFsQcWfxcXQPgd7VH9lT+FUJ2gKESjnqC/fB8R0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i5cGB+My; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f75c6ed397so70415641fa.2;
+        Wed, 25 Sep 2024 04:57:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727265458; x=1727870258; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BmlT8mVz0poKewfRg9p15ADjJkRKRpso2Nj7MuaKVq8=;
+        b=i5cGB+MyRPlIUzn8dz+YM/SEkxGS00NkMWqnpP501gke30Ts68AoAwFqigbubKKFjz
+         UQyomgHN/C/uQX7+sGInRlP7F9Qo5LtZrYB88Wx0LBvw8R+KDy37eLvG+wWSpcehy+ek
+         Czm/MsN4s6Od9Zb93tNJOJmEJtFfX6l+E6D1bv+HeGdXs1LROBc5dvipBTYd0281RsXT
+         t6vQpDriPMp3PmBoA31Uxu5r20K2CqRTbOg5E6APE7iGYjf3zV4sMseNZ3nEhAVIf6ve
+         p2eBqKZMWWvdCSiSWB4sD+WxgUqXhBxSYboOFy1lzPY6xLbFZ+asxDdyJIZP6ykar24G
+         Ldkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727265458; x=1727870258;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BmlT8mVz0poKewfRg9p15ADjJkRKRpso2Nj7MuaKVq8=;
+        b=uxt5AYbkHETXOyJGxkfjwehhVqQfOW4g0HpUHVSjBuebDch7Msm7Eib5W77qaigYQt
+         qEIAAXvXPyYgvmllsEf+3h3GvTglglfVl21fBF7IJSNxc138VmrZVEbpfqlKCzPr4808
+         OZNfv79iPBBXzxsDfrYf1JsGvgb9Swrq6+OEW7zGmqYrhA6nCLm7MIdmgFEGqNievgnf
+         M7P30mpDSk9cJzG7s8Cm7KFixeMs7wSjcI/l9cw2wewz+xCKAQlrVBVqk0iNa5425E6z
+         QMwMlmBGWOBj4yQbhS8Smc3iA6xEXd3DGp6Tru6AqeNjyobzZsan+vXwtY2efMj0/XIN
+         I8ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWyIGmQIebpsuBm1Rgj+mUbzha9JvcqTKCvI9lTegCCnChi9jmGGa6HQsJq+rOKwpQyO5YqxBmCbyWK37Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7V+ZQ18xWiZQnik001GDsRsKY9BWfDIQBf4/FMDUk+bQY2Q1L
+	xoaNc+SBNG/IeyktrLcim0fiQGWRJdpUnIzmGnYHOqsqCW+Wkev9+hBrYAlM
+X-Google-Smtp-Source: AGHT+IFIcuDJ/MTLw4ON+iRrc7fEGM33mnlKzDZ0rV+YJcV1corgdL97dhlVovAOoRBPdCHASA0bZw==
+X-Received: by 2002:a05:6512:224b:b0:533:7ce:20e0 with SMTP id 2adb3069b0e04-5387048b8demr1585664e87.8.1727265457610;
+        Wed, 25 Sep 2024 04:57:37 -0700 (PDT)
+Received: from [192.168.92.221] ([85.255.235.163])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9392f347fdsm203991466b.16.2024.09.25.04.57.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Sep 2024 04:57:37 -0700 (PDT)
+Message-ID: <1f21a22b-e5a7-48bd-a1c8-b9d817b2291a@gmail.com>
+Date: Wed, 25 Sep 2024 12:58:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925113641.1297102-1-sashal@kernel.org> <20240925113641.1297102-229-sashal@kernel.org>
-In-Reply-To: <20240925113641.1297102-229-sashal@kernel.org>
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date: Wed, 25 Sep 2024 13:57:51 +0200
-X-Gmail-Original-Message-ID: <CAHmME9rBzzi92f053MBi_xLTv52SqTGXFrreOdvZD0KgG3RkVA@mail.gmail.com>
-Message-ID: <CAHmME9rBzzi92f053MBi_xLTv52SqTGXFrreOdvZD0KgG3RkVA@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 6.11 229/244] random: vDSO: don't use 64-bit
- atomics on 32-bit architectures
-To: Sasha Levin <sashal@kernel.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Thomas Gleixner <tglx@linutronix.de>, tytso@mit.edu, 
-	luto@kernel.org, vincenzo.frascino@arm.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 RESEND] io_uring/fdinfo: add timeout_list to fdinfo
+To: Ruyi Zhang <ruyi.zhang@samsung.com>, axboe@kernel.dk
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ peiwei.li@samsung.com
+References: <CGME20240925085815epcas5p16fa977581284a81dae7b67da8bc96a85@epcas5p1.samsung.com>
+ <20240925085800.1729-1-ruyi.zhang@samsung.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20240925085800.1729-1-ruyi.zhang@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This is not stable material and I didn't mark it as such. Do not backport.
+On 9/25/24 09:58, Ruyi Zhang wrote:
+> io_uring fdinfo contains most of the runtime information,which is
+> helpful for debugging io_uring applications; However, there is
+> currently a lack of timeout-related information, and this patch adds
+> timeout_list information.
+
+Please refer to unaddressed comments from v1. We can't have irqs
+disabled for that long. And it's too verbose (i.e. depends on
+the number of timeouts).
+
+
+> --
+> changes since v1:
+> - use _irq version spin_lock.
+> - Fixed formatting issues and delete redundant code.
+> - v1 :https://lore.kernel.org/io-uring/20240812020052.8763-1-ruyi.zhang@samsung.com/
+> --
+> 
+> Signed-off-by: Ruyi Zhang <ruyi.zhang@samsung.com>
+
+-- 
+Pavel Begunkov
 
