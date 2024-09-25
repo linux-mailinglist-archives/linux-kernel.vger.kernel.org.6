@@ -1,131 +1,122 @@
-Return-Path: <linux-kernel+bounces-339466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D725B986591
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:26:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2286798659A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:29:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D69C1F21E03
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:26:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C13A11F21DA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6770157880;
-	Wed, 25 Sep 2024 17:26:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5538B77117;
+	Wed, 25 Sep 2024 17:29:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DEp+GMnE"
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="ZCH7+8Rm"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36DE3282FD
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 17:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746594AEF2;
+	Wed, 25 Sep 2024 17:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727285183; cv=none; b=gxLLvB07DqBkPLYR/ChC6lcuP/5ygwUuUvenXe+BbXep8BdTAIqjfAOcmsLNxbgeIO9ayoVBKWfyH+ebC+npRPJwRHEdJlaw+KI4PpvHSLWqZhNrkch0NdrW5bFvULALffN323AcXfJB/sHYKzA5O5Mkr8rEn19Ezfnrot/8Oh4=
+	t=1727285378; cv=none; b=cBulvPFmJVYU/6yojM7z7pL8qQzXvhMNk5fJNYcFXbaw810CvdEWdOY1dYuIY1XYsppW62ZNhFyW9fGp0yPEr3KskzzV4efsLCjQeT8laOdJcnWKp5N1UPgoATW3Pg0XaKygJ5ptH/Pv6k12jESGusWA/Z6XfGja9DyvBCZ3paE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727285183; c=relaxed/simple;
-	bh=S/MhFgcRKcARF4C/WkE2tB9txWJI/GeERMG8nD/tZck=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XO9sfiKK/+TunMzgybu8zlTL7bfDQqOTNvuFl14gaDPEmdR6IuyiY+0QjBH5JDMU9Z3CrdLBSU2+bxYDoieget/OK3mknnRs+y6CT6r4On2l9xsOv3r/RPglw3u2zRjegC79wYGc7svIa972LuKjpAzAIUWDSKvdh3pSXepJcnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DEp+GMnE; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-82aab679b7bso3275239f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 10:26:21 -0700 (PDT)
+	s=arc-20240116; t=1727285378; c=relaxed/simple;
+	bh=TPOpswsdijw5gm3RbX6cBpr2bSe4KFnYCCRVAKV7fBE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OGgWCde8pjCx/LXSMnmWnkBa8G3z2BvqZBnWBEDULp1t8my2aL6NJpUKN0+Je8RUiAP6PqGwTbtP3svhTfxV+GipWcKjbQ5Pr0iB05ZEJjbLOFhljjcfNAsUucceNEqGrHOuYaCRYTYGLEzX8IuImLBKTf3evcMi+O5QnFMbSwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=ZCH7+8Rm; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-206aee40676so472375ad.0;
+        Wed, 25 Sep 2024 10:29:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1727285181; x=1727889981; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Nsw+zRp/Ze7eW9+6epMJhd53fkKQRkg9ETNvRz5Ml1s=;
-        b=DEp+GMnEaQdkwIxuRnR/Q4BUn+p0hZvjX3hJYuW7J2OaX0HuYCylpUGmbDDkH76DeO
-         lDDKTb/cVv/+A0wttuGZI2VuytfETI6dYFA2FEzgEF+bqFaCUtvCQ1p+jnj+BvF30zKz
-         4N94GA9MNoH63l871adHrqMDocKdPGecr+0Y4=
+        d=googlemail.com; s=20230601; t=1727285377; x=1727890177; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=76c1gfIJ44N/4frQpedFLzuDh4DDf4ytBF5LgFjIvvY=;
+        b=ZCH7+8Rm+cr8Q4ZBhABe/IrjKKsJhGXxpwCUuKvgCF8//Ja4aADmPGC3M/VV9H+Uyx
+         YFcSbAK+6DKQAtALAAP8OZ9nXc77W8f17RR/G3e6HCJiIJZAdDLCggZa5ouhj0gKJaEo
+         u6OOk9ZRrCExcZqbfsasNei82Gd6BzqJHbZObOk6C2CTmxKber05e1PF+qOLXGUsGJig
+         3ZTLJELwq/lVXBmO0OM60ePfCGzeEkeW3VBfd1D7XJlJrhKb/ykBXPJYVjhwZRB5iB0l
+         F5X1T4wrStj8kqie3OzOQv5BUxa27LUSZ/AVAHmGo9g6TsYikSJreKxBGrMjiyc4ujcq
+         qMjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727285181; x=1727889981;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nsw+zRp/Ze7eW9+6epMJhd53fkKQRkg9ETNvRz5Ml1s=;
-        b=XnT8lR+Y2tLYlPDKmHoElyUtc6D/VGO88tyu84GFNZrJd2f5fKu6ckSSV/L7dmP9rv
-         +/3Cg+yCOP/tyrho/xSLkO0l9epBWH/Stxb2hQX7at2uDMf7XMQEJKPwLXxDJSB9iyFp
-         ja0yT7LXmRMtRmpp0HifHkAF4Rzw7Ofo+7JDk+PIF5fEAh9dF5R4xe5X+ocGbW9gDLSl
-         MySM89OLzqRQMxKld1o78TIduqQGo3ZEQqU8icg8M8hZXuwWPGQJU9h7xV+YG3QKxc7G
-         kc7lh6c9ccEFlqHAjcvFppEZxvY9bhY+H052sKdUUO1cvfNVf98vTU7DuFqs21rLPscr
-         bBZA==
-X-Forwarded-Encrypted: i=1; AJvYcCU79eQlWDiLIUqGdcuu/rKy51eN9EKbRkasgFWSI+++YYZQ7mD9RnU8f/MoNYhHJOU2LZNrhP57VNK3FPE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoOden1eA8iY3qcDrVsAIkyj0BBAG27diBItWLYouqiEPAZH1N
-	1L/BapRXwrRJdp5RbdAdCcuYsXGP3C795GXJC4BUSbvDUKmNryLldkZ32gsUCmw=
-X-Google-Smtp-Source: AGHT+IGmRIDkJ5EYcMz5zDv+p0A3MLFtNlRBHwMyJenq92Hsd1XC41WvVZMfEbFtv+gq53kcE8kOfQ==
-X-Received: by 2002:a05:6602:2c01:b0:82a:7181:200f with SMTP id ca18e2360f4ac-83247d26137mr450776739f.9.1727285181091;
-        Wed, 25 Sep 2024 10:26:21 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d40f1bcd9asm1181347173.95.2024.09.25.10.26.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Sep 2024 10:26:20 -0700 (PDT)
-Message-ID: <3f0d12ba-0e52-41f9-9cbd-34bc1225121e@linuxfoundation.org>
-Date: Wed, 25 Sep 2024 11:26:19 -0600
+        d=1e100.net; s=20230601; t=1727285377; x=1727890177;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=76c1gfIJ44N/4frQpedFLzuDh4DDf4ytBF5LgFjIvvY=;
+        b=qgulJGd0OpsEdjPdjIyRXFHDQKLy5n3Yhchv/mh7ofCUHEsjKHmSEjp3cmRz84mdQX
+         Pvgu3AVa9+SNHmqzzLa28q/K4n1oRQvUvrOoD2JPZN2YC7phyN1m8SuMyL9jF7N+OYDD
+         WbKSEvmzA4PTad3jGKzrRzTuHhMBdtKersBX3/HXwYKxv2WyRursp1Hf9827YUH2Takb
+         XtC9d4ZG/2p4NlYl8z9jkva8zuCuKF8XOgSUOypyPVlV5PLhYWyVBOPg6i2PhpJ8P322
+         AE8HmbsrLcMUMTjlkD/P/7wxFizEJmIWaVtJDhrnt585J5m24D64pRXotc5WGZDcpJD3
+         Rqdg==
+X-Forwarded-Encrypted: i=1; AJvYcCVkL417E1b1+evUQEamco0dXbYj4etnKZNsj7XbsBvtJK3yJnpMElufM1U2MCLtyGSe65mbcSfFLmvi@vger.kernel.org, AJvYcCWmrWcL5rZdVkE1YmPPXeA2CbOgrhOSS2l+wOu72/IJeCSJ85bhni70mPmTIZgRL35BeMxh4aZznxm6@vger.kernel.org, AJvYcCXcp0q0ujHcxUxSTaWcEII/onzrFGItRmpgpouSlBr+hi60cZnl3oEPgS7ncQs0ZbozkirQQR8p7FspnYrZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOHNqsIFihRNQXWUKz9ArKLs49lkfNg1+iQFcSSoXHmigWNF3t
+	I18MdUqDsuPYFjPbBkSqaMQdga4DGkNM+eWMiLpLo/ScUDd71WKA35TACSbfZVgmzphftW5Etrw
+	ENQj1IiRQ1MULonWlh5O54a2DqP0=
+X-Google-Smtp-Source: AGHT+IGL8Tarnw4aOxyngiyyJMw2bFTvc8HSfobctrnuSaGxAiJN+XPoCfQJeAeS5waKELhDrIf1ZNEdC7ArTM2uMQA=
+X-Received: by 2002:a17:902:f707:b0:206:8f25:a3e with SMTP id
+ d9443c01a7336-20afc60958amr46716805ad.53.1727285376595; Wed, 25 Sep 2024
+ 10:29:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests: Makefile: create OUTPUT dir
-To: Jakub Kicinski <kuba@kernel.org>, Anders Roxell <anders.roxell@linaro.org>
-Cc: shuah@kernel.org, willemb@google.com, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240916075655.4117151-1-anders.roxell@linaro.org>
- <952aeec9-c21f-46ce-bf68-e6ffce51630c@linuxfoundation.org>
- <20240920123827.715ff109@kernel.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240920123827.715ff109@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240920-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v2-0-5aa8bdfe01af@linaro.org>
+ <20240920-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v2-3-5aa8bdfe01af@linaro.org>
+ <mbc2cacow73vmwn3w42aucq6x6xijbpgustkv3v6etgv35xih7@truf2rbgf3vo>
+In-Reply-To: <mbc2cacow73vmwn3w42aucq6x6xijbpgustkv3v6etgv35xih7@truf2rbgf3vo>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Wed, 25 Sep 2024 19:29:25 +0200
+Message-ID: <CAFBinCDu0P8QEvxrUdXXSVCn-1061fjyhYd2nve9QCCvXmoe5Q@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] dt-bindings: mmc: convert amlogic,meson-mx-sdio.txt
+ to dtschema
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, linux-mmc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/20/24 04:38, Jakub Kicinski wrote:
-> On Thu, 19 Sep 2024 09:51:47 -0600 Shuah Khan wrote:
->>> @@ -261,6 +261,7 @@ ifdef INSTALL_PATH
->>>    	@ret=1;	\
->>>    	for TARGET in $(TARGETS) $(INSTALL_DEP_TARGETS); do \
->>>    		BUILD_TARGET=$$BUILD/$$TARGET;	\
->>> +		mkdir -p $$BUILD_TARGET;	\
->>>    		$(MAKE) OUTPUT=$$BUILD_TARGET -C $$TARGET install \
->>>    				INSTALL_PATH=$(INSTALL_PATH)/$$TARGET \
->>>    				SRC_PATH=$(shell readlink -e $$(pwd)) \
->>
->> Doesn't the "all" target mkdir work for this case? Why do we need another mkdir here?
-> 
-> I was wondering about that, too. Looks like the code from the all
-> target is copy/pasted in the install target except the mkdir line.
-> Best fix would be to make the dependency work, I don't understand
-> why it doesn't already, tho.
+Hi Krzysztof,
 
-I think this could be the issue:
+On Tue, Sep 24, 2024 at 11:18=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.o=
+rg> wrote:
+[...]
+> > +        enum: [0, 1, 2]
+> > +
+> > +      bus-width:
+> > +        enum: [1, 4]
+> > +
+> > +    unevaluatedProperties: false
+>
+> Hm, I wonder why not all slots are defined in your DTS? Why not all of
+> them are required? I assume the slots are there always, as part of the
+> controller.
+>
+> Is this because of driver limitation mentioned in the old binding?
+The MMC core (still) has a limitation of only supporting one slot per
+controller - so a limitation will stay in place.
 
-net main Makefile doesn't have handling for subdirs. It looks
-like the way this is handled is by adding an entry to the main
-Makefile:
+However, the driver (drivers/mmc/host/meson-mx-sdio.c) uses
+of_get_compatible_child(), meaning it will also pick the first child
+node with the correct compatible string, even if it has status =3D
+"disabled".
+I can send a patch to reduce the scope of this limitation: all slots
+can be defined but only the first enabled one is used.
+What do you think?
 
-TARGETS += net/af_unix
-TARGETS += net/forwarding
-TARGETS += net/hsr
-TARGETS += net/mptcp
-TARGETS += net/openvswitch
-TARGETS += net/tcp_ao
-TARGETS += net/netfilter
 
-So the solution would be similar adding net/lib to the main
-Makefile.
-
-Anders, can you try the above and see if it works.
-
-Another issue - lib/Makefile
-TEST_GEN_FILES += csum needs to be TEST_GEN_FILES = csum
-
-thanks,
--- Shuah
-
+Best regards,
+Martin
 
