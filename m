@@ -1,174 +1,149 @@
-Return-Path: <linux-kernel+bounces-339386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80B64986459
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:59:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C527498645D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:00:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A30511C251AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:59:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82996288176
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F053A1BA;
-	Wed, 25 Sep 2024 15:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3668C208CA;
+	Wed, 25 Sep 2024 16:00:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="UVKMXiTj";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VkQkxhzM"
-Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Hfvng506"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8AA18637;
-	Wed, 25 Sep 2024 15:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F342F5B
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 16:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727279955; cv=none; b=sa3WV09dVjCJIafIgmJk2N19Jdlj4pASEe6ccIBr1YJXkX3hNuCqg7AjFjdfe2bdAKGjK+yIDFR38IXi9HzjCfvohiUX7s10aexaOah4ORmy7e9hMhJgfDeIrmBrhkTjXcsnj6qll1LUBcsqPZuuDVTiKuRpPbGAJgK/2MJsMrg=
+	t=1727280049; cv=none; b=SX6KmbtMKP17AbtFRb4CS1PGpfxx1Z372H+fvafEfZnal5FpKAPch9QqXe2JqADyOkneazuCaie/rFPmZ0+rnImXWLt4BlA4XS63bvBbxoTHa8jNU8k9IFU/lUW0kIlkIQmyd1RZAgOA/JgkgNdV0lkU/zzFuoHbuvYDJt7KvCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727279955; c=relaxed/simple;
-	bh=yaiCoyV8POwmw8mOFb1CvfBnHJKh54ULmKz45sixybQ=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=sR6mKxNyUsHZ9p8KwYp6mnBXK+81DWVn8SWXpavv2Kfhigs1vRNqgAt7l6GYZup1UB0DQC04k5mMJeeeQLoAw1XRJk2rOwz7nt/xwgXFm9ux6fDmqlGt6CeV1rURVK2DCI1b0ys5pWTf9Xwi6sAluwk/cqqE/TOHSxCJa5BneWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=UVKMXiTj; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VkQkxhzM; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id ECD7113803AA;
-	Wed, 25 Sep 2024 11:59:10 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Wed, 25 Sep 2024 11:59:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1727279950;
-	 x=1727366350; bh=3HZx7sec5GV7f3nA3v8u1Fjv7A5gsnEaqY5PBAiqOkk=; b=
-	UVKMXiTjaRWc30bxZNATVWbRhgICrxpyR1x16ghxJOAQTl5BOunfXp9FwWV9WhlV
-	+aUa/RGQh0Kyz4py6ifpIJ0+eLmjwMyTDfXsi0XWrcC8RcdTOOgH0YZTuBZbucr/
-	z2c10MA43k2yciVzwTab6t6eXgWSHOOzeHnWuiGcynxher7cWBmML1U9Sevdd5iI
-	uzvkVwSmr0CDT4xYR/kN0N6RZhrsVcoWwgNNDis6Dv19wAKQhSHm5ns+KjaDg8od
-	S9wcHRzFhbGHOVeS9mXFTuId4wpU9p1MK04NIfi1O27zhlWafosj7W3qPNzL6+H+
-	DB2IwVwmKjOI85hzhAEKpQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727279950; x=
-	1727366350; bh=3HZx7sec5GV7f3nA3v8u1Fjv7A5gsnEaqY5PBAiqOkk=; b=V
-	kQkxhzMWnh9soxOXto4eo35XEnniTH4Wu+9ZskAHzs93bDP7LBa6DgPrj6HceGdo
-	8YKYsjg/9l4PP68f+e9rStsWE3nv4yrfFwW9zxVUxAAoxu92B7DwkCnMDEB5z++5
-	B2Uj+lbSbXt+XIWbOH6RMp3gHONT6vsyJTj7kIzfZlBMjfQMJfIdjyljGakAIjbV
-	dxtEToc/zuQB6+/68rKtO42kB6GLy1P4svOtLC8opNfW/Ibh4Rj6RfYs1tmv6qEF
-	/xMtI7xZqb2slX9RiE52KgOWpCCVFgL5Cu2jlVC9WPk3512KFFuAVu9ynYuhKCE0
-	r2M9NYYjcQEpvrsJmEDGg==
-X-ME-Sender: <xms:TTP0ZqmgT4Iz-DjvOhb6TEsmbNcedL4jv-HXEBZ14JusRndh8E3guQ>
-    <xme:TTP0Zh1aAfi2-W_sHtCvZrcYc2NMKYejucSvVVwIJzXQiogHFgrFj3dCt8w6MAvoP
-    d41cQblQb2fa8wiyNo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddthedgleehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhepfefhheetffduvdfgieeghfejtedvkeetkeejfeek
-    keelffejteevvdeghffhiefhnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlh
-    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghr
-    nhgusgdruggvpdhnsggprhgtphhtthhopeegtddpmhhouggvpehsmhhtphhouhhtpdhrtg
-    hpthhtohepmhgrthhhihgvuhdruggvshhnohihvghrshesvghffhhitghiohhsrdgtohhm
-    pdhrtghpthhtohepuhgsihiijhgrkhesghhmrghilhdrtghomhdprhgtphhtthhopegrrh
-    gusgdoghhithesghhoohhglhgvrdgtohhmpdhrtghpthhtohepihhrohhgvghrshesghho
-    ohhglhgvrdgtohhmpdhrtghpthhtohepjhhushhtihhnshhtihhtthesghhoohhglhgvrd
-    gtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghp
-    thhtoheprggurhhirghnrdhhuhhnthgvrhesihhnthgvlhdrtghomhdprhgtphhtthhope
-    hkvghithhhpheskhgvihhthhhprdgtohhmpdhrtghpthhtoheprggtmhgvsehkvghrnhgv
-    lhdrohhrgh
-X-ME-Proxy: <xmx:TTP0ZorEpf8uhg8h7KUOuuyxmkFTuOqd8M-ijgxDXgHXHnEsCAqn1A>
-    <xmx:TTP0ZukWROg85Ojj1n7scTnPh_o5BOn4tFS4d6Wlg35ADB7gm5yxxQ>
-    <xmx:TTP0Zo3bonoZfA7r9k_xttbCf96LxvWQCw6nio7M3wIvLzzRaNhFBA>
-    <xmx:TTP0ZlvFerWdcwY5EIw3orvEavM3V7Yt9LqH5F0Xmjy4Y5rHiisqdQ>
-    <xmx:TjP0ZmWuFxpdl1lIuEttTBR3BrOqJ-pJA32wqZmkpWVgyRHgKyKtEXao>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 792C62220071; Wed, 25 Sep 2024 11:59:09 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1727280049; c=relaxed/simple;
+	bh=S7be5KN6UGGOf23Jltm5kL5ASOA+5n5j6TpUb0Rh4r8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B/aK7VFSssCuaempgGIvZF30Q9x4PrrUQXH0nJ9BlNW3w/2FqoPkrP6EKmuSF8KueCfLfq9lEENZeKOmm73vzAN+o0s/LAF7fxm0ety6cwZvJX1P+VP72foSxrhuNZwcR3bv5JHNA5Hs3vWJ3GzpIji6muaI8Zc70hgiBRtIS60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Hfvng506; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from tr.lan (ip-86-49-120-218.bb.vodafone.cz [86.49.120.218])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 09F0087E30;
+	Wed, 25 Sep 2024 18:00:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1727280045;
+	bh=WqvSyAtJdJLkJyg1eGohRVV8HBMvuaIpHViAOX2Hufw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Hfvng506APnt/IorzQSrKlFLcsd64/VsJJM3/jfX0X4g80/84RglqnGwzbIbymsCJ
+	 u2EVkWyKPGSqxobu64fK8kJkDU8DCKij9yYJevrCmmKZw3HnRqEhjygXMynQrLiIdt
+	 uOlwcDW8R7aFdLa5pMzyIJaKI48eL7YlqXdmNBu/rkxhClvh7+f2hfJHCiYnRocN1+
+	 GuusVY/PuqJsXJew40jhTa9oZMqqW6xXMhG0EzWfHvczTWSRbxfUPCiBxIb+R+DzRL
+	 CUjfQ12Yfn3gdK4WC/uATT8p1EDxNld9vDltruyK/b44xNXLvHEfGzhQuYRdasWa3p
+	 0DzHyyCZhOHRQ==
+From: Marek Vasut <marex@denx.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: kernel@dh-electronics.com,
+	Marek Vasut <marex@denx.de>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Saravana Kannan <saravanak@google.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] soc: imx8m: Probe the SoC driver late
+Date: Wed, 25 Sep 2024 18:00:11 +0200
+Message-ID: <20240925160026.84091-1-marex@denx.de>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 25 Sep 2024 15:58:38 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Ard Biesheuvel" <ardb+git@google.com>, linux-kernel@vger.kernel.org
-Cc: "Ard Biesheuvel" <ardb@kernel.org>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, "Andy Lutomirski" <luto@kernel.org>,
- "Peter Zijlstra" <peterz@infradead.org>,
- "Uros Bizjak" <ubizjak@gmail.com>, "Dennis Zhou" <dennis@kernel.org>,
- "Tejun Heo" <tj@kernel.org>, "Christoph Lameter" <cl@linux.com>,
- "Mathieu Desnoyers" <mathieu.desnoyers@efficios.com>,
- "Paolo Bonzini" <pbonzini@redhat.com>,
- "Vitaly Kuznetsov" <vkuznets@redhat.com>,
- "Juergen Gross" <jgross@suse.com>,
- "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Masahiro Yamada" <masahiroy@kernel.org>, "Kees Cook" <kees@kernel.org>,
- "Nathan Chancellor" <nathan@kernel.org>,
- "Keith Packard" <keithp@keithp.com>,
- "Justin Stitt" <justinstitt@google.com>,
- "Josh Poimboeuf" <jpoimboe@kernel.org>,
- "Arnaldo Carvalho de Melo" <acme@kernel.org>,
- "Namhyung Kim" <namhyung@kernel.org>, "Jiri Olsa" <jolsa@kernel.org>,
- "Ian Rogers" <irogers@google.com>,
- "Adrian Hunter" <adrian.hunter@intel.com>,
- "Kan Liang" <kan.liang@linux.intel.com>, linux-doc@vger.kernel.org,
- linux-pm@vger.kernel.org, kvm@vger.kernel.org,
- xen-devel@lists.xenproject.org, linux-efi@vger.kernel.org,
- Linux-Arch <linux-arch@vger.kernel.org>, linux-sparse@vger.kernel.org,
- linux-kbuild@vger.kernel.org, linux-perf-users@vger.kernel.org,
- rust-for-linux@vger.kernel.org, llvm@lists.linux.dev
-Message-Id: <c4868f63-b688-4489-a112-05bf04280bde@app.fastmail.com>
-In-Reply-To: <20240925150059.3955569-32-ardb+git@google.com>
-References: <20240925150059.3955569-30-ardb+git@google.com>
- <20240925150059.3955569-32-ardb+git@google.com>
-Subject: Re: [RFC PATCH 02/28] Documentation: Bump minimum GCC version to 8.1
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Wed, Sep 25, 2024, at 15:01, Ard Biesheuvel wrote:
-> From: Ard Biesheuvel <ardb@kernel.org>
->
-> Bump the minimum GCC version to 8.1 to gain unconditional support for
-> referring to the per-task stack cookie using a symbol rather than
-> relying on the fixed offset of 40 bytes from %GS, which requires
-> elaborate hacks to support.
->
-> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> ---
->  Documentation/admin-guide/README.rst | 2 +-
->  Documentation/process/changes.rst    | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+With driver_async_probe=* on kernel command line, the following trace is
+produced because on i.MX8M Plus hardware because the soc-imx8m.c driver
+calls of_clk_get_by_name() which returns -EPROBE_DEFER because the clock
+driver is not yet probed. This was not detected during regular testing
+without driver_async_probe.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Attempt to fix it by probing the SoC driver late, but I don't think that
+is the correct approach here.
 
-As we discussed during plumbers, I think this is reasonable,
-both the gcc-8.1 version and the timing after the 6.12-LTS
-kernel.
+"
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 1 at drivers/soc/imx/soc-imx8m.c:115 imx8mm_soc_revision+0xdc/0x180
+CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0-next-20240924-00002-g2062bb554dea #603
+Hardware name: DH electronics i.MX8M Plus DHCOM Premium Developer Kit (3) (DT)
+pstate: 20000005 (nzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : imx8mm_soc_revision+0xdc/0x180
+lr : imx8mm_soc_revision+0xd0/0x180
+sp : ffff8000821fbcc0
+x29: ffff8000821fbce0 x28: 0000000000000000 x27: ffff800081810120
+x26: ffff8000818a9970 x25: 0000000000000006 x24: 0000000000824311
+x23: ffff8000817f42c8 x22: ffff0000df8be210 x21: fffffffffffffdfb
+x20: ffff800082780000 x19: 0000000000000001 x18: ffffffffffffffff
+x17: ffff800081fff418 x16: ffff8000823e1000 x15: ffff0000c03b65e8
+x14: ffff0000c00051b0 x13: ffff800082790000 x12: 0000000000000801
+x11: ffff80008278ffff x10: ffff80008209d3a6 x9 : ffff80008062e95c
+x8 : ffff8000821fb9a0 x7 : 0000000000000000 x6 : 00000000000080e3
+x5 : ffff0000df8c03d8 x4 : 0000000000000000 x3 : 0000000000000000
+x2 : 0000000000000000 x1 : fffffffffffffdfb x0 : fffffffffffffdfb
+Call trace:
+ imx8mm_soc_revision+0xdc/0x180
+ imx8_soc_init+0xb0/0x1e0
+ do_one_initcall+0x94/0x1a8
+ kernel_init_freeable+0x240/0x2a8
+ kernel_init+0x28/0x140
+ ret_from_fork+0x10/0x20
+---[ end trace 0000000000000000 ]---
+SoC: i.MX8MP revision 1.1
+"
 
-We obviously need to go through all the other version checks
-to see what else can be cleaned up. I would suggest we also
-raise the binutils version to 2.30+, which is what RHEL8
-shipped alongside gcc-8. I have not found other distros that
-use older binutils in combination with gcc-8 or higher,
-Debian 10 uses binutils-2.31.
-I don't think we want to combine the additional cleanup with
-your series, but if we can agree on the version, we can do that
-in parallel.
+Signed-off-by: Marek Vasut <marex@denx.de>
+---
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: Saravana Kannan <saravanak@google.com>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: imx@lists.linux.dev
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/soc/imx/soc-imx8m.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-FWIW, here are links to the last few times we discussed this,
-and there are already has a few other things that would
-benefit from more modern compilers:
+diff --git a/drivers/soc/imx/soc-imx8m.c b/drivers/soc/imx/soc-imx8m.c
+index fe111bae38c8e..04d6ab1073b25 100644
+--- a/drivers/soc/imx/soc-imx8m.c
++++ b/drivers/soc/imx/soc-imx8m.c
+@@ -251,6 +251,6 @@ static int __init imx8_soc_init(void)
+ 	kfree(soc_dev_attr);
+ 	return ret;
+ }
+-device_initcall(imx8_soc_init);
++late_initcall(imx8_soc_init);
+ MODULE_DESCRIPTION("NXP i.MX8M SoC driver");
+ MODULE_LICENSE("GPL");
+-- 
+2.45.2
 
-https://lore.kernel.org/lkml/dca5b082-90d1-40ab-954f-8b3b6f51138c@app.fastmail.com/
-https://lore.kernel.org/lkml/CAFULd4biN8FPRtU54Q0QywfBFvvWV-s1M3kWF9YOmozyAX9+ZQ@mail.gmail.com/
-https://lore.kernel.org/lkml/CAK8P3a1Vt17Yry_gTQ0dwr7_tEoFhuec+mQzzKzFvZGD5Hrnow@mail.gmail.com/
-
-     Arnd
 
