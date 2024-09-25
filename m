@@ -1,60 +1,66 @@
-Return-Path: <linux-kernel+bounces-339048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63439985FBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:04:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E302E985FC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:05:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD6E61F25047
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:04:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C6311F2131F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37027229949;
-	Wed, 25 Sep 2024 12:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF57B1B9B50;
+	Wed, 25 Sep 2024 12:17:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aoh6JVwj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fqQRwdta"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A06D1A42AB;
-	Wed, 25 Sep 2024 12:17:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CCCA22997C;
+	Wed, 25 Sep 2024 12:17:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727266643; cv=none; b=SEvpRheM1YroekQ+2hy+UWW+qIBQTXyy9f0rZSoXg97xSUBJFF3GWy5PBnU5rFZuQQjcI+TSRjPH2srl7a964drTEe3KJBeL1a3iMa1b7hGml0sePtMIu1PvAyju4JZ5Oc/qtkHydCgHTtQUxl4wE8hYfW1F60GbzbXThhRpu7M=
+	t=1727266651; cv=none; b=Xd1oC9AnS7ihW1kW8G5+765wo9HAeuLhY3/ECpKiffIX5TqW6lv6BtCgE+fbKxA/MOKK3+m0b/EGwPicm6vz4l2tYnxYAFPUdnz4jfnmN6tyaQHMbnHHjWoynMp0Hc57x/+GdC3AI6QWdusiJjQErGXZ/pxkX1QuXWjjMuRs49A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727266643; c=relaxed/simple;
-	bh=zGmVvdjZI2OxMCY8uvpgnHQNqHm/txbyXC+4jCowR40=;
+	s=arc-20240116; t=1727266651; c=relaxed/simple;
+	bh=3uworH+Fy5wViEyD2XoSjiO38p5Ba0tD//i0S3nbEAA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AA3BdAteHKAIVvTSQIzv+s8FEL3kziJtdGN8eOKyfdnqFtlaUrjVJLWjlBHS3aqrRB7As0PVSKZUeXRkJ7tCYbrOqRrFyeYnwFqKpoyRhtOYmgsqcYKA2jGWI3dN+y0uTp1fjZO0rjIQWHIXi6VGTZJnxE6iOzoTW5DdJSDLM2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aoh6JVwj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE697C4CEC7;
-	Wed, 25 Sep 2024 12:17:21 +0000 (UTC)
+	 MIME-Version; b=c5o4ze1WD7exu3G9oUf7qrik5pbGli/H6g2PcQh7mSzA2gj2Iy4/o/gBSK1vxcU/KPt4Ct1FoYBQhFA+qY19paqn4RiEQP9Q3wyAXKBbHixbbhwSH0Jf8U4oUbpy+mQ1R7Vxls7h1G+GpU52o/iCLDlgUmz+YMLilru5u7vY5+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fqQRwdta; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DC02C4CEC3;
+	Wed, 25 Sep 2024 12:17:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727266643;
-	bh=zGmVvdjZI2OxMCY8uvpgnHQNqHm/txbyXC+4jCowR40=;
+	s=k20201202; t=1727266651;
+	bh=3uworH+Fy5wViEyD2XoSjiO38p5Ba0tD//i0S3nbEAA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=aoh6JVwjHWXnKbCR9pJCG0uA8sGRAJYcbXpfgsvBdMql56rmDOSnRLIdo9INGvqa+
-	 TV6EHHKGUhxBSz/3mxBhVv7SlJS40gENU+AncbDPuvmHjBnM4KKwtMfZ7icB3oz73a
-	 jrSEe9n3ouklTVPPAX7XLF7F16jKQI75Z4pURhIfRR/iBGAThrsekeO6nR6tIj9yCi
-	 OWUYew/+9vut/UInABG1HAe/2VPh7GMd5tguto5eq0ic/AoHwmUa59PXoCR6oz2vQb
-	 TbDj6rn22nzr8tx3jLUo6Rw98ln6SdaEuOQkbjTOCcsPF9aG1BYlCPK+n/HA6nweUF
-	 OZLwZNUE5UvbQ==
+	b=fqQRwdtaYYs0Qy08hrGpBadZFvhITFUy/S9nX8sXqbsrm1B8anUQFwyGSfnjMXmqB
+	 Cl6P2ZbKhRPIkjIJnwC3PuJx+rUF5Lx4s9cfWEgWAx4sbj3X5AqzIimIZYSc+KAIKz
+	 RKmY3lwPhimYkwpJLw4t9mmcL7aVh4bA7ugB0n7SV/otJHL32wSOaz164/8bbsLHZw
+	 U+lh6b3P8eEV0BplloFT4r6soe96vLa2Tiy4XtCcOx6q+enYTN5mdrbakYw3HP/jcv
+	 bo2PByz7MV4laUgKo3h2uaayTYeovhab/52KNLn8XTVHBkQYWrmnuTdAxdLUcVvd/f
+	 pS/89QgihvVoQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Alex Deucher <alexander.deucher@amd.com>,
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	Vitaly Prosyak <vitaly.prosyak@amd.com>,
 	Sasha Levin <sashal@kernel.org>,
 	christian.koenig@amd.com,
 	Xinhui.Pan@amd.com,
 	airlied@gmail.com,
 	daniel@ffwll.ch,
+	sunil.khatri@amd.com,
+	Prike.Liang@amd.com,
+	liupeng01@kylinos.cn,
+	Tim.Huang@amd.com,
+	kevinyang.wang@amd.com,
+	pierre-eric.pelloux-prayer@amd.com,
 	amd-gfx@lists.freedesktop.org,
 	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 6.6 121/139] drm/radeon/r100: Handle unknown family in r100_cp_init_microcode()
-Date: Wed, 25 Sep 2024 08:09:01 -0400
-Message-ID: <20240925121137.1307574-121-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.6 123/139] drm/amdgpu/gfx9: use rlc safe mode for soft recovery
+Date: Wed, 25 Sep 2024 08:09:03 -0400
+Message-ID: <20240925121137.1307574-123-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240925121137.1307574-1-sashal@kernel.org>
 References: <20240925121137.1307574-1-sashal@kernel.org>
@@ -64,141 +70,38 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.52
 Content-Transfer-Encoding: 8bit
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Alex Deucher <alexander.deucher@amd.com>
 
-[ Upstream commit c6dbab46324b1742b50dc2fb5c1fee2c28129439 ]
+[ Upstream commit 3ec2ad7c34c412bd9264cd1ff235d0812be90e82 ]
 
-With -Werror:
+Protect the MMIO access with safe mode.
 
-    In function ‘r100_cp_init_microcode’,
-	inlined from ‘r100_cp_init’ at drivers/gpu/drm/radeon/r100.c:1136:7:
-    include/linux/printk.h:465:44: error: ‘%s’ directive argument is null [-Werror=format-overflow=]
-      465 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
-	  |                                            ^
-    include/linux/printk.h:437:17: note: in definition of macro ‘printk_index_wrap’
-      437 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
-	  |                 ^~~~~~~
-    include/linux/printk.h:508:9: note: in expansion of macro ‘printk’
-      508 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-	  |         ^~~~~~
-    drivers/gpu/drm/radeon/r100.c:1062:17: note: in expansion of macro ‘pr_err’
-     1062 |                 pr_err("radeon_cp: Failed to load firmware \"%s\"\n", fw_name);
-	  |                 ^~~~~~
-
-Fix this by converting the if/else if/... construct into a proper
-switch() statement with a default to handle the error case.
-
-As a bonus, the generated code is ca. 100 bytes smaller (with gcc 11.4.0
-targeting arm32).
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Vitaly Prosyak <vitaly.prosyak@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/radeon/r100.c | 70 ++++++++++++++++++++++-------------
- 1 file changed, 45 insertions(+), 25 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/radeon/r100.c b/drivers/gpu/drm/radeon/r100.c
-index cfeca2694d5f9..b63b6b4e9b281 100644
---- a/drivers/gpu/drm/radeon/r100.c
-+++ b/drivers/gpu/drm/radeon/r100.c
-@@ -1015,45 +1015,65 @@ static int r100_cp_init_microcode(struct radeon_device *rdev)
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+index 00e693c47f3cc..895060f6948f3 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+@@ -5709,7 +5709,9 @@ static void gfx_v9_0_ring_soft_recovery(struct amdgpu_ring *ring, unsigned vmid)
+ 	value = REG_SET_FIELD(value, SQ_CMD, MODE, 0x01);
+ 	value = REG_SET_FIELD(value, SQ_CMD, CHECK_VMID, 1);
+ 	value = REG_SET_FIELD(value, SQ_CMD, VM_ID, vmid);
++	amdgpu_gfx_rlc_enter_safe_mode(adev, 0);
+ 	WREG32_SOC15(GC, 0, mmSQ_CMD, value);
++	amdgpu_gfx_rlc_exit_safe_mode(adev, 0);
+ }
  
- 	DRM_DEBUG_KMS("\n");
- 
--	if ((rdev->family == CHIP_R100) || (rdev->family == CHIP_RV100) ||
--	    (rdev->family == CHIP_RV200) || (rdev->family == CHIP_RS100) ||
--	    (rdev->family == CHIP_RS200)) {
-+	switch (rdev->family) {
-+	case CHIP_R100:
-+	case CHIP_RV100:
-+	case CHIP_RV200:
-+	case CHIP_RS100:
-+	case CHIP_RS200:
- 		DRM_INFO("Loading R100 Microcode\n");
- 		fw_name = FIRMWARE_R100;
--	} else if ((rdev->family == CHIP_R200) ||
--		   (rdev->family == CHIP_RV250) ||
--		   (rdev->family == CHIP_RV280) ||
--		   (rdev->family == CHIP_RS300)) {
-+		break;
-+
-+	case CHIP_R200:
-+	case CHIP_RV250:
-+	case CHIP_RV280:
-+	case CHIP_RS300:
- 		DRM_INFO("Loading R200 Microcode\n");
- 		fw_name = FIRMWARE_R200;
--	} else if ((rdev->family == CHIP_R300) ||
--		   (rdev->family == CHIP_R350) ||
--		   (rdev->family == CHIP_RV350) ||
--		   (rdev->family == CHIP_RV380) ||
--		   (rdev->family == CHIP_RS400) ||
--		   (rdev->family == CHIP_RS480)) {
-+		break;
-+
-+	case CHIP_R300:
-+	case CHIP_R350:
-+	case CHIP_RV350:
-+	case CHIP_RV380:
-+	case CHIP_RS400:
-+	case CHIP_RS480:
- 		DRM_INFO("Loading R300 Microcode\n");
- 		fw_name = FIRMWARE_R300;
--	} else if ((rdev->family == CHIP_R420) ||
--		   (rdev->family == CHIP_R423) ||
--		   (rdev->family == CHIP_RV410)) {
-+		break;
-+
-+	case CHIP_R420:
-+	case CHIP_R423:
-+	case CHIP_RV410:
- 		DRM_INFO("Loading R400 Microcode\n");
- 		fw_name = FIRMWARE_R420;
--	} else if ((rdev->family == CHIP_RS690) ||
--		   (rdev->family == CHIP_RS740)) {
-+		break;
-+
-+	case CHIP_RS690:
-+	case CHIP_RS740:
- 		DRM_INFO("Loading RS690/RS740 Microcode\n");
- 		fw_name = FIRMWARE_RS690;
--	} else if (rdev->family == CHIP_RS600) {
-+		break;
-+
-+	case CHIP_RS600:
- 		DRM_INFO("Loading RS600 Microcode\n");
- 		fw_name = FIRMWARE_RS600;
--	} else if ((rdev->family == CHIP_RV515) ||
--		   (rdev->family == CHIP_R520) ||
--		   (rdev->family == CHIP_RV530) ||
--		   (rdev->family == CHIP_R580) ||
--		   (rdev->family == CHIP_RV560) ||
--		   (rdev->family == CHIP_RV570)) {
-+		break;
-+
-+	case CHIP_RV515:
-+	case CHIP_R520:
-+	case CHIP_RV530:
-+	case CHIP_R580:
-+	case CHIP_RV560:
-+	case CHIP_RV570:
- 		DRM_INFO("Loading R500 Microcode\n");
- 		fw_name = FIRMWARE_R520;
-+		break;
-+
-+	default:
-+		DRM_ERROR("Unsupported Radeon family %u\n", rdev->family);
-+		return -EINVAL;
- 	}
- 
- 	err = request_firmware(&rdev->me_fw, fw_name, rdev->dev);
+ static void gfx_v9_0_set_gfx_eop_interrupt_state(struct amdgpu_device *adev,
 -- 
 2.43.0
 
