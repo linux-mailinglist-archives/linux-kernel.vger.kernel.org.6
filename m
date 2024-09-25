@@ -1,165 +1,136 @@
-Return-Path: <linux-kernel+bounces-338255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D89298557D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:29:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92685985652
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:28:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FE3E1C226F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:29:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C30001C21109
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0184115A864;
-	Wed, 25 Sep 2024 08:29:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1019315B999;
+	Wed, 25 Sep 2024 09:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iYxVLF4u"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QUOo9tGZ"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A8F1598EE
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684EA15B971
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 09:28:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727252944; cv=none; b=bfB5qF5N8bBHeNe6sW9YlbkUlx/fe6ew0rfNj24a7N0pvLI/nrK8P/aGFTvmI5lVtDq+djFz4KEGhVGBT8o1EvUFvByWwd8AbhU5n6oSLs+4hDceD0FKx1mPFp+n2nNPkm5HA4PcHmNbG1KuZzqnaZKMDfmEcQkDsKPaqxhfXAY=
+	t=1727256529; cv=none; b=V1NVBglrkKJ1qfDmJnDzrsOyDUR/vikw9k6FtsUTvNMN8HbXO5jzIPA0CXTBEtRsqjFl2vLoCElJz2zZnYxJf/wICQBlHIF8ar3wjm3+DdkJPdY/NbQJPVzzQb3q4DfkNh6AfK4mTTLhN9tJGv/ONfGuUxxH4S+1RQ9Y07/ly64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727252944; c=relaxed/simple;
-	bh=q29PEj4IlMN9GSxCgG1by5KAX38sxz8FA6VWkjwf1+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=In2EfPBFrJvBnSiGAosNfNaEUtfaupT0vMXjdeGGf+62r22bJDAD5kotOQfqF+dVDn4q0nTv7JCVqj8iiRjm3cVe3qOevErq7QUyrIR4bHn2tdt2DTzB3ZgYiXJCooZ4tBWvQb/MfDoLQSJ/73/3iyl3H7KV9xt+jjyIVU7nAF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iYxVLF4u; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53654e2ed93so7640762e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 01:29:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727252940; x=1727857740; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fJc/ZEonsSpvQx65a5f325f6xswc665KOha+qhiv8i8=;
-        b=iYxVLF4uOOaUooX9pmelWwGNWXXDY/6O5fYHVjSnvArikmH1ULv6LImgfk9uub+B+M
-         9NPsqTDi1cz42N7Hfoxa397tV//PW3j0gxux+7Mk2r8Koy1H3E+q+UlStQvl6Lmr0YCs
-         y/pQY6MgGLYbeu+b31hKHhtVLUW49IelRGigZuTZd3YT3zPK6Pd29sq1QugYtKUmIRVA
-         3kCee9zrOIMwcNQj17nzjFSOeZYX7rs8xfwCJ/4kl6JmH48WQlE/xTKAw8/jv/WTVst9
-         l8VoX6nFhfGvrZqR0epPu3IHD4uILHSSZnUQ7LFuOfYdNQ2vRNI6DLli23RkuE0YIKdZ
-         TJAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727252940; x=1727857740;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fJc/ZEonsSpvQx65a5f325f6xswc665KOha+qhiv8i8=;
-        b=VtiZ34J930mzm8tQOpEngxbiSiXp4uRuVoqBF0c4IpUlnX7jdjCVe96UGrvVxIRcCC
-         9OzJ0iSTMMtH/cWNwZmJo4jbTv9poc+4ylNntDgfBf8tqm1oPI4OhA164z37PCO/dVut
-         hcaQ+og0S+ITBND5ZSQaK6SES6T/fpU1rATtn1fBj1ppdqz5DeBM21SqMPZ2ttm4U/Rq
-         BgyBVaAVe9eHmHRKvf3CI+9rklNFzyXixMbCNiAEZ/C3kuW88ZvZTEbEOifKLqKaXsSm
-         sEqp1z/6W+g7uMqxFqag3y8XGMdwKyH3znxGfF/h68dFcKXyzrnZyXr//SEGxgM6PM/s
-         uz2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVWXGPLST+njntirFAjs5z+ZCZFrCO+jfvbo4j5JZ/fqfj8YQ+EygOJGy4DEmHo9aTjHC9SwQgnHJhMS9w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOBPdTmvqvarwbJZ6cgL0D3i4hLKRQV+nEwfYG8YRUEIEqdRV6
-	EyttJunwX4E9Yw7Py2yfWngaCc/jMjEky84CuzX/wQw2DgBjbjbhPJMlkf+1IX8=
-X-Google-Smtp-Source: AGHT+IFWtR5Spi/hxHDKmyK+yEjL67FVSC0HLJLKUPO8bW2hzqf39SxWRho/7uZXgcWIoMTcw6ko+w==
-X-Received: by 2002:a05:6512:3f07:b0:535:6ba7:7725 with SMTP id 2adb3069b0e04-5387048a6d7mr1170484e87.3.1727252940511;
-        Wed, 25 Sep 2024 01:29:00 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-537a8648d41sm454852e87.224.2024.09.25.01.28.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 01:28:59 -0700 (PDT)
-Date: Wed, 25 Sep 2024 11:28:57 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	quic_ebharadw@quicinc.com, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, Rob Clark <robdclark@chromium.org>, 
-	Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Subject: Re: [PATCH v2 14/22] drm/msm/dpu: Require modeset if clone mode
- status changes
-Message-ID: <zwxgml3qi3t253y2yhmi5lcpxg5odugrncfgh74y36kwubd4xv@oem2vicytu5i>
-References: <20240924-concurrent-wb-v2-0-7849f900e863@quicinc.com>
- <20240924-concurrent-wb-v2-14-7849f900e863@quicinc.com>
- <yjfe5wajajeqmcp65kbvcttzgkrsfv5rhkbvqvioqx3rwdn6g6@2h2byk2l2imy>
- <75297d0d-528a-4152-b35f-ba41fbf914dc@quicinc.com>
+	s=arc-20240116; t=1727256529; c=relaxed/simple;
+	bh=2A/5/Zh9h+rW85FdnEo9f/zG7q4C7ky0ju//Of9ir48=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=b+7pQFWeJIfZKp3Dtyg/D6rPYDZVf8+GGgynP3foEmYBUqoraMLsmV5ovtOspXPhZde5uBf2Im4JyOQTLA24LYyuPs3bBamGW45Dmw0lpVLnxiIwtSVNCOZ67VuyYhWrfIxpXZndnYKLT9B3MTwADqH/OExaJ/dxVToJGkOAemY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QUOo9tGZ; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240925092844epoutp029b113d7aab0813393481ba7b20b18021~4cqhFpk7-1385413854epoutp02y
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 09:28:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240925092844epoutp029b113d7aab0813393481ba7b20b18021~4cqhFpk7-1385413854epoutp02y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1727256524;
+	bh=2A/5/Zh9h+rW85FdnEo9f/zG7q4C7ky0ju//Of9ir48=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=QUOo9tGZFMID2dBYuXy7ulXnyC6dtyG3g7yMp+Ao8TTtzFnlZ7gyXq84RxFSBGKDK
+	 pV2t2P/De2thJ5dNdvcXpo0vVK7erNmoAdRdZ2qXIBaXLlus3BNFoq/QA5jOZqAsr1
+	 9qltRGFnGIt9ne5fCy4QvkxQg6S1fCaMhvH+zfjI=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20240925092843epcas5p4a14de11937d8b45349d6ceafda3c849e~4cqgqAn802289322893epcas5p48;
+	Wed, 25 Sep 2024 09:28:43 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.175]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4XDBHY6t2nz4x9Px; Wed, 25 Sep
+	2024 09:28:41 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	E9.BA.19863.9C7D3F66; Wed, 25 Sep 2024 18:28:41 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240925082937epcas5p1baa4bb786ea874400d7b18553cd57625~4b25wN5tc1294712947epcas5p1s;
+	Wed, 25 Sep 2024 08:29:37 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240925082937epsmtrp1b22f20c9bb6f3b295bfcb5b3e83294e5~4b25vgwqz0616606166epsmtrp1_;
+	Wed, 25 Sep 2024 08:29:37 +0000 (GMT)
+X-AuditID: b6c32a50-c73ff70000004d97-06-66f3d7c9a325
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	6F.4B.19367.1F9C3F66; Wed, 25 Sep 2024 17:29:37 +0900 (KST)
+Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240925082936epsmtip2df8a3d4af1b9f8c3c756a334e070e465~4b25Ai2DR2384823848epsmtip2s;
+	Wed, 25 Sep 2024 08:29:36 +0000 (GMT)
+From: hexue <xue01.he@samsung.com>
+To: asml.silence@gmail.com, axboe@kernel.dk
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V8] io_uring: releasing CPU resources when polling
+Date: Wed, 25 Sep 2024 16:29:32 +0800
+Message-Id: <20240925082932.3329096-1-xue01.he@samsung.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20240918021010.12894-1-xue01.he@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <75297d0d-528a-4152-b35f-ba41fbf914dc@quicinc.com>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmk+LIzCtJLcpLzFFi42LZdlhTS/fk9c9pBpffmlrMWbWN0WL13X42
+	i3et51gsfnXfZbS4vGsOm8XZCR9YHdg8ds66y+5x+WypR9+WVYwenzfJBbBEZdtkpCampBYp
+	pOYl56dk5qXbKnkHxzvHm5oZGOoaWlqYKynkJeam2iq5+AToumXmAO1WUihLzCkFCgUkFhcr
+	6dvZFOWXlqQqZOQXl9gqpRak5BSYFOgVJ+YWl+al6+WlllgZGhgYmQIVJmRnXLkwia3gHFPF
+	vh9rWRsYe5i6GDk5JARMJC4tvcLYxcjFISSwh1Fiyc2TrBDOJ0aJ6Yv/sIFUgTkbj0bCdEx9
+	1sMGUbSTUWLr/03sEM4PRolDPWvAOtgElCT2b/nACGKLCGhLrL2/nQXEZhawkjg75yeYLSzg
+	JvH1wSGwO1gEVCXWnP4AtJqDg1fAWuJwezXEMnmJm137mUFsTqDWJQ+PgrXyCghKnJz5BGqk
+	vETz1tnMEPXX2CW6pilA2C4Sl1csgHpTWOLV8S3sELaUxMv+Nig7X2Ly9/WMEHaNxLrN71gg
+	bGuJf1f2sICcwyygKbF+lz5EWFZi6ql1TBBr+SR6fz+BGs8rsWMejK0kseTICqiREhK/JywC
+	+0pCwEPi1do4SEj1MkpM+/WVfQKjwiwk38xC8s0shM0LGJlXMUqlFhTnpqcmmxYY6uallsPj
+	ODk/dxMjODVqBexgXL3hr94hRiYOxkOMEhzMSiK8k25+TBPiTUmsrEotyo8vKs1JLT7EaAoM
+	7onMUqLJ+cDknFcSb2hiaWBiZmZmYmlsZqgkzvu6dW6KkEB6YklqdmpqQWoRTB8TB6dUA1Oe
+	x5NXpzZccX9T+7xhZf39/wo8h1gnTApcyzWn4/bkuLN6RQujHmr4VeXzFqq/ZotlDmnYHMVe
+	83XxYbXUD6dL+TYH3OGVS5T49oCtt03LSenJzuvbY64XC70Xmf54/pybwgEucxebdWZYZWk+
+	kHTbpXhM/mhrPKOBnPPVq4a270Mi9txwObF4S1X6ox9zFKwCWPju/7zUkvMz90hIfMUFux73
+	7JXODhJeX2LVn10tFfvuZzWh4LxW85YS026xB8qp2vMl47p+MPiGzkybaVsyN7WtxlXOTiwx
+	XKSPpUPwrOEq9w7mvf0azT/eR7TMu8gnmir9+IqfjdjSDPaLsW8NFFOeHM2MZlzPP/WJEktx
+	RqKhFnNRcSIAQdtughYEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGLMWRmVeSWpSXmKPExsWy7bCSvO7Hk5/TDL4/57SYs2obo8Xqu/1s
+	Fu9az7FY/Oq+y2hxedccNouzEz6wOrB57Jx1l93j8tlSj74tqxg9Pm+SC2CJ4rJJSc3JLEst
+	0rdL4Mq4cmESW8E5pop9P9ayNjD2MHUxcnJICJhITH3Ww9bFyMUhJLCdUeL1jUdQCQmJHY/+
+	sELYwhIr/z1nhyj6xijx58gRFpAEm4CSxP4tHxhBbBEBXYm1mxrBbGYBG4mdLVvYQWxhATeJ
+	rw8OgQ1lEVCVWHP6A9BQDg5eAWuJw+3VEPPlJW527WcGsTkFrCSWPDzKAlIiJGApseGgG0iY
+	V0BQ4uTMJywQ0+UlmrfOZp7AKDALSWoWktQCRqZVjKKpBcW56bnJBYZ6xYm5xaV56XrJ+bmb
+	GMFBqxW0g3HZ+r96hxiZOBgPMUpwMCuJ8E66+TFNiDclsbIqtSg/vqg0J7X4EKM0B4uSOK9y
+	TmeKkEB6YklqdmpqQWoRTJaJg1OqgWnBrtu7j5yZvOXaacHeVGVnU+6Pc30Zt6Wol935/u7m
+	SoctXSY/NvSZpYXPYS+M6O3cbfQ8tkFpofChENdrbbfLi9rnl+fWmPFeKsmPyTMzNArpkL1w
+	/GlXknH5NbZEpe8vsncecyk38T0dofpXd6GOz7XDqY7TTyxZIhWspbf6wZ7CJemMdao/lt+c
+	y8cvsdj+tjV7Mc9Su2+zD8yVfSu8LeGHcgczn6XGZG93D4ELXox3NzHN/PszYqHyz/mPRZlm
+	d33T2sNqFOPJ8D2ie1/kvcwdW2dn3tVumxjU+zIja+13t9smrH8/XFKT5F7ru/GIypSFXrH3
+	6111Ij5dfeH35ln9P7Hjr7RL+j26nimxFGckGmoxFxUnAgB5s8hlyQIAAA==
+X-CMS-MailID: 20240925082937epcas5p1baa4bb786ea874400d7b18553cd57625
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240925082937epcas5p1baa4bb786ea874400d7b18553cd57625
+References: <20240918021010.12894-1-xue01.he@samsung.com>
+	<CGME20240925082937epcas5p1baa4bb786ea874400d7b18553cd57625@epcas5p1.samsung.com>
 
-On Tue, Sep 24, 2024 at 05:05:43PM GMT, Abhinav Kumar wrote:
-> 
-> 
-> On 9/24/2024 4:25 PM, Dmitry Baryshkov wrote:
-> > On Tue, Sep 24, 2024 at 03:59:30PM GMT, Jessica Zhang wrote:
-> > > If the clone mode enabled status is changing, a modeset needs to happen
-> > > so that the resources can be reassigned
-> > 
-> > Sima's comment regarding crtc_state->mode_changed seems to be ignored...
-> > 
-> 
-> Not ignored. One of us has to take that up. There is a broader cleanup
-> required for that.
+On 24/08/12 1:59AM, hexue wrote:
+>This patch add a new hybrid poll at io_uring level, it also set a signal
+>"IORING_SETUP_HY_POLL" to application, aim to provide a interface for users
+>to enable use new hybrid polling flexibly.
 
-At least then it should be mentioned in the commit message or under the
-commit message.
-
-> 
-> We can sync up on how to tackle this : whether it needs to be in this series
-> or push another one cleaning up all the instances.
-
-
-Yes, let's sync separately.
-
-> 
-> > > 
-> > > Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-> > > ---
-> > >   drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c | 8 ++++++++
-> > >   1 file changed, 8 insertions(+)
-> > > 
-> > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> > > index a7850bf844db..f20e44e9fc05 100644
-> > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> > > @@ -1268,6 +1268,8 @@ static int dpu_crtc_atomic_check(struct drm_crtc *crtc,
-> > >   {
-> > >   	struct drm_crtc_state *crtc_state = drm_atomic_get_new_crtc_state(state,
-> > >   									  crtc);
-> > > +	struct drm_crtc_state *old_crtc_state = drm_atomic_get_old_crtc_state(state,
-> > > +									      crtc);
-> > >   	struct dpu_crtc *dpu_crtc = to_dpu_crtc(crtc);
-> > >   	struct dpu_crtc_state *cstate = to_dpu_crtc_state(crtc_state);
-> > > @@ -1279,6 +1281,8 @@ static int dpu_crtc_atomic_check(struct drm_crtc *crtc,
-> > >   	int rc = 0;
-> > >   	bool needs_dirtyfb = dpu_crtc_needs_dirtyfb(crtc_state);
-> > > +	bool clone_mode_requested = drm_crtc_in_clone_mode(old_crtc_state);
-> > > +	bool clone_mode_enabled = drm_crtc_in_clone_mode(crtc_state);
-> > >   	/* there might be cases where encoder needs a modeset too */
-> > >   	drm_for_each_encoder_mask(drm_enc, crtc->dev, crtc_state->encoder_mask) {
-> > > @@ -1286,6 +1290,10 @@ static int dpu_crtc_atomic_check(struct drm_crtc *crtc,
-> > >   			crtc_state->mode_changed = true;
-> > >   	}
-> > > +	if ((clone_mode_requested && !clone_mode_enabled) ||
-> > > +	    (!clone_mode_requested && clone_mode_enabled))
-> > > +		crtc_state->mode_changed = true;
-> > > +
-> > >   	if (drm_atomic_crtc_needs_modeset(crtc_state)) {
-> > >   		rc = dpu_crtc_assign_resources(crtc, crtc_state);
-> > >   		if (rc < 0)
-> > > 
-> > > -- 
-> > > 2.34.1
-> > > 
-> > 
-
--- 
-With best wishes
-Dmitry
+Hi, just a gentle ping, is there still in merge window? or any comment for
+this patch?
+--
+hexue
 
