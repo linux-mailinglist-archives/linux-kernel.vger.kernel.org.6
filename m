@@ -1,73 +1,55 @@
-Return-Path: <linux-kernel+bounces-339427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 062FD9864F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:38:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC5129864F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:39:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBA26288F18
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:38:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD879289B8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3AFE4962B;
-	Wed, 25 Sep 2024 16:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D8B5487B0;
+	Wed, 25 Sep 2024 16:39:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mBuE9aZw"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="Y5roqoIg"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9A317C6C;
-	Wed, 25 Sep 2024 16:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86CB8DDC5;
+	Wed, 25 Sep 2024 16:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727282324; cv=none; b=rEerLmpBqe9K1rET4Qq1KjjWdZ1Qh4GBok9GZiwZySpBBKTliLTPg9ZktjO6kbHgUIJ5KK2BDfgSt1urUQ0N/DC9RnVZFxwG2QxP/Z0RXmgbshOwDQpnKTfnphsGsYv1tNOME2yt670MquJZ8eESuzYcBCRQ56OYvStYoEA2pyY=
+	t=1727282374; cv=none; b=jIIglG4yDBKMgkDUM5VDAZRw7pmse+YqveEt6daf+mJD5jzlfGZP9Dl5j1BM66IOJ/TIGqgZXv6fd7NWvXxHsTO7nafjHqEKYnZLQJVGOwYh0lWLWF8gJO+1r+rMhb0McJ363kBplqcx+7grj6y0CUJPLwYE0HcosklSYDTN43c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727282324; c=relaxed/simple;
-	bh=AWnsj1qmPS/m6isTX9M3B7IZEnxlL916R1MIHdxfq3k=;
+	s=arc-20240116; t=1727282374; c=relaxed/simple;
+	bh=mmEKsumJaV/C4mSg39qdgs9ioH/P7I2y3Olde/K4Vfw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NioJ1gl3BITEyimtHzeMTC9E7Oh5bezgJWkxTAK3XEP2wRolClzvVb4VAu1L6ZPZC9+hkQDZIk56LSbb3zBx4Rn0lrofF0M9ec/7oKlUqa+Kb1d2a4x9T10w2GQfnaMm5YazLhUeO7xl+mknF+GaAy4CHFzpfAQ+cBHY2hzdTD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mBuE9aZw; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20b05ba4192so674715ad.1;
-        Wed, 25 Sep 2024 09:38:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727282322; x=1727887122; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5PK2m3Ze63qRkSazwclcAjByMVHVEVpFHvdModCOxYo=;
-        b=mBuE9aZwF8iXsJN6zB72tZeBNY/I7gvYvkxw3cU9bCZWTu2SiPNFrE+cnPEFWqfDFu
-         vMoqleV/lvNrydUN8rL9f+GboN7A+/xKWDWsZqEQ1VtGiDPQ5o+p+METKzf2A8odYdRw
-         cgRZEHefz0AgImuzPX7l9kHc6Ow5URSEFx2u1E5/LtG1d12Kk1N4WIQCwaI3IlOYhvRH
-         DUFekIndIn1EvtpAZvE554gFrptsO2aoDSvnYZ6rE/C9rDlXr2gDNWDWKMDflMMxLBOS
-         /gXRC4yb7xMFfy8/c83Pc2dfZa+Lm2F4z4OD9DILa/YYgSKzsoY/a/kYyVYl8iqbr5TH
-         f+GQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727282322; x=1727887122;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5PK2m3Ze63qRkSazwclcAjByMVHVEVpFHvdModCOxYo=;
-        b=KMYyxdZ+IpNgKeEUeSvtRfEeg6dHl/FKnJHGbe9QK8SGGq9iIPCd7v2FPPsEuMZ5r/
-         roKQOlKm10O64+vix4ju6Qi+KXaFHJifYTpQIaAHsi+dOli+/8rIzacsrx/uOR4hsoBf
-         FG+ywQuy1G2MChP3j7ZHGm+O2bsOjDeCsG7CGnrCIsP4PXGjjqWKcF0rt5BthSQJuHc0
-         8ms1AQcanH/2fUu5SbFvxpPDvlE+PPKsnNUeTTRIRFr2o36BDw+KzPOFnvPY+OLec4+V
-         MaahvMzgfAROBG79dMDblVXJWHp1FUyC8VWTaK5SXBh0I1HTgJAP4wWKChxI3LeVmjtU
-         42pw==
-X-Forwarded-Encrypted: i=1; AJvYcCXFK71dAJJrbu+pBBBFEUmeAyEvcgNGXuDTA+YebL+tnu3Fx5Kergz4g6gwDVd51fAOZrWkBc1H0UdU@vger.kernel.org, AJvYcCXv3BCA4/vwRRj/Q+BxMkNkafLpln7eEFaGfdIlSAKxN/eJChXw2zPUxff6UBjAC2XQWBsjh/dQTAlx@vger.kernel.org, AJvYcCXzubIK3nJqaZX0yzr70qamOEUeSKwRcPiKx3oKybaUCfMNhMTiH2kAYK44DsdPzxESUSzHk6qH+uuYOeOl@vger.kernel.org
-X-Gm-Message-State: AOJu0YxM8ZWGdUa2fYIGBgpvvQLwVevIpmcr87bWcMJwLOqimW5dYxN0
-	ixNZ9awzuSKnTD9txnpbWQPAXk0oWVXYKrV45Pa0pE+nQkET/pU7hBhXNfhl
-X-Google-Smtp-Source: AGHT+IG7u6OiLVb7b0zYZ1RAnRCZKp7t7FjbLFYBGhUZUARkL5hQevdWnRq3/E4qbCOgpdV4D8dgBg==
-X-Received: by 2002:a17:903:183:b0:207:14b3:11a7 with SMTP id d9443c01a7336-20afc6a1d36mr21038375ad.14.1727282321908;
-        Wed, 25 Sep 2024 09:38:41 -0700 (PDT)
-Received: from [100.116.227.126] ([45.32.86.188])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af17e1813sm26367245ad.144.2024.09.25.09.38.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Sep 2024 09:38:41 -0700 (PDT)
-Message-ID: <bd02cd8f-fdb0-420e-8c3d-f050b1298a24@gmail.com>
-Date: Thu, 26 Sep 2024 00:38:31 +0800
+	 In-Reply-To:Content-Type; b=eUCM/K+dRMiphITSsS6TtVVj+xbtTZh61Jxatkvv38kAVghzfhoe3+PESMZZWbFSmEVJrBfWf3u75raiXFC1okFWjgOlIbCKdzQaZRteOFBkbxd1RbCABIp2um0sJywjcOimH6HoAqncnnZJvnmJS/klinfgI1F8EtZC2ubsB4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=Y5roqoIg; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1727282355; x=1727887155; i=wahrenst@gmx.net;
+	bh=/+s/MJvLvSedW4ZMyn8J2kl/4UKa33y7jLnA8XfsWps=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Y5roqoIgXsQFzQuf/ACzNU4pahTsn9E57oTVocdGLQ24QlpnJMBVL06Z0mFotrk9
+	 j72gUC6XQfH2qCVdBekN5hDzBrTZ/qDDf0JsU9Djf/aqrLTMvMBIw2ule72QfPihr
+	 zgh23brPmWEbDXSkC5JcwERdfu9nHw41MOYsqJH2hvF5NJCTHdFOOqdUgT+DAI2dk
+	 KwrnDaW1fHDqRdLVnorvh4xfMTjhv7G7pPTnVLo3PpzYg1QB+kHwR4UEp/8LIKMZA
+	 m2EsSOHqKSFs3Pr+7dwk27QEhqBYXHqFDRe2u96KF1MvujZ8scayxHFIGcpYMBBV+
+	 O21bMYAsw/DoaJbCqg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.104] ([37.4.248.43]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MwQT9-1s254w0ZDJ-00xFsX; Wed, 25
+ Sep 2024 18:39:15 +0200
+Message-ID: <3e296eed-5dbc-4098-ac3c-3c3125a352d8@gmx.net>
+Date: Wed, 25 Sep 2024 18:39:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,82 +57,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: iio: tyhx,hx9023s: Add performance
- tuning configuration
-To: Rob Herring <robh@kernel.org>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240923-add-performance-tuning-configuration-v1-0-587220c8aece@gmail.com>
- <20240923-add-performance-tuning-configuration-v1-1-587220c8aece@gmail.com>
- <20240924215912.GA363446-robh@kernel.org>
+Subject: Re: [PATCH] arm: dts: broadcom: Add missing required fields
+To: Karan Sanghavi <karansanghvi98@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>, Anup <anupnewsmail@gmail.com>
+References: <ZvQ27pvrnEYA8BB9@Emma>
 Content-Language: en-US
-From: Yasin Lee <yasin.lee.x@gmail.com>
-In-Reply-To: <20240924215912.GA363446-robh@kernel.org>
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <ZvQ27pvrnEYA8BB9@Emma>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:qHjJIXyZ0wH1uw0c/zb0EA2UhlAwq+UYG8OwhqNPpMCx7zLR0KI
+ QSVFslHzzwQclHWDfpLt5yaArQiWPGXLffTP8OQGQ4fWdpjZIWs13bg8vC+D+03sTl3rLJw
+ 0nHvdSsU4NpqJYppZPoYtS86b1YFsMc/l62E9M0+ZMMa1/hoBZrxLzRKhZCFkR9nAHjZCHw
+ lnGdVoltok0RduGz5Epww==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Jrc/8pPEFX8=;XJ22mE5GQkmuQyl8bX4pI2ki9Tx
+ IAJ/pssT9vasKnGmfcWw4KDVDY/KfVaF56CH2CYpOnUvCj3VpWwYuGolBdEhL+PNA/93uxXwb
+ l5M05FnILJUv/2kG6o+IA6IvPtAMpreBqGDXBmGwkT9xD1SMejj9Xak+Fb2lOqlVsepmZM//9
+ n6Oe9Q7+UtkTn6mBouIJBLKWH6XW4zMGdjjww+YFAglsXz6pygsggMwW9VEvhKaSrgO9p+GWW
+ BHFDbK62GpCfhXbN6bG7xyuRfcTDdSOZHI0l2PuJPfv4UuNBhdj2ZeXlhMSjVD1X9S9XMrW9n
+ dmauFsDY5VqdiS0ymdAwfOW9T5BBMbilVx2gMpoUiPns7B7y/XoS2YtI/II95K4Ybaj/vcEfr
+ KcJIFeb2Jp66Pt/al6MheUqGZ2w8xXgYjhHMMtujKlCKOTS13ZGa66/Srw2+SK6TLkfXSzfzH
+ 5XQ43+hUJglKRyMGFnlT4hCYZVC7zOqg0XifgCzyp1xyFxnR+Nf8J72CxK1gHR7uE7OD0YJZd
+ Vdue5lJr+I63HFoFVkoInGa5KNnFXm0/9BVLbTrrNhFfGM2c1sLSICkC2e3Nd6iAA1RBHOfei
+ CSFf1odCdV0kq7PraAwPpgHQzurULHcwjx/Id5s3f+1WG8I6Q0BW9hzTS7z2h0a4Nf+3ef/UK
+ degKYK1YzJ3TEb9o9xyQgXJaoR5c2p0VJaPEbrsojw+81FgbfLdWO99e75DoxArkLsJ3+/xVW
+ BMombBeo331bO+OKZSmbn0uK3INPDyvVa7SsSp0NoMMXG0OAxF26XDkJyEvaFQjTSL1qnqiny
+ Aa5/pjSfzJQfhGMfT/PDyeXg==
 
+Hi Karan,
 
-On 9/25/24 05:59, Rob Herring wrote:
-> On Mon, Sep 23, 2024 at 09:16:10AM +0800, Yasin Lee wrote:
->> When hardware design introduces significant sensor data noise,
->> performance can be improved by adjusting register settings.
->>
->> Signed-off-by: Yasin Lee <yasin.lee.x@gmail.com>
->> ---
->>   .../devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml    | 14 ++++++++++++++
->>   1 file changed, 14 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml b/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml
->> index 64ce8bc8bd36..417fbc0bb205 100644
->> --- a/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml
->> +++ b/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml
->> @@ -28,6 +28,13 @@ properties:
->>   
->>     vdd-supply: true
->>   
->> +  tyhx,performance-tuning:
->> +    description:
->> +      Optional, When hardware design introduces significant sensor data noise,
->> +      performance can be improved by adjusting register settings, including
->> +      but not limited to sample integration time and average sample count.
->> +    $ref: /schemas/types.yaml#/definitions/uint8-array
-> 1 byte is valid? What about 10000? Add some constraints on the array
-> size and the values if possible
+Am 25.09.24 um 18:14 schrieb Karan Sanghavi:
+> Added below mentioned required fields
+>    1. interrupt-controller
+>    2. #interrupt-cells
+> in the bcm2711.dtsi file for the
+> interrupt-controller@40000000 block as defined in the
+> bindings/interrupt-controller/brcm,bcm2836-l1-intc.yaml.
+> This issue was noticed while compiling the dtb file
+> for broadcom/bcm2711-rpi-4-b.dts file.
+> After including the above fields in the dtsi file
+> interrupt-conntroller error was resolved.
+looks like you made the same mistake like me [1]. This change breaks
+boot of Raspberry Pi 4 [2].
+
+There are a lot of DT schema warnings to fix, but this doesn't belong to
+the trivial ones.
+
+[1] -
+https://lore.kernel.org/linux-arm-kernel/20240812200358.4061-5-wahrenst@gm=
+x.net/
+[2] -
+https://lore.kernel.org/linux-arm-kernel/CA+G9fYuncv0fuBSC0A1z1G_UOv_XuMQz=
+=3DDsrLZDK-Wc=3D10ghag@mail.gmail.com/
 >
-Hi Rob,
+> Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
+> ---
+>   arch/arm/boot/dts/broadcom/bcm2711.dtsi | 2 ++
+>   1 file changed, 2 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/broadcom/bcm2711.dtsi b/arch/arm/boot/dts=
+/broadcom/bcm2711.dtsi
+> index e4e42af21ef3..313b1046d74f 100644
+> --- a/arch/arm/boot/dts/broadcom/bcm2711.dtsi
+> +++ b/arch/arm/boot/dts/broadcom/bcm2711.dtsi
+> @@ -51,6 +51,8 @@ soc {
+>   		local_intc: interrupt-controller@40000000 {
+>   			compatible =3D "brcm,bcm2836-l1-intc";
+>   			reg =3D <0x40000000 0x100>;
+> +			interrupt-controller;
+> +			#interrupt-cells =3D <2>;
+>   		};
+>
+>   		gicv2: interrupt-controller@40041000 {
 
-Thank you for your feedback.
-
-In the next version, I've added constraints on the number of elements in 
-the tyhx,performance-tuning array, limiting it to between 2 and 512 
-elements. Additionally, I updated the description to clarify that the 
-number of elements must be even, as each pair represents a register 
-address followed by a value.
-
-Best regards,
-Yasin Lee
->> +
->>     "#address-cells":
->>       const: 1
->>   
->> @@ -65,6 +72,13 @@ examples:
->>           interrupt-parent = <&pio>;
->>           interrupts = <16 IRQ_TYPE_EDGE_FALLING>;
->>           vdd-supply = <&pp1800_prox>;
->> +        tyhx,performance-tuning = [00 00
->> +        02 17
->> +        0D 44
->> +        0E 44
->> +        0F 04
->> +        1F 65
->> +        21 65];
->>   
->>           #address-cells = <1>;
->>           #size-cells = <0>;
->>
->> -- 
->> 2.43.0
->>
 
