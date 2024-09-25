@@ -1,207 +1,223 @@
-Return-Path: <linux-kernel+bounces-339111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF43F98609D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:28:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 494DC986072
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:23:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37731B248CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:23:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 622521C260A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:23:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0CCF1A4B8A;
-	Wed, 25 Sep 2024 12:55:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627761A4B82;
+	Wed, 25 Sep 2024 12:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="d4nHFf9C"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m55ZZCs1"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F7215B12B
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 12:55:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C404F183CAB;
+	Wed, 25 Sep 2024 12:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727268943; cv=none; b=HCNmv89mpYMPZqSnBfkQ0/IveCrEt6v2rW/sQfYpAzYriexjDTQgFXFv/HzmHl3L/u8lYiS5xfodMjTUsnzNq4KKAPw+7kahA0XcrKOtNrgmZiq3aYP+yWPKCp9P4NdoS2h51Fu12zPY5LPxEI8UqTYz0RQUfPZRiTHJnqg+AZA=
+	t=1727269017; cv=none; b=Ig1U/X79+bXkR/b7PuaVVJkR7Jgoj743aSvAcTbJRVNDE/9Nf7/YrTb7CmFpSCuZcojSJ/FZR2UPFwXV1STSq6XPBj6ol5Jufp2WRcwViLWE2+b+oKXIvNr1LXGMJTLGOtImCOOJXo+i7PSWlvzR9VR6OdJ8xrrqQ4437lXycHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727268943; c=relaxed/simple;
-	bh=SqsrNamKhqSmaf/1oFdKI6QM7JNNm91uH+KndaDN+GM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=G353YhOan6hmkcLxxDtAfas4ZdFTcF3IrOwBRmKfPdJT/ap5rI0MOY66AJ7XA2WfMjozOrwpIArulOlapvGSihPd6TbtMtZYetI6DUA0MJn1yu3ZEgxqKASLILt/BVfQHqtDdc6+ILur0y1CEDRVk3GBlfTw4JQYO3dRjSaJ+sM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=d4nHFf9C; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e20b046922so38408447b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 05:55:41 -0700 (PDT)
+	s=arc-20240116; t=1727269017; c=relaxed/simple;
+	bh=3fxAT9AVfLIeN6rjTVrSeohwxgf70dKlprguYeTQ+CE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HXxoow4VtsKRpQwQ50BRBLGDcsuRvQvWCU9SeiKXFFB38QvPcL8cY0uvu0n+JsEq2eV2tW3LNnajlxa1Vi1CNif8i2+ZgYNkEc3gpoStFDPWkHHrG3DaFM1YuQjTwHWsZxk4fI0J4XXkX9j7mCdY89Ta/oqzUIq2Zkkd2iTqxEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m55ZZCs1; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53567b4c3f4so1132055e87.2;
+        Wed, 25 Sep 2024 05:56:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727268940; x=1727873740; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ejU8vvarcUji1scLaHFX1ADT3z35bJpwvhsMj4+OLE4=;
-        b=d4nHFf9C6GZ1aBjMSMjzhlY0M0WSlkLd1VfrIvmnTshVasLe3Uom/Z4BAJbPOgC+f6
-         jMbpLmgydJcnk1EO+I/aOmJfe9kMhCuk+C+WyaO7O7Vt1jR3trxKz5aR/B+gw3lfWn+B
-         eRBdImzYNmKX/8e8Qys30/rryQ6Gk+J8T2NNK0akXyZR+6UjiCf3jjJ4ZvQqNT6xKC1R
-         r3yLYsTHZpgmMfVWYilMX6+Ba+UBLrfUXjZhmcggkJTxW3TDacJknXAygVNLnlj0Hozw
-         QFBE+Abub0UmpjmIVRTWFDCj8s43li+FzZkzsbwIHxglaE2hT0AqniH7PWuyWe6QHa9n
-         DgUw==
+        d=gmail.com; s=20230601; t=1727269014; x=1727873814; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3fxAT9AVfLIeN6rjTVrSeohwxgf70dKlprguYeTQ+CE=;
+        b=m55ZZCs1D2duxSFZpFnRMfPKdwamvYNZ9hUrWqC8wtVNWQj3KJOVc1eFBRBbzF2Q+p
+         CwF5tW4SmRTEwqz8xl0DT45Fil465vxPJxUJA6PFF3BvcmNgJjlvfmozJ4MOzN7T+5/S
+         oastcsO0JekNwCSLFW+nGit+3w4Fdg+eL6W6jvoQQEEXjE6XCAlovWbGEqtcn1m45bMR
+         038DdWZPMu5DRid9PgBQuDUc4dK34YqOUHwqBoJLPvnF9Ip+GLgWqq9drvBEJfOTo7Yl
+         859HrtWWgGxU51Qd3kxtLZICD1wlxYumnxtasf2TttptV5lGZ50PTEzZeyb0cu4Y4c0R
+         JspQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727268940; x=1727873740;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ejU8vvarcUji1scLaHFX1ADT3z35bJpwvhsMj4+OLE4=;
-        b=OkhwkFrR9m1czoCetZhfr97D9M2x4cfCN96Lg/PN4LCH6N9tjWc84OAeo+cOCgr8cn
-         utxav8pOVGgUeF3tyYCtP1THZq4oaLqLmGAy8OBwt8yIVyWrobo9apDNBTH7ghxsPssi
-         jPAsEWG1uEOpmnxfnk9pJSpvhjTmtDC6SXxfsLEKnG4w6pZvA+bkY62GrRkVd3LpYK6q
-         6aBJetqrZ9kwOijKG4XuCFFMlUwc5iYRG15XiYjCE1TXVLj0+Y2EgSBv1K8vXXgYyy8E
-         HMMOweTUcmESTvh7MqZFgs19BvDzUAlF84k2qoaujz8vQoplvcKzviL21MFkh8MXwQ3r
-         N0Vg==
-X-Gm-Message-State: AOJu0YwDppUPhwaGimq/hrxJPMkY9LtmBND8STRadHYYagd/3kmbQBi/
-	nqJVriecbzCMYNlAGSpCHWhax8aejfYyOo2S4tC/zhNreWG3kmihut/Z2yf40pYe/V7avLpDYn8
-	Fow==
-X-Google-Smtp-Source: AGHT+IHV+hKp0Q9Hx5xYHjlPSEL8B7B2ZZTX/32jkpd2zuCYjaKxoOK6gQ4TjmMkDZqskxjv4Q7RPav9iq0=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:690c:580a:b0:6dd:c0f7:2121 with SMTP id
- 00721157ae682-6e21d9fc431mr30527b3.5.1727268939762; Wed, 25 Sep 2024 05:55:39
- -0700 (PDT)
-Date: Wed, 25 Sep 2024 05:55:38 -0700
-In-Reply-To: <ef194c25-22d8-204e-ffb6-8f9f0a0621fb@amd.com>
+        d=1e100.net; s=20230601; t=1727269014; x=1727873814;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3fxAT9AVfLIeN6rjTVrSeohwxgf70dKlprguYeTQ+CE=;
+        b=I6iUAdZ4S3gzX8YDgipb0+av1csZfM4MI9/knt9z1VMJjE7SKzip2aAU6o5jGLey/0
+         fZd4pY/2XM5eTGyIIBbtLrUbsL6Bxq7jcPvMMXe6ewPGO6P1LsOUn9L5IJqprO3f6Nbu
+         AUlIyWE09XcPKIEv318qwy/NEH1SqfGTJ4AbGm28gTzHt12NmphCOr2FBSqHmUYGOppk
+         2LPlP785ZhN1fW+7KmQF+S/hHxoGWnVIUCsQ2Kr0itMrvbGcW0cHm6Qr2b9+Cz/lV7gM
+         FnTCjDbOfuzwmNCIVRUhM4wo77zexZjMkzSi83rNFUVr3rX4Sacl51KQmfVRqTJ6KgV2
+         7Pmg==
+X-Forwarded-Encrypted: i=1; AJvYcCViwP8zK71D0r7QRdRvBvdnySBoh8ro70CjNCMcdFQgF40GSanQr8aAiUCiruAA9+pf4Gm9scCLUmcUAHI=@vger.kernel.org, AJvYcCWnxfHRNz6DLY3yfTe4FU80tbteo5ROfRIu0cMknp8ZwGOZJJLA1Owi6i9z1l+EIw4U7eRb@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywx7zkvhF03VHuv2w5oNh907g/0kP28VVcj0aZE1NerkWDjCkeK
+	gPMK7Zg++Cn5RTfSR6lIBNZaSyvGDke2+c5TsDAo3PuB6a52igheC/dyO16VfZVDrl5TcNiQBD/
+	Nll+G2T4Fls0uDMzeia/sNO2FTIbrJ6X0R8k=
+X-Google-Smtp-Source: AGHT+IG2RdlFyeWRvaEGDdt+1AxrtErQa9D9ipkPti5nYA90xXjvvPF2uBQnA766jIJPAMkrSvh2PIdI9Qj8zx/I20o=
+X-Received: by 2002:a05:6512:4019:b0:52c:86d7:fa62 with SMTP id
+ 2adb3069b0e04-53877538cc6mr1823486e87.23.1727269013251; Wed, 25 Sep 2024
+ 05:56:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240731150811.156771-1-nikunj@amd.com> <20240731150811.156771-20-nikunj@amd.com>
- <ZuR2t1QrBpPc1Sz2@google.com> <9a218564-b011-4222-187d-cba9e9268e93@amd.com>
- <ZurCbP7MesWXQbqZ@google.com> <2870c470-06c8-aa9c-0257-3f9652a4ccd8@amd.com>
- <Zu0iiMoLJprb4nUP@google.com> <4cc88621-d548-d3a1-d667-13586b7bfea8@amd.com> <ef194c25-22d8-204e-ffb6-8f9f0a0621fb@amd.com>
-Message-ID: <ZvQHpbNauYTBgU6M@google.com>
-Subject: Re: [PATCH v11 19/20] x86/kvmclock: Skip kvmclock when Secure TSC is available
-From: Sean Christopherson <seanjc@google.com>
-To: "Nikunj A. Dadhania" <nikunj@amd.com>
-Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, bp@alien8.de, 
-	x86@kernel.org, kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de, 
-	dave.hansen@linux.intel.com, pgonda@google.com, pbonzini@redhat.com, 
-	peterz@infradead.org, gautham.shenoy@amd.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20240807-b4-slab-kfree_rcu-destroy-v2-0-ea79102f428c@suse.cz>
+ <20240807-b4-slab-kfree_rcu-destroy-v2-7-ea79102f428c@suse.cz>
+ <6fcb1252-7990-4f0d-8027-5e83f0fb9409@roeck-us.net> <07d5a214-a6c2-4444-8122-0a7b1cdd711f@suse.cz>
+ <73f9e6d7-f5c0-4cdc-a9c4-dde3e2fb057c@roeck-us.net> <474b0519-b354-4370-84ac-411fd3d6d14b@suse.cz>
+ <CAB=+i9SQHqVrfUbuSgsKbD07k37MUsPcU7NMSYgwXhLL+UhF2w@mail.gmail.com> <fcaaf6b9-f284-4983-a8e3-e282dd95fc16@roeck-us.net>
+In-Reply-To: <fcaaf6b9-f284-4983-a8e3-e282dd95fc16@roeck-us.net>
+From: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Date: Wed, 25 Sep 2024 21:56:40 +0900
+Message-ID: <CAB=+i9Ty5kUUR1P_ahSfReJAOfhQc_dOdQ=9LBZJ4-=1kEOVXg@mail.gmail.com>
+Subject: Re: [PATCH v2 7/7] kunit, slub: add test_kfree_rcu() and test_leak_destroy()
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Vlastimil Babka <vbabka@suse.cz>, KUnit Development <kunit-dev@googlegroups.com>, 
+	Brendan Higgins <brendanhiggins@google.com>, David Gow <davidgow@google.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Joel Fernandes <joel@joelfernandes.org>, 
+	Josh Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Zqiang <qiang.zhang1211@gmail.com>, Julia Lawall <Julia.Lawall@inria.fr>, 
+	Jakub Kicinski <kuba@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, 
+	"Uladzislau Rezki (Sony)" <urezki@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	rcu@vger.kernel.org, Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com, 
+	Jann Horn <jannh@google.com>, Mateusz Guzik <mjguzik@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 25, 2024, Nikunj A. Dadhania wrote:
-> >>>>> Are you suggesting that whenever the guest is either SNP or TDX, kvmclock
-> >>>>> should be disabled assuming that timesource is stable and always running?
+On Sun, Sep 22, 2024 at 11:13=E2=80=AFPM Guenter Roeck <linux@roeck-us.net>=
+ wrote:
+>
+> On 9/21/24 23:16, Hyeonggon Yoo wrote:
+> > On Sun, Sep 22, 2024 at 6:25=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz=
+> wrote:
+> >>
+> >> On 9/21/24 23:08, Guenter Roeck wrote:
+> >>> On 9/21/24 13:40, Vlastimil Babka wrote:
+> >>>> +CC kunit folks
 > >>>>
-> >>>> No, I'm saying that the guest should prefer the raw TSC over kvmclock if the TSC
-> >>>> is stable, irrespective of SNP or TDX.  This is effectively already done for the
-> >>>> timekeeping base (see commit 7539b174aef4 ("x86: kvmguest: use TSC clocksource if
-> >>>> invariant TSC is exposed")), but the scheduler still uses kvmclock thanks to the
-> >>>> kvm_sched_clock_init() code.
+> >>>> On 9/20/24 15:35, Guenter Roeck wrote:
+> >>>>> Hi,
+> >>>>
+> >>>> Hi,
+> >>>>
+> >>>>> On Wed, Aug 07, 2024 at 12:31:20PM +0200, Vlastimil Babka wrote:
+> >>>>>> Add a test that will create cache, allocate one object, kfree_rcu(=
+) it
+> >>>>>> and attempt to destroy it. As long as the usage of kvfree_rcu_barr=
+ier()
+> >>>>>> in kmem_cache_destroy() works correctly, there should be no warnin=
+gs in
+> >>>>>> dmesg and the test should pass.
+> >>>>>>
+> >>>>>> Additionally add a test_leak_destroy() test that leaks an object o=
+n
+> >>>>>> purpose and verifies that kmem_cache_destroy() catches it.
+> >>>>>>
+> >>>>>> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> >>>>>
+> >>>>> This test case, when run, triggers a warning traceback.
+> >>>>>
+> >>>>> kmem_cache_destroy TestSlub_kfree_rcu: Slab cache still has objects=
+ when called from test_leak_destroy+0x70/0x11c
+> >>>>> WARNING: CPU: 0 PID: 715 at mm/slab_common.c:511 kmem_cache_destroy=
++0x1dc/0x1e4
+> >>>>
+> >>>> Yes that should be suppressed like the other slub_kunit tests do. I =
+have
+> >>>> assumed it's not that urgent because for example the KASAN kunit tes=
+ts all
+> >>>> produce tons of warnings and thus assumed it's in some way acceptabl=
+e for
+> >>>> kunit tests to do.
+> >>>>
 > >>>
-> >>> The kvm-clock and tsc-early both are having the rating of 299. As they are of
-> >>> same rating, kvm-clock is being picked up first.
-> >>>
-> >>> Is it fine to drop the clock rating of kvmclock to 298 ? With this tsc-early will
-> >>> be picked up instead.
+> >>> I have all tests which generate warning backtraces disabled. Trying t=
+o identify
+> >>> which warnings are noise and which warnings are on purpose doesn't sc=
+ale,
+> >>> so it is all or nothing for me. I tried earlier to introduce a patch =
+series
+> >>> which would enable selective backtrace suppression, but that died the=
+ death
+> >>> of architecture maintainers not caring and people demanding it to be =
+perfect
+> >>> (meaning it only addressed WARNING: backtraces and not BUG: backtrace=
+s,
+> >>> and apparently that wasn't good enough).
 > >>
-> >> IMO, it's ugly, but that's a problem with the rating system inasmuch as anything.
+> >> Ah, didn't know, too bad.
 > >>
-> >> But the kernel will still be using kvmclock for the scheduler clock, which is
-> >> undesirable.
-> > 
-> > Agree, kvm_sched_clock_init() is still being called. The above hunk was to use
-> > tsc-early/tsc as the clocksource and not kvm-clock.
-> 
-> How about the below patch:
-> 
-> From: Nikunj A Dadhania <nikunj@amd.com>
-> Date: Tue, 28 Nov 2023 18:29:56 +0530
-> Subject: [RFC PATCH] x86/kvmclock: Prefer invariant TSC as the clocksource and
->  scheduler clock
-> 
-> For platforms that support stable and always running TSC, although the
-> kvm-clock rating is dropped to 299 to prefer TSC, the guest scheduler clock
-> still keeps on using the kvm-clock which is undesirable. Moreover, as the
-> kvm-clock and early-tsc clocksource are both registered with 299 rating,
-> kvm-clock is being picked up momentarily instead of selecting more stable
-> tsc-early clocksource.
-> 
->   kvm-clock: Using msrs 4b564d01 and 4b564d00
->   kvm-clock: using sched offset of 1799357702246960 cycles
->   clocksource: kvm-clock: mask: 0xffffffffffffffff max_cycles: 0x1cd42e4dffb, max_idle_ns: 881590591483 ns
->   tsc: Detected 1996.249 MHz processor
->   clocksource: tsc-early: mask: 0xffffffffffffffff max_cycles: 0x398cadd9d93, max_idle_ns: 881590552906 ns
->   clocksource: Switched to clocksource kvm-clock
->   clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x398cadd9d93, max_idle_ns: 881590552906 ns
->   clocksource: Switched to clocksource tsc
-> 
-> Drop the kvm-clock rating to 298, so that tsc-early is picked up before
-> kvm-clock and use TSC for scheduler clock as well when the TSC is invariant
-> and stable.
-> 
-> Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
-> 
-> ---
-> 
-> The issue we see here is that on bare-metal if the TSC is marked unstable,
-> then the sched-clock will fall back to jiffies. In the virtualization case,
-> do we want to fall back to kvm-clock when TSC is marked unstable?
+> >>> If the backtrace is intentional (and I think you are saying that it i=
+s),
+> >>> I'll simply disable the test. That may be a bit counter-productive, b=
+ut
+> >>> there is really no alternative for me.
+> >>
+> >> It's intentional in the sense that the test intentionally triggers a
+> >> condition that normally produces a warning. Many if the slub kunit tes=
+t do
+> >> that, but are able to suppress printing the warning when it happens in=
+ the
+> >> kunit context. I forgot to do that for the new test initially as the w=
+arning
+> >> there happens from a different path that those that already have the k=
+unit
+> >> suppression, but we'll implement that suppression there too ASAP.
+> >
+> > We might also need to address the concern of the commit
+> > 7302e91f39a ("mm/slab_common: use WARN() if cache still has objects on
+> > destroy"),
+> > the concern that some users prefer WARN() over pr_err() to catch
+> > errors on testing systems
+> > which relies on WARN() format, and to respect panic_on_warn.
+> >
+> > So we might need to call WARN() instead of pr_err() if there are errors=
+ in
+> > slub error handling code in general, except when running kunit tests?
+> >
+>
+> If people _want_ to see WARNING backtraces generated on purpose, so be it=
+.
+> For me it means that _real_ WARNING backtraces disappear in the noise.
+> Manually maintaining a list of expected warning backtraces is too mainten=
+ance
+> expensive for me, so I simply disable all kunit tests which generate
+> backtraces on purpose. That is just me, though. Other testbeds may have
+> more resources available and may be perfectly happy with the associated
+> maintenance cost.
+>
+> In this specific case, I now have disabled slub kunit tests, and, as
+> mentioned before, from my perspective there is no need to change the
+> code just to accommodate my needs. I'll do the same with all other new
+> unit tests which generate backtraces in the future, without bothering
+> anyone.
+>
+> Sorry for the noise.
 
-In the general case, yes.  Though that might be a WARN-able offense if the TSC
-is allegedly constant+nonstop.  And for SNP and TDX, it might be a "panic and do
-not boot" offense, since using kvmclock undermines the security of the guest.
+I don't think this was a noise :) IMO some people want to see WARNING
+during testing to catch errors,
+but not for the slub_kunit test case. I think a proper approach here
+would be suppressing
+warnings while running slub_kunit test cases, but print WARNING when
+it is not running slub_kunit test cases.
 
-> ---
->  arch/x86/kernel/kvmclock.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
-> index 5b2c15214a6b..c997b2628c4b 100644
-> --- a/arch/x86/kernel/kvmclock.c
-> +++ b/arch/x86/kernel/kvmclock.c
-> @@ -317,9 +317,6 @@ void __init kvmclock_init(void)
->  	if (kvm_para_has_feature(KVM_FEATURE_CLOCKSOURCE_STABLE_BIT))
->  		pvclock_set_flags(PVCLOCK_TSC_STABLE_BIT);
->  
-> -	flags = pvclock_read_flags(&hv_clock_boot[0].pvti);
-> -	kvm_sched_clock_init(flags & PVCLOCK_TSC_STABLE_BIT);
-> -
->  	x86_platform.calibrate_tsc = kvm_get_tsc_khz;
->  	x86_platform.calibrate_cpu = kvm_get_tsc_khz;
->  	x86_platform.get_wallclock = kvm_get_wallclock;
-> @@ -341,8 +338,12 @@ void __init kvmclock_init(void)
->  	 */
->  	if (boot_cpu_has(X86_FEATURE_CONSTANT_TSC) &&
->  	    boot_cpu_has(X86_FEATURE_NONSTOP_TSC) &&
-> -	    !check_tsc_unstable())
-> -		kvm_clock.rating = 299;
-> +	    !check_tsc_unstable()) {
-> +		kvm_clock.rating = 298;
-> +	} else {
-> +		flags = pvclock_read_flags(&hv_clock_boot[0].pvti);
-> +		kvm_sched_clock_init(flags & PVCLOCK_TSC_STABLE_BIT);
-> +	}
+That would require some work changing the slub error reporting logic
+to print WARNING on certain errors.
+Any opinions, Vlastimil?
 
-I would really, really like to fix this in a centralized location, not by having
-each PV clocksource muck with their clock's rating.  I'm not even sure the existing
-code is entirely correct, as kvmclock_init() runs _before_ tsc_early_init().  Which
-is desirable in the legacy case, as it allows calibrating the TSC using kvmclock,
-
-  	x86_platform.calibrate_tsc = kvm_get_tsc_khz;
-
-but on modern setups that's definitely undesirable, as it means the kernel won't
-use CPUID.0x15, which every explicitly tells software the frequency of the TSC.
-
-And I don't think we want to simply point at native_calibrate_tsc(), because that
-thing is not at all correct for a VM, where checking x86_vendor and x86_vfm is at
-best sketchy.  E.g. I would think it's in AMD's interest for Secure TSC to define
-the TSC frequency using CPUID.0x15, even if AMD CPUs don't (yet) natively support
-CPUID.0x15.
-
-In other words, I think we need to overhaul the PV clock vs. TSC logic so that it
-makes sense for modern CPUs+VMs, not just keep hacking away at kvmclock.  I don't
-expect the code would be all that complex in the end, the hardest part is likely
-just figuring out (and agreeing on) what exactly the kernel should be doing.
-
->  	clocksource_register_hz(&kvm_clock, NSEC_PER_SEC);
->  	pv_info.name = "KVM";
-> -- 
-> 2.34.1
-> 
+Thanks,
+Hyeonggon
 
