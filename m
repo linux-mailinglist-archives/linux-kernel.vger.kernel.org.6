@@ -1,140 +1,148 @@
-Return-Path: <linux-kernel+bounces-338179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1603C985466
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:45:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B76C98546A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:46:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D288D28390B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:45:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F15DE285171
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3FC157490;
-	Wed, 25 Sep 2024 07:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E375158520;
+	Wed, 25 Sep 2024 07:46:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="p8YG+41F"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="m/BttQ2s"
+Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E46768E7;
-	Wed, 25 Sep 2024 07:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10FF157492;
+	Wed, 25 Sep 2024 07:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727250325; cv=none; b=A8pn2ZMk5Dwim1wtlPICLbMKebKTBxWQIBZei7386HO45Q3I9kLFspCITqEHF6ZfnRD+1prnxJ3GpOztA4B5R+Y88uEks3C9Yu7bitefmLwdwkGcRRgmicVgjVPTEl2iIEwDLIt8bEAs1/jzWprB2936fBS+tHpd9HimrSTkujo=
+	t=1727250360; cv=none; b=kTOOkbh+3j+jtLxzBRyD7U4WgXDv7M93MP8/6bV5UW62OwDXJHDFK5VLkFDZ0eJ1uoEHTuzuRk1jbcbL1usyvvXGeWTd+Y7weOeNjphAEv1BJhLltxQV0Gq8Oi4VwEEsH7pGgmzrlG/heEQ+U9+GDSee9zma5ttARGkHR6MNosQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727250325; c=relaxed/simple;
-	bh=IE8ZVu2aiidjh+hRIBeJ/vw9AQM1Lg63nrhIP0/Uaaw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=suz3CNKQCBJ6MtJT8Ksp5ZhdgZSvDH/b1RHiS2aEXy76FbcKFFBl2oaH3ryYCnwYbFJgC+SPagyAbtR+J+0VRAd8c7K0T1n3phK+qRJZ9qpBvW02bKDuTT3NDMi1/waXCX5w12VZ+2rq59tNBDX7UUgQ3kU+GeDhKbP5/WYVglg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=p8YG+41F; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48OI25XF013399;
-	Wed, 25 Sep 2024 07:45:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=URXGrPY7ypUtdDqnCvuaAT
-	HIgW9AP3ddNNq9J4c23OQ=; b=p8YG+41FMP4G4TasYReDsIadY5uzVUhRX4xbs/
-	y6+9kWspjtAGr8MkdAJa+Z6sE2Y+g0Fe50xKrl+mEZmf5c6WfIKW1BHo6+dWqOFE
-	HAm6EAAEoto0UKo8KPvjIYehy98rSdeOLkNatFT0Zv6cTT+0MGqh8znCTGyzVeWB
-	hSA24aT3S1zXGnPV3y/2Ksq1B3Q3AEoMpIpLARP2h36j5z3eW0sY4E8nXFKCSlGV
-	fKap7zXLptjifw/mdhr8epXplwLemVwO3jVuZ6+JhLa9W6mloEeaHweDi0gikbZj
-	EyLF5TABxx2FOGTuVM5l6SHOmyWyweajWTdOm0Baqsu+fE4w==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41spc2u4en-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 07:45:20 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48P7jJbu001253
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 07:45:19 GMT
-Received: from jingyw-gv.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 25 Sep 2024 00:45:17 -0700
-From: Jingyi Wang <quic_jingyw@quicinc.com>
-Date: Wed, 25 Sep 2024 15:45:06 +0800
-Subject: [PATCH] dt-bindings: interconnect: qcom-bwmon: Document QCS8300
- bwmon compatibles
+	s=arc-20240116; t=1727250360; c=relaxed/simple;
+	bh=ZUProyu00ja80ci1A0RXcLmyyBjWY9msWbU/KAg4HIg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G8OEnmXucA7c7mfZkJZhpVzbDahY15f1FzfuDNDGj0JRCphnB0GCvBVagZAS/yRiqySc7ZmDP7GIzoOozJfii+33BDl3Rf3Frkxie7XbmPieVDWdBk0MCVnQUZvWI1QhaaHgtCHbTX2XZMuw6LoGL1L1yqhhhvYZ7cHKB6V4+jY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=m/BttQ2s; arc=none smtp.client-ip=15.184.224.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1727250326;
+	bh=sMEaKZQcq/TtGsA51jEZ9Lr0IGSJ55RWX+ZF3Zx81xc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=m/BttQ2sycPDV4kc5eWZA+RRlx1rHcpTKXrgYAJ88aD/3kNBC6f0EmBy/HJn9+ECM
+	 hb6E2z0QMz9nUnHuip7vzdmYLoo5h2HyXPikxh5heJlUJZ4rh30Rfqc2MrSMNHh2aG
+	 HzJi4o1XQFth97thO/Q4mHjJU8Ls8Zt1z30+pNS0=
+X-QQ-mid: bizesmtp78t1727250322tqckfpzb
+X-QQ-Originating-IP: fxt20V0vtp7XFP4+BckSlREbZu54Gq5LMBLejmguxFg=
+Received: from [10.20.255.96] ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 25 Sep 2024 15:45:20 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 3157228644688347360
+Message-ID: <81A3C9D37E72666E+13e8b5ef-8499-45e6-9442-060ef88152d8@uniontech.com>
+Date: Wed, 25 Sep 2024 15:45:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240925-qcs8300_bwmon_binding-v1-1-a7bfd94b2854@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAIG/82YC/x3MTQ5AMBBA4avIrDWptn6vIiKqg1kYtAkScXeN5
- bd474GAnjBAkzzg8aRAG0dkaQLjMvCMglw0KKmMrFUujjFUWsreXuvGvSV2xLMoTOYqNHbSZQG
- x3T1OdP/ftnvfDyLo2bRnAAAA
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Georgi Djakov
-	<djakov@kernel.org>, Rob Herring <robh@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <quic_tengfan@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Jingyi Wang <quic_jingyw@quicinc.com>
-X-Mailer: b4 0.15-dev-99b12
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1727250316; l=1422;
- i=quic_jingyw@quicinc.com; s=20240910; h=from:subject:message-id;
- bh=IE8ZVu2aiidjh+hRIBeJ/vw9AQM1Lg63nrhIP0/Uaaw=;
- b=aRTjs8Zvo3qvyumphImuX18BBp/XI8y7mkkYzjZBhWOTOfEPxRzrGRCEIK2BG8wNfFGw7bQr7
- XmCks+84mhkAxTRKUqKRkyCBvfhVcyXL8DzDFl2gD59qRQh2RTyIPPS
-X-Developer-Key: i=quic_jingyw@quicinc.com; a=ed25519;
- pk=ZRP1KgWMhlXXWlSYLoO7TSfwKgt6ke8hw5xWcSY+wLQ=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: hDCOYzy3pQjHRyQHpjhFcjEiL5SLLOPp
-X-Proofpoint-ORIG-GUID: hDCOYzy3pQjHRyQHpjhFcjEiL5SLLOPp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- priorityscore=1501 suspectscore=0 lowpriorityscore=0 spamscore=0
- impostorscore=0 malwarescore=0 adultscore=0 phishscore=0 mlxlogscore=907
- bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409250054
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] net/bridge: Optimizing read-write locks in ebtables.c
+To: Stephen Hemminger <stephen@networkplumber.org>,
+ Eric Dumazet <edumazet@google.com>
+Cc: pablo@netfilter.org, kadlec@netfilter.org, roopa@nvidia.com,
+ razor@blackwall.org, davem@davemloft.net, kuba@kernel.org,
+ pabeni@redhat.com, netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+ bridge@lists.linux.dev, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, gouhao@uniontech.com
+References: <14BD7E92B23BF276+20240924090906.157995-1-yushengjin@uniontech.com>
+ <20240924063258.1edfb590@fedora>
+ <CANn89iLoBYjMmot=6e_WJrtEhcAzWikU2eV0eQExHPj7+ObGKA@mail.gmail.com>
+ <20240924094054.2d005c76@fedora>
+From: yushengjin <yushengjin@uniontech.com>
+In-Reply-To: <20240924094054.2d005c76@fedora>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrsz:qybglogicsvrsz4a-0
 
-Document QCS8300 BWMONs, which has two BWMONv4 instances for the CPU->LLCC
-path and one BWMONv5 instance for LLCC->DDR path.
 
-Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
----
- Documentation/devicetree/bindings/interconnect/qcom,msm8998-bwmon.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+在 25/9/2024 上午12:40, Stephen Hemminger 写道:
+> On Tue, 24 Sep 2024 15:46:17 +0200
+> Eric Dumazet <edumazet@google.com> wrote:
+>
+>> On Tue, Sep 24, 2024 at 3:33 PM Stephen Hemminger
+>> <stephen@networkplumber.org> wrote:
+>>> On Tue, 24 Sep 2024 17:09:06 +0800
+>>> yushengjin <yushengjin@uniontech.com> wrote:
+>>>   
+>>>> When conducting WRK testing, the CPU usage rate of the testing machine was
+>>>> 100%. forwarding through a bridge, if the network load is too high, it may
+>>>> cause abnormal load on the ebt_do_table of the kernel ebtable module, leading
+>>>> to excessive soft interrupts and sometimes even directly causing CPU soft
+>>>> deadlocks.
+>>>>
+>>>> After analysis, it was found that the code of ebtables had not been optimized
+>>>> for a long time, and the read-write locks inside still existed. However, other
+>>>> arp/ip/ip6 tables had already been optimized a lot, and performance bottlenecks
+>>>> in read-write locks had been discovered a long time ago.
+>>>>
+>>>> Ref link: https://lore.kernel.org/lkml/20090428092411.5331c4a1@nehalam/
+>>>>
+>>>> So I referred to arp/ip/ip6 modification methods to optimize the read-write
+>>>> lock in ebtables.c.
+>>> What about doing RCU instead, faster and safer.
+>> Safer ? How so ?
+>>
+>> Stephen, we have used this stuff already in other netfilter components
+>> since 2011
+>>
+>> No performance issue at all.
+>>
+> I was thinking that lockdep and analysis tools do better job looking at RCU.
+> Most likely, the number of users of ebtables was small enough that nobody looked
+> hard at it until now.
 
-diff --git a/Documentation/devicetree/bindings/interconnect/qcom,msm8998-bwmon.yaml b/Documentation/devicetree/bindings/interconnect/qcom,msm8998-bwmon.yaml
-index 189f5900ee50..251410aabf38 100644
---- a/Documentation/devicetree/bindings/interconnect/qcom,msm8998-bwmon.yaml
-+++ b/Documentation/devicetree/bindings/interconnect/qcom,msm8998-bwmon.yaml
-@@ -26,6 +26,7 @@ properties:
-       - items:
-           - enum:
-               - qcom,qcm2290-cpu-bwmon
-+              - qcom,qcs8300-cpu-bwmon
-               - qcom,sa8775p-cpu-bwmon
-               - qcom,sc7180-cpu-bwmon
-               - qcom,sc7280-cpu-bwmon
-@@ -40,6 +41,7 @@ properties:
-           - const: qcom,sdm845-bwmon    # BWMON v4, unified register space
-       - items:
-           - enum:
-+              - qcom,qcs8300-llcc-bwmon
-               - qcom,sa8775p-llcc-bwmon
-               - qcom,sc7180-llcc-bwmon
-               - qcom,sc8280xp-llcc-bwmon
+Even though there are few users of ebtables, there are still serious issues.
+This is the data running on the arm Kunpeng-920 (96 cpus) machine,When I 
+only run
+wrk tests, the softirq of the system will rapidly increase to 25%:
 
----
-base-commit: 4d0326b60bb753627437fff0f76bf1525bcda422
-change-id: 20240925-qcs8300_bwmon_binding-641d8e4bf376
+02:50:07 PM  CPU %usr  %nice %sys %iowait %irq  %soft  %steal %guest  
+%gnice %idle
+02:50:25 PM  all    0.00    0.00    0.05    0.00    0.72 23.20    
+0.00    0.00    0.00   76.03
+02:50:26 PM  all    0.00    0.00    0.08    0.00    0.72 24.53    
+0.00    0.00    0.00   74.67
+02:50:27 PM  all    0.01    0.00    0.13    0.00    0.75 24.89    
+0.00    0.00    0.00   74.23
 
-Best regards,
--- 
-Jingyi Wang <quic_jingyw@quicinc.com>
+If ebatlse queries, updates, and other operations are continuously 
+executed at this time, softirq
+will increase again to 50%:
+
+02:52:23 PM  all    0.00    0.00    1.18    0.00    0.54 48.91    
+0.00    0.00    0.00   49.36
+02:52:24 PM  all    0.00    0.00    1.19    0.00    0.43 48.23    
+0.00    0.00    0.00   50.15
+02:52:25 PM  all    0.00    0.00    1.20    0.00    0.50 48.29    
+0.00    0.00    0.00   50.01
+
+More seriously, soft lockup may occur:
+
+Message from syslogd@localhost at Sep 25 14:52:22 ...
+  kernel:watchdog: BUG: soft lockup - CPU#88 stuck for 23s! [ebtables:3896]
+
+So i think soft lockup is even more unbearable than performance.
+
+>
+>
 
 
