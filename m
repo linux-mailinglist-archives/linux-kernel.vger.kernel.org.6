@@ -1,131 +1,74 @@
-Return-Path: <linux-kernel+bounces-338049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 153C39852B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:00:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 273E29852C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:11:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 432B21C228E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 06:00:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 543971C22AEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 06:11:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E02A1552EB;
-	Wed, 25 Sep 2024 06:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bc4Mzta4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C307A155359;
+	Wed, 25 Sep 2024 06:11:21 +0000 (UTC)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1EB2AE6C;
-	Wed, 25 Sep 2024 06:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB1182AE6C;
+	Wed, 25 Sep 2024 06:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727244036; cv=none; b=qJiwGrT6zxePNJgMG65H/+aopGxaNZWC1WmL6rkMNTBjzCk+Y7YKO8kJpTLfSXRxOKXAZQCMaTvNifIg7uGasU4ZSnPIk8Mre3E7AdHvW+22clPfFVJswHES5e0HSaU7rQJ68tPUtejmKP83XzgcZDnkigr6QFN2+vDP/UtNC5c=
+	t=1727244681; cv=none; b=txtLpjAVDAg3pVfe+G+1S229hUkYd6bQmcmN8DdREQCrFHHpYKiT34zSocSEsqQz4RBq7AVGlh3T667dN8nUj/2C3sXKR9lDjdW0SuVkf6+3E/Ne5BL23t80ljWUkfIJDIeSxiGyZdyoOm7rYFLeQ11sysC65CbTp0vGQPR0n0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727244036; c=relaxed/simple;
-	bh=a2kUZamx3G6wtAWBvJMzf+1y5KXNDyS621iqqz8/pcM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G2XoejfG/mmqvDKjGTSsUI0YrlT97ANX44dnA8M6jc3hk2eQ18alKdEcIXkxgUQ5H2XR2iwNkiOkc9svl9niWePLRcxJJsZvlIF3J1DpAImeUXtE9VorzPBxPsioksU75ZEcwv8+y5f6a+Y5ztKWYA3RABlayhh7MwQHW/keQZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bc4Mzta4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66C58C4CEC3;
-	Wed, 25 Sep 2024 06:00:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727244036;
-	bh=a2kUZamx3G6wtAWBvJMzf+1y5KXNDyS621iqqz8/pcM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Bc4Mzta4TydL6KZLckxFiVKNQD+FMAdCa7UCN3VsIUUUBuy2u8VNsNiIPYNNNSbeN
-	 YET33M0NDNo60lfZkA5yz+JAq3jjqA9PpeP8Pls7lBzix2I/DkTKiCbHOVA1C+heZr
-	 69VS6xsLgAhd+4xPFxNmfZ2lHEgQTC6fr2nUG8uRt/6KflD8cVbh81ORgKZIjDYivs
-	 5FvSylLsYWTka8ebY6Ni+B1gaPFJQuw3zQA6FDtx0faXmRIV7k6RSK2iYzB81o2NhR
-	 pFAx/CjIB4fjhjHCQleLnkGRPQLcYzTfgaqbWQgkiH6HJ3UzKHtWWpAZxRUl2b34Mr
-	 2JKxH7ld3XZ+g==
-Date: Tue, 24 Sep 2024 23:00:34 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: James Clark <james.clark@linaro.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	"Steinar H. Gunderson" <sesse@google.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Hemant Kumar <hemant@linux.vnet.ibm.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Yang Jihong <yangjihong@bytedance.com>, leo.yan@arm.com
-Subject: Re: [PATCH v1 2/3] perf probe: Fix libdw memory leak
-Message-ID: <ZvOnATEtJJQWhThK@google.com>
-References: <20240924003720.617258-1-irogers@google.com>
- <20240924003720.617258-3-irogers@google.com>
- <de38a809-1968-4d6d-b1ed-1f47e8762ee2@linaro.org>
- <ZvMHfB1f_GbtRqSp@google.com>
- <CAP-5=fXCtcHiA0SgEZNe6KQBq+rFb2b8ar7awjvUiDOB+0M_SQ@mail.gmail.com>
+	s=arc-20240116; t=1727244681; c=relaxed/simple;
+	bh=baM9HjeqwvVdEQ+R+/2xqWkWEJPW7mlAMefzFNiLkEE=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=D3CB1DX8MT6T/q3GQ7Fz9t5Luly22P/mSDXqg+5Tfts0seK/yzhnWwnC8IhCqnY4tSbcd2VvhH/sK4SES5FtP2IxbCVDbUlTn3J+9TQMeuyOCw07p+o7v5lMq8q0EJjhn+Kul39zi/WEVjtjncwVRRy6sTVfd3VDUmjhI7pR8bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 31E6C20059A;
+	Wed, 25 Sep 2024 08:11:12 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id BDEB8201FF5;
+	Wed, 25 Sep 2024 08:11:11 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id B51EE183AD44;
+	Wed, 25 Sep 2024 14:11:09 +0800 (+08)
+From: Richard Zhu <hongxing.zhu@nxp.com>
+To: jingoohan1@gmail.com,
+	manivannan.sadhasivam@linaro.org,
+	kwilczynski@kernel.org,
+	bhelgaas@google.com,
+	lpieralisi@kernel.org,
+	frank.li@nxp.com,
+	robh@kernel.org
+Cc: linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev
+Subject: [PATCH v1 0/2] Bug fixes when dwc generic suspend/resume functions are used
+Date: Wed, 25 Sep 2024 13:48:35 +0800
+Message-Id: <1727243317-15729-1-git-send-email-hongxing.zhu@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fXCtcHiA0SgEZNe6KQBq+rFb2b8ar7awjvUiDOB+0M_SQ@mail.gmail.com>
 
-On Tue, Sep 24, 2024 at 12:47:33PM -0700, Ian Rogers wrote:
-> On Tue, Sep 24, 2024 at 11:40 AM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > On Tue, Sep 24, 2024 at 10:17:08AM +0100, James Clark wrote:
-> > >
-> > >
-> > > On 24/09/2024 1:37 am, Ian Rogers wrote:
-> > > > Add missing dwarf_cfi_end to free memory associated with probe_finder
-> > > > cfi_eh or cfi_dbg. This addresses leak sanitizer issues seen in:
-> > > > tools/perf/tests/shell/test_uprobe_from_different_cu.sh
-> > > >
-> > > > Fixes: 270bde1e76f4 ("perf probe: Search both .eh_frame and .debug_frame sections for probe location")
-> > > > Signed-off-by: Ian Rogers <irogers@google.com>
-> > > > ---
-> > > >   tools/perf/util/probe-finder.c | 5 +++++
-> > > >   1 file changed, 5 insertions(+)
-> > > >
-> > > > diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
-> > > > index 630e16c54ed5..78f34fa0c391 100644
-> > > > --- a/tools/perf/util/probe-finder.c
-> > > > +++ b/tools/perf/util/probe-finder.c
-> > > > @@ -1379,6 +1379,11 @@ int debuginfo__find_trace_events(struct debuginfo *dbg,
-> > > >     if (ret >= 0 && tf.pf.skip_empty_arg)
-> > > >             ret = fill_empty_trace_arg(pev, tf.tevs, tf.ntevs);
-> > > > +#if _ELFUTILS_PREREQ(0, 142)
-> > > > +   dwarf_cfi_end(tf.pf.cfi_eh);
-> > > > +   dwarf_cfi_end(tf.pf.cfi_dbg);
-> > > > +#endif
-> > > > +
-> > >
-> > > I noticed that c06547d converted an _ELFUTILS_PREREQ(0, 142) into
-> > > HAVE_DWARF_CFI_SUPPORT. But there is still a mixture of both in the code
-> > > (unrelated to this patch). The commit message doesn't say why it is better,
-> > > just that it could be changed, so I'm not sure which one is right.
-> >
-> > I think HAVE_DWARF_CFI_SUPPORT is better since it reveals the intention
-> > clearly.
-> 
-> Let's just nuke the conditional compilation, the CFI support is in
-> libdw (calling it dwarf is just actively confusing) is 15 years old:
-> https://lore.kernel.org/lkml/20240924160418.1391100-7-irogers@google.com/
-> https://lore.kernel.org/lkml/20240924160418.1391100-8-irogers@google.com/
+Two bug fixes when dwc generic suspend/resume callbacks are used.
 
-Sounds good as long as we checks the version or the API in the feature
-test.
+The patch #1 is issued before, but it's not applied yet refer to [1].
+Combine these two bug fixes into one series and send here.
 
-Thanks,
-Namhyung
+[1] https://patchwork.kernel.org/project/linux-pci/patch/1721628913-1449-1-git-send-email-hongxing.zhu@nxp.com/
+
+[PATCH v1 1/2] PCI: dwc: Fix resume failure if no EP is connected on
+[PATCH v1 2/2] PCI: dwc: Do stop link in the dw_pcie_suspend_noirq
+
+drivers/pci/controller/dwc/pcie-designware-host.c | 31 ++++++++++++++++---------------
+1 file changed, 16 insertions(+), 15 deletions(-)
+
 
