@@ -1,108 +1,98 @@
-Return-Path: <linux-kernel+bounces-339245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DD6C9861A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:58:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB7C29861AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:58:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD6C91F2978F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:58:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A543128C8A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8063A1DA;
-	Wed, 25 Sep 2024 14:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 217264F5FB;
+	Wed, 25 Sep 2024 14:32:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="h2eaIGtA"
-Received: from xry111.site (xry111.site [89.208.246.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="wnV5yGb8"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A961B25757;
-	Wed, 25 Sep 2024 14:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5467B49620;
+	Wed, 25 Sep 2024 14:31:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727274632; cv=none; b=n5s1jKTD7m3TCK8E9DRZrQg10QZY4hxGNkev2rDkyUt6xN21NtIAHgPzoDXsMkr10+irL9V2d3oDT6mz6tAP29oThEbTOIrWCs6VP8934CBt+cnph2OdNoyUbrb65H4pM70g3/p84puIV2oPIMyIru7GJ6XciKDww6I6cuQZ2xc=
+	t=1727274721; cv=none; b=BhbQHSoujsTAcLZhv8Ta+9eI1exUa8vDaXYV5PF0T+1XO9AWxeEdjeQMq2c9YwfluYp2Afd6j1WzaHKPndS+fOoCDYkVOBX1++hL6Ce80cCMdfgpZWCjyTcsL5o4KwyHCzXvtmQKHlzokp6An7xc0cEDmk3Vgw3HCfgUWa4Olxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727274632; c=relaxed/simple;
-	bh=1gtNphDi5bzcfWG6u8nfxXUGf9DsB1ZBd5SkCfMHNps=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=S/VWnOsP13CJU6T14fmJq8l6s3PklCT5VmfyDdHH/dLS4mYDxEkAHKMS++u8eG02tc20Ba9kkQ+Fy1xzhYvuDzEhzhAVJcJDbMqPt1wLhnJ16uST4CKEJ6/740KLg/l6ZigEAJEEqu93RM7Wzd3/WryfgL/P0N9beziPWx7pBe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=h2eaIGtA; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
-	s=default; t=1727274623;
-	bh=1gtNphDi5bzcfWG6u8nfxXUGf9DsB1ZBd5SkCfMHNps=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=h2eaIGtAqTLXmhPcihkAlmwuwbGYpNovsndV7595U9IjVAI3Q21qlKYi0V2kRtHgf
-	 fSoS+lufy4UAWUgafABMNlpQ6GJDK7whd6bOcxQO5I7oveaW8DR7q6Vw684CkbEdb5
-	 3RERFyBx8d9ztoJlu6gImUFCpPcMksjszrq0yeFA=
-Received: from [192.168.124.11] (unknown [113.200.174.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 645BC668F5;
-	Wed, 25 Sep 2024 10:30:21 -0400 (EDT)
-Message-ID: <6afb4e1e2bad540dcb4790170c42f38a95d369bb.camel@xry111.site>
-Subject: Re: [PATCH v3] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
-From: Xi Ruoyao <xry111@xry111.site>
-To: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org, Miao Wang
-	 <shankerwangmiao@gmail.com>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, axboe@kernel.dk, 
-	torvalds@linux-foundation.org, loongarch@lists.linux.dev
-Date: Wed, 25 Sep 2024 22:30:18 +0800
-In-Reply-To: <20240625151807.620812-1-mjguzik@gmail.com>
-References: <20240625151807.620812-1-mjguzik@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.0 
+	s=arc-20240116; t=1727274721; c=relaxed/simple;
+	bh=P6Q8H/nVfZxoli/QLkCamvYcqkoFGaMes991H56nXKM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Tmu1CYkGuY/9nwSPhu9nd4xbzhhaiY2a3OL2rOgzkFbu9U+Abzkh/XLKydlYmLt2ovWYACTQVDO/fHlSHdsYuV2KAVilIqJVcG1dbBVzEQPtey2mljeQD6wBYwTqbEl2eAv0bw87G6MKZvlVVelZ4ibUHML2u7HXELDUgYCaJZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=wnV5yGb8; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from localhost.localdomain (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: lukma@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id BA5EF85B66;
+	Wed, 25 Sep 2024 16:31:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1727274712;
+	bh=Lu4rvVtjeWbLqPkpe2uf4LN2PWTpI6uvoia3eK+/qII=;
+	h=From:To:Cc:Subject:Date:From;
+	b=wnV5yGb8IhjheI7hU3yaeiRng4byjGK6k5+smvKVFI+B1+42LfkkSoQz7gNU9fWeO
+	 O0YrgaPxwBCnvb2PD4VxcIkZ0qF9JqZyMwJvMhy78PDzB5U5O7ranO4Fb1LSXcERiv
+	 YLD3O3FoLZmzx4LgeQ8+GeeJ1MBsbbNwQakFSif3TCAQPvsPdPXNMel7JWlvdZZ04k
+	 P8nN6mdJm/SvrtZfTw6CXnlTGLCeiFswKHstf/exJks4MHmea4u+Wle5dhL7Ozt08d
+	 3deArbxt3GcBM2F8yW4uKpOysx+HHuunNuAHjiHPXvXHUz35GU67O1Rk7Sav+LMx+M
+	 EnKciuilwzmAA==
+From: Lukasz Majewski <lukma@denx.de>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Lukasz Majewski <lukma@denx.de>
+Subject: [PATCH v7 1/2] dt-bindings: arm: Document the btt3 i.MX28 based board
+Date: Wed, 25 Sep 2024 16:31:28 +0200
+Message-Id: <20240925143129.4081815-1-lukma@denx.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Tue, 2024-06-25 at 17:18 +0200, Mateusz Guzik wrote:
-> The newly used helper also checks for empty ("") paths.
->=20
-> NULL paths with any flag value other than AT_EMPTY_PATH go the usual
-> route and end up with -EFAULT to retain compatibility (Rust is abusing
-> calls of the sort to detect availability of statx).
->=20
-> This avoids path lookup code, lockref management, memory allocation
-> and
-> in case of NULL path userspace memory access (which can be quite
-> expensive with SMAP on x86_64).
->=20
-> Benchmarked with statx(..., AT_EMPTY_PATH, ...) running on Sapphire
-> Rapids, with the "" path for the first two cases and NULL for the last
-> one.
->=20
-> Results in ops/s:
-> stock:=C2=A0=C2=A0=C2=A0=C2=A0 4231237
-> pre-check: 5944063 (+40%)
-> NULL path: 6601619 (+11%/+56%)
->=20
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+The imx287 based btt3 board is very similar to xea in terms of used SOM
+module.
 
-Hi Mateusz and Christian,
+Signed-off-by: Lukasz Majewski <lukma@denx.de>
+---
+ Documentation/devicetree/bindings/arm/fsl.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-There's a special case, AT_FDCWD + NULL + AT_EMPTY_PATH, still resulting
-EFAULT, while AT_FDCWD + "" + AT_EMPTY_PATH is OK (returning the stat of
-current directory).
+diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+index b39a7e031177..2b5c405d15ef 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.yaml
++++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+@@ -97,6 +97,7 @@ properties:
+               - i2se,duckbill
+               - i2se,duckbill-2
+               - karo,tx28                 # Ka-Ro electronics TX28 module
++              - lwn,imx28-btt3
+               - lwn,imx28-xea
+               - msr,m28cu3                # M28 SoM with custom base board
+               - schulercontrol,imx28-sps1
+-- 
+2.39.2
 
-I know allowing NULL with AT_FDCWD won't produce any performance gain,
-but it seems the difference would make the document of the API more
-nasty.
-
-So is it acceptable to make the kernel "hide" this difference, i.e.
-accept AT_FDCWD + NULL + AT_EMPTY_PATH as-is AT_FDCWD + "" +
-AT_EMPTY_PATH?
-
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
 
