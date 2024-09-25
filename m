@@ -1,377 +1,173 @@
-Return-Path: <linux-kernel+bounces-339629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 574AC986819
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 23:08:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1D4D986811
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 23:08:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D077B1F21C11
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:08:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A3CBB229DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CCD4145FFF;
-	Wed, 25 Sep 2024 21:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B19161902;
+	Wed, 25 Sep 2024 21:07:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UqUeN44x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IVvERCOi"
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1953117CA19;
-	Wed, 25 Sep 2024 21:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18A9156677
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 21:07:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727298439; cv=none; b=nBS/nO/X89/aU1Ko5lX+biC/big0sRQPycnYQ2NUrPgfNmEnbSp/DjX2M1+bxtaYJ8Kj9LKmTSGVhxgcfatBvhCiT8ndhSmAH4QVa2pEFusBjkpnQQ/8sMTQDj9f/vqGRcmRA1p1Uf9yvR1Pumg4AMbmHxHQti5WibGlrFXSGoU=
+	t=1727298431; cv=none; b=DS3KL9/EEsyseMqnX/azNa0AtSmMv+0qNGytKnJOkLgbj9QLLSXZpJgFRqgKros2XJNy9EjLIoc5DHqUM4PPuUZOZss+NpfvOZ/ptPEwNz78L+GvyWEM1rEhPtRRpWd58TfeMpOFCDN8HMOoM32uVYT4cQlnDwkjAC4xKvTb3jI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727298439; c=relaxed/simple;
-	bh=ODTKCHXxIZE3eYSHvfpmzYWSeBfhCgyCnxo8sL2fUHU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YEQ+D/HCZCKPiLT1yFnug4ix259hkY/FR9TiTnuel0p213KxE2YvA22sJf/NfFi05AlX/xOSoHh9tmwybIQZScWaMHMjJFvMCoQXC6jn3GkrQ2n1myfPgWE1GN1a7+bLEVdRZXqyf9he81ESY48R/7xI7dd+Xjy4R9dwz/0S9Ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UqUeN44x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E93BAC4CEC3;
-	Wed, 25 Sep 2024 21:07:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727298438;
-	bh=ODTKCHXxIZE3eYSHvfpmzYWSeBfhCgyCnxo8sL2fUHU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UqUeN44x2CyaBUPaNDkT98k6QN3VewzS7CUSKeQCD7Er05TZWE0qz2tzTPJ5xFD/o
-	 SZdsfPJBUcVK4dRlnz8/NqnIbj/TOm7FASPiv+Zps96TFrJjYpEVq4XxK0nqdTGty8
-	 cVz2cOJxhyz6vRclrGlh3FDM1KAMq5JWGh1Z3LYFBAgcqBisNYyEg6kxvm+G+h1/34
-	 AKFLgqXcNy+hn1N/9l0tNjYChvvNXi0fQ3/AHQvp7aGYCZu8vedTaYrNErzVdPI0aH
-	 yTvTayfqA+sFZUYQ+NLii51HXTvqMUHW975iSPHKFjGcwkF95HyatEteJJwpOUEYZt
-	 xQwPkqnb9dgXw==
-From: Arnd Bergmann <arnd@kernel.org>
-To: linux-mm@kvack.org
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Greg Ungerer <gerg@linux-m68k.org>,
-	Helge Deller <deller@gmx.de>,
-	Kees Cook <kees@kernel.org>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Matt Turner <mattst88@gmail.com>,
-	Max Filippov <jcmvbkbc@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Michal Hocko <mhocko@suse.com>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Vladimir Murzin <vladimir.murzin@arm.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arch@vger.kernel.org
-Subject: [PATCH 5/5] [RFC] mm: Remove MAP_UNINITIALIZED support
-Date: Wed, 25 Sep 2024 21:06:15 +0000
-Message-Id: <20240925210615.2572360-6-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240925210615.2572360-1-arnd@kernel.org>
-References: <20240925210615.2572360-1-arnd@kernel.org>
+	s=arc-20240116; t=1727298431; c=relaxed/simple;
+	bh=QZt3yVSc/qlXYirdmv6SC1bTfBp6NhD7W4RMDsAzbzQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FqUndJGWU/KqsU5FuxT2qH9sN4OqKWuH2YKtU2o0dJonof5/xeSvjDW2vhUW/IU3GeIXZTsZA5l2u/QPgGQsAVTT6V0D+51hQ0w435Herj0qRSz43u0B+zQ6J4e7NjeJVM2vMmbk6+rKZ0HrJgNCl+ck+vrWkGPAcgtyw21pTf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IVvERCOi; arc=none smtp.client-ip=209.85.217.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-49bbbebc26dso146930137.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 14:07:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727298429; x=1727903229; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QZt3yVSc/qlXYirdmv6SC1bTfBp6NhD7W4RMDsAzbzQ=;
+        b=IVvERCOih+7Wx/r+aAkaSfYsAMlTTMYbqluUJCoyiK9LpCYW0UUtPn56wvAsffLQkc
+         21KsJ7ClEQagEvRGkB9TX3pXaMzXzZioFPu1QWaWvfnK+SAT2ohGU4e6zyQt5iGSJKe9
+         GCUJC85/Xt6BnehrIcRWO/t9lpcHw1xKlXwXs7p9nyaVDyAWyDUGrXvlrNzfi4stCfUB
+         h5bjkJ80IMsUaWgfIBU/wSa9yhnSj8JGpYejNVbLw4fusWQ1GorV9ORbv5n34t0/cQfX
+         F8p2W1TUDf5PyfHZdWu8CGJCK6qMYrqFvslBIY6xZGIwTFxCRewQfGPg+jSB/bS3cjys
+         7Q8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727298429; x=1727903229;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QZt3yVSc/qlXYirdmv6SC1bTfBp6NhD7W4RMDsAzbzQ=;
+        b=tGuY3klQx2AT6OnmMCknJJtqsIpJVuJs25ohMZ4qsAXzGaFmT229YUfUZXeT3K1CNo
+         Te7XU23JDGYedtAsZkQYmdjglF7o/3TBBiUG3HNreVE5WhueGxokAlegq5ilIMCjN6nw
+         JnZgbdu1mITB25UTKzdeeL6clyUy8lEhrEzriyXNksbapRrfBnOwtsQMHxZeZM2aBRUA
+         IlxL6MKeXPg8nQV8vCodRCN8FcLkCwjJqZWrI9bCMPX21ltJjKmRyv6XMmtbo/FnU+cm
+         NMVb3DelcaSrffAGL9vuF0iMv+KDRJ2XEXE8vpA8gxzKdcreiZmxrwAWt7VdUem4XKdN
+         SvRg==
+X-Forwarded-Encrypted: i=1; AJvYcCVWgEVwU5UI1PfEkd6EQ4Eq4Ui3TIRzrsbZRnzap8/h65CFpqKti80yztxSN28T+l1m/7g3g1vO+HwJpng=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsCkk2NKeVf683aw+0nswx9K6Sg0vMv+65rJrPn0yv9DptKEUN
+	wnW29xGrrSifJtXiyxFBdF4jV1gd/wItItYyN9147kEIYX7Aq0EfcDSMc51KCOQc4Z62bfMhAW6
+	M2tw3QMLNXaF1Mnh7DhdN5zhgN1GTN/O7luKK
+X-Google-Smtp-Source: AGHT+IH5Qx2Vu4JNrzIicNZyArgUk6lXzguvXh21h7MSJEkhP162Yp8vlp61GgsBSUkazmamPLIqPYRnxTVCyHD123o=
+X-Received: by 2002:a05:6102:304f:b0:49e:94ef:4759 with SMTP id
+ ada2fe7eead31-4a15dc3bc76mr4802779137.4.1727298428417; Wed, 25 Sep 2024
+ 14:07:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240924011709.7037-1-kanchana.p.sridhar@intel.com>
+ <20240924011709.7037-7-kanchana.p.sridhar@intel.com> <CAJD7tkbd=H+=wx0gnu8sh44hOmx7BE3G3oSxi7zt+o3HKJthkA@mail.gmail.com>
+ <20240925134008.GA875661@cmpxchg.org> <CAJD7tkY8D14j-e6imW9NxZCjTbx8tu_VaKDbRRQMdSeKX_kBuw@mail.gmail.com>
+ <20240925192006.GB876370@cmpxchg.org> <CAJD7tkY-ayU3Ld+dKTLEEG3U72fGnCbiQgZursK+eGMXif_uzA@mail.gmail.com>
+ <20240925201323.GA880690@cmpxchg.org>
+In-Reply-To: <20240925201323.GA880690@cmpxchg.org>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Wed, 25 Sep 2024 14:06:26 -0700
+Message-ID: <CAJD7tkbCDe1Y__0vUKt9q0dz_sXM74fKGQo2Zgq9CJ8=FEjH3w@mail.gmail.com>
+Subject: Re: [PATCH v7 6/8] mm: zswap: Support mTHP swapout in zswap_store().
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, nphamcs@gmail.com, chengming.zhou@linux.dev, 
+	usamaarif642@gmail.com, shakeel.butt@linux.dev, ryan.roberts@arm.com, 
+	ying.huang@intel.com, 21cnbao@gmail.com, akpm@linux-foundation.org, 
+	nanhai.zou@intel.com, wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Wed, Sep 25, 2024 at 1:13=E2=80=AFPM Johannes Weiner <hannes@cmpxchg.org=
+> wrote:
+>
+> On Wed, Sep 25, 2024 at 12:39:02PM -0700, Yosry Ahmed wrote:
+> > On Wed, Sep 25, 2024 at 12:20=E2=80=AFPM Johannes Weiner <hannes@cmpxch=
+g.org> wrote:
+> > >
+> > > On Wed, Sep 25, 2024 at 11:30:34AM -0700, Yosry Ahmed wrote:
+> > > > Johannes wrote:
+> > > > > If this ever becomes an issue, we can handle it in a fastpath-slo=
+wpath
+> > > > > scheme: check the limit up front for fast-path failure if we're
+> > > > > already maxed out, just like now; then make obj_cgroup_charge_zsw=
+ap()
+> > > > > atomically charge against zswap.max and unwind the store if we ra=
+ced.
+> > > > >
+> > > > > For now, I would just keep the simple version we currently have: =
+check
+> > > > > once in zswap_store() and then just go ahead for the whole folio.
+> > > >
+> > > > I am not totally against this but I feel like this is too optimisti=
+c.
+> > > > I think we can keep it simple-ish by maintaining an ewma for the
+> > > > compression ratio, we already have primitives for this (see
+> > > > DECLARE_EWMA).
+> > > >
+> > > > Then in zswap_store(), we can use the ewma to estimate the compress=
+ed
+> > > > size and use it to do the memcg and global limit checks once, like =
+we
+> > > > do today. Instead of just checking if we are below the limits, we
+> > > > check if we have enough headroom for the estimated compressed size.
+> > > > Then we call zswap_store_page() to do the per-page stuff, then do
+> > > > batched charging and stats updates.
+> > >
+> > > I'm not sure what you gain from making a non-atomic check precise. Yo=
+u
+> > > can get a hundred threads determining down precisely that *their*
+> > > store will fit exactly into the last 800kB before the limit.
+> >
+> > We just get to avoid overshooting in cases where we know we probably
+> > can't fit it anyway. If we have 4KB left and we are trying to compress
+> > a 2MB THP, for example. It just makes the upfront check to avoid
+> > pointless compression a little bit more meaningful.
+>
+> I think I'm missing something. It's not just an upfront check, it's
+> the only check. The charge down the line doesn't limit anything, it
+> just counts. So if this check passes, we WILL store the folio. There
+> is no pointless compression.
 
-MAP_UNINITIALIZED was added back in 2009 for NOMMU kernels, specifically
-for blackfin, which is long gone. MAP_HUGE_SHIFT/MAP_HUGE_MASK were
-added in 2012 for architectures supporting hugepages, which at the time
-did not overlap with the ones supporting NOMMU.
+I got confused by what you said about the fast-slow path, I thought
+you were suggesting we do this now, so I was saying it's better to use
+an estimate of the compressed size in the fast path to avoid pointless
+compression.
 
-Adding the macro under an #ifdef was obviously a mistake, which
-Christoph Hellwig tried to address by making it unconditionally defined
-to 0x4000000 as part of the series to support RISC-V NOMMU kernels. At
-this point linux/mman.h contained two conflicting definitions for bit 26,
-though the two are still mutually exclusive at runtime in all supported
-configurations.
+I missed the second paragraph.
 
-According to the commit 854e9ed09ded ("mm: support madvise(MADV_FREE)")
-description, it was previously used internally by facebook, which
-would have resulted in MAP_HUGE_1MB turning into MAP_HUGE_2MB
-with MAP_UNINITIALIZED enabled, and every other page size implying
-MAP_UNINITIALIZED. I assume there are no remaining out of tree users
-on MMU-enabled kernels today.
+>
+> We might overshoot the limit by about one folio in a single-threaded
+> scenario. But that is negligible in comparison to the overshoot we can
+> get due to race conditions.
+>
+> Again, I see no no practical, meaningful difference in outcome by
+> making that limit check any more precise. Just keep it as-is.
 
-I do not see any sensible way to redefine the macros for the ABI in
-a way avoids breaking something. The only ideas so far are:
+> Sorry to be blunt, but "precision" in a non-atomic check like this?
+> makes no sense. The fact that it's not too expensive is irrelevant.
+> This discussion around this honestly has gone off the rails.
 
- - do nothing, try to document the bug, hope for the best
+Yeah I thought we were talking about the version where we rollback
+compressions if we overshoot, my bad. We discussed quite a few things
+and I managed to confuse myself.
 
- - remove the kernel implementation and redefine MAP_UNINITIALIZED to
-   zero in the header to silently turn it off for everyone. There are
-   few NOMMU users left, and the ones that do use NOMMU usually turn
-   off MMAP_ALLOW_UNINITIALIZED, as it still has the potential to cause
-   bugs and even security issues on systems with a memory protection
-   unit.
+> Just leave the limit checks exactly as they are. Check limits and
+> cgroup_may_zswap() once up front. Compress the subpages. Acquire
+> references and bump all stats in batches of folio_nr_pages(). You can
+> add up the subpage compressed bytes in the for-loop and do the
+> obj_cgroup_charge_zswap() in a single call at the end as well.
 
- - remove both the implementation and the macro to force a build
-   failure for anyone trying to use the feature. This way we can
-   see who complains and whether we need to put it back in some
-   form or change the userspace sources to no longer pass the flag.
-
-Implement the third option here for the sake of discussion.
-
-Link: https://git.uclibc.org/uClibc/commit/libc/stdlib/malloc/malloc.c?id=00673f93826bf1f
-Link: https://lore.kernel.org/lkml/20190610221621.10938-4-hch@lst.de/
-Link: https://lore.kernel.org/lkml/1352157848-29473-1-git-send-email-andi@firstfloor.org/
-Link: https://lore.kernel.org/lkml/1448865583-2446-2-git-send-email-minchan@kernel.org/
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Damien Le Moal <dlemoal@kernel.org>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: linux-stm32@st-md-mailman.stormreply.com
-Cc: Greg Ungerer <gerg@linux-m68k.org>
-Cc: Vladimir Murzin <vladimir.murzin@arm.com>
-Cc: Max Filippov <jcmvbkbc@gmail.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- Documentation/admin-guide/mm/nommu-mmap.rst | 10 ++--------
- arch/alpha/include/uapi/asm/mman.h          |  2 --
- arch/mips/include/uapi/asm/mman.h           |  2 --
- arch/parisc/include/uapi/asm/mman.h         |  2 --
- arch/powerpc/include/uapi/asm/mman.h        |  5 -----
- arch/sh/configs/rsk7264_defconfig           |  1 -
- arch/sparc/include/uapi/asm/mman.h          |  3 ---
- arch/xtensa/include/uapi/asm/mman.h         |  3 ---
- fs/binfmt_elf_fdpic.c                       |  3 +--
- include/linux/mman.h                        |  4 ----
- include/uapi/asm-generic/mman.h             |  4 ----
- mm/Kconfig                                  | 22 ---------------------
- mm/nommu.c                                  |  4 +---
- 13 files changed, 4 insertions(+), 61 deletions(-)
-
-diff --git a/Documentation/admin-guide/mm/nommu-mmap.rst b/Documentation/admin-guide/mm/nommu-mmap.rst
-index 530fed08de2c..9434c2fa99ae 100644
---- a/Documentation/admin-guide/mm/nommu-mmap.rst
-+++ b/Documentation/admin-guide/mm/nommu-mmap.rst
-@@ -135,14 +135,8 @@ Further notes on no-MMU MMAP
-      significant delays during a userspace malloc() as the C library does an
-      anonymous mapping and the kernel then does a memset for the entire map.
- 
--     However, for memory that isn't required to be precleared - such as that
--     returned by malloc() - mmap() can take a MAP_UNINITIALIZED flag to
--     indicate to the kernel that it shouldn't bother clearing the memory before
--     returning it.  Note that CONFIG_MMAP_ALLOW_UNINITIALIZED must be enabled
--     to permit this, otherwise the flag will be ignored.
--
--     uClibc uses this to speed up malloc(), and the ELF-FDPIC binfmt uses this
--     to allocate the brk and stack region.
-+     Previously, Linux also supported a MAP_UNINITIALIZED flag to allocate
-+     memory without clearing it, this is no longer support.
- 
-  (#) A list of all the private copy and anonymous mappings on the system is
-      visible through /proc/maps in no-MMU mode.
-diff --git a/arch/alpha/include/uapi/asm/mman.h b/arch/alpha/include/uapi/asm/mman.h
-index fc8b74aa3f89..1099b17a4003 100644
---- a/arch/alpha/include/uapi/asm/mman.h
-+++ b/arch/alpha/include/uapi/asm/mman.h
-@@ -21,8 +21,6 @@
- /* MAP_SYNC not supported */
- #define MAP_FIXED_NOREPLACE	0x200000/* MAP_FIXED which doesn't unmap underlying mapping */
- 
--/* MAP_UNINITIALIZED not supported */
--
- /*
-  * Flags for mlockall
-  */
-diff --git a/arch/mips/include/uapi/asm/mman.h b/arch/mips/include/uapi/asm/mman.h
-index 6deb62db90de..9463c9071268 100644
---- a/arch/mips/include/uapi/asm/mman.h
-+++ b/arch/mips/include/uapi/asm/mman.h
-@@ -31,8 +31,6 @@
- /* MAP_SYNC not supported */
- #define MAP_FIXED_NOREPLACE	0x100000	/* MAP_FIXED which doesn't unmap underlying mapping */
- 
--/* MAP_UNINITIALIZED not supported */
--
- /*
-  * Flags for mlockall
-  */
-diff --git a/arch/parisc/include/uapi/asm/mman.h b/arch/parisc/include/uapi/asm/mman.h
-index 3732950a5cd8..8d7f3a8912b3 100644
---- a/arch/parisc/include/uapi/asm/mman.h
-+++ b/arch/parisc/include/uapi/asm/mman.h
-@@ -20,8 +20,6 @@
- /* MAP_SYNC not supported */
- #define MAP_FIXED_NOREPLACE	0x100000	/* MAP_FIXED which doesn't unmap underlying mapping */
- 
--/* MAP_UNINITIALIZED not supported */
--
- /*
-  * Flags for mlockall
-  */
-diff --git a/arch/powerpc/include/uapi/asm/mman.h b/arch/powerpc/include/uapi/asm/mman.h
-index d57b347c37fe..48c734b4d201 100644
---- a/arch/powerpc/include/uapi/asm/mman.h
-+++ b/arch/powerpc/include/uapi/asm/mman.h
-@@ -33,11 +33,6 @@
- #define MAP_SYNC		0x080000 /* perform synchronous page faults for the mapping */
- #define MAP_FIXED_NOREPLACE	0x100000	/* MAP_FIXED which doesn't unmap underlying mapping */
- 
--#define MAP_UNINITIALIZED 0x4000000	/* For anonymous mmap, memory could be
--					 * uninitialized */
--
--
--
- #define MCL_CURRENT     0x2000          /* lock all currently mapped pages */
- #define MCL_FUTURE      0x4000          /* lock all additions to address space */
- #define MCL_ONFAULT	0x8000		/* lock all pages that are faulted in */
-diff --git a/arch/sh/configs/rsk7264_defconfig b/arch/sh/configs/rsk7264_defconfig
-index e4ef259425c4..86421e2fec10 100644
---- a/arch/sh/configs/rsk7264_defconfig
-+++ b/arch/sh/configs/rsk7264_defconfig
-@@ -12,7 +12,6 @@ CONFIG_KALLSYMS_ALL=y
- CONFIG_EXPERT=y
- CONFIG_PERF_COUNTERS=y
- # CONFIG_VM_EVENT_COUNTERS is not set
--CONFIG_MMAP_ALLOW_UNINITIALIZED=y
- CONFIG_PROFILING=y
- # CONFIG_BLK_DEV_BSG is not set
- CONFIG_PARTITION_ADVANCED=y
-diff --git a/arch/sparc/include/uapi/asm/mman.h b/arch/sparc/include/uapi/asm/mman.h
-index afb86698cdb1..e05ac492f9a8 100644
---- a/arch/sparc/include/uapi/asm/mman.h
-+++ b/arch/sparc/include/uapi/asm/mman.h
-@@ -30,9 +30,6 @@
- #define MAP_SYNC		0x080000 /* perform synchronous page faults for the mapping */
- #define MAP_FIXED_NOREPLACE	0x100000	/* MAP_FIXED which doesn't unmap underlying mapping */
- 
--#define MAP_UNINITIALIZED 0x4000000	/* For anonymous mmap, memory could be
--					 * uninitialized */
--
- #define MCL_CURRENT     0x2000          /* lock all currently mapped pages */
- #define MCL_FUTURE      0x4000          /* lock all additions to address space */
- #define MCL_ONFAULT	0x8000		/* lock all pages that are faulted in */
-diff --git a/arch/xtensa/include/uapi/asm/mman.h b/arch/xtensa/include/uapi/asm/mman.h
-index e713b8dc8587..6fdf9f3e587a 100644
---- a/arch/xtensa/include/uapi/asm/mman.h
-+++ b/arch/xtensa/include/uapi/asm/mman.h
-@@ -36,9 +36,6 @@
- /* MAP_SYNC not supported */
- #define MAP_FIXED_NOREPLACE	0x100000	/* MAP_FIXED which doesn't unmap underlying mapping */
- 
--#define MAP_UNINITIALIZED 0x4000000	/* For anonymous mmap, memory could be
--					 * uninitialized */
--
- /*
-  * Flags for mlockall
-  */
-diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-index 4fe5bb9f1b1f..82ba92d28ddf 100644
---- a/fs/binfmt_elf_fdpic.c
-+++ b/fs/binfmt_elf_fdpic.c
-@@ -418,8 +418,7 @@ static int load_elf_fdpic_binary(struct linux_binprm *bprm)
- 
- 	current->mm->start_brk = vm_mmap(NULL, 0, stack_size, stack_prot,
- 					 MAP_PRIVATE | MAP_ANONYMOUS |
--					 MAP_UNINITIALIZED | MAP_GROWSDOWN,
--					 0);
-+					 MAP_GROWSDOWN, 0);
- 
- 	if (IS_ERR_VALUE(current->mm->start_brk)) {
- 		retval = current->mm->start_brk;
-diff --git a/include/linux/mman.h b/include/linux/mman.h
-index bcb201ab7a41..f606b2264cc0 100644
---- a/include/linux/mman.h
-+++ b/include/linux/mman.h
-@@ -24,9 +24,6 @@
- #ifndef MAP_HUGE_1GB
- #define MAP_HUGE_1GB 0
- #endif
--#ifndef MAP_UNINITIALIZED
--#define MAP_UNINITIALIZED 0
--#endif
- #ifndef MAP_SYNC
- #define MAP_SYNC 0
- #endif
-@@ -44,7 +41,6 @@
- 		| MAP_ANONYMOUS \
- 		| MAP_DENYWRITE \
- 		| MAP_EXECUTABLE \
--		| MAP_UNINITIALIZED \
- 		| MAP_GROWSDOWN \
- 		| MAP_LOCKED \
- 		| MAP_NORESERVE \
-diff --git a/include/uapi/asm-generic/mman.h b/include/uapi/asm-generic/mman.h
-index f26f9b4c03e1..541be26ad947 100644
---- a/include/uapi/asm-generic/mman.h
-+++ b/include/uapi/asm-generic/mman.h
-@@ -27,10 +27,6 @@
- #define MAP_SYNC		0x080000 /* perform synchronous page faults for the mapping */
- #define MAP_FIXED_NOREPLACE	0x100000	/* MAP_FIXED which doesn't unmap underlying mapping */
- 
--#define MAP_UNINITIALIZED 0x4000000	/* For anonymous mmap, memory could be
--					 * uninitialized */
--
--
- /*
-  * Bits [26:31] are reserved, see asm-generic/hugetlb_encode.h
-  * for MAP_HUGETLB usage
-diff --git a/mm/Kconfig b/mm/Kconfig
-index 09aebca1cae3..7326820ba200 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -381,28 +381,6 @@ config COMPAT_BRK
- 
- 	  On non-ancient distros (post-2000 ones) N is usually a safe choice.
- 
--config MMAP_ALLOW_UNINITIALIZED
--	bool "Allow mmapped anonymous memory to be uninitialized"
--	depends on EXPERT && !MMU
--	default n
--	help
--	  Normally, and according to the Linux spec, anonymous memory obtained
--	  from mmap() has its contents cleared before it is passed to
--	  userspace.  Enabling this config option allows you to request that
--	  mmap() skip that if it is given an MAP_UNINITIALIZED flag, thus
--	  providing a huge performance boost.  If this option is not enabled,
--	  then the flag will be ignored.
--
--	  This is taken advantage of by uClibc's malloc(), and also by
--	  ELF-FDPIC binfmt's brk and stack allocator.
--
--	  Because of the obvious security issues, this option should only be
--	  enabled on embedded devices where you control what is run in
--	  userspace.  Since that isn't generally a problem on no-MMU systems,
--	  it is normally safe to say Y here.
--
--	  See Documentation/admin-guide/mm/nommu-mmap.rst for more information.
--
- config SELECT_MEMORY_MODEL
- 	def_bool y
- 	depends on ARCH_SELECT_MEMORY_MODEL
-diff --git a/mm/nommu.c b/mm/nommu.c
-index 385b0c15add8..793fa7303065 100644
---- a/mm/nommu.c
-+++ b/mm/nommu.c
-@@ -1172,9 +1172,7 @@ unsigned long do_mmap(struct file *file,
- 	add_nommu_region(region);
- 
- 	/* clear anonymous mappings that don't ask for uninitialized data */
--	if (!vma->vm_file &&
--	    (!IS_ENABLED(CONFIG_MMAP_ALLOW_UNINITIALIZED) ||
--	     !(flags & MAP_UNINITIALIZED)))
-+	if (!vma->vm_file)
- 		memset((void *)region->vm_start, 0,
- 		       region->vm_end - region->vm_start);
- 
--- 
-2.39.2
-
+We can keep the limit checks as they are for now, and revisit as needed.
 
