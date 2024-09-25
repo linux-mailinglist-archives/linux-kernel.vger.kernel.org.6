@@ -1,125 +1,170 @@
-Return-Path: <linux-kernel+bounces-338086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B36E985336
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:49:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D910C985337
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:49:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B08DC1C23C61
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 06:49:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BA85286612
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 06:49:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B9715696E;
-	Wed, 25 Sep 2024 06:47:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40773155CBA;
+	Wed, 25 Sep 2024 06:49:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LWFjb0Ih"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="h4NHbUVk"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815E1156875;
-	Wed, 25 Sep 2024 06:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F6E14D6E1
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 06:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727246849; cv=none; b=e8rh3v7Lc7Mu1FvViiIQjpYTej1s9aIol+K+y6j2G7JBtbKJf8n+RN3nqeMc/nZY/3qnNezr9Erau6YNk1TKIQc5h/qO7zANw1U4+IQUZKrleWp/1D98SyZw9KoIbsw4Jo/GfP8aGFxp+enEjkXEKQm9fZvxLYFyWd+/ISSpYHI=
+	t=1727246952; cv=none; b=DiwTqLt0ytdcn99PjOUwiC351acFO+0/OmAAKhtH3vixeDpeOy3CmWsalSpwT3zHEjfLCvIVrJK5WXhM1rkt94AZYEtkS1zxGa35mbzwY3T6UwaZ7J/Ycxgg6k/KaUWDrOgsAOYIKYeDVX8PdTnp4856Y7UdkcTYllbrqwONQZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727246849; c=relaxed/simple;
-	bh=mlLpvpU5h3KChIjhV43WoLH/do6/n4v6lSdzaC/4lso=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jAnaFxE3f5RZbswsMqrBcPgF5KlQ2xq3NGxQJj4sDNk3U7TriSZhaDRxgwgTCvoLrDCIlxXWMqh0Jyqh5ZdZxDmQmIo/fqrZGuKLUfc3BCnhA8xZ4KyYV/lCPoJxtG3YXdLq7MNrN5yDfqBaRKPEj0tBpE8M7FlHd9XLUMBYMX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LWFjb0Ih; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-710e1a48130so1976253a34.1;
-        Tue, 24 Sep 2024 23:47:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727246847; x=1727851647; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SCvWjbZiRcFE7BpPuL1CRrnqJmD47+cwm4wsjCPkMsg=;
-        b=LWFjb0Ih3/p1JVK+uQ5EZqyEcRrfQ8huffAJ1Bw0ghSyXixfMUsJ0iEGXOC4jWsZOS
-         A/+JxGqlK+1MZT+1GInYzcDFIID3KKBAuoncOqvc3ky9knojV0a8Nh/uJjneOt8HeeN/
-         l+ErTLAXobOJrHwWGKHEk8P6SP/jolweMoByV4NZQhsAeqf4NImy6S/inB+bJKjJtHcb
-         bjKGqOHlvlqGZhPc7YXgCoxmrI6+I/uxAT/kdmjVfSnmLAewdHm9V4T75dgwItLa8+0H
-         QobpnthWFYAuqsLr+8XxbXlvQSN5+SIZV4WhPyWjTQ65emafDOCisTEcUzsFav95suhA
-         6X0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727246847; x=1727851647;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SCvWjbZiRcFE7BpPuL1CRrnqJmD47+cwm4wsjCPkMsg=;
-        b=hBr5XDArl6Kmx6GOXldDevesaDF7Ry+3AFn4HI7xe1E7XksmU92oL4zKKVzSRSM3Zg
-         Md50Vwe9BIpcAbhZyXoP0TIW/Wi1HMz0OepcCkjsUQKL8pqD54MNsEdJ5us0N87NYWsJ
-         ENLSUN2DZclG3d9/K5ssZYsBnAYDKIVHNEa9xVOA7aArP/81mEHvNa0B55D3TuxgNMtJ
-         gPoRNidmSQlu9CZzWdpSBtLyxGcMo+Am5shM/draOQI47w+JfSZZlPAJkjKjxQOY4SUG
-         SqCnYAv3SG3Cdj38K3tPXoHSkVISsTbBWRgr6Sn/ynnA8wpdlZhkBG9/M7rp4p8v+qT+
-         sqPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUwsMvmCmw7AcahYCevFrBxXUUVVD5EEOg+tulk8vLAlXE3UEqkRiibRIUgykF3dmkZULmIP51uwg/fCeM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz49FG0KDra8smJ6ktkuT8PUaHWEKNphlnl2YdCh+eedREMH0Rf
-	9wGd+1CyARV0cI0OaKBxjWoCWyxDVN0gENi3Uv3LDl9I5DXsbumY
-X-Google-Smtp-Source: AGHT+IGGCHgPFYaz/jOqIrSzxFOksYsAEteh8NXeHjhHP620RTIPIg+t8iMXK80EB71cmuYVzWr5gA==
-X-Received: by 2002:a05:6830:6d12:b0:713:722c:835f with SMTP id 46e09a7af769-713c7dc411emr1431074a34.18.1727246847368;
-        Tue, 24 Sep 2024 23:47:27 -0700 (PDT)
-Received: from fedora ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e06e31a006sm733263a91.55.2024.09.24.23.47.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 23:47:26 -0700 (PDT)
-Date: Wed, 25 Sep 2024 06:47:19 +0000
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: Paolo Abeni <pabeni@redhat.com>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Sabrina Dubroca <sd@queasysnail.net>
-Cc: netdev@vger.kernel.org, Jay Vosburgh <jv@jvosburgh.net>,
-	Andy Gospodarek <andy@greyhouse.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Jarod Wilson <jarod@redhat.com>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] Bonding: update bond device XFRM features based on
- current active slave
-Message-ID: <ZvOx95zrrKonjTPn@fedora>
-References: <20240918083533.21093-1-liuhangbin@gmail.com>
- <1b507e18-24a4-4705-a987-53119009ce3f@redhat.com>
+	s=arc-20240116; t=1727246952; c=relaxed/simple;
+	bh=au88WlsDSPMs588SnlzkV9uUVXOnSobVfUkhB4cLYSQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=N3md7zgkPwmT0BiD2kRRkGWfeKjXQ+XLB70PxE6yQxOupFZo3slL5yLvIfCmwDhnkD3Ux8b7ejmRN7F0HNGjroU8t5VZCZwkOYEQlaJWpDuE9bQ9jXQfT6sV0Qa5l0tpLAdBpd/OzhFKOofvCQjNtYrfP7E/Vx0jBFuVgvlnMYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=h4NHbUVk; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 40d8525a7b0a11efb66947d174671e26-20240925
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=GIXtBLCtXr6MqBqJlnp57Xa9ytuceXIA441Kk55rrF4=;
+	b=h4NHbUVkb04ybPSWFtztF6K7iNELGQ5AtIBX7yYhcCKSlOmHpsE2tSvSZ+aAXVGLZrXv3hdkzTFsXxZAjA12AAjj4mJbm3VXtUDq/8ZanClT6gCl42eo5tDO6/QYVh7yzSyZN1m8/ZfJwvfF3/fM8koj+0lUtuaQXDtD3BcFY/c=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:3e4ffd7b-20be-4055-a54e-3fd010bf9823,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:da9abbd0-7921-4900-88a1-3aef019a55ce,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 40d8525a7b0a11efb66947d174671e26-20240925
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
+	(envelope-from <liankun.yang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1926389267; Wed, 25 Sep 2024 14:49:03 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ MTKMBS14N2.mediatek.inc (172.21.101.76) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 25 Sep 2024 14:49:00 +0800
+Received: from mszsdhlt06.gcn.mediatek.inc (10.16.6.206) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 25 Sep 2024 14:49:00 +0800
+From: Liankun Yang <liankun.yang@mediatek.com>
+To: <chunkuang.hu@kernel.org>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
+	<simona@ffwll.ch>, <matthias.bgg@gmail.com>,
+	<angelogioacchino.delregno@collabora.com>, <jitao.shi@mediatek.com>,
+	<mac.shen@mediatek.com>, <peng.liu@mediatek.com>, <liankun.yang@mediatek.com>
+CC: <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH v3 1/1] drm/mediatek: dp: Add sdp path reset
+Date: Wed, 25 Sep 2024 14:48:22 +0800
+Message-ID: <20240925064854.23065-1-liankun.yang@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1b507e18-24a4-4705-a987-53119009ce3f@redhat.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--3.788000-8.000000
+X-TMASE-MatchedRID: sCy2GwBQH7yvhOOX3csmVw0QY5VnQyAN6SXuwUgGH0iyrCkM9r1bWojW
+	iMxtXqDIzP/fGiNMYHU3LXzHrryidfA5M+x5Rjkcl1zsjZ1/6ayeEP0DdJruliz+5QCTrE/s+Vi
+	hXqn9xLF1Xu18Rs/cG0cr8zPjxcDfEJHpQ2Y9lURCxKB9Mp7mVU9nxZsOR/FT1MUvXa3LfbejNb
+	S0t/0QSUHNY7W6Yix9gDLqnrRlXrZ8nn9tnqel2MZW5ai5WKlyZ/VrItWeJXv016YqZfAT5G4MD
+	qojiLaNlLcFj/78QgopdIrrqkKoT7TTdbRCVjfgjo5opvXOhw94O3plWBIsE0JYdnh79GXHbVGO
+	i6nZUJxa9755XPg+nlWTm62ZDVWUZUXf532uejGkjwQURlVuKA==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--3.788000-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	B195F4980861ED25D8E68E8EB5B3E84150ECCA730C5C97F8B4AD11662FEE14EF2000:8
+X-MTK: N
 
-On Tue, Sep 24, 2024 at 03:17:25PM +0200, Paolo Abeni wrote:
-> 
-> 
-> On 9/18/24 10:35, Hangbin Liu wrote:
-> > XFRM offload is supported in active-backup mode. However, if the current
-> > active slave does not support it, we should disable it on bond device.
-> > Otherwise, ESP traffic may fail due to the downlink not supporting the
-> > feature.
-> 
-> Why would the excessive features exposed by the bond device will be a
-> problem? later dev_queue_xmit() on the lower device should take care of
-> needed xfrm offload in validate_xmit_xfrm(), no?
+When using type-c to type-c to connect to the monitor,
+the sound plays normally. If you unplug the type-c and
+connect the type-c to hdmi dongle to the monitor, there will be noise.
 
-I'm not very sure. In validate_xmit_xfrm() it looks the lower dev won't
-check again if the upper dev has validated.
+By capturing the audio data, it is found that
+the data position is messy, and there is no error in the data.
 
-        /* This skb was already validated on the upper/virtual dev */
-        if ((x->xso.dev != dev) && (x->xso.real_dev == dev))
-                return skb;
+Through experiments, it can be restored by resetting the SDP path
+when unplugging it.
 
-Hi Sabrina, Steffen, if the upper dev validate failed, what would happen?
-Just drop the skb or go via software path?
+Signed-off-by: Liankun Yang <liankun.yang@mediatek.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+Changes in V3:
+- No change.
+Per suggestion from the previous thread:
+https://patchwork.kernel.org/project/linux-mediatek/patch/20240923132521.22785-1-liankun.yang@mediatek.com/
 
-> 
-> Let segmentation happening as late as possible is usually a win.
+Changes in V2:
+- Fix build error.
+Per suggestion from the previous thread:
+https://patchwork.kernel.org/project/linux-mediatek/patch/20240923133610.23728-1-liankun.yang@mediatek.com/
+---
+ drivers/gpu/drm/mediatek/mtk_dp.c     | 15 +++++++++++++++
+ drivers/gpu/drm/mediatek/mtk_dp_reg.h |  1 +
+ 2 files changed, 16 insertions(+)
 
-Yes, indeed.
+diff --git a/drivers/gpu/drm/mediatek/mtk_dp.c b/drivers/gpu/drm/mediatek/mtk_dp.c
+index d8796a904eca..4003bd83f64e 100644
+--- a/drivers/gpu/drm/mediatek/mtk_dp.c
++++ b/drivers/gpu/drm/mediatek/mtk_dp.c
+@@ -1052,6 +1052,18 @@ static void mtk_dp_digital_sw_reset(struct mtk_dp *mtk_dp)
+ 			   0, DP_TX_TRANSMITTER_4P_RESET_SW_DP_TRANS_P0);
+ }
+ 
++static void mtk_dp_sdp_path_reset(struct mtk_dp *mtk_dp)
++{
++	mtk_dp_update_bits(mtk_dp, MTK_DP_ENC0_P0_3004,
++				SDP_RESET_SW_DP_ENC0_P0,
++				SDP_RESET_SW_DP_ENC0_P0);
++
++	/* Wait for sdp path reset to complete */
++	usleep_range(1000, 5000);
++	mtk_dp_update_bits(mtk_dp, MTK_DP_ENC0_P0_3004,
++				0, SDP_RESET_SW_DP_ENC0_P0);
++}
++
+ static void mtk_dp_set_lanes(struct mtk_dp *mtk_dp, int lanes)
+ {
+ 	mtk_dp_update_bits(mtk_dp, MTK_DP_TRANS_P0_35F0,
+@@ -2314,6 +2326,9 @@ static void mtk_dp_bridge_atomic_disable(struct drm_bridge *bridge,
+ 			   DP_PWR_STATE_BANDGAP_TPLL,
+ 			   DP_PWR_STATE_MASK);
+ 
++	/* SDP path reset sw*/
++	mtk_dp_sdp_path_reset(mtk_dp);
++
+ 	/* Ensure the sink is muted */
+ 	msleep(20);
+ }
+diff --git a/drivers/gpu/drm/mediatek/mtk_dp_reg.h b/drivers/gpu/drm/mediatek/mtk_dp_reg.h
+index 709b79480693..8ad7a9cc259e 100644
+--- a/drivers/gpu/drm/mediatek/mtk_dp_reg.h
++++ b/drivers/gpu/drm/mediatek/mtk_dp_reg.h
+@@ -86,6 +86,7 @@
+ #define MTK_DP_ENC0_P0_3004			0x3004
+ #define VIDEO_M_CODE_SEL_DP_ENC0_P0_MASK		BIT(8)
+ #define DP_TX_ENCODER_4P_RESET_SW_DP_ENC0_P0		BIT(9)
++#define SDP_RESET_SW_DP_ENC0_P0				BIT(13)
+ #define MTK_DP_ENC0_P0_3010			0x3010
+ #define HTOTAL_SW_DP_ENC0_P0_MASK			GENMASK(15, 0)
+ #define MTK_DP_ENC0_P0_3014			0x3014
+-- 
+2.45.2
 
-Thanks
-Hangbin
 
