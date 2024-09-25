@@ -1,212 +1,236 @@
-Return-Path: <linux-kernel+bounces-338226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE04898550B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:06:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48919985505
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:05:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10FEEB228BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:06:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC58B1F21011
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:05:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9936315DBA3;
-	Wed, 25 Sep 2024 08:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F195157487;
+	Wed, 25 Sep 2024 08:04:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kneron.us header.i=@kneron.us header.b="JHUMMOT2"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2103.outbound.protection.outlook.com [40.107.92.103])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PJ6IjScG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B2515C131;
-	Wed, 25 Sep 2024 08:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.103
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727251497; cv=fail; b=b0EXNUd96bQ9vo6NNkfN1A/FhOdTlp1FtGziqvx0w5w3v8dLLyMh/x1QMvLTa5zTwl/D3S/RPEHzwEEJjbfjwBtjedN+Z2mUwHb7CJXozAHP1xQi7tWn9O7Pdy5B8BY0ZMDIDHVOkD9JcguLHQ/2rvPctcXpvt1K+4GrxCMVrFw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727251497; c=relaxed/simple;
-	bh=09KeYWbDKiHO4/wxPYTeh6VRxir/sUs+bBB1+6YNsPg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=k9ApwGdnLlnTvyzdBBbbCD+pyZv2YJenHy8pg19Z/gmHtx6qnzyyMtZK51YXx7LLQjDqYnWnsH/UfgfOI//kB+PwjpFV3Bm0CfzRbotYsLALbBOnn7QS6rt1N07ESRyI3OJQcH86xcjOfJ0yq4ceZ5S7v5jM7/rVuYTv0+hJUjI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kneron.us; spf=pass smtp.mailfrom=kneron.us; dkim=pass (1024-bit key) header.d=kneron.us header.i=@kneron.us header.b=JHUMMOT2; arc=fail smtp.client-ip=40.107.92.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kneron.us
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kneron.us
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fNTDEKMKuZCBpJFaHRKdasL6d5oUHnfmxuFYImJiEg+IT03/oScaemoVPk40BuL2vjzQi86g12wvGd5hitrO2kbfNGVHu+Yfgk3k2I5OvBkC1lXRFLf76R5d8Q1cDa69lQejopQBS58I75pdVNCyn0j3aD9lRF0zms2BzAQnrnLjC0jraOr3Etp8dktE0EZMtEY64NQ2Y+y+WnSh+kZ4WD1jg4RHnDebMW/jXaRoPvgx8DZaYRJR0pZm0OojTYmo56hRlLkLU6ZAgKZHHw0uZkPJ+b/dcj4pEFYdVsMq+qcHaQG0Vs/dXp8FlG34yCkc2K2gmfeYzUFUjYTvYhDUNA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mu1IlZSGYKMCi9HZxVx35VHlH5Y7Nyg5Jzhl1c5Ddds=;
- b=pL0ou8j1C1jfFv5CwincH3MjxGJlHCxKtCvo81FDb3xqkv1EyYzV0N5Xldulaw4GoDgUgDZrlAE4ydm+EzutFqZM5i2wPEsjU35myarTO7ENhGGIZUCtHo8WQrDQTZ0+d5A74ezOrmAudx73F6J8Ai7MY/mCXEcIfZKbOlOp4b1TftuNmIbrE7pkQY1n6gWyWH/Ak3OnOQGqjluH2fpZ8XspIsEEBHLl9mC8oIrnEyB1/QmuQ3V+omrqCnW15erE3+mi164d/4yMFjEvAGbK660AKfCwLtvo7BPbrAvOnt1RzvRi4fV35Yw4FkQvT1ApElDfRsrMCCJV0ONe2cr3zQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=kneron.us; dmarc=pass action=none header.from=kneron.us;
- dkim=pass header.d=kneron.us; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kneron.us;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mu1IlZSGYKMCi9HZxVx35VHlH5Y7Nyg5Jzhl1c5Ddds=;
- b=JHUMMOT2Is2XPkDg0baiT539IpMhE6T3uXzuQuqpZO6awfLwt8O/MHB15Faho6fpYMZ49hdz88Cier4XDcGgQ0A4JxSAi3yH7GmAAG7X6tK8Y/zJmANHdGgx+KyuTMT/6Rai1XEVFydRIwJqRQLRPHtkcJ4Cr4V+rhOZVN+/cfw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=kneron.us;
-Received: from IA1PR14MB6224.namprd14.prod.outlook.com (2603:10b6:208:42b::6)
- by PH8PR14MB7109.namprd14.prod.outlook.com (2603:10b6:510:254::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.27; Wed, 25 Sep
- 2024 08:04:54 +0000
-Received: from IA1PR14MB6224.namprd14.prod.outlook.com
- ([fe80::c527:653c:698d:3d94]) by IA1PR14MB6224.namprd14.prod.outlook.com
- ([fe80::c527:653c:698d:3d94%3]) with mapi id 15.20.7982.022; Wed, 25 Sep 2024
- 08:04:54 +0000
-From: Michael Wu <michael.wu@kneron.us>
-To: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>,
-	linux-i2c@vger.kernel.org
-Cc: Andi Shyti <andi.shyti@kernel.org>,
-	Morgan Chang <morgan.chang@kneron.us>,
-	linux-kernel@vger.kernel.org,
-	Michael Wu <michael.wu@kneron.us>
-Subject: [PATCH 2/2] dt-bindings: i2c: snps,designware-i2c: add bus-loading and clk-freq-optimized
-Date: Wed, 25 Sep 2024 16:04:31 +0800
-Message-ID: <20240925080432.186408-3-michael.wu@kneron.us>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240925080432.186408-1-michael.wu@kneron.us>
-References: <20240925080432.186408-1-michael.wu@kneron.us>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0161.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:383::6) To IA1PR14MB6224.namprd14.prod.outlook.com
- (2603:10b6:208:42b::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7A0148849
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727251487; cv=none; b=WQyyoVSI9oMRfuUhxKXazWnWrHwhM+c4rGBzlModhMOfrGBdVz4gUu7GryADhyUf7NEdq7QAfiJSebxNoVJcpdwekxdDoX7biTv4YkSjiVc58XWIMIALq9gVwbEpm8AAac5hsxiKHfGNyFkAwyLpHdjENgcK21ysDQr5158Pr+s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727251487; c=relaxed/simple;
+	bh=XtTR+0xNDM4kXU9yTQYoYa57KB86//G17A4RfWnZ188=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Rc5KaMMiCZmaSZJa7vtqo9s9uW0liJYX0sAl5+Q2uy2SQrpEwZudv4biC7EGZrIjG3pWwTWDkorEvIcnSn87w8dsqco3bxUArlOgO5RWLmJtSJj9UDCoNN/sU3J1BVwLXILyAjxFhMSKrsL+qyaI2G+fkcy3TWph9bic0RTYMY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PJ6IjScG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1118BC4CEC3;
+	Wed, 25 Sep 2024 08:04:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727251486;
+	bh=XtTR+0xNDM4kXU9yTQYoYa57KB86//G17A4RfWnZ188=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=PJ6IjScG7UBcmzhhkAjyhX58+TQg5ouqzFWdHJeruf/9Y5ar3O03lMTj7HdFP+Z/x
+	 hbkUsB3ConnnjJJbGTz6jtmMlfbp9d/xlesXJat702M9qOAJVf5FfetDf/A914IH+E
+	 zatJDvh5I5iudsMbgzq9JOwvuEZ6Sdf83oF98NzLsFKMTJNBqAQA0YToWTynQ2oxng
+	 DEr7eZMxCa1wiOcv+U4b731Fy6MFRcPLldDrsgHXiuYineQqIXEpEgQPBxaABI4jW/
+	 hoF+QRRen6qZJswZhV0J/Y9RlcXEPDmmH5vOSzMG2TKBVC2c+DRWLCccgZlE23eZDw
+	 +oomspFu6VsyQ==
+Date: Wed, 25 Sep 2024 10:04:41 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Peter Xu <peterx@redhat.com>
+Cc: Igor Mammedov <imammedo@redhat.com>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, Shiju Jose <shiju.jose@huawei.com>, "Michael
+ S. Tsirkin" <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>,
+ linux-kernel@vger.kernel.org, qemu-devel@nongnu.org, Fabiano Rosas
+ <farosas@suse.de>
+Subject: Re: [PATCH v10 02/21] acpi/generic_event_device: Update GHES
+ migration to cover hest addr
+Message-ID: <20240925100441.229790ba@foz.lan>
+In-Reply-To: <ZumetxyRro8RfC8h@x1n>
+References: <cover.1726293808.git.mchehab+huawei@kernel.org>
+	<bed4b2da51e0c894cc255f712b67e2e57295d826.1726293808.git.mchehab+huawei@kernel.org>
+	<20240917111921.7e95726b@imammedo.users.ipa.redhat.com>
+	<ZumetxyRro8RfC8h@x1n>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR14MB6224:EE_|PH8PR14MB7109:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1536a015-c219-4f9b-c1ac-08dcdd38bcfa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|1800799024|366016|80162021|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?pwiQtgvqTyjlE5dgMlukPjFagFamprp0AE2Iyzycz7e0YzGZNV09YKKsDnD5?=
- =?us-ascii?Q?lGslFj0KPWo+Z4ZDpm9IdOY7oSYX2mLLDwSDNY2OJawR9DIAYhy9sl4xCwPP?=
- =?us-ascii?Q?Gphk98ZB/nx9pDQdQT9A3HEuNLDzZBi52xXLhYfXrVl2X0BJ+mTXg0ulF7mp?=
- =?us-ascii?Q?glVpXsAgfyBDtDOAFo/awoSsFXUeK9g444qXmJH1jBDgX/BpHePTQhjC+Mcy?=
- =?us-ascii?Q?uN+87GrU5XVjfkMavD54slQFHEZhluaCVVQiK7BpyG1pPWTBRif8XYlkN7aq?=
- =?us-ascii?Q?Zzv9jjc5vC5AkF+uVqkqXIGUQE+/96rZ/yqTNNUvo4AwwU63rYAgSlVDAoOD?=
- =?us-ascii?Q?NHBYmddkru/Def+J8HXO3jnXb3psj93Cz6LztDjwzb/xxj61vVF7UIbL80bD?=
- =?us-ascii?Q?VB8tVPcAoI4iUC606iZKdpx72aoIeFXSJB/FSZMp1nzwSkaBPGWJ3TybYT44?=
- =?us-ascii?Q?rUXHsTNLkyqUlKALvqASWXXRUr5yZgN7rUmozYkMLLDDeelS4QLXv7M55zJr?=
- =?us-ascii?Q?IRy6WBff//7eRtbHbaGUBA69V43YZI5msPwZeOJBlvYbRlu6A1lXXN6tsMLQ?=
- =?us-ascii?Q?hWGQUrtTEpIalN1F4s4rykwaobyJrz8slPz3TzlxdpvJzya2yjDLDk+FjmbX?=
- =?us-ascii?Q?2FtbHeXlnqpPTZXB422zKxC6z0cMaNwBziXusQSpHjcuCP1/nivHvH7UzPYh?=
- =?us-ascii?Q?9+HektOLP75a5t4z7Igf95xzV49jWcB8GsBXaOSuKsUlVdcIepyy5s77lEMj?=
- =?us-ascii?Q?g1+etb7rz9pvINoJSe3+PhKc9sb+GzstE8am/eo13d2UQZ2DoJYtUJvO451b?=
- =?us-ascii?Q?2Hk/H5DGQqSDKdxGZ2If2mThj/tViJyidg1tdxxyxw7+rcje5YfBj82LSUB6?=
- =?us-ascii?Q?MUvpwUfi+qKvwdqsM0W1L9SyY+TJjQZ+Lmvj7h5OzLYxrG8b8+0oZBluV64l?=
- =?us-ascii?Q?k4246mMyYqT8zZaXhNYCBOWXPfP0CmJ4b0VQUatYoi8NhhmUOGOKdqlbXt+M?=
- =?us-ascii?Q?Clwn8DLEI+Ojwcp+XPt0rPWalljmq9qfUH1S5ouyk9saYVDu3Xvt37/1YCOy?=
- =?us-ascii?Q?v/jcJMIWCho7tZBhIfjcAQSW5x8hqmqzGCqAJjevXXy0K5ZbQ5kZj31m9hil?=
- =?us-ascii?Q?6oyLCokUvaalQwcZCUzTAwB6E7AkfxrN6/EbKZ23TzAh9v7a2qlZKvGGwxkk?=
- =?us-ascii?Q?b6KcCzhMDFkObpfEHAuRxl4mA7HxkFMv5xLMGLMMMRH5mgUWQawE2+MiNTjw?=
- =?us-ascii?Q?TrqgEnzexm6OHmX0mJaTU/PMGmhRGVEui1gHT2XyabNhucG7B599PUqlh4ON?=
- =?us-ascii?Q?V39N8NeE08NRFI1FeL8O9jkMOYyh6TccNXDlGN6dtSgYbGUiBoDG9NRA7fhn?=
- =?us-ascii?Q?IMyRGVWGvA7bs/v7HN2VCWtxEJ5vmteDvYc1mvYjmoMGxLQKSsZLyB75/1Y2?=
- =?us-ascii?Q?UKBtM28qhw4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR14MB6224.namprd14.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(1800799024)(366016)(80162021)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?YcxUoTxlQvQael89LJZ5tbMGO+Y6y3JORViE8sDAOdtGB+XPtqa/3SRwbZm3?=
- =?us-ascii?Q?E7oAwGDcVbb65Q7EmtAiwae7S6PjxNQ4JxCGzhZPvqTHElke2BY/CkuJ87jd?=
- =?us-ascii?Q?BBk7Dj8fwmiFifYAscOcre4CAziFeZkMfgNcYibd4nY6QBrY+1uiTvLCtZcv?=
- =?us-ascii?Q?xIB2IIW9WVdc9OE+N7Kit85y89bnLISsI0NRvVkEDr3QbDIcCJqdk02GO2bL?=
- =?us-ascii?Q?pTMtDTwxym2mVgryROAaHR5f0l7qII9YTBmLn4muKzJkuABcYdzqGyovW9oA?=
- =?us-ascii?Q?WNmy9VPrn8giiohbBXXpyV+i3hu/19jpODQXSI69C6QIbQPfSgzL8nxBX6Us?=
- =?us-ascii?Q?227DHDzFT5jIqFwiHVK9AiQDLOQTnOc85+y9/zI1R4vNbMAl0pDnQy8S0MPK?=
- =?us-ascii?Q?q6hE2VY1+WOOdzRf6LalyefAG1IrBAelv+LPijf0g/6sHvlMYB3cCSjyNcHV?=
- =?us-ascii?Q?uHfCN0d+gqcJvOJqIAThkDCov7CYNHPOiHtY9jWQ6woln1m45w+w4hVgWzNM?=
- =?us-ascii?Q?IVoSnSsLgyAFTJmlwAbhu99SPA2AurH8PU4KoQALx6P5zARiTMbpEk5kLguy?=
- =?us-ascii?Q?Bf1SgUKbfERI4WXQifEuU8SpqarILckekv4vew4noWNar9Ww3ZMeKvspgU8h?=
- =?us-ascii?Q?HV37LBAShpcf3LztHuCUpnsVlHAifBKrxhfZQOhoD08chvcsLm/Hk216NSDH?=
- =?us-ascii?Q?gWwKymBfNP+S47rBOy4/kAQFnRWKPnOKMrA3vx3+zKK6101BAchupneZLSwO?=
- =?us-ascii?Q?KqsgoRJGXc4Rz3i8cm6jUrSWB8Mk0rXXN7A8VZ5ZpA8QNB6VdbQZ155TUqdB?=
- =?us-ascii?Q?DTPRsjyu/9n14pLpHDp73gDmShLzc0B7J8jtQjnzfc0MnIgFXmB5MvFkdSAp?=
- =?us-ascii?Q?JS5w/i3O5EYvirepFr5XSHWgr7eMNY2/NRBIB6hrVVpuNbThGC4jCwtk6Qoc?=
- =?us-ascii?Q?/UXTvDYQPWEONl6ztEmOkGbaOZOuSSofp2w80VJVmSLEfX29B3MnE70GxzaN?=
- =?us-ascii?Q?hEnYutLAFYlvXGauVIYxvnrlaiNjybm+boyynx8rp/Yq8Jxl4R6I7kGkCmNi?=
- =?us-ascii?Q?0NMcPtPLfbhoqK/e8FLqunxvl5F+7s74mUSzSODr+rZIGJSoIfeLdZy6grSB?=
- =?us-ascii?Q?2LS39gnMVPBFVywCGnoepMaSsTZDbSMAnM0mEdsk2vHUcQ2iKbUTU/E4ko7C?=
- =?us-ascii?Q?gh1qo/qWwHRYX9Vset/QcggxyARCoLNYtOe1j9fTZEBL6+VJG9nd9MHTY95S?=
- =?us-ascii?Q?E08vOHOESzMTUdH3tIs10JxwR+M1hPVuTUrRil0uE1tUd5PO8n3YeEoq5FPh?=
- =?us-ascii?Q?u87R7fQygB8aQ0ci+4V0ppruOggQTQVqXjSZEhcLEi4ZGuZ71nqAmK/eUnWK?=
- =?us-ascii?Q?iJC1AsY2Hh0Dj8H7t9EDwmMEl6biKwrNPm3fo1FbuCZTlrH5YU0QAlyFJEfY?=
- =?us-ascii?Q?sD+JbvSIfVvVy0GIRY12Pcbjv4SFD6gV/Oc4jLEEXVZ627qk4vYyi0g9ugGQ?=
- =?us-ascii?Q?C+0egvVgU0xdd4vweAycMuAeDwUTSppVdGMb9BiUToHJjNncmNOc08uJh8de?=
- =?us-ascii?Q?Y8ztQww4agtOGsiKDWcO1PbYuGmHohe8tM+apZ9R?=
-X-OriginatorOrg: kneron.us
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1536a015-c219-4f9b-c1ac-08dcdd38bcfa
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR14MB6224.namprd14.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2024 08:04:54.0065
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: f92b0f4b-650a-4d8a-bae3-0e64697d65f2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SRXRnBcL/JsxmkZCVNkS2IvHefvTWpfnBed0tP2+dAGccYI36i4/9hRn/cloewz1AZBgVs6xR7pSkcaXMkpk3g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR14MB7109
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Since there are no registers controlling the hardware parameters
-IC_CAP_LOADING and IC_CLK_FREQ_OPTIMIZATION, their values can only be
-noted in the device tree.
+Em Tue, 17 Sep 2024 11:22:31 -0400
+Peter Xu <peterx@redhat.com> escreveu:
 
-"bus-loading" is used to declare the value of IC_CAP_LOADING, and
-"clk-freq-optimized" is used to declare IC_CLK_FREQ_OPTIMIZATION = 1.
+> On Tue, Sep 17, 2024 at 11:19:21AM +0200, Igor Mammedov wrote:
+> > On Sat, 14 Sep 2024 08:13:23 +0200
+> > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> >   
 
-Signed-off-by: Michael Wu <michael.wu@kneron.us>
+> > what I would do:
+> >   add ghes_needed_v2(): return  s->ghes_state.hest_addr_le;
+> > 
+> > and then instead of reusing vmstate_ghes_state would add new
+> > vmstate_ghes_v2_state subsection that migrates only 
+> >   VMSTATE_UINT64(hest_addr_le, AcpiGhesState)
+> > field.
+> > 
+> > btw: we probably don't need ghes_addr_le for new code that
+> > uses HEST to lookup relevant error status block.
+> > but we should still keep it for 9.1 and older machine types
+> > as they expect/use it. Separate subsections would work with
+> > this req just fine.  
+
+Ok, so, if I understood it right, the enclosed patch should do the
+job, right?
+
+> Right, if we need bi-directional migration we need above and a compat
+> property (or VMSTATE_UINT64_TEST() would work too, iiuc).
+> 
+> OTOH VMSD versioning only works for forward migration, not backward.
+
+I don't think bi-directional migration would work. See, with
+old version, we have:
+
+- Just one Error source block structure, only for ARMv8 using synchronous
+  notification (SEA).
+- The offsets to access the error block structure and the memory
+  position where the OSPM will acknowledge the error assumes a single
+  error source;
+- such offsets come from ghes_addr_le bios pointer (we will rename it to
+  hw_addr_le at the cleanup patch series).
+
+With the new versions, we'll have:
+
+- at least two notification sources on ARMv8 (SEA and GPIO). We may
+  end adding more with time;
+- other architectures may also have support for bios-first hardware
+  errors;
+- the number of error block structures is now read from HEST table
+  (so it needs that hest_addr_le will be stored at AcpiGedState;
+- the offsets to retrieve the addresses are now relative to the offset
+  at hest_addr_le.
+
+The new error injection code, which uses either hest_addr_le or
+ghes_addr_le (now hw_addr_le) should be able to properly generate
+errors from a VM created on 9.1, as it will check if hest_addr_le
+is not zero. If it is zero, it will call a backward-compatible
+code:
+
+    acpi_ged_state = ACPI_GED(object_resolve_path_type("", TYPE_ACPI_GED,
+                                                       NULL));
+    if (!acpi_ged_state) {
+        error_setg(errp, "Can't find ACPI_GED object");
+        return;
+    }
+    ags = &acpi_ged_state->ghes_state;
+
+    if (!ags->hest_addr_le) {
+	/* Assumes just a single source_id */
+        get_ghes_offsets(le64_to_cpu(ags->hw_error_le),
+                         &cper_addr, &read_ack_register_addr);
+    } else {
+	/* do a for at the HEST table seeking for an specific source_id */
+        get_hest_offsets(source_id, le64_to_cpu(ags->hest_addr_le),
+                         &cper_addr, &read_ack_register_addr, errp);
+    }
+
+Now, a VM created with 9.2 will have multiple sources. The location of the
+read_ack_register_addr depends on the number of sources, which can't be
+retrieved without a VIOS pointer to the location of the HEST table
+(e. g. ags->hest_addr_le).
+
+So, a 9.1 QEMU with a VM created on 9.2 won't be doing the right thing
+with regards to the vaule of the ack offset, thus with RAS errors not
+working. I can't see any way to make it work.
+
+> >   
+> > >  static const VMStateDescription vmstate_ghes_state = {
+> > >      .name = "acpi-ged/ghes",
+> > > -    .version_id = 1,
+> > > -    .minimum_version_id = 1,
+> > > +    .version_id = 2,
+> > > +    .minimum_version_id = 2,  
+> 
+> (and IIUC if we set min ver=2, even forward migration should fail.. better
+>  test it with an old binary, migrating back and forth)
+> 
+> > >      .needed = ghes_needed,
+> > >      .fields = (const VMStateField[]) {
+> > >          VMSTATE_STRUCT(ghes_state, AcpiGedState, 1,  
+> >   
+> 
+> Thanks,
+> 
+
+Thanks,
+Mauro
+
 ---
- .../bindings/i2c/snps,designware-i2c.yaml     | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml b/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml
-index 60035a787e5c..f954f5014a00 100644
---- a/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml
-+++ b/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml
-@@ -87,6 +87,16 @@ properties:
-       This value is used to compute the tHIGH period.
-     default: 300
+[PATCH] acpi/generic_event_device: Update GHES migration to cover hest addr
+
+The GHES migration logic at GED should now support HEST table
+location too.
+
+Increase migration version and change needed to check for both
+ghes_addr_le and hest_addr_le.
+
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+
+diff --git a/hw/acpi/generic_event_device.c b/hw/acpi/generic_event_device.c
+index c5acfb204e5f..bd996d01390c 100644
+--- a/hw/acpi/generic_event_device.c
++++ b/hw/acpi/generic_event_device.c
+@@ -377,6 +377,34 @@ static const VMStateDescription vmstate_ghes_state = {
+     }
+ };
  
-+  bus-loading:
-+    description: |
-+      This property should be 100 or 400 for high speed mode.
-+      This value is used to compute the tHIGH period and the tLOW period.
-+    default: 100
++static const VMStateDescription vmstate_hest = {
++    .name = "acpi-ghes",
++    .version_id = 1,
++    .minimum_version_id = 1,
++    .fields = (const VMStateField[]) {
++        VMSTATE_UINT64(hest_addr_le, AcpiGhesState),
++        VMSTATE_END_OF_LIST()
++    },
++};
 +
-+  clk_freq_optimized:
-+    description: |
-+      Thie property is used to declare whether the internal latency is reduced.
++static bool hest_needed(void *opaque)
++{
++    AcpiGedState *s = opaque;
++    return s->ghes_state.hest_addr_le;
++}
 +
-   dmas:
-     items:
-       - description: TX DMA Channel
-@@ -146,4 +156,13 @@ examples:
-       interrupts = <8>;
-       clocks = <&ahb_clk>;
-     };
-+  - |
-+    i2c@ce500000 {
-+      compatible = "snps,designware-i2c";
-+      reg = <0xce500000 0x1000>;
-+      interrupts = <37 1>;
-+      clock-frequency = <3400000>;
-+      bus-loading = <400>;
-+      clk-freq-optimized;
-+    };
- ...
--- 
-2.43.0
++static const VMStateDescription vmstate_hest_state = {
++    .name = "acpi-ged/ghes",
++    .version_id = 1,
++    .minimum_version_id = 1,
++    .needed = hest_needed,
++    .fields = (const VMStateField[]) {
++        VMSTATE_STRUCT(ghes_state, AcpiGedState, 1,
++                       vmstate_hest, AcpiGhesState),
++        VMSTATE_END_OF_LIST()
++    }
++};
++
+ static const VMStateDescription vmstate_acpi_ged = {
+     .name = "acpi-ged",
+     .version_id = 1,
+@@ -388,6 +416,7 @@ static const VMStateDescription vmstate_acpi_ged = {
+     .subsections = (const VMStateDescription * const []) {
+         &vmstate_memhp_state,
+         &vmstate_ghes_state,
++        &vmstate_hest_state,
+         NULL
+     }
+ };
 
 
