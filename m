@@ -1,149 +1,136 @@
-Return-Path: <linux-kernel+bounces-339422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E3E99864DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:32:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C011C9864DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:32:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E93F728A0EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:32:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0AF21C2140D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:32:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B2361FD8;
-	Wed, 25 Sep 2024 16:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 350E74DA04;
+	Wed, 25 Sep 2024 16:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="IBnRxkLL";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="D2wrJykN"
-Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TdCU3z9q"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984ABDDC5
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 16:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F31DDC5
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 16:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727281895; cv=none; b=j/xib6zI0gixF8xHco1vPna6QNgklEygAbECbJDuyJ4/HgnFQqO0x2Xmoh+m+DkZ3r6df9MSD/E51wgaSKctVieDLwoEn/LSs/0sTbLrLy0UeGIftyPeiaG1hieDF1c6xxd72e2xIUL1dEb2l35gz8ldYFlR7rmCJSZhsygl29A=
+	t=1727281879; cv=none; b=ZpmkDzYDB8XVaHazRpbE/MYjiTyrh/uQzTQXVJ8/9E8PnGcIPUWpwDTuVTHxj14GAlqWJ2VJM0oXqJUdu1B3KOo8S0KnRUvx1RzCQRe1u3It6RftTO3xsJrix/htpMvgGuIfja1x2XUnps/PNJWNKmrsvnjGl+ps757BNtmBIAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727281895; c=relaxed/simple;
-	bh=0wHfzOc496HvVN4fYLnjqiOw9aqvqVmLd29lNZ/5x2k=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=qStOfWQxWQcHVujZZsUg1mMZdI8uAvoy1cBLywwkOab3WUb6N69e+rGK1ZkD4eVQbPFmD8OxS0U4+Z2VxDfVhub2bEeR/W+P7a7OcHk8R6zPF6T/3Hs53qbBiKV5X+ltLmFlljIrIVrLqiu3A/wzxlkUs5xSYo1D1juoJKVifdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=IBnRxkLL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=D2wrJykN; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id A2E031140102;
-	Wed, 25 Sep 2024 12:31:32 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Wed, 25 Sep 2024 12:31:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1727281892;
-	 x=1727368292; bh=cCq04gC5CE/gJbEL0QfCDxqzOjOqobJNsPfOX58NLBw=; b=
-	IBnRxkLLrb010iQ/gUc84zgST743DMKadxTtEwL13pVBIpYzdesTCxZFf/yPvqy8
-	YK087mD+Dqq7Yw9NYIZhCSDh4oRZwkg+dUKrzQjtN5rI2hZJBdGYXolNUy1NCLKK
-	ga7mHWexC0zYztgefMFYzGNUV/YCMGcPzDDbK5pKvZLvfDSKAFznSiQBDpAJ7fOK
-	tRJIEIZz3wMv3SlMK/TzEsBC6rBevcYdoNPWmZgXVFUQfZh4gkJQL5bD0NVfInrm
-	aBLd1VqZqRkII92LZ+OFFurhVW1mmgZ3mlHU69HAbPJnPlPFDMwb4bfAUCTTRh5R
-	3iiSvjg7rWTjqEqHcIDGeQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727281892; x=
-	1727368292; bh=cCq04gC5CE/gJbEL0QfCDxqzOjOqobJNsPfOX58NLBw=; b=D
-	2wrJykNvjRJ9Y5/k2wW9guig+xhI50AS4BT3d3+dK/UbfYhpuW2/FFnl8UTRn7xk
-	ONzHeaipwB9OHBEUMUmVO0jCfI7P26SGVF8lURjRsiEygrQqLSFz590YTN4DpPiU
-	FctjapkPxqxkkkjO6WVzx6/HaLDVuJFBw58+1Def7PgAV7D+xtbnAhOyaH7lnCnn
-	vIMrNYotV4AGhBjZSea4F7Zj7D+Bi+9W16WQrrP29mGXnLEw5Myk0GbuqlzoH59l
-	dXBVpFmoTV2CXDHBQJu+8UXut2HbleiK5kLabqHSAZjYCuQqfIWI+cWNS9gaDPSz
-	TRJrfcIkztuKOB8XotZxw==
-X-ME-Sender: <xms:5Dr0ZvFJTkB8RM4OocXHby-YT8-dFMfWGp48-nxhAcqkRBUpLXVKDQ>
-    <xme:5Dr0ZsUd5ifr2VHUe-t9GBg4ddxo_h8t3Ml65XbBTgT2ise2ebQA-VuL8yUxQF1ht
-    WhG2OJMC_EllM7N1UQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddthedguddtvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedu
-    fedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnghgvlhhoghhiohgrtggthh
-    hinhhordguvghlrhgvghhnohestgholhhlrggsohhrrgdrtghomhdprhgtphhtthhopehm
-    rghrvgigseguvghngidruggvpdhrtghpthhtohepkhgvrhhnvghlseguhhdqvghlvggtth
-    hrohhnihgtshdrtghomhdprhgtphhtthhopehfvghsthgvvhgrmhesghhmrghilhdrtgho
-    mhdprhgtphhtthhopehsrghrrghvrghnrghksehgohhoghhlvgdrtghomhdprhgtphhtth
-    hopehshhgrfihnghhuoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvihhlrdgr
-    rhhmshhtrhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrh
-    hmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthho
-    pehimhigsehlihhsthhsrdhlihhnuhigrdguvghv
-X-ME-Proxy: <xmx:5Dr0ZhIDtvqkvsXrdAzAb6pLKj-avMeob7RcvNvVXwLBoNltu70mQQ>
-    <xmx:5Dr0ZtHmvPuHkAaVr5Zt7QmHxW5bgs-OCNkh2HC6gEKohVwifpuXCg>
-    <xmx:5Dr0ZlXRvSkMYjY7vv7xNdIJooRqFsDWok9g30hm42oTiksxBbf1tw>
-    <xmx:5Dr0ZoMbJ4HIkOG_3My56NI1EBmkE6JhMZC_dsHnWq3Eu7fkYU6-XA>
-    <xmx:5Dr0ZusnQ2u9S1uWA4lEVuLLkvNUSKu3nZJuivI38dZQeFvwOo1v-S2H>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 24ED12220071; Wed, 25 Sep 2024 12:31:32 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1727281879; c=relaxed/simple;
+	bh=uWKo7zRK/Xmqx0Cq/oLyPS+UkQg7iz02ZLA2k1+FPBE=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type; b=sr43sBjquYa0PPLGv86inbj+9ILEM1myMzDhGHRer6ScV0pwDFYd6qB6gNVNALfCgrEppz7fbEQPIeVe5jZodtymKnupauxExJfG7VSLrAKuObPi5u6u5cQiM4rcYGhfSDR61Z4owGnGw9P3OnbAiEPNiXeQ/cVkI3C4z9EGFGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TdCU3z9q; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a8a706236bfso3339966b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 09:31:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727281876; x=1727886676; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eP50uSWjV+hJIxa6UNz8iFm87kac5ssUVDTap0zM3Fw=;
+        b=TdCU3z9q8W0aPIWmts6ByTFrn0exDAIxEyuhg5UGWlhVe5hdF9Z885VPGKfCrL2Eq4
+         dzIX/OipaoduyvD0IqDTWNjO48yqzv9hLYxh/U0WPytzKwj4eKBiridm3PIs/Y/0t2Iz
+         L+294lLSgXpKXv1Vsg7Rht7eI3kwNMUflRaaKkpYlED6zxQqCeO5F986SmYmYqGwm82a
+         ZJoFolezMVcuISkytHXotqatSdF6ZQzBbK/GMreJNHHlBKd2mI5aeNXzOLGcmZd1nPIo
+         h15Uz+m0591YkDKeQgSTHvzPQ7OrWVNDkR3N0pvDdCTWzTIxnvTBXbtqBHBUKg25E7oi
+         TDJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727281876; x=1727886676;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=eP50uSWjV+hJIxa6UNz8iFm87kac5ssUVDTap0zM3Fw=;
+        b=cn+BIV1BpklzT1l/DfubAUPZt797ZMLZ4/H30Ymhbz++T/kRPVTS0TIs5M5dsbG0nD
+         B7qYUyJIPI/NuCNPatA/4LOPCSXE0eNRUo3qrxdjn7+oKqUYmI/RLRNFw1kHtgx6/X4c
+         KgXzfyBM9mH3p4fquAkiUFj44xKzbmPibK5g2WIeNa2sduiC4f7P4C1sMDlmlJ+erUpe
+         3YT/g6RI+AQGvKHs3M4Z06evRgZvUw6r9j3PDSbHMttykkNXIOKVcLvHrVAA4l9PIJVd
+         POFGlUn9cIjTqAPfzCNoJC5T5oKRUjifE4J5itKorZfztuenfieMeERx+Gcf6Vb7Wstg
+         wU7Q==
+X-Gm-Message-State: AOJu0YziFY32X1ZjoEzzg2CLRYHH/JrNNshZL4CVsYwn+IJkQA64NvJ4
+	u+GmPxhcliiywD9JyOyosV2jyTCoh5X6vlpzSNhlryUmLIpyR4S6talwA4S4ajqnIF61Hs6nq14
+	FBI8=
+X-Google-Smtp-Source: AGHT+IGmxegFNIY1ldIAhp9rFEaHzPfraX1h4OI0uqEN5qAoT9hzjyowvJ4r+TpycZKIzMlnDaSIlA==
+X-Received: by 2002:a05:6402:2185:b0:5c4:64e6:55a4 with SMTP id 4fb4d7f45d1cf-5c7206211afmr4368783a12.12.1727281876000;
+        Wed, 25 Sep 2024 09:31:16 -0700 (PDT)
+Received: from [192.168.0.25] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c877a6c985sm32933a12.80.2024.09.25.09.31.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Sep 2024 09:31:15 -0700 (PDT)
+Message-ID: <e4a03e2b-63e1-4247-a57e-10bcb75cf7ac@linaro.org>
+Date: Wed, 25 Sep 2024 17:31:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 25 Sep 2024 16:31:00 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Marek Vasut" <marex@denx.de>, linux-arm-kernel@lists.infradead.org
-Cc: kernel@dh-electronics.com,
- "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
- "Fabio Estevam" <festevam@gmail.com>,
- "Jeff Johnson" <quic_jjohnson@quicinc.com>,
- "Neil Armstrong" <neil.armstrong@linaro.org>,
- "Pengutronix Kernel Team" <kernel@pengutronix.de>,
- "Saravana Kannan" <saravanak@google.com>,
- "Sascha Hauer" <s.hauer@pengutronix.de>, "Shawn Guo" <shawnguo@kernel.org>,
- imx@lists.linux.dev, linux-kernel@vger.kernel.org
-Message-Id: <4897ec78-b82c-415d-88dd-5092fa009f77@app.fastmail.com>
-In-Reply-To: <03b05be4-2276-4e70-9480-2b1467df4ef6@denx.de>
-References: <20240925160026.84091-1-marex@denx.de>
- <486054ad-20c2-45f4-a457-c9334afb53ed@app.fastmail.com>
- <03b05be4-2276-4e70-9480-2b1467df4ef6@denx.de>
-Subject: Re: [PATCH] soc: imx8m: Probe the SoC driver late
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
+ "Signed-off-by: Stephen Rothwell" <sfr@canb.auug.org.au>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: b4 commit in -next breaks b4 on next
+Cc: lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 25, 2024, at 16:09, Marek Vasut wrote:
-> On 9/25/24 6:04 PM, Arnd Bergmann wrote:
->> On Wed, Sep 25, 2024, at 16:00, Marek Vasut wrote:
->>> With driver_async_probe=* on kernel command line, the following trace is
->>> produced because on i.MX8M Plus hardware because the soc-imx8m.c driver
->>> calls of_clk_get_by_name() which returns -EPROBE_DEFER because the clock
->>> driver is not yet probed. This was not detected during regular testing
->>> without driver_async_probe.
->>>
->>> Attempt to fix it by probing the SoC driver late, but I don't think that
->>> is the correct approach here.
->> 
->> I think the correct fix would be to propagate the -EPROBE_DEFER
->> and return that from imx8_soc_init(), so it gets retried again
->> after the clock driver.
-> I already tried that, but if I return -EPROBE_DEFER from 
-> device_initcall, it doesn't get retriggered . I suspect EPROBE_DEFER 
-> works only for proper drivers ?
+Hey.
 
-Right, of course. And unfortunately it can't just register to
-the fsl,imx8mm-anatop/fsl,imx8mm-ocotp/... nodes because they
-all have a driver already.
+On commit 2b7275670032a98cba266bd1b8905f755b3e650f (HEAD -> 
+b4/master-24-11-25-ov08x40, tag: next-20240925, linux-next/master)
 
-On the other hand, making it a late_initcall() defeats the
-purpose of the driver because then it can't be used by other
-drivers with soc_device_match(), resulting in incorrect
-behavior when another driver relies on this to enable
-a chip revision specific workaround.
+exists
 
-     Arnd
+commit 3a904d2c771115154380caaae7ffaaf0095fb88f
+Author: Benjamin Tissoires <bentiss@kernel.org>
+Date:   Fri Jul 5 14:07:06 2024 +0200
+
+     HID: fix for amples in for-6.11/bpf
+
+     To: Jiri Kosina <jikos@kernel.org>
+     Cc: linux-input@vger.kernel.org
+     Cc: linux-kernel@vger.kernel.org
+     Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
+
+     ---
+     Changes in v2:
+     - EDITME: describe what is new in this series revision.
+     - EDITME: use bulletpoints and terse descriptions.
+     - Link to v1: 
+https://lore.kernel.org/r/20240705-for-6-11-bpf-v1-1-1960e3165c9e@kernel.org
+
+
+
+     --- b4-submit-tracking ---
+     # This section is used internally by b4 prep for tracking purposes.
+     {
+       "series": {
+         "revision": 2,
+         "change-id": "20240705-for-6-11-bpf-a349efc08df8",
+         "prefixes": [],
+         "history": {
+           "v1": [
+             "20240705-for-6-11-bpf-v1-1-1960e3165c9e@kernel.org"
+           ]
+         }
+       }
+     }
+
+Which means if you run "b4 prep --edit-cover" that is used as the base 
+for your b4 series.
+
+You can't revert 3a904d2c771115154380caaae7ffaaf0095fb88f so you 
+basically can't use -next for b4 at the moment.
+
+---
+bod
 
