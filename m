@@ -1,157 +1,110 @@
-Return-Path: <linux-kernel+bounces-339640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7028C986846
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 23:24:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0E1198684A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 23:26:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 266F528462C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:24:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF1AD1C2191A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA00614D70B;
-	Wed, 25 Sep 2024 21:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF7B156677;
+	Wed, 25 Sep 2024 21:26:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="alQIhLYj"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IYDBYT3Q"
 Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BFC6157A72
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 21:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C081CF93
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 21:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727299461; cv=none; b=bdIkG0Z6o3GrgtPyhe18K1y3RB+CypJQRGGqnLAmYauny9Fb/DgWw28bKtg8RYud4oPCAUKx1jGG8KIcFT///O4q1xTKenDbSJIV4HovE1VIYBPIZwJsvEwPUslnxS+tclDiqZu598sBoc7vTFNqMPFaoEF1udEnqmN8mL+lugc=
+	t=1727299592; cv=none; b=XnXwL6mUmk/qKpEP3c8888zKbUDEb53CwX2WF6b2QgxR0pywSRKsA2y9+S9vgbsmFpYWKVJeO/7KSaknDTkRSkwXZ7oBwSiKZYQgHnmPBJD6V+L+RPeFFQKtgB90Nxfr3TgwfZXwGCyg7ErvNZ4L/aSIIH1by6M3vH9QWAZIA8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727299461; c=relaxed/simple;
-	bh=ENI533Wvk9fW22NzjUB/wng+S3KXlrAb+HlIIZDYhbY=;
+	s=arc-20240116; t=1727299592; c=relaxed/simple;
+	bh=zaF/Dm1tDIioJLLUoaqqYW8eTsn35uabr/Gky5vZDuM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ooOkQVWtLecPIsXQEKH6cjszQLIbVaXAOqIfE7sxbB9zPQVRz2lckCSM1ULouKaeHRswA62ppEqgIoJsXxaGHjt5NE0pciG9YUaNcXriZSzsTlYiP6YeD6946NO4b1qTTCq/ziz0abx/lYlsEnH2Uo/SWojTr/xreol1IqB40xQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=alQIhLYj; arc=none smtp.client-ip=209.85.208.169
+	 Content-Type:Content-Disposition:In-Reply-To; b=oLyzpwhlPcpAEJ+1AX+kZSRdS5oxzdQsZBx4/4Pk6M9sji/a9REPEuLGx4qjbWffeo/hiK/v+mayUiNTlCMhfQ8XMHD6GMEomOXdoJjOLydIMFYXxnARCOObkUS03KySNjYihx3U4uV3ILAYd8r7TQM4f/KW8Sjga7kSD1WcF9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IYDBYT3Q; arc=none smtp.client-ip=209.85.208.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f75428b9f8so3733261fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 14:24:19 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f75c0b78fbso3185191fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 14:26:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727299457; x=1727904257; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=vSSQUfbDC1+51k8Yn6Wcx1enae2/noyB/PVtp31Onqc=;
-        b=alQIhLYjYTL8l6z7Xx9js5CCY0H20E7OTWT3XTSKC+mfn/a9v4i4GccoRFX+GUrbhw
-         pcRDruWayI55HojxG28Ao1oOICy6ASOgxNz5PELqCUWE72Xmr/sCVlnYKtYOTc9xWYfJ
-         3xuaiU5yWbCQA2KwIl0XnoVS2p6tQaz6VKizgjlFIGQjFPVAV38ogElNB6xZp2boltWw
-         3Z0isUmWTSrhAke8rygY+hHCFwzMzJfepwcimmylz0Y+KbBdHzmKTkWQ5wmj1of5DAN0
-         ZRi5hxr2S/ZPUh73pbf0CBJfYljZzQWXm86+qxSMZ0DwpV105liMTz7wURltLm7+w0W3
-         XKig==
+        d=linaro.org; s=google; t=1727299589; x=1727904389; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TOYkNpvty++FfWXgNtcgpq0qmRgQhoDIUQ1gLZ+9OCs=;
+        b=IYDBYT3QZccc47c255acGbPbeCeA+UsAO4OW/go653zzSD55oGeNex13I0DxH0uDfM
+         W2tvCFIbrJJBP67oW2g32v0uXJCO83eazpjL0ki6HK8Mt5ZjhECjtRS5o8/aPgT2rYet
+         um6fiquUnnVUQEyyy5/GQe62VYRoaD6PI3pJwLih+CsbLacVzGr5nxyGY89di9q3Aw5C
+         pD2zMHDSBZJ2SiYhBxjOmfTQTMUYCO4G6GoQd8gG05+iuGT7VdhAVX1xwP6JVsC03Bh5
+         squw75JwzPOSJszDX1WqAcg5AmLCm56Rt93pXxSFJzwogwkvScDQZqdYGy/3nfFdsguX
+         2tfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727299457; x=1727904257;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vSSQUfbDC1+51k8Yn6Wcx1enae2/noyB/PVtp31Onqc=;
-        b=Djdb2TXacSjvfttTatw8/taRnQR/HrMY8VYReNztZMITl4Og0TCsBqArAFC6xzalqM
-         f/n83cQtYfv0JkklDfqDNiG7gpVwsC1rVsbjMsOzerhi4AZ1gaaO4xrwAFUjdviPGzbh
-         KRXeyeyNaffxUaiv0ynecOuzydwyCV1kvOS2juj5mIH3YQz4jP8CKoCiDTHtg5Ybhz75
-         16ho7BPrccj/FEljPKUS9+lG1o7hOhyCgc0PzelPhiUok8RO1sEu0n7hj+yfeDduc6pP
-         EhzqGsw1o57XSFLJV/0BSxzIIGm8XPEnIi3Wc/XNIr2WlyLemrt7fRjtDDlW0+e1y1IH
-         vzCA==
-X-Forwarded-Encrypted: i=1; AJvYcCXlSSwv+pmJ0ixqlCQS/Jv8pty/5Fanvy/PvSixYvSJqFwwPKHr8hk+pyqBBTpmI+oRdT5AXgLJpsY2Nwo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1IKt0gWZPW1PgKi7pknPNaesbe1J+HheDdDRf2/JWFxEv96Ja
-	CQD9ZW8FD/r1NRLgiPw4WNzeJqE7QwQyzrtAenlf2lUOq7z795JisUh8WYel2/8=
-X-Google-Smtp-Source: AGHT+IH3/LP3ilxbDfmA6pTL0SoDzTXi6TCiYTvAxyyZOZ/hEkaOkOMnHWfB/zS+ShC1mBJZo4SXyg==
-X-Received: by 2002:a05:6512:e84:b0:536:a7a4:c3d4 with SMTP id 2adb3069b0e04-5387755ced1mr3677792e87.39.1727299457320;
-        Wed, 25 Sep 2024 14:24:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727299589; x=1727904389;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TOYkNpvty++FfWXgNtcgpq0qmRgQhoDIUQ1gLZ+9OCs=;
+        b=TAR+PxobWCk3K2UanpxMPVEnCbahwI+cFrZFMoupubrJAPBYHed/JbyM41dCpC270w
+         FRWvse+OQNfsuBR6bTrtXhktvhDgTdXFU3JBwRBmN5Wdt3gNIIlXpsCwIRqupVVqbVHc
+         cJ0kCk2ZP4lvOV3vZa1YKOrskOwKvcqmm4BTxtFqAYtqsAhhesx9CginDDyYy3jAx3hQ
+         c6uOadHuN62Y072QtIzRqx488+jferOGCWZjpvJYDHNz1TPvxwOxhxnLYN2KWerST+C5
+         dTOh3iWhluBZQnQy1hgiGoXSuH7XijxGRNVeR4/0MOFYJES681CWVoDb/aYw+jQEPM80
+         02Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbNXc1iqPbBfuDLqkmynk8DobsB8uMO+DxkrYVfvYi99X7sKxDrZFG9h9OIYpj9onFTPDgWTvIvRN0SFo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHAaSpDqNKpYuM8fxBT/oj5JazNucIb0G9LhhBWUA3JYk2hgf0
+	ySyyRUIXI7mmxpBeyZWQmEdJw74awCK4e5i69Cya3aBYdPdpv2tfk8kQB7rN5IE=
+X-Google-Smtp-Source: AGHT+IEmV7veckkGCnJaS53c+RIOeWgYMFU3i3KFTcPwIhFLJpfjINi6uUsM/Jg8x2BKOpYRIDVosw==
+X-Received: by 2002:a05:651c:50f:b0:2f7:939f:a47f with SMTP id 38308e7fff4ca-2f915fdbbe0mr29744371fa.11.1727299588616;
+        Wed, 25 Sep 2024 14:26:28 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53896ea4ce9sm60186e87.293.2024.09.25.14.24.14
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f8d289b61fsm6086821fa.111.2024.09.25.14.26.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 14:24:15 -0700 (PDT)
-Date: Thu, 26 Sep 2024 00:24:12 +0300
+        Wed, 25 Sep 2024 14:26:27 -0700 (PDT)
+Date: Thu, 26 Sep 2024 00:26:24 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Cc: heikki.krogerus@linux.intel.com, tzungbi@kernel.org, jthies@google.com, 
-	pmalani@chromium.org, akuchynski@google.com, Benson Leung <bleung@chromium.org>, 
-	Guenter Roeck <groeck@chromium.org>, chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 8/8] platform/chrome: cros_ec_typec: Disable auto_enter
-Message-ID: <25dcuu7bli47etvyijpi4winx4t42jwjq5ld2de3vmzkucic5j@h3wejwqyo7p2>
-References: <20240925162513.435177-1-abhishekpandit@chromium.org>
- <20240925092505.8.Ic14738918e3d026fa2d85e95fb68f8e07a0828d0@changeid>
- <vnemjw6uo3sydriabdrzwinbnam2xitrezrw3ztcymi63zakep@2rruplyjzuol>
- <CANFp7mVir-XEuVBd+kbQq0+5Si0CBo8TNxcdNpG6X+PDR-J1Zw@mail.gmail.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-usb@vger.kernel.org, Ajay Gupta <ajayg@nvidia.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Haotien Hsu <haotienh@nvidia.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Utkarsh Patel <utkarsh.h.patel@intel.com>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	Wolfram Sang <wsa@the-dreams.de>, LKML <linux-kernel@vger.kernel.org>, 
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 0/2] usb: typec: ucsi: ccg: Adjustments for common code
+ in two functions
+Message-ID: <jjsbnitbajdw7dc4plkbb55ezl2cdbnrfws7hnoigbzasvdzua@puhrwwlu4lvv>
+References: <b890361e-e99b-43da-8571-7478b5eab475@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANFp7mVir-XEuVBd+kbQq0+5Si0CBo8TNxcdNpG6X+PDR-J1Zw@mail.gmail.com>
+In-Reply-To: <b890361e-e99b-43da-8571-7478b5eab475@web.de>
 
-On Wed, Sep 25, 2024 at 10:39:00AM GMT, Abhishek Pandit-Subedi wrote:
-> On Wed, Sep 25, 2024 at 10:03 AM Dmitry Baryshkov
-> <dmitry.baryshkov@linaro.org> wrote:
-> >
-> > On Wed, Sep 25, 2024 at 09:25:09AM GMT, Abhishek Pandit-Subedi wrote:
-> > > Altmodes with cros_ec are either automatically entered by the EC or
-> > > entered by typecd in userspace so we should not auto enter from the
-> > > kernel.
-> >
-> > This makes policy decision for the whole platform. Consider somebody
-> > running normal Linux distro on chromebooks. Can this be configured by
-> > the userspace itself?
+On Wed, Sep 25, 2024 at 07:31:04PM GMT, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 25 Sep 2024 19:19:01 +0200
 > 
-> This is just the default for when the driver registers. You will then
-> find that there is now a sysfs entry for auto_enter that you can
-> control from userspace to allow you to auto-enter the mode on partner
-> attach (which you could probably write a udev rule for).
+> A few update suggestions were taken into account
+> from static source code analysis.
+> 
+> Markus Elfring (2):
+>   Use common code in ccg_write()
+>   Use common code in ccg_read()
+> 
+>  drivers/usb/typec/ucsi/ucsi_ccg.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
 
-I think, a usual policy is to handle everything automatically, unless
-userspace configures it in a different way. Otherwise it might be really
-surprising to users, if the kernel expects an action from the
-non-existing userspace agent.
+For the series:
 
-> I still need to send a follow-up for how to handle auto-enter when
-> there are multiple modes available on the partner that are all
-> enabled. This first patch series is mostly about supporting existing
-> use-case for ChromeOS.
-
-Doesn't EC decide that, which AltMode to select?
-
-> > > Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-> > > ---
-> > >
-> > >  drivers/platform/chrome/cros_ec_typec.c | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> > >
-> > > diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/chrome/cros_ec_typec.c
-> > > index ec13d84d11b8..e06a0f2712ce 100644
-> > > --- a/drivers/platform/chrome/cros_ec_typec.c
-> > > +++ b/drivers/platform/chrome/cros_ec_typec.c
-> > > @@ -294,6 +294,7 @@ static int cros_typec_register_port_altmodes(struct cros_typec_data *typec,
-> > >       desc.svid = USB_TYPEC_DP_SID;
-> > >       desc.mode = USB_TYPEC_DP_MODE;
-> > >       desc.vdo = DP_PORT_VDO;
-> > > +     desc.no_auto_enter = true;
-> > >       amode = cros_typec_register_displayport(port, &desc,
-> > >                                               typec->ap_driven_altmode);
-> > >       if (IS_ERR(amode))
-> > > @@ -314,6 +315,7 @@ static int cros_typec_register_port_altmodes(struct cros_typec_data *typec,
-> > >               memset(&desc, 0, sizeof(desc));
-> > >               desc.svid = USB_TYPEC_TBT_SID;
-> > >               desc.mode = TYPEC_ANY_MODE;
-> > > +             desc.no_auto_enter = true;
-> > >               amode = cros_typec_register_thunderbolt(port, &desc);
-> > >               if (IS_ERR(amode))
-> > >                       return PTR_ERR(amode);
-> > > --
-> > > 2.46.0.792.g87dc391469-goog
-> > >
-> >
-> > --
-> > With best wishes
-> > Dmitry
+Acked-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 -- 
 With best wishes
