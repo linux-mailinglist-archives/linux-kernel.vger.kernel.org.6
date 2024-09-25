@@ -1,108 +1,330 @@
-Return-Path: <linux-kernel+bounces-338243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B696A985544
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:15:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74FE7985548
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:16:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E729C1C21095
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:15:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE328280FE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BBAA15AD9B;
-	Wed, 25 Sep 2024 08:14:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90236156C5E;
+	Wed, 25 Sep 2024 08:16:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AcA53Ysv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cpwo/VaR"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB592148849;
-	Wed, 25 Sep 2024 08:14:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5DD13AA26;
+	Wed, 25 Sep 2024 08:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727252087; cv=none; b=HJX/lYDyAzdicN6SM92lRSmKGFb9pRtK10mQS3qCq+YL86eWnRbtlzWo3eZgzrLfrcEyK06546O7yfJLm5DSk73VMOysgft589gT77QzlfvNtos+eEA8nMHb+bjwL7OhATzj2mmKdOjyOS7pURUew/UE/CBsMLEMWBDa/Rp7daw=
+	t=1727252205; cv=none; b=LJr4B4n4bbzycRClpPMXvfhkjGTlLQanN8M5H1bGY/+LxJqoQdGa7S5Lw3HFKrCMt2gg3JPOtYXOpHB+3jSU01pk74Q3agm8DEE+NJXjpRQJ6bx8hLhV5bhac5vW62tAqpULVDQsNDPmy/NnorvX4V70XeBsDqnMjVH8ZmVwiIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727252087; c=relaxed/simple;
-	bh=FgyJaMf+udJs61Oebn2XB8BHj/lhCR104SBb9JsLSw4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AJ4qMqkVx1c0xwhj2y0Rj/0CGg9GhKHydXvSp8QXu/S+8+zLF4jzPWepuC8UBh9sI7rBYxnsjBIu5sHUJXhyb4Ju/gAEqwtwI1Tk2GfFsfkwIL30bqPH3twmVLfgpI2j6iTG8OH5lNciYnWN+6W0fJrin6O4yt3GO3OpnM3xHFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AcA53Ysv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 582D6C4CEC3;
-	Wed, 25 Sep 2024 08:14:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727252087;
-	bh=FgyJaMf+udJs61Oebn2XB8BHj/lhCR104SBb9JsLSw4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AcA53YsvfCo9m8w9ji1QV5Lmm/Lc2HRphqg6nANVhqdPaXhQiPRvtW3/dPWgkJJMz
-	 pSwsRBsnUVNZa1WJAipdt4wOvzp9Q7kDQBZFEv4V2Vhixj+7JFciU/hwLsHyR78r/a
-	 hxmjzst/RVjP4yxB9m8XlfR8SOoEDMVXWh1P30zY5byXK9Ne2QfaL0SslZHH8VRMKc
-	 wRcDSIzFzBorneBLhpufk5PoMg8GDM2h2v/StzE/rRaEwJUvGsyGtIi2kQ+e3Ak5Eh
-	 FCP4P1pwZJElGNlDGVCYkxumj2DQgMmOcYWyORnqRkxiinZlJFy08rtk2USCXlYw3O
-	 KawhRLRM0g8Xw==
-Received: from johan by theta with local (Exim 4.98)
-	(envelope-from <johan@kernel.org>)
-	id 1stNAZ-000000000c9-3ZrB;
-	Wed, 25 Sep 2024 10:14:43 +0200
-Date: Wed, 25 Sep 2024 10:14:43 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Qiang Yu <quic_qianyu@quicinc.com>
-Cc: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org,
-	robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
-	sboyd@kernel.org, abel.vesa@linaro.org, quic_msarkar@quicinc.com,
-	quic_devipriy@quicinc.com, dmitry.baryshkov@linaro.org,
-	kw@linux.com, lpieralisi@kernel.org, neil.armstrong@linaro.org,
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 3/6] phy: qcom: qmp: Add phy register and clk setting
- for x1e80100 PCIe3
-Message-ID: <ZvPGc_pPkUfLp6hi@hovoldconsulting.com>
-References: <20240924101444.3933828-1-quic_qianyu@quicinc.com>
- <20240924101444.3933828-4-quic_qianyu@quicinc.com>
- <ZvLXjdpBpUS3lLn-@hovoldconsulting.com>
- <3d4a8243-5c2f-41c4-85ce-6e072331f4f3@quicinc.com>
+	s=arc-20240116; t=1727252205; c=relaxed/simple;
+	bh=nDHsMmoxUxyDNohFz/+8O7PtcnI0tOkSGfxeDI/bHDY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZcFJgPUtjFHwf8LByzQvIPapgxNQCTCnJNmD5y2sqIrkt9DnRMObIoTmdIZHe1cgTI8gcM/L5bphQc+QKGipSD8KPMp7d7jtLKwPAM9kXWZAvZnkZh+SnUCwJt3+TEIxH9Uo+iAm4b2zvIHfoOf2YhBWjgGeM3RvcIKeDanwMPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cpwo/VaR; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e06f5d4bc7so335025a91.2;
+        Wed, 25 Sep 2024 01:16:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727252203; x=1727857003; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fRyT55ab4R2A+65MrHS5Vqlg7xItZ53sZIU1oLGBkYE=;
+        b=cpwo/VaRywbtZ2/ZF88qqZCwU4DmBpua81oJVpGv5Vnru15b6WujUsQDXwRtTfoeG7
+         2YoFnAooEw2ZAICL8YWx4BLsoXMn0PFkFEPz44k7f4+FTZeG5YX5PlV9lHbLYhA92PO/
+         WhWh6xW7J46IuzkDY+Dvs3bf8xg0jwldMAge2UwppDRP/P1iag4CxTQ+ze2wsSoniybX
+         hX+mauhSp3f98/kdFWbt9VtZeMEAlJDGI5dofk7ezhFWj8bjutX/dD/oyN3CoJ82LwXw
+         Fe+/0O7bA+BR65af7kn0kP+0xkeddxLryZrwIxTJgzdFBILEtlNMCwLM5mWqvFfpiXqB
+         CbLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727252203; x=1727857003;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fRyT55ab4R2A+65MrHS5Vqlg7xItZ53sZIU1oLGBkYE=;
+        b=vuvyfecOjlP4nCfWFhuWu00aSqLEQVFJJDOLufrUktBeIi+wIsEw/ckv1KL7Fmfwsc
+         rPpVturgRbMgUH7gAxnIhCGuZI97yftvRQyIJxH5nogmA0Td3oixH1QmMlhoc0Q2MCVU
+         wZ5hlByd0B/z+KjIeyfjBb1rOyqvtVOIMS8lpzpMiUuz9sjZYmyGwZWAIhzxu5T+tYM8
+         aT2xPnt4Zctwdl+XwpylcD5IIaOvp8qqAxs5cNzs8VjGj+6UikSWar9A+o8pPSHqVOOz
+         mk2InMOvXBP5kgLO0gNyqxemKw/vOSnr0Ons9ELOVTybVjfeBADND48tlfRZUXkm6qmJ
+         jazg==
+X-Forwarded-Encrypted: i=1; AJvYcCVzYgTIHumyqalgsH9kpdZEF6TBfBmOdWSeH4aEnFNG6WK/Hkpk+lMBjruJ/JJylNm2p5vB4XxrbfxJkpXMO1o47Jvp9L38@vger.kernel.org, AJvYcCWNa7M1HSuKDncHDKAKfptAw4eqNXiac8CRdJ4O7h09FEnkdr5A4Hyqk9dJcWovtfIw/w+/l1MIYpXOpxA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBKi2GrGa/MhudibOB/GjiTlmYqjJokRGeL+0fJ4/+cY846Kl2
+	k1Ai1IeKOvDGbNIRCtlFjkM+n4ppHTJGHuVTxryj+wZQmY2UYly7XeqhYA==
+X-Google-Smtp-Source: AGHT+IGZS9xjGJwPRz1ykf4pT7W+CzzPG0n3AZrZoCrp3A7RbLnNkCT0Ba3xqVKn6D1cKa5HT2lahA==
+X-Received: by 2002:a17:90b:2ec8:b0:2d8:9c97:3c33 with SMTP id 98e67ed59e1d1-2e06afc4197mr2134089a91.28.1727252203186;
+        Wed, 25 Sep 2024 01:16:43 -0700 (PDT)
+Received: from localhost.localdomain ([20.37.103.148])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e06e2bbecasm925215a91.46.2024.09.25.01.16.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 01:16:42 -0700 (PDT)
+From: Shu Han <ebpqwerty472123@gmail.com>
+To: akpm@linux-foundation.org,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	lorenzo.stoakes@oracle.com
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH] mm: move security_file_mmap() back into do_mmap()
+Date: Wed, 25 Sep 2024 16:16:28 +0800
+Message-Id: <20240925081628.408-1-ebpqwerty472123@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3d4a8243-5c2f-41c4-85ce-6e072331f4f3@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 25, 2024 at 11:38:46AM +0800, Qiang Yu wrote:
-> 
-> On 9/24/2024 11:15 PM, Johan Hovold wrote:
-> > On Tue, Sep 24, 2024 at 03:14:41AM -0700, Qiang Yu wrote:
-> > > Currently driver supports only x4 lane based functionality using tx/rx and
-> > > tx2/rx2 pair of register sets. To support 8 lane functionality with PCIe3,
-> > > PCIe3 related QMP PHY provides additional programming which are available
-> > > as txz and rxz based register set. Hence adds txz and rxz based registers
-> > > usage and programming sequences.
-> > > Phy register setting for txz and rxz will
-> > > be applied to all 8 lanes. Some lanes may have different settings on
-> > > several registers than txz/rxz, these registers should be programmed after
-> > > txz/rxz programming sequences completing.
+This patch moves the security_file_mmap() back into do_mmap(), which
+revert the commit 8b3ec6814c83d76b85bd13badc48552836c24839
+("take security_mmap_file() outside of ->mmap_sem"). Below is the reason.
 
-> > Please expand and clarify what you mean by this.
+Some logic may call do_mmap() without calling security_file_mmap(),
+without being aware of the harm this poses to LSM.
 
-> PCIe3 supports 8 lanes, so in general, we have to program 8 pairs tx/rx
-> registers. However, most of tx/rx registers of different lanes have
-> same settings, so the configuration for all 8 lanes tx/rx registers is
-> a little repetitive.
-> 
-> Hence, txz/rxz registers are included. The values programmed into txz/rxz
-> registers by software will be "broadcasted" to all 8 lanes by hardware.
-> Some lanes may have different settings on several registers than txz/rxz.
-> In order to ensure the different values take effect, they need to be
-> programmed after txz/rxz programming sequences completing.
+For example, CVE-2016-10044[1] has reported many years ago, but the
+remap_file_pages() can still bypass the W^X policy enforced by SELinux[2]
+for a long time.
 
-Thanks for clarifying. This is how I interpreted it, but please include
-(some or all of of) what you just wrote to make this more clear in the
-commit message.
+Add a check is easy, but there may have more calls to do_mmap() in the
+future. Moving security_file_mmap() back into do_mmap() can avoid
+forgetting, and avoid repeated logic for whether READ_IMPLIES_EXEC should
+add PROT_EXEC for the mapping or not(In current, the !MMU case won't
+imply exec if the file's mmap_capabilities is not exist, but the
+security check logic is different).
 
-Johan
+It is noteworthy that moving the security check in do_mmap() will let it
+in the mmap_write_lock, which slows down the performance and even have
+deadlocks if someone depends on it(Since security_file_mprotect() is
+already in the lock, this possibility is tiny).
+
+Link: https://project-zero.issues.chromium.org/issues/42452389 [1]
+Link: https://lore.kernel.org/all/20240919080905.4506-2-paul@paul-moore.com/ [2]
+Signed-off-by: Shu Han <ebpqwerty472123@gmail.com>
+---
+An alternative method is moving the check of READ_IMPLIES_EXEC out of
+do_mmap() and calling the LSM hooks at the same time, which has better
+performance and compatibility but may introduce some complexity. It has
+been proposed in [3], which cannot be applied at the same time with
+this patch.
+Link: https://lore.kernel.org/all/20240925063034.169-1-ebpqwerty472123@gmail.com/ [3]
+---
+ include/linux/security.h |  8 ++++----
+ ipc/shm.c                |  4 ----
+ mm/mmap.c                |  9 +++++----
+ mm/nommu.c               |  5 ++++-
+ mm/util.c                | 19 ++++++++-----------
+ security/security.c      | 41 ++++------------------------------------
+ 6 files changed, 25 insertions(+), 61 deletions(-)
+
+diff --git a/include/linux/security.h b/include/linux/security.h
+index c37c32ebbdcd..e061bc9a0331 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -423,8 +423,8 @@ void security_file_free(struct file *file);
+ int security_file_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
+ int security_file_ioctl_compat(struct file *file, unsigned int cmd,
+ 			       unsigned long arg);
+-int security_mmap_file(struct file *file, unsigned long prot,
+-			unsigned long flags);
++int security_mmap_file(struct file *file, unsigned long reqprot,
++		       unsigned long prot, unsigned long flags);
+ int security_mmap_addr(unsigned long addr);
+ int security_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
+ 			   unsigned long prot);
+@@ -1077,8 +1077,8 @@ static inline int security_file_ioctl_compat(struct file *file,
+ 	return 0;
+ }
+ 
+-static inline int security_mmap_file(struct file *file, unsigned long prot,
+-				     unsigned long flags)
++static inline int security_mmap_file(struct file *file, unsigned long reqprot,
++				     unsigned long prot, unsigned long flags)
+ {
+ 	return 0;
+ }
+diff --git a/ipc/shm.c b/ipc/shm.c
+index 3e3071252dac..ce02560b856f 100644
+--- a/ipc/shm.c
++++ b/ipc/shm.c
+@@ -1636,10 +1636,6 @@ long do_shmat(int shmid, char __user *shmaddr, int shmflg,
+ 	sfd->vm_ops = NULL;
+ 	file->private_data = sfd;
+ 
+-	err = security_mmap_file(file, prot, flags);
+-	if (err)
+-		goto out_fput;
+-
+ 	if (mmap_write_lock_killable(current->mm)) {
+ 		err = -EINTR;
+ 		goto out_fput;
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 18fddcce03b8..56f9520f85ab 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1260,6 +1260,7 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
+ {
+ 	struct mm_struct *mm = current->mm;
+ 	int pkey = 0;
++	unsigned long reqprot = prot, err;
+ 
+ 	*populate = 0;
+ 
+@@ -1276,6 +1277,10 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
+ 		if (!(file && path_noexec(&file->f_path)))
+ 			prot |= PROT_EXEC;
+ 
++	err = security_mmap_file(file, reqprot, prot, flags);
++	if (err)
++		return err;
++
+ 	/* force arch specific MAP_FIXED handling in get_unmapped_area */
+ 	if (flags & MAP_FIXED_NOREPLACE)
+ 		flags |= MAP_FIXED;
+@@ -3198,12 +3203,8 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
+ 		flags |= MAP_LOCKED;
+ 
+ 	file = get_file(vma->vm_file);
+-	ret = security_mmap_file(vma->vm_file, prot, flags);
+-	if (ret)
+-		goto out_fput;
+ 	ret = do_mmap(vma->vm_file, start, size,
+ 			prot, flags, 0, pgoff, &populate, NULL);
+-out_fput:
+ 	fput(file);
+ out:
+ 	mmap_write_unlock(mm);
+diff --git a/mm/nommu.c b/mm/nommu.c
+index 7296e775e04e..e632f3105a5a 100644
+--- a/mm/nommu.c
++++ b/mm/nommu.c
+@@ -681,7 +681,7 @@ static int validate_mmap_request(struct file *file,
+ 				 unsigned long pgoff,
+ 				 unsigned long *_capabilities)
+ {
+-	unsigned long capabilities, rlen;
++	unsigned long capabilities, rlen, reqprot = prot;
+ 	int ret;
+ 
+ 	/* do the simple checks first */
+@@ -818,6 +818,9 @@ static int validate_mmap_request(struct file *file,
+ 	}
+ 
+ 	/* allow the security API to have its say */
++	ret = security_mmap_file(file, reqprot, prot, flags);
++	if (ret < 0)
++		return ret;
+ 	ret = security_mmap_addr(addr);
+ 	if (ret < 0)
+ 		return ret;
+diff --git a/mm/util.c b/mm/util.c
+index bd283e2132e0..47345e927a8f 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -581,17 +581,14 @@ unsigned long vm_mmap_pgoff(struct file *file, unsigned long addr,
+ 	unsigned long populate;
+ 	LIST_HEAD(uf);
+ 
+-	ret = security_mmap_file(file, prot, flag);
+-	if (!ret) {
+-		if (mmap_write_lock_killable(mm))
+-			return -EINTR;
+-		ret = do_mmap(file, addr, len, prot, flag, 0, pgoff, &populate,
+-			      &uf);
+-		mmap_write_unlock(mm);
+-		userfaultfd_unmap_complete(mm, &uf);
+-		if (populate)
+-			mm_populate(ret, populate);
+-	}
++	if (mmap_write_lock_killable(mm))
++		return -EINTR;
++	ret = do_mmap(file, addr, len, prot, flag, 0, pgoff, &populate,
++		      &uf);
++	mmap_write_unlock(mm);
++	userfaultfd_unmap_complete(mm, &uf);
++	if (populate)
++		mm_populate(ret, populate);
+ 	return ret;
+ }
+ 
+diff --git a/security/security.c b/security/security.c
+index 4564a0a1e4ef..25556629f588 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2927,42 +2927,10 @@ int security_file_ioctl_compat(struct file *file, unsigned int cmd,
+ }
+ EXPORT_SYMBOL_GPL(security_file_ioctl_compat);
+ 
+-static inline unsigned long mmap_prot(struct file *file, unsigned long prot)
+-{
+-	/*
+-	 * Does we have PROT_READ and does the application expect
+-	 * it to imply PROT_EXEC?  If not, nothing to talk about...
+-	 */
+-	if ((prot & (PROT_READ | PROT_EXEC)) != PROT_READ)
+-		return prot;
+-	if (!(current->personality & READ_IMPLIES_EXEC))
+-		return prot;
+-	/*
+-	 * if that's an anonymous mapping, let it.
+-	 */
+-	if (!file)
+-		return prot | PROT_EXEC;
+-	/*
+-	 * ditto if it's not on noexec mount, except that on !MMU we need
+-	 * NOMMU_MAP_EXEC (== VM_MAYEXEC) in this case
+-	 */
+-	if (!path_noexec(&file->f_path)) {
+-#ifndef CONFIG_MMU
+-		if (file->f_op->mmap_capabilities) {
+-			unsigned caps = file->f_op->mmap_capabilities(file);
+-			if (!(caps & NOMMU_MAP_EXEC))
+-				return prot;
+-		}
+-#endif
+-		return prot | PROT_EXEC;
+-	}
+-	/* anything on noexec mount won't get PROT_EXEC */
+-	return prot;
+-}
+-
+ /**
+  * security_mmap_file() - Check if mmap'ing a file is allowed
+  * @file: file
++ * @reqprot: protection requested by user
+  * @prot: protection applied by the kernel
+  * @flags: flags
+  *
+@@ -2971,11 +2939,10 @@ static inline unsigned long mmap_prot(struct file *file, unsigned long prot)
+  *
+  * Return: Returns 0 if permission is granted.
+  */
+-int security_mmap_file(struct file *file, unsigned long prot,
+-		       unsigned long flags)
++int security_mmap_file(struct file *file, unsigned long reqprot,
++		       unsigned long prot, unsigned long flags)
+ {
+-	return call_int_hook(mmap_file, file, prot, mmap_prot(file, prot),
+-			     flags);
++	return call_int_hook(mmap_file, file, reqprot, prot, flags);
+ }
+ 
+ /**
+
+base-commit: f89722faa31466ff41aed21bdeb9cf34c2312858
+-- 
+2.34.1
+
 
