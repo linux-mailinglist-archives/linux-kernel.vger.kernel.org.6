@@ -1,116 +1,97 @@
-Return-Path: <linux-kernel+bounces-338183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2051298546F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:46:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 334FE985474
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:47:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA3B728322E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:46:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 648151C23779
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ADB9157466;
-	Wed, 25 Sep 2024 07:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2C115855D;
+	Wed, 25 Sep 2024 07:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="B3CXqL1Z"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lVE9lrlZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D647525634;
-	Wed, 25 Sep 2024 07:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E4115852F;
+	Wed, 25 Sep 2024 07:46:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727250400; cv=none; b=h/dJKXdzBRHzfOmxwKaVZohhPr7C6gWINvQjebleqTWlCS5KDsDVfe+pWdMNjodYV9Tx4WefaqivXU5702P+5PIIwi7PLq9m8AstZrGvJAmXiiD0lfvL2H6lzr85utrAj2qDffHE/GlpevHlggYjxzFGxm/hOZGG4ca2syo5Xbs=
+	t=1727250403; cv=none; b=jqphBibUP46M71CnvFPOuMQPl6V9wXwTZMUvg3aZgzOTc/0rMbAIQ7xhYa4d1Fwplai9JhmD4VQtEo84ACsTEJIFuOmipgmxliZf7Fz8I11k448u8wR2lpHZXoAsnlxIvH5uXQjJlfEW4xmyMeAl509XhmaWl78PN73EJwzdNk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727250400; c=relaxed/simple;
-	bh=sZD07Nz3JTxtQk22kFbo0BTn2I8r91GWAyKTpZgpZRw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XLwsooz6lFRUH1CPTD/qehp+ObMr/5kC+7GvON2EIfw7Wula+WwdFFxVHO4ZcA/EPWvMFOrzr85YXpx3zDnplcjde3e1wpVv742Mu1FRuYdS1sf+yS0i9OXJ5++8VgYKuYSh03FEjCcZQYGMtMGA2Y6Qg1bC9WI2TzHp/BD5Ho8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=B3CXqL1Z; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727250396;
-	bh=sZD07Nz3JTxtQk22kFbo0BTn2I8r91GWAyKTpZgpZRw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=B3CXqL1Z4AgfpkGPaS6OxowMLRHD6RlxBEzgKBUrW2KagsdEi9Nw5hdzrkoJBVSYT
-	 t6Wf3RTe2zyvX6taQmtQNS5amemwzdRilfwuwT1U8sDLeCMyIG0/DwUjTBqphL0tWj
-	 JbE23qjZkxnNBI2jeFnspzfs8uLubXLoXnmt6XEuwGBWym5qubk00jWwpB2nX8vHwv
-	 8hrSNyiQcA746tgvgKoqXfl1F07ycRmrKHNhWL8rQId97ZWlahvDidL2x4lFJu+4/e
-	 ZBvTq12zVS5mHqsG6OP/XcMIlxn6KFd+5UPHeiqL8zRdjPV+web/+EBmk4Agp1fZOa
-	 6MYPDJN10IoQw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 503D517E1034;
-	Wed, 25 Sep 2024 09:46:36 +0200 (CEST)
-Message-ID: <32e9ec0e-5ba6-4653-adf7-ccd0af7d58a9@collabora.com>
-Date: Wed, 25 Sep 2024 09:46:35 +0200
+	s=arc-20240116; t=1727250403; c=relaxed/simple;
+	bh=gL9fWAQbBAqwAotYYcbC3CfevPSo7imSq39pgy8VqDI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=uGwhGACWEdXIt5tPeaiM3DhnOkXzmZ9lAnEO8Z5kpj4zau+hQOxSTZhQ14zRh4FiGEk/JK5KwAZFXZIFR/wFZgM/ekseBcc68hpnLw0pxdfU/BvzGnMUOu8b1jP4eAj3M4T21L+dyOLGg2mHw4pDHAeF8W6kRTalYKrRGkTtKy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lVE9lrlZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7C8BC4CEC6;
+	Wed, 25 Sep 2024 07:46:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727250403;
+	bh=gL9fWAQbBAqwAotYYcbC3CfevPSo7imSq39pgy8VqDI=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=lVE9lrlZ1wM2F1DxuN2JDERdW6f9Yd2VkuwnUejsx9LhwJm00nD8q/0yUSotAWfNo
+	 YZrIDxOkkfCACaOTSexine33/+a3dkTloxe0+ZAwzeqwTLh8/oOpYG8niizcQ3EMbc
+	 hqItl8+dig61uSvXUGXtEO4tFw30kf2R+p/Nvkukjj3idcg2lZGdkVbQhLp6xZQHjL
+	 OkEg9ytMcV5H6qiE5ImhscNRpmUZi3w2gZao8affFyvsCiZeAKU26jVoJJlFiSRMI8
+	 xJKypo4EC9PcX4S6oZvTYdiLcZh5BeIQQ98TdcxibAADMy1w46ZLNtKPSFsxFSUo1v
+	 PhdnOtMuUoaPQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] soc: mediatek: mtk-svs: Call of_node_put(np) only once in
- svs_get_subsys_device()
-To: Markus Elfring <Markus.Elfring@web.de>,
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- Kevin Hilman <khilman@baylibre.com>,
- Matthias Brugger <matthias.bgg@gmail.com>, Roger Lu <roger.lu@mediatek.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <884f0a5d-e6d3-47dc-8a9e-201bb86b271f@web.de>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <884f0a5d-e6d3-47dc-8a9e-201bb86b271f@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 25 Sep 2024 10:46:39 +0300
+Message-Id: <D4F75ZA3WH4X.2LTKNXM4X60KY@kernel.org>
+Cc: <roberto.sassu@huawei.com>, <mapengyu@gmail.com>,
+ <stable@vger.kernel.org>, "Mimi Zohar" <zohar@linux.ibm.com>, "David
+ Howells" <dhowells@redhat.com>, "Paul Moore" <paul@paul-moore.com>, "James
+ Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, "Peter
+ Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>,
+ <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 5/5] tpm: flush the auth session only when /dev/tpm0
+ is open
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, "James Bottomley"
+ <James.Bottomley@HansenPartnership.com>, <linux-integrity@vger.kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20240921120811.1264985-1-jarkko@kernel.org>
+ <20240921120811.1264985-6-jarkko@kernel.org>
+ <00cf0bdb3ebfaec7c4607c8c09e55f2e538402f1.camel@HansenPartnership.com>
+ <D4EPQPFA8RGN.2PO6UNTDFI6IT@kernel.org>
+ <f9e2072909d462af72a9f3833b2d76e50894e70a.camel@HansenPartnership.com>
+ <D4EU5PQLA7BO.2J5MI195F8CIF@kernel.org>
+ <2b4c10ca905070158a4bc2fb78d5d5b0f32950ad.camel@HansenPartnership.com>
+ <D4F72OC53B3R.TJ4FDFPRDC8V@kernel.org>
+In-Reply-To: <D4F72OC53B3R.TJ4FDFPRDC8V@kernel.org>
 
-Il 24/09/24 20:08, Markus Elfring ha scritto:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 24 Sep 2024 20:00:09 +0200
-> 
-> An of_node_put(np) call was immediately used after a pointer check
-> for a of_find_device_by_node() call in this function implementation.
-> Thus call such a function only once instead directly before the check.
-> 
-> This issue was transformed by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+On Wed Sep 25, 2024 at 10:42 AM EEST, Jarkko Sakkinen wrote:
+> Fair enough. I can buy this.
+>
+> I'll phrase it that (since it was mentioned in the bugzilla comment)
+> in the bug in question the root is in PCR extend but since in my own
+> tests I got overhead from trusted keys I also mention that it overally
+> affects also that and tpm2_get_random().
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+I do not want to take null key flushing away although I got the
+reasoning given the small amount of time is saved (maybe 25-50 ms
+in my QEMU setup if I recall correctly) but it would make sense to
+squash it auth session patch.
 
-> ---
->   drivers/soc/mediatek/mtk-svs.c | 4 +---
->   1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/soc/mediatek/mtk-svs.c b/drivers/soc/mediatek/mtk-svs.c
-> index 9a91298c1253..7c349a94b45c 100644
-> --- a/drivers/soc/mediatek/mtk-svs.c
-> +++ b/drivers/soc/mediatek/mtk-svs.c
-> @@ -2133,14 +2133,12 @@ static struct device *svs_get_subsys_device(struct svs_platform *svsp,
->   	}
-> 
->   	pdev = of_find_device_by_node(np);
-> +	of_node_put(np);
->   	if (!pdev) {
-> -		of_node_put(np);
->   		dev_err(svsp->dev, "cannot find pdev by %s\n", node_name);
->   		return ERR_PTR(-ENXIO);
->   	}
-> 
-> -	of_node_put(np);
-> -
->   	return &pdev->dev;
->   }
-> 
-> --
-> 2.46.1
-> 
+I'll also check 1/2 and 2/2 if I'm doing too much in them. Not
+adding any tags to v6 and it really makes sense to develop=20
+benchmarks and not rush with the new version now that I got
+also your feedback, since it is past rc1 timeline.
 
+Good target rcX would be around rc3.
+
+BR, Jarkko
 
