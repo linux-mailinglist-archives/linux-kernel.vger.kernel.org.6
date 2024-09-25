@@ -1,122 +1,152 @@
-Return-Path: <linux-kernel+bounces-339467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2286798659A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:29:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F76998659C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:30:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C13A11F21DA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:29:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14B111C217EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5538B77117;
-	Wed, 25 Sep 2024 17:29:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574267581F;
+	Wed, 25 Sep 2024 17:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="ZCH7+8Rm"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YLDjk6BW"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746594AEF2;
-	Wed, 25 Sep 2024 17:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F76571B3A
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 17:30:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727285378; cv=none; b=cBulvPFmJVYU/6yojM7z7pL8qQzXvhMNk5fJNYcFXbaw810CvdEWdOY1dYuIY1XYsppW62ZNhFyW9fGp0yPEr3KskzzV4efsLCjQeT8laOdJcnWKp5N1UPgoATW3Pg0XaKygJ5ptH/Pv6k12jESGusWA/Z6XfGja9DyvBCZ3paE=
+	t=1727285401; cv=none; b=W3mQtuUVzV7FR7E2pSO2t+g2FxgkRIowdEHcOMsfiW5ybHb2MPdOz1+Qa5txxLbCGf64uzUforePV1sKx29MhXfzvTVHlONQ9iVKtfepEcUCe4Sfot6Ja4vH7FsaC5O81NpEtpf8iJF8oz/KwvsNMLw60UOUEp1IxFLvwYT3Md8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727285378; c=relaxed/simple;
-	bh=TPOpswsdijw5gm3RbX6cBpr2bSe4KFnYCCRVAKV7fBE=;
+	s=arc-20240116; t=1727285401; c=relaxed/simple;
+	bh=S3foybS1q/OA+MvBiFZY5r1m2O/kN5+WeazHlK5he04=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OGgWCde8pjCx/LXSMnmWnkBa8G3z2BvqZBnWBEDULp1t8my2aL6NJpUKN0+Je8RUiAP6PqGwTbtP3svhTfxV+GipWcKjbQ5Pr0iB05ZEJjbLOFhljjcfNAsUucceNEqGrHOuYaCRYTYGLEzX8IuImLBKTf3evcMi+O5QnFMbSwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=ZCH7+8Rm; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-206aee40676so472375ad.0;
-        Wed, 25 Sep 2024 10:29:37 -0700 (PDT)
+	 To:Cc:Content-Type; b=BumiL/L61EV2EN798BS1QWqs52pYUhoMNBc1HGuTNrFeeQGTBEj86GbGPdS++FjyBNzpCpx69GM/WgR6PMBf9u0vLMQYZT5arcXLmfDYMUShGLfPXucfQByoc5eibdkxaMe7aIrybS93H4GGgeyPVP5iJsBbsTW+FYxIaWnz+20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YLDjk6BW; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6e129c01b3bso1465647b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 10:30:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1727285377; x=1727890177; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1727285399; x=1727890199; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=76c1gfIJ44N/4frQpedFLzuDh4DDf4ytBF5LgFjIvvY=;
-        b=ZCH7+8Rm+cr8Q4ZBhABe/IrjKKsJhGXxpwCUuKvgCF8//Ja4aADmPGC3M/VV9H+Uyx
-         YFcSbAK+6DKQAtALAAP8OZ9nXc77W8f17RR/G3e6HCJiIJZAdDLCggZa5ouhj0gKJaEo
-         u6OOk9ZRrCExcZqbfsasNei82Gd6BzqJHbZObOk6C2CTmxKber05e1PF+qOLXGUsGJig
-         3ZTLJELwq/lVXBmO0OM60ePfCGzeEkeW3VBfd1D7XJlJrhKb/ykBXPJYVjhwZRB5iB0l
-         F5X1T4wrStj8kqie3OzOQv5BUxa27LUSZ/AVAHmGo9g6TsYikSJreKxBGrMjiyc4ujcq
-         qMjA==
+        bh=j/V7CxHWV1Tser1qk57X7xlPUJc/6s+EPJGxMPkOcP0=;
+        b=YLDjk6BWLGpl11iCrSIqHzhcozlE7aH7Z/7MnD9zndIh1hiYFRiDj6wdJUpXOfci9u
+         LwMHfh5Rt6hA4XK1y4v2gQuIm7SZA8USa61q94+gR1uP2xYTqo5LHAfPljlRaAZ6F81h
+         k/FO2AFGoj1/OZebNUBAnjJteY9MX/HRorMwQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727285377; x=1727890177;
+        d=1e100.net; s=20230601; t=1727285399; x=1727890199;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=76c1gfIJ44N/4frQpedFLzuDh4DDf4ytBF5LgFjIvvY=;
-        b=qgulJGd0OpsEdjPdjIyRXFHDQKLy5n3Yhchv/mh7ofCUHEsjKHmSEjp3cmRz84mdQX
-         Pvgu3AVa9+SNHmqzzLa28q/K4n1oRQvUvrOoD2JPZN2YC7phyN1m8SuMyL9jF7N+OYDD
-         WbKSEvmzA4PTad3jGKzrRzTuHhMBdtKersBX3/HXwYKxv2WyRursp1Hf9827YUH2Takb
-         XtC9d4ZG/2p4NlYl8z9jkva8zuCuKF8XOgSUOypyPVlV5PLhYWyVBOPg6i2PhpJ8P322
-         AE8HmbsrLcMUMTjlkD/P/7wxFizEJmIWaVtJDhrnt585J5m24D64pRXotc5WGZDcpJD3
-         Rqdg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkL417E1b1+evUQEamco0dXbYj4etnKZNsj7XbsBvtJK3yJnpMElufM1U2MCLtyGSe65mbcSfFLmvi@vger.kernel.org, AJvYcCWmrWcL5rZdVkE1YmPPXeA2CbOgrhOSS2l+wOu72/IJeCSJ85bhni70mPmTIZgRL35BeMxh4aZznxm6@vger.kernel.org, AJvYcCXcp0q0ujHcxUxSTaWcEII/onzrFGItRmpgpouSlBr+hi60cZnl3oEPgS7ncQs0ZbozkirQQR8p7FspnYrZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOHNqsIFihRNQXWUKz9ArKLs49lkfNg1+iQFcSSoXHmigWNF3t
-	I18MdUqDsuPYFjPbBkSqaMQdga4DGkNM+eWMiLpLo/ScUDd71WKA35TACSbfZVgmzphftW5Etrw
-	ENQj1IiRQ1MULonWlh5O54a2DqP0=
-X-Google-Smtp-Source: AGHT+IGL8Tarnw4aOxyngiyyJMw2bFTvc8HSfobctrnuSaGxAiJN+XPoCfQJeAeS5waKELhDrIf1ZNEdC7ArTM2uMQA=
-X-Received: by 2002:a17:902:f707:b0:206:8f25:a3e with SMTP id
- d9443c01a7336-20afc60958amr46716805ad.53.1727285376595; Wed, 25 Sep 2024
- 10:29:36 -0700 (PDT)
+        bh=j/V7CxHWV1Tser1qk57X7xlPUJc/6s+EPJGxMPkOcP0=;
+        b=r4QKn+BR82IPBaV+Dy8QvpsHsPS6Tc7d3RVLeAF8RjCKvtBieEkFIRRPH4iihDK9kv
+         ZqEYlZEPdTj/0KHsqO8d7SyFm3PIaTJEylu0R4CtpLBZ2ZTfnJ64QPg5KRqM576zWqyW
+         v5pVY0XErNWVOa10K8pNNdDIyBn67OvMHFS/IcS1HTBPwYSrPCAX7HjQuEmhILn5GE5o
+         ZxfPVjPZvoRhQ8O7uN2iNPpTZRPlFC/ryBfWraJeesFWA5DMU30RjbtgbF+d9BgRETQT
+         MN2O3yTgN7siuKpFsrLCgU5kMhgGBD/Aytu2NWzgxQuh9hXmUL45DH502gLQ6PUc2Ea/
+         eMRA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyxjSKaL+vIi0oLmwcLKHX+mTTvcX50jKV4FnYoaCpC9uJtld8DStLTftXxNVu6862NbWukWKD3YJSVYs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzP1jzJeElyQY2RPgQN2xylOnzikXINWyEkbiltxbukoDzljVOk
+	eBKbQJx6QFMOIbZdxZ4k2XheWGtI3/ua68GE6YkLmFu2eDMXVYKyr2GSpMuGcm1Rh/6/hcGwlpL
+	BE+xit6JLXfeiIJd6Ls0I5zBCwCUTF3tFVYiM
+X-Google-Smtp-Source: AGHT+IEEJk0hLmkYSqK37kVBafdY8v3m2TYyb4PkKS+wmM4CoQEd1qC9celbMVCKx7Czv9htT4lCXpG6HWI/tNvq/v0=
+X-Received: by 2002:a05:690c:660e:b0:6e2:1336:55d8 with SMTP id
+ 00721157ae682-6e21d6ed513mr37998667b3.10.1727285399187; Wed, 25 Sep 2024
+ 10:29:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240920-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v2-0-5aa8bdfe01af@linaro.org>
- <20240920-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v2-3-5aa8bdfe01af@linaro.org>
- <mbc2cacow73vmwn3w42aucq6x6xijbpgustkv3v6etgv35xih7@truf2rbgf3vo>
-In-Reply-To: <mbc2cacow73vmwn3w42aucq6x6xijbpgustkv3v6etgv35xih7@truf2rbgf3vo>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Wed, 25 Sep 2024 19:29:25 +0200
-Message-ID: <CAFBinCDu0P8QEvxrUdXXSVCn-1061fjyhYd2nve9QCCvXmoe5Q@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] dt-bindings: mmc: convert amlogic,meson-mx-sdio.txt
- to dtschema
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, linux-mmc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240925162513.435177-1-abhishekpandit@chromium.org>
+ <20240925092505.3.Ib7a83adb069df1cb0a40dcddff29618bf3255700@changeid> <xzk3yjkf4zew4p3f4jo6an3cnp4qe2vcvdbu6eq4ths5q4aqmp@4d2qfvrdwym5>
+In-Reply-To: <xzk3yjkf4zew4p3f4jo6an3cnp4qe2vcvdbu6eq4ths5q4aqmp@4d2qfvrdwym5>
+From: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Date: Wed, 25 Sep 2024 10:29:45 -0700
+Message-ID: <CANFp7mXwOXhkOSCwCME_ZbzvNP20OVZYX5sE-7+WtC5buSxTrw@mail.gmail.com>
+Subject: Re: [PATCH 3/8] usb: typec: intel_pmc_mux: Null check before use
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: heikki.krogerus@linux.intel.com, tzungbi@kernel.org, jthies@google.com, 
+	pmalani@chromium.org, akuchynski@google.com, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof,
-
-On Tue, Sep 24, 2024 at 11:18=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.o=
-rg> wrote:
-[...]
-> > +        enum: [0, 1, 2]
-> > +
-> > +      bus-width:
-> > +        enum: [1, 4]
-> > +
-> > +    unevaluatedProperties: false
+On Wed, Sep 25, 2024 at 9:54=E2=80=AFAM Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
 >
-> Hm, I wonder why not all slots are defined in your DTS? Why not all of
-> them are required? I assume the slots are there always, as part of the
-> controller.
+> On Wed, Sep 25, 2024 at 09:25:04AM GMT, Abhishek Pandit-Subedi wrote:
+> > Make sure the data pointer in typec_mux_state is not null before
+> > accessing it.
+> >
+> > Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
 >
-> Is this because of driver limitation mentioned in the old binding?
-The MMC core (still) has a limitation of only supporting one slot per
-controller - so a limitation will stay in place.
+> Is the a fix for an actual issue or just good-to-have thing? In the
+> former case it lacks a description of how the issue can be triggered and
+> a Fixes tag.
 
-However, the driver (drivers/mmc/host/meson-mx-sdio.c) uses
-of_get_compatible_child(), meaning it will also pick the first child
-node with the correct compatible string, even if it has status =3D
-"disabled".
-I can send a patch to reduce the scope of this limitation: all slots
-can be defined but only the first enabled one is used.
-What do you think?
+This fixes a segfault that occurs when the new Thunderbolt driver is
+used because it calls `typec_altmode_notify` with null data. I'm not
+sure if that needs a `Fixes` since what's currently running upstream
+doesn't actually trigger this error.
 
+I'll update the description with why this is needed. i.e.
+---
+Make sure the data pointer in typec_mux_state is not null before
+accessing it. The new Thunderbolt driver calls typec_altmode_notify
+with a NULL pointer for data which can cause this mux configuration
+to crash.
 
-Best regards,
-Martin
+>
+> > ---
+> >
+> >  drivers/usb/typec/mux/intel_pmc_mux.c | 9 +++++++--
+> >  1 file changed, 7 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/usb/typec/mux/intel_pmc_mux.c b/drivers/usb/typec/=
+mux/intel_pmc_mux.c
+> > index 56989a0d0f43..4283fead9a69 100644
+> > --- a/drivers/usb/typec/mux/intel_pmc_mux.c
+> > +++ b/drivers/usb/typec/mux/intel_pmc_mux.c
+> > @@ -331,14 +331,19 @@ static int
+> >  pmc_usb_mux_tbt(struct pmc_usb_port *port, struct typec_mux_state *sta=
+te)
+> >  {
+> >       struct typec_thunderbolt_data *data =3D state->data;
+> > -     u8 cable_rounded =3D TBT_CABLE_ROUNDED_SUPPORT(data->cable_mode);
+> > -     u8 cable_speed =3D TBT_CABLE_SPEED(data->cable_mode);
+> > +     u8 cable_rounded, cable_speed;
+> >       struct altmode_req req =3D { };
+> >
+> > +     if (!data)
+> > +             return 0;
+> > +
+> >       if (IOM_PORT_ACTIVITY_IS(port->iom_status, TBT) ||
+> >           IOM_PORT_ACTIVITY_IS(port->iom_status, ALT_MODE_TBT_USB))
+> >               return 0;
+> >
+> > +     cable_rounded =3D TBT_CABLE_ROUNDED_SUPPORT(data->cable_mode);
+> > +     cable_speed =3D TBT_CABLE_SPEED(data->cable_mode);
+> > +
+> >       req.usage =3D PMC_USB_ALT_MODE;
+> >       req.usage |=3D port->usb3_port << PMC_USB_MSG_USB3_PORT_SHIFT;
+> >       req.mode_type =3D PMC_USB_MODE_TYPE_TBT << PMC_USB_MODE_TYPE_SHIF=
+T;
+> > --
+> > 2.46.0.792.g87dc391469-goog
+> >
+>
+> --
+> With best wishes
+> Dmitry
 
