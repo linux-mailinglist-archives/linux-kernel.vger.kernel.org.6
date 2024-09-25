@@ -1,157 +1,154 @@
-Return-Path: <linux-kernel+bounces-339122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D31E986090
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:26:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 430F9986191
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:55:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 136AE28802D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:26:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 806EEB2FFCA
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44E21ACDF9;
-	Wed, 25 Sep 2024 13:11:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6E718C015;
+	Wed, 25 Sep 2024 13:12:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="hgUKQz8S"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Crqhtoco"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B194A18C00C;
-	Wed, 25 Sep 2024 13:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38FFD18C004;
+	Wed, 25 Sep 2024 13:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727269862; cv=none; b=FMaa7NzXIDty6xL29yCF+KpNGl2F07f+58G+00mPmxa5dBcTUV47h7ZQ1+kfdF/2bOMJUpwTXoHq8Z6PkwHfaA5X9I9mbU80WvsTnPX7ZtIKUJaZA5o6YdN08CF0NNRMQSO0LzAIGNp1pJukUtcB6nvQmIkomJFHh+a6vX1VDo0=
+	t=1727269949; cv=none; b=BXyKCIRd+E/JHR2nHhXZfDiIU5ug4eFeystIehFSlmv7CDiAfLT53apl54oKwuMKwnSiMlj+HhjG4stkyCxKD5tiRrC4VbWcBIGV+xGFKi8O3UhKbAOkA1fbqjJNx4BWPDfP47QCjygd0SZLSOXo6MKD4jha4TBC3qJJMo/zwnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727269862; c=relaxed/simple;
-	bh=PIcjDAxhxhmeRYLU1Sp75CHF/2n2HX48fEla2+zT/ec=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=rDF/QUoWBzgg2lJVFaJSQYOQyAr/PgiKnDO414slsa3RJxkzV6avIxtFyF+2Ml6R4u2qM0G+1WoU1IWpeFwgqVGen71j3F0rWvum4on4n/KLyeezAWUcwbxXzAjnkTMVS1hoCCKcbYnLr91LP4jVFp5kQFkqd2GeXB0V4/cC/TI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=hgUKQz8S; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1727269859;
-	bh=PIcjDAxhxhmeRYLU1Sp75CHF/2n2HX48fEla2+zT/ec=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=hgUKQz8SowpTtP0MWxpogy40UW6I3MH61/B+Hf39WsbWia+GPtCjNYjmcXPgV/T0/
-	 eaHHvdrwyenR5iBEx5JXbXfTrSdNV3HvZltE0zIV2DNGAbDzDQT2XpbgAYU9egP1TF
-	 9GOYRN7EJKXMudrbbVNkmXalHvTqqSrhtXNv/NIYIxPZLFuXBj41VgQrr8yImhnxwG
-	 OUV+kREsSqXdYy6xXvxozfPP+wWkETfNWwApAeoB8utPG9yeTAdkANL/6AhzfO9lHE
-	 GPnNcjhxR+L30qURmQ59w5cZ9OVP8ozoiUX6MYm5mb05Tu7boUsG7e22PqjgbaFYob
-	 Za4ppeJGMiCTw==
-Received: from [192.168.126.112] (unknown [147.75.204.251])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XDHCv1Rksz1LsS;
-	Wed, 25 Sep 2024 09:10:50 -0400 (EDT)
-Message-ID: <48992c9f-6c61-4716-977c-66e946adb399@efficios.com>
-Date: Wed, 25 Sep 2024 15:10:11 +0200
+	s=arc-20240116; t=1727269949; c=relaxed/simple;
+	bh=UeDkwbmJSVVb+6EeoAPD3T85InEae0+dBckAFjBy7uY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sZOoWKGh42r//KstM5UIwbfz87YDlrK/qrLRsUnlhedqqcxU0Rto5QrYetRrD1AR9cMC6iJR49jQ01Ipc0Jsj0/ro0+Nd9oltyIuStNJHhlGM4iV3+vhNFF6hgJK+AprL0TWFI5yDWhmYT+aeYOSrk6QlrSFMSpaM0gqlcVdxj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Crqhtoco; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7178df70f28so5144954b3a.2;
+        Wed, 25 Sep 2024 06:12:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727269947; x=1727874747; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=faAzbfCVHd1movVl3Gdx3/iQrBI1ffHa9CbcxGsEAyg=;
+        b=CrqhtocoJni/q3xja/D4BbayKIpLpX7PqQfPGBenSHWwo8djOD5lugtBpmis0IErjY
+         kxs2A5ZZWsacaJIH1h7wYRnIFZ9x0Vet1yl7qfBsgVe4MLX5b2Sf4ra1yS3MV/DI4NDt
+         nOJFGvYX4zwUBsxMt0r0z2NZuEWCgVRlWKgB0pWpWdXdCjqCQmn1OxfPivJMQUVhD8Yv
+         LsW9R2ARPF6jmw3y1+vAsIukm1+flx97V0E9hOatmdVr1KjjExgtX3332Cqed87Gkc9m
+         hwxapreMkSkjotF+gZaL9tR9RumG+QkBEkUM1rTwijPobfMbAZW4Hny2HMTlTAxcLLHh
+         d9+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727269947; x=1727874747;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=faAzbfCVHd1movVl3Gdx3/iQrBI1ffHa9CbcxGsEAyg=;
+        b=k4jZx96OXPOuWeRj0IlgatU2i0eY+9+CTXzwyKYiBC2dnGHFUwmrU0+XsdTHPVD7RA
+         RfK6R4cHoFNVoHOrDiPoiaqfKqYn0uTqGYrdSDAOO5rdPXammDRJbQheTSNnTAr+Nl3z
+         fawo+62+EjpQYENqMNmXvzdS6KdU5jARUgWLAdTsQn++eExnR00eXaQpqFUxZ9nAmSxO
+         E2Ox6tpeLDznucK0OYKR8UpE2yXDDBvNYm4YNtjNHoP5HS8Cw/yjUHQtHDqXxSQk9G5Y
+         TM/KHR3JejRgg/asUFwi6JAcZri+kv0AiUB0uPy5vWItcMWK+u2BKe7ngg92A78zYWs6
+         +I+g==
+X-Forwarded-Encrypted: i=1; AJvYcCU0ElEhz8tojoYyFjM2ARsKj+CKaLTE8mQyQtIuotGQCL6Bf4+cfBVXyZ/AM2C2Y7np8e4DSdab+ziKzsGd@vger.kernel.org, AJvYcCXTvUiBKHx1lcOGGe/BCqI7FyzWllgtka69gRMo8F7GRVuUbC/rokfgz+kvpSLjS2p5W+WCjm0ZVWlf@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3mF7cK0LeX1W8IcjQQ+Yfeep8UiTt4Gfup1COdGKRyJ6PTXfF
+	e+o3l1zHkApvik2Fprvlju/j7/IsgcQQ2hbHdvAaXsakk9IrDvnOXvRGNe5E
+X-Google-Smtp-Source: AGHT+IHLooNSOfabY0P8Bed32e0Xag9VC4/Ep2PgBnfIyEF0odak/k6ESwQrbDrHLDsVnNQLSN/Y/w==
+X-Received: by 2002:a05:6a00:464f:b0:714:2198:26af with SMTP id d2e1a72fcca58-71b0aaa2693mr3369028b3a.3.1727269947193;
+        Wed, 25 Sep 2024 06:12:27 -0700 (PDT)
+Received: from rigel.home.arpa (14-202-6-222.static.tpgi.com.au. [14.202.6.222])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71afc97c168sm2816922b3a.148.2024.09.25.06.12.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 06:12:26 -0700 (PDT)
+From: Kent Gibson <warthog618@gmail.com>
+To: brgl@bgdev.pl,
+	gregkh@linuxfoundation.org,
+	sashal@kernel.org,
+	linus.walleij@linaro.org
+Cc: stable@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Kent Gibson <warthog618@gmail.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH 6.1.y 6.6.y] gpiolib: cdev: Ignore reconfiguration without direction
+Date: Wed, 25 Sep 2024 21:10:13 +0800
+Message-Id: <20240925131013.651551-1-warthog618@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
- pointers
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
- linux-kernel@vger.kernel.org, rcu@vger.kernel.org, linux-mm@kvack.org,
- lkmm@lists.linux.dev, "Paul E. McKenney" <paulmck@kernel.org>,
- Frederic Weisbecker <frederic@kernel.org>,
- Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
- <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Kent Overstreet <kent.overstreet@gmail.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
- Neeraj Upadhyay <neeraj.upadhyay@amd.com>
-References: <20240917143402.930114-1-boqun.feng@gmail.com>
- <20240917143402.930114-2-boqun.feng@gmail.com>
- <55975a55-302f-4c45-bfcc-192a8a1242e9@huaweicloud.com>
- <ZvPfmAp_2mDkI3ss@boqun-archlinux>
- <f5aeeeda-c725-422a-9481-4795bd3ade0f@huaweicloud.com>
- <ZvPp4taB9uu__oSQ@boqun-archlinux>
- <4167e6f5-4ff9-4aaa-915e-c1e692ac785a@efficios.com>
- <ZvP_H_R43bXpmkMS@boqun-archlinux>
- <a87040be-890b-4e83-86bb-5018da4a894d@efficios.com>
-Content-Language: en-US
-In-Reply-To: <a87040be-890b-4e83-86bb-5018da4a894d@efficios.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 2024-09-25 14:47, Mathieu Desnoyers wrote:
-[...]
+[ Upstream commit b440396387418fe2feaacd41ca16080e7a8bc9ad ]
 
-> Like so:
-> 
-> #include <stdio.h>
-> 
-> #define __str_1(x)  #x
-> #define __str(x)    __str_1(x)
-> 
-> /* x86-64 */
-> #define bne_ptr(_a, _b, _label) \
->      asm goto ( \
->          "cmpq %[a], %[b]\n\t" \
->          "jne %l[" __str(_label) "]\n\t" \
->          : : [a] "r" (_a), [b] "r" (_b) \
->          : : _label)
-> 
-> int x;
-> 
-> int v[2];
-> 
-> int main(void)
-> {
->      bne_ptr(v, v + 1, label_same);
->      x = 1;
-> label_same:
+linereq_set_config() behaves badly when direction is not set.
+The configuration validation is borrowed from linereq_create(), where,
+to verify the intent of the user, the direction must be set to in order to
+effect a change to the electrical configuration of a line. But, when
+applied to reconfiguration, that validation does not allow for the unset
+direction case, making it possible to clear flags set previously without
+specifying the line direction.
 
-Note that this label should probably be called "label_ne".
-I flipped the macro logic without changing the labels.
+Adding to the inconsistency, those changes are not immediately applied by
+linereq_set_config(), but will take effect when the line value is next get
+or set.
 
-Thanks,
+For example, by requesting a configuration with no flags set, an output
+line with GPIO_V2_LINE_FLAG_ACTIVE_LOW and GPIO_V2_LINE_FLAG_OPEN_DRAIN
+set could have those flags cleared, inverting the sense of the line and
+changing the line drive to push-pull on the next line value set.
 
-Mathieu
+Skip the reconfiguration of lines for which the direction is not set, and
+only reconfigure the lines for which direction is set.
 
->      printf("%d\n", x);
->      return 0;
-> }
-> 
-> 
->>
->> Regards,
->> Boqun
->>
->>> Thanks,
->>>
->>> Mathieu
->>>
->>>> Regards,
->>>> Boqun
->>>>
->>>>>
->>>>> Have fun,
->>>>>      jonas
->>>>>
->>>
->>> -- 
->>> Mathieu Desnoyers
->>> EfficiOS Inc.
->>> https://www.efficios.com
->>>
-> 
+Fixes: a54756cb24ea ("gpiolib: cdev: support GPIO_V2_LINE_SET_CONFIG_IOCTL")
+Signed-off-by: Kent Gibson <warthog618@gmail.com>
+Link: https://lore.kernel.org/r/20240626052925.174272-3-warthog618@gmail.com
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/gpio/gpiolib-cdev.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
+index d526a4c91e82..545998e9f6ad 100644
+--- a/drivers/gpio/gpiolib-cdev.c
++++ b/drivers/gpio/gpiolib-cdev.c
+@@ -1565,12 +1565,14 @@ static long linereq_set_config_unlocked(struct linereq *lr,
+ 		line = &lr->lines[i];
+ 		desc = lr->lines[i].desc;
+ 		flags = gpio_v2_line_config_flags(lc, i);
+-		gpio_v2_line_config_flags_to_desc_flags(flags, &desc->flags);
+-		edflags = flags & GPIO_V2_LINE_EDGE_DETECTOR_FLAGS;
+ 		/*
+-		 * Lines have to be requested explicitly for input
+-		 * or output, else the line will be treated "as is".
++		 * Lines not explicitly reconfigured as input or output
++		 * are left unchanged.
+ 		 */
++		if (!(flags & GPIO_V2_LINE_DIRECTION_FLAGS))
++			continue;
++		gpio_v2_line_config_flags_to_desc_flags(flags, &desc->flags);
++		edflags = flags & GPIO_V2_LINE_EDGE_DETECTOR_FLAGS;
+ 		if (flags & GPIO_V2_LINE_FLAG_OUTPUT) {
+ 			int val = gpio_v2_line_config_output_value(lc, i);
+
+@@ -1578,7 +1580,7 @@ static long linereq_set_config_unlocked(struct linereq *lr,
+ 			ret = gpiod_direction_output(desc, val);
+ 			if (ret)
+ 				return ret;
+-		} else if (flags & GPIO_V2_LINE_FLAG_INPUT) {
++		} else {
+ 			ret = gpiod_direction_input(desc);
+ 			if (ret)
+ 				return ret;
+--
+2.39.5
 
 
