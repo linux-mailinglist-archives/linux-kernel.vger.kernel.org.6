@@ -1,111 +1,133 @@
-Return-Path: <linux-kernel+bounces-339074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8154986008
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:12:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AF52986030
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:16:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FD7F1F26372
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:12:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55E82B2F059
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:13:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F431192D77;
-	Wed, 25 Sep 2024 12:23:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141CB193073;
+	Wed, 25 Sep 2024 12:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="pqmcV9+9"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jec5IJN8"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A9518452A;
-	Wed, 25 Sep 2024 12:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B55EF18452A;
+	Wed, 25 Sep 2024 12:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727267024; cv=none; b=DQ1h7pK4ZqU4hXBVooe/LvkiIVd1NAN8CZe3KCQPIbAbNcK7whxGlUR/L4JSsbW+mCDvKapkT4cM+b1npOrZH9mEgFpLYxBzCv9xfoydSTqgvDJk+O9CDYLsUTLzVLOjL9c2aBErAjcgWVBWf/JtGw3jV6Gjd2NB6do5B3if9tw=
+	t=1727267045; cv=none; b=agT0uQMbLyhGApxbZc/0OZTOxns9yoqRCKhtdArVaY3UH7I+I21+SVwCTBQB+QlL6Cc4sNjqxQbkJF8+9OhJ9HMzzHxG8acES7CSZZ0Ommkq34oE+cUI+betdxinWoW47/ykIFArMC3MV4ktVQvcsZ4I4qKhMYvs1KmAm74sJOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727267024; c=relaxed/simple;
-	bh=xJpNptsOxLsojUl6nDKNKIYUHPxpjNwDAUH41RcxOO0=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=a+Bhw/HSf/dTXwUBahmPmOG4bJFbYU2OPg8g+oW9PEUfCZ9SKuy8a3BbJVw2EOERR1Cg3YPFGbLjDUY1nrTg508nsyQHn5iMgCeuU3DDXnMoMDBAuAn6WLdf/WIS3TdqkjQhLExLa/j/e/QDQH1PrNpMGJq7ahh5FjqE7uNdWFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=pqmcV9+9; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:Subject
-	:Reply-To:Cc:To:From:MIME-Version:Date:Message-ID:From:Sender:Reply-To:
-	Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=xJpNptsOxLsojUl6nDKNKIYUHPxpjNwDAUH41RcxOO0=; t=1727267022;
-	x=1727699022; b=pqmcV9+9+Sabmpf0hJ/4SDBACwRb1byi7z0vEM0n8WoCBy1qh24HNuOyKMcBK
-	GYmp3l2Fuxn1BgSndzI13OTlN2ZRpO2CJHbobOt+AW7sBKsEk/hx8ZiUEmaMSflt7vYGoL7rzXCek
-	OwuDBEBMtlYa54jr9RKe92N/Gl4T0muTD4qSkFUqVDMcfEdqdfaWb4MHrNj04LDymYqlEyK3zh7Gq
-	dNTufnt7D5gX8c4oLyyFOAT2bkKTup4wvGEZ3qcVXyTWDOPlSpHc0R+aWJd8V5A4/0xWbFI+304DL
-	8GLONH0Z0Nn0NHDTLq7g/ouAqRdSC0MF9tdukKy3lJasCrKzLw==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1stR3Q-0005hP-6o; Wed, 25 Sep 2024 14:23:36 +0200
-Message-ID: <bf8288c9-13a1-47f0-9842-3b8eff37ef65@leemhuis.info>
-Date: Wed, 25 Sep 2024 14:23:35 +0200
+	s=arc-20240116; t=1727267045; c=relaxed/simple;
+	bh=/0BRZHUYHg7b8BpYfsT0qrXwbXQQ0jG649TK756HeFE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=D3Fgjh7G2uPDL/0HkdToDWHbgsrgsc7KloxexXHv0j/wZzyErVWhIOI8huJC2PZLx4Zpf9+7hIngQYaQLIeyyPXvUkM+cMScYmmT90VT/wIyRGc3of41n+gnxr8dcddiS6EFk4DDJVsPdDyKZ4KI6n/bqfjswshzCT3HdUlq0hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jec5IJN8; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-536748c7e9aso1299608e87.0;
+        Wed, 25 Sep 2024 05:24:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727267041; x=1727871841; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3D9H7m1ayAExeAteiY4BmZMeyV1ukgj31CzY4MoI5+Y=;
+        b=Jec5IJN8G4EW7D18pZ35Lh5T5a+fQWBf4qUXlNmTeNMyCzIfOaaQHVs0bniufJQpbK
+         5BbnZ+qPOPnvlPbzy0sHq3oXzHQ/6igYx1ZXH91jYkwEHQ0uvTFO4ImD57rMwB61ythL
+         gdemvaeNERA5ceXUay05Opz3r4Nu5xylS63p6/s0eJtOD7I7W7dOCoP7Z+GelIhAKJe8
+         s/NOnPQ/s4vUSpMc/QdiQzx4dozU5o/1a5bajIvs03LBSwC42mn1CMNxq6GvicL4cRhF
+         Yyup2Qy6viq04/QfcF4fvOYFXQlCVMBoK75/33phvm0zVbaFMfqvtCNb0kwuHOGx0Jzy
+         36Qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727267041; x=1727871841;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3D9H7m1ayAExeAteiY4BmZMeyV1ukgj31CzY4MoI5+Y=;
+        b=UUHJXHJzgdhWiFsIsBmQeeZy99SJTfT3k5FUOWYqWwqiw79OPAscZLMXX1UhFr+mNc
+         WiQPqW4I3SzFhT9NHqJjRj0yEfWgPeMgvzvDhQgXeLEwVQRA4uM2H0+fLn0VEqbSYyuU
+         j9AqMZ6knBp4p2eY8WK+pwxXA6MT7gfc9jlgwp1eWcOLGWl3w850FaAapvAo/raMeurM
+         E4Cr3fYFw3q7mOKW49GL5aakN+GEEBNJ0VBPCgPsvbvzIxFMeR86XiRMAZV1IXLuf0PX
+         UtOaiE9ifP0QBol5qwu387/5JULT1JpnomQh51+7TGnly/XlaW3tvmMZKmejcwL0s/zC
+         1YNA==
+X-Forwarded-Encrypted: i=1; AJvYcCUdmHyvEou5OZYWYd95caAFL8UIA6Aw76I2OkAGAyaU54UqlpNM9xcPl8dKkwcdCmemL6cvIM+m/W6WsJs=@vger.kernel.org, AJvYcCVROfuLpSFFr9LTKl+5hbKHW+a7GxHPd8u9ffA1IJngfXJesVvg+guKZta0TEw+pJ/fU+NGNitQ@vger.kernel.org, AJvYcCVqWFwufBviq1CMgHaBSZjztE+caGn5TX6a4XqEeFT5HJfDZOjhaT0QjizTp111f5EPCQVRKcRA0a8jiQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzC5HOTKfC+unETNEJYZgPU3Ux/l8bohajCV5fGbQ9ALGlgkfTn
+	DcBKmcmOPSBdJTF0QW92TZ2rWcn1gqHOa3jocibYQlY/MYorEdkhi28oiNZc
+X-Google-Smtp-Source: AGHT+IHFfLQnU+I3m0J+fjUdYH3rJ/SG1O3DECX99SL7D3Bh0hOkeXe84K8q9nD+8SM2zX2uss31zg==
+X-Received: by 2002:a05:6512:b01:b0:530:ae22:a6f0 with SMTP id 2adb3069b0e04-53873455f14mr1633306e87.5.1727267040906;
+        Wed, 25 Sep 2024 05:24:00 -0700 (PDT)
+Received: from [127.0.1.1] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93930f8529sm204745566b.185.2024.09.25.05.23.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 05:24:00 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH v2 0/4] selftsets: gitignore and clean target file
+ additions
+Date: Wed, 25 Sep 2024 14:23:43 +0200
+Message-Id: <20240925-selftests-gitignore-v2-0-bbbbdef21959@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-To: Linus Walleij <linus.walleij@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>
-Cc: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org,
- Linux kernel regressions list <regressions@lists.linux.dev>,
- LKML <linux-kernel@vger.kernel.org>, Andrew <quark@disroot.org>
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Subject: [regression] segfault in Qt apps running on Linux kernel 6.10.8 ARM
- with LPAE
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1727267022;d28f6a51;
-X-HE-SMSGID: 1stR3Q-0005hP-6o
+X-B4-Tracking: v=1; b=H4sIAM8A9GYC/32NQQ6CMBBFr0JmbQ1tQYsr72FY1DKUSYCaTkM0p
+ He3cgCX7yX//R0YIyHDrdoh4kZMYS2gThW4ya4eBQ2FQdWqqTvVCMZ5TMiJhadEfg0RBTZSao0
+ X1z4HKMtXxJHeR/XRF56IU4if42STP/u/t0lRi+7attYZo7Uxd79Yms8uLNDnnL/fZQFAtgAAA
+ A==
+To: Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ Allison Henderson <allison.henderson@oracle.com>, 
+ Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ netdev@vger.kernel.org, linux-rdma@vger.kernel.org, 
+ rds-devel@oss.oracle.com, linux-mm@kvack.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727267039; l=1181;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=/0BRZHUYHg7b8BpYfsT0qrXwbXQQ0jG649TK756HeFE=;
+ b=nnlM9AKYM+9p4f8mDEbSXp8CsfNyW08Xlqfp9YMAcdhL6diwkcbWgGsKug91Y6fb4Dx8ffyY5
+ p+OaBLVnccBAulRnnP3E7pqKJdx2n1tTl0OxSTbg72iKSsRc0x9zYrb
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-Hi, Thorsten here, the Linux kernel's regression tracker.
+Trivial patches to update the gitignore files unders selftests, and a
+little addition to EXTRA_CLEAN under net/rds to account for the
+automatically generated include.sh.
 
-Catalin, Linus, I noticed a report about a regression in
-bugzilla.kernel.org that appears to be caused by a change of yours:
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Changes in v2:
+- [PATCH 4/4] add excepction for load_address.c (must be tracked).
+- Link to v1: https://lore.kernel.org/r/20240924-selftests-gitignore-v1-0-9755ac883388@gmail.com
 
-7af5b901e84743 ("ARM: 9358/2: Implement PAN for LPAE by TTBR0 page table
-walks disablement") [v6.10-rc1]
+---
+Javier Carrasco (4):
+      selftests: add unshare_test and msg_oob to gitignore
+      selftests: rds: add include.sh to EXTRA_CLEAN
+      selftests: rds: add gitignore file for include.sh
+      selftests: exec: update gitignore for load_address
 
-As many (most?) kernel developers don't keep an eye on the bug tracker,
-I decided to write this mail. To quote from https://bugzilla.kernel.org/
-show_bug.cgi?id=219247 :
+ tools/testing/selftests/core/.gitignore    | 1 +
+ tools/testing/selftests/exec/.gitignore    | 3 ++-
+ tools/testing/selftests/net/.gitignore     | 1 +
+ tools/testing/selftests/net/rds/.gitignore | 1 +
+ tools/testing/selftests/net/rds/Makefile   | 2 +-
+ 5 files changed, 6 insertions(+), 2 deletions(-)
+---
+base-commit: 4d0326b60bb753627437fff0f76bf1525bcda422
+change-id: 20240924-selftests-gitignore-e41133e6c5bd
 
-> Trying to run LxQt on a Chromebook XE303C12 with Devuan 4 and Linux
-> kernel 6.10.8 results in a segmentation fault (for LxQt). There are
-> no such problems with Linux kernel 6.9.12 or earlier. With Linux
-> kernel 6.10.8 it is possible to run Xfce4, but trying to run for
-> example Kate ends in a segmentation fault. Mesa 20.3.5, patched for
-> partial hardware acceleration, preserves this acceleration in Xfce4.
-> The mpv works using acceleration regardless of the Linux kernel
-> version. dmesg does not give anything significantly new compared to
-> previous kernel version.
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-See the ticket for more details and the bisection log. The reporter is CCed.
-
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
---
-Everything you wanna know about Linux kernel regression tracking:
-https://linux-regtracking.leemhuis.info/about/#tldr
-If I did something stupid, please tell me, as explained on that page.
-
-P.S.: let me use this mail to also add the report to the list of tracked
-regressions to ensure it's doesn't fall through the cracks:
-
-#regzbot introduced: 7af5b901e84743c608aae90cb0e429702812c324
-#regzbot title: ARM: segfault in Qt apps running on Linux kernel 6.10.8
-ARM with LPAE
-#regzbot from: Andrew
-#regzbot duplicate: https://bugzilla.kernel.org/show_bug.cgi?id=219247
-#regzbot ignore-activity
 
