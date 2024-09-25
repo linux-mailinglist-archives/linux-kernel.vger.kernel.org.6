@@ -1,79 +1,62 @@
-Return-Path: <linux-kernel+bounces-338971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F144D985EF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:47:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F6DE985EF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:47:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7526A1F211D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:47:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CCE71F2544E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D139121948F;
-	Wed, 25 Sep 2024 12:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78DFC188728;
+	Wed, 25 Sep 2024 12:13:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J0aPT+UV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sXCM0pwA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B89B156236;
-	Wed, 25 Sep 2024 12:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B189D188719;
+	Wed, 25 Sep 2024 12:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727266406; cv=none; b=A7t/GjGVO7jVA109+L2xaJBH2mqToWqKS2/45E9ilrCPGFv8d2fcbTzLeNVgk+Y0PdxQ16hGg6ApeCZPrTAKH9Ql3hcclICIT5QFfM7QaseM0tyspDlGMxXYMp6oyfiwDeoghtW7JEPLnqZFePMuLLrosSpN80eq9BuRwKGYUik=
+	t=1727266411; cv=none; b=D5Kp35pn6C3SFvJKXRlyAiWDWgGxn8VbMAd6MAwmUtK8OA069mJjab9q101QVFT/KCSL/VvoRqcZ/vXoeALAwnxepNxHGEvVpy7fp4kfylh1+DwBIYJ175ZZ8//UyvtNVVl7EnU55J2dRwWTfTSKvPhflXOLs88AsbV1jOQ801k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727266406; c=relaxed/simple;
-	bh=G7/+ReEWFxx7v5IvoprCkGqar5mOxyZHzDBImv9/pWM=;
+	s=arc-20240116; t=1727266411; c=relaxed/simple;
+	bh=kRWR6qYrxWbNzYcGxDDO/mF6H7avlIAs8xLSBm1IsR8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mb4I/hQqwCSZ5TWxoNF4fIm8B1EGDv9owGCkbjlWP/3jklP+aDy3fYdRJ0d0PosUrd8aM+mbjgXiaP8QzKVekdbkrFe1r8bFstLtOjBxQW+MNIaL0OQlBi3y02fQpbAZWqQ97K2qyik9XPKQ4KcAyQVHjM934oHAyUGvBJpyjQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J0aPT+UV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A05FC4CEC3;
-	Wed, 25 Sep 2024 12:13:22 +0000 (UTC)
+	 MIME-Version:Content-Type; b=tELQMYT746avoGT/tvEv87mOc3N0Q3mxftksKBcNDy/s3TNYVOGHJ1YmowMZ+S5VX7cvHS/am7kYmwjjki0xL3aDzgJIMQc70zALZzVyIaM6opgnpsdjzYdJL8Dc1l1XeXIMNedUcb7VNlZI3rAHwslROPyUmWQvYppoEeEi4dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sXCM0pwA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3755C4CECD;
+	Wed, 25 Sep 2024 12:13:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727266405;
-	bh=G7/+ReEWFxx7v5IvoprCkGqar5mOxyZHzDBImv9/pWM=;
+	s=k20201202; t=1727266411;
+	bh=kRWR6qYrxWbNzYcGxDDO/mF6H7avlIAs8xLSBm1IsR8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=J0aPT+UV9Rfc1rRuBLKQRtg9TFAt3KOCznF+jO6NKp5VAzB8UCbdVLTa8UL4dkiue
-	 D4FiHCl5WxEUHMSmtlUubzz8FjxZOSNsw7i5UDNhNRMArM2InuB0v54a1U86o4Qvp2
-	 nUgIgdfQ+0seJBxGrg1OCWTmgMRICUl+c/DLAYMe98LJkJVWOG/fNhcny9RgfQYOFO
-	 xvaShYa7WjbYp2rNvWQ9QAc6OjsovTmjuyPLsdlEW2JmMHbXSE9TlgSRC6XO2uaegn
-	 0Exg4kGSLx3DWwUTNuzNcOWeJZ89wSE2towo9yXyeWQCjdiI3BsWBiQUFRB4Hyo+dR
-	 oposf7XWYL+kg==
+	b=sXCM0pwAJUB4S7yL0B8GP1Vmx0CkxLx6d5K/DpFlG9QtbtoGPX+v35XPE/l0sP22S
+	 +rOFF3UTU94U5bO5l7njWSTIvK/W3h2ILLLLPoVHAEwqLJnuS9qE8e8oOy6X0vWqt8
+	 V4uSQCk99WeoD2ANZaawjTXmnm2FQqJJOY/MbeAcFa2w4qYaBdk/B/LHcnDvmvzZzr
+	 0SDTSLfm9H1lvLpKcdy6VwhMy5k54kbfYMATQfX6xatI+YWsOT0x3qyxF26HNLKJaj
+	 CT+AhQfFAFbsnJmX/ZkihNcjZsZoDD8p9vFslp8D5QglPsYWdPAaF2roClUjy+/oX0
+	 YR6pDPcgeekfA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Adrian Ratiu <adrian.ratiu@collabora.com>,
-	Doug Anderson <dianders@chromium.org>,
-	Jeff Xu <jeffxu@google.com>,
-	Jann Horn <jannh@google.com>,
-	Kees Cook <kees@kernel.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
+Cc: =?UTF-8?q?Stefan=20M=C3=A4tje?= <stefan.maetje@esd.eu>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
 	Sasha Levin <sashal@kernel.org>,
-	corbet@lwn.net,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	thuth@redhat.com,
-	bp@alien8.de,
-	tglx@linutronix.de,
-	jpoimboe@kernel.org,
-	paulmck@kernel.org,
-	tony@atomide.com,
-	xiongwei.song@windriver.com,
-	akpm@linux-foundation.org,
-	oleg@redhat.com,
-	adobriyan@gmail.com,
-	casey@schaufler-ca.com,
-	viro@zeniv.linux.org.uk,
-	linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 048/139] proc: add config & param to block forcing mem writes
-Date: Wed, 25 Sep 2024 08:07:48 -0400
-Message-ID: <20240925121137.1307574-48-sashal@kernel.org>
+	mailhol.vincent@wanadoo.fr,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	maxime.jayat@mobile-devices.fr,
+	linux-can@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.6 050/139] can: netlink: avoid call to do_set_data_bittiming callback with stale can_priv::ctrlmode
+Date: Wed, 25 Sep 2024 08:07:50 -0400
+Message-ID: <20240925121137.1307574-50-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240925121137.1307574-1-sashal@kernel.org>
 References: <20240925121137.1307574-1-sashal@kernel.org>
@@ -83,203 +66,173 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.52
 Content-Transfer-Encoding: 8bit
 
-From: Adrian Ratiu <adrian.ratiu@collabora.com>
+From: Stefan Mätje <stefan.maetje@esd.eu>
 
-[ Upstream commit 41e8149c8892ed1962bd15350b3c3e6e90cba7f4 ]
+[ Upstream commit 2423cc20087ae9a7b7af575aa62304ef67cad7b6 ]
 
-This adds a Kconfig option and boot param to allow removing
-the FOLL_FORCE flag from /proc/pid/mem write calls because
-it can be abused.
+This patch moves the evaluation of data[IFLA_CAN_CTRLMODE] in function
+can_changelink in front of the evaluation of data[IFLA_CAN_BITTIMING].
 
-The traditional forcing behavior is kept as default because
-it can break GDB and some other use cases.
+This avoids a call to do_set_data_bittiming providing a stale
+can_priv::ctrlmode with a CAN_CTRLMODE_FD flag not matching the
+requested state when switching between a CAN Classic and CAN-FD bitrate.
 
-Previously we tried a more sophisticated approach allowing
-distributions to fine-tune /proc/pid/mem behavior, however
-that got NAK-ed by Linus [1], who prefers this simpler
-approach with semantics also easier to understand for users.
+In the same manner the evaluation of data[IFLA_CAN_CTRLMODE] in function
+can_validate is also moved in front of the evaluation of
+data[IFLA_CAN_BITTIMING].
 
-Link: https://lore.kernel.org/lkml/CAHk-=wiGWLChxYmUA5HrT5aopZrB7_2VTa0NLZcxORgkUe5tEQ@mail.gmail.com/ [1]
-Cc: Doug Anderson <dianders@chromium.org>
-Cc: Jeff Xu <jeffxu@google.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Kees Cook <kees@kernel.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
-Link: https://lore.kernel.org/r/20240802080225.89408-1-adrian.ratiu@collabora.com
-Signed-off-by: Christian Brauner <brauner@kernel.org>
+This is a preparation for patches where the nominal and data bittiming
+may have interdependencies on the driver side depending on the
+CAN_CTRLMODE_FD flag state.
+
+Signed-off-by: Stefan Mätje <stefan.maetje@esd.eu>
+Link: https://patch.msgid.link/20240808164224.213522-1-stefan.maetje@esd.eu
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../admin-guide/kernel-parameters.txt         | 10 +++
- fs/proc/base.c                                | 61 ++++++++++++++++++-
- security/Kconfig                              | 32 ++++++++++
- 3 files changed, 102 insertions(+), 1 deletion(-)
+ drivers/net/can/dev/netlink.c | 102 +++++++++++++++++-----------------
+ 1 file changed, 51 insertions(+), 51 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index a7fe113897361..d83a3f47e2007 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4639,6 +4639,16 @@
- 	printk.time=	Show timing data prefixed to each printk message line
- 			Format: <bool>  (1/Y/y=enable, 0/N/n=disable)
+diff --git a/drivers/net/can/dev/netlink.c b/drivers/net/can/dev/netlink.c
+index dfdc039d92a6c..01aacdcda2606 100644
+--- a/drivers/net/can/dev/netlink.c
++++ b/drivers/net/can/dev/netlink.c
+@@ -65,15 +65,6 @@ static int can_validate(struct nlattr *tb[], struct nlattr *data[],
+ 	if (!data)
+ 		return 0;
  
-+	proc_mem.force_override= [KNL]
-+			Format: {always | ptrace | never}
-+			Traditionally /proc/pid/mem allows memory permissions to be
-+			overridden without restrictions. This option may be set to
-+			restrict that. Can be one of:
-+			- 'always': traditional behavior always allows mem overrides.
-+			- 'ptrace': only allow mem overrides for active ptracers.
-+			- 'never':  never allow mem overrides.
-+			If not specified, default is the CONFIG_PROC_MEM_* choice.
-+
- 	processor.max_cstate=	[HW,ACPI]
- 			Limit processor to maximum C-state
- 			max_cstate=9 overrides any DMI blacklist limit.
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 6e61d93ffa552..699f085d4de7d 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -85,6 +85,7 @@
- #include <linux/elf.h>
- #include <linux/pid_namespace.h>
- #include <linux/user_namespace.h>
-+#include <linux/fs_parser.h>
- #include <linux/fs_struct.h>
- #include <linux/slab.h>
- #include <linux/sched/autogroup.h>
-@@ -116,6 +117,40 @@
- static u8 nlink_tid __ro_after_init;
- static u8 nlink_tgid __ro_after_init;
+-	if (data[IFLA_CAN_BITTIMING]) {
+-		struct can_bittiming bt;
+-
+-		memcpy(&bt, nla_data(data[IFLA_CAN_BITTIMING]), sizeof(bt));
+-		err = can_validate_bittiming(&bt, extack);
+-		if (err)
+-			return err;
+-	}
+-
+ 	if (data[IFLA_CAN_CTRLMODE]) {
+ 		struct can_ctrlmode *cm = nla_data(data[IFLA_CAN_CTRLMODE]);
+ 		u32 tdc_flags = cm->flags & CAN_CTRLMODE_TDC_MASK;
+@@ -114,6 +105,15 @@ static int can_validate(struct nlattr *tb[], struct nlattr *data[],
+ 		}
+ 	}
  
-+enum proc_mem_force {
-+	PROC_MEM_FORCE_ALWAYS,
-+	PROC_MEM_FORCE_PTRACE,
-+	PROC_MEM_FORCE_NEVER
-+};
++	if (data[IFLA_CAN_BITTIMING]) {
++		struct can_bittiming bt;
 +
-+static enum proc_mem_force proc_mem_force_override __ro_after_init =
-+	IS_ENABLED(CONFIG_PROC_MEM_NO_FORCE) ? PROC_MEM_FORCE_NEVER :
-+	IS_ENABLED(CONFIG_PROC_MEM_FORCE_PTRACE) ? PROC_MEM_FORCE_PTRACE :
-+	PROC_MEM_FORCE_ALWAYS;
-+
-+static const struct constant_table proc_mem_force_table[] __initconst = {
-+	{ "always", PROC_MEM_FORCE_ALWAYS },
-+	{ "ptrace", PROC_MEM_FORCE_PTRACE },
-+	{ "never", PROC_MEM_FORCE_NEVER },
-+	{ }
-+};
-+
-+static int __init early_proc_mem_force_override(char *buf)
-+{
-+	if (!buf)
-+		return -EINVAL;
-+
-+	/*
-+	 * lookup_constant() defaults to proc_mem_force_override to preseve
-+	 * the initial Kconfig choice in case an invalid param gets passed.
-+	 */
-+	proc_mem_force_override = lookup_constant(proc_mem_force_table,
-+						  buf, proc_mem_force_override);
-+
-+	return 0;
-+}
-+early_param("proc_mem.force_override", early_proc_mem_force_override);
-+
- struct pid_entry {
- 	const char *name;
- 	unsigned int len;
-@@ -834,6 +869,28 @@ static int mem_open(struct inode *inode, struct file *file)
- 	return ret;
- }
- 
-+static bool proc_mem_foll_force(struct file *file, struct mm_struct *mm)
-+{
-+	struct task_struct *task;
-+	bool ptrace_active = false;
-+
-+	switch (proc_mem_force_override) {
-+	case PROC_MEM_FORCE_NEVER:
-+		return false;
-+	case PROC_MEM_FORCE_PTRACE:
-+		task = get_proc_task(file_inode(file));
-+		if (task) {
-+			ptrace_active =	READ_ONCE(task->ptrace) &&
-+					READ_ONCE(task->mm) == mm &&
-+					READ_ONCE(task->parent) == current;
-+			put_task_struct(task);
-+		}
-+		return ptrace_active;
-+	default:
-+		return true;
++		memcpy(&bt, nla_data(data[IFLA_CAN_BITTIMING]), sizeof(bt));
++		err = can_validate_bittiming(&bt, extack);
++		if (err)
++			return err;
 +	}
-+}
 +
- static ssize_t mem_rw(struct file *file, char __user *buf,
- 			size_t count, loff_t *ppos, int write)
- {
-@@ -854,7 +911,9 @@ static ssize_t mem_rw(struct file *file, char __user *buf,
- 	if (!mmget_not_zero(mm))
- 		goto free;
+ 	if (is_can_fd) {
+ 		if (!data[IFLA_CAN_BITTIMING] || !data[IFLA_CAN_DATA_BITTIMING])
+ 			return -EOPNOTSUPP;
+@@ -195,48 +195,6 @@ static int can_changelink(struct net_device *dev, struct nlattr *tb[],
+ 	/* We need synchronization with dev->stop() */
+ 	ASSERT_RTNL();
  
--	flags = FOLL_FORCE | (write ? FOLL_WRITE : 0);
-+	flags = write ? FOLL_WRITE : 0;
-+	if (proc_mem_foll_force(file, mm))
-+		flags |= FOLL_FORCE;
+-	if (data[IFLA_CAN_BITTIMING]) {
+-		struct can_bittiming bt;
+-
+-		/* Do not allow changing bittiming while running */
+-		if (dev->flags & IFF_UP)
+-			return -EBUSY;
+-
+-		/* Calculate bittiming parameters based on
+-		 * bittiming_const if set, otherwise pass bitrate
+-		 * directly via do_set_bitrate(). Bail out if neither
+-		 * is given.
+-		 */
+-		if (!priv->bittiming_const && !priv->do_set_bittiming &&
+-		    !priv->bitrate_const)
+-			return -EOPNOTSUPP;
+-
+-		memcpy(&bt, nla_data(data[IFLA_CAN_BITTIMING]), sizeof(bt));
+-		err = can_get_bittiming(dev, &bt,
+-					priv->bittiming_const,
+-					priv->bitrate_const,
+-					priv->bitrate_const_cnt,
+-					extack);
+-		if (err)
+-			return err;
+-
+-		if (priv->bitrate_max && bt.bitrate > priv->bitrate_max) {
+-			NL_SET_ERR_MSG_FMT(extack,
+-					   "arbitration bitrate %u bps surpasses transceiver capabilities of %u bps",
+-					   bt.bitrate, priv->bitrate_max);
+-			return -EINVAL;
+-		}
+-
+-		memcpy(&priv->bittiming, &bt, sizeof(bt));
+-
+-		if (priv->do_set_bittiming) {
+-			/* Finally, set the bit-timing registers */
+-			err = priv->do_set_bittiming(dev);
+-			if (err)
+-				return err;
+-		}
+-	}
+-
+ 	if (data[IFLA_CAN_CTRLMODE]) {
+ 		struct can_ctrlmode *cm;
+ 		u32 ctrlstatic;
+@@ -284,6 +242,48 @@ static int can_changelink(struct net_device *dev, struct nlattr *tb[],
+ 			priv->ctrlmode &= cm->flags | ~CAN_CTRLMODE_TDC_MASK;
+ 	}
  
- 	while (count > 0) {
- 		size_t this_len = min_t(size_t, count, PAGE_SIZE);
-diff --git a/security/Kconfig b/security/Kconfig
-index 52c9af08ad35d..39af8b8696efb 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -19,6 +19,38 @@ config SECURITY_DMESG_RESTRICT
- 
- 	  If you are unsure how to answer this question, answer N.
- 
-+choice
-+	prompt "Allow /proc/pid/mem access override"
-+	default PROC_MEM_ALWAYS_FORCE
-+	help
-+	  Traditionally /proc/pid/mem allows users to override memory
-+	  permissions for users like ptrace, assuming they have ptrace
-+	  capability.
++	if (data[IFLA_CAN_BITTIMING]) {
++		struct can_bittiming bt;
 +
-+	  This allows people to limit that - either never override, or
-+	  require actual active ptrace attachment.
++		/* Do not allow changing bittiming while running */
++		if (dev->flags & IFF_UP)
++			return -EBUSY;
 +
-+	  Defaults to the traditional behavior (for now)
++		/* Calculate bittiming parameters based on
++		 * bittiming_const if set, otherwise pass bitrate
++		 * directly via do_set_bitrate(). Bail out if neither
++		 * is given.
++		 */
++		if (!priv->bittiming_const && !priv->do_set_bittiming &&
++		    !priv->bitrate_const)
++			return -EOPNOTSUPP;
 +
-+config PROC_MEM_ALWAYS_FORCE
-+	bool "Traditional /proc/pid/mem behavior"
-+	help
-+	  This allows /proc/pid/mem accesses to override memory mapping
-+	  permissions if you have ptrace access rights.
++		memcpy(&bt, nla_data(data[IFLA_CAN_BITTIMING]), sizeof(bt));
++		err = can_get_bittiming(dev, &bt,
++					priv->bittiming_const,
++					priv->bitrate_const,
++					priv->bitrate_const_cnt,
++					extack);
++		if (err)
++			return err;
 +
-+config PROC_MEM_FORCE_PTRACE
-+	bool "Require active ptrace() use for access override"
-+	help
-+	  This allows /proc/pid/mem accesses to override memory mapping
-+	  permissions for active ptracers like gdb.
++		if (priv->bitrate_max && bt.bitrate > priv->bitrate_max) {
++			NL_SET_ERR_MSG_FMT(extack,
++					   "arbitration bitrate %u bps surpasses transceiver capabilities of %u bps",
++					   bt.bitrate, priv->bitrate_max);
++			return -EINVAL;
++		}
 +
-+config PROC_MEM_NO_FORCE
-+	bool "Never"
-+	help
-+	  Never override memory mapping permissions
++		memcpy(&priv->bittiming, &bt, sizeof(bt));
 +
-+endchoice
++		if (priv->do_set_bittiming) {
++			/* Finally, set the bit-timing registers */
++			err = priv->do_set_bittiming(dev);
++			if (err)
++				return err;
++		}
++	}
 +
- config SECURITY
- 	bool "Enable different security models"
- 	depends on SYSFS
+ 	if (data[IFLA_CAN_RESTART_MS]) {
+ 		/* Do not allow changing restart delay while running */
+ 		if (dev->flags & IFF_UP)
 -- 
 2.43.0
 
