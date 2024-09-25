@@ -1,156 +1,184 @@
-Return-Path: <linux-kernel+bounces-339752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A33259869E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 01:43:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D802F9869EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 01:46:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC247B24D0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 23:43:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D3091F266A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 23:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149C91A42D4;
-	Wed, 25 Sep 2024 23:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C28FF1A3BB9;
+	Wed, 25 Sep 2024 23:46:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E2DB/sBO"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wb4CJHyJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24CD1A3BC0
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 23:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22BA84A00;
+	Wed, 25 Sep 2024 23:46:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727307765; cv=none; b=N8924JRTVa1oKvSO+Nv5Rk9D9NvsNgB5ro7TA1X8Hg+l3h+MoDM080jrdgiRls5rfvISQeT0eW5VQW3lxCaeWctZzWhTD8n6IcNtI1foG8gWh1YMdArwLYEvOQH7KaDioOhsMegHrdDazxxCCHY3Jmq0rEWjKpS3DPZCWpjHOvU=
+	t=1727307986; cv=none; b=HyAfmu23IlwjJ15GJ6A/Vb2OZV4+VWddaJmoi3t1DiBXYqaU5u+B+3VsCbLW3zYV3SlcFGl3GRRoZ5oXu4bel7m61XxWT9Y5EkYIZJ40wMAtZsR7fKxM57mkmPTEdzdePPcjSAzoagAkW5tu5ZL2XfX8r90fdSrzykuyM7GzkU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727307765; c=relaxed/simple;
-	bh=cwCCg7cjlmVJH30GDf9Cwg6fhR2bbuS17MaqIuOSV0s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lHLBnq3J7sc6UQ/o1FWVaQa/jBOkS/nsKj+XoigniCmrZw+gU+vGG5S8j0HTZPyE7RRsO93s+25IK4zAFSNoUp8ccpEGL9YZirKbFgQY+0Nqep7FvQSsr6RSJv4n91/iONj0KAJLX0i94flvW/9VjHX3Rxl+Bh7KPFRnzMPbsUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=E2DB/sBO; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c2460e885dso9895a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 16:42:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727307762; x=1727912562; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ek54duFW07igKvK9AQGJRlqEiTdehADtLtBpPhw2agE=;
-        b=E2DB/sBOLvarg2yLjBPzCZclNsJO7hUZ6G7JWzC4pwy0KSxVSEd4lwuegmPYuVSQE4
-         prcHVOg7GAh69d/EyX0HEVwPNO7OoxLLT1XW9/QLTBTpHNoaawRjhV6Izc8NyK6G7J8g
-         yWT+LFnEPZTweXSqF0Az63SGuO4uGNkcw9+B+7ZDCh1lPcuAEmiGtGkKT7vA+yauVohF
-         3I/GitalJG7xgdUdG+J/pJVjqu/LMTaS6qysbWg7BKBSXex1Mmr8VhbGOaHL7P8+MlDu
-         17kRZ9XoPDATpxO0EUSiqUqOlSRZ5lMf95dG/4z3py4hD1ZCDkd3CV/2P3UQBIVojm1S
-         /P1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727307762; x=1727912562;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ek54duFW07igKvK9AQGJRlqEiTdehADtLtBpPhw2agE=;
-        b=INS5k3j1xSqHu5afkr/CXphbCX87Cw/gpWOCCF1o6v4uG2rxRyyyCqYwnFTYs3yoIS
-         VQP6UIbJPDbsFPVo9g1K1nVI0bhA0+dLXwjnuzjCeVQR7ZFaCV+tgt75k01B9Reylbhx
-         Svl7HFd87r1jnUwBeEjn57KZr7tNI6hN74buOxPNo+AHdiT8gsXXU27EWZz+fPWT3wCl
-         7V4dnSy1bs4gfanIVVj3RO2WMsnrD2TNG1/zyidtxpaVBzkF1pUjq2HDZLPykw3ouzCL
-         tGiqwQu9AE+WCpD6HwSCcHlbgn3MigzvDjYlbAGPpkXYdIGGJbPAUWKpnHP2IF+0xONw
-         +NKw==
-X-Forwarded-Encrypted: i=1; AJvYcCUACsMKlk7whzXMgHQ2N+TeF+yIGTLIFhNFfSdz7IqxRlgTVQ9KO7JnUj+VT5l+VMWtVU+vn8yzPexDW80=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQtrb+l/I0xJFgC8w8ccP007URHrOJ3HC7nhN1Ves14hlpLB5B
-	8WO/Hgoxqe9c10TJg1z/jEvako04w3c34bWqs6S0oZO8dm/JCgzlmUBDquTVyq6V70WT0TRSQ3i
-	WPhyK+WufqU73kZRERn5HClMhyl9YxkhAWyWp
-X-Google-Smtp-Source: AGHT+IEQLkFnBxCVmc+hBCfJCN9xgnB4wVQcVoqAWlHhf+GqjN1sdjtOkK/z88OGPV3GGtu/6kc0Wj3d2hT0sVNu66g=
-X-Received: by 2002:a05:6402:524d:b0:5c2:5251:ba5c with SMTP id
- 4fb4d7f45d1cf-5c8783c7d8fmr251259a12.0.1727307761901; Wed, 25 Sep 2024
- 16:42:41 -0700 (PDT)
+	s=arc-20240116; t=1727307986; c=relaxed/simple;
+	bh=kRJUa6JzNqkOy3Yp5wDfA42w2JFJa+Z824N4jsJX2vo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=osyeJXTR4SpQWpC8YdQxICHHHO+yIIGkO7Qhd7fiJvLeLHTCSeRfEcAIkEzLOHbaVohGSdWj83JYpiVJ/vq5YEbjy84PzNFN1LeFCeAtjh/XhoUxTXbkf7Mki3R7nzT6r030do6DqP2RMYcyxWvSvCGl7MpsVgEOa1HOALKhXg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wb4CJHyJ; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727307984; x=1758843984;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=kRJUa6JzNqkOy3Yp5wDfA42w2JFJa+Z824N4jsJX2vo=;
+  b=Wb4CJHyJl33kmbb68EPPJZD4WASEFwx9kNTLfr96Sa27ywWbWVJmjcGu
+   8X5jK41NSLN/mpFXwrJAolFxYvt8o7QF6if/7rRYHacDxmO3KHqsJjwZa
+   HYEfANyZcr4KJjcmNQdpLIjF1ix5HTcljozuSjQCPY4XOB0XifOmGWV0B
+   WQTInYdYFPIPoTCRIZS8PzuJM/OgrFjLoZ+BzLkSid22pTJqpSdA4nO0B
+   tKTMh+g7R3gpMewlpwF5+4L2WxevBtme2O0+Bc7LSF6KZTSuYJnqllvxN
+   7I1cH/AnI4pZmAyW2UA4qsyKHpCwAJP3iasZtBbwgZpjD/b+1EMQACGwF
+   Q==;
+X-CSE-ConnectionGUID: GsTYZ3vpSdiRYmr+RmT3RQ==
+X-CSE-MsgGUID: vrDt7b9JSLaL2mD7gTmClA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11206"; a="43902658"
+X-IronPort-AV: E=Sophos;i="6.10,258,1719903600"; 
+   d="scan'208";a="43902658"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 16:46:23 -0700
+X-CSE-ConnectionGUID: KSZbMsWbRvya90BG3MH0Dw==
+X-CSE-MsgGUID: N9NdVQuORnSp47XdMMGZvA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,258,1719903600"; 
+   d="scan'208";a="72075269"
+Received: from fecarpio-mobl.amr.corp.intel.com (HELO desk) ([10.125.147.229])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 16:46:23 -0700
+Date: Wed, 25 Sep 2024 16:46:16 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Robert Gill <rtgill82@gmail.com>,
+	Jari Ruusu <jariruusu@protonmail.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
+	antonio.gomez.iglesias@linux.intel.com,
+	daniel.sneddon@linux.intel.com, stable@vger.kernel.org
+Subject: Re: [PATCH v7 3/3] x86/bugs: Use code segment selector for VERW
+ operand
+Message-ID: <20240925234616.2ublphj3vbluawb3@desk>
+References: <20240925-fix-dosemu-vm86-v7-0-1de0daca2d42@linux.intel.com>
+ <20240925-fix-dosemu-vm86-v7-3-1de0daca2d42@linux.intel.com>
+ <5703f2d8-7ca0-4f01-a954-c0eb1de930b4@citrix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240924212024.540574-1-mmaurer@google.com> <20240924212024.540574-15-mmaurer@google.com>
- <20240925230000.GA3176650@google.com>
-In-Reply-To: <20240925230000.GA3176650@google.com>
-From: Matthew Maurer <mmaurer@google.com>
-Date: Wed, 25 Sep 2024 16:42:30 -0700
-Message-ID: <CAGSQo00OqOJ+s3xULXvojXMSCR8y-TQOHAwWqpS2VDxWaDxxQA@mail.gmail.com>
-Subject: Re: [PATCH v4 14/16] modules: Support extended MODVERSIONS info
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: masahiroy@kernel.org, ndesaulniers@google.com, ojeda@kernel.org, 
-	gary@garyguo.net, mcgrof@kernel.org, Michael Ellerman <mpe@ellerman.id.au>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Benjamin Gray <bgray@linux.ibm.com>, 
-	Naveen N Rao <naveen@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, neal@gompa.dev, 
-	marcan@marcan.st, j@jannau.net, asahi@lists.linux.dev, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Petr Pavlu <petr.pavlu@suse.com>, 
-	Daniel Gomez <da.gomez@samsung.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linuxppc-dev@lists.ozlabs.org, 
-	linux-modules@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5703f2d8-7ca0-4f01-a954-c0eb1de930b4@citrix.com>
 
-Thanks for the catch. I've sent up v5 to include that fix. I've also
-added a changelog and made sure the patches make it to linux-modules@
-as Daniel suggested.
+On Thu, Sep 26, 2024 at 12:29:00AM +0100, Andrew Cooper wrote:
+> On 25/09/2024 11:25 pm, Pawan Gupta wrote:
+> > Robert Gill reported below #GP in 32-bit mode when dosemu software was
+> > executing vm86() system call:
+> >
+> >   general protection fault: 0000 [#1] PREEMPT SMP
+> >   CPU: 4 PID: 4610 Comm: dosemu.bin Not tainted 6.6.21-gentoo-x86 #1
+> >   Hardware name: Dell Inc. PowerEdge 1950/0H723K, BIOS 2.7.0 10/30/2010
+> >   EIP: restore_all_switch_stack+0xbe/0xcf
+> >   EAX: 00000000 EBX: 00000000 ECX: 00000000 EDX: 00000000
+> >   ESI: 00000000 EDI: 00000000 EBP: 00000000 ESP: ff8affdc
+> >   DS: 0000 ES: 0000 FS: 0000 GS: 0033 SS: 0068 EFLAGS: 00010046
+> >   CR0: 80050033 CR2: 00c2101c CR3: 04b6d000 CR4: 000406d0
+> >   Call Trace:
+> >    show_regs+0x70/0x78
+> >    die_addr+0x29/0x70
+> >    exc_general_protection+0x13c/0x348
+> >    exc_bounds+0x98/0x98
+> >    handle_exception+0x14d/0x14d
+> >    exc_bounds+0x98/0x98
+> >    restore_all_switch_stack+0xbe/0xcf
+> >    exc_bounds+0x98/0x98
+> >    restore_all_switch_stack+0xbe/0xcf
+> >
+> > This only happens in 32-bit mode when VERW based mitigations like MDS/RFDS
+> > are enabled. This is because segment registers with an arbitrary user value
+> > can result in #GP when executing VERW. Intel SDM vol. 2C documents the
+> > following behavior for VERW instruction:
+> >
+> >   #GP(0) - If a memory operand effective address is outside the CS, DS, ES,
+> > 	   FS, or GS segment limit.
+> >
+> > CLEAR_CPU_BUFFERS macro executes VERW instruction before returning to user
+> > space. Use %cs selector to reference VERW operand. This ensures VERW will
+> > not #GP for an arbitrary user %ds.
+> >
+> > Fixes: a0e2dab44d22 ("x86/entry_32: Add VERW just before userspace transition")
+> > Cc: stable@vger.kernel.org # 5.10+
+> > Reported-by: Robert Gill <rtgill82@gmail.com>
+> > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218707
+> > Closes: https://lore.kernel.org/all/8c77ccfd-d561-45a1-8ed5-6b75212c7a58@leemhuis.info/
+> > Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
+> > Suggested-by: Brian Gerst <brgerst@gmail.com>
+> > Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+> > ---
+> >  arch/x86/include/asm/nospec-branch.h | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+> > index ff5f1ecc7d1e..e18a6aaf414c 100644
+> > --- a/arch/x86/include/asm/nospec-branch.h
+> > +++ b/arch/x86/include/asm/nospec-branch.h
+> > @@ -318,12 +318,14 @@
+> >  /*
+> >   * Macro to execute VERW instruction that mitigate transient data sampling
+> >   * attacks such as MDS. On affected systems a microcode update overloaded VERW
+> > - * instruction to also clear the CPU buffers. VERW clobbers CFLAGS.ZF.
+> > + * instruction to also clear the CPU buffers. VERW clobbers CFLAGS.ZF. Using %cs
+> > + * to reference VERW operand avoids a #GP fault for an arbitrary user %ds in
+> > + * 32-bit mode.
+> >   *
+> >   * Note: Only the memory operand variant of VERW clears the CPU buffers.
+> >   */
+> >  .macro CLEAR_CPU_BUFFERS
+> > -	ALTERNATIVE "", __stringify(verw _ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
+> > +	ALTERNATIVE "", __stringify(verw %cs:_ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
+> >  .endm
+> 
+> People ought rightly to double-take at this using %cs and not %ss. 
+> There is a good reason, but it needs describing explicitly.  May I
+> suggest the following:
+> 
+> *...
+> * In 32bit mode, the memory operand must be a %cs reference.  The data
+> segments may not be usable (vm86 mode), and the stack segment may not be
+> flat (espfix32).
+> *...
 
+Thanks for the suggestion. I will include this.
 
-On Wed, Sep 25, 2024 at 4:00=E2=80=AFPM Sami Tolvanen <samitolvanen@google.=
-com> wrote:
->
-> Hi Matt,
->
-> On Tue, Sep 24, 2024 at 09:19:56PM +0000, Matthew Maurer wrote:
-> > +static void dedotify_ext_version_names(char *str_seq, unsigned long si=
-ze)
-> > +{
-> > +     unsigned long out =3D 0;
-> > +     unsigned long in;
-> > +     char last =3D '\0';
-> > +
-> > +     for (in =3D 0; in < size; in++) {
-> > +             if (last =3D=3D '\0')
-> > +                     /* Skip one leading dot */
-> > +                     if (str_seq[in] =3D=3D '.')
-> > +                             in++;
->
-> Thanks for addressing Michael's comment, this looks correct to me.
->
-> Nit: might be cleaner in a single if statement though:
->
->         /* Skip one leading dot */
->         if (last =3D=3D '\0' && str_seq[in] =3D=3D '.')
->                 in++;
->
-> > +void modversion_ext_start(const struct load_info *info,
-> > +                       struct modversion_info_ext *start)
-> > +{
-> > +     unsigned int crc_idx =3D info->index.vers_ext_crc;
-> > +     unsigned int name_idx =3D info->index.vers_ext_name;
-> > +     Elf_Shdr *sechdrs =3D info->sechdrs;
-> > +
-> > +     /*
-> > +      * Both of these fields are needed for this to be useful
-> > +      * Any future fields should be initialized to NULL if absent.
-> > +      */
-> > +     if ((crc_idx =3D=3D 0) || (name_idx =3D=3D 0))
-> > +             start->remaining =3D 0;
-> > +
-> > +     start->crc =3D (const s32 *)sechdrs[crc_idx].sh_addr;
-> > +     start->name =3D (const char *)sechdrs[name_idx].sh_addr;
-> > +     start->remaining =3D sechdrs[crc_idx].sh_size / sizeof(*start->cr=
-c);
-> > +}
->
-> This looks unchanged from v3, so I think my comment from there
-> still applies:
->
-> https://lore.kernel.org/lkml/CABCJKufJK0WO92wnW09VTLqZk0ODxhuKQG=3DHbKE-v=
-a0urJU1Vg@mail.gmail.com/
->
-> Sami
+>  .macro CLEAR_CPU_BUFFERS
+> #ifdef __x86_64__
+>     ALTERNATIVE "", "verw mds_verw_sel(%rip)", X86_FEATURE_CLEAR_CPU_BUF
+> #else
+>     ALTERNATIVE "", "verw %cs:mds_verw_sel", X86_FEATURE_CLEAR_CPU_BUF
+> #endif
+>  .endm
+> 
+> This also lets you drop _ASM_RIP().  It's a cute idea, but is more
+> confusion than it's worth, because there's no such thing in 32bit mode.
+> 
+> "%cs:_ASM_RIP(mds_verw_sel)" reads as if it does nothing, because it
+> really doesn't in 64bit mode.
+
+Right, will drop _ASM_RIP() in 32-bit mode and %cs in 64-bit mode.
 
