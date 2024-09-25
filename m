@@ -1,139 +1,98 @@
-Return-Path: <linux-kernel+bounces-338159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5249F985421
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:28:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83EFC985436
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:32:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08DDD1F21350
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:28:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A565B20BEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:32:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA94615C12F;
-	Wed, 25 Sep 2024 07:23:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B810155335;
+	Wed, 25 Sep 2024 07:32:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oOBiE37b"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=milecki.pl header.i=@milecki.pl header.b="Ovl4kHSG"
+Received: from 5.mo576.mail-out.ovh.net (5.mo576.mail-out.ovh.net [46.105.43.105])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE0115852E;
-	Wed, 25 Sep 2024 07:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF9CB132114
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 07:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.105.43.105
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727249035; cv=none; b=MlfByUVkHZlc0dvwN0EJwaUzyEOl1Rc1ec0XKPntQWe7iGf3kgfj8JvI4J3WXY3YSEJuBtNhr7hRtg+kVc7y6l5YhqXvvSE2DrkxtnveG6uTg77pqwCbDD88KAAnsqptaTfLvKdGPk4K152BoduBDGVdrucXB1tDvmH6cxK6cO0=
+	t=1727249567; cv=none; b=Uuto3tCM2FawgjM+mztDbWbjG86QehHzkLK8I5+9j3ijPO0tZkJm9XozFLTp+xihleb5EfoH+L0i7NjD0jLEaNVUUDftgRauVDSErJ3Y12mTf3PJx3ZhPnrNdTpOuTsEgV//sOXTw3N9Iyl87MgsfSImaz7eD5dF71vGkicZeIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727249035; c=relaxed/simple;
-	bh=vrJLRTaM8vLQbQvHYHMUqyBvqO0BZuVwMB/6a3RGmP4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=e6hJiGGv5/qIpL+AqN/aJpUV21U/GrfpiGX0AoQx9RMcU91X5ivfyQOwD1Q+1xQ7MjTV2x56qrcwHqqrU3NKeXBc7OIYAzTJGfFfZlH3adkT4VTHM1JgxtqfrEV26oQqrfepzpQ3/kQkvlNfM46w/F5HE0NnMb87dZyfTk7SrNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oOBiE37b; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48OIu8I8017406;
-	Wed, 25 Sep 2024 07:23:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=RW9uqI2u7e537Jy88OFRJu
-	5D/8fSuY3/wdo7VX82wrY=; b=oOBiE37bYFBZB1YC2PSmpDc84QRaucNqgjEGNT
-	0JvClgtbqF1EL1iDcMYwO8zT8uyGaHqoCg6NhCUTg9e8nKMCYqNvlpijMFBQjPIV
-	Kz847Q2fl2DlZaON1DmUQPVuYUjSPnYn87zffeMgHxxcd8GLjiX71ff177DVbhhZ
-	TyLpRfvn03BEOtgw+bNI3tqv13Uwoq1IFFDCdw7Jj1+fx7Q9AbgHqZ6l754uGMk8
-	VQ32KWViiRRpkM4zHY5sGyhahEcY8rOPVxtMDLr2QDIHKEUKpejxCAuyZjaxAqxE
-	uC9Tv8OSdteEDSRKHkY+Rkz5qhx2xLSkg323NMW4hCqKxVsA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41snqyka4p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 07:23:49 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48P7Nmrq000420
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 07:23:48 GMT
-Received: from hu-deesin-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 25 Sep 2024 00:23:44 -0700
-From: Deepak Kumar Singh <quic_deesin@quicinc.com>
-To: <quic_bjorande@quicinc.com>, <andersson@kernel.org>,
-        <quic_clew@quicinc.com>, <mathieu.poirier@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <quic_sarannya@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <stable@vger.kernel.org>, Deepak Kumar Singh <quic_deesin@quicinc.com>
-Subject: [PATCH V2] rpmsg: glink: Add abort_tx check in intent wait
-Date: Wed, 25 Sep 2024 12:53:28 +0530
-Message-ID: <20240925072328.1163183-1-quic_deesin@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727249567; c=relaxed/simple;
+	bh=FyQ+PaSDOc52BM9gnVH3xSMvP/hTE2Dzz/PW17DJve8=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=eSoPqFsQJ9pL/zbvsLQK8dJ+ty7fFTccq+MdvP+ssoQB83w61vNe8v41KBsW696Hf82b7hQg36TqsZDS21etm4HWJb2JS0+NsGtdxvK/tf5RHXc16VGkLEifc8XRldPT9KMRpBbptKU8otA6gGGBufykKFuuqc4Ei50ZH+BXMls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=milecki.pl; spf=pass smtp.mailfrom=milecki.pl; dkim=pass (2048-bit key) header.d=milecki.pl header.i=@milecki.pl header.b=Ovl4kHSG; arc=none smtp.client-ip=46.105.43.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=milecki.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=milecki.pl
+Received: from director3.ghost.mail-out.ovh.net (unknown [10.109.139.3])
+	by mo576.mail-out.ovh.net (Postfix) with ESMTP id 4XD7WR6nJ2z1q0F
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 07:23:47 +0000 (UTC)
+Received: from ghost-submission-55b549bf7b-64cjv (unknown [10.110.118.154])
+	by director3.ghost.mail-out.ovh.net (Postfix) with ESMTPS id 4775F1FE3C;
+	Wed, 25 Sep 2024 07:23:45 +0000 (UTC)
+Received: from milecki.pl ([37.59.142.103])
+	by ghost-submission-55b549bf7b-64cjv with ESMTPSA
+	id mUbACYG682ZBNAAAyTvjrg
+	(envelope-from <rafal@milecki.pl>); Wed, 25 Sep 2024 07:23:45 +0000
+Authentication-Results:garm.ovh; auth=pass (GARM-103G00530c11656-fd2d-4e51-b038-3339ee5f64f8,
+                    9DD8DC6CF38314E8515C70E4989C69D14BB97D32) smtp.auth=rafal@milecki.pl
+X-OVh-ClientIp:176.31.235.81
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Date: Wed, 25 Sep 2024 09:23:44 +0200
+From: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>
+To: Sandie Cao <sandie.cao@deepcomputing.io>
+Cc: Emil Renner Berthing <kernel@esmil.dk>, Conor Dooley <conor@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Heiko Stuebner
+ <heiko.stuebner@cherry.de>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Michael Zhu
+ <michael.zhu@starfivetech.com>, Drew Fustini <drew@beagleboard.org>,
+ linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dhs@frame.work, ams@frame.work,
+ gregkh@linuxfoundation.org, yuning.liang@deepcomputing.io,
+ huiming.qiu@deepcomputing.io, Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 1/3] dt-bindings: vendor: add deepcomputing
+In-Reply-To: <20240925053123.1364574-2-sandie.cao@deepcomputing.io>
+References: <20240925053123.1364574-2-sandie.cao@deepcomputing.io>
+Message-ID: <9e32cc30b1c9923f985aa6786d1f9d62@milecki.pl>
+X-Sender: rafal@milecki.pl
+X-Webmail-UserID: rafal@milecki.pl
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: dF6Huu5oJ8GGHAu5Q5qQUqkjRK83dJ9O
-X-Proofpoint-ORIG-GUID: dF6Huu5oJ8GGHAu5Q5qQUqkjRK83dJ9O
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 adultscore=0 bulkscore=0 phishscore=0 mlxlogscore=999
- spamscore=0 lowpriorityscore=0 clxscore=1011 mlxscore=0 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409250051
+X-Ovh-Tracer-Id: 13439585716663266069
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtgedguddukecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeggfffhvfevufgjfhfkgihitgfgsehtkehjtddttdejnecuhfhrohhmpeftrghfrghlucfoihhlvggtkhhiuceorhgrfhgrlhesmhhilhgvtghkihdrphhlqeenucggtffrrghtthgvrhhnpeejjeekkeegjedtffffveffieevtdeuieefueffgeekheekleeiudfgleefuddtueenucfkphepuddvjedrtddrtddruddpfedurdduuddrvddukedruddtiedpudejiedrfedurddvfeehrdekuddpfeejrdehledrudegvddruddtfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomheprhgrfhgrlhesmhhilhgvtghkihdrphhlpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehjeeipdhmohguvgepshhmthhpohhuth
+DKIM-Signature: a=rsa-sha256; bh=oItKQ7Un4VVtOguEdJMdsbTrZ/zvp+itPGogkzlkK3Y=;
+ c=relaxed/relaxed; d=milecki.pl; h=From; s=ovhmo3028686-selector1;
+ t=1727249028; v=1;
+ b=Ovl4kHSGTKMErUPsh99wFV9ywc1NXhkv4W4b/wxPhu+8OY/PTRr7RVL/1a3rSQ0+zjGtZsCX
+ sBn6acYwUaURTOmlLCHj1xYZjb+yeb/elRftToCNh26hE2BoWnBgAIez5SyHszscWcLwCyt5I3u
+ M4VgZhlwnLHLgIjwUJxrPtqZ4/nCv+OtjjSEgTjQJmCF0BVYhxE5kYM4/S6O0ngtzu4TOf6NBHW
+ K+xThf2JP6f+2J/2QPuEhF8pfvDk6sKz3863KeZynfrARAwpOB+SFKHEWiewOuRkmPzbCwrWodI
+ +Plooid2MqWS9co3Y1LSMvlCwFMD35DuuJQIpzZ82Hh7g==
 
-From: Sarannya S <quic_sarannya@quicinc.com>
+On 2024-09-25 07:31, Sandie Cao wrote:
+> Add deepcomputing into vendor list.
+> 
+> Signed-off-by: Sandie Cao <sandie.cao@deepcomputing.io>
+> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-On remote susbsystem restart rproc will stop glink subdev which will
-trigger qcom_glink_native_remove, any ongoing intent wait should be
-aborted from there otherwise this wait delays glink send which potentially
-delays glink channel removal as well. This further introduces delay in ssr
-notification to other remote subsystems from rproc.
+This "PATCH" is empty. Please verify what's your about to send :)
 
-Currently qcom_glink_native_remove is not setting channel->intent_received,
-so any ongoing intent wait is not aborted on remote susbsystem restart.
-abort_tx flag can be used as a condition to abort in such cases.
-
-Adding abort_tx flag check in intent wait, to abort intent wait from
-qcom_glink_native_remove.
-
-Fixes: c05dfce0b89e ("rpmsg: glink: Wait for intent, not just request ack")
-Cc: stable@vger.kernel.org
-Signed-off-by: Sarannya S <quic_sarannya@quicinc.com>
-Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
----
- drivers/rpmsg/qcom_glink_native.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 82d460ff4777..ff828531c36f 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -438,7 +438,6 @@ static void qcom_glink_handle_intent_req_ack(struct qcom_glink *glink,
- 
- static void qcom_glink_intent_req_abort(struct glink_channel *channel)
- {
--	WRITE_ONCE(channel->intent_req_result, 0);
- 	wake_up_all(&channel->intent_req_wq);
- }
- 
-@@ -1354,8 +1353,9 @@ static int qcom_glink_request_intent(struct qcom_glink *glink,
- 		goto unlock;
- 
- 	ret = wait_event_timeout(channel->intent_req_wq,
--				 READ_ONCE(channel->intent_req_result) >= 0 &&
--				 READ_ONCE(channel->intent_received),
-+				 (READ_ONCE(channel->intent_req_result) >= 0 &&
-+				 READ_ONCE(channel->intent_received)) ||
-+				 glink->abort_tx,
- 				 10 * HZ);
- 	if (!ret) {
- 		dev_err(glink->dev, "intent request timed out\n");
 -- 
-2.34.1
-
+Rafał Miłecki
 
