@@ -1,112 +1,187 @@
-Return-Path: <linux-kernel+bounces-339398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68C1A9864A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:18:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D74C986488
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E0EF1F218D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:18:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36D1E28920D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:13:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A72944C86;
-	Wed, 25 Sep 2024 16:18:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AEA83B796;
+	Wed, 25 Sep 2024 16:13:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="Zl7g9RJT"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qiJ7C2J0"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDC61D5ABD;
-	Wed, 25 Sep 2024 16:18:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 863812F5B;
+	Wed, 25 Sep 2024 16:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727281088; cv=none; b=fx1qT3bsnK6k0jZZXCWkQSJcQLW1hig2qFOdz3JjbN++lUyybTFWlqRwuZNxNSKNMMb2L1g1HwC2mW2CQWBOfnSFBQF8TwvPgwe3RdgXmzkgq2PCGGjjLD65C8IKSRK/YS3qhgQ86mGu6kYSe6EWVqgjdFGE0sNDObQPiJn3+6o=
+	t=1727280784; cv=none; b=F+7CbzCJRYJt44wGPhpJ28S/Z+4ehJplYuGCt0L3g/n5/JA9EgRfeFUT01tdWOOu0SKQJxJeXJGEpWknTPEIQ/eoeDDH9Ux8465nbx++i80Ol12GkGUj7fE9iLHphfJSuRH70SxA5/NoYr7Kyxc27Je2pLts4bTSuRuWbPsrcC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727281088; c=relaxed/simple;
-	bh=UR4rx861FVc7MUozMDlYpuInZFzHxiWfjaUBgmnWlzQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UZjOLnX1yv1FFOyFulVFy8HEPPJR3687iRKqdrSdO216LdkviTAgc3O8l3oG5dHBitOM158Zc/w0+q0WEw8tNLDeyXLMaT408Bwt4FsrR5vKhZW15MMBgokpA1o6sr96mj5vwDASfxvXF3FjmWBGTtOiHm4dnmaGwBDmx5//gGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=Zl7g9RJT; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Received: from [192.168.1.130] (BC2491B6.dsl.pool.telekom.hu [188.36.145.182])
-	by mail.mainlining.org (Postfix) with ESMTPSA id 489B4E450F;
-	Wed, 25 Sep 2024 16:09:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1727280584;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=fhfpSgyYQdb2EqROgqo0rwnUCTCj5II+pEYG/o/3OIM=;
-	b=Zl7g9RJT1AjBvUtYBfRyjBJYVyoLiEy6jyD5OauarHAkDyPoZY7bX61nKlvOffBto/8ktK
-	1eWPZybdICP87Ack0l3GNLoqlaxxBnj5qgwwtj+7IARNqJRJyZ6c3KmKPZPbNacsM3tzbG
-	u7c/3Hv9RQJjpR9JxMQYIyWXR+WaaQS+OOx6xzBu+WjpIQ0JsWMcXt0yrJGhQ0nJznftwU
-	ipZImxYrLJl9adhoAiLeiBvJQOIaELm2YraA+lQ0RUj+M0QVUq9iMDdEM9Nr8Psyv8YFLy
-	3QadhZeUv8IlII528HT+jVFtZ+X9/i/Tk2tfVdqXVJIsfdChV1/xbE3c/j7Xhg==
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Wed, 25 Sep 2024 18:09:39 +0200
-Subject: [PATCH] clk: qcom: clk-alpha-pll: Fix pll post div mask when width
- is not set
+	s=arc-20240116; t=1727280784; c=relaxed/simple;
+	bh=OO2N0MlWDN0Lh2XfHNJMedIUwrmR2LNmHR79B3i0gaY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SaK4kPlwOnprQa26mL83sj8EJ4H76MoY4YXRhIn4vkkitzoS31cV3GhJ+2AQTsAbzMA2blyxuT26TZPJGuZldaCln3cidM47Vs4lU1zC+PM6f9wjDDRAohxXNO5iyhrA9t7KS+WOgomq5tKu+xUkWUEEw3852HP3aZd9kQLzy/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qiJ7C2J0; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48PGCrtI120414;
+	Wed, 25 Sep 2024 11:12:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1727280773;
+	bh=usMqwaFjtbUHhvdgniW/2exXtWe9frXJJ19B3XP9a3s=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=qiJ7C2J0oRE3zhKmtajbV0CEPR8+zhOJ390s1kgGaC7POUMZV8gx2WSyLP1x+cUef
+	 /FqczTibZkijzrx3p1HIimxX7yv4Gm3QBBt/GLMu5lOCiOUsv+uW7xoLhaMmflW3Li
+	 krwX48edxbL/me4Yd2yHCcnZpnMlUFdisUCae644=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48PGCrms015577
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 25 Sep 2024 11:12:53 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 25
+ Sep 2024 11:12:52 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 25 Sep 2024 11:12:52 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48PGCqtA065205;
+	Wed, 25 Sep 2024 11:12:52 -0500
+Message-ID: <809b9eaa-a539-4309-95a3-c9fc9c39288b@ti.com>
+Date: Wed, 25 Sep 2024 11:12:52 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240925-fix-postdiv-mask-v1-1-f70ba55f415e@mainlining.org>
-X-B4-Tracking: v=1; b=H4sIAMI19GYC/x2MQQqAIBAAvxJ7bqHUiPpKdDDdaoks3JAg+nvSc
- WBmHhCKTAJ98UCkxMJHyFCXBbjVhoWQfWZQlTJVpxqc+cbzkMtzwt3KhpM1LTmvNFkNOTsjZed
- fDuP7fnVsv+1iAAAA
-X-Change-ID: 20240925-fix-postdiv-mask-ba47ecd23ea3
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1727280584; l=1264;
- i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=UR4rx861FVc7MUozMDlYpuInZFzHxiWfjaUBgmnWlzQ=;
- b=hoCWYjTKMqe5jer7ssS/foHAcic93tpjikdx3NHX2UQP/WtBfWXSd/t7KKJS2eMbxCgxA9rfS
- gJD0R9guodpBmtCYiIht+Kxa2e/ezE4AIbhCwkbfQSF09q04dPcbXT4
-X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
- pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 6/6] cpufreq: ti-cpufreq: Update efuse/rev offsets in
+ AM62 family
+To: Dhruva Gole <d-gole@ti.com>, Nishanth Menon <nm@ti.com>,
+        Vignesh
+ Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar
+	<viresh.kumar@linaro.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        Bryan Brattlof
+	<bb@ti.com>
+References: <20240925-ti-cpufreq-fixes-v5-v6-0-46f41a903e01@ti.com>
+ <20240925-ti-cpufreq-fixes-v5-v6-6-46f41a903e01@ti.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20240925-ti-cpufreq-fixes-v5-v6-6-46f41a903e01@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Many qcom clock drivers do not have .width set. In that case value of
-(p)->width - 1 will be negative which breaks clock tree. Fix this
-by checking if width is zero, and pass 0 to GENMASK if that's the case.
+On 9/25/24 9:54 AM, Dhruva Gole wrote:
+> With the Silicon revision being taken directly from socinfo, there's no
+> longer any need for reading any SOC register for revision from this driver.
+> Hence, we do not require any rev_offset for AM62 family of devices.
+> The efuse offset should be 0x0 for AM625 as well, as the syscon
+> register being used from DT refers to the efuse_offset directly.
+> 
+> However, to maintain the backward compatibility with old devicetree, also
+> add condition to handle the case where we have the wrong offset and add
+> the older efuse_offset value there such that we don't end up reading the
+> wrong register offset.
+> 
+> Signed-off-by: Dhruva Gole <d-gole@ti.com>
+> ---
+>   drivers/cpufreq/ti-cpufreq.c | 23 +++++++++++++++++------
+>   1 file changed, 17 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
+> index ba621ce1cdda694c98867422dbb7f10c0df2afef..8a97b95b4c44a76b12cab76ddc0f9a5b8ae73f84 100644
+> --- a/drivers/cpufreq/ti-cpufreq.c
+> +++ b/drivers/cpufreq/ti-cpufreq.c
+> @@ -313,10 +313,9 @@ static const struct soc_device_attribute k3_cpufreq_soc[] = {
+>   
+>   static struct ti_cpufreq_soc_data am625_soc_data = {
+>   	.efuse_xlate = am625_efuse_xlate,
+> -	.efuse_offset = 0x0018,
+> +	.efuse_offset = 0x0,
+>   	.efuse_mask = 0x07c0,
+>   	.efuse_shift = 0x6,
+> -	.rev_offset = 0x0014,
+>   	.multi_regulator = false,
+>   };
+>   
+> @@ -325,7 +324,6 @@ static struct ti_cpufreq_soc_data am62a7_soc_data = {
+>   	.efuse_offset = 0x0,
+>   	.efuse_mask = 0x07c0,
+>   	.efuse_shift = 0x6,
+> -	.rev_offset = 0x0014,
+>   	.multi_regulator = false,
+>   };
+>   
+> @@ -334,7 +332,6 @@ static struct ti_cpufreq_soc_data am62p5_soc_data = {
+>   	.efuse_offset = 0x0,
+>   	.efuse_mask = 0x07c0,
+>   	.efuse_shift = 0x6,
+> -	.rev_offset = 0x0014,
+>   	.multi_regulator = false,
+>   };
+>   
+> @@ -349,11 +346,25 @@ static int ti_cpufreq_get_efuse(struct ti_cpufreq_data *opp_data,
+>   				u32 *efuse_value)
+>   {
+>   	struct device *dev = opp_data->cpu_dev;
+> +	struct device_node *np = opp_data->opp_node;
+>   	u32 efuse;
+>   	int ret;
+>   
+> -	ret = regmap_read(opp_data->syscon, opp_data->soc_data->efuse_offset,
+> -			  &efuse);
+> +	/*
+> +	 * The following check is used as a way to check if this is an older devicetree
 
-Fixes: 2c4553e6c485 ("clk: qcom: clk-alpha-pll: Fix the pll post div mask")
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
----
- drivers/clk/qcom/clk-alpha-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+"check is used as a way to check" sound redundant, maybe just:
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index f9105443d7dbb104e3cb091e59f43df25999f8b3..1f914bc0af5449ed1fb545d850607138a06fab1a 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -40,7 +40,7 @@
- 
- #define PLL_USER_CTL(p)		((p)->offset + (p)->regs[PLL_OFF_USER_CTL])
- # define PLL_POST_DIV_SHIFT	8
--# define PLL_POST_DIV_MASK(p)	GENMASK((p)->width - 1, 0)
-+# define PLL_POST_DIV_MASK(p)	GENMASK((p)->width ? (p)->width - 1 : 0, 0)
- # define PLL_ALPHA_MSB		BIT(15)
- # define PLL_ALPHA_EN		BIT(24)
- # define PLL_ALPHA_MODE		BIT(25)
+This checks for old AM625 Devicetrees where the syscon was a phandle
+to the wkup_conf parent, this required a hard-coded offset to
+the efuse register.
 
----
-base-commit: 62f92d634458a1e308bb699986b9147a6d670457
-change-id: 20240925-fix-postdiv-mask-ba47ecd23ea3
+> +	 * being used where the entire wkup_conf node was marked as "syscon",
+> +	 * "simple-mfd".
+> +	 * Since this bug only affects AM625, make sure it enters this condition
+> +	 * only for that SoC.
+> +	 */
+> +	if (of_device_is_compatible(np, "simple-mfd") &&
+> +	    of_device_is_compatible(np, "ti,am625")) {
 
-Best regards,
--- 
-Barnabás Czémán <barnabas.czeman@mainlining.org>
+Kinda hacky, but keeping backwards compat often is hacky..
 
+Does `of_device_is_compatible(np, "ti,am625")` actually work here? I'm assuming you
+tested with an old DT to make sure this path ever got taken. Maybe put a warning
+here that an old DT is in use and the user should update at some point.
+
+Andrew
+
+> +		ret = regmap_read(opp_data->syscon, opp_data->soc_data->efuse_offset + 0x0018,
+> +				  &efuse);
+> +	} else {
+> +		ret = regmap_read(opp_data->syscon, opp_data->soc_data->efuse_offset,
+> +				  &efuse);
+> +	}
+>   	if (opp_data->soc_data->quirks & TI_QUIRK_SYSCON_MAY_BE_MISSING && ret == -EIO) {
+>   		/* not a syscon register! */
+>   		void __iomem *regs = ioremap(OMAP3_SYSCON_BASE +
+> 
 
