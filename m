@@ -1,147 +1,326 @@
-Return-Path: <linux-kernel+bounces-339341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C8A898638A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:30:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03535986390
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:31:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C88111F252EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:30:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C133929070A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496DD1D5AB0;
-	Wed, 25 Sep 2024 15:24:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A01913CA9C;
+	Wed, 25 Sep 2024 15:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="r24O82Ae"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="etU5KFHl"
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429551F5F6
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 15:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746DE25757;
+	Wed, 25 Sep 2024 15:25:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727277886; cv=none; b=fTOegW2jlXkQwErLxDgKqL27PQ0b09TDSjt3nC0v+q5OtjGIOIDq/D6j7v+vSkReNTPGtULhxB6MMXVreo2XaWjjS4Hicrmloeeugnh/prASYeo6LTvWgYn1oRgEnj8GgRiXtw9bwp9SJHH6ZYYycdog35xjCoF2TII8GCIN2KM=
+	t=1727277921; cv=none; b=UBDiNvBDhomYIIDvwpg2JMwvZhiE6LKWzjabYvPwyRg93K5ygiO+vXuxWxWmSdIG8Cq8MGE3c8gp7KLKGA9ezfqbyhASzehsAtQgqZEQv0KN1q6Odrh4vXXw4ou5aT0XLTlKsBIeqfU3x3m4g2upYtTfjnG1WWPJSPWDNZQthgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727277886; c=relaxed/simple;
-	bh=Nei19YCOdWxQB6PSFPBaKgKKbnCCQEOXG737LQ9AkSc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k/+s3QfAR+r73NK2sKHKyhWa3PAyd4f5ubpR1JQ6zn8uInx5rkjjF4VlMukvN5Z6ie3ezCbSqCjjra2oYjn+CkcrI8gowRD5WR4R+ZRfXHIDBEbPqkHMY1dOw+petR3nXkTz589PJgazsxE1qDl5Zw6ugyGWSf1MWSS1kI3IKJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=r24O82Ae; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42cbe624c59so60550035e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:24:43 -0700 (PDT)
+	s=arc-20240116; t=1727277921; c=relaxed/simple;
+	bh=/rg8lzY/L9SaJEfUUJfiiuMItn3SqcxpEq8hsR2vPO4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bBSx672mEknz1m8iVmFoCB9g9bmGNtcYZ1r7wQE2LtvtuSU+BfKpW8hwZlX+RviJF8HBVGDW1kUeUmx28kf4Mc8igFfvwbbegzUyfqt8duuTNCWZ+KGOMUAoi4XdP2qYvdzKAuxrlojtMwGrMhiewPk3spB0PvMuEgJlfGcqIas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=etU5KFHl; arc=none smtp.client-ip=209.85.217.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-49bbbebc26dso2344443137.0;
+        Wed, 25 Sep 2024 08:25:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727277882; x=1727882682; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HZaMZwXHaKwH3J28J1QUJ8EoP3VpC4zNWUFe/+K3NKg=;
-        b=r24O82Ae4uytcsbEvvMneIUeZNprSWbmibyv58zobG8gTKlOz9h4a42F2xaQMpO9wq
-         2KkNhfRhynMmcnv80i4R1L10DTpOsZPfP1bqinUHj+mA3OvdET7F4EJiq2DQDHLZo6TQ
-         6fNk5kMQ7dlo1FPqy/LEJ578r2V9HondS/BTEkhIWlJa0QfKams5hedocdRvK7TkgxVD
-         bja+6q/fC4Okuf6om7Y8JVGHUQj4LCk11cX7SrIb1mEmRuTkIVEJE7gx/E3py8XVzXhs
-         dtX6rFjz3j1h7zCT2/NnmBxVk74cOYhuSs7crRY+Pj9mr4So1uNv4NYfyxpjyla8VOya
-         Ll9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727277882; x=1727882682;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1727277918; x=1727882718; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HZaMZwXHaKwH3J28J1QUJ8EoP3VpC4zNWUFe/+K3NKg=;
-        b=g2JKkO35rMcxT9LWK/42C/I3qcvp2Fpa8swK52kps0Q71BPoqV6t+GwGvLpGfTGSag
-         iNN6s2OUqE2oIMIyG/jyaQoRm15jKebsUsgII/O+VbrvOTChLx37zzZAxsxiSVMlfvmq
-         0GRg/RKRbcEziL+1M4iccavtsqR1Ex3gHR82QyebvgBXZuRDf4Ksj8J4xwi7ZFYge1r9
-         toMwwtYfXrrfuqkww7cM72qT7E/cOOcWI2fFhiWGwxw2NHgcb1fWc2rJFUc7l7Txq4So
-         2bIRVdwA8gxVapxRfbGChKcfzIneOt/OZcBhkejy0uU5/w2J89DCgPrxdXVZvgP+Wrd3
-         362w==
-X-Forwarded-Encrypted: i=1; AJvYcCUQh/f23GIBKDO/yryiUglrKiq0oFR+wwCLOugK99XiJA/O9Y54/+/FaPejASmJj3cyw9aOZp3NK3FaCcg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4hLYa4CHaWmhDx61QXLxgtLeRuoizuvBSVdF2P2FEM7UIDk5w
-	FF3PltdYgLwaUnmKK8+2Ge3KEVIOu8tt+pltcbJa/RuEUeEBu5TXDVHODZ7iizY=
-X-Google-Smtp-Source: AGHT+IGp7IXEcyn9CleK5p1AdnO4qjInVMLqS+PxMVRogEvNdttg+ML/7c2lCBDgnb9yXkneZtqQFA==
-X-Received: by 2002:a05:600c:2908:b0:42c:b949:328e with SMTP id 5b1f17b1804b1-42e96ab6bbamr16529155e9.31.1727277882413;
-        Wed, 25 Sep 2024 08:24:42 -0700 (PDT)
-Received: from localhost (amontpellier-556-1-151-252.w109-210.abo.wanadoo.fr. [109.210.7.252])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e96a54fdesm22048715e9.41.2024.09.25.08.24.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 08:24:42 -0700 (PDT)
-Date: Wed, 25 Sep 2024 17:24:40 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Michael Hennerich <michael.hennerich@analog.com>, 
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Trevor Gamblin <tgamblin@baylibre.com>
-Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pwm: axi-pwmgen: Create a dedicated function for getting
- driver data from a chip
-Message-ID: <4zgf7ykie6blsatpmc22qy4ipglgwzyze6utvhzbkzr7o24rpj@hdpf6k2pf7mm>
-X-Patchwork-State: Accepted
-References: <20240923125418.16558-2-u.kleine-koenig@baylibre.com>
+        bh=+xh/2EOs2WTw8AQzEyqJvYQT+wfQifYuKy9bTkOCzPg=;
+        b=etU5KFHls/AQi12xnZireF/Bul4TeGc3/Zpff4oAti2Uet6y0XV6vVQss1O7rtLb+d
+         XWOwzalINOdfF4Dy+7mu6D5sdIBDKSNCb+gVRbzwmlPkzHWb8KbDP9/TLRnOnPPV9ZaZ
+         3YvLaClToFIRSJU80RG93mnHzyGUb+paS6GtrUf2iXYHwLjnqMOwVEPQbBYRBx4dJ/2c
+         Ld1XsOgOvATr2FeDkzhh+Ghv0awgSw4QB1l7asw4DyzrcaSUa5HD4rNTNwKPw+YVza5z
+         pVyoHerGAvcxAuWsKxPiM+SWas92bejvpQHTb0Kfl2f4aLip7yV/3pjPV1dkoZv736iv
+         uRFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727277918; x=1727882718;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+xh/2EOs2WTw8AQzEyqJvYQT+wfQifYuKy9bTkOCzPg=;
+        b=S276bpY0ArP6o+RIfQAtvbNkJS7PeX2vH+iGnElhfBgLtTvXnkV6a13SWf7SScCfQY
+         xN0BnOL3PNZ47fyJIKnznTvAcborXTG81ts+9XC6C/ATLs1jdxvm8RVWji17T6mkrg+Y
+         khaLDQg/vbH6hK1iKtXmBpYMKEPFG+OPLLj3QhatQ+cq6LwPRdBEAPc9MRBRet3VJb6t
+         ya8mASDBkkFnmYJGAJLPBCFX2moW97KjkmBv5a+SBBN9zJtBz5piFgy3G1wR3fVWZUe4
+         t9zu+1L/6+ix0IzZDjZ70O1qrNACkjHX7ivE0fAug5QFDuScZQcGTLk+BB/MN4KRhAup
+         8QPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUNYoB7yQIgMa6KFCgoPl5rcVNshThLOteLsG6j9BZhJZHB69ZpFa5vVETjwqcP9C78JcQZwXlEPbW5dx2VtqRPkjg=@vger.kernel.org, AJvYcCX5PBVnjeQQhMPpABx+v4L0UARat99AQytFwOzaE+CZmvgJRMatlLy9XPmxlRdOzC0F1bT4V7v0vpyZvec=@vger.kernel.org, AJvYcCXftOCL+dTxV1XQeYM0yZlcxv6noOiXxSPd5WwOPQe9aiL4zXJOq4ttjkK9jMINCGNkIKrwFl7Zb3XhIS0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyE1+TrW3Mc3EbfUmiZq4p7p0v22n2GkDTQDRA+fogYXifXX0ns
+	Tmch/us69CXk4M0cnwZTbYqKfNUnJ3jWnddvFkkQelCwayhuJY358mQ6k01moOFJ2VbW/grrAtD
+	r1XKe1pYUcGid9cpVoB2Y0foHa+c=
+X-Google-Smtp-Source: AGHT+IEg6P4vnh18BilWdWKPk3+aT1nLRyAXyvrAWbYUOD6SRQAugNrB4O6aCr5Atj7f9apSxRU16+Pjxx7ksN+WqtM=
+X-Received: by 2002:a05:6122:319b:b0:4ef:5b2c:df41 with SMTP id
+ 71dfb90a1353d-505c20745fcmr2875987e0c.9.1727277917965; Wed, 25 Sep 2024
+ 08:25:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gtjkcuacc3cpyeri"
-Content-Disposition: inline
-In-Reply-To: <20240923125418.16558-2-u.kleine-koenig@baylibre.com>
-
-
---gtjkcuacc3cpyeri
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+References: <20240910170610.226189-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240910170610.226189-5-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240924224357.GM7165@pendragon.ideasonboard.com>
+In-Reply-To: <20240924224357.GM7165@pendragon.ideasonboard.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Wed, 25 Sep 2024 16:24:52 +0100
+Message-ID: <CA+V-a8uZP0_kvtNYzfTA8atn=wgFrabLODxyVuyYvjR68z=HZA@mail.gmail.com>
+Subject: Re: [PATCH v2 04/11] media: i2c: ov5645: Use dev_err_probe instead of dev_err
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Kieran Bingham <kieran.bingham@ideasonboard.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi Laurent,
 
-On Mon, Sep 23, 2024 at 02:54:17PM +0200, Uwe Kleine-K=F6nig wrote:
-> Compared to direct calls to pwmchip_get_drvdata() a dedicated function
-> has two upsides: A better name and the right type. So the code becomes
-> easier to read and the new function is harder to use wrongly.
->=20
-> Another side effect (which is the secret motivation for this patch, but
-> shhh) is that the driver becomes a bit easier to backport to kernel
-> versions that don't have devm_pwmchip_alloc() yet.
->=20
-> Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
-> ---
->  drivers/pwm/pwm-axi-pwmgen.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/pwm/pwm-axi-pwmgen.c b/drivers/pwm/pwm-axi-pwmgen.c
-> index b5477659ba18..e5162f3e511e 100644
-> --- a/drivers/pwm/pwm-axi-pwmgen.c
-> +++ b/drivers/pwm/pwm-axi-pwmgen.c
-> @@ -53,10 +53,15 @@ static const struct regmap_config axi_pwmgen_regmap_c=
-onfig =3D {
->  	.max_register =3D 0xFC,
->  };
-> =20
-> +static struct axi_pwmgen_ddata axi_pwmgen_ddata_from_chip(struct pwm_chi=
-p *chip)
+Thank you for the review.
 
-Applied with an extra * to
-https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
-nexxt
-=2E It will migrate to pwm/for-next once the merge window closes.
+On Tue, Sep 24, 2024 at 11:44=E2=80=AFPM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Prabhakar,
+>
+> Thank you for the patch.
+>
+> On Tue, Sep 10, 2024 at 06:06:03PM +0100, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Drop dev_err() and use the dev_err_probe() helper on probe path.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >  drivers/media/i2c/ov5645.c | 74 +++++++++++++++-----------------------
+> >  1 file changed, 28 insertions(+), 46 deletions(-)
+> >
+> > diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
+> > index 78b86438c798..9e6ff1f1b9ac 100644
+> > --- a/drivers/media/i2c/ov5645.c
+> > +++ b/drivers/media/i2c/ov5645.c
+> > @@ -1076,51 +1076,37 @@ static int ov5645_probe(struct i2c_client *clie=
+nt)
+> >       ov5645->dev =3D dev;
+> >
+> >       endpoint =3D of_graph_get_endpoint_by_regs(dev->of_node, 0, -1);
+> > -     if (!endpoint) {
+> > -             dev_err(dev, "endpoint node not found\n");
+> > -             return -EINVAL;
+> > -     }
+> > +     if (!endpoint)
+> > +             return dev_err_probe(dev, -EINVAL, "endpoint node not fou=
+nd\n");
+> >
+> >       ret =3D v4l2_fwnode_endpoint_parse(of_fwnode_handle(endpoint),
+> >                                        &ov5645->ep);
+> >
+> >       of_node_put(endpoint);
+> >
+> > -     if (ret < 0) {
+> > -             dev_err(dev, "parsing endpoint node failed\n");
+> > -             return ret;
+> > -     }
+> > +     if (ret < 0)
+> > +             return dev_err_probe(dev, ret, "parsing endpoint node fai=
+led\n");
+> >
+> > -     if (ov5645->ep.bus_type !=3D V4L2_MBUS_CSI2_DPHY) {
+> > -             dev_err(dev, "invalid bus type, must be CSI2\n");
+> > -             return -EINVAL;
+> > -     }
+> > +     if (ov5645->ep.bus_type !=3D V4L2_MBUS_CSI2_DPHY)
+> > +             return dev_err_probe(dev, -EINVAL, "invalid bus type, mus=
+t be CSI2\n");
+> >
+> >       /* get system clock (xclk) */
+> >       ov5645->xclk =3D devm_clk_get(dev, NULL);
+> > -     if (IS_ERR(ov5645->xclk)) {
+> > -             dev_err(dev, "could not get xclk");
+> > -             return PTR_ERR(ov5645->xclk);
+> > -     }
+> > +     if (IS_ERR(ov5645->xclk))
+> > +             return dev_err_probe(dev, PTR_ERR(ov5645->xclk), "could n=
+ot get xclk");
+> >
+> >       ret =3D of_property_read_u32(dev->of_node, "clock-frequency", &xc=
+lk_freq);
+> > -     if (ret) {
+> > -             dev_err(dev, "could not get xclk frequency\n");
+> > -             return ret;
+> > -     }
+> > +     if (ret)
+> > +             return dev_err_probe(dev, ret, "could not get xclk freque=
+ncy\n");
+> >
+> >       /* external clock must be 24MHz, allow 1% tolerance */
+> > -     if (xclk_freq < 23760000 || xclk_freq > 24240000) {
+> > -             dev_err(dev, "external clock frequency %u is not supporte=
+d\n",
+> > -                     xclk_freq);
+> > -             return -EINVAL;
+> > -     }
+> > +     if (xclk_freq < 23760000 || xclk_freq > 24240000)
+> > +             return dev_err_probe(dev, -EINVAL, "external clock freque=
+ncy %u is not supported\n",
+> > +                                  xclk_freq);
+> >
+> >       ret =3D clk_set_rate(ov5645->xclk, xclk_freq);
+> > -     if (ret) {
+> > -             dev_err(dev, "could not set xclk frequency\n");
+> > -             return ret;
+> > -     }
+> > +     if (ret)
+> > +             return dev_err_probe(dev, ret, "could not set xclk freque=
+ncy\n");
+> >
+> >       for (i =3D 0; i < OV5645_NUM_SUPPLIES; i++)
+> >               ov5645->supplies[i].supply =3D ov5645_supply_name[i];
+> > @@ -1131,16 +1117,12 @@ static int ov5645_probe(struct i2c_client *clie=
+nt)
+> >               return ret;
+> >
+> >       ov5645->enable_gpio =3D devm_gpiod_get(dev, "enable", GPIOD_OUT_H=
+IGH);
+> > -     if (IS_ERR(ov5645->enable_gpio)) {
+> > -             dev_err(dev, "cannot get enable gpio\n");
+> > -             return PTR_ERR(ov5645->enable_gpio);
+> > -     }
+> > +     if (IS_ERR(ov5645->enable_gpio))
+> > +             return dev_err_probe(dev, PTR_ERR(ov5645->enable_gpio), "=
+cannot get enable gpio\n");
+>
+> Those lines are getting long. We usually try to wrap at 80 columns for
+> sensor drivers:
+>
+As there will be a v3 anyway, I'll wrap it to 80 columns.
 
-Best regards
-Uwe
+>                 return dev_err_probe(dev, PTR_ERR(ov5645->enable_gpio),
+>                                      "cannot get enable gpio\n");
+>
+> Same elsewhere. I'll let Sakari decide.
+>
+> >
+> >       ov5645->rst_gpio =3D devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH)=
+;
+> > -     if (IS_ERR(ov5645->rst_gpio)) {
+> > -             dev_err(dev, "cannot get reset gpio\n");
+> > -             return PTR_ERR(ov5645->rst_gpio);
+> > -     }
+> > +     if (IS_ERR(ov5645->rst_gpio))
+> > +             return dev_err_probe(dev, PTR_ERR(ov5645->rst_gpio), "can=
+not get reset gpio\n");
+> >
+> >       mutex_init(&ov5645->power_lock);
+> >
+> > @@ -1177,9 +1159,9 @@ static int ov5645_probe(struct i2c_client *client=
+)
+> >       ov5645->sd.ctrl_handler =3D &ov5645->ctrls;
+> >
+> >       if (ov5645->ctrls.error) {
+> > -             dev_err(dev, "%s: control initialization error %d\n",
+> > -                    __func__, ov5645->ctrls.error);
+> >               ret =3D ov5645->ctrls.error;
+> > +             dev_err_probe(dev, ret, "%s: control initialization error=
+ %d\n",
+> > +                           __func__, ov5645->ctrls.error);
+> >               goto free_ctrl;
+> >       }
+> >
+> > @@ -1192,7 +1174,7 @@ static int ov5645_probe(struct i2c_client *client=
+)
+> >
+> >       ret =3D media_entity_pads_init(&ov5645->sd.entity, 1, &ov5645->pa=
+d);
+> >       if (ret < 0) {
+> > -             dev_err(dev, "could not register media entity\n");
+> > +             dev_err_probe(dev, ret, "could not register media entity\=
+n");
+> >               goto free_ctrl;
+> >       }
+> >
+> > @@ -1202,14 +1184,14 @@ static int ov5645_probe(struct i2c_client *clie=
+nt)
+> >
+> >       ret =3D ov5645_read_reg(ov5645, OV5645_CHIP_ID_HIGH, &chip_id_hig=
+h);
+> >       if (ret < 0 || chip_id_high !=3D OV5645_CHIP_ID_HIGH_BYTE) {
+> > -             dev_err(dev, "could not read ID high\n");
+> >               ret =3D -ENODEV;
+> > +             dev_err_probe(dev, ret, "could not read ID high\n");
+> >               goto power_down;
+> >       }
+> >       ret =3D ov5645_read_reg(ov5645, OV5645_CHIP_ID_LOW, &chip_id_low)=
+;
+> >       if (ret < 0 || chip_id_low !=3D OV5645_CHIP_ID_LOW_BYTE) {
+> > -             dev_err(dev, "could not read ID low\n");
+> >               ret =3D -ENODEV;
+> > +             dev_err_probe(dev, ret, "could not read ID low\n");
+> >               goto power_down;
+> >       }
+> >
+> > @@ -1218,24 +1200,24 @@ static int ov5645_probe(struct i2c_client *clie=
+nt)
+> >       ret =3D ov5645_read_reg(ov5645, OV5645_AEC_PK_MANUAL,
+> >                             &ov5645->aec_pk_manual);
+> >       if (ret < 0) {
+> > -             dev_err(dev, "could not read AEC/AGC mode\n");
+> >               ret =3D -ENODEV;
+> > +             dev_err_probe(dev, ret, "could not read AEC/AGC mode\n");
+> >               goto power_down;
+> >       }
+> >
+> >       ret =3D ov5645_read_reg(ov5645, OV5645_TIMING_TC_REG20,
+> >                             &ov5645->timing_tc_reg20);
+> >       if (ret < 0) {
+> > -             dev_err(dev, "could not read vflip value\n");
+> >               ret =3D -ENODEV;
+> > +             dev_err_probe(dev, ret, "could not read vflip value\n");
+> >               goto power_down;
+> >       }
+> >
+> >       ret =3D ov5645_read_reg(ov5645, OV5645_TIMING_TC_REG21,
+> >                             &ov5645->timing_tc_reg21);
+> >       if (ret < 0) {
+> > -             dev_err(dev, "could not read hflip value\n");
+> >               ret =3D -ENODEV;
+> > +             dev_err_probe(dev, ret, "could not read hflip value\n");
+> >               goto power_down;
+> >       }
+> >
+> > @@ -1243,7 +1225,7 @@ static int ov5645_probe(struct i2c_client *client=
+)
+> >
+> >       ret =3D v4l2_async_register_subdev(&ov5645->sd);
+> >       if (ret < 0) {
+> > -             dev_err(dev, "could not register v4l2 device\n");
+> > +             dev_err_probe(dev, ret, "could not register v4l2 device\n=
+");
+> >               goto power_down;
+> >       }
+> >
+>
+> The probe function looks really young, I think it would benefit from
+> being broken down in multiple functions.
+>
+I will add this once this initial series gets accepted.
 
---gtjkcuacc3cpyeri
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmb0KzQACgkQj4D7WH0S
-/k7KPQf+JPIPZqb28EwD4AmBY40e0WcHC3V63BzgaJnZ/BYxZ24ZVlgNVPH5M6BE
-MmOnL2wcuvCYoCGFTJtdUNI4FLFzkJ2vqif9CTcXEFomAhqPwBqkxzI7coOEXIEF
-N7tG0O9/mQ4gKokmv4clc0DSw5gE811iO7wUwRsLdL7LYLvxbgkZ/apTd/WihuPX
-1uMK0FujmoF9/hBivwSgdeySF+wmK/xracX0bSzAzBXGTd2jaQewNFdR9TlDAIse
-zoQJR3KzXtq8T56AXAutvfUbA5WWnTFVEa7xLtkrJqzn4BMeely7kEa8IgQikPre
-uAu7DbdBvhY6Oj3NPUGpCohLdffsNQ==
-=yuIz
------END PGP SIGNATURE-----
-
---gtjkcuacc3cpyeri--
+Cheers,
+Prabhakar
 
