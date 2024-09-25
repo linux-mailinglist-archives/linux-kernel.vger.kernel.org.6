@@ -1,71 +1,62 @@
-Return-Path: <linux-kernel+bounces-339608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE4999867B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 22:39:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7CF19867B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 22:39:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D43B71C215F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 20:39:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37D501F23725
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 20:39:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D8414D2B8;
-	Wed, 25 Sep 2024 20:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F0514B962;
+	Wed, 25 Sep 2024 20:39:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="I46luq1y"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VCqPid5m"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41CC91BC2A
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 20:38:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE9714AD29;
+	Wed, 25 Sep 2024 20:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727296735; cv=none; b=WWzuhzYyIZXUTRURIyESgDQeFdg1DsrvszZzK7AxfBXgnNyJWqmUfn2fPzkVJH99Wj7MZkBwtaD0VlwgnOfaUMb2GlAcuM+r3X/XG+GfO36TA25i9Xs0xTKqmh49NUmreclVd9n7Aso8AU4Uf8+/Sh7JHLYTDKIQq9V+N34xY+A=
+	t=1727296756; cv=none; b=qHp2sGheqitxRLLO9pcY8X7OkpfDn4DQoPmQ/W91sJ/gb/QdF/iH2MuUMN3W9A0cDYPjJhXvHMybayfn4mZRqRpPt/2dY4ZCW4hnIbm2M+Zn0FAKrY2PnYiFgB/KoWtYK+NE1DnP/cSAoWe/9xj52AFWSVNdu4TgWL/TPwW5koU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727296735; c=relaxed/simple;
-	bh=YVNmR6XXvH8A5mvxHVgdhsaKgdAgwRDKLgBUf6F6wc0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qm5RY5fxzMYDi/iXLizAyp8iF2zI9woSybDF+qbVgo/TywP1ul659g55EcCDr8096hUme67aBJx1Hzijflm0lCqkhMB6oncvz//QizPDnRksnlzoV3e/j+5J744YAuSVfh5ceYq9BqlAJskkkiCWZl7ouzUOT3F+NRAgg1fODaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=I46luq1y; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20570b42f24so2458265ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 13:38:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1727296733; x=1727901533; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=KMqnLJA14tEsx7O9h7xhY2igThYy8VcFXXux1jwsKwM=;
-        b=I46luq1yYoPYyO3TaT/8qIP9cBwvN1cA52v7dzRzg54QT3uHex+0pXMn6Sg5Z0ry3Y
-         mtBJE+wGK6sa+NwR4m2j2lDHfgfrWlvbIH4J5xy2k64F0FG7rWCeSZFG/ub2kI1pYJ/6
-         fyaWev5bv+/x2RNIBmNE3+05RlnC9Awe/Wuf8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727296733; x=1727901533;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KMqnLJA14tEsx7O9h7xhY2igThYy8VcFXXux1jwsKwM=;
-        b=UG/E5lfL0YXOeqmNluYnIikn34ZqKuyoIPBzQoJtkEFIr4s0CxiZn27SECy0tpxhX9
-         zXNCE/EpeoA4ZnIeIW125HYcVajYOWX83aRBfAp9rZby3WnOuA5W+raz7c851GTxpxMd
-         TfyDmdBemkFTN6GAqhjkTnW+mHmgnLgMDuKKJZdWIaN/vbYd2q7VQc6vvE1MLkxN9E2g
-         oXAqbp2+nRfoeWW6F5fRBkV1brXcNkn1+rUVX6/bMS95EOaisG2f3WH5ic3MW1laytYX
-         sqgJWVnnIDCncZojDddvnrCJERt5crChIzk9xaC9DgwK7YvsnQks9B2iVGesf8z234ui
-         yDYg==
-X-Forwarded-Encrypted: i=1; AJvYcCWG1go1cKjLMVa0Oe3PTJbjkfD89pnXzHrIJuflp9Tnbjbf/V+u+LKaIh+3OQk23yIlGdn5H+8dPbSg5K0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNqCWGs25Y92ph2XS2u9TqN8kQkWjrZQ5sEjAbNOGe9qB6uW5o
-	DvyBRH7H3ziisEHf9c5mPsAJONAZ+648wI4gHoWj8yOZI5ASyme4AqUBozcg4Q==
-X-Google-Smtp-Source: AGHT+IH1jpsv0tw2DCcjrIftabUlsulweSmtlXGW2NhlfsDo3ONd9Fj2VcbVlSoC4aSk6HabY5Rwpg==
-X-Received: by 2002:a17:902:d481:b0:20b:f89:de76 with SMTP id d9443c01a7336-20b0f89e1d1mr25897875ad.36.1727296733476;
-        Wed, 25 Sep 2024 13:38:53 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af16e0551sm27781615ad.3.2024.09.25.13.38.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Sep 2024 13:38:52 -0700 (PDT)
-Message-ID: <6723d91c-ac15-436e-878c-2d6fc1aac5e2@broadcom.com>
-Date: Wed, 25 Sep 2024 13:38:50 -0700
+	s=arc-20240116; t=1727296756; c=relaxed/simple;
+	bh=fAXdxypWajVQ/dpOuvObpeGWRODJEYC4z4qggc5BTjI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WJ7/3+lYY+5vxzzntlQCgLHXnDIVuBCmTvYk1+DA4xk14pOFTzDy+buB6/fO4fACtCNYhQzEJtLYxPUQhi5JGbBaraj4XDybXst9dfv0CeYNSUvdL2wf+8TWqI7JbFCFOwe+tA3xD2+enqa409mJk5rehALvk1p8QxMFfjBYogs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VCqPid5m; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48PH5JRg021397;
+	Wed, 25 Sep 2024 20:38:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	P6P7lwm0vmj3CCAHkpq3SqDjbGrXo0A50h7s/zhPceM=; b=VCqPid5mj+qJiAnG
+	6WW3Oxr5GviTCmApAL3UwZSl7EIlwRW36jzxYz+iHBewIkIViWbDIgqbR1nviCpc
+	2OPy0X0+UphoSzXYB023+lVkCBuAv1isXpVPgpeYB6FaMlJr8FHDNXAlsTPJyIvN
+	+jdMjNP774aYHnHRIEBqRCcENbLNHfvK4r1NQUSmerCbmSTLRRDEotJv7YZj1Eet
+	auCV2PFGEoz5vnTJupa1K1twp+LbEYHoRBjn50VArZMCDeIWjqzDii+dzN4DmAU9
+	A3NfMvuUZ1rEQIff9BKzBjcMITFCVPYS/9vUzne02VcrRI1plSrgiEi+0Y1uu1sF
+	W9erng==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sqakn0mm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Sep 2024 20:38:59 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48PKcwdb025853
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Sep 2024 20:38:58 GMT
+Received: from [10.134.70.212] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 25 Sep
+ 2024 13:38:55 -0700
+Message-ID: <24a11f4c-d848-4f1b-afbd-35b135fa3105@quicinc.com>
+Date: Wed, 25 Sep 2024 13:38:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,86 +64,156 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm: dts: broadcom: Add missing required fields
-To: Stefan Wahren <wahrenst@gmx.net>,
- Karan Sanghavi <karansanghvi98@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>, Anup <anupnewsmail@gmail.com>
-References: <ZvQ27pvrnEYA8BB9@Emma>
- <3e296eed-5dbc-4098-ac3c-3c3125a352d8@gmx.net>
+Subject: Re: [PATCH v2 05/22] drm/msm/dpu: move resource allocation to CRTC
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Rob Clark <robdclark@gmail.com>, <quic_abhinavk@quicinc.com>,
+        Sean Paul
+	<sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        "David
+ Airlie" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, <quic_ebharadw@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        Rob Clark <robdclark@chromium.org>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+References: <20240924-concurrent-wb-v2-0-7849f900e863@quicinc.com>
+ <20240924-concurrent-wb-v2-5-7849f900e863@quicinc.com>
+ <dv5iij6v76ieprfckdjo4yksrjrgqw73v2lh7u4xffpu7rdrf3@zgjcp3a2hlxo>
 Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <3e296eed-5dbc-4098-ac3c-3c3125a352d8@gmx.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <dv5iij6v76ieprfckdjo4yksrjrgqw73v2lh7u4xffpu7rdrf3@zgjcp3a2hlxo>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: HQfy6X8dyIuenG609UO1FYSJh9K-t1tf
+X-Proofpoint-GUID: HQfy6X8dyIuenG609UO1FYSJh9K-t1tf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
+ bulkscore=0 impostorscore=0 suspectscore=0 phishscore=0 adultscore=0
+ clxscore=1015 malwarescore=0 lowpriorityscore=0 mlxlogscore=999
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409250147
 
-On 9/25/24 09:39, Stefan Wahren wrote:
-> Hi Karan,
+
+
+On 9/24/2024 4:13 PM, Dmitry Baryshkov wrote:
+> On Tue, Sep 24, 2024 at 03:59:21PM GMT, Jessica Zhang wrote:
+>> From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>
+>> All resource allocation is centered around the LMs. Then other blocks
+>> (except DSCs) are allocated basing on the LMs that was selected, and LM
+>> powers up the CRTC rather than the encoder.
+>>
+>> Moreover if at some point the driver supports encoder cloning,
+>> allocating resources from the encoder will be incorrect, as all clones
+>> will have different encoder IDs, while LMs are to be shared by these
+>> encoders.
+>>
+>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> [quic_abhinavk@quicinc.com: Refactored resource allocation for CDM]
+>> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+>> [quic_jesszhan@quicinc.com: Changed to grabbing exising global state]
+>> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+>> ---
+>>   drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    |  86 ++++++++++++
+>>   drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 201 +++++++++++-----------------
+>>   drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h |  19 +++
+>>   3 files changed, 183 insertions(+), 123 deletions(-)
+>>
+>> @@ -544,159 +542,117 @@ void dpu_encoder_helper_split_config(
+>>   	}
+>>   }
+>>   
+>> -bool dpu_encoder_use_dsc_merge(struct drm_encoder *drm_enc)
+>> +void dpu_encoder_update_topology(struct drm_encoder *drm_enc,
+>> +				 struct msm_display_topology *topology,
+>> +				 struct drm_atomic_state *state,
+>> +				 const struct drm_display_mode *adj_mode)
+>>   {
+>>   	struct dpu_encoder_virt *dpu_enc = to_dpu_encoder_virt(drm_enc);
+>> -	int i, intf_count = 0, num_dsc = 0;
+>> +	struct drm_connector *connector;
+>> +	struct drm_connector_state *conn_state;
+>> +	struct msm_display_info *disp_info;
+>> +	struct drm_framebuffer *fb;
+>> +	struct msm_drm_private *priv;
+>> +	int i;
+>>   
+>>   	for (i = 0; i < MAX_PHYS_ENCODERS_PER_VIRTUAL; i++)
+>>   		if (dpu_enc->phys_encs[i])
+>> -			intf_count++;
+>> +			topology->num_intf++;
+>>   
+>> -	/* See dpu_encoder_get_topology, we only support 2:2:1 topology */
+>> +	/* We only support 2 DSC mode (with 2 LM and 1 INTF) */
+>>   	if (dpu_enc->dsc)
+>> -		num_dsc = 2;
+>> +		topology->num_dsc += 2;
+>>   
+>> -	return (num_dsc > 0) && (num_dsc > intf_count);
+>> -}
+>> +	connector = drm_atomic_get_new_connector_for_encoder(state, drm_enc);
+>> +	if (!connector)
+>> +		return;
+>> +	conn_state = drm_atomic_get_new_connector_state(state, connector);
+>> +	if (!conn_state)
+>> +		return;
+>>   
+>> -struct drm_dsc_config *dpu_encoder_get_dsc_config(struct drm_encoder *drm_enc)
+>> -{
+>> -	struct msm_drm_private *priv = drm_enc->dev->dev_private;
+>> -	struct dpu_encoder_virt *dpu_enc = to_dpu_encoder_virt(drm_enc);
+>> -	int index = dpu_enc->disp_info.h_tile_instance[0];
+>> +	disp_info = &dpu_enc->disp_info;
+>>   
+>> -	if (dpu_enc->disp_info.intf_type == INTF_DSI)
+>> -		return msm_dsi_get_dsc_config(priv->dsi[index]);
+>> +	priv = drm_enc->dev->dev_private;
+>>   
+>> -	return NULL;
+>> +	/*
+>> +	 * Use CDM only for writeback or DP at the moment as other interfaces cannot handle it.
+>> +	 * If writeback itself cannot handle cdm for some reason it will fail in its atomic_check()
+>> +	 * earlier.
+>> +	 */
+>> +	if (disp_info->intf_type == INTF_WB && conn_state->writeback_job) {
+>> +		fb = conn_state->writeback_job->fb;
+>> +
+>> +		if (fb && MSM_FORMAT_IS_YUV(msm_framebuffer_format(fb)))
+>> +			topology->needs_cdm = true;
+>> +	} else if (disp_info->intf_type == INTF_DP) {
+>> +		if (msm_dp_is_yuv_420_enabled(priv->dp[disp_info->h_tile_instance[0]], adj_mode))
+>> +			topology->needs_cdm = true;
+>> +	}
 > 
-> Am 25.09.24 um 18:14 schrieb Karan Sanghavi:
->> Added below mentioned required fields
->>    1. interrupt-controller
->>    2. #interrupt-cells
->> in the bcm2711.dtsi file for the
->> interrupt-controller@40000000 block as defined in the
->> bindings/interrupt-controller/brcm,bcm2836-l1-intc.yaml.
->> This issue was noticed while compiling the dtb file
->> for broadcom/bcm2711-rpi-4-b.dts file.
->> After including the above fields in the dtsi file
->> interrupt-conntroller error was resolved.
-> looks like you made the same mistake like me [1]. This change breaks
-> boot of Raspberry Pi 4 [2].
+> Just to note, the needs_cdm is not enough once you introduce CWB
+> support. E.g. DP/YUV420 + WB/YUV case requires two CDM blocks (which we
+> don't have), but this doesn't get reflected in the topology.
+
+Hi Dmitry,
+
+Ack. I can add something to make atomic_check fail if the input FB is 
+YUV format and CWB is enabled.
+
+Thanks,
+
+Jessica Zhang
+
 > 
-> There are a lot of DT schema warnings to fix, but this doesn't belong to
-> the trivial ones.
+>>   }
+>>   
+> -- 
+> With best wishes
+> Dmitry
 
-Including the #interrupt-cells would not have a functional impact 
-however, and we ought to be able to do that.
-
-The 'interrupt-controller' property presence means that the controller 
-will be picked up by of_irq_init() and that is was causes problems for 
-people testing this. Stefan, do you know if the VPU firmware 
-removes/inserts that property to tell Linux which interrupt controller 
-(bcm2836-l1-intc or ARM GIC) to use or does it make use of the "status" 
-property which would be the canonical way about doing that?
-
-Thanks!
--- 
-Florian
 
