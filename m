@@ -1,125 +1,143 @@
-Return-Path: <linux-kernel+bounces-338248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A044F985556
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:19:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DA0C98554F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50ECC281A58
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:19:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C65BA1F2407C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6427C15B12F;
-	Wed, 25 Sep 2024 08:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53FF158D94;
+	Wed, 25 Sep 2024 08:18:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZzH/hoWL"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DYVqF/wm"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3683415921D;
-	Wed, 25 Sep 2024 08:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD03158D96
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727252314; cv=none; b=Du6Sr3CUqfiQ/HVVJstpZskomqB/ppkin0Wh6uYBdeBxqZcK1OcZSYq7KrVTppu+KjHk6ANMYZIf/IOu+A4WPS5wkQnjVbzyxPgBKASvNhQYE/FKLpXgEFDGG+EGh70Mji2WVniBlSanKjM4Oa2YKoRC2266MiZbyYrL1rsvKzI=
+	t=1727252308; cv=none; b=htLwbV6gjT812gu0sNAQ0S+Li7PUyUXEwir71jXcQ9+KADBQmiQOuKvowg/eXuCad9Qp2MlXGAlnlbNXo7iqJGsidagTcjM914NZYbSigu+9u4qlkQAsw7BUit2yM/igJGUuI9SaVLSUKktGk2eQiYb9lEIQD5ylbMC5buGbFx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727252314; c=relaxed/simple;
-	bh=1Nk5zw78EsDZtTINVN7tnvRQ3dNjHON4s+1QiENmxCY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g292NMZfDJqB5B6qRgfzEkXfc4W6+5H5eqsuy3teRy6CMP42JBybvs7gnsuUcekMB6/PuVGijIjGUx/Nsyd9zUdSLMQamF6/zSDSMnHNbe/NyrsCG/1gK25oIRyWK6AiXgkX9WZDCvcCHam0Se7brmXhCAcEluzizqYKypBJQOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZzH/hoWL; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f75c0b78fbso65026661fa.1;
-        Wed, 25 Sep 2024 01:18:32 -0700 (PDT)
+	s=arc-20240116; t=1727252308; c=relaxed/simple;
+	bh=ZNN0WA2/p1ORgw0WLog369ZiQNy2kk/Mzv+YGlD0aSc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=L3UBOwfCBQYQMn1kBDVfJDvwLltNfhAq4n/MQWsIyHvzsVjeygZktK8PPs8qTe1J1PkNGYncgTuQ7VrydCUS3oXUV0wFUxIvX8s3xjdCGs4ixXA40ipcSiiRwpUVQuU+pcRpTx4POZXgb6UbQC4Uarvri7Dt0dQrvJgaf4x4Dyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DYVqF/wm; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cae6bb895so63926595e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 01:18:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727252311; x=1727857111; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=1Nk5zw78EsDZtTINVN7tnvRQ3dNjHON4s+1QiENmxCY=;
-        b=ZzH/hoWLKdAOfTG2BO0mbR8C9StQXevObg687JzwjMzcUfnsgYKm9V8ZnzJa1rJEe/
-         cA4hnY2wVGuI8b7zsbqR1uDbarMfObEszQ9d/Y3oSgReBkE0PBs8v9GyrUZLadcNLNDW
-         XC+pKQrKExWVdkR3hbXBlkUn2kGvna1yvzIkGnss3HAKa6OAbFOq4Tgrz0L8kVxcl5rU
-         BxsnQyTq9bDsla0tIhwowb3j+wbugIt3iJB5sDG+bxxK3Fnvu27kfVYcB/owfBVtRsWs
-         CSFsTUYoo+gj5ooNyqI+N/veh+8skD4DloUxVwszeZMnl+RqyeZ89l92ePw1Ze6XBzJq
-         P+8A==
+        d=linaro.org; s=google; t=1727252305; x=1727857105; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CjViwqKoOuJx/lbhmfqAwvB3FRCAndqhaaKQMzHxtco=;
+        b=DYVqF/wm5gdqbVfTe9EK/+0aiAIU70Z20kN5LXCHyXXsC2+A9KjoL+xX0jeu5qFgPd
+         lRWaphLh2z4UWpRov70KdrYFMpSETuySqSnYeb9/VhackhZRbm73oH80Z0cJtuUal8+U
+         CJz8+3A95q44b6RFHfwgjxBGufi37TLS/Pf4Jeo/DSrBiXTnTuAl4ew3rHkh6ybCjQsN
+         aZgaw89hnGnL+lT4Tm68MF0Bzntr9iC3qcbj4m4z1jZ0dEeP8zo5HPMkLUuUmBlpZGSG
+         rw4w3pbcXzsYlQKkgOMb4Ks/9iFuqpW7wCrMS2gyWkUCJFoBKR/Vca6u3zeAPTFgYbGJ
+         8lHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727252311; x=1727857111;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1Nk5zw78EsDZtTINVN7tnvRQ3dNjHON4s+1QiENmxCY=;
-        b=ofq1r3KxKbtStjAJ4gq7N+1I8fRjes2XIFI+j8kSTbEyYxHzj1lT9oMow91sldAoAn
-         9eiFsYYtFaNqsx+Y6ho8ndv1COYcGsMWzKtuDNdF3SxUvJNu6dqsIQ88ESeIx1kniBCB
-         ejDudKobluqHUgpIShp+0nr2D3M9mOh1hsoEiV5qjWPds5hdWM4uI2Ej5J6EYaMVVlwm
-         vBuL0Uf1L9S1mqFVtNQqf7M3P+3ojIEr1PwojLX++0KFHwISnsQDCVNjT4Cl1tAk+JGJ
-         nPTcyCbeBQfD44YKurk5pbydj7FKxDOCQNNvqagOZJZb3UAYUgwgjn7mDAbkTjYvaIJ1
-         c1CQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9AI3qRnI5qgWCN16YWw+fIyMlCsrW4+a3Bl4zohXE1V7NoUxp/eo3q/cEt6nsc2Tagl5ho+zHqg==@vger.kernel.org, AJvYcCVpjyIg3KG2c2qRWON8TT2dJQj/sxTtMxV9qmjr31aNsuaD1sPY52pf2OIA399lAtF9Z1o9Ox1Zk9WsiFUm@vger.kernel.org, AJvYcCWi6oORtXEYeapcUzhGaNae/3F/ps/CFPL8Es7MwUqn20IA21R7HnGSI09gq5JRawPLExk=@vger.kernel.org, AJvYcCXWBcNOSShwr941RlTTg0MVtpLhkfep/RSH1EYPYuq4ZGnKuJND6ZRXJdiwdK1PRZq2cSOFuxp+AtuIf/kh@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYW/zGNLMUUjgRyPfOCzhXAkQ+mDXIKPKq8e2+QxjK3uvmrqOD
-	Z3J4Zfgu6GVidguCQ0YgGxkvu5B7TAbgnMsBQXPXM/gnCLJNkfowWh41nGZn/t+bXOx7EpfcLag
-	1VqHmRrkvIlnkvdlkZqcpdlZaUK0=
-X-Google-Smtp-Source: AGHT+IERKtPYc980lSJ1UEXpI+b66aNtrwATZPdGkwcCyH8NhpOU5uComuDPBZkuyJYi/sYF3vfJcZoUfsiZOy7Rjr8=
-X-Received: by 2002:a2e:a58c:0:b0:2f7:4ea7:300c with SMTP id
- 38308e7fff4ca-2f91600dae6mr11933971fa.27.1727252310822; Wed, 25 Sep 2024
- 01:18:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727252305; x=1727857105;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CjViwqKoOuJx/lbhmfqAwvB3FRCAndqhaaKQMzHxtco=;
+        b=SredwAA8tuZmWoo+FtnaBmyt0Y2sd4qmNo5D0wOEp55saw9zqrL/4w0Y6yHJFB7N0s
+         +dR+OjdV5w4Jt/vLsld8epoBfoPBvYVFDpnASS8YvO8n/AmdgYsSJFn5botNPFWR7mSl
+         jobP+tzna0k0oWkKsRU5eayYPSvtdDk0h0PAS+ZadUNKZ8gy9emEe428L38PUDdbUUi7
+         q4vOHaOppOayqI4kDLFcwk2xAi5eaDZjf/rW5hL32Gb8Enpzdpr0MBndrNWG2CA+oXTW
+         299uW++TvYHNCHRLhGmGHmhvQl3FgrOhWDIweFtWdxid6pDiPaciXQ0OL9tdcJnAIFzb
+         8C6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW7LyTa7idae38qnV6/m+ehKULmxlIXyYcNIrUYlC+V1m564GAujfDNRuIy7Lbq6n7nbGiohzIMqKDkJQE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlKt01sVoTJhc1KEp9vI3fGqPgvFX+tfdnu80yJzDv9hpX3A5G
+	+G8Mxt+lt2X52aSUwudJWmNwNGoYq4QzpZCkxcKZbEl7wf2LsAmNYWYejYSG42I=
+X-Google-Smtp-Source: AGHT+IGzTCJoMIje7BlfvPfP0lS5uStHPhLpQoLdhOq/3pwsQ/1Hd2BTnfsSIdO9RAY8hcw1bZBCyQ==
+X-Received: by 2002:a05:600c:3d05:b0:42c:b9c8:2bb0 with SMTP id 5b1f17b1804b1-42e96103358mr11373925e9.4.1727252304561;
+        Wed, 25 Sep 2024 01:18:24 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cbc2a8bcasm3362899f8f.9.2024.09.25.01.18.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 01:18:24 -0700 (PDT)
+Date: Wed, 25 Sep 2024 11:18:20 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Mary Strodl <mstrodl@csh.rit.edu>,
+	linux-kernel@vger.kernel.org
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, linus.walleij@linaro.org,
+	brgl@bgdev.pl, linux-gpio@vger.kernel.org,
+	Mary Strodl <mstrodl@csh.rit.edu>
+Subject: Re: [PATCH v2] gpio: add support for FTDI's MPSSE as GPIO
+Message-ID: <0c58010f-3d25-498b-a519-d79e7021cff1@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240820085950.200358-1-jirislaby@kernel.org> <ZsSpU5DqT3sRDzZy@krava>
- <523c1afa-ed9d-4c76-baea-1c43b1b0c682@kernel.org> <c2086083-4378-4503-b3e2-08fb14f8ff37@kernel.org>
- <7ebee21d-058f-4f83-8959-bd7aaa4e7719@kernel.org> <a45nq7wustxrztjxmkqzevv3mkki5oizfik7b24gqiyldhlkhv@4rpy4tzwi52l>
- <ZsdYGOS7Yg9pS2BJ@x1> <CA+icZUVL13oPX8KybWirie5zH77qWuzG9-9yTNM7O1CxwhOp1w@mail.gmail.com>
-In-Reply-To: <CA+icZUVL13oPX8KybWirie5zH77qWuzG9-9yTNM7O1CxwhOp1w@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Date: Wed, 25 Sep 2024 10:17:54 +0200
-Message-ID: <CA+icZUUgk3fsmmWTx2ix0HAV=Wagy5AT341SFs2idaCyS2uvtA@mail.gmail.com>
-Subject: Re: [RFC] kbuild: bpf: Do not run pahole with -j on 32bit userspace
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Shung-Hsi Yu <shung-hsi.yu@suse.com>, dwarves@vger.kernel.org, 
-	Jiri Slaby <jirislaby@kernel.org>, Jiri Olsa <olsajiri@gmail.com>, masahiroy@kernel.org, 
-	linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	linux-kbuild@vger.kernel.org, bpf@vger.kernel.org, msuchanek@suse.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240919141014.4000958-1-mstrodl@csh.rit.edu>
+Received: from imap.gmail.com (108.177.15.109:993) by stanley.mountain with
 
-On Mon, Aug 26, 2024 at 12:18=E2=80=AFPM Sedat Dilek <sedat.dilek@gmail.com=
-> wrote:
->
-> On Thu, Aug 22, 2024 at 5:24=E2=80=AFPM Arnaldo Carvalho de Melo
-> <acme@kernel.org> wrote:
->
-> > Please let me know if what is in the 'next' branch of:
-> >
-> > https://git.kernel.org/pub/scm/devel/pahole/pahole.git
-> >
-> > Works for you, that will be extra motivation to move it to the master
-> > branch and cut 1.28.
->
-> For pahole version 1.28 - Please, Go Go Go.
->
-> -Sedat-
->
-> pahole 1.27 segfaults when generating BTF for modules built with LTO #203=
-2
-> https://github.com/ClangBuiltLinux/linux/issues/2032
+Hi Mary,
 
-Hi Arnaldo,
+kernel test robot noticed the following build warnings:
 
-Any news for pahole version 1.28 release?
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks.
+url:    https://github.com/intel-lab-lkp/linux/commits/Mary-Strodl/gpio-add-support-for-FTDI-s-MPSSE-as-GPIO/20240919-221626
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
+patch link:    https://lore.kernel.org/r/20240919141014.4000958-1-mstrodl%40csh.rit.edu
+patch subject: [PATCH v2] gpio: add support for FTDI's MPSSE as GPIO
+config: x86_64-randconfig-161-20240922 (https://download.01.org/0day-ci/archive/20240923/202409230158.XhvhLOyY-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
 
-Best regards,
--Sedat-
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202409230158.XhvhLOyY-lkp@intel.com/
+
+smatch warnings:
+drivers/gpio/gpio-mpsse.c:211 gpio_mpsse_get_multiple() warn: inconsistent returns '&priv->io_mutex'.
+
+vim +211 drivers/gpio/gpio-mpsse.c
+
+be777399e9baea Mary Strodl 2024-09-19  190  static int gpio_mpsse_get_multiple(struct gpio_chip *chip, unsigned long *mask,
+be777399e9baea Mary Strodl 2024-09-19  191  				   unsigned long *bits)
+be777399e9baea Mary Strodl 2024-09-19  192  {
+be777399e9baea Mary Strodl 2024-09-19  193  	unsigned long i, bank, bank_mask;
+be777399e9baea Mary Strodl 2024-09-19  194  	int ret;
+be777399e9baea Mary Strodl 2024-09-19  195  	struct mpsse_priv *priv = gpiochip_get_data(chip);
+be777399e9baea Mary Strodl 2024-09-19  196  
+be777399e9baea Mary Strodl 2024-09-19  197  	mutex_lock(&priv->io_mutex);
+be777399e9baea Mary Strodl 2024-09-19  198  	for_each_set_clump8(i, bank_mask, mask, chip->ngpio) {
+be777399e9baea Mary Strodl 2024-09-19  199  		bank = i / 8;
+be777399e9baea Mary Strodl 2024-09-19  200  
+be777399e9baea Mary Strodl 2024-09-19  201  		if (bank_mask) {
+be777399e9baea Mary Strodl 2024-09-19  202  			ret = gpio_mpsse_get_bank(priv, bank);
+be777399e9baea Mary Strodl 2024-09-19  203  			if (ret < 0)
+be777399e9baea Mary Strodl 2024-09-19  204  				return ret;
+
+Needs to mutex_unlock(&priv->io_mutex) before returning.
+
+be777399e9baea Mary Strodl 2024-09-19  205  
+be777399e9baea Mary Strodl 2024-09-19  206  			bitmap_set_value8(bits, ret & bank_mask, i);
+be777399e9baea Mary Strodl 2024-09-19  207  		}
+be777399e9baea Mary Strodl 2024-09-19  208  	}
+be777399e9baea Mary Strodl 2024-09-19  209  	mutex_unlock(&priv->io_mutex);
+be777399e9baea Mary Strodl 2024-09-19  210  
+be777399e9baea Mary Strodl 2024-09-19 @211  	return 0;
+be777399e9baea Mary Strodl 2024-09-19  212  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
