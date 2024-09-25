@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-337956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ED0C98516B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 05:30:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF830985170
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 05:31:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DD66285046
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 03:30:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C2181F24B01
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 03:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845FC14AD3F;
-	Wed, 25 Sep 2024 03:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98DA14A60F;
+	Wed, 25 Sep 2024 03:31:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Cc50jO1v"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gSfNEiQr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DECB2AE8A
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 03:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965282F52
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 03:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727235026; cv=none; b=Q23L5Yaa7JliuieD9m98mYYtTtU5D0OutCaceAKGOPv4ppueiL2O0UaNNaE0A/0ND0/DXTrYUn+EgdpUglYIXuVzKYpSqtZE7JsGvokvBkyNkz/FBPwZqD2kAJkDBy/BG3goiQC+B46Gez2VZL5A0ejJ+BS1dExquZXVkVDbvDM=
+	t=1727235073; cv=none; b=SQQgj4Ml50IObmBmAEByypaVRnIunVhVi0hLmjt594CPsOBNHihna+Li1vNRJYmof8B/3xdvpxEc4ChXb4cFgP9lE84Tip2ZWGEFK3uORupHY5SEFHdI0+V8LGQ8aVpT1l1Wz8Q92EgklZ2PgAKxFqW+kMt6jHvjFkbmjlbxCR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727235026; c=relaxed/simple;
-	bh=/pj+RCuXouKWKKmVNJjkG4mjtgCiJqE6IxJ4EvXxnE4=;
+	s=arc-20240116; t=1727235073; c=relaxed/simple;
+	bh=M0Ynl+OetR8GBYZEwi4ht5kW6Ch+UvBVR3yT5ZWcE34=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qfCOjSV5CUR7IBJUiq9y3kjelj2inSE7Ng4XJ2f7sbxfWY3sc2bZ+5MJVIubHWL+fE8686vn03Ro7MiaXppLau7tCHUs5y/BIYKZbrB9X2MKaBnU1FFzGzgKB36J1vVtvoCGZN+KcE9Y+mEZOl4MflGtspCLLvhDelhm1fPpRqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Cc50jO1v; arc=none smtp.client-ip=170.10.133.124
+	 To:Cc:Content-Type; b=rdt+tZAy4TxrKlscDZvEi0XJhq5penqN100dqCmtYWtRbs1+uW95IhITNnTDIbyjOFnLwq5YwRpJMibwY4Dd3p3AFqJmDgQRxjinpFvZfiB5ye2e/RePf8g4RcxNxCRAR2jjLtUZ34OQW+itP3enCe348/uCYyaMnEhExT8P6/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gSfNEiQr; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727235024;
+	s=mimecast20190719; t=1727235070;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/pj+RCuXouKWKKmVNJjkG4mjtgCiJqE6IxJ4EvXxnE4=;
-	b=Cc50jO1vwKFaEKU2XlDyrbNt/ghI8Q4f7OyGi9IdYTcKsiVT1tASj2oYd0URyrZRUE7e1k
-	5Xg3T3sKJYlPAyDMdt9z7r6570YQXa97L6GW7EBMhp5bQ1Y3llL19jXoLqYbkqozaQpyDb
-	IvLuAhyly3Iw+ra5b+DjdRpRwy+KIH4=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=M0Ynl+OetR8GBYZEwi4ht5kW6Ch+UvBVR3yT5ZWcE34=;
+	b=gSfNEiQryX5Qntgto1tG6oWI8Yteq3asQBw9mV0khYlN/cDkXo1gOithLrHHonTnbrrbCy
+	aQL16PWKNa9TQLZJCbQV+YztanCBtx+JWlIorV7USyWzhvFMH5+I1g8ZIE69cRxTKis+wP
+	w8Wf+q7zw4l49h9OTQtL6/8dzH890ks=
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
+ [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-144-dJctUX3LPtCWNP9CKxGVpg-1; Tue, 24 Sep 2024 23:30:22 -0400
-X-MC-Unique: dJctUX3LPtCWNP9CKxGVpg-1
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2d8817d8e03so8983399a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 20:30:22 -0700 (PDT)
+ us-mta-311-qhZdi8vKN5asgANo63mMHw-1; Tue, 24 Sep 2024 23:31:09 -0400
+X-MC-Unique: qhZdi8vKN5asgANo63mMHw-1
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-7cd7614d826so600465a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 20:31:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727235022; x=1727839822;
+        d=1e100.net; s=20230601; t=1727235068; x=1727839868;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/pj+RCuXouKWKKmVNJjkG4mjtgCiJqE6IxJ4EvXxnE4=;
-        b=SkGpjCpPl632Bsd9EVDVqGf8a/H8RO7fI+SlJ8Tu5VaeerJjTuz0fTsUnLdpB+B1l0
-         klIZLoivleedTTCOQ0piuIbx7achlS6g2kmSBYMeZdoEJsE34Qblypm7M7zhLCuLDl8X
-         OXsWYJ34IhMBmwKP8dVK00NRtzyZrFk03RQXxbvVlsXh0sAIjdYTYfitomyvEO9T61qz
-         IoDdhIouF+Ekpk2Ghsa4wRJqMeYJUFTLUTokywOnX1REDaErNzY9HvEbJNhTZZztMWnF
-         wYE3zXgQyaNx75PeSePTiJEYbQbZMPYatbzRI9Li5cLf0+KUxFdkLkBYOFcBFl0HFzR4
-         BxZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVsVkw5FDaRRoHA2ycG8dAQfFUM8FtA3xc3wH7CGaIc1gFGg2n61JW4mQvfWFtmouTzON/PDuCdh9hEdkI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSFzuBRNDxlspmOG1VCHjExEepV7kKIOLaPuCSUEBF5sJnA5sK
-	do694PWW8sLhJwCKB38wsVIueF0WxgExMS5Qu6LMjUKJ4hJHSbizxOmF1ohI/iplACUtFgdYaT/
-	874cCW8WhjaJFMhzJ9bSwt6/bFAfco0rJuqHDn/BZEIAaHQ3ObFcpZNRrvHNksCuZOQsErTEEse
-	486EYAB5wHSoLHnDLsIxxev/stAEdC7WBXFE8d
-X-Received: by 2002:a17:90a:f2d5:b0:2da:905a:d88a with SMTP id 98e67ed59e1d1-2e06ae791a7mr1467813a91.21.1727235021752;
-        Tue, 24 Sep 2024 20:30:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFt284MvmYUlT8+AL6adgtTv8NmOQ1ld/MsvwYgsNGC040Pi/BgPI1vkZfb6OO4Jtnfla96r8UcK+AJSx61zg8=
-X-Received: by 2002:a17:90a:f2d5:b0:2da:905a:d88a with SMTP id
- 98e67ed59e1d1-2e06ae791a7mr1467782a91.21.1727235021240; Tue, 24 Sep 2024
- 20:30:21 -0700 (PDT)
+        bh=M0Ynl+OetR8GBYZEwi4ht5kW6Ch+UvBVR3yT5ZWcE34=;
+        b=sU2Ffhzv1CGMW8ZXIRva2PtnBxDt6Xz/Spc17Lcu4kz6zlGqjcsACqGVBQ5EWmDtlz
+         FloFiA1g/LEDf/ciLl0zfym3s2seb97mMN3Y9e978+oWYrV8L76v4jfz3fO39j5s4Uvt
+         uNtnRMGer9yNhF8enXBev0z4hNLmLHMfb+jvfxY2SsJW2lgKHrzR4m+Zb3tCJxRCDGCM
+         mdu6jsUBeMNOYrIy0hTV96moWcJnnyPn9S1Efg2DI6otGYWHHDeUAe6u0XWiXDh3EWcI
+         jrslaw8X2tLCfWwls04NtV5wkGIeUBbGi3A3VjV7zj/WRCkIjPiPnCQYza9jNfCd6EnK
+         TIOg==
+X-Forwarded-Encrypted: i=1; AJvYcCULA98vKOw+uLYqYl869FDWu70mP3NHj3MdukRZxj23Xi09hBZOZZI5fP+uiq8bTMVNTGiMcjRjMVFJUKY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVbD8dx991veTOxRbT3GfTnT4CR4G83fRfSnOOKNgRc8Fo3tCD
+	rKNDL7XsgC7yfl4NM62j2pNxtcumxhkcadeEX63S2k/qsubFmJ0Z4W8opkZ0TJ8NpvUYDz0p5EG
+	yk5kdzWZ9ctCUY1vImymFO0qu1RashAFFfzi177/lc+pYEhw7dvmKud/Otl8HKNR/XO4KaTYkEU
+	IbmrUVDb67CjkSJAzTZt9RePWvDfurDpMLlIV9
+X-Received: by 2002:a17:90a:d18b:b0:2c9:7343:71f1 with SMTP id 98e67ed59e1d1-2e06ac390c5mr2020776a91.14.1727235068207;
+        Tue, 24 Sep 2024 20:31:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGHSXnVXH4KJFogFRlAqrxz0oHdsU+wQjcpSOWPpZkunKpdZpa8uVOFkj6NCDsQxAw+PRNHCHqUsGcOkqjm3ok=
+X-Received: by 2002:a17:90a:d18b:b0:2c9:7343:71f1 with SMTP id
+ 98e67ed59e1d1-2e06ac390c5mr2020746a91.14.1727235067738; Tue, 24 Sep 2024
+ 20:31:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240924-rss-v4-0-84e932ec0e6c@daynix.com>
-In-Reply-To: <20240924-rss-v4-0-84e932ec0e6c@daynix.com>
+References: <20240924-rss-v4-0-84e932ec0e6c@daynix.com> <20240924-rss-v4-7-84e932ec0e6c@daynix.com>
+In-Reply-To: <20240924-rss-v4-7-84e932ec0e6c@daynix.com>
 From: Jason Wang <jasowang@redhat.com>
-Date: Wed, 25 Sep 2024 11:30:08 +0800
-Message-ID: <CACGkMEvMuBe5=wQxZMns4R-oJtVOWGhKM3sXy8U6wSQX7c=iWQ@mail.gmail.com>
-Subject: Re: [PATCH RFC v4 0/9] tun: Introduce virtio-net hashing feature
+Date: Wed, 25 Sep 2024 11:30:56 +0800
+Message-ID: <CACGkMEvKPXCPi6=1938J-k8JNA+hHqzRSt1gPQtqBvSfcgGZeQ@mail.gmail.com>
+Subject: Re: [PATCH RFC v4 7/9] tun: Introduce virtio-net RSS
 To: Akihiko Odaki <akihiko.odaki@daynix.com>
 Cc: Jonathan Corbet <corbet@lwn.net>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
 	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
@@ -98,28 +98,28 @@ Content-Transfer-Encoding: quoted-printable
 On Tue, Sep 24, 2024 at 5:01=E2=80=AFPM Akihiko Odaki <akihiko.odaki@daynix=
 .com> wrote:
 >
-> virtio-net have two usage of hashes: one is RSS and another is hash
-> reporting. Conventionally the hash calculation was done by the VMM.
+> RSS is a receive steering algorithm that can be negotiated to use with
+> virtio_net. Conventionally the hash calculation was done by the VMM.
 > However, computing the hash after the queue was chosen defeats the
 > purpose of RSS.
 >
 > Another approach is to use eBPF steering program. This approach has
 > another downside: it cannot report the calculated hash due to the
-> restrictive nature of eBPF.
+> restrictive nature of eBPF steering program.
 >
-> Introduce the code to compute hashes to the kernel in order to overcome
-> thse challenges.
+> Introduce the code to perform RSS to the kernel in order to overcome
+> thse challenges. An alternative solution is to extend the eBPF steering
+> program so that it will be able to report to the userspace, but I didn't
+> opt for it because extending the current mechanism of eBPF steering
+> program as is because it relies on legacy context rewriting, and
+> introducing kfunc-based eBPF will result in non-UAPI dependency while
+> the other relevant virtualization APIs such as KVM and vhost_net are
+> UAPIs.
 >
-> An alternative solution is to extend the eBPF steering program so that it
-> will be able to report to the userspace, but it is based on context
-> rewrites, which is in feature freeze. We can adopt kfuncs, but they will
-> not be UAPIs. We opt to ioctl to align with other relevant UAPIs (KVM
-> and vhost_net).
->
+> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
 
-I wonder if we could clone the skb and reuse some to store the hash,
-then the steering eBPF program can access these fields without
-introducing full RSS in the kernel?
+If we decide to go this way, we need to make it reusable for macvtap as wel=
+l.
 
 Thanks
 
