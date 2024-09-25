@@ -1,118 +1,95 @@
-Return-Path: <linux-kernel+bounces-338042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B39C29852A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:50:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 193FE9852A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:51:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 721CD284DBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 05:50:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90DC5B22D47
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 05:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B9914F9D5;
-	Wed, 25 Sep 2024 05:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A50415531B;
+	Wed, 25 Sep 2024 05:51:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C8VGAvx8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qTOTQ3y7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13181B85D5;
-	Wed, 25 Sep 2024 05:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A29B657;
+	Wed, 25 Sep 2024 05:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727243411; cv=none; b=nVIEglD1PVOjU2Ie1vmro/t4r5HMN0lIOxHjKXCFzGL7bAu5sPOadtdS+BepYOss1PVU5AJ+RV25vnN7ZwPW+5HEEmbJp8Kr0OjUrEJ+9wp8fdweI3UDmNNveKvnic0afeaV+PoAwZurKRJXWCu6jH9lR/HogKNJG0GqvR9iwS8=
+	t=1727243487; cv=none; b=MUgI8poWn1k8lhORHokG0tKwRrSfqjoIRfKRc2suRMspAGw3zFaPxpaYQ84j8OgwUP9WJOEMU3oTGb5OpN3b1J9rKEjAVydfNSLLs4yVltL2qQq0smH5bZNZp0gBCFkLoA5yyG541onSfaCtD5utyRTYGR4eiQg3YSnVPwdIKxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727243411; c=relaxed/simple;
-	bh=rSX1IsaQQ1k0DI/hlmS0BNorx/LQ8UCwbDfk1W3HIzY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=elqvcaW3SNpFjEQFei/QlsmdBViURlUK8lzWFAC7DtnurQUffGLBq/6aCxt7Spfu4wYYee/EOc4ht/9XLFdYmUTKRqWF80Z8pqmDuUzXua++I+ihMMOK3ljh6/Z/U4oeI+VV244mQ8tGO41HVSXlHSmQpS7WTpH558Zbz3VmKHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C8VGAvx8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7534C4CEC3;
-	Wed, 25 Sep 2024 05:50:08 +0000 (UTC)
+	s=arc-20240116; t=1727243487; c=relaxed/simple;
+	bh=L0DvuQ5+JV7LC8u5ipDHoi9P+mRwkQBovnpX/4+rPGQ=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=ZYpXOQXlYjfI6ZVmQEegrOCwGYL8FVK18g/bY7/IKEb+Wa6rt/MUdpBplrjhtoTJH0lkK01odZ9gY+jMI04MIjY3Zqx4N+5khFSVWzJ2KFMopHqz0I5CfnztOOwZzK0XaZvPWk7Hylg8YltUMLMP6be2kr0UBrVqRCYp6CXcpo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qTOTQ3y7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9746C4CEC3;
+	Wed, 25 Sep 2024 05:51:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727243409;
-	bh=rSX1IsaQQ1k0DI/hlmS0BNorx/LQ8UCwbDfk1W3HIzY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=C8VGAvx8n9TqREQtZlcHpBlnJDU4PnkUCZoQYIIvHZBhpREMa15nvascCH/qs+66a
-	 dOxxoo68yt4Vzfra6ATom7bgzKMdRHtFiCLpYbi1r348gd2x76O8RdZ6YE55Srjn/W
-	 t3mdLs8qQfBgW01PL2l9zHXs+k9AW49jyYnmP958mIvl6X2dXuJYnUgxtFx0lSgdgl
-	 55XEKhjl1B50fzdmNF39yo7u8Z+Gn2beldw59Y6vY78cX4WHPlEkj1sBFuoh29+XBP
-	 b8E01tJWRJl7ggwaa1Y2Hxl9IEiTFOz6thaEx7ifcmz95DvuYqap+25OsxtfvauQUm
-	 0K7QAgT95D5Tg==
-Date: Tue, 24 Sep 2024 22:50:07 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Alexander Monakov <amonakov@ispras.ru>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 1/2] perf symbol: Set binary_type of dso when loading
-Message-ID: <ZvOkj-USs2PRXxsH@google.com>
-References: <20240426215139.1271039-1-namhyung@kernel.org>
- <b9a82437-cd4a-5331-47da-b0d1640169d7@ispras.ru>
+	s=k20201202; t=1727243486;
+	bh=L0DvuQ5+JV7LC8u5ipDHoi9P+mRwkQBovnpX/4+rPGQ=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=qTOTQ3y7eXGfNvx3YAluz0B4Japbnoq7cwxyk86Aa/xA6BVcs044N0dLqXbNwbAfs
+	 lKXs/4lt/xaOrBwHBDsLHsF2WfKnOfibM0ew09w4VuVf9dz+Sri13dkM4D+E15XyRr
+	 XSVGLxh6VheBafOplSVQYrw1/nYU3THIXGCnzcenDAVvZxtVMPYSpwzfwUXdVak4UA
+	 Z2fQigUexilrPTTmv30FQkFC3dYekyAdBjy3UOOi09jdeTLp2OYsY7Pqh2bILaegbB
+	 fSHlIS1kObJKdNBHNgg8H1nwYPKysERFTulPK2iHOEtDKkT49xGkgz1kKimBcgq4VV
+	 ek/K7Ri0Y0Dpg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DE1380DBF5;
+	Wed, 25 Sep 2024 05:51:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <b9a82437-cd4a-5331-47da-b0d1640169d7@ispras.ru>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v1 1/1] selftests: set executable bit
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172724348926.448598.2586649481930779700.git-patchwork-notify@kernel.org>
+Date: Wed, 25 Sep 2024 05:51:29 +0000
+References: <20240924175500.17212-1-david.hunter.linux@gmail.com>
+In-Reply-To: <20240924175500.17212-1-david.hunter.linux@gmail.com>
+To: David Hunter <david.hunter.linux@gmail.com>
+Cc: sj@kernel.org, shuah@kernel.org, allison.henderson@oracle.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ damon@lists.linux.dev, linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
+ javier.carrasco.cruz@gmail.com
 
-Hello,
+Hello:
 
-On Fri, Sep 20, 2024 at 08:04:00PM +0300, Alexander Monakov wrote:
-> Hi,
-> 
-> On Fri, 26 Apr 2024, Namhyung Kim wrote:
-> 
-> > For the kernel dso, it sets the binary type of dso when loading the
-> > symbol table.  But it seems not to do that for user DSOs.  Actually
-> > it sets the symtab type only.  It's not clear why we want to maintain
-> > the two separately but it uses the binary type info before getting
-> > the disassembly.
-> > 
-> > Let's use the symtab type as binary type too if it's not set.  I think
-> > it's ok to set the binary type when it founds a symsrc whether or not
-> > it has actual symbols.
-> > 
-> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> 
-> Any chance this can be applied and propagated to stable? Annotating
-> functions outside of the main executable is broken otherwise (regressed
-> since 873a83731f1c ("perf annotate: Skip DSOs not found")).
-> 
-> Tested-by: Alexander Monakov <amonakov@ispras.ru>
+This patch was applied to bpf/bpf-next.git (master)
+by Palmer Dabbelt <palmer@rivosinc.com>:
 
-Thanks for the test.  For some reason, it doesn't seem to be merged
-while patch 2/2 is.  I'll add this with above information.
-
-Thanks,
-Namhyung
-
+On Tue, 24 Sep 2024 13:54:57 -0400 you wrote:
+> Turn on the executable bit for the following script files. These scripts
+> are set to TEST_PROGS in their respective Makefiles, but currently, when
+> these tests are run, a warning occurs:
 > 
-> > ---
-> >  tools/perf/util/symbol.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-> > index 7772a4d3e66c..63936269ec15 100644
-> > --- a/tools/perf/util/symbol.c
-> > +++ b/tools/perf/util/symbol.c
-> > @@ -1927,6 +1927,9 @@ int dso__load(struct dso *dso, struct map *map)
-> >  		if (next_slot) {
-> >  			ss_pos++;
-> >  
-> > +			if (dso__binary_type(dso) == DSO_BINARY_TYPE__NOT_FOUND)
-> > +				dso__set_binary_type(dso, symtab_type);
-> > +
-> >  			if (syms_ss && runtime_ss)
-> >  				break;
-> >  		} else {
-> > 
+>   # Warning: <file> is not executable
+> 
+> Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
+> 
+> [...]
+
+Here is the summary with links:
+  - [v1,1/1] selftests: set executable bit
+    https://git.kernel.org/bpf/bpf-next/c/9ea7b92b77df
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
