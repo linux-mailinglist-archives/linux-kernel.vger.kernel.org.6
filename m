@@ -1,119 +1,168 @@
-Return-Path: <linux-kernel+bounces-337905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A1F99850E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 04:13:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8BA19850E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 04:19:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B33E8B21141
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 02:13:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E95B1F24D46
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 02:19:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8E3148827;
-	Wed, 25 Sep 2024 02:13:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB59E139CE2;
+	Wed, 25 Sep 2024 02:19:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dKfgOgVd"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="B2LUy7cp"
+Received: from out199-11.us.a.mail.aliyun.com (out199-11.us.a.mail.aliyun.com [47.90.199.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1E313AA53
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 02:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11294946F
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 02:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.199.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727230389; cv=none; b=RVans0F0bJweovijZBF3QPNED5k7pscymh7Wwe9p0pUlVgqUlGDQpw48J3FHglN+exDs3ceFWOEiAjWTEB+Ujf5BUVai/FMZ4FDqbKKWfMEkRSiqVhxKYNUI0kbKZ3zR2byaKrPyH+b+xWlJKt9+RFlD5915wRcdCvEbaRiJHI0=
+	t=1727230760; cv=none; b=GO0MkemV7GOB0GJIqMDatqYUTro5gwizPXzhGxcSeWUWBMPODJ+jHvr6aeYinL4jhI6vL6B0jNr5/B8nXU3VfZvKbODtssEk+RTy2pCDXjQBIlL5TyKbf5VanIQthJxCqmaouGsb5MY0NVvf/3DIf/BVv6wuzR3lJbb1EmVIKlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727230389; c=relaxed/simple;
-	bh=80X2Gp24nNMX8cXLPZsZvliNWxzeYD78Zp8JZk8dOng=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kUZnE3tpJkhyWc3QrzPYuFvwyNH+JOSOOWJNXXZTU2sNJaG5rQe6Flbgjoo9aqcTD79l4BGDHXT5CLOSxCY0hBSlk6jvi+m+X0DfpifrPoe7xPESQ5gvW9KrVS7gmipyyN5nDMycgBJMBg1eorwT5USOPHQEFX+eJfKHDX5F9+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dKfgOgVd; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 24 Sep 2024 22:13:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727230386;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hBkMp/0eODCP6liVuxv3l7JuWVErFP5s89WUrTpn8/s=;
-	b=dKfgOgVdYMp8dbkclyYFcyazgNGRS2mgqFwJkwWIUg4o4iBZbkmEmt8s8jBYaiRM8qxFcw
-	IKpCHY9kzGlZFMnL3sc56kSDJXCqrl/78cyNyM/LoUNtUsssrnvE2aWfXhMd0iRWzr9/5z
-	amWebubHMpGQw50NZNEEhqgllvST3gk=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dave Chinner <dchinner@redhat.com>
-Subject: Re: [GIT PULL] bcachefs changes for 6.12-rc1
-Message-ID: <v5lvhjauvcx27fcsyhyugzexdk7sik7an2soyxtx5dxj3oxjqa@gbvyu2kc7vpy>
-References: <dtolpfivc4fvdfbqgmljygycyqfqoranpsjty4sle7ouydycez@aw7v34oibdhm>
- <CAHk-=whQTx4xmWp9nGiFofSC-T0U_zfZ9L8yt9mG5Qvx8w=_RQ@mail.gmail.com>
- <6vizzdoktqzzkyyvxqupr6jgzqcd4cclc24pujgx53irxtsy4h@lzevj646ccmg>
- <ZvIHUL+3iO3ZXtw7@dread.disaster.area>
- <CAHk-=whbD0zwn-0RMNdgAw-8wjVJFQh4o_hGqffazAiW7DwXSQ@mail.gmail.com>
- <74sgzrvtnry4wganaatcmxdsfwauv6r33qggxo27yvricrzxvq@77knsf6cfftl>
- <ZvIzNlIPX4Dt8t6L@dread.disaster.area>
- <dia6l34faugmuwmgpyvpeeppqjwmv2qhhvu57nrerc34qknwlo@ltwkoy7pstrm>
- <ZvNgmoKgWF0TBXP8@dread.disaster.area>
+	s=arc-20240116; t=1727230760; c=relaxed/simple;
+	bh=1hfjPVR8xYUNEGOQYEwDTU/sigNSviBYkdwpcTH1enA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=E7ev0YrOHgMpV/rk9ALWclRaJKrZaD1v5QmdRNGzBo3d9ftxeSjqk5VYiiDaC+GWLLg/4qMFMIUcvh0LrhMwZ4QIOS+EiWuKaJwqYC0cTpmVpytVawI+jBvSaMEhixgeMVVrKlvZo3VnI/+Qvi+eow41pRrexlR4EJpyCeHdJWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=B2LUy7cp; arc=none smtp.client-ip=47.90.199.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1727230741; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=ctPCbbIrXfLhie32yFDtiMEmUEiu5OCZekEIljzc/7k=;
+	b=B2LUy7cpMUjvNTQ9S15ajdbw632N9RFLbvrPlc8y8sg7Whz1d0s3N5eHhTjDvPw/16M1w/jHkNdpqfK6Jo/f9FhiqIgB3w9nVdZQhaWKoib3ejpi58zdpelrcUcX9xZnBtQxKn2s2TLu9AlIGQAIC9uoaC+NFRlQu1V/6m7WuvE=
+Received: from 30.221.129.244(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WFhmHNe_1727230740)
+          by smtp.aliyun-inc.com;
+          Wed, 25 Sep 2024 10:19:00 +0800
+Message-ID: <3a4a1d88-0a5c-4636-ace9-ffc269c64d4b@linux.alibaba.com>
+Date: Wed, 25 Sep 2024 10:19:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZvNgmoKgWF0TBXP8@dread.disaster.area>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [ocfs2?] KMSAN: uninit-value in ocfs2_get_block
+To: syzbot <syzbot+9709e73bae885b05314b@syzkaller.appspotmail.com>,
+ jlbec@evilplan.org, linux-kernel@vger.kernel.org, mark@fasheh.com,
+ ocfs2-devel@lists.linux.dev, syzkaller-bugs@googlegroups.com
+References: <66f36739.050a0220.30ac7d.0004.GAE@google.com>
+Content-Language: en-US
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <66f36739.050a0220.30ac7d.0004.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 25, 2024 at 11:00:10AM GMT, Dave Chinner wrote:
-> > Eh? Of course it'd have to be coherent, but just checking if an inode is
-> > present in the VFS cache is what, 1-2 cache misses? Depending on hash
-> > table fill factor...
+This blames p_blkno is uninitialized when ocfs2_extent_map_get_blocks()
+fails.
+
+#syz test: upstream
+
+diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
+index 1fea43c33b6b..db72b3e924b3 100644
+--- a/fs/ocfs2/aops.c
++++ b/fs/ocfs2/aops.c
+@@ -156,9 +156,8 @@ int ocfs2_get_block(struct inode *inode, sector_t iblock,
+        err = ocfs2_extent_map_get_blocks(inode, iblock, &p_blkno, &count,
+                                          &ext_flags);
+        if (err) {
+-               mlog(ML_ERROR, "Error %d from get_blocks(0x%p, %llu, 1, "
+-                    "%llu, NULL)\n", err, inode, (unsigned long long)iblock,
+-                    (unsigned long long)p_blkno);
++               mlog(ML_ERROR, "get_blocks() failed, inode: 0x%p, "
++                    "block: %llu\n", inode, (unsigned long long)iblock);
+                goto bail;
+        }
+
+On 9/25/24 9:28 AM, syzbot wrote:
+> Hello,
 > 
-> Sure, when there is no contention and you have CPU to spare. But the
-> moment the lookup hits contention problems (i.e. we are exceeding
-> the cache lookup scalability capability), we are straight back to
-> running a VFS cache speed instead of uncached speed.
+> syzbot found the following issue on:
+> 
+> HEAD commit:    baeb9a7d8b60 Merge tag 'sched-rt-2024-09-17' of git://git...
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=172af607980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=acaa65be5f19fc5a
+> dashboard link: https://syzkaller.appspot.com/bug?extid=9709e73bae885b05314b
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=161e2ca9980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=151bff00580000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/cac89ddb3388/disk-baeb9a7d.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/ddec90b149ab/vmlinux-baeb9a7d.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/f8db8244cc07/bzImage-baeb9a7d.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/25ed405f5727/mount_0.gz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+9709e73bae885b05314b@syzkaller.appspotmail.com
+> 
+> OCFS2: ERROR (device loop0): int __ocfs2_find_path(struct ocfs2_caching_info *, struct ocfs2_extent_list *, u32, path_insert_t *, void *): Owner 17 has empty extent list at depth 312
+> On-disk corruption discovered. Please run fsck.ocfs2 once the filesystem is unmounted.
+> OCFS2: Returning error to the calling process.
+> (syz-executor337,5180,0):ocfs2_find_leaf:1940 ERROR: status = -30
+> (syz-executor337,5180,0):ocfs2_get_clusters_nocache:421 ERROR: status = -30
+> (syz-executor337,5180,0):ocfs2_get_clusters:624 ERROR: status = -30
+> (syz-executor337,5180,0):ocfs2_extent_map_get_blocks:671 ERROR: status = -30
+> =====================================================
+> BUG: KMSAN: uninit-value in ocfs2_get_block+0xed2/0x2710 fs/ocfs2/aops.c:159
+>  ocfs2_get_block+0xed2/0x2710 fs/ocfs2/aops.c:159
+>  do_mpage_readpage+0xc45/0x2780 fs/mpage.c:225
+>  mpage_readahead+0x43f/0x840 fs/mpage.c:374
+>  ocfs2_readahead+0x269/0x320 fs/ocfs2/aops.c:381
+>  read_pages+0x193/0x1110 mm/readahead.c:160
+>  page_cache_ra_unbounded+0x901/0x9f0 mm/readahead.c:273
+>  do_page_cache_ra mm/readahead.c:303 [inline]
+>  force_page_cache_ra+0x3b1/0x4b0 mm/readahead.c:332
+>  force_page_cache_readahead mm/internal.h:347 [inline]
+>  generic_fadvise+0x6b0/0xa90 mm/fadvise.c:106
+>  vfs_fadvise mm/fadvise.c:185 [inline]
+>  ksys_fadvise64_64 mm/fadvise.c:199 [inline]
+>  __do_sys_fadvise64 mm/fadvise.c:214 [inline]
+>  __se_sys_fadvise64 mm/fadvise.c:212 [inline]
+>  __x64_sys_fadvise64+0x1fb/0x3a0 mm/fadvise.c:212
+>  x64_sys_call+0xe11/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:222
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> Local variable p_blkno created at:
+>  ocfs2_get_block+0xc7/0x2710 fs/ocfs2/aops.c:140
+>  do_mpage_readpage+0xc45/0x2780 fs/mpage.c:225
+> 
+> CPU: 0 UID: 0 PID: 5180 Comm: syz-executor337 Not tainted 6.11.0-syzkaller-07341-gbaeb9a7d8b60 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+> =====================================================
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
-The cache lookups are just reads; they don't introduce scalability
-issues, unless they're contending with other cores writing to those
-cachelines - checking if an item is present in a hash table is trivial
-to do locklessly.
-
-But pulling an inode into and then evicting it from the inode cache
-entails a lot more work - just initializing a struct inode is
-nontrivial, and then there's the (multiple) shared data structures you
-have to manipulate.
-
-> Keep in mind that not having a referenced inode opens up the code to
-> things like pre-emption races. i.e. a cache miss doesn't prevent
-> the current task from being preempted before it reads the inode
-> information into the user buffer. The VFS inode could bei
-> instantiated and modified before the uncached access runs again and
-> pulls stale information from the underlying buffer and returns that
-> to userspace.
-
-Yeah, if you're reading from a buffer cache that doesn't have a lock
-that does get dicy - but for bcachefs where we're reading from a btree
-node that does have a lock it's quite manageable.
-
-And incidentally this sort of "we have a cache on top of the btree, but
-sometimes we have to do direct access" is already something that comes
-up a lot in bcachefs, primarily for the alloc btree. _Tons_ of fun, but
-doesn't actually come up here for us since we don't use the vfs inode
-cache as a writeback cache.
-
-Now, for some completely different sillyness, there's actually _three_
-levels of caching for inodes in bcachefs: btree node cache, btree key
-cache, then the vfs cache. In the first two inodes are packed down to
-~100 bytes so it's not that bad, but it does make you go "...what?". It
-would be nice in theory to collapse - but the upside is that we don't
-have the interactions between the vfs inode cache and journalling that
-xfs has.
-
-But if vfs inodes no longer have their own lifetime like you've been
-talking about, that might open up interesting possibilities.
 
