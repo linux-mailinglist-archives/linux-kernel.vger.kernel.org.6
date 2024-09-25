@@ -1,353 +1,245 @@
-Return-Path: <linux-kernel+bounces-339397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1940F9864AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:20:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E0FC9864AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:19:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17894B230D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:18:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ED9228B379
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:19:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F8BF4643B;
-	Wed, 25 Sep 2024 16:17:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938D044C86;
+	Wed, 25 Sep 2024 16:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="waZd9n2j"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vVT+HoHW"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFE421D5ABD
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 16:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804473B295
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 16:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727281078; cv=none; b=l8OsnD4ql2bhd4LzziPgoFgoi6ZaPYNsDpGrXqat14tO4Cg1VMXXJa+dLnnTWLK8r2PmpNj1Ph8Zi3pHOz/UBv9YgFUwoa7QLSrvTK8UCqtFs+n6E7G3b26vuY7oV/F5o79bwA5/AVplXnzf8asoR92eAILNDlFqsn0/TUTcMZ4=
+	t=1727281169; cv=none; b=qvhNFsVqfcsra1W4lWKu8xpztPH59huGVBjaWOT2GBoJr5lYBqIJ3bO5wXXG0E+pZHFwZdeyzNcDalpYSUNgoDTcGma6BL6TeGzPIRQi83MqywxemuYwtfNwHvG2juzBtwW2fSGzQ/qyk3o6BsyFhFMtpsaMvQCEqo7bw49sc00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727281078; c=relaxed/simple;
-	bh=g9E8zPJQZ+WKtz/NOzLnwgbBUCFBXvSj04Z75GvLJZQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ahkTspAvrW+XPf8PflZlgU1382zgrZNPBxWdYtWi0z9qMpuZ6knHB8VhrEIbCxPttejxWnO73t1rXbIMOP+Ai2CwflyfhW2EbbzMEwJSpEoWwLVSAOyCi/daDQKZkGmgaASoWYJESHPNvKvn7XGlvlw5EspHMC+4MeskXkyvYSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=waZd9n2j; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-vk1-f199.google.com (mail-vk1-f199.google.com [209.85.221.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 7FB9E3FDF0
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 16:17:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1727281072;
-	bh=KEgQnWZ+UHxrm0MMWG0A0YgheYaHlx7qOY6QwfASbDE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=waZd9n2jTVAMr+zlvebWzdSaQNSCafbiKGSPASfP96te8bfQ08pdZEN2pimL4d7RF
-	 ApaL7iBF3lm2Gz5vNwmXCWE8MEswovcbJyXbl6TeXEz4FIVzYZWyr3srSAegsP7CJW
-	 OZbqEhAnseMjISb0srFEgwbubEM+Y8lCtnCWJPL+KRJbFF+hVRpKsq+xbVfJE8zIFx
-	 ArY6MxAdhrTXsGIsPXplD8AjOLoOoTVNDpAsSSLRO2cYVU0upudWs1ter9I64NYH+a
-	 OVhQCXsrZGc15JFzEPZWzbu1Y4iMsvg5XRpfxC6UpAIuMe4I/Nd3SNkSvzE/F79KP3
-	 Z210Kbd+p6oAQ==
-Received: by mail-vk1-f199.google.com with SMTP id 71dfb90a1353d-5011a8bd01bso820750e0c.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 09:17:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727281071; x=1727885871;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KEgQnWZ+UHxrm0MMWG0A0YgheYaHlx7qOY6QwfASbDE=;
-        b=vOuMNg30cUM7zpgFOTwdZ2FlftqF9F0bAqSwEZmCRAM5FHckLMMDwb5c6OA68uGP9W
-         VFLFugPsAa1NYg1nRwz0iGvL77xYeiuXzqCJYyT3/IgHL2mAYXfT6ZcfBcJyqHNqxh9/
-         PQPLiLUbmiTSc+RKCkJg5n7oWQhHvp5IovHphgodgO/BfSBy0GGkEc0HFpQL9Gi19FMl
-         1aibcu5/70t7OVp2vdHlIvX7U/nSI/XjqeyEZPKABrRjiAR7SH2orwJWUDMhYg+eJxgt
-         HkxkMt4L/dvSuWNvz9Q+wt/11DLXqxjZVd0OQzStes5v/9aNCBm2AJNy/J/mAiIPiE9M
-         gZ9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUJpZl1dU+eKqDY64pQhMFqFgehGV1DqSc0GuajqLQGHYLZOPdFVuRw4oHahBfhnYyPp0fpg1zjkvaf9Gw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJypEi9ZCEtVQISf4j9mM03/VvOYQrVRh0ahJE5ivBFZsRRFiK
-	6WDKnZLHsyxWeVQXnboXDKerKjCnjxxScx99HQsQqXg4o8BO4qZKXay1AQmcxn84LbHCQqr5S17
-	BJAL0dBkP3kEaGikRfG6Z5AgWOz4MBBAKz0xvZAozcx2mLVI9rHnqjgq8OzCxt48yET9AucMjp9
-	h6AU6Z7ZV0hFqTFk1SXDKGpzTaPg0X7uIhIvr3YG91jioojqXjTk/E
-X-Received: by 2002:a05:6122:3193:b0:503:d876:5e0a with SMTP id 71dfb90a1353d-5073bf2c77fmr313432e0c.0.1727281070933;
-        Wed, 25 Sep 2024 09:17:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFZZuyYU0WAWeXCej3QTUblc6Uv7YSQNlxDGc/5pLtnfQpPZc0N61MMk4ehu32sSNA43VULOeWPMn3L/LXLhPg=
-X-Received: by 2002:a05:6122:3193:b0:503:d876:5e0a with SMTP id
- 71dfb90a1353d-5073bf2c77fmr313362e0c.0.1727281070421; Wed, 25 Sep 2024
- 09:17:50 -0700 (PDT)
+	s=arc-20240116; t=1727281169; c=relaxed/simple;
+	bh=BV2a8idtNznVzDGHAz/mLNHpSkNlSHO+wTuGZIzNvSc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c0/dRenSHGg/iTEn2igL4Wp09hQsfvU8/fFwcKpFKdKcjaad406eMTVEeiZzimNdK/La3bqh5sJ3S4UXMwg8fn0SeaTN/IoeyV0J9YI0wjSH9jc/wgAt2yF7VO9j3tfPKl+JmEeQvOkd7+/BQxFmGci2fepvok2vKUB+KW7EPP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vVT+HoHW; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 25 Sep 2024 09:19:17 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727281165;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tBJk0rPPHbDUQHgsR/WgSoPYVaSEOecFXHLvPSFTqoI=;
+	b=vVT+HoHWXwWr+gWC1gwr3m/Hapbg4kzKm6AHG6+ELPKP2zfVSmInmAjYbickdlALs5WKTo
+	rPwQ3fY9QDCxf5qRD/VlKoByAD+GYY/7PJa9sSwLBCEIoOTYx2Wq+8NVs7GC4dmGYA0pnl
+	WSSX3hCWRPSwcDpfVSrZIFSjRmoymJM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Pedro Falcato <pedro.falcato@gmail.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Minchan Kim <minchan@kernel.org>, 
+	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
+	Matt Turner <mattst88@gmail.com>, linux-alpha@vger.kernel.org, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, linux-mips@vger.kernel.org, 
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org, 
+	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, christian@brauner.io
+Subject: Re: [PATCH v2 1/2] mm/madvise: introduce PR_MADV_SELF flag to
+ process_madvise()
+Message-ID: <wvk5y3m47qmox4by6u3zpxtwartjmoaqaaqswbgui626zkjajq@22wjmqo36hes>
+References: <cover.1727176176.git.lorenzo.stoakes@oracle.com>
+ <1ecf2692b3bcdd693ad61d510ce0437abb43a1bd.1727176176.git.lorenzo.stoakes@oracle.com>
+ <u64scsk52b3ek4b7fh72tdylkf3qh537txcqhvozmaasrlug3r@eqsmstvs324c>
+ <4740dfc7-71da-4eb4-b071-35116288571f@lucifer.local>
+ <xilfrvlstq4fqr46jlrzvq2vlr22nizdrwlcdizp774nlt6pfj@jukzlcwc7bed>
+ <7f40a8f6-c2f1-45f2-b9ff-88e169a33906@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925143325.518508-1-aleksandr.mikhalitsyn@canonical.com>
- <20240925143325.518508-2-aleksandr.mikhalitsyn@canonical.com> <20240925155706.zad2euxxuq7h6uja@quack3>
-In-Reply-To: <20240925155706.zad2euxxuq7h6uja@quack3>
-From: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Date: Wed, 25 Sep 2024 18:17:39 +0200
-Message-ID: <CAEivzxfjnKq2fgCfYwhZukAO-ZfoUiC5n0Y5yaUpuz-y7kDf+g@mail.gmail.com>
-Subject: Re: [PATCH 1/1] ext4: fix crash on BUG_ON in ext4_alloc_group_tables
-To: Jan Kara <jack@suse.cz>
-Cc: tytso@mit.edu, stable@vger.kernel.org, 
-	Andreas Dilger <adilger.kernel@dilger.ca>, Baokun Li <libaokun1@huawei.com>, 
-	=?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@stgraber.org>, 
-	Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	Wesley Hershberger <wesley.hershberger@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7f40a8f6-c2f1-45f2-b9ff-88e169a33906@lucifer.local>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Sep 25, 2024 at 5:57=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Wed 25-09-24 16:33:24, Alexander Mikhalitsyn wrote:
-> > [   33.882936] EXT4-fs (dm-5): mounted filesystem 8aaf41b2-6ac0-4fa8-b9=
-2b-77d10e1d16ca r/w with ordered data mode. Quota mode: none.
-> > [   33.888365] EXT4-fs (dm-5): resizing filesystem from 7168 to 786432 =
-blocks
-> > [   33.888740] ------------[ cut here ]------------
-> > [   33.888742] kernel BUG at fs/ext4/resize.c:324!
->
-> Ah, I was staring at this for a while before I understood what's going on
-> (it would be great to explain this in the changelog BTW).  As far as I
-> understand commit 665d3e0af4d3 ("ext4: reduce unnecessary memory allocati=
-on
-> in alloc_flex_gd()") can actually make flex_gd->resize_bg larger than
-> flexbg_size (for example when ogroup =3D flexbg_size, ngroup =3D 2*flexbg=
-_size
-> - 1) which then confuses things. I think that was not really intended and
+I have no idea what makes you think I am blocking the feature that you
+repond in a weird tone but let me be upfront what I am asking: Let's
+collectively decide which is the better option (in terms of
+maintainability and extensibility) and move forward.
 
-Hi Jan,
-
-First of all, thanks for your reaction/review on this one ;-)
-
-You are absolutely right, have just checked with our reproducer and
-this modification:
-
-diff --git a/fs/ext4/resize.c b/fs/ext4/resize.c
-index e04eb08b9060..530a918f0cab 100644
---- a/fs/ext4/resize.c
-+++ b/fs/ext4/resize.c
-@@ -258,6 +258,8 @@ static struct ext4_new_flex_group_data
-*alloc_flex_gd(unsigned int flexbg_size,
-                flex_gd->resize_bg =3D 1 << max(fls(last_group - o_group + =
-1),
-                                              fls(n_group - last_group));
-
-+       BUG_ON(flex_gd->resize_bg > flexbg_size);
-+
-        flex_gd->groups =3D kmalloc_array(flex_gd->resize_bg,
-                                        sizeof(struct ext4_new_group_data),
-                                        GFP_NOFS);
-
-and yes, it crashes on this BUG_ON. So it looks like instead of making
-flex_gd->resize_bg to be smaller
-than flexbg_size in most cases we can actually have an opposite effect
-here. I guess we really need to fix alloc_flex_gd() too.
-
-> instead of fixing up ext4_alloc_group_tables() we should really change
-> the logic in alloc_flex_gd() to make sure flex_gd->resize_bg never exceed=
-s
-> flexbg size. Baokun?
-
-At the same time, if I understand the code right, as we can have
-flex_gd->resize_bg !=3D flexbg_size after
-5d1935ac02ca5a ("ext4: avoid online resizing failures due to oversized
-flex bg") and
-665d3e0af4d3 ("ext4: reduce unnecessary memory allocation in alloc_flex_gd(=
-)")
-we should always refer to flex_gd->resize_bg value which means that
-ext4_alloc_group_tables() fix is needed too.
-Am I correct in my understanding?
-
->
->                                                                 Honza
-
-Kind regards,
-Alex
-
->
->
-> > [   33.889075] Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
-> > [   33.889503] CPU: 9 UID: 0 PID: 3576 Comm: resize2fs Not tainted 6.11=
-.0+ #27
-> > [   33.890039] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), B=
-IOS 1.15.0-1 04/01/2014
-> > [   33.890705] RIP: 0010:ext4_resize_fs+0x1212/0x12d0
-> > [   33.891063] Code: b8 45 31 c0 4c 89 ff 45 31 c9 31 c9 ba 0e 08 00 00=
- 48 c7 c6 68 75 65 b8 e8 2b 79 01 00 41 b8 ea ff ff ff 41 5f e9 8d f1 ff ff=
- <0f> 0b 48 83 bd 70 ff ff ff 00 75 32 45 31 c0 e9 53 f1 ff ff 41 b8
-> > [   33.892701] RSP: 0018:ffffa97f413f3cc8 EFLAGS: 00010202
-> > [   33.893081] RAX: 0000000000000018 RBX: 0000000000000001 RCX: 0000000=
-0fffffff0
-> > [   33.893639] RDX: 0000000000000017 RSI: 0000000000000016 RDI: 0000000=
-0e8c2c810
-> > [   33.894197] RBP: ffffa97f413f3d90 R08: 0000000000000000 R09: 0000000=
-000008000
-> > [   33.894755] R10: ffffa97f413f3cc8 R11: ffffa2c1845bfc80 R12: 0000000=
-000000000
-> > [   33.895317] R13: ffffa2c1843d6000 R14: 0000000000008000 R15: ffffa2c=
-199963000
-> > [   33.895877] FS:  00007f46efd17000(0000) GS:ffffa2c89fc40000(0000) kn=
-lGS:0000000000000000
-> > [   33.896524] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > [   33.896954] CR2: 00005630a4a1cc88 CR3: 000000010532c000 CR4: 0000000=
-000350eb0
-> > [   33.897516] Call Trace:
-> > [   33.897638]  <TASK>
-> > [   33.897728]  ? show_regs+0x6d/0x80
-> > [   33.897942]  ? die+0x3c/0xa0
-> > [   33.898106]  ? do_trap+0xe5/0x110
-> > [   33.898311]  ? do_error_trap+0x6e/0x90
-> > [   33.898555]  ? ext4_resize_fs+0x1212/0x12d0
-> > [   33.898844]  ? exc_invalid_op+0x57/0x80
-> > [   33.899101]  ? ext4_resize_fs+0x1212/0x12d0
-> > [   33.899387]  ? asm_exc_invalid_op+0x1f/0x30
-> > [   33.899675]  ? ext4_resize_fs+0x1212/0x12d0
-> > [   33.899961]  ? ext4_resize_fs+0x745/0x12d0
-> > [   33.900239]  __ext4_ioctl+0x4e0/0x1800
-> > [   33.900489]  ? srso_alias_return_thunk+0x5/0xfbef5
-> > [   33.900832]  ? putname+0x5b/0x70
-> > [   33.901028]  ? srso_alias_return_thunk+0x5/0xfbef5
-> > [   33.901374]  ? do_sys_openat2+0x87/0xd0
-> > [   33.901632]  ? srso_alias_return_thunk+0x5/0xfbef5
-> > [   33.901981]  ? srso_alias_return_thunk+0x5/0xfbef5
-> > [   33.902324]  ? __x64_sys_openat+0x59/0xa0
-> > [   33.902595]  ext4_ioctl+0x12/0x20
-> > [   33.902802]  ? ext4_ioctl+0x12/0x20
-> > [   33.903031]  __x64_sys_ioctl+0x99/0xd0
-> > [   33.903277]  x64_sys_call+0x1206/0x20d0
-> > [   33.903534]  do_syscall_64+0x72/0x110
-> > [   33.903771]  ? srso_alias_return_thunk+0x5/0xfbef5
-> > [   33.904115]  ? irqentry_exit+0x3f/0x50
-> > [   33.904362]  ? srso_alias_return_thunk+0x5/0xfbef5
-> > [   33.904707]  ? exc_page_fault+0x1aa/0x7b0
-> > [   33.904979]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> > [   33.905349] RIP: 0033:0x7f46efe3294f
-> > [   33.905579] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10=
- 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05=
- <41> 89 c0 3d 00 f0 ff ff 77 1f 48 8b 44 24 18 64 48 2b 04 25 28 00
-> > [   33.907321] RSP: 002b:00007ffe9b8833a0 EFLAGS: 00000246 ORIG_RAX: 00=
-00000000000010
-> > [   33.907926] RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007f4=
-6efe3294f
-> > [   33.908487] RDX: 00007ffe9b8834a0 RSI: 0000000040086610 RDI: 0000000=
-000000004
-> > [   33.909046] RBP: 00005630a4a0b0e0 R08: 0000000000000000 R09: 00007ff=
-e9b8832d7
-> > [   33.909605] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000=
-000000004
-> > [   33.910165] R13: 00005630a4a0c580 R14: 00005630a4a10400 R15: 0000000=
-000000000
-> > [   33.910740]  </TASK>
-> > [   33.910837] Modules linked in:
-> > [   33.911049] ---[ end trace 0000000000000000 ]---
-> > [   33.911428] RIP: 0010:ext4_resize_fs+0x1212/0x12d0
-> > [   33.911810] Code: b8 45 31 c0 4c 89 ff 45 31 c9 31 c9 ba 0e 08 00 00=
- 48 c7 c6 68 75 65 b8 e8 2b 79 01 00 41 b8 ea ff ff ff 41 5f e9 8d f1 ff ff=
- <0f> 0b 48 83 bd 70 ff ff ff 00 75 32 45 31 c0 e9 53 f1 ff ff 41 b8
-> > [   33.913928] RSP: 0018:ffffa97f413f3cc8 EFLAGS: 00010202
-> > [   33.914313] RAX: 0000000000000018 RBX: 0000000000000001 RCX: 0000000=
-0fffffff0
-> > [   33.914909] RDX: 0000000000000017 RSI: 0000000000000016 RDI: 0000000=
-0e8c2c810
-> > [   33.915482] RBP: ffffa97f413f3d90 R08: 0000000000000000 R09: 0000000=
-000008000
-> > [   33.916258] R10: ffffa97f413f3cc8 R11: ffffa2c1845bfc80 R12: 0000000=
-000000000
-> > [   33.917027] R13: ffffa2c1843d6000 R14: 0000000000008000 R15: ffffa2c=
-199963000
-> > [   33.917884] FS:  00007f46efd17000(0000) GS:ffffa2c89fc40000(0000) kn=
-lGS:0000000000000000
-> > [   33.918818] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > [   33.919322] CR2: 00005630a4a1cc88 CR3: 000000010532c000 CR4: 0000000=
-000350eb0
-> > [   44.072293] ------------[ cut here ]------------
+On Wed, Sep 25, 2024 at 03:48:07PM GMT, Lorenzo Stoakes wrote:
+> On Wed, Sep 25, 2024 at 07:02:59AM GMT, Shakeel Butt wrote:
+> > Cced Christian
 > >
-> > Cc: stable@vger.kernel.org # v6.8+
-> > Fixes: 665d3e0af4d3 ("ext4: reduce unnecessary memory allocation in all=
-oc_flex_gd()")
-> > Cc: "Theodore Ts'o" <tytso@mit.edu>
-> > Cc: Andreas Dilger <adilger.kernel@dilger.ca>
-> > Cc: Jan Kara <jack@suse.cz>
-> > Cc: Baokun Li <libaokun1@huawei.com>
-> > Cc: St=C3=A9phane Graber <stgraber@stgraber.org>
-> > Cc: Christian Brauner <brauner@kernel.org>
-> > Cc: <linux-kernel@vger.kernel.org>
-> > Cc: <linux-fsdevel@vger.kernel.org>
-> > Cc: <linux-ext4@vger.kernel.org>
-> > Reported-by: Wesley Hershberger <wesley.hershberger@canonical.com>
-> > Closes: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2081231
-> > Reported-by: St=C3=A9phane Graber <stgraber@stgraber.org>
-> > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.c=
-om>
-> > ---
-> >  fs/ext4/resize.c | 13 ++++++-------
-> >  1 file changed, 6 insertions(+), 7 deletions(-)
+> > On Tue, Sep 24, 2024 at 02:12:49PM GMT, Lorenzo Stoakes wrote:
+> > > On Tue, Sep 24, 2024 at 01:51:11PM GMT, Pedro Falcato wrote:
+> > > > On Tue, Sep 24, 2024 at 12:16:27PM GMT, Lorenzo Stoakes wrote:
+> > > > > process_madvise() was conceived as a useful means for performing a vector
+> > > > > of madvise() operations on a remote process's address space.
+> > > > >
+> > > > > However it's useful to be able to do so on the current process also. It is
+> > > > > currently rather clunky to do this (requiring a pidfd to be opened for the
+> > > > > current process) and introduces unnecessary overhead in incrementing
+> > > > > reference counts for the task and mm.
+> > > > >
+> > > > > Avoid all of this by providing a PR_MADV_SELF flag, which causes
+> > > > > process_madvise() to simply ignore the pidfd parameter and instead apply
+> > > > > the operation to the current process.
+> > > > >
+> > > >
+> > > > How about simply defining a pseudo-fd PIDFD_SELF in the negative int space?
+> > > > There's precedent for it in the fs space (AT_FDCWD). I think it's more ergonomic
+> > > > and if you take out the errno space we have around 2^31 - 4096 available sentinel
+> > > > values.
+> > > >
+> > > > e.g:
+> > > >
+> > > > /* AT_FDCWD = -10, -1 is dangerous, pick a different value */
+> > > > #define PIDFD_SELF   -11
+> > > >
+> > > > int pidfd = target_pid == getpid() ? PIDFD_SELF : pidfd_open(...);
+> > > > process_madvise(pidfd, ...);
+> > > >
+> > > >
+> > > > What do you think?
+> > >
+> > > I like the way you're thinking, but I don't think this is something we can
+> > > do in the context of this series.
+> > >
+> > > I mean, I totally accept using a flag here and ignoring the pidfd field is
+> > > _ugly_, no question. But I'm trying to find the smallest change that
+> > > achieves what we want.
 > >
-> > diff --git a/fs/ext4/resize.c b/fs/ext4/resize.c
-> > index e04eb08b9060..c057a7867363 100644
-> > --- a/fs/ext4/resize.c
-> > +++ b/fs/ext4/resize.c
-> > @@ -300,8 +300,7 @@ static void free_flex_gd(struct ext4_new_flex_group=
-_data *flex_gd)
-> >   * block group.
-> >   */
-> >  static int ext4_alloc_group_tables(struct super_block *sb,
-> > -                             struct ext4_new_flex_group_data *flex_gd,
-> > -                             unsigned int flexbg_size)
-> > +                             struct ext4_new_flex_group_data *flex_gd)
-> >  {
-> >       struct ext4_new_group_data *group_data =3D flex_gd->groups;
-> >       ext4_fsblk_t start_blk;
-> > @@ -313,7 +312,7 @@ static int ext4_alloc_group_tables(struct super_blo=
-ck *sb,
-> >       ext4_group_t group;
-> >       ext4_group_t last_group;
-> >       unsigned overhead;
-> > -     __u16 uninit_mask =3D (flexbg_size > 1) ? ~EXT4_BG_BLOCK_UNINIT :=
- ~0;
-> > +     __u16 uninit_mask =3D (flex_gd->resize_bg > 1) ? ~EXT4_BG_BLOCK_U=
-NINIT : ~0;
-> >       int i;
+> > I don't think "smallest change" should be the target. We are changing
+> > user API and we should aim to make it as robust as possible against
+> > possible misuse or making uninteded assumptions.
+> 
+> I think introducing a new pidfd sentinel that isn't used anywhere else is
+> far more liable to mistakes than adding an explicit flag.
+> 
+> Could you provide examples of possible misuse of this flag or unintended
+> assumptions it confers (other than the -1 thing addressed below).
+> 
+> The flag is explicitly 'target this process, ignore pidfd'. We can document
+> it as such (I will patch manpages too).
+> 
 > >
-> >       BUG_ON(flex_gd->count =3D=3D 0 || group_data =3D=3D NULL);
-> > @@ -321,8 +320,8 @@ static int ext4_alloc_group_tables(struct super_blo=
-ck *sb,
-> >       src_group =3D group_data[0].group;
-> >       last_group  =3D src_group + flex_gd->count - 1;
+> > The proposed implementation opened the door for the applications to
+> > provide dummy pidfd if PR_MADV_SELF is used. You definitely need to
+> > restrict it to some known value like -1 used by mmap() syscall.
+> 
+> Why?
+> 
+> mmap() is special in that you have a 'dual' situation with shmem that is
+> both file-backed and private and of course you can do MAP_SHARED |
+> MAP_PRIVATE and have mmap() transparently assign something to you, etc.
+> 
+> Here we explicitly have a flag whose semantics are 'ignore pidfd, target
+> self'.
+> 
+> If you choose to use a brand new flag that explicitly states this and
+> provide a 'dummy' pidfd which then has nothing done to it - what exactly is
+> the problem?
+
+IMHO having a fixed dummy would allow the kernel more flexibility in
+future for evolving the API.
+
+> 
+> I mean if you feel strongly, we can enforce this, but I'm not sure -1
+> implying a special case for pidfd is a thing either.
+> 
+> On the other hand it would be _weird_ and broken for the user to provide a
+> valid pidfd so maybe we should as it is easy to do and the user has clearly
+> done something wrong.
+> 
+> So fine, agreed, I'll add that.
+> 
+
+No, don't just agree. The response like "-1 is not good for so and so
+reasons" is totally fine and my request would be add that reasoning in
+the commit message. My only request is that we have thought through
+alternatives and document the reasonsing behind the decided approach.
+
 > >
-> > -     BUG_ON((flexbg_size > 1) && ((src_group & ~(flexbg_size - 1)) !=
-=3D
-> > -            (last_group & ~(flexbg_size - 1))));
-> > +     BUG_ON((flex_gd->resize_bg > 1) && ((src_group & ~(flex_gd->resiz=
-e_bg - 1)) !=3D
-> > +            (last_group & ~(flex_gd->resize_bg - 1))));
-> >  next_group:
-> >       group =3D group_data[0].group;
-> >       if (src_group >=3D group_data[0].group + flex_gd->count)
-> > @@ -403,7 +402,7 @@ static int ext4_alloc_group_tables(struct super_blo=
-ck *sb,
+> > >
+> > > To add such a sentinel would be a change to the pidfd mechanism as a whole,
+> > > and we'd be left in the awkward situation that no other user of the pidfd
+> > > mechanism would be implementing this, but we'd have to expose this as a
+> > > general sentinel value for all pidfd users.
 > >
-> >               printk(KERN_DEBUG "EXT4-fs: adding a flex group with "
-> >                      "%u groups, flexbg size is %u:\n", flex_gd->count,
-> > -                    flexbg_size);
-> > +                    flex_gd->resize_bg);
+> > There might be future users which can take advantage of this. I can even
+> > imagine pidfd_send_signal() can use PIDFD_SELF as well.
+> 
+> I'm confused by this comment - I mean absolutely, as I said I like the
+> idea, but this just proves the point that you'd have to go around and
+> implement this everywhere that uses a pidfd?
+> 
+> That is a big undertaking, and not blocked by this change. Nor is
+> maintaining the flag proposed here egregious.
+
+By big undertaking, do you mean other syscalls that take pidfd
+(pidfd_getfd, pidfd_send_signal & process_mrelease) to handle PIDFD_SELF
+or something else?
+
+> 
+> Blocking a useful feature because we may in future possibly add a new means
+> of doing the same thing seems a little silly to me.
+> 
+
+Hah!!
+
+> > >
+> > > One nice thing with doing this as a flag is that, later, if somebody is
+> > > willing to do the larger task of having a special sentinel pidfd value to
+> > > mean 'the current process', we could use this in process_madvise() and
+> > > deprecate this flag :)
+> > >
 > >
-> >               for (i =3D 0; i < flex_gd->count; i++) {
-> >                       ext4_debug(
-> > @@ -2158,7 +2157,7 @@ int ext4_resize_fs(struct super_block *sb, ext4_f=
-sblk_t n_blocks_count)
-> >                                        ext4_blocks_count(es));
-> >                       last_update_time =3D jiffies;
-> >               }
-> > -             if (ext4_alloc_group_tables(sb, flex_gd, flexbg_size) !=
-=3D 0)
-> > +             if (ext4_alloc_group_tables(sb, flex_gd) !=3D 0)
-> >                       break;
-> >               err =3D ext4_flex_group_add(sb, resize_inode, flex_gd);
-> >               if (unlikely(err))
-> > --
-> > 2.34.1
+> > Once something is added to an API, particularly syscalls, the removal
+> > is almost impossible.
+> 
+> And why would it be such a problem to have this flag remain? I said
+> deprecate not remove. And only in the sense that 'you may as well use the
+> sentinel'.
+> 
+
+My point was to aim for the solution where we can avoid such scenario
+but it is totally understandable and acceptable that we still have to go
+through deprecation process in future.
+
+> The flag is very clear in its meaning, and confers no special problem in
+> remaining supported. It is a private flag that overlaps no others.
+> 
+> I mean it'd in effect being a change to a single line 'if pidfd is sentinel
+> or flag is used'. If we can't support that going forward, then we should
+> give up this kernel stuff and frolick in the fields joyously instead...
+> 
+> Again, if you can tell me why it'd be such a problem then fine we can
+> address that.
+> 
+> But blocking a series and demanding a change to an entire other feature
+> just to support something I'd say requires some pretty specific reasons as
+> to why you have a problem with the change.
+> 
 > >
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+> > Anyways, I don't have very strong opinion one way or other but whatever
+> > we decide, let's make it robust.
+> 
+> I mean... err... it sounds like you do kinda have pretty strong opinions ;)
+
+I am not sure how more explicit I have to be to but I am hoping now it
+is more clear than before.
+
+Shakeel
 
