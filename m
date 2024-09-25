@@ -1,120 +1,182 @@
-Return-Path: <linux-kernel+bounces-339572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FCE3986723
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:45:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3321898672C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:50:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4A52B22D69
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:45:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DC361F23F75
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:50:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3374B14600F;
-	Wed, 25 Sep 2024 19:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B797145A11;
+	Wed, 25 Sep 2024 19:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xgT8KXNL"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w0S3Fn3A"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C6513B2A5;
-	Wed, 25 Sep 2024 19:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2AF27483
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 19:49:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727293548; cv=none; b=ufOw9VrU3cOT6xHLrV7A7EtPxdMRjFrmQvdH9zCsu/NLnxgwMCyIgUqeRay9hyn9c15zV7gpoUYUS2ale8rBDgYeLU6/jQoJ0QwUIaS+1CFEQjJVwlupiQ+GZ0E3qGGDFcPriMq50r+Jw+1qg5q3ZunRHVV1QqdLbEJRHMWFdBY=
+	t=1727293795; cv=none; b=hk8d68EGFWx2x+HoR9+eUyah9uGHDSCxz3AohqIXu+sYQc7rXu1UlXAFIJ4Xdf64ZRje+Nq36HFWZmzy54LYtrWddbajlOVOJvswQV+HJ2v7iZ4P2lV/CX36KJQwv5ayYaHPMhgdQxP5ynysLzXOhruhJZcCFcv/gH/N5Jps95o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727293548; c=relaxed/simple;
-	bh=/+kdZQ5YHJwk5UqW5/x5VvZy36jmX/1B0aCZVsLz934=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tipTuL3Et/TEhpqqHgtvbDjP/2+TtOfee5CirWABexuaVTvRPiZBh1vV7BpsmE0d5lmn9lNRbr5ZcBIM7MYAscS+46gtLXJTNX90iS/s0HCDoHsmvazL3v8vMjwHEMdh1RJ5ZzLHBknzBlmsyLcFJid/4hqjnidQcUo2easmQ8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xgT8KXNL; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <97229412-7506-4b71-b77a-0993b2f07c60@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727293544;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Cl+NY6biSh5nINCc+id3pfw9oMtmyYXAOxWEXpGs8ic=;
-	b=xgT8KXNLGBDFMYK6h/xeqLhMy9HNx2NijbwLLNN1DCzbhE7MUHDViEplQcSANS/w2hbFM5
-	VksTKHCTRpqyi6bgXDV2Q5zC0cQVvZLAxw1BD4+6UNtmOmbf0H7Jow37QLH33GhAAJYrWi
-	RkTw9YuQmIOxYM8r1lrkidraCF2Ab70=
-Date: Wed, 25 Sep 2024 12:45:34 -0700
+	s=arc-20240116; t=1727293795; c=relaxed/simple;
+	bh=x4DdtdussbMDHS2whrljcdH70T37YBCkEKiRiXvjKHQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lM0ovTPK8NZKkrEaUYU8YWOoCL3gG+PoJBqOIVYgpJaZ6CmLsC4HPv6rIY6Du8smatboCXgBiq2LJbDjZPxBC2hFt6zRgtTqlH5xWLidQIz2isAhTFHFIJCRhPeKS4roTlykx64LqFv/F0wPdZf9BInxLz1ufPs5WI9ObRFi2T0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w0S3Fn3A; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a8d2b24b7a8so256738266b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 12:49:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727293792; x=1727898592; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=uDIzP+sh/uI4eNppc+3qR6pBT/O+j/o04qIWIoM9cP4=;
+        b=w0S3Fn3ACmtZ1vaV8aV9kq3IuxrCc265m8VcdNpP/sWigDWt8BKCrYsTdWs3v/jJkS
+         KVotlqr2LQ8+dVJ6Y+o+RiWcK3JFJ5gXAT8ezoRxvpR70vnXxY3pPZexTuqDwlHi9kqN
+         kKj6rFcrYVsBhRadWwLseBVC9VewOjiFF29UeJsdToFBjnOE2g0J65QWJU4P58lryb6m
+         2+g+3SRvvtz9RabaKQyk3B3vJWfKZHI6jvBw+jwGrgQP1L+uzOdfNFqI/ktSEy7F7tWg
+         9saW4XIqyv9DVcCQG8qipj+pAAYaljl1ZmUpBgDLo3Vku4gEe9oGz3LAKhVquIfQLyyl
+         J0Bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727293792; x=1727898592;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uDIzP+sh/uI4eNppc+3qR6pBT/O+j/o04qIWIoM9cP4=;
+        b=Y1aU3/gO58t/g7g4SXrg43qUDTZz9xUfL3dagH2kLnOUcpmk6x80IxSGnTUiUz1aHK
+         UlMbZggpn2+MSlyW2+bE7NscN9fPHym3EUG1Dy5G4Z+cQqB+BOfLrEJ1sQirE3n7irjx
+         dXuxuryBybz30qiSbnWGDSDA17b58umyHldbf3wNn7FpxgUcfvJtXx+IXVL+9lSfMUnM
+         1iCQhVQwXlO5cmPbnyT91etdj6zzVssxlABugBaQSNgvMRozxMOr5sTUmgfIukR/fSzI
+         AEqaKkODNcWC4zDnn7E1SPCnCQYcic3cgWQHZgCcNCj8UAg/qMfuWCAUUrv81u+LiZsg
+         aaWA==
+X-Forwarded-Encrypted: i=1; AJvYcCWt9+fczBE1xDvSjx1v1nsg/EF+o2l3xsmiMUB9mjaB9rceZ5w5AnK5OhMiAZx89BeBG9mHeVKZDIoRpsw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeUrqgWtZXsA2FvMduR0ao/p5bLYfh3En3LliX/BiSqn6F5pbi
+	6mJ2EKTtckGd5BNW9430m2az9il3TpGRbFFNVvfuX5vcNGp5UPEiP5gM5z1TEURb+ZaB5OJiWxk
+	Nlo6xVmjZ/mfZG5iiNXdM2dn0ln3Pkw7MU2VM
+X-Google-Smtp-Source: AGHT+IGj6Bwqln8E9y6xXVNdF13Fn9r97uuyLN+uVhMBcmBw5v8NlAuMrgaqTe5hDv61S0qWRxXL2USPDIEMZtPGH44=
+X-Received: by 2002:a17:907:9728:b0:a90:34e8:6761 with SMTP id
+ a640c23a62f3a-a93b157ccfbmr84071766b.6.1727293791591; Wed, 25 Sep 2024
+ 12:49:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net v4 0/2] bpf: devmap: provide rxq after redirect
-To: Paolo Abeni <pabeni@redhat.com>,
- Florian Kauer <florian.kauer@linutronix.de>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller"
- <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>,
- Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
- Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
- =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
- David Ahern <dsahern@kernel.org>, Hangbin Liu <liuhangbin@gmail.com>,
- Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
- netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jesper Dangaard Brouer <brouer@redhat.com>, linux-kselftest@vger.kernel.org
-References: <20240911-devel-koalo-fix-ingress-ifindex-v4-0-5c643ae10258@linutronix.de>
- <dd84c2d8-1571-41e9-8562-a4db232fbc38@redhat.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Martin KaFai Lau <martin.lau@linux.dev>
-In-Reply-To: <dd84c2d8-1571-41e9-8562-a4db232fbc38@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20240924011709.7037-1-kanchana.p.sridhar@intel.com>
+ <20240924011709.7037-7-kanchana.p.sridhar@intel.com> <CAJD7tkbd=H+=wx0gnu8sh44hOmx7BE3G3oSxi7zt+o3HKJthkA@mail.gmail.com>
+ <20240925134008.GA875661@cmpxchg.org> <CAJD7tkY8D14j-e6imW9NxZCjTbx8tu_VaKDbRRQMdSeKX_kBuw@mail.gmail.com>
+ <SJ0PR11MB56784B0D0EC2348A0ED7542CC9692@SJ0PR11MB5678.namprd11.prod.outlook.com>
+In-Reply-To: <SJ0PR11MB56784B0D0EC2348A0ED7542CC9692@SJ0PR11MB5678.namprd11.prod.outlook.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Wed, 25 Sep 2024 12:49:13 -0700
+Message-ID: <CAJD7tkapj+Wb7BMGZ=2AGi2NTXJbZBCnoJkZuBAkkF8NDZDKjA@mail.gmail.com>
+Subject: Re: [PATCH v7 6/8] mm: zswap: Support mTHP swapout in zswap_store().
+To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"nphamcs@gmail.com" <nphamcs@gmail.com>, "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, 
+	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "shakeel.butt@linux.dev" <shakeel.butt@linux.dev>, 
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>, "Huang, Ying" <ying.huang@intel.com>, 
+	"21cnbao@gmail.com" <21cnbao@gmail.com>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
+	"Zou, Nanhai" <nanhai.zou@intel.com>, "Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, 
+	"Gopal, Vinodh" <vinodh.gopal@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/19/24 11:12 AM, Paolo Abeni wrote:
-> On 9/11/24 10:41, Florian Kauer wrote:
->> rxq contains a pointer to the device from where
->> the redirect happened. Currently, the BPF program
->> that was executed after a redirect via BPF_MAP_TYPE_DEVMAP*
->> does not have it set.
->>
->> Add bugfix and related selftest.
->>
->> Signed-off-by: Florian Kauer <florian.kauer@linutronix.de>
->> ---
->> Changes in v4:
->> - return -> goto out_close, thanks Toke
->> - Link to v3: https://lore.kernel.org/r/20240909-devel-koalo-fix-ingress- 
->> ifindex-v3-0-66218191ecca@linutronix.de
->>
->> Changes in v3:
->> - initialize skel to NULL, thanks Stanislav
->> - Link to v2: https://lore.kernel.org/r/20240906-devel-koalo-fix-ingress- 
->> ifindex-v2-0-4caa12c644b4@linutronix.de
->>
->> Changes in v2:
->> - changed fixes tag
->> - added selftest
->> - Link to v1: https://lore.kernel.org/r/20240905-devel-koalo-fix-ingress- 
->> ifindex-v1-1-d12a0d74c29c@linutronix.de
->>
->> ---
->> Florian Kauer (2):
->>        bpf: devmap: provide rxq after redirect
->>        bpf: selftests: send packet to devmap redirect XDP
->>
->>   kernel/bpf/devmap.c                                |  11 +-
->>   .../selftests/bpf/prog_tests/xdp_devmap_attach.c   | 114 +++++++++++++++++++--
->>   2 files changed, 115 insertions(+), 10 deletions(-)
-> 
-> Alex, Daniel: this will go directly via the bpf tree, right?
+[..]
+> > > > > +       /*
+> > > > > +        * Check cgroup limits:
+> > > > > +        *
+> > > > > +        * The cgroup zswap limit check is done once at the beginning of an
+> > > > > +        * mTHP store, and not within zswap_store_page() for each page
+> > > > > +        * in the mTHP. We do however check the zswap pool limits at the
+> > > > > +        * start of zswap_store_page(). What this means is, the cgroup
+> > > > > +        * could go over the limits by at most (HPAGE_PMD_NR - 1) pages.
+> > > > > +        * However, the per-store-page zswap pool limits check should
+> > > > > +        * hopefully trigger the cgroup aware and zswap LRU aware global
+> > > > > +        * reclaim implemented in the shrinker. If this assumption holds,
+> > > > > +        * the cgroup exceeding the zswap limits could potentially be
+> > > > > +        * resolved before the next zswap_store, and if it is not, the next
+> > > > > +        * zswap_store would fail the cgroup zswap limit check at the start.
+> > > > > +        */
+> > > >
+> > > > I do not really like this. Allowing going one page above the limit is
+> > > > one thing, but one THP above the limit seems too much. I also don't
+> > > > like relying on the repeated limit checking in zswap_store_page(), if
+> > > > anything I think that should be batched too.
+> > > >
+> > > > Is it too unreasonable to maintain the average compression ratio and
+> > > > use that to estimate limit checking for both memcg and global limits?
+> > > > Johannes, Nhat, any thoughts on this?
+> > >
+> > > I honestly don't think it's much of an issue. The global limit is
+> > > huge, and the cgroup limit is to the best of my knowledge only used as
+> > > a binary switch. Setting a non-binary limit - global or cgroup - seems
+> > > like a bit of an obscure usecase to me, because in the vast majority
+> > > of cases it's preferable to keep compresing over declaring OOM.
+> > >
+> > > And even if you do have some granular limit, the workload size scales
+> > > with it. It's not like you have a thousand THPs in a 10M cgroup.
+> >
+> > The memcg limit and zswap limit can be disproportionate, although that
+> > shouldn't be common.
+> >
+> > >
+> > > If this ever becomes an issue, we can handle it in a fastpath-slowpath
+> > > scheme: check the limit up front for fast-path failure if we're
+> > > already maxed out, just like now; then make obj_cgroup_charge_zswap()
+> > > atomically charge against zswap.max and unwind the store if we raced.
+> > >
+> > > For now, I would just keep the simple version we currently have: check
+> > > once in zswap_store() and then just go ahead for the whole folio.
+> >
+> > I am not totally against this but I feel like this is too optimistic.
+> > I think we can keep it simple-ish by maintaining an ewma for the
+> > compression ratio, we already have primitives for this (see
+> > DECLARE_EWMA).
+> >
+> > Then in zswap_store(), we can use the ewma to estimate the compressed
+> > size and use it to do the memcg and global limit checks once, like we
+> > do today. Instead of just checking if we are below the limits, we
+> > check if we have enough headroom for the estimated compressed size.
+> > Then we call zswap_store_page() to do the per-page stuff, then do
+> > batched charging and stats updates.
+> >
+> > If you think that's an overkill we can keep doing the limit checks as
+> > we do today,
+> > but I would still like to see batching of all the limit checks,
+> > charging, and stats updates. It makes little sense otherwise.
+>
+> Thanks Johannes and Yosry for these suggestions and pointers.
+> I think there is general agreement about the batch charging and
+> zswap_stored_pages/stats updates. Yosry,  does "batching of limit
+> checks" imply the same as a simple check for being over the cgroup
+> limit at the start of zswap_store and not doing this check in
+> zswap_store_page? Does this also imply a zswap_pool_get_many()?
+> Would appreciate it if you can help clarify.
 
-The patches lgtm also. Yes, it can directly go to the bpf tree.
+Yes I think we should batch as much as possible in zswap_store(), and
+only do the things are truly per-page in zswap_store_page(). The limit
+checks, stats updates, zswap_pool refs, charging etc. Batching all of
+these things should be clear wins.
 
-It is useful if I can get an ack from netdev (Paolo?) at least for patch 1. Thanks.
+>
+> The main question in my mind about using the EWMA checks is,
+> will it add overhead to the normal zswap reclaim path; and if so,
+> would a simple limit check at the start of zswap_store as suggested
+> by Johannes suffice. I can run a few experiments to quantify this
+> overhead, and maybe we can revisit this?
 
+If you look at ewma_##name##_add() in include/linux/average.h, it's
+really just a bunch of bit shifts, so I am not concerned about runtime
+overhead. My discussion with Johannes is more about if the complexity
+is justified, I'd wait for that discussion to settle.
+
+Either way, we should check the limits once in zswap_store().
 
