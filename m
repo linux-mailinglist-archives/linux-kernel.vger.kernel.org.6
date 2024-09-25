@@ -1,78 +1,82 @@
-Return-Path: <linux-kernel+bounces-339616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28C299867DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 22:51:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BDFC9867DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 22:51:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57F281C215B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 20:51:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05F7B1F257CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 20:51:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5AB714F9EE;
-	Wed, 25 Sep 2024 20:51:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E7E154C15;
+	Wed, 25 Sep 2024 20:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JuLbMVFD"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="rN6nfYWX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378AD130E58;
-	Wed, 25 Sep 2024 20:51:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F01130E58
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 20:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727297467; cv=none; b=ZhcUS+3jUltxHxVSDd9uqAeFvi6KQL12vX8RV8edxDrQcAhm3BabJjEIO0ZYHRjBorzSN4Z8k1tXOzm1pwQ8QffrR5g8As2h/V2xl4yzkVHOZMYdofwVD5aN90kNZJADjvYlZ4MyNoQcg/64Up0VUvsBxjNWmv/mLb7yDI5vKPQ=
+	t=1727297472; cv=none; b=QGUqd/BUdrC+CYIye95KH8WltK4OogGlipCMh9WM3JscgeqhbIy++mFu/8fwiS2rG2w98Ajgykm+87WS5xWBgFM7H/dp8mIsKwfGsFacGKe/gsAfWckTkkjhGei3+v61ieH8CKjkLWMXQVYm9L3/djcFXRWpFH3slMy8gphx4Hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727297467; c=relaxed/simple;
-	bh=qlNOe+qn/Ih8XUFiyDGvR6ThhF6SmLlkMOkHMZ1MnNo=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=sPKEJoIkEaw1OHRqGKf60JZjmUItgebNPmyvVR+V/Yg8osyWwBChdRd44ZrryUMrcFVJOKjYcEC9DF+ZXBb6DYg8ysIxYf2EFslc3aqGT/yQmarYrIHI2riK9CINfSIujDrAISHrjet+ioG6PyeuHaoBlFhAjE5lO/gqYUFRqqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JuLbMVFD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A619C4CEC3;
-	Wed, 25 Sep 2024 20:51:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727297466;
-	bh=qlNOe+qn/Ih8XUFiyDGvR6ThhF6SmLlkMOkHMZ1MnNo=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=JuLbMVFD5V8Pf4ELlUfOk42/PSwr5/GvUNSrDNrWBIqlr2hT0oAex80mOUcVO6elF
-	 3KVT9DN1kK+eaA+mkCuzIFIU59UFMLDRZAabfyMmFb/AcQUa1wUX20qlH5Pd/b8vON
-	 EHOZRDY4o8IPiuPvUFz3U8GYEka33rPR0e2JF3ZjM6eRC56naBUT5doDml5YL9qkOz
-	 AilTwOfvjE+gwC4pTsRvkjTb/xQTe505Olw7zOpKvrsWeFXHGcjVpB8jLQgFe/GbO4
-	 6zI3y7Bm2e+zPMGCOCz54vZxE29pk6fJ92U/uPo9Kug8QqWbi1bSqsM++hriUoNw3N
-	 gqpGTs9a1AW+w==
-Date: Wed, 25 Sep 2024 22:51:04 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Rob Herring <robh@kernel.org>
-cc: Charles Wang <charles.goodix@gmail.com>, dmitry.torokhov@gmail.com, 
-    dianders@chromium.org, dan.carpenter@linaro.org, conor@kernel.org, 
-    krzk+dt@kernel.org, bentiss@kernel.org, hbarnor@chromium.org, 
-    linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v7 2/2] dt-bindings: input: Goodix SPI HID Touchscreen
-In-Reply-To: <CAL_Jsq+6fvCaxLexo9c6zs+8vwyfPAOCCVsejw_uKURVU-Md9w@mail.gmail.com>
-Message-ID: <nycvar.YFH.7.76.2409252250330.31206@cbobk.fhfr.pm>
-References: <20240814024513.164199-1-charles.goodix@gmail.com> <20240814024513.164199-3-charles.goodix@gmail.com> <CAL_Jsq+QfTtRj_JCqXzktQ49H8VUnztVuaBjvvkg3fwEHniUHw@mail.gmail.com> <CAL_JsqKUDj6vrWMVVBHrDeXdb3ogsMb3NUbV6OjKR-EhLLZuGg@mail.gmail.com>
- <CAL_Jsq+6fvCaxLexo9c6zs+8vwyfPAOCCVsejw_uKURVU-Md9w@mail.gmail.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1727297472; c=relaxed/simple;
+	bh=YjI364IwGFp7fSAZmhwGwSO6y7Xxx/BQNQLBXZyxl8Y=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=CvNIbLVmV2ofN0HgxS52lfsW9RJljA5pLMrajqxzceNrQETFbw4u/WnfsDF0bj4YXys7a9dVMMbf5yVACWLRgCB/oZNhEgRF43RzzP3dtDXcpkqZB0tVQb+pGY8oPIJwZaAWVKTIN1oFEnBQ5psfq7OCjhhaRcMkeWL59ZWjigw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=rN6nfYWX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5451C4CEC3;
+	Wed, 25 Sep 2024 20:51:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1727297472;
+	bh=YjI364IwGFp7fSAZmhwGwSO6y7Xxx/BQNQLBXZyxl8Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rN6nfYWXa6A8OwG98JwxNdimUmeTuLBDije5l3qJbbm0bOKzBefkWcxrg3l32N7kK
+	 6fjf/6VCdgQaNhdU06FfL7sIVFlcjwK4uc9JDUNfGMNCp3yfRhUxQ8C0Kkd5aD2J2c
+	 o98Jgw4ooUtiM/TGWMrPsR73bMFIvpQ9YidFhECA=
+Date: Wed, 25 Sep 2024 13:51:11 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Zhiguo Jiang <justinjiang@vivo.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ opensource.kernel@vivo.com
+Subject: Re: [PATCH] mm: fix shrink nr.unqueued_dirty counter issue
+Message-Id: <20240925135111.4a82c0a126114d3f8bcc7abd@linux-foundation.org>
+In-Reply-To: <20240112012353.1387-1-justinjiang@vivo.com>
+References: <20240112012353.1387-1-justinjiang@vivo.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, 25 Sep 2024, Rob Herring wrote:
+On Fri, 12 Jan 2024 09:23:52 +0800 Zhiguo Jiang <justinjiang@vivo.com> wrote:
 
-> Still an issue and no response. Please fix or revert the series.
+> It is needed to ensure sc->nr.unqueued_dirty > 0, which can avoid to
+> set PGDAT_DIRTY flag when sc->nr.unqueued_dirty and sc->nr.file_taken
+> are both zero at the same time.
+> 
+> ...
+>
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -5957,7 +5957,8 @@ static void shrink_node(pg_data_t *pgdat, struct scan_control *sc)
+>  			set_bit(PGDAT_WRITEBACK, &pgdat->flags);
+>  
+>  		/* Allow kswapd to start writing pages during reclaim.*/
+> -		if (sc->nr.unqueued_dirty == sc->nr.file_taken)
+> +		if (sc->nr.unqueued_dirty &&
+> +			sc->nr.unqueued_dirty == sc->nr.file_taken)
+>  			set_bit(PGDAT_DIRTY, &pgdat->flags);
+>  
 
-Reverts are now queued in hid.git#for-6.12/upstream-fixes and I will be 
-sending them to Linus ASAP.
-
-Sorry for the delay,
-
--- 
-Jiri Kosina
-SUSE Labs
-
+Seems sensible.  Was this discovered by code inspection, or is there
+some observable runtime effect?  If the latter, can you please describe
+that effect?
 
