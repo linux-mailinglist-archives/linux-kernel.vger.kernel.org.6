@@ -1,243 +1,132 @@
-Return-Path: <linux-kernel+bounces-339379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5056E986435
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:54:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9792198643A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:56:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D03E31F26EB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:54:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5390E287144
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CACAF25757;
-	Wed, 25 Sep 2024 15:54:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A621BC23;
+	Wed, 25 Sep 2024 15:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uBo8zCYc"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="RGBTGhkS"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160321AACB
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 15:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178A71D5ADB;
+	Wed, 25 Sep 2024 15:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727279645; cv=none; b=tFOJQ2gI2X1il0kDNIwWHldTTXClYA+MOYUPTsw9Sz7aBZL8QTJ9YAY1ugtQ+RwtxNMnDTGNBGASgKvl580knIJ8SCASbvkCWxDPbwRZ/2LKdQteHFjbQhq1oopGqKjeKCzu3KoYH9RRq2Wzs0FULC0JSnUJTd2eFdGGDDAtApM=
+	t=1727279757; cv=none; b=ajHEh2k35cVb4Sc5YFyp7x1hFJ0PN8i1vGVBJHGXt8Sqb5L+lD555GpW8WeRas45NWk31qsfGI8pbywcnbudWFdMKrCJJvLHZCLhl2f/qnwrYrh+KveSPGqoWsTmQ1EXCAiN4BKOwJUFtTi/b2O3VUVV2Vk0H+Yr28VdADcCESA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727279645; c=relaxed/simple;
-	bh=viYabtJz1TITnQz4Qa7lIMio94cIQKuN9RXprlUUn20=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j5cRiRt2jRHCVO0Q06+E0wv6wIczAV73t72p/5WQv53waTSZnzvK1SR8QLX5Elh0PUBTYylFGkSEByrgPKCfOCIyHyW5ZH6rSWgYh7HwI0guLhFLBHmNE+YZi19okkOQZ984OVuArIyxI4lPbdBI1/LxknMOOw41vqt0IpxHnCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uBo8zCYc; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3a1a662a633so313535ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:54:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727279642; x=1727884442; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mtlWMtq+JiEyWaKdO0nlwORQa61CRpWkCRYLpleOmWc=;
-        b=uBo8zCYcIUJhS/PETf/69bupBGH621jT9YSETyyoKqXOKliYYHE14wU2XYwl3A0Sxs
-         avFXLpOlKG1iDnsgjPremaiZ/sL8gi+DhtPwdzSnvI9BAx2FWDnXRCsGB00rhwxzIPSC
-         y3Bmqq/uDBl+VjgBgr8MJd6URamV2xVVzRYBUjPI5rZAOeS5jZGZQZrKMFy1fM9TP5ji
-         K1iPoZA+53P9UDeQG5OUIKnrRY6lKNRw6n6gWP3NWCb6oLnR5jncL6e/W8GqmOJwZx/2
-         6CfvKnZYnueW+VBXDB4Z2aXesW6PBGjI7CM1zz957Cg0zLfk2PmXluePf7E1SPKoB+cz
-         tdrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727279642; x=1727884442;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mtlWMtq+JiEyWaKdO0nlwORQa61CRpWkCRYLpleOmWc=;
-        b=j76DGRftgq340eTDCHDvEnk++2qunavi3wpyThE9iXFQP6BIRWPkXmh1lj1X5HCt5C
-         jH9IGY84aokt0gWS0f2HY72JK90g/d6DTXs/iSGOarT2okOLxfXIwelHrklrCjhenOzb
-         Tv6dUCadGdfcsYeJH8GDuyTzK/iVW6z/VOO1bo+jtsiV4t+KIMQXP6qlsMFZMAGgP5gi
-         UjEAEO5JlKLUrtDRdGBYHFizD3G0wbuv5FjDNK0/QcUVHIn2i3EWuGE4pG1qY3cjMgcN
-         DdZhKfKh9eC7yXiPjiZPlxP2u7slY0N4CqTwCCFM2kJ7VyJZjDSswxe/oTNJcsk9eZMJ
-         8Arw==
-X-Gm-Message-State: AOJu0Yw8QLKIshPO13HYo+G1VaqOqFaXlKvEdjgblaqp3iv1AxAwvwCa
-	x7rrYkfuPd+kr5DuGQrIhV2IK9uEKkK657byUQUlOG2EncTUZMkIXm//nj15WQfiQpNq0J3uvIS
-	FJbvlBkf0QBbKeghyo+ovgS+rO2NXfLxQGkNN
-X-Google-Smtp-Source: AGHT+IECKVgNpXJyra6xJfQTQh6aQ7i0vY0ZTk0QtA5OBdxknRIVX3nOfLE4llLAa859tdiG19FbtS4i20eJ0xsZ7pg=
-X-Received: by 2002:a05:6e02:b2e:b0:3a0:926a:8d35 with SMTP id
- e9e14a558f8ab-3a27443ee75mr1540455ab.17.1727279641904; Wed, 25 Sep 2024
- 08:54:01 -0700 (PDT)
+	s=arc-20240116; t=1727279757; c=relaxed/simple;
+	bh=6cl/j0h8/fQAecYQcMkV6Ik//UIK14kCIeO58lhlD0o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YE0GT/inKcrY/wKjKkj12KJdFCAc4WAJI1sIyhpJkzFJHUW3JLlnXL7NyTknYyvSK0ef6G68E0TBTSHw7hOpxvjgCsvwT3y1MpYzE3UZ+Je8ebC7fypFDWvbM/SgTw3umiQrbqJHSlq3cFT4MamhBEbfYTGocHNtWM4QVT9MOnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=RGBTGhkS; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48PF8aGl012527;
+	Wed, 25 Sep 2024 15:55:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=pp1; bh=P8P2LInkPjfmmtxfJgORNu/tQb
+	1/lCiXfKfhHbq/uwA=; b=RGBTGhkSeIKb57pHfMRqzNCTgKHQyqB6YZoeyoTG4U
+	iZEu8rp+xZSeLRbWhbXUrgRLBXs3t4jdiGYkCwNouqHn7OIfJFK8y0GSb9+UqByC
+	ZLfgMMvVqyZudVtcH/PjOu/aS42JIxan+8KUYSuZwNpgXEPkouNW1IjyoxAADxm1
+	qVk2krT5dRp7K1qXFrNO5dDsIzwxG1ivmhag4VbVLBgrp3wV7vLedx0yQotlxb/q
+	xD9YrqH8Gqpd9xpX811TMhcpJpGkB0BL46qMg1FgwLNlEcTMIGdNLPmgP7eYCQ1+
+	H2tpPR0WSUO3xpw0PDxq7I+HG2dDdxsIuWiMuiuWi5Ng==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41smjk0y8u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Sep 2024 15:55:32 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48PFtWwM026737;
+	Wed, 25 Sep 2024 15:55:32 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41smjk0y8q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Sep 2024 15:55:32 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48PEpufn000636;
+	Wed, 25 Sep 2024 15:55:31 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 41t8futn58-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Sep 2024 15:55:31 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48PFtUQb28049968
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 25 Sep 2024 15:55:30 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8F8C958056;
+	Wed, 25 Sep 2024 15:55:30 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4E7895803F;
+	Wed, 25 Sep 2024 15:55:30 +0000 (GMT)
+Received: from slate16.aus.stglabs.ibm.com (unknown [9.61.18.127])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 25 Sep 2024 15:55:30 +0000 (GMT)
+From: Eddie James <eajames@linux.ibm.com>
+To: sam@mendozajonas.com
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, gwshan@linux.vnet.ibm.com, joel@jms.id.au,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Eddie James <eajames@linux.ibm.com>
+Subject: [PATCH v2] net/ncsi: Disable the ncsi work before freeing the associated structure
+Date: Wed, 25 Sep 2024 10:55:23 -0500
+Message-ID: <20240925155523.1017097-1-eajames@linux.ibm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925150059.3955569-30-ardb+git@google.com> <20240925150059.3955569-35-ardb+git@google.com>
-In-Reply-To: <20240925150059.3955569-35-ardb+git@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 25 Sep 2024 08:53:50 -0700
-Message-ID: <CAP-5=fXw1rcgWgMeDSVqiDYh2XYApyaJpNvukvJ7vMs7ZPMr6g@mail.gmail.com>
-Subject: Re: [RFC PATCH 05/28] x86: Define the stack protector guard symbol explicitly
-To: Ard Biesheuvel <ardb+git@google.com>
-Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Uros Bizjak <ubizjak@gmail.com>, Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, 
-	Christoph Lameter <cl@linux.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
-	Juergen Gross <jgross@suse.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Keith Packard <keithp@keithp.com>, 
-	Justin Stitt <justinstitt@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	linux-doc@vger.kernel.org, linux-pm@vger.kernel.org, kvm@vger.kernel.org, 
-	xen-devel@lists.xenproject.org, linux-efi@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-sparse@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: POry1i8rnsfMSXOG3dF5uswqgu50EnHn
+X-Proofpoint-GUID: QzXtUoC9gSTn8yU4tyu1H-DzYHSrr1qA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-25_10,2024-09-25_02,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 adultscore=0 malwarescore=0 suspectscore=0 bulkscore=0
+ spamscore=0 mlxscore=0 lowpriorityscore=0 phishscore=0 clxscore=1015
+ mlxlogscore=670 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409250111
 
-On Wed, Sep 25, 2024 at 8:02=E2=80=AFAM Ard Biesheuvel <ardb+git@google.com=
-> wrote:
->
-> From: Ard Biesheuvel <ardb@kernel.org>
->
-> Specify the guard symbol for the stack cookie explicitly, rather than
-> positioning it exactly 40 bytes into the per-CPU area. Doing so removes
-> the need for the per-CPU region to be absolute rather than relative to
-> the placement of the per-CPU template region in the kernel image, and
-> this allows the special handling for absolute per-CPU symbols to be
-> removed entirely.
->
-> This is a worthwhile cleanup in itself, but it is also a prerequisite
-> for PIE codegen and PIE linking, which can replace our bespoke and
-> rather clunky runtime relocation handling.
->
-> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> ---
->  arch/x86/Makefile                     |  4 ++++
->  arch/x86/include/asm/init.h           |  2 +-
->  arch/x86/include/asm/processor.h      | 11 +++--------
->  arch/x86/include/asm/stackprotector.h |  4 ----
->  tools/perf/util/annotate.c            |  4 ++--
->  5 files changed, 10 insertions(+), 15 deletions(-)
->
-> diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-> index 6b3fe6e2aadd..b78b7623a4a9 100644
-> --- a/arch/x86/Makefile
-> +++ b/arch/x86/Makefile
-> @@ -193,6 +193,10 @@ else
->          KBUILD_RUSTFLAGS +=3D -Cno-redzone=3Dy
->          KBUILD_RUSTFLAGS +=3D -Ccode-model=3Dkernel
->
-> +        ifeq ($(CONFIG_STACKPROTECTOR),y)
-> +                KBUILD_CFLAGS +=3D -mstack-protector-guard-symbol=3Dfixe=
-d_percpu_data
-> +        endif
-> +
->          # Don't emit relaxable GOTPCREL relocations
->          KBUILD_AFLAGS_KERNEL +=3D -Wa,-mrelax-relocations=3Dno
->          KBUILD_CFLAGS_KERNEL +=3D -Wa,-mrelax-relocations=3Dno
-> diff --git a/arch/x86/include/asm/init.h b/arch/x86/include/asm/init.h
-> index 14d72727d7ee..3ed0e8ec973f 100644
-> --- a/arch/x86/include/asm/init.h
-> +++ b/arch/x86/include/asm/init.h
-> @@ -2,7 +2,7 @@
->  #ifndef _ASM_X86_INIT_H
->  #define _ASM_X86_INIT_H
->
-> -#define __head __section(".head.text")
-> +#define __head __section(".head.text") __no_stack_protector
->
->  struct x86_mapping_info {
->         void *(*alloc_pgt_page)(void *); /* allocate buf for page table *=
-/
-> diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/proc=
-essor.h
-> index 4a686f0e5dbf..56bc36116814 100644
-> --- a/arch/x86/include/asm/processor.h
-> +++ b/arch/x86/include/asm/processor.h
-> @@ -402,14 +402,9 @@ struct irq_stack {
->  #ifdef CONFIG_X86_64
->  struct fixed_percpu_data {
->         /*
-> -        * GCC hardcodes the stack canary as %gs:40.  Since the
-> -        * irq_stack is the object at %gs:0, we reserve the bottom
-> -        * 48 bytes of the irq stack for the canary.
-> -        *
-> -        * Once we are willing to require -mstack-protector-guard-symbol=
-=3D
-> -        * support for x86_64 stackprotector, we can get rid of this.
-> +        * Since the irq_stack is the object at %gs:0, the bottom 8 bytes=
- of
-> +        * the irq stack are reserved for the canary.
->          */
-> -       char            gs_base[40];
->         unsigned long   stack_canary;
->  };
->
-> @@ -418,7 +413,7 @@ DECLARE_INIT_PER_CPU(fixed_percpu_data);
->
->  static inline unsigned long cpu_kernelmode_gs_base(int cpu)
->  {
-> -       return (unsigned long)per_cpu(fixed_percpu_data.gs_base, cpu);
-> +       return (unsigned long)&per_cpu(fixed_percpu_data, cpu);
->  }
->
->  extern asmlinkage void entry_SYSCALL32_ignore(void);
-> diff --git a/arch/x86/include/asm/stackprotector.h b/arch/x86/include/asm=
-/stackprotector.h
-> index 00473a650f51..d1dcd22a0a4c 100644
-> --- a/arch/x86/include/asm/stackprotector.h
-> +++ b/arch/x86/include/asm/stackprotector.h
-> @@ -51,10 +51,6 @@ static __always_inline void boot_init_stack_canary(voi=
-d)
->  {
->         unsigned long canary =3D get_random_canary();
->
-> -#ifdef CONFIG_X86_64
-> -       BUILD_BUG_ON(offsetof(struct fixed_percpu_data, stack_canary) !=
-=3D 40);
-> -#endif
-> -
->         current->stack_canary =3D canary;
->  #ifdef CONFIG_X86_64
->         this_cpu_write(fixed_percpu_data.stack_canary, canary);
-> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-> index 37ce43c4eb8f..7ecfedf5edb9 100644
-> --- a/tools/perf/util/annotate.c
-> +++ b/tools/perf/util/annotate.c
-> @@ -2485,10 +2485,10 @@ static bool is_stack_operation(struct arch *arch,=
- struct disasm_line *dl)
->
->  static bool is_stack_canary(struct arch *arch, struct annotated_op_loc *=
-loc)
->  {
-> -       /* On x86_64, %gs:40 is used for stack canary */
-> +       /* On x86_64, %gs:0 is used for stack canary */
->         if (arch__is(arch, "x86")) {
->                 if (loc->segment =3D=3D INSN_SEG_X86_GS && loc->imm &&
-> -                   loc->offset =3D=3D 40)
-> +                   loc->offset =3D=3D 0)
+The work function can run after the ncsi device is freed, resulting
+in use-after-free bugs or kernel panic.
 
-As a new perf tool  can run on old kernels we may need to have this be
-something like:
-(loc->offset =3D=3D 40 /* pre v6.xx kernels */ || loc->offset =3D=3D 0 /*
-v6.xx and later */ )
+Fixes: 2d283bdd079c ("net/ncsi: Resource management")
+Signed-off-by: Eddie James <eajames@linux.ibm.com>
+---
+Changes since v1:
+ - Use disable_work_sync instead of cancel_work_sync
 
-We could make this dependent on the kernel by processing the os_release str=
-ing:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/util/env.h#n55
-but that could well be more trouble than it is worth.
+ net/ncsi/ncsi-manage.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Thanks,
-Ian
+diff --git a/net/ncsi/ncsi-manage.c b/net/ncsi/ncsi-manage.c
+index 5ecf611c8820..5cf55bde366d 100644
+--- a/net/ncsi/ncsi-manage.c
++++ b/net/ncsi/ncsi-manage.c
+@@ -1954,6 +1954,8 @@ void ncsi_unregister_dev(struct ncsi_dev *nd)
+ 	list_del_rcu(&ndp->node);
+ 	spin_unlock_irqrestore(&ncsi_dev_lock, flags);
+ 
++	disable_work_sync(&ndp->work);
++
+ 	kfree(ndp);
+ }
+ EXPORT_SYMBOL_GPL(ncsi_unregister_dev);
+-- 
+2.43.0
 
->                         return true;
->         }
-
->
-> --
-> 2.46.0.792.g87dc391469-goog
->
 
