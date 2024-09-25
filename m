@@ -1,113 +1,240 @@
-Return-Path: <linux-kernel+bounces-339147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 809DE98628A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:14:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85A769860C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:33:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E373B23BBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:33:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5C7D1C265C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:33:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064E21B1427;
-	Wed, 25 Sep 2024 13:25:35 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4921B14EB;
+	Wed, 25 Sep 2024 13:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=freebsd.org header.i=@freebsd.org header.b="mQ5QGde8"
+Received: from mx2.freebsd.org (mx2.freebsd.org [96.47.72.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80571B1412
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 13:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727270734; cv=none; b=NfzuLQjZCYPHhJx8t0ouTgpnDH+C7bGCJv5b+AMwgl9AK2xh/ZQICMl2gSW2UFUVd1WpcduqGpoelm8O3JmF73LsccsW5I4cVqluTtWO2BA1uFi12D9BHFsLvoFdF9jnnj0rM77brtvrnRH8Ya8P6l86zCn/xDNMOVE3wSinJIM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727270734; c=relaxed/simple;
-	bh=ujYzwysx8BVaV/txjzevN6TgeIeQEwkBY9v+gQRY6tk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SDSa8FlK4Xf6IPLGXwtrz1Asrb9bjVihgZfokeg6iQ0LsgBqFwamNN+vRhUzD27JNPwDBslc4rVXhD13MA5QX3CVseWOhhVNuT0nqq+foz+0Uzf7BnG52Lo1Edq0UbDw3ck0XxlZJwUwu2r3spB272OgAyDT4S/BW0Cq2XChXSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 48PDPKph032238;
-	Wed, 25 Sep 2024 21:25:20 +0800 (+08)
-	(envelope-from fangzheng.zhang@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4XDHMg1QHxz2QHjcP;
-	Wed, 25 Sep 2024 21:17:35 +0800 (CST)
-Received: from bj10906pcu1.spreadtrum.com (10.0.73.72) by
- BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Wed, 25 Sep 2024 21:25:17 +0800
-From: Fangzheng Zhang <fangzheng.zhang@unisoc.com>
-To: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-        David
- Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew
- Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Roman
- Gushchin <roman.gushchin@linux.dev>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>
-CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, <tkjos@google.com>,
-        Fangzheng Zhang <fangzheng.zhang@unisoc.com>,
-        Fangzheng Zhang
-	<fangzheng.zhang1003@gmail.com>,
-        Yuming Han <yuming.han@unisoc.com>
-Subject: [PATCH V2 2/2] Documentation: admin-guide: kernel-parameters: Add parameter description for slub_leak_panic function
-Date: Wed, 25 Sep 2024 21:25:05 +0800
-Message-ID: <20240925132505.21278-3-fangzheng.zhang@unisoc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240925132505.21278-1-fangzheng.zhang@unisoc.com>
-References: <20240925132505.21278-1-fangzheng.zhang@unisoc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F7B1B0126;
+	Wed, 25 Sep 2024 13:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=96.47.72.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727270737; cv=pass; b=ivm5RmsW7V1rKOAAymhsIxsFoai4w8V9y+DCuMBNie7Y02uuEx/V7EHEd7amjv8At/PzYZsM4y1Z3KQnHu4yeVtPNuUjkh8Qiz/zAkC1m3+oSRVYzwJUJA64DX45IKTUACkHwyC6QzCR5O2A930/xRBOioegfMQ/0KQHEdfM9bk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727270737; c=relaxed/simple;
+	bh=Fe7FCm7RW03CVhyxUi/vygxJhyLwUh1g5pqIE6udzS0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kkFgVHjSsPs2GkmRZjSbBP7kBVtAmizWT1/VxOE6ad5J9hylOxM1b783kZFr5WKIgj8jK4bRQZzC6lkQxZQ+O8JwCSQDWF7MiUlgfe4H8puFSkT24EpbVz13Cgcu1d8GUI64PH0cVHJUHFJK+vgColZIgstzfy8nMHIPlvADGuE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freebsd.org; spf=pass smtp.mailfrom=freebsd.org; dkim=pass (2048-bit key) header.d=freebsd.org header.i=@freebsd.org header.b=mQ5QGde8; arc=pass smtp.client-ip=96.47.72.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freebsd.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freebsd.org
+Received: from mx1.freebsd.org (mx1.freebsd.org [96.47.72.80])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits)
+	 client-signature RSA-PSS (4096 bits))
+	(Client CN "mx1.freebsd.org", Issuer "R10" (verified OK))
+	by mx2.freebsd.org (Postfix) with ESMTPS id 4XDHXs2xvHz3m0j;
+	Wed, 25 Sep 2024 13:25:33 +0000 (UTC)
+	(envelope-from ssouhlal@freebsd.org)
+Received: from freefall.freebsd.org (freefall.freebsd.org [IPv6:2610:1c1:1:6074::16:84])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "freefall.freebsd.org", Issuer "R11" (verified OK))
+	by mx1.freebsd.org (Postfix) with ESMTPS id 4XDHXs26R4z42qN;
+	Wed, 25 Sep 2024 13:25:33 +0000 (UTC)
+	(envelope-from ssouhlal@freebsd.org)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=freebsd.org; s=dkim;
+	t=1727270733;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZhUKa5mLtSQgeXQTIq8+FnMk1elUt4b5ryl5TJg4/Rc=;
+	b=mQ5QGde8iA51w95D7ZqDFKGFXVJ97Zz7ovWyb+XGOzzGFjFOIMN+2fi+OWq8t4jIaGt+mL
+	3lL67Vx4c8afcaIqYh5ejhBfNADtx3btYGQhh5yyC3bVz+tnZua4pB/Sm8krFrejsAas6D
+	1H4MkCoxjWbnL5MuC4EvV0sbGGe4mcKz+LvcEUa0aRMY/ib6b15wda4NVYBnPvFrzURXfO
+	SvdwRmsnYh3SS0/TOKOc+62Q/VTcRCA/+SYVw39ALcdf69OO9cx1zmFYIL1jkK13qBh8+2
+	7DrkVJXi3AssEJi6wD9AsKn/JV3oX3PygGopPxVciWa5XNdBARz7YZB95keFQg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=freebsd.org;
+	s=dkim; t=1727270733;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZhUKa5mLtSQgeXQTIq8+FnMk1elUt4b5ryl5TJg4/Rc=;
+	b=gpJRwOfPvRDG3vPXaLiLzc60JUfckld/jZFAiC6AB1nJbjwOW9L5k3dgvR/Tp0u8/Ynn/y
+	HiBz7jG9xZdhkaYSpaGgzsFe9uat2F5U5BScy7j4PaU1M/QBEC8ENZy3wzQzio4oe/e9bS
+	6iTBS6fSAna0Phv/vGNf/nDg/llc3RnVR4R50HR+vkZTENxdeBDX3YQ9ARxmj0wjIPLva2
+	QOvn+Njn+1hf8wmGu0ueZw2MWxdjFZOKI7hvZsJmG5lmoCZVLWgA1rv6Q8UTyxp3PpSb0Q
+	vD2sVp5IzHrs+BExHtIyJT5XkJRUb4A0mNROcNbA+dN4Tur1x7kmZA7xD6MAhg==
+ARC-Authentication-Results: i=1;
+	mx1.freebsd.org;
+	none
+ARC-Seal: i=1; s=dkim; d=freebsd.org; t=1727270733; a=rsa-sha256; cv=none;
+	b=QDhDT0gZtiVagrzhbQMyPpvyRQdhYvQaF9JIcvH0sUPb7fUMxhLF3GgXJmMl9sXa3JjcBC
+	P65F1RhVqaYOFVNP/GrdREfJS+DOxFkqoPeUBjPlvNTeO6XHiBWfZo9984fkvpSmTUOWuF
+	hKwPcLnuySk7/q9dt4WxlXjcvjxaZM+AniOfrypNmUBkfsZWwLsDJUN8B/YgFhNG/7Hzez
+	pgwLFgZbPFH04G2bv6Jytf7QBIEBgRLMuUjR5IlyzqcRyzv1IlFgD/jH+hggqDEA/xAmPc
+	pRfqpNmHDnkxvrI5bthrOmfbylGIVACO3XRSoNUG50cw/qOkp1OziK+nks3aHQ==
+Received: by freefall.freebsd.org (Postfix, from userid 1026)
+	id 40EB0E158; Wed, 25 Sep 2024 13:25:33 +0000 (UTC)
+Date: Wed, 25 Sep 2024 13:25:33 +0000
+From: Suleiman Souhlal <ssouhlal@freebsd.org>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Suleiman Souhlal <suleiman@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, joelaf@google.com,
+	vineethrp@google.com, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, Srikar Dronamraju <srikar@linux.ibm.com>,
+	Sean Christopherson <seanjc@google.com>
+Subject: Re: [PATCH v2] sched: Don't try to catch up excess steal time.
+Message-ID: <ZvQPTYo2oCN-4YTM@freefall.freebsd.org>
+References: <20240911111522.1110074-1-suleiman@google.com>
+ <f0535c47ea81a311efd5cade70543cdf7b25b15c.camel@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL:SHSQR01.spreadtrum.com 48PDPKph032238
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f0535c47ea81a311efd5cade70543cdf7b25b15c.camel@infradead.org>
 
-Introduce the details of the slub_leak_panic parameters in
-kernel-parameters.txt, so that users can understand how to use
-the parameters more quickly.
+On Wed, Sep 25, 2024 at 12:45:55PM +0100, David Woodhouse wrote:
+> On Wed, 2024-09-11 at 20:15 +0900, Suleiman Souhlal wrote:
+> > When steal time exceeds the measured delta when updating clock_task,
+> > we
+> > currently try to catch up the excess in future updates.
+> > However, this results in inaccurate run times for the future things
+> > using
+> > clock_task, as they end up getting additional steal time that did not
+> > actually happen.
+> > 
+> > For example, suppose a task in a VM runs for 10ms and had 15ms of
+> > steal
+> > time reported while it ran. clock_task rightly doesn't advance. Then,
+> > a
+> > different taks runs on the same rq for 10ms without any time stolen
+> > in
+> > the host.
+> > Because of the current catch up mechanism, clock_sched inaccurately
+> > ends
+> > up advancing by only 5ms instead of 10ms even though there wasn't any
+> > actual time stolen. The second task is getting charged for less time
+> > than it ran, even though it didn't deserve it.
+> > This can result in tasks getting more run time than they should
+> > actually
+> > get.
+> > 
+> > So, we instead don't make future updates pay back past excess stolen
+> > time.
+> > 
+> > Signed-off-by: Suleiman Souhlal <suleiman@google.com>
+> > ---
+> > v2:
+> > - Slightly changed to simply moving one line up instead of adding
+> >   new variable.
+> > 
+> > v1:
+> > https://lore.kernel.org/lkml/20240806111157.1336532-1-suleiman@google.com
+> > ---
+> >  kernel/sched/core.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > index f3951e4a55e5..6c34de8b3fbb 100644
+> > --- a/kernel/sched/core.c
+> > +++ b/kernel/sched/core.c
+> > @@ -730,11 +730,11 @@ static void update_rq_clock_task(struct rq *rq,
+> > s64 delta)
+> >         if (static_key_false((&paravirt_steal_rq_enabled))) {
+> >                 steal = paravirt_steal_clock(cpu_of(rq));
+> >                 steal -= rq->prev_steal_time_rq;
+> > +               rq->prev_steal_time_rq += steal;
+> 
+> The above two lines are essentially:
+> 
+> 	steal -= prev;
+> 	prev += steal;
+> 
+> It's like one of those clever ways of exchanging two variables with
+> three XOR operations. I don't like it :)
+> 
+> Ultimately, you're just setting rq->prev_steal_time_rq to the latest
+> value that you just read from paravirt_steal_clock(). And then setting
+> 'steal' to the delta between the new reading and the previous one.
+> 
+> The code above is *far* from obvious. At the very least it wants a
+> comment, but I'd rather see it refactored so that it doesn't need one. 
+> 
+>     u64 abs_steal_now = paravirt_steal_clock(cpu_of(rq));
+>     steal = abs_steal_now - rq->prev_steal_time_rq;
+>     rq->prev_steal_time_rq = abs_steal_now;
 
-Signed-off-by: Fangzheng Zhang <fangzheng.zhang@unisoc.com>
----
- Documentation/admin-guide/kernel-parameters.txt | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+That is what v1 did:
+https://lore.kernel.org/lkml/20240806111157.1336532-1-suleiman@google.com/
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index bb48ae24ae69..8a672766f05f 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6130,6 +6130,21 @@
- 			For more information see Documentation/mm/slub.rst.
- 			(slub_nomerge legacy name also accepted for now)
- 
-+	slub.leak_panic= [MM, SLUB]
-+			Enabling slub.leak_panic can monitor the slub usage
-+			in real time on the slub allocation path. When the
-+			slub occupancy is abnormal, the alarm or panic will
-+			be triggered.
-+			Default: N
-+
-+	slub.leak_panic_threshold= [MM, SLUB]
-+			Upper limit value of the slub usage, expressed as
-+			a percentage of memtotal. When the usage exceeds
-+			the set value (threshold * memtotal / 100), the
-+			slub_leak_panic function will be trigger. The
-+			value setting range is [0, 100].
-+			Default: 0
-+
- 	slram=		[HW,MTD]
- 
- 	smart2=		[HW]
--- 
-2.17.1
+It is also more obvious to me, but the feedback I received was that
+the way in the current iteration is better.
+
+I don't feel strongly about it, and I'd be ok with either version applied. 
+
+> 
+> I'm still not utterly convinced this is the right thing to do, though.
+> It means you will constantly undermeasure the accounting of steal time
+> as you discard the excess each time.
+> 
+> The underlying bug here is that we are sampling the steal time and the
+> time slice at *different* times. This update_rq_clock_task() function
+> could be called with a calculated 'delta' argument... and then
+> experience a large amount of steal time *before* calling
+> paravirt_steal_clock(), which is how we end up in the situation where
+> the calculated steal time exceeds the running time of the previous
+> task.
+> 
+> Which task *should* that steal time be accounted to? At the moment it
+> ends up being accounted to the next task to run — which seems to make
+> sense to me. In the situation I just described, we can consider the
+> time stolen in update_rq_clock_task() itself to have been stolen from
+> the *incoming* task, not the *outgoing* one. But that seems to be what
+> you're objecting to?
+
+This is a good description of the problem, except that the time stolen
+in update_rq_clock_task() itself is actually being stolen from the 
+outgoing task. This is because we are still trying to calculate how long
+it ran for (update_curr()), and time hasn't started ticking for the
+incoming task yet. We haven't set the incoming task's exec_start with the
+new clock_task time yet.
+
+So, in my opinion, it's wrong to give that time to the incoming task.
+
+> 
+> In
+> https://lore.kernel.org/all/20240522001817.619072-22-dwmw2@infradead.org/
+> I put a limit on the amount of steal time carried forward from one
+> timeslice to the next, as it was misbehaving when a bad hypervisor
+> reported negative steal time. But I don't think the limit should be
+> zero.
+> 
+> Of course, *ideally* we'd be able to sample the time and steal time
+> *simultaneously*, with a single sched_clock_cpu_and_steal() function so
+> that we don't have to deal with this slop between readings. Then none
+> of this would be necessary. But that seems hard.
+
+I agree that that would be ideal.
+
+Thanks,
+-- Suleiman
 
 
