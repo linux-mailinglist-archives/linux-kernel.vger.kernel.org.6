@@ -1,100 +1,100 @@
-Return-Path: <linux-kernel+bounces-338031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F8FB985286
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:36:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3FEF985287
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:37:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06FD4B23125
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 05:36:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E5671F241E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 05:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C6914C5A7;
-	Wed, 25 Sep 2024 05:36:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF113155359;
+	Wed, 25 Sep 2024 05:36:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="y8c+yhbn";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Lm9/PbPR";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="y8c+yhbn";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Lm9/PbPR"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uXLa+LUl";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TSFEwEXM";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uXLa+LUl";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TSFEwEXM"
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D0C154C04
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 05:36:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4315015574D
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 05:36:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727242565; cv=none; b=eT+LSR+aEhZE9ogULDTI1vx3a7xlq33J6DdBQ9Spet7zd78yqzH6MKYMxCMVsJCvDfE70/2CvR/rghxYiiysbsK0SslxaIjEwgfPpYoAucL3nLr1OA4HW/b+IUuoGBT/DBaEokYyUxx0rcQKuSDvEIThBs5y5xq7lMi1IumUZ1Q=
+	t=1727242570; cv=none; b=tYdh91aAMS1bh/e0V0u5guSFzpeyRZT9iRXOpSX0kGIvWw35IpHzhon8YxzohmELpVh6bPl7RYAplqWop4xyAjO6AuwyGeFldv0W2TfLa7iOZGb+S3mORhkNcC5xiq1MrjiGs7f/yzQw7YZCMU5fzlt7NOpn70DvHGgBicveYb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727242565; c=relaxed/simple;
-	bh=5G8drIKcKc9eVEXrKmaP6lcL1lKGSHzxebmMrtAz1EY=;
+	s=arc-20240116; t=1727242570; c=relaxed/simple;
+	bh=3qiBvSTL5KVMcgRfJKD7rY9QeKLgUOpk2C3iJy5L2SM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kGYNYBWP2vRFuq3yTS1vLF3IOwfAnKiAMy1Brc1KYwFLStyxgxngTySE8a5urlovC7PozQY9VXQQaceqERk2roC4fHlFzTjqeoImmKli7thu0FZOJ9rzBP5oG14Q8gyIlZt+/b2xY23HcVXsGV3Yr7hR7R51EzbgRTwI/xCUN1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=y8c+yhbn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Lm9/PbPR; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=y8c+yhbn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Lm9/PbPR; arc=none smtp.client-ip=195.135.223.131
+	 MIME-Version; b=pT0uew1D+9Knesr1Unc5VV0hS32KvOO3YErgJs8hm1glPrLZurqxQaFE854ZdYEK0V3a1sNsB/LRM3mDGbf+RtkN7V9oJYMKz28rnzDsWQNAKkyS2E4qK4Kjt8bZhQ3EbCGiDNE2HrkRRqfOJnC9mHvTs0cDX8ZsnJQY9Wq/RI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uXLa+LUl; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TSFEwEXM; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uXLa+LUl; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TSFEwEXM; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id BEB831FD32;
-	Wed, 25 Sep 2024 05:36:01 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A51721FD30;
+	Wed, 25 Sep 2024 05:36:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1727242561; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1727242566; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vNdiD1XMKNrft2fFnwEWO+4kNLwMK+cCeQRN0tFRGyQ=;
-	b=y8c+yhbnHJFhuTwvcixz11BBXC41xTWX4auyawSKvi9y0NPaJ6xOHL/dfA1l+gocKVVQAM
-	6ofu0cNLUyRxmlEPF6sTMPh4RgomcE6iYQ1fQF4gLOcxjjc02fAfre8W0ZpQJzLJ7elyzX
-	WDh8cQxp2Fj7rONTmfuJ3sJTK8zTOvU=
+	bh=Lm78a9I/y5Jhx1MOAKRxaG8h/PjpFbsM89I1+Rnyl4w=;
+	b=uXLa+LUlmtfGMZUjnR/VznzqrWaNjhXTY9iH33J0BdOBb3M87Y57m/4GgDRngzxx9gfse1
+	2z3017jsPIO71UBHb9JiMmVG0QmM1116mHEPzn7BHayKPy6BYB3jzimmNzJ2zIwC3FWroy
+	glUXoem89VRqZU2Kf8wmtpdZaBXaOrc=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1727242561;
+	s=susede2_ed25519; t=1727242566;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vNdiD1XMKNrft2fFnwEWO+4kNLwMK+cCeQRN0tFRGyQ=;
-	b=Lm9/PbPR23ctF4WlfvfayLqD/62FwtIaX+7CU/TQGtKuTyWttVx3iUMLLE5PubQF9FdhCn
-	Sbnv2DCeoRV6GQAQ==
+	bh=Lm78a9I/y5Jhx1MOAKRxaG8h/PjpFbsM89I1+Rnyl4w=;
+	b=TSFEwEXMagcALrZLQZ5RRTxFwqARV7Ti/EpSC7VjutZqQIOVAwMkRL4oZIaeCwI4+ZPV3N
+	RxLgfmfrz+FcC1Dw==
 Authentication-Results: smtp-out2.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1727242561; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1727242566; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vNdiD1XMKNrft2fFnwEWO+4kNLwMK+cCeQRN0tFRGyQ=;
-	b=y8c+yhbnHJFhuTwvcixz11BBXC41xTWX4auyawSKvi9y0NPaJ6xOHL/dfA1l+gocKVVQAM
-	6ofu0cNLUyRxmlEPF6sTMPh4RgomcE6iYQ1fQF4gLOcxjjc02fAfre8W0ZpQJzLJ7elyzX
-	WDh8cQxp2Fj7rONTmfuJ3sJTK8zTOvU=
+	bh=Lm78a9I/y5Jhx1MOAKRxaG8h/PjpFbsM89I1+Rnyl4w=;
+	b=uXLa+LUlmtfGMZUjnR/VznzqrWaNjhXTY9iH33J0BdOBb3M87Y57m/4GgDRngzxx9gfse1
+	2z3017jsPIO71UBHb9JiMmVG0QmM1116mHEPzn7BHayKPy6BYB3jzimmNzJ2zIwC3FWroy
+	glUXoem89VRqZU2Kf8wmtpdZaBXaOrc=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1727242561;
+	s=susede2_ed25519; t=1727242566;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vNdiD1XMKNrft2fFnwEWO+4kNLwMK+cCeQRN0tFRGyQ=;
-	b=Lm9/PbPR23ctF4WlfvfayLqD/62FwtIaX+7CU/TQGtKuTyWttVx3iUMLLE5PubQF9FdhCn
-	Sbnv2DCeoRV6GQAQ==
+	bh=Lm78a9I/y5Jhx1MOAKRxaG8h/PjpFbsM89I1+Rnyl4w=;
+	b=TSFEwEXMagcALrZLQZ5RRTxFwqARV7Ti/EpSC7VjutZqQIOVAwMkRL4oZIaeCwI4+ZPV3N
+	RxLgfmfrz+FcC1Dw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EBFB013A66;
-	Wed, 25 Sep 2024 05:35:59 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 28CB813A66;
+	Wed, 25 Sep 2024 05:36:04 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id IQHSJz+h82aWUQAAD6G6ig
-	(envelope-from <neilb@suse.de>); Wed, 25 Sep 2024 05:35:59 +0000
+	id mIj7M0Sh82adUQAAD6G6ig
+	(envelope-from <neilb@suse.de>); Wed, 25 Sep 2024 05:36:04 +0000
 From: NeilBrown <neilb@suse.de>
 To: Ingo Molnar <mingo@redhat.com>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>
 Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 2/7] sched: Improve documentation for wake_up_bit/wait_on_bit family of functions
-Date: Wed, 25 Sep 2024 15:31:39 +1000
-Message-ID: <20240925053405.3960701-3-neilb@suse.de>
+Subject: [PATCH 3/7] sched: Document wait_var_event() family of functions and wake_up_var()
+Date: Wed, 25 Sep 2024 15:31:40 +1000
+Message-ID: <20240925053405.3960701-4-neilb@suse.de>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240925053405.3960701-1-neilb@suse.de>
 References: <20240925053405.3960701-1-neilb@suse.de>
@@ -124,322 +124,169 @@ X-Spamd-Result: default: False [-2.80 / 50.00];
 	RCPT_COUNT_THREE(0.00)[4];
 	RCVD_COUNT_TWO(0.00)[2];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo];
 	RCVD_TLS_ALL(0.00)[]
 X-Spam-Flag: NO
 X-Spam-Level: 
 
-This patch revises the documention for wake_up_bit(),
-clear_and_wake_up_bit(), and all the wait_on_bit() family of functions.
+wake_up_var(), wait_var_event() and related interfaces are not
+documented but have important ordering requirements.  This patch adds
+documentation and makes these requirements explicit.
 
-The new documentation places less emphasis on the pool of waitqueues
-used (an implementation detail) and focuses instead on details of how
-the functions behave.
-
-The barriers included in the wait functions and clear_and_wake_up_bit()
-and those required for wake_up_bit() are spelled out more clearly.
-
-The error statuses returned are given explicitly.
-
-The fact that the wait_on_bit_lock() function sets the bit is made more
-obvious.
+The return values for those wait_var_event_* functions which return a
+value are documented.  Note that these are, perhaps surprisingly,
+sometimes different from comparable wait_on_bit() functions.
 
 Signed-off-by: NeilBrown <neilb@suse.de>
 ---
- include/linux/wait_bit.h | 159 +++++++++++++++++++++------------------
- kernel/sched/wait_bit.c  |  34 +++++----
- 2 files changed, 107 insertions(+), 86 deletions(-)
+ include/linux/wait_bit.h | 71 ++++++++++++++++++++++++++++++++++++++++
+ kernel/sched/wait_bit.c  | 30 +++++++++++++++++
+ 2 files changed, 101 insertions(+)
 
 diff --git a/include/linux/wait_bit.h b/include/linux/wait_bit.h
-index 48e123839892..723e7bf35747 100644
+index 723e7bf35747..06ec99b90bf3 100644
 --- a/include/linux/wait_bit.h
 +++ b/include/linux/wait_bit.h
-@@ -53,19 +53,21 @@ extern int bit_wait_io_timeout(struct wait_bit_key *key, int mode);
+@@ -282,6 +282,22 @@ __out:	__ret;								\
+ 	___wait_var_event(var, condition, TASK_UNINTERRUPTIBLE, 0, 0,	\
+ 			  schedule())
  
- /**
-  * wait_on_bit - wait for a bit to be cleared
-- * @word: the word being waited on, a kernel virtual address
-- * @bit: the bit of the word being waited on
-+ * @word: the address containing the bit being waited on
-+ * @bit: the bit at that address being waited on
-  * @mode: the task state to sleep in
-  *
-- * There is a standard hashed waitqueue table for generic use. This
-- * is the part of the hashtable's accessor API that waits on a bit.
-- * For instance, if one were to have waiters on a bitflag, one would
-- * call wait_on_bit() in threads waiting for the bit to clear.
-- * One uses wait_on_bit() where one is waiting for the bit to clear,
-- * but has no intention of setting it.
-- * Returned value will be zero if the bit was cleared, or non-zero
-- * if the process received a signal and the mode permitted wakeup
-- * on that signal.
-+ * Wait for the given bit in an unsigned long or bitmap (see DECLARE_BITMAP())
-+ * to be cleared.  The clearing of the bit must be signalled with
-+ * wake_up_bit(), often as clear_and_wake_up_bit().
++/**
++ * wait_var_event - wait for a variable to be updated and notified
++ * @var: the address of variable being waited on
++ * @condition: the condition to wait for
++ *
++ * Wait for a @condition to be true, only re-checking when a wake up is
++ * received for the given @var (an arbitrary kernel address which need
++ * not be directly related to the given condition, but usually is).
 + *
 + * The process will wait on a waitqueue selected by hash from a shared
-+ * pool.  It will only be woken on a wake_up for the target bit, even
-+ * if other processes on the same queue are waiting for other bits.
++ * pool.  It will only be woken on a wake_up for the given address.
 + *
-+ * Returned value will be zero if the bit was cleared in which case the
-+ * call has ACQUIRE semantics, or %-EINTR if the process received a
-+ * signal and the mode permitted wake up on that signal.
-  */
- static inline int
- wait_on_bit(unsigned long *word, int bit, unsigned mode)
-@@ -80,17 +82,20 @@ wait_on_bit(unsigned long *word, int bit, unsigned mode)
++ * The condition should normally use smp_load_acquire() or a similarly
++ * ordered access to ensure that any changes to memory made before the
++ * condition became true will be visible after the wait completes.
++ */
+ #define wait_var_event(var, condition)					\
+ do {									\
+ 	might_sleep();							\
+@@ -294,6 +310,24 @@ do {									\
+ 	___wait_var_event(var, condition, TASK_KILLABLE, 0, 0,		\
+ 			  schedule())
  
- /**
-  * wait_on_bit_io - wait for a bit to be cleared
-- * @word: the word being waited on, a kernel virtual address
-- * @bit: the bit of the word being waited on
-+ * @word: the address containing the bit being waited on
-+ * @bit: the bit at that address being waited on
-  * @mode: the task state to sleep in
-  *
-- * Use the standard hashed waitqueue table to wait for a bit
-- * to be cleared.  This is similar to wait_on_bit(), but calls
-- * io_schedule() instead of schedule() for the actual waiting.
-+ * Wait for the given bit in an unsigned long or bitmap (see DECLARE_BITMAP())
-+ * to be cleared.  The clearing of the bit must be signalled with
-+ * wake_up_bit(), often as clear_and_wake_up_bit().
++/**
++ * wait_var_event_killable - wait for a variable to be updated and notified
++ * @var: the address of variable being waited on
++ * @condition: the condition to wait for
 + *
-+ * This is similar to wait_on_bit(), but calls io_schedule() instead of
-+ * schedule() for the actual waiting.
-  *
-- * Returned value will be zero if the bit was cleared, or non-zero
-- * if the process received a signal and the mode permitted wakeup
-- * on that signal.
-+ * Returned value will be zero if the bit was cleared in which case the
-+ * call has ACQUIRE semantics, or %-EINTR if the process received a
-+ * signal and the mode permitted wake up on that signal.
-  */
- static inline int
- wait_on_bit_io(unsigned long *word, int bit, unsigned mode)
-@@ -104,19 +109,24 @@ wait_on_bit_io(unsigned long *word, int bit, unsigned mode)
- }
- 
- /**
-- * wait_on_bit_timeout - wait for a bit to be cleared or a timeout elapses
-- * @word: the word being waited on, a kernel virtual address
-- * @bit: the bit of the word being waited on
-+ * wait_on_bit_timeout - wait for a bit to be cleared or a timeout to elapse
-+ * @word: the address containing the bit being waited on
-+ * @bit: the bit at that address being waited on
-  * @mode: the task state to sleep in
-  * @timeout: timeout, in jiffies
-  *
-- * Use the standard hashed waitqueue table to wait for a bit
-- * to be cleared. This is similar to wait_on_bit(), except also takes a
-- * timeout parameter.
-+ * Wait for the given bit in an unsigned long or bitmap (see
-+ * DECLARE_BITMAP()) to be cleared, or for a timeout to expire.  The
-+ * clearing of the bit must be signalled with wake_up_bit(), often as
-+ * clear_and_wake_up_bit().
-  *
-- * Returned value will be zero if the bit was cleared before the
-- * @timeout elapsed, or non-zero if the @timeout elapsed or process
-- * received a signal and the mode permitted wakeup on that signal.
-+ * This is similar to wait_on_bit(), except it also takes a timeout
-+ * parameter.
++ * Wait for a @condition to be true or a fatal signal to be received,
++ * only re-checking the condition when a wake up is received for the given
++ * @var (an arbitrary kernel address which need not be directly related
++ * to the given condition, but usually is).
 + *
-+ * Returned value will be zero if the bit was cleared in which case the
-+ * call has ACQUIRE semantics, or %-EINTR if the process received a
-+ * signal and the mode permitted wake up on that signal, or %-EAGAIN if the
-+ * timeout elapsed.
-  */
- static inline int
- wait_on_bit_timeout(unsigned long *word, int bit, unsigned mode,
-@@ -132,19 +142,21 @@ wait_on_bit_timeout(unsigned long *word, int bit, unsigned mode,
- 
- /**
-  * wait_on_bit_action - wait for a bit to be cleared
-- * @word: the word being waited on, a kernel virtual address
-- * @bit: the bit of the word being waited on
-+ * @word: the address containing the bit waited on
-+ * @bit: the bit at that address being waited on
-  * @action: the function used to sleep, which may take special actions
-  * @mode: the task state to sleep in
-  *
-- * Use the standard hashed waitqueue table to wait for a bit
-- * to be cleared, and allow the waiting action to be specified.
-- * This is like wait_on_bit() but allows fine control of how the waiting
-- * is done.
-+ * Wait for the given bit in an unsigned long or bitmap (see DECLARE_BITMAP())
-+ * to be cleared.  The clearing of the bit must be signalled with
-+ * wake_up_bit(), often as clear_and_wake_up_bit().
++ * This is similar to wait_var_event() but returns a value which is
++ * 0 if the condition became true, or %-ERESTARTSYS if a fatal signal
++ * was received.
 + *
-+ * This is similar to wait_on_bit(), but calls @action() instead of
-+ * schedule() for the actual waiting.
-  *
-- * Returned value will be zero if the bit was cleared, or non-zero
-- * if the process received a signal and the mode permitted wakeup
-- * on that signal.
-+ * Returned value will be zero if the bit was cleared in which case the
-+ * call has ACQUIRE semantics, or the error code returned by @action if
-+ * that call returned non-zero.
-  */
- static inline int
- wait_on_bit_action(unsigned long *word, int bit, wait_bit_action_f *action,
-@@ -157,23 +169,22 @@ wait_on_bit_action(unsigned long *word, int bit, wait_bit_action_f *action,
- }
++ * The condition should normally use smp_load_acquire() or a similarly
++ * ordered access to ensure that any changes to memory made before the
++ * condition became true will be visible after the wait completes.
++ */
+ #define wait_var_event_killable(var, condition)				\
+ ({									\
+ 	int __ret = 0;							\
+@@ -308,6 +342,26 @@ do {									\
+ 			  TASK_UNINTERRUPTIBLE, 0, timeout,		\
+ 			  __ret = schedule_timeout(__ret))
  
- /**
-- * wait_on_bit_lock - wait for a bit to be cleared, when wanting to set it
-- * @word: the word being waited on, a kernel virtual address
-- * @bit: the bit of the word being waited on
-+ * wait_on_bit_lock - wait for a bit to be cleared, then set it
-+ * @word: the address containing the bit being waited on
-+ * @bit: the bit of the word being waited on and set
-  * @mode: the task state to sleep in
-  *
-- * There is a standard hashed waitqueue table for generic use. This
-- * is the part of the hashtable's accessor API that waits on a bit
-- * when one intends to set it, for instance, trying to lock bitflags.
-- * For instance, if one were to have waiters trying to set bitflag
-- * and waiting for it to clear before setting it, one would call
-- * wait_on_bit() in threads waiting to be able to set the bit.
-- * One uses wait_on_bit_lock() where one is waiting for the bit to
-- * clear with the intention of setting it, and when done, clearing it.
-+ * Wait for the given bit in an unsigned long or bitmap (see
-+ * DECLARE_BITMAP()) to be cleared.  The clearing of the bit must be
-+ * signalled with wake_up_bit(), often as clear_and_wake_up_bit().  As
-+ * soon as it is clear, atomically set it and return.
-  *
-- * Returns zero if the bit was (eventually) found to be clear and was
-- * set.  Returns non-zero if a signal was delivered to the process and
-- * the @mode allows that signal to wake the process.
-+ * This is similar to wait_on_bit(), but sets the bit before returning.
++/**
++ * wait_var_event_timeout - wait for a variable to be updated or a timeout to expire
++ * @var: the address of variable being waited on
++ * @condition: the condition to wait for
++ * @timeout: maximum time to wait in jiffies
 + *
-+ * Returned value will be zero if the bit was successfully set in which
-+ * case the call has the same memory sequencing semantics as
-+ * test_and_clear_bit(), or %-EINTR if the process received a signal and
-+ * the mode permitted wake up on that signal.
-  */
- static inline int
- wait_on_bit_lock(unsigned long *word, int bit, unsigned mode)
-@@ -185,15 +196,18 @@ wait_on_bit_lock(unsigned long *word, int bit, unsigned mode)
- }
- 
- /**
-- * wait_on_bit_lock_io - wait for a bit to be cleared, when wanting to set it
-- * @word: the word being waited on, a kernel virtual address
-- * @bit: the bit of the word being waited on
-+ * wait_on_bit_lock_io - wait for a bit to be cleared, then set it
-+ * @word: the address containing the bit being waited on
-+ * @bit: the bit of the word being waited on and set
-  * @mode: the task state to sleep in
-  *
-- * Use the standard hashed waitqueue table to wait for a bit
-- * to be cleared and then to atomically set it.  This is similar
-- * to wait_on_bit(), but calls io_schedule() instead of schedule()
-- * for the actual waiting.
-+ * Wait for the given bit in an unsigned long or bitmap (see
-+ * DECLARE_BITMAP()) to be cleared.  The clearing of the bit must be
-+ * signalled with wake_up_bit(), often as clear_and_wake_up_bit().  As
-+ * soon as it is clear, atomically set it and return.
++ * Wait for a @condition to be true or a timeout to expire, only
++ * re-checking the condition when a wake up is received for the given
++ * @var (an arbitrary kernel address which need not be directly related
++ * to the given condition, but usually is).
 + *
-+ * This is similar to wait_on_bit_lock(), but calls io_schedule() instead
-+ * of schedule().
-  *
-  * Returns zero if the bit was (eventually) found to be clear and was
-  * set.  Returns non-zero if a signal was delivered to the process and
-@@ -209,21 +223,19 @@ wait_on_bit_lock_io(unsigned long *word, int bit, unsigned mode)
- }
++ * This is similar to wait_var_event() but returns a value which is 0 if
++ * the timeout expired and the condition was still false, or the
++ * remaining time left in the timeout (but at least 1) if the condition
++ * was found to be true.
++ *
++ * The condition should normally use smp_load_acquire() or a similarly
++ * ordered access to ensure that any changes to memory made before the
++ * condition became true will be visible after the wait completes.
++ */
+ #define wait_var_event_timeout(var, condition, timeout)			\
+ ({									\
+ 	long __ret = timeout;						\
+@@ -321,6 +375,23 @@ do {									\
+ 	___wait_var_event(var, condition, TASK_INTERRUPTIBLE, 0, 0,	\
+ 			  schedule())
  
- /**
-- * wait_on_bit_lock_action - wait for a bit to be cleared, when wanting to set it
-- * @word: the word being waited on, a kernel virtual address
-- * @bit: the bit of the word being waited on
-+ * wait_on_bit_lock_action - wait for a bit to be cleared, then set it
-+ * @word: the address containing the bit being waited on
-+ * @bit: the bit of the word being waited on and set
-  * @action: the function used to sleep, which may take special actions
-  * @mode: the task state to sleep in
-  *
-- * Use the standard hashed waitqueue table to wait for a bit
-- * to be cleared and then to set it, and allow the waiting action
-- * to be specified.
-- * This is like wait_on_bit() but allows fine control of how the waiting
-- * is done.
-+ * This is similar to wait_on_bit_lock(), but calls @action() instead of
-+ * schedule() for the actual waiting.
-  *
-- * Returns zero if the bit was (eventually) found to be clear and was
-- * set.  Returns non-zero if a signal was delivered to the process and
-- * the @mode allows that signal to wake the process.
-+ * Returned value will be zero if the bit was successfully set in which
-+ * case the call has the same memory sequencing semantics as
-+ * test_and_clear_bit(), or the error code returned by @action if that
-+ * call returned non-zero.
-  */
- static inline int
- wait_on_bit_lock_action(unsigned long *word, int bit, wait_bit_action_f *action,
-@@ -320,12 +332,13 @@ do {									\
- 
- /**
-  * clear_and_wake_up_bit - clear a bit and wake up anyone waiting on that bit
-- *
-  * @bit: the bit of the word being waited on
-- * @word: the word being waited on, a kernel virtual address
-+ * @word: the address containing the bit being waited on
-  *
-- * You can use this helper if bitflags are manipulated atomically rather than
-- * non-atomically under a lock.
-+ * The designated bit is cleared and any tasks waiting in wait_on_bit()
-+ * or similar will be woken.  This call has RELEASE semantics so that
-+ * any changes to memory made before this call are guaranteed to be visible
-+ * after the corresponding wait_on_bit() completes.
-  */
- static inline void clear_and_wake_up_bit(int bit, unsigned long *word)
- {
++/**
++ * wait_var_event_killable - wait for a variable to be updated and notified
++ * @var: the address of variable being waited on
++ * @condition: the condition to wait for
++ *
++ * Wait for a @condition to be true or a signal to be received, only
++ * re-checking the condition when a wake up is received for the given
++ * @var (an arbitrary kernel address which need not be directly related
++ * to the given condition, but usually is).
++ *
++ * This is similar to wait_var_event() but returns a value which is 0 if
++ * the condition became true, or %-ERESTARTSYS if a signal was received.
++ *
++ * The condition should normally use smp_load_acquire() or a similarly
++ * ordered access to ensure that any changes to memory made before the
++ * condition became true will be visible after the wait completes.
++ */
+ #define wait_var_event_interruptible(var, condition)			\
+ ({									\
+ 	int __ret = 0;							\
 diff --git a/kernel/sched/wait_bit.c b/kernel/sched/wait_bit.c
-index 058b0e18727e..bd2fc750fb1f 100644
+index bd2fc750fb1f..22ec270f5ab5 100644
 --- a/kernel/sched/wait_bit.c
 +++ b/kernel/sched/wait_bit.c
-@@ -128,21 +128,29 @@ void __wake_up_bit(struct wait_queue_head *wq_head, unsigned long *word, int bit
- EXPORT_SYMBOL(__wake_up_bit);
+@@ -196,6 +196,36 @@ void init_wait_var_entry(struct wait_bit_queue_entry *wbq_entry, void *var, int
+ }
+ EXPORT_SYMBOL(init_wait_var_entry);
  
- /**
-- * wake_up_bit - wake up a waiter on a bit
-- * @word: the word being waited on, a kernel virtual address
-- * @bit: the bit of the word being waited on
-+ * wake_up_bit - wake up waiters on a bit
-+ * @word: the address containing the bit being waited on
-+ * @bit: the bit at that address being waited on
-  *
-- * There is a standard hashed waitqueue table for generic use. This
-- * is the part of the hash-table's accessor API that wakes up waiters
-- * on a bit. For instance, if one were to have waiters on a bitflag,
-- * one would call wake_up_bit() after clearing the bit.
-+ * Wake up any process waiting in wait_on_bit() or similar for the
-+ * given bit to be cleared.
-  *
-- * In order for this to function properly, as it uses waitqueue_active()
-- * internally, some kind of memory barrier must be done prior to calling
-- * this. Typically, this will be smp_mb__after_atomic(), but in some
-- * cases where bitflags are manipulated non-atomically under a lock, one
-- * may need to use a less regular barrier, such fs/inode.c's smp_mb(),
-- * because spin_unlock() does not guarantee a memory barrier.
++/**
++ * wake_up_var - wake up waiters on a variable (kernel address)
++ * @var: the address of the variable being waited on
++ *
++ * Wake up any process waiting in wait_var_event() or similar for the
++ * given variable to change.  wait_var_event() can be waiting for an
++ * arbitrary condition to be true and associates that condition with an
++ * address.  Calling wake_up_var() suggests that the condition has been
++ * made true, but does not strictly require the condtion to use the
++ * address given.
++ *
 + * The wake-up is sent to tasks in a waitqueue selected by hash from a
 + * shared pool.  Only those tasks on that queue which have requested
-+ * wake_up on this specific address and bit will be woken, and only if the
-+ * bit is clear.
++ * wake_up on this specific address will be woken.
 + *
 + * In order for this to function properly there must be a full memory
-+ * barrier after the bit is cleared and before this function is called.
-+ * If the bit was cleared atomically, such as a by clear_bit() then
-+ * smb_mb__after_atomic() can be used, othwewise smb_mb() is needed.
-+ * If the bit was cleared with a fully-ordered operation, no further
-+ * barrier is required.
++ * barrier after the variable is updated (or more accurately, after the
++ * condition waited on has been made to be true) and before this function
++ * is called.  If the variable was updated atomically, such as a by
++ * atomic_dec() then smb_mb__after_atomic() can be used.  If the
++ * variable was updated by a fully ordered operation such as
++ * atomic_dec_and_test() then no extra barrier is required.  Otherwise
++ * smb_mb() is needed.
 + *
-+ * Normally the bit should be cleared by an operation with RELEASE
-+ * semantics so that any changes to memory made before the bit is
-+ * cleared are guaranteed to be visible after the matching wait_on_bit()
-+ * completes.
-  */
- void wake_up_bit(unsigned long *word, int bit)
++ * Normally the variable should be updated (the condition should be made
++ * to be true) by an operation with RELEASE semantics such as
++ * smp_store_release() so that any changes to memory made before the
++ * variable was updated are guaranteed to be visible after the matching
++ * wait_var_event() completes.
++ */
+ void wake_up_var(void *var)
  {
+ 	__wake_up_bit(__var_waitqueue(var), var, -1);
 -- 
 2.46.0
 
