@@ -1,228 +1,157 @@
-Return-Path: <linux-kernel+bounces-339632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83EE2986828
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 23:11:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CD90986829
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 23:11:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F093DB23731
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:11:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B46941C210B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B48145FFF;
-	Wed, 25 Sep 2024 21:11:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E81614D430;
+	Wed, 25 Sep 2024 21:11:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oGw98LgU"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YXKaa92M"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5F814D430
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 21:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFBD51D5AD5
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 21:11:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727298699; cv=none; b=CBd701haCzJeZzluxmF8qRp6dhpZwfeT6auHLeQ1BGRk46443p5vfV15TFc7hNZPRQ3is0IGbj7lyxEOAlIaij1gBrfujhoBpd+fUBlee/5Tqv/vVOCRx0XHD1mgeM3KK2DXnvOa+D8NXtMfYs2cKkBqiFT4VinreSWB35ehv+E=
+	t=1727298707; cv=none; b=mKHnCaE+EmqMupjVgy18lYTwsDJqVuAPcGwJna1ljhI1I+oPhz2xYYt2QfaEjI4xSB6XB7ngNukm1zWPcDm5MLygSHgZ8iNV0+TbQchp1OMFlx1AMse//Mw+YAdi3tS/mGlCan1X/wDVx8KHFjDikJqf6NcrnbdU3bCHrKKpyPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727298699; c=relaxed/simple;
-	bh=uaJyIEoSwNKsjJkoEyrCnv8T+eq1xY6FzObEOx7j1Ic=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WIIpx/IjHZguqqmFZks2fxxTqxDBLB8QuYeVBJLCFMizh4bJCDvdpwRYcSwh0Uqpa8sI57nyMOO+AIc2D7PVNZq1uPehqyy8Zxfu56HOpqAmWFIY3985WigE0nw2BBvaV9l/JLMQbYOKwgpvWDsN/a31WjDI07k76NvFpPcvbHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oGw98LgU; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6e22f10cc11so3246927b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 14:11:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727298697; x=1727903497; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+9TIU+9hxJV2zxmNs4d032rUDDVyJj1j83Li4zDnFvc=;
-        b=oGw98LgU9N+LZvTwAj1dGhCsC5B4hX0XLm9HNsbxKvvdDW59MjvzZ1KLJa3b0/Ft+O
-         QXnTpzvx2bUIt1PKSeVXYOgYVgP84/iTRBDRe3ngkwba/KfcwnTD7IKYdqhemXzkwpu+
-         nRZVZUw9pKWf8WkTMu1vpX3ZtY8BdSDzZRJLL0Tecs1B0xMiNwD6k39FviBkmJuo4ID9
-         PXEbP9IKW6oLtYTljFSwHI7qqdEIaGHBgnlD+oChwcQ6aoGwJFIKui7ZVUyZoX98pC87
-         7Sm6RaoO3xqTezzr+dQnp3XnLsQgjRud3sBOGIkaOZf/cdEnqW+Tejxqe3rTBxf/Q1yZ
-         jPbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727298697; x=1727903497;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+9TIU+9hxJV2zxmNs4d032rUDDVyJj1j83Li4zDnFvc=;
-        b=LaZppsjYj53hB3mAI+zGB2ChWqFAq1ZIwrDVnTdtzXil5RVzdOkLvsBDdE4JlpfiR+
-         RKXCUJaQroDwJEgRkti0kmnr2EeZ4Q8/FEJ3PPWA61H/ToezQ2i4Oju4X2hGoYPJxCi7
-         2F9RLfktyOESZTNlSmWGNdrP7zjE7COjc028/Ls1mAEOVFNmxHozr0vVnJNHubRkBUBZ
-         Rs5msjpYbwC3oG1NUKslNBnsB1kRUZd3dRddNrRMSlXqWCfMUv0Xx29xiHawiSJIo6Va
-         ht2b5/sWkwxegSxWS9MdTJPJtjtK/BlqtEF7DGnPMC0gJ46MpyVhaBQocO0qVydL/2+f
-         +VhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVy/33xzdiyyarXYnUzfYJtY+oDDH5Tgv2A0itxtaesTrMyDVugv0JsKqFenY+5/t5BRLzAgGsVnkqVteU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxci6TYBWzbJZ6d8s8sUaCJIIcgh/fU3DRVWFwjosZCgcUReTsi
-	LKyIN0wvouQR1FZ3mr3BuMAnuAL5DGqrHW8rzB5fu2QwQQo8nt5NFQsQItC7PvR8d4PllwVy7sU
-	3e06eSXE1yHQXe+2PUKzfNlUfE8P0rCkg4qQpJg==
-X-Google-Smtp-Source: AGHT+IEp+mxvGkg3YqT/1KJufgJQB/xXWcnPMsUafm3tUlKhN15iL95oyO8K6Op3Y8xSE5IQjn21aX/7DyU72/mq1E4=
-X-Received: by 2002:a05:690c:660f:b0:6de:b23:f2c3 with SMTP id
- 00721157ae682-6e21d6ec709mr41328167b3.7.1727298696928; Wed, 25 Sep 2024
- 14:11:36 -0700 (PDT)
+	s=arc-20240116; t=1727298707; c=relaxed/simple;
+	bh=WYQuFwzok3rg+YHdOtEOx563voWrz5vF/+BSsDdrK9w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IDgbu+AaKM3EwVjW0zAaleUViekvSL/wmVcaxzR6mxDTTFn1FWsiRhUSUKFTq2bMovSPMcYMizsS5m2loIaLdwmjf8y6odMuoEMuCFXUyZ37MZbggl0+TGvTY7zeToNTQJSLWGIngqAMOR73v2FMVYKOEFjB+XrDwpjTbcCuIYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YXKaa92M; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727298706; x=1758834706;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WYQuFwzok3rg+YHdOtEOx563voWrz5vF/+BSsDdrK9w=;
+  b=YXKaa92MkCd25jORc9UdGHYQaWg0Hn8W0/pV+TD69NYpAyeGBki7Vwvj
+   hINk9r95QM3WQ4afSBUmV4VUfnK1ASlaDcuWkO/+Ls18mczKxuEHQJemQ
+   nRcydP8Ob/T5+/FPB5Inhtzj6RXYN0SAnzIjLEhIkBMtmZhkRkuAwvgKT
+   Sxiv20+bdm4lA9iJRwql4bxT89r+UtxW81RGuCpLV+QM0ioW16FIUM7qr
+   Mst4Nfrj/qcDre2WgPKGC6ACJaIg8tFVcIhKwBbK2yhOBUdsq8ekmkT7T
+   DaAPYTTyYBwos5vCBl6DMqMxKykw7xT1+aXilgrv053t0hV1a+ZQ14Qsl
+   g==;
+X-CSE-ConnectionGUID: zTjXaNR2Qh+zMTuPBvQ3qg==
+X-CSE-MsgGUID: FJaGSsiaRgm0sAKEmZAFHA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11206"; a="37514332"
+X-IronPort-AV: E=Sophos;i="6.10,258,1719903600"; 
+   d="scan'208";a="37514332"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 14:11:45 -0700
+X-CSE-ConnectionGUID: x7icb/xySOu2oihN2PnC5w==
+X-CSE-MsgGUID: Vd2m/jYdTXy9SiUKkaq2iw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,258,1719903600"; 
+   d="scan'208";a="75998554"
+Received: from fecarpio-mobl.amr.corp.intel.com (HELO desk) ([10.125.147.229])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 14:11:45 -0700
+Date: Wed, 25 Sep 2024 14:11:38 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	Robert Gill <rtgill82@gmail.com>,
+	Jari Ruusu <jariruusu@protonmail.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
+	antonio.gomez.iglesias@linux.intel.com,
+	daniel.sneddon@linux.intel.com
+Subject: Re: [PATCH v6 3/3] x86/bugs: Use stack segment selector for VERW
+ operand
+Message-ID: <20240925211138.ccc6zodo7h5x3mvx@desk>
+References: <20240905-fix-dosemu-vm86-v6-0-7aff8e53cbbf@linux.intel.com>
+ <20240905-fix-dosemu-vm86-v6-3-7aff8e53cbbf@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240924-concurrent-wb-v2-0-7849f900e863@quicinc.com>
- <20240924-concurrent-wb-v2-5-7849f900e863@quicinc.com> <dv5iij6v76ieprfckdjo4yksrjrgqw73v2lh7u4xffpu7rdrf3@zgjcp3a2hlxo>
- <24a11f4c-d848-4f1b-afbd-35b135fa3105@quicinc.com>
-In-Reply-To: <24a11f4c-d848-4f1b-afbd-35b135fa3105@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 25 Sep 2024 23:11:25 +0200
-Message-ID: <CAA8EJpraspHpgGvJxe7dXx-hN+yirs_+AacjkrHvPWuEvrLJ-w@mail.gmail.com>
-Subject: Re: [PATCH v2 05/22] drm/msm/dpu: move resource allocation to CRTC
-To: Jessica Zhang <quic_jesszhan@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, quic_abhinavk@quicinc.com, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, quic_ebharadw@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Rob Clark <robdclark@chromium.org>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240905-fix-dosemu-vm86-v6-3-7aff8e53cbbf@linux.intel.com>
 
-On Wed, 25 Sept 2024 at 22:39, Jessica Zhang <quic_jesszhan@quicinc.com> wrote:
->
->
->
-> On 9/24/2024 4:13 PM, Dmitry Baryshkov wrote:
-> > On Tue, Sep 24, 2024 at 03:59:21PM GMT, Jessica Zhang wrote:
-> >> From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> >>
-> >> All resource allocation is centered around the LMs. Then other blocks
-> >> (except DSCs) are allocated basing on the LMs that was selected, and LM
-> >> powers up the CRTC rather than the encoder.
-> >>
-> >> Moreover if at some point the driver supports encoder cloning,
-> >> allocating resources from the encoder will be incorrect, as all clones
-> >> will have different encoder IDs, while LMs are to be shared by these
-> >> encoders.
-> >>
-> >> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> >> [quic_abhinavk@quicinc.com: Refactored resource allocation for CDM]
-> >> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> >> [quic_jesszhan@quicinc.com: Changed to grabbing exising global state]
-> >> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-> >> ---
-> >>   drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    |  86 ++++++++++++
-> >>   drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 201 +++++++++++-----------------
-> >>   drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h |  19 +++
-> >>   3 files changed, 183 insertions(+), 123 deletions(-)
-> >>
-> >> @@ -544,159 +542,117 @@ void dpu_encoder_helper_split_config(
-> >>      }
-> >>   }
-> >>
-> >> -bool dpu_encoder_use_dsc_merge(struct drm_encoder *drm_enc)
-> >> +void dpu_encoder_update_topology(struct drm_encoder *drm_enc,
-> >> +                             struct msm_display_topology *topology,
-> >> +                             struct drm_atomic_state *state,
-> >> +                             const struct drm_display_mode *adj_mode)
-> >>   {
-> >>      struct dpu_encoder_virt *dpu_enc = to_dpu_encoder_virt(drm_enc);
-> >> -    int i, intf_count = 0, num_dsc = 0;
-> >> +    struct drm_connector *connector;
-> >> +    struct drm_connector_state *conn_state;
-> >> +    struct msm_display_info *disp_info;
-> >> +    struct drm_framebuffer *fb;
-> >> +    struct msm_drm_private *priv;
-> >> +    int i;
-> >>
-> >>      for (i = 0; i < MAX_PHYS_ENCODERS_PER_VIRTUAL; i++)
-> >>              if (dpu_enc->phys_encs[i])
-> >> -                    intf_count++;
-> >> +                    topology->num_intf++;
-> >>
-> >> -    /* See dpu_encoder_get_topology, we only support 2:2:1 topology */
-> >> +    /* We only support 2 DSC mode (with 2 LM and 1 INTF) */
-> >>      if (dpu_enc->dsc)
-> >> -            num_dsc = 2;
-> >> +            topology->num_dsc += 2;
-> >>
-> >> -    return (num_dsc > 0) && (num_dsc > intf_count);
-> >> -}
-> >> +    connector = drm_atomic_get_new_connector_for_encoder(state, drm_enc);
-> >> +    if (!connector)
-> >> +            return;
-> >> +    conn_state = drm_atomic_get_new_connector_state(state, connector);
-> >> +    if (!conn_state)
-> >> +            return;
-> >>
-> >> -struct drm_dsc_config *dpu_encoder_get_dsc_config(struct drm_encoder *drm_enc)
-> >> -{
-> >> -    struct msm_drm_private *priv = drm_enc->dev->dev_private;
-> >> -    struct dpu_encoder_virt *dpu_enc = to_dpu_encoder_virt(drm_enc);
-> >> -    int index = dpu_enc->disp_info.h_tile_instance[0];
-> >> +    disp_info = &dpu_enc->disp_info;
-> >>
-> >> -    if (dpu_enc->disp_info.intf_type == INTF_DSI)
-> >> -            return msm_dsi_get_dsc_config(priv->dsi[index]);
-> >> +    priv = drm_enc->dev->dev_private;
-> >>
-> >> -    return NULL;
-> >> +    /*
-> >> +     * Use CDM only for writeback or DP at the moment as other interfaces cannot handle it.
-> >> +     * If writeback itself cannot handle cdm for some reason it will fail in its atomic_check()
-> >> +     * earlier.
-> >> +     */
-> >> +    if (disp_info->intf_type == INTF_WB && conn_state->writeback_job) {
-> >> +            fb = conn_state->writeback_job->fb;
-> >> +
-> >> +            if (fb && MSM_FORMAT_IS_YUV(msm_framebuffer_format(fb)))
-> >> +                    topology->needs_cdm = true;
-> >> +    } else if (disp_info->intf_type == INTF_DP) {
-> >> +            if (msm_dp_is_yuv_420_enabled(priv->dp[disp_info->h_tile_instance[0]], adj_mode))
-> >> +                    topology->needs_cdm = true;
-> >> +    }
-> >
-> > Just to note, the needs_cdm is not enough once you introduce CWB
-> > support. E.g. DP/YUV420 + WB/YUV case requires two CDM blocks (which we
-> > don't have), but this doesn't get reflected in the topology.
->
-> Hi Dmitry,
->
-> Ack. I can add something to make atomic_check fail if the input FB is
-> YUV format and CWB is enabled.
+On Thu, Sep 05, 2024 at 09:00:57AM -0700, Pawan Gupta wrote:
+> Robert Gill reported below #GP in 32-bit mode when dosemu software was
+> executing vm86() system call:
+> 
+>   general protection fault: 0000 [#1] PREEMPT SMP
+>   CPU: 4 PID: 4610 Comm: dosemu.bin Not tainted 6.6.21-gentoo-x86 #1
+>   Hardware name: Dell Inc. PowerEdge 1950/0H723K, BIOS 2.7.0 10/30/2010
+>   EIP: restore_all_switch_stack+0xbe/0xcf
+>   EAX: 00000000 EBX: 00000000 ECX: 00000000 EDX: 00000000
+>   ESI: 00000000 EDI: 00000000 EBP: 00000000 ESP: ff8affdc
+>   DS: 0000 ES: 0000 FS: 0000 GS: 0033 SS: 0068 EFLAGS: 00010046
+>   CR0: 80050033 CR2: 00c2101c CR3: 04b6d000 CR4: 000406d0
+>   Call Trace:
+>    show_regs+0x70/0x78
+>    die_addr+0x29/0x70
+>    exc_general_protection+0x13c/0x348
+>    exc_bounds+0x98/0x98
+>    handle_exception+0x14d/0x14d
+>    exc_bounds+0x98/0x98
+>    restore_all_switch_stack+0xbe/0xcf
+>    exc_bounds+0x98/0x98
+>    restore_all_switch_stack+0xbe/0xcf
+> 
+> This only happens in 32-bit mode when VERW based mitigations like MDS/RFDS
+> are enabled. This is because segment registers with an arbitrary user value
+> can result in #GP when executing VERW. Intel SDM vol. 2C documents the
+> following behavior for VERW instruction:
+> 
+>   #GP(0) - If a memory operand effective address is outside the CS, DS, ES,
+> 	   FS, or GS segment limit.
+> 
+> CLEAR_CPU_BUFFERS macro executes VERW instruction before returning to user
+> space. Use %ss selector to reference VERW operand. This ensures VERW will
+> not #GP for an arbitrary user %ds.
+> 
+> Fixes: a0e2dab44d22 ("x86/entry_32: Add VERW just before userspace transition")
+> Cc: stable@vger.kernel.org # 5.10+
+> Reported-by: Robert Gill <rtgill82@gmail.com>
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218707
+> Closes: https://lore.kernel.org/all/8c77ccfd-d561-45a1-8ed5-6b75212c7a58@leemhuis.info/
+> Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Suggested-by: Brian Gerst <brgerst@gmail.com> # Use %ss
+> Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+> ---
+>  arch/x86/include/asm/nospec-branch.h | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+> index ff5f1ecc7d1e..aa5ed1a59cde 100644
+> --- a/arch/x86/include/asm/nospec-branch.h
+> +++ b/arch/x86/include/asm/nospec-branch.h
+> @@ -318,12 +318,14 @@
+>  /*
+>   * Macro to execute VERW instruction that mitigate transient data sampling
+>   * attacks such as MDS. On affected systems a microcode update overloaded VERW
+> - * instruction to also clear the CPU buffers. VERW clobbers CFLAGS.ZF.
+> + * instruction to also clear the CPU buffers. VERW clobbers CFLAGS.ZF. Using %ss
+> + * to reference VERW operand avoids a #GP fault for an arbitrary user %ds in
+> + * 32-bit mode.
+>   *
+>   * Note: Only the memory operand variant of VERW clears the CPU buffers.
+>   */
+>  .macro CLEAR_CPU_BUFFERS
+> -	ALTERNATIVE "", __stringify(verw _ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
+> +	ALTERNATIVE "", __stringify(verw %ss:_ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
 
-I'd prefer for this to be more natural rather than just checking for
-the DP && DP_YUV420 && WB && WB_FMT_YUV. In the worst case, count CDM
-requests and then in RM check them against the catalog. But I had a
-more logical (although more intrusive) implementation on my mind:
-
-struct msm_display_topology {
-    struct {
-      u32 num_intf;
-      u32 num_wb;
-      u32 num_dsc;
-      bool needs_cdm;
-    } outputs[MAX_OUTPUTS];
-    u32 num_lm;
-};
-
-WDYT?
-
->
-> Thanks,
->
-> Jessica Zhang
->
-> >
-> >>   }
-> >>
-> > --
-> > With best wishes
-> > Dmitry
->
-
-
--- 
-With best wishes
-Dmitry
+Kselftest ldt_gdt.c in 32-bit mode results in oops when using SS. Dave
+suggested to use CS instead, as it can't be user controlled. Using CS is
+also more intuitive because the operand for verw i.e. mds_verw_sel is in
+code section. With this change no oops were observed running kselftests, I
+will be sending the updated version soon.
 
