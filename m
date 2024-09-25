@@ -1,93 +1,111 @@
-Return-Path: <linux-kernel+bounces-337826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F10D4984F77
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 02:32:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE160984F73
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 02:27:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DED71C20FC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:32:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87919284D3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:27:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA1BDDA6;
-	Wed, 25 Sep 2024 00:32:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABF08BE0;
+	Wed, 25 Sep 2024 00:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="v3If9BOB"
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AAP9i+g5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB28C8FF
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 00:31:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94E55223
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 00:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727224320; cv=none; b=tzwiuKJlFsSgWFIy12cn7EPS4oxF1PuB6i8DBI4VQZd6jvl5VQWRj8TxM3bp9U5UahwNyzXJlW7DuSPBhu1dnJIT7h0wP+8OiiKAwqmohB6xn5g8q6MgT8W2x55Jt8DpUEofQMt1/07macTLeJUr63eOSIGk/SBrOzrldW+rsa8=
+	t=1727224041; cv=none; b=Y1ZdwFs+rYyo1Mvk7Zf2L1pElyFY2FFAxjnxrSLxAziirnopvbsV1iJYcnKPiGpoprbKEZ5mKUUs3dAiBMgnXS6xKXJ2+n+m7OCi+C75uA7rSqGWH+7o8lpoGxa6S/lXUvry602qKu7wZpNjjdtu1QUJN3LiveKgBKxkpVuJqM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727224320; c=relaxed/simple;
-	bh=iveDUNzlNFl3ql9YrU9NiXfQ8Ds5Tvh4d+zzEq5zQw8=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=o3Fon2SP6oO6bvVBnRedjN7OPIsDCE1KBahbU8Yyf1B16Liu1hG4pandVNU/M+SaF0ZU7fU56ECdvN1qym7eGtAbm0gG2HuTzfANIpFffvFxg/sdUJcbq7FcmxPFXwa8W8E7AvLe62QiUxfEcKo+yijW/OanlQWpN/nnyEalGDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=v3If9BOB; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1727224307; bh=vpVWgiJhx2Rid7BwpDRT5JT5s7sa/hkRaaHKbr+MCm4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=v3If9BOB24Xl94LTDxKTgs1OoXeRLWUgIf1MfLfxGhAT1SJutJHxl6iihfuj7DSZ4
-	 OgbPTDnyZgW3j5P+8UP44GPNs2lkAX57A9f/elbXdp1HUf8/og0WbFWFf4VVZ/0CR/
-	 hbTCK+wDBjqm2bGcWir3oHBnVSI914zNuv5YOZXI=
-Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
-	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
-	id 5E698A9B; Wed, 25 Sep 2024 08:23:38 +0800
-X-QQ-mid: xmsmtpt1727223818tk8f6zy33
-Message-ID: <tencent_32A5A08D89123A5DB6DD8A19514F8B8DD107@qq.com>
-X-QQ-XMAILINFO: MRw/zKT/0BpPrprfKPF0l6gNpU2NTl39rTuFtj4RmdV3QomwJdEVKQFOREF0Vw
-	 mth53AuVHl60k8Kh8oeDWGeK9Jsye/ujHvcSkWec0JaoayNPlNpcQiQlBiYXuRWGdwiAp/EZzKNF
-	 hF5NWdr+afC2wm17m8MXD/6OoWq3xtKasj782cmKCVdG8wuTZCtLARYrubmVjugD8DNwR3q2FzGG
-	 wB6yydzNMRGvDAxuZSwxhahhTBR513LzZZOM4HDDxUvvfVnVO/04pC/qWkZzwEmAp3kr2w8rDef6
-	 44++VgyxjSOF17av6cLuaN+gYds7doRRzzxks4nodKIxe1OeRa7HphWvr9ySzPUMK7AsOPa0bJba
-	 gMWLVnVR2hApwQ6REh6euHwzTiJFMcexkpBjtpKZyEOIbF/MmFa3oTNycHiax7MJ7LKoHWRvNKwI
-	 q/tiFk3g4jJi8n78/hjSH8+IZLatQcF2yql1Sus5JmiOlGG+mJdcMVZn4mvaPTrB52GxJ10b38uy
-	 fE/7cs6NGI8WJupP75gcew7c1Iw3Ak7ncV+7xiaBa4UrmMVW7TlnCClhCprAS5QW//NdrkwyTe5D
-	 mZ6kqGrRFseOvRO/TM+frODlAqDd+vibY5S1+ZiA/UZuJVFAg6ZcwaWKabC1MmK160Ha4AUZnCB7
-	 FJg2dVncL0eyOIJZNLFNnLr46iqAkw5zi37M4UFm7fMTSm5Y7KJXZmTq+tXuq/XJtgw3NWAVZKm1
-	 466FcBjcAhCSK6aEUCQSxyVBmHVhgxZgMAjK0bx7gmBQ55qpD7Zx4WtayDa9IXVs8FQZZ3g14LvT
-	 ZtCktp31dSSeeNVCp6uNVU3zxwjHmVvNr541FIKJAnA6GeLaxj1I80zuxcwdPIHm6za6moybp5le
-	 ggRrqp289MBeIa9TNDwhIZFeAn0yOeFTIRZcL/nrND
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+c0360e8367d6d8d04a66@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in vfs_get_tree
-Date: Wed, 25 Sep 2024 08:23:39 +0800
-X-OQ-MSGID: <20240925002338.779950-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <66f33aad.050a0220.457fc.0030.GAE@google.com>
-References: <66f33aad.050a0220.457fc.0030.GAE@google.com>
+	s=arc-20240116; t=1727224041; c=relaxed/simple;
+	bh=Z4RkI2XCR/URBobI3g/0VbmMRzi4VsCIdRH6RvE7uTw=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=P3Ga6vHVCFqRJ1hEbGtRkVpZ9dqEUGlzF/IUNSQ8Ihdt7xf6nVpJ9rXnveAn/WfoFxidIiB7ouWomGZ6InsFY0PX49DPK5MQUBebtQhj3NZfDQ8PF+lXsqYX9s+EEaj3PkMl8IX8+Yxd2IPqEe7ORTF7cHLnBACkWAMIrUMJ3gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AAP9i+g5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 513D9C4CEC4;
+	Wed, 25 Sep 2024 00:27:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1727224040;
+	bh=Z4RkI2XCR/URBobI3g/0VbmMRzi4VsCIdRH6RvE7uTw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=AAP9i+g5EnqoBd7ofnlINLmnTTI7pf6hjkHge+rAl/hL1OQlFoq/s8wDssOfWHGYJ
+	 UhDn6TC0uadAnNH85/X/lHJ/DTY8hR0yI8xiK9dF08/B3j6yloX+eZpbawmvfH+Whx
+	 uDgQ7RemLXae4hxBtL2OlME/6G3wt7d/6X0WFFUM=
+Date: Tue, 24 Sep 2024 17:27:19 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Xiang Gao <gxxa03070307@gmail.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, gaoxiang17
+ <gaoxiang17@xiaomi.com>
+Subject: Re: [PATCH] mm/cma.c: To better understand cma area during
+ debugging, add total and used count logs to in cma_alloc
+Message-Id: <20240924172719.a486793abd66643d9938081f@linux-foundation.org>
+In-Reply-To: <20240918124325.109236-1-gxxa03070307@gmail.com>
+References: <20240918124325.109236-1-gxxa03070307@gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Add EPERM support
+On Wed, 18 Sep 2024 20:43:25 +0800 Xiang Gao <gxxa03070307@gmail.com> wrote:
 
-#syz test
+> From: gaoxiang17 <gaoxiang17@xiaomi.com>
+> 
+> [   24.225125] cma: cma_alloc(cma (____ptrval____), name: reserved, total count 16384, used count: 64, request count 1, align 0)
+> [   24.231963] cma: cma_alloc(cma (____ptrval____), name: reserved, total count 16384, used count: 65, request count 1, align 0)
+> [   24.235712] cma: cma_alloc(cma (____ptrval____), name: reserved, total count 16384, used count: 66, request count 1, align 0)
+> 
 
-diff --git a/fs/bcachefs/errcode.h b/fs/bcachefs/errcode.h
-index 60b7875adada..4119ef5e1fa1 100644
---- a/fs/bcachefs/errcode.h
-+++ b/fs/bcachefs/errcode.h
-@@ -102,6 +102,7 @@
- 	x(ENOSPC,			ENOSPC_sb_downgrade)			\
- 	x(ENOSPC,			ENOSPC_btree_slot)			\
- 	x(ENOSPC,			ENOSPC_snapshot_tree)			\
-+	x(EPERM,			EPERM_fc_root)				\
- 	x(ENOENT,			ENOENT_bkey_type_mismatch)		\
- 	x(ENOENT,			ENOENT_str_hash_lookup)			\
- 	x(ENOENT,			ENOENT_str_hash_set_must_replace)	\
+Providing before-and-after output would make the proposal more easily
+understood.
 
+> --- a/mm/cma.c
+> +++ b/mm/cma.c
+> @@ -403,6 +403,17 @@ static void cma_debug_show_areas(struct cma *cma)
+>  	spin_unlock_irq(&cma->lock);
+>  }
+>  
+> +static unsigned long cma_get_used(struct cma *cma)
+> +{
+> +	unsigned long used;
+> +
+> +	spin_lock_irq(&cma->lock);
+> +	used = bitmap_weight(cma->bitmap, (int)cma_bitmap_maxno(cma));
+
+Is the (int) cast needed?
+
+> +	spin_unlock_irq(&cma->lock);
+> +
+> +	return (unsigned long)used << cma->order_per_bit;
+
+Is the (unsigned long) bast needed?
+
+> +}
+> +
+>  /**
+>   * cma_alloc() - allocate pages from contiguous area
+>   * @cma:   Contiguous memory region for which the allocation is performed.
+> @@ -430,8 +441,8 @@ struct page *cma_alloc(struct cma *cma, unsigned long count,
+>  	if (!cma || !cma->count || !cma->bitmap)
+>  		return page;
+>  
+> -	pr_debug("%s(cma %p, name: %s, count %lu, align %d)\n", __func__,
+> -		(void *)cma, cma->name, count, align);
+> +	pr_debug("%s(cma %p, name: %s, total count %lu, used count: %lu, request count %lu, align %d)\n", __func__,
+> +		(void *)cma, cma->name, cma->count, cma_get_used(cma), count, align);
+>  
+>  	if (!count)
+>  		return page;
+> -- 
+> 2.34.1
 
