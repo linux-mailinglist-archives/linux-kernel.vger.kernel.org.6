@@ -1,141 +1,129 @@
-Return-Path: <linux-kernel+bounces-339461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FB6D98656A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:13:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11130986563
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:13:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B06AB1C23BF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:13:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C441D28AB40
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B615913D638;
-	Wed, 25 Sep 2024 17:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526B684A31;
+	Wed, 25 Sep 2024 17:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="dj3ZLDTe"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OdrF2Xy+"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA6E481CE;
-	Wed, 25 Sep 2024 17:12:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EAE8481CE
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 17:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727284342; cv=none; b=sp4yly42AhiSnmbujhIrn7pnYIBLmWOLAkqu/JOoSSHLgdQ/fYxpkR80mX9DzVbkDR4PjYWRhFKKs05Gj4RDXOL1dujVCu/HBZ/NR+rnKQRRv1FAi3bqAtOlHSgLiJLfL6lzw+mLSQS76JPgU79kYjbZeYEVP7eMEzh+scPjwoQ=
+	t=1727284328; cv=none; b=MO0NWjB1jdW7Lx29ujcbZVc1gjpXXUTtWTw9ilAQVdMQOBg78kof84Zo4SLogneL7IxyaOxQnPLCrz+pHwS+oxzt0KI0AXWAaNUoZYaLWNripkP26VVQgQHaDdMpI5ibH0Ds+fdZAwkMJY6WM6BX6NVg4jFFDQEgG8OIgXGXfGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727284342; c=relaxed/simple;
-	bh=ZDX/3Uw+OGxEuW7N3xp9JAXC/koSaQ7zuRhrK1YtCZo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sfGEi0h/TWRNBx8VfHjHFA0Q59tUGAhvf3reynzu/9ExHUJoG5bue/ZU1+Tpa+KTaC0eRdsojCbfToe+6p4q2dzX69A6la/S/Rs/nn//N6EfwgVWzvksqPgM1DnMkdhcZ6DXAmX+jxj0teRdgKf4iuW2R4ahMIznHbrtJtgha0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=dj3ZLDTe; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 4df472d27b6111efb66947d174671e26-20240926
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=iAzBCvy0VmUuU94kvJI2+WAtlOqI4D3pcld1I1Auw0w=;
-	b=dj3ZLDTem4f20YkrtdEEH5EPYnMyh+e5gUaf8v63fTbekZFV7KkaCO88NK7WfEkueE1dpPXSCDhISes9PUzCB0LvXJKV0/jJg+67HKPQtqA6yfcKACPAqVUnquYaJgz/+MeiIjrYy3I2J1l1bnawY4ecNXqoFm1fNt2kQWmxbPE=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:7e19de30-bb04-47c8-9f05-b110acb3d76d,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:a178c2d0-7921-4900-88a1-3aef019a55ce,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 4df472d27b6111efb66947d174671e26-20240926
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 822567883; Thu, 26 Sep 2024 01:12:12 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Thu, 26 Sep 2024 01:12:09 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Thu, 26 Sep 2024 01:12:09 +0800
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-To: Sen Chu <sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
-	Macpaul Lin <macpaul.lin@mediatek.com>, Lee Jones <lee@kernel.org>, "Rob
- Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	<linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, Alexandre Mergnat
-	<amergnat@baylibre.com>
-CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
-	Macpaul Lin <macpaul@gmail.com>, Chris-qj chen <chris-qj.chen@mediatek.com>,
-	MediaTek Chromebook Upstream
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai
-	<wenst@chromium.org>
-Subject: [PATCH 2/2] arm64: dts: mediatek: mt6359: fix dtbs_check error for RTC and regulators
-Date: Thu, 26 Sep 2024 01:11:56 +0800
-Message-ID: <20240925171156.9115-2-macpaul.lin@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20240925171156.9115-1-macpaul.lin@mediatek.com>
-References: <20240925171156.9115-1-macpaul.lin@mediatek.com>
+	s=arc-20240116; t=1727284328; c=relaxed/simple;
+	bh=bIoWbL8+cQIvftkQhhhS5aGeLo30gcPHnKNxeaE3haM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WULN2vY7aM3lhbEVhRb8Eg1MiULpICJu6e11MFgiFrM13P/GD0Cn5qZp01mtXEp6tED/jeniWxTmjrFpL9gVwLlgDjWr3mRRuY+NZa3dNS3VnZ+dFIwsQz1tAKJ6+l94Sa6UsLYsYDnS0gKXwrcg5MHUR5tb3y449h0dzdQXsiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OdrF2Xy+; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-536a2759f0eso144575e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 10:12:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727284325; x=1727889125; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=s4Z/qrw/8ifzhH4AWTm4LO9RxwBj17vLbr7zbvp6uIk=;
+        b=OdrF2Xy+54e01alroweUoc7T0cOqAwiXrLotIIkAUOvhjUaCLA4h3U98i3ad3MlRFb
+         pmQqnX1MxR6uHsdB2J25qPynbrfnz1421N2jSZTIuO8gkf7BYhmbs5pekvfn/sUiJgDc
+         zxMqGRktYOlmGA2rPEplhJucT3V1QmSI7OohqAp7nTAGl+UpA4yYZhW8arpYunULdGNq
+         03UyXj/BEiVOaxRaRR3Bre2T/jkvvvtEQjuLe4pr5zns7GIrgqd7wdG9onOnoKFTLWDC
+         DG3gesATDCnEYaLCkMqQ2B4mSsIqiMPQDpUn0VqvEPd3jV190mJE1eKNWHKio72GPX8/
+         IdxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727284325; x=1727889125;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s4Z/qrw/8ifzhH4AWTm4LO9RxwBj17vLbr7zbvp6uIk=;
+        b=xCaaDjD0M1VUXTY7+UBgEIvAnfZVq6f69tluaXaiGrFHdsJlsbBD3viXskHqglkDhZ
+         TEGz/8cMayL3yTozifxby+fGsZt2I18VB2CGIdyRYxFUmjS4ElT2vt2YlRZurZbvTON8
+         M+szaQUPjL9YLCMW2QojF9/14e54NYhu8u6+GQafiQ9y1wKyGPlwuxsUe/OgToLTnNlI
+         9aAslbBT+RBEIPpqH3gyAuo6kA5b+bGMIm2+YnzI9PYVW/cWcGKipCBQfgyT21oEMtAU
+         kzHp4UIRVySLYiv9owtUiQwxPnuwkETgvgu34q+/mI847YfUr13rAC/11XfiZ88TwLGO
+         mK6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUcZwK70WIfiX5s8N9iBraKrKeoUm91th6S1KRG1ZwiEBMj4dyuHuAd+zEgwEQVHAiGjsptdKeM+SFNdWg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8Xu99A7wVOE2uQIXwgc+nfHmcY6OK/kilgUPFcTTn+eGGWsoW
+	aDtE2qutv82f2SyIrPu4kN6tQb/nlsYztluG+5sjStx8baY0ofQt8p/XNzAqVLvA340twQcAav3
+	cr1W4IQ==
+X-Google-Smtp-Source: AGHT+IH88Z9ewx3HV2rusn4TYxo6thy54qxZ0Rzi5KZL1FRdRnJgljKSZzpDn1p7xLduuWwez5myRw==
+X-Received: by 2002:a05:6512:3d26:b0:52f:d15f:d46b with SMTP id 2adb3069b0e04-53870498352mr2214537e87.14.1727284324994;
+        Wed, 25 Sep 2024 10:12:04 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-537a86402adsm572113e87.169.2024.09.25.10.12.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 10:12:03 -0700 (PDT)
+Date: Wed, 25 Sep 2024 20:12:01 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Cc: heikki.krogerus@linux.intel.com, tzungbi@kernel.org, jthies@google.com, 
+	pmalani@chromium.org, akuchynski@google.com, Benson Leung <bleung@chromium.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <groeck@chromium.org>, 
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH 0/8] Thunderbolt and DP altmode support for cros-ec-typec
+Message-ID: <6flxq7m7fdcpajdg5sthar6xlnpn2b3nzzwgp55jlqrjw5ubge@kdym7c2kv5fm>
+References: <20240925162513.435177-1-abhishekpandit@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--2.002300-8.000000
-X-TMASE-MatchedRID: 8PwIYNh8Bn1DKVWWbGcmRiZm6wdY+F8KCt59Uh3p/NWUzka/OKYytcFk
-	Mp+HRF4cVkYkwvZAWNf5IV2n4J3Q94JrRWPc34Z+A9lly13c/gF9LQinZ4QefPcjNeVeWlqY+gt
-	Hj7OwNO1J4MCrOTno5+a2TFKA2Ye2AlAf+rnwEGLTwbw0zKGZTcOhnWkOZTjkx9iZU14Li3vKhz
-	P7d9BDrNpZ7JqxkrFqc90KBdA4Y8ReBZp2IvvhrqMnTJRI0XInfXwUEm1ouDzLDYxFC1/7rjCBQ
-	Dy1BJScwL6SxPpr1/I=
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--2.002300-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP:
-	17DFAE06CD59BBD0E82B8C6D67528A7396DCFB95B7366686CEA392FC3798324A2000:8
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240925162513.435177-1-abhishekpandit@chromium.org>
 
-This patch fixes the following dtbs_check errors:
-1. 'mt6359rtc' do not match any of the regexes: 'pinctrl-[0-9]+'
- - Update 'mt6359rtc' in 'mt6359.dtsi' with a generic device name 'rtc'
-2. 'pmic: regulators: 'compatible' is a required property'
- - Add 'mediatek,mt6359-regulator' to compatible property.
+On Wed, Sep 25, 2024 at 09:25:01AM GMT, Abhishek Pandit-Subedi wrote:
+> 
+> Hi Heikki, Tzung-Bi et al,
+> 
+> This patch series adds support for alternate mode entry for the
+> cros-ec-typec driver for Displayport and Thunderbolt.
+> 
+> Thunderbolt support is added by adapting an RFC Heikki had posted
+> previously:
+> 
+> https://lore.kernel.org/linux-usb/20191230152857.43917-1-heikki.krogerus@linux.intel.com/
+> 
+> A few comments on the series:
+> 
+> * The cros-ec interface will not accept any VDOs/VDMs so we simply
+>   ignore any configurations we are passed (i.e. DPConfigure). This means
+>   the sysfs control of DP lanes won't work.
+> * ChromeOS has two modes of operation for alt-modes: entirely EC driven
+>   or AP-driven from userspace (via the typec daemon). Thus, we never
+>   expect the kernel alt-mode drivers to auto-enter modes.
+> 
+> This was tested on kernel 6.6 with a ChromeOS Brya device and compile
+> tested against linux-usb (with allmodconfig).
 
-Fixes: 3b7d143be4b7 ("arm64: dts: mt6359: add PMIC MT6359 related nodes")
-Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/mt6359.dtsi | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Please test on top of the linux-usb or linux-next. 6.6 is nine months
+old kernel.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt6359.dtsi b/arch/arm64/boot/dts/mediatek/mt6359.dtsi
-index 8e1b8c85c6ed..dd732a820a7c 100644
---- a/arch/arm64/boot/dts/mediatek/mt6359.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt6359.dtsi
-@@ -18,6 +18,8 @@ mt6359codec: mt6359codec {
- 		};
- 
- 		regulators {
-+			compatible = "mediatek,mt6359-regulator";
-+
- 			mt6359_vs1_buck_reg: buck_vs1 {
- 				regulator-name = "vs1";
- 				regulator-min-microvolt = <800000>;
-@@ -296,7 +298,7 @@ mt6359_vsram_others_sshub_ldo: ldo_vsram_others_sshub {
- 			};
- 		};
- 
--		mt6359rtc: mt6359rtc {
-+		mt6359_rtc: rtc {
- 			compatible = "mediatek,mt6358-rtc";
- 		};
- 	};
+Also for v2 please consider CC'ing both lists for all patches. Otherwise
+it's hard to follow the changes.
+
+> 
+> Thanks,
+> Abhishek
+> 
+> 
+> 
+
 -- 
-2.45.2
-
+With best wishes
+Dmitry
 
