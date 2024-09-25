@@ -1,106 +1,95 @@
-Return-Path: <linux-kernel+bounces-339389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BDC9986474
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:06:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42C4498647D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:09:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C4C61C20DC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:06:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01C882880D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49DB3D97F;
-	Wed, 25 Sep 2024 16:06:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B9C208D1;
+	Wed, 25 Sep 2024 16:09:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PSv6tBBX"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="yPQaOqKU"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDE52F5B;
-	Wed, 25 Sep 2024 16:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B98F219E0
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 16:09:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727280399; cv=none; b=QZvc7hdc4rsE+OQ3iWQK/McS/Yp/6XCAq5U9FC3m/P/sAta2vHfv3GErhihk25h++4t7G8GceX57LqPbEcpAZIGsFOPIspgt1dSHBmBrXm06w4qmbgCUhXlGwYTdsTQlSEcOY63j66fi1ErSTDDhrcOE1RhEWSMSpT8plOAYzXY=
+	t=1727280574; cv=none; b=ROp0q1/MIIR8cv9n799Lm0nKgtTdgxA8yLqY2y1fzXoiOMNHNlw0jaMwYlm8UrkBWkV/xS2LviGSqWc2oPTavvjGB3yPSIcq4DkjruFcWpALPzCIaqfOIy8VYkgQxVoUikhdCC+55x5f/aYm3IBjCrqZEydeKVEMVVllRuTRHBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727280399; c=relaxed/simple;
-	bh=2Wpg2PjOSk/M4D8f3ZoLXyifchNF3HCLIWirDmcvRPE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rg1xCo3kWdXEsZrXxamruv4p58X4bmBUYzmdjPJxAoG8CWR8JcL2dZz+eXnuRIila2V0AXZBpQdXZz/BFcutMqSGKqGA/QrspwXC9JUe57L3lJhp2mDCNsniaTzNNOj9aGKOcC+MDOrtupyPQGdoMy9b+nxzyyHZ3z/U71ldv8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PSv6tBBX; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f6580c2bbfso9618481fa.1;
-        Wed, 25 Sep 2024 09:06:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727280395; x=1727885195; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2Wpg2PjOSk/M4D8f3ZoLXyifchNF3HCLIWirDmcvRPE=;
-        b=PSv6tBBXqtYRf+bFFSSyY6Gz5ZS+09z9IYDPl6qDIXcrzNzyVXrtZ9/5E7MYgqjBo2
-         MUkIrn6YLgEdsR2rTrwbRRv2Rg3QXuBxH4BYEuuYRjIfOIKb5bCKdrh580ow4+XnZE/T
-         8YI8M8bE9SyvY9QhkHtkSi7TaiuJIXGicTMI/PjEWaJ2TmaPGQ59SX+U54jvmX6zZho2
-         uaWntNgC4/S9WO8piOey9B+9h0MarHXZy5FEgtrf4h0A7ZgpTanxPTLLUiWzIQHdoNbX
-         8IBeOmNHbigJzFN3K+y3xwDa1SVxzvYxixrroN+Q3ThwcErPrNaKqnIpQ1SR/2QBrmnq
-         cnvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727280395; x=1727885195;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2Wpg2PjOSk/M4D8f3ZoLXyifchNF3HCLIWirDmcvRPE=;
-        b=EBkTaJSJmPrSMu+9IIYNd7v+/EV/3uwiy4L4i0Fudf/2t7vhMll6ONsuSdibCfYfKM
-         Wbw6J2XCxEsok4T8wXcaiuswHYwp5wrHmYEfCCSBNJ5k0ljigKOQR6JOO+oDGA51skVB
-         yxkN2vwf9q7UV7N/HFl4u4slOguJYXSHNER/3EeWCmff3o1OcfzEXiG1SNmyEq5iQyXq
-         etXKtGXZXjWTP/YycapRzWMizd4pviVltPIU31DFL13DGhhEHBhSKv3yTeQhMGdhXsAx
-         eyvyTh/14m2u8oHw1k9VKc+oZjQBQFwvMVnUR/OW7D0wp1CJ+ey2/Ydzb1LYnOmqUxqk
-         fxxw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2HhC03z0KOWw9AKsN0gZCY2xP4NUY+eEwynG/jDN6ZbrbxOeVKgz25V1BJ6VH5Q8NwjNBdWOmJ91P@vger.kernel.org, AJvYcCVoB+t7UMNkoAOlXpUelOVIsf6OD8xiLGH53QPABKmmD9/2mG0LfolketJ57Cxjf3y2Iy/kenN/PGq2NAVt@vger.kernel.org, AJvYcCWGm/bIK2IU6Re41H0JVa1RPK8oxC//2uPXGRSgaCnMMESVLOUxaDj5CkYqYqT5TyCSm7GQb8UH9dHlKQ1O@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtgGFpIYIbEQgpvhFvCJoCE9DRJ3QNSrWmJLeghWjkYoVBT0/o
-	fI9EKgO8phvf5a1jE9Hf38zdCxqZzKfsxC0KWf3kQWIvy6x4hDMSaU4Smh1/ZddH7zKqYD+PnMq
-	+ElXwPRixkgRM8EsEdIBAp7k8+Uc=
-X-Google-Smtp-Source: AGHT+IFfTUuhRjGyeGP067T50/GeAjOgvxwBokvoT72wr9zTIkRSPAAxAiRwC3Lcnvamx1vFFxiaaHJQqlay4IHWcBk=
-X-Received: by 2002:a2e:611a:0:b0:2ef:1f5e:92be with SMTP id
- 38308e7fff4ca-2f9c6c66aa6mr392431fa.9.1727280395131; Wed, 25 Sep 2024
- 09:06:35 -0700 (PDT)
+	s=arc-20240116; t=1727280574; c=relaxed/simple;
+	bh=lg/iI4hZoajx+b0U7SWbWtXnilv08PsMqWYodIQ0g+w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dPZTG9exSw7ELHdw1Yksa89/XP43z9I6CA4OiYsyclGGU8ooEfIr0DnX2DnhN26eoV4slDEORgXlrV23Nt+6CNRI++mZb5yBnK51a8t+GFOmmGStHGthOPkG+fqnPpMsHmqFd5iSn6eRSt6vrbhN/ZTG7GFugxWtRg8EeX2KW9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=yPQaOqKU; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id AABD388B63;
+	Wed, 25 Sep 2024 18:09:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1727280571;
+	bh=pKIb0NlqaLV0X/VCYBMhdIFO7pr+Y97u8itZR02Ft1k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=yPQaOqKUpBQuUI3bePihQUw4fMcSd4+Smdpl+ViHhl9gcqgIU77Ag8lYNZs/uKbsG
+	 2XB5+SyIuh8yXoAwnkvb5uHvD0iFh3FW72mdC257TGXlUxf3ChcC7JQOJ/n9YCR7xx
+	 TEsSqVRUY1pl5iLjCGC3eTExYAvs0MP68sB3drM67HVYx0JTpBWgwlpu/z0c+ZBVWE
+	 AhgoK9QvUEtTxB958qliqKhztdzWjSiBVkt/Mc+kiEJ6lboNrY+NLWO0QGWMdBVrBI
+	 9GD1RT+I47eRNQhLoveRGAy6I1hHKWU+XGquazj32GD8Cb9b81TUQ6UO+FzQedM5HW
+	 ydvnB0UGFibOg==
+Message-ID: <03b05be4-2276-4e70-9480-2b1467df4ef6@denx.de>
+Date: Wed, 25 Sep 2024 18:09:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0a3b09db-23e8-4a06-85f8-a0d7bbc3228b@meta.com> <87plotvuo1.fsf@gentoo.org>
-In-Reply-To: <87plotvuo1.fsf@gentoo.org>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Thu, 26 Sep 2024 00:06:18 +0800
-Message-ID: <CAMgjq7A3uRcr5VzPYo-hvM91fT+01tB-D3HPvk6_wcx3pq+m+Q@mail.gmail.com>
-Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
- folios since Dec 2021 (any kernel from 6.1 upwards)
-To: Sam James <sam@gentoo.org>, stable@kernel.org
-Cc: clm@meta.com, Matthew Wilcox <willy@infradead.org>, axboe@kernel.dk, ct@flyingcircus.io, 
-	david@fromorbit.com, dqminh@cloudflare.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-xfs@vger.kernel.org, 
-	regressions@leemhuis.info, regressions@lists.linux.dev, 
-	torvalds@linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] soc: imx8m: Probe the SoC driver late
+To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: kernel@dh-electronics.com,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Fabio Estevam <festevam@gmail.com>, Jeff Johnson
+ <quic_jjohnson@quicinc.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Saravana Kannan <saravanak@google.com>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ imx@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240925160026.84091-1-marex@denx.de>
+ <486054ad-20c2-45f4-a457-c9334afb53ed@app.fastmail.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <486054ad-20c2-45f4-a457-c9334afb53ed@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Wed, Sep 25, 2024 at 1:16=E2=80=AFAM Sam James <sam@gentoo.org> wrote:
->
-> Kairui, could you send them to the stable ML to be queued if Willy is
-> fine with it?
->
-
-Hi Sam,
-
-Thanks for adding me to the discussion.
-
-Yes I'd like to, just not sure if people are still testing and
-checking the commits.
-
-And I haven't sent seperate fix just for stable fix before, so can
-anyone teach me, should I send only two patches for a minimal change,
-or send a whole series (with some minor clean up patch as dependency)
-for minimal conflicts? Or the stable team can just pick these up?
+On 9/25/24 6:04 PM, Arnd Bergmann wrote:
+> On Wed, Sep 25, 2024, at 16:00, Marek Vasut wrote:
+>> With driver_async_probe=* on kernel command line, the following trace is
+>> produced because on i.MX8M Plus hardware because the soc-imx8m.c driver
+>> calls of_clk_get_by_name() which returns -EPROBE_DEFER because the clock
+>> driver is not yet probed. This was not detected during regular testing
+>> without driver_async_probe.
+>>
+>> Attempt to fix it by probing the SoC driver late, but I don't think that
+>> is the correct approach here.
+> 
+> I think the correct fix would be to propagate the -EPROBE_DEFER
+> and return that from imx8_soc_init(), so it gets retried again
+> after the clock driver.
+I already tried that, but if I return -EPROBE_DEFER from 
+device_initcall, it doesn't get retriggered . I suspect EPROBE_DEFER 
+works only for proper drivers ?
 
