@@ -1,330 +1,261 @@
-Return-Path: <linux-kernel+bounces-338244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74FE7985548
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:16:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69A6B98554D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:17:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE328280FE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:16:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8DC21F23F74
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:17:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90236156C5E;
-	Wed, 25 Sep 2024 08:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7364C158868;
+	Wed, 25 Sep 2024 08:17:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cpwo/VaR"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U7WR0btR"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5DD13AA26;
-	Wed, 25 Sep 2024 08:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2C2149C4F
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:17:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727252205; cv=none; b=LJr4B4n4bbzycRClpPMXvfhkjGTlLQanN8M5H1bGY/+LxJqoQdGa7S5Lw3HFKrCMt2gg3JPOtYXOpHB+3jSU01pk74Q3agm8DEE+NJXjpRQJ6bx8hLhV5bhac5vW62tAqpULVDQsNDPmy/NnorvX4V70XeBsDqnMjVH8ZmVwiIs=
+	t=1727252251; cv=none; b=HXzSwmZFSfQXfh+DtqDRGD9KsEwTl6XDbw7lvS5ErkI8TFlRzJ/u5Iu+ITZ+StShvW++VHJWCihzF8flOamSnoNfDPDH1Tq0kJ/TlXlZAFjlB3HUSb62bN3s99Y2AhpNO9lv933ejih0ijeKoVqk92Zembr7Hd1wb2hPhORyGR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727252205; c=relaxed/simple;
-	bh=nDHsMmoxUxyDNohFz/+8O7PtcnI0tOkSGfxeDI/bHDY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZcFJgPUtjFHwf8LByzQvIPapgxNQCTCnJNmD5y2sqIrkt9DnRMObIoTmdIZHe1cgTI8gcM/L5bphQc+QKGipSD8KPMp7d7jtLKwPAM9kXWZAvZnkZh+SnUCwJt3+TEIxH9Uo+iAm4b2zvIHfoOf2YhBWjgGeM3RvcIKeDanwMPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cpwo/VaR; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e06f5d4bc7so335025a91.2;
-        Wed, 25 Sep 2024 01:16:43 -0700 (PDT)
+	s=arc-20240116; t=1727252251; c=relaxed/simple;
+	bh=322+YjFSMbCRMWKuIniuIuP8jIehsf+N6cFsyXvO5Sc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DOAaet5995RdVWCu8k0dgC7h7y7OzY9kTeDfWo2aTC9l5FxzjZBd69OQQGg7pqE/Bt+w1FVFkKCEX2mmJwlwPedNbBUB6aZ56nNAGHeTPdeIACnSb8j9HZRL4duqRMaN/DU3H4hTgj+XdslZKkMhNzkFGBfRcY8q0s3X3FLsoG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U7WR0btR; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53659867cbdso9484846e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 01:17:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727252203; x=1727857003; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fRyT55ab4R2A+65MrHS5Vqlg7xItZ53sZIU1oLGBkYE=;
-        b=cpwo/VaRywbtZ2/ZF88qqZCwU4DmBpua81oJVpGv5Vnru15b6WujUsQDXwRtTfoeG7
-         2YoFnAooEw2ZAICL8YWx4BLsoXMn0PFkFEPz44k7f4+FTZeG5YX5PlV9lHbLYhA92PO/
-         WhWh6xW7J46IuzkDY+Dvs3bf8xg0jwldMAge2UwppDRP/P1iag4CxTQ+ze2wsSoniybX
-         hX+mauhSp3f98/kdFWbt9VtZeMEAlJDGI5dofk7ezhFWj8bjutX/dD/oyN3CoJ82LwXw
-         Fe+/0O7bA+BR65af7kn0kP+0xkeddxLryZrwIxTJgzdFBILEtlNMCwLM5mWqvFfpiXqB
-         CbLw==
+        d=linaro.org; s=google; t=1727252248; x=1727857048; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PItdsNbKJCVfD2sQE4FIY5JPIF0NlmLuFR81Hxp3WNA=;
+        b=U7WR0btRPu9HyM56o/cFeISUx+u7QL1O5VpEdgAFIx3bi8ToFRSWeXZZHCBnHkmVQQ
+         6gIau0gCvQgC5tOnoQPW0FY9JuR0KKzoC56RsVKQxLDqzJB1HHDLZ88uyDplYIvZ+uQT
+         7pPSiGtUGaPzHJurilAz4MZJghmR3YAXRqXZHN3AT/Uus8u1yAl6RZsvAw9l4P9jnqZb
+         6fEXbPylXteaeeWyUi1ogzEjfX7wyslAYyUsqhcyx4N50DcByLa0z+T5o/MJjpsp5eoU
+         4orh9zpqeeMbVXV5TR6Hm7cyttf/yeTeWOgokmeHV8JaMDm//M0IvSOEXKqnyDoCNTQu
+         GaVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727252203; x=1727857003;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fRyT55ab4R2A+65MrHS5Vqlg7xItZ53sZIU1oLGBkYE=;
-        b=vuvyfecOjlP4nCfWFhuWu00aSqLEQVFJJDOLufrUktBeIi+wIsEw/ckv1KL7Fmfwsc
-         rPpVturgRbMgUH7gAxnIhCGuZI97yftvRQyIJxH5nogmA0Td3oixH1QmMlhoc0Q2MCVU
-         wZ5hlByd0B/z+KjIeyfjBb1rOyqvtVOIMS8lpzpMiUuz9sjZYmyGwZWAIhzxu5T+tYM8
-         aT2xPnt4Zctwdl+XwpylcD5IIaOvp8qqAxs5cNzs8VjGj+6UikSWar9A+o8pPSHqVOOz
-         mk2InMOvXBP5kgLO0gNyqxemKw/vOSnr0Ons9ELOVTybVjfeBADND48tlfRZUXkm6qmJ
-         jazg==
-X-Forwarded-Encrypted: i=1; AJvYcCVzYgTIHumyqalgsH9kpdZEF6TBfBmOdWSeH4aEnFNG6WK/Hkpk+lMBjruJ/JJylNm2p5vB4XxrbfxJkpXMO1o47Jvp9L38@vger.kernel.org, AJvYcCWNa7M1HSuKDncHDKAKfptAw4eqNXiac8CRdJ4O7h09FEnkdr5A4Hyqk9dJcWovtfIw/w+/l1MIYpXOpxA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBKi2GrGa/MhudibOB/GjiTlmYqjJokRGeL+0fJ4/+cY846Kl2
-	k1Ai1IeKOvDGbNIRCtlFjkM+n4ppHTJGHuVTxryj+wZQmY2UYly7XeqhYA==
-X-Google-Smtp-Source: AGHT+IGZS9xjGJwPRz1ykf4pT7W+CzzPG0n3AZrZoCrp3A7RbLnNkCT0Ba3xqVKn6D1cKa5HT2lahA==
-X-Received: by 2002:a17:90b:2ec8:b0:2d8:9c97:3c33 with SMTP id 98e67ed59e1d1-2e06afc4197mr2134089a91.28.1727252203186;
-        Wed, 25 Sep 2024 01:16:43 -0700 (PDT)
-Received: from localhost.localdomain ([20.37.103.148])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e06e2bbecasm925215a91.46.2024.09.25.01.16.39
+        d=1e100.net; s=20230601; t=1727252248; x=1727857048;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PItdsNbKJCVfD2sQE4FIY5JPIF0NlmLuFR81Hxp3WNA=;
+        b=c+J2SrVLoxlqpuvhNrcM7H1HhInkusUZv/aRp+hgOKOVm1ye95UfvEs0l3RZSvFeHX
+         LxdD0HwgE+5ZDfYCXONCINn423rMOmA0bNGwQJKtSE6rC0nSFdDYzAgZV1k8oJewByhn
+         CMWwbpPSstnCWvVpaHTT6oaDG2IR9iM7pmcd2h7w1WWvbl8FI5lMJQ9z/lMetzuekuNb
+         3kXQ+PRVjzRTgak4b6m48auDtut3b5JTh1lG1xxI4ZN+tBqeUAF72T2FxsyEwYIyg8rh
+         tMYcO0Se6Zt5XRGbyVfyDu+ZsL0LX1Ccn7dv5Tc9F4gk4JuGDw0wskGDNWzHFrTMsIU2
+         gVbg==
+X-Forwarded-Encrypted: i=1; AJvYcCWSNzgtEn72bv2ZowB4NcrPDYCGRr8fOQV/p7dbg/vShfVeCmWTjmMTn+pdUwf7dzfFitGu/4IzSMo+g/8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQVbTlIWcO6mUymTqAHojcwyGhlEGSxvDXKHmzlRgaJyCaU1y+
+	wU/Z0aMJcRyDMDwB8+oQOK8TgqX0rX36oNklCGUmGO13HQIKhE4itLT4JFv4ZEo=
+X-Google-Smtp-Source: AGHT+IG5Nl0ptMYn5BJw3VOSRd7OvrwuUcJMu7vRDsBX1yDILY+iinhIQlUl9VUjVqNtD0ZEUfaV2Q==
+X-Received: by 2002:a05:6512:33d2:b0:536:7377:7d23 with SMTP id 2adb3069b0e04-5387755cf84mr1477993e87.40.1727252247573;
+        Wed, 25 Sep 2024 01:17:27 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-537a8640978sm452536e87.126.2024.09.25.01.17.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 01:16:42 -0700 (PDT)
-From: Shu Han <ebpqwerty472123@gmail.com>
-To: akpm@linux-foundation.org,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	Liam.Howlett@oracle.com,
-	vbabka@suse.cz,
-	lorenzo.stoakes@oracle.com
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH] mm: move security_file_mmap() back into do_mmap()
-Date: Wed, 25 Sep 2024 16:16:28 +0800
-Message-Id: <20240925081628.408-1-ebpqwerty472123@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        Wed, 25 Sep 2024 01:17:26 -0700 (PDT)
+Date: Wed, 25 Sep 2024 11:17:23 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jessica Zhang <quic_jesszhan@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, quic_abhinavk@quicinc.com, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, quic_ebharadw@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Rob Clark <robdclark@chromium.org>, Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Subject: Re: [PATCH v2 06/22] drm/msm/dpu: fill CRTC resources in dpu_crtc.c
+Message-ID: <tr2uoiypchf7wcytayvae3e26ye72vyoq763l2ysclwa25bxz7@ojtglsboe63f>
+References: <20240924-concurrent-wb-v2-0-7849f900e863@quicinc.com>
+ <20240924-concurrent-wb-v2-6-7849f900e863@quicinc.com>
+ <4c7spborzltmvjlbd2o4uwknraitjtf34mqt7r3x2ospnaidyn@abvn5zdumvwt>
+ <b66264a9-2ff9-482a-96e0-453d55bc651c@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b66264a9-2ff9-482a-96e0-453d55bc651c@quicinc.com>
 
-This patch moves the security_file_mmap() back into do_mmap(), which
-revert the commit 8b3ec6814c83d76b85bd13badc48552836c24839
-("take security_mmap_file() outside of ->mmap_sem"). Below is the reason.
+On Tue, Sep 24, 2024 at 05:37:30PM GMT, Jessica Zhang wrote:
+> 
+> 
+> On 9/24/2024 4:16 PM, Dmitry Baryshkov wrote:
+> > On Tue, Sep 24, 2024 at 03:59:22PM GMT, Jessica Zhang wrote:
+> > > From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > 
+> > > Stop poking into CRTC state from dpu_encoder.c, fill CRTC HW resources
+> > > from dpu_crtc_assign_resources().
+> > > 
+> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > [quic_abhinavk@quicinc.com: cleaned up formatting]
+> > > Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> > > [quic_jesszhan@quicinc.com: dropped clearing num_mixers in CRTC disable
+> > > path]
+> > 
+> > Same comment as before: the code is still there.
+> 
+> Hi Dmitry,
+> 
+> I thought the original comment was to move the dropping `num_mixers = 0`
+> chunk from the previous patch to this one?
+> 
+> Sorry if I misunderstood.
 
-Some logic may call do_mmap() without calling security_file_mmap(),
-without being aware of the harm this poses to LSM.
+Code move is fine. The commit message should reflect the code though. So
+if you have "dropped clearing num_mixers..." in the commit message, it
+is surprising to see the code actually claring num_mixers.
 
-For example, CVE-2016-10044[1] has reported many years ago, but the
-remap_file_pages() can still bypass the W^X policy enforced by SELinux[2]
-for a long time.
+> 
+> Thanks,
+> 
+> Jessica Zhang
+> 
+> > 
+> > > Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+> > > ---
+> > >   drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    | 32 ++++++++++++++++++++++++++---
+> > >   drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 24 ++--------------------
+> > >   2 files changed, 31 insertions(+), 25 deletions(-)
+> > > 
+> > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> > > index b918c80d30b3..d53e986eee54 100644
+> > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> > > @@ -1091,9 +1091,6 @@ static void dpu_crtc_disable(struct drm_crtc *crtc,
+> > >   	dpu_core_perf_crtc_update(crtc, 0);
+> > > -	memset(cstate->mixers, 0, sizeof(cstate->mixers));
+> > > -	cstate->num_mixers = 0;
+> > > -
+> > >   	/* disable clk & bw control until clk & bw properties are set */
+> > >   	cstate->bw_control = false;
+> > >   	cstate->bw_split_vote = false;
+> > > @@ -1164,6 +1161,7 @@ static bool dpu_crtc_needs_dirtyfb(struct drm_crtc_state *cstate)
+> > >   }
+> > >   #define MAX_HDISPLAY_SPLIT 1080
+> > > +#define MAX_CHANNELS_PER_CRTC 2
+> > >   static struct msm_display_topology dpu_crtc_get_topology(
+> > >   		struct drm_crtc *crtc,
+> > > @@ -1208,9 +1206,14 @@ static struct msm_display_topology dpu_crtc_get_topology(
+> > >   static int dpu_crtc_assign_resources(struct drm_crtc *crtc, struct drm_crtc_state *crtc_state)
+> > >   {
+> > > +	struct dpu_hw_blk *hw_ctl[MAX_CHANNELS_PER_CRTC];
+> > > +	struct dpu_hw_blk *hw_lm[MAX_CHANNELS_PER_CRTC];
+> > > +	struct dpu_hw_blk *hw_dspp[MAX_CHANNELS_PER_CRTC];
+> > > +	int i, num_lm, num_ctl, num_dspp;
+> > >   	struct dpu_kms *dpu_kms = _dpu_crtc_get_kms(crtc);
+> > >   	struct dpu_global_state *global_state;
+> > >   	struct msm_display_topology topology;
+> > > +	struct dpu_crtc_state *cstate;
+> > >   	int ret;
+> > >   	/*
+> > > @@ -1232,6 +1235,29 @@ static int dpu_crtc_assign_resources(struct drm_crtc *crtc, struct drm_crtc_stat
+> > >   	if (ret)
+> > >   		return ret;
+> > > +	cstate = to_dpu_crtc_state(crtc_state);
+> > > +
+> > > +	num_ctl = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
+> > > +						crtc, DPU_HW_BLK_CTL, hw_ctl,
+> > > +						ARRAY_SIZE(hw_ctl));
+> > > +	num_lm = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
+> > > +					       crtc, DPU_HW_BLK_LM, hw_lm,
+> > > +					       ARRAY_SIZE(hw_lm));
+> > > +	num_dspp = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
+> > > +						 crtc, DPU_HW_BLK_DSPP, hw_dspp,
+> > > +						 ARRAY_SIZE(hw_dspp));
+> > > +
+> > > +	for (i = 0; i < num_lm; i++) {
+> > > +		int ctl_idx = (i < num_ctl) ? i : (num_ctl-1);
+> > > +
+> > > +		cstate->mixers[i].hw_lm = to_dpu_hw_mixer(hw_lm[i]);
+> > > +		cstate->mixers[i].lm_ctl = to_dpu_hw_ctl(hw_ctl[ctl_idx]);
+> > > +		if (i < num_dspp)
+> > > +			cstate->mixers[i].hw_dspp = to_dpu_hw_dspp(hw_dspp[i]);
+> > > +	}
+> > > +
+> > > +	cstate->num_mixers = num_lm;
+> > > +
+> > >   	return 0;
+> > >   }
+> > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> > > index ada9119326ca..36b677cf9c7a 100644
+> > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> > > @@ -1049,14 +1049,11 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
+> > >   	struct dpu_encoder_virt *dpu_enc;
+> > >   	struct msm_drm_private *priv;
+> > >   	struct dpu_kms *dpu_kms;
+> > > -	struct dpu_crtc_state *cstate;
+> > >   	struct dpu_global_state *global_state;
+> > >   	struct dpu_hw_blk *hw_pp[MAX_CHANNELS_PER_ENC];
+> > >   	struct dpu_hw_blk *hw_ctl[MAX_CHANNELS_PER_ENC];
+> > > -	struct dpu_hw_blk *hw_lm[MAX_CHANNELS_PER_ENC];
+> > > -	struct dpu_hw_blk *hw_dspp[MAX_CHANNELS_PER_ENC] = { NULL };
+> > >   	struct dpu_hw_blk *hw_dsc[MAX_CHANNELS_PER_ENC];
+> > > -	int num_lm, num_ctl, num_pp, num_dsc;
+> > > +	int num_pp, num_dsc;
+> > >   	unsigned int dsc_mask = 0;
+> > >   	int i;
+> > > @@ -1083,13 +1080,8 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
+> > >   	num_pp = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
+> > >   		drm_enc->crtc, DPU_HW_BLK_PINGPONG, hw_pp,
+> > >   		ARRAY_SIZE(hw_pp));
+> > > -	num_ctl = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
+> > > -		drm_enc->crtc, DPU_HW_BLK_CTL, hw_ctl, ARRAY_SIZE(hw_ctl));
+> > > -	num_lm = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
+> > > -		drm_enc->crtc, DPU_HW_BLK_LM, hw_lm, ARRAY_SIZE(hw_lm));
+> > >   	dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
+> > > -		drm_enc->crtc, DPU_HW_BLK_DSPP, hw_dspp,
+> > > -		ARRAY_SIZE(hw_dspp));
+> > > +			drm_enc->crtc, DPU_HW_BLK_CTL, hw_ctl, ARRAY_SIZE(hw_ctl));
+> > 
+> > Please don't mix reindentation with the actual changes. It makes it
+> > harder to read.
+> > 
+> > >   	for (i = 0; i < MAX_CHANNELS_PER_ENC; i++)
+> > >   		dpu_enc->hw_pp[i] = i < num_pp ? to_dpu_hw_pingpong(hw_pp[i])
+> > > @@ -1115,18 +1107,6 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
+> > >   		dpu_enc->cur_master->hw_cdm = hw_cdm ? to_dpu_hw_cdm(hw_cdm) : NULL;
+> > >   	}
+> > > -	cstate = to_dpu_crtc_state(crtc_state);
+> > > -
+> > > -	for (i = 0; i < num_lm; i++) {
+> > > -		int ctl_idx = (i < num_ctl) ? i : (num_ctl-1);
+> > > -
+> > > -		cstate->mixers[i].hw_lm = to_dpu_hw_mixer(hw_lm[i]);
+> > > -		cstate->mixers[i].lm_ctl = to_dpu_hw_ctl(hw_ctl[ctl_idx]);
+> > > -		cstate->mixers[i].hw_dspp = to_dpu_hw_dspp(hw_dspp[i]);
+> > > -	}
+> > > -
+> > > -	cstate->num_mixers = num_lm;
+> > > -
+> > >   	for (i = 0; i < dpu_enc->num_phys_encs; i++) {
+> > >   		struct dpu_encoder_phys *phys = dpu_enc->phys_encs[i];
+> > > 
+> > > -- 
+> > > 2.34.1
+> > > 
+> > 
+> > -- 
+> > With best wishes
+> > Dmitry
+> 
 
-Add a check is easy, but there may have more calls to do_mmap() in the
-future. Moving security_file_mmap() back into do_mmap() can avoid
-forgetting, and avoid repeated logic for whether READ_IMPLIES_EXEC should
-add PROT_EXEC for the mapping or not(In current, the !MMU case won't
-imply exec if the file's mmap_capabilities is not exist, but the
-security check logic is different).
-
-It is noteworthy that moving the security check in do_mmap() will let it
-in the mmap_write_lock, which slows down the performance and even have
-deadlocks if someone depends on it(Since security_file_mprotect() is
-already in the lock, this possibility is tiny).
-
-Link: https://project-zero.issues.chromium.org/issues/42452389 [1]
-Link: https://lore.kernel.org/all/20240919080905.4506-2-paul@paul-moore.com/ [2]
-Signed-off-by: Shu Han <ebpqwerty472123@gmail.com>
----
-An alternative method is moving the check of READ_IMPLIES_EXEC out of
-do_mmap() and calling the LSM hooks at the same time, which has better
-performance and compatibility but may introduce some complexity. It has
-been proposed in [3], which cannot be applied at the same time with
-this patch.
-Link: https://lore.kernel.org/all/20240925063034.169-1-ebpqwerty472123@gmail.com/ [3]
----
- include/linux/security.h |  8 ++++----
- ipc/shm.c                |  4 ----
- mm/mmap.c                |  9 +++++----
- mm/nommu.c               |  5 ++++-
- mm/util.c                | 19 ++++++++-----------
- security/security.c      | 41 ++++------------------------------------
- 6 files changed, 25 insertions(+), 61 deletions(-)
-
-diff --git a/include/linux/security.h b/include/linux/security.h
-index c37c32ebbdcd..e061bc9a0331 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -423,8 +423,8 @@ void security_file_free(struct file *file);
- int security_file_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
- int security_file_ioctl_compat(struct file *file, unsigned int cmd,
- 			       unsigned long arg);
--int security_mmap_file(struct file *file, unsigned long prot,
--			unsigned long flags);
-+int security_mmap_file(struct file *file, unsigned long reqprot,
-+		       unsigned long prot, unsigned long flags);
- int security_mmap_addr(unsigned long addr);
- int security_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
- 			   unsigned long prot);
-@@ -1077,8 +1077,8 @@ static inline int security_file_ioctl_compat(struct file *file,
- 	return 0;
- }
- 
--static inline int security_mmap_file(struct file *file, unsigned long prot,
--				     unsigned long flags)
-+static inline int security_mmap_file(struct file *file, unsigned long reqprot,
-+				     unsigned long prot, unsigned long flags)
- {
- 	return 0;
- }
-diff --git a/ipc/shm.c b/ipc/shm.c
-index 3e3071252dac..ce02560b856f 100644
---- a/ipc/shm.c
-+++ b/ipc/shm.c
-@@ -1636,10 +1636,6 @@ long do_shmat(int shmid, char __user *shmaddr, int shmflg,
- 	sfd->vm_ops = NULL;
- 	file->private_data = sfd;
- 
--	err = security_mmap_file(file, prot, flags);
--	if (err)
--		goto out_fput;
--
- 	if (mmap_write_lock_killable(current->mm)) {
- 		err = -EINTR;
- 		goto out_fput;
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 18fddcce03b8..56f9520f85ab 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1260,6 +1260,7 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
- {
- 	struct mm_struct *mm = current->mm;
- 	int pkey = 0;
-+	unsigned long reqprot = prot, err;
- 
- 	*populate = 0;
- 
-@@ -1276,6 +1277,10 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
- 		if (!(file && path_noexec(&file->f_path)))
- 			prot |= PROT_EXEC;
- 
-+	err = security_mmap_file(file, reqprot, prot, flags);
-+	if (err)
-+		return err;
-+
- 	/* force arch specific MAP_FIXED handling in get_unmapped_area */
- 	if (flags & MAP_FIXED_NOREPLACE)
- 		flags |= MAP_FIXED;
-@@ -3198,12 +3203,8 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
- 		flags |= MAP_LOCKED;
- 
- 	file = get_file(vma->vm_file);
--	ret = security_mmap_file(vma->vm_file, prot, flags);
--	if (ret)
--		goto out_fput;
- 	ret = do_mmap(vma->vm_file, start, size,
- 			prot, flags, 0, pgoff, &populate, NULL);
--out_fput:
- 	fput(file);
- out:
- 	mmap_write_unlock(mm);
-diff --git a/mm/nommu.c b/mm/nommu.c
-index 7296e775e04e..e632f3105a5a 100644
---- a/mm/nommu.c
-+++ b/mm/nommu.c
-@@ -681,7 +681,7 @@ static int validate_mmap_request(struct file *file,
- 				 unsigned long pgoff,
- 				 unsigned long *_capabilities)
- {
--	unsigned long capabilities, rlen;
-+	unsigned long capabilities, rlen, reqprot = prot;
- 	int ret;
- 
- 	/* do the simple checks first */
-@@ -818,6 +818,9 @@ static int validate_mmap_request(struct file *file,
- 	}
- 
- 	/* allow the security API to have its say */
-+	ret = security_mmap_file(file, reqprot, prot, flags);
-+	if (ret < 0)
-+		return ret;
- 	ret = security_mmap_addr(addr);
- 	if (ret < 0)
- 		return ret;
-diff --git a/mm/util.c b/mm/util.c
-index bd283e2132e0..47345e927a8f 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -581,17 +581,14 @@ unsigned long vm_mmap_pgoff(struct file *file, unsigned long addr,
- 	unsigned long populate;
- 	LIST_HEAD(uf);
- 
--	ret = security_mmap_file(file, prot, flag);
--	if (!ret) {
--		if (mmap_write_lock_killable(mm))
--			return -EINTR;
--		ret = do_mmap(file, addr, len, prot, flag, 0, pgoff, &populate,
--			      &uf);
--		mmap_write_unlock(mm);
--		userfaultfd_unmap_complete(mm, &uf);
--		if (populate)
--			mm_populate(ret, populate);
--	}
-+	if (mmap_write_lock_killable(mm))
-+		return -EINTR;
-+	ret = do_mmap(file, addr, len, prot, flag, 0, pgoff, &populate,
-+		      &uf);
-+	mmap_write_unlock(mm);
-+	userfaultfd_unmap_complete(mm, &uf);
-+	if (populate)
-+		mm_populate(ret, populate);
- 	return ret;
- }
- 
-diff --git a/security/security.c b/security/security.c
-index 4564a0a1e4ef..25556629f588 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -2927,42 +2927,10 @@ int security_file_ioctl_compat(struct file *file, unsigned int cmd,
- }
- EXPORT_SYMBOL_GPL(security_file_ioctl_compat);
- 
--static inline unsigned long mmap_prot(struct file *file, unsigned long prot)
--{
--	/*
--	 * Does we have PROT_READ and does the application expect
--	 * it to imply PROT_EXEC?  If not, nothing to talk about...
--	 */
--	if ((prot & (PROT_READ | PROT_EXEC)) != PROT_READ)
--		return prot;
--	if (!(current->personality & READ_IMPLIES_EXEC))
--		return prot;
--	/*
--	 * if that's an anonymous mapping, let it.
--	 */
--	if (!file)
--		return prot | PROT_EXEC;
--	/*
--	 * ditto if it's not on noexec mount, except that on !MMU we need
--	 * NOMMU_MAP_EXEC (== VM_MAYEXEC) in this case
--	 */
--	if (!path_noexec(&file->f_path)) {
--#ifndef CONFIG_MMU
--		if (file->f_op->mmap_capabilities) {
--			unsigned caps = file->f_op->mmap_capabilities(file);
--			if (!(caps & NOMMU_MAP_EXEC))
--				return prot;
--		}
--#endif
--		return prot | PROT_EXEC;
--	}
--	/* anything on noexec mount won't get PROT_EXEC */
--	return prot;
--}
--
- /**
-  * security_mmap_file() - Check if mmap'ing a file is allowed
-  * @file: file
-+ * @reqprot: protection requested by user
-  * @prot: protection applied by the kernel
-  * @flags: flags
-  *
-@@ -2971,11 +2939,10 @@ static inline unsigned long mmap_prot(struct file *file, unsigned long prot)
-  *
-  * Return: Returns 0 if permission is granted.
-  */
--int security_mmap_file(struct file *file, unsigned long prot,
--		       unsigned long flags)
-+int security_mmap_file(struct file *file, unsigned long reqprot,
-+		       unsigned long prot, unsigned long flags)
- {
--	return call_int_hook(mmap_file, file, prot, mmap_prot(file, prot),
--			     flags);
-+	return call_int_hook(mmap_file, file, reqprot, prot, flags);
- }
- 
- /**
-
-base-commit: f89722faa31466ff41aed21bdeb9cf34c2312858
 -- 
-2.34.1
-
+With best wishes
+Dmitry
 
