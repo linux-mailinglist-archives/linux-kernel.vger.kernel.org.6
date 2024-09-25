@@ -1,82 +1,176 @@
-Return-Path: <linux-kernel+bounces-338108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36F5A985368
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:08:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEEFC98536A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:09:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C39DCB22944
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:08:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A5202822BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401D5156644;
-	Wed, 25 Sep 2024 07:08:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t8U4dPJw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7E9156237;
+	Wed, 25 Sep 2024 07:09:05 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947C4132103;
-	Wed, 25 Sep 2024 07:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA68132103;
+	Wed, 25 Sep 2024 07:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727248108; cv=none; b=h3sB62bkfkNkar3uapAOvD/LwrdPPg6pl4DNvQ4duqvE9TtwrDbuw1asO+b6oEQ840PYo47DHYHCFNBvOpcBfbX7TaJE+3q/5lWdSCe4j0NxhtMJqPjZPoTr59fA4uonwUpiSByD4sPvEK5U5oAdZ1PQRDzYT8bN9S9YhZsjDG0=
+	t=1727248144; cv=none; b=YPek7LcFzmhhu9rJo1tGpuY6peNZ7VMZthNT1CjBsnwM40iqrS7CKjk8TxNiDMUkn2nB1OSHFA7SSZV2jC7G9wAED+SxAD9SOIJOC5cBpn3FS34v04NfTvxZR4rNWAyBLOhLS+iTX/sPuoMMU8km2a/dkAUkh0pPJQngM7QDbMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727248108; c=relaxed/simple;
-	bh=8C9zq1a496NalKgWmrzYn8bXqhj/Q05OOw+7Zz22H1w=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=KnD+R6Awt9AUmn3yGYkBhMKa/joPMtIRGjY1RYLL20F+SQQ6Fl+vnvXr5kRTB7w/KmTs4T0cAeyVvlPnOWUuvcIXEjWl2LQqY5jMvQg58Tb5fjGWUwy2M1pSTEAmkbDXQf3L3TQKD6pbcNWeHfBXEL7xh9kI/LYiQXjFc6MRRxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t8U4dPJw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 303DEC4CEC3;
-	Wed, 25 Sep 2024 07:08:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727248108;
-	bh=8C9zq1a496NalKgWmrzYn8bXqhj/Q05OOw+7Zz22H1w=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=t8U4dPJwqPVePK5ibIHYaUUfrJdlCelv6H/y687rQt6wyCNuhcAHJc6TjAh5Y9MKC
-	 xKtA1Qsvzjy7ds+LAP4atySalx5H/RfM+riSwuvKjr5uYn/SqzQ5F/3/NVkmBtUdcc
-	 DFyxBwaHD/lOwQDqX4FEGN9+G+ZRA4tw2LXj+Zuq0NAHNRwAOs6ev3SL0JO1mmsxpk
-	 BcTgms1h2rnf6dXE78EutsUqAUlNjmE94enSgB0pDdF2k6m5FnJnX/bP+WZNsgW0vM
-	 YaC00xT3EZCSsGRuCqwPqVowrFpB4ywM836hGWRTVnjpAxdSSwBhWh2sQoYqot7BRO
-	 cD7EJMcIcaxOg==
-From: Kalle Valo <kvalo@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Johannes Berg <johannes@sipsolutions.net>,  "David S . Miller"
- <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
- Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,
-  linux-wireless@vger.kernel.org,  netdev@vger.kernel.org,
-  linux-trace-kernel@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] mac80211: MAC80211_MESSAGE_TRACING should depend on
- TRACING
-References: <85bbe38ce0df13350f45714e2dc288cc70947a19.1727179690.git.geert@linux-m68k.org>
-Date: Wed, 25 Sep 2024 10:08:24 +0300
-In-Reply-To: <85bbe38ce0df13350f45714e2dc288cc70947a19.1727179690.git.geert@linux-m68k.org>
-	(Geert Uytterhoeven's message of "Tue, 24 Sep 2024 14:08:57 +0200")
-Message-ID: <87a5fw9pnb.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1727248144; c=relaxed/simple;
+	bh=1VRMxsV1T0yeplH6qQsbT5SNdj7O1rTqbm5gQDChpfs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AI6Dv+71Nsq1HvamJ8C46x4aTLSCbuFuBmYjASDgKTQyXjdF5KQXr9MIjFn8P4dZsP3znrzii+Cqy6jTRR3vuVBeGHpeQ35xketMvBzbaw3rDGR326w4kuByJnSQ7wCrwTPEY4kX7qcRV83GinyT9a4YbPL+KgB+DnqQKjdPLi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4XD7BP385Pz9sSt;
+	Wed, 25 Sep 2024 09:09:01 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id ofayadwilK7M; Wed, 25 Sep 2024 09:09:01 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4XD7BP28JFz9sSp;
+	Wed, 25 Sep 2024 09:09:01 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 355CF8B76E;
+	Wed, 25 Sep 2024 09:09:01 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id zc9XJ1vndXU7; Wed, 25 Sep 2024 09:09:01 +0200 (CEST)
+Received: from [192.168.232.90] (PO27091.IDSI0.si.c-s.fr [192.168.232.90])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 4F6388B763;
+	Wed, 25 Sep 2024 09:09:00 +0200 (CEST)
+Message-ID: <7c3bfb87-40e8-45ef-86a7-53f02053d9b3@csgroup.eu>
+Date: Wed, 25 Sep 2024 09:09:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 8/8] vdso: Modify getrandom to include the correct
+ namespace.
+To: Vincenzo Frascino <vincenzo.frascino@arm.com>,
+ linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org
+Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ "Jason A . Donenfeld" <Jason@zx2c4.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H . Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+ Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+References: <20240923141943.133551-1-vincenzo.frascino@arm.com>
+ <20240923141943.133551-9-vincenzo.frascino@arm.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20240923141943.133551-9-vincenzo.frascino@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Geert Uytterhoeven <geert@linux-m68k.org> writes:
 
-> When tracing is disabled, there is no point in asking the user about
-> enabling tracing of all mac80211 debug messages.
->
-> Fixes: 3fae0273168026ed ("mac80211: trace debug messages")
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-mac80211 patches go to wireless tree, not net. Also 'wifi:' missing from
-subject but I suspect Johannes can fix that during commit, so no need to
-resend (I hope).
+Le 23/09/2024 à 16:19, Vincenzo Frascino a écrit :
+> The VDSO implementation includes headers from outside of the
+> vdso/ namespace.
+> 
+> Modify getrandom to take advantage of the refactoring done in the
+> previous patches and to include only the vdso/ namespace.
+> 
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Jason A. Donenfeld <Jason@zx2c4.com>
+> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+> ---
+>   include/vdso/datapage.h |  1 +
+>   lib/vdso/getrandom.c    | 22 +++++++++++-----------
+>   2 files changed, 12 insertions(+), 11 deletions(-)
+> 
+> diff --git a/include/vdso/datapage.h b/include/vdso/datapage.h
+> index b7d6c71f20c1..127f0c51bf01 100644
+> --- a/include/vdso/datapage.h
+> +++ b/include/vdso/datapage.h
+> @@ -5,6 +5,7 @@
+>   #ifndef __ASSEMBLY__
+>   
+>   #include <linux/compiler.h>
+> +#include <linux/build_bug.h>
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+What in this datapage.h requires this build_bug header ?
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+>   #include <uapi/linux/time.h>
+>   #include <uapi/linux/types.h>
+>   #include <uapi/asm-generic/errno-base.h>
+> diff --git a/lib/vdso/getrandom.c b/lib/vdso/getrandom.c
+> index 938ca539aaa6..e15d3cf768c9 100644
+> --- a/lib/vdso/getrandom.c
+> +++ b/lib/vdso/getrandom.c
+> @@ -3,19 +3,19 @@
+>    * Copyright (C) 2022-2024 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
+>    */
+>   
+> -#include <linux/array_size.h>
+> -#include <linux/minmax.h>
+>   #include <vdso/datapage.h>
+>   #include <vdso/getrandom.h>
+>   #include <vdso/unaligned.h>
+> -#include <asm/vdso/getrandom.h>
+> -#include <uapi/linux/mman.h>
+> -#include <uapi/linux/random.h>
+> +#include <vdso/mman.h>
+
+This change is not needed, asm/vdso/getrandom.h is in VDSO namespace, 
+and the other two are UAPI headers which must be safe to include in VDSO 
+code as VDSO code in userland code.
+
+> +#include <vdso/page.h>
+>   
+> -#undef PAGE_SIZE
+> -#undef PAGE_MASK
+> -#define PAGE_SIZE (1UL << CONFIG_PAGE_SHIFT)
+> -#define PAGE_MASK (~(PAGE_SIZE - 1))
+> +#ifndef ARRAY_SIZE
+> +#define ARRAY_SIZE(x)	(sizeof(x) / sizeof(*x))
+> +#endif
+> +
+> +#ifndef min_t
+> +#define min_t(type,a,b)	((type)(a) < (type)(b) ? (type)(a) : (type)(b))
+> +#endif
+
+Would be better to force undefine/redefine ARRAY_SIZE and min_t instead 
+of defining them only when they don't exist already.
+
+>   
+>   #define MEMCPY_AND_ZERO_SRC(type, dst, src, len) do {				\
+>   	while (len >= sizeof(type)) {						\
+> @@ -79,8 +79,8 @@ __cvdso_getrandom_data(const struct vdso_rng_data *rng_info, void *buffer, size_
+>   	if (unlikely(opaque_len == ~0UL && !buffer && !len && !flags)) {
+>   		struct vgetrandom_opaque_params *params = opaque_state;
+>   		params->size_of_opaque_state = sizeof(*state);
+> -		params->mmap_prot = PROT_READ | PROT_WRITE;
+> -		params->mmap_flags = MAP_DROPPABLE | MAP_ANONYMOUS;
+> +		params->mmap_prot = VDSO_MMAP_PROT;
+> +		params->mmap_flags = VDSO_MMAP_FLAGS;
+
+At the time being the flags and prot are the same for all architectures, 
+there is no point in introducing VDSO_MMAP_PROT and VDSO_MMAP_FLAGS. 
+Maybe one day that may be needed, but until that day nothing should be 
+changed, unless you already have in mind and describe an architecture 
+that will need that.
+
+Christophe
+
+>   		for (size_t i = 0; i < ARRAY_SIZE(params->reserved); ++i)
+>   			params->reserved[i] = 0;
+>   		return 0;
 
