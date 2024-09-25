@@ -1,115 +1,164 @@
-Return-Path: <linux-kernel+bounces-339356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9D099863BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:38:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 996519863C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:39:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAA2C1C2646A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:38:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F7611F27C11
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:39:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F01DDC5;
-	Wed, 25 Sep 2024 15:38:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3CB17557;
+	Wed, 25 Sep 2024 15:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fclNx2/4"
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Dk//1uWw"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8914F1D5AB6;
-	Wed, 25 Sep 2024 15:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3E9DDC5;
+	Wed, 25 Sep 2024 15:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727278683; cv=none; b=DXvbDD9+7musFMiAjap37/Q7szFj8PhYenbkg7auI/TsdiGAHhMTlwMtZsF/5KdMnGl9Cdbpb7Rch9ARwHxaroIrBllZbyKRoF6N8bmsSOCSXUAa3CWujuOy8VIpCBOv2Pmgml1DX3kUvCHUx/u/WUlptl1cDqGqPALLyVlu7uQ=
+	t=1727278737; cv=none; b=ulWXk8/PKN+RhvJtc2Vir9QqUWnZWmdSk9NGWCD1M09xMWbVyMXK+fKSyvco38UAzF/t1/ssNhw82Yq8BNrv+DwxE0Pg9CqTXkW2d4unDb9uA4k7rGVtHaesdtMTKQYncKgjhQJqZc1vfkgxq4xA5FMG0rdDyuuoz5TWE7LOMdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727278683; c=relaxed/simple;
-	bh=qQaegB/CY+RMNIpGwZktikND96IzDNK9c4iLGeje7O4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rc1BDmQIMcrlZjhxGvlDJMlCq9U42uMeUIQjkpYffFYKOgk00D1lPvJo3DhMo4iWCMpud/Kimtnx380/kVCCmc8si7Js8jOBAkqvy2Mq+uEn2iyOKILIzCsNAgnyfhjGAjkwKdAgSVjCXIP+rxdoaHExDPWurISQpfHLQFNBpdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fclNx2/4; arc=none smtp.client-ip=209.85.221.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-503f943f115so1349445e0c.0;
-        Wed, 25 Sep 2024 08:38:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727278680; x=1727883480; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qQaegB/CY+RMNIpGwZktikND96IzDNK9c4iLGeje7O4=;
-        b=fclNx2/42WHL1L+xRoLUiCgEjs6X8WeqIm/E1IGEZm6HWuRWFBK+orIVfeuimhXrnA
-         zwBMI8KdiUxIGoI54FJqqdPRRi6csbslNRg3f0n3El8lCSNSVPMwc4sOETm9/lirZADF
-         0fBBNatzoDU2oM4qhqDiPRznFdFPaOio7dtxTp/pRr09r7lEB823ofq+MLovwzMRWLqZ
-         LeywZYLvJbyRXvREhW6X/pYRZnW5sBR4MccsK5lWZ1owxIToZywPFj5QffcBUJobrDnB
-         k+uTdYcUnCTA82jgAIoJ040Z72kdB28SsODTvrItDq483YrbWSEn8TsYNv4YWPKia+3Q
-         BCUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727278680; x=1727883480;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qQaegB/CY+RMNIpGwZktikND96IzDNK9c4iLGeje7O4=;
-        b=AY4xEA6X+cn940AWI+tkN8C/sHN4a/pYr1pYGUR48arnrpXZTkjxt9NGfNQGWMIFop
-         DC6GQUB+5tx64L9Caa8SR+9Pf7KyoUmy5QIYSjD+8/twXpB0zw8v2HzKqVXXZ7Aa+rHz
-         k+908tR1joCuvA9CNJywK0uwdFrJ6N8VplfWa8F+yGor3kmLM3fxEmVD0/9PCrtwSrCV
-         dQqNbom3oJ55mNCEAFCCNCg5EL0KpJ0Q/91kPpUvdGhzsXeVD2X/i7uX5ysYpcDMVDt3
-         +g9JzZOa4IokHcmTEwGPCe1KjVlvrL0HV5MqZU2yiYciq4dvhR25kXqUqy4vOfR5kOni
-         jjGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUmGSMlqhldJrrN6A+NWNKk1Ph2rw9xaJ++Hu+yoJtidB8EJp4pdWpx+XnME1zoElSXE7ztOLjJoAXsKd4=@vger.kernel.org, AJvYcCVzZZZtVVyV9dvhPCf0ByARqA33budto42p3sR/kUgMFFO+a1g87grbUUUhDHCDS5wtXou5icq8@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ2b0V8KVuYU5T3PZYbz5mL6dkTBmeo+abEflMmFGpqI8rg5Li
-	PSPosw2S1HEuqnToG78nb9k/ETdgwjONKl5bYYPOclW4hn+D0Zq+9kiosZC4BwHA0hfoi1mZ5vF
-	T9h7E29CGzrXdknw2nFOluAQkHJyz7DygK1Y=
-X-Google-Smtp-Source: AGHT+IEOq44YSVQBZM4ocAEcRPcpmoijL3KJAuuCU/GUmvBejs9ZRARJ4whETyoZnNxIotep54t/sCX3HYbtJXo5hbc=
-X-Received: by 2002:a05:6122:17a8:b0:500:eeee:c8a2 with SMTP id
- 71dfb90a1353d-505c1ddb6f5mr2896462e0c.7.1727278680096; Wed, 25 Sep 2024
- 08:38:00 -0700 (PDT)
+	s=arc-20240116; t=1727278737; c=relaxed/simple;
+	bh=93cxj6Cr+VPnS1DFo8zzQfPXtg13oFKJuewmGZN28fc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=rL97JZ2WMgLGXp9WrWr+KIfKKGPzagau7l4QIUMOwwtOVIkhgwqbNI1Erwq658pBXMjaxe1fms5kpnksUdLD4WUHEMDxkwu/WsOj6/YqYV4RldfSbbpPwGxOIctXB/XKuzRJmqvxL/hxCYDP6Yc81/E55piQ8u0SRaajktzlZc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Dk//1uWw; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727278720; x=1727883520; i=markus.elfring@web.de;
+	bh=/BF/n008MTXnPCnTy2Tzf/W95fPNGj+i5tDXPuhc4/g=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Dk//1uWwJCm+GNNhpNKI12pGiZICAlzBZNRi6Jop3VV16DTGdsYQTnm5OVQkaCCo
+	 Gc2UpLhnpGJZMoQzYgCJGB4u+TyTjQOTqz17ffz2iBHsGawYxCuuqZBR+qdieQsX8
+	 0WFG/qYIERsnDTvNvVi/rc+csfnVViTBddss3komN2kL4MU/M2DH31dpNvhFjborR
+	 erYj1jBA44e1x6JJRN27+ayxnNwEbJBO5JnYKM8PgDkI3GQd9vFhKT4GE6PTvW2zO
+	 HRzgTSRaNDQIg4v+/oxQy6HzcSWegH0tyoE3fiDkv/o16ZR9ViADO/Uu0NR4NcRbW
+	 0f6SFq7py5E4XGtXaA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MTOha-1sUCxY0a3Y-00R1uX; Wed, 25
+ Sep 2024 17:38:40 +0200
+Message-ID: <59fadd5a-6574-4379-98ac-cc4f11b675cc@web.de>
+Date: Wed, 25 Sep 2024 17:38:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240924185634.2358-1-kdipendra88@gmail.com> <20240925111857.GU4029621@kernel.org>
-In-Reply-To: <20240925111857.GU4029621@kernel.org>
-From: Dipendra Khadka <kdipendra88@gmail.com>
-Date: Wed, 25 Sep 2024 21:22:48 +0545
-Message-ID: <CAEKBCKN=J6esdjOF5yh1KtmOVTgmXpKjTfbXAzyRcULKzbMi9w@mail.gmail.com>
-Subject: Re: [PATCH v3 net] net: systemport: Add error pointer checks in
- bcm_sysport_map_queues() and bcm_sysport_unmap_queues()
-To: Simon Horman <horms@kernel.org>
-Cc: florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	f.fainelli@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: linux-usb@vger.kernel.org, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Jeff Johnson <quic_jjohnson@quicinc.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] usb: gadget: eem: Use common error handling code in
+ eem_unwrap()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:MeUPnH0sS8NaAjzkZtCgjeUspcEHrkiTqOp61I/CfLq64WMzRa2
+ 4vuTdbQkQyiTzn09j3nXY6XzuEOvcN6uKto3VpYz2rNged6uXX+R+a9q27Vof4cXLKwb9N+
+ mKWwlPRYTYH+tp3tCno8xABVG2NI9NMcXYjfZRpRA4d6GD7vgQ+jrttyIG0G4yCAXV85GhV
+ juwGmgGqhuURyAfg5mTgw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:WCT5LJdfDHo=;jH7Uz4t1nuoKWXTB/e6FmWstsa3
+ XDsoH1RH8myevKcPIT6aG6V1JNz4hR9p4U3g1rHH+NBrP13mOzz7V+XuvEKDZpxXP8WTIG45Q
+ r/IHhSC0MwglRbCSv3H7LCwwpY9zyfrkRPYSHbXE3/bNh1XUjS66/9So/yisTu4ceS800jwYp
+ CQtIqcsLwfZkZmwBI8WNNWkCGD1G8gHio9Ami6iVpbUzS4otAWQsZijmvvci1Mk8zHpuvMH8R
+ pDuJ/cQb41pm4OddMUd0LbbGF9eHmVDP1EauV8y8XJhbbeccvg3fQyxJhsd9hgdk2VUCJNJhy
+ DeMfcVFZtYUK7Gw56zwFwhK8B8vz+0ZrynKhftjSsWDRz5qsSCWXp+Ezd8Hs8zMWpQY0As5A/
+ J1ZiHPwEhbm9x7kcJPLrC9yG5iR7gqg4pDV6Pq0/GioVT5vx9K7aH9GPROfcqWW0Vfx86dOzr
+ 4EcSqGqMsmIm0unG7Ky1idSLMok4zs++WbPMcMI/K0j2Fh+Tp8WmaFtuo8ODEXLz6FWBkVTVf
+ W6KdGaqa6Zt+j3SJrUSHvne1A3C5CBVn4V7GtP7Um4Q/EymZKUVmKPhLBYzy32psgdqbfXKwC
+ PGTg48GhgglYS5MLdaXHupcDPkmA8qHZ+SrS8Ok4Tl+17WtY0w0sYQS9KkeTXqsFeNq0MeW8o
+ bsHP8NX8VRot4x3lmBXholsyW2v78lpQ9vU7CLMv9+MgZdkO87o/qgDXfTlQEtgCP4E3f/Dze
+ 7duhSwr3+4/F2EoDhQw0qgYsRg9BwYYMfk9HY1ox9Is11mcl0HsiTPtbdCv+Q6LjxdMUsXUL1
+ KUI7ibW1pV5YOzwQy53bjkIA==
 
-Hi Simon,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 25 Sep 2024 17:26:40 +0200
 
-On Wed, 25 Sept 2024 at 17:04, Simon Horman <horms@kernel.org> wrote:
->
-> On Tue, Sep 24, 2024 at 06:56:33PM +0000, Dipendra Khadka wrote:
-> > Add error pointer checks in bcm_sysport_map_queues() and
-> > bcm_sysport_unmap_queues() after calling dsa_port_from_netdev().
-> >
-> > Fixes: d156576362c0 ("net: systemport: Establish lower/upper queue mapping")
-> > Fixes: da106a140f9c ("net: systemport: Unmap queues upon DSA unregister event")
-> > Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
->
-> I'm sorry to be picky, but I think the fixes tag should be (only):
->
-> Fixes: 1593cd40d785 ("net: systemport: use standard netdevice notifier to detect DSA presence")
->
+Add jump targets so that a bit of exception handling can be better reused
+at the end of this function implementation.
 
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/usb/gadget/function/f_eem.c | 30 ++++++++++++++---------------
+ 1 file changed, 14 insertions(+), 16 deletions(-)
 
-I have sent the v4 patch. I was checking git log -S 'function name
-like bcm_sysport_map_queues'. But when I checked with the
-"dsa_port_from_netdev", I got the same result as yours.Thank you once
-again.
+diff --git a/drivers/usb/gadget/function/f_eem.c b/drivers/usb/gadget/func=
+tion/f_eem.c
+index 6de81ea17274..b1be23e947dc 100644
+=2D-- a/drivers/usb/gadget/function/f_eem.c
++++ b/drivers/usb/gadget/function/f_eem.c
+@@ -450,24 +450,17 @@ static int eem_unwrap(struct gether *port,
 
-> Otherwise, this looks good to me.
->
-> ...
+ 				ep =3D port->in_ep;
+ 				req =3D usb_ep_alloc_request(ep, GFP_ATOMIC);
+-				if (!req) {
+-					dev_kfree_skb_any(skb2);
+-					goto next;
+-				}
++				if (!req)
++					goto free_skb;
 
-Best regards,
-Dipendra Khadka
+ 				req->buf =3D kmalloc(skb2->len, GFP_KERNEL);
+-				if (!req->buf) {
+-					usb_ep_free_request(ep, req);
+-					dev_kfree_skb_any(skb2);
+-					goto next;
+-				}
++				if (!req->buf)
++					goto free_request;
+
+ 				ctx =3D kmalloc(sizeof(*ctx), GFP_KERNEL);
+ 				if (!ctx) {
+ 					kfree(req->buf);
+-					usb_ep_free_request(ep, req);
+-					dev_kfree_skb_any(skb2);
+-					goto next;
++					goto free_request;
+ 				}
+ 				ctx->skb =3D skb2;
+ 				ctx->ep =3D ep;
+@@ -536,10 +529,9 @@ static int eem_unwrap(struct gether *port,
+ 						NET_IP_ALIGN,
+ 						0,
+ 						GFP_ATOMIC);
+-			if (unlikely(!skb3)) {
+-				dev_kfree_skb_any(skb2);
+-				goto next;
+-			}
++			if (unlikely(!skb3))
++				goto free_skb;
++
+ 			dev_kfree_skb_any(skb2);
+ 			skb_queue_tail(list, skb3);
+ 		}
+@@ -550,6 +542,12 @@ static int eem_unwrap(struct gether *port,
+ error:
+ 	dev_kfree_skb_any(skb);
+ 	return status;
++
++free_request:
++	usb_ep_free_request(ep, req);
++free_skb:
++	dev_kfree_skb_any(skb2);
++	goto next;
+ }
+
+ static inline struct f_eem_opts *to_f_eem_opts(struct config_item *item)
+=2D-
+2.46.1
+
 
