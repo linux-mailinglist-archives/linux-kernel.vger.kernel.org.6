@@ -1,154 +1,138 @@
-Return-Path: <linux-kernel+bounces-338010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C5E1985260
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:26:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11DE8985264
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:29:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92D011C230D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 05:26:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A368AB23136
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 05:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1362214F9E9;
-	Wed, 25 Sep 2024 05:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UISts3pl"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDD414A62F
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 05:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD52153573;
+	Wed, 25 Sep 2024 05:28:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9ECA14A62F
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 05:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727241969; cv=none; b=n3ow41iKErWxDixHL9YhUw/JXygZz/hMidYgajhHo44SSzWHidCyUVwkPMH5Vyqse7fg4Tcs0NXhVCAdC5eLoL26ZOcEvMeNksab1Lk6vulC/a5PwuHc6D39CZ4OqnGRIO/tmhqD7SfkUlBJXbCR0qhmT/q6w++Id5NIidu0oXU=
+	t=1727242139; cv=none; b=PFVcRs5hScOt4f+fMA7dBIW3REO6xKTmSCjLX47Phy2BhHNCbVdFSf8F2XBWCSf0J2thrHqEUJe85la7ixPtptqGn/KDY9lKR9gxzuVP3iCBfQZHw64kFchTeZdc4gi7mlqB6YRQmrjizKgZ6NT50k/tsrxO7FI6pKBvQpaCJ7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727241969; c=relaxed/simple;
-	bh=aqpZHQjv+jbOIBhgEc/YCfWTw+VUkwC2p04dhOBAkv0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Ak5NyLnfWWce04bJkFLzjLrAThNhjVeDQPyCjhNGC5VcTsf7w+LlnDpcP6RuLKvDdIe6fuLCGW3uq2+FysTKNQltnh1FztKv4bqNsMMcnTOFhd8KlxTgIQKzEw3eLGUOI4TFtJS2JRXVqiC3BQzPHyRR/I6Ye1Quv2aHWssmnUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UISts3pl; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48P1Wg6H018838;
-	Wed, 25 Sep 2024 05:25:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:reply-to:references:content-type
-	:in-reply-to:mime-version; s=pp1; bh=tB2ZBQbiSdGrrrGZ+85E9Fm5yI1
-	BjXBYFiE/q7sXLZ8=; b=UISts3ploAKMFIDNjscCsaPSaeMudYOA5VGMrNV0+lC
-	Yo9/81XPx5qFkcZRrFnwdf1J8TsQ1PGcuJV+2dZwyPn7WZKL9j8GINurCGCM9fyF
-	lewwSzewyhstTEffH6ffR7GIaepLDFnje6HVEunYhiotmEpenTODtQ6tBw3eMXen
-	0IpWEDXm3IlUR2FgHyJYWndz/ftBjN09wNVSF1JwFLeLVKnxT5lqzNoTsev1sLDH
-	N2AAH5N13dxV9yngnp5GT6WuEVlE5eNgfqeVDp62sNTkobJblnTcFY3TRVm42U7G
-	wcM/5ka8RXTpeos6AKJR0Yb4I7CsoMmySBZkngve88w==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41skjrnyky-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 05:25:55 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48P5PtNn013656;
-	Wed, 25 Sep 2024 05:25:55 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41skjrnykw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 05:25:55 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48P1oEce012507;
-	Wed, 25 Sep 2024 05:25:54 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41t9fpyp59-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 05:25:54 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48P5Pqap50266412
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 25 Sep 2024 05:25:52 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8CCAC20040;
-	Wed, 25 Sep 2024 05:25:52 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BA47B20043;
-	Wed, 25 Sep 2024 05:25:50 +0000 (GMT)
-Received: from linux.ibm.com (unknown [9.126.150.29])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with SMTP;
-	Wed, 25 Sep 2024 05:25:50 +0000 (GMT)
-Date: Wed, 25 Sep 2024 10:55:49 +0530
-From: Srikar Dronamraju <srikar@linux.ibm.com>
-To: Nicholas Piggin <npiggin@gmail.com>
-Cc: paulmck@kernel.org, Tejun Heo <tj@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] Fix scalability problem in workqueue watchdog touch
- caused by stop_machine
-Message-ID: <20240925052549.GI1578937@linux.ibm.com>
-Reply-To: Srikar Dronamraju <srikar@linux.ibm.com>
-References: <20240625114249.289014-1-npiggin@gmail.com>
- <9d1d4a41-fcdb-448c-9a0f-bc9909193fa9@paulmck-laptop>
- <D29JH7VL4HH7.3FSD747K8GPF@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <D29JH7VL4HH7.3FSD747K8GPF@gmail.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: aPOqlh4XltmxDt_6UIjmNbXJ9E0Boiow
-X-Proofpoint-ORIG-GUID: YyozFeZjLlBJCcdVPGosTvCQewj8CX0m
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1727242139; c=relaxed/simple;
+	bh=fshCpm14lebwQtjLVhyMWAmzBLOuetVcPx7fTFdXYwY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E2K5qAzwc1y3jMIqIll5NaxFDXNbiAwBCUQGN1AkPVsewv8vjca+WCjGtJifVRmXhK9/g2R8pip3Hqdxq2S7BRU6QCKPeiDsjs8n0GKYqdDaMiDhTbOmgXZwhJ1/8B4kDyaSRLCkF5gvRRE5ldgQouhsajHo5/9MO8PhoXxK/+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0ABA1DA7;
+	Tue, 24 Sep 2024 22:29:25 -0700 (PDT)
+Received: from [10.162.43.26] (e116581.arm.com [10.162.43.26])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F3B753F528;
+	Tue, 24 Sep 2024 22:28:46 -0700 (PDT)
+Message-ID: <59b38cc6-9491-40bf-a254-9c6c5f07c072@arm.com>
+Date: Wed, 25 Sep 2024 10:58:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-24_02,2024-09-24_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
- spamscore=0 adultscore=0 lowpriorityscore=0 impostorscore=0 phishscore=0
- clxscore=1011 malwarescore=0 mlxlogscore=966 bulkscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409250033
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/2] mm: Abstract THP allocation
+To: Kefeng Wang <wangkefeng.wang@huawei.com>, akpm@linux-foundation.org,
+ david@redhat.com, willy@infradead.org, kirill.shutemov@linux.intel.com
+Cc: ryan.roberts@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
+ cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
+ dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
+ jack@suse.cz, mark.rutland@arm.com, hughd@google.com,
+ aneesh.kumar@kernel.org, yang@os.amperecomputing.com, peterx@redhat.com,
+ ioworker0@gmail.com, jglisse@google.com, ziy@nvidia.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20240924101654.1777697-1-dev.jain@arm.com>
+ <20240924101654.1777697-2-dev.jain@arm.com>
+ <61b16640-49e0-4f84-8587-ae9b90a78887@huawei.com>
+ <91892582-1063-4757-9cc6-664d57b9d828@arm.com>
+ <d9aff21a-7f37-470d-b798-abd1e354f2da@huawei.com>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <d9aff21a-7f37-470d-b798-abd1e354f2da@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-* Nicholas Piggin <npiggin@gmail.com> [2024-06-26 10:57:36]:
 
-> On Wed Jun 26, 2024 at 12:53 AM AEST, Paul E. McKenney wrote:
-> > On Tue, Jun 25, 2024 at 09:42:43PM +1000, Nicholas Piggin wrote:
-> > > Here are a few patches to fix a lockup caused by very slow progress due
-> > > to a scalability problem in workqueue watchdog touch being hammered by
-> > > thousands of CPUs in multi_cpu_stop. Patch 2 is the fix.
-> > > 
-> > > I did notice when making a microbenchmark reproducer that the RCU call
-> > > was actually also causing slowdowns. Not nearly so bad as the workqueue
-> > > touch, but workqueue queueing of dummy jobs slowed down by a factor of
-> > > several times when lots of other CPUs were making
-> > > rcu_momentary_dyntick_idle() calls. So I did the stop_machine patches to
-> > > reduce that. So those patches 3,4 are independent of the first two and
-> > > can go in any order.
-> >
-> > For the series:
-> >
-> > Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
-> 
-> Oh, it did get a comment :) Thanks Paul. Not sure who owns the
-> multi_cpu_stop loop, Tejun and Peter I guess but that was 10+
-> years ago :P
-> 
-> I might ask Andrew if he would take patches 3-4, if there are
-> no objections.
-> 
+On 9/24/24 18:24, Kefeng Wang wrote:
+>
+>
+> On 2024/9/24 20:17, Dev Jain wrote:
+>>
+>> On 9/24/24 16:50, Kefeng Wang wrote:
+>>>
+>>>
+>>> On 2024/9/24 18:16, Dev Jain wrote:
+>>>> In preparation for the second patch, abstract away the THP allocation
+>>>> logic present in the create_huge_pmd() path, which corresponds to the
+>>>> faulting case when no page is present.
+>>>>
+>>>> There should be no functional change as a result of applying this 
+>>>> patch,
+>>>> except that, as David notes at [1], a PMD-aligned address should
+>>>> be passed to update_mmu_cache_pmd().
+>>>>
+>>>> [1]: https://lore.kernel.org/all/ddd3fcd2-48b3-4170- 
+>>>> bcaa-2fe66e093f43@redhat.com/
+>>>>
+>>>> Acked-by: David Hildenbrand <david@redhat.com>
+>>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>>>> ---
+>>>>   mm/huge_memory.c | 98 
+>>>> ++++++++++++++++++++++++++++--------------------
+>>>>   1 file changed, 57 insertions(+), 41 deletions(-)
+>>>>
+>>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>>>> index 4e34b7f89daf..bdbf67c18f6c 100644
+>>>> --- a/mm/huge_memory.c
+>>>> +++ b/mm/huge_memory.c
+>>>> @@ -1148,47 +1148,81 @@ unsigned long thp_get_unmapped_area(struct 
+>>>> file *filp, unsigned long addr,
+>>>>   }
+>>>>   EXPORT_SYMBOL_GPL(thp_get_unmapped_area);
+>>>>   -static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault 
+>>>> *vmf,
+>>>> -            struct page *page, gfp_t gfp)
+>>>> +static struct folio *vma_alloc_anon_folio_pmd(struct 
+>>>> vm_area_struct *vma,
+>>>> +                          unsigned long addr)
+>>>>   {
+>>>> -    struct vm_area_struct *vma = vmf->vma;
+>>>> -    struct folio *folio = page_folio(page);
+>>>> -    pgtable_t pgtable;
+>>>> -    unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
+>>>> -    vm_fault_t ret = 0;
+>>>> +    unsigned long haddr = addr & HPAGE_PMD_MASK;
+>>>> +    gfp_t gfp = vma_thp_gfp_mask(vma);
+>>>> +    const int order = HPAGE_PMD_ORDER;
+>>>> +    struct folio *folio = vma_alloc_folio(gfp, order, vma, haddr, 
+>>>> true);
+>>>
+>>> There is a warning without NUMA,
+>>>
+>>> ../mm/huge_memory.c: In function ‘vma_alloc_anon_folio_pmd’:
+>>> ../mm/huge_memory.c:1154:16: warning: unused variable ‘haddr’ [- 
+>>> Wunused-variable]
+>>>  1154 |  unsigned long haddr = addr & HPAGE_PMD_MASK;
+>>>       |                ^~~~~
+>>>
+>>
+>> But why is this happening?
+>
+> If no CONFIG_NUMA, vma_alloc_folio(...) = folio_alloc_noprof(gfp, order),
+> it won't use haddr.
 
-patches 3 and 4 are still not part of any tree.
-Can we please include them or are there any reservations on them.
-
-The patches still seem to apply on top of Linus tree except one line where
-rcu_momentary_dyntick_idle() has been renamed to rcu_momentary_eqs()
-
-Commit 32a9f26e5e26 ("rcu: Rename rcu_momentary_dyntick_idle() into
-rcu_momentary_eqs()") 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=32a9f26e5e26
-
--- 
-Thanks and Regards
-Srikar Dronamraju
+Ah got it, thanks, I missed the ifdeffery in include/linux/gfp.h.
+>
+>
 
