@@ -1,108 +1,101 @@
-Return-Path: <linux-kernel+bounces-337971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA7B09851C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 06:04:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 251739851C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 06:05:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4227BB21E87
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 04:04:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF4C9281574
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 04:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E813B13AA53;
-	Wed, 25 Sep 2024 04:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B41714F9FD;
+	Wed, 25 Sep 2024 04:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nA88GzKs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p1+cvVm2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EBC38DD2
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 04:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4E614B950
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 04:04:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727237063; cv=none; b=Iw/rn+8zn9XSOCVWQTGZb/hIAl6baOnKnyQRJNZqL7BC+5FQOcsWw1eAWAh+bZUXUalaO9qtDKYkA/kCZtN+LS0gxFd3nKMqFCIZeUxljU1m56J0kla87fLFiO8vDutOEQZK9oPRGyl1T6jBfWeQgOiRweUzegK93eGkCStAWiQ=
+	t=1727237088; cv=none; b=fAX9C0fYrtjWksRNIBhahA3oaEu6bEtaR2yG01pwxX4jHzxcYu5mI+FFvGKlOhyNgFQPTp4UcGwnY9EdZ108VwJhyxEwg9Y1v3/8Qvqe1+ThwIQIKMgK73lnhqnRh6SQS9UdQABU3ucyTFW57CEEpnTKNSySLVGcmIT0RhRMiig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727237063; c=relaxed/simple;
-	bh=p6aXdQCsCQDb+qv4Oe0hGSlkljpbIyMoGX6UwtO7y4I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PGQYv1X05FcbF1n1Zku3qoG2TL4rOSLbRMNpVbgSq4t1dwilkFidy9/715/pQuHp+JZ0n26jD9cOXJU3KbDC37gC/f5/52H2H10ldNkJKHCNnqSHDPuH/w141F1er0m5T4rjUoAEwxo6ZS6KYuU1C3dQ718wODK5GI9SbiDlQVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nA88GzKs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13319C4AF09
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 04:04:23 +0000 (UTC)
+	s=arc-20240116; t=1727237088; c=relaxed/simple;
+	bh=8SPGtmIk/Wiv1BG4hlHht3DlqkOVUBdSPbbEYZCXUmo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=cqU7mk1YXtnpgSBsHOUUyvLj4nBHt53sFcvV8NfZvgXUshpTUnTYx9SgU1ZzLKgd+snZuNx60yjDNfUPWB0trF6fB52K/QztYAEBpkanUOJhQvCOV5IizXEYq3D/hU6L35O2KgDme8asJogV4rKnX1YDPBEj02l5UbuFvzdO8gE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p1+cvVm2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09544C4AF0B;
+	Wed, 25 Sep 2024 04:04:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727237063;
-	bh=p6aXdQCsCQDb+qv4Oe0hGSlkljpbIyMoGX6UwtO7y4I=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=nA88GzKs5XmLWrndPrDBLIlm2YKSyzxjfTMeUcwyCTPPvNIylFyR9KPMoFnsRigln
-	 N5p5eiokmbwRNFB8e1m7FQtXltuKRfr6os8y9ARhe/aWfV6h/haikvrl4Vnew+Ouoa
-	 LYkNp9zgCqUA1VhD86WOVRzQRxKTrhSFhCkV6HIezFfP8yxytc51u8eyJWw4/FVgOQ
-	 FAcE5YV6H8NBTr+d4cd7x4TMq1Ptr874yhL8hO36EixErjyAzRw+6C+IlpFukgHbx5
-	 t1fHJ134zbPhaxJNFyuegXX2IdAnkA0bWqp+3dBgXajEbIxKGZEb4XX+N2N9pDrXJ1
-	 juJlN63g8Fiqg==
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3a0cb892c6aso188145ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 21:04:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUiWdqserAtVq0QjYYFDMyh3/Ddp12tvKB8nMr/T8uaLhkEM2gbq+EoOz+QTOzKN0Ez/wvAZu1rRb/StLA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzrm1o5PKJZ6mAgXc6a9oMdpohgdjlOK88WZGB9BQ7DcC/ox4ci
-	6X/8oXOf5XgzEXYBfMK3JcdlwN/lBPXn2dD/B37AWAog7K1SA2yoGOGCchJc+aqVjh1fvuHdLwJ
-	X2zpz3yhasljbWnylDWQqNRPFPiFPPEjKxYtM
-X-Google-Smtp-Source: AGHT+IELrtiyu4mKIo4xDH5TOC5IAATMzMKE7/IoB9tmPJ03N/88XGcxL4jb93lXI1QLJzXHw4dM7zmW4R0m7d9um7c=
-X-Received: by 2002:a05:6e02:1fec:b0:376:3026:9dfc with SMTP id
- e9e14a558f8ab-3a2703e74f4mr1275375ab.24.1727237062258; Tue, 24 Sep 2024
- 21:04:22 -0700 (PDT)
+	s=k20201202; t=1727237088;
+	bh=8SPGtmIk/Wiv1BG4hlHht3DlqkOVUBdSPbbEYZCXUmo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=p1+cvVm2GHorVtqr04U8x2CYuw225+q17Jf7hT5fnlwDXrS+VDldRYEIVirOelyKS
+	 qbIYl2x7zogGlAmw+C7hHiw7rNiG3wB7Tknz3nYK3uwggh7J1E05/Ua2iPCZ/OCJBJ
+	 LNbqRMXNL3F+5KYiwLA607Dp3PfMxwA2akgmdr5m4zQMF6FOkp03KKM39Galv95qEt
+	 hEhMUTlJ+33Rm4wu+03RcdkJnDsrzTnDD+di/wX+a3u+B8pM7azLTu1iNiMFR9CB+K
+	 vtSL79ioEU/AUIpp51lHh7hQuuwiKdM9RxA+2sErxHSlaDitx2EGgbn/qoKoP6b1Gz
+	 z9x1NEsU8kjgA==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1stJGg-00000008281-0sVD;
+	Wed, 25 Sep 2024 06:04:46 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Igor Mammedov <imammedo@redhat.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Shiju Jose <shiju.jose@huawei.com>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Ani Sinha <anisinha@redhat.com>,
+	Dongjiu Geng <gengdongjiu1@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	qemu-arm@nongnu.org,
+	qemu-devel@nongnu.org
+Subject: [PATCH 06/15] acpi/ghes: Remove a duplicated out of bounds check
+Date: Wed, 25 Sep 2024 06:04:11 +0200
+Message-ID: <271a2d24854e1d63c0913e5d68ac565dc0b8dd42.1727236561.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.46.1
+In-Reply-To: <cover.1727236561.git.mchehab+huawei@kernel.org>
+References: <cover.1727236561.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240923164843.1117010-1-andrej.skvortzov@gmail.com>
- <20240924014241.GH38742@google.com> <d22cff1a-701d-4078-867d-d82caa943bab@linux.vnet.ibm.com>
- <CAF8kJuPEg1yKNmVvPbEYGME8HRoTXdHTANm+OKOZwX9B6uEtmw@mail.gmail.com>
- <CAF8kJuOs-3WZPQo0Ktyp=7DytWrL9+UrTNUGz+9n9s6urR-rtA@mail.gmail.com> <20240925003718.GA11458@google.com>
-In-Reply-To: <20240925003718.GA11458@google.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Tue, 24 Sep 2024 21:04:10 -0700
-X-Gmail-Original-Message-ID: <CAF8kJuNDzk21jZR1+TkGdMOrXdQcfa+=bxLF6FhyuXzRwT4Y9Q@mail.gmail.com>
-Message-ID: <CAF8kJuNDzk21jZR1+TkGdMOrXdQcfa+=bxLF6FhyuXzRwT4Y9Q@mail.gmail.com>
-Subject: Re: [PATCH v3] zram: don't free statically defined names
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Andrey Skvortsov <andrej.skvortzov@gmail.com>, Minchan Kim <minchan@kernel.org>, 
-	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
-	stable@vger.kernel.org, Sachin Sant <sachinp@linux.ibm.com>, 
-	linux-mm <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-On Tue, Sep 24, 2024 at 5:37=E2=80=AFPM Sergey Senozhatsky
-<senozhatsky@chromium.org> wrote:
->
-> On (24/09/24 11:29), Chris Li wrote:
-> > On Tue, Sep 24, 2024 at 8:56=E2=80=AFAM Chris Li <chrisl@kernel.org> wr=
-ote:
-> [..]
-> > Given the merge window is closing. I suggest just reverting this
-> > change. As it is the fix also causing regression in the swap stress
-> > test for me. It is possible that is my test setup issue, but reverting
-> > sounds the safe bet.
->
-> The patch in question is just a kfree() call that is only executed
-> during zram reset and that fixes tiny memory leaks when zram is
-> configured with alternative (re-compression) streams.  I cannot
-> imagine how that can have any impact on runtime, that makes no
-> sense to me, I'm not sure that revert is justified here.
->
-After some discussion with Sergey, we have more progress on
-understanding the swap stress test regression.
-One of the triggering conditions is I don't have zram lz4 config
-enabled, (the config option name has changed) and the test script
-tries to set lz4 on zram and fails. It will fall back to the lzo.
-Anyway, if I have zram lz4 configured, my stress test can pass with
-the fix. Still I don't understand why disabling lz4 config can trigger
-it. Need to dig more.
+acpi_ghes_record_errors() has an assert() at the beginning
+to ensure that source_id will be lower than
+ACPI_GHES_ERROR_SOURCE_COUNT. Remove a duplicated check.
 
-Agree that we don't need to revert this.
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Reviewed-by: Igor Mammedov <imammedo@redhat.com>
+---
+ hw/acpi/ghes.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Chris
+diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
+index 7460cd1a8d56..b932b6fe2c2e 100644
+--- a/hw/acpi/ghes.c
++++ b/hw/acpi/ghes.c
+@@ -404,9 +404,7 @@ int acpi_ghes_record_errors(uint8_t source_id, uint64_t physical_address)
+         return -1;
+     }
+ 
+-    if (source_id < ACPI_GHES_ERROR_SOURCE_COUNT) {
+-        start_addr += source_id * sizeof(uint64_t);
+-    }
++    start_addr += source_id * sizeof(uint64_t);
+ 
+     cpu_physical_memory_read(start_addr, &error_block_addr,
+                                 sizeof(error_block_addr));
+-- 
+2.46.1
+
 
