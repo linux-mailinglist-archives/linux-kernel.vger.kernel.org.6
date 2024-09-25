@@ -1,62 +1,65 @@
-Return-Path: <linux-kernel+bounces-338973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FEF8985FED
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:09:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DFD3E985FF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:10:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1653B2D1C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:47:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1A26B2A14C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:00:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06762194BF;
-	Wed, 25 Sep 2024 12:13:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44D222664D;
+	Wed, 25 Sep 2024 12:16:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ugK2Rszc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JEvhVrjy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1602194A8;
-	Wed, 25 Sep 2024 12:13:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20618226640;
+	Wed, 25 Sep 2024 12:16:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727266408; cv=none; b=P+AGpUidHSyDiSVCHJTO1QNfakA3eAYhn1XL5YqMyb04s9+aUCKFAdcAo1Gt/hB7Iyoq7Dutim+1UkAFcgurg4IEs//i7t8sxyD92/f18sAca6hT1UhwwQyGPp80rDO/MybRQJLkDHUPW7ilnu8EZtH5hbUv7j2ud/4PY+49B5U=
+	t=1727266589; cv=none; b=JEx5DpfNfdcTyxUo8TlhOEN46YK2ugaO8Uv1+H5xLj6KyuUxq5I9pdXTDQpyIAE4mPXFGklq1ewbfEbdp5cIPVyQ7GRUFHQPOQbAqrauUaxQPGKPCJpzdciiCLBC0Jp82MTnCuHcwvL5h1V3U0DLKSpBeQbHv7GIXyEbib8DO2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727266408; c=relaxed/simple;
-	bh=LrCOcNgGPitG5crkhX9bq4DBpSXYwgiiKFJA3JrJJCI=;
+	s=arc-20240116; t=1727266589; c=relaxed/simple;
+	bh=BxcwbgJ/CnH0K4cDKwkcguF41kZNgM81f4D/TFs+Ny4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VxqjYMKc2xO76/zEdAVba4uWqj6U3vU3vNVkMWBuuKfxSm0KaAzCy1e2OA5o1YWLvjnvW7xreqwUca+UQpZ25Q1O0zgY25ojyPg0apDseBGqxXv7QLNfxNji3M02OMxgJzQNKbk+2UUj/5o86AiK1SjUFioIg9G5P1yLv4aiToM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=fail (0-bit key) header.d=kernel.org header.i=@kernel.org header.b=ugK2Rszc reason="key not found in DNS"; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F591C4CEC3;
-	Wed, 25 Sep 2024 12:13:26 +0000 (UTC)
+	 MIME-Version; b=sYUgpXxgJL99SShT2nUMFmCrZf8sRAnmPCdsXvOPYTxHa8O1fqbc9ydl8zVJJPUx1yNSMuPR6rY234klKSDY8jaJOklzsadQex4nQxtHaYuIGA5qvjSWqj0Q//ccunMzb3Wtk31WQMAdcpzno5yOYiPPQ5VPaOuhjyoC4GMfTSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JEvhVrjy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19E6FC4CEC3;
+	Wed, 25 Sep 2024 12:16:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727266408;
-	bh=LrCOcNgGPitG5crkhX9bq4DBpSXYwgiiKFJA3JrJJCI=;
+	s=k20201202; t=1727266589;
+	bh=BxcwbgJ/CnH0K4cDKwkcguF41kZNgM81f4D/TFs+Ny4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ugK2RszcsEfHwDOFcf/qV8Z7Od8qZTgf31yNsjjVyvPt5QsZT2XZ5w94YfJQByuu7
-	 ofLJXXLPUJXrOxfagE42W7i9w+3Hs5UiLsoyd+GV4Eo3OCBDFx2rESRwUX02b8Cxes
-	 p6blDDD8YrOYcH47tciN7squloF1DEuUYEGqOOHsjJ444ABibf24fE2++/KiCYqUjM
-	 XRqWTvEeuYTCkky3Yn+aXfjmD/mvH/gFnMXQxe7ghiydVWdUkYFHjqupLKQcFF8m23
-	 4Yd4z5gj+Lc+KM3JCiJBXx06UC74vqZHcndiGjGIZgx7icK3n/hU0U9eSgeBWVUOdV
-	 FuZs0vcrcQCfw==
+	b=JEvhVrjyUgbZCsuh4VdZwUUKjICcXk+psJ2slWjr2b8+Akgeq/M9zGtZv7tSM/Unk
+	 xfG5yNB/e5BK2I4niFz2ESv9gPApkh8nDYG+0z3qRL/RDnrL4g1AA/V34D0YKHxREy
+	 1fOdbDRjLXivScqtbgM02UJKD4sG4EO3zs0W6wwuDLDgv3aFBqyCL5bA2Po5pjppZs
+	 x2rsRg+9Hv9NQ0amLU1l8JBl8zosQ3cXNYOcRsYAScdkCTIMefwLtJQXVYoR4J2omt
+	 ladOl0e9VBH0oTO0xe3sEpxRHLp9b8eUOr5uXF0dRObvt8+51FO4Yj0hxnLcidPSZF
+	 PmlovhndbhCxA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: James Clark <james.clark@linaro.org>,
-	Al Grant <al.grant@arm.com>,
-	Will Deacon <will@kernel.org>,
+Cc: Yannick Fertre <yannick.fertre@foss.st.com>,
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
 	Sasha Levin <sashal@kernel.org>,
-	mark.rutland@arm.com,
-	peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 049/139] drivers/perf: arm_spe: Use perf_allow_kernel() for permissions
-Date: Wed, 25 Sep 2024 08:07:49 -0400
-Message-ID: <20240925121137.1307574-49-sashal@kernel.org>
+	philippe.cornu@foss.st.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com,
+	dri-devel@lists.freedesktop.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 6.6 106/139] drm/stm: ltdc: reset plane transparency after plane disable
+Date: Wed, 25 Sep 2024 08:08:46 -0400
+Message-ID: <20240925121137.1307574-106-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240925121137.1307574-1-sashal@kernel.org>
 References: <20240925121137.1307574-1-sashal@kernel.org>
@@ -71,113 +74,36 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.52
 Content-Transfer-Encoding: 8bit
 
-From: James Clark <james.clark@linaro.org>
+From: Yannick Fertre <yannick.fertre@foss.st.com>
 
-[ Upstream commit 5e9629d0ae977d6f6916d7e519724804e95f0b07 ]
+[ Upstream commit 02fa62d41c8abff945bae5bfc3ddcf4721496aca ]
 
-Use perf_allow_kernel() for 'pa_enable' (physical addresses),
-'pct_enable' (physical timestamps) and context IDs. This means that
-perf_event_paranoid is now taken into account and LSM hooks can be used,
-which is more consistent with other perf_event_open calls. For example
-PERF_SAMPLE_PHYS_ADDR uses perf_allow_kernel() rather than just
-perfmon_capable().
+The plane's opacity should be reseted while the plane
+is disabled. It prevents from seeing a possible global
+or layer background color set earlier.
 
-This also indirectly fixes the following error message which is
-misleading because perf_event_paranoid is not taken into account by
-perfmon_capable():
-
-  $ perf record -e arm_spe/pa_enable/
-
-  Error:
-  Access to performance monitoring and observability operations is
-  limited. Consider adjusting /proc/sys/kernel/perf_event_paranoid
-  setting ...
-
-Suggested-by: Al Grant <al.grant@arm.com>
-Signed-off-by: James Clark <james.clark@linaro.org>
-Link: https://lore.kernel.org/r/20240827145113.1224604-1-james.clark@linaro.org
-Link: https://lore.kernel.org/all/20240807120039.GD37996@noisy.programming.kicks-ass.net/
-Signed-off-by: Will Deacon <will@kernel.org>
+Signed-off-by: Yannick Fertre <yannick.fertre@foss.st.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20240712131344.98113-1-yannick.fertre@foss.st.com
+Signed-off-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/perf/arm_spe_pmu.c | 9 ++++-----
- include/linux/perf_event.h | 8 +-------
- kernel/events/core.c       | 9 +++++++++
- 3 files changed, 14 insertions(+), 12 deletions(-)
+ drivers/gpu/drm/stm/ltdc.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
-index d2b0cbf0e0c41..2bec2e3af0bd6 100644
---- a/drivers/perf/arm_spe_pmu.c
-+++ b/drivers/perf/arm_spe_pmu.c
-@@ -41,7 +41,7 @@
+diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
+index eeaabb4e10d3e..9e76785cb2691 100644
+--- a/drivers/gpu/drm/stm/ltdc.c
++++ b/drivers/gpu/drm/stm/ltdc.c
+@@ -1513,6 +1513,9 @@ static void ltdc_plane_atomic_disable(struct drm_plane *plane,
+ 	/* Disable layer */
+ 	regmap_write_bits(ldev->regmap, LTDC_L1CR + lofs, LXCR_LEN | LXCR_CLUTEN |  LXCR_HMEN, 0);
  
- /*
-  * Cache if the event is allowed to trace Context information.
-- * This allows us to perform the check, i.e, perfmon_capable(),
-+ * This allows us to perform the check, i.e, perf_allow_kernel(),
-  * in the context of the event owner, once, during the event_init().
-  */
- #define SPE_PMU_HW_FLAGS_CX			0x00001
-@@ -50,7 +50,7 @@ static_assert((PERF_EVENT_FLAG_ARCH & SPE_PMU_HW_FLAGS_CX) == SPE_PMU_HW_FLAGS_C
- 
- static void set_spe_event_has_cx(struct perf_event *event)
- {
--	if (IS_ENABLED(CONFIG_PID_IN_CONTEXTIDR) && perfmon_capable())
-+	if (IS_ENABLED(CONFIG_PID_IN_CONTEXTIDR) && !perf_allow_kernel(&event->attr))
- 		event->hw.flags |= SPE_PMU_HW_FLAGS_CX;
- }
- 
-@@ -767,9 +767,8 @@ static int arm_spe_pmu_event_init(struct perf_event *event)
- 
- 	set_spe_event_has_cx(event);
- 	reg = arm_spe_event_to_pmscr(event);
--	if (!perfmon_capable() &&
--	    (reg & (PMSCR_EL1_PA | PMSCR_EL1_PCT)))
--		return -EACCES;
-+	if (reg & (PMSCR_EL1_PA | PMSCR_EL1_PCT))
-+		return perf_allow_kernel(&event->attr);
- 
- 	return 0;
- }
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 95d4118ee4a91..7a5563ffe61b5 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -1599,13 +1599,7 @@ static inline int perf_is_paranoid(void)
- 	return sysctl_perf_event_paranoid > -1;
- }
- 
--static inline int perf_allow_kernel(struct perf_event_attr *attr)
--{
--	if (sysctl_perf_event_paranoid > 1 && !perfmon_capable())
--		return -EACCES;
--
--	return security_perf_event_open(attr, PERF_SECURITY_KERNEL);
--}
-+int perf_allow_kernel(struct perf_event_attr *attr);
- 
- static inline int perf_allow_cpu(struct perf_event_attr *attr)
- {
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 4d0abdace4e7c..d40809bdf4b30 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -13330,6 +13330,15 @@ const struct perf_event_attr *perf_event_attrs(struct perf_event *event)
- 	return &event->attr;
- }
- 
-+int perf_allow_kernel(struct perf_event_attr *attr)
-+{
-+	if (sysctl_perf_event_paranoid > 1 && !perfmon_capable())
-+		return -EACCES;
++	/* Reset the layer transparency to hide any related background color */
++	regmap_write_bits(ldev->regmap, LTDC_L1CACR + lofs, LXCACR_CONSTA, 0x00);
 +
-+	return security_perf_event_open(attr, PERF_SECURITY_KERNEL);
-+}
-+EXPORT_SYMBOL_GPL(perf_allow_kernel);
-+
- /*
-  * Inherit an event from parent task to child task.
-  *
+ 	/* Commit shadow registers = update plane at next vblank */
+ 	if (ldev->caps.plane_reg_shadow)
+ 		regmap_write_bits(ldev->regmap, LTDC_L1RCR + lofs,
 -- 
 2.43.0
 
