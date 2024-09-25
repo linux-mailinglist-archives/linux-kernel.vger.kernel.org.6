@@ -1,72 +1,47 @@
-Return-Path: <linux-kernel+bounces-339081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC27198601D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:15:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E486986022
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:15:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED27C1C2609C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:15:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 219102885D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082F0198A0D;
-	Wed, 25 Sep 2024 12:26:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F00518453D;
+	Wed, 25 Sep 2024 12:33:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="WeiJ1gt+"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p/Uih25E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89653196450
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 12:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D74126BFE;
+	Wed, 25 Sep 2024 12:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727267196; cv=none; b=hD8t2+s9DsR46h1D1vmoS+T71K2gUnEVXRneX9GD4bU2Q5hRv19OaxA+xalKzEG3PMIpYemWVS71Hqq/aUEyBfhLCCGjMy3y74vcOjRZXJXROXiYlJ9zJhdYbwm4oYT7SXir73c8PWCdMJomF6MCW1X3EpAjT3xxrlfvyx2YZfM=
+	t=1727267635; cv=none; b=FOgUb793d74FlAWKyCYT3kRXbfEREeQMwPjX/ZnEiFHPj1Iu+O333lMyLubqWcr3xQOReNXo5MP2F688xOiSRHrAwFmkPQcPF4q9x4CvGCRFPlqeEKddwyC/ppGhgKlG86BqqU9+9HCAm1iYIzE/YSQ0w9pYi3xl0lDjvsUHEQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727267196; c=relaxed/simple;
-	bh=44dUcyb4pojWlalreytAu2YYfrk2bYX8H5gach7S1VU=;
+	s=arc-20240116; t=1727267635; c=relaxed/simple;
+	bh=6k5ITNytTdH6fEqAVvLa7B903k78f8uZRP1Pv3xgFEY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XTiOoRCBQYEJICxOb9R9qbV0EXjRA/IuShEsOdBBA2QftP2x4Pvk8og5INsnkPZSDDJpQslAo/4pwKjetQZZzMKqBQ5KthuEqvpGr/JlkjmiJD7SQ8RLXKVrToTbvUgYGscSwenn0QVuv/dAR85OrS6JpSnohM4GpzpR1CI9sEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=WeiJ1gt+; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a8d6ac24a3bso172802666b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 05:26:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1727267191; x=1727871991; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qXObrB9SCWT0qsHW/jrZ3wivuu5nQ72fsLR3yoLGNyQ=;
-        b=WeiJ1gt+TudydtSt5RAr16NiwqsyLZtmNGcfNJ3ZNj87QCY+QtMx7MHDUQQspKrIkA
-         mmKOd0IXDDgbMPc2hWXqUvGaEkdN3An3TSz8Jj+QK/oxuCOh7VaI6myi2oCAzPQr8zFr
-         5ESFl4p6/DEdziGnFn126vEYd7g+fG0r1rr8GNMaujGqR4cMIU5WkfnlVfJ4PMtJztw6
-         mNayxsnYa+L3vUksKgUbfee//BGBfBpItlhtBjnT76GpWeVXgYB1Nl75M6/cuISJ96yX
-         vIkqwCTas2MMD0IzWm4zDCInTFkM2npiwCyW6bc/eMPFlItYAOjiKFZE0Q0pu7cLX9LS
-         01hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727267191; x=1727871991;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qXObrB9SCWT0qsHW/jrZ3wivuu5nQ72fsLR3yoLGNyQ=;
-        b=nUBn97WHuhbcW4YgY3amlUELov5NEUPhqYDitqCTrpwsnAHxyYyxiKG71BeFD9yk4l
-         zzPSD+O2dKJukzYyDOJ5tQXOM51EMkiZGNsLQClxJdODQFq4b4W51sMBSvvLvSREbiT5
-         ngULX0Di9vueqZTIvWj9okTVFknObRMuVNDJFZ+TDFz0f48Bo0XzF0TJAe/4qYoUk5B/
-         OkXAb8ai6EuSTP+nGTcjV7bjq+icti0/E2bbXe272eUnLegRUVy5aTRQGyzNZvf1iW8C
-         Xtx5NIyyD2PL1WOyTh9iAhN+Lc6p7Jl7rPqhtWlBJ3R9KIqgQZdtPhGsUZA5zbsjQ4tF
-         B5+A==
-X-Gm-Message-State: AOJu0YwABId8VHm91w9ev/p1E2mBKxzpt4rwkzZsAdZZqOddiu6wMGLJ
-	77XgbN6DwjSMT6HkXUrN5aM8ViyUjhTCw+kQq9RFU8Z5zu/1ZJhVjF+5DIHbKek=
-X-Google-Smtp-Source: AGHT+IFGt9TvMcN8PokSCKK6m9lqKpNnIJl+qSPpLG4Ds1hb9WW4j8dhPYticmSgUnzrpD/liLTKmw==
-X-Received: by 2002:a17:907:2da2:b0:a7d:c464:d5f3 with SMTP id a640c23a62f3a-a93a16cfb5dmr274302866b.11.1727267191398;
-        Wed, 25 Sep 2024 05:26:31 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.115])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93a5fdc3c4sm59145566b.220.2024.09.25.05.26.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Sep 2024 05:26:30 -0700 (PDT)
-Message-ID: <12fed7ff-6ca5-409a-8215-e3eb955eaa1d@tuxon.dev>
-Date: Wed, 25 Sep 2024 15:26:29 +0300
+	 In-Reply-To:Content-Type; b=Wh91aUTMpKBIS4Q1ADSEkRxvsuynxMDrliag9eNtnr4YLsRgdZZlE5k1jsefgLe4LIwX3c8e7Hyx6pwx1iOc9l6xacTzhEhfeDdY0aukXWtavsreKph2Ed4NJaStVf2pGnnlFBsw4Q1oioTEIsCQb46sGftNJ1hnqzJ0nadgfTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p/Uih25E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EF39C4CEC3;
+	Wed, 25 Sep 2024 12:33:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727267634;
+	bh=6k5ITNytTdH6fEqAVvLa7B903k78f8uZRP1Pv3xgFEY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=p/Uih25E11ECt1iv400ZtPfsX58TF2Vnp3vqSebGnONwGiGWZ4F9PSvOYiDVdXVx+
+	 5NfQavi/T/Fq+OCIgI+w6R6HlBPvU7aaUoKSRU1CVZMuR2osLnYRyGn6aRqI751pUX
+	 wQjP6eFTWMRXk19jB0mgNnqdYmSiiwYVrwV3zL7OPTf5DH/oHDinLmNZz7bPcE6tQG
+	 RKJDTtqEd+r5tzjjqrlrMAxurnwWuhEafmvcHziUzN6sRM/9kDAKLnQ6xxeE6rHkvn
+	 QNxOYLzhbK2CFIPrGWy4JLKWn55bcZEcE0NImL/LZquMis5jmD9/y2CT34nLvoofVT
+	 JuKQZwa0Q+mFg==
+Message-ID: <9507b3e6-3be6-4392-94f7-8fb05e3ace4c@kernel.org>
+Date: Wed, 25 Sep 2024 14:33:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,54 +49,76 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: Update maintainer list for MICROCHIP ASOC
- and MCP16502 drivers
+Subject: Re: [PATCH v2] dt-bindings: spi: zynqmp-qspi: Include two 'reg'
+ properties only for the Zynq UltraScale QSPI
+To: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>, broonie@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: michal.simek@amd.com, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, git@amd.com,
+ amitrkcian2002@gmail.com
+References: <20240925114203.2234735-1-amit.kumar-mahapatra@amd.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-To: Andrei Simion <andrei.simion@microchip.com>, nicolas.ferre@microchip.com
-Cc: linux-kernel@vger.kernel.org, cristian.birsan@microchip.com
-References: <20240925120224.120032-1-andrei.simion@microchip.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20240925120224.120032-1-andrei.simion@microchip.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240925114203.2234735-1-amit.kumar-mahapatra@amd.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi, Andrei,
-
-On 25.09.2024 15:02, Andrei Simion wrote:
-> To help Claudiu and offload the work, add myself to the maintainer list for
-> those drivers.
+On 25/09/2024 13:42, Amit Kumar Mahapatra wrote:
+> Linear mode is only supported by the Zynq UltraScale QSPI controller,
+> so update the bindings to include two 'reg' properties only for the
+> Zynq UltraScale QSPI controller.
 > 
-> Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
+> Signed-off-by: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
 > ---
->  MAINTAINERS | 2 ++
->  1 file changed, 2 insertions(+)
+> BRANCH: for-next
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 09d0f09c36cc..7f2f87a2483a 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -15088,6 +15088,7 @@ F:	drivers/spi/spi-at91-usart.c
->  
->  MICROCHIP AUDIO ASOC DRIVERS
->  M:	Claudiu Beznea <claudiu.beznea@tuxon.dev>
-> +M:	Andrei Simion <andrei.simion@microchip.com>
 
-I think you may also want to update the MICROCHIP SSC DRIVER section.
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Other than this:
-Acked-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Best regards,
+Krzysztof
 
->  L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
->  S:	Supported
->  F:	Documentation/devicetree/bindings/sound/atmel*
-> @@ -15196,6 +15197,7 @@ F:	include/video/atmel_lcdc.h
->  
->  MICROCHIP MCP16502 PMIC DRIVER
->  M:	Claudiu Beznea <claudiu.beznea@tuxon.dev>
-> +M:	Andrei Simion <andrei.simion@microchip.com>
->  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
->  S:	Supported
->  F:	Documentation/devicetree/bindings/regulator/microchip,mcp16502.yaml
-> 
-> base-commit: 2b7275670032a98cba266bd1b8905f755b3e650f
 
