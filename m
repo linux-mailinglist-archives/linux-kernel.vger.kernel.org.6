@@ -1,144 +1,132 @@
-Return-Path: <linux-kernel+bounces-339194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD078986207
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:06:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C421398613E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:44:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDE52B342E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:44:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88CE928D4D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1A21B372B;
-	Wed, 25 Sep 2024 14:03:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADBD61B07D6;
+	Wed, 25 Sep 2024 14:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XiinWLMV"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZGAzSbKp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E753A1B251A
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 14:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D3F1B07BE;
+	Wed, 25 Sep 2024 14:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727272993; cv=none; b=alCatRWfeHdaL8pmZnMfafZ+hRc6f5elRiJflYttkz/yE0CKN7DnoKaNQX3lheSerNxqm65FirVjzCDNd9MJU1ETxfwrwVoykfa4A+raaASmMg8BZkY07qTnb3HrmY9YkqZoxKc+VDqWcJPNx+E90N8cdX0jOUZm5hlEBB3llCs=
+	t=1727272988; cv=none; b=eIRs8Borz3EyU3crM/owPdwAenZuyI58hBD7NcULqBvMA4vuEW84pI8Lp1zkN5s9UHvGhJjStTWx4XBY0BExYRWDGvWlzv6xAlEM2+E+sjC3qrdZnQVELbTXmh6NEn6fmGFjLGvheGF1UAPU6MK/1E0FrPhH6vhdKfuDVqlNLWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727272993; c=relaxed/simple;
-	bh=qckODCn1Qe91B/IOqDEMwpop7pD/4GWLDYxE60jAeNo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tGozWucf3qjTReVsM/X/VpbvDvon4xBcSR17Zj8UqFlN1X5RFpVW7J/PPn/iQWQ22uO7sdGw2i4muXYcHcMsEilX1rtcFdFyDW98RGMzzcJZh/OFIkDgHQycvb8s+deksZGV+LZBtgAdQEjiL3UmX5AP0rTXJQsT06DQZktBSZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XiinWLMV; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 25 Sep 2024 07:02:59 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727272987;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5t463NG6eQ9jLF1YTXL/0TjCocLmn8Mda+WfoUOloPc=;
-	b=XiinWLMVgLAFXBHkWWg+stYNqT4HftwpWwql5zrUkGf56VIJnBycuq0wrsWFr53xHFZd2Q
-	pfJNKS/UZ8nX2VTTiyi01vbdQ0fKa9LlV3Jg30rG4uGmRQDh6enLUC+J6y/Zt/6UhKNdWU
-	yVfeEOwFmSfpi6DyFPWg8LXvIYzV6sM=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Pedro Falcato <pedro.falcato@gmail.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
-	Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Minchan Kim <minchan@kernel.org>, 
-	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
-	Matt Turner <mattst88@gmail.com>, linux-alpha@vger.kernel.org, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, linux-mips@vger.kernel.org, 
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org, 
-	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, christian@brauner.io
-Subject: Re: [PATCH v2 1/2] mm/madvise: introduce PR_MADV_SELF flag to
- process_madvise()
-Message-ID: <xilfrvlstq4fqr46jlrzvq2vlr22nizdrwlcdizp774nlt6pfj@jukzlcwc7bed>
-References: <cover.1727176176.git.lorenzo.stoakes@oracle.com>
- <1ecf2692b3bcdd693ad61d510ce0437abb43a1bd.1727176176.git.lorenzo.stoakes@oracle.com>
- <u64scsk52b3ek4b7fh72tdylkf3qh537txcqhvozmaasrlug3r@eqsmstvs324c>
- <4740dfc7-71da-4eb4-b071-35116288571f@lucifer.local>
+	s=arc-20240116; t=1727272988; c=relaxed/simple;
+	bh=nXK7N7Nf1cSVpn5fChKLMWvj7CC+73/9ZEx65cCe3Y8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IOpXfJNDxtz+CaXNHtp9hpYnuNr4Nr2kGGEUFOASh7fbgkRQgF5vxRG+v6kwwTG586Zc0kbKtX4JLSTwMyhiSZ7iUD5ZC8aESH94nJjCkfFc2tzqW3MMYou2EHd6RYddHQP1zd0t33/ATDzp4LD0nQu81mVEdB6uWU53xyVO4eU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZGAzSbKp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 323F4C4CEC3;
+	Wed, 25 Sep 2024 14:03:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727272987;
+	bh=nXK7N7Nf1cSVpn5fChKLMWvj7CC+73/9ZEx65cCe3Y8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZGAzSbKpZ13a3gBnNPRxmeX46Jw9jpP82qR5qcK85E3ipgzDNy3fWNbggCT2LvOtg
+	 tLbm8ytutjjwrxiVj7QLeX6KHz+lUtKS7pAVLzrEARDWjQOF+Bx9Viu9I8ftAJHN2O
+	 sFOkha0s2ZkJfLNfRVasOKpixP6xFtNBDS1uXIGC9PEX/aIPDbGEVDnnnfHQv6Oydf
+	 3E6q6CqlBatZjB+Z+UGw6D3673vh5muHU5EfbVWRMAoVWnF5tqjDgwV9V1ERnief4J
+	 0dPGPffXkOOYgZipHDBPHaJlodxcAeDVEoDiQK6WgE8Jn1wCvVjH2cX0dMmL6bf0px
+	 KscXFPpk67ICA==
+Message-ID: <31d6f7e3-a839-4532-8290-4ed29cadb5b7@kernel.org>
+Date: Wed, 25 Sep 2024 16:03:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4740dfc7-71da-4eb4-b071-35116288571f@lucifer.local>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] arm64: defconfig: enable clock controller,
+ interconnect and pinctrl for QCS8300
+To: Jingyi Wang <quic_jingyw@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>
+Cc: quic_tengfan@quicinc.com, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, quic_tingweiz@quicinc.com,
+ quic_aiquny@quicinc.com
+References: <20240925-qcs8300_initial_dtsi-v2-0-494c40fa2a42@quicinc.com>
+ <20240925-qcs8300_initial_dtsi-v2-2-494c40fa2a42@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240925-qcs8300_initial_dtsi-v2-2-494c40fa2a42@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Cced Christian
-
-On Tue, Sep 24, 2024 at 02:12:49PM GMT, Lorenzo Stoakes wrote:
-> On Tue, Sep 24, 2024 at 01:51:11PM GMT, Pedro Falcato wrote:
-> > On Tue, Sep 24, 2024 at 12:16:27PM GMT, Lorenzo Stoakes wrote:
-> > > process_madvise() was conceived as a useful means for performing a vector
-> > > of madvise() operations on a remote process's address space.
-> > >
-> > > However it's useful to be able to do so on the current process also. It is
-> > > currently rather clunky to do this (requiring a pidfd to be opened for the
-> > > current process) and introduces unnecessary overhead in incrementing
-> > > reference counts for the task and mm.
-> > >
-> > > Avoid all of this by providing a PR_MADV_SELF flag, which causes
-> > > process_madvise() to simply ignore the pidfd parameter and instead apply
-> > > the operation to the current process.
-> > >
-> >
-> > How about simply defining a pseudo-fd PIDFD_SELF in the negative int space?
-> > There's precedent for it in the fs space (AT_FDCWD). I think it's more ergonomic
-> > and if you take out the errno space we have around 2^31 - 4096 available sentinel
-> > values.
-> >
-> > e.g:
-> >
-> > /* AT_FDCWD = -10, -1 is dangerous, pick a different value */
-> > #define PIDFD_SELF   -11
-> >
-> > int pidfd = target_pid == getpid() ? PIDFD_SELF : pidfd_open(...);
-> > process_madvise(pidfd, ...);
-> >
-> >
-> > What do you think?
+On 25/09/2024 12:43, Jingyi Wang wrote:
+> Enable clock controller, interconnect and pinctrl for Qualcomm
+> QCS8300 platform to boot to UART console.
 > 
-> I like the way you're thinking, but I don't think this is something we can
-> do in the context of this series.
+> The serial engine depends on gcc, interconnect and pinctrl. Since
+> the serial console driver is only available as built-in, so these
+> configs needs be built-in for the UART device to probe and register
+> the console.
 > 
-> I mean, I totally accept using a flag here and ignoring the pidfd field is
-> _ugly_, no question. But I'm trying to find the smallest change that
-> achieves what we want.
+> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
+> ---
 
-I don't think "smallest change" should be the target. We are changing
-user API and we should aim to make it as robust as possible against
-possible misuse or making uninteded assumptions.
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-The proposed implementation opened the door for the applications to
-provide dummy pidfd if PR_MADV_SELF is used. You definitely need to
-restrict it to some known value like -1 used by mmap() syscall.
+Best regards,
+Krzysztof
 
-> 
-> To add such a sentinel would be a change to the pidfd mechanism as a whole,
-> and we'd be left in the awkward situation that no other user of the pidfd
-> mechanism would be implementing this, but we'd have to expose this as a
-> general sentinel value for all pidfd users.
-
-There might be future users which can take advantage of this. I can even
-imagine pidfd_send_signal() can use PIDFD_SELF as well.
-
-> 
-> One nice thing with doing this as a flag is that, later, if somebody is
-> willing to do the larger task of having a special sentinel pidfd value to
-> mean 'the current process', we could use this in process_madvise() and
-> deprecate this flag :)
-> 
-
-Once something is added to an API, particularly syscalls, the removal
-is almost impossible.
-
-Anyways, I don't have very strong opinion one way or other but whatever
-we decide, let's make it robust.
 
