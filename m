@@ -1,99 +1,111 @@
-Return-Path: <linux-kernel+bounces-339242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A65A098619F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:57:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 814C49861A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:57:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C0D71F28F0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:57:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4854928AFC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:57:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E11CAD512;
-	Wed, 25 Sep 2024 14:28:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FBA817BB7;
+	Wed, 25 Sep 2024 14:29:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yvmOtMvs"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gi1Lzrkl"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A475D19F11C
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 14:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220DB1AAC4
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 14:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727274486; cv=none; b=R8VU46b95m+TmhPr79d3wmtP5UcFeybpj8h3NOMIDKmVHxQHcRuWCtRTiPt5ZBz/C3x6HM8IYhBE4MkREPr9vai/4ech5j4skYiucyoeEVqmhlXBo7mZlu9HiHu9BM31oh0UkHHCfcSQoNpdtuVO6PLennvlFUwBQNURE6AqQHg=
+	t=1727274553; cv=none; b=Ly/L2M8vbpX1Al1u4Q+mPyIXCzc/O76pAw2VHpFqVweLmQ/eYMjDi0Eu0wM6VVg8Hp3rJXB3xBQttG5KzMvz+dNkT/NDFn8RO9QcvUVOoVFNx/Sn6qaIHL/XSlweULZGo0gvAhSFsgIujSi8wpBR6fomQD1wuO4rfDtCipl8/Ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727274486; c=relaxed/simple;
-	bh=obC/7/KH2c7jTGLio49zTh/+gYmG1p+8KVkj8WjaOGo=;
+	s=arc-20240116; t=1727274553; c=relaxed/simple;
+	bh=xUQYJ75vXn1lLVXVNdsC5J0RATkg/QsIAKyS6ZPN07o=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BFxatal2y41ZwlPXBS7XLHoZH/ze+6bD4bLc65JYm75z+cf2Jjs8sheWdUSv1mRAMwm6pfyq4UOyc3T5RkRKZZJOBy1BKKkc95PJvqzRvkwYtsRDDa+eIZINqeu13bhWVgoOftzRUB3/oCrAPIUe21EV6b9rPd/rNx8lcGSh/Bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yvmOtMvs; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cb57f8b41so87086475e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 07:28:04 -0700 (PDT)
+	 To:Cc:Content-Type; b=FjoDG1764t/hKQIvoLUkdpyfYd2N0Q24T9EWzz+GJu2Jm7A/6nw305C0ZmGGHi8YgiRErCqh8RRGBWYWh6IM7aslMqSit4Y9oOYPTb2RsRr8O7lxm1O3iVelBxqZgbOg0YJkXSUej1Fy9OawtlfBq38BnhxjIK42E9QJfUBsBkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gi1Lzrkl; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6c351809a80so48396696d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 07:29:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727274483; x=1727879283; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1727274551; x=1727879351; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=obC/7/KH2c7jTGLio49zTh/+gYmG1p+8KVkj8WjaOGo=;
-        b=yvmOtMvsyuqmWcKgosMMwuDw1YNcL0c6yyyeMt/KM3XnwBDe7IxheCrJR1znqGIF9V
-         Dwx47snfHh90QJxC0Tmsldo/M6jhry9+OTBhP97Ji9OPuV/5jQL8UCfhOU6OQyxhcjDl
-         QZjZSqpYwHU6iucuQVEYlkat6thzuNK+yW+nMNJ3zlfSCJp95lD0gZmoMhHB0MpPHXuL
-         A1u77LA2+myI2e+iqoAZjqdyxs7Bj7npGbhZ9GkljUw3EJLy4ZxaRgOjL1Km6vr1S3eG
-         qXv+Gp3WhtVqhnjWrmIMyMVn+VRJhVArzE9DK1Ywrv8y1zvOV3Z2M7X6gCgPD8Xwgl55
-         A3ww==
+        bh=xUQYJ75vXn1lLVXVNdsC5J0RATkg/QsIAKyS6ZPN07o=;
+        b=gi1Lzrklp/k5UTWvup8FF7CFwkEz3jMHHsA7GW3PfNqvDWcLJACXH97ei/KfDDwLHq
+         5XpfV+HO8wuV1iRZRI/RMxPlkRiHPT5u3OruQFEUQ4kQzfZSexshm1twzdHFaB7aW/dX
+         6rKjA/mPLNUcNoyKquc1eV0B74IbuDkpAXZV7nFeBQ5GM3bKuwLmiNpWSvXkEsGDmLEJ
+         Oj9cWdYNhKqFbEGJ9PexEhrAllwX/7yjV7PtnpN/E2Ku4JGaMgpE00gWL1DoePySyUhE
+         UbO9mXgCjK4l1AsmyqYGVbeegQSLOyFrAszfzBLkivCrbV6hCXUb5qQh8BP3WNkwch/p
+         yUjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727274483; x=1727879283;
+        d=1e100.net; s=20230601; t=1727274551; x=1727879351;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=obC/7/KH2c7jTGLio49zTh/+gYmG1p+8KVkj8WjaOGo=;
-        b=hskB0AcAfxiJNOasLvuDri9Dc7SwC1ndm9dFEnFkgZRfNp8xFhLABcl8i0kDn3sStu
-         dIHLJIECWuovRtKeqMdc9Bto1a2ci5xF7pCL1MER6OTleWFHY0hgsUmtoZGS0ZC7Jeod
-         9Qt6flgrUOgr6XjLCSfhp+Tsvb7QRa0He6eHq6qipUvepoeVIwogV0oIq450v35TnK+4
-         SFFoiQBXD3IbZAi7pc/tNt7uvuKp78Xwdrsy2uYeWbFKZKy5aqklbVXaJnvE/DQcxwyW
-         hAULcJHvUIcw6MDhbzoXvLWWgd2wqJUfB7dMAUSyClqvAkrR8lEyZn5AKwqFOinC76me
-         PRhA==
-X-Forwarded-Encrypted: i=1; AJvYcCUzUtnqGxl47RBojXUR2F8K/Ecka4LV0W+psi8LnKfpxFjr0pEnSeeMhQXWLG5pNDnRBbEoBiQVzLzZ5Nw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfKJSUilg28VHXZNtAvsAkQAsjTUxwuWp4DZbcMgED3XNQvV/2
-	/1BkZ90s1Iw9F/DV+USk7qF95m5q1mpsbsMteXR+XC4SVRIILZhHcki71xTLlNfFdtFDrRFL9T7
-	2ZgaFzH1RH3MXxrltZN33eNoZnAqbXxQWI+RQ
-X-Google-Smtp-Source: AGHT+IFd9vRwftTt8XvUpteeBh1GBHyoPi/G9HBBRN0TTqfaKPh4NZIR8691AkkQ6GlnqZn4WH3b/ayxYAoChf7kkaU=
-X-Received: by 2002:a5d:58fa:0:b0:374:b30b:9ae7 with SMTP id
- ffacd0b85a97d-37cc24c511bmr2574271f8f.49.1727274482535; Wed, 25 Sep 2024
- 07:28:02 -0700 (PDT)
+        bh=xUQYJ75vXn1lLVXVNdsC5J0RATkg/QsIAKyS6ZPN07o=;
+        b=aVp9clktOJfuPJg6IIvDxSqIfjUa0HR3B37326k1oAoRPKIrtwihTtRg7O4gKpBafI
+         sqqXW9eB0GnUrt7ZvkQgkWg336zepEc1Q1yHO0fHTTtRD35raoI1QpcOsou4V0mALOgF
+         lB0Wn1jWCQcSClOUdEfCmPuqSurQd/KLsD4UEavnZR7JKSFTZt7qhlpL4d3AeqTBwnex
+         ATLLr/ozUZsSztgQpSXcXV22JSlogI6WQrRoL3yMqx4e6y4dP43lfs+jtSD9/E5gTzih
+         RdUGk8dL73ahEFrfnLU9Mf8gUYV3whcajnhSzfEYrdRy4cQkCG2Ou4HMKNJlTb7opHUm
+         Kd4g==
+X-Forwarded-Encrypted: i=1; AJvYcCWAj275tc5e1KqaTXNP8b1xSYgPdSHVUp4EvCRjFj6HXX6k/RtPTKBOSj+UgYplUdIvASeap5KwZqsI17A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy63mqQS7o6Jdd9dUYmqD9aAVSFOUIMLDc9oQ4udGv0a957AbHF
+	czm75iN5moH+67qsixq5By/mxsAi2o6KM2ZhKtf2lxplPcEzGHataIY1R+JSrWtQCnWTBf/M1Ap
+	dTFpDMk9RFgd+d1AoRCGeE6pCzPY=
+X-Google-Smtp-Source: AGHT+IHGx8Ulcf5JyspZf37Tqz9M7joMNTp8Z/DRQsZdQXRmnrjqEhkPVUefdfbJH9Fk4VUq4OM5xcOR2p8/786qqb0=
+X-Received: by 2002:a05:6214:3213:b0:6c1:6d4e:535c with SMTP id
+ 6a1803df08f44-6cb1dd0a7afmr41846946d6.4.1727274550719; Wed, 25 Sep 2024
+ 07:29:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925141944.277936-1-ojeda@kernel.org>
-In-Reply-To: <20240925141944.277936-1-ojeda@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 25 Sep 2024 16:27:50 +0200
-Message-ID: <CAH5fLggG1n5RMHcE3ZWjz4m7ybG86gwSAsnh2NU5pvTL+zqQgQ@mail.gmail.com>
-Subject: Re: [PATCH] rust: cfi: fix `patchable-function-entry` starting version
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+References: <20240923231142.4155415-1-nphamcs@gmail.com> <4d38c65d-760c-43a5-bb47-8e0235c13a51@linux.alibaba.com>
+ <CAJD7tkamKcaqHR5V+4+9ixmFc3dC2NnGcu7YzdXqxqNEe8FqqA@mail.gmail.com>
+ <9a110f20-42ad-468b-96c6-683e162452a9@linux.alibaba.com> <CAKEwX=PiOdrR7Ad5XoT8pRZDLB=q6B_fmwQ3ScgWFPNptBuHPw@mail.gmail.com>
+ <CAJD7tkZFu3DbovTwyRdQmEG=7nQtmzrjQVgyhE4mNzbCtZxFZA@mail.gmail.com>
+ <CAKEwX=ML4+iW+WkyjezaqipZU=N=DeB561M4XzOqQMD6drk9dA@mail.gmail.com>
+ <87o74cryhu.fsf@yhuang6-desk2.ccr.corp.intel.com> <CAGsJ_4yckKO29b-BtTHazJEcf58R4JaUkTYZbhNDByLecqJGGQ@mail.gmail.com>
+ <CAKEwX=NuRuu9qXA9mRMqb6Okcwa86mEkp2Ac8sQjwb0ACdS7YQ@mail.gmail.com>
+In-Reply-To: <CAKEwX=NuRuu9qXA9mRMqb6Okcwa86mEkp2Ac8sQjwb0ACdS7YQ@mail.gmail.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Wed, 25 Sep 2024 07:28:59 -0700
+Message-ID: <CAKEwX=OtpnH+i4FtZ66HPoe7zRRtEBuMbHQ9+LW4k5yLK+yHNw@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/2] remove SWAP_MAP_SHMEM
+To: Barry Song <baohua@kernel.org>
+Cc: "Huang, Ying" <ying.huang@intel.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org, 
+	hannes@cmpxchg.org, hughd@google.com, shakeel.butt@linux.dev, 
+	ryan.roberts@arm.com, chrisl@kernel.org, david@redhat.com, kasong@tencent.com, 
+	willy@infradead.org, viro@zeniv.linux.org.uk, chengming.zhou@linux.dev, 
+	linux-mm@kvack.org, kernel-team@meta.com, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 25, 2024 at 4:20=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
-te:
+On Wed, Sep 25, 2024 at 7:21=E2=80=AFAM Nhat Pham <nphamcs@gmail.com> wrote=
+:
 >
-> The `-Zpatchable-function-entry` flag is available since Rust
-> 1.81.0, not Rust 1.80.0, i.e. commit ac7595fdb1ee ("Support for -Z
-> patchable-function-entry") in upstream Rust.
+> On Wed, Sep 25, 2024 at 12:33=E2=80=AFAM Barry Song <baohua@kernel.org> w=
+rote:
+> How does this look? My concern is that there is not really a use for
+> the fallback logic. Basically dead code.
 >
-> Fixes: ca627e636551 ("rust: cfi: add support for CFI_CLANG with Rust")
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> I can keep it in if you guys have a use for it soon, but otherwise I
+> lean towards just adding a WARN etc. there, or return -ENOMEM, and
+> WARN at shmem's callsite (because it cannot get -ENOMEM).
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Oh and another point - I plan to rewrite this swap entity lifetime
+logic in the new abstraction layer. The swap continuation part will go
+away with it - I don't quite like the way we're currently doing
+things. So this added complexity might be unnecessary.
 
