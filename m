@@ -1,98 +1,112 @@
-Return-Path: <linux-kernel+bounces-338317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FD49985658
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:29:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59071985663
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:31:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB6AC1F21784
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:29:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B35828453F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5684A15C12F;
-	Wed, 25 Sep 2024 09:29:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501AC15CD42;
+	Wed, 25 Sep 2024 09:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="e68pSZL2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tgJL/c0e"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8569E15B972
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 09:29:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9797913AA53;
+	Wed, 25 Sep 2024 09:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727256555; cv=none; b=OIkh+UulEwPipQ+DpkAsF93KiEjy4TuOzhLpPrgVOrv5aLBo3gzyegh2a9UMvC4UZcJhfn2Ga31irIzzSm0H0pmI+5oOUqqVKTkMW13ZBHikHFVo971B4o1aXtFbKrd7Gg5i0kz11rMr33qyUOOnm8ja61gwcOGg9MMh+Lw1mWs=
+	t=1727256667; cv=none; b=C++zxxjgXd9Rkp75TCq4Fzh8aFOOG5ymUvQvYr1RExsxkoIIV/5Eb3eVsF3oUcJ45BN/2o2DDtbz+G7qhMRLrh/KHLelwJiI1z8SzO3go46yr5mtSNOrILlO+iTgnOnGv8HynBnqklpgU7akVxEaJTOdKJl1WiquZxSbr+Xo8F8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727256555; c=relaxed/simple;
-	bh=eMhbrFVorCUcB+bdzryCwpTOvnjXWyhp4ukLuhEbuEA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=dovYwNk69d8EIzHv4f5aaduoeH3OKwj4TKR8C9dkS6KfF/7EySW3aL1J3/6ZZx0Ukdvx9QXVByPv+uavpzhZWyCO5i4ByGJRH4WufEG5IEuRfcLBrWPlD+yzflXP18M4D3BgPeDayFF3/zFyVCEXZ815nY4epr2WI2frInvqGk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=e68pSZL2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ED7FC4CEC3;
-	Wed, 25 Sep 2024 09:29:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1727256555;
-	bh=eMhbrFVorCUcB+bdzryCwpTOvnjXWyhp4ukLuhEbuEA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=e68pSZL2oz+VPNyWp2fvN5Xn47uaRol62aicXRCKBSPGNcHxfd42hB8So0AjowS/2
-	 xTHNnCqHsZ3H9aVXXt/VWoIICM2PzhW2hTZDjXUJk0PSuqUJRfNq3HHjLmQETt3XdW
-	 laulko/THHBPi+f8LM87Np1qq8we87lYaLQ3wew8=
-Date: Wed, 25 Sep 2024 02:29:14 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: liuye <liuye@kylinos.cn>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/vmscan: Fix hard LOCKUP in function
- isolate_lru_folios
-Message-Id: <20240925022914.7c4033c9bb1206ad149ba69e@linux-foundation.org>
-In-Reply-To: <565bae19-889e-57df-42ff-70728cfb818c@kylinos.cn>
-References: <20240814091825.27262-1-liuye@kylinos.cn>
-	<20240924172205.5068e86430873b09b75f8538@linux-foundation.org>
-	<565bae19-889e-57df-42ff-70728cfb818c@kylinos.cn>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727256667; c=relaxed/simple;
+	bh=x2JF9xWznc10DmqXgd7CuRvcJk+8ONpVG+QxkOmFgQI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OlrRiMg/MODneNK5AvT6IWGxtOtxus+UaRHM9+FIcjQDLnAIt52j1cUshbpvEBsGzHN437yes8Io8CPOnWeXGwOEscXK2B1AGCCIywrYQBRfNsFjljpnBb9a+bc6SDcL1KPWdvJVq+CwJz3eMGXouA6M5iO+ZmikyC/7oPzMzFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tgJL/c0e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D58CC4CEC3;
+	Wed, 25 Sep 2024 09:31:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727256667;
+	bh=x2JF9xWznc10DmqXgd7CuRvcJk+8ONpVG+QxkOmFgQI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tgJL/c0eI0Pzf2B14LODbJDI0p7Z1IRoiFIPHVUhJmHt29pRVg44j0S6NJ1wu7U+I
+	 efHRQyL5Sv494fYPtYfE69s8ypF1aujlHoaBRg0p7w5t903YIkVuKDWp1GxP65ojzj
+	 RWtRattmI7qzgQPuwXiYIniC0A5ACI+FZBbRfUiwF2Fx9WHMjvPlSCobdvPNlUZBVF
+	 KrGo5EfOPUdKPJhsOVEP/59fecriOcNb5m31bn8CuTbdLXp4XZroRS2m5AF5ByDsmT
+	 W0dJJHcjOzgcIY1j63WcVxDr1syWtU9eTvzqiOeytfvuwfmd48Q+dz3o9np34mzgCA
+	 26OMZh5GnUnCA==
+Message-ID: <4ee4d016-9d68-4925-9f49-e73a4e7fa794@kernel.org>
+Date: Wed, 25 Sep 2024 11:30:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 6/6] arm64: dts: qcom: x1e80100: Add support for PCIe3
+ on x1e80100
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Johan Hovold <johan+linaro@kernel.org>
+Cc: Qiang Yu <quic_qianyu@quicinc.com>, vkoul@kernel.org, kishon@kernel.org,
+ robh@kernel.org, andersson@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ abel.vesa@linaro.org, quic_msarkar@quicinc.com, quic_devipriy@quicinc.com,
+ dmitry.baryshkov@linaro.org, kw@linux.com, lpieralisi@kernel.org,
+ neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20240924101444.3933828-1-quic_qianyu@quicinc.com>
+ <20240924101444.3933828-7-quic_qianyu@quicinc.com>
+ <9a692c98-eb0a-4d86-b642-ea655981ff53@kernel.org>
+ <20240925080522.qwjeyrpjtz64pccx@thinkpad>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <20240925080522.qwjeyrpjtz64pccx@thinkpad>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On Wed, 25 Sep 2024 16:37:14 +0800 liuye <liuye@kylinos.cn> wrote:
+On 25.09.2024 10:05 AM, Manivannan Sadhasivam wrote:
+> On Tue, Sep 24, 2024 at 04:26:34PM +0200, Konrad Dybcio wrote:
+>> On 24.09.2024 12:14 PM, Qiang Yu wrote:
+>>> Describe PCIe3 controller and PHY. Also add required system resources like
+>>> regulators, clocks, interrupts and registers configuration for PCIe3.
+>>>
+>>> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>> ---
+>>
+>> Qiang, Mani
+>>
+>> I have a RTS5261 mmc chip on PCIe3 on the Surface Laptop.
+> 
+> Is it based on x1e80100?
+
+You would think so :P
 
 > 
+>> Adding the global irq breaks sdcard detection (the chip still comes
+>> up fine) somehow. Removing the irq makes it work again :|
+>>
+>> I've confirmed that the irq number is correct
+>>
 > 
-> On 2024/9/25 上午8:22, Andrew Morton wrote:
-> > On Wed, 14 Aug 2024 17:18:25 +0800 liuye <liuye@kylinos.cn> wrote:
-> > 
-> >> @@ -1669,10 +1670,12 @@ static unsigned long isolate_lru_folios(unsigned long nr_to_scan,
-> >>  		nr_pages = folio_nr_pages(folio);
-> >>  		total_scan += nr_pages;
-> >>  
-> >> -		if (folio_zonenum(folio) > sc->reclaim_idx ||
-> >> -				skip_cma(folio, sc)) {
-> >> +		/* Using max_nr_skipped to prevent hard LOCKUP*/
-> >> +		if ((max_nr_skipped < SWAP_CLUSTER_MAX_SKIPPED) &&
-> >> +			(folio_zonenum(folio) > sc->reclaim_idx || skip_cma(folio, sc))) {
-> >>  			nr_skipped[folio_zonenum(folio)] += nr_pages;
-> >>  			move_to = &folios_skipped;
-> >> +			max_nr_skipped++;
-> >>  			goto move;
-> > 
-> > This hunk is not applicable to current mainline.
-> > 
+> Yeah, I did see some issues with MSI on SM8250 (RB5) when global interrupts are
+> enabled and I'm working with the hw folks to understand what is going on. But
+> I didn't see the same issues on newer platforms (sa8775p etc...).
 > 
-> Please see the PATCH v2 in link [1], and the related discussion in link [2].
-> Then please explain why it is not applicable,thank you.
+> Can you please confirm if the issue is due to MSI not being received from the
+> device? Checking the /proc/interrutps is enough.
 
-What I mean is that the patch doesn't apply.
+There's no msi-map for PCIe3. I recall +Johan talking about some sort of
+a bug that prevents us from adding it?
 
-Current mainline has
-
-		if (folio_zonenum(folio) > sc->reclaim_idx) {
-			nr_skipped[folio_zonenum(folio)] += nr_pages;
-			move_to = &folios_skipped;
-			goto move;
-		}
-
+Konrad
 
