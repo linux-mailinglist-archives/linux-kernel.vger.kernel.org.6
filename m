@@ -1,88 +1,84 @@
-Return-Path: <linux-kernel+bounces-338284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D8319855E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:55:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 138DD9855E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:55:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4BBA1F25266
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:55:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0FCBB23C1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B0B15A864;
-	Wed, 25 Sep 2024 08:55:06 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4446158A18
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C720015ADB8;
+	Wed, 25 Sep 2024 08:55:39 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1CCD15747D;
+	Wed, 25 Sep 2024 08:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727254506; cv=none; b=Y8aKTkGGEWY8w3xAn5xb2OMiLF2XgZNMDrMj93nEg0+kkBJvnSryNGxmcjSMjmUtWMc4SGXkS45paZ287h44b1wh2jcz0KT03V9Uwjwl9YaPVjUDi4v/te6Wy/3RFMe8k0fk71uILpwZykluaRcfaBfLcuumPrmdSWo9bhTNlTE=
+	t=1727254539; cv=none; b=WLmwbV4OE3JWVIe+/t/qaDFQ83OCr/35LfZBFuhmWca62B7CaG5m+R8K6NiOBudsiwds7HkWZDERWdy8PzTtkErDmkHBCGSiE7evXa7XB6H/U45dbwpIcqdo97cMKvYCiMWyObK5EldfmQPo/4pirAq8I3hVlV2iogDSI3H56AU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727254506; c=relaxed/simple;
-	bh=73MPY6aoutLl/EA0dk0w49JFjhcA2BSDLXc0ZfHC7So=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=gNtHA+T19eVv+FL6w3QU4BbK3/DBqXsxQ43ngtPi7hJE24hoLvFjTeP4SzJFP20jJh6Ht/iqtz1cFK78E9uX4hmOCSlC0J0YETXNxqcnnEzOKm3LRvLRGgPBLgiW8Axb+6cI5+JPtM897GZbtDFyCTdP9BiJ89tBd51Ax4eVR+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a0629ed658so63125845ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 01:55:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727254503; x=1727859303;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qEMTbiahrepVGJTD40IQdXijMvf08ZrzOrFqeHstblg=;
-        b=on10rn+4y04ytHxbNCp7Nma9NxuqzpQ4Ai21FOOK45UzxtGz65xoni/W0AYVq87PXU
-         qnQsL919YkwMeQbuyhj0QtShzGkZapKKkz2pm4u4slPJkup/fTsuD1doTlbLp6kc2SEK
-         L2ckaU53p4nClo3XHe3tSKha/ombEDz+RMwnSV8edHxd98Doe99gdDDHf7qwRDwa7pVd
-         iKNKr9iSlRFskgCfWoUa3x9la21rO8XfHrNG6mEqI6PxU4TbVu3Ji1oaKwEIjtn37qI5
-         ArezF4cZ6Polrf4oI91n6o2SOZbmZpInfPbBoQKCXUNO6Qj/HSxA1VPZRU/KzgUiFxbC
-         LOLw==
-X-Forwarded-Encrypted: i=1; AJvYcCVbFlvKCytWYCkimcSDIfZqWl5DBdyFdwQekqLQvW4hdsLhrKTLqhIthzd2W9gitVz6ymO/xucs9PP1vj4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxun2BaJ9euRvPu4dzGab8i6E91AaK66JJPsX+IEvHbPQJLXdUY
-	Y3Y1Zl0G8ztVT9FI7kx+shMNuiyzXq4BkB/q4d7ZJ8o8d5MeI1Rs/w+ZtGhbNrPqYE4FdmgLDK8
-	hItfGS/2JXVdBNwcLPc/6nmamO++Jne3M6hd899PUn8nXcpeIRYoX8eg=
-X-Google-Smtp-Source: AGHT+IE84KSyKVyp+PYMEpncD5pqsII/zmei/APPWrJ5Wpu+N4xC4m5S0PZQ86rGdx31GmB0k6UBGW3MAXGDglCMoEI3gLOTMXLL
+	s=arc-20240116; t=1727254539; c=relaxed/simple;
+	bh=lhSsYpNmbIkkmSCV1rETJVNHXvWLD+63NYOe4YSZCIs=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=JFj1TyD6Uoj1NTs+5oYRs96WUfG7OO2aSUmCuwCa6xikZoXUTvjI5qkx8kV8BlgDvM0eXXVvOkm9Cus9FGNx458DBPbB8EFUhk4bfbjnfRR3tqtfYQffxVJ95pS5VfiZ/H0dUZVBAfpvP1d2T7RaQUPRY3tcGhvHQxUfxIQ6SS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app01-12001 (RichMail) with SMTP id 2ee166f3cffed4d-5d650;
+	Wed, 25 Sep 2024 16:55:26 +0800 (CST)
+X-RM-TRANSID:2ee166f3cffed4d-5d650
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from ubuntu.localdomain (unknown[10.55.1.70])
+	by rmsmtp-syy-appsvr04-12004 (RichMail) with SMTP id 2ee466f3cffd430-c4ac5;
+	Wed, 25 Sep 2024 16:55:26 +0800 (CST)
+X-RM-TRANSID:2ee466f3cffd430-c4ac5
+From: Zhu Jun <zhujun2@cmss.chinamobile.com>
+To: davem@davemloft.net
+Cc: edumazet@google.com,
+	pabeni@redhat.com,
+	hawk@kernel.org,
+	zhujun2@cmss.chinamobile.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] tools/net:Fix the wrong format specifier
+Date: Wed, 25 Sep 2024 01:55:24 -0700
+Message-Id: <20240925085524.3525-1-zhujun2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1446:b0:3a0:ac5a:2015 with SMTP id
- e9e14a558f8ab-3a26d7095bamr22899465ab.6.1727254502870; Wed, 25 Sep 2024
- 01:55:02 -0700 (PDT)
-Date: Wed, 25 Sep 2024 01:55:02 -0700
-In-Reply-To: <6e7d21ec-f4c0-4c94-85b1-afa308fdcdba@linux.alibaba.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f3cfe6.050a0220.30ac7d.0012.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] KMSAN: uninit-value in ocfs2_get_block
-From: syzbot <syzbot+9709e73bae885b05314b@syzkaller.appspotmail.com>
-To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+The format specifier of "unsigned int" in printf() should be "%u", not
+"%d".
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+---
+ tools/net/ynl/samples/page-pool.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reported-by: syzbot+9709e73bae885b05314b@syzkaller.appspotmail.com
-Tested-by: syzbot+9709e73bae885b05314b@syzkaller.appspotmail.com
+diff --git a/tools/net/ynl/samples/page-pool.c b/tools/net/ynl/samples/page-pool.c
+index 332f281ee5cb..e5d521320fbf 100644
+--- a/tools/net/ynl/samples/page-pool.c
++++ b/tools/net/ynl/samples/page-pool.c
+@@ -118,7 +118,7 @@ int main(int argc, char **argv)
+ 			name = if_indextoname(s->ifc, ifname);
+ 			if (name)
+ 				printf("%8s", name);
+-			printf("[%d]\t", s->ifc);
++			printf("[%u]\t", s->ifc);
+ 		}
+ 
+ 		printf("page pools: %u (zombies: %u)\n",
+-- 
+2.17.1
 
-Tested on:
 
-commit:         684a64bf Merge tag 'nfs-for-6.12-1' of git://git.linux..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13fa32a9980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6fa513ce0305877d
-dashboard link: https://syzkaller.appspot.com/bug?extid=9709e73bae885b05314b
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=13398a80580000
 
-Note: testing is done by a robot and is best-effort only.
 
