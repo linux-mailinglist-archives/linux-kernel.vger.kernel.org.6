@@ -1,150 +1,162 @@
-Return-Path: <linux-kernel+bounces-337859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 013AC985011
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 03:06:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB5CE984FA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 03:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B538C28181A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:06:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8F37282FD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807A015852E;
-	Wed, 25 Sep 2024 01:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB8513A863;
+	Wed, 25 Sep 2024 01:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pjldD4f9"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="2wG9L15t"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF56157469;
-	Wed, 25 Sep 2024 01:01:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F84D1369BC
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 01:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727226084; cv=none; b=TkWadC7bC1vD5t2E825/3R924n6BKRsmjYCoKcR+e6bi/jJqFDxALEJmmS+IdWfZKnxTl7Ex31ogTSVWCfwDDYHihj67LJRFBy0NGKHIHLbynVd1BlnMdSS7BMlZd9OPRLu1Nw8k5lku7LmxTKEwojhcPCpr3zOCOk2nWXUpBVc=
+	t=1727226017; cv=none; b=R76jUhIrZ/YjUYTWdQ9FUJIQj/XrTKIkHYpmeo7Oq2zlMgfZtzoFwOW+ZJkqPc0EYRp1zgvDDasIEigv5Mj1bn0jki368tbvTACyGHcsXXVNu27cXMJ9jfSgKiTUgomhAMOjMDpyo38pF+31t1e2yzrVl7X5DM3W3lTDVEgnZUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727226084; c=relaxed/simple;
-	bh=prnyaP8xdPvgf7lPSdgoOnTFSQEEfdLilloaJUXm1RE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kl5rjkOEDANeZGK0kS0a/pcoC4zsnFan+QyH7OjC7kHworObx8AEfPfHJzHwQPsPNY2RyUwsXJjh9+2NQpDHfhIpi5kOG6MPxdPK9zBhgzTe7J1EGpjU4Wx19Z3ohhxMzHh3nSr6ZyPO32gCyyExhUWheBYNIhK5DXdw3VX1w7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pjldD4f9; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48OIJGAj001625;
-	Wed, 25 Sep 2024 01:00:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	IHuzCQGYpXyTPH0RihFbQD623zcQRcB8CUdC3cqWdMA=; b=pjldD4f9IXUoQo+6
-	v0DhTrFEJMo29LhW+GBGrrCDkdYe00bE7NcqwI+9FiM4djrz0OYEDpDczfE8hVOS
-	3C4ivw4yDwn+gJEkjIdkLy9uf0kfmgkki+u+Q8lGxIs346X47HAtcOYfwHf6tlii
-	nKkIuAjL9QutcCbd6MiS8pNOBegMxhWwd3107CTRhcnMeL7GXmsi1EwgCvzGSqFL
-	pJODt2TPVDdE4uDtOhKtyhRE+WF1b/32DaW0U275vhBMnKZVfTvwlRmnMyJ4sPut
-	MKHLvDF1hPGGlDdjZ7xTIhQeGkAoIoZft1FFbAoD6XVdMhTnvz8CtXkNMpsfYD/+
-	XpGafg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41snqyjg40-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 01:00:21 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48P10Kac022123
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 01:00:20 GMT
-Received: from hu-wcheng-lv.qualcomm.com (10.49.16.6) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 24 Sep 2024 18:00:20 -0700
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-To: <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <dmitry.torokhov@gmail.com>,
-        <corbet@lwn.net>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <tiwai@suse.com>, <krzk+dt@kernel.org>,
-        <pierre-louis.bossart@linux.intel.com>, <Thinh.Nguyen@synopsys.com>,
-        <bgoswami@quicinc.com>, <robh@kernel.org>,
-        <gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        Wesley Cheng
-	<quic_wcheng@quicinc.com>
-Subject: [PATCH v28 32/32] ASoC: usb: Rediscover USB SND devices on USB port add
-Date: Tue, 24 Sep 2024 18:00:00 -0700
-Message-ID: <20240925010000.2231406-33-quic_wcheng@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240925010000.2231406-1-quic_wcheng@quicinc.com>
-References: <20240925010000.2231406-1-quic_wcheng@quicinc.com>
+	s=arc-20240116; t=1727226017; c=relaxed/simple;
+	bh=xYktIkXQ15frF7P5Q3qcWSwJNgJzoKJz+5SWEqQnc/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W3+wKHG6POFdsWi66wE3slKy4DOKwMMajoKDuljaMLoc628fl5L47OEu7Vf/a2IdcqxqqwgY0m8cID0rCvBIHTp1FSpSizY5lgy3Tk+a0LpAowzBiJWEcU1WrFLmeceYpD9PVingUT/ZrbvPCdyJ1yysCvSsRDw5SR+LunLlhjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=2wG9L15t; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7db1f13b14aso4991808a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 18:00:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1727226016; x=1727830816; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=M9P19Dpz8pYn0b02ZYZ9X2FwfHXZd1aOXbrW9qrvHLk=;
+        b=2wG9L15tTOxvrK6jMVP6b+kyz0Z1XArT/rsIiSmUNCvrvwtNNNOfqGbs4DmRz7HjTR
+         ZzSIXS8ttfhXaPnFLNMmlsHl8Iuk2MrghAEpEADypaUWdIcGfX43/5v3Nfh5E6KnrC/b
+         ZjyghOiduGKJvqSA+e5dwkW+arRkG+1AvjOFMtIV263YpptBKdFwVgY8+BHasbK1GHFF
+         Es3iO4zQdUFoYNA1bumJXXggqLIsJSNUTMzCq4NywKKo+v42eQAUL9BZjHYyvcgHtS8i
+         fyXJliaLKOKelGUT4AwOXQlA0GX3XBlcCx4GOuDQrWKfRZGuYP8sJQE5PCp641k4VCi5
+         nDhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727226016; x=1727830816;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M9P19Dpz8pYn0b02ZYZ9X2FwfHXZd1aOXbrW9qrvHLk=;
+        b=gpehTwrB3YMV6HScqBqzNQPwPAxiuKMgActC8ZXB/6ZS3cOHJPHdKk9xHmrjChRJHg
+         isJUTJDvyVH9leatg+687niP6deCdgFvq5avnyNxAVcvve7+arOZAvpTx2Q2mruLYa7K
+         YPLLO/6khg9z6X9bEVAWbATXJTrQM/8QGmwkxSjMnyoF6AMyWTDuOjzPVez0/xQqjQEC
+         a6mlXzZPi9wxvKP6221nSuRoH0LJ+yS7Mw78kdQtNeV/55qd60UG3jx/QgPRbbNI1OFL
+         cAAAPwpi2mpBg3tRlP/FCq1S6gX7ms8ZKqkQPqu0XDW2+rL6FVuxsKPTvCl55JruFj6v
+         XQnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXtylQbRDXHqpudD+jaQ766Mfu+YFzBwItu5YDwR+1eSz/Lia0Hlbu4sCR9B864PIYw7JsKhyck6JjUHc0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6LJPOA58djguCUlsaF9k29JRbmhEQvrWr/KrNSXPGIhUl435O
+	07c6ZbU2JVya/PsQqVsP5MwUjWM9V8q4zgRVBcxznQwx13HV7arnhPUHA59/79SL9he2siyRdGs
+	H
+X-Google-Smtp-Source: AGHT+IEM7TDZzneq8AdP+jj2pLX3nFkKqcakDcc8T3ybOf+A6xVCkRRDIVO4PWWelkRcfh6Fh4H9EQ==
+X-Received: by 2002:a17:90b:3144:b0:2d4:bf3:428e with SMTP id 98e67ed59e1d1-2e06afe04cbmr1336970a91.37.1727226015679;
+        Tue, 24 Sep 2024 18:00:15 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e06e1c286csm187676a91.17.2024.09.24.18.00.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2024 18:00:14 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1stGO2-009ede-2D;
+	Wed, 25 Sep 2024 11:00:10 +1000
+Date: Wed, 25 Sep 2024 11:00:10 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
+Subject: Re: [GIT PULL] bcachefs changes for 6.12-rc1
+Message-ID: <ZvNgmoKgWF0TBXP8@dread.disaster.area>
+References: <dtolpfivc4fvdfbqgmljygycyqfqoranpsjty4sle7ouydycez@aw7v34oibdhm>
+ <CAHk-=whQTx4xmWp9nGiFofSC-T0U_zfZ9L8yt9mG5Qvx8w=_RQ@mail.gmail.com>
+ <6vizzdoktqzzkyyvxqupr6jgzqcd4cclc24pujgx53irxtsy4h@lzevj646ccmg>
+ <ZvIHUL+3iO3ZXtw7@dread.disaster.area>
+ <CAHk-=whbD0zwn-0RMNdgAw-8wjVJFQh4o_hGqffazAiW7DwXSQ@mail.gmail.com>
+ <74sgzrvtnry4wganaatcmxdsfwauv6r33qggxo27yvricrzxvq@77knsf6cfftl>
+ <ZvIzNlIPX4Dt8t6L@dread.disaster.area>
+ <dia6l34faugmuwmgpyvpeeppqjwmv2qhhvu57nrerc34qknwlo@ltwkoy7pstrm>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: vKi0Sn_XlvQ3aFwyj_s_nRXk2lodc4I0
-X-Proofpoint-ORIG-GUID: vKi0Sn_XlvQ3aFwyj_s_nRXk2lodc4I0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 adultscore=0 bulkscore=0 phishscore=0 mlxlogscore=999
- spamscore=0 lowpriorityscore=0 clxscore=1015 mlxscore=0 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409250005
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dia6l34faugmuwmgpyvpeeppqjwmv2qhhvu57nrerc34qknwlo@ltwkoy7pstrm>
 
-In case the USB backend device has not been initialized/probed, USB SND
-device connections can still occur.  When the USB backend is eventually
-made available, previous USB SND device connections are not communicated to
-the USB backend.  Call snd_usb_rediscover_devices() to generate the connect
-callbacks for all USB SND devices connected.  This will allow for the USB
-backend to be updated with the current set of devices available.
+On Mon, Sep 23, 2024 at 11:47:54PM -0400, Kent Overstreet wrote:
+> On Tue, Sep 24, 2024 at 01:34:14PM GMT, Dave Chinner wrote:
+> > On Mon, Sep 23, 2024 at 10:55:57PM -0400, Kent Overstreet wrote:
+> > > But stat/statx always pulls into the vfs inode cache, and that's likely
+> > > worth fixing.
+> > 
+> > No, let's not even consider going there.
+> > 
+> > Unlike most people, old time XFS developers have direct experience
+> > with the problems that "uncached" inode access for stat purposes.
+> > 
+> > XFS has had the bulkstat API for a long, long time (i.e. since 1998
+> > on Irix). When it was first implemented on Irix, it was VFS cache
+> > coherent. But in the early 2000s, that caused problems with HSMs
+> > needing to scan billions inodes indexing petabytes of stored data
+> > with certain SLA guarantees (i.e. needing to scan at least a million
+> > inodes a second).  The CPU overhead of cache instantiation and
+> > teardown was too great to meet those performance targets on 500MHz
+> > MIPS CPUs.
+> > 
+> > So we converted bulkstat to run directly out of the XFS buffer cache
+> > (i.e. uncached from the perspective of the VFS). This reduced the
+> > CPU over per-inode substantially, allowing bulkstat rates to
+> > increase by a factor of 10. However, it introduced all sorts of
+> > coherency problems between cached inode state vs what was stored in
+> > the buffer cache. It was basically O_DIRECT for stat() and, as you'd
+> > expect from that description, the coherency problems were horrible.
+> > Detecting iallocated-but-not-yet-updated and
+> > unlinked-but-not-yet-freed inodes were particularly consistent
+> > sources of issues.
+> > 
+> > The only way to fix these coherency problems was to check the inode
+> > cache for a resident inode first, which basically defeated the
+> > entire purpose of bypassing the VFS cache in the first place.
+> 
+> Eh? Of course it'd have to be coherent, but just checking if an inode is
+> present in the VFS cache is what, 1-2 cache misses? Depending on hash
+> table fill factor...
 
-The chip array entries are all populated and removed while under the
-register_mutex, so going over potential race conditions:
+Sure, when there is no contention and you have CPU to spare. But the
+moment the lookup hits contention problems (i.e. we are exceeding
+the cache lookup scalability capability), we are straight back to
+running a VFS cache speed instead of uncached speed.
 
-Thread#1:
-  q6usb_component_probe()
-    --> snd_soc_usb_add_port()
-      --> snd_usb_rediscover_devices()
-        --> mutex_lock(register_mutex)
+IOWs, needing to perform the cache lookup defeated the purpose of
+using uncached lookups to avoid the cache scalabilty problems.
 
-Thread#2
-  --> usb_audio_disconnect()
-    --> mutex_lock(register_mutex)
+Keep in mind that not having a referenced inode opens up the code to
+things like pre-emption races. i.e. a cache miss doesn't prevent
+the current task from being preempted before it reads the inode
+information into the user buffer. The VFS inode could bei
+instantiated and modified before the uncached access runs again and
+pulls stale information from the underlying buffer and returns that
+to userspace.
 
-So either thread#1 or thread#2 will complete first.  If
+Those were the sorts of problems we continually had with using low
+level inode information for stat operations vs using the up-to-date
+VFS inode state....
 
-Thread#1 completes before thread#2:
-  SOC USB will notify DPCM backend of the device connection.  Shortly
-  after, once thread#2 runs, we will get a disconnect event for the
-  connected device.
-
-Thread#2 completes before thread#1:
-  Then during snd_usb_rediscover_devices() it won't notify of any
-  connection for that particular chip index.
-
-Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
----
- sound/soc/soc-usb.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/sound/soc/soc-usb.c b/sound/soc/soc-usb.c
-index f88ccf90df32..3457bb51a0a1 100644
---- a/sound/soc/soc-usb.c
-+++ b/sound/soc/soc-usb.c
-@@ -252,6 +252,8 @@ void snd_soc_usb_add_port(struct snd_soc_usb *usb)
- 	mutex_lock(&ctx_mutex);
- 	list_add_tail(&usb->list, &usb_ctx_list);
- 	mutex_unlock(&ctx_mutex);
-+
-+	snd_usb_rediscover_devices();
- }
- EXPORT_SYMBOL_GPL(snd_soc_usb_add_port);
- 
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
