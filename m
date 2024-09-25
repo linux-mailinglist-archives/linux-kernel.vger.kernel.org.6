@@ -1,111 +1,120 @@
-Return-Path: <linux-kernel+bounces-338296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6985A985609
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:05:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D3B798560D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:06:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15B5C1F25082
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:05:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB1F2B2254A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:06:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DED15A864;
-	Wed, 25 Sep 2024 09:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7E413D291;
+	Wed, 25 Sep 2024 09:06:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V/Fyz04x"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Dk5MkyBL"
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0B815B113
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 09:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34AD4136E01
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 09:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727255132; cv=none; b=L37SZB0OXrdvwu7+qSgGbWnGiPmLH8WhrtzYkA1dmRF9JpUkY+OnR/JrI7qrSFJdqkf7yw+2DclOnvTBvkV0PDwphJDeWqWIO9+g2guR4K1GMUQeWNZda6lO5VzUgIN4NNieTtd/c+WjOX+DCmYMVs34FGNk3YbaIzbJuxo4AYc=
+	t=1727255172; cv=none; b=fpM/jKYbXT1W/EYYOA7uE2Xa1/mvmRpmew+TcE89AJolo2Vwqt0Zxyl0fI9CASGTK/LtqX7otfo8mlM0BbsEZsLJUzqeajHf/GrptztRWXkzmS8hyov9s6BD6sl2PJSLuxjpnGs8idTJx99e+pqN9pNoWx+3kkUH8tGCTWYP54o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727255132; c=relaxed/simple;
-	bh=+cONzHrk7zpOTzu5yxEITF6cqEnqFLEKXmn44uaJRp4=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=MNeXRMw8ul1vy/ZkOhLc53oraGLi8p1yrDLxaWK0+eVd4ey1dLbByGzKHX0/Y0rSMGIP9nZ0caWclFuNphUVlwBFt2NAMqUNpr+dVUEYAm/3EdzNtZq73Q3T8VkV+4d00EC0njQX+IIA7cbVfv74GxCEkSFiahH1ZcXaiyHaAR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V/Fyz04x; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727255129;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CsaacKXy3sl3N6SSRdjs/BVpOGZEc2AswllD9kisABA=;
-	b=V/Fyz04xCUiOALAyUbZIQ2A0pxg52dysFZjgTdpLgv8HVOBRlZUvxPI03ZkGaSRh9L3isJ
-	wEACTtRmk38QcRmarwZTWhMqcvRlD5rzj5Y2xb/YwNjSZAZ88PrcrQTv0Zezd6dtZEyyaf
-	WmKj5F4n75qr/9KhIxwKEra1SXbJQus=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-94-CW2EtpPNNhqVDtPiLXNdxA-1; Wed,
- 25 Sep 2024 05:05:26 -0400
-X-MC-Unique: CW2EtpPNNhqVDtPiLXNdxA-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5E0EE1955F3D;
-	Wed, 25 Sep 2024 09:05:24 +0000 (UTC)
-Received: from [10.45.226.79] (unknown [10.45.226.79])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AB367195608A;
-	Wed, 25 Sep 2024 09:05:19 +0000 (UTC)
-Date: Wed, 25 Sep 2024 11:05:15 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Song Liu <song@kernel.org>
-cc: Shen Lichuan <shenlichuan@vivo.com>, colyli@suse.de, 
-    kent.overstreet@linux.dev, agk@redhat.com, snitzer@kernel.org, 
-    yukuai3@huawei.com, linux-bcache@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, dm-devel@lists.linux.dev, 
-    linux-raid@vger.kernel.org
-Subject: Re: [PATCH v1] md: Correct typos in multiple comments across various
- files
-In-Reply-To: <CAPhsuW51S=WfyNoP_cWvNVq3rPW0+iBrhzRVaKK=q3PLRA94UA@mail.gmail.com>
-Message-ID: <d3bfe143-1b96-c28b-8ef1-f7d86c8e5b54@redhat.com>
-References: <20240924091733.8370-1-shenlichuan@vivo.com> <d95d7419-7bac-802f-a5d6-456900539c32@redhat.com> <CAPhsuW51S=WfyNoP_cWvNVq3rPW0+iBrhzRVaKK=q3PLRA94UA@mail.gmail.com>
+	s=arc-20240116; t=1727255172; c=relaxed/simple;
+	bh=CtYJKhN56Tkn2nTyWC//bspec045L3XtMKbo8OzVVIQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=G9Aqwa3zPRAT+VxScRbKm9wsf61AYmh2heC8q0m846ksrOogwRJAjbIIqMfN9QccUt3GzJye+QJwX6DAdB9+RBSn5uJTZgzdUejn0o4SgSFM+trK2M/51UjBu4MUdSPhoCumrLlNr4Gx/8Q7GigYrkMHNrm6edIuBtr4wHA+85M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Dk5MkyBL; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1727255161; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=fa+kLf6gy5U/3Q/eBaW0VYx6czuibDXvJZbaeNqxg9M=;
+	b=Dk5MkyBLXxm3AjWbOO9OuH7Kain7cz4Pm9S0au8FqPesIO2cXhBrBQI8hGhAnmB01bBQR12eetazUJ7x4diXsZH6pFciLtA+I3hTpK+8Y5+MwrfBbxGPWXYjTZ0x2wjYDAKtVranyoY6WU1wZUtKvZ/AFXp0cZzSfLR28u++cuQ=
+Received: from localhost(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WFjCWdW_1727255160)
+          by smtp.aliyun-inc.com;
+          Wed, 25 Sep 2024 17:06:01 +0800
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Heming Zhao <heming.zhao@suse.com>
+Cc: ocfs2-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	syzbot+9709e73bae885b05314b@syzkaller.appspotmail.com
+Subject: [PATCH] ocfs2: fix uninit-value in ocfs2_get_block()
+Date: Wed, 25 Sep 2024 17:06:00 +0800
+Message-Id: <20240925090600.3643376-1-joseph.qi@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="-1463811712-289647186-1727255124=:2979785"
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+syzbot reported an uninit-value BUG:
 
----1463811712-289647186-1727255124=:2979785
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+BUG: KMSAN: uninit-value in ocfs2_get_block+0xed2/0x2710 fs/ocfs2/aops.c:159
+ocfs2_get_block+0xed2/0x2710 fs/ocfs2/aops.c:159
+do_mpage_readpage+0xc45/0x2780 fs/mpage.c:225
+mpage_readahead+0x43f/0x840 fs/mpage.c:374
+ocfs2_readahead+0x269/0x320 fs/ocfs2/aops.c:381
+read_pages+0x193/0x1110 mm/readahead.c:160
+page_cache_ra_unbounded+0x901/0x9f0 mm/readahead.c:273
+do_page_cache_ra mm/readahead.c:303 [inline]
+force_page_cache_ra+0x3b1/0x4b0 mm/readahead.c:332
+force_page_cache_readahead mm/internal.h:347 [inline]
+generic_fadvise+0x6b0/0xa90 mm/fadvise.c:106
+vfs_fadvise mm/fadvise.c:185 [inline]
+ksys_fadvise64_64 mm/fadvise.c:199 [inline]
+__do_sys_fadvise64 mm/fadvise.c:214 [inline]
+__se_sys_fadvise64 mm/fadvise.c:212 [inline]
+__x64_sys_fadvise64+0x1fb/0x3a0 mm/fadvise.c:212
+x64_sys_call+0xe11/0x3ba0
+arch/x86/include/generated/asm/syscalls_64.h:222
+do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
+This is because when ocfs2_extent_map_get_blocks() fails, p_blkno is
+uninitialized. So the error log will trigger the above uninit-value
+access.
 
+The error log is out-of-date since get_blocks() was removed long time
+ago. And the error code will be logged in ocfs2_extent_map_get_blocks()
+once ocfs2_get_cluster() fails, so fix this by only logging inode and
+block.
 
-On Tue, 24 Sep 2024, Song Liu wrote:
+Link: https://syzkaller.appspot.com/bug?extid=9709e73bae885b05314b
+Reported-by: syzbot+9709e73bae885b05314b@syzkaller.appspotmail.com
+Tested-by: syzbot+9709e73bae885b05314b@syzkaller.appspotmail.com
+Fixes: ccd979bdbce9 ("[PATCH] OCFS2: The Second Oracle Cluster Filesystem")
+Cc: stable@vger.kernel.org
+Signed-off-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+---
+ fs/ocfs2/aops.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-> Hi Mikulas,
-> 
-> On Tue, Sep 24, 2024 at 6:30 AM Mikulas Patocka <mpatocka@redhat.com> wrote:
-> >
-> > Hi
-> >
-> > I've applied the device mapper part of the patch.
-> 
-> Would you mind taking the whole patch instead? You can add
-> 
-> Acked-by: Song Liu <song@kernel.org>
-> 
-> Thanks,
-> Song
-
-I'm not a maintainer of MD and BCACHE. The MD and BCACHE part of the patch 
-should go through their tree.
-
-Mikulas
----1463811712-289647186-1727255124=:2979785--
+diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
+index 1fea43c33b6b..db72b3e924b3 100644
+--- a/fs/ocfs2/aops.c
++++ b/fs/ocfs2/aops.c
+@@ -156,9 +156,8 @@ int ocfs2_get_block(struct inode *inode, sector_t iblock,
+ 	err = ocfs2_extent_map_get_blocks(inode, iblock, &p_blkno, &count,
+ 					  &ext_flags);
+ 	if (err) {
+-		mlog(ML_ERROR, "Error %d from get_blocks(0x%p, %llu, 1, "
+-		     "%llu, NULL)\n", err, inode, (unsigned long long)iblock,
+-		     (unsigned long long)p_blkno);
++		mlog(ML_ERROR, "get_blocks() failed, inode: 0x%p, "
++		     "block: %llu\n", inode, (unsigned long long)iblock);
+ 		goto bail;
+ 	}
+ 
+-- 
+2.39.3
 
 
