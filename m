@@ -1,86 +1,125 @@
-Return-Path: <linux-kernel+bounces-339580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91DF7986735
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:54:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4987F98673A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:55:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4357828283D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:54:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E57A286F2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8472215383C;
-	Wed, 25 Sep 2024 19:53:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417DB14831F;
+	Wed, 25 Sep 2024 19:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q/ln3DH6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="WZlV1OKt"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16A5146A83;
-	Wed, 25 Sep 2024 19:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C149C145B26;
+	Wed, 25 Sep 2024 19:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727294039; cv=none; b=itJlEz2QxBwr1r81oq/SjiqJXvMERcCIgI1FD7Mv3cvVRygvu/IBI/Y4zc/lm1ZRjuGONKWL4dP2qiHKwVC+UUrqjVAbaCaqH3u4+LZkM/v736B4No76k6+t+d/NdKV2PYLHqs5q3rtE5bqgcK+bz3iPcuAY7nwVMThlABL+mI8=
+	t=1727294077; cv=none; b=VkOPWqLbjYwyrqzCYlDbwPh9RAW9QHKTZAqKCRJnOEw0NuX16Brr15jFpT3CrU2GvEEBSyOKTeAmlhlkQ2WU85+uctNyTJs6oMVLPUWTykktf+mJbv70vDn1xZ5vug9GwEDg0uUXQ2AjMn5FhoJUXhPyXbx19qxE6885tNxqYhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727294039; c=relaxed/simple;
-	bh=PsewtJ2NK1B0orZJR3lv20G81kf/IkJEtGPhtMCu6q8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hLsqeNPNDamly7SPY4e7yONzV0Oe0hwwas07MmUjboMoAwXT0NiQJoGVi8SDxIMsYkb5Ms0djKVIzVf02kzXmofuj5Vol9S/Qs2VSs49UetaCdNTasQC24LP+Z3TZuNEw5Qne0H6NC4ip7WDc5JqBFy8WeWDUrU+8Dr8Bp0D8zA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q/ln3DH6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36AAAC4CECD;
-	Wed, 25 Sep 2024 19:53:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727294038;
-	bh=PsewtJ2NK1B0orZJR3lv20G81kf/IkJEtGPhtMCu6q8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q/ln3DH6185xuGtUi5wm20wr6/1/j4M02AYz5dwmA8zmRDk2tfPMzjfKL14u/1BYP
-	 VhfE75TWa7dG6QUa4GI/d++PKeBBTx5EoUI2EtYx1Y365ENVkOFCAJruWWp/2xvttg
-	 y5B+G2RJ2+pClOhU6bw7g+SpCRHf7PzevtuuxTyKqz+RCjfG6mo+YVeczwLw/O42lW
-	 /sllJVtSuDqFa3UsKviDDNytjza5XbFMZRco1Ipfr2eI3Lkv8O0zOndUC1SzF4i8ne
-	 hVz7Ybf+dauuZS8bigzWu3Kb5XHleBGgYzKgh35UrcMeP4t7k4ex6tBW1miyRI4AW/
-	 tiGqHXnAxhXMg==
-Date: Wed, 25 Sep 2024 20:53:54 +0100
-From: Simon Horman <horms@kernel.org>
-To: Zhu Jun <zhujun2@cmss.chinamobile.com>
-Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-	hawk@kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tools/net:Fix the wrong format specifier
-Message-ID: <20240925195354.GY4029621@kernel.org>
-References: <20240925085524.3525-1-zhujun2@cmss.chinamobile.com>
+	s=arc-20240116; t=1727294077; c=relaxed/simple;
+	bh=MHYemQ4iLJxEt+SBHZ8DDhtdDBmysgd2m8HWLVTbcLk=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=nrRnRTBxZ83ZmJGp/mPeZ72lYSoKmqtlexdVw2cB2+htMWNDcJ31OJC3BFQJ3gywcH2k1LMgCyQfo1Toy0+KxWcZU8IhMqENgK5RLVoY+81qzRwd6YEjVW1EvS7Vc6hTayD2R9tQZooOZN7ZJ5EFn97nULLcV0Y/x13UIxm1xdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=WZlV1OKt; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727294064; x=1727898864; i=markus.elfring@web.de;
+	bh=oZFXgGZpN35Zb33XWrmn6Py5ABUqGOrhRxGCArCoPsQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=WZlV1OKt8vJe+eWHvXmXian3WVMAsLdis6oc6rAYeAgIWdG1xCuyf/SAQXqtr+s/
+	 F4iFc60CGfBiPHosuHxSLBDaLHDOGOGEprWdxfMmboMVoM5FPs0u8Hp5qeTghNMPY
+	 R+Nf2MkmArRMvOpV3DJ50ipKgzQmaNhdNcr4cbeNO4rUyAE77MhWz8wxaYaDR/ceu
+	 8/cEWChONkGNknDF6nHfzoYkTkxHehp2HG6nt1nZIsaBYjQlUA9ClogqPKQkBRQyM
+	 bLuYFYGZTThnJRGB2HMq4B5fmq/HmzJtZQkB80xGY+ikmLnRHnWPjJBs25c5NrpsV
+	 Rf9xT56OR6RACRguCg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MRW6Z-1sWg9a3le1-00P9Iy; Wed, 25
+ Sep 2024 21:54:23 +0200
+Message-ID: <cf895072-43cf-412c-bced-8268498ad13e@web.de>
+Date: Wed, 25 Sep 2024 21:54:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240925085524.3525-1-zhujun2@cmss.chinamobile.com>
+User-Agent: Mozilla Thunderbird
+To: linux-ext4@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>,
+ Jan Kara <jack@suse.cz>, Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+ Ritesh Harjani <riteshh@linux.ibm.com>, Theodore Ts'o <tytso@mit.edu>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] ext4: Call ext4_journal_stop(handle) only once in
+ ext4_dio_write_iter()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:N+Rv56bpzb01vFl7kAaSa0ilOzgrnXCwdreS4Meu1k9Ls8DgELx
+ MRrsN3KmVbKDIU1FGMitIJoC6nM7t5Cdr3Xe3JT7EVTSwhqeTY/eIrQeRHM7IAHgfd0cQYG
+ raRYCIU8166o9UUv/CgiRSEd4ie0/wvJPMudeQFymHzQDQdxmxARo66K05VK4vPhKCXPJYH
+ kAQNXGMA/1iQSWYJFNCfA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:kajW8eoXXRI=;WidS8QTOOMrNRr758M3ooy1P6F4
+ G2wZH3SQPlqT4Zh9CLES7uKaC9L2A+lOQA5qk8+ZVvIUUyowkYISsZE9ElJaJRt5pXJM3zB2m
+ ETcP2gOzySNsH0D4ej490l04gwHtLQDuz8RL8gQ6LVHqshEzVLvlQGdRoRO1q2QpQyA42CLr6
+ Jx0dwCDU7Hv8TvC8qZKTF9yXSx/ZJSLJTowF0aGsFQlrlAZ1sF/5hrtqyo9bkTXvWXmDJ/z9j
+ vm7eNtgrgfVI5wD02XN/FGiiAwszZIr4wGSpA26iY/5fA59qalsTZAZDQruC0ucdfdzc/ws1a
+ AH8hgETGYm4XYN4dmng3q3eZyOmdf1FMsn39LGO6nCafv2fWviUUkP5MVvGtZz8ux8zITjid9
+ AOO9yijvkwk+bEbqt5Bj8+0gkOdhqhejfvjITsVy7HOBGqtiC/6xPpRJR+pORFzrMudI4Of/7
+ Arn74bZOLYvprIgq156zOz/jjh7zBLkAaJT+tvfBrj9focTJvakUbUx/3GS36F3wRsvtPW+oD
+ pui4BX7rfw/rPjxLOuOsAJ3cI9Goik8DcyRlocERetQvGwI8PzTXIo0+kg+i7YVp1AOEVZg8y
+ 5cWxVhOO8TASr97fF/FfAAKYP1SLC47sMkeh3GFRhmSrlBNLgSHw+EW8gRQcprqpBrQENHlRO
+ jqrmFd83wv2pdU3P3wEiqcf1T/1Y2wWLpgSKWUGcE4C1keyo8twcAjppq6QevHMn5XlL6hnin
+ XHEkMeAQZg/c7h4hOePQ+Ymsvc7BFmBrisBIXQrQ/GvsAcS1C5Q898EFpiEleHL8AtbVqc60r
+ epB0pNSSbwdPI/a7sCbY1guA==
 
-On Wed, Sep 25, 2024 at 01:55:24AM -0700, Zhu Jun wrote:
-> The format specifier of "unsigned int" in printf() should be "%u", not
-> "%d".
-> 
-> Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 25 Sep 2024 21:47:39 +0200
 
-Hi Zhu Jun,
+An ext4_journal_stop(handle) call was immediately used after a return valu=
+e
+check for a ext4_orphan_add() call in this function implementation.
+Thus call such a function only once instead directly before the check.
 
-Thanks for your patch.
+This issue was transformed by using the Coccinelle software.
 
-While this change looks good to me it looks like it is for net-next.
-Currently net-next is closed for the v6.12 merge window. So please
-repost this patch once it reopens, after v6.12-rc1 has been released.
-I expect that to happen early next week.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ fs/ext4/file.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-Also, please explicitly target net-next patches for that tree like this:
+diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+index f14aed14b9cf..23005f1345a8 100644
+=2D-- a/fs/ext4/file.c
++++ b/fs/ext4/file.c
+@@ -564,12 +564,9 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb=
+, struct iov_iter *from)
+ 		}
 
-  Subject: [PATCH net-next]
+ 		ret =3D ext4_orphan_add(handle, inode);
+-		if (ret) {
+-			ext4_journal_stop(handle);
+-			goto out;
+-		}
+-
+ 		ext4_journal_stop(handle);
++		if (ret)
++			goto out;
+ 	}
 
-For reference, netdev processes are documented here:
-https://docs.kernel.org/process/maintainer-netdev.html
+ 	if (ilock_shared && !unwritten)
+=2D-
+2.46.1
 
--- 
-pw-bot: defer
 
