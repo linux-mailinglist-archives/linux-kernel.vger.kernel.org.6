@@ -1,70 +1,71 @@
-Return-Path: <linux-kernel+bounces-337997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CA5A985210
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 06:38:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5274B985211
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 06:38:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDD7C285679
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 04:38:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFA011F24E47
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 04:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A619C14C5BF;
-	Wed, 25 Sep 2024 04:38:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6901014F132;
+	Wed, 25 Sep 2024 04:38:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aD2Zz3KO"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MAoUc2lk"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203E62F52
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 04:38:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363F714B965
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 04:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727239110; cv=none; b=g8SLzc05WiNd5srTg0S1v8/SYQOleLNTcwePSjgbKYZs46OQAsofO/xsapvc02uGPlA1ncYSKzDHwvTC7nDcj4OG9xwFRxNe5I4cRXllnhYIGGXp2x6OP316Yj5uyXz88Y1BMEvaLM/8Rk3g987wgrzh0C/3mV/KABZiOPA/MHM=
+	t=1727239111; cv=none; b=qzXCuoUjQMSK76X/Ol58qs8ifJ5TAJmk0E96uhWk3mF2Bz+QOa3lxoICiBWlv+2Kul5PcOdnjUHtYsHBlJjhkWuEd1dw/3E1rfE6aJE3Q4fobMB/mf0Icm5VIamyIhh38+S2yURmJbcG5m6AUZEVOwHoX+BtRTFRd/VrtKPhgA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727239110; c=relaxed/simple;
-	bh=vcbtUAz7yhwWjWdeSyDPvePJuJQCbBjXfWfwU0OxtHI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dyYT1PrjiMF8dB+7HW5OpeuDk364JKr87suX+SGSaW798fKxU5ckSf/QmA5jq45Bp+bU1jN4b3rP8NWLvy0WQllCjAjXj6D+M+uRcjF+oqmrAumdG2FY+jZMYVtbay8mM/cUXMt2U2/iWEQqipvfERRu41uP1daLXm6LO2ZBu/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aD2Zz3KO; arc=none smtp.client-ip=209.85.218.54
+	s=arc-20240116; t=1727239111; c=relaxed/simple;
+	bh=ciTImMBS0p6wks5mQK0mcllczL97Z3Zssq9pfQWx3xs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=jCA5G+Ef/qaeJOZWBi94AEwwefj9P0tZlRFsNvYCw/nT/UlSWzXX+6zwdygpIWnerrw9+xu5eKf3vEQLcO2JbQSkMO3NLZ5UkZSXm2spxs5ilBrIfNSKnd10BElq1LUz9XmjBKHObqwMdhcuLiT25K8pIh0ywGmCU3yr9cDwPnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MAoUc2lk; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a8d2b4a5bf1so875430566b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 21:38:27 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a86e9db75b9so983488266b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 21:38:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727239106; x=1727843906; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=D/oxZoO71PQ5m5Ow+SV5/SV/jvpv3lxQQXCYtby61Bc=;
-        b=aD2Zz3KOB5jLldI+7RcSUqDJrUMc0bvGg+Wpf/EGibPBGWfjdPvXPOTIlt5xKGUdwA
-         lJpEZ4zCK2JPnWIHNe+oGJiVTLy3hnx3BoTuYq87O5NqajYKDM8KofPQl5xVNHjeAJ8T
-         fOxILsEc8OjAPrHfq6f429dcr4yhykAWoumqxXHu5ZoXYNW8JyCvVwahWWLzyQbjRR7u
-         fC4SVmp19ZIHA3B1ktAVH5+MsDWfSYPf+xTjymVKncRE9KUrznDGCiv0XUF2UpiAFqhR
-         dJ3N5aXzR7D8RGk0IYQXKwdg5IOznNR23jSG5xvSkudcHjvu7bssxkiLX1cm2CtseJYG
-         2HDQ==
+        d=linaro.org; s=google; t=1727239108; x=1727843908; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eqcG1Y/DqvLJS0U3eydB1IqD9oVuSGX+UlV/1xSIyT0=;
+        b=MAoUc2lkIfHSanC/k/VTS3tfcLqGjtvLOJ1vBgdk5XSOQikocbEsybcfvdR2zvCkvm
+         XtZqCSLnazE7kbatmo4zRCmqW8FBjZmTPq/mRAhC4gWkDhs7mcNfVVV5F9TnDlegGmSV
+         tM0SOOtePdpFqIjqreVW+FeJI/NzpflmK8ygXDVScD+jJa5keRXS7s4ApsCIshjeWu6e
+         GOL0sg+AxDW3KnKsYb7v8c9WhT1FTeF8li864PJqYUBRaW7/QUhGFy4l+k1VnmlXcGbh
+         aUULabtyx7TtJDXRA8vEsZb7AHgeSEnBugAx4Ca+o294BD6ak9OgVVTIuZcYz5k4JR7l
+         adoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727239106; x=1727843906;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=D/oxZoO71PQ5m5Ow+SV5/SV/jvpv3lxQQXCYtby61Bc=;
-        b=Gq79qVEmZCFEnN8fGV8WtTC9lIxWFLCBZWCbQvI8R+a99sxPE0gpm9km11rcUvJ82H
-         JLrE2qjH8kwWUkVP5OdD2R0H/+FWecAqbW91JY2mf8Tiz6+sQm5pMCsNN0/YwJaKXg5D
-         bBdyJE5o3l8o6Y4h8zMzseOlNQgHRtwVm9ugeW8nY4i9doOnQHcfG4tCrdCJbjwcv3Jf
-         lCoWUowywO53B/j7KnYnqK6Jw79CUJGQp8yx2z7qgFRlL50rEMjhbA+fEZB8gfKfuoZy
-         1P3kEZ7qbYKH1/u7MNYkni+fCmI94F8GkyGGwuEvxIrdtd2sgXtUDmjbujQ8yIcxIHGt
-         e2JQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV6RXDbHpNHBngUG6dySC+vEdICSZ9KmxhIrSyMEPrDBQ/WoYdM/yTdfmMGePDTwCFH1QRsEILmxa3pYXE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzA8vY7QcT5R1JXlwobv9Aazdjk9ZQFL/PoDsIw6qkMIW8BTv8
-	70RJrYC0oxHFm7ahnUmHssW7i969KuCHyeoRDX11EoY2c8X+KHBKbo5lP2Ds6++2iQdKKOxvU8m
-	WzPA=
-X-Google-Smtp-Source: AGHT+IHwdF5ljDQfVen2bB2i+DqTGyQ8nFc+SavdlwPgLOgvH9bEIVuNClRBPu4Uwc0aZm3GruhGCg==
-X-Received: by 2002:a17:906:730a:b0:a8d:e49:c530 with SMTP id a640c23a62f3a-a93a05eda5fmr124902866b.42.1727239106340;
-        Tue, 24 Sep 2024 21:38:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727239108; x=1727843908;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eqcG1Y/DqvLJS0U3eydB1IqD9oVuSGX+UlV/1xSIyT0=;
+        b=WXfAct48TxVsDi0hjrC/JMSZNaQEjrv/823tIS8/02gT7JrUDBzBrdziH3zLvaeFSS
+         BJHSwgU4MmTfeW59kFXBLVDl809khWZ/70yOFO9dN+OiLT43fVJhoohnOAuLtO3B28SO
+         UR4b4KzTpCajQ4rG7FMWWQjlpvo+Xm/yf4qoCe3RovUIldjoXQboayVQ0LHKbCfPEE/T
+         3FlZWNIU2yaolSVR1ZmROOzMQcOFwlgWcvQLpmSkYOQvqj0u8ZIE9lRn23jMoKUkl5va
+         Qf1R4hPxykUEnd2rpENQyNBMu3CGtlNr87agcMSigQIs0zg6Ug4M71y+DQ4cHMsjR5W8
+         0tpA==
+X-Forwarded-Encrypted: i=1; AJvYcCUtgfGyXc5oLM4/S40Rz0U9RBHr6gXSW37IOQHwUuftEgy62ssMpA0Lb44QnWjmeivKy3hEDAotgEsudWQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ/I6O065PXmsInB5ZNW5f12nUkS9pTOl6ACjrKHC7pfxg3IsH
+	qELZB6JI7nFxgfBzH6dH3FZXphMOldXbir2tvF6RtArWRj+31l56PmazK9KUFVg=
+X-Google-Smtp-Source: AGHT+IGxDWA9Bpt+Vo+5NwY4exmWH9AugLbSR05W212S951aBgbB3SXoz6SBoMQb7pJmFGUWWMTH7w==
+X-Received: by 2002:a17:907:f14d:b0:a8b:6ee7:ba26 with SMTP id a640c23a62f3a-a93a0322a63mr119177866b.1.1727239108517;
+        Tue, 24 Sep 2024 21:38:28 -0700 (PDT)
 Received: from localhost.localdomain ([2.125.184.148])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9392f346casm164857466b.24.2024.09.24.21.38.24
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9392f346casm164857466b.24.2024.09.24.21.38.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 21:38:25 -0700 (PDT)
+        Tue, 24 Sep 2024 21:38:27 -0700 (PDT)
 From: Alexey Klimov <alexey.klimov@linaro.org>
 To: srinivas.kandagatla@linaro.org,
 	a39.skl@gmail.com,
@@ -79,10 +80,12 @@ Cc: lgirdwood@gmail.com,
 	krzysztof.kozlowski@linaro.org,
 	vkoul@kernel.org,
 	klimov.linux@gmail.com
-Subject: [PATCH REVIEW 1/2] ASoC: codecs: lpass-rx-macro: fix RXn(rx,n) macro for DSM_CTL and SEC7 regs
-Date: Wed, 25 Sep 2024 05:38:22 +0100
-Message-ID: <20240925043823.520218-1-alexey.klimov@linaro.org>
+Subject: [PATCH REVIEW 2/2] ASoC: codecs: lpass-rx-macro: add missing CDC_RX_BCL_VBAT_RF_PROC2 to default regs values
+Date: Wed, 25 Sep 2024 05:38:23 +0100
+Message-ID: <20240925043823.520218-2-alexey.klimov@linaro.org>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240925043823.520218-1-alexey.klimov@linaro.org>
+References: <20240925043823.520218-1-alexey.klimov@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,73 +94,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Turns out some registers of pre-2.5 version of rxmacro codecs are not
-located at the expected offsets but 0xc further away in memory.
-So far the detected registers are CDC_RX_RX2_RX_PATH_SEC7 and
-CDC_RX_RX2_RX_PATH_DSM_CTL.
-
-CDC_RX_RXn_RX_PATH_DSM_CTL(rx, n) macro incorrectly generates the address
-0x540 for RX2 but it should be 0x54C and it also overwrites
-CDC_RX_RX2_RX_PATH_SEC7 which is located at 0x540.
-The same goes for CDC_RX_RXn_RX_PATH_SEC7(rx, n).
-
-Fix this by introducing additional rxn_reg_stride2 offset. For 2.5 version
-and above this offset will be equal to 0.
-With such change the corresponding RXn() macros will generate the same
-values for 2.5 codec version for all RX paths and the same old values
-for pre-2.5 version for RX0 and RX1. However for the latter case with RX2 path
-it will also add 2 * rxn_reg_stride2 on top.
+CDC_RX_BCL_VBAT_RF_PROC1 is listed twice and its default value
+is 0x2a which is overwriten by its next occurence in rx_defaults[].
+The second one should be missing CDC_RX_BCL_VBAT_RF_PROC2 instead
+and its default value is expected 0x0.
 
 Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 ---
- sound/soc/codecs/lpass-rx-macro.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ sound/soc/codecs/lpass-rx-macro.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/sound/soc/codecs/lpass-rx-macro.c b/sound/soc/codecs/lpass-rx-macro.c
-index 71e0d3bffd3f..9288ddb705fe 100644
+index 9288ddb705fe..2f6699c0a643 100644
 --- a/sound/soc/codecs/lpass-rx-macro.c
 +++ b/sound/soc/codecs/lpass-rx-macro.c
-@@ -202,12 +202,14 @@
- #define CDC_RX_RXn_RX_PATH_SEC3(rx, n)	(0x042c  + rx->rxn_reg_stride * n)
- #define CDC_RX_RX0_RX_PATH_SEC4		(0x0430)
- #define CDC_RX_RX0_RX_PATH_SEC7		(0x0434)
--#define CDC_RX_RXn_RX_PATH_SEC7(rx, n)	(0x0434  + rx->rxn_reg_stride * n)
-+#define CDC_RX_RXn_RX_PATH_SEC7(rx, n)		\
-+	(0x0434 + rx->rxn_reg_stride * n + n * (n - 1) * rx->rxn_reg_stride2)
- #define CDC_RX_DSM_OUT_DELAY_SEL_MASK	GENMASK(2, 0)
- #define CDC_RX_DSM_OUT_DELAY_TWO_SAMPLE	0x2
- #define CDC_RX_RX0_RX_PATH_MIX_SEC0	(0x0438)
- #define CDC_RX_RX0_RX_PATH_MIX_SEC1	(0x043C)
--#define CDC_RX_RXn_RX_PATH_DSM_CTL(rx, n)	(0x0440  + rx->rxn_reg_stride * n)
-+#define CDC_RX_RXn_RX_PATH_DSM_CTL(rx, n)	\
-+	(0x0440 + rx->rxn_reg_stride * n + n * (n - 1) * rx->rxn_reg_stride2)
- #define CDC_RX_RXn_DSM_CLK_EN_MASK	BIT(0)
- #define CDC_RX_RX0_RX_PATH_DSM_CTL	(0x0440)
- #define CDC_RX_RX0_RX_PATH_DSM_DATA1	(0x0444)
-@@ -645,6 +647,7 @@ struct rx_macro {
- 	int rx_mclk_cnt;
- 	enum lpass_codec_version codec_version;
- 	int rxn_reg_stride;
-+	int rxn_reg_stride2;
- 	bool is_ear_mode_on;
- 	bool hph_pwr_mode;
- 	bool hph_hd2_mode;
-@@ -3821,6 +3824,7 @@ static int rx_macro_probe(struct platform_device *pdev)
- 	case LPASS_CODEC_VERSION_2_0:
- 	case LPASS_CODEC_VERSION_2_1:
- 		rx->rxn_reg_stride = 0x80;
-+		rx->rxn_reg_stride2 = 0x6;
- 		def_count = ARRAY_SIZE(rx_defaults) + ARRAY_SIZE(rx_pre_2_5_defaults);
- 		reg_defaults = kmalloc_array(def_count, sizeof(struct reg_default), GFP_KERNEL);
- 		if (!reg_defaults)
-@@ -3834,6 +3838,7 @@ static int rx_macro_probe(struct platform_device *pdev)
- 	case LPASS_CODEC_VERSION_2_7:
- 	case LPASS_CODEC_VERSION_2_8:
- 		rx->rxn_reg_stride = 0xc0;
-+		rx->rxn_reg_stride2 = 0x0;
- 		def_count = ARRAY_SIZE(rx_defaults) + ARRAY_SIZE(rx_2_5_defaults);
- 		reg_defaults = kmalloc_array(def_count, sizeof(struct reg_default), GFP_KERNEL);
- 		if (!reg_defaults)
+@@ -961,7 +961,7 @@ static const struct reg_default rx_defaults[] = {
+ 	{ CDC_RX_BCL_VBAT_PK_EST2, 0x01 },
+ 	{ CDC_RX_BCL_VBAT_PK_EST3, 0x40 },
+ 	{ CDC_RX_BCL_VBAT_RF_PROC1, 0x2A },
+-	{ CDC_RX_BCL_VBAT_RF_PROC1, 0x00 },
++	{ CDC_RX_BCL_VBAT_RF_PROC2, 0x00 },
+ 	{ CDC_RX_BCL_VBAT_TAC1, 0x00 },
+ 	{ CDC_RX_BCL_VBAT_TAC2, 0x18 },
+ 	{ CDC_RX_BCL_VBAT_TAC3, 0x18 },
 -- 
 2.45.2
 
