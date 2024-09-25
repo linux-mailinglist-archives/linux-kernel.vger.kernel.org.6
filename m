@@ -1,166 +1,144 @@
-Return-Path: <linux-kernel+bounces-338094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3897998534A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:55:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A736F98538E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:17:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42F691C23C4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 06:55:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50D261F2508D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:17:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A10156230;
-	Wed, 25 Sep 2024 06:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TSFhwR7W"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8D215665C;
+	Wed, 25 Sep 2024 07:17:52 +0000 (UTC)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A577155A25
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 06:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99CBF155C98;
+	Wed, 25 Sep 2024 07:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727247305; cv=none; b=TSCK6t2LrFF6+A7Adrv8Qyu0Xx1S+UkNLD29ViFq+b4QJPFBe2D5saoGuRAKN9Qw17JhtozMqYkzI44nH/xPxXF1XVheYvbyb5OY8CU9pv3GOU61+7ob88ct0B7wcl1LI5SDUrTiB5hgE1b+RkGUNdGSGaQSWIWaDfScjv772ec=
+	t=1727248672; cv=none; b=RTuZzHQu/oWDHqCvlBH9rp+U66viwGDBDyKPKu4PuB8veDBhSOd/rRZJj+UXE3mVp+rR8vX9BNV3WDG/8LcTWj6yEelC3SwOcLD6LUzPGOWl9N33pwgGJYGW7Ejtr4Sgrs2/ovOpNk8DUmnVRpwazQrzvCoWOFT1zvtdM0+B3D8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727247305; c=relaxed/simple;
-	bh=4gOKKEtz+0EI6rj3HqZT27xWK2qDolfvA8v4vKsZ6RU=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=QIj57VUgMo+XuaiyCwQmrBDGzNAPf960qysJEHShI44Ue3gPFSARYFtHTbli+oejh+5l6mf9nrIYPsNxo4CO/OAKBULFpvNSQcjYx6AXi6dU49b2nD2vEkb++0z4wdyq3oXrvmyziwe3YXUc4Gcb97HGtMJp+TsNeMgA4gzw61A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TSFhwR7W; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240925065501epoutp034d006ee57022f4fefa2c5bce919481d9~4akTnbY9V1105411054epoutp03t
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 06:55:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240925065501epoutp034d006ee57022f4fefa2c5bce919481d9~4akTnbY9V1105411054epoutp03t
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1727247301;
-	bh=npWzJrPmcJ7bQMNX0h6hcxv6OusSwWpLI++E+L4EUvU=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=TSFhwR7WVS85pq9Zo++PTL//bWIhraLamMrsIFsALm8sUybNg2gfxb5fqTomEiZb/
-	 Hu4dsUxgx4BZlKXk0APs+J/xKwZh1RblcB08Mdmz6c1Rbfti9i4MXt8f00Km7qG6aQ
-	 ZVrnwnInkr4oaTUdSRfCZFtSo98NOosOcmexkpwA=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240925065500epcas1p230985f5aa54f41a5df2549418f732a7c~4akTDSehl0821208212epcas1p2e;
-	Wed, 25 Sep 2024 06:55:00 +0000 (GMT)
-Received: from epsmgec1p1-new.samsung.com (unknown [182.195.38.243]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4XD6tD3zJkz4x9Q1; Wed, 25 Sep
-	2024 06:55:00 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-	epsmgec1p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	5E.6E.19509.4C3B3F66; Wed, 25 Sep 2024 15:55:00 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240925065459epcas1p3b8e701fd0228bc2670f22cf253a3b02f~4akSaJnxP2690826908epcas1p3I;
-	Wed, 25 Sep 2024 06:54:59 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240925065459epsmtrp2e39f8de490b2cc6f2afb472e175b4937~4akSZP00F1786117861epsmtrp26;
-	Wed, 25 Sep 2024 06:54:59 +0000 (GMT)
-X-AuditID: b6c32a4c-17bc070000004c35-0a-66f3b3c4a89b
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	7C.67.08456.3C3B3F66; Wed, 25 Sep 2024 15:54:59 +0900 (KST)
-Received: from sh8267baek02 (unknown [10.253.99.49]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240925065459epsmtip18e825fae86b1134e725dde1488ddc4da~4akSHH87I1980719807epsmtip1w;
-	Wed, 25 Sep 2024 06:54:59 +0000 (GMT)
-From: "Seunghwan Baek" <sh8267.baek@samsung.com>
-To: "'Bart Van Assche'" <bvanassche@acm.org>,
-	<linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-	<martin.petersen@oracle.com>, <James.Bottomley@HansenPartnership.com>,
-	<avri.altman@wdc.com>, <alim.akhtar@samsung.com>
-Cc: <grant.jung@samsung.com>, <jt77.jang@samsung.com>,
-	<junwoo80.lee@samsung.com>, <dh0421.hwang@samsung.com>,
-	<jangsub.yi@samsung.com>, <sh043.lee@samsung.com>, <cw9316.lee@samsung.com>,
-	<wkon.kim@samsung.com>, <stable@vger.kernel.org>
-In-Reply-To: <1845f326-e9eb-4351-9ed1-fce373c82cb0@acm.org>
-Subject: RE: [PATCH v1 1/1] ufs: core: set SDEV_OFFLINE when ufs shutdown.
-Date: Wed, 25 Sep 2024 15:54:59 +0900
-Message-ID: <08b901db0f17$d6a20b50$83e621f0$@samsung.com>
+	s=arc-20240116; t=1727248672; c=relaxed/simple;
+	bh=JlqzkcI1dW2ynQ75PjrYYS6kdHiITrvjuZiQki7W53g=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type; b=KBk4oSwcb2UKWhlBbxncePbFAOVCXy4mWaQN4kckxSuLMba9z2Ua+XlYrOvopHU2jMG3r8BRtkKgWXYTQuRaNSS2ScR8F1yBNUnXHAmtzb4ev/ELm99+QMCUxhpMDZfiOv8cYMJMFBuBsa+n3SvosuMCtzrymf/jeAaZqkqx3jU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0FA491A038D;
+	Wed, 25 Sep 2024 09:17:49 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id CB8DC1A0056;
+	Wed, 25 Sep 2024 09:17:48 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 2B8AF183AD44;
+	Wed, 25 Sep 2024 15:17:47 +0800 (+08)
+From: Shengjiu Wang <shengjiu.wang@nxp.com>
+To: vkoul@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	shengjiu.wang@gmail.com,
+	Xiubo.Lee@gmail.com,
+	festevam@gmail.com,
+	nicoleotsuka@gmail.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v4 0/7] ASoC: fsl: add memory to memory function for ASRC
+Date: Wed, 25 Sep 2024 14:55:09 +0800
+Message-Id: <1727247316-16156-1-git-send-email-shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQITd6wvsWq6bg+5ypABxh1kBxxfMwHy7pIVAtyJc3gCDAIdKwI4d05OAHuLQEuxqsQ7wA==
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHJsWRmVeSWpSXmKPExsWy7bCmvu6RzZ/TDJacl7F4MG8bm8XLn1fZ
-	LKZ9+MlsMeNUG6vFvmsn2S1+/V3PbrGxn8OiY+tkJosdz8+wW+z628xkcXnXHDaL7us72CyW
-	H//HZNH0Zx+LxYKNjxgtNl/6xuIg4HH5irfHtEmn2Dw+Pr3F4tG3ZRWjx+dNch7tB7qZAtii
-	sm0yUhNTUosUUvOS81My89JtlbyD453jTc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgM5WUihL
-	zCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak5BSYFegVJ+YWl+al6+WlllgZGhgYmQIVJmRn
-	fF5nUDCVs2Lzvz72BsbD7F2MnBwSAiYSZ5etZ+pi5OIQEtjDKDG/dxMLhPOJUWL3+hvsEM43
-	RonNbzczw7QcenUYKrGXUeLIxLuMEM5LRonT7YsYQarYBAwkmn8cBKsSAUns2HIdbDAzyOAt
-	f46xgFRxClhLPH+xgRXEFhbwkvix7QQTiM0ioCrx4Mg7sH28ApYS7/9sYoGwBSVOznwCZjML
-	yEtsfzsH6iYFiZ9Pl4HNEREIk1j69TgjRI2IxOzONmaQxRICdzgk9v07wAjR4CLRuLgFqllY
-	4tXxLdDwkJL4/G4vG4RdLLFw4yQWiOYWRonry/9ANdtLNLc2AxVxAG3QlFi/Sx9iGZ/Eu689
-	rCBhCQFeiY42IYhqVYlTG7ZCdUpLXG9uYIWwPSQ2rtvPPIFRcRaS12YheW0WkhdmISxbwMiy
-	ilEqtaA4Nz012bDAUDcvtRwe58n5uZsYwQlby2cH4/f1f/UOMTJxMB5ilOBgVhLhnXTzY5oQ
-	b0piZVVqUX58UWlOavEhRlNggE9klhJNzgfmjLySeEMTSwMTMyMTC2NLYzMlcd4zV8pShQTS
-	E0tSs1NTC1KLYPqYODilGph6Ex2DmA+tieu/c/dN80/+9iOT2q8d383+/Hfi2qI1+/ufqMnM
-	eBxa/jBW4fB3xkPXVphZ3/u0bsqLP58vp/ytPHlIveSFrGXwW//HeZLfrBlNmjh4jHN2vudc
-	pb9gUtth/mvFlxJr5nD8cS1aHBrGt1+9xGy2YwTbTIYGR7XLtyfebtVYcNw13k12vqrbdNfT
-	PKtKT9y+7tn/37MxdkbKJNHgkxd/3DCaEujWMm+/32G9hbXhEkE6Yee2XRd//MlelFvm7wIm
-	kaX5hxaa9y7Y37JRSbMnz6P7XovAyS0+qd/0J/il8h27t6fZ/2fvPY17P9Ls7vzTmh+u/PlS
-	enHiDhVLoUUsTyZHy0kJFHxWYinOSDTUYi4qTgQArUJSXmEEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCIsWRmVeSWpSXmKPExsWy7bCSnO7hzZ/TDC4dNrR4MG8bm8XLn1fZ
-	LKZ9+MlsMeNUG6vFvmsn2S1+/V3PbrGxn8OiY+tkJosdz8+wW+z628xkcXnXHDaL7us72CyW
-	H//HZNH0Zx+LxYKNjxgtNl/6xuIg4HH5irfHtEmn2Dw+Pr3F4tG3ZRWjx+dNch7tB7qZAtii
-	uGxSUnMyy1KL9O0SuDI+rzMomMpZsflfH3sD42H2LkZODgkBE4lDr0BsLg4hgd2MEpMmXGeD
-	SEhLPD7wkrGLkQPIFpY4fLgYouY5o8S9vQ2sIDVsAgYSzT8OgjWLCLxnlDj+Zx2Ywyzwh1Fi
-	zrnJbBAtJ5kkXk19ywTSwilgLfH8xQawdmEBL4kf206AxVkEVCUeHHnHDGLzClhKvP+ziQXC
-	FpQ4OfMJmM0soC3R+7CVEcKWl9j+dg4zxKkKEj+fLgObKSIQJrH063GoGhGJ2Z1tzBMYhWch
-	GTULyahZSEbNQtKygJFlFaNkakFxbnpusWGBUV5quV5xYm5xaV66XnJ+7iZGcMRqae1g3LPq
-	g94hRiYOxkOMEhzMSiK8k25+TBPiTUmsrEotyo8vKs1JLT7EKM3BoiTO++11b4qQQHpiSWp2
-	ampBahFMlomDU6qBac8Xx1WngyR77Tpf7nyc5hixz+2eSlrlzrm7PqmH7hRmOh+4dPb5vUrh
-	uQGueSkSgkJz3moptBwzrj67aV2lcovr6e0WrIz131Pmct3VC9NfsPytzB3l9xv/75h/UOWo
-	XizzYZazmhc3sOw72a05Y8diuyKm2tNs684cTt+d7+xgdU+rjavlaqmqh8PdK8b313ednHYu
-	gMeWseb3tDt/Viq+W2bzT4P7YJlfycGTb/Vqrnr11P4L8f91LmXzCk/NOoYH2RND5h/OYD9y
-	ud/kUKC2MUtz3+R60bV/duQGfltyfIpA+vcyfv9p2y8kRFpd6pmQG98/5fN/f6PGpblzFlkm
-	BE44zLQ38b/as4vNXkosxRmJhlrMRcWJAFEqB0ZHAwAA
-X-CMS-MailID: 20240925065459epcas1p3b8e701fd0228bc2670f22cf253a3b02f
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240829093921epcas1p35d28696b0f79e2ae39d8e3690f088e64
-References: <20240829093913.6282-1-sh8267.baek@samsung.com>
-	<CGME20240829093921epcas1p35d28696b0f79e2ae39d8e3690f088e64@epcas1p3.samsung.com>
-	<20240829093913.6282-2-sh8267.baek@samsung.com>
-	<fa8a4c1a-e583-496b-a0a2-bd86f86af508@acm.org>
-	<003201db0e27$df93f250$9ebbd6f0$@samsung.com>
-	<1845f326-e9eb-4351-9ed1-fce373c82cb0@acm.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-> On 9/23/24 7:17 PM, Seunghwan Baek wrote:> That's because SSU (Start Stop
-> Unit) command must be sent during
-> > shutdown process. If SDEV_OFFLINE is set for wlun, SSU command cannot
-> > be sent because it is rejected by the scsi layer. Therefore, we
-> > consider to set SDEV_QUIESCE for wlun, and set SDEV_OFFLINE for other
-> > lus.
-> Right. Since ufshcd_wl_shutdown() is expected to stop all DMA related to
-> the UFS host, shouldn't there be a scsi_device_quiesce(sdev) call after
-> the __ufshcd_wl_suspend(hba, UFS_SHUTDOWN_PM) call?
-> 
-> Thanks,
-> 
-> Bart.
+This function is base on the accelerator implementation
+for compress API:
+https://patchwork.kernel.org/project/alsa-devel/patch/20240731083843.59911-1-perex@perex.cz/
+Add it to this patch set.
 
-Yes. __ufshcd_wl_suspend(hba, UFS_SHUTDOWN_PM) should be called after
-scsi_device_quiesce(sdev). Generally, the SSU command is the last command
-before UFS power off. Therefore, if __ufshcd_wl_suspend is performed
-before scsi_device_quiesce, other commands may be performed after the SSU
-command and UFS may not guarantee the operation of the SSU command, which
-may cause other problems. This order must be guaranteed.
+Audio signal processing also has the requirement for memory to
+memory similar as Video.
 
-And with SDEV_QUIESCE, deadlock issue cannot be avoided due to requeue.
-We need to return the i/o error with SDEV_OFFLINE to avoid the mentioned
-deadlock problem.
+This asrc memory to memory (memory ->asrc->memory) case is a non
+real time use case.
+
+User fills the input buffer to the asrc module, after conversion, then asrc
+sends back the output buffer to user. So it is not a traditional ALSA playback
+and capture case.
+
+Because we had implemented the "memory -> asrc ->i2s device-> codec"
+use case in ALSA.  Now the "memory->asrc->memory" needs
+to reuse the code in asrc driver, so the patch 1 and patch 2 is for refining
+the code to make it can be shared by the "memory->asrc->memory"
+driver.
+
+Other change is to add memory to memory support for two kinds of i.MX ASRC
+modules.
+
+changes in v4:
+- remove the RFC tag, no comments receive in v3
+- Add Jaroslav Kysela's patch in this patch set. because it may be
+  better for reviewing in a full patch set.
+- Fix the list_for_each_entry_reverse to list_for_each_entry_safe_reverse
+- Fix some coding style issues in Jaroslav Kysela's patch
+
+changes in v3:
+- use Jaroslav's suggestion for header file compress_params.h (PATCH 01)
+- remove the ASRC_OUTPUT_FORMAT/ASRC_OUTPUT_RATE definition
+- remove ASRC_RATIO_MOD in this version because it uses .set_metadata()
+  Will wait Jaroslav's update or other better method in the future.
+- Address some comments from Pierre.
+
+changes in v2:
+- Remove the changes in compress API
+- drop the SNDRV_COMPRESS_SRC_RATIO_MOD
+- drop the SND_AUDIOCODEC_SRC and struct snd_dec_src
+- define private metadata key value
+  ASRC_OUTPUT_FORMAT/ASRC_OUTPUT_RATE/ASRC_RATIO_MOD
+
+Jaroslav Kysela (1):
+  ALSA: compress_offload: introduce accel operation mode
+
+Shengjiu Wang (6):
+  ALSA: compress: Add output rate and output format support
+  ASoC: fsl_asrc: define functions for memory to memory usage
+  ASoC: fsl_easrc: define functions for memory to memory usage
+  ASoC: fsl_asrc_m2m: Add memory to memory function
+  ASoC: fsl_asrc: register m2m platform device
+  ASoC: fsl_easrc: register m2m platform device
+
+ .../sound/designs/compress-accel.rst          | 136 ++++
+ include/sound/compress_driver.h               |  46 ++
+ include/uapi/sound/compress_offload.h         |  63 +-
+ include/uapi/sound/compress_params.h          |  23 +-
+ sound/core/Kconfig                            |   3 +
+ sound/core/compress_offload.c                 | 351 ++++++++-
+ sound/soc/fsl/Kconfig                         |   1 +
+ sound/soc/fsl/Makefile                        |   2 +-
+ sound/soc/fsl/fsl_asrc.c                      | 179 ++++-
+ sound/soc/fsl/fsl_asrc.h                      |   2 +
+ sound/soc/fsl/fsl_asrc_common.h               |  70 ++
+ sound/soc/fsl/fsl_asrc_m2m.c                  | 727 ++++++++++++++++++
+ sound/soc/fsl/fsl_easrc.c                     | 261 ++++++-
+ sound/soc/fsl/fsl_easrc.h                     |   4 +
+ 14 files changed, 1851 insertions(+), 17 deletions(-)
+ create mode 100644 Documentation/sound/designs/compress-accel.rst
+ create mode 100644 sound/soc/fsl/fsl_asrc_m2m.c
+
+-- 
+2.34.1
 
 
