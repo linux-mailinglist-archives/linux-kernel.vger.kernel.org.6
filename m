@@ -1,95 +1,112 @@
-Return-Path: <linux-kernel+bounces-339390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42C4498647D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:09:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68C1A9864A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:18:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01C882880D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:09:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E0EF1F218D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B9C208D1;
-	Wed, 25 Sep 2024 16:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A72944C86;
+	Wed, 25 Sep 2024 16:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="yPQaOqKU"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="Zl7g9RJT"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B98F219E0
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 16:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDC61D5ABD;
+	Wed, 25 Sep 2024 16:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727280574; cv=none; b=ROp0q1/MIIR8cv9n799Lm0nKgtTdgxA8yLqY2y1fzXoiOMNHNlw0jaMwYlm8UrkBWkV/xS2LviGSqWc2oPTavvjGB3yPSIcq4DkjruFcWpALPzCIaqfOIy8VYkgQxVoUikhdCC+55x5f/aYm3IBjCrqZEydeKVEMVVllRuTRHBU=
+	t=1727281088; cv=none; b=fx1qT3bsnK6k0jZZXCWkQSJcQLW1hig2qFOdz3JjbN++lUyybTFWlqRwuZNxNSKNMMb2L1g1HwC2mW2CQWBOfnSFBQF8TwvPgwe3RdgXmzkgq2PCGGjjLD65C8IKSRK/YS3qhgQ86mGu6kYSe6EWVqgjdFGE0sNDObQPiJn3+6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727280574; c=relaxed/simple;
-	bh=lg/iI4hZoajx+b0U7SWbWtXnilv08PsMqWYodIQ0g+w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dPZTG9exSw7ELHdw1Yksa89/XP43z9I6CA4OiYsyclGGU8ooEfIr0DnX2DnhN26eoV4slDEORgXlrV23Nt+6CNRI++mZb5yBnK51a8t+GFOmmGStHGthOPkG+fqnPpMsHmqFd5iSn6eRSt6vrbhN/ZTG7GFugxWtRg8EeX2KW9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=yPQaOqKU; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id AABD388B63;
-	Wed, 25 Sep 2024 18:09:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1727280571;
-	bh=pKIb0NlqaLV0X/VCYBMhdIFO7pr+Y97u8itZR02Ft1k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=yPQaOqKUpBQuUI3bePihQUw4fMcSd4+Smdpl+ViHhl9gcqgIU77Ag8lYNZs/uKbsG
-	 2XB5+SyIuh8yXoAwnkvb5uHvD0iFh3FW72mdC257TGXlUxf3ChcC7JQOJ/n9YCR7xx
-	 TEsSqVRUY1pl5iLjCGC3eTExYAvs0MP68sB3drM67HVYx0JTpBWgwlpu/z0c+ZBVWE
-	 AhgoK9QvUEtTxB958qliqKhztdzWjSiBVkt/Mc+kiEJ6lboNrY+NLWO0QGWMdBVrBI
-	 9GD1RT+I47eRNQhLoveRGAy6I1hHKWU+XGquazj32GD8Cb9b81TUQ6UO+FzQedM5HW
-	 ydvnB0UGFibOg==
-Message-ID: <03b05be4-2276-4e70-9480-2b1467df4ef6@denx.de>
-Date: Wed, 25 Sep 2024 18:09:29 +0200
+	s=arc-20240116; t=1727281088; c=relaxed/simple;
+	bh=UR4rx861FVc7MUozMDlYpuInZFzHxiWfjaUBgmnWlzQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UZjOLnX1yv1FFOyFulVFy8HEPPJR3687iRKqdrSdO216LdkviTAgc3O8l3oG5dHBitOM158Zc/w0+q0WEw8tNLDeyXLMaT408Bwt4FsrR5vKhZW15MMBgokpA1o6sr96mj5vwDASfxvXF3FjmWBGTtOiHm4dnmaGwBDmx5//gGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=Zl7g9RJT; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+Received: from [192.168.1.130] (BC2491B6.dsl.pool.telekom.hu [188.36.145.182])
+	by mail.mainlining.org (Postfix) with ESMTPSA id 489B4E450F;
+	Wed, 25 Sep 2024 16:09:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1727280584;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=fhfpSgyYQdb2EqROgqo0rwnUCTCj5II+pEYG/o/3OIM=;
+	b=Zl7g9RJT1AjBvUtYBfRyjBJYVyoLiEy6jyD5OauarHAkDyPoZY7bX61nKlvOffBto/8ktK
+	1eWPZybdICP87Ack0l3GNLoqlaxxBnj5qgwwtj+7IARNqJRJyZ6c3KmKPZPbNacsM3tzbG
+	u7c/3Hv9RQJjpR9JxMQYIyWXR+WaaQS+OOx6xzBu+WjpIQ0JsWMcXt0yrJGhQ0nJznftwU
+	ipZImxYrLJl9adhoAiLeiBvJQOIaELm2YraA+lQ0RUj+M0QVUq9iMDdEM9Nr8Psyv8YFLy
+	3QadhZeUv8IlII528HT+jVFtZ+X9/i/Tk2tfVdqXVJIsfdChV1/xbE3c/j7Xhg==
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Date: Wed, 25 Sep 2024 18:09:39 +0200
+Subject: [PATCH] clk: qcom: clk-alpha-pll: Fix pll post div mask when width
+ is not set
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] soc: imx8m: Probe the SoC driver late
-To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: kernel@dh-electronics.com,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Fabio Estevam <festevam@gmail.com>, Jeff Johnson
- <quic_jjohnson@quicinc.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Saravana Kannan <saravanak@google.com>, Sascha Hauer
- <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- imx@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240925160026.84091-1-marex@denx.de>
- <486054ad-20c2-45f4-a457-c9334afb53ed@app.fastmail.com>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <486054ad-20c2-45f4-a457-c9334afb53ed@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240925-fix-postdiv-mask-v1-1-f70ba55f415e@mainlining.org>
+X-B4-Tracking: v=1; b=H4sIAMI19GYC/x2MQQqAIBAAvxJ7bqHUiPpKdDDdaoks3JAg+nvSc
+ WBmHhCKTAJ98UCkxMJHyFCXBbjVhoWQfWZQlTJVpxqc+cbzkMtzwt3KhpM1LTmvNFkNOTsjZed
+ fDuP7fnVsv+1iAAAA
+X-Change-ID: 20240925-fix-postdiv-mask-ba47ecd23ea3
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727280584; l=1264;
+ i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
+ bh=UR4rx861FVc7MUozMDlYpuInZFzHxiWfjaUBgmnWlzQ=;
+ b=hoCWYjTKMqe5jer7ssS/foHAcic93tpjikdx3NHX2UQP/WtBfWXSd/t7KKJS2eMbxCgxA9rfS
+ gJD0R9guodpBmtCYiIht+Kxa2e/ezE4AIbhCwkbfQSF09q04dPcbXT4
+X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
+ pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-On 9/25/24 6:04 PM, Arnd Bergmann wrote:
-> On Wed, Sep 25, 2024, at 16:00, Marek Vasut wrote:
->> With driver_async_probe=* on kernel command line, the following trace is
->> produced because on i.MX8M Plus hardware because the soc-imx8m.c driver
->> calls of_clk_get_by_name() which returns -EPROBE_DEFER because the clock
->> driver is not yet probed. This was not detected during regular testing
->> without driver_async_probe.
->>
->> Attempt to fix it by probing the SoC driver late, but I don't think that
->> is the correct approach here.
-> 
-> I think the correct fix would be to propagate the -EPROBE_DEFER
-> and return that from imx8_soc_init(), so it gets retried again
-> after the clock driver.
-I already tried that, but if I return -EPROBE_DEFER from 
-device_initcall, it doesn't get retriggered . I suspect EPROBE_DEFER 
-works only for proper drivers ?
+Many qcom clock drivers do not have .width set. In that case value of
+(p)->width - 1 will be negative which breaks clock tree. Fix this
+by checking if width is zero, and pass 0 to GENMASK if that's the case.
+
+Fixes: 2c4553e6c485 ("clk: qcom: clk-alpha-pll: Fix the pll post div mask")
+Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index f9105443d7dbb104e3cb091e59f43df25999f8b3..1f914bc0af5449ed1fb545d850607138a06fab1a 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -40,7 +40,7 @@
+ 
+ #define PLL_USER_CTL(p)		((p)->offset + (p)->regs[PLL_OFF_USER_CTL])
+ # define PLL_POST_DIV_SHIFT	8
+-# define PLL_POST_DIV_MASK(p)	GENMASK((p)->width - 1, 0)
++# define PLL_POST_DIV_MASK(p)	GENMASK((p)->width ? (p)->width - 1 : 0, 0)
+ # define PLL_ALPHA_MSB		BIT(15)
+ # define PLL_ALPHA_EN		BIT(24)
+ # define PLL_ALPHA_MODE		BIT(25)
+
+---
+base-commit: 62f92d634458a1e308bb699986b9147a6d670457
+change-id: 20240925-fix-postdiv-mask-ba47ecd23ea3
+
+Best regards,
+-- 
+Barnabás Czémán <barnabas.czeman@mainlining.org>
+
 
