@@ -1,62 +1,45 @@
-Return-Path: <linux-kernel+bounces-339423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8D1D9864E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:34:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0F5F9864EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:36:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05A4D1C248C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:34:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B7CD1C2406D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:36:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0F43A1BA;
-	Wed, 25 Sep 2024 16:34:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E57CB73452;
+	Wed, 25 Sep 2024 16:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="DOp8J+7c"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="NbrkOdBZ"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A5717C6C;
-	Wed, 25 Sep 2024 16:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25019381AF;
+	Wed, 25 Sep 2024 16:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727282049; cv=none; b=ruOdN5DauLln5uxNtF7g1a5l6fEuNVmLQp0087ewdTOouxHQLxsNeys8lGE1Ip++S83sDiLj2OT34kfgHnhtw7+khKH+QJxMBUjDn/609jx0HavA4ecffWTwHax5t0uSow/VvoqqmqfeeHQI6VHvGIYrcs1NGXGJbSQrXn3bJ+8=
+	t=1727282139; cv=none; b=pqGFx/tRvXt6nYSASuNJ8nYOWYRQp1GdNq3uKE/LcfUadfE7KnssLUGFvpwV8TtOS1tGD4uMR89ILkZP/wTsTZy1DpiJeIdKzGB3Y+yC8LBQlLB6X0Xl3GFH0sK5v+QJwKvICFMhrHC/5oDlS3vyHajv9zXXUl5RxUB7YgQ19oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727282049; c=relaxed/simple;
-	bh=cuLHVkDzKjoEHhogUbpQZo71rZ7nSas3O2rhEfclQHA=;
+	s=arc-20240116; t=1727282139; c=relaxed/simple;
+	bh=HMxBVux/FQvn7pBMChSCMMhWMsYbvTHrT3oR2wbLjA8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XUzZeH8ekoKRO8L6JzanqWoagkaWj6V+tFYIsdGNME3eg4100hTT68NWKg5761ivf9PklhbasoPjo1jo34XEf6kq/vWS4TH/nRJwS0JydRrvirmS9dh9tN44F6CIAarNDMn1DCytHHwKGRpiZSOhBJRWzKZD92WrHCaz0nRniC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=DOp8J+7c; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4XDMkR3MFXz6ClY98;
-	Wed, 25 Sep 2024 16:34:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1727282043; x=1729874044; bh=/FyXFs10MLjrqvHD+X2ddLPl
-	nu+sUJLNIwL7ZV9g+ds=; b=DOp8J+7cAsp/Tz33eG8p/X5L0yEHSriZC9a2JBFi
-	ZuZJPCYIzcMyC2Cn3OSEhOtSPETKDRFa09ChFdJHDXQPq8Vzpgkg4DrUfV5HaCH+
-	t6nm+SMwqZJcw85cT5LSh6AocrfmhUuK76mrK9kwq2OIy1bWzSkw6tF5bCiuVN2R
-	ef7yKCeMbjZTL/kxX1r1C6UKM+XGnyMX5mJ/2VDPTrSKXODwCHBne9y07/NoGana
-	8LXwoeFwUrHmbBOA3eA03eUam9LZ3VTldoDtdRB4M7GyavPr7G3vU9joihjzxQTl
-	T+1m/tG4ZFjQ3PQ7cbvB1JXBp3exgH5LmI4QSVkMXcbPCA==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id i2J2OkpuoVyI; Wed, 25 Sep 2024 16:34:03 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4XDMkL38Tyz6ClY9N;
-	Wed, 25 Sep 2024 16:34:02 +0000 (UTC)
-Message-ID: <7c760b76-aba1-4e30-8966-17ae81a7e223@acm.org>
-Date: Wed, 25 Sep 2024 09:34:00 -0700
+	 In-Reply-To:Content-Type; b=ePN0rpvTwQl0+yzFkcMynoRt/QSQAHV9bF3TxLawTE3zXSXxkaAj31sv0vbXisimLBm8XXt8dubrR3/fgwTYjVq2aQ81d7HfiVYwl6l5FCuPlJDQkrNh/59l3GbCArQlD7qbRZXOq18yrqs6KYommVxsksAOATbqylwPTt2aEls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=NbrkOdBZ; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1727282128; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=E6ocSw4NWKlqHxKRP24Nwyb3i7XLZtOr82Y4AE+Iu6Q=;
+	b=NbrkOdBZ24/y4whkZwn5YCaXeYH6TXhl0h2Kuyy3Z636t8CsZXZ2j1LENJ2FWDoeDAEBI4huVxVFHeDm38AiXcY09kW6z710Kn53l9I0EweGbvvZa1Bfk/jC/jjU/f3PZ0+Ya8+/w9UwrTxAA71dmItB9fYGH7/kQgizVr66nLo=
+Received: from 30.244.99.85(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WFkHUjQ_1727282125)
+          by smtp.aliyun-inc.com;
+          Thu, 26 Sep 2024 00:35:27 +0800
+Message-ID: <80cd0899-f14c-42f4-a0aa-3b8fa3717443@linux.alibaba.com>
+Date: Thu, 26 Sep 2024 00:35:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,66 +47,89 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi:ufs:core: Add trace READ(16)/WRITE(16) commands
-To: liuderong@oppo.com, alim.akhtar@samsung.com, avri.altman@wdc.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jaegeuk Kim <jaegeuk@kernel.org>
-References: <1727232523-188866-1-git-send-email-liuderong@oppo.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <1727232523-188866-1-git-send-email-liuderong@oppo.com>
+Subject: Re: [RFC PATCH 03/24] erofs: add Errno in Rust
+To: Ariel Miculas <amiculas@cisco.com>, Benno Lossin <benno.lossin@proton.me>
+Cc: Gary Guo <gary@garyguo.net>, Yiyang Wu <toolmanp@tlmp.cc>,
+ rust-for-linux@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ LKML <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+ linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+ Linus Torvalds <torvalds@linux-foundation.org>
+References: <20240916135634.98554-1-toolmanp@tlmp.cc>
+ <20240916135634.98554-4-toolmanp@tlmp.cc>
+ <20240916210111.502e7d6d.gary@garyguo.net>
+ <2b04937c-1359-4771-86c6-bf5820550c92@linux.alibaba.com>
+ <ac871d1e-9e4e-4d1b-82be-7ae87b78d33e@proton.me>
+ <9bbbac63-c05f-4f7b-91c2-141a93783cd3@linux.alibaba.com>
+ <239b5d1d-64a7-4620-9075-dc645d2bab74@proton.me>
+ <20240925154831.6fe4ig4dny2h7lpw@amiculas-l-PF3FCGJH>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20240925154831.6fe4ig4dny2h7lpw@amiculas-l-PF3FCGJH>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 9/24/24 7:48 PM, liuderong@oppo.com wrote:
-> From: liuderong <liuderong@oppo.com>
-> 
-> For sd_zbc_read_zones, READ(16)/WRITE(16) are mandatory for ZBC disks.
-> Currently, when printing the trace:ufshcd_command on zone UFS devices,
-> the LBA and SIZE fields appear invalid,
-> making it difficult to trace commands.
-> So add trace READ(16)/WRITE(16) commands for zone ufs device.
-> 
-> Trace sample:
-> ufshcd_command: send_req: 1d84000.ufshc: tag: 31, DB: 0x0,
-> size: -1, IS: 0, LBA: 0, opcode: 0x8a (WRITE_16), group_id: 0x0, hwq_id: 7
-> ufshcd_command: complete_rsp: 1d84000.ufshc: tag: 31, DB: 0x0,
-> size: -1, IS: 0, LBA: 0, opcode: 0x8a (WRITE_16), group_id: 0x0, hwq_id: 7
-> 
-> Signed-off-by: liuderong <liuderong@oppo.com>
-> ---
->   drivers/ufs/core/ufshcd.c | 8 ++++++--
->   1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-> index 5e3c67e..9e5e903 100644
-> --- a/drivers/ufs/core/ufshcd.c
-> +++ b/drivers/ufs/core/ufshcd.c
-> @@ -434,15 +434,19 @@ static void ufshcd_add_command_trace(struct ufs_hba *hba, unsigned int tag,
->   
->   	opcode = cmd->cmnd[0];
->   
-> -	if (opcode == READ_10 || opcode == WRITE_10) {
-> +	if (opcode == READ_10 || opcode == READ_16 ||
-> +		opcode == WRITE_10 || opcode == WRITE_16) {
->   		/*
-> -		 * Currently we only fully trace read(10) and write(10) commands
-> +		 * Currently we only fully trace the following commands,
-> +		 * read(10),read(16),write(10), and write(16)
->   		 */
->   		transfer_len =
->   		       be32_to_cpu(lrbp->ucd_req_ptr->sc.exp_data_transfer_len);
->   		lba = scsi_get_lba(cmd);
->   		if (opcode == WRITE_10)
->   			group_id = lrbp->cmd->cmnd[6];
-> +		if (opcode == WRITE_16)
-> +			group_id = lrbp->cmd->cmnd[14];
->   	} else if (opcode == UNMAP) {
->   		/*
->   		 * The number of Bytes to be unmapped beginning with the lba.
+Hi Ariel,
 
-To me the above patch looks like a subset of this patch from 1.5y ago:
-https://lore.kernel.org/linux-scsi/20230215190448.1687786-1-jaegeuk@kernel.org/
+On 2024/9/25 23:48, Ariel Miculas wrote:
 
-Bart.
+...
+
+> I share the same opinions as Benno that we should try to use the
+> existing filesystem abstractions, even if they are not yet upstream.
+> Since erofs is a read-only filesystem and the Rust filesystem
+> abstractions are also used by other two read-only filesystems (TarFS and
+> PuzzleFS), it shouldn't be too difficult to adapt the erofs Rust code so
+> that it also uses the existing filesystem abstractions. And if there is
+> anything lacking, we can improve the existing generic APIs. This would
+> also increase the chances of upstreaming them.
+
+I've expressed my ideas about "TarFS" [1] and PuzzleFS already: since
+I'm one of the EROFS authors, I should be responsible for this
+long-term project as my own promise to the Linux community and makes
+it serve for more Linux users (it has not been interrupted since 2017,
+even I sacrificed almost all my leisure time because the EROFS project
+isn't all my paid job, I need to maintain our internal kernel storage
+stack too).
+
+[1] https://lore.kernel.org/r/3a6314fc-7956-47f3-8727-9dc026f3f50e@linux.alibaba.com
+
+Basically there should be some good reasons to upstream a new stuff to
+Linux kernel, I believe it has no exception on the Rust side even it's
+somewhat premature: please help compare to the prior arts in details.
+
+And there are all thoughts for reference [2][3][4][5]:
+[2] https://github.com/project-machine/puzzlefs/issues/114#issuecomment-2369872133
+[3] https://github.com/opencontainers/image-spec/issues/1190#issuecomment-2138572683
+[4] https://lore.kernel.org/linux-fsdevel/b9358e7c-8615-1b12-e35d-aae59bf6a467@linux.alibaba.com/
+[5] https://lore.kernel.org/linux-fsdevel/20230609-nachrangig-handwagen-375405d3b9f1@brauner/
+
+Here still, I do really want to collaborate with you on your
+reasonable use cases.  But if you really want to do your upstream
+attempt without even any comparsion, please go ahead because I
+believe I can only express my own opinion, but I really don't
+decide if your work is acceptable for the kernel.
+
+> 
+> I'm happy to help you if you decide to go down this route.
+
+Again, the current VFS abstraction is totally incomplete and broken
+[6].
+
+I believe it should be driven by a full-featured read-write fs [7]
+(even like a simple minix fs in pre-Linux 1.0 era) and EROFS will
+use Rust in "fs/erofs" as the experiment, but I will definitely
+polish the Rust version until it looks good before upstreaming.
+
+I really don't want to be a repeater again.
+
+[6] https://lwn.net/SubscriberLink/991062/9de8e9a466a3faf5
+[7] https://lore.kernel.org/linux-fsdevel/ZZ3GeehAw%2F78gZJk@dread.disaster.area
+
+Thanks,
+Gao Xiang
+
+> 
+> Cheers,
+> Ariel
+
 
