@@ -1,112 +1,149 @@
-Return-Path: <linux-kernel+bounces-338369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 091159856FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:12:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23773985700
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:12:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1CD91F24EBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:12:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6809B20CFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:12:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF0B015C158;
-	Wed, 25 Sep 2024 10:12:25 +0000 (UTC)
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64CD1865FE;
+	Wed, 25 Sep 2024 10:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="EhvSPEZL"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961FC14B07E;
-	Wed, 25 Sep 2024 10:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685BB15B966;
+	Wed, 25 Sep 2024 10:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727259145; cv=none; b=iWRJ6eoGLw09KcInkQuK9GqUVw9ywbYgNVyvPDG8qFnHWs9frIpgFUboLKBOtfRyX94xR8ma/R0loYr28gcBjoxk2cQYGkVbAY+IwXscT37IUzajXnFfysj0ZDwb8bctBv/mAffTg0m82Y4A7+4UgTiu8ZgQh1oL28g8uWUhgpI=
+	t=1727259147; cv=none; b=jRupnAuLfnlkv0AtqhFrXQ4kJM9JnU/OVr49qboNQLNraAYuouAbveE9B00W9lkAUus+9ixVQl3fF20BsexqmWG9/hr8egxFeYlyyhmLMKV2LABLVKEiXNHkqbJo/LrjNPzdpFhKdyjOnpT1HJWawL341rkfyMuCjyqyThwQ8CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727259145; c=relaxed/simple;
-	bh=WNay2WNLiI/AIMNDpXFtNDMsDbvMSivFO34397OI6C4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j02Nj0H7LKcAsvcu/KSJQCOQXrDKLinHtfJQNtMaAmUZixpjrUQ0+6+aEZN19mlZehfbiNKrpfDbl6sFZWktEARtXADMrayvG6Y6N1xbMW0wUgxQL7LnVHSJUdAgFys8KcRlX6fbsqXSuAHJkrriCOYJqrP2whl7G+UDZmbpLvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4XDBhN6gTSz9v7JY;
-	Wed, 25 Sep 2024 17:46:44 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 99AD81404C6;
-	Wed, 25 Sep 2024 18:12:10 +0800 (CST)
-Received: from [10.45.145.58] (unknown [10.45.145.58])
-	by APP1 (Coremail) with SMTP id LxC2BwBn+C_r4fNmunSaAQ--.25388S2;
-	Wed, 25 Sep 2024 11:12:10 +0100 (CET)
-Message-ID: <f5aeeeda-c725-422a-9481-4795bd3ade0f@huaweicloud.com>
-Date: Wed, 25 Sep 2024 12:11:52 +0200
+	s=arc-20240116; t=1727259147; c=relaxed/simple;
+	bh=3q9s6Vw7uH+PCgqxX0aWg6g2gWqXS1lHc1WrlVHoEUI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lIK0firnnvh6HmXTqky93+H4OHtHr5DLKU3E1x76EeOc/SHHbAi11Bbi0HSkdaEVsEpWb0srS495Kr1CVCtneNM84Cip5wgdDaLNLM7Rmc5bfHrFYHuRy8HjWccgsqahK9mT152NXPcsGcneq+l4a6WiQxUsIu2uxqwx5XwPdYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=EhvSPEZL; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=S/Mnn3eVQ+O1lmZHAuc1mutxHotBW3h1Bj4uCFY1CU8=; b=EhvSPEZLef6O0Y8aVlARJnBF6f
+	NGbQuY+02uSoNi6XkvcZSUoY3TtaouVaR4Hfavg06pLMIkPCNk2awXVVkR+VBM8VT0Ly3S28oJbiA
+	ZPxUCkS8kQS0Oun54v9pBX4Lz5kBFoUROCrXT3PNoy15mxuKBUpxX+zruWF4isFy/A9syM384FvN4
+	uYHP1y3i7CqHbeuVlh9Rt9olAdSvkcRUoqKmNquxypJ2V4U/QEGRqGTopqPHekj8hJE2XJo/f8ZMD
+	JhTvyyV5COWbm1lnNiAFgQeNJNxcKOKVLt9LxhN64vd8ooKv0w93XZikRoBpYdVkjNSjPDRKgBnlf
+	bzGigpdQ==;
+Date: Wed, 25 Sep 2024 12:12:17 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Roger Quadros <rogerq@kernel.org>
+Cc: linux-omap@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, Kevin
+ Hilman <khilman@baylibre.com>, Michael Turquette <mturquette@baylibre.com>,
+ Aaro Koskinen <aaro.koskinen@iki.fi>, linux-kernel@vger.kernel.org, Lee
+ Jones <lee@kernel.org>, Tony Lindgren <tony@atomide.com>,
+ linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: twl: add TWL6030 support
+Message-ID: <20240925121217.0aa54808@akair>
+In-Reply-To: <9b7f6995-586e-44ee-a73b-9baf1bf23a69@kernel.org>
+References: <20240924103609.12513-1-andreas@kemnade.info>
+	<20240924103609.12513-3-andreas@kemnade.info>
+	<9b7f6995-586e-44ee-a73b-9baf1bf23a69@kernel.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
- pointers
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org, linux-mm@kvack.org,
- lkmm@vger.kernel.org, "Paul E. McKenney" <paulmck@kernel.org>,
- Frederic Weisbecker <frederic@kernel.org>,
- Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Kent Overstreet <kent.overstreet@gmail.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
- Neeraj Upadhyay <neeraj.upadhyay@amd.com>
-References: <20240917143402.930114-1-boqun.feng@gmail.com>
- <20240917143402.930114-2-boqun.feng@gmail.com>
- <55975a55-302f-4c45-bfcc-192a8a1242e9@huaweicloud.com>
- <ZvPfmAp_2mDkI3ss@boqun-archlinux>
-From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-In-Reply-To: <ZvPfmAp_2mDkI3ss@boqun-archlinux>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:LxC2BwBn+C_r4fNmunSaAQ--.25388S2
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYa7kC6x804xWl14x267AKxVWrJVCq3wAF
-	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xv
-	wVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7
-	xvwVC2z280aVCY1x0267AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8C
-	rVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxV
-	WUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1l42xK82IYc2Ij64vIr41l4c8EcI0Ec7CjxVAaw2AFwI0_GFv_Wryl4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
-	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_
-	Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8Jr
-	UvcSsGvfC2KfnxnUUI43ZEXa7IUbHa0PUUUUU==
-X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
+Am Wed, 25 Sep 2024 10:07:29 +0300
+schrieb Roger Quadros <rogerq@kernel.org>:
 
-
-Am 9/25/2024 um 12:02 PM schrieb Boqun Feng:
-> Hi Jonas,
+[...]
+> > +static void twl6030_clks_unprepare(struct clk_hw *hw)
+> > +{
+> > +	struct twl_clock_info *cinfo = to_twl_clks_info(hw);
+> > +
+> > +	twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
+> > +		     ALL_GRP << TWL6030_CFG_STATE_GRP_SHIFT |  
+> 
+> Why are you unpreparing ALL_GRP? In prepare you only used VREG_GRP.
 >
-> Of
-> course, if we are really worried about compilers being too "smart"
-
-Ah, I see you know me better and better...
-
-> we can always do the comparison in asm code, then compilers don't know
-> anything of the equality between 'ptr' and 'head - head_offset'.
-Yes, but then a simple compiler barrier between the comparison and 
-returning ptr would also do the trick, right? And maybe easier on the eyes.
+well, if we want control, then I think using every group to turn it off
+into a defined state is a good idea.
 
 
-Have fun,
-    jonas
+> > +		     TWL6030_CFG_STATE_OFF);
+> > +}
+> > +
+> > +static int twl6030_clks_is_prepared(struct clk_hw *hw)
+> > +{
+> > +	struct twl_clock_info *cinfo = to_twl_clks_info(hw);
+> > +	int val;
+> > +
+> > +	val = twlclk_read(cinfo, TWL_MODULE_PM_RECEIVER, VREG_GRP);
+> > +	if (val < 0)
+> > +		return val;
+> > +
+> > +	if (!(val & P1_GRP))
+> > +		return 0;
+> > +
+> > +	val = twlclk_read(cinfo, TWL_MODULE_PM_RECEIVER,
+> > VREG_STATE);
+> > +	if (val < 0)
+> > +		return val;
+> > +
+> > +	val = TWL6030_CFG_STATE_APP(val);
+> > +	return val == TWL6030_CFG_STATE_ON  
+> 
+> Is there a possibility that after calling twl6030_clks_prepare()
+> the clock can still remain OFF?
 
+I do not see a reason. 
+
+> If not then we could just use a private flag to indicate clock
+> prepared status and return that instead of reading the registers
+> again.
+>
+The clock core already uses prepare_count if no is_prepared() is
+defined.
+So this prepare functions can just be dropped.
+
+> 
+> > +}
+> > +
+> >  static int twl6032_clks_prepare(struct clk_hw *hw)
+> >  {
+> >  	struct twl_clock_info *cinfo = to_twl_clks_info(hw);
+> > @@ -93,6 +148,13 @@ static int twl6032_clks_is_prepared(struct
+> > clk_hw *hw) return val == TWL6030_CFG_STATE_ON;
+> >  }
+> >  
+> > +static const struct clk_ops twl6030_clks_ops = {
+> > +	.prepare	= twl6030_clks_prepare,
+> > +	.unprepare	= twl6030_clks_unprepare,
+> > +	.is_prepared	= twl6030_clks_is_prepared,
+> > +	.recalc_rate	= twl_clks_recalc_rate,
+> > +};  
+> 
+> Instead of re-defining all the clock ops can't we just reuse the
+> existing twl6032 clock ops?
+> 
+> We just need to tackle the twl6030 specific stuff inside the ops
+> based on some platform driver data flag.
+> 
+a big if (driver_data == TWL6032) in each of the ops might be ok, since
+we have an int and not a pointer there anyways might be the easiest way
+to go.
+
+Regards,
+Andreas
 
