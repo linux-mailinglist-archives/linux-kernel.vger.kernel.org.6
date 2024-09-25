@@ -1,140 +1,158 @@
-Return-Path: <linux-kernel+bounces-337886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 782AE9850AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 03:42:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 617299850B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 03:42:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27FF4281E97
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:42:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 928611C22C3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:42:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663771482E5;
-	Wed, 25 Sep 2024 01:42:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17395148304;
+	Wed, 25 Sep 2024 01:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ghVyEi63"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE38EEAE
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 01:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D81EEAE;
+	Wed, 25 Sep 2024 01:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727228525; cv=none; b=grGeqosBkj/WWm6qJOgLzALmRsLgpbW0+YlBpLYtlt7gFIP/nYimxPKh2WwSEkE7s6Vn79GYY8LacMI35SFi+H2f1zPNZ+IFrIlwMWlRXXb6DzwfIV7mtv4E6Gi18Ce8IPuMdeXxmy/2Z28WPJN6zCeNzv8iv9/8P8nSy6Z8pQI=
+	t=1727228563; cv=none; b=DzjjatAhllRpnBc6ipkZZ71tZGl8bK/vW18wU0zRPyIn0kNwe8eIKhBktw869pOhRMGBbkQsjh+3kPlKaw6Z4jYehYAG5WqDJPfs9OntdJFPHFn1J+Iw6gfr+DEL4VHk+aoWDvV+AAgQ2hTsg3D8TMI/LzJRgNyV/eoF4vk4Qxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727228525; c=relaxed/simple;
-	bh=CP12Iu5dYUUFRjmTJepDenkS+LoZ0HUDQQ4Q0nIFpdU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Y1NwuSSU9/r/MT2AS+FkWahNVB1PEsa/ikoQhnJhvRtkbhSiUZtgZjvqbtsy+qFCWXkwniZq8PhCZEsvLhdqgOciDehis4toVt15MizgdE9cGV+fcWHIHNZw1+4xHUjrBXCEvcvJuQTLDWtfOR3BwoW3ix3ToVPFHBbNNY8tYMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39fe9710b7fso99024055ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 18:42:03 -0700 (PDT)
+	s=arc-20240116; t=1727228563; c=relaxed/simple;
+	bh=fgukxMgAjrlRQrBVZ6J6xzCFT+TQlgaIYzBfc23MB+A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PHozCnTAI71+kh7t/3DzwhkI2gEwtLckkQZexqnrt504MF0MSeKv6b7Q1ir9n679/LsCNY4/kZhZDi47cXVi7+yzpX/uWStnilSPPyqaoJbryDGccfdE3i26OwM/oBT8kLuGzfKEABIqWj6rrxibgM5jtMy6vlnXnn6tP8ObmOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ghVyEi63; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2d8741c85bdso1169106a91.1;
+        Tue, 24 Sep 2024 18:42:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727228561; x=1727833361; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GcWVN5jq5I86+F+azhdXxblU0W/zeOeflgS1enKCNA8=;
+        b=ghVyEi63f4DwO5qcJ+7ys4Ss8h96DXACwtNYHAn0h5OfYlCoInOmYoj8q3Gw4Ev/pT
+         xGX03g4O1WUQBsE6i7O26NAKWAWh5IxVqgZIeVcPmyM/vqEUOW2cPr3pf/2Qt25kJNiP
+         yEuTEACsWj7tik79TyVBU0YCt3B7NLwzWiY5lFWrrpw86WdphMrDuGgejZ943gfZD6Lt
+         NVbFppGS1XxvrTr5BS3vZMF8IRi/2SkWe42PMoSYkDJP5lWRywAekWsGOvOCXpWiS8Mk
+         mRao0fEx6gj6u+Fjz8ZPpoFBLcIhBXkfci7hx5teTzjUdEmEUUc3yY1XOdZr1nDHpSF0
+         Rtvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727228522; x=1727833322;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1727228561; x=1727833361;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gaC2DDxJeTt0n/7vEBd76QpaRiiwBO9OoxRBydGg3B4=;
-        b=SrJTGKbT8puGS1PSPgZvuna4nv6rCbu7JMlf+WT8FNy3o88630j5zuXR3nkfQltRYp
-         c99lHDohgE6lj01Zw4Z185xjiDs/POz1JxUkNlzA6oP3RyE8xWUZn7pTWj0wnIM5Xuzd
-         okmPT67ONaq2ZwXvv7oD591Mwv+O8VogMY1V87WcPnV2EotjOn3objBINdaMOz4m2eck
-         mI4lfgIja3Ruty1gM/uTujLkm+JTsc5HoPYWw085Q2QYbRwEnU0JXT32l3kuSLrvUKpA
-         275dpoYfoa8GEenfL1PXDg9KY0MlgKOLi76FlQpebVWHhQ4+/K7HrGY5CZbv+rYefsk3
-         ZDmg==
-X-Forwarded-Encrypted: i=1; AJvYcCXFEcWPWYnjEhBCB4fdO/0piJBczEcpd1KneMHDMdNaDAkTm5g5tBasn4w3/1Ze6zZuniTWHifGbXeQDCg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuI/apcaGl1sv93jdMD40YW+aUidsJvi+QFt+R4yXD4KXbVygi
-	1+0ZG3sJd3qRoiWedPlVXPmTDtpQM3J8URXB1xCyWFF1Mkr0Xu5+Wzn/6X0pmy0BACZBMNXbzdf
-	tSuxh6Jwmzr3yJq1WDiFm4yGYO6NFCWdDJ07eiTRd7s6zu126rkv4TB8=
-X-Google-Smtp-Source: AGHT+IF9la2/mWYH0iVbdrlZNURF+D+lf6fKHiR4sHVkHZfdOa95nJc0dbvILEFrrSRYqVY7VzFOtQNNJ4hhpGgf4d7s/exg4dTF
+        bh=GcWVN5jq5I86+F+azhdXxblU0W/zeOeflgS1enKCNA8=;
+        b=e3txj2rrA1e9KmbrBcsrJtlsdbPdJbnALs2tDtplyvwuSJwJDz5hkxryyssZ5zuWW1
+         B9vsT1ffKXDuYxG44cVwosOJssvpD+3INV2wELSGYwlfEOqjFTK4U+XRwXSdP2qqBxws
+         lSPRJ1iFs3eaYLX1Y32Jh2BW1a0vEbO5XG5izTfKD3ikLlAWpnr0oV4Jrxhz3/w7S1wF
+         uKK6zSSaYzmXniNZhBEYpOuuEPSNV2ktgwuSbZn+1aRx6IvRB6zu9h49zlgWzZgD1Vfl
+         eDW2dDN9nIOJfFeIrWMT26n8WaN97nszLkeahWlYUgguihuc+NAjgzXpwWWbzgPRLNp0
+         avqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUAtkhjVk5Jp30AvluDM1/O/FqiGWElWv06SpzGkDqMgKfdV6+DMAtc9KYwwCzrHWx5f+GlRWyhNjg2@vger.kernel.org, AJvYcCUiPRtNs8xf35ZwWzGcw3uEHKpwR4WL6PCqzJDFxW5d2n65bDt4LY/un6JDzh6jaLTMHCkN16XmgwtJUv0Q@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjB7CXT/ALPQXrM9xQyuZYIJdrK+gZHAbpgbOsfxDh3p4nYh5W
+	X+Z4hdVcdJ+91cDpzvo/DkVPYIsR7AVJ+pefouIPFs+4VQZrX7EF
+X-Google-Smtp-Source: AGHT+IFqIBT66TkyL0J2QfmtEOX6F9Je5mvlnxVw4zEkidcGIvNVdjtGkMa+udbesxpclhLKmHCHiA==
+X-Received: by 2002:a17:903:110c:b0:207:14b3:10f0 with SMTP id d9443c01a7336-20afc6427e0mr6506155ad.14.1727228561153;
+        Tue, 24 Sep 2024 18:42:41 -0700 (PDT)
+Received: from [192.168.60.56] ([103.29.142.67])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af18572bdsm15396675ad.248.2024.09.24.18.42.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Sep 2024 18:42:40 -0700 (PDT)
+Message-ID: <29d80d30-dcbf-4fe1-b7aa-3f8c46fee714@gmail.com>
+Date: Wed, 25 Sep 2024 09:42:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1848:b0:3a0:98b2:8f3b with SMTP id
- e9e14a558f8ab-3a26d7149e3mr13274605ab.7.1727228522520; Tue, 24 Sep 2024
- 18:42:02 -0700 (PDT)
-Date: Tue, 24 Sep 2024 18:42:02 -0700
-In-Reply-To: <tencent_08982ECAAEE20C9E67D106F812CF067E8906@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f36a6a.050a0220.30ac7d.0006.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in vfs_get_tree
-From: syzbot <syzbot+c0360e8367d6d8d04a66@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] phy: rockchip: inno-usb2: Add usb2 phys support
+ for rk3576
+Content-Language: en-US
+To: Heiko Stuebner <heiko@sntech.de>, vkoul@kernel.org, kishon@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, william.wu@rock-chips.com,
+ tim.chen@rock-chips.com, Frank Wang <frank.wang@rock-chips.com>
+References: <20240924085510.20863-1-frawang.cn@gmail.com>
+ <20240924085510.20863-2-frawang.cn@gmail.com> <15288441.JCcGWNJJiE@phil>
+From: frawang <frawang.cn@gmail.com>
+In-Reply-To: <15288441.JCcGWNJJiE@phil>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Hi Heiko,
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-kernel BUG in vfs_get_tree
+On 2024/9/24 18:01, Heiko Stuebner wrote:
+> Am Dienstag, 24. September 2024, 10:55:10 CEST schrieb Frank Wang:
+>> From: William Wu <william.wu@rock-chips.com>
+>>
+>> The RK3576 SoC has two independent USB2.0 PHYs, and
+>> each PHY has one port.
+> Can you please split the content into "converting to clk_bulk" (see
+> additional comment below) and "add rk3576" please?
+>
+> That would make the patch a lot cleaner.
 
-bcachefs: bch2_fs_get_tree() ret: 1, sb: fffffffffffffff0, fc: ffff8880537ad800, fcroot: 0000000000000000, bch2_fs_get_tree
-bcachefs: bch2_fs_get_tree() error: EPERM
-Filesystem bcachefs get_tree() didn't set fc->root, returned 1
-------------[ cut here ]------------
-kernel BUG at fs/super.c:1810!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5755 Comm: syz.0.15 Not tainted 6.11.0-syzkaller-10547-g684a64bf32b6-dirty #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:vfs_get_tree+0x29f/0x2b0 fs/super.c:1810
-Code: 1e 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 14 c4 ec ff 48 8b 33 48 c7 c7 20 d4 18 8c 44 89 e2 e8 92 98 af 09 90 <0f> 0b 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 90 90 90 90 90
-RSP: 0018:ffffc9000313fd08 EFLAGS: 00010246
-RAX: 000000000000003e RBX: ffffffff8ef5ba00 RCX: cdd8394f8f48fd00
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: 1ffff1100a6f5b16 R08: ffffffff81746c8c R09: 1ffff92000627f3c
-R10: dffffc0000000000 R11: fffff52000627f3d R12: 0000000000000001
-R13: dffffc0000000000 R14: ffff8880537ad898 R15: ffff8880537ad8b0
-FS:  00007fed01cdb6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055ca2d7dd000 CR3: 00000000577b4000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- do_new_mount+0x2be/0xb40 fs/namespace.c:3507
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4055 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fed00f7f69a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fed01cdae68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007fed01cdaef0 RCX: 00007fed00f7f69a
-RDX: 0000000020005d80 RSI: 0000000020005dc0 RDI: 00007fed01cdaeb0
-RBP: 0000000020005d80 R08: 00007fed01cdaef0 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000020005dc0
-R13: 00007fed01cdaeb0 R14: 0000000000005dcb R15: 0000000020000240
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:vfs_get_tree+0x29f/0x2b0 fs/super.c:1810
-Code: 1e 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 14 c4 ec ff 48 8b 33 48 c7 c7 20 d4 18 8c 44 89 e2 e8 92 98 af 09 90 <0f> 0b 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 90 90 90 90 90
-RSP: 0018:ffffc9000313fd08 EFLAGS: 00010246
-RAX: 000000000000003e RBX: ffffffff8ef5ba00 RCX: cdd8394f8f48fd00
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: 1ffff1100a6f5b16 R08: ffffffff81746c8c R09: 1ffff92000627f3c
-R10: dffffc0000000000 R11: fffff52000627f3d R12: 0000000000000001
-R13: dffffc0000000000 R14: ffff8880537ad898 R15: ffff8880537ad8b0
-FS:  00007fed01cdb6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f1c28ab5b47 CR3: 00000000577b4000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+OK, I shall amend in the next patch.
 
+>
+>> @@ -376,6 +378,7 @@ rockchip_usb2phy_clk480m_register(struct rockchip_usb2phy *rphy)
+>>   {
+>>   	struct device_node *node = rphy->dev->of_node;
+>>   	struct clk_init_data init;
+>> +	struct clk *refclk = of_clk_get_by_name(node, "phyclk");
+> Doesn't this create an imbalance - with the missing put?
+> I think ideally just define clk_bulk_data structs for the
+> 1-clock and 3-clock variant, attach that to the device-data
+> and then use the regular devm_clk_bulk_get ?
+>
+> That way you can then retrieve the clock from that struct?
 
-Tested on:
+How about keep the clk_bulk_data and num_clks member in rockchip_usb2phy 
+structs, and retrieve the clock by "clks.id" here?
+Just like the following codes.
 
-commit:         684a64bf Merge tag 'nfs-for-6.12-1' of git://git.linux..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=143e8a80580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bd75e1a00004094f
-dashboard link: https://syzkaller.appspot.com/bug?extid=c0360e8367d6d8d04a66
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10b3c99f980000
+@@ -378,8 +378,9 @@ rockchip_usb2phy_clk480m_register(struct 
+rockchip_usb2phy *rphy)
+  {
+         struct device_node *node = rphy->dev->of_node;
+         struct clk_init_data init;
+-       struct clk *refclk = of_clk_get_by_name(node, "phyclk");
++       struct clk *refclk = NULL;
+         const char *clk_name;
++       int i;
+         int ret = 0;
 
+         init.flags = 0;
+@@ -389,6 +390,13 @@ rockchip_usb2phy_clk480m_register(struct 
+rockchip_usb2phy *rphy)
+         /* optional override of the clockname */
+         of_property_read_string(node, "clock-output-names", &init.name);
+
++       for (i = 0; i < rphy->num_clks; i++) {
++               if (!strncmp(rphy->clks[i].id, "phyclk", 6)) {
++                       refclk = rphy->clks[i].clk;
++                       break;
++               }
++       }
++
+
+BR.
+Frank
+
+>
+> Thanks
+> Heiko
+>
 
