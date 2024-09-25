@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-337894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BF789850C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 03:57:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF3E39850C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 03:57:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B740B1F2490D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:57:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BEEA1C22C49
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A761494DF;
-	Wed, 25 Sep 2024 01:56:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890D114A4E2;
+	Wed, 25 Sep 2024 01:56:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gYZofYAe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="khom1fzU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E633A148FF2;
-	Wed, 25 Sep 2024 01:56:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D993B149C7B;
+	Wed, 25 Sep 2024 01:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727229416; cv=none; b=hxcGvwHnSicBI3QYCu+r9AiuOmuztkrrHq+ct9hg8t7c/foHRBsUNh8k3npiZ2MFCkD0x4NBl3yqQi0HTX7RAk5t0ejmulPJrHADWRqDb2g4G8JjG3hoPIn9+RNx6sYaJb1geMvG6bpeP9v1C3EQzjEWDj269MXFW8Z+OpCYGP4=
+	t=1727229417; cv=none; b=oS4b2yBNCw+TH3j4RQtOcbE3Hjr8P1PV94s7o2lHICT4fYLQCCnxaQX3WpZxIR7F+sSyLydsiizeuf96tFh+yj9uvld8eV09RCrQ21DsE/XA8gdNHZq5wG/iqskAvVRLqpOpnfoGEIa5BRpEsre/Xl4+X1lgeZYCqVsJegFEP7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727229416; c=relaxed/simple;
-	bh=9fxS2QULMOS9mbQo3JE7ITPh91eCmGqnu+5X9B+3q0g=;
+	s=arc-20240116; t=1727229417; c=relaxed/simple;
+	bh=6gwL+zL2Lrbl0+gRCIRbQNsZBY+xx4uea05tk+MSwSQ=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=q2rxUgOdvUoJji6aZF9ARs4qfEWzs61sCNcQdIIZvo5HmlFeruMlcqBWX16rVgzouwTAdHukZlsp5gwrhmyEjleX3s+rpEwGJmJBksc/53nmTFpQryYjanLtQ+LRymem/k+1BlSvngYnPGYMKo30fSMDVyfQa1mOHoRytez67gQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gYZofYAe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48356C4CECD;
-	Wed, 25 Sep 2024 01:56:55 +0000 (UTC)
+	 Message-Id:Subject; b=Mi1qelIierVW8t5cr50eower5Gt68daNcsstr9Bu7tbs45O1Mwtx05mlrCv6yeJ8ilXmagAxgC7RbOG3O/fnRKDttSSn1zexgi5jt+Y7xNHkk5Mep61+JhWlleZMEZFW3nPfaey1PHxxMLb/hVn/cTt2XOHgTn+GgIxUtUeF4uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=khom1fzU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B35EC4CEC7;
+	Wed, 25 Sep 2024 01:56:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727229415;
-	bh=9fxS2QULMOS9mbQo3JE7ITPh91eCmGqnu+5X9B+3q0g=;
+	s=k20201202; t=1727229416;
+	bh=6gwL+zL2Lrbl0+gRCIRbQNsZBY+xx4uea05tk+MSwSQ=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=gYZofYAeYKDhS+JcsCR1LfYtfy1/y2wUHt3Ocx8QsJu7ULOXJUDeBulUzodhGbV5u
-	 9iPcRRjVRCTziTOpznbaoaOyd29f+WHZdCRKvFe9PtgGYFZqJfodZEg5fhivxx7AJM
-	 UhQYp80fBNnTJKcdEaSRWn5Xs2F8gTVUe9CSo4FDFkeCdbLObXCLSRrEFLWwFX6cgq
-	 7v+rZVTOoWCEUbV1pMb+jXws0UJLL7fN/zfFSUx6CUwA8wgAlbPk3C7DijEyyT6oUz
-	 437h9YapLLZRtxkTPLLTM8A/JNCRYoP/Ero1PJvWoddwNdcwhRMNsFxxAv3bu5dCkn
-	 xdPkxr1U3AVhQ==
-Date: Tue, 24 Sep 2024 20:56:54 -0500
+	b=khom1fzUYKcHkLgiCMdtDYo7yOM98yuKAWTlEbtJLlvD8wDZg+3sTuxTIKZy5rhRe
+	 4tr/20MP7unjCvghIfLopev2tylM3rpiNuTpB+mV/Q0XZxR4irOSdZeFjqXF2qtldp
+	 ymapN5mgJNp7CdroiCQaVX4rEUFxQAuhf1VUdv9uyij9a6gOaqYv8k8NVY2Y9X3qyW
+	 slzPfJok8fElj5Jc5VorNmQ553bai7gNut4upaUwtPixXHHed+G8Q940uukkHN3FSY
+	 kVRc6ZEvbVkwB9ZhDVacB2fZdP7q1/nZLRYfwu9izn7ihSkaEl8yKfR7xtzMneFX9E
+	 n5AW2NbQ0raoA==
+Date: Tue, 24 Sep 2024 20:56:55 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,49 +50,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Fabio Estevam <festevam@gmail.com>, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, imx@lists.linux.dev, 
- devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
- Shawn Guo <shawnguo@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Francesco Dolcini <francesco.dolcini@toradex.com>
-In-Reply-To: <20240924114053.127737-1-francesco@dolcini.it>
-References: <20240924114053.127737-1-francesco@dolcini.it>
-Message-Id: <172722910792.836115.6325079480022384908.robh@kernel.org>
-Subject: Re: [PATCH v1 0/3] arm64: dts: freescale: imx8mp-verdin: Add Ivy
- carrier
+To: =?utf-8?q?Michal_Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
+Cc: imx@lists.linux.dev, Joao Paulo Goncalves <joao.goncalves@toradex.com>, 
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>, 
+ Michael Walle <mwalle@kernel.org>, 
+ Herburger <gregor.herburger@ew.tq-group.com>, 
+ Mathieu Othacehe <m.othacehe@gmail.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, Conor Dooley <conor+dt@kernel.org>, 
+ Hiago De Franco <hiago.franco@toradex.com>, 
+ Fabio Estevam <festevam@gmail.com>, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, Petr Benes <petr.benes@ysoft.com>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Alexander Stein <alexander.stein@ew.tq-group.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-usb@vger.kernel.org, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devicetree@vger.kernel.org, 
+ Shawn Guo <shawnguo@kernel.org>
+In-Reply-To: <20240924103941.1729061-1-michal.vokac@ysoft.com>
+References: <20240924103941.1729061-1-michal.vokac@ysoft.com>
+Message-Id: <172722910586.836022.2066040703589041608.robh@kernel.org>
+Subject: Re: [PATCH v4 0/2] Add support for new IMX8MP based board
 
 
-On Tue, 24 Sep 2024 13:40:50 +0200, Francesco Dolcini wrote:
-> From: Francesco Dolcini <francesco.dolcini@toradex.com>
+On Tue, 24 Sep 2024 12:39:39 +0200, Michal Vokáč wrote:
+> Hi,
+> this series adds support for a new member in our IOTA platform.
+> The board is based on the i.MX8MP SoC. It adds support for most
+> of the board functionality except USB Type-C port and some other
+> minor things.
 > 
-> Add support for the Toradex Verdin iMX8MP Ivy carrier board. Ivy is a carrier
-> board designed for industrial environments, supporting industrial
-> I/O interfaces such as CAN, RS485, RS232, Gigabit Ethernet, 0-25mA analog
-> inputs, relays, PCIe and more. The board also includes a TPM for security
-> applications.
+> This series originally included the dt-binding for that Type-C
+> port controller but I finally removed it based on a good comment
+> from Krzysztof. I will post the Type-C binding including the driver
+> in a followup series.
 > 
-> https://www.toradex.com/products/carrier-board/ivy-carrier-board
+> Michal
 > 
-> João Paulo Gonçalves (3):
->   dt-bindings: arm: freescale: Add verdin imx8mp ivy board
->   arm64: dts: freescale: imx8mp-verdin: add labels to som nodes
->   arm64: dts: freescale: imx8mp-verdin: Add Ivy carrier board
+> Michal Vokáč (2):
+>   dt-bindings: arm: Add i.MX8MP IOTA2 Lumpy board
+>   arm64: dts: imx: Add imx8mp-iota2-lumpy board
 > 
->  .../devicetree/bindings/arm/fsl.yaml          |   2 +
->  arch/arm64/boot/dts/freescale/Makefile        |   2 +
->  .../boot/dts/freescale/imx8mp-verdin-ivy.dtsi | 512 ++++++++++++++++++
->  .../freescale/imx8mp-verdin-nonwifi-ivy.dts   |  18 +
->  .../dts/freescale/imx8mp-verdin-wifi-ivy.dts  |  18 +
->  .../boot/dts/freescale/imx8mp-verdin.dtsi     |   5 +-
->  6 files changed, 555 insertions(+), 2 deletions(-)
->  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-verdin-ivy.dtsi
->  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-verdin-nonwifi-ivy.dts
->  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-verdin-wifi-ivy.dts
+>  .../devicetree/bindings/arm/fsl.yaml          |   1 +
+>  arch/arm64/boot/dts/freescale/Makefile        |   1 +
+>  .../boot/dts/freescale/imx8mp-iota2-lumpy.dts | 423 ++++++++++++++++++
+>  3 files changed, 425 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts
 > 
 > --
-> 2.39.5
+> 2.43.0
 > 
 > 
 
@@ -111,15 +115,11 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y freescale/imx8mp-verdin-nonwifi-ivy.dtb freescale/imx8mp-verdin-wifi-ivy.dtb' for 20240924114053.127737-1-francesco@dolcini.it:
+New warnings running 'make CHECK_DTBS=y freescale/imx8mp-iota2-lumpy.dtb' for 20240924103941.1729061-1-michal.vokac@ysoft.com:
 
-arch/arm64/boot/dts/freescale/imx8mp-verdin-nonwifi-ivy.dtb: pcie-ep@33800000: reg: [[864026624, 4194304], [402653184, 134217728]] is too short
+arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dtb: pcie-ep@33800000: reg: [[864026624, 4194304], [402653184, 134217728]] is too short
 	from schema $id: http://devicetree.org/schemas/pci/fsl,imx6q-pcie-ep.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-verdin-nonwifi-ivy.dtb: pcie-ep@33800000: reg-names: ['dbi', 'addr_space'] is too short
-	from schema $id: http://devicetree.org/schemas/pci/fsl,imx6q-pcie-ep.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-verdin-wifi-ivy.dtb: pcie-ep@33800000: reg: [[864026624, 4194304], [402653184, 134217728]] is too short
-	from schema $id: http://devicetree.org/schemas/pci/fsl,imx6q-pcie-ep.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-verdin-wifi-ivy.dtb: pcie-ep@33800000: reg-names: ['dbi', 'addr_space'] is too short
+arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dtb: pcie-ep@33800000: reg-names: ['dbi', 'addr_space'] is too short
 	from schema $id: http://devicetree.org/schemas/pci/fsl,imx6q-pcie-ep.yaml#
 
 
