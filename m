@@ -1,121 +1,106 @@
-Return-Path: <linux-kernel+bounces-339505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C521986616
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 20:01:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 533F8986617
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 20:02:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9B17289DA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:01:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F9951C20DE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57080135A53;
-	Wed, 25 Sep 2024 18:01:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0232B84A2F;
+	Wed, 25 Sep 2024 18:02:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PAAoTEdH"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="RyC5TMn7"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79563D520;
-	Wed, 25 Sep 2024 18:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5AA5D520;
+	Wed, 25 Sep 2024 18:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727287296; cv=none; b=WseUxgb691vDJYPyw7uWFeSiiFXrm6NLLqMc0zM9TYUpu/2tZuxMejkkVTFuy91ndVOnDpvwfAsWLAvClCYgyB8Nhn4aMoLbtCPNDXWIb07s5wf2q5RJCjkXYBaSrz1/DMeq7It9+SnB23d/2jFO/2Ik3rX9m7zmOF4XhrN4x0I=
+	t=1727287371; cv=none; b=eBfSJwDtPfILa2uVY4/9rXNwjI80TF1s2Goin3UvhPeYN0q74krIpgpgAuxAVdDyVvIwyokymEh6BfxXZLyOuzMsuT0ac/afdF7pVHf/vnPPxp6xjQWDCrzbj9TZOAsruezJeXpObpU/rDco0ZRY6Ps/uo7jDWWmKmbMwNOJT0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727287296; c=relaxed/simple;
-	bh=l/aF6HEje1WrQejJhMguPF74uJK65A2E6ZnTaqz0qh4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TLgaar46F+r2Bi2DcnFcojbzddPVXLWNroxxmfv0jtDuWCpU/2Z3XDUZE+puJzInsjTk7G/ICT7+q8Toi4ziEqWlLm3Iycvrt92LCDqJqOcWEdGFUaMArECUSfNdj/vcHeaPSIlCuqQzDoQ7Ow1r3mkRoQNaIKzgLeQn91X0wGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PAAoTEdH; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-718d5058819so17232b3a.3;
-        Wed, 25 Sep 2024 11:01:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727287295; x=1727892095; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N2bMVMMQFiHMYlO4kJ4Jsrotx2zHLunmyL9pDwTWohM=;
-        b=PAAoTEdHGPsybBTaweiTVmjQmZzGb5haTg6wKCnGNANEzjqUlTbTjABZ/WyQX3Trr0
-         b7jb1YWTaqbJdp5WbcqVPwKHckBS/ZDmHHLDAAksHW1Fs1LE1d7Pr8ACE6TzJu1N8uON
-         /zhjk4j/NnSteyTvOuZaj0+STzpur6YPVVWvPdEmxwY6KSqwiS4vTsCRZSO8+nq96SeI
-         vMVT61NsFnpGrnuh9PgwoMG2J4H4iAaWaJ4DjgNtOV/ONGGK232ZgOZOybqngEHxGJ5j
-         UJMjMKfFHiHlKbO6FfoNWV0mwB2A7i200KT0+uo5p1tAobbAi7xj6fXqnmst87I/mYhu
-         +0Pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727287295; x=1727892095;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N2bMVMMQFiHMYlO4kJ4Jsrotx2zHLunmyL9pDwTWohM=;
-        b=nCx/RPjDZqcd/Grq9jmABh2e77J36wZApMKmT2GciREoixoAMmngU8Zvrq6U0w3btA
-         w9t0CGbrBaWhb15IIbtjVnHkMUd0qtug9NurncTv2NuFTLrFATzrWhz08LDP1ZJnU0UA
-         9oDHDLVfg68fLhEZpRfXv1em+2xpxt4U3m3UwSTXAhAwiOH5k6UoVDVnyZWmlEw8yyn0
-         fTDyglcN1AYd4wPTBcfWgGPlDvcOqpXGkJsgPrm2t7fgx5IfUkcWNBFF082ose+ButtM
-         58TYnsRYKGoKyfFZsfgycth5l1MrgP19k5Z6J1T6ov4gpSbRjquTV63EylHLIQBvJdMm
-         uR9g==
-X-Forwarded-Encrypted: i=1; AJvYcCW4OcY5Wqgk6ZP/DwtnqNGrqCFlG6p9jYsLoh6GbmsvBtLNASdw7OKEQnS3NABLklG7L1QSL9Q7cGHqtsU=@vger.kernel.org, AJvYcCWSrqBGtQfRf/553tIUzzLRd1hU74KV5UiSQVx8auuf4b1PQnycCBbmZ75be9cq2ivccZHdqEtrwhxie8mPxPo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxqs+qQydi0MJJbthY1XRpzbc/aIWxKQwEN2S5yraZnY4D1/GYW
-	taGpTUaXl2JB/UV/+Gdpv9BkgAduLvSR8CelxLCAN5FHkR5qUFP6uaj9bpTH2agHc2hoAG59itm
-	43Fb9dbMSwbtLrE7hbgPAngdiov8=
-X-Google-Smtp-Source: AGHT+IFNl0/wFDJTogZurxb0YOmE/SuxjY2UhYxrOQ1JRzNCgdbbGH+ZSOh7oP3wpgG/YRHHBGKLS4FSXYgozxCMXwY=
-X-Received: by 2002:a05:6a00:ac3:b0:717:9406:c1be with SMTP id
- d2e1a72fcca58-71b0aa94ed2mr2271225b3a.1.1727287294372; Wed, 25 Sep 2024
- 11:01:34 -0700 (PDT)
+	s=arc-20240116; t=1727287371; c=relaxed/simple;
+	bh=ubZtjqgkEHcSLKdzn6nGGJAAygV9tuUOg+CSvkLi0js=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=JhNH77yRlPxoVt0ojnGZd7zEpkL5XycT5GU5Er+UmGYpt2jkU/ex8slEs9qyJJvw1RabtvVaNjcrfg9Ap8DrK16s9T+pNguLTtOZVk37tKhPu3cDuKpl2cGHveB7XAQCZsdUTvFI2qRMFLKihwnKQaHQe/ZISwRTgu1LaZCSKDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=RyC5TMn7; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 7B12242B30
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1727287363; bh=KhWuW/hYDA06KYXwRlFbqTyp8jMGMd12FTTtzzUby4U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=RyC5TMn7I/DipJ8q07f3+pbjTqMT5u8yWGSBxpiUQddzY+OFcYk7iAvPnRBm0Sm+P
+	 M4F3IqGx3osI60chgcozOAZChMVSNAOE6ka1Dcr8QhSPWZoeZJeiAvUAkUtslDiINf
+	 QevD3Ivw9WalwF/zfi8hlziaIHPtRcJHpNFBtjkdo//QV9TTzabLiz5dLqvfjtrgZ6
+	 fFvAoiSWDsYqTgZeG6dTV1mTufwn0o5zaXDeF90X2TccQAHLIVSatI/X8cpb75zDhZ
+	 ZCJWOznTgLP0C4/P+Z2UPGFCaZfznWiaByjMp2YKksDeFqlYvp2o68KijWns2aba7E
+	 /jr+2VxofeNFw==
+Received: from localhost (bo-18-143-171.service.infuturo.it [151.18.143.171])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 7B12242B30;
+	Wed, 25 Sep 2024 18:02:42 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Nam Cao <namcao@linutronix.de>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+ <aou@eecs.berkeley.edu>, =?utf-8?Q?Cl=C3=A9ment_L=C3=A9ger?=
+ <cleger@rivosinc.com>, Evan Green
+ <evan@rivosinc.com>, Charlie Jenkins <charlie@rivosinc.com>, Andrew Jones
+ <ajones@ventanamicro.com>, linux-doc@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Nam Cao <namcao@linutronix.de>
+Subject: Re: [PATCH] Documentation: riscv: Fix typo MIMPLID -> MIMPID
+In-Reply-To: <20240925142532.31808-1-namcao@linutronix.de>
+References: <20240925142532.31808-1-namcao@linutronix.de>
+Date: Wed, 25 Sep 2024 12:02:39 -0600
+Message-ID: <87h6a3fw74.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240924221023.197610-1-ojeda@kernel.org> <CAHk-=wjuMrUMceYX01T0SBz4E0yL4Kh2Jb_8qyKxJwwitCG6Zw@mail.gmail.com>
-In-Reply-To: <CAHk-=wjuMrUMceYX01T0SBz4E0yL4Kh2Jb_8qyKxJwwitCG6Zw@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 25 Sep 2024 20:01:21 +0200
-Message-ID: <CANiq72m7ZcmQdq+D37N-bmH_JeFg7H+HUhJJnWTdCyZxn0hkMQ@mail.gmail.com>
-Subject: Re: [GIT PULL] Rust for 6.12
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Wed, Sep 25, 2024 at 7:46=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+Nam Cao <namcao@linutronix.de> writes:
+
+> The macro that is really defined is RISCV_HWPROBE_KEY_MIMPID, not
+> RISCV_HWPROBE_KEY_MIMPLID (difference is the 'L').
 >
-> That gets it building for me on x86-64, at least. But at the
-> maintainer summit I think you said MODVERSIONS support is being worked
-> on too, no?
+> Also, the riscv privileged specification names the register "mimpid", not
+> "mimplid".
+>
+> Correct these typos.
+>
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
+> ---
+> ask me how I found out..
+>
+>  Documentation/arch/riscv/hwprobe.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
+> index 85b709257918..fb0affa61eb9 100644
+> --- a/Documentation/arch/riscv/hwprobe.rst
+> +++ b/Documentation/arch/riscv/hwprobe.rst
+> @@ -51,7 +51,7 @@ The following keys are defined:
+>  * :c:macro:`RISCV_HWPROBE_KEY_MARCHID`: Contains the value of ``marchid``, as
+>    defined by the RISC-V privileged architecture specification.
+>  
+> -* :c:macro:`RISCV_HWPROBE_KEY_MIMPLID`: Contains the value of ``mimplid``, as
+> +* :c:macro:`RISCV_HWPROBE_KEY_MIMPID`: Contains the value of ``mimpid``, as
+>    defined by the RISC-V privileged architecture specification.
 
-Yeah:
+You should be able to just say RISCV_HWPROBE_KEY_MIMPID() without the
+:c:macro: markup and have the right thing happen.
 
-    https://lore.kernel.org/rust-for-linux/20240923181846.549877-22-samitol=
-vanen@google.com/
-    https://lore.kernel.org/rust-for-linux/20240924212024.540574-1-mmaurer@=
-google.com/
+Thanks,
 
-> On my arm64 box, Rust support is still disabled due to
-> RUSTC_SUPPORTS_ARM64 not being true (which in turn seems to be due to
-> SHADOW_CALL_STACK support, and that needs rust 18.2 which I don't
-> have).
-
-Yeah, Rust 1.82 is not released yet, it will be on 2024-10-17, i.e.
-about 3 weeks, and then Fedora should have it soon after (~some days,
-I think).
-
-> Anyway, just a heads up that I think we'll have more "unintentional"
-> Rust build test coverage this way.
-
-That is great, thanks. I currently do defconfig + a few bits and
-variations to cover the Rust code we have (to keep the CI time down)
--- I will start doing allmodconfigs for the next cycles then.
-
-Cheers,
-Miguel
+jon
 
