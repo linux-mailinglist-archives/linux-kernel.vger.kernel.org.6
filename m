@@ -1,459 +1,271 @@
-Return-Path: <linux-kernel+bounces-338810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70FBD985D42
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:06:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D4C5985DA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:17:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 942D71C24400
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:06:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC3C7284C67
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:17:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0BE1DCB09;
-	Wed, 25 Sep 2024 12:03:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB3B20FA9E;
+	Wed, 25 Sep 2024 12:06:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="YGXRj2dE"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HkhtgBC/"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BDFA1779BC
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 12:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9CE620FA84;
+	Wed, 25 Sep 2024 12:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727265789; cv=none; b=oEOYWXMVdMf+8pPnzh7FhPifiwIbKx1T4dy0FVsAzG7Dn2uPrjqur0RuC29EURMi8Dif83Dswz73vi5FMch6qTKP3ZEIiORMbV5ZseamxZ0s0ks4M6/XIcC/yArHHBWXiyfHR3vqaEfbzZkkdWpitqxgKsG6g/cwbqSW+cTWGLA=
+	t=1727265979; cv=none; b=QsACReWhUUlLJmSfngdRuMymREqAbvluPREDDCiudBoEb7p+Rzhah/zJDk8SWX4Ju7Cf0SMB8jbOLKz7W2wrpusy7/Yh+4hrhslcLUvsRZel/3YYdveUbg4fE7ZTNgFZ3bG0p+5XYCF/zF3hmYC2ZRj9NH+Yo3ol0GyGbunOAiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727265789; c=relaxed/simple;
-	bh=39Lp4jBIRrEyYM4RFp/vxv1s5shbI/aDZb0dPfqu6Kk=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OBUUqyGDCjsDqZ8Qps/RH1n1T2ceZdU0B8tBwg82o3nKR8S+NoQjSWElem0UC+cStqm/NuKFP0S9ZYsi2csELHIvOgTho+ZEhjSazGXVMmrWJSL5NKBFaKxkncz6g18X4I0cQxK6IkRTFgLYIgjpO5RfsvVcpKHN3dJZjlOpAM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=YGXRj2dE; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-374c4c6cb29so6529050f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 05:03:06 -0700 (PDT)
+	s=arc-20240116; t=1727265979; c=relaxed/simple;
+	bh=Q/0isB8d+PhYppY+RJRI+eI0LimUN2tr5HgwjgRnTWU=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ff0r1KOQ4pN8WSrUwMUMXETxAmAwzDL/WvHXemPVYmYE1NyL6NdeEK4vcFrV/3MMeherRSoKR91OA2q8lycXCJ65iOiQBKqNG5LGnKAtFdegGJUYnInCSDirJ0WPBtm0vtInRAVrNq3zHrXaWT468JRMWxIH/Nno0zroUE+3brg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HkhtgBC/; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-378c16a4d3eso7157614f8f.1;
+        Wed, 25 Sep 2024 05:06:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1727265785; x=1727870585; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=d+BnqYQphMgQrEghFz+jkPnstQ279kBxaF+7ZzXxhK4=;
-        b=YGXRj2dED8JxhBQTCHGu+IoQXwDY3/igjArwOEqFgPp6T6R4rolIxIBiBOu+85ns61
-         hT5Zfi94HrBSAMeCFAa8Yq0ogGcJ3vhnEdaDevmOHUTBQt8NfgpIfmObL6D6NB6bNkjT
-         tq9QnW1mNWaIpaJlyfbnvQcbkhTE8Eci0X4M0=
+        d=gmail.com; s=20230601; t=1727265976; x=1727870776; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=GFGu7JG+fN86SqEPQDV5t2R/+6V1TMtaekXfpbj35vo=;
+        b=HkhtgBC/NDPqMQvYqy+rX5svVWIsOOcJFPVik6StjRGYdBgsFx1QxJGnd4lG8be2H0
+         eEFWgR5Vq3lAug6M70eLSsuOM9DS5WGjOaS8g/7rV+stsC3L4HTCgRb6GojQ00p4pc1F
+         GLD+jcOFKTXu6JRoLpnTwTId7AdzqJYsgzQW2R+lj9XDhINIRmHT1jrIQ4o/JTiEc8b2
+         gdvpx9TzIlCDTVVlwOshJIKIVz+VIXCSS/ssWd6+CszTrD/giB/sANQ/4Nic3Ev4deQo
+         EgSv/BtI1GvcyoqRpyseuylMZokjIBBtnJeeeW8UHRD9n+GPesS1aNsje/5kZE9zEwDx
+         Aing==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727265785; x=1727870585;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d+BnqYQphMgQrEghFz+jkPnstQ279kBxaF+7ZzXxhK4=;
-        b=h0sPpDSb+7Yfw1sX9gBT63uhCQPN5qmMxYMBemzGVOKH5EwFi/GxTnZj4ZtO05QZ51
-         gvQQrtw+UcOxFD1dMzlCXFLWKSuZjx+LEX2CSmawyXzjFI8sRkTdCEt7WnPhx4O62e1x
-         LsGWkLph+FXhMuMbF256iixAJngFQNj8q3u7ZplUM8HT6clfjvLS4hf24q4vlcxALXC5
-         0SWEu6bN7/yfsbMmzcjCkch3AxfhtsV4PH9VXoIPgaTIOAFTUO1XCgwSIS2qMwtPCXnE
-         Qytgh+HMyFoke38kSo7u6aaGUzLQIy2/WggwfCUNjYNgjL2ww7pB75Dw3ydI9KRnit0v
-         GGcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWKSsq73gbnyfJxjy96DRGnGLtgL3zCycwfCyF6eyAb8ioQmUdAkO5+jtBBj7YslVV6hFmdyJa79lC7WK4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEhEIpk3qaqAevfEYSm7YGvcMef4MaGH8OXs3vggbY3+No1ryE
-	VI2Gnd0hvhCTa+New3VSXr3SZNaS59TPNVez3zKdAcd1wk22PKYhv25stoor91M=
-X-Google-Smtp-Source: AGHT+IH9XpxgGrxb70x7pZuBaYHQJvWc5XmY50pQDVfF2U35JvwSMMWh3tXiXkkIGf6BhQ5BnHSScQ==
-X-Received: by 2002:a5d:61c2:0:b0:374:d29e:6db8 with SMTP id ffacd0b85a97d-37cc2468777mr2313487f8f.16.1727265784549;
-        Wed, 25 Sep 2024 05:03:04 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93930f4715sm202101166b.152.2024.09.25.05.03.03
+        d=1e100.net; s=20230601; t=1727265976; x=1727870776;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GFGu7JG+fN86SqEPQDV5t2R/+6V1TMtaekXfpbj35vo=;
+        b=mjFCSAu6S61uAo7wLMNDUWZJrQ82wSCTYVhzzGpku0gJXbu6xT1xF6YCYSuuRnCwTL
+         55rptPPFF+lJHkPgKcQjvc/uQiKnmPzzcOBr5J0Zz9Nc1jN18mKPmlvRJMIm0mmHMVMt
+         OI/zLpLtVjfNjlU51oD241FqIs5IYXHCls18xz2DeNGROmZgIayFWqySp6UnFzDzpxct
+         Y8tmRBRR3Naqx4sxlRg7nDwRVO+iPvF+l2HLoViL3mIxQABVtl79ud7jTk41VeMpFko8
+         7cZJpFgxpLlNrk6MS7VaJgKd+UC/sROaADUT3HqkvXvEbH2UDFzXSHisElu30+paKkzc
+         I6ow==
+X-Forwarded-Encrypted: i=1; AJvYcCWPbasJGdktQS8khT/SO1tr7j6Jk1ChDS+zPwxjBACSbjXS4aU7QTfsrNZH2Vu0PnqHR67Xzzq1WzjG@vger.kernel.org, AJvYcCX74fooODY0845dmnBVubHLSW0fhdcW/OY0CVbfvKR/0fVWPVNM20uurPm6KxmGXLDdUVpnAU6yAMRTU8/9@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbRJX9ABNzwfTjWGLbGUPematB7gvbhKwiyNTrDkxhJQL9tmED
+	aK9JFh0gYpYLsctrkVq4dpjuHX1pefsmh1MrW1cEK2J0r/EmTExv
+X-Google-Smtp-Source: AGHT+IHui2T3XvdVgwebU7tifxGbADu36lPdixerBRDLTCO+Id/czkCJ54OP+u092S/jZ28BuBXgyg==
+X-Received: by 2002:a5d:660a:0:b0:374:bcdc:6257 with SMTP id ffacd0b85a97d-37cc24c687dmr2345251f8f.54.1727265975674;
+        Wed, 25 Sep 2024 05:06:15 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cbc2a8b55sm3823201f8f.17.2024.09.25.05.06.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 05:03:03 -0700 (PDT)
-Date: Wed, 25 Sep 2024 14:03:02 +0200
-From: Simona Vetter <simona.vetter@ffwll.ch>
-To: Matthew Brost <matthew.brost@intel.com>,
-	Felix Kuehling <felix.kuehling@amd.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Philip.Yang@amd.com, akpm@linux-foundation.org,
-	christian.koenig@amd.com
-Subject: Re: [PATCH 1/1] mm/migrate: Trylock device page in do_swap_page
-Message-ID: <ZvP79hb-0HJMvhv-@phenom.ffwll.local>
-Mail-Followup-To: Matthew Brost <matthew.brost@intel.com>,
-	Felix Kuehling <felix.kuehling@amd.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Philip.Yang@amd.com, akpm@linux-foundation.org,
-	christian.koenig@amd.com
-References: <87mskehjtc.fsf@nvdebian.thelocal>
- <ZuS/NH/P8Fl+qptx@DUT025-TGLU.fm.intel.com>
- <87msk5our1.fsf@nvdebian.thelocal>
- <ece41917-2ea7-4571-83a5-a50c776c6587@amd.com>
- <Zu3n3MmtdlEDaXnF@DUT025-TGLU.fm.intel.com>
- <9a3e62e0-cb62-4d73-9694-7be8893f7206@amd.com>
- <Zu3wV9FJSTs1E5Vx@DUT025-TGLU.fm.intel.com>
- <ZvKnDT_bdx_PhAcG@phenom.ffwll.local>
- <ZvLr66F3VqpMyLlS@DUT025-TGLU.fm.intel.com>
- <ZvP3pWjVviMdezuy@phenom.ffwll.local>
+        Wed, 25 Sep 2024 05:06:15 -0700 (PDT)
+Message-ID: <66f3fcb7.5d0a0220.3ca4c2.ba83@mx.google.com>
+X-Google-Original-Message-ID: <ZvP8s3zhrBtvmnYz@Ansuel-XPS.>
+Date: Wed, 25 Sep 2024 14:06:11 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Lorenzo Bianconi <lorenzo@kernel.org>,
+	upstream@airoha.com
+Subject: Re: [PATCH 2/3] dt-bindings: mtd: Add Documentation for Airoha
+ fixed-partitions
+References: <20240925101422.8373-1-ansuelsmth@gmail.com>
+ <20240925101422.8373-3-ansuelsmth@gmail.com>
+ <20240925133003.619c40c4@xps-13>
+ <66f3f58e.5d0a0220.5d655.b48a@mx.google.com>
+ <20240925135256.32d3a0f7@xps-13>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZvP3pWjVviMdezuy@phenom.ffwll.local>
-X-Operating-System: Linux phenom 6.10.6-amd64 
+In-Reply-To: <20240925135256.32d3a0f7@xps-13>
 
-On Wed, Sep 25, 2024 at 01:44:37PM +0200, Simona Vetter wrote:
-> On Tue, Sep 24, 2024 at 04:42:19PM +0000, Matthew Brost wrote:
-> > On Tue, Sep 24, 2024 at 01:48:29PM +0200, Simona Vetter wrote:
-> > > On Fri, Sep 20, 2024 at 09:59:51PM +0000, Matthew Brost wrote:
-> > > > On Fri, Sep 20, 2024 at 05:50:10PM -0400, Felix Kuehling wrote:
-> > > > > 
-> > > > > On 2024-09-20 17:23, Matthew Brost wrote:
-> > > > > > On Fri, Sep 20, 2024 at 04:26:50PM -0400, Felix Kuehling wrote:
-> > > > > > > On 2024-09-18 11:10, Alistair Popple wrote:
-> > > > > > > > Matthew Brost <matthew.brost@intel.com> writes:
-> > > > > > > > 
-> > > > > > > > > On Wed, Sep 11, 2024 at 02:53:31PM +1000, Alistair Popple wrote:
-> > > > > > > > > > Matthew Brost <matthew.brost@intel.com> writes:
-> > > > > > > > > > 
-> > > > > > > > > > I haven't seen the same in the NVIDIA UVM driver (out-of-tree, I know)
-> > > > > > > > > Still a driver.
-> > > > > > > > Indeed, and I'm happy to answer any questions about our implementation.
-> > > > > > > > 
-> > > > > > > > > > but theoretically it seems like it should be possible. However we
-> > > > > > > > > > serialize migrations of the same virtual address range to avoid these
-> > > > > > > > > > kind of issues as they can happen the other way too (ie. multiple
-> > > > > > > > > > threads trying to migrate to GPU).
-> > > > > > > > > > 
-> > > > > > > > > > So I suspect what happens in UVM is that one thread wins and installs
-> > > > > > > > > > the migration entry while the others fail to get the driver migration
-> > > > > > > > > > lock and bail out sufficiently early in the fault path to avoid the
-> > > > > > > > > > live-lock.
-> > > > > > > > > > 
-> > > > > > > > > I had to try hard to show this, doubt an actual user could trigger this.
-> > > > > > > > > 
-> > > > > > > > > I wrote a test which kicked 8 threads, each thread did a pthread join,
-> > > > > > > > > and then tried to read the same page. This repeats in loop for like 512
-> > > > > > > > > pages or something. I needed an exclusive lock in migrate_to_ram vfunc
-> > > > > > > > > for it to livelock. Without an exclusive lock I think on average I saw
-> > > > > > > > > about 32k retries (i.e. migrate_to_ram calls on the same page) before a
-> > > > > > > > > thread won this race.
-> > > > > > > > > 
-> > > > > > > > >   From reading UVM, pretty sure if you tried hard enough you could trigger
-> > > > > > > > > a livelock given it appears you take excluvise locks in migrate_to_ram.
-> > > > > > > > Yes, I suspect you're correct here and that we just haven't tried hard
-> > > > > > > > enough to trigger it.
-> > > > > > > > 
-> > > > > > > > > > > Cc: Philip Yang <Philip.Yang@amd.com>
-> > > > > > > > > > > Cc: Felix Kuehling <felix.kuehling@amd.com>
-> > > > > > > > > > > Cc: Christian König <christian.koenig@amd.com>
-> > > > > > > > > > > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > > > > > > > > > > Suggessted-by: Simona Vetter <simona.vetter@ffwll.ch>
-> > > > > > > > > > > Signed-off-by: Matthew Brost <matthew.brost@intel.com>
-> > > > > > > > > > > ---
-> > > > > > > > > > >    mm/memory.c         | 13 +++++++---
-> > > > > > > > > > >    mm/migrate_device.c | 60 +++++++++++++++++++++++++++++++--------------
-> > > > > > > > > > >    2 files changed, 50 insertions(+), 23 deletions(-)
-> > > > > > > > > > > 
-> > > > > > > > > > > diff --git a/mm/memory.c b/mm/memory.c
-> > > > > > > > > > > index 3c01d68065be..bbd97d16a96a 100644
-> > > > > > > > > > > --- a/mm/memory.c
-> > > > > > > > > > > +++ b/mm/memory.c
-> > > > > > > > > > > @@ -4046,10 +4046,15 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
-> > > > > > > > > > >    			 * Get a page reference while we know the page can't be
-> > > > > > > > > > >    			 * freed.
-> > > > > > > > > > >    			 */
-> > > > > > > > > > > -			get_page(vmf->page);
-> > > > > > > > > > > -			pte_unmap_unlock(vmf->pte, vmf->ptl);
-> > > > > > > > > > > -			ret = vmf->page->pgmap->ops->migrate_to_ram(vmf);
-> > > > > > > > > > > -			put_page(vmf->page);
-> > > > > > > > > > > +			if (trylock_page(vmf->page)) {
-> > > > > > > > > > > +				get_page(vmf->page);
-> > > > > > > > > > > +				pte_unmap_unlock(vmf->pte, vmf->ptl);
-> > > > > > > > > > This is all beginning to look a lot like migrate_vma_collect_pmd(). So
-> > > > > > > > > > rather than do this and then have to pass all this context
-> > > > > > > > > > (ie. fault_page) down to the migrate_vma_* functions could we instead
-> > > > > > > > > > just do what migrate_vma_collect_pmd() does here? Ie. we already have
-> > > > > > > > > > the PTL and the page lock so there's no reason we couldn't just setup
-> > > > > > > > > > the migration entry prior to calling migrate_to_ram().
-> > > > > > > > > > 
-> > > > > > > > > > Obviously calling migrate_vma_setup() would show the page as not
-> > > > > > > > > > migrating, but drivers could easily just fill in the src_pfn info after
-> > > > > > > > > > calling migrate_vma_setup().
-> > > > > > > > > > 
-> > > > > > > > > > This would eliminate the whole fault_page ugliness.
-> > > > > > > > > > 
-> > > > > > > > > This seems like it would work and agree it likely be cleaner. Let me
-> > > > > > > > > play around with this and see what I come up with. Multi-tasking a bit
-> > > > > > > > > so expect a bit of delay here.
-> > > > > > > > > 
-> > > > > > > > > Thanks for the input,
-> > > > > > > > > Matt
-> > > > > > > Thanks! Sorry, I'm late catching up after a vacation. Please keep Philip,
-> > > > > > > Christian and myself in the loop with future patches in this area.
-> > > > > > > 
-> > > > > > Will do. Already have another local patch set which helps drivers dma
-> > > > > > map 2M pages for migrations if SRAM is physically contiguous. Seems
-> > > > > > helpful for performance on Intel hardware. Probably post that soon for
-> > > > > > early feedack.
-> > > > > 
-> > > > > OK.
-> > > > > 
-> > > > > 
-> > > > > > 
-> > > > > > Longer term I thinking 2M migration entries, 2M device pages, and being
-> > > > > > able to install 2M THP on VRAM -> SRAM could be really helpful. I'm
-> > > > > > finding migrate_vma_* functions take up like 80-90% of the time in the
-> > > > > > CPU / GPU fault handlers on a fault (or prefetch) which doesn't seem
-> > > > > > ideal. Seems like 2M entries for everything would really help here. No
-> > > > > > idea how feasible this is as the core MM stuff gets confusing fast. Any
-> > > > > > input on this idea?
-> > > > > 
-> > > > > I agree with your observations. We found that the migrate_vma_* code was the
-> > > > > bottle neck for migration performance as well, and not breaking 2M pages
-> > > > > could reduce that overhead a lot. I don't have any specific ideas. I'm not
-> > > > > familiar with the details of that code myself. Philip has looked at this
-> > > > > (and some old NVidia patches from a few years ago) in the past but never had
-> > > > > enough uninterrupted time to make it past prototyping.
-> > > > > 
+On Wed, Sep 25, 2024 at 01:52:56PM +0200, Miquel Raynal wrote:
+> Hi Christian,
+> 
+> ansuelsmth@gmail.com wrote on Wed, 25 Sep 2024 13:35:38 +0200:
+> 
+> > On Wed, Sep 25, 2024 at 01:30:03PM +0200, Miquel Raynal wrote:
+> > > Hi Christian,
+> > > 
+> > > ansuelsmth@gmail.com wrote on Wed, 25 Sep 2024 12:13:58 +0200:
+> > >   
+> > > > Add Documentation for Airoha fixed-partitions compatibles.
 > > > > 
-> > > > Cool good to know this isn't some crazy idea. Doubt it happen anytime
-> > > > soon as I need to get a working baseline in before anything then start
-> > > > applying optimizations and help in get other features to get the design
-> > > > complete. But eventually will probably try to look at this. May ping
-> > > > Philip and Nvidia when I have time to dig in here.
-> > > 
-> > > I think the big step will be moving hmm.c and migrate.c apis over from
-> > > struct page to folios. That should also give us some nice benefits on the
-> > > gpu side, since instead of 4k pages to track we could allocate 2m gpu
-> > > pages.
-> > > 
-> > 
-> > I think was thinking just encode the order in the migration PFN like HMM
-> > does. Really only Nth order entry in the page array needs to be
-> > populated then - HMM populates every entry though which doesn't seem
-> > like that is required. Maybe having a folio API makes more sense?
-> 
-> Both I'd say, as a first attempt at least. An array of folios, but only
-> populate the ones we need and jump over empty entries. A bit wasteful, but
-> eh it's just allocations.
-
-Ok thought some more, I think there's two things going on:
-
-- spot contig memory sections so that the gpu side is more efficient and
-  can user bigger pagetables and stuff like that. this is what
-  hmm_range_fault does.
-
-- optimize the core mm book-keeping by working on folios instead of
-  individual pages. hmm_range_fault does not care because it doesn't grab
-  references or lock pages or do anything else interesting with them, the
-  entire synchronization is provided by mmu notifier retry loops. But the
-  migration code does do a lot of expensive stuff, so it would need that.
-  For hmm_range_fault it's probably not so important, so maybe we could
-  leave the folio conversion of that to later.
-
-I think we need both, meaning:
-- switch to folio, leave out entries as NULL for compound folios
-- on top of compoung folios still track contig ranges so that the gpu side
-  can additionally benefit when e.g. 2M pages are split into smaller
-  folios but happen to be contig
-
-Cheers, Sima
-
-> 
-> > > Once we have folios at the driver/core mm api level doing all the fancy
-> > > thp stuff should be at least a well-contained problem. But I might be
-> > > dellusionally optimistic here :-)
-> > 
-> > I think it contained in the sense is the DRM SVM layer just allocates a
-> > THP or large continous device memory and hands it off to migrate layer
-> > and that layer does the right thing. The 'right thing' here I believe is
-> > a decent amount of core MM work though.
-> 
-> Yeah that's what I meant, once we have switched the interfaces to be
-> arrays of folios, where for larger folios we leave the entries in between
-> NULL and have some appropriate iterators, then the driver side is done
-> mostly.  The core mm side to actually make use of that will be fairly
-> gnarly though.
-> -Sima
-> 
-> > 
-> > Matt
-> > 
-> > > -Sima
-> > > 
+> > > > Airoha based SoC declare a dedicated partition at the end of the flash to
+> > > > store calibration and device specific data, in addition to fixed
+> > > > partitions.
 > > > > 
-> > > > Matt
+> > > > The offset of this special partition is not well defined as a custom bad
+> > > > block management driver is used that reserve space at the end of the flash.
 > > > > 
-> > > > > Regards,
-> > > > >   Felix
-> > > > > 
-> > > > > 
-> > > > > > 
-> > > > > > Matt
-> > > > > > 
-> > > > > > > Regards,
-> > > > > > >    Felix
-> > > > > > > 
-> > > > > > > 
-> > > > > > > > > > > +				ret = vmf->page->pgmap->ops->migrate_to_ram(vmf);
-> > > > > > > > > > > +				put_page(vmf->page);
-> > > > > > > > > > > +				unlock_page(vmf->page);
-> > > > > > > > > > > +			} else {
-> > > > > > > > > > > +				pte_unmap_unlock(vmf->pte, vmf->ptl);
-> > > > > > > > > > > +			}
-> > > > > > > > > > >    		} else if (is_hwpoison_entry(entry)) {
-> > > > > > > > > > >    			ret = VM_FAULT_HWPOISON;
-> > > > > > > > > > >    		} else if (is_pte_marker_entry(entry)) {
-> > > > > > > > > > > diff --git a/mm/migrate_device.c b/mm/migrate_device.c
-> > > > > > > > > > > index 6d66dc1c6ffa..049893a5a179 100644
-> > > > > > > > > > > --- a/mm/migrate_device.c
-> > > > > > > > > > > +++ b/mm/migrate_device.c
-> > > > > > > > > > > @@ -60,6 +60,8 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
-> > > > > > > > > > >    				   struct mm_walk *walk)
-> > > > > > > > > > >    {
-> > > > > > > > > > >    	struct migrate_vma *migrate = walk->private;
-> > > > > > > > > > > +	struct folio *fault_folio = migrate->fault_page ?
-> > > > > > > > > > > +		page_folio(migrate->fault_page) : NULL;
-> > > > > > > > > > >    	struct vm_area_struct *vma = walk->vma;
-> > > > > > > > > > >    	struct mm_struct *mm = vma->vm_mm;
-> > > > > > > > > > >    	unsigned long addr = start, unmapped = 0;
-> > > > > > > > > > > @@ -88,11 +90,13 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
-> > > > > > > > > > >    			folio_get(folio);
-> > > > > > > > > > >    			spin_unlock(ptl);
-> > > > > > > > > > > -			if (unlikely(!folio_trylock(folio)))
-> > > > > > > > > > > +			if (unlikely(fault_folio != folio &&
-> > > > > > > > > > > +				     !folio_trylock(folio)))
-> > > > > > > > > > >    				return migrate_vma_collect_skip(start, end,
-> > > > > > > > > > >    								walk);
-> > > > > > > > > > >    			ret = split_folio(folio);
-> > > > > > > > > > > -			folio_unlock(folio);
-> > > > > > > > > > > +			if (fault_folio != folio)
-> > > > > > > > > > > +				folio_unlock(folio);
-> > > > > > > > > > >    			folio_put(folio);
-> > > > > > > > > > >    			if (ret)
-> > > > > > > > > > >    				return migrate_vma_collect_skip(start, end,
-> > > > > > > > > > > @@ -192,7 +196,7 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
-> > > > > > > > > > >    		 * optimisation to avoid walking the rmap later with
-> > > > > > > > > > >    		 * try_to_migrate().
-> > > > > > > > > > >    		 */
-> > > > > > > > > > > -		if (folio_trylock(folio)) {
-> > > > > > > > > > > +		if (fault_folio == folio || folio_trylock(folio)) {
-> > > > > > > > > > >    			bool anon_exclusive;
-> > > > > > > > > > >    			pte_t swp_pte;
-> > > > > > > > > > > @@ -204,7 +208,8 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
-> > > > > > > > > > >    				if (folio_try_share_anon_rmap_pte(folio, page)) {
-> > > > > > > > > > >    					set_pte_at(mm, addr, ptep, pte);
-> > > > > > > > > > > -					folio_unlock(folio);
-> > > > > > > > > > > +					if (fault_folio != folio)
-> > > > > > > > > > > +						folio_unlock(folio);
-> > > > > > > > > > >    					folio_put(folio);
-> > > > > > > > > > >    					mpfn = 0;
-> > > > > > > > > > >    					goto next;
-> > > > > > > > > > > @@ -363,6 +368,8 @@ static unsigned long migrate_device_unmap(unsigned long *src_pfns,
-> > > > > > > > > > >    					  unsigned long npages,
-> > > > > > > > > > >    					  struct page *fault_page)
-> > > > > > > > > > >    {
-> > > > > > > > > > > +	struct folio *fault_folio = fault_page ?
-> > > > > > > > > > > +		page_folio(fault_page) : NULL;
-> > > > > > > > > > >    	unsigned long i, restore = 0;
-> > > > > > > > > > >    	bool allow_drain = true;
-> > > > > > > > > > >    	unsigned long unmapped = 0;
-> > > > > > > > > > > @@ -427,7 +434,8 @@ static unsigned long migrate_device_unmap(unsigned long *src_pfns,
-> > > > > > > > > > >    		remove_migration_ptes(folio, folio, false);
-> > > > > > > > > > >    		src_pfns[i] = 0;
-> > > > > > > > > > > -		folio_unlock(folio);
-> > > > > > > > > > > +		if (fault_folio != folio)
-> > > > > > > > > > > +			folio_unlock(folio);
-> > > > > > > > > > >    		folio_put(folio);
-> > > > > > > > > > >    		restore--;
-> > > > > > > > > > >    	}
-> > > > > > > > > > > @@ -536,6 +544,8 @@ int migrate_vma_setup(struct migrate_vma *args)
-> > > > > > > > > > >    		return -EINVAL;
-> > > > > > > > > > >    	if (args->fault_page && !is_device_private_page(args->fault_page))
-> > > > > > > > > > >    		return -EINVAL;
-> > > > > > > > > > > +	if (args->fault_page && !PageLocked(args->fault_page))
-> > > > > > > > > > > +		return -EINVAL;
-> > > > > > > > > > >    	memset(args->src, 0, sizeof(*args->src) * nr_pages);
-> > > > > > > > > > >    	args->cpages = 0;
-> > > > > > > > > > > @@ -799,19 +809,13 @@ void migrate_vma_pages(struct migrate_vma *migrate)
-> > > > > > > > > > >    }
-> > > > > > > > > > >    EXPORT_SYMBOL(migrate_vma_pages);
-> > > > > > > > > > > -/*
-> > > > > > > > > > > - * migrate_device_finalize() - complete page migration
-> > > > > > > > > > > - * @src_pfns: src_pfns returned from migrate_device_range()
-> > > > > > > > > > > - * @dst_pfns: array of pfns allocated by the driver to migrate memory to
-> > > > > > > > > > > - * @npages: number of pages in the range
-> > > > > > > > > > > - *
-> > > > > > > > > > > - * Completes migration of the page by removing special migration entries.
-> > > > > > > > > > > - * Drivers must ensure copying of page data is complete and visible to the CPU
-> > > > > > > > > > > - * before calling this.
-> > > > > > > > > > > - */
-> > > > > > > > > > > -void migrate_device_finalize(unsigned long *src_pfns,
-> > > > > > > > > > > -			unsigned long *dst_pfns, unsigned long npages)
-> > > > > > > > > > > +static void __migrate_device_finalize(unsigned long *src_pfns,
-> > > > > > > > > > > +				      unsigned long *dst_pfns,
-> > > > > > > > > > > +				      unsigned long npages,
-> > > > > > > > > > > +				      struct page *fault_page)
-> > > > > > > > > > >    {
-> > > > > > > > > > > +	struct folio *fault_folio = fault_page ?
-> > > > > > > > > > > +		page_folio(fault_page) : NULL;
-> > > > > > > > > > >    	unsigned long i;
-> > > > > > > > > > >    	for (i = 0; i < npages; i++) {
-> > > > > > > > > > > @@ -838,7 +842,8 @@ void migrate_device_finalize(unsigned long *src_pfns,
-> > > > > > > > > > >    		src = page_folio(page);
-> > > > > > > > > > >    		dst = page_folio(newpage);
-> > > > > > > > > > >    		remove_migration_ptes(src, dst, false);
-> > > > > > > > > > > -		folio_unlock(src);
-> > > > > > > > > > > +		if (fault_folio != src)
-> > > > > > > > > > > +			folio_unlock(src);
-> > > > > > > > > > >    		if (is_zone_device_page(page))
-> > > > > > > > > > >    			put_page(page);
-> > > > > > > > > > > @@ -854,6 +859,22 @@ void migrate_device_finalize(unsigned long *src_pfns,
-> > > > > > > > > > >    		}
-> > > > > > > > > > >    	}
-> > > > > > > > > > >    }
-> > > > > > > > > > > +
-> > > > > > > > > > > +/*
-> > > > > > > > > > > + * migrate_device_finalize() - complete page migration
-> > > > > > > > > > > + * @src_pfns: src_pfns returned from migrate_device_range()
-> > > > > > > > > > > + * @dst_pfns: array of pfns allocated by the driver to migrate memory to
-> > > > > > > > > > > + * @npages: number of pages in the range
-> > > > > > > > > > > + *
-> > > > > > > > > > > + * Completes migration of the page by removing special migration entries.
-> > > > > > > > > > > + * Drivers must ensure copying of page data is complete and visible to the CPU
-> > > > > > > > > > > + * before calling this.
-> > > > > > > > > > > + */
-> > > > > > > > > > > +void migrate_device_finalize(unsigned long *src_pfns,
-> > > > > > > > > > > +			unsigned long *dst_pfns, unsigned long npages)
-> > > > > > > > > > > +{
-> > > > > > > > > > > +	return __migrate_device_finalize(src_pfns, dst_pfns, npages, NULL);
-> > > > > > > > > > > +}
-> > > > > > > > > > >    EXPORT_SYMBOL(migrate_device_finalize);
-> > > > > > > > > > >    /**
-> > > > > > > > > > > @@ -869,7 +890,8 @@ EXPORT_SYMBOL(migrate_device_finalize);
-> > > > > > > > > > >     */
-> > > > > > > > > > >    void migrate_vma_finalize(struct migrate_vma *migrate)
-> > > > > > > > > > >    {
-> > > > > > > > > > > -	migrate_device_finalize(migrate->src, migrate->dst, migrate->npages);
-> > > > > > > > > > > +	__migrate_device_finalize(migrate->src, migrate->dst, migrate->npages,
-> > > > > > > > > > > +				  migrate->fault_page);
-> > > > > > > > > > >    }
-> > > > > > > > > > >    EXPORT_SYMBOL(migrate_vma_finalize);
+> > > > This binding allows defining all fixed partitions and marking the last one
+> > > > to detect the correct offset.
+> > > > 
+> > > > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > > > ---
+> > > >  .../partitions/airoha,fixed-partitions.yaml   | 80 +++++++++++++++++++
+> > > >  .../bindings/mtd/partitions/partitions.yaml   |  1 +
+> > > >  2 files changed, 81 insertions(+)
+> > > >  create mode 100644 Documentation/devicetree/bindings/mtd/partitions/airoha,fixed-partitions.yaml
+> > > > 
+> > > > diff --git a/Documentation/devicetree/bindings/mtd/partitions/airoha,fixed-partitions.yaml b/Documentation/devicetree/bindings/mtd/partitions/airoha,fixed-partitions.yaml
+> > > > new file mode 100644
+> > > > index 000000000000..a45df51065af
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/mtd/partitions/airoha,fixed-partitions.yaml
+> > > > @@ -0,0 +1,80 @@
+> > > > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > > > +%YAML 1.2
+> > > > +---
+> > > > +$id: http://devicetree.org/schemas/mtd/partitions/airoha,fixed-partitions.yaml#
+> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > +
+> > > > +title: Airoha SoC partitioning
+> > > > +
+> > > > +description: |
+> > > > +  Airoha based SoC declare a dedicated partition at the end of the flash to
+> > > > +  store calibration and device specific data, in addition to fixed partitions.
+> > > > +
+> > > > +  The offset of this special partition is not well defined as a custom bad block
+> > > > +  management driver is used that reserve space at the end of the flash.
+> > > > +
+> > > > +  This binding allows defining all fixed partitions and marking the last one to
+> > > > +  detect the correct offset from the new end of the flash.
+> > > > +
+> > > > +maintainers:
+> > > > +  - Christian Marangi <ansuelsmth@gmail.com>
+> > > > +
+> > > > +select: false
+> > > > +
+> > > > +properties:
+> > > > +  compatible:
+> > > > +    const: airoha,fixed-partitions
+> > > > +
+> > > > +  "#address-cells":
+> > > > +    enum: [ 1, 2 ]
+> > > > +
+> > > > +  "#size-cells":
+> > > > +    enum: [ 1, 2 ]
+> > > > +
+> > > > +patternProperties:
+> > > > +  "^partition@[0-9a-f]+$":
+> > > > +    $ref: partition.yaml#
+> > > > +    properties:
+> > > > +      compatible:
+> > > > +        const: airoha,dynamic-art
+> > > > +    unevaluatedProperties: false
+> > > > +
+> > > > +required:
+> > > > +  - "#address-cells"
+> > > > +  - "#size-cells"
+> > > > +
+> > > > +additionalProperties: false
+> > > > +
+> > > > +examples:
+> > > > +  - |
+> > > > +    partitions {
+> > > > +        compatible = "airoha,fixed-partitions";
+> > > > +        #address-cells = <1>;
+> > > > +        #size-cells = <1>;
+> > > > +
+> > > > +        partition@0 {
+> > > > +          label = "bootloader";
+> > > > +          reg = <0x00000000 0x00080000>;
+> > > > +        };
+> > > > +
+> > > > +        partition@80000 {
+> > > > +          label = "tclinux";
+> > > > +          reg = <0x00080000 0x02800000>;
+> > > > +        };
+> > > > +
+> > > > +        partition@2880000 {
+> > > > +          label = "tclinux_slave";
+> > > > +          reg = <0x02880000 0x02800000>;
+> > > > +        };
+> > > > +
+> > > > +        partition@5080000 {
+> > > > +          label = "rootfs_data";
+> > > > +          reg = <0x5080000 0x00800000>;
+> > > > +        };
+> > > > +
+> > > > +        partition@ffffffff {
+> > > > +          compatible = "airoha,dynamic-art";
+> > > > +          label = "art";
+> > > > +          reg = <0xffffffff 0x00300000>;  
 > > > 
-> > > -- 
-> > > Simona Vetter
-> > > Software Engineer, Intel Corporation
-> > > http://blog.ffwll.ch
+> > > I'm a little bit puzzled by this kind of information which is known to
+> > > be wrong. As the partition offset and size must be dynamically
+> > > calculated, this reg property (as well as the size parameter of the
+> > > previous one) are notably wrong. I guess we are not fully constrained
+> > > by the fixed-partitions schema here, so could we avoid the reg property
+> > > in the airoha,dynamic-art partition? Maybe we also need a #define for a
+> > > specific placeholder in the penultimate reg property too (for the size).
+> > >  
+> > 
+> > Maybe instead of reg we can use a property like size?
+> > 
+> > Can you better elaborate the suggestion about the #define?
+> > 
+> > Do you mean for case where the last partition might overlap
+> > with the penultimate? Honestly in such case I would error hard, that
+> > case happen when too much space is reserved and that is a
+> > misconfiguration of the system (developer error)
 > 
-> -- 
-> Simona Vetter
-> Software Engineer, Intel Corporation
-> http://blog.ffwll.ch
+> That's not what I mean.
+> 
+> In the above case you say partition "partition@5080000" is 0x800000
+> bytes long. This is obviously wrong otherwise you would know where the
+> art partition starts. And right after you're saying partition
+> "partition@ffffffff" starts at 0xffffffff and is 0x300000 bytes long.
+> This is also wrong because 0xffffffff is not a valid start address and
+> IIUC 0x300000 is also unknown and dynamically derived.
+> 
+> So for the art partition my advise if you know nothing about the
+> start/length is to just skip the reg property. For the previous
+> partition I'd maybe use a definition (whose name is to discuss) instead
+> of the wrong size argument (the start offset being correct on his side).
+>
+
+Ok probably the description isn't clear enough. The missing info that
+require this parser is the flash end.
+
+Following the example we know the size of rootfs_data and start offset
+AND we know the size of the ART partition.
+
+There might be a space in the middle unused between the rootfs_data
+partition and the art partition. What is derived is the starting offset
+of the art partition that is flash end - art partition size.
+(where flash end change and is not always the same due to how the special
+bad block managament table reserved space is handled)
+
+This is why 0xffffffff, used as a dummy offset to signal it will be parsed at
+runtime. On second tought tho maybe using this dummy offset is wrong and
+I should just have something like
+
+length = <0x300000>;
+
+Is it clear now? Sorry for any confusion.
 
 -- 
-Simona Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+	Ansuel
 
