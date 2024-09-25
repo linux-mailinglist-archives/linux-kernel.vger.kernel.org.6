@@ -1,176 +1,132 @@
-Return-Path: <linux-kernel+bounces-339117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86CDB9860BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:31:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B15D986086
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:25:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B25CCB2E019
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:25:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E42F11F25225
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:25:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB1019AD8E;
-	Wed, 25 Sep 2024 13:08:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41AA81AB50F;
+	Wed, 25 Sep 2024 13:08:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cvuu/UVn"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="T3I73COa"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FCC41779BC
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 13:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 858E91AB6D0
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 13:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727269680; cv=none; b=JBYq4w/2AqAVHEG1bchIY1PPzBQ3ViI347Cr/mKhP+ltnKthNL7pptJ7L1tnglZzPgGZ2QFIY35eJCPs/5eqi44GiPDJQ5AJIFDGaDw5RkyjtADHj0+aIl8SkhrQMKmr8og9dD5R8ybAFB1GJZvR1V+IilLi+RYCrC7BPiMXxU4=
+	t=1727269712; cv=none; b=tPoNL9qXAdTA2i3bT5z0Ms+haLS1GVHO2bbtuNtANmS5Z+NB0gTgfpX3cVkaI0IaKR4J2CM78GUJOsNGgdJ+cDbRrWorI8DGye0VvlCMVfBCX0DpfWZdI4jaWUaSj0IQrluWQvp963piIrSqAc6jKWlvbLhuUR2UZ8kVxoyizKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727269680; c=relaxed/simple;
-	bh=WF4/MpU11kD15cU2i0hoOhStBywiu641ooEf+oH29jo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dI7Tryl6S5X5PL2eTzWpE7j7PERM8VwKL+42YnDWv+iDOnFXMgp0sY+5tJHVx7pNvJOd+GagI4FyisYQu9uTlCWY2wNeZ2LlbUMGdjdN8OfZTjX27OJVBvy9vAFGuN3+UAUJ9wsdEF8TX8H3Up2zlBAw9UtQFbUt0ceatxzU3wU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cvuu/UVn; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7c3e1081804so2960725a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 06:07:59 -0700 (PDT)
+	s=arc-20240116; t=1727269712; c=relaxed/simple;
+	bh=oy4FjmWQhhsk5gZLF9a56ivnKadXTHvPmDY2gbMhqvo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=l6AhgHRCBQ+zMTabuyDTSXFqghTfGILlsMDbSv6FsZhmSX0k5dKYQSRx17h9CiamYJ4Bk/W2HH0mZ6+EAFchq36d8b39IA3kvWUsSyKH8qOHR3N7heTuA5SlVXbiXCXayPJ5i+mbXk6avN0+2CltNF1pJTy8QPR8vSQCHojnnrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=T3I73COa; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53654e2ed93so8004185e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 06:08:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727269678; x=1727874478; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QMQjYjN7HAdSQNZWDM3WCmN32hY2AjYX/wlFF+U58Mg=;
-        b=cvuu/UVn5BvEmE/JETWBxxcDMUBYy9V5qsSZiqywJdmVjGfL3fkuIC64bUkmda6T8Y
-         1YZZNVbULkCi8kaxnfBudxUJ0ffhw5ic0vjlkGgDq/BTWmydxWjyGiyt3/bKGSpQqhdI
-         g7Ir4B6eJQD4UliYnRZgu2llHlHMtuVAyrh9Y9eBNwjvOT0EG2KsfimyXTv3U+VNL0Nz
-         O56xUvPUu644TCp/Mg7seO0Rt0UHn59VmbANUfX0r1xOgSuYxPFK5o2BaEjfzLQi0NiG
-         Fl31H2e8nP7F7Cd/tWqQZvhX6XvKFeq3lEhCEJRWJi8GigA2bMuGG92fBC642dwcVf/M
-         leTw==
+        d=suse.com; s=google; t=1727269708; x=1727874508; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=oy4FjmWQhhsk5gZLF9a56ivnKadXTHvPmDY2gbMhqvo=;
+        b=T3I73COapJbJgVYo1UhXp2YVW0gW9rHa9Y72ncJe4xpPvhYIVsqZTU/O7a8u9U9DKj
+         xxNFsixKhOamNd3YkkE28zkuyx3QTQmc8DH263s4cjk+1z0u9BVsvAM3ZNyab6LuUpMp
+         +/jEm6iVPuAR+TlhMqe8wJ9sX9zGV4WJ97dsR+X1oCp/BI6vcs/pSXpegYkpWybkW12C
+         muvbjSBn7M3+A8c+6xTeVaZxD3+Rq0mLDkXJFjSPKIT2ECzKqyOJ/S7p2kV6EnLSwYS1
+         cfr3FwgnXYACFUB9DYhUhSxIgAyjb83D2Ce+DR7Ji5CA1PRIPF9nqybNuTKAST3VWqWO
+         cVTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727269678; x=1727874478;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QMQjYjN7HAdSQNZWDM3WCmN32hY2AjYX/wlFF+U58Mg=;
-        b=HKy7dHqqsAF5nSCzsmqXVDdp12XRzS5CAD4oKJsG+CNqPd4IWT8xAbDEjSS9Ydl+2r
-         7hCfyxUYehRvg/vWhiqPjDaHsyrQ5QV1CGoxGgVDNkja4aUvXnyEhL+6g5kLESNbFbBb
-         X7AN9e8hmtbVTV3YX/vVF9FBIuiulLXTko+wiYq/wnm9SAjVFwMefxD9TyxFsbBld8rM
-         uesvdoJgOlgqOCCPfSXhgocW8jR9R7X6dESaOzwAtHC9XV/KARDDgJRFZmLKrjJE5cl1
-         LVaehUyH6ESvs3cueAP8Y3s2Rd+2ZDNNWQmNBmc4EsuwIGkmPPReWiH39uRh1Qjmz4JN
-         g3Uw==
-X-Forwarded-Encrypted: i=1; AJvYcCXzk4A1cXbvKUlbLxcf6gpnEKRqDh8HSTzCkA22Xd8z283ZBVkYP3ZsW6721VdrwAL1qEBqpOXNzZe8jQY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyY38xR6xpM7uRE+aPwxme3NIfncRdOpmdBjJwNmZGu7zKB0fXB
-	XpnM/CJsZKsXUkvSA7JIhHUqV/Wo+iTnsxy+KtTQzbGwUaXsMTSGahPDegjr5uapfHOGpFf8ML6
-	BaJEckkeY4AJp584GDL4+VX/+7PcC7d+S5BkxEA==
-X-Google-Smtp-Source: AGHT+IFHgHcN5pxFxoFwe7/iwYV3NKVvNHWwIwbvhJzV6XPUKUwgxZ7Dd/J0+ZA2VJRIodLbcqULhosFombZR/ibrJY=
-X-Received: by 2002:a17:90a:cf91:b0:2d8:84df:fa0a with SMTP id
- 98e67ed59e1d1-2e06afcd745mr3514814a91.32.1727269678505; Wed, 25 Sep 2024
- 06:07:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727269708; x=1727874508;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oy4FjmWQhhsk5gZLF9a56ivnKadXTHvPmDY2gbMhqvo=;
+        b=hr+mDfhPI4XDvD3BQaEITNHIYw8ZdeqUi+4TvW3JZ2Sv9Pswj8oS8Yj1MGnDbcxkyk
+         5G53oBmUCh7J64AoyjKp0wr/x3rQD0HRleLCGCLzdWjKQn1ZS6Z/6NSoO96x9mIB969K
+         zFGdLRZq5IAmMu723vnIuPWMlQxsMmIvkVhw+/38gPWEGLQ3b3UNbi+JomMaO3c9eEyT
+         ccrBEQgqCvWh9NrrW3BDZ9hII1FAf5odsTnn88UJXm8CgIHxMP3eWq90UlCuhmQnBBRO
+         DePNrPPAt64UeknwTYDwOfuufmHEwXa2pu4DgTlejh0av4eD0Twg4tJgA/BSQk/IyZIz
+         23LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXi36KkEkA0iGIJ28iWfEQvIRuDONnP8oiaeUSGLFuba1+6cAIDSLxcTdSJjaoNkufA3n2ddMRjmTOue0M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwK+yvy8onStb7CZyMjEbpmznQieBWww6cvD6/kTDp62GmitKgo
+	FE2N3HIKTsl/s3UNFfI1gGJM2o3NMyGyEgbzshHdpck+JuzOkk8g1LRfNIhtI/GoqX1z0k6fJIn
+	Thtg=
+X-Google-Smtp-Source: AGHT+IEhmiM9PRXA9kCtpYEyjG2XjauKbi5RYBQYK5ElaZTVJYzszEWccWppxnF9+yJhAmG+NxP6Ig==
+X-Received: by 2002:a05:6512:400d:b0:530:ad7d:8957 with SMTP id 2adb3069b0e04-53877564917mr1761043e87.49.1727269708468;
+        Wed, 25 Sep 2024 06:08:28 -0700 (PDT)
+Received: from [192.168.3.3] (77.39.160.45.gramnet.com.br. [45.160.39.77])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c5cf4c500dsm1797598a12.61.2024.09.25.06.08.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 06:08:28 -0700 (PDT)
+Message-ID: <0fe8f8d36fb5fc78c645b26c20b5ae365bb59991.camel@suse.com>
+Subject: Re: [PATCH 0/2] livepatch: introduce 'stack_order' sysfs interface
+ to klp_patch
+From: Marcos Paulo de Souza <mpdesouza@suse.com>
+To: Wardenjohn <zhangwarden@gmail.com>, jpoimboe@kernel.org, mbenes@suse.cz,
+  jikos@kernel.org, pmladek@suse.com, joe.lawrence@redhat.com
+Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 25 Sep 2024 10:08:22 -0300
+In-Reply-To: <20240925064047.95503-1-zhangwarden@gmail.com>
+References: <20240925064047.95503-1-zhangwarden@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830130309.2141697-1-vincent.guittot@linaro.org>
- <20240830130309.2141697-5-vincent.guittot@linaro.org> <64ed0fb8-12ea-4452-9ec2-7ad127b65529@arm.com>
-In-Reply-To: <64ed0fb8-12ea-4452-9ec2-7ad127b65529@arm.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Wed, 25 Sep 2024 15:07:46 +0200
-Message-ID: <CAKfTPtAAytu2iaGNp8N0uhXA=3zmSsuygtrH36RWBG2yryHWWw@mail.gmail.com>
-Subject: Re: [RFC PATCH 4/5] sched/fair: Use EAS also when overutilized
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	mgorman@suse.de, vschneid@redhat.com, lukasz.luba@arm.com, 
-	rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org, qyousef@layalina.io, 
-	hongyan.xia2@arm.com
-Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 17 Sept 2024 at 22:24, Christian Loehle
-<christian.loehle@arm.com> wrote:
->
-> On 8/30/24 14:03, Vincent Guittot wrote:
-> > Keep looking for an energy efficient CPU even when the system is
-> > overutilized and use the CPU returned by feec() if it has been able to find
-> > one. Otherwise fallback to the default performance and spread mode of the
-> > scheduler.
-> > A system can become overutilized for a short time when workers of a
-> > workqueue wake up for a short background work like vmstat update.
-> > Continuing to look for a energy efficient CPU will prevent to break the
-> > power packing of tasks.
-> >
-> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > ---
-> >  kernel/sched/fair.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index 2273eecf6086..e46af2416159 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -8505,7 +8505,7 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int wake_flags)
-> >                   cpumask_test_cpu(cpu, p->cpus_ptr))
-> >                       return cpu;
-> >
-> > -             if (!is_rd_overutilized(this_rq()->rd)) {
-> > +             if (sched_energy_enabled()) {
-> >                       new_cpu = find_energy_efficient_cpu(p, prev_cpu);
-> >                       if (new_cpu >= 0)
-> >                               return new_cpu;
->
-> Super quick testing on pixel6:
-> for i in $(seq 0 6); do /data/local/tmp/hackbench -l 500 -g 100 | grep Time; sleep 60; done
-> with patch 5/5 only:
+On Wed, 2024-09-25 at 14:40 +0800, Wardenjohn wrote:
+> As previous discussion, maintainers think that patch-level sysfs
+> interface is the
+> only acceptable way to maintain the information of the order that
+> klp_patch is=20
+> applied to the system.
+>=20
+> However, the previous patch introduce klp_ops into klp_func is a
+> optimization=20
+> methods of the patch introducing 'using' feature to klp_func.
+>=20
+> But now, we don't support 'using' feature to klp_func and make
+> 'klp_ops' patch
+> not necessary.
+>=20
+> Therefore, this new version is only introduce the sysfs feature of
+> klp_patch=20
+> 'stack_order'.
 
-Do you mean 4/5 ?
+The approach seems ok to me, but I would like to see selftests for this
+new attribute. We have been trying to add more and more selftests for
+existing known behavior, so IMO adding a new attribute should contain a
+new test to exercise the correct behavior.
 
-> Time: 19.433
-> Time: 19.657
-> Time: 19.851
-> Time: 19.789
-> Time: 19.857
-> Time: 20.092
-> Time: 19.973
->
-> mainline:
-> Time: 18.836
-> Time: 18.718
-> Time: 18.781
-> Time: 19.015
-> Time: 19.061
-> Time: 18.950
-> Time: 19.166
->
+Other than that, for the series:
 
-As mentioned in the cover letter,  patch 4/5  has an impact on performance.
-Your 4.6% regression is in the range of what I have for these tests
+ Acked-by: Marcos Paulo de Souza <mpdesouza@suse.com>
 
->
-> The reason we didn't always have this enabled is the belief that
-> this costs us too much performance in scenarios we most need it
-> while at best making subpar EAS decisions anyway (in an
-> overutilized state).
-> I'd be open for questioning that, but why the change of mind?
+>=20
+> V1 -> V2:
+> 1. According to the suggestion from Petr, to make the meaning more
+> clear, rename
+> 'order' to 'stack_order'.
+> 2. According to the suggestion from Petr and Miroslav, this patch now
+> move the=20
+> calculating process to stack_order_show function. Adding klp_mutex
+> lock protection.
+>=20
+> Regards.
+> Wardenjohn.
+>=20
 
-several reasons:
-- the rework of eas patch 1,2,3 of this patchset adds some performance
-hints into the selection of an energy efficient CPU
-- Although some initial proposal of overutilized state was per sched
-domain to prevent destroying whole placement if only a subpart of the
-system was overutilized, the current implementation is binary: whole
-system or nothing. As shown during [1], a short kworker wakeup can
-destroy all task placement by putting the whole system overutilized.
-But even  when overutilized, there are a lot of possibilities to do
-correct feec() task placement. The overutilized state is too
-aggressive.
-- the feec() has been reworked since the original version to be less
-complex as described by commit 5b77261c5510 ("sched/topology: Remove
-the EM_MAX_COMPLEXITY limit")
-
-[1] https://youtu.be/PHEBAyxeM_M?si=ZApIOw3BS4SOLPwp
-
-> And why is this necessary in your series if the EAS selection
-> isn't 'final' (until the next sleep) anymore (Patch 5/5)?
-
-To prevent destroying everything without good reason. feec() will try
-select a CPU only if it can find one that fits for the task otherwise
-we fallback to full performance one.
 
