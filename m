@@ -1,137 +1,157 @@
-Return-Path: <linux-kernel+bounces-338418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D105C98578C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:02:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE741985776
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:58:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90C71285CCB
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:02:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A35C9285BAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92EF3189F48;
-	Wed, 25 Sep 2024 11:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E760183CAB;
+	Wed, 25 Sep 2024 10:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jafBm6Fn"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pl2BeJNG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA165189BA3
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 11:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FADC14B94C;
+	Wed, 25 Sep 2024 10:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727262104; cv=none; b=KK3x5FiHdzrp5RzDvcHozP1QdPm1MhmniVULPdasVyJwEqP9w59BzGdTCTEKEPjL+hHDVato39hffrQ5yK36j35d+3rtWJqc9+BT+r5B11ylwf5cr1WZKCpcbKSBQwj/SDAFQ8KwSVxD+bzt+WXxEefBHGcWQBKm6JSZM6WCwhU=
+	t=1727261914; cv=none; b=RfdJeIbCbm/a0O0CIaWjcHMiEQbjkHiVwAkH9LZiDHlmuBMoIWmBqROm+lMiq3WYjvS1lyHyi904xtLrKXzq1Gy7vMzCShvWSHv9zgZvwYETwa08qu0pZ/HoaTIsVGfOE1bisx9jDYhVsLWFHG6zFf3N5WLoEJQzyxouqEBXIJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727262104; c=relaxed/simple;
-	bh=qTmn6cvNPS/41vZDFYHAEqEZ5hFW5+iV9uAFz4c3bHQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ewIBsJTRcX86X7vEroQoxULUl+JE1mNeT0dsldtPjOG/FbWef7CfCvhd/f1iFPknwfOthto0lRSZNwLcetrgi90kmyc9f/rDl9qkZ5iVrIJKHbm1rZn2T66v1bEyWXnziYqnIwb9XW8spDST8b8tBKa7hVBDPUp7uJgFOIepmpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jafBm6Fn; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71971d20ad9so4357642b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 04:01:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727262101; x=1727866901; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+0gdoWEmQ8OIzTuFnl4n60fS6o89niEVW+7kgdyvnOE=;
-        b=jafBm6Fnr9LjWk5Ht+bIW1Rd2r0XRHGe6g0ZYsvjgMW7yJ0HnDAhWAagmYGXHNUSAN
-         8goMzYrk7HMXJqUxMZoCEzcUMhj/5iTprDCPnC7iwO/3j1G26f/28ooii62tAWkv/Hmd
-         w3S13Y+kcx+lcwHBbvamisSJAssHpPsb6APjI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727262101; x=1727866901;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+0gdoWEmQ8OIzTuFnl4n60fS6o89niEVW+7kgdyvnOE=;
-        b=NvDaxOV9PqC/Es6fItJkXIn7Br2jZJca/cICrZHibvXiaQM7JE38qRz/U/ZD5F7z3t
-         COSy6r74mVWKAFJJOH4Xr/f9fXGqU0fScNWpuhlZ6B8LXTFKysWOkRQR9BLi+lKwKrHY
-         08teQuBy6U8Sj2oyvKU6gtRJ9jChk5V+y7xJ0Is473i4F4Ognv4Fj0+qU9PlHR5ibtmq
-         4ORpFnt1IXcKP/NH2tiXk/DnqUi0wDPueysadJpQ2vnZx/8YJP5GwvklQ/mGMsifK6Rf
-         FJn94icAB88Li/I7x8Bbvnbchtiq+LroeWqlwpLGB6rGar6UNULofI0Zcu5tMi76rq1q
-         3G9g==
-X-Forwarded-Encrypted: i=1; AJvYcCUv4++lBczT5LphnawP1QZdfynvcvLWvIC2gl5/EEB0PGB/aL5OYmBnIK/E5yRZ68bgsVXn3E30Rv1BYss=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrERSQ7cmWwsio++Qb4pjz1h87OeS6XFDUoI7z09BPbWel3sPh
-	5SdLLZ689/tuTrCAXgZBjFpl+6JEOQ8Pes9JIlj9DfElEUbotgL6qLCqcWSrjQ==
-X-Google-Smtp-Source: AGHT+IHW8akhne8ifxBoarbEIqQkjZqpqla6rNR9R3QeDqTmmCGIt95+B1YaGfD1lQYvQ0y0FfdixQ==
-X-Received: by 2002:a05:6a20:1010:b0:1d4:e56e:93b5 with SMTP id adf61e73a8af0-1d4e56e93bbmr1103285637.16.1727262100947;
-        Wed, 25 Sep 2024 04:01:40 -0700 (PDT)
-Received: from fshao-p620.tpe.corp.google.com ([2401:fa00:1:10:2b86:78b6:8ebc:e17a])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6b7c73085sm2570298a12.59.2024.09.25.04.01.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 04:01:40 -0700 (PDT)
-From: Fei Shao <fshao@chromium.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Fei Shao <fshao@chromium.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH 6/6] arm64: dts: mediatek: mt8188: Update vppsys node names to syscon
-Date: Wed, 25 Sep 2024 18:57:50 +0800
-Message-ID: <20240925110044.3678055-7-fshao@chromium.org>
-X-Mailer: git-send-email 2.46.0.792.g87dc391469-goog
-In-Reply-To: <20240925110044.3678055-1-fshao@chromium.org>
-References: <20240925110044.3678055-1-fshao@chromium.org>
+	s=arc-20240116; t=1727261914; c=relaxed/simple;
+	bh=xbGkoffuSAvg1OpI731V72OH6zmPBU3cjaqvfly31NY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HZ7yUFJKAC5IxZSbvmmLMAiP5ha2lnk/YyzYSFwaWqnepN1gErKYilmSgEf8RSTWG05zfb01/mcjkhHqevDX28+Yw+mxQysz6OH3/cILdRVyDaF9ykUI5mXlkoGsAt26x4gDaZJkzVLN6J74BmsJWGWK8ntVlTp6qx062ndFjSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pl2BeJNG; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727261914; x=1758797914;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=xbGkoffuSAvg1OpI731V72OH6zmPBU3cjaqvfly31NY=;
+  b=Pl2BeJNGIfKjzWPsNjmNzIe9NqrCUJ4sesPrRXJIKhwp3BQDemPRS8wR
+   vPIR2Wr58gokH09y57azGjIRWCtr3nq09Gp+HiyTqbTNqk+bK+KhTjBDB
+   /OltP+kI7Zhht1PLxGp9UP2ltPYgKs6Ppc89otom4D1gM6xC76C7u92nt
+   BSoDXeMxN+eWowbVj/WSTVwg9qhRzCj7hHvsmymQ57BjxJWHoM8jm7RgA
+   tYu2INZSdSHfngC3o0uQBblpyyJoDrwGIqIyx+vvA6hR32EHi65K9te4V
+   DWZtc13yjuv3Hkg1KUttXdSNzfJXdM4/RjOF3YjQy6mA1uWDmfUoGLFZK
+   w==;
+X-CSE-ConnectionGUID: 9owdnr3ESCKvE6MBsq2W+w==
+X-CSE-MsgGUID: RkY7JtLjQWSpRrjevxjgxg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="30093636"
+X-IronPort-AV: E=Sophos;i="6.10,257,1719903600"; 
+   d="scan'208";a="30093636"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 03:58:32 -0700
+X-CSE-ConnectionGUID: QnHwRlVARWm5p0J/OMfh2g==
+X-CSE-MsgGUID: qaEesQtKRgG9MypQQT8MUg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,257,1719903600"; 
+   d="scan'208";a="102551930"
+Received: from mylly.fi.intel.com (HELO [10.237.72.57]) ([10.237.72.57])
+  by fmviesa001.fm.intel.com with ESMTP; 25 Sep 2024 03:58:28 -0700
+Message-ID: <90f64539-3092-4d3b-bdf2-c6af51e32fdc@linux.intel.com>
+Date: Wed, 25 Sep 2024 13:58:27 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] i2c: designware: determine HS tHIGH and tLOW based on
+ HW paramters
+To: Michael Wu <michael.wu@kneron.us>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Jan Dabros <jsd@semihalf.com>, linux-i2c@vger.kernel.org
+Cc: Andi Shyti <andi.shyti@kernel.org>, Morgan Chang
+ <morgan.chang@kneron.us>, linux-kernel@vger.kernel.org
+References: <20240925080432.186408-1-michael.wu@kneron.us>
+ <20240925080432.186408-2-michael.wu@kneron.us>
+Content-Language: en-US
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+In-Reply-To: <20240925080432.186408-2-michael.wu@kneron.us>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The MediaTek mmsys is more than just a clock controller; it's a
-system controller. In addition to clock controls, it provides display
-pipeline routing controls and other miscellaneous control registers.
+Hi
 
-On the MT8188 and MT8195 SoCs, the mmsys blocks utilize the same mmsys
-driver but have been aliased to "vdosys" and "vppsys", likely to better
-represent their actual functionality.
+On 9/25/24 11:04 AM, Michael Wu wrote:
+> In commit 35eba185fd1a ("i2c: designware: Calculate SCL timing
+> parameter for High Speed Mode") hs_hcnt and hs_hcnt are computed based on
+> fixed tHIGH = 160 and tLOW = 320. However, this fixed values only applies
+> to the set of conditions of IC_CAP_LOADING = 400pF and
+> IC_FREQ_OPTIMIZATION = 1. Outside of this conditions set, if this fixed
+> values are still used, the calculated HCNT and LCNT will make the SCL
+> frequency unabled to reach 3.4 MHz.
+> 
+> If hs_hcnt and hs_lcnt are calculated based on fixed tHIGH = 160 and
+> tLOW = 320, SCL frequency may not reach 3.4 MHz when IC_CAP_LOADING is not
+> 400pF or IC_FREQ_OPTIMIZATION is not 1.
+> 
+> Section 3.15.4.5 in DesignWare DW_apb_i2c Databook v2.03 says when
+> IC_CLK_FREQ_OPTIMIZATION = 0,
+> 
+>      MIN_SCL_HIGHtime = 60 ns for 3.4 Mbps, bus loading = 100pF
+> 		     = 120 ns for 3,4 Mbps, bus loading = 400pF
+>      MIN_SCL_LOWtime = 160 ns for 3.4 Mbps, bus loading = 100pF
+> 		    = 320 ns for 3.4 Mbps, bus loading = 400pF
+> 
+> and section 3.15.4.6 says when IC_CLK_FREQ_OPTIMIZATION = 1,
+> 
+>      MIN_SCL_HIGHtime = 60 ns for 3.4 Mbps, bus loading = 100pF
+> 		     = 160 ns for 3.4 Mbps, bus loading = 400pF
+>      MIN_SCL_LOWtime = 120 ns for 3.4 Mbps, bus loading = 100pF
+> 		    = 320 ns for 3.4 Mbps, bus loading = 400pF
+> 
+> In order to calculate more accurate hs_hcnt and hs_lcnt, two hardware
+> parameters IC_CAP_LOADING and IC_CLK_FREQ_OPTIMIZATION must be
+> considered together.
+> 
+> Signed-off-by: Michael Wu <michael.wu@kneron.us>
+> ---
+>   drivers/i2c/busses/i2c-designware-common.c  | 16 ++++++++++++++
+>   drivers/i2c/busses/i2c-designware-core.h    |  8 +++++++
+>   drivers/i2c/busses/i2c-designware-master.c  | 24 +++++++++++++++++++--
+>   drivers/i2c/busses/i2c-designware-platdrv.c |  2 ++
+>   4 files changed, 48 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-designware-common.c b/drivers/i2c/busses/i2c-designware-common.c
+> index e8a688d04aee..f0a7d0ce6fd6 100644
+> --- a/drivers/i2c/busses/i2c-designware-common.c
+> +++ b/drivers/i2c/busses/i2c-designware-common.c
+> @@ -332,6 +332,22 @@ void i2c_dw_adjust_bus_speed(struct dw_i2c_dev *dev)
+>   }
+>   EXPORT_SYMBOL_GPL(i2c_dw_adjust_bus_speed);
+>   
+> +void i2c_dw_parse_of(struct dw_i2c_dev *dev)
+> +{
+> +	int ret;
+> +
+> +	ret = device_property_read_u32(dev->dev, "bus-loading",
+> +				       &dev->bus_loading);
 
-Update the vppsys node names and compatibles in MT8188 DT to reflect
-that and fix dtbs_check errors against mediatek/mt8188-evb.dtb.
+Like Andy said better name would be bus_capacitance_pf.
 
-Signed-off-by: Fei Shao <fshao@chromium.org>
----
+Also i2c_dw_parse_of() sounds too generic and may lead to think all and 
+only device tree related parameters are parsed here.
 
- arch/arm64/boot/dts/mediatek/mt8188.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> +	if (ret || dev->bus_loading < 400)
+> +		dev->bus_loading = 100;
+> +	else
+> +		dev->bus_loading = 400;
+> +
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8188.dtsi b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-index a6cd08ea74eb..98ba3485a8bd 100644
---- a/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
-@@ -1783,8 +1783,8 @@ mfgcfg: clock-controller@13fbf000 {
- 			#clock-cells = <1>;
- 		};
- 
--		vppsys0: clock-controller@14000000 {
--			compatible = "mediatek,mt8188-vppsys0";
-+		vppsys0: syscon@14000000 {
-+			compatible = "mediatek,mt8188-vppsys0", "syscon";
- 			reg = <0 0x14000000 0 0x1000>;
- 			#clock-cells = <1>;
- 		};
-@@ -1801,8 +1801,8 @@ wpesys_vpp0: clock-controller@14e02000 {
- 			#clock-cells = <1>;
- 		};
- 
--		vppsys1: clock-controller@14f00000 {
--			compatible = "mediatek,mt8188-vppsys1";
-+		vppsys1: syscon@14f00000 {
-+			compatible = "mediatek,mt8188-vppsys1", "syscon";
- 			reg = <0 0x14f00000 0 0x1000>;
- 			#clock-cells = <1>;
- 		};
--- 
-2.46.0.792.g87dc391469-goog
-
+I think these are more understandable and robust if no parameter 
+adjustments are not done here but used straight in the if statements in 
+the i2c_dw_set_timings_master(). Less if statements that way and all 
+checked in one place.
 
