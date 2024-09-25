@@ -1,335 +1,229 @@
-Return-Path: <linux-kernel+bounces-338442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22F3E985806
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:35:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC6A098580B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:35:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9D2028241D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:35:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13314B20A31
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6410E15E5B5;
-	Wed, 25 Sep 2024 11:35:06 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE65156F23;
+	Wed, 25 Sep 2024 11:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q9eIU1U4"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39639137775;
-	Wed, 25 Sep 2024 11:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D05137775;
+	Wed, 25 Sep 2024 11:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727264105; cv=none; b=OiSNjT8/ZCmOCrR02yGzQ9991mlydgCZ6Krw3qrFyV2S+43uaAEYxw1oR1oAWvmYv504VVifWG5nJK3zsd0sLDsnDCMCpS01zPVP2+vsZJBh0ViNVQbuURU3nZm5ZKGTKHTl9L8QSCZQMhf5bVY36o6yLnjm9b5ZYxbfU+Hdq68=
+	t=1727264146; cv=none; b=C3rcmgwmcZCLkR/GFVp9hWD9THvwA3/1ZvMmH+K9D/AftIavPospDS/W6qxTu9GV4COvDam+JWaC0MEbs7iHK9bl2j3g9Ye9rlSyzSIHF8f27CWZiubGwfeh1EiCJQM973G8ELIavol00n1sHljIFNDxggYPDdDwY25lJn9uoHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727264105; c=relaxed/simple;
-	bh=170AVyQFJ3/97RuZmyCLwYfGaDGwl+WX6cd9BfoheAA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HUZvg8UkMewAhrVmw9G5ve/aLm43Mo9EXm2fzxqZ6ajoXf0A6AGfA/6LjHcOn8tGxxIyeEiNTMClJ9JNWwfRN44k/UN4QdUAJWzfaGJjUS3xiMo9YUaJnpMAVKpzR6nwQ0WxhS1UysSuHMRUWbK20dZOGLfFTGoN/jEsENA+LCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XDF4r1LYkz4f3l2C;
-	Wed, 25 Sep 2024 19:34:36 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 207C31A1125;
-	Wed, 25 Sep 2024 19:34:53 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgDH+sZX9fNmN5E9CQ--.2308S3;
-	Wed, 25 Sep 2024 19:34:48 +0800 (CST)
-Message-ID: <b98ad16c-8362-45ef-86fc-b23f17ac8697@huaweicloud.com>
-Date: Wed, 25 Sep 2024 19:34:47 +0800
+	s=arc-20240116; t=1727264146; c=relaxed/simple;
+	bh=/pSQ/xNkOX6ORmM05y8rQhImn2uy639aERh7uoQXfDw=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ivlKb2HNsCWqU9BKXhSaoSGugoX0sYpumPmYvMyHpcqMN4YNL3zoxL4iYalAEhX7s9v4KQXfsQuoAHivFnTG6QtRvv0sXQDWP1XSnk6dI+KRmcAUxbr8p8jIS5cU7edvnAR+8ReV/FogcMw68hR4Ih+PL0ZMDjLXGSw6+UBF0kQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q9eIU1U4; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-375e5c12042so3484363f8f.3;
+        Wed, 25 Sep 2024 04:35:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727264143; x=1727868943; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=qWs4MKWn4IG5TDYW4mkeYaUP9TdSrJm2s49LW7b6huE=;
+        b=Q9eIU1U4jcD0YkCcfmMRRhl7IcsJnlxHvC2AFOpIe6SbgblAMaz3DvI80A2O+QmiR7
+         fHDgt6y1s53BIgumPDJ9CyfdIjQ3C9y1j9S8TdWjRbqcGIaD5o9Vgvs3/Bw3EgyL1j39
+         QRusOyFwB8Y+p5QjUNXMYSdCC+LFjhDCFCzsIF/oA4o6b1K949nAEn7KQ3SEeZFRKp40
+         d9gTODMffNG4IWVMbPnyoW7ihFA6AsVRgFeOIYgmTXMuRE9NZOfkMRc9zepStlYiGaL8
+         fqDse2dD4v0N+9bCmm29By73A8TOU+8kw824QpOVIsWrrypC4RXGGFXweA5HoZk7ycFv
+         2twg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727264143; x=1727868943;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qWs4MKWn4IG5TDYW4mkeYaUP9TdSrJm2s49LW7b6huE=;
+        b=roQnvtP51JQwf3LoWSGkM7/5fisiXCLr4OwUrIe/B50BmKuLvcW/41XirxpYYRMxb2
+         M+wQgynKmyfby/AX61g2VhzUshCIVV/lBwvrdTUUa2fwcw+4oMC0vNVcppFrl8z97LpN
+         5kWQH6EVXqmywGeGbRFfcn/RLDo7aumxAB2PfLuXBg6kZcu1xbQZBdaBgEefJdfRe/PR
+         moODWczRGGxE9hVvW1nWHz1B3IdvomwX7MqtBmE4q//aHupew7z3cJkctZJ17wbbpEth
+         Nekd9xPkD0P1RDtaDR3BoUr1yzameeKimLrIx6e5eYspsqjCYxEZBXWsI1o2OUxH+cNP
+         FmBA==
+X-Forwarded-Encrypted: i=1; AJvYcCVx8dH7OadR23rFHKRJU7F7PsTgbqLiFkLnCTrThxHfXF7SqWtDSmEGRnHCsv7r9NGQn5TvNK1lM54U@vger.kernel.org, AJvYcCWsf2DG3Cta8K1HvuYwMCtdduO9mRQwdU7qE/8qrDJmHtULYw9D6JAPVsbQdTMo8yKOehypRlraFvSAhBJC@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiNp89Vv6gTafb+EFTPJ/m8iITWAikjY4b53OTw/ER23TBIPib
+	TBIZWhZPGFbqJbvYPXbbEsX9GH1M1JCFeAP2HLeX7FXXxNp91faG
+X-Google-Smtp-Source: AGHT+IHRdPtqmM9PLpkqO4zrDeiSAfnuAfG5Sq385VHJ2FgMeMRF8IuH66Jm6m6MGMrtVGh0FU9tAA==
+X-Received: by 2002:a5d:4b07:0:b0:374:c1bd:f7c0 with SMTP id ffacd0b85a97d-37cc2479fa9mr1649530f8f.22.1727264142558;
+        Wed, 25 Sep 2024 04:35:42 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cbc32add1sm3713658f8f.114.2024.09.25.04.35.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 04:35:42 -0700 (PDT)
+Message-ID: <66f3f58e.5d0a0220.5d655.b48a@mx.google.com>
+X-Google-Original-Message-ID: <ZvP1isSJk2ebHdLz@Ansuel-XPS.>
+Date: Wed, 25 Sep 2024 13:35:38 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Lorenzo Bianconi <lorenzo@kernel.org>,
+	upstream@airoha.com
+Subject: Re: [PATCH 2/3] dt-bindings: mtd: Add Documentation for Airoha
+ fixed-partitions
+References: <20240925101422.8373-1-ansuelsmth@gmail.com>
+ <20240925101422.8373-3-ansuelsmth@gmail.com>
+ <20240925133003.619c40c4@xps-13>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 03/10] ext4: warn if delalloc counters are not zero on
- inactive
-To: "Lai, Yi" <yi1.lai@linux.intel.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- jack@suse.cz, ritesh.list@gmail.com, yi.zhang@huawei.com,
- chengzhihao1@huawei.com, yukuai3@huawei.com, yi1.lai@intel.com
-References: <20240517124005.347221-1-yi.zhang@huaweicloud.com>
- <20240517124005.347221-4-yi.zhang@huaweicloud.com>
- <ZvIxRP0eVkbagUr5@ly-workstation>
- <e3503ded-749c-4651-85a4-a6165b22cfd1@huaweicloud.com>
- <ZvPdaEqsboTBcMrm@ly-workstation>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <ZvPdaEqsboTBcMrm@ly-workstation>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgDH+sZX9fNmN5E9CQ--.2308S3
-X-Coremail-Antispam: 1UD129KBjvAXoW3uF1fGr18uF1UKF4DGw17KFg_yoW8Gr1DJo
-	WfJrZ7Jw4rGFy5Grn5Cw17J345G397tFn7Jr98KrWUGF1Iga1DXr18J34kXwsrtF1FgFWU
-	A3sIqF1DZa98Jrn7n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UjIYCTnIWjp_UUUY77kC6x804xWl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK
-	8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4
-	AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF
-	7I0E14v26F4UJVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
-	7KsUUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240925133003.619c40c4@xps-13>
 
-On 2024/9/25 17:52, Lai, Yi wrote:
-> Hi,
+On Wed, Sep 25, 2024 at 01:30:03PM +0200, Miquel Raynal wrote:
+> Hi Christian,
 > 
-> I have applied your mentioned patch series on top of linux tag v6.11.
-> Using the same repro binary, issue cannot be reproduced.
+> ansuelsmth@gmail.com wrote on Wed, 25 Sep 2024 12:13:58 +0200:
 > 
-
-Ah, that's great, this series seems had fixed some corner problems
-as well, thanks a lot for testing this.
-
-Thanks,
-Yi.
-
-> Regards,
-> Yi Lai
+> > Add Documentation for Airoha fixed-partitions compatibles.
+> > 
+> > Airoha based SoC declare a dedicated partition at the end of the flash to
+> > store calibration and device specific data, in addition to fixed
+> > partitions.
+> > 
+> > The offset of this special partition is not well defined as a custom bad
+> > block management driver is used that reserve space at the end of the flash.
+> > 
+> > This binding allows defining all fixed partitions and marking the last one
+> > to detect the correct offset.
+> > 
+> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > ---
+> >  .../partitions/airoha,fixed-partitions.yaml   | 80 +++++++++++++++++++
+> >  .../bindings/mtd/partitions/partitions.yaml   |  1 +
+> >  2 files changed, 81 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/mtd/partitions/airoha,fixed-partitions.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/mtd/partitions/airoha,fixed-partitions.yaml b/Documentation/devicetree/bindings/mtd/partitions/airoha,fixed-partitions.yaml
+> > new file mode 100644
+> > index 000000000000..a45df51065af
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/mtd/partitions/airoha,fixed-partitions.yaml
+> > @@ -0,0 +1,80 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/mtd/partitions/airoha,fixed-partitions.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Airoha SoC partitioning
+> > +
+> > +description: |
+> > +  Airoha based SoC declare a dedicated partition at the end of the flash to
+> > +  store calibration and device specific data, in addition to fixed partitions.
+> > +
+> > +  The offset of this special partition is not well defined as a custom bad block
+> > +  management driver is used that reserve space at the end of the flash.
+> > +
+> > +  This binding allows defining all fixed partitions and marking the last one to
+> > +  detect the correct offset from the new end of the flash.
+> > +
+> > +maintainers:
+> > +  - Christian Marangi <ansuelsmth@gmail.com>
+> > +
+> > +select: false
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: airoha,fixed-partitions
+> > +
+> > +  "#address-cells":
+> > +    enum: [ 1, 2 ]
+> > +
+> > +  "#size-cells":
+> > +    enum: [ 1, 2 ]
+> > +
+> > +patternProperties:
+> > +  "^partition@[0-9a-f]+$":
+> > +    $ref: partition.yaml#
+> > +    properties:
+> > +      compatible:
+> > +        const: airoha,dynamic-art
+> > +    unevaluatedProperties: false
+> > +
+> > +required:
+> > +  - "#address-cells"
+> > +  - "#size-cells"
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    partitions {
+> > +        compatible = "airoha,fixed-partitions";
+> > +        #address-cells = <1>;
+> > +        #size-cells = <1>;
+> > +
+> > +        partition@0 {
+> > +          label = "bootloader";
+> > +          reg = <0x00000000 0x00080000>;
+> > +        };
+> > +
+> > +        partition@80000 {
+> > +          label = "tclinux";
+> > +          reg = <0x00080000 0x02800000>;
+> > +        };
+> > +
+> > +        partition@2880000 {
+> > +          label = "tclinux_slave";
+> > +          reg = <0x02880000 0x02800000>;
+> > +        };
+> > +
+> > +        partition@5080000 {
+> > +          label = "rootfs_data";
+> > +          reg = <0x5080000 0x00800000>;
+> > +        };
+> > +
+> > +        partition@ffffffff {
+> > +          compatible = "airoha,dynamic-art";
+> > +          label = "art";
+> > +          reg = <0xffffffff 0x00300000>;
 > 
-> On Tue, Sep 24, 2024 at 04:38:22PM +0800, Zhang Yi wrote:
->> On 2024/9/24 11:25, Lai, Yi wrote:
->>> Hi Zhang Yi,
->>>
->>> Greetings!
->>>
->>> I used Syzkaller and found that there is WARNING in ext4_destroy_inode.
->>>
->>> After bisection and the first bad commit is:
->>> "
->>> b37c907073e8 ext4: warn if delalloc counters are not zero on inactive
->>> "
->>>
->>> I understand that the commit is to add WARN_ON_ONCE to make error message more visible. I hope the reproduction program will be insightful for you.
->>>
->>
->> Thanks for the report! It seems that this patch worked, it start exposing
->> problems about inconsistent delalloc counter, which were previously hidden.
->> However, the counter updating logic has changed after this series:
->>
->> https://lore.kernel.org/linux-ext4/20240813123452.2824659-1-yi.zhang@huaweicloud.com/
->>
->> Could you reproduce this issue with this series or in the latest upstream
->> kernel?
->>
->> Thanks,
->> Yi.
->>
->>> All detailed into can be found at:
->>> https://github.com/laifryiee/syzkaller_logs/tree/main/240923_043748_ext4_destroy_inode
->>> Syzkaller repro code:
->>> https://github.com/laifryiee/syzkaller_logs/blob/main/240923_043748_ext4_destroy_inode/repro.c
->>> Syzkaller repro syscall steps:
->>> https://github.com/laifryiee/syzkaller_logs/blob/main/240923_043748_ext4_destroy_inode/repro.prog
->>> Syzkaller report:
->>> https://github.com/laifryiee/syzkaller_logs/blob/main/240923_043748_ext4_destroy_inode/repro.report
->>> Kconfig(make olddefconfig):
->>> https://github.com/laifryiee/syzkaller_logs/blob/main/240923_043748_ext4_destroy_inode/kconfig_origin
->>> Bisect info:
->>> https://github.com/laifryiee/syzkaller_logs/blob/main/240923_043748_ext4_destroy_inode/bisect_info.log
->>> bzImage:
->>> https://github.com/laifryiee/syzkaller_logs/raw/main/240923_043748_ext4_destroy_inode/bzImage_98f7e32f20d28ec452afb208f9cffc08448a2652
->>> Issue dmesg:
->>> https://github.com/laifryiee/syzkaller_logs/blob/main/240923_043748_ext4_destroy_inode/98f7e32f20d28ec452afb208f9cffc08448a2652_dmesg.log
->>>
->>> "
->>> [   25.223775] ------------[ cut here ]------------
->>> [   25.224177] WARNING: CPU: 0 PID: 740 at fs/ext4/super.c:1464 ext4_destroy_inode+0x1de/0x280
->>> [   25.224724] Modules linked in:
->>> [   25.224920] CPU: 0 UID: 0 PID: 740 Comm: repro Not tainted 6.11.0-98f7e32f20d2 #1
->>> [   25.225393] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
->>> [   25.226103] RIP: 0010:ext4_destroy_inode+0x1de/0x280
->>> [   25.226429] Code: 31 ff 44 89 e6 e8 62 ad 45 ff 45 85 e4 75 16 e8 d8 a9 45 ff 48 8d 65 e0 5b 41 5c 41 5d 41 5e 5d c3 cc cc cc cc e8 c2 a9 45 ff <0f> 0b 48 8d 7b 40 4c 8d 83 50 fd ff ff 48 b8 00 00 00 00 00 fc ff
->>> [   25.227570] RSP: 0018:ff11000023707c08 EFLAGS: 00010293
->>> [   25.227915] RAX: 0000000000000000 RBX: ff11000022f22a50 RCX: ffffffff822028de
->>> [   25.228357] RDX: ff110000139a8000 RSI: ffffffff822028fe RDI: 0000000000000005
->>> [   25.228840] RBP: ff11000023707c30 R08: 0000000000000001 R09: ffe21c00024e24eb
->>> [   25.229284] R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000001
->>> [   25.229712] R13: ff11000012712000 R14: ff11000022f22ad0 R15: ff1100006c1aa440
->>> [   25.230168] FS:  00007f1d418a7800(0000) GS:ff1100006c400000(0000) knlGS:0000000000000000
->>> [   25.230666] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>> [   25.230818] EXT4-fs (sda): Inode 151593 (000000004419e1b8): i_reserved_data_blocks (1) not cleared!
->>> [   25.231037] CR2: 00007f1d416b1ac0 CR3: 00000000140e4004 CR4: 0000000000771ef0
->>> [   25.232104] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->>> [   25.232546] DR3: 0000000000000000 DR6: 00000000fffe07f0 DR7: 0000000000000400
->>> [   25.233006] PKRU: 55555554
->>> [   25.233184] Call Trace:
->>> [   25.233348]  <TASK>
->>> [   25.233489]  ? show_regs+0xa8/0xc0
->>> [   25.233724]  ? __warn+0xee/0x380
->>> [   25.233953]  ? report_bug+0x25e/0x4b0
->>> [   25.234201]  ? ext4_destroy_inode+0x1de/0x280
->>> [   25.234485]  ? report_bug+0x2cb/0x4b0
->>> [   25.234729]  ? ext4_destroy_inode+0x1de/0x280
->>> [   25.235020]  ? handle_bug+0xa2/0x130
->>> [   25.235266]  ? exc_invalid_op+0x3c/0x80
->>> [   25.235513]  ? asm_exc_invalid_op+0x1f/0x30
->>> [   25.235786]  ? ext4_destroy_inode+0x1be/0x280
->>> [   25.236072]  ? ext4_destroy_inode+0x1de/0x280
->>> [   25.236356]  ? ext4_destroy_inode+0x1de/0x280
->>> [   25.236637]  ? ext4_destroy_inode+0x1de/0x280
->>> [   25.236949]  ? __pfx_ext4_destroy_inode+0x10/0x10
->>> [   25.237257]  destroy_inode+0xd6/0x1d0
->>> [   25.237507]  evict+0x5a7/0x930
->>> [   25.237708]  ? lock_release+0x441/0x870
->>> [   25.237975]  ? do_raw_spin_lock+0x141/0x280
->>> [   25.238246]  ? __pfx_evict+0x10/0x10
->>> [   25.238486]  ? __pfx_lock_release+0x10/0x10
->>> [   25.238757]  ? lock_release+0x441/0x870
->>> [   25.239015]  ? lock_release+0x441/0x870
->>> [   25.239266]  ? do_raw_spin_unlock+0x15c/0x210
->>> [   25.239552]  iput.part.0+0x543/0x740
->>> [   25.239788]  ? __pfx_ext4_drop_inode+0x10/0x10
->>> [   25.240081]  iput+0x68/0x90
->>> [   25.240265]  do_unlinkat+0x5dc/0x730
->>> [   25.240503]  ? __pfx_do_unlinkat+0x10/0x10
->>> [   25.240791]  ? __sanitizer_cov_trace_const_cmp8+0x1c/0x30
->>> [   25.241149]  ? strncpy_from_user+0x1ef/0x2e0
->>> [   25.241436]  ? __sanitizer_cov_trace_const_cmp4+0x1a/0x20
->>> [   25.241774]  ? getname_flags.part.0+0x1d5/0x570
->>> [   25.242459]  __x64_sys_unlink+0xd1/0x120
->>> [   25.242749]  x64_sys_call+0x2014/0x20d0
->>> [   25.243031]  do_syscall_64+0x6d/0x140
->>> [   25.243304]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>> [   25.243630] RIP: 0033:0x7f1d4163eb7b
->>> [   25.243878] Code: f0 ff ff 73 01 c3 48 8b 0d a2 b2 1b 00 f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 84 00 00 00 00 00 f3 0f 1e fa b8 57 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 75 b2 1b 00 f7 d8 64 89 01 48
->>> [   25.245038] RSP: 002b:00007fffffa2ca48 EFLAGS: 00000206 ORIG_RAX: 0000000000000057
->>> [   25.245508] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f1d4163eb7b
->>> [   25.245966] RDX: 00007fffffa2ca60 RSI: 00007fffffa2caf0 RDI: 00007fffffa2caf0
->>> [   25.246412] RBP: 00007fffffa2db30 R08: 0000000000000000 R09: 00007fffffa2c8e0
->>> [   25.246872] R10: 00007f1d4160b208 R11: 0000000000000206 R12: 00007fffffa2dca8
->>> [   25.247310] R13: 0000000000402e4b R14: 0000000000404e08 R15: 00007f1d418f2000
->>> [   25.247759]  </TASK>
->>> [   25.247912] irq event stamp: 5719
->>> [   25.248127] hardirqs last  enabled at (5727): [<ffffffff81458eb4>] console_unlock+0x224/0x240
->>> [   25.248690] hardirqs last disabled at (5736): [<ffffffff81458e99>] console_unlock+0x209/0x240
->>> [   25.249236] softirqs last  enabled at (5252): [<ffffffff81289d19>] __irq_exit_rcu+0xa9/0x120
->>> [   25.249768] softirqs last disabled at (5247): [<ffffffff81289d19>] __irq_exit_rcu+0xa9/0x120
->>> [   25.250311] ---[ end trace 0000000000000000 ]---
->>> [   25.250602] EXT4-fs (sda): Inode 151586 (00000000f9d6a315): i_reserved_data_blocks (1) not cleared!
->>> [   25.326263] EXT4-fs (sda): Inode 151578 (00000000d86ad2f9): i_reserved_data_blocks (1) not cleared!
->>> [   25.680884] EXT4-fs (sda): Inode 151596 (00000000da9177c9): i_reserved_data_blocks (1) not cleared!
->>> [   25.717550] EXT4-fs (sda): Inode 151573 (0000000088687caa): i_reserved_data_blocks (1) not cleared!
->>> [   25.726089] EXT4-fs (sda): Inode 151585 (000000005d7aed9a): i_reserved_data_blocks (1) not cleared!
->>> [   25.838592] EXT4-fs (sda): Inode 151573 (000000004af622df): i_reserved_data_blocks (1) not cleared!
->>> [   25.955073] EXT4-fs (sda): Inode 151598 (00000000a6e598ec): i_reserved_data_blocks (1) not cleared!
->>> [   26.525552] EXT4-fs (sda): Inode 151593 (0000000026aef1cd): i_reserved_data_blocks (1) not cleared!
->>> [   26.554067] EXT4-fs (sda): Inode 151591 (0000000051e990da): i_reserved_data_blocks (1) not cleared!
->>> [   30.291490] EXT4-fs: 14 callbacks suppressed
->>> [   30.291510] EXT4-fs (sda): Inode 151591 (0000000050be254a): i_reserved_data_blocks (1) not cleared!
->>> [   30.301238] EXT4-fs (sda): Inode 151587 (000000004ba9ad70): i_reserved_data_blocks (1) not cleared!
->>> [   30.414377] EXT4-fs (sda): Inode 151583 (00000000f6751ad3): i_reserved_data_blocks (1) not cleared!
->>> [   30.417213] EXT4-fs (sda): Inode 151591 (0000000090a0dce3): i_reserved_data_blocks (1) not cleared!
->>> [   30.537920] EXT4-fs (sda): Inode 151587 (00000000de72acf9): i_reserved_data_blocks (1) not cleared!
->>> [   30.645791] EXT4-fs (sda): Inode 151580 (00000000a40a052f): i_reserved_data_blocks (1) not cleared!
->>> [   30.665732] EXT4-fs (sda): Inode 151587 (00000000d9452edd): i_reserved_data_blocks (1) not cleared!
->>> [   30.670204] EXT4-fs (sda): Inode 151597 (00000000f861d75f): i_reserved_data_blocks (1) not cleared!
->>> [   31.964931] EXT4-fs (sda): Inode 151589 (000000009baa4064): i_reserved_data_blocks (1) not cleared!
->>> [   32.101343] EXT4-fs (sda): Inode 151598 (000000003fca6cd5): i_reserved_data_blocks (1) not cleared!
->>> "
->>>
->>> I hope you find it useful.
->>>
->>> Regards,
->>> Yi Lai
->>>
->>> ---
->>>
->>> If you don't need the following environment to reproduce the problem or if you
->>> already have one reproduced environment, please ignore the following information.
->>>
->>> How to reproduce:
->>> git clone https://gitlab.com/xupengfe/repro_vm_env.git
->>> cd repro_vm_env
->>> tar -xvf repro_vm_env.tar.gz
->>> cd repro_vm_env; ./start3.sh  // it needs qemu-system-x86_64 and I used v7.1.0
->>>   // start3.sh will load bzImage_2241ab53cbb5cdb08a6b2d4688feb13971058f65 v6.2-rc5 kernel
->>>   // You could change the bzImage_xxx as you want
->>>   // Maybe you need to remove line "-drive if=pflash,format=raw,readonly=on,file=./OVMF_CODE.fd \" for different qemu version
->>> You could use below command to log in, there is no password for root.
->>> ssh -p 10023 root@localhost
->>>
->>> After login vm(virtual machine) successfully, you could transfer reproduced
->>> binary to the vm by below way, and reproduce the problem in vm:
->>> gcc -pthread -o repro repro.c
->>> scp -P 10023 repro root@localhost:/root/
->>>
->>> Get the bzImage for target kernel:
->>> Please use target kconfig and copy it to kernel_src/.config
->>> make olddefconfig
->>> make -jx bzImage           //x should equal or less than cpu num your pc has
->>>
->>> Fill the bzImage file into above start3.sh to load the target kernel in vm.
->>>
->>> Tips:
->>> If you already have qemu-system-x86_64, please ignore below info.
->>> If you want to install qemu v7.1.0 version:
->>> git clone https://github.com/qemu/qemu.git
->>> cd qemu
->>> git checkout -f v7.1.0
->>> mkdir build
->>> cd build
->>> yum install -y ninja-build.x86_64
->>> yum -y install libslirp-devel.x86_64
->>> ../configure --target-list=x86_64-softmmu --enable-kvm --enable-vnc --enable-gtk --enable-sdl --enable-usb-redir --enable-slirp
->>> make
->>> make install 
->>>
->>> On Fri, May 17, 2024 at 08:39:58PM +0800, Zhang Yi wrote:
->>>> From: Zhang Yi <yi.zhang@huawei.com>
->>>>
->>>> The per-inode i_reserved_data_blocks count the reserved delalloc blocks
->>>> in a regular file, it should be zero when destroying the file. The
->>>> per-fs s_dirtyclusters_counter count all reserved delalloc blocks in a
->>>> filesystem, it also should be zero when umounting the filesystem. Now we
->>>> have only an error message if the i_reserved_data_blocks is not zero,
->>>> which is unable to be simply captured, so add WARN_ON_ONCE to make it
->>>> more visable.
->>>>
->>>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
->>>> ---
->>>>  fs/ext4/super.c | 6 +++++-
->>>>  1 file changed, 5 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
->>>> index 044135796f2b..b68064c877e3 100644
->>>> --- a/fs/ext4/super.c
->>>> +++ b/fs/ext4/super.c
->>>> @@ -1343,6 +1343,9 @@ static void ext4_put_super(struct super_block *sb)
->>>>  
->>>>  	ext4_group_desc_free(sbi);
->>>>  	ext4_flex_groups_free(sbi);
->>>> +
->>>> +	WARN_ON_ONCE(!(sbi->s_mount_state & EXT4_ERROR_FS) &&
->>>> +		     percpu_counter_sum(&sbi->s_dirtyclusters_counter));
->>>>  	ext4_percpu_param_destroy(sbi);
->>>>  #ifdef CONFIG_QUOTA
->>>>  	for (int i = 0; i < EXT4_MAXQUOTAS; i++)
->>>> @@ -1473,7 +1476,8 @@ static void ext4_destroy_inode(struct inode *inode)
->>>>  		dump_stack();
->>>>  	}
->>>>  
->>>> -	if (EXT4_I(inode)->i_reserved_data_blocks)
->>>> +	if (!(EXT4_SB(inode->i_sb)->s_mount_state & EXT4_ERROR_FS) &&
->>>> +	    WARN_ON_ONCE(EXT4_I(inode)->i_reserved_data_blocks))
->>>>  		ext4_msg(inode->i_sb, KERN_ERR,
->>>>  			 "Inode %lu (%p): i_reserved_data_blocks (%u) not cleared!",
->>>>  			 inode->i_ino, EXT4_I(inode),
->>>> -- 
->>>> 2.39.2
->>>>
->>>
->>
+> I'm a little bit puzzled by this kind of information which is known to
+> be wrong. As the partition offset and size must be dynamically
+> calculated, this reg property (as well as the size parameter of the
+> previous one) are notably wrong. I guess we are not fully constrained
+> by the fixed-partitions schema here, so could we avoid the reg property
+> in the airoha,dynamic-art partition? Maybe we also need a #define for a
+> specific placeholder in the penultimate reg property too (for the size).
+>
 
+Maybe instead of reg we can use a property like size?
+
+Can you better elaborate the suggestion about the #define?
+
+Do you mean for case where the last partition might overlap
+with the penultimate? Honestly in such case I would error hard, that
+case happen when too much space is reserved and that is a
+misconfiguration of the system (developer error)
+
+-- 
+	Ansuel
 
