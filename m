@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-339745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABDD59869D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 01:42:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFF339869D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 01:42:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3A8C1C210AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 23:42:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 048871C2152A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 23:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96811AD416;
-	Wed, 25 Sep 2024 23:39:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96691AD9E6;
+	Wed, 25 Sep 2024 23:39:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MZmAsWA3"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OTdjCMgM"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C41E1AD3EB
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 23:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7B91AD40E
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 23:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727307587; cv=none; b=mLPdgCHwz/5BGQJRww+p5B6PtJPCKubO7MhVQmBQulMhJANy2Nus93DGpEny26F5wTUK7Q0DJDcs2Du3GU+S+eedGAToZnAMi/naGiDvGjbUqSMVBEzLK+CIklrm3HGHn7nvVILYwSEkmm5ofWSHfeIzzH7coVdu8I1ib7H6qCQ=
+	t=1727307589; cv=none; b=KzfFkp65/R63CMOLdGO2SDEB711KXEDGaEFqwSEZQWDI2VGx8R4s2Ww7HWsVQTNgOOx+6U/MXn716DSajHV7BeNu/Ci+dpYV/0yWUxhjJ2LJMds+6Hp2ODedr0s64SJVyZMhlRwQx4ticZnOC99men80wmkNW9h5Hz+yetNhk8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727307587; c=relaxed/simple;
-	bh=RFwYTaeqemLtmezDNnI4k0C/4IQdB480nO3xNfeeufc=;
+	s=arc-20240116; t=1727307589; c=relaxed/simple;
+	bh=9QDYzeFqtIgpifJubbDxlmlH7eEjUZaH/2YQ84rdY0c=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=HsmFN+FN1ieu93oBItkLT1UDa+uEgSI0m6SK2XAs3glMHUUQ9EF94mlQDG4KcLLn326kEAYzY9YEZSwrCSnpa0vNx4oPuVdQZubqMW38aAjNpv5c/cdK4URnKaS0vtQC5PmGdeAj+h6EoScmd5QYCX1vvBPGKg+nPBjoF4vo05Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MZmAsWA3; arc=none smtp.client-ip=209.85.128.201
+	 To:Cc:Content-Type; b=GH9haDa2EUeQTrZ2S+BCe291bOvwrIk5w4Qhz4EQhceUi8ibG2E5+nWWvWAkAuj5nzFOekAWt84jxr17gft3XiB3aKY/tKFVxyGyiFSDGvv07CTKDP27p2xeofQaBv17wFtqk3CCWS12KWeU88FA98/sYYc9m6nCiJLHfjusM/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OTdjCMgM; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6d7124938d1so11644247b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 16:39:45 -0700 (PDT)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e2270a147aso10320177b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 16:39:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727307584; x=1727912384; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1727307586; x=1727912386; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=extRuG4D1AdoHKvsMv2fLx/d2D/gEpHsXYLRVzC3Sa0=;
-        b=MZmAsWA3xomFzJ3UUFSEudjq/FEAUJacydlEI1beul+6uGuE6Dk612LIlvkuQsgQxE
-         LKFw1JuiaBXdG1uHQJtonGotcE3vuZBlVdDPI5OlmeijfeydlODQgykSy2MKioYhpxBx
-         tpDeVANLnJsAfhxUabBpeAZO2v32QtQ0ZnkCZwOjiQMrKcSKK7qk+g9nJqLz2wWRoIkn
-         1thJdq3czEqvSmthv4qaSVD3DLOipzTmOnKwOsYfep36BabfVuSbJIbAk7IsFiWHeb9V
-         bLKfqdSTWXI08j85AFD+OBSQAOnaiR4vQbZCgv8iuHqgKqpIcqasuCk+F8w4TSNp76rw
-         kF9A==
+        bh=6yXvv/vrTLDrEzmPTfvxgBAIug2sA8OdrjoRUJniL2M=;
+        b=OTdjCMgM8YjxDuEHL8ypwKq7l22iOrFWtkQjFufh9dEToAFONT32xfWhlYlYyjYPzh
+         I5yjUlBc5jn4Th5d13BoVfmIoA1V0zqYnXOcpw8JE6CfyloFRCLBJEcsnywsNqhoSqSd
+         l+MXDGR7HPpopbirbgIsdc7HUZpIOWUK+4UXwxNw+ky3BUrtyITuuUucrkU5oFqjY2pe
+         /VvWCgQmo4PptPK5LWwbjMRdZaRDriPq55Ltk721/L1aM9+bL7owhnDXnKTx3/3OnOEn
+         eEXBxTZphjfst/D4skhIKnZka6ofbVS2t+NF37pF6X+HDhksD+a8UgUiSGnPZZ9dtavR
+         fvFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727307584; x=1727912384;
+        d=1e100.net; s=20230601; t=1727307586; x=1727912386;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=extRuG4D1AdoHKvsMv2fLx/d2D/gEpHsXYLRVzC3Sa0=;
-        b=ew9ApeTdHbNFgd1d3vp5xuPZIJKJF4xYqexjcLxGf08nNB4nA1l2dfQHcn/88d7ISa
-         1hN8GNNerYT6QsdPc7N0aifEozGtAC34L4TXpOPsSmXDYKBjKKODg4KAdg1rpDt7k/mg
-         knSQuiljW81cdaV8U04M4QO9cSU/mhc5G8AxCAvuDHhrmXbGvsw6xAvEu4/KZwgO5sKd
-         WvxJiXH5ZdJXmPwFRDufFKyE3v/F0NtmjHjSs6l8d2PPJce50GhMuUf7Amtzia3y1xsK
-         PNs+hJ7tzS1P9JZqhrtcv4l1SzH9+7Y1uizEDesWrsw8xU7xpHVMdijFCZCuFEqNwNNY
-         vuGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUGMWm1xkOJ65oQvvtIIDZEx9VC4YHonb22wm62xuPfbMAZiQiTb/Zmsj+/w//ezGKbye+6Nwzi6GjefQI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKUhJo6iRRP9oKSF+d+wcaBApJXJyXrArX5r5ZUH88nfk+3Cm2
-	92zre0gENc3dKhm/OwH8E6eNHUOjZsZucSDi59fkOcxUiU5fl5KvOfi++P3Tod1wPgqTRzLpOMO
-	DmzfbXg==
-X-Google-Smtp-Source: AGHT+IHi0gSVKxF9796sY6n1cVcgNiz/fsNc836mupUZtqmyvJTlnsLOXeqwbXzuTlIf+2iUj78FZGeorFh0
+        bh=6yXvv/vrTLDrEzmPTfvxgBAIug2sA8OdrjoRUJniL2M=;
+        b=ojJitMrBj1Q5IwR8EzqFfGTMkJcY+rYx5UnlBV97gJJPOey/QXs9guTiFnPCMnW1bi
+         yLl0kvLSavCshoA4AEsgwIARqfYcfKhf7H+oov7OtpYbMTmQAz7kQ1DvEB6d7Qr+M++3
+         SKM/tJ3XseYe4dk+ZKHNE1uLAOiZZr3M1YEYxBg0htMOXqK+sBmFJXu0I5rlkYA6zOJE
+         nwNMfBOlIww/1ChrI8DknhezCNNta9nkQ7KsIP7aG15vIv4OA94VWJRwaCr6mTDdXG7h
+         IGX1URlNQVpqcK6BcWjiB/Y6IL9YLZZUGyk7Yeu6yswaXsCGI/AiZ4tkVMjlvhiKStGm
+         fL6w==
+X-Forwarded-Encrypted: i=1; AJvYcCV0BfjakkIQKXAqILF4bFhCWzBZkj5+M/2F99DdYM7cw/0eQuFE1rgNb2ey+pX2mugDyqoZIdotA1CVsBg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMnccHRIAPNF621hSPQhbSZCYKbBPGLzKfGIMplWIcZBFqiu5s
+	8/bFx6/1sra1feKaQKZgycMxV0C1mdQLfRc5AMMisyODTKZF4l+JY8/cvZcg0XlOAoUJFVpMSA+
+	FP+hbGQ==
+X-Google-Smtp-Source: AGHT+IFOctLtu2fDpWSwtgdrlWQhzeyg6ur9X7N6yKJb4yvjNshlLawCmOC09mIbp13RxLe82I6Qn8MDC9MI
 X-Received: from anyblade.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:1791])
- (user=mmaurer job=sendgmr) by 2002:a05:690c:2a92:b0:6e2:2600:ed65 with SMTP
- id 00721157ae682-6e22600f35dmr247467b3.1.1727307584197; Wed, 25 Sep 2024
- 16:39:44 -0700 (PDT)
-Date: Wed, 25 Sep 2024 23:38:25 +0000
+ (user=mmaurer job=sendgmr) by 2002:a05:690c:6583:b0:6dd:bc47:1ce1 with SMTP
+ id 00721157ae682-6e21d0b47e5mr368107b3.0.1727307586448; Wed, 25 Sep 2024
+ 16:39:46 -0700 (PDT)
+Date: Wed, 25 Sep 2024 23:38:26 +0000
 In-Reply-To: <20240925233854.90072-1-mmaurer@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240925233854.90072-1-mmaurer@google.com>
 X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
-Message-ID: <20240925233854.90072-11-mmaurer@google.com>
-Subject: [PATCH v5 10/16] module: Factor out elf_validity_cache_strtab
+Message-ID: <20240925233854.90072-12-mmaurer@google.com>
+Subject: [PATCH v5 11/16] module: Additional validation in elf_validity_cache_strtab
 From: Matthew Maurer <mmaurer@google.com>
 To: masahiroy@kernel.org, ndesaulniers@google.com, ojeda@kernel.org, 
 	gary@garyguo.net, mcgrof@kernel.org, Alex Gaynor <alex.gaynor@gmail.com>
@@ -89,56 +89,78 @@ Cc: rust-for-linux@vger.kernel.org, linux-kbuild@vger.kernel.org,
 	Trevor Gross <tmgross@umich.edu>
 Content-Type: text/plain; charset="UTF-8"
 
-This patch only moves the existing strtab population to a function.
-Validation comes in a following patch, this is split out to make the new
-validation checks more clearly separated.
+Validate properties of the strtab that are depended on elsewhere, but
+were previously unchecked:
+* String table nonempty (offset 0 is valid)
+* String table has a leading NUL (offset 0 corresponds to "")
+* String table is NUL terminated (strfoo functions won't run out of the
+  table while reading).
+* All symbols names are inbounds of the string table.
 
 Signed-off-by: Matthew Maurer <mmaurer@google.com>
 ---
- kernel/module/main.c | 23 ++++++++++++++++++++---
- 1 file changed, 20 insertions(+), 3 deletions(-)
+ kernel/module/main.c | 38 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 37 insertions(+), 1 deletion(-)
 
 diff --git a/kernel/module/main.c b/kernel/module/main.c
-index e04a228c694a..c082d5d41a8d 100644
+index c082d5d41a8d..b40b632f00a6 100644
 --- a/kernel/module/main.c
 +++ b/kernel/module/main.c
-@@ -2089,6 +2089,23 @@ static int elf_validity_cache_index(struct load_info *info, int flags)
- 	return 0;
+@@ -2090,17 +2090,53 @@ static int elf_validity_cache_index(struct load_info *info, int flags)
  }
  
-+/**
-+ * elf_validity_cache_strtab() - Cache symbol string table
-+ * @info: Load info to read from and update.
-+ *        Must have &load_info->sechdrs and &load_info->secstrings populated.
-+ *        Must have &load_info->index populated.
+ /**
+- * elf_validity_cache_strtab() - Cache symbol string table
++ * elf_validity_cache_strtab() - Validate and cache symbol string table
+  * @info: Load info to read from and update.
+  *        Must have &load_info->sechdrs and &load_info->secstrings populated.
+  *        Must have &load_info->index populated.
+  *
++ * Checks:
 + *
-+ * Return: 0 on success, negative error code if a check failed.
-+ */
-+static int elf_validity_cache_strtab(struct load_info *info)
-+{
-+	Elf_Shdr *str_shdr = &info->sechdrs[info->index.str];
-+	char *strtab = (char *)info->hdr + str_shdr->sh_offset;
++ * * The string table is not empty.
++ * * The string table starts and ends with NUL (required by ELF spec).
++ * * Every &Elf_Sym->st_name offset in the symbol table is inbounds of the
++ *   string table.
++ *
++ * And caches the pointer as &load_info->strtab in @info.
++ *
+  * Return: 0 on success, negative error code if a check failed.
+  */
+ static int elf_validity_cache_strtab(struct load_info *info)
+ {
+ 	Elf_Shdr *str_shdr = &info->sechdrs[info->index.str];
++	Elf_Shdr *sym_shdr = &info->sechdrs[info->index.sym];
+ 	char *strtab = (char *)info->hdr + str_shdr->sh_offset;
++	Elf_Sym *syms = (void *)info->hdr + sym_shdr->sh_offset;
++	int i;
 +
-+	info->strtab = strtab;
-+	return 0;
-+}
++	if (str_shdr->sh_size == 0) {
++		pr_err("empty symbol string table\n");
++		return -ENOEXEC;
++	}
++	if (strtab[0] != '\0') {
++		pr_err("symbol string table missing leading NUL\n");
++		return -ENOEXEC;
++	}
++	if (strtab[str_shdr->sh_size - 1] != '\0') {
++		pr_err("symbol string table isn't NUL terminated\n");
++		return -ENOEXEC;
++	}
 +
- /*
-  * Check userspace passed ELF module against our expectations, and cache
-  * useful variables for further processing as we go.
-@@ -2122,9 +2139,9 @@ static int elf_validity_cache_copy(struct load_info *info, int flags)
- 	err = elf_validity_cache_index(info, flags);
- 	if (err < 0)
- 		return err;
--
--	/* Sets internal strings. */
--	info->strtab = (char *)info->hdr + info->sechdrs[info->index.str].sh_offset;
-+	err = elf_validity_cache_strtab(info);
-+	if (err < 0)
-+		return err;
++	/*
++	 * Now that we know strtab is correctly structured, check symbol
++	 * starts are inbounds before they're used later.
++	 */
++	for (i = 0; i < sym_shdr->sh_size / sizeof(*syms); i++) {
++		if (syms[i].st_name >= str_shdr->sh_size) {
++			pr_err("symbol name out of bounds in string table");
++			return -ENOEXEC;
++		}
++	}
  
- 	/* This is temporary: point mod into copy of data. */
- 	info->mod = (void *)info->hdr + info->sechdrs[info->index.mod].sh_offset;
+ 	info->strtab = strtab;
+ 	return 0;
 -- 
 2.46.1.824.gd892dcdcdd-goog
 
