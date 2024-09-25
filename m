@@ -1,123 +1,176 @@
-Return-Path: <linux-kernel+bounces-339119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFB53986088
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:25:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86CDB9860BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:31:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C6091C26662
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:25:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B25CCB2E019
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F431ABEAF;
-	Wed, 25 Sep 2024 13:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB1019AD8E;
+	Wed, 25 Sep 2024 13:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Mtl4Yz/l"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cvuu/UVn"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16E6147C79
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 13:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FCC41779BC
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 13:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727269727; cv=none; b=JR0CV8CpFhpu4QWgJMrS6XHBjqb/mHZ2HNLYfTDUuvctfUXUtAnFL5cYT5HDUONkgloOUrWLd5Kj8TFjZit1naZlkxsb9LvS34loFnF2ZkuyoySnKu8wY628c2JiqjjmujzyWAz5pl1OvzX3e5rZI7cIbrTxuo8Si8I14IrkS1E=
+	t=1727269680; cv=none; b=JBYq4w/2AqAVHEG1bchIY1PPzBQ3ViI347Cr/mKhP+ltnKthNL7pptJ7L1tnglZzPgGZ2QFIY35eJCPs/5eqi44GiPDJQ5AJIFDGaDw5RkyjtADHj0+aIl8SkhrQMKmr8og9dD5R8ybAFB1GJZvR1V+IilLi+RYCrC7BPiMXxU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727269727; c=relaxed/simple;
-	bh=xfyKxiJ0VdCTnYIVTPcXWqUPqfQyCG2ceYDOz7S/23o=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GzHjrRT7wiv8rS9q88L3Tgn2iS8tG6jLTvvxHqxZsRXjvD1dA+D2e/r4tIIdvNwvD4vsXE50JLa8TwIv42eL4Cz6gz8qYCSDUGbJ7wwFjHaRDAS4jtA/Eh4GYxB0dSYP2z+HaAxgm8BCQgklyYZpGe7xL9It3C7YKEEQyKhGs6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Mtl4Yz/l; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1727269726; x=1758805726;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=xfyKxiJ0VdCTnYIVTPcXWqUPqfQyCG2ceYDOz7S/23o=;
-  b=Mtl4Yz/l5o2nJixHQGmxqmkre5Q0JXIt3Z/Su4ExRhHI+7PAs1JM/2CS
-   SABfqf++UNDVa9MEEBMUOwJkRtuLvh1dWm1AlxZ1E1RvoOmNjR6wt6ajJ
-   PGGJ3rR25rqREpFkbYV3K05UbH0kr/595sW9DrD9zJJdxCRKvWsTZI6/I
-   bUZRa61fv3GG0J/YT8imOYs8D+bnurSbfagzqVuRwqerT8HNDcJI9QhrO
-   W76sVfjNDJsWYOhGbcExyEBypNhMtgT+RAV9Yop/g96nQxuZnWzGcygYd
-   Myl+M2mQX19slYz8SIjtcDpn8AAHtT47VOD7fkwSJfO/lxmdrWrbrDBNA
-   w==;
-X-CSE-ConnectionGUID: E01jMMOtQJGPKYHP3FcoBg==
-X-CSE-MsgGUID: X7+G096kSaOyfAeW0z/AtQ==
-X-IronPort-AV: E=Sophos;i="6.10,257,1719903600"; 
-   d="scan'208";a="32223755"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Sep 2024 06:08:45 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 25 Sep 2024 06:08:04 -0700
-Received: from ROB-ULT-M76677.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Wed, 25 Sep 2024 06:08:02 -0700
-From: Andrei Simion <andrei.simion@microchip.com>
-To: <nicolas.ferre@microchip.com>, <claudiu.beznea@tuxon.dev>
-CC: <linux-kernel@vger.kernel.org>, <cristian.birsan@microchip.com>, "Andrei
- Simion" <andrei.simion@microchip.com>
-Subject: [PATCH v2] MAINTAINERS: Update maintainer list for MICROCHIP ASOC, SSC and MCP16502 drivers
-Date: Wed, 25 Sep 2024 16:07:13 +0300
-Message-ID: <20240925130711.122950-1-andrei.simion@microchip.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727269680; c=relaxed/simple;
+	bh=WF4/MpU11kD15cU2i0hoOhStBywiu641ooEf+oH29jo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dI7Tryl6S5X5PL2eTzWpE7j7PERM8VwKL+42YnDWv+iDOnFXMgp0sY+5tJHVx7pNvJOd+GagI4FyisYQu9uTlCWY2wNeZ2LlbUMGdjdN8OfZTjX27OJVBvy9vAFGuN3+UAUJ9wsdEF8TX8H3Up2zlBAw9UtQFbUt0ceatxzU3wU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cvuu/UVn; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7c3e1081804so2960725a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 06:07:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727269678; x=1727874478; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=QMQjYjN7HAdSQNZWDM3WCmN32hY2AjYX/wlFF+U58Mg=;
+        b=cvuu/UVn5BvEmE/JETWBxxcDMUBYy9V5qsSZiqywJdmVjGfL3fkuIC64bUkmda6T8Y
+         1YZZNVbULkCi8kaxnfBudxUJ0ffhw5ic0vjlkGgDq/BTWmydxWjyGiyt3/bKGSpQqhdI
+         g7Ir4B6eJQD4UliYnRZgu2llHlHMtuVAyrh9Y9eBNwjvOT0EG2KsfimyXTv3U+VNL0Nz
+         O56xUvPUu644TCp/Mg7seO0Rt0UHn59VmbANUfX0r1xOgSuYxPFK5o2BaEjfzLQi0NiG
+         Fl31H2e8nP7F7Cd/tWqQZvhX6XvKFeq3lEhCEJRWJi8GigA2bMuGG92fBC642dwcVf/M
+         leTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727269678; x=1727874478;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QMQjYjN7HAdSQNZWDM3WCmN32hY2AjYX/wlFF+U58Mg=;
+        b=HKy7dHqqsAF5nSCzsmqXVDdp12XRzS5CAD4oKJsG+CNqPd4IWT8xAbDEjSS9Ydl+2r
+         7hCfyxUYehRvg/vWhiqPjDaHsyrQ5QV1CGoxGgVDNkja4aUvXnyEhL+6g5kLESNbFbBb
+         X7AN9e8hmtbVTV3YX/vVF9FBIuiulLXTko+wiYq/wnm9SAjVFwMefxD9TyxFsbBld8rM
+         uesvdoJgOlgqOCCPfSXhgocW8jR9R7X6dESaOzwAtHC9XV/KARDDgJRFZmLKrjJE5cl1
+         LVaehUyH6ESvs3cueAP8Y3s2Rd+2ZDNNWQmNBmc4EsuwIGkmPPReWiH39uRh1Qjmz4JN
+         g3Uw==
+X-Forwarded-Encrypted: i=1; AJvYcCXzk4A1cXbvKUlbLxcf6gpnEKRqDh8HSTzCkA22Xd8z283ZBVkYP3ZsW6721VdrwAL1qEBqpOXNzZe8jQY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyY38xR6xpM7uRE+aPwxme3NIfncRdOpmdBjJwNmZGu7zKB0fXB
+	XpnM/CJsZKsXUkvSA7JIhHUqV/Wo+iTnsxy+KtTQzbGwUaXsMTSGahPDegjr5uapfHOGpFf8ML6
+	BaJEckkeY4AJp584GDL4+VX/+7PcC7d+S5BkxEA==
+X-Google-Smtp-Source: AGHT+IFHgHcN5pxFxoFwe7/iwYV3NKVvNHWwIwbvhJzV6XPUKUwgxZ7Dd/J0+ZA2VJRIodLbcqULhosFombZR/ibrJY=
+X-Received: by 2002:a17:90a:cf91:b0:2d8:84df:fa0a with SMTP id
+ 98e67ed59e1d1-2e06afcd745mr3514814a91.32.1727269678505; Wed, 25 Sep 2024
+ 06:07:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+References: <20240830130309.2141697-1-vincent.guittot@linaro.org>
+ <20240830130309.2141697-5-vincent.guittot@linaro.org> <64ed0fb8-12ea-4452-9ec2-7ad127b65529@arm.com>
+In-Reply-To: <64ed0fb8-12ea-4452-9ec2-7ad127b65529@arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Wed, 25 Sep 2024 15:07:46 +0200
+Message-ID: <CAKfTPtAAytu2iaGNp8N0uhXA=3zmSsuygtrH36RWBG2yryHWWw@mail.gmail.com>
+Subject: Re: [RFC PATCH 4/5] sched/fair: Use EAS also when overutilized
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+	mgorman@suse.de, vschneid@redhat.com, lukasz.luba@arm.com, 
+	rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org, qyousef@layalina.io, 
+	hongyan.xia2@arm.com
+Content-Type: text/plain; charset="UTF-8"
 
-To help Claudiu and offload the work, add myself to the maintainer list for
-those drivers.
+On Tue, 17 Sept 2024 at 22:24, Christian Loehle
+<christian.loehle@arm.com> wrote:
+>
+> On 8/30/24 14:03, Vincent Guittot wrote:
+> > Keep looking for an energy efficient CPU even when the system is
+> > overutilized and use the CPU returned by feec() if it has been able to find
+> > one. Otherwise fallback to the default performance and spread mode of the
+> > scheduler.
+> > A system can become overutilized for a short time when workers of a
+> > workqueue wake up for a short background work like vmstat update.
+> > Continuing to look for a energy efficient CPU will prevent to break the
+> > power packing of tasks.
+> >
+> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > ---
+> >  kernel/sched/fair.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index 2273eecf6086..e46af2416159 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+> > @@ -8505,7 +8505,7 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int wake_flags)
+> >                   cpumask_test_cpu(cpu, p->cpus_ptr))
+> >                       return cpu;
+> >
+> > -             if (!is_rd_overutilized(this_rq()->rd)) {
+> > +             if (sched_energy_enabled()) {
+> >                       new_cpu = find_energy_efficient_cpu(p, prev_cpu);
+> >                       if (new_cpu >= 0)
+> >                               return new_cpu;
+>
+> Super quick testing on pixel6:
+> for i in $(seq 0 6); do /data/local/tmp/hackbench -l 500 -g 100 | grep Time; sleep 60; done
+> with patch 5/5 only:
 
-Acked-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
----
-v1 -> v2:
-- add acked-by tag
-- adjust commit title
-- update maintainer list for MICROCHIP SSC DRIVER
----
- MAINTAINERS | 3 +++
- 1 file changed, 3 insertions(+)
+Do you mean 4/5 ?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 09d0f09c36cc..12e6777bb6b4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15088,6 +15088,7 @@ F:	drivers/spi/spi-at91-usart.c
- 
- MICROCHIP AUDIO ASOC DRIVERS
- M:	Claudiu Beznea <claudiu.beznea@tuxon.dev>
-+M:	Andrei Simion <andrei.simion@microchip.com>
- L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
- S:	Supported
- F:	Documentation/devicetree/bindings/sound/atmel*
-@@ -15196,6 +15197,7 @@ F:	include/video/atmel_lcdc.h
- 
- MICROCHIP MCP16502 PMIC DRIVER
- M:	Claudiu Beznea <claudiu.beznea@tuxon.dev>
-+M:	Andrei Simion <andrei.simion@microchip.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Supported
- F:	Documentation/devicetree/bindings/regulator/microchip,mcp16502.yaml
-@@ -15327,6 +15329,7 @@ F:	drivers/spi/spi-atmel.*
- 
- MICROCHIP SSC DRIVER
- M:	Claudiu Beznea <claudiu.beznea@tuxon.dev>
-+M:	Andrei Simion <andrei.simion@microchip.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Supported
- F:	Documentation/devicetree/bindings/misc/atmel-ssc.txt
+> Time: 19.433
+> Time: 19.657
+> Time: 19.851
+> Time: 19.789
+> Time: 19.857
+> Time: 20.092
+> Time: 19.973
+>
+> mainline:
+> Time: 18.836
+> Time: 18.718
+> Time: 18.781
+> Time: 19.015
+> Time: 19.061
+> Time: 18.950
+> Time: 19.166
+>
 
-base-commit: 2b7275670032a98cba266bd1b8905f755b3e650f
--- 
-2.34.1
+As mentioned in the cover letter,  patch 4/5  has an impact on performance.
+Your 4.6% regression is in the range of what I have for these tests
 
+>
+> The reason we didn't always have this enabled is the belief that
+> this costs us too much performance in scenarios we most need it
+> while at best making subpar EAS decisions anyway (in an
+> overutilized state).
+> I'd be open for questioning that, but why the change of mind?
+
+several reasons:
+- the rework of eas patch 1,2,3 of this patchset adds some performance
+hints into the selection of an energy efficient CPU
+- Although some initial proposal of overutilized state was per sched
+domain to prevent destroying whole placement if only a subpart of the
+system was overutilized, the current implementation is binary: whole
+system or nothing. As shown during [1], a short kworker wakeup can
+destroy all task placement by putting the whole system overutilized.
+But even  when overutilized, there are a lot of possibilities to do
+correct feec() task placement. The overutilized state is too
+aggressive.
+- the feec() has been reworked since the original version to be less
+complex as described by commit 5b77261c5510 ("sched/topology: Remove
+the EM_MAX_COMPLEXITY limit")
+
+[1] https://youtu.be/PHEBAyxeM_M?si=ZApIOw3BS4SOLPwp
+
+> And why is this necessary in your series if the EAS selection
+> isn't 'final' (until the next sleep) anymore (Patch 5/5)?
+
+To prevent destroying everything without good reason. feec() will try
+select a CPU only if it can find one that fits for the task otherwise
+we fallback to full performance one.
 
