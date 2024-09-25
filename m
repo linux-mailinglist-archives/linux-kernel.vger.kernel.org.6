@@ -1,152 +1,134 @@
-Return-Path: <linux-kernel+bounces-339706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6495D986950
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 01:00:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3202B986953
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 01:02:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 273CD2822CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 23:00:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBA6A1F25B0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 23:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CE5F16D33F;
-	Wed, 25 Sep 2024 23:00:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C944187331;
+	Wed, 25 Sep 2024 23:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IcomXzl5"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="L8DzBNUP"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F07615B55E
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 23:00:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A36186E36;
+	Wed, 25 Sep 2024 23:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727305210; cv=none; b=OWo6dfHSvUH6No8M5K1ZXonALbKg/NKN3vDX76huw9vWKmZwhXwSuvuEx+1WfrozWSexN29ShB2XI/KHbUPdA+XKp1kILTaS0E1hp4YtSrrIsnkRAIzF+a8D87J3EanoZWL67w3XjoBas7skXcRSn/gAINAYynpCFWVRb5oWXXM=
+	t=1727305316; cv=none; b=ejXtRnYudi7b6sK7ED2jP1QFb/CBazCK8Fa9wgYN1GcbGKk9hPfsYuc+AQy5meTqxNW7HJAThZU7BFgF8PRVL136gsAd7BL5VOwWa9UxnHIN41RD4rg++3Y4VVwou8UzaYsg1uyhj8CRCNL7D3oh6w4TwEP9hVrLKY3sVWMladM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727305210; c=relaxed/simple;
-	bh=kQStd7Sr/RrN6skcJm3qMMqtRvr2awicCI5PoWvm6FU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pTVoY/gQn/icMvrZGwGSvNoZukeBuyEq3rj8JY/mCYLZghKCOjqJfUnYxXu9r4lSWgyllouaH9qlmPl2jtr471+fIX5PVmuYiE2q9kZPDFP5QroMtCLDIbHdGfNKIMk4jryXS1L0Zu+j3CSxUd/SrPw7gvaUiXc7oullJrxZLW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IcomXzl5; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20b061b7299so38625ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 16:00:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727305209; x=1727910009; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vl8E5j+ZmDbmKOpu44SNpmShgOamIMtl/ODRrZ2cGY4=;
-        b=IcomXzl5tWEX1JaDgotIOyN48qUKBEo4AgZJF7Vasz2qOzWowsC1mo6dVWq1TxaFpb
-         39rRcbbIQFUkXBSt3uTZ3J9SvWDXYHPOI0o2N/CRlGbJjCWgUNj5z8t6xzKKJaQW3hIt
-         O8L+xJNAdHFNW/3jIYOJ09RLG0CynCiPLCmCkVW8ZfE/DXLjdufok9H2QYvJ+3VXLHav
-         0bYA5jN9/fVjzgflicpwQ7cc7cY1rxGjtr87j7P2Ht/r8T1TZLiGQ2XXwc5+G5eKPKkJ
-         l7I6RWK2QD6aTkRIMfEYiMSfglb+/joCAke+E9V3X7e8y8HbcrwzhLxGwivHD9gTEPrJ
-         UR0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727305209; x=1727910009;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vl8E5j+ZmDbmKOpu44SNpmShgOamIMtl/ODRrZ2cGY4=;
-        b=sXsJSutQtSVLtme9Kus9PErks3Rv6SFNI0lZSa8ownPxuuMhRYU24hlCad5NrEVKk3
-         5IWikE+VU8LjIHOHRxUBICfUZZrYtJGKpb87US/jZfaAuMmg9xch705hFuA0LwSW74cM
-         T4eV6QjC2NwJwyy3/hnjOU4eaIcr+0RdLNDY90vFjofyo3zEzy6OPl8fNP173PztTfKJ
-         I7lWIYgyeke/MeE3WsliLdrIucH/LymiB1OrrNUA9zBjAqgCdw2YaluhXYW5w+iIeS/i
-         7ht2c8b8O1UY+IwbLL1PVE+GYNJCeDlP+OyNuJuJJd8jLtPA2443nUn9ELi7MTU6LJHg
-         H09Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUXIuoKGC/U5oyUwa44vGi1oa6wRY8+Mxk2XXZcF+jwoI9zLjAO5uXI0XWJzKEXfhtRn3wFMBpieO0oZhI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxE+ErQW4ZY0jmpvhguVjhG+WwvfypXmG878MH0IpOQzTtNQ/XY
-	LhUSpJ/EQKjfMtParrmQ1FZuN7MgJEdbmeExppewebaFtcVHFAM1g6QVtYKg0w==
-X-Google-Smtp-Source: AGHT+IFG1pBJvk67WuIMPqXmbr6qCgX/nanvp1+Hex9+YWAbxaQzu9KQp5bWrdANVwkkvt84iFfWmg==
-X-Received: by 2002:a17:902:ec83:b0:206:a87c:2873 with SMTP id d9443c01a7336-20b202f1655mr563355ad.5.1727305208163;
-        Wed, 25 Sep 2024 16:00:08 -0700 (PDT)
-Received: from google.com (164.135.233.35.bc.googleusercontent.com. [35.233.135.164])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71afc8493cdsm3190227b3a.88.2024.09.25.16.00.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 16:00:07 -0700 (PDT)
-Date: Wed, 25 Sep 2024 23:00:00 +0000
-From: Sami Tolvanen <samitolvanen@google.com>
-To: Matthew Maurer <mmaurer@google.com>
-Cc: masahiroy@kernel.org, ndesaulniers@google.com, ojeda@kernel.org,
-	gary@garyguo.net, mcgrof@kernel.org,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Benjamin Gray <bgray@linux.ibm.com>,
-	Naveen N Rao <naveen@kernel.org>, rust-for-linux@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	neal@gompa.dev, marcan@marcan.st, j@jannau.net,
-	asahi@lists.linux.dev, Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	linuxppc-dev@lists.ozlabs.org, linux-modules@vger.kernel.org
-Subject: Re: [PATCH v4 14/16] modules: Support extended MODVERSIONS info
-Message-ID: <20240925230000.GA3176650@google.com>
-References: <20240924212024.540574-1-mmaurer@google.com>
- <20240924212024.540574-15-mmaurer@google.com>
+	s=arc-20240116; t=1727305316; c=relaxed/simple;
+	bh=4RRry88l42YWMnIm3Kf7otPxCu4Y3NeGaIx1YdU7vqQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OZ5LyxWFa+DuVWkwOJGswKv9/Pebz98td8+aw8kZAobxF0XQ5HvHncCaoD5Afl+l5jw4X8W+M911OvQeQ4FEU/COXGkmb6KhwOEtBsKWhoVUB7ghpU8Wcfq8plp3a7KYcJceQi1KN5Bux34BeD1YTtBQX6DU7W/284N1hg4WLO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=L8DzBNUP; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48PH5Dfn007919;
+	Wed, 25 Sep 2024 23:01:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=1uSVyniIwqHCHdlFrBLS7ZeBT58eCVGU7d3
+	n0U0EmDs=; b=L8DzBNUPTgzVZ1vw1CipRMYsp/odeV5u2bxondpJoscVzaDH0Sy
+	63+u3a/Kary7D14atun3+xV0KY0E8FvBQiALQiB4S8ULtAvBPqMoWq9csleBKhUF
+	fkkCc9rKFhFBxfRrNl7lGp2Zum2rsPJWoue53MBB6c314Ik8HTDHxk6rdDQUNzLS
+	9PJrU+dVUwzoV/Of3RmAlrxV47+el4Ey0Dg0W86HjrhMrJKwu7PX4crRNXx0B1tv
+	ldsUYPE76LbUKJYaK4jlTUrZVIE76Pz2jL3ySt9ZRTO5T89xJ3bPp91HOkLzqucZ
+	aml89HdLKihbccN0FBYgTGdn8+xS33hvSpw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sn3sdh3g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Sep 2024 23:01:31 +0000 (GMT)
+Received: from pps.filterd (NALASPPMTA05.qualcomm.com [127.0.0.1])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 48PN1UX8012467;
+	Wed, 25 Sep 2024 23:01:30 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by NALASPPMTA05.qualcomm.com (PPS) with ESMTPS id 41vfmmx1jy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Sep 2024 23:01:30 +0000
+Received: from NALASPPMTA05.qualcomm.com (NALASPPMTA05.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 48PN09ql010238;
+	Wed, 25 Sep 2024 23:01:30 GMT
+Received: from hu-devc-lv-u20-a-new.qualcomm.com (hu-abchauha-lv.qualcomm.com [10.81.25.35])
+	by NALASPPMTA05.qualcomm.com (PPS) with ESMTPS id 48PN1Ukm012446
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Sep 2024 23:01:30 +0000
+Received: by hu-devc-lv-u20-a-new.qualcomm.com (Postfix, from userid 214165)
+	id DBB8021B91; Wed, 25 Sep 2024 16:01:29 -0700 (PDT)
+From: Abhishek Chauhan <quic_abchauha@quicinc.com>
+To: "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andrew Halaney <ahalaney@redhat.com>,
+        "Russell King (Oracle)" <linux@armlinux.org.uk>,
+        Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Brad Griffis <bgriffis@nvidia.com>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: kernel@quicinc.com
+Subject: [PATCH net v3 0/2] Fix AQR PMA capabilities
+Date: Wed, 25 Sep 2024 16:01:27 -0700
+Message-Id: <20240925230129.2064336-1-quic_abchauha@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240924212024.540574-15-mmaurer@google.com>
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: MiWFWSx67aM2dgFDDg9a6wb8Z8YSA_Pv
+X-Proofpoint-ORIG-GUID: MiWFWSx67aM2dgFDDg9a6wb8Z8YSA_Pv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
+ mlxscore=0 impostorscore=0 spamscore=0 malwarescore=0 suspectscore=0
+ priorityscore=1501 lowpriorityscore=0 mlxlogscore=963 clxscore=1015
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409250163
 
-Hi Matt,
+Patch 1:- 
+AQR115c reports incorrect PMA capabilities which includes
+10G/5G and also incorrectly disables capabilities like autoneg
+and 10Mbps support.
 
-On Tue, Sep 24, 2024 at 09:19:56PM +0000, Matthew Maurer wrote:
-> +static void dedotify_ext_version_names(char *str_seq, unsigned long size)
-> +{
-> +	unsigned long out = 0;
-> +	unsigned long in;
-> +	char last = '\0';
-> +
-> +	for (in = 0; in < size; in++) {
-> +		if (last == '\0')
-> +			/* Skip one leading dot */
-> +			if (str_seq[in] == '.')
-> +				in++;
+AQR115c as per the Marvell databook supports speeds up to 2.5Gbps
+with autonegotiation.
 
-Thanks for addressing Michael's comment, this looks correct to me.
+AQR115c also support 2500BaseX 
 
-Nit: might be cleaner in a single if statement though:
+Patch 2:- 
+Remove the use of phy_set_max_speed in phy driver as the
+function is mainly used in MAC driver to set the max
+speed.
 
-	/* Skip one leading dot */
-	if (last == '\0' && str_seq[in] == '.')
-		in++;
+Instead use get_features to fix up Phy PMA capabilities for
+AQR111, AQR111B0, AQR114C and AQCS109
 
-> +void modversion_ext_start(const struct load_info *info,
-> +			  struct modversion_info_ext *start)
-> +{
-> +	unsigned int crc_idx = info->index.vers_ext_crc;
-> +	unsigned int name_idx = info->index.vers_ext_name;
-> +	Elf_Shdr *sechdrs = info->sechdrs;
-> +
-> +	/*
-> +	 * Both of these fields are needed for this to be useful
-> +	 * Any future fields should be initialized to NULL if absent.
-> +	 */
-> +	if ((crc_idx == 0) || (name_idx == 0))
-> +		start->remaining = 0;
-> +
-> +	start->crc = (const s32 *)sechdrs[crc_idx].sh_addr;
-> +	start->name = (const char *)sechdrs[name_idx].sh_addr;
-> +	start->remaining = sechdrs[crc_idx].sh_size / sizeof(*start->crc);
-> +}
 
-This looks unchanged from v3, so I think my comment from there
-still applies:
+Abhishek Chauhan (2):
+  net: phy: aquantia: AQR115c fix up PMA capabilities
+  net: phy: aquantia: remove usage of phy_set_max_speed
 
-https://lore.kernel.org/lkml/CABCJKufJK0WO92wnW09VTLqZk0ODxhuKQG=HbKE-va0urJU1Vg@mail.gmail.com/
+ drivers/net/phy/aquantia/aquantia_main.c | 73 +++++++++++++++++++-----
+ 1 file changed, 58 insertions(+), 15 deletions(-)
 
-Sami
+-- 
+2.25.1
+
 
