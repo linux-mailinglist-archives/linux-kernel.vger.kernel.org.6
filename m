@@ -1,159 +1,367 @@
-Return-Path: <linux-kernel+bounces-338365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 181C29856EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:08:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8D6F9856EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:08:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BAD11C21342
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:08:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87AB628256C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDCBB15C131;
-	Wed, 25 Sep 2024 10:08:07 +0000 (UTC)
-Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2098.outbound.protection.partner.outlook.cn [139.219.146.98])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46D215B14B;
+	Wed, 25 Sep 2024 10:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KjqVg1ob"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EACE514AD19;
-	Wed, 25 Sep 2024 10:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.98
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727258887; cv=fail; b=ZB7Q+1dDAYjrHkM/uyH9ZRLIAq/jWDxPvY/nyp6ZnqF6HdKHyhDxmUuLRL/7ehI/J3AvS0405pN3GSUjI3lXT+BvKztEhPRmA3jeVZTH0/KYIW+0eMAhvY5NxXpGWblrgTXr8jGeOPvru5/ZEFZF2fGQ2QCrdcVXJ3uCU60QzYY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727258887; c=relaxed/simple;
-	bh=apIs5UMNKnU//WmOOjaQhdC+ouFfr0lSQCNXbj3mlLI=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=RDxGZtBMCYnSu+6Ftwf36O2d56S79OlJ3vp3efTiW6UkIdKGGqUyHiO0lnV/I5XuHKujMmU0umX95Kg3G/xJfhw0ZWbl9Z1EbeHUxZv5kkZ2ULd7cH5W57MD2BHSzYxNBZEc/8kKDo+KoyvU70wqqVWbiCOPVFUhqqDnpUTU/to=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LaL/gxD9wK5r1/v1cfvcQarRkiP/e78bd7Gb/qzxrghTJCksGcmySlSscVhMAo4q2VvlHZiQAmcMp1QDnJWtmD+BkG+wtBPcFLcO7Em+GQ7ZFbJ4vomWn75d1qbowUfU0ZENJRV8rUSUxvWpxKbp5Do2xTPuSdLU1O+ZpJ2l7sq2uZwENN1hToEWNjIeAaA1JXhxMPHXpdoBLOEJilmeOOQGrOxbD9VFEBFXC3XAlCOWXt0Zg7Hnw8bodlYKSoQUj6EQG7Laa8mBGcjPMhh7UyEr6WlfHZhLL8HIzPZq0EBnVA2gv3P7ZYpNAL7DT/lwBMIngxATFxHOFFwiVyGt3Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=V6VxDSO8iqhurxhynfKhByJdV1L3fDOUmJ2X16Da6qM=;
- b=mLQ6GwVa7ft8A8rX7ou34iEP3N0K9IEvz1CABCI5jNhe2xxdg6An+AIoaQ0wMY8sBlIA1c+zC5f42s5NdMLW7sLDhJcEqVyEImByrdZtSSl5dkCdTH3c/48i44Xk42UoFx7R9VIDEThfXJbt10uLl12MRva3gsjeoOZao3wqJCt78qrJCLGSLLqBNaLLPy1RNc4Dz19zozgO320IBGJsDu9hp3buKy2QvOMDrz1vN+0YWi5d2q/IhmqwBpLQm323/jVLlAzrcvShmocxjrWzRg9hMdTSSU9W0IrycPNBuKzF1/szUEZXRkLUPp81jda5wHRFGACy63xb+oBBcoaI2w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:1b::9) by ZQ0PR01MB1208.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:19::5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.31; Wed, 25 Sep
- 2024 10:07:48 +0000
-Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
- ([fe80::64c5:50d8:4f2c:59aa]) by
- ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn ([fe80::64c5:50d8:4f2c:59aa%5])
- with mapi id 15.20.7962.029; Wed, 25 Sep 2024 10:07:48 +0000
-From: Changhuang Liang <changhuang.liang@starfivetech.com>
-To: Jason Wessel <jason.wessel@windriver.com>,
-	Daniel Thompson <daniel.thompson@linaro.org>,
-	Douglas Anderson <dianders@chromium.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Changhuang Liang <changhuang.liang@starfivetech.com>,
-	kgdb-bugreport@lists.sourceforge.net,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] Documentation: kgdb: Correct parameter error
-Date: Wed, 25 Sep 2024 03:07:42 -0700
-Message-Id: <20240925100742.1730576-1-changhuang.liang@starfivetech.com>
-X-Mailer: git-send-email 2.25.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BJSPR01CA0001.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c211:c::13) To ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:1b::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01432158557;
+	Wed, 25 Sep 2024 10:08:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727258932; cv=none; b=OkANSdOEuSeWYV2Nyb1tLkzxFdLkpZnvBuuXZJrcF8i/jzaUaNUmmIe1741WlDtoyxR1qC/uFYJyx1shl/2SSj9cERhHq8xj3ZYQoMJnRIMP0JYFhXMm7YbYY/KcK+lvbW6rZp+C7KF/KK4y16MKeAsAE+CW0+gpvEvX2oCJBA0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727258932; c=relaxed/simple;
+	bh=mKg1Pn/wp7JBOz5guJCa/oeTDBDmbcFvcIbh2hBt8k4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Xgq2TD9/dd/8oV8rZRy1j7hEqwBrRKx97p4mWjWy2A08Qzb8cEB4R4x7ldzhs/SPVEYu7MgVKHjpoW0mLT7B4sSU/Z8+zAy/ba6srrW7Hnv1JuXAkA/IaTlTo9RkS6YtYRX27gqmzfk6B0kiTQ6xjvurh2q/UiS1r2E5AZySDOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KjqVg1ob; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 705FAC4CEC3;
+	Wed, 25 Sep 2024 10:08:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727258931;
+	bh=mKg1Pn/wp7JBOz5guJCa/oeTDBDmbcFvcIbh2hBt8k4=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=KjqVg1obzL7Xzzzia2RIzH3R6tHWs/Rc1oj5NgibOkkWr2tldQwKLMblVdTjw6blJ
+	 7mlfQJ0MP7+89tclHYBZGOe6hG2BbqxbvYEXHr+2gXPPB/4RIB7udHzvpsjhnWmb37
+	 vIsUB1Kkwlcn2eVXRW0IGdYs0Eu8l10eiVOFz8blpgSWboiXAOnPynpWPN4rOQ3cTk
+	 5VaaqleVQE56zYGeiCHC5LcRtfV7yep5dnj661Mk9s7zPjLS8i28742dwqAlsL6gTe
+	 cdJz79uE07iF5AlUKMEsiRwde7rknBxFEM/rSypPundfW+wp0V+MYiRcLR7pKlANKw
+	 eGKrLk9qe6FuQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F0D4C369C8;
+	Wed, 25 Sep 2024 10:08:51 +0000 (UTC)
+From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Date: Wed, 25 Sep 2024 18:08:28 +0800
+Subject: [PATCH v2] clk: meson: mpll: Delete a useless spinlock from the
+ MPLL
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: ZQ0PR01MB1302:EE_|ZQ0PR01MB1208:EE_
-X-MS-Office365-Filtering-Correlation-Id: b8e8abab-7486-4876-5b4c-08dcdd49e8cf
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|1800799024|366016|41320700013|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	4XExc37jW4SxfkDieMvhXooZqwHoqwIkhOt0MZ6u8ZPkMZF8AHPJp4ReRCCKKi+ppb3HL/PzVVAcbda3pvQqkpRby93K2eXms1tiuk7GyOS2yrvtSuVqEM7BAxG3RG7CboHQrM03a4rhiv2AkOCGcGSWOL5vfnIJJqi1N581G6yQQlcU1cN0f4k0GFJEGrC1fYTxa5/dKkeXWukwIhCqBTVrie/T+6jlL8TdrnslR4Ao65QdTNhxIDHLiZT2RKCwkOQ/kp3mupKUEr2JqhCulczhefOb3ZWvqZS0ZB+hFdBFLmAT8e9x07UhcxAkC23oRNEt6sfuE7ibFDbAa5XSiq31hkr4C+6yU+SmzoxNijUjJlA7stVg1pXhJ8mLb+fBAAXW+nxjD2qSfpqtFGHTuXiV5iq3TKgvdwlkVQ0xtQVN3+cp/59hZYuGj7MygtFqyU71oe8eOV6dK8wmVNZ0XS5yzZnbculLYvErwORunb0nalZLsoOW0OvhN7h3GvJx+DSS1PMTMKy2ajv9olwFHmwoZwi4LKAiH4WVyIc7oCGeMY2EELSZYakuMjDfPRd+hX6mjC3kvZ2B19u6D8qBmoe8N7HHCpth9WXG7XftsKmf1zMx/j3VJ3GZKdr+4Gio
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(366016)(41320700013)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?KCJI6xeMlRTHP4zj1LQLcTVR2iMvN3VPFw+2WHhFzmTWBihqYJuPqJ6bAB1x?=
- =?us-ascii?Q?LC+OOfFzz4OlfUVr37gDluygouS4UBL6Wg92V6DIo+tHuOYWXBdeU97EkQfv?=
- =?us-ascii?Q?kD0t8FKUzLCAw9EH4w1pu0wk/4hm4x3aGr0aGU2n3vcBKPP8A+8senKLHcYn?=
- =?us-ascii?Q?BERcIg+LmYjRwRZUhlKh+o8t/fR6LfasXRlMSISdM6HOl8UH1J2a0sqgiTgX?=
- =?us-ascii?Q?BCou2kCVMdWJB++7bYyF+UOAe66v5iSJUO7xTXmgkO9pjEGODId+iBNaf28I?=
- =?us-ascii?Q?r+ctBi8b31zJxty7L+K8uHN0LO1gACxpxuEoB3j4tS0t7/cQjnq7FvU0WNRq?=
- =?us-ascii?Q?HlGgg8hNmYwNT6TZI2C3/5Y+e0AKVOvqOEnppWX4EmuHvBZA3fpPLXXWQust?=
- =?us-ascii?Q?pq0sP6LJyX6xsWwvn9tu8LeNyjZMwLJZ9DqJbCNsP/USwiOrvuqHPIwnFZ3x?=
- =?us-ascii?Q?SBDdQzZCpi/MyWJBdse9FFVohzLwGLzWobjcCs+IjQuRmuMnWhEvWHxv7/KT?=
- =?us-ascii?Q?JJGJxSNW9DcOmphEOzOM5BBCdKeG+4QsUkkkWiQC7YZ1jmaXAy9uesJprsx9?=
- =?us-ascii?Q?utpTy6TSNv+d425pND3Abtg++qQRQJvpQs4A0VN+NDnAJnhl1Xt52Ly3HcU9?=
- =?us-ascii?Q?I2VWTlc4SyD5TwB/owHRIWnNup6uRmNMa1AsdHV+auyvwTY9oTB0scfbPFqS?=
- =?us-ascii?Q?dj7nd0e1m7Nu7n45m9Ah4qJGg1DGeCHcWgzFyW7h/L5qAmlWevdu3b9GLEq8?=
- =?us-ascii?Q?eyx/CQL/ccmpLp4e0JsJxsxKrwRGepS9w8etezhxfzwdDKm/O4h6xi4lyO22?=
- =?us-ascii?Q?EE3Kh5dsbMJbQsI25swNylxipxzu0RMXT2BJPODFz9MckBlLzLdcxLwgu5mt?=
- =?us-ascii?Q?aoyju+wYoz66ab5IYxa6K+KZo2Oz18DxK4fLlHORS1RycHJTunhJ+Uoc1fsr?=
- =?us-ascii?Q?eoWh1y//UBgEUeyCiHncOBFbLorX6XwXopUB3Ty6IgkRljG8FSsDC1LcCK5V?=
- =?us-ascii?Q?XmHGLNoyLJqd8EbVJ6wLF9R3rVaFAF6fyrfzPWYHtvcB0nTi9PLe60hNXeed?=
- =?us-ascii?Q?P2odcWKI+r8QK8wSnltksIlG0In8/AYBD1H/A1RcSKCmiIAibnd99jfDuKzZ?=
- =?us-ascii?Q?JozdAkCANwefiVvNzfpcfq94ixhpj4HkkRmyKFMR+4zy4XbUJdQB2YBZoBM8?=
- =?us-ascii?Q?hr6VGdOYKt1KCwGGz461PIGVar8rs6WqNC39CBBac4G57g8cwTyx+iiEYQHO?=
- =?us-ascii?Q?Gxw4JyUxDuzMAGmL2dGpI1uHn/0KzNvyZ+XDv9MG8hVYhlXt7sgQSZSa7fQU?=
- =?us-ascii?Q?LanHE6RYUA3Z3J6TPU0Nb0NgngfLyHnT0XSXGZr5zkwDyZVwBj1bBnb4T+JA?=
- =?us-ascii?Q?ocZKd0KsDevjCpx/1uff0w/CWmhC+7abdPOJsM2L/oFxqFnPSH02SvRM0anr?=
- =?us-ascii?Q?fc+/Hk4137EfgYttHzYpgibDImF+UYmpyDDT6aqL3mfbR8/QAtk8O7BgUvR0?=
- =?us-ascii?Q?+bJf+1K2Zu/doPmcaLfQ9oQUntUI/o/2BIre9eTN3GqJd1eYXDlMwrbcI4xR?=
- =?us-ascii?Q?Vn5FSaSukvc00yjd5QjIJy6Lk3uz6W2aMEDT4pORo8vp0JIflQLKsmR0N49x?=
- =?us-ascii?Q?k+z3hE57UTM8vsfqa0aB6NU=3D?=
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b8e8abab-7486-4876-5b4c-08dcdd49e8cf
-X-MS-Exchange-CrossTenant-AuthSource: ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2024 10:07:48.8936
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SV8Rg3cqHucv72jAbioXvsxui854pCliVkzMhlroP1LjqNo5YJLtJd6jX4alg+EBkLewy0FRqqkz17P2rRcrm7INGjr6DjTJZB+foASoN1HehG44xfTYvAMKaYwkT8nd
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ0PR01MB1208
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240925-mpll_spinlock-v2-1-8f9b73588ec1@amlogic.com>
+X-B4-Tracking: v=1; b=H4sIABvh82YC/13MSwrDIBSF4a2EO67FiJLaUfcRQlFjkkt9BC3SE
+ rL32tBRh/+B822QbUKb4dpskGzBjDHUYKcGzKLCbAmOtYFRxqlsL8Svzt3zisFF8yBcSy2E4Xw
+ aBdTPmuyEr8Prh9oL5mdM74Mv7Xf9SYz+SaUllAjGpZKqs0x3N+VdnNGcTfQw7Pv+AQaGveasA
+ AAA
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jerome Brunet <jbrunet@baylibre.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Chuan Liu <chuan.liu@amlogic.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727258930; l=8347;
+ i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
+ bh=ZyPnj+RyKrSajBhQmyfJU1szWyHwl1WcQqsqZnpTU7o=;
+ b=U/+tnxrfGff37ZUf7sYlp/cNh53Yt2f8WNnAnhJ4kn7XfzEjnQhjRRCLExzt4S4f2YPnJf5bH
+ NG1ejpqmzuEDkAaX4lW5Dd2Via7P1aOkswd4UDgyix31p4VpDTuFPsl
+X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
+ pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
+X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
+ auth_id=203
+X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
+Reply-To: chuan.liu@amlogic.com
 
-Module kgdb had been converted to debug_core since commit c433820971ff
-("Move kernel/kgdb.c to kernel/debug/debug_core.c") be added, so let's
-correct the module parameter path.
+From: Chuan Liu <chuan.liu@amlogic.com>
 
-Fixes: c433820971ff ("Move kernel/kgdb.c to kernel/debug/debug_core.c")
-Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+The register corresponding to MPLL does not share the same register
+with other module drivers, so there is no concurrent access to the
+register with other modules drivers. The spinlock defined in struct
+meson_clk_mpll_data is no longer useful.
+
+Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 ---
+Changes in v2:
+- Squeeze into a patch.
+- Modifying commit Information.
+- Link to v1: https://lore.kernel.org/r/20240920-mpll_spinlock-v1-0-5249a9a7e2b7@amlogic.com
+---
+ drivers/clk/meson/axg.c      |  6 ------
+ drivers/clk/meson/clk-mpll.c | 11 -----------
+ drivers/clk/meson/clk-mpll.h |  1 -
+ drivers/clk/meson/g12a.c     |  6 ------
+ drivers/clk/meson/gxbb.c     |  6 ------
+ drivers/clk/meson/meson8b.c  |  3 ---
+ drivers/clk/meson/s4-pll.c   |  6 ------
+ 7 files changed, 39 deletions(-)
 
-Hi,
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index 757c7a28c53d..1b08daf579b2 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -23,8 +23,6 @@
+ 
+ #include <dt-bindings/clock/axg-clkc.h>
+ 
+-static DEFINE_SPINLOCK(meson_clk_lock);
+-
+ static struct clk_regmap axg_fixed_pll_dco = {
+ 	.data = &(struct meson_clk_pll_data){
+ 		.en = {
+@@ -506,7 +504,6 @@ static struct clk_regmap axg_mpll0_div = {
+ 			.shift   = 0,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.flags = CLK_MESON_MPLL_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+@@ -557,7 +554,6 @@ static struct clk_regmap axg_mpll1_div = {
+ 			.shift   = 1,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.flags = CLK_MESON_MPLL_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+@@ -613,7 +609,6 @@ static struct clk_regmap axg_mpll2_div = {
+ 			.shift   = 2,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.flags = CLK_MESON_MPLL_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+@@ -664,7 +659,6 @@ static struct clk_regmap axg_mpll3_div = {
+ 			.shift   = 3,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.flags = CLK_MESON_MPLL_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
+index f639d56f0fd3..aa9abd06ae65 100644
+--- a/drivers/clk/meson/clk-mpll.c
++++ b/drivers/clk/meson/clk-mpll.c
+@@ -112,26 +112,15 @@ static int mpll_set_rate(struct clk_hw *hw,
+ 	struct clk_regmap *clk = to_clk_regmap(hw);
+ 	struct meson_clk_mpll_data *mpll = meson_clk_mpll_data(clk);
+ 	unsigned int sdm, n2;
+-	unsigned long flags = 0;
+ 
+ 	params_from_rate(rate, parent_rate, &sdm, &n2, mpll->flags);
+ 
+-	if (mpll->lock)
+-		spin_lock_irqsave(mpll->lock, flags);
+-	else
+-		__acquire(mpll->lock);
+-
+ 	/* Set the fractional part */
+ 	meson_parm_write(clk->map, &mpll->sdm, sdm);
+ 
+ 	/* Set the integer divider part */
+ 	meson_parm_write(clk->map, &mpll->n2, n2);
+ 
+-	if (mpll->lock)
+-		spin_unlock_irqrestore(mpll->lock, flags);
+-	else
+-		__release(mpll->lock);
+-
+ 	return 0;
+ }
+ 
+diff --git a/drivers/clk/meson/clk-mpll.h b/drivers/clk/meson/clk-mpll.h
+index a991d568c43a..4ffd3aeef799 100644
+--- a/drivers/clk/meson/clk-mpll.h
++++ b/drivers/clk/meson/clk-mpll.h
+@@ -20,7 +20,6 @@ struct meson_clk_mpll_data {
+ 	struct parm misc;
+ 	const struct reg_sequence *init_regs;
+ 	unsigned int init_count;
+-	spinlock_t *lock;
+ 	u8 flags;
+ };
+ 
+diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+index 02dda57105b1..d3539fe9f7af 100644
+--- a/drivers/clk/meson/g12a.c
++++ b/drivers/clk/meson/g12a.c
+@@ -28,8 +28,6 @@
+ 
+ #include <dt-bindings/clock/g12a-clkc.h>
+ 
+-static DEFINE_SPINLOCK(meson_clk_lock);
+-
+ static struct clk_regmap g12a_fixed_pll_dco = {
+ 	.data = &(struct meson_clk_pll_data){
+ 		.en = {
+@@ -2225,7 +2223,6 @@ static struct clk_regmap g12a_mpll0_div = {
+ 			.shift   = 29,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.init_regs = g12a_mpll0_init_regs,
+ 		.init_count = ARRAY_SIZE(g12a_mpll0_init_regs),
+ 	},
+@@ -2279,7 +2276,6 @@ static struct clk_regmap g12a_mpll1_div = {
+ 			.shift   = 29,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.init_regs = g12a_mpll1_init_regs,
+ 		.init_count = ARRAY_SIZE(g12a_mpll1_init_regs),
+ 	},
+@@ -2333,7 +2329,6 @@ static struct clk_regmap g12a_mpll2_div = {
+ 			.shift   = 29,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.init_regs = g12a_mpll2_init_regs,
+ 		.init_count = ARRAY_SIZE(g12a_mpll2_init_regs),
+ 	},
+@@ -2387,7 +2382,6 @@ static struct clk_regmap g12a_mpll3_div = {
+ 			.shift   = 29,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.init_regs = g12a_mpll3_init_regs,
+ 		.init_count = ARRAY_SIZE(g12a_mpll3_init_regs),
+ 	},
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index f071faad1ebb..262c318edbd5 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -19,8 +19,6 @@
+ 
+ #include <dt-bindings/clock/gxbb-clkc.h>
+ 
+-static DEFINE_SPINLOCK(meson_clk_lock);
+-
+ static const struct pll_params_table gxbb_gp0_pll_params_table[] = {
+ 	PLL_PARAMS(32, 1),
+ 	PLL_PARAMS(33, 1),
+@@ -731,7 +729,6 @@ static struct clk_regmap gxbb_mpll0_div = {
+ 			.shift   = 16,
+ 			.width   = 9,
+ 		},
+-		.lock = &meson_clk_lock,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll0_div",
+@@ -760,7 +757,6 @@ static struct clk_regmap gxl_mpll0_div = {
+ 			.shift   = 16,
+ 			.width   = 9,
+ 		},
+-		.lock = &meson_clk_lock,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll0_div",
+@@ -812,7 +808,6 @@ static struct clk_regmap gxbb_mpll1_div = {
+ 			.shift   = 16,
+ 			.width   = 9,
+ 		},
+-		.lock = &meson_clk_lock,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll1_div",
+@@ -855,7 +850,6 @@ static struct clk_regmap gxbb_mpll2_div = {
+ 			.shift   = 16,
+ 			.width   = 9,
+ 		},
+-		.lock = &meson_clk_lock,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll2_div",
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index b7417ac262d3..5011768c0f4e 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -492,7 +492,6 @@ static struct clk_regmap meson8b_mpll0_div = {
+ 			.shift   = 25,
+ 			.width   = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll0_div",
+@@ -537,7 +536,6 @@ static struct clk_regmap meson8b_mpll1_div = {
+ 			.shift   = 16,
+ 			.width   = 9,
+ 		},
+-		.lock = &meson_clk_lock,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll1_div",
+@@ -582,7 +580,6 @@ static struct clk_regmap meson8b_mpll2_div = {
+ 			.shift   = 16,
+ 			.width   = 9,
+ 		},
+-		.lock = &meson_clk_lock,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll2_div",
+diff --git a/drivers/clk/meson/s4-pll.c b/drivers/clk/meson/s4-pll.c
+index 9697f6577e06..d8e621e79428 100644
+--- a/drivers/clk/meson/s4-pll.c
++++ b/drivers/clk/meson/s4-pll.c
+@@ -17,8 +17,6 @@
+ #include "meson-clkc-utils.h"
+ #include <dt-bindings/clock/amlogic,s4-pll-clkc.h>
+ 
+-static DEFINE_SPINLOCK(meson_clk_lock);
+-
+ /*
+  * These clock are a fixed value (fixed_pll is 2GHz) that is initialized by ROMcode.
+  * The chip was changed fixed pll for security reasons. Fixed PLL registers are not writable
+@@ -547,7 +545,6 @@ static struct clk_regmap s4_mpll0_div = {
+ 			.shift   = 29,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.init_regs = s4_mpll0_init_regs,
+ 		.init_count = ARRAY_SIZE(s4_mpll0_init_regs),
+ 	},
+@@ -601,7 +598,6 @@ static struct clk_regmap s4_mpll1_div = {
+ 			.shift   = 29,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.init_regs = s4_mpll1_init_regs,
+ 		.init_count = ARRAY_SIZE(s4_mpll1_init_regs),
+ 	},
+@@ -655,7 +651,6 @@ static struct clk_regmap s4_mpll2_div = {
+ 			.shift   = 29,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.init_regs = s4_mpll2_init_regs,
+ 		.init_count = ARRAY_SIZE(s4_mpll2_init_regs),
+ 	},
+@@ -709,7 +704,6 @@ static struct clk_regmap s4_mpll3_div = {
+ 			.shift   = 29,
+ 			.width	 = 1,
+ 		},
+-		.lock = &meson_clk_lock,
+ 		.init_regs = s4_mpll3_init_regs,
+ 		.init_count = ARRAY_SIZE(s4_mpll3_init_regs),
+ 	},
 
-v3: I wrote a error change log in v2. Now fix it.
+---
+base-commit: 0ef513560b53d499c824b77220c537eafe1df90d
+change-id: 20240918-mpll_spinlock-4b9b55c44fd5
 
- Documentation/dev-tools/kgdb.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Best regards,
+-- 
+Chuan Liu <chuan.liu@amlogic.com>
 
-diff --git a/Documentation/dev-tools/kgdb.rst b/Documentation/dev-tools/kgdb.rst
-index f83ba2601e55..a87a58e6509a 100644
---- a/Documentation/dev-tools/kgdb.rst
-+++ b/Documentation/dev-tools/kgdb.rst
-@@ -329,7 +329,7 @@ ways to activate this feature.
 
- 2. Use sysfs before configuring an I/O driver::
-
--	echo 1 > /sys/module/kgdb/parameters/kgdb_use_con
-+	echo 1 > /sys/module/debug_core/parameters/kgdb_use_con
-
- .. note::
-
---
-2.25.1
 
