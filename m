@@ -1,108 +1,117 @@
-Return-Path: <linux-kernel+bounces-338923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65CE2985E54
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:32:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 782F9985EF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:46:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C6621F211D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:32:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FA281F25033
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84EF518CBE3;
-	Wed, 25 Sep 2024 12:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A7421948D;
+	Wed, 25 Sep 2024 12:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jL0mtyGi"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iWsHTqa7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FE117BEB9;
-	Wed, 25 Sep 2024 12:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0F1157468;
+	Wed, 25 Sep 2024 12:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727266283; cv=none; b=QKXi+/QzBPLkoSdrQb4V37t92lQ8PZqIim97mlhiX8zH8oGTREwT1F5FwJooVQSWOvhkVVCkwUrpw5NDklDnA+wdU9ZobsPTm4maQX6jZxrQH27BzrPIET6qycAWs8yKvhfMk7dvmjNQuZIUK38sYuilE7d9bVEOBaAxA48Fczw=
+	t=1727266406; cv=none; b=gEEX26zHwM+7V92mK0xgqYFOJiY+aJipoSy8Y7ZZKJctqXhgsDEPZtbykZvgQOjoK6SxMlbS671miZ5CS2iEbZM4vZMX68g1kxmuWHaIDB+pgcrjJzB82p6foI/8DJXpEYAdkwfslxO3UOTP2ycxX8g7rVX7PZaTqKoq+4DderQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727266283; c=relaxed/simple;
-	bh=PUVNBgnIa4l40mnGlrwfTKt8522hvAy93E98nVKVo+U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eBsjfPBkc7ycemBJlJdVhRiQ03yrq7SoDm9na4f1z0dWHrHfk08SU/qwffUDd6/CCkX4+7YMKNRS7qussDYfaoOjlGTnIhlYYXP9fHjCaXjejEevUO2a6b3u1dIqU1CWmCw0L/nxpUs8FvusBKY3PktysYSrdG7eg/0rVkW/FDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jL0mtyGi; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8d2b24b7a8so168497766b.1;
-        Wed, 25 Sep 2024 05:11:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727266280; x=1727871080; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9hW9bK7WjApbQpCc3LHU+3cowizY2PJ/6QHhNHuy6fc=;
-        b=jL0mtyGi2XFkn6bGEM5szVkMJZvCdFfN4CgKM47AbTw3o6fSFtabs45ZCjRo3FQ7ZU
-         odEjWU4YTgMfUWfgLwR44zkiI+DDEcOzTfS+/z+MfLFTccb+7R4EW6YHhWLpYf3zeKQT
-         QA5C77oMfY1fgHf5csYumSJYWTXzbDZz3DymTzc4KL5Lbem90ut+aK21t8Hl1lY8apeE
-         F2F8DgSuNVJc/1Ld4Pfl4sjVo6uxOcjsbuLpsASv8cUPA7qCJ8OpZbbl56C56frlYDZ7
-         kWX2+AiXGt8aoCY4jxDKduG0VTFAj0Vb/733p/QYG2o3vLP4lC3Dueha5D6Sz7appHK1
-         cZRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727266280; x=1727871080;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9hW9bK7WjApbQpCc3LHU+3cowizY2PJ/6QHhNHuy6fc=;
-        b=tnuGJQruKZwEvA/B7gYL4hCKhZQcwoSEkXTcxX+nIybRdkt2zsP3YPgoD8422FQAEm
-         G1marr1rY5fOtAahYQ8TESwwuN0Xq5ZseWSwZSBj+/92Wp6PF19akjC6be5gnGu11QVg
-         nMieYFPWRLXw2LR30wZ6bklr7/NIDNb11By8PGofAKFkQxRtWjsMs79Fe86HWD0noUXP
-         7bk8+bHogM/upzezrOcxj7ejpmpw5Ga1Yq575x2MuiklTvMFoFe5Acp6gENL1qOYT/oT
-         iOA8eJ9bnoH2gEGQS2+WUGQDHdBAor60IydBZ/Rgfb462qbGIjP9GlBpDJbKfvX/M49F
-         9jSg==
-X-Forwarded-Encrypted: i=1; AJvYcCVKLHf9MwOuWPvESdvEIrU5SmBQT8jXCj5Q4UB1ojFt8c0cPx1DYa9lRQgVgHcZQZ3hxBrZ4uHi2+iyQyA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMX1X/h2xEuH2GAjFSKil6zGoRAIR/FRVPAfdToLxawIgU0pZ2
-	NbMlmNXlvg4CeuyNpo4NuTmGovROdcv2FHc1wJZ+4PHd8Tjn165VLekfSqIZ
-X-Google-Smtp-Source: AGHT+IEU0urojDpL0fOG84+kksHaHBDz7bnrNhZwKyqJc5xvZWmVZf7CkpnJW2UZ5LAl1YzmDFS+lw==
-X-Received: by 2002:a17:907:a09:b0:a8d:4c83:d85d with SMTP id a640c23a62f3a-a92c4811c13mr729896266b.12.1727266280235;
-        Wed, 25 Sep 2024 05:11:20 -0700 (PDT)
-Received: from [192.168.92.221] ([85.255.235.163])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93930f82dcsm205313366b.177.2024.09.25.05.11.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Sep 2024 05:11:19 -0700 (PDT)
-Message-ID: <293e5757-4160-4734-931c-9830df7c2f88@gmail.com>
-Date: Wed, 25 Sep 2024 13:12:00 +0100
+	s=arc-20240116; t=1727266406; c=relaxed/simple;
+	bh=+1y2qWX4I37sboGZ/CIyWvPaFcHrMk6++9l2cSkHugU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q/UgjG/g7Ga2J+ixRMv8t5yD3W6znItLWGr0C3geAbqETZ+cZBRQtSjtWT7eA8e4LbaPo/Q5JZpZZZBPCKbVgI1COA2jjuFBL/tiB23ddKvY4M6nGJ3f/KYUaQk9XcQ+ryqPppHNXCe33kFfcW6dtnzF5Y2I+0Ei2fmFhU8nG9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iWsHTqa7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A9D2C4CECD;
+	Wed, 25 Sep 2024 12:13:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727266406;
+	bh=+1y2qWX4I37sboGZ/CIyWvPaFcHrMk6++9l2cSkHugU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iWsHTqa7uicmJR0AfRymwSTg8K2w/+Je+4e3h9kUvq8ikzJXPunzwftlbjAhqu04g
+	 M8Y9b696C4OsSaErVnN+wsSkJw7IwKMkFGaLHYsCnKs4XsNj0k4i7rXOxmADFJk5qR
+	 u/nv/JBmY2OpjGw+0KIIozcpzT1FLgVsNB8l/yhCXUZ3sXVNTZBPl/WnSb6qvfcrdp
+	 6dDgrBMJuZCYKY4u4KpFenZu7UhK+KKIcKoh62pKncVdJgWJ2c9lfn+eN8HZsxIi+C
+	 S9Gm6gPx7M5MOhIeYJR72/RZITfokdpy67vLvZtyU62f2/TuXbIz/zHI25hbJQ7ZzB
+	 Dy6s1u3IMnZ6w==
+Date: Wed, 25 Sep 2024 14:13:21 +0200
+From: Mark Brown <broonie@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Jerome Brunet <jbrunet@baylibre.com>, lgirdwood@gmail.com,
+	perex@perex.cz, tiwai@suse.com, linux-sound@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 6.11 109/244] ASoC: soc-pcm: Indicate warning if
+ dpcm_playback/capture were used for availability limition
+Message-ID: <ZvP-YQuXTyGDfb8x@finisterre.sirena.org.uk>
+References: <20240925113641.1297102-1-sashal@kernel.org>
+ <20240925113641.1297102-109-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V8] io_uring: releasing CPU resources when polling
-To: hexue <xue01.he@samsung.com>, axboe@kernel.dk
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240918021010.12894-1-xue01.he@samsung.com>
- <CGME20240925082937epcas5p1baa4bb786ea874400d7b18553cd57625@epcas5p1.samsung.com>
- <20240925082932.3329096-1-xue01.he@samsung.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20240925082932.3329096-1-xue01.he@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qJJpRQInejXrpnv9"
+Content-Disposition: inline
+In-Reply-To: <20240925113641.1297102-109-sashal@kernel.org>
+X-Cookie: Editing is a rewording activity.
 
-On 9/25/24 09:29, hexue wrote:
-> On 24/08/12 1:59AM, hexue wrote:
->> This patch add a new hybrid poll at io_uring level, it also set a signal
->> "IORING_SETUP_HY_POLL" to application, aim to provide a interface for users
->> to enable use new hybrid polling flexibly.
-> 
-> Hi, just a gentle ping, is there still in merge window? or any comment for
-> this patch?
 
-I don't have a strong opinion on the feature, but the open question
-we should get some decision on is whether it's really well applicable to
-a good enough set of apps / workloads, if it'll even be useful in the
-future and/or for other vendors, and if the merit outweighs extra
-8 bytes + 1 flag per io_kiocb and the overhead of 1-2 static key'able
-checks in hot paths.
+--qJJpRQInejXrpnv9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Pavel Begunkov
+On Wed, Sep 25, 2024 at 07:25:30AM -0400, Sasha Levin wrote:
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>=20
+> [ Upstream commit fd69dfe6789f4ed46d1fdb52e223cff83946d997 ]
+>=20
+> I have been wondering why DPCM needs special flag (=3D dpcm_playback/capt=
+ure)
+> to use it. Below is the history why it was added to ASoC.
+
+=2E..
+
+> Because of these history, this dpcm_xxx is unneeded flag today. But becau=
+se
+> we have been used it for 10 years since (B), it may have been used
+> differently. For example some DAI available both playback/capture, but it
+> set dpcm_playback flag only, in this case dpcm_xxx flag is used as
+> availability limitation. We can use playback_only flag instead in this
+> case, but it is very difficult to find such DAI today.
+>=20
+> Let's add grace time to remove dpcm_playback/capture flag.
+>=20
+> This patch don't use dpcm_xxx flag anymore, and indicates warning to use
+> xxx_only flag if both playback/capture were available but using only
+> one of dpcm_xxx flag, and not using xxx_only flag.
+
+This is a cleanup/refactoring preparation patch, I can see no reason why
+it would be considered for stable.
+
+--qJJpRQInejXrpnv9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbz/mAACgkQJNaLcl1U
+h9AlKQf/actvaVQqut6lkvX9H4EC03wsHESIYk/mIlv1AY/S2Z8XAnnZJKgihREa
+Rw7Gpz57S/gnBAOUzRLARFVuN/JfWnThVHpCnnhwdM/REUe/ilLuw2Vfqmj1ZEsd
+0yOypEvwgKiy88ncpS+hic56KuzZ7DuX+AyVAf7OMQJui73oCaKKOFxQHj3BRrs3
+cMqdY/G2JfHqbexQqw0jzg0kuhoLpUWYNMpga5IckBlrZBFgACZvn407nGEurpuu
+yd0fusSRVRpb4hcAOb85sO+zNVyOyGSQQsGppT7pGQlqxbxpUUblk5OLL6qgvOBo
++oVk/YDapmFe9QfP2uOvmjVRhbk37g==
+=IIv9
+-----END PGP SIGNATURE-----
+
+--qJJpRQInejXrpnv9--
 
