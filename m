@@ -1,263 +1,129 @@
-Return-Path: <linux-kernel+bounces-338263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8693E985593
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:36:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09F4D985597
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:36:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48FCB2840D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:36:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A864B1F24CF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B4415AAC6;
-	Wed, 25 Sep 2024 08:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925C815AAB8;
+	Wed, 25 Sep 2024 08:36:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j4KiXF85"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iFguPwAH"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4F015990E
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6C61552E0
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727253380; cv=none; b=YTtC4KSBU3DBVmZIB8MO/dcyrxeGbNdA1Y72cSaJJRJLHSYeLioIQwZqPuI8NJax6mYRuz0hbfbPKzKushCQ9P/h6XChRkv/hgWqVasJcBEiyQoLDBiUwhHpcojwYQ+15Yb8uNoDduTthcq09mI7VGEJxCEJFGOhJeY0i6Ep4Z4=
+	t=1727253414; cv=none; b=pmxJkroQVlRhOEUEpni3n5wZffrYWgBX6mZu+5v7O0bt5l7Iftf34Ytq/gnenlcAkmcXptm3qQIhCcKlSLW/ThNO23cT+Y/Q+mkg7NK4iUm0MPyT0m0y8yp9sAHYGvEMLGTbgGQBDfdknWP+biee1vxVMTKSDz44p+YbtVxQRNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727253380; c=relaxed/simple;
-	bh=oitXK+OEA9BE37g2KeTUWl9Ho1Qq0dOTe5le8iXubTE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cwp5CQQOMxviNPZtYJ6Zp2aKaqCIOqAwG8JkcaNJQCUEh8qwvDLrs/aWZnFL7392DNN6giLVSTOxuFiCl8jIN/tMgQgyTpMl+Im4CPT8sIiUN+S5ZIVZ9tNZtV+xWqqYW959AwqtZVkndFiqQAF5QRxGIkFQGI6MBfcLsNEt2d4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j4KiXF85; arc=none smtp.client-ip=209.85.208.48
+	s=arc-20240116; t=1727253414; c=relaxed/simple;
+	bh=M0aotw4FUaDTsuER1Qe9yFHs32+HvH0H5XJwh6aFk2s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mc7Dz4g6/Aw/NCG1p9GpvG2+ciEJhb2+8L7LQYcjjFKX3/bMwWfBHPG3/P9PGabKYCdny/ZFjhCTBJNzSAzRkmgZbOulsAHOu+yKojqSa+zWzW6rAqgz06OgzYb48bmvkWqpQxjIlC67erYl9ijkDO4Bn9yn58zBJhqoSGQbxts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iFguPwAH; arc=none smtp.client-ip=209.85.167.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c42f406e29so9221338a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 01:36:18 -0700 (PDT)
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5365d3f9d34so6666582e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 01:36:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727253377; x=1727858177; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ksp6a+vBmT9tTbuHR2BiPBA+vRFwOJtyTtU/9OAbDfY=;
-        b=j4KiXF85GTT33DY1Lym5+059Bcvb2bQMDJtqVw9lQiCFrE+aAGNOED1ywPnPNfQrjU
-         fV8L8v3To4K48YCnrTjN53BPO6mtjcoqpZe6Ovewr5H2UQ62PTTKXu3SoXuDl2DdDCVH
-         xnYFC0NNvvLva0Rm+paY8NxDzXNNimi0f31GaH3QVLf/E6iWXDv/gCARMQurvKeT4I4B
-         yF39hvcz2ADQefWE4zMQBYEZTirBYK0+0QixlnqxmEPUjrrNW8LdM7fn9cDVKQkEZpYx
-         UXxrB5jrNsVc/y1D+RiCfmFQ+xa7ot1vPdPUybVWIXThdcnRk//XurvRgYAle5QNCgMq
-         cuog==
+        d=linaro.org; s=google; t=1727253410; x=1727858210; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4LFFK30ORGOB8opISAVi2/AjiV23wsDk5moHBmYPz9c=;
+        b=iFguPwAHXGEHuf6HzKMA4mfTAV2JlGKc9Y4RfzigMR+YG7PedtPQbqifv8476ASNnq
+         06gI2JHJ6WL0IABubYTpXF0PcFjUMJkWbYr7DWNrpgBPgeE8ZsMZ9eD5FhqpTPBwff9/
+         85E3mpINcv5FSaAup6BXFZatP5QWRsH3AkXSYl58VFEXivNZDYWY6rXD1mO2xYYakVEb
+         wSw8Hd5P4Apb+pnvu/NihaQgfCWy4WZLezg7+kERQgb6oDd9e7NmJFhXie85h5a3Ch1G
+         iJCqdBquLprq5mt9DvPh7IlkMD0ay9QO0N+P0sMgN+BB4DH8PqLhSOxo+F4cVjgFmnqz
+         SV+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727253377; x=1727858177;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ksp6a+vBmT9tTbuHR2BiPBA+vRFwOJtyTtU/9OAbDfY=;
-        b=YCuEAJ072MVHQKqgeIU8oq+2D+Snai4N/y/6fFWbiU8TxM6IIh+kw48HXB10r42teK
-         zlOYN2rHEPJDD1hk/erWVWoVVk0ZhK/TtPQi4Q91a1W9HIc2qZ4UFpDdGK6m9hi98t/p
-         mmNXLelsFzpRSQeb5MMPXtRrYXmDisbPnZdmjcH1upN04LdbfboBYcbanviu7nFIR7BG
-         BMMHg9B+e0gwspnb6VJZBPoh/pocpbd5J4FYpl4nfndecxZhLbyTylKITuawhS/edaXV
-         RtEIzb6ackm9vCCuwkVwC6MEMVLeLGLf19Ctmduo/whU2gP76rZVDc+7aKzKnmPPaSYp
-         gM9g==
-X-Forwarded-Encrypted: i=1; AJvYcCU3M9SOIVgVKfLcdAlx5Av55BEdfDMmaf6IC/PM9bNwbUby730gwa4MXTJM06klkjS2sQD4kDhtYkrNHXA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1OfmZOMQjjzvJaDwZvFVjK4u+aiCDw4jHYpnKajBvTL2ZH6d6
-	vPz2T0+q51NcuK9ldBVaeFD8sbwjxrHErkuWxhrFurGqbwlbPD/lvNSvOZgoC+o=
-X-Google-Smtp-Source: AGHT+IE7u/39911j1c3sz50SAnSlko3wr3KlRCn4HiDW+ocZgc3Eog0SsprY2n653epsmYu7G78Wbw==
-X-Received: by 2002:a05:6402:3207:b0:5bf:2577:32b8 with SMTP id 4fb4d7f45d1cf-5c72061b565mr1672076a12.9.1727253376929;
-        Wed, 25 Sep 2024 01:36:16 -0700 (PDT)
-Received: from [192.168.1.3] ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c5cf49728asm1632068a12.33.2024.09.25.01.36.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Sep 2024 01:36:16 -0700 (PDT)
-Message-ID: <f436dc23-bcaf-493b-93a9-699b63a18d46@linaro.org>
-Date: Wed, 25 Sep 2024 09:36:15 +0100
+        d=1e100.net; s=20230601; t=1727253410; x=1727858210;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4LFFK30ORGOB8opISAVi2/AjiV23wsDk5moHBmYPz9c=;
+        b=fjPXbQq7kt0IfAAB4G6CqHhB0p9eqOpw7Q6siwLw/sZyrtb4QzfcC0YReFipd7qe2C
+         JAggfcS4QD+VtdNoHTFIFhCog7FyELk/x2ep7qoOLhFfhbA/RGSfsfkJROwMaVIfl3zE
+         DN2crgx+r6M6ekjyDJ7dXjPtJcPV42IgClheUDu/STMASD2J1jBALNJvuQKfMG1RQJqD
+         WAQLMHekFdX6Ahtwd3cyII+3ya+PHz1JhfK3nuW+MFi3DDt9yJTnd7BQy6UAoRjjNria
+         FkFTbQB6bhg9KGbWqNZotSCGMv8TLTE+kExpxF0n2MG/onl8bkhKIpf5xOovxVybfb58
+         oYxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX6MN7j275R9SJ9w3unfZiFGDRf9jRKNszhbGP3TognwDwwmRLEYNaPA+zwh5YRFNntTi4DWDFNFgbl7GU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGkIuFVPE+CAvmYI5qyitX4kG8NgjA7xVzWw/0gHD8LQIzjunY
+	r2clEhZiVKHAJ15aIlk8LocNkDMpj8KZ/t48+Y+z4uNwbtVQGwBeUQDjb1OBMRM=
+X-Google-Smtp-Source: AGHT+IFzrCK0VcF5jVceh0qZQhYC3c4kXM0RNJ7sHMGDqRBw1Dr0li2TBcCq7sjXdcDnOzH2DHlX+w==
+X-Received: by 2002:a05:6512:110e:b0:52c:e3ad:3fbf with SMTP id 2adb3069b0e04-5387755cb9cmr1098457e87.42.1727253410148;
+        Wed, 25 Sep 2024 01:36:50 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-537a85e0ba7sm457699e87.52.2024.09.25.01.36.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 01:36:48 -0700 (PDT)
+Date: Wed, 25 Sep 2024 11:36:47 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Liankun Yang <liankun.yang@mediatek.com>
+Cc: chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com, 
+	simona@ffwll.ch, matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, 
+	jitao.shi@mediatek.com, mac.shen@mediatek.com, peng.liu@mediatek.com, 
+	Project_Global_Chrome_Upstream_Group@mediatek.com, dri-devel@lists.freedesktop.org, 
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 1/1] drm/mediatek: dp: Add sdp path reset
+Message-ID: <ybnnqysm2ptvclaal3kw26ttqkgbicn45cwxkkchl72vuzwtt2@el7c34zqxmjl>
+References: <20240925064854.23065-1-liankun.yang@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/10] perf stat: Add --exclude-guest option
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: "Liang, Kan" <kan.liang@linux.intel.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org,
- Ravi Bangoria <ravi.bangoria@amd.com>, Mark Rutland <mark.rutland@arm.com>,
- James Clark <james.clark@arm.com>, Kajol Jain <kjain@linux.ibm.com>,
- Thomas Richter <tmricht@linux.ibm.com>, Atish Patra <atishp@atishpatra.org>,
- Palmer Dabbelt <palmer@rivosinc.com>, Mingwei Zhang <mizhang@google.com>
-References: <20240905202426.2690105-1-namhyung@kernel.org>
- <20240905202426.2690105-5-namhyung@kernel.org>
- <b1002dc7-78bf-40ed-83af-12a50622fb76@linux.intel.com>
- <c26e646d-5ebf-473e-91e2-db28fc01e35d@linaro.org>
- <ZvMfVe1VXwhCIOB9@google.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <ZvMfVe1VXwhCIOB9@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240925064854.23065-1-liankun.yang@mediatek.com>
 
+On Wed, Sep 25, 2024 at 02:48:22PM GMT, Liankun Yang wrote:
+> When using type-c to type-c to connect to the monitor,
+> the sound plays normally. If you unplug the type-c and
+> connect the type-c to hdmi dongle to the monitor, there will be noise.
+> 
+> By capturing the audio data, it is found that
+> the data position is messy, and there is no error in the data.
+> 
+> Through experiments, it can be restored by resetting the SDP path
+> when unplugging it.
+> 
+> Signed-off-by: Liankun Yang <liankun.yang@mediatek.com>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> ---
+> Changes in V3:
+> - No change.
 
+If there are no changes, why did you increase the revision?
 
-On 24/09/2024 9:21 pm, Namhyung Kim wrote:
-> Hello,
+> Per suggestion from the previous thread:
+> https://patchwork.kernel.org/project/linux-mediatek/patch/20240923132521.22785-1-liankun.yang@mediatek.com/
+
+The link points to some other patch. Please consider using b4 tool, it
+will manage changelogs and links for you.
+
 > 
-> On Mon, Sep 23, 2024 at 09:47:17AM +0100, James Clark wrote:
->>
->>
->> On 06/09/2024 3:33 pm, Liang, Kan wrote:
->>>
->>>
->>> On 2024-09-05 4:24 p.m., Namhyung Kim wrote:
->>>> This option is to support the old behavior of setting exclude_guest by
->>>> default.  Now it doesn't set the bit so users want the old behavior can
->>>> use this option.
->>>>
->>>>     $ perf stat true
->>>>
->>>>      Performance counter stats for 'true':
->>>>
->>>>                   0.86 msec task-clock:u                     #    0.443 CPUs utilized
->>>>                      0      context-switches:u               #    0.000 /sec
->>>>                      0      cpu-migrations:u                 #    0.000 /sec
->>>>                     49      page-faults:u                    #   56.889 K/sec
->>>>                    ...
->>>>
->>>>     $ perf stat --exclude-guest true
->>>>
->>>>      Performance counter stats for 'true':
->>>>
->>>>                   0.79 msec task-clock:Hu                    #    0.490 CPUs utilized
->>>>                      0      context-switches:Hu              #    0.000 /sec
->>>>                      0      cpu-migrations:Hu                #    0.000 /sec
->>>>                     49      page-faults:Hu                   #   62.078 K/sec
->>>>                    ...
->>>>
->>>> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
->>>> ---
->>>>    tools/perf/Documentation/perf-stat.txt | 7 +++++++
->>>>    tools/perf/builtin-stat.c              | 2 ++
->>>>    2 files changed, 9 insertions(+)
->>>>
->>>> diff --git a/tools/perf/Documentation/perf-stat.txt b/tools/perf/Documentation/perf-stat.txt
->>>> index 2bc06367248691dd..d28d8370a856598f 100644
->>>> --- a/tools/perf/Documentation/perf-stat.txt
->>>> +++ b/tools/perf/Documentation/perf-stat.txt
->>>> @@ -382,6 +382,13 @@ color the metric's computed value.
->>>>    Don't print output, warnings or messages. This is useful with perf stat
->>>>    record below to only write data to the perf.data file.
->>>> +--exclude-guest::
->>>> +Don't count event in the guest mode.  It was the old behavior but the
->>>> +default is changed to count guest events also.  Use this option if you
->>>> +want the old behavior (host only).  Note that this option needs to be
->>>> +before other events in case you added -e/--event option in the command
->>>> +line.
->>>
->>> I'm not sure if we really need this option. I think it may bring more
->>> trouble than what we get.
->>>
->>> The name of the "--exclude-guest" sounds like a replacement of the event
->>> modifier "H". But in fact, it's not. It should only affect the default.
->>> It doesn't set the "H" for any events.
-> 
-> Well I think it's tricky but it'd set "H" modifier events after the
-> option.  But I have to agree that it can bring more troubles.
-> 
->>>
->>> Except for the perf kvm user, I don't think there are many users which
->>> care the exclude_guest. The behavior of the perf kvm is not changed. So
->>> the option seems not that important. If we really want an option to
->>> restore the old behavior, it's better to choose a better name and update
->>> the description.
-> 
-> Personally I don't want to this option but just worried if there's a
-> case where exclude_guest is preferred.
-> 
->>
->> Do we not want to keep exclude_guest for record, but remove it for stat?
-> 
-> What I really want is to synchronize record and stat behavior in terms
-> of the default exclusion mode.  If everyone is fine, I'd like to remove
-> exclude_guest from the default and set it only if needed (through the
-> fallback) like we do for exclude_kernel.
-> 
->>
->> Because in record the addresses of guest samples don't make sense without
->> extra work, but for stat you might want to see an overview of the whole
->> system.
-> 
-> I think it depends on the use case and (power) users should know about
-> their environment and requirement.  The concern is what's the reasonable
-> default, but I think it should be the same both in perf record and stat
-> at least.
-> 
->>
->> For Coresight tracing and SPE we would want to keep exclude_guest, otherwise
->> you generate a load of extra trace that you can't make use of. Say you were
->> doing PGO on your host you wouldn't be recompiling anything the guests were
->> running.
-> 
-> For the specific use case, I think we can guide users to add "H"
-> modifier (I guess it's not the default event for perf record).
-> Maybe we can consider per-PMU default attributes.
+> Changes in V2:
+> - Fix build error.
+> Per suggestion from the previous thread:
+> https://patchwork.kernel.org/project/linux-mediatek/patch/20240923133610.23728-1-liankun.yang@mediatek.com/
+> ---
+>  drivers/gpu/drm/mediatek/mtk_dp.c     | 15 +++++++++++++++
+>  drivers/gpu/drm/mediatek/mtk_dp_reg.h |  1 +
+>  2 files changed, 16 insertions(+)
 > 
 
-Yeah I was thinking about adding it as a default when the Coresight and 
-SPE events are configured, but I think it's too much to expect for 
-people to know all the edge cases about what the per PMU defaults will 
-be. Having one default for all PMUs makes more sense to me.
-
-I suppose asking Coresight users to add :H when they need it might be a 
-less bad thing than this change to clean up the fragmentation in the 
-defaults.
-
-I expect most of the time if :H is not added things continue to work, 
-just that more data will be recorded. One real concern is that in some 
-configurations there is a limited buffer size and once it's filled you 
-don't get any more data. If that buffer is filled by guest trace then 
-maybe some Auto FDO flow could break. But it's kind of an edge case of 
-an edge case and adding :H isn't really the end of the world.
-
->>
->> If we do change the defaults isn't ':H' already enough to go back to the old
->> behavior? I'm wondering why we need an argument when all the other exclude
->> rules are done with the letter modifiers?
-> 
-> I'm not sure I follow this.  But maybe we don't need this option at all.
-> We can add ":H" for every event but I'm too lazy to add them to all the
-> default events in perf data. :)
-> 
-> Thanks,
-> Namhyung
->   
-
-Oh I see yes, the argument is a shortcut to adding H on all events 
-and/or the default ones. I wasn't sure if was added because it couldn't 
-be done with :H, but I see it's an alternative instead. So adding it 
-makes sense.
-
->>>> +
->>>>    STAT RECORD
->>>>    -----------
->>>>    Stores stat data into perf data file.
->>>> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
->>>> index d8315dae930184ba..4d47675af5cc3094 100644
->>>> --- a/tools/perf/builtin-stat.c
->>>> +++ b/tools/perf/builtin-stat.c
->>>> @@ -2491,6 +2491,8 @@ int cmd_stat(int argc, const char **argv)
->>>>    		OPT_BOOLEAN_FLAG(0, "all-user", &stat_config.all_user,
->>>>    				"Configure all used events to run in user space.",
->>>>    				PARSE_OPT_EXCLUSIVE),
->>>> +		OPT_BOOLEAN(0, "exclude-guest", &exclude_HG_default,
->>>> +			"Don't count events in the guest mode"),
-
-Maybe this would be a good hint if it really is equivalent:
-
-  +	"Don't count events in the guest mode. (Add :H to all events)"),
-
->>>>    		OPT_BOOLEAN(0, "percore-show-thread", &stat_config.percore_show_thread,
->>>>    			"Use with 'percore' event qualifier to show the event "
->>>>    			"counts of one hardware thread by sum up total hardware "
->>
-
+-- 
+With best wishes
+Dmitry
 
