@@ -1,231 +1,158 @@
-Return-Path: <linux-kernel+bounces-338316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C202F985655
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:29:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC3D79855F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:58:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E60821C22FCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:29:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DACA28144C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:58:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24EC15C136;
-	Wed, 25 Sep 2024 09:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="gi6Vtva/"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937D415B113;
+	Wed, 25 Sep 2024 08:58:44 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42BFC15B972
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 09:28:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843ED139579;
+	Wed, 25 Sep 2024 08:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727256537; cv=none; b=ERjZak/N5B46jx4lj3bYA0+nogC5yKeIMEQlC2xmskn8dn8tFXQNZlu21QdpmfyGN0EM96DHFIADVFZLpYTEbP0o+QWIsoPyN2MDq0X7k6r2lELllmuIN7ArmHN5zsBPtQTtWYIU+IkqNxlQHwBuV8LhEKDkameEptoVcV4Oti0=
+	t=1727254724; cv=none; b=CtfyoN0k9ua21lHF/fJro1HxRAM/11gpjCz6kiprBbwmzUBSE6UCTNXuQ708st0PK+cGpOnx54Pk/WgX2MX8E+yfe/m6wnXAc09LbGxLjcXRrjdOe6rD8Nnvx5o2d9ZWSmz+5BXQ+3VcXdgmnATHgcVOCrgEJ+F4qC+IIZc0uIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727256537; c=relaxed/simple;
-	bh=mMWh3Z1Y0a6QMHBkqsaNi5Podd5MV+7sJ5y0oxuH01U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 References; b=TGlvUQFBT7Fpm4msADKR59+VQgKElP37DgIVjrz+ZLTSV/zSyDew1nlvk+V1GU1H6nhgvJ7695PH3qpEigB7npawmw0jlqfyLoX19CT+CzTkmF1YirTGexgfKoXAiOW6H891x5itf+TdsLxWijz/h+n1P/q0g//fw9STiIv93yQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=gi6Vtva/; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240925092848epoutp0443d853fa1d7b3404e3610c9cc362adc7~4cqkwKdSI1399713997epoutp04D
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 09:28:48 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240925092848epoutp0443d853fa1d7b3404e3610c9cc362adc7~4cqkwKdSI1399713997epoutp04D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1727256528;
-	bh=B6PiPsFEiraCQMw0Yc1r7WTRP21USjl00XIkTG0Mk4Q=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=gi6Vtva/0fSnnBWkYXqdm9z3v4PHJhLHXVNArIqfbiZHayZRL6meUt5Qbg9rgGZgq
-	 1UUgobtLzWJ16mNz7Y8BhSYHpLqAIbaVAv2MPJJ+/V+lbH3C+o5VDgIvHFmh65Ys9P
-	 tQzp7NRpANhxzvdNcUFjZmm5kYjohExK34th8s1w=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20240925092847epcas5p2d5dd578346e67f76e75f6fa06d5040d1~4cqkWz0I80788307883epcas5p2e;
-	Wed, 25 Sep 2024 09:28:47 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.179]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4XDBHd6GJ9z4x9Q6; Wed, 25 Sep
-	2024 09:28:45 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	CE.12.09640.DC7D3F66; Wed, 25 Sep 2024 18:28:45 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240925085815epcas5p16fa977581284a81dae7b67da8bc96a85~4cP5mkhnx1293612936epcas5p1n;
-	Wed, 25 Sep 2024 08:58:15 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240925085814epsmtrp2310113ec2b28c6371d9d562aa5695a9f~4cP5kA0vF2616326163epsmtrp2d;
-	Wed, 25 Sep 2024 08:58:14 +0000 (GMT)
-X-AuditID: b6c32a49-a57ff700000025a8-a3-66f3d7cd383c
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	D1.07.08964.6A0D3F66; Wed, 25 Sep 2024 17:58:14 +0900 (KST)
-Received: from dev.. (unknown [109.105.118.18]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240925085813epsmtip1564bde7c46c1a79a0a91b0ea8ab8d6d5~4cP4ivrqD0082300823epsmtip1W;
-	Wed, 25 Sep 2024 08:58:13 +0000 (GMT)
-From: Ruyi Zhang <ruyi.zhang@samsung.com>
-To: axboe@kernel.dk, asml.silence@gmail.com
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-	peiwei.li@samsung.com, Ruyi Zhang <ruyi.zhang@samsung.com>
-Subject: [PATCH v2 RESEND] io_uring/fdinfo: add timeout_list to fdinfo
-Date: Wed, 25 Sep 2024 08:58:00 +0000
-Message-ID: <20240925085800.1729-1-ruyi.zhang@samsung.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1727254724; c=relaxed/simple;
+	bh=77TYbhk3FEQDvRMc1aKR+Jy7UbmeKedsMaovZa0q+Dw=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=gol1XSicyEfjehcbjqq+oYdaxvBtx+F5oJAHpBYEh01A4gqMsW2kQcPYl1XxVgkhpZihg/msMrAxuAlv/uTMc+sEs+uImc6pbELNBO94N1GwmHf4Kj4eimbVs/0lpUOE+YmGUE9dykJyaMFQL4cAfFbBZ/RqwZqXCrILIrVkopQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XD9bD1h8Pz1T7y2;
+	Wed, 25 Sep 2024 16:57:12 +0800 (CST)
+Received: from dggpeml500019.china.huawei.com (unknown [7.185.36.137])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1E814180087;
+	Wed, 25 Sep 2024 16:58:37 +0800 (CST)
+Received: from [10.67.121.58] (10.67.121.58) by dggpeml500019.china.huawei.com
+ (7.185.36.137) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 25 Sep
+ 2024 16:58:36 +0800
+Message-ID: <09887c82-2813-59c3-2ff2-0b7223b37b9e@hisilicon.com>
+Date: Wed, 25 Sep 2024 16:58:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLKsWRmVeSWpSXmKPExsWy7bCmpu7Z65/TDL7PNLCYs2obo8Xqu/1s
-	Fu9az7FY/Oq+y2hxedccNotnezktvhz+zm5xdsIHVgcOj52z7rJ7XD5b6tG3ZRWjx+dNcgEs
-	Udk2GamJKalFCql5yfkpmXnptkrewfHO8aZmBoa6hpYW5koKeYm5qbZKLj4Bum6ZOUBHKCmU
-	JeaUAoUCEouLlfTtbIryS0tSFTLyi0tslVILUnIKTAr0ihNzi0vz0vXyUkusDA0MjEyBChOy
-	M47u1i3YKlFx+tV1xgbGz8JdjJwcEgImEjO/b2XpYuTiEBLYzShx58Q5KOcTo8THqS8ZQaqE
-	BL4xSjz5aNfFyAHW8f6aO0TNXkaJs/+vsUI4TxglLh1sZANpYBPQlLg8swGsWURAW+L146ks
-	IDazQIXEuttPmUAGCQu4Sby86g0SZhFQlZiyfCM7iM0rYCWxZslfVojr5CUW71jODBEXlDg5
-	8wnUGHmJ5q2zmUH2SgicY5c49+AwC0SDi8T0i4fYIWxhiVfHt0DZUhKf3+1lg3igWOJhXz5E
-	uIFRYtvvOgjbWuLflT0sICXMQOev36UPEZaVmHpqHRPEWj6J3t9PmCDivBI75sHYKhLvV7xj
-	gtm0vnU3lO0hMbnxGzQIYyWuPVrPOIFRfhaSb2Yh+WYWwuYFjMyrGCVTC4pz01OLTQsM81LL
-	4ZGanJ+7iRGcDrU8dzDeffBB7xAjEwfjIUYJDmYlEd5JNz+mCfGmJFZWpRblxxeV5qQWH2I0
-	BQbxRGYp0eR8YELOK4k3NLE0MDEzMzOxNDYzVBLnfd06N0VIID2xJDU7NbUgtQimj4mDU6qB
-	Safk4vR7Umk3yjkOd7r7dpxdylWtdukMw55DYl/2rbHP1JUzfPhwRluS1yHzji9zuhd+P/0/
-	MzJu62z57eckmJPZT//bWLMihvmohFlB4vOWL7v8/adz9u0x1Zy8j8P1T+IcY56iyuCcw1l3
-	Qp/0yAmlmF2fKrrpbuoWWZfz+VOP7k7+P3tXs7Bs9Du2/byixmHm22Qt+O4+O3Ev7su0E6+3
-	5jokufDacRwsrzsWpfX9lHzYb8fl2+MjD8/afo/n4vGbE9xqGlvrlXNTrVzDrKV7X+x+/bB2
-	1ZXLTToMRuastedXKD6+3VWq9v1Km0Z/rtQpx3Uia7aErP3L0zJN6ex+Z2cB0WeaMvOeHMoW
-	UGIpzkg01GIuKk4EAHrJLecQBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJLMWRmVeSWpSXmKPExsWy7bCSnO6yC5/TDG4dMbWYs2obo8Xqu/1s
-	Fu9az7FY/Oq+y2hxedccNotnezktvhz+zm5xdsIHVgcOj52z7rJ7XD5b6tG3ZRWjx+dNcgEs
-	UVw2Kak5mWWpRfp2CVwZR3frFmyVqDj96jpjA+Nn4S5GDg4JAROJ99fcuxi5OIQEdjNKzNw9
-	lbGLkRMoLiVxs+kYE4QtLLHy33N2iKJHjBK3n1xnAUmwCWhKXJ7ZwAgySERAV6LxrgJImFmg
-	RqLr6gQmkLCwgJvEy6veIGEWAVWJKcs3soPYvAJWEmuW/GWFGC8vsXjHcmaIuKDEyZlPWCDG
-	yEs0b53NPIGRbxaS1CwkqQWMTKsYJVMLinPTc4sNCwzzUsv1ihNzi0vz0vWS83M3MYJDU0tz
-	B+P2VR/0DjEycTAeYpTgYFYS4Z1082OaEG9KYmVValF+fFFpTmrxIUZpDhYlcV7xF70pQgLp
-	iSWp2ampBalFMFkmDk6pBqbNOlMUBBofqKnPm7ah+kkv+6E3V6bxuvjX/Bbhmn9oheIEtfDN
-	iZ+vPCldVm96YdV3k2u9nG2v1kjyHXXjOdN3nel75dFzNfce1y3hCrnyKPLLD76shfIyl3mc
-	xcIVZ/dr3Ga8/tvnpRqnFEfQwfxlOj4qU5aZPBf/NvHdE8MzfzRP1y6yeLJ39TcdhoOJD+/2
-	KhWbuLxebf/g75o5Jrzpz6pOh4hPmS9ys+V5/bLsA0IvrHX/eLT4sLOfUnpvc75E01Hpe/bq
-	1gMXxU3u3FY0ap2k4iHPs0917QedK1V5G+7/tuDc03zkoVbQWj6ODfpfM1XXKvSX6UnH1B/V
-	+l6ykFPmh+7nCSFLGITlzzxWYinOSDTUYi4qTgQAm0+h57wCAAA=
-X-CMS-MailID: 20240925085815epcas5p16fa977581284a81dae7b67da8bc96a85
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240925085815epcas5p16fa977581284a81dae7b67da8bc96a85
-References: <CGME20240925085815epcas5p16fa977581284a81dae7b67da8bc96a85@epcas5p1.samsung.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+From: Jie Zhan <zhanjie9@hisilicon.com>
+Subject: Re: [PATCH v7 1/4] cpufreq: Introduce an optional cpuinfo_avg_freq
+ sysfs entry
+To: Beata Michalska <beata.michalska@arm.com>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
+	<ionela.voinescu@arm.com>, <sudeep.holla@arm.com>, <will@kernel.org>,
+	<catalin.marinas@arm.com>, <rafael@kernel.org>, <viresh.kumar@linaro.org>
+CC: <sumitg@nvidia.com>, <yang@os.amperecomputing.com>,
+	<vanshikonda@os.amperecomputing.com>, <lihuisong@huawei.com>
+References: <20240913132944.1880703-1-beata.michalska@arm.com>
+ <20240913132944.1880703-2-beata.michalska@arm.com>
+In-Reply-To: <20240913132944.1880703-2-beata.michalska@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpeml500019.china.huawei.com (7.185.36.137)
 
-io_uring fdinfo contains most of the runtime information,which is
-helpful for debugging io_uring applications; However, there is
-currently a lack of timeout-related information, and this patch adds
-timeout_list information.
+Hi Beata,
 
---
-changes since v1:
-- use _irq version spin_lock.
-- Fixed formatting issues and delete redundant code.
-- v1 :https://lore.kernel.org/io-uring/20240812020052.8763-1-ruyi.zhang@samsung.com/
---
+Great thanks for the update.
 
-Signed-off-by: Ruyi Zhang <ruyi.zhang@samsung.com>
----
- io_uring/fdinfo.c  | 14 ++++++++++++++
- io_uring/timeout.c | 12 ------------
- io_uring/timeout.h | 12 ++++++++++++
- 3 files changed, 26 insertions(+), 12 deletions(-)
+On 13/09/2024 21:29, Beata Michalska wrote:
+> Currently the CPUFreq core exposes two sysfs attributes that can be used
+> to query current frequency of a given CPU(s): namely cpuinfo_cur_freq
+> and scaling_cur_freq. Both provide slightly different view on the
+> subject and they do come with their own drawbacks.
+> 
+> cpuinfo_cur_freq provides higher precision though at a cost of being
+> rather expensive. Moreover, the information retrieved via this attribute
+> is somewhat short lived as frequency can change at any point of time
+> making it difficult to reason from.
+> 
+> scaling_cur_freq, on the other hand, tends to be less accurate but then
+> the actual level of precision (and source of information) varies between
+> architectures making it a bit ambiguous.
+> 
+> The new attribute, cpuinfo_avg_freq, is intended to provide more stable,
+> distinct interface, exposing an average frequency of a given CPU(s), as
+> reported by the hardware, over a time frame spanning no more than a few
+> milliseconds. As it requires appropriate hardware support, this
+> interface is optional.
+> 
+> Signed-off-by: Beata Michalska <beata.michalska@arm.com>
+> ---
+>  Documentation/admin-guide/pm/cpufreq.rst | 10 ++++++++
+>  drivers/cpufreq/cpufreq.c                | 31 ++++++++++++++++++++++++
+>  include/linux/cpufreq.h                  |  1 +
+>  3 files changed, 42 insertions(+)
+> 
+> diff --git a/Documentation/admin-guide/pm/cpufreq.rst b/Documentation/admin-guide/pm/cpufreq.rst
+> index fe1be4ad88cb..2204d6132c05 100644
+> --- a/Documentation/admin-guide/pm/cpufreq.rst
+> +++ b/Documentation/admin-guide/pm/cpufreq.rst
+> @@ -248,6 +248,16 @@ are the following:
+>  	If that frequency cannot be determined, this attribute should not
+>  	be present.
+>  
+> +``cpuinfo_avg_freq``
+> +        An average frequency (in KHz) of all CPUs belonging to a given policy,
+> +        derived from a hardware provided feedback and reported on a time frame
+> +        spanning at most few milliseconds.
 
-diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
-index d43e1b5fcb36..f524c3cd6f57 100644
---- a/io_uring/fdinfo.c
-+++ b/io_uring/fdinfo.c
-@@ -14,6 +14,7 @@
- #include "fdinfo.h"
- #include "cancel.h"
- #include "rsrc.h"
-+#include "timeout.h"
- 
- #ifdef CONFIG_PROC_FS
- static __cold int io_uring_show_cred(struct seq_file *m, unsigned int id,
-@@ -55,6 +56,7 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *file)
- 	struct io_ring_ctx *ctx = file->private_data;
- 	struct io_overflow_cqe *ocqe;
- 	struct io_rings *r = ctx->rings;
-+	struct io_timeout *timeout;
- 	struct rusage sq_usage;
- 	unsigned int sq_mask = ctx->sq_entries - 1, cq_mask = ctx->cq_entries - 1;
- 	unsigned int sq_head = READ_ONCE(r->sq.head);
-@@ -235,5 +237,17 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *file)
- 		seq_puts(m, "NAPI:\tdisabled\n");
- 	}
- #endif
-+
-+	seq_puts(m, "TimeoutList:\n");
-+	spin_lock_irq(&ctx->timeout_lock);
-+	list_for_each_entry(timeout, &ctx->timeout_list, list) {
-+		struct io_timeout_data *data;
-+
-+		data = cmd_to_io_kiocb(timeout)->async_data;
-+		seq_printf(m, "  off=%u, repeats=%u, sec=%lld, nsec=%ld\n",
-+			   timeout->off, timeout->repeats, data->ts.tv_sec,
-+			   data->ts.tv_nsec);
-+	}
-+	spin_unlock_irq(&ctx->timeout_lock);
- }
- #endif
-diff --git a/io_uring/timeout.c b/io_uring/timeout.c
-index 9973876d91b0..4449e139e371 100644
---- a/io_uring/timeout.c
-+++ b/io_uring/timeout.c
-@@ -13,18 +13,6 @@
- #include "cancel.h"
- #include "timeout.h"
- 
--struct io_timeout {
--	struct file			*file;
--	u32				off;
--	u32				target_seq;
--	u32				repeats;
--	struct list_head		list;
--	/* head of the link, used by linked timeouts only */
--	struct io_kiocb			*head;
--	/* for linked completions */
--	struct io_kiocb			*prev;
--};
--
- struct io_timeout_rem {
- 	struct file			*file;
- 	u64				addr;
-diff --git a/io_uring/timeout.h b/io_uring/timeout.h
-index a6939f18313e..befd489a6286 100644
---- a/io_uring/timeout.h
-+++ b/io_uring/timeout.h
-@@ -1,5 +1,17 @@
- // SPDX-License-Identifier: GPL-2.0
- 
-+struct io_timeout {
-+	struct file			*file;
-+	u32				off;
-+	u32				target_seq;
-+	u32				repeats;
-+	struct list_head		list;
-+	/* head of the link, used by linked timeouts only */
-+	struct io_kiocb			*head;
-+	/* for linked completions */
-+	struct io_kiocb			*prev;
-+};
-+
- struct io_timeout_data {
- 	struct io_kiocb			*req;
- 	struct hrtimer			timer;
--- 
-2.43.0
+I don't think it's necessary to put the 'at most few milliseconds'
+limitation on.
 
+It's supposed to be fine for other platforms to implement the interface
+with a longer time period, e.g. a few seconds, in the future.  Otherwise,
+this would probably force the implementation of 'cpuinfo_avg_freq' to be
+binded with the 'scale freq tick' stuff.
+
+> +
+> +        This is expected to be based on the frequency the hardware actually runs
+> +        at and, as such, might require specialised hardware support (such as AMU
+> +        extension on ARM). If one cannot be determined, this attribute should
+> +        not be present.
+> +
+>  ``cpuinfo_max_freq``
+>  	Maximum possible operating frequency the CPUs belonging to this policy
+>  	can run at (in kHz).
+
+...
+
+> diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+> index d4d2f4d1d7cb..48262073707e 100644
+> --- a/include/linux/cpufreq.h
+> +++ b/include/linux/cpufreq.h
+> @@ -1195,6 +1195,7 @@ static inline int of_perf_domain_get_sharing_cpumask(int pcpu, const char *list_
+>  #endif
+>  
+>  extern unsigned int arch_freq_get_on_cpu(int cpu);
+> +extern int arch_freq_avg_get_on_cpu(int cpu);
+
+It's werid to have two different functions with mostly the same behaviour,
+i.e. arch_freq_get_on_cpu() and arch_freq_avg_get_on_cpu().
+
+Appreciated that there would be some capatibility work with x86 at the
+moment if merging them, e.g. return type, default implementation, impact on
+some userspace tools, etc.
+
+Anyhow, are they supposed to be merged in the near future?
+
+
+Thanks,
+Jie
+>  
+>  #ifndef arch_set_freq_scale
+>  static __always_inline
 
