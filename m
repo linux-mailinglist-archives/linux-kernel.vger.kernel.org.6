@@ -1,228 +1,173 @@
-Return-Path: <linux-kernel+bounces-339734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57ED69869A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 01:29:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 353AF9869A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 01:39:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B12D2B21E49
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 23:29:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5D8B283490
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 23:39:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D291A3A84;
-	Wed, 25 Sep 2024 23:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C21511A3BD1;
+	Wed, 25 Sep 2024 23:39:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="sSF/p827"
-Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fwL7EGk7"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB15A1A3A97
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 23:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7633C1A3BB4
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 23:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727306945; cv=none; b=aoCOBxOinFMetrkl80SN9boxLc6sgqqga9c3EO8o7bC3uJ0/qxIbEdIlg0IzFklP4R4AQhMDJVWcxoU/ZYw/nuI1nMNJAYZPgKaYwFxqKZOZV1v7HdMv1Hd/j2VTQA6tzh6O7KusmFqUSlcavB0x3jvwktLwHyaOHxvMasukRD8=
+	t=1727307564; cv=none; b=rwjwXc9gG8lVnfyUZQYQKBW1l2ZcirHla/MyoHdEbgu5cB7VLEkFQbbmQY/DL190gs9/xs+nOdg86blVtt+/PhK648muJ/8hqnOIV1KDv8pfKCAcq90+1vT+oszA6/LzzmzagCiAjssWqlGyR6jO3d2s/bSfdMtwO1qi728aRhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727306945; c=relaxed/simple;
-	bh=bH+Ve5nsEN+3SnSHno8h9Y2E52xhoyJJ0TckeDMAJfQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dhmf16Rn27KaGZFlkTNA4RJlCtiGzlordB2/hK2js14+4b/VUIpZkiLZZBAQCpo366tZGSmM6DEwNpnMpuYcWFH/Kr941KB/lPljDwjRwR8tzDZq0lFTpkGSzSnro7Uaw+xzjgkia7YFTtXZE6jkel15DLROGOKFE4kZVEunoTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=sSF/p827; arc=none smtp.client-ip=209.85.218.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-a8d51a7d6f5so49071166b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 16:29:03 -0700 (PDT)
+	s=arc-20240116; t=1727307564; c=relaxed/simple;
+	bh=muaWdXOp0i1NHw58x/ytq5TJ2WagOWI67+2dfrsQk4o=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=LFQKcTLeIRPUvoKepjCTJdWVHA7Z4aE1Qt88EGgGux4KG3ZxNq+G4mWyTG0oq4FirILroolEqni5QbJATwZB4CZOHCc8MYx5KSMIIrQQEZjR+gIUe2TVnuF3os7CeYzhH0Xqs9CVZszOFaC2bJkv6yax0kRB0AZuN3fe9a2bf4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fwL7EGk7; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6dbbeee08f0so22495007b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 16:39:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1727306942; x=1727911742; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=FqG3lde+Y337a6pWWD0xpeuKeT8KOXh/zQzNaK4EmN0=;
-        b=sSF/p8275P4umEo8K/+VgHKfPC4cxJEidG44uLv5t3Rf+A3BqdOK2LM8mpx+Lyz4aX
-         Ezizl5j7uFYV1Y8U/VkBa3rjlhsuQ00ZniTEtfwTEt4HaNi6rDEzAo1aN5O9OyCoseGn
-         ST1W2PONKs4d1YywnHB72fF2yALWZjShTqVO0=
+        d=google.com; s=20230601; t=1727307561; x=1727912361; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=q7b6h3HmgxgHIdWpgRX2iff7bgpoat2/yBhTNJ92XBU=;
+        b=fwL7EGk7M8apziku9aY01pxjzuXj/9hRKLP1kooKi7wujrIJghEoOyYGC9usyuXZZr
+         7GzOFogKNpME0m3ThbAbc9kqEdcSX5j9TgwqKAqDeb6QXO4fXXs6ydSc2SRU0FC8CINv
+         VO/BynGOHd7xuK/+z3+iH9jI9mBjs1rgmRDmg6x5EYTZ86zC7Xp42GbZq3isgdqmj4tr
+         MM5dmeXLgw5xR7fDQ1n+AFc4icsMEOJ49rfCNhzShfnpjvvif7wKRrj9AS3Lg++2YXSX
+         7kLhy8Erpv3/IaApt2/mPzum/b/bmcO1TCI9mi05S7Bmwl1rXsYH4ha7jlcIN/CBTZW5
+         wKNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727306942; x=1727911742;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FqG3lde+Y337a6pWWD0xpeuKeT8KOXh/zQzNaK4EmN0=;
-        b=WYB2rt3EPG8ftvxPHOVXD4rd/64Q4ZOvP5jAkBtGMx1P0jfmUc6c0BEl1tgZyxpsOl
-         bY9jaNdK0XvLIkaF5Wt/BkoX3/DZcBaYLQaaM2751+BTjLkhSH9DD73MLEnj9OCeibSv
-         NfK3xENp+mDWxEaygS00bN8CHcF3/bTReVTHu9LqoG8D86XjaSxb6ro6JW1ZE+8CByaq
-         NM5H0Rhvj9mrybFUqj+Y3+IcsCKYdbF6tG+crK46DfJzcEXcrSkB8NHPfvxuFUMptQ2m
-         dh5ULNsjb/kuoeqemAVylvulmBezZCx+T50JvRITgWUtmWzN/sHHtR0xHq0vfccPpC3f
-         tgPA==
-X-Gm-Message-State: AOJu0YzEVejfj/rfHI2dHDE73C9QhbXvXwDSGiMtznUx2WTq+BLvK9/K
-	LdMbhQ1YU3VJ7yGx3pHqq2sB8SQAra3gzAXkeOvfQ7YakzhHTKWOMSRCMBZBSY0=
-X-Google-Smtp-Source: AGHT+IFNUkb34hUHNiX21asJjU+4/p6K+ftZI1kY5bJBBmizbpavgRvYbS8lljDcfPfWnv+WD7NG6A==
-X-Received: by 2002:a17:907:9620:b0:a86:96d1:d1f with SMTP id a640c23a62f3a-a93a036bb1fmr431279666b.26.1727306941802;
-        Wed, 25 Sep 2024 16:29:01 -0700 (PDT)
-Received: from [192.168.1.10] (host-92-26-98-202.as13285.net. [92.26.98.202])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93a238bc4esm163275766b.81.2024.09.25.16.29.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Sep 2024 16:29:01 -0700 (PDT)
-Message-ID: <5703f2d8-7ca0-4f01-a954-c0eb1de930b4@citrix.com>
-Date: Thu, 26 Sep 2024 00:29:00 +0100
+        d=1e100.net; s=20230601; t=1727307561; x=1727912361;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=q7b6h3HmgxgHIdWpgRX2iff7bgpoat2/yBhTNJ92XBU=;
+        b=oKa1sDY9b/jcyKlnqETsify4hXbhAdKFZ8NFDw5At9aWOMgLGzUA+6qIT9YXtmuZLQ
+         wgGi+5xXRMhrro17KuFGNZOQWDrDhzBXdT8W//i+nwhytd1yyajbOZoPhz2iEFzvs0ed
+         WtsVxj1z6eB4SiT3QipxuUfDnvqhlTepKD+4yn99Bs/094wljo4dwY2rZ/cTqcjsQ2K5
+         ZJZ2xuWamPNPJQj0gBYZL2qM16ESYjROr3+/3ri97c+mMTeCxYBvCmxCSCGj/0743PoZ
+         7hbeFDiQbzUxe/tp2edASnudDhaMmLBWb03J8AlxNzQ5/lGEhQWTAPq3TJv1AP09hGCI
+         Yvjw==
+X-Forwarded-Encrypted: i=1; AJvYcCWMhzvhDKiM4Og8meuwMgPD5I9nHh22rQ7jndGIIaZOvRLa6vsq4iokL5fDGX7fi108N+fWEsc+W839KWg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyL4uRL3LaC2jYAT98Z7aDijUbURVEs+eqKnan/6Jnq3uPHn78c
+	GnC8hL/NuCLO6OquoX5kClCw7o86N0Ws4x5IAioDi9eqb3YvWImHtcPKjbL+fywos4M2p1sYxA2
+	gnhf+PA==
+X-Google-Smtp-Source: AGHT+IGA4oLQ7oskOvz6jUuH8pwaRGHmRTicDgFocvw4e/tJcx31v4NxTp/MI5BNDdGho+l01HKc5yR1Qinp
+X-Received: from anyblade.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:1791])
+ (user=mmaurer job=sendgmr) by 2002:a25:ad4d:0:b0:e11:593b:b8e7 with SMTP id
+ 3f1490d57ef6-e25ca915db6mr19076276.3.1727307561199; Wed, 25 Sep 2024 16:39:21
+ -0700 (PDT)
+Date: Wed, 25 Sep 2024 23:38:15 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 3/3] x86/bugs: Use code segment selector for VERW
- operand
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
- Robert Gill <rtgill82@gmail.com>, Jari Ruusu <jariruusu@protonmail.com>,
- Brian Gerst <brgerst@gmail.com>,
- "Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
- antonio.gomez.iglesias@linux.intel.com, daniel.sneddon@linux.intel.com,
- stable@vger.kernel.org
-References: <20240925-fix-dosemu-vm86-v7-0-1de0daca2d42@linux.intel.com>
- <20240925-fix-dosemu-vm86-v7-3-1de0daca2d42@linux.intel.com>
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- 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
- 6+ahAA==
-In-Reply-To: <20240925-fix-dosemu-vm86-v7-3-1de0daca2d42@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
+Message-ID: <20240925233854.90072-1-mmaurer@google.com>
+Subject: [PATCH v5 00/16] Extended MODVERSIONS Support
+From: Matthew Maurer <mmaurer@google.com>
+To: masahiroy@kernel.org, ndesaulniers@google.com, ojeda@kernel.org, 
+	gary@garyguo.net, mcgrof@kernel.org, Alex Gaynor <alex.gaynor@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, neal@gompa.dev, marcan@marcan.st, j@jannau.net, 
+	asahi@lists.linux.dev, linux-modules@vger.kernel.org, 
+	Matthew Maurer <mmaurer@google.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>
+Content-Type: text/plain; charset="UTF-8"
 
-On 25/09/2024 11:25 pm, Pawan Gupta wrote:
-> Robert Gill reported below #GP in 32-bit mode when dosemu software was
-> executing vm86() system call:
->
->   general protection fault: 0000 [#1] PREEMPT SMP
->   CPU: 4 PID: 4610 Comm: dosemu.bin Not tainted 6.6.21-gentoo-x86 #1
->   Hardware name: Dell Inc. PowerEdge 1950/0H723K, BIOS 2.7.0 10/30/2010
->   EIP: restore_all_switch_stack+0xbe/0xcf
->   EAX: 00000000 EBX: 00000000 ECX: 00000000 EDX: 00000000
->   ESI: 00000000 EDI: 00000000 EBP: 00000000 ESP: ff8affdc
->   DS: 0000 ES: 0000 FS: 0000 GS: 0033 SS: 0068 EFLAGS: 00010046
->   CR0: 80050033 CR2: 00c2101c CR3: 04b6d000 CR4: 000406d0
->   Call Trace:
->    show_regs+0x70/0x78
->    die_addr+0x29/0x70
->    exc_general_protection+0x13c/0x348
->    exc_bounds+0x98/0x98
->    handle_exception+0x14d/0x14d
->    exc_bounds+0x98/0x98
->    restore_all_switch_stack+0xbe/0xcf
->    exc_bounds+0x98/0x98
->    restore_all_switch_stack+0xbe/0xcf
->
-> This only happens in 32-bit mode when VERW based mitigations like MDS/RFDS
-> are enabled. This is because segment registers with an arbitrary user value
-> can result in #GP when executing VERW. Intel SDM vol. 2C documents the
-> following behavior for VERW instruction:
->
->   #GP(0) - If a memory operand effective address is outside the CS, DS, ES,
-> 	   FS, or GS segment limit.
->
-> CLEAR_CPU_BUFFERS macro executes VERW instruction before returning to user
-> space. Use %cs selector to reference VERW operand. This ensures VERW will
-> not #GP for an arbitrary user %ds.
->
-> Fixes: a0e2dab44d22 ("x86/entry_32: Add VERW just before userspace transition")
-> Cc: stable@vger.kernel.org # 5.10+
-> Reported-by: Robert Gill <rtgill82@gmail.com>
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218707
-> Closes: https://lore.kernel.org/all/8c77ccfd-d561-45a1-8ed5-6b75212c7a58@leemhuis.info/
-> Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
-> Suggested-by: Brian Gerst <brgerst@gmail.com>
-> Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-> ---
->  arch/x86/include/asm/nospec-branch.h | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-> index ff5f1ecc7d1e..e18a6aaf414c 100644
-> --- a/arch/x86/include/asm/nospec-branch.h
-> +++ b/arch/x86/include/asm/nospec-branch.h
-> @@ -318,12 +318,14 @@
->  /*
->   * Macro to execute VERW instruction that mitigate transient data sampling
->   * attacks such as MDS. On affected systems a microcode update overloaded VERW
-> - * instruction to also clear the CPU buffers. VERW clobbers CFLAGS.ZF.
-> + * instruction to also clear the CPU buffers. VERW clobbers CFLAGS.ZF. Using %cs
-> + * to reference VERW operand avoids a #GP fault for an arbitrary user %ds in
-> + * 32-bit mode.
->   *
->   * Note: Only the memory operand variant of VERW clears the CPU buffers.
->   */
->  .macro CLEAR_CPU_BUFFERS
-> -	ALTERNATIVE "", __stringify(verw _ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
-> +	ALTERNATIVE "", __stringify(verw %cs:_ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
->  .endm
+This patch series is intended for use alongside the Implement
+MODVERSIONS for RUST [1] series as a replacement for the symbol name
+hashing approach used there to enable RUST and MODVERSIONS at the same
+time.
 
-People ought rightly to double-take at this using %cs and not %ss. 
-There is a good reason, but it needs describing explicitly.  May I
-suggest the following:
+Elsewhere, we've seen a desire for long symbol name support for LTO
+symbol names [2], and the previous series came up [3] as a possible
+solution rather than hashing, which some have objected [4] to.
 
-*...
-* In 32bit mode, the memory operand must be a %cs reference.  The data
-segments may not be usable (vm86 mode), and the stack segment may not be
-flat (espfix32).
-*...
+This series adds a MODVERSIONS format which uses a section per column.
+This avoids userspace tools breaking if we need to make a similar change
+to the format in the future - we would do so by adding a new section,
+rather than editing the struct definition. In the new format, the name
+section is formatted as a concatenated sequence of NUL-terminated
+strings, which allows for arbitrary length names.
 
- .macro CLEAR_CPU_BUFFERS
-#ifdef __x86_64__
-    ALTERNATIVE "", "verw mds_verw_sel(%rip)", X86_FEATURE_CLEAR_CPU_BUF
-#else
-    ALTERNATIVE "", "verw %cs:mds_verw_sel", X86_FEATURE_CLEAR_CPU_BUF
-#endif
- .endm
+Currently, this series emits both the extended format and the current
+format on all modules, and prefers the extended format when checking if
+present. I'm open to various other policies via Kconfig knobs, but this
+seemed like a good initial default.
 
-This also lets you drop _ASM_RIP().  It's a cute idea, but is more
-confusion than it's worth, because there's no such thing in 32bit mode.
+The refactor to MODVERSIONS is prefixed to this series as result of an
+explicit request [5] by Luis in response to the original patchset.
 
-"%cs:_ASM_RIP(mds_verw_sel)" reads as if it does nothing, because it
-really doesn't in 64bit mode.
+If you are testing this patch alongside RUST by manually removing the
+!MODVERSIONS restriction (this series doesn't remove it, because the
+CRCs don't mean what we'd want them to yet, we need the DWARF patch for
+that) and have kernel hardening enabled, you may need the CPU
+Mitigations [6] series. Without it, the foo.mod.o file produced by the
+C compiler will reference __x86_return_thunk, but foo.o will not.
+This means that the version table will not contain a version for
+__x86_return_thunk, but foo.ko will reference it, which will result
+in a version check failure.
 
-~Andrew
+[1] https://lore.kernel.org/all/20240617175818.58219-17-samitolvanen@google.com/
+[2] https://lore.kernel.org/lkml/20240605032120.3179157-1-song@kernel.org/
+[3] https://lore.kernel.org/lkml/ZoxbEEsK40ASi1cY@bombadil.infradead.org/
+[4] https://lore.kernel.org/lkml/0b2697fd-7ab4-469f-83a6-ec9ebc701ba0@suse.com/
+[5] https://lore.kernel.org/lkml/ZVZNh%2FPA5HiVRkeb@bombadil.infradead.org/
+[6] https://lore.kernel.org/all/20240725183325.122827-1-ojeda@kernel.org/
+
+Changes in v5:
+- Addresses Sami's comments from v3 that I missed in v4 (missing early
+  return, extra parens)
+
+v4: https://lore.kernel.org/asahi/20240924212024.540574-1-mmaurer@google.com/
+- Fix incorrect dot munging in PPC
+
+v3: https://lore.kernel.org/lkml/87le0w2hop.fsf@mail.lhotse/T/
+- Split up the module verification refactor into smaller patches, per
+  Greg K-H's suggestion.
+
+v2: https://lore.kernel.org/all/20231118025748.2778044-1-mmaurer@google.com/
+- Add loading/verification refactor before modifying, per Luis's request
+
+v1: https://lore.kernel.org/rust-for-linux/20231115185858.2110875-1-mmaurer@google.com/ 
+
+Matthew Maurer (16):
+  module: Take const arg in validate_section_offset
+  module: Factor out elf_validity_ehdr
+  module: Factor out elf_validity_cache_sechdrs
+  module: Factor out elf_validity_cache_secstrings
+  module: Factor out elf_validity_cache_index_info
+  module: Factor out elf_validity_cache_index_mod
+  module: Factor out elf_validity_cache_index_sym
+  module: Factor out elf_validity_cache_index_str
+  module: Group section index calculations together
+  module: Factor out elf_validity_cache_strtab
+  module: Additional validation in elf_validity_cache_strtab
+  module: Reformat struct for code style
+  export_report: Rehabilitate script
+  modules: Support extended MODVERSIONS info
+  modpost: Produce extended modversion information
+  export_report: Use new version info format
+
+ arch/powerpc/kernel/module_64.c |  23 +-
+ kernel/module/internal.h        |  18 +-
+ kernel/module/main.c            | 647 ++++++++++++++++++++++++--------
+ kernel/module/version.c         |  45 +++
+ scripts/export_report.pl        |  17 +-
+ scripts/mod/modpost.c           |  39 +-
+ 6 files changed, 628 insertions(+), 161 deletions(-)
+
+-- 
+2.46.1.824.gd892dcdcdd-goog
+
 
