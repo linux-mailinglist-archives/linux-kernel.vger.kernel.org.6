@@ -1,117 +1,100 @@
-Return-Path: <linux-kernel+bounces-338972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 782F9985EF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:46:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1369A985F5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:56:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FA281F25033
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:46:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA576288881
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:56:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A7421948D;
-	Wed, 25 Sep 2024 12:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F39D1D2711;
+	Wed, 25 Sep 2024 12:15:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iWsHTqa7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AowY8iVA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0F1157468;
-	Wed, 25 Sep 2024 12:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7227718FC90;
+	Wed, 25 Sep 2024 12:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727266406; cv=none; b=gEEX26zHwM+7V92mK0xgqYFOJiY+aJipoSy8Y7ZZKJctqXhgsDEPZtbykZvgQOjoK6SxMlbS671miZ5CS2iEbZM4vZMX68g1kxmuWHaIDB+pgcrjJzB82p6foI/8DJXpEYAdkwfslxO3UOTP2ycxX8g7rVX7PZaTqKoq+4DderQ=
+	t=1727266536; cv=none; b=B5ZsISOxt/qGcYT4n7ed8KXHw+xLOdMrn40PTZa0d6+GFch7nwiQR632vhxARpwzd0VNYJ87xCa2wbXCjitvbzY2MUK3glnyVHV0ofsD1JZYfdGs9ZJt7MrBRv+TuVWAXfP3YTxjKAemzY5hgAny5cwW5kBm1Xn0ZWHLsyXmnRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727266406; c=relaxed/simple;
-	bh=+1y2qWX4I37sboGZ/CIyWvPaFcHrMk6++9l2cSkHugU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q/UgjG/g7Ga2J+ixRMv8t5yD3W6znItLWGr0C3geAbqETZ+cZBRQtSjtWT7eA8e4LbaPo/Q5JZpZZZBPCKbVgI1COA2jjuFBL/tiB23ddKvY4M6nGJ3f/KYUaQk9XcQ+ryqPppHNXCe33kFfcW6dtnzF5Y2I+0Ei2fmFhU8nG9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iWsHTqa7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A9D2C4CECD;
-	Wed, 25 Sep 2024 12:13:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727266406;
-	bh=+1y2qWX4I37sboGZ/CIyWvPaFcHrMk6++9l2cSkHugU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iWsHTqa7uicmJR0AfRymwSTg8K2w/+Je+4e3h9kUvq8ikzJXPunzwftlbjAhqu04g
-	 M8Y9b696C4OsSaErVnN+wsSkJw7IwKMkFGaLHYsCnKs4XsNj0k4i7rXOxmADFJk5qR
-	 u/nv/JBmY2OpjGw+0KIIozcpzT1FLgVsNB8l/yhCXUZ3sXVNTZBPl/WnSb6qvfcrdp
-	 6dDgrBMJuZCYKY4u4KpFenZu7UhK+KKIcKoh62pKncVdJgWJ2c9lfn+eN8HZsxIi+C
-	 S9Gm6gPx7M5MOhIeYJR72/RZITfokdpy67vLvZtyU62f2/TuXbIz/zHI25hbJQ7ZzB
-	 Dy6s1u3IMnZ6w==
-Date: Wed, 25 Sep 2024 14:13:21 +0200
-From: Mark Brown <broonie@kernel.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Jerome Brunet <jbrunet@baylibre.com>, lgirdwood@gmail.com,
-	perex@perex.cz, tiwai@suse.com, linux-sound@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 6.11 109/244] ASoC: soc-pcm: Indicate warning if
- dpcm_playback/capture were used for availability limition
-Message-ID: <ZvP-YQuXTyGDfb8x@finisterre.sirena.org.uk>
-References: <20240925113641.1297102-1-sashal@kernel.org>
- <20240925113641.1297102-109-sashal@kernel.org>
+	s=arc-20240116; t=1727266536; c=relaxed/simple;
+	bh=LAyZEYybAVkrpMxB8OhZGXg46DMOVw09blsQOKiw630=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=XZi6geWKJuGA1YeCVHt1JOLqBooV6Q6VxJz31OtuxH2kc8BJV2ftg+lGHJBS/g9TDGXv4EdV6THKvMaxsKxD8j3hFdIvxI9DQG0A9OfmXmKqZRm4zT+iFTiBe1K++0uX44IGMlWx0vZ7SK0ZOg1dZmo6Wizj+wtLnZKoWg7yPNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AowY8iVA; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727266534; x=1758802534;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=LAyZEYybAVkrpMxB8OhZGXg46DMOVw09blsQOKiw630=;
+  b=AowY8iVAOuaf7yrjxFQaPeiWUv0NnoLzZ8OKtncl9f6esgfjLSccsCH+
+   t5FCRRayOPq6V0lOgEN2g3DoPsRyPqqsGpX+DM2a+4BWkyMxt8LS+zb24
+   ufvoLj8NskIaV6VH6pOOMI9m1gzKOckx6YVma1NTOHr0OVnLvyFnW8wy7
+   B7sSP05VjapjskpS7BjdCJJi06D/wble6VPZJevNA4byUoMkU9v3Lphg0
+   xT9FMpDj7lbRx3Ekeq0ewmqgPhkBuwW0C3V4SRthJy+G1hhFsQ/fsm+w9
+   yTN34DdjPmoVQaidqbP8R+sp6+4xIesjRWHRhha+pCRXJ2hUK1o3ncr8c
+   g==;
+X-CSE-ConnectionGUID: kbzgBfKLReWplj+oVw9HRw==
+X-CSE-MsgGUID: KMRigXR3SUqT+qiKy384ig==
+X-IronPort-AV: E=McAfee;i="6700,10204,11206"; a="37665386"
+X-IronPort-AV: E=Sophos;i="6.10,257,1719903600"; 
+   d="scan'208";a="37665386"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 05:15:32 -0700
+X-CSE-ConnectionGUID: tKL70W03T2yFz7dfQhwkhg==
+X-CSE-MsgGUID: WcGWDSS9SN2Dv5bCgcpJyA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,257,1719903600"; 
+   d="scan'208";a="71894911"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.54.38.190])
+  by fmviesa008.fm.intel.com with ESMTP; 25 Sep 2024 05:15:32 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+	id A3C5730183B; Wed, 25 Sep 2024 05:15:31 -0700 (PDT)
+From: Andi Kleen <ak@linux.intel.com>
+To: Levi Yun <yeoreum.yun@arm.com>
+Cc: peterz@infradead.org,  mingo@redhat.com,  acme@kernel.org,
+  namhyung@kernel.org,  mark.rutland@arm.com,
+  alexander.shishkin@linux.intel.com,  jolsa@kernel.org,
+  irogers@google.com,  adrian.hunter@intel.com,  james.clark@linaro.org,
+  howardchu95@gmail.com,  nd@arm.com,  linux-perf-users@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/2] perf stat: Close cork_fd when
+ create_perf_stat_counter() failed
+In-Reply-To: <20240925110802.2620613-2-yeoreum.yun@arm.com> (Levi Yun's
+	message of "Wed, 25 Sep 2024 12:08:01 +0100")
+References: <20240925110802.2620613-1-yeoreum.yun@arm.com>
+	<20240925110802.2620613-2-yeoreum.yun@arm.com>
+Date: Wed, 25 Sep 2024 05:15:31 -0700
+Message-ID: <87msjw2al8.fsf@linux.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qJJpRQInejXrpnv9"
-Content-Disposition: inline
-In-Reply-To: <20240925113641.1297102-109-sashal@kernel.org>
-X-Cookie: Editing is a rewording activity.
+Content-Type: text/plain
 
+Levi Yun <yeoreum.yun@arm.com> writes:
+> +void evlist__cancel_workload(struct evlist *evlist)
+> +{
+> +	int status;
+> +
+> +	if (evlist->workload.cork_fd > 0) {
 
---qJJpRQInejXrpnv9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Technically 0 is a valid file descriptor. Check for >= 0
+And make sure the field is initialized with -1
 
-On Wed, Sep 25, 2024 at 07:25:30AM -0400, Sasha Levin wrote:
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->=20
-> [ Upstream commit fd69dfe6789f4ed46d1fdb52e223cff83946d997 ]
->=20
-> I have been wondering why DPCM needs special flag (=3D dpcm_playback/capt=
-ure)
-> to use it. Below is the history why it was added to ASoC.
+The rest looks fine to me.
 
-=2E..
-
-> Because of these history, this dpcm_xxx is unneeded flag today. But becau=
-se
-> we have been used it for 10 years since (B), it may have been used
-> differently. For example some DAI available both playback/capture, but it
-> set dpcm_playback flag only, in this case dpcm_xxx flag is used as
-> availability limitation. We can use playback_only flag instead in this
-> case, but it is very difficult to find such DAI today.
->=20
-> Let's add grace time to remove dpcm_playback/capture flag.
->=20
-> This patch don't use dpcm_xxx flag anymore, and indicates warning to use
-> xxx_only flag if both playback/capture were available but using only
-> one of dpcm_xxx flag, and not using xxx_only flag.
-
-This is a cleanup/refactoring preparation patch, I can see no reason why
-it would be considered for stable.
-
---qJJpRQInejXrpnv9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbz/mAACgkQJNaLcl1U
-h9AlKQf/actvaVQqut6lkvX9H4EC03wsHESIYk/mIlv1AY/S2Z8XAnnZJKgihREa
-Rw7Gpz57S/gnBAOUzRLARFVuN/JfWnThVHpCnnhwdM/REUe/ilLuw2Vfqmj1ZEsd
-0yOypEvwgKiy88ncpS+hic56KuzZ7DuX+AyVAf7OMQJui73oCaKKOFxQHj3BRrs3
-cMqdY/G2JfHqbexQqw0jzg0kuhoLpUWYNMpga5IckBlrZBFgACZvn407nGEurpuu
-yd0fusSRVRpb4hcAOb85sO+zNVyOyGSQQsGppT7pGQlqxbxpUUblk5OLL6qgvOBo
-+oVk/YDapmFe9QfP2uOvmjVRhbk37g==
-=IIv9
------END PGP SIGNATURE-----
-
---qJJpRQInejXrpnv9--
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
 
