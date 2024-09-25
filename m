@@ -1,113 +1,126 @@
-Return-Path: <linux-kernel+bounces-337955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23C5F985167
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 05:24:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ED0C98516B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 05:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7ABBAB23443
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 03:24:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DD66285046
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 03:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3105E14A614;
-	Wed, 25 Sep 2024 03:23:45 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845FC14AD3F;
+	Wed, 25 Sep 2024 03:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Cc50jO1v"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5DD14A4E2
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 03:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DECB2AE8A
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 03:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727234624; cv=none; b=ipHn+QS7chw7ANByrf04glnJnD/oedb5xHXOxrZ8T7Ui/gqg1vVNbrlC7ScNvWykpGtmUQ9pUHNreIOGB5VKvQR705IGBCUSC6XA9oTKI8egwpRHoX7qTI7uzNPq/6TSnEd9SWJzk83r8xnEwlej40Dzr95C5kmP0dw/rMktnIA=
+	t=1727235026; cv=none; b=Q23L5Yaa7JliuieD9m98mYYtTtU5D0OutCaceAKGOPv4ppueiL2O0UaNNaE0A/0ND0/DXTrYUn+EgdpUglYIXuVzKYpSqtZE7JsGvokvBkyNkz/FBPwZqD2kAJkDBy/BG3goiQC+B46Gez2VZL5A0ejJ+BS1dExquZXVkVDbvDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727234624; c=relaxed/simple;
-	bh=ujYzwysx8BVaV/txjzevN6TgeIeQEwkBY9v+gQRY6tk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kR3nEATkqSyz9Y07zmzF+WEezgjM/kWbDaYUpgdevj6jdV1Q8EONBFLVznqmm5p3RQ33o3GJOKG43z+7401Y5ZbMjN0oyB3U++Wc8c/np1HakpnDACez4MyKjZKCqBVRRvgDJOjeIW2z/bEVZpx0AT9Dk/MRqp95qSFUROe6Vh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 48P3NE3x054301;
-	Wed, 25 Sep 2024 11:23:14 +0800 (+08)
-	(envelope-from fangzheng.zhang@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4XD20y3PGQz2Mx63v;
-	Wed, 25 Sep 2024 11:15:30 +0800 (CST)
-Received: from bj10906pcu1.spreadtrum.com (10.0.73.72) by
- BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Wed, 25 Sep 2024 11:23:11 +0800
-From: Fangzheng Zhang <fangzheng.zhang@unisoc.com>
-To: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-        David
- Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew
- Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Roman
- Gushchin <roman.gushchin@linux.dev>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>
-CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, <tkjos@google.com>,
-        Fangzheng Zhang <fangzheng.zhang@unisoc.com>,
-        Fangzheng Zhang
-	<fangzheng.zhang1003@gmail.com>,
-        Yuming Han <yuming.han@unisoc.com>
-Subject: [PATCH 2/2] Documentation: admin-guide: kernel-parameters: Add parameter description for slub_leak_panic function
-Date: Wed, 25 Sep 2024 11:22:56 +0800
-Message-ID: <20240925032256.1782-3-fangzheng.zhang@unisoc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240925032256.1782-1-fangzheng.zhang@unisoc.com>
-References: <20240925032256.1782-1-fangzheng.zhang@unisoc.com>
+	s=arc-20240116; t=1727235026; c=relaxed/simple;
+	bh=/pj+RCuXouKWKKmVNJjkG4mjtgCiJqE6IxJ4EvXxnE4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qfCOjSV5CUR7IBJUiq9y3kjelj2inSE7Ng4XJ2f7sbxfWY3sc2bZ+5MJVIubHWL+fE8686vn03Ro7MiaXppLau7tCHUs5y/BIYKZbrB9X2MKaBnU1FFzGzgKB36J1vVtvoCGZN+KcE9Y+mEZOl4MflGtspCLLvhDelhm1fPpRqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Cc50jO1v; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727235024;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/pj+RCuXouKWKKmVNJjkG4mjtgCiJqE6IxJ4EvXxnE4=;
+	b=Cc50jO1vwKFaEKU2XlDyrbNt/ghI8Q4f7OyGi9IdYTcKsiVT1tASj2oYd0URyrZRUE7e1k
+	5Xg3T3sKJYlPAyDMdt9z7r6570YQXa97L6GW7EBMhp5bQ1Y3llL19jXoLqYbkqozaQpyDb
+	IvLuAhyly3Iw+ra5b+DjdRpRwy+KIH4=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-144-dJctUX3LPtCWNP9CKxGVpg-1; Tue, 24 Sep 2024 23:30:22 -0400
+X-MC-Unique: dJctUX3LPtCWNP9CKxGVpg-1
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2d8817d8e03so8983399a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 20:30:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727235022; x=1727839822;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/pj+RCuXouKWKKmVNJjkG4mjtgCiJqE6IxJ4EvXxnE4=;
+        b=SkGpjCpPl632Bsd9EVDVqGf8a/H8RO7fI+SlJ8Tu5VaeerJjTuz0fTsUnLdpB+B1l0
+         klIZLoivleedTTCOQ0piuIbx7achlS6g2kmSBYMeZdoEJsE34Qblypm7M7zhLCuLDl8X
+         OXsWYJ34IhMBmwKP8dVK00NRtzyZrFk03RQXxbvVlsXh0sAIjdYTYfitomyvEO9T61qz
+         IoDdhIouF+Ekpk2Ghsa4wRJqMeYJUFTLUTokywOnX1REDaErNzY9HvEbJNhTZZztMWnF
+         wYE3zXgQyaNx75PeSePTiJEYbQbZMPYatbzRI9Li5cLf0+KUxFdkLkBYOFcBFl0HFzR4
+         BxZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVsVkw5FDaRRoHA2ycG8dAQfFUM8FtA3xc3wH7CGaIc1gFGg2n61JW4mQvfWFtmouTzON/PDuCdh9hEdkI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSFzuBRNDxlspmOG1VCHjExEepV7kKIOLaPuCSUEBF5sJnA5sK
+	do694PWW8sLhJwCKB38wsVIueF0WxgExMS5Qu6LMjUKJ4hJHSbizxOmF1ohI/iplACUtFgdYaT/
+	874cCW8WhjaJFMhzJ9bSwt6/bFAfco0rJuqHDn/BZEIAaHQ3ObFcpZNRrvHNksCuZOQsErTEEse
+	486EYAB5wHSoLHnDLsIxxev/stAEdC7WBXFE8d
+X-Received: by 2002:a17:90a:f2d5:b0:2da:905a:d88a with SMTP id 98e67ed59e1d1-2e06ae791a7mr1467813a91.21.1727235021752;
+        Tue, 24 Sep 2024 20:30:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFt284MvmYUlT8+AL6adgtTv8NmOQ1ld/MsvwYgsNGC040Pi/BgPI1vkZfb6OO4Jtnfla96r8UcK+AJSx61zg8=
+X-Received: by 2002:a17:90a:f2d5:b0:2da:905a:d88a with SMTP id
+ 98e67ed59e1d1-2e06ae791a7mr1467782a91.21.1727235021240; Tue, 24 Sep 2024
+ 20:30:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL:SHSQR01.spreadtrum.com 48P3NE3x054301
+References: <20240924-rss-v4-0-84e932ec0e6c@daynix.com>
+In-Reply-To: <20240924-rss-v4-0-84e932ec0e6c@daynix.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Wed, 25 Sep 2024 11:30:08 +0800
+Message-ID: <CACGkMEvMuBe5=wQxZMns4R-oJtVOWGhKM3sXy8U6wSQX7c=iWQ@mail.gmail.com>
+Subject: Re: [PATCH RFC v4 0/9] tun: Introduce virtio-net hashing feature
+To: Akihiko Odaki <akihiko.odaki@daynix.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, kvm@vger.kernel.org, 
+	virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org, 
+	Yuri Benditovich <yuri.benditovich@daynix.com>, Andrew Melnychenko <andrew@daynix.com>, 
+	Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Introduce the details of the slub_leak_panic parameters in
-kernel-parameters.txt, so that users can understand how to use
-the parameters more quickly.
+On Tue, Sep 24, 2024 at 5:01=E2=80=AFPM Akihiko Odaki <akihiko.odaki@daynix=
+.com> wrote:
+>
+> virtio-net have two usage of hashes: one is RSS and another is hash
+> reporting. Conventionally the hash calculation was done by the VMM.
+> However, computing the hash after the queue was chosen defeats the
+> purpose of RSS.
+>
+> Another approach is to use eBPF steering program. This approach has
+> another downside: it cannot report the calculated hash due to the
+> restrictive nature of eBPF.
+>
+> Introduce the code to compute hashes to the kernel in order to overcome
+> thse challenges.
+>
+> An alternative solution is to extend the eBPF steering program so that it
+> will be able to report to the userspace, but it is based on context
+> rewrites, which is in feature freeze. We can adopt kfuncs, but they will
+> not be UAPIs. We opt to ioctl to align with other relevant UAPIs (KVM
+> and vhost_net).
+>
 
-Signed-off-by: Fangzheng Zhang <fangzheng.zhang@unisoc.com>
----
- Documentation/admin-guide/kernel-parameters.txt | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+I wonder if we could clone the skb and reuse some to store the hash,
+then the steering eBPF program can access these fields without
+introducing full RSS in the kernel?
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index bb48ae24ae69..8a672766f05f 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6130,6 +6130,21 @@
- 			For more information see Documentation/mm/slub.rst.
- 			(slub_nomerge legacy name also accepted for now)
- 
-+	slub.leak_panic= [MM, SLUB]
-+			Enabling slub.leak_panic can monitor the slub usage
-+			in real time on the slub allocation path. When the
-+			slub occupancy is abnormal, the alarm or panic will
-+			be triggered.
-+			Default: N
-+
-+	slub.leak_panic_threshold= [MM, SLUB]
-+			Upper limit value of the slub usage, expressed as
-+			a percentage of memtotal. When the usage exceeds
-+			the set value (threshold * memtotal / 100), the
-+			slub_leak_panic function will be trigger. The
-+			value setting range is [0, 100].
-+			Default: 0
-+
- 	slram=		[HW,MTD]
- 
- 	smart2=		[HW]
--- 
-2.17.1
+Thanks
 
 
