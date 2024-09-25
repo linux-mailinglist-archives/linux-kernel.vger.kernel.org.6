@@ -1,162 +1,188 @@
-Return-Path: <linux-kernel+bounces-339497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45B3E9865ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:48:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 754F49865F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:49:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9AD61F21356
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:48:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2737F2880C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE8312B176;
-	Wed, 25 Sep 2024 17:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C380413C8E8;
+	Wed, 25 Sep 2024 17:48:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bnDwKmEK"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EhfvPwe5"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B7953376
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 17:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F301870
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 17:48:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727286512; cv=none; b=XKeOkdAcoEhZTSYdZpRoPXD73+fc4nDoZh0M5v2jPMKw7EymAEqE87vDlMuN3tL7eK0BZptY8CZFydhk2rJasY7ZvcU8/2TAHKHos+4bZ6A6EX7fay2qjsuLAn45GDPLP2QkVI+d9HCIlmquSEoRaVOERZDJEWnyR7Rje6+hqdQ=
+	t=1727286524; cv=none; b=tnwrSvRy3APXhub5wDtRx+MkT4JHpPk0jJYJVrxeLYp4GD8diiIys6GmhJlRNHFzdT/2ESg3w/83d7JVeAPnADDqTMPZSVIuDFt/LHcf6zdHHQme9SmTS+mR60juKTFwD963Us1drBIhMf5mz0rbZ3EqNg1P38eCTDF2r9C9bb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727286512; c=relaxed/simple;
-	bh=s+Fsq6c0E4UqhDF+GTJIyrIlBaNJKj4Eto+OjSrKVpY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LqXEQeqzB74/Goe0E0PQgdXgb9I/0KRbCCmtPIHPPOYyu88anqSF8as6G5MkXl19JXSbWciqaIuA4Nu/c9pOZc9QmIPTXYjsT+0AFkhiHKrwFxn8L3jVtT3utFelpPedrvb00ok99S+gTXyH7eAqj/RJfeBI+/5qK0pnMHtYDlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bnDwKmEK; arc=none smtp.client-ip=209.85.214.177
+	s=arc-20240116; t=1727286524; c=relaxed/simple;
+	bh=A8pJXK5Zztv371Oe9drq6CplFViPG0d7lDriodHWbVE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=diWpaEZkejxdMitVWanwj0N2Mzw2W/EzCvKseA8HvgzniGADBz7HastDisx8HKyPkDMPTBUfSkIASivL3DRx4AVLmy8sCkhu21Lov7GTSFnyrnUbzXMvPZUzrtMHn2wD5Dhr7A4ImSp2E+f3VPuXEqOVdVGFDXuwRiq1VxRPCyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EhfvPwe5; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20b061b7299so14015ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 10:48:30 -0700 (PDT)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20b061b7299so14105ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 10:48:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727286510; x=1727891310; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ozwTA3TD6zQfqCMRip8pZ83VBEALnmG9iDzNvfVVggI=;
-        b=bnDwKmEKswx1XNmNjHhO6J1B8VRHNuYvbGmWukW5e3VLNwWjKiH9zrRQR9hxZ87Igx
-         ppN55h7nIyO2da3Zw5gwIjBsUzFbKC5erbEAxpZXnA/zo/Wtavb+4txewVrTpqOP8/BK
-         ya9nTq9MsNBPaNJb0/xltOzS4uo37RtXx0jZFvIYMJxehGCiFfEJgKywmy9AYTsQSTl3
-         OwOQNNRyWz8j2oX9ywUB4KemybXAjJSeOXUUYSTpwMLPzkxKcibwlCmgDFGs74ZTbqxn
-         bRyETbgvGVOgSAv1g1mIcXCxyMCwJaZO6ne8h4PT+RAs2l3KNEuSsEE3mmG6v4pdhgkr
-         aqwQ==
+        d=google.com; s=20230601; t=1727286522; x=1727891322; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lrK3h7FdOSPKkdvPmV4/inQbE4aDL8B9EB3Kr7AaA5w=;
+        b=EhfvPwe52EJcoK5OTD/Baq29N3KooUMm7CDlp7y5ZrJVaZvCNr8JqLYQh7dWcKboLs
+         IBUfLMcCYJjIGvVShgr7/f/OXpTV2jPv3O+fSX6gm4tLDkMS+FFr8C0AhxIeSOML9jwc
+         VYQXw/PVz/BV3p2E5K7SnFnASduW83uLL+qP2+FngFQA2L0rJ7s/2Yck3jVMsGBv45I1
+         I2+s58Oy5yXD5PBZHKfuNgZQJLcLXiHW+gHT78cDPv3V5NhxBxxKxulUoy+TCpfFiika
+         xxUaNwK1vVGaB9gWfmfPzY6EhlIVKP0pV3pSWTFStoU7isVzNW8Qwc18VTrQaGvU4gim
+         uSnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727286510; x=1727891310;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ozwTA3TD6zQfqCMRip8pZ83VBEALnmG9iDzNvfVVggI=;
-        b=U1pBKDOiWRkZDBo0J+3aim6JpFvg7ZRxNMgYI/RL783PFic4OuPcSpxq9RNC5vRalL
-         WG1Sd2BEnafla1j50J/ICkdMgBucTyPJ+1gr6eDTnHueH5eOw7zzz+vMfIK3Vs2MnCTY
-         xhRKPk1u+yZRTPwKwIhFIEcHrlSPxf4bQBnIjNJKjT5N+BqXwrJf9NaRqCCMbIsgdOmo
-         4dxgK6gwGLT8ZzY7wZgkv4JRMktqUeQH+GolgRqGG8W/tczhW8mEs/tlTCSSVGvv+ZUT
-         /a+qWX3ok5dpLxvubNy8AUWdNvdTk8vJEm1IC4RjQ5sp4PPd9uezGikXjeQRniHLMLTl
-         qqPw==
-X-Forwarded-Encrypted: i=1; AJvYcCXVZzWjOG2iZWKiVjeS/O8xXiZT3QCSttGCpf+Ahu3YBmpUdmiOS0PGcwGTgGAGMKFniT5tbdx6z19UqUM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxui6tF0DIOxhy2PlOwxKK6Dphy96NvDhvPyYHHaM5w7JSvWo7X
-	N2RmqZOWk7UJdxBBA2U7d3Bpf28pEqjATz9JonBVzhuzpufl0R3wthMO/T9r9Q==
-X-Google-Smtp-Source: AGHT+IFutEWYBK/Nvgcz2Tx6c1LNM5iBgzNMwt4bAnNvki4icwmyytR7tK14mV2RcwMW77JMVHQ4NA==
-X-Received: by 2002:a17:902:e84f:b0:205:937f:3add with SMTP id d9443c01a7336-20b1b4c13d0mr46215ad.1.1727286509972;
-        Wed, 25 Sep 2024 10:48:29 -0700 (PDT)
-Received: from google.com (201.215.168.34.bc.googleusercontent.com. [34.168.215.201])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b0f8b1d1dsm6606605ad.298.2024.09.25.10.48.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 10:48:29 -0700 (PDT)
-Date: Wed, 25 Sep 2024 17:48:25 +0000
-From: Carlos Llamas <cmllamas@google.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Yu-Ting Tseng <yutingtseng@google.com>,
-	linux-kernel@vger.kernel.org, kernel-team@android.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 2/4] binder: fix OOB in binder_add_freeze_work()
-Message-ID: <ZvRM6RHstUiTSsk4@google.com>
-References: <20240924184401.76043-1-cmllamas@google.com>
- <20240924184401.76043-3-cmllamas@google.com>
- <CAH5fLghapZJ4PbbkC8V5A6Zay-_sgTzwVpwqk6RWWUNKKyJC_Q@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1727286522; x=1727891322;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lrK3h7FdOSPKkdvPmV4/inQbE4aDL8B9EB3Kr7AaA5w=;
+        b=oXcX8onJLdn7T0zvfcucxGZq69KSJWzpj0eKvSdxwL/bNCkYdvZHCVzos47V/Wltpk
+         XJpirDSTVuyRy3rtCf+4JSP3wff8UPVW5Q+8n6yuuJwnmdNuLhxsJdeMtAYPZPWchqys
+         MiL9y3LbGV3kavhLR7AJ1rmz7oJPlA2ycqIk+bBYUCwfn+vgNuE9eAenhd+AUAD2ddKD
+         i1jpN3uqUvjGCDtu1x/GxtTE085f+QP8DUgI8ATuqFAP5JFhjlYO3l7Y+zZa1mjTsqdY
+         NNtw7N6bmM/UQI3F/ijbZYEb7rqR1UgYKp+bq9LriDRBeSPcpyKiYMQCw37b1p1hvKEi
+         Hx2A==
+X-Forwarded-Encrypted: i=1; AJvYcCXCKS05pqKWBoLcZ2bZmJR7yaSUDPAYxEyVpAfVzzbUQJDc8PytciybGgDztuQe3GN8F0NU/av3fyoASv0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyA5ypss3LX6fqakIJHu3O+9MAH0EnzD+VcNDzlGYaIQq06k1u/
+	/APnVks4Oq/y9+hIItM0EK390gaeGVT8ZU0q645oqpxJaKZV9JyCFy09TLtZEF8k4ORBCqXHUmM
+	uD6D2hDoXTEdhPmFX4g20NJTUEAyTCTsR8mY+
+X-Google-Smtp-Source: AGHT+IFiXYlI29ocsY9jVI8vGIQKmEL8X6grxbcgFKgyWyz2ix/vsNm7/Zsem2ox1yGF0FtMygKog55oBTNJR6Dh6yI=
+X-Received: by 2002:a17:903:1210:b0:206:a913:96b9 with SMTP id
+ d9443c01a7336-20b1b302843mr105105ad.10.1727286521405; Wed, 25 Sep 2024
+ 10:48:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLghapZJ4PbbkC8V5A6Zay-_sgTzwVpwqk6RWWUNKKyJC_Q@mail.gmail.com>
+References: <20240925150059.3955569-30-ardb+git@google.com>
+ <20240925150059.3955569-35-ardb+git@google.com> <CAP-5=fXw1rcgWgMeDSVqiDYh2XYApyaJpNvukvJ7vMs7ZPMr6g@mail.gmail.com>
+ <CAMj1kXEmssrOhu20aLW4v88YVdkCfbeRg6arkgUoDNHm-4vbMA@mail.gmail.com>
+In-Reply-To: <CAMj1kXEmssrOhu20aLW4v88YVdkCfbeRg6arkgUoDNHm-4vbMA@mail.gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 25 Sep 2024 10:48:27 -0700
+Message-ID: <CAP-5=fXstnbX7rY1_RcOP_TmuXqY3HTt__4VgEkgNEJQPHxezg@mail.gmail.com>
+Subject: Re: [RFC PATCH 05/28] x86: Define the stack protector guard symbol explicitly
+To: Ard Biesheuvel <ardb@kernel.org>, Namhyung Kim <namhyung@kernel.org>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Uros Bizjak <ubizjak@gmail.com>, Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, 
+	Christoph Lameter <cl@linux.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
+	Juergen Gross <jgross@suse.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Keith Packard <keithp@keithp.com>, 
+	Justin Stitt <justinstitt@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	linux-doc@vger.kernel.org, linux-pm@vger.kernel.org, kvm@vger.kernel.org, 
+	xen-devel@lists.xenproject.org, linux-efi@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-sparse@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 25, 2024 at 10:02:51AM +0200, 'Alice Ryhl' via kernel-team wrote:
-> On Tue, Sep 24, 2024 at 8:44 PM Carlos Llamas <cmllamas@google.com> wrote:
+On Wed, Sep 25, 2024 at 10:43=E2=80=AFAM Ard Biesheuvel <ardb@kernel.org> w=
+rote:
+>
+> On Wed, 25 Sept 2024 at 17:54, Ian Rogers <irogers@google.com> wrote:
 > >
-> > In binder_add_freeze_work() we iterate over the proc->nodes with the
-> > proc->inner_lock held. However, this lock is temporarily dropped to
-> > acquire the node->lock first (lock nesting order). This can race with
-> > binder_deferred_release() which removes the nodes from the proc->nodes
-> > rbtree and adds them into binder_dead_nodes list. This leads to a broken
-> > iteration in binder_add_freeze_work() as rb_next() will use data from
-> > binder_dead_nodes, triggering an out-of-bounds access:
+> > On Wed, Sep 25, 2024 at 8:02=E2=80=AFAM Ard Biesheuvel <ardb+git@google=
+.com> wrote:
+> > >
+> > > From: Ard Biesheuvel <ardb@kernel.org>
+> > >
+> > > Specify the guard symbol for the stack cookie explicitly, rather than
+> > > positioning it exactly 40 bytes into the per-CPU area. Doing so remov=
+es
+> > > the need for the per-CPU region to be absolute rather than relative t=
+o
+> > > the placement of the per-CPU template region in the kernel image, and
+> > > this allows the special handling for absolute per-CPU symbols to be
+> > > removed entirely.
+> > >
+> > > This is a worthwhile cleanup in itself, but it is also a prerequisite
+> > > for PIE codegen and PIE linking, which can replace our bespoke and
+> > > rather clunky runtime relocation handling.
+> > >
+> > > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> > > ---
+> > >  arch/x86/Makefile                     |  4 ++++
+> > >  arch/x86/include/asm/init.h           |  2 +-
+> > >  arch/x86/include/asm/processor.h      | 11 +++--------
+> > >  arch/x86/include/asm/stackprotector.h |  4 ----
+> > >  tools/perf/util/annotate.c            |  4 ++--
+> > >  5 files changed, 10 insertions(+), 15 deletions(-)
+> > >
+> ...
+> > > diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+> > > index 37ce43c4eb8f..7ecfedf5edb9 100644
+> > > --- a/tools/perf/util/annotate.c
+> > > +++ b/tools/perf/util/annotate.c
+> > > @@ -2485,10 +2485,10 @@ static bool is_stack_operation(struct arch *a=
+rch, struct disasm_line *dl)
+> > >
+> > >  static bool is_stack_canary(struct arch *arch, struct annotated_op_l=
+oc *loc)
+> > >  {
+> > > -       /* On x86_64, %gs:40 is used for stack canary */
+> > > +       /* On x86_64, %gs:0 is used for stack canary */
+> > >         if (arch__is(arch, "x86")) {
+> > >                 if (loc->segment =3D=3D INSN_SEG_X86_GS && loc->imm &=
+&
+> > > -                   loc->offset =3D=3D 40)
+> > > +                   loc->offset =3D=3D 0)
 > >
-> >   ==================================================================
-> >   BUG: KASAN: global-out-of-bounds in rb_next+0xfc/0x124
-> >   Read of size 8 at addr ffffcb84285f7170 by task freeze/660
+> > As a new perf tool  can run on old kernels we may need to have this be
+> > something like:
+> > (loc->offset =3D=3D 40 /* pre v6.xx kernels */ || loc->offset =3D=3D 0 =
+/*
+> > v6.xx and later */ )
 > >
-> >   CPU: 8 UID: 0 PID: 660 Comm: freeze Not tainted 6.11.0-07343-ga727812a8d45 #18
-> >   Hardware name: linux,dummy-virt (DT)
-> >   Call trace:
-> >    rb_next+0xfc/0x124
-> >    binder_add_freeze_work+0x344/0x534
-> >    binder_ioctl+0x1e70/0x25ac
-> >    __arm64_sys_ioctl+0x124/0x190
+> > We could make this dependent on the kernel by processing the os_release=
+ string:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
+t/tree/tools/perf/util/env.h#n55
+> > but that could well be more trouble than it is worth.
 > >
-> >   The buggy address belongs to the variable:
-> >    binder_dead_nodes+0x10/0x40
-> >   [...]
-> >   ==================================================================
-> >
-> > This is possible because proc->nodes (rbtree) and binder_dead_nodes
-> > (list) share entries in binder_node through a union:
-> >
-> >         struct binder_node {
-> >         [...]
-> >                 union {
-> >                         struct rb_node rb_node;
-> >                         struct hlist_node dead_node;
-> >                 };
-> >
-> > Fix the race by checking that the proc is still alive. If not, simply
-> > break out of the iteration.
-> >
-> > Fixes: d579b04a52a1 ("binder: frozen notification")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Carlos Llamas <cmllamas@google.com>
-> 
-> This change LGTM.
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> 
-> I reviewed some other code paths to verify whether there are other
-> problems with processes dying concurrently with operations on freeze
-> notifications. I didn't notice any other memory safety issues, but I
+>
+> Yeah. I also wonder what the purpose of this feature is. At the end of
+> this series, the stack cookie will no longer be at a fixed offset of
+> %GS anyway, and so perf will not be able to identify it in the same
+> manner. So it is probably better to just leave this in place, as the
+> %gs:0 case will not exist in the field (assuming that the series lands
+> all at once).
+>
+> Any idea why this deviates from other architectures? Is x86_64 the
+> only arch that needs to identify stack canary accesses in perf? We
+> could rename the symbol to something identifiable, and do it across
+> all architectures, if this really serves a need (and assuming that
+> perf has insight into the symbol table).
 
-Yeah most other paths are protected with binder_procs_lock mutex.
+This is relatively new work coming from Namhyung for data type
+profiling and I believe is pretty much just x86 at the moment -
+although the ever awesome IBM made contributions for PowerPC. The data
+type profiling is trying to classify memory accesses which is why it
+cares about the stack canary instruction, the particular encoding
+shouldn't matter.
 
-> noticed that binder_request_freeze_notification returns EINVAL if you
-> try to use it with a node from a dead process. That seems problematic,
-> as this means that there's no way to invoke that command without
-> risking an EINVAL error if the remote process dies. We should not
-> return EINVAL errors on correct usage of the driver.
-
-Agreed, this should probably be -ESRCH or something. I'll add it to v2,
-thanks for the suggestion.
-
-Cheers,
-Carlos Llamas
+Thanks,
+Ian
 
