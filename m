@@ -1,259 +1,239 @@
-Return-Path: <linux-kernel+bounces-338110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39D7998536C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:10:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05995985370
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF79E1F24929
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:10:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B31CF2816F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A03B5156641;
-	Wed, 25 Sep 2024 07:10:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A8F8156879;
+	Wed, 25 Sep 2024 07:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="haH670w6"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2082.outbound.protection.outlook.com [40.107.255.82])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vs8FW5Ys"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE7E132103;
-	Wed, 25 Sep 2024 07:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727248199; cv=fail; b=iArUVszNz3XQ5rqIW48ZrqZwQh+fi8qNTK/1Khg6zpjqYrcIqkLtH7cCsrW7hLYVbMSzCXpWf6cmYNuoM6TBa4NOuul/BPf2t3sE40UTlOLqegWM4JKzJeE/8m3oWlYp5H6ZVjgnsLONEQKioTfJpvDk4s9gi7aLFsaXmiVbiJE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727248199; c=relaxed/simple;
-	bh=PRXcH/vCK6kajm/wN5ztXlb4KyV7u89aPADsKaoITaQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=I33LIzKixra+jLKf2PUquTqrGWplQX3p/cEMAmx9iCECGmmf5KmoizVELvjbd13kFZiRDi+V+1Av4gtXJlQ+VQyQicQJxOmLldd5OkH4XNZzANVM5sJ0BJRZKiJnEGeVHYofhoAnyAPnvdVk1s0imTYORZMzxa/ailpsGk2322s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=haH670w6; arc=fail smtp.client-ip=40.107.255.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yXEygFBWBqICFLjZfdtxCHrAgKQToJludB9wgWcib/9e3YHFDY8nXu63T86d3NY/HxPbjPS5HaITzrgkEWg3YZBmUs6GXk2r7rDvEGFCa3OaGiFLiUsj7cvq5vsk+b5u+HQckOAebshqLWhU0aoWtbvanrzTj7MH+10Py33YxgCtmP5m74GJkivDOz2hRmtbYp1ORyXCtP9SpGuRtZNUWxgvvyt1dltfZQ86dZoPWqdfF3j3rbMEz4ISWR1vv3BKzzUHqGIptvrwDS7WK6Lz3DCB+BXTB3IJt+6vbtjPMgEclXIwcHYnBXqzNCB++cy3T8bjDM4AFKpbzq+Q685pHA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gLMkHLK0mKWMqok5JcQDcXoi3eGIlWQL3FDHYTg6RDo=;
- b=R2s1VOmkAn8wIaoPC+6mC3+ZexTkGyLXKuzULGadM/BE2P70xDyFEPXrGnZbNsP71kC2vi1859SAucpqx6UHZmuCb2q80mB1gDGPnJBq1UMAnlck0+PQ6T3vS+3JxS0it3JKQSJ14mTNBd/iq33BE93rdVMfRN0xqbCam8TSQguFHT/kl9Kngd6QDlxS+B2yjowT75eznkuoCUXULypI8wrLMK/KfQK5vrsaadBjPJ33ojDhujplGVd6CIiXeKdFEpdbmm7obRat8QcxVsfB4PekzwlmUwKHozGXu/DzpQxWvU1XYKh/9JAcdHVGGa0f1+ZZGF5/6826MRjelIuaTw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gLMkHLK0mKWMqok5JcQDcXoi3eGIlWQL3FDHYTg6RDo=;
- b=haH670w6uu5dk4jOJaujXx2DD5Kxnv1BIFhncAkKohGKG9/hC0/jP+w8ypx0fTkY1IFvG22xL3O2IJ15DPKb3pOQaciYvFYcmvnmtFjAH4kP1+bDeE5rJfvwEVWSgaUfQqXi2aKsuc+QLW51Vu2TVMzGIPfU4J/7ZAU8UnRNFtQe72a4/b4jCRh1wH01K2BzC8sQlLt5Rhi+HIzJpjlPlhX7Je00FYVY3vnb80Sl3QDBwcwg90QJWfOh7GrxnGjfpHT56mcfkoYUlyxcrBi4etH0uOkzEtzlNPkg2TJA/vBC2zImsTStpCDo7eMWvdlPoz0n7YO0K+PLCJ+pkk8N+g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYZPR06MB4461.apcprd06.prod.outlook.com (2603:1096:400:82::8)
- by PUZPR06MB6102.apcprd06.prod.outlook.com (2603:1096:301:112::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.25; Wed, 25 Sep
- 2024 07:09:53 +0000
-Received: from TYZPR06MB4461.apcprd06.prod.outlook.com
- ([fe80::9c62:d1f5:ede3:1b70]) by TYZPR06MB4461.apcprd06.prod.outlook.com
- ([fe80::9c62:d1f5:ede3:1b70%5]) with mapi id 15.20.7982.022; Wed, 25 Sep 2024
- 07:09:53 +0000
-From: Yu Jiaoliang <yujiaoliang@vivo.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Akihiro Tsukada <tskd08@gmail.com>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Cc: opensource.kernel@vivo.com
-Subject: [PATCH v1] media:tuners: Fix typos in comments across various files
-Date: Wed, 25 Sep 2024 15:09:13 +0800
-Message-Id: <20240925070920.3304189-1-yujiaoliang@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR06CA0226.apcprd06.prod.outlook.com
- (2603:1096:4:68::34) To TYZPR06MB4461.apcprd06.prod.outlook.com
- (2603:1096:400:82::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA04132103;
+	Wed, 25 Sep 2024 07:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727248221; cv=none; b=GXfeKZtMmxn7QzyUHA1gvVTgqar7BVWRxmqvR6+TbxKtoMX90965jwW8Qh/0MSutveZQbkD+qUwJdHrtMwwZcL3mtmGsQFKS66w2qkOaEFVPSzyB5Wpt8O1+NfNhA/v6deka54TxJcIdXEdhF47YCZexm6FHww0Xf+07pG67HoI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727248221; c=relaxed/simple;
+	bh=wykQV2o1lX+mZwLiNc+DAJYf+A3aFAUYe3LRR6OMPsQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kpYqh1Buw1rGW4zefyZJuxI1G5LIRcE+mIyyICMeuVg/ciYpSkelJXKqlOeNB7mEegO80TKNZp7IE4t6bYBnLJ9ih5VsgdDYu80mD9i7fGTp8fItPS13aMsVuAYVqnpfoYDTkceqGti7NCUsovun0/0CdkEU32ga/tL9cRRVvlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vs8FW5Ys; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF976C4CEC3;
+	Wed, 25 Sep 2024 07:10:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727248221;
+	bh=wykQV2o1lX+mZwLiNc+DAJYf+A3aFAUYe3LRR6OMPsQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Vs8FW5YsSY5YXTYivLUIxGiuR9d78FN6XL1p4gP/jP/T8Xdli8m4ZsifEJ/rpP+km
+	 DaZRGbVcY3D8Ay2KKM7Of+LzxTr2JNFwgPxYdQWpcMdqxy+gndEgqTtjRvljP0ff2q
+	 V2Ycf3VuUg8eynn8Du+t3KSqcx+nVP+KKmYZGQ0BKxZgRMi1jdj2ZlvBtmHMardtBx
+	 b5YcbIugEPGSEY6O6ThPHycDjQRRlBRqh1VdQJaMEwZEszMtOoDWu/jIYX+c4JPB3y
+	 tBSNhWe5GxrQI6VIIBlJcRZsceP5lIJK3FS6RpQZHRtIizDMLwBRzCq3T8c0RJ/b6T
+	 CGZ8hOhqJRdnQ==
+Message-ID: <04fc202a-ac1c-44c9-ba67-8809e45ef940@kernel.org>
+Date: Wed, 25 Sep 2024 09:10:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB4461:EE_|PUZPR06MB6102:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4401cfae-47bf-4540-7aa9-08dcdd310db7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|52116014|1800799024|7416014|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?h+C5vHFsQ9Epujr8f450oH8DJfwTWbV1J+yR/6y+widcA2QsyumLMIkxzF6B?=
- =?us-ascii?Q?KW+RAjq/xR2xjUmAZp6HWmsZyaQ4nTx5KCP3wtqcRvdoSZ6GQj3Z4Z7l3yu1?=
- =?us-ascii?Q?zpYvDz3XaeTFlQGQjIuaAvGmhw7dCpyNIYevaz1FYPyv5Uom7UYVVbZrYGcr?=
- =?us-ascii?Q?qr7NGMAFISEo6T6+1hacKbXZhJ1v/F+3o5Rx0CTBghffydSQYXi4V9ZOQGlF?=
- =?us-ascii?Q?qpvx3HwJNDIteYlcQIqLiBjRLHEsL3VA7PWW61zucl4t8XEGNNGdBEUCehFE?=
- =?us-ascii?Q?FJ+cIbwo3EEx9zWRUFgRIEp/0dN0YOPlZ0+Ynt+5ebCk5j44xQ2rE/+HIDRA?=
- =?us-ascii?Q?wcLNRR+wX8ZeninkQm9c+V+2T9TEk0eezI5RkOrY0buLvQ/gqWxFdrAkxkL0?=
- =?us-ascii?Q?O3siiAujyzLFUvsdJ9RfswyC3upevsmlAhn4mjvzfkMl7krPw1PVMDzqXiZD?=
- =?us-ascii?Q?5ZrJ/iu0BWolHuSPmx/Hw9JLaBB4Y/blFGsvo90UKhvTuNcE/4elqUYo+Vo+?=
- =?us-ascii?Q?rRSuLG2jQwsuoelHiSz1Sn6D9YcMI37qhEfiJDfGvDGrdIG7IuDSmx+450hv?=
- =?us-ascii?Q?zX124y7wNCRdcbHuYNZq2x8jsktFwV5XTa9epTzBmEdNn8Zbh+/tnmrg0m4A?=
- =?us-ascii?Q?bRYCoRivJB+pB39Aj6wYT/skodijPqsTqu2yGw66+4NtdfDbT8HwH0nBLEyb?=
- =?us-ascii?Q?i51KNB2YCaGPrHE/dTpA6hjqVWuzCzvgHxqg4ZNEgwFuAZXB8BXu9+VLf6Nc?=
- =?us-ascii?Q?0mMqArBHzcnIdapQd0xHQSVGBb+4vq1FeaPuzKhWklS8BqZpvBBz34gN1cT2?=
- =?us-ascii?Q?byAosnbcd0ZdolsVW5Dg10MyiTurVRMYuUMNrFsLDC1XH0GT7xDV2BJytJZU?=
- =?us-ascii?Q?0jIU57SGmZTC54vPi5dmrC6YMCizdGpGP8qjovx2afEKoRBhArm23oHfHvld?=
- =?us-ascii?Q?19ZM5DIIYBRssidov4YC2t33pGogQFwkKqan6ljAku34LPrqKlBjNvMQuA6M?=
- =?us-ascii?Q?Qz5labsNJEyqnNSC0IoXmcJNmxThILzP5XuRw0pyCedPF2IGctbbsIO5AUNu?=
- =?us-ascii?Q?KkRJ78ughlFGtc0CcLOtIwuOXBxtghI6DeKIPjFtpkW1za/3FSYZ03UJnwQ0?=
- =?us-ascii?Q?UmPggvXKU3pvMrtA7MkQ08/TM+x9E7RUbU2A6S00HnFqxFtMhYaeaz0w7oAi?=
- =?us-ascii?Q?gnCUSBxEzjPJZoq/8YZaVBLfWr5JzbnzXiGJEm8heeTmM41Zq2Vl/lPszmOy?=
- =?us-ascii?Q?FZnL3b2035YvOu5v/ZsQIMno7WNJM2teKLNQ8J2+ZxrEJ5hUVA25Q3TIrlWt?=
- =?us-ascii?Q?OMrZBvXE/mn6E6FOiFY9L1OozmSMgZRnt3ciOYYpyqkw1KlvNpj0Sw4cXXaB?=
- =?us-ascii?Q?gYY1f7I=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB4461.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(1800799024)(7416014)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?+qNxeB7ofGgzrjfLLoltQXghIH2mKePePci+/pqKLfg5qTo4ukIXJ4McYQWp?=
- =?us-ascii?Q?9WHyWTN5h17uXa+2eCIh+H1L+Vce5BxMe/H1rBKPYRyQMW6bTVczsXo//DXV?=
- =?us-ascii?Q?pd9EguzkaJANOgC5/APt5k5hO9Y9SosgnPdMZjNrvzEdBkbzAoxAD0+7uP2v?=
- =?us-ascii?Q?GaFahOPHZ1uRmV7ueFRXGQJHchvwuyzychCU/XjTVfZdRRvbzjctQZ7RBKdX?=
- =?us-ascii?Q?+zYtn16m3gr56Vz0jefMzHi96U1t+Zr5SXDUsTive/NqD52KymNXmh0zqov0?=
- =?us-ascii?Q?0FLBLQjYki6nltIOZpY5SfLhKj0MA7OeiH7OLNdfldxXiTaHwa1WZYk3vLH/?=
- =?us-ascii?Q?rrF+FgpaabanEObvYjh9tLUFscqDCf+pLURZ+0ugxgUTs9zEqkfVC+AxkNPs?=
- =?us-ascii?Q?d6N4ME+Jo5eN22xBtBxW97dcEDAwBd1ua6dqddAZs3G1HZ76Uk5CEmxyRrxY?=
- =?us-ascii?Q?dzwHgidZoon0w9Nk4EZbajRnMJzMlZDFmCyzH1rUBUWEtahG9knLvSMYe/iS?=
- =?us-ascii?Q?nCLV4qVJ8QMiMuupHeYhvqI1y7Qqb0YB0uf37mwUBT9MHw0yuQmo2ifOG5rb?=
- =?us-ascii?Q?C/lD+dL7pEUD7TF01Rtt+WLQU3v79ZDGoObnfPCATWeqpbNF2zzoKEh+N5Ww?=
- =?us-ascii?Q?HzTw296lsTMOVgqCA1g2rspnJYCjCkICHiJq8E9L4FQ+rUKcI3iHNEr8jXUu?=
- =?us-ascii?Q?lPQYs1wrNwoIQ3Ww1ObzzRC+oBP2/sQZiDFGlpSMLrHgII3xpZGpTrXRfX8O?=
- =?us-ascii?Q?CNEY4O3H4IFRKBrt8EOkt2XgeTXRJaWiFC4CtR0J+3WwFCY1pGrd4tf8b68D?=
- =?us-ascii?Q?pn+f4LclRCEHpJTi1vd3R/W+l1AqOVLhVhlyVxwHtQfDIxdHAgkjTNRqd8iZ?=
- =?us-ascii?Q?cmLdZDQweMNrr3nu5W8dZlHMVXcBxQwGW+67OuFwQL7JdUARXi4ZDWM+J0oM?=
- =?us-ascii?Q?4pgu/NV3K37K7PysBswAV6UhxjZvyuYnMsQ12lkUEe7HHbiZDaALdzNpEoMy?=
- =?us-ascii?Q?nn/xSAS6jwCvz56bQoLG5ecqLxGrcwxeJRQIeSOycRUjKH0ixqR0NuwD+1QP?=
- =?us-ascii?Q?3dvuulD2rvfMu1DBhQIocoXa7E2IUbETYvOlQmQ5YfvFM5hYNWJ3MwgZQBdb?=
- =?us-ascii?Q?RoIaXO5sKUZS6SruerW39+hogPkSRe0lxL2ILknimsLAwSSU3piqTpe3M14Q?=
- =?us-ascii?Q?qQeeZlUOZPmFdrNbccPgBNqV1iqOAkYd5v2ZET8W4Ve/7gvi+Ryc6YF2moLV?=
- =?us-ascii?Q?3FnKGht7rl3+qw43klyF0LJaub+5YMAIE6onkrRpHKioHdSIxXL1sqgRvY3O?=
- =?us-ascii?Q?wknJQmdtXcJjxLql3ufoPBSrMAgftt8G7cp7wgNuZDkABeWuxX0ClbZqEexA?=
- =?us-ascii?Q?rFfpjwjVIe4ZgeiFSmICz8etAOfPkr0fVdexGJIIytCX+IFYhc11wdU1Roqf?=
- =?us-ascii?Q?dwkcS+khRTkh4li5PDjgcA2llpvsiGQj0V+SRdK5JLPUM7o2xhaC6huXtQjQ?=
- =?us-ascii?Q?rpmHQKASyQ5pi8/9ULM5UjftGsUi5NHELu77xm54+EEXA+rKk/94dMBIXYs4?=
- =?us-ascii?Q?c3tZ1jz/SY63patudsE5clLLVtYe8fPlK77owcLP?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4401cfae-47bf-4540-7aa9-08dcdd310db7
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB4461.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2024 07:09:53.4360
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PB9RxANT75VdPwZQtp/w3Nj5OYxjJTSy5+q65rqkiB+Q5G87ox1sSSaP7E7Fq5pVn73dzo2musw+EqPY/fJlqQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB6102
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2] dt-bindings: net: ath11k: document the inputs
+ of the ath11k on WCN6855
+To: Kalle Valo <kvalo@kernel.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+ linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, ath11k@lists.infradead.org,
+ linux-kernel@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Arnd Bergmann <arnd@arndb.de>
+References: <20240814082301.8091-1-brgl@bgdev.pl>
+ <83c562e9-2add-4086-86e7-6e956d2ee70f@kernel.org> <87msk49j8m.fsf@kernel.org>
+ <ed6aceb6-4954-43ad-b631-6c6fda209411@kernel.org> <87a5g2bz6j.fsf@kernel.org>
+ <3ba2ce52-4da3-4066-baf0-5bab1a9f872a@kernel.org> <87zfnw8eb2.fsf@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <87zfnw8eb2.fsf@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This commit corrects spelling errors in comments within
-the media/tuners directory found by codespell to enhance
-clarity and maintainability of the code.
-This change does not affect the functionality.
+On 25/09/2024 07:58, Kalle Valo wrote:
+> Krzysztof Kozlowski <krzk@kernel.org> writes:
+> 
+>> On 20/09/2024 08:45, Kalle Valo wrote:
+>>
+>>> Krzysztof Kozlowski <krzk@kernel.org> writes:
+>>>
+>>>> On 19/09/2024 09:48, Kalle Valo wrote:
+>>>>> Krzysztof Kozlowski <krzk@kernel.org> writes:
+>>>>>
+>>>>>> On 14/08/2024 10:23, Bartosz Golaszewski wrote:
+>>>>>>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>>>>>>>
+>>>>>>> Describe the inputs from the PMU of the ath11k module on WCN6855.
+>>>>>>>
+>>>>>>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>>>>>>> ---
+>>>>>>> v1 -> v2:
+>>>>>>> - update the example
+>>>>>>
+>>>>>> I don't understand why this patch is no being picked up. The code
+>>>>>> correct represents the piece of hardware. The supplies should be
+>>>>>> required, because this one particular device - the one described in this
+>>>>>> binding - cannot work without them.
+>>>>>
+>>>>> I have already explained the situation. With supplies changed to
+>>>>> optional I'm happy take the patch.
+>>>>
+>>>> You did not provide any relevant argument to this case. Your concerns
+>>>> described quite different case and are no applicable to DT based platforms.
+>>>
+>>> Ok, I'll try to explain my concerns one more time. I'll try to be
+>>> thorough so will be a longer mail.
+>>>
+>>> In ath11k we have board files, it's basically board/product specific
+>>> calibration data which is combined with the calibration data from chip's
+>>> OTP. Choosing the correct board file is essential as otherwise the
+>>> performance can be bad or the device doesn't work at all.
+>>>
+>>> The board files are stored in board-2.bin file in /lib/firmware. ath11k
+>>> chooses the correct board file based on the information provided by the
+>>> ath11k firmware and then transfers the board file to firmware. From
+>>> board-2.bin the correct board file is search based on strings like this:
+>>>
+>>> bus=pci,vendor=17cb,device=1103,subsystem-vendor=105b,subsystem-device=e0ca,qmi-chip-id=2,qmi-board-id=255
+>>> bus=pci,vendor=17cb,device=1103,subsystem-vendor=105b,subsystem-device=e0ca,qmi-chip-id=2,qmi-board-id=255,variant=HO_BNM
+>>>
+>>> But the firmware does not always provide unique enough information for
+>>> choosing the correct board file and that's why we added the variant
+>>> property (the second example above). This variant property gives us the
+>>> means to name the board files uniquely and not have any conflicts. In
+>>> x86 systems we retrieve it from SMBIOS and in DT systems using
+>>> qcom,ath11k-calibration-variant property.
+>>>
+>>> If WCN6855 supplies are marked as required, it means that we cannot use
+>>> qcom,ath11k-calibration-variant DT property anymore with WCN6855 M.2
+>>> boards. So if we have devices which don't provide unique information
+>>
+>> No, it does not mean that.
+>>
+>>> then for those devices it's impossible to automatically to choose the
+>>> correct board file.
+>>
+>> Anyway, only this device must be fully described, because you cannot
+>> have pci17cb,1103 without these supplies. It's just electrically not
+>> possible, according to our investigation.
+> 
+> Yeah, you have been telling that all along. But on the contrary I have
+> WCN6855 (pci17cb,1103) M.2 board which I installed to my NUC and they
+> haven't needed any supplies (unless BIOS does something automatically).
 
-Signed-off-by: Yu Jiaoliang <yujiaoliang@vivo.com>
----
- drivers/media/tuners/mt2063.c   | 2 +-
- drivers/media/tuners/mxl301rf.c | 2 +-
- drivers/media/tuners/mxl5005s.c | 2 +-
- drivers/media/tuners/tea5761.c  | 4 ++--
- drivers/media/tuners/tea5767.c  | 4 ++--
- 5 files changed, 7 insertions(+), 7 deletions(-)
+That's a ACPI system, so ACPI and complex drivers handle this.
 
-diff --git a/drivers/media/tuners/mt2063.c b/drivers/media/tuners/mt2063.c
-index 6afef11a49cb..2c8ce74ddca4 100644
---- a/drivers/media/tuners/mt2063.c
-+++ b/drivers/media/tuners/mt2063.c
-@@ -1476,7 +1476,7 @@ static u32 MT2063_CalcLO2Mult(u32 *Div,
- }
- 
- /*
-- * FindClearTuneFilter() - Calculate the corrrect ClearTune filter to be
-+ * FindClearTuneFilter() - Calculate the correct ClearTune filter to be
-  *			   used for a given input frequency.
-  *
-  * @state:	ptr to tuner data structure
-diff --git a/drivers/media/tuners/mxl301rf.c b/drivers/media/tuners/mxl301rf.c
-index 7c03d4132763..3b61c3afed18 100644
---- a/drivers/media/tuners/mxl301rf.c
-+++ b/drivers/media/tuners/mxl301rf.c
-@@ -64,7 +64,7 @@ static int reg_read(struct mxl301rf_state *state, u8 reg, u8 *val)
- 
- /* tuner_ops */
- 
--/* get RSSI and update propery cache, set to *out in % */
-+/* get RSSI and update property cache, set to *out in % */
- static int mxl301rf_get_rf_strength(struct dvb_frontend *fe, u16 *out)
- {
- 	struct mxl301rf_state *state;
-diff --git a/drivers/media/tuners/mxl5005s.c b/drivers/media/tuners/mxl5005s.c
-index d9bfa257a005..0e811c5eae6c 100644
---- a/drivers/media/tuners/mxl5005s.c
-+++ b/drivers/media/tuners/mxl5005s.c
-@@ -2639,7 +2639,7 @@ static u16 MXL_TuneRF(struct dvb_frontend *fe, u32 RF_Freq)
- 	E5A = (((Fmax - state->RF_LO)/1000)*4/((Fmax-Fmin)/1000)) + 1 ;
- 	status += MXL_ControlWrite(fe, RFSYN_LPF_R, E5A);
- 
--	/* Euqation E5B CHCAL_EN_INIT_RF */
-+	/* Equation E5B CHCAL_EN_INIT_RF */
- 	status += MXL_ControlWrite(fe, CHCAL_EN_INT_RF, ((E5 == 0) ? 1 : 0));
- 	/*if (E5 == 0)
- 	 *	status += MXL_ControlWrite(fe, CHCAL_EN_INT_RF, 1);
-diff --git a/drivers/media/tuners/tea5761.c b/drivers/media/tuners/tea5761.c
-index d78a2bdb3e36..425e9fd3f3d4 100644
---- a/drivers/media/tuners/tea5761.c
-+++ b/drivers/media/tuners/tea5761.c
-@@ -46,7 +46,7 @@ struct tea5761_priv {
- /* FRQSET - Read: bytes 2 and 3 / Write: byte 1 and 2 */
- 
- 	/* First byte */
--#define TEA5761_FRQSET_SEARCH_UP 0x80		/* 1=Station search from botton to up */
-+#define TEA5761_FRQSET_SEARCH_UP 0x80		/* 1=Station search from bottom to up */
- #define TEA5761_FRQSET_SEARCH_MODE 0x40		/* 1=Search mode */
- 
- 	/* Bits 0-5 for divider MSB */
-@@ -132,7 +132,7 @@ static void tea5761_status_dump(unsigned char *buffer)
- 	       frq / 1000, frq % 1000, div);
- }
- 
--/* Freq should be specifyed at 62.5 Hz */
-+/* Freq should be specified at 62.5 Hz */
- static int __set_radio_freq(struct dvb_frontend *fe,
- 			    unsigned int freq,
- 			    bool mono)
-diff --git a/drivers/media/tuners/tea5767.c b/drivers/media/tuners/tea5767.c
-index 016d0d5ec50b..ef4acb1f1bfa 100644
---- a/drivers/media/tuners/tea5767.c
-+++ b/drivers/media/tuners/tea5767.c
-@@ -44,7 +44,7 @@ struct tea5767_priv {
- 
- /* Third register */
- 
--/* Station search from botton to up */
-+/* Station search from bottom to up */
- #define TEA5767_SEARCH_UP	0x80
- 
- /* Searches with ADC output = 10 */
-@@ -183,7 +183,7 @@ static void tea5767_status_dump(struct tea5767_priv *priv,
- 		   (buffer[4] & TEA5767_RESERVED_MASK));
- }
- 
--/* Freq should be specifyed at 62.5 Hz */
-+/* Freq should be specified at 62.5 Hz */
- static int set_radio_freq(struct dvb_frontend *fe,
- 			  struct analog_parameters *params)
- {
--- 
-2.34.1
+> Also I have QCA6390 and WCN7850 M.2 boards, both which you claim needs
+> the supplies, and they just work out-of-box as well. So I have a hard
+
+On DT platform they work by coincidence or "work mostly". Ppwer
+sequencing work fixes it.
+
+> time trusting your spec and believing it's the ultimate authority. To me
+> if reality and spec doesn't match, reality wins.
+
+You miss concepts of DT. Really.
+
+You can skip in DT many regulator supplies, which are enabled by default
+(e.g. by bootloader). And what? Everything will work fine even if Linux
+kernel requires them. Driver will probe fine, hardware "will work".
+
+Still the regulators *are required* by DT rules and we have been telling
+you this so many times already.
+
+That's not a difference case here.
+
+> 
+>>> So based on this, to me the correct solution here is to make the
+>>> supplies optional so that qcom,ath11k-calibration-variant DT property
+>>> can continue to be used with WCN6855 M.2 boards.
+>>
+>> WCN6855 can still do whatever they want. They are not restricted, not
+>> limited. pci17cb,1103 must provide suppplies, because pci17cb,1103
+>> cannot work without them.
+> 
+> Claiming that WCN6885 can still do whatever they want is confusing to me
+> because WCN6855 is pci17cb,1103, there are no other ids. See
+> ath11k/pci.c:
+> 
+> #define WCN6855_DEVICE_ID		0x1103
+> 
+> { PCI_VDEVICE(QCOM, WCN6855_DEVICE_ID) },
+> 
+> But this discussion is going circles and honestly is waste of time. I
+> don't think the patch is right but I'll apply it anyway, let's deal with
+> the problems if/when they come up.
+
+For me, there could be different WCN6885 chips, flavors or PCI cards.
+The binding speaks only about given PCI device.
+
+Best regards,
+Krzysztof
 
 
