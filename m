@@ -1,158 +1,145 @@
-Return-Path: <linux-kernel+bounces-339492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 451B19865DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:43:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 84B199865E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:44:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBD70282446
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:43:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48105282050
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DAE8139D0B;
-	Wed, 25 Sep 2024 17:43:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4FF139D0B;
+	Wed, 25 Sep 2024 17:44:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XSCNkXh6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="S7E9AvB8"
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D6C13B287;
-	Wed, 25 Sep 2024 17:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A6A8289A
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 17:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727286195; cv=none; b=Tf/2mauNsd/MV244xJL1sfYz1OYA4x3maSQNHoNkaM8pbGCdxgtL4xAPrFReqh6+QIDe9d4WueCfFLhV31UP01Z+RYiSrt21vngQNnBr61IGcAvu7+m6efwIFloJo5pT4nnkO/PzrObw/HntNZzxA2dbWaiRRKg+WQrPIDdNe2o=
+	t=1727286249; cv=none; b=m1o62ZLSTcO2clU2QxJ1UBESNxcvvdYucDS0yGf0uJ2JHfUPOufM/ta+LdGDX4Rb2Os13ZW/Gy9D01z0OY4ImC8bJPnFu9cklkYL+6xxzSVQ9908+r7eCWRpiViksmT+0/wyyif1NjCpd3fZuctphLsvRPuN3Rfw8PELR4FVpOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727286195; c=relaxed/simple;
-	bh=F9RWq/rXxSYntRpuJCLCsbi4j1kIhMfwU6j+9oqCDbQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ncNRihlKL8WJ3bYrXGEn1b89jEGMdBcDJMaF4Seeyg4CpF2JyAQx7SsHreZpAFrjAbZcHFKsaAAsrXItMZ5FuIRAHPgTyW5nxI39GNougXjiyPVEwYjNCxF6J3orxv5BfWaFb0o157+GvyqA3bzcWNvG5DekLUPjXmTHGzWaxVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XSCNkXh6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D95DFC4CEC9;
-	Wed, 25 Sep 2024 17:43:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727286194;
-	bh=F9RWq/rXxSYntRpuJCLCsbi4j1kIhMfwU6j+9oqCDbQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=XSCNkXh6Nl50YIGnJnoFX/5doL7AaTWE4fzrWVW0hSaX6cA89l8hRUPk0oOxn0/0a
-	 7wc981hmfdlzSpnQY9sbk8hjpbuMbi04gUV4NOBjSxdcCRv0l+9U93iqbaEjA7uRhU
-	 mKtjlR2QJTTICDfJYJBjgq/4Of69bkzakvzTKnEkZPXKAUWDroeMGQqp7mYfMFud4z
-	 uQ0NYsGBrrIejc9vp+uWBUcVTSKskJLtavBZiLaEDucMz7IKhONgqP809zorLVgWwD
-	 pZlBp4L5B0EYbSgxxe/GU/Rb8Xjee15oLOBozXq0EZiQYQCQOu5KSgugF3iAd1kCu0
-	 d9ygt3KDerlZg==
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f75c6ed397so918571fa.2;
-        Wed, 25 Sep 2024 10:43:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU0NZguSYRaESNaMLCxRnrnJBujIGWqp5RSwdEDBVFl1iZ6uxtaZDi3oGZDsBXrkwU5CuUl8Ho9pDnMVj/t@vger.kernel.org, AJvYcCU4rkrjglJdW6N/3Tn4CviyNkRnvcgek2M9ZvK3wixQjwZgiWeZL6mMOi/iVe3ajP0TVYRCDZem4P4Afvgx@vger.kernel.org, AJvYcCUB4gs1GDhVtdjY3yokCK6y2Mgfy+PrxOEWttNewzfDgaameMoAAhb8MbZJau4jU22bNWg=@vger.kernel.org, AJvYcCUXqqGfM9kEoabAXq2UFW69UprDDHfZ9t6Xx1hWC+z4fHTxOk118xgYFV07Lk0yzAwUCm/4mRovB04245+rVso=@vger.kernel.org, AJvYcCUZWD5pNGaRoLvjvqs4+YguaYVh1mp5YtOhJAbfOmk1OVUMWKRFPG2kJwUgqlq3huNb0a/WyHY3sz7h@vger.kernel.org, AJvYcCV2JhnMQ1eMwtgl9w5nyULw9XiHzHBf+b5ynFnpEqItN2vODXdrAn7SZsGOmIjab6+770+RNBaLbv0=@vger.kernel.org, AJvYcCVPAf3T4PLp45gATMgqSOItD7FjcPMvRMkqFrkXjgFs0qZBRalArhgeYFNksP02KvxhVX6t2ObpfyFhag==@vger.kernel.org, AJvYcCVgvSe7X2bfsHYoKn4QERQRqami54TlaGT3X+HKpxzfiNzbdVKALpHoMr436/g2uGxlA+00wRPoCEqv@vger.kernel.org, AJvYcCWmfYSzVKmxZYYq7DzySb+Ar/wVAXL23NPMPIyRThI0KJwXh7txuEr7akcDCitfXLRgqM6490aoXpSAveult5Zp1g==@vger.kernel.org, AJvYcCWtTb3O21Ie4t0MKjEk3TQq
- 4Ulnn7rzsckBX1+eLPIT/G9+I4zRUx6U7IFC5JwQuoVSr7NONcSMrEE9q60z@vger.kernel.org
-X-Gm-Message-State: AOJu0YzU54WlhGCv2KZbv0ekJIVdl33DEHGM70dlZvYCaxwjNa0P5XbN
-	n4cDTL8XpI0Q7MVlaXf5LPM7qW1kWersdyft8s7ViN+Pa9Jc5/mKzoBKgqzSxZ581vJOFpRfxqh
-	0TrMWsb4TBnv1zxSWMzN9OtxcoV4=
-X-Google-Smtp-Source: AGHT+IE+in2ujKNOqfeviyH74B95luqIkWPFYLgeNJlVInDDisJWQsgCamgzHX+iXC0QURdLGLDiXb1g2DagGfPNhfo=
-X-Received: by 2002:a05:651c:1504:b0:2f6:5f7b:e5e0 with SMTP id
- 38308e7fff4ca-2f915ff58a0mr23471981fa.21.1727286193113; Wed, 25 Sep 2024
- 10:43:13 -0700 (PDT)
+	s=arc-20240116; t=1727286249; c=relaxed/simple;
+	bh=mdOJO1T2SXtgXhpZ8IXEcyfGOLgVnBuAE9fSfJICRmk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IU1lYPJTezrhZFGP1k3OgCIDj+kuQrHGGFS4g+rLR2OxRsLQ5DPenSlDktPBaJcPspq4dvy1BTH6xYXPz1y3vfljTo3ziwqQhGB4Eh+T6qVKQqO97b4Vpdf9z5bOHqS3Z2HAX8+vtB7eeX7E/Fi9rgw7qzzlOEY5ZTMVv5E0k9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=S7E9AvB8; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3a0cc384a85so459065ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 10:44:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1727286245; x=1727891045; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=S1NOQIHvoS1b32+JnBJFUorwn4fOby0JeQc5DVFR9XI=;
+        b=S7E9AvB8z9vhEKVxqeOY3EdmweLKcSMceSz9dRv4NyFaQbru0zdCiB1lzgxnqoKW4M
+         HxKWfW1ecyDsEZxPxQBrPPMxwQVgJrzsQ8g81PThpkCF2/kt5A3bUtxIAjNf0jLAXRvY
+         R3rnJy+A8XnIt7aSrbivsyU67NaF+rE3JZFjY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727286245; x=1727891045;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=S1NOQIHvoS1b32+JnBJFUorwn4fOby0JeQc5DVFR9XI=;
+        b=uIMXchG/yOSdCUwLghff7emhsQszg3q4vA5luBj8PnUuvuyI1VpMhZ7KVdYcbCSAtF
+         aHHNk8zbftlk0d4eKTiUevpO/E83Kgs1eHzKfArzzQXVZf2C/YJadpOH0t1kpxizkldU
+         ICpChNJdJ9zB/ZkUcelMnFKAy9FELAvLzfvuUzLg2v9y4yWWTENibwQlASRyVy1C5yr0
+         aSGmSNmsOKp3P99u2gc4xu/COJm1RBTxZwgFbbuqHEYMXYR4z8MUeMIkT47fTg85CV0M
+         bvhXuzjOUdyGW3aWoxYt9f7aWzFcNzxIxqg0pI7xZMFvPJ+azkNCITL3rN1GOKMiCu+B
+         cjdA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxGL1WYa+3sZ4YMcRyjmEYRt3di6N323ev1vgyH4hmXo+HLJakPCCBmdOIZhkefDcNOQUWD1Juu1DgUfQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5vv9lJkhDY+hzMIju8DQr5J+TDLNxNsU29ucJOhhXI1pktupf
+	4m375QXqNsd4Lg8Cj71euUYP90+1g/xlMjHW8xz5XexeirxFdSKWinPz5aSOezU=
+X-Google-Smtp-Source: AGHT+IGU2iXvHZXBx7d7MTmHzpaHRYoM0isbxb+yjYZRM40BVKEyJurIZQMglgYHXU0dupnd4jnbLw==
+X-Received: by 2002:a05:6e02:13aa:b0:39d:4c8a:370d with SMTP id e9e14a558f8ab-3a26d7a0ed1mr37529425ab.18.1727286245036;
+        Wed, 25 Sep 2024 10:44:05 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a1a5713ac4sm12296485ab.68.2024.09.25.10.44.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Sep 2024 10:44:04 -0700 (PDT)
+Message-ID: <576dd993-1428-4be0-9e5d-abec44a039c5@linuxfoundation.org>
+Date: Wed, 25 Sep 2024 11:44:03 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925150059.3955569-30-ardb+git@google.com>
- <20240925150059.3955569-35-ardb+git@google.com> <CAP-5=fXw1rcgWgMeDSVqiDYh2XYApyaJpNvukvJ7vMs7ZPMr6g@mail.gmail.com>
-In-Reply-To: <CAP-5=fXw1rcgWgMeDSVqiDYh2XYApyaJpNvukvJ7vMs7ZPMr6g@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 25 Sep 2024 19:43:01 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXEmssrOhu20aLW4v88YVdkCfbeRg6arkgUoDNHm-4vbMA@mail.gmail.com>
-Message-ID: <CAMj1kXEmssrOhu20aLW4v88YVdkCfbeRg6arkgUoDNHm-4vbMA@mail.gmail.com>
-Subject: Re: [RFC PATCH 05/28] x86: Define the stack protector guard symbol explicitly
-To: Ian Rogers <irogers@google.com>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Uros Bizjak <ubizjak@gmail.com>, Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, 
-	Christoph Lameter <cl@linux.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
-	Juergen Gross <jgross@suse.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Keith Packard <keithp@keithp.com>, 
-	Justin Stitt <justinstitt@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	linux-doc@vger.kernel.org, linux-pm@vger.kernel.org, kvm@vger.kernel.org, 
-	xen-devel@lists.xenproject.org, linux-efi@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-sparse@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] selftests: exec: update gitignore for load_address
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Allison Henderson <allison.henderson@oracle.com>,
+ Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+ rds-devel@oss.oracle.com, linux-mm@kvack.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240924-selftests-gitignore-v1-0-9755ac883388@gmail.com>
+ <20240924-selftests-gitignore-v1-4-9755ac883388@gmail.com>
+ <e537539f-85a5-42eb-be8a-8a865db53ca2@linuxfoundation.org>
+ <70864b3b-ad84-49b2-859c-8c7e6814c3f1@gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <70864b3b-ad84-49b2-859c-8c7e6814c3f1@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 25 Sept 2024 at 17:54, Ian Rogers <irogers@google.com> wrote:
->
-> On Wed, Sep 25, 2024 at 8:02=E2=80=AFAM Ard Biesheuvel <ardb+git@google.c=
-om> wrote:
-> >
-> > From: Ard Biesheuvel <ardb@kernel.org>
-> >
-> > Specify the guard symbol for the stack cookie explicitly, rather than
-> > positioning it exactly 40 bytes into the per-CPU area. Doing so removes
-> > the need for the per-CPU region to be absolute rather than relative to
-> > the placement of the per-CPU template region in the kernel image, and
-> > this allows the special handling for absolute per-CPU symbols to be
-> > removed entirely.
-> >
-> > This is a worthwhile cleanup in itself, but it is also a prerequisite
-> > for PIE codegen and PIE linking, which can replace our bespoke and
-> > rather clunky runtime relocation handling.
-> >
-> > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> > ---
-> >  arch/x86/Makefile                     |  4 ++++
-> >  arch/x86/include/asm/init.h           |  2 +-
-> >  arch/x86/include/asm/processor.h      | 11 +++--------
-> >  arch/x86/include/asm/stackprotector.h |  4 ----
-> >  tools/perf/util/annotate.c            |  4 ++--
-> >  5 files changed, 10 insertions(+), 15 deletions(-)
-> >
-...
-> > diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-> > index 37ce43c4eb8f..7ecfedf5edb9 100644
-> > --- a/tools/perf/util/annotate.c
-> > +++ b/tools/perf/util/annotate.c
-> > @@ -2485,10 +2485,10 @@ static bool is_stack_operation(struct arch *arc=
-h, struct disasm_line *dl)
-> >
-> >  static bool is_stack_canary(struct arch *arch, struct annotated_op_loc=
- *loc)
-> >  {
-> > -       /* On x86_64, %gs:40 is used for stack canary */
-> > +       /* On x86_64, %gs:0 is used for stack canary */
-> >         if (arch__is(arch, "x86")) {
-> >                 if (loc->segment =3D=3D INSN_SEG_X86_GS && loc->imm &&
-> > -                   loc->offset =3D=3D 40)
-> > +                   loc->offset =3D=3D 0)
->
-> As a new perf tool  can run on old kernels we may need to have this be
-> something like:
-> (loc->offset =3D=3D 40 /* pre v6.xx kernels */ || loc->offset =3D=3D 0 /*
-> v6.xx and later */ )
->
-> We could make this dependent on the kernel by processing the os_release s=
-tring:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/=
-tree/tools/perf/util/env.h#n55
-> but that could well be more trouble than it is worth.
->
+On 9/25/24 10:25, Javier Carrasco wrote:
+> On 25/09/2024 17:46, Shuah Khan wrote:
+>> On 9/24/24 06:49, Javier Carrasco wrote:
+>>> The name of the "load_address" objects has been modified, but the
+>>> corresponding entry in the gitignore file must be updated.
+>>>
+>>> Update the load_address entry in the gitignore file to account for
+>>> the new names.
+>>>
+>>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+>>> ---
+>>>    tools/testing/selftests/exec/.gitignore | 2 +-
+>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/tools/testing/selftests/exec/.gitignore b/tools/testing/
+>>> selftests/exec/.gitignore
+>>> index 90c238ba6a4b..4d9fb7b20ea7 100644
+>>> --- a/tools/testing/selftests/exec/.gitignore
+>>> +++ b/tools/testing/selftests/exec/.gitignore
+>>> @@ -9,7 +9,7 @@ execveat.ephemeral
+>>>    execveat.denatured
+>>>    non-regular
+>>>    null-argv
+>>> -/load_address_*
+>>> +/load_address.*
+>>
+>> Hmm. This will include the load_address.c which shouldn't
+>> be included in the .gitignore?
+>>
+>>>    /recursion-depth
+>>>    xxxxxxxx*
+>>>    pipe
+>>>
+>>
+>> thanks,
+>> -- Shuah
+> 
+> 
+> Hi, the kernel test robot already notified me about that issue, and I
+> sent a v2 to fix it shortly after. Please take a look at the newer
+> version where I added the exception for load_address.c.
+> 
 
-Yeah. I also wonder what the purpose of this feature is. At the end of
-this series, the stack cookie will no longer be at a fixed offset of
-%GS anyway, and so perf will not be able to identify it in the same
-manner. So it is probably better to just leave this in place, as the
-%gs:0 case will not exist in the field (assuming that the series lands
-all at once).
+Thanks. I saw your v2 after sending this email. I have a comment
+on v2 to split core and net patch
 
-Any idea why this deviates from other architectures? Is x86_64 the
-only arch that needs to identify stack canary accesses in perf? We
-could rename the symbol to something identifiable, and do it across
-all architectures, if this really serves a need (and assuming that
-perf has insight into the symbol table).
+thanks,
+-- Shuah
+
 
