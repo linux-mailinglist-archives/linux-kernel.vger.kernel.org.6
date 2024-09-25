@@ -1,52 +1,68 @@
-Return-Path: <linux-kernel+bounces-338297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D3B798560D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:06:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0670E985614
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:07:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB1F2B2254A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:06:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37E381C21256
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7E413D291;
-	Wed, 25 Sep 2024 09:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F05515C122;
+	Wed, 25 Sep 2024 09:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Dk5MkyBL"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Wp6jtN2r"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34AD4136E01
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 09:06:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5844212D20D;
+	Wed, 25 Sep 2024 09:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727255172; cv=none; b=fpM/jKYbXT1W/EYYOA7uE2Xa1/mvmRpmew+TcE89AJolo2Vwqt0Zxyl0fI9CASGTK/LtqX7otfo8mlM0BbsEZsLJUzqeajHf/GrptztRWXkzmS8hyov9s6BD6sl2PJSLuxjpnGs8idTJx99e+pqN9pNoWx+3kkUH8tGCTWYP54o=
+	t=1727255239; cv=none; b=tAz2qnGHSXVSNUBm31QT28r9D9LKK0AU+ijWzAeVb12AO9kTNGohIRBx2a7faHHkgAp9vcBphvsNZ1HFlGZY/3/5CW9Xjl3G1tkSDP/k0Cbxnn2+YaMpGepESdMpC8SvkY4vBpRYYT1veE5u7A9/L1JZymcJV5J1oZZZu87w9qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727255172; c=relaxed/simple;
-	bh=CtYJKhN56Tkn2nTyWC//bspec045L3XtMKbo8OzVVIQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=G9Aqwa3zPRAT+VxScRbKm9wsf61AYmh2heC8q0m846ksrOogwRJAjbIIqMfN9QccUt3GzJye+QJwX6DAdB9+RBSn5uJTZgzdUejn0o4SgSFM+trK2M/51UjBu4MUdSPhoCumrLlNr4Gx/8Q7GigYrkMHNrm6edIuBtr4wHA+85M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Dk5MkyBL; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1727255161; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=fa+kLf6gy5U/3Q/eBaW0VYx6czuibDXvJZbaeNqxg9M=;
-	b=Dk5MkyBLXxm3AjWbOO9OuH7Kain7cz4Pm9S0au8FqPesIO2cXhBrBQI8hGhAnmB01bBQR12eetazUJ7x4diXsZH6pFciLtA+I3hTpK+8Y5+MwrfBbxGPWXYjTZ0x2wjYDAKtVranyoY6WU1wZUtKvZ/AFXp0cZzSfLR28u++cuQ=
-Received: from localhost(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WFjCWdW_1727255160)
-          by smtp.aliyun-inc.com;
-          Wed, 25 Sep 2024 17:06:01 +0800
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Heming Zhao <heming.zhao@suse.com>
-Cc: ocfs2-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	syzbot+9709e73bae885b05314b@syzkaller.appspotmail.com
-Subject: [PATCH] ocfs2: fix uninit-value in ocfs2_get_block()
-Date: Wed, 25 Sep 2024 17:06:00 +0800
-Message-Id: <20240925090600.3643376-1-joseph.qi@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.3
+	s=arc-20240116; t=1727255239; c=relaxed/simple;
+	bh=kES6VBN1NljvQbZDMcvTT+f9VfdLXE0r+xGDKiev3fw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tU9psgLHhrIkmgpQ06Xx8wKRaVH/UJfosqgLMfmnOJ9DObESFq50UZjqwrkQagj38AUy3wRjS5mjkWZ8mHOLhFWfy+RciN6D09bcCbl4jU9FUmpE5e6zTNY878Z6kus9JcFPclmn42VrbWdJgraKLOgMUryCne99LFd7ZYbTqxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Wp6jtN2r; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48P8Nm49005416;
+	Wed, 25 Sep 2024 09:07:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=2P7zf0h8271G9c8uj9+9m6
+	5W2uDQEJvoZrE/yBtWvwQ=; b=Wp6jtN2rET+/xRMtav48dsOekqzIluLhENDLFU
+	1mG+8hin7CMC50A/eBw1schp5B6tygPg8ooIMaW127ICHVKqIK12AEW+M1vhXgd7
+	jW2IYTQXtVGKPiZz0VrrMR0WzAupFYyAy6AACXXk0GBGQ4JPyZtm5Tkk1M2jaeOd
+	hLdEe2gh7I/qeRilg1fYYR1bHsLs+HSikaGjHLCe2WDx2f+KEzQ2Z4d104UQL1Zl
+	A0Teeg09SltMmkG6IG5w4TbJRLtBZMAmdVbLgG8jjoT1AhcLyG9MNV6NXu2L+mfG
+	GxfqC+Lglxq5aMCLb66SRcjI8IjugTV4pTyYMk4rn+/rGf8w==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41skueug7d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Sep 2024 09:07:15 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48P97E1P014714
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Sep 2024 09:07:14 GMT
+Received: from hu-bpothuno-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 25 Sep 2024 02:07:11 -0700
+From: Balaji Pothunoori <quic_bpothuno@quicinc.com>
+To: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Balaji Pothunoori <quic_bpothuno@quicinc.com>
+Subject: [PATCH] arm64: dts: qcom: qcs6490-rb3gen2: Enable wifi for qcs6490-rb3gen2 boards
+Date: Wed, 25 Sep 2024 14:36:50 +0530
+Message-ID: <20240925090650.26314-1-quic_bpothuno@quicinc.com>
+X-Mailer: git-send-email 2.35.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,67 +70,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: w9bNEcK5dk9IJ2m6cW8rJu3AcK6Fv1QO
+X-Proofpoint-ORIG-GUID: w9bNEcK5dk9IJ2m6cW8rJu3AcK6Fv1QO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
+ adultscore=0 clxscore=1011 lowpriorityscore=0 suspectscore=0
+ malwarescore=0 impostorscore=0 mlxlogscore=555 bulkscore=0 mlxscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409250064
 
-syzbot reported an uninit-value BUG:
+Enable the 'wifi' node for qcs6490-rb3gen2 boards.
 
-BUG: KMSAN: uninit-value in ocfs2_get_block+0xed2/0x2710 fs/ocfs2/aops.c:159
-ocfs2_get_block+0xed2/0x2710 fs/ocfs2/aops.c:159
-do_mpage_readpage+0xc45/0x2780 fs/mpage.c:225
-mpage_readahead+0x43f/0x840 fs/mpage.c:374
-ocfs2_readahead+0x269/0x320 fs/ocfs2/aops.c:381
-read_pages+0x193/0x1110 mm/readahead.c:160
-page_cache_ra_unbounded+0x901/0x9f0 mm/readahead.c:273
-do_page_cache_ra mm/readahead.c:303 [inline]
-force_page_cache_ra+0x3b1/0x4b0 mm/readahead.c:332
-force_page_cache_readahead mm/internal.h:347 [inline]
-generic_fadvise+0x6b0/0xa90 mm/fadvise.c:106
-vfs_fadvise mm/fadvise.c:185 [inline]
-ksys_fadvise64_64 mm/fadvise.c:199 [inline]
-__do_sys_fadvise64 mm/fadvise.c:214 [inline]
-__se_sys_fadvise64 mm/fadvise.c:212 [inline]
-__x64_sys_fadvise64+0x1fb/0x3a0 mm/fadvise.c:212
-x64_sys_call+0xe11/0x3ba0
-arch/x86/include/generated/asm/syscalls_64.h:222
-do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
-entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-This is because when ocfs2_extent_map_get_blocks() fails, p_blkno is
-uninitialized. So the error log will trigger the above uninit-value
-access.
-
-The error log is out-of-date since get_blocks() was removed long time
-ago. And the error code will be logged in ocfs2_extent_map_get_blocks()
-once ocfs2_get_cluster() fails, so fix this by only logging inode and
-block.
-
-Link: https://syzkaller.appspot.com/bug?extid=9709e73bae885b05314b
-Reported-by: syzbot+9709e73bae885b05314b@syzkaller.appspotmail.com
-Tested-by: syzbot+9709e73bae885b05314b@syzkaller.appspotmail.com
-Fixes: ccd979bdbce9 ("[PATCH] OCFS2: The Second Oracle Cluster Filesystem")
-Cc: stable@vger.kernel.org
-Signed-off-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+Signed-off-by: Balaji Pothunoori <quic_bpothuno@quicinc.com>
 ---
- fs/ocfs2/aops.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
-index 1fea43c33b6b..db72b3e924b3 100644
---- a/fs/ocfs2/aops.c
-+++ b/fs/ocfs2/aops.c
-@@ -156,9 +156,8 @@ int ocfs2_get_block(struct inode *inode, sector_t iblock,
- 	err = ocfs2_extent_map_get_blocks(inode, iblock, &p_blkno, &count,
- 					  &ext_flags);
- 	if (err) {
--		mlog(ML_ERROR, "Error %d from get_blocks(0x%p, %llu, 1, "
--		     "%llu, NULL)\n", err, inode, (unsigned long long)iblock,
--		     (unsigned long long)p_blkno);
-+		mlog(ML_ERROR, "get_blocks() failed, inode: 0x%p, "
-+		     "block: %llu\n", inode, (unsigned long long)iblock);
- 		goto bail;
- 	}
+diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+index 0d45662b8028..21bcfcdb5e46 100644
+--- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
++++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+@@ -792,6 +792,7 @@
  
+ &wifi {
+ 	memory-region = <&wlan_fw_mem>;
++	status = "okay";
+ };
+ 
+ /* PINCTRL - ADDITIONS TO NODES IN PARENT DEVICE TREE FILES */
 -- 
-2.39.3
+2.17.1
 
 
