@@ -1,159 +1,127 @@
-Return-Path: <linux-kernel+bounces-339371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E568986401
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:44:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 274B098640A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:46:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A7241C27BB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:44:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C88781F2446C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F80219E0;
-	Wed, 25 Sep 2024 15:44:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D5B1BF2B;
+	Wed, 25 Sep 2024 15:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EXWy5Vr2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PC9gRgVo"
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF9A1D5AD7
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 15:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB1A7367
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 15:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727279044; cv=none; b=HovXEmm6D79Zbt26n5ga59PPN9XQcCIAptka9axZ3vPKSYGN+VzE3MQMmmEWkkMMUiz4AtYU6qqahonYjRRQprIyPAy0f7OyprTKSFFHhkcD+KWTYFsfRXdkwtAZ6b7x4Je6tXvMWcFaT4IuqJywIKjkDkRoSHhemsNGz5e9yrU=
+	t=1727279178; cv=none; b=sFsSYeMWUAqZ6YWTJXmUPLBIwB7hI0HYR/2ii+T4x0XGxKH0XnTZSLakQYX9rYBV4Oo2WBR4QwyPG0SpdicRWuxVGAI8w4hC+FWGsfETEKwDCnIT5bSyyHaRJiPAv4tXcG3aEKoRX/yFt0N0o8IVltAg0zS7N/iTuHUJXg2tDZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727279044; c=relaxed/simple;
-	bh=MWXGrbZKhplb8b5pdAR8zTppw4TNyfFnSpLm65mxNg8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dXa+6pVlvoGLe6oa7trlz1RitobvJYyP+qTkUn01PBRD8ILkMMaQc23lgvTXvuHTZEQEnGq1Jstvy4a1Ec/cjbSDtucTATPC5NWVAo587mbiDakfrm4nB0cYo4mkOsdAyk+wdhnSIEsTNGltTBuIetpyuJC1hzmbt4B3OCeS7mQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EXWy5Vr2; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727279043; x=1758815043;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=MWXGrbZKhplb8b5pdAR8zTppw4TNyfFnSpLm65mxNg8=;
-  b=EXWy5Vr25AF34kCJbthg5/oFeLd8OcAOQfUvEaa7MzyKcEDz1kXxn2Ft
-   xlk5GeF79OilCf7g234A+O5oECtTi+qkR/MJxzPRZZRmsRqQBiTtNh2sV
-   ByTTvGzY0cjXhCqG9hpTvAK5m5ivPXJcKthdUO9ZVyk8yC11sSdPXySdL
-   C2Xn6RE3NWbqbi1iGQP7an2lUY07ork6UAOuX/gHR+wf4/Y9U4naOmzFh
-   yKTHUAISaSSTn4mJyHV0aOVbao8qN4XikQwLhEYrY3dVf3HYozGc8jZi8
-   cJ3aghskfhw5OvkMYCKX5fT5AMDsASBQAxJG4zUIuP13DtY8P/k47BUQj
-   w==;
-X-CSE-ConnectionGUID: 6jAZviWHRS6tuyGeY5j2zw==
-X-CSE-MsgGUID: RCpq5zMeQnWS+ijCkPaRzg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11206"; a="51752543"
-X-IronPort-AV: E=Sophos;i="6.10,257,1719903600"; 
-   d="scan'208";a="51752543"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 08:44:01 -0700
-X-CSE-ConnectionGUID: OpeOVUwgQUCWEHsaGrBRZA==
-X-CSE-MsgGUID: WUgH7Bn0R0SKdoldUzzWAA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,257,1719903600"; 
-   d="scan'208";a="71411835"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa006.fm.intel.com with ESMTP; 25 Sep 2024 08:43:59 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 4BE23565; Wed, 25 Sep 2024 18:43:58 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: linux-kernel@vger.kernel.org
-Cc: Andy Shevchenko <andy@kernel.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 2/2] resource: Introduce is_type_match() helper and use it
-Date: Wed, 25 Sep 2024 18:43:35 +0300
-Message-ID: <20240925154355.1170859-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20240925154355.1170859-1-andriy.shevchenko@linux.intel.com>
-References: <20240925154355.1170859-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1727279178; c=relaxed/simple;
+	bh=x+4F0wBUmKeHDpIxKuL0c2Jd8c4z4haxH1Lz4gdI+B0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l0LZAAxi+40lFwET3ojbKZmHKHLG3K+/n4Ob1tGcJl52VGZK5zTNpEV2mqW9LDd+oJEOyIJx3nthHBFoNZJ+/FH5Uxsjdp4uIBSHWCfmwL54FkTZbCmw9IxZhWqsWoMXOIgHDxqiTypSTQ6OogfgAw0NnsJIAFaIG3jPMywD8Vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=PC9gRgVo; arc=none smtp.client-ip=209.85.166.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-82cd872755dso303744939f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:46:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1727279175; x=1727883975; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bJM9B0m/lek0u1t6zaan4eSGVrdWrKVx/I5Nl82tDpg=;
+        b=PC9gRgVoBdTFbP/CUmjj8qpu4fOA1QUc1MXA98jYJFalliEKXucSUK5a/JmYxtNdrt
+         1GorQ5NKg6gXGR4htfCIwdAz5SWa+WevsgaGrs2sNNRTbV2xm6g7FTCU3PxhYfcVSkBe
+         N5II6CsvQ1LhBPL2FEMfRsbT2YZMMwIa2Guhg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727279175; x=1727883975;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bJM9B0m/lek0u1t6zaan4eSGVrdWrKVx/I5Nl82tDpg=;
+        b=YJE1XpLbICMnVOiX4vvc+pTA01OKumuyV+S3AjqbrsIylpMB4KGM6v5L6s9oh6FpBF
+         L/swks22TZUJD8JGN5PLr/QX4BTh0KZgJqxLQ5Q94Jp7GQzHFlZnbMVjwErsR01/Gdxi
+         84O+vv6MBFPUeltoh4fRDtk2rsvhPqCNot+/EJNOHDdsNp1SYpFoZ/R2lGRggQ+0biOa
+         gUfkV894PVU3nT6PmI5MPCz4W6ZDH4JACFvXngFvoDcSe1to2cJS3VUCYbSHnli0ntfA
+         rOXtCwwOvV5LTLqMZuxzZJsS0rOZZHcKLD2Hps3VG+zO/wvMSIEIew0IIZMlv/jCRdr2
+         921Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWwMwbe70JJatVfc3hrH+F2tWPWqimX7NoDVd8gUtUx2v6M6a9QNAiCLDnqHsktMv+LLQc+t0DM8EYgN1k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyF/wRlGjjOjUQOp14w9Ch703IY6eoIsqt7qRyT/bCdM4h1WCGy
+	k3TioDDT8J45mIyooU8CMLzi+X26MuZ5NZKuWsHPePQ/XtYYhzhvJ5Q3F4lIwh0=
+X-Google-Smtp-Source: AGHT+IHRidj4X8LYl5IH0Bj18RNFExR+Bckr7+2ammy4QZdJGrRo2Cl1ySSH9rbblKME1zD62cNhWw==
+X-Received: by 2002:a05:6602:6424:b0:82d:f4f:f49b with SMTP id ca18e2360f4ac-83247f9003fmr365137839f.16.1727279174659;
+        Wed, 25 Sep 2024 08:46:14 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8323f5dbf4dsm112899639f.11.2024.09.25.08.46.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Sep 2024 08:46:14 -0700 (PDT)
+Message-ID: <e537539f-85a5-42eb-be8a-8a865db53ca2@linuxfoundation.org>
+Date: Wed, 25 Sep 2024 09:46:12 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] selftests: exec: update gitignore for load_address
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Allison Henderson <allison.henderson@oracle.com>,
+ Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+ rds-devel@oss.oracle.com, linux-mm@kvack.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240924-selftests-gitignore-v1-0-9755ac883388@gmail.com>
+ <20240924-selftests-gitignore-v1-4-9755ac883388@gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240924-selftests-gitignore-v1-4-9755ac883388@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-There are already a couple of places where we may replace
-a few lines of code by calling a helper, which increases
-readability while deduplicating the code.
+On 9/24/24 06:49, Javier Carrasco wrote:
+> The name of the "load_address" objects has been modified, but the
+> corresponding entry in the gitignore file must be updated.
+> 
+> Update the load_address entry in the gitignore file to account for
+> the new names.
+> 
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> ---
+>   tools/testing/selftests/exec/.gitignore | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/exec/.gitignore b/tools/testing/selftests/exec/.gitignore
+> index 90c238ba6a4b..4d9fb7b20ea7 100644
+> --- a/tools/testing/selftests/exec/.gitignore
+> +++ b/tools/testing/selftests/exec/.gitignore
+> @@ -9,7 +9,7 @@ execveat.ephemeral
+>   execveat.denatured
+>   non-regular
+>   null-argv
+> -/load_address_*
+> +/load_address.*
 
-Introduce is_type_match() helper and use it.
+Hmm. This will include the load_address.c which shouldn't
+be included in the .gitignore?
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- kernel/resource.c | 23 ++++++++++-------------
- 1 file changed, 10 insertions(+), 13 deletions(-)
+>   /recursion-depth
+>   xxxxxxxx*
+>   pipe
+> 
 
-diff --git a/kernel/resource.c b/kernel/resource.c
-index 6880c0e283dd..2d266b5ff881 100644
---- a/kernel/resource.c
-+++ b/kernel/resource.c
-@@ -297,6 +297,11 @@ int release_resource(struct resource *old)
- 
- EXPORT_SYMBOL(release_resource);
- 
-+static bool is_type_match(struct resource *p, unsigned long flags, unsigned long desc)
-+{
-+	return (p->flags & flags) == flags && (desc == IORES_DESC_NONE || desc == p->desc);
-+}
-+
- /**
-  * find_next_iomem_res - Finds the lowest iomem resource that covers part of
-  *			 [@start..@end].
-@@ -339,13 +344,9 @@ static int find_next_iomem_res(resource_size_t start, resource_size_t end,
- 		if (p->end < start)
- 			continue;
- 
--		if ((p->flags & flags) != flags)
--			continue;
--		if ((desc != IORES_DESC_NONE) && (desc != p->desc))
--			continue;
--
- 		/* Found a match, break */
--		break;
-+		if (is_type_match(p, flags, desc))
-+			break;
- 	}
- 
- 	if (p) {
-@@ -542,7 +543,7 @@ static int __region_intersects(struct resource *parent, resource_size_t start,
- 	int type = 0; int other = 0;
- 	struct resource *p, *dp;
- 	struct resource res, o;
--	bool is_type, covered;
-+	bool covered;
- 
- 	res.start = start;
- 	res.end = start + size - 1;
-@@ -550,9 +551,7 @@ static int __region_intersects(struct resource *parent, resource_size_t start,
- 	for (p = parent->child; p ; p = p->sibling) {
- 		if (!resource_intersection(p, &res, &o))
- 			continue;
--		is_type = (p->flags & flags) == flags &&
--			(desc == IORES_DESC_NONE || desc == p->desc);
--		if (is_type) {
-+		if (is_type_match(p, flags, desc)) {
- 			type++;
- 			continue;
- 		}
-@@ -572,9 +571,7 @@ static int __region_intersects(struct resource *parent, resource_size_t start,
- 		for_each_resource(p, dp, false) {
- 			if (!resource_overlaps(dp, &res))
- 				continue;
--			is_type = (dp->flags & flags) == flags &&
--				(desc == IORES_DESC_NONE || desc == dp->desc);
--			if (is_type) {
-+			if (is_type_match(dp, flags, desc)) {
- 				type++;
- 				/*
- 				 * Range from 'o.start' to 'dp->start'
--- 
-2.43.0.rc1.1336.g36b5255a03ac
-
+thanks,
+-- Shuah
 
