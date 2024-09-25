@@ -1,110 +1,116 @@
-Return-Path: <linux-kernel+bounces-338437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A5D69857F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:27:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F1529857F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:27:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E725F1F215DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:27:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A8F9285920
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F45154BEC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A8B158DD1;
 	Wed, 25 Sep 2024 11:27:42 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uQYE976G"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1E478B50
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 11:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4FF012AAC6;
+	Wed, 25 Sep 2024 11:27:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727263662; cv=none; b=o8IeZjKh33E/oq6VPW060sGm1MDN90dup46MK3B6Fg51DteHmKenCY3vslqLPYjwAsRVjODElQtb7GhLN8mBQdrncJnKTWXGYj8BCpQIQ4cyD1Wv5ExjocAm6F0GcIQP3ld7VYYCbIVqd9Ouwav97uVn6dWWx17EitG3kowtLH8=
+	t=1727263661; cv=none; b=GqWnqdTTFQ8e3VX4spnNWYmvB5kICtL0/pNUBQc+KgUpQs44l+bCSoReFCd71UGDTJfcG0o9kCaXFy9YcO+PfVaGPOEDt/RU9Jcr90r5S8uQrf0FN4DJFtOcpS9q/+q85FwrFdI1KLQHnQQ6LntKrrHymKUzT14eYrELKuIvjog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727263662; c=relaxed/simple;
-	bh=nlwY4nKqkWCXyO3T2vmHu68hC7HddzgTamRajvxJbjk=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=pES0ueFJE3xNVRsqYqi1P0ZSeFvL7H5DzyS7EJo9nec3ltkh1miErYKkz05/OgaG+VXz+ci+hTodD9YcGaM3iWsfRM2a+OZwVYxNMq231sZ8w+yhBXgTynUv6rtSH/HQtJkK28Wk5wk3AItA51Twpwi10koiMQjMTT/JxxJLuR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-201-7-hegE0WNKa5nIuQIrIH7w-1; Wed, 25 Sep 2024 12:27:30 +0100
-X-MC-Unique: 7-hegE0WNKa5nIuQIrIH7w-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 25 Sep
- 2024 12:26:43 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Wed, 25 Sep 2024 12:26:43 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Vinicius Peixoto' <vpeixoto@lkcamp.dev>, Brendan Higgins
-	<brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar
-	<rmoar@google.com>, "linux-kselftest@vger.kernel.org"
-	<linux-kselftest@vger.kernel.org>, "kunit-dev@googlegroups.com"
-	<kunit-dev@googlegroups.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
-	"~lkcamp/patches@lists.sr.ht" <~lkcamp/patches@lists.sr.ht>
-Subject: RE: [PATCH 0/1] Add KUnit tests for lib/crc16.c
-Thread-Topic: [PATCH 0/1] Add KUnit tests for lib/crc16.c
-Thread-Index: AQHbDUbburejGRqRfUyI9R5kM3ntM7JoXa8Q
-Date: Wed, 25 Sep 2024 11:26:43 +0000
-Message-ID: <51c4ba25f9284a749b451ca203fcc124@AcuMS.aculab.com>
-References: <20240922232643.535329-1-vpeixoto@lkcamp.dev>
-In-Reply-To: <20240922232643.535329-1-vpeixoto@lkcamp.dev>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1727263661; c=relaxed/simple;
+	bh=0Gj1uox717iZ2CzrG/UNwTUtmfDL3zydP7VtIqDGXIw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZyeuFjV8Of4S7oaCN/sMJWff9RzjYmfM1orpOfRRSERY23GL7kZI8cJP5kTrUnnpRQzdRwDp04hHqTzNNGiyp4N5TXSTJb1hPFvTqNG/x4TWZWTXi4L4Nj4em581l6gQNikjiGduUQ+HMe845tayLVQExzS34VZtybz5m6gCmGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uQYE976G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADC9CC4CEC3;
+	Wed, 25 Sep 2024 11:27:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727263661;
+	bh=0Gj1uox717iZ2CzrG/UNwTUtmfDL3zydP7VtIqDGXIw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=uQYE976Gyq9INGzAxUEdHOFI1VTXhRgWeVdydeACgcEmh831WSAg3fTwTa+WfOUia
+	 7CdYze8d7ycGU0Uv0NzId/GEImGl/c24gP/TADwNBAbtPqXc+cvlWmWIFVWH38E98F
+	 IHW8GUKqJI+vaQ8VBOFQeOeYgpSgwHg42VjFJKbtOkwaZUVjPjcV9dmOEh3ZYkh1n3
+	 gqgUeeV9nNb26Ux+e17vtvCnVve9XBgZ7m7dSGz4RTUufd/8qIgxB7cOj3ZG9t0Or/
+	 YhuVBfWagKFJDbSyNqblQMhFqxKPtSIJ4cIB97vNH3UYwveO8TSBc/6Xj+rpFpK+3J
+	 OriBZAzFskZhg==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53653682246so1100673e87.1;
+        Wed, 25 Sep 2024 04:27:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUc4DQDOACD7eV1hOQWm1CK0KQr4NQgGX0aw2FDi6Hku5yXRVLXXsNdk413XFE5IxXNzrKLGN5yLQxEGwQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhWvGXpEZxvVeuD6M0s2Iy2UBSwDbf/aUjGI0PwbgU9N1Fxe0z
+	rGnwAwm/26cZCv0beNDL/qZ61sS+emN9ELFLDubjTZCvG5joglvPoRKruZqaxEVFkyrK4PMHUxA
+	QNWRHme6XjgoSKgNTCqak1yx3zeE=
+X-Google-Smtp-Source: AGHT+IGIt06f3VlhdI4HCBy5MqZ8fPDUhzjtWTTLtm+PB2Crkuaifr13ysKmDjALp3/fGv0gxr4vRiw3e6wJVqQbuXA=
+X-Received: by 2002:a05:6512:4008:b0:536:536f:c666 with SMTP id
+ 2adb3069b0e04-5387752fa74mr1518490e87.8.1727263660328; Wed, 25 Sep 2024
+ 04:27:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+References: <1763151587.3581913.1727224126288@privateemail.com>
+In-Reply-To: <1763151587.3581913.1727224126288@privateemail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 25 Sep 2024 20:27:03 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS0wreFRe4LmvecY7b3i+H3nkJEb+AMY9w63iOHxAcQcw@mail.gmail.com>
+Message-ID: <CAK7LNAS0wreFRe4LmvecY7b3i+H3nkJEb+AMY9w63iOHxAcQcw@mail.gmail.com>
+Subject: Re: Broken Kconfig scripts in v6.11: conf/mconf stuck in endless loop
+ at 100% CPU
+To: Marco Bonelli <marco@mebeim.net>
+Cc: "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-RnJvbTogVmluaWNpdXMgUGVpeG90bw0KPiBTZW50OiAyMyBTZXB0ZW1iZXIgMjAyNCAwMDoyNw0K
-PiANCj4gSGkgYWxsLA0KPiANCj4gVGhpcyBwYXRjaCB3YXMgZGV2ZWxvcGVkIGR1cmluZyBhIGhh
-Y2thdGhvbiBvcmdhbml6ZWQgYnkgTEtDQU1QIFsxXSwNCj4gd2l0aCB0aGUgb2JqZWN0aXZlIG9m
-IHdyaXRpbmcgS1VuaXQgdGVzdHMsIGJvdGggdG8gaW50cm9kdWNlIHBlb3BsZSB0bw0KPiB0aGUg
-a2VybmVsIGRldmVsb3BtZW50IHByb2Nlc3MgYW5kIHRvIGxlYXJuIGFib3V0IGRpZmZlcmVudCBz
-dWJzeXN0ZW1zDQo+ICh3aXRoIHRoZSBwb3NpdGl2ZSBzaWRlIGVmZmVjdCBvZiBpbXByb3Zpbmcg
-dGhlIGtlcm5lbCB0ZXN0IGNvdmVyYWdlLCBvZg0KPiBjb3Vyc2UpLg0KPiANCj4gV2Ugbm90aWNl
-ZCB0aGVyZSB3ZXJlIHRlc3RzIGZvciBDUkMzMiBpbiBsaWIvY3JjMzJ0ZXN0LmMgYW5kIHRob3Vn
-aHQgaXQNCj4gd291bGQgYmUgbmljZSB0byBoYXZlIHNvbWV0aGluZyBzaW1pbGFyIGZvciBDUkMx
-Niwgc2luY2UgaXQgc2VlbXMgdG8gYmUNCj4gd2lkZWx5IHVzZWQgaW4gbmV0d29yayBkcml2ZXJz
-IChhcyB3ZWxsIGFzIGluIHNvbWUgZXh0NCBjb2RlKS4NCj4gDQo+IEFsdGhvdWdoIHRoaXMgcGF0
-Y2ggdHVybmVkIG91dCBxdWl0ZSBiaWcsIG1vc3Qgb2YgdGhlIExPQ3MgY29tZSBmcm9tDQo+IHRh
-YmxlcyBjb250YWluaW5nIHJhbmRvbWx5LWdlbmVyYXRlZCB0ZXN0IGRhdGEgdGhhdCB3ZSB1c2Ug
-dG8gdmFsaWRhdGUNCj4gdGhlIGtlcm5lbCdzIGltcGxlbWVudGF0aW9uIG9mIENSQy0xNi4NCj4g
-DQo+IFdlIHdvdWxkIHJlYWxseSBhcHByZWNpYXRlIGFueSBmZWVkYmFjay9zdWdnZXN0aW9ucyBv
-biBob3cgdG8gaW1wcm92ZQ0KPiB0aGlzLiBUaGFua3MhIDotKQ0KDQpXb3VsZCBpcyBiZSBiZXR0
-ZXIgdG8gdXNlIGEgdHJpdmlhbCBQUk5HIHRvIGdlbmVyYXRlIHJlcGVhdGFibGUgJ3JhbmRvbSBl
-bm91Z2gnDQpkYXRhLCByYXRoZXIgdGhhbiBoYXZpbmcgYSBsYXJnZSBzdGF0aWMgYXJyYXk/DQoN
-CkFzIGEgbWF0dGVyIG9mIGludGVyZXN0LCBob3cgaW4gY3JjMTYgaW1wbGVtZW50ZWQgKEkga25v
-dyBJIGNvdWxkIGxvb2spLg0KVGhlIGNvZGUgdmVyc2lvbjoNCg0KdWludDMyX3QNCmNyY19zdGVw
-KHVpbnQzMl90IGNyYywgdWludDMyX3QgYnl0ZV92YWwpDQp7DQogICAgdWludDMyX3QgdCA9IGNy
-YyBeIChieXRlX3ZhbCAmIDB4ZmYpOw0KICAgIHQgPSAodCBeIHQgPDwgNCkgJiAweGZmOw0KICAg
-IHJldHVybiBjcmMgPj4gOCBeIHQgPDwgOCBeIHQgPDwgMyBeIHQgPj4gNDsNCn0NCg0KbWF5IHdl
-bGwgYmUgZmFzdGVyIHRoYW4gYSBsb29rdXAgdGFibGUgdmVyc2lvbi4NCkVzcGVjaWFsbHkgb24g
-bW9kZXJuIG11bHRpLWlzc3VlIGNwdSBhbmQvb3IgZm9yIHNtYWxsIGJ1ZmZlcnMgd2hlcmUgdGhl
-IGxvb2t1cA0KdGFibGUgd29uJ3QgbmVjZXNzYXJpbHkgYmUgcmVzaWRlbnQgaW4gdGhlIEQtY2Fj
-aGUuDQoNCkl0IGlzIHNsaWdodGx5IHNsb3dlciB0aGFuIHRoZSB0YWJsZSBsb29rdXAgb24gdGhl
-IHNpbXBsZSBOaW9zLUlJIGNwdS4NCkJ1dCB3ZSB1c2UgYSBjdXN0b20gaW5zdHJ1Y3Rpb24gdG8g
-ZG8gaXQgaW4gb25lIGNsb2NrLg0KDQoJRGF2aWQNCg0KPiANCj4gVmluaWNpdXMgUGVpeG90byAo
-MSk6DQo+ICAgbGliL2NyYzE2X2t1bml0LmM6IGFkZCBLVW5pdCB0ZXN0cyBmb3IgY3JjMTYNCj4g
-DQo+ICBsaWIvS2NvbmZpZy5kZWJ1ZyB8ICAgOCArDQo+ICBsaWIvTWFrZWZpbGUgICAgICB8ICAg
-MSArDQo+ICBsaWIvY3JjMTZfa3VuaXQuYyB8IDcxNSArKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrDQo+ICAzIGZpbGVzIGNoYW5nZWQsIDcyNCBpbnNlcnRpb25z
-KCspDQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgbGliL2NyYzE2X2t1bml0LmMNCj4gDQo+IC0tDQo+
-IDIuNDMuMA0KPiANCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJv
-YWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24g
-Tm86IDEzOTczODYgKFdhbGVzKQ0K
+On Wed, Sep 25, 2024 at 9:28=E2=80=AFAM Marco Bonelli <marco@mebeim.net> wr=
+ote:
+>
+> I was building v6.11 for PowerPC when I noticed that `make olddefconfig` =
+hangs
+> indefinitely when running `scripts/kconfig/conf` and gets stuck in what s=
+eems
+> an infinite loop at 100% CPU while evaluating an expression.
+>
+> The issue is still present on master of linux-next. I did a bisect run an=
+d
+> narrowed it down to this commit:
+>
+>         f79dc03fe68c79d388908182e68d702f7f1786bc kconfig: refactor choice=
+ value calculation
+>
+> Steps to reproduce:
+>
+>         git checkout v6.11
+>         export ARCH=3Dpowerpc CROSS_COMPILE=3Dpowerpc-linux-
+>         make distclean
+>         make ppc64_defconfig
+>         ./scripts/config --file .config -d PPC64
+>         make olddefconfig
+>         # Hangs indefinitely running scripts/kconfig/conf
+>
 
+>
+> Let me know if any additional information is needed. Happy to help.
+
+
+This provides enough information to figure out the issue.
+
+I posted a patch.
+
+Thanks.
+
+
+
+
+--
+Best Regards
+Masahiro Yamada
 
