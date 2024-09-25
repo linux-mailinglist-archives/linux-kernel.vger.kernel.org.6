@@ -1,108 +1,197 @@
-Return-Path: <linux-kernel+bounces-338056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F9E49852D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:19:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D1349852DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:22:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 919B5B21155
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 06:19:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 466C12843C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 06:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CACF155C98;
-	Wed, 25 Sep 2024 06:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03B5155359;
+	Wed, 25 Sep 2024 06:22:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bahQ+can"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ONQG6JVm"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2732E155C95
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 06:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9445C14C582
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 06:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727245126; cv=none; b=nAw18Ukh46R7iuxv/nyVc0szKCTggCtIQF/Iq6+NfxsAQ/MmeMxmJaj6HGbjaOjeI/GsDFetUbPCWQ5SmXwW3o3+k2UTjw1Chr0KhvdrZekPvRQoruntZVOmZWNN9G/5KfBXr+AsPA3WjDtE779moJoR4PA4LrbyqhojDFeYx6M=
+	t=1727245328; cv=none; b=CEJnrc+CkLyJPmNCbxqYYXgEky+TjzhACOwVd/K+1vg/Uvo0SbpvMHfZ5rSU4vPzRUJjZQIa+o9ryf/15J0iii5UYJYZiECpCkXtRRKmCniSKpT3vJ78YjQzHFOSFsTPvUvPysZRPOtE7GC04K+epTbKdLfwSnY3wNKw3s7kixo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727245126; c=relaxed/simple;
-	bh=4PFi3GrWcYBdSSW0hgzBkVDs0dXzs21wTMmchnPoW+s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YQiBtwwXYxE4LNL84M/0FJ3Pg6mdZaDdUy75gzFK8R0za7/aQjlOJQDBuQqmocNSEhpJxL/iYXInKZ2LFgfk2Z50yq2/sMbwC4JQ6uBmefItQZCHa7U0a0Zcn8XDvNIcxwcMUNfnQrIWlb+42DXn597ZhmpsPY1SbF3VzRwnj+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=bahQ+can; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2068a7c9286so63599095ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 23:18:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727245124; x=1727849924; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gAfB/c2dUK7Tp4TizuYkDvXRM6wc04Km7rfihTnNlVI=;
-        b=bahQ+canDxfoqCvyVVBxpy2yDQTbPoEIGfwsErvWKUcaG0DhTb9u+YhB57wl3rOg7i
-         hEkYGbZG8KnbFZFgJ2FrjJdiLkvGdi/OyLhkF0B3W8WmRTMAcnhiX4By6yTAG2oww8Qx
-         FxYFcFn8EKdL9+/r1Z46NGQem1hSHkOjcjGZs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727245124; x=1727849924;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gAfB/c2dUK7Tp4TizuYkDvXRM6wc04Km7rfihTnNlVI=;
-        b=gbeqre9Hw9VBYk5ZTNyHofMtItlmPYncXlxbE26gamhzHzfce62fsyr6BpadpM+oA7
-         ltpMgp0QCPsdKRGhK3RmpYHslzx8QC3r9JL9UPSdNRT+UjgZLO1dtTWtpak3vgIbcwGi
-         /+sHscUeWh3kP7RfuJmQF0V9XcGk0DYufu2WdqsjP1uu+dFgEsQczvDZ5RG3si1wPVET
-         A1JK7vR9/nhXVaihuiIgu/kcIwPmFSwN4FbFC1RyAdci/KJWE7Jp2KvT0bwdID00XwaA
-         3vqOKZTp3tiLYPvuWgB5AhL6x26oAu9LNKxl1D7R9Ngp4JRr1agSFy7nqlg1ToOGMs3K
-         MHXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWZneUfmSRdnDrmAKYMr95pz8pzgHxI/Ua9IUykiOlrcw1PFIuc2i8PcEPSCnE4djUTPDFfbBJp5bQUZIk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0/fUrh6USB2OOBHA7EhOvnPruYk9jH3zzqhvFUAZJm4CcnaWv
-	2wzNY7f1K2qSbioEa2yOv1NuQOWqR82jyGptpXsnvcFpTj/a2BbzEcijgSJxDA==
-X-Google-Smtp-Source: AGHT+IEdnYbq5bAx4Sg9X+VZO3Xo5eBYOK7WziCE8Ch3Kc7BECkSDi4+tCYZhgtuKZ8+gFm9JzzLAw==
-X-Received: by 2002:a17:90a:2dc6:b0:2c8:f3b7:ec45 with SMTP id 98e67ed59e1d1-2e06afe8f6fmr1835727a91.36.1727245124474;
-        Tue, 24 Sep 2024 23:18:44 -0700 (PDT)
-Received: from ?IPV6:2401:fa00:61:204:5d35:3dbe:2256:3e42? ([2401:fa00:61:204:5d35:3dbe:2256:3e42])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e06e1ae741sm665351a91.15.2024.09.24.23.18.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Sep 2024 23:18:44 -0700 (PDT)
-Message-ID: <c9f7042b-1e61-4289-9ef9-ea15bd7e9847@chromium.org>
-Date: Wed, 25 Sep 2024 11:48:40 +0530
+	s=arc-20240116; t=1727245328; c=relaxed/simple;
+	bh=tFJLMH16MvhRj3zeHSvbMzen/rGWE00hjFvjCOjwr1I=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=FhloSaxkEPFvDEfx3FCGoAOfeMal+jbMq/YJPxnjyTqv2G7523pnQQOZF4dvi06/fep30oTFVmt1kw3Ini958OHXh/edzfAm/gcE64fxEHzEej428NQ+MyYNH30y624V6plns75znMWJYqpJAkaWjixuOCd3Mj/FiyU4RgafWDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ONQG6JVm; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727245325; x=1758781325;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=tFJLMH16MvhRj3zeHSvbMzen/rGWE00hjFvjCOjwr1I=;
+  b=ONQG6JVmF8feSQ4Hon5yaLKIPY1jpid4yDZll1v0hsrCyepO4d2m8qri
+   pzRgC9KvnY09yWS0Ox9FuV1/FLxpYoZzEJZutjbGFOkTD/ZMm1DXTpQKy
+   Wst0uHQFbGfjO7w4BZBkMHnEC3Lm+LdhKi1vNVzjVURsNAKmZtC0Im3Le
+   hWxz9hQq1nroArG70mLBaM5TI9MeHGvHvwjzhbn9cqBvudWo32UnexIMr
+   nrQ859X9zBiuA+5mgNgVOLRxs3QLXHnMO2YSA9IXBiRLPaK6uI2DasEBe
+   ZSQDR+fU8tlRG4Wx/TC5Q1BD0yV9bDGIPxYCKyJKMHLBEBdPgwl62o1b7
+   A==;
+X-CSE-ConnectionGUID: W6fKEfjOQmivrSYAsR9CNg==
+X-CSE-MsgGUID: 7DU0jfyjQ2ibfYgULzQLOQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="26144041"
+X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
+   d="scan'208";a="26144041"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 23:22:05 -0700
+X-CSE-ConnectionGUID: uk+QLmS2TCqlBgCTmEMQ9g==
+X-CSE-MsgGUID: 6zf6NmwJS3WjehMpyQfTmA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
+   d="scan'208";a="72118857"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 24 Sep 2024 23:22:03 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1stLPU-000JDL-1M;
+	Wed, 25 Sep 2024 06:22:00 +0000
+Date: Wed, 25 Sep 2024 14:21:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Lee Jones <lee@kernel.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	"Rob Herring (Arm)" <robh@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: arch/mips/boot/dts/brcm/bcm96368mvwg.dtb: syscon@100000008:
+ compatible: ['syscon'] is too short
+Message-ID: <202409251418.vYwoiQ8l-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: display: mediatek: dpi: Add power
- domain for MT8183
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: chunkuang.hu@kernel.org, krzk+dt@kernel.org, ck.hu@mediatek.com,
- robh@kernel.org, linux-mediatek@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20240919112152.2829765-1-rohiagar@chromium.org>
- <20240919112152.2829765-2-rohiagar@chromium.org>
- <4djlcabqjkq7thbxadjbbi6oumybnyzv7biwawke46ctjccwye@rmqougrj6pl2>
-Content-Language: en-US
-From: Rohit Agarwal <rohiagar@chromium.org>
-In-Reply-To: <4djlcabqjkq7thbxadjbbi6oumybnyzv7biwawke46ctjccwye@rmqougrj6pl2>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   684a64bf32b6e488004e0ad7f0d7e922798f65b6
+commit: f97b0435c8572b16305d68cfc14ddc901878a9e7 dt-bindings: mfd: syscon: Split and enforce documenting MFD children
+date:   3 months ago
+config: mips-randconfig-052-20240925 (https://download.01.org/0day-ci/archive/20240925/202409251418.vYwoiQ8l-lkp@intel.com/config)
+compiler: mipsel-linux-gcc (GCC) 13.2.0
+dtschema version: 2024.10.dev4+g577c1ab
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240925/202409251418.vYwoiQ8l-lkp@intel.com/reproduce)
 
-On 24/09/24 2:41 PM, Krzysztof Kozlowski wrote:
-> On Thu, Sep 19, 2024 at 11:21:51AM +0000, Rohit Agarwal wrote:
->> Add power domain binding to the mediatek DPI controller
-> That's DPI controller, how can you add here power domain binding?
-I think, I messed up in the commit message. I wanted to add a missing 
-compatible string
-in both the patches.
-Will update the commit messages in both the patches.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409251418.vYwoiQ8l-lkp@intel.com/
 
-Thanks,
-Rohit.
->
->> for MT8183 that already had the property in DT.
-> Best regards,
-> Krzysztof
->
+dtcheck warnings: (new ones prefixed by >>)
+   arch/mips/boot/dts/brcm/bcm6368.dtsi:68.30-78.5: Warning (simple_bus_reg): /ubus/syscon@100000008: simple-bus unit address format error, expected "10000008"
+   arch/mips/boot/dts/brcm/bcm96368mvwg.dtb: /: compatible:0: 'brcm,bcm96368mvwg' is not one of ['brcm,bcm3368', 'brcm,bcm3384', 'brcm,bcm33843', 'brcm,bcm3384-viper', 'brcm,bcm33843-viper', 'brcm,bcm6328', 'brcm,bcm6358', 'brcm,bcm6362', 'brcm,bcm6368', 'brcm,bcm63168', 'brcm,bcm63268', 'brcm,bcm7125', 'brcm,bcm7346', 'brcm,bcm7358', 'brcm,bcm7360', 'brcm,bcm7362', 'brcm,bcm7420', 'brcm,bcm7425']
+   	from schema $id: http://devicetree.org/schemas/mips/brcm/soc.yaml#
+   arch/mips/boot/dts/brcm/bcm96368mvwg.dtb: /: compatible: ['brcm,bcm96368mvwg', 'brcm,bcm6368'] is too long
+   	from schema $id: http://devicetree.org/schemas/mips/brcm/soc.yaml#
+   arch/mips/boot/dts/brcm/bcm96368mvwg.dtb: /: failed to match any schema with compatible: ['brcm,bcm96368mvwg', 'brcm,bcm6368']
+   arch/mips/boot/dts/brcm/bcm96368mvwg.dtb: ubus: $nodename:0: 'ubus' does not match '^([a-z][a-z0-9\\-]+-bus|bus|localbus|soc|axi|ahb|apb)(@.+)?$'
+   	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
+   arch/mips/boot/dts/brcm/bcm96368mvwg.dtb: /ubus/clock-controller@10000004: failed to match any schema with compatible: ['brcm,bcm6368-clocks']
+>> arch/mips/boot/dts/brcm/bcm96368mvwg.dtb: syscon@100000008: compatible: ['syscon'] is too short
+   	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
+   arch/mips/boot/dts/brcm/bcm96368mvwg.dtb: /ubus/interrupt-controller@10000020: failed to match any schema with compatible: ['brcm,bcm6345-l1-intc']
+   arch/mips/boot/dts/brcm/bcm96368mvwg.dtb: watchdog@1000005c: Unevaluated properties are not allowed ('clock-names' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/watchdog/brcm,bcm7038-wdt.yaml#
+   arch/mips/boot/dts/brcm/bcm96368mvwg.dtb: /ubus/led-controller@100000d0: failed to match any schema with compatible: ['brcm,bcm6358-leds']
+   arch/mips/boot/dts/brcm/bcm96368mvwg.dtb: nand@10000200: compatible: 'oneOf' conditional failed, one must be fixed:
+   	['brcm,nand-bcm6368', 'brcm,brcmnand-v2.1', 'brcm,brcmnand'] is too long
+   	['brcm,nand-bcm6368', 'brcm,brcmnand-v2.1', 'brcm,brcmnand'] is too short
+   	'brcm,nand-bcm6368' is not one of ['brcm,brcmnand-v2.1', 'brcm,brcmnand-v2.2', 'brcm,brcmnand-v4.0', 'brcm,brcmnand-v5.0', 'brcm,brcmnand-v6.0', 'brcm,brcmnand-v6.1', 'brcm,brcmnand-v6.2', 'brcm,brcmnand-v7.0', 'brcm,brcmnand-v7.1', 'brcm,brcmnand-v7.2', 'brcm,brcmnand-v7.3']
+   	'brcm,nand-bcm63138' was expected
+--
+   	from schema $id: http://devicetree.org/schemas/mips/brcm/soc.yaml#
+   arch/mips/boot/dts/brcm/bcm9ejtagprb.dtb: /: compatible: ['brcm,bcm9ejtagprb', 'brcm,bcm6328'] is too long
+   	from schema $id: http://devicetree.org/schemas/mips/brcm/soc.yaml#
+   arch/mips/boot/dts/brcm/bcm9ejtagprb.dtb: /: failed to match any schema with compatible: ['brcm,bcm9ejtagprb', 'brcm,bcm6328']
+   arch/mips/boot/dts/brcm/bcm9ejtagprb.dtb: ubus: $nodename:0: 'ubus' does not match '^([a-z][a-z0-9\\-]+-bus|bus|localbus|soc|axi|ahb|apb)(@.+)?$'
+   	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
+   arch/mips/boot/dts/brcm/bcm9ejtagprb.dtb: /ubus/clock-controller@10000004: failed to match any schema with compatible: ['brcm,bcm6328-clocks']
+   arch/mips/boot/dts/brcm/bcm9ejtagprb.dtb: /ubus/interrupt-controller@10000020: failed to match any schema with compatible: ['brcm,bcm6345-l1-intc']
+   arch/mips/boot/dts/brcm/bcm9ejtagprb.dtb: watchdog@1000005c: Unevaluated properties are not allowed ('clock-names' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/watchdog/brcm,bcm7038-wdt.yaml#
+>> arch/mips/boot/dts/brcm/bcm9ejtagprb.dtb: syscon@10000068: compatible: ['syscon'] is too short
+   	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
+   arch/mips/boot/dts/brcm/bcm9ejtagprb.dtb: nand@10000200: compatible: 'oneOf' conditional failed, one must be fixed:
+   	['brcm,nand-bcm6368', 'brcm,brcmnand-v2.2', 'brcm,brcmnand'] is too long
+   	['brcm,nand-bcm6368', 'brcm,brcmnand-v2.2', 'brcm,brcmnand'] is too short
+   	'brcm,nand-bcm6368' is not one of ['brcm,brcmnand-v2.1', 'brcm,brcmnand-v2.2', 'brcm,brcmnand-v4.0', 'brcm,brcmnand-v5.0', 'brcm,brcmnand-v6.0', 'brcm,brcmnand-v6.1', 'brcm,brcmnand-v6.2', 'brcm,brcmnand-v7.0', 'brcm,brcmnand-v7.1', 'brcm,brcmnand-v7.2', 'brcm,brcmnand-v7.3']
+   	'brcm,nand-bcm63138' was expected
+   	'brcm,nand-iproc' was expected
+   	'brcm,nand-bcm63168' was expected
+   	'brcm,brcmnand' was expected
+   	'brcm,brcmnand-v2.2' is not one of ['brcm,brcmnand-v7.0', 'brcm,brcmnand-v7.1']
+--
+   arch/mips/boot/dts/brcm/bcm3368-netgear-cvg834g.dtb: /: compatible: ['netgear,cvg834g', 'brcm,bcm3368'] is too long
+   	from schema $id: http://devicetree.org/schemas/mips/brcm/soc.yaml#
+   arch/mips/boot/dts/brcm/bcm3368-netgear-cvg834g.dtb: /: failed to match any schema with compatible: ['netgear,cvg834g', 'brcm,bcm3368']
+   arch/mips/boot/dts/brcm/bcm3368-netgear-cvg834g.dtb: ubus: $nodename:0: 'ubus' does not match '^([a-z][a-z0-9\\-]+-bus|bus|localbus|soc|axi|ahb|apb)(@.+)?$'
+   	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
+   arch/mips/boot/dts/brcm/bcm3368-netgear-cvg834g.dtb: ubus: syscon-reboot@fff8c008: 'anyOf' conditional failed, one must be fixed:
+   	'reg' is a required property
+   	'ranges' is a required property
+   	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
+   arch/mips/boot/dts/brcm/bcm3368-netgear-cvg834g.dtb: /ubus/clock-controller@fff8c004: failed to match any schema with compatible: ['brcm,bcm3368-clocks']
+>> arch/mips/boot/dts/brcm/bcm3368-netgear-cvg834g.dtb: syscon@fff8c008: compatible: ['syscon'] is too short
+   	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
+   arch/mips/boot/dts/brcm/bcm3368-netgear-cvg834g.dtb: /ubus/interrupt-controller@fff8c00c: failed to match any schema with compatible: ['brcm,bcm6345-l1-intc']
+--
+   arch/mips/boot/dts/brcm/bcm6358-neufbox4-sercomm.dtb: /: compatible:0: 'sfr,nb4-ser' is not one of ['brcm,bcm3368', 'brcm,bcm3384', 'brcm,bcm33843', 'brcm,bcm3384-viper', 'brcm,bcm33843-viper', 'brcm,bcm6328', 'brcm,bcm6358', 'brcm,bcm6362', 'brcm,bcm6368', 'brcm,bcm63168', 'brcm,bcm63268', 'brcm,bcm7125', 'brcm,bcm7346', 'brcm,bcm7358', 'brcm,bcm7360', 'brcm,bcm7362', 'brcm,bcm7420', 'brcm,bcm7425']
+   	from schema $id: http://devicetree.org/schemas/mips/brcm/soc.yaml#
+   arch/mips/boot/dts/brcm/bcm6358-neufbox4-sercomm.dtb: /: compatible: ['sfr,nb4-ser', 'brcm,bcm6358'] is too long
+   	from schema $id: http://devicetree.org/schemas/mips/brcm/soc.yaml#
+   arch/mips/boot/dts/brcm/bcm6358-neufbox4-sercomm.dtb: /: failed to match any schema with compatible: ['sfr,nb4-ser', 'brcm,bcm6358']
+   arch/mips/boot/dts/brcm/bcm6358-neufbox4-sercomm.dtb: ubus: $nodename:0: 'ubus' does not match '^([a-z][a-z0-9\\-]+-bus|bus|localbus|soc|axi|ahb|apb)(@.+)?$'
+   	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
+   arch/mips/boot/dts/brcm/bcm6358-neufbox4-sercomm.dtb: /ubus/clock-controller@fffe0004: failed to match any schema with compatible: ['brcm,bcm6358-clocks']
+>> arch/mips/boot/dts/brcm/bcm6358-neufbox4-sercomm.dtb: syscon@fffe0008: compatible: ['syscon'] is too short
+   	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
+   arch/mips/boot/dts/brcm/bcm6358-neufbox4-sercomm.dtb: /ubus/interrupt-controller@fffe000c: failed to match any schema with compatible: ['brcm,bcm6345-l1-intc']
+   arch/mips/boot/dts/brcm/bcm6358-neufbox4-sercomm.dtb: watchdog@fffe005c: Unevaluated properties are not allowed ('clock-names' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/watchdog/brcm,bcm7038-wdt.yaml#
+   arch/mips/boot/dts/brcm/bcm6358-neufbox4-sercomm.dtb: /ubus/led-controller@fffe00d0: failed to match any schema with compatible: ['brcm,bcm6358-leds']
+   arch/mips/boot/dts/brcm/bcm6358-neufbox4-sercomm.dtb: usb-phy@fffe1500: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/phy/brcm,bcm63xx-usbh-phy.yaml#
+   arch/mips/boot/dts/brcm/bcm6358-neufbox4-sercomm.dtb: nor@1e000000: $nodename:0: 'nor@1e000000' does not match '^(flash|.*sram|nand)(@.*)?$'
+   	from schema $id: http://devicetree.org/schemas/mtd/mtd-physmap.yaml#
+--
+   arch/mips/boot/dts/brcm/bcm6362-neufbox6-sercomm.dtb: /: compatible:0: 'sfr,nb6-ser' is not one of ['brcm,bcm3368', 'brcm,bcm3384', 'brcm,bcm33843', 'brcm,bcm3384-viper', 'brcm,bcm33843-viper', 'brcm,bcm6328', 'brcm,bcm6358', 'brcm,bcm6362', 'brcm,bcm6368', 'brcm,bcm63168', 'brcm,bcm63268', 'brcm,bcm7125', 'brcm,bcm7346', 'brcm,bcm7358', 'brcm,bcm7360', 'brcm,bcm7362', 'brcm,bcm7420', 'brcm,bcm7425']
+   	from schema $id: http://devicetree.org/schemas/mips/brcm/soc.yaml#
+   arch/mips/boot/dts/brcm/bcm6362-neufbox6-sercomm.dtb: /: compatible: ['sfr,nb6-ser', 'brcm,bcm6362'] is too long
+   	from schema $id: http://devicetree.org/schemas/mips/brcm/soc.yaml#
+   arch/mips/boot/dts/brcm/bcm6362-neufbox6-sercomm.dtb: /: failed to match any schema with compatible: ['sfr,nb6-ser', 'brcm,bcm6362']
+   arch/mips/boot/dts/brcm/bcm6362-neufbox6-sercomm.dtb: ubus: $nodename:0: 'ubus' does not match '^([a-z][a-z0-9\\-]+-bus|bus|localbus|soc|axi|ahb|apb)(@.+)?$'
+   	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
+   arch/mips/boot/dts/brcm/bcm6362-neufbox6-sercomm.dtb: /ubus/clock-controller@10000004: failed to match any schema with compatible: ['brcm,bcm6362-clocks']
+>> arch/mips/boot/dts/brcm/bcm6362-neufbox6-sercomm.dtb: syscon@10000008: compatible: ['syscon'] is too short
+   	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
+   arch/mips/boot/dts/brcm/bcm6362-neufbox6-sercomm.dtb: /ubus/interrupt-controller@10000020: failed to match any schema with compatible: ['brcm,bcm6345-l1-intc']
+   arch/mips/boot/dts/brcm/bcm6362-neufbox6-sercomm.dtb: watchdog@1000005c: Unevaluated properties are not allowed ('clock-names' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/watchdog/brcm,bcm7038-wdt.yaml#
+   arch/mips/boot/dts/brcm/bcm6362-neufbox6-sercomm.dtb: nand@10000200: compatible: 'oneOf' conditional failed, one must be fixed:
+   	['brcm,nand-bcm6368', 'brcm,brcmnand-v2.2', 'brcm,brcmnand'] is too long
+   	['brcm,nand-bcm6368', 'brcm,brcmnand-v2.2', 'brcm,brcmnand'] is too short
+   	'brcm,nand-bcm6368' is not one of ['brcm,brcmnand-v2.1', 'brcm,brcmnand-v2.2', 'brcm,brcmnand-v4.0', 'brcm,brcmnand-v5.0', 'brcm,brcmnand-v6.0', 'brcm,brcmnand-v6.1', 'brcm,brcmnand-v6.2', 'brcm,brcmnand-v7.0', 'brcm,brcmnand-v7.1', 'brcm,brcmnand-v7.2', 'brcm,brcmnand-v7.3']
+   	'brcm,nand-bcm63138' was expected
+   	'brcm,nand-iproc' was expected
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
