@@ -1,224 +1,160 @@
-Return-Path: <linux-kernel+bounces-338352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 716689856C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:57:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95A9B9856C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:58:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E99891F255B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:57:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5558528809D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:58:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B738515884A;
-	Wed, 25 Sep 2024 09:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E877156F54;
+	Wed, 25 Sep 2024 09:57:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IFKm9sG+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oK2KliJ3"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005C513B284;
-	Wed, 25 Sep 2024 09:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D39313B284;
+	Wed, 25 Sep 2024 09:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727258259; cv=none; b=kUdopewdvPtYES0S62Qc4nfrDtaQsaHcyswtHEiZn3K1qk4OtLKDSzU/vCzA2UrKoxDBbpJmQtrOI69yDGgOjAVXvtScBvI+7tPzvLjSkSnaLijqLJLO3vIK6r4dxb9XY+fxgHj5WvvbazG3JyOJfob+NDlVnrrVCIepWPZSO2E=
+	t=1727258273; cv=none; b=hgje8Ex9PuNIdgKiFxyAQUsbvzsBeOxuQUw//JrsWHHFqOR7nW0+GFEAb4efY7+GJmnCChtkSdmfYE6o07TbG29Jpwr9F6Ry0Ql8jI8QoOUMgv5Haa+lKREdEenkQ+KSp891UNmGcqlNaoyQjno88qK8RuWJaGoD8cWFLgpgsk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727258259; c=relaxed/simple;
-	bh=vGxDPSnuJ37z6PLwU6WYvNuiHQxevlr1X42htFaXoMA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jz4QI9NkQMT1u2/3pU8mKc/XZbaEDmgMP5Sd0wdMbop+nye6ZI+j2SNHcva+pLlHgPpfqycT0PGtUeRBjj8ZkIN2hS3ZapnHPSdNPCfcz6qxWbR+3HjTig0uEutEhNmiV8T3zhaq5WbDhxOsx5MUdsf48LKLBzt8M27zLuKkIc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IFKm9sG+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A8F1C4CEC3;
-	Wed, 25 Sep 2024 09:57:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727258258;
-	bh=vGxDPSnuJ37z6PLwU6WYvNuiHQxevlr1X42htFaXoMA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IFKm9sG+snwW1Vw0W/mcQHX6PmIOMIqO76rsm50kyqZ49BFdygoDeC6VProJICXvT
-	 z91SSjgMsSHfVK0q9BPF6I1ftfNmOUojVE3SSFsouFubWCRspyVqsdHie8zTGpjcrf
-	 14AXmfwzHnmEgESiJOBA/XiEQkBzKY6TUyWPyVJ6rhmbSRrQ6X/twRskyXUmcHevKO
-	 7zIImMQwzFAyDHZABKnEJbeq3ELJ04TkYSjUpHCjSUsYrRujJtVDAvGmW0HKrNTXvu
-	 Pzvd+/5iaUNPi5qqyu5lkupzvUqAld7WvkWCUeE3osjIgowwpCgrirC/SMZY8PG2Eu
-	 eIgZkMde85CGQ==
-Date: Wed, 25 Sep 2024 11:57:33 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, amir73il@gmail.com, 
-	hu1.chen@intel.com, malini.bhandaru@intel.com, tim.c.chen@intel.com, 
-	mikko.ylinen@intel.com, lizhen.you@intel.com, linux-unionfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 04/16] overlayfs: Document critical override_creds()
- operations
-Message-ID: <20240925-umweht-schiffen-252e157b67f7@brauner>
-References: <20240822012523.141846-1-vinicius.gomes@intel.com>
- <20240822012523.141846-5-vinicius.gomes@intel.com>
- <CAJfpegvx2nyVpp4kHaxt=VwBb3U4=7GM-pjW_8bu+fm_N8diHQ@mail.gmail.com>
- <87wmk2lx3s.fsf@intel.com>
- <87h6a43gcc.fsf@intel.com>
+	s=arc-20240116; t=1727258273; c=relaxed/simple;
+	bh=Dnr5JTATSDJ1XWIiCjvpCuE72azmyNZ7y6FEaY78JN8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ib+X6rVahbcgO06EtVDkOk8zz+qjF0aEWLKNqMoypwlJDd3qHvej6G5fG+E9IIxtUMMnNRtSUIA5vg+eaDC7X+G9z49uiQy7htb2oCF4SyUQFu7R/MccgfmfhhyapUgQISQPrSUhb3QrPg0OvLmnzFxaqvlyAS34A1Jt3YEgmOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oK2KliJ3; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2AAABE0004;
+	Wed, 25 Sep 2024 09:57:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1727258268;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ty4/y3Jxu7Plk8pWyWkojbI6PSWYseKcvwhL4r+Fr70=;
+	b=oK2KliJ3sE2eBBPA18DPlVQIcj0IxjMMqXloudsKnqCy9lustdss2TdcROKN1CRJw2+YvT
+	ZSIiwcHjHTR6xFc6Yum/4yxEi9a2cJ1X16WcU3P+FpncjQq9xFqHCwwnY5GlE4ZFvhBmqW
+	lzmnULfYUcJfzV3gCwsw32zofU9oOsof1tn0Ncm1P5dKuMImziaQFemm9IWpqTh6QEfA6f
+	BmgddcU9i1W9ke1JlxtEcQ6VIK2KMT0fKO0HZSiWDVqrJLgFgaWYRgm1g0h7h6TmVTv49Q
+	admQ2l39BAcnLZENYsqnERVLSacWZHSwHh6jT3dBMBybE6xeuUELODycTqKing==
+Date: Wed, 25 Sep 2024 11:57:46 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Alvin Zhou <alvinzhou.tw@gmail.com>, linux-mtd@lists.infradead.org,
+ linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ pratyush@kernel.org, mwalle@kernel.org, richard@nod.at, vigneshr@ti.com,
+ broonie@kernel.org, chengminglin@mxic.com.tw, leoyu@mxic.com.tw, AlvinZhou
+ <alvinzhou@mxic.com.tw>, JaimeLiao <jaimeliao@mxic.com.tw>, Bough Chen
+ <haibo.chen@nxp.com>
+Subject: Re: [PATCH v9 6/6] mtd: spi-nor: add support for Macronix Octal
+ flash
+Message-ID: <20240925115746.22cdd8fe@xps-13>
+In-Reply-To: <79406f2b-8411-4059-b959-9e543944fb9c@linaro.org>
+References: <20240718034614.484018-1-alvinzhou.tw@gmail.com>
+	<20240718034614.484018-7-alvinzhou.tw@gmail.com>
+	<97134efb-398d-4c21-a915-87a5b4f1b29a@linaro.org>
+	<CAPhrvRR3U9=0DuG_FQ81ZJq+RLe6Bn9YO831Mx2n3NkeV3MCdA@mail.gmail.com>
+	<368cd6fb-cab1-44ad-af46-651d9323bc19@linaro.org>
+	<618e4514-791b-4a73-a1ba-45170a21e453@linaro.org>
+	<79406f2b-8411-4059-b959-9e543944fb9c@linaro.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87h6a43gcc.fsf@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Tue, Sep 24, 2024 at 06:13:39PM GMT, Vinicius Costa Gomes wrote:
-> Vinicius Costa Gomes <vinicius.gomes@intel.com> writes:
-> 
-> > Miklos Szeredi <miklos@szeredi.hu> writes:
-> >
-> >> On Thu, 22 Aug 2024 at 03:25, Vinicius Costa Gomes
-> >> <vinicius.gomes@intel.com> wrote:
+Hi Alvin,
+
+tudor.ambarus@linaro.org wrote on Tue, 24 Sep 2024 08:17:26 +0100:
+
+> On 9/24/24 7:36 AM, Tudor Ambarus wrote:
+> >=20
+> >=20
+> > On 9/24/24 7:26 AM, Tudor Ambarus wrote: =20
+> >>
+> >>
+> >> On 9/24/24 4:25 AM, Alvin Zhou wrote: =20
+> >>> Hi Tudor,
 > >>>
-> >>> Add a comment to these operations that cannot use the _light version
-> >>> of override_creds()/revert_creds(), because during the critical
-> >>> section the struct cred .usage counter might be modified.
+> >>> Tudor Ambarus <tudor.ambarus@linaro.org> =E6=96=BC 2024=E5=B9=B49=E6=
+=9C=8823=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=882:54=E5=AF=AB=E9=81=
+=93=EF=BC=9A =20
+> >>>>
+> >>>> Hi, Alvin,
+> >>>>
+> >>>> I quickly skimmed over the previous 5 patches and they are looking f=
+ine.
+> >>>>
+> >>>> I don't get this patch however.
+> >>>>
+> >>>> On 7/18/24 4:46 AM, AlvinZhou wrote: =20
+> >>>>> From: AlvinZhou <alvinzhou@mxic.com.tw>
+> >>>>>
+> >>>>> Adding Manufacture ID 0xC2 in last of ID table because of
+> >>>>> Octal Flash need manufacturer fixup for enabling/disabling
+> >>>>> Octal DTR mode.
+> >>>>>
+> >>>>> Signed-off-by: JaimeLiao <jaimeliao@mxic.com.tw>
+> >>>>> Signed-off-by: AlvinZhou <alvinzhou@mxic.com.tw>
+> >>>>> ---
+> >>>>>  drivers/mtd/spi-nor/macronix.c | 4 +++-
+> >>>>>  1 file changed, 3 insertions(+), 1 deletion(-)
+> >>>>>
+> >>>>> diff --git a/drivers/mtd/spi-nor/macronix.c b/drivers/mtd/spi-nor/m=
+acronix.c
+> >>>>> index f039819a5252..1a8ccebdfe0e 100644
+> >>>>> --- a/drivers/mtd/spi-nor/macronix.c
+> >>>>> +++ b/drivers/mtd/spi-nor/macronix.c
+> >>>>> @@ -200,7 +200,9 @@ static const struct flash_info macronix_nor_par=
+ts[] =3D {
+> >>>>>               .name =3D "mx25l3255e",
+> >>>>>               .size =3D SZ_4M,
+> >>>>>               .no_sfdp_flags =3D SECT_4K,
+> >>>>> -     }
+> >>>>> +     },
+> >>>>> +     /* Need the manufacturer fixups, Keep this last */
+> >>>>> +     { .id =3D SNOR_ID(0xc2) }
+> >>>>>  };
+> >>>>> =20
+> >>>>
+> >>>> Could you please elaborate why you need just the manufacturer id her=
+e? I
+> >>>> would have expected to see a specific flash entry instead. =20
+> >>>
+> >>> Grateful to Michael for the valuable suggestion. This addition of the
+> >>> Macronix manufacturer ID enables the fixup functions such as
+> >>> macronix_nor_set_octal_dtr to be executed without the need to
+> >>> create separate ID entries for each Octal DTR NOR Flash in the
+> >>> flash_info.
+> >>> =20
 > >>
-> >> Why is it a problem if the usage counter is modified?  Why is the
-> >> counter modified in each of these cases?
-> >>
-> >
-> > Working on getting some logs from the crash that I get when I convert
-> > the remaining cases to use the _light() functions.
-> >
-> 
-> See the log below.
-> 
-> > Perhaps I was wrong on my interpretation of the crash.
-> >
-> 
-> What I am seeing is that ovl_setup_cred_for_create() has a "side
-> effect", it creates another set of credentials, runs the security hooks
-> with this new credentials, and the side effect is that when it returns,
-> by design, 'current->cred' is this new credentials (a third set of
-> credentials).
+> >> Ah, nice. Okay then. I'm going to review the rest of the patches. They
+> >> look promising ;). =20
+> >=20
+> > ah, but then you'll always have a matched ID, so you break the generic
+> > flash probing for macronix. Is that correct? =20
+>=20
+> Answering myself: it's fine. Generic flash probe just fills a name,
+> which we don't really care about.
 
-Well yes, during ovl_setup_cred_for_create() the fs{g,u}id needs to be
-overwritten. But I'm stil confused what the exact problem is as it was
-always clear that ovl_setup_cred_for_create() wouldn't be ported to
-light variants.
+I was also a bit surprised by the diff, would you mind filling a more
+complete with details on the actual goal of this entry (having all
+Macronix flashes to get the fixups, without creating separate ID
+entries for each of the flashes)
 
-/me looks...
-
-> 
-> And this implies that refcounting for this is somewhat tricky, as said
-> in commit d0e13f5bbe4b ("ovl: fix uid/gid when creating over whiteout").
-> 
-> I see two ways forward:
-> 
-> 1. Keep using the non _light() versions in functions that call
->    ovl_setup_cred_for_create().
-> 2. Change ovl_setup_cred_for_create() so it doesn't drop the "extra"
->    refcount.
-> 
-> I went with (1), and it still sounds to me like the best way, but I
-> agree that my explanation was not good enough, will add the information
-> I just learned to the commit message and to the code.
-> 
-> Do you see another way forward? Or do you think that I should go with
-> (2)?
-
-... ok, I understand. Say we have:
-
-ovl_create_tmpfile()
-/* current->cred == ovl->creator_cred without refcount bump /*
-old_cred = ovl_override_creds_light()
--> ovl_setup_cred_for_create()
-   /* Copy current->cred == ovl->creator_cred */
-   modifiable_cred = prepare_creds()
-
-   /* Override current->cred == modifiable_cred */
-   mounter_creds = override_creds(modifiable_cred)
-
-   /*
-    * And here's the BUG BUG BUG where we decrement the refcount on the
-    * constant mounter_creds.
-    */
-   put_cred(mounter_creds) // BUG BUG BUG
-
-   put_cred(modifiable_creds)
-
-So (1) is definitely the wrong option given that we can get rid of
-refcount decs and incs in the creation path.
-
-Imo, you should do (2) and add a WARN_ON_ONC(). Something like the
-__completely untested__:
-
-diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-index ab65e98a1def..e246e0172bb6 100644
---- a/fs/overlayfs/dir.c
-+++ b/fs/overlayfs/dir.c
-@@ -571,7 +571,12 @@ static int ovl_setup_cred_for_create(struct dentry *dentry, struct inode *inode,
-                put_cred(override_cred);
-                return err;
-        }
--       put_cred(override_creds(override_cred));
-+
-+       /*
-+        * We must be called with creator creds already, otherwise we risk
-+        * leaking creds.
-+        */
-+       WARN_ON_ONCE(override_creds(override_cred) != ovl_creds(dentry->d_sb));
-        put_cred(override_cred);
-
-        return 0;
-
-> 
-> > Thanks for raising this, I should have added more information about this.
-> >
-> >
-> > Cheers,
-> > -- 
-> > Vinicius
-> 
-> [    4.646955] [touch 1512] commit_creds(0000000009e62474{1})
-> [    4.648637] [touch 1512] __put_cred(00000000200a9944{0})
-> [    4.648844] [virtm 1502] prepare_creds() alloc 0000000050563530
-> [    4.651631] [virtm 1513] prepare_creds() alloc 00000000da716e80
-> [    4.652515] [mktem 1513] commit_creds(00000000da716e80{1})
-> [    4.654056] ovl_create_or_link: [override] cred 0000000007112f42
-> [    4.654108] ovl_override_creds_light: new cred 0000000007112f42{1}
-> [    4.654155] ovl_override_creds_light: old cred 00000000da716e80{3}
-> [    4.654199] [mktem 1513] prepare_creds() alloc 000000003c8d17b7
-> [    4.654246] [mktem 1513] override_creds(000000003c8d17b7{1})
-> [    4.654292] [mktem 1513] override_creds() = 0000000007112f42{1}
-> [    4.654337] [mktem 1513] __put_cred(0000000007112f42{0})
-> [    4.654388] [mktem 1513] __put_cred(0000000007112f42{0})
-> [    4.654431] ------------[ cut here ]------------
-> [    4.654470] ODEBUG: activate active (active state 1) object: 00000000ad88840d object type: rcu_head hint: 0x0
-> [    4.654484] [swapp    0] exit_creds(1507,00000000efafcffd,00000000efafcffd,{2})
-> [    4.654575] WARNING: CPU: 23 PID: 1513 at lib/debugobjects.c:515 debug_print_object+0x7d/0xb0
-> [    4.654596] [swapp    0] __put_cred(00000000efafcffd{0})
-> [    4.654674] Modules linked in: sha512_ssse3(E) isst_if_common(E-) crct10dif_pclmul(E) sha256_ssse3(E) skx_edac_common(E) nfit(E) virtio_net(E) net_failover(E) i2c_piix4(E) input_leds(E) psmouse(E) serio_raw(E) failover(E) i2c_smbus(E) pata_acpi(E) floppy(E) qemu_fw_cfg(E) mac_hid(E) overlay(E) 9pnet_virtio(E) virtiofs(E) 9p(E) 9pnet(E) netfs(E)
-> [    4.654686] CPU: 23 UID: 0 PID: 1513 Comm: mktemp Tainted: G            E      6.11.0-rc5+ #4
-> [    4.654689] Tainted: [E]=UNSIGNED_MODULE
-> [    4.654689] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-> [    4.654690] RIP: 0010:debug_print_object+0x7d/0xb0
-> [    4.654692] Code: 01 8b 4b 14 48 c7 c7 d8 ce 3a 99 89 15 ec 53 77 02 8b 53 10 50 4c 8b 4d 00 48 8b 14 d5 80 32 e8 98 4c 8b 43 18 e8 73 fb a0 ff <0f> 0b 58 83 05 dd 35 c6 01 01 48 83 c4 08 5b 5d c3 cc cc cc cc 83
-> [    4.654693] RSP: 0018:ff5fa086c391bd28 EFLAGS: 00010282
-> [    4.654695] RAX: 0000000000000000 RBX: ff5fa086c391bd60 RCX: 0000000000140017
-> [    4.654696] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 0000000000000001
-> [    4.654697] RBP: ffffffff98e28c40 R08: 0000000000000000 R09: ff4deb8a8531a0a8
-> [    4.654697] R10: 0000000000000000 R11: 0000000000000001 R12: ff4deb8a87d29de8
-> [    4.654698] R13: ffffffff98e28c40 R14: 0000000000000202 R15: ffffffff9aa64e58
-> [    4.654699] FS:  00007ff8543af740(0000) GS:ff4deb8ab8580000(0000) knlGS:0000000000000000
-> [    4.654700] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [    4.654701] CR2: 00007ff8540ec040 CR3: 0000000005784002 CR4: 0000000000771ef0
-> [    4.654704] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> [    4.654705] DR3: 0000000000000000 DR6: 00000000fffe07f0 DR7: 0000000000000400
-> [    4.654706] PKRU: 55555554
-> [    4.654707] Call Trace:
-> [    4.654709]  <TASK>
-> [    4.654710]  ? __warn+0x83/0x130
-> [    4.654725]  ? debug_print_object+0x7d/0xb0
-> [    4.654726]  ? report_bug+0x18e/0x1a0
-> [    4.654773] [swapp    0] exit_creds(1508,00000000b957e777,00000000b957e777,{2})
-> 
-> 
-> Cheers,
-> -- 
-> Vinicius
+Thanks,
+Miqu=C3=A8l
 
