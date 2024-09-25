@@ -1,342 +1,251 @@
-Return-Path: <linux-kernel+bounces-339151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C49A9860CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:34:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C5C69860D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:34:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC4C828BC5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:33:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC0D91F27A3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973C81B1D66;
-	Wed, 25 Sep 2024 13:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UG3FBgXS"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA5D1B251F;
+	Wed, 25 Sep 2024 13:32:07 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4AA11CF92
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 13:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A624E189BA5;
+	Wed, 25 Sep 2024 13:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727270905; cv=none; b=GhzaGrV7Ven/WftJoCXler3910v26i+avSZ2oBtles8lLOGkq0koVX//ydt9+VpmiXKarjmTooQHC1ktfQH1CVNMCm640CCY3x3A6w+s/vOL2s6UGNurHv1oenU2SMuVgHkVGT/RJO0PcML4JAtE3skFlvlwRaQ1OQXRYogB9Ug=
+	t=1727271126; cv=none; b=BwwhA4wqqNyK0yZTaHeaQPCn5p/HE1yCztLe1IAvcy9BNiJaYPsr2KPuXM/5d8DlVVgnEn45R4bDDttHZeFYKVISrEzMen+1fho7xMqnn6NcbnlT9aDRVesMT1p7HIv9vtfEs4SvIbpkoZurMJKciE53vNz4c/vxPRSsNQCiw3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727270905; c=relaxed/simple;
-	bh=HzuiD2eIhasTgVYZPiaCxg+X3qZWugULlka7ykB37ls=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MyCC66Rn92RxEnyqMATIT1o1LLVyrbxHooFOuDOIgnWluJ00Mcj87NrAimeGTcG4xaVZItPUk/FMJJTfqYehstqZHB6H8lW9Fh2ezknXROa5LByjlkcQWR+zXXT3qApy7l+HBFQ/0CubrBaXSAKCR4nLqbFoBKiNl8nrpO1Clw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UG3FBgXS; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e06f5d4bc7so556228a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 06:28:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727270903; x=1727875703; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b63aGhYvPyTN8zXlCICgHfx2PCRNJVpBTl5cHACah5k=;
-        b=UG3FBgXSQ8iRuY46dbygY8trKQebVEvQ5jFjm+Vrkye4lqkuCyNeXcu4e1LGcB7NLq
-         9vllwISNxccRtMHEph+VHimzOOIWQPdfhOSuI1m1ZrXLe4UUfr7kft/hZgEiaOvG192v
-         CQejl77NAMrXLIHBu2m5hoGoL12hdOLH9Nf9CWBRT8OqdKwawcTMaKrs4IxrLlQKKhs+
-         /4GZhp5yYiAar8chsWn5RB/TQHNpo0QDBBmAR4ig5iJ3/xw2MWHxE5bGs/xhx1FmXjfi
-         tI4BWfGgRrR57KEDIn7ZykK2ujm9CrRNwnJmJkd/cdmhePlFmkqW6dM5Q6+nuGznV/DV
-         68SA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727270903; x=1727875703;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b63aGhYvPyTN8zXlCICgHfx2PCRNJVpBTl5cHACah5k=;
-        b=sM7Nxt99sGTaArpCMSgIcun7V0mqjsNuKe58TDa8E6xVntZV1bKBypgc0Abo8pNhhh
-         og7Pt7obaZx3htV05T1Q7txFkJLHuUvYvpbI7LMJaQrZeCBJN9AG88gxaco7bv1bJbY2
-         BvRP53DHUNQ2buj2WDvv+BU+HQ3aAZfV/DuOt3dz99X8mGkggSirD1fW3eixRFFRDn9h
-         DnIIDUf21bCDYP0SH41hghOcnaBVWn52785Gq7Hqnzura/83w2H2xREI9bnsarRcLu/L
-         mSV7xHIAoOsesAmRHOI1uc1O0wWJ5dh8QHZwEv/3hCoe8fwMrM2shNRWlC3AF9Xh2js9
-         PSiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWwYD5JzhQqsVoq10kPRxiIOlK1+gJB4bCS79CkXci4haRwqEOmHn6TwP3lExkvC9fe8QP1LzK+OQEIOg4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVgkfdVJnNsOyGm8Wswf46yxuRJYudCgFqE4aWFdWCNu4adYJ0
-	rBclTuyrSo2u2BOyiP+CSsRFdpKpB9o1sRmVRm/gftvbPaLLTmsTAsuDHBdreHhLTu5Sfxa4SLu
-	+Pd9Bd+NXYlJjuXvUJ8cVDOa4oQIOdsn+zzQ9+Q==
-X-Google-Smtp-Source: AGHT+IF54z4CaFfG7l+EhZGW3J6xXLaPuuiN6eeBfGiUZQniAdf+eIQs4piHjnMjtJntvp9xKw/R+Y6vSxXdT7b7bYM=
-X-Received: by 2002:a17:90b:392:b0:2da:8e1d:4769 with SMTP id
- 98e67ed59e1d1-2e06aff5dc2mr2761589a91.38.1727270903132; Wed, 25 Sep 2024
- 06:28:23 -0700 (PDT)
+	s=arc-20240116; t=1727271126; c=relaxed/simple;
+	bh=qvJ+/AG4rYN3l9UpFuRhPA6wXOQLE49l5qwR7uwnP40=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tldUeylgl9VGQgmJBapA3j44GnvTrzybJw1mqWtCtITcxz8UcRWkHV0W+g9AJpZtvfSC8Almn9tbKaDDH5nM7h+z/32/ean05xnTXMzeoXqbgYs9pTa0u+at0s5P05jHLFV/DfFWbpHVg6n/7SWjVG4JCqp+FrQG3vQ15+H3Fuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XDHfg0sdzz1T7tx;
+	Wed, 25 Sep 2024 21:30:35 +0800 (CST)
+Received: from kwepemf200007.china.huawei.com (unknown [7.202.181.233])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3C59F1800A4;
+	Wed, 25 Sep 2024 21:32:00 +0800 (CST)
+Received: from [10.67.121.184] (10.67.121.184) by
+ kwepemf200007.china.huawei.com (7.202.181.233) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 25 Sep 2024 21:31:59 +0800
+Message-ID: <282e3f4f-c3ef-4b42-bf9e-3a1ab25a8091@huawei.com>
+Date: Wed, 25 Sep 2024 21:31:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830130309.2141697-1-vincent.guittot@linaro.org>
- <20240830130309.2141697-5-vincent.guittot@linaro.org> <64ed0fb8-12ea-4452-9ec2-7ad127b65529@arm.com>
- <66583e86-e2a7-4e4f-bd45-40ea2d4a21df@arm.com>
-In-Reply-To: <66583e86-e2a7-4e4f-bd45-40ea2d4a21df@arm.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Wed, 25 Sep 2024 15:28:12 +0200
-Message-ID: <CAKfTPtAooR2Qqko6Cfe=hQiTqJEzHX0j5uydza-SxdGDTsoGYA@mail.gmail.com>
-Subject: Re: [RFC PATCH 4/5] sched/fair: Use EAS also when overutilized
-To: Pierre Gondois <pierre.gondois@arm.com>
-Cc: Christian Loehle <christian.loehle@arm.com>, qyousef@layalina.io, hongyan.xia2@arm.com, 
-	mingo@redhat.com, peterz@infradead.org, linux-kernel@vger.kernel.org, 
-	rafael.j.wysocki@intel.com, lukasz.luba@arm.com, vschneid@redhat.com, 
-	mgorman@suse.de, bsegall@google.com, rostedt@goodmis.org, 
-	dietmar.eggemann@arm.com, juri.lelli@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v2 0/2] fix two bugs related to page_pool
+To: Yunsheng Lin <linyunsheng@huawei.com>, <davem@davemloft.net>,
+	<kuba@kernel.org>, <pabeni@redhat.com>
+CC: <fanghaiqing@huawei.com>, <zhangkun09@huawei.com>, Alexander Lobakin
+	<aleksander.lobakin@intel.com>, Robin Murphy <robin.murphy@arm.com>,
+	Alexander Duyck <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>,
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend
+	<john.fastabend@gmail.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	<netdev@vger.kernel.org>, <intel-wired-lan@lists.osuosl.org>,
+	<bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
+References: <20240925075707.3970187-1-linyunsheng@huawei.com>
+Content-Language: en-US
+From: Yonglong Liu <liuyonglong@huawei.com>
+In-Reply-To: <20240925075707.3970187-1-linyunsheng@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemf200007.china.huawei.com (7.202.181.233)
 
-On Thu, 19 Sept 2024 at 10:26, Pierre Gondois <pierre.gondois@arm.com> wrot=
-e:
+Tested-by: Yonglong Liu <liuyonglong@huawei.com>
+
+On 2024/9/25 15:57, Yunsheng Lin wrote:
+> Patch 1 fix a possible time window problem for page_pool.
+> Patch 2 fix the kernel crash problem at iommu_get_dma_domain
+> reported in [1].
 >
-> Hello Vincent,
-> I tried this patch on a Pixel 6 (8 CPUs, 4 little, 2 mid, 2 big)
-> with patches 1-4/5 using these workloads:
-> ---
-> A.
-> a. 8 tasks at 2%/5%/10% during 1s
-> b. 1 task:
->     - sleeping during 0.3s
->     - at 100% during 0.3s
->     - sleeping during 0.3s
+> When page_pool_put_unrefed_netmem() is called with allow_direct
+> being true, there is only a newly added checking overhead
+> introduced in patch 1, which seem to be no noticeable performance
+> impact.
 >
-> b. is used to reach the overutilized state during a limited amount of tim=
-e.
-> EAS is then operating, then the load balancer does the task placement, th=
-en EAS
-> is operating again.
+> When page_pool_put_unrefed_netmem() is called with allow_direct
+> being false, there is an added rcu read lock overhead introduced in
+> patch 1, and the overhead is about 13ns using the below test code,
+> but 'time_bench_page_pool02_ptr_ring' only show about 2ns overhead,
+> which is about 2% degradation.
 >
-> B.
-> a. 8 tasks at 2%/5%/10% during 1s
-> b. 1 task:
->     - at 100% during 1s
+> +static int time_bench_rcu(
+> +       struct time_bench_record *rec, void *data)
+> +{
+> +       uint64_t loops_cnt = 0;
+> +       int i;
+> +
+> +       time_bench_start(rec);
+> +       /** Loop to measure **/
+> +       for (i = 0; i < rec->loops; i++) {
+> +               rcu_read_lock();
+> +               loops_cnt++;
+> +               barrier(); /* avoid compiler to optimize this loop */
+> +               rcu_read_unlock();
+> +       }
+> +       time_bench_stop(rec, loops_cnt);
+> +       return loops_cnt;
+> +}
 >
-> ---
-> I'm seeing the energy consumption increase in some cases. This seems to b=
-e
-> due to feec() migrating tasks more often than what the load balancer does
-> for this workload. This leads to utilization 'spikes' and then frequency
-> 'spikes', increasing the overall energy consumption.
-> This is not entirely related to this patch though,, as the task placement=
- seems
-> correct. I.e. feec() effectively does an optimal placement given the EM a=
-nd
-> task utilization. The task placement is just a bit less stable than with
-> the load balancer.
-
-Would patch 5 help to keep things better placed ? in particular if
-task b is misplaced at some point because of load balance ?
-
-I agree that load balance might still contribute to migrate task in a
-not energy efficient way
-
+> When page_pool need to be refilled from or flushed to the page allocator,
+> the added overhead is the page_pool_item_add() and page_pool_item_del()
+> calling overhead, using below patch to enable Jesper's testing running in
+> arm64, the overhead is 0~20ns, which is quite variable
 >
-> ---
-> Regarding hackbench, I've reproduced the test you've run on the same Pixe=
-l6.
-> I have CONFIG_SCHED_CLUSTER enabled, which allows having a sched domain f=
-or
-> each little/mid/big CPUs (without the config, these group would no exist)=
-.
-
-Why did you do this ? All cpus are expected to be in same sched domain
-as they share their LLC
-
+> Before this patchset:
+> root@(none)$ taskset -c 1 insmod bench_page_pool_simple.ko
+> [  136.641453] bench_page_pool_simple: Loaded
+> [  136.722560] time_bench: Type:for_loop Per elem: 0 cycles(tsc) 0.769 ns (step:0) - (measurement period time:0.076968720 sec time_interval:76968720) - (invoke count:100000000 tsc_interval:7696855)
+> [  137.317006] time_bench: Type:atomic_inc Per elem: 0 cycles(tsc) 5.771 ns (step:0) - (measurement period time:0.577164350 sec time_interval:577164350) - (invoke count:100000000 tsc_interval:57716429)
+> [  137.480852] time_bench: Type:lock Per elem: 1 cycles(tsc) 14.621 ns (step:0) - (measurement period time:0.146218730 sec time_interval:146218730) - (invoke count:10000000 tsc_interval:14621868)
+> [  138.842377] time_bench: Type:rcu Per elem: 1 cycles(tsc) 13.444 ns (step:0) - (measurement period time:1.344419820 sec time_interval:1344419820) - (invoke count:100000000 tsc_interval:134441975)
+> [  138.859656] bench_page_pool_simple: time_bench_page_pool01_fast_path(): Cannot use page_pool fast-path
+> [  139.132102] time_bench: Type:no-softirq-page_pool01 Per elem: 2 cycles(tsc) 26.315 ns (step:0) - (measurement period time:0.263151430 sec time_interval:263151430) - (invoke count:10000000 tsc_interval:26315135)
+> [  139.150769] bench_page_pool_simple: time_bench_page_pool02_ptr_ring(): Cannot use page_pool fast-path
+> [  139.910642] time_bench: Type:no-softirq-page_pool02 Per elem: 7 cycles(tsc) 75.066 ns (step:0) - (measurement period time:0.750663200 sec time_interval:750663200) - (invoke count:10000000 tsc_interval:75066312)
+> [  139.929312] bench_page_pool_simple: time_bench_page_pool03_slow(): Cannot use page_pool fast-path
+> [  141.673951] time_bench: Type:no-softirq-page_pool03 Per elem: 17 cycles(tsc) 173.578 ns (step:0) - (measurement period time:1.735781610 sec time_interval:1735781610) - (invoke count:10000000 tsc_interval:173578155)
+> [  141.692970] bench_page_pool_simple: pp_tasklet_handler(): in_serving_softirq fast-path
+> [  141.700874] bench_page_pool_simple: time_bench_page_pool01_fast_path(): in_serving_softirq fast-path
+> [  141.973638] time_bench: Type:tasklet_page_pool01_fast_path Per elem: 2 cycles(tsc) 26.364 ns (step:0) - (measurement period time:0.263645150 sec time_interval:263645150) - (invoke count:10000000 tsc_interval:26364508)
+> [  141.992912] bench_page_pool_simple: time_bench_page_pool02_ptr_ring(): in_serving_softirq fast-path
+> [  142.531745] time_bench: Type:tasklet_page_pool02_ptr_ring Per elem: 5 cycles(tsc) 52.980 ns (step:0) - (measurement period time:0.529801250 sec time_interval:529801250) - (invoke count:10000000 tsc_interval:52980119)
+> [  142.550933] bench_page_pool_simple: time_bench_page_pool03_slow(): in_serving_softirq fast-path
+> [  144.297646] time_bench: Type:tasklet_page_pool03_slow Per elem: 17 cycles(tsc) 173.802 ns (step:0) - (measurement period time:1.738029000 sec time_interval:1738029000) - (invoke count:10000000 tsc_interval:173802894)
 >
-> I see an important regression in the result.
-> I replaced the condition to run feec() through select_task_rq_fair() by:
->    if (get_rd_overloaded(cpu_rq(cpu)->rd) =3D=3D 0)) {
-
-overloaded is enable when more than 1 task runs on a cpu whatever the
-utilization
-
->      new_cpu =3D find_energy_efficient_cpu(p, prev_cpu);
->      ...
->    }
-> and obtained better results.
+> After this patchset:
+> root@(none)$ taskset -c 1 insmod bench_page_pool_simple.ko
+> [  149.865799] bench_page_pool_simple: Loaded
+> [  149.946907] time_bench: Type:for_loop Per elem: 0 cycles(tsc) 0.769 ns (step:0) - (measurement period time:0.076965620 sec time_interval:76965620) - (invoke count:100000000 tsc_interval:7696556)
+> [  150.722282] time_bench: Type:atomic_inc Per elem: 0 cycles(tsc) 7.580 ns (step:0) - (measurement period time:0.758094660 sec time_interval:758094660) - (invoke count:100000000 tsc_interval:75809459)
+> [  150.886335] time_bench: Type:lock Per elem: 1 cycles(tsc) 14.640 ns (step:0) - (measurement period time:0.146405830 sec time_interval:146405830) - (invoke count:10000000 tsc_interval:14640578)
+> [  152.249454] time_bench: Type:rcu Per elem: 1 cycles(tsc) 13.460 ns (step:0) - (measurement period time:1.346009570 sec time_interval:1346009570) - (invoke count:100000000 tsc_interval:134600951)
+> [  152.266734] bench_page_pool_simple: time_bench_page_pool01_fast_path(): Cannot use page_pool fast-path
+> [  152.537046] time_bench: Type:no-softirq-page_pool01 Per elem: 2 cycles(tsc) 26.100 ns (step:0) - (measurement period time:0.261007670 sec time_interval:261007670) - (invoke count:10000000 tsc_interval:26100761)
+> [  152.555714] bench_page_pool_simple: time_bench_page_pool02_ptr_ring(): Cannot use page_pool fast-path
+> [  153.342212] time_bench: Type:no-softirq-page_pool02 Per elem: 7 cycles(tsc) 77.729 ns (step:0) - (measurement period time:0.777293380 sec time_interval:777293380) - (invoke count:10000000 tsc_interval:77729331)
+> [  153.360881] bench_page_pool_simple: time_bench_page_pool03_slow(): Cannot use page_pool fast-path
+> [  155.287747] time_bench: Type:no-softirq-page_pool03 Per elem: 19 cycles(tsc) 191.800 ns (step:0) - (measurement period time:1.918007990 sec time_interval:1918007990) - (invoke count:10000000 tsc_interval:191800791)
+> [  155.306766] bench_page_pool_simple: pp_tasklet_handler(): in_serving_softirq fast-path
+> [  155.314670] bench_page_pool_simple: time_bench_page_pool01_fast_path(): in_serving_softirq fast-path
+> [  155.584313] time_bench: Type:tasklet_page_pool01_fast_path Per elem: 2 cycles(tsc) 26.052 ns (step:0) - (measurement period time:0.260524810 sec time_interval:260524810) - (invoke count:10000000 tsc_interval:26052476)
+> [  155.603588] bench_page_pool_simple: time_bench_page_pool02_ptr_ring(): in_serving_softirq fast-path
+> [  156.183214] time_bench: Type:tasklet_page_pool02_ptr_ring Per elem: 5 cycles(tsc) 57.059 ns (step:0) - (measurement period time:0.570594850 sec time_interval:570594850) - (invoke count:10000000 tsc_interval:57059478)
+> [  156.202402] bench_page_pool_simple: time_bench_page_pool03_slow(): in_serving_softirq fast-path
+> [  158.045594] time_bench: Type:tasklet_page_pool03_slow Per elem: 18 cycles(tsc) 183.450 ns (step:0) - (measurement period time:1.834507700 sec time_interval:1834507700) - (invoke count:10000000 tsc_interval:183450764)
 >
-> Indeed, for such intensive workload:
-> - EAS would not have any energy benefit, so better prioritize performance
->    (as Christian mentioned)
-> - EAS would not be able to find a fitting CPU, so running feec() should b=
-e
->    avoided
-> - as you mention in the commit message, shuffling tasks when one CPU beco=
-mes
->    momentarily overutilized is inefficient energy-wise (even though I don=
-'t have
->    the numbers, it should make sense).
-> So detecting when the system is overloaded should be a better compromise =
-I
-> assume. The condition in sched_balance_find_src_group() to let the load b=
-alancer
-> operate might also need to be updated.
+> Patch for time_bench.h enable the out of tree testing on arm64 system:
+> @@ -101,6 +101,7 @@ struct time_bench_cpu {
+>    *  CPUID clears the high 32-bits of all (rax/rbx/rcx/rdx)
+>    */
+>   static __always_inline uint64_t tsc_start_clock(void) {
+> +#if defined(__i386__) || defined(__x86_64__)
+>          /* See: Intel Doc #324264 */
+>          unsigned hi, lo;
+>          asm volatile (
+> @@ -111,9 +112,13 @@ static __always_inline uint64_t tsc_start_clock(void) {
+>                  "%rax", "%rbx", "%rcx", "%rdx");
+>          //FIXME: on 32bit use clobbered %eax + %edx
+>          return ((uint64_t)lo) | (((uint64_t)hi) << 32);
+> +#else
+> +       return get_cycles();
+> +#endif
+>   }
 >
-> Note:
-> - base: with patches 1-4/5
-> - _ou: run feec() when not overutilized
-> - _ol: run feec() when not overloaded
-> - mean: hackbench execution time in s.
-> - delta: negative is better. Value is in percentage.
-
-Could you share your command line ? As explained in the cover letter I
-have seen some perf regressions but not in the range that you have
-below
-
-What is your base ? tip/sched/core ?
-
-> =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=AC=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=90
-> =E2=94=82 id  =E2=94=86 mean_base =E2=94=86 std_base =E2=94=86 mean_ou =
-=E2=94=86 std_ou   =E2=94=86 mean_ol =E2=94=86 std_ol   =E2=94=86 delta_ou =
-=E2=94=86 delta_ol =E2=94=82
-> =E2=95=9E=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=AA=E2=95=90=
-=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=
-=95=90=E2=95=90=E2=95=AA=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=
-=90=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=AA=E2=95=90=E2=95=90=E2=95=90=
-=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=AA=E2=95=90=E2=
-=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=
-=90=E2=95=AA=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=90=
-=E2=95=90=E2=95=90=E2=95=AA=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=
-=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=AA=E2=95=90=E2=95=90=E2=95=
-=90=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=AA=
-=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=95=90=E2=
-=95=90=E2=95=90=E2=95=A1
-> =E2=94=82 1   =E2=94=86 1.9786    =E2=94=86 0.04719  =E2=94=86 3.0856  =
-=E2=94=86 0.122209 =E2=94=86 2.1734  =E2=94=86 0.045203 =E2=94=86 55.95    =
-=E2=94=86 9.85     =E2=94=82
-> =E2=94=82 2   =E2=94=86 1.8991    =E2=94=86 0.019768 =E2=94=86 2.6672  =
-=E2=94=86 0.135266 =E2=94=86 1.98875 =E2=94=86 0.055132 =E2=94=86 40.45    =
-=E2=94=86 4.72     =E2=94=82
-> =E2=94=82 3   =E2=94=86 1.9053    =E2=94=86 0.014795 =E2=94=86 2.5761  =
-=E2=94=86 0.141693 =E2=94=86 2.06425 =E2=94=86 0.045901 =E2=94=86 35.21    =
-=E2=94=86 8.34     =E2=94=82
-> =E2=94=82 4   =E2=94=86 1.9586    =E2=94=86 0.023439 =E2=94=86 2.5823  =
-=E2=94=86 0.110399 =E2=94=86 2.0955  =E2=94=86 0.053818 =E2=94=86 31.84    =
-=E2=94=86 6.99     =E2=94=82
-> =E2=94=82 5   =E2=94=86 1.746     =E2=94=86 0.055676 =E2=94=86 3.3437  =
-=E2=94=86 0.279107 =E2=94=86 1.88    =E2=94=86 0.038184 =E2=94=86 91.51    =
-=E2=94=86 7.67     =E2=94=82
-> =E2=94=82 6   =E2=94=86 1.5476    =E2=94=86 0.050131 =E2=94=86 2.6835  =
-=E2=94=86 0.140497 =E2=94=86 1.5645  =E2=94=86 0.081644 =E2=94=86 73.4     =
-=E2=94=86 1.09     =E2=94=82
-> =E2=94=82 7   =E2=94=86 1.4562    =E2=94=86 0.062457 =E2=94=86 2.3568  =
-=E2=94=86 0.119213 =E2=94=86 1.48425 =E2=94=86 0.06212  =E2=94=86 61.85    =
-=E2=94=86 1.93     =E2=94=82
-> =E2=94=82 8   =E2=94=86 1.3554    =E2=94=86 0.031757 =E2=94=86 2.0609  =
-=E2=94=86 0.112869 =E2=94=86 1.4085  =E2=94=86 0.036601 =E2=94=86 52.05    =
-=E2=94=86 3.92     =E2=94=82
-> =E2=94=82 9   =E2=94=86 2.0391    =E2=94=86 0.035732 =E2=94=86 3.4045  =
-=E2=94=86 0.277307 =E2=94=86 2.2155  =E2=94=86 0.019053 =E2=94=86 66.96    =
-=E2=94=86 8.65     =E2=94=82
-> =E2=94=82 10  =E2=94=86 1.9247    =E2=94=86 0.056472 =E2=94=86 2.6605  =
-=E2=94=86 0.119417 =E2=94=86 2.02775 =E2=94=86 0.05795  =E2=94=86 38.23    =
-=E2=94=86 5.35     =E2=94=82
-> =E2=94=82 11  =E2=94=86 1.8923    =E2=94=86 0.038222 =E2=94=86 2.8113  =
-=E2=94=86 0.120623 =E2=94=86 2.089   =E2=94=86 0.025259 =E2=94=86 48.57    =
-=E2=94=86 10.39    =E2=94=82
-> =E2=94=82 12  =E2=94=86 1.9444    =E2=94=86 0.034856 =E2=94=86 2.6675  =
-=E2=94=86 0.219585 =E2=94=86 2.1035  =E2=94=86 0.076514 =E2=94=86 37.19    =
-=E2=94=86 8.18     =E2=94=82
-> =E2=94=82 13  =E2=94=86 1.7107    =E2=94=86 0.04874  =E2=94=86 3.4443  =
-=E2=94=86 0.154481 =E2=94=86 1.8275  =E2=94=86 0.036665 =E2=94=86 101.34   =
-=E2=94=86 6.83     =E2=94=82
-> =E2=94=82 14  =E2=94=86 1.5565    =E2=94=86 0.056595 =E2=94=86 2.8241  =
-=E2=94=86 0.158643 =E2=94=86 1.5515  =E2=94=86 0.040813 =E2=94=86 81.44    =
-=E2=94=86 -0.32    =E2=94=82
-> =E2=94=82 15  =E2=94=86 1.4932    =E2=94=86 0.085256 =E2=94=86 2.6841  =
-=E2=94=86 0.135623 =E2=94=86 1.50475 =E2=94=86 0.028336 =E2=94=86 79.75    =
-=E2=94=86 0.77     =E2=94=82
-> =E2=94=82 16  =E2=94=86 1.4263    =E2=94=86 0.067666 =E2=94=86 2.3971  =
-=E2=94=86 0.145928 =E2=94=86 1.414   =E2=94=86 0.061422 =E2=94=86 68.06    =
-=E2=94=86 -0.86    =E2=94=82
-> =E2=94=94=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=B4=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=E2=94=80=E2=94=80=E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=B4=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=98
+>   static __always_inline uint64_t tsc_stop_clock(void) {
+> +#if defined(__i386__) || defined(__x86_64__)
+>          /* See: Intel Doc #324264 */
+>          unsigned hi, lo;
+>          asm volatile(
+> @@ -123,6 +128,9 @@ static __always_inline uint64_t tsc_stop_clock(void) {
+>                  "CPUID\n\t": "=r" (hi), "=r" (lo)::
+>                  "%rax", "%rbx", "%rcx", "%rdx");
+>          return ((uint64_t)lo) | (((uint64_t)hi) << 32);
+> +#else
+> +       return get_cycles();
+> +#endif
+>   }
 >
-> On 9/17/24 22:24, Christian Loehle wrote:
-> > On 8/30/24 14:03, Vincent Guittot wrote:
-> >> Keep looking for an energy efficient CPU even when the system is
-> >> overutilized and use the CPU returned by feec() if it has been able to=
- find
-> >> one. Otherwise fallback to the default performance and spread mode of =
-the
-> >> scheduler.
-> >> A system can become overutilized for a short time when workers of a
-> >> workqueue wake up for a short background work like vmstat update.
-> >> Continuing to look for a energy efficient CPU will prevent to break th=
-e
-> >> power packing of tasks.
-> >>
-> >> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> >> ---
-> >>   kernel/sched/fair.c | 2 +-
-> >>   1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> >> index 2273eecf6086..e46af2416159 100644
-> >> --- a/kernel/sched/fair.c
-> >> +++ b/kernel/sched/fair.c
-> >> @@ -8505,7 +8505,7 @@ select_task_rq_fair(struct task_struct *p, int p=
-rev_cpu, int wake_flags)
-> >>                  cpumask_test_cpu(cpu, p->cpus_ptr))
-> >>                      return cpu;
-> >>
-> >> -            if (!is_rd_overutilized(this_rq()->rd)) {
-> >> +            if (sched_energy_enabled()) {
-> >>                      new_cpu =3D find_energy_efficient_cpu(p, prev_cpu=
-);
-> >>                      if (new_cpu >=3D 0)
-> >>                              return new_cpu;
-> >
-> > Super quick testing on pixel6:
-> > for i in $(seq 0 6); do /data/local/tmp/hackbench -l 500 -g 100 | grep =
-Time; sleep 60; done
-> > with patch 5/5 only:
-> > Time: 19.433
-> > Time: 19.657
-> > Time: 19.851
-> > Time: 19.789
-> > Time: 19.857
-> > Time: 20.092
-> > Time: 19.973
-> >
-> > mainline:
-> > Time: 18.836
-> > Time: 18.718
-> > Time: 18.781
-> > Time: 19.015
-> > Time: 19.061
-> > Time: 18.950
-> > Time: 19.166
-> >
-> >
-> > The reason we didn't always have this enabled is the belief that
-> > this costs us too much performance in scenarios we most need it
-> > while at best making subpar EAS decisions anyway (in an
-> > overutilized state).
-> > I'd be open for questioning that, but why the change of mind?
-> > And why is this necessary in your series if the EAS selection
-> > isn't 'final' (until the next sleep) anymore (Patch 5/5)?
-> >
+>   /* Notes for RDTSC and RDTSCP
+> @@ -186,10 +194,14 @@ enum {
+>
+>   static __always_inline unsigned long long p_rdpmc(unsigned in)
+>   {
+> +#if defined(__i386__) || defined(__x86_64__)
+>          unsigned d, a;
+>
+>          asm volatile("rdpmc" : "=d" (d), "=a" (a) : "c" (in) : "memory");
+>          return ((unsigned long long)d << 32) | a;
+> +#else
+> +       return 0;
+> +#endif
+>   }
+>
+>   /* These PMU counter needs to be enabled, but I don't have the
+> @@ -216,7 +228,11 @@ static __always_inline unsigned long long pmc_clk(void)
+>   #define MSR_IA32_PCM2 0x400000C3
+>   inline uint64_t msr_inst(unsigned long long *msr_result)
+>   {
+> +#if defined(__i386__) || defined(__x86_64__)
+>          return rdmsrl_safe(MSR_IA32_PCM0, msr_result);
+> +#else
+> +       return 0;
+> +#endif
+>   }
+>
+> 1. https://lore.kernel.org/lkml/8067f204-1380-4d37-8ffd-007fc6f26738@kernel.org/T/
+>
+> CC: Alexander Lobakin <aleksander.lobakin@intel.com>
+> CC: Robin Murphy <robin.murphy@arm.com>
+> CC: Alexander Duyck <alexander.duyck@gmail.com>
+> CC: IOMMU <iommu@lists.linux.dev>
+>
+> Change log:
+> V2:
+>    1. Add a item_full stat.
+>    2. Use container_of() for page_pool_to_pp().
+>
+> Yunsheng Lin (2):
+>    page_pool: fix timing for checking and disabling napi_local
+>    page_pool: fix IOMMU crash when driver has already unbound
+>
+>   drivers/net/ethernet/freescale/fec_main.c     |   8 +-
+>   drivers/net/ethernet/intel/iavf/iavf_txrx.c   |   6 +-
+>   drivers/net/ethernet/intel/idpf/idpf_txrx.c   |  14 +-
+>   drivers/net/ethernet/intel/libeth/rx.c        |   2 +-
+>   .../net/ethernet/mellanox/mlx5/core/en/xdp.c  |   3 +-
+>   drivers/net/netdevsim/netdev.c                |   6 +-
+>   drivers/net/wireless/mediatek/mt76/mt76.h     |   2 +-
+>   include/linux/mm_types.h                      |   2 +-
+>   include/linux/skbuff.h                        |   1 +
+>   include/net/libeth/rx.h                       |   3 +-
+>   include/net/netmem.h                          |  10 +-
+>   include/net/page_pool/helpers.h               |   7 +
+>   include/net/page_pool/types.h                 |  17 +-
+>   net/core/devmem.c                             |   4 +-
+>   net/core/netmem_priv.h                        |   5 +-
+>   net/core/page_pool.c                          | 190 +++++++++++++++---
+>   net/core/page_pool_priv.h                     |  10 +-
+>   net/core/skbuff.c                             |   3 +-
+>   net/core/xdp.c                                |   3 +-
+>   19 files changed, 238 insertions(+), 58 deletions(-)
+>
 
