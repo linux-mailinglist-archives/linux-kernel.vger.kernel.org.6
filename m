@@ -1,88 +1,52 @@
-Return-Path: <linux-kernel+bounces-339673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE66E9868CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 23:57:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBBFD9868CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 23:58:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23C67B21B57
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:57:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA51C282265
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D73158851;
-	Wed, 25 Sep 2024 21:57:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 988DA156C72;
+	Wed, 25 Sep 2024 21:57:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ep5aeaa6"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DUXYh80d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251B53A8F0;
-	Wed, 25 Sep 2024 21:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B864C91
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 21:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727301434; cv=none; b=Svqu59to5pOjTaszU4gv/39GjmlN+2VA66WK9HmHyTTP55oM3e1Y11gMBuBsMCRazeQrQyWrvHFSqnNjS/CoMk3JPxlBjcPBjnrhqzuUInE1FgTTeF5m9tEyYIvZePCvNVJA2DWXBAaLL6VEZitGUmKM2KrxBWonGdOikdClClU=
+	t=1727301478; cv=none; b=ntQwZWr/9EUexUxue+BH6zVbMYfbZE5HdHSLsD+6SvzjNmfyaSNATaE66q5HlXDkzrlw/72HJl4RT7oRf7GlL+vLDsAMi1VRMOotne7P98mtmANuBTT791GeuzmdCR5kxV1Mi2caA/b/VoK+tP5wIhvOUoXxDbomInDVZ+wFKF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727301434; c=relaxed/simple;
-	bh=Rqc2X5SMPu63Cqa+DDX7JyDhlqatIp5x/uNwDdENIiY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tzJOQgjnbknOMsNwqplUWOEiud/c/l0bxVz//onFDyJHh7xctkmZXaRLojHX6SD6QzrMkoxsYVEmi6aOtpM1WjiuTYxZGt58K8vpwwg1TgoeTG85sWZfWzdQV/qnAhtcgro3dTvgdaki58Myjd+hePN3xWriMdao4a8L2VQlDs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ep5aeaa6; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2068a7c9286so2638425ad.1;
-        Wed, 25 Sep 2024 14:57:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727301432; x=1727906232; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kh8uyuzwH0iOnzLqnw2uzJ+CxTGFRCNbmwoBnNZzNgE=;
-        b=Ep5aeaa6Sk85YbjGGJL8yTPZuRGjk54rog8tgR01+uuy+TjSWZbeWqkmsEh0vTh3hy
-         OjZ6LDULKuxSMZhSC3WkMrQnhTQNkS7cT71WZZ+uDIZQtqbE7aM8xK6Hlz1IBBwTvDJQ
-         D6Oq2RDv2o329/91FJqHNWHqJhZJWrUxCUsw/NTzK0c/3tkCSZkTF07JGQWzrKOCGjt0
-         73XMxXZtkZzzCB250j4VMNDLp5r/BJfDjDY+1Uql4OF2xXGRBeaei3txOnjRQOy7mZBB
-         cC8gAimLGStfWKQjXET7QcQklncl0X/JP1n+NcYSy3PzmTY8KTYejH66rA7YdRlvjAcY
-         qr6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727301432; x=1727906232;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Kh8uyuzwH0iOnzLqnw2uzJ+CxTGFRCNbmwoBnNZzNgE=;
-        b=Yyo0/SuElH4+gHOuzM0C5WARD1IRAT6BwMwF5no4g/YStKnL9qql1OHRSjK5WQFw/P
-         DocNRR1oxU2J7UGtyuqyIV7LzBd/hLPvimohwmjdflfdLVyx4YGnXMxGUt9/BokRHFb9
-         Z5rdUb4GOaVycnZ+zkTie5zItU81kTH2w2X1cRmiIDI/UraUsnJl3h83PeADkf9XRsvm
-         YexnZ0WC9e3d3IruRvUABcam0XWYHWweKBwWjRu2b3yOoUeCSrFsxLs2Krqe05sYeBkg
-         Uj0VBzN+1clzDp4MI3jHV8URj4uXckIDllrmIP8kcGJAOhUWNqgWzYWC98Eir6LxbO3D
-         C7VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUc4rgGt1wUnDSHESURVlO6k6sc6qvjfHeS9/STPAmNYCxb/enhLZbHI6Hm5eqvZYsIT0LQDNKSn52W1Nc=@vger.kernel.org, AJvYcCWsoLAAACz74MsOV3G9TP4vc7pUQJdM7a7zQhU4H1IJL9SBpg/xwYNhL7yYY/SmYNA8AhHLFIu5vqKF@vger.kernel.org, AJvYcCXlgHx2XXlI3m/Q4hs04dJnpEQuTdj2NfnBlfELrlPnWkOhiDDXzS/mqneEzZlcbMhUVyLf/nPBNAzLLP+B@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuCBVvhjCld6Q4ruy2+gZskeZDFV6tt23ychsfcnChRKvQbxjC
-	TokYfnCiV4rii7XMioWmrQ1Lf0RWg6WebgZgwl/gL8dYbBbvxN/0
-X-Google-Smtp-Source: AGHT+IH7P/xvl10Q1V+B6l7XzaGTGgPRRYGBLveGCGwyzJDP/1Re4PziTBm+SPob5q8/JdKGxQGdeA==
-X-Received: by 2002:a17:903:41cd:b0:205:5582:d650 with SMTP id d9443c01a7336-20afc5e3a39mr63011295ad.52.1727301432257;
-        Wed, 25 Sep 2024 14:57:12 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:dda4:383f:ca3a:82bb])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af17e01absm28424475ad.174.2024.09.25.14.57.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 14:57:11 -0700 (PDT)
-Date: Wed, 25 Sep 2024 14:57:08 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Jiri Kosina <jikos@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Charles Wang <charles.goodix@gmail.com>,
-	dianders@chromium.org, dan.carpenter@linaro.org, conor@kernel.org,
-	krzk+dt@kernel.org, bentiss@kernel.org, hbarnor@chromium.org,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v7 2/2] dt-bindings: input: Goodix SPI HID Touchscreen
-Message-ID: <ZvSHNFPPC1NNq33J@google.com>
-References: <20240814024513.164199-1-charles.goodix@gmail.com>
- <20240814024513.164199-3-charles.goodix@gmail.com>
- <CAL_Jsq+QfTtRj_JCqXzktQ49H8VUnztVuaBjvvkg3fwEHniUHw@mail.gmail.com>
- <CAL_JsqKUDj6vrWMVVBHrDeXdb3ogsMb3NUbV6OjKR-EhLLZuGg@mail.gmail.com>
- <CAL_Jsq+6fvCaxLexo9c6zs+8vwyfPAOCCVsejw_uKURVU-Md9w@mail.gmail.com>
- <ZvSEkn66qNziJV0M@google.com>
- <nycvar.YFH.7.76.2409252347140.31206@cbobk.fhfr.pm>
+	s=arc-20240116; t=1727301478; c=relaxed/simple;
+	bh=yx8lih9oLY12YVOI+EkDxwGMzkYwdi7Tv9kls7gCen8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=WAydCzsry0rFpG9m8HXLHY0au6jvUB01eceMwecKmbmma/U9uBhiJVM2NvfCB6+7ovFkgqZBmCG93vtXS5C7Dev0CjGSoMjcvijEHg9Dl1hcagoSq9d0vKkLOgxnyatgR0NeIG4pRAKo89SFHkEZGJTX2Sc53/rSm+lqWqit+jU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DUXYh80d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6784EC4CEC3;
+	Wed, 25 Sep 2024 21:57:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727301477;
+	bh=yx8lih9oLY12YVOI+EkDxwGMzkYwdi7Tv9kls7gCen8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=DUXYh80dExPQHIaEeR5Jj9Um/wdLod2oPE8J53sj/VnwdiG/uM6vcUDi3tG+6GSCM
+	 GOSUFSCsuTsrILAgJiroIGRHj3wqbOsi3QFCxkTbMzqFqBv5DF5oAg3GNc2K3SkTnc
+	 Md8MIiWS1ilZXLFt2cCrlxPsECnz/mGH7En1jUAyBmKARnbVGF6FAmBdd8g3CNajy7
+	 yEsqYiousWCby/okHN1gtPeoGL+kk10ww5eJ11u9e1z8OBI/DQYdSpawu8dxZxBQ7F
+	 SFc4POyw2YdYpydm0SGE5hZIUTrTuWuDlpa9+gPhk9FXI1cvTp4AwZ7PIbXgqnNjhj
+	 b+qOp+LUcSBUA==
+Date: Wed, 25 Sep 2024 11:57:56 -1000
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, sched-ext@meta.com
+Subject: [sched_ext/for-6.12-fixes] sched_ext: Add __COMPAT helpers for
+ features added during v6.12 devel cycle
+Message-ID: <ZvSHZL3mBlYm2H_A@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,27 +55,130 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <nycvar.YFH.7.76.2409252347140.31206@cbobk.fhfr.pm>
 
-On Wed, Sep 25, 2024 at 11:48:50PM +0200, Jiri Kosina wrote:
-> On Wed, 25 Sep 2024, Dmitry Torokhov wrote:
-> 
-> > I see that Krzysztof sent a revert, but what a proper fix would be?
-> > Apparently Goodix is using the same product ID gt7986u for both I2C and
-> > SPI parts, and covering them in one binding is not really easy (well, I
-> > guess it is possible with a big ugly "if"). Do we just slap "-spi"
-> > suffix on the compatible, so it becomes "goodix,gt7986u-spi" and go on
-> > on our merry way? 
-> 
-> I actually see this as a viable option, given the circumstances.
-> 
-> However, given the non-responsiveness of the original author, I am now 
-> proceeding with the revert, and we can try to sort it out later.
+cgroup support and scx_bpf_dispatch[_vtime]_from_dsq() are newly added since
+8bb30798fd6e ("sched_ext: Fixes incorrect type in bpf_scx_init()") which is
+the current earliest commit targeted by BPF schedulers. Add compat helpers
+for them and apply them in the example schedulers.
 
-Yeah, no objections there.
+These will be dropped after a few kernel releases. The exact backward
+compatibility window hasn't been decided yet.
+
+Signed-off-by: Tejun Heo <tj@kernel.org>
+---
+Applying to sched_ext/for-6.12-fixes.
 
 Thanks.
 
--- 
-Dmitry
+ tools/sched_ext/include/scx/compat.bpf.h |   19 +++++++++++++++++++
+ tools/sched_ext/scx_flatcg.bpf.c         |   10 +++++-----
+ tools/sched_ext/scx_qmap.bpf.c           |   12 ++++++------
+ 3 files changed, 30 insertions(+), 11 deletions(-)
+
+--- a/tools/sched_ext/include/scx/compat.bpf.h
++++ b/tools/sched_ext/include/scx/compat.bpf.h
+@@ -15,6 +15,25 @@
+ 	__ret;									\
+ })
+ 
++/* v6.12: 819513666966 ("sched_ext: Add cgroup support") */
++#define __COMPAT_scx_bpf_task_cgroup(p)						\
++	(bpf_ksym_exists(scx_bpf_task_cgroup) ?					\
++	 scx_bpf_task_cgroup((p)) : NULL)
++
++/* v6.12: 4c30f5ce4f7a ("sched_ext: Implement scx_bpf_dispatch[_vtime]_from_dsq()") */
++#define __COMPAT_scx_bpf_dispatch_from_dsq_set_slice(it, slice)			\
++	(bpf_ksym_exists(scx_bpf_dispatch_from_dsq_set_slice) ?			\
++	 scx_bpf_dispatch_from_dsq_set_slice((it), (slice)) : (void)0)
++#define __COMPAT_scx_bpf_dispatch_from_dsq_set_vtime(it, vtime)			\
++	(bpf_ksym_exists(scx_bpf_dispatch_from_dsq_set_vtime) ?			\
++	 scx_bpf_dispatch_from_dsq_set_vtime((it), (vtime)) : (void)0)
++#define __COMPAT_scx_bpf_dispatch_from_dsq(it, p, dsq_id, enq_flags)		\
++	(bpf_ksym_exists(scx_bpf_dispatch_from_dsq) ?				\
++	 scx_bpf_dispatch_from_dsq((it), (p), (dsq_id), (enq_flags)) : false)
++#define __COMPAT_scx_bpf_dispatch_vtime_from_dsq(it, p, dsq_id, enq_flags)	\
++	(bpf_ksym_exists(scx_bpf_dispatch_vtime_from_dsq) ?			\
++	 scx_bpf_dispatch_vtime_from_dsq((it), (p), (dsq_id), (enq_flags)) : false)
++
+ /*
+  * Define sched_ext_ops. This may be expanded to define multiple variants for
+  * backward compatibility. See compat.h::SCX_OPS_LOAD/ATTACH().
+--- a/tools/sched_ext/scx_flatcg.bpf.c
++++ b/tools/sched_ext/scx_flatcg.bpf.c
+@@ -383,7 +383,7 @@ void BPF_STRUCT_OPS(fcg_enqueue, struct
+ 		return;
+ 	}
+ 
+-	cgrp = scx_bpf_task_cgroup(p);
++	cgrp = __COMPAT_scx_bpf_task_cgroup(p);
+ 	cgc = find_cgrp_ctx(cgrp);
+ 	if (!cgc)
+ 		goto out_release;
+@@ -509,7 +509,7 @@ void BPF_STRUCT_OPS(fcg_runnable, struct
+ {
+ 	struct cgroup *cgrp;
+ 
+-	cgrp = scx_bpf_task_cgroup(p);
++	cgrp = __COMPAT_scx_bpf_task_cgroup(p);
+ 	update_active_weight_sums(cgrp, true);
+ 	bpf_cgroup_release(cgrp);
+ }
+@@ -522,7 +522,7 @@ void BPF_STRUCT_OPS(fcg_running, struct
+ 	if (fifo_sched)
+ 		return;
+ 
+-	cgrp = scx_bpf_task_cgroup(p);
++	cgrp = __COMPAT_scx_bpf_task_cgroup(p);
+ 	cgc = find_cgrp_ctx(cgrp);
+ 	if (cgc) {
+ 		/*
+@@ -565,7 +565,7 @@ void BPF_STRUCT_OPS(fcg_stopping, struct
+ 	if (!taskc->bypassed_at)
+ 		return;
+ 
+-	cgrp = scx_bpf_task_cgroup(p);
++	cgrp = __COMPAT_scx_bpf_task_cgroup(p);
+ 	cgc = find_cgrp_ctx(cgrp);
+ 	if (cgc) {
+ 		__sync_fetch_and_add(&cgc->cvtime_delta,
+@@ -579,7 +579,7 @@ void BPF_STRUCT_OPS(fcg_quiescent, struc
+ {
+ 	struct cgroup *cgrp;
+ 
+-	cgrp = scx_bpf_task_cgroup(p);
++	cgrp = __COMPAT_scx_bpf_task_cgroup(p);
+ 	update_active_weight_sums(cgrp, false);
+ 	bpf_cgroup_release(cgrp);
+ }
+--- a/tools/sched_ext/scx_qmap.bpf.c
++++ b/tools/sched_ext/scx_qmap.bpf.c
+@@ -318,11 +318,11 @@ static bool dispatch_highpri(bool from_t
+ 
+ 		if (tctx->highpri) {
+ 			/* exercise the set_*() and vtime interface too */
+-			scx_bpf_dispatch_from_dsq_set_slice(
++			__COMPAT_scx_bpf_dispatch_from_dsq_set_slice(
+ 				BPF_FOR_EACH_ITER, slice_ns * 2);
+-			scx_bpf_dispatch_from_dsq_set_vtime(
++			__COMPAT_scx_bpf_dispatch_from_dsq_set_vtime(
+ 				BPF_FOR_EACH_ITER, highpri_seq++);
+-			scx_bpf_dispatch_vtime_from_dsq(
++			__COMPAT_scx_bpf_dispatch_vtime_from_dsq(
+ 				BPF_FOR_EACH_ITER, p, HIGHPRI_DSQ, 0);
+ 		}
+ 	}
+@@ -340,9 +340,9 @@ static bool dispatch_highpri(bool from_t
+ 		else
+ 			cpu = scx_bpf_pick_any_cpu(p->cpus_ptr, 0);
+ 
+-		if (scx_bpf_dispatch_from_dsq(BPF_FOR_EACH_ITER, p,
+-					      SCX_DSQ_LOCAL_ON | cpu,
+-					      SCX_ENQ_PREEMPT)) {
++		if (__COMPAT_scx_bpf_dispatch_from_dsq(BPF_FOR_EACH_ITER, p,
++						       SCX_DSQ_LOCAL_ON | cpu,
++						       SCX_ENQ_PREEMPT)) {
+ 			if (cpu == this_cpu) {
+ 				dispatched = true;
+ 				__sync_fetch_and_add(&nr_expedited_local, 1);
+
 
