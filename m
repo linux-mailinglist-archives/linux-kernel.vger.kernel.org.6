@@ -1,456 +1,442 @@
-Return-Path: <linux-kernel+bounces-339455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DF77986550
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:05:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFFEC98654A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:05:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91B471C23AAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:05:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8241F281D37
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E080E56458;
-	Wed, 25 Sep 2024 17:05:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65AA57880;
+	Wed, 25 Sep 2024 17:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="GG1HXv+V";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="l5qStjS5"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="blE4aVRY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98CA883CD9;
-	Wed, 25 Sep 2024 17:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727283946; cv=fail; b=b8b6PVJy7z0XSuPOAwYzV6YeFq+YCd5v3fva2DM1cdR6nTFSNZBY9tc6cLVONrfM3JX46ws3c13rvnJKqa8hpGoYIHvHdars9thmYRJ2Rgnzx/lJN/+OhkTsar2bYUTHqz3VVsfVRBRFJ2CiIAd9tqGc/BrGxg1MsvdMc4fpYOw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727283946; c=relaxed/simple;
-	bh=V/FTcU6Alt5lu7AGW2SpA28X80AOXDoiFdtree1iqsk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Q69jKm8ZSYbGBq53W7JfUWFaJq0MP6fHHcs0o647wJQ8A5twDrhnXETTwjd+O1gnP3sB0cnULhLuDCNIEMTGFAazmIGTOSlfujNHG1U5p58g46LTNQ87nURFPQYxqJ9We3VDuLIu+NuyKn3cGCZP2pd6nHUxl9j6rEhDY5I4/50=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=GG1HXv+V; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=l5qStjS5; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48PGtbt5018183;
-	Wed, 25 Sep 2024 17:05:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=corp-2023-11-20; bh=7hIgIl3LS2qTJKW
-	d/hf4MGpOCwmba4gYbRgfZD1/zig=; b=GG1HXv+VmduVTfVqPIZylfXtItORD3Q
-	+arQNXXHO3FPLEMp2vQp/5UEL0t5Ep54VEg8sOEl5lZa3VDSxEpSon+rZvKSuMVF
-	f/vwgnMjWpV6L4q4kOw2aDpD7ilnFb+PWYgYjjERDcXSdJ/OrytTBSpUneSWw3Ld
-	S06Drtp4/PeMXAq9wlbc9PIEJR0JSzTdIonMjhNKYBeA7tRFFuht2LN7NU/xfNHO
-	0dmUB6RtbUDiPOk1p1LpAuNxQbRCGmC4/oDgp+n7gPPWvhW80NPazPWt+akLVhIS
-	5+/VsUZeMFap5zBof86C4zIUYAqGEXBESX9PeQ0DEj0lHv2C6L0+CsQ==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41smr1b0ke-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 25 Sep 2024 17:05:07 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48PGn2h7026109;
-	Wed, 25 Sep 2024 17:05:06 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2177.outbound.protection.outlook.com [104.47.59.177])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41smkawqg9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 25 Sep 2024 17:05:06 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zH0GR5pa9lmmqlgL7uexrX+Gu6J8PbicutZyCViHT0nsmziJp2iyDdvqDx7Ml/m8jKd3bPG6wDy0dtJOBH1stbNnXTICjxDsuVIFNc1PQ7mFWkqqXfSNmsRSvqsFWQwBNfuvf7fafX3wGha8nam6w4je3uVoB9MLjMRw732F7zt6UW6OAEyfbocgcgEDur5QNJcr2iTiJtfQlBRESKY2asH2lZmYSuVxJ4RA9yGBt15quH2yuzZj200zs2qBTXc1H3tJ3DD0mdO2J6n4BKqWB0Y56WCoBD2qaj55+HxAZ7dwz+qkECM8ULG71alIKDaiUX0qDvsgclVpfkemAnl+Yw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7hIgIl3LS2qTJKWd/hf4MGpOCwmba4gYbRgfZD1/zig=;
- b=DEBxPem56WZozuliV3fKlpyV5X1AN5dXmY3Yqu1IyO/pUc4dIX/1rGIckfBxA1LIrEOkqv2P3LqYi/uRfgz/LTJ0CnK9HHSDsIWMAZYdhExJ+BAvx+SJml5qqq6MBUNh5w4wPTfVsmfPEH6lbO2NUloYAaHsyYKdESVXsT3xPgs+HTV6uPzf6mB7Cv5CqhISDGypb0Yk2MaY6hm2R4wsBUVFqLDZJCcGCII920Z4NC1hu4yhGoj9zWZBLcTAgdVfsodwwvH612tUkYEBdKQoFtl/W5e9swWCnew9KJrsgbCseJalWw7TXL8RCfwOK6VRC6M+D/K4kfwEc/I9XQMjyw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7hIgIl3LS2qTJKWd/hf4MGpOCwmba4gYbRgfZD1/zig=;
- b=l5qStjS5Ie9LgQQqpMMUBOloNEXMDFapDUg38N8mjBVe8vL3kh7MwzdJ4g/+mKY7jEKdmUG8PItw2lAvbTcbxBq9SlEstDAl0d9+1wFDvmhIy5rmjPcoW4kc9HUrYgOEjE23EHDml6242jwXvxyDtGPJW5Nm8+t6Jm9VYEZnqLw=
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
- by CH2PR10MB4247.namprd10.prod.outlook.com (2603:10b6:610:7a::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.13; Wed, 25 Sep
- 2024 17:05:03 +0000
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e%5]) with mapi id 15.20.8005.010; Wed, 25 Sep 2024
- 17:05:02 +0000
-Date: Wed, 25 Sep 2024 18:04:59 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Pedro Falcato <pedro.falcato@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Suren Baghdasaryan <surenb@google.com>, Arnd Bergmann <arnd@arndb.de>,
-        linux-api@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Minchan Kim <minchan@kernel.org>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>, linux-alpha@vger.kernel.org,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        linux-mips@vger.kernel.org,
-        "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org,
-        Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>,
-        christian@brauner.io
-Subject: Re: [PATCH v2 1/2] mm/madvise: introduce PR_MADV_SELF flag to
- process_madvise()
-Message-ID: <6b449c32-0954-4db1-9df5-23b766dc2d9a@lucifer.local>
-References: <cover.1727176176.git.lorenzo.stoakes@oracle.com>
- <1ecf2692b3bcdd693ad61d510ce0437abb43a1bd.1727176176.git.lorenzo.stoakes@oracle.com>
- <u64scsk52b3ek4b7fh72tdylkf3qh537txcqhvozmaasrlug3r@eqsmstvs324c>
- <4740dfc7-71da-4eb4-b071-35116288571f@lucifer.local>
- <xilfrvlstq4fqr46jlrzvq2vlr22nizdrwlcdizp774nlt6pfj@jukzlcwc7bed>
- <7f40a8f6-c2f1-45f2-b9ff-88e169a33906@lucifer.local>
- <wvk5y3m47qmox4by6u3zpxtwartjmoaqaaqswbgui626zkjajq@22wjmqo36hes>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <wvk5y3m47qmox4by6u3zpxtwartjmoaqaaqswbgui626zkjajq@22wjmqo36hes>
-X-ClientProxiedBy: LO2P265CA0111.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:c::27) To SJ0PR10MB5613.namprd10.prod.outlook.com
- (2603:10b6:a03:3d0::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9878C34CC4
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 17:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727283929; cv=none; b=jVmrJTHthPnrTqIu6YHBMnmrG8vgksuAtxXvh+pxRansjYzlB1uW3HCd2g973OjJ6W2AwageayYFAuAWKYDTtQ48yC5gMaHTkD9QxjxxYfSwnGvUzBubPKiB9CauUPKhnqrD7ir/HwI6f38laVsRC+IXUvBka3C/A7pCjs/RAnk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727283929; c=relaxed/simple;
+	bh=iFxM43rWyH5d2CGiANYwsZrL5kh1zj+7s9Tna+MKIp0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=NMowHYf6W0DB2m1DTT8IZoG6pmtbdJGWxx4QOvDfjSLFKT+yTfbYI525aZO2WOo12Vg80wDouAZ8B0m24ZXA48mPqWTVDQW9ymL0q/w14M7X4CflQvacXF8CTl53uewSXO2CTzSWvVsRw6pzYKimRoZSi2S1SDPFBApzQyt8XdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=blE4aVRY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727283926;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=14jM8sP/zRLQ3FgfpULDlZiLAMnh3LZ2O0kIN73+8Cg=;
+	b=blE4aVRYCvIDt7QY2T6uM5q2cnu7fr/H6K+vPjU9pkDlU6C2vKp39DdFH76YA3sY0xuOW3
+	ovAV++dHlcuDV5aeJkGqoPU9+ITkCu9Cti9HVKYSUsZLan5yMabtfFvtesiTabR5ivU56e
+	bz8xpbNPJfQ7wYdMrYLOBZFROtisMDE=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-623-GqZhCPhiOsi1U6zfjXExOQ-1; Wed, 25 Sep 2024 13:05:25 -0400
+X-MC-Unique: GqZhCPhiOsi1U6zfjXExOQ-1
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-45825ed5a19so125091cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 10:05:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727283925; x=1727888725;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=14jM8sP/zRLQ3FgfpULDlZiLAMnh3LZ2O0kIN73+8Cg=;
+        b=fpZ0YahSSu9pOKPDCmEhkDFNoxHvk+e4BuduCFn5eAK+D/WDssleRDMpWL3cpcrlbR
+         7caXJdi3ywI/JkHoinY0sZEGdu5RNq8/cvU4WIe0zUfSHF0ZxbL0Y06AIkjmcaj/JAF5
+         rfe/vO+feet9ypmsyVWpP+RLIlevPN9JGKukb5WmHS5QD4xq5N6SUR3lodhAtMIv9EGY
+         W9GAA9GLmOjj3EF9i8i3Ik7G5UyvIUc3TvB3b8/H8+1sOl7cbZKCe6GC+BXVLfgkGBpq
+         FkwH65/ldgprMDKNv6gg3BHZ7fOx8Q3HJk8sBw1QRFwgoy7DANx9peRdOB+PkRj5ei+z
+         rDkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWqXOVnRiPMiPLdrYtFfwjJ0tw1zMjBXKgm8yUIDJO3Pb4dRrmxe2ZFQfL14CU/lDzmVN3VfrHxRnvd5Gs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7HlUIbiOj5JbnuyN55n64I67FGcuvP2eeCVDMtncB1y8YU/Qt
+	xLVnMoj/77pOJK9eiykStwKM5YAuZlPq9F4TAkZYjKnpyaQr98FlGs6KOHfbh6mzoV3mrGVFKBm
+	okkMKl56T+JES9mI0b4PjAdqqXxFGxjhADoJTySebTMBxva+2TIxvykQ/NqugXg==
+X-Received: by 2002:a05:622a:30e:b0:458:2aac:e502 with SMTP id d75a77b69052e-45b5dede3f7mr41942361cf.23.1727283924797;
+        Wed, 25 Sep 2024 10:05:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEaH3mKi4H3/3muZEKBLjgJRkxenn+2wKaM3uGfcZKSTTQzdFMGMQ0SjsyMzwf30cFFYlrZ1Q==
+X-Received: by 2002:a05:622a:30e:b0:458:2aac:e502 with SMTP id d75a77b69052e-45b5dede3f7mr41941971cf.23.1727283924269;
+        Wed, 25 Sep 2024 10:05:24 -0700 (PDT)
+Received: from starship ([2607:fea8:fc01:760d:6adb:55ff:feaa:b156])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45b52594b73sm17813341cf.47.2024.09.25.10.05.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 10:05:23 -0700 (PDT)
+Message-ID: <b06172780e3af37fe91d1cc434aceff4169f88b3.camel@redhat.com>
+Subject: Re: [PATCH v3 2/2] VMX: reset the segment cache after segment
+ initialization in vmx_vcpu_reset
+From: Maxim Levitsky <mlevitsk@redhat.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Chao Gao <chao.gao@intel.com>, kvm@vger.kernel.org, Dave Hansen
+ <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo
+ Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin"
+ <hpa@zytor.com>,  linux-kernel@vger.kernel.org, Paolo Bonzini
+ <pbonzini@redhat.com>,  x86@kernel.org
+Date: Wed, 25 Sep 2024 13:05:22 -0400
+In-Reply-To: <ZvQne77ycOKQ1nvU@google.com>
+References: <20240725175232.337266-1-mlevitsk@redhat.com>
+	 <20240725175232.337266-3-mlevitsk@redhat.com> <ZrF55uIvX2rcHtSW@chao-email>
+	 <ZrY1adEnEW2N-ijd@google.com>
+	 <61e7e64c615aba6297006dbf32e48986d33c12ab.camel@redhat.com>
+	 <65fe418f079a1f9f59caa170ec0ae5d828486714.camel@redhat.com>
+	 <ZvQne77ycOKQ1nvU@google.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|CH2PR10MB4247:EE_
-X-MS-Office365-Filtering-Correlation-Id: fd5a4d6f-0320-49f5-4815-08dcdd84320e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?RvMEDzjzKt+Vjfr0sAewzH8aRqdrK1fo5yKRpH5Ce9girEVCjv+EL7rGDp72?=
- =?us-ascii?Q?0rGEFpV1SjQX7DixvXDUypmTdM/ZZT1pQrNRtrYk9GC0m8wxI1WPyjZCcc8m?=
- =?us-ascii?Q?d5M0ZAGK7dTF+npV61q5b58oAac66eGe9sZGDwux/yjExE40QDX+UpX11j20?=
- =?us-ascii?Q?16ronlWO4fOkz2FOx4hkFPcQdVIFb5FbX7FsrXXuu1+tb69hCI2jS98mAPaU?=
- =?us-ascii?Q?/fzm69NfIwDcPsHBH98ovnyZwDBPPzEQRT2BYekPGTybZdB6t/vDUFjvYSCf?=
- =?us-ascii?Q?op6HcXxskuUPhd7p4bKhhKjmdQr59aLw1x5r7nH5+wm5vNB5gSOM0idY8uY6?=
- =?us-ascii?Q?LKOBEV/y+vLua1lWtnpZsF3Bj/KBY0J/cYWOlqnllevdQ/8EkfMcQwDH8qEG?=
- =?us-ascii?Q?2AclvWXprX9hn9U1XjhgbOheSbnjEdQHsijwt7YE8NL+bCIsoIakTGrPPyk5?=
- =?us-ascii?Q?DpzhiS+7boGWyMzgEzVHKDyUwT8pFQws5b+CS22Hx2kap2texGPFC0KAuD0U?=
- =?us-ascii?Q?kVElNYk8rkAK8ZdQ1oaCn3ct1ps4Y0CM5tL/mpkS9rdSo6QG8qQJntra9EA5?=
- =?us-ascii?Q?Y5VJepDAZbQx64/Iqj9i9n4lef/8ds7dn2ibZocvnF+VtQjzuaiOSInkvksM?=
- =?us-ascii?Q?RjaSs5LYw97AGtszE+oAvqQ7gS0VsLMxAJhi8GxyHwuoWo5NiIIShRmSKeTe?=
- =?us-ascii?Q?xuhsUFK9Db57TM5cLApEGVQgx4UH94dT5YB/TbeolmQG4UuiWGnwsE+8dapj?=
- =?us-ascii?Q?90nm6vQeBDw8YKECGE/BsbmNcufWCGucL3f/FsyzdVVcGhQ7ImjLgiKE8E6P?=
- =?us-ascii?Q?trHQFkoAO7uzS4PAf1KC9Apedarc4x1a5X7dKNONwq1vI2ui4HrJOPUEacHN?=
- =?us-ascii?Q?ub3ygykTMXoN/nEKPXJx5559/gyT/8tiSez+YhwREInFRraNrBOiqKOOBZQE?=
- =?us-ascii?Q?Gm3ut9i3K/AHEw9TIZzii+sC955/vetVBgHEMdW7kyAtdbZnVtwv1BBgfwZq?=
- =?us-ascii?Q?mKxWvRO8/DyoaZoMLu2GHRNYs2lWEKebIierxJfvYy8qCgHUkgB20zvrMo1a?=
- =?us-ascii?Q?ppEFBhUY23meHKMXTg1SkTrel9BI6+AnCkmblyE3/2OkrFh8Cy8kH1hDQSp7?=
- =?us-ascii?Q?Fg5P9WsM3Bm3j8z0SJ7YuH5Qr0xzE1RdWj0aBvCpU6xgyj2n+hqNLKZ/vJez?=
- =?us-ascii?Q?+WhioWAHANTNlX+jC+3RqAEy9iFBtq02CcvuGPBuGwLkicaU/Y9M3poe5Aka?=
- =?us-ascii?Q?bkovdyAzSy0loNGlMchkBoxK7fnfawwpQVt508D5nQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?sg+QMQcKtADvxzJ25VsKN3geQtpmFCSnmGaUXlh96QjBru66JrxCEnxagQG8?=
- =?us-ascii?Q?xAC9CnnurnImjTahpHT9HIN6pwDeFJMNDSOSYyr/lkcqjknbpoyv98AsQamR?=
- =?us-ascii?Q?KjZND99Ps9jzPuCvL2FrYsnTRVAK5FtxdVWssA8L5PKM4OQPYfuyYq6RnHE4?=
- =?us-ascii?Q?scEAFnrj2rNIfRwWgeGQL5jF98Fw/5BDzTwk6FZdAUKwXHj05yae2vImpDbx?=
- =?us-ascii?Q?f+zbOIWQ2cs4ftbdvqgR9B0y4g2AvKNoUtORx7q9WsGXfw1t4+TeqtqXkVwy?=
- =?us-ascii?Q?iomDViOsuHdT7cDLP6IyxaQGP2uK53pQje2DzXbmCvT7UzmlcdwF69WCILcF?=
- =?us-ascii?Q?iwA4+8nWs1KzMqo2eAtRS9oaEfEYrsWMj62JeZWUX238yCAEMN7wcU/JdBmZ?=
- =?us-ascii?Q?oByXDJsq0dbBhAfTV3YOgUcPCZn2AupEIDoCvPFQmh1sVATQ1mEvnKQ8R5d1?=
- =?us-ascii?Q?P59uKLUU17d7PpwQez5x/T06WRhH6l7ygZ4Ex8MdRj/nY090gfZZPhTP7+Fi?=
- =?us-ascii?Q?kLQcRsqXQYFHYcYr1BeUrahPluU0+wF8NAw3+73IGPjiHMiIfwYwTRB/eB5H?=
- =?us-ascii?Q?WudCWGwTrzSAB0iNkm2qetC42kM49dPFur1IhgT6sbkfBo5PQQb3S2DLLuuq?=
- =?us-ascii?Q?Iq85uRWJXvqxN18cMN7E+88kEQ66J4KJJzW4pXKQedhfNzbxgVE+diA2wdJa?=
- =?us-ascii?Q?gr4x4LKpbI7zAB6OEGr39nZkC03FuvJfcYCq0T980gWlxS7jIkSD7KU1uWD7?=
- =?us-ascii?Q?uKmcmRZtyufQMhZIucXf95Y9G8hRp7Lr37lbA5HnUKPLgNt1Mfn0NTiPUs77?=
- =?us-ascii?Q?he4d9xjJT2dGFeXqgL6yvHjijRr0ArKjGdMqpPSN7993He0L6V7N+g5fzvYy?=
- =?us-ascii?Q?SRG81d5caQCaHxcfY0HI8o/cyTvr+VWRshohvz/uQJlSN/KiX/g/atJLORIZ?=
- =?us-ascii?Q?hZ8K3bUip/TqV2ytauq3CSa1ZCUHyG8I2ETVp8sOSQ79FfTkbrdqCSKH749n?=
- =?us-ascii?Q?16F1f6G/WNwYbTI9Bz08u/awi1idmUZzfMwYkxEYCkDXZncZrTj7T/BwPXpD?=
- =?us-ascii?Q?25ZPdYq4y4Broo61xmccCPNts+DUMrg/9NHH7T6YmRsbLXu7KxywYTdokDO6?=
- =?us-ascii?Q?6HFnZesL+b3u8kyQyC45ZTTXVqhuvEon7oY4IKr1kPfFxs6jXT6VxDbP22cl?=
- =?us-ascii?Q?SXJrBM/5+9hrQRDZcHHPeDFVByeKxTZoZRXCWuNT50/jRi+uXtog8EHHdhy8?=
- =?us-ascii?Q?AHVo8V0YAys4MJ7Zpa6U3BzVw+SQDYctnWJd+OzKAFC+Yt7cdP0sEdS+mTVE?=
- =?us-ascii?Q?OlU3gimgKFQ32VrLp7QS5vRtQTanCCAq+sI/pVQ1FuZg27VLfS7zvtdcopyt?=
- =?us-ascii?Q?naE2JyHhI0+XIN/l6wZj7L4IbNGAImv4Ru1ilDDcNXbw6fbhQDncFXqJMLws?=
- =?us-ascii?Q?EaivEYtUXpMqijkKvszvLdAqRijUszZ5FWWk3IGELYv82kPRg/XJ1PlXcRML?=
- =?us-ascii?Q?z0VdoL89fLH4AHfqR+lmEsOLA9Nm0RBofzaveNOlPXxHeW1IQkoyu2f3a+4+?=
- =?us-ascii?Q?9Qps0w8mntUbbpQIRO52wMPBPztKOgGdYuUVXt0ecxgYEq2ugiPO2ygZtY25?=
- =?us-ascii?Q?Cg=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	E9kBKqjV5ARadFEmL2rt6Rwduju1Z1lvhP64SqKmxx/yJtiuZXPzR1btXCli73g22LkZIGeBKw+EwIeDPRg623usssZ+mMzrRhZItQvrUlzzOzoPPOr9Wk0DQvw/EWI9+wS0Zl4MIWaxJO5iUZNEceWU+IO6q7TEttUSlxWQgmnHL+Ohkp9EZplI/9T0qsBt3cG+iV6/CNNfeotHEo+WLg8CdDMXdwe1ZLeqzDsRdWCsUX2Z347XhQfKpGB9bb1jQPaWE8eDwczOR894zyqW6IUdAb8a4Dzm3gv9DFTpvdnNySKirWghcbYZnxtkWo7Q0F7YuK0Ljc9ahG/JSWajtbQl1ZOIi+WU4WQNKwpl7NfqWaqFntJ/2+hjw2Nd05YcmNZltZL3aH+g8XGAGKn9W4AdCsYi2uP3FgbhwooskMy0U86IpM8FKSoPBZljHV4uCILckYMC8dLy23c+D0c7mcNp6keDfct/CRpeUzNzmOd50HGZfuGOrnRtRIdFcaMH26mdjb31RdCUtzjhRLuKrfsimhHibQK9AL7iQF9HJ95s2LK7oK3V+chvJEyYwdftOjQstKNf9CgvkRCBwozZwi8eK3kIlC5VrQdBUCBiU14=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fd5a4d6f-0320-49f5-4815-08dcdd84320e
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2024 17:05:02.6231
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6+E/vcKcu17jVM87tVWvJPL1Q826+hcbfA4fYZrlMM67arnVHVlTha/02lV6tfuayw1lhmKVAr/RLO/16lo36ySh3tK50CEOJjOc+JAz8jg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR10MB4247
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-25_11,2024-09-25_02,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
- phishscore=0 mlxscore=0 bulkscore=0 suspectscore=0 malwarescore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2408220000 definitions=main-2409250121
-X-Proofpoint-ORIG-GUID: p8RuW0orLtDqbypL_FirEevV3b46iC4a
-X-Proofpoint-GUID: p8RuW0orLtDqbypL_FirEevV3b46iC4a
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 25, 2024 at 09:19:17AM GMT, Shakeel Butt wrote:
-> I have no idea what makes you think I am blocking the feature that you
-> repond in a weird tone but let me be upfront what I am asking: Let's
-> collectively decide which is the better option (in terms of
-> maintainability and extensibility) and move forward.
+On Wed, 2024-09-25 at 08:08 -0700, Sean Christopherson wrote:
+> On Mon, Sep 09, 2024, Maxim Levitsky wrote:
+> > On Mon, 2024-09-09 at 15:11 -0400, Maxim Levitsky wrote:
+> > > On Fri, 2024-08-09 at 08:27 -0700, Sean Christopherson wrote:
+> > > > > > @@ -4899,6 +4896,9 @@ void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+> > > > > > 	vmcs_writel(GUEST_IDTR_BASE, 0);
+> > > > > > 	vmcs_write32(GUEST_IDTR_LIMIT, 0xffff);
+> > > > > > 
+> > > > > > +	vmx_segment_cache_clear(vmx);
+> > > > > > +	kvm_register_mark_available(vcpu, VCPU_EXREG_SEGMENTS);
+> > > > > 
+> > > > > vmx_segment_cache_clear() is called in a few other sites. I think at least the
+> > > > > call in __vmx_set_segment() should be fixed, because QEMU may read SS.AR right
+> > > > > after a write to it. if the write was preempted after the cache was cleared but
+> > > > > before the new value being written into VMCS, QEMU would find that SS.AR held a
+> > > > > stale value.
+> > > > 
+> > > > Ya, I thought the plan was to go for a more complete fix[*]?  This change isn't
+> > > > wrong, but it's obviously incomplete, and will be unnecessary if the preemption
+> > > > issue is resolved.
+> > > 
+> > > Hi,
+> > > 
+> > > I was thinking to keep it simple, since the issue is mostly theoretical
+> > > after this fix, but I'll give this another try.
+> > 
+> > This is what I am thinking, after going over this issue again:
+> > 
+> > Pre-populating the cache and/or adding 'exited_in_kernel' will waste vmreads
+> > on *each* vmexit,
+> 
+> FWIW, KVM would only need to do the VMREAD on non-fastpath exits.
+> 
+> > I worry that this is just not worth the mostly theoretical issue that we
+> > have.
+> 
+> Yeah.  And cost aside, it's weird and hard to document and use properly because
+> it's such an edge case.  E.g. only applies preemptible kernels, and use of
+> exited_in_kernel would likely need to be restricted to the sched_out() preempt
+> logic, because anything really needs to check the "current" CPL.
+> 
+> > Since the segment and the register cache only optimize the case of reading a
+> > same field twice or more, I suspect that reading these fields always is worse
+> > performance wise than removing the segment cache altogether and reading these
+> > fields again and again.
+> 
+> For modern setups, yeah, the segment cache likely isn't helping much, though I
+> suspect it still gets a decent number of "hits" on CS.AR_BYTES via is_64_bit_mode().
+> 
+> But for older CPUs where KVM needs to emulate large chunks of code, I'm betting
+> the segment cache is an absolute must have.
+> 
+> > Finally all 3 places that read the segment cache, only access one piece of
+> > data (SS.AR or RIP), thus it doesn't really matter if they see an old or a
+> > new value. 
+> > 
+> > I mean in theory if userspace changes the SS's AR bytes out of the blue, and
+> > then we get a preemption event, in theory as you say the old value is correct
+> > but it really doesn't matter.
+> > 
+> > So IMHO, just ensuring that we invalidate the segment cache right after we do
+> > any changes is the simplest solution.
+> 
+> But it's not a very maintainable solution.  It fixes the immediate problem, but
+> doesn't do anything to help ensure that all future code invalidates the cache
+> after writing,
 
-I'm not sure what you mean by 'weird tone'... perhaps a miscommunication?
+If we wrap segment cache access with something like segment_cache_access_begin()/end(),
+we can ensure that segment cache is only modified then (with some macros even maybe),
+or that at least it is clear to the developer that all writes should be wrapped by these
+functions.
 
-To summarise in my view - a suggestion was made to, rather than provide the
-proposed flag - a pidfd sentinel should be introduced.
+I also do think that we should still re-order the segment cache accesses in vmx_vcpu_reset()
+and other places just for the sake of consistency.
 
-Simply introducing a sentinel that represents 'the current process' without
-changing interfaces that accept a pidfd would be broken - so implementing
-this implies that _all_ pidfd interfaces are updated, as well as tests.
 
-I suggest doing so is, of course, entirely out of the scope of this
-change. Therefore if we were to require that here - it would block the
-feature while I go work on that.
+>  nor does it guarantee that all future usage of SS.AR can tolerate
+> consuming stale values.
+> 
+> > I can in addition to that add a warning to kvm_register_is_available and
+> > vmx_segment_cache_test_set, that will test that only SS.AR and RIP are read
+> > from the interrupt context, so that if in the future someone attempts to read
+> > more fields, this issue can be re-evaluated.
+> 
+> There's no need to add anything to vmx_segment_cache_test_set(), because it uses
+> kvm_register_is_available().  I.e. adding logic in kvm_register_is_available()
+> will suffice.
+> 
+> If we explicitly allow VMCS accesses from PMI callbacks, which by we *know* can
+> tolerate stale data _and_ never run while KVM is updating segments, then we can
+> fix the preemption case by forcing a VMREAD and bypassing the cache.
+>  
+> And looking to the future, if vcpu->arch.guest_state_protected is moved/exposed
+> to common code in some way, then the common PMI code can skip trying to read guest
+> state, and the ugliness of open coding that check in the preemption path largely
+> goes away.
+This is assuming that most VMs will be protected in the future?
 
-I think this is pretty clear right? And I also suggest that doing so is
-likely to take quite some time, and may not even have a positive outcome.
+> 
+> If you're ok with the idea, I'll write changelogs and post the below (probably over
+> two patches).  I don't love adding another kvm_x86_ops callback, but I couldn't
+> come up with anything less ugly.
 
-So it's not a case of 'shall we take approach A or approach B?' but rather
-'should we take approach A or entirely implement a new feature B, then once
-that is done, use it'.
+This was one of the reasons I didn't want to write something like that.
+If we indeed only add callback for get_cpl_no_cache, then it is tolerable.
 
-So as to your 'collectively decide what is the better option' - in my
-previous response I argued that the best approach between 'use an
-unimplemented suggested entirely new feature of pidfd' vs. 'implement a
-flag that would in no way block the prior approach' - a flag works better.
 
-If you can provide specific arguments as to why I'm wrong then by all means
-I'm happy to hear them.
+> 
+> ---
+>  arch/x86/include/asm/kvm-x86-ops.h |  1 +
+>  arch/x86/include/asm/kvm_host.h    |  1 +
+>  arch/x86/kvm/kvm_cache_regs.h      | 17 +++++++++++++++++
+>  arch/x86/kvm/svm/svm.c             |  1 +
+>  arch/x86/kvm/vmx/main.c            |  1 +
+>  arch/x86/kvm/vmx/vmx.c             | 23 ++++++++++++++++++-----
+>  arch/x86/kvm/vmx/vmx.h             |  1 +
+>  arch/x86/kvm/x86.c                 | 13 ++++++++++++-
+>  8 files changed, 52 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/kvm-x86-ops.h b/arch/x86/include/asm/kvm-x86-ops.h
+> index 861d080ed4c6..5aff7222e40f 100644
+> --- a/arch/x86/include/asm/kvm-x86-ops.h
+> +++ b/arch/x86/include/asm/kvm-x86-ops.h
+> @@ -34,6 +34,7 @@ KVM_X86_OP(set_msr)
+>  KVM_X86_OP(get_segment_base)
+>  KVM_X86_OP(get_segment)
+>  KVM_X86_OP(get_cpl)
+> +KVM_X86_OP(get_cpl_no_cache)
+>  KVM_X86_OP(set_segment)
+>  KVM_X86_OP(get_cs_db_l_bits)
+>  KVM_X86_OP(is_valid_cr0)
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index 6d9f763a7bb9..3ae90df0a177 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -1656,6 +1656,7 @@ struct kvm_x86_ops {
+>  	void (*get_segment)(struct kvm_vcpu *vcpu,
+>  			    struct kvm_segment *var, int seg);
+>  	int (*get_cpl)(struct kvm_vcpu *vcpu);
+> +	int (*get_cpl_no_cache)(struct kvm_vcpu *vcpu);
+>  	void (*set_segment)(struct kvm_vcpu *vcpu,
+>  			    struct kvm_segment *var, int seg);
+>  	void (*get_cs_db_l_bits)(struct kvm_vcpu *vcpu, int *db, int *l);
+> diff --git a/arch/x86/kvm/kvm_cache_regs.h b/arch/x86/kvm/kvm_cache_regs.h
+> index b1eb46e26b2e..0370483003f6 100644
+> --- a/arch/x86/kvm/kvm_cache_regs.h
+> +++ b/arch/x86/kvm/kvm_cache_regs.h
+> @@ -43,6 +43,18 @@ BUILD_KVM_GPR_ACCESSORS(r14, R14)
+>  BUILD_KVM_GPR_ACCESSORS(r15, R15)
+>  #endif
+>  
+> +/*
+> + * Using the register cache from interrupt context is generally not allowed, as
+> + * caching a register and marking it available/dirty can't be done atomically,
+> + * i.e. accesses from interrupt context may clobber state or read stale data if
+> + * the vCPU task is in the process of updating the cache.  The exception is if
+> + * KVM is handling an IRQ/NMI from guest mode, as that bounded sequence doesn't
+> + * touch the cache, it runs after the cache is reset (post VM-Exit), and PMIs
+> + * need to several registers that are cacheable.
+> + */
+> +#define kvm_assert_register_caching_allowed(vcpu)		\
+> +	lockdep_assert_once(in_task() ||			\
+> +			    READ_ONCE(vcpu->arch.handling_intr_from_guest))
 
->
-> On Wed, Sep 25, 2024 at 03:48:07PM GMT, Lorenzo Stoakes wrote:
-> > On Wed, Sep 25, 2024 at 07:02:59AM GMT, Shakeel Butt wrote:
-> > > Cced Christian
-> > >
-> > > On Tue, Sep 24, 2024 at 02:12:49PM GMT, Lorenzo Stoakes wrote:
-> > > > On Tue, Sep 24, 2024 at 01:51:11PM GMT, Pedro Falcato wrote:
-> > > > > On Tue, Sep 24, 2024 at 12:16:27PM GMT, Lorenzo Stoakes wrote:
-> > > > > > process_madvise() was conceived as a useful means for performing a vector
-> > > > > > of madvise() operations on a remote process's address space.
-> > > > > >
-> > > > > > However it's useful to be able to do so on the current process also. It is
-> > > > > > currently rather clunky to do this (requiring a pidfd to be opened for the
-> > > > > > current process) and introduces unnecessary overhead in incrementing
-> > > > > > reference counts for the task and mm.
-> > > > > >
-> > > > > > Avoid all of this by providing a PR_MADV_SELF flag, which causes
-> > > > > > process_madvise() to simply ignore the pidfd parameter and instead apply
-> > > > > > the operation to the current process.
-> > > > > >
-> > > > >
-> > > > > How about simply defining a pseudo-fd PIDFD_SELF in the negative int space?
-> > > > > There's precedent for it in the fs space (AT_FDCWD). I think it's more ergonomic
-> > > > > and if you take out the errno space we have around 2^31 - 4096 available sentinel
-> > > > > values.
-> > > > >
-> > > > > e.g:
-> > > > >
-> > > > > /* AT_FDCWD = -10, -1 is dangerous, pick a different value */
-> > > > > #define PIDFD_SELF   -11
-> > > > >
-> > > > > int pidfd = target_pid == getpid() ? PIDFD_SELF : pidfd_open(...);
-> > > > > process_madvise(pidfd, ...);
-> > > > >
-> > > > >
-> > > > > What do you think?
-> > > >
-> > > > I like the way you're thinking, but I don't think this is something we can
-> > > > do in the context of this series.
-> > > >
-> > > > I mean, I totally accept using a flag here and ignoring the pidfd field is
-> > > > _ugly_, no question. But I'm trying to find the smallest change that
-> > > > achieves what we want.
-> > >
-> > > I don't think "smallest change" should be the target. We are changing
-> > > user API and we should aim to make it as robust as possible against
-> > > possible misuse or making uninteded assumptions.
-> >
-> > I think introducing a new pidfd sentinel that isn't used anywhere else is
-> > far more liable to mistakes than adding an explicit flag.
-> >
-> > Could you provide examples of possible misuse of this flag or unintended
-> > assumptions it confers (other than the -1 thing addressed below).
-> >
-> > The flag is explicitly 'target this process, ignore pidfd'. We can document
-> > it as such (I will patch manpages too).
-> >
-> > >
-> > > The proposed implementation opened the door for the applications to
-> > > provide dummy pidfd if PR_MADV_SELF is used. You definitely need to
-> > > restrict it to some known value like -1 used by mmap() syscall.
-> >
-> > Why?
-> >
-> > mmap() is special in that you have a 'dual' situation with shmem that is
-> > both file-backed and private and of course you can do MAP_SHARED |
-> > MAP_PRIVATE and have mmap() transparently assign something to you, etc.
-> >
-> > Here we explicitly have a flag whose semantics are 'ignore pidfd, target
-> > self'.
-> >
-> > If you choose to use a brand new flag that explicitly states this and
-> > provide a 'dummy' pidfd which then has nothing done to it - what exactly is
-> > the problem?
->
-> IMHO having a fixed dummy would allow the kernel more flexibility in
-> future for evolving the API.
+This is ugly, but on the second thought reasonable, given the circumstances.
 
-OK. I agree with having a fixed dummy value as stated.
+How about using kvm_arch_pmi_in_guest() instead? It is a tiny bit more accurate
+and self-documenting IMHO.
 
->
-> >
-> > I mean if you feel strongly, we can enforce this, but I'm not sure -1
-> > implying a special case for pidfd is a thing either.
-> >
-> > On the other hand it would be _weird_ and broken for the user to provide a
-> > valid pidfd so maybe we should as it is easy to do and the user has clearly
-> > done something wrong.
-> >
-> > So fine, agreed, I'll add that.
-> >
->
-> No, don't just agree. The response like "-1 is not good for so and so
-> reasons" is totally fine and my request would be add that reasoning in
-> the commit message. My only request is that we have thought through
-> alternatives and document the reasonsing behind the decided approach.
 
-I didn't just agree, as I said, my reasoning is:
+Also, how about checking for in_task() in __vmx_get_cpl() and then avoiding the cache?
+This way we will avoid adding a new callback, and in theory if there is more code that
+tries to read CPL from interrupt context, it will work for free. 
 
-	On the other hand it would be _weird_ and broken for the user to
-	provide a valid pidfd so maybe we should as it is easy to do and
-	the user has clearly done something wrong.
+But on the other hand we might actually not want new code to get this for free. 
+Is this the reason you added the callback?
 
-If we're in alignment with that then all good!
+>  /*
+>   * avail  dirty
+>   * 0	  0	  register in VMCS/VMCB
+> @@ -53,24 +65,28 @@ BUILD_KVM_GPR_ACCESSORS(r15, R15)
+>  static inline bool kvm_register_is_available(struct kvm_vcpu *vcpu,
+>  					     enum kvm_reg reg)
+>  {
+> +	kvm_assert_register_caching_allowed(vcpu);
+>  	return test_bit(reg, (unsigned long *)&vcpu->arch.regs_avail);
+>  }
+>  
+>  static inline bool kvm_register_is_dirty(struct kvm_vcpu *vcpu,
+>  					 enum kvm_reg reg)
+>  {
+> +	kvm_assert_register_caching_allowed(vcpu);
+>  	return test_bit(reg, (unsigned long *)&vcpu->arch.regs_dirty);
+>  }
+>  
+>  static inline void kvm_register_mark_available(struct kvm_vcpu *vcpu,
+>  					       enum kvm_reg reg)
+>  {
+> +	kvm_assert_register_caching_allowed(vcpu);
+>  	__set_bit(reg, (unsigned long *)&vcpu->arch.regs_avail);
+>  }
+>  
+>  static inline void kvm_register_mark_dirty(struct kvm_vcpu *vcpu,
+>  					   enum kvm_reg reg)
+>  {
+> +	kvm_assert_register_caching_allowed(vcpu);
+>  	__set_bit(reg, (unsigned long *)&vcpu->arch.regs_avail);
+>  	__set_bit(reg, (unsigned long *)&vcpu->arch.regs_dirty);
+>  }
+> @@ -84,6 +100,7 @@ static inline void kvm_register_mark_dirty(struct kvm_vcpu *vcpu,
+>  static __always_inline bool kvm_register_test_and_mark_available(struct kvm_vcpu *vcpu,
+>  								 enum kvm_reg reg)
+>  {
+> +	kvm_assert_register_caching_allowed(vcpu);
+>  	return arch___test_and_set_bit(reg, (unsigned long *)&vcpu->arch.regs_avail);
+>  }
+>  
+> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+> index 9df3e1e5ae81..50f6b0e03d04 100644
+> --- a/arch/x86/kvm/svm/svm.c
+> +++ b/arch/x86/kvm/svm/svm.c
+> @@ -5031,6 +5031,7 @@ static struct kvm_x86_ops svm_x86_ops __initdata = {
+>  	.get_segment = svm_get_segment,
+>  	.set_segment = svm_set_segment,
+>  	.get_cpl = svm_get_cpl,
+> +	.get_cpl_no_cache = svm_get_cpl,
+>  	.get_cs_db_l_bits = svm_get_cs_db_l_bits,
+>  	.is_valid_cr0 = svm_is_valid_cr0,
+>  	.set_cr0 = svm_set_cr0,
+> diff --git a/arch/x86/kvm/vmx/main.c b/arch/x86/kvm/vmx/main.c
+> index 7668e2fb8043..92d35cc6cd15 100644
+> --- a/arch/x86/kvm/vmx/main.c
+> +++ b/arch/x86/kvm/vmx/main.c
+> @@ -50,6 +50,7 @@ struct kvm_x86_ops vt_x86_ops __initdata = {
+>  	.get_segment = vmx_get_segment,
+>  	.set_segment = vmx_set_segment,
+>  	.get_cpl = vmx_get_cpl,
+> +	.get_cpl_no_cache = vmx_get_cpl_no_cache,
+>  	.get_cs_db_l_bits = vmx_get_cs_db_l_bits,
+>  	.is_valid_cr0 = vmx_is_valid_cr0,
+>  	.set_cr0 = vmx_set_cr0,
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index c67e448c6ebd..e2483678eca1 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -3568,16 +3568,29 @@ u64 vmx_get_segment_base(struct kvm_vcpu *vcpu, int seg)
+>  	return vmx_read_guest_seg_base(to_vmx(vcpu), seg);
+>  }
+>  
+> -int vmx_get_cpl(struct kvm_vcpu *vcpu)
+> +static int __vmx_get_cpl(struct kvm_vcpu *vcpu, bool no_cache)
+>  {
+>  	struct vcpu_vmx *vmx = to_vmx(vcpu);
+> +	int ar;
+>  
+>  	if (unlikely(vmx->rmode.vm86_active))
+>  		return 0;
+> -	else {
+> -		int ar = vmx_read_guest_seg_ar(vmx, VCPU_SREG_SS);
+> -		return VMX_AR_DPL(ar);
+> -	}
+> +
+> +	if (no_cache)
+> +		ar = vmcs_read32(GUEST_SS_AR_BYTES);
+> +	else
+> +		ar = vmx_read_guest_seg_ar(vmx, VCPU_SREG_SS);
+> +	return VMX_AR_DPL(ar);
+> +}
+> +
+> +int vmx_get_cpl(struct kvm_vcpu *vcpu)
+> +{
+> +	return __vmx_get_cpl(vcpu, false);
+> +}
+> +
+> +int vmx_get_cpl_no_cache(struct kvm_vcpu *vcpu)
+> +{
+> +	return __vmx_get_cpl(vcpu, true);
+>  }
+>  
+>  static u32 vmx_segment_access_rights(struct kvm_segment *var)
+> diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+> index 2325f773a20b..bcf40c7f3a38 100644
+> --- a/arch/x86/kvm/vmx/vmx.h
+> +++ b/arch/x86/kvm/vmx/vmx.h
+> @@ -385,6 +385,7 @@ void vmx_prepare_switch_to_guest(struct kvm_vcpu *vcpu);
+>  void vmx_set_host_fs_gs(struct vmcs_host_state *host, u16 fs_sel, u16 gs_sel,
+>  			unsigned long fs_base, unsigned long gs_base);
+>  int vmx_get_cpl(struct kvm_vcpu *vcpu);
+> +int vmx_get_cpl_no_cache(struct kvm_vcpu *vcpu);
+>  bool vmx_emulation_required(struct kvm_vcpu *vcpu);
+>  unsigned long vmx_get_rflags(struct kvm_vcpu *vcpu);
+>  void vmx_set_rflags(struct kvm_vcpu *vcpu, unsigned long rflags);
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 83fe0a78146f..941245082647 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -5094,7 +5094,13 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
+>  	int idx;
+>  
+>  	if (vcpu->preempted) {
+> -		vcpu->arch.preempted_in_kernel = kvm_arch_vcpu_in_kernel(vcpu);
+> +		/*
+> +		 * Assume protected guests are in-kernel.  Inefficient yielding
+> +		 * due to false positives is preferable to never yielding due
+> +		 * to false negatives.
+> +		 */
+> +		vcpu->arch.preempted_in_kernel = vcpu->arch.guest_state_protected ||
+> +						 !kvm_x86_call(get_cpl_no_cache)(vcpu);
+>  
+>  		/*
+>  		 * Take the srcu lock as memslots will be accessed to check the gfn
+> @@ -13207,6 +13213,7 @@ void kvm_arch_commit_memory_region(struct kvm *kvm,
+>  
+>  bool kvm_arch_vcpu_in_kernel(struct kvm_vcpu *vcpu)
+>  {
+> +	/* TODO: Elide the call in the kvm_guest_get_ip() perf callback. */
+>  	if (vcpu->arch.guest_state_protected)
+>  		return true;
+>  
+> @@ -13215,6 +13222,10 @@ bool kvm_arch_vcpu_in_kernel(struct kvm_vcpu *vcpu)
+>  
+>  unsigned long kvm_arch_vcpu_get_ip(struct kvm_vcpu *vcpu)
+>  {
+> +	/* TODO: Elide the call in the kvm_guest_get_ip() perf callback. */
+> +	if (vcpu->arch.guest_state_protected)
+> +		return 0;
+> +
+>  	return kvm_rip_read(vcpu);
+>  }
+>  
+> 
+> base-commit: 3f8df6285271d9d8f17d733433e5213a63b83a0b
 
->
-> > >
-> > > >
-> > > > To add such a sentinel would be a change to the pidfd mechanism as a whole,
-> > > > and we'd be left in the awkward situation that no other user of the pidfd
-> > > > mechanism would be implementing this, but we'd have to expose this as a
-> > > > general sentinel value for all pidfd users.
-> > >
-> > > There might be future users which can take advantage of this. I can even
-> > > imagine pidfd_send_signal() can use PIDFD_SELF as well.
-> >
-> > I'm confused by this comment - I mean absolutely, as I said I like the
-> > idea, but this just proves the point that you'd have to go around and
-> > implement this everywhere that uses a pidfd?
-> >
-> > That is a big undertaking, and not blocked by this change. Nor is
-> > maintaining the flag proposed here egregious.
->
-> By big undertaking, do you mean other syscalls that take pidfd
-> (pidfd_getfd, pidfd_send_signal & process_mrelease) to handle PIDFD_SELF
-> or something else?
+Overall I think I agree with this patch.
 
-I mean if you add a pidfd sentinel that represents 'the current process' it
-may get passed to any interface that accepts a pidfd, so all of them have
-to handle it _somehow_.
+Best regards,
+      Maxim Levitsky
 
-Also you'll want to update tests accordingly and clearly need to get
-community buy-in for that feature.
 
-You may want to just add a bunch of:
-
-if (pidfd == SENTINEL)
-	return -EINVAL;
-
-So it's not impossible my instincts are off and we can get away with simply
-doing that.
-
-On the other hand, would that be confusing? Wouldn't we need to update
-documentation, manpages, etc. to say explicitly 'hey this sentinel is just
-not supported'?
-
-Again totally fine with the idea, like it actually, just my instincts are
-it will involve some work. I may be wrong.
-
->
-> >
-> > Blocking a useful feature because we may in future possibly add a new means
-> > of doing the same thing seems a little silly to me.
-> >
->
-> Hah!!
-
-See top of mail.
-
->
-> > > >
-> > > > One nice thing with doing this as a flag is that, later, if somebody is
-> > > > willing to do the larger task of having a special sentinel pidfd value to
-> > > > mean 'the current process', we could use this in process_madvise() and
-> > > > deprecate this flag :)
-> > > >
-> > >
-> > > Once something is added to an API, particularly syscalls, the removal
-> > > is almost impossible.
-> >
-> > And why would it be such a problem to have this flag remain? I said
-> > deprecate not remove. And only in the sense that 'you may as well use the
-> > sentinel'.
-> >
->
-> My point was to aim for the solution where we can avoid such scenario
-> but it is totally understandable and acceptable that we still have to go
-> through deprecation process in future.
->
-> > The flag is very clear in its meaning, and confers no special problem in
-> > remaining supported. It is a private flag that overlaps no others.
-> >
-> > I mean it'd in effect being a change to a single line 'if pidfd is sentinel
-> > or flag is used'. If we can't support that going forward, then we should
-> > give up this kernel stuff and frolick in the fields joyously instead...
-> >
-> > Again, if you can tell me why it'd be such a problem then fine we can
-> > address that.
-> >
-> > But blocking a series and demanding a change to an entire other feature
-> > just to support something I'd say requires some pretty specific reasons as
-> > to why you have a problem with the change.
-> >
-> > >
-> > > Anyways, I don't have very strong opinion one way or other but whatever
-> > > we decide, let's make it robust.
-> >
-> > I mean... err... it sounds like you do kinda have pretty strong opinions ;)
->
-> I am not sure how more explicit I have to be to but I am hoping now it
-> is more clear than before.
-
-I mean perhaps I misinterpreted you as strongly advocating for the sentinel
-and your intent was rather to provide argument on that side also so the
-community can decide as you say - sure.
-
-But with you indifferent as you say as to which way to go, and my having
-provided arguments for the flags (again happy to hear push-back of course)
-- I suggest we go forward with the series as-is, other than a fixpatch I'll
-send for the -1 thing.
-
->
-> Shakeel
-
-Thanks for your review!
 
