@@ -1,107 +1,147 @@
-Return-Path: <linux-kernel+bounces-339333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD46D986372
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:27:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50CAE986452
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:58:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C287283EB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:27:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 786DBB2E4E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC64C1BF2B;
-	Wed, 25 Sep 2024 15:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4650B39AD6;
+	Wed, 25 Sep 2024 15:13:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EH8GCQxn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="iijq9vdQ"
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193461A702;
-	Wed, 25 Sep 2024 15:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE75138FA3
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 15:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727276997; cv=none; b=O91WauQCzGbfniAxHgAaE3p4cgs8iVWPrkl573/nDFtrmHJ89TWJkoqUb5v0dynClxf5/vkaxF9t6RQnQhRTpgZc+iO5EE1rpM+6dMhD6+dwkRJAOxWvskDtE454vhRziwtV4i1Ty/MctH4T+fs+Augamz6Kcs81NQavRjcPBMA=
+	t=1727277197; cv=none; b=DaRJYJkJPZYU1sBwQyZRnb1GDPtZ8QFGTJLBLXuGl1vDVGYewPMDPXNk7Mu1FGj8y+ro/YcZHv+qdrENfBZt16GcUeNJ9ogBBnQbpayR/UJ+Oxyc9iMbZ1djDsvMK1rdau3ypMuW7Zg+l3rBxlrhbyPoPVDgF2B5820e+N19Cfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727276997; c=relaxed/simple;
-	bh=v6ZqQ0h3Q4wFy9NSRlR9T2wiHt8IegbsTzeMyUTfV/I=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ANzW6Yp9Sig9JeHLWqs1Ng4F2aa8sjd76vPEceYPTv9dqcp3aIraxVQpGkJTKU0pA1vqPrX/n80yWVhSYnTsW3ZfUEtPKDxCoQ4qRy5lt6ducR4cwcLnhuWYmDA5FhaEPKEipxJv79mNoojggcLCS9Om2IL4m6GjXBJhRL8tMZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EH8GCQxn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E28FC4CECE;
-	Wed, 25 Sep 2024 15:09:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727276996;
-	bh=v6ZqQ0h3Q4wFy9NSRlR9T2wiHt8IegbsTzeMyUTfV/I=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=EH8GCQxnuNLmojJvnFgDo2oOw+22mOTHKQnwSFJhAIxA7CHF7fFinMasmGo/htt0S
-	 FNP1s3y3lRGu6rG2krldFh6PNWoHQMCbeFcHxDUUl9SMtrKVkLcZziyXSthqOSwawi
-	 mWlKW72HAqZioIonpExemwMKEzbrm71Ilzt1DUuet4zcyfUVx/6b9v2o58rLLzj7zO
-	 fMq/i1quOb+wW8sxf1oyO1kz8nbYC93NTXQ8akNVf3b2Yg/cpz1iLDVTnPZEkATDEY
-	 NbZaC7IPHlN3rPs57DWIm0YisYu7XeE9IR9mHnygVMNyR3EQg0xQwWhOjBGWgG8AuA
-	 92jB+BOVLrCSA==
-From: Mark Brown <broonie@kernel.org>
-To: srinivas.kandagatla@linaro.org, a39.skl@gmail.com, 
- linux-sound@vger.kernel.org, Alexey Klimov <alexey.klimov@linaro.org>
-Cc: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
- alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, krzysztof.kozlowski@linaro.org, 
- vkoul@kernel.org, klimov.linux@gmail.com
-In-Reply-To: <20240925043823.520218-1-alexey.klimov@linaro.org>
-References: <20240925043823.520218-1-alexey.klimov@linaro.org>
-Subject: Re: (subset) [PATCH REVIEW 1/2] ASoC: codecs: lpass-rx-macro: fix
- RXn(rx,n) macro for DSM_CTL and SEC7 regs
-Message-Id: <172727699157.2075752.5178047483756857834.b4-ty@kernel.org>
-Date: Wed, 25 Sep 2024 17:09:51 +0200
+	s=arc-20240116; t=1727277197; c=relaxed/simple;
+	bh=orysemYIOAAOVmrSgXc7YbMIId2a4I9QLWaG6kwa1MI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZVmEsp+Ute+I2ubZCfeYjZ5hleSYwe5TtxZhwy8zzrQd6tHjRDo0nB6yc1fcrScw4tVuQn+nV4fWV6uGdtQqn9jydTmuSDx3IVNMEUrUK5ZSuVZuyYb0xpuFbDcbtlWmN2RAqEj6pUEptWGceiW9aGG5CSyk9qORAS0CWxyOa2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=iijq9vdQ; arc=none smtp.client-ip=209.85.166.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-82a626d73efso262374939f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:13:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1727277194; x=1727881994; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jeDepfrVJjJS1L25dHRrhNZeV7uLqen0lw2mzfoTy1U=;
+        b=iijq9vdQvHavrU7hGstFuCbmExaBuLKBWr+blnCUK+Ow5i1Tuo3Mi4x8eNXiLhhG5e
+         gYwsKsa5LrdEztGSL0TNFMHtKH/2oB15GGcI8f/mAsA4xFFtJtgYq+TXWIFzoC08WEHV
+         Xg+bh0Yf5qc7bnuS+soKe7ipsh4hlsMCMOM+w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727277194; x=1727881994;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jeDepfrVJjJS1L25dHRrhNZeV7uLqen0lw2mzfoTy1U=;
+        b=pYFFj5BdCjWXzLQky0GvYMT6eFszv9gIFKL0/QE4jTyRmtRQy+HBIEop/5jNpVp97Y
+         MYuiy8YcHBH4mcGNegYirlGJfjRMIEIKTNBUCW+wpZWrAd3xSy2euggkfdegw6bvhj4n
+         X+BhuT2pnuBNqN6fOuGsBB59quSa+LbO60V0TdA6r5Jnd8GZc9X7XYiaSUiSd5k+ywSt
+         SdbkhTHLKmz1qPHYe1pVBvznafS2YRlLPQc683HdYr/kkLaw2Z5INS0No85SIi4OmPjV
+         uDQhf9+6KacRNU9SvSM07iMjfoQtkx0qE9nozFKofSAi8XtmrCy9mZaKRUq0Sb2Fx9PK
+         3+Qg==
+X-Gm-Message-State: AOJu0YyShOXjtA++NYE0DPfVNW+t+wWBFBmQFk+MGZcTU1oXU8hnH6dQ
+	sP5Q3Il+R9TB1kGoYXhXcTHrSMOqaISMhdsqUUKL31/E0qu+wnUrDP1to7EQHLbKGxmY59ixKzl
+	n
+X-Google-Smtp-Source: AGHT+IExjTKCbzt3SJ+TM0c/1itzBbHKZtRJG/mDo+qsHf6ISOkO2mVQLVf5/Yg9HENFYHgYMbPTKQ==
+X-Received: by 2002:a05:6e02:160f:b0:3a0:ac0d:22b9 with SMTP id e9e14a558f8ab-3a26d745c5emr36059565ab.6.1727277193698;
+        Wed, 25 Sep 2024 08:13:13 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a1a57247a5sm11239805ab.72.2024.09.25.08.13.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Sep 2024 08:13:13 -0700 (PDT)
+Message-ID: <07999b46-ec31-4284-8869-1ecbdc0c7104@linuxfoundation.org>
+Date: Wed, 25 Sep 2024 09:13:12 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-99b12
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] selftests:timers: posix_timers: Fix
+ warn_unused_result in __fatal_error()
+To: jstultz@google.com
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ tglx@linutronix.de, shuah@kernel.org, sboyd@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <cover.1727191485.git.skhan@linuxfoundation.org>
+ <4f3a0acd903aeee52fb71acaec1106d513a2e88b.1727191485.git.skhan@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <4f3a0acd903aeee52fb71acaec1106d513a2e88b.1727191485.git.skhan@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 25 Sep 2024 05:38:22 +0100, Alexey Klimov wrote:
-> Turns out some registers of pre-2.5 version of rxmacro codecs are not
-> located at the expected offsets but 0xc further away in memory.
-> So far the detected registers are CDC_RX_RX2_RX_PATH_SEC7 and
-> CDC_RX_RX2_RX_PATH_DSM_CTL.
+On 9/24/24 09:56, Shuah Khan wrote:
+> __fatal_error routine doesn't check strerror_r() return value,
+> which results in the following compile time warning:
 > 
-> CDC_RX_RXn_RX_PATH_DSM_CTL(rx, n) macro incorrectly generates the address
-> 0x540 for RX2 but it should be 0x54C and it also overwrites
-> CDC_RX_RX2_RX_PATH_SEC7 which is located at 0x540.
-> The same goes for CDC_RX_RXn_RX_PATH_SEC7(rx, n).
+> posix_timers.c: In function ‘__fatal_error’:
+> posix_timers.c:31:9: warning: ignoring return value of ‘strerror_r’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+>     31 |         strerror_r(errno, buf, sizeof(buf));
 > 
-> [...]
+> Fix this by adding a check for return value and error handling appropriate
+> for the GNU-specific strerror_r() in use in __fatal_error(). Check if
+> return string is null and handle accordingly.
+> 
+>  From Linux strerror_r() manual page:
+> 
+> "The GNU-specific strerror_r() returns a pointer to a string containing
+> the error message. This may be either a pointer to a string that the
+> function stores in buf, or a pointer to some (immutable) static string
+> (in which case buf is unused). If the function stores a string in buf,
+> then at most buflen bytes are stored (the string may be truncated if
+> buflen is too small and errnum is unknown). The string always includes
+> a terminating null byte."
+> 
+> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+> ---
+>   tools/testing/selftests/timers/posix_timers.c | 12 ++++++++----
+>   1 file changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/timers/posix_timers.c b/tools/testing/selftests/timers/posix_timers.c
+> index 16bd49492efa..ddb1cebc844e 100644
+> --- a/tools/testing/selftests/timers/posix_timers.c
+> +++ b/tools/testing/selftests/timers/posix_timers.c
+> @@ -26,13 +26,17 @@
+>   static void __fatal_error(const char *test, const char *name, const char *what)
+>   {
+>   	char buf[64];
+> +	char *ret_str = NULL;
+>   
+> -	strerror_r(errno, buf, sizeof(buf));
+> +	ret_str = strerror_r(errno, buf, sizeof(buf));
+>   
+> -	if (name && strlen(name))
+> -		ksft_exit_fail_msg("%s %s %s %s\n", test, name, what, buf);
+> +	if (name && strlen(name) && ret_str)
+> +		ksft_exit_fail_msg("%s %s %s %s\n", test, name, what, ret_str);
+> +	else if (ret_str)
+> +		ksft_exit_fail_msg("%s %s %s\n", test, what, ret_str);
+>   	else
+> -		ksft_exit_fail_msg("%s %s %s\n", test, what, buf);
+> +		ksft_exit_fail_msg("%s %s\n", test, what);
+> +
+>   }
+>   
+>   #define fatal_error(name, what)	__fatal_error(__func__, name, what)
 
-Applied to
+Any comments on this patch John?
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[2/2] ASoC: codecs: lpass-rx-macro: add missing CDC_RX_BCL_VBAT_RF_PROC2 to default regs values
-      commit: e249786b2188107a7c50e7174d35f955a60988a1
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+thanks,
+-- Shuah
 
