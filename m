@@ -1,213 +1,186 @@
-Return-Path: <linux-kernel+bounces-339660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1587798689A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 23:48:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAC34986878
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 23:46:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFE1B282023
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:48:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 536181F24F24
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:46:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF963158DDC;
-	Wed, 25 Sep 2024 21:46:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6CDA155C82;
+	Wed, 25 Sep 2024 21:46:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cKrrdVbw"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ekzz1Ns1"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D77E183CCB;
-	Wed, 25 Sep 2024 21:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5DF4C91;
+	Wed, 25 Sep 2024 21:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727300816; cv=none; b=lxwz2Clo4F1FoaT9dASy7oci63beLFRr3Mevl47tIS9st5RR/+QlupsU08SkHBnsqbsnJabHQwMV84noQIikAnCeo70iSMxr0nrnTFPwb0l6yxomCN3ONisJ3Jd6Xe9liGFASOVjeBmN0SUWLnmwDTghm9eo9BOuiDv4WJLmQtc=
+	t=1727300760; cv=none; b=NelnWWBjFlnS9ognBJQc7COo/O4XdsyFGHLbhee8xNn1SomhG1Z3unmelmqMbFgBRUinz/xZ+HSv5RJ0bCh0YAoDPZOWuVdTI6WiML5+yKF/EGEOihWZEHS/HzHDjwU+KTjEmNgV0CxzHZBzsZOu9ju01PgIyckxLX60ZAXmXsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727300816; c=relaxed/simple;
-	bh=FeHxkCsjuNWL4fLxU+cdqB1g5g+6e0/6atm4D7lPtT8=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FYAf2aqsfZRVli9Hqyavr9T4ci6dy/ZrMUJKavFIYHeB3nKAcJJHAYBpMS7UXAv0OZnJMLNUvhKpQ6t0ygEQ5mwJO60rN+9+XLPInSvPfUXJK81wSajLlSMjbb1TR5mzFWq0wmfgKxZQPAglIhuKY5Gr2tTN0yOXQPk2kg/BynI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cKrrdVbw; arc=none smtp.client-ip=209.85.221.49
+	s=arc-20240116; t=1727300760; c=relaxed/simple;
+	bh=mjSdvmDDeg5uGKVjHJ9VJUicVT2ZG8wk8GU45xLxz9M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AIJMFVAJ9mPqpwS04M6rzOTQ8k+TbgiklfdcQ6kT8ic6fCT/wBbIoRuaA8J32Wo3H3xQYIr4cMe35X7HhBlCBx8Nt2fwXk81SZ9l4eDbeBuYEub/GwPQukjCIjemyfQd5BpiTGxG6CHLaGktVL/0UmOHgXsBegnjUvmNWv2P2Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ekzz1Ns1; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37cc5fb1e45so163542f8f.2;
-        Wed, 25 Sep 2024 14:46:54 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20b0b2528d8so2689595ad.2;
+        Wed, 25 Sep 2024 14:45:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727300813; x=1727905613; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d9nJBatBeRhZqG9r4m0SatNAaTtD+mKgW27WzTrnpaU=;
-        b=cKrrdVbw8WMQaaHu5TuAQWGFVeNSWAfDH69/W0MdnZCjwPc/5H2FRQvwIZXQ+otbwf
-         OpE3M/jo2YVIfGir0gLBPoKgjT1L+P1rYDhwPM8qtIn/naE5E4awGaNwhpva10mxO6B6
-         VszGXjFX8u0BGiN6eQL8pPABk6qocpyoWCf3WGR2bslpx++JCCQO9q/HfVMluu1vD5zN
-         nBIIKHv8i1PBIpXrd1et+21HEk1uf9xYH2r66tkl21KHsP21zf0nAbJzDhDndRg0wAwd
-         5Uart59LAg87iNnfRNznreRgHUAwpm9yyq/8/ikwzZ/PvmUG5PIdbyzx9RhAxNx5FXh6
-         aaLQ==
+        d=gmail.com; s=20230601; t=1727300758; x=1727905558; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8gIKllQESEXWDuVjffYCuPTY+jx2pXNh0YOpfxcs1cQ=;
+        b=Ekzz1Ns1eni8riLsqwA5H5oac8OfJsk26uz1CjgFNOgrJn6cYKjoT6mwxICrgqcT18
+         Ctm330VX3y7Ent0QY70dqt05oCrce6FUozYVdXgiAyKmTbRVyykTcdUyFrpvsGMeKmAt
+         APTMzpm4SOrUrBpKDAcWC1Swuma5ZcoxzlzjwVhyiIGPWvRba5gORenQFHlihFL6EDlm
+         5uMgs4cCTyCWhJ5LIOwJOfs8u1JyWJTSgGlxmdDsSywquB0LqPIB/c+9ppw/KPIENbEs
+         wZo47jqUT8XIYQ3R+T8phZvnnvQ+FeXnZtHyuRnCBRr+M/jpT0x56Xg4rNt7YS4kwpXI
+         sRbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727300813; x=1727905613;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d9nJBatBeRhZqG9r4m0SatNAaTtD+mKgW27WzTrnpaU=;
-        b=kW8q3YB6ztiN6RCJQtR+SFi0EDfyoKhAaIBs/l+/cbbKD8xkgTP14ptzpQ4TrUwZEb
-         F4txmQce4N0Ce8QTkk4ADcAy2CxJA9E2rwNzZbWigDgdNpIsEgQjufSXnE2kL9a05O4A
-         iCGWn9awbGXWqb6RdYa9ndHyWGpXRZ+r7mhKNXVb6Jr1nkKAQ9Mact8/izEyVDl2ZBNN
-         BIYbdgQnY9NtsW01LqRXVjXWEhoU+4ohfABs6ytj6h8fpVGN6nu521SR/lwKuDgbuych
-         PD73d7WWRZ/MRJjQNxKu2IM4qOOxr1y18g6hHydF1eZdj8oNAko1UvtRO2mMoA8MmHvP
-         DJGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUWv4SrX+szq8G/DOWDcAFHE6V1y2rKx5fUmmrsSw3q+qiWYu6sloVoD5CO4ui/TKDxSK/3IsKaiuNz@vger.kernel.org, AJvYcCVOdI/ylun78/0K9vHqZRgGao3IeRF7smzKcv+/pses5K3VDuRQDVy8Q0oIi8iBNMCXk7hH+x7GQfikAGg=@vger.kernel.org, AJvYcCVVd9xyvGK3bhRkPKlA3iuthA72IbnBKttTg6kz/cFwnJp2dV1ZRtNFifldGa8X13DVgj0tWxqjo5H6@vger.kernel.org, AJvYcCX1Kui7lfHYNPp+cHZzt1Ilz8E3FsditsHudWRupz7eVrtq9M7nDt/L+Janu47II/EGaox0b027HTzM@vger.kernel.org, AJvYcCXcUQinFyXN41+YWNjDNGg++0z2Fo3Js78DHqC1oUACXutl2cD43TJOv/OxaHgii5p7mkzTLr36rscKyCau@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxp9xAk6yNHfBD04EiEP1/+9V/phrL8Y7rH3JVlEodJCuT5/3QB
-	7GCOYNDBf7VsH4jMPqhEQBtHpbvoaHhQPPykyzf+CadftYXBP7EP
-X-Google-Smtp-Source: AGHT+IGZAeyKrzKHwOIGMyU2gN/Hnw0mA0ZY+Q9ejwmwD5hxO/FVKoUk2mqdLL+JRkRUMynqLB4o7Q==
-X-Received: by 2002:a05:6000:120a:b0:374:c847:852 with SMTP id ffacd0b85a97d-37cc247944dmr2442137f8f.29.1727300810823;
-        Wed, 25 Sep 2024 14:46:50 -0700 (PDT)
-Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42e96a1f2aasm28802565e9.45.2024.09.25.14.46.48
+        d=1e100.net; s=20230601; t=1727300758; x=1727905558;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8gIKllQESEXWDuVjffYCuPTY+jx2pXNh0YOpfxcs1cQ=;
+        b=Jtglc3Mlq0zcN1hc23/ASHf5aQrnzJQJ2H+mlHgO7+e1pn9CODPupGqX0Gq7QPav6V
+         6eri2nW5e8u2H6J36acb35sHkEc3f6QQB0Nz2l9Ct2xefpLuBqniAdI1dIUDf+OAaDtg
+         squhKipmP/gqe/pDBYzdPKRHyx08boyFp3UKCJwvxk7XcC/g4LAW4mOGMjfiIPj7HnLh
+         ZldpVCvD4wH2ggPQ7xfrFq9aUgXymh/XdwrWKfE8mcUdk6QXcMDNnyfS45/wlkdWuL5q
+         3kuiwnZ7eG3X+f711/B9jgbdZ9cs86dc9vcKzxiI10ZZQ/2KvJO/o7CXuA0brX8EKUWj
+         f9Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+AgDfg6XedpIevqSukXDyprLYXOEy6lTfgJSPCaD/nuV5x0gSUR+wOFTOmlreAq6FBk9WCINootWfH6E=@vger.kernel.org, AJvYcCVE7agKefnGEs0Lnjz4nWZJo52L+UfakZFkhpxyKvz5WZco5eP0BaOb0mBJLLKqhP8fSTRL7E9yZFbiudpk@vger.kernel.org, AJvYcCXbS6NU8Ss0+tYm1HQ+r4BXZHGm8StpsCeNSmPpXriHQJ3ET1JsY0uF8186Iq2lO+1yf+0fdCmZsTvS@vger.kernel.org
+X-Gm-Message-State: AOJu0YytR6fLZAwp9uc4JkGB7YoEr79v0Lcpodc/CXyNduN61JBS1wkU
+	wsYJdf6N2RAB+Hix4/igtXROHnNp5Oauj1YbqHaiGOisJ9dzSnKM
+X-Google-Smtp-Source: AGHT+IETNqtMlQxZaFuOKl/wcIj7BhxFJ6AJJ0ayeTnmOUWK+IvW4zjNH8rpWKZeRfbNmjJT3ACqvw==
+X-Received: by 2002:a17:902:f54e:b0:206:aac4:b844 with SMTP id d9443c01a7336-20afc400e57mr68105395ad.6.1727300757659;
+        Wed, 25 Sep 2024 14:45:57 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:dda4:383f:ca3a:82bb])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af1867938sm27957185ad.309.2024.09.25.14.45.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 14:46:50 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Simon Glass <sjg@chromium.org>,
-	INAGAKI Hiroshi <musashino.open@gmail.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Li Lingfeng <lilingfeng3@huawei.com>,
-	Christian Heusel <christian@heusel.eu>,
-	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-	linux-block@vger.kernel.org,
-	linux-doc@vger.kernel.org,
+        Wed, 25 Sep 2024 14:45:57 -0700 (PDT)
+Date: Wed, 25 Sep 2024 14:45:54 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Charles Wang <charles.goodix@gmail.com>, dianders@chromium.org,
+	dan.carpenter@linaro.org, conor@kernel.org, krzk+dt@kernel.org,
+	jikos@kernel.org, bentiss@kernel.org, hbarnor@chromium.org,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	Lorenzo Bianconi <lorenzo@kernel.org>
-Subject: [RFC PATCH v2 5/5] dt-bindings: mmc: Document support for partition table in mmc-card
-Date: Wed, 25 Sep 2024 23:45:25 +0200
-Message-ID: <20240925214544.6114-6-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240925214544.6114-1-ansuelsmth@gmail.com>
-References: <20240925214544.6114-1-ansuelsmth@gmail.com>
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v7 2/2] dt-bindings: input: Goodix SPI HID Touchscreen
+Message-ID: <ZvSEkn66qNziJV0M@google.com>
+References: <20240814024513.164199-1-charles.goodix@gmail.com>
+ <20240814024513.164199-3-charles.goodix@gmail.com>
+ <CAL_Jsq+QfTtRj_JCqXzktQ49H8VUnztVuaBjvvkg3fwEHniUHw@mail.gmail.com>
+ <CAL_JsqKUDj6vrWMVVBHrDeXdb3ogsMb3NUbV6OjKR-EhLLZuGg@mail.gmail.com>
+ <CAL_Jsq+6fvCaxLexo9c6zs+8vwyfPAOCCVsejw_uKURVU-Md9w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL_Jsq+6fvCaxLexo9c6zs+8vwyfPAOCCVsejw_uKURVU-Md9w@mail.gmail.com>
 
-Document support for defining a partition table in the mmc-card node.
+On Wed, Sep 25, 2024 at 12:40:56PM -0500, Rob Herring wrote:
+> On Tue, Sep 10, 2024 at 5:41 PM Rob Herring <robh@kernel.org> wrote:
+> >
+> > On Fri, Sep 6, 2024 at 3:28 PM Rob Herring <robh@kernel.org> wrote:
+> > >
+> > > On Tue, Aug 13, 2024 at 9:45 PM Charles Wang <charles.goodix@gmail.com> wrote:
+> > > >
+> > > > The Goodix GT7986U touch controller report touch data according to the
+> > > > HID protocol through the SPI bus. However, it is incompatible with
+> > > > Microsoft's HID-over-SPI protocol.
+> > > >
+> > > > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> > > > Signed-off-by: Charles Wang <charles.goodix@gmail.com>
+> > > > ---
+> > > >  .../bindings/input/goodix,gt7986u.yaml        | 71 +++++++++++++++++++
+> > > >  1 file changed, 71 insertions(+)
+> > > >  create mode 100644 Documentation/devicetree/bindings/input/goodix,gt7986u.yaml
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/input/goodix,gt7986u.yaml b/Documentation/devicetree/bindings/input/goodix,gt7986u.yaml
+> > > > new file mode 100644
+> > > > index 000000000..a7d42a5d6
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/input/goodix,gt7986u.yaml
+> > > > @@ -0,0 +1,71 @@
+> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > > +%YAML 1.2
+> > > > +---
+> > > > +$id: http://devicetree.org/schemas/input/goodix,gt7986u.yaml#
+> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > +
+> > > > +title: GOODIX GT7986U SPI HID Touchscreen
+> > > > +
+> > > > +maintainers:
+> > > > +  - Charles Wang <charles.goodix@gmail.com>
+> > > > +
+> > > > +description: Supports the Goodix GT7986U touchscreen.
+> > > > +  This touch controller reports data packaged according to the HID protocol,
+> > > > +  but is incompatible with Microsoft's HID-over-SPI protocol.
+> > > > +
+> > > > +allOf:
+> > > > +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> > > > +
+> > > > +properties:
+> > > > +  compatible:
+> > > > +    enum:
+> > > > +      - goodix,gt7986u
+> > >
+> > > This is already documented in goodix,gt7375p.yaml. Now linux-next has warnings:
+> > >
+> > > /builds/robherring/linux-dt/Documentation/devicetree/bindings/input/goodix,gt7986u.example.dtb:
+> > > touchscreen@0: compatible: 'oneOf' conditional failed, one must be
+> > > fixed:
+> > >         ['goodix,gt7986u'] is too short
+> > >         'goodix,gt7375p' was expected
+> > >         from schema $id:
+> > > http://devicetree.org/schemas/input/goodix,gt7375p.yaml#
+> > > /builds/robherring/linux-dt/Documentation/devicetree/bindings/input/goodix,gt7986u.example.dtb:
+> > > touchscreen@0: reg:0:0: 0 is not one of [93, 20]
+> > >         from schema $id:
+> > > http://devicetree.org/schemas/input/goodix,gt7375p.yaml#
+> > > /builds/robherring/linux-dt/Documentation/devicetree/bindings/input/goodix,gt7986u.example.dtb:
+> > > touchscreen@0: 'vdd-supply' is a required property
+> > >         from schema $id:
+> > > http://devicetree.org/schemas/input/goodix,gt7375p.yaml#
+> > > /builds/robherring/linux-dt/Documentation/devicetree/bindings/input/goodix,gt7986u.example.dtb:
+> > > touchscreen@0: 'goodix,hid-report-addr', 'spi-max-frequency' do not
+> > > match any of the regexes: 'pinctrl-[0-9]+'
+> > >         from schema $id:
+> > > http://devicetree.org/schemas/input/goodix,gt7375p.yaml#
+> > >
+> > > Please sort this out and send a fix.
+> >
+> > I should add that it is intermittent whether you see this error or
+> > not. The tools select a single schema based on the compatible string
+> > and it is undefined which of the 2 schemas you will get.
+> 
+> Still an issue and no response. Please fix or revert the series.
 
-This is needed if the eMMC doesn't have a partition table written and
-the bootloader of the device load data by using absolute offset of the
-block device. This is common on embedded device that have eMMC installed
-to save space and have non removable block devices.
+I see that Krzysztof sent a revert, but what a proper fix would be?
+Apparently Goodix is using the same product ID gt7986u for both I2C and
+SPI parts, and covering them in one binding is not really easy (well, I
+guess it is possible with a big ugly "if"). Do we just slap "-spi"
+suffix on the compatible, so it becomes "goodix,gt7986u-spi" and go on
+on our merry way? Is there a better option for such products that
+support multiple interfaces/transports?
 
-If an OF partition table is detected, any partition table written in the
-eMMC will be ignored and won't be parsed.
+Thanks.
 
-eMMC provide a generic disk for user data and if supported (JEDEC 4.4+)
-also provide two additional disk ("boot0" and "boot1") for special usage
-of boot operation where normally is stored the bootloader or boot info.
-
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- .../devicetree/bindings/mmc/mmc-card.yaml     | 57 +++++++++++++++++++
- 1 file changed, 57 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/mmc/mmc-card.yaml b/Documentation/devicetree/bindings/mmc/mmc-card.yaml
-index fd347126449a..58b6593a0f60 100644
---- a/Documentation/devicetree/bindings/mmc/mmc-card.yaml
-+++ b/Documentation/devicetree/bindings/mmc/mmc-card.yaml
-@@ -13,6 +13,10 @@ description: |
-   This documents describes the devicetree bindings for a mmc-host controller
-   child node describing a mmc-card / an eMMC.
- 
-+  It's possible to define a fixed partition table for an eMMC for the user
-+  partition and one of the 2 boot partition (boot0/boot1) if supported by the
-+  eMMC.
-+
- properties:
-   compatible:
-     const: mmc-card
-@@ -26,6 +30,30 @@ properties:
-       Use this to indicate that the mmc-card has a broken hpi
-       implementation, and that hpi should not be used.
- 
-+  "#address-cells":
-+    const: 0
-+
-+  "#size-cells":
-+    const: 0
-+
-+patternProperties:
-+  "^partitions(-boot[01])?$":
-+    $ref: /schemas/block/partitions/partitions.yaml
-+
-+    patternProperties:
-+      "^partition@[0-9a-f]+$":
-+        $ref: /schemas/block/partitions/partition.yaml
-+
-+        properties:
-+          reg:
-+            multipleOf: 512
-+
-+        required:
-+          - reg
-+          - label
-+
-+        unevaluatedProperties: false
-+
- required:
-   - compatible
-   - reg
-@@ -42,6 +70,35 @@ examples:
-             compatible = "mmc-card";
-             reg = <0>;
-             broken-hpi;
-+
-+            #address-cells = <0>;
-+            #size-cells = <0>;
-+
-+            partitions {
-+                #address-cells = <1>;
-+                #size-cells = <1>;
-+
-+                partition@0 {
-+                    label = "kernel"; /* Kernel */
-+                    reg = <0x0 0x2000000>; /* 32 MB */
-+                };
-+
-+                partition@2000000 {
-+                    label = "rootfs";
-+                    reg = <0x2000000 0x40000000>; /* 1GB */
-+                };
-+            };
-+
-+            partitions-boot0 {
-+                #address-cells = <1>;
-+                #size-cells = <1>;
-+
-+                partition@0 {
-+                    label = "bl";
-+                    reg = <0x0 0x2000000>; /* 32MB */
-+                    read-only;
-+                };
-+            };
-         };
-     };
- 
 -- 
-2.45.2
-
+Dmitry
 
