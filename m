@@ -1,139 +1,114 @@
-Return-Path: <linux-kernel+bounces-338251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB385985566
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:24:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82ADA985574
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:27:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B059328247E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:24:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CE8C1F221A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:27:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 425BA15A4B7;
-	Wed, 25 Sep 2024 08:24:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20FCD15990E;
+	Wed, 25 Sep 2024 08:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QYb9KAz8"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NEU4YWVZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21624130499;
-	Wed, 25 Sep 2024 08:24:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3EF7E574
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727252656; cv=none; b=MjfdJU2M2ydEH4R+blTMdVve1j6TdNkCHzDIzfp87uiDtQFXxLp4uRy+0Ep1Xs2WWL7ueXlwwtR5cyCuiSVmlGciXkZpSbjPXfmB/Rua69g1vVfSw3HftFwQBxT1SPvixLmipVvEtgSXP7DYQYC9S2YGaCYQLv/wAeEFG1SKa1g=
+	t=1727252852; cv=none; b=hDvM5A0QkpsBvsoNrgKAz7oh/M1HtJQFbET3/ECcMq5BVbypX0RmjnRUmmxJWxKp5xKGTmgKWYjK2ki/oIrfROAw189qUdEjMMElWrcxowkeHd6bR+qk9gzl3Yb7jEYnYUbqWsB270buTFCGg4bZnnMdr7ml/ecAZgWtxtHVUSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727252656; c=relaxed/simple;
-	bh=z0YhgJE8tGOsHV49d9k1PcL2yhU7lZxB7k3+WA5Bpo0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XCNEFEPtETaWcMDh1DQvjrT986zaejrensUrm+rQvE43FEEa3u4uYx+qNoHvLnVZe0ikBnq1COXFFnHUCAEggwjW/QIShcDRSqTjZxjAj1UaQL7btHwclxM0U+1yG+zywUB1QFfKyJmnZ7uk0DCabgs84HfKz2r2UpG70DSs/W8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QYb9KAz8; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-374cacf18b1so3791278f8f.2;
-        Wed, 25 Sep 2024 01:24:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727252653; x=1727857453; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r2edHstWlsclzGFyhsz5xiTaZ1ZX4wZXAdxPbt18MN0=;
-        b=QYb9KAz86aPOk0KFsYMPchvHwqVgVbHqR2blrPF0Po6bng82J7+Qw4KHXGjQLHI2qp
-         4S8pVPrjxeVhNEuAH4DcNJz0SSdL1qcO+BSUCAdZo5kxmzYti5iJqo42v4zotU+ySjTK
-         05CaJIOO+ISz5jjx7sFi7nZxtd0ZhuX/OpCKyBFvrhYBhbVgEqqJvu3uNQmQehH4xqTC
-         Olc9Cmv+Uad1K+ToYpjVPz2/sAwoAlBAv+hvBHu1qyKGuFC0xd9UgJq47zMMEF1DEmTP
-         fm0a4cHCAiGfPD6U/lxunfDr6ss4jo/UTNqvfqn0wt5TulaSDMlw9yBVVzVLkAv8HyZr
-         Gklw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727252653; x=1727857453;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=r2edHstWlsclzGFyhsz5xiTaZ1ZX4wZXAdxPbt18MN0=;
-        b=AO29vmNL7A/rc5FFI/hIKbXE0fqklLQV4r58gVV4FFUSdffwC6fP12h8bdcGC27Ca8
-         EkejjXGbtXBtQM9xI/oEuX6Usa1YlcD+m8tiONE2BMByR8T1EQkRPgTcMzVM7/KWOC9y
-         otzZGZLJVhR9wtTQwIfJDSwXwus7b0KktY0JZCSoWleQVEdL1ZwhEvjHsE8YcmCHVZIm
-         DEuKYbig8bUkc+MQCBOsRV1WKIKn4/EV1R8+QOUCeN3DstNnUXCrNAuZ4WrFd/UZck+I
-         EJCjc9Sc1njgZ1Of4eaKytncAjYHnyRYAm19ipAErpC/UavN/yXwNiFMjLMKf8pOyPTo
-         DwWA==
-X-Forwarded-Encrypted: i=1; AJvYcCVKsbbV/Gxn+ECgIMisxQtDgjR25Q9/VUAbytGEy4y0H7zep94Il+5feG5gPXXiM43cm+IGLYLbwUvg+CTb@vger.kernel.org, AJvYcCW+tHvGhBQUTI1PslT5RgxhrMC6HLiwYlSWJAI87qnlxKW1ez/8vfI3ppc6noX+b3XVgkE=@vger.kernel.org, AJvYcCXDeecuXAgvN2oTXNyFca/lJYtx/10InTsHgvaz1bcI1uuwog2Q1/z/gvyBvwB2dXkR1qIljTKKqTj3XlGhNjyA@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxP1P7GLZTywTkcmVGld5oh2o+kf9tpL3RqR3RTiBdYZSPm80P
-	jgUcUdwm7YhCL+cpQBswwIJ4NN2ZEBbfQ6+wMlWddNf1fRp4OqXW98bqG5MxlDsdIqyqnBkab4n
-	hc2Nn1dq8J5qduHQzFPlMN5zsj4E=
-X-Google-Smtp-Source: AGHT+IEDxTRbBnGIMHlwmtmEVOiP+3su787rzVqn6SiEoedksyYRYCb1L7LZhgoxFmj4CZxWus/vi/pOmX1wsDm8s+Y=
-X-Received: by 2002:adf:dd90:0:b0:374:b6b5:4688 with SMTP id
- ffacd0b85a97d-37cc24c9e96mr1103156f8f.49.1727252653066; Wed, 25 Sep 2024
- 01:24:13 -0700 (PDT)
+	s=arc-20240116; t=1727252852; c=relaxed/simple;
+	bh=2y2ixCf4N2myONTLqDniuYdI7WXLmCRyNgYUxMr/m58=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iHIk9uV3l6C4OaLTjb/TZETbtVqf/7G5EUhsqfPpBG9AksFdRWhpYObE407Dc0cyrvIJokm2icjTyCImVSqYLlOBsasN7p1n9kKaqjpg129Um7j2jwmsc7WWAU6gxmrkMFPuUoOmiX5NpyvFoytp/AfnLnj11ZMN760TYxXjw68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NEU4YWVZ; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727252851; x=1758788851;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=2y2ixCf4N2myONTLqDniuYdI7WXLmCRyNgYUxMr/m58=;
+  b=NEU4YWVZSki2bKrFCHCrsXRhBuzOvqbJ7O+tJXkNAOsfou8CKa4LMixR
+   bMz7Ps55qgqoZFOlJRXMwPNS3fi4gUyOaa6tpm7L7bm5hggmbvfbIY/mT
+   dHxM7de6DewcXZXr8WjIvZwaxLTs+A/m1gDo1AsOXMlC5iuuxh0U19bcA
+   LAYJHxw/XJ4sUOqBqAtofQkkq8ReV0OlGQ7Xzr7u+TDCnvibb4039layB
+   +n+diaqAW+Fn/8XuKdFo+dIzxjB2cMmev7HqxFOmZsirSidNYNdUsHFMc
+   g/albLDVvBHSkecVTfNRoV70qvZDLUzX38vX07CApXd1sYerg9hilH+bL
+   Q==;
+X-CSE-ConnectionGUID: yf9/InbcQZG9YA+KoZT+Rg==
+X-CSE-MsgGUID: ub6tY5TTRLGbYjoPZTqHhQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="26468387"
+X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
+   d="scan'208";a="26468387"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 01:27:30 -0700
+X-CSE-ConnectionGUID: rYLXGgwVSvWZ0R+FD4MI7g==
+X-CSE-MsgGUID: ftO+K2T+T2aIwhWB2ZDu7A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
+   d="scan'208";a="71575357"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa010.jf.intel.com with ESMTP; 25 Sep 2024 01:27:29 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 76F73565; Wed, 25 Sep 2024 11:27:27 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	linux-kernel@vger.kernel.org
+Cc: Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] regmap-irq: Consistently use memset32() in regmap_irq_thread()
+Date: Wed, 25 Sep 2024 11:27:26 +0300
+Message-ID: <20240925082726.620622-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1727174358.git.dxu@dxuuu.xyz> <815cefa75561c30bec8ca62b9261d4706fa25bb6.1727174358.git.dxu@dxuuu.xyz>
-In-Reply-To: <815cefa75561c30bec8ca62b9261d4706fa25bb6.1727174358.git.dxu@dxuuu.xyz>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 25 Sep 2024 10:24:01 +0200
-Message-ID: <CAADnVQKZ1MkBttCKsOMh7nNXNP4OVxGdYLnJuXjNFLPUv3Bm6w@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3 1/2] bpf: verifier: Support eliding map lookup nullness
-To: Daniel Xu <dxu@dxuuu.xyz>
-Cc: Shuah Khan <shuah@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Alexei Starovoitov <ast@kernel.org>, Eddy Z <eddyz87@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	John Fastabend <john.fastabend@gmail.com>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Mykola Lysenko <mykolal@fb.com>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Kernel Team <kernel-team@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 24, 2024 at 12:40=E2=80=AFPM Daniel Xu <dxu@dxuuu.xyz> wrote:
->
-> +
-> +/* Returns constant key value if possible, else -1 */
-> +static long get_constant_map_key(struct bpf_verifier_env *env,
-> +                                struct bpf_reg_state *key)
-> +{
-> +       struct bpf_func_state *state =3D func(env, key);
-> +       struct bpf_reg_state *reg;
-> +       int stack_off;
-> +       int slot;
-> +       int spi;
-> +
-> +       if (key->type !=3D PTR_TO_STACK)
-> +               return -1;
-> +       if (!tnum_is_const(key->var_off))
-> +               return -1;
-> +
-> +       stack_off =3D key->off + key->var_off.value;
-> +       slot =3D -stack_off - 1;
-> +       if (slot < 0)
-> +               /* Stack grew upwards */
+The commit 4d60cac951fd ("regmap-irq: Add no_status support") adds
+an additional branch into IRQ thread handler in regmap. It wisely
+chose to use memset32() as it might be optimised on some architectures
+and hence give a performance benefit. At the same time the old code
+continue using simple memset(). Update the old code to use memset32().
 
-The comment is misleading.
-The verifier is supposed to catch this.
-It's just this helper was called before the stack bounds
-were checked?
-Maybe the call can be done later?
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/base/regmap/regmap-irq.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-> +               return -1;
-> +       else if (slot >=3D state->allocated_stack)
-> +               /* Stack uninitialized */
-> +               return -1;
-> +
-> +       spi =3D slot / BPF_REG_SIZE;
-> +       reg =3D &state->stack[spi].spilled_ptr;
-> +       if (!tnum_is_const(reg->var_off))
-> +               /* Stack value not statically known */
-> +               return -1;
-> +
-> +       return reg->var_off.value;
-> +}
+diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
+index a750e48a26b8..33ec28e3a802 100644
+--- a/drivers/base/regmap/regmap-irq.c
++++ b/drivers/base/regmap/regmap-irq.c
+@@ -364,14 +364,11 @@ static irqreturn_t regmap_irq_thread(int irq, void *d)
+ 		memset32(data->status_buf, GENMASK(31, 0), chip->num_regs);
+ 	} else if (chip->num_main_regs) {
+ 		unsigned int max_main_bits;
+-		unsigned long size;
+-
+-		size = chip->num_regs * sizeof(unsigned int);
+ 
+ 		max_main_bits = (chip->num_main_status_bits) ?
+ 				 chip->num_main_status_bits : chip->num_regs;
+ 		/* Clear the status buf as we don't read all status regs */
+-		memset(data->status_buf, 0, size);
++		memset32(data->status_buf, 0, chip->num_regs);
+ 
+ 		/* We could support bulk read for main status registers
+ 		 * but I don't expect to see devices with really many main
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
-Looks like the code is more subtle than it looks.
-
-I think it's better to guard it all with CAP_BPF.
-
-pw-bot: cr
 
