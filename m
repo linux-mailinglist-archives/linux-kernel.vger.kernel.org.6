@@ -1,236 +1,137 @@
-Return-Path: <linux-kernel+bounces-338223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48919985505
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:05:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CFE5985512
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:06:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC58B1F21011
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:05:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ADD31C23615
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:06:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F195157487;
-	Wed, 25 Sep 2024 08:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A22315921D;
+	Wed, 25 Sep 2024 08:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PJ6IjScG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="pGOLeaAr"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7A0148849
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E83153BEE;
+	Wed, 25 Sep 2024 08:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727251487; cv=none; b=WQyyoVSI9oMRfuUhxKXazWnWrHwhM+c4rGBzlModhMOfrGBdVz4gUu7GryADhyUf7NEdq7QAfiJSebxNoVJcpdwekxdDoX7biTv4YkSjiVc58XWIMIALq9gVwbEpm8AAac5hsxiKHfGNyFkAwyLpHdjENgcK21ysDQr5158Pr+s=
+	t=1727251538; cv=none; b=kgCLrZ5O7xNZcQG8ZxF1glnlrwxhj308WOWAFv65/jridF++ijJJcCE1cHapTDVi+joa6MoTk8ov+lJArayuQG466oJtPpONpm6fLNbpNOb8kuo91hJp2H2FlfKktZY373aJGGA5/A5C8kh6QctGr+GyPY+VTYJopsXJ6FuXScs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727251487; c=relaxed/simple;
-	bh=XtTR+0xNDM4kXU9yTQYoYa57KB86//G17A4RfWnZ188=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Rc5KaMMiCZmaSZJa7vtqo9s9uW0liJYX0sAl5+Q2uy2SQrpEwZudv4biC7EGZrIjG3pWwTWDkorEvIcnSn87w8dsqco3bxUArlOgO5RWLmJtSJj9UDCoNN/sU3J1BVwLXILyAjxFhMSKrsL+qyaI2G+fkcy3TWph9bic0RTYMY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PJ6IjScG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1118BC4CEC3;
-	Wed, 25 Sep 2024 08:04:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727251486;
-	bh=XtTR+0xNDM4kXU9yTQYoYa57KB86//G17A4RfWnZ188=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PJ6IjScG7UBcmzhhkAjyhX58+TQg5ouqzFWdHJeruf/9Y5ar3O03lMTj7HdFP+Z/x
-	 hbkUsB3ConnnjJJbGTz6jtmMlfbp9d/xlesXJat702M9qOAJVf5FfetDf/A914IH+E
-	 zatJDvh5I5iudsMbgzq9JOwvuEZ6Sdf83oF98NzLsFKMTJNBqAQA0YToWTynQ2oxng
-	 DEr7eZMxCa1wiOcv+U4b731Fy6MFRcPLldDrsgHXiuYineQqIXEpEgQPBxaABI4jW/
-	 hoF+QRRen6qZJswZhV0J/Y9RlcXEPDmmH5vOSzMG2TKBVC2c+DRWLCccgZlE23eZDw
-	 +oomspFu6VsyQ==
-Date: Wed, 25 Sep 2024 10:04:41 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Peter Xu <peterx@redhat.com>
-Cc: Igor Mammedov <imammedo@redhat.com>, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>, Shiju Jose <shiju.jose@huawei.com>, "Michael
- S. Tsirkin" <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>,
- linux-kernel@vger.kernel.org, qemu-devel@nongnu.org, Fabiano Rosas
- <farosas@suse.de>
-Subject: Re: [PATCH v10 02/21] acpi/generic_event_device: Update GHES
- migration to cover hest addr
-Message-ID: <20240925100441.229790ba@foz.lan>
-In-Reply-To: <ZumetxyRro8RfC8h@x1n>
-References: <cover.1726293808.git.mchehab+huawei@kernel.org>
-	<bed4b2da51e0c894cc255f712b67e2e57295d826.1726293808.git.mchehab+huawei@kernel.org>
-	<20240917111921.7e95726b@imammedo.users.ipa.redhat.com>
-	<ZumetxyRro8RfC8h@x1n>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1727251538; c=relaxed/simple;
+	bh=E4nNFFvMZkEQNPfl+mFeqOm0ZlAe6uYcyzIkUo4Szv0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ME7NCXxYSNFThluqsO39FAYBlHOaCC7holuUzi5kET99i6GmSdmfJ4g/Yqqbig6gnnfbrkYFguj6sKWRZJa5XwEfcPaiGSGsfFkVvF5wEGgtgFucdWvgHC8c+xswHjtXpPAMGpfz9lYMdisxX4hgNeXrAP3SGXx6epx3PDL+EvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=pGOLeaAr; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: ecd0f1d47b1411efb66947d174671e26-20240925
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=37F1OHaShuh5YOl5yr/QWDxroLyh6khCJ1bm+0dqZBA=;
+	b=pGOLeaArNmPatkzqpBux6QUDa46KJXDCaIoj6Ifb472qF4cMqMXTSDpiZ1R7+k3unBoYLgXAU6uNLWEjw/qeT7UGQM68F7MQawg14NVJhn4RsdlW/AwdH3Be45pUC1Kto1zQJ8nTgyde6Qe8tAJGbiXEG7WY4eD/5YsixIhrabA=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:5380d1a3-b283-4135-8bee-b883cdf65e95,IP:0,U
+	RL:25,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:25
+X-CID-META: VersionHash:6dc6a47,CLOUDID:c5953918-b42d-49a6-94d2-a75fa0df01d2,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_ULN,TF_CID_SPAM_SNR
+X-UUID: ecd0f1d47b1411efb66947d174671e26-20240925
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
+	(envelope-from <macpaul.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1813105391; Wed, 25 Sep 2024 16:05:27 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 25 Sep 2024 16:05:19 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 25 Sep 2024 16:05:19 +0800
+From: Macpaul Lin <macpaul.lin@mediatek.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, Alexandre Mergnat
+	<amergnat@baylibre.com>
+CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+	Macpaul Lin <macpaul.lin@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, "Sen
+ Chu" <sen.chu@mediatek.com>, Chris-qj chen <chris-qj.chen@mediatek.com>,
+	MediaTek Chromebook Upstream
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai
+	<wenst@chromium.org>, Tommy Chen <tommyyl.chen@mediatek.com>
+Subject: [PATCH v3] arm64: dts: mediatek: mt8195: Add power domain for dp_intf0
+Date: Wed, 25 Sep 2024 16:05:15 +0800
+Message-ID: <20240925080515.16377-1-macpaul.lin@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--4.739500-8.000000
+X-TMASE-MatchedRID: SlB0fb4khOUZ7Eu9TqPx8ED6z8N1m1ALQBnqdxuJ5SA4YKAM3oRt9g2f
+	2+c5equm0OsI7hqGDS1Mn6L65ug232QexWkOikPfGVyS87Wb4lwNgFUqZt55AxjQD3m2MCf7tTq
+	5wzqAYJijtBJIHld7XYgmzRSnu+RYr78SC5iivxwURSScn+QSXgGlEJORGTlJ+gtHj7OwNO0X9r
+	pBZuBDbcFmQGkpeAqhUvhqE0gbH574d28m8PV9uo59ndbLaFhyBITe/0ZtGOk3wa44Od3MjvQPW
+	lg2m8guqzTXpO4+RaKcjwfT+qpWaaMnTJRI0XInfXwUEm1ouDzLDYxFC1/7rn6GdNk4NWmA
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--4.739500-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP: 1342942027DFC659AEEAF3ABAF9BB25373D93F3CED4C7E0BD352FAF4A3F0B46E2000:8
+X-MTK: N
 
-Em Tue, 17 Sep 2024 11:22:31 -0400
-Peter Xu <peterx@redhat.com> escreveu:
+During inspecting dtbs_check errors, we found the power domain
+setting of DPI node "dp_intf0" is missing. Add power domain setting
+to "MT8195_POWER_DOMAIN_VDOSYS0" for "dp_intf0"
 
-> On Tue, Sep 17, 2024 at 11:19:21AM +0200, Igor Mammedov wrote:
-> > On Sat, 14 Sep 2024 08:13:23 +0200
-> > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> >   
-
-> > what I would do:
-> >   add ghes_needed_v2(): return  s->ghes_state.hest_addr_le;
-> > 
-> > and then instead of reusing vmstate_ghes_state would add new
-> > vmstate_ghes_v2_state subsection that migrates only 
-> >   VMSTATE_UINT64(hest_addr_le, AcpiGhesState)
-> > field.
-> > 
-> > btw: we probably don't need ghes_addr_le for new code that
-> > uses HEST to lookup relevant error status block.
-> > but we should still keep it for 9.1 and older machine types
-> > as they expect/use it. Separate subsections would work with
-> > this req just fine.  
-
-Ok, so, if I understood it right, the enclosed patch should do the
-job, right?
-
-> Right, if we need bi-directional migration we need above and a compat
-> property (or VMSTATE_UINT64_TEST() would work too, iiuc).
-> 
-> OTOH VMSD versioning only works for forward migration, not backward.
-
-I don't think bi-directional migration would work. See, with
-old version, we have:
-
-- Just one Error source block structure, only for ARMv8 using synchronous
-  notification (SEA).
-- The offsets to access the error block structure and the memory
-  position where the OSPM will acknowledge the error assumes a single
-  error source;
-- such offsets come from ghes_addr_le bios pointer (we will rename it to
-  hw_addr_le at the cleanup patch series).
-
-With the new versions, we'll have:
-
-- at least two notification sources on ARMv8 (SEA and GPIO). We may
-  end adding more with time;
-- other architectures may also have support for bios-first hardware
-  errors;
-- the number of error block structures is now read from HEST table
-  (so it needs that hest_addr_le will be stored at AcpiGedState;
-- the offsets to retrieve the addresses are now relative to the offset
-  at hest_addr_le.
-
-The new error injection code, which uses either hest_addr_le or
-ghes_addr_le (now hw_addr_le) should be able to properly generate
-errors from a VM created on 9.1, as it will check if hest_addr_le
-is not zero. If it is zero, it will call a backward-compatible
-code:
-
-    acpi_ged_state = ACPI_GED(object_resolve_path_type("", TYPE_ACPI_GED,
-                                                       NULL));
-    if (!acpi_ged_state) {
-        error_setg(errp, "Can't find ACPI_GED object");
-        return;
-    }
-    ags = &acpi_ged_state->ghes_state;
-
-    if (!ags->hest_addr_le) {
-	/* Assumes just a single source_id */
-        get_ghes_offsets(le64_to_cpu(ags->hw_error_le),
-                         &cper_addr, &read_ack_register_addr);
-    } else {
-	/* do a for at the HEST table seeking for an specific source_id */
-        get_hest_offsets(source_id, le64_to_cpu(ags->hest_addr_le),
-                         &cper_addr, &read_ack_register_addr, errp);
-    }
-
-Now, a VM created with 9.2 will have multiple sources. The location of the
-read_ack_register_addr depends on the number of sources, which can't be
-retrieved without a VIOS pointer to the location of the HEST table
-(e. g. ags->hest_addr_le).
-
-So, a 9.1 QEMU with a VM created on 9.2 won't be doing the right thing
-with regards to the vaule of the ack offset, thus with RAS errors not
-working. I can't see any way to make it work.
-
-> >   
-> > >  static const VMStateDescription vmstate_ghes_state = {
-> > >      .name = "acpi-ged/ghes",
-> > > -    .version_id = 1,
-> > > -    .minimum_version_id = 1,
-> > > +    .version_id = 2,
-> > > +    .minimum_version_id = 2,  
-> 
-> (and IIUC if we set min ver=2, even forward migration should fail.. better
->  test it with an old binary, migrating back and forth)
-> 
-> > >      .needed = ghes_needed,
-> > >      .fields = (const VMStateField[]) {
-> > >          VMSTATE_STRUCT(ghes_state, AcpiGedState, 1,  
-> >   
-> 
-> Thanks,
-> 
-
-Thanks,
-Mauro
-
+Suggested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Signed-off-by: Tommy Chen <tommyyl.chen@mediatek.com>
+Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
+ arch/arm64/boot/dts/mediatek/mt8195.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-[PATCH] acpi/generic_event_device: Update GHES migration to cover hest addr
+Changes for v1:
+ - This patch is related to adding mt8195-dp-intf to DT schema fix for
+  - http://devicetree.org/schemas/display/mediatek/mediatek,dpi.yaml 
+  - patch: https://lore.kernel.org/all/20240924103156.13119-6-macpaul.lin@mediatek.com/
 
-The GHES migration logic at GED should now support HEST table
-location too.
+Changes for v2:
+ - Fix typo for Tommy's email address. Others remains no change.
 
-Increase migration version and change needed to check for both
-ghes_addr_le and hest_addr_le.
+Changes for v3:
+ - Added Suggested-by: and Reviewed-by: tags. Thanks!
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-
-diff --git a/hw/acpi/generic_event_device.c b/hw/acpi/generic_event_device.c
-index c5acfb204e5f..bd996d01390c 100644
---- a/hw/acpi/generic_event_device.c
-+++ b/hw/acpi/generic_event_device.c
-@@ -377,6 +377,34 @@ static const VMStateDescription vmstate_ghes_state = {
-     }
- };
- 
-+static const VMStateDescription vmstate_hest = {
-+    .name = "acpi-ghes",
-+    .version_id = 1,
-+    .minimum_version_id = 1,
-+    .fields = (const VMStateField[]) {
-+        VMSTATE_UINT64(hest_addr_le, AcpiGhesState),
-+        VMSTATE_END_OF_LIST()
-+    },
-+};
-+
-+static bool hest_needed(void *opaque)
-+{
-+    AcpiGedState *s = opaque;
-+    return s->ghes_state.hest_addr_le;
-+}
-+
-+static const VMStateDescription vmstate_hest_state = {
-+    .name = "acpi-ged/ghes",
-+    .version_id = 1,
-+    .minimum_version_id = 1,
-+    .needed = hest_needed,
-+    .fields = (const VMStateField[]) {
-+        VMSTATE_STRUCT(ghes_state, AcpiGedState, 1,
-+                       vmstate_hest, AcpiGhesState),
-+        VMSTATE_END_OF_LIST()
-+    }
-+};
-+
- static const VMStateDescription vmstate_acpi_ged = {
-     .name = "acpi-ged",
-     .version_id = 1,
-@@ -388,6 +416,7 @@ static const VMStateDescription vmstate_acpi_ged = {
-     .subsections = (const VMStateDescription * const []) {
-         &vmstate_memhp_state,
-         &vmstate_ghes_state,
-+        &vmstate_hest_state,
-         NULL
-     }
- };
+diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+index ade685ed2190..6218bd7abb05 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+@@ -3252,6 +3252,7 @@ dp_intf0: dp-intf@1c015000 {
+ 			compatible = "mediatek,mt8195-dp-intf";
+ 			reg = <0 0x1c015000 0 0x1000>;
+ 			interrupts = <GIC_SPI 657 IRQ_TYPE_LEVEL_HIGH 0>;
++			power-domains = <&spm MT8195_POWER_DOMAIN_VDOSYS0>;
+ 			clocks = <&vdosys0 CLK_VDO0_DP_INTF0_DP_INTF>,
+ 				 <&vdosys0  CLK_VDO0_DP_INTF0>,
+ 				 <&apmixedsys CLK_APMIXED_TVDPLL1>;
+-- 
+2.45.2
 
 
