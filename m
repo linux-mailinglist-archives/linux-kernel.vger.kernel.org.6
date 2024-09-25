@@ -1,151 +1,163 @@
-Return-Path: <linux-kernel+bounces-338012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7F27985267
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:30:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 489B398526A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F0B91F241FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 05:30:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79E121C232B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 05:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7045154C19;
-	Wed, 25 Sep 2024 05:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="WkKDmf+i"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB8AF14A62F;
-	Wed, 25 Sep 2024 05:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2C71537AC;
+	Wed, 25 Sep 2024 05:30:06 +0000 (UTC)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F7F1514CB;
+	Wed, 25 Sep 2024 05:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727242202; cv=none; b=YitBfq703jsaB3omdE+ZZbt4VAEmsceXWYLq9tFNSgJv5qdLK/9zjSu90HH7GUr7XAVBxaiR1x2J2o7TbuGKznUfIK+7tLZQ0UEXQqkh6PrSB8UycFn5IbD/0kmwFepkiX+MBOSkFVzOz/uDNXLFVUjDiIKmAFf4V2PPPYdL7lc=
+	t=1727242206; cv=none; b=jdYR++rNniBnR1rpxrBRh0F8S8rLZad/uf4W/GrljIkPhtWUCseI5ki74SUgxOP9qnx34+czrf+52Meer52sOiuGPyzZL7klONTXwxLLnhAkKibU+RpGKX9GR8h3UOTqdK2A+s5+fTQegY60CZleIe9hVFAs+fR/1MK2namNTD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727242202; c=relaxed/simple;
-	bh=jGpqJbVzRpKzy5QsoMynmjUtdDYVRQ+bX/xMcnAWlUw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QA8DKZ6bM0SlrdrOwinQ7rXjHVBFo1Q3BKLdyjk79HmVm/yixI6mxRojW2vO5dATe3mjHZnFELIxjd9QY9PkR78+cqRAVCnbDCkiQvjN+w0HTW7Q/HCmVx+g4ZcVlu3NkigAOsTiGgWE5UOMIduYxEAjboSPxkGaWgigDzHIbb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=WkKDmf+i; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=aqkoSnEgaj9DVcjWERksyIfsDRhiR+luevjNipHPwIo=;
-	b=WkKDmf+iFDYdvla8K6TRmY4PJxkiiKAgpydWfGjqsQvAclMl9q0/MehBHbG608
-	8NVPjwLY+uwMzyoZgCep4glrcOlK+X94WxQosk9jbvB563JaYLZaAv6zBMb8Drjk
-	dDLRg1pJoNAlchuKGPFMWbmC1XzGsfvk/TubUu9WUKEgs=
-Received: from localhost (unknown [60.168.209.67])
-	by gzsmtp2 (Coremail) with SMTP id sSgvCgAXg_7An_NmfUNVAA--.16028S2;
-	Wed, 25 Sep 2024 13:29:37 +0800 (CST)
-Date: Wed, 25 Sep 2024 13:29:36 +0800
-From: Qianqiang Liu <qianqiang.liu@163.com>
-To: Helge Deller <deller@gmx.de>
-Cc: linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	syzbot+3d613ae53c031502687a@syzkaller.appspotmail.com
-Subject: [PATCH v3] fbcon: Fix a NULL pointer dereference issue in fbcon_putcs
-Message-ID: <ZvOfwLvWdNHiU4g8@thinkpad>
-References: <20240916011027.303875-1-qianqiang.liu@163.com>
- <a57734e8-ffb9-4af1-be02-eb0c99507048@gmx.de>
- <ZvLlEpIMQnJcJsla@thinkpad>
- <1b1a2d3c-ed4a-4d9b-b87a-8d05f3d6592e@gmx.de>
+	s=arc-20240116; t=1727242206; c=relaxed/simple;
+	bh=o0Ao4ZilaUp2dcY/sC41jiPqy+7EujwpI9Yfw5PcBQE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=FxYvxki+6z81bQFH+F3E8xuwdO96DYq9HF943YxhlI2ZLD7IsZHotELwYxih0ZoSJS0OMhwXNYMEX1vcesZWmJbTiATFGKIOrado5r89deVVfJdBAq2BURymBI+dBRlcmoR1qii1GO8pdswJ5oBmcY8c58NMYjsGbWa3IJ/V1YM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a93a1cda54dso54598266b.2;
+        Tue, 24 Sep 2024 22:30:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727242203; x=1727847003;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:from:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ALn1HVNf/hT2yAkZkwD36MDV/I6QOfaDiw2O0GS4YLg=;
+        b=ETJ1DJQpv7b/gShJ9K0tRbA/NPEUvd4+Ho5jiSsyNgt2IPbfeyc7S71dNEZtZMpSPO
+         bGKRq4h58dNA2+IO2dly+Fi/nCGbEGW7445i0AfQv4faY7lAZH+kz/e1YJ+wAY2eOkG8
+         pasl3xosy//xjXzZW8E/l8ECJP3/7LgN/xVz4cPEfDJ7hjsRDvUmkQE9xZLol/0DQbon
+         6grN3YzJpflznAwriZ9MOLzZgna7G2V+B2fVCfdMZ0JlYvZrk7GGZRD2m5iNe5jjHJcm
+         2L/kw3kmVMtWfE+f8BQv+iRG094UsxiIM9TgWnyRC3QjGsQgz5SvXOl2+F1TT4Z6ax68
+         W0Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCVi/68xYiL244bUHMetFGmuD1yq2EDpgy1NH/wjy59k7tSzRYp7zz9os1Ptg7UDRiJ5f8CzpRgZ0pw=@vger.kernel.org, AJvYcCX9db/69Ex/Tiy3qA6whsuKaG94ZarR4/SVB89UcdeGV7J0RLXQbNfhZXmiddQ/F6bbbV/IBEXyX5UJ@vger.kernel.org, AJvYcCXH/R8wvURHp2jgkXozmD46HLfpPv53DcDW2BYPKfklw7OapE7CWquzMpxTeugn7+6d7iuaYUcUITGq2lXj@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx29V12079y0W8em/3ESXX3W4gq+lp2tlVOI36RXog2q9hOGeNH
+	MONrD13IgHxHUKXec2J3JkOOvd2bXMeWWkYEM8eHbCGpG2FYJXlY
+X-Google-Smtp-Source: AGHT+IEk6hl9O6U9FgYshFoRiU2rvZihWJtAOJtstG1esXBfEjZBBNDkQK1UsqoCuRLo13T/0E++kw==
+X-Received: by 2002:a17:906:dac8:b0:a8d:2a46:6068 with SMTP id a640c23a62f3a-a93a03c2dc8mr127117466b.39.1727242202898;
+        Tue, 24 Sep 2024 22:30:02 -0700 (PDT)
+Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93930f7b41sm166771666b.162.2024.09.24.22.30.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Sep 2024 22:30:02 -0700 (PDT)
+Message-ID: <3cbd6ddb-1984-4055-9d29-297b4633fc41@kernel.org>
+Date: Wed, 25 Sep 2024 07:29:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1b1a2d3c-ed4a-4d9b-b87a-8d05f3d6592e@gmx.de>
-X-CM-TRANSID:sSgvCgAXg_7An_NmfUNVAA--.16028S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7AF17Jw4xJw1xJryDur1ftFb_yoW8uFykpF
-	W5tFWaqrZ8try3Z34jgr4xZr1rXas8ArWUWayFqa4fZFnFvF18WFyIgryUCrWru3W0kryx
-	KF1jy3y2kas3WaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jEdgAUUUUU=
-X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiLxtlambzkrb51AAAsn
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4] PCI: Extend ACS configurability
+From: Jiri Slaby <jirislaby@kernel.org>
+To: Vidya Sagar <vidyas@nvidia.com>, corbet@lwn.net, bhelgaas@google.com,
+ galshalom@nvidia.com, leonro@nvidia.com, jgg@nvidia.com, treding@nvidia.com,
+ jonathanh@nvidia.com
+Cc: mmoshrefjava@nvidia.com, shahafs@nvidia.com, vsethi@nvidia.com,
+ sdonthineni@nvidia.com, jan@nvidia.com, tdave@nvidia.com,
+ linux-doc@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kthota@nvidia.com, mmaddireddy@nvidia.com,
+ sagar.tv@gmail.com, vliaskovitis@suse.com
+References: <20240523063528.199908-1-vidyas@nvidia.com>
+ <20240625153150.159310-1-vidyas@nvidia.com>
+ <e89107da-ac99-4d3a-9527-a4df9986e120@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <e89107da-ac99-4d3a-9527-a4df9986e120@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-syzbot has found a NULL pointer dereference bug in fbcon.
-Here is the simplified C reproducer:
+On 25. 09. 24, 7:06, Jiri Slaby wrote:
+>> @@ -1047,23 +1066,33 @@ static void pci_std_enable_acs(struct pci_dev 
+>> *dev)
+>>    */
+>>   static void pci_enable_acs(struct pci_dev *dev)
+>>   {
+>> -    if (!pci_acs_enable)
+>> -        goto disable_acs_redir;
+>> +    struct pci_acs caps;
+>> +    int pos;
+>> +
+>> +    pos = dev->acs_cap;
+>> +    if (!pos)
+>> +        return;
+>> -    if (!pci_dev_specific_enable_acs(dev))
+>> -        goto disable_acs_redir;
+>> +    pci_read_config_word(dev, pos + PCI_ACS_CAP, &caps.cap);
+>> +    pci_read_config_word(dev, pos + PCI_ACS_CTRL, &caps.ctrl);
+>> +    caps.fw_ctrl = caps.ctrl;
+>> -    pci_std_enable_acs(dev);
+>> +    /* If an iommu is present we start with kernel default caps */
+>> +    if (pci_acs_enable) {
 
-struct param {
-	uint8_t type;
-	struct tiocl_selection ts;
-};
+AFAIU pci_acs_enable is set from iommus' code via pci_request_acs(). 
+Which is much later than when bridges are initialized here, right?
 
-int main()
-{
-	struct fb_con2fbmap con2fb;
-	struct param param;
+>> +        if (pci_dev_specific_enable_acs(dev))
+>> +            pci_std_enable_acs(dev, &caps);
 
-	int fd = open("/dev/fb1", 0, 0);
+So this is never called, IMO.
 
-	con2fb.console = 0x19;
-	con2fb.framebuffer = 0;
-	ioctl(fd, FBIOPUT_CON2FBMAP, &con2fb);
+>> +    }
 
-	param.type = 2;
-	param.ts.xs = 0; param.ts.ys = 0;
-	param.ts.xe = 0; param.ts.ye = 0;
-	param.ts.sel_mode = 0;
-
-	int fd1 = open("/dev/tty1", O_RDWR, 0);
-	ioctl(fd1, TIOCLINUX, &param);
-
-	con2fb.console = 1;
-	con2fb.framebuffer = 0;
-	ioctl(fd, FBIOPUT_CON2FBMAP, &con2fb);
-
-	return 0;
-}
-
-After calling ioctl(fd1, TIOCLINUX, &param), the subsequent ioctl(fd, FBIOPUT_CON2FBMAP, &con2fb)
-causes the kernel to follow a different execution path:
-
- set_con2fb_map
-  -> con2fb_init_display
-   -> fbcon_set_disp
-    -> redraw_screen
-     -> hide_cursor
-      -> clear_selection
-       -> highlight
-        -> invert_screen
-         -> do_update_region
-          -> fbcon_putcs
-           -> ops->putcs
-
-Since ops->putcs is a NULL pointer, this leads to a kernel panic.
-To prevent this, we need to call set_blitting_type() within set_con2fb_map()
-to properly initialize ops->putcs.
-
-Reported-by: syzbot+3d613ae53c031502687a@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=3d613ae53c031502687a
-Tested-by: syzbot+3d613ae53c031502687a@syzkaller.appspotmail.com
-Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
----
- Changes since v2:
- - Document the commit message in more detail
----
- Changes since v1:
- - Initialize ops->putcs by calling set_blitting_type()
----
- drivers/video/fbdev/core/fbcon.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
-index 2e093535884b..d9abae2516d8 100644
---- a/drivers/video/fbdev/core/fbcon.c
-+++ b/drivers/video/fbdev/core/fbcon.c
-@@ -861,6 +861,8 @@ static int set_con2fb_map(int unit, int newidx, int user)
- 			return err;
- 
- 		fbcon_add_cursor_work(info);
-+	} else if (vc) {
-+		set_blitting_type(vc, info);
- 	}
- 
- 	con2fb_map[unit] = newidx;
+thanks,
 -- 
-2.34.1
+js
+suse labs
 
 
