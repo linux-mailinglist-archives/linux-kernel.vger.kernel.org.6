@@ -1,47 +1,50 @@
-Return-Path: <linux-kernel+bounces-338445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8553985813
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:36:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B996985877
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:43:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72AE71F21724
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:36:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C54A71F23B44
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5F615B570;
-	Wed, 25 Sep 2024 11:36:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B05C18E052;
+	Wed, 25 Sep 2024 11:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JDHFMoUL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="NzUR10xe"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75743137775;
-	Wed, 25 Sep 2024 11:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B54218DF78;
+	Wed, 25 Sep 2024 11:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727264196; cv=none; b=Lp7tuED6JlUGrPwCt6McF/TTm9XrVX1mOim69aoCnQGcbOlvMFWgWsQ+GNtei41iK2RWDVM4MuoA4tpj8oZgS06MjhJ9YurIR0IZPf7u9DsXXv2Dv5x7N7g6J4yB2JnfnBGCB2R4qPcF0IQ8rahyeLlFAo/lgwtQCNeTJkYI9HY=
+	t=1727264261; cv=none; b=NWN1AHDTp/i3td6Z96Iz14uKtfdvzOHZSKnwwK7Or3C5iYns2UMqjDns9Ib3b5e4bOfHlRoL/T564PclyUnn13kWdhBn9hbf9LgeK0vNSvmPH5+eblxIJ2IPZEboVv2D4OIMqAErPJERrFCSqejoC8BSFxd85BWPA714UNspXFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727264196; c=relaxed/simple;
-	bh=sM+fMnhyC9TsJZ+JsMfaVTsHFap3lcKhc2XucAwaltM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=G6tFPeG/zw/bvmF8DygniPysX/bRn1ZDkrMg0m/45eajwaPmlbuCuWIsRQm3zgS2PSJsjy1YhiKJictj4paJXQ/QIft2LKSf85KY3G7dc88fHwFD1icJlOtydrSDzC8pbcTXNHtX7s95h9s/yALToCJ2L9jCxSdD7w7eOzcT3v0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JDHFMoUL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CECDFC4CEC3;
-	Wed, 25 Sep 2024 11:36:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727264196;
-	bh=sM+fMnhyC9TsJZ+JsMfaVTsHFap3lcKhc2XucAwaltM=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=JDHFMoULqFCSEtvk3j7Cm3R7u+IVaHej1V1CmYwgRLqvciBxN4loLt4Ne1TUahc1r
-	 Vpw5NoUs4aBYe+P+PJh75md9F2M3vL7lDXtVuyQxaCGiJ3XIkLiOi4N0xyUOBmwowP
-	 6+4+xUXk/zfHL+IV4M1XkUEnj4cgfloiHVVNKQrURXW7FK27FuqON52+6xrFLgkcDG
-	 qIsReUEjalTiYhCGGeU1PrQc+Cvx7JZommBteNWvNpMOauz8ZejjdEWmuSsrCMen1u
-	 hvOMvE888zoEXNjEEXhjVtN1Wl/12RYv1iyGpoD4gEI8gNso9HRQaUHliXREj5ORjA
-	 ubM0VPnbyC13A==
-Message-ID: <3e160ce4-ce7f-4172-8759-3dcbaf5c00cb@kernel.org>
-Date: Wed, 25 Sep 2024 13:36:30 +0200
+	s=arc-20240116; t=1727264261; c=relaxed/simple;
+	bh=mNVhvWOEn6bEbyXBRFPt8xXjd1N12QiImpkDDnCHGZg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ul6KBDEgHbeDU9Fw+Wxoqoqom1O8VB33QnEbZ3b8u0pfuZHMorUCzxO3wsCG6/zff7O9Fheepfqb+PMHZxOUf+ozKCarkFaH4eJ3OFfAkwQzwTT/mK/gkjrXpPme3nNByuPqZc9J+MGkZnmGZ1KRCiHUZRR41kbo8ReW7jsYxbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=NzUR10xe; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1727264258;
+	bh=mNVhvWOEn6bEbyXBRFPt8xXjd1N12QiImpkDDnCHGZg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NzUR10xe39M7KcplzFnp+pUsEnYBTpuWdGy3vbCLCSkWSGx7UPd4EO5CiQnCY1JYv
+	 JtRxX5/Ixr7OvlSMQIatUb49kBUW3RitX8UtpVMisU2jOeRGePJAlTKFYsM9DatxiC
+	 i6QageZOCnVC23DGwUXJfVSZG3TkO7GsMJitiSGz5o3khKYim3JA9CZgkBj4oyP6Bh
+	 r4K6hqSj61MhTBA4aXhIbWOuA1mN4pMErKQ29tuxB+3hbN3+GUh2dqogU9ky+12xgT
+	 wgQOr4BhV3FzutJAbY057deM4ZjVSuYufhlTHd+ecR9QhWlEcFwcK6EQMFnb6BbooY
+	 PUPJVGFPX6eHQ==
+Received: from [192.168.126.112] (unknown [147.75.204.251])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XDF885PTZz1LfT;
+	Wed, 25 Sep 2024 07:37:28 -0400 (EDT)
+Message-ID: <38b04b86-1e85-40f0-8174-3c8ab29cbcaf@efficios.com>
+Date: Wed, 25 Sep 2024 13:36:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,81 +52,106 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: watchdog: airoha: document watchdog
- for Airoha EN7581
-To: Christian Marangi <ansuelsmth@gmail.com>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
- <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-watchdog@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Lorenzo Bianconi <lorenzo@kernel.org>, upstream@airoha.com
-References: <20240925091326.2900-1-ansuelsmth@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [RFC PATCH 1/1] hpref: Hazard Pointers with Reference Counter
+To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
+ Boqun Feng <boqun.feng@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Alan Stern
+ <stern@rowland.harvard.edu>, John Stultz <jstultz@google.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
+ <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
+ Mateusz Guzik <mjguzik@gmail.com>, rcu@vger.kernel.org, linux-mm@kvack.org,
+ lkmm@lists.linux.dev
+References: <20240921164210.256278-1-mathieu.desnoyers@efficios.com>
+ <e4721439-8cad-4134-8c07-84b6ecc69573@huaweicloud.com>
+ <48ae741e-98aa-49d9-b677-6c4f8fd1bcb0@efficios.com>
+ <07c9285f-44a1-486a-8390-0c63cefae35a@huaweicloud.com>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240925091326.2900-1-ansuelsmth@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <07c9285f-44a1-486a-8390-0c63cefae35a@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 25/09/2024 11:13, Christian Marangi wrote:
-> Document watchdog for Airoha EN7581. This SoC implement a simple
-> watchdog that supports a max timeout of 28 seconds.
+On 2024-09-25 12:06, Jonas Oberhauser wrote:
 > 
-> The watchdog ticks on half the BUS clock and requires the BUS clock to be
-> referenced.
 > 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
-> Changes v2:
-> - Drop clock-frequency
-> - Correctly attach BUS clock
+> Am 9/25/2024 um 8:35 AM schrieb Mathieu Desnoyers:
+>> On 2024-09-25 07:57, Jonas Oberhauser wrote:
+>>> Hi Mathieu,
+> 
+>>> I haven't read your code in detail but it seems to me you have an ABA 
+>>> bug: as I explained elsewhere, you could read the same pointer after 
+>>> ABA but you don't synchronize with the newer store that gave you 
+>>> node2, leaving you to speculatively read stale values through *ctx->hp.
+>>> (I am assuming here that ctx->hp is essentially an out parameter used 
+>>> to let the caller know which node got protected).
+>>
+>> The following change should fix it:
+>>
+>>       cmm_barrier();
+>> -    node2 = uatomic_load(node_p, CMM_RELAXED);    /* Load A */
+>> +    node2 = rcu_dereference(*node_p);    /* Load A */
+>>
+> 
+> I don't think this fixes it, because IIRC rcu_dereference relies on the 
+> address dependency (which we don't have here) to provide ordering.
+> 
+> I would recommend either:
+> 
+> -    ctx->hp = node;
+> +    ctx->hp = node2;
+> 
+> which fixes the problem under the perhaps too weak assumption that the 
+> compiler doesn't use its knowledge that node==node2 to just undo this 
+> fix, or more strictly,
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+As stated in Documentation/RCU/rcu_dereference.rst from the Linux
+kernel, comparing the result of rcu_dereference against another
+non-NULL pointer is discouraged, as you rightly point out.
 
-Best regards,
-Krzysztof
+> 
+> +    ctx->hp = READ_ONCE(node2);
+> 
+> which I believe makes sure that the value of node2 is used.
+
+I am not entirely sure this extra READ_ONCE() would be sufficient
+to prevent the compiler from making assumptions about the content
+of node2 and thus use the result of the first load (node) instead.
+It would also not suffice to prevent the CPU from speculatively
+using the result of the first load to perform dependent loads AFAIU.
+
+> Alternatively you could always use an acquire load.
+
+Unless someone comes up with a sound alternate approach,
+I am tempted to go with an acquire load as the second load
+within hpref_hp_get().
+
+This way, the compiler would not attempt to use the
+node value from the first load for dependent loads,
+and the and CPU won't try to speculate dependent loads
+either.
+
+Thanks,
+
+Mathieu
+
+> 
+> 
+> Best wishes,
+> 
+>    jonas
+> 
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
 
