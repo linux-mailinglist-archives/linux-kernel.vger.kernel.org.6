@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-339307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 966219862D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:16:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51B4F9862DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:17:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C28AC1C27368
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:16:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 818961C23F95
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0770C1917E9;
-	Wed, 25 Sep 2024 15:02:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E02A18DF98;
+	Wed, 25 Sep 2024 15:02:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GnkKjhtp"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Qrok5dzK"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52A518FDDA
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 15:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514C3191F62
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 15:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727276551; cv=none; b=q6r1TuE1qgY4g28ZdMUySHwWCA+9Nhh1vE8GNA7eaJnWs1v1neu09Q7YryiNeWeywBYWDjtk9kgvQCJowSBg+3BoKcWY/7VHIsqN6akYagoZIUFixqk54p/tnpvggMuMwJo3oGc1vvRGQf9H7aKhqditwdbcj/ObtVLb7lGymV4=
+	t=1727276555; cv=none; b=Dg02nrSfUITkz5A5zAQEvthj6EDWQWw8opSw4IioqyxMAGcPXO4gOC2ELr6Z/CGC7K6E9Uh/ELGjsBphQeagASh8bX/N9w1nvgXUbN1WSYAfHopxCMrRA+Rz3UC6x4BygJgfwYmtkeDBM5jq/wLP5fK592LzoE3ZMblDnViFzHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727276551; c=relaxed/simple;
-	bh=tOVKR1lo4TSaVSSD57+XbfuDxZ/gh43zpiGViV/8Jbk=;
+	s=arc-20240116; t=1727276555; c=relaxed/simple;
+	bh=w/P+2/7/i0/j2dzTpIfGv0L554wt2D6+DkL221lAYlA=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=IZSggig7/hi/ZWoHDIUJB5xiIXiZrJU+5UqEJwI11BhxYsxBQgEZ5iiMrKX9rzBB6Du7AsxDZMjQK2fJXA1ku8dSuRpLu2ti1atN0DAFWGsaaci4Q/8o4+yRBKFZHtvYOQHr+QDOFV47fQSSN9QGZ9kcRvnfK7Bb2NQbzjyId90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GnkKjhtp; arc=none smtp.client-ip=209.85.128.202
+	 To:Cc:Content-Type; b=iMsTD3911bM9uceQFrmEZOFeymwlyty249rUpRoZHdpq2AGTPyPA3guZdEPpmeygHkkuJpuVB38yvSVt0HpU7tF1Vd2ibl4TDyV0QRJeG0xbaETtPCxvdx2bwo2CERc8VsQWzmD7dRI+Dv+3vyLdPn98VyE+Flpl8WHJn/v39gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Qrok5dzK; arc=none smtp.client-ip=209.85.128.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6d4f52a4069so118678527b3.3
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:02:29 -0700 (PDT)
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-42cb374f0cdso5460665e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:02:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727276548; x=1727881348; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1727276551; x=1727881351; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ApY23d/9zEIgxeEREKcGvRSADQZAXD1f0/BrlQ4mdDw=;
-        b=GnkKjhtp9zSMZYTexidLqwKc++D8bRxlmP6vfNPPiswSuKsY7b5gjmgIVcyTHNJmXV
-         R7cILxiDBk7XWsrqChfpEINGugxqUdT9I5FgI4htYuOm1ROc5WGR59a0jlhTFRO/tjum
-         CWVybAqQtX2snhNPb+A1mhvliI+J7VlZ0xZ3USnRGgmL1vakWwE8brOdDD8vlqavUm12
-         lanq2ZcCA7IIW/USsG0YE1Oa6h++SWt4alvAWiXjABfnGQRDtvpHHc+Nrb+8CBRvciCq
-         nkpjydToaKAfAY4HeApliRfcLdyZvFqwlsJLIYZPyN43lymbKggonsBTZKs6FZRRm5WP
-         HXJA==
+        bh=vAC8l3Y8WvFUyajZb+pirsZCUpFvZ3r8+BwrpQuj/SE=;
+        b=Qrok5dzKpXydUx5M9TW32zg2YJHKEXJ61ctOadUBeAGB0KBhnYmDeES2ItYtzlQ2Iz
+         83RXWxCohJTrwzWXBDmOBVxKe6VqAo2t8LYfZT/bLYT9u83sHWixLK1XVitYJRNU/4Cs
+         bb77HlZaFm1QRsB7nJfWZ0p3iGuBnLTvkB9/lQp6uDm+ON3kaCp8gsqNFk3Y9/CGKqIE
+         mBsiU79wsuaLlW3wl+quKZDfLd/CzlCAAq9B6bQ6OaoulHkoF0c/xiBT0Ptq3TE5N54G
+         ykdnMzV1y3bDyPswuWKLS6zWQ7VCEkG5IeV+AzWbZ4q26npScA3CSzFd4kTH4K4/ONO0
+         7t0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727276548; x=1727881348;
+        d=1e100.net; s=20230601; t=1727276551; x=1727881351;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ApY23d/9zEIgxeEREKcGvRSADQZAXD1f0/BrlQ4mdDw=;
-        b=TuHemGDHIdQYB6/j78QmTF7VhfblftPqVv0lKP7ZUmWRfmZllkf7ayz3jyAjJlqzMM
-         wZCLgCdeSjK9bodoA1ip5G0mU4DE17NxiaEPHCX8X0CQQ85C+JaavICz1O8avFqgtPWm
-         V0iW0gP+uLfyxZybXn0DoKPydy9/CDveNaB6dYFbFTLnEpEYmO3u53JZ3wrXJXCE1hg/
-         JybUyVnS3FVcsPG1WkgBGwkLtxgnoWpbO8M27Fy/EXqUi2WuLh0RiKz/U+l3ySw0ALJ1
-         hW2/ICBG03RkInDLN2wVjfwN5RRngdP0RpHluzDKBjM8DbuIl75A5PeT4kk4xFiWnVcR
-         tM0g==
-X-Gm-Message-State: AOJu0Yx7eIVoUdNnlvZNCkI3kDxMr+AlOlbzjR7L5liZzBTctg5hOfj9
-	cn+O1cRa5CNUlKv8hBjQHHISUemY8KjI72A7WN+XbewdxabeEyDuhvPBwLQBwJPafwbzhMzXce4
-	makbP2sze9MUltfH87c/kXoSAUE33jImZIjRS1SBmAEIspFr8+vvXZQjozrK50RY8CZWLk7sEFe
-	9+TaqsT1hwUWD0sCj11nBu7/c3lyM7MA==
-X-Google-Smtp-Source: AGHT+IG0+ryHhOjgZiIz9yF/upguc+H1WcXc9rbc3LtAhjefmA+cSn7SHizdSFamvUM2J9fCM9A9Vr3/
+        bh=vAC8l3Y8WvFUyajZb+pirsZCUpFvZ3r8+BwrpQuj/SE=;
+        b=H0nVFyZ/SY1rb1z8JHcGW2Yu6f+bW8rtOQE48E15vKP/h8qZk+wQ0IDD3U87jESOdU
+         liVs55gea7VXeQk7db5clA93lO2d/yymIubbmUg96qMFSfY8ms+gK3w3x5ppFGIj/K5g
+         Ym+Qo1FwhQ3XMBhGGWXSr61K8PJVMUm+RqdUju9NvyHgwXHN1kTZpoxbY9VVWza18mLH
+         37Trarsud8ffeEXnCqUYsmgTYnR/p/PeEr3V50SbUnnlj4mdJaUMFwS2sog9mUOTzce9
+         ju5K5rQRSJgOcc0nJITnczQJbrI/Kl35GO7+P6eF/NaMQTc3jfeQycSJ18a5/hNPWq7p
+         d25A==
+X-Gm-Message-State: AOJu0Yx5OHikM/BHMhTzWNo16+ny/Qe3qth2H8vuUw4ONUY6A8G1umLN
+	ik4YKL8l3hLmIj+FVDUmP1Hd/nljM8XY57fTlb3sxwQQM0vjG2SGF+jvJlGAB9zcxatkjBsZwQr
+	/uOLxRmSalzJfoaXSz5DlL5bYhdwC4GR9SZ8Gde2IH3BYCMaSRrOJRvm7FX/LGbrzX127U/Ymt2
+	/afXmBNQxuH40m/I/U9slwyI2XR7yTfQ==
+X-Google-Smtp-Source: AGHT+IGsHQZbBz7v7rjB2VogUNbzT3V2zpNGtAWZsXzYUPDihu4mWF0GF+yn2VIMs1ZNTkRqyJuf4PXN
 X-Received: from palermo.c.googlers.com ([fda3:e722:ac3:cc00:7b:198d:ac11:8138])
- (user=ardb job=sendgmr) by 2002:a05:690c:d85:b0:6db:e107:75a2 with SMTP id
- 00721157ae682-6e21da5c761mr429007b3.4.1727276548084; Wed, 25 Sep 2024
- 08:02:28 -0700 (PDT)
-Date: Wed, 25 Sep 2024 17:01:15 +0200
+ (user=ardb job=sendgmr) by 2002:a05:600c:4ca2:b0:42c:acd5:c641 with SMTP id
+ 5b1f17b1804b1-42e96037975mr279665e9.2.1727276550412; Wed, 25 Sep 2024
+ 08:02:30 -0700 (PDT)
+Date: Wed, 25 Sep 2024 17:01:16 +0200
 In-Reply-To: <20240925150059.3955569-30-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,14 +73,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240925150059.3955569-30-ardb+git@google.com>
 X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=715; i=ardb@kernel.org;
- h=from:subject; bh=MI3z3hAzDWNLGP+bB6WD9qNMTMv7yb8jTXTlUIfHWCE=;
- b=owGbwMvMwCFmkMcZplerG8N4Wi2JIe2L6sHwPz3fHPWC8oK2RzHe5nszs/XmM4NX7P1ae3YFv
- bWd+fJLRykLgxgHg6yYIovA7L/vdp6eKFXrPEsWZg4rE8gQBi5OAZjI/9UMfwVfxZ9hrm+9xvze
- 6zfvw/cKoUe5Kv5w1pmKsYfxH/f4do3hf+75iD2ndC64zYjxsFPZpbpKIrxBk/fzstDCxW8eO9h OYgAA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2723; i=ardb@kernel.org;
+ h=from:subject; bh=tMElkct6gfSM6gp7MMWL/mRF1vGpc7RrYvn7ljZWXyE=;
+ b=owGbwMvMwCFmkMcZplerG8N4Wi2JIe2L6iGZPaJMr8LDnd//b/RW8SszXOfdmXXq3NuftZV75
+ oQv+lfaUcrCIMbBICumyCIw+++7nacnStU6z5KFmcPKBDKEgYtTACZy4w/DHw7GS21Or9/PeKL6
+ 7ZX8zCMs6WX7p7QFXu6zKz6oZDhn3S9GhnkFPcEfOSfJKv9IYrKOXfBu+/X/Xl4zqlnSnqz7v02 4kwsA
 X-Mailer: git-send-email 2.46.0.792.g87dc391469-goog
-Message-ID: <20240925150059.3955569-45-ardb+git@google.com>
-Subject: [RFC PATCH 15/28] x86/sync_core: Use RIP-relative addressing
+Message-ID: <20240925150059.3955569-46-ardb+git@google.com>
+Subject: [RFC PATCH 16/28] x86/entry_64: Use RIP-relative addressing
 From: Ard Biesheuvel <ardb+git@google.com>
 To: linux-kernel@vger.kernel.org
 Cc: Ard Biesheuvel <ardb@kernel.org>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
@@ -105,27 +105,97 @@ Content-Type: text/plain; charset="UTF-8"
 
 From: Ard Biesheuvel <ardb@kernel.org>
 
-Use RIP-relative accesses and avoid fixups at runtime.
+Fix up a couple of occurrences in the x86_64 entry code where we take
+the absolute address of a symbol while we could use RIP-relative
+addressing just the same. This avoids relocation fixups at boot for
+these quantities.
 
 Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 ---
- arch/x86/include/asm/sync_core.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/entry/calling.h  |  9 +++++----
+ arch/x86/entry/entry_64.S | 12 +++++++-----
+ 2 files changed, 12 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/include/asm/sync_core.h b/arch/x86/include/asm/sync_core.h
-index ab7382f92aff..cfd2f3bca83b 100644
---- a/arch/x86/include/asm/sync_core.h
-+++ b/arch/x86/include/asm/sync_core.h
-@@ -31,7 +31,8 @@ static inline void iret_to_self(void)
- 		"pushfq\n\t"
- 		"mov %%cs, %0\n\t"
- 		"pushq %q0\n\t"
--		"pushq $1f\n\t"
-+		"leaq 1f(%%rip), %q0\n\t"
-+		"pushq %q0\n\t"
- 		"iretq\n\t"
- 		"1:"
- 		: "=&r" (tmp), ASM_CALL_CONSTRAINT : : "cc", "memory");
+diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
+index ea81770629ee..099da5aaf929 100644
+--- a/arch/x86/entry/calling.h
++++ b/arch/x86/entry/calling.h
+@@ -375,8 +375,8 @@ For 32-bit we have the following conventions - kernel is built with
+ .endm
+ 
+ .macro SAVE_AND_SET_GSBASE scratch_reg:req save_reg:req
++	GET_PERCPU_BASE \scratch_reg \save_reg
+ 	rdgsbase \save_reg
+-	GET_PERCPU_BASE \scratch_reg
+ 	wrgsbase \scratch_reg
+ .endm
+ 
+@@ -412,15 +412,16 @@ For 32-bit we have the following conventions - kernel is built with
+  * Thus the kernel would consume a guest's TSC_AUX if an NMI arrives
+  * while running KVM's run loop.
+  */
+-.macro GET_PERCPU_BASE reg:req
++.macro GET_PERCPU_BASE reg:req scratch:req
+ 	LOAD_CPU_AND_NODE_SEG_LIMIT \reg
+ 	andq	$VDSO_CPUNODE_MASK, \reg
+-	movq	__per_cpu_offset(, \reg, 8), \reg
++	leaq	__per_cpu_offset(%rip), \scratch
++	movq	(\scratch, \reg, 8), \reg
+ .endm
+ 
+ #else
+ 
+-.macro GET_PERCPU_BASE reg:req
++.macro GET_PERCPU_BASE reg:req scratch:req
+ 	movq	pcpu_unit_offsets(%rip), \reg
+ .endm
+ 
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index 1b5be07f8669..6509e12b6329 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -1038,7 +1038,8 @@ SYM_CODE_START(error_entry)
+ 	movl	%ecx, %eax			/* zero extend */
+ 	cmpq	%rax, RIP+8(%rsp)
+ 	je	.Lbstep_iret
+-	cmpq	$.Lgs_change, RIP+8(%rsp)
++	leaq	.Lgs_change(%rip), %rcx
++	cmpq	%rcx, RIP+8(%rsp)
+ 	jne	.Lerror_entry_done_lfence
+ 
+ 	/*
+@@ -1250,10 +1251,10 @@ SYM_CODE_START(asm_exc_nmi)
+ 	 * the outer NMI.
+ 	 */
+ 
+-	movq	$repeat_nmi, %rdx
++	leaq	repeat_nmi(%rip), %rdx
+ 	cmpq	8(%rsp), %rdx
+ 	ja	1f
+-	movq	$end_repeat_nmi, %rdx
++	leaq	end_repeat_nmi(%rip), %rdx
+ 	cmpq	8(%rsp), %rdx
+ 	ja	nested_nmi_out
+ 1:
+@@ -1307,7 +1308,8 @@ nested_nmi:
+ 	pushq	%rdx
+ 	pushfq
+ 	pushq	$__KERNEL_CS
+-	pushq	$repeat_nmi
++	leaq	repeat_nmi(%rip), %rdx
++	pushq	%rdx
+ 
+ 	/* Put stack back */
+ 	addq	$(6*8), %rsp
+@@ -1346,7 +1348,7 @@ first_nmi:
+ 	addq	$8, (%rsp)	/* Fix up RSP */
+ 	pushfq			/* RFLAGS */
+ 	pushq	$__KERNEL_CS	/* CS */
+-	pushq	$1f		/* RIP */
++	pushq	1f@GOTPCREL(%rip) /* RIP */
+ 	iretq			/* continues at repeat_nmi below */
+ 	UNWIND_HINT_IRET_REGS
+ 1:
 -- 
 2.46.0.792.g87dc391469-goog
 
