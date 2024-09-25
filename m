@@ -1,116 +1,99 @@
-Return-Path: <linux-kernel+bounces-338003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1E80985224
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 06:57:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C526598522B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:07:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6B661C22D81
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 04:57:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02CCC1C23083
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 05:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 790CE150980;
-	Wed, 25 Sep 2024 04:57:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39EC153838;
+	Wed, 25 Sep 2024 05:07:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BHRnt69w"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ludwinski.dev header.i=@ludwinski.dev header.b="hczqQYZF"
+Received: from pv50p00im-ztbu10011701.me.com (pv50p00im-ztbu10011701.me.com [17.58.6.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC971E49E
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 04:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C432E148FE6
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 05:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727240272; cv=none; b=KUtHbbDxYrTf+0GGJDWz2gyCaRPUYcnIPv1UecrHpW7D+zcVf3t7f1LFJ4VQxN0DE25o4PDQ4uFOLHIRKr/XpbypirhfcEQ6p++DC1zgwSVQfYgEA2xMBW6upJNWtF+w/bsHfwSafw+g0YcrcXXzzk783GBP6yQWMCW3LmFzODM=
+	t=1727240825; cv=none; b=cMPVXSpM60Foz2NsSBkw47sCKBKmNLVie0/USkyyvjreROCuEHn9O8j3yOWuCUVKxQmXx6zRR58YC7QNWierHzavBVTKLC7Dyo64MUb7dYdhJAwXormf5b5H96ZxIxgBqQoFpEdyE3+3yjUXMJC1XhNYI6NsN2TEq23nSLvYSs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727240272; c=relaxed/simple;
-	bh=lBlqDp6O0540f+oYifxSFcL8Gq2kXJlTpK3ZOe2hZgs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hwFxpjYe9bBDDSkfuUYQImMQ6iuYt5/TTVDJ2lYesnaBQ+FwoAXZtbZ42asenBsJ2W3xCSnjQT8bEjhPZVHzpK+0x2IcBUDHlkr6FYXkv8V9D4mfru2dIDXMmdSBKOA9ghLbRMOVRiPP4ycmhvLVRwNXRf8+/8v+Hng57QC7S3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BHRnt69w; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5365928acd0so2903264e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 21:57:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727240269; x=1727845069; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sJV2XVw94OreIIZVf5rIJQQIM7YKtPS2fDsN8P1COgs=;
-        b=BHRnt69wWEyAQzZXu+fILzTnteBWpxI1XajR4BK7sGuOggVLYDJJeMQEgEAoOwhTkz
-         5p4Nr0obIQ+HmU3JrzUwGE9d6aI9qY5NiVvtMRrvlX9e5ds/d609zuL4AVAsMrYgkw8A
-         FELof/5Quw4GUTU3NkPAK55WYDwMF/Y5UwJOMjqkgpZT5+1yz8XIsKEtUXQ/rMA5Nfmv
-         Ds0S9DC9zeK+IxnbBy4Onv1iI24EiLbEKrYejELUNJ1Ehsv/9Hh+Qo9Xc2O0Ytbo5M5W
-         1GMBHWohwEV6GrS1TaA1GnoCq7YPpCSGIyM3aL2crt0Wkk4y5wzDapCZ84DSkBmKKEb9
-         LyhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727240269; x=1727845069;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sJV2XVw94OreIIZVf5rIJQQIM7YKtPS2fDsN8P1COgs=;
-        b=fT9nqpFEPUUSoXuvfrSK1Unv9lzj+eYsB4WcoTw8+YTWaTNBv7lKIzciIcC2RzKQnr
-         btTtWhaMEH5myvmBF0NZoVchjrWQNYYPyWSItpSxIXL75P+ywhSbYRfSQIZPAjwrYYWZ
-         Bf3nwwKUYOsZZJ8RaytpLGRmK40Bihr6LXkcrhp7VddyFfCe5jegKQ2bFI0SvVQws1OZ
-         4jjbxo9Uhdrtj2vy/LYfGvyCbuNju14Q4wEDUBw/Uth/S910vYyWNDYg8qtpBRfrhPN0
-         hrzkwWdpqTR/Q+5/WDaday1rYAe5P2hoYCGcYkjcES/aDt67Ukpp2MNnKWoitCAyJE7r
-         U0oA==
-X-Gm-Message-State: AOJu0Yz4qPO5NPTT4k7nJ7vCrzedlE7vLd6emhvFXc+kbsIbzhrTPcCD
-	b613fg8uQMnnkgzVD7GaAPk8RtJpiZs7+m18XmZyJRPbGNCtvHzL
-X-Google-Smtp-Source: AGHT+IHvIZ9ytjnTfTrHAoLOSG/2WoPRP+wSLREr5FT7kJLNJsoiAWwZGG/siWZPj+zJwm36wiK38g==
-X-Received: by 2002:a05:6512:1383:b0:530:ab86:1e with SMTP id 2adb3069b0e04-5387048b8d3mr767764e87.6.1727240269058;
-        Tue, 24 Sep 2024 21:57:49 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-537a85f06bbsm413902e87.84.2024.09.24.21.57.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Sep 2024 21:57:47 -0700 (PDT)
-Message-ID: <5ec5c65d-8bdb-4dec-87b2-75413a025657@gmail.com>
-Date: Wed, 25 Sep 2024 07:57:46 +0300
+	s=arc-20240116; t=1727240825; c=relaxed/simple;
+	bh=ZQmPLurWg8bBFA6Nqi8RQUZAXqWWg/v371tCKDxHcJY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=lenCYL3hfgbH/DQSt4sKG2As+dRKWC6OS/UfIfqObvM9zpJMk03+LICahIiZjnlgmBcbw4+eAIJsOndREQgCwT/myHfA8D1P4TCVBDcokGHgmNaza8/w9mnu9FsOUh7mFckX2iAEnLW5jWUcyUm5Jbb4DTv1+LwjFS8S4GraAr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ludwinski.dev; spf=pass smtp.mailfrom=ludwinski.dev; dkim=pass (2048-bit key) header.d=ludwinski.dev header.i=@ludwinski.dev header.b=hczqQYZF; arc=none smtp.client-ip=17.58.6.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ludwinski.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ludwinski.dev
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ludwinski.dev;
+	s=sig1; t=1727240823;
+	bh=0ScNFFQi3tBi9pjXGBPJ4aeFaBdyK4X71baS0jOPlj8=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=hczqQYZF9sYYjAUdT95lyUx2+qO5Zs9fCnCr/vJROwjzp6FK/uL9RXDXtBffUGGUc
+	 ZyuV1KnJLdfspUdzgDPugYIcizk03kuBEpqPp0Jq7Z1lIQ61dbt3DnvDwpf0uvQmSj
+	 iy1IOa4bGq7ecMf7JmAeqXyrk96j9DwiqSL5Kv3kWVLacyFwgOREJird1QCCBev8ut
+	 DNihAN726oYHnLFPG6OcLqv/D3zEGHDbm/WGiYOLsmzQPVOxILlDthrA5Ul8LbKazn
+	 Mxhi8Tg40rV3Hq2NmA7e1S/doH5D+nZ9TDq8fOHi50AwMeVPe3jRA8lkpJYPon8+dM
+	 GptoRLnpi6Rzg==
+Received: from ubuntu.. (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztbu10011701.me.com (Postfix) with ESMTPSA id E34E974032B;
+	Wed, 25 Sep 2024 05:06:38 +0000 (UTC)
+From: Kacper Ludwinski <kacper@ludwinski.dev>
+To: davem@davemloft.net
+Cc: kuba@kernel.org,
+	vladimir.oltean@nxp.com,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Kacper Ludwinski <kacper@ludwinski.dev>
+Subject: [PATCH] Fix issue related with assigning two diffrent vids to the same interface.
+Date: Wed, 25 Sep 2024 14:05:39 +0900
+Message-ID: <20240925050539.1906-1-kacper@ludwinski.dev>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240925043724.1785-1-kacper@ludwinski.dev>
+References: <20240925043724.1785-1-kacper@ludwinski.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mfd: bd96801: Use maple tree register cache
-To: Mark Brown <broonie@kernel.org>, Lee Jones <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-References: <20240924-mfd-bd96801-maple-v1-1-04fe33e1f009@kernel.org>
-Content-Language: en-US, en-GB
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20240924-mfd-bd96801-maple-v1-1-04fe33e1f009@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: e9IBxhJkomuhuHVFvVPdjIMgWI83dFH5
+X-Proofpoint-ORIG-GUID: e9IBxhJkomuhuHVFvVPdjIMgWI83dFH5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-24_02,2024-09-24_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0
+ malwarescore=0 mlxscore=0 adultscore=0 bulkscore=0 clxscore=1030
+ mlxlogscore=654 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2308100000 definitions=main-2409250034
 
-Hi Mark,
+Fixes: 476a4f05d9b8 ("selftests: forwarding: add a no_forwarding.sh test")
+Signed-off-by: Kacper Ludwinski <kacper@ludwinski.dev>
+---
+ tools/testing/selftests/net/forwarding/no_forwarding.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 9/24/24 19:22, Mark Brown wrote:
-> The maple tree register cache uses a more modern data structure than the
-> rbtree cache and makes implementation decisions more suited to modern
-> hardware, switch the bd96801 driver to it to take advantage of this newer
-> code. No functional changes.
-> 
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-
-Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
-
-Thanks! So, I should have used maple tree with regmap instead of the 
-rbtree when sending this... Do you know, is there any occasion where the 
-rbtree would be better?
-
-As a unrelated thing - seems like you've made it safely back from the 
-LPC. It was nice finally meeting you :)
-
-Yours,
-	-- Matti
-
+diff --git a/tools/testing/selftests/net/forwarding/no_forwarding.sh b/tools/testing/selftests/net/forwarding/no_forwarding.sh
+index 9e677aa64a06..694ece9ba3a7 100755
+--- a/tools/testing/selftests/net/forwarding/no_forwarding.sh
++++ b/tools/testing/selftests/net/forwarding/no_forwarding.sh
+@@ -202,7 +202,7 @@ one_bridge_two_pvids()
+ 	ip link set $swp2 master br0
+ 
+ 	bridge vlan add dev $swp1 vid 1 pvid untagged
+-	bridge vlan add dev $swp1 vid 2 pvid untagged
++	bridge vlan add dev $swp2 vid 2 pvid untagged
+ 
+ 	run_test "Switch ports in VLAN-aware bridge with different PVIDs"
+ 
 -- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
-
-~~ When things go utterly wrong vim users can always type :help! ~~
+2.43.0
 
 
