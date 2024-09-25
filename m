@@ -1,138 +1,170 @@
-Return-Path: <linux-kernel+bounces-339635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70F1098683E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 23:20:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AF4E986842
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 23:23:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FB2C1C2154D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:20:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE2631F23973
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA19150994;
-	Wed, 25 Sep 2024 21:20:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8244314D430;
+	Wed, 25 Sep 2024 21:23:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UJSmt1Q4"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EKsB1ur3"
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A122AE6C
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 21:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135F41CF93
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 21:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727299228; cv=none; b=t1q6nGh3qg77TsjlDu6liFkAVjNfaqnsK1iu3qS87R35Xgx4xsFTHVT94CgZXEdc4qhSobsW6NxvJ6LYoSi6/KnZkaW7yHFA2uTvWiP+RUPRqiWV8VdFKOirKdxZqAzQtKoyZqDPSbjQlaHRAlLThSd7RtJGQXxXTZ3pUvfjtO4=
+	t=1727299406; cv=none; b=Ch+EdcmvKx9MKKTqnbPTe0iIDqVr0IjUQXIRoOmgqk76cUc8OfMNPdqKll2qSzZCatGqx+pfO1+Iknu1pg3SF1DJX0/vUFQSYMqBobavf/AL9M+33MWzw4R6K23K17M1t0LJUUejz2lBevZFa88+uhPpzlCJ5etoLRBM4hQFfTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727299228; c=relaxed/simple;
-	bh=Qhca8aXwASzA52qlSc2EwlB3ylWt+AImaIw3ntnxQ4o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z11Ow0Mp4K0iWyL8dS6emLiBLUgfcTfYT1hnPyc3QuMlvh9FG963n1Foa8ZMMHIPfatpuGGz3B7Xk+h6HvQdwqpLusWxyhwCG0qS+9j9vfn+dJZ1EO7Zboj9Tpo3QvFiPNuIk2j5EY1Xc8ihSCyY/p5CEXM7eYbKg+NS30KS/cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UJSmt1Q4; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-535be093a43so374148e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 14:20:27 -0700 (PDT)
+	s=arc-20240116; t=1727299406; c=relaxed/simple;
+	bh=xzjH/92jjMnUNJmn6715vbklG+b0RjBO0jA77EpiR5A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EgUxV4wJbn1gPtHPX3YyeI5bDyu2CLe/AxcAtAZZ9pVvdDD2IfkpEQTUdZpUVILgN2ZCWOVv+6do2Ul4QdKa7gud+jowqUzq9xHJK0vtJB8WxD21oUzgcoBFUrqMnr334DxfmrQomY4mVXHbXj1Om7WBhuagbTs0azxT8b0EQCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EKsB1ur3; arc=none smtp.client-ip=209.85.217.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-49bd40d77e5so136461137.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 14:23:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727299225; x=1727904025; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5ikqskVacaiYlGqYTtdMd9WM+WdS9gWd86sHASES6xw=;
-        b=UJSmt1Q43yXu4muKO9wHe7eLj4RdK/7t1a6cirVa8BHFcxa22ls8tBzJPZqlBd+MM2
-         TbZc1cED52ZyuBCtGcF/vYFrEWe8juw2aYZOhKJtGlOeHm74EmnnhXOhfBo8QKNx9MZL
-         rsTTNS0ugdnlzGRWWVMLV5hSy83VRJaunFaDB0XfVUvtDh2qSryxQjNfcOguVPmd+Mrb
-         PRedmdQZvsqCuBGmL1Q7VMB6Rt8L/DaG/xsFw6M4Zi8lBDcHLoNaYDQkmXO9qTquxNa+
-         uWGjgWdj25eumFfpGLwttijCtZOPR8PJOmc78g9SvHmqNFRre5ONr4+dx5Raq/wXUZjW
-         LgnA==
+        d=google.com; s=20230601; t=1727299404; x=1727904204; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7K7gyhap+H2n6PUqc57MGvJNsh7ab/hzu5M29MqKlLU=;
+        b=EKsB1ur3z68YbKWx/1ubaJhva4dYkvRe3hH8VegsvgXseC92JjjPBlwvj/5ATDKrpB
+         KaiJhJ3jyRg2/2SEQxhGdaKceX2W8s8tycsqG6S2rEKzQB7gzMrX0mWqqf3uG+XhFz2G
+         m40mGclGX5e3LVJQAQHT0w/n7kTxuIsYw+7u5wGowzSG3XHMDGHwvok/csHvPmtycLu/
+         2wX31t7NB3lsXkWd+YEakCUZw+JatPfcN5wYHI4S7GYUdLpR8bufyO9QI6UuEQQVismm
+         Fsatswa+x6Yem3DtcVSdGvyFPL9NMzSAZY4MAQCK0+N6QaBAXwqZZNte55rXZcLt1Trw
+         TEnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727299225; x=1727904025;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5ikqskVacaiYlGqYTtdMd9WM+WdS9gWd86sHASES6xw=;
-        b=b2kbd3o3EJYPnvSWiXw/My3mOVj23IV0VZY+bS56HZdP2CKBdus3AL7nq6g+GgBTsM
-         ddeVXN8I108bIgdyarPkKhlgBkJl87oRQ5nqKEz463iLqOkro1ClsH5TO3QPXE6oLSNj
-         UuKSsIYz9cvp/500obeG9g7lKGsHu4kg/z4j4QS7okON/bkCYnHgQify50QuDpUgq1/t
-         NoNAqIzn4mLA7E+dsM2kf1AKdPCnMq8zfIoNSseEW9gMbOBgTRH3Jdeg4/dsDVt+0utW
-         h/YKz0tI6AOVVFPELv5AfFflwreC7bDRP1kcMWwzqGM6tkRLCAwqbzE3xsbDBHbIsLvO
-         YgxA==
-X-Forwarded-Encrypted: i=1; AJvYcCXeMjBJz9ugcgnIqRZCkKQp0ysd81ivD88+D5LbC13jMx9oj+l2DXeOv3eKVMjLywX/tgyZTFmCYCeKBic=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0Yz/7XxN5CJhm51hwXjy+1U+1m+o/PDTgz2/WwUMykXTBarIE
-	cqa4j/TYLVsLdggUkNrUx+TfuX5UvMfKH97BI3PMj6HUcUhf3a9HpqGEKguutdU=
-X-Google-Smtp-Source: AGHT+IFIwZzp5H6Akje3OgBbwgOTHgQxfddQGj0pEjO8YqbK94y5DOh3cQpldsUfZpC4ahcgtm8E8Q==
-X-Received: by 2002:a05:6512:3083:b0:530:ea60:7e07 with SMTP id 2adb3069b0e04-53877568f5cmr2200879e87.58.1727299225256;
-        Wed, 25 Sep 2024 14:20:25 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-537a864d56fsm616189e87.250.2024.09.25.14.20.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 14:20:24 -0700 (PDT)
-Date: Thu, 26 Sep 2024 00:20:23 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Cc: heikki.krogerus@linux.intel.com, tzungbi@kernel.org, jthies@google.com, 
-	pmalani@chromium.org, akuchynski@google.com, Benson Leung <bleung@chromium.org>, 
-	Guenter Roeck <groeck@chromium.org>, chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/8] platform/chrome: cros_ec_typec: Thunderbolt support
-Message-ID: <pl6xv55ohx3jprgc67umftjrwzlvass75d2pqzzdnktvt3njxh@gbujd5qf3tpz>
-References: <20240925162513.435177-1-abhishekpandit@chromium.org>
- <20240925092505.7.Ic61ced3cdfb5d6776435356061f12307da719829@changeid>
- <gqceveqpbvmiv3mg5cs3k3qd4rr6fpb3xksvxvdhkugr52paoj@olks6bqjc436>
- <CANFp7mX0=9qHb8_UotKjDo8rGemA7L+NGp3J+qSzBg_9Pp2CTw@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1727299404; x=1727904204;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7K7gyhap+H2n6PUqc57MGvJNsh7ab/hzu5M29MqKlLU=;
+        b=Glq7fpXIwbDnHfmpHXwjTcqk7ZW/DKWWdfiM09sMF30LrUGBAe0QuG7ojEsEmSbbqb
+         r9lZ8C8EL3UaT7Z+HtjZKZll/W5kWWIj/cyn1sFMkfKwhBVwEUlWbR97gceff25iTGa1
+         rpFf1npu/r7YD9I82W1U1DVQ20cFMnq5UPnjPmuLS6ZG8+i+jsvY2SIQJlNjp+96F9fj
+         Yd3G/Pnu4DTOhSbAhbTZQ/FtTGFV8oumhgjdtXnoy2PFCKzgoVfTg6H8xPJ+lLQxesID
+         etidBfNOabLZcbLSIw+CRxeVmKhzB3ovkGZ0pFqjGTU/oiCIMbdkv60lc1Bn0YauHopl
+         dstw==
+X-Forwarded-Encrypted: i=1; AJvYcCV0CQDo+cDQViw1neKmTQLdJDCXnTrN7kcF7321wiD47qVXrj5a0Q9efEk4z/1MqNkn7I/iM/M+4CLMApo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUotiKa8SGy9kREHoW+KfHQMFnWZ+AsNgWDU3wLyTjI66rMC5K
+	F9jeqImTIkUS7iA6ocirDwXqE0nVRELw/si6zzUSPRCJsapTC3/VL08KNkXeByEGsAmKOYv0qcJ
+	rgBAFPjGaFpRMSJgYMGCupQKGOYy0CHG+X42v
+X-Google-Smtp-Source: AGHT+IHARl/sqH+UF9Tgj9PZ7hVymFoqDVNm06j0xdMsPZYx83BlOyjx2GcScpIQBmBMYcIWEgcI6u5EJYgdRDazAFs=
+X-Received: by 2002:a05:6102:2911:b0:48f:3f9a:7609 with SMTP id
+ ada2fe7eead31-4a15dc67936mr5164754137.5.1727299403620; Wed, 25 Sep 2024
+ 14:23:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANFp7mX0=9qHb8_UotKjDo8rGemA7L+NGp3J+qSzBg_9Pp2CTw@mail.gmail.com>
+References: <20240925030225.236143-1-zhaoyang.huang@unisoc.com>
+ <20240925024215.265614f6839e752882b1c28b@linux-foundation.org> <CAGWkznG40FyJxOzB1jRsBVGPrZhV=ceKWzTQSTq2TbzRLMAZ5w@mail.gmail.com>
+In-Reply-To: <CAGWkznG40FyJxOzB1jRsBVGPrZhV=ceKWzTQSTq2TbzRLMAZ5w@mail.gmail.com>
+From: Yu Zhao <yuzhao@google.com>
+Date: Wed, 25 Sep 2024 15:22:46 -0600
+Message-ID: <CAOUHufaQh9OmbnraLvpS+RMqYQOeatSrb==CaNKn63j7yfJCgw@mail.gmail.com>
+Subject: Re: [PATCH] mm: migrate LRU_REFS_MASK bits in folio_migrate_flags
+To: Zhaoyang Huang <huangzhaoyang@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, 
+	David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, steve.kang@unisoc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 25, 2024 at 11:42:46AM GMT, Abhishek Pandit-Subedi wrote:
-> On Wed, Sep 25, 2024 at 10:13 AM Dmitry Baryshkov
-> <dmitry.baryshkov@linaro.org> wrote:
+On Wed, Sep 25, 2024 at 5:50=E2=80=AFAM Zhaoyang Huang <huangzhaoyang@gmail=
+.com> wrote:
+>
+> On Wed, Sep 25, 2024 at 5:42=E2=80=AFPM Andrew Morton <akpm@linux-foundat=
+ion.org> wrote:
 > >
-> > On Wed, Sep 25, 2024 at 09:25:08AM GMT, Abhishek Pandit-Subedi wrote:
-> > > Add support for entering and exiting Thunderbolt alt-mode using AP
-> > > driven alt-mode.
+> > On Wed, 25 Sep 2024 11:02:25 +0800 "zhaoyang.huang" <zhaoyang.huang@uni=
+soc.com> wrote:
+> >
+> > > From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
 > > >
-> > > Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-> > > ---
+> > > Bits of LRU_REFS_MASK are not inherited during migration which lead t=
+o
+> > > new_folio start from tier0. Fix this by migrate the bits domain.
+> >
+> > I'm having trouble understanding this, sorry.  Please more fully
+> > describe the runtime effects of this flaw.
+> Sorry for bringing confusion. According to my understanding, MGLRU
+> records how many times that vfs access this page in a range of bits
+> domain(LRU_REFS_MASK) in folio->flags which are not being migrated to
+> new_folios so far. This commit would like to do so to have the
+> new_folio inherit these bits from the old folio. Is it right and
+> worthy to do?
+
+Correct. And this was not done because
+1. While LRU_REFS_MASK is useful, but it's not important, and
+2. More important information, e.g., generations, is lost during migration.
+
+So I'm not sure how much this patch can help. But you think it does, why no=
+t.
+
+> > > --- a/include/linux/mm_inline.h
+> > > +++ b/include/linux/mm_inline.h
+> > > @@ -291,6 +291,12 @@ static inline bool lru_gen_del_folio(struct lruv=
+ec *lruvec, struct folio *folio,
+> > >       return true;
+> > >  }
 > > >
-> > >  drivers/platform/chrome/Makefile              |   1 +
-> > >  drivers/platform/chrome/cros_ec_typec.c       |  29 +--
-> > >  drivers/platform/chrome/cros_typec_altmode.h  |  14 ++
-> > >  .../platform/chrome/cros_typec_thunderbolt.c  | 184 ++++++++++++++++++
-> > >  4 files changed, 216 insertions(+), 12 deletions(-)
-> > >  create mode 100644 drivers/platform/chrome/cros_typec_thunderbolt.c
-> >
-> > This patch looks like nearly exact 1:1 copy of the previous one. Please
-> > merge both altmode implementations in the same way as tcpm.c does.
-> 
-> It's easier for tcpm.c to have a merged implementation because it
-> simply forwards VDMs to the internal state machine to handle without
-> doing anything with them. Our implementation is closer to
-> ucsi/displayport.c which needs to maintain an internal state machine
-> for DP and TBT VDMs and respond differently.
-> 
-> I can merge the two but I'd like to understand intent (reduce code
-> duplication? reduce the number of files?). As it is, keeping the files
-> separate makes it easier to understand how each alt-mode operates in
-> my opinion.
+> > > +static inline void folio_migrate_refs(struct folio *new_folio, struc=
+t folio *folio)
 
-Separate common code and AltMode-specific code. This way we reduce a
-risk of errors fixed in only one of two drivers and at the same time the
-driver clearly separates common vs specific code paths (e.g. VDM
-handling is mode-specific, while the rest of the code is common).
+Nitpick: folio_migrate_refs(struct folio *new, struct folio *old)
 
-> 
-> >
-> > --
-> > With best wishes
-> > Dmitry
+> > > +{
+> > > +     unsigned long refs =3D READ_ONCE(folio->flags) & LRU_REFS_MASK;
+> > > +
+> > > +     set_mask_bits(&new_folio->flags, LRU_REFS_MASK, refs);
+> > > +}
+> > >  #else /* !CONFIG_LRU_GEN */
+> > >
+> > >  static inline bool lru_gen_enabled(void)
+> > > @@ -313,6 +319,8 @@ static inline bool lru_gen_del_folio(struct lruve=
+c *lruvec, struct folio *folio,
+> > >       return false;
+> > >  }
+> > >
+> > > +static inline void folio_migrate_refs(struct folio *new_folio, struc=
+t folio *folio)
 
--- 
-With best wishes
-Dmitry
+Ditto.
+
+> > > +{}
+
+A line break between "{" and "}".
+
+> > >  #endif /* CONFIG_LRU_GEN */
+> > >
+> > >  static __always_inline
+> > > diff --git a/mm/migrate.c b/mm/migrate.c
+> > > index 923ea80ba744..60c97e235ae7 100644
+> > > --- a/mm/migrate.c
+> > > +++ b/mm/migrate.c
+> > > @@ -618,6 +618,7 @@ void folio_migrate_flags(struct folio *newfolio, =
+struct folio *folio)
+> > >       if (folio_test_idle(folio))
+> > >               folio_set_idle(newfolio);
+> > >
+> > > +     folio_migrate_refs(newfolio, folio);
+> > >       /*
+> > >        * Copy NUMA information to the new page, to prevent over-eager
+> > >        * future migrations of this same page.
+> > > --
+> > > 2.25.1
 
