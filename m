@@ -1,187 +1,181 @@
-Return-Path: <linux-kernel+bounces-339391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D74C986488
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:13:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4856598648C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:13:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36D1E28920D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:13:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67C911C25EA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AEA83B796;
-	Wed, 25 Sep 2024 16:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06813D97F;
+	Wed, 25 Sep 2024 16:13:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qiJ7C2J0"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mj6lMq2c"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 863812F5B;
-	Wed, 25 Sep 2024 16:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D018825;
+	Wed, 25 Sep 2024 16:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727280784; cv=none; b=F+7CbzCJRYJt44wGPhpJ28S/Z+4ehJplYuGCt0L3g/n5/JA9EgRfeFUT01tdWOOu0SKQJxJeXJGEpWknTPEIQ/eoeDDH9Ux8465nbx++i80Ol12GkGUj7fE9iLHphfJSuRH70SxA5/NoYr7Kyxc27Je2pLts4bTSuRuWbPsrcC4=
+	t=1727280799; cv=none; b=ikNa2ITj12W2oyNsTGob6XBC7RrZEldPI1xGPYtP1Smf5/Mc19atAANp/19bKF4gDcD6F2p+/34dyZ7TrnuyHdziujmdYfHDyWhg9IEN1elGRYwvdWnUMpE5BC6c9QYypv0tGbGyjALw8ZgX75Kz4mV0+kN8sCelEmIBOkURkt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727280784; c=relaxed/simple;
-	bh=OO2N0MlWDN0Lh2XfHNJMedIUwrmR2LNmHR79B3i0gaY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SaK4kPlwOnprQa26mL83sj8EJ4H76MoY4YXRhIn4vkkitzoS31cV3GhJ+2AQTsAbzMA2blyxuT26TZPJGuZldaCln3cidM47Vs4lU1zC+PM6f9wjDDRAohxXNO5iyhrA9t7KS+WOgomq5tKu+xUkWUEEw3852HP3aZd9kQLzy/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qiJ7C2J0; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48PGCrtI120414;
-	Wed, 25 Sep 2024 11:12:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1727280773;
-	bh=usMqwaFjtbUHhvdgniW/2exXtWe9frXJJ19B3XP9a3s=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=qiJ7C2J0oRE3zhKmtajbV0CEPR8+zhOJ390s1kgGaC7POUMZV8gx2WSyLP1x+cUef
-	 /FqczTibZkijzrx3p1HIimxX7yv4Gm3QBBt/GLMu5lOCiOUsv+uW7xoLhaMmflW3Li
-	 krwX48edxbL/me4Yd2yHCcnZpnMlUFdisUCae644=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48PGCrms015577
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 25 Sep 2024 11:12:53 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 25
- Sep 2024 11:12:52 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 25 Sep 2024 11:12:52 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48PGCqtA065205;
-	Wed, 25 Sep 2024 11:12:52 -0500
-Message-ID: <809b9eaa-a539-4309-95a3-c9fc9c39288b@ti.com>
-Date: Wed, 25 Sep 2024 11:12:52 -0500
+	s=arc-20240116; t=1727280799; c=relaxed/simple;
+	bh=fh87/7/cjeNB1MLFEZVeuefzCQFZEWjVB8DAwrbLGZQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XxpBjN6Uj8DPxwOUCh3U8MIVxtlf9LfpKEg5riBLOwDSoak0aJ9mqrmV7KyRH/f1W7pQRm5xvnuDYM8Jln6MBYg9d+7oJyA1Rn+MCFADZPNFCT3qc5CGAhDqs0/WhQX8c7Puzr5ixuuHBEmtTBNsCMD5KVmXSUeZ6nRLLo1b0j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mj6lMq2c; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48PAXZ6m021829;
+	Wed, 25 Sep 2024 16:13:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=Xn5KB4XMfCoVaqwl1DhkyrSK
+	BLK4FYZuKYagmLMmDg8=; b=mj6lMq2cnzYk8kWlV97b+04DEimao5DMHNFV/2dj
+	GJlzImEKl2MIfIeJBfmYMuurk0FRwYicjJ7IodsY0muNOYVadIwbwH/GNFTy0DMQ
+	5xYrC+ce1KfCMTOgf8+ScGvkKZiTBW9sZCcQRt38VWxQ2GNa9s1DwXVnuOdcL13d
+	HB0PeQw7J29VUx3gp/rm8L2XIur4Jtsol+8OSWTHa6/MDIHyMpXhqc15b5Qkq2kO
+	nD9e8/VgF/Yy9j2Wo797ezmRWURMTsNAAiT+g/A5X7YB/0KhyTDyAYylZIHpoozo
+	qNMoQEN92voAZUTyq+Dyg+4iZJsoojvJSmFO0nttXCuu/g==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41snqymv5c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Sep 2024 16:13:13 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48PGDB5n024261
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Sep 2024 16:13:11 GMT
+Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 25 Sep 2024 09:13:11 -0700
+Date: Wed, 25 Sep 2024 09:13:10 -0700
+From: Bjorn Andersson <quic_bjorande@quicinc.com>
+To: Deepak Kumar Singh <quic_deesin@quicinc.com>
+CC: <andersson@kernel.org>, <quic_clew@quicinc.com>,
+        <mathieu.poirier@linaro.org>, <linux-kernel@vger.kernel.org>,
+        <quic_sarannya@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH V2] rpmsg: glink: Add abort_tx check in intent wait
+Message-ID: <ZvQ2lnRO/dTyH1g3@hu-bjorande-lv.qualcomm.com>
+References: <20240925072328.1163183-1-quic_deesin@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 6/6] cpufreq: ti-cpufreq: Update efuse/rev offsets in
- AM62 family
-To: Dhruva Gole <d-gole@ti.com>, Nishanth Menon <nm@ti.com>,
-        Vignesh
- Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar
-	<viresh.kumar@linaro.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        Bryan Brattlof
-	<bb@ti.com>
-References: <20240925-ti-cpufreq-fixes-v5-v6-0-46f41a903e01@ti.com>
- <20240925-ti-cpufreq-fixes-v5-v6-6-46f41a903e01@ti.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20240925-ti-cpufreq-fixes-v5-v6-6-46f41a903e01@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240925072328.1163183-1-quic_deesin@quicinc.com>
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: PivgByQxnxAC1xkwdyBjDtHVxBtNFqdf
+X-Proofpoint-ORIG-GUID: PivgByQxnxAC1xkwdyBjDtHVxBtNFqdf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 adultscore=0 bulkscore=0 phishscore=0 mlxlogscore=999
+ spamscore=0 lowpriorityscore=0 clxscore=1011 mlxscore=0 malwarescore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409250114
 
-On 9/25/24 9:54 AM, Dhruva Gole wrote:
-> With the Silicon revision being taken directly from socinfo, there's no
-> longer any need for reading any SOC register for revision from this driver.
-> Hence, we do not require any rev_offset for AM62 family of devices.
-> The efuse offset should be 0x0 for AM625 as well, as the syscon
-> register being used from DT refers to the efuse_offset directly.
+On Wed, Sep 25, 2024 at 12:53:28PM +0530, Deepak Kumar Singh wrote:
+> From: Sarannya S <quic_sarannya@quicinc.com>
 > 
-> However, to maintain the backward compatibility with old devicetree, also
-> add condition to handle the case where we have the wrong offset and add
-> the older efuse_offset value there such that we don't end up reading the
-> wrong register offset.
+> On remote susbsystem restart rproc will stop glink subdev which will
+
+"When stopping or restarting a remoteproc the glink subdev stop will
+invoke qcom_glink_native_remove(). Any ..."
+
+> trigger qcom_glink_native_remove, any ongoing intent wait should be
+
+Please always have () on function names, to make clear they are indeed
+functions.
+
+s/intent wait/wait for intent request/
+
+And I think "can" is a better word than "should" (we can abort the wait
+to not waiting for the intents that aren't expected to come).
+
+> aborted from there otherwise this wait delays glink send which potentially
+> delays glink channel removal as well. This further introduces delay in ssr
+> notification to other remote subsystems from rproc.
 > 
-> Signed-off-by: Dhruva Gole <d-gole@ti.com>
+> Currently qcom_glink_native_remove is not setting channel->intent_received,
+
+This observation is correct, but I don't see a reason why it should. So
+express this in terms of the applicable logic (i.e. we have abort_tx to
+signal this scenario already, let's use it)
+
+> so any ongoing intent wait is not aborted on remote susbsystem restart.
+> abort_tx flag can be used as a condition to abort in such cases.
+> 
+> Adding abort_tx flag check in intent wait, to abort intent wait from
+> qcom_glink_native_remove.
+
+More () please.
+
+> 
+> Fixes: c05dfce0b89e ("rpmsg: glink: Wait for intent, not just request ack")
+> Cc: stable@vger.kernel.org
+
+I don't think the current code is broken, just suboptimal. And as such I
+don't think this is a bugfix.
+
+Perhaps I'm missing some case here? Otherwise, please drop the Fixes and
+Cc...
+
+> Signed-off-by: Sarannya S <quic_sarannya@quicinc.com>
+> Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
 > ---
->   drivers/cpufreq/ti-cpufreq.c | 23 +++++++++++++++++------
->   1 file changed, 17 insertions(+), 6 deletions(-)
+>  drivers/rpmsg/qcom_glink_native.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
-> index ba621ce1cdda694c98867422dbb7f10c0df2afef..8a97b95b4c44a76b12cab76ddc0f9a5b8ae73f84 100644
-> --- a/drivers/cpufreq/ti-cpufreq.c
-> +++ b/drivers/cpufreq/ti-cpufreq.c
-> @@ -313,10 +313,9 @@ static const struct soc_device_attribute k3_cpufreq_soc[] = {
->   
->   static struct ti_cpufreq_soc_data am625_soc_data = {
->   	.efuse_xlate = am625_efuse_xlate,
-> -	.efuse_offset = 0x0018,
-> +	.efuse_offset = 0x0,
->   	.efuse_mask = 0x07c0,
->   	.efuse_shift = 0x6,
-> -	.rev_offset = 0x0014,
->   	.multi_regulator = false,
->   };
->   
-> @@ -325,7 +324,6 @@ static struct ti_cpufreq_soc_data am62a7_soc_data = {
->   	.efuse_offset = 0x0,
->   	.efuse_mask = 0x07c0,
->   	.efuse_shift = 0x6,
-> -	.rev_offset = 0x0014,
->   	.multi_regulator = false,
->   };
->   
-> @@ -334,7 +332,6 @@ static struct ti_cpufreq_soc_data am62p5_soc_data = {
->   	.efuse_offset = 0x0,
->   	.efuse_mask = 0x07c0,
->   	.efuse_shift = 0x6,
-> -	.rev_offset = 0x0014,
->   	.multi_regulator = false,
->   };
->   
-> @@ -349,11 +346,25 @@ static int ti_cpufreq_get_efuse(struct ti_cpufreq_data *opp_data,
->   				u32 *efuse_value)
->   {
->   	struct device *dev = opp_data->cpu_dev;
-> +	struct device_node *np = opp_data->opp_node;
->   	u32 efuse;
->   	int ret;
->   
-> -	ret = regmap_read(opp_data->syscon, opp_data->soc_data->efuse_offset,
-> -			  &efuse);
-> +	/*
-> +	 * The following check is used as a way to check if this is an older devicetree
+> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+> index 82d460ff4777..ff828531c36f 100644
+> --- a/drivers/rpmsg/qcom_glink_native.c
+> +++ b/drivers/rpmsg/qcom_glink_native.c
+> @@ -438,7 +438,6 @@ static void qcom_glink_handle_intent_req_ack(struct qcom_glink *glink,
+>  
+>  static void qcom_glink_intent_req_abort(struct glink_channel *channel)
+>  {
+> -	WRITE_ONCE(channel->intent_req_result, 0);
+>  	wake_up_all(&channel->intent_req_wq);
+>  }
+>  
+> @@ -1354,8 +1353,9 @@ static int qcom_glink_request_intent(struct qcom_glink *glink,
+>  		goto unlock;
+>  
+>  	ret = wait_event_timeout(channel->intent_req_wq,
+> -				 READ_ONCE(channel->intent_req_result) >= 0 &&
+> -				 READ_ONCE(channel->intent_received),
+> +				 (READ_ONCE(channel->intent_req_result) >= 0 &&
+> +				 READ_ONCE(channel->intent_received)) ||
+> +				 glink->abort_tx,
 
-"check is used as a way to check" sound redundant, maybe just:
+This looks good. But Chris and I talked about his patches posted
+yesterday, and it seems like a good idea to differentiate the cases of
+aborted and granted = 0.
 
-This checks for old AM625 Devicetrees where the syscon was a phandle
-to the wkup_conf parent, this required a hard-coded offset to
-the efuse register.
+Chris' patch is fixing a real bug, so that should be backported, so
+let's conclude that discussion (with this patch included or in mind).
 
-> +	 * being used where the entire wkup_conf node was marked as "syscon",
-> +	 * "simple-mfd".
-> +	 * Since this bug only affects AM625, make sure it enters this condition
-> +	 * only for that SoC.
-> +	 */
-> +	if (of_device_is_compatible(np, "simple-mfd") &&
-> +	    of_device_is_compatible(np, "ti,am625")) {
+Regards,
+Bjorn
 
-Kinda hacky, but keeping backwards compat often is hacky..
-
-Does `of_device_is_compatible(np, "ti,am625")` actually work here? I'm assuming you
-tested with an old DT to make sure this path ever got taken. Maybe put a warning
-here that an old DT is in use and the user should update at some point.
-
-Andrew
-
-> +		ret = regmap_read(opp_data->syscon, opp_data->soc_data->efuse_offset + 0x0018,
-> +				  &efuse);
-> +	} else {
-> +		ret = regmap_read(opp_data->syscon, opp_data->soc_data->efuse_offset,
-> +				  &efuse);
-> +	}
->   	if (opp_data->soc_data->quirks & TI_QUIRK_SYSCON_MAY_BE_MISSING && ret == -EIO) {
->   		/* not a syscon register! */
->   		void __iomem *regs = ioremap(OMAP3_SYSCON_BASE +
+>  				 10 * HZ);
+>  	if (!ret) {
+>  		dev_err(glink->dev, "intent request timed out\n");
+> -- 
+> 2.34.1
 > 
 
