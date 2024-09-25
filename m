@@ -1,134 +1,110 @@
-Return-Path: <linux-kernel+bounces-339381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C1E198643D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:56:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FD8B98643F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:57:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B02B1C26874
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:56:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 653361C23976
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346FF199A2;
-	Wed, 25 Sep 2024 15:56:31 +0000 (UTC)
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8BE81C6A1;
+	Wed, 25 Sep 2024 15:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GAHcGNsp"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6131A29A
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 15:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD181BC23;
+	Wed, 25 Sep 2024 15:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727279790; cv=none; b=D/i8R7rbPfjIitQQteNrMk7udKpd7ssBVxMNkiCLQr3ZydEWCPvX4jj7sweyeG0Ea9BfWJdIlUiuppmhCuKAfK3NGRxGnbpqcFP0vkF5yXMSVHKMMmY24ZJKNSAx1Ar+OFCazIbZh+aVfRQ1WQjCV26J9q626chDttH1ub9wU3E=
+	t=1727279816; cv=none; b=bpGlAL6Mb09sn6J0bGHd5jzc/6lgUBTQ4WuyuzMb8UutqYF6qWCQ8HortnYOKvSFJFMCX3VZB9PKhRmnUdQmUEn+rZjWcPfLs8TFNY1jc42NS8MSuHlhUESyyd+RsNNx3nDBIN4C9CiZYLH443fUX/XVagEW6w0Q3TolHa+ywgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727279790; c=relaxed/simple;
-	bh=CIp/l6tYI+u7YR2VJVBHZwHcYbvsSX7uJzRJO8fWMt4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=udNlPAKu8M3gcub6O6EXpDu/egoauedopDU3ao7HosR2rLU555boJ41JjKw3GvWsS5u7rU0LMBY9nAuh+5txfEqkCFZ7ywf2BzyZaxK5E7CCnbxbdX8ui5wk3Ln8yFRp8WFTZT4jTuFpnQAYSVvnEyeEJ7mk4lEO49+KOl/BK/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ooseel.net; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ooseel.net
+	s=arc-20240116; t=1727279816; c=relaxed/simple;
+	bh=5OUE80WtU0P2alzw7pidUQvYWCHPiDGNs8PM/oEiQK8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O+sbFUdSSRNSyQ63+9uiNoQrt1rBYgIHpXJ+z+bHto6B36IUPcQszobjBny9mDjrvfkkih7HHW3CjU387mPnf9uWsjKupNEkdXrBKiedEb0O/fooCn6tQl5Z8TC0QolhvI2++DN+lOG7u8BQW1EbCe7PNYKdX5H4189dbMG4tkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GAHcGNsp; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71798661a52so70610b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:56:28 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5365aa568ceso24371e87.0;
+        Wed, 25 Sep 2024 08:56:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727279813; x=1727884613; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5OUE80WtU0P2alzw7pidUQvYWCHPiDGNs8PM/oEiQK8=;
+        b=GAHcGNspvNOOZN4pr7h8DGjOX4a+OHYjRbM0m0KGbwq6MT/ZPaDo3irqFQAZcjT4u3
+         hX0pXr9AtSbByQuL8dvSm5hOjLY2E3rup3XRbFhw/yF5N8/N8SowBGI1X5HAsmZgJnyM
+         OhQ23KnIyAhiFKE5JtWS00ERhdXlhq+WdwpA4t3Pqvvaa/UurLqbL2dPkoA9gNG17ORR
+         tpYhBf/4q/pcgtUnK7BA1K9YsZNRkwO9l1M2YhKZMngIomAxBXnHKRSDjMHMb2ci0WI3
+         T+ppoBNaV01zct+vw5wSINIfL7ETEjb38DRxg55HFY0wnAY9/8q0nSZC1VgQ92y/nw8S
+         H+pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727279788; x=1727884588;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/EGKCLuEpsZX8eShN6EA6IJ5o9oCBmRtPZ33EEovFzc=;
-        b=uhDE1kJCIyJmTDgwZXTcJ0uUWQOhDzYsBC07t3NBhCVrr16MMC0dMrp4DVS+rkjjoT
-         922t9w1P7w4s0qnXpMJdbw2dg8jgWbMPjYmHvE1asw2ISfDafHUrLJWdN6UI12C89M6F
-         swz2zkKL6T5Kl9USym945Enc5cHRgFXWUcd/orZtaTwQt0zc5pscQyu9PdzUxJOrHzY1
-         8PZRA3vsulxvVDkjVh0qab+8npAQ3/tcCRDj/F1gOhPY9WrLPqBSzLWuFOHyIbKEh/jz
-         IB/p88t07s2H9G7z5Ow03M6o3LFB9RMy7TyMMHmFxEPomHAmpzLUSqvOY/YRM/5PeokI
-         zHjA==
-X-Forwarded-Encrypted: i=1; AJvYcCW8AhkAmtZVpwYY3pLuAgwCS0R5ItduvFyioQDHKaFRdJiAukcRAa1FqqIMwHKO7ocaWGKOc0GyxpzxyGs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+u4oAdrSFTyfcOTGEe2jjgZvonlyWWf4ODNJfKe4MCsich4mN
-	FlIDAa0vWGYMdXVCxwjcSrQiLytEReNcvklEmJZ1P9sc5ICbG/NO
-X-Google-Smtp-Source: AGHT+IFfjaADO2ScvbyWwiOLTtmupiLDz5RwaOB779NvMl7Z1bVFoWk8AH6+X/sXpaD7Q1r9lnG0BA==
-X-Received: by 2002:a05:6a00:3d41:b0:717:92d8:ca5c with SMTP id d2e1a72fcca58-71b19250df2mr168153b3a.3.1727279788055;
-        Wed, 25 Sep 2024 08:56:28 -0700 (PDT)
-Received: from localhost.localdomain ([1.213.237.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71afc834fdbsm2932222b3a.20.2024.09.25.08.56.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 08:56:27 -0700 (PDT)
-From: Leesoo Ahn <lsahn@ooseel.net>
-To: lsahn@wewakecorp.com
-Cc: Leesoo Ahn <lsahn@ooseel.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] mmzone: remove redundant exception handler on pfn_valid()
-Date: Thu, 26 Sep 2024 00:55:28 +0900
-Message-ID: <20240925155540.4087150-1-lsahn@ooseel.net>
-X-Mailer: git-send-email 2.46.1
+        d=1e100.net; s=20230601; t=1727279813; x=1727884613;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5OUE80WtU0P2alzw7pidUQvYWCHPiDGNs8PM/oEiQK8=;
+        b=QefLNKmeh+cc/OhUtUoQYFKjcPKwtduMGItd1Rk9eamk8s7RrTMSmiLpogNjkpj3Ge
+         gjpDQEJMxbfqsXr5a4X15uNx0qW5Yks332MeL0qYLPtsN/gwoOHAuHiv2VRVCSmkqpHt
+         y/Q8uZ1txd0K0AUEJmu3GXnL0xmSLmQSYqcJj7PCbpUw3MbzyQ/jSWXuR1+m9PeFAEHb
+         Tn5yCy7KT9UuWPs1NJBqRxbd8FsooavmHE+W2yfDQB1/5wN401ixUsg0h+rXlEM1884G
+         L2JtaEP9xv72DlgQFwb2ccMd8lOBXvOsAuLCpbwYK7axSTQe4cW3ponJ9ihxfCWIRiBr
+         /Q5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUg8i18PulqKPnwiF1D6g9g8pdBfyrCrxCbGVO5S1XcbUGdPgvKP4maKFvfaMDGAPwGJaJh92eHMYlmS+kL@vger.kernel.org, AJvYcCVjr5vYEErFNoTy4toA7klY9WQv+HkgwW/5PQvM5tAU1fjU6wF081OwHlROx9SDllTVr5FcocCfvJNArNmBFQ==@vger.kernel.org, AJvYcCX9m1jgtRlB8klbEaYQb/c6v92gef2KbxZi//mf9P7kTv7+hegqRMZogYLb0n6KnOlcls/r/GH6yw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRmM7MqPPOw5wm2ZuZU5WxslJj2zbdk7xzB1yCiLMOaGlt4erM
+	v0KYpvDmgz3wgepyGkUz5bWbSSpxX58alJ68KprIXvQywmpGAJWo8KPxKabNly4bAbYv6AQ8ODt
+	sQSjLm9BD9BtC3phWgr0BQq2Oo+I=
+X-Google-Smtp-Source: AGHT+IFdEcDsvri2q6U3WW1OBmRMf60+DtFuTxhJJuwUKPa6CEiFG2mxuppBB82HSIGEhIhVV0fcvjyRAZVHKcFLOjw=
+X-Received: by 2002:a05:6512:124b:b0:52c:e10b:cb33 with SMTP id
+ 2adb3069b0e04-5387756630cmr2857168e87.50.1727279812232; Wed, 25 Sep 2024
+ 08:56:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240625151807.620812-1-mjguzik@gmail.com> <6afb4e1e2bad540dcb4790170c42f38a95d369bb.camel@xry111.site>
+In-Reply-To: <6afb4e1e2bad540dcb4790170c42f38a95d369bb.camel@xry111.site>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 25 Sep 2024 17:56:40 +0200
+Message-ID: <CAGudoHFrTWktBYQjrQMJbVZvWLPD3A51YsOMOJqAtpdruSkGsQ@mail.gmail.com>
+Subject: Re: [PATCH v3] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: brauner@kernel.org, Miao Wang <shankerwangmiao@gmail.com>, viro@zeniv.linux.org.uk, 
+	jack@suse.cz, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	io-uring@vger.kernel.org, axboe@kernel.dk, torvalds@linux-foundation.org, 
+	loongarch@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-1). It can ensure the upper PAGE_SHIFT'ed bits of PHYS_PFN(..) are clear
-by the C11 standard:
+On Wed, Sep 25, 2024 at 4:30=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wrot=
+e:
+> There's a special case, AT_FDCWD + NULL + AT_EMPTY_PATH, still resulting
+> EFAULT, while AT_FDCWD + "" + AT_EMPTY_PATH is OK (returning the stat of
+> current directory).
+>
+> I know allowing NULL with AT_FDCWD won't produce any performance gain,
+> but it seems the difference would make the document of the API more
+> nasty.
+>
+> So is it acceptable to make the kernel "hide" this difference, i.e.
+> accept AT_FDCWD + NULL + AT_EMPTY_PATH as-is AT_FDCWD + "" +
+> AT_EMPTY_PATH?
+>
 
-    6.5.7 Bitwise shift operator
+huh, that indeed makes sense to add. kind of weird this was not sorted
+out at the time, but i'm not going to pointer a finger at myself :) so
+ACK from me as far as the idea goes
 
-    ...
+I presume you can do the honors? :)
 
-    The result of E1 >> E2 is E1 right-shifted E2 bit positions. If E1 has
-    an unsigned type or if E1 has a signed type and a nonnegative value,
-    the value of the result is the integral part of the quotient of E1 / 2^E2.
-
-@pfn parameter of pfn_valid(..) is unsigned long and PHYS_PFN(..) makes
-the upper bits clear(zero) always with it. Otherwise, the result of E1 / 2^E2
-doesn't make sense in the document.
-
-2). x86 instructions
-
-The following x86 instructions are the part of the redundant exception handler:
-
-    ...
-    movabs  $0xfffffffffffff,%rax
-    and     %rdi,%rax
-    cmp     %rax,%rdi
-    je      22
-    xor     %eax,%eax
-    jmp     __x86_return_thunk
-22: push    %rbp
-    ...
-
-%rdi would be the @pfn parameter of pfn_valid(..) and -1 assigned to %rax.
-'je' always takes place by %rdi AND and CMP ops with %rax.
-
-Therefore, the exception handler is unnecessary.
-
-Signed-off-by: Leesoo Ahn <lsahn@ooseel.net>
----
- include/linux/mmzone.h | 9 ---------
- 1 file changed, 9 deletions(-)
-
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 17506e4a2835..164ae80977d6 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -2028,15 +2028,6 @@ static inline int pfn_valid(unsigned long pfn)
- 	struct mem_section *ms;
- 	int ret;
- 
--	/*
--	 * Ensure the upper PAGE_SHIFT bits are clear in the
--	 * pfn. Else it might lead to false positives when
--	 * some of the upper bits are set, but the lower bits
--	 * match a valid pfn.
--	 */
--	if (PHYS_PFN(PFN_PHYS(pfn)) != pfn)
--		return 0;
--
- 	if (pfn_to_section_nr(pfn) >= NR_MEM_SECTIONS)
- 		return 0;
- 	ms = __pfn_to_section(pfn);
--- 
-2.46.0
-
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
