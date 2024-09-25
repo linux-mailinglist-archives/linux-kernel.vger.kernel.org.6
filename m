@@ -1,141 +1,118 @@
-Return-Path: <linux-kernel+bounces-339231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DB8A986189
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:54:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7146D98618A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:54:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EDDE1C25524
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:54:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35415287E4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:54:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A061891AA;
-	Wed, 25 Sep 2024 14:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GZLPZLuR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 348E318952F;
+	Wed, 25 Sep 2024 14:23:40 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8A1188CC9;
-	Wed, 25 Sep 2024 14:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA681898F3
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 14:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727274184; cv=none; b=S3O3Y8E2hSrQ6yN6GlYyxnBlIYIeykXv6kCmHmxVAg88MvBFf4U/Pa3sjWvDJhGVBuZeMw3+t4DVXx9KpEwCZQQpXTII2514JU/xhAw+BHJjQCUDr/8JDG0/oJ5PWRQQ/X67fEDxr4G7+RSwvrAOP31D3JecSgEjgOfAWiYAz5Q=
+	t=1727274219; cv=none; b=RlIPh+Qdd3rV2A5Sij3/a6jfs1T43rpsvmRFHBaa+37dUyjWLQiUwS5RFZs0U/emujNccGGRA4sWwQUrVUtz14aJ9KtCBA1qdDm1bUJXiRMXDAeZGFUIkkgDyd1vj7C7+f7Vj7mfHjuTY2iuUS72mNMRL/LDtAMiJM/qPnKveXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727274184; c=relaxed/simple;
-	bh=lHacvqU9sTiBr2x2zGC7Qa98PXBs2PGhN+ijPp+OQac=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wjctip6wPy0CJQBjcx4uzOA9XkFqdnV9H9B0FdM4C+ew4jpvNZj/s8LVmGlzXkou24LIg2SEwbejc28ocPf3LjY6uRe40rsebc8w87dewju47Gw1EdVn1czlddFfQ0NH7zcr3amiol7qluoR43So/5RZA2wpRYa88K2claeORm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GZLPZLuR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E3B6C4CEC3;
-	Wed, 25 Sep 2024 14:23:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727274184;
-	bh=lHacvqU9sTiBr2x2zGC7Qa98PXBs2PGhN+ijPp+OQac=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GZLPZLuRPmNwfC1/WlxnOlzrEp5FYHiR08Ma4ezjz9XILqK+BguSVvoB8L40Ncxg0
-	 6fiU2BJPeBYr4YxCX1c1vh5sN3qctJ1tMwL6hXY5Ug7enf4nzZx2VoJItv3Bjuri9V
-	 /1zEWCPSmnUQ6EsHmviYG2wO6GIpNnuitd/uue8n5EkJGAotDYuWjPdBGBGJ2ASK1K
-	 1Rm4Z5TC+K2j/Jtq434UWL67eqSLP4B5YV3oJjmK/9G+MvlzvNAuj+S/odl5kh6tVu
-	 iS4/Gj96lBt5Qtxdn0OGsIrUdoK2MkdY30CvFdag0MpZsLJgXojOhX3m1nXBBuo+Dq
-	 DunEA6HmvdrzQ==
-Message-ID: <e88e0ed0-9833-418c-b454-5d8ae798f4a1@kernel.org>
-Date: Wed, 25 Sep 2024 16:23:00 +0200
+	s=arc-20240116; t=1727274219; c=relaxed/simple;
+	bh=ZNdmXSJ6ORvtYsZFqqe9goSbjFnSSPQiCvw4tqyEhN0=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Mr5KH6nY2387VCEAG8xfOuH1Q2pICSnW0RUPOBbi1rAV8NCMYShLzpLPIZIb44yHG+Cl0KqXbKlRJOcWbVI2bY4hvePMQl9V7qJIm6ThevzjXnrWysdckVTA88WO8LJuUs1klAqFzf9FxBrbxXzXUQCT4PK1r4Opw67hCvRgw9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XDJqC0lDhz6G9Pm;
+	Wed, 25 Sep 2024 22:23:03 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1B45E140736;
+	Wed, 25 Sep 2024 22:23:35 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 25 Sep
+ 2024 16:23:34 +0200
+Date: Wed, 25 Sep 2024 15:23:33 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+CC: Igor Mammedov <imammedo@redhat.com>, Shiju Jose <shiju.jose@huawei.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>,
+	Dongjiu Geng <gengdongjiu1@gmail.com>, Peter Maydell
+	<peter.maydell@linaro.org>, Shannon Zhao <shannon.zhaosl@gmail.com>,
+	<linux-kernel@vger.kernel.org>, <qemu-arm@nongnu.org>,
+	<qemu-devel@nongnu.org>
+Subject: Re: [PATCH 08/15] acpi/ghes: Prepare to support multiple sources on
+ ghes
+Message-ID: <20240925152333.0000110d@Huawei.com>
+In-Reply-To: <05fb5c6a7d26eeb730bf5fe1f67bb6581ec6d730.1727236561.git.mchehab+huawei@kernel.org>
+References: <cover.1727236561.git.mchehab+huawei@kernel.org>
+	<05fb5c6a7d26eeb730bf5fe1f67bb6581ec6d730.1727236561.git.mchehab+huawei@kernel.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: mailbox: qcom,cpucp-mbox: Add sc7280
- cpucp mailbox instance
-To: Shivnandan Kumar <quic_kshivnan@quicinc.com>,
- Sibi Sankar <quic_sibis@quicinc.com>, Jassi Brar <jassisinghbrar@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org,
- Ramakrishna Gottimukkula <quic_rgottimu@quicinc.com>
-References: <20240924050941.1251485-1-quic_kshivnan@quicinc.com>
- <20240924050941.1251485-2-quic_kshivnan@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240924050941.1251485-2-quic_kshivnan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 24/09/2024 07:09, Shivnandan Kumar wrote:
-> sc7280 has a cpucp mailbox. Document them.
-> 
-> Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
-> ---
->  .../devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml         | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml b/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
-> index f7342d04beec..4a7ea072a3c1 100644
-> --- a/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
-> +++ b/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
-> @@ -15,8 +15,9 @@ description:
-> 
->  properties:
->    compatible:
-> -    items:
-> -      - const: qcom,x1e80100-cpucp-mbox
-> +    enum:
-> +      - qcom,x1e80100-cpucp-mbox
-> +      - qcom,sc7280-cpucp-mbox
+On Wed, 25 Sep 2024 06:04:13 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-Keep alphabetical order.
+> The current code is actually dependent on having just one
+> error structure with a single source.
+> 
+> As the number of sources should be arch-dependent, as it
+> will depend on what kind of synchronous/assynchronous
+> notifications will exist, change the logic to dynamically
+> build the table.
+Not really arch dependent.  Depends on both arch and some
+firmware implementation choices, but I guess that detail
+doesn't matter here.
 
-Best regards,
-Krzysztof
+> 
+> Yet, for a proper support, we need to get the number of
+> sources by reading the number from the HEST table. However,
+> bios currently doesn't store a pointer to it.
+> 
+> For now just change the logic at table build time, while
+> enforcing that it will behave like before with a single
+> source ID.
+> 
+> A future patch will add a HEST table bios pointer and
+> change the logic at acpi_ghes_record_errors() to
+> dynamically use the new size.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Trivial comment inline
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
+> @@ -335,9 +346,10 @@ static void build_ghes_v2(GArray *table_data,
+>      build_append_gas(table_data, AML_AS_SYSTEM_MEMORY, 0x40, 0,
+>                       4 /* QWord access */, 0);
+>      bios_linker_loader_add_pointer(linker, ACPI_BUILD_TABLE_FILE,
+> -        address_offset + GAS_ADDR_OFFSET,
+> -        sizeof(uint64_t), ACPI_GHES_ERRORS_FW_CFG_FILE,
+> -        (ACPI_GHES_ERROR_SOURCE_COUNT + source_id) * sizeof(uint64_t));
+> +                                   address_offset + GAS_ADDR_OFFSET,
+
+I'd prefer if we avoided realigning unless absolutely necessary or
+that it is split into a separate patch.
+Makes things a tiny bit harder to review.
+
+> +                                   sizeof(uint64_t),
+> +                                   ACPI_GHES_ERRORS_FW_CFG_FILE,
+> +                                   (num_sources + index) * sizeof(uint64_t));
+>  
 
 
