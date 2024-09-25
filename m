@@ -1,217 +1,97 @@
-Return-Path: <linux-kernel+bounces-339094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A64C1986044
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:18:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58A5E986042
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:18:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63CDD2880B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:18:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 881911C25E8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:18:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F77D19F499;
-	Wed, 25 Sep 2024 12:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="VqeA6j3w"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84C619F120;
+	Wed, 25 Sep 2024 12:47:30 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6A419F473;
-	Wed, 25 Sep 2024 12:48:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7A119F10A
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 12:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727268503; cv=none; b=K4BRKV24p4ItacMR9ATRLAdMmFzTjS7PARzkepBPJjfRrpwMKEwwhpUeSNIOYY0zGh44sEHT1tSLWFWVjTzOlh7Nk1cOquJ+MPDAxF2gjPgWlerz/lWs/sF/HIVttJ5enucETjKNPFrh5A12H+NdkehvBocVrS538VU1QkcNNZ4=
+	t=1727268450; cv=none; b=qSUNnhAdQX9Dxbdzgo7xMoLM7WqU4bSR8TD29d1203ET4EZOWfAjDI9jUcKXNYmWSVIkHx5CuLvDnADfaUBTaWrZzDfv6gDnlLhTpsTRPHEuzTo1grvNtKQ83u6//ebOGgn17JjgsCo4tp6s0lk9lPFZiKSrb4VKSYgZr5YeIgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727268503; c=relaxed/simple;
-	bh=24v3d1jjV4GAVX62MeV1ZzpVMnN+aHy8vAKvEJyK3Yo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AGyrSAgX6VgiO1Yy0c9yPHc2zkOKZBRMCPJKKkAtNzxTc1sAlyVWOsDcDm7bPilPK9ygo0/TS0wgTjsws/MqUT8VrRnJ2wixwwTu5mkVSSBA7QsQ0j3OpW+nv1gGcQi8vH2f4Embs7Tmf1DdTCJoFp4EuFQWK89br9z4l0RFXH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=VqeA6j3w; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1727268498;
-	bh=24v3d1jjV4GAVX62MeV1ZzpVMnN+aHy8vAKvEJyK3Yo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VqeA6j3wW7L0gZavAW9VbhmKfkwEO9YJWLS97HC+4BVvFvj4UDFor1HyoQjDrl0vN
-	 L8+alwtwKCELhjqbzBYXXxTd/OxnLTVA5wEaFsJvrZm8teAJ0wlK3FdbbpZ2aUmotj
-	 u8NM0qv70aopRwRm//IlN99soxfiD+heN+y3LrHJCo/hLP1Ju/SR+SkHNbqR++Rfag
-	 S3ieVP7cfVC6VsqWjLdlcQkrK3oIuhYNOToaLCMI3XWy3gT/sgUc3hBRETx2ZYhfUM
-	 VSnySAm5d4+f6sBELPNgGQWT2oYhIyiUW33i0NqiY1l0fBc7SdIfpQlxX+IQbdssYG
-	 ea5EBN1bg0hLQ==
-Received: from [192.168.126.112] (unknown [147.75.204.251])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XDGjg4b5Hz1M43;
-	Wed, 25 Sep 2024 08:48:07 -0400 (EDT)
-Message-ID: <a87040be-890b-4e83-86bb-5018da4a894d@efficios.com>
-Date: Wed, 25 Sep 2024 14:47:26 +0200
+	s=arc-20240116; t=1727268450; c=relaxed/simple;
+	bh=NCzsW4E2ZZ2FzA20ISpl6xFoETKKdSaYRdl/64ktIa4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=aiv3gtvVrTtLRQThosYHl+/XcMl1b/fPbc9UxOQUqjE4D9aeI5esctDl/elcywO+wgWexX0UIfeeljkLySaD7UuzFNINZ4s2P8pMuQ7ohgprG/FuUzdqV3SdcU7hqOVVSwQIBE1xaHtfGHw4+Kim3Ub93M+bxblGdRftjYUEqF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82ce3316d51so789064539f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 05:47:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727268448; x=1727873248;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cbe2GuJNvu3f+dUwcul28DEfPY70yqUucRe+UoOSEdk=;
+        b=CIDnlTC4uNMbH+4Ak1vncB4s+BvLTCIcmbRTJOLcRtq1AJ9db0U+87R+Mwq/WLm7fo
+         rPeGKEJPBbojYmxzIMEggkyMFY+lFfjOpgrmODiP+I/P0A2qZvwVqHwiSNi89i4/nRID
+         9xowwZ2Hq8zxsYjoaU0+GgZ5JI6B0Hmaf2QLbPaUgsxd4v8AMlaeUiJ89X7gIqrmKYSM
+         T01CcZze2L5PFof+cS5sPQJk8OSCxTdsYAT5OBDLB86fwhLANnr2+N+SoEIx61J9FRI9
+         WKkyPYQam3Wv4ENDiJIJyqHPjDZlDxRdVD11w0hAP+yKvyb12/43P0uC5AY8B1H+BRDw
+         yidw==
+X-Gm-Message-State: AOJu0YxicGU5WCfgs8ehXOolWosSVLpNFyDA1d7U1Ao16i8wqIvozRKl
+	QM6eXQWD/z2020VI+iKZcWYB2Z960Nhw/ZgWcr4xrWhrSjGF9pc+0QbM6YotiIVy5E2vGZguStR
+	Y078Kg9Kmkc/cmVFwkIbq4qk4Y16+EirkgiIyQnKOR4l5g7dCIPQl1iE=
+X-Google-Smtp-Source: AGHT+IGdu7jW53gAtty/Z8NYGmjy8KYYIM6G1e9GE6nxm3CZKmYKiP6EgzQqN3JbkSSMi6X1O4s5yrtQ+d4EB/sGl5OX5h7p1fnO
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
- pointers
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
- linux-kernel@vger.kernel.org, rcu@vger.kernel.org, linux-mm@kvack.org,
- lkmm@lists.linux.dev, "Paul E. McKenney" <paulmck@kernel.org>,
- Frederic Weisbecker <frederic@kernel.org>,
- Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
- <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Kent Overstreet <kent.overstreet@gmail.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
- Neeraj Upadhyay <neeraj.upadhyay@amd.com>
-References: <20240917143402.930114-1-boqun.feng@gmail.com>
- <20240917143402.930114-2-boqun.feng@gmail.com>
- <55975a55-302f-4c45-bfcc-192a8a1242e9@huaweicloud.com>
- <ZvPfmAp_2mDkI3ss@boqun-archlinux>
- <f5aeeeda-c725-422a-9481-4795bd3ade0f@huaweicloud.com>
- <ZvPp4taB9uu__oSQ@boqun-archlinux>
- <4167e6f5-4ff9-4aaa-915e-c1e692ac785a@efficios.com>
- <ZvP_H_R43bXpmkMS@boqun-archlinux>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <ZvP_H_R43bXpmkMS@boqun-archlinux>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1564:b0:3a0:c820:c5f0 with SMTP id
+ e9e14a558f8ab-3a26d7f11admr28720545ab.24.1727268447974; Wed, 25 Sep 2024
+ 05:47:27 -0700 (PDT)
+Date: Wed, 25 Sep 2024 05:47:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f4065f.050a0220.211276.002b.GAE@google.com>
+Subject: [syzbot] Monthly netfs report (Sep 2024)
+From: syzbot <syzbot+list6282f492642ca904f394@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024-09-25 14:16, Boqun Feng wrote:
-> On Wed, Sep 25, 2024 at 01:59:06PM +0200, Mathieu Desnoyers wrote:
->> On 2024-09-25 12:45, Boqun Feng wrote:
->>> On Wed, Sep 25, 2024 at 12:11:52PM +0200, Jonas Oberhauser wrote:
->>>>
->>>>
->>>> Am 9/25/2024 um 12:02 PM schrieb Boqun Feng:
->>>>> Hi Jonas,
->>>>>
->>>>> Of
->>>>> course, if we are really worried about compilers being too "smart"
->>>>
->>>> Ah, I see you know me better and better...
->>>>
->>>>> we can always do the comparison in asm code, then compilers don't know
->>>>> anything of the equality between 'ptr' and 'head - head_offset'.
->>>> Yes, but then a simple compiler barrier between the comparison and returning
->>>> ptr would also do the trick, right? And maybe easier on the eyes.
->>>>
->>>
->>> The thing about putting a compiler barrier is that it will prevent all
->>> compiler reorderings, and some of the reordering may contribute to
->>> better codegen. (I know in this case, we have a smp_mb(), but still
->>> compilers can move unrelated code upto the second load for optimization
->>> purpose). Asm comparison is cheaper in this way. But TBH, compilers
->>> should provide a way to compare pointer values without using the result
->>> for pointer equality proof, if "convert to unsigned long" doesn't work,
->>> some other ways should work.
->>>
->>
->> Based on Documentation/RCU/rcu_dereference.rst :
->>
->> -       Be very careful about comparing pointers obtained from
->>          rcu_dereference() against non-NULL values.  As Linus Torvalds
->>          explained, if the two pointers are equal, the compiler could
->>          substitute the pointer you are comparing against for the pointer
->>          obtained from rcu_dereference().  For example::
->>
->>                  p = rcu_dereference(gp);
->>                  if (p == &default_struct)
->>                          do_default(p->a);
->>
->>          Because the compiler now knows that the value of "p" is exactly
->>          the address of the variable "default_struct", it is free to
->>          transform this code into the following::
->>
->>                  p = rcu_dereference(gp);
->>                  if (p == &default_struct)
->>                          do_default(default_struct.a);
->>
->>          On ARM and Power hardware, the load from "default_struct.a"
->>          can now be speculated, such that it might happen before the
->>          rcu_dereference().  This could result in bugs due to misordering.
->>
->> So I am not only concerned about compiler proofs here, as it appears
->> that the speculation done by the CPU can also cause issues on some
->> architectures.
->>
-> 
-> Note that the issue is caused by compiler replacing one pointer with
-> the other, CPU speculation won't cause the issue solely, because all
-> architectures Linux supports honor address dependencies (except for
-> Alpha, but on Alpha, READ_ONCE() has a smp_mb() after the load). That
-> is: if the compiler generates code as the code is written, there should
-> be no problem.
+Hello netfs maintainers/developers,
 
-I am starting to wonder if it would not be more robust to just bite
-the bullet and add the inline asm helpers to do the pointer comparison
-outside of the compiler knowledge for each architecture. This should
-work fine in the short term, until compilers eventually give us a
-"compare pointers without allowing the compiler to infer anything about
-pointer equality".
+This is a 31-day syzbot report for the netfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/netfs
 
-Like so:
+During the period, 5 new issues were detected and 0 were fixed.
+In total, 6 issues are still open.
 
-#include <stdio.h>
+Some of the still happening issues:
 
-#define __str_1(x)  #x
-#define __str(x)    __str_1(x)
+Ref Crashes Repro Title
+<1> 11      Yes   KASAN: slab-use-after-free Read in iov_iter_folioq_advance
+                  https://syzkaller.appspot.com/bug?extid=e6089e62b4d92c4a7792
+<2> 12      No    possible deadlock in lock_mm_and_find_vma (2)
+                  https://syzkaller.appspot.com/bug?extid=b02bbe0ff80a09a08c1b
+<3> 4       Yes   KASAN: slab-use-after-free Read in iov_iter_revert
+                  https://syzkaller.appspot.com/bug?extid=2625ce08c2659fb9961a
 
-/* x86-64 */
-#define bne_ptr(_a, _b, _label) \
-     asm goto ( \
-         "cmpq %[a], %[b]\n\t" \
-         "jne %l[" __str(_label) "]\n\t" \
-         : : [a] "r" (_a), [b] "r" (_b) \
-         : : _label)
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-int x;
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
-int v[2];
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
-int main(void)
-{
-     bne_ptr(v, v + 1, label_same);
-     x = 1;
-label_same:
-     printf("%d\n", x);
-     return 0;
-}
-
-
-> 
-> Regards,
-> Boqun
-> 
->> Thanks,
->>
->> Mathieu
->>
->>> Regards,
->>> Boqun
->>>
->>>>
->>>> Have fun,
->>>>      jonas
->>>>
->>
->> -- 
->> Mathieu Desnoyers
->> EfficiOS Inc.
->> https://www.efficios.com
->>
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+You may send multiple commands in a single email message.
 
