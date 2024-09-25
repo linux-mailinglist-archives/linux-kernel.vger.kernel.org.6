@@ -1,65 +1,60 @@
-Return-Path: <linux-kernel+bounces-338977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47F65985F00
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:48:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC0CE985F04
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:48:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 794C81C25A08
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:48:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D64B11C259FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28ECA18733E;
-	Wed, 25 Sep 2024 12:13:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD1C1B07BA;
+	Wed, 25 Sep 2024 12:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iCCQ9/lO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dl1ytu/i"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 797E921A642;
-	Wed, 25 Sep 2024 12:13:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58EDA1B07A7;
+	Wed, 25 Sep 2024 12:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727266424; cv=none; b=BXNT3v1duLwLoP646FbxIDCY2TjEXKD3pCqboFCeJ/4btLjzTdYW7JFideDCX3Azc/MooNvpZvA2D9GHK5B3Mn67spUcId0fJJRR8j2lVgCTl9a8zhUQQLh84ZKNx8hlOrXkH5hhDsMro0DAE9oOSCyJHIBRpIN+wK6fydbsK7s=
+	t=1727266427; cv=none; b=RnzbpEen4o+zMr2YW9DFiwplcJuDPZNQ3QWSwT4Bn04VNZCQODYjIpamDz/CflLiDnO54IAYpx/BVy2ttk/drsJq7E9Ad+K36wRoA0LAshefRPfgIN/ZqnpcD3/4iHH3ZmuaDFTZpS/CSw371VBVoeVQgDMjpjYaEIXqmvhCvRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727266424; c=relaxed/simple;
-	bh=ev5wvojVnFyXFugc+1rqnmORPLhCYPvYkXPNKMIuqu0=;
+	s=arc-20240116; t=1727266427; c=relaxed/simple;
+	bh=bWnVQq/FSskDyqp8JhBvKiekpyhQd+d4A7dAmfZL4I0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bkz0O/jN9GOjoDFXdHWVlfoMriqsZtxeiLCJB5GGE6TkFm/KKuXBejepm2lrnyVlZBABkYVyBsYMmZNAihMwzR8VT9ng7H381fWE7Q+kgbRMFkBgtIM8yWE02i/YH57HGDmj3Ru+9FXnjGUunGOHWicTDo8DN46kltEP8qEEkoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iCCQ9/lO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FF3BC4CECD;
-	Wed, 25 Sep 2024 12:13:42 +0000 (UTC)
+	 MIME-Version; b=IUe9i4d/Z1B2YcobMKkCHSARfb/mCtsfZaKyInUoC0Ai5ug8ek+MXVKc9ICi8efh663l8X2AToO9A4+luFi5yiPbSkoScYgzScETLsm2VMvp/6aWcOSnxRjZHCVMzFISYphYYa8PDXmdlRiqDIAnEyioaEpxJbhYztQS9tVXwpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dl1ytu/i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82918C4CEC3;
+	Wed, 25 Sep 2024 12:13:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727266424;
-	bh=ev5wvojVnFyXFugc+1rqnmORPLhCYPvYkXPNKMIuqu0=;
+	s=k20201202; t=1727266425;
+	bh=bWnVQq/FSskDyqp8JhBvKiekpyhQd+d4A7dAmfZL4I0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iCCQ9/lONINeJn5fIC5DHfHEv9tLd9Em12OTupakeob05YrkXEraoxWHk2YKsusia
-	 m1oqvohzMZmrzpIwVQYBx7HzbALjFshqEf01OzuJXhs+YZdoKE9OSMSHNKaxNnfbkd
-	 KVThyadGy6nO0ZLsVn8byC0rpsKvLjOnl8d3lYUd27mzcuLazl5fVocunJGGeE/iDc
-	 KTvaLWBdSUbOQPB/vgv7JsK/bvIYiSti9yAG526F0GZoCt7sg6x3oVH3uPlye9ntCc
-	 dbme0cKJW4bQueSlCT5IupVFigYd9vFtURYL7//5+pX+sbONODTnWu73IQOju4X98u
-	 MybFRcFA9dYrg==
+	b=Dl1ytu/i4gSSnpYLZFyHZPLoBnLsxtq4MqTdTmxdDHjgW4i6mN8giZCrNEy4Csi3/
+	 dtjsl0QW/zV0RL5ovJD0213qIaEG+mZOMLwGTWmzJMN9IXUxbZ1ukMyt+cHCDXsIt3
+	 TZpo9DS9gQlF7Ryi1cUhnuvwXrDFACRK6ZJg/au3LKTnVmgke/lQTzu8Y3L9x7ZyRe
+	 FoPERBDpp/+uzLXtqgXONjJcjrNAXtKTHYzOgjmvq03xeFuK+dmayS/URTjK3Cbll9
+	 DelhfoDcaNJId12xZ0f1Jw/qmWWw2CLMcosKEUzYqQjWdjgoYtJt7Hz4dTnyjOZdbC
+	 5b00i/DPYz/Lw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Felix Fietkau <nbd@nbd.name>,
+Cc: Sascha Hauer <s.hauer@pengutronix.de>,
+	Jakub Kicinski <kuba@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	lorenzo@kernel.org,
-	ryder.lee@mediatek.com,
-	kvalo@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	yunchuan@nfschina.com,
-	Bo.Jiao@mediatek.com,
-	shayne.chen@mediatek.com,
-	henry.yen@mediatek.com,
-	linux-wireless@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.6 053/139] wifi: mt76: mt7915: hold dev->mt76.mutex while disabling tx worker
-Date: Wed, 25 Sep 2024 08:07:53 -0400
-Message-ID: <20240925121137.1307574-53-sashal@kernel.org>
+	borisp@nvidia.com,
+	john.fastabend@gmail.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.6 054/139] net: tls: wait for async completion on last message
+Date: Wed, 25 Sep 2024 08:07:54 -0400
+Message-ID: <20240925121137.1307574-54-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240925121137.1307574-1-sashal@kernel.org>
 References: <20240925121137.1307574-1-sashal@kernel.org>
@@ -74,39 +69,49 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.52
 Content-Transfer-Encoding: 8bit
 
-From: Felix Fietkau <nbd@nbd.name>
+From: Sascha Hauer <s.hauer@pengutronix.de>
 
-[ Upstream commit 8f7152f10cb434f954aeff85ca1be9cd4d01912b ]
+[ Upstream commit 54001d0f2fdbc7852136a00f3e6fc395a9547ae5 ]
 
-Prevent racing against other functions disabling the same worker
+When asynchronous encryption is used KTLS sends out the final data at
+proto->close time. This becomes problematic when the task calling
+close() receives a signal. In this case it can happen that
+tcp_sendmsg_locked() called at close time returns -ERESTARTSYS and the
+final data is not sent.
 
-Link: https://patch.msgid.link/20240827093011.18621-17-nbd@nbd.name
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
+The described situation happens when KTLS is used in conjunction with
+io_uring, as io_uring uses task_work_add() to add work to the current
+userspace task. A discussion of the problem along with a reproducer can
+be found in [1] and [2]
+
+Fix this by waiting for the asynchronous encryption to be completed on
+the final message. With this there is no data left to be sent at close
+time.
+
+[1] https://lore.kernel.org/all/20231010141932.GD3114228@pengutronix.de/
+[2] https://lore.kernel.org/all/20240315100159.3898944-1-s.hauer@pengutronix.de/
+
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+Link: https://patch.msgid.link/20240904-ktls-wait-async-v1-1-a62892833110@pengutronix.de
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/mediatek/mt76/mt7915/mac.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/tls/tls_sw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/mac.c b/drivers/net/wireless/mediatek/mt76/mt7915/mac.c
-index 2222fb9aa103e..38d27f8721733 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7915/mac.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7915/mac.c
-@@ -1538,12 +1538,14 @@ void mt7915_mac_reset_work(struct work_struct *work)
- 		set_bit(MT76_RESET, &phy2->mt76->state);
- 		cancel_delayed_work_sync(&phy2->mt76->mac_work);
- 	}
-+
-+	mutex_lock(&dev->mt76.mutex);
-+
- 	mt76_worker_disable(&dev->mt76.tx_worker);
- 	mt76_for_each_q_rx(&dev->mt76, i)
- 		napi_disable(&dev->mt76.napi[i]);
- 	napi_disable(&dev->mt76.tx_napi);
+diff --git a/net/tls/tls_sw.c b/net/tls/tls_sw.c
+index df166f6afad82..904dae0df7a47 100644
+--- a/net/tls/tls_sw.c
++++ b/net/tls/tls_sw.c
+@@ -1201,7 +1201,7 @@ static int tls_sw_sendmsg_locked(struct sock *sk, struct msghdr *msg,
  
--	mutex_lock(&dev->mt76.mutex);
+ 	if (!num_async) {
+ 		goto send_end;
+-	} else if (num_zc) {
++	} else if (num_zc || eor) {
+ 		int err;
  
- 	mt76_wr(dev, MT_MCU_INT_EVENT, MT_MCU_INT_EVENT_DMA_STOPPED);
- 
+ 		/* Wait for pending encryptions to get completed */
 -- 
 2.43.0
 
