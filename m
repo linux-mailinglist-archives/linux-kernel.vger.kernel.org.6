@@ -1,109 +1,145 @@
-Return-Path: <linux-kernel+bounces-338156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C64198541A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:27:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD9E598541C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:27:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2B5CB24829
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:27:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B0341C23101
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4EE158524;
-	Wed, 25 Sep 2024 07:22:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC5015853E;
+	Wed, 25 Sep 2024 07:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="S+DTkOq0"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="upcxZK6c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16EF15AD8B;
-	Wed, 25 Sep 2024 07:22:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D94158534;
+	Wed, 25 Sep 2024 07:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727248963; cv=none; b=iWE2kdPMCLDjAKmLJcK6kxphJC2pnxxFK+kUxVATfmqiKFfpInF4XinHTgxfSPVVXxR54ycQsv7Z23j6phkt2UeyR3J6gNPrBUC7/jsUhNOUNBsfkLY7TITEEaXqz6bEDC1nZqOqvbAntjcTpU4c/9OAJniwA9rzSW6gN5yUZMM=
+	t=1727248990; cv=none; b=OrUQQo4jKiJNbuxmxQqFhWBS8YYRy5jQA7pb6cAKl+cbSWN0vQVATucHJCRzgduShMFCZagTtBCbJYENYG1QWYOhmSmmh4jNBZ07sIPK3jMGaJbXAVn2QqHmV19wvCqyau3YPyliml74kyLHykx4jXx8kcauB4kJuAevttPX9B8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727248963; c=relaxed/simple;
-	bh=fWQc86uvk41jzWAKtD5AHKfG+qWsOinTlTLdzMU6ivo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=t0dYEE8hyHpCy0AnRmQ9AjSanPv5Gp2HAy4sHt25i5xmRjCKx6utg7Q2PlvT1D2wDI4+gi1EkoZqfQBE4qJhzMN5o2E+LmCmA+oPCYxyi2LciokxCehbLGBl/x5zztjWn2c+o+xkttaWAOn9rRFh+s8TAoyrw+DJheaNGmCeYhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=S+DTkOq0; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: f015f3cc7b0e11ef8b96093e013ec31c-20240925
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=xl0YbQNchGMDcxT/riTMU37tGxjdInutMd+47zW0twk=;
-	b=S+DTkOq0tHsWBT2f7xSVhqDnupaPlSY26O1XFuhyxOsZ25lrSOjQDCR8EevL3Ab29VdIYF60lc6LajscoN+9LshhU+J/Vi4FWx1aZAUpO79dl6uU5qKngbNHJapnqBEvDpBeAfqilI9YILmxtQ9l7bTQeihQESs1Zmk84bAuKuk=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:8e35c7da-81c5-4139-91b0-9d0a3373e917,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:682cbcd0-7921-4900-88a1-3aef019a55ce,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: f015f3cc7b0e11ef8b96093e013ec31c-20240925
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 161981965; Wed, 25 Sep 2024 15:22:35 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Wed, 25 Sep 2024 00:22:35 -0700
-Received: from [172.21.84.99] (172.21.84.99) by mtkmbs11n2.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
- Transport; Wed, 25 Sep 2024 15:22:35 +0800
-Message-ID: <47c4b502-0c8d-126e-699f-b59a55d895c3@mediatek.com>
-Date: Wed, 25 Sep 2024 15:22:33 +0800
+	s=arc-20240116; t=1727248990; c=relaxed/simple;
+	bh=+MshezIUowXnhFogys8xJQLBrxENmFL5Y2dLYOhLzJU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DsarYP4EDQu9YIiPlzRRx1RufCTqAd6U+5gc1hPEqxFq7Elk0bPUetMlIiypdVNwqIJy/XwYrxOqTlFrs2fcwfRTPZWg3C3kkRSawbz+dgRWOCRn88C942yszvyo/HDElWcGu0r0CqRY+EHp9FwM3GvdMRhRc/MvBki44R9MOn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=upcxZK6c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1327C4CEC3;
+	Wed, 25 Sep 2024 07:23:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727248990;
+	bh=+MshezIUowXnhFogys8xJQLBrxENmFL5Y2dLYOhLzJU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=upcxZK6cgfxo3wt/KjWFpciHZWnFtGjvzOWMqfmWALgvfAIeNqpETpb0kaVuFZeRe
+	 8idI676mrJR1AZmdTrVp7uQV7B/xgIO8DF3UlyMGthwM0FdZg4Ty25sS2LRc63tX1v
+	 rDo8tlIVQGkq5Zow2wjuVy8KTNOhT+cfOE1exG7pWUAkQq2ksUqNXOQROgn1n4wnMg
+	 LuyTXy99OTOmMv/x5DGITs5ifUAl/bZum1baVzyjKwW6Cru9c7UO298Rq5a3BlSFQ8
+	 8b83yM8JkAZGdiefoBzRcMHJgS2CvW6MSqL9mdHb5fRrxGp9RyXp+Ttoxh+rmSl4Cj
+	 y94S3zIClEgeg==
+Date: Wed, 25 Sep 2024 09:23:07 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Jessica Zhang <quic_jesszhan@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, quic_abhinavk@quicinc.com, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, quic_ebharadw@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Rob Clark <robdclark@chromium.org>, Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Subject: Re: [PATCH v2 02/22] drm: Add valid clones check
+Message-ID: <20240925-hasty-bald-caribou-eedbf5@houat>
+References: <20240924-concurrent-wb-v2-0-7849f900e863@quicinc.com>
+ <20240924-concurrent-wb-v2-2-7849f900e863@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] arm64: dts: mediatek: mt8195: Add power domain for
- dp_intf0
-Content-Language: en-US
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, Alexandre Mergnat
-	<amergnat@baylibre.com>
-CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
-	Macpaul Lin <macpaul@gmail.com>, Sen Chu <sen.chu@mediatek.com>, Chris-qj
- chen <chris-qj.chen@mediatek.com>, MediaTek Chromebook Upstream
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai
-	<wenst@chromium.org>, Tommy Chen <tommytl.chen@mediatek.com>
-References: <20240925071514.17626-1-macpaul.lin@mediatek.com>
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-In-Reply-To: <20240925071514.17626-1-macpaul.lin@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="tp2mdysvfttz7mch"
+Content-Disposition: inline
+In-Reply-To: <20240924-concurrent-wb-v2-2-7849f900e863@quicinc.com>
 
 
-On 9/25/24 15:15, Macpaul Lin wrote:
-> During inspecting dtbs_check errors, we found the power domain
-> setting of DPI node "dp_intf0" is missing. Add power domain setting
-> to "MT8195_POWER_DOMAIN_VDOSYS0" for "dp_intf0"
-> 
-> Signed-off-by: Tommy Chen <tommytl.chen@mediatek.com>
-> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+--tp2mdysvfttz7mch
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[snip]
+On Tue, Sep 24, 2024 at 03:59:18PM GMT, Jessica Zhang wrote:
+> Check that all encoders attached to a given CRTC are valid
+> possible_clones of each other.
+>=20
+> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+> ---
+>  drivers/gpu/drm/drm_atomic_helper.c | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+>=20
+> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_at=
+omic_helper.c
+> index 43cdf39019a4..cc4001804fdc 100644
+> --- a/drivers/gpu/drm/drm_atomic_helper.c
+> +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> @@ -574,6 +574,25 @@ mode_valid(struct drm_atomic_state *state)
+>  	return 0;
+>  }
+> =20
+> +static int drm_atomic_check_valid_clones(struct drm_atomic_state *state,
+> +					 struct drm_crtc *crtc)
+> +{
+> +	struct drm_encoder *drm_enc;
+> +	struct drm_crtc_state *crtc_state =3D drm_atomic_get_new_crtc_state(sta=
+te,
+> +									  crtc);
+> +
+> +	drm_for_each_encoder_mask(drm_enc, crtc->dev, crtc_state->encoder_mask)=
+ {
+> +		if ((crtc_state->encoder_mask & drm_enc->possible_clones) !=3D
+> +		    crtc_state->encoder_mask) {
+> +			DRM_DEBUG("crtc%d failed valid clone check for mask 0x%x\n",
+> +				  crtc->base.id, crtc_state->encoder_mask);
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  /**
+>   * drm_atomic_helper_check_modeset - validate state object for modeset c=
+hanges
+>   * @dev: DRM device
+> @@ -745,6 +764,10 @@ drm_atomic_helper_check_modeset(struct drm_device *d=
+ev,
+>  		ret =3D drm_atomic_add_affected_planes(state, crtc);
+>  		if (ret !=3D 0)
+>  			return ret;
+> +
+> +		ret =3D drm_atomic_check_valid_clones(state, crtc);
+> +		if (ret !=3D 0)
+> +			return ret;
+>  	}
 
-Sorry there is a typo in the Signed-off-by.
-I'll send v2 to correct this.
+Pretty much the same comment, we should have kunit tests for this.
 
-Thanks
-Macpaul Lin
+Maxime
 
+--tp2mdysvfttz7mch
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZvO6WgAKCRAnX84Zoj2+
+droGAYDSol3kgX7wkzSE1oluNc2+KTnfRFY6zafC8+pe813u+oXEix2JgVyztgXw
+aPgARssBgIVCQkqjoD4G64sFreIbBdDVYhH6QcPY/DKdVoih5mbH1LB4c9jksnGD
+3arX4CTVbg==
+=pdXg
+-----END PGP SIGNATURE-----
+
+--tp2mdysvfttz7mch--
 
