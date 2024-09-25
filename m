@@ -1,102 +1,132 @@
-Return-Path: <linux-kernel+bounces-338088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 124F9985338
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:49:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1800F98533C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:51:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9F60286730
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 06:49:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4577D1C23AC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 06:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC76C15687C;
-	Wed, 25 Sep 2024 06:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lBdQM5sd"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694F4155CBA;
+	Wed, 25 Sep 2024 06:51:05 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3FC156661;
-	Wed, 25 Sep 2024 06:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E668155751;
+	Wed, 25 Sep 2024 06:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727246980; cv=none; b=NNMeIG/tbup9qtHmuw1+1hMoRsr71rnKxf3F38/ESLJU3nS8JDZdTbI/oFW1lvDzKnDa7ImEvsWzfvZpYCH7rOTytfmRWXTUSlmKEi0uA6BIAQoQd5cZx0lngUC2p7cN7VdUlQYOtktXgDdklrkZTqn7k7Inx1/59OBj+e9+yqM=
+	t=1727247065; cv=none; b=aSDE2bmE0B7fMxl+Qkte4atopio6Pn6JxtSFsLIgHQ+LuYU/Px4nh4juzqA+ahMGgcyA0tdJswjynicymMOdEnthEU2ekXjSEX0rMzUFlVwQco7vMf62SDHacHKhzC24SNLQfe3T6TR5918diCGOMB8dXfT5+NDcCminDUjTvyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727246980; c=relaxed/simple;
-	bh=kk0Mt/+Hyj4BQOBJfxHEcKPbnwRr+BiwB73GhiBhJzc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xdz84cM4tvmrLCGNrxB+in7qFMqZXY6brOatatFcHUP2UR+5Xou/Vd7cCZgeRg6tf2FfLKMCUeTOGYnuK/RYxGY20xf4oWqwkCrxV3lFWU9XlqdS5O0gyPBLta3kDoBbA5e7rduV/uQkG6OMBABfHbBKhuppynGW2UmkwXbwEyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lBdQM5sd; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a8d2daa2262so813145366b.1;
-        Tue, 24 Sep 2024 23:49:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727246977; x=1727851777; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kk0Mt/+Hyj4BQOBJfxHEcKPbnwRr+BiwB73GhiBhJzc=;
-        b=lBdQM5sd7SDm45Z7utkeeTelriQ/HvtPDDmml5SpHVPUml+tXFR/5PE4HCVhfKVeOg
-         wgdFd6iJHBmophsQCSHR/rqjK/nGojRsOEONXyFf8yGEVGTNidtoCkYQT9Z0nUspp0rv
-         mY+8Dz17irJHG48+45YtpNXAoR7pZHuCZiIgWv6dSECJVEgR/CFOhQRzOwCffqG5e7E9
-         jdVmQBejgRuEMmmyDVR0lJeqabLeJXLrf1rafFQ54Ck0NdaNZi6g2b9Hch96feYkNZXT
-         KmrGR8inQWuOucWrUIUSFaSlZkkFwkWKoVzL/AQsiQjjPfhkJWl5xfq2GNXUfD8pXPgY
-         5GTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727246977; x=1727851777;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kk0Mt/+Hyj4BQOBJfxHEcKPbnwRr+BiwB73GhiBhJzc=;
-        b=k5y4wOiyKKD9kP0G/gH9SDXzkP79iabCUiWS2+QHg/6wVddjklYcV1B12KOtLz4nRD
-         M25GcRtNRmV0EfRPpehYs3nWQPdwihF4lLKXVRgEQygSJTmaifrHtTe8ylUTsBPXOnLQ
-         n2ygT92yIYEliZ1lrSerPA+/chibb7327juNCs04qjAyB8xtPzQwwsixQzAWZWTTotTd
-         CDGf7FO6VKUGfw5V3FBlbBQmhG4opKsMC6KiR7MEZXPZarpUM68XtplNK7O+MH2+Jiou
-         Q0NrcXOuKJ2uElfWyr1zPn5Z18yDYlMIuPpfps6IZKjNcdZqwWoMlmHYydWTyAaIT6bN
-         /t2g==
-X-Forwarded-Encrypted: i=1; AJvYcCUHUHWxi+4n1+imXFDiQOa1NPPVFkoZqbZIGPNdoqX9ueeuoSy3DYz4WDntDuhQ3irSpgkvqnUgQf9bVN8=@vger.kernel.org, AJvYcCXb/zLVsw5+SMnKT+mDKslMU04ORPoVxd64W8to7laZgP7EeNOSRcykeSuU+Ne7392gIeyOumgDo4PirJY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzF2pA5gN1FPiNSVOjCUhjOzoVD6A/TV/tXcHh1NIF2Jq0tF88v
-	5r4K/bBpfv6Pii0f6ILLX1WiXitQSOe4OQiXGUVQIxBtmt4UIBQ1/SIOuC2AGnz1OKbBi6u0M2l
-	73rSYAs077j8z/Q0HE7Sq1csQQYA=
-X-Google-Smtp-Source: AGHT+IG4EhVNx4ZXTlcmLKwxSpAi+1Cc6wEcJlS0M5tzYd1bPulq0A8B/RQMJgdldFEu+s5xV1faX8OGR4qz9F9spEc=
-X-Received: by 2002:a17:907:c7d5:b0:a86:86d7:2890 with SMTP id
- a640c23a62f3a-a93a05d6507mr137992666b.50.1727246976510; Tue, 24 Sep 2024
- 23:49:36 -0700 (PDT)
+	s=arc-20240116; t=1727247065; c=relaxed/simple;
+	bh=PSYNZMFkaYoG/HLJwWAvfyDTbE6HRmrOEoHtLD17l0I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iZ+9CvYx3DTZg0aWqbm32zK7L2ECQQcxESiKXvDpGSNxG3F0rfmT8PFNqbwyTwikD/KYXdCekAPWKuGYHQg3XjrqhTyl03uPRah+u8j6Yolv7fox3/gZkKQRvM9PG73piUARxBrGcbASg6npWV99hRVAL6IbelCUerR9sOpMves=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4XD6nd28lPz9sSK;
+	Wed, 25 Sep 2024 08:51:01 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id wiveKoQOCT17; Wed, 25 Sep 2024 08:51:01 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4XD6nd1JXyz9sRs;
+	Wed, 25 Sep 2024 08:51:01 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 1A0E88B76E;
+	Wed, 25 Sep 2024 08:51:01 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id qdW7TkhX9VjY; Wed, 25 Sep 2024 08:51:01 +0200 (CEST)
+Received: from [192.168.232.90] (PO27091.IDSI0.si.c-s.fr [192.168.232.90])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 4444C8B763;
+	Wed, 25 Sep 2024 08:51:00 +0200 (CEST)
+Message-ID: <626baa55-ca84-49ba-9131-c1657e0c0454@csgroup.eu>
+Date: Wed, 25 Sep 2024 08:51:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240924-asoc-imx-maple-v1-1-8b993901f71e@kernel.org>
-In-Reply-To: <20240924-asoc-imx-maple-v1-1-8b993901f71e@kernel.org>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Wed, 25 Sep 2024 09:50:35 +0300
-Message-ID: <CAEnQRZBde3AV7Dvu-jtXCTbZnBg60COdp7eheSdyfE_6mP9GQw@mail.gmail.com>
-Subject: Re: [PATCH] ASoC: fsl: Use maple tree register cache
-To: Mark Brown <broonie@kernel.org>
-Cc: Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, 
-	Fabio Estevam <festevam@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-sound@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/8] x86: vdso: Introduce asm/vdso/mman.h
+To: Vincenzo Frascino <vincenzo.frascino@arm.com>,
+ linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org
+Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ "Jason A . Donenfeld" <Jason@zx2c4.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H . Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+ Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+References: <20240923141943.133551-1-vincenzo.frascino@arm.com>
+ <20240923141943.133551-2-vincenzo.frascino@arm.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20240923141943.133551-2-vincenzo.frascino@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 24, 2024 at 4:59=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
-te:
->
-> Several of the NXP drivers use regmaps with a rbtree register cache. Sinc=
-e
-> the maple tree cache is uisng a generally more modern data structure whic=
-h
-> makes implementation choices more suitable for modern systems let's conve=
-rt
-> these drivers to it. This should have no practical impact.
->
-> Signed-off-by: Mark Brown <broonie@kernel.org>
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+
+Le 23/09/2024 à 16:19, Vincenzo Frascino a écrit :
+> The VDSO implementation includes headers from outside of the
+> vdso/ namespace.
+> 
+> Introduce asm/vdso/mman.h to make sure that the generic library
+> uses only the allowed namespace.
+> 
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Jason A. Donenfeld <Jason@zx2c4.com>
+> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+> ---
+>   arch/x86/include/asm/vdso/mman.h | 15 +++++++++++++++
+>   1 file changed, 15 insertions(+)
+>   create mode 100644 arch/x86/include/asm/vdso/mman.h
+> 
+> diff --git a/arch/x86/include/asm/vdso/mman.h b/arch/x86/include/asm/vdso/mman.h
+> new file mode 100644
+> index 000000000000..4c936c9d11ab
+> --- /dev/null
+> +++ b/arch/x86/include/asm/vdso/mman.h
+> @@ -0,0 +1,15 @@
+> +
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef __ASM_VDSO_MMAN_H
+> +#define __ASM_VDSO_MMAN_H
+> +
+> +#ifndef __ASSEMBLY__
+> +
+> +#include <uapi/linux/mman.h>
+> +
+> +#define VDSO_MMAP_PROT	PROT_READ | PROT_WRITE
+> +#define VDSO_MMAP_FLAGS	MAP_DROPPABLE | MAP_ANONYMOUS
+
+I still can't see the point with that change.
+
+Today 4 architectures implement getrandom and none of them require that 
+indirection. Please leave prot and flags as they are in the code.
+
+Then this file is totally pointless, VDSO code can include 
+uapi/linux/mman.h directly.
+
+VDSO is userland code, it should be safe to include any UAPI file there.
+
+Christophe
+
+> +
+> +#endif /* !__ASSEMBLY__ */
+> +
+> +#endif /* __ASM_VDSO_MMAN_H */
 
