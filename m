@@ -1,126 +1,100 @@
-Return-Path: <linux-kernel+bounces-339599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C875098677C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 22:17:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF613986780
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 22:19:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67BD4B21AEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 20:17:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 788FF1F220C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 20:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DACA2148304;
-	Wed, 25 Sep 2024 20:17:00 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38AD28E8;
-	Wed, 25 Sep 2024 20:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B4614830A;
+	Wed, 25 Sep 2024 20:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TK3JSYw7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C9628E8;
+	Wed, 25 Sep 2024 20:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727295420; cv=none; b=MJX/A6KNSlWbWJ7sc61AT5nK+WXXVB7wiS6nIe256wFShPOjgUVoIRRKYdOldS6W+eEal61DKPPsvNVfcmUNfdtKoeBEeNZXJR+FBK6M15DT4i9X5aTTdq2CKnvjzvpVe0wNb+6zIolavPngJizOs3hDbkRrV49+Vb++pudHv7Q=
+	t=1727295551; cv=none; b=Q/N+exQLhLdSNQEfgofghMOm9YlkBFQKlUEKSC11SzS7qQboB4lROQfie9FfId76pMU66IYhyFUT4gNqHzhJO8oyuF3SFbIw8W2KZZ3cPUpjLGbiMH9JkKvvKb1d0Lg0n9ytPWuoh7yChi3aoQrYECaS0i3iTZby7486YBQeWS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727295420; c=relaxed/simple;
-	bh=fcCd/pAN7J1DNVaXaNGjD4NBFJWuo+jVlqAFYDeSXX0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P+hnzapOX2/7JG43072oxbKmTk6bfc8ZBjP+ogm1kme6AbyCwFqgJJEoYmJw3ojml4scRMwKkxwHwZGoE5hYBA1Ep6NzReLSuVcjBMAjynGpK6Vg5rfC6w5TRFVVrdb2tzET0Od5kSOsWaYeucseih+ocAspeRGokeB00aqn2Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8DC6A150C;
-	Wed, 25 Sep 2024 13:17:27 -0700 (PDT)
-Received: from [10.57.21.248] (unknown [10.57.21.248])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8E74E3F64C;
-	Wed, 25 Sep 2024 13:16:55 -0700 (PDT)
-Message-ID: <6d409278-988b-4c09-adfb-5e075c9b326e@arm.com>
-Date: Wed, 25 Sep 2024 21:16:50 +0100
+	s=arc-20240116; t=1727295551; c=relaxed/simple;
+	bh=vAWMx9G13EynX00wpjAYAtIgxqGNrZ8HS8AmNSNLzmE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PZj8TkA7t4ZfZ6KNCAP+hKsIW5mn7inTYSCsYNspkh6aiaPnxK+53Xax3scm1GL5FlsN49LSQYAK/ZXeebonZ+mPZvHVx2a2d/WafJ0eecconObJknadT5gE1VMeoiHkQ2gh1eYRRoOlE5/l0hzqNT+zXCNgqBJOz3CA/miL7fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TK3JSYw7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE080C4CEC3;
+	Wed, 25 Sep 2024 20:19:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727295550;
+	bh=vAWMx9G13EynX00wpjAYAtIgxqGNrZ8HS8AmNSNLzmE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TK3JSYw7OksLYc64eM2dFrj77UAE82vPI0wTltj2nMZZtgh39bGoooZmRMfcmZeIH
+	 0uxWhFlApIimXYuYNT4GUkJeJ9pH6yqnwlQif4YPazukSweFaSjBteuU24g0w2b3i4
+	 paJycJC9fjNF43l9Rr9VMkfOKEoVZftXF5OeYZnrxehjkH1Vk97NusWYzoEZC0qA7Q
+	 Bw0dZxUN5HMr1gp6GWSe9vt0ir40YKRt6u41GJ3pE+Y1keIxTW6bwOW+GNjokh/T+i
+	 70PAUoJkTE/NbB3i41WJbau+zE6YquJS9YKYj8iq/x6cV4vhDWpT0vvOEFPlG1S6Vo
+	 iwUwt6tTSbVqQ==
+Date: Wed, 25 Sep 2024 22:19:06 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: warp5tw@gmail.com
+Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
+	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
+	andriy.shevchenko@linux.intel.com, wsa@kernel.org, rand.sec96@gmail.com, 
+	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, Avi.Fishman@nuvoton.com, 
+	tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, JJLIU0@nuvoton.com, kfting@nuvoton.com, 
+	openbmc@lists.ozlabs.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/6] i2c: npcm: correct the read/write operation
+ procedure
+Message-ID: <rpu2o2vw6jqbuywabaxaqepathkqlzjzjvn7j6h5lq6zslitu4@icj5hpmwo6kr>
+References: <20240920101820.44850-1-kfting@nuvoton.com>
+ <20240920101820.44850-2-kfting@nuvoton.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf mem: Fix printing PERF_MEM_LVLNUM_{L2_MHB|MSC}
-To: Thomas Falcon <thomas.falcon@intel.com>, peterz@infradead.org,
- mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
- mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
- irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240925183633.49653-1-thomas.falcon@intel.com>
-Content-Language: en-US
-From: Leo Yan <leo.yan@arm.com>
-In-Reply-To: <20240925183633.49653-1-thomas.falcon@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240920101820.44850-2-kfting@nuvoton.com>
 
-On 9/25/2024 7:36 PM, Thomas Falcon wrote:
-> 
-> 
-> With commit 8ec9497d3ef34 ("tools/include: Sync uapi/linux/perf.h
-> with the kernel sources"), 'perf mem report' gives an incorrect memory
-> access string.
-> ...
-> 0.02%   1       3644    L5 hit  [.] 0x0000000000009b0e  mlc     [.] 0x00007fce43f59480
-> ...
-> 
-> This occurs because, if no entry exists in mem_lvlnum, perf_mem__lvl_scnprintf
-> will default to 'L%d, lvl', which in this case for PERF_MEM_LVLNUM_L2_MHB is 0x05.
-> Add entries for PERF_MEM_LVLNUM_L2_MHB and PERF_MEM_LVLNUM_MSC to mem_lvlnum,
-> so that the correct strings are printed.
-> ...
-> 0.02%   1       3644    L2 MHB hit      [.] 0x0000000000009b0e  mlc     [.] 0x00007fce43f59480
-> ...
-> 
-> Fixes: 8ec9497d3ef34 ("tools/include: Sync uapi/linux/perf.h with the kernel sources")
-> Suggested-by: Kan Liang <kan.liang@linux.intel.com>
-> Signed-off-by: Thomas Falcon <thomas.falcon@intel.com>
-> Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
+Hi Tyrone,
 
-This change is fine for me. But for later avoid same issues, I would like to
-improve a bit:
-
-static const char * const mem_lvlnum[] = {
-       [PERF_MEM_LVLNUM_L1] = "L1",
-       [PERF_MEM_LVLNUM_L2] = "L2",
-       [PERF_MEM_LVLNUM_L3] = "L3",
-       [PERF_MEM_LVLNUM_L4] = "L4",
-       [PERF_MEM_LVLNUM_L2_MHB] = "L2 MHB",
-       [PERF_MEM_LVLNUM_MSC] = "Memory-side Cache",
-       ...
-};
-
-Then in the function perf_mem__lvl_scnprintf() :
-
-   if (mem_lvlnum[lvl])
-       l += scnprintf(out + l, sz - l, mem_lvlnum[lvl]);
-   else
-       l += scnprintf(out + l, sz - l, "Unknown level %d", lvl);
-
-This can help us easily to catch unexpected memory level.
-
-Thanks,
-Leo
-
-> ---
->  tools/perf/util/mem-events.c | 2 ++
->  1 file changed, 2 insertions(+)
+On Fri, Sep 20, 2024 at 06:18:15PM GMT, warp5tw@gmail.com wrote:
+> From: Tyrone Ting <kfting@nuvoton.com>
 > 
-> diff --git a/tools/perf/util/mem-events.c b/tools/perf/util/mem-events.c
-> index 051feb93ed8d..c630aca5bd93 100644
-> --- a/tools/perf/util/mem-events.c
-> +++ b/tools/perf/util/mem-events.c
-> @@ -366,6 +366,8 @@ static const char * const mem_lvl[] = {
->  };
+> From: Tyrone Ting <kfting@nuvoton.com>
+
+no worries, I can take care of this.
+
+> Originally the driver uses the XMIT bit in SMBnST register to decide
+> the upcoming i2c transaction. If XMIT bit is 1, then it will be an i2c
+> write operation. If it's 0, then a read operation will be executed.
 > 
->  static const char * const mem_lvlnum[] = {
-> +       [PERF_MEM_LVLNUM_L2_MHB] = "L2 MHB",
-> +       [PERF_MEM_LVLNUM_MSC] = "Memory-side Cache",
->         [PERF_MEM_LVLNUM_UNC] = "Uncached",
->         [PERF_MEM_LVLNUM_CXL] = "CXL",
->         [PERF_MEM_LVLNUM_IO] = "I/O",
-> --
-> 2.46.0
+> In slave mode the XMIT bit can simply be used directly to set the state.
+> XMIT bit can be used as an indication to the current state of the state
+> machine during slave operation. (meaning XMIT = 1 during writing and
+> XMIT = 0 during reading).
 > 
+> In master operation XMIT is valid only if there are no bus errors.
+> For example: in a multi master where the same module is switching from
+> master to slave at runtime, and there are collisions, the XMIT bit
+> cannot be trusted.
 > 
+> However the maser already "knows" what the bus state is, so this bit
+> is not needed and the driver can just track what it is currently doing.
+> 
+> Signed-off-by: Tyrone Ting <kfting@nuvoton.com>
+> Reviewed-by: Tali Perry <tali.perry1@gmail.com>
+
+This patch is independent from the rest of the series, can I
+start takin this in and unburden you from this?
+
+Andi
 
