@@ -1,187 +1,237 @@
-Return-Path: <linux-kernel+bounces-337990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8821B9851F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 06:17:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 069969851E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 06:09:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19954285402
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 04:17:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 891E11F254F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 04:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F06D14C5A3;
-	Wed, 25 Sep 2024 04:17:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342FE14B950;
+	Wed, 25 Sep 2024 04:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JDrQwnqA"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qlt+fVWp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C10C2CA6;
-	Wed, 25 Sep 2024 04:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C31E1494B2
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 04:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727237865; cv=none; b=Q3ZV/nCCy4DmP+JXrdZ0Idse16qXTgp+uzg4CoPrwxkGImCsUb7F0GkCn3tI+DSAN/yiUiaLbWQXd1dP4ZPOQPf6sFjwl5CP+2Tf0EqNsnkatNYHTA4etByE44BE/kUkB9do3uAWZ9iFqcTGKZdeQWr5VZpnuJtsdNhfXJDOIG8=
+	t=1727237341; cv=none; b=O7/fccVHHTutDooV7NS2a1TfXFdJDEegw2wGko4H6HGOw0kPZQ6nUIP7q4veyG5YtTWst/LXbUawm2ysn42ek/34CBFp5bCD7A9de/Vt2b+7RST9GKLe+vKCDJt0I6a3r5Q3tAFxlpSr8iYjq+m/6EV/lH/CXwXnaAGgnlnqr2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727237865; c=relaxed/simple;
-	bh=KOtJjfbQO25dIwdv+f4iH8x+aV0gECM+IZPInPTm17U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Xi16XM5JDMS+bieJd6aNdBP5krM74RUNcyfuY0IVLyEbqQpFx1NaAMuAxjHA68xGD00OmA8Sg2wCVyCmZYQcfWGvmtT/4E0W1s5nMqj+Qr10uIBQcQNzae1gjd5SJTg/GvdOObfsJzIfzTdTKDMIn3QWPyU8DM4FVtVd7TSeRdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JDrQwnqA; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48OHOk64006035;
-	Wed, 25 Sep 2024 03:44:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ZhbqxxGnNn6iWuWZcW4la2E8zNouyHAN9O3d1uNJ50A=; b=JDrQwnqAeHFbZEBb
-	3cATDigDpyfO5/dAknAPPdebAnb0nHiwdG7exO2p0zv0tM9wgFumjYIEGnsvzGq4
-	AtPbC9naAgNM7XRrPJ4kZPEJYHw4kB4iVz3YWhB1WkaHuTfV0oc/GkovNu042SgT
-	JowtNhBbrKc+TRK5tQgbZzhChVes1d6e4Is0/tzYe4EXMc/IeIZZ7aGFsMqB9IG5
-	11b52V5Ieytr+vtn2tzC+qAlH+zJV7JrD69+H044cu3MioQu2wJ1Vr3JIg27N4sl
-	kB7w0q9R4J6HfhVbM9U7zdrBBP2HteVjIfXWaehSBIOieVJ5FZ83VJbdmhh3/SiP
-	Pb+72Q==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sqe9ag98-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 03:44:59 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48P3iwj6018823
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 03:44:58 GMT
-Received: from [10.239.29.179] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 24 Sep
- 2024 20:44:54 -0700
-Message-ID: <3f454d6f-b40e-49e5-89eb-b77bcca35043@quicinc.com>
-Date: Wed, 25 Sep 2024 11:44:51 +0800
+	s=arc-20240116; t=1727237341; c=relaxed/simple;
+	bh=3BOMAtP8PlWKySgPuchMZreV7N4TNixAq4sTN5Y0kX4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=I6pnpt9I+NbfXdSlDL4zs8/3TUvnPpNNkyG1rqYevVx8KnS3EVYQfc68PHAA2n+DU7iCXtzuD7HHE6TGc+SIiypl4i8ptgsjTri9fk43no8KyhT0zYa4anhB6t2+5THNya7pSGfxKruDVbfZDQwfLZLcMpVpFnWvoNZdJF0OVvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qlt+fVWp; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727237339; x=1758773339;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=3BOMAtP8PlWKySgPuchMZreV7N4TNixAq4sTN5Y0kX4=;
+  b=Qlt+fVWpGahhCl4c5SLTFpKjaCan8LuwBGUepSCkyg1WmUoCjj+ohtOd
+   m2uf3lPEB3uSPEzXSHxE6PmUnboiOMGzCN3Wyi6cWFrUCBSOjcjDBtH6Q
+   ac92aSw1fTOJWjmj+KMNrNkmnDSrJxwddtDf8OZaVW0LTGzG5i4qxByrg
+   cqMezgR9cPcUnuKGRuPNv9eXPdoZFBTwkNFQ2x3knD8GO2diU9LEsRgee
+   Hbcd9uWPyEXgginJcVor8lz00BOSR16OM150HvOR3FfUgvWfAL957SAld
+   xUTgeEmdTdWV9vLh+yVe9ppB6xvCqdLUvYPV/1/bpCSltbeA7rM/1Izjv
+   w==;
+X-CSE-ConnectionGUID: 3xULWaBPTHWkIdrMf9Q9Mg==
+X-CSE-MsgGUID: SzbLtjmVS1Gs5gB0yK+AqA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="37642288"
+X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
+   d="scan'208";a="37642288"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 21:08:59 -0700
+X-CSE-ConnectionGUID: XRAT1GceR9Smk2lxfUbBHA==
+X-CSE-MsgGUID: osHNa+i1QLmMKNsAaTBQqg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
+   d="scan'208";a="72093803"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 24 Sep 2024 21:08:57 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1stJKg-000J7V-2k;
+	Wed, 25 Sep 2024 04:08:54 +0000
+Date: Wed, 25 Sep 2024 12:08:18 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jordan Niethe <jniethe5@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: arch/powerpc/kvm/powerpc.c:1732:52: error: implicit declaration of
+ function 'kvmppc_get_vrsave'; did you mean 'kvmppc_get_sr'?
+Message-ID: <202409251137.1cRB00WD-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/6] PCI: qcom: Add support for X1E80100 SoC
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-CC: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <abel.vesa@linaro.org>, <quic_msarkar@quicinc.com>,
-        <quic_devipriy@quicinc.com>, <dmitry.baryshkov@linaro.org>,
-        <kw@linux.com>, <lpieralisi@kernel.org>, <neil.armstrong@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>
-References: <20240924101444.3933828-1-quic_qianyu@quicinc.com>
- <20240924101444.3933828-6-quic_qianyu@quicinc.com>
- <20240924135021.ybpyoahlpuvedma5@thinkpad>
-Content-Language: en-US
-From: Qiang Yu <quic_qianyu@quicinc.com>
-In-Reply-To: <20240924135021.ybpyoahlpuvedma5@thinkpad>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: NEvl7Hnmhc16mCowiCBdCrSnCaYaxu0v
-X-Proofpoint-GUID: NEvl7Hnmhc16mCowiCBdCrSnCaYaxu0v
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=999 spamscore=0 lowpriorityscore=0 adultscore=0 mlxscore=0
- suspectscore=0 malwarescore=0 phishscore=0 impostorscore=0 clxscore=1015
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409250025
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi Jordan,
+
+FYI, the error/warning still remains.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   684a64bf32b6e488004e0ad7f0d7e922798f65b6
+commit: 7028ac8d174f28220f0e2de0cb3346cd3c31976d KVM: PPC: Use accessors for VCPU registers
+date:   1 year ago
+config: powerpc64-randconfig-003-20240925 (https://download.01.org/0day-ci/archive/20240925/202409251137.1cRB00WD-lkp@intel.com/config)
+compiler: powerpc64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240925/202409251137.1cRB00WD-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409251137.1cRB00WD-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   arch/powerpc/kvm/powerpc.c: In function 'kvmppc_set_vmx_dword':
+   arch/powerpc/kvm/powerpc.c:1061:9: error: implicit declaration of function 'kvmppc_get_vsx_vr'; did you mean 'kvmppc_get_sr'? [-Wimplicit-function-declaration]
+    1061 |         kvmppc_get_vsx_vr(vcpu, index, &val.vval);
+         |         ^~~~~~~~~~~~~~~~~
+         |         kvmppc_get_sr
+   arch/powerpc/kvm/powerpc.c:1063:9: error: implicit declaration of function 'kvmppc_set_vsx_vr'; did you mean 'kvmppc_set_sr'? [-Wimplicit-function-declaration]
+    1063 |         kvmppc_set_vsx_vr(vcpu, index, &val.vval);
+         |         ^~~~~~~~~~~~~~~~~
+         |         kvmppc_set_sr
+   In file included from arch/powerpc/kvm/powerpc.c:25:
+   arch/powerpc/kvm/powerpc.c: In function 'kvm_vcpu_ioctl_get_one_reg':
+   arch/powerpc/kvm/powerpc.c:1729:52: error: implicit declaration of function 'kvmppc_get_vscr'; did you mean 'kvmppc_get_sr'? [-Wimplicit-function-declaration]
+    1729 |                         val = get_reg_val(reg->id, kvmppc_get_vscr(vcpu));
+         |                                                    ^~~~~~~~~~~~~~~
+   arch/powerpc/include/asm/kvm_ppc.h:412:29: note: in definition of macro 'get_reg_val'
+     412 |         case 4: __u.wval = (reg); break;        \
+         |                             ^~~
+>> arch/powerpc/kvm/powerpc.c:1732:52: error: implicit declaration of function 'kvmppc_get_vrsave'; did you mean 'kvmppc_get_sr'? [-Wimplicit-function-declaration]
+    1732 |                         val = get_reg_val(reg->id, kvmppc_get_vrsave(vcpu));
+         |                                                    ^~~~~~~~~~~~~~~~~
+   arch/powerpc/include/asm/kvm_ppc.h:412:29: note: in definition of macro 'get_reg_val'
+     412 |         case 4: __u.wval = (reg); break;        \
+         |                             ^~~
+   arch/powerpc/kvm/powerpc.c: In function 'kvm_vcpu_ioctl_set_one_reg':
+   arch/powerpc/kvm/powerpc.c:1780:25: error: implicit declaration of function 'kvmppc_set_vscr'; did you mean 'kvmppc_set_sr'? [-Wimplicit-function-declaration]
+    1780 |                         kvmppc_set_vscr(vcpu, set_reg_val(reg->id, val));
+         |                         ^~~~~~~~~~~~~~~
+         |                         kvmppc_set_sr
+>> arch/powerpc/kvm/powerpc.c:1787:25: error: implicit declaration of function 'kvmppc_set_vrsave'; did you mean 'kvmppc_set_sr'? [-Wimplicit-function-declaration]
+    1787 |                         kvmppc_set_vrsave(vcpu, set_reg_val(reg->id, val));
+         |                         ^~~~~~~~~~~~~~~~~
+         |                         kvmppc_set_sr
 
 
-On 9/24/2024 9:50 PM, Manivannan Sadhasivam wrote:
-> On Tue, Sep 24, 2024 at 03:14:43AM -0700, Qiang Yu wrote:
->> X1E80100 has PCIe ports that support up to Gen4 x8 based on hardware IP
->> version 1.38.0.
->>
->> Currently the ops_1_9_0 which is being used for X1E80100 has config_sid
->> callback to config BDF to SID table. However, this callback is not
->> required for X1E80100 because it has smmuv3 support and BDF to SID table
->> will be not present.
->>
->> Hence add support for X1E80100 by introducing a new ops and cfg structures
->> that don't require the config_sid callback. This could be reused by the
->> future platforms based on SMMUv3.
->>
-> Oops... I completely overlooked that you are not adding the SoC support but
-> fixing the existing one :( Sorry for suggesting a commit message that changed
-> the context.
->
-> For this, you can have something like:
->
-> "PCI: qcom: Fix the ops for X1E80100 SoC
->
-> X1E80100 SoC is based on SMMUv3, hence it doesn't need the BDF2SID mapping
-> present in the existing cfg_1_9_0 ops. This is fixed by introducing new ops
-> 'ops_1_38_0' and cfg 'cfg_1_38_0' structures. These are exactly same as the
-> 1_9_0 ones, but they don't have the 'config_sid()' callback that handles the
-> BDF2SID mapping in the hardware. These new structures could also be used by the
-> future SoCs making use of SMMUv3."
-Never mind, thanks for your suggestions. Will update the commit msg in next
-version.
+vim +1732 arch/powerpc/kvm/powerpc.c
 
-Thanks,
-Qiang Yu
->
-> - Mani
->
->> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
->> ---
->>   drivers/pci/controller/dwc/pcie-qcom.c | 16 +++++++++++++++-
->>   1 file changed, 15 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
->> index 88a98be930e3..56ba8bc72f78 100644
->> --- a/drivers/pci/controller/dwc/pcie-qcom.c
->> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
->> @@ -1367,6 +1367,16 @@ static const struct qcom_pcie_ops ops_2_9_0 = {
->>   	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
->>   };
->>   
->> +/* Qcom IP rev.: 1.38.0 */
->> +static const struct qcom_pcie_ops ops_1_38_0 = {
->> +	.get_resources = qcom_pcie_get_resources_2_7_0,
->> +	.init = qcom_pcie_init_2_7_0,
->> +	.post_init = qcom_pcie_post_init_2_7_0,
->> +	.host_post_init = qcom_pcie_host_post_init_2_7_0,
->> +	.deinit = qcom_pcie_deinit_2_7_0,
->> +	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
->> +};
->> +
->>   static const struct qcom_pcie_cfg cfg_1_0_0 = {
->>   	.ops = &ops_1_0_0,
->>   };
->> @@ -1409,6 +1419,10 @@ static const struct qcom_pcie_cfg cfg_sc8280xp = {
->>   	.no_l0s = true,
->>   };
->>   
->> +static const struct qcom_pcie_cfg cfg_1_38_0 = {
->> +	.ops = &ops_1_38_0,
->> +};
->> +
->>   static const struct dw_pcie_ops dw_pcie_ops = {
->>   	.link_up = qcom_pcie_link_up,
->>   	.start_link = qcom_pcie_start_link,
->> @@ -1837,7 +1851,7 @@ static const struct of_device_id qcom_pcie_match[] = {
->>   	{ .compatible = "qcom,pcie-sm8450-pcie0", .data = &cfg_1_9_0 },
->>   	{ .compatible = "qcom,pcie-sm8450-pcie1", .data = &cfg_1_9_0 },
->>   	{ .compatible = "qcom,pcie-sm8550", .data = &cfg_1_9_0 },
->> -	{ .compatible = "qcom,pcie-x1e80100", .data = &cfg_1_9_0 },
->> +	{ .compatible = "qcom,pcie-x1e80100", .data = &cfg_1_38_0 },
->>   	{ }
->>   };
->>   
->> -- 
->> 2.34.1
->>
+  1701	
+  1702	int kvm_vcpu_ioctl_get_one_reg(struct kvm_vcpu *vcpu, struct kvm_one_reg *reg)
+  1703	{
+  1704		int r = 0;
+  1705		union kvmppc_one_reg val;
+  1706		int size;
+  1707	
+  1708		size = one_reg_size(reg->id);
+  1709		if (size > sizeof(val))
+  1710			return -EINVAL;
+  1711	
+  1712		r = kvmppc_get_one_reg(vcpu, reg->id, &val);
+  1713		if (r == -EINVAL) {
+  1714			r = 0;
+  1715			switch (reg->id) {
+  1716	#ifdef CONFIG_ALTIVEC
+  1717			case KVM_REG_PPC_VR0 ... KVM_REG_PPC_VR31:
+  1718				if (!cpu_has_feature(CPU_FTR_ALTIVEC)) {
+  1719					r = -ENXIO;
+  1720					break;
+  1721				}
+  1722				kvmppc_get_vsx_vr(vcpu, reg->id - KVM_REG_PPC_VR0, &val.vval);
+  1723				break;
+  1724			case KVM_REG_PPC_VSCR:
+  1725				if (!cpu_has_feature(CPU_FTR_ALTIVEC)) {
+  1726					r = -ENXIO;
+  1727					break;
+  1728				}
+  1729				val = get_reg_val(reg->id, kvmppc_get_vscr(vcpu));
+  1730				break;
+  1731			case KVM_REG_PPC_VRSAVE:
+> 1732				val = get_reg_val(reg->id, kvmppc_get_vrsave(vcpu));
+  1733				break;
+  1734	#endif /* CONFIG_ALTIVEC */
+  1735			default:
+  1736				r = -EINVAL;
+  1737				break;
+  1738			}
+  1739		}
+  1740	
+  1741		if (r)
+  1742			return r;
+  1743	
+  1744		if (copy_to_user((char __user *)(unsigned long)reg->addr, &val, size))
+  1745			r = -EFAULT;
+  1746	
+  1747		return r;
+  1748	}
+  1749	
+  1750	int kvm_vcpu_ioctl_set_one_reg(struct kvm_vcpu *vcpu, struct kvm_one_reg *reg)
+  1751	{
+  1752		int r;
+  1753		union kvmppc_one_reg val;
+  1754		int size;
+  1755	
+  1756		size = one_reg_size(reg->id);
+  1757		if (size > sizeof(val))
+  1758			return -EINVAL;
+  1759	
+  1760		if (copy_from_user(&val, (char __user *)(unsigned long)reg->addr, size))
+  1761			return -EFAULT;
+  1762	
+  1763		r = kvmppc_set_one_reg(vcpu, reg->id, &val);
+  1764		if (r == -EINVAL) {
+  1765			r = 0;
+  1766			switch (reg->id) {
+  1767	#ifdef CONFIG_ALTIVEC
+  1768			case KVM_REG_PPC_VR0 ... KVM_REG_PPC_VR31:
+  1769				if (!cpu_has_feature(CPU_FTR_ALTIVEC)) {
+  1770					r = -ENXIO;
+  1771					break;
+  1772				}
+  1773				kvmppc_set_vsx_vr(vcpu, reg->id - KVM_REG_PPC_VR0, &val.vval);
+  1774				break;
+  1775			case KVM_REG_PPC_VSCR:
+  1776				if (!cpu_has_feature(CPU_FTR_ALTIVEC)) {
+  1777					r = -ENXIO;
+  1778					break;
+  1779				}
+  1780				kvmppc_set_vscr(vcpu, set_reg_val(reg->id, val));
+  1781				break;
+  1782			case KVM_REG_PPC_VRSAVE:
+  1783				if (!cpu_has_feature(CPU_FTR_ALTIVEC)) {
+  1784					r = -ENXIO;
+  1785					break;
+  1786				}
+> 1787				kvmppc_set_vrsave(vcpu, set_reg_val(reg->id, val));
+  1788				break;
+  1789	#endif /* CONFIG_ALTIVEC */
+  1790			default:
+  1791				r = -EINVAL;
+  1792				break;
+  1793			}
+  1794		}
+  1795	
+  1796		return r;
+  1797	}
+  1798	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
