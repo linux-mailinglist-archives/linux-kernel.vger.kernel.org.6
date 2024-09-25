@@ -1,68 +1,71 @@
-Return-Path: <linux-kernel+bounces-338375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DAEC98570A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:16:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 181C29856EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:08:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F28F1C22A49
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:16:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BAD11C21342
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BDD13A884;
-	Wed, 25 Sep 2024 10:15:55 +0000 (UTC)
-Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2096.outbound.protection.partner.outlook.cn [139.219.146.96])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDCBB15C131;
+	Wed, 25 Sep 2024 10:08:07 +0000 (UTC)
+Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2098.outbound.protection.partner.outlook.cn [139.219.146.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B1F3F9D5
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 10:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.96
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EACE514AD19;
+	Wed, 25 Sep 2024 10:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.98
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727259354; cv=fail; b=HpaChlxty2oD8xw7K3br3bON5g44FgCanGDZ1GMgRqEkmQIL3Lvq1ERprPQk+6xbtyWRIhlmKq61auu1ybqLL5beiy8Erdm7243D7wDEjzSPIr83sNBmvek8BFbil3d47jezgoaDDxjTrjEms0Z4PQjkFY8r9Ei2jV2RvHjd7Ls=
+	t=1727258887; cv=fail; b=ZB7Q+1dDAYjrHkM/uyH9ZRLIAq/jWDxPvY/nyp6ZnqF6HdKHyhDxmUuLRL/7ehI/J3AvS0405pN3GSUjI3lXT+BvKztEhPRmA3jeVZTH0/KYIW+0eMAhvY5NxXpGWblrgTXr8jGeOPvru5/ZEFZF2fGQ2QCrdcVXJ3uCU60QzYY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727259354; c=relaxed/simple;
-	bh=/s8+s8t3ZveAC6QzUwgVNJnlJTa3ZKkicvsXElOk/Yg=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=mC2g4w/Jrfa4KyEIbef+/ToLSJrMsA4dZl59Pj7Ce+fCiKDSLrAm5dBEXmpq+6fMizDp2q0mSIxSQsfzaO/WrJz6XOPed/VCtPNOjRX3M2SvD2qKBokm8O2ygdD48+4Pu+6ZWNmEaPt8r6CeNRnVltEX3D6YKvn7SAQHYH2cYMw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.96
+	s=arc-20240116; t=1727258887; c=relaxed/simple;
+	bh=apIs5UMNKnU//WmOOjaQhdC+ouFfr0lSQCNXbj3mlLI=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=RDxGZtBMCYnSu+6Ftwf36O2d56S79OlJ3vp3efTiW6UkIdKGGqUyHiO0lnV/I5XuHKujMmU0umX95Kg3G/xJfhw0ZWbl9Z1EbeHUxZv5kkZ2ULd7cH5W57MD2BHSzYxNBZEc/8kKDo+KoyvU70wqqVWbiCOPVFUhqqDnpUTU/to=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.98
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=I9v5yGUWpdHIJ14Txat5kf5hV66E7EUOR+UDPwAV2DU9nnXkp84JVdMxz48ejCpNH8H0RcsbzqoltXAwWeSQTz2twoV4+vJifququNSwcui/vZh6HywEPYfeki7Q2SlvFRzXZw5FvUo6lzMayEcsFEcDNFWvfEQBGPnmPCMkMAiAZjOVB0G5HA1JbqzXCUn4w+Xkts0VyU1pk/mIbg1HYCYNhk+A6zjAusysVdIax1+YBmHkOLeJ2e1Zu2M//4PWAYjKa+bzs6Zm1KcbrBo9+fHBDqS2jp3FOKI1CyeYqDK0LOUSh9b15b3x3lp8yUc3qkg2pcB7fCeWDVyHuGpCxw==
+ b=LaL/gxD9wK5r1/v1cfvcQarRkiP/e78bd7Gb/qzxrghTJCksGcmySlSscVhMAo4q2VvlHZiQAmcMp1QDnJWtmD+BkG+wtBPcFLcO7Em+GQ7ZFbJ4vomWn75d1qbowUfU0ZENJRV8rUSUxvWpxKbp5Do2xTPuSdLU1O+ZpJ2l7sq2uZwENN1hToEWNjIeAaA1JXhxMPHXpdoBLOEJilmeOOQGrOxbD9VFEBFXC3XAlCOWXt0Zg7Hnw8bodlYKSoQUj6EQG7Laa8mBGcjPMhh7UyEr6WlfHZhLL8HIzPZq0EBnVA2gv3P7ZYpNAL7DT/lwBMIngxATFxHOFFwiVyGt3Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=q78oL9QIhd/pRsG9o9xqABuE2HSWpPyCeXmQlHsZFIE=;
- b=etey/3pwJwWtvD9AfZ0kybuJR05Vvk5cbFNWF4kEJ46gmlOoXRMxHmL2JFVb1+eRos8/+oUG4VmZaUcvJBAygNQHebS9Y67XSNpVYJygy9dqnP/81td/LK69eRDgCyTW6scUWpKHXFGX8XRqZ7DaIxvLvk0B+jCQUhcFMEDEFMsN2vkm8ZMS7PybdPuAUzrzH282xKhVH3BV6GnjSonQtVUT3N/P3kSY0XDZ7UwrOUP6T9UiJXzNgZC9xRCljtSyEMTggU7WTlupM004w372QVvnb+I4eZYa127QW8HaPWRJ+xK3Il3TaLk0EYQE/Su6zQ81zoRi2Lv1rIAeJ1Wl/w==
+ bh=V6VxDSO8iqhurxhynfKhByJdV1L3fDOUmJ2X16Da6qM=;
+ b=mLQ6GwVa7ft8A8rX7ou34iEP3N0K9IEvz1CABCI5jNhe2xxdg6An+AIoaQ0wMY8sBlIA1c+zC5f42s5NdMLW7sLDhJcEqVyEImByrdZtSSl5dkCdTH3c/48i44Xk42UoFx7R9VIDEThfXJbt10uLl12MRva3gsjeoOZao3wqJCt78qrJCLGSLLqBNaLLPy1RNc4Dz19zozgO320IBGJsDu9hp3buKy2QvOMDrz1vN+0YWi5d2q/IhmqwBpLQm323/jVLlAzrcvShmocxjrWzRg9hMdTSSU9W0IrycPNBuKzF1/szUEZXRkLUPp81jda5wHRFGACy63xb+oBBcoaI2w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=starfivetech.com; dmarc=pass action=none
  header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=starfivetech.com;
 Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:1b::9) by ZQ0PR01MB0984.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:c::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.17; Wed, 25 Sep
- 2024 09:59:36 +0000
+ (2406:e500:c550:1b::9) by ZQ0PR01MB1208.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:19::5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.31; Wed, 25 Sep
+ 2024 10:07:48 +0000
 Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
  ([fe80::64c5:50d8:4f2c:59aa]) by
  ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn ([fe80::64c5:50d8:4f2c:59aa%5])
- with mapi id 15.20.7962.029; Wed, 25 Sep 2024 09:59:36 +0000
+ with mapi id 15.20.7962.029; Wed, 25 Sep 2024 10:07:48 +0000
 From: Changhuang Liang <changhuang.liang@starfivetech.com>
-To: Emil Renner Berthing <kernel@esmil.dk>,
-	Hal Feng <hal.feng@starfivetech.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH v2] reset: starfive: jh71x0: Fix accessing the empty member on JH7110 SoC
-Date: Wed, 25 Sep 2024 02:59:29 -0700
-Message-Id: <20240925095929.1729726-1-changhuang.liang@starfivetech.com>
+To: Jason Wessel <jason.wessel@windriver.com>,
+	Daniel Thompson <daniel.thompson@linaro.org>,
+	Douglas Anderson <dianders@chromium.org>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Changhuang Liang <changhuang.liang@starfivetech.com>,
+	kgdb-bugreport@lists.sourceforge.net,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] Documentation: kgdb: Correct parameter error
+Date: Wed, 25 Sep 2024 03:07:42 -0700
+Message-Id: <20240925100742.1730576-1-changhuang.liang@starfivetech.com>
 X-Mailer: git-send-email 2.25.1
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: BJXPR01CA0065.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c211:12::32) To ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
+X-ClientProxiedBy: BJSPR01CA0001.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c211:c::13) To ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
  (2406:e500:c550:1b::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -71,84 +74,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: ZQ0PR01MB1302:EE_|ZQ0PR01MB0984:EE_
-X-MS-Office365-Filtering-Correlation-Id: ecaf5aae-9720-4c78-78d0-08dcdd48c33f
+X-MS-TrafficTypeDiagnostic: ZQ0PR01MB1302:EE_|ZQ0PR01MB1208:EE_
+X-MS-Office365-Filtering-Correlation-Id: b8e8abab-7486-4876-5b4c-08dcdd49e8cf
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|41320700013|366016|52116014|1800799024|38350700014;
+	BCL:0;ARA:13230040|52116014|1800799024|366016|41320700013|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	E/7/fWJ0uMS/SJwu+OJ6gXoGWMwfoW8iM0esI6VO+veKGAcNGnFiAWrH7XtQ2UapYjLzisMIly5hexmYdnuvgA2wR19j3plMbSl2+UdqQW7tmZvUqzaDOO3UYZUxAj//FDA1/Jeyz0W0WKbS7e1DvI5iM2xMdqNL5h6/7LBHKeigAx1PLluQ9JGtYSH/nj9WHRTBl/Dy6vJUevY9jqGwLVn9nqI69pM4itBrBBS0HeNNHWtLjizbW7iXrYKQmVAOcnPxkWsLkEYKtxgm0YHg3oTXDekmvwKx1VZzr1U+e9MDp4EA5Pzb084bomDeeIkzjEJ5htnihkstpmtvsWLfpjLF6dWvanKTu2lPDJgUX84tDzf/mGg/u9ZkvGGgf9p9H87IbECj3ctBBaQ+hj3ZOATCml5MBfNBM+RU+pWCexBPCElCDUdXJwGx1RJEWHlRoG/z0f0fCmDgdVy/i0ixG6iBMfukfondDvNJ3Ug01DiCby8EW/noVuKqqh8jQW3TThSiZVtZW975uzEZ6/8eM0zXuPbYjgydOWn0xsXwnCdmcQ4yETBaAauNc6BJP9piTY51Tpyol8sypdJlqs9OFXzuzLGeiOS9RnmZDR+fVCA6FSC5IRTeAwOjwmIA+ekJ
+	4XExc37jW4SxfkDieMvhXooZqwHoqwIkhOt0MZ6u8ZPkMZF8AHPJp4ReRCCKKi+ppb3HL/PzVVAcbda3pvQqkpRby93K2eXms1tiuk7GyOS2yrvtSuVqEM7BAxG3RG7CboHQrM03a4rhiv2AkOCGcGSWOL5vfnIJJqi1N581G6yQQlcU1cN0f4k0GFJEGrC1fYTxa5/dKkeXWukwIhCqBTVrie/T+6jlL8TdrnslR4Ao65QdTNhxIDHLiZT2RKCwkOQ/kp3mupKUEr2JqhCulczhefOb3ZWvqZS0ZB+hFdBFLmAT8e9x07UhcxAkC23oRNEt6sfuE7ibFDbAa5XSiq31hkr4C+6yU+SmzoxNijUjJlA7stVg1pXhJ8mLb+fBAAXW+nxjD2qSfpqtFGHTuXiV5iq3TKgvdwlkVQ0xtQVN3+cp/59hZYuGj7MygtFqyU71oe8eOV6dK8wmVNZ0XS5yzZnbculLYvErwORunb0nalZLsoOW0OvhN7h3GvJx+DSS1PMTMKy2ajv9olwFHmwoZwi4LKAiH4WVyIc7oCGeMY2EELSZYakuMjDfPRd+hX6mjC3kvZ2B19u6D8qBmoe8N7HHCpth9WXG7XftsKmf1zMx/j3VJ3GZKdr+4Gio
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(41320700013)(366016)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(366016)(41320700013)(38350700014);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?a3vbSxAvuL5yKVuGFbIlh/KrHmM0kKiOQ3VxXtL3jqvhZXqqILu3A3EslaIs?=
- =?us-ascii?Q?opalVWrNDAD6D6K9Y+fQ62fAmywgM61Ho2FEK1rOKJIsX+zdVPTkQLmzhJQd?=
- =?us-ascii?Q?STJzSXHileB1kHZ3yR2P7g1H5ToGNDemTmfE3fPWKmh1kWJn0owJKoXs1m0p?=
- =?us-ascii?Q?wgd1zsN7449OnencVdo0+R5wK4qkTc4IIx/nfnu+w5zLJBH20KOFEPZpob0r?=
- =?us-ascii?Q?vpo92BKvBzEfVsYMkwdMn9/L46xt9YNndo4UGCnPGEghdKKumee0xsOcnmjX?=
- =?us-ascii?Q?2G4u4j8Wkwo+2VOmRLW4xTJ1YdE14sme7fkmQH2bakg3kVgVLD/FeZbp0UH9?=
- =?us-ascii?Q?Y4oloHEOKAIEAvHLBt7YOxnsHQcnmu20E8ARsIrGIkVOwAw1enDs69XumpW2?=
- =?us-ascii?Q?aXsi7dW5YzZfe8UR9r/wL7zFRg9rUu48dJL/HN9nIudUOSI4l61poE0geP3S?=
- =?us-ascii?Q?agnWCHJsNX+mg2yC04o8Hj06kDYuAcRmGbngL7IqBezUQY0QjSDg0u2PXC+V?=
- =?us-ascii?Q?A44nLSvvvWcWBnR42qjDKcBTeNLzJpMGL5Nbb+JA1UM6vpVdTi/naUamVGW8?=
- =?us-ascii?Q?5YTu/AJXM+x+f3+2dlH/RxV+VRph4LN8FI/I725SXN0LPDa9lTHoTn8nwll7?=
- =?us-ascii?Q?UP+rmkkHMFcOFhX6/3hx1mTsVoAcB/jMcOqHUPQcX6XGoCcJHj2FrbBEg2Ru?=
- =?us-ascii?Q?oJ8MAwWlb5lhAmvtJ/cn+LdDGHVk28G6RJxI5XZaP9GW1EHDSYG5yeh0ryRE?=
- =?us-ascii?Q?A3kQpdAQtQwi4UcxwBHev76OPbXGTLL9i6PALP09h6Za+UxNgklcAw+oAdxi?=
- =?us-ascii?Q?kvrAcN/T1PstgVJFpPpRNE8oAVOCsXGmZw66Oe6FuQ0QZ2zDTqPtvLuEibGV?=
- =?us-ascii?Q?672qYm/btwNFiR47d2knCb3G0pLNaJY5e5T28BiWpN+PCldpKnrP0/ffJVuf?=
- =?us-ascii?Q?Ahdj8AaSD1PMFbLagNgsP30pV3C3GQEm8joht5T6XmHHC21KFnCt8nQuq8Rt?=
- =?us-ascii?Q?2rPFW0Z0Y7f1U+Og2jljKm0j9cbtk8sfSHO6HD3xJVTTwIHBwd+RiTzZGRaK?=
- =?us-ascii?Q?qb2b5P6+qQ3oV9eUxo9Vjbq1nhhJ2bESK8k1/kI8FVQBQK9oQvZWQBc/fUuC?=
- =?us-ascii?Q?XltewBl6r3pewxCDBmHSxlPl1wCrYr8pMVI4GxbqMH5nhmHs4xOXXmbtpj6j?=
- =?us-ascii?Q?jNWDx2jP4/zBRUHoxVvVwI1/CC2xiDj+f9buuANZPfkMiMUhbJkh60un5Ec9?=
- =?us-ascii?Q?7mZ1sgkYFGtz46Qfm4pbrl46GJ/SB+JDkaJdmRhaSaPkE+xsC0hb45HCn8Hw?=
- =?us-ascii?Q?2LInDouMHxuNEY9GCyJ6zzBKWWOO7n14QMsbDVe7arb5VTICkI4iOLAqy347?=
- =?us-ascii?Q?kkN9dEJ7rb0VtgDY9nKkH+qVS43sJNWCG+eij5kxK05JnlNt1oqoGRrn2D0a?=
- =?us-ascii?Q?QvsIrZdXsIIchfBBQrORZ6ZE5NfF9dmRfeMS0/y3NaYlO22801NTu803vTla?=
- =?us-ascii?Q?JXLcYvFEl6bkzG3xX4Vy92piOpsexDBxLzMsZbZUy3t0g2yVkxJIpBQ+BoRg?=
- =?us-ascii?Q?FpFFLBe2z/GgBCH3g9BYUDFRL1KE0nayoXqe5ilQQihgQH6UW2YLdD5jiqkL?=
- =?us-ascii?Q?41G/iImAbBTlR/QIhfoVSz4=3D?=
+	=?us-ascii?Q?KCJI6xeMlRTHP4zj1LQLcTVR2iMvN3VPFw+2WHhFzmTWBihqYJuPqJ6bAB1x?=
+ =?us-ascii?Q?LC+OOfFzz4OlfUVr37gDluygouS4UBL6Wg92V6DIo+tHuOYWXBdeU97EkQfv?=
+ =?us-ascii?Q?kD0t8FKUzLCAw9EH4w1pu0wk/4hm4x3aGr0aGU2n3vcBKPP8A+8senKLHcYn?=
+ =?us-ascii?Q?BERcIg+LmYjRwRZUhlKh+o8t/fR6LfasXRlMSISdM6HOl8UH1J2a0sqgiTgX?=
+ =?us-ascii?Q?BCou2kCVMdWJB++7bYyF+UOAe66v5iSJUO7xTXmgkO9pjEGODId+iBNaf28I?=
+ =?us-ascii?Q?r+ctBi8b31zJxty7L+K8uHN0LO1gACxpxuEoB3j4tS0t7/cQjnq7FvU0WNRq?=
+ =?us-ascii?Q?HlGgg8hNmYwNT6TZI2C3/5Y+e0AKVOvqOEnppWX4EmuHvBZA3fpPLXXWQust?=
+ =?us-ascii?Q?pq0sP6LJyX6xsWwvn9tu8LeNyjZMwLJZ9DqJbCNsP/USwiOrvuqHPIwnFZ3x?=
+ =?us-ascii?Q?SBDdQzZCpi/MyWJBdse9FFVohzLwGLzWobjcCs+IjQuRmuMnWhEvWHxv7/KT?=
+ =?us-ascii?Q?JJGJxSNW9DcOmphEOzOM5BBCdKeG+4QsUkkkWiQC7YZ1jmaXAy9uesJprsx9?=
+ =?us-ascii?Q?utpTy6TSNv+d425pND3Abtg++qQRQJvpQs4A0VN+NDnAJnhl1Xt52Ly3HcU9?=
+ =?us-ascii?Q?I2VWTlc4SyD5TwB/owHRIWnNup6uRmNMa1AsdHV+auyvwTY9oTB0scfbPFqS?=
+ =?us-ascii?Q?dj7nd0e1m7Nu7n45m9Ah4qJGg1DGeCHcWgzFyW7h/L5qAmlWevdu3b9GLEq8?=
+ =?us-ascii?Q?eyx/CQL/ccmpLp4e0JsJxsxKrwRGepS9w8etezhxfzwdDKm/O4h6xi4lyO22?=
+ =?us-ascii?Q?EE3Kh5dsbMJbQsI25swNylxipxzu0RMXT2BJPODFz9MckBlLzLdcxLwgu5mt?=
+ =?us-ascii?Q?aoyju+wYoz66ab5IYxa6K+KZo2Oz18DxK4fLlHORS1RycHJTunhJ+Uoc1fsr?=
+ =?us-ascii?Q?eoWh1y//UBgEUeyCiHncOBFbLorX6XwXopUB3Ty6IgkRljG8FSsDC1LcCK5V?=
+ =?us-ascii?Q?XmHGLNoyLJqd8EbVJ6wLF9R3rVaFAF6fyrfzPWYHtvcB0nTi9PLe60hNXeed?=
+ =?us-ascii?Q?P2odcWKI+r8QK8wSnltksIlG0In8/AYBD1H/A1RcSKCmiIAibnd99jfDuKzZ?=
+ =?us-ascii?Q?JozdAkCANwefiVvNzfpcfq94ixhpj4HkkRmyKFMR+4zy4XbUJdQB2YBZoBM8?=
+ =?us-ascii?Q?hr6VGdOYKt1KCwGGz461PIGVar8rs6WqNC39CBBac4G57g8cwTyx+iiEYQHO?=
+ =?us-ascii?Q?Gxw4JyUxDuzMAGmL2dGpI1uHn/0KzNvyZ+XDv9MG8hVYhlXt7sgQSZSa7fQU?=
+ =?us-ascii?Q?LanHE6RYUA3Z3J6TPU0Nb0NgngfLyHnT0XSXGZr5zkwDyZVwBj1bBnb4T+JA?=
+ =?us-ascii?Q?ocZKd0KsDevjCpx/1uff0w/CWmhC+7abdPOJsM2L/oFxqFnPSH02SvRM0anr?=
+ =?us-ascii?Q?fc+/Hk4137EfgYttHzYpgibDImF+UYmpyDDT6aqL3mfbR8/QAtk8O7BgUvR0?=
+ =?us-ascii?Q?+bJf+1K2Zu/doPmcaLfQ9oQUntUI/o/2BIre9eTN3GqJd1eYXDlMwrbcI4xR?=
+ =?us-ascii?Q?Vn5FSaSukvc00yjd5QjIJy6Lk3uz6W2aMEDT4pORo8vp0JIflQLKsmR0N49x?=
+ =?us-ascii?Q?k+z3hE57UTM8vsfqa0aB6NU=3D?=
 X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ecaf5aae-9720-4c78-78d0-08dcdd48c33f
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8e8abab-7486-4876-5b4c-08dcdd49e8cf
 X-MS-Exchange-CrossTenant-AuthSource: ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2024 09:59:36.4062
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2024 10:07:48.8936
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VJ8E+tdT0DdCmledMGttd5NdPmZ4kUeNyYT2abIA2npNngzPdODjR7Nu0Y1bqH/7qR3zVs4WJhSjwxTOi+MNA5qrzglu52qE9Zeifa6YBbuMvLHugdX3M+ivoFbGBa45
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ0PR01MB0984
+X-MS-Exchange-CrossTenant-UserPrincipalName: SV8Rg3cqHucv72jAbioXvsxui854pCliVkzMhlroP1LjqNo5YJLtJd6jX4alg+EBkLewy0FRqqkz17P2rRcrm7INGjr6DjTJZB+foASoN1HehG44xfTYvAMKaYwkT8nd
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ0PR01MB1208
 
-data->asserted will be NULL on JH7110 SoC since commit 82327b127d41
-("reset: starfive: Add StarFive JH7110 reset driver") was added. Add
-the judgment condition to avoid errors when calling reset_control_status
-on JH7110 SoC.
+Module kgdb had been converted to debug_core since commit c433820971ff
+("Move kernel/kgdb.c to kernel/debug/debug_core.c") be added, so let's
+correct the module parameter path.
 
+Fixes: c433820971ff ("Move kernel/kgdb.c to kernel/debug/debug_core.c")
 Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
-Acked-by: Hal Feng <hal.feng@starfivetech.com>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 ---
 
-v2: Improve commit message
+Hi,
 
- drivers/reset/starfive/reset-starfive-jh71x0.c | 3 +++
- 1 file changed, 3 insertions(+)
+v3: I wrote a error change log in v2. Now fix it.
 
-diff --git a/drivers/reset/starfive/reset-starfive-jh71x0.c b/drivers/reset/starfive/reset-starfive-jh71x0.c
-index 55bbbd2de52c..29ce3486752f 100644
---- a/drivers/reset/starfive/reset-starfive-jh71x0.c
-+++ b/drivers/reset/starfive/reset-starfive-jh71x0.c
-@@ -94,6 +94,9 @@ static int jh71x0_reset_status(struct reset_controller_dev *rcdev,
- 	void __iomem *reg_status = data->status + offset * sizeof(u32);
- 	u32 value = readl(reg_status);
+ Documentation/dev-tools/kgdb.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-+	if (!data->asserted)
-+		return !(value & mask);
-+
- 	return !((value ^ data->asserted[offset]) & mask);
- }
+diff --git a/Documentation/dev-tools/kgdb.rst b/Documentation/dev-tools/kgdb.rst
+index f83ba2601e55..a87a58e6509a 100644
+--- a/Documentation/dev-tools/kgdb.rst
++++ b/Documentation/dev-tools/kgdb.rst
+@@ -329,7 +329,7 @@ ways to activate this feature.
+
+ 2. Use sysfs before configuring an I/O driver::
+
+-	echo 1 > /sys/module/kgdb/parameters/kgdb_use_con
++	echo 1 > /sys/module/debug_core/parameters/kgdb_use_con
+
+ .. note::
 
 --
 2.25.1
