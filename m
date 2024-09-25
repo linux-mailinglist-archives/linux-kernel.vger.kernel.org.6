@@ -1,202 +1,134 @@
-Return-Path: <linux-kernel+bounces-339090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67A13986039
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:17:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6769898615B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:47:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2908628B4EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:17:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C91CEB32238
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947BE19C568;
-	Wed, 25 Sep 2024 12:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE0519CCE2;
+	Wed, 25 Sep 2024 12:46:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J/rDeOHr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TzCck2oX"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67BE19C555;
-	Wed, 25 Sep 2024 12:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AFD419C555;
+	Wed, 25 Sep 2024 12:46:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727268405; cv=none; b=UWVSPQN/YMP02DJutI+f6q8+HMhgkekHOpG1npRzYPAFJWz8XBuGnsdhm9Zt4U8EKBCDZZ/G+Fkrg09gizHmTQY3GxuVHfZy2Aol/RX7i2rY6DgO/jncA/6wpKScRd3I8PaCvhwgI62UthxwMW+KLf0viFgCn+uPrdDEvhaQOTw=
+	t=1727268417; cv=none; b=C0PrQaE714RI83+9o8PIiajZGZqM+gq5nWzLkiVWR4FhmoHrTsaD4k2Y3eTDxb8J4ENIPcrX0qfLwmmyLaUvuF2l4gE1lsILR8bzwoUiLmyYV9BfHn65i6tDc9x04+WpGwitnX15Bdc60pi1i1kOSTRrD1DGS5HhbB904D6fJhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727268405; c=relaxed/simple;
-	bh=kcSA1j/3f0Eze9yRRZ4pyTUpEjl/LYeoC7gl0Z8q/BM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cj7oV6ZiXc8TJ22lPn+osPItaZNXtfsaY3avF5F+KlAgsrgn5QsD4mf4Gc+TR/wPLLrkSEeQtWe94AeQwL30Cfhfe3A6IBMfFtAsSEszQSUV3fdYRKvnO6Q8yvv2Z7Ba/9H0b1ejHvs4E715IAe+VRTfgG9RauKKf2PiNlE0KxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J/rDeOHr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23301C4CEC3;
-	Wed, 25 Sep 2024 12:46:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727268404;
-	bh=kcSA1j/3f0Eze9yRRZ4pyTUpEjl/LYeoC7gl0Z8q/BM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J/rDeOHrlwt6bi35l3WrRKtwZ/Hf7vHYS9qemOk3SIU+UIyEZmgNFddrsGW3cR/d+
-	 MvzsyAojMqYy5NaCHneDSiHJCtZ7XkelcfAyCRyNgV/4lagm4JGo9HVVKSAgUa716D
-	 PD5pUQWUIcDHNbCLIfVUljDNd2/YJCm/kvCzXwUH1FnUlo8Rci/lltRXmU16AeAmBu
-	 Jbv+3/ENU5je2/AS2BkIcJjIOzXmV8NDuuB2LAw0oiuKV0jQdfALqnbGbwlSoV6lsQ
-	 tujWUyEwICK6r91V7BGKV04xg0VQi9Z/cGKWJCW5ASNQf4gwHs/7wRCZ9mEtTy0hqk
-	 fI1PMf0GIHZsw==
-Date: Wed, 25 Sep 2024 13:46:40 +0100
-From: Conor Dooley <conor@kernel.org>
-To: "Mahapatra, Amit Kumar" <amit.kumar-mahapatra@amd.com>
-Cc: "broonie@kernel.org" <broonie@kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"Simek, Michal" <michal.simek@amd.com>,
-	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"git (AMD-Xilinx)" <git@amd.com>,
-	"amitrkcian2002@gmail.com" <amitrkcian2002@gmail.com>
-Subject: Re: [PATCH] dt-bindings: spi: xilinx: Add clocks & clock-names
- properties
-Message-ID: <20240925-trapdoor-stunt-33516665fdc5@spud>
-References: <20240923123242.2101562-1-amit.kumar-mahapatra@amd.com>
- <20240924-impaired-starving-eef91b339f67@spud>
- <IA0PR12MB76998D7BC3429606508E6202DC692@IA0PR12MB7699.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1727268417; c=relaxed/simple;
+	bh=+h73NwMo5znLu2Ew+i3I2VkupHos0y5Ye4/mBWE8h+8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iyyrmv/xb0lXAvGtBDuxg/4n/hhpKR23r7ThSvLaT5GxOixfoXQXCCPQ18widt+Ly8yt0YY32TcoHzP2jQobQxNtzuuT6PC/JlDN2s2zPjK+d7l1o1qa4JikinrXnFkiYEIqz4m9FbRcJAP/3hIafLAfIOjixqvS5CwMHx3MQPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TzCck2oX; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7CE84240007;
+	Wed, 25 Sep 2024 12:46:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1727268412;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ykqGoCKyoZGe85lSwP80aytv9ilQyJvt2Y/G75BsUSk=;
+	b=TzCck2oXif/neky+oze7S7hIvR+rneHWHSQod443z/rgmML+WiiWBSjX2q1Z4gyqueUVd6
+	BslqbwZp5FHma3Y/8KWsi5randgJqIxzwXwuvP2inFuR3jaqKySj0TSIVYKwBugrkQCNgk
+	3pc057P0Cm6jsfgKlODq44gsfc/34xgGwXdNET9FCBPSbO3Uz90U/bMbSaGUXeb0VrIIsg
+	drbow4nG2N1oljv5krCDMplerSiLmnwozJQxa+tC9TxtlGtv+cgRT82JD4Wubp0pa4bMc3
+	VtydWbYZl6eNWXro7T3eli5JZgBFeUmW+G2zWKic8GvhkmpDWvmcER5y8kw7Kg==
+Date: Wed, 25 Sep 2024 14:46:49 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Jacob Keller <jacob.e.keller@intel.com>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>, "Broadcom internal
+ kernel review list" <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
+ <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, "Eric
+ Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>, Radu
+ Pirea <radu-nicolae.pirea@oss.nxp.com>, Jay Vosburgh
+ <j.vosburgh@gmail.com>, "Andy Gospodarek" <andy@greyhouse.net>, Nicolas
+ Ferre <nicolas.ferre@microchip.com>, Claudiu Beznea
+ <claudiu.beznea@tuxon.dev>, Willem de Bruijn
+ <willemdebruijn.kernel@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ "Horatiu Vultur" <horatiu.vultur@microchip.com>,
+ <UNGLinuxDriver@microchip.com>, "Simon Horman" <horms@kernel.org>, Vladimir
+ Oltean <vladimir.oltean@nxp.com>, <donald.hunter@gmail.com>,
+ <danieller@nvidia.com>, <ecree.xilinx@gmail.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, <linux-kernel@vger.kernel.org>,
+ <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>, Maxime Chevallier
+ <maxime.chevallier@bootlin.com>, Rahul Rameshbabu <rrameshbabu@nvidia.com>,
+ Willem de Bruijn <willemb@google.com>, Shannon Nelson
+ <shannon.nelson@amd.com>, Alexandra Winter <wintera@linux.ibm.com>
+Subject: Re: [PATCH net-next v17 04/14] net: Change the API of PHY default
+ timestamp to MAC
+Message-ID: <20240925144649.086b9771@kmaincent-XPS-13-7390>
+In-Reply-To: <e4de7c23-ffee-42f6-aba8-b10f3d44f22c@intel.com>
+References: <20240709-feature_ptp_netnext-v17-0-b5317f50df2a@bootlin.com>
+	<20240709-feature_ptp_netnext-v17-4-b5317f50df2a@bootlin.com>
+	<39c7fe45-fbee-4de5-ab43-bf042ed31504@intel.com>
+	<20240727154426.7ba30ed9@kmaincent-XPS-13-7390>
+	<e4de7c23-ffee-42f6-aba8-b10f3d44f22c@intel.com>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="HaqQMrQQU5awWjZC"
-Content-Disposition: inline
-In-Reply-To: <IA0PR12MB76998D7BC3429606508E6202DC692@IA0PR12MB7699.namprd12.prod.outlook.com>
-
-
---HaqQMrQQU5awWjZC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Wed, Sep 25, 2024 at 11:35:56AM +0000, Mahapatra, Amit Kumar wrote:
-> Hello Conor,
+Hello Jacob,
+
+On Mon, 29 Jul 2024 11:08:01 -0700
+Jacob Keller <jacob.e.keller@intel.com> wrote:
+
+Sorry for answering it so late. I was a bit busy.
+
+> >>> --- a/net/core/timestamping.c
+> >>> +++ b/net/core/timestamping.c
+> >>> @@ -25,7 +25,8 @@ void skb_clone_tx_timestamp(struct sk_buff *skb)
+> >>>  	struct sk_buff *clone;
+> >>>  	unsigned int type;
+> >>> =20
+> >>> -	if (!skb->sk)
+> >>> +	if (!skb->sk || !skb->dev ||
+> >>> +	    !phy_is_default_hwtstamp(skb->dev->phydev))   =20
+> >>
+> >> I don't follow why this check is added and its not calling something
+> >> like "phy_is_current_hwtstamp"? I guess because we don't yet have a way
+> >> to select between MAC/PHY at this point in the series? Ok. =20
+> >=20
+> > skb_clone_tx_timestamp is only used for PHY timestamping so we should do
+> > nothing if the default PTP is the MAC.
+> >  =20
 >=20
+> I guess my misunderstanding is what about the case where user selects
+> PHY timestamping with the netlink command? Then it would still need to
+> do the skb_clone_tx_timestamp even though its not the default? Or does
+> phy_is_default_hwtstamp take that into account? In which case it would
+> make more sense to name it phy_is_current_hwtstamp.
 >=20
-> > -----Original Message-----
-> > From: Conor Dooley <conor@kernel.org>
-> > Sent: Tuesday, September 24, 2024 10:07 PM
-> > To: Mahapatra, Amit Kumar <amit.kumar-mahapatra@amd.com>
-> > Cc: broonie@kernel.org; robh@kernel.org; krzk+dt@kernel.org;
-> > conor+dt@kernel.org; Simek, Michal <michal.simek@amd.com>; linux-
-> > spi@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-
-> > kernel@lists.infradead.org; linux-kernel@vger.kernel.org; git (AMD-Xili=
-nx)
-> > <git@amd.com>; amitrkcian2002@gmail.com
-> > Subject: Re: [PATCH] dt-bindings: spi: xilinx: Add clocks & clock-names=
- properties
-> >=20
-> > On Mon, Sep 23, 2024 at 06:02:42PM +0530, Amit Kumar Mahapatra wrote:
-> > > Include the 'clocks' and 'clock-names' properties in the AXI Quad-SPI
-> > > bindings. When the AXI4-Lite interface is enabled, the core operates
-> > > in legacy mode, maintaining backward compatibility with version 1.00,
-> > > and uses 's_axi_aclk' and 'ext_spi_clk'. For the AXI interface, it
-> > > uses 's_axi4_aclk' and 'ext_spi_clk'.
-> > >
-> > > Signed-off-by: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
-> > > ---
-> > > BRANCH: for-next
-> > > ---
-> > >  .../devicetree/bindings/spi/spi-xilinx.yaml   | 29 +++++++++++++++++=
-++
-> > >  1 file changed, 29 insertions(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/spi/spi-xilinx.yaml
-> > > b/Documentation/devicetree/bindings/spi/spi-xilinx.yaml
-> > > index 4beb3af0416d..9dfec195ecd4 100644
-> > > --- a/Documentation/devicetree/bindings/spi/spi-xilinx.yaml
-> > > +++ b/Documentation/devicetree/bindings/spi/spi-xilinx.yaml
-> > > @@ -12,6 +12,25 @@ maintainers:
-> > >  allOf:
-> > >    - $ref: spi-controller.yaml#
-> >=20
-> > Please move the allOf block down to the end of the binding, after the p=
-roperty
-> > definitions.
-> =20
-> Sure, I'll take care of it in the next series
-> >=20
-> > > +  - if:
-> > > +      properties:
-> > > +        compatible:
-> > > +          contains:
-> > > +            const: xlnx,axi-quad-spi-1.00.a
-> > > +    then:
-> > > +      properties:
-> > > +        clock-names:
-> > > +          items:
-> > > +            - const: s_axi_aclk
-> > > +            - const: ext_spi_clk
-> >=20
-> > These are all clocks, there should be no need to have "clk" in the name=
-s.
->=20
-> These are the names exported by the IP and used by the DTG.
+> Either way this is mostly bikeshedding and probably just some
+> misunderstanding in my reading of the code.
 
-So? This is a binding, not a verilog file.
+In fact the phy_is_default_hwtstamp() is only needed in case of no netlink
+command used. As you can see in patch 8, we call it only if dev->hwtstamp is
+null which mean that a netlink command has been sent.=20
 
-> > > +
-> > > +    else:
-> > > +      properties:
-> > > +        clock-names:
-> > > +          items:
-> > > +            - const: s_axi4_aclk
-> > > +            - const: ext_spi_clk
-> > > +
-> > >  properties:
-> > >    compatible:
-> > >      enum:
-> > > @@ -25,6 +44,12 @@ properties:
-> > >    interrupts:
-> > >      maxItems: 1
-> > >
-> > > +  clocks:
-> > > +    maxItems: 2
-> > > +
-> > > +  clock-names:
-> > > +    maxItems: 2
-> > > +
-> > >    xlnx,num-ss-bits:
-> > >      description: Number of chip selects used.
-> > >      minimum: 1
-> > > @@ -39,6 +64,8 @@ required:
-> > >    - compatible
-> > >    - reg
-> > >    - interrupts
-> > > +  - clocks
-> > > +  - clock-names
-> >=20
-> > New required properties are an ABI break, where is the driver patch tha=
-t makes use
-> > of these clocks?
->=20
-> Alright, I will remove these from the required properties to avoid=20
-> breaking the ABI. We're working on the driver patch and will send it once=
-=20
-> it's ready.
-
-What changed to make the clocks needed now? It's possible that making
-them required is the correct thing to do, so breaking the ABI would be
-justified (provided the driver can still handle there being no clocks).
-
---HaqQMrQQU5awWjZC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvQGLAAKCRB4tDGHoIJi
-0scRAQCAKuG3tQ1/pvYQPWfQVDEub9Z82uFOrgLkwy9OhlSd1wD+LQsM2swJTMq1
-Uz+Je+2R40Vej/gra4Rc5OrYmXslfwY=
-=8acX
------END PGP SIGNATURE-----
-
---HaqQMrQQU5awWjZC--
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
