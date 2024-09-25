@@ -1,91 +1,112 @@
-Return-Path: <linux-kernel+bounces-338368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1DE39856F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:10:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 091159856FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:12:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75AA31F2570D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:10:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1CD91F24EBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C00E175568;
-	Wed, 25 Sep 2024 10:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SCwlXPE0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF0B015C158;
+	Wed, 25 Sep 2024 10:12:25 +0000 (UTC)
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A5715E5CC;
-	Wed, 25 Sep 2024 10:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961FC14B07E;
+	Wed, 25 Sep 2024 10:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727259029; cv=none; b=NoXOTRXHf60RntcWoaRl/MDbLIrZn+JQo6TAlS6cTgbZCUCGfHBjVlQFp4MRkdgl0NbXnDb22QuV/fDXCPECayJeaGalTzy68VWRdlhLTCH0ZztbRFOP6eiKvuUaRHk9GXUm8IgqczdWAzSn4P6QxIXRs0Eheytdmc052LWfO40=
+	t=1727259145; cv=none; b=iWRJ6eoGLw09KcInkQuK9GqUVw9ywbYgNVyvPDG8qFnHWs9frIpgFUboLKBOtfRyX94xR8ma/R0loYr28gcBjoxk2cQYGkVbAY+IwXscT37IUzajXnFfysj0ZDwb8bctBv/mAffTg0m82Y4A7+4UgTiu8ZgQh1oL28g8uWUhgpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727259029; c=relaxed/simple;
-	bh=zagggcB3+STL8PwRqWhjspVVN0j/v2YUcWp5Mt0mX78=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=m3SGEYFHyO/PeFXXLMEhZY+A2ZVw3TxYlZXidq/7SbXEPC+mn1T3z5G9FALD8XdrruD2XWWBtoNjjg6Do4KwRVBZypNmzkQZ5MVP633wE2nSTlUg+blQLMSzxP9RfyWx6L3R2+3wzYLchQTivMZu0X8Ew/7duMtda1LdpWsSvX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SCwlXPE0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ED4BC4CEC3;
-	Wed, 25 Sep 2024 10:10:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727259029;
-	bh=zagggcB3+STL8PwRqWhjspVVN0j/v2YUcWp5Mt0mX78=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=SCwlXPE0bpsrn6qxwQy+GoKuil1/vTEP1ZPibVKUdixp5k0izh/VvFtPnYNpQiRqH
-	 NswBhCfXZ9h9Dn5E4N1OnXyyESiSZdw0GWyWo2cjU5owy3ElohtIAKAlU9awmgHYGw
-	 ZafdW+SuUYbGpc2+Qc6i1vqBNEQyn5P58IdYvGDKmwUCxKyEJ46f2dbdEZKTN/h+RS
-	 LYNqZ3Drr+VwliesKtgjZ6NAqcOUBxi5OYuE9Py1Blciqsrm8WCseWd1qV3+M+JGc5
-	 PnVxcXxTTkZHgnYPea/D+frKI4pqdeuvlt9JJ6du0lARrVDMLBkRZnsnpR87TA2GQl
-	 Zh7ocE51AbKcw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD203809A8F;
-	Wed, 25 Sep 2024 10:10:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1727259145; c=relaxed/simple;
+	bh=WNay2WNLiI/AIMNDpXFtNDMsDbvMSivFO34397OI6C4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j02Nj0H7LKcAsvcu/KSJQCOQXrDKLinHtfJQNtMaAmUZixpjrUQ0+6+aEZN19mlZehfbiNKrpfDbl6sFZWktEARtXADMrayvG6Y6N1xbMW0wUgxQL7LnVHSJUdAgFys8KcRlX6fbsqXSuAHJkrriCOYJqrP2whl7G+UDZmbpLvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4XDBhN6gTSz9v7JY;
+	Wed, 25 Sep 2024 17:46:44 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 99AD81404C6;
+	Wed, 25 Sep 2024 18:12:10 +0800 (CST)
+Received: from [10.45.145.58] (unknown [10.45.145.58])
+	by APP1 (Coremail) with SMTP id LxC2BwBn+C_r4fNmunSaAQ--.25388S2;
+	Wed, 25 Sep 2024 11:12:10 +0100 (CET)
+Message-ID: <f5aeeeda-c725-422a-9481-4795bd3ade0f@huaweicloud.com>
+Date: Wed, 25 Sep 2024 12:11:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] selftests/bpf: Add missing va_end.
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172725903151.525990.10977318589786290906.git-patchwork-notify@kernel.org>
-Date: Wed, 25 Sep 2024 10:10:31 +0000
-References: <20240924045534.8672-1-zhangjiao2@cmss.chinamobile.com>
-In-Reply-To: <20240924045534.8672-1-zhangjiao2@cmss.chinamobile.com>
-To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-Cc: andrii@kernel.org, eddyz87@gmail.com, shuah@kernel.org,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
+ pointers
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org, linux-mm@kvack.org,
+ lkmm@vger.kernel.org, "Paul E. McKenney" <paulmck@kernel.org>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Kent Overstreet <kent.overstreet@gmail.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
+ Neeraj Upadhyay <neeraj.upadhyay@amd.com>
+References: <20240917143402.930114-1-boqun.feng@gmail.com>
+ <20240917143402.930114-2-boqun.feng@gmail.com>
+ <55975a55-302f-4c45-bfcc-192a8a1242e9@huaweicloud.com>
+ <ZvPfmAp_2mDkI3ss@boqun-archlinux>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <ZvPfmAp_2mDkI3ss@boqun-archlinux>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:LxC2BwBn+C_r4fNmunSaAQ--.25388S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYa7kC6x804xWl14x267AKxVWrJVCq3wAF
+	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
+	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xv
+	wVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7
+	xvwVC2z280aVCY1x0267AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8C
+	rVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxV
+	WUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1l42xK82IYc2Ij64vIr41l4c8EcI0Ec7CjxVAaw2AFwI0_GFv_Wryl4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
+	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_
+	Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8Jr
+	UvcSsGvfC2KfnxnUUI43ZEXa7IUbHa0PUUUUU==
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
-Hello:
 
-This patch was applied to bpf/bpf-next.git (master)
-by Daniel Borkmann <daniel@iogearbox.net>:
 
-On Tue, 24 Sep 2024 12:55:34 +0800 you wrote:
-> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
-> 
-> There is no va_end after va_copy, just add it.
-> 
-> Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
-> ---
->  tools/testing/selftests/bpf/test_progs.c | 1 +
->  1 file changed, 1 insertion(+)
+Am 9/25/2024 um 12:02 PM schrieb Boqun Feng:
+> Hi Jonas,
+>
+> Of
+> course, if we are really worried about compilers being too "smart"
 
-Here is the summary with links:
-  - selftests/bpf: Add missing va_end.
-    https://git.kernel.org/bpf/bpf-next/c/8714495755fd
+Ah, I see you know me better and better...
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+> we can always do the comparison in asm code, then compilers don't know
+> anything of the equality between 'ptr' and 'head - head_offset'.
+Yes, but then a simple compiler barrier between the comparison and 
+returning ptr would also do the trick, right? And maybe easier on the eyes.
 
+
+Have fun,
+    jonas
 
 
