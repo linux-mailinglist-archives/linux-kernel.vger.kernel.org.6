@@ -1,128 +1,156 @@
-Return-Path: <linux-kernel+bounces-339426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CC549864ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:36:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 062FD9864F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:38:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 878001F252B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:36:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBA26288F18
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:38:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED53446DC;
-	Wed, 25 Sep 2024 16:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3AFE4962B;
+	Wed, 25 Sep 2024 16:38:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="p1BvZ1VZ"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mBuE9aZw"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC3073A1BA
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 16:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9A317C6C;
+	Wed, 25 Sep 2024 16:38:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727282175; cv=none; b=I6eJPjE9ERlr4iCJtL0yi8Yxdnxy8lUtBFUCudeEAKOMlMR/t6kkMUq59XlZlwo5g7n92Dx8S3Pr6bSDZwlR/5flDEDqyoHMQ6AO+ZipgFLNdi/q7tcEKmYIAlnzrHUUwXzmxwICfxcg3BHe2OioxoIsNwkTTXQmv2JEQumeEiE=
+	t=1727282324; cv=none; b=rEerLmpBqe9K1rET4Qq1KjjWdZ1Qh4GBok9GZiwZySpBBKTliLTPg9ZktjO6kbHgUIJ5KK2BDfgSt1urUQ0N/DC9RnVZFxwG2QxP/Z0RXmgbshOwDQpnKTfnphsGsYv1tNOME2yt670MquJZ8eESuzYcBCRQ56OYvStYoEA2pyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727282175; c=relaxed/simple;
-	bh=w8SJ75PMeCgEFuEGe+d801zRh1FiK0RxpW5UvU9+MMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P9YTsGBIAFBMT3TJDjW7dTfwcxzdXJtYvVC51qauSKk66931vPmwIhy9V2p9OqlIDw9YQWWuZnseSklA/3/XP5GeWgkwLlVLP4Iyrrx/BaSXoRhIpnEpvYohsTQeRHF/fOdj1iPGTmfSyfZ+P7+KEkJottgBLD5WN66T+GqUVH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=p1BvZ1VZ; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 375C77E2;
-	Wed, 25 Sep 2024 18:34:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1727282084;
-	bh=w8SJ75PMeCgEFuEGe+d801zRh1FiK0RxpW5UvU9+MMY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p1BvZ1VZU8NqNvU4usiN0aUF0oWWNqsE/HUYKw+oINfkcwWDuPYJo/XVySWlz4lNN
-	 MmR+tDYjMazIuUVgltKcW5gCKH4zq7BVExqxHdlM5tIDhMRFgSW3ReEjP7iqb4EwbB
-	 dFn7qKR2uWG7q7solOzlcCDPjRfIqn0pMe+0Vv34=
-Date: Wed, 25 Sep 2024 19:36:09 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Steffen Dirkwinkel <lists@steffen.cc>
-Cc: dri-devel@lists.freedesktop.org,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Michal Simek <michal.simek@amd.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm: xlnx: zynqmp_dpsub: also call
- drm_helper_hpd_irq_event
-Message-ID: <20240925163609.GD27666@pendragon.ideasonboard.com>
-References: <20240923074803.10306-1-lists@steffen.cc>
- <20240924184335.GJ30551@pendragon.ideasonboard.com>
- <e4626c1d3b28613d1d219c735bcd8525be0f0d9e.camel@dirkwinkel.cc>
+	s=arc-20240116; t=1727282324; c=relaxed/simple;
+	bh=AWnsj1qmPS/m6isTX9M3B7IZEnxlL916R1MIHdxfq3k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NioJ1gl3BITEyimtHzeMTC9E7Oh5bezgJWkxTAK3XEP2wRolClzvVb4VAu1L6ZPZC9+hkQDZIk56LSbb3zBx4Rn0lrofF0M9ec/7oKlUqa+Kb1d2a4x9T10w2GQfnaMm5YazLhUeO7xl+mknF+GaAy4CHFzpfAQ+cBHY2hzdTD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mBuE9aZw; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20b05ba4192so674715ad.1;
+        Wed, 25 Sep 2024 09:38:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727282322; x=1727887122; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5PK2m3Ze63qRkSazwclcAjByMVHVEVpFHvdModCOxYo=;
+        b=mBuE9aZwF8iXsJN6zB72tZeBNY/I7gvYvkxw3cU9bCZWTu2SiPNFrE+cnPEFWqfDFu
+         vMoqleV/lvNrydUN8rL9f+GboN7A+/xKWDWsZqEQ1VtGiDPQ5o+p+METKzf2A8odYdRw
+         cgRZEHefz0AgImuzPX7l9kHc6Ow5URSEFx2u1E5/LtG1d12Kk1N4WIQCwaI3IlOYhvRH
+         DUFekIndIn1EvtpAZvE554gFrptsO2aoDSvnYZ6rE/C9rDlXr2gDNWDWKMDflMMxLBOS
+         /gXRC4yb7xMFfy8/c83Pc2dfZa+Lm2F4z4OD9DILa/YYgSKzsoY/a/kYyVYl8iqbr5TH
+         f+GQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727282322; x=1727887122;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5PK2m3Ze63qRkSazwclcAjByMVHVEVpFHvdModCOxYo=;
+        b=KMYyxdZ+IpNgKeEUeSvtRfEeg6dHl/FKnJHGbe9QK8SGGq9iIPCd7v2FPPsEuMZ5r/
+         roKQOlKm10O64+vix4ju6Qi+KXaFHJifYTpQIaAHsi+dOli+/8rIzacsrx/uOR4hsoBf
+         FG+ywQuy1G2MChP3j7ZHGm+O2bsOjDeCsG7CGnrCIsP4PXGjjqWKcF0rt5BthSQJuHc0
+         8ms1AQcanH/2fUu5SbFvxpPDvlE+PPKsnNUeTTRIRFr2o36BDw+KzPOFnvPY+OLec4+V
+         MaahvMzgfAROBG79dMDblVXJWHp1FUyC8VWTaK5SXBh0I1HTgJAP4wWKChxI3LeVmjtU
+         42pw==
+X-Forwarded-Encrypted: i=1; AJvYcCXFK71dAJJrbu+pBBBFEUmeAyEvcgNGXuDTA+YebL+tnu3Fx5Kergz4g6gwDVd51fAOZrWkBc1H0UdU@vger.kernel.org, AJvYcCXv3BCA4/vwRRj/Q+BxMkNkafLpln7eEFaGfdIlSAKxN/eJChXw2zPUxff6UBjAC2XQWBsjh/dQTAlx@vger.kernel.org, AJvYcCXzubIK3nJqaZX0yzr70qamOEUeSKwRcPiKx3oKybaUCfMNhMTiH2kAYK44DsdPzxESUSzHk6qH+uuYOeOl@vger.kernel.org
+X-Gm-Message-State: AOJu0YxM8ZWGdUa2fYIGBgpvvQLwVevIpmcr87bWcMJwLOqimW5dYxN0
+	ixNZ9awzuSKnTD9txnpbWQPAXk0oWVXYKrV45Pa0pE+nQkET/pU7hBhXNfhl
+X-Google-Smtp-Source: AGHT+IG7u6OiLVb7b0zYZ1RAnRCZKp7t7FjbLFYBGhUZUARkL5hQevdWnRq3/E4qbCOgpdV4D8dgBg==
+X-Received: by 2002:a17:903:183:b0:207:14b3:11a7 with SMTP id d9443c01a7336-20afc6a1d36mr21038375ad.14.1727282321908;
+        Wed, 25 Sep 2024 09:38:41 -0700 (PDT)
+Received: from [100.116.227.126] ([45.32.86.188])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af17e1813sm26367245ad.144.2024.09.25.09.38.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Sep 2024 09:38:41 -0700 (PDT)
+Message-ID: <bd02cd8f-fdb0-420e-8c3d-f050b1298a24@gmail.com>
+Date: Thu, 26 Sep 2024 00:38:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e4626c1d3b28613d1d219c735bcd8525be0f0d9e.camel@dirkwinkel.cc>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: iio: tyhx,hx9023s: Add performance
+ tuning configuration
+To: Rob Herring <robh@kernel.org>
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240923-add-performance-tuning-configuration-v1-0-587220c8aece@gmail.com>
+ <20240923-add-performance-tuning-configuration-v1-1-587220c8aece@gmail.com>
+ <20240924215912.GA363446-robh@kernel.org>
+Content-Language: en-US
+From: Yasin Lee <yasin.lee.x@gmail.com>
+In-Reply-To: <20240924215912.GA363446-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Steffen,
 
-On Wed, Sep 25, 2024 at 09:54:18AM +0200, Steffen Dirkwinkel wrote:
-> On Tue, 2024-09-24 at 21:43 +0300, Laurent Pinchart wrote:
-> > On Mon, Sep 23, 2024 at 09:48:03AM +0200, lists@steffen.cc wrote:
-> > > From: Steffen Dirkwinkel <s.dirkwinkel@beckhoff.com>
-> > > 
-> > > With hpd going through the bridge as of commit eb2d64bfcc17
-> > > ("drm: xlnx: zynqmp_dpsub: Report HPD through the bridge")
-> > > we don't get hotplug events in userspace on zynqmp hardware.
-> > > Also sending hotplug events with drm_helper_hpd_irq_event works.
-> > 
-> > Why does the driver need to call both drm_helper_hpd_irq_event() and
-> > drm_bridge_hpd_notify() ? The latter should end up calling
-> > drm_kms_helper_connector_hotplug_event(), which is the same function
-> > that drm_helper_hpd_irq_event() calls.
-> 
-> I don't know why we need drm_helper_hpd_irq_event.
-> I'll try to trace what happens on hotplug.
+On 9/25/24 05:59, Rob Herring wrote:
+> On Mon, Sep 23, 2024 at 09:16:10AM +0800, Yasin Lee wrote:
+>> When hardware design introduces significant sensor data noise,
+>> performance can be improved by adjusting register settings.
+>>
+>> Signed-off-by: Yasin Lee <yasin.lee.x@gmail.com>
+>> ---
+>>   .../devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml    | 14 ++++++++++++++
+>>   1 file changed, 14 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml b/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml
+>> index 64ce8bc8bd36..417fbc0bb205 100644
+>> --- a/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml
+>> +++ b/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml
+>> @@ -28,6 +28,13 @@ properties:
+>>   
+>>     vdd-supply: true
+>>   
+>> +  tyhx,performance-tuning:
+>> +    description:
+>> +      Optional, When hardware design introduces significant sensor data noise,
+>> +      performance can be improved by adjusting register settings, including
+>> +      but not limited to sample integration time and average sample count.
+>> +    $ref: /schemas/types.yaml#/definitions/uint8-array
+> 1 byte is valid? What about 10000? Add some constraints on the array
+> size and the values if possible
+>
+Hi Rob,
 
-Thank you. Let's try to find the best solution based on your findings.
+Thank you for your feedback.
 
-> > > Fixes: eb2d64bfcc17 ("drm: xlnx: zynqmp_dpsub: Report HPD through
-> > > the bridge")
-> > > Signed-off-by: Steffen Dirkwinkel <s.dirkwinkel@beckhoff.com>
-> > > ---
-> > >  drivers/gpu/drm/xlnx/zynqmp_dp.c | 4 ++++
-> > >  1 file changed, 4 insertions(+)
-> > > 
-> > > diff --git a/drivers/gpu/drm/xlnx/zynqmp_dp.c
-> > > b/drivers/gpu/drm/xlnx/zynqmp_dp.c
-> > > index 1846c4971fd8..cb823540a412 100644
-> > > --- a/drivers/gpu/drm/xlnx/zynqmp_dp.c
-> > > +++ b/drivers/gpu/drm/xlnx/zynqmp_dp.c
-> > > @@ -17,6 +17,7 @@
-> > >  #include <drm/drm_fourcc.h>
-> > >  #include <drm/drm_modes.h>
-> > >  #include <drm/drm_of.h>
-> > > +#include <drm/drm_probe_helper.h>
-> > >  
-> > >  #include <linux/clk.h>
-> > >  #include <linux/delay.h>
-> > > @@ -1614,6 +1615,9 @@ static void zynqmp_dp_hpd_work_func(struct
-> > > work_struct *work)
-> > >  					    hpd_work.work);
-> > >  	enum drm_connector_status status;
-> > >  
-> > > +	if (dp->bridge.dev)
-> > > +		drm_helper_hpd_irq_event(dp->bridge.dev);
-> > > +
-> > >  	status = zynqmp_dp_bridge_detect(&dp->bridge);
-> > >  	drm_bridge_hpd_notify(&dp->bridge, status);
-> > >  }
+In the next version, I've added constraints on the number of elements in 
+the tyhx,performance-tuning array, limiting it to between 2 and 512 
+elements. Additionally, I updated the description to clarify that the 
+number of elements must be even, as each pair represents a register 
+address followed by a value.
 
--- 
-Regards,
-
-Laurent Pinchart
+Best regards,
+Yasin Lee
+>> +
+>>     "#address-cells":
+>>       const: 1
+>>   
+>> @@ -65,6 +72,13 @@ examples:
+>>           interrupt-parent = <&pio>;
+>>           interrupts = <16 IRQ_TYPE_EDGE_FALLING>;
+>>           vdd-supply = <&pp1800_prox>;
+>> +        tyhx,performance-tuning = [00 00
+>> +        02 17
+>> +        0D 44
+>> +        0E 44
+>> +        0F 04
+>> +        1F 65
+>> +        21 65];
+>>   
+>>           #address-cells = <1>;
+>>           #size-cells = <0>;
+>>
+>> -- 
+>> 2.43.0
+>>
 
