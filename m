@@ -1,121 +1,132 @@
-Return-Path: <linux-kernel+bounces-339228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 869E1986181
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:53:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F1F4986167
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:49:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B57791C23F5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:53:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8C001F296D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:49:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33EEB19AD85;
-	Wed, 25 Sep 2024 14:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b="ibpERn9M"
-Received: from mail.katalix.com (mail.katalix.com [3.9.82.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB89F183CB1;
+	Wed, 25 Sep 2024 14:13:33 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD531802AB;
-	Wed, 25 Sep 2024 14:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.9.82.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35629183CAF
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 14:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727274061; cv=none; b=NP3lDlFWjS+/xkie/Jr2qtNB+mfbq0u0IbZdnyOuW8y+FN1MhlSfk2Ln4dLPQ6cL6I1Mh6MaOnp6vpdlAEeKvwXAL4MpUS5y88iC6ASRDkn/gUGe/Z7MBsbMIXy7xms+yWQajDTk5zbllZP2Kc3cUzFHWZhncM0bXUfkMlzPVck=
+	t=1727273613; cv=none; b=IbrMQ2ze2x/WTSHuCoU6kEZ5MhOoMbdILrYHjoIDBrX3Zqo1wofdp2WDtrr1MTV/+bwJbL+YhEwqeaY6Ho/5w5l3CnvBnG59j3q18enS1g4Rny+kdcXqdR/XokGDOyCq5TFfxuVkp8tPt3e+SzBDTOWi6ooHCRVHwGJGWzOPLpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727274061; c=relaxed/simple;
-	bh=hreFMW+LO4ZLSNOcwW1x2c7h9E2Yc4p9I2jB/KsJrSU=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
-	 In-Reply-To:Content-Type; b=jdqChEf5KSnYNlNc7oyeNKMZjT7eDPvkb6fw0FvLsFdtwlWqjHyVGzQXUHfYlX4A/ERPFDeGj/JEGENdgu/9Lgqwg32uVfDUMvv1Xp9eAuEO4kyPl+lPGKbji6ZS8o1JZeI54VNDE1MuvF0BHj11o0RUHsz0aEhbBAuUY9H+TJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com; spf=pass smtp.mailfrom=katalix.com; dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b=ibpERn9M; arc=none smtp.client-ip=3.9.82.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=katalix.com
-Received: from [IPV6:2a02:8010:6359:2:fd3b:359b:7b1f:f7be] (unknown [IPv6:2a02:8010:6359:2:fd3b:359b:7b1f:f7be])
-	(Authenticated sender: james)
-	by mail.katalix.com (Postfix) with ESMTPSA id D9A087D118;
-	Wed, 25 Sep 2024 15:12:23 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=katalix.com; s=mail;
-	t=1727273544; bh=hreFMW+LO4ZLSNOcwW1x2c7h9E2Yc4p9I2jB/KsJrSU=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
-	 In-Reply-To:From;
-	z=Message-ID:=20<4010bc54-6704-8144-189b-e945329fbad0@katalix.com>|
-	 Date:=20Wed,=2025=20Sep=202024=2015:12:23=20+0100|MIME-Version:=20
-	 1.0|To:=20Sasha=20Levin=20<sashal@kernel.org>,=20linux-kernel@vger
-	 .kernel.org,=0D=0A=20stable@vger.kernel.org|Cc:=20Tom=20Parkin=20<
-	 tparkin@katalix.com>,=20"David=20S=20.=20Miller"=0D=0A=20<davem@da
-	 vemloft.net>,=20edumazet@google.com,=20kuba@kernel.org,=0D=0A=20pa
-	 beni@redhat.com,=20netdev@vger.kernel.org|References:=20<202409251
-	 15823.1303019-1-sashal@kernel.org>=0D=0A=20<20240925115823.1303019
-	 -32-sashal@kernel.org>|From:=20James=20Chapman=20<jchapman@katalix
-	 .com>|Subject:=20Re:=20[PATCH=20AUTOSEL=206.10=20032/197]=20l2tp:=
-	 20don't=20use=20tunnel=20socket=0D=0A=20sk_user_data=20in=20ppp=20
-	 procfs=20output|In-Reply-To:=20<20240925115823.1303019-32-sashal@k
-	 ernel.org>;
-	b=ibpERn9MMJHTATpSt+y4CZkFw+ZWjjm0AuerxkUqhbXDOwd9t6rvZWtD4kf2vTPdu
-	 4FUevqrFzLZUndYBJimj+6/0qnRc1b56KCaki4H0FXi5oFpUouoZSfiw/3RqpHNL2h
-	 TlPXGazGHaji37xZXuVXgCnKhCOmufkecWL78o//Ql4f3quBc3jsdAGPDzHRc6eKQe
-	 jwKkVuoG52SrnUGP6nipZjT98w8p24vqm25gC3tKoZ5dMVFJ8x+b7IyChGTiAsaY6c
-	 qPBJdB2eCzaShEnY8rG6kNFf/z4LILRdb8D26Afl8oE6oj9xVM2ioCO7M0nlAsXyVf
-	 2c3xMGQHRKdjQ==
-Message-ID: <4010bc54-6704-8144-189b-e945329fbad0@katalix.com>
-Date: Wed, 25 Sep 2024 15:12:23 +0100
+	s=arc-20240116; t=1727273613; c=relaxed/simple;
+	bh=cRBy+OaeCOEbFRpLa40cyehNyi0dRN1NCKfw1AZgFoo=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BxsORkDckL9xo3/wtLqz9g5AHqrOkrGrayND8f6JvRUp1Cdoq7GO6laAREzwmYoHRe9br9UiD9YNCPEHmmM98QQcRh3cJ3+L0i2cq0+b3RWl/NIslHd21rgoeyM7nb2STO2Q1VMlrv8uxjjy8sbkc7wsbQggE75STp4cpcflv6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XDJWZ6Snkz6LCdm;
+	Wed, 25 Sep 2024 22:09:30 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id D6AB9140FA6;
+	Wed, 25 Sep 2024 22:13:28 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 25 Sep
+ 2024 16:13:28 +0200
+Date: Wed, 25 Sep 2024 15:13:27 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+CC: Igor Mammedov <imammedo@redhat.com>, Shiju Jose <shiju.jose@huawei.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>,
+	Dongjiu Geng <gengdongjiu1@gmail.com>, <linux-kernel@vger.kernel.org>,
+	<qemu-arm@nongnu.org>, <qemu-devel@nongnu.org>
+Subject: Re: [PATCH 04/15] acpi/ghes: better handle source_id and
+ notification
+Message-ID: <20240925151327.0000202b@Huawei.com>
+In-Reply-To: <a3b54a74158fdff44e600cf0949a430891c8cb22.1727236561.git.mchehab+huawei@kernel.org>
+References: <cover.1727236561.git.mchehab+huawei@kernel.org>
+	<a3b54a74158fdff44e600cf0949a430891c8cb22.1727236561.git.mchehab+huawei@kernel.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Content-Language: en-US
-To: Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-Cc: Tom Parkin <tparkin@katalix.com>, "David S . Miller"
- <davem@davemloft.net>, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, netdev@vger.kernel.org
-References: <20240925115823.1303019-1-sashal@kernel.org>
- <20240925115823.1303019-32-sashal@kernel.org>
-From: James Chapman <jchapman@katalix.com>
-Organization: Katalix Systems Ltd
-Subject: Re: [PATCH AUTOSEL 6.10 032/197] l2tp: don't use tunnel socket
- sk_user_data in ppp procfs output
-In-Reply-To: <20240925115823.1303019-32-sashal@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 25/09/2024 12:50, Sasha Levin wrote:
-> From: James Chapman <jchapman@katalix.com>
+On Wed, 25 Sep 2024 06:04:09 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+
+> GHES has two fields that are stored on HEST error source
+> blocks:
 > 
-> [ Upstream commit eeb11209e000797d555aefd642e24ed6f4e70140 ]
+> - notification type, which is a number defined at the ACPI spec
+>   containing several arch-specific synchronous and assynchronous
+>   types;
+> - source id, which is a HW/FW defined number, used to distinguish
+>   between different implemented hardware report mechanisms.
 > 
-> l2tp's ppp procfs output can be used to show internal state of
-> pppol2tp. It includes a 'user-data-ok' field, which is derived from
-> the tunnel socket's sk_user_data being non-NULL. Use tunnel->sock
-> being non-NULL to indicate this instead.
+> Cleanup the logic to fill those, as they should be handled
+> independently.
 > 
-> Signed-off-by: James Chapman <jchapman@katalix.com>
-> Signed-off-by: Tom Parkin <tparkin@katalix.com>
-> Signed-off-by: David S. Miller <davem@davemloft.net>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> This is a preparation for a future patch that will shift
+> those fields to the HEST init function call.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Trivial comment inline.
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
+> 
 > ---
->   net/l2tp/l2tp_ppp.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/net/l2tp/l2tp_ppp.c b/net/l2tp/l2tp_ppp.c
-> index 6146e4e67bbb5..6ab8c47487161 100644
-> --- a/net/l2tp/l2tp_ppp.c
-> +++ b/net/l2tp/l2tp_ppp.c
-> @@ -1511,7 +1511,7 @@ static void pppol2tp_seq_tunnel_show(struct seq_file *m, void *v)
->   
->   	seq_printf(m, "\nTUNNEL '%s', %c %d\n",
->   		   tunnel->name,
-> -		   (tunnel == tunnel->sock->sk_user_data) ? 'Y' : 'N',
-> +		   tunnel->sock ? 'Y' : 'N',
->   		   refcount_read(&tunnel->ref_count) - 1);
->   	seq_printf(m, " %08x %ld/%ld/%ld %ld/%ld/%ld\n",
->   		   0,
+> Chenges from v10:
+Changes
 
-This change isn't needed in 6.10. The commit was part of a series for 
-6.12 that removed use of sk_user_data in l2tp tunnel sockets.
+> 
+> - Some changes got moved to the previous patch.
+> 
+> Changes from v8:
+> - Non-rename/cleanup changes merged altogether;
+> - source ID is now more generic, defined per guest target.
+>   That should make easier to add support for 86.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  hw/acpi/ghes.c | 23 +++++++++--------------
+>  1 file changed, 9 insertions(+), 14 deletions(-)
+> 
+> diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
+> index 7b42ed59cd15..7460cd1a8d56 100644
+> --- a/hw/acpi/ghes.c
+> +++ b/hw/acpi/ghes.c
+> @@ -284,9 +284,13 @@ static void build_ghes_error_table(GArray *hardware_errors, BIOSLinker *linker)
+>  }
+>  
+>  /* Build Generic Hardware Error Source version 2 (GHESv2) */
+> -static void build_ghes_v2(GArray *table_data, int source_id, BIOSLinker *linker)
+> +static void build_ghes_v2(GArray *table_data,
+> +                          BIOSLinker *linker,
+> +                          enum AcpiGhesNotifyType notify,
+> +                          uint16_t source_id)
+>  {
+>      uint64_t address_offset;
+> +
+Technically a stray change but meh there should have always been a blank
+line here.
+
+>      /*
+>       * Type:
+>       * Generic Hardware Error Source version 2(GHESv2 - Type 10)
+> @@ -316,18 +320,8 @@ static void build_ghes_v2(GArray *table_data, int source_id, BIOSLinker *linker)
 
 
