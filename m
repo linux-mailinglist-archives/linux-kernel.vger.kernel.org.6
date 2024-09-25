@@ -1,93 +1,89 @@
-Return-Path: <linux-kernel+bounces-338412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8921E98577D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:01:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 004AB985780
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:01:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36FA51F2445F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:01:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E5D61F207CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:01:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E59513212A;
-	Wed, 25 Sep 2024 11:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FED314C5AF;
+	Wed, 25 Sep 2024 11:01:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IQmjGs6D"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hOVCZeXf"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA2521A1C
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 11:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87ACA14B06E
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 11:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727262083; cv=none; b=Cq/HXHiok3w0t+OVaTzi9PKYmUWGRhYM6RN+kLPYzvLhluhIYCcSb5JynHAa7isUfak3Naje6kc6Be5mIJ2Ayh2bpgAyltjA8+wLknOs9qUQoPEYoxrwW2iREURoy4911OfVIiG2pSi0NWDop0JQxspvafYPVcVuN1XPmFDKt1U=
+	t=1727262086; cv=none; b=Sr2GIfapvrvkphtTJCdv0yZqSEU3buG0iYWSqxLQY4e0QRp6oVi9Mf6+leMn+laZOet6oh4WbRAXrcb3qMx58GK7tvy3CTsKCcTAzHQ0707/te74mRSYvhe0sRxKZxGTThrR/4iynEnz43xFcxUkomn50adJFI7Q5mSs21Ox3n4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727262083; c=relaxed/simple;
-	bh=E14547+Z5pM+4hyJJ9CX2ijEIt8G13j2nVrnOZDkQ4g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ee+1j3YFdxCvWM8B+Oivj8XV9mARcgizLJ8cfrDKXclwzrk6VdFB1POaath6A5PooUV0prT3obbMRwxXlSXxW2SPHPEXRRkoWQJsSVDG0K6KJ+FnRBlZu4hv0cltI3xv+Alox+ouLLYUKt9f4rO1G1wfYB7xAXqvvi4wzpfjP18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IQmjGs6D; arc=none smtp.client-ip=209.85.166.174
+	s=arc-20240116; t=1727262086; c=relaxed/simple;
+	bh=q/tDIQcwb90Jb2IXrq0hODLYDVzUBiOWeWXKNBlnfM8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=bjowLVuaVCH8nEfywlb6PLegf92nFnpj/ZsbH5bgRY9VH2NLRhHmiQRyDu0iE4RgZxp4r2wL+30MR1pkJ7zydxSEjiQOivkJSBl7LArQrac8CtqynK3qQ6tUMAthVzxLXBd+2ToYJlPvdpYRxoNCXnABYIhra1vSeROWZ9ciEgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hOVCZeXf; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3a0c8c40560so29591995ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 04:01:22 -0700 (PDT)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-718e6299191so3432357b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 04:01:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727262081; x=1727866881; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=x+wU+nQmthczOLIKmqdKHiC6ejraUTpzi9Y1GrEh5og=;
-        b=IQmjGs6DEFD7dwSjPKZKG0+YT6g9uB2CNDfxbS4J8sVj7iWjzPvdtJEv9zC09DqaV+
-         DJuhOF/rLg6vBAgzWRrYuJGmYF9xZwfApS4r03WIe3kIFwn2KDQ0aPScVJpHjHRUZ1fp
-         EoeuRbmVIeZCMKb6c8t4QEaRMMLC937KxAzWw=
+        d=chromium.org; s=google; t=1727262085; x=1727866885; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QVeMj7wLnXufiIx19gdVV+26XJBDhZuDvTGjagZ/exM=;
+        b=hOVCZeXf5y7/INL5Z4bYT036dJY2XDVPllMDum8i12EFjY3E8I2k47LfTs5yoy4E2t
+         GKhKOy1BK6ZrkijgmxSGUit84ViUVpWzWMFVBYJwiwdairLoBNYOkFCPfjkfIwS5n8ty
+         kD6u4ISEkX5PzbgpuTBbHjukCBpZh0FE8BlQ4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727262081; x=1727866881;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=x+wU+nQmthczOLIKmqdKHiC6ejraUTpzi9Y1GrEh5og=;
-        b=Dto4Xopm1xOHvb3uzaN/r5lT0f3MBgqaEZFA94YtbTVUOecKDSRnBDOiq7QaeqMUFE
-         NaWXHvHh2kHoNYrFXX2DRmZBH1r8b153FyVUm7VCC6/RQ0MWwVLJAdH+nRrnFDIJkGh0
-         uBRJIkGtfj8jKnwmMnseQz0SMGhjGT0bUiK+x5p+lhigA9WevB6Mji4wykYvsflp23+Y
-         KOWHfJDWHEOjbFqzt+lNLCpGmyMZKy4LQyQNjXDEExAxn+W5Nm0Qjl1IcEsyKCc71hHM
-         mLsguQ21eemz0r3DKTp4vo3rmywnLV/M00KjI/1LijXTUpGoh74VoTAGL770a8uY7v6a
-         h8yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXnlzYXIl4KdAnPFcToCjZztCdmMkScKMfEYEaXJP74NT61Pa9nmw5N1r7x20yqDovbZPwWAtwOJUSbbG4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1g5BFiTxIOvrAt/QXmO7Mf8xOmgbnSI6kbqZYaXsdtd2S32Pl
-	2BwBHvk/moEvAc1Hk/M4MGqKwuwWfWP7p88EAY4Ua4ebNeq2qhQhb+L2dkhXtQ==
-X-Google-Smtp-Source: AGHT+IGjqwv6hyYB9WgLlo4cxUlTkRTFUHeo+Nb8obSIHI0syyubDfaR8EBimZS1brkQVkQGQfPnaQ==
-X-Received: by 2002:a05:6e02:1566:b0:3a1:a179:bb54 with SMTP id e9e14a558f8ab-3a26d5e8bf2mr30993475ab.0.1727262081294;
-        Wed, 25 Sep 2024 04:01:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727262085; x=1727866885;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QVeMj7wLnXufiIx19gdVV+26XJBDhZuDvTGjagZ/exM=;
+        b=jRbyuVsyAaZuGpWGGdA+ED5DfPXL0IVW3cMYH7XDMoYFtB8QFd1O93gttjYCkgDt1Y
+         qn8E7R1/EQMRz8Dlf7tIBSE0LfayiDlksCD7/moeTK4eyyPYPN9O7q8P0vTmnOzeA22P
+         pTcDkdADXxw84dBYad2tIWnnXc1IWB1DAsuBPSx2WEzGpIDsTmi4g4u8b9vn3MKtJfG1
+         /FxClJ9y+XT9CkbA5cKTCygAt0wmlEpd79w36owK2GnA0tHKKIop9x9nvcLWjBmRKkbu
+         fR3AwiuSmyzsAzlrDclNK7YxqnG+Jypv8c/s2Wuft65/hYvKk0bmW3KB4FGIW5pgFKCQ
+         wqlg==
+X-Forwarded-Encrypted: i=1; AJvYcCV550p96MNNZqcNl+PCHh7RbMBBlPSz5ksc7UM2JS9oPBc1j0dlrPBb51ACipRc2iRwjoDmvFQaAdkX7kA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1qRUpo3kdV9Nv7+OqqW7Go6miZzsS/uDWEhP6qjLm3mTHfgcw
+	tMnoqZj8qGJoiGRf7JuObSigGHYkXiUUYLNyAxR7L/1bUytA+1W4EHsWYI0lKQ==
+X-Google-Smtp-Source: AGHT+IFvn40kXszElCdDiZEOckut6uDsZhbA1ymXKe+lan+5/nDemYiY5zux8PnoVFCzu4aMNSiAeQ==
+X-Received: by 2002:a05:6a00:b81:b0:706:3329:5533 with SMTP id d2e1a72fcca58-71b0afa2c26mr3124717b3a.24.1727262084788;
+        Wed, 25 Sep 2024 04:01:24 -0700 (PDT)
 Received: from fshao-p620.tpe.corp.google.com ([2401:fa00:1:10:2b86:78b6:8ebc:e17a])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6b7c73085sm2570298a12.59.2024.09.25.04.01.17
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6b7c73085sm2570298a12.59.2024.09.25.04.01.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 04:01:20 -0700 (PDT)
+        Wed, 25 Sep 2024 04:01:24 -0700 (PDT)
 From: Fei Shao <fshao@chromium.org>
 To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Cc: Fei Shao <fshao@chromium.org>,
+	"Rob Herring (Arm)" <robh@kernel.org>,
 	Alexandre Mergnat <amergnat@baylibre.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Fabien Parent <fparent@baylibre.com>,
-	Jianjun Wang <jianjun.wang@mediatek.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
 	MandyJH Liu <mandyjh.liu@mediatek.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
 	Matthias Brugger <matthias.bgg@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Ryder Lee <ryder.lee@mediatek.com>,
 	Ulf Hansson <ulf.hansson@linaro.org>,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-pci@vger.kernel.org
-Subject: [PATCH 0/6] MT8188 DT and binding fixes
-Date: Wed, 25 Sep 2024 18:57:44 +0800
-Message-ID: <20240925110044.3678055-1-fshao@chromium.org>
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH 1/6] dt-bindings: power: mediatek: Add another nested power-domain layer
+Date: Wed, 25 Sep 2024 18:57:45 +0800
+Message-ID: <20240925110044.3678055-2-fshao@chromium.org>
 X-Mailer: git-send-email 2.46.0.792.g87dc391469-goog
+In-Reply-To: <20240925110044.3678055-1-fshao@chromium.org>
+References: <20240925110044.3678055-1-fshao@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,32 +92,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi all,
+The MT8188 SoC has a more in-depth power-domain tree, and the
+CHECK_DTBS=y check could fail because the current MediaTek power
+dt-binding is insufficient to cover its CAM_SUBA and CAM_SUBB
+sub-domains.
 
-This series is split from a previous series[1] to focus on few fixes and
-improvements around MediaTek MT8188 device tree and bindings, and also
-addressed comments and carried tags from the mentioned series.
+Add one more nested power-domain layer to pass the check.
 
-[1]:
-https://lore.kernel.org/all/20240909111535.528624-1-fshao@chromium.org/
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Fei Shao <fshao@chromium.org>
+---
 
-Regards,
-Fei
+ .../devicetree/bindings/power/mediatek,power-controller.yaml  | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-
-Fei Shao (6):
-  dt-bindings: power: mediatek: Add another nested power-domain layer
-  dt-bindings: PCI: mediatek-gen3: Allow exact number of clocks only
-  arm64: dts: mediatek: mt8188: Define CPU big core cluster
-  arm64: dts: mediatek: mt8188: Add missing dma-ranges to soc node
-  arm64: dts: mediatek: mt8188: Move vdec1 power domain under vdec0
-  arm64: dts: mediatek: mt8188: Update vppsys node names to syscon
-
- .../bindings/pci/mediatek-pcie-gen3.yaml      |  5 ++-
- .../power/mediatek,power-controller.yaml      |  4 ++
- arch/arm64/boot/dts/mediatek/mt8188.dtsi      | 37 +++++++++++--------
- 3 files changed, 28 insertions(+), 18 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/power/mediatek,power-controller.yaml b/Documentation/devicetree/bindings/power/mediatek,power-controller.yaml
+index 8985e2df8a56..a7df4041b745 100644
+--- a/Documentation/devicetree/bindings/power/mediatek,power-controller.yaml
++++ b/Documentation/devicetree/bindings/power/mediatek,power-controller.yaml
+@@ -54,6 +54,10 @@ patternProperties:
+             patternProperties:
+               "^power-domain@[0-9a-f]+$":
+                 $ref: "#/$defs/power-domain-node"
++                patternProperties:
++                  "^power-domain@[0-9a-f]+$":
++                    $ref: "#/$defs/power-domain-node"
++                    unevaluatedProperties: false
+                 unevaluatedProperties: false
+             unevaluatedProperties: false
+         unevaluatedProperties: false
 -- 
 2.46.0.792.g87dc391469-goog
 
