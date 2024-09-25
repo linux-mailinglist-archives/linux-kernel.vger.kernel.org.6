@@ -1,76 +1,56 @@
-Return-Path: <linux-kernel+bounces-338432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BB609857ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:19:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEBEC9857F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:19:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B576FB21084
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:19:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E1FC2861E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:19:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5FB716D33F;
-	Wed, 25 Sep 2024 11:18:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D5D1591F1;
+	Wed, 25 Sep 2024 11:19:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GeaFx9Yx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R947yg/7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2A915AAB6;
-	Wed, 25 Sep 2024 11:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D62E146A93;
+	Wed, 25 Sep 2024 11:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727263129; cv=none; b=TRRITFz9R4JFmIVBcz9Vcd2EKu8c1M6YxnwyzKoz8Nqt7IQOszbWK6tAAf+rNV3gAKsbxT/J9eZjunPLEKbRWQhpLVpO+z9M0zQqyxVNwGw04/DHPu6Hv9gpmhifv3eurY3xg9HhwjygOXyHbu9tfKIz1Hjy3WCCAQJ9UlanPis=
+	t=1727263142; cv=none; b=W5+Wlwtqgw0Vq3iIJWNLc3lA7rjU5fgroS8oE+OvcE4rAf/Qtf+chgb8OGFHaREYDP4s7/oRn3+8LIWNGal39uZlbLI9KD28OlGE7hcyzuNUWyJ6b9EkBDjJQ3qLLJIlan0tkf3GXi0PNldSVY95WMOOf+BhZxC+63k7jrzJCao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727263129; c=relaxed/simple;
-	bh=hxbnpZILYLfhpFIePux7F3TZ1IaKkzgGbm4ZXDk/BZk=;
+	s=arc-20240116; t=1727263142; c=relaxed/simple;
+	bh=LSJq1uNpXSP4ZmzorfnTFL60qw3FPktUVAcY8S2ci40=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eRxglqGqMjD2EE27gYDaBiABjzUQ0WbxSpzHOeuncjbIDHxTEKsiQ9wQftmweG1aG/Cjm2cJSEoydYZSKsmvI0HpHQnmDF+pp4prlO2hmdef8b0BDd3rRMp+9SQBfQLkJmHzNv1gbdEofldMOuUociV9zlkA1278Vwcb13ClWDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GeaFx9Yx; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727263127; x=1758799127;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hxbnpZILYLfhpFIePux7F3TZ1IaKkzgGbm4ZXDk/BZk=;
-  b=GeaFx9YxD/sdEyr8wVd5Dwqrn7egUUntQPx51bGM9xw1wnrQf5OBnebn
-   4f5x/ECikpE+IN6H33CUSlyXMzQITCdxi5Rcz/IqzUzUzZofME7DfRhli
-   SmtFYbVQYAvY0rzt8aDTVP7OCSXaRgpq5jO86lcfiWTMHLhKWmnNg1LJD
-   1jjqEN8riQ9E/7eVfuo2OcLkLldWlJzn6PeALbZGsUTAt7IUuR8e+Uwk2
-   TMe18AXcTB6noB7AwOcf4mwMND4mRBBOdbV/OFRYZL7pt6rZW6vub4h4W
-   8LjXC6AY5/t9zQWPRRF5UYoWcpMIGoT8DSdYY/Ep5NNQFrupbnVuTNydn
-   A==;
-X-CSE-ConnectionGUID: L35UuXa/Sja3EX0hiZ0qxw==
-X-CSE-MsgGUID: O94ObgXiQ+KZ77nkwGYgGg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="36882963"
-X-IronPort-AV: E=Sophos;i="6.10,257,1719903600"; 
-   d="scan'208";a="36882963"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 04:18:46 -0700
-X-CSE-ConnectionGUID: obFrx28UTsKDOymWZ0OkMA==
-X-CSE-MsgGUID: Wde9/ASRTMah02v3auHlPw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,257,1719903600"; 
-   d="scan'208";a="95064325"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by fmviesa002.fm.intel.com with SMTP; 25 Sep 2024 04:18:43 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 25 Sep 2024 14:18:42 +0300
-Date: Wed, 25 Sep 2024 14:18:42 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Yu Jiaoliang <yujiaoliang@vivo.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	RD Babiera <rdbabiera@google.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Badhri Jagan Sridharan <badhri@google.com>,
-	Kyle Tso <kyletso@google.com>, Xu Yang <xu.yang_2@nxp.com>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com
-Subject: Re: [PATCH v1] usb: typec: Fix typo in comment
-Message-ID: <ZvPxkvq8BTOBpP_l@kuha.fi.intel.com>
-References: <20240919014646.1635774-1-yujiaoliang@vivo.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LT7oKuB25Qk07LuJ+YYT0VbDlG9o2v7vIX+gNJRVC92/ghWke3NPPRz+olZ+Wg6VKijEKhYWNKj4i44syZgdHhTo+R+WGuMDXJxV/Du6LoYj10X3tFSmZhnhi3kSDdJR/gPW6pD/3CaxWI23bp0fVLEfo6NUKNUWNSiUUBCczHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R947yg/7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A11A6C4CEC3;
+	Wed, 25 Sep 2024 11:18:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727263141;
+	bh=LSJq1uNpXSP4ZmzorfnTFL60qw3FPktUVAcY8S2ci40=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R947yg/7wDOLc8Ix/bcjcntfctoEHcooM3bsYkp1vuMM7ISETUj/8vDJx07JsKHFR
+	 OYYKhvMwXFF2oGb5ErOjtxryZnEO3cpaWJ2BIWOplBdWSwNUOOgEv7cCB7lSEQpAIz
+	 4xR6lwtZEe+fqp6fKdygNrLQ/O7FFXcf2cLFKf2MQaZ8ZP8B73eNOo+WDkr9SlYcQc
+	 Jwscu5u2TPywzPtNrujP9nporUq6pTP4zb5EC9JgeoK+TbD+Rp5Iw+Ui4Dsk0TJTi4
+	 h1bW2kImkAnqNETGL0oF5XeylbYGIioBnkG+94uBZ8c3+vFjiBzmcN5hU1RST/m7NE
+	 /zva7qQwMY4Sg==
+Date: Wed, 25 Sep 2024 12:18:57 +0100
+From: Simon Horman <horms@kernel.org>
+To: Dipendra Khadka <kdipendra88@gmail.com>
+Cc: florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, f.fainelli@gmail.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 net] net: systemport: Add error pointer checks in
+ bcm_sysport_map_queues() and bcm_sysport_unmap_queues()
+Message-ID: <20240925111857.GU4029621@kernel.org>
+References: <20240924185634.2358-1-kdipendra88@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,61 +59,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240919014646.1635774-1-yujiaoliang@vivo.com>
+In-Reply-To: <20240924185634.2358-1-kdipendra88@gmail.com>
 
-On Thu, Sep 19, 2024 at 09:46:26AM +0800, Yu Jiaoliang wrote:
-> Fix typos:
-> reseet->reset,
-> reaach->reach,
-> compatiple->compatible.
+On Tue, Sep 24, 2024 at 06:56:33PM +0000, Dipendra Khadka wrote:
+> Add error pointer checks in bcm_sysport_map_queues() and
+> bcm_sysport_unmap_queues() after calling dsa_port_from_netdev().
 > 
-> Signed-off-by: Yu Jiaoliang <yujiaoliang@vivo.com>
+> Fixes: d156576362c0 ("net: systemport: Establish lower/upper queue mapping")
+> Fixes: da106a140f9c ("net: systemport: Unmap queues upon DSA unregister event")
+> Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+I'm sorry to be picky, but I think the fixes tag should be (only):
 
-> ---
->  drivers/usb/typec/altmodes/displayport.c | 2 +-
->  drivers/usb/typec/tcpm/tcpm.c            | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/altmodes/displayport.c b/drivers/usb/typec/altmodes/displayport.c
-> index 92cc1b136120..2f03190a9873 100644
-> --- a/drivers/usb/typec/altmodes/displayport.c
-> +++ b/drivers/usb/typec/altmodes/displayport.c
-> @@ -729,7 +729,7 @@ int dp_altmode_probe(struct typec_altmode *alt)
->  
->  	/* FIXME: Port can only be DFP_U. */
->  
-> -	/* Make sure we have compatiple pin configurations */
-> +	/* Make sure we have compatible pin configurations */
->  	if (!(DP_CAP_PIN_ASSIGN_DFP_D(port->vdo) &
->  	      DP_CAP_PIN_ASSIGN_UFP_D(alt->vdo)) &&
->  	    !(DP_CAP_PIN_ASSIGN_UFP_D(port->vdo) &
-> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
-> index fc619478200f..b6486beda6ab 100644
-> --- a/drivers/usb/typec/tcpm/tcpm.c
-> +++ b/drivers/usb/typec/tcpm/tcpm.c
-> @@ -5270,7 +5270,7 @@ static void run_state_machine(struct tcpm_port *port)
->  		tcpm_set_state(port, SRC_UNATTACHED, PD_T_PS_SOURCE_ON);
->  		break;
->  	case SNK_HARD_RESET_SINK_OFF:
-> -		/* Do not discharge/disconnect during hard reseet */
-> +		/* Do not discharge/disconnect during hard reset */
->  		tcpm_set_auto_vbus_discharge_threshold(port, TYPEC_PWR_MODE_USB, false, 0);
->  		memset(&port->pps_data, 0, sizeof(port->pps_data));
->  		tcpm_set_vconn(port, false);
-> @@ -6066,7 +6066,7 @@ static void _tcpm_pd_vbus_off(struct tcpm_port *port)
->  		break;
->  	case SNK_ATTACH_WAIT:
->  	case SNK_DEBOUNCED:
-> -		/* Do nothing, as TCPM is still waiting for vbus to reaach VSAFE5V to connect */
-> +		/* Do nothing, as TCPM is still waiting for vbus to reach VSAFE5V to connect */
->  		break;
->  
->  	case SNK_NEGOTIATE_CAPABILITIES:
-> -- 
-> 2.34.1
+Fixes: 1593cd40d785 ("net: systemport: use standard netdevice notifier to detect DSA presence")
 
--- 
-heikki
+Otherwise, this looks good to me.
+
+...
 
