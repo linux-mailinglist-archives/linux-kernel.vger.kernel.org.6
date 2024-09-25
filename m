@@ -1,96 +1,82 @@
-Return-Path: <linux-kernel+bounces-339177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB7F0986116
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:40:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33912986118
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A185828A260
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:40:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56FB41C267C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 253C018871E;
-	Wed, 25 Sep 2024 13:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7645C1885AA;
+	Wed, 25 Sep 2024 13:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="NQkNhNGM"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Jo7edg6r"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9A326AF5
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 13:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5670A79E5
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 13:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727272437; cv=none; b=QhZcFExLKunppdtgKgIrVJeqpBevqkbKTs2p0SVmvM1xfEt2VjiHx+XJMej5mW31ZIdUyvS7f/QdIzD0CU+XfASbFZZlHx2ZzGhHn5+6UHpmgcnOLv+7oeLf4OlZopIx1gKPC4HMzbipCiKS7A0P+HPs8f2w63hXcb05d5cCLxk=
+	t=1727272474; cv=none; b=RwDSo2eY7rx6QjsBkYAvX57JmYhT3fPPMWNjc8wLHX8P6ttaGgyOi3y/9BwHXAOi0nHKQNYgR35Y7eSZ+1icONtxwDKu5JHWMfPysi/Ur4yJdleVTxv00a25pwyoByv/0glsP9D2QHsmhajthI/6T1BZta94JfFNOrO75kdnDE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727272437; c=relaxed/simple;
-	bh=XzKCdtlmW5Np3hHkg1/02JFijZkjDBawF1bEOfJlIqI=;
+	s=arc-20240116; t=1727272474; c=relaxed/simple;
+	bh=bCNm6tNHTnPIrqzXiu0mJ3ZC8e374AVY1ZDQqx3gxA0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X6IqrAMYYHkEj/VE172tn+EK9jff1leWtKmCmzlq7qrxel7hILYyqSKoH8NW/O0c2xJzuwwS2SGMqQzCq+nGyA844sy7tTBkbZormQNzngj+NONXPyfw0cZBk5szTTVBNvyFXUWwHiSumd56fNo3U4sKmO2mthvXNGaHaJzt3zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=NQkNhNGM; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6cb2c5128d5so2036526d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 06:53:54 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZkjUT31o+SwwYCw7D5OsvTAEwM7wo0vBL2BkoVoM6K5jixfE4FqDScY6VUobUnmeK4L/5Q6psQHPHCuj7AfZu/CfeMFHnKhrErN3/5hu8h2XLFph1mkEqvMX4UoHbyk63dskRrSfmNjtjA9+A7IbX0c6Hjv9hBmrHyOE/TET12A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Jo7edg6r; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a8d2b24b7a8so190204266b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 06:54:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1727272433; x=1727877233; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1727272469; x=1727877269; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=f5rfM4JbVf2FJw+jtjeUyKhsGkuYNtfAFedVvaBv/3w=;
-        b=NQkNhNGM8F8gI2HkUC8dReO/slCs16Ja0mDMJVgoXE/A6RyNJ6y5Tn9yUJNfMgPmi9
-         zHnPFFI2RteQTrNRd66yx+xwDTYT/wL5m9OymqjmVWYdTXJSgrkbBbFuSXb+rSgtFN8b
-         gHgZpr+ssmx56cEJjADiM2Ulh1/VeG1iCictcY3AA+E1p+JKXdB2YixoLG9gD0ZZ7RJ4
-         0zNyyKJ2U8tjZRutkGpY/lBzvFbQi485W5e96NdPjiQ1F6CbMvgJykUfQLc4pjesZSjv
-         xZjU0K4n4hmvASahxnk0aOFqRY2jFjH/vFVgzf/lu/4w4AcyNIzJ3wYcowBo0Vto4A/F
-         t+pA==
+        bh=sNB/FTWMXFgC6FNYR/I4iwVpyab2JktNBpcKO0l//4w=;
+        b=Jo7edg6rI7oUSd7vt5T36OBPO8NXtHFmWV7LWLIfvmN67E+DDCk67Bx+hAR0HL8zCk
+         A9iJwFX7ilSPp1NK31EJmTJUO9hFKWRQzEhMkN6rWBH0cpHDO4QUuurp4znor5sZpw0T
+         JAhZZ9piXnobu+FYZYyFGu+raq97ygut7hej6n7+kRSZzAA/C43J34o7ExeMTTjBc6eA
+         AG4DAlJ9qlEhXNeozFQyeQQ3bm07M05vOuz/nlZUvS/jftEqE9T7CYBynGvpwXCIAK4M
+         Z0PnknuSGOt9tV79q9FfF5F8oX2Rm91Y7c4/hyz5A4MJIz1ERr/0Dz+jZmzMV50vXyHq
+         4HoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727272433; x=1727877233;
+        d=1e100.net; s=20230601; t=1727272469; x=1727877269;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=f5rfM4JbVf2FJw+jtjeUyKhsGkuYNtfAFedVvaBv/3w=;
-        b=RxZs7ytn0BHNSvpdjlIVAypR5rAQYZWbFr1maj0yTZdoKPSKQZ2Ef9GU9vg6A0WKqq
-         f8JgdZSkWfIdnF9x0IOHsiy2+HHJ8ruJ2MNHQE/Ib8R217UUnc0l5iZ1ezZZxubdrYyM
-         zJjp0eY39yWsDPDijClkSiBbRmg1fD8oqb1YPJNSrEyTHrShbLBQoS2/aaA/jt3kNjWq
-         +PG000CsHn6+7PeI42WkI+1KvC+bmKhRGVzhpCMJsPHXPRbapktMKtOUgqv+ABH0TKT/
-         3J410rUvNBr6kaJguXWhQQzK0tocCawMDKzXiC0viD2RdbWZzi3j838OCPyKVFNlNjq4
-         oZgA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7h4fqPMXFNQXPmNf+AlT7IH1LO4s/IEJJ9xK0I8t65btTxYkZ54iMMgUARpOfU7xGdfgMVO6KoM/FY30=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzg+7J+Eq1TT3ptsCJSJt99dvhI8yBRz5stCj4ANljpHmvt0uw0
-	bqx8A7A1NnWJS1RpjWYZ6ARyyrGRF3/vIHgcKeH6cUg1qTATGU/REM+lW+d5VCo=
-X-Google-Smtp-Source: AGHT+IHJqyXqdkePK3CZZGGmyrtJ+p/ACo/Iy9jG5PrYhxG0iafEwE9SELoDNXGFcFXpHUKwFp3/Ug==
-X-Received: by 2002:a05:6214:5992:b0:6c5:7ed0:194a with SMTP id 6a1803df08f44-6cb1dd09a19mr46739536d6.2.1727272433156;
-        Wed, 25 Sep 2024 06:53:53 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb0f554371sm16411466d6.80.2024.09.25.06.53.52
+        bh=sNB/FTWMXFgC6FNYR/I4iwVpyab2JktNBpcKO0l//4w=;
+        b=aggu3qEDcqfBEsLkeCsMNvSpGgWBXQvYuOdA72l8bHiNWpmZhRqIl7SvRCgLM7TOj3
+         n3B1swdG2w/icoopN8tIv6FIsGSILtR4sbqSi3Ih0Y44h4k4EIPUyC8FTiJn0nPsDVvR
+         qgOCYHAQ5NNbo4bHVkurPafEZ1o8/moGO98uxEKL0VOU1ZrGaNe9NGv6JKFPQH/68rPW
+         EBMYbTKeuOqKXPOFeXZXafAs4uBc38FMsXY25I4M4ZYnaW2r0uV8nro1zkH2IuJ3SdJn
+         rmzEUlh2Faj638/qiSmYo65xxLvQ/Y48xTeUkqx+JIvFt9zhX9Ee1fhA+VvJdQPBnNAo
+         HsLw==
+X-Forwarded-Encrypted: i=1; AJvYcCW5SGuAAMeOwAVo2meindqH5GqRryMn5Ls6L3r8ggqbPMHbVrzUl/+jBYYdTcv7EceyMRpJVzM2JFplNo8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybjT5mvVObYA/az9rCQrgCCQ4RjK9zqjYYNCyntF4Fu1sb1JZ0
+	Yo8nxd53r24oUeHhm2Ru0lYlSGzZvNnNxMROoTkNgYFQwMdNYR5LTgKzQpnGFqY=
+X-Google-Smtp-Source: AGHT+IEN2XB0JMyRoNcOOMIEkxwPG/sC/2MttP5xrk3hCZHIidjNVZQ908jcPyvYgV8nIcdxOcAZmQ==
+X-Received: by 2002:a17:907:7ea1:b0:a75:7a8:d70c with SMTP id a640c23a62f3a-a93a1685e67mr299483066b.4.1727272469391;
+        Wed, 25 Sep 2024 06:54:29 -0700 (PDT)
+Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9392f51e73sm208833666b.72.2024.09.25.06.54.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 06:53:52 -0700 (PDT)
-Date: Wed, 25 Sep 2024 09:53:48 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-Cc: Yosry Ahmed <yosryahmed@google.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"nphamcs@gmail.com" <nphamcs@gmail.com>,
-	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
-	"usamaarif642@gmail.com" <usamaarif642@gmail.com>,
-	"shakeel.butt@linux.dev" <shakeel.butt@linux.dev>,
-	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
-	"Huang, Ying" <ying.huang@intel.com>,
-	"21cnbao@gmail.com" <21cnbao@gmail.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"Zou, Nanhai" <nanhai.zou@intel.com>,
-	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>,
-	"Gopal, Vinodh" <vinodh.gopal@intel.com>
-Subject: Re: [PATCH v7 5/8] mm: zswap: Compress and store a specific page in
- a folio.
-Message-ID: <20240925135348.GB875661@cmpxchg.org>
-References: <20240924011709.7037-1-kanchana.p.sridhar@intel.com>
- <20240924011709.7037-6-kanchana.p.sridhar@intel.com>
- <CAJD7tkacF3hCXiZHy7_+E7xmdojnsUewDeP=BsamcZReHxCTtg@mail.gmail.com>
- <SJ0PR11MB567887AF292EC178BEF1CF43C9682@SJ0PR11MB5678.namprd11.prod.outlook.com>
- <CAJD7tkbCB9iqRc1Y0287rZjQnJaV41DxN+GzZJFkqxM1FM8R4w@mail.gmail.com>
- <SJ0PR11MB5678EA6E0A41B0C83CB7F8F3C9692@SJ0PR11MB5678.namprd11.prod.outlook.com>
+        Wed, 25 Sep 2024 06:54:28 -0700 (PDT)
+Date: Wed, 25 Sep 2024 15:54:28 +0200
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Xu Lu <luxu.kernel@bytedance.com>
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	andy.chiu@sifive.com, guoren@kernel.org, christoph.muellner@vrull.eu, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, lihangjing@bytedance.com, 
+	dengliang.1214@bytedance.com, xieyongji@bytedance.com, chaiwen.cc@bytedance.com
+Subject: Re: [PATCH v3 1/2] riscv: process: Introduce idle thread using Zawrs
+ extension
+Message-ID: <20240925-2acd8d9743cf40b999172b40@orel>
+References: <20240925131547.42396-1-luxu.kernel@bytedance.com>
+ <20240925131547.42396-2-luxu.kernel@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,30 +85,224 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <SJ0PR11MB5678EA6E0A41B0C83CB7F8F3C9692@SJ0PR11MB5678.namprd11.prod.outlook.com>
+In-Reply-To: <20240925131547.42396-2-luxu.kernel@bytedance.com>
 
-On Wed, Sep 25, 2024 at 01:49:03AM +0000, Sridhar, Kanchana P wrote:
-> > From: Yosry Ahmed <yosryahmed@google.com>
-> > I think it's more correct and efficient to update the atomic once
-> > after all the pages are successfully compressed and stored.
+On Wed, Sep 25, 2024 at 09:15:46PM GMT, Xu Lu wrote:
+> The Zawrs extension introduces a new instruction WRS.NTO, which will
+> register a reservation set and causes the hart to temporarily stall
+> execution in a low-power state until a store occurs to the reservation
+> set or an interrupt is observed.
 > 
-> Actually this would need to co-relate with the limits checking strategy,
-> because the atomic is used there and needs to be as accurate as possible.
+> This commit implements new version of idle thread for RISC-V via Zawrs
+> extension.
+> 
+> Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
+> Reviewed-by: Hangjing Li <lihangjing@bytedance.com>
+> Reviewed-by: Liang Deng <dengliang.1214@bytedance.com>
+> Reviewed-by: Wen Chai <chaiwen.cc@bytedance.com>
+> ---
+>  arch/riscv/Kconfig                 | 10 ++++++++
+>  arch/riscv/include/asm/cpuidle.h   | 11 +-------
+>  arch/riscv/include/asm/processor.h | 18 +++++++++++++
+>  arch/riscv/kernel/cpu.c            |  5 ++++
+>  arch/riscv/kernel/process.c        | 41 +++++++++++++++++++++++++++++-
+>  5 files changed, 74 insertions(+), 11 deletions(-)
+> 
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index 939ea7f6a228..56cf6000d286 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -23,6 +23,7 @@ config RISCV
+>  	select ARCH_ENABLE_SPLIT_PMD_PTLOCK if PGTABLE_LEVELS > 2
+>  	select ARCH_ENABLE_THP_MIGRATION if TRANSPARENT_HUGEPAGE
+>  	select ARCH_HAS_BINFMT_FLAT
+> +	select ARCH_HAS_CPU_FINALIZE_INIT
+>  	select ARCH_HAS_CURRENT_STACK_POINTER
+>  	select ARCH_HAS_DEBUG_VIRTUAL if MMU
+>  	select ARCH_HAS_DEBUG_VM_PGTABLE
+> @@ -1153,6 +1154,15 @@ endmenu # "Power management options"
+>  
+>  menu "CPU Power Management"
+>  
+> +config RISCV_ZAWRS_IDLE
+> +	bool "Idle thread using ZAWRS extensions"
+> +	depends on RISCV_ISA_ZAWRS
+> +	default y
+> +	help
+> +		Adds support to implement idle thread using ZAWRS extension.
+> +
+> +		If you don't know what to do here, say Y.
+> +
+>  source "drivers/cpuidle/Kconfig"
+>  
+>  source "drivers/cpufreq/Kconfig"
+> diff --git a/arch/riscv/include/asm/cpuidle.h b/arch/riscv/include/asm/cpuidle.h
+> index 71fdc607d4bc..94c9ecb46571 100644
+> --- a/arch/riscv/include/asm/cpuidle.h
+> +++ b/arch/riscv/include/asm/cpuidle.h
+> @@ -10,15 +10,6 @@
+>  #include <asm/barrier.h>
+>  #include <asm/processor.h>
+>  
+> -static inline void cpu_do_idle(void)
+> -{
+> -	/*
+> -	 * Add mb() here to ensure that all
+> -	 * IO/MEM accesses are completed prior
+> -	 * to entering WFI.
+> -	 */
+> -	mb();
+> -	wait_for_interrupt();
+> -}
+> +void cpu_do_idle(void);
+>  
+>  #endif
+> diff --git a/arch/riscv/include/asm/processor.h b/arch/riscv/include/asm/processor.h
+> index efa1b3519b23..d0dcdb7e7392 100644
+> --- a/arch/riscv/include/asm/processor.h
+> +++ b/arch/riscv/include/asm/processor.h
+> @@ -12,6 +12,7 @@
+>  
+>  #include <vdso/processor.h>
+>  
+> +#include <asm/insn-def.h>
+>  #include <asm/ptrace.h>
+>  
+>  #define arch_get_mmap_end(addr, len, flags)			\
+> @@ -148,6 +149,21 @@ static inline void wait_for_interrupt(void)
+>  	__asm__ __volatile__ ("wfi");
+>  }
+>  
+> +static inline void wrs_nto(unsigned long *addr)
+> +{
+> +	int val;
+> +
+> +	__asm__ __volatile__(
+> +#ifdef CONFIG_64BIT
+> +			"lr.d %[p], %[v]\n\t"
+> +#else
+> +			"lr.w %[p], %[v]\n\t"
+> +#endif
 
-For the limit checks, we use the zpool counters, not zswap_stored_pages.
+val is always 32-bit since it's an int. We should always use lr.w.
 
-zswap_stored_pages is used in the zswap shrinker to guesstimate
-pressure, so it's likely a good thing to only count entries that are
-expected to stay, and not account the ones that might fail just yet.
+> +			ZAWRS_WRS_NTO "\n\t"
+> +			: [p] "=&r" (val), [v] "+A" (*addr)
 
-> As far as the vmstat 'zswpout', the reason I left it as-is in my patchset
-> was to be more indicative of the actual zswpout compute events that
-> occurred (for things like getting the compressions count), regardless
-> of whether or not the overall mTHP store was successful. If this vmstat
-> needs to reflect only successful zswpout events (i.e., represent the zswap
-> usage), I can fix it by updating it once only if the mTHP is stored successfully.
+What do 'p' and 'v' represent? If they are pointer and value then they're
+backwards. I would just spell them out [val] and [addr].
 
-Yeah, that's fine as well.
+> +			: : "memory");
+> +}
+> +
+>  extern phys_addr_t dma32_phys_limit;
+>  
+>  struct device_node;
+> @@ -177,6 +193,8 @@ extern int set_unalign_ctl(struct task_struct *tsk, unsigned int val);
+>  #define RISCV_SET_ICACHE_FLUSH_CTX(arg1, arg2)	riscv_set_icache_flush_ctx(arg1, arg2)
+>  extern int riscv_set_icache_flush_ctx(unsigned long ctx, unsigned long per_thread);
+>  
+> +extern void select_idle_routine(void);
+> +
+>  #endif /* __ASSEMBLY__ */
+>  
+>  #endif /* _ASM_RISCV_PROCESSOR_H */
+> diff --git a/arch/riscv/kernel/cpu.c b/arch/riscv/kernel/cpu.c
+> index f6b13e9f5e6c..97a7144fa6cd 100644
+> --- a/arch/riscv/kernel/cpu.c
+> +++ b/arch/riscv/kernel/cpu.c
+> @@ -23,6 +23,11 @@ bool arch_match_cpu_phys_id(int cpu, u64 phys_id)
+>  	return phys_id == cpuid_to_hartid_map(cpu);
+>  }
+>  
+> +void __init arch_cpu_finalize_init(void)
+> +{
+> +	select_idle_routine();
+> +}
 
-I would suggest batching them both at the end of zswap_store().
+Is there a reason we need to do this at arch_cpu_finalize_init() time?
+This seems like the type of thing we have typically done at the bottom of
+setup_arch().
+
+> +
+>  /*
+>   * Returns the hart ID of the given device tree node, or -ENODEV if the node
+>   * isn't an enabled and valid RISC-V hart node.
+> diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
+> index e4bc61c4e58a..77769965609e 100644
+> --- a/arch/riscv/kernel/process.c
+> +++ b/arch/riscv/kernel/process.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/tick.h>
+>  #include <linux/ptrace.h>
+>  #include <linux/uaccess.h>
+> +#include <linux/static_call.h>
+>  
+>  #include <asm/unistd.h>
+>  #include <asm/processor.h>
+> @@ -35,11 +36,49 @@ EXPORT_SYMBOL(__stack_chk_guard);
+>  
+>  extern asmlinkage void ret_from_fork(void);
+>  
+> -void noinstr arch_cpu_idle(void)
+> +static __cpuidle void default_idle(void)
+> +{
+> +	/*
+> +	 * Add mb() here to ensure that all
+> +	 * IO/MEM accesses are completed prior
+> +	 * to entering WFI.
+> +	 */
+> +	mb();
+> +	wait_for_interrupt();
+> +}
+> +
+> +static __cpuidle void wrs_idle(void)
+> +{
+> +	/*
+> +	 * Add mb() here to ensure that all
+> +	 * IO/MEM accesses are completed prior
+> +	 * to entering WRS.NTO.
+> +	 */
+> +	mb();
+> +	wrs_nto(&current_thread_info()->flags);
+> +}
+> +
+> +DEFINE_STATIC_CALL_NULL(riscv_idle, default_idle);
+> +
+> +void __cpuidle cpu_do_idle(void)
+> +{
+> +	static_call(riscv_idle)();
+> +}
+> +
+> +void __cpuidle arch_cpu_idle(void)
+
+Switching the section of this from '.noinstr.text' to 'cpuidle.text'
+should probably be a separate patch.
+
+>  {
+>  	cpu_do_idle();
+>  }
+>  
+> +void __init select_idle_routine(void)
+> +{
+> +	if (IS_ENABLED(CONFIG_RISCV_ZAWRS_IDLE) &&
+> +			riscv_has_extension_likely(RISCV_ISA_EXT_ZAWRS))
+> +		static_call_update(riscv_idle, wrs_idle);
+> +	else
+> +		static_call_update(riscv_idle, default_idle);
+
+Do we need this 'else'? Can't we set the default at DEFINE_STATIC_CALL*
+time?
+
+> +}
+> +
+>  int set_unalign_ctl(struct task_struct *tsk, unsigned int val)
+>  {
+>  	if (!unaligned_ctl_available())
+> -- 
+> 2.20.1
+>
+
+Thanks,
+drew
 
