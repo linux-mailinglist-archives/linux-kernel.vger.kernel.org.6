@@ -1,133 +1,121 @@
-Return-Path: <linux-kernel+bounces-339554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40A1C9866D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:25:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FFA29866D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:27:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF8481F253CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:25:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C56F4284689
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:27:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9196A1411E0;
-	Wed, 25 Sep 2024 19:25:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B78F143C72;
+	Wed, 25 Sep 2024 19:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hdeUJa1J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Ld3+j3zf"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF685129E93;
-	Wed, 25 Sep 2024 19:25:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B521422D4;
+	Wed, 25 Sep 2024 19:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727292322; cv=none; b=A7VW4uMIuGoGyritDs5EbDcXjxPwcdvQgNqeOwO5xzdL0jDw9lm3mKFW3olV/I4N+2zvFsAP/KGwVRL8q8TtBiONv8wvhLtEQRLT+uICLoVLlGgbDJum/cz27I43kurBCAmhVUHP5ZW0gT1US54keTsH42XrZ227oo0jfgYEl98=
+	t=1727292436; cv=none; b=m/6zILwIqZMaxXnxPr4FMKUnOiGAGZdlCiuyQ4uMp6q1p14BrqUpMD11JfVdT9eF0ao5ryI5j56+HfJ7BpbOHbLCmqq9CKcbCFpzSMxa1Hdkelo3BM4QrxJYEna8sGnfBIqmOwRsSJ4oKU75eCmbyM+jVNJujkIFPJkF2cOYpgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727292322; c=relaxed/simple;
-	bh=MusVW8RKzT4P2ZHFT7vTRVPZkKSJCEA0Z0dd+wyb+EA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QVHZ82NGBxLPf2sLLRtcCEfAcVYoZ48a7l+kLnHzybFpzmw+DauM4uyZn0Y3AcTKHexxfy6y8Y7KTJNNgAPy6quIMClKNei3o+gUcsWWHk2PlzcttKlN+iaoxlctqfpeSHFh899xriehDD7Y7V6ad+BwxsLv6+08TzdC7LEug+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hdeUJa1J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72BBCC4CEC3;
-	Wed, 25 Sep 2024 19:25:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727292321;
-	bh=MusVW8RKzT4P2ZHFT7vTRVPZkKSJCEA0Z0dd+wyb+EA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hdeUJa1JTdHOBeR/MfCmQO1ud1uTTcnlG4ziKOxR8k9lCM3C7JuTtNrJUax58oGGl
-	 f+GYk+xbQuuwoUALSI2VWuxzrpQnM3GBU7A3DDPPEc7rsbOwZCnqpVCCE4IBxdK9rP
-	 vUftJs5c0HKCkd0hzO9keUqHTqEMNvYnPu9TCDkQakxlAVYhSV3yCvGwHigKl7ZCqG
-	 44JS91OAPjINwJc3/bZgxux+HZwY0gKzHhNHg+6V+lqQHIxo92hPBI7smVuMlnzxti
-	 TFslWPITX9RfoAWOPK/zaC3be/rw+1B+wWTmt1AMhQRg9PODcJFeUEEUn5Z8535ex0
-	 DDrDfdunYEqhw==
-Message-ID: <1bc0ad48-03c0-4cf6-afb1-2296d1c259b9@kernel.org>
-Date: Wed, 25 Sep 2024 21:25:15 +0200
+	s=arc-20240116; t=1727292436; c=relaxed/simple;
+	bh=d02yL61bwHOdp2ulyVt5n0+M1sAtTilcRj4+vN96hPY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lMw70OxuMAi6Zsf20TW5kSS6WY71KQCRZeDY46l6We5TrEBwOPYjebPp0fFgKJKDsPyNf+dvYYaYmXcRMUs3EklP4ioL6NejOlTjEJVOK71sPy1pBdOfy4HXwFp2/I7FvmhBtPfaCTdC8GOuv0oXmBVoIbqzDcxiC73AGmiHKIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Ld3+j3zf; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8F4DC7E2;
+	Wed, 25 Sep 2024 21:25:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1727292345;
+	bh=d02yL61bwHOdp2ulyVt5n0+M1sAtTilcRj4+vN96hPY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ld3+j3zfSBPtVBGa+hdHpuhuyjqtBcQJpKcfxFGXGL7U60zdQfI6rUxvwBHD19Irk
+	 NR0zHezb+887NwFa6tl+gQZniG39pKi9Sy8pxeNJgN4Qoqov+2nBTodmFqcyX9ps80
+	 EMtqtVI68iBmk/CTpzXYZApsn0ntS63gAYcBh6n4=
+Date: Wed, 25 Sep 2024 22:27:11 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Tomasz Figa <tfiga@chromium.org>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Sean Paul <seanpaul@chromium.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH v6 4/4] media: uvcvideo: Exit early if there is not
+ int_urb
+Message-ID: <20240925192711.GE30399@pendragon.ideasonboard.com>
+References: <20240614-guenter-mini-v6-0-7b7fdc3b21b3@chromium.org>
+ <20240614-guenter-mini-v6-4-7b7fdc3b21b3@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] dt-bindings: display: samsung,exynos7-decon: add
- exynos7870 compatible
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: airlied@gmail.com, alim.akhtar@samsung.com, conor@kernel.org,
- devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
- inki.dae@samsung.com, kyungmin.park@samsung.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, robh@kernel.org, simona@ffwll.ch,
- sw0312.kim@samsung.com, tzimmermann@suse.de
-References: <20240919-exynosdrm-decon-v1-0-6c5861c1cb04@disroot.org>
- <20240919-exynosdrm-decon-v1-6-8c3e3ccffad5@disroot.org>
- <32ae1188-196d-4fe8-8719-968e5149a771@kernel.org>
- <7e5caaea80390e8cf87ba0a74d9719f0@disroot.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <7e5caaea80390e8cf87ba0a74d9719f0@disroot.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240614-guenter-mini-v6-4-7b7fdc3b21b3@chromium.org>
 
-On 25/09/2024 20:42, Kaustabh Chakraborty wrote:
-> On 2024-09-20 12:39, Krzysztof Kozlowski wrote:
->> On 19/09/2024 17:20, Kaustabh Chakraborty wrote:
->>> Add the compatible string of Exynos7870 to the existing list.
->>>
->>> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
->>
->> ... and the DTS is <please provide lore ink in changelog>?
+Hi Ricardo,
+
+Thank you for the patch.
+
+On Fri, Jun 14, 2024 at 12:41:30PM +0000, Ricardo Ribalda wrote:
+> If there is no int_urb there is no need to do a clean stop.
 > 
-> Didn't quite understand. The patch adds the compatible string
-> for Exynos7870 DECON in documentation. There's no DTS involved
-> in here, right?
+> Also we avoid calling usb_kill_urb(NULL). It is properly handled by the
+> usb framework, but it is not polite.
+> 
+> Now that we are at it, fix the code style in uvc_status_start() for
+> consistency.
+> 
+> Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 
-Provide lore link to the DTS submission.
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Best regards,
-Krzysztof
+> ---
+>  drivers/media/usb/uvc/uvc_status.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_status.c b/drivers/media/usb/uvc/uvc_status.c
+> index 8fd8250110e2..9108522beea6 100644
+> --- a/drivers/media/usb/uvc/uvc_status.c
+> +++ b/drivers/media/usb/uvc/uvc_status.c
+> @@ -308,7 +308,7 @@ static int __uvc_status_start(struct uvc_device *dev, gfp_t flags)
+>  {
+>  	lockdep_assert_held(&dev->status_lock);
+>  
+> -	if (dev->int_urb == NULL)
+> +	if (!dev->int_urb)
+>  		return 0;
+>  
+>  	return usb_submit_urb(dev->int_urb, flags);
+> @@ -320,6 +320,9 @@ static void __uvc_status_stop(struct uvc_device *dev)
+>  
+>  	lockdep_assert_held(&dev->status_lock);
+>  
+> +	if (!dev->int_urb)
+> +		return;
+> +
+>  	/*
+>  	 * Prevent the asynchronous control handler from requeing the URB. The
+>  	 * barrier is needed so the flush_status change is visible to other
+> 
 
+-- 
+Regards,
+
+Laurent Pinchart
 
