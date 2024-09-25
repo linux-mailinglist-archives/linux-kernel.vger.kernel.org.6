@@ -1,65 +1,62 @@
-Return-Path: <linux-kernel+bounces-339009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCB84985F55
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:55:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B3CE985F57
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:55:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09CC31C25855
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:55:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0166E28841A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6234E223128;
-	Wed, 25 Sep 2024 12:15:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCEF223140;
+	Wed, 25 Sep 2024 12:15:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bu5KZTdf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GDRyHqYx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2DED223120;
-	Wed, 25 Sep 2024 12:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045B922313A;
+	Wed, 25 Sep 2024 12:15:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727266525; cv=none; b=Nau9mxcQOYGpa1ICV9UGl7M9syI3TZTtlRO1ab/lraldDkCIAI7Lx8Y7tbWiC253r/G0vJuGbN3i1fcHWtliH7iTXm9AnzjSyW7xkEndx1m5atD+E+OXb3YGkiRPfFypRgzDklzXmQKXdkikLiu8RvnuZisAvaPy0/inOpOJ8Zs=
+	t=1727266528; cv=none; b=Bx3HAZa0ibgWbDtOPmBQmOtgSjytAqeJLwsIuNjD7z5gDsqMxHWSN+GmUnkaJ9HXAXpaQVib1V7AIhIBg/tEI0EIKC4w+lAmvK0072zH1X2qrf42L103wMCcvCVKnn+Itr6TbwDQF8sD4wY6fj3zaJGhf30NTV3TOpikHada9Lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727266525; c=relaxed/simple;
-	bh=CYajmbx9prw2S0Ak/5/EIouMep9LYASd91oKa/eiWcI=;
+	s=arc-20240116; t=1727266528; c=relaxed/simple;
+	bh=XiQIFmprWkUi9N/cUrGzN3PDYbjr1hO7g8ROWTNg/5c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UsuWfFm8eMnmKFE3MKxJxuIXYlHsXrHVNyAu0CP9sfp5anNNY5MviXzu+3pEcfV3VbcfTU7CAPJqOzpirRDIoXWT76C9C01Akai//W5INhr0C4EucpK8a5rySzYISFvdByjQdRyzRwR9VOxe1JrwTY5EjBNenx1ZOfQDI6TgWqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bu5KZTdf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6368EC4CECD;
-	Wed, 25 Sep 2024 12:15:23 +0000 (UTC)
+	 MIME-Version:Content-Type; b=IRLE2LPwLT90ivY2rdLa2yYvZZGu/HSxdvhM9OGIt2r6iJahzCUDv4B60iTYD23kBsUcaL3uWdk6ZqoWagjRqMyd2n6GkkXNMCD01hbNuEDF8BqIpU92LMwl6weXhxaK+MKRQ5pDBYALjbzd6VFYpv1z2gDJLHFDvNi3AZrHtqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GDRyHqYx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 522CEC4CECD;
+	Wed, 25 Sep 2024 12:15:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727266525;
-	bh=CYajmbx9prw2S0Ak/5/EIouMep9LYASd91oKa/eiWcI=;
+	s=k20201202; t=1727266527;
+	bh=XiQIFmprWkUi9N/cUrGzN3PDYbjr1hO7g8ROWTNg/5c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bu5KZTdfJ3ZZ+u0QbhLBOtxjjbg8xd/QmIR39bk+VfSAyNDw+lG7mRKoahoPnIsz5
-	 7qCI6/bpLhwlBCZ/cI5PiRL2oj27/OSXlaPUZku2b9SZWnTewk9bYYDxRgXq19sRS1
-	 IiURgiDL4wvtKUTkpe7FrczwBMTAX5hoUwexyHrDhffiWixiUvt+FY4LMA0qw7ZLbC
-	 rdBJN58SAl+VdHCTt1AeAnUh77adL6Tu0viQEAVjtuolvPN7bYp021ZowiBM8HPlj+
-	 YlGKoDurrynSHn1LtzxdzD8cO/XMqevr5OBeJzgZKZai+KxbxpdiUkGXnSjQb6GL6H
-	 zB8EAZ/nk80/g==
+	b=GDRyHqYxxqcEDD6lSQcwmsqiUvtwJRI8H0GVKlfEmHtp+1zcF+KV4Wr/Mv2RsepOY
+	 hv9FI+SAvg/BZfPKnOhKYYj6/Me/oFmiyY5FW2sgbYxe/ECsKEf+eawsV8L+TgIXQS
+	 eS4QqBGclIWPlrBW2nk0GCXNtui1Dfp4LdpG0UDDIyHrzIAA5YbbESCHefxtGKsqqy
+	 hNKHnvio3eKfDPiE/xKTtCJUOWs6L8uJEYuyfWlGKL4CV3eiYG6Y6TVzlb7mwmgm67
+	 jaKJ5y8iu78Q88Yn2ZTJHqVRPNHGH03GGXv1hNm9rVXlbTxRNrRVv/eAN06jOt0d8/
+	 v0w6MrS1cPiyw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
+Cc: Philip Yang <Philip.Yang@amd.com>,
+	Felix Kuehling <felix.kuehling@amd.com>,
 	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
 	Alex Deucher <alexander.deucher@amd.com>,
 	Sasha Levin <sashal@kernel.org>,
+	Felix.Kuehling@amd.com,
 	Xinhui.Pan@amd.com,
 	airlied@gmail.com,
 	daniel@ffwll.ch,
-	felix.kuehling@amd.com,
-	robdclark@chromium.org,
-	srinivasan.shanmugam@amd.com,
-	David.Wu3@amd.com,
-	YuanShang.Mao@amd.com,
 	amd-gfx@lists.freedesktop.org,
 	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 6.6 085/139] drm/amdgpu: disallow multiple BO_HANDLES chunks in one submit
-Date: Wed, 25 Sep 2024 08:08:25 -0400
-Message-ID: <20240925121137.1307574-85-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.6 086/139] drm/amdkfd: amdkfd_free_gtt_mem clear the correct pointer
+Date: Wed, 25 Sep 2024 08:08:26 -0400
+Message-ID: <20240925121137.1307574-86-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240925121137.1307574-1-sashal@kernel.org>
 References: <20240925121137.1307574-1-sashal@kernel.org>
@@ -75,44 +72,160 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.52
 Content-Transfer-Encoding: 8bit
 
-From: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+From: Philip Yang <Philip.Yang@amd.com>
 
-[ Upstream commit fec5f8e8c6bcf83ed7a392801d7b44c5ecfc1e82 ]
+[ Upstream commit c86ad39140bbcb9dc75a10046c2221f657e8083b ]
 
-Before this commit, only submits with both a BO_HANDLES chunk and a
-'bo_list_handle' would be rejected (by amdgpu_cs_parser_bos).
+Pass pointer reference to amdgpu_bo_unref to clear the correct pointer,
+otherwise amdgpu_bo_unref clear the local variable, the original pointer
+not set to NULL, this could cause use-after-free bug.
 
-But if UMD sent multiple BO_HANDLES, what would happen is:
-* only the last one would be really used
-* all the others would leak memory as amdgpu_cs_p1_bo_handles would
-  overwrite the previous p->bo_list value
-
-This commit rejects submissions with multiple BO_HANDLES chunks to
-match the implementation of the parser.
-
-Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Philip Yang <Philip.Yang@amd.com>
+Reviewed-by: Felix Kuehling <felix.kuehling@amd.com>
+Acked-by: Christian König <christian.koenig@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c         | 14 +++++++-------
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.h         |  2 +-
+ drivers/gpu/drm/amd/amdkfd/kfd_chardev.c           |  2 +-
+ drivers/gpu/drm/amd/amdkfd/kfd_device.c            |  4 ++--
+ .../gpu/drm/amd/amdkfd/kfd_device_queue_manager.c  |  2 +-
+ drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c       |  2 +-
+ drivers/gpu/drm/amd/amdkfd/kfd_process.c           |  2 +-
+ .../gpu/drm/amd/amdkfd/kfd_process_queue_manager.c |  4 ++--
+ 8 files changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-index e361dc37a0890..7abcd618e70bd 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-@@ -263,6 +263,10 @@ static int amdgpu_cs_pass1(struct amdgpu_cs_parser *p,
- 			if (size < sizeof(struct drm_amdgpu_bo_list_in))
- 				goto free_partial_kdata;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c
+index 25d5fda5b243e..af6c6d89e63af 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c
+@@ -335,15 +335,15 @@ int amdgpu_amdkfd_alloc_gtt_mem(struct amdgpu_device *adev, size_t size,
+ 	return r;
+ }
  
-+			/* Only a single BO list is allowed to simplify handling. */
-+			if (p->bo_list)
-+				ret = -EINVAL;
-+
- 			ret = amdgpu_cs_p1_bo_handles(p, p->chunks[i].kdata);
- 			if (ret)
- 				goto free_partial_kdata;
+-void amdgpu_amdkfd_free_gtt_mem(struct amdgpu_device *adev, void *mem_obj)
++void amdgpu_amdkfd_free_gtt_mem(struct amdgpu_device *adev, void **mem_obj)
+ {
+-	struct amdgpu_bo *bo = (struct amdgpu_bo *) mem_obj;
++	struct amdgpu_bo **bo = (struct amdgpu_bo **) mem_obj;
+ 
+-	amdgpu_bo_reserve(bo, true);
+-	amdgpu_bo_kunmap(bo);
+-	amdgpu_bo_unpin(bo);
+-	amdgpu_bo_unreserve(bo);
+-	amdgpu_bo_unref(&(bo));
++	amdgpu_bo_reserve(*bo, true);
++	amdgpu_bo_kunmap(*bo);
++	amdgpu_bo_unpin(*bo);
++	amdgpu_bo_unreserve(*bo);
++	amdgpu_bo_unref(bo);
+ }
+ 
+ int amdgpu_amdkfd_alloc_gws(struct amdgpu_device *adev, size_t size,
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.h
+index db5b1c6beba75..3134e6ad81d1d 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.h
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.h
+@@ -221,7 +221,7 @@ int amdgpu_amdkfd_evict_userptr(struct mmu_interval_notifier *mni,
+ int amdgpu_amdkfd_alloc_gtt_mem(struct amdgpu_device *adev, size_t size,
+ 				void **mem_obj, uint64_t *gpu_addr,
+ 				void **cpu_ptr, bool mqd_gfx9);
+-void amdgpu_amdkfd_free_gtt_mem(struct amdgpu_device *adev, void *mem_obj);
++void amdgpu_amdkfd_free_gtt_mem(struct amdgpu_device *adev, void **mem_obj);
+ int amdgpu_amdkfd_alloc_gws(struct amdgpu_device *adev, size_t size,
+ 				void **mem_obj);
+ void amdgpu_amdkfd_free_gws(struct amdgpu_device *adev, void *mem_obj);
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
+index 9d10530283705..19d46be639429 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
+@@ -417,7 +417,7 @@ static int kfd_ioctl_create_queue(struct file *filep, struct kfd_process *p,
+ 
+ err_create_queue:
+ 	if (wptr_bo)
+-		amdgpu_amdkfd_free_gtt_mem(dev->adev, wptr_bo);
++		amdgpu_amdkfd_free_gtt_mem(dev->adev, (void **)&wptr_bo);
+ err_wptr_map_gart:
+ err_bind_process:
+ err_pdd:
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_device.c b/drivers/gpu/drm/amd/amdkfd/kfd_device.c
+index 0c94bdfadaabf..9d0b0bf70ad1e 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_device.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_device.c
+@@ -838,7 +838,7 @@ bool kgd2kfd_device_init(struct kfd_dev *kfd,
+ kfd_doorbell_error:
+ 	kfd_gtt_sa_fini(kfd);
+ kfd_gtt_sa_init_error:
+-	amdgpu_amdkfd_free_gtt_mem(kfd->adev, kfd->gtt_mem);
++	amdgpu_amdkfd_free_gtt_mem(kfd->adev, &kfd->gtt_mem);
+ alloc_gtt_mem_failure:
+ 	dev_err(kfd_device,
+ 		"device %x:%x NOT added due to errors\n",
+@@ -856,7 +856,7 @@ void kgd2kfd_device_exit(struct kfd_dev *kfd)
+ 		kfd_doorbell_fini(kfd);
+ 		ida_destroy(&kfd->doorbell_ida);
+ 		kfd_gtt_sa_fini(kfd);
+-		amdgpu_amdkfd_free_gtt_mem(kfd->adev, kfd->gtt_mem);
++		amdgpu_amdkfd_free_gtt_mem(kfd->adev, &kfd->gtt_mem);
+ 	}
+ 
+ 	kfree(kfd);
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
+index 60d98301ef041..4d9a406925e18 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
+@@ -2610,7 +2610,7 @@ static void deallocate_hiq_sdma_mqd(struct kfd_node *dev,
+ {
+ 	WARN(!mqd, "No hiq sdma mqd trunk to free");
+ 
+-	amdgpu_amdkfd_free_gtt_mem(dev->adev, mqd->gtt_mem);
++	amdgpu_amdkfd_free_gtt_mem(dev->adev, &mqd->gtt_mem);
+ }
+ 
+ void device_queue_manager_uninit(struct device_queue_manager *dqm)
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c
+index 447829c22295c..4c3f379803117 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c
+@@ -223,7 +223,7 @@ void kfd_free_mqd_cp(struct mqd_manager *mm, void *mqd,
+ 	      struct kfd_mem_obj *mqd_mem_obj)
+ {
+ 	if (mqd_mem_obj->gtt_mem) {
+-		amdgpu_amdkfd_free_gtt_mem(mm->dev->adev, mqd_mem_obj->gtt_mem);
++		amdgpu_amdkfd_free_gtt_mem(mm->dev->adev, &mqd_mem_obj->gtt_mem);
+ 		kfree(mqd_mem_obj);
+ 	} else {
+ 		kfd_gtt_sa_free(mm->dev, mqd_mem_obj);
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_process.c b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
+index d98e45aec76b4..43f520b379670 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_process.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
+@@ -1047,7 +1047,7 @@ static void kfd_process_destroy_pdds(struct kfd_process *p)
+ 
+ 		if (pdd->dev->kfd->shared_resources.enable_mes)
+ 			amdgpu_amdkfd_free_gtt_mem(pdd->dev->adev,
+-						   pdd->proc_ctx_bo);
++						   &pdd->proc_ctx_bo);
+ 		/*
+ 		 * before destroying pdd, make sure to report availability
+ 		 * for auto suspend
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c b/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c
+index 8aca92624a77e..dbc75ca84375a 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c
+@@ -199,9 +199,9 @@ static void pqm_clean_queue_resource(struct process_queue_manager *pqm,
+ 	}
+ 
+ 	if (dev->kfd->shared_resources.enable_mes) {
+-		amdgpu_amdkfd_free_gtt_mem(dev->adev, pqn->q->gang_ctx_bo);
++		amdgpu_amdkfd_free_gtt_mem(dev->adev, &pqn->q->gang_ctx_bo);
+ 		if (pqn->q->wptr_bo)
+-			amdgpu_amdkfd_free_gtt_mem(dev->adev, pqn->q->wptr_bo);
++			amdgpu_amdkfd_free_gtt_mem(dev->adev, (void **)&pqn->q->wptr_bo);
+ 	}
+ }
+ 
 -- 
 2.43.0
 
