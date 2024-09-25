@@ -1,152 +1,165 @@
-Return-Path: <linux-kernel+bounces-339468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F76998659C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:30:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FDC698659D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14B111C217EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:30:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E6D7280D69
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574267581F;
-	Wed, 25 Sep 2024 17:30:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1076A357;
+	Wed, 25 Sep 2024 17:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YLDjk6BW"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PrSwGy9S"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F76571B3A
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 17:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A160C152
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 17:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727285401; cv=none; b=W3mQtuUVzV7FR7E2pSO2t+g2FxgkRIowdEHcOMsfiW5ybHb2MPdOz1+Qa5txxLbCGf64uzUforePV1sKx29MhXfzvTVHlONQ9iVKtfepEcUCe4Sfot6Ja4vH7FsaC5O81NpEtpf8iJF8oz/KwvsNMLw60UOUEp1IxFLvwYT3Md8=
+	t=1727285419; cv=none; b=PBEqrGRVLs+WIl72B/X2v/PZM8fEiPrjZ8qD3v5iMZq5bI/CVzjaYI8Ac7o//Bz2JZIs3BDn8zZ57BMHNK1A+MKEftrLPYhuDVWEOkL5PGI2vmsLq6tyae7IhtpiZGujCbFCIN0NelIJJ3a7QcG4Qqkx2vMN86Xht6ertYrecwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727285401; c=relaxed/simple;
-	bh=S3foybS1q/OA+MvBiFZY5r1m2O/kN5+WeazHlK5he04=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BumiL/L61EV2EN798BS1QWqs52pYUhoMNBc1HGuTNrFeeQGTBEj86GbGPdS++FjyBNzpCpx69GM/WgR6PMBf9u0vLMQYZT5arcXLmfDYMUShGLfPXucfQByoc5eibdkxaMe7aIrybS93H4GGgeyPVP5iJsBbsTW+FYxIaWnz+20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YLDjk6BW; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6e129c01b3bso1465647b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 10:30:00 -0700 (PDT)
+	s=arc-20240116; t=1727285419; c=relaxed/simple;
+	bh=6lMrxe8sCTgBy01/mf9iIpgXaSX/UU8ZeE/q0YQhcj4=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=EISDKfzFTFKIFzSI+YjnV3TAs7Z+O/w4ko1ZFm3ZmcKHxpvjqliD4jixCfO9JMA/bJKbpPHlTB2Ps+RIBmxteF53Z8TRhfes/HDxuhICChZDeCfbUJoG77a+XYIJgUbkJ9x8FUvBsK1gyFqgjAj4+zFjtTrRPR1W3vkDIneDgBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PrSwGy9S; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e201a37e5a4so164755276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 10:30:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727285399; x=1727890199; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j/V7CxHWV1Tser1qk57X7xlPUJc/6s+EPJGxMPkOcP0=;
-        b=YLDjk6BWLGpl11iCrSIqHzhcozlE7aH7Z/7MnD9zndIh1hiYFRiDj6wdJUpXOfci9u
-         LwMHfh5Rt6hA4XK1y4v2gQuIm7SZA8USa61q94+gR1uP2xYTqo5LHAfPljlRaAZ6F81h
-         k/FO2AFGoj1/OZebNUBAnjJteY9MX/HRorMwQ=
+        d=google.com; s=20230601; t=1727285417; x=1727890217; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=o7mmItE13oyNMD526yrDEYQPSrEQwCMg1pQdM7EvhJM=;
+        b=PrSwGy9SQzZJ91muSfew88JRed98LJr50YV/sIQG40NdjkUzZ4391Xok56sJLlLNyt
+         S8cNn4ekjIIvQ0O7LZnxQepjHbp0s6peccS/vo93ywgIosWPb2eRKyNi/XjKL8TTXHTV
+         NySj5hwukjN/zyJdPqvgRiH+xPjfeHo2hwRXnRTqIF7gouWskR+m8wBHb+oUsbSg1JzK
+         qOI0cAK8zNhyxjENDrTqVcQmrhefGA5+H9KdNaLuTqbc9GCRL6V+YSaNzE2CQnBtBpad
+         XmcnviCfq2Hb2/z+lQ1koT7eiV/xuU0EkRl7Z2r7MUMFyuvq8umUcbbagVeIFHN5adGF
+         x3LQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727285399; x=1727890199;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j/V7CxHWV1Tser1qk57X7xlPUJc/6s+EPJGxMPkOcP0=;
-        b=r4QKn+BR82IPBaV+Dy8QvpsHsPS6Tc7d3RVLeAF8RjCKvtBieEkFIRRPH4iihDK9kv
-         ZqEYlZEPdTj/0KHsqO8d7SyFm3PIaTJEylu0R4CtpLBZ2ZTfnJ64QPg5KRqM576zWqyW
-         v5pVY0XErNWVOa10K8pNNdDIyBn67OvMHFS/IcS1HTBPwYSrPCAX7HjQuEmhILn5GE5o
-         ZxfPVjPZvoRhQ8O7uN2iNPpTZRPlFC/ryBfWraJeesFWA5DMU30RjbtgbF+d9BgRETQT
-         MN2O3yTgN7siuKpFsrLCgU5kMhgGBD/Aytu2NWzgxQuh9hXmUL45DH502gLQ6PUc2Ea/
-         eMRA==
-X-Forwarded-Encrypted: i=1; AJvYcCUyxjSKaL+vIi0oLmwcLKHX+mTTvcX50jKV4FnYoaCpC9uJtld8DStLTftXxNVu6862NbWukWKD3YJSVYs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzP1jzJeElyQY2RPgQN2xylOnzikXINWyEkbiltxbukoDzljVOk
-	eBKbQJx6QFMOIbZdxZ4k2XheWGtI3/ua68GE6YkLmFu2eDMXVYKyr2GSpMuGcm1Rh/6/hcGwlpL
-	BE+xit6JLXfeiIJd6Ls0I5zBCwCUTF3tFVYiM
-X-Google-Smtp-Source: AGHT+IEEJk0hLmkYSqK37kVBafdY8v3m2TYyb4PkKS+wmM4CoQEd1qC9celbMVCKx7Czv9htT4lCXpG6HWI/tNvq/v0=
-X-Received: by 2002:a05:690c:660e:b0:6e2:1336:55d8 with SMTP id
- 00721157ae682-6e21d6ed513mr37998667b3.10.1727285399187; Wed, 25 Sep 2024
- 10:29:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727285417; x=1727890217;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=o7mmItE13oyNMD526yrDEYQPSrEQwCMg1pQdM7EvhJM=;
+        b=ngMFJHSylOMdIdgN8LqBNiILW08J+UTr3VHpbdNVtnXq8svCyHs54BXfgXOt1ogOrG
+         6igqDSvtx/RNjlOgwheOPtc8fCT4sC+P8J1HUD4jHYGOy4mCGjO8tdqcJIa4B2RX0sA6
+         9nowp85g90e47q14ZvTOhejhsFLp/UiZFc7DGnalprK48FROFKhHoWMb0ppG/9PcFtDV
+         Y6EV1UFN3xPgMYYg/KqcScUgpTWEzHdJnoOuR/4uhpI7OHqt/kkTcHrex5VXHdQxCcZw
+         EAJedEGXIhJ68vE34EXHNX4Ogko/MhtueMBelJhkTBe5yQ3Si4Mhi08mKGL8lpZvjCAH
+         4agw==
+X-Forwarded-Encrypted: i=1; AJvYcCVxC7ydOq5us9WY+aXhJC9o/iEfKxPK5Duvm1LjkN+9Axab01A558+vB8IOarhJfqtEelXAM/E2e2Y4aBU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+UwpEzMpBWjlSXtXmM3MViYZomlIScIuVOIRFyIZJ46ngRkSL
+	NQUtCV3UCLwj1bUf/HmjQTCKibpE0jQKQG+09RrLiTu4gHCJ0M+sgUjNGrbd34tJIKAabcI0Hnp
+	9bImQcQ==
+X-Google-Smtp-Source: AGHT+IFzc5fJx3iARQ8up/ouMLSTHLgHfuFoYepAgqOopOfeUM/50KEXWyClxZLUzhVg2ZRNel7VH9IHzDjz
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:965e:4297:88a9:5902])
+ (user=irogers job=sendgmr) by 2002:a05:6902:292:b0:e25:2491:d005 with SMTP id
+ 3f1490d57ef6-e252491d211mr2442276.8.1727285417021; Wed, 25 Sep 2024 10:30:17
+ -0700 (PDT)
+Date: Wed, 25 Sep 2024 10:30:13 -0700
+Message-Id: <20240925173013.12789-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240925162513.435177-1-abhishekpandit@chromium.org>
- <20240925092505.3.Ib7a83adb069df1cb0a40dcddff29618bf3255700@changeid> <xzk3yjkf4zew4p3f4jo6an3cnp4qe2vcvdbu6eq4ths5q4aqmp@4d2qfvrdwym5>
-In-Reply-To: <xzk3yjkf4zew4p3f4jo6an3cnp4qe2vcvdbu6eq4ths5q4aqmp@4d2qfvrdwym5>
-From: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Date: Wed, 25 Sep 2024 10:29:45 -0700
-Message-ID: <CANFp7mXwOXhkOSCwCME_ZbzvNP20OVZYX5sE-7+WtC5buSxTrw@mail.gmail.com>
-Subject: Re: [PATCH 3/8] usb: typec: intel_pmc_mux: Null check before use
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: heikki.krogerus@linux.intel.com, tzungbi@kernel.org, jthies@google.com, 
-	pmalani@chromium.org, akuchynski@google.com, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.792.g87dc391469-goog
+Subject: [PATCH v1] perf test: Ignore security failures in all PMU test
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Colin Ian King <colin.i.king@gmail.com>, 
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 25, 2024 at 9:54=E2=80=AFAM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On Wed, Sep 25, 2024 at 09:25:04AM GMT, Abhishek Pandit-Subedi wrote:
-> > Make sure the data pointer in typec_mux_state is not null before
-> > accessing it.
-> >
-> > Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
->
-> Is the a fix for an actual issue or just good-to-have thing? In the
-> former case it lacks a description of how the issue can be triggered and
-> a Fixes tag.
+Refactor code to have some more error diagnosis on traps, etc. and to
+do less work on each line. Add an ignore situation for security failures.
 
-This fixes a segfault that occurs when the new Thunderbolt driver is
-used because it calls `typec_altmode_notify` with null data. I'm not
-sure if that needs a `Fixes` since what's currently running upstream
-doesn't actually trigger this error.
-
-I'll update the description with why this is needed. i.e.
+Signed-off-by: Ian Rogers <irogers@google.com>
 ---
-Make sure the data pointer in typec_mux_state is not null before
-accessing it. The new Thunderbolt driver calls typec_altmode_notify
-with a NULL pointer for data which can cause this mux configuration
-to crash.
+ tools/perf/tests/shell/stat_all_pmu.sh | 52 ++++++++++++++++++++------
+ 1 file changed, 40 insertions(+), 12 deletions(-)
 
->
-> > ---
-> >
-> >  drivers/usb/typec/mux/intel_pmc_mux.c | 9 +++++++--
-> >  1 file changed, 7 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/usb/typec/mux/intel_pmc_mux.c b/drivers/usb/typec/=
-mux/intel_pmc_mux.c
-> > index 56989a0d0f43..4283fead9a69 100644
-> > --- a/drivers/usb/typec/mux/intel_pmc_mux.c
-> > +++ b/drivers/usb/typec/mux/intel_pmc_mux.c
-> > @@ -331,14 +331,19 @@ static int
-> >  pmc_usb_mux_tbt(struct pmc_usb_port *port, struct typec_mux_state *sta=
-te)
-> >  {
-> >       struct typec_thunderbolt_data *data =3D state->data;
-> > -     u8 cable_rounded =3D TBT_CABLE_ROUNDED_SUPPORT(data->cable_mode);
-> > -     u8 cable_speed =3D TBT_CABLE_SPEED(data->cable_mode);
-> > +     u8 cable_rounded, cable_speed;
-> >       struct altmode_req req =3D { };
-> >
-> > +     if (!data)
-> > +             return 0;
-> > +
-> >       if (IOM_PORT_ACTIVITY_IS(port->iom_status, TBT) ||
-> >           IOM_PORT_ACTIVITY_IS(port->iom_status, ALT_MODE_TBT_USB))
-> >               return 0;
-> >
-> > +     cable_rounded =3D TBT_CABLE_ROUNDED_SUPPORT(data->cable_mode);
-> > +     cable_speed =3D TBT_CABLE_SPEED(data->cable_mode);
-> > +
-> >       req.usage =3D PMC_USB_ALT_MODE;
-> >       req.usage |=3D port->usb3_port << PMC_USB_MSG_USB3_PORT_SHIFT;
-> >       req.mode_type =3D PMC_USB_MODE_TYPE_TBT << PMC_USB_MODE_TYPE_SHIF=
-T;
-> > --
-> > 2.46.0.792.g87dc391469-goog
-> >
->
-> --
-> With best wishes
-> Dmitry
+diff --git a/tools/perf/tests/shell/stat_all_pmu.sh b/tools/perf/tests/shell/stat_all_pmu.sh
+index d2a3506e0d19..42456d89c5da 100755
+--- a/tools/perf/tests/shell/stat_all_pmu.sh
++++ b/tools/perf/tests/shell/stat_all_pmu.sh
+@@ -1,23 +1,51 @@
+-#!/bin/sh
++#!/bin/bash
+ # perf all PMU test
+ # SPDX-License-Identifier: GPL-2.0
+ 
+ set -e
++err=0
++result=""
++
++trap_cleanup() {
++  echo "Unexpected signal in ${FUNCNAME[1]}"
++  echo "$result"
++  exit 1
++}
++trap trap_cleanup EXIT TERM INT
+ 
+ # Test all PMU events; however exclude parameterized ones (name contains '?')
+-for p in $(perf list --raw-dump pmu | sed 's/[[:graph:]]\+?[[:graph:]]\+[[:space:]]//g'); do
++for p in $(perf list --raw-dump pmu | sed 's/[[:graph:]]\+?[[:graph:]]\+[[:space:]]//g')
++do
+   echo "Testing $p"
+   result=$(perf stat -e "$p" true 2>&1)
+-  if ! echo "$result" | grep -q "$p" && ! echo "$result" | grep -q "<not supported>" ; then
+-    # We failed to see the event and it is supported. Possibly the workload was
+-    # too small so retry with something longer.
+-    result=$(perf stat -e "$p" perf bench internals synthesize 2>&1)
+-    if ! echo "$result" | grep -q "$p" ; then
+-      echo "Event '$p' not printed in:"
+-      echo "$result"
+-      exit 1
+-    fi
++  if echo "$result" | grep -q "$p"
++  then
++    # Event seen in output.
++    continue
++  fi
++  if echo "$result" | grep -q "<not supported>"
++  then
++    # Event not supported, so ignore.
++    continue
++  fi
++  if echo "$result" | grep -q "Access to performance monitoring and observability operations is limited."
++  then
++    # Access is limited, so ignore.
++    continue
++  fi
++
++  # We failed to see the event and it is supported. Possibly the workload was
++  # too small so retry with something longer.
++  result=$(perf stat -e "$p" perf bench internals synthesize 2>&1)
++  if echo "$result" | grep -q "$p"
++  then
++    # Event seen in output.
++    continue
+   fi
++  echo "Error: event '$p' not printed in:"
++  echo "$result"
++  err=1
+ done
+ 
+-exit 0
++trap - EXIT TERM INT
++exit $err
+-- 
+2.46.0.792.g87dc391469-goog
+
 
