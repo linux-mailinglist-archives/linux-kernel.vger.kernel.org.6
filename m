@@ -1,117 +1,124 @@
-Return-Path: <linux-kernel+bounces-339643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 405D9986854
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 23:28:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8DC698685D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 23:31:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C418DB22055
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:28:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7856FB2356B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B1815667B;
-	Wed, 25 Sep 2024 21:28:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B862156F23;
+	Wed, 25 Sep 2024 21:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M6P9byp+"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vpHxw83B"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD06F146A63
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 21:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 312EA1411E0
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 21:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727299727; cv=none; b=W2EjNgzSo/7SDaEb4GPNWNWftMmiO9qDhbRjLHLfjrHyWtkfmIuLfTBoNr1Mw++Tatr+epY+mJNDTVMvnnv5EWVnYMRnCV+idvHaFWH84C4b+LRyi8A9ObhlZN0tz4GhrF6eoUTDdoDbhEikos1VUnzRbcga2BNq0mEwTiYA7cU=
+	t=1727299905; cv=none; b=WNklOXH8548HvgCJEkJwQJ/EnuLncGKBpCNg7zXyYIL5azXt+YVOU5Cl+K9iNgvEposo1QSrcDBDOvhZB2irsjPpkq37V9cRxcH9QYrGwI2liuD/3sgle1IibMVuEfcmRQmnIBCDT5ZHZJjI5eCkUpwm0vCDLyzdgwf0XVO45/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727299727; c=relaxed/simple;
-	bh=WucR+djirwpM6STmHdVUy4UR5ERz2gZtg/GRT0C4+GM=;
+	s=arc-20240116; t=1727299905; c=relaxed/simple;
+	bh=q1hnfW/UYENj/VV96bgSolK/g/2vdQSz2wVyhQteCPs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JYGvCwM6LwUOZSK5mjYaIwMTsI9XqsQ+QcTv6YE2PviP8VRYmyc40s1yJK6m2pXnFutIq3S0JM92OIT5tS5wdscaBf21OIIG7rV4m4Q8NaW/jFMFYU/cSMRc6H8EqGcGpgm9LpU0ZVzNlfzArLVyb6NddfbItsJ6eN91I+ldfMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M6P9byp+; arc=none smtp.client-ip=209.85.208.172
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sb7AJoe0k60T2qv3giRnnzlhDtLk79+x8VtmeefzM6a6tw0EJVwGZcnmHG6PKaoSUyrqq1+pt/iBZTEYfFyFQGisNhgqwFbxvS00B/b4KX8Dr2LMGeOU+WhCLqPahX/kcFgm4bAGv73h+7JVynEiLggDSAXMdJu09b0+SGebQAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vpHxw83B; arc=none smtp.client-ip=209.85.167.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f75129b3a3so2820871fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 14:28:45 -0700 (PDT)
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5365c060f47so366977e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 14:31:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727299724; x=1727904524; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=gwTr0ZjzKHD8edFYUSKF8PBtaT++xT7YsKjfFnre+JY=;
-        b=M6P9byp+++VgGzj3JjemOtwY976DKBqxqAII/DgM4aNnkiS1sYNXCw+EUwxQTkvLAT
-         GG7TQdk5sgipr9UPMLraayYGIG5oki9x9QDgJeuoWeh29mCugfrLacEm05apNh35PD1l
-         vvfE0QgUQEOfNwNh28+LSn/BxBGuhIINM55223ygPTzZvEwy6QeM4uC55l4iJB5AGkcV
-         xtTW+eH4E6Dvli43X0wilQ/PLPUDEBPkpguG86UC5pyIDb9Mnp/DyGG5jL7TQ6kFzVVZ
-         GEPd/g+OQ8TG8j1w3asTDgbMMmHBxkK9QS0glr4yk76+TF3MFli6Oec8clg6+rUdwMaK
-         5hgw==
+        d=linaro.org; s=google; t=1727299902; x=1727904702; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=g2gRWXk6um8ssZG0dTYz3h8O6sPux+vtNyTeziNQM+4=;
+        b=vpHxw83BEcxXUiXAHcwannMowZ5Cp/Zm0//e9txywTNF+VvbYNu8F1jTKNov+mH/Ns
+         5hHQflIjhKUl5G/IPTQ1QlYBoyLU+pl1Qt4Mx572kqq6ImpdtT9nvn7R1iEEZdIHMOxB
+         SzftUfPVRDvh/dh4iGooNg+6fQdfSwKqC2XOKsnIbMuGDmC0MWWgUrNTgHl0q+YB/QjH
+         E6TDD2eqeFktH3aKA7aTMaEBEEEm2Bnp4OTeVI5cdWgWqIyT1MrP4YYAq9UO8Q2phjMl
+         Cl+YWdmPf1FQZtaE2nhr2VGc1ZXKepGxtu0tMXMKlhUgIh3yLSandXdoVQjX1kgBeB6r
+         TSUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727299724; x=1727904524;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gwTr0ZjzKHD8edFYUSKF8PBtaT++xT7YsKjfFnre+JY=;
-        b=kWUkwyuIL+xofMDOR5ICZ1zr7GPGDsf0ci9Nia2rrVj2qpBEKnq0iNH024L6SyaWOy
-         vf7BI2KIA531CAV0F5a2yHTEiOKEwen2c2cYxYCZKpDdj2AFQt17rQwQZTjiG4JidSEc
-         Ty8TJvLiOeYqomZQ89ulgbNbd/CD0IDpgxXS7ekMfjKMwZHUevzm0YIBBpCJgKxdiXsz
-         7MwOqmYu65i2BKZ1QGtlAJhhZ8AeNFJ0wscymOYUufcqpCYA8xtoM/29bUQq1PzKbKsI
-         kidAkpdq5AnKE2Q9pw7cO8BowvJAYHio725QY2SAv05U42cfm5eoA2wHmnBp1eQQ7P89
-         AALA==
-X-Forwarded-Encrypted: i=1; AJvYcCWerRqcQtv1Qq/ymkVz1bEHtEw1JT26BouTs5P+jEFGIDblW9wQQ2qsFsE5DEA5WZ787KlmV9WxugVoeNM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztJGkgUWHCipRdGenFZbkwWxt3UsyFvNmYaLbwlKyMm8Sx3yG7
-	ZhEFc6VfI13NdC4VBZrcTSD7xxUBHtHZjt1vZ4Yv7ZU9iB4cgObrNCpinI10lC4=
-X-Google-Smtp-Source: AGHT+IFr4Ny4+GpZtXRbkLD1/XaxRB6oYcW6d6Gw9eijaSV1QXJ3oFhYYiPUQKPns6/AJEWKpEWAAA==
-X-Received: by 2002:a05:651c:2117:b0:2f7:4f84:50a2 with SMTP id 38308e7fff4ca-2f91ca426ffmr26443491fa.31.1727299723711;
-        Wed, 25 Sep 2024 14:28:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727299902; x=1727904702;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g2gRWXk6um8ssZG0dTYz3h8O6sPux+vtNyTeziNQM+4=;
+        b=OO6P2tX8v+X46F8ozAvBfL3KzL6J9NQBb5o/yWHF9sRZHiAsOT0Y46VjbmVP//vlGK
+         retMXFEzWTha3NlnRxTM7cUsBPGt23HQvDYy7O203PNFx2NftmsmPM6M5QJhcHin+dA4
+         Xk5nCzexJpxm0x1159ESDl+f6wrTDlvx05ZVFKzVjns484FJ8VogMyrA0oCuDy17e8hJ
+         WUbMaKER6h9TRU/ty3KbtgIaGnuSPPPd+IxP3W5jdtkpqhTzp+YvRn48TpykqfkK6vLG
+         5VxZdHirWQxhFs1AvE6y2HU4ZW4pWLFGEC1xF0fum3GMQVgiDT2oLVcqO+E6i5tRU1cC
+         9mig==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ1SyYBIyjlDPVOd4VT5pKAt7AexJj3/tI1GDkuGC/w0AkSKh6wNvu9V7mVlq9b3i6KjpMBeQscMLfjSI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYokftAumW9PLX2bSbh+8elttFHVPRxuUMm5mjU7BMnRyNYHUB
+	tUxh9ORa0zHpqtwdEeMzpgjeuFOIQJJ2XNgRJA8DWiwcp9/3lKJmd534PuO11vI=
+X-Google-Smtp-Source: AGHT+IGRtxkMp3x13jBkNmqIgOxnVIpZ0WovylKJsjpSzFGlmQuJwR6WMxOTZoa6v7kxp+tzwKvB6Q==
+X-Received: by 2002:a05:6512:3a8f:b0:536:536f:c663 with SMTP id 2adb3069b0e04-538704986fcmr2778800e87.22.1727299902152;
+        Wed, 25 Sep 2024 14:31:42 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f8d283bfd0sm6173091fa.42.2024.09.25.14.28.41
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-537a86408dasm623111e87.144.2024.09.25.14.31.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 14:28:42 -0700 (PDT)
-Date: Thu, 26 Sep 2024 00:28:40 +0300
+        Wed, 25 Sep 2024 14:31:41 -0700 (PDT)
+Date: Thu, 26 Sep 2024 00:31:40 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Abhishek Sahu <absahu@codeaurora.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH v2] clk: qcom: clk-alpha-pll: Fix pll post div mask when
- width is not set
-Message-ID: <jlmnxzkferigmhh5akcr5uumrdychjxyy2flftx5u2sg2w62aa@566u2lqj5od2>
-References: <20240925-fix-postdiv-mask-v2-1-b825048b828b@mainlining.org>
+To: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
+	ulf.hansson@linaro.org, linus.walleij@linaro.org, catalin.marinas@arm.com, 
+	p.zabel@pengutronix.de, geert+renesas@glider.be, neil.armstrong@linaro.org, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, quic_varada@quicinc.com
+Subject: Re: [PATCH 8/8] arm64: defconfig: Enable IPQ5424 SoC base configs
+Message-ID: <h6ajhgv5rqabxupove4ge4253ywzbjyxoqq75c7ojmauudd3z5@hhhkbbzfmved>
+References: <20240913121250.2995351-1-quic_srichara@quicinc.com>
+ <20240913121250.2995351-9-quic_srichara@quicinc.com>
+ <4dxqbm4uuuuht5db7kt6faz2pdeodn224hd34np322divs22ba@dzmjveze3b4f>
+ <2a16d5a2-17a5-4988-8a25-34ac10ff3d08@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240925-fix-postdiv-mask-v2-1-b825048b828b@mainlining.org>
+In-Reply-To: <2a16d5a2-17a5-4988-8a25-34ac10ff3d08@quicinc.com>
 
-On Wed, Sep 25, 2024 at 08:33:20PM GMT, Barnabás Czémán wrote:
-> Many qcom clock drivers do not have .width set. In that case value of
-> (p)->width - 1 will be negative which breaks clock tree. Fix this
-> by checking if width is zero, and pass 3 to GENMASK if that's the case.
+On Thu, Sep 26, 2024 at 12:34:56AM GMT, Sricharan Ramabadhran wrote:
 > 
-> Fixes: 1c3541145cbf ("clk: qcom: support for 2 bit PLL post divider")
-> Fixes: 2c4553e6c485 ("clk: qcom: clk-alpha-pll: Fix the pll post div mask")
+> 
+> On 9/13/2024 6:23 PM, Dmitry Baryshkov wrote:
+> > On Fri, Sep 13, 2024 at 05:42:50PM GMT, Sricharan R wrote:
+> > > From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> > > 
+> > > Enable the clock and pinctrl configs for Qualcomm IPQ5332 SoC
+> > 
+> > Please name the device rather than the platform. The defconfig affects
+> > all users, so it should be justified.
+> > 
+> Sorry, to understand correctly, you mean to use the board name here ?
 
-I think one Fixes tag should be enough.
+Yes, the board which is generally accessible, if possible. You are
+increasing kernel size for everybody using defconfig, so at least it
+should be obvious, who is benefiting from that.
 
-Nevertheless,
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
-> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
-> ---
-> Changes in v2:
-> - Pass 3 to GENMASK instead of 0.
-> - Add more Fixes tag for reference root cause.
-> - Link to v1: https://lore.kernel.org/r/20240925-fix-postdiv-mask-v1-1-f70ba55f415e@mainlining.org
-> ---
->  drivers/clk/qcom/clk-alpha-pll.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> > > 
+> > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > > Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> > 
+> > Usual comment.
+> ok, will fix.
+> 
+> Regards,
+>  Sricharan
 
 -- 
 With best wishes
