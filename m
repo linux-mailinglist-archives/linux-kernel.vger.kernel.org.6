@@ -1,389 +1,270 @@
-Return-Path: <linux-kernel+bounces-339331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60C3F98636F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:26:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F4BC986371
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:27:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E142B1F27964
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:26:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD182286630
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:27:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE4918661B;
-	Wed, 25 Sep 2024 15:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA8D145336;
+	Wed, 25 Sep 2024 15:09:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sI0FfFu3"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="nLcgLCdx"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2836913D891
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 15:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303FDC8D1;
+	Wed, 25 Sep 2024 15:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727276928; cv=none; b=mq22gpuDIz7o/ViPb3zzxrcTkc9nlyQ+dq613licaqgH5VD+KI8CL6af6r5tW5+6jGuLYZGFw11IYqZuwjue0wJNvjmCxUtfbbXTMUYJwlNaHcAHGCxc8Jtle+aU58ZC91tr+69051Krmr+VFv0VCEqJHj5+ifbOZfGqUjTw0NA=
+	t=1727276947; cv=none; b=uP9aBpZu436Z1tU0RL3EwFHptnZ5IaxsJgzlS/n0Wyu4XcymiIApc4TTLWhcAByyKa1VR9ogyz+bbow+xPcaYJd54QSWSXu7xN7/bft05CV3qAynOl+GM0Ryji5dbqWwkHfvEWKuSwmmMpoSk/vdPlBOraOAKLRBso47pwBvOaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727276928; c=relaxed/simple;
-	bh=B8GjkZ9KSpAFYR+WSzBhrhjfRNsNrfu9PdiIxSYd2dw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=d+bJ8ue+EluuqgxfStbJdtBi101LZzJAV5v2jTq6wa/lxHy4tw/qPDhYDV854FzPBYwAxsyncdflD+dhvv1Xjl3JThuV7CXKM05U4P5uuHXn59AyQKg2mPpci9fdTQ9lsGM/YUZR2NcocT00nDQ2bNvaWplJ34+kF3wEiugRzZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sI0FfFu3; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7c6a9c1a9b8so4492430a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:08:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727276925; x=1727881725; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CJjlCVLEZdWj934sR01kDIPq+l9ewDRt7kkVfBRkT5A=;
-        b=sI0FfFu3rMHxQ92kip65G0cH48eQKAHZfCu4DJvJ6wegxCGJr5DQGiqK3cGszfdhrS
-         p3j3ztE1pSfRO8MpJ/a7ZkwdF9F8m3khwmuZL1LGd1Jd4DXNYHMBQ4TZY/yekvfXIYfv
-         wp5i8cZYgq13jWqBUP0bGNDgW32NOzSJ/bgNpFoHdLIAG93BV7kOD9UzpogtCaFp26+I
-         EEcUEYm2k6DoFMs+ir1PMkDYY2R4lyt4eZtmxtCkA7GkbcLM1xDt+0T3Hhv9v8jm0NIq
-         /ZhR5SfT1PFnTuBdQ21WfUVP+xr9SRNusA15kn2LRW3rzfky8CdoYCu6uWFHDGKHUPZ2
-         dBiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727276925; x=1727881725;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CJjlCVLEZdWj934sR01kDIPq+l9ewDRt7kkVfBRkT5A=;
-        b=QpiaMaeEyvmrLsPx9lCSQKmTy1NVPmi4d7D6fCur2i/gIVeSFWD7q2JIEdItfnNbfL
-         5YzVTodToGV+zUTd6ynb0bJaIEnlPFa1OdWsHUMUU1AAY9gc/c4Ltk6viHe7RSs1U6l9
-         0hCPuMMlrt/JDNek4qm/8P7bzTUpUph7VujtTb1RVrlvfJCjXgitHRkckzgrAi1BTspI
-         aJ+UPIbpdC8+aX6KeWt5EmhHc1DP9YAeb2JGg52jlqcPUCYE08B6+rANBiN0aqeLPc+u
-         4iAdlQGXWAUufThBgm3BmmLz2Pqk64dy59uIhQDQxVLkzPwGWDYYJg0OOaVuFrG3njn9
-         sDNw==
-X-Forwarded-Encrypted: i=1; AJvYcCVlFG5afI9LcjsCgg5Rg7a+aBuaDNAn02O3sHXf8Y3QCh0sOa+bSbg/Jx77w9UGARjU8M1qdhguLqGj1gk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy93Wq+NExl0UbRLXe4f5+DJFsdl60FaSDPYT8l+FzHX2RkIYf9
-	QfDSjbOxaBM82uZu3CjU3OcZtmiJvBXAy8E7R2sKmDn+9H0FpDB63MlRumzKVJPXgLOD2bwPm2E
-	Bnw==
-X-Google-Smtp-Source: AGHT+IHrIyskI5zYC0DBa9u5TteP6HKJCX5qffLdumB5VXa+/HHcwX6qSSRiKGLGGvId15g5lZFKwsrMIKs=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:d503:b0:201:f9c7:632d with SMTP id
- d9443c01a7336-20afc2cfd1cmr341265ad.0.1727276925273; Wed, 25 Sep 2024
- 08:08:45 -0700 (PDT)
-Date: Wed, 25 Sep 2024 08:08:43 -0700
-In-Reply-To: <65fe418f079a1f9f59caa170ec0ae5d828486714.camel@redhat.com>
+	s=arc-20240116; t=1727276947; c=relaxed/simple;
+	bh=nQ/Cr5Bfm5KJBGUupn+Bz8PlyDkWSw0a2Ipd0EIg54g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=drTllLQvrqMbtgZEuZ/VGGEKElTkId10LF7CrqjuY03y+rB5fTM+tfYCZjJT8YI06RVLj7xJbYBWKNEpbi4dMEql0wiKn6smmq/UfahN1dGDSEtNp5s3waQVRxbDhZoXxbjZt8dQcbnBQ36nNpxar3DSE/6a3lsjYjy6RrRjGH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=nLcgLCdx; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1727276945; x=1758812945;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=nQ/Cr5Bfm5KJBGUupn+Bz8PlyDkWSw0a2Ipd0EIg54g=;
+  b=nLcgLCdxfcUGwH+LPCxJjG2dpDT8RZEm9bT3GIryGMY6tYSMwbXC0kSK
+   qpt0CxKmmhZW5j5oZztiauE4sQtKi4+wBCnrvQmpzHWJMnam1m8AxKL0G
+   AnRwRqpxwXnYP61wid4fzTvmm615zzznJ2Lhk3J7D3fah+SLY3Gbq+8vS
+   4uMm7cl4U15ac5/o+h+pdB4I7+D10HZLiDe0r8P5wDuaCP1CJf5YwRIDy
+   nrBM/m5pFiRBBNChXDRL5b//B+Leh9IXXUcgETM0fzYOo+IoNDXZ7KVPr
+   614SR4mwHrz7jsMHKAAFaLdCfRIm5h/CuIwgXa3Rq1So4JL8mdj4rrzHF
+   Q==;
+X-CSE-ConnectionGUID: r0BHBmfrTJ2zG0UC0FqmTQ==
+X-CSE-MsgGUID: RpZnUojOS5aN67xiiPa9Jg==
+X-IronPort-AV: E=Sophos;i="6.10,257,1719903600"; 
+   d="scan'208";a="32846330"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Sep 2024 08:09:03 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 25 Sep 2024 08:08:59 -0700
+Received: from vduicu-Virtual-Machine.mshome.net (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Wed, 25 Sep 2024 08:08:58 -0700
+From: <victor.duicu@microchip.com>
+To: <matteomartelli3@gmail.com>, <jic23@kernel.org>, <lars@metafoo.de>
+CC: <marius.cristea@microchip.com>, <linux-iio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <victor.duicu@microchip.com>
+Subject: [PATCH v1] iio: adc: pac1921: add ACPI support for pac1921
+Date: Wed, 25 Sep 2024 18:08:56 +0300
+Message-ID: <20240925150856.19441-1-victor.duicu@microchip.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240725175232.337266-1-mlevitsk@redhat.com> <20240725175232.337266-3-mlevitsk@redhat.com>
- <ZrF55uIvX2rcHtSW@chao-email> <ZrY1adEnEW2N-ijd@google.com>
- <61e7e64c615aba6297006dbf32e48986d33c12ab.camel@redhat.com> <65fe418f079a1f9f59caa170ec0ae5d828486714.camel@redhat.com>
-Message-ID: <ZvQne77ycOKQ1nvU@google.com>
-Subject: Re: [PATCH v3 2/2] VMX: reset the segment cache after segment
- initialization in vmx_vcpu_reset
-From: Sean Christopherson <seanjc@google.com>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: Chao Gao <chao.gao@intel.com>, kvm@vger.kernel.org, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, 
-	linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, x86@kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Mon, Sep 09, 2024, Maxim Levitsky wrote:
-> On Mon, 2024-09-09 at 15:11 -0400, Maxim Levitsky wrote:
-> > On Fri, 2024-08-09 at 08:27 -0700, Sean Christopherson wrote:
-> > > > > @@ -4899,6 +4896,9 @@ void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
-> > > > > 	vmcs_writel(GUEST_IDTR_BASE, 0);
-> > > > > 	vmcs_write32(GUEST_IDTR_LIMIT, 0xffff);
-> > > > > 
-> > > > > +	vmx_segment_cache_clear(vmx);
-> > > > > +	kvm_register_mark_available(vcpu, VCPU_EXREG_SEGMENTS);
-> > > > 
-> > > > vmx_segment_cache_clear() is called in a few other sites. I think at least the
-> > > > call in __vmx_set_segment() should be fixed, because QEMU may read SS.AR right
-> > > > after a write to it. if the write was preempted after the cache was cleared but
-> > > > before the new value being written into VMCS, QEMU would find that SS.AR held a
-> > > > stale value.
-> > > 
-> > > Ya, I thought the plan was to go for a more complete fix[*]?  This change isn't
-> > > wrong, but it's obviously incomplete, and will be unnecessary if the preemption
-> > > issue is resolved.
-> > 
-> > Hi,
-> > 
-> > I was thinking to keep it simple, since the issue is mostly theoretical
-> > after this fix, but I'll give this another try.
->
-> This is what I am thinking, after going over this issue again:
-> 
-> Pre-populating the cache and/or adding 'exited_in_kernel' will waste vmreads
-> on *each* vmexit,
+From: Victor Duicu <victor.duicu@microchip.com>
 
-FWIW, KVM would only need to do the VMREAD on non-fastpath exits.
+This patch implements ACPI support for pac1921.
+Driver can read shunt resistor value and device name from ACPI table.
 
-> I worry that this is just not worth the mostly theoretical issue that we
-> have.
-
-Yeah.  And cost aside, it's weird and hard to document and use properly because
-it's such an edge case.  E.g. only applies preemptible kernels, and use of
-exited_in_kernel would likely need to be restricted to the sched_out() preempt
-logic, because anything really needs to check the "current" CPL.
-
-> Since the segment and the register cache only optimize the case of reading a
-> same field twice or more, I suspect that reading these fields always is worse
-> performance wise than removing the segment cache altogether and reading these
-> fields again and again.
-
-For modern setups, yeah, the segment cache likely isn't helping much, though I
-suspect it still gets a decent number of "hits" on CS.AR_BYTES via is_64_bit_mode().
-
-But for older CPUs where KVM needs to emulate large chunks of code, I'm betting
-the segment cache is an absolute must have.
-
-> Finally all 3 places that read the segment cache, only access one piece of
-> data (SS.AR or RIP), thus it doesn't really matter if they see an old or a
-> new value. 
-> 
-> I mean in theory if userspace changes the SS's AR bytes out of the blue, and
-> then we get a preemption event, in theory as you say the old value is correct
-> but it really doesn't matter.
-> 
-> So IMHO, just ensuring that we invalidate the segment cache right after we do
-> any changes is the simplest solution.
-
-But it's not a very maintainable solution.  It fixes the immediate problem, but
-doesn't do anything to help ensure that all future code invalidates the cache
-after writing, nor does it guarantee that all future usage of SS.AR can tolerate
-consuming stale values.
-
-> I can in addition to that add a warning to kvm_register_is_available and
-> vmx_segment_cache_test_set, that will test that only SS.AR and RIP are read
-> from the interrupt context, so that if in the future someone attempts to read
-> more fields, this issue can be re-evaluated.
-
-There's no need to add anything to vmx_segment_cache_test_set(), because it uses
-kvm_register_is_available().  I.e. adding logic in kvm_register_is_available()
-will suffice.
-
-If we explicitly allow VMCS accesses from PMI callbacks, which by we *know* can
-tolerate stale data _and_ never run while KVM is updating segments, then we can
-fix the preemption case by forcing a VMREAD and bypassing the cache.
- 
-And looking to the future, if vcpu->arch.guest_state_protected is moved/exposed
-to common code in some way, then the common PMI code can skip trying to read guest
-state, and the ugliness of open coding that check in the preemption path largely
-goes away.
-
-If you're ok with the idea, I'll write changelogs and post the below (probably over
-two patches).  I don't love adding another kvm_x86_ops callback, but I couldn't
-come up with anything less ugly.
-
+Signed-off-by: Victor Duicu <victor.duicu@microchip.com>
 ---
- arch/x86/include/asm/kvm-x86-ops.h |  1 +
- arch/x86/include/asm/kvm_host.h    |  1 +
- arch/x86/kvm/kvm_cache_regs.h      | 17 +++++++++++++++++
- arch/x86/kvm/svm/svm.c             |  1 +
- arch/x86/kvm/vmx/main.c            |  1 +
- arch/x86/kvm/vmx/vmx.c             | 23 ++++++++++++++++++-----
- arch/x86/kvm/vmx/vmx.h             |  1 +
- arch/x86/kvm/x86.c                 | 13 ++++++++++++-
- 8 files changed, 52 insertions(+), 6 deletions(-)
+ drivers/iio/adc/pac1921.c | 116 +++++++++++++++++++++++++++++++-------
+ 1 file changed, 97 insertions(+), 19 deletions(-)
 
-diff --git a/arch/x86/include/asm/kvm-x86-ops.h b/arch/x86/include/asm/kvm-x86-ops.h
-index 861d080ed4c6..5aff7222e40f 100644
---- a/arch/x86/include/asm/kvm-x86-ops.h
-+++ b/arch/x86/include/asm/kvm-x86-ops.h
-@@ -34,6 +34,7 @@ KVM_X86_OP(set_msr)
- KVM_X86_OP(get_segment_base)
- KVM_X86_OP(get_segment)
- KVM_X86_OP(get_cpl)
-+KVM_X86_OP(get_cpl_no_cache)
- KVM_X86_OP(set_segment)
- KVM_X86_OP(get_cs_db_l_bits)
- KVM_X86_OP(is_valid_cr0)
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 6d9f763a7bb9..3ae90df0a177 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1656,6 +1656,7 @@ struct kvm_x86_ops {
- 	void (*get_segment)(struct kvm_vcpu *vcpu,
- 			    struct kvm_segment *var, int seg);
- 	int (*get_cpl)(struct kvm_vcpu *vcpu);
-+	int (*get_cpl_no_cache)(struct kvm_vcpu *vcpu);
- 	void (*set_segment)(struct kvm_vcpu *vcpu,
- 			    struct kvm_segment *var, int seg);
- 	void (*get_cs_db_l_bits)(struct kvm_vcpu *vcpu, int *db, int *l);
-diff --git a/arch/x86/kvm/kvm_cache_regs.h b/arch/x86/kvm/kvm_cache_regs.h
-index b1eb46e26b2e..0370483003f6 100644
---- a/arch/x86/kvm/kvm_cache_regs.h
-+++ b/arch/x86/kvm/kvm_cache_regs.h
-@@ -43,6 +43,18 @@ BUILD_KVM_GPR_ACCESSORS(r14, R14)
- BUILD_KVM_GPR_ACCESSORS(r15, R15)
- #endif
+diff --git a/drivers/iio/adc/pac1921.c b/drivers/iio/adc/pac1921.c
+index 4c2a1c07bc39..9bb61b88aaef 100644
+--- a/drivers/iio/adc/pac1921.c
++++ b/drivers/iio/adc/pac1921.c
+@@ -67,6 +67,10 @@ enum pac1921_mxsl {
+ #define PAC1921_DEFAULT_DI_GAIN		0 /* 2^(value): 1x gain (HW default) */
+ #define PAC1921_DEFAULT_NUM_SAMPLES	0 /* 2^(value): 1 sample (HW default) */
  
-+/*
-+ * Using the register cache from interrupt context is generally not allowed, as
-+ * caching a register and marking it available/dirty can't be done atomically,
-+ * i.e. accesses from interrupt context may clobber state or read stale data if
-+ * the vCPU task is in the process of updating the cache.  The exception is if
-+ * KVM is handling an IRQ/NMI from guest mode, as that bounded sequence doesn't
-+ * touch the cache, it runs after the cache is reset (post VM-Exit), and PMIs
-+ * need to several registers that are cacheable.
-+ */
-+#define kvm_assert_register_caching_allowed(vcpu)		\
-+	lockdep_assert_once(in_task() ||			\
-+			    READ_ONCE(vcpu->arch.handling_intr_from_guest))
++#define PAC1921_ACPI_GET_UOHMS_VALS             0
++#define PAC1921_ACPI_GET_NAME			1
++#define PAC1921_DSM_UUID                        "f7bb9932-86ee-4516-a236-7a7a742e55cb"
++
  /*
-  * avail  dirty
-  * 0	  0	  register in VMCS/VMCB
-@@ -53,24 +65,28 @@ BUILD_KVM_GPR_ACCESSORS(r15, R15)
- static inline bool kvm_register_is_available(struct kvm_vcpu *vcpu,
- 					     enum kvm_reg reg)
- {
-+	kvm_assert_register_caching_allowed(vcpu);
- 	return test_bit(reg, (unsigned long *)&vcpu->arch.regs_avail);
+  * Pre-computed scale factors for BUS voltage
+  * format: IIO_VAL_INT_PLUS_NANO
+@@ -190,6 +194,7 @@ struct pac1921_priv {
+ 	u8 n_samples;
+ 	u8 prev_ovf_flags;
+ 	u8 ovf_enabled_events;
++	char *name;
+ 
+ 	bool first_integr_started;
+ 	bool first_integr_done;
+@@ -1151,6 +1156,79 @@ static void pac1921_regulator_disable(void *data)
+ 	regulator_disable(regulator);
  }
  
- static inline bool kvm_register_is_dirty(struct kvm_vcpu *vcpu,
- 					 enum kvm_reg reg)
- {
-+	kvm_assert_register_caching_allowed(vcpu);
- 	return test_bit(reg, (unsigned long *)&vcpu->arch.regs_dirty);
- }
- 
- static inline void kvm_register_mark_available(struct kvm_vcpu *vcpu,
- 					       enum kvm_reg reg)
- {
-+	kvm_assert_register_caching_allowed(vcpu);
- 	__set_bit(reg, (unsigned long *)&vcpu->arch.regs_avail);
- }
- 
- static inline void kvm_register_mark_dirty(struct kvm_vcpu *vcpu,
- 					   enum kvm_reg reg)
- {
-+	kvm_assert_register_caching_allowed(vcpu);
- 	__set_bit(reg, (unsigned long *)&vcpu->arch.regs_avail);
- 	__set_bit(reg, (unsigned long *)&vcpu->arch.regs_dirty);
- }
-@@ -84,6 +100,7 @@ static inline void kvm_register_mark_dirty(struct kvm_vcpu *vcpu,
- static __always_inline bool kvm_register_test_and_mark_available(struct kvm_vcpu *vcpu,
- 								 enum kvm_reg reg)
- {
-+	kvm_assert_register_caching_allowed(vcpu);
- 	return arch___test_and_set_bit(reg, (unsigned long *)&vcpu->arch.regs_avail);
- }
- 
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 9df3e1e5ae81..50f6b0e03d04 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -5031,6 +5031,7 @@ static struct kvm_x86_ops svm_x86_ops __initdata = {
- 	.get_segment = svm_get_segment,
- 	.set_segment = svm_set_segment,
- 	.get_cpl = svm_get_cpl,
-+	.get_cpl_no_cache = svm_get_cpl,
- 	.get_cs_db_l_bits = svm_get_cs_db_l_bits,
- 	.is_valid_cr0 = svm_is_valid_cr0,
- 	.set_cr0 = svm_set_cr0,
-diff --git a/arch/x86/kvm/vmx/main.c b/arch/x86/kvm/vmx/main.c
-index 7668e2fb8043..92d35cc6cd15 100644
---- a/arch/x86/kvm/vmx/main.c
-+++ b/arch/x86/kvm/vmx/main.c
-@@ -50,6 +50,7 @@ struct kvm_x86_ops vt_x86_ops __initdata = {
- 	.get_segment = vmx_get_segment,
- 	.set_segment = vmx_set_segment,
- 	.get_cpl = vmx_get_cpl,
-+	.get_cpl_no_cache = vmx_get_cpl_no_cache,
- 	.get_cs_db_l_bits = vmx_get_cs_db_l_bits,
- 	.is_valid_cr0 = vmx_is_valid_cr0,
- 	.set_cr0 = vmx_set_cr0,
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index c67e448c6ebd..e2483678eca1 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -3568,16 +3568,29 @@ u64 vmx_get_segment_base(struct kvm_vcpu *vcpu, int seg)
- 	return vmx_read_guest_seg_base(to_vmx(vcpu), seg);
- }
- 
--int vmx_get_cpl(struct kvm_vcpu *vcpu)
-+static int __vmx_get_cpl(struct kvm_vcpu *vcpu, bool no_cache)
- {
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
-+	int ar;
- 
- 	if (unlikely(vmx->rmode.vm86_active))
- 		return 0;
--	else {
--		int ar = vmx_read_guest_seg_ar(vmx, VCPU_SREG_SS);
--		return VMX_AR_DPL(ar);
--	}
++static int pac1921_match_acpi_device(struct i2c_client *client, struct pac1921_priv *priv)
++{
++	const struct acpi_device_id *device_pointer;
++	acpi_handle handle;
++	union acpi_object *rez;
++	guid_t guid;
++	struct device *dev = &client->dev;
 +
-+	if (no_cache)
-+		ar = vmcs_read32(GUEST_SS_AR_BYTES);
++	guid_parse(PAC1921_DSM_UUID, &guid);
++	handle = ACPI_HANDLE(&client->dev);
++
++	device_pointer = acpi_match_device(dev->driver->acpi_match_table, dev);
++	if (!device_pointer)
++		return -EINVAL;
++
++	rez = acpi_evaluate_dsm(handle, &guid, 1, PAC1921_ACPI_GET_UOHMS_VALS, NULL);
++	if (!rez)
++		return dev_err_probe(&client->dev, -EINVAL,
++				     "Could not read shunt from ACPI table\n");
++
++	priv->rshunt_uohm = rez->package.elements[0].integer.value;
++	ACPI_FREE(rez);
++
++	if (priv->rshunt_uohm == 0)
++		return dev_err_probe(&client->dev, -EINVAL, "Shunt value is 0.");
++
++	pac1921_calc_current_scales(priv);
++
++	rez = acpi_evaluate_dsm(handle, &guid, 1, PAC1921_ACPI_GET_NAME, NULL);
++	if (!rez) {
++		priv->name = "";
++		return dev_err_probe(&client->dev, -EINVAL,
++				     "Could not read name from ACPI table\n");
++	}
++
++	priv->name = devm_kmemdup(&client->dev, rez->package.elements->string.pointer,
++				  (size_t)rez->package.elements->string.length + 1,
++				  GFP_KERNEL);
++	priv->name[rez->package.elements->string.length] = '\0';
++	ACPI_FREE(rez);
++
++	return 0;
++}
++
++static int pac1921_match_of_device(struct i2c_client *client, struct pac1921_priv *priv)
++{
++	int ret;
++	struct device *dev = &client->dev;
++
++	/* Read shunt resistor value */
++	ret = device_property_read_u32(dev, "shunt-resistor-micro-ohms", &priv->rshunt_uohm);
++	if (ret)
++		return dev_err_probe(dev, ret,
++				     "Cannot read shunt resistor property\n");
++
++	if (priv->rshunt_uohm == 0 || priv->rshunt_uohm > INT_MAX)
++		return dev_err_probe(dev, -EINVAL, "Invalid shunt resistor: %u\n",
++				     priv->rshunt_uohm);
++
++	pac1921_calc_current_scales(priv);
++
++	if (device_property_present(dev, "name")) {
++		ret = device_property_read_string(dev, "name", (const char **)&priv->name);
++		if (ret)
++			return dev_err_probe(&client->dev, ret,
++					     "Invalid rail-name value\n");
++	} else {
++		priv->name = "pac1921";
++	}
++
++	return 0;
++}
++
+ static int pac1921_probe(struct i2c_client *client)
+ {
+ 	struct device *dev = &client->dev;
+@@ -1172,22 +1250,14 @@ static int pac1921_probe(struct i2c_client *client)
+ 				     "Cannot initialize register map\n");
+ 
+ 	devm_mutex_init(dev, &priv->lock);
++	if (ACPI_HANDLE(&client->dev))
++		ret = pac1921_match_acpi_device(client, priv);
 +	else
-+		ar = vmx_read_guest_seg_ar(vmx, VCPU_SREG_SS);
-+	return VMX_AR_DPL(ar);
-+}
-+
-+int vmx_get_cpl(struct kvm_vcpu *vcpu)
-+{
-+	return __vmx_get_cpl(vcpu, false);
-+}
-+
-+int vmx_get_cpl_no_cache(struct kvm_vcpu *vcpu)
-+{
-+	return __vmx_get_cpl(vcpu, true);
- }
++		ret = pac1921_match_of_device(client, priv);
  
- static u32 vmx_segment_access_rights(struct kvm_segment *var)
-diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
-index 2325f773a20b..bcf40c7f3a38 100644
---- a/arch/x86/kvm/vmx/vmx.h
-+++ b/arch/x86/kvm/vmx/vmx.h
-@@ -385,6 +385,7 @@ void vmx_prepare_switch_to_guest(struct kvm_vcpu *vcpu);
- void vmx_set_host_fs_gs(struct vmcs_host_state *host, u16 fs_sel, u16 gs_sel,
- 			unsigned long fs_base, unsigned long gs_base);
- int vmx_get_cpl(struct kvm_vcpu *vcpu);
-+int vmx_get_cpl_no_cache(struct kvm_vcpu *vcpu);
- bool vmx_emulation_required(struct kvm_vcpu *vcpu);
- unsigned long vmx_get_rflags(struct kvm_vcpu *vcpu);
- void vmx_set_rflags(struct kvm_vcpu *vcpu, unsigned long rflags);
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 83fe0a78146f..941245082647 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -5094,7 +5094,13 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
- 	int idx;
+-	priv->dv_gain = PAC1921_DEFAULT_DV_GAIN;
+-	priv->di_gain = PAC1921_DEFAULT_DI_GAIN;
+-	priv->n_samples = PAC1921_DEFAULT_NUM_SAMPLES;
+-
+-	ret = device_property_read_u32(dev, "shunt-resistor-micro-ohms",
+-				       &priv->rshunt_uohm);
+-	if (ret)
+-		return dev_err_probe(dev, ret,
+-				     "Cannot read shunt resistor property\n");
+-	if (priv->rshunt_uohm == 0 || priv->rshunt_uohm > INT_MAX)
+-		return dev_err_probe(dev, -EINVAL,
+-				     "Invalid shunt resistor: %u\n",
+-				     priv->rshunt_uohm);
+-
+-	pac1921_calc_current_scales(priv);
++	if (ret < 0)
++		return dev_err_probe(&client->dev, ret,
++				     "parameter parsing error\n");
  
- 	if (vcpu->preempted) {
--		vcpu->arch.preempted_in_kernel = kvm_arch_vcpu_in_kernel(vcpu);
-+		/*
-+		 * Assume protected guests are in-kernel.  Inefficient yielding
-+		 * due to false positives is preferable to never yielding due
-+		 * to false negatives.
-+		 */
-+		vcpu->arch.preempted_in_kernel = vcpu->arch.guest_state_protected ||
-+						 !kvm_x86_call(get_cpl_no_cache)(vcpu);
+ 	priv->vdd = devm_regulator_get(dev, "vdd");
+ 	if (IS_ERR(priv->vdd))
+@@ -1198,13 +1268,15 @@ static int pac1921_probe(struct i2c_client *client)
+ 	if (ret)
+ 		return dev_err_probe(dev, ret, "Cannot enable vdd regulator\n");
  
- 		/*
- 		 * Take the srcu lock as memslots will be accessed to check the gfn
-@@ -13207,6 +13213,7 @@ void kvm_arch_commit_memory_region(struct kvm *kvm,
+-	ret = devm_add_action_or_reset(dev, pac1921_regulator_disable,
+-				       priv->vdd);
++	ret = devm_add_action_or_reset(dev, pac1921_regulator_disable, priv->vdd);
+ 	if (ret)
+ 		return dev_err_probe(dev, ret,
+-			"Cannot add action for vdd regulator disposal\n");
++				     "Cannot add action for vdd regulator disposal\n");
  
- bool kvm_arch_vcpu_in_kernel(struct kvm_vcpu *vcpu)
- {
-+	/* TODO: Elide the call in the kvm_guest_get_ip() perf callback. */
- 	if (vcpu->arch.guest_state_protected)
- 		return true;
+ 	msleep(PAC1921_POWERUP_TIME_MS);
++	priv->dv_gain = PAC1921_DEFAULT_DV_GAIN;
++	priv->di_gain = PAC1921_DEFAULT_DI_GAIN;
++	priv->n_samples = PAC1921_DEFAULT_NUM_SAMPLES;
  
-@@ -13215,6 +13222,10 @@ bool kvm_arch_vcpu_in_kernel(struct kvm_vcpu *vcpu)
+ 	ret = pac1921_init(priv);
+ 	if (ret)
+@@ -1212,7 +1284,7 @@ static int pac1921_probe(struct i2c_client *client)
  
- unsigned long kvm_arch_vcpu_get_ip(struct kvm_vcpu *vcpu)
- {
-+	/* TODO: Elide the call in the kvm_guest_get_ip() perf callback. */
-+	if (vcpu->arch.guest_state_protected)
-+		return 0;
-+
- 	return kvm_rip_read(vcpu);
- }
+ 	priv->iio_info = pac1921_iio;
  
+-	indio_dev->name = "pac1921";
++	indio_dev->name = priv->name;
+ 	indio_dev->info = &priv->iio_info;
+ 	indio_dev->modes = INDIO_DIRECT_MODE;
+ 	indio_dev->channels = pac1921_channels;
+@@ -1244,11 +1316,17 @@ static const struct of_device_id pac1921_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, pac1921_of_match);
+ 
++static const struct acpi_device_id pac1921_acpi_match[] = {
++	{ "MCHP1921" },
++	{ }
++};
++MODULE_DEVICE_TABLE(acpi, pac1921_acpi_match);
+ static struct i2c_driver pac1921_driver = {
+ 	.driver	 = {
+ 		.name = "pac1921",
+ 		.pm = pm_sleep_ptr(&pac1921_pm_ops),
+ 		.of_match_table = pac1921_of_match,
++		.acpi_match_table = pac1921_acpi_match
+ 	},
+ 	.probe = pac1921_probe,
+ 	.id_table = pac1921_id,
 
-base-commit: 3f8df6285271d9d8f17d733433e5213a63b83a0b
+base-commit: fec496684388685647652ab4213454fbabdab099
 -- 
+2.43.0
 
 
