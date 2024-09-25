@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-339618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F7549867DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 22:53:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C1D89867E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 22:53:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D08701F257DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 20:53:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 845AF1F257BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 20:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CDE414E2ED;
-	Wed, 25 Sep 2024 20:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 976AD150994;
+	Wed, 25 Sep 2024 20:53:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="hn8oUkjN"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="FK5+Nhg1"
+Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A7414EC5D;
-	Wed, 25 Sep 2024 20:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69413153838
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 20:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727297600; cv=none; b=WPd5fRx4vKTBTXk9D9tlUwbaYOYZHlxhqh4RfSJU+KXNSWBbvvlzdO6rFfEhrUfohJntrAQofDOJyUArfJFB/zpH+mw1k33/lkfrSOvWdEVeVMLULkIibFSY6uo+ye4Nh76rYvc50zprw9HyZ1xLBiRgRQf4A+QEnqFVs52ibOQ=
+	t=1727297604; cv=none; b=mZ7TkhuVTLxg3j6ApJzaM/CoZ1X3GV2LjXpnOCm8sQ+9t4Q9iT6x08J4sZh+h6JnU9B52qToQV6HFekTyEJZpIKqNBsQfeW67TzeSSAB3CxL4rDEu2OM06BFp9NuQWiJcHvYIMEN0/zu+97W9/047wjFUpkrIyD+myzpVhfUKw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727297600; c=relaxed/simple;
-	bh=nHKVM6jVyy6XtdH6RPwIDEYx+HH5nQo6nYpf3OuSyK8=;
+	s=arc-20240116; t=1727297604; c=relaxed/simple;
+	bh=IYVmKGR8BTQh+MjR3g//jQuhlY0zjVgj6wdU7ydD0Fc=;
 	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jkcs2NGdFCHPFHqvRk89HUu3nTXz7quGkgX9W9M16FhOFBu4R08+n4hjx8nLogB0EJdni33hrxhiIwhh/WCFEAfqqyWPCd4d4/tjqyR1YHJA1nNuyvzuGCoRMNjGHHJHtbLVNF+HJ1wpKInyWVWkWlWSXcySli119faDn5wBlx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=hn8oUkjN; arc=none smtp.client-ip=185.70.43.16
+	 MIME-Version:Content-Type; b=eopkGWBY24WHp4QDL2+t9D03UlSzx98rzNBBjRGMi4AYy+A/D83/mTYqsMK/zmzG4ax1Bgx8SHD3YrrHwup8ecnTNPRzDDK1uKWZauvmW+JDqYT5WoBXiCmybHYGhbQnMbEd0xTh6O5XF4Nn9HGKEQ7CelYB73zC9pBnbZhegIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=FK5+Nhg1; arc=none smtp.client-ip=185.70.40.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1727297590; x=1727556790;
-	bh=qiyKQWQNCUk2/ZfZxnftGeTOeoA1CywONUeEx4QsYLk=;
+	s=protonmail; t=1727297594; x=1727556794;
+	bh=ZxKUuYTNuFDMzuoyfDreAfyk2YdwTAdXezye9i3yow4=;
 	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
 	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
 	 Message-ID:BIMI-Selector;
-	b=hn8oUkjNo93Eddg21mTQCTGQ9EattnlDUVbm6mq6EZa4zpzjymwMjJRjuV7B9E0KI
-	 H/X0imRE8EzteTef04LxtzzA+Qavtz78KO3Nb3QtLQ4gxtlcYORkXoKyUznnGjzrTm
-	 1wfPTNjXyE1cv92SpDpyFqoz6QJRllupWj20A5Jzn2cvc3EOVUIlyoOaGw1MH9dIaE
-	 s9/JvZCia312M1M+cCoQRRnGX3LhIlt9N6RUkSq9cnOhvhnw5zhmqhtz/+7OImERVU
-	 DdaNO/AHy2micNmfZU4tIrWejHnd/U9l22dsA70mE38gQppV31/KnW1Cp9LK36LCYK
-	 UXYsB0WGcG1cQ==
-Date: Wed, 25 Sep 2024 20:53:05 +0000
+	b=FK5+Nhg1gIifAh91THN0ojhFtU4/llF/O9QkT/bLANZrKuqb35cM0bGXBNwwpDUqB
+	 btJ1ptXCm3SkISXre+z6QVrgP2G/COGlW0yM2HYXIv8m5TWc/2i9SAxShZEm3jifmd
+	 16xvr7sq0auJIhyCodpd4CJjOobut5pLTZ+5YpCG7Ve9AfXqgyeNTINwpAZYIGxtnt
+	 fLsKvt2FdGQp2/pFElz94bYNP3pQm/8QS+DDqMqG2HSU11sMqQ4e+8fKj5xbyJEy44
+	 17t8rPDC1+yhPGUzLsJRswseVVq6q44QXQcAo4Ei88TSpf9F5MQXoqbIdWFZdPwVgk
+	 iV0/otALr/hnQ==
+Date: Wed, 25 Sep 2024 20:53:11 +0000
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
 From: Benno Lossin <benno.lossin@proton.me>
-Cc: Greg KH <gregkh@linuxfoundation.org>, Simona Vetter <simona.vetter@ffwll.ch>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: [PATCH v2 1/2] rust: add untrusted data abstraction
-Message-ID: <20240925205244.873020-2-benno.lossin@proton.me>
+Cc: Greg KH <gregkh@linuxfoundation.org>, Simona Vetter <simona.vetter@ffwll.ch>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/2] rust: switch uaccess to untrusted data API
+Message-ID: <20240925205244.873020-3-benno.lossin@proton.me>
 In-Reply-To: <20240925205244.873020-1-benno.lossin@proton.me>
 References: <20240925205244.873020-1-benno.lossin@proton.me>
 Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 3f67bea4faef9b3cbced77f3a1778216b81cf81c
+X-Pm-Message-ID: abe00c8f502b7f6ab6b5ae2814a75fa72a9b0e03
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,725 +61,300 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-When reading data from userspace, hardware or other external untrusted
-sources, the data must be validated before it is used for logic within
-the kernel. This abstraction provides a generic newtype wrapper
-`Untrusted`; it prevents direct access to the inner type. The only way
-to use the underlying data is to call `.validate()` on such a value.
+Userspace is an untrusted data source, so all data that can be read from
+there is untrusted. Therefore use the new untrusted API for any data
+returned from it.
+This makes it significantly harder to write TOCTOU bug, the example bug
+in the documentation cannot easily be converted to use the new API. Thus
+it is removed.
 
-Doing so utilizes the new `Validate` trait that is responsible for all
-of the validation logic. This trait gives access to the inner value of
-`Untrusted` by means of another newtype wrapper `Unvalidated`. In
-contrast to `Untrusted`, `Unvalidated` allows direct access and
-additionally provides several helper functions for slices.
+A possible future improvement is to change how `UserSliceWriter` exposes
+writing to userspace: a trait `ToUserspace` TBB (to be bikeshed) could
+allow users to write untrusted data to a userpointer without adding more
+methods to it.
 
-Having these two different newtype wrappers is an idea from Simona
-Vetter. It has several benefits: it fully prevents safe access to the
-underlying value of `Untrusted` without going through the `Validate`
-API. Additionally, it allows one to grep for validation logic by simply
-looking for `Unvalidated<`.
-
-Any API that reads data from an untrusted source should return
-`Untrusted<T>` where `T` is the type of the underlying untrusted data.
-This generic allows other abstractions to return their custom type
-wrapped by `Untrusted`, signaling to the caller that the data must be
-validated before use. This allows those abstractions to be used both in
-a trusted and untrusted manner, increasing their generality.
-Additionally, using the arbitrary self types feature, APIs can be
-designed to explicitly read untrusted data:
-
-    impl MyCustomDataSource {
-        pub fn read(self: &Untrusted<Self>) -> &Untrusted<[u8]>;
-    }
-
-Cc: Simona Vetter <simona.vetter@ffwll.ch>
 Signed-off-by: Benno Lossin <benno.lossin@proton.me>
 ---
- rust/kernel/lib.rs      |   1 +
- rust/kernel/validate.rs | 602 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 603 insertions(+)
- create mode 100644 rust/kernel/validate.rs
+ rust/kernel/page.rs    |   8 ++-
+ rust/kernel/uaccess.rs | 135 +++++++++++++++++++++--------------------
+ 2 files changed, 74 insertions(+), 69 deletions(-)
 
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index f10b06a78b9d..3125936eae45 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -54,6 +54,7 @@
- pub mod time;
- pub mod types;
- pub mod uaccess;
-+pub mod validate;
- pub mod workqueue;
-=20
- #[doc(hidden)]
-diff --git a/rust/kernel/validate.rs b/rust/kernel/validate.rs
-new file mode 100644
-index 000000000000..b325349e7dc3
---- /dev/null
-+++ b/rust/kernel/validate.rs
-@@ -0,0 +1,604 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Types for handling and validating untrusted data.
-+//!
-+//! # Overview
-+//!
-+//! Untrusted data is marked using the [`Untrusted<T>`] type. See [Rationa=
-le](#rationale) for the
-+//! reasons to mark untrusted data throught the kernel. It is a totally op=
-aque wrapper, it is not
-+//! possible to read the data inside; but it is possible to [`Untrusted::w=
-rite`] into it.
-+//!
-+//! The only way to "access" the data inside an [`Untrusted<T>`] is to [`U=
-ntrusted::validate`] it;
-+//! turning it into a different form using the [`Validate`] trait. That tr=
-ait receives the data in
-+//! the form of [`Unvalidated<T>`], which in contrast to [`Untrusted<T>`],=
- allows access to the
-+//! underlying data. It additionally provides several utility functions to=
- simplify validation.
-+//!
-+//! # Rationale
-+//!
-+//! When reading data from an untrusted source, it must be validated befor=
-e it can be used for
-+//! logic. For example, this is a very bad idea:
-+//!
-+//! ```
-+//! # fn read_bytes_from_network() -> Box<[u8]> {
-+//! #     Box::new([1, 0], kernel::alloc::flags::GFP_KERNEL).unwrap()
-+//! # }
-+//! let bytes: Box<[u8]> =3D read_bytes_from_network();
-+//! let data_index =3D bytes[0];
-+//! let data =3D bytes[usize::from(data_index)];
-+//! ```
-+//!
-+//! While this will not lead to a memory violation (because the array inde=
-x checks the bounds), it
-+//! might result in a kernel panic. For this reason, all untrusted data mu=
-st be wrapped in
-+//! [`Untrusted<T>`]. This type only allows validating the data or passing=
- it along, since copying
-+//! data from one userspace buffer into another is allowed for untrusted d=
-ata.
-+
-+use crate::init::Init;
-+use core::{
-+    mem::MaybeUninit,
-+    ops::{Index, IndexMut},
-+    ptr, slice,
-+};
-+
-+/// Untrusted data of type `T`.
-+///
-+/// When reading data from userspace, hardware or other external untrusted=
- sources, the data must
-+/// be validated before it is used for logic within the kernel. To do so, =
-the [`validate()`]
-+/// function exists and uses the [`Validate`] trait.
-+///
-+/// Also see the [module] description.
-+///
-+/// [`validate()`]: Self::validate
-+/// [module]: self
-+#[repr(transparent)]
-+pub struct Untrusted<T: ?Sized>(Unvalidated<T>);
-+
-+impl<T: ?Sized> Untrusted<T> {
-+    /// Marks the given value as untrusted.
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```
-+    /// use kernel::validate::Untrusted;
-+    ///
-+    /// # mod bindings { pub(crate) unsafe fn read_foo_info() -> [u8; 4] {=
- todo!() } };
-+    /// fn read_foo_info() -> Untrusted<[u8; 4]> {
-+    ///     // SAFETY: just an FFI call without preconditions.
-+    ///     Untrusted::new(unsafe { bindings::read_foo_info() })
-+    /// }
-+    /// ```
-+    pub fn new(value: T) -> Self
-+    where
-+        T: Sized,
-+    {
-+        Self(Unvalidated::new(value))
-+    }
-+
-+    /// Marks the value behind the reference as untrusted.
-+    ///
-+    /// # Examples
-+    ///
-+    /// In this imaginary example there exists the `foo_hardware` struct o=
-n the C side, as well as
-+    /// a `foo_hardware_read` function that reads some data directly from =
-the hardware.
-+    /// ```
-+    /// use kernel::{error, types::Opaque, validate::Untrusted};
-+    /// use core::ptr;
-+    ///
-+    /// # #[allow(non_camel_case_types)]
-+    /// # mod bindings {
-+    /// #     pub(crate) struct foo_hardware;
-+    /// #     pub(crate) unsafe fn foo_hardware_read(_foo: *mut foo_hardwa=
-re, _len: &mut usize) -> *mut u8 {
-+    /// #         todo!()
-+    /// #     }
-+    /// # }
-+    /// struct Foo(Opaque<bindings::foo_hardware>);
-+    ///
-+    /// impl Foo {
-+    ///     fn read(&mut self, mut len: usize) -> Result<&Untrusted<[u8]>>=
- {
-+    ///         // SAFETY: just an FFI call without preconditions.
-+    ///         let data: *mut u8 =3D unsafe { bindings::foo_hardware_read=
-(self.0.get(), &mut len) };
-+    ///         let data =3D error::from_err_ptr(data)?;
-+    ///         let data =3D ptr::slice_from_raw_parts(data, len);
-+    ///         // SAFETY: `data` returned by `foo_hardware_read` is valid=
- for reads as long as the
-+    ///         // `foo_hardware` object exists. That function updated the
-+    ///         let data =3D unsafe { &*data };
-+    ///         Ok(Untrusted::new_ref(data))
-+    ///     }
-+    /// }
-+    /// ```
-+    pub fn new_ref(value: &T) -> &Self {
-+        let ptr: *const T =3D value;
-+        // CAST: `Self` and `Unvalidated` are `repr(transparent)` and cont=
-ain a `T`.
-+        let ptr =3D ptr as *const Self;
-+        // SAFETY: `ptr` came from a shared reference valid for `'a`.
-+        unsafe { &*ptr }
-+    }
-+
-+    /// Marks the value behind the reference as untrusted.
-+    ///
-+    /// # Examples
-+    ///
-+    /// In this imaginary example there exists the `foo_hardware` struct o=
-n the C side, as well as
-+    /// a `foo_hardware_read` function that reads some data directly from =
-the hardware.
-+    /// ```
-+    /// use kernel::{error, types::Opaque, validate::Untrusted};
-+    /// use core::ptr;
-+    ///
-+    /// # #[allow(non_camel_case_types)]
-+    /// # mod bindings {
-+    /// #     pub(crate) struct foo_hardware;
-+    /// #     pub(crate) unsafe fn foo_hardware_read(_foo: *mut foo_hardwa=
-re, _len: &mut usize) -> *mut u8 {
-+    /// #         todo!()
-+    /// #     }
-+    /// # }
-+    /// struct Foo(Opaque<bindings::foo_hardware>);
-+    ///
-+    /// impl Foo {
-+    ///     fn read(&mut self, mut len: usize) -> Result<&mut Untrusted<[u=
-8]>> {
-+    ///         // SAFETY: just an FFI call without preconditions.
-+    ///         let data: *mut u8 =3D unsafe { bindings::foo_hardware_read=
-(self.0.get(), &mut len) };
-+    ///         let data =3D error::from_err_ptr(data)?;
-+    ///         let data =3D ptr::slice_from_raw_parts_mut(data, len);
-+    ///         // SAFETY: `data` returned by `foo_hardware_read` is valid=
- for reads as long as the
-+    ///         // `foo_hardware` object exists. That function updated the
-+    ///         let data =3D unsafe { &mut *data };
-+    ///         Ok(Untrusted::new_mut(data))
-+    ///     }
-+    /// }
-+    /// ```
-+    pub fn new_mut(value: &mut T) -> &mut Self {
-+        let ptr: *mut T =3D value;
-+        // CAST: `Self` and `Unvalidated` are `repr(transparent)` and cont=
-ain a `T`.
-+        let ptr =3D ptr as *mut Self;
-+        // SAFETY: `ptr` came from a mutable reference valid for `'a`.
-+        unsafe { &mut *ptr }
-+    }
-+
-+    /// Validates and parses the untrusted data.
-+    ///
-+    /// See the [`Validate`] trait on how to implement it.
-+    pub fn validate<'a, V: Validate<&'a Unvalidated<T>>>(&'a self) -> Resu=
-lt<V, V::Err> {
-+        V::validate(&self.0)
-+    }
-+
-+    /// Validates and parses the untrusted data.
-+    ///
-+    /// See the [`Validate`] trait on how to implement it.
-+    pub fn validate_mut<'a, V: Validate<&'a mut Unvalidated<T>>>(
-+        &'a mut self,
-+    ) -> Result<V, V::Err> {
-+        V::validate(&mut self.0)
-+    }
-+
-+    /// Sets the underlying untrusted value.
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```
-+    /// use kernel::validate::Untrusted;
-+    ///
-+    /// let mut untrusted =3D Untrusted::new(42);
-+    /// untrusted.write(24);
-+    /// ```
-+    pub fn write(&mut self, value: impl Init<T>) {
-+        let ptr: *mut T =3D &mut self.0 .0;
-+        // SAFETY: `ptr` came from a mutable reference and the value is ov=
-erwritten before it is
-+        // read.
-+        unsafe { ptr::drop_in_place(ptr) };
-+        // SAFETY: `ptr` came from a mutable reference and the initializer=
- cannot error.
-+        match unsafe { value.__init(ptr) } {
-+            Ok(()) =3D> {}
-+        }
-+    }
-+
-+    /// Turns a slice of untrusted values into an untrusted slice of value=
-s.
-+    pub fn transpose_slice(slice: &[Untrusted<T>]) -> &Untrusted<[T]>
-+    where
-+        T: Sized,
-+    {
-+        let ptr =3D slice.as_ptr().cast::<T>();
-+        // SAFETY: `ptr` and `len` come from the same slice reference.
-+        let slice =3D unsafe { slice::from_raw_parts(ptr, slice.len()) };
-+        Untrusted::new_ref(slice)
-+    }
-+
-+    /// Turns a slice of uninitialized, untrusted values into an untrusted=
- slice of uninitialized
-+    /// values.
-+    pub fn transpose_slice_uninit(
-+        slice: &[MaybeUninit<Untrusted<T>>],
-+    ) -> &Untrusted<[MaybeUninit<T>]>
-+    where
-+        T: Sized,
-+    {
-+        let ptr =3D slice.as_ptr().cast::<MaybeUninit<T>>();
-+        // SAFETY: `ptr` and `len` come from the same mutable slice refere=
-nce.
-+        let slice =3D unsafe { slice::from_raw_parts(ptr, slice.len()) };
-+        Untrusted::new_ref(slice)
-+    }
-+
-+    /// Turns a slice of uninitialized, untrusted values into an untrusted=
- slice of uninitialized
-+    /// values.
-+    pub fn transpose_slice_uninit_mut(
-+        slice: &mut [MaybeUninit<Untrusted<T>>],
-+    ) -> &mut Untrusted<[MaybeUninit<T>]>
-+    where
-+        T: Sized,
-+    {
-+        // CAST: `MaybeUninit<T>` and `MaybeUninit<Untrusted<T>>` have the=
- same layout.
-+        let ptr =3D slice.as_mut_ptr().cast::<MaybeUninit<T>>();
-+        // SAFETY: `ptr` and `len` come from the same mutable slice refere=
-nce.
-+        let slice =3D unsafe { slice::from_raw_parts_mut(ptr, slice.len())=
+diff --git a/rust/kernel/page.rs b/rust/kernel/page.rs
+index 208a006d587c..74ce86326893 100644
+--- a/rust/kernel/page.rs
++++ b/rust/kernel/page.rs
+@@ -5,9 +5,9 @@
+ use crate::{
+     alloc::{AllocError, Flags},
+     bindings,
+-    error::code::*,
+-    error::Result,
++    error::{code::*, Result},
+     uaccess::UserSliceReader,
++    validate::Untrusted,
  };
-+        Untrusted::new_mut(slice)
-+    }
-+}
-+
-+impl<T> Untrusted<MaybeUninit<T>> {
-+    /// Sets the underlying untrusted value.
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```
-+    /// use kernel::validate::Untrusted;
-+    ///
-+    /// let mut untrusted =3D Untrusted::new(42);
-+    /// untrusted.write(24);
-+    /// ```
-+    pub fn write_uninit<E>(&mut self, value: impl Init<T, E>) -> Result<&m=
-ut Untrusted<T>, E> {
-+        let ptr: *mut MaybeUninit<T> =3D &mut self.0 .0;
-+        // CAST: `MaybeUninit<T>` is `repr(transparent)`.
-+        let ptr =3D ptr.cast::<T>();
-+        // SAFETY: `ptr` came from a reference and if `Err` is returned, t=
-he underlying memory is
-+        // considered uninitialized.
-+        unsafe { value.__init(ptr) }.map(|()| {
-+            let this =3D self.0.raw_mut();
-+            // SAFETY: we initialized the memory above.
-+            Untrusted::new_mut(unsafe { this.assume_init_mut() })
-+        })
-+    }
-+}
-+
-+impl<T> Untrusted<[MaybeUninit<T>]> {
-+    /// Sets the underlying untrusted value.
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```
-+    /// use kernel::validate::Untrusted;
-+    ///
-+    /// let mut untrusted =3D Untrusted::new(42);
-+    /// untrusted.write(24);
-+    /// ```
-+    pub fn write_uninit_slice<E>(
-+        &mut self,
-+        value: impl Init<[T], E>,
-+    ) -> Result<&mut Untrusted<[T]>, E> {
-+        let ptr: *mut [MaybeUninit<T>] =3D &mut self.0 .0;
-+        // CAST: `MaybeUninit<T>` is `repr(transparent)`.
-+        let ptr =3D ptr as *mut [T];
-+        // SAFETY: `ptr` came from a reference and if `Err` is returned, t=
-he underlying memory is
-+        // considered uninitialized.
-+        unsafe { value.__init(ptr) }.map(|()| {
-+            let this =3D self.0.raw_mut().as_mut_ptr();
-+            // CAST: `MaybeUninit<T>` is `repr(transparent)`.
-+            let this =3D this.cast::<T>();
-+            // SAFETY: `this` and `len` came from the same slice reference=
-.
-+            let this =3D unsafe { slice::from_raw_parts_mut(this, self.0.l=
-en()) };
-+            Untrusted::new_mut(this)
-+        })
-+    }
-+}
-+
-+/// Marks types that can be used as input to [`Validate::validate`].
-+pub trait ValidateInput: private::Sealed + Sized {}
-+
-+mod private {
-+    pub trait Sealed {}
-+}
-+
-+impl<'a, T: ?Sized> private::Sealed for &'a Unvalidated<T> {}
-+impl<'a, T: ?Sized> ValidateInput for &'a Unvalidated<T> {}
-+
-+impl<'a, T: ?Sized> private::Sealed for &'a mut Unvalidated<T> {}
-+impl<'a, T: ?Sized> ValidateInput for &'a mut Unvalidated<T> {}
-+
-+/// Validates untrusted data.
-+///
-+/// # Examples
-+///
-+/// The simplest way to validate data is to just implement `Validate<&Unva=
-lidated<[u8]>>` for the
-+/// type that you wish to validate:
-+///
-+/// ```
-+/// use kernel::{
-+///     error::{code::EINVAL, Error},
-+///     str::{CStr, CString},
-+///     validate::{Unvalidated, Validate},
-+/// };
-+///
-+/// struct Data {
-+///     flags: u8,
-+///     name: CString,
-+/// }
-+///
-+/// impl Validate<&Unvalidated<[u8]>> for Data {
-+///     type Err =3D Error;
-+///
-+///     fn validate(unvalidated: &Unvalidated<[u8]>) -> Result<Self, Self:=
-:Err> {
-+///         let raw =3D unvalidated.raw();
-+///         let (&flags, name) =3D raw.split_first().ok_or(EINVAL)?;
-+///         let name =3D CStr::from_bytes_with_nul(name)?.to_cstring()?;
-+///         Ok(Data { flags, name })
+ use core::ptr::{self, NonNull};
+=20
+@@ -237,8 +237,10 @@ pub unsafe fn copy_from_user_slice_raw(
+             // SAFETY: If `with_pointer_into_page` calls into this closure=
+, then it has performed a
+             // bounds check and guarantees that `dst` is valid for `len` b=
+ytes. Furthermore, we have
+             // exclusive access to the slice since the caller guarantees t=
+hat there are no races.
+-            reader.read_raw(unsafe { core::slice::from_raw_parts_mut(dst.c=
+ast(), len) })
++            let slice =3D unsafe { core::slice::from_raw_parts_mut(dst.cas=
+t(), len) };
++            reader.read_raw(Untrusted::new_mut(slice))
+         })
++        .map(|_| ())
+     }
+ }
+=20
+diff --git a/rust/kernel/uaccess.rs b/rust/kernel/uaccess.rs
+index e9347cff99ab..3d312f845269 100644
+--- a/rust/kernel/uaccess.rs
++++ b/rust/kernel/uaccess.rs
+@@ -10,10 +10,12 @@
+     error::Result,
+     prelude::*,
+     types::{AsBytes, FromBytes},
++    validate::Untrusted,
+ };
+ use alloc::vec::Vec;
+ use core::ffi::{c_ulong, c_void};
+ use core::mem::{size_of, MaybeUninit};
++use init::init_from_closure;
+=20
+ /// The type used for userspace addresses.
+ pub type UserPtr =3D usize;
+@@ -47,59 +49,39 @@
+ ///
+ /// ```no_run
+ /// use alloc::vec::Vec;
+-/// use core::ffi::c_void;
+-/// use kernel::error::Result;
+-/// use kernel::uaccess::{UserPtr, UserSlice};
++/// use core::{convert::Infallible, ffi::c_void};
++/// use kernel::{error::Result, uaccess::{UserPtr, UserSlice}, validate::{=
+Unvalidated, Untrusted, Validate}};
+ ///
+-/// fn bytes_add_one(uptr: UserPtr, len: usize) -> Result<()> {
+-///     let (read, mut write) =3D UserSlice::new(uptr, len).reader_writer(=
+);
++/// struct AddOne<'a>(&'a mut u8);
+ ///
+-///     let mut buf =3D Vec::new();
+-///     read.read_all(&mut buf, GFP_KERNEL)?;
++/// impl<'a> Validate<&'a mut Unvalidated<u8>> for AddOne<'a> {
++///     type Err =3D Infallible;
+ ///
+-///     for b in &mut buf {
+-///         *b =3D b.wrapping_add(1);
++///     fn validate(unvalidated: &'a mut Unvalidated<u8>) -> Result<Self, =
+Self::Err> {
++///         // We are not doing any kind of validation here on purpose. Af=
+ter all, we only want to
++///         // increment the value and write it back.
++///         Ok(Self(unvalidated.raw_mut()))
+ ///     }
+-///
+-///     write.write_slice(&buf)?;
+-///     Ok(())
+ /// }
+-/// ```
+-///
+-/// Example illustrating a TOCTOU (time-of-check to time-of-use) bug.
+ ///
+-/// ```no_run
+-/// use alloc::vec::Vec;
+-/// use core::ffi::c_void;
+-/// use kernel::error::{code::EINVAL, Result};
+-/// use kernel::uaccess::{UserPtr, UserSlice};
++/// impl AddOne<'_> {
++///     fn inc(&mut self) {
++///         *self.0 =3D self.0.wrapping_add(1);
 +///     }
 +/// }
-+/// ```
-+///
-+/// This approach copies the data and requires allocation. If you want to =
-avoid the allocation and
-+/// copying the data, you can borrow from the input like this:
-+///
-+/// ```
-+/// use kernel::{
-+///     error::{code::EINVAL, Error},
-+///     str::CStr,
-+///     validate::{Unvalidated, Validate},
-+/// };
-+///
-+/// struct Data<'a> {
-+///     flags: u8,
-+///     name: &'a CStr,
-+/// }
-+///
-+/// impl<'a> Validate<&'a Unvalidated<[u8]>> for Data<'a> {
-+///     type Err =3D Error;
-+///
-+///     fn validate(unvalidated: &'a Unvalidated<[u8]>) -> Result<Self, Se=
-lf::Err> {
-+///         let raw =3D unvalidated.raw();
-+///         let (&flags, name) =3D raw.split_first().ok_or(EINVAL)?;
-+///         let name =3D CStr::from_bytes_with_nul(name)?;
-+///         Ok(Data { flags, name })
-+///     }
-+/// }
-+/// ```
-+///
-+/// If you need to in-place validate your data, you currently need to reso=
-rt to `unsafe`:
-+///
-+/// ```
-+/// use kernel::{
-+///     error::{code::EINVAL, Error},
-+///     str::CStr,
-+///     validate::{Unvalidated, Validate},
-+/// };
-+/// use core::mem;
-+///
-+/// // Important: use `repr(C)`, this ensures a linear layout of this type=
-.
-+/// #[repr(C)]
-+/// struct Data {
-+///     version: u8,
-+///     flags: u8,
-+///     _reserved: [u8; 2],
-+///     count: u64,
-+///     // lots of other fields...
-+/// }
-+///
-+/// impl Validate<&Unvalidated<[u8]>> for &Data {
-+///     type Err =3D Error;
-+///
-+///     fn validate(unvalidated: &Unvalidated<[u8]>) -> Result<Self, Self:=
-:Err> {
-+///         let raw =3D unvalidated.raw();
-+///         if raw.len() < mem::size_of::<Data>() {
-+///             return Err(EINVAL);
-+///         }
-+///         // can only handle version 0
-+///         if raw[0] !=3D 0 {
-+///             return Err(EINVAL);
-+///         }
-+///         // version 0 only uses the lower 4 bits of flags
-+///         if raw[1] & 0xf0 !=3D 0 {
-+///             return Err(EINVAL);
-+///         }
-+///         let ptr =3D raw.as_ptr();
-+///         // CAST: `Data` only contains integers and has `repr(C)`.
-+///         let ptr =3D ptr.cast::<Data>();
-+///         // SAFETY: `ptr` came from a reference and the cast above is v=
-alid.
-+///         Ok(unsafe { &*ptr })
-+///     }
-+/// }
-+/// ```
-+///
-+/// To be able to modify the parsed data, while still supporting zero-copy=
-, you can implement
-+/// `Validate<&mut Unvalidated<[u8]>>`:
-+///
-+/// ```
-+/// use kernel::{
-+///     error::{code::EINVAL, Error},
-+///     str::CStr,
-+///     validate::{Unvalidated, Validate},
-+/// };
-+/// use core::mem;
-+///
-+/// // Important: use `repr(C)`, this ensures a linear layout of this type=
-.
-+/// #[repr(C)]
-+/// struct Data {
-+///     version: u8,
-+///     flags: u8,
-+///     _reserved: [u8; 2],
-+///     count: u64,
-+///     // lots of other fields...
-+/// }
-+///
-+/// impl Validate<&mut Unvalidated<[u8]>> for &Data {
-+///     type Err =3D Error;
-+///
-+///     fn validate(unvalidated: &mut Unvalidated<[u8]>) -> Result<Self, S=
-elf::Err> {
-+///         let raw =3D unvalidated.raw_mut();
-+///         if raw.len() < mem::size_of::<Data>() {
-+///             return Err(EINVAL);
-+///         }
-+///         match raw[0] {
-+///             0 =3D> {},
-+///             1 =3D> {
-+///                 // version 1 implicitly sets the first bit.
-+///                 raw[1] |=3D 1;
-+///             },
-+///             // can only handle version 0 and 1
-+///             _ =3D> return Err(EINVAL),
-+///         }
-+///         // version 0 and 1 only use the lower 4 bits of flags
-+///         if raw[1] & 0xf0 !=3D 0 {
-+///             return Err(EINVAL);
-+///         }
-+///         if raw[1] =3D=3D 0 {}
-+///         let ptr =3D raw.as_ptr();
-+///         // CAST: `Data` only contains integers and has `repr(C)`.
-+///         let ptr =3D ptr.cast::<Data>();
-+///         // SAFETY: `ptr` came from a reference and the cast above is v=
-alid.
-+///         Ok(unsafe { &*ptr })
-+///     }
-+/// }
-+/// ```
-+pub trait Validate<I: ValidateInput>: Sized {
-+    /// Validation error.
-+    type Err;
-+
-+    /// Validate the given untrusted data and parse it into the output typ=
-e.
-+    fn validate(unvalidated: I) -> Result<Self, Self::Err>;
-+}
-+
-+/// Unvalidated data of type `T`.
-+#[repr(transparent)]
-+pub struct Unvalidated<T: ?Sized>(T);
-+
-+impl<T: ?Sized> Unvalidated<T> {
-+    fn new(value: T) -> Self
-+    where
-+        T: Sized,
-+    {
-+        Self(value)
-+    }
-+
-+    fn new_ref(value: &T) -> &Self {
-+        let ptr: *const T =3D value;
-+        // CAST: `Self` is `repr(transparent)` and contains a `T`.
-+        let ptr =3D ptr as *const Self;
-+        // SAFETY: `ptr` came from a mutable reference valid for `'a`.
-+        unsafe { &*ptr }
-+    }
-+
-+    fn new_mut(value: &mut T) -> &mut Self {
-+        let ptr: *mut T =3D value;
-+        // CAST: `Self` is `repr(transparent)` and contains a `T`.
-+        let ptr =3D ptr as *mut Self;
-+        // SAFETY: `ptr` came from a mutable reference valid for `'a`.
-+        unsafe { &mut *ptr }
-+    }
-+
-+    /// Validates and parses the untrusted data.
+ ///
+-/// /// Returns whether the data in this region is valid.
+-/// fn is_valid(uptr: UserPtr, len: usize) -> Result<bool> {
+-///     let read =3D UserSlice::new(uptr, len).reader();
++/// fn bytes_add_one(uptr: UserPtr, len: usize) -> Result<()> {
++///     let (read, mut write) =3D UserSlice::new(uptr, len).reader_writer(=
+);
+ ///
+ ///     let mut buf =3D Vec::new();
+ ///     read.read_all(&mut buf, GFP_KERNEL)?;
+ ///
+-///     todo!()
+-/// }
+-///
+-/// /// Returns the bytes behind this user pointer if they are valid.
+-/// fn get_bytes_if_valid(uptr: UserPtr, len: usize) -> Result<Vec<u8>> {
+-///     if !is_valid(uptr, len)? {
+-///         return Err(EINVAL);
++///     for b in &mut buf {
++///         b.validate_mut::<AddOne<'_>>()?.inc();
+ ///     }
+ ///
+-///     let read =3D UserSlice::new(uptr, len).reader();
+-///
+-///     let mut buf =3D Vec::new();
+-///     read.read_all(&mut buf, GFP_KERNEL)?;
+-///
+-///     // THIS IS A BUG! The bytes could have changed since we checked th=
+em.
+-///     //
+-///     // To avoid this kind of bug, don't call `UserSlice::new` multiple
+-///     // times with the same address.
+-///     Ok(buf)
++///     write.write_untrusted_slice(Untrusted::transpose_slice(&buf))?;
++///     Ok(())
+ /// }
+ /// ```
+ ///
+@@ -130,7 +112,7 @@ pub fn new(ptr: UserPtr, length: usize) -> Self {
+     /// Reads the entirety of the user slice, appending it to the end of t=
+he provided buffer.
+     ///
+     /// Fails with [`EFAULT`] if the read happens on a bad address.
+-    pub fn read_all(self, buf: &mut Vec<u8>, flags: Flags) -> Result {
++    pub fn read_all(self, buf: &mut Vec<Untrusted<u8>>, flags: Flags) -> R=
+esult {
+         self.reader().read_all(buf, flags)
+     }
+=20
+@@ -218,38 +200,47 @@ pub fn is_empty(&self) -> bool {
+     /// Fails with [`EFAULT`] if the read happens on a bad address, or if =
+the read goes out of
+     /// bounds of this [`UserSliceReader`]. This call may modify `out` eve=
+n if it returns an error.
+     ///
++    /// Returns a reference to the initialized bytes in `out`.
 +    ///
-+    /// See the [`Validate`] trait on how to implement it.
-+    pub fn validate_ref<'a, V: Validate<&'a Unvalidated<T>>>(&'a self) -> =
-Result<V, V::Err> {
-+        V::validate(self)
-+    }
-+
-+    /// Validates and parses the untrusted data.
-+    ///
-+    /// See the [`Validate`] trait on how to implement it.
-+    pub fn validate_mut<'a, V: Validate<&'a mut Unvalidated<T>>>(
+     /// # Guarantees
+     ///
+     /// After a successful call to this method, all bytes in `out` are ini=
+tialized.
+-    pub fn read_raw(&mut self, out: &mut [MaybeUninit<u8>]) -> Result {
+-        let len =3D out.len();
+-        let out_ptr =3D out.as_mut_ptr().cast::<c_void>();
+-        if len > self.length {
+-            return Err(EFAULT);
+-        }
+-        let Ok(len_ulong) =3D c_ulong::try_from(len) else {
+-            return Err(EFAULT);
++    pub fn read_raw<'a>(
 +        &'a mut self,
-+    ) -> Result<V, V::Err> {
-+        V::validate(self)
++        out: &'a mut Untrusted<[MaybeUninit<u8>]>,
++    ) -> Result<&'a mut Untrusted<[u8]>> {
++        let init =3D |ptr: *mut [u8]| {
++            let out_ptr =3D ptr.cast::<c_void>();
++            let len =3D ptr.len();
++            if len > self.length {
++                return Err(EFAULT);
++            }
++            let Ok(len_ulong) =3D c_ulong::try_from(len) else {
++                return Err(EFAULT);
++            };
++            // SAFETY: `out_ptr` points into a mutable slice of length `le=
+n_ulong`, so we may write
++            // that many bytes to it.
++            let res =3D
++                unsafe { bindings::copy_from_user(out_ptr, self.ptr as *co=
+nst c_void, len_ulong) };
++            if res !=3D 0 {
++                return Err(EFAULT);
++            }
++            self.ptr =3D self.ptr.wrapping_add(len);
++            self.length -=3D len;
++            Ok(())
+         };
+-        // SAFETY: `out_ptr` points into a mutable slice of length `len_ul=
+ong`, so we may write
+-        // that many bytes to it.
+-        let res =3D
+-            unsafe { bindings::copy_from_user(out_ptr, self.ptr as *const =
+c_void, len_ulong) };
+-        if res !=3D 0 {
+-            return Err(EFAULT);
+-        }
+-        self.ptr =3D self.ptr.wrapping_add(len);
+-        self.length -=3D len;
+-        Ok(())
++        out.write_uninit_slice(unsafe { init_from_closure(init) })
+     }
+=20
+     /// Reads raw data from the user slice into a kernel buffer.
+     ///
+     /// Fails with [`EFAULT`] if the read happens on a bad address, or if =
+the read goes out of
+     /// bounds of this [`UserSliceReader`]. This call may modify `out` eve=
+n if it returns an error.
+-    pub fn read_slice(&mut self, out: &mut [u8]) -> Result {
++    pub fn read_slice(&mut self, out: &mut Untrusted<[u8]>) -> Result<&mut=
+ Untrusted<[u8]>> {
+         // SAFETY: The types are compatible and `read_raw` doesn't write u=
+ninitialized bytes to
+         // `out`.
+-        let out =3D unsafe { &mut *(out as *mut [u8] as *mut [MaybeUninit<=
+u8>]) };
++        let out =3D
++            unsafe { &mut *(out as *mut Untrusted<[u8]> as *mut Untrusted<=
+[MaybeUninit<u8>]>) };
+         self.read_raw(out)
+     }
+=20
+@@ -291,13 +282,15 @@ pub fn read<T: FromBytes>(&mut self) -> Result<T> {
+     /// Reads the entirety of the user slice, appending it to the end of t=
+he provided buffer.
+     ///
+     /// Fails with [`EFAULT`] if the read happens on a bad address.
+-    pub fn read_all(mut self, buf: &mut Vec<u8>, flags: Flags) -> Result {
++    pub fn read_all(mut self, buf: &mut Vec<Untrusted<u8>>, flags: Flags) =
+-> Result {
+         let len =3D self.length;
+-        VecExt::<u8>::reserve(buf, len, flags)?;
++        VecExt::<_>::reserve(buf, len, flags)?;
+=20
+         // The call to `try_reserve` was successful, so the spare capacity=
+ is at least `len` bytes
+         // long.
+-        self.read_raw(&mut buf.spare_capacity_mut()[..len])?;
++        self.read_raw(Untrusted::transpose_slice_uninit_mut(
++            &mut buf.spare_capacity_mut()[..len],
++        ))?;
+=20
+         // SAFETY: Since the call to `read_raw` was successful, so the nex=
+t `len` bytes of the
+         // vector have been initialized.
+@@ -333,8 +326,18 @@ pub fn is_empty(&self) -> bool {
+     /// bounds of this [`UserSliceWriter`]. This call may modify the assoc=
+iated userspace slice even
+     /// if it returns an error.
+     pub fn write_slice(&mut self, data: &[u8]) -> Result {
+-        let len =3D data.len();
+-        let data_ptr =3D data.as_ptr().cast::<c_void>();
++        self.write_untrusted_slice(Untrusted::new_ref(data))
 +    }
 +
-+    /// Gives immutable access to the underlying value.
-+    pub fn raw(&self) -> &T {
-+        &self.0
-+    }
-+
-+    /// Gives mutable access to the underlying value.
-+    pub fn raw_mut(&mut self) -> &mut T {
-+        &mut self.0
-+    }
-+}
-+
-+impl<T, I> Index<I> for Unvalidated<[T]>
-+where
-+    I: slice::SliceIndex<[T]>,
-+{
-+    type Output =3D Unvalidated<I::Output>;
-+
-+    fn index(&self, index: I) -> &Self::Output {
-+        Unvalidated::new_ref(self.0.index(index))
-+    }
-+}
-+
-+impl<T, I> IndexMut<I> for Unvalidated<[T]>
-+where
-+    I: slice::SliceIndex<[T]>,
-+{
-+    fn index_mut(&mut self, index: I) -> &mut Self::Output {
-+        Unvalidated::new_mut(self.0.index_mut(index))
-+    }
-+}
-+
-+/// Immutable unvalidated slice iterator.
-+pub struct Iter<'a, T>(slice::Iter<'a, T>);
-+
-+/// Mutable unvalidated slice iterator.
-+pub struct IterMut<'a, T>(slice::IterMut<'a, T>);
-+
-+impl<'a, T> Iterator for Iter<'a, T> {
-+    type Item =3D &'a Unvalidated<T>;
-+
-+    fn next(&mut self) -> Option<Self::Item> {
-+        self.0.next().map(Unvalidated::new_ref)
-+    }
-+}
-+
-+impl<'a, T> IntoIterator for &'a Unvalidated<[T]> {
-+    type Item =3D &'a Unvalidated<T>;
-+    type IntoIter =3D Iter<'a, T>;
-+
-+    fn into_iter(self) -> Self::IntoIter {
-+        Iter(self.0.iter())
-+    }
-+}
-+
-+impl<'a, T> Iterator for IterMut<'a, T> {
-+    type Item =3D &'a mut Unvalidated<T>;
-+
-+    fn next(&mut self) -> Option<Self::Item> {
-+        self.0.next().map(Unvalidated::new_mut)
-+    }
-+}
-+
-+impl<'a, T> IntoIterator for &'a mut Unvalidated<[T]> {
-+    type Item =3D &'a mut Unvalidated<T>;
-+    type IntoIter =3D IterMut<'a, T>;
-+
-+    fn into_iter(self) -> Self::IntoIter {
-+        IterMut(self.0.iter_mut())
-+    }
-+}
-+
-+impl<T> Unvalidated<[T]> {
-+    /// Returns the number of elements in the underlying slice.
-+    pub fn len(&self) -> usize {
-+        self.0.len()
-+    }
-+
-+    /// Returns true if the underlying slice has a length of 0.
-+    pub fn is_empty(&self) -> bool {
-+        self.0.is_empty()
-+    }
-+
-+    /// Iterates over all items and validates each of them individually.
-+    pub fn validate_iter<'a, V: Validate<&'a Unvalidated<T>>>(
-+        &'a self,
-+    ) -> impl Iterator<Item =3D Result<V, V::Err>> + 'a {
-+        self.into_iter().map(|item| V::validate(item))
-+    }
-+
-+    /// Iterates over all items and validates each of them individually.
-+    pub fn validate_iter_mut<'a, V: Validate<&'a mut Unvalidated<T>>>(
-+        &'a mut self,
-+    ) -> impl Iterator<Item =3D Result<V, V::Err>> + 'a {
-+        self.into_iter().map(|item| V::validate(item))
-+    }
-+}
++    /// Writes raw data to this user pointer from a kernel buffer.
++    ///
++    /// Fails with [`EFAULT`] if the write happens on a bad address, or if=
+ the write goes out of
++    /// bounds of this [`UserSliceWriter`]. This call may modify the assoc=
+iated userspace slice even
++    /// if it returns an error.
++    pub fn write_untrusted_slice(&mut self, data: &Untrusted<[u8]>) -> Res=
+ult {
++        let data_ptr =3D (data as *const _) as *const [u8];
++        let len =3D data_ptr.len();
++        let data_ptr =3D data_ptr.cast::<c_void>();
+         if len > self.length {
+             return Err(EFAULT);
+         }
 --=20
 2.46.0
 
