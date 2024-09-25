@@ -1,245 +1,124 @@
-Return-Path: <linux-kernel+bounces-339399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E0FC9864AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:19:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 515FB9864B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:21:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ED9228B379
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:19:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16F5028B206
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:21:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938D044C86;
-	Wed, 25 Sep 2024 16:19:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCDB03D0A9;
+	Wed, 25 Sep 2024 16:21:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vVT+HoHW"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="YJJk3XCa"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804473B295
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 16:19:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1DF8266AB
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 16:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727281169; cv=none; b=qvhNFsVqfcsra1W4lWKu8xpztPH59huGVBjaWOT2GBoJr5lYBqIJ3bO5wXXG0E+pZHFwZdeyzNcDalpYSUNgoDTcGma6BL6TeGzPIRQi83MqywxemuYwtfNwHvG2juzBtwW2fSGzQ/qyk3o6BsyFhFMtpsaMvQCEqo7bw49sc00=
+	t=1727281261; cv=none; b=pqgLUvmxey2xS9y/cg8WKU0CJd0Jh9hY5bnoiRJEb/EC6LqFd5ztySns6sKBOWYXkeIoWkZq6+SdREtSq5F9VbhDiur3YhNPTLPDtfudAz9ClPDM4IMswz4QHDW38+g1UOPSXeA3fdoaObMRt3gMK84OKm4Dq2YJMtRYes34mFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727281169; c=relaxed/simple;
-	bh=BV2a8idtNznVzDGHAz/mLNHpSkNlSHO+wTuGZIzNvSc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c0/dRenSHGg/iTEn2igL4Wp09hQsfvU8/fFwcKpFKdKcjaad406eMTVEeiZzimNdK/La3bqh5sJ3S4UXMwg8fn0SeaTN/IoeyV0J9YI0wjSH9jc/wgAt2yF7VO9j3tfPKl+JmEeQvOkd7+/BQxFmGci2fepvok2vKUB+KW7EPP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vVT+HoHW; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 25 Sep 2024 09:19:17 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727281165;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tBJk0rPPHbDUQHgsR/WgSoPYVaSEOecFXHLvPSFTqoI=;
-	b=vVT+HoHWXwWr+gWC1gwr3m/Hapbg4kzKm6AHG6+ELPKP2zfVSmInmAjYbickdlALs5WKTo
-	rPwQ3fY9QDCxf5qRD/VlKoByAD+GYY/7PJa9sSwLBCEIoOTYx2Wq+8NVs7GC4dmGYA0pnl
-	WSSX3hCWRPSwcDpfVSrZIFSjRmoymJM=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Pedro Falcato <pedro.falcato@gmail.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
-	Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Minchan Kim <minchan@kernel.org>, 
-	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
-	Matt Turner <mattst88@gmail.com>, linux-alpha@vger.kernel.org, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, linux-mips@vger.kernel.org, 
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org, 
-	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, christian@brauner.io
-Subject: Re: [PATCH v2 1/2] mm/madvise: introduce PR_MADV_SELF flag to
- process_madvise()
-Message-ID: <wvk5y3m47qmox4by6u3zpxtwartjmoaqaaqswbgui626zkjajq@22wjmqo36hes>
-References: <cover.1727176176.git.lorenzo.stoakes@oracle.com>
- <1ecf2692b3bcdd693ad61d510ce0437abb43a1bd.1727176176.git.lorenzo.stoakes@oracle.com>
- <u64scsk52b3ek4b7fh72tdylkf3qh537txcqhvozmaasrlug3r@eqsmstvs324c>
- <4740dfc7-71da-4eb4-b071-35116288571f@lucifer.local>
- <xilfrvlstq4fqr46jlrzvq2vlr22nizdrwlcdizp774nlt6pfj@jukzlcwc7bed>
- <7f40a8f6-c2f1-45f2-b9ff-88e169a33906@lucifer.local>
+	s=arc-20240116; t=1727281261; c=relaxed/simple;
+	bh=Dk6X+xSiHfgs31VmHqZTurDjVbP1XP6i/9hilYXsQhc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Vk4xa/NxioDPX4V52S/5j//Jb8OhVVjCxfROSF+lZRtWEN17aQzthLhbPtWnRJZBBrA9wCCrAiHhQPai6xz+G8I09MvT6xWs84sFaPDZUfDcaTq6FSM/9LY5ZuwtCcM8ucUT4utWZQ7Vh+pCJWa+FT5NSJEWNtZ2plVQ9skQY3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=YJJk3XCa; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-206b9455460so703305ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 09:20:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1727281259; x=1727886059; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VX4o26UEjmYDlazuMHXCVg//sBBLs3VDVwOlYuEl2Mc=;
+        b=YJJk3XCas/axk3+CX3C+sd9qF2ECTduISzaNOuGNzOOcCTYxhsalaK+Io8toyaEqI9
+         SPdF/tnRYnCmssj6wQBb2WJ00vew6YC1lLFJpdAjt+66dFLTCawOz3H3Hn58LDhDfGfr
+         BH2wZWFGAs/J+6tNmnLKzgPD2jF0VtCEKUT4s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727281259; x=1727886059;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VX4o26UEjmYDlazuMHXCVg//sBBLs3VDVwOlYuEl2Mc=;
+        b=gzHIEFFduBfL/gXpt3AeomijHHvGXyL8gje+ySODDukZIw4AGiBfYcc0qH07B343jk
+         EMrZ+SjBZdKJ5TqapRuX+fikbi9n5HqtrFht93wawfNa1ZXHpYhC4q2h3fQb+JxD2Ve+
+         1VJ0olOXX3AL/Fhu9gsy2wHHAGP4kkDwAmjb4EPZvpuhVp9EWNRce9EN4IBwJZvjs7d2
+         k5p6tSEEon7YJSoqG1ACm1ndnVHVRdwUnbvFiVpj05j2TzNKMobeRzakoMDYK1AQyCHw
+         0bHzw5IBli8w1/R7h6QvjlMW2jBBVk5CHgZeG+HWRuZijUFHbE/1bXBWSSDyMQzfwpzj
+         32wQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX/fKvCDWnLYyxVskfN6h9SICqoh40i/6kBMEfYGrg4W6CX0L+vj/tM60k8A3UccmGxajmaAkY8qrgUr44=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIHoMsS9q1jiYJ2Y9a562AiIFv1KHbpNDSwe6pMwGnrHSwBG8Z
+	jcLhrBJuV2ygWkBPpQw65nFc2zSwyI9AOD8qQMEIXkWAhcNiWpaODofGLCbdPZE=
+X-Google-Smtp-Source: AGHT+IH5OPAlqNY7D4alHb/gHJCc50Tl/V50oHFttUV8VmEJJhr89TDA+wKDchkkCoWXUHzbHXM4yg==
+X-Received: by 2002:a17:903:32d0:b0:205:5a3f:76b2 with SMTP id d9443c01a7336-20b19ce53cfmr2078495ad.29.1727281258969;
+        Wed, 25 Sep 2024 09:20:58 -0700 (PDT)
+Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6b7c73341sm2948433a12.72.2024.09.25.09.20.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 09:20:58 -0700 (PDT)
+From: Joe Damato <jdamato@fastly.com>
+To: netdev@vger.kernel.org
+Cc: Joe Damato <jdamato@fastly.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	linux-kernel@vger.kernel.org (open list),
+	Michael Chan <mchan@broadcom.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Pavan Chebbi <pavan.chebbi@broadcom.com>
+Subject: [RFC net-next v2 0/2] tg3: Link IRQs, NAPIs, and queues
+Date: Wed, 25 Sep 2024 16:20:46 +0000
+Message-Id: <20240925162048.16208-1-jdamato@fastly.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7f40a8f6-c2f1-45f2-b9ff-88e169a33906@lucifer.local>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-I have no idea what makes you think I am blocking the feature that you
-repond in a weird tone but let me be upfront what I am asking: Let's
-collectively decide which is the better option (in terms of
-maintainability and extensibility) and move forward.
+Greetings:
 
-On Wed, Sep 25, 2024 at 03:48:07PM GMT, Lorenzo Stoakes wrote:
-> On Wed, Sep 25, 2024 at 07:02:59AM GMT, Shakeel Butt wrote:
-> > Cced Christian
-> >
-> > On Tue, Sep 24, 2024 at 02:12:49PM GMT, Lorenzo Stoakes wrote:
-> > > On Tue, Sep 24, 2024 at 01:51:11PM GMT, Pedro Falcato wrote:
-> > > > On Tue, Sep 24, 2024 at 12:16:27PM GMT, Lorenzo Stoakes wrote:
-> > > > > process_madvise() was conceived as a useful means for performing a vector
-> > > > > of madvise() operations on a remote process's address space.
-> > > > >
-> > > > > However it's useful to be able to do so on the current process also. It is
-> > > > > currently rather clunky to do this (requiring a pidfd to be opened for the
-> > > > > current process) and introduces unnecessary overhead in incrementing
-> > > > > reference counts for the task and mm.
-> > > > >
-> > > > > Avoid all of this by providing a PR_MADV_SELF flag, which causes
-> > > > > process_madvise() to simply ignore the pidfd parameter and instead apply
-> > > > > the operation to the current process.
-> > > > >
-> > > >
-> > > > How about simply defining a pseudo-fd PIDFD_SELF in the negative int space?
-> > > > There's precedent for it in the fs space (AT_FDCWD). I think it's more ergonomic
-> > > > and if you take out the errno space we have around 2^31 - 4096 available sentinel
-> > > > values.
-> > > >
-> > > > e.g:
-> > > >
-> > > > /* AT_FDCWD = -10, -1 is dangerous, pick a different value */
-> > > > #define PIDFD_SELF   -11
-> > > >
-> > > > int pidfd = target_pid == getpid() ? PIDFD_SELF : pidfd_open(...);
-> > > > process_madvise(pidfd, ...);
-> > > >
-> > > >
-> > > > What do you think?
-> > >
-> > > I like the way you're thinking, but I don't think this is something we can
-> > > do in the context of this series.
-> > >
-> > > I mean, I totally accept using a flag here and ignoring the pidfd field is
-> > > _ugly_, no question. But I'm trying to find the smallest change that
-> > > achieves what we want.
-> >
-> > I don't think "smallest change" should be the target. We are changing
-> > user API and we should aim to make it as robust as possible against
-> > possible misuse or making uninteded assumptions.
-> 
-> I think introducing a new pidfd sentinel that isn't used anywhere else is
-> far more liable to mistakes than adding an explicit flag.
-> 
-> Could you provide examples of possible misuse of this flag or unintended
-> assumptions it confers (other than the -1 thing addressed below).
-> 
-> The flag is explicitly 'target this process, ignore pidfd'. We can document
-> it as such (I will patch manpages too).
-> 
-> >
-> > The proposed implementation opened the door for the applications to
-> > provide dummy pidfd if PR_MADV_SELF is used. You definitely need to
-> > restrict it to some known value like -1 used by mmap() syscall.
-> 
-> Why?
-> 
-> mmap() is special in that you have a 'dual' situation with shmem that is
-> both file-backed and private and of course you can do MAP_SHARED |
-> MAP_PRIVATE and have mmap() transparently assign something to you, etc.
-> 
-> Here we explicitly have a flag whose semantics are 'ignore pidfd, target
-> self'.
-> 
-> If you choose to use a brand new flag that explicitly states this and
-> provide a 'dummy' pidfd which then has nothing done to it - what exactly is
-> the problem?
+This RFC v2 follows from a PATCH submission which received some feedback
+from broadcom on shortening the patch.
 
-IMHO having a fixed dummy would allow the kernel more flexibility in
-future for evolving the API.
+Patch 1 is a revised, shortened version of the original I submit a few
+weeks ago [1].
 
-> 
-> I mean if you feel strongly, we can enforce this, but I'm not sure -1
-> implying a special case for pidfd is a thing either.
-> 
-> On the other hand it would be _weird_ and broken for the user to provide a
-> valid pidfd so maybe we should as it is easy to do and the user has clearly
-> done something wrong.
-> 
-> So fine, agreed, I'll add that.
-> 
+Patch 2 is a new patch to link queues to NAPI instances. See the commit
+message for more details and sample output.
 
-No, don't just agree. The response like "-1 is not good for so and so
-reasons" is totally fine and my request would be add that reasoning in
-the commit message. My only request is that we have thought through
-alternatives and document the reasonsing behind the decided approach.
+I am sending them together as I plan to send them a series when net-next
+reopens next week unless there is any feedback or changes requested.
 
-> >
-> > >
-> > > To add such a sentinel would be a change to the pidfd mechanism as a whole,
-> > > and we'd be left in the awkward situation that no other user of the pidfd
-> > > mechanism would be implementing this, but we'd have to expose this as a
-> > > general sentinel value for all pidfd users.
-> >
-> > There might be future users which can take advantage of this. I can even
-> > imagine pidfd_send_signal() can use PIDFD_SELF as well.
-> 
-> I'm confused by this comment - I mean absolutely, as I said I like the
-> idea, but this just proves the point that you'd have to go around and
-> implement this everywhere that uses a pidfd?
-> 
-> That is a big undertaking, and not blocked by this change. Nor is
-> maintaining the flag proposed here egregious.
+I am hoping that broadcom would be able to take a look before then so
+that these patches will be ready for official submission next week :)
 
-By big undertaking, do you mean other syscalls that take pidfd
-(pidfd_getfd, pidfd_send_signal & process_mrelease) to handle PIDFD_SELF
-or something else?
+Thanks,
+Joe
 
-> 
-> Blocking a useful feature because we may in future possibly add a new means
-> of doing the same thing seems a little silly to me.
-> 
+[1]: https://lore.kernel.org/netdev/20240912155830.14688-1-jdamato@fastly.com/
 
-Hah!!
+rfv2:
+  - Switched to RFC (net-next is closed).
+  - Patch 1 incorporated the feedback from Michael Chan in the thread
+    linked above to reduce the number of lines of code added.
+  - Added patch 2, which implements a new feature.
 
-> > >
-> > > One nice thing with doing this as a flag is that, later, if somebody is
-> > > willing to do the larger task of having a special sentinel pidfd value to
-> > > mean 'the current process', we could use this in process_madvise() and
-> > > deprecate this flag :)
-> > >
-> >
-> > Once something is added to an API, particularly syscalls, the removal
-> > is almost impossible.
-> 
-> And why would it be such a problem to have this flag remain? I said
-> deprecate not remove. And only in the sense that 'you may as well use the
-> sentinel'.
-> 
+Joe Damato (2):
+  tg3: Link IRQs to NAPI instances
+  tg3: Link queues to NAPIs
 
-My point was to aim for the solution where we can avoid such scenario
-but it is totally understandable and acceptable that we still have to go
-through deprecation process in future.
+ drivers/net/ethernet/broadcom/tg3.c | 31 ++++++++++++++++++++++-------
+ 1 file changed, 24 insertions(+), 7 deletions(-)
 
-> The flag is very clear in its meaning, and confers no special problem in
-> remaining supported. It is a private flag that overlaps no others.
-> 
-> I mean it'd in effect being a change to a single line 'if pidfd is sentinel
-> or flag is used'. If we can't support that going forward, then we should
-> give up this kernel stuff and frolick in the fields joyously instead...
-> 
-> Again, if you can tell me why it'd be such a problem then fine we can
-> address that.
-> 
-> But blocking a series and demanding a change to an entire other feature
-> just to support something I'd say requires some pretty specific reasons as
-> to why you have a problem with the change.
-> 
-> >
-> > Anyways, I don't have very strong opinion one way or other but whatever
-> > we decide, let's make it robust.
-> 
-> I mean... err... it sounds like you do kinda have pretty strong opinions ;)
+-- 
+2.25.1
 
-I am not sure how more explicit I have to be to but I am hoping now it
-is more clear than before.
-
-Shakeel
 
