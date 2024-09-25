@@ -1,195 +1,108 @@
-Return-Path: <linux-kernel+bounces-337830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F558984F83
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 02:39:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87867984F7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 02:37:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 572E4B233BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:39:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B80CD1C21952
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816635234;
-	Wed, 25 Sep 2024 00:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB19DC8FF;
+	Wed, 25 Sep 2024 00:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mebeim.net header.i=@mebeim.net header.b="M8937kgP"
-Received: from h7.fbrelay.privateemail.com (h7.fbrelay.privateemail.com [162.0.218.230])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="b9dI6Exf"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70739DDA0;
-	Wed, 25 Sep 2024 00:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.0.218.230
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1404A18
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 00:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727224747; cv=none; b=Pm14Dy/ezKcbiQdRlrz+7vrMyDVqn54mRmC+QpdZlkaQMdADMIsP+Bc3d4Fq8m31hBXmfPZ2Q3iuFSdj0V6gAye/ih2zTIl8nuts47Oj6c9ZqUsKStF9tH/Opfx2gshYpgZi1LNrqhzlVOBtN5WYFKwOUNGScNMDzhKpImkOst8=
+	t=1727224646; cv=none; b=E3cl+9yLl5AZp6JtdOcKDu4GK9soTc+G0Hjfw9lfD7SEgJ14vG0ScOTpEn/Jbkwtf1DlGC2pdkp1zGBByGCzXKeyDj+tBCqKU90EEJMB9KjoC8WrO45PrT8EMP+6DyNdfTGlLB+AShC0xUOQ4dOPaoX6uh9WDKiHtifAjXRrOgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727224747; c=relaxed/simple;
-	bh=oiB2mcGrcocAEq3HAn+Q7QNtNCJCcr6lELuaQWXoVn4=;
-	h=Date:From:To:Cc:Message-ID:Subject:MIME-Version:Content-Type; b=WYuxyeWeFJHkvu3nmn+F37fj3modefnKQziEEMQqCloCHpRQm5MCC2aimkh/Icbfj3H2ERiKZmUwdRLh4phVIokPAKI+5xnRFkXxJGYfg5Fk5Zfl8NiXFn7DxYSw5NMLSMoJh2OQlurEF5HJcRNXIfbkoWJsGeTKJUvLaOzUsT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mebeim.net; spf=pass smtp.mailfrom=mebeim.net; dkim=pass (2048-bit key) header.d=mebeim.net header.i=@mebeim.net header.b=M8937kgP; arc=none smtp.client-ip=162.0.218.230
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mebeim.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mebeim.net
-Received: from MTA-13-4.privateemail.com (mta-13-1.privateemail.com [198.54.122.107])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
-	(No client certificate requested)
-	by h7.fbrelay.privateemail.com (Postfix) with ESMTPSA id 07A02607F2;
-	Tue, 24 Sep 2024 20:28:56 -0400 (EDT)
-Received: from mta-13.privateemail.com (localhost [127.0.0.1])
-	by mta-13.privateemail.com (Postfix) with ESMTP id 7B67B18000BD;
-	Tue, 24 Sep 2024 20:28:48 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=mebeim.net; s=default;
-	t=1727224128; bh=oiB2mcGrcocAEq3HAn+Q7QNtNCJCcr6lELuaQWXoVn4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=M8937kgPY1yMipiviPuJgl5avh38gzzVf4zgax66fhLCHf7gAnzWj2IcZbFiBUzGj
-	 F4+JS1OyBmmrvA5qprXjHOXkALqN7X38VOa811EuoHwoD/0SYcUWhHdirePndPghBn
-	 mIMxq1VNYcDgV+MIf7dWdtHk9cuGtsMJ76FOi+T6191GGNTMU7es8xGdXa2OIb8fEI
-	 qtpq7Vhq41GK2LegJK7cIWRGyxRPwCO/WGxNw3G7XeigMjRY4IDS6xf00BtICixD9Y
-	 XE8KxBVT8CONFWSZqCpKbKzOrN7gLvxdxBAhm1SQn1/wVY0AiNGYHYEgPUjw3cpOpr
-	 uBdGC5tV13Q6g==
-Received: from APP-16 (unknown [10.50.14.240])
-	by mta-13.privateemail.com (Postfix) with ESMTPA;
-	Tue, 24 Sep 2024 20:28:46 -0400 (EDT)
-Date: Wed, 25 Sep 2024 02:28:46 +0200 (CEST)
-From: Marco Bonelli <marco@mebeim.net>
-To: "masahiroy@kernel.org" <masahiroy@kernel.org>
-Cc: "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Message-ID: <1763151587.3581913.1727224126288@privateemail.com>
-Subject: Broken Kconfig scripts in v6.11: conf/mconf stuck in endless loop
- at 100% CPU
+	s=arc-20240116; t=1727224646; c=relaxed/simple;
+	bh=Ne4vSr3cvYtPVxEhHNFux7VOXieBzrt1kuOruhtxSL0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UmFtf/B9PVPVw2x5P9L31wDCRzmE8sQ9j4fy2m+2ng1Pz5jz/0xDKy6qg7NCszfB/c8w+ihvF5XgXcE7cy2KCg5dgPgIXX+uRagCOCt7uFW/+SDq2g7prrvc+QjV1nBq5Ndg1WOlot/uZe1fTNuU4nrveHkE5susHvmrqlKYgXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=b9dI6Exf; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e053f42932so1383809a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 17:37:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1727224644; x=1727829444; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=qi+Ew/rpwQdNekWtvCMQfio8DRksEPNbxq/gVYTc9Bc=;
+        b=b9dI6ExfYHghZcb+6aNMSYMdVeecGzHlQ7pF5VDSD4FfPpELvS2C/+XGVYPQbGijtM
+         tORy73aiMoCF4X66byl96MkEzenZg/Pu3YCNZm6CgXFkjXzPL4ors4dXgQxC7gqkYY12
+         SahDw2Gwx2h07VUSn3plqGYpJwTRw2mhTxDTc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727224644; x=1727829444;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qi+Ew/rpwQdNekWtvCMQfio8DRksEPNbxq/gVYTc9Bc=;
+        b=QK94IDyDFhfib0IGy5W19PrW/a2qJFgbCjNxw4B903hTKGffcdoyyxBddX6UgoUm5a
+         eFjig21Fx+l3Z4KI4t8F7HMZxy+AkCTaBaOhse4I7DmmratoAOkwOkFhrfJrvu2D6q6y
+         sfrh85ISy5TqSh7EbDulbplWk/2ShLCNvUpv84VIs7jomAD9vo1Ofzc1i0wXj4xDa1rI
+         mKsn3wwLWew3EJhBpl4QRt41EWpMq8NTJZTrv0dq46edBdissC7Do+1iYt4E/XeLVhMo
+         gO5ncpTT84js0OB/3DqL8gb3hEyNSIErDgj8EARblhyVxW3yRl5TgZjaiJ6fFrVcKhyE
+         jFvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWAFBt9gpRut91BgPwpB3qQSgP6jnFjqtAs+GuU/YG2h65Gsgi7YOLUIkC/Xrd08C2IFbpcFxywwwQJuKw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfzyN6VwJvtkwg75MVNE0xT4GWqh8Jh3dN/koCvJYjyu2oBgM9
+	NCQF/Xu21XgEjboy7+KIjVUdiZXEz7w9eNXmWXpehJozcbDUsg7Dz0KWlw3IQQ==
+X-Google-Smtp-Source: AGHT+IGHpbtyH6wG5q8wpr8glm0LmNDVojnlHAVCXzzabVBkw4UaRXRI6IpMn0gx/0I09JmQAN/eSw==
+X-Received: by 2002:a17:90a:cb97:b0:2d3:d398:3c1e with SMTP id 98e67ed59e1d1-2e06afd7775mr1014848a91.36.1727224644075;
+        Tue, 24 Sep 2024 17:37:24 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:234f:c061:7929:9747])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e058a0899fsm1409293a91.0.2024.09.24.17.37.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2024 17:37:23 -0700 (PDT)
+Date: Wed, 25 Sep 2024 09:37:18 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Chris Li <chrisl@kernel.org>
+Cc: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andrey Skvortsov <andrej.skvortzov@gmail.com>,
+	Minchan Kim <minchan@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	stable@vger.kernel.org, Sachin Sant <sachinp@linux.ibm.com>,
+	linux-mm <linux-mm@kvack.org>
+Subject: Re: [PATCH v3] zram: don't free statically defined names
+Message-ID: <20240925003718.GA11458@google.com>
+References: <20240923164843.1117010-1-andrej.skvortzov@gmail.com>
+ <20240924014241.GH38742@google.com>
+ <d22cff1a-701d-4078-867d-d82caa943bab@linux.vnet.ibm.com>
+ <CAF8kJuPEg1yKNmVvPbEYGME8HRoTXdHTANm+OKOZwX9B6uEtmw@mail.gmail.com>
+ <CAF8kJuOs-3WZPQo0Ktyp=7DytWrL9+UrTNUGz+9n9s6urR-rtA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v7.10.6-Rev67
-X-Originating-Client: open-xchange-appsuite
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAF8kJuOs-3WZPQo0Ktyp=7DytWrL9+UrTNUGz+9n9s6urR-rtA@mail.gmail.com>
 
-I was building v6.11 for PowerPC when I noticed that `make olddefconfig` hangs
-indefinitely when running `scripts/kconfig/conf` and gets stuck in what seems
-an infinite loop at 100% CPU while evaluating an expression.
+On (24/09/24 11:29), Chris Li wrote:
+> On Tue, Sep 24, 2024 at 8:56 AM Chris Li <chrisl@kernel.org> wrote:
+[..]
+> Given the merge window is closing. I suggest just reverting this
+> change. As it is the fix also causing regression in the swap stress
+> test for me. It is possible that is my test setup issue, but reverting
+> sounds the safe bet.
 
-The issue is still present on master of linux-next. I did a bisect run and
-narrowed it down to this commit:
-
-	f79dc03fe68c79d388908182e68d702f7f1786bc kconfig: refactor choice value calculation
-
-Steps to reproduce:
-
-	git checkout v6.11
-	export ARCH=powerpc CROSS_COMPILE=powerpc-linux-
-	make distclean
-	make ppc64_defconfig
-	./scripts/config --file .config -d PPC64
-	make olddefconfig
-	# Hangs indefinitely running scripts/kconfig/conf
-
-The same outcome can be achieved with:
-
-	git checkout v6.11
-	export ARCH=powerpc CROSS_COMPILE=powerpc-linux-
-	make distclean
-	make ppc64_defconfig
-	make menuconfig
-	# Manually disable PPC64 by unchecking "64-bit kernel", save and exit
-	# Hangs indefinitely running scripts/kconfig/mconf
-
-Not sure what exactly is causing the issue as I am not familiar with these
-tools, but it seems to me that conf/mconf get stuck endlessly evaluating an
-expression.
-
-Here is a stack trace after re-compiling with HOSTCFLAGS="-O0 -g" and attaching
-to the `conf` process with GDB. It looks like the last sym_calc_choice() at
-frame #4 never returns.
-
-	#0  0x0000557bc97287cd in expr_calc_value (e=0x557bcb812800) at scripts/kconfig/expr.c:1012
-	#1  0x0000557bc972880e in expr_calc_value (e=0x557bcb8127e0) at scripts/kconfig/expr.c:1017
-	#2  0x0000557bc9728823 in expr_calc_value (e=0x557bcb8127a0) at scripts/kconfig/expr.c:1018
-	#3  0x0000557bc9732a67 in sym_calc_visibility (sym=0x557bca6692e0) at scripts/kconfig/symbol.c:211
-	#4  0x0000557bc9732db3 in sym_calc_choice (choice=0x557bca669040) at scripts/kconfig/symbol.c:299
-	#5  0x0000557bc9733384 in sym_calc_value (sym=0x557bca66bb10) at scripts/kconfig/symbol.c:457
-	#6  0x0000557bc97287ec in expr_calc_value (e=0x557bcb80e710) at scripts/kconfig/expr.c:1014
-	#7  0x0000557bc9728886 in expr_calc_value (e=0x557bcb80e6f0) at scripts/kconfig/expr.c:1025
-	#8  0x0000557bc9728823 in expr_calc_value (e=0x557bcb80e670) at scripts/kconfig/expr.c:1018
-	#9  0x0000557bc972885f in expr_calc_value (e=0x557bcb80e630) at scripts/kconfig/expr.c:1022
-	#10 0x0000557bc9732a67 in sym_calc_visibility (sym=0x557bca66d970) at scripts/kconfig/symbol.c:211
-	#11 0x0000557bc97332f3 in sym_calc_value (sym=0x557bca66d970) at scripts/kconfig/symbol.c:443
-	#12 0x0000557bc97287ec in expr_calc_value (e=0x557bcc6a6cf0) at scripts/kconfig/expr.c:1014
-	#13 0x0000557bc9728823 in expr_calc_value (e=0x557bcc6a6cb0) at scripts/kconfig/expr.c:1018
-	#14 0x0000557bc9728823 in expr_calc_value (e=0x557bcc6a6bd0) at scripts/kconfig/expr.c:1018
-	#15 0x0000557bc9732a67 in sym_calc_visibility (sym=0x557bcb6cf0e0) at scripts/kconfig/symbol.c:211
-	#16 0x0000557bc97332f3 in sym_calc_value (sym=0x557bcb6cf0e0) at scripts/kconfig/symbol.c:443
-	#17 0x0000557bc97287ec in expr_calc_value (e=0x557bcc6a7270) at scripts/kconfig/expr.c:1014
-	#18 0x0000557bc972880e in expr_calc_value (e=0x557bcc6a7290) at scripts/kconfig/expr.c:1017
-	#19 0x0000557bc972885f in expr_calc_value (e=0x557bcc6a72b0) at scripts/kconfig/expr.c:1022
-	#20 0x0000557bc972884a in expr_calc_value (e=0x557bcc6b1bf0) at scripts/kconfig/expr.c:1021
-	#21 0x0000557bc972884a in expr_calc_value (e=0x557bcc6b5c70) at scripts/kconfig/expr.c:1021
-	#22 0x0000557bc972884a in expr_calc_value (e=0x557bcc6cf2d0) at scripts/kconfig/expr.c:1021
-	#23 0x0000557bc972884a in expr_calc_value (e=0x557bcc6fc0f0) at scripts/kconfig/expr.c:1021
-	#24 0x0000557bc972884a in expr_calc_value (e=0x557bcc726130) at scripts/kconfig/expr.c:1021
-	#25 0x0000557bc972884a in expr_calc_value (e=0x557bcc726170) at scripts/kconfig/expr.c:1021
-	#26 0x0000557bc972884a in expr_calc_value (e=0x557bcc7262f0) at scripts/kconfig/expr.c:1021
-	#27 0x0000557bc972884a in expr_calc_value (e=0x557bcc73bb30) at scripts/kconfig/expr.c:1021
-	#28 0x0000557bc9732ba7 in sym_calc_visibility (sym=0x557bca718350) at scripts/kconfig/symbol.c:234
-	#29 0x0000557bc97332f3 in sym_calc_value (sym=0x557bca718350) at scripts/kconfig/symbol.c:443
-	#30 0x0000557bc97287ec in expr_calc_value (e=0x557bcc725e10) at scripts/kconfig/expr.c:1014
-	#31 0x0000557bc9732a67 in sym_calc_visibility (sym=0x557bcb737420) at scripts/kconfig/symbol.c:211
-	#32 0x0000557bc97332f3 in sym_calc_value (sym=0x557bcb737420) at scripts/kconfig/symbol.c:443
-	#33 0x0000557bc9724718 in conf_read (name=0x0) at scripts/kconfig/confdata.c:492
-	#34 0x0000557bc9722f6e in main (ac=3, av=0x7ffe09eadc08) at scripts/kconfig/conf.c:733
-
-Additional details:
-
-	Host: Linux 6.1.0-25-amd64 Debian Bookworm 
-	HOSTCC: gcc --version: gcc (Debian 12.2.0-14) 12.2.0
-	CC: powerpc-linux-gcc --version: powerpc-linux-gcc (GCC) 12.2.0
-	(from https://mirrors.edge.kernel.org/pub/tools/crosstool/files/bin/x86_64/12.2.0/)
-
-Full bisect run log:
-
-	# bad: [8400291e289ee6b2bf9779ff1c83a291501f017b] Linux 6.11-rc1
-	# good: [0c3836482481200ead7b416ca80c68a29cfdaabd] Linux 6.10
-	git bisect start 'v6.11-rc1' 'v6.10'
-	# good: [280e36f0d5b997173d014c07484c03a7f7750668] nsfs: use cleanup guard
-	git bisect good 280e36f0d5b997173d014c07484c03a7f7750668
-	# good: [a4f9285520584977127946a22eab2adfbc87d1bf] Merge tag 'clk-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux
-	git bisect good a4f9285520584977127946a22eab2adfbc87d1bf
-	# good: [2c9b3512402ed192d1f43f4531fb5da947e72bd0] Merge tag 'for-linus' of git://git.kernel.org/pub/scm/virt/kvm/kvm
-	git bisect good 2c9b3512402ed192d1f43f4531fb5da947e72bd0
-	# good: [6dc2e98d5f1de162d1777aee97e59d75d70d07c5] s390: Remove protvirt and kvm config guards for uv code
-	git bisect good 6dc2e98d5f1de162d1777aee97e59d75d70d07c5
-	# bad: [c2a96b7f187fb6a455836d4a6e113947ff11de97] Merge tag 'driver-core-6.11-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core
-	git bisect bad c2a96b7f187fb6a455836d4a6e113947ff11de97
-	# bad: [786c8248dbd33a5a7a07f7c6e55a7bfc68d2ca48] Merge tag 'perf-tools-fixes-for-v6.11-2024-07-23' of git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools
-	git bisect bad 786c8248dbd33a5a7a07f7c6e55a7bfc68d2ca48
-	# good: [643af93f15be901982b2b08f241263934201c99f] Merge tag 'rpmsg-v6.11' of git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux
-	git bisect good 643af93f15be901982b2b08f241263934201c99f
-	# bad: [bde6fb37bbc3a41eb63b1e4d06e2ff217d4a2f18] kallsyms: avoid repeated calculation of array size for markers
-	git bisect bad bde6fb37bbc3a41eb63b1e4d06e2ff217d4a2f18
-	# bad: [b139b43e9d47552b3f998fade184ed19e45d0c32] kconfig: use sym_get_choice_menu() in sym_check_deps()
-	git bisect bad b139b43e9d47552b3f998fade184ed19e45d0c32
-	# good: [bd988e7cb84a7f27e8ec100c5f68498b7d4fa69c] kconfig: introduce choice_set_value() helper
-	git bisect good bd988e7cb84a7f27e8ec100c5f68498b7d4fa69c
-	# bad: [f79dc03fe68c79d388908182e68d702f7f1786bc] kconfig: refactor choice value calculation
-	git bisect bad f79dc03fe68c79d388908182e68d702f7f1786bc
-	# good: [7308bf8a2c3d008f3662eaa3b4c3bbe55852d6c6] modpost: Enable section warning from *driver to .exit.text
-	git bisect good 7308bf8a2c3d008f3662eaa3b4c3bbe55852d6c6
-	# good: [17c31aded9a1ee87e37f0ea0e3737797ef3f8c97] scripts/make_fit: Support decomposing DTBs
-	git bisect good 17c31aded9a1ee87e37f0ea0e3737797ef3f8c97
-	# good: [ee29e6204c32dce013ac6d1078d98dce5607ce86] kconfig: import list_move(_tail) and list_for_each_entry_reverse macros
-	git bisect good ee29e6204c32dce013ac6d1078d98dce5607ce86
-	# first bad commit: [f79dc03fe68c79d388908182e68d702f7f1786bc] kconfig: refactor choice value calculation
-
-
-Let me know if any additional information is needed. Happy to help.
-
---
-Marco Bonelli
+The patch in question is just a kfree() call that is only executed
+during zram reset and that fixes tiny memory leaks when zram is
+configured with alternative (re-compression) streams.  I cannot
+imagine how that can have any impact on runtime, that makes no
+sense to me, I'm not sure that revert is justified here.
 
