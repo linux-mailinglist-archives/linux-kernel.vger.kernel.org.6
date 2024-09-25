@@ -1,75 +1,117 @@
-Return-Path: <linux-kernel+bounces-339174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C757A98610F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:39:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CD66986127
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:41:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B3B21F27134
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:39:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B65DD1F216FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C03F187FF3;
-	Wed, 25 Sep 2024 13:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26EB18F2DD;
+	Wed, 25 Sep 2024 13:58:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YTsQjfi4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="dIUEdKsi"
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0A4188011;
-	Wed, 25 Sep 2024 13:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4EEF17E00C;
+	Wed, 25 Sep 2024 13:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727272365; cv=none; b=kHHyvk4Tp4mJqkECWEapnJZd9x71pSzS6opJws9tKTdDoMUXej4hLUdkOoKrBbdgxJWvtdOxC8dzD6pmqWnKU60T+D/nXMs5d32mO5bl3y5Sco6WIN5qyt2Yu4OAx/bNoGyzoAR+BS07BekeoDpR3LIcaWeZkiKl+TJ2aI9lxDc=
+	t=1727272698; cv=none; b=ZOeImoPlHZ17vrBOuy+2bO/XDOFIQL2zqr9k4IOL0HfZcLer58zvdSmrUxHZLbzPMs6LclPoT9vVXqzqSitLJerSKqfzs72b5LRwB+3qnjmrEsFju4QZYtCboScJxDxKTQUvWOGX4CPLOBs6FcZ4DJQADEGbYBILSprNkTWVQfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727272365; c=relaxed/simple;
-	bh=szWYh/k8Wut3JQcCumvWA+GxufyWMJx3lS3HCro3hVA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eKJxiO8O8APa7AV6rt2BXkZr2kOe3ZDkIim1eij3DV/C7t8Wj5oBl+g+jRvy9rDFpzeYI0lV0sSEnpk6vrp+p+EfZdbsi9pFNvMFvHVbfcXi8Fs75N5556PJUgEnUCui/EKx5A66W4Bssv96OZwHUrK9AZAbsZY7qnq6x//V2sY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YTsQjfi4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62561C4CEC3;
-	Wed, 25 Sep 2024 13:52:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727272365;
-	bh=szWYh/k8Wut3JQcCumvWA+GxufyWMJx3lS3HCro3hVA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YTsQjfi43RkygNFBoYyx8OSG3TurslCGQjHiy7nBJZYORF1+akf4Z0bCNlbFzmS4z
-	 2uj0Tz/1HgFFJJdMWvsP+Klyu3R4dlkEg8/tOXrdLsRRcGEbOxZWca+E5cQRBrzLXN
-	 WJoOTkJTqXN2DgslObyMai3Yef5b801FRt++7qAtvAYLCAML2oKoXLXuvnVnsPY4m2
-	 0VTxmS0Wrby0mrxicDRlkAubdUMphe7QyOZ5ucAb68i89GgGc3X7GNt5elggPvqm+r
-	 X6nVJRpY6+9hJ21ergM40niMC6ipgNaIZTqngoPblqbJ4PSazdcZACfz4sqUyGohp2
-	 vEh2kHAXPaang==
-Date: Wed, 25 Sep 2024 15:52:41 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Gerhard Engleder <eg@keba.com>, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: I2C_KEBA should depend on KEBA_CP500
-Message-ID: <7zmfqcadn45biuk5p2dd3tf6ccgj54n3bjb4j454n3cyjud6wa@ahcevypnprqh>
-References: <39a6ce50b152c8e435c78825ab56aa714b54fce8.1727170404.git.geert+renesas@glider.be>
+	s=arc-20240116; t=1727272698; c=relaxed/simple;
+	bh=24MQxyf9XU7dt8p5pJ4zrnOq+YqSfpDo/gZcai/d4jo=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=DsIYWP1IXnohejJpWznYcEPTBWBtiNPPWF01UxnuQKYMBkGBi17sWifl1ZM/hFVSxyhndeMb6EwrU9Htu6GXlIyPPCzgAsJRdAu6fq/P30OlaiRNYwqPIDUyd5CZTQJG3+xDwsbhPZwLJGTyhktjv+/nABe3baCc90xDOrpL1fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=dIUEdKsi; arc=none smtp.client-ip=162.62.58.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1727272384; bh=xDQ/047YH46qDRI7w0LS7iGSEzIWbAIopOEzW3KNye8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=dIUEdKsibdJ9eB6mwGiMepFV+OHk5tdw69lrvlVAIY59UO9kMKFsqmajSpNh/ScC9
+	 KLXq6Dl6cM7gl08G3UUCNI3J1l9rp33ObVUMzuOjISnkwB7kOBQgt57uiWxJam4oNK
+	 j/z7MB4p/nLhR2AquYRvBwex8IdhRJHxNOlpZdyc=
+Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id D402DE7B; Wed, 25 Sep 2024 21:53:00 +0800
+X-QQ-mid: xmsmtpt1727272380tbx63wbr1
+Message-ID: <tencent_4A8FBB4133EA9E461B0C4B2C1B2425FFBA08@qq.com>
+X-QQ-XMAILINFO: NY3HYYTs4gYSCD4BjJa3oLj2wgetdTniRHGpPBJX6dm2difxmsv/fwTkOwmJY5
+	 jt6PpNTqYy5rI38TJLLAuCSkY9gVU7Q9eiFK6tOPRHW+31HToo0IeL9lZyo0XXXcimsazmvxSkDU
+	 XsppQQ+lej3dGDsGYjcz9Z08yBJUjda5SL4rMt1d1cXVHFgfCSPofoHQAMIwwua3bZgglf/2fTJw
+	 xuva/rW5nYj7cLej6f+agYfo1K4Jd8lmwlDaz90B6FatPhiCWahiQQMk5syEUo1GtcCAtBSS7Rgw
+	 rBSa8TEPCMvN1MavC1SapZm9spMn/wQqFM033aokDKbrrPktRBuHT8AZSPSkSDRVgWboMxmvBxMX
+	 ekLHmFDkJEeDNKscbmtad1u3WHrP5TcGft0y06HnSDNW+y0AYGL1b49jWnDtiZRdJW50hntyYd0N
+	 sOpUrOaR0n9yKJc+YykZIdNC2gl1yL0noZWUlgWkw0cQ0etXcVT6NUlA8JOPM6UlmYJjkaLdq85R
+	 x4lcUzbzuewh0jinBtzNh19RyTs282HQ1RIFzFor4QViHsDAf/WtbTzR1bpk5X9s7k/HcWIDy185
+	 lygJYt2/BZCw0Cf9LlNZVdop+HbUSXAXbduPEy3s53lwUdYzELuE72EXJkYfrS7DYoWz48HEz5Jc
+	 IN6eB9GzQO/fjMGyo0ejV53kUdAU35ydnwuYV0FH3Ve3siXTDuqhGJMD5J5VHTjj814m3n7Hkbx7
+	 fdfR+id0RUI/Dg5gA35pOZHciygL2fMkXpUGuCIIYuZM3UhXsdEKMA4W9VdxgJSh4OcGqUUPBFUB
+	 vKYjJ1FNJFlQ9ShemPz6QYdIPX4C4dxThAuTeQe7gceAyVgGfkcE4XwNJQqGYNGjPJ5Jr9aJh9RN
+	 K1BcHgb5UrMqPm28AnpE8Z1NLhhBjFLGC/rI9hrf8e6BDFb31tb9YjGQ2In0U8WL2M9OS/fwlG+L
+	 Fr9Wtq65s=
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+c0360e8367d6d8d04a66@syzkaller.appspotmail.com
+Cc: brauner@kernel.org,
+	jack@suse.cz,
+	jfs-discussion@lists.sourceforge.net,
+	kent.overstreet@linux.dev,
+	linux-bcachefs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	shaggy@kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	viro@zeniv.linux.org.uk
+Subject: [PATCH] bcachefs: return the error code instead of the return value of IS_ERR_OR_NULL
+Date: Wed, 25 Sep 2024 21:53:00 +0800
+X-OQ-MSGID: <20240925135259.1575815-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <66f33aad.050a0220.457fc.0030.GAE@google.com>
+References: <66f33aad.050a0220.457fc.0030.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <39a6ce50b152c8e435c78825ab56aa714b54fce8.1727170404.git.geert+renesas@glider.be>
+Content-Transfer-Encoding: 8bit
 
-Hi Geert,
+Syzbot report a kernel BUG in vfs_get_tree.
+The root cause is that read_btree_nodes() returned 1 and returned -EINTR
+due to kthread_run() execution failure.
 
-On Tue, Sep 24, 2024 at 11:34:18AM GMT, Geert Uytterhoeven wrote:
-> The KEBA I2C controller is only present on KEBA PLC devices.  Hence add
-> a dependency on KEBA_CP500, to prevent asking the user about this driver
-> when configuring a kernel without KEBA CP500 system FPGA support.
-> 
-> Fixes: c7e08c816cd2fdf8 ("i2c: keba: Add KEBA I2C controller support")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The -EINTR needs to be returnned to bch2_fs_recovery(), not return to
+"ret = IS_ERR_OR_NULL(t)".
 
-Thanks for your fix, merged to i2c/i2c-host-fixes.
+Reported-and-tested-by: syzbot+c0360e8367d6d8d04a66@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=c0360e8367d6d8d04a66
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/bcachefs/btree_node_scan.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Thanks,
-Andi
+diff --git a/fs/bcachefs/btree_node_scan.c b/fs/bcachefs/btree_node_scan.c
+index b28c649c6838..df7090ca1e81 100644
+--- a/fs/bcachefs/btree_node_scan.c
++++ b/fs/bcachefs/btree_node_scan.c
+@@ -281,6 +281,10 @@ static int read_btree_nodes(struct find_btree_nodes *f)
+ 			closure_put(&cl);
+ 			f->ret = ret;
+ 			bch_err(c, "error starting kthread: %i", ret);
++			if (IS_ERR(t)) {
++				closure_sync(&cl);
++				return PTR_ERR(t);
++			}
+ 			break;
+ 		}
+ 	}
+-- 
+2.43.0
+
 
