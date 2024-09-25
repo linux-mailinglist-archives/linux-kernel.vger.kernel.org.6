@@ -1,252 +1,170 @@
-Return-Path: <linux-kernel+bounces-339257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 523179861C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:01:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EE6A9861C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:01:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7ED128C409
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:01:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB3B428DEC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:01:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90B1119FA86;
-	Wed, 25 Sep 2024 14:34:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7CB917C984;
+	Wed, 25 Sep 2024 14:34:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="CO+ijkY7"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oq2W/6ik"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE14188735
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 14:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E698610B;
+	Wed, 25 Sep 2024 14:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727274858; cv=none; b=tNOwHsREUh0oS/q/sB5cfNjGMO1IB15+zVCGDapoQlx+xyyRbzrwuMqctwEyvMOXFizCo/hEstI7UC34MWYv+hS2IBPtnecNx+lzDxZGl2dMUxi+A7CsC5kfdK7t5aUcZOWVxX9IiIv8erjcsQqCjgPJeyX8XVIpdPYvf0Jtkao=
+	t=1727274891; cv=none; b=bCz8J04OQ6TrNPvcGCNoH7ft+oTJdWaUnFg1430TqilfDFkAcpRhDcKfNOhwK2OGtbaEUgEdCrosZH2h3Z1p42Zo8lAKXhM9kILOZOGy6XK2E3P/H8s3xl6LiSyusXuNQ6N01SavRz9IOLh2MUyFmyjYpQcJcXyXqfthfuoEGzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727274858; c=relaxed/simple;
-	bh=AtqtjEkK+AUk6ACyf9LCOO3NLZRZooSD2Sf1HPC6BGo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BjajDCRWqBnMW/YpDwdnGP9iYk/foQMX/SGkBHeNBIv35PYh1a1YK7G2dWzxwuKQvBTqIeShG72uhsKWP0TpQWoGFSIfi/VSv4HvoM5TKrLsi2ErXkCV9XxGy4kesQ7vo8b4q0kvXYHBw4aF+tci0UxNlwPDhFp8U6qRmRzeVdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=CO+ijkY7; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com [209.85.218.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id BB62940647
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 14:34:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1727274853;
-	bh=GxKPrnIU1I3GU0CvN/XzCRoFswb4aJWlE53TgvU92Rk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type;
-	b=CO+ijkY7fa3uGd4SHJvGO85Z5BTneW1t0p05Rn4608iW5FrXKiCzLy721++s8HQ+n
-	 3qFpvRQUbir0zD5BsxTn2NZxBeQ3/oyyzFQK4B1v4RZzf5RGK/FTYvS/eLaYGfysZS
-	 54oC6dc69vkzO6KOijQVCei07ZCIAIMDoMurbsNAteANetKN3trem9yHq0rOKJQj02
-	 E5Z09Rh6AKUe971O5eOrcAxxFWs4dIIZDyBbGyiMU0+CmmmRm7ZAEkoi+FrEFvtBdd
-	 94DI5Vzx/KQxKRWmaexvsgY+DyPwRD58JJ2NaKxMOt34sE8g5fstFs3l5xEVXWWz34
-	 qLAQTwDaBgAfQ==
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a7d2d414949so522152066b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 07:34:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727274852; x=1727879652;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GxKPrnIU1I3GU0CvN/XzCRoFswb4aJWlE53TgvU92Rk=;
-        b=Tm/EDCmfyXiROb2WzdrA1cIhvSOe+kRgu8Z8+87lgVe7wxC8U590lI2sfGxk0k8u94
-         WHJ2xuJh7IA8lVYZlF4OkiWs8ZAy/IIar4mqMinU+l+ngWwn6291h05eQeHpTVZM6phx
-         mS9Ix89R/yO6h8lBq92vXCQbz2sch6aXdjtisdEJX0TKrMQXvN8dEvNI1eVdaeTay3d9
-         NCDrE1bUFmErEtZhCx4cAEHvCg1A15qRSUIrxAdp1O5lGfxtDw6Jxq6jq06ulyIh1S6d
-         PdkEnnWVXau58ETrN3G9KUalDvkCSEXP2Vgrq4riECJkgCoaE3bDjxlAoQkjTB7dFWx+
-         0djw==
-X-Forwarded-Encrypted: i=1; AJvYcCXB+2+ddYkgjmLPRIonl+4c+xtdZs2136C3AS4qepG+gLI4DwfZFGyVhMcNV5xgnrmWN1p41cd78Sg9SIw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiZnTvH0ZC0DpIp9BR0ON/Woyv2YRKuL1BYsEhMEIH9B0w+BFa
-	7jdHHXmxHFICKVsvKwpEHDy/W+yeyXJxYpEtBd/KS7xTXlq/iqPiaiViCmO/0e991L/Ik9XvEux
-	YX0gh/IYNOTJwq3Rfdho5JbCPFV3e87AfnJbI3K/ehqgrC7pvkdIMteD2pG2VqWqBC1pbiXoJcA
-	DOVw==
-X-Received: by 2002:a17:907:7f03:b0:a8d:caa:7ffb with SMTP id a640c23a62f3a-a93a03c3145mr233907166b.29.1727274852378;
-        Wed, 25 Sep 2024 07:34:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEkMud1tdev4JvCJ8nbs1UnCYmFH6la1yKrhtQLh+31n3CMfO83TaOsVrSzbVkkFuTuqpO8SA==
-X-Received: by 2002:a17:907:7f03:b0:a8d:caa:7ffb with SMTP id a640c23a62f3a-a93a03c3145mr233903666b.29.1727274851863;
-        Wed, 25 Sep 2024 07:34:11 -0700 (PDT)
-Received: from amikhalitsyn.. ([188.192.113.77])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93930cad0asm213137366b.118.2024.09.25.07.34.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 07:34:11 -0700 (PDT)
-From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-To: tytso@mit.edu
-Cc: stable@vger.kernel.org,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Jan Kara <jack@suse.cz>,
-	Baokun Li <libaokun1@huawei.com>,
-	=?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@stgraber.org>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	Wesley Hershberger <wesley.hershberger@canonical.com>,
-	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Subject: [PATCH 1/1] ext4: fix crash on BUG_ON in ext4_alloc_group_tables
-Date: Wed, 25 Sep 2024 16:33:24 +0200
-Message-Id: <20240925143325.518508-2-aleksandr.mikhalitsyn@canonical.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240925143325.518508-1-aleksandr.mikhalitsyn@canonical.com>
-References: <20240925143325.518508-1-aleksandr.mikhalitsyn@canonical.com>
+	s=arc-20240116; t=1727274891; c=relaxed/simple;
+	bh=dpQ/czRVTd2i1LaIRTZfUT2aSTnHS8M++kos8GBDjMI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KghAorWwo0ldzdLQupO97fqs0NN4yEJY50cUebnTbFjg9Ph7feE0hZIzs+Aw5g71U5P+ttIoge6p/pQ5bvWMpjKtmR0sHR8g/cO/+bM5kwVpWtZkvpOWZFQWAm7yPxKDwZoWdRxntbW7dY2ARWxAkQXzMOGOwyjp+7Gps0W48UA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oq2W/6ik; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A959C4CEC3;
+	Wed, 25 Sep 2024 14:34:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727274890;
+	bh=dpQ/czRVTd2i1LaIRTZfUT2aSTnHS8M++kos8GBDjMI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oq2W/6ik4uHLxVqum7YpvzS6LKLKV+OtW5nJejIsnO+dt6aPiWsX6Iu72+JNHxp5c
+	 plKWY3hpOzeu/5aI9yuTbcd7R6afZgYPnp9EhpBs3UmUIqcnAa9pQfBSbI6ZyjuASL
+	 efhuhosNlwbOgW2Jc5mprIaPgqH3LNfsln3GtwEqYN2FTANtuYgXovIdp9OiTGlbk+
+	 AeOi7fNWgTc28lIOEiUBafHDcjJKWPe57zxZMlcSreeVvuGqz7bJFvjjWs3EQaesL/
+	 /5Rv3qZ/D64TvEObsrENGUlIpm2ricXIpygIvJX/H3tluPMBOqQNisr9N0biGpU/1Q
+	 04m4OM2IV/SWA==
+Date: Wed, 25 Sep 2024 15:34:42 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Macpaul Lin <macpaul.lin@mediatek.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	moudy.ho@mediatek.com, macross.chen@mediatek.com,
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Yong Wu <yong.wu@mediatek.com>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	Alexandre Mergnat <amergnat@baylibre.com>,
+	Bear Wang <bear.wang@mediatek.com>,
+	Pablo Sun <pablo.sun@mediatek.com>, Macpaul Lin <macpaul@gmail.com>,
+	Sen Chu <sen.chu@mediatek.com>,
+	Chris-qj chen <chris-qj.chen@mediatek.com>,
+	MediaTek Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	Chen-Yu Tsai <wenst@chromium.org>
+Subject: Re: [PATCH 3/6] dt-bindings: display: mediatek: Fix clocks count
+ constraint for new SoCs
+Message-ID: <20240925-satisfy-epidermal-bd414891479a@spud>
+References: <20240924103156.13119-1-macpaul.lin@mediatek.com>
+ <20240924103156.13119-3-macpaul.lin@mediatek.com>
+ <ffc1900b-3921-48ca-a2b2-1b798c57e572@collabora.com>
+ <20240924-commute-collision-13ad39717d31@spud>
+ <2821ef09-1b32-082d-69d1-e09a3a302447@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="J8wSVO8x24H35hg9"
+Content-Disposition: inline
+In-Reply-To: <2821ef09-1b32-082d-69d1-e09a3a302447@mediatek.com>
 
-[   33.882936] EXT4-fs (dm-5): mounted filesystem 8aaf41b2-6ac0-4fa8-b92b-77d10e1d16ca r/w with ordered data mode. Quota mode: none.
-[   33.888365] EXT4-fs (dm-5): resizing filesystem from 7168 to 786432 blocks
-[   33.888740] ------------[ cut here ]------------
-[   33.888742] kernel BUG at fs/ext4/resize.c:324!
-[   33.889075] Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
-[   33.889503] CPU: 9 UID: 0 PID: 3576 Comm: resize2fs Not tainted 6.11.0+ #27
-[   33.890039] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-[   33.890705] RIP: 0010:ext4_resize_fs+0x1212/0x12d0
-[   33.891063] Code: b8 45 31 c0 4c 89 ff 45 31 c9 31 c9 ba 0e 08 00 00 48 c7 c6 68 75 65 b8 e8 2b 79 01 00 41 b8 ea ff ff ff 41 5f e9 8d f1 ff ff <0f> 0b 48 83 bd 70 ff ff ff 00 75 32 45 31 c0 e9 53 f1 ff ff 41 b8
-[   33.892701] RSP: 0018:ffffa97f413f3cc8 EFLAGS: 00010202
-[   33.893081] RAX: 0000000000000018 RBX: 0000000000000001 RCX: 00000000fffffff0
-[   33.893639] RDX: 0000000000000017 RSI: 0000000000000016 RDI: 00000000e8c2c810
-[   33.894197] RBP: ffffa97f413f3d90 R08: 0000000000000000 R09: 0000000000008000
-[   33.894755] R10: ffffa97f413f3cc8 R11: ffffa2c1845bfc80 R12: 0000000000000000
-[   33.895317] R13: ffffa2c1843d6000 R14: 0000000000008000 R15: ffffa2c199963000
-[   33.895877] FS:  00007f46efd17000(0000) GS:ffffa2c89fc40000(0000) knlGS:0000000000000000
-[   33.896524] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   33.896954] CR2: 00005630a4a1cc88 CR3: 000000010532c000 CR4: 0000000000350eb0
-[   33.897516] Call Trace:
-[   33.897638]  <TASK>
-[   33.897728]  ? show_regs+0x6d/0x80
-[   33.897942]  ? die+0x3c/0xa0
-[   33.898106]  ? do_trap+0xe5/0x110
-[   33.898311]  ? do_error_trap+0x6e/0x90
-[   33.898555]  ? ext4_resize_fs+0x1212/0x12d0
-[   33.898844]  ? exc_invalid_op+0x57/0x80
-[   33.899101]  ? ext4_resize_fs+0x1212/0x12d0
-[   33.899387]  ? asm_exc_invalid_op+0x1f/0x30
-[   33.899675]  ? ext4_resize_fs+0x1212/0x12d0
-[   33.899961]  ? ext4_resize_fs+0x745/0x12d0
-[   33.900239]  __ext4_ioctl+0x4e0/0x1800
-[   33.900489]  ? srso_alias_return_thunk+0x5/0xfbef5
-[   33.900832]  ? putname+0x5b/0x70
-[   33.901028]  ? srso_alias_return_thunk+0x5/0xfbef5
-[   33.901374]  ? do_sys_openat2+0x87/0xd0
-[   33.901632]  ? srso_alias_return_thunk+0x5/0xfbef5
-[   33.901981]  ? srso_alias_return_thunk+0x5/0xfbef5
-[   33.902324]  ? __x64_sys_openat+0x59/0xa0
-[   33.902595]  ext4_ioctl+0x12/0x20
-[   33.902802]  ? ext4_ioctl+0x12/0x20
-[   33.903031]  __x64_sys_ioctl+0x99/0xd0
-[   33.903277]  x64_sys_call+0x1206/0x20d0
-[   33.903534]  do_syscall_64+0x72/0x110
-[   33.903771]  ? srso_alias_return_thunk+0x5/0xfbef5
-[   33.904115]  ? irqentry_exit+0x3f/0x50
-[   33.904362]  ? srso_alias_return_thunk+0x5/0xfbef5
-[   33.904707]  ? exc_page_fault+0x1aa/0x7b0
-[   33.904979]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[   33.905349] RIP: 0033:0x7f46efe3294f
-[   33.905579] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <41> 89 c0 3d 00 f0 ff ff 77 1f 48 8b 44 24 18 64 48 2b 04 25 28 00
-[   33.907321] RSP: 002b:00007ffe9b8833a0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-[   33.907926] RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007f46efe3294f
-[   33.908487] RDX: 00007ffe9b8834a0 RSI: 0000000040086610 RDI: 0000000000000004
-[   33.909046] RBP: 00005630a4a0b0e0 R08: 0000000000000000 R09: 00007ffe9b8832d7
-[   33.909605] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000004
-[   33.910165] R13: 00005630a4a0c580 R14: 00005630a4a10400 R15: 0000000000000000
-[   33.910740]  </TASK>
-[   33.910837] Modules linked in:
-[   33.911049] ---[ end trace 0000000000000000 ]---
-[   33.911428] RIP: 0010:ext4_resize_fs+0x1212/0x12d0
-[   33.911810] Code: b8 45 31 c0 4c 89 ff 45 31 c9 31 c9 ba 0e 08 00 00 48 c7 c6 68 75 65 b8 e8 2b 79 01 00 41 b8 ea ff ff ff 41 5f e9 8d f1 ff ff <0f> 0b 48 83 bd 70 ff ff ff 00 75 32 45 31 c0 e9 53 f1 ff ff 41 b8
-[   33.913928] RSP: 0018:ffffa97f413f3cc8 EFLAGS: 00010202
-[   33.914313] RAX: 0000000000000018 RBX: 0000000000000001 RCX: 00000000fffffff0
-[   33.914909] RDX: 0000000000000017 RSI: 0000000000000016 RDI: 00000000e8c2c810
-[   33.915482] RBP: ffffa97f413f3d90 R08: 0000000000000000 R09: 0000000000008000
-[   33.916258] R10: ffffa97f413f3cc8 R11: ffffa2c1845bfc80 R12: 0000000000000000
-[   33.917027] R13: ffffa2c1843d6000 R14: 0000000000008000 R15: ffffa2c199963000
-[   33.917884] FS:  00007f46efd17000(0000) GS:ffffa2c89fc40000(0000) knlGS:0000000000000000
-[   33.918818] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   33.919322] CR2: 00005630a4a1cc88 CR3: 000000010532c000 CR4: 0000000000350eb0
-[   44.072293] ------------[ cut here ]------------
 
-Cc: stable@vger.kernel.org # v6.8+
-Fixes: 665d3e0af4d3 ("ext4: reduce unnecessary memory allocation in alloc_flex_gd()")
-Cc: "Theodore Ts'o" <tytso@mit.edu>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Baokun Li <libaokun1@huawei.com>
-Cc: Stéphane Graber <stgraber@stgraber.org>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>
-Cc: <linux-fsdevel@vger.kernel.org>
-Cc: <linux-ext4@vger.kernel.org>
-Reported-by: Wesley Hershberger <wesley.hershberger@canonical.com>
-Closes: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2081231
-Reported-by: Stéphane Graber <stgraber@stgraber.org>
-Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
----
- fs/ext4/resize.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+--J8wSVO8x24H35hg9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/fs/ext4/resize.c b/fs/ext4/resize.c
-index e04eb08b9060..c057a7867363 100644
---- a/fs/ext4/resize.c
-+++ b/fs/ext4/resize.c
-@@ -300,8 +300,7 @@ static void free_flex_gd(struct ext4_new_flex_group_data *flex_gd)
-  * block group.
-  */
- static int ext4_alloc_group_tables(struct super_block *sb,
--				struct ext4_new_flex_group_data *flex_gd,
--				unsigned int flexbg_size)
-+				struct ext4_new_flex_group_data *flex_gd)
- {
- 	struct ext4_new_group_data *group_data = flex_gd->groups;
- 	ext4_fsblk_t start_blk;
-@@ -313,7 +312,7 @@ static int ext4_alloc_group_tables(struct super_block *sb,
- 	ext4_group_t group;
- 	ext4_group_t last_group;
- 	unsigned overhead;
--	__u16 uninit_mask = (flexbg_size > 1) ? ~EXT4_BG_BLOCK_UNINIT : ~0;
-+	__u16 uninit_mask = (flex_gd->resize_bg > 1) ? ~EXT4_BG_BLOCK_UNINIT : ~0;
- 	int i;
- 
- 	BUG_ON(flex_gd->count == 0 || group_data == NULL);
-@@ -321,8 +320,8 @@ static int ext4_alloc_group_tables(struct super_block *sb,
- 	src_group = group_data[0].group;
- 	last_group  = src_group + flex_gd->count - 1;
- 
--	BUG_ON((flexbg_size > 1) && ((src_group & ~(flexbg_size - 1)) !=
--	       (last_group & ~(flexbg_size - 1))));
-+	BUG_ON((flex_gd->resize_bg > 1) && ((src_group & ~(flex_gd->resize_bg - 1)) !=
-+	       (last_group & ~(flex_gd->resize_bg - 1))));
- next_group:
- 	group = group_data[0].group;
- 	if (src_group >= group_data[0].group + flex_gd->count)
-@@ -403,7 +402,7 @@ static int ext4_alloc_group_tables(struct super_block *sb,
- 
- 		printk(KERN_DEBUG "EXT4-fs: adding a flex group with "
- 		       "%u groups, flexbg size is %u:\n", flex_gd->count,
--		       flexbg_size);
-+		       flex_gd->resize_bg);
- 
- 		for (i = 0; i < flex_gd->count; i++) {
- 			ext4_debug(
-@@ -2158,7 +2157,7 @@ int ext4_resize_fs(struct super_block *sb, ext4_fsblk_t n_blocks_count)
- 					 ext4_blocks_count(es));
- 			last_update_time = jiffies;
- 		}
--		if (ext4_alloc_group_tables(sb, flex_gd, flexbg_size) != 0)
-+		if (ext4_alloc_group_tables(sb, flex_gd) != 0)
- 			break;
- 		err = ext4_flex_group_add(sb, resize_inode, flex_gd);
- 		if (unlikely(err))
--- 
-2.34.1
+On Wed, Sep 25, 2024 at 04:42:59PM +0800, Macpaul Lin wrote:
+>=20
+> On 9/25/24 00:00, Conor Dooley wrote:
+> > On Tue, Sep 24, 2024 at 01:42:01PM +0200, AngeloGioacchino Del Regno wr=
+ote:
+> > > Il 24/09/24 12:31, Macpaul Lin ha scritto:
+> > > > The display node in mt8195.dtsi was triggering a CHECK_DTBS error d=
+ue
+> > > > to an excessively long 'clocks' property:
+> > > >     display@14f06000: clocks: [[31, 14], [31, 43], [31, 44]] is too=
+ long
+> > > >=20
+> > > > To resolve this issue, add "maxItems: 3" to the 'clocks' property in
+> > > > the DT schema.
+> > > >=20
+> > > > Fixes: 4ed545e7d100 ("dt-bindings: display: mediatek: disp: split e=
+ach block to individual yaml")
+> > > > Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+> > > > ---
+> > > >    .../devicetree/bindings/display/mediatek/mediatek,split.yaml    =
+ | 1 +
+> > > >    1 file changed, 1 insertion(+)
+> > > >=20
+> > > > diff --git a/Documentation/devicetree/bindings/display/mediatek/med=
+iatek,split.yaml b/Documentation/devicetree/bindings/display/mediatek/media=
+tek,split.yaml
+> > > > index e4affc854f3d..42d2d483cc29 100644
+> > > > --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,s=
+plit.yaml
+> > > > +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,s=
+plit.yaml
+> > > > @@ -57,6 +57,7 @@ properties:
+> > > >      clocks:
+> > > >        items:
+> > > >          - description: SPLIT Clock
+> > >=20
+> > > That's at least confusing (granted that it works) - either add a desc=
+ription for
+> > > each clock and then set `minItems: 1` (preferred), or remove this "SP=
+LIT Clock"
+> > > description and allow a maximum of 3 clocks.
+> > >=20
+> > > Removing the description can be done - IMO - because "SPLIT Clock" is=
+, well,
+> > > saying that the SPLIT block gets a SPLIT clock ... stating the obviou=
+s, anyway.
+> >=20
+> > Right, but what are the other two new clocks? Are they as obvious?
+> > There's no clock-names here to give any more information as to what the
+> > other clocks are supposed to be.
+> >=20
+> > Kinda unrelated, but I think that "SPLIT Clock" probably isn't what the
+> > name of the clock in the IP block is anyway, sounds more like the name
+> > for it on the provider end..
+>=20
+> Thanks for the suggestions. I think Moudy could help on the new fixes
+> for both DT schem and mt8195.dtsi. This patch could be separated from
+> origin patch set.
 
+Not sure what you mean about separating it, if you mean correcting the
+description for the split clock sure. The other stuff I mentioned needs
+to be resolved before I'm willing to ack this.
+
+--J8wSVO8x24H35hg9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvQfggAKCRB4tDGHoIJi
+0kZaAQDow3QEAY+WQ0ufqkVPpT6Klr1sLJA3DGBOMb0OR2mFBAD+LZNm99NaPFvR
+YY8n+V0cs0h8KfWB99zY2q0PPvHvNwc=
+=5wf9
+-----END PGP SIGNATURE-----
+
+--J8wSVO8x24H35hg9--
 
