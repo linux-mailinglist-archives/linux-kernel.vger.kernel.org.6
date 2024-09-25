@@ -1,115 +1,210 @@
-Return-Path: <linux-kernel+bounces-337819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8194E984F55
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 02:07:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44E69984F57
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 02:09:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B24081C22B0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:07:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE4361F24642
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:08:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDFF1BC59;
-	Wed, 25 Sep 2024 00:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D60F1862;
+	Wed, 25 Sep 2024 00:08:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kzaHijSh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PipVKimp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 539EF18C1F
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 00:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D62367
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 00:08:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727222791; cv=none; b=Vl1n7yjSM/yXoePsMCDSXkcl2ofEu20Tq1YYFO9T3OhkWuGr+l8EyDUziKx0MG+kELy9D6HBBepyNFbS2Rs/dzuUezm/iOj7cT02riGDogf+YDc9WBgxyCzWkqSXtHLz8Bq1ZtWI6SvKDrR4b/oCE5xMheg6LWMzS57gOtCJrII=
+	t=1727222933; cv=none; b=m7XMySKgSlHgWfBR7qCwbqY/bkFfywFzDT+qGn04aafgTF1BPArrwwnGz6SwJItDd+o7IJT9+G8WDj+ltdLtDSQMnN+zrihiqfhyta19P39GjOpzT6fot1RQ3LgFMqeZI1rSt+DWtFLmpOz4NI+bOxtBOdTzuR3+5ppzbFIPlLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727222791; c=relaxed/simple;
-	bh=i2pzXtc4C144qi9MagxUe3zu+6AwIz6/m6cnhn2h1Zc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rq338xuit9yT9CRJ6O6W5xVy6TEgopito7Bgr2MF5PkLlD7VJM4OgXVW5lK3aFagp6H2+9lzjJjjAuSdczHke9P7E5wGmc9eqbxDuBwd+f5lYS+yCwH4wOv4vzwMRhyfAGGCuorI0cLWzxPdyDKGOLLeqY2Pa5V/iUuiVoIHCss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kzaHijSh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F239C4CED3;
-	Wed, 25 Sep 2024 00:06:31 +0000 (UTC)
+	s=arc-20240116; t=1727222933; c=relaxed/simple;
+	bh=YFC6S6N8hE+GkVgobmdUokssatSjr1KE+G4PuGTdy9s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=kufKdjnvjO99LazdJe+N9MHUTv3jCcAXH2sHq0xOcJYs+FUrYGrJtuMdU2lU1nZouq5n/SHf9II3WnsJI/iWvbeH+NwtYDZCk50fjLEwp/IxGy4pyG7CxQTosbgT60x6bpyWkLnTwQAqUbeZCJqPqmreOhZgN2XvFj5/0Qw1RZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PipVKimp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16E24C4CEC4;
+	Wed, 25 Sep 2024 00:08:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727222791;
-	bh=i2pzXtc4C144qi9MagxUe3zu+6AwIz6/m6cnhn2h1Zc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kzaHijSh+ji5da/9S8oXX2WXOmRfUMa2Jj9pjpH/a4UgHTcd6gEs3MEkmLTsKEh6n
-	 JqBK+YB3eK5/1IsmaglIaATNxycI/MKEJhfJ2WoPUMc88bGgv+ywA/LrWpPFXhB+hR
-	 k/lvn8zCETuPEtCNsXHyLZ0+ZszO6URbFYlQL+XRzqvQ6uF30mVo/RyPjhFrzZXASs
-	 AC5/UREGkv5WVxX2vg5k8tn8Upn6P+Ey4JQprC/b5+RZWQMoDWRG2OyD0qYqkFuIpJ
-	 zcHowrRBP0nbBtNC7dn18dPd2/7evhtiZbWP+dFaieRJLr97gQQQTd9crPMxadg2Hj
-	 5vQ/U5D/r/NCA==
+	s=k20201202; t=1727222933;
+	bh=YFC6S6N8hE+GkVgobmdUokssatSjr1KE+G4PuGTdy9s=;
+	h=Date:From:To:Cc:Subject:From;
+	b=PipVKimpdrmeWEuToYZWZ1nj7hIgWOIzJrjnqtlwqKHPihdZ8BXYgE+7v6LFZUva4
+	 hY7BW6+J5hTr2S+W2cNYhYEES5mKzyDvyNg23h76/7DGhtZ9HBx5uf+LDYGd9w7t9a
+	 uxJ+kG7HoC70sfm+iSVcZgcRgm5JGWRoHBtxgjT6sXgdNMizzDHCMkjKZ6hiIKZ2/t
+	 +W1KtBP4+R9oVC7YU/Y/dgcjgGYvuWIXNYTqGmWBllHMPM2M9LutvUCkjStre6m/bL
+	 Bcy1U4YqX7uETjxMd7tOcQL2LeTLXSMccNxEL8zJcmlF2k1p4hjWCXsGZ4z/3wM3A8
+	 +j2486LaPhFiw==
+Date: Tue, 24 Sep 2024 14:08:52 -1000
 From: Tejun Heo <tj@kernel.org>
-To: void@manifault.com
-Cc: kernel-team@meta.com,
-	linux-kernel@vger.kernel.org,
-	sched-ext@meta.com,
-	Tejun Heo <tj@kernel.org>
-Subject: [PATCH 5/5] sched_ext: Use shorter slice while bypassing
-Date: Tue, 24 Sep 2024 14:06:07 -1000
-Message-ID: <20240925000622.1972325-6-tj@kernel.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240925000622.1972325-1-tj@kernel.org>
-References: <20240925000622.1972325-1-tj@kernel.org>
+To: David Vernet <void@manifault.com>
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, sched-ext@meta.com
+Subject: [PATCH sched_ext/for-6.13] sched_ext: Factor out
+ move_task_between_dsqs() from scx_dispatch_from_dsq()
+Message-ID: <ZvNUlEVgJkJkGaT8@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-While bypassing, tasks are scheduled in FIFO order which favors tasks that
-hog CPUs. This can slow down e.g. unloading of the BPF scheduler. While
-bypassing, guaranteeing timely forward progress is the main goal. There's no
-point in giving long slices. Shorten the time slice used while bypassing
-from 20ms to 5ms.
+Pure reorganization. No functional changes.
 
 Signed-off-by: Tejun Heo <tj@kernel.org>
 ---
- kernel/sched/ext.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ kernel/sched/ext.c |  116 ++++++++++++++++++++++++++++++++++-------------------
+ 1 file changed, 75 insertions(+), 41 deletions(-)
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 949a3c43000a..d6f6bf6caecc 100644
 --- a/kernel/sched/ext.c
 +++ b/kernel/sched/ext.c
-@@ -9,6 +9,7 @@
- #define SCX_OP_IDX(op)		(offsetof(struct sched_ext_ops, op) / sizeof(void (*)(void)))
+@@ -2368,6 +2368,73 @@ static inline bool task_can_run_on_remot
+ static inline bool consume_remote_task(struct rq *this_rq, struct task_struct *p, struct scx_dispatch_q *dsq, struct rq *task_rq) { return false; }
+ #endif	/* CONFIG_SMP */
  
- enum scx_consts {
-+	SCX_SLICE_BYPASS		= SCX_SLICE_DFL / 4,
- 	SCX_DSP_DFL_MAX_BATCH		= 32,
- 	SCX_DSP_MAX_LOOPS		= 32,
- 	SCX_WATCHDOG_MAX_TIMEOUT	= 30 * HZ,
-@@ -1944,6 +1945,7 @@ static bool scx_rq_online(struct rq *rq)
- static void do_enqueue_task(struct rq *rq, struct task_struct *p, u64 enq_flags,
- 			    int sticky_cpu)
++/**
++ * move_task_between_dsqs() - Move a task from one DSQ to another
++ * @p: target task
++ * @enq_flags: %SCX_ENQ_*
++ * @src_dsq: DSQ @p is currently on, must not be a local DSQ
++ * @dst_dsq: DSQ @p is being moved to, can be any DSQ
++ *
++ * Must be called with @p's task_rq and @src_dsq locked. If @dst_dsq is a local
++ * DSQ and @p is on a different CPU, @p will be migrated and thus its task_rq
++ * will change. As @p's task_rq is locked, this function doesn't need to use the
++ * holding_cpu mechanism.
++ *
++ * On return, @src_dsq is unlocked and only @p's new task_rq, which is the
++ * return value, is locked.
++ */
++static struct rq *move_task_between_dsqs(struct task_struct *p, u64 enq_flags,
++					 struct scx_dispatch_q *src_dsq,
++					 struct scx_dispatch_q *dst_dsq)
++{
++	struct rq *src_rq = task_rq(p), *dst_rq;
++
++	BUG_ON(src_dsq->id == SCX_DSQ_LOCAL);
++	lockdep_assert_held(&src_dsq->lock);
++	lockdep_assert_rq_held(src_rq);
++
++	if (dst_dsq->id == SCX_DSQ_LOCAL) {
++		dst_rq = container_of(dst_dsq, struct rq, scx.local_dsq);
++		if (!task_can_run_on_remote_rq(p, dst_rq, true)) {
++			dst_dsq = find_global_dsq(p);
++			dst_rq = src_rq;
++		}
++	} else {
++		/* no need to migrate if destination is a non-local DSQ */
++		dst_rq = src_rq;
++	}
++
++	/*
++	 * Move @p into $dst_dsq. If $dst_dsq is the local DSQ of a different
++	 * CPU, @p will be migrated.
++	 */
++	if (dst_dsq->id == SCX_DSQ_LOCAL) {
++		/* @p is going from a non-local DSQ to a local DSQ */
++		if (src_rq == dst_rq) {
++			task_unlink_from_dsq(p, src_dsq);
++			move_local_task_to_local_dsq(p, enq_flags,
++						     src_dsq, dst_rq);
++			raw_spin_unlock(&src_dsq->lock);
++		} else {
++			raw_spin_unlock(&src_dsq->lock);
++			move_remote_task_to_local_dsq(p, enq_flags,
++						      src_rq, dst_rq);
++		}
++	} else {
++		/*
++		 * @p is going from a non-local DSQ to a non-local DSQ. As
++		 * $src_dsq is already locked, do an abbreviated dequeue.
++		 */
++		task_unlink_from_dsq(p, src_dsq);
++		p->scx.dsq = NULL;
++		raw_spin_unlock(&src_dsq->lock);
++
++		dispatch_enqueue(dst_dsq, p, enq_flags);
++	}
++
++	return dst_rq;
++}
++
+ static bool consume_dispatch_q(struct rq *rq, struct scx_dispatch_q *dsq)
  {
-+	bool bypassing = scx_rq_bypassing(rq);
- 	struct task_struct **ddsp_taskp;
- 	unsigned long qseq;
+ 	struct task_struct *p;
+@@ -6041,7 +6108,7 @@ static bool scx_dispatch_from_dsq(struct
+ 				  u64 enq_flags)
+ {
+ 	struct scx_dispatch_q *src_dsq = kit->dsq, *dst_dsq;
+-	struct rq *this_rq, *src_rq, *dst_rq, *locked_rq;
++	struct rq *this_rq, *src_rq, *locked_rq;
+ 	bool dispatched = false;
+ 	bool in_balance;
+ 	unsigned long flags;
+@@ -6087,51 +6154,18 @@ static bool scx_dispatch_from_dsq(struct
+ 	/* @p is still on $src_dsq and stable, determine the destination */
+ 	dst_dsq = find_dsq_for_dispatch(this_rq, dsq_id, p);
  
-@@ -1961,7 +1963,7 @@ static void do_enqueue_task(struct rq *rq, struct task_struct *p, u64 enq_flags,
- 	if (!scx_rq_online(rq))
- 		goto local;
+-	if (dst_dsq->id == SCX_DSQ_LOCAL) {
+-		dst_rq = container_of(dst_dsq, struct rq, scx.local_dsq);
+-		if (!task_can_run_on_remote_rq(p, dst_rq, true)) {
+-			dst_dsq = find_global_dsq(p);
+-			dst_rq = src_rq;
+-		}
+-	} else {
+-		/* no need to migrate if destination is a non-local DSQ */
+-		dst_rq = src_rq;
+-	}
+-
+ 	/*
+-	 * Move @p into $dst_dsq. If $dst_dsq is the local DSQ of a different
+-	 * CPU, @p will be migrated.
++	 * Apply vtime and slice updates before moving so that the new time is
++	 * visible before inserting into $dst_dsq. @p is still on $src_dsq but
++	 * this is safe as we're locking it.
+ 	 */
+-	if (dst_dsq->id == SCX_DSQ_LOCAL) {
+-		/* @p is going from a non-local DSQ to a local DSQ */
+-		if (src_rq == dst_rq) {
+-			task_unlink_from_dsq(p, src_dsq);
+-			move_local_task_to_local_dsq(p, enq_flags,
+-						     src_dsq, dst_rq);
+-			raw_spin_unlock(&src_dsq->lock);
+-		} else {
+-			raw_spin_unlock(&src_dsq->lock);
+-			move_remote_task_to_local_dsq(p, enq_flags,
+-						      src_rq, dst_rq);
+-			locked_rq = dst_rq;
+-		}
+-	} else {
+-		/*
+-		 * @p is going from a non-local DSQ to a non-local DSQ. As
+-		 * $src_dsq is already locked, do an abbreviated dequeue.
+-		 */
+-		task_unlink_from_dsq(p, src_dsq);
+-		p->scx.dsq = NULL;
+-		raw_spin_unlock(&src_dsq->lock);
+-
+-		if (kit->cursor.flags & __SCX_DSQ_ITER_HAS_VTIME)
+-			p->scx.dsq_vtime = kit->vtime;
+-		dispatch_enqueue(dst_dsq, p, enq_flags);
+-	}
+-
++	if (kit->cursor.flags & __SCX_DSQ_ITER_HAS_VTIME)
++		p->scx.dsq_vtime = kit->vtime;
+ 	if (kit->cursor.flags & __SCX_DSQ_ITER_HAS_SLICE)
+ 		p->scx.slice = kit->slice;
  
--	if (scx_rq_bypassing(rq))
-+	if (bypassing)
- 		goto global;
- 
- 	if (p->scx.ddsp_dsq_id != SCX_DSQ_INVALID)
-@@ -2016,7 +2018,7 @@ static void do_enqueue_task(struct rq *rq, struct task_struct *p, u64 enq_flags,
- 
- global:
- 	touch_core_sched(rq, p);	/* see the comment in local: */
--	p->scx.slice = SCX_SLICE_DFL;
-+	p->scx.slice = bypassing ? SCX_SLICE_BYPASS : SCX_SLICE_DFL;
- 	dispatch_enqueue(find_global_dsq(p), p, enq_flags);
- }
- 
--- 
-2.46.0
-
++	/* execute move */
++	locked_rq = move_task_between_dsqs(p, enq_flags, src_dsq, dst_dsq);
+ 	dispatched = true;
+ out:
+ 	if (in_balance) {
 
