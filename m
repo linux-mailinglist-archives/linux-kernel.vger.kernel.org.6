@@ -1,139 +1,156 @@
-Return-Path: <linux-kernel+bounces-339414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94B4E9864CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:28:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E06219864D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:29:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EA1D1F254F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:28:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 939EAB25C40
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A1DD5381B;
-	Wed, 25 Sep 2024 16:26:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3CFC80C04;
+	Wed, 25 Sep 2024 16:26:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HLKkrw16"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="P1baD7/l"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2C71BC2A;
-	Wed, 25 Sep 2024 16:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715B38288F;
+	Wed, 25 Sep 2024 16:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727281565; cv=none; b=OV1lLAQkbKVH0h+t9uQChxVReJhLsmUUhl1re3UvsPFtWDr8QFb9AHHvPg5teFv0rPXfe6Z43aMK5GWAJBHW9Ki0ifWeU5FlswluduS7PU9nL+DM/GBshPyBlHm9WZfKjeQC2ZNzsj7Ag6C5TvuvQkhNgkboakBVqqzPmIAfSzU=
+	t=1727281585; cv=none; b=qNDqYDwNVqAPeV6w3LM8SeNO1dCzwFkg7Xqy6PIKot2gz+Kuzk+HdPbcTV1ysgwUFmyHvtw139U9WkOrHC1jPzu+sZ989r2ly0tyo1vExezzEzNWaoisrsdxYiByui34xRFQYE+QECwJ1oFl8ZkEEkndgdSqOzlpsHYBjHaxCHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727281565; c=relaxed/simple;
-	bh=cI6lyNFuQzUTS7t+rqJMQnOPi9+rdmD9ZefQND902cI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZSFryfJfkGKMbL82wSaqzWKDZ1kHdP5iMw+x6BTGUAzA01AA+2+V7JNebWLbTj0Nf9eYnfYZG1GYRApz9MEixhOB5Yek5/MxMwEU/FemcsVV6Lw6wDxbRpdqmiH+XDdTTmlvj8tQBg292IHzpUJw9SpF8E10KaOc1fGC2W3/Y78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HLKkrw16; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cbface8d6so88592305e9.3;
-        Wed, 25 Sep 2024 09:26:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727281562; x=1727886362; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=H/UtXLfeBskg7av7Jxvz+w2dEjZcwNE7yygFxh5xpPU=;
-        b=HLKkrw16Omsmq2k0YWGGgCXCYO4RcVm5KeMv4em2sxcbMITwW/WVX50Bx63l5PrOCr
-         QSzjCgkOkuu0cia4IW34OV17EsAfvmoMdyKh8BxICOdKuhSQQL8ORrWLD7J+V0y0LiFy
-         SxD5VqFB2G5VZm6HhVHvDP+7GRv/vQnOOYWY32AHOi87ui+0oZfhldHU3tKx77vCOKl2
-         N4B0VSzlr5NjuCDt4Q9t0jZh02bpWEI3fOrhUAW7ctLep+O6S3tlsVp0dIFNf4Ge+Y22
-         QinJEDu94h0TBngqgvD77PSLsslcoRdr/59IpTWg3UbHnDv7ZOQF/RqHHO9bBjqSbJ/X
-         MoQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727281562; x=1727886362;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H/UtXLfeBskg7av7Jxvz+w2dEjZcwNE7yygFxh5xpPU=;
-        b=vZyn9yzjGlLyvpd+x5+HDLKp7K4f4X+bFvMaWCk8jMI0P9vga2wge2K3rVvU1qoDob
-         Sw54QIT0c/55X/ZAj8HxjA2xVFvilz5Y0et8y07TNCO9Qza5DCMnPq7saMRNmDGubYu6
-         SOhVdTOSxfXkJGaTxiIkG5MTKNuSmL/XpDZhHjCN7Nh0sk959E+ztj3uu9DvcNBZARLN
-         xyYq2VELD2PWkRrmQgy7kE47kZ7ocNOo9LF3kfUUXo1CTM/Pj8eANYY8JUN8V+2mPOoA
-         04MLZwfqTblXbn9NMVGVNwjUihgcV1gdHGBW8VvRWxOIwMWciGUZsAg7VV+XCJSPp9pC
-         r4GQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNkwdc+rDQuQLqLZri9KqnSGKX/xfNUJYBVeRdkwD7NNF3ZMdHTa+DxRZxaPD1esJgYdnaR2GMWlmFHHc=@vger.kernel.org, AJvYcCW8TekLkdkONg9V+xprgNxRzufQ54q+Q4bKj6a1zPMBvEA7xEgtVDZMF6wI03jQQqeY+ETfeoUV@vger.kernel.org, AJvYcCX8CrxdBhkZpRjTZE7nYoBiMHDinQ2H9JIOk6kISEPGI2gV33vC1hbd9z2wf1Mzbh8tcAgMAMWCQZ79yw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6JuHOdrlLI3VE/0MFHb/KB3prrdl4x+TXJ3VJ9Wn4eLoy8ns+
-	pUxbnwpQcAfZZfVK57TM+2laIZGDCUSkLizRim622pEQL/JjCLkK
-X-Google-Smtp-Source: AGHT+IFnUcAaIeFzw5E9a6d4pDhxJA51W3OA4HKs+9mXTYSBF++MSHEBdMd2l1J6YgLA5fH5oKDXlw==
-X-Received: by 2002:a05:600c:1e03:b0:42c:c8be:4215 with SMTP id 5b1f17b1804b1-42e9610252bmr27899125e9.4.1727281562296;
-        Wed, 25 Sep 2024 09:26:02 -0700 (PDT)
-Received: from ?IPV6:2a02:8389:41cf:e200:ec17:8f60:3966:3e7b? (2a02-8389-41cf-e200-ec17-8f60-3966-3e7b.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:ec17:8f60:3966:3e7b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e969ffa3dsm23280735e9.23.2024.09.25.09.25.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Sep 2024 09:26:01 -0700 (PDT)
-Message-ID: <70864b3b-ad84-49b2-859c-8c7e6814c3f1@gmail.com>
-Date: Wed, 25 Sep 2024 18:25:58 +0200
+	s=arc-20240116; t=1727281585; c=relaxed/simple;
+	bh=fUBReA9Oa2MdEPzZp8Px3H5TN5AN1XPNmd8MSRduDvE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CAt7EUzNoM3LoFpPUYLVZAULHOSBpfkXq2ydl7THCl7/UFqIyjvunEd90+NRqnjhMLBdHe8swZBoM+ZfaAAxcyH4hSzcmPRzSj/hdG1zHut53nNr0/tb242em113KgBWePYIrGcjgVXn+ucJ6XNKGuJEmSBwzAgrjoCulMU4CvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=P1baD7/l; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 885F97E2;
+	Wed, 25 Sep 2024 18:24:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1727281493;
+	bh=fUBReA9Oa2MdEPzZp8Px3H5TN5AN1XPNmd8MSRduDvE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P1baD7/liO60LXfuKDyQyIDPCCPS+D+bl1KqqThdv2wq9b7/pLQERE9qqXGJTKGUr
+	 6snz/zKzdhbPlPYAvj2400QvDm5p9XPgGD0Cv9jj27SVP6+C9vFEDA8DAaJvRciEJV
+	 AdvKd5I/s4Y/glmWbw+OyrQJvGV+9/fY/TzrVqu0=
+Date: Wed, 25 Sep 2024 19:26:19 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v2 11/11] media: i2c: ov5645: Report streams using frame
+ descriptors
+Message-ID: <20240925162619.GB27666@pendragon.ideasonboard.com>
+References: <20240910170610.226189-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240910170610.226189-12-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] selftests: exec: update gitignore for load_address
-To: Shuah Khan <skhan@linuxfoundation.org>, Shuah Khan <shuah@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Allison Henderson <allison.henderson@oracle.com>,
- Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
- rds-devel@oss.oracle.com, linux-mm@kvack.org
-References: <20240924-selftests-gitignore-v1-0-9755ac883388@gmail.com>
- <20240924-selftests-gitignore-v1-4-9755ac883388@gmail.com>
- <e537539f-85a5-42eb-be8a-8a865db53ca2@linuxfoundation.org>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <e537539f-85a5-42eb-be8a-8a865db53ca2@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240910170610.226189-12-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On 25/09/2024 17:46, Shuah Khan wrote:
-> On 9/24/24 06:49, Javier Carrasco wrote:
->> The name of the "load_address" objects has been modified, but the
->> corresponding entry in the gitignore file must be updated.
->>
->> Update the load_address entry in the gitignore file to account for
->> the new names.
->>
->> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
->> ---
->>   tools/testing/selftests/exec/.gitignore | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/tools/testing/selftests/exec/.gitignore b/tools/testing/
->> selftests/exec/.gitignore
->> index 90c238ba6a4b..4d9fb7b20ea7 100644
->> --- a/tools/testing/selftests/exec/.gitignore
->> +++ b/tools/testing/selftests/exec/.gitignore
->> @@ -9,7 +9,7 @@ execveat.ephemeral
->>   execveat.denatured
->>   non-regular
->>   null-argv
->> -/load_address_*
->> +/load_address.*
+Hi Prabhakar,
+
+Thank you for the patch.
+
+On Tue, Sep 10, 2024 at 06:06:10PM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > 
-> Hmm. This will include the load_address.c which shouldn't
-> be included in the .gitignore?
+> Implement the .get_frame_desc() subdev operation to report information
+> about streams to the connected CSI-2 receiver. This is required to let
+> the CSI-2 receiver driver know about virtual channels and data types for
+> each stream.
 > 
->>   /recursion-depth
->>   xxxxxxxx*
->>   pipe
->>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>  drivers/media/i2c/ov5645.c | 28 ++++++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
 > 
-> thanks,
-> -- Shuah
+> diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
+> index 7f1133292ffc..c24eb6e7a7b5 100644
+> --- a/drivers/media/i2c/ov5645.c
+> +++ b/drivers/media/i2c/ov5645.c
+> @@ -28,6 +28,7 @@
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/slab.h>
+>  #include <linux/types.h>
+> +#include <media/mipi-csi2.h>
+>  #include <media/v4l2-ctrls.h>
+>  #include <media/v4l2-event.h>
+>  #include <media/v4l2-fwnode.h>
+> @@ -829,6 +830,32 @@ static const struct v4l2_ctrl_ops ov5645_ctrl_ops = {
+>  	.s_ctrl = ov5645_s_ctrl,
+>  };
+>  
+> +static int ov5645_get_frame_desc(struct v4l2_subdev *sd, unsigned int pad,
+> +				 struct v4l2_mbus_frame_desc *fd)
+> +{
+> +	const struct v4l2_mbus_framefmt *fmt;
+> +	struct v4l2_subdev_state *state;
+> +
+> +	if (pad != OV5645_PAD_SOURCE)
+> +		return -EINVAL;
+> +
+> +	state = v4l2_subdev_lock_and_get_active_state(sd);
+> +	fmt = v4l2_subdev_state_get_format(state, OV5645_PAD_SOURCE, 0);
+> +	v4l2_subdev_unlock_state(state);
 
+Once you unlock the state fmt could change, so you should instead do
 
-Hi, the kernel test robot already notified me about that issue, and I
-sent a v2 to fix it shortly after. Please take a look at the newer
-version where I added the exception for load_address.c.
+	state = v4l2_subdev_lock_and_get_active_state(sd);
+	code = v4l2_subdev_state_get_format(state, OV5645_PAD_SOURCE, 0)->code;
+	v4l2_subdev_unlock_state(state);
 
-Thanks and best regards,
-Javier Carrasco
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+> +
+> +	fd->type = V4L2_MBUS_FRAME_DESC_TYPE_CSI2;
+> +	fd->num_entries = 1;
+> +
+> +	memset(fd->entry, 0, sizeof(fd->entry));
+> +
+> +	fd->entry[0].pixelcode = fmt->code;
+> +	fd->entry[0].stream = 0;
+> +	fd->entry[0].bus.csi2.vc = 0;
+> +	fd->entry[0].bus.csi2.dt = MIPI_CSI2_DT_YUV422_8B;
+> +
+> +	return 0;
+> +}
+> +
+>  static int ov5645_enum_mbus_code(struct v4l2_subdev *sd,
+>  				 struct v4l2_subdev_state *sd_state,
+>  				 struct v4l2_subdev_mbus_code_enum *code)
+> @@ -1062,6 +1089,7 @@ static const struct v4l2_subdev_video_ops ov5645_video_ops = {
+>  };
+>  
+>  static const struct v4l2_subdev_pad_ops ov5645_subdev_pad_ops = {
+> +	.get_frame_desc = ov5645_get_frame_desc,
+>  	.enum_mbus_code = ov5645_enum_mbus_code,
+>  	.enum_frame_size = ov5645_enum_frame_size,
+>  	.get_fmt = v4l2_subdev_get_fmt,
+
+-- 
+Regards,
+
+Laurent Pinchart
 
