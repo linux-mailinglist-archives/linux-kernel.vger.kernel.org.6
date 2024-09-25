@@ -1,137 +1,195 @@
-Return-Path: <linux-kernel+bounces-337903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33C589850DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 04:08:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B1E49850DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 04:09:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3E16B230D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 02:08:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32BBF1C22C3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 02:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C517914831F;
-	Wed, 25 Sep 2024 02:08:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3083D148307;
+	Wed, 25 Sep 2024 02:09:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HH3JzMW2"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bytncnkh"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B252907;
-	Wed, 25 Sep 2024 02:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C99136672;
+	Wed, 25 Sep 2024 02:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727230089; cv=none; b=ZRxP/GlluWhYaTog916/NKtz70lQJKyCIghQdS4AepCoDcq1Kx84MFhgv9uzffK+v9YNqfBzxFSu65PulRhPpAInTNuj4gNINsyGpJy8Js6wa8xoF0yV6M/Gd3GR02ZjMSbVGlr+JefxcEF64KeU76xI6yD1+JD9nVX0KGqV9Oo=
+	t=1727230169; cv=none; b=JgFBr7CkQrK413XBtn9boOJVsxtfjB3Zk467WKPWo8SbCWj0expSIvpy0MaD9t0JAtZoBx87vS3jf4P08mnvpx2nyeujtEXMRi3prmoiGvw+c7NGT8p7gSG4ZFCRXN1DV5AioSjTZf2iPnxar9aeqz7cD3ioRzV811SC0tB7meA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727230089; c=relaxed/simple;
-	bh=YQdyEEZJ5a6/ep7DkjM00giP8OFpMEW3FmhXIjpNbqQ=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=kR5eglDXbm0W4Hhe0qugJaNCcv5aoyPr9TSBN4PYEP/2b5BxyX33VzGkcxL8cQ0FX67fR9TW2Lwyxa/t+NUtR/FatPMFAEJa9Q7QutNZDREGiSuqdcMDVhuAEtCwWzqOTX7amM7hoCeGNg+4jgJas1V/RIKDuiDOgqSlf/bLSRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HH3JzMW2; arc=none smtp.client-ip=209.85.214.175
+	s=arc-20240116; t=1727230169; c=relaxed/simple;
+	bh=dALrHiqc+AULWuHCigbUNG/T0LDQA1gxAoWOKjKKFpk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sbjME6017OthbFKGSpaRWdABimqe+c9GCKvzSJiklFQS/A9PAUa3ifVlIlDRf8hHL/DXKv0OHLqG10X5c0w9YkXE91mbqKUPNPm1i4HdQco70bCt4V2Wd8ZKbNIE4qy1G8xt5ACfzBCAuGsbJVtzaA1FfqgkCosDDNi8AcX4Bi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bytncnkh; arc=none smtp.client-ip=209.85.216.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-205909afad3so70398965ad.2;
-        Tue, 24 Sep 2024 19:08:07 -0700 (PDT)
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2d8a9a15a7fso1176057a91.0;
+        Tue, 24 Sep 2024 19:09:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727230087; x=1727834887; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YQdyEEZJ5a6/ep7DkjM00giP8OFpMEW3FmhXIjpNbqQ=;
-        b=HH3JzMW2uX1oGuLTpo0yUoMGMhFhclpnd2rUgenPi+MZ8ReEjSxptgph0NiicnRRHq
-         BbO2Htt01i/x+jskG8FzFTkwcQagh4/sm3WwmexMWTrMQ+M006c1KBjJzVomWmIWpTcw
-         +J1hmQIZsPa+MsTlo+7KI8LQVTl2iqOBDSKaXcgF7R7yVRJXbgfZJt19vPGesKtejRyA
-         vst5N7AjlS9SNRbrrU7YOBU74aTHTbx1Y8G4JXZII9iv9h5T+4bwWRFuiJfNQRbgHlzy
-         e3Ko9tkkd4gmnWgMLIfDYEdKFNEqnDIWICuohCWSbaVjaYvxB3dgr4mK2+rmUhJhBu4N
-         uLyQ==
+        d=gmail.com; s=20230601; t=1727230167; x=1727834967; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lhT4emZQMu0iLsfja78mVDr5B3L8j965fQjbvHU4u9w=;
+        b=bytncnkhhzX90WPXW3QnqW2R4zbU2jmCCWm3oapUDF1othhy9pdEtUvdSh9VefvawA
+         dDT6jnTcGVZIREZaj20y8rLWNt8NtEFbdlqKj2+AE9jBK/zG3t+WLCMHsQqwuw1O5S//
+         qR64AyPr1g4R2yJYz3Rmndwp4GJoPuDv7XG76wdERR1pthjeketNhrGUaBUnvzMexGjW
+         lnX2D+nVbe3RmMGq1ebLlpYt20BTksmYfwv86jKhqZX8ARWxkxpzdsgb99ZK1h6JuXGx
+         vw9BSUG7NWWJ7wcU4O4Ph4Q/qCb2oaEomf4T+/ZMnpsG3lCmum/9NTuwfzHBqAoQvCFt
+         m3Dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727230087; x=1727834887;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YQdyEEZJ5a6/ep7DkjM00giP8OFpMEW3FmhXIjpNbqQ=;
-        b=feaiZYYFbnV9sBn7hIZhwLwsztmmCUT/ogcQ8QsdY38G+MV2dgdjmb0DA+a5NAg35E
-         yShvkc2NhZy7uFI1O/sSuN8h/5r9Gs/1lSXj5OKh6wjBbpdS6EBg89sSW7gGMSMqTK5t
-         qQswQ6a8kQsa6VMtCUgTDvLYpvxqb3+Q3EkHYr65JlP94lwgbqPyPzPHRI+xEEO6wi+3
-         diU3Vp2I8mbCP0CLSAYjYAhEThTK+Mv3n6eH/JjEE4eikbq5JqzdvEtqSBGDC/iECqB9
-         YHEfP7aGp+yW+2ZUpME20Vbw9UbYb+oTCdCv+ZaQN8PnnVNMQLiGqekbxXB2RkOPAN31
-         y6tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVgGkILq7QPzyUMJZNrsQPCmTeBYHDSD01HBCnNaYm92jgR2M4ifKv6lGc0ZDi/drqf2tL/oQ/PMuEmYxQ=@vger.kernel.org, AJvYcCW7nIhhP8VRsJp6dqxAijKaeSzKrVMP7aHn8jLJEkFbW6yRIKXgTx94ybI++uY7DYydIjp7DDB3DCAlbJ78MA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxvs8N1jfX7nzLxP8suMCCfq+R27QQJZkd4HGoThQw/R3i/ZWUu
-	tXGY7f9n/eqnl4k6W2YkZn91BFBf0I7/cfX7y22GxpEvv5/cGILB
-X-Google-Smtp-Source: AGHT+IGewTRV5H15P5hfG14X46jcfTk14wLdVb4BYVwml0icSQRScEsD55EY8vGvckQSsvtcX2osCw==
-X-Received: by 2002:a17:902:d510:b0:206:bdb7:7637 with SMTP id d9443c01a7336-20afc4c79f7mr16973245ad.48.1727230086993;
-        Tue, 24 Sep 2024 19:08:06 -0700 (PDT)
-Received: from smtpclient.apple ([198.11.178.15])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af17e1ac3sm15644515ad.150.2024.09.24.19.08.03
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 24 Sep 2024 19:08:06 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+        d=1e100.net; s=20230601; t=1727230167; x=1727834967;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lhT4emZQMu0iLsfja78mVDr5B3L8j965fQjbvHU4u9w=;
+        b=eg9FsP/cafsbn+f9y2oh5oqG8urQJuebDnQH1sdwR/cdMey5kM9siN41C85wm4Jgy6
+         xIh0bItX5te2ORkqyzYz31yohY/cw8pFxyy0gLu400VFV916jp10Y+UA03P5XVAxhUin
+         agoPbupdZPATIGp6ZOaeIfSZ0DfCdqFggSjXdmfgidnDaCvTbY2bv/MOPXAXCEJx9kiP
+         dkZ+0Y5cupuu/sMtoRdDwekiFtQTogPwPOs4hkFlqpumZ82piF/iO2kztNg/I8PVQ96W
+         YZGb1lT2j4ZTe7wcjBFcjXM+AonPjsq6T09wne5TP1ZxzAzKDfSDxXqkakVVbzkBiLbE
+         /Kdg==
+X-Forwarded-Encrypted: i=1; AJvYcCWmlHoJ+VJA61Ga8vX1sCEE+YXAT3eq9NVYyI/lot254+cx30jZanbDzdiUIyZiaSHWE1Coj1PI0eZko8r3@vger.kernel.org, AJvYcCX+EWAv4eLWrmiLdtFo/bJ/c6oT8JoPoBKZyk0ncTZMc+PW/LR1Ni9cSE44o/Nw2ekIScIajbEwfk6V@vger.kernel.org
+X-Gm-Message-State: AOJu0YyarYQfwjRIaQxF7vyMSZ0zhohiVKA+/mw3mLC5jJDVzruVjMGa
+	tPjNNmNUNCGBzlThe990K+7bBIj1Sy/+/NXqCSBkBFeqaO6L7HGz
+X-Google-Smtp-Source: AGHT+IEgOjNFa2IPtnydRtu4ja6d33MWXnvg3q5KwwfLA4hgKFc9OYCnHhghim3qoE66AaUQyL+GJA==
+X-Received: by 2002:a17:90b:3a86:b0:2db:60b:9be5 with SMTP id 98e67ed59e1d1-2e06affdd19mr597228a91.8.1727230167336;
+        Tue, 24 Sep 2024 19:09:27 -0700 (PDT)
+Received: from [192.168.60.56] ([103.29.142.67])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e06e1e6660sm287402a91.24.2024.09.24.19.09.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Sep 2024 19:09:27 -0700 (PDT)
+Message-ID: <87146372-6d05-4994-8f64-47f4cb07e2b4@gmail.com>
+Date: Wed, 25 Sep 2024 10:09:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
-Subject: Re: [PATCH 1/2] livepatch: introduce 'order' sysfs interface to
- klp_patch
-From: zhang warden <zhangwarden@gmail.com>
-In-Reply-To: <ZvKiPvID1K0dAHnq@pathway.suse.cz>
-Date: Wed, 25 Sep 2024 10:07:50 +0800
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
- Miroslav Benes <mbenes@suse.cz>,
- Jiri Kosina <jikos@kernel.org>,
- Joe Lawrence <joe.lawrence@redhat.com>,
- live-patching@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <F420EDF1-976E-4B76-A1D7-83CCA8F3023C@gmail.com>
-References: <20240920090404.52153-1-zhangwarden@gmail.com>
- <20240920090404.52153-2-zhangwarden@gmail.com>
- <ZvKiPvID1K0dAHnq@pathway.suse.cz>
-To: Petr Mladek <pmladek@suse.com>
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: phy: rockchip,inno-usb2phy: add
+ rk3576
+Content-Language: en-US
+To: Conor Dooley <conor@kernel.org>, krzk@kernel.org
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, heiko@sntech.de, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ william.wu@rock-chips.com, tim.chen@rock-chips.com,
+ Frank Wang <frank.wang@rock-chips.com>
+References: <20240924085510.20863-1-frawang.cn@gmail.com>
+ <20240924-overtly-curable-13df2e7fdc9b@spud>
+From: Frank Wang <frawang.cn@gmail.com>
+In-Reply-To: <20240924-overtly-curable-13df2e7fdc9b@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+
+Hi Conor,
+
+On 2024/9/25 0:11, Conor Dooley wrote:
+> On Tue, Sep 24, 2024 at 04:55:09PM +0800, Frank Wang wrote:
+>> From: Frank Wang <frank.wang@rock-chips.com>
+>>
+>> Add compatible for the USB2 phy in the Rockchip RK3576 SoC.
+>>
+>> Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
+>> ---
+>> Changelog:
+>> v2:
+>>   - Categorize clock names by oneOf keyword.
+>>
+>> v1:
+>>   - https://patchwork.kernel.org/project/linux-phy/patch/20240923025326.10467-1-frank.wang@rock-chips.com/
+>>
+>>   .../bindings/phy/rockchip,inno-usb2phy.yaml      | 16 ++++++++++++++--
+>>   1 file changed, 14 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml b/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
+>> index 5254413137c64..8af4e0f8637fc 100644
+>> --- a/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
+>> +++ b/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
+>> @@ -20,6 +20,7 @@ properties:
+>>         - rockchip,rk3366-usb2phy
+>>         - rockchip,rk3399-usb2phy
+>>         - rockchip,rk3568-usb2phy
+>> +      - rockchip,rk3576-usb2phy
+>>         - rockchip,rk3588-usb2phy
+>>         - rockchip,rv1108-usb2phy
+>>   
+>> @@ -34,10 +35,20 @@ properties:
+>>       const: 0
+>>   
+>>     clocks:
+>> -    maxItems: 1
+>> +    minItems: 1
+>> +    maxItems: 3
+>>   
+>>     clock-names:
+>> -    const: phyclk
+>> +    minItems: 1
+>> +    maxItems: 3
+> clock-names isn't a required property, you can't allow jumbling the order
+> like this does without breaking the ABI. Why can't the new device have
+> phyclk in position 1?
+
+I sent a draft changes in patch v1 comments which put the "phyclk" in 
+position 1, Krzysztof said I have messed the order, so I reorder them in v2.
+Did I misunderstand? anyway, should the changes like the below?
+
+@@ -34,10 +35,20 @@ properties:
+       const: 0
+
+     clocks:
+-    maxItems: 1
++    minItems: 1
++    maxItems: 3
+
+     clock-names:
+-    const: phyclk
++    minItems: 1
++    maxItems: 3
++    items:
++      oneOf:
++        - description: PHY input reference clocks.
++          const: phyclk
++        - description: aclk for USB MMU.
++          const: aclk
++        - description: aclk_slv for USB MMU.
++          const: aclk_slv
 
 
-Hi! Petr!
-> On Sep 24, 2024, at 19:27, Petr Mladek <pmladek@suse.com> wrote:
->=20
-> This does not work well. It uses the order on the stack when
-> the livepatch is being loaded. It is not updated when any livepatch =
-gets
-> removed. It might create wrong values.
->=20
-> I have even tried to reproduce this:
->=20
-> # modprobe livepatch-sample
-> # modprobe livepatch-shadow-fix1
-> # cat /sys/kernel/livepatch/livepatch_sample/order
-> 1
-> # cat /sys/kernel/livepatch/livepatch_shadow_fix1/order
-> 2
->=20
-> # echo 0 >/sys/kernel/livepatch/livepatch_sample/enabled
-> # rmmod livepatch_sample
-> # cat /sys/kernel/livepatch/livepatch_shadow_fix1/order
-> 2
->=20
-> # modprobe livepatch-sample
-> # cat /sys/kernel/livepatch/livepatch_shadow_fix1/order
-> 2
-> # cat /sys/kernel/livepatch/livepatch_sample/order
-> 2
->=20
-> BANG: The livepatches have the same order.
->=20
+BR.
+Frank
 
-My bad...lol...
-I tested this patch under my env but ignore such important scenario. =
-Thank you very much! Petr!!
+>> +    items:
+>> +      oneOf:
+>> +        - description: aclk for USB MMU.
+>> +          const: aclk
+>> +        - description: aclk_slv for USB MMU.
+>> +          const: aclk_slv
+>> +        - description: PHY input reference clocks.
+>> +          const: phyclk
+>>   
+>>     assigned-clocks:
+>>       description:
+>> @@ -143,6 +154,7 @@ allOf:
+>>             contains:
+>>               enum:
+>>                 - rockchip,rk3568-usb2phy
+>> +              - rockchip,rk3576-usb2phy
+>>                 - rockchip,rk3588-usb2phy
+>>   
+>>       then:
+>> -- 
+>> 2.45.2
+>>
 
-This patch do have problem, I need to rewrite it again. I am sorry, =
-again.
-
-Sincerely,
-Wardenjohn,=
 
