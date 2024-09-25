@@ -1,144 +1,149 @@
-Return-Path: <linux-kernel+bounces-339420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5299A9864DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:31:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E3E99864DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 830F91C26853
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:31:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E93F728A0EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D34783A18;
-	Wed, 25 Sep 2024 16:31:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B2361FD8;
+	Wed, 25 Sep 2024 16:31:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="ZHo7fk5B"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="IBnRxkLL";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="D2wrJykN"
+Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E2257880
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 16:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984ABDDC5
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 16:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727281861; cv=none; b=oIV7gD7pmlTw68UNqsjA0cP1i4dhRNY7XJRUWFvmDERvDTfKlgIlO6z6rfgjSVW+delTxkg+xgWIkuiiE29G21yOOhmzPbx/b3cZAchXte3ITXGoNXxy9Xik05CHFoRTTP7bV7tbPtNUJnL8dBlguQo1ITjRYFicS+cAH34zdto=
+	t=1727281895; cv=none; b=j/xib6zI0gixF8xHco1vPna6QNgklEygAbECbJDuyJ4/HgnFQqO0x2Xmoh+m+DkZ3r6df9MSD/E51wgaSKctVieDLwoEn/LSs/0sTbLrLy0UeGIftyPeiaG1hieDF1c6xxd72e2xIUL1dEb2l35gz8ldYFlR7rmCJSZhsygl29A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727281861; c=relaxed/simple;
-	bh=WLuLHgx2MT3+4N/TaNL5sHAmTNY9YxSr2tDwSWM1Wks=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XrM2b9FFOfu/ejA6TQ1g8LbzkeIgDzzhmQG2L5xR8uSPuOe5eJ+UhBJdUPjf9jeMrSOiWWf0QNLbQKyqg75xxZxvcIjj/3ESy1COuMQYbJ4eiSgHe9E9/tTVkw7hHG/oMDQidqH4sV+U6Ro/5fWLe/uRcBu2XMrGD6b7kHfSgiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=ZHo7fk5B; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7d50e7a3652so739a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 09:31:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1727281860; x=1727886660; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zqS3WLQRtJuGZ7n5fqIngVYCyukIdr8Yi9XEikosZZs=;
-        b=ZHo7fk5BBCCHxeLIzWbCsbVVRvT9Ogg3YO1U1LNcCts+dFwBxac64Wu3OfDCHoMAfQ
-         0g0ehad/FU77j6okMhTn0m0jGcU1kLx4mNyAwbQAA7vT9LbWTGz1+0y6ewPQznyNtabj
-         LC/3z8QrqLoHe1IY+HiJQuwkk2olcuLWP1PlY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727281860; x=1727886660;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zqS3WLQRtJuGZ7n5fqIngVYCyukIdr8Yi9XEikosZZs=;
-        b=WdMkqrjgRAuwQKG/nLiiIZT9cWtuhiiXfdPR2UcV5K5GTBIuNNKd6H4Jh5eA1tOv6I
-         ws1/KGwo8UJqWqNmOeVEHn+JoEp5n+x1/Yj2dcMSlSmilnrAuH8B014GJMAR000oo3mp
-         Ve6G2XIKo91nIGc+Fh4hWpQ+TwN4vFh2MqpEdV2LF711hROnFrL9S+gV+TLpI7n5O9DC
-         mPKHam5QHrg3MYSKxJcxQCS4z42TLIAb2gi1YCEh3LMUEQO+NnW0GvoDtu2wP5XjS9o1
-         D+vkq9kluk/Qky7lXU06qalObfQFD7k6HlHy+uzeOqoHyIfgORWK4N8aCoNGWnlik2ej
-         Vexg==
-X-Forwarded-Encrypted: i=1; AJvYcCV+rN6EGBvlQ6kCnX/z4On6dbTI4jkg/7FOWDYj/st6o1aYIVI6YN1q067Y5rTde/6uw7sgki63HRzB67M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysxisIgLkKUnATfGnFzVUWkKYqChWHfP0cVjhJpQyUxuGOKt+z
-	H3lpYNYOOXZRre6QHOTHuCweBsCdSvmoTvpqUmjoJAYYgkdJXvEgDNvOWtN6poA=
-X-Google-Smtp-Source: AGHT+IHkq6o5Ld2ygnxmPUAmwe4I6gQIsnCBKwiUvvIUWibnJ6eGpMuDVKGGABQBnTR8IJWaW9URVQ==
-X-Received: by 2002:a05:6a20:d526:b0:1c4:dfa7:d3b9 with SMTP id adf61e73a8af0-1d4d4b08946mr4079299637.28.1727281859597;
-        Wed, 25 Sep 2024 09:30:59 -0700 (PDT)
-Received: from localhost.localdomain (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af16e0702sm26345585ad.28.2024.09.25.09.30.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 09:30:59 -0700 (PDT)
-From: Joe Damato <jdamato@fastly.com>
-To: netdev@vger.kernel.org
-Cc: Joe Damato <jdamato@fastly.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	intel-wired-lan@lists.osuosl.org (moderated list:INTEL ETHERNET DRIVERS),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [RFC v2 net-next 2/2] e1000: Link IRQs and queues to NAPIs
-Date: Wed, 25 Sep 2024 16:29:37 +0000
-Message-Id: <20240925162937.2218-3-jdamato@fastly.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240925162937.2218-1-jdamato@fastly.com>
-References: <20240925162937.2218-1-jdamato@fastly.com>
+	s=arc-20240116; t=1727281895; c=relaxed/simple;
+	bh=0wHfzOc496HvVN4fYLnjqiOw9aqvqVmLd29lNZ/5x2k=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=qStOfWQxWQcHVujZZsUg1mMZdI8uAvoy1cBLywwkOab3WUb6N69e+rGK1ZkD4eVQbPFmD8OxS0U4+Z2VxDfVhub2bEeR/W+P7a7OcHk8R6zPF6T/3Hs53qbBiKV5X+ltLmFlljIrIVrLqiu3A/wzxlkUs5xSYo1D1juoJKVifdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=IBnRxkLL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=D2wrJykN; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id A2E031140102;
+	Wed, 25 Sep 2024 12:31:32 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Wed, 25 Sep 2024 12:31:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1727281892;
+	 x=1727368292; bh=cCq04gC5CE/gJbEL0QfCDxqzOjOqobJNsPfOX58NLBw=; b=
+	IBnRxkLLrb010iQ/gUc84zgST743DMKadxTtEwL13pVBIpYzdesTCxZFf/yPvqy8
+	YK087mD+Dqq7Yw9NYIZhCSDh4oRZwkg+dUKrzQjtN5rI2hZJBdGYXolNUy1NCLKK
+	ga7mHWexC0zYztgefMFYzGNUV/YCMGcPzDDbK5pKvZLvfDSKAFznSiQBDpAJ7fOK
+	tRJIEIZz3wMv3SlMK/TzEsBC6rBevcYdoNPWmZgXVFUQfZh4gkJQL5bD0NVfInrm
+	aBLd1VqZqRkII92LZ+OFFurhVW1mmgZ3mlHU69HAbPJnPlPFDMwb4bfAUCTTRh5R
+	3iiSvjg7rWTjqEqHcIDGeQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727281892; x=
+	1727368292; bh=cCq04gC5CE/gJbEL0QfCDxqzOjOqobJNsPfOX58NLBw=; b=D
+	2wrJykNvjRJ9Y5/k2wW9guig+xhI50AS4BT3d3+dK/UbfYhpuW2/FFnl8UTRn7xk
+	ONzHeaipwB9OHBEUMUmVO0jCfI7P26SGVF8lURjRsiEygrQqLSFz590YTN4DpPiU
+	FctjapkPxqxkkkjO6WVzx6/HaLDVuJFBw58+1Def7PgAV7D+xtbnAhOyaH7lnCnn
+	vIMrNYotV4AGhBjZSea4F7Zj7D+Bi+9W16WQrrP29mGXnLEw5Myk0GbuqlzoH59l
+	dXBVpFmoTV2CXDHBQJu+8UXut2HbleiK5kLabqHSAZjYCuQqfIWI+cWNS9gaDPSz
+	TRJrfcIkztuKOB8XotZxw==
+X-ME-Sender: <xms:5Dr0ZvFJTkB8RM4OocXHby-YT8-dFMfWGp48-nxhAcqkRBUpLXVKDQ>
+    <xme:5Dr0ZsUd5ifr2VHUe-t9GBg4ddxo_h8t3Ml65XbBTgT2ise2ebQA-VuL8yUxQF1ht
+    WhG2OJMC_EllM7N1UQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddthedguddtvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedu
+    fedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnghgvlhhoghhiohgrtggthh
+    hinhhordguvghlrhgvghhnohestgholhhlrggsohhrrgdrtghomhdprhgtphhtthhopehm
+    rghrvgigseguvghngidruggvpdhrtghpthhtohepkhgvrhhnvghlseguhhdqvghlvggtth
+    hrohhnihgtshdrtghomhdprhgtphhtthhopehfvghsthgvvhgrmhesghhmrghilhdrtgho
+    mhdprhgtphhtthhopehsrghrrghvrghnrghksehgohhoghhlvgdrtghomhdprhgtphhtth
+    hopehshhgrfihnghhuoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvihhlrdgr
+    rhhmshhtrhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrh
+    hmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthho
+    pehimhigsehlihhsthhsrdhlihhnuhigrdguvghv
+X-ME-Proxy: <xmx:5Dr0ZhIDtvqkvsXrdAzAb6pLKj-avMeob7RcvNvVXwLBoNltu70mQQ>
+    <xmx:5Dr0ZtHmvPuHkAaVr5Zt7QmHxW5bgs-OCNkh2HC6gEKohVwifpuXCg>
+    <xmx:5Dr0ZlXRvSkMYjY7vv7xNdIJooRqFsDWok9g30hm42oTiksxBbf1tw>
+    <xmx:5Dr0ZoMbJ4HIkOG_3My56NI1EBmkE6JhMZC_dsHnWq3Eu7fkYU6-XA>
+    <xmx:5Dr0ZusnQ2u9S1uWA4lEVuLLkvNUSKu3nZJuivI38dZQeFvwOo1v-S2H>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 24ED12220071; Wed, 25 Sep 2024 12:31:32 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Wed, 25 Sep 2024 16:31:00 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Marek Vasut" <marex@denx.de>, linux-arm-kernel@lists.infradead.org
+Cc: kernel@dh-electronics.com,
+ "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
+ "Fabio Estevam" <festevam@gmail.com>,
+ "Jeff Johnson" <quic_jjohnson@quicinc.com>,
+ "Neil Armstrong" <neil.armstrong@linaro.org>,
+ "Pengutronix Kernel Team" <kernel@pengutronix.de>,
+ "Saravana Kannan" <saravanak@google.com>,
+ "Sascha Hauer" <s.hauer@pengutronix.de>, "Shawn Guo" <shawnguo@kernel.org>,
+ imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Message-Id: <4897ec78-b82c-415d-88dd-5092fa009f77@app.fastmail.com>
+In-Reply-To: <03b05be4-2276-4e70-9480-2b1467df4ef6@denx.de>
+References: <20240925160026.84091-1-marex@denx.de>
+ <486054ad-20c2-45f4-a457-c9334afb53ed@app.fastmail.com>
+ <03b05be4-2276-4e70-9480-2b1467df4ef6@denx.de>
+Subject: Re: [PATCH] soc: imx8m: Probe the SoC driver late
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Add support for netdev-genl, allowing users to query IRQ, NAPI, and
-queue information.
+On Wed, Sep 25, 2024, at 16:09, Marek Vasut wrote:
+> On 9/25/24 6:04 PM, Arnd Bergmann wrote:
+>> On Wed, Sep 25, 2024, at 16:00, Marek Vasut wrote:
+>>> With driver_async_probe=* on kernel command line, the following trace is
+>>> produced because on i.MX8M Plus hardware because the soc-imx8m.c driver
+>>> calls of_clk_get_by_name() which returns -EPROBE_DEFER because the clock
+>>> driver is not yet probed. This was not detected during regular testing
+>>> without driver_async_probe.
+>>>
+>>> Attempt to fix it by probing the SoC driver late, but I don't think that
+>>> is the correct approach here.
+>> 
+>> I think the correct fix would be to propagate the -EPROBE_DEFER
+>> and return that from imx8_soc_init(), so it gets retried again
+>> after the clock driver.
+> I already tried that, but if I return -EPROBE_DEFER from 
+> device_initcall, it doesn't get retriggered . I suspect EPROBE_DEFER 
+> works only for proper drivers ?
 
-After this patch is applied, note the IRQ assigned to my NIC:
+Right, of course. And unfortunately it can't just register to
+the fsl,imx8mm-anatop/fsl,imx8mm-ocotp/... nodes because they
+all have a driver already.
 
-$ cat /proc/interrupts | grep enp0s8 | cut -f1 --delimiter=':'
- 18
+On the other hand, making it a late_initcall() defeats the
+purpose of the driver because then it can't be used by other
+drivers with soc_device_match(), resulting in incorrect
+behavior when another driver relies on this to enable
+a chip revision specific workaround.
 
-Note the output from the cli:
-
-$ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
-                         --dump napi-get --json='{"ifindex": 2}'
-[{'id': 513, 'ifindex': 2, 'irq': 18}]
-
-This device supports only 1 rx and 1 tx queue, so querying that:
-
-$ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
-                         --dump queue-get --json='{"ifindex": 2}'
-[{'id': 0, 'ifindex': 2, 'napi-id': 513, 'type': 'rx'},
- {'id': 0, 'ifindex': 2, 'napi-id': 513, 'type': 'tx'}]
-
-Signed-off-by: Joe Damato <jdamato@fastly.com>
----
- drivers/net/ethernet/intel/e1000/e1000_main.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/net/ethernet/intel/e1000/e1000_main.c b/drivers/net/ethernet/intel/e1000/e1000_main.c
-index ab7ae418d294..4de9b156b2be 100644
---- a/drivers/net/ethernet/intel/e1000/e1000_main.c
-+++ b/drivers/net/ethernet/intel/e1000/e1000_main.c
-@@ -513,6 +513,8 @@ void e1000_down(struct e1000_adapter *adapter)
- 	 */
- 	netif_carrier_off(netdev);
- 
-+	netif_queue_set_napi(netdev, 0, NETDEV_QUEUE_TYPE_RX, NULL);
-+	netif_queue_set_napi(netdev, 0, NETDEV_QUEUE_TYPE_TX, NULL);
- 	napi_disable(&adapter->napi);
- 
- 	e1000_irq_disable(adapter);
-@@ -1392,7 +1394,10 @@ int e1000_open(struct net_device *netdev)
- 	/* From here on the code is the same as e1000_up() */
- 	clear_bit(__E1000_DOWN, &adapter->flags);
- 
-+	netif_napi_set_irq(&adapter->napi, adapter->pdev->irq);
- 	napi_enable(&adapter->napi);
-+	netif_queue_set_napi(netdev, 0, NETDEV_QUEUE_TYPE_RX, &adapter->napi);
-+	netif_queue_set_napi(netdev, 0, NETDEV_QUEUE_TYPE_TX, &adapter->napi);
- 
- 	e1000_irq_enable(adapter);
- 
--- 
-2.34.1
-
+     Arnd
 
