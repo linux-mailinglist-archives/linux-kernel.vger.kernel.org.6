@@ -1,70 +1,62 @@
-Return-Path: <linux-kernel+bounces-339334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50CAE986452
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:58:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83D4B986461
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:02:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 786DBB2E4E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:27:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96B08B375E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:28:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4650B39AD6;
-	Wed, 25 Sep 2024 15:13:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3489049624;
+	Wed, 25 Sep 2024 15:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="iijq9vdQ"
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TwhdQubu"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE75138FA3
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 15:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0BE3B796;
+	Wed, 25 Sep 2024 15:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727277197; cv=none; b=DaRJYJkJPZYU1sBwQyZRnb1GDPtZ8QFGTJLBLXuGl1vDVGYewPMDPXNk7Mu1FGj8y+ro/YcZHv+qdrENfBZt16GcUeNJ9ogBBnQbpayR/UJ+Oxyc9iMbZ1djDsvMK1rdau3ypMuW7Zg+l3rBxlrhbyPoPVDgF2B5820e+N19Cfw=
+	t=1727277225; cv=none; b=XcwPmv9k2rfFBzsGtmafqMtZESF+qr0EE970OWOPa0wGItfSvI5r3MifsGCQi8lPyn1Yjop/G1urlz4guSnHMfBwzklD1FUfkEcrBmhU92Hb9hN2UKtS9fncpt/lbAdy+O5QlKHlQ5HND4302ERKrI0oQPMBOiQbSbTqoDlW0Xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727277197; c=relaxed/simple;
-	bh=orysemYIOAAOVmrSgXc7YbMIId2a4I9QLWaG6kwa1MI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZVmEsp+Ute+I2ubZCfeYjZ5hleSYwe5TtxZhwy8zzrQd6tHjRDo0nB6yc1fcrScw4tVuQn+nV4fWV6uGdtQqn9jydTmuSDx3IVNMEUrUK5ZSuVZuyYb0xpuFbDcbtlWmN2RAqEj6pUEptWGceiW9aGG5CSyk9qORAS0CWxyOa2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=iijq9vdQ; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-82a626d73efso262374939f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:13:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1727277194; x=1727881994; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jeDepfrVJjJS1L25dHRrhNZeV7uLqen0lw2mzfoTy1U=;
-        b=iijq9vdQvHavrU7hGstFuCbmExaBuLKBWr+blnCUK+Ow5i1Tuo3Mi4x8eNXiLhhG5e
-         gYwsKsa5LrdEztGSL0TNFMHtKH/2oB15GGcI8f/mAsA4xFFtJtgYq+TXWIFzoC08WEHV
-         Xg+bh0Yf5qc7bnuS+soKe7ipsh4hlsMCMOM+w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727277194; x=1727881994;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jeDepfrVJjJS1L25dHRrhNZeV7uLqen0lw2mzfoTy1U=;
-        b=pYFFj5BdCjWXzLQky0GvYMT6eFszv9gIFKL0/QE4jTyRmtRQy+HBIEop/5jNpVp97Y
-         MYuiy8YcHBH4mcGNegYirlGJfjRMIEIKTNBUCW+wpZWrAd3xSy2euggkfdegw6bvhj4n
-         X+BhuT2pnuBNqN6fOuGsBB59quSa+LbO60V0TdA6r5Jnd8GZc9X7XYiaSUiSd5k+ywSt
-         SdbkhTHLKmz1qPHYe1pVBvznafS2YRlLPQc683HdYr/kkLaw2Z5INS0No85SIi4OmPjV
-         uDQhf9+6KacRNU9SvSM07iMjfoQtkx0qE9nozFKofSAi8XtmrCy9mZaKRUq0Sb2Fx9PK
-         3+Qg==
-X-Gm-Message-State: AOJu0YyShOXjtA++NYE0DPfVNW+t+wWBFBmQFk+MGZcTU1oXU8hnH6dQ
-	sP5Q3Il+R9TB1kGoYXhXcTHrSMOqaISMhdsqUUKL31/E0qu+wnUrDP1to7EQHLbKGxmY59ixKzl
-	n
-X-Google-Smtp-Source: AGHT+IExjTKCbzt3SJ+TM0c/1itzBbHKZtRJG/mDo+qsHf6ISOkO2mVQLVf5/Yg9HENFYHgYMbPTKQ==
-X-Received: by 2002:a05:6e02:160f:b0:3a0:ac0d:22b9 with SMTP id e9e14a558f8ab-3a26d745c5emr36059565ab.6.1727277193698;
-        Wed, 25 Sep 2024 08:13:13 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a1a57247a5sm11239805ab.72.2024.09.25.08.13.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Sep 2024 08:13:13 -0700 (PDT)
-Message-ID: <07999b46-ec31-4284-8869-1ecbdc0c7104@linuxfoundation.org>
-Date: Wed, 25 Sep 2024 09:13:12 -0600
+	s=arc-20240116; t=1727277225; c=relaxed/simple;
+	bh=uxbcjAmptvie1W4Mx7yaaLpA7Q3f3F8RvWBLg04aUdU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HNNhBPnpW4hWs2hWSfrCOAOmiYLLQpdOffWBOlP6yGK6LChQKYKsX+9Bo9ktKNwChinTsV/yenmhackhIyiQxubnByeucVtc73f87z7ge1iHONE1KKl7ebEt2CvRuCOJnmt8T6NtQKcB0Dw71V9kP9zBIZ8khEOJicXPKWNcOcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TwhdQubu; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48P86pN2018535;
+	Wed, 25 Sep 2024 15:13:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	y8B3AA1Oy4YgLejJwIJ71AljxWMCbFNvodY0+wutPHM=; b=TwhdQubuZXSGyHXl
+	nIlMJtzZjMsmG83okX99sQrqkFl4jbWjpcnfRDxmudZgwWhTi/ZHpJ5BS/SRMMMk
+	9VrKYduskpPaVW36NnAAvPk8hoPaOoLl3UTqDY49EZoQwGxpoL+lkX3pnG/GYDJQ
+	Yo0Mn7mwyX5uzUIBbdgvlWALdeUGrtK2kUy9stOrnN6AlqmQasgd5mLF3bCBpmOk
+	ehFT9Tfn7Xk+4FQKibnihsBpKWSNcpXm2FoMPqQiH3yXOrjmlV0F7+a5mArQO+/J
+	no2Utl39PFOcAB/SL6VklxeznZfnLoqXJ6fwfRNiTveo5Pjw1+VFzAOp8ErYXzg8
+	JtyYWg==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sqakm8eq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Sep 2024 15:13:26 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48PFDPMh025682
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Sep 2024 15:13:25 GMT
+Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 25 Sep
+ 2024 08:13:19 -0700
+Message-ID: <ed012367-1bfd-4eef-931b-37e1ac839176@quicinc.com>
+Date: Wed, 25 Sep 2024 23:13:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,76 +64,180 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] selftests:timers: posix_timers: Fix
- warn_unused_result in __fatal_error()
-To: jstultz@google.com
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- tglx@linutronix.de, shuah@kernel.org, sboyd@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <cover.1727191485.git.skhan@linuxfoundation.org>
- <4f3a0acd903aeee52fb71acaec1106d513a2e88b.1727191485.git.skhan@linuxfoundation.org>
+Subject: Re: [PATCH 07/13] dt-bindings: media: camss: Add qcom,sm8550-camss
+ binding
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, <rfoss@kernel.org>,
+        <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
+        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>, Yongsheng Li <quic_yon@quicinc.com>
+References: <20240812144131.369378-1-quic_depengs@quicinc.com>
+ <20240812144131.369378-8-quic_depengs@quicinc.com>
+ <9ed92660-5f42-4a1a-9261-b8800133972a@linaro.org>
 Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <4f3a0acd903aeee52fb71acaec1106d513a2e88b.1727191485.git.skhan@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Depeng Shao <quic_depengs@quicinc.com>
+In-Reply-To: <9ed92660-5f42-4a1a-9261-b8800133972a@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ixBl7qkO5m5ncWrhF8ZbMhffXrEYOHnL
+X-Proofpoint-GUID: ixBl7qkO5m5ncWrhF8ZbMhffXrEYOHnL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
+ bulkscore=0 impostorscore=0 suspectscore=0 phishscore=0 adultscore=0
+ clxscore=1011 malwarescore=0 lowpriorityscore=0 mlxlogscore=999
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409250108
 
-On 9/24/24 09:56, Shuah Khan wrote:
-> __fatal_error routine doesn't check strerror_r() return value,
-> which results in the following compile time warning:
-> 
-> posix_timers.c: In function ‘__fatal_error’:
-> posix_timers.c:31:9: warning: ignoring return value of ‘strerror_r’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
->     31 |         strerror_r(errno, buf, sizeof(buf));
-> 
-> Fix this by adding a check for return value and error handling appropriate
-> for the GNU-specific strerror_r() in use in __fatal_error(). Check if
-> return string is null and handle accordingly.
-> 
->  From Linux strerror_r() manual page:
-> 
-> "The GNU-specific strerror_r() returns a pointer to a string containing
-> the error message. This may be either a pointer to a string that the
-> function stores in buf, or a pointer to some (immutable) static string
-> (in which case buf is unused). If the function stores a string in buf,
-> then at most buflen bytes are stored (the string may be truncated if
-> buflen is too small and errnum is unknown). The string always includes
-> a terminating null byte."
-> 
-> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
-> ---
->   tools/testing/selftests/timers/posix_timers.c | 12 ++++++++----
->   1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/timers/posix_timers.c b/tools/testing/selftests/timers/posix_timers.c
-> index 16bd49492efa..ddb1cebc844e 100644
-> --- a/tools/testing/selftests/timers/posix_timers.c
-> +++ b/tools/testing/selftests/timers/posix_timers.c
-> @@ -26,13 +26,17 @@
->   static void __fatal_error(const char *test, const char *name, const char *what)
->   {
->   	char buf[64];
-> +	char *ret_str = NULL;
->   
-> -	strerror_r(errno, buf, sizeof(buf));
-> +	ret_str = strerror_r(errno, buf, sizeof(buf));
->   
-> -	if (name && strlen(name))
-> -		ksft_exit_fail_msg("%s %s %s %s\n", test, name, what, buf);
-> +	if (name && strlen(name) && ret_str)
-> +		ksft_exit_fail_msg("%s %s %s %s\n", test, name, what, ret_str);
-> +	else if (ret_str)
-> +		ksft_exit_fail_msg("%s %s %s\n", test, what, ret_str);
->   	else
-> -		ksft_exit_fail_msg("%s %s %s\n", test, what, buf);
-> +		ksft_exit_fail_msg("%s %s\n", test, what);
-> +
->   }
->   
->   #define fatal_error(name, what)	__fatal_error(__func__, name, what)
+Hi Vladimir,
 
-Any comments on this patch John?
+On 9/6/2024 11:56 PM, Vladimir Zapolskiy wrote:
 
-thanks,
--- Shuah
+>> +            compatible = "qcom,sm8550-camss";
+>> +
+>> +            reg = <0 0x0acb7000 0 0xd00>,
+>> +                  <0 0x0acb9000 0 0xd00>,
+>> +                  <0 0x0acbb000 0 0xd00>,
+>> +                  <0 0x0acca000 0 0xa00>,
+>> +                  <0 0x0acce000 0 0xa00>,
+>> +                  <0 0x0acb6000 0 0x1000>,
+>> +                  <0 0x0ace4000 0 0x2000>,
+>> +                  <0 0x0ace6000 0 0x2000>,
+>> +                  <0 0x0ace8000 0 0x2000>,
+>> +                  <0 0x0acea000 0 0x2000>,
+>> +                  <0 0x0acec000 0 0x2000>,
+>> +                  <0 0x0acee000 0 0x2000>,
+>> +                  <0 0x0acf0000 0 0x2000>,
+>> +                  <0 0x0acf2000 0 0x2000>,
+>> +                  <0 0x0ac62000 0 0xf000>,
+>> +                  <0 0x0ac71000 0 0xf000>,
+>> +                  <0 0x0ac80000 0 0xf000>,
+>> +                  <0 0x0accb000 0 0x2800>,
+>> +                  <0 0x0accf000 0 0x2800>;
+> 
+> Please sort the list above in numerical order, this will change positions
+> of "vfe_lite0", "vfe_lite1" etc.
+> 
+> Another note, since it's not possible to map less than a page, so I believe
+> it might make sense to align all sizes to 0x1000.
+> 
+
+Sure, I previously sorted by the alphabetical order of reg_name.
+I will update it based on your suggestion. And will also make sure the 
+align all sizes to 0x1000.
+
+
+>> +                     <&camcc CAM_CC_IFE_LITE_CLK>,
+>> +                     <&camcc CAM_CC_IFE_LITE_AHB_CLK>,
+>> +                     <&camcc CAM_CC_IFE_LITE_CPHY_RX_CLK>,
+>> +                     <&camcc CAM_CC_IFE_LITE_CSID_CLK>,
+>> +                     <&gcc GCC_CAMERA_HF_AXI_CLK>;
+> 
+> Could you please put the &gcc provided clock as the first one in the list?
+> 
+
+Sure, will do.
+
+>> +
+>> +            interconnects = <&gem_noc MASTER_APPSS_PROC 0 &config_noc 
+>> SLAVE_CAMERA_CFG 0>,
+>> +                            <&mmss_noc MASTER_CAMNOC_HF 0 &mc_virt 
+>> SLAVE_EBI1 0>,
+>> +                            <&mmss_noc MASTER_CAMNOC_ICP 0 &mc_virt 
+>> SLAVE_EBI1 0>,
+>> +                            <&mmss_noc MASTER_CAMNOC_SF 0 &mc_virt 
+>> SLAVE_EBI1 0>;
+>> +            interconnect-names = "ahb",
+>> +                                 "hf_0_mnoc",
+>> +                                 "icp_mnoc",
+>> +                                 "sf_0_mnoc";
+> 
+> Just a note for myself, interconnect names lost "cam_" prefix, and it 
+> should
+> be fine.
+
+Krzysztof posted a comment in a SC7280 camss change and asked to remove 
+the "cam_" prefix.
+
+
+https://lore.kernel.org/all/087e7f29-1fa8-4bc2-bb3d-acb941432381@kernel.org/
+
+
+>> +            ports {
+>> +                #address-cells = <1>;
+>> +                #size-cells = <0>;
+> 
+> In case of a single child node #address-cells/#size-cells could be omitted,
+> if I'm not mistaken about it...
+> 
+
+I tried it, but dt_binding_check report below warning.
+
+Documentation/devicetree/bindings/media/qcom,sm8550-camss.example.dts:221.29-39: 
+Warning (reg_format): 
+/example-0/soc/camss@ace4000/ports/port@0/endpoint@0:reg: property has 
+invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
+Documentation/devicetree/bindings/media/qcom,sm8550-camss.example.dtb: 
+Warning (pci_device_reg): Failed prerequisite 'reg_format'
+Documentation/devicetree/bindings/media/qcom,sm8550-camss.example.dtb: 
+Warning (pci_device_bus_num): Failed prerequisite 'reg_format'
+Documentation/devicetree/bindings/media/qcom,sm8550-camss.example.dtb: 
+Warning (simple_bus_reg): Failed prerequisite 'reg_format'
+Documentation/devicetree/bindings/media/qcom,sm8550-camss.example.dtb: 
+Warning (i2c_bus_reg): Failed prerequisite 'reg_format'
+Documentation/devicetree/bindings/media/qcom,sm8550-camss.example.dtb: 
+Warning (spi_bus_reg): Failed prerequisite 'reg_format'
+Documentation/devicetree/bindings/media/qcom,sm8550-camss.example.dts:220.48-225.27: 
+Warning (avoid_default_addr_size): 
+/example-0/soc/camss@ace4000/ports/port@0/endpoint@0: Relying on default 
+#address-cells value
+Documentation/devicetree/bindings/media/qcom,sm8550-camss.example.dts:220.48-225.27: 
+Warning (avoid_default_addr_size): 
+/example-0/soc/camss@ace4000/ports/port@0/endpoint@0: Relying on default 
+#size-cells value
+Documentation/devicetree/bindings/media/qcom,sm8550-camss.example.dtb: 
+Warning (unique_unit_address_if_enabled): Failed prerequisite 
+'avoid_default_addr_size'
+Documentation/devicetree/bindings/media/qcom,sm8550-camss.example.dts:220.48-225.27: 
+Warning (graph_endpoint): 
+/example-0/soc/camss@ace4000/ports/port@0/endpoint@0: graph node 
+'#address-cells' is -1, must be 1
+Documentation/devicetree/bindings/media/qcom,sm8550-camss.example.dts:220.48-225.27: 
+Warning (graph_endpoint): 
+/example-0/soc/camss@ace4000/ports/port@0/endpoint@0: graph node 
+'#size-cells' is -1, must be 0
+
+>> +                port@0 {
+>> +                    reg = <0>;
+>> +                    #address-cells = <1>;
+>> +                    #size-cells = <0>;
+> 
+> Same as above.
+> 
+
+Same warning..
+
+>> +
+>> +                    csiphy_ep0: endpoint@0 {
+>> +                        reg = <0>;
+>> +                        clock-lanes = <7>;
+>> +                        data-lanes = <0 1>;
+>> +                        remote-endpoint = <&sensor_ep>;
+>> +                    };
+>> +                };
+>> +            };
+>> +        };
+>> +    };
+> 
+
+---
+Thanks,
+Depeng
 
