@@ -1,199 +1,182 @@
-Return-Path: <linux-kernel+bounces-337925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62468985115
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 04:48:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9127F985118
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 04:49:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34C671C22CE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 02:48:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B46551C2348E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 02:49:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EADCE14A4E0;
-	Wed, 25 Sep 2024 02:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052F2149C4B;
+	Wed, 25 Sep 2024 02:49:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lzckW9eu"
-Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
+	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="v784tjO+"
+Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11010017.outbound.protection.outlook.com [52.101.128.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1A414831F
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 02:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727232499; cv=none; b=nlBwngqCRiXTNJmnLghu9qRh28+Pirb1ZogJzES1pA7wlD8QWwovijCYHLg6Df0TsUWRZHWh6WvfENzPPTclL8rwaFHZrE35iLX+LlsKqbqu37XRhQ16cN/Jd723P6UXTtU8fUiAvxSDwSlTGe9ZtCn9NyVxfVI3BVO6wHLK4mc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727232499; c=relaxed/simple;
-	bh=gugZapi3cZAYta1HiNuZBSd/zAeX7lJQFf0IfUkZ4Mg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ovGPN8ujn0gL0V8uZrXsHBnKBqPcRqabEE+sK+5P7d13WeIa5OL7qFN2cYcYpxYaHEtO7xlQzB3UWyjXtZwWHZwsZyeq2ljklEW5QmatxjLGT2+3P00TxjKgKgMnLLg5qY057mYWlh+GToaVae5IakNJv5ulm/NWxg/3smxByPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lzckW9eu; arc=none smtp.client-ip=91.218.175.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 24 Sep 2024 22:48:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727232494;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yKijGDqskvNDbN8KDSCURpOXQD6HJdnMiOeP2iC+QNg=;
-	b=lzckW9euTuzFv0w7nskTFoh97KGubTQCnlUGdB7tfN7bO7KFlQ2He3//6nPauvI7zFlB9s
-	N0ohG1new579m0NP6sKob9/gdSUCCauPqygVlWbm42/F0w3atobxVFHnK5uSljMl32xWRf
-	A4IKVbBrgV3jUkN0c1y5bG1go9wAbCY=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dave Chinner <dchinner@redhat.com>, Thomas Graf <tgraf@suug.ch>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, netdev@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs changes for 6.12-rc1
-Message-ID: <jeyayqez34guxgvzf4unzytbfgjv2thgrha5miul25y4eearp2@33junxiz2o7f>
-References: <dtolpfivc4fvdfbqgmljygycyqfqoranpsjty4sle7ouydycez@aw7v34oibdhm>
- <CAHk-=whQTx4xmWp9nGiFofSC-T0U_zfZ9L8yt9mG5Qvx8w=_RQ@mail.gmail.com>
- <6vizzdoktqzzkyyvxqupr6jgzqcd4cclc24pujgx53irxtsy4h@lzevj646ccmg>
- <ZvIHUL+3iO3ZXtw7@dread.disaster.area>
- <CAHk-=whbD0zwn-0RMNdgAw-8wjVJFQh4o_hGqffazAiW7DwXSQ@mail.gmail.com>
- <CAHk-=wh+atcBWa34mDdG1bFGRc28eJas3tP+9QrYXX6C7BX0JQ@mail.gmail.com>
- <ZvI4N55fzO7kg0W/@dread.disaster.area>
- <CAHk-=wjNPE4Oz2Qn-w-mo1EJSUCQ+XJfeR3oSgQtM0JJid2zzg@mail.gmail.com>
- <ZvNWqhnUgqk5BlS4@dread.disaster.area>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49755146D6D;
+	Wed, 25 Sep 2024 02:48:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727232541; cv=fail; b=AQnYvKztyW7NVit22UgrdzEH8VZwzlB+UjlEZxZ2L9c7Lwium7J2vB5QwHpyV+AJMpkhpaxFTd6PcpZU72zowE1imZblih8DDI9i25kQf5To8YKcyvAYqRY7ILhBeBbszNeD7q9BRUPEaLszOisQg+pQFwhKsamwnsbHJJyGVP0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727232541; c=relaxed/simple;
+	bh=LObJaivAr5g8eQmdUtd9SPilVMyK93oE+3S2pUy8GiA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Fgywb4lgmlKEGD3VxhlVvFmHLBDzXjRhhGx7WSU8VSUBmqEjw5MUz9U4dcfgdJMEeFde02/b3zNJvbjWdMFrpWlJ/u8dKJNbUmFns/koh/9i1+mtsGG2y/xdx/SQweSDSapEPBzC0+PvvXO8y48S+QvAgAZGyHR121eu22VTetE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=v784tjO+; arc=fail smtp.client-ip=52.101.128.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LQ9JLfUp9P/MfTe2/cmnVRMsgvZIJdRZfHIy61YM+/rR1kNa2VLkIJHorgXiZC1L3IIrDJYKXtVR+crf3WE0c6Mt3l5fbDXeuF/Vj0U/9w0EowXcU1U8Wg7jD42c9fqSh0y/CQZR/NrECx1AO6xSUrSIuEnJjoxky5lAm77NAdt0h1nwFQcC/N6z1j5jGr55gdAafAanBEwAqRbOUpft3CfxK8D9HPUxJgM2+4CVVe5HPEWkJm32tR9WALAwaP4rKMj+aiOHJ55Fraa67T9aGrMastJLcAgd95H0m8fPC0lreSZf381Krou43rbMkbHFcDIG5szU358J/Z+jZYs6Qw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Mx4BEAP9cjjHSnFpGBz0GVMHLyRxFNFGoyL4vlRV2d4=;
+ b=NHmSchiSyUqFcR7lG2yqkiizlwDkaiZ0xIYv0hBhQN5ILGDgBBY53hwIecsFgqb8K0ZWHjk4IpqtL0LHanMgBDD1VrTKSgUV9MjLKnjeFiaxRfoCTkY7qJxOJgq15gNArI/aEpfdoz/GOLnk4+ZGUeBw2336CvlIprsYSM07MjctOKUYhTl/E3IfO4Ifk3JQwDqUch2J9ciV6JSxIUfUjya0qtzNk6YFkXRQiDkNYLvmGZxrEtkA+ViWaUQlAVo2heK9Gks15TXj6OU7nf4cVlBF4CV2IP6XZSnpdEzVw/5Gf6YiwpLygORWrLjErfR3PyFxBYoqQBKh7NwK/c/ZQg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 58.252.5.68) smtp.rcpttodomain=samsung.com smtp.mailfrom=oppo.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=oppo.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Mx4BEAP9cjjHSnFpGBz0GVMHLyRxFNFGoyL4vlRV2d4=;
+ b=v784tjO+WY2yUz8vRfR6Z/JbL5WpKyFtJISUhPSuBuxofIdNiMi9J0SCCxyjXGboDxHoo0PDc8YzBG25xLiVRlI1SvKXIdi+1KMP9/h0ASIWpUTO3XkuMiErTlRc92X2TCpotU/TPtirHlb/90WzSTSH9OT1Fm7W//zzBmTtJb0=
+Received: from SG2PR06CA0232.apcprd06.prod.outlook.com (2603:1096:4:ac::16) by
+ SEYPR02MB6243.apcprd02.prod.outlook.com (2603:1096:101:d0::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7982.24; Wed, 25 Sep 2024 02:48:54 +0000
+Received: from SG2PEPF000B66CC.apcprd03.prod.outlook.com
+ (2603:1096:4:ac:cafe::68) by SG2PR06CA0232.outlook.office365.com
+ (2603:1096:4:ac::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.17 via Frontend
+ Transport; Wed, 25 Sep 2024 02:48:54 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
+ smtp.mailfrom=oppo.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=oppo.com;
+Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
+ 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
+ client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
+Received: from mail.oppo.com (58.252.5.68) by
+ SG2PEPF000B66CC.mail.protection.outlook.com (10.167.240.25) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7918.13 via Frontend Transport; Wed, 25 Sep 2024 02:48:54 +0000
+Received: from cndgdcavdu0c-218-29.172.16.40.114 (172.16.40.118) by
+ mailappw30.adc.com (172.16.56.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 25 Sep 2024 10:48:53 +0800
+From: <liuderong@oppo.com>
+To: <alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>
+CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>, liuderong
+	<liuderong@oppo.com>
+Subject: [PATCH] scsi:ufs:core: Add trace READ(16)/WRITE(16) commands
+Date: Wed, 25 Sep 2024 10:48:43 +0800
+Message-ID: <1727232523-188866-1-git-send-email-liuderong@oppo.com>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZvNWqhnUgqk5BlS4@dread.disaster.area>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
+X-ClientProxiedBy: mailappw30.adc.com (172.16.56.197) To mailappw30.adc.com
+ (172.16.56.197)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG2PEPF000B66CC:EE_|SEYPR02MB6243:EE_
+X-MS-Office365-Filtering-Correlation-Id: d9ad3e61-838a-45a9-27c6-08dcdd0c9841
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?VpORU51jA87sJ7mSr/gin7eMNn5fuDUIOL6sV4fl234AFs43Jy3laKLZQWkA?=
+ =?us-ascii?Q?/pi1TVFcSVQCdyIrvS/r4SDPjKBTjNBCFNW8/FaCNCcJYkkvnMrFQW6cM1SF?=
+ =?us-ascii?Q?zJdvm5ax08/5JORJe4P5OR3oa2hC0ZWqAltshrvZ+flJ7xSfecTuOTHQMBKC?=
+ =?us-ascii?Q?26nx+SWXzTfIRJNTeZVx+BAytsmmwdkiqfmkF7q56ig8r03C4qMsiBWeCBZD?=
+ =?us-ascii?Q?EyVwXNjDbi2KCmGxTgb6fqxQhH7tRh/qPzNvXrtQhBsGphtIwQCuqP5Kw5QH?=
+ =?us-ascii?Q?0rt8/4bnjI/z8SXqa1+UYDLq5SO7xB/ss4GAI1B7flbHoDqFjgb4+fyu4HEa?=
+ =?us-ascii?Q?wM2B9KLeL/0p1OM3ZmC9p/2MPptJb+RYTEufzK8Xs1BsfIq8BcsPsmvH1Fw9?=
+ =?us-ascii?Q?N+BgkJjSjO9iXNmoO8spzJoJSSfJ6nCSvgPdykUwgpVq3zWlf8YOA50vkMpa?=
+ =?us-ascii?Q?zkrI1QvZggXWF7XStyfLoO7lSnZac9jW6NxnFV4J0QWEp6gKzVfkzLnLfztD?=
+ =?us-ascii?Q?rGH8JfEKpZoVWrV+LMPBvGftOP20MSkNPVAoDnGeI+hJXyEfVAG5XSKnNxv6?=
+ =?us-ascii?Q?EFMH44x6oB/x+qWgtwS9lD01T2GTHVzvNkm/4XbgdyGaJJRWqFwQyMCql8MO?=
+ =?us-ascii?Q?fLrLX5eAdOR4UyHzJMzeKsMeV+yFEX76MQJqIhyuvl2ClrdKmdUqtxN/N9OR?=
+ =?us-ascii?Q?hMVhHlWqspWEvtkmQm3ulvyz8FNgSstOgggcWT7FTGp/hq3B887RvJhwTXsX?=
+ =?us-ascii?Q?uv4vmlfE5Zfw5WDa8Waob7CE7t9IDVu7q3HJPNC3ZO1DwPRZ4VVtu72eBWDw?=
+ =?us-ascii?Q?7Vm7Cz/E/AMhDfez9sB3K5KRfzMH76nv8sxKVVhTICUkdq0emYO/x8XnCe5L?=
+ =?us-ascii?Q?cBQSzRgwLJzG0/jC3iTptkTZ7npf/taNnchI5r5vNxQJvcilSU9cAoZhyCxf?=
+ =?us-ascii?Q?D4cBcrs1YVRdJy/YZZ8ZsMfyn9P/al39V6xMQwB7w96544dewp0ylnbwITEK?=
+ =?us-ascii?Q?3rgxvaGI0CrCiOj25Bw6ujN7fgX1V54kFX68j2EW+styx0tcOyyD6y57BkoL?=
+ =?us-ascii?Q?nnBr1Dt106cnQ9bM/b/RxEjqVPN8mGdWmvgYsN9Y59ZncNxQzhPoq4yZsTW2?=
+ =?us-ascii?Q?R9tH42nx1NBE4uvy5OstZcI8hBXwQMCJfajhyow+xbaaPNzhmvV3GP3QdmFH?=
+ =?us-ascii?Q?k/KfkXsoQwRV5qvx+kqVlyXRCGPa886pU3NgTfkHdSS9ysedd0vPXAq3i0iI?=
+ =?us-ascii?Q?yJGL4sjhEMQkFcBBi+54KvriRjpEFvdHtjKbSYm62TD/L/onjxPTB7sEeVEe?=
+ =?us-ascii?Q?RWmh0gT3ykAF/XkgV6jhjN5SUohCtCl1GGS9YNfn7Yjvt+/K/OXx4KiyMooo?=
+ =?us-ascii?Q?qs+rTeGuAAAxE/QXHQrymCPD+CvN?=
+X-Forefront-Antispam-Report:
+	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: oppo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2024 02:48:54.2426
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d9ad3e61-838a-45a9-27c6-08dcdd0c9841
+X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SG2PEPF000B66CC.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR02MB6243
 
-+cc rhashtable folks for bug report
+From: liuderong <liuderong@oppo.com>
 
-On Wed, Sep 25, 2024 at 10:17:46AM GMT, Dave Chinner wrote:
-> On Tue, Sep 24, 2024 at 09:57:13AM -0700, Linus Torvalds wrote:
-> > On Mon, 23 Sept 2024 at 20:55, Dave Chinner <david@fromorbit.com> wrote:
-> > >
-> > > That's effectively what the patch did - it added a spinlock per hash
-> > > list.
-> > 
-> > Yeah, no, I like your patches, they all seem to be doing sane things
-> > and improve the code.
-> > 
-> > The part I don't like is how the basic model that your patches improve
-> > seems quite a bit broken.
-> > 
-> > For example, that whole superblock list lock contention just makes me
-> > go "Christ, that's stupid". Not because your patches to fix it with
-> > Waiman's fancy list would be wrong or bad, but because the whole pain
-> > is self-inflicted garbage.
-> 
-> I'm not about to disagree with that assessment.
-> 
-> > And it's all historically very very understandable. It wasn't broken
-> > when it was written.
-> > 
-> > That singly linked list is 100% sane in the historical context of "we
-> > really don't want anything fancy for this". The whole list of inodes
-> > for a superblock is basically unimportant, and it's main use (only
-> > use?) is for the final "check that we don't have busy inodes at umount
-> > time, remove any pending stuff".
-> > 
-> > So using a stupid linked list was absolutely the right thing to do,
-> > but now that just the *locking* for that list is a pain, it turns out
-> > that we probably shouldn't use a list at all. Not because the list was
-> > wrong, but because a flat list is such a pain for locking, since
-> > there's no hierarchy to spread the locking out over.
-> 
-> Right, that's effectively what the dlist infrastructure has taught
-> us - we need some kind of heirarchy to spread the locking over. But
-> what that heirachy is for a "iterate every object" list looks like
-> isn't really clear cut...
+For sd_zbc_read_zones, READ(16)/WRITE(16) are mandatory for ZBC disks.
+Currently, when printing the trace:ufshcd_command on zone UFS devices,
+the LBA and SIZE fields appear invalid,
+making it difficult to trace commands.
+So add trace READ(16)/WRITE(16) commands for zone ufs device.
 
-If you think of dlist as just "faster lru list", I think that's a
-completely viable approach.
+Trace sample:
+ufshcd_command: send_req: 1d84000.ufshc: tag: 31, DB: 0x0,
+size: -1, IS: 0, LBA: 0, opcode: 0x8a (WRITE_16), group_id: 0x0, hwq_id: 7
+ufshcd_command: complete_rsp: 1d84000.ufshc: tag: 31, DB: 0x0,
+size: -1, IS: 0, LBA: 0, opcode: 0x8a (WRITE_16), group_id: 0x0, hwq_id: 7
 
-So one thing I've been mulling over is a data structure for efficiently
-tracking async op structs - "some async op went out to lunch" is
-something that we still have crap debug tooling for, and those bugs take
-forever to get fixed. There seems to be an outstanding bug in compaction
-or migration that I've seen multiple reports for, and I doubt it's
-bcachefs (we're quite standard there) - and it's some async op that
-should've released a folio lock but isn't.
+Signed-off-by: liuderong <liuderong@oppo.com>
+---
+ drivers/ufs/core/ufshcd.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-And all we need for that is, roughly, an idr with a percpu buffer for
-allocating/freeing slots in front. Which would be perfect for shrinker
-lists, too: walking the list is a lockless radix tree walk, and
-adding/removing entries mostly just hits the percpu buffers.
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 5e3c67e..9e5e903 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -434,15 +434,19 @@ static void ufshcd_add_command_trace(struct ufs_hba *hba, unsigned int tag,
+ 
+ 	opcode = cmd->cmnd[0];
+ 
+-	if (opcode == READ_10 || opcode == WRITE_10) {
++	if (opcode == READ_10 || opcode == READ_16 ||
++		opcode == WRITE_10 || opcode == WRITE_16) {
+ 		/*
+-		 * Currently we only fully trace read(10) and write(10) commands
++		 * Currently we only fully trace the following commands,
++		 * read(10),read(16),write(10), and write(16)
+ 		 */
+ 		transfer_len =
+ 		       be32_to_cpu(lrbp->ucd_req_ptr->sc.exp_data_transfer_len);
+ 		lba = scsi_get_lba(cmd);
+ 		if (opcode == WRITE_10)
+ 			group_id = lrbp->cmd->cmnd[6];
++		if (opcode == WRITE_16)
++			group_id = lrbp->cmd->cmnd[14];
+ 	} else if (opcode == UNMAP) {
+ 		/*
+ 		 * The number of Bytes to be unmapped beginning with the lba.
+-- 
+2.7.4
 
-So now we have another use case for that data structure, so I'll try to
-get that done in the near future and see how it does.
-
-> > (We used to have that kind of "flat lock" for the dcache too, but
-> > "dcache_lock" went away many moons ago, and good riddance - but the
-> > only reason it could go away is that the dcache has a hierarchy, so
-> > that you can always lock just the local dentry (or the parent dentry)
-> > if you are just careful).
-> 
-> > 
-> > > [ filesystems doing their own optimized thing ]
-> > >
-> > > IOWs, it's not clear to me that this is a caching model we really
-> > > want to persue in general because of a) the code duplication and b)
-> > > the issues such an inode life-cycle model has interacting with the
-> > > VFS life-cycle expectations...
-> > 
-> > No, I'm sure you are right, and I'm just frustrated with this code
-> > that probably _should_ look a lot more like the dcache code, but
-> > doesn't.
-> > 
-> > I get the very strong feeling that we should have a per-superblock
-> > hash table that we could also traverse the entries of. That way the
-> > superblock inode list would get some structure (the hash buckets) that
-> > would allow the locking to be distributed (and we'd only need one lock
-> > and just share it between the "hash inode" and "add it to the
-> > superblock list").
-> 
-> The only problem with this is the size of the per-sb hash tables
-> needed for scalability - we can't allocate system sized hash tables
-> for every superblock just in case a superblock might be asked to
-> cache 100 million inodes. That's why Kent used rhashtables for the
-> bcachefs implementation - they resize according to how many objects
-> are being indexed, and hence scale both up and down.
-
-I've been noticing rhashtable resize is surprisingly heavy (the default
-parameters don't ever shrink the table, which is why it's not seen as
-much).
-
-And, when I was torture testing that code I tripped over what appeared
-to be an infinite loop in rht_bucket() when a rehsah is in progress,
-which I worked around in
-
-  a592cdf5164d bcachefs: don't use rht_bucket() in btree_key_cache_scan()
-
-(because it makes more sense to just not run while rehashing and avoid
-the function call overhead of rht_bucket()). If rhashtable folks are
-interested in looking at that I have a test that reproduces it.
-
-> So: should we be looking towards gutting the inode cache and so the
-> in-memory VFS inode lifecycle tracks actively referenced inodes? If
-> so, then the management of the VFS inodes becomes a lot simpler as
-> the LRU lock, maintenance and shrinker-based reclaim goes away
-> entirely. Lots of code gets simpler if we trim down the VFS inode
-> life cycle to remove the caching of unreferenced inodes...
-
-Sounds completely legit to me - except for the weird filesystems. I just
-started cscoping and afs at least seems to do iget() without ever
-attaching it to a dentry, I didn't look further.
-
-So...
-
-If fs/inode.c is grotty, perhaps it makes sense to start a
-fs/inode_rhashtable.c with all the new semantics and convert filesystems
-one by one, like we've been doing with the dio code and iomap.
-
-I finally have my head sufficiently around all the weird inode lifetime
-rules that I could do it, although it'll be a bit before I'm not
-swamped.
 
