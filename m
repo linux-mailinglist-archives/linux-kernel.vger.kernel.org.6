@@ -1,127 +1,183 @@
-Return-Path: <linux-kernel+bounces-339372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 274B098640A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:46:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24599986416
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C88781F2446C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:46:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4ECE28CAA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D5B1BF2B;
-	Wed, 25 Sep 2024 15:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492791AAC4;
+	Wed, 25 Sep 2024 15:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PC9gRgVo"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ks0IV4MH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB1A7367
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 15:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F5712B8B;
+	Wed, 25 Sep 2024 15:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727279178; cv=none; b=sFsSYeMWUAqZ6YWTJXmUPLBIwB7hI0HYR/2ii+T4x0XGxKH0XnTZSLakQYX9rYBV4Oo2WBR4QwyPG0SpdicRWuxVGAI8w4hC+FWGsfETEKwDCnIT5bSyyHaRJiPAv4tXcG3aEKoRX/yFt0N0o8IVltAg0zS7N/iTuHUJXg2tDZk=
+	t=1727279315; cv=none; b=R4wGFgAwhf1MhiG9SQd8KZ+iECdwCvl29Re+aVGFpBnanwCHhK05CCRohsLQXil3iJmKdsw3ZlkeFUG5ygoK0vaGvPSos1FX6et3qum1eKAsNtxwDSfFTZiU09jzmSPl7egbl5O88zD56EveV82mBWJXxRVRM6YPjKXUu6xFFOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727279178; c=relaxed/simple;
-	bh=x+4F0wBUmKeHDpIxKuL0c2Jd8c4z4haxH1Lz4gdI+B0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l0LZAAxi+40lFwET3ojbKZmHKHLG3K+/n4Ob1tGcJl52VGZK5zTNpEV2mqW9LDd+oJEOyIJx3nthHBFoNZJ+/FH5Uxsjdp4uIBSHWCfmwL54FkTZbCmw9IxZhWqsWoMXOIgHDxqiTypSTQ6OogfgAw0NnsJIAFaIG3jPMywD8Vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=PC9gRgVo; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-82cd872755dso303744939f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:46:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1727279175; x=1727883975; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bJM9B0m/lek0u1t6zaan4eSGVrdWrKVx/I5Nl82tDpg=;
-        b=PC9gRgVoBdTFbP/CUmjj8qpu4fOA1QUc1MXA98jYJFalliEKXucSUK5a/JmYxtNdrt
-         1GorQ5NKg6gXGR4htfCIwdAz5SWa+WevsgaGrs2sNNRTbV2xm6g7FTCU3PxhYfcVSkBe
-         N5II6CsvQ1LhBPL2FEMfRsbT2YZMMwIa2Guhg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727279175; x=1727883975;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bJM9B0m/lek0u1t6zaan4eSGVrdWrKVx/I5Nl82tDpg=;
-        b=YJE1XpLbICMnVOiX4vvc+pTA01OKumuyV+S3AjqbrsIylpMB4KGM6v5L6s9oh6FpBF
-         L/swks22TZUJD8JGN5PLr/QX4BTh0KZgJqxLQ5Q94Jp7GQzHFlZnbMVjwErsR01/Gdxi
-         84O+vv6MBFPUeltoh4fRDtk2rsvhPqCNot+/EJNOHDdsNp1SYpFoZ/R2lGRggQ+0biOa
-         gUfkV894PVU3nT6PmI5MPCz4W6ZDH4JACFvXngFvoDcSe1to2cJS3VUCYbSHnli0ntfA
-         rOXtCwwOvV5LTLqMZuxzZJsS0rOZZHcKLD2Hps3VG+zO/wvMSIEIew0IIZMlv/jCRdr2
-         921Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWwMwbe70JJatVfc3hrH+F2tWPWqimX7NoDVd8gUtUx2v6M6a9QNAiCLDnqHsktMv+LLQc+t0DM8EYgN1k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyF/wRlGjjOjUQOp14w9Ch703IY6eoIsqt7qRyT/bCdM4h1WCGy
-	k3TioDDT8J45mIyooU8CMLzi+X26MuZ5NZKuWsHPePQ/XtYYhzhvJ5Q3F4lIwh0=
-X-Google-Smtp-Source: AGHT+IHRidj4X8LYl5IH0Bj18RNFExR+Bckr7+2ammy4QZdJGrRo2Cl1ySSH9rbblKME1zD62cNhWw==
-X-Received: by 2002:a05:6602:6424:b0:82d:f4f:f49b with SMTP id ca18e2360f4ac-83247f9003fmr365137839f.16.1727279174659;
-        Wed, 25 Sep 2024 08:46:14 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8323f5dbf4dsm112899639f.11.2024.09.25.08.46.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Sep 2024 08:46:14 -0700 (PDT)
-Message-ID: <e537539f-85a5-42eb-be8a-8a865db53ca2@linuxfoundation.org>
-Date: Wed, 25 Sep 2024 09:46:12 -0600
+	s=arc-20240116; t=1727279315; c=relaxed/simple;
+	bh=wWKdhuaFqeg1OGQPpJT1FdZiD0N4gWpXyG9Ve1H5Rrs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YA4HnFn8MAll62Ex65DqMbObPuOUB+YgsGx6syCO5XLZ79lQVynMts52nk78PPiOVur+4Cc+kXQqkbMNKbVRWMwd9KAUhNmQDSU7+czXY1OA2Y5swJVNrKAVGFUISNdK3zRz4qnGQ3lAOoLE9RIA4viG3QpCvo6a5A8IUkEknmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ks0IV4MH; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727279314; x=1758815314;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wWKdhuaFqeg1OGQPpJT1FdZiD0N4gWpXyG9Ve1H5Rrs=;
+  b=Ks0IV4MHf7EaqURqAYVDDEV3UCarLt3m1ZOedIuDYj3+Kcry51s6LLLo
+   M66Rigxw6OJCd0MWbqcetsyUF61DfbQIhuWOGPsZftLCN7xLhbK+5ej8d
+   DdVYTYTVZXk5cwdsrc8eq+c83ReCzCOurOm/Xn9q+TrV7zZyMBCYQi0X1
+   A/KNaJz178WTb/NDVc3jXQHqJXwfR0PlP4MMe8NqHzpOTx+PbZziQg/EH
+   hf4NxvCxeXdvZiiwkOdO1ZFuOxCXntUm6negHRSxqw+1gVynxuvnfC54b
+   fPOBy3U0NgjhLJjogcOw3/qfZu9HaUsIbSQSynjf20N6h+TVw2fscjfIf
+   g==;
+X-CSE-ConnectionGUID: 3Df66lmyQMegaDSzikDn5w==
+X-CSE-MsgGUID: 8LiIPrpUSdaJyPDkVVtCcg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11206"; a="13961728"
+X-IronPort-AV: E=Sophos;i="6.10,257,1719903600"; 
+   d="scan'208";a="13961728"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 08:48:25 -0700
+X-CSE-ConnectionGUID: XP6UHyFzQki/KQRJiIUfuQ==
+X-CSE-MsgGUID: gm6fk4vVTyOM96+LVeO2tw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,257,1719903600"; 
+   d="scan'208";a="72131552"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 25 Sep 2024 08:48:23 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1stUFY-000Jf1-1q;
+	Wed, 25 Sep 2024 15:48:20 +0000
+Date: Wed, 25 Sep 2024 23:47:56 +0800
+From: kernel test robot <lkp@intel.com>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Trevor Gamblin <tgamblin@baylibre.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-pwm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pwm: axi-pwmgen: Create a dedicated function for getting
+ driver data from a chip
+Message-ID: <202409252352.YzA5pFp7-lkp@intel.com>
+References: <20240923125418.16558-2-u.kleine-koenig@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] selftests: exec: update gitignore for load_address
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- Allison Henderson <allison.henderson@oracle.com>,
- Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
- rds-devel@oss.oracle.com, linux-mm@kvack.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240924-selftests-gitignore-v1-0-9755ac883388@gmail.com>
- <20240924-selftests-gitignore-v1-4-9755ac883388@gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240924-selftests-gitignore-v1-4-9755ac883388@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240923125418.16558-2-u.kleine-koenig@baylibre.com>
 
-On 9/24/24 06:49, Javier Carrasco wrote:
-> The name of the "load_address" objects has been modified, but the
-> corresponding entry in the gitignore file must be updated.
-> 
-> Update the load_address entry in the gitignore file to account for
-> the new names.
-> 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> ---
->   tools/testing/selftests/exec/.gitignore | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/exec/.gitignore b/tools/testing/selftests/exec/.gitignore
-> index 90c238ba6a4b..4d9fb7b20ea7 100644
-> --- a/tools/testing/selftests/exec/.gitignore
-> +++ b/tools/testing/selftests/exec/.gitignore
-> @@ -9,7 +9,7 @@ execveat.ephemeral
->   execveat.denatured
->   non-regular
->   null-argv
-> -/load_address_*
-> +/load_address.*
+Hi Uwe,
 
-Hmm. This will include the load_address.c which shouldn't
-be included in the .gitignore?
+kernel test robot noticed the following build errors:
 
->   /recursion-depth
->   xxxxxxxx*
->   pipe
-> 
+[auto build test ERROR on 62f92d634458a1e308bb699986b9147a6d670457]
 
-thanks,
--- Shuah
+url:    https://github.com/intel-lab-lkp/linux/commits/Uwe-Kleine-K-nig/pwm-axi-pwmgen-Create-a-dedicated-function-for-getting-driver-data-from-a-chip/20240923-205606
+base:   62f92d634458a1e308bb699986b9147a6d670457
+patch link:    https://lore.kernel.org/r/20240923125418.16558-2-u.kleine-koenig%40baylibre.com
+patch subject: [PATCH] pwm: axi-pwmgen: Create a dedicated function for getting driver data from a chip
+config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20240925/202409252352.YzA5pFp7-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240925/202409252352.YzA5pFp7-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409252352.YzA5pFp7-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/pwm/pwm-axi-pwmgen.c: In function 'axi_pwmgen_ddata_from_chip':
+>> drivers/pwm/pwm-axi-pwmgen.c:58:16: error: incompatible types when returning type 'void *' but 'struct axi_pwmgen_ddata' was expected
+      58 |         return pwmchip_get_drvdata(chip);
+         |                ^~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/pwm/pwm-axi-pwmgen.c: In function 'axi_pwmgen_apply':
+>> drivers/pwm/pwm-axi-pwmgen.c:64:42: error: incompatible types when initializing type 'struct axi_pwmgen_ddata *' using type 'struct axi_pwmgen_ddata'
+      64 |         struct axi_pwmgen_ddata *ddata = axi_pwmgen_ddata_from_chip(chip);
+         |                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/pwm/pwm-axi-pwmgen.c: In function 'axi_pwmgen_get_state':
+   drivers/pwm/pwm-axi-pwmgen.c:108:42: error: incompatible types when initializing type 'struct axi_pwmgen_ddata *' using type 'struct axi_pwmgen_ddata'
+     108 |         struct axi_pwmgen_ddata *ddata = axi_pwmgen_ddata_from_chip(chip);
+         |                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for OMAP2PLUS_MBOX
+   Depends on [n]: MAILBOX [=y] && (ARCH_OMAP2PLUS || ARCH_K3)
+   Selected by [y]:
+   - TI_K3_M4_REMOTEPROC [=y] && REMOTEPROC [=y] && (ARCH_K3 || COMPILE_TEST [=y])
+
+
+vim +58 drivers/pwm/pwm-axi-pwmgen.c
+
+    55	
+    56	static struct axi_pwmgen_ddata axi_pwmgen_ddata_from_chip(struct pwm_chip *chip)
+    57	{
+  > 58		return pwmchip_get_drvdata(chip);
+    59	}
+    60	
+    61	static int axi_pwmgen_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+    62				    const struct pwm_state *state)
+    63	{
+  > 64		struct axi_pwmgen_ddata *ddata = axi_pwmgen_ddata_from_chip(chip);
+    65		unsigned int ch = pwm->hwpwm;
+    66		struct regmap *regmap = ddata->regmap;
+    67		u64 period_cnt, duty_cnt;
+    68		int ret;
+    69	
+    70		if (state->polarity != PWM_POLARITY_NORMAL)
+    71			return -EINVAL;
+    72	
+    73		if (state->enabled) {
+    74			period_cnt = mul_u64_u64_div_u64(state->period, ddata->clk_rate_hz, NSEC_PER_SEC);
+    75			if (period_cnt > UINT_MAX)
+    76				period_cnt = UINT_MAX;
+    77	
+    78			if (period_cnt == 0)
+    79				return -EINVAL;
+    80	
+    81			ret = regmap_write(regmap, AXI_PWMGEN_CHX_PERIOD(ch), period_cnt);
+    82			if (ret)
+    83				return ret;
+    84	
+    85			duty_cnt = mul_u64_u64_div_u64(state->duty_cycle, ddata->clk_rate_hz, NSEC_PER_SEC);
+    86			if (duty_cnt > UINT_MAX)
+    87				duty_cnt = UINT_MAX;
+    88	
+    89			ret = regmap_write(regmap, AXI_PWMGEN_CHX_DUTY(ch), duty_cnt);
+    90			if (ret)
+    91				return ret;
+    92		} else {
+    93			ret = regmap_write(regmap, AXI_PWMGEN_CHX_PERIOD(ch), 0);
+    94			if (ret)
+    95				return ret;
+    96	
+    97			ret = regmap_write(regmap, AXI_PWMGEN_CHX_DUTY(ch), 0);
+    98			if (ret)
+    99				return ret;
+   100		}
+   101	
+   102		return regmap_write(regmap, AXI_PWMGEN_REG_CONFIG, AXI_PWMGEN_LOAD_CONFIG);
+   103	}
+   104	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
