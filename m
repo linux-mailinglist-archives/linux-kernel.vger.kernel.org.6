@@ -1,126 +1,91 @@
-Return-Path: <linux-kernel+bounces-337963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9A41985190
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 05:40:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31F84985191
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 05:41:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78496B22BD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 03:40:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19E1D1C23237
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 03:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2625F14B07A;
-	Wed, 25 Sep 2024 03:40:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92ECE14B08E;
+	Wed, 25 Sep 2024 03:41:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Qo2KTyM8"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p7a3609T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA586126F0A;
-	Wed, 25 Sep 2024 03:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA86B14AD3F
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 03:41:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727235644; cv=none; b=omZnqBgxIJrXQGtit+JHLdQBAYV8K4ECDoCxoE4VHZ93rPysa2kN4oxym2Ei4oudJYUpc+xNKpAccSMfRbW5U4DF5UvcZ8i/t0HvSKSh9vblmR7FeqtTDfHsz9KFFLwXWVjpxvq2dzvQNjTcUDsurZWP9sraFNStl9nteLPiEME=
+	t=1727235688; cv=none; b=NvY5qqcDLmcb3iCjUdcJF0i0W+W32pz+ZJwtPbHxuyOnM0qt78Gl2eET0td10YTJAWmHiMfM7p8m2jzAUa5FsajDLSnVqfuGRM6y47/bGe7M3GYx6EIAAQXmOjE+rjmosdP2g9h9vR9jV1/uuGzBH8dqM/QDIXY333/pqr0V3bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727235644; c=relaxed/simple;
-	bh=8IaeXU8v7pvd1GaZ60wnggcBhffoHu+Rw5ZykBmr74U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=oc8zLQNbb674bw5L95nI7lXBl4Y0k7OBXqJfGTHqip+GLWTynMYAY0yZERe6EsVwx8jZpOkPDyihnBbExhFb/uBUq0TRXVX28wHYcWb1AXcdrC+PG8Atl6jDAuL2iwYg3Wauk+tIetgb4GoUWLpsZWU/yOo5gsGcXALSHvb6Mpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Qo2KTyM8; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48OJ57ll014296;
-	Wed, 25 Sep 2024 03:40:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8IaeXU8v7pvd1GaZ60wnggcBhffoHu+Rw5ZykBmr74U=; b=Qo2KTyM8isGhWo9n
-	mgCwFEO4gu1iWwBZrFmAclykWyQTfU7+ca70n91SXdfCT4aHdPe6Ud6iWsvWG66R
-	KaOttd4kqP+64No4lQwPV0PCR3+YpwF6CTD7fmGDzFL3+F8W6LKePGE6h894eyJ+
-	QqI+49eW5Tc/xW3x2CbbVuaRNVoAbyflmGz2bMEO4M+eWsMW8kzpA2oVHmhKP+Gy
-	wc4eYt4VkraYVU+/B46AGPQs1OdVTUFRYtto+M7TnnitJIG3Lq7pmEH0+i7gnEbH
-	6mP8/1P4kLu161Z0CExEV6vmZvRiNESGtVTaZWUU6Xsw4sOZhWVs6LPa26j/Oxu3
-	nzT5DQ==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41snfh2xay-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 03:40:34 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48P3eXPj012440
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 03:40:33 GMT
-Received: from [10.239.29.179] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 24 Sep
- 2024 20:40:28 -0700
-Message-ID: <dd16ff25-8f05-4137-9726-7f63ab82f30a@quicinc.com>
-Date: Wed, 25 Sep 2024 11:40:26 +0800
+	s=arc-20240116; t=1727235688; c=relaxed/simple;
+	bh=Xce3UyyGKlz+3jg4rHmmMiwwmv+9dBnd289UDXz6Hik=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=K5UOwssjL9xSer5lftgQNp4XuFCF8COSza69ytxR4cWRagBdIb0te2cqu4yY5nX0ttNxkflL71BDVulQEvIpmO0r8F9eNuYIQjreOgcaZsEzxn7L63YPvALA7/U7Cpo7OIB9Ty09fpzMeYgzEeokcFRmuft9a8Nn8XncXnBkQT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p7a3609T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98E35C4CECE;
+	Wed, 25 Sep 2024 03:41:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727235687;
+	bh=Xce3UyyGKlz+3jg4rHmmMiwwmv+9dBnd289UDXz6Hik=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=p7a3609TEJhik1mwSQt7x/NJ8qqpriX4ccJviepFHCZuj0q9sLmTXwlinr9xIif9q
+	 Le0phncemRRwx/UbTAf/V2EZrVJVrCYaMm31KAIpibtMP01CEOcWxQXo1wtOYRuW+J
+	 P8KItNkkb1wkRpdQLiR+yQ5bGznlZT75wT949R50JrMXuvO9b1lz04uZG19SA55guk
+	 DVb6wr56YP8hXX8nh6STo4z7x1fR5RaJLC6xE2hMLVW++4sR3NhFDl64pS9p1m2vzp
+	 waVOwcZPedegSQZLE5mh4NNVDSjU1dnHS2i7nqznqnN2nfdqmfZXrwp93tmo636A/z
+	 EcE/cfeR4Ho1g==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34597380DBF5;
+	Wed, 25 Sep 2024 03:41:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/6] clk: qcom: gcc-x1e80100: Fix halt_check for
- pipediv2 clocks
-To: Johan Hovold <johan@kernel.org>
-CC: <manivannan.sadhasivam@linaro.org>, <vkoul@kernel.org>,
-        <kishon@kernel.org>, <robh@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>, <abel.vesa@linaro.org>,
-        <quic_msarkar@quicinc.com>, <quic_devipriy@quicinc.com>,
-        <dmitry.baryshkov@linaro.org>, <kw@linux.com>, <lpieralisi@kernel.org>,
-        <neil.armstrong@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, Mike Tipton <quic_mdtipton@quicinc.com>
-References: <20240924101444.3933828-1-quic_qianyu@quicinc.com>
- <20240924101444.3933828-5-quic_qianyu@quicinc.com>
- <ZvLNNDCOy68nK2B5@hovoldconsulting.com>
-Content-Language: en-US
-From: Qiang Yu <quic_qianyu@quicinc.com>
-In-Reply-To: <ZvLNNDCOy68nK2B5@hovoldconsulting.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: EVIdORHBfowiQCKqqaKJOSDHKth64nAV
-X-Proofpoint-GUID: EVIdORHBfowiQCKqqaKJOSDHKth64nAV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- lowpriorityscore=0 priorityscore=1501 malwarescore=0 mlxscore=0
- suspectscore=0 impostorscore=0 spamscore=0 phishscore=0 mlxlogscore=622
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409250024
+Content-Transfer-Encoding: 8bit
+Subject: Re: [f2fs-dev] [GIT PULL] f2fs for 6.12-rc1
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: 
+ <172723568980.97387.2632105381881398970.git-patchwork-notify@kernel.org>
+Date: Wed, 25 Sep 2024 03:41:29 +0000
+References: <ZvInHczHWvWeXEoF@google.com>
+In-Reply-To: <ZvInHczHWvWeXEoF@google.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+
+Hello:
+
+This pull request was applied to jaegeuk/f2fs.git (dev)
+by Linus Torvalds <torvalds@linux-foundation.org>:
+
+On Tue, 24 Sep 2024 02:42:37 +0000 you wrote:
+> Hi Linus,
+> 
+> Could you please consider this pull reuqest?
+> 
+> Thanks,
+> 
+> The following changes since commit c813111d19e65b6336a6352eae9c1ff5c40f722f:
+> 
+> [...]
+
+Here is the summary with links:
+  - [f2fs-dev,GIT,PULL] f2fs for 6.12-rc1
+    https://git.kernel.org/jaegeuk/f2fs/c/79952bdcbcea
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
-On 9/24/2024 10:31 PM, Johan Hovold wrote:
-> On Tue, Sep 24, 2024 at 03:14:42AM -0700, Qiang Yu wrote:
->> The pipediv2_clk's source from the same mux as pipe clock. So they have
->> same limitation, which is that the PHY sequence requires to enable these
->> local CBCs before the PHY is actually outputting a clock to them. This
->> means the clock won't actually turn on when we vote them. Hence, let's
->> skip the halt bit check of the pipediv2_clk, otherwise pipediv2_clk may
->> stuck at off state during bootup.
->>
->> Suggested-by: Mike Tipton <quic_mdtipton@quicinc.com>
->> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
->> Reviewed-by: Konrad Dybcio <konradybcio@kernel.org>
-> Looks like this one is missing a Fixes and CC stable tag. With that
-> added:
-
-Will add Fixes and CC stable tag.
-
-Thanks,
-Qiang Yu
-> Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
->
-> Johan
 
