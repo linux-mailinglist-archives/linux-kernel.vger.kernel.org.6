@@ -1,268 +1,130 @@
-Return-Path: <linux-kernel+bounces-338314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D60A985651
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:28:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B40C3985664
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:32:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B03301C22BC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:28:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79341281BCB
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DBB215B98D;
-	Wed, 25 Sep 2024 09:28:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A1415C15A;
+	Wed, 25 Sep 2024 09:32:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="VEIOJkW0";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="JzBNScWS"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l3WHxoMF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8143B15B570
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 09:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9362315C122
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 09:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727256508; cv=none; b=EkWWmhxAt/h4iyVQM/jsTHg1DWGSGHWQxiH2Rz4eAkDDzXuC0ooZHrgOCJDgAroUiGw1oyDX0GpgyAe6te+mEzEYKFBU8j5+B0txAu51BpGsGol+B60CnXLg0hXajpJRMC/wMUC7V5FElbU60Usppz5qcGnUQM6MiePg8rRxXr4=
+	t=1727256720; cv=none; b=GLTMbhJ3XX6+Ya0n4STkQMkHhnKOULWRK0KA/aKNPmxrUTwwCwIQm4eMgngV9ehMSr2lNSxNUIdZ4SJmLroiR03vjC3Exm0rCkrpg9jJLyi1UAg5+4CRezF7uwc7gF5AKovXBupnwYrFD/x/oJcQ9G/oWD7Yev+ggOQ15ZAYBRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727256508; c=relaxed/simple;
-	bh=ti5h2hViOIkxVJMMvVqZYX68Xr6yIWnIzfSdL9fXvyo=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=LH0r+ac0oEVgVlvCwshigvHiqNBb+65V6+3tnd7wIRIUhNUdvW0ewllXJBR82cEuRV+5JQr4TS+Bawm8u0GxysQkYBZDK4yYRSQ8rNUCy/SwL8HrDyjrx0uUU6/WLAavdrFssIBM4Liu5WWw5FzvwXtHvE35c1Ls5vaSeOKwsJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=VEIOJkW0; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=JzBNScWS; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 734361FD39;
-	Wed, 25 Sep 2024 09:28:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1727256504; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ti5h2hViOIkxVJMMvVqZYX68Xr6yIWnIzfSdL9fXvyo=;
-	b=VEIOJkW09FCFKOZXer9zdoWubVl2P8c011vtUoZVpOMfaMjrgfMQupjzFzGxaQl4HbHCIi
-	fjDMX46FFhNwr9zMdrabLoNNYzji7C2z7PbCYdZ3LeUGCiypnqCV4Sc7Hrgr7AY6tdvQCf
-	UZrI/7mZ6Zkg74nsGCFRE81W9EWLgfQ=
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1727256503; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ti5h2hViOIkxVJMMvVqZYX68Xr6yIWnIzfSdL9fXvyo=;
-	b=JzBNScWSIJ5sPfOs5v2zQR1qbXaLbDZZ4tt2FtP5NAfhH2Tr99686HlwFH543Tz6u7shBb
-	nb0YR8wKaa7ZDQM9wq+AKcyZ6+P+TB72rCd34a/yB5hItKSrDxrBnWSBrEY2VWz7N8Mt6r
-	YXj1+ojF7nsgr7bg8hOK88KVrKkD3Vg=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0B7F213793;
-	Wed, 25 Sep 2024 09:28:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id bhBmAbfX82b0EwAAD6G6ig
-	(envelope-from <jgross@suse.com>); Wed, 25 Sep 2024 09:28:23 +0000
-Message-ID: <bb725e5e-0dd2-4ce4-993a-608569f318d8@suse.com>
-Date: Wed, 25 Sep 2024 11:28:22 +0200
+	s=arc-20240116; t=1727256720; c=relaxed/simple;
+	bh=X7wHJJlQGTqEuthpuVb29KmqlKJoK5uc7L0Yi8DfPB8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JWnwhXwtYlNLy8WxK5EJ1X3BVk7d5qYur+9j4Jzz8g4160wZwdgAnq3kcJ2cM2Ip61ta1RTPrnGcoS2XjUbguuRqC8XpB80LIwsEDReH22Hd/fm3vYKynwMoeOZpg1rPpPTIQQ+IyZYjtrpW1OJeHymgilGBJiqHTyO3Tf0Mzw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l3WHxoMF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6D49C4CEC3;
+	Wed, 25 Sep 2024 09:31:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727256720;
+	bh=X7wHJJlQGTqEuthpuVb29KmqlKJoK5uc7L0Yi8DfPB8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l3WHxoMFGNVzLEjZIvwIK0aD/Bn3yY99UjH3Kphkn/YZ8dnqP9FKuu/JG9OMycPkl
+	 ui9ItvwXXDevvxCpuKa0bEI700Qf0wzBdt2UwUWDrhjhtwcDTENHtlHvpoUcXU16nx
+	 8cTHjIAImIiTh0Yj3ZJU7gJdcLJkM+mQAwpsbeGEeHNm1K7vsXTKp3JYviYP+htq4S
+	 88XDRZkgd2kGz7FmEDxpbZS5i8mR/yk2SY4Ebigy3geHY3Gw2SrZXtbbi5fwn6J6k9
+	 vzovHbca+EtAbnqQVtjW6j9Gf87D5Hdd7NmZAVIua9fN/y6J7CMlZ1NfZ2Prkworxn
+	 tXxb0CW6ZWkVw==
+Date: Wed, 25 Sep 2024 12:28:56 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Bruno Faccini <bfaccini@nvidia.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	Zi Yan <ziy@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+	John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [PATCH] mm/fake-numa: per-phys node fake size
+Message-ID: <ZvPX2J7D9w0EJTUo@kernel.org>
+References: <20240921081348.10016-1-bfaccini@nvidia.com>
+ <ZvKXFnriMlH2y5Oo@kernel.org>
+ <A846613E-A2B4-4B56-B368-5786F572F168@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/5] x86/pvh: Make 64bit PVH entry relocatable
-From: Juergen Gross <jgross@suse.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
-Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
- Jason Andryuk <jason.andryuk@amd.com>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Brian Gerst <brgerst@gmail.com>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>,
- Stefano Stabellini <sstabellini@kernel.org>
-References: <20240823193630.2583107-1-jason.andryuk@amd.com>
- <f8cf8e13-cbd3-4dfa-b09c-e0a14f0e346c@suse.com>
-Content-Language: en-US
-Autocrypt: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
-In-Reply-To: <f8cf8e13-cbd3-4dfa-b09c-e0a14f0e346c@suse.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------KG7TQpH7DwdSELYLY1SLEQXi"
-X-Spam-Score: -5.19
-X-Spamd-Result: default: False [-5.19 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SIGNED_PGP(-2.00)[];
-	MIME_BASE64_TEXT_BOGUS(1.00)[];
-	NEURAL_HAM_LONG(-0.99)[-0.988];
-	MIME_GOOD(-0.20)[multipart/signed,multipart/mixed,text/plain];
-	NEURAL_HAM_SHORT(-0.20)[-0.995];
-	MIME_UNKNOWN(0.10)[application/pgp-keys];
-	MIME_BASE64_TEXT(0.10)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,imap1.dmz-prg2.suse.org:helo];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	MIME_TRACE(0.00)[0:+,1:+,2:+,3:+,4:~,5:~];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[lists.xenproject.org,vger.kernel.org,amd.com,epam.com,redhat.com,gmail.com,oracle.com,kernel.org];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	HAS_ATTACHMENT(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <A846613E-A2B4-4B56-B368-5786F572F168@nvidia.com>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------KG7TQpH7DwdSELYLY1SLEQXi
-Content-Type: multipart/mixed; boundary="------------pyNEyvK3zdiQ2A2L0hy2cX60";
- protected-headers="v1"
-From: Juergen Gross <jgross@suse.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
-Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
- Jason Andryuk <jason.andryuk@amd.com>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Brian Gerst <brgerst@gmail.com>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>,
- Stefano Stabellini <sstabellini@kernel.org>
-Message-ID: <bb725e5e-0dd2-4ce4-993a-608569f318d8@suse.com>
-Subject: Re: [PATCH v3 0/5] x86/pvh: Make 64bit PVH entry relocatable
-References: <20240823193630.2583107-1-jason.andryuk@amd.com>
- <f8cf8e13-cbd3-4dfa-b09c-e0a14f0e346c@suse.com>
-In-Reply-To: <f8cf8e13-cbd3-4dfa-b09c-e0a14f0e346c@suse.com>
+Hi Bruno,
 
---------------pyNEyvK3zdiQ2A2L0hy2cX60
-Content-Type: multipart/mixed; boundary="------------ocOH19oOhJdHAgBom22rvwEh"
+Please reply inline to the mails on Linux kernel mailing lists.
 
---------------ocOH19oOhJdHAgBom22rvwEh
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+On Tue, Sep 24, 2024 at 03:27:52PM +0000, Bruno Faccini wrote:
+> On 24/09/2024 12:43, "Mike Rapoport" <rppt@kernel.org> wrote:
 
-T24gMTYuMDkuMjQgMTA6NDQsIEp1ZXJnZW4gR3Jvc3Mgd3JvdGU6DQo+IHg4NiBtYWludGFp
-bmVycywNCj4gDQo+IGFyZSB5b3UgZ29pbmcgdG8gcGljayB0aGlzIHNlcmllcyB1cCwgb3Ig
-c2hvdWxkIEkgdGFrZSBpdCB2aWEgdGhlDQo+IFhlbiB0cmVlPw0KDQpJIHRha2UgdGhlIHNp
-bGVuY2UgYXMgYSAiaXRzIG9rYXkgdG8gZ28gdmlhIHRoZSBYZW4gdHJlZSIuDQoNCg0KSnVl
-cmdlbg0KDQo=
---------------ocOH19oOhJdHAgBom22rvwEh
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+> > On Sat, Sep 21, 2024 at 01:13:49AM -0700, Bruno Faccini wrote:
+> > > Determine fake numa node size on a per-phys node basis to
+> > > handle cases where there are big differences of reserved
+> > > memory size inside physical nodes, this will allow to get
+> > > the expected number of nodes evenly interleaved.
+> > >
+> > > Consider a system with 2 physical Numa nodes where almost
+> > > all reserved memory sits into a single node, computing the
+> > > fake-numa nodes (fake=N) size as the ratio of all
+> > > available/non-reserved memory can cause the inability to
+> > > create N/2 fake-numa nodes in the physical node.
+> > 
+> > 
+> > I'm not sure I understand the problem you are trying to solve.
+> > Can you provide more specific example?
+>
+> I will try to be more precise about the situation I have encountered with
+> your original set of patches and how I thought it could be solved.
+> 
+> On a system with 2 physical Numa nodes each with 480GB local memory,
+> where the biggest part of reserved memory (~ 309MB) is from node 0 with a
+> small part (~ 51MB) from node 1, leading to the fake node size of ~<120GB
+> being determined.
+>
+> But when allocating fake nodes from physical nodes, with let say fake=8
+> boot parameter being used, we ended with less (7) than expected, because
+> there was not enough room to allocate 8/2 fake nodes in physical node 0,
+> due to too big size evaluation.
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+The ability to split a physical node to emulated nodes depends not only on
+the node sizes and hole sizes, but also where the holes are located inside
+the nodes and it's quite possible that for some memory layouts
+split_nodes_interleave() will fail to create the requested number of the
+emulated nodes.
 
-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
-kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
-=3DeeAB
------END PGP PUBLIC KEY BLOCK-----
+> I don't think that fake=N allocation method is intended to get fake nodes
+> with equal size, but to get this exact number of nodes.  This is why I
+> think we should use a per-phys node size for the fake nodes it will host.
 
---------------ocOH19oOhJdHAgBom22rvwEh--
+IMO your change adds to much complexity for a feature that by definition
+should be used only for debugging.
 
---------------pyNEyvK3zdiQ2A2L0hy2cX60--
+Also, there is a variation numa=fake=<N>U of numa=fake parameter that
+divides each node into N emulated nodes.
+ 
+> Hope this clarifies the reason and intent for my patch, have a good day,
+> Bruno 
+> 
+> 
+> > Signed-off-by: Bruno Faccini <bfaccini@nvidia.com>
+> > ---
+> > mm/numa_emulation.c | 66 ++++++++++++++++++++++++++-------------------
+> > 1 file changed, 39 insertions(+), 27 deletions(-)
 
---------------KG7TQpH7DwdSELYLY1SLEQXi
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmbz17YFAwAAAAAACgkQsN6d1ii/Ey88
-xwgAgH1hLLwru25hETw5JTuZzmVvLoP1oX4JmiysavtA+5ll9ysoIOZsV4yk19Clt9066cAhqxYr
-K9YqiKwcL6+4g67aq7CQCL3AtVhkGmxTLlU8+EUr/HXw3poxloRwZwDSc1u7eGA9/Y/UqpfufSTv
-2uSWa225aA+kmED/Ntlsyp0h7TkfsCx+cHnHY3NpVOIXLsKvCMhOIqJMkTeKb0lrGvnvSTvMhwly
-ojUWNvKkEt9Ef6TJxtofwuez9Js/CydTHafC5dJo2NvatqrNUtehOaUJ8Q+YAIPPVkoudT1iTpw8
-k/Gp1dQZhVsNByM6tTE81KlQDgWuyhhQ7I7fW5f1jw==
-=YDlb
------END PGP SIGNATURE-----
-
---------------KG7TQpH7DwdSELYLY1SLEQXi--
+-- 
+Sincerely yours,
+Mike.
 
