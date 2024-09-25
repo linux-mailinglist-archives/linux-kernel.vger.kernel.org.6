@@ -1,73 +1,45 @@
-Return-Path: <linux-kernel+bounces-337949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A959A98515C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 05:17:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ECDB698515F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 05:17:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DB5D284F89
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 03:17:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86E852850AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 03:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1DF14A4D4;
-	Wed, 25 Sep 2024 03:16:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F5D14A619;
+	Wed, 25 Sep 2024 03:17:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2J5Nfg3W"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="bbHWULm2"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1FF14B07A
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 03:16:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503E31487FF;
+	Wed, 25 Sep 2024 03:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727234208; cv=none; b=dbUbSyd7LzHwDfIskVmnyA/rMFAvtViXslXy83QzSpjcjz2GDFUeskAQVCJu2G+BtscrjXE8f0ZRgc6v4xDlZ2jqw0CfT8tGGBc7Pu4UlyyIfbIG7N77syaF4JjYt5uXR0x8uie8ksEAH5Z/wcZRCbzANy8aRs3dr0aVm8I3gik=
+	t=1727234221; cv=none; b=QPnPmes+0VJnnOsou64o5ZjpI8ynjEWfh0y+BxMBStqqZN/J571mafNu8JQftiLdwYjnzbaNArXcvhn+hm/qaVMemJIoRj4AarCvUVEuuLSFCYmMEbevQBZBgSBSIa2l6U47GmJbC+0HQrQLsrN2RDg28oRHQ9r33eZBXGf0PJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727234208; c=relaxed/simple;
-	bh=WH3f1wEHTyRTJ7AT+c2IFOfTQMxKRPyA2AXtakgC6sg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=d4jdRw0db+N9px9KcaYmyOlD592/mstDUb1XCK7gC7n5qB8mJsivtBgWM2/h/nUbZdG7zpIjJQ9f0wyKoPBYndXNFX3sze11x2qxK6KymCYyw8U4lorkgSNC2/nJh1xrtPHc1TArqavPwY97ZRu6DZN+98mrQHWemqU7hxVcKfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2J5Nfg3W; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2da4ea59658so4964554a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 20:16:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727234206; x=1727839006; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=j/foBZ7L1xcE0uOYfjQY3pnhprf6ad5uc1MzhfvUezU=;
-        b=2J5Nfg3Wlo1FqRRtbPbdRKFX5uQo2fWSeDO4xAJquR2w+XVOg7qVHJ+CYE3aZz+6PJ
-         BIj+nFRb7jMB6F1o8P6AuVGFZYUxdlnrQSPDAY47a+z31gddVHoOD9E5uoVpjpjnJyiJ
-         XvppiA4diX3kWPetnU9of5v2uwOJosbyp1obhCG8xxxER7qAg+/a2ZH68tHzDocpbElm
-         OxH0u8OJM/MujOmSPrCl+eWBEb8LkrVpGsjus43w1vMIFQwas5cyJeBQ1r5l7qixzQDa
-         nd2Smd9uxTbqeEKQu9PBVJ+is7mlhwIcFsFgoinlqPxt6m7A4sjBkFtUilYVKOnZyJFv
-         ivBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727234206; x=1727839006;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j/foBZ7L1xcE0uOYfjQY3pnhprf6ad5uc1MzhfvUezU=;
-        b=Bbkg9OEaeHLoEKRKT3BCwr7yP688L7f3IRbwO4HjSOlWcqT5oA+F1OT3EMhncJ4kEw
-         ERmt1K/uDr7V3zGREf6qOZiaWt//svLPLhbtR5Np5Ph+mF2VLXoi4c70fN3kfhQOhbQ7
-         QyrNMXSk0NQWbj9h7Dph/8KU1dkSSa3mE/WuV1sg7VgqdU9h4XMuB/GVPK1wc9fFZPxd
-         OVic6xZLuzLPJ5yFoh5S4nKs9J/nQVlwQaOddhP4Pxjx6DX203Jdvxeg9+04H+07Nt9h
-         NwXZbYF5ELG5UPbD2jamBRtF02bPbKj1xqBwu7Hj5JQE5uV4MHVK9krle0DOd6w3FQBw
-         E9JQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWazTe1/Swq6l+f5r/QOMpxyLl73hjOAdIXSx0xxbAl9YkjT1hz4ahAii7s78mfGi1109OnGAAlTgrQuu8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAKZvaSkITciKt+hsMXfQteF96rQXv/QvbN55js4UoFOS0tzqh
-	oUVbZPwS97gb40fqxHHQvFNORT38VEuQiYXcUZ2hW61K2QsrtqHkl81MXcWMhA==
-X-Google-Smtp-Source: AGHT+IHNTG/XEGwlf6r5ouS7N3mZHtb1iWq6Pcvw53rK4zJHPUQ1Ne1Ch54gGVnRgQVdpD3vSX+AvA==
-X-Received: by 2002:a17:90a:17cb:b0:2e0:78a0:55c4 with SMTP id 98e67ed59e1d1-2e078a0572cmr194836a91.9.1727234206189;
-        Tue, 24 Sep 2024 20:16:46 -0700 (PDT)
-Received: from ?IPV6:2a00:79e0:2e14:8:32ad:6c37:2d1:220a? ([2a00:79e0:2e14:8:32ad:6c37:2d1:220a])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e06e1a08fesm327560a91.5.2024.09.24.20.16.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Sep 2024 20:16:45 -0700 (PDT)
-Message-ID: <66d9af81-d211-45c9-bc3e-8dec5a8f92e0@google.com>
-Date: Tue, 24 Sep 2024 20:16:44 -0700
+	s=arc-20240116; t=1727234221; c=relaxed/simple;
+	bh=eSLOudwo/gNlwHCaosTH6LuuU8d+3VhzM0tpxUzQTkY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bOxKxn+Vz1bKguoDNolM7mJAcBHdrXh/jDU3cwoeulcs7ITXJjWVlbSxl1RAnBIVMt/9hw9CmBymBfg/3lR1Gr3t7KXpHFqv6+lE9VJMbgHWXwT2kPXAMxRRxab5SH6BT+SDvqdpE5VRl5oKYICFDXSiaZ5uMb7QCIHMe2cd/hI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=bbHWULm2; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1727234216; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=vBmybkyManHrqJ/9QxLToxzghGi40MtTOZyEj7zvSaU=;
+	b=bbHWULm2HBnxfmV0uarqZnPEelxAaICiV5E8QdervlCD11ul8ISzV/Le0FCmy9WLc2SVGMTIXgmIIHn0vbWHiB5tVC3T/l5irKneHNo67PldZ8lll2BY5oGx/UYPAHOUAi/5u3jelchvabvAZAVyJbMZUq+ufCrhtneMRvAB2tg=
+Received: from 30.221.128.100(mailfrom:lulie@linux.alibaba.com fp:SMTPD_---0WFi0I1F_1727234213)
+          by smtp.aliyun-inc.com;
+          Wed, 25 Sep 2024 11:16:54 +0800
+Message-ID: <0fb425e0-5482-4cdf-9dc1-3906751f8f81@linux.alibaba.com>
+Date: Wed, 25 Sep 2024 11:16:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,66 +47,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v3 2/2] usb: typec: tcpm: Add support for parsing time dt
- properties
-From: Amit Sunil Dhamne <amitsd@google.com>
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: gregkh@linuxfoundation.org, robh@kernel.org, dmitry.baryshkov@linaro.org,
- badhri@google.com, kyletso@google.com, rdbabiera@google.com,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240923224059.3674414-1-amitsd@google.com>
- <20240923224059.3674414-3-amitsd@google.com>
- <ZvK2slBHR8PhzaMt@kuha.fi.intel.com>
- <d72cc89a-7f73-4294-927e-48e647e37310@google.com>
-Content-Language: en-US
-In-Reply-To: <d72cc89a-7f73-4294-927e-48e647e37310@google.com>
+Subject: Re: [RFC PATCHv2 net-next 3/3] ipv4/udp: Add 4-tuple hash for
+ connected socket
+To: Gur Stavi <gur.stavi@huawei.com>
+Cc: antony.antony@secunet.com, davem@davemloft.net, dsahern@kernel.org,
+ dust.li@linux.alibaba.com, edumazet@google.com, fred.cc@alibaba-inc.com,
+ jakub@cloudflare.com, kuba@kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, pabeni@redhat.com, steffen.klassert@secunet.com,
+ willemdebruijn.kernel@gmail.com, yubing.qiuyubing@alibaba-inc.com
+References: <20240924110414.52618-4-lulie@linux.alibaba.com>
+ <20240924123113.1688315-1-gur.stavi@huawei.com>
+From: Philo Lu <lulie@linux.alibaba.com>
+In-Reply-To: <20240924123113.1688315-1-gur.stavi@huawei.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-
-Hi,
-
-On 9/24/24 7:44 PM, Amit Sunil Dhamne wrote:
-> Hi Heikki,
->
-> On 9/24/24 5:55 AM, Heikki Krogerus wrote:
->> Hi,
->>
->>> @@ -7611,10 +7650,13 @@ struct tcpm_port *tcpm_register_port(struct 
->>> device *dev, struct tcpc_dev *tcpc)
->>>       err = tcpm_fw_get_caps(port, tcpc->fwnode);
->>>       if (err < 0)
->>>           goto out_destroy_wq;
->>> +
->>
->> This extra newline is not relevant or necessary. Otherwise this LGTM:
->
-> Thanks for reviewing! Please let me know if I should upload a new set 
-> or this is alright at this time?
+Content-Transfer-Encoding: 7bit
 
 
-Uploaded a new patchset anyway: 
-https://lore.kernel.org/all/20240925031135.1101048-3-amitsd@google.com/
+On 2024/9/24 20:31, Gur Stavi wrote:
+>> +/* In hash4, rehash can also happen in connect(), where hash4_cnt keeps unchanged. */
+>> +static void udp4_rehash4(struct udp_table *udptable, struct sock *sk, u16 newhash4)
+>> +{
+>> +	struct udp_hslot *hslot4, *nhslot4;
+>> +
+>> +	hslot4 = udp_hashslot4(udptable, udp_sk(sk)->udp_lrpa_hash);
+>> +	nhslot4 = udp_hashslot4(udptable, newhash4);
+>> +	udp_sk(sk)->udp_lrpa_hash = newhash4;
+>> +
+>> +	if (hslot4 != nhslot4) {
+>> +		spin_lock_bh(&hslot4->lock);
+>> +		hlist_del_init_rcu(&udp_sk(sk)->udp_lrpa_node);
+>> +		hslot4->count--;
+>> +		spin_unlock_bh(&hslot4->lock);
+> 
+> I realize this is copied from udp_lib_rehash, but isn't it an RCU bug?
+> Once a node is removed from a list, shouldn't synchronize_rcu be called
+> before it is reused for a new list? A reader that was traversing the
+> old list may find itself on the new list.
+> 
+>> +
+>> +		spin_lock_bh(&nhslot4->lock);
+>> +		hlist_add_head_rcu(&udp_sk(sk)->udp_lrpa_node, &nhslot4->head);
+>> +		nhslot4->count++;
+>> +		spin_unlock_bh(&nhslot4->lock);
+>> +	}
+>> +}
+>> +
 
+Good catch! IIUC, synchronize_rcu() is needed here, or otherwise, this 
+could happen:
 
-Thanks!
+    Reader(lookup)     Writer(rehash)
+    -----------------  ---------------
+1. rcu_read_lock()
+2. pos = sk;
+3.                     hlist_del_init_rcu(sk, old_slot)
+4.                     hlist_add_head_rcu(sk, new_slot)
+5. pos = pos->next; <=
+6. rcu_read_unlock()
 
->
-> -- 
->
-> Amit
->
->>
->> Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
->>
->>>       err = tcpm_fw_get_snk_vdos(port, tcpc->fwnode);
->>>       if (err < 0)
->>>           goto out_destroy_wq;
->>>   +    tcpm_fw_get_timings(port, tcpc->fwnode);
->>> +
->>>       port->try_role = port->typec_caps.prefer_role;
->>>         port->typec_caps.revision = 0x0120;    /* Type-C spec 
->>> release 1.2 */
->> thanks,
->>
+In step 5, we wrongly moved from old_slot to new_slot.
+
+Perhaps the similar codes in udp_lib_rehash() for hslot2 also need a fix.
+
+Thanks.
+-- 
+Philo
+
 
