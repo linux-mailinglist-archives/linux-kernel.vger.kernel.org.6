@@ -1,126 +1,222 @@
-Return-Path: <linux-kernel+bounces-339255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D89769861BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:00:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C86329861BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:00:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 153B91C26C10
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:00:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 494041F2BFBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944661925BC;
-	Wed, 25 Sep 2024 14:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B15D617BEA7;
+	Wed, 25 Sep 2024 14:34:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fua6v3jS"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="mD1W8heg"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EAFC18C927
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 14:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED5C18C931
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 14:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727274798; cv=none; b=itOKW9rCQSsj19DzlRiVs4G2LVBPsAkF04ChOx9G7f1rHV6Ce3UT0AezmjZTHyoNbh9dVFiSWStJDvVwZ5Ec5jnfU5fXn/I6jDUDYLryEJ8Fmj3fvP29ubYWNorrjBQt+PtsoNCUlzuM75C4w5v807JYqq1xLSZGUc9CvRrXFHI=
+	t=1727274846; cv=none; b=dPih6F6EEL4jOczuIx+NztCeDLXmyYYOp2nyLvl5Bl+jp8fxptGDKm5F52V09L4J5b/btL8abUQ9qVRp6RDClTb1oTY3KcEyVW0J5uxFHpaLwqu0k3sAWuhmASZTilnLcTcaJvJvX2woE6YDNE5wXtkAUsrdarOWh3BrctKO+J8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727274798; c=relaxed/simple;
-	bh=YLTenKhS3xLclYZc+EScAxbqhF86plf5qeJH856RvYI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sPvdP9mLYdfNsj9MPsTsZ+p6To7dlkLYARci1gbjKvrwuswV1SgvGbHO1vkAGja+TakyNKLlyWPC/yEygUbRDZrCJQC4FFeOBparbu4ZR7YGp6m3aquVc1RCQRD2kOQ2KxyfoRcXDonefP2kpsYA96osSqbLUsWvZUEhsZbq2pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fua6v3jS; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5369f1c7cb8so8814178e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 07:33:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727274792; x=1727879592; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=65VA0NQnFRDpybsCtjHAkUveWm0YvCe5g8L8mRc9rpA=;
-        b=fua6v3jS8ahFMYpvu16oueagMTwbBv5gxvDvxwToTC3Rm6gvxprDL2njOnwBDVT6oc
-         FXE/rUXYoItI9vGU1m10/cnNH4t7RC61zGQQM/KrJiapYW7fybTIVrJWGbEFcnHgBVOC
-         nj/V4xW1l/knlwtbFLugDHbL9mQN/23uufeiw=
+	s=arc-20240116; t=1727274846; c=relaxed/simple;
+	bh=diAMlwEmIc31dAh/E1f912CF6mSdX3qEXeARlvF6e+4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=hw+bHA/QckoInV2DkJhrsnZcy3HqclhYVSrz4BahXgrjOFYixpVKU8CGIQjibLhZvpgjTlS5mF14W+w04o8Hsdtp0Z3IS0BRcuFIxAsRty0O/cwug3ejlWyTTjPuTdNj02dXpJsloLUYVxVx3jTDEQp1+haDNn9VkxFvRHLE2kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=mD1W8heg; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id A7F173F2AD
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 14:34:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1727274841;
+	bh=IOx8To2TCRCnkrRgvwNDKzzd5Ho7q0DXUkJ0rDtdRMQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+	b=mD1W8hegvL//QmKV2KV0OS4pWAYim6WjAAP9rFKztW/SEMOF4ZFAKXWjN27rkrNnL
+	 6aS6BzYh/YwnE32vh3h7T/C2hMMsZ11hi3Ut8IMor4DoAxuO66Zd/sF8aP3xCN7pbr
+	 VY5Yuy9AUWaczy9JezTwPcUEzjE+nA3FXCl8N8X0Ko1a5taE1Z1rq+x7it9tIDZYkt
+	 gquAxCS6gx4eCzXdwrKcAX7qh1AplzKFOqK3JsHygao2/fn2lGqAaN36811U9s34F5
+	 NnMKyLH8ges1OlUay9HxLG6hI1g85zG0z/o3ldKMxIG8R2mLqapEtcRr4IUiR+Kqcv
+	 xxNLIy4StRmmA==
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a8a7463c3d0so446305566b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 07:34:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727274792; x=1727879592;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=65VA0NQnFRDpybsCtjHAkUveWm0YvCe5g8L8mRc9rpA=;
-        b=E3WYxy1gTlynxPPoxOWAn/uGVAIsry906DwrmF6KPaFRFo0Sv7HosDrdwV34KvfiJb
-         7Pztst1EO0M+3bnG+d2pOf28ZIctKlPEpHk0vpgUjeXXYdQ1wQZBb5ECBddpO2uTZMj8
-         1lPm8EcA9baBHUpve+wWJui4lZ33aC9Ks09g0W/qsuq1e27IF2XiSK4tXH8GDgtdzA/L
-         18n1b5LJZW9mxCd9l46fDAi7B6bhcUW4fJXC6vAGzwW9ZMTXWThvg/JmVaPcBNiGRmRM
-         UAPievXMQ+fWRlubKaj63W7AxudVk1N3Ix2hF5b5VOgofNyWOTqk5gBc9UNPL86hPD+k
-         zskg==
-X-Forwarded-Encrypted: i=1; AJvYcCXz6sZhj+bqzF+oBMHpxsw3Dn+ui/2mjm5uOztIfI8g1ikPdlVaDy/+z3SFpu6nPYrZXFnAG6h7GJUODag=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbDsrTmDNkg16MJ1cF8IE4KEgwffHPfrRt36l3TSxtkw7WlxIt
-	a8EZHELtwHTTkSfRVbmQqMz+Y4/EiMuM3z3EF1at8Yiy8iiE+WqRBoiBWgPBVAsz+cPflLUUxvn
-	SZA==
-X-Google-Smtp-Source: AGHT+IE49gZvqp+YYfvoDl83NxZmFVGGpDXxjX6BOkl0Et9bzX75vCvvYsLkrnRNpanlm3zjxcc6Lw==
-X-Received: by 2002:a05:6512:1110:b0:52c:e393:6634 with SMTP id 2adb3069b0e04-5387753386bmr2207886e87.33.1727274791552;
-        Wed, 25 Sep 2024 07:33:11 -0700 (PDT)
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-537a864e178sm538231e87.290.2024.09.25.07.33.09
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Sep 2024 07:33:11 -0700 (PDT)
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53653ff0251so7831419e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 07:33:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWGboBMEo2sOQxXHrLlLWoOEnMxkSa57sXKZzkDE7K6GkhMbjvqF71LS663sRerRwTPjlfS1n1BzbcQqi0=@vger.kernel.org
-X-Received: by 2002:a05:6512:33d4:b0:530:ae99:c7fa with SMTP id
- 2adb3069b0e04-5387048cec7mr1901357e87.10.1727274789474; Wed, 25 Sep 2024
- 07:33:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727274841; x=1727879641;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IOx8To2TCRCnkrRgvwNDKzzd5Ho7q0DXUkJ0rDtdRMQ=;
+        b=PVyO0dHveXMi0Dj8yaNvF5N2qsmBSI1LUAg3Qe3IsYkeREe5yv6idtrsIJGY32zJ0/
+         mMTRTrVgEfvctGYb0WCQecjytwW85g48BmIz3tZDrTL3/W26+SetnORL2ktnPfKW3TcF
+         lzNZCt8i0AWlB1mdRuE/8zn7ibA0FUp33dt78fzm3jkYbXF5Q7fDiJuArMQ10w4VkcWl
+         veyOEXC3yUdoMBkHL98reIBoiRbEM8dFDxAF6xc8WJgaEgjJGaPY1/D7hXAtY1z4XSRU
+         ARoXCtTmZ4PqtHIptniwvMT40oF+qq1SCQUdrHkQrb2Jq9AvnF3D3FD0DqTK3XxRHLd6
+         wr5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUBbexyNNLmHowfAHpt0wf1dNwVTvafiNRggvhEWj4PvgnJHdzA7LwFtnyZshH1VuFHbR/Iclogf/WMx4g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOGAeYeynkGla2RXatc4BcmLlB86l2CN82+Lr8gAVnOK2XHl7L
+	eAaurykfA20x19HFzce9ayZMkByFBL7ytKimxG8LJ4sG8u1Mr+TD51LdotEnF6Arr3aaskVEsM4
+	vNnosQvGeFpvOyz9RMGo1lHg7a9OcuN2mLHBJ8+rnmXWETQNIBsZqvQNRAoeLYZuI0ywRB1NLIl
+	enGQ==
+X-Received: by 2002:a17:907:9444:b0:a8d:29b7:ecf3 with SMTP id a640c23a62f3a-a93a0325da2mr338062966b.13.1727274840875;
+        Wed, 25 Sep 2024 07:34:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFFLsEUWtGKMVnsB9Bpth1JGRAwgTtpINOh/ia+dJ5By5L1JL7Z5+0zfg0sxlhc2JUbuJhAHQ==
+X-Received: by 2002:a17:907:9444:b0:a8d:29b7:ecf3 with SMTP id a640c23a62f3a-a93a0325da2mr338059266b.13.1727274840409;
+        Wed, 25 Sep 2024 07:34:00 -0700 (PDT)
+Received: from amikhalitsyn.. ([188.192.113.77])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93930cad0asm213137366b.118.2024.09.25.07.33.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 07:33:59 -0700 (PDT)
+From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+To: tytso@mit.edu
+Cc: stable@vger.kernel.org,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	Jan Kara <jack@suse.cz>,
+	Baokun Li <libaokun1@huawei.com>,
+	=?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@stgraber.org>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-ext4@vger.kernel.org,
+	Wesley Hershberger <wesley.hershberger@canonical.com>,
+	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Subject: [PATCH 0/1] ext4: fix crash on BUG_ON in ext4_alloc_group_tables
+Date: Wed, 25 Sep 2024 16:33:23 +0200
+Message-Id: <20240925143325.518508-1-aleksandr.mikhalitsyn@canonical.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925080003.1250448-1-tejasvipin76@gmail.com>
-In-Reply-To: <20240925080003.1250448-1-tejasvipin76@gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 25 Sep 2024 07:32:54 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XZJCvLJMmx45zgfruNfRKSMndUm7X5DWTO=7MVmMpO4Q@mail.gmail.com>
-Message-ID: <CAD=FV=XZJCvLJMmx45zgfruNfRKSMndUm7X5DWTO=7MVmMpO4Q@mail.gmail.com>
-Subject: Re: [PATCH v3] drm/panel: elida-kd35t133: transition to mipi_dsi
- wrapped functions
-To: Tejas Vipin <tejasvipin76@gmail.com>
-Cc: neil.armstrong@linaro.org, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
-	quic_jesszhan@quicinc.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi,
+A long story behind this one, first of all, we (LXD project folks) started to see issues
+in our tests on GitHub Actions ubuntu22.04 runners after they've got updated from 6.5 to 6.8-based kernel
+and this was reported on Launchpad tracker [1] by Wesley Hershberger.
 
-On Wed, Sep 25, 2024 at 1:00=E2=80=AFAM Tejas Vipin <tejasvipin76@gmail.com=
-> wrote:
->
-> Changes the elida-kd35t133 panel to use multi style functions for
-> improved error handling.
->
-> Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
-> ---
-> Changes in v3:
->     - Added back bytes that were removed
->     - Replaced mipi_dsi_dcs_write_buffer_multi with mipi_dsi_dcs_write_se=
-q_multi
->
-> Changes in v2:
->     - Changed mipi_dsi_dcs_write to mipi_dsi_dcs_write_buffer_multi
->     - Cleaned up error handling
->
-> Link to v2: https://lore.kernel.org/all/20240923122558.728516-1-tejasvipi=
-n76@gmail.com/
-> Link to v1: https://lore.kernel.org/all/20240917071710.1254520-1-tejasvip=
-in76@gmail.com/
-> ---
->  drivers/gpu/drm/panel/panel-elida-kd35t133.c | 108 ++++++++-----------
->  1 file changed, 45 insertions(+), 63 deletions(-)
+At the same time, Stéphane Graber from LXC containers project saw the same problem on Incus testsuite (also
+on Github Actions).
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Then we had a debugging session together with Stéphane and he found a quite minimalistic reproducer:
+curl https://pkgs.zabbly.com/get/incus-daily | sudo sh
+sudo apt-get install lvm2 --yes
+sudo incus storage create default lvm volume.size=25MiB size=1GiB
+sudo incus image copy images:alpine/edge local: --alias testimage
+sudo incus profile device add default root disk pool=default path=/ size=3GiB
+sudo incus create testimage a1
+
+this thing produces the following output in kernel logs:
+
+[   33.882936] EXT4-fs (dm-5): mounted filesystem 8aaf41b2-6ac0-4fa8-b92b-77d10e1d16ca r/w with ordered data mode. Quota mode: none.
+[   33.888365] EXT4-fs (dm-5): resizing filesystem from 7168 to 786432 blocks
+[   33.888740] ------------[ cut here ]------------
+[   33.888742] kernel BUG at fs/ext4/resize.c:324!
+[   33.889075] Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+[   33.889503] CPU: 9 UID: 0 PID: 3576 Comm: resize2fs Not tainted 6.11.0+ #27
+[   33.890039] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+[   33.890705] RIP: 0010:ext4_resize_fs+0x1212/0x12d0
+[   33.891063] Code: b8 45 31 c0 4c 89 ff 45 31 c9 31 c9 ba 0e 08 00 00 48 c7 c6 68 75 65 b8 e8 2b 79 01 00 41 b8 ea ff ff ff 41 5f e9 8d f1 ff ff <0f> 0b 48 83 bd 70 ff ff ff 00 75 32 45 31 c0 e9 53 f1 ff ff 41 b8
+[   33.892701] RSP: 0018:ffffa97f413f3cc8 EFLAGS: 00010202
+[   33.893081] RAX: 0000000000000018 RBX: 0000000000000001 RCX: 00000000fffffff0
+[   33.893639] RDX: 0000000000000017 RSI: 0000000000000016 RDI: 00000000e8c2c810
+[   33.894197] RBP: ffffa97f413f3d90 R08: 0000000000000000 R09: 0000000000008000
+[   33.894755] R10: ffffa97f413f3cc8 R11: ffffa2c1845bfc80 R12: 0000000000000000
+[   33.895317] R13: ffffa2c1843d6000 R14: 0000000000008000 R15: ffffa2c199963000
+[   33.895877] FS:  00007f46efd17000(0000) GS:ffffa2c89fc40000(0000) knlGS:0000000000000000
+[   33.896524] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   33.896954] CR2: 00005630a4a1cc88 CR3: 000000010532c000 CR4: 0000000000350eb0
+[   33.897516] Call Trace:
+[   33.897638]  <TASK>
+[   33.897728]  ? show_regs+0x6d/0x80
+[   33.897942]  ? die+0x3c/0xa0
+[   33.898106]  ? do_trap+0xe5/0x110
+[   33.898311]  ? do_error_trap+0x6e/0x90
+[   33.898555]  ? ext4_resize_fs+0x1212/0x12d0
+[   33.898844]  ? exc_invalid_op+0x57/0x80
+[   33.899101]  ? ext4_resize_fs+0x1212/0x12d0
+[   33.899387]  ? asm_exc_invalid_op+0x1f/0x30
+[   33.899675]  ? ext4_resize_fs+0x1212/0x12d0
+[   33.899961]  ? ext4_resize_fs+0x745/0x12d0
+[   33.900239]  __ext4_ioctl+0x4e0/0x1800
+[   33.900489]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   33.900832]  ? putname+0x5b/0x70
+[   33.901028]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   33.901374]  ? do_sys_openat2+0x87/0xd0
+[   33.901632]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   33.901981]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   33.902324]  ? __x64_sys_openat+0x59/0xa0
+[   33.902595]  ext4_ioctl+0x12/0x20
+[   33.902802]  ? ext4_ioctl+0x12/0x20
+[   33.903031]  __x64_sys_ioctl+0x99/0xd0
+[   33.903277]  x64_sys_call+0x1206/0x20d0
+[   33.903534]  do_syscall_64+0x72/0x110
+[   33.903771]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   33.904115]  ? irqentry_exit+0x3f/0x50
+[   33.904362]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   33.904707]  ? exc_page_fault+0x1aa/0x7b0
+[   33.904979]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[   33.905349] RIP: 0033:0x7f46efe3294f
+[   33.905579] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <41> 89 c0 3d 00 f0 ff ff 77 1f 48 8b 44 24 18 64 48 2b 04 25 28 00
+[   33.907321] RSP: 002b:00007ffe9b8833a0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[   33.907926] RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007f46efe3294f
+[   33.908487] RDX: 00007ffe9b8834a0 RSI: 0000000040086610 RDI: 0000000000000004
+[   33.909046] RBP: 00005630a4a0b0e0 R08: 0000000000000000 R09: 00007ffe9b8832d7
+[   33.909605] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000004
+[   33.910165] R13: 00005630a4a0c580 R14: 00005630a4a10400 R15: 0000000000000000
+[   33.910740]  </TASK>
+[   33.910837] Modules linked in:
+[   33.911049] ---[ end trace 0000000000000000 ]---
+[   33.911428] RIP: 0010:ext4_resize_fs+0x1212/0x12d0
+[   33.911810] Code: b8 45 31 c0 4c 89 ff 45 31 c9 31 c9 ba 0e 08 00 00 48 c7 c6 68 75 65 b8 e8 2b 79 01 00 41 b8 ea ff ff ff 41 5f e9 8d f1 ff ff <0f> 0b 48 83 bd 70 ff ff ff 00 75 32 45 31 c0 e9 53 f1 ff ff 41 b8
+[   33.913928] RSP: 0018:ffffa97f413f3cc8 EFLAGS: 00010202
+[   33.914313] RAX: 0000000000000018 RBX: 0000000000000001 RCX: 00000000fffffff0
+[   33.914909] RDX: 0000000000000017 RSI: 0000000000000016 RDI: 00000000e8c2c810
+[   33.915482] RBP: ffffa97f413f3d90 R08: 0000000000000000 R09: 0000000000008000
+[   33.916258] R10: ffffa97f413f3cc8 R11: ffffa2c1845bfc80 R12: 0000000000000000
+[   33.917027] R13: ffffa2c1843d6000 R14: 0000000000008000 R15: ffffa2c199963000
+[   33.917884] FS:  00007f46efd17000(0000) GS:ffffa2c89fc40000(0000) knlGS:0000000000000000
+[   33.918818] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   33.919322] CR2: 00005630a4a1cc88 CR3: 000000010532c000 CR4: 0000000000350eb0
+[   44.072293] ------------[ cut here ]------------
+
+This patch is attempt to fix it and I can confirm that after applying it everything works just fine.
+At the same time, I'm not knowledgable in ext4 filesystem code so careful review is required here.
+
+Kind regards,
+Alex
+
+Cc: stable@vger.kernel.org # v6.8+
+Fixes: 665d3e0af4d3 ("ext4: reduce unnecessary memory allocation in alloc_flex_gd()")
+Link: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2081231 [1]
+Cc: "Theodore Ts'o" <tytso@mit.edu>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Baokun Li <libaokun1@huawei.com>
+Cc: Stéphane Graber <stgraber@stgraber.org>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: <linux-kernel@vger.kernel.org>
+Cc: <linux-fsdevel@vger.kernel.org>
+Cc: <linux-ext4@vger.kernel.org>
+Reported-by: Wesley Hershberger <wesley.hershberger@canonical.com>
+Reported-by: Stéphane Graber <stgraber@stgraber.org>
+Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+
+Alexander Mikhalitsyn (1):
+  ext4: fix BUG at fs/ext4/resize.c
+
+ fs/ext4/resize.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+-- 
+2.34.1
+
 
