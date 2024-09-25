@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-338997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 857B7985F33
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:52:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3975A985F94
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:01:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4917628A789
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:52:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E27A8B2BEF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FA642207F7;
-	Wed, 25 Sep 2024 12:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E70D22081A;
+	Wed, 25 Sep 2024 12:15:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vA0IIIfV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RobtNMKk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB50B2207E5;
-	Wed, 25 Sep 2024 12:14:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75FA122080C;
+	Wed, 25 Sep 2024 12:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727266498; cv=none; b=TazMlpOMFK6zwZh29JsKqrryO7Kc4KXo3ouY0Cx6rszqA2aNWSme73FY0aQc1JPyagA1hBCP/NInLvH1qDveh2hPQE0Mu8nzCrrj+/pGphrhnX89AB7F/BD6pLqMLAy4CN/j8oCx0qu6aBQld06PCEMFcyRmMHywT6OvzVFR5JQ=
+	t=1727266500; cv=none; b=SiZMdLb1T66ttXxI7GSAuiba6+zj5q9fO5sFyNiCOYi5SQtNsu8eKpRU1atbxT6+Y1LgnCL4Jy94a7+6GxLztWi2Kw46PtNZ43hY2i1MgkLRf5J/6Pm4xx9iG4TNp4OqAM87MQDhRtLFDqQSEIubNr+zTosXE7rANphmR1gCSqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727266498; c=relaxed/simple;
-	bh=84Rhq/UE1HwUGX63uMq0z2ShlifERp66qxV0V3E24gM=;
+	s=arc-20240116; t=1727266500; c=relaxed/simple;
+	bh=AtIto5lcfkNXDHThGqXctmPj/h6eo8IBcUWG3Q7psmI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ddi8ifj+oWQbl9QI5dLTZo/cGalgbjZVAZ//ySaYrzHFVf4A2W69zZ3Qo2djtgsV/Nhlu4C5RLYXleBS/uEmakHj4eb/VsDHBQUJUo7KCySLPlrPOudMd+iDDGKILt3UZQkXe2sMfMENSMLt8Krbsin0LpMhzt0MGOV1YKREfFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vA0IIIfV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64D6DC4CEC7;
-	Wed, 25 Sep 2024 12:14:56 +0000 (UTC)
+	 MIME-Version:Content-Type; b=R8J6zTDJZ6la5tWIo3uvsqY24/BJCOmyNlEQRW6UF6ltTTjOe2t0ZiGV6XYKY2Hl6vV7i7ZMmBA219rghYiWE8RMeKFN/TzWYjp9MIMteRGXL1mg61fz3lvbrTqIst/IbOxhg+IvEjg3UdNVRDA8Pjfb5BeZAwew+nP8njG3VZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RobtNMKk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E911EC4CEC3;
+	Wed, 25 Sep 2024 12:14:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727266497;
-	bh=84Rhq/UE1HwUGX63uMq0z2ShlifERp66qxV0V3E24gM=;
+	s=k20201202; t=1727266499;
+	bh=AtIto5lcfkNXDHThGqXctmPj/h6eo8IBcUWG3Q7psmI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=vA0IIIfVLNxkuHBrI3PcJg8207RYJl6vCi58pzpyrvk35g+ukoshBOcZjMtnFPYuZ
-	 T397me+otCGC7z69wUqLcc00Gh9H3A1mTwpK4ai1dYbHO+q1OCKwSQfsfqVHGGgFya
-	 7vU3pWnVnSFkZ2RjUSLGwzXlPsneN2X2Hf3016yUI2kf8tfRri0jayv3iWZMl8+xET
-	 W2vGSDXqmoJddHT63p8rx3qDZD6iL8cb2r763sIx3g+PTGDkUFuNIO5QT87+pQhuJV
-	 cq3dHzgOgER0WS4dczETve6Ql8MWyf3S72aoEED9AGUL68q5anVzp1GA65k0zMUb3M
-	 TRu79aVtK1EwQ==
+	b=RobtNMKkk2WInYmGbAwNKP3RuQ8mIqV6wbSQvHU0Uy3y128cSbd5tA6l3anO4g10S
+	 zuykYuXPmhiMe1GMKnTg8hWikG3Xuk2h1Xp2tddhXqACx8ypc0B3R/bDOMEkPtwlZq
+	 SUtOIvocA8E0AMlh6P5UcEw0ha38BSxArIhyTM/XNHAESt/f8HL93epjsZoJnV3YkK
+	 MsZ7ckcMm438nzrXIc6APm5UnW8ptdMewlwGnzrclDBwJpClb7F6wMcQXJEn040BFM
+	 ux5t2OhI5DXiVKs1EqTDWbganl0mbO3VCRHlnDYUBQnuQ4YVQXNZyuHWsgp6QSuKXh
+	 HNgnXBNvL/lTw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Denis Pauk <pauk.denis@gmail.com>,
-	Attila <attila@fulop.one>,
-	Guenter Roeck <linux@roeck-us.net>,
+Cc: =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+	Helge Deller <deller@gmx.de>,
 	Sasha Levin <sashal@kernel.org>,
-	jdelvare@suse.com,
-	linux-hwmon@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 073/139] hwmon: (nct6775) add G15CF to ASUS WMI monitoring list
-Date: Wed, 25 Sep 2024 08:08:13 -0400
-Message-ID: <20240925121137.1307574-73-sashal@kernel.org>
+	pjones@redhat.com,
+	linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 6.6 074/139] fbdev: efifb: Register sysfs groups through driver core
+Date: Wed, 25 Sep 2024 08:08:14 -0400
+Message-ID: <20240925121137.1307574-74-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240925121137.1307574-1-sashal@kernel.org>
 References: <20240925121137.1307574-1-sashal@kernel.org>
@@ -61,42 +61,74 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.52
 Content-Transfer-Encoding: 8bit
 
-From: Denis Pauk <pauk.denis@gmail.com>
+From: Thomas Weißschuh <linux@weissschuh.net>
 
-[ Upstream commit 1f432e4cf1dd3ecfec5ed80051b4611632a0fd51 ]
+[ Upstream commit 95cdd538e0e5677efbdf8aade04ec098ab98f457 ]
 
-Boards G15CF has got a nct6775 chip, but by default there's no use of it
-because of resource conflict with WMI method.
+The driver core can register and cleanup sysfs groups already.
+Make use of that functionality to simplify the error handling and
+cleanup.
 
-Add the board to the WMI monitoring list.
+Also avoid a UAF race during unregistering where the sysctl attributes
+were usable after the info struct was freed.
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=204807
-Signed-off-by: Denis Pauk <pauk.denis@gmail.com>
-Tested-by: Attila <attila@fulop.one>
-Message-ID: <20240812152652.1303-1-pauk.denis@gmail.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+Signed-off-by: Helge Deller <deller@gmx.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/nct6775-platform.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/video/fbdev/efifb.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/hwmon/nct6775-platform.c b/drivers/hwmon/nct6775-platform.c
-index 81bf03dad6bbc..706a662dd077d 100644
---- a/drivers/hwmon/nct6775-platform.c
-+++ b/drivers/hwmon/nct6775-platform.c
-@@ -1269,6 +1269,7 @@ static const char * const asus_msi_boards[] = {
- 	"EX-B760M-V5 D4",
- 	"EX-H510M-V3",
- 	"EX-H610M-V3 D4",
-+	"G15CF",
- 	"PRIME A620M-A",
- 	"PRIME B560-PLUS",
- 	"PRIME B560-PLUS AC-HES",
+diff --git a/drivers/video/fbdev/efifb.c b/drivers/video/fbdev/efifb.c
+index f9b4ddd592ce4..88ac24202a1ff 100644
+--- a/drivers/video/fbdev/efifb.c
++++ b/drivers/video/fbdev/efifb.c
+@@ -571,15 +571,10 @@ static int efifb_probe(struct platform_device *dev)
+ 		break;
+ 	}
+ 
+-	err = sysfs_create_groups(&dev->dev.kobj, efifb_groups);
+-	if (err) {
+-		pr_err("efifb: cannot add sysfs attrs\n");
+-		goto err_unmap;
+-	}
+ 	err = fb_alloc_cmap(&info->cmap, 256, 0);
+ 	if (err < 0) {
+ 		pr_err("efifb: cannot allocate colormap\n");
+-		goto err_groups;
++		goto err_unmap;
+ 	}
+ 
+ 	if (efifb_pci_dev)
+@@ -603,8 +598,6 @@ static int efifb_probe(struct platform_device *dev)
+ 		pm_runtime_put(&efifb_pci_dev->dev);
+ 
+ 	fb_dealloc_cmap(&info->cmap);
+-err_groups:
+-	sysfs_remove_groups(&dev->dev.kobj, efifb_groups);
+ err_unmap:
+ 	if (mem_flags & (EFI_MEMORY_UC | EFI_MEMORY_WC))
+ 		iounmap(info->screen_base);
+@@ -624,12 +617,12 @@ static void efifb_remove(struct platform_device *pdev)
+ 
+ 	/* efifb_destroy takes care of info cleanup */
+ 	unregister_framebuffer(info);
+-	sysfs_remove_groups(&pdev->dev.kobj, efifb_groups);
+ }
+ 
+ static struct platform_driver efifb_driver = {
+ 	.driver = {
+ 		.name = "efi-framebuffer",
++		.dev_groups = efifb_groups,
+ 	},
+ 	.probe = efifb_probe,
+ 	.remove_new = efifb_remove,
 -- 
 2.43.0
 
