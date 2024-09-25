@@ -1,73 +1,45 @@
-Return-Path: <linux-kernel+bounces-337890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D91119850B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 03:49:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AC0C9850BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 03:54:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EB7B283E4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:49:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5282284073
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:54:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35E31482FE;
-	Wed, 25 Sep 2024 01:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14851474BF;
+	Wed, 25 Sep 2024 01:54:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TDzV6dgS"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="HDZHC3UA"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC152E83F;
-	Wed, 25 Sep 2024 01:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 324122E83F
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 01:53:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727228991; cv=none; b=iLzGCVxDC0YtF6FUE10hXywpf22TLg/pPiTd4FvnEJT3bv0K1h4XLzNMTctITwqZJOR4X5CuQPqHExBYBh6ad3P/Y45TIYLEEOs+FZlYwFi3a6HyJb0iM7Ou7MR1ZAn5egO1JUoHE12DqaLgnJ1VIGJ0L4/HGkrwB5J7VWHHeEE=
+	t=1727229240; cv=none; b=fPLFAdS9Evz5KP2KNNb6GxkMEA3cBl3a37DwM14kUQHp359RZmcQD9SWGfRDEHwYuLCtx5n8pAv281C6Ul9fTCJvoSuv2nI7jPYuQCK/pZvP/4ouSi4XYK/CE6QdgqZkHPcd3O9wIu/Ioy1Tc2Mqtns1Hy+SkBMsWNHRCos5qGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727228991; c=relaxed/simple;
-	bh=T/RmI0pD5sA7gq7g/Xw6pv9qbfNnWgxjYriM68Tj61U=;
+	s=arc-20240116; t=1727229240; c=relaxed/simple;
+	bh=svUnDHKYmNktfEWopQ4HP1v4AzmL+OXvjaWS2o219yE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=It5UZl8O1+QrXrgZ1y3qY1Sx+Ad+5BEZuwu2zvlvCKQOESaMw0bdZZvtzzT0k+xYEWn2jst6eQh7NcTwtzgir+N2tu6nXONCvY0mbrj+PzCqrbmw2TAHb2H1QEmS3CYxPtSZrMtFTVKKP/YkMss2P15xMPRSGSEqDmf4Wah+CWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TDzV6dgS; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2db6b13c6a0so1123824a91.1;
-        Tue, 24 Sep 2024 18:49:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727228989; x=1727833789; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qfgOUAOcbkxFyXWTo9S/L0xB7TtcO2Ot01YMhuKobrk=;
-        b=TDzV6dgSM79VaE9UbZ0KBt0+/ox/GF3GC47JbTlA5Abe17A8+d6m9W3b/28jlkcFxj
-         QX30/Wg032ugpclqyYEYLI+t8Uoz8x07fWWWLQN20CWkxqIpvpo/vB+xXVqzwnEcjeuv
-         Nc8VVVb/xcprjzr8U5OGWbbt64qEJoOflrsO5NZaw2Es0B+VwMTtA+sdoOlMPtCaQB7i
-         8k/+43OykpW2d1Di+y50jogWUJTDN//BGI4k9PXkPRDX2pRMweunLK+9TsySGnubMdku
-         biJpNtn4aJpnsU4A2rAt6XLOBGd5DO7Tqc3uB/v8MQO7ceMMV4Qpo3/OQzd7lPdbcbyH
-         3qZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727228989; x=1727833789;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qfgOUAOcbkxFyXWTo9S/L0xB7TtcO2Ot01YMhuKobrk=;
-        b=pwBBdTIDCPyxzcGkC1S0LjOU0sTtqcz5nwNgYnBxg+wgFvEJSwjJb90pmnZDSmD/wc
-         ENwJ8hyd0SHuA8qB16VdQaGO+pcGDoZdCOvhu6By1mP2TM7MkC+0YnV6dZbGYZX4g+os
-         8b4pkt1ViY/2qykrbQtmW+aX4QfW8PIxI5JkEQaKk8o8IYpekLn8/eHdFo1o96OqCUAz
-         ycMm9TEqYklebJlTKUaLMlGoDH5gGDBgRvU5WALJINkTN2HI2H9H13mfLIBk9FKrjtJz
-         N5MXSgAXR/4PpVcrrog3OiH02SZPEnJmOHz2PADQW1XKBqEbv0B0sGS0mJH2+2RlhCPW
-         QjOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxspAaO6IpkAZPDPL5OBytDMMJANlmQ8yp0qG/sh/UaQ7JxaIBkRl0EflnlZb0Wxl+SlDu+fMCroXX@vger.kernel.org, AJvYcCWk14rXG+6HBOBJRh2n8XxwgqFMIBDYzZeGN10bLESrSLT+LH4Ahkd+ctu6JVOJ2zjG7s/8KtTT/gZXtyB1@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJU8rQ+Mi6NjKyr1UsB5uwp13NVreRqrUS+RlTOSCvMy3aDy+P
-	OZ+mSyQEj4rP8UpYfr/yh/zoM7Sg2u4LqwCspQKCFshU0+tlvxwW
-X-Google-Smtp-Source: AGHT+IF42uHxU+McaJwOYqt74xfZ3X9l8ZaBFNhvW3sc2MTkO66TCrdx6QmGA70vRyBEU069n7D27w==
-X-Received: by 2002:a17:902:eccc:b0:205:9112:6c38 with SMTP id d9443c01a7336-20afc47bbe0mr6799845ad.10.1727228988969;
-        Tue, 24 Sep 2024 18:49:48 -0700 (PDT)
-Received: from [192.168.60.56] ([103.29.142.67])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af16e5551sm15517245ad.6.2024.09.24.18.49.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Sep 2024 18:49:48 -0700 (PDT)
-Message-ID: <285d7b52-956a-412d-ba85-7641e95226e5@gmail.com>
-Date: Wed, 25 Sep 2024 09:49:43 +0800
+	 In-Reply-To:Content-Type; b=GfuOV5ZLiiQS8s6XaVuajE8vSe6t43sLfYxDHnKkr3jkr/bAH8HIC81TaBSDSFi5xm0PHvxmIcdppVCel2qNooC9XKgis83e4wph3qVz7CW44H1RYt89nGNXYEdUaBmcKF1IIhqe7MqVdtegR181S+E2Pu3zyr/3aVoCiQHvc1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=HDZHC3UA; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1727229229; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=4v+88U4FOuGKfl4tx2izcT7w2SDLhnoDATDvDZFe/6o=;
+	b=HDZHC3UA+eETTyw/IS5L9i2uwX9liAJUnCLOS4mUZphK7Cbdk10UfQQZSsJtyfNKXUjNV7kjVTtYdKR7/s7TTvRiQpW1A6e8F2Ni9Ni2gGzvf6FhVc120XMJadHPjAPoUWaPvRtamkoqbwyBQ1yEEDybLWaYwp7zI/5uLsMsJWQ=
+Received: from 30.74.144.126(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WFhl-hc_1727229227)
+          by smtp.aliyun-inc.com;
+          Wed, 25 Sep 2024 09:53:48 +0800
+Message-ID: <85a2fd61-93d3-4cd9-95a3-e9eaef87286b@linux.alibaba.com>
+Date: Wed, 25 Sep 2024 09:53:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,97 +47,194 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: phy: rockchip,inno-usb2phy: add
- rk3576
-Content-Language: en-US
-To: Heiko Stuebner <heiko@sntech.de>, vkoul@kernel.org, kishon@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, william.wu@rock-chips.com,
- tim.chen@rock-chips.com, Frank Wang <frank.wang@rock-chips.com>
-References: <20240924085510.20863-1-frawang.cn@gmail.com>
- <11146778.5MRjnR8RnV@phil>
-From: Frank Wang <frawang.cn@gmail.com>
-In-Reply-To: <11146778.5MRjnR8RnV@phil>
+Subject: Re: [RFC PATCH 0/2] remove SWAP_MAP_SHMEM
+To: Nhat Pham <nphamcs@gmail.com>, Yosry Ahmed <yosryahmed@google.com>
+Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, hughd@google.com,
+ shakeel.butt@linux.dev, ryan.roberts@arm.com, ying.huang@intel.com,
+ chrisl@kernel.org, david@redhat.com, kasong@tencent.com,
+ willy@infradead.org, viro@zeniv.linux.org.uk, baohua@kernel.org,
+ chengming.zhou@linux.dev, linux-mm@kvack.org, kernel-team@meta.com,
+ linux-kernel@vger.kernel.org
+References: <20240923231142.4155415-1-nphamcs@gmail.com>
+ <4d38c65d-760c-43a5-bb47-8e0235c13a51@linux.alibaba.com>
+ <CAJD7tkamKcaqHR5V+4+9ixmFc3dC2NnGcu7YzdXqxqNEe8FqqA@mail.gmail.com>
+ <9a110f20-42ad-468b-96c6-683e162452a9@linux.alibaba.com>
+ <CAKEwX=PiOdrR7Ad5XoT8pRZDLB=q6B_fmwQ3ScgWFPNptBuHPw@mail.gmail.com>
+ <CAJD7tkZFu3DbovTwyRdQmEG=7nQtmzrjQVgyhE4mNzbCtZxFZA@mail.gmail.com>
+ <CAKEwX=ML4+iW+WkyjezaqipZU=N=DeB561M4XzOqQMD6drk9dA@mail.gmail.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <CAKEwX=ML4+iW+WkyjezaqipZU=N=DeB561M4XzOqQMD6drk9dA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Heiko,
 
-On 2024/9/24 18:01, Heiko Stuebner wrote:
-> Hi Frank,
->
-> Am Dienstag, 24. September 2024, 10:55:09 CEST schrieb Frank Wang:
->> From: Frank Wang <frank.wang@rock-chips.com>
+
+On 2024/9/24 23:48, Nhat Pham wrote:
+> On Tue, Sep 24, 2024 at 8:08 AM Yosry Ahmed <yosryahmed@google.com> wrote:
 >>
->> Add compatible for the USB2 phy in the Rockchip RK3576 SoC.
-> can you please add some details to the commit message, about those
-> new clocks. I.e. what they do.
-
-OK, I shall add in the next version.
-
-BR.
-Frank
-
-> Thanks
-> Heiko
->
->> Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
->> ---
->> Changelog:
->> v2:
->>   - Categorize clock names by oneOf keyword.
+>> On Tue, Sep 24, 2024 at 7:32 AM Nhat Pham <nphamcs@gmail.com> wrote:
+>>>
+>>> On Mon, Sep 23, 2024 at 8:25 PM Baolin Wang
+>>> <baolin.wang@linux.alibaba.com> wrote:
+>>>>
+>>>>
+>>>> On 2024/9/24 10:15, Yosry Ahmed wrote:
+>>>>> On Mon, Sep 23, 2024 at 6:55 PM Baolin Wang
+>>>>> <baolin.wang@linux.alibaba.com> wrote:
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> On 2024/9/24 07:11, Nhat Pham wrote:
+>>>>>>> The SWAP_MAP_SHMEM state was originally introduced in the commit
+>>>>>>> aaa468653b4a ("swap_info: note SWAP_MAP_SHMEM"), to quickly determine if a
+>>>>>>> swap entry belongs to shmem during swapoff.
+>>>>>>>
+>>>>>>> However, swapoff has since been rewritten drastically in the commit
+>>>>>>> b56a2d8af914 ("mm: rid swapoff of quadratic complexity"). Now
+>>>>>>> having swap count == SWAP_MAP_SHMEM value is basically the same as having
+>>>>>>> swap count == 1, and swap_shmem_alloc() behaves analogously to
+>>>>>>> swap_duplicate()
+>>>>>>>
+>>>>>>> This RFC proposes the removal of this state and the associated helper to
+>>>>>>> simplify the state machine (both mentally and code-wise). We will also
+>>>>>>> have an extra state/special value that can be repurposed (for swap entries
+>>>>>>> that never gets re-duplicated).
+>>>>>>>
+>>>>>>> Another motivation (albeit a bit premature at the moment) is the new swap
+>>>>>>> abstraction I am currently working on, that would allow for swap/zswap
+>>>>>>> decoupling, swapoff optimization, etc. The fewer states and swap API
+>>>>>>> functions there are, the simpler the conversion will be.
+>>>>>>>
+>>>>>>> I am sending this series first as an RFC, just in case I missed something
+>>>>>>> or misunderstood this state, or if someone has a swap optimization in mind
+>>>>>>> for shmem that would require this special state.
+>>>>>>
+>>>>>> The idea makes sense to me. I did a quick test with shmem mTHP, and
+>>>>>> encountered the following warning which is triggered by
+>>>>>> 'VM_WARN_ON(usage == 1 && nr > 1)' in __swap_duplicate().
+>>>>>
+>>>>> Apparently __swap_duplicate() does not currently handle increasing the
+>>>>> swap count for multiple swap entries by 1 (i.e. usage == 1) because it
+>>>>> does not handle rolling back count increases when
+>>>>> swap_count_continued() fails.
+>>>>>
+>>>>> I guess this voids my Reviewed-by until we sort this out. Technically
+>>>>> swap_count_continued() won't ever be called for shmem because we only
+>>>>> ever increment the count by 1, but there is no way to know this in
+>>>>> __swap_duplicate() without SWAP_HAS_SHMEM.
+>>>
+>>> Ah this is my bad. I compiled with CONFIG_THP_SWAP, but forgot to
+>>> remove the swapfile check (that's another can of worms, but I need
+>>> data before submitting the patch to remove it...)
+>>>
+>>> One thing we can do is instead of warning here, we can handle it in
+>>> the for loop check, where we have access to count - that's the point
+>>> of having that for-loop check anyway? :)
+>>>
+>>> There's a couple of ways to go about it:
+>>>
+>>> 1. VM_WARN_ON(usage == 1 && nr > 1 && count != 0 );
 >>
->> v1:
->>   - https://patchwork.kernel.org/project/linux-phy/patch/20240923025326.10467-1-frank.wang@rock-chips.com/
+>> Hmm that should work, although it's a bit complicated tbh.
 >>
->>   .../bindings/phy/rockchip,inno-usb2phy.yaml      | 16 ++++++++++++++--
->>   1 file changed, 14 insertions(+), 2 deletions(-)
+>>> (or more accurately, (count & ~COUNT_CONTINUED) >= SWAP_MAP_MAX))
 >>
->> diff --git a/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml b/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
->> index 5254413137c64..8af4e0f8637fc 100644
->> --- a/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
->> +++ b/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
->> @@ -20,6 +20,7 @@ properties:
->>         - rockchip,rk3366-usb2phy
->>         - rockchip,rk3399-usb2phy
->>         - rockchip,rk3568-usb2phy
->> +      - rockchip,rk3576-usb2phy
->>         - rockchip,rk3588-usb2phy
->>         - rockchip,rv1108-usb2phy
->>   
->> @@ -34,10 +35,20 @@ properties:
->>       const: 0
->>   
->>     clocks:
->> -    maxItems: 1
->> +    minItems: 1
->> +    maxItems: 3
->>   
->>     clock-names:
->> -    const: phyclk
->> +    minItems: 1
->> +    maxItems: 3
->> +    items:
->> +      oneOf:
->> +        - description: aclk for USB MMU.
->> +          const: aclk
->> +        - description: aclk_slv for USB MMU.
->> +          const: aclk_slv
->> +        - description: PHY input reference clocks.
->> +          const: phyclk
->>   
->>     assigned-clocks:
->>       description:
->> @@ -143,6 +154,7 @@ allOf:
->>             contains:
->>               enum:
->>                 - rockchip,rk3568-usb2phy
->> +              - rockchip,rk3576-usb2phy
->>                 - rockchip,rk3588-usb2phy
->>   
->>       then:
+>> I think this will make the warning very hard to hit if there's a
+>> misuse of __swap_duplicate(). It will only be hit when an entry needs
+>> count continuation, which I am not sure is very common. If there's a
+>> bug, the warning will potentially catch it too late, if ever.
 >>
+>> The side effect here is failing to decrement the swap count of some
+>> swap entries which will lead to them never being freed, essentially
+>> leaking swap capacity slowly over time. I am not sure if there are
+>> more detrimental effects.
+>>
+>>>
+>>> 2. Alternatively, instead of warning here, we can simply return
+>>> -ENOMEM. Then, at shmem callsite, have a VM_WARN_ON/VM_BUG_ON(), since
+>>> this MUST succeed.
+>>
+>> We still fail to rollback incremented counts though when we return
+>> -ENOMEM, right? Maybe I didn't get what you mean.
+> 
+> My understanding now is that there are two for loops. One for loop
+> that checks the entry's states, and one for loop that does the actual
+> incrementing work (or state modification).
+> 
+> We can check in the first for loop, if it is safe to proceed:
+> 
+> if (!count && !has_cache) {
+>      err = -ENOENT;
+> } else if (usage == SWAP_HAS_CACHE) {
+> if (has_cache)
+>      err = -EEXIST;
+> } else if ((count & ~COUNT_CONTINUED) > SWAP_MAP_MAX) {
+>      err = -EINVAL;
+> } else if (usage == 1 && nr > 1 && (count & ~COUNT_CONTINUED) >=
+> SWAP_MAP_MAX)) {
+>      /* the batched variants currently do not support rollback */
+>      err = -ENOMEM;
+> }
+> 
+> At this point, IIUC, we have not done any incrementing, so no rollback
+> needed? :)
 
+Right, looks good (although need some cleanup pointed by Yosry).
+
+>>>
+>>> Either solutions should follow with careful documentation to make it
+>>> clear the expectation/guarantee of the new API.
+>>>
+>>> Yosry, Baolin, how do you two feel about this? Would something like
+>>> this work? I need to test it first, but let me know if I'm missing
+>>> something.
+>>>
+>>> If this does not work, we can do what Baolin is suggesting, and
+>>> perhaps maintain the swap_shmem_alloc() helper. It's less than ideal,
+>>> but at least we still lose a state...
+>>
+>> Depending on the complexity tbh, right now removing SWAP_MAP_SHMEM is
+>> just a cleanup with small wins, so if it's too complicated to remove
+>> it it may not be worth it. I am assuming with your ongoing work, it
+>> becomes much more valuable, so maybe if it's too complicated we can
+>> defer it until the benefits are realizable?
+> 
+> I agree :)
+
+One benefit I can mention is that removing 'SWAP_MAP_SHMEM' can help to 
+batch free shmem swap entries in __swap_entries_free(), similar to the 
+commit bea67dcc5eea ("mm: attempt to batch free swap entries for 
+zap_pte_range()") did, which can improve the performance of shmem mTHP 
+munmap() function based on my testing.
+
+Without this patch set, I need do following changes to batch free shmem 
+swap entries:
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 0cded32414a1..94e28cd60c52 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -163,7 +163,7 @@ static bool swap_is_last_map(struct swap_info_struct 
+*si,
+         unsigned char *map_end = map + nr_pages;
+         unsigned char count = *map;
+
+-       if (swap_count(count) != 1)
++       if (swap_count(count) != 1 && swap_count(count) != SWAP_MAP_SHMEM)
+                 return false;
+
+         while (++map < map_end) {
+@@ -1503,10 +1503,10 @@ static bool __swap_entries_free(struct 
+swap_info_struct *si,
+         unsigned int type = swp_type(entry);
+         struct swap_cluster_info *ci;
+         bool has_cache = false;
+-       unsigned char count;
++       unsigned char count = swap_count(data_race(si->swap_map[offset]));
+         int i;
+
+-       if (nr <= 1 || swap_count(data_race(si->swap_map[offset])) != 1)
++       if (nr <= 1 || (count != 1 && count != SWAP_MAP_SHMEM))
+                 goto fallback;
+         /* cross into another cluster */
+         if (nr > SWAPFILE_CLUSTER - offset % SWAPFILE_CLUSTER)
 
