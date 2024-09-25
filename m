@@ -1,317 +1,229 @@
-Return-Path: <linux-kernel+bounces-339560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 840639866F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:33:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B5E99866EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:33:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EFC71F24621
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:33:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C4131C21311
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1933813CFA5;
-	Wed, 25 Sep 2024 19:33:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAAF613D2A9;
+	Wed, 25 Sep 2024 19:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Lu9/7aa+";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="KnPXpzX8"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="sPyutr75"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A38D1D5ABE
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 19:33:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727292823; cv=fail; b=a8rBnC7fzmRvmBQ+l8RDPdF7vZ2x2qlBQ+JASByhf/2Ierl5mRxBrBO2k98XrUEXyHry1LLwZx0H4vD1FdGp/DsnEQ/vCq+H4e6WUAjnYRatla4to7Vjc8mrNPoB0+CH4AZUsMmFjU61E8UoezvsTwuAEBQGe38vEhGSpWo3FbY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727292823; c=relaxed/simple;
-	bh=E3sBxnY4dUyn6nefYbgSjiPkI/7LWKCidPVrDmaQuZ4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=HfYqSVCauBIjddaDSKhtpsPH/+QZo89+qDg27CT5+96kqJUdXxF55P8Z3NmVQ2yrSEGF5ekMHVnO1mp28pIGhN4J0Dz/SwVZtYlPlMV546tOgu1F+BYrLl/lnPSDq2Rs6/ONynIQwNIIfF8LV+0NqV1TtMMZJbVia5wH3DBrpcQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Lu9/7aa+; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=KnPXpzX8; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48PJBaPo015755;
-	Wed, 25 Sep 2024 19:33:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=
-	corp-2023-11-20; bh=vyL1n2cAu0KaYKNO3FeQ2x6JrIya02lZ+95zB4Efvh0=; b=
-	Lu9/7aa+/5179GtBWDFWKtpu2D/yDQyQOG0PFpwPPHjMMxdrlpoBy6knvJ2YIklr
-	Y1NLaVTesSQ148R7gPYeFNgjeRHCwhBH07YTNTqJQNHdyASw5wSoVoB4K4Hxsu1Z
-	vK/GtJwm/ifvL22noKtFzqZ4DHOrmX5b+8S/xD3rI0LuteqoSl/I4OdQIFUv2cEH
-	NAAAS/mz7PZZF9k82bCKOh9vQ73ABNLOHD/lzquCjZ7spUHpg5V6MWetr55o/9hl
-	r9AFx9KhTeEsfsFFoqRXTiQXy254PexUar9260qUt5hbFkjT3l9pPFxWS53YVF7v
-	/gW199/AS56hkgXfcwA7KQ==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41sn2cucw9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 25 Sep 2024 19:33:22 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48PIUui5009839;
-	Wed, 25 Sep 2024 19:33:21 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2100.outbound.protection.outlook.com [104.47.58.100])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41smkaucd4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 25 Sep 2024 19:33:21 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YCr5s89ZjCsIyjUohehpT8TqrxBzgPk4ln39GNZ90JBOImbqsBFwv2eETksYa6/CCMDvboD5rqXLDmccLLWZHB45AFRaKUP9V0+ESTPxkrr22WEWwhNdozKC4mYO/fLwW5+u0N+pFUZfIWwUjVbhgSOpZWOeZzd9SJ/dZ92g5Hci4rMkfbRU2GypbM59S417yLYvP6qEn9VX0OeLIPpOb31YV4IAIQWslexqlDLsV/4HcmqTisvC9ce2Q6WkcGYvUqiSZXOHtoE/IYJPcJkJU44mGYBeGODLlbxl/4rB8oaXoHIXEmIr/X/4ICQXvpb65GGAKGPhbQvtvnbJWrNVwg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vyL1n2cAu0KaYKNO3FeQ2x6JrIya02lZ+95zB4Efvh0=;
- b=sj05TV8HM6tKOUQegW996xm9gorq+W2T9X4xlonik6F6E3sdfMoHxEl/Ql1uWZCcYJ1SCWvJqKA0vGbWC6oCWq/H2KYq3YgghAxLMxePbNft9AxCfflOFpJlibbykTh9B1tK3IuiFTuSsGuUJ7r1NFrqgLik3rGmpQGMt17Ms5fOcXfz5Nb4LLMTnN77yt+SZfOhNxUTTh1rU5i9ysE1A2+Fi35FJoLsRkGIi8wN93Eeb09rWIoLaAqxYutegcS7XhNu6QL1jyoAR1EYnCdCs0Ys1V/4jl2oPW2vcGjWIcY0wV9vCpGhuQmdRgiVRywco5NbPcDpabuXoRAoyxuVAw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vyL1n2cAu0KaYKNO3FeQ2x6JrIya02lZ+95zB4Efvh0=;
- b=KnPXpzX8f3UYw9ByeH2X6lXXT2zqlhQjguU8a9brxQN4hufSZfV/8AiAbJsKIxDMQt2yQOmAHt73OO2ltGRnhWUyrQGdCDKh8ZLJngGH9DAgE44TnraumClrmPZYS0fPpPgapNPzVjrh/23gEPM3XpVbyyrrY93Qm3Vkl9JnC04=
-Received: from DS7PR10MB5117.namprd10.prod.outlook.com (2603:10b6:5:3a6::17)
- by DM4PR10MB7474.namprd10.prod.outlook.com (2603:10b6:8:18b::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.13; Wed, 25 Sep
- 2024 19:33:19 +0000
-Received: from DS7PR10MB5117.namprd10.prod.outlook.com
- ([fe80::a2d3:a2e9:efcf:46e0]) by DS7PR10MB5117.namprd10.prod.outlook.com
- ([fe80::a2d3:a2e9:efcf:46e0%6]) with mapi id 15.20.8005.010; Wed, 25 Sep 2024
- 19:33:19 +0000
-Message-ID: <f8924491-929b-4b10-b13f-0b6461d28eec@oracle.com>
-Date: Wed, 25 Sep 2024 14:33:16 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 04/17] maple_tree: introduce mas_wr_store_type()
-To: Wei Yang <richard.weiyang@gmail.com>
-Cc: linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org,
-        linux-mm@kvack.org, akpm@linux-foundation.org, liam.howlett@oracle.com,
-        willy@infradead.org, surenb@google.com
-References: <20240814161944.55347-1-sidhartha.kumar@oracle.com>
- <20240814161944.55347-5-sidhartha.kumar@oracle.com>
- <20240925020431.joykmu4zzahoglcl@master>
-Content-Language: en-US
-From: Sid Kumar <sidhartha.kumar@oracle.com>
-In-Reply-To: <20240925020431.joykmu4zzahoglcl@master>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BYAPR21CA0017.namprd21.prod.outlook.com
- (2603:10b6:a03:114::27) To DS7PR10MB5117.namprd10.prod.outlook.com
- (2603:10b6:5:3a6::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23CB01D5ABE;
+	Wed, 25 Sep 2024 19:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727292815; cv=none; b=RV1YGY/UJhuNC/W8EN8tGQ4FMcTlUaUgkJh0Wh7aTaiSe4Lt6U6CX+bb3wHpDsCzMLj5pE8TE6NVRBuAm+lZHNkJD4W2LO+GNZ2zx+AqjKUUSJsJKpwq5qRFi51TFC+ytp+4mv167wJxkd7eMO6ScED5Gngbl2+zv8BQi6DifrA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727292815; c=relaxed/simple;
+	bh=Hx/rlkYU0ZVVReIDGCS57p8OVIwu1U+jY2KjmIVkXlk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KSWz6xQ3fuoEPP333H+dikHZS6nvVQMeystAb5qMoH0JtrEFwD20BmsjfUINahkazfQnc6ysjhTz84gFRinZ4SYpSsQ/qMlf1D/DmrQw5AvOdph/2rN8CIYSowPjAGaev3CTNQZ0Ylu0fsrk71GJ/dnzy/G3WcSKcbpKvdOTOPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=sPyutr75; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1727292802; x=1727897602; i=deller@gmx.de;
+	bh=nXH904ypmTw/gJKVkpTGZ7KBXsxTPIsGXQBiVA1uwKY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=sPyutr758U0cFCKASc+SjRzfaI+0Gv8mVUqK8k2ynGFrk4dvWGhpE6fH/QlhMSsV
+	 TutqIyDa7/wnSskO7clUXtE4lYSE9coJydngIkXQ3N1X8dr006ToCnhnoqEU/hX2Z
+	 rAZpBXChSbhO2Gpm6S8umUCl3hockGOYpWjiXZjZGfgviiHKK8YmdD4NNCHUzl+AX
+	 fjodbb1rkze/2CSL581fzy/AAQFRi9HiBuBq9davhL7ERqtKppivGGyweTUhnDuTh
+	 jW/QidViI5INm3WRiwpcMx2AhbLT0mHSzmZdeta5IoSTqUXqI7R69UbUSQ4fKgcXY
+	 FrzRDSuqOObKx6cwhA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.55] ([109.250.63.79]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MIx3C-1sedXk1i6k-00PZjm; Wed, 25
+ Sep 2024 21:33:22 +0200
+Message-ID: <acb94eab-78e1-4e79-8c3f-11eefe525324@gmx.de>
+Date: Wed, 25 Sep 2024 21:33:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR10MB5117:EE_|DM4PR10MB7474:EE_
-X-MS-Office365-Filtering-Correlation-Id: 779cad68-4b18-4874-6b2b-08dcdd98e8e9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?T0xUK3hXNExvckFaMW9ncFpTWENFeDhJZ1YxYWR5YTk2MVd4WlYwblJxck9l?=
- =?utf-8?B?VTAydFhUdWFySXpXL0xQOU9YaDE5dWZmNnQ5a053V0hlWk1POENjdU9qQndB?=
- =?utf-8?B?Zm9lQzdwZ29NMEJEZVFRNXJrTWNjSFovWnZ4OU80TjBlQ0wzUmEvNm9HSHo4?=
- =?utf-8?B?WmFVT284S0lWcFJuSmgxd0xJakpBZDZkUC83ZTBCWStmc2hjY2hPa2t3bmtN?=
- =?utf-8?B?dGxxVWNxcXdGRVVVQTdjZkdmdUYxTzY3Zy84ZnlrK3J3WkZkWkVvMGZFUzBs?=
- =?utf-8?B?SnFVZkNzdTQ2dVVvZDZqRXV4N1BqQ3ZKai9ock1sUTJaVWJuaWRHb3E2cjJN?=
- =?utf-8?B?VkFlSytMRUo3aWVSR21VRE9YaWp4MTFCeUNyV0xkbHF4UVZTVXFVR1dkakho?=
- =?utf-8?B?MGZZb0t4TldOdkNsZzRxZDFtYlh5ZEphR0JIT09ZSytXbHBtenUxaXJOUHNP?=
- =?utf-8?B?a2hNeXhtZDJDVHAvWkFrTVdvbXRSRTF4dXRhLy9Cc1l6R1VOcGNIeHlqUk5X?=
- =?utf-8?B?dTUwdURUU3hsTk82ODZMcHJST3RKOGNXeFYwZ28rNnpmUzdZQUN3QWlNU0Nq?=
- =?utf-8?B?eHlncjBXY1VPSHRZQUg1dUNEZktnZ25LWCtVc3VlWXhjblhNUndKZGJqdzYw?=
- =?utf-8?B?NlRucHhTaVkyYTluWUVTTnBqWUsxa2NGOEVtNkZnM2ZMcE9LbUd6MjNlUVM2?=
- =?utf-8?B?WUpGMFNEcmZCQWY0Rmwya0gvSFArelIxayt5Z1JyOUZzQXVjUEdONlA5TVVv?=
- =?utf-8?B?Ynl6ZC9KLy9HTXRxeVFYV0Y5Ri9Vc1hQMXlnU3h3K1lqSUlOYzdBRGFmREpD?=
- =?utf-8?B?QlRhaDFCWkhVaXlhaGwvNlVzMTlYNUgxSnB1eU1PUWppS1dnYTVpOVhVMHhl?=
- =?utf-8?B?OG1OT0pta2NYSGF3RW5hRHVocitKYWZmVnZ4bUN4Yjh6SjIwNnE4YmpsbGtn?=
- =?utf-8?B?Qm5tZnFwaGZRSGpHWGt6dzVOSlYrNXNGWElhNko5N1FRN3dyZVlnZVVuY0Rs?=
- =?utf-8?B?SjdXTnlJQ3hDOG9wVU1ySVJ1R0xLM2tSVVdpdUlYN2grUkxhT1dGY0R5RzRJ?=
- =?utf-8?B?TkFiak1WYlhCVHFBd21WS0ZldzlUK2ZvV1BPMTBVUnJVTWFjWnQrU2ZwbGx4?=
- =?utf-8?B?NHFheU9LMG9weFFpRGZPNlhIaXczZFJtQ2luelg4NEI0ZzdWYUJaVmJVeW9L?=
- =?utf-8?B?dG5HYWYzVEpVYU5ncUszWFNZZ3k4YkRycERjL0FTaFBnOEx0OFNaaWhySVNp?=
- =?utf-8?B?VVN1ZWFDRWo4QmU0Q3MrV0xKZGpZanRyVnpRQlRoSXlQWVJ0QkhPWmRUdjIv?=
- =?utf-8?B?NlNOMUx6UXRrLzJVNmZGanFVWUhpUm0xN28wN1VkcUVUUXoxTWpXVGpOTzFK?=
- =?utf-8?B?V0plOHVxdUQ0cFRuM1pqemtNL2NvNGZDVG9oTkpKOVFQcHFOQUV4MERYY0Z2?=
- =?utf-8?B?N3ZmcGFxa1FOUlZ0a0hkTzVpaVVKeS9QVWVCTWpTQTJ5ZHdmdHJhN0ZncU5E?=
- =?utf-8?B?ZTN4ckluajRVR2YzeVhjOVZPckRHTHRPdWt0dkMwaWdkYkE4bStmdkJzUnVC?=
- =?utf-8?B?L05FY2svMm4xYUt4Q0paWUVKWHdNRDFBdG1kallLTTM0TndwTllDNGJnNDNK?=
- =?utf-8?B?cG52NGoxWUF2UW9nODgvV0RGUnRsMUlKQzZsVFVaa0szeW9KMXh1a0ZNVkkr?=
- =?utf-8?B?K3dsY29heUNtNWxHMzFhTnh0YTRFSTJldWVQRW9JMnZnYlNTVEExeDZ3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR10MB5117.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OVV2TUtIUlB5T2MvUGFNZGRJRmF2em5aOTNvbUYyUEdqaCt1VXRQMzl3R2FN?=
- =?utf-8?B?SFhVeWkrVkpUL2N0bDVqUm5MbWhPMFljNXkwOFhkUVFtVXhZeTI2U0JodGhs?=
- =?utf-8?B?MlFzM202S0FOS3VRUUtuR2xYUXZuSGJIOUVXUFhtcG9lZVptb3BVWHVTdVFy?=
- =?utf-8?B?MWVnMDJhQkdCVnNvajJUTHRaMkdRTlROeFJWaWlYaVN5aTJLVnM3NVR6UjFu?=
- =?utf-8?B?L05TbzBKenpadWtFTUQ4c01uVjR6SzlCcUtpZTZ3dCtpRTVnemRhRmNML2lk?=
- =?utf-8?B?TGloM1o4Q0tNdkdTTEZKc0ZRSW9ubFpLbjR1SXFMU2VQUWZlcFhmUGhWcjRJ?=
- =?utf-8?B?b093ZFU0VW9uSmp2Zy9XOW5iRDRIRncxMTVUREhtZjZhZlFySm1BUFZxVjZR?=
- =?utf-8?B?M0xEbit1eThYbWI1VGNOTmE4M2lqdFZpL2RteXNGSlZWRlZTdVJxUng3QjEz?=
- =?utf-8?B?Y1ArOURJZm9yVTFyNXB2YzhsM3NxWVcvNlY4VTIwaEZ6bTBYMUFFSC9DNVZq?=
- =?utf-8?B?MGV3VU9kY0VZYW1JNUg4aHFRa2cxbW5aeG41RnhOQXBpZUVGRlNyaEd1aVdE?=
- =?utf-8?B?cmczZzZmUk5WaytkLzl5d1pSczM0NDlUSlpzMm1taXRXUnVKeTBaenhNYUFS?=
- =?utf-8?B?ZnJBcndscUZOMnBhRkcyL05QcjA4aFB5Y0NCNzVlQy9wdVhaUkZPc2t3bnJy?=
- =?utf-8?B?STFOVTNXeU5Qc2Q2ci9UbW5COWdHbFdZY1hlNkVtQTJCK09SbjFkRHRCRktG?=
- =?utf-8?B?NGxzWk80OXhONVFSL3l5WXNkVGJEQ3N2TkRwTFNNa2VJQlBieERKdWg2Ynhr?=
- =?utf-8?B?WVFCcW9JNEk0NHprdTdjeStMRlF6cm0vQUU5MVloSkJ2ZjM2Y1ZqWWM3c3dq?=
- =?utf-8?B?K3dmcUJDRGRWaW81dHVXOG9MNllwVFI0L1h0SE9CVkszREkzMWxVMUpmWklu?=
- =?utf-8?B?SEh2Y0VMU3R2Q29YMlpROW5uYU5RQkMzVGZYRzRKYjNaVUg4OThaNTF2UjE4?=
- =?utf-8?B?QVA2cm5LU1djS2M5TW82K1lEQ2RZWGE3UjRlTHpjQUdicEZPSnVGZXZVdzRZ?=
- =?utf-8?B?UlRxcGlHbTd6T1laSEljYUtOcUovQWwyQmVBQjJ1QzBVeXJGWXZLZ0JOamJC?=
- =?utf-8?B?VXlEQ0g2WUh0aGZibHFFcnFSWjc0ZWlHdytESGpNWFNXT3FTYk5OSlFzUXY0?=
- =?utf-8?B?dTA2eDdjcGRueHg0TEtEdHBFalZjUGFYOG1EL1JIeDNLdWhNNjV2SlhreHU3?=
- =?utf-8?B?UFNwbkM4WkZjSWF6bXpnMmdmQ1prUEZJRUVWSi9yOE5jMSsrTnB3ajVzRDN0?=
- =?utf-8?B?R1BpaTNRS01HNVFxWG4vSnNJbXBHa2gxK0NSbUtSRTlidUZXb2xIcnV2ZHZS?=
- =?utf-8?B?TDZycnRBaEgwMFJrdm1UYTdXVGphQVRDYUkxZ3ZJNldRSmpLR2hveDNUUkEv?=
- =?utf-8?B?OUNhbXhVT0VDVHFLRitKNFBEV3Q4U3A2cGxRWjdGdStNUDBIUDZWSFltMkll?=
- =?utf-8?B?MGt3WEVGWW5vV0dBbmJMSmF4OFRFWGd3VHZ4cG1zcXVvRjk5S0kwaHlXWkcw?=
- =?utf-8?B?bWNvamppTVlrN3VGaUVJZ2lvVm9FenZkSG1QMjdyZER0VW50SFRUSm1ReXlu?=
- =?utf-8?B?SFpoRkdkaGdJRENJUmp5cmk4d3NyY1FZcVp4c0dndFNRNmhPVDROVmRQanBW?=
- =?utf-8?B?M0FkM3JNbnN6MDdWWlZ3d0MxaVRVOW9Ec0h6SG42MUw3K3NPU3M1OE9jbjZW?=
- =?utf-8?B?TFJraWFocEN1SFBSVFZreVZheWVMSUtzVHpUZU14ekFSYkZwc3k2QkE3Rmpu?=
- =?utf-8?B?ajRSdlZWUU9aRlZvYmlFazhjRHg0ZytkeGZrbU83Wk00SHBnVVdYTVREVlRZ?=
- =?utf-8?B?akZqR0JiVkVZTzNQR0owL1RvZU0xd0NvMzcybEJ3czg3REsrZ1ZzSmxndVBp?=
- =?utf-8?B?cHRRbHMwTG9CN3V2Z01JL1VjWW9YZXpiblNjcVN3OEREd3V6VERSREFyZ1RD?=
- =?utf-8?B?c3dFb25jblVENDBiclhWYnhtUHhYRDA1Zi9JckJDOWUvNHN0ckRITjlGUFF2?=
- =?utf-8?B?cVFjRjM2SmRCSUE5L0ZxT3M1R3lpRHFsV0Zjd29hVEdrVklkMWM5MGZnVFdI?=
- =?utf-8?B?UWd4UkJ2eUY4Q2trZ3dxQm0za1I2M2VSSHZkcXNpN2lEWWlFdjVPNm5Nd2k4?=
- =?utf-8?B?cFE9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	9Z6x/RQNCzUo5uVAk8tl3dRZWe7Nasnnsxt6rfS3L3Z0MymZOUcuugi/N8cFjTrGajNDZDZT/uvSu2JtfrlaxEwRiRJA/mHludhbnS9At0ztJ8hCQqgdYa9LeyhR8HOA06PQFxu8hDaRdBDJoL4VsR1si9JGNKgBM+2Hgh62uNNeRzWsZIRY0e0Ni4RMwMrR6kLMEymjcGTXUJrZF0qqyOxa+/2I8OoYoanEYcPna0ZYAalKIa3hfJV8vt1qGaexLl8hpdfNKvsuRur7Qo3TSg4N5wNx64EGy/2vGL07c/TCa8R0EnSoEdiXRGpEddKWQHEnGHfw1HZwKGWiVrpea1cWGcnziQApDRxIykLVfZJspkytnqNWHKygKNT/T98Z+PgXkf9fVrRYAnef2tIXfsYvmSZCToPSfJ2dpp6fTuZbCgRZregRl2U6hRI0Apf3Yvmi2M92lRadIwJV1rOcfziuHk9jG0Wh+C6zVWbf8YTey7sfcI3fosGqr783mJgb9ZvNqOs6S0/67e+sWLSTXxV+PvqEMO4zLvEzaoW0+VGYzbqEUqg3QKlcYBzZSrdAONhbiMS5tpljJuaWbHUpdgKfTDkBUZvwRbzbnonrTs0=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 779cad68-4b18-4874-6b2b-08dcdd98e8e9
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR10MB5117.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2024 19:33:19.3850
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4wztfk3cCERzj/oXkVCB0/NpQNhJxDlR1m3Iv53RR2VMkLhIZDa4urkjNBlH7OXNZw5B/3h6JgoqAWCPIfhQBY44ViIBG7s+foCiAh7Hbas=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR10MB7474
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-25_12,2024-09-25_02,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
- malwarescore=0 mlxscore=0 bulkscore=0 phishscore=0 spamscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2408220000 definitions=main-2409250138
-X-Proofpoint-GUID: 5jWNuZDM5KNEX5XR4-7oOsrj0O6ZxcCe
-X-Proofpoint-ORIG-GUID: 5jWNuZDM5KNEX5XR4-7oOsrj0O6ZxcCe
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] fbcon: Fix a NULL pointer dereference issue in
+ fbcon_putcs
+To: Qianqiang Liu <qianqiang.liu@163.com>
+Cc: linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org,
+ syzbot+3d613ae53c031502687a@syzkaller.appspotmail.com
+References: <20240916011027.303875-1-qianqiang.liu@163.com>
+ <a57734e8-ffb9-4af1-be02-eb0c99507048@gmx.de> <ZvLlEpIMQnJcJsla@thinkpad>
+ <1b1a2d3c-ed4a-4d9b-b87a-8d05f3d6592e@gmx.de> <ZvOfwLvWdNHiU4g8@thinkpad>
+Content-Language: en-US
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+In-Reply-To: <ZvOfwLvWdNHiU4g8@thinkpad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:GhjcJBvIWCuBdISj33TK8C6II0pS/jTEZG/PvjpsJqAy8uOg1zq
+ N7FyvHb5NO7vqr+gDBtnpPIBYEh3Sz+pWT1LckU9/Stme2ZWW9xOwYo9xkMRHNqWSGTo/4g
+ 7gTmcpbc1L3m6KoDiX8NSDvPFZHNzF7ZcbTgdaSN/D1KghsOgaXMKBa+VuDGy39Mjuobw67
+ hKquVbZXwrRq2wviHjYRg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:K2D4VqVlOr4=;uYJHJmMdmWSu6wAChDv4BFsYkzc
+ qIVp/Cq+7eaR4X8yhtVtbvC+XLRvWE00upEURQO3UCyceTc8dItIeqLKMelzRFiZHPcwLLJMT
+ J7GeOIm59IgpBvnylos8uSH3siaZ7athVXD1rvVRD3xYa9MXUpMcUf7Ej6QhCpEZsWw/qfaRa
+ BcPrXgpnHnFefZCrm8P2N2uHzZIzp1M34kNBtNgfyCW8kA/fN6zxZ44m610e0u9oHZS/dC9LD
+ QWI8WHgsZ6uoHTNoKl0w9duL3ms1ZGfwTJgN79YBpq8cJaUo8VJlNrLyzwGjrBAUP+2wM6iSL
+ SSIYinzt9MmAcDsEtfJvAzZ+gP9Q1JG4WOKxczk/YgqyMkThj0zv6cb7MWYrngGgn49DoEjqG
+ C7VxLovfFIMBxrCEAL6bXxQnShNJQj8Ct3kGJ+0Pk9vqNI4d7DqbQfqe/5coKPQVVKpUVTHRc
+ xRQlnFTETvNb32UxAMa7Ui+H0pxVGy4xEtB2fADunI39lClRvyEYjVKSGSlwUDEQqiCLtltDl
+ AHv3NhQuF+PNufjhBoO+M7Wtkn13pqE92OUEOfI7mL8o/GhurFdUb1DeKJoMyMks+fQLmWJDd
+ 3rq2hH6chqbmOwLu4D+TmqXSg5QMbZ3uYzGXHs5X/NrAv7qktTCt4KDglQquk1HJhtExHy/39
+ oQXlaXzPAHRI3TbDDr94YLqMfAo/6xpn9IuVfLjexNSIduvGh3sqJLRvJcD6OEqxUxJyXNfMv
+ fhftg8ER/GutqNeUmMzR4IT8c2v0rPaNDlAz0WI8s+gtV4cW4T8mTlfTywEUKBlaEedrKQ5Gs
+ /PFR4ZLyLoTYgFhhm3/QO9Qg==
 
-
-On 9/24/24 9:04 PM, Wei Yang wrote:
-> On Wed, Aug 14, 2024 at 12:19:31PM -0400, Sidhartha Kumar wrote:
+On 9/25/24 07:29, Qianqiang Liu wrote:
+> syzbot has found a NULL pointer dereference bug in fbcon.
+> Here is the simplified C reproducer:
 >
-> Sorry for a late reply, I just see this change.
+> struct param {
+> 	uint8_t type;
+> 	struct tiocl_selection ts;
+> };
 >
->> +
->> +/*
->> + * mas_wr_store_type() - Set the store type for a given
->> + * store operation.
->> + * @wr_mas: The maple write state
->> + */
->> +static inline void mas_wr_store_type(struct ma_wr_state *wr_mas)
->> +{
->> +	struct ma_state *mas = wr_mas->mas;
->> +	unsigned char new_end;
->> +
->> +	if (unlikely(mas_is_none(mas) || mas_is_ptr(mas))) {
->> +		mas->store_type = wr_store_root;
->> +		return;
->> +	}
->> +
->> +	if (unlikely(!mas_wr_walk(wr_mas))) {
->> +		mas->store_type = wr_spanning_store;
->> +		return;
->> +	}
->> +
->> +	/* At this point, we are at the leaf node that needs to be altered. */
->> +	mas_wr_end_piv(wr_mas);
->> +	if (!wr_mas->entry)
->> +		mas_wr_extend_null(wr_mas);
->> +
->> +	new_end = mas_wr_new_end(wr_mas);
->> +	if ((wr_mas->r_min == mas->index) && (wr_mas->r_max == mas->last)) {
->> +		mas->store_type = wr_exact_fit;
->> +		return;
->> +	}
->> +
->> +	if (unlikely(!mas->index && mas->last == ULONG_MAX)) {
->> +		mas->store_type = wr_new_root;
->> +		return;
->> +	}
->> +
->> +	/* Potential spanning rebalance collapsing a node */
->> +	if (new_end < mt_min_slots[wr_mas->type]) {
->> +		if (!mte_is_root(mas->node)) {
->> +			mas->store_type = wr_rebalance;
->> +			return;
->> +		}
->> +		mas->store_type = wr_node_store;
->> +		return;
->> +	}
-> After this check, we are sure new_end >= mt_min_slots[wr_mas->type].
+> int main()
+> {
+> 	struct fb_con2fbmap con2fb;
+> 	struct param param;
 >
->> +
->> +	if (new_end >= mt_slots[wr_mas->type]) {
->> +		mas->store_type = wr_split_store;
->> +		return;
->> +	}
->> +
->> +	if (!mt_in_rcu(mas->tree) && (mas->offset == mas->end)) {
->> +		mas->store_type = wr_append;
->> +		return;
->> +	}
->> +
->> +	if ((new_end == mas->end) && (!mt_in_rcu(mas->tree) ||
->> +		(wr_mas->offset_end - mas->offset == 1))) {
->> +		mas->store_type = wr_slot_store;
->> +		return;
->> +	}
->> +
->> +	if (mte_is_root(mas->node) || (new_end >= mt_min_slots[wr_mas->type]) ||
->> +		(mas->mas_flags & MA_STATE_BULK)) {
-> The check (new_end >= mt_min_slots[wr_mas->type]) here seems always be true.
+> 	int fd =3D open("/dev/fb1", 0, 0);
 >
-> So the if here seems not necessary. Do I miss something?
+> 	con2fb.console =3D 0x19;
+> 	con2fb.framebuffer =3D 0;
+> 	ioctl(fd, FBIOPUT_CON2FBMAP, &con2fb);
+>
+> 	param.type =3D 2;
+> 	param.ts.xs =3D 0; param.ts.ys =3D 0;
+> 	param.ts.xe =3D 0; param.ts.ye =3D 0;
+> 	param.ts.sel_mode =3D 0;
+>
+> 	int fd1 =3D open("/dev/tty1", O_RDWR, 0);
+> 	ioctl(fd1, TIOCLINUX, &param);
+>
+> 	con2fb.console =3D 1;
+> 	con2fb.framebuffer =3D 0;
+> 	ioctl(fd, FBIOPUT_CON2FBMAP, &con2fb);
+>
+> 	return 0;
+> }
+>
+> After calling ioctl(fd1, TIOCLINUX, &param), the subsequent ioctl(fd, FB=
+IOPUT_CON2FBMAP, &con2fb)
+> causes the kernel to follow a different execution path:
+>
+>   set_con2fb_map
+>    -> con2fb_init_display
+>     -> fbcon_set_disp
+>      -> redraw_screen
+>       -> hide_cursor
+>        -> clear_selection
+>         -> highlight
+>          -> invert_screen
+>           -> do_update_region
+>            -> fbcon_putcs
+>             -> ops->putcs
+>
+> Since ops->putcs is a NULL pointer, this leads to a kernel panic.
+> To prevent this, we need to call set_blitting_type() within set_con2fb_m=
+ap()
+> to properly initialize ops->putcs.
+>
+> Reported-by: syzbot+3d613ae53c031502687a@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3D3d613ae53c031502687a
+> Tested-by: syzbot+3d613ae53c031502687a@syzkaller.appspotmail.com
+> Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
+> ---
+>   Changes since v2:
+>   - Document the commit message in more detail
 
-It is true that at this point new_end >= mt_min_slots[wr_mas->type] must 
-be true but if we remove that check we won't catch this wr_node_store 
-case if !mte_is_root() and !(mas->mas_flags & MA_STATE_BULK).
+Queued up in for-next branch of fbdev git tree.
 
-We could change the default store type to be wr_node_store and get rid 
-of that whole if statement entirely.
+Thanks!
+Helge
 
-This diff passes the tests:
 
-diff --git a/lib/maple_tree.c b/lib/maple_tree.c index 
-4f34e50c92b5..2ae0c4da9d74 100644 --- a/lib/maple_tree.c +++ 
-b/lib/maple_tree.c @@ -4242,14 +4242,7 @@ static inline void 
-mas_wr_store_type(struct ma_wr_state *wr_mas) return; } - if 
-(mte_is_root(mas->node) || (new_end >= mt_min_slots[wr_mas->type]) || - 
-(mas->mas_flags & MA_STATE_BULK)) { - mas->store_type = wr_node_store; - 
-return; - } - - mas->store_type = wr_invalid; - MAS_WARN_ON(mas, 1); + 
-mas->store_type = wr_node_store; }
+> ---
+>   Changes since v1:
+>   - Initialize ops->putcs by calling set_blitting_type()
+> ---
+>   drivers/video/fbdev/core/fbcon.c | 2 ++
+>   1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core=
+/fbcon.c
+> index 2e093535884b..d9abae2516d8 100644
+> --- a/drivers/video/fbdev/core/fbcon.c
+> +++ b/drivers/video/fbdev/core/fbcon.c
+> @@ -861,6 +861,8 @@ static int set_con2fb_map(int unit, int newidx, int =
+user)
+>   			return err;
+>
+>   		fbcon_add_cursor_work(info);
+> +	} else if (vc) {
+> +		set_blitting_type(vc, info);
+>   	}
+>
+>   	con2fb_map[unit] =3D newidx;
 
-do you think this makes sense?
-
-Thanks,
-
-Sid
-
->> +		mas->store_type = wr_node_store;
->> +		return;
->> +	}
->> +
->> +	mas->store_type = wr_invalid;
->> +	MAS_WARN_ON(mas, 1);
->> +}
->> +
 
