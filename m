@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-338439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C84559857FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:30:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D33E985800
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C0A91F216FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:30:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 993E51C22BBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:32:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4DC915B999;
-	Wed, 25 Sep 2024 11:30:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C44115688C;
+	Wed, 25 Sep 2024 11:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="K2ZB8PiQ"
-Received: from uho.ysoft.cz (uho.ysoft.cz [81.19.3.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AkCYJK1+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131AF13A884;
-	Wed, 25 Sep 2024 11:30:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.3.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D18137775;
+	Wed, 25 Sep 2024 11:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727263843; cv=none; b=SMoXn0kqRBkdYm3qF4VRhNqQCVtmxyTSoOxM1LgJkTBxDX7JZ00oNGR3TMQ+yp60DQNcBNX1bLbcUSrlBbtmvTyWH0Z8wdaO7VxS8EDPQH8BahusK5McZfU8lUJNQIw1B0jGFp0aHgJGR/oAlzsl1lQNTfqYm4f0l/20mOCLUyw=
+	t=1727263966; cv=none; b=o3UnXwbNHGv8VToYFaCAeNGWhQQF3P6iwCbR+wIXx2VK3VOI0JpPwiFN0ZE+8QITSH/NsAlGHVPdMBmZZ8hSlmzJNEiPSvtfez0EPXpTlzFN0lLjGPG8YeSOiFbRst4O0e8W/ooy1B4sbkPT8VMZhFry+k9WEFDGEYTIP2uOgEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727263843; c=relaxed/simple;
-	bh=kH3tIv8Rti5+DuHw8zFtAnwwGg+1JNCj8v1UnbudLJE=;
+	s=arc-20240116; t=1727263966; c=relaxed/simple;
+	bh=yjqXEyqaUHjKbE/DCFjplucileIRbiZ/r5DPWpKujxA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=THAxb9Cu+kOR0ivWJObVY5dVLn8xjMVPqsFicLmpfuVQMn9HmaKeSL4f7QWdGgVxaNPOj/2qYi8Z2qwdP4ytsGo9WwOssEOlsqDuP1ly5oHp9BVtkrDbhkUynDhG7AWKSB/0dbEFQThOzxMNjTcXMkFW++UD2ku22p884xnU3HQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com; spf=pass smtp.mailfrom=ysoft.com; dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b=K2ZB8PiQ; arc=none smtp.client-ip=81.19.3.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ysoft.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
-	s=20160406-ysoft-com; t=1727263832;
-	bh=hxagW0FnMKA1WsvZNBxUuoXtqQsT77XoKbAVByUrEvw=;
+	 In-Reply-To:Content-Type; b=fQGwY9nGRHL29VtL6td9oQmmeMV040rb6YtlPPU/kpmh2gi0QuKKDV/lMinBO2GAzR7haAm1EfYxNdPeHMZ9+/BrMdhYerzy/tEykXcPNWJmh6Xu2VYVzmxykmQi71rDIRpqylmTz7x7TJFd61Vs0HPipoTOt2nw8ZoOJwguCno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AkCYJK1+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2872C4CEC3;
+	Wed, 25 Sep 2024 11:32:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727263965;
+	bh=yjqXEyqaUHjKbE/DCFjplucileIRbiZ/r5DPWpKujxA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=K2ZB8PiQCH0Of/+V6shxnF1wQSHyYoF7T3dCeTs1dCkPe5oGFH9UsRFKj4XdkIjLV
-	 MV1Ip/5AON2FxDr5Q8yIN26v8XuSeUU3S+aA725nCw7HPZ9D9enfRpAeZWI3fQlh/u
-	 XjlIVrz02VBW2l1EmRk9iFsTw2+ovlipoZkpfg/A=
-Received: from [10.1.8.111] (unknown [10.1.8.111])
-	by uho.ysoft.cz (Postfix) with ESMTP id DF20CA025E;
-	Wed, 25 Sep 2024 13:30:31 +0200 (CEST)
-Message-ID: <87980643-44b4-4df9-9eb7-1583b5074bdd@ysoft.com>
-Date: Wed, 25 Sep 2024 13:30:31 +0200
+	b=AkCYJK1+Hy5JbnRxYFvKoVOJ/so2a01jlUtM+cALu4pXTGRYJX3c7glUvfW47lHF+
+	 dGoc8ICaoOGLrzdH6rKy+5AOR55V+KMfm0qeJRCK1zwstDiGGx7pLjjUnl6l6cOnZx
+	 8NzE38mA6djaxqq4pIIHk+Vu66qgdN0ngkYQ2CIAqF/vbdoKNYI60BFjZ+oToPvlAD
+	 r5Ct/zBR17RHhVG0NdyvecPcYZjyrPXoLGb/DTNr0sblt4jB4KBQnwX93R8zRVzHw+
+	 4tYC4Jg50OqL1svGarkAPDD4O0WV30B3d6RsYdnCoVTnKsNBPH+UDdMGLnQynKV5a+
+	 wh+NxgVv0NqiA==
+Message-ID: <1e570a30-af84-4ec3-9e3d-3f358b29c0ff@kernel.org>
+Date: Wed, 25 Sep 2024 13:32:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,237 +49,145 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] arm64: dts: imx: Add imx8mp-iota2-lumpy board
-To: Marco Felsch <m.felsch@pengutronix.de>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Fabio Estevam <festevam@gmail.com>, Michael Walle <mwalle@kernel.org>,
- devicetree@vger.kernel.org, Alexander Stein
- <alexander.stein@ew.tq-group.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Mathieu Othacehe <m.othacehe@gmail.com>,
- Hugo Villeneuve <hvilleneuve@dimonoff.com>, linux-kernel@vger.kernel.org,
- Hiago De Franco <hiago.franco@toradex.com>,
- Herburger <gregor.herburger@ew.tq-group.com>,
- Petr Benes <petr.benes@ysoft.com>, linux-usb@vger.kernel.org,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Joao Paulo Goncalves <joao.goncalves@toradex.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, imx@lists.linux.dev,
- Shawn Guo <shawnguo@kernel.org>, linux-arm-kernel@lists.infradead.org,
- Frank Li <Frank.li@nxp.com>
-References: <20240924103941.1729061-1-michal.vokac@ysoft.com>
- <20240924103941.1729061-3-michal.vokac@ysoft.com>
- <ZvLXenqG/++AR4We@lizhi-Precision-Tower-5810>
- <20240924173714.qxxkhn6wscze7q5n@pengutronix.de>
+Subject: Re: [PATCH 2/2] dt-bindings: i2c: snps,designware-i2c: add
+ bus-loading and clk-freq-optimized
+To: Michael Wu <michael.wu@kneron.us>,
+ Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Jan Dabros <jsd@semihalf.com>, linux-i2c@vger.kernel.org
+Cc: Andi Shyti <andi.shyti@kernel.org>, Morgan Chang
+ <morgan.chang@kneron.us>, linux-kernel@vger.kernel.org
+References: <20240925080432.186408-1-michael.wu@kneron.us>
+ <20240925080432.186408-3-michael.wu@kneron.us>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>
-In-Reply-To: <20240924173714.qxxkhn6wscze7q5n@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240925080432.186408-3-michael.wu@kneron.us>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 24. 09. 24 19:37, Marco Felsch wrote:
-> Hi Frank,
+On 25/09/2024 10:04, Michael Wu wrote:
+> Since there are no registers controlling the hardware parameters
+> IC_CAP_LOADING and IC_CLK_FREQ_OPTIMIZATION, their values can only be
+> noted in the device tree.
 > 
-> On 24-09-24, Frank Li wrote:
->> On Tue, Sep 24, 2024 at 12:39:41PM +0200, Michal Vokáč wrote:
->>> The IOTA2 Lumpy board is based on the i.MX8MPlus EVK.
->>>
->>> Basic features are:
->>> - 4GB LPDDR4
->>> - 64GB eMMC
->>> - 2x 1GB Ethernet
->>> - USB 3.0 Type-C dual role port, without power delivery
->>> - USB 3.0 Type-A host port
->>> - RGB LED - PWM driven
->>> - speaker - PWM driven
->>> - RTC with super capacitor backup
->>>
->>> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
->>> ---
->>> v4:
->>> - Moved the iomuxc node to the end of the file.
->>> - Moved the bus-width and non-removeable properties below
->>>    the pinctrl-* properties in &usdhc3 node.
->>> - Moved the fsl,ext-reset-output below the pinctrl-* properties
->>>    in &wdog1 node.
->>> v3:
->>> - Dropped pinctrl-names property from &usb_dwc3_1 node.
->>> v2:
->>> - Dropped unused property from pwm4 node.
->>> - Sorted all nodes and properties using dt-format tool from Frank.
->>>
->>>   arch/arm64/boot/dts/freescale/Makefile        |   1 +
->>>   .../boot/dts/freescale/imx8mp-iota2-lumpy.dts | 423 ++++++++++++++++++
->>
->> Suggest use https://github.com/lznuaa/dt-format
->> sort node. any issue, let me know.
+> "bus-loading" is used to declare the value of IC_CAP_LOADING, and
+> "clk-freq-optimized" is used to declare IC_CLK_FREQ_OPTIMIZATION = 1.
 > 
-> Thanks for the link :) would be nice to have this script to be part of
-> the kernel. The script follows the rules in [1] I'm just used to have
-> common properties like pinctrl-* in front of the device specific
-> properties e.g. "enable-active-high". But this rule is not part of [1]
-> so I can't blame the script.
+> Signed-off-by: Michael Wu <michael.wu@kneron.us>
+
+<form letter>
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC. It might happen, that command when run on an older
+kernel, gives you outdated entries. Therefore please be sure you base
+your patches on recent Linux kernel.
+
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about `b4 prep --auto-to-cc` if you added new
+patches to the patchset.
+
+You missed at least devicetree list (maybe more), so this won't be
+tested by automated tooling. Performing review on untested code might be
+a waste of time.
+
+Please kindly resend and include all necessary To/Cc entries.
+</form letter>
+
+> ---
+>  .../bindings/i2c/snps,designware-i2c.yaml     | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
 > 
-> Regards,
->    Marco
-> 
-> [1] https://docs.kernel.org/devicetree/bindings/dts-coding-style.html#order-of-properties-in-device-node
+> diff --git a/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml b/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml
+> index 60035a787e5c..f954f5014a00 100644
+> --- a/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml
+> +++ b/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml
+> @@ -87,6 +87,16 @@ properties:
+>        This value is used to compute the tHIGH period.
+>      default: 300
+>  
+> +  bus-loading:
+> +    description: |
+> +      This property should be 100 or 400 for high speed mode.
+> +      This value is used to compute the tHIGH period and the tLOW period.
 
-Thank you for the review Frank & Marco.
-I quickly went through the file again and found another few properties
-that could be better ordered according to the kernel documentation [1].
+How? This wasn't ever tested obviously... Missing units in property name
+(or ref but units are preferred).
 
->>>   2 files changed, 424 insertions(+)
->>>   create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts
->>>
->>> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
->>> index 9d3df8b218a2..aa26a50b7bb4 100644
->>> --- a/arch/arm64/boot/dts/freescale/Makefile
->>> +++ b/arch/arm64/boot/dts/freescale/Makefile
->>> @@ -171,6 +171,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-dhcom-pdk2.dtb
->>>   dtb-$(CONFIG_ARCH_MXC) += imx8mp-dhcom-pdk3.dtb
->>>   dtb-$(CONFIG_ARCH_MXC) += imx8mp-evk.dtb
->>>   dtb-$(CONFIG_ARCH_MXC) += imx8mp-icore-mx8mp-edimm2.2.dtb
->>> +dtb-$(CONFIG_ARCH_MXC) += imx8mp-iota2-lumpy.dtb
->>>   dtb-$(CONFIG_ARCH_MXC) += imx8mp-msc-sm2s-ep1.dtb
->>>   dtb-$(CONFIG_ARCH_MXC) += imx8mp-navqp.dtb
->>>   dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-rdk.dtb
->>> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts b/arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts
->>> new file mode 100644
->>> index 000000000000..9eb58e818dc7
->>> --- /dev/null
->>> +++ b/arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts
->>> @@ -0,0 +1,423 @@
->>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->>> +/*
->>> + * Copyright 2023 Y Soft
->>> + */
->>> +
->>> +/dts-v1/;
->>> +
->>> +#include "imx8mp.dtsi"
->>> +
->>> +/ {
->>> +	compatible = "ysoft,imx8mp-iota2-lumpy", "fsl,imx8mp";
->>> +	model = "Y Soft i.MX8MPlus IOTA2 Lumpy board";
->>> +
->>> +	beeper {
->>> +		compatible = "pwm-beeper";
->>> +		pwms = <&pwm4 0 500000 0>;
->>> +	};
->>> +
->>> +	chosen {
->>> +		stdout-path = &uart2;
->>> +	};
->>> +
->>> +	gpio_keys: gpio-keys {
->>> +		compatible = "gpio-keys";
->>> +		pinctrl-0 = <&pinctrl_gpio_keys>;
->>> +		pinctrl-names = "default";
->>> +
->>> +		button-reset {
->>> +			gpios = <&gpio1 7 GPIO_ACTIVE_LOW>;
->>> +			label = "Factory RESET";
->>> +			linux,code = <BTN_0>;
->>> +		};
->>> +	};
->>> +
->>> +	reg_usb_host: regulator-usb-host {
->>> +		compatible = "regulator-fixed";
->>> +		enable-active-high;
->>> +		gpio = <&gpio1 14 GPIO_ACTIVE_HIGH>;
+> +    default: 100
+> +
+> +  clk_freq_optimized:
 
-The enable-active-high and gpio should go bellow regulator-*.
+No underscores.
 
->>> +		pinctrl-0 = <&pinctrl_usb_host_vbus>;
->>> +		pinctrl-names = "default";
->>> +		regulator-max-microvolt = <5000000>;
->>> +		regulator-min-microvolt = <5000000>;
->>> +		regulator-name = "usb-host";
->>> +	};
->>> +
->>> +	memory@40000000 {
->>> +		reg = <0x0 0x40000000 0 0x80000000>,
->>> +		      <0x1 0x00000000 0 0x80000000>;
->>> +		device_type = "memory";
->>> +	};
->>> +};
->>> +
->>> +&A53_0 {
->>> +	cpu-supply = <&reg_arm>;
->>> +};
->>> +
->>> +&A53_1 {
->>> +	cpu-supply = <&reg_arm>;
->>> +};
->>> +
->>> +&A53_2 {
->>> +	cpu-supply = <&reg_arm>;
->>> +};
->>> +
->>> +&A53_3 {
->>> +	cpu-supply = <&reg_arm>;
->>> +};
->>> +
->>> +&eqos {
->>> +	phy-handle = <&ethphy0>;
->>> +	phy-mode = "rgmii-id";
->>> +	pinctrl-0 = <&pinctrl_eqos>;
->>> +	pinctrl-names = "default";
->>> +	status = "okay";
->>> +
->>> +	mdio {
->>> +		compatible = "snps,dwmac-mdio";
->>> +		#address-cells = <1>;
->>> +		#size-cells = <0>;
->>> +
->>> +		ethphy0: ethernet-phy@0 {
->>> +			reg = <0>;
->>> +			interrupts = <21 IRQ_TYPE_LEVEL_LOW>;
->>> +			interrupt-parent = <&gpio3>;
->>> +			micrel,led-mode = <0>;
+> +    description: |
+> +      Thie property is used to declare whether the internal latency is reduced.
 
-The micrel,* is a vendor specific property. It should go bellow the reset-*.
+Your descriptions don't tell me much. Drop redundant parts "This
+property" and instead describe the hardware aspect of this property.
 
->>> +			pinctrl-0 = <&pinctrl_ethphy0>;
->>> +			pinctrl-names = "default";
->>> +			reset-assert-us = <1000>;
->>> +			reset-deassert-us = <1000>;
->>> +			reset-gpios = <&gpio3 22 GPIO_ACTIVE_LOW>;
->>> +		};
->>> +	};
->>> +};
->>> +
->>> +&fec {
->>> +	fsl,magic-packet;
->>> +	phy-handle = <&ethphy1>;
->>> +	phy-mode = "rgmii-id";
->>> +	pinctrl-0 = <&pinctrl_fec>;
->>> +	pinctrl-names = "default";
->>> +	status = "okay";
->>> +
->>> +	mdio {
->>> +		#address-cells = <1>;
->>> +		#size-cells = <0>;
->>> +
->>> +		ethphy1: ethernet-phy@0 {
->>> +			reg = <0>;
->>> +			interrupts = <19 IRQ_TYPE_LEVEL_LOW>;
->>> +			interrupt-parent = <&gpio3>;
->>> +			micrel,led-mode = <0>;
 
-Same as above, micrel,* should go bellow common properties.
-I will send a v5 with these fixed.
+> +
+>    dmas:
+>      items:
+>        - description: TX DMA Channel
+> @@ -146,4 +156,13 @@ examples:
+>        interrupts = <8>;
+>        clocks = <&ahb_clk>;
+>      };
+> +  - |
+> +    i2c@ce500000 {
 
-Michal
+No, no need.
 
->>> +			pinctrl-0 = <&pinctrl_ethphy1>;
->>> +			pinctrl-names = "default";
->>> +			reset-assert-us = <1000>;
->>> +			reset-deassert-us = <1000>;
->>> +			reset-gpios = <&gpio3 20 GPIO_ACTIVE_LOW>;
->>> +		};
->>> +	};
->>> +};
->>> +
+
+
+Best regards,
+Krzysztof
+
 
