@@ -1,125 +1,152 @@
-Return-Path: <linux-kernel+bounces-337883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C0B99850A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 03:34:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74C8D9850A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 03:28:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAEA52848AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:34:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A2BF2848A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:28:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77641145B0B;
-	Wed, 25 Sep 2024 01:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="lYmGcrfy"
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12AAB1474B7;
+	Wed, 25 Sep 2024 01:28:28 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3E542AB5
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 01:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245C9145B0B
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 01:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727228062; cv=none; b=T1tRPSi0QLpJIzUZyzQA0VOnQA1stzsYKk5lH7aAmV95/mChwqFKH/8+vfL/33xz+fPTKochVwqJ6bfywnoqp+5Rimm8CkND8rjXJ4l/qstzjeYry31iDP+QTs05tYdQ8xc5xVLNXJL2HjJDmaY5hkRx19T/bkpcxyEDdOvM1Ac=
+	t=1727227707; cv=none; b=ffHlA8mZ/Rx1jOWGrNo04sHG8FQDixBhQQa1JaVkV9Otd8t/tTpvDGhsu6Cj0pbR+pnPMC5re7E7AOhMnR8JmK8MwEc16IBobXO0+6986mNlPoSfcJA+RdHf82c2GElS96Bow29/KtKpbB5CdeXRuTz4wCAsXbKzGd5uuA50aos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727228062; c=relaxed/simple;
-	bh=u0hbjJNpzOW6ItAe/lgfk03Pzl5beZR51/r8QN8usbk=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=pgcRmq1NSBn6GKNxQPH+Kwd18MWsMnKTJS9AZuOs+MG37mScTenIehqL32hg3CRMfhKG4TE5HC9SOeEJhRksLjdA53/2G0LZxjEKm7gkWTu5nSzIvKe3JPSeKzFixrllyVCirtmoWlOB03to2LN834jZNP5AnIo3iPjB39Za0vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=lYmGcrfy; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1727228055; bh=YIL4iXIHrJrYf3W/ArVUoDuQ3Ht/E83pGURjcCp5p48=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=lYmGcrfy0ayGK0NCDzAuKuX82Kdy5ZYOfUkmS4xg8LeP1yS7fJV0iHxSjflRIoi0m
-	 ZQZUYM3MrTLLW4t8XJPcWT+76O2GyAgM4ETuJEY2NqmgMSjBIedJpPTezkPr0/qTj1
-	 HNQaeSHcDev41VmCSXFmtoagP/O66D6JnGTbOcQE=
-Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id 681AC2A7; Wed, 25 Sep 2024 09:26:01 +0800
-X-QQ-mid: xmsmtpt1727227561tlvmbvhvy
-Message-ID: <tencent_08982ECAAEE20C9E67D106F812CF067E8906@qq.com>
-X-QQ-XMAILINFO: OaubouGXmhNzcKFJKN2/tnxmFnE+UHI3fWqB9mWSWR2lYK5NYj93oJQjl9vf29
-	 QYLga3V0hcKZ9UImZSw9Rq53paaqU/R8PAgJv2p62PQFMiUwyDZdNXMcb8nnzjH5fO+32RCa9HNk
-	 ESvZpN0xpBzRxkKqEH6QFVXcuGR079hceHHpiWtrj/roJzY+qpnZemOaalaLELmV6iU2WKqVt1nU
-	 UXDcS5y4gJB/Pw0Fz+LrxixFZ5Nrq8N/WRxLAUwdGytKHfSDpGa8+lvmKJXVqNV3UcTRatah7YH/
-	 SkzHgNlAE3z78GOWOlm3qWo4btvo1f7xjJd8U3v/LVCmz6k8qaPfvnfqcHIElvQFSnD4AArnrWfK
-	 2oyEVWa/6fZW0aK0qJJE+GJgvjzWfLDIAfO4Fg6nAZg48TGGr9EWD60wb6O2lcG4zfuUZB8qk6/A
-	 E8wHnd96R8phK7IjvJRTiSQMEQN6vTO9AC18GMzyFiEH60LoZE4NVWkdyl3q/nLhaUqCVPmguDUq
-	 kHEAagtX8bCA0Xq2X5p/hBRPaUed8TZ7oEpmVWa2Xlz8SiKc8KbdSokDbYqg8UcMisIZDPCwu6LV
-	 xIA+IVodTzpYrD7O659N28OIgFjYTltvk9CLsdpXms02TnETAiPMKDobtN/+3Zue5SMsh2ZIXxtd
-	 PvSZjCm03ajQOuj06oCMgGDkSjY02t1fk2osRN1iG6F+Wnl9s3VjzmErAJg76QiFmDF953ygAd47
-	 +OK817Ay5Dum8MIl5hkKcbboRg4+tX8LIZE6iYU7BpUTv1EX6meb80CFgyCwJ0NMDu0vVIs1tLOZ
-	 x1FBOZBK8SlKs2U01DNPbQJ8HmmFst62OnNBfRAhodnXsWad+rhMfaZlzI66CC+64L0gb1lbhe0f
-	 1ga4K4ElOCwbl7qkifsovnUg9FTxIpYqlkQVTngI2GAjAWVl/j8vgooypOn3nN72DL8tfwlV8D
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+c0360e8367d6d8d04a66@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in vfs_get_tree
-Date: Wed, 25 Sep 2024 09:26:02 +0800
-X-OQ-MSGID: <20240925012601.840261-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <66f33aad.050a0220.457fc.0030.GAE@google.com>
-References: <66f33aad.050a0220.457fc.0030.GAE@google.com>
+	s=arc-20240116; t=1727227707; c=relaxed/simple;
+	bh=5n942yHYYWOIIk0LfIm2nfmYfyORxFjSQXjeLhFsLV8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DS+AscqHfHllaQcpHTIwv0PzxZUN99V1BdX0EAASsd5bA5Qi1hfwfUXDPS74MnRr+c3198/MLAMVyJ3jW0eu5/GyikGuHkSowbQmEPLnmfwaHyNQ6L52GYMNbCze1dcNfogEI8qOm5z//n7lamyBMcHL6DDz3KX/Vv6cvW1lyLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82cdb749571so622556539f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 18:28:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727227705; x=1727832505;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6iVNGliU2YEWa4+d/A9WhHN0EgbELWDz/lD1nQdQndo=;
+        b=f/yjdc13nvQNNa9Svsx2+URzsVh2OwGjUHo6ynQnKUOwrxIKLryxReWR6YOEXRANFq
+         KYfZRzApsJYcRrux5gGwt1hkOsO7VFWnJxJCeRXA9q+O050+REzXLUY5423zmqhOxuHP
+         TpYycjK+/LN0EQPmCCyWTXvOvwUvVGtK6mci6He5cw7RHdeSJUGc8KL8jkE0PoZYwWUW
+         yj9h0eD9fxDQ7W3jCVLZfu2SBtZIB7ydU/AkHAAz3MK7sU19Ft+P/EBBvWhsj6rMGQhE
+         zwbK60xXOuW2G+2y9RnZevT5EvY64xbK+i1jFXL49gGHDhrYJpohXfqnrAaqqAomNaVD
+         sa1w==
+X-Forwarded-Encrypted: i=1; AJvYcCV51nT2Qu2DPUmLIxQqtZYkRD8iIXOMbjqTE0YQ6Lyucq+5nP4GoyDXABM2Go1m/Tasz4u7vOeHKRlz0EI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5/nFdglf4JSHt6pon6STb3hpGmWGDp+dvnkmCdTeST9oSWeGN
+	n0pi2iOOJg27urDOnpYQEdRBQbyxt+BQV7w0c6BtAkZjf7+fD71ItN1844FEJPmkKeAOUHrt1VU
+	OHZ+P3TcP678NXR/AkkYa8S7e1pRgkr1l1RHfkK8EAADVmbHgg8CZTEI=
+X-Google-Smtp-Source: AGHT+IGcKJDS1W6/v9uEM44JZcc/aG8tZxBooFdmswhFeCLD7+c5rrnNFzYQiO/fRcwKR+Wa7SNMU3bLrJhzxmxLr80gpNQf2bCY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1d97:b0:3a0:90c7:f1b with SMTP id
+ e9e14a558f8ab-3a26d773085mr12755805ab.12.1727227705228; Tue, 24 Sep 2024
+ 18:28:25 -0700 (PDT)
+Date: Tue, 24 Sep 2024 18:28:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f36739.050a0220.30ac7d.0004.GAE@google.com>
+Subject: [syzbot] [ocfs2?] KMSAN: uninit-value in ocfs2_get_block
+From: syzbot <syzbot+9709e73bae885b05314b@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-db
+Hello,
 
-#syz test
+syzbot found the following issue on:
 
-diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
-index 4a1bb07a2574..49d711e9837e 100644
---- a/fs/bcachefs/fs.c
-+++ b/fs/bcachefs/fs.c
-@@ -2148,6 +2148,7 @@ static int bch2_fs_get_tree(struct fs_context *fc)
- out:
- 	fc->root = dget(sb->s_root);
- err:
-+	pr_info("ret: %d, sb: %p, fc: %p, fcroot: %p, %s\n", ret, sb, fc, fc->root, __func__);
- 	darray_exit(&devs_to_fs);
- 	bch2_darray_str_exit(&devs);
- 	if (ret)
-diff --git a/fs/bcachefs/recovery.c b/fs/bcachefs/recovery.c
-index be1e7ca4362f..12835c0290f8 100644
---- a/fs/bcachefs/recovery.c
-+++ b/fs/bcachefs/recovery.c
-@@ -849,6 +849,7 @@ int bch2_fs_recovery(struct bch_fs *c)
- 		atomic64_add(1 << 16, &c->key_version);
- 
- 	ret = read_btree_roots(c);
-+	pr_info("ret: %d, %s\n", ret, __func__);
- 	if (ret)
- 		goto err;
- 
-diff --git a/fs/bcachefs/super.c b/fs/bcachefs/super.c
-index 873e4be7e1dc..9fb45c7e7063 100644
---- a/fs/bcachefs/super.c
-+++ b/fs/bcachefs/super.c
-@@ -1011,6 +1011,7 @@ int bch2_fs_start(struct bch_fs *c)
- 	mutex_lock(&c->sb_lock);
- 
- 	ret = bch2_sb_members_v2_init(c);
-+	pr_info("ret: %d, %s\n", ret, __func__);
- 	if (ret) {
- 		mutex_unlock(&c->sb_lock);
- 		goto err;
-@@ -1036,6 +1037,7 @@ int bch2_fs_start(struct bch_fs *c)
- 	ret = BCH_SB_INITIALIZED(c->disk_sb.sb)
- 		? bch2_fs_recovery(c)
- 		: bch2_fs_initialize(c);
-+	pr_info("2ret: %d, %s\n", ret, __func__);
- 	if (ret)
- 		goto err;
- 
+HEAD commit:    baeb9a7d8b60 Merge tag 'sched-rt-2024-09-17' of git://git...
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=172af607980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=acaa65be5f19fc5a
+dashboard link: https://syzkaller.appspot.com/bug?extid=9709e73bae885b05314b
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=161e2ca9980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=151bff00580000
 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/cac89ddb3388/disk-baeb9a7d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ddec90b149ab/vmlinux-baeb9a7d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f8db8244cc07/bzImage-baeb9a7d.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/25ed405f5727/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9709e73bae885b05314b@syzkaller.appspotmail.com
+
+OCFS2: ERROR (device loop0): int __ocfs2_find_path(struct ocfs2_caching_info *, struct ocfs2_extent_list *, u32, path_insert_t *, void *): Owner 17 has empty extent list at depth 312
+On-disk corruption discovered. Please run fsck.ocfs2 once the filesystem is unmounted.
+OCFS2: Returning error to the calling process.
+(syz-executor337,5180,0):ocfs2_find_leaf:1940 ERROR: status = -30
+(syz-executor337,5180,0):ocfs2_get_clusters_nocache:421 ERROR: status = -30
+(syz-executor337,5180,0):ocfs2_get_clusters:624 ERROR: status = -30
+(syz-executor337,5180,0):ocfs2_extent_map_get_blocks:671 ERROR: status = -30
+=====================================================
+BUG: KMSAN: uninit-value in ocfs2_get_block+0xed2/0x2710 fs/ocfs2/aops.c:159
+ ocfs2_get_block+0xed2/0x2710 fs/ocfs2/aops.c:159
+ do_mpage_readpage+0xc45/0x2780 fs/mpage.c:225
+ mpage_readahead+0x43f/0x840 fs/mpage.c:374
+ ocfs2_readahead+0x269/0x320 fs/ocfs2/aops.c:381
+ read_pages+0x193/0x1110 mm/readahead.c:160
+ page_cache_ra_unbounded+0x901/0x9f0 mm/readahead.c:273
+ do_page_cache_ra mm/readahead.c:303 [inline]
+ force_page_cache_ra+0x3b1/0x4b0 mm/readahead.c:332
+ force_page_cache_readahead mm/internal.h:347 [inline]
+ generic_fadvise+0x6b0/0xa90 mm/fadvise.c:106
+ vfs_fadvise mm/fadvise.c:185 [inline]
+ ksys_fadvise64_64 mm/fadvise.c:199 [inline]
+ __do_sys_fadvise64 mm/fadvise.c:214 [inline]
+ __se_sys_fadvise64 mm/fadvise.c:212 [inline]
+ __x64_sys_fadvise64+0x1fb/0x3a0 mm/fadvise.c:212
+ x64_sys_call+0xe11/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:222
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Local variable p_blkno created at:
+ ocfs2_get_block+0xc7/0x2710 fs/ocfs2/aops.c:140
+ do_mpage_readpage+0xc45/0x2780 fs/mpage.c:225
+
+CPU: 0 UID: 0 PID: 5180 Comm: syz-executor337 Not tainted 6.11.0-syzkaller-07341-gbaeb9a7d8b60 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+=====================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
