@@ -1,117 +1,183 @@
-Return-Path: <linux-kernel+bounces-338116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC0CC985386
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:15:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27A04985388
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:16:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 540701F22AD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:15:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BCAAB20E61
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:16:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D533C156F42;
-	Wed, 25 Sep 2024 07:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2036A156237;
+	Wed, 25 Sep 2024 07:16:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="JTVmZmXy"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SkaoKo+t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4C9155335;
-	Wed, 25 Sep 2024 07:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4CE126F0A;
+	Wed, 25 Sep 2024 07:16:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727248535; cv=none; b=ofqBj8+QKW8DMdY15eKxFXi+5QxmxlF/AsiP2DG5rVsdy9GOQmk9G8Hc+9lhxO/Yp6nT8wqIz2BvEEyQ1TDudRdSNGWC6l4yGkj92N5ARRqY1j7jXMEmpjx+zIb/ouLnRM3RuUBLqJIIMqunoqh740y8tYEkRuibft0YgwDT+8Q=
+	t=1727248606; cv=none; b=OjLN5EDE9MFhOBUsWZIhXwcsNJArOlnBAUDxAOve5dRkYnrttOMlWElQdC/9zOb/DjdmRh7LFFA8+dYyEiqEwQyzUtviyu/GVmTF/1MkfUP4Y5KSBLQehQ16fFVMXFUr+q7seblDBW5layCZdQR8LxZMhx/uFyNQ6IPnM5jB0Xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727248535; c=relaxed/simple;
-	bh=2H0Tll7iXS56COsAJ9Ba9VN7MsihEl3S3mG7XvlJCJ8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rS3ryY/SzFuwJdY4sFmZKtK5HncBZ9IRVaxc/JNFUaTDHIu6XcsQbw45iP1CvPPFb9ffmEunsrnDmaKzsDW7p8Zt0mH1w4yBFUxOgrFYISqF762cW4s2VWMe1CAl0Ouj/oILDHg9e5kfHSjlgXpKZfN/nZlZNIrLh7Lyghu1GPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=JTVmZmXy; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: ecd1331c7b0d11efb66947d174671e26-20240925
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=yaIodi5uj4km3VKABv1O17zLQr709EqtZWRmv7oakJc=;
-	b=JTVmZmXyBKy9U+J/OgN/DL1UfcssvqXfk+5CLxRD4zQauAhWvSryk4LaGGn/jTOiA8/+fXBLRj3cyTT85SNDzkIKR2zr+9iojh1fj4Gvi3UEupNL3UBka+u+eCEbeHJAxWOBIsXb9RIX1LZ9prLHgPKq0SFwf153qiVy45iFMr8=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:43bb804f-41f7-4b50-8b1c-03a5a6d389f5,IP:0,U
-	RL:25,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:25
-X-CID-META: VersionHash:6dc6a47,CLOUDID:7a19889e-8e9a-4ac1-b510-390a86b53c0a,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_ULN,TF_CID_SPAM_SNR
-X-UUID: ecd1331c7b0d11efb66947d174671e26-20240925
-Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw01.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 244326886; Wed, 25 Sep 2024 15:15:20 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Wed, 25 Sep 2024 15:15:19 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Wed, 25 Sep 2024 15:15:19 +0800
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, Alexandre Mergnat
-	<amergnat@baylibre.com>
-CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
-	Macpaul Lin <macpaul.lin@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, Sen
- Chu <sen.chu@mediatek.com>, Chris-qj chen <chris-qj.chen@mediatek.com>,
-	MediaTek Chromebook Upstream
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai
-	<wenst@chromium.org>, Tommy Chen <tommytl.chen@mediatek.com>
-Subject: [PATCH] arm64: dts: mediatek: mt8195: Add power domain for dp_intf0
-Date: Wed, 25 Sep 2024 15:15:14 +0800
-Message-ID: <20240925071514.17626-1-macpaul.lin@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	s=arc-20240116; t=1727248606; c=relaxed/simple;
+	bh=wlACnvaHMg42FGtJEoBPkQSfA29gqh3WPsl/M0+9Cu8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=akjZjji94yuO6duZbOyWuZT/qK2Fesne9LUHPMhOFJHpoojyMGie7lbWJlwmd6ew6iUCeC/I61rUvpilHUgyLiIJ/G9CDIAJqgHwNUCG/ht+xDRpyr/FWoYUpbXNMtq0MmsfpzwIbyG3bWqg4uxHNn+SR8ruoAPhMR01btt2LvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SkaoKo+t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90D41C4CEC3;
+	Wed, 25 Sep 2024 07:16:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727248606;
+	bh=wlACnvaHMg42FGtJEoBPkQSfA29gqh3WPsl/M0+9Cu8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SkaoKo+tJ04Oi1whNH0iQvQ2ebWfeKjM+QaIaYnvG9aEQgpHXSHn7PBnV6Gi/rR1v
+	 Ah4EnaOJqO1wlqdD89A04+6DN1HA2wEbFYVVuUiWNdqauze62x9wYeaPTtXhwMl7eG
+	 db8vtygygIVh0k0DZuxqOyzh66JK12v7bsOEkIuU3PnGcxQHYvYRBJD+kdQ8gbfAZP
+	 02RghyUDTvBzqw9PdCm4s+onpBT1KbPDA5l+idkljBG8vWrUS7nFKqGCVo4oqVHCTk
+	 ksVo39J0Ke5/8IeHcpUpck723uk4EKUOhmO2e12zxRnGpkupAbJkTBIpTquJhdtidj
+	 JkgJu8hoFLt/Q==
+Message-ID: <2a4200ac-3ea2-4449-94ac-c4b9f37ad800@kernel.org>
+Date: Wed, 25 Sep 2024 09:16:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: phy: rockchip,inno-usb2phy: add
+ rk3576
+To: Frank Wang <frawang.cn@gmail.com>, Conor Dooley <conor@kernel.org>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, heiko@sntech.de, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ william.wu@rock-chips.com, tim.chen@rock-chips.com,
+ Frank Wang <frank.wang@rock-chips.com>
+References: <20240924085510.20863-1-frawang.cn@gmail.com>
+ <20240924-overtly-curable-13df2e7fdc9b@spud>
+ <87146372-6d05-4994-8f64-47f4cb07e2b4@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <87146372-6d05-4994-8f64-47f4cb07e2b4@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-During inspecting dtbs_check errors, we found the power domain
-setting of DPI node "dp_intf0" is missing. Add power domain setting
-to "MT8195_POWER_DOMAIN_VDOSYS0" for "dp_intf0"
+On 25/09/2024 04:09, Frank Wang wrote:
+> Hi Conor,
+> 
+> On 2024/9/25 0:11, Conor Dooley wrote:
+>> On Tue, Sep 24, 2024 at 04:55:09PM +0800, Frank Wang wrote:
+>>> From: Frank Wang <frank.wang@rock-chips.com>
+>>>
+>>> Add compatible for the USB2 phy in the Rockchip RK3576 SoC.
+>>>
+>>> Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
+>>> ---
+>>> Changelog:
+>>> v2:
+>>>   - Categorize clock names by oneOf keyword.
+>>>
+>>> v1:
+>>>   - https://patchwork.kernel.org/project/linux-phy/patch/20240923025326.10467-1-frank.wang@rock-chips.com/
+>>>
+>>>   .../bindings/phy/rockchip,inno-usb2phy.yaml      | 16 ++++++++++++++--
+>>>   1 file changed, 14 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml b/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
+>>> index 5254413137c64..8af4e0f8637fc 100644
+>>> --- a/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
+>>> +++ b/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
+>>> @@ -20,6 +20,7 @@ properties:
+>>>         - rockchip,rk3366-usb2phy
+>>>         - rockchip,rk3399-usb2phy
+>>>         - rockchip,rk3568-usb2phy
+>>> +      - rockchip,rk3576-usb2phy
+>>>         - rockchip,rk3588-usb2phy
+>>>         - rockchip,rv1108-usb2phy
+>>>   
+>>> @@ -34,10 +35,20 @@ properties:
+>>>       const: 0
+>>>   
+>>>     clocks:
+>>> -    maxItems: 1
+>>> +    minItems: 1
+>>> +    maxItems: 3
+>>>   
+>>>     clock-names:
+>>> -    const: phyclk
+>>> +    minItems: 1
+>>> +    maxItems: 3
+>> clock-names isn't a required property, you can't allow jumbling the order
+>> like this does without breaking the ABI. Why can't the new device have
+>> phyclk in position 1?
+> 
+> I sent a draft changes in patch v1 comments which put the "phyclk" in 
 
-Signed-off-by: Tommy Chen <tommytl.chen@mediatek.com>
-Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/mt8195.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+No, you did not. You sent buggy code which was never tested.
 
-Changes for v1:
- - This patch is related to adding mt8195-dp-intf to DT schema fix for
-  - http://devicetree.org/schemas/display/mediatek/mediatek,dpi.yaml 
-  - patch: https://lore.kernel.org/all/20240924103156.13119-6-macpaul.lin@mediatek.com/
+> position 1, Krzysztof said I have messed the order, so I reorder them in v2.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-index ade685ed2190..6218bd7abb05 100644
---- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-@@ -3252,6 +3252,7 @@ dp_intf0: dp-intf@1c015000 {
- 			compatible = "mediatek,mt8195-dp-intf";
- 			reg = <0 0x1c015000 0 0x1000>;
- 			interrupts = <GIC_SPI 657 IRQ_TYPE_LEVEL_HIGH 0>;
-+			power-domains = <&spm MT8195_POWER_DOMAIN_VDOSYS0>;
- 			clocks = <&vdosys0 CLK_VDO0_DP_INTF0_DP_INTF>,
- 				 <&vdosys0  CLK_VDO0_DP_INTF0>,
- 				 <&apmixedsys CLK_APMIXED_TVDPLL1>;
--- 
-2.45.2
+No, I did not. I said your current code (from your reply or patch v2)
+messes the order. Even though I sent you reply that this code is wrong,
+you still decided to ignore my feedback and send it.
+
+To be clear:
+NAK
+
+> Did I misunderstand? anyway, should the changes like the below?
+
+Read all the answers again instead of putting wrong words to wrong patches.
+
+
+Best regards,
+Krzysztof
 
 
