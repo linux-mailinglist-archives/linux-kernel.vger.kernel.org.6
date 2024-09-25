@@ -1,160 +1,118 @@
-Return-Path: <linux-kernel+bounces-338059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F1209852E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:23:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCF3C9852DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:22:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A3EE2844F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 06:23:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91B081F24572
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 06:22:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B515D156227;
-	Wed, 25 Sep 2024 06:22:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE7315535B;
+	Wed, 25 Sep 2024 06:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CxCzIibe"
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="reD/XONV"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F901553BB;
-	Wed, 25 Sep 2024 06:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9768014C582
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 06:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727245366; cv=none; b=d8tAFS7pEq5i/STzUcmB6xfFE7ZytKCjSw+8NS9jHvNbHBWqrj7/1pfpBB1c83AkvAzr0Te4V0JoHAMc4aRLtOaycEd03nVj9S71uNsuZhObXobW667DVmxyk2TTGJi34Awd0CV8U8jRXRf+wsUT4cMq+snNSspZb5Zz5lzyS6Q=
+	t=1727245363; cv=none; b=EtG0nFVwggaKsn8RWBD+xl6/ZmEzoqxJmvViPPzUgNijkYBsnl42ad2pnq2O1NlpdCp1zdTta8c+dhIZdfCRrvSP+IrGxY/s1q+Z1Fkje0/B6x7+H01vnSKT/SzF/26yHBE+OrnNx9BnTzUUPhZJfI0xdMj0nV/lvPI2/d/h1D4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727245366; c=relaxed/simple;
-	bh=DI93RTVhxJCMcF7fWRY0x9wSn19y2TQtXcBi/Dp2FVA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a+piaS9HQQzK9mwe4H18bwBAo9Wbgxn5rhC379uEY0kXn9x+C+FohU66luByihHq3mZVOQyhijq/yJPJ6ADlU4gOhUxXVNd+sKR0lrZnR13pRUZA5gPjuB+LJPKpk9mrzKptI7QPT6Ah3J0Mik40ItV9+Qe5zDrNzN/sF4QKPlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CxCzIibe; arc=none smtp.client-ip=209.85.222.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-846d741dfdbso1513701241.0;
-        Tue, 24 Sep 2024 23:22:44 -0700 (PDT)
+	s=arc-20240116; t=1727245363; c=relaxed/simple;
+	bh=IVhzGzAjVHafS0MM02RpmBp4pWCImbqC4zkBAGpgAPc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZPYJxtK7qXDvwwcibhmn/tYK0njq1h69iyD86paWxZx6fW9cmktk3K2E3pHGKjHht4fKzc5yWD40FHxD7eR6kTKyIP9/XSWyKsb3VHT5UOuEwMXiCth8vRQyViXBPsPuMk/gpjkFMF+tzSchmq+w5hmghy+/OkAttkb+iUXQZo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=reD/XONV; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37cc810ce73so75864f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 23:22:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727245363; x=1727850163; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=k7veGukCa0lref55ONxo5SP6cYT+orCQe+FfCxTaJJo=;
-        b=CxCzIibeRql247HrbYaaFr3uCRAWSi5pzDcYYT2LrEBMQIuMlev+xyfkp6263Cou47
-         CAknpzm5BuH8lvFAOGRGD4h0BfMmQjWb6qoS07vqufVgd1R4LYC65ZmZbuvJoZqEfOoY
-         GLbFizblQ9J6X+RJfRAjDhzwSiZGcjNoFLxjg+QsCFt3vARqqbY7BwE6N1dTZWEMaYnL
-         4FChhJ99jwcq5Qr2EHq6tTAvr/tpx6w/gls+bNk/Z7qVE59nbXyOv/9pUkmQFoYXnS94
-         C3s0ZZlb5bt1lVb8bZ6F8pAe++BBiDc725h7tnWATsKHbxjFvomuO7HdP4WJkqBKNMCY
-         imfA==
+        d=linaro.org; s=google; t=1727245360; x=1727850160; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=o/oS2ugpeUSW+6nwIvuuz9Sn1patnKM1K1PU0Uod2NY=;
+        b=reD/XONVK9Hj3Mi+mPdHnK4uB8BdM0NsM9BNoJEjTC3nlXSc5UgLynP6qXYK0e0edy
+         zA9u5AS7UbLTT5ViZ6/UrnsCvgh14+EehjeeUmvXznFmQY3Adcc7eLAM8qOdvuqzDPQz
+         1OO0aKcv020DbUDCZ2qHD4HeqH18FBRTxu+QIO02Zy1q5xu1mu/JonKRX8VKIo7CP51z
+         n4N9c0zcex7N5EUkxCYmwjhBMWqgZoWGOSOVDqy0v7GYuXSJH7gHcr8dhBPcnrk3qxrX
+         UxjhYucCjjDhQUleOJIdQMe58c9/PzBKA0ZBSuDQ0uNyoOH0jXSwmhJnOLyIvwA1gyhe
+         wp/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727245363; x=1727850163;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=k7veGukCa0lref55ONxo5SP6cYT+orCQe+FfCxTaJJo=;
-        b=jQ7itpAqEW/EsOyrqWSpUKDLm+y21rtXbPeSgJW0QyPf3CUmgR0KdXiD+le1SD2lzU
-         ++q9N/EDNZjQo1Mo9v23oqWor8G7unoaefxNNy8QHKKCcGNw9IfuHFN6OVps5tesE1/s
-         pBNmAGSAz+WbOSqmN3uWSo/9aaj2TJzI80dOswupEXV/ugTqNQkGjafwY2LCwSGfWqzJ
-         6X5Y6nqIsP9CMwiOMt/iIsrkZSKj+gBd7jEmctMLOzO9105rUHDMg/h6DcbalCbWeb3d
-         sDY1SDdXB7fB+UJ0njljWZt5iHv8Ltalmx3oMgS7SEamLQLTBFx78GHLC6ytBjlw0hdB
-         /Tfw==
-X-Forwarded-Encrypted: i=1; AJvYcCUn3Tea1TdL89h8t8s2pwMpmcRshLot8Yd50jD+q16YMr3y2TbNaxnU8bZZKe5dZTJFnca4n5Yb1Jthzt4=@vger.kernel.org, AJvYcCXFSsoYxXpl2WV5/DvjLSrJFFOIQcV1DdrZVkDv1Qd5/98qP68QcBfpRjZRG/CBFvwoWxsqc+QN@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyE+V/EanQw6uVSPXsJGPyT1A50Sdx1/aCMd4sjnsfayc/HaPg
-	3tgHfi5NdksxIKeJDjcPZC29GSwN4LPsVueeMo6ownVOItdvt1ERhPztuH1YlECTM1wOf3CT/MJ
-	1bJxfnIOw66EORtu+J0Yd86r8Olk=
-X-Google-Smtp-Source: AGHT+IHtcJ83ClreK41Jty65h5eL9wFd7SBneiV1e84OYQqEbdmuy6WR2s5jBNjPdT1ChQhwWR+0B7Rr9JWmdl2CxXc=
-X-Received: by 2002:a05:6122:1d4d:b0:503:e775:ad50 with SMTP id
- 71dfb90a1353d-505c2070295mr1418042e0c.8.1727245363245; Tue, 24 Sep 2024
- 23:22:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727245360; x=1727850160;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=o/oS2ugpeUSW+6nwIvuuz9Sn1patnKM1K1PU0Uod2NY=;
+        b=xCSphHvtHrXQfJ2Q8AHdGgydiZk7EbOC2pXVflMaJqX4BZDETRMT0QGJ5siRIw9cW6
+         TVzTj5HBSpymAzyyqVVSB8HYA1rJaQSv0R5KV6bWQQTKqBXjn59xads2JM9tFNBpHJGR
+         tSYhgWAMGi3Ax9lkQ/W/pTVwRGgjpqssGjXH8XOtMR+wuwqyFMdAQclJIKfUkjS/vR0M
+         Eiqa9vu3FriJYE9ryjyD7hWV6QWO6uYaKckx8luJDr3AALSXXUyZfUbh/Ddv1vGK+Q7C
+         MK5s1+3v7lUZsNsx+RwoWTrz+a6fVqWt9GZjdlZLvzP47X0mdzNK9MBvFNsHY5jyFwfF
+         iMgA==
+X-Forwarded-Encrypted: i=1; AJvYcCVOgAPTWTUoVG9mYK6JxE6d6Y2YKsC8T3f9ZWR2xb+L+l0xij8nu6cIXAptOUZXO3JxfTxgZBPtf5RFlEI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz62MFqwal0uP2PuzuMujUEMBVj+mAimQ2RPfH9rZOPzXChTTo5
+	0GC9FVkHx4jy5MTLnFtQVYmUQY2nzwcfIgC0HEouoUvIB8HXvGGnguknYC8avbw=
+X-Google-Smtp-Source: AGHT+IG3dYAVXO0Ep2i7vx0JuRGZS2wbqrxhkLOCav4gzYfGhkJtR3KQHMBdbfF5LZr1l8Ir4MTfmw==
+X-Received: by 2002:a05:6000:4388:b0:37c:c870:b454 with SMTP id ffacd0b85a97d-37cc870bc64mr149201f8f.49.1727245359901;
+        Tue, 24 Sep 2024 23:22:39 -0700 (PDT)
+Received: from [10.11.12.107] ([79.115.63.53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cbc2d25absm3108089f8f.65.2024.09.24.23.22.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Sep 2024 23:22:39 -0700 (PDT)
+Message-ID: <b4dae4ba-c016-4384-8a20-5184cf113902@linaro.org>
+Date: Wed, 25 Sep 2024 07:22:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240923113135.4366-1-kdipendra88@gmail.com> <20240924071026.GB4029621@kernel.org>
- <CAEKBCKPw=uwN+MCLenOe6ZkLBYiwSg35eQ_rk_YeNBMOuqvVOw@mail.gmail.com>
- <20240924155812.GR4029621@kernel.org> <CAEKBCKO45g4kLm-YPZHpbcS5AMUaqo6JHoDxo8QobaP_kxQn=w@mail.gmail.com>
- <20240924181458.GT4029621@kernel.org>
-In-Reply-To: <20240924181458.GT4029621@kernel.org>
-From: Dipendra Khadka <kdipendra88@gmail.com>
-Date: Wed, 25 Sep 2024 12:07:32 +0545
-Message-ID: <CAEKBCKPz=gsLbUWNDinVVHD8t760jW+wt1GtFgJW_5cHCj0XbQ@mail.gmail.com>
-Subject: Re: [PATCH net] net: ethernet: marvell: octeontx2: nic: Add error
- pointer check in otx2_ethtool.c
-To: Simon Horman <horms@kernel.org>
-Cc: sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com, 
-	hkelam@marvell.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 5/6] spi: mxic: Add support for swapping byte
+To: Mark Brown <broonie@kernel.org>
+Cc: AlvinZhou <alvinzhou.tw@gmail.com>, linux-mtd@lists.infradead.org,
+ linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ pratyush@kernel.org, mwalle@kernel.org, miquel.raynal@bootlin.com,
+ richard@nod.at, vigneshr@ti.com, chengminglin@mxic.com.tw,
+ leoyu@mxic.com.tw, AlvinZhou <alvinzhou@mxic.com.tw>,
+ JaimeLiao <jaimeliao@mxic.com.tw>
+References: <20240718034614.484018-1-alvinzhou.tw@gmail.com>
+ <20240718034614.484018-6-alvinzhou.tw@gmail.com>
+ <ZvKktPc0luV9hItN@finisterre.sirena.org.uk>
+ <a87a159e-eff1-45c3-bf26-115d4ca5a9be@linaro.org>
+ <ZvLSLt95Hrd7JYj3@finisterre.sirena.org.uk>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <ZvLSLt95Hrd7JYj3@finisterre.sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 25 Sept 2024 at 00:00, Simon Horman <horms@kernel.org> wrote:
->
-> On Tue, Sep 24, 2024 at 11:42:58PM +0545, Dipendra Khadka wrote:
-> > Hi Simon,
-> >
-> > On Tue, 24 Sept 2024 at 21:43, Simon Horman <horms@kernel.org> wrote:
-> > >
-> > > On Tue, Sep 24, 2024 at 08:39:47PM +0545, Dipendra Khadka wrote:
-> > > > Hi Simon,
-> > > >
-> > > > On Tue, 24 Sept 2024 at 12:55, Simon Horman <horms@kernel.org> wrote:
-> > > > >
-> > > > > On Mon, Sep 23, 2024 at 11:31:34AM +0000, Dipendra Khadka wrote:
-> > > > > > Add error pointer check after calling otx2_mbox_get_rsp().
-> > > > > >
-> > > > >
-> > > > > Hi Dipendra,
-> > > > >
-> > > > > Please add a fixes tag here (no blank line between it and your
-> > > > > Signed-off-by line).
-> > > > > > Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
-> > > > >
-> > > > > As you have posted more than one patch for this driver, with very similar,
-> > > > > not overly complex or verbose changes, it might make sense to combine them
-> > > > > into a single patch. Or, if not, to bundle them up into a patch-set with a
-> > > > > cover letter.
-> > > > >
-> > > > > Regarding the patch subject, looking at git history, I think
-> > > > > an appropriate prefix would be 'octeontx2-pf:'. I would go for
-> > > > > something like this:
-> > > > >
-> > > > >   Subject: [PATCH net v2] octeontx2-pf: handle otx2_mbox_get_rsp errors
-> > > > >
-> > > >
-> > > > If I bundle all the patches for the
-> > > > drivers/net/ethernet/marvell/octeontx2/ , will this subject without v2
-> > > > work? Or do I need to change anything? I don't know how to send the
-> > > > patch-set with the cover letter.
-> > >
-> > > Given that one of the patches is already at v2, probably v3 is best.
-> > >
-> > > If you use b4, it should send a cover letter if the series has more than 1
-> > > patch.  You can use various options to b4 prep to set the prefix
-> > > (net-next), version, and edit the cover (letter).  And you can use various
-> > > options to b4 send, such as -d, to test your submission before sending it
-> > > to the netdev ML.
-> > >
-> >
-> > I did not get this -d and testing? testing in net-next and sending to net?
->
-> I meant that b4 prep -d allows you to see the emails that would be sent
-> without actually sending them. I find this quite useful myself.
->
-> >
-> > > Alternatively the following command will output 3 files: a cover letter and
-> > > a file for each of two patches, with v3 and net-next in the subject of each
-> > > file. You can edit these files and send them using git send-email.
-> > >
-> > > git format-patch --cover-letter -2 -v3 --subject-prefix="PATCH net-next"
-> > >
-> >
-> > Should I send it to net-next or net?
->
-> Sorry for the confusion. I wrote net-next in my example,
-> but I think this patch-set would be for net.
->
-> ...
 
-Thank you Simon for everything.
 
-Best regards,
-Dipendra
+On 9/24/24 3:52 PM, Mark Brown wrote:
+> On Tue, Sep 24, 2024 at 03:29:37PM +0100, Tudor Ambarus wrote:
+>> On 9/24/24 12:38 PM, Mark Brown wrote:
+> 
+>>> Acked-by: Mark Brown <broonie@kernel.org>
+> 
+>> I'm fine with the SPI bits as well. Shall I take the SPI/SPIMEM patches
+>> through mtd and provide you an immutable tag? I can do that after -rc1
+>> is out.
+> 
+>> Or you can take them directly through spi/, but I'll need an immutable tag.
+> 
+> If you apply and send me a pull request with the tag that should be
+> good.
+
+okay, will do, after -rc1 is out.
+
+Cheers,
+ta
 
