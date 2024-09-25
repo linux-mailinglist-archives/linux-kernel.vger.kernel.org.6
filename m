@@ -1,245 +1,272 @@
-Return-Path: <linux-kernel+bounces-337823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21E8E984F6C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 02:18:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C8899850A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 03:39:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 452A61C21753
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:18:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAA6B1F228DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B63DDAD;
-	Wed, 25 Sep 2024 00:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F281482ED;
+	Wed, 25 Sep 2024 01:39:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="ScGRUpX5"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=internode.on.net header.i=@internode.on.net header.b="IbKFpcLF"
+Received: from omr002.pc5.atmailcloud.com (omr002.pc5.atmailcloud.com [103.150.252.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC720B657
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 00:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A118EEAE;
+	Wed, 25 Sep 2024 01:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.150.252.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727223472; cv=none; b=PaAluXhNtcj17N+2EOJBLfKngAxKxWMOfuRVLa3qYnOcfUls1LU8mB4XrofsxszNvX+bVw10zRGzZ5Fv5BraAFxYqZabUj8QMQFGghjPBdlAOhAq/7gK6237+V+D6x3/90j3RLRR9wn8m4cCFtcFyK1hMcn8WA/wNaf0iMlLSd0=
+	t=1727228363; cv=none; b=XrIc5wwqJ2WisSyzPAvGLEM7Dw6cu5sMCyf/8TmDzDUUsbuzY1CXsq63D2yf1mBoZXx4bxYigio8EfZrO+n/mdXGFpAY60PjgG3JKcuHq5/hk3dQMKxhiP0tXKn05CXFW1p9s9MsYCVfEjHb8CXyGNyfn8DkqC8twDN7N3Q1NDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727223472; c=relaxed/simple;
-	bh=XjwV7ooouV4mXp4zpORY+QsAa1Fc9zhXXncoNiqLpRI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kHwTAxbjJJn3UPHhpGMgV7Ux9NMDvtg8jwmV35hR+KiwmBurMgRB8rDWedCkEcmmI28CyMoR4IqSNJ5d9L1cFDjyHI7x/FpQbOlxqhrRtGuzvGovQYepMCGcKkHnnHr9r7dM1yzLaEp4nzC7xr65Pk+qL1yl1W2EjzqqaKnX6Wc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=ScGRUpX5; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20688fbaeafso65483935ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 17:17:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1727223470; x=1727828270; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZxBCf5uNQNAL3k3Wxpn0q6ae9NteRJmyEjICcWBnEX8=;
-        b=ScGRUpX5pBE2+MCXfETE0Y26bpnqqn0amUvNiHlHZ5mgA3uOLeeblbW6IbTNZxwTwW
-         7yhQb0LRRFsMnx58NicmyN39Q//+lHhLhR05PXIvwC6qOUxiSz18IAtixQkMbPlo/QuZ
-         3ZXMkcyY26TsNkRm2w54sCK/VBM+ZA+OuNjoFt90+uEbfD5u9M3gWMhtaogh8+rdpBsh
-         FJ3aNKzTRKfvo7HOec4ALwb1L9tNX5XGG420BWx3Vep3fiMkhBXaIWtWgM0f8U7Ex/mj
-         n7gR+6HYwlzVhAOpbJlg/E/IbmDWKzmM6BshUPNJVNsxUufe65ekd9I0/9KQs19ZyNGA
-         mtOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727223470; x=1727828270;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZxBCf5uNQNAL3k3Wxpn0q6ae9NteRJmyEjICcWBnEX8=;
-        b=sC3Rjz1aeIvimVXW1gpEjqL1cjTGDvvv2zacvzlj1/kD6t5hp7nRzUmfGr+nFYfimH
-         x3ti8VrV609rLv10OWF2AWTxzYzm6MSr2wyLfCRCnOa06Lk5PyUgzJgImTUwOhRRIOge
-         XcRTjs7+fCzH/3Yy1fIYPtzE0IDFc3IZN4z3P/FzCnlPLe6RiiA113FNwZSw3IViFg+Y
-         5EmTzKcZD820l9I51jDExg4+I/Yvr4SWF5cICVgfTSSLPlfAosg6KD32dR6Edf9FeXnE
-         ReeK9TLlBNi+uGAmO90bUL/bOnhfRWhHWEFsZ1F+NgrEVDhj+PdmfkM47KcSc1CuOnSb
-         Yp6g==
-X-Forwarded-Encrypted: i=1; AJvYcCXh2clFjGrqfqlKQNGWJ4FT1nfSqdXEZXJZ6azon933LRJwuPbBxcSm6gy+HbW7ZpDtjyu10G9KeZYh2JQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2rLtCP1emKCuuqtWQc2Zlfm8oR8eUKfSRm8Q4ilZvFYK7w02p
-	5AAj6aHAdyTAOI15uWpyb3vAdyXKo3F2Jhx4wJUbMPxLFkmVH0ADC+u2IWJdZs0=
-X-Google-Smtp-Source: AGHT+IHeVKhbsatOw7Qx2kKg+qV81P7Ump5pcTq+XicBjALOlKzXHaZhf4/0ryeV1aZtpLdVW+Bq1g==
-X-Received: by 2002:a17:902:ce86:b0:205:5eaf:99e7 with SMTP id d9443c01a7336-20afc4c6c7emr12552095ad.38.1727223470033;
-        Tue, 24 Sep 2024 17:17:50 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af1720b00sm14779125ad.64.2024.09.24.17.17.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 17:17:49 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1stFj0-009di0-1N;
-	Wed, 25 Sep 2024 10:17:46 +1000
-Date: Wed, 25 Sep 2024 10:17:46 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
-Subject: Re: [GIT PULL] bcachefs changes for 6.12-rc1
-Message-ID: <ZvNWqhnUgqk5BlS4@dread.disaster.area>
-References: <dtolpfivc4fvdfbqgmljygycyqfqoranpsjty4sle7ouydycez@aw7v34oibdhm>
- <CAHk-=whQTx4xmWp9nGiFofSC-T0U_zfZ9L8yt9mG5Qvx8w=_RQ@mail.gmail.com>
- <6vizzdoktqzzkyyvxqupr6jgzqcd4cclc24pujgx53irxtsy4h@lzevj646ccmg>
- <ZvIHUL+3iO3ZXtw7@dread.disaster.area>
- <CAHk-=whbD0zwn-0RMNdgAw-8wjVJFQh4o_hGqffazAiW7DwXSQ@mail.gmail.com>
- <CAHk-=wh+atcBWa34mDdG1bFGRc28eJas3tP+9QrYXX6C7BX0JQ@mail.gmail.com>
- <ZvI4N55fzO7kg0W/@dread.disaster.area>
- <CAHk-=wjNPE4Oz2Qn-w-mo1EJSUCQ+XJfeR3oSgQtM0JJid2zzg@mail.gmail.com>
+	s=arc-20240116; t=1727228363; c=relaxed/simple;
+	bh=7FjRthazZ5JB+LOA6I/nCHSq1RrYvCD8INOVwn7ottw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tt9AkgcPzO2e5a4w5sKyJSoMiwtl0iWkGaaRWpYV+u54YCd82yXS9hzyKMjfbF/nkIRXMnieQOh0zCsdlAWWclRRSYLHbQG/NaI6kauenwJ1sj3K3B5fNqtvy6M4xo5NoRg25N/2BaPnCZ+VNmuznEzFWFr5pOTkQCKkaFHhzRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=internode.on.net; spf=pass smtp.mailfrom=internode.on.net; dkim=pass (2048-bit key) header.d=internode.on.net header.i=@internode.on.net header.b=IbKFpcLF; arc=none smtp.client-ip=103.150.252.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=internode.on.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=internode.on.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=internode.on.net; s=202309; h=MIME-Version:Message-ID:Date:Subject:To:From:
+	content-type; bh=VO+pqWj1yIOcgZrNglPcMFYl+7rjqsSaJWWxgX9+s1I=; b=IbKFpcLFCqe3
+	1GkQoNAmvochWFH3S779x5Dgyaaj2L14KJIe63zzF4xX0hkx7dD9Z0tRMiHR7egxpLUd5iR3sTfiQ
+	94eybGtwbUfgSp4rthoFuE6l3Lkmn+YTySxEO2EpBkHtA0tMI5iEJChQU5CmbnwYfeyS+3IfUWXu+
+	tNx5qox4nr4jSJB917PFIdKyG+2abs3qKjZb6MNsl0hY+hg1GvVV8op/IeDS5NO8vq93idqJ5WY7o
+	96B3Ed+F+MjwB7vAQM+N1vIDaWKPHTTgzsz54vP85A7rThkdwHXRiHq/DDuTSdWIiE1v9rEP5Agc/
+	yRpGdpDhQ1Xo9iNfF77Ixg==;
+Received: from CMR-KAKADU01.i-02175a00542f9bb7e
+	 by OMR.i-06efc5390fb1e2455 with esmtps
+	(envelope-from <arthur.marsh@internode.on.net>)
+	id 1stFnF-000000001LH-3zIl;
+	Wed, 25 Sep 2024 00:22:09 +0000
+Received: from [118.210.167.213] (helo=localhost)
+	 by CMR-KAKADU01.i-02175a00542f9bb7e with esmtpsa
+	(envelope-from <arthur.marsh@internode.on.net>)
+	id 1stFnF-000000001WC-0xQ7;
+	Wed, 25 Sep 2024 00:22:09 +0000
+Received: from amarsh04 by localhost with local (Exim 4.98)
+	(envelope-from <arthur.marsh@internode.on.net>)
+	id 1stFnB-0000000013i-2r9I;
+	Wed, 25 Sep 2024 09:52:05 +0930
+From: Arthur Marsh <arthur.marsh@internode.on.net>
+To: alexdeucher@gmail.com
+Cc: Xinhui.Pan@amd.com,
+	airlied@gmail.com,
+	alexander.deucher@amd.com,
+	amd-gfx@lists.freedesktop.org,
+	arthur.marsh@internode.on.net,
+	christian.koenig@amd.com,
+	daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	tzimmermann@suse.de,
+	wuhoipok@gmail.com,
+	x86@kernel.org
+Subject: NULL pointer dereference after ib test on ring 7 succeeded
+Date: Wed, 25 Sep 2024 09:52:04 +0930
+Message-ID: <20240925002205.4065-1-user@am64>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <CADnq5_OtdUvOUPpq1aUoxtgpt6a4h598019SNhe+9ZWUaANYqg@mail.gmail.com>
+References: <CADnq5_OtdUvOUPpq1aUoxtgpt6a4h598019SNhe+9ZWUaANYqg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjNPE4Oz2Qn-w-mo1EJSUCQ+XJfeR3oSgQtM0JJid2zzg@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+X-Atmail-Id: arthur.marsh@internode.on.net
+X-atmailcloud-spam-action: no action
+X-Cm-Analysis: v=2.4 cv=A4dqPbWG c=1 sm=1 tr=0 ts=66f357b1 a=Kh1sbcNhzywcxpuRN39Emg==:117 a=Kh1sbcNhzywcxpuRN39Emg==:17 a=EaEq8P2WXUwA:10 a=x7bEGLp0ZPQA:10 a=-3lUenqOrSg5RfNWSYcA:9
+X-Cm-Envelope: MS4xfETnA6LXsDoIbHo78TzFnuLKdTbuh6Xc81j3uKGCfrG+02BZA76KXSzIgCsUX8DRfw2SxVgzHNbtz7GWtsVJcLgIxgPxKnk8frFYdV5liTMecmR9J7tN airCbemFwH3XFB5XOQha/VWWEu2R/lcwZw7ASx5Ua4HSBkxt7lOx2esCacjsRflwPoGIn/hcu2nrjvHlgjSQ7SenLIwKOn8QRtY=
+X-atmailcloud-route: unknown
 
-On Tue, Sep 24, 2024 at 09:57:13AM -0700, Linus Torvalds wrote:
-> On Mon, 23 Sept 2024 at 20:55, Dave Chinner <david@fromorbit.com> wrote:
-> >
-> > That's effectively what the patch did - it added a spinlock per hash
-> > list.
-> 
-> Yeah, no, I like your patches, they all seem to be doing sane things
-> and improve the code.
-> 
-> The part I don't like is how the basic model that your patches improve
-> seems quite a bit broken.
-> 
-> For example, that whole superblock list lock contention just makes me
-> go "Christ, that's stupid". Not because your patches to fix it with
-> Waiman's fancy list would be wrong or bad, but because the whole pain
-> is self-inflicted garbage.
+After rebuilding current Linus git head with:
 
-I'm not about to disagree with that assessment.
+dma-mapping: report unlimited DMA addressing in IOMMU DMA path
+b348b6d17fd1d5d89b86db602f02bea54a754bd8
 
-> And it's all historically very very understandable. It wasn't broken
-> when it was written.
-> 
-> That singly linked list is 100% sane in the historical context of "we
-> really don't want anything fancy for this". The whole list of inodes
-> for a superblock is basically unimportant, and it's main use (only
-> use?) is for the final "check that we don't have busy inodes at umount
-> time, remove any pending stuff".
-> 
-> So using a stupid linked list was absolutely the right thing to do,
-> but now that just the *locking* for that list is a pain, it turns out
-> that we probably shouldn't use a list at all. Not because the list was
-> wrong, but because a flat list is such a pain for locking, since
-> there's no hierarchy to spread the locking out over.
+applied, the radeon module load gets further before hitting another
+NULL pointer dereference:
 
-Right, that's effectively what the dlist infrastructure has taught
-us - we need some kind of heirarchy to spread the locking over. But
-what that heirachy is for a "iterate every object" list looks like
-isn't really clear cut...
+[   17.777472] [drm] radeon kernel modesetting enabled.
+[   17.777536] radeon 0000:00:01.0: vgaarb: deactivate vga console
+[   17.778276] Console: switching to colour dummy device 80x25
+[   17.778519] [drm] initializing kernel modesetting (ARUBA 0x1002:0x990C 0=
+x1002:0x0123 0x00).
+[   17.778600] ATOM BIOS: 113
+[   17.778658] radeon 0000:00:01.0: VRAM: 768M 0x0000000000000000 - 0x00000=
+0002FFFFFFF (768M used)
+[   17.778661] radeon 0000:00:01.0: GTT: 1024M 0x0000000030000000 - 0x00000=
+0006FFFFFFF
+[   17.778665] [drm] Detected VRAM RAM=3D768M, BAR=3D256M
+[   17.778665] [drm] RAM width 64bits DDR
+[   17.778764] [drm] radeon: 768M of VRAM memory ready
+[   17.778766] [drm] radeon: 1024M of GTT memory ready.
+[   17.778777] [drm] Loading ARUBA Microcode
+[   18.038084] [drm] Internal thermal controller without fan control
+[   18.038425] [drm] radeon: dpm initialized
+[   18.333508] [drm] Found VCE firmware/feedback version 50.0.1 / 17!
+[   18.333548] [drm] GART: num cpu pages 262144, num gpu pages 262144
+[   18.353624] [drm] PCIE GART of 1024M enabled (table at 0x00000000001D600=
+0).
+[   18.353755] radeon 0000:00:01.0: WB enabled
+[   18.353758] radeon 0000:00:01.0: fence driver on ring 0 use gpu addr 0x0=
+000000030000c00
+[   18.354136] radeon 0000:00:01.0: fence driver on ring 5 use gpu addr 0x0=
+000000000075a18
+[   18.374206] radeon 0000:00:01.0: fence driver on ring 6 use gpu addr 0x0=
+000000030000c18
+[   18.374208] radeon 0000:00:01.0: fence driver on ring 7 use gpu addr 0x0=
+000000030000c1c
+[   18.374210] radeon 0000:00:01.0: fence driver on ring 1 use gpu addr 0x0=
+000000030000c04
+[   18.374212] radeon 0000:00:01.0: fence driver on ring 2 use gpu addr 0x0=
+000000030000c08
+[   18.374213] radeon 0000:00:01.0: fence driver on ring 3 use gpu addr 0x0=
+000000030000c0c
+[   18.374214] radeon 0000:00:01.0: fence driver on ring 4 use gpu addr 0x0=
+000000030000c10
+[   18.374469] radeon 0000:00:01.0: radeon: MSI limited to 32-bit
+[   18.374525] radeon 0000:00:01.0: radeon: using MSI.
+[   18.374604] [drm] radeon: irq initialized.
+[   18.392823] [drm] ring test on 0 succeeded in 3 usecs
+[   18.392831] [drm] ring test on 3 succeeded in 4 usecs
+[   18.392836] [drm] ring test on 4 succeeded in 3 usecs
+[   18.438526] [drm] ring test on 5 succeeded in 2 usecs
+[   18.458380] [drm] UVD initialized successfully.
+[   18.567616] [drm] ring test on 6 succeeded in 18 usecs
+[   18.567626] [drm] ring test on 7 succeeded in 3 usecs
+[   18.567627] [drm] VCE initialized successfully.
+[   18.567686] snd_hda_intel 0000:00:01.1: bound 0000:00:01.0 (ops radeon_a=
+udio_component_bind_ops [radeon])
+[   18.567925] [drm] ib test on ring 0 succeeded in 0 usecs
+[   18.567968] [drm] ib test on ring 3 succeeded in 0 usecs
+[   18.568008] [drm] ib test on ring 4 succeeded in 0 usecs
+[   19.094527] [drm] ib test on ring 5 succeeded
+[   19.257713] mc: Linux media interface: v0.10
+[   19.638235] [drm] ib test on ring 6 succeeded
+[   20.017069] usb 1-3: dvb_usb_v2: found a 'Realtek RTL2832U reference des=
+ign' in warm state
+[   20.048473] usb 1-3: dvb_usb_v2: will pass the complete MPEG2 transport =
+stream to the software demuxer
+[   20.048493] dvbdev: DVB: registering new adapter (Realtek RTL2832U refer=
+ence design)
+[   20.048497] usb 1-3: media controller created
+[   20.049487] dvbdev: dvb_create_media_entity: media entity 'dvb-demux' re=
+gistered.
+[   20.150361] [drm] ib test on ring 7 succeeded
+[   20.150700] BUG: kernel NULL pointer dereference, address: 0000000000000=
+050
+[   20.150702] #PF: supervisor read access in kernel mode
+[   20.150704] #PF: error_code(0x0000) - not-present page
+[   20.150705] PGD 0 P4D 0=20
+[   20.150707] Oops: Oops: 0000 [#1] PREEMPT_RT SMP NOPTI
+[   20.150710] CPU: 0 UID: 0 PID: 446 Comm: udevd Not tainted 6.11.0+ #6122
+[   20.150713] Hardware name: Gigabyte Technology Co., Ltd. To be filled by=
+ O.E.M./F2A78M-HD2, BIOS F2 05/28/2014
+[   20.150714] RIP: 0010:drm_dp_aux_register+0x59/0x110 [drm_display_helper]
+[   20.150732] Code: a1 c0 48 85 f6 48 89 83 b8 00 00 00 74 1c 48 8d bb b4 =
+03 00 00 ba 30 00 00 00 e8 52 e5 60 db 48 8d 7b 08 5b 5d e9 b7 ea 37 db <48=
+> 8b 70 50 48 85 f6 75 db 48 8b 30 eb d6 48 8d ab 88 04 00 00 48
+[   20.150734] RSP: 0018:ffff9eb8013cb960 EFLAGS: 00010246
+[   20.150736] RAX: 0000000000000000 RBX: ffff8f1983bfc508 RCX: ffffffffc0b=
+d1bc0
+[   20.150737] RDX: ffffffffc0a1de40 RSI: 0000000000000000 RDI: ffff8f1983b=
+fc9f0
+[   20.150738] RBP: ffff8f1983bfc9f0 R08: ffff8f199ca70008 R09: 00000000c0c=
+0c0c0
+[   20.150739] R10: 0000000000000000 R11: 0000000000000001 R12: ffff8f199da=
+9af50
+[   20.150740] R13: ffff8f199da9b092 R14: ffff8f199da9af2e R15: 00000000000=
+00018
+[   20.150741] FS:  00007ff9b9e6a840(0000) GS:ffff8f1caf800000(0000) knlGS:=
+0000000000000000
+[   20.150743] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   20.150744] CR2: 0000000000000050 CR3: 00000001033e4000 CR4: 00000000000=
+406f0
+[   20.150745] Call Trace:
+[   20.150747]  <TASK>
+[   20.150748]  ? __die_body.cold+0x19/0x1e
+[   20.150753]  ? page_fault_oops+0xa8/0x230
+[   20.150757]  ? drm_dp_aux_register+0x59/0x110 [drm_display_helper]
+[   20.150767]  ? search_module_extables+0x4f/0x90
+[   20.150771]  ? fixup_exception+0x36/0x2f0
+[   20.150773]  ? exc_page_fault+0x88/0x1b0
+[   20.150776]  ? asm_exc_page_fault+0x22/0x30
+[   20.150779]  ? __pfx_radeon_dp_aux_transfer_atom+0x10/0x10 [radeon]
+[   20.150888]  ? drm_dp_aux_register+0x59/0x110 [drm_display_helper]
+[   20.150900]  radeon_dp_aux_init+0x91/0xc0 [radeon]
+[   20.150984]  radeon_get_atom_connector_info_from_object_table+0x58e/0x88=
+0 [radeon]
+[   20.151047]  ? radeon_get_atom_connector_info_from_supported_devices_tab=
+le+0x5cf/0x600 [radeon]
+[   20.151111]  ? kstrdup+0x4c/0x70
+[   20.151115]  ? __kmalloc_noprof+0x24d/0x340
+[   20.151118]  radeon_modeset_init+0x375/0x470 [radeon]
+[   20.151187]  ? radeon_device_init+0x667/0xb40 [radeon]
+[   20.151250]  radeon_driver_load_kms+0xc2/0x260 [radeon]
+[   20.151312]  radeon_pci_probe+0xff/0x170 [radeon]
+[   20.151374]  pci_device_probe+0xbe/0x1a0
+[   20.151377]  really_probe+0xde/0x350
+[   20.151380]  ? pm_runtime_barrier+0x61/0xb0
+[   20.151383]  ? __pfx___driver_attach+0x10/0x10
+[   20.151386]  __driver_probe_device+0x78/0x110
+[   20.151388]  driver_probe_device+0x2d/0xc0
+[   20.151390]  __driver_attach+0xc9/0x1c0
+[   20.151393]  bus_for_each_dev+0x6a/0xb0
+[   20.151395]  ? migrate_enable+0xbf/0xf0
+[   20.151397]  bus_add_driver+0x139/0x220
+[   20.151400]  driver_register+0x6e/0xc0
+[   20.151402]  ? __pfx_radeon_module_init+0x10/0x10 [radeon]
+[   20.151463]  do_one_initcall+0x42/0x210
+[   20.151467]  ? __kmalloc_cache_noprof+0x89/0x230
+[   20.151469]  do_init_module+0x60/0x210
+[   20.151472]  init_module_from_file+0x89/0xc0
+[   20.151475]  __x64_sys_finit_module+0x142/0x390
+[   20.151477]  do_syscall_64+0x47/0x110
+[   20.151480]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[   20.151483] RIP: 0033:0x7ff9b9d82279
+[   20.151485] Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 =
+89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48=
+> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 77 6b 0d 00 f7 d8 64 89 01 48
+[   20.151486] RSP: 002b:00007fffc5f84708 EFLAGS: 00000246 ORIG_RAX: 000000=
+0000000139
+[   20.151488] RAX: ffffffffffffffda RBX: 000055d02068d9b0 RCX: 00007ff9b9d=
+82279
+[   20.151489] RDX: 0000000000000000 RSI: 000055d0206807f0 RDI: 00000000000=
+00012
+[   20.151490] RBP: 0000000000000000 R08: 0000000000000001 R09: 000055d0206=
+6d540
+[   20.151491] R10: 0000000000000040 R11: 0000000000000246 R12: 000055d0206=
+807f0
+[   20.151492] R13: 0000000000020000 R14: 000055d02067e510 R15: 00000000000=
+00000
+[   20.151494]  </TASK>
+[   20.151494] Modules linked in: i2c_mux dvb_usb_rtl28xxu(+) dvb_usb_v2 dv=
+b_core mc snd_emu10k1_synth radeon(+) snd_emux_synth snd_seq_midi_emul snd_=
+seq_virmidi drm_ttm_helper snd_seq_midi snd_seq_midi_event ttm snd_seq edac=
+_mce_amd snd_hda_codec_hdmi sha512_ssse3 sha512_generic sha256_ssse3 sha1_s=
+sse3 snd_emu10k1 aesni_intel drm_suballoc_helper snd_hda_intel drm_display_=
+helper snd_intel_dspcfg snd_hda_codec snd_util_mem gf128mul snd_ac97_codec =
+snd_hda_core drm_kms_helper crypto_simd cryptd ac97_bus snd_rawmidi k10temp=
+ snd_seq_device snd_hwdep snd_pcm drm acpi_cpufreq evdev serio_raw pcspkr a=
+t24 emu10k1_gp gameport regmap_i2c i2c_algo_bit snd_timer video snd sp5100_=
+tco soundcore wmi button ext4 crc32c_generic crc16 mbcache jbd2 uas usb_sto=
+rage hid_generic usbhid hid sg sr_mod cdrom sd_mod ata_generic firewire_ohc=
+i crc32_pclmul crc32c_intel ahci i2c_piix4 firewire_core crc_itu_t pata_ati=
+ixp libahci i2c_smbus ohci_pci xhci_pci libata xhci_hcd ehci_pci ohci_hcd r=
+8169 ehci_hcd realtek scsi_mod mdio_devres usbcore
+[   20.151550]  scsi_common libphy usb_common
+[   20.151553] CR2: 0000000000000050
+[   20.151555] ---[ end trace 0000000000000000 ]---
 
-Another option I'd considered was to offload the iteration to
-filesystems that have internal tracking mechanisms. e.g. use a
-superblock method (say ->for_all_cached_inodes()) that gets passed a
-callback function for the operation to perform on a stabilised
-inode.
+Regards,
 
-This would work for XFS - we already have such an internal callback
-based cache-walking infrastructure - xfs_iwalk() - that is used
-extensively for internal admin, gc and scrub/repair functions.
-If we could use this for VFS icache traversals, then
-we wouldn't need to maintain the sb->s_inodes list at all in XFS.
-
-But I didn't go down that route because I didn't think we wanted to
-encourage each major filesysetm to have their own unique internal
-inode caching implementations with there own special subtle
-differences. The XFS icache code is pretty complex and really
-requires a lot of XFS expertise to understand - that makes changing
-global inode caching behaviour or life cycle semantics much more
-difficult than it already is.
-
-That said, if we do decide that a model where filesystems will
-provide their own inode caches is acceptible, then as a first step
-we could convert the generic s_inodes list iteration to the callback
-model fairly easily....
-
-> (We used to have that kind of "flat lock" for the dcache too, but
-> "dcache_lock" went away many moons ago, and good riddance - but the
-> only reason it could go away is that the dcache has a hierarchy, so
-> that you can always lock just the local dentry (or the parent dentry)
-> if you are just careful).
-
-> 
-> > [ filesystems doing their own optimized thing ]
-> >
-> > IOWs, it's not clear to me that this is a caching model we really
-> > want to persue in general because of a) the code duplication and b)
-> > the issues such an inode life-cycle model has interacting with the
-> > VFS life-cycle expectations...
-> 
-> No, I'm sure you are right, and I'm just frustrated with this code
-> that probably _should_ look a lot more like the dcache code, but
-> doesn't.
-> 
-> I get the very strong feeling that we should have a per-superblock
-> hash table that we could also traverse the entries of. That way the
-> superblock inode list would get some structure (the hash buckets) that
-> would allow the locking to be distributed (and we'd only need one lock
-> and just share it between the "hash inode" and "add it to the
-> superblock list").
-
-The only problem with this is the size of the per-sb hash tables
-needed for scalability - we can't allocate system sized hash tables
-for every superblock just in case a superblock might be asked to
-cache 100 million inodes. That's why Kent used rhashtables for the
-bcachefs implementation - they resize according to how many objects
-are being indexed, and hence scale both up and down.
-
-That is also why XFS uses multiple radix trees per-sb in it's icache
-implementation - they scale up efficiently, yet have a small
-memory footprint when only a few inodes are in cache in a little
-used filesystem.
-
-> But that would require something much more involved than "improve the
-> current code".
-
-Yup.
-
-FWIW, I think all this "how do we cache inodes better" discussion is
-somehwat glossing over a more important question we need to think
-about first: do we even need a fully fledged inode cache anymore?
-
-Every inode brought into cache is pinned by a dentry. The dentry
-cache has an LRU and cache aging, and so by the time a dentry is
-aged out of the dentry cache and the inode is finally dropped, it
-has not been in use for some time. It has aged out of the current
-working set.
-
-Given that we've already aged the inode out of the working set.  why
-do we then need to dump the inode into another LRU and age that out
-again before we reclaim the inode? What does this double caching
-actually gaining us?
-
-I've done experiments on XFS marking all inodes with I_DONT_CACHE,
-which means it gets removed from the inode cache the moment the
-reference count goes to zero (i.e. when the dentry is dropped from
-cache). This leaves the inode life cycle mirroring the dentry
-life-cycle. i.e. the inode is evicted when the dentry is aged out as
-per normal.
-
-On SSD based systems, I really don't see any performance degradation
-for my typical workstation workloads like git tree operations and
-kernel compiles. I don't see any noticable impact on streaming
-inode/data workloads, either. IOWs, the dentry cache appears to be
-handling the workings set maintenance duties pretty well for most
-common workloads. Hence I question the need for LRU based inode
-cache aging being needed at all.
-
-So: should we be looking towards gutting the inode cache and so the
-in-memory VFS inode lifecycle tracks actively referenced inodes? If
-so, then the management of the VFS inodes becomes a lot simpler as
-the LRU lock, maintenance and shrinker-based reclaim goes away
-entirely. Lots of code gets simpler if we trim down the VFS inode
-life cycle to remove the caching of unreferenced inodes...
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Arthur.
 
