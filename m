@@ -1,148 +1,179 @@
-Return-Path: <linux-kernel+bounces-338399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88D4D98574E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:44:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6428D985758
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:46:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3640D1F211A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:44:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7A851F21197
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B08C016F0D0;
-	Wed, 25 Sep 2024 10:44:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074B3183CD7;
+	Wed, 25 Sep 2024 10:46:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RhP9G6VI"
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jKa5c3Wv"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B59165F1C
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 10:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFBC277107;
+	Wed, 25 Sep 2024 10:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727261056; cv=none; b=q3rrzSyGuWtxJ9j1ttyYdrhfX5oGHMhrpSoHzIkmsZlHCR1APtJpjkQLeUYAS4I+zM98C3ry/+4cibOATvd2igkUC7ZG6rObr9bGgslMFSt6gAXYexaTixgJ40ukl3BqTF2LGKSj8ttZdcVpX0EgXrk/dqT4ZCJeaUVn32HDi08=
+	t=1727261201; cv=none; b=J09W2pDR8CKocLG3f0SWcQlX4mHBGQnAgb1CYiox0hSOs8f36GjehCK3+PPYk4LJSvoEW/mNMKUNdSZyWsWgdxmwsQqIRzNoRHrOCwkEAnl7pegrSYhK9Rg2T9ltBZKW4PrxYGdLxqyzvp1WtkGvkZalUP0VdhwYNLNPjp39YoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727261056; c=relaxed/simple;
-	bh=6vOHl1VdYn2VePnbuw0FDYDOxo/fTsYaSPfeyzNpL1Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F2/3CDDmaLqB1tVchgssR5Z/TAW7BUGzK3oo2IJTlUa+HiB03ZsOMWi2narAIeRR1nYUfWCdHGKnA/g9iNy7HZ4apFX0ZTCDHCCO9G+wIH55eQiUWDtkShOSs9l3xF17kHd7JlMdFtpdYF1iJhie8JFIrIAWaYoIJRwYW8FuCso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RhP9G6VI; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-710d9b33303so4817814a34.3
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 03:44:14 -0700 (PDT)
+	s=arc-20240116; t=1727261201; c=relaxed/simple;
+	bh=uu/PXwiT3eXsRa1cBT+MzQ24JypnbUQpiBpLXUDF0d0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mIoHIOVYA7Vf1IYTNIDsPBVSbWaCis+ZDFsrKkiMBOwWFOT3i/Pps0lk1M3R2a1r+2Nv+TJhocnsYMGn7m2srAUuQyzJxaYesIC967NOlfbS83sH/2jMbFXr6W2HZaMlKUf09aG803ScS52IQgrKwMm3hCuJprANuiUWztIIC3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jKa5c3Wv; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7a99e4417c3so573263085a.1;
+        Wed, 25 Sep 2024 03:46:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727261053; x=1727865853; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1727261199; x=1727865999; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=p18jL2hLutiaep38fb0ejRXREkRooHh3eI3tmn6pG+o=;
-        b=RhP9G6VIw+NResls66q8PhQPz8eP4a0DhBiTjxZvVUdUz0Sh6SjS1XyvxzbiiLuZEz
-         baXqJ8OxK+/ZFMlUCzH9IwixZwbwj5H/WJDeRNKyfibmwdhgpEc4CBhM6hPQqM7YIZ87
-         AnShkv5OmABC4EOJ9UsrUIUp0IsVLxX0egdmU=
+        bh=9aNL2DkbqIFQCOqqQozrXxRXJzMB2AW4PJqi08QSnaw=;
+        b=jKa5c3Wv4yP8JVvFaQAkT68zMF/7is191QtwSv9v1EpToGBz+uC4yx8vmePBG2l7rI
+         Zx55iJtEJuy9DkF6Dtf517ANeEmpeC33d76wClknyj9WEHUgdJixrN0rlKrjsIIjgX03
+         2Su2iSrSksmGWYtHdk/bk+Lye8qnmydsFWjdKKbK61FCO/p6WHNaHFrIFrt/IivuabHb
+         8twBqQN0kbXAMs9DAXBMiYbYZEPIykEUgFVRVR1A55izz22N6CSDzPvyv+rDzCY9ntTB
+         497990Z0YYiBooM4qZaHrPNlQsGK9JpFZqU7sLh+BGwB/hEmM8HFutt0Ld5UKA8uUzUa
+         rUOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727261053; x=1727865853;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1727261199; x=1727865999;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=p18jL2hLutiaep38fb0ejRXREkRooHh3eI3tmn6pG+o=;
-        b=oIbrIvsHcY5CE/vX96Tbz2uBbDLzObozt+rQrYyOE1M8xyuWlmhw0MPfc/eyqDXmHE
-         fy+wOquWaHaon4zB8KocKv54m+vhP9cdaEY9fFejBmFHHg0Xs87fUNk0u9h+gQ4eGiM6
-         G2KkYvGi2VJAoY+Dg9SRZIf2nK92aGwZttMlQLSzHxIBy7uB18FZAaO9XTBFGw7kRLew
-         8k0Up3JZUgdY9idS8PHS5qMCK6lTG3O6K/TrysRZamCEsdI4BEAD4OPfhjBy3XlUJSRc
-         DFIR9fP7cqhvc+wjtx3upRFumdRBtCPgqE90FyChnowuVQH0DfYQqYCZKOntSYUU1MwW
-         4cNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUVy2U3hYRLqZblUctQf+JA321VD98lGkkXmUfEqVgQF69vkeKBxlVypUleDYYoEkR9ygo1d4mEgt4LhyM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKMyUQIaaKkBv6OpUsvw1EsOfOCp7+qt8axs3vlMDutLfDcsSn
-	quxW7eFmaUzpbNhiOj152kAEUKHeX0XJ+dY47EtIzc9cWBWIPsXXRHTnFqsq+dXHAO4SD54XaBW
-	Sunwnd7846ZNy+5tEuTlFGOMQkMvONvffQ5UK
-X-Google-Smtp-Source: AGHT+IGhoxWoyLCZ1aRxjjHIcUx8YFuna6OqcImZMuxL9OA/2tyXvCgmuAskMzvWBQ9WRNUkhBGHynShOaLw7Va2Cdk=
-X-Received: by 2002:a05:6830:3894:b0:70f:6f4f:e8d9 with SMTP id
- 46e09a7af769-713c7e2e146mr2486302a34.20.1727261053556; Wed, 25 Sep 2024
- 03:44:13 -0700 (PDT)
+        bh=9aNL2DkbqIFQCOqqQozrXxRXJzMB2AW4PJqi08QSnaw=;
+        b=rfxgGQCttCiTQhn/lYhLidG0FhwPzfRN5c2WPDWp7hgQoFjLZKeRcgdqGwQkHXbo/+
+         DXUhocsQF6xxkIuOR1ISW6v4JT4noXh9/w2MFdwg7Z5+pYGJZd39ODrDpdOw+/4ujU66
+         6cyXA7yXVT7Uqnz7MvtYO77vxBXHBiNyvXSMRK0EoWCIros4jlg8kqtScKygxYZlbY65
+         ZHllY9N8AbXe3tTx6EAmn+BF5KJ+tS74ENnldwp0W/X2zIVZaNsLBImurelx6kWM/sI1
+         n58yhoJW9x4hAGyBkm16HtGW645CBbRrBkB6Foh95uLbGIV4cJOFrZ80Xg3Yg08DSuQH
+         62oQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9RMaxaXI+mQ8knpjYBeOVZ2thUTGWJLDFWmTspCiuDe4XJAFr2m/ThOqCFwytvd9T/Co=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyg/sYN+yuLKgiIx2aW4sO72YF45abmJ0yUZ09AJWpsU/2xSf+W
+	naDjo2AapcR2221I3Q3HSDayBHvEvvjj6mox/3nKRGf8YuSK8pAl
+X-Google-Smtp-Source: AGHT+IFvHuGGdp6zrYogUOKGpCVDO+pYTLfd+cXdAs25Wrk14yTLJgeGQxPFJrC9SIR0gcCZRTm9PA==
+X-Received: by 2002:a05:620a:3199:b0:7a9:bf31:dbc7 with SMTP id af79cd13be357-7ace7461d21mr347540485a.53.1727261198621;
+        Wed, 25 Sep 2024 03:46:38 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7acde62b3d0sm158399585a.134.2024.09.25.03.46.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 03:46:37 -0700 (PDT)
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 0FF831200069;
+	Wed, 25 Sep 2024 06:46:37 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-02.internal (MEProxy); Wed, 25 Sep 2024 06:46:37 -0400
+X-ME-Sender: <xms:DOrzZjJSGMuMjwT-CxfQOIMmOIVDZyrLcSf_UkXRaVhTZ39XtyDyUA>
+    <xme:DOrzZnIHQr2tj5kWc8meY7wB6NkH_Q-dqQJJ3cU5F4mcQooxEKxt0_c-0tOEjjpjB
+    UKDW-G1Ma2l5zWINw>
+X-ME-Received: <xmr:DOrzZrvvRZjLgKFaJfT4u9c6EV6wKQrSYzKv5rv1yt0cB7LQWcfYLVvZl3D0-w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddthedgfedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
+    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
+    gtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleei
+    vedtgeeuhfegueevieduffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
+    thihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmh
+    grihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepvdejpdhmohgu
+    vgepshhmthhpohhuthdprhgtphhtthhopehjohhnrghsrdhosggvrhhhrghushgvrheshh
+    hurgifvghitghlohhuugdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhes
+    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehrtghusehvghgvrhdrkhgvrh
+    hnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhr
+    tghpthhtoheplhhkmhhmsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepph
+    gruhhlmhgtkheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfhhrvgguvghrihgtsehk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopehnvggvrhgrjhdruhhprgguhhihrgihsehkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopehjohgvlhesjhhovghlfhgvrhhnrghnuggvshdr
+    ohhrgh
+X-ME-Proxy: <xmx:DOrzZsaAcBqNHeASds4eEcgDk_lQ5GM87IQGyL-x5ZCX8D8mNzdTtg>
+    <xmx:DOrzZqZ8ZPzkMZfcOkW23uyahf2VuQO16bYMOT03jY6vKQBGQcDygg>
+    <xmx:DOrzZgDTtBxTuAMxP71zmYf5zTpIV7o66qzJDiEtE-2XtOZLZw8SWQ>
+    <xmx:DOrzZoZoLaVSxlF9wFcEhoILwPTqmYEmR2EHKb_lU5WDGLRW6pzlEg>
+    <xmx:DerzZuqxdrjChdezibvqGC_ASUpO23azOPWlRhtKkP9c3eTw1SIKz54b>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 25 Sep 2024 06:46:36 -0400 (EDT)
+Date: Wed, 25 Sep 2024 03:45:54 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org, linux-mm@kvack.org,
+	lkmm@lists.linux.dev, "Paul E. McKenney" <paulmck@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Kent Overstreet <kent.overstreet@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>
+Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
+ pointers
+Message-ID: <ZvPp4taB9uu__oSQ@boqun-archlinux>
+References: <20240917143402.930114-1-boqun.feng@gmail.com>
+ <20240917143402.930114-2-boqun.feng@gmail.com>
+ <55975a55-302f-4c45-bfcc-192a8a1242e9@huaweicloud.com>
+ <ZvPfmAp_2mDkI3ss@boqun-archlinux>
+ <f5aeeeda-c725-422a-9481-4795bd3ade0f@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240919094212.1902073-1-treapking@chromium.org> <172676985046.765320.3471835988677145017.robh@kernel.org>
-In-Reply-To: <172676985046.765320.3471835988677145017.robh@kernel.org>
-From: Pin-yen Lin <treapking@chromium.org>
-Date: Wed, 25 Sep 2024 18:44:02 +0800
-Message-ID: <CAEXTbpeATBYmHpCYAGhiecVeH=+R8=E0aLLscnKV4QyVbfrWJw@mail.gmail.com>
-Subject: Re: [PATCH v3] arm64: dts: mediatek: mt8183-pumpkin: add HDMI support
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, Fabien Parent <fparent@baylibre.com>, 
-	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	=?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>, 
-	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f5aeeeda-c725-422a-9481-4795bd3ade0f@huaweicloud.com>
 
-On Fri, Sep 20, 2024 at 2:18=E2=80=AFAM Rob Herring (Arm) <robh@kernel.org>=
- wrote:
->
->
-> On Thu, 19 Sep 2024 17:41:49 +0800, Pin-yen Lin wrote:
-> > From: Fabien Parent <fparent@baylibre.com>
-> >
-> > The MT8183 Pumpkin board has a micro-HDMI connector. HDMI support is
-> > provided by an IT66121 DPI <-> HDMI bridge.
-> >
-> > Enable the DPI and add the node for the IT66121 bridge.
-> >
-> > Signed-off-by: Fabien Parent <fparent@baylibre.com>
-> > Co-developed-by: Pin-yen Lin <treapking@chromium.org>
-> > Signed-off-by: Pin-yen Lin <treapking@chromium.org>
-> > Reviewed-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
-> >
-> > ---
-> >
-> > Changes in v3:
-> > - Update commit message and fix formatting issues
-> > - Fix the label name of vcn33 regulator
-> >
-> >  .../boot/dts/mediatek/mt8183-pumpkin.dts      | 123 ++++++++++++++++++
-> >  1 file changed, 123 insertions(+)
-> >
->
->
-> My bot found new DTB warnings on the .dts files added or changed in this
-> series.
->
-> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-> are fixed by another series. Ultimately, it is up to the platform
-> maintainer whether these warnings are acceptable or not. No need to reply
-> unless the platform maintainer has comments.
->
-> If you already ran DT checks and didn't see these error(s), then
-> make sure dt-schema is up to date:
->
->   pip3 install dtschema --upgrade
->
->
-> New warnings running 'make CHECK_DTBS=3Dy mediatek/mt8183-pumpkin.dtb' fo=
-r 20240919094212.1902073-1-treapking@chromium.org:
->
-> arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dtb: dpi@14015000: power-doma=
-ins: False schema does not allow [[76, 7]]
->         from schema $id: http://devicetree.org/schemas/display/mediatek/m=
-ediatek,dpi.yaml#
+On Wed, Sep 25, 2024 at 12:11:52PM +0200, Jonas Oberhauser wrote:
+> 
+> 
+> Am 9/25/2024 um 12:02 PM schrieb Boqun Feng:
+> > Hi Jonas,
+> > 
+> > Of
+> > course, if we are really worried about compilers being too "smart"
+> 
+> Ah, I see you know me better and better...
+> 
+> > we can always do the comparison in asm code, then compilers don't know
+> > anything of the equality between 'ptr' and 'head - head_offset'.
+> Yes, but then a simple compiler barrier between the comparison and returning
+> ptr would also do the trick, right? And maybe easier on the eyes.
+> 
 
-This warning will be addressed by
-https://lore.kernel.org/all/20240919112152.2829765-2-rohiagar@chromium.org/=
-,
-and it comes from the dtsi file this patch includes.
+The thing about putting a compiler barrier is that it will prevent all
+compiler reorderings, and some of the reordering may contribute to
+better codegen. (I know in this case, we have a smp_mb(), but still
+compilers can move unrelated code upto the second load for optimization
+purpose). Asm comparison is cheaper in this way. But TBH, compilers
+should provide a way to compare pointer values without using the result
+for pointer equality proof, if "convert to unsigned long" doesn't work,
+some other ways should work.
 
 Regards,
-Pin-yen
->
->
->
->
->
+Boqun
+
+> 
+> Have fun,
+>    jonas
+> 
 
