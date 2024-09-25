@@ -1,375 +1,204 @@
-Return-Path: <linux-kernel+bounces-338302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE707985621
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:13:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0D30985631
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:16:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C0A92863CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:13:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82D7EB228A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:16:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D180715B12F;
-	Wed, 25 Sep 2024 09:13:39 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C53015B0FF;
+	Wed, 25 Sep 2024 09:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IlzrISRo"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F095156257;
-	Wed, 25 Sep 2024 09:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE601537B9;
+	Wed, 25 Sep 2024 09:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727255619; cv=none; b=tcfjHd7IjCINhWxqxrIfhohmHLv8qtjcdzQkAOnIX4J0IbUkjG/MBMpBxjTKivwIKWK6Rm0E1D3rD48JhUd1XRK2xmGjmuoLwxvq03EqaTfrJpduJXGaJUDggB7fnL2hypkiuB57DyXSh5rZjBw79A4VIQHC9EZmjBgJZn4LqXg=
+	t=1727255780; cv=none; b=pfRaMbyJRUYu85fygO03BxNqPv4HgjvbTqFtdBsay+B+chfYPRe0JdhniLBuQ8K34bnJSDZmMZe5L3hQ6ezQSwaiMsz8I4asmkAhEFIhvw4OYa2rX6iBrr9lR46pbOmmC+TPBvWIgUbNfkCrMxGKS3erwoSjEdFisTh/eErxTzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727255619; c=relaxed/simple;
-	bh=d6JLoUbDwBjIKDx20ZTHvHtdpUWvWpheRHW6XLbj/t0=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qFVnZpjLGVlIzLKcl015yAts3mTwKblmtxZwK+iAU2s/z+x3iR24idtkoMsDUYfn2gc9lpwyP+sHUwto+aSKcxori9b94YViiQKCAksfmCJ1sgjjiS48gnKJkpWSWK2NZKxPoJDgfKW/SjNldamJK0+R/WmMUHfw9p8JONH2M5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XD9xV3L9jz6GBkj;
-	Wed, 25 Sep 2024 17:13:02 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id CBD0E140EDF;
-	Wed, 25 Sep 2024 17:13:33 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 25 Sep
- 2024 11:13:33 +0200
-Date: Wed, 25 Sep 2024 10:13:31 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Zhao Qunqin <zhaoqunqin@loongson.cn>
-CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<chenhuacai@kernel.org>, <bp@alien8.de>, <tony.luck@intel.com>,
-	<linux-edac@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <kernel@xen0n.name>, <james.morse@arm.com>,
-	<mchehab@kernel.org>, <rric@kernel.org>, <loongarch@lists.linux.dev>
-Subject: Re: [PATCH v5 2/2] Loongarch: EDAC driver for loongson memory
- controller
-Message-ID: <20240925101331.00000e63@Huawei.com>
-In-Reply-To: <20240925024038.9844-3-zhaoqunqin@loongson.cn>
-References: <20240925024038.9844-1-zhaoqunqin@loongson.cn>
-	<20240925024038.9844-3-zhaoqunqin@loongson.cn>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1727255780; c=relaxed/simple;
+	bh=PGYNPV2DA2x1n9XVXr9pJ1WqM1VT24jrJYqJrYX8pLQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qv6BswRxnjHGcUW1xFABhTtK4/VN4XkhGWHIO8JeDvmh6w/padlcP9NjiYQCXgOyfXtiBUtbFKJ8MiDAF03LbeCAKZaSTFgyJaeM6gIaYYNMfGairTQjOhL6wsC9AAuQj8QfMLFo5JULln+NMbgrWMpYBA6xDRxSDxWTECNYapc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IlzrISRo; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727255780; x=1758791780;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PGYNPV2DA2x1n9XVXr9pJ1WqM1VT24jrJYqJrYX8pLQ=;
+  b=IlzrISRoz1nCYL+bpD8SOvQlmjstNi5PxpoPR3u1xCB5YjOusl5nYTpr
+   rZxlIr4SGHr70AXRGKo205dF09SPBWXRoURZ/1kiMJSfJXNJVMg15xO6s
+   TDlbfEzxRnDbOJsILQ3+4uh9YQ5W7l8TakYHVlVllBepWmn32QMznI+W+
+   PWLeGPbSCaufF17/EYpYJujWRB9uiMiq5qJkMhWH3Ab7V9JimgwqWFcJ/
+   1WNKqDDsb131M5a/fWFztgZ1lFCB5+LvtRQNuUnC+Nwf6aBNfQRauI1Vc
+   HGRbwYULxAIKsRFxi/8D/HDvwyiVDHQKXcbpGV9xQjH7+ZAli5QqSD9nt
+   Q==;
+X-CSE-ConnectionGUID: tBEZXJDRQJKAfdmFTlDo3g==
+X-CSE-MsgGUID: jvhVh05QQcuvDLrJo+FSDA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="43768452"
+X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
+   d="scan'208";a="43768452"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 02:16:15 -0700
+X-CSE-ConnectionGUID: Cj8B8ja8RN68KbmGKXWg+w==
+X-CSE-MsgGUID: MjASpi57RF6e7wChQjrMEw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
+   d="scan'208";a="71590735"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 02:16:13 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1stO82-0000000ClAm-0A9b;
+	Wed, 25 Sep 2024 12:16:10 +0300
+Date: Wed, 25 Sep 2024 12:16:09 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Michael Wu <michael.wu@kneron.us>
+Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Jan Dabros <jsd@semihalf.com>, linux-i2c@vger.kernel.org,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Morgan Chang <morgan.chang@kneron.us>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] i2c: designware: determine HS tHIGH and tLOW based
+ on HW paramters
+Message-ID: <ZvPU2ZEG_8UV3FzF@smile.fi.intel.com>
+References: <20240925080432.186408-1-michael.wu@kneron.us>
+ <20240925080432.186408-2-michael.wu@kneron.us>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240925080432.186408-2-michael.wu@kneron.us>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, 25 Sep 2024 10:40:38 +0800
-Zhao Qunqin <zhaoqunqin@loongson.cn> wrote:
+On Wed, Sep 25, 2024 at 04:04:30PM +0800, Michael Wu wrote:
+> In commit 35eba185fd1a ("i2c: designware: Calculate SCL timing
+> parameter for High Speed Mode") hs_hcnt and hs_hcnt are computed based on
+> fixed tHIGH = 160 and tLOW = 320. However, this fixed values only applies
+> to the set of conditions of IC_CAP_LOADING = 400pF and
+> IC_FREQ_OPTIMIZATION = 1. Outside of this conditions set, if this fixed
+> values are still used, the calculated HCNT and LCNT will make the SCL
+> frequency unabled to reach 3.4 MHz.
+> 
+> If hs_hcnt and hs_lcnt are calculated based on fixed tHIGH = 160 and
+> tLOW = 320, SCL frequency may not reach 3.4 MHz when IC_CAP_LOADING is not
+> 400pF or IC_FREQ_OPTIMIZATION is not 1.
+> 
+> Section 3.15.4.5 in DesignWare DW_apb_i2c Databook v2.03 says when
+> IC_CLK_FREQ_OPTIMIZATION = 0,
+> 
+>     MIN_SCL_HIGHtime = 60 ns for 3.4 Mbps, bus loading = 100pF
+> 		     = 120 ns for 3,4 Mbps, bus loading = 400pF
+>     MIN_SCL_LOWtime = 160 ns for 3.4 Mbps, bus loading = 100pF
+> 		    = 320 ns for 3.4 Mbps, bus loading = 400pF
+> 
+> and section 3.15.4.6 says when IC_CLK_FREQ_OPTIMIZATION = 1,
+> 
+>     MIN_SCL_HIGHtime = 60 ns for 3.4 Mbps, bus loading = 100pF
+> 		     = 160 ns for 3.4 Mbps, bus loading = 400pF
+>     MIN_SCL_LOWtime = 120 ns for 3.4 Mbps, bus loading = 100pF
+> 		    = 320 ns for 3.4 Mbps, bus loading = 400pF
+> 
+> In order to calculate more accurate hs_hcnt and hs_lcnt, two hardware
+> parameters IC_CAP_LOADING and IC_CLK_FREQ_OPTIMIZATION must be
+> considered together.
 
-> Reports single bit errors (CE) only.
-> 
-> Signed-off-by: Zhao Qunqin <zhaoqunqin@loongson.cn>
-Hi. A few quick comments inline
+...
 
-Jonathan
-
-> ---
-> Changes in v5:
-> 	- Drop the loongson_ prefix from all static functions.
-> 	- Align function arguments on the opening brace.
-> 	- Drop useless comments and useless wrapper. Drop side comments.
-> 	- Reorder variable declarations.
-> 
-> Changes in v4:
-> 	- None
-> 
-> Changes in v3:
-> 	- Addressed review comments raised by Krzysztof and Huacai
-> 
-> Changes in v2:
-> 	- Addressed review comments raised by Krzysztof
-> 
->  MAINTAINERS                  |   1 +
->  arch/loongarch/Kconfig       |   1 +
->  drivers/edac/Kconfig         |   8 ++
->  drivers/edac/Makefile        |   1 +
->  drivers/edac/loongson_edac.c | 168 +++++++++++++++++++++++++++++++++++
->  5 files changed, 179 insertions(+)
->  create mode 100644 drivers/edac/loongson_edac.c
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 6cc8cfc8f..5b4526638 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -13242,6 +13242,7 @@ M:	Zhao Qunqin <zhaoqunqin@loongson.cn>
->  L:	linux-edac@vger.kernel.org
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/edac/loongson,ls3a5000-mc-edac.yaml
-> +F:	drivers/edac/loongson_edac.c
->  
->  LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)
->  M:	Sathya Prakash <sathya.prakash@broadcom.com>
-> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-> index 70f169210..9c135f1a2 100644
-> --- a/arch/loongarch/Kconfig
-> +++ b/arch/loongarch/Kconfig
-> @@ -181,6 +181,7 @@ config LOONGARCH
->  	select PCI_MSI_ARCH_FALLBACKS
->  	select PCI_QUIRKS
->  	select PERF_USE_VMALLOC
-> +	select EDAC_SUPPORT
->  	select RTC_LIB
->  	select SPARSE_IRQ
->  	select SYSCTL_ARCH_UNALIGN_ALLOW
-> diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
-> index 81af6c344..719bb6ca7 100644
-> --- a/drivers/edac/Kconfig
-> +++ b/drivers/edac/Kconfig
-> @@ -564,5 +564,13 @@ config EDAC_VERSAL
->  	  Support injecting both correctable and uncorrectable errors
->  	  for debugging purposes.
->  
-> +config EDAC_LOONGSON3
-> +	tristate "Loongson-3 Memory Controller"
-> +	depends on LOONGARCH || COMPILE_TEST
-> +	help
-> +	  Support for error detection and correction on the Loongson-3
-> +	  family memory controller. This driver reports single bit
-> +	  errors (CE) only. Loongson-3A5000/3C5000/3D5000/3C5000L/3A6000/3C6000
-> +	  are compatible.
->  
->  endif # EDAC
-> diff --git a/drivers/edac/Makefile b/drivers/edac/Makefile
-> index faf310eec..e72ca1be4 100644
-> --- a/drivers/edac/Makefile
-> +++ b/drivers/edac/Makefile
-> @@ -88,3 +88,4 @@ obj-$(CONFIG_EDAC_DMC520)		+= dmc520_edac.o
->  obj-$(CONFIG_EDAC_NPCM)			+= npcm_edac.o
->  obj-$(CONFIG_EDAC_ZYNQMP)		+= zynqmp_edac.o
->  obj-$(CONFIG_EDAC_VERSAL)		+= versal_edac.o
-> +obj-$(CONFIG_EDAC_LOONGSON3)		+= loongson_edac.o
-> diff --git a/drivers/edac/loongson_edac.c b/drivers/edac/loongson_edac.c
-> new file mode 100644
-> index 000000000..2721dfba5
-> --- /dev/null
-> +++ b/drivers/edac/loongson_edac.c
-> @@ -0,0 +1,168 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2024 Loongson Technology Corporation Limited.
-> + */
-> +
-> +#include <linux/edac.h>
-> +#include <linux/module.h>
-> +#include <linux/init.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include "edac_module.h"
-> +
-> +enum ecc_index {
-> +	ECC_SET = 0,
-> +	ECC_RESERVED,
-> +	ECC_COUNT,
-> +	ECC_CS_COUNT,
-> +	ECC_CODE,
-> +	ECC_ADDR,
-> +	ECC_DATA0,
-> +	ECC_DATA1,
-> +	ECC_DATA2,
-> +	ECC_DATA3,
-> +};
-> +
-> +struct loongson_edac_pvt {
-> +	u64 *ecc_base;
-> +	int last_ce_count;
-> +};
-> +
-> +static int read_ecc(struct mem_ctl_info *mci)
+> +void i2c_dw_parse_of(struct dw_i2c_dev *dev)
 > +{
-> +	struct loongson_edac_pvt *pvt = mci->pvt_info;
-> +	u64 ecc;
-> +	int cs;
-> +
-> +	if (!pvt->ecc_base)
-> +		return pvt->last_ce_count;
-> +
-> +	ecc = pvt->ecc_base[ECC_CS_COUNT];
-> +	/* cs0 -- cs3 */
-> +	cs = ecc & 0xff;
-> +	cs += (ecc >> 8) & 0xff;
-> +	cs += (ecc >> 16) & 0xff;
-> +	cs += (ecc >> 24) & 0xff;
 
-This smells like an endian swap.
-swab32() or is this fixing a wrong endian register?
-In which case b32_to_cpu()
++	struct device *device = dev->dev;
 
-> +
-> +	return cs;
-> +}
-> +
-> +static void edac_check(struct mem_ctl_info *mci)
-> +{
-> +	struct loongson_edac_pvt *pvt = mci->pvt_info;
-> +	int new, add;
-> +
-> +	new = read_ecc(mci);
-> +	add = new - pvt->last_ce_count;
-> +	pvt->last_ce_count = new;
-> +	if (add <= 0)
-
-This has be a little confused. Either this counter can
-wrap in which case why drop out here, or it can't in which case
-does < occur?
-
-> +		return;
-> +
-> +	edac_mc_handle_error(HW_EVENT_ERR_CORRECTED, mci, add,
-> +			     0, 0, 0, 0, 0, -1, "error", "");
-> +	edac_mc_printk(mci, KERN_INFO, "add: %d", add);
-> +}
-> +
-> +static int get_dimm_config(struct mem_ctl_info *mci)
-> +{
-> +	struct dimm_info *dimm;
-> +	u32 size, npages;
-> +
-> +	/* size not used */
-> +	size = -1;
-> +	npages = MiB_TO_PAGES(size);
-> +
-> +	dimm = edac_get_dimm(mci, 0, 0, 0);
-> +	dimm->nr_pages = npages;
-> +	snprintf(dimm->label, sizeof(dimm->label),
-> +		 "MC#%uChannel#%u_DIMM#%u", mci->mc_idx, 0, 0);
-> +	dimm->grain = 8;
-> +
-> +	return 0;
-> +}
-> +
-> +static void pvt_init(struct mem_ctl_info *mci, u64 *vbase)
-> +{
-> +	struct loongson_edac_pvt *pvt = mci->pvt_info;
-> +
-> +	pvt->ecc_base = vbase;
-> +	pvt->last_ce_count = read_ecc(mci);
-> +}
-> +
-> +static int edac_probe(struct platform_device *pdev)
-> +{
-> +	struct edac_mc_layer layers[2];
-> +	struct loongson_edac_pvt *pvt;
-> +	struct mem_ctl_info *mci;
-> +	u64 *vbase;
 > +	int ret;
 > +
-> +	vbase = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(vbase))
-> +		return PTR_ERR(vbase);
+> +	ret = device_property_read_u32(dev->dev, "bus-loading",
+> +				       &dev->bus_loading);
+
+	ret = device_property_read_u32(device, "bus-loading", &dev->bus_loading);
+
+(now one line)
+
+> +	if (ret || dev->bus_loading < 400)
+> +		dev->bus_loading = 100;
+> +	else
+> +		dev->bus_loading = 400;
+
+> +	dev->clk_freq_optimized =
+> +		device_property_read_bool(dev->dev, "clk-freq-optimized");
+
+	dev->clk_freq_optimized = device_property_read_bool(device, "clk-freq-optimized");
+
+(now one line)
+
 > +
-> +	/* allocate a new MC control structure */
-> +	layers[0].type = EDAC_MC_LAYER_CHANNEL;
-> +	layers[0].size = 1;
-> +	layers[0].is_virt_csrow = false;
-> +	layers[1].type = EDAC_MC_LAYER_SLOT;
-> +	layers[1].size = 1;
-> +	layers[1].is_virt_csrow = true;
-Could move this to a c99 style
 
-	struct edac_mc_layer layers[2] = {
-		{
-			.type = EDAC_MC_LAYER_CHANNEL,
-			.size = 1,
-			.is_virt_csrow = false,
-		}, {
-			.type = EDAC_MC_LAYER_SLOT,
-			.size = 1,
-			is_virt_csrow = true,
-		}
-	};
-Not particularly important though.
-
-> +	mci = edac_mc_alloc(0, ARRAY_SIZE(layers), layers, sizeof(*pvt));
-> +	if (mci == NULL)
-
-Probably !mci is sufficient but I'm not sure on local edac style.
-
-> +		return -ENOMEM;
-> +
-> +	mci->mc_idx = edac_device_alloc_index();
-> +	mci->mtype_cap = MEM_FLAG_RDDR4;
-> +	mci->edac_ctl_cap = EDAC_FLAG_NONE;
-> +	mci->edac_cap = EDAC_FLAG_NONE;
-> +	mci->mod_name = "loongson_edac.c";
-> +	mci->ctl_name = "loongson_edac_ctl";
-> +	mci->dev_name = "loongson_edac_dev";
-> +	mci->ctl_page_to_phys = NULL;
-> +	mci->pdev = &pdev->dev;
-> +	mci->error_desc.grain = 8;
-> +	/* Set the function pointer to an actual operation function */
-> +	mci->edac_check = edac_check;
-
-Similar to above, can initialize this structure more cleanly
-using 
-
-	*mci = (struct mem_ctl_info) {
-		.mc_idx = edac_device_alloc_index,
-	...
-	};
-> +
-> +	pvt_init(mci, vbase);
-> +	get_dimm_config(mci);
-> +
-> +	ret = edac_mc_add_mc(mci);
-
-I'd be tempted to use devm_add_action_or_cleanup() for this and the
-alloc above, but not common in edac but it is done in al_mc_edac.c if
-you want an example.
-
-> +	if (ret) {
-> +		edac_dbg(0, "MC: failed edac_mc_add_mc()\n");
-> +		edac_mc_free(mci);
-> +		return ret;
-> +	}
-> +	edac_op_state = EDAC_OPSTATE_POLL;
-> +
-> +	return 0;
-> +}
-> +
-> +static void edac_remove(struct platform_device *pdev)
-> +{
-> +	struct mem_ctl_info *mci = edac_mc_del_mc(&pdev->dev);
-> +
-> +	if (mci)
-> +		edac_mc_free(mci);
-
-Very odd if you got to remove and edac_mc_del_mc() failed.
-Do we need this check?  At least some drivers (I checked a few
-at random) don't check this.
-
+Redundant blank line.
 
 > +}
-> +
-> +static const struct of_device_id loongson_edac_of_match[] = {
-> +	{ .compatible = "loongson,ls3a5000-mc-edac", },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, loongson_edac_of_match);
-> +
-> +static struct platform_driver loongson_edac_driver = {
-> +	.probe		= edac_probe,
-> +	.remove		= edac_remove,
-> +	.driver		= {
-> +		.name	= "loongson-mc-edac",
-> +		.of_match_table = loongson_edac_of_match,
-> +	},
-> +};
-> +module_platform_driver(loongson_edac_driver);
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_AUTHOR("Zhao Qunqin <zhaoqunqin@loongson.cn>");
-> +MODULE_DESCRIPTION("EDAC driver for loongson memory controller");
+
+> + * @bus_loading: for high speed mode, the bus loading affects the high and low
+> + *	pulse width of SCL
+
+This is bad naming, better is bus_capacitance.
+
+> + * @clk_freq_optimized: indicate whether the system clock frequency is reduced
+
+...
+
+> +void i2c_dw_parse_of(struct dw_i2c_dev *dev);
+
+Should be part of i2c_dw_fw_parse_and_configure().
+
+...
+
+> +			if (dev->clk_freq_optimized) {
+> +				if (dev->bus_loading == 400) {
+> +					t_high = 160;
+> +					t_low = 320;
+> +				} else {
+> +					t_high = 60;
+> +					t_low = 120;
+> +				}
+> +			} else {
+> +				if (dev->bus_loading == 400) {
+> +					t_high = 120;
+> +					t_low = 320;
+> +				} else {
+> +					t_high = 60;
+> +					t_low = 160;
+> +				}
+> +			}
+
+Can be as simple as
+
+			if (dev->bus_loading == 400) {
+				t_high = dev->clk_freq_optimized ? 160 : 120;
+				t_low = 320;
+			} else {
+				t_high = 60;
+				t_low = dev->clk_freq_optimized ? 120 : 160;
+			}
+
+It also makes it much more visible to get how this flag affects the values.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
