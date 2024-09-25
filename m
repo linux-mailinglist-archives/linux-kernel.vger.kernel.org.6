@@ -1,106 +1,135 @@
-Return-Path: <linux-kernel+bounces-337992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 902F79851FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 06:22:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 676749851FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 06:26:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CFB6284F9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 04:22:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97ADD1C232FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 04:26:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17BBC14BF97;
-	Wed, 25 Sep 2024 04:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E325314C5BE;
+	Wed, 25 Sep 2024 04:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UwMaiaiH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qfvajQ7W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0DF2AD11
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 04:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB7713AA53;
+	Wed, 25 Sep 2024 04:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727238152; cv=none; b=G6drJ5jwVcqYVez9v9QTUB/9EU7tVa+9OASqaVbYxHb+8X7zHtOt9REQMkupMs1uFJpjwJadwHWWcSVvIeqkyUW/omiM0x90TJqjWg6Ud4eHx8xCRthgd7B8PBc+QFETbdKX+l/g3SR5HKI0wMifv4IO0FQc+zSzKAinVoeREks=
+	t=1727238368; cv=none; b=iOx9+KBbF8RuYZaqxSMx16Li8IvNw+nwYd2ZJUfiEQGhbWa7VdxFY7eU0Cm+o7QDiwsncWkA3Hy5yCE7XHA+dEdq9eSm5Qk3/c3NjiqEjgfxIXnTtK8RqhSQZHvM4MBoaEqrjORFyaozKEG/5Bn0Yp2KuI1CxGWvrbPmRmcEdGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727238152; c=relaxed/simple;
-	bh=f9LN97hlTJQQcAvajkRRjEdhLeC7uRAKnig/6jQvM+o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B29TrNt3i6hzu115Zi0jamnmvzyiTDRuXEs2yyR0FbVmyVsxSLJ8UcIlvm07LlqhDi+26zAyTivvqY7WRK8QGnMoQyWCPKOUyQ00J/lctla6oelOet+l6cNTQdgopTKYSs3ylYrgnIdgvZVnKYh/fG/cu0Qc3u5KeLWiiRbECqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UwMaiaiH; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727238150;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f9LN97hlTJQQcAvajkRRjEdhLeC7uRAKnig/6jQvM+o=;
-	b=UwMaiaiHAPscoq7ISZu4dDBOnDRWYfiMSoFIVn1X92RfeQcMal8ef00cVXkiFZzLEeYp99
-	XRyDmi8sfER80lBnbZ8Czb7H2se5OhqDFxvp73whE12r956mC71iZUgY5Bl15hiCbt1aXD
-	BZyNm2/oOOzE2Mg4rwPUnrkxJIEGB9A=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-270-hmT2931sPM-RDHLJBU09Dg-1; Wed, 25 Sep 2024 00:22:26 -0400
-X-MC-Unique: hmT2931sPM-RDHLJBU09Dg-1
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2d8859d6e9dso5806101a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 21:22:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727238145; x=1727842945;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f9LN97hlTJQQcAvajkRRjEdhLeC7uRAKnig/6jQvM+o=;
-        b=jlrvMQ51ImgHTyXd6uE0tOln294t8TapvgO532cW/hCjaxnZmEF+OvZYB3zHI+1eCh
-         eZ/gaiVZJcbR0Dc+rJWePIZa1PeTVmXDNNDqihYuSoX5SbIuGO6HrbBI7Deg3bBZKtUx
-         IaxvaSBBskxLlKURWjqhc6mvDXusau3XSfK3GsjqJPKd6KKaPLyc8KwTYwx+aBRTUxZt
-         ZDjfaq7WAmxFXHhNjUtG8+bgyz6Z7aaR6JFeaxbylIb3IsUy7loxfay3bMAZe6HdKATB
-         egmfeweaIQudqbuMTANH8MsolgHBeSPECem0thzUJeeCI9wlJz8oLTI+weO2I34IaPSB
-         xi2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVJfnTtKqvhh/sJEs8/4T2wUgNB7WgGelUbw5OHE6nFay1lldqJKq7Pt2QqkserrH4z9NEnHhX0TNmvHM4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHoQN/dwQBYYdfBiWdK9YnuBKLbtGG0sDz0IfsdcCcTha26DZa
-	WxYm/RJs3hKWaBhdb10I2JwHA9L5peTb2LxOn5YVEIOOQB9StE3aXAtyXBj8RbbBzXN+O7G/087
-	vejVkMobB4yQ2vkS+yOb2rK34E7TzA7CsYNDt4Wa51WUyQ1nPo2776zfFPeJkeX9itEYNWi2t56
-	qgsx4PTLTS4BI9Ur/gfynVr97WzhZ+nhCOhSSU
-X-Received: by 2002:a17:90b:2811:b0:2da:d766:1925 with SMTP id 98e67ed59e1d1-2e06aff73b7mr1767992a91.37.1727238144853;
-        Tue, 24 Sep 2024 21:22:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEyQ0SI/V6qMBFQePIJmblPb1NZncnX8sNbsV7txh504HJjJLI6AZkFNT+9jhFdudDINdqTAi1UZYIWZxKdAIE=
-X-Received: by 2002:a17:90b:2811:b0:2da:d766:1925 with SMTP id
- 98e67ed59e1d1-2e06aff73b7mr1767966a91.37.1727238144426; Tue, 24 Sep 2024
- 21:22:24 -0700 (PDT)
+	s=arc-20240116; t=1727238368; c=relaxed/simple;
+	bh=Ynfd0JRm++Nr2Ee+rhT8wlroxPnjzYV/SOrelhCelmg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=efdKDIBKG9OjKdU0qIDU53Xx5Kth6orZz+oi4vUandOhwq+fkSsVvqDpUeldM3wjCAeSgxVX+Ba0JCcXQtr9oVyP975wcK5/tn8TfWerj1h3jlbfaximKO9kC4nblPR/opyPIl8n2BL+whpVz4Ij6G7J9VSCf8+7ZIF+fSlMJNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qfvajQ7W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23A92C4CEC3;
+	Wed, 25 Sep 2024 04:26:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727238367;
+	bh=Ynfd0JRm++Nr2Ee+rhT8wlroxPnjzYV/SOrelhCelmg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qfvajQ7WG0ypVLqcmpWxo+kxj698Cwbnm+r/0YhOX3PEe3PnWkgW57a5A2eo0Ee7D
+	 B+LuTdFM+97a3BW1idyWzlu5ciUFDocJ+JUeYlmNmsb/8pEGOB4tYpXYdqzcIDnTCZ
+	 L1PHsV5f8TUQQpB7xX/T3CavZr5mhYoyJqYzLq541F/A6Y5AkdSM7rFkHfAqVNVtUo
+	 D5GK8ONk5257ePVWiM1eM8/8pndgpG6cmHbmVeZEtGDYE4cboH+ahc6ZQfzn7W+xyC
+	 PJ53wOCz70H5DQYV8woUPwZYfC9fHOSyTq8K5uat4f5y7bnp0zP6l6fsm9biw6giaB
+	 +kSl80LgePvqA==
+Date: Wed, 25 Sep 2024 06:26:00 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Igor Mammedov <imammedo@redhat.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
+ <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
+ <anisinha@redhat.com>, Cleber Rosa <crosa@redhat.com>, Dongjiu Geng
+ <gengdongjiu1@gmail.com>, Eric Blake <eblake@redhat.com>, John Snow
+ <jsnow@redhat.com>, Markus Armbruster <armbru@redhat.com>, Michael Roth
+ <michael.roth@amd.com>, Paolo Bonzini <pbonzini@redhat.com>, Peter Maydell
+ <peter.maydell@linaro.org>, Shannon Zhao <shannon.zhaosl@gmail.com>,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org, qemu-arm@nongnu.org,
+ qemu-devel@nongnu.org
+Subject: Re: [PATCH v10 00/21] Add ACPI CPER firmware first error injection
+ on ARM emulation
+Message-ID: <20240925062600.7cbfeb19@foz.lan>
+In-Reply-To: <20240924151429.3e758b38@imammedo.users.ipa.redhat.com>
+References: <cover.1726293808.git.mchehab+huawei@kernel.org>
+	<20240917141519.57766bb6@imammedo.users.ipa.redhat.com>
+	<20240924150058.4879abe9@foz.lan>
+	<20240924151429.3e758b38@imammedo.users.ipa.redhat.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240920202141.89446-1-huangwenyuu@outlook.com>
-In-Reply-To: <20240920202141.89446-1-huangwenyuu@outlook.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Wed, 25 Sep 2024 12:22:13 +0800
-Message-ID: <CACGkMEvieuDTp-DfhQ58EGbeFCvNmn4fUNmUdPHzex6pOetbdw@mail.gmail.com>
-Subject: Re: [PATCH] virtio: Make vring_new_virtqueue support for packed vring
-To: Wenyu Huang <huangwenyu1998@gmail.com>
-Cc: mst@redhat.com, xuanzhuo@linux.alibaba.com, virtualization@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Sep 21, 2024 at 4:21=E2=80=AFAM Wenyu Huang <huangwenyu1998@gmail.c=
-om> wrote:
->
-> From: Wenyu Huang <huangwenyu1998@gmail.com>
->
-> It's also available for packed ring now.
->
-> Signed-off-by: Wenyu Huang <huangwenyu1998@gmail.com>
-> ---
+Em Tue, 24 Sep 2024 15:14:29 +0200
+Igor Mammedov <imammedo@redhat.com> escreveu:
 
-Patch seems to be fine at a first glance. Is this used for testing or
-transport like remoteproc?
+> > 1) preparation patches:
+...
+> > 69850f550f99 acpi/generic_event_device: add an APEI error device  
+> this one doesn't belong to clean ups, I think.
+> Lets move this to #3 part
 
-Thanks
+Ok.
 
+> > The migration logic will require some time, and I don't want to bother
+> > with the cleanup stuff while doing it. So, perhaps while I'm doing it,
+> > you could review/merge the cleanups.
+> > 
+> > We can do the same for each of the 4 above series of patches, as it
+> > makes review simpler as there will be less patches to look into on
+> > each series.
+> > 
+> > Would it work for you?  
+> 
+> other than nit above, LGTM
+> 
+
+Ok, sent a PR with the first set (cleanups) at:
+
+	https://lore.kernel.org/qemu-devel/cover.1727236561.git.mchehab+huawei@kernel.org/
+
+You can see the full series at:
+
+	https://gitlab.com/mchehab_kernel/qemu/-/commits/qemu_submission_v11b?ref_type=heads
+
+It works fine, except for the migration part that I'm still working with.
+
+For the migration, there are how two functions at ghes.c:
+
+The one compatible with current behavior (up to version 9.1):
+	https://gitlab.com/mchehab_kernel/qemu/-/blob/qemu_submission_v11b/hw/acpi/ghes.c?ref_type=heads#L411
+
+And the new one using offsets calculated from HEST (newer versions):
+	https://gitlab.com/mchehab_kernel/qemu/-/blob/qemu_submission_v11b/hw/acpi/ghes.c?ref_type=heads#L437 
+
+With that, the migration logic can decide what function should be
+called (currently, it is just checking if hest_addr_le is zero, but
+I guess I'll need to change it to match some variable added by the
+migration path.
+
+Also, in preparation for the migration tests, I created a separate 
+branch at:
+
+	https://gitlab.com/mchehab_kernel/qemu/-/commits/ghes_on_v9.1.0?ref_type=heads
+
+which contains the same patches on the top of 9.1, except for
+the HEST ones. It also contains a hack to use ACPI_GHES_NOTIFY_GPIO
+instead of ACPI_GHES_NOTIFY_SEA.
+
+With that, we have a way to use the same error injection logic
+on both 9.1 and upstream, hopefully being enough to test if migration
+works.
+
+Thanks,
+Mauro
 
