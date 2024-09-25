@@ -1,216 +1,229 @@
-Return-Path: <linux-kernel+bounces-338113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B294985374
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:14:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 874F0985381
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:15:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85981B2159A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:14:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 152E91F2149B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A351D1537AC;
-	Wed, 25 Sep 2024 07:14:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE0C156C73;
+	Wed, 25 Sep 2024 07:15:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fGqurL4P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K3x08vSL"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D735A132103;
-	Wed, 25 Sep 2024 07:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448EC1553BB
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 07:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727248447; cv=none; b=sH8ShnszKoeRNf5v7gFWCSr8rjAVb194RnbONGYGtfYjeu8sw4hnV+K3VINQeVWEI1LChEpc6NVrOKFp9CNamAOUoDRWiuAq3FupllWslogBPS/reACs/Ljvbmn5FeAYKVwjh3Q6wAuC3NDjeXIg/84xe23EqKG8C6EM3dhzHQw=
+	t=1727248513; cv=none; b=G7M8GwccRENOyokImuVqOZEnwpfcJAI0qn2CRekqnQupvFYrWamxrxbqSgo8LTbUOrmGzOMVgdPkNfwoQwf2xDNX6hdUjcYRtuDNlB6oiXckYRI2JhqjMtdSzkhEVjw2M98WAuBLRFiy/toFlrcwdKIH1gZ/g77aDK9lN7m5tIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727248447; c=relaxed/simple;
-	bh=qJ4TsQ/6sArUbR1U3iecRaZ6CownESjdXqH3GgdPvcs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ze+O6uWYnAHC3ZRct05t4GfYwnkFb/avgh/SO5Q0LcVq9VN2gb8Ng5hgiVdYzAqIxGcB9Em6GBOEopXZhC8H5CPdV+vT5NbUt05eFU9Yw2hCCxTMnGUgolx/6ZfGQx1PxTRbwZm9wDnoM3aK2uvgrX1/xgWjyOgBW9GqLPZjcTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fGqurL4P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67892C4CECD;
-	Wed, 25 Sep 2024 07:14:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727248446;
-	bh=qJ4TsQ/6sArUbR1U3iecRaZ6CownESjdXqH3GgdPvcs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fGqurL4Pj8U8nZs+NSlgdDX3IWw9273x8Mrg51UhRYzx+B5x/tw/FyqGNOhQM7V5y
-	 4O4SphPKSGZ2abMaExxrXiwOed/+HyZUewPzvyALMeLbBHTvwCk8K9flSGpsk/cWT5
-	 b/q/XJ4n/xRT8NeFeaS9kE4kMdy5i9SoRp++3Xsrd5YTHen3TDJkUwWA5ZdF9YFLkZ
-	 kAFGnOvMNpo2RuOPI6Xs1ZJEvZ194lS2gbyYN3nziIIRigHBW2M1VieylwM+dRbO9z
-	 jdkoQkyg7P21OGos7k9JTs1xKN2DXrAXq7k/8lD0XjqiTGzfRKQIIy3uJDW81qtydP
-	 3Caiur91MlF6w==
-Message-ID: <01ea36e7-f4a7-4f1f-9596-3ed6ed13b47b@kernel.org>
-Date: Wed, 25 Sep 2024 09:14:00 +0200
+	s=arc-20240116; t=1727248513; c=relaxed/simple;
+	bh=YvH5CO/g/ZZSGTW6Ve+4KcjKGOqOYedFuS4vYOlaBCA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RmXMLBr4DMQ9ie7Kl5Obl19F8rM2yJZThLQa6wHgmMjg2V5CZ+LFwM5mMss11kLU9MG8lTXDtXgjv+K0wXvu1pnX4aK8RGQZoY3C+S8Mvor3EmQLDC3oXKNbjoIWKMr/hx1DS8ahCYok2i8RdM9rHXr+HyDRRUz5yhLsacQM9oI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K3x08vSL; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a86e9db75b9so1001981666b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 00:15:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727248508; x=1727853308; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TDaNdhjF6czZwZ8GYJQ+xlqUWHjP+ROLSrQsWDOJZts=;
+        b=K3x08vSLc2O2J/FoeZVxTfvniV8zz3At4298ho6IWsjEWLXrlrUbESVsXgrQ0npS3n
+         kYNLLltJlJi7Dm3cYlfA8pGMAgMEnJ06L+jqf3IDJD8qhUrj0cpa3D8PXxHjVz3TEVKI
+         xtBZwCZjrwWncn5stzABQEh/nEMYW+Uwmu0yi3YtjmLiOB42SskJY6fkMf0WDn+FgeZ8
+         +0uBgT2Gu5PiqV92zWSonqKiL0s8qW1mlAdwineqvjPzsRj2kTV530R5gibC6JMAErjJ
+         tJtjmcg33LngHrCNlbKQNsZCn0z+KeEJ/Yadomo5Mld1kZJxRL1Ka+vpUoh1xJKNQdH0
+         f63A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727248508; x=1727853308;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TDaNdhjF6czZwZ8GYJQ+xlqUWHjP+ROLSrQsWDOJZts=;
+        b=KbhQ7AVwwjRlM6k/MbgdnQq/oGQI1SAZoHsoaAnzFjRfRMMTzJWB0DMzPVxtlmMaPY
+         FAq8esGl82ynJLtWxtoAI8OJoj9Mc2YN4nIvdO8p79w2+9po6U0UaNKop3sw7olcNvvW
+         gEL4kmWGZ37RlaikwpERSyEAHbHB5/+LvvvN3akAr9VWlPh7bC/vZZOGMDmVStxvn3J1
+         IuDkOkBjmyIejNkJZHA/mWQVuZGZ+rziiZ56tQMJw+cRoTPOYBhgZZfyRt52qOGh0Rif
+         lXcCSXyLiE1fDTC7yaLMT/Tx3Av8iViS+juz/6Lt64FGYjlOUi1kXxR4/RERk1sAYRSl
+         djDw==
+X-Gm-Message-State: AOJu0Yx3r1i2EBVk8ciID25HkgBp3O6o2S26zwO0fMFnf2+5QoSFo08F
+	hqDRKWz19fvvGwC8JQiAfL1if8PVoqTLzOXYTRfOXui4E2VTiOLmZ9w7fWtJ+Io=
+X-Google-Smtp-Source: AGHT+IHv93X+9j84xZuTxFkaqtse2mqrU5kPecB2WQv7iIqPArSVbHN4jb/WWw/ItxeQzBtjVNzB3Q==
+X-Received: by 2002:a17:907:e656:b0:a86:9644:2a60 with SMTP id a640c23a62f3a-a93a03200d0mr161368666b.6.1727248508395;
+        Wed, 25 Sep 2024 00:15:08 -0700 (PDT)
+Received: from rayden (h-217-31-164-171.A175.priv.bahnhof.se. [217.31.164.171])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9393138bd5sm174570466b.205.2024.09.25.00.15.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 00:15:06 -0700 (PDT)
+Date: Wed, 25 Sep 2024 09:15:04 +0200
+From: Jens Wiklander <jens.wiklander@linaro.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org, op-tee@lists.trustedfirmware.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Olivier Masse <olivier.masse@nxp.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Yong Wu <yong.wu@mediatek.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	John Stultz <jstultz@google.com>,
+	"T . J . Mercier" <tjmercier@google.com>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	Sumit Garg <sumit.garg@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [RFC PATCH 0/4] Linaro restricted heap
+Message-ID: <20240925071504.GA3519798@rayden>
+References: <20240830070351.2855919-1-jens.wiklander@linaro.org>
+ <dhxvyshwi4qmcmwceokhqey2ww4azjcs6qrpnkgivdj7tv5cke@r36srvvbof6q>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: phy: Add QMP UFS PHY comptible for
- QCS8300
-To: Jingyi Wang <quic_jingyw@quicinc.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Xin Liu <quic_liuxin@quicinc.com>
-References: <20240911-qcs8300_ufs_phy_binding-v2-1-c801a2d27a84@quicinc.com>
- <ztpetznwid2om6vylyl2boi665ch3wnkprkmzcq6bem6cqhqtf@ogsi657y4kex>
- <6656171b-12d3-490b-b53c-f907b7454f99@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <6656171b-12d3-490b-b53c-f907b7454f99@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <dhxvyshwi4qmcmwceokhqey2ww4azjcs6qrpnkgivdj7tv5cke@r36srvvbof6q>
 
-On 25/09/2024 05:16, Jingyi Wang wrote:
+On Mon, Sep 23, 2024 at 09:33:29AM +0300, Dmitry Baryshkov wrote:
+> Hi,
 > 
+> On Fri, Aug 30, 2024 at 09:03:47AM GMT, Jens Wiklander wrote:
+> > Hi,
+> > 
+> > This patch set is based on top of Yong Wu's restricted heap patch set [1].
+> > It's also a continuation on Olivier's Add dma-buf secure-heap patch set [2].
+> > 
+> > The Linaro restricted heap uses genalloc in the kernel to manage the heap
+> > carvout. This is a difference from the Mediatek restricted heap which
+> > relies on the secure world to manage the carveout.
+> > 
+> > I've tried to adress the comments on [2], but [1] introduces changes so I'm
+> > afraid I've had to skip some comments.
 > 
-> On 9/16/2024 10:53 PM, Krzysztof Kozlowski wrote:
->> On Wed, Sep 11, 2024 at 02:56:16PM +0800, Jingyi Wang wrote:
->>> From: Xin Liu <quic_liuxin@quicinc.com>
->>>
->>> Document the QMP UFS PHY compatible for Qualcomm QCS8300 to support
->>> physical layer functionality for UFS found on the SoC. Use fallback to
->>> indicate the compatibility of the QMP UFS PHY on the QCS8300 with that
->>> on the SA8775P.
->>>
->>> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
->>> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
->>> ---
->>> Changes in v2:
->>> - decoupled from the original series.
->>> - Use fallback to indicate compatibility with SA8775P.
->>> - typo fixup
->>> - Link to v1: https://lore.kernel.org/r/20240904-qcs8300_initial_dtsi-v1-0-d0ea9afdc007@quicinc.com
->>> ---
->>>  .../bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml    | 46 ++++++++++++----------
->>>  1 file changed, 26 insertions(+), 20 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml
->>> index f9cfbd0b2de6..626a2039e177 100644
->>> --- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml
->>> +++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml
->>> @@ -15,26 +15,31 @@ description:
->>>  
->>>  properties:
->>>    compatible:
->>> -    enum:
->>> -      - qcom,msm8996-qmp-ufs-phy
->>> -      - qcom,msm8998-qmp-ufs-phy
->>> -      - qcom,sa8775p-qmp-ufs-phy
->>> -      - qcom,sc7180-qmp-ufs-phy
->>> -      - qcom,sc7280-qmp-ufs-phy
->>> -      - qcom,sc8180x-qmp-ufs-phy
->>> -      - qcom,sc8280xp-qmp-ufs-phy
->>> -      - qcom,sdm845-qmp-ufs-phy
->>> -      - qcom,sm6115-qmp-ufs-phy
->>> -      - qcom,sm6125-qmp-ufs-phy
->>> -      - qcom,sm6350-qmp-ufs-phy
->>> -      - qcom,sm7150-qmp-ufs-phy
->>> -      - qcom,sm8150-qmp-ufs-phy
->>> -      - qcom,sm8250-qmp-ufs-phy
->>> -      - qcom,sm8350-qmp-ufs-phy
->>> -      - qcom,sm8450-qmp-ufs-phy
->>> -      - qcom,sm8475-qmp-ufs-phy
->>> -      - qcom,sm8550-qmp-ufs-phy
->>> -      - qcom,sm8650-qmp-ufs-phy
->>> +    oneOf:
->>> +      - items:
->>> +          - enum:
->>> +              - qcom,qcs8300-qmp-ufs-phy
->>> +          - const: qcom,sa8775p-qmp-ufs-phy
->>> +      - enum:
->>> +          - qcom,msm8996-qmp-ufs-phy
->>> +          - qcom,msm8998-qmp-ufs-phy
->>> +          - qcom,sa8775p-qmp-ufs-phy
->>> +          - qcom,sc7180-qmp-ufs-phy
->>> +          - qcom,sc7280-qmp-ufs-phy
->>> +          - qcom,sc8180x-qmp-ufs-phy
->>> +          - qcom,sc8280xp-qmp-ufs-phy
->>> +          - qcom,sdm845-qmp-ufs-phy
->>> +          - qcom,sm6115-qmp-ufs-phy
->>> +          - qcom,sm6125-qmp-ufs-phy
->>> +          - qcom,sm6350-qmp-ufs-phy
->>> +          - qcom,sm7150-qmp-ufs-phy
->>> +          - qcom,sm8150-qmp-ufs-phy
->>> +          - qcom,sm8250-qmp-ufs-phy
->>> +          - qcom,sm8350-qmp-ufs-phy
->>> +          - qcom,sm8450-qmp-ufs-phy
->>> +          - qcom,sm8475-qmp-ufs-phy
->>> +          - qcom,sm8550-qmp-ufs-phy
->>> +          - qcom,sm8650-qmp-ufs-phy
->>>  
->>>    reg:
->>>      maxItems: 1
->>> @@ -85,6 +90,7 @@ allOf:
->>>            contains:
->>>              enum:
->>>                - qcom,msm8998-qmp-ufs-phy
->>> +              - qcom,qcs8300-qmp-ufs-phy
->>
->> Not needed.
->>
-> Well noted.
->> BTW, please be sure you organize your patchsets per subsystem. IOW, that
->> you do not split same subsystem bindings patches into separate
->> patchsets.
->>
-> Do you mean combine the binding of qmp-ufs-phy with ufs controller? I noticed
-> that this patch belongs to "GENERIC PHY FRAMEWORK" subsystem and ufs controller
-> binding belongs to "UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER". If necessary,
-> we can pay attention to combine them next time
+> I know I have raised the same question during LPC (in connection to
+> Qualcomm's dma-heap implementation). Is there any reason why we are
+> using generic heaps instead of allocating the dma-bufs on the device
+> side?
+> 
+> In your case you already have TEE device, you can use it to allocate and
+> export dma-bufs, which then get imported by the V4L and DRM drivers.
+> 
+> I have a feeling (I might be completely wrong here) that by using
+> generic dma-buf heaps we can easily end up in a situation when the
+> userspace depends heavily on the actual platform being used (to map the
+> platform to heap names). I think we should instead depend on the
+> existing devices (e.g. if there is a TEE device, use an IOCTL to
+> allocate secured DMA BUF from it, otherwise check for QTEE device,
+> otherwise check for some other vendor device).
 
-No, I mean group patches targeting the same subsystem.
+That makes sense, it's similar to what we do with TEE_IOC_SHM_ALLOC
+where we allocate from a carveout reserverd for shared memory with the
+secure world. It was even based on dma-buf until commit dfd0743f1d9e
+("tee: handle lookup of shm with reference count 0").
 
-Best regards,
-Krzysztof
+We should use a new TEE_IOC_*_ALLOC for these new dma-bufs to avoid
+confusion and to have more freedom when designing the interface.
 
+> 
+> The mental experiment to check if the API is correct is really simple:
+> Can you use exactly the same rootfs on several devices without
+> any additional tuning (e.g. your QEMU, HiKey, a Mediatek board, Qualcomm
+> laptop, etc)?
+
+No, I don't think so.
+
+> 
+> > 
+> > This can be tested on QEMU with the following steps:
+> > repo init -u https://github.com/jenswi-linaro/manifest.git -m qemu_v8.xml \
+> >         -b prototype/sdp-v1
+> > repo sync -j8
+> > cd build
+> > make toolchains -j4
+> > make all -j$(nproc)
+> > make run-only
+> > # login and at the prompt:
+> > xtest --sdp-basic
+> > 
+> > https://optee.readthedocs.io/en/latest/building/prerequisites.html
+> > list dependencies needed to build the above.
+> > 
+> > The tests are pretty basic, mostly checking that a Trusted Application in
+> > the secure world can access and manipulate the memory.
+> 
+> - Can we test that the system doesn't crash badly if user provides
+>   non-secured memory to the users which expect a secure buffer?
+> 
+> - At the same time corresponding entities shouldn't decode data to the
+>   buffers accessible to the rest of the sytem.
+
+I'll a few tests along that.
+
+Thanks,
+Jens
+
+> 
+> > 
+> > Cheers,
+> > Jens
+> > 
+> > [1] https://lore.kernel.org/dri-devel/20240515112308.10171-1-yong.wu@mediatek.com/
+> > [2] https://lore.kernel.org/lkml/20220805135330.970-1-olivier.masse@nxp.com/
+> > 
+> > Changes since Olivier's post [2]:
+> > * Based on Yong Wu's post [1] where much of dma-buf handling is done in
+> >   the generic restricted heap
+> > * Simplifications and cleanup
+> > * New commit message for "dma-buf: heaps: add Linaro restricted dmabuf heap
+> >   support"
+> > * Replaced the word "secure" with "restricted" where applicable
+> > 
+> > Etienne Carriere (1):
+> >   tee: new ioctl to a register tee_shm from a dmabuf file descriptor
+> > 
+> > Jens Wiklander (2):
+> >   dma-buf: heaps: restricted_heap: add no_map attribute
+> >   dma-buf: heaps: add Linaro restricted dmabuf heap support
+> > 
+> > Olivier Masse (1):
+> >   dt-bindings: reserved-memory: add linaro,restricted-heap
+> > 
+> >  .../linaro,restricted-heap.yaml               |  56 ++++++
+> >  drivers/dma-buf/heaps/Kconfig                 |  10 ++
+> >  drivers/dma-buf/heaps/Makefile                |   1 +
+> >  drivers/dma-buf/heaps/restricted_heap.c       |  17 +-
+> >  drivers/dma-buf/heaps/restricted_heap.h       |   2 +
+> >  .../dma-buf/heaps/restricted_heap_linaro.c    | 165 ++++++++++++++++++
+> >  drivers/tee/tee_core.c                        |  38 ++++
+> >  drivers/tee/tee_shm.c                         | 104 ++++++++++-
+> >  include/linux/tee_drv.h                       |  11 ++
+> >  include/uapi/linux/tee.h                      |  29 +++
+> >  10 files changed, 426 insertions(+), 7 deletions(-)
+> >  create mode 100644 Documentation/devicetree/bindings/reserved-memory/linaro,restricted-heap.yaml
+> >  create mode 100644 drivers/dma-buf/heaps/restricted_heap_linaro.c
+> > 
+> > -- 
+> > 2.34.1
+> > 
+> 
+> -- 
+> With best wishes
+> Dmitry
 
