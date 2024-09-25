@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-338117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27A04985388
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:16:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 862FB98538B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:17:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BCAAB20E61
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:16:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 468FD281CE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:17:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2036A156237;
-	Wed, 25 Sep 2024 07:16:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F18A156237;
+	Wed, 25 Sep 2024 07:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SkaoKo+t"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PRNNU2lZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4CE126F0A;
-	Wed, 25 Sep 2024 07:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61A7126F0A;
+	Wed, 25 Sep 2024 07:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727248606; cv=none; b=OjLN5EDE9MFhOBUsWZIhXwcsNJArOlnBAUDxAOve5dRkYnrttOMlWElQdC/9zOb/DjdmRh7LFFA8+dYyEiqEwQyzUtviyu/GVmTF/1MkfUP4Y5KSBLQehQ16fFVMXFUr+q7seblDBW5layCZdQR8LxZMhx/uFyNQ6IPnM5jB0Xo=
+	t=1727248647; cv=none; b=B5QUIbW81LX2a3DNxvMQLWCclcRIucsHX8XiIw2c1N4SwG8NLyDHJ1vbOTMzTdlq0pWugLeLynCFo4BV8F4BtwwZYdas5VCxwCbXQCQ4Yb1Pk/43CxbRqFbKGB2nex69mnOl5iWRAfgof7X9dpSV3gTZoxJxILhXioKO1whUK2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727248606; c=relaxed/simple;
-	bh=wlACnvaHMg42FGtJEoBPkQSfA29gqh3WPsl/M0+9Cu8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=akjZjji94yuO6duZbOyWuZT/qK2Fesne9LUHPMhOFJHpoojyMGie7lbWJlwmd6ew6iUCeC/I61rUvpilHUgyLiIJ/G9CDIAJqgHwNUCG/ht+xDRpyr/FWoYUpbXNMtq0MmsfpzwIbyG3bWqg4uxHNn+SR8ruoAPhMR01btt2LvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SkaoKo+t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90D41C4CEC3;
-	Wed, 25 Sep 2024 07:16:40 +0000 (UTC)
+	s=arc-20240116; t=1727248647; c=relaxed/simple;
+	bh=Akfo8Gddw9SK+w9XsX7ow8HzfXmSzAecBPPLdWBJbsU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=EUR3Pc5m4M6lG89pnk2iqd7HSwOKmu3JSEVRnHQWZHGcpS65qc7CE/ZHWE5p4aN/ESghMkLBH4FCmhejy0dKV95HOfjCUqt/cg9JS+LjdkkkSVA2Zb7v40OOCo7+EnO8FoNLebl6qRlXk17P3J5jxpxrk5Ftj5AYw49UAIMcqHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PRNNU2lZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 785B6C4CEC3;
+	Wed, 25 Sep 2024 07:17:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727248606;
-	bh=wlACnvaHMg42FGtJEoBPkQSfA29gqh3WPsl/M0+9Cu8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SkaoKo+tJ04Oi1whNH0iQvQ2ebWfeKjM+QaIaYnvG9aEQgpHXSHn7PBnV6Gi/rR1v
-	 Ah4EnaOJqO1wlqdD89A04+6DN1HA2wEbFYVVuUiWNdqauze62x9wYeaPTtXhwMl7eG
-	 db8vtygygIVh0k0DZuxqOyzh66JK12v7bsOEkIuU3PnGcxQHYvYRBJD+kdQ8gbfAZP
-	 02RghyUDTvBzqw9PdCm4s+onpBT1KbPDA5l+idkljBG8vWrUS7nFKqGCVo4oqVHCTk
-	 ksVo39J0Ke5/8IeHcpUpck723uk4EKUOhmO2e12zxRnGpkupAbJkTBIpTquJhdtidj
-	 JkgJu8hoFLt/Q==
-Message-ID: <2a4200ac-3ea2-4449-94ac-c4b9f37ad800@kernel.org>
-Date: Wed, 25 Sep 2024 09:16:37 +0200
+	s=k20201202; t=1727248646;
+	bh=Akfo8Gddw9SK+w9XsX7ow8HzfXmSzAecBPPLdWBJbsU=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=PRNNU2lZby/NT/m3KYScSfzsNzgQ/A0vRf45kpPilzJHDmV5hb1Xsatm54qiPnpyg
+	 jW3GrgMDCRmpg4IKrJz5aCZRWNNWEs2DRvFHb58hSI8yOR02p8lFOO8HgOi89ceVIq
+	 vY/XUAEEQCe8aaV+BXJpufPJOE9hLmGqAziy9hnRqdFyciOsuITvByl0xXsQKL3EvG
+	 6+gU5uN1uMOaVkYu/xN//2dVVljqe50+yogovWBlEN8wiNY5IfJzFhIf3qGxK3yrcW
+	 VNnMwL+PQu83f6kFxctMuPhAhSVRbhaaFLQxE7yq5gqvoaFxYtIXvB2k7lljPYCAFo
+	 ToXELRQC8FWSg==
+Message-ID: <99409dd6-f474-432e-a8fc-687993ebf942@kernel.org>
+Date: Wed, 25 Sep 2024 09:17:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,19 +49,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: phy: rockchip,inno-usb2phy: add
+Subject: Re: [RESEND PATCH 1/2] dt-bindings: phy: rockchip,inno-usb2phy: add
  rk3576
-To: Frank Wang <frawang.cn@gmail.com>, Conor Dooley <conor@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Frank Wang <frank.wang@rock-chips.com>
 Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
  conor+dt@kernel.org, heiko@sntech.de, linux-phy@lists.infradead.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
- william.wu@rock-chips.com, tim.chen@rock-chips.com,
- Frank Wang <frank.wang@rock-chips.com>
-References: <20240924085510.20863-1-frawang.cn@gmail.com>
- <20240924-overtly-curable-13df2e7fdc9b@spud>
- <87146372-6d05-4994-8f64-47f4cb07e2b4@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ william.wu@rock-chips.com, tim.chen@rock-chips.com, wmc@rock-chips.com
+References: <20240923025326.10467-1-frank.wang@rock-chips.com>
+ <snccizbw6thn3lhwad4xppp7vqii4p56ttl2gufwc3ke7vfckf@e4b7nvwwtdfr>
+ <1f996322-e6f6-4dd5-a1d7-c2bde92c876b@rock-chips.com>
+ <e77cab18-155a-4174-bca0-5ff1ce1d2b6f@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -106,76 +106,80 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <87146372-6d05-4994-8f64-47f4cb07e2b4@gmail.com>
+In-Reply-To: <e77cab18-155a-4174-bca0-5ff1ce1d2b6f@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 25/09/2024 04:09, Frank Wang wrote:
-> Hi Conor,
+On 24/09/2024 09:56, Krzysztof Kozlowski wrote:
+> On 24/09/2024 04:24, Frank Wang wrote:
+>> Hi Krzysztof,
+>> On 2024/9/23 17:31, Krzysztof Kozlowski wrote:
+>>> On Mon, Sep 23, 2024 at 10:53:25AM +0800, Frank Wang wrote:
+>>>> Add compatible for the USB2 phy in the Rockchip RK3576 SoC.
+>>>>
+>>>> Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
+>>>> ---
+>>>>   .../devicetree/bindings/phy/rockchip,inno-usb2phy.yaml | 10 +++++++++-
+>>>>   1 file changed, 9 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml b/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
+>>>> index 5254413137c64..214917e55c0b6 100644
+>>>> --- a/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
+>>>> +++ b/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
+>>>> @@ -20,6 +20,7 @@ properties:
+>>>>         - rockchip,rk3366-usb2phy
+>>>>         - rockchip,rk3399-usb2phy
+>>>>         - rockchip,rk3568-usb2phy
+>>>> +      - rockchip,rk3576-usb2phy
+>>>>         - rockchip,rk3588-usb2phy
+>>>>         - rockchip,rv1108-usb2phy
+>>>>   
+>>>> @@ -34,10 +35,16 @@ properties:
+>>>>       const: 0
+>>>>   
+>>>>     clocks:
+>>>> -    maxItems: 1
+>>>> +    minItems: 1
+>>>> +    items:
+>>>> +      - description: phyclk - PHY input reference clocks.
+>>>> +      - description: aclk and aclk_slv are optional and used for USB MMU.
+>>>>   
+>>>>     clock-names:
+>>>> +    minItems: 1
+>>>>       const: phyclk
+>>>> +    const: aclk
+>>>> +    const: aclk_slv
+>>> Please test... Not sure what you wanted to achieve here, but maybe
+>>> oneOf?
+>>
+>> The "aclk" and "aclk_slv" clocks are new in RK3576, you mean the changes 
+>> should be like the below?
+>>
+>> @@ -34,10 +35,20 @@ properties:
+>>       const: 0
+>>
+>>     clocks:
+>> -    maxItems: 1
+>> +    minItems: 1
+>> +    maxItems: 3
+>>
+>>     clock-names:
+>> -    const: phyclk
+>> +    minItems: 1
+>> +    maxItems: 3
+>> +    items:
+>> +      oneOf:
+>> +        - description: PHY input reference clocks.
+>> +          const: phyclk
+>> +        - description: aclk for USB MMU.
+>> +          const: aclk
+>> +        - description: aclk_slv for USB MMU.
+>> +          const: aclk_slv
 > 
-> On 2024/9/25 0:11, Conor Dooley wrote:
->> On Tue, Sep 24, 2024 at 04:55:09PM +0800, Frank Wang wrote:
->>> From: Frank Wang <frank.wang@rock-chips.com>
->>>
->>> Add compatible for the USB2 phy in the Rockchip RK3576 SoC.
->>>
->>> Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
->>> ---
->>> Changelog:
->>> v2:
->>>   - Categorize clock names by oneOf keyword.
->>>
->>> v1:
->>>   - https://patchwork.kernel.org/project/linux-phy/patch/20240923025326.10467-1-frank.wang@rock-chips.com/
->>>
->>>   .../bindings/phy/rockchip,inno-usb2phy.yaml      | 16 ++++++++++++++--
->>>   1 file changed, 14 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml b/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
->>> index 5254413137c64..8af4e0f8637fc 100644
->>> --- a/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
->>> +++ b/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
->>> @@ -20,6 +20,7 @@ properties:
->>>         - rockchip,rk3366-usb2phy
->>>         - rockchip,rk3399-usb2phy
->>>         - rockchip,rk3568-usb2phy
->>> +      - rockchip,rk3576-usb2phy
->>>         - rockchip,rk3588-usb2phy
->>>         - rockchip,rv1108-usb2phy
->>>   
->>> @@ -34,10 +35,20 @@ properties:
->>>       const: 0
->>>   
->>>     clocks:
->>> -    maxItems: 1
->>> +    minItems: 1
->>> +    maxItems: 3
->>>   
->>>     clock-names:
->>> -    const: phyclk
->>> +    minItems: 1
->>> +    maxItems: 3
->> clock-names isn't a required property, you can't allow jumbling the order
->> like this does without breaking the ABI. Why can't the new device have
->> phyclk in position 1?
-> 
-> I sent a draft changes in patch v1 comments which put the "phyclk" in 
+> Nope, you just messed the order. Order is strict.
 
-No, you did not. You sent buggy code which was never tested.
-
-> position 1, Krzysztof said I have messed the order, so I reorder them in v2.
-
-No, I did not. I said your current code (from your reply or patch v2)
-messes the order. Even though I sent you reply that this code is wrong,
-you still decided to ignore my feedback and send it.
-
-To be clear:
-NAK
-
-> Did I misunderstand? anyway, should the changes like the below?
-
-Read all the answers again instead of putting wrong words to wrong patches.
-
+And you still sent v2 with this messed order. No. Order must be strict.
+Cannot be oneOf.
 
 Best regards,
 Krzysztof
