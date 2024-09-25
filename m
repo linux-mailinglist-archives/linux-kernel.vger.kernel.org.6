@@ -1,203 +1,149 @@
-Return-Path: <linux-kernel+bounces-339557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E67D59866E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:29:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 825D69866ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:31:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C9CC1F25391
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:29:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30377285A00
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2FE51428E7;
-	Wed, 25 Sep 2024 19:29:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63B313EFF3;
+	Wed, 25 Sep 2024 19:31:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="IgJA9hvV"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ezqRXrmU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9582E1EEE9;
-	Wed, 25 Sep 2024 19:29:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1FF1D5ABE;
+	Wed, 25 Sep 2024 19:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727292578; cv=none; b=D8aDBeT8WWT/9qfQ5pzi/QS42re4Mj5WwJfI1bTrnsIgUt57nxAsP9FAHCInqzVwiQ+HHia0my01U9VAT3uAxc8n2gC92478VtiM6J3tlNNDxO9Q7furGDjdsPu3M1CKkb/1e3V/RO7a2w4CPzkPFHV5xOKtB3aZ52jIAjtz+so=
+	t=1727292687; cv=none; b=cfiuEcXeguqoKQJHti09Tt+ErOeTyuJT8XX2swO7HIan71f4XW5SjcqqoxkcbBk/lvRyVkBeEYO4E4HLyfd8SrLU0rpopeOUBwXLx+5uZsy2cIKZ3JVvBfyy3yYM3qpwYsUe2AQJk9MK/pe96cR95kId6amHZKUEJLD5UN17x/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727292578; c=relaxed/simple;
-	bh=zd9CIfWqD2a5Xm03ZG5N5wiQjOljUnCdd/64SUOKojU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KwdIgs+C6RXlcQGSw58vUTnK6Czu6Bmd+wMh5AeOTc9bdAaRadWKiW8j5dPeLM2yajhG7xi811h1fz8kH8/dBXQBBKU/TBe8gKgMCsRc4aHLQpCEz+8FxldbLMUEUT7gNTT2YSLXkMFDuPyN4I8F5m1UhV1uJwtO1QFYYU/LAns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=IgJA9hvV; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D73717E2;
-	Wed, 25 Sep 2024 21:28:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1727292487;
-	bh=zd9CIfWqD2a5Xm03ZG5N5wiQjOljUnCdd/64SUOKojU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IgJA9hvV92Bi30xQYz0EcSAjPqhBhyAjUzWoOjPiA2KQ4RONXgxigHoGh0UUPgCqr
-	 /y9q3hyf0NE55xSj0vimUOwhLXej1dt/yyvZSLJLw/ZZy3h9qzX3FTo2Wy6lU/Z26a
-	 WM72cq0mnWa4bxENtR53SQdgVAMIXNRg99P/keQY=
-Date: Wed, 25 Sep 2024 22:29:32 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: Guenter Roeck <linux@roeck-us.net>, Tomasz Figa <tfiga@chromium.org>,
-	Alan Stern <stern@rowland.harvard.edu>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Sean Paul <seanpaul@chromium.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Ricardo Ribalda <ribalda@chromium.org>
-Subject: Re: [PATCH v6 1/4] media: uvcvideo: Stop stream during unregister
-Message-ID: <20240925192932.GF30399@pendragon.ideasonboard.com>
-References: <20240614-guenter-mini-v6-0-7b7fdc3b21b3@chromium.org>
- <20240614-guenter-mini-v6-1-7b7fdc3b21b3@chromium.org>
- <f4c49ccf-9dc9-475a-8fc9-4ef4c85a729a@xs4all.nl>
- <318aa048-ffdf-4379-929b-54358b018c94@xs4all.nl>
+	s=arc-20240116; t=1727292687; c=relaxed/simple;
+	bh=Zw8NRhd8Kj3Wp7zD5zXcK8TNN/qjT42LyVLnuxRSETM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AVrteezevOecWC1JVKKjnpUrviFgbo+kTbv8wCGiOXx7mH160/+i7ZyhYXk4qRx0he20G4kzW6gmW5yy2mUnnpJ/NSoN9yaSgxoEOEKG4iTuBKUfWIaSAPkEhqC8PBhfOm5Ar97Jju8Y7FvKgaJw+v5HvDRc18qikxdpEQrjik4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ezqRXrmU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36D22C4CEC3;
+	Wed, 25 Sep 2024 19:31:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727292685;
+	bh=Zw8NRhd8Kj3Wp7zD5zXcK8TNN/qjT42LyVLnuxRSETM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ezqRXrmU476GNOoLcrgM5RmFHqTyDDa+JjHTgd+rnzSaSaodmLwLUupuu5qN2f+kQ
+	 A0a0UU6+j/IlWSswt9juu7QfXKuz5e92fbmjgdFg1YbJMKOiF3FlFxCnglq0cCI2O/
+	 f8Y5Ya6z+Wgb6AsdjNMkX3YiLqQkNJBDPD1qfOYYvC+UEiXVv+w8weBsiB7hYQsX6Z
+	 7NNMOXVaQWHDu3lVk3sYSvlScK+KuVTrsZjQIPFXmBPS/Qz1pSKYDrs/bn4UhX10zk
+	 AWyTVKhe2+MUqe28uCNyeiZc3U+JtlmZ8j3hoJbxz3ZrVb8R/L1XI/DFQq7cwx8Frb
+	 blf1qBViyo9QA==
+Message-ID: <a3777c1f-b01d-41eb-acd3-61b0814668a2@kernel.org>
+Date: Wed, 25 Sep 2024 21:31:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <318aa048-ffdf-4379-929b-54358b018c94@xs4all.nl>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] dt-bindings: mmc: convert
+ amlogic,meson-mx-sdio.txt to dtschema
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+ Jerome Brunet <jbrunet@baylibre.com>, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240920-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v2-0-5aa8bdfe01af@linaro.org>
+ <20240920-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v2-3-5aa8bdfe01af@linaro.org>
+ <mbc2cacow73vmwn3w42aucq6x6xijbpgustkv3v6etgv35xih7@truf2rbgf3vo>
+ <CAFBinCDu0P8QEvxrUdXXSVCn-1061fjyhYd2nve9QCCvXmoe5Q@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CAFBinCDu0P8QEvxrUdXXSVCn-1061fjyhYd2nve9QCCvXmoe5Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Hans,
-
-On Wed, Sep 25, 2024 at 11:50:41AM +0200, Hans Verkuil wrote:
-> On 25/09/2024 10:32, Hans Verkuil wrote:
-> > Hi Laurent,
-> > 
-> > We discussed this patch last week, and you thought that there was still
-> > a race condition if the uvc device was unplugged while an application was
-> > in the VIDIOC_DQBUF call waiting for a buffer to arrive (so the vb2 wait_prepare
-> > op is called, which unlocks the serialization mutex).
-> > 
-> > I'll go through the code below, explaining why that isn't an issue.
+On 25/09/2024 19:29, Martin Blumenstingl wrote:
+> Hi Krzysztof,
 > 
-> Update: I added an extra check for this scenario to the test-media script to make
-> sure we catch any potential regressions in how this is handled in the core.
+> On Tue, Sep 24, 2024 at 11:18 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> [...]
+>>> +        enum: [0, 1, 2]
+>>> +
+>>> +      bus-width:
+>>> +        enum: [1, 4]
+>>> +
+>>> +    unevaluatedProperties: false
+>>
+>> Hm, I wonder why not all slots are defined in your DTS? Why not all of
+>> them are required? I assume the slots are there always, as part of the
+>> controller.
+>>
+>> Is this because of driver limitation mentioned in the old binding?
+> The MMC core (still) has a limitation of only supporting one slot per
+> controller - so a limitation will stay in place.
+> 
+> However, the driver (drivers/mmc/host/meson-mx-sdio.c) uses
+> of_get_compatible_child(), meaning it will also pick the first child
+> node with the correct compatible string, even if it has status =
+> "disabled".
+> I can send a patch to reduce the scope of this limitation: all slots
+> can be defined but only the first enabled one is used.
+> What do you think?
 
-I'm recovering from Vienna and I'll review your explanation towards the
-end of the week.
+For the conversion it can stay as is. Follow-up patches allowing
+multiple slots, adding them in DTC etc. are nice, but not necessary here.
 
-Ricardo, patches 2/4 to 4/4 are not controversial. 2/4 needs a new
-version to address small issues. As far as I understand, they don't
-depend on 1/4. Would you submit a new version of them that I can merge
-right away ?
+Best regards,
+Krzysztof
 
-> > On 14/06/2024 14:41, Ricardo Ribalda wrote:
-> >> uvc_unregister_video() can be called asynchronously from
-> >> uvc_disconnect(). If the device is still streaming when that happens, a
-> >> plethora of race conditions can occur.
-> >>
-> >> Make sure that the device has stopped streaming before exiting this
-> >> function.
-> >>
-> >> If the user still holds handles to the driver's file descriptors, any
-> >> ioctl will return -ENODEV from the v4l2 core.
-> >>
-> >> This change makes uvc more consistent with the rest of the v4l2 drivers
-> >> using the vb2_fop_* and vb2_ioctl_* helpers.
-> >>
-> >> Reviewed-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-> >> Suggested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-> >> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> >> ---
-> >>  drivers/media/usb/uvc/uvc_driver.c | 32 +++++++++++++++++++++++++++++++-
-> >>  1 file changed, 31 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> >> index bbd90123a4e7..55132688e363 100644
-> >> --- a/drivers/media/usb/uvc/uvc_driver.c
-> >> +++ b/drivers/media/usb/uvc/uvc_driver.c
-> >> @@ -1908,11 +1908,41 @@ static void uvc_unregister_video(struct uvc_device *dev)
-> >>  	struct uvc_streaming *stream;
-> >>  
-> >>  	list_for_each_entry(stream, &dev->streams, list) {
-> >> +		/* Nothing to do here, continue. */
-> >>  		if (!video_is_registered(&stream->vdev))
-> >>  			continue;
-> >>  
-> >> +		/*
-> >> +		 * For stream->vdev we follow the same logic as:
-> >> +		 * vb2_video_unregister_device().
-> >> +		 */
-> >> +
-> >> +		/* 1. Take a reference to vdev */
-> >> +		get_device(&stream->vdev.dev);
-> > 
-> > This ensures that the device refcount won't go to 0 if video_unregister_device
-> > is called (which calls put_device).
-> > 
-> > But note that if an application called VIDIOC_DQBUF and is waiting for a buffer,
-> > then that open filehandle also called get_device(). So while that application is
-> > waiting, the device refcount will never go to 0.
-> > 
-> >> +
-> >> +		/* 2. Ensure that no new ioctls can be called. */
-> >>  		video_unregister_device(&stream->vdev);
-> >> -		video_unregister_device(&stream->meta.vdev);
-> >> +
-> >> +		/* 3. Wait for old ioctls to finish. */
-> >> +		mutex_lock(&stream->mutex);
-> > 
-> > If VIDIOC_DQBUF is waiting for a buffer to arrive, then indeed we can take this
-> > lock here. So in that case this won't wait for that specific ioctl to finish.
-> > 
-> >> +
-> >> +		/* 4. Stop streaming. */
-> >> +		uvc_queue_release(&stream->queue);
-> > 
-> > This will __vb2_queue_cancel() which will stop streaming and wake up the wait for
-> > buffers in VIDIOC_DQBUF. It will try to lock this mutex again, and sleeps while
-> > waiting for the mutex to become available.
-> > 
-> >> +
-> >> +		mutex_unlock(&stream->mutex);
-> > 
-> > At this point it can take the mutex again. But since q->streaming is now false,
-> > (due to the __vb2_queue_cancel call) this will return an error which is returned
-> > to userspace.
-> > 
-> >> +
-> >> +		put_device(&stream->vdev.dev);
-> > 
-> > This releases the reference we took earlier. If the application has already closed
-> > the filehandle, then this will release all memory. If the application still has the
-> > fh open, then only when it closes that fh will the memory be released.
-> > 
-> > Conclusion: there is no race condition here, this is handled correctly by the core.
-> > 
-> >> +
-> >> +		/*
-> >> +		 * For stream->meta.vdev we can directly call:
-> >> +		 * vb2_video_unregister_device().
-> >> +		 */
-> >> +		vb2_video_unregister_device(&stream->meta.vdev);
-> > 
-> > Perhaps a patch adding more comments to the vb2_video_unregister_device()
-> > function might help document this sequence better.
-> > 
-> > Regards,
-> > 
-> > 	Hans
-> > 
-> >> +
-> >> +		/*
-> >> +		 * Now both vdevs are not streaming and all the ioctls will
-> >> +		 * return -ENODEV.
-> >> +		 */
-> >>  
-> >>  		uvc_debugfs_cleanup_stream(stream);
-> >>  	}
-> >>
-
--- 
-Regards,
-
-Laurent Pinchart
 
