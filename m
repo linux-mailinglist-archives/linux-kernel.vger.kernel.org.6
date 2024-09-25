@@ -1,263 +1,103 @@
-Return-Path: <linux-kernel+bounces-339086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA73598602D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:16:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 168EE98602F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:16:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A0C11F265DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:16:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B48B41F2656A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:16:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C9918CBF9;
-	Wed, 25 Sep 2024 12:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF94199FAC;
+	Wed, 25 Sep 2024 12:42:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S4Dpmm5v"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="gE0b4qHd"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A147A189BA5;
-	Wed, 25 Sep 2024 12:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F39189BA5
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 12:42:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727268142; cv=none; b=qGUPv6klZ9Ap5E8KvkeDeuZyVECkqdBfs67P0ZHuAYmEAPFA08om96fS1LDJsJjQzL4AcejP3lMBnsu5EAuq7W9Nt5kRa4K60ZgMw6op0uRWH8IzS/rHZbBYi/7axsGuqns2HD+HVcehDqLAVq8c3xtEqAQRJ5ougk7pEcLnJR4=
+	t=1727268157; cv=none; b=fhKHeQ/CSM/ZRhAPF48dDThvL3VGLiR3rWji3jnjx99NraqbTuVAlxMZmq5q9SvIX3jJOhBwlF3N/94R9prG3DYzv6OOqlNERdu3KZ2x04n4L+D+XwqlUnrUu7OxZcGuSKVNDpUFio3sfA+H0V6Ms4x9oeCwsvzjgtpHaKxfM+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727268142; c=relaxed/simple;
-	bh=WXAQYtZyqCVW4wBSXVV7iEu+jmbm65WGzIo4hviMllI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h0QGZ0vDqsw20I+xPk9fq1GnbstyPabArTlrlEkVq8sRSADtx3ojWa04ZbdT7WGoP/myrvVJdT2VIMQLCtsQQB/PWrZfxiQQJv9Ytj2p8NxaC36KSpVckPom99ErQXb/Oj/1qrkS6Rk/hpRV/xCY1ROEKsSUO/QpVl+BYowG/rU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S4Dpmm5v; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727268140; x=1758804140;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WXAQYtZyqCVW4wBSXVV7iEu+jmbm65WGzIo4hviMllI=;
-  b=S4Dpmm5vMVfO8gF1Dr5GTZ+0j6JI535td0TiJHuxJpM/i3PT9swnTHc1
-   KPvaJtIuc2Wqf5ZjUBeZsbz48J6cztfs+HDLoEU6XOX+/2xB0c2DygxgA
-   Sp9sBXBQi8B3KYmdzrbuRUOVUADbEvUXVG/7bGtcgtsmeK6e/g7RYvonY
-   t2BargIdjBsXSv9A7Fghceg3JfgcnIIydzucFB2Ov1Wo7s38ic/pA2Szb
-   sPYRVuYCMrcISgJkuICxNYzs5mB+0xPHKpVD8loUjCItm0yG8JsOi/kG6
-   6z4KBXpVVAy+pqAVb48iEmnNQQYvIu02ioQJ1p3wzdhB3bJAuKi2Dhgbf
-   g==;
-X-CSE-ConnectionGUID: cJc+V9J4S3eCfHZesrtEow==
-X-CSE-MsgGUID: 3ur+eU46TiCKgAsCXDzfPQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11206"; a="26176194"
-X-IronPort-AV: E=Sophos;i="6.10,257,1719903600"; 
-   d="scan'208";a="26176194"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 05:42:20 -0700
-X-CSE-ConnectionGUID: NUqdowHsSfCR8WZAZzCtfg==
-X-CSE-MsgGUID: /B3t6mycQySzKBvhQktK+w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,257,1719903600"; 
-   d="scan'208";a="71419940"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 25 Sep 2024 05:42:18 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1stRLT-000JXz-2K;
-	Wed, 25 Sep 2024 12:42:15 +0000
-Date: Wed, 25 Sep 2024 20:41:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Trevor Gamblin <tgamblin@baylibre.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pwm: axi-pwmgen: Create a dedicated function for getting
- driver data from a chip
-Message-ID: <202409252009.ZbXikiQJ-lkp@intel.com>
-References: <20240923125418.16558-2-u.kleine-koenig@baylibre.com>
+	s=arc-20240116; t=1727268157; c=relaxed/simple;
+	bh=El6oWbR7rRi08IjrUaM+P5VyJ0OlRZUZ+xlM00lD954=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=WkmQpGJJVEJcq9lvaKMwUd2UHuy/pW5KGoJWv+seDVjuGhVBSbGJp/QcHqC4dD3dfjnj3McQckN4ODppeZZrdHaEUWwhLTK+KKeQU/LAZ8bTISByrxSNAWljJYq9KC/rygWsedCJb4gz5m5IPoRIxAqs25kBnJIZKzSzBzLlyy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=gE0b4qHd; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1727268150; bh=OMizEf/W81z9x4fR7NsGieDGacS+HY7RbXRbuVcvaEY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=gE0b4qHdEHr+ihrmERa76ZAAYX8ofY5c3z9iaJaXRgD9MJJ6h00mLO2XQNWzKwsI/
+	 160Ldj/uPTYRyLEnM5eXMZBl5JVtlmkuqh6BM24d9jqQrKvsKHTsdgqpT5aaSnn6kF
+	 xasCLmJE5OKIDXwm+2rKBo81s/qiTT0no2mh+FkM=
+Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
+	by newxmesmtplogicsvrszb9-1.qq.com (NewEsmtp) with SMTP
+	id A9CA50CD; Wed, 25 Sep 2024 20:42:28 +0800
+X-QQ-mid: xmsmtpt1727268148tqaobinr0
+Message-ID: <tencent_5C26C693770376096443A5A440F760776D05@qq.com>
+X-QQ-XMAILINFO: M0PjjqbLT90wa3B8JXO/EbcnUkVDZPJbyEo2MkLD4fMuzORIDYLQaS3uYhy3Sj
+	 bt3wI/RS0GhKgVX5coZQhQImdqksOl94KTplZQZprUu3Wu0x/IVTxtUlX9OK1cioLcvesOEKTjcb
+	 6EMqqPBoLg/meCaWWWCM+iYsVNXSzuL5R2O0rNAFs42Kjn/L7ZSPCZmMhtTItLv7ybq6PrVg9t4R
+	 PVpCifUsvzxNJvW8PNVYahRko/aGiteslTuEdFMKsxnlcOoK0wK1iQ6+fxAkdcth6mG4HVY1Yh4y
+	 QgJdgxok+SBX2wU6Crt7EspKAaDE6s0RspU7fQvRFe5rn2kKNtbUjVO/jGwkf5yjtyumsO/60G9/
+	 UgpmgZl0wBPoB0zYZlhjGVKJPuzhpIT4M4rgwVIUIiD+dVAiXrN7G66xoa4hoRKQ3Jep0v7/05wO
+	 3BCg7bMxP2entX5h/T1Gbe0PzUxROKN7JgdEa3/9Eb3xVsgJTGt4Ty5SgO790VVXeLq6tTxcwhjx
+	 tXws+FBw3qiDXbwjgVjl3CCmABuNO5lRG316f3jEspNY5SHWQcYUhog7AMciwYf8lBRlbOGJri7e
+	 gAuWy5PWrqx/dH3Nj+SBDdOhBoIwCwuVBOTOGhEpwMBPTCqfWv3MapZ7zrDgG++P9FfNZtEctgbj
+	 WxooCbTl6DvIEd5koeyJPhIP9LtwMcnCfLgDGfPKeOUf3Ec4S9qcgBI5O+d0Ute7nxiX1ZSmp5Uh
+	 IOKBuOKbndsVZ2W1XhYJyiQXLSoQKFA/sMADWPigGtuugYNkyb747fiZEPRcoEmbghMZYXVoJM+8
+	 1gW5s2o2j+F/gBvlPwjdWnCZaeFh0JObW6BpqEdmFcT764IS1tLQuIsWwnFSyQgJzWQ4YvdpRnN4
+	 SGnt/sDxL+oNXTgBinwdibTI24l+F0Csi/N7dqR+BiEqJa8hlBbiPT7HkiJJ2Vug==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+c0360e8367d6d8d04a66@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bcachefs?] kernel BUG in vfs_get_tree
+Date: Wed, 25 Sep 2024 20:42:29 +0800
+X-OQ-MSGID: <20240925124228.1494226-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <66f33aad.050a0220.457fc.0030.GAE@google.com>
+References: <66f33aad.050a0220.457fc.0030.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240923125418.16558-2-u.kleine-koenig@baylibre.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Uwe,
+kthread_run return -EINTR in read_btree_nodes(), it needs to be returnned
+to bch2_fs_recovery(), not back to "ret = IS_ERR_OR_NULL(t)".
 
-kernel test robot noticed the following build errors:
+#syz test
 
-[auto build test ERROR on 62f92d634458a1e308bb699986b9147a6d670457]
+diff --git a/fs/bcachefs/btree_node_scan.c b/fs/bcachefs/btree_node_scan.c
+index b28c649c6838..aa0f84d35895 100644
+--- a/fs/bcachefs/btree_node_scan.c
++++ b/fs/bcachefs/btree_node_scan.c
+@@ -280,12 +280,15 @@ static int read_btree_nodes(struct find_btree_nodes *f)
+ 			percpu_ref_put(&ca->io_ref);
+ 			closure_put(&cl);
+ 			f->ret = ret;
+-			bch_err(c, "error starting kthread: %i", ret);
++			bch_err(c, "error starting kthread: %i %d", ret, PTR_ERR(t));
+ 			break;
+ 		}
+ 	}
+ err:
+ 	closure_sync(&cl);
++	if (IS_ERR(t))
++		return PTR_ERR(t);
++
+ 	return f->ret ?: ret;
+ }
+ 
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Uwe-Kleine-K-nig/pwm-axi-pwmgen-Create-a-dedicated-function-for-getting-driver-data-from-a-chip/20240923-205606
-base:   62f92d634458a1e308bb699986b9147a6d670457
-patch link:    https://lore.kernel.org/r/20240923125418.16558-2-u.kleine-koenig%40baylibre.com
-patch subject: [PATCH] pwm: axi-pwmgen: Create a dedicated function for getting driver data from a chip
-config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20240925/202409252009.ZbXikiQJ-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 7773243d9916f98ba0ffce0c3a960e4aa9f03e81)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240925/202409252009.ZbXikiQJ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409252009.ZbXikiQJ-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/pwm/pwm-axi-pwmgen.c:25:
-   In file included from include/linux/io.h:14:
-   In file included from arch/s390/include/asm/io.h:93:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
-     102 | #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
-         |                                                      ^
-   In file included from drivers/pwm/pwm-axi-pwmgen.c:25:
-   In file included from include/linux/io.h:14:
-   In file included from arch/s390/include/asm/io.h:93:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
-     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
-         |                                                      ^
-   In file included from drivers/pwm/pwm-axi-pwmgen.c:25:
-   In file included from include/linux/io.h:14:
-   In file included from arch/s390/include/asm/io.h:93:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     693 |         readsb(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     701 |         readsw(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     709 |         readsl(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     718 |         writesb(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     727 |         writesw(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     736 |         writesl(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   In file included from drivers/pwm/pwm-axi-pwmgen.c:26:
-   In file included from include/linux/module.h:19:
-   In file included from include/linux/elf.h:6:
-   In file included from arch/s390/include/asm/elf.h:181:
-   In file included from arch/s390/include/asm/mmu_context.h:11:
-   In file included from arch/s390/include/asm/pgalloc.h:18:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     505 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     512 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     525 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
->> drivers/pwm/pwm-axi-pwmgen.c:58:9: error: returning 'void *' from a function with incompatible result type 'struct axi_pwmgen_ddata'
-      58 |         return pwmchip_get_drvdata(chip);
-         |                ^~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/pwm/pwm-axi-pwmgen.c:64:27: error: initializing 'struct axi_pwmgen_ddata *' with an expression of incompatible type 'struct axi_pwmgen_ddata'
-      64 |         struct axi_pwmgen_ddata *ddata = axi_pwmgen_ddata_from_chip(chip);
-         |                                  ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/pwm/pwm-axi-pwmgen.c:108:27: error: initializing 'struct axi_pwmgen_ddata *' with an expression of incompatible type 'struct axi_pwmgen_ddata'
-     108 |         struct axi_pwmgen_ddata *ddata = axi_pwmgen_ddata_from_chip(chip);
-         |                                  ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   16 warnings and 3 errors generated.
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for OMAP2PLUS_MBOX
-   Depends on [n]: MAILBOX [=y] && (ARCH_OMAP2PLUS || ARCH_K3)
-   Selected by [m]:
-   - TI_K3_M4_REMOTEPROC [=m] && REMOTEPROC [=y] && (ARCH_K3 || COMPILE_TEST [=y])
-
-
-vim +58 drivers/pwm/pwm-axi-pwmgen.c
-
-    55	
-    56	static struct axi_pwmgen_ddata axi_pwmgen_ddata_from_chip(struct pwm_chip *chip)
-    57	{
-  > 58		return pwmchip_get_drvdata(chip);
-    59	}
-    60	
-    61	static int axi_pwmgen_apply(struct pwm_chip *chip, struct pwm_device *pwm,
-    62				    const struct pwm_state *state)
-    63	{
-  > 64		struct axi_pwmgen_ddata *ddata = axi_pwmgen_ddata_from_chip(chip);
-    65		unsigned int ch = pwm->hwpwm;
-    66		struct regmap *regmap = ddata->regmap;
-    67		u64 period_cnt, duty_cnt;
-    68		int ret;
-    69	
-    70		if (state->polarity != PWM_POLARITY_NORMAL)
-    71			return -EINVAL;
-    72	
-    73		if (state->enabled) {
-    74			period_cnt = mul_u64_u64_div_u64(state->period, ddata->clk_rate_hz, NSEC_PER_SEC);
-    75			if (period_cnt > UINT_MAX)
-    76				period_cnt = UINT_MAX;
-    77	
-    78			if (period_cnt == 0)
-    79				return -EINVAL;
-    80	
-    81			ret = regmap_write(regmap, AXI_PWMGEN_CHX_PERIOD(ch), period_cnt);
-    82			if (ret)
-    83				return ret;
-    84	
-    85			duty_cnt = mul_u64_u64_div_u64(state->duty_cycle, ddata->clk_rate_hz, NSEC_PER_SEC);
-    86			if (duty_cnt > UINT_MAX)
-    87				duty_cnt = UINT_MAX;
-    88	
-    89			ret = regmap_write(regmap, AXI_PWMGEN_CHX_DUTY(ch), duty_cnt);
-    90			if (ret)
-    91				return ret;
-    92		} else {
-    93			ret = regmap_write(regmap, AXI_PWMGEN_CHX_PERIOD(ch), 0);
-    94			if (ret)
-    95				return ret;
-    96	
-    97			ret = regmap_write(regmap, AXI_PWMGEN_CHX_DUTY(ch), 0);
-    98			if (ret)
-    99				return ret;
-   100		}
-   101	
-   102		return regmap_write(regmap, AXI_PWMGEN_REG_CONFIG, AXI_PWMGEN_LOAD_CONFIG);
-   103	}
-   104	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
