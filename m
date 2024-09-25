@@ -1,154 +1,379 @@
-Return-Path: <linux-kernel+bounces-339376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1340D986421
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:50:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41BEB986424
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:50:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43FFB1C26866
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:50:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1B8428F2E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:50:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD841B963;
-	Wed, 25 Sep 2024 15:50:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4D4208D1;
+	Wed, 25 Sep 2024 15:50:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="NoB6Bnv6"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="BNpAv7r9"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B90645957
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 15:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F051B963;
+	Wed, 25 Sep 2024 15:50:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727279400; cv=none; b=AabgPqjXPprUdrjWFMh3Cr3MZHDDOJ2WT2K361t3MPCciUVRKtgmjuwLDRtPQmXq9WR3IEff2SQwVp7sVkeG1cMT1mgsSSx6QySlFjswSK9CNssu/+BUOsygiGDDbUdRpN/rjFrQNC+YfLMxOfbj4JuEdcPET7gVr5DIpU3Z6xM=
+	t=1727279441; cv=none; b=NLgieocGAMImqE7qXxkpVx9Ogoy1zp/yWazvDL0E+MPBUut50lT25wvhd0ITaaFM8jpOoBaUFOQpx9S/6/O432XP2q2Cxh0OtmmvM972pVlId6zqjps847CpFZ3Vzsw8vwAe3NNdg5kEK1VVHLLVx9aRIhx8gg8p4OncX8joOVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727279400; c=relaxed/simple;
-	bh=9TsPcuUYM+Ss6zqclxdoIjmneAaFI96S82iLraC7iZc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OC6yD6vsJuirIWsdgMC7FUq1Gl6y+gHRc8neZn35iRu8G/XIoAn1VYCk6tfZ5non4o354rwy+VlYbHsOVw9gFL3nOT/nUYLI+JBVd2lEzBwmZLcJiCNaS9zll5R3AraW5e3tpwc1mkN0Mf7XxujFQTGOV/Ba5OuOTTgfmFYA9G8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=NoB6Bnv6; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3787f30d892so4026181f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:49:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727279395; x=1727884195; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=37Uo+LYHc9uDv5WXDoS/QUjwvEuwcoXI9DaReh1Q9jo=;
-        b=NoB6Bnv6+8gZvkasvz6ezjeJ6jf72qUM4SFrcvGso0e+M56jGWIzPTPuvVtt92cMVs
-         3zqotfMgaLviO/A/oS89Gb47QPDQEUjdhY3OTKyIInv4+l0L7eSTtlE/GACsxTARl4Qi
-         aEbuRm4fyhKnbTdmeRRZZXhCoVY7y3VlUSBTs42ts0IL8AS8HbxWKsnb/gcNNpD+1IRx
-         Bd7YWUgtEzemkFdumDCserQSnIoosACWtzlpUqHwv8cJioND3617C08W76KZ1pnT/94s
-         kX9q8dhO2ytxsy+08nQG+i5taIbpr5cRRVeg3PcDPhvHwQET4NGjJl3Uy6wcYGbJqLdY
-         5KLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727279395; x=1727884195;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=37Uo+LYHc9uDv5WXDoS/QUjwvEuwcoXI9DaReh1Q9jo=;
-        b=H+eZvB839pj2FWqjUfWdzamZFm45kMRf4pTyKBVCY9GWTp6TQPqq+0WQy7HFbkILrG
-         IKAWOcGCgd3MVX5RPJcqKsSE0QSvKFbba2VkLmVPV/av/kwfkSJFk1gDlUUBjZJplgL4
-         pv/CRHGmHlHJ0fEHy4JQ+YR7GoVtGcHCCwHBFoCJAUb9CFBwAPyYgS00Lbsc3lLtMXkN
-         7GX5JDldvsxSdoRYcyRrc5S6gPGK6VgCchk4WYgGTXTq45nAx8CsMp/pqaIYEI3BJ5cm
-         xjJWLg1pBn872qqBRLbkb9sz9BNHPX30THPSvk5RCyb9LH2UBTmLNPu3cTK2ZV/MYYOi
-         UVNg==
-X-Forwarded-Encrypted: i=1; AJvYcCVA8fqG7l0IU1/XNcn3gZyWW9OXf76ANg3+CGG8C+tiOTX5HKV+hR0ypkl0gocLiusRdUgxwnBoG1OgpPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyq70sGLRKA3vmxNm3y1KVWhvl6DNinD4MgATrUxX/BRY4iD/XV
-	S9wyeaILslsQH3DpyuFFFF6UbNe2keyt8tBShWnouNctjKhd30jpBORF1mT2vH8=
-X-Google-Smtp-Source: AGHT+IEAS0LwFCOdWh/KDz7RDglph2fRnUmoWH+9kNxDyY1e/NNyCJMDVGvV3rFMYpCS8UvnTzLt5Q==
-X-Received: by 2002:adf:f010:0:b0:366:f8e7:d898 with SMTP id ffacd0b85a97d-37cc24cb3d4mr1738982f8f.50.1727279395568;
-        Wed, 25 Sep 2024 08:49:55 -0700 (PDT)
-Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:857b:1996:7ede:6ce4])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37cc85a520esm1475699f8f.61.2024.09.25.08.49.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 08:49:55 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Wed, 25 Sep 2024 17:49:48 +0200
-Subject: [PATCH] clk: meson: meson8b: remove spinlock
+	s=arc-20240116; t=1727279441; c=relaxed/simple;
+	bh=CB+3Lp3VN774vqHi8/oCBn9vplfDccD6BeDeA6L4O4g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LgP8YVhjAyxmeIXhdotzzHzwQkaDZ1pIlLXA1fG62fXZUKdkELSdu8UwQJkgCd4gyVrWx2aWMYmcYdRyf/RgsGaMeEtWIbTP/DSQ7LR7R6LLM16F0ZfBKX72f5QePzEiK5xK9QKsUdAnC069j7ecezpBEM1tz8wRZkYF71fv6iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=BNpAv7r9; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4XDLm51Fzgz9v6Q;
+	Wed, 25 Sep 2024 17:50:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1727279429;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QQf8ojWSXWZSZ6MYBGzujgts/DM5JNOMcUzwckxOaIM=;
+	b=BNpAv7r9p6pFXjR/X5j1ZOd09QJPaD38/oxMmMUAOYAyGMwU5Z2EHrSKBYBYsbro8XdWwn
+	7t6sq892Z9CoCO29BfTEUXsGM763nE9U4rMxDd9/C9/CFb1GXSfzF1aPwLtgE4cGyFmNrO
+	CbEIYdj1s8C8fLGPpT7eoAD2qxAPi3+TYGtbh+aubowslCOY5KXR2S/5Kiwl/TLyr0JvX7
+	tV/iyvWjTwqwgM+ZqOM9wOlF7GzawnK0qIFCxFXZYMGqJTx+yQUFAsg09du0YoHRjkuCse
+	6sd1b+hC8BMwhwlZJo5oDQdnM9on+m7mD0pNk2/TMpcsU54knGMETW2E5N3kSw==
+Date: Wed, 25 Sep 2024 17:50:10 +0200
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Tycho Andersen <tycho@tycho.pizza>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Kees Cook <kees@kernel.org>, Jeff Layton <jlayton@kernel.org>, 
+	Chuck Lever <chuck.lever@oracle.com>, Alexander Aring <alex.aring@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Tycho Andersen <tandersen@netflix.com>, Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>
+Subject: Re: [RFC] exec: add a flag for "reasonable" execveat() comm
+Message-ID: <20240925.152228-private.conflict.frozen.trios-TdUGhuI5Sb4v@cyphar.com>
+References: <20240924141001.116584-1-tycho@tycho.pizza>
+ <87msjx9ciw.fsf@email.froward.int.ebiederm.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240925-clk-meson8b-spinlock-v1-1-50b7f2d02d7d@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIABsx9GYC/x3MSwqFMAxA0a1Ixi+gwf9WxIGtqQa1lQZEEPdue
- cMzuPcB5Sis0GcPRL5EJfiE4peBXSe/MMqcDJRTmXdUod03PFiDbw3qKX4PdsPJuNI6Q9R0NaT
- 0jOzk/m+H8X0/Z/yGhmYAAAA=
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Jerome Brunet <jbrunet@baylibre.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1318; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=9TsPcuUYM+Ss6zqclxdoIjmneAaFI96S82iLraC7iZc=;
- b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBm9DEhF0lAj/EqoEAesyRPssexBVC1QtaRwk44F
- aNx1o9GuN2JAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCZvQxIQAKCRDm/A8cN/La
- hZ5wD/9tJin5d1OCx/JB3/3AG+c8jcCTXnA8GtC+HZV3qQkwmHVe2OuLxH5qD7Ex6p2LQYRjevQ
- ejXwTMK13w2M8pwtuEZNyMgVC5vL9/XC/aNEbuDPVPF4UKCFOieBuL9TVY8ak8cFkjh6tDsvIgJ
- 2ozud1HL0QLPPsZ2gSjOdxgPq56dVcVux/EF9TtkeUBF1Njr5IKU/PCWRK3/j7AqhYw4SutZhT3
- XQ3Of3SYPUPnyKdate0pj+y8u8tZJFivol4PzcPab1B9rOO3e7J82WXM4+qO1VBN16rG1FkYdj5
- JkP6cCXz+wxYVSuLAVXDds0H++4kPagnH2eyvU5LimtUf3lXSebQ1JggTuXF2WTTYwnISPt4GYg
- hPp1Qv0jxm6gFfOi4qwZ3qIHciYSR+tUyP/IxEBDsqcuAi3TXx/rn7K9seA/aSCXQ5z9CSCo8Jm
- yUN9G0AJ0kPE4EuvRzxfKWbx/7+nq9v9LM8C8nun8g+LdgFZgsA572bskptKEVpX7BakBoP//bG
- 4TfQT1dGoloaX6FGFVTO6ITuvPa7J51E348wtIKLuzum4L9qscHAeqtNV5PiGVHpgUCZi8GYDU/
- QlUwAT47KIXu23155c042aCPWoAQ+6qZ0Bri2IgaU6y7fnOP2p3TLA5bJr86NGMBQyX7yoWczWl
- MV2jovBeM/j28Gg==
-X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
- fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="zq3wrif6kf5tb34a"
+Content-Disposition: inline
+In-Reply-To: <87msjx9ciw.fsf@email.froward.int.ebiederm.org>
+X-Rspamd-Queue-Id: 4XDLm51Fzgz9v6Q
 
-The spinlock in meson8b clock controller is now only protecting a call to
-regmap_update_bits().
 
-The regmap API already has its own locking system so this spinlock
-is redundant. Remove it.
+--zq3wrif6kf5tb34a
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/meson8b.c | 6 ------
- 1 file changed, 6 deletions(-)
+On 2024-09-24, Eric W. Biederman <ebiederm@xmission.com> wrote:
+> Tycho Andersen <tycho@tycho.pizza> writes:
+>=20
+> > From: Tycho Andersen <tandersen@netflix.com>
+> >
+> > Zbigniew mentioned at Linux Plumber's that systemd is interested in
+> > switching to execveat() for service execution, but can't, because the
+> > contents of /proc/pid/comm are the file descriptor which was used,
+> > instead of the path to the binary. This makes the output of tools like
+> > top and ps useless, especially in a world where most fds are opened
+> > CLOEXEC so the number is truly meaningless.
+> >
+> > This patch adds an AT_ flag to fix up /proc/pid/comm to instead be the
+> > contents of argv[0], instead of the fdno.
+>=20
+> The kernel allows prctl(PR_SET_NAME, ...)  without any permission
+> checks so adding an AT_ flat to use argv[0] instead of the execed
+> filename seems reasonable.
+>=20
+> Maybe the flag should be called AT_NAME_ARGV0.
+>=20
+>=20
+> That said I am trying to remember why we picked /dev/fd/N, as the
+> filename.
+>=20
+> My memory is that we couldn't think of anything more reasonable to use.
+> Looking at commit 51f39a1f0cea ("syscalls: implement execveat() system
+> call") unfortunately doesn't clarify anything for me, except that
+> /dev/fd/N was a reasonable choice.
+>=20
+> I am thinking the code could reasonably try:
+> 	get_fs_root_rcu(current->fs, &root);
+> 	path =3D __d_path(file->f_path, root, buf, buflen);
+>=20
+> To see if a path to the file from the current root directory can be
+> found.  For files that are not reachable from the current root the code
+> still need to fallback to /dev/fd/N.
+>=20
+> Do you think you can investigate that and see if that would generate
+> a reasonable task->comm?
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 5011768c0f4e..96358bc054b5 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -25,8 +25,6 @@
- #include <dt-bindings/clock/meson8b-clkc.h>
- #include <dt-bindings/reset/amlogic,meson8b-clkc-reset.h>
- 
--static DEFINE_SPINLOCK(meson_clk_lock);
--
- struct meson8b_clk_reset {
- 	struct reset_controller_dev reset;
- 	struct regmap *regmap;
-@@ -3709,13 +3707,9 @@ static int meson8b_clk_reset_update(struct reset_controller_dev *rcdev,
- 	if (assert != reset->active_low)
- 		value = BIT(reset->bit_idx);
- 
--	spin_lock_irqsave(&meson_clk_lock, flags);
--
- 	regmap_update_bits(meson8b_clk_reset->regmap, reset->reg,
- 			   BIT(reset->bit_idx), value);
- 
--	spin_unlock_irqrestore(&meson_clk_lock, flags);
--
- 	return 0;
- }
- 
+The problem mentioned during the discussion after the talk was that
+busybox symlinks everything to the same program, so using d_path will
+give somewhat confusing results and so separate behaviour is still
+needed (though to be fair, the current results are also confusing).
 
----
-base-commit: b7fadc62b8d700e14787d26345379e95c86e1684
-change-id: 20240925-clk-meson8b-spinlock-abf4cfb22796
+> If for no other reason than because it would generate a usable result
+> for #! scripts, without /proc mounted.
 
-Best regards,
--- 
-Jerome
+For interpreters, wouldn't there be a race condition where the path
+might change after doing d_path? I don't know if any interpreter
+actually cares about that, but it seems possible that it could lead to
+issues. Though for O_CLOEXEC, the fd will always be closed (as Zbigniew
+said in his talk) so maybe this isn't a problem in practice.
 
+> It looks like a reasonable case can be made that while /dev/fd/N is
+> a good path for interpreters, it is never a good choice for comm,
+> so perhaps we could always use argv[0] if the fdpath is of the
+> form /dev/fd/N.
+>=20
+> All of that said I am not a fan of the implementation below as it has
+> the side effect of replacing /dev/fd/N with a filename that is not
+> usable by #! interpreters.  So I suggest an implementation that affects
+> task->comm and not brpm->filename.
+
+I think only affecting task->comm would be ideal.
+
+> Eric
+>=20
+>=20
+> > Signed-off-by: Tycho Andersen <tandersen@netflix.com>
+> > Suggested-by: Zbigniew J=C4=99drzejewski-Szmek <zbyszek@in.waw.pl>
+> > CC: Aleksa Sarai <cyphar@cyphar.com>
+> > ---
+> > There is some question about what to name the flag; it seems to me that
+> > "everyone wants this" instead of the fdno, but probably "REASONABLE" is=
+ not
+> > a good choice.
+> >
+> > Also, requiring the arg to alloc_bprm() is a bit ugly: kernel-based exe=
+cs
+> > will never use this, so they just have to pass an empty thing. We could
+> > introduce a bprm_fixup_comm() to do the munging there, but then the code
+> > paths start to diverge, which is maybe not nice. I left it this way bec=
+ause
+> > this is the smallest patch in terms of size, but I'm happy to change it.
+> >
+> > Finally, here is a small set of test programs, I'm happy to turn them i=
+nto
+> > kselftests if we agree on an API
+> >
+> > #include <stdio.h>
+> > #include <unistd.h>
+> > #include <stdlib.h>
+> > #include <sys/types.h>
+> > #include <sys/stat.h>
+> > #include <fcntl.h>
+> >
+> > int main(void)
+> > {
+> > 	int fd;
+> > 	char buf[128];
+> >
+> > 	fd =3D open("/proc/self/comm", O_RDONLY);
+> > 	if (fd < 0) {
+> > 		perror("open comm");
+> > 		exit(1);
+> > 	}
+> >
+> > 	if (read(fd, buf, 128) < 0) {
+> > 		perror("read");
+> > 		exit(1);
+> > 	}
+> >
+> > 	printf("comm: %s", buf);
+> > 	exit(0);
+> > }
+> >
+> > #define _GNU_SOURCE
+> > #include <stdio.h>
+> > #include <syscall.h>
+> > #include <stdbool.h>
+> > #include <unistd.h>
+> > #include <fcntl.h>
+> > #include <stdlib.h>
+> > #include <errno.h>
+> > #include <sys/wait.h>
+> >
+> > #ifndef AT_EMPTY_PATH
+> > #define AT_EMPTY_PATH                        0x1000  /* Allow empty rel=
+ative */
+> > #endif
+> >
+> > #ifndef AT_EXEC_REASONABLE_COMM
+> > #define AT_EXEC_REASONABLE_COMM         0x200
+> > #endif
+> >
+> > int main(int argc, char *argv[])
+> > {
+> > 	pid_t pid;
+> > 	int status;
+> > 	bool wants_reasonable_comm =3D argc > 1;
+> >
+> > 	pid =3D fork();
+> > 	if (pid < 0) {
+> > 		perror("fork");
+> > 		exit(1);
+> > 	}
+> >
+> > 	if (pid =3D=3D 0) {
+> > 		int fd;
+> > 		long ret, flags;
+> >
+> > 		fd =3D open("./catprocselfcomm", O_PATH);
+> > 		if (fd < 0) {
+> > 			perror("open catprocselfname");
+> > 			exit(1);
+> > 		}
+> >
+> > 		flags =3D AT_EMPTY_PATH;
+> > 		if (wants_reasonable_comm)
+> > 			flags |=3D AT_EXEC_REASONABLE_COMM;
+> > 		syscall(__NR_execveat, fd, "", (char *[]){"./catprocselfcomm", NULL},=
+ NULL, flags);
+> > 		fprintf(stderr, "execveat failed %d\n", errno);
+> > 		exit(1);
+> > 	}
+> >
+> > 	if (waitpid(pid, &status, 0) !=3D pid) {
+> > 		fprintf(stderr, "wrong child\n");
+> > 		exit(1);
+> > 	}
+> >
+> > 	if (!WIFEXITED(status)) {
+> > 		fprintf(stderr, "exit status %x\n", status);
+> > 		exit(1);
+> > 	}
+> >
+> > 	if (WEXITSTATUS(status) !=3D 0) {
+> > 		fprintf(stderr, "child failed\n");
+> > 		exit(1);
+> > 	}
+> >
+> > 	return 0;
+> > }
+> > ---
+> >  fs/exec.c                  | 22 ++++++++++++++++++----
+> >  include/uapi/linux/fcntl.h |  3 ++-
+> >  2 files changed, 20 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/fs/exec.c b/fs/exec.c
+> > index dad402d55681..36434feddb7b 100644
+> > --- a/fs/exec.c
+> > +++ b/fs/exec.c
+> > @@ -1569,11 +1569,15 @@ static void free_bprm(struct linux_binprm *bprm)
+> >  	kfree(bprm);
+> >  }
+> > =20
+> > -static struct linux_binprm *alloc_bprm(int fd, struct filename *filena=
+me, int flags)
+> > +static struct linux_binprm *alloc_bprm(int fd, struct filename *filena=
+me,
+> > +				       struct user_arg_ptr argv, int flags)
+> >  {
+> >  	struct linux_binprm *bprm;
+> >  	struct file *file;
+> >  	int retval =3D -ENOMEM;
+> > +	bool needs_comm_fixup =3D flags & AT_EXEC_REASONABLE_COMM;
+> > +
+> > +	flags &=3D ~AT_EXEC_REASONABLE_COMM;
+> > =20
+> >  	file =3D do_open_execat(fd, filename, flags);
+> >  	if (IS_ERR(file))
+> > @@ -1590,11 +1594,20 @@ static struct linux_binprm *alloc_bprm(int fd, =
+struct filename *filename, int fl
+> >  	if (fd =3D=3D AT_FDCWD || filename->name[0] =3D=3D '/') {
+> >  		bprm->filename =3D filename->name;
+> >  	} else {
+> > -		if (filename->name[0] =3D=3D '\0')
+> > +		if (needs_comm_fixup) {
+> > +			const char __user *p =3D get_user_arg_ptr(argv, 0);
+> > +
+> > +			retval =3D -EFAULT;
+> > +			if (!p)
+> > +				goto out_free;
+> > +
+> > +			bprm->fdpath =3D strndup_user(p, MAX_ARG_STRLEN);
+> > +		} else if (filename->name[0] =3D=3D '\0')
+> >  			bprm->fdpath =3D kasprintf(GFP_KERNEL, "/dev/fd/%d", fd);
+> >  		else
+> >  			bprm->fdpath =3D kasprintf(GFP_KERNEL, "/dev/fd/%d/%s",
+> >  						  fd, filename->name);
+> > +		retval =3D -ENOMEM;
+> >  		if (!bprm->fdpath)
+> >  			goto out_free;
+> > =20
+> > @@ -1969,7 +1982,7 @@ static int do_execveat_common(int fd, struct file=
+name *filename,
+> >  	 * further execve() calls fail. */
+> >  	current->flags &=3D ~PF_NPROC_EXCEEDED;
+> > =20
+> > -	bprm =3D alloc_bprm(fd, filename, flags);
+> > +	bprm =3D alloc_bprm(fd, filename, argv, flags);
+> >  	if (IS_ERR(bprm)) {
+> >  		retval =3D PTR_ERR(bprm);
+> >  		goto out_ret;
+> > @@ -2034,6 +2047,7 @@ int kernel_execve(const char *kernel_filename,
+> >  	struct linux_binprm *bprm;
+> >  	int fd =3D AT_FDCWD;
+> >  	int retval;
+> > +	struct user_arg_ptr user_argv =3D {};
+> > =20
+> >  	/* It is non-sense for kernel threads to call execve */
+> >  	if (WARN_ON_ONCE(current->flags & PF_KTHREAD))
+> > @@ -2043,7 +2057,7 @@ int kernel_execve(const char *kernel_filename,
+> >  	if (IS_ERR(filename))
+> >  		return PTR_ERR(filename);
+> > =20
+> > -	bprm =3D alloc_bprm(fd, filename, 0);
+> > +	bprm =3D alloc_bprm(fd, filename, user_argv, 0);
+> >  	if (IS_ERR(bprm)) {
+> >  		retval =3D PTR_ERR(bprm);
+> >  		goto out_ret;
+> > diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+> > index 87e2dec79fea..7178d1e4a3de 100644
+> > --- a/include/uapi/linux/fcntl.h
+> > +++ b/include/uapi/linux/fcntl.h
+> > @@ -100,7 +100,8 @@
+> >  /* Reserved for per-syscall flags	0xff. */
+> >  #define AT_SYMLINK_NOFOLLOW		0x100   /* Do not follow symbolic
+> >  						   links. */
+> > -/* Reserved for per-syscall flags	0x200 */
+> > +#define AT_EXEC_REASONABLE_COMM		0x200   /* Use argv[0] for comm in
+> > +						   execveat */
+> >  #define AT_SYMLINK_FOLLOW		0x400   /* Follow symbolic links. */
+> >  #define AT_NO_AUTOMOUNT			0x800	/* Suppress terminal automount
+> >  						   traversal. */
+> >
+> > base-commit: baeb9a7d8b60b021d907127509c44507539c15e5
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--zq3wrif6kf5tb34a
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZvQxMQAKCRAol/rSt+lE
+b1XgAP41kGZlYqUV0ZABrpnHjekcL3eayZchKbYAY7PP51DYDgD9EmJbAQws0DYN
+7baXa27f1/Ih9KmNAYcj2WsktTkQogI=
+=vOm3
+-----END PGP SIGNATURE-----
+
+--zq3wrif6kf5tb34a--
 
