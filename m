@@ -1,77 +1,52 @@
-Return-Path: <linux-kernel+bounces-339691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7008986929
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 00:26:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B01298692B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 00:28:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E2FAB25535
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 22:26:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A867C1C23241
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 22:28:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C42A17557E;
-	Wed, 25 Sep 2024 22:25:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B07B156F23;
+	Wed, 25 Sep 2024 22:28:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PLQRk09P"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BVJzsw4I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84892148838;
-	Wed, 25 Sep 2024 22:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E12148838
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 22:28:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727303154; cv=none; b=ft3VLCrNRdzoPpHIkTwfin3WeRGLWlViN8fuG3++mJwoPG2pwPgQ+MuxgEVBpPGyXBZe0SAcnHeriQ/vK2cxX9+b26w03VW2OnJUDY9RRaldFl2+gxyXN43BGXtet/FID765adnj8zqGhTinPj3o0r4P5XsuNfGsqFYNx4AsZuY=
+	t=1727303301; cv=none; b=oxaLdvCSIPrB78Gw8ZwuwgbSrq11fhvDRFXtpbok8eT/CUq2BYOequSPjZuKya95yqQK7ldQ2h+XEu+RRdrQPRUNZoumxg7K00lxEkld5oPvg4p9Ry4gID0Gp7PU/sBZ0dhrWrClhtUJ/nbv7J1RWzGDRtAwB6M4aWGOQkEDvyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727303154; c=relaxed/simple;
-	bh=5sBmeZb7zgbq4jsPslNM38CJ8kyfg1bQz+tU7ToEsR8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o9BmcBhGAWSURGLY/9Y4PiCDir6n31F9D1C7YPngvUDevds4muQqC9LlSNqqZnoe12nWssxRYF9nSI+P8haQEyaMqX6tOZ9MBfc6kkfR5OXi35C+365Vf36zJhtj0QEP3Jfehm2biQCvk2RL77/G2N1WCpvU9Et8Id5TZwk2DCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PLQRk09P; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727303153; x=1758839153;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5sBmeZb7zgbq4jsPslNM38CJ8kyfg1bQz+tU7ToEsR8=;
-  b=PLQRk09PtpIj/k/VWYQ1RcLTvAKH+nofI2ixnU5fyujMwT41iiBwinxB
-   eCdKqaPc+v39Yc2S1qNh53nZwTli4LsVAQcm4ITfPF4dXBj84etDkUy1G
-   gQ5hRihflTz5yo0eUuULakQApVm1aZxaXQes6B5mIo+d4R0uF+houigaj
-   gsd6uFLSq+LKHbRBAHp2HkCqycIU7R9hkZ+K9IGfPdxsJ+sFx/E4my+07
-   u4Sz+KLZcG6GpnM7GgUHYMhGuaLbrc+dJb+4tLRYK2X5R1uGmxQP1bQ1z
-   lr4f3KR94vDZu6agFfAWKMmU9KG9mGxwA3HOoAMDaOY8Q99ouF2Ra/J4f
-   Q==;
-X-CSE-ConnectionGUID: hOTThXShTuqgDD866Cqi7w==
-X-CSE-MsgGUID: jnWPZkJpQ3GBs23kkb1KTw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11206"; a="43895205"
-X-IronPort-AV: E=Sophos;i="6.10,258,1719903600"; 
-   d="scan'208";a="43895205"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 15:25:52 -0700
-X-CSE-ConnectionGUID: HdLibePzRd2ER7RdHGcJ/A==
-X-CSE-MsgGUID: F/Hub8YTRSiD927TWLe9cg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,258,1719903600"; 
-   d="scan'208";a="71929308"
-Received: from fecarpio-mobl.amr.corp.intel.com (HELO desk) ([10.125.147.229])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 15:25:51 -0700
-Date: Wed, 25 Sep 2024 15:25:50 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	Robert Gill <rtgill82@gmail.com>,
-	Jari Ruusu <jariruusu@protonmail.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
-	antonio.gomez.iglesias@linux.intel.com,
-	daniel.sneddon@linux.intel.com, stable@vger.kernel.org
-Subject: [PATCH v7 3/3] x86/bugs: Use code segment selector for VERW operand
-Message-ID: <20240925-fix-dosemu-vm86-v7-3-1de0daca2d42@linux.intel.com>
-X-Mailer: b4 0.14.1
-References: <20240925-fix-dosemu-vm86-v7-0-1de0daca2d42@linux.intel.com>
+	s=arc-20240116; t=1727303301; c=relaxed/simple;
+	bh=cE+zJj+RRxFJpslmJFHiN/+FOWMr/gRNrNJ//B6y6fs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KddGAOSHwAQstMQ56brdIGA3XvzYsJXb3G3ogkKx6uxtug1ONK4APuVHxUamzAgoIOBs/qV5TzsO2nhqHsHYISE62Nv9FT42Npbxtw7a3smr9SxYbMfFIygUNRjY8yCzXNeQb2bZRUeYaaVU4Oz6UtSk7FK4P3tl5OmIOqL9bM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BVJzsw4I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AE16C4CEC3;
+	Wed, 25 Sep 2024 22:28:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727303301;
+	bh=cE+zJj+RRxFJpslmJFHiN/+FOWMr/gRNrNJ//B6y6fs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=BVJzsw4I4DLCWTsHKXZtmWkfCRV0VWq8IQReGRMpribe88G64vMzEcuePhsgeb5In
+	 kZVOXKEDbCPz2Pit2S5kKvd6eM57qMg27yP/4vYbuFmDVkPUK5GhXk7PlnrpC+AeRs
+	 gZ2k6wcl7gdb0NhsZ9y5eYVrxDnkO1apwliUYncIre8U2iukZsCz/PGM4asxma4OhY
+	 qV5l5xNu2u3NxHh12xPVbIXcgisrxc3h9nEItCYdtCp6gRj58w9ALPhvg0CIlVrfqy
+	 thvn7e3XaLFbI1sT/UPzFBmvJe018xIs8IO+F7bIshYvgACXBRSpuUcpiyjKXBllPv
+	 hdXufGb/Hns7Q==
+Date: Wed, 25 Sep 2024 12:28:20 -1000
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>
+Cc: linux-kernel@vger.kernel.org, kernle-team@meta.com, sched-ext@meta.com
+Subject: [PATCH sched_ext/for-6.12-fixes] tools/sched_ext: Receive misc
+ updates from SCX repo
+Message-ID: <ZvSOhNJT1giUi4nh@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,78 +55,105 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240925-fix-dosemu-vm86-v7-0-1de0daca2d42@linux.intel.com>
 
-Robert Gill reported below #GP in 32-bit mode when dosemu software was
-executing vm86() system call:
+From a748db0c8c6a88da66c3ab3791bd1a229f4a7fee Mon Sep 17 00:00:00 2001
+From: Tejun Heo <tj@kernel.org>
+Date: Wed, 25 Sep 2024 12:22:37 -1000
 
-  general protection fault: 0000 [#1] PREEMPT SMP
-  CPU: 4 PID: 4610 Comm: dosemu.bin Not tainted 6.6.21-gentoo-x86 #1
-  Hardware name: Dell Inc. PowerEdge 1950/0H723K, BIOS 2.7.0 10/30/2010
-  EIP: restore_all_switch_stack+0xbe/0xcf
-  EAX: 00000000 EBX: 00000000 ECX: 00000000 EDX: 00000000
-  ESI: 00000000 EDI: 00000000 EBP: 00000000 ESP: ff8affdc
-  DS: 0000 ES: 0000 FS: 0000 GS: 0033 SS: 0068 EFLAGS: 00010046
-  CR0: 80050033 CR2: 00c2101c CR3: 04b6d000 CR4: 000406d0
-  Call Trace:
-   show_regs+0x70/0x78
-   die_addr+0x29/0x70
-   exc_general_protection+0x13c/0x348
-   exc_bounds+0x98/0x98
-   handle_exception+0x14d/0x14d
-   exc_bounds+0x98/0x98
-   restore_all_switch_stack+0xbe/0xcf
-   exc_bounds+0x98/0x98
-   restore_all_switch_stack+0xbe/0xcf
+Receive misc tools/sched_ext updates from https://github.com/sched-ext/scx
+to sync userspace bits.
 
-This only happens in 32-bit mode when VERW based mitigations like MDS/RFDS
-are enabled. This is because segment registers with an arbitrary user value
-can result in #GP when executing VERW. Intel SDM vol. 2C documents the
-following behavior for VERW instruction:
+- LSP macros to help language servers.
 
-  #GP(0) - If a memory operand effective address is outside the CS, DS, ES,
-	   FS, or GS segment limit.
+- bpf_cpumask_weight() declaration and cast_mask() helper.
 
-CLEAR_CPU_BUFFERS macro executes VERW instruction before returning to user
-space. Use %cs selector to reference VERW operand. This ensures VERW will
-not #GP for an arbitrary user %ds.
+- Cosmetic updates to scx_flatcg.bpf.c.
 
-Fixes: a0e2dab44d22 ("x86/entry_32: Add VERW just before userspace transition")
-Cc: stable@vger.kernel.org # 5.10+
-Reported-by: Robert Gill <rtgill82@gmail.com>
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218707
-Closes: https://lore.kernel.org/all/8c77ccfd-d561-45a1-8ed5-6b75212c7a58@leemhuis.info/
-Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
-Suggested-by: Brian Gerst <brgerst@gmail.com>
-Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 ---
- arch/x86/include/asm/nospec-branch.h | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Applied to sched_ext/for-6.12-fixes.
 
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index ff5f1ecc7d1e..e18a6aaf414c 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -318,12 +318,14 @@
- /*
-  * Macro to execute VERW instruction that mitigate transient data sampling
-  * attacks such as MDS. On affected systems a microcode update overloaded VERW
-- * instruction to also clear the CPU buffers. VERW clobbers CFLAGS.ZF.
-+ * instruction to also clear the CPU buffers. VERW clobbers CFLAGS.ZF. Using %cs
-+ * to reference VERW operand avoids a #GP fault for an arbitrary user %ds in
-+ * 32-bit mode.
-  *
-  * Note: Only the memory operand variant of VERW clears the CPU buffers.
-  */
- .macro CLEAR_CPU_BUFFERS
--	ALTERNATIVE "", __stringify(verw _ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
-+	ALTERNATIVE "", __stringify(verw %cs:_ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
- .endm
+Thanks.
+
+ tools/sched_ext/include/scx/common.bpf.h     | 15 +++++++++++++++
+ tools/sched_ext/include/scx/user_exit_info.h |  4 ++++
+ tools/sched_ext/scx_flatcg.bpf.c             |  5 ++---
+ 3 files changed, 21 insertions(+), 3 deletions(-)
+
+diff --git a/tools/sched_ext/include/scx/common.bpf.h b/tools/sched_ext/include/scx/common.bpf.h
+index f538c75db183..225f61f9bfca 100644
+--- a/tools/sched_ext/include/scx/common.bpf.h
++++ b/tools/sched_ext/include/scx/common.bpf.h
+@@ -7,7 +7,13 @@
+ #ifndef __SCX_COMMON_BPF_H
+ #define __SCX_COMMON_BPF_H
  
- #ifdef CONFIG_X86_64
-
++#ifdef LSP
++#define __bpf__
++#include "../vmlinux/vmlinux.h"
++#else
+ #include "vmlinux.h"
++#endif
++
+ #include <bpf/bpf_helpers.h>
+ #include <bpf/bpf_tracing.h>
+ #include <asm-generic/errno.h>
+@@ -309,6 +315,15 @@ void bpf_cpumask_copy(struct bpf_cpumask *dst, const struct cpumask *src) __ksym
+ u32 bpf_cpumask_any_distribute(const struct cpumask *cpumask) __ksym;
+ u32 bpf_cpumask_any_and_distribute(const struct cpumask *src1,
+ 				   const struct cpumask *src2) __ksym;
++u32 bpf_cpumask_weight(const struct cpumask *cpumask) __ksym;
++
++/*
++ * Access a cpumask in read-only mode (typically to check bits).
++ */
++const struct cpumask *cast_mask(struct bpf_cpumask *mask)
++{
++	return (const struct cpumask *)mask;
++}
+ 
+ /* rcu */
+ void bpf_rcu_read_lock(void) __ksym;
+diff --git a/tools/sched_ext/include/scx/user_exit_info.h b/tools/sched_ext/include/scx/user_exit_info.h
+index 891693ee604e..8ce2734402e1 100644
+--- a/tools/sched_ext/include/scx/user_exit_info.h
++++ b/tools/sched_ext/include/scx/user_exit_info.h
+@@ -25,7 +25,11 @@ struct user_exit_info {
+ 
+ #ifdef __bpf__
+ 
++#ifdef LSP
++#include "../vmlinux/vmlinux.h"
++#else
+ #include "vmlinux.h"
++#endif
+ #include <bpf/bpf_core_read.h>
+ 
+ #define UEI_DEFINE(__name)							\
+diff --git a/tools/sched_ext/scx_flatcg.bpf.c b/tools/sched_ext/scx_flatcg.bpf.c
+index 936415b98ae7..e272bc39bbbd 100644
+--- a/tools/sched_ext/scx_flatcg.bpf.c
++++ b/tools/sched_ext/scx_flatcg.bpf.c
+@@ -225,7 +225,7 @@ static void cgrp_refresh_hweight(struct cgroup *cgrp, struct fcg_cgrp_ctx *cgc)
+ 				break;
+ 
+ 			/*
+-			 * We can be oppotunistic here and not grab the
++			 * We can be opportunistic here and not grab the
+ 			 * cgv_tree_lock and deal with the occasional races.
+ 			 * However, hweight updates are already cached and
+ 			 * relatively low-frequency. Let's just do the
+@@ -258,8 +258,7 @@ static void cgrp_cap_budget(struct cgv_node *cgv_node, struct fcg_cgrp_ctx *cgc)
+ 	 * and thus can't be updated and repositioned. Instead, we collect the
+ 	 * vtime deltas separately and apply it asynchronously here.
+ 	 */
+-	delta = cgc->cvtime_delta;
+-	__sync_fetch_and_sub(&cgc->cvtime_delta, delta);
++	delta = __sync_fetch_and_sub(&cgc->cvtime_delta, cgc->cvtime_delta);
+ 	cvtime = cgv_node->cvtime + delta;
+ 
+ 	/*
 -- 
-2.34.1
-
+2.46.0
 
 
