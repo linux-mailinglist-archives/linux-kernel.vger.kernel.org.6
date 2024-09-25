@@ -1,144 +1,92 @@
-Return-Path: <linux-kernel+bounces-338968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61CF2985EE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:46:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C27F5985DF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:24:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20E51286CC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:46:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8212428BEC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:24:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A8E218904;
-	Wed, 25 Sep 2024 12:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vF34Jdxb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4B0208515;
+	Wed, 25 Sep 2024 12:07:59 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9AC52188E7;
-	Wed, 25 Sep 2024 12:13:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B2D1B5829;
+	Wed, 25 Sep 2024 12:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727266396; cv=none; b=VWlZnCbtXMwsUjndh5sJJZToH9RrvTQy8EmbVHc5SafMC6DZyEOX76N3C+80ITBuLzUkkgJZLPoViprZsPBusAimHEE0ULsOeOZ4E0eHlWbTz+FcJ3APq0AtVtilorsjPphcMmHXcd7iCtt/zzTofO/8unA9+UrvFGw65cRjEHg=
+	t=1727266079; cv=none; b=oiE3FcAqfXn1L7SSU6lzk8BmWCipY0jcJ6W1quqRVz9LLvRb/UAT9QG9sWrNZGo0meoB9IQUHXf9Zld1L52Xtv42AdOnehzxMsoftP8cLyrwDh1BzqtuasUIORjYbkhkDTlD//iZ85dHuxqW7DBSmR+nRFdhHBO84cpr1zKxlec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727266396; c=relaxed/simple;
-	bh=dud/DxXjNofOsAwrAwT2KLGOnJNEyrKFlTDOnpdvlFs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PxLwcLoYhMDovnltSQ104gs9OrVJ81ws6QU1NCIrXUEDJ7qNyQeot0f33/O8L54H0ThId96DeZvdLza89qGmvsKfKWw5DM4FjEfYATeNuVIQDQ/o6LEpOsyiX9UmymrsYTufxO/ickQ0hm1IqL3QrKkwUzY0brap40OVWzThAv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vF34Jdxb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEA87C4CEC3;
-	Wed, 25 Sep 2024 12:13:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727266395;
-	bh=dud/DxXjNofOsAwrAwT2KLGOnJNEyrKFlTDOnpdvlFs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=vF34JdxbIIpi8YjFzYt9I0+KAWTD/+9FiHf1kJa1pliqTGxL/28uWC0gPT+piauX0
-	 DHF7P33Y5u5Yzz/cC513ckmkH7iqYhjulRKVHEv+1us1LKMlNo1hIq1ZVFf/97B45Q
-	 QjswTUShdHrOtsOyD5ZIhPgfdnaWRXJpKU3V6Ln7Fv9OHB4CgLRmyHkJyb5BZKKjPk
-	 2Qu1exVgJsSOubkd1+0xw+J74o2ujeYOo3AxzaD0jejcapVw2mRbRs9vtim+8rvAYB
-	 zRf9FnMQEvWr/DISpHFCD7Qv+GS9UT5fcdjMu8GTxOM/tTI4kR3uO0W/nQcOZIH935
-	 ptGJXxLjglkSw==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Miri Korenblit <miriam.rachel.korenblit@intel.com>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Sasha Levin <sashal@kernel.org>,
-	kvalo@kernel.org,
-	gregory.greenman@intel.com,
-	edumazet@google.com,
-	davem@davemloft.net,
-	shaul.triebitz@intel.com,
-	daniel.gabay@intel.com,
-	linux-wireless@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 045/139] wifi: iwlwifi: mvm: avoid NULL pointer dereference
-Date: Wed, 25 Sep 2024 08:07:45 -0400
-Message-ID: <20240925121137.1307574-45-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240925121137.1307574-1-sashal@kernel.org>
-References: <20240925121137.1307574-1-sashal@kernel.org>
+	s=arc-20240116; t=1727266079; c=relaxed/simple;
+	bh=cdhkjTe9uFvt2/UW/vfC2+D1KZldNIpOdMEaT30Az7I=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qw6u6woYDbiXXDDcqVaEM517yOLnSnBarjJQOiLTG7avIJB4Ne/zs6U+g/hLqRFISq+OVH2j4iL4caT6AuD/LCI85VopTR+wFbfDM7q72j/MOaHuyXupL30ZQsZ96Xsgc+RHyScFPi+3RORGrbnQLSIzNtXBS85eSGZnTc2AlBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XDFpl1Jh6z20pKZ;
+	Wed, 25 Sep 2024 20:07:27 +0800 (CST)
+Received: from kwepemd200011.china.huawei.com (unknown [7.221.188.251])
+	by mail.maildlp.com (Postfix) with ESMTPS id 843231A0188;
+	Wed, 25 Sep 2024 20:07:48 +0800 (CST)
+Received: from cgs.huawei.com (10.244.148.83) by
+ kwepemd200011.china.huawei.com (7.221.188.251) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Wed, 25 Sep 2024 20:07:47 +0800
+From: Gaosheng Cui <cuigaosheng1@huawei.com>
+To: <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+	<akpm@linux-foundation.org>, <thunder.leizhen@huawei.com>,
+	<cuigaosheng1@huawei.com>, <wangweiyang2@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: [PATCH -next 1/2] kobject: fix memory leak in kset_register() due to uninitialized kset->kobj.ktype
+Date: Wed, 25 Sep 2024 20:07:46 +0800
+Message-ID: <20240925120747.1930709-2-cuigaosheng1@huawei.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240925120747.1930709-1-cuigaosheng1@huawei.com>
+References: <20240925120747.1930709-1-cuigaosheng1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.52
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemd200011.china.huawei.com (7.221.188.251)
 
-From: Miri Korenblit <miriam.rachel.korenblit@intel.com>
+If a kset with uninitialized kset->kobj.ktype be registered,
+kset_register() will return error, and the kset.kobj.name allocated
+by kobject_set_name() will be leaked.
 
-[ Upstream commit 557a6cd847645e667f3b362560bd7e7c09aac284 ]
+To mitigate this, we free the name in kset_register() when an error
+is encountered due to uninitialized kset->kobj.ktype.
 
-iwl_mvm_tx_skb_sta() and iwl_mvm_tx_mpdu() verify that the mvmvsta
-pointer is not NULL.
-It retrieves this pointer using iwl_mvm_sta_from_mac80211, which is
-dereferencing the ieee80211_sta pointer.
-If sta is NULL, iwl_mvm_sta_from_mac80211 will dereference a NULL
-pointer.
-Fix this by checking the sta pointer before retrieving the mvmsta
-from it. If sta is not NULL, then mvmsta isn't either.
-
-Signed-off-by: Miri Korenblit <miriam.rachel.korenblit@intel.com>
-Reviewed-by: Johannes Berg <johannes.berg@intel.com>
-Link: https://patch.msgid.link/20240825191257.880921ce23b7.I340052d70ab6d3410724ce955eb00da10e08188f@changeid
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 4d0fe8c52bb3 ("kobject: Add sanity check for kset->kobj.ktype in kset_register()")
+Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/tx.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ lib/kobject.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tx.c b/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
-index 3adb1acc07191..ce5f2bdde1388 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
-@@ -1145,6 +1145,9 @@ static int iwl_mvm_tx_mpdu(struct iwl_mvm *mvm, struct sk_buff *skb,
- 	bool is_ampdu = false;
- 	int hdrlen;
+diff --git a/lib/kobject.c b/lib/kobject.c
+index 72fa20f405f1..ecca72622933 100644
+--- a/lib/kobject.c
++++ b/lib/kobject.c
+@@ -862,6 +862,8 @@ int kset_register(struct kset *k)
+ 		return -EINVAL;
  
-+	if (WARN_ON_ONCE(!sta))
-+		return -1;
-+
- 	mvmsta = iwl_mvm_sta_from_mac80211(sta);
- 	fc = hdr->frame_control;
- 	hdrlen = ieee80211_hdrlen(fc);
-@@ -1152,9 +1155,6 @@ static int iwl_mvm_tx_mpdu(struct iwl_mvm *mvm, struct sk_buff *skb,
- 	if (IWL_MVM_NON_TRANSMITTING_AP && ieee80211_is_probe_resp(fc))
- 		return -1;
- 
--	if (WARN_ON_ONCE(!mvmsta))
--		return -1;
--
- 	if (WARN_ON_ONCE(mvmsta->deflink.sta_id == IWL_MVM_INVALID_STA))
- 		return -1;
- 
-@@ -1285,7 +1285,7 @@ static int iwl_mvm_tx_mpdu(struct iwl_mvm *mvm, struct sk_buff *skb,
- int iwl_mvm_tx_skb_sta(struct iwl_mvm *mvm, struct sk_buff *skb,
- 		       struct ieee80211_sta *sta)
- {
--	struct iwl_mvm_sta *mvmsta = iwl_mvm_sta_from_mac80211(sta);
-+	struct iwl_mvm_sta *mvmsta;
- 	struct ieee80211_tx_info info;
- 	struct sk_buff_head mpdus_skbs;
- 	struct ieee80211_vif *vif;
-@@ -1294,9 +1294,11 @@ int iwl_mvm_tx_skb_sta(struct iwl_mvm *mvm, struct sk_buff *skb,
- 	struct sk_buff *orig_skb = skb;
- 	const u8 *addr3;
- 
--	if (WARN_ON_ONCE(!mvmsta))
-+	if (WARN_ON_ONCE(!sta))
- 		return -1;
- 
-+	mvmsta = iwl_mvm_sta_from_mac80211(sta);
-+
- 	if (WARN_ON_ONCE(mvmsta->deflink.sta_id == IWL_MVM_INVALID_STA))
- 		return -1;
- 
+ 	if (!k->kobj.ktype) {
++		kfree_const(k->kobj.name);
++		k->kobj.name = NULL;
+ 		pr_err("must have a ktype to be initialized properly!\n");
+ 		return -EINVAL;
+ 	}
 -- 
-2.43.0
+2.25.1
 
 
