@@ -1,104 +1,156 @@
-Return-Path: <linux-kernel+bounces-338389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3745F985737
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:32:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63AA098573A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:34:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 672561C21215
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:32:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 233CB28258B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410AC15C12F;
-	Wed, 25 Sep 2024 10:32:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A699315C12F;
+	Wed, 25 Sep 2024 10:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="PeLyz8eX"
-Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VqLgN6br"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482331304AB;
-	Wed, 25 Sep 2024 10:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744A31304AB;
+	Wed, 25 Sep 2024 10:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727260345; cv=none; b=nE2UXX4jbsGz6zDm9TaX/OxEMrmYeRZUSIucp/KXM5oasn6qkaOVfLie4yKboJjlN2X2aUFqgRzRvQLkDRMYJLK9TGns19I+MKNdc3y9smv5b5oEXYrrq3fBVxcOZA1St8tn3Xlj5Pz/s3pKo1tp8DRrKyY+6YTIptf9PNN0ArM=
+	t=1727260461; cv=none; b=IdjIEPtv6rJt84lTTeLAwUBTE1dSlLtOIf0LbgptssGlDwTEznEOwOJuQOLCgHl+Dw8Z2KnGvAb+73t1px+95nGL/x5tlGV3JGHVxkLY5f1o5C8crj50cNRpzf8D+wQ7bs9rgZnVoaelwdjWeRyvewblEuCOB8Xi4W5ptduSong=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727260345; c=relaxed/simple;
-	bh=PEjdN1B8+nauzasTx+oZo2a/P2fqeXtD5HkfhxXmZEg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n2hwIHsc6gHFcV6UbOAsbaWB4PNYyhqKx9Fn5XGhmxSnJs+BeEHAV1YwQA3tekVatfM6rHJpM2ARkkncnJvba65KoaNESdJ0SJq9jC2DeprJ2KCf4IiG/XMMYDx0GMnE2Z4v4xiPxhHZS/JQxCt1MRLcAxpE9SVxAOcGPnvZvPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=PeLyz8eX; arc=none smtp.client-ip=213.133.104.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=kcWlSC0R569rA7S9bQRoeCCxWKeeKW+3l2wH6VkxOIk=; b=PeLyz8eXctSFlPP0aizM/oPEO0
-	SQsf2XpAFd0oVtamcxXWsRL7XtJVaLDkv+RyExATR/ACYKZBYaf12660ipQLEZEObBVrSMHMGDG3k
-	9YDnjW3Oty/21rXYE9VPmxUl3I+JyrK7aBZWdCDnzkt7v9fKg6ySQSdN0DKC6guMOnN+UBhQtIuxZ
-	jPilQ4gjByTZare0td9Q7r5ueZd7KmIstMNediInPjl4ebbpO1LkD9Coub0OA9ciDEaPfoIR+Dm9S
-	8j1yEKUqPQ5HTU4SzNeTsDiP6FNO147sB/BdQt7cdq8rUdJafpB+Pi//mVM/bwW3EGZlIndfW+fxP
-	B7C33xxA==;
-Received: from sslproxy05.your-server.de ([78.46.172.2])
-	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1stPJk-000FNr-U2; Wed, 25 Sep 2024 12:32:20 +0200
-Received: from [178.197.249.20] (helo=[192.168.1.114])
-	by sslproxy05.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1stPJk-000NDC-2I;
-	Wed, 25 Sep 2024 12:32:20 +0200
-Message-ID: <4f58b093-ca1f-426a-8102-4b00ccaf4973@iogearbox.net>
-Date: Wed, 25 Sep 2024 12:32:19 +0200
+	s=arc-20240116; t=1727260461; c=relaxed/simple;
+	bh=Ih0eZVGy2u1bgO5w/cU3c0CaCbAcvFxlPkiN+QUaznM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pv+jtGS9+YU//v0DIkW9VqkV6u3HOEXRejPEeRWLc3OSIIvqmg4SzR9FT+ZMHVatelilHAse13EIPFzCG0a9UJuBUaLK3axF+I0esTxO+B1tPvofxHWnGLvn99yA+GEVIqiNomEplxsHetLzXiWa02KjOYHiKgTjtcf9CUsCiig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VqLgN6br; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48P84SAP026808;
+	Wed, 25 Sep 2024 10:34:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=6NE1TN9QRZJT4d/UVAfDRd
+	WL9ww6G38R4/OqvHvAJm4=; b=VqLgN6brQ3HlS756W/ONihmSOKg/tZroDBsi4A
+	W+EvjmA0MqqOpsHRK2EEQUIEKWmooVsL8Nrzd7MUpB8nrou+cupZMf0DuZTfT401
+	5OBBw05YEqfFSvPAjHHlsZLQw8rUpqqobVNMP7t+FIgUzriMoHP+EyWZcoljxdxC
+	FnMzdESPXNP59NiZoq4ZgfLr2+Z4RRbPncDdBMVsUaxAGnmGebrVwR1UaKe1FV+A
+	EenodiMxBlKYBpK7Asl0Kd5i3fKskLenPiKbV0sYSipqxufRmfrEQvWXZ+yMmDBm
+	DcizQvjOhSIKAGdZutq0WkEl624mAd21instsl/EIVphzxpA==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sqakkcx4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Sep 2024 10:34:15 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48PAYFce014184
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Sep 2024 10:34:15 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 25 Sep 2024 03:34:13 -0700
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Mukesh Ojha <quic_mojha@quicinc.com>
+Subject: [PATCH] remoteproc: qcom: Fix NULL pointer in glink_subdev_stop()
+Date: Wed, 25 Sep 2024 16:03:51 +0530
+Message-ID: <20240925103351.1628788-1-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next] bpftool: Remove llvm-strip from Makefile
-To: patchwork-bot+netdevbpf@kernel.org, Tao Chen <chen.dylane@gmail.com>
-Cc: qmo@kernel.org, ast@kernel.org, andrii@kernel.org, martin.lau@linux.dev,
- eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
- jolsa@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240924165202.1379930-1-chen.dylane@gmail.com>
- <172725782851.519668.2924142510144708471.git-patchwork-notify@kernel.org>
-Content-Language: en-US
-From: Daniel Borkmann <daniel@iogearbox.net>
-In-Reply-To: <172725782851.519668.2924142510144708471.git-patchwork-notify@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27409/Wed Sep 25 11:17:07 2024)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: P5mw_FoXn3xdWA6pA1Eh-xrBLwNCJMMa
+X-Proofpoint-GUID: P5mw_FoXn3xdWA6pA1Eh-xrBLwNCJMMa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
+ bulkscore=0 impostorscore=0 suspectscore=0 phishscore=0 adultscore=0
+ clxscore=1011 malwarescore=0 lowpriorityscore=0 mlxlogscore=999
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409250072
 
-On 9/25/24 11:50 AM, patchwork-bot+netdevbpf@kernel.org wrote:
-> Hello:
->
-> This patch was applied to bpf/bpf-next.git (master)
-> by Daniel Borkmann <daniel@iogearbox.net>:
->
-> On Wed, 25 Sep 2024 00:52:02 +0800 you wrote:
->> As Quentin and Andrri said [0], bpftool gen object strips
->> out DWARF already, so remove the repeat operation.
->>
->> [0] https://github.com/libbpf/bpftool/issues/161
->>
->> Suggested-by: Andrii Nakryiko <andrii@kernel.org>
->> Suggested-by: Quentin Monnet <qmo@kernel.org>
->> Signed-off-by: Tao Chen <chen.dylane@gmail.com>
->>
->> [...]
-I'll toss this shortly from the tree again, this missed that bpftool gen 
-object call
-needs to strip out dwarf.
->> Here is the summary with links:
->>    - [bpf-next] bpftool: Remove llvm-strip from Makefile
->>      https://git.kernel.org/bpf/bpf-next/c/25bfc6333e32
->>
->> You are awesome, thank you!
+Multiple call to glink_subdev_stop() for the same remoteproc can happen
+if rproc_stop() fails from Process-A that leaves the rproc state to
+RPROC_CRASHED state later a call to recovery_store from user space in
+Process B triggers rproc_trigger_recovery() of the same remoteproc to
+recover it results in NULL pointer dereference issue in
+qcom_glink_smem_unregister().
+
+Fix it by having a NULL check in glink_subdev_stop().
+
+	Process-A                			Process-B
+
+  fatal error interrupt happens
+
+  rproc_crash_handler_work()
+    mutex_lock_interruptible(&rproc->lock);
+    ...
+
+       rproc->state = RPROC_CRASHED;
+    ...
+    mutex_unlock(&rproc->lock);
+
+    rproc_trigger_recovery()
+     mutex_lock_interruptible(&rproc->lock);
+
+      adsp_stop()
+      qcom_q6v5_pas 20c00000.remoteproc: failed to shutdown: -22
+      remoteproc remoteproc3: can't stop rproc: -22
+     mutex_unlock(&rproc->lock);
+
+						echo enabled > /sys/class/remoteproc/remoteprocX/recovery
+						recovery_store()
+						 rproc_trigger_recovery()
+						  mutex_lock_interruptible(&rproc->lock);
+						   rproc_stop()
+						    glink_subdev_stop()
+						      qcom_glink_smem_unregister() ==|
+                                                                                     |
+                                                                                     V
+						      Unable to handle kernel NULL pointer dereference
+                                                                at virtual address 0000000000000358
+
+Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+---
+- We can do this NULL check in qcom_glink_smem_unregister() as it is
+  exported function however, there is only one user of this. So, doing
+  it with current approach should also be fine.
+
+ drivers/remoteproc/qcom_common.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+index 8c8688f99f0a..52d6c9b99fdb 100644
+--- a/drivers/remoteproc/qcom_common.c
++++ b/drivers/remoteproc/qcom_common.c
+@@ -209,6 +209,9 @@ static void glink_subdev_stop(struct rproc_subdev *subdev, bool crashed)
+ {
+ 	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
+ 
++	if (!glink->edge)
++		return;
++
+ 	qcom_glink_smem_unregister(glink->edge);
+ 	glink->edge = NULL;
+ }
+-- 
+2.34.1
+
 
