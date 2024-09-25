@@ -1,83 +1,110 @@
-Return-Path: <linux-kernel+bounces-338167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94D2D985437
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:33:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 264F9985451
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A214285912
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:33:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCFEA281F77
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528DA15667B;
-	Wed, 25 Sep 2024 07:32:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A3E157A67;
+	Wed, 25 Sep 2024 07:38:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="quR6G069"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZxNR5KQH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D8614B950
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 07:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BEF1157472;
+	Wed, 25 Sep 2024 07:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727249578; cv=none; b=DdA2tt0ZN1CrHQlRG8nq3pJgAuIrS+hPiebsBhGNrgTPIN1deX2z8uMWAp1KhUzpKGrD/Zud73g79JV3o8yuK2dGjlkKVf/yJ5mEXq/p1fL5rcLV6X6CB3l/tY8UQZ5VzZuY0rom/lYUN8i//h8juhlm2i/8Ek980CiFIqHrDbg=
+	t=1727249883; cv=none; b=c4sXmLUR3/w2zB+Az6pvGUloPiyuATu1bFEJWSORyHz7vti22opUL9KN6/SPBlnepW0K/tL19/pf9dynY7kClOwNHfqOSkLw1WhY/5WqKQhE1FdH28RwPeqVt/M/fwiVepAOmu5zHRLo0yHnHWwmkFZtFiYUNqCpbAFXgax2fX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727249578; c=relaxed/simple;
-	bh=AtqSt6iODFs/wkU/c1FCnNaPM9X0N32dQ/Eiwhzqvb4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DwIZbEvT44wFUl237wtcPzYoNkXjrNdGwZPxwV4KyIkTD7kIQKnmyuckCLPTG8AxbOBZSS7PRogrWJ6yAnAW8iDX5lFlsumEafEmSUSgr2IihoVXwLb0RxS/fi1YpkhvdBgSrEQet5IWMkXnSjj6i4XRkrVKoKMt4KUO3k0Oo/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=quR6G069; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A39B2C4CEC3;
-	Wed, 25 Sep 2024 07:32:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727249578;
-	bh=AtqSt6iODFs/wkU/c1FCnNaPM9X0N32dQ/Eiwhzqvb4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=quR6G069Xt6tN2WI9D20M4Dt6UMDedqLTUIGYgI6MZEJtnBX4OoIDg6A37Ty7p6gf
-	 Mt3mg7v4ynWhYkRmIO4bsMQjywI51z14nkNbHa+Ggee/ym7A297qovlKb29ImjkY5Z
-	 pU1w/p2xdpG5mLNfYAKVpPrfmTEV0o1Wz/iFy5eK0x+lKedSzb8Z1E55wAPh2qNwrs
-	 xrNYXYgxZeaiZRyjvJoz/yTrgP3WIi6xJt/AU3M8givXrgg6d35hUtmRjq/SuzhoOq
-	 2ft3SiJdoTBUazOjKNVPqC5rwGDykozRdoxZMyBnm8Ism4JwEZIxhnY5+yL5qtzQgQ
-	 2gofeVQQULncA==
-Date: Wed, 25 Sep 2024 09:32:53 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Igor Mammedov <imammedo@redhat.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
- <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
- <anisinha@redhat.com>, linux-kernel@vger.kernel.org, qemu-devel@nongnu.org
-Subject: Re: [PATCH v10 02/21] acpi/generic_event_device: Update GHES
- migration to cover hest addr
-Message-ID: <20240925093253.758d4064@foz.lan>
-In-Reply-To: <20240917140146.56c9d581@imammedo.users.ipa.redhat.com>
-References: <cover.1726293808.git.mchehab+huawei@kernel.org>
-	<bed4b2da51e0c894cc255f712b67e2e57295d826.1726293808.git.mchehab+huawei@kernel.org>
-	<20240917140146.56c9d581@imammedo.users.ipa.redhat.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1727249883; c=relaxed/simple;
+	bh=FsOhK/LiJhTIlz6gkBzMHtsb7SO4o21EIbdA7S2Uuy0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Q+N9YOZcguFynE1renBk5IP/F1ozPNURU6P04AI9fR7zVBGwMXm7O6d5WD1LLdVkPdNNiv4aQWgt7fTI5jLypLMpqzWrZRpcLrYFBg7NyCRAEpmb1Mj93P5olnaliUMG4DJ7tQOs8jtPz9VdzjO3SIDWTe3s+xI3M22FMLpVI/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZxNR5KQH; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727249882; x=1758785882;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=FsOhK/LiJhTIlz6gkBzMHtsb7SO4o21EIbdA7S2Uuy0=;
+  b=ZxNR5KQHbi2fJKF900r5UBghSwhOyvSAmxZ1UzxaG7vI8VxU0Vsbpxz4
+   ts54oxFnkZlS22rC90MlhQkOqaH3zh02buZX33/fkAllV2kP7noftbEun
+   XTl0YJyaNbKoz+/15e6k92dB3F49a9IUXHvG4kys/VlYqWJ5h2aq/9AZB
+   BII71r4HgeBdAiZfvEAzhnRe0tFy317gsEOFNDKBBdYzJqIw4ZyV16R4v
+   /CMUqSNruCXFrIw/IaNOqpQlufCZOQ3TvvQKDaR0JfEhUntFE4z1Q37tl
+   zytsToye3AMWxVRjP2B1KVENLzaH1s34kFWL/qM4n8SQ0K4I+UxN+KBxi
+   w==;
+X-CSE-ConnectionGUID: 5WOLng8bQkiSyo4ApJVzdw==
+X-CSE-MsgGUID: 2GJ/2cI5TsaYRaNlVMJX4A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="30170172"
+X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
+   d="scan'208";a="30170172"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 00:38:01 -0700
+X-CSE-ConnectionGUID: u5wksEuyQeqKIJnd7TdxPw==
+X-CSE-MsgGUID: soM3O1iYRzmfD+y6VzmREw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
+   d="scan'208";a="95009705"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 00:37:55 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Qun-Wei Lin <qun-wei.lin@mediatek.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,  Matthias Brugger
+ <matthias.bgg@gmail.com>,  AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>,  Ryan Roberts
+ <ryan.roberts@arm.com>,  "David Hildenbrand" <david@redhat.com>,  Chris Li
+ <chrisl@kernel.org>,  "Matthew Wilcox (Oracle)" <willy@infradead.org>,  Al
+ Viro <viro@zeniv.linux.org.uk>,  "Dan Schatzberg"
+ <schatzberg.dan@gmail.com>,  Kairui Song <kasong@tencent.com>,  Barry Song
+ <baohua@kernel.org>,  Jens Axboe <axboe@kernel.dk>,
+  <linux-kernel@vger.kernel.org>,  <linux-mm@kvack.org>,
+  <linux-arm-kernel@lists.infradead.org>,
+  <linux-mediatek@lists.infradead.org>,  <linux-block@vger.kernel.org>,
+  Casper Li <casper.li@mediatek.com>,  "Chinwen Chang"
+ <chinwen.chang@mediatek.com>,  Andrew Yang <andrew.yang@mediatek.com>,
+  John Hsu <john.hsu@mediatek.com>,  <wsd_upstream@mediatek.com>
+Subject: Re: [PATCH 0/2] Add BLK_FEAT_READ_SYNCHRONOUS and
+ SWP_READ_SYNCHRONOUS_IO
+In-Reply-To: <20240919112952.981-1-qun-wei.lin@mediatek.com> (Qun-Wei Lin's
+	message of "Thu, 19 Sep 2024 19:29:50 +0800")
+References: <20240919112952.981-1-qun-wei.lin@mediatek.com>
+Date: Wed, 25 Sep 2024 15:34:22 +0800
+Message-ID: <87frporxtt.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ascii
 
-Em Tue, 17 Sep 2024 14:01:46 +0200
-Igor Mammedov <imammedo@redhat.com> escreveu:
+Qun-Wei Lin <qun-wei.lin@mediatek.com> writes:
 
-> > @@ -354,13 +355,13 @@ static const VMStateDescription vmstate_ghes = {
-> >  static bool ghes_needed(void *opaque)
-> >  {
-> >      AcpiGedState *s = opaque;
-> > -    return s->ghes_state.ghes_addr_le;  
->                             ^^^^^^^^^^^^
-> another thing, perhaps we should rename it to 'hardware_errors_addr'
-> to make it less confusing 
+> This patchset introduces 2 new feature flags, BLK_FEAT_READ_SYNCHRONOUS and
+> SWP_READ_SYNCHRONOUS_IO.
+>
+> These changes are motivated by the need to better accommodate certain swap
+> devices that support synchronous read operations but asynchronous write
+> operations.
+>
+> The existing BLK_FEAT_SYNCHRONOUS and SWP_SYNCHRONOUS_IO flags are not
+> sufficient for these devices, as they enforce synchronous behavior for both
+> read and write operations.
 
-At the cleanups, I added a rename patch. I opted to a shorter name:
-	hw_error_le.
+Which kind of device needs this?  Read fast, but write slow?
 
-Thanks,
-Mauro
+--
+Best Regards,
+Huang, Ying
 
