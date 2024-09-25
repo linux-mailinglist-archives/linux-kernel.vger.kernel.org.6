@@ -1,151 +1,137 @@
-Return-Path: <linux-kernel+bounces-339521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDB4598664F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 20:31:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3EC298664C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 20:30:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFC931C2272B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:31:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CD5EB24156
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7277078B50;
-	Wed, 25 Sep 2024 18:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5774C13AD2F;
+	Wed, 25 Sep 2024 18:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tABxU0Ny"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m1b61+9l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141EA4D8BF
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 18:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B486E1D5ADC;
+	Wed, 25 Sep 2024 18:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727289074; cv=none; b=F1XwS8ZsKQ1wLS9uelmdg/pgEUdhRdzzAAGfam5wn7hBZF9pOKBfF5bgB/hv9tWZefUvKyU9L74dC4iivEyD+L3DymPFCOEAYpvd2nAk/iqnvy1cyWxa3zKyh79Bt/T/KTMqSeBIl+LPgixFAUUzrZ54Acr10UvHR8dYsvFgyck=
+	t=1727289042; cv=none; b=lRkbScIW8z2ihGdNder3sNh4URyJTrcsEK28+HjT7OpPNaVkjxcCQfbN2Ym/MVwT8urNLfSoiDgQ8amxnT7sggEqWdyZ/BVr3oINDuXdIDDrIAY9Qsd6/PAo2WW0HgjzdxOCZJAF3M/tQhrQ+Na9/xQL/gFWAdx1s5OJ/bBw0PQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727289074; c=relaxed/simple;
-	bh=LYdLXSUrJXRDqqcpEE1+1SQR8ZanTN9oiSk3QKCSDTk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gaIFKu5zyl25x1dyv0nBT3M+VfH3QXuA8Wbnh0P4ZVZcJAzHJL1DIAirhKL7Snsl3MfWDYY5awRhClGPmH3oaRlX/Ne7zAXGTwhXdACf5pLSV14L4pwrPzY9lDrkolLEPn0elGAB2u8236y3WbMHQer5B3uvJ8u2IungWCPx9w0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tABxU0Ny; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a8ce5db8668so23976966b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 11:31:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727289071; x=1727893871; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=U6+i/7mcDfuzEJiw3xSsDAEL4FTrEvTwh7sTExEl5Jg=;
-        b=tABxU0NyHEds7SvociGZYHvKh6h60F3tAEQHoZYqExr8MGWI1U4j7vR3pFhLLNBquO
-         Wb+9b4kaUNHTfGNVw92GC1G8cf7n2GNnRUhGq8GOI7vL6E8rd6c3H/8nCUkXjdt5p38a
-         V0nINnQMMoD7NqDUNq1ZfFPK1H/KCapmJQ+AhRU2MWr3yB+v3GDfBmAtL4Dztr8sqYdJ
-         4LqCkcvdTugCIx880BE0aI+8EBLV3QVUZz3iWWyKPIb4fHnPZ8dgq3UWwf7MLpyolNUl
-         pWwTrpAsFzcVanyrAW8w+TEtp+U+CiCXS5PWi8/ODSHS7sv5/HET6okCs+zTMQABr5+m
-         /dHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727289071; x=1727893871;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U6+i/7mcDfuzEJiw3xSsDAEL4FTrEvTwh7sTExEl5Jg=;
-        b=IGcC2fw1B8v/VJaTNwgOrP2dJsGF26Ih1TFJzfwc3VKHP0ojZ916jP450a+dcWsMBw
-         Y1TH2IycEhJjlgrXiPmSVjWHkkpCx5fOtQjrElZ11cFE45N+yP9gVYvL5v8ILRYN8xL9
-         Hhec1nIDWlA940148UtYxqyog0dLN5z244jS2sUANKdA/WnPjGLLyRoj+ikrbXu/T2an
-         2lLq4EJ9TBH5Uxe9cp9kQe3khMQcrHmdnte3rgNpcn9ZYydwcgKLsH5lzrakeP133s7O
-         kNTh7xNrJrwj0anvH8qBWzfSo3Wlu2x2wFsmD5OkmkXNG4egxzIyW1Gbdww1RTan9Wl+
-         V8ww==
-X-Forwarded-Encrypted: i=1; AJvYcCV3ZE/eKaXmJ3QZOo8NGt5qkeTEA6rebjhTZHA4FeIFjYKxo84UFUyzAxPosV6wNkf5lHZ1Y4cNEo37KpI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9m3NfckBDwe/Gow8kA7XCKibj8LzoQbXJQ8tCAnyp9mEFzu5a
-	KV1K/YpbMtNL1XNfSqj0Da1nLl3v7wwoNHP/XBCPnE7JBTszAodVPl9qcIKngDaaD1qx9N72rbL
-	IxctGe7bVwuTIdwQ1JjO0gqQrDf39DgpETyiN
-X-Google-Smtp-Source: AGHT+IH0U/Sj/v3RDFLKDFGHHDOUO1yFKD7gU9F+YCdLZqdw2Vcxx9QjbEcC92mesiGInr9j/gAI39Tn6vVe50TjVNA=
-X-Received: by 2002:a17:907:3d8d:b0:a91:158a:a900 with SMTP id
- a640c23a62f3a-a93a069bf67mr391239166b.58.1727289070910; Wed, 25 Sep 2024
- 11:31:10 -0700 (PDT)
+	s=arc-20240116; t=1727289042; c=relaxed/simple;
+	bh=rCVfh1YcnQdRwRTGp5hSq3bNXJ39sMKutBAw1jlny9A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hbs2vaWhtEjwjzm0OJcKeNdS8d6VIDOQ+VUK1Ao7l9fuPGS/ITVtoZ0utrguoR9BjXeuT56yyFrwR3CdvhzpnvH3dSC04zMJpGC9R3dKLdi3SJGdlPjub1/fshhowWzcqTz/VP+vGGA+VlF2pMh+/eImzS0PhXgLBdkU8V/bcW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m1b61+9l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7A54C4CEC3;
+	Wed, 25 Sep 2024 18:30:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727289041;
+	bh=rCVfh1YcnQdRwRTGp5hSq3bNXJ39sMKutBAw1jlny9A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m1b61+9lBP1hv0l8LCCNmAdETPhM1Amw6RRUwFaWxRlZ/HZhCcaTulJ4YiqxrcXt6
+	 kETQaFMixIBRCzStOBxfvJdRBJCW73swjJzKXcWcHt/1XDUx1zQxVdtH9ebq5BI49z
+	 GxCQS9xJkmWY7s9i84S8lCMlYmCNZKoE7wNHJ2wXgEcQMAMDpLz1iSeHuT+VOxT4CT
+	 n2JEGJlbnVd6bHw8dFYpNao/D2AIExLJEw3HSef/x3rLjBTcqyRFke4nRAEzF2mdcj
+	 q9B8DC9ITKhkSJhYj27r3PQkMYvxqMqB3AEAKrFOK16Uag87i13XPHKQizMjm5JPBq
+	 emquRfqSpi3QA==
+Date: Wed, 25 Sep 2024 19:30:35 +0100
+From: Simon Horman <horms@kernel.org>
+To: Mohamed Khalfella <mkhalfella@purestorage.com>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Auke Kok <auke-jan.h.kok@intel.com>,
+	Yuanyuan Zhong <yzhong@purestorage.com>,
+	Jeff Garzik <jgarzik@redhat.com>, Ying Hsu <yinghsu@chromium.org>,
+	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] igb: Do not bring the device up after non-fatal
+ error
+Message-ID: <20240925183035.GV4029621@kernel.org>
+References: <20240924210604.123175-1-mkhalfella@purestorage.com>
+ <20240924210604.123175-2-mkhalfella@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240924011709.7037-1-kanchana.p.sridhar@intel.com>
- <20240924011709.7037-7-kanchana.p.sridhar@intel.com> <CAJD7tkbd=H+=wx0gnu8sh44hOmx7BE3G3oSxi7zt+o3HKJthkA@mail.gmail.com>
- <20240925134008.GA875661@cmpxchg.org>
-In-Reply-To: <20240925134008.GA875661@cmpxchg.org>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Wed, 25 Sep 2024 11:30:34 -0700
-Message-ID: <CAJD7tkY8D14j-e6imW9NxZCjTbx8tu_VaKDbRRQMdSeKX_kBuw@mail.gmail.com>
-Subject: Re: [PATCH v7 6/8] mm: zswap: Support mTHP swapout in zswap_store().
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, nphamcs@gmail.com, chengming.zhou@linux.dev, 
-	usamaarif642@gmail.com, shakeel.butt@linux.dev, ryan.roberts@arm.com, 
-	ying.huang@intel.com, 21cnbao@gmail.com, akpm@linux-foundation.org, 
-	nanhai.zou@intel.com, wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240924210604.123175-2-mkhalfella@purestorage.com>
 
-[..]
-> > > +       /*
-> > > +        * Check cgroup limits:
-> > > +        *
-> > > +        * The cgroup zswap limit check is done once at the beginning of an
-> > > +        * mTHP store, and not within zswap_store_page() for each page
-> > > +        * in the mTHP. We do however check the zswap pool limits at the
-> > > +        * start of zswap_store_page(). What this means is, the cgroup
-> > > +        * could go over the limits by at most (HPAGE_PMD_NR - 1) pages.
-> > > +        * However, the per-store-page zswap pool limits check should
-> > > +        * hopefully trigger the cgroup aware and zswap LRU aware global
-> > > +        * reclaim implemented in the shrinker. If this assumption holds,
-> > > +        * the cgroup exceeding the zswap limits could potentially be
-> > > +        * resolved before the next zswap_store, and if it is not, the next
-> > > +        * zswap_store would fail the cgroup zswap limit check at the start.
-> > > +        */
-> >
-> > I do not really like this. Allowing going one page above the limit is
-> > one thing, but one THP above the limit seems too much. I also don't
-> > like relying on the repeated limit checking in zswap_store_page(), if
-> > anything I think that should be batched too.
-> >
-> > Is it too unreasonable to maintain the average compression ratio and
-> > use that to estimate limit checking for both memcg and global limits?
-> > Johannes, Nhat, any thoughts on this?
->
-> I honestly don't think it's much of an issue. The global limit is
-> huge, and the cgroup limit is to the best of my knowledge only used as
-> a binary switch. Setting a non-binary limit - global or cgroup - seems
-> like a bit of an obscure usecase to me, because in the vast majority
-> of cases it's preferable to keep compresing over declaring OOM.
->
-> And even if you do have some granular limit, the workload size scales
-> with it. It's not like you have a thousand THPs in a 10M cgroup.
+On Tue, Sep 24, 2024 at 03:06:01PM -0600, Mohamed Khalfella wrote:
+> Commit 004d25060c78 ("igb: Fix igb_down hung on surprise removal")
+> changed igb_io_error_detected() to ignore non-fatal pcie errors in order
+> to avoid hung task that can happen when igb_down() is called multiple
+> times. This caused an issue when processing transient non-fatal errors.
+> igb_io_resume(), which is called after igb_io_error_detected(), assumes
+> that device is brought down by igb_io_error_detected() if the interface
+> is up. This resulted in panic with stacktrace below.
+> 
+> [ T3256] igb 0000:09:00.0 haeth0: igb: haeth0 NIC Link is Down
+> [  T292] pcieport 0000:00:1c.5: AER: Uncorrected (Non-Fatal) error received: 0000:09:00.0
+> [  T292] igb 0000:09:00.0: PCIe Bus Error: severity=Uncorrected (Non-Fatal), type=Transaction Layer, (Requester ID)
+> [  T292] igb 0000:09:00.0:   device [8086:1537] error status/mask=00004000/00000000
+> [  T292] igb 0000:09:00.0:    [14] CmpltTO [  200.105524,009][  T292] igb 0000:09:00.0: AER:   TLP Header: 00000000 00000000 00000000 00000000
+> [  T292] pcieport 0000:00:1c.5: AER: broadcast error_detected message
+> [  T292] igb 0000:09:00.0: Non-correctable non-fatal error reported.
+> [  T292] pcieport 0000:00:1c.5: AER: broadcast mmio_enabled message
+> [  T292] pcieport 0000:00:1c.5: AER: broadcast resume message
+> [  T292] ------------[ cut here ]------------
+> [  T292] kernel BUG at net/core/dev.c:6539!
+> [  T292] invalid opcode: 0000 [#1] PREEMPT SMP
+> [  T292] RIP: 0010:napi_enable+0x37/0x40
+> [  T292] Call Trace:
+> [  T292]  <TASK>
+> [  T292]  ? die+0x33/0x90
+> [  T292]  ? do_trap+0xdc/0x110
+> [  T292]  ? napi_enable+0x37/0x40
+> [  T292]  ? do_error_trap+0x70/0xb0
+> [  T292]  ? napi_enable+0x37/0x40
+> [  T292]  ? napi_enable+0x37/0x40
+> [  T292]  ? exc_invalid_op+0x4e/0x70
+> [  T292]  ? napi_enable+0x37/0x40
+> [  T292]  ? asm_exc_invalid_op+0x16/0x20
+> [  T292]  ? napi_enable+0x37/0x40
+> [  T292]  igb_up+0x41/0x150
+> [  T292]  igb_io_resume+0x25/0x70
+> [  T292]  report_resume+0x54/0x70
+> [  T292]  ? report_frozen_detected+0x20/0x20
+> [  T292]  pci_walk_bus+0x6c/0x90
+> [  T292]  ? aer_print_port_info+0xa0/0xa0
+> [  T292]  pcie_do_recovery+0x22f/0x380
+> [  T292]  aer_process_err_devices+0x110/0x160
+> [  T292]  aer_isr+0x1c1/0x1e0
+> [  T292]  ? disable_irq_nosync+0x10/0x10
+> [  T292]  irq_thread_fn+0x1a/0x60
+> [  T292]  irq_thread+0xe3/0x1a0
+> [  T292]  ? irq_set_affinity_notifier+0x120/0x120
+> [  T292]  ? irq_affinity_notify+0x100/0x100
+> [  T292]  kthread+0xe2/0x110
+> [  T292]  ? kthread_complete_and_exit+0x20/0x20
+> [  T292]  ret_from_fork+0x2d/0x50
+> [  T292]  ? kthread_complete_and_exit+0x20/0x20
+> [  T292]  ret_from_fork_asm+0x11/0x20
+> [  T292]  </TASK>
+> 
+> To fix this issue igb_io_resume() checks if the interface is running and
+> the device is not down this means igb_io_error_detected() did not bring
+> the device down and there is no need to bring it up.
+> 
+> Signed-off-by: Mohamed Khalfella <mkhalfella@purestorage.com>
+> Reviewed-by: Yuanyuan Zhong<yzhong@purestorage.com>
+> Fixes: 004d25060c78 ("igb: Fix igb_down hung on surprise removal")
 
-The memcg limit and zswap limit can be disproportionate, although that
-shouldn't be common.
+Thanks for the update, this version looks good to me.
 
->
-> If this ever becomes an issue, we can handle it in a fastpath-slowpath
-> scheme: check the limit up front for fast-path failure if we're
-> already maxed out, just like now; then make obj_cgroup_charge_zswap()
-> atomically charge against zswap.max and unwind the store if we raced.
->
-> For now, I would just keep the simple version we currently have: check
-> once in zswap_store() and then just go ahead for the whole folio.
-
-I am not totally against this but I feel like this is too optimistic.
-I think we can keep it simple-ish by maintaining an ewma for the
-compression ratio, we already have primitives for this (see
-DECLARE_EWMA).
-
-Then in zswap_store(), we can use the ewma to estimate the compressed
-size and use it to do the memcg and global limit checks once, like we
-do today. Instead of just checking if we are below the limits, we
-check if we have enough headroom for the estimated compressed size.
-Then we call zswap_store_page() to do the per-page stuff, then do
-batched charging and stats updates.
-
-If you think that's an overkill we can keep doing the limit checks as
-we do today,
-but I would still like to see batching of all the limit checks,
-charging, and stats updates. It makes little sense otherwise.
+Reviewed-by: Simon Horman <horms@kernel.org>
 
