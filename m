@@ -1,59 +1,57 @@
-Return-Path: <linux-kernel+bounces-338963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D174985ED3
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:44:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A62D985ED6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:45:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E3321C25636
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:44:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A530287153
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:45:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09E521733D;
-	Wed, 25 Sep 2024 12:13:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D57392178F7;
+	Wed, 25 Sep 2024 12:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lJ8dSteg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TtBchNPP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383C621732B;
-	Wed, 25 Sep 2024 12:13:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0EE72178F9;
+	Wed, 25 Sep 2024 12:13:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727266381; cv=none; b=jOtXo+I+BT2orAbpOY0vk82R9rfZneA39MtzdJBvref53mkqiPkINTL42xdQD53gvb332dFh7rS82GNggfZX52vkv8XcDXzQJhwZb1NpBgpKcu9WzuYp6JqrLivRwrE9ilXzO8xaKSFZTLwgRlgor4ZiPJxOIGP5OZua3+1D52o=
+	t=1727266384; cv=none; b=Wut5+LEVmzeWlGUxZhVS36GCbL4dak/hB3UWlrXFsj5YRSR/nunKg62l806924tXNCoGUPztBAV4bhcjVFWV0+Pd8afIIlZP7VVIh117sW4ZEvM7VkhFZDOw8RpjOhFv79rEB7jZ9I7yBEd04D9d1UBBRH+7/HgpwzPmkU91yj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727266381; c=relaxed/simple;
-	bh=xoTFhBnTc4Snj/E3xhe+4mYR/X98uCTUSeSuEr5NlEw=;
+	s=arc-20240116; t=1727266384; c=relaxed/simple;
+	bh=danRxNEwCBNhHmGNlVwhkZHk/Q9xGvHDOSjgsq/3ibc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y+V4/DmeyyV7+v+0Np0z+xRPS0fSZ4CjLvC6A5aNjIBWp1Ngev9UgY82Bie2XnQTmc/XOipH5G9HghG8OLReRCBxGvAkuniGr29J4PcJwSFckjCZhHuy8HVPRJv+l2QHSAiNVGj7l0JTjmWPisK28HGiELmg29zu30v/XdLR1x8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lJ8dSteg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD95CC4CEC7;
-	Wed, 25 Sep 2024 12:12:59 +0000 (UTC)
+	 MIME-Version; b=la2tCTysHfDiE7257mzSWsKt9I5W3tWbgf+H+9S1Ll2kpcU+1eHmg2a2QOy/lZ36TkZ3G1fkHYisHXVVsfhXF9bYiKbmZp9jUpjiE44LnDRyMLrlNQXag8A5RlHa2FZsLEtLkPau8Iz8YLtEd16YWEcvvqDYvslqABgFhXb1TCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TtBchNPP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C282FC4CEC7;
+	Wed, 25 Sep 2024 12:13:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727266381;
-	bh=xoTFhBnTc4Snj/E3xhe+4mYR/X98uCTUSeSuEr5NlEw=;
+	s=k20201202; t=1727266383;
+	bh=danRxNEwCBNhHmGNlVwhkZHk/Q9xGvHDOSjgsq/3ibc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lJ8dStegozHAJDfVk9CSsNklHhuazvseEt4HMbr59iOYuT423Vsz/UqM5/792Ecm3
-	 CGur1jO2xx+bJ6+dsd2MJjqTQVmfU+LsKm1qO94OZY4OyzBL7wWoDFWunYBsGueyd4
-	 9ypCxTNGBKTrmFSet57U3p4b+bMPILTvxPmHQazqq/dDqUS0KDswGykkC+MwjuzeaK
-	 VXFwJ7+UAELQWJhs6Ny5BpWJ6/tCzsxsKGfDxaNk3UDblxHhBnzfeiPBfmibNtOA8Y
-	 aCaEVhkV3r1d5jbDmNNFVSWOeNgldGkB/2V9TgN9tkmN6AVyZOooxJd6DDMUzGoJ8S
-	 g6IrjpsZc6Y6A==
+	b=TtBchNPPjU/1/mkLXTZQssT1ndBIEDE0caVSD9YwLuZ89OuPE7vQlAgnPddIvIpvb
+	 IyYrdtTXCHjn+rKE3XleBsv1b4t5+nl/j+/Mc0OVNStX9uPM79laIgtrx8fGae6+KA
+	 LQHU9qb00E4I8DSNUHmsWV3++mce70zgPS8FqilVOcvspbMG5beDl+fzpq2GqUgobX
+	 zKlBc6/fkXg5uWoHn+bbw5FfbqqYze4SZEKJPHbO8ycJ3k4WmmKNRHAsGu+yyyXTwr
+	 8BpdGQOzwX+LaZxfp8/BpEa0S2+upszIymj1n+RQJ1M+1myU6qkhi3UMtVoctWVBFl
+	 9YM023fqEwEqg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Simon Horman <horms@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>,
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
 	Sasha Levin <sashal@kernel.org>,
-	irusskikh@marvell.com,
 	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 040/139] net: atlantic: Avoid warning about potential string truncation
-Date: Wed, 25 Sep 2024 08:07:40 -0400
-Message-ID: <20240925121137.1307574-40-sashal@kernel.org>
+	linux@armlinux.org.uk,
+	linux-crypto@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 6.6 041/139] crypto: simd - Do not call crypto_alloc_tfm during registration
+Date: Wed, 25 Sep 2024 08:07:41 -0400
+Message-ID: <20240925121137.1307574-41-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240925121137.1307574-1-sashal@kernel.org>
 References: <20240925121137.1307574-1-sashal@kernel.org>
@@ -63,80 +61,252 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.52
 Content-Transfer-Encoding: 8bit
 
-From: Simon Horman <horms@kernel.org>
+From: Herbert Xu <herbert@gondor.apana.org.au>
 
-[ Upstream commit 5874e0c9f25661c2faefe4809907166defae3d7f ]
+[ Upstream commit 3c44d31cb34ce4eb8311a2e73634d57702948230 ]
 
-W=1 builds with GCC 14.2.0 warn that:
+Algorithm registration is usually carried out during module init,
+where as little work as possible should be carried out.  The SIMD
+code violated this rule by allocating a tfm, this then triggers a
+full test of the algorithm which may dead-lock in certain cases.
 
-.../aq_ethtool.c:278:59: warning: ‘%d’ directive output may be truncated writing between 1 and 11 bytes into a region of size 6 [-Wformat-truncation=]
-  278 |                                 snprintf(tc_string, 8, "TC%d ", tc);
-      |                                                           ^~
-.../aq_ethtool.c:278:56: note: directive argument in the range [-2147483641, 254]
-  278 |                                 snprintf(tc_string, 8, "TC%d ", tc);
-      |                                                        ^~~~~~~
-.../aq_ethtool.c:278:33: note: ‘snprintf’ output between 5 and 15 bytes into a destination of size 8
-  278 |                                 snprintf(tc_string, 8, "TC%d ", tc);
-      |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+SIMD is only allocating the tfm to get at the alg object, which is
+in fact already available as it is what we are registering.  Use
+that directly and remove the crypto_alloc_tfm call.
 
-tc is always in the range 0 - cfg->tcs. And as cfg->tcs is a u8,
-the range is 0 - 255. Further, on inspecting the code, it seems
-that cfg->tcs will never be more than AQ_CFG_TCS_MAX (8), so
-the range is actually 0 - 8.
+Also remove some obsolete and unused SIMD API.
 
-So, it seems that the condition that GCC flags will not occur.
-But, nonetheless, it would be nice if it didn't emit the warning.
-
-It seems that this can be achieved by changing the format specifier
-from %d to %u, in which case I believe GCC recognises an upper bound
-on the range of tc of 0 - 255. After some experimentation I think
-this is due to the combination of the use of %u and the type of
-cfg->tcs (u8).
-
-Empirically, updating the type of the tc variable to unsigned int
-has the same effect.
-
-As both of these changes seem to make sense in relation to what the code
-is actually doing - iterating over unsigned values - do both.
-
-Compile tested only.
-
-Signed-off-by: Simon Horman <horms@kernel.org>
-Link: https://patch.msgid.link/20240821-atlantic-str-v1-1-fa2cfe38ca00@kernel.org
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/aquantia/atlantic/aq_ethtool.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/crypto/aes-ce-glue.c     |  2 +-
+ arch/arm/crypto/aes-neonbs-glue.c |  2 +-
+ crypto/simd.c                     | 76 ++++++-------------------------
+ include/crypto/internal/simd.h    | 12 +----
+ 4 files changed, 19 insertions(+), 73 deletions(-)
 
-diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_ethtool.c b/drivers/net/ethernet/aquantia/atlantic/aq_ethtool.c
-index ac4ea93bd8dda..eaef14ea5dd2e 100644
---- a/drivers/net/ethernet/aquantia/atlantic/aq_ethtool.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_ethtool.c
-@@ -265,7 +265,7 @@ static void aq_ethtool_get_strings(struct net_device *ndev,
- 		const int rx_stat_cnt = ARRAY_SIZE(aq_ethtool_queue_rx_stat_names);
- 		const int tx_stat_cnt = ARRAY_SIZE(aq_ethtool_queue_tx_stat_names);
- 		char tc_string[8];
--		int tc;
-+		unsigned int tc;
+diff --git a/arch/arm/crypto/aes-ce-glue.c b/arch/arm/crypto/aes-ce-glue.c
+index b668c97663ec0..f5b66f4cf45d9 100644
+--- a/arch/arm/crypto/aes-ce-glue.c
++++ b/arch/arm/crypto/aes-ce-glue.c
+@@ -711,7 +711,7 @@ static int __init aes_init(void)
+ 		algname = aes_algs[i].base.cra_name + 2;
+ 		drvname = aes_algs[i].base.cra_driver_name + 2;
+ 		basename = aes_algs[i].base.cra_driver_name;
+-		simd = simd_skcipher_create_compat(algname, drvname, basename);
++		simd = simd_skcipher_create_compat(aes_algs + i, algname, drvname, basename);
+ 		err = PTR_ERR(simd);
+ 		if (IS_ERR(simd))
+ 			goto unregister_simds;
+diff --git a/arch/arm/crypto/aes-neonbs-glue.c b/arch/arm/crypto/aes-neonbs-glue.c
+index f00f042ef3570..0ca94b90bc4ec 100644
+--- a/arch/arm/crypto/aes-neonbs-glue.c
++++ b/arch/arm/crypto/aes-neonbs-glue.c
+@@ -539,7 +539,7 @@ static int __init aes_init(void)
+ 		algname = aes_algs[i].base.cra_name + 2;
+ 		drvname = aes_algs[i].base.cra_driver_name + 2;
+ 		basename = aes_algs[i].base.cra_driver_name;
+-		simd = simd_skcipher_create_compat(algname, drvname, basename);
++		simd = simd_skcipher_create_compat(aes_algs + i, algname, drvname, basename);
+ 		err = PTR_ERR(simd);
+ 		if (IS_ERR(simd))
+ 			goto unregister_simds;
+diff --git a/crypto/simd.c b/crypto/simd.c
+index edaa479a1ec5e..d109866641a26 100644
+--- a/crypto/simd.c
++++ b/crypto/simd.c
+@@ -136,27 +136,19 @@ static int simd_skcipher_init(struct crypto_skcipher *tfm)
+ 	return 0;
+ }
  
- 		memset(tc_string, 0, sizeof(tc_string));
- 		memcpy(p, aq_ethtool_stat_names,
-@@ -274,7 +274,7 @@ static void aq_ethtool_get_strings(struct net_device *ndev,
+-struct simd_skcipher_alg *simd_skcipher_create_compat(const char *algname,
++struct simd_skcipher_alg *simd_skcipher_create_compat(struct skcipher_alg *ialg,
++						      const char *algname,
+ 						      const char *drvname,
+ 						      const char *basename)
+ {
+ 	struct simd_skcipher_alg *salg;
+-	struct crypto_skcipher *tfm;
+-	struct skcipher_alg *ialg;
+ 	struct skcipher_alg *alg;
+ 	int err;
  
- 		for (tc = 0; tc < cfg->tcs; tc++) {
- 			if (cfg->is_qos)
--				snprintf(tc_string, 8, "TC%d ", tc);
-+				snprintf(tc_string, 8, "TC%u ", tc);
+-	tfm = crypto_alloc_skcipher(basename, CRYPTO_ALG_INTERNAL,
+-				    CRYPTO_ALG_INTERNAL | CRYPTO_ALG_ASYNC);
+-	if (IS_ERR(tfm))
+-		return ERR_CAST(tfm);
+-
+-	ialg = crypto_skcipher_alg(tfm);
+-
+ 	salg = kzalloc(sizeof(*salg), GFP_KERNEL);
+ 	if (!salg) {
+ 		salg = ERR_PTR(-ENOMEM);
+-		goto out_put_tfm;
++		goto out;
+ 	}
  
- 			for (i = 0; i < cfg->vecs; i++) {
- 				for (si = 0; si < rx_stat_cnt; si++) {
+ 	salg->ialg_name = basename;
+@@ -195,30 +187,16 @@ struct simd_skcipher_alg *simd_skcipher_create_compat(const char *algname,
+ 	if (err)
+ 		goto out_free_salg;
+ 
+-out_put_tfm:
+-	crypto_free_skcipher(tfm);
++out:
+ 	return salg;
+ 
+ out_free_salg:
+ 	kfree(salg);
+ 	salg = ERR_PTR(err);
+-	goto out_put_tfm;
++	goto out;
+ }
+ EXPORT_SYMBOL_GPL(simd_skcipher_create_compat);
+ 
+-struct simd_skcipher_alg *simd_skcipher_create(const char *algname,
+-					       const char *basename)
+-{
+-	char drvname[CRYPTO_MAX_ALG_NAME];
+-
+-	if (snprintf(drvname, CRYPTO_MAX_ALG_NAME, "simd-%s", basename) >=
+-	    CRYPTO_MAX_ALG_NAME)
+-		return ERR_PTR(-ENAMETOOLONG);
+-
+-	return simd_skcipher_create_compat(algname, drvname, basename);
+-}
+-EXPORT_SYMBOL_GPL(simd_skcipher_create);
+-
+ void simd_skcipher_free(struct simd_skcipher_alg *salg)
+ {
+ 	crypto_unregister_skcipher(&salg->alg);
+@@ -246,7 +224,7 @@ int simd_register_skciphers_compat(struct skcipher_alg *algs, int count,
+ 		algname = algs[i].base.cra_name + 2;
+ 		drvname = algs[i].base.cra_driver_name + 2;
+ 		basename = algs[i].base.cra_driver_name;
+-		simd = simd_skcipher_create_compat(algname, drvname, basename);
++		simd = simd_skcipher_create_compat(algs + i, algname, drvname, basename);
+ 		err = PTR_ERR(simd);
+ 		if (IS_ERR(simd))
+ 			goto err_unregister;
+@@ -383,27 +361,19 @@ static int simd_aead_init(struct crypto_aead *tfm)
+ 	return 0;
+ }
+ 
+-struct simd_aead_alg *simd_aead_create_compat(const char *algname,
+-					      const char *drvname,
+-					      const char *basename)
++static struct simd_aead_alg *simd_aead_create_compat(struct aead_alg *ialg,
++						     const char *algname,
++						     const char *drvname,
++						     const char *basename)
+ {
+ 	struct simd_aead_alg *salg;
+-	struct crypto_aead *tfm;
+-	struct aead_alg *ialg;
+ 	struct aead_alg *alg;
+ 	int err;
+ 
+-	tfm = crypto_alloc_aead(basename, CRYPTO_ALG_INTERNAL,
+-				CRYPTO_ALG_INTERNAL | CRYPTO_ALG_ASYNC);
+-	if (IS_ERR(tfm))
+-		return ERR_CAST(tfm);
+-
+-	ialg = crypto_aead_alg(tfm);
+-
+ 	salg = kzalloc(sizeof(*salg), GFP_KERNEL);
+ 	if (!salg) {
+ 		salg = ERR_PTR(-ENOMEM);
+-		goto out_put_tfm;
++		goto out;
+ 	}
+ 
+ 	salg->ialg_name = basename;
+@@ -442,36 +412,20 @@ struct simd_aead_alg *simd_aead_create_compat(const char *algname,
+ 	if (err)
+ 		goto out_free_salg;
+ 
+-out_put_tfm:
+-	crypto_free_aead(tfm);
++out:
+ 	return salg;
+ 
+ out_free_salg:
+ 	kfree(salg);
+ 	salg = ERR_PTR(err);
+-	goto out_put_tfm;
+-}
+-EXPORT_SYMBOL_GPL(simd_aead_create_compat);
+-
+-struct simd_aead_alg *simd_aead_create(const char *algname,
+-				       const char *basename)
+-{
+-	char drvname[CRYPTO_MAX_ALG_NAME];
+-
+-	if (snprintf(drvname, CRYPTO_MAX_ALG_NAME, "simd-%s", basename) >=
+-	    CRYPTO_MAX_ALG_NAME)
+-		return ERR_PTR(-ENAMETOOLONG);
+-
+-	return simd_aead_create_compat(algname, drvname, basename);
++	goto out;
+ }
+-EXPORT_SYMBOL_GPL(simd_aead_create);
+ 
+-void simd_aead_free(struct simd_aead_alg *salg)
++static void simd_aead_free(struct simd_aead_alg *salg)
+ {
+ 	crypto_unregister_aead(&salg->alg);
+ 	kfree(salg);
+ }
+-EXPORT_SYMBOL_GPL(simd_aead_free);
+ 
+ int simd_register_aeads_compat(struct aead_alg *algs, int count,
+ 			       struct simd_aead_alg **simd_algs)
+@@ -493,7 +447,7 @@ int simd_register_aeads_compat(struct aead_alg *algs, int count,
+ 		algname = algs[i].base.cra_name + 2;
+ 		drvname = algs[i].base.cra_driver_name + 2;
+ 		basename = algs[i].base.cra_driver_name;
+-		simd = simd_aead_create_compat(algname, drvname, basename);
++		simd = simd_aead_create_compat(algs + i, algname, drvname, basename);
+ 		err = PTR_ERR(simd);
+ 		if (IS_ERR(simd))
+ 			goto err_unregister;
+diff --git a/include/crypto/internal/simd.h b/include/crypto/internal/simd.h
+index d2316242a9884..be97b97a75dd2 100644
+--- a/include/crypto/internal/simd.h
++++ b/include/crypto/internal/simd.h
+@@ -14,11 +14,10 @@
+ struct simd_skcipher_alg;
+ struct skcipher_alg;
+ 
+-struct simd_skcipher_alg *simd_skcipher_create_compat(const char *algname,
++struct simd_skcipher_alg *simd_skcipher_create_compat(struct skcipher_alg *ialg,
++						      const char *algname,
+ 						      const char *drvname,
+ 						      const char *basename);
+-struct simd_skcipher_alg *simd_skcipher_create(const char *algname,
+-					       const char *basename);
+ void simd_skcipher_free(struct simd_skcipher_alg *alg);
+ 
+ int simd_register_skciphers_compat(struct skcipher_alg *algs, int count,
+@@ -32,13 +31,6 @@ void simd_unregister_skciphers(struct skcipher_alg *algs, int count,
+ struct simd_aead_alg;
+ struct aead_alg;
+ 
+-struct simd_aead_alg *simd_aead_create_compat(const char *algname,
+-					      const char *drvname,
+-					      const char *basename);
+-struct simd_aead_alg *simd_aead_create(const char *algname,
+-				       const char *basename);
+-void simd_aead_free(struct simd_aead_alg *alg);
+-
+ int simd_register_aeads_compat(struct aead_alg *algs, int count,
+ 			       struct simd_aead_alg **simd_algs);
+ 
 -- 
 2.43.0
 
