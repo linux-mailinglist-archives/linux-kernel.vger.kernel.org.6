@@ -1,153 +1,213 @@
-Return-Path: <linux-kernel+bounces-337951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4F9D985163
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 05:17:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5688B985164
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 05:18:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99E7F1F2621C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 03:17:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C91F41F260F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 03:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE5B314A4F0;
-	Wed, 25 Sep 2024 03:17:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 173A414A095;
+	Wed, 25 Sep 2024 03:18:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="olkwWh75"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Uxv10dFw"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2041.outbound.protection.outlook.com [40.107.100.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F37F148304;
-	Wed, 25 Sep 2024 03:17:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727234253; cv=none; b=ViE/UXqkffHE9kkMN0F1K4H7CsEfmmtnyzN0XqHN7O+BaQvuk96UPNygcsDrzeW002DryyZIpqMUA6yd8GLW36QJOiA2YJElZtkJiVNQtYdOiN93+BhkYId651dkelJHQWWxyXM85eRPiKRtLN5V6u2lolHBhSVzI8fDcDkafQ0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727234253; c=relaxed/simple;
-	bh=7Rf1WPMMHzwR4cN/mSEBEBHU/HBB3cFfHxdJODffJMw=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A168E148304
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 03:18:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727234329; cv=fail; b=Vje3tdQYCQqwgNea+mmJBn/e7G9jUzgY93IY+ktmnAH98FAl2pczQeA6CEO+zAOo4npPAyCzvFz1UHLuWhT/wXGAVvTEFBnhr2u9BWTgK1O1CGgKdwEJ0MusDx99xh5KoQ2bJe0TO8VudUz77gpuM5OUBx/E5TG961khsjVWyzY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727234329; c=relaxed/simple;
+	bh=Xbmd94M2+52Djq1RF/ET3i4dYIP60i22VWR1p2NW/Jc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ctVLaw8qICRsX8VgOUU4qNItTYmfE/ggKTT/ALntWyDLtmMTArdu7x7SmzD36jqs7n7Ou1HD9OEcO17R6Ysc1PyKA/VSZnWM3iXAjgtdG/8nclWtj6WcXZc3ljKAUgrZo8rOgxQtRiJpcb3BkXxCTH8Ku6/1rQkF/4eEFfMq0K0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=olkwWh75; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48OJTnxd007878;
-	Wed, 25 Sep 2024 03:17:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	f9+Ho66y8WeZ0czVdVauMxfLgk0UIRhMmgGryu+9d/Q=; b=olkwWh75dkeHBkLd
-	GpG8BIxDCCi7wyhuF1OwR7xJ1Hd6ioxd5DAiqbU0OJ3LJrjETZkyITDqNZPpWYlf
-	jW7TPCsofNiMUoD0n3/d+wrPKtN1TZ5uOVhtUepM50ibbe2C1UD528eyF5j7Z9Wg
-	7ZjVHVdYBnaa1pZJkNhD5VHe/mxsKq5euuCAHgYYHbj1sM8ulLIesmMlPwpoExFn
-	aElPynYKYEG9Hb/s7OWOFCnbtjjsg8A5ZQo0PE+YvoylZ7ovluxoNfQVGTcDDnM5
-	ZzzyrSFiW832jMbBeNwvRARTm15E6PYJcTDOaynNlgEGtzmgobQhiOs/4MYBTG/w
-	sdTcxg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sn5btt8h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 03:17:26 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48P3HPTY031569
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 03:17:25 GMT
-Received: from [10.233.21.53] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 24 Sep
- 2024 20:17:20 -0700
-Message-ID: <d921cffe-bcea-4f96-8d8e-6b319af7e5ab@quicinc.com>
-Date: Wed, 25 Sep 2024 11:17:18 +0800
+	 In-Reply-To:Content-Type; b=WaKdJ9SEHtLlXfcJ1oxIwgh2LdSZrwUgGBozwgKPo0RcnStTKAp6ASawlzxVtjvVkJNoboKKdYQ9e6VhJKft7cp4l8ctMSwVj8qxuxDVYyW8srwK0EULcLXiaWzEyp3AMlVy/gTlwDFpAm0XAuVJzbIPAy9b/aHvfpZnv+YDmEk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Uxv10dFw; arc=fail smtp.client-ip=40.107.100.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HaVqSnQvP/YbmZTI1SmFp6UX6h/1u0B255dFHZFLJ73PClHmhqIGCaWeBICi1+mnOiTiwLPInqqHkopBNVbq8tXvtjO2jqrKlO4WHzRfn8rXOCuNubwgfXS/aNGzmITSLUe9P1rZskntiJTcvkjxoAhu8BKNQVRZxEV6ELGo/bh3Sfe8sfHQdQSnM4tWlTu4zLuY5iGt0xoIy7UJ1zovJkn6bJot6nYZ0VvgPaQU+M4RUJ+pMwzvHNYiJ+5yN2QtG0T/KlB0c3253w2x5Wx5ImrFEoldGmxEPrvDUHO+e/fYLsJ5x2UJCaKShPbEwfyKO/Mtn5AAdKxQCR6S2mtqSg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8m6hfsB8PYP6b9qaHDqRR3ccct9QoaMMwth0pc+KHPI=;
+ b=IXeM7HLkSjMzZvRHOPamgBgkuoEWqf2DPpxxvlGsDgzOcevntDiombvMf7YnNSNcN+iZvG97rRbzli07B7hegjlVUjITDmkMg+yCsBzym/TRYQU8HlGltrNC3bevF9Hxub5NUsbaa0ydSlrGFBTX2+TdHGCpb3yAFxEETSAVS3OHWGQxL+hVq4hNH61LaESWeIC4eijHrIycfN8UybnAdRkYMxH8RJfwlk+f7IY07hp37bwLHRPUB6dFUyiGQD9Ji+lF+v8Hnlc49gEnML5IDv8hCTQR1/SJSKgnuftm9gx2POiGjUtTaHv/ApMgUHg4TMRefDFUJsu/VINYW9LHJw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8m6hfsB8PYP6b9qaHDqRR3ccct9QoaMMwth0pc+KHPI=;
+ b=Uxv10dFwZYCFQ8x/gPzTGkuKT/i0scsOZD0JofTRMQ4/aBQB3V0awtOG/GLkKffR8DeqikQ12hSVK5xCQyQhKsPzIlk8ewQckvgwjyoMcPBCFx+roMuUVDLK/u8+alUPdWRrw9iyfGQ3anyEbdSDAkPMB2rgIc5IhMCiFt/wxU4=
+Received: from BYAPR01CA0052.prod.exchangelabs.com (2603:10b6:a03:94::29) by
+ CY5PR12MB6646.namprd12.prod.outlook.com (2603:10b6:930:41::14) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7982.26; Wed, 25 Sep 2024 03:18:42 +0000
+Received: from CO1PEPF000044F0.namprd05.prod.outlook.com
+ (2603:10b6:a03:94:cafe::65) by BYAPR01CA0052.outlook.office365.com
+ (2603:10b6:a03:94::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.27 via Frontend
+ Transport; Wed, 25 Sep 2024 03:18:43 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1PEPF000044F0.mail.protection.outlook.com (10.167.241.70) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8005.15 via Frontend Transport; Wed, 25 Sep 2024 03:18:42 +0000
+Received: from [10.136.36.144] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 24 Sep
+ 2024 22:18:21 -0500
+Message-ID: <ef409c01-1588-6e3a-aa3c-f142c80657c7@amd.com>
+Date: Wed, 25 Sep 2024 08:47:47 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: remoteproc: qcom,sa8775p-pas: Document
- QCS8300 remoteproc
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Xin Liu
-	<quic_liuxin@quicinc.com>
-References: <20240911-qcs8300_remoteproc_binding-v2-1-01921b110532@quicinc.com>
- <afa070b7-7aae-49ee-a983-24bda96bd6ec@kernel.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.1
+Subject: Re: [PATCH sched_ext/for-6.12-fixes] Disable SM_IDLE/rq empty path
+ when scx_enabled
 Content-Language: en-US
-From: Jingyi Wang <quic_jingyw@quicinc.com>
-In-Reply-To: <afa070b7-7aae-49ee-a983-24bda96bd6ec@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+To: Tejun Heo <tj@kernel.org>
+CC: <void@manifault.com>, <linux-kernel@vger.kernel.org>,
+	<kernel-team@meta.com>, <sched-ext@meta.com>, <peterz@infradead.org>, Pat
+ Somaru <patso@likewhatevs.io>
+References: <20240920194159.158152-1-patso@likewhatevs.io>
+ <ZvGMjn1Va3aNbieH@slm.duckdns.org>
+ <3e6fdedc-a87c-ff8a-a75c-5c1282a122b5@amd.com>
+ <ZvM7UntdPJKioomO@slm.duckdns.org>
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <ZvM7UntdPJKioomO@slm.duckdns.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: fQ52S-We6sjEkhHqlhhuBsYdmjfcux_K
-X-Proofpoint-GUID: fQ52S-We6sjEkhHqlhhuBsYdmjfcux_K
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 adultscore=0 impostorscore=0 malwarescore=0 mlxlogscore=797
- spamscore=0 mlxscore=0 priorityscore=1501 bulkscore=0 phishscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409250023
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044F0:EE_|CY5PR12MB6646:EE_
+X-MS-Office365-Filtering-Correlation-Id: 78d4bfcd-3611-4ce1-3dc3-08dcdd10c200
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?T0RKbjdSYTlMYmZ4aURhdFVJNWkybzlGOEFQSmtZMnY0K2ZmWEN6amJMUnhK?=
+ =?utf-8?B?MzlvQkg2TFl0cU5pVlJVTE5nOVN6Z1ErM3JwWUdjbXNMcU94WEozNENzUzgv?=
+ =?utf-8?B?V0FzVHFlWFNvL3VKNUkreFM5WmpMWElFRzBwKzV2d0tRbE1rOHptUkdkN2VL?=
+ =?utf-8?B?ZXFFbDV0SzM2UTJiaFJZbGhrR3lqcklybUg1dGZoSDE5L2Q3UWdqSW9JSWlr?=
+ =?utf-8?B?aXE3NXRnTHJUZ3pJNXZxb2hjNE1UV1dYemNnSEM4YVovbkNTd0hXZUMvdWRo?=
+ =?utf-8?B?elV2ckNTaWptaXJRMCtsSlBMN01XcnJlQjZXRksxN0pwQ0RjY3MxVDZkZEhH?=
+ =?utf-8?B?aGFqbUEzT2c0eFkrc1lKL0w2aXBlY1R6QTlpQkRrUFdab3d4VTZXRDJENk1T?=
+ =?utf-8?B?ZWhBdi82NmQrQktuUERDU3Y0bk03MjhhaVk3MmNuREpBdVBSbm9SeDdRdDB5?=
+ =?utf-8?B?c05lMG51ZW1wdzhEN3YxWWQ5aUhVOGE4TmZEV2Z5RG9CeVl0V2NYemsvbmhq?=
+ =?utf-8?B?aDN0SmdFNm95b284MWtaZlF3MTRwUkJGWWJkL0hjNmxuOFlUcGYzNDBCTVpE?=
+ =?utf-8?B?OHNtNlJXanJzVVpOZkpCNzBFN0FvZzR6M2dpNXdxVlNuSDN3c2dzYmtYOUxw?=
+ =?utf-8?B?RHU1dndSdXNrbXQ1ay9UUzMrQTJlOWY3M0xJYWFVN01mQzRYZ0MvWUJnZzZW?=
+ =?utf-8?B?a1BXbWh6cUsyczJUMVoxeC9BSjNaV0ZXYnNsbU1JaDluS215QUZoR3ZmVVRl?=
+ =?utf-8?B?STBiTjBjV2ZZdmFQWktReXoxWS9XaEZvcGFEZzhIa1BTZ0RrZGE4TFZQeE5k?=
+ =?utf-8?B?Vk9vb1RHUHYzWGM4QTRkOVMxdTBtRUNjbHpoRkxiSHUvVmdUc09oYVNYZ1Va?=
+ =?utf-8?B?RlVGR21EbXZpejE5MUNJU3F2c0k0VXh6Um5aWDFLcldQQ0p3MC9sYUllWnVk?=
+ =?utf-8?B?Q3c1MU9UZi9RREJ6cEJ0OVV2NWJCVzN5SmhCTnBZQ2trN1ZXTUdQQU96SkZD?=
+ =?utf-8?B?V3RFYUxUWm45TmYxU3pEUmpXeFBrQWQ1V0J0QWl5REFNaTcyOERlWVZ2ck5F?=
+ =?utf-8?B?Y2xmbDVkMFB4NXArK0R1UjZVRGtmeEJDQlF5Mjd5QWJpY3V5elcrc2RKWEtM?=
+ =?utf-8?B?TWJKZEkwMWVJQjdvTkhHNjMydnNSR3psUnlqaTNYNFkxMUZ6NUNTWUFGQ2dV?=
+ =?utf-8?B?VnJOR0c5RGNycCs3MXFaSUsxTXFLUkNGTjJacThPNFZtZDB1ejBFaVRWYXp4?=
+ =?utf-8?B?ck5YTkdzNUpIWVR6NUlpUS9DM1ZsM0VKMlZ3cUdab3pjaTJFQ0IxSzRHTHpQ?=
+ =?utf-8?B?clBmVW5JVndZdUc5RDFEajNoY0N1NzBIMzJXT2lRUjlCK01sUmdhL0ZDaWZ3?=
+ =?utf-8?B?RnRucnAwQkM0c05RNEdIYmxUWEQ4SHlmWFMyc2VSTUFHSkZFMVlIUFVHSEFh?=
+ =?utf-8?B?QXQxKzNUZ3d6SlhyYWZXL3RBV0E2R3pyekpBaThyWkNISVBzTEVOYlF1Qm1t?=
+ =?utf-8?B?c0pkNWZTNk5wcjRrOXUxbXhjd3BGbUpma1Zpc29NR2grSERFQ0RWdUJzUUh1?=
+ =?utf-8?B?NXNIbURyRStic3lDN1NaNkFZcTh1YUthRS91ZDQwWGkwcFZQYkFZb09TdG94?=
+ =?utf-8?B?Q25peitNYi9zcjFMVGlOSkRGS3d0TGFKeE9lWENZcC9RbVJFanVoam5VOUtJ?=
+ =?utf-8?B?K0NKckhNc0ovR2ZVTkd4ZVJ3eFROVDdJdjUyc3ArZ056Qm5XNitLNEgvR1dE?=
+ =?utf-8?B?MFE0dDVjUHFLaTJ4aWsvNmZsL2JqUXpRQnhXcElGN1VackI3VkNzWTdVWlow?=
+ =?utf-8?B?dmJpUjBFK29PNDdHeHJhZmlwbnJwRG1rUWlLU0RjNEk2TkVkMWtVRzZBZGZD?=
+ =?utf-8?B?R083QUZZTytLUDBOSDZWZEpiNGw4TWh3bVNVZFkvTG5MenFPWlhJeksxZi9H?=
+ =?utf-8?Q?qNOkrYl67VLo7hZmIiMMOF3t0m0Zc30Z?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2024 03:18:42.2216
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 78d4bfcd-3611-4ce1-3dc3-08dcdd10c200
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044F0.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6646
 
+Hello Tejun,
 
+On 9/25/2024 3:51 AM, Tejun Heo wrote:
+> Hello,
+> 
+> On Tue, Sep 24, 2024 at 09:10:02AM +0530, K Prateek Nayak wrote:
+>>>    	prev_state = READ_ONCE(prev->__state);
+>>>    	if (sched_mode == SM_IDLE) {
+>>> -		if (!rq->nr_running) {
+>>> +		/* SCX must consult the BPF scheduler to tell if rq is empty */
+>>
+>> I was wondering if sched_ext case could simply do:
+>>
+>> 		if (scx_enabled())
+>> 			prev_balance(rq, prev, rf);
+>>
+>> and use "rq->scx.flags" to skip balancing in balance_scx() later when
+>> __pick_next_task() calls prev_balance() but (and please correct me if
+>> I'm wrong here) balance_scx() calls balance_one() which can call
+>> consume_dispatch_q() to pick a task from global / user-defined dispatch
+>> queue, and in doing so, it does not update "rq->nr_running".
+> 
+> Hmm... would that be a meaningful optimization? prev_balance() calls into
+> SCX's dispatch path and there can be quite a bit going on there. I'm not
+> sure whether it'd worth much to save a trip through __pick_next_task().
 
-On 9/16/2024 10:57 PM, Krzysztof Kozlowski wrote:
-> On 11/09/2024 08:41, Jingyi Wang wrote:
->> +      - items:
->> +          - enum:
->> +              - qcom,qcs8300-adsp-pas
->> +          - const: qcom,sa8775p-adsp-pas
->> +      - items:
->> +          - enum:
->> +              - qcom,qcs8300-cdsp-pas
->> +          - const: qcom,sa8775p-cdsp0-pas
->> +      - items:
->> +          - enum:
->> +              - qcom,qcs8300-gpdsp-pas
->> +          - const: qcom,sa8775p-gpdsp0-pas
->> +      - enum:
->> +          - qcom,sa8775p-adsp-pas
->> +          - qcom,sa8775p-cdsp0-pas
->> +          - qcom,sa8775p-cdsp1-pas
->> +          - qcom,sa8775p-gpdsp0-pas
->> +          - qcom,sa8775p-gpdsp1-pas
->>  
->>    reg:
->>      maxItems: 1
->> @@ -64,6 +77,7 @@ allOf:
->>        properties:
->>          compatible:
+Probably not worth it given balance_scx() is indeed very complex and can
+release and re-acquire the rq-lock (I don't believe it should be a
+problem in SM_IDLE path but the given he complexity, I could have easily
+missed something again :)
+
 > 
-> Instead add here "contains:" and no need for mentioning compatible
-> second time. Same in other places.
+>> I could only see add_nr_running() being called from enqueue_task_scx()
+>> and this is even before the ext core calls do_enqueue_task() which hooks
+>> into the bpf layer which makes the decision where the task actually
+>> goes.
+>>
+>> Is my understanding correct that whichever CPU is the target for the
+>> enqueue_task_scx() callback initially is the one that accounts the
+>> enqueue in "rq->nr_running" until the task is dequeued or did I miss
+>> something?
 > 
-> Best regards,
-> Krzysztof
+> Whenever a task is dispatched to a local DSQ of a CPU including from
+> balance_one(), if the task is not on that CPU already,
+> move_remote_task_to_local_dsq() is called which migrates the task to the
+> target CPU by deactivating and then re-activating it. As deactivating and
+> re-activating involves dequeueing and re-enqueueing, rq->running gets
+> updated accordingly.
+
+Ah! I gave up too soon going down the call chain. Thank you for
+clarifying.
+
 > 
-Well noted.
->>            enum:
->> +            - qcom,qcs8300-adsp-pas
->>              - qcom,sa8775p-adsp-pas
+> Thanks.
 > 
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
-Thanks,
-Jingyi
+
+-- 
+Thanks and Regards,
+Prateek
 
