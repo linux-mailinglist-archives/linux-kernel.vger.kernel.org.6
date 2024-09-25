@@ -1,179 +1,248 @@
-Return-Path: <linux-kernel+bounces-337900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6A649850D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 04:04:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 841B69850D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 04:07:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5799BB215AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 02:04:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F05D41F24937
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 02:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD824136672;
-	Wed, 25 Sep 2024 02:04:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE96E13D62F;
+	Wed, 25 Sep 2024 02:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hWoJojZh"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IbcMxeSf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2422907
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 02:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135622907
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 02:07:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727229879; cv=none; b=k75TsD9e2oc+pzuL8UVbZsekIjXqy4thZMwXLMTZD5ueQZiM5aZCaAn5Zg7AL1wb8H5LGgP9oWlVRAz/1ugVBsXgkRlGgAnuiam9I+daV3qQEToyVvIzkoXuPZakcg2MGlZncF/nb0BuI+SSWKP7xLX7broRgHa5OOioEh7az3U=
+	t=1727230065; cv=none; b=DhNcKHy0iwE7g/hmlPKkVSbvbacTvfcsUp+Ldx8GN0BLrAopUX4hdY4d6LwB9406RhylbiWAghqweAgcQtCXkRpzCzvbmk5SquxCnWG1/Eg5ZHqmVNBFdsw6naGMDPJBbGmoLsRMBHIr29rZUUIw2EenzSyej0R9G3lLlajfBuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727229879; c=relaxed/simple;
-	bh=06wk/Tlf+Bby/yFKfYGc3wTiVwIiam0YQcS4rttyljM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GAiD19dEQe/FJJKWqosThNyiiSX8Js4SC7Mq1/1+PexZGJ8wJUhhRiKssNvfbBN8eia6R8OS8vdIhkhMSj0fXq09dGmFUomRwFPEu6ny72kLCutvJJUHYnRqHIRgs5rEUhJ7F8E7jgV002WTIGVJVDywtvefFrT02nbHQt+tTEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hWoJojZh; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5365928acd0so2788626e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 19:04:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727229875; x=1727834675; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UBgutzjDfOgDhfPJb/VqZ+KjGDGotu18ULGDFcekRCk=;
-        b=hWoJojZhLj25E/OiSx/QQ7XER2r/uwPh9NItUPz6RmtVubt7QzovSzElOfyDeE3Oo9
-         HIBKQscNqLR2yn/+t8Wfw8LWuSZUZNxrpEfUAWRFVOzLOpUSDph8JG84EoIr9py4nsv0
-         +TAVzVzPjj3G9aeqmfsIT2xWCZSLDey8x7TpsSe/+58mjEAHYwPMmWs2kUX0vYEdAQwt
-         GlBfenTeO8Ed6nAFP7vx3OdI/EjL8v+4O4G2od6aTLALRGddsTUbK4RFNN9TemcUkdgb
-         SEhK6hj7u8RYoKnz4/9/LMrqzJPuCIN9VYQFLbB369QeDpospzFTdzDqI/FFzaK2D+JD
-         5GMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727229875; x=1727834675;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=UBgutzjDfOgDhfPJb/VqZ+KjGDGotu18ULGDFcekRCk=;
-        b=KJZP1pxlGstUKbVhyG315mhsI3oXsaP/JyFYvbUxF8sUHcFKtt37NP6caeSO9nbn8L
-         P4dv6QjKN7emDKM9EQ2NlZrnpMP17xFmj2bHcu63osLakDRsqpJ5L4hIiq2o61cbuh/M
-         jNO1rXxm0BZ1j4K02yadng0Pw1XsMKJL9I8wNF+JeSVeGyRGbiF6GSmK8RwMcbeq6HlR
-         Xb0mLzl+2TIV/IaAW+4rn3q9rlEAflWgCyDmexrG2ib7fUulUNyKnYIidxggKbm9K1cW
-         3/N3IUT2bcPG37WyAMb3pyUm23//zowIEGZoiDCeetLSeIoAl0J6qQFtCOkvclRUHj2j
-         8oxQ==
-X-Gm-Message-State: AOJu0Yyu/Qz09H7mS92It0LUgMyAM5bGqpV5h5rNhekDj3LWwmTiNHoV
-	VhqMQZd9C4vapgiBMm7dFR8V8lkDalfrmIUF/poQcOq31cf2QjvkUD6vkeBA
-X-Google-Smtp-Source: AGHT+IFCjPaZImuPumIH/zGWBtkHZ7XjcKsaZgbyp4TxJQSA7Fxxl4PuItGSboViP9fG+T4P1EmMaA==
-X-Received: by 2002:a05:6512:12c7:b0:52c:818c:13b8 with SMTP id 2adb3069b0e04-5387048bb6dmr610863e87.4.1727229875207;
-        Tue, 24 Sep 2024 19:04:35 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93930cace4sm154470966b.117.2024.09.24.19.04.32
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 24 Sep 2024 19:04:33 -0700 (PDT)
-Date: Wed, 25 Sep 2024 02:04:31 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Sidhartha Kumar <sidhartha.kumar@oracle.com>
-Cc: linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org,
-	linux-mm@kvack.org, akpm@linux-foundation.org,
-	liam.howlett@oracle.com, willy@infradead.org, surenb@google.com
-Subject: Re: [PATCH v4 04/17] maple_tree: introduce mas_wr_store_type()
-Message-ID: <20240925020431.joykmu4zzahoglcl@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20240814161944.55347-1-sidhartha.kumar@oracle.com>
- <20240814161944.55347-5-sidhartha.kumar@oracle.com>
+	s=arc-20240116; t=1727230065; c=relaxed/simple;
+	bh=lj18Z52aMzSH/9GoeTIElboBBspmzY9xOQ06C8At3nM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tG5B+XyZOD9br2awDTIA9MlSwX9ir1uWajg+NZm6RUuygP+eAto/7wfMVd12WvurpRafxRgZm1/7kuMaVuiz+vQP9WqSzYdjsV7ZKIr/LLw3HhxIGTE3MRMfSxdL1E9iXWLNlsi7911waSAvewV9QMPCaQvTfuWxO0DfSMXjfxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IbcMxeSf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90824C4CED0
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 02:07:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727230064;
+	bh=lj18Z52aMzSH/9GoeTIElboBBspmzY9xOQ06C8At3nM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=IbcMxeSfKmNJ/zrFLzoQm29LqZjw6LIsg5lf9PFL9OEylXECGwcOYelJLdYGwph9l
+	 gfmlC3JC09rPY7bs0w1n/h1EOsBTUd2Ri4Xvt0Edj/YejFAoqX/uo0hU834sZAN4T4
+	 h/QJ/X8SmN4D7bk3QjlNf/y/mLwDkQV2pGWbnDX9zZMHJDcmchUURUFpf5scQLoACR
+	 dc04APNACn2+paDRV95kYQ7TkUlYV1DQaln06Icv1PqynWykeSRwW4RC3VuX9yBDW+
+	 Q39VrL9d51m6J3fMm7aJaxa2x+/+jTEYjOMidq476KMfeebo6fzVVzG/cai977CTYG
+	 bF58R9r3YDQRw==
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3a0cb892c6aso148565ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 19:07:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXf36jPYJXAql5+74kbOb50emGDoE23bQS3L+nhWv2alb0fyX+QX5cuJ0OT7GLFZrKlpCCd4oXlxZi5FdQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHGBh4MOivK8iUnX4irmBIyfHD8g0NtrrRsQiqysDf7p4a8IaZ
+	8ErT88rG4oIb3VERutd17rKkAl3mKaPtx95ps5zwYwnUqi00FbNWKNV4f+1smWSlKruaSEJ6btN
+	LLD2NBVFA/ivD3IUtY5aBh0+jdy1uo9o0Wdp4
+X-Google-Smtp-Source: AGHT+IGsAX6Dq4L+moisbEyMVPV/W0EQ4y6e1Oow+CD0nOMsIqdX6U/6Zg9c+iFwJC1p60P3SXBZalQa9YHsgAi9Ggo=
+X-Received: by 2002:a05:6e02:1ca6:b0:39d:1b64:3551 with SMTP id
+ e9e14a558f8ab-3a2703b9a04mr929545ab.19.1727230063538; Tue, 24 Sep 2024
+ 19:07:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240814161944.55347-5-sidhartha.kumar@oracle.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <linuszeng@tencent.com> <20240924121358.30685-1-jingxiangzeng.cas@gmail.com>
+In-Reply-To: <20240924121358.30685-1-jingxiangzeng.cas@gmail.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Tue, 24 Sep 2024 19:07:30 -0700
+X-Gmail-Original-Message-ID: <CAF8kJuM2UobJEkrssR2KSLAwOF6fZmjRHANkXfjmdk+hM5+PWA@mail.gmail.com>
+Message-ID: <CAF8kJuM2UobJEkrssR2KSLAwOF6fZmjRHANkXfjmdk+hM5+PWA@mail.gmail.com>
+Subject: Re: [PATCH V3] mm/vmscan: wake up flushers conditionally to avoid
+ cgroup OOM
+To: Jingxiang Zeng <jingxiangzeng.cas@gmail.com>
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org, kasong@tencent.com, 
+	linuszeng@tencent.com, linux-kernel@vger.kernel.org, tjmercier@google.com, 
+	weixugc@google.com, yuzhao@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 14, 2024 at 12:19:31PM -0400, Sidhartha Kumar wrote:
+Hi Jingxiang,
 
-Sorry for a late reply, I just see this change.
+I just tested your v3 patch, apply on top of
+d675c821b65f0c496df1d33150619b7635827e89("mm-memcontrol-add-per-memcg-pgpgi=
+n-pswpin-counter-v2")
+with 684826f8271ad97580b138b9ffd462005e470b99(""zram: free secondary
+algorithms names") reverted.
 
->+
->+/*
->+ * mas_wr_store_type() - Set the store type for a given
->+ * store operation.
->+ * @wr_mas: The maple write state
->+ */
->+static inline void mas_wr_store_type(struct ma_wr_state *wr_mas)
->+{
->+	struct ma_state *mas = wr_mas->mas;
->+	unsigned char new_end;
->+
->+	if (unlikely(mas_is_none(mas) || mas_is_ptr(mas))) {
->+		mas->store_type = wr_store_root;
->+		return;
->+	}
->+
->+	if (unlikely(!mas_wr_walk(wr_mas))) {
->+		mas->store_type = wr_spanning_store;
->+		return;
->+	}
->+
->+	/* At this point, we are at the leaf node that needs to be altered. */
->+	mas_wr_end_piv(wr_mas);
->+	if (!wr_mas->entry)
->+		mas_wr_extend_null(wr_mas);
->+
->+	new_end = mas_wr_new_end(wr_mas);
->+	if ((wr_mas->r_min == mas->index) && (wr_mas->r_max == mas->last)) {
->+		mas->store_type = wr_exact_fit;
->+		return;
->+	}
->+
->+	if (unlikely(!mas->index && mas->last == ULONG_MAX)) {
->+		mas->store_type = wr_new_root;
->+		return;
->+	}
->+
->+	/* Potential spanning rebalance collapsing a node */
->+	if (new_end < mt_min_slots[wr_mas->type]) {
->+		if (!mte_is_root(mas->node)) {
->+			mas->store_type = wr_rebalance;
->+			return;
->+		}
->+		mas->store_type = wr_node_store;
->+		return;
->+	}
+Without your v3 patch it can pass the swap stress test in less than 5 mins.
+With your V3 patch it is running over 30 minutes and still can't complete.
+It does not produce kernel panic though, just extremely slow at the
+linking phase.
 
-After this check, we are sure new_end >= mt_min_slots[wr_mas->type].
+Here is the top shows:
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+
+COMMAND
+  33895 ...    20   0    8872   1780   1780 R  99.3   0.0  33:18.70 as
+  34115 ...    20   0   10568   4692   2964 R   1.0   0.0   0:00.97
+top
 
->+
->+	if (new_end >= mt_slots[wr_mas->type]) {
->+		mas->store_type = wr_split_store;
->+		return;
->+	}
->+
->+	if (!mt_in_rcu(mas->tree) && (mas->offset == mas->end)) {
->+		mas->store_type = wr_append;
->+		return;
->+	}
->+
->+	if ((new_end == mas->end) && (!mt_in_rcu(mas->tree) ||
->+		(wr_mas->offset_end - mas->offset == 1))) {
->+		mas->store_type = wr_slot_store;
->+		return;
->+	}
->+
->+	if (mte_is_root(mas->node) || (new_end >= mt_min_slots[wr_mas->type]) ||
->+		(mas->mas_flags & MA_STATE_BULK)) {
+V3 also has regression on my swap stress test.
 
-The check (new_end >= mt_min_slots[wr_mas->type]) here seems always be true.
+Chris
 
-So the if here seems not necessary. Do I miss something?
-
->+		mas->store_type = wr_node_store;
->+		return;
->+	}
->+
->+	mas->store_type = wr_invalid;
->+	MAS_WARN_ON(mas, 1);
->+}
->+
-
--- 
-Wei Yang
-Help you, Help me
+On Tue, Sep 24, 2024 at 5:14=E2=80=AFAM Jingxiang Zeng
+<jingxiangzeng.cas@gmail.com> wrote:
+>
+> From: Zeng Jingxiang <linuszeng@tencent.com>
+>
+> Commit 14aa8b2d5c2e ("mm/mglru: don't sync disk for each aging cycle")
+> removed the opportunity to wake up flushers during the MGLRU page
+> reclamation process can lead to an increased likelihood of triggering OOM
+> when encountering many dirty pages during reclamation on MGLRU.
+>
+> This leads to premature OOM if there are too many dirty pages in cgroup:
+> Killed
+>
+> dd invoked oom-killer: gfp_mask=3D0x101cca(GFP_HIGHUSER_MOVABLE|__GFP_WRI=
+TE),
+> order=3D0, oom_score_adj=3D0
+>
+> Call Trace:
+>   <TASK>
+>   dump_stack_lvl+0x5f/0x80
+>   dump_stack+0x14/0x20
+>   dump_header+0x46/0x1b0
+>   oom_kill_process+0x104/0x220
+>   out_of_memory+0x112/0x5a0
+>   mem_cgroup_out_of_memory+0x13b/0x150
+>   try_charge_memcg+0x44f/0x5c0
+>   charge_memcg+0x34/0x50
+>   __mem_cgroup_charge+0x31/0x90
+>   filemap_add_folio+0x4b/0xf0
+>   __filemap_get_folio+0x1a4/0x5b0
+>   ? srso_return_thunk+0x5/0x5f
+>   ? __block_commit_write+0x82/0xb0
+>   ext4_da_write_begin+0xe5/0x270
+>   generic_perform_write+0x134/0x2b0
+>   ext4_buffered_write_iter+0x57/0xd0
+>   ext4_file_write_iter+0x76/0x7d0
+>   ? selinux_file_permission+0x119/0x150
+>   ? srso_return_thunk+0x5/0x5f
+>   ? srso_return_thunk+0x5/0x5f
+>   vfs_write+0x30c/0x440
+>   ksys_write+0x65/0xe0
+>   __x64_sys_write+0x1e/0x30
+>   x64_sys_call+0x11c2/0x1d50
+>   do_syscall_64+0x47/0x110
+>   entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>
+>  memory: usage 308224kB, limit 308224kB, failcnt 2589
+>  swap: usage 0kB, limit 9007199254740988kB, failcnt 0
+>
+>   ...
+>   file_dirty 303247360
+>   file_writeback 0
+>   ...
+>
+> oom-kill:constraint=3DCONSTRAINT_MEMCG,nodemask=3D(null),cpuset=3Dtest,
+> mems_allowed=3D0,oom_memcg=3D/test,task_memcg=3D/test,task=3Ddd,pid=3D440=
+4,uid=3D0
+> Memory cgroup out of memory: Killed process 4404 (dd) total-vm:10512kB,
+> anon-rss:1152kB, file-rss:1824kB, shmem-rss:0kB, UID:0 pgtables:76kB
+> oom_score_adj:0
+>
+> The flusher wake up was removed to decrease SSD wearing, but if we are
+> seeing all dirty folios at the tail of an LRU, not waking up the flusher
+> could lead to thrashing easily.  So wake it up when a mem cgroups is abou=
+t
+> to OOM due to dirty caches.
+>
+> Link: https://lkml.kernel.org/r/20240829102543.189453-1-jingxiangzeng.cas=
+@gmail.com
+> Link: https://lkml.kernel.org/r/20240913084506.3606292-1-jingxiangzeng.ca=
+s@gmail.com
+> Fixes: 14aa8b2d5c2e ("mm/mglru: don't sync disk for each aging cycle")
+> Signed-off-by: Zeng Jingxiang <linuszeng@tencent.com>
+> Signed-off-by: Kairui Song <kasong@tencent.com>
+> Cc: T.J. Mercier <tjmercier@google.com>
+> Cc: Wei Xu <weixugc@google.com>
+> Cc: Yu Zhao <yuzhao@google.com>
+> ---
+> Changes from v2:
+> - Acquire the lock before calling the folio_check_dirty_writeback
+>   function.
+> - Link to v2: https://lore.kernel.org/all/20240913084506.3606292-1-jingxi=
+angzeng.cas@gmail.com/
+> Changes from v1:
+> - Add code to count the number of unqueued_dirty in the sort_folio
+>   function.
+> - Link to v1: https://lore.kernel.org/all/20240829102543.189453-1-jingxia=
+ngzeng.cas@gmail.com/
+> ---
+>  mm/vmscan.c | 16 ++++++++++++++--
+>  1 file changed, 14 insertions(+), 2 deletions(-)
+>
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 749cdc110c74..12c285a96353 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -4290,6 +4290,8 @@ static bool sort_folio(struct lruvec *lruvec, struc=
+t folio *folio, struct scan_c
+>         int delta =3D folio_nr_pages(folio);
+>         int refs =3D folio_lru_refs(folio);
+>         int tier =3D lru_tier_from_refs(refs);
+> +       bool dirty =3D folio_test_dirty(folio);
+> +       bool writeback =3D folio_test_writeback(folio);
+>         struct lru_gen_folio *lrugen =3D &lruvec->lrugen;
+>
+>         VM_WARN_ON_ONCE_FOLIO(gen >=3D MAX_NR_GENS, folio);
+> @@ -4330,8 +4332,10 @@ static bool sort_folio(struct lruvec *lruvec, stru=
+ct folio *folio, struct scan_c
+>         }
+>
+>         /* waiting for writeback */
+> -       if (folio_test_locked(folio) || folio_test_writeback(folio) ||
+> -           (type =3D=3D LRU_GEN_FILE && folio_test_dirty(folio))) {
+> +       if (folio_test_locked(folio) || dirty ||
+> +           (type =3D=3D LRU_GEN_FILE && writeback)) {
+> +               if (type =3D=3D LRU_GEN_FILE && dirty && !writeback)
+> +                       sc->nr.unqueued_dirty +=3D delta;
+>                 gen =3D folio_inc_gen(lruvec, folio, true);
+>                 list_move(&folio->lru, &lrugen->folios[gen][type][zone]);
+>                 return true;
+> @@ -4448,6 +4452,7 @@ static int scan_folios(struct lruvec *lruvec, struc=
+t scan_control *sc,
+>                                 scanned, skipped, isolated,
+>                                 type ? LRU_INACTIVE_FILE : LRU_INACTIVE_A=
+NON);
+>
+> +       sc->nr.taken +=3D isolated;
+>         /*
+>          * There might not be eligible folios due to reclaim_idx. Check t=
+he
+>          * remaining to prevent livelock if it's not making progress.
+> @@ -4920,6 +4925,13 @@ static void lru_gen_shrink_lruvec(struct lruvec *l=
+ruvec, struct scan_control *sc
+>         if (try_to_shrink_lruvec(lruvec, sc))
+>                 lru_gen_rotate_memcg(lruvec, MEMCG_LRU_YOUNG);
+>
+> +       /*
+> +        * If too many pages in the coldest generation that cannot
+> +        * be isolated, wake up flusher.
+> +        */
+> +       if (sc->nr.unqueued_dirty > sc->nr.taken)
+> +               wakeup_flusher_threads(WB_REASON_VMSCAN);
+> +
+>         clear_mm_walk();
+>
+>         blk_finish_plug(&plug);
+> --
+> 2.43.5
+>
+>
 
