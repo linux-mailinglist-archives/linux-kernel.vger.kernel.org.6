@@ -1,146 +1,139 @@
-Return-Path: <linux-kernel+bounces-338434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC0039857F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:25:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A618D985A39
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:06:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B4EDB23529
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:25:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 091E11C2367C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1A6146A93;
-	Wed, 25 Sep 2024 11:25:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336D71B3F30;
+	Wed, 25 Sep 2024 11:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N20vghRL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EdRk0Xps"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99376FDC;
-	Wed, 25 Sep 2024 11:25:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C7C1B3F2B;
+	Wed, 25 Sep 2024 11:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727263538; cv=none; b=UlFQ4XcOiw6fuys48jkJezY55tc8lPkkM1IwbViaFTYUrbEQwCc7rKwKMXsPr8/YhUcNfbe57O2JZ5jeAvMGGqugaYMPOxESq0l/z1WZojm8AQj7epHsv7mpLgN7WX4puCdrXijeIMUiJutYlKRnytTUspweGGbyAx4srdO5kaQ=
+	t=1727264515; cv=none; b=isUd8qO6AnsH9XOccRtAKU8F6hX9hU/a8Aw2M5Fzx5EP4/GWCaOFFnAiu+j5ZoARQ/19wgqhakynex8pv0kMo0lNBaqFjVY2oHFeJ71EAadVwNeDjDm402uaWPSgOu3/wPPYICr+U7YgKUHtv1FKydi7z3HUxsHXWNWzME5Jk0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727263538; c=relaxed/simple;
-	bh=puhxPJH/amOnms7SLF2+4j5c1YRzIKGbh4esV2Il+tA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=keKLVVepb1YABLJkceXTb4xITWnlP0AWk5ltNxMI1lJDtj+Evx3v57yUaEW2tLK/oZFdqP/xqsMx2tEfj5em+ca8CH91v4yWnaUlPiLc1AnZuUp9WUmybr3NzrkOWNfW6psoWtAmIW8fyJuwZxRJqn9AdLS0RjoG8AqktPyvHkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N20vghRL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A03EC4CEC3;
-	Wed, 25 Sep 2024 11:25:37 +0000 (UTC)
+	s=arc-20240116; t=1727264515; c=relaxed/simple;
+	bh=YFY+3mAanqIL5F/49zuwu1YvcyrnvxDObgM837R9lN0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JaDZyX0StceYyKt1V+le0dTiUUnFz4h41IrMNwcMVqs8WITiPb2RRjymntpKqBbH+KtsQe06/h3Beai1XdpZx4JxziD1lMxYqwYjZoaQqf4+3TvIQTtqm7qFXVHnNsNzSRYfuEXObpdhx0nHKJs1cX7LIKGEZ/LmL4Ymp3n8ptA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EdRk0Xps; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 507FEC4CEC7;
+	Wed, 25 Sep 2024 11:41:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727263538;
-	bh=puhxPJH/amOnms7SLF2+4j5c1YRzIKGbh4esV2Il+tA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=N20vghRLGx1HqbBtVbX4cqbCJy7T4LsHJRnSCzM4sSUTwar6lQrTlqEfTawObD/2g
-	 +tTqdDd9cbzS7hlHrlTj4rqhSMBzClpljzBbZLamZKUKRNp7ceh89/TzF4FkuaTXmD
-	 4JAyDQWlRz80B4XBYhDYzI8NahPKNo0ONMdq+NOa9lbA+qZObOKKFTsKsfkipCQPPL
-	 5wHe2ESjcxLHraE0pl/rW6EOXTR78u2bP0YmAdMlGgKDsIBOHK0bNqxAIgZYCPjN0f
-	 ZwMPoXk6xolDbWUY3eZERc7ngsPoHZ8aZkh1HsIYcZcGJ19/4pcVYcI3Ji6YNTBscQ
-	 QjIBAyKiIbaaw==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: linux-kbuild@vger.kernel.org
-Cc: Marco Bonelli <marco@mebeim.net>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] kconfig: fix infinite loop in sym_calc_choice()
-Date: Wed, 25 Sep 2024 20:25:31 +0900
-Message-ID: <20240925112533.184957-1-masahiroy@kernel.org>
+	s=k20201202; t=1727264515;
+	bh=YFY+3mAanqIL5F/49zuwu1YvcyrnvxDObgM837R9lN0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=EdRk0Xps3X3qMRSNEHYOH3Al9QexJGSy5g+RjuM2TcqWCi+EcBBpxom6WnyJe/pNr
+	 EVeZDxBIdGou5VHbziZEl91ZZM6eNAN1M/8DHFvGwfTP1BKPoJFFFnFmnLk0dmHEVK
+	 +3mDEjCZHRdgdgW+VT4ZYu22I+9aznHHgzNNEjr4DCJNCSgshNjGfTr65IsoEqV5Kq
+	 OhH+0ayY6r1F50/w4N0hSKOzcXMpN+5T5NZOFhaRJOuA1GqiIZ7JrbX7oo2CbWHnfK
+	 xttIEvvgsL04zZNpT2nDWSQzAdo7bApJ/0MUrPUzjqA3dgQHMEZ0M5Uq/Zx/zpBvCf
+	 4sfHkRnUpba7g==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Kees Cook <kees@kernel.org>,
+	Mirsad Todorovac <mtodorovac69@gmail.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	x86@kernel.org,
+	daniel.sneddon@linux.intel.com,
+	jpoimboe@kernel.org,
+	brgerst@gmail.com,
+	pawan.kumar.gupta@linux.intel.com
+Subject: [PATCH AUTOSEL 6.11 110/244] x86/syscall: Avoid memcpy() for ia32 syscall_get_arguments()
+Date: Wed, 25 Sep 2024 07:25:31 -0400
+Message-ID: <20240925113641.1297102-110-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240925113641.1297102-1-sashal@kernel.org>
+References: <20240925113641.1297102-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.11
 Content-Transfer-Encoding: 8bit
 
-Since commit f79dc03fe68c ("kconfig: refactor choice value calculation"),
-Kconfig for ARCH=powerpc may result in an infinite loop. This occurs
-because there are two entries for POWERPC64_CPU in a choice block.
+From: Kees Cook <kees@kernel.org>
 
-If the same symbol appears twice in a choice block, the ->choice_link
-node is added twice to ->choice_members, resulting a corrupted linked
-list.
+[ Upstream commit d19d638b1e6cf746263ef60b7d0dee0204d8216a ]
 
-A simple test case is:
+Modern (fortified) memcpy() prefers to avoid writing (or reading) beyond
+the end of the addressed destination (or source) struct member:
 
-    choice
-            prompt "choice"
+In function ‘fortify_memcpy_chk’,
+    inlined from ‘syscall_get_arguments’ at ./arch/x86/include/asm/syscall.h:85:2,
+    inlined from ‘populate_seccomp_data’ at kernel/seccomp.c:258:2,
+    inlined from ‘__seccomp_filter’ at kernel/seccomp.c:1231:3:
+./include/linux/fortify-string.h:580:25: error: call to ‘__read_overflow2_field’ declared with attribute warning: detected read beyond size of field (2nd parameter); maybe use struct_group()? [-Werror=attribute-warning]
+  580 |                         __read_overflow2_field(q_size_field, size);
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    config X
-            bool "X"
+As already done for x86_64 and compat mode, do not use memcpy() to
+extract syscall arguments from struct pt_regs but rather just perform
+direct assignments. Binary output differences are negligible, and actually
+ends up using less stack space:
 
-    config A
-            bool "A prompt 1"
+-       sub    $0x84,%esp
++       sub    $0x6c,%esp
 
-    config A
-            bool "A prompt 2"
+and less text size:
 
-    endchoice
+   text    data     bss     dec     hex filename
+  10794     252       0   11046    2b26 gcc-32b/kernel/seccomp.o.stock
+  10714     252       0   10966    2ad6 gcc-32b/kernel/seccomp.o.after
 
-Running 'make defconfig' results in an infinite loop.
-
-One solution is to replace the current two entries:
-
-    config POWERPC64_CPU
-            bool "Generic (POWER5 and PowerPC 970 and above)"
-            depends on PPC_BOOK3S_64 && !CPU_LITTLE_ENDIAN
-            select PPC_64S_HASH_MMU
-
-    config POWERPC64_CPU
-            bool "Generic (POWER8 and above)"
-            depends on PPC_BOOK3S_64 && CPU_LITTLE_ENDIAN
-            select ARCH_HAS_FAST_MULTIPLIER
-            select PPC_64S_HASH_MMU
-            select PPC_HAS_LBARX_LHARX
-
-with the following single entry:
-
-    config POWERPC64_CPU
-            bool "Generic 64 bit powerpc"
-            depends on PPC_BOOK3S_64
-            select ARCH_HAS_FAST_MULTIPLIER if CPU_LITTLE_ENDIAN
-            select PPC_64S_HASH_MMU
-            select PPC_HAS_LBARX_LHARX if CPU_LITTLE_ENDIAN
-
-In my opinion, the latter looks cleaner, but PowerPC maintainers may
-prefer to display different prompts depending on CPU_LITTLE_ENDIAN.
-
-For now, this commit fixes the issue in Kconfig, restoring the original
-behavior. I will reconsider whether such a use case is worth supporting.
-
-Fixes: f79dc03fe68c ("kconfig: refactor choice value calculation")
-Reported-by: Marco Bonelli <marco@mebeim.net>
-Closes: https://lore.kernel.org/all/1763151587.3581913.1727224126288@privateemail.com/
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+Closes: https://lore.kernel.org/lkml/9b69fb14-df89-4677-9c82-056ea9e706f5@gmail.com/
+Reported-by: Mirsad Todorovac <mtodorovac69@gmail.com>
+Signed-off-by: Kees Cook <kees@kernel.org>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+Tested-by: Mirsad Todorovac <mtodorovac69@gmail.com>
+Link: https://lore.kernel.org/all/20240708202202.work.477-kees%40kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
+ arch/x86/include/asm/syscall.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
- scripts/kconfig/parser.y | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/scripts/kconfig/parser.y b/scripts/kconfig/parser.y
-index 1ad60f9e164e..bc43fb67c7c4 100644
---- a/scripts/kconfig/parser.y
-+++ b/scripts/kconfig/parser.y
-@@ -159,8 +159,14 @@ config_stmt: config_entry_start config_option_list
- 			yynerrs++;
- 		}
+diff --git a/arch/x86/include/asm/syscall.h b/arch/x86/include/asm/syscall.h
+index 2fc7bc3863ff6..7c488ff0c7641 100644
+--- a/arch/x86/include/asm/syscall.h
++++ b/arch/x86/include/asm/syscall.h
+@@ -82,7 +82,12 @@ static inline void syscall_get_arguments(struct task_struct *task,
+ 					 struct pt_regs *regs,
+ 					 unsigned long *args)
+ {
+-	memcpy(args, &regs->bx, 6 * sizeof(args[0]));
++	args[0] = regs->bx;
++	args[1] = regs->cx;
++	args[2] = regs->dx;
++	args[3] = regs->si;
++	args[4] = regs->di;
++	args[5] = regs->bp;
+ }
  
--		list_add_tail(&current_entry->sym->choice_link,
--			      &current_choice->choice_members);
-+		/*
-+		 * If the same symbol appears twice in a choice block, the list
-+		 * node would be added twice, leading to a broken linked list.
-+		 * list_empty() ensures that this symbol has not yet added.
-+		 */
-+		if (list_empty(&current_entry->sym->choice_link))
-+			list_add_tail(&current_entry->sym->choice_link,
-+				      &current_choice->choice_members);
- 	}
- 
- 	printd(DEBUG_PARSE, "%s:%d:endconfig\n", cur_filename, cur_lineno);
+ static inline int syscall_get_arch(struct task_struct *task)
 -- 
 2.43.0
 
