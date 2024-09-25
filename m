@@ -1,128 +1,118 @@
-Return-Path: <linux-kernel+bounces-337918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C1BA98510B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 04:44:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5171B98510D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 04:47:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BF5E1C23450
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 02:44:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D41BAB225C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 02:47:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136F81494A9;
-	Wed, 25 Sep 2024 02:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C34E81487F4;
+	Wed, 25 Sep 2024 02:47:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MtAgPLJ/"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mKVcmwBI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B3A3770C
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 02:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF59F647;
+	Wed, 25 Sep 2024 02:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727232266; cv=none; b=tsYixOj9izt9/5sI3z5Vd23O+RGV9U3ZM7wqbwNoamgeg7m9zWI702B8Aei/lZG366t9rgnHjojPelDkvK4NaUphiah4asqjgoTfVBR4LClUWke9dWPk47WjtBo2IZgMzTFnkz5lPOkdKCvmDhexxmVtLJEHf77II3x5BMD64E4=
+	t=1727232431; cv=none; b=Npg2f5wKOm25AiTGO0ii8FNLV7zgD8myHz2b2cFbNi2xf4M5AJ1GXgTyYWXiFSb1MC6M9y9OB5neFxv/a+FvhzXFBZXNXuIZdfjDYVgpDXFOrbJRqe1dCskhjwCxVkR2rWS0xh2Y1r1EbfQCOiPcypc4kxhLItJoET41xd5YDd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727232266; c=relaxed/simple;
-	bh=n4vzVMJk/wnTZoLjPI6/94113lyUB4lEeWRcZRd99M4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BaP678S9P5lIGmIVjlnQMBpM52CD8vaoTtYPyXdKR3oYx7ldv8JVfVYpkU0XDnJLgmZpcwAf5F4CKkdItxMg5W/9a/WIc1jWCH9qI6kqkcMKgN2PewgwH06su/ylzrDXhPiVN6SqA9mtKU/av4uiTndp8yf5NBcgxr9hgyUfqXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MtAgPLJ/; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-206b9455460so3661995ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 19:44:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727232264; x=1727837064; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5u9fJUNtEJazJzPyTQOtG1FO6Z7cS1MgX+7pZ8RK+ts=;
-        b=MtAgPLJ/8BNj+j2n9NpzgVXS/nyxj2z1pFBVCFeRJUWGOoZBxWjaO66AKIce/xlX3k
-         L2jF2mNAmIvH9XI9h6/Djskf461Zxa+me8ksgNS5cb0Kgd16NsljUIen50E+ReCWhtUK
-         YOaR9rZzKUHbEOKCRbXA9NIBQcmO1vomUxxNXqPBTzYocYdWrQhndHZsPX7S9fiYIYja
-         shjcrrC56nlpOT/7hk0hbtKB10SUcxUizR3rpDrmHpSX6ua5IojtY6K3iNW8jd5y5YkW
-         7B+Jtr1SpOVS/HcDI+tUZyPNP2QrHBSb3JiXqIgzaW+5mGnhDek9V9IGhOgmMvOV/o3G
-         DBYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727232264; x=1727837064;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5u9fJUNtEJazJzPyTQOtG1FO6Z7cS1MgX+7pZ8RK+ts=;
-        b=tjrCeTFZm9cGiGbk2WZ0Ll6pUZoB72TLCrd225BPRcKRyYYraJNgj2Np4IILkxBMYq
-         HWJ5GVUlTrSV/EwK0UUSOJFIBkJyR1leQaDGEU/9+swUtfHhc7lOMQ3dLNriGVRJaMMR
-         v60lFnAB//qwNlEw3jh5zLWPOy/v82TUkyqqvlRBMqqZeXY4r2t2HeyyBCAruChVXEIN
-         PiVTyWwOeyPbjWMK87qoO1s/Nft5am26wiIcM1l79WWAaCWc7AdnhwKG6SFsR3B2kzD8
-         5tNubz2L/t5mvZS+8rXSJpPeeAHwiKjn2FXcl4yVjv0dXjFH5lveHS+i/ffTMl5hBT8a
-         tbsg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPkGF+CzRalvwJDjY02S0mTpR0cSs5MO6jX60luhG58xq1KAFUgW4FjLRvPCAULt4w01fGI2Av0VE6okY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDp9LOr4iF2MGRjLxBWa32o+LEiv+WGZrqF8OjVU6Vs4bRzuk4
-	qNQ+/HEdKWBxDI5rWhTMoBhofxei6qm5DNdGxpHSbPMIfUkfvAS7kwOFhCnwoA==
-X-Google-Smtp-Source: AGHT+IFOu3sATw4O+ghyS7x5azvPQ4AJoo6YIcBuz/3H73r9HL0ro3DSjKBapUQ9ynom5wab2GLyuQ==
-X-Received: by 2002:a17:902:f644:b0:207:3a4c:8c6f with SMTP id d9443c01a7336-20afc436639mr16594225ad.29.1727232264093;
-        Tue, 24 Sep 2024 19:44:24 -0700 (PDT)
-Received: from ?IPV6:2a00:79e0:2e14:8:32ad:6c37:2d1:220a? ([2a00:79e0:2e14:8:32ad:6c37:2d1:220a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af1859c00sm15796035ad.286.2024.09.24.19.44.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Sep 2024 19:44:23 -0700 (PDT)
-Message-ID: <d72cc89a-7f73-4294-927e-48e647e37310@google.com>
-Date: Tue, 24 Sep 2024 19:44:19 -0700
+	s=arc-20240116; t=1727232431; c=relaxed/simple;
+	bh=oaQE6hd7RvtSy106D6ugYqDvaO565pG0/zqJCR9JgxU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hRhLWa491LqSvwOYSRlqAzr9trWC3zHqff+xrlwnWtHt1+drXXa5By6QHtHaIQJD6YC2B3o6W2tIioppKmYsZQRlVYxXuqptdX0m5+GH7ehjQ3JHsaRq0VrVshFoUKLEP0EMu4+Qc50d3oCaWceZcgArxrH+h2YBX2cHsU6FWfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mKVcmwBI; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727232429; x=1758768429;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=oaQE6hd7RvtSy106D6ugYqDvaO565pG0/zqJCR9JgxU=;
+  b=mKVcmwBIMGDj2g0plex7crP/sVjcmtDi8IWk1jGHiWpwhuvEXv+zzZmP
+   JwxwpuPLRKswly9hYFfoqlFkd6YbVwpH4LSz6YbdwJJsidWRQqthxRF9X
+   qrFcohw80kbbvJGBwMhzKlwSmZU3WLedV1BK0v3MKLwgiNXXnHKzrp2sZ
+   1zdOCZyIKyldUMxWjRQr/MSjUTdJ1CE+lGYBnZ9yrlV+R5e8dDuL75egC
+   ygt6Z4l88YI0qYSi8ynl43346kUzRkw3ZU8waM4C5KTUu4a6NlaHEtCUa
+   MGkxh+pQ8LPJZWw2ytB63hPNC6JtewK8weeDbHIjoCM77xM2AMiBOHYQf
+   A==;
+X-CSE-ConnectionGUID: TcS122HXTtmpllEJ2hwEGA==
+X-CSE-MsgGUID: ieAUvdNnSkKHC4U4IYDYpQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="26132016"
+X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
+   d="scan'208";a="26132016"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 19:47:09 -0700
+X-CSE-ConnectionGUID: WMimAwU5TRu3ZuQesnKPsg==
+X-CSE-MsgGUID: /b13eS66TwiNOCQ35LVgbA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
+   d="scan'208";a="102388960"
+Received: from yhuang6-mobl2.sh.intel.com ([10.238.3.32])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 19:47:06 -0700
+From: Huang Ying <ying.huang@intel.com>
+To: Dan Williams <dan.j.williams@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>
+Cc: linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Huang Ying <ying.huang@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Alejandro Lucero <alucerop@amd.com>
+Subject: [RFC 0/5] cxl: Preparation of type2 accelerators support
+Date: Wed, 25 Sep 2024 10:46:42 +0800
+Message-Id: <20240925024647.46735-1-ying.huang@intel.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v3 2/2] usb: typec: tcpm: Add support for parsing time dt
- properties
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: gregkh@linuxfoundation.org, robh@kernel.org, dmitry.baryshkov@linaro.org,
- badhri@google.com, kyletso@google.com, rdbabiera@google.com,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240923224059.3674414-1-amitsd@google.com>
- <20240923224059.3674414-3-amitsd@google.com>
- <ZvK2slBHR8PhzaMt@kuha.fi.intel.com>
-Content-Language: en-US
-From: Amit Sunil Dhamne <amitsd@google.com>
-In-Reply-To: <ZvK2slBHR8PhzaMt@kuha.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Heikki,
+There have been 2 series to add type 2 accelerators support in [1] and [2].
 
-On 9/24/24 5:55 AM, Heikki Krogerus wrote:
-> Hi,
->
->> @@ -7611,10 +7650,13 @@ struct tcpm_port *tcpm_register_port(struct device *dev, struct tcpc_dev *tcpc)
->>   	err = tcpm_fw_get_caps(port, tcpc->fwnode);
->>   	if (err < 0)
->>   		goto out_destroy_wq;
->> +
->
-> This extra newline is not relevant or necessary. Otherwise this LGTM:
+[1] https://lore.kernel.org/linux-cxl/168592149709.1948938.8663425987110396027.stgit@dwillia2-xfh.jf.intel.com/
+[2] https://lore.kernel.org/linux-cxl/20240516081202.27023-1-alucerop@amd.com/
 
-Thanks for reviewing! Please let me know if I should upload a new set or 
-this is alright at this time?
+Both provide relative complete support, but both are long too.  To
+make it easier to review, some preparation of type2 accelerators
+support is implemented in this series.  More complete support can be
+implemented based on it.
 
---
+This series has been tested with cxl_test via mocking a type2
+accelerator as in [1] above.  Because more type2 accelerators support
+than that provided by this series is needed to simulate the device,
+the cxl_test patch isn't included in the series.
 
-Amit
+Huang Ying (5):
+  cxl: Rename ACPI_CEDT_CFMWS_RESTRICT_TYPE2/TYPE3
+  cxl: Rename CXL_DECODER_HOSTONLYMEM/DEVMEM
+  cxl: Separate coherence from target type
+  cxl: Set type of region to that of the first endpoint
+  cxl: Avoid to create dax regions for type2 accelerators
 
->
-> Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
->
->>   	err = tcpm_fw_get_snk_vdos(port, tcpc->fwnode);
->>   	if (err < 0)
->>   		goto out_destroy_wq;
->>   
->> +	tcpm_fw_get_timings(port, tcpc->fwnode);
->> +
->>   	port->try_role = port->typec_caps.prefer_role;
->>   
->>   	port->typec_caps.revision = 0x0120;	/* Type-C spec release 1.2 */
-> thanks,
->
+ drivers/cxl/acpi.c           |  9 +++---
+ drivers/cxl/core/hdm.c       | 38 +++++++++++++----------
+ drivers/cxl/core/mbox.c      |  1 +
+ drivers/cxl/core/port.c      | 17 ++++++-----
+ drivers/cxl/core/region.c    | 58 ++++++++++++++++++++++++++++++------
+ drivers/cxl/cxl.h            | 28 +++++++++++------
+ drivers/cxl/cxlmem.h         | 11 +++++++
+ include/acpi/actbl1.h        | 10 +++----
+ tools/testing/cxl/test/cxl.c | 24 +++++++--------
+ 9 files changed, 133 insertions(+), 63 deletions(-)
+
+Best Regards,
+Huang, Ying
 
