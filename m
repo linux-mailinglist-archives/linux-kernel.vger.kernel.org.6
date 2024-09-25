@@ -1,415 +1,148 @@
-Return-Path: <linux-kernel+bounces-338401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAC2D985753
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:45:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88D4D98574E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:44:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AECF1F2174B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:45:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3640D1F211A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:44:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 748C9188A08;
-	Wed, 25 Sep 2024 10:44:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B08C016F0D0;
+	Wed, 25 Sep 2024 10:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AHCHl0xG"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RhP9G6VI"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7BD7186E57;
-	Wed, 25 Sep 2024 10:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B59165F1C
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 10:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727261062; cv=none; b=qwRtpfA83Bgi/kGdJut/b6WxKYzME7M3VcZzs5ZUvToLEErEZcnjN/q41gLeZnr/CPjcB9P/UsRgjTShlQqZcoXdeg5LQW2oP/voyDbKiXwRgwScXfNnmiykiYxl+PsgtZt5AkSc8bxIoiD0wadRGmKW8ftqR/FEdh6LVEr0rNg=
+	t=1727261056; cv=none; b=q3rrzSyGuWtxJ9j1ttyYdrhfX5oGHMhrpSoHzIkmsZlHCR1APtJpjkQLeUYAS4I+zM98C3ry/+4cibOATvd2igkUC7ZG6rObr9bGgslMFSt6gAXYexaTixgJ40ukl3BqTF2LGKSj8ttZdcVpX0EgXrk/dqT4ZCJeaUVn32HDi08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727261062; c=relaxed/simple;
-	bh=NkAuUsXE1jIHbpi8GKtnFonWvbswuxV6xhVZ6eWmp5c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=h3JguHHbNU7L85gzzr2MQYWYnpVgNnY2CBaTOsszPFNQlycB24b4CcM2W3Ye0UnJAepZUVouv3x+pJk8+1VccckqiSf68opanQVm2bdnF4LqK3YIdhEkuaHj2QGJteupUGKrHttwPugVvL0FaMWumYzkh4WU1H5hI47ZgfTeAV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AHCHl0xG; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48P8Hp5p020806;
-	Wed, 25 Sep 2024 10:44:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	hYPWpYbSESsou3TEJdg39ZAtlwclkTyrb4xeslRjd1o=; b=AHCHl0xGEq821W6p
-	EDgvsUAPcJbIk/QYT6v8fCwsionU1+lR1z3UYdPxZkVDmoh7E4aQuo7vuY99R3fg
-	0PjHP6WHphQ047MTTr+tWEnfHq5xbw8mI25gsickcppu33SPfulIYDLMnVQU/OsG
-	0LX2z4YiQ4cAXEVtKbeYmYBpX0xIGW2UxavVh8GYnsO21/1CKvUV70ZI5B2OZz4Z
-	oskefwAGcLxdsdtjFpjZyx1jOpoeIyVW1ZvVeulYJ3FjzdO6Dy5uoGEJCT0DN9u9
-	ABszQaKIMN4j0LVitdw4V2cFKxm5gM1y0nvGpOIm0+GC1OLeZSi8mef0yxKBKqVF
-	ZTNXsg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41snqyku6q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 10:44:10 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48PAi98N004490
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 10:44:09 GMT
-Received: from jingyw-gv.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 25 Sep 2024 03:44:05 -0700
-From: Jingyi Wang <quic_jingyw@quicinc.com>
-Date: Wed, 25 Sep 2024 18:43:35 +0800
-Subject: [PATCH v2 4/4] arm64: dts: qcom: add base QCS8300 RIDE dts
+	s=arc-20240116; t=1727261056; c=relaxed/simple;
+	bh=6vOHl1VdYn2VePnbuw0FDYDOxo/fTsYaSPfeyzNpL1Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F2/3CDDmaLqB1tVchgssR5Z/TAW7BUGzK3oo2IJTlUa+HiB03ZsOMWi2narAIeRR1nYUfWCdHGKnA/g9iNy7HZ4apFX0ZTCDHCCO9G+wIH55eQiUWDtkShOSs9l3xF17kHd7JlMdFtpdYF1iJhie8JFIrIAWaYoIJRwYW8FuCso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RhP9G6VI; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-710d9b33303so4817814a34.3
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 03:44:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1727261053; x=1727865853; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p18jL2hLutiaep38fb0ejRXREkRooHh3eI3tmn6pG+o=;
+        b=RhP9G6VIw+NResls66q8PhQPz8eP4a0DhBiTjxZvVUdUz0Sh6SjS1XyvxzbiiLuZEz
+         baXqJ8OxK+/ZFMlUCzH9IwixZwbwj5H/WJDeRNKyfibmwdhgpEc4CBhM6hPQqM7YIZ87
+         AnShkv5OmABC4EOJ9UsrUIUp0IsVLxX0egdmU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727261053; x=1727865853;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p18jL2hLutiaep38fb0ejRXREkRooHh3eI3tmn6pG+o=;
+        b=oIbrIvsHcY5CE/vX96Tbz2uBbDLzObozt+rQrYyOE1M8xyuWlmhw0MPfc/eyqDXmHE
+         fy+wOquWaHaon4zB8KocKv54m+vhP9cdaEY9fFejBmFHHg0Xs87fUNk0u9h+gQ4eGiM6
+         G2KkYvGi2VJAoY+Dg9SRZIf2nK92aGwZttMlQLSzHxIBy7uB18FZAaO9XTBFGw7kRLew
+         8k0Up3JZUgdY9idS8PHS5qMCK6lTG3O6K/TrysRZamCEsdI4BEAD4OPfhjBy3XlUJSRc
+         DFIR9fP7cqhvc+wjtx3upRFumdRBtCPgqE90FyChnowuVQH0DfYQqYCZKOntSYUU1MwW
+         4cNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUVy2U3hYRLqZblUctQf+JA321VD98lGkkXmUfEqVgQF69vkeKBxlVypUleDYYoEkR9ygo1d4mEgt4LhyM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKMyUQIaaKkBv6OpUsvw1EsOfOCp7+qt8axs3vlMDutLfDcsSn
+	quxW7eFmaUzpbNhiOj152kAEUKHeX0XJ+dY47EtIzc9cWBWIPsXXRHTnFqsq+dXHAO4SD54XaBW
+	Sunwnd7846ZNy+5tEuTlFGOMQkMvONvffQ5UK
+X-Google-Smtp-Source: AGHT+IGhoxWoyLCZ1aRxjjHIcUx8YFuna6OqcImZMuxL9OA/2tyXvCgmuAskMzvWBQ9WRNUkhBGHynShOaLw7Va2Cdk=
+X-Received: by 2002:a05:6830:3894:b0:70f:6f4f:e8d9 with SMTP id
+ 46e09a7af769-713c7e2e146mr2486302a34.20.1727261053556; Wed, 25 Sep 2024
+ 03:44:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240925-qcs8300_initial_dtsi-v2-4-494c40fa2a42@quicinc.com>
-References: <20240925-qcs8300_initial_dtsi-v2-0-494c40fa2a42@quicinc.com>
-In-Reply-To: <20240925-qcs8300_initial_dtsi-v2-0-494c40fa2a42@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-CC: <quic_tengfan@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <quic_tingweiz@quicinc.com>,
-        <quic_aiquny@quicinc.com>, Jingyi Wang <quic_jingyw@quicinc.com>,
-        Xin Liu
-	<quic_liuxin@quicinc.com>,
-        Tingguo Cheng <quic_tingguoc@quicinc.com>
-X-Mailer: b4 0.15-dev-99b12
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1727261026; l=8689;
- i=quic_jingyw@quicinc.com; s=20240910; h=from:subject:message-id;
- bh=NkAuUsXE1jIHbpi8GKtnFonWvbswuxV6xhVZ6eWmp5c=;
- b=0LnZjiQ/fnX9K8rMgLEDf03maIbacQM2SaBf7ZaPQhTkKnLiJNZ8M5+gvPlnk8if2ZYkkI4vF
- g7IdPma7fKlBEkcve748J+zsDiPH0Ykb9msO10Jc7wXfkKkCu0MdJ8l
-X-Developer-Key: i=quic_jingyw@quicinc.com; a=ed25519;
- pk=ZRP1KgWMhlXXWlSYLoO7TSfwKgt6ke8hw5xWcSY+wLQ=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: iHY3qpwK5d-aDn2_m-ycDsJ1JDMQ0UKz
-X-Proofpoint-ORIG-GUID: iHY3qpwK5d-aDn2_m-ycDsJ1JDMQ0UKz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 adultscore=0 bulkscore=0 phishscore=0 mlxlogscore=999
- spamscore=0 lowpriorityscore=0 clxscore=1015 mlxscore=0 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409250073
+References: <20240919094212.1902073-1-treapking@chromium.org> <172676985046.765320.3471835988677145017.robh@kernel.org>
+In-Reply-To: <172676985046.765320.3471835988677145017.robh@kernel.org>
+From: Pin-yen Lin <treapking@chromium.org>
+Date: Wed, 25 Sep 2024 18:44:02 +0800
+Message-ID: <CAEXTbpeATBYmHpCYAGhiecVeH=+R8=E0aLLscnKV4QyVbfrWJw@mail.gmail.com>
+Subject: Re: [PATCH v3] arm64: dts: mediatek: mt8183-pumpkin: add HDMI support
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, Fabien Parent <fparent@baylibre.com>, 
+	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	=?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>, 
+	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add initial support for Qualcomm QCS8300 RIDE board which enables
-DSPs, UFS and booting to shell with uart console.
+On Fri, Sep 20, 2024 at 2:18=E2=80=AFAM Rob Herring (Arm) <robh@kernel.org>=
+ wrote:
+>
+>
+> On Thu, 19 Sep 2024 17:41:49 +0800, Pin-yen Lin wrote:
+> > From: Fabien Parent <fparent@baylibre.com>
+> >
+> > The MT8183 Pumpkin board has a micro-HDMI connector. HDMI support is
+> > provided by an IT66121 DPI <-> HDMI bridge.
+> >
+> > Enable the DPI and add the node for the IT66121 bridge.
+> >
+> > Signed-off-by: Fabien Parent <fparent@baylibre.com>
+> > Co-developed-by: Pin-yen Lin <treapking@chromium.org>
+> > Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+> > Reviewed-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
+> >
+> > ---
+> >
+> > Changes in v3:
+> > - Update commit message and fix formatting issues
+> > - Fix the label name of vcn33 regulator
+> >
+> >  .../boot/dts/mediatek/mt8183-pumpkin.dts      | 123 ++++++++++++++++++
+> >  1 file changed, 123 insertions(+)
+> >
+>
+>
+> My bot found new DTB warnings on the .dts files added or changed in this
+> series.
+>
+> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+> are fixed by another series. Ultimately, it is up to the platform
+> maintainer whether these warnings are acceptable or not. No need to reply
+> unless the platform maintainer has comments.
+>
+> If you already ran DT checks and didn't see these error(s), then
+> make sure dt-schema is up to date:
+>
+>   pip3 install dtschema --upgrade
+>
+>
+> New warnings running 'make CHECK_DTBS=3Dy mediatek/mt8183-pumpkin.dtb' fo=
+r 20240919094212.1902073-1-treapking@chromium.org:
+>
+> arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dtb: dpi@14015000: power-doma=
+ins: False schema does not allow [[76, 7]]
+>         from schema $id: http://devicetree.org/schemas/display/mediatek/m=
+ediatek,dpi.yaml#
 
-[Xin: added ufs/adsp/gpdsp nodes]
-Co-developed-by: Xin Liu <quic_liuxin@quicinc.com>
-Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
-[Tingguo: added the rpmhpd nodes]
-Co-developed-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
-Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
-Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
----
- arch/arm64/boot/dts/qcom/Makefile         |   1 +
- arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 267 ++++++++++++++++++++++++++++++
- 2 files changed, 268 insertions(+)
+This warning will be addressed by
+https://lore.kernel.org/all/20240919112152.2829765-2-rohiagar@chromium.org/=
+,
+and it comes from the dtsi file this patch includes.
 
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index ae002c7cf126..b69be54829ea 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -111,6 +111,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qcm6490-shift-otter.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-1000.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-4000.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= qcs8300-ride.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcs8550-aim300-aiot.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qdu1000-idp.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qrb2210-rb1.dtb
-diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-new file mode 100644
-index 000000000000..7eed19a694c3
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-@@ -0,0 +1,267 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-+
-+#include "qcs8300.dtsi"
-+/ {
-+	model = "Qualcomm Technologies, Inc. QCS8300 Ride";
-+	compatible = "qcom,qcs8300-ride", "qcom,qcs8300";
-+	chassis-type = "embedded";
-+
-+	aliases {
-+		serial0 = &uart7;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	clocks {
-+		xo_board_clk: xo-board-clk {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <38400000>;
-+		};
-+
-+		sleep_clk: sleep-clk {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <32000>;
-+		};
-+	};
-+};
-+
-+&apps_rsc {
-+	regulators-0 {
-+		compatible = "qcom,pmm8654au-rpmh-regulators";
-+		qcom,pmic-id = "a";
-+
-+		vreg_s4a: smps4 {
-+			regulator-name = "vreg_s4a";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_s9a: smps9 {
-+			regulator-name = "vreg_s9a";
-+			regulator-min-microvolt = <1352000>;
-+			regulator-max-microvolt = <1352000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l3a: ldo3 {
-+			regulator-name = "vreg_l3a";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+			regulator-allow-set-load;
-+			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
-+						   RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l4a: ldo4 {
-+			regulator-name = "vreg_l4a";
-+			regulator-min-microvolt = <880000>;
-+			regulator-max-microvolt = <912000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+			regulator-allow-set-load;
-+			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
-+						   RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l5a: ldo5 {
-+			regulator-name = "vreg_l5a";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+			regulator-allow-set-load;
-+			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
-+						   RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l6a: ldo6 {
-+			regulator-name = "vreg_l6a";
-+			regulator-min-microvolt = <880000>;
-+			regulator-max-microvolt = <912000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+			regulator-allow-set-load;
-+			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
-+						   RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l7a: ldo7 {
-+			regulator-name = "vreg_l7a";
-+			regulator-min-microvolt = <880000>;
-+			regulator-max-microvolt = <912000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+			regulator-allow-set-load;
-+			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
-+						   RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l8a: ldo8 {
-+			regulator-name = "vreg_l8a";
-+			regulator-min-microvolt = <2504000>;
-+			regulator-max-microvolt = <2960000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+			regulator-allow-set-load;
-+			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
-+						   RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l9a: ldo9 {
-+			regulator-name = "vreg_l9a";
-+			regulator-min-microvolt = <2970000>;
-+			regulator-max-microvolt = <3072000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+			regulator-allow-set-load;
-+			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
-+						   RPMH_REGULATOR_MODE_HPM>;
-+		};
-+	};
-+
-+	regulators-1 {
-+		compatible = "qcom,pmm8654au-rpmh-regulators";
-+		qcom,pmic-id = "c";
-+
-+		vreg_s5c: smps5 {
-+			regulator-name = "vreg_s5c";
-+			regulator-min-microvolt = <1104000>;
-+			regulator-max-microvolt = <1104000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l1c: ldo1 {
-+			regulator-name = "vreg_l1c";
-+			regulator-min-microvolt = <300000>;
-+			regulator-max-microvolt = <500000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+			regulator-allow-set-load;
-+			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
-+						   RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l2c: ldo2 {
-+			regulator-name = "vreg_l2c";
-+			regulator-min-microvolt = <900000>;
-+			regulator-max-microvolt = <904000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+			regulator-allow-set-load;
-+			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
-+						   RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l4c: ldo4 {
-+			regulator-name = "vreg_l4c";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+			regulator-allow-set-load;
-+			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
-+						   RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l6c: ldo6 {
-+			regulator-name = "vreg_l6c";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+			regulator-allow-set-load;
-+			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
-+						   RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l7c: ldo7 {
-+			regulator-name = "vreg_l7c";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+			regulator-allow-set-load;
-+			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
-+						   RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l8c: ldo8 {
-+			regulator-name = "vreg_l8c";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+			regulator-allow-set-load;
-+			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
-+						   RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l9c: ldo9 {
-+			regulator-name = "vreg_l9c";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+			regulator-allow-set-load;
-+			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
-+						   RPMH_REGULATOR_MODE_HPM>;
-+		};
-+	};
-+};
-+
-+&gcc {
-+	clocks = <&rpmhcc RPMH_CXO_CLK>,
-+		 <&sleep_clk>,
-+		 <0>,
-+		 <0>,
-+		 <0>,
-+		 <0>,
-+		 <0>,
-+		 <0>,
-+		 <0>,
-+		 <0>;
-+};
-+
-+&qupv3_id_0 {
-+	status = "okay";
-+};
-+
-+&remoteproc_adsp {
-+	firmware-name = "qcom/qcs8300/adsp.mbn";
-+	status = "okay";
-+};
-+
-+&remoteproc_cdsp {
-+	firmware-name = "qcom/qcs8300/cdsp0.mbn";
-+	status = "okay";
-+};
-+
-+&remoteproc_gpdsp {
-+	firmware-name = "qcom/qcs8300/gpdsp0.mbn";
-+	status = "okay";
-+};
-+
-+&rpmhcc {
-+	clocks = <&xo_board_clk>;
-+	clock-names = "xo";
-+};
-+
-+&uart7 {
-+	status = "okay";
-+};
-+
-+&ufs_mem_hc {
-+	reset-gpios = <&tlmm 133 GPIO_ACTIVE_LOW>;
-+	vcc-supply = <&vreg_l8a>;
-+	vcc-max-microamp = <1100000>;
-+	vccq-supply = <&vreg_l4c>;
-+	vccq-max-microamp = <1200000>;
-+	status = "okay";
-+};
-+
-+&ufs_mem_phy {
-+	vdda-phy-supply = <&vreg_l4a>;
-+	vdda-pll-supply = <&vreg_l5a>;
-+	status = "okay";
-+};
-
--- 
-2.25.1
-
+Regards,
+Pin-yen
+>
+>
+>
+>
+>
 
