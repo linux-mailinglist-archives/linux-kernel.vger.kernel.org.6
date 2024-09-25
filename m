@@ -1,156 +1,135 @@
-Return-Path: <linux-kernel+bounces-339321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3F15986463
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:03:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EB0B98634C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:23:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8416B325F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:23:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5E1D28A8C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2429813AA35;
-	Wed, 25 Sep 2024 15:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B5E156CF;
+	Wed, 25 Sep 2024 15:04:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HRriJeOp"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="bcq5OVh2"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC54813A25B;
-	Wed, 25 Sep 2024 15:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F332941C71
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 15:04:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727276610; cv=none; b=mAFu/672Xkv4ndQ2b+kRP4DHCRViLdzcqn3FfgXiMJ09F+ykC2kxuhXH3lV0zCczyMVpx1ZbzbeV5JT1+gZGLaMa5y1zLocOOORlCeICJHh0rSmr/S72b94nbkNNQb3bp3hUnz3PAsByI0jUw6mxzjEn+FALEqC+N38uyRPfsjE=
+	t=1727276666; cv=none; b=LzoL2ZlDO42lPNQlh/7sHbTc7yMs7FCsQZyD55ZMfYUsgK+0pRDvl+Ln7ppsnZM7zJKqCNXXnoPdzESiv+nILA9uWSZxi5pteSd31Gr/jrkFzDk2WP0u9JhDW8RlvUFoXEnZjx8HcnPUBRJRZJVeqmlScNUwjzPdgJ2tVZNjB8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727276610; c=relaxed/simple;
-	bh=zfQYIeSmrGqAr1oLOpgHPFXklc1HHrWmeccH5tTTESs=;
+	s=arc-20240116; t=1727276666; c=relaxed/simple;
+	bh=BZVIfssE/HlkKbYUh4j2gsPekqVebeV1vDele5otCJ8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RGdmru8FhRSA8OLxuroMEOI63coMcVniI9iJUPZZi7L6gdmLjdTApV36UJecjZQQsPBUuuXb4i2SLLKjz7eTfUzwS3S2qmfGGRDrA8qVUqUJL03LsvNGX+if9mm7InCD8n4eKy7RlCujZ+ySYPiuQfzs+dGT/q2CLukIVFeX7Sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HRriJeOp; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f7528f4658so60422431fa.3;
-        Wed, 25 Sep 2024 08:03:28 -0700 (PDT)
+	 To:Cc:Content-Type; b=n+Udxbu4blJDCxo4krNiVZgdGnth0k/VKKygH2ocBBVo4K14+Y+B/sgJV9qGdLNRob4E25jtxLfXk797EfF6Tc5enCiGn34+WYx/c9aBrzzmibfFiXLFP2xFy2efe3IyxJXUcJHmYJS9ba5eRzNVzEUBC4rZufVXUtxvkX3+644=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=bcq5OVh2; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8d2daa2262so874869766b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:04:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727276606; x=1727881406; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1727276663; x=1727881463; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WyPp28NYrJbi33YU5dd0/uz1wt5cUJUmG1p8KF+fEHg=;
-        b=HRriJeOpGzGfZJWEGoAUcVTrCkEfB1padaJYyIRsOHNn97UXqiA1AupP4BPhhwxYji
-         H4+umPJKI+MOqksxD52yPlzhHHkO6WTIYRwJrt88GtkXrwgjVqx6g8eHqL9wpi42yj9m
-         8Mjvx6LVD0Z0fngeePMdj2/oidFyNAn9w4D3m3+pWz3d9K79NH0xhiVhKHCgdpn+TWIs
-         xkzSMqh84j6rNdOU1s6tt3sauQE4QtAm0uZ9dck/daudDO7tYj2MikxVjSloYZjuVWCM
-         O/3PhmdAaPIdbV4wSkXpoM63GbPSMW/t6hli8vwUBA50c83GytwK3pjHQX0CM2xdsWJf
-         oJfA==
+        bh=Fcm1dYWoLf3Wc6bRnTyM3HuYA6slsWvg941YHjTJgDI=;
+        b=bcq5OVh2fgjz6Xm3EKIQSxI4LoNnLWbFAC6on2mCOLs7ETqNEfleDfdX/apt/5W3L3
+         X9eQy6bG1UVlS5yQiwp2ClH9//yvSRrL3NQ4SIgYyBdlU9vMsqk5stupQBQNIdb74j4b
+         PMWwT2whFhFjvUHaIF10b5tHmdiDbVN8HRBoglIRfVLVMGoudsuuTVMlZo+XM76sNCkc
+         DWH2L6FsL41u/bkqVepz5ghDACfmwWEFAn+OkciR64mG5O2n7AlX9z6QulDz3FpyS5lH
+         Xwkfy696190q2WYZc4Pphw08fm1YNrYNsSsOBYj49W5+HXnKVBJn6y1lr8ucHhjxE31P
+         lekQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727276606; x=1727881406;
+        d=1e100.net; s=20230601; t=1727276663; x=1727881463;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WyPp28NYrJbi33YU5dd0/uz1wt5cUJUmG1p8KF+fEHg=;
-        b=k3N9y47rSkXnPtxi01iV+SFJqAfo3ICtQgJkRtJ/l1rODwrnluIs4kZW6b+fOyKuSG
-         9YbAm723q/IYmQ2CsFVma6soxDJRXhm1/zplQahRRAT99y60OCMeMI6sOuOwrTAvBw3F
-         Bg5BSXub3s7LVtY/D7mrSIiFYl480SHWIK1CQ3vUQHyIfusSXLCRAsqwo4gg+cZO2GNF
-         bMlc/Gdb9UyFzLdGj4Ko1HlOkzC9sHHsI5nBhd+dY5q0QsSC9RmoiIbOIqHeDaOndhbs
-         2fK6JTsb5o8REvKxXpMKbRqZnfx6MvmBaJS5q+FTfm5i+fczRth40+VK6p0pMki55+/l
-         7VZA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1i2vL6yy8YNCVwSABkLvRgVQsHltKQ8ysymNhCxKKI0PuP+tpycCfxCUlacS4FgDFlFw7YWus6GwVoL6WLQY=@vger.kernel.org, AJvYcCVTuOEFskojRfFkkudzVASGfhY9jPApi1B0Co8lsJleY5tQGFEJcbWL4h8TGIuimu3UfG0PdZ24CWLbiWKI@vger.kernel.org
-X-Gm-Message-State: AOJu0YylSMF5DasBNRM6+AS7yVrf8WixPvPDagdhLPqBsPJPdGvGu2rZ
-	mZCH+IDCKay12FE9721X60CL8iMLnC2S+tmFtd3iZhO8Tn3/nrb8xMzbf/9yjbn8SXUqrgUMu24
-	r1Zo3r7hj+XL9h3r+u7AA6qzee7Spbg==
-X-Google-Smtp-Source: AGHT+IHclq8G6lZmqiClsVpYhUU8uH4PHhqZcQ11/na9kXhX5DTaYq0EOx8xyP3fN0UlxUQFfY9EZIk5HvE68VZXH/k=
-X-Received: by 2002:a05:651c:b14:b0:2f7:90b9:7534 with SMTP id
- 38308e7fff4ca-2f915fe4a35mr20741691fa.11.1727276606111; Wed, 25 Sep 2024
- 08:03:26 -0700 (PDT)
+        bh=Fcm1dYWoLf3Wc6bRnTyM3HuYA6slsWvg941YHjTJgDI=;
+        b=OeveBx4HEZldVVpKVE7Lm3TgubvsDRjQIcUEswvz9RhLC9p6M7TtDwDw2uV3zxiV92
+         TRVJ25VvY+a0sCzupWjqJh+p1sS189mw1BuJoTel7sWoCD6FS6eGfI3i1KWhu2V9N4hR
+         kETIW1Mo3mubY4fto7OSzFeUwbKVrS4PXJVFzoQ0YO1xLAKyxbHwTwyKjnlKj5YN2oOi
+         oqPgm2VXwbqm4ZY+VVowIG4kxWFH8invSHVYzFpIVLhpZEFMbE3kGvwVxPB3kkxloRVI
+         sG+EDIOd4uECE31uGJZdwe3tI9mfDjMvHdQX6ghUdpFK2EdrsF8y58++p08tyqzMahqk
+         yvfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPlHK/NfCub8SbH7WJ8zHSUgigdb712nwQTObxupTWW8geKdr/+HtOIeFZqMf5+YffFIXUdE6D9nix/RE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywix5g5fEqXy4W5bjSq37R894STiKraiRYAgD+ng1DXEyrtSbcu
+	jgfqUHuOhLzFv4JoIgVzHkzW2rp7hb9BN1cWmxMGZaLA9t+1ImUvb1aLvQFE/Wsbw4xIcFW3m8Y
+	jH0cYz3ND/8jF4+cDPA1aC/WFYVRjqfDHQjBMsg==
+X-Google-Smtp-Source: AGHT+IEKBETEBbA8oFDZdNCsj+RIgKMhlQG/S1lkwH92vhMzI5tt0OxPYPqW1BlbMTlymXavydaePF4Y5PU6xJJfy1c=
+X-Received: by 2002:a17:907:e213:b0:a86:7b71:7b77 with SMTP id
+ a640c23a62f3a-a93a05de319mr274196366b.44.1727276661650; Wed, 25 Sep 2024
+ 08:04:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240916032228.6601-1-jiande.lu@mediatek.com>
-In-Reply-To: <20240916032228.6601-1-jiande.lu@mediatek.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Wed, 25 Sep 2024 11:03:13 -0400
-Message-ID: <CABBYNZJQ4WVAgTPpQBsPp+wBqymN_inisdFZXoMT_b9YdXf2Jw@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth: btusb: Add USB HW IDs for MT7920/MT7925
-To: Jiande Lu <jiande.lu@mediatek.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, 
-	Sean Wang <sean.wang@mediatek.com>, Chris Lu <chris.lu@mediatek.com>, 
-	Deren Wu <deren.Wu@mediatek.com>, Aaron Hou <aaron.hou@mediatek.com>, 
-	Steve Lee <steve.lee@mediatek.com>, linux-bluetooth <linux-bluetooth@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	linux-mediatek <linux-mediatek@lists.infradead.org>
+References: <20240925131547.42396-1-luxu.kernel@bytedance.com>
+ <20240925131547.42396-2-luxu.kernel@bytedance.com> <20240925-2acd8d9743cf40b999172b40@orel>
+ <mvmbk0b7rjz.fsf@suse.de>
+In-Reply-To: <mvmbk0b7rjz.fsf@suse.de>
+From: Xu Lu <luxu.kernel@bytedance.com>
+Date: Wed, 25 Sep 2024 23:04:09 +0800
+Message-ID: <CAPYmKFs7s4fHBEZCuE92hwVPCTwvUX3864tR5OmgBKkMY57BKg@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v3 1/2] riscv: process: Introduce idle
+ thread using Zawrs extension
+To: Andreas Schwab <schwab@suse.de>
+Cc: Andrew Jones <ajones@ventanamicro.com>, paul.walmsley@sifive.com, palmer@dabbelt.com, 
+	aou@eecs.berkeley.edu, andy.chiu@sifive.com, guoren@kernel.org, 
+	christoph.muellner@vrull.eu, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, lihangjing@bytedance.com, 
+	dengliang.1214@bytedance.com, xieyongji@bytedance.com, 
+	chaiwen.cc@bytedance.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jiande,
+Hi Andreas,
 
-On Sun, Sep 15, 2024 at 11:22=E2=80=AFPM Jiande Lu <jiande.lu@mediatek.com>=
- wrote:
->
-> Add HW IDs for wireless module. These HW IDs are extracted from
-> Windows driver inf file and the test for card bring up successful.
+Thanks a lot for your reply.
 
-Well this is not enough if we don't have firmware published for them,
-or you have confirmed that firmware is available and it does load
-properly? In that case please add the information about the firmware
-as well and perhaps some logs that it can be loaded properly.
+On Wed, Sep 25, 2024 at 10:10=E2=80=AFPM Andreas Schwab <schwab@suse.de> wr=
+ote:
+>
+> On Sep 25 2024, Andrew Jones wrote:
+>
+> > On Wed, Sep 25, 2024 at 09:15:46PM GMT, Xu Lu wrote:
+> >> @@ -148,6 +149,21 @@ static inline void wait_for_interrupt(void)
+> >>      __asm__ __volatile__ ("wfi");
+> >>  }
+> >>
+> >> +static inline void wrs_nto(unsigned long *addr)
+> >> +{
+> >> +    int val;
+> >> +
+> >> +    __asm__ __volatile__(
+> >> +#ifdef CONFIG_64BIT
+> >> +                    "lr.d %[p], %[v]\n\t"
+> >> +#else
+> >> +                    "lr.w %[p], %[v]\n\t"
+> >> +#endif
+> >
+> > val is always 32-bit since it's an int. We should always use lr.w.
+>
+> Shouldn't val be unsigned long like the pointer that is being read?
 
-> Signed-off-by: Jiande Lu <jiande.lu@mediatek.com>
-> ---
->  drivers/bluetooth/btusb.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+Yes. As I replied Andrew, the 'int val' is a mistake here. The val can
+be an unsigned long (thread_info->flags) when CONFIG_SMP is disabled.
+I will update the declaration of val from 'int' to 'unsigned long'.
+
 >
-> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-> index 6c9c761d5b93..8946aafae640 100644
-> --- a/drivers/bluetooth/btusb.c
-> +++ b/drivers/bluetooth/btusb.c
-> @@ -563,6 +563,16 @@ static const struct usb_device_id quirks_table[] =3D=
- {
->         { USB_DEVICE(0x043e, 0x3109), .driver_info =3D BTUSB_MEDIATEK |
->                                                      BTUSB_WIDEBAND_SPEEC=
-H },
->
-> +       /* Additional MediaTek MT7920 Bluetooth devices */
-> +       { USB_DEVICE(0x0489, 0xe134), .driver_info =3D BTUSB_MEDIATEK |
-> +                                                    BTUSB_WIDEBAND_SPEEC=
-H },
-> +       { USB_DEVICE(0x13d3, 0x3620), .driver_info =3D BTUSB_MEDIATEK |
-> +                                                    BTUSB_WIDEBAND_SPEEC=
-H },
-> +       { USB_DEVICE(0x13d3, 0x3621), .driver_info =3D BTUSB_MEDIATEK |
-> +                                                    BTUSB_WIDEBAND_SPEEC=
-H },
-> +       { USB_DEVICE(0x13d3, 0x3622), .driver_info =3D BTUSB_MEDIATEK |
-> +                                                    BTUSB_WIDEBAND_SPEEC=
-H },
-> +
->         /* Additional MediaTek MT7921 Bluetooth devices */
->         { USB_DEVICE(0x0489, 0xe0c8), .driver_info =3D BTUSB_MEDIATEK |
->                                                      BTUSB_WIDEBAND_SPEEC=
-H },
-> @@ -636,6 +646,8 @@ static const struct usb_device_id quirks_table[] =3D =
-{
->                                                      BTUSB_WIDEBAND_SPEEC=
-H },
->         { USB_DEVICE(0x0489, 0xe11e), .driver_info =3D BTUSB_MEDIATEK |
->                                                      BTUSB_WIDEBAND_SPEEC=
-H },
-> +       { USB_DEVICE(0x0489, 0xe139), .driver_info =3D BTUSB_MEDIATEK |
-> +                                                    BTUSB_WIDEBAND_SPEEC=
-H },
->         { USB_DEVICE(0x13d3, 0x3602), .driver_info =3D BTUSB_MEDIATEK |
->                                                      BTUSB_WIDEBAND_SPEEC=
-H },
->         { USB_DEVICE(0x13d3, 0x3603), .driver_info =3D BTUSB_MEDIATEK |
 > --
-> 2.45.2
->
+> Andreas Schwab, SUSE Labs, schwab@suse.de
+> GPG Key fingerprint =3D 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D=
+7
+> "And now for something completely different."
 
+Thanks,
 
---=20
-Luiz Augusto von Dentz
+Xu Lu.
 
