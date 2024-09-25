@@ -1,156 +1,123 @@
-Return-Path: <linux-kernel+bounces-338390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63AA098573A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:34:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D87A598573C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:36:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 233CB28258B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:34:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 158F61C20DE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A699315C12F;
-	Wed, 25 Sep 2024 10:34:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E9015DBAE;
+	Wed, 25 Sep 2024 10:36:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VqLgN6br"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="YnPgnMyb"
+Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744A31304AB;
-	Wed, 25 Sep 2024 10:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222E71304AB;
+	Wed, 25 Sep 2024 10:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727260461; cv=none; b=IdjIEPtv6rJt84lTTeLAwUBTE1dSlLtOIf0LbgptssGlDwTEznEOwOJuQOLCgHl+Dw8Z2KnGvAb+73t1px+95nGL/x5tlGV3JGHVxkLY5f1o5C8crj50cNRpzf8D+wQ7bs9rgZnVoaelwdjWeRyvewblEuCOB8Xi4W5ptduSong=
+	t=1727260568; cv=none; b=daLPDJ+DsAcwRLbWWK/YB7QaM31hEG1QuB4FlwGlifXwKzjj73KUHdP1bljI4B3PnU5WZe2xCq+Zyjr+wx1zUxRmwD1ePKhiPakirZi/0VtgNRu2lOUvR5nqY7UYYF762eh+OK52eUj9aY1z5KPG5aY/XsMElwI4/T20tN295Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727260461; c=relaxed/simple;
-	bh=Ih0eZVGy2u1bgO5w/cU3c0CaCbAcvFxlPkiN+QUaznM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pv+jtGS9+YU//v0DIkW9VqkV6u3HOEXRejPEeRWLc3OSIIvqmg4SzR9FT+ZMHVatelilHAse13EIPFzCG0a9UJuBUaLK3axF+I0esTxO+B1tPvofxHWnGLvn99yA+GEVIqiNomEplxsHetLzXiWa02KjOYHiKgTjtcf9CUsCiig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VqLgN6br; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48P84SAP026808;
-	Wed, 25 Sep 2024 10:34:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=6NE1TN9QRZJT4d/UVAfDRd
-	WL9ww6G38R4/OqvHvAJm4=; b=VqLgN6brQ3HlS756W/ONihmSOKg/tZroDBsi4A
-	W+EvjmA0MqqOpsHRK2EEQUIEKWmooVsL8Nrzd7MUpB8nrou+cupZMf0DuZTfT401
-	5OBBw05YEqfFSvPAjHHlsZLQw8rUpqqobVNMP7t+FIgUzriMoHP+EyWZcoljxdxC
-	FnMzdESPXNP59NiZoq4ZgfLr2+Z4RRbPncDdBMVsUaxAGnmGebrVwR1UaKe1FV+A
-	EenodiMxBlKYBpK7Asl0Kd5i3fKskLenPiKbV0sYSipqxufRmfrEQvWXZ+yMmDBm
-	DcizQvjOhSIKAGdZutq0WkEl624mAd21instsl/EIVphzxpA==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sqakkcx4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 10:34:15 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48PAYFce014184
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 10:34:15 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 25 Sep 2024 03:34:13 -0700
-From: Mukesh Ojha <quic_mojha@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Mukesh Ojha <quic_mojha@quicinc.com>
-Subject: [PATCH] remoteproc: qcom: Fix NULL pointer in glink_subdev_stop()
-Date: Wed, 25 Sep 2024 16:03:51 +0530
-Message-ID: <20240925103351.1628788-1-quic_mojha@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727260568; c=relaxed/simple;
+	bh=EHwd2d+hqVgsyBcdI/VT2BZY5ls9gxMbsay29WFqh4M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tgbnYnO5C6csYsWvYk144/iqXfkpKWAQlw2fPHjv7S2DzMvcfXnY5GXmmbwDuChvPew2GkGlSCr3Xfr2A+ENh64QTt9I72kPr4U3Mq0f7WO3LU1VWu+m2Uk6HTSw/GUdR4XklWJ/uV54tngV8v+zQImbZ6WrV3wSHYUd2Nt8bQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=YnPgnMyb; arc=none smtp.client-ip=213.133.104.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=xZijSakaFI8Z3r7WPvVbRLHmqe3UhmGepM/S5JV7NbU=; b=YnPgnMybuFjS9iG8qlsOz177HI
+	pOheTewqZgHFvSIfAlHtoer3wH0TsOboPDbmZWgRHtbR8kZjehI0g3SUtREZ9cYrs6x1+jhINyvYz
+	wxHZl0ccX7C4yySqV0sXCvSJRzLqH65fOK6/aTRIZt1iORM4sYZzwynAQ3ofIWaxzl8ihBJeuxC9M
+	Hbkk6rw9naDOkWncIbYe1PLsRD8WWOHamuow3NyqGq0/MDgo70Iq86YCkNbnAIkr9xAo4DISX/vZR
+	9rE1ib1gf2DD7X2vM7RaXhzFzOOb5V/ODkMQ/1XGwSf1dCdnM0K8lALsbgxB+Ow6Yp9zgiq3NfHvt
+	YyRdB2sQ==;
+Received: from sslproxy05.your-server.de ([78.46.172.2])
+	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1stPNM-000Fsi-5G; Wed, 25 Sep 2024 12:36:03 +0200
+Received: from [178.197.249.20] (helo=[192.168.1.114])
+	by sslproxy05.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1stPNL-000P50-2l;
+	Wed, 25 Sep 2024 12:36:03 +0200
+Message-ID: <11e2ed15-b3a5-419a-9e9f-cbfe270d0fe8@iogearbox.net>
+Date: Wed, 25 Sep 2024 12:36:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: P5mw_FoXn3xdWA6pA1Eh-xrBLwNCJMMa
-X-Proofpoint-GUID: P5mw_FoXn3xdWA6pA1Eh-xrBLwNCJMMa
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
- bulkscore=0 impostorscore=0 suspectscore=0 phishscore=0 adultscore=0
- clxscore=1011 malwarescore=0 lowpriorityscore=0 mlxlogscore=999
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409250072
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v3] libbpf: Fix expected_attach_type set when
+ kernel not support
+To: Jiri Olsa <olsajiri@gmail.com>, Tao Chen <chen.dylane@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
+ <eddyz87@gmail.com>, Martin KaFai Lau <martin.lau@linux.dev>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240914154040.276933-1-chen.dylane@gmail.com>
+ <ZvPl6Wo4cdihaQ0A@krava>
+Content-Language: en-US
+From: Daniel Borkmann <daniel@iogearbox.net>
+In-Reply-To: <ZvPl6Wo4cdihaQ0A@krava>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27409/Wed Sep 25 11:17:07 2024)
 
-Multiple call to glink_subdev_stop() for the same remoteproc can happen
-if rproc_stop() fails from Process-A that leaves the rproc state to
-RPROC_CRASHED state later a call to recovery_store from user space in
-Process B triggers rproc_trigger_recovery() of the same remoteproc to
-recover it results in NULL pointer dereference issue in
-qcom_glink_smem_unregister().
-
-Fix it by having a NULL check in glink_subdev_stop().
-
-	Process-A                			Process-B
-
-  fatal error interrupt happens
-
-  rproc_crash_handler_work()
-    mutex_lock_interruptible(&rproc->lock);
-    ...
-
-       rproc->state = RPROC_CRASHED;
-    ...
-    mutex_unlock(&rproc->lock);
-
-    rproc_trigger_recovery()
-     mutex_lock_interruptible(&rproc->lock);
-
-      adsp_stop()
-      qcom_q6v5_pas 20c00000.remoteproc: failed to shutdown: -22
-      remoteproc remoteproc3: can't stop rproc: -22
-     mutex_unlock(&rproc->lock);
-
-						echo enabled > /sys/class/remoteproc/remoteprocX/recovery
-						recovery_store()
-						 rproc_trigger_recovery()
-						  mutex_lock_interruptible(&rproc->lock);
-						   rproc_stop()
-						    glink_subdev_stop()
-						      qcom_glink_smem_unregister() ==|
-                                                                                     |
-                                                                                     V
-						      Unable to handle kernel NULL pointer dereference
-                                                                at virtual address 0000000000000358
-
-Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
----
-- We can do this NULL check in qcom_glink_smem_unregister() as it is
-  exported function however, there is only one user of this. So, doing
-  it with current approach should also be fine.
-
- drivers/remoteproc/qcom_common.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
-index 8c8688f99f0a..52d6c9b99fdb 100644
---- a/drivers/remoteproc/qcom_common.c
-+++ b/drivers/remoteproc/qcom_common.c
-@@ -209,6 +209,9 @@ static void glink_subdev_stop(struct rproc_subdev *subdev, bool crashed)
- {
- 	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
- 
-+	if (!glink->edge)
-+		return;
-+
- 	qcom_glink_smem_unregister(glink->edge);
- 	glink->edge = NULL;
- }
--- 
-2.34.1
-
+On 9/25/24 12:28 PM, Jiri Olsa wrote:
+> On Sat, Sep 14, 2024 at 11:40:40PM +0800, Tao Chen wrote:
+>> The commit "5902da6d8a52" set expected_attach_type again with
+>> field of bpf_program after libpf_prepare_prog_load, which makes
+>> expected_attach_type = 0 no sense when kenrel not support the
+>> attach_type feature, so fix it.
+>>
+>> Fixes: 5902da6d8a52 ("libbpf: Add uprobe multi link support to bpf_program__attach_usdt")
+>> Suggested-by: Jiri Olsa <jolsa@kernel.org>
+>> Signed-off-by: Tao Chen <chen.dylane@gmail.com>
+>> ---
+>>   tools/lib/bpf/libbpf.c | 12 ++++++++----
+>>   1 file changed, 8 insertions(+), 4 deletions(-)
+>>
+>> Change list:
+>> - v2 -> v3:
+>>      - update BPF_TRACE_UPROBE_MULTI both in prog and opts suggedted by
+>>        Andrri
+>> - v1 -> v2:
+>>      - restore the original initialization way suggested by Jiri
+>>
+>> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+>> index 219facd0e66e..a78e24ff354b 100644
+>> --- a/tools/lib/bpf/libbpf.c
+>> +++ b/tools/lib/bpf/libbpf.c
+>> @@ -7352,8 +7352,14 @@ static int libbpf_prepare_prog_load(struct bpf_program *prog,
+>>   		opts->prog_flags |= BPF_F_XDP_HAS_FRAGS;
+>>   
+>>   	/* special check for usdt to use uprobe_multi link */
+>> -	if ((def & SEC_USDT) && kernel_supports(prog->obj, FEAT_UPROBE_MULTI_LINK))
+>> +	if ((def & SEC_USDT) && kernel_supports(prog->obj, FEAT_UPROBE_MULTI_LINK)) {
+>> +		/* for BPF_TRACE_KPROBE_MULTI, user might want to query exected_attach_type
+>> +		 * in prog, and expected_attach_type we set in kenrel is from opts, so we
+>> +		 * update both.
+>> +		 */
+> s/K/U/ in BPF_TRACE_KPROBE_MULTI in above comment and 'kenrel' typo
+>
+> Acked-by: Jiri Olsa <jolsa@kernel.org>
+Same typo is also in commit desc, would be good to improve the commit
+desc a bit if you spin v4 anyway. Thanks!
 
