@@ -1,150 +1,141 @@
-Return-Path: <linux-kernel+bounces-337967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9E189851B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 05:57:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FF659851B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 06:01:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80A981F22DAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 03:57:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 080681C20EDD
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 04:01:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D6A14B959;
-	Wed, 25 Sep 2024 03:57:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0E31494A9;
+	Wed, 25 Sep 2024 04:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UacvM0WY"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="l7PFiia3"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9CEF20E6;
-	Wed, 25 Sep 2024 03:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4E71FAA
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 04:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727236650; cv=none; b=LplnWfJqwebI4159X5k6WR/vuoKN5++tI3H5+QAd+xdqErk4Lrf8dU6BfAvhvM/5GOfACqA0zxabh8X/a9CYDojG8R6Qxb5fYWNFArjK5wFBO/zZVLs2n0x2De1+sQW3U21uNupQWBrcnLzZfjZh3zD/aDo0D/1PluwP4GbrTWc=
+	t=1727236882; cv=none; b=TchY+5ERztWhmYiw95elIfKwnpdn0Nm3Jo1fl4W3dSfkqu6e2VhTiFf9XBwwdfEBTTe/p8NFSibtQjHR8wNuBmX+jkFY9U/ktGSvCRqiXJlmn73e7Xh0D18yuQ5DGctKjDYBcgAf+/ZrpUvXIt6xvj80ty2cNMekOTBh2uwDzv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727236650; c=relaxed/simple;
-	bh=YZVzUHAhTPtsCdRB659ZwrS37NIwIBpNnkeOsyC/mGw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FXsbKC8bGDVO+1ZdWvrxHc4wxdNrSbVan4xZ5qLBxm9Qxf/kG6TIGE5YaOQp3+4/ShG6Q6uYLci38VHoXFjd+JsrnapIYjjaF8+r5R1O+jns25C72e/tvU926yXBiC5Vei0sM7uBVr2uKy8GJb4ORTpmyTE9Ddu21GWkUfg+rVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UacvM0WY; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48OHPbm2030767;
-	Wed, 25 Sep 2024 03:57:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	CX20ZVEGJjZtDO5C6RRvh7xdr6TkKmPim/oalofyHN4=; b=UacvM0WY50vYut0l
-	kP8X1l3Crye4s90m2Z+Lmqw2lI/5KeI6RZ5rji9KBIRCBYUPWBV/LE4znoWsZHQS
-	Z/XnJfqR0M7TtvXoePbs8pIhiCvrbCsU/jWASWDVqDyggYy1ZepTY/lu/WDO1YH2
-	4x6I5MAwQiAz71Fq89AiBib1ZWXuXHiRvtpXskGQn2RTa+EuVquya7F4ATZ72ZPe
-	26m5zVstZowa+QeU5VCuhnANUihMd/oqDASkl42ZEGODK0JslX5GMj3U+no/7Zl2
-	cbPiPGr6nXO7GLL8EyGpinr3MAe5HqvctzgEOWvo2gtsYvA18Rmdsyvu/d+nyJcG
-	0uJq0A==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sph6twn3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 03:57:15 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48P3vEWl010502
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 03:57:14 GMT
-Received: from [10.239.29.179] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 24 Sep
- 2024 20:57:09 -0700
-Message-ID: <f9456f67-0425-4ed0-8de0-17ed61e2af8e@quicinc.com>
-Date: Wed, 25 Sep 2024 11:57:07 +0800
+	s=arc-20240116; t=1727236882; c=relaxed/simple;
+	bh=EKPS+oo/SYEIXrJlcvkra97kLZnQ1iRLYXvaEVbf4zQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LYsEZd7iHWPT959S/CBGgJhoIo7y+w9CxwrQeX4zI4+a3U43OYbN81A0i6D9pm+G1vqB+0DicGs6cnnjwTUVGYm/GTX6sV6jpHRTBQozuHRUG8EDwbfJGbJx28co8yGSedO9AbpRnNC7uXXavpRj/jFqcoBmnroGAoTbtbLeLXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=l7PFiia3; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-7138acdfb49so3229803a34.3
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 21:01:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1727236880; x=1727841680; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wv0LNQbODtscukyro5hUsz/iAMlBwMMkYBgi7p9HDmY=;
+        b=l7PFiia3cwYhq30iI+vgIAlDXmM2H0WNzaf5+hf8pJ+rkY30o9iSQxBctnzp3IR+vB
+         uPoSkgLJ6ucJaHUrJLglE6NlXp4kTgBWViRwmIu/sQwA1vGQQUxjcXqFTcdIG0NolUv3
+         symaN3xlaNy1EEhwXyUZ+f4PKNHRXjQjg42Rs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727236880; x=1727841680;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wv0LNQbODtscukyro5hUsz/iAMlBwMMkYBgi7p9HDmY=;
+        b=X8GaJsY+C/j42siWoknnykkXfbOFZBfu4RBEdzteJLKoPNs42oT1Ibyx5rU4WVpt+H
+         +zeguSvWtP+VNAfBuDbBj1ePSilHw/7iFA5HnI/mBiD0cxePMqhOv30rhMnww13IAuBM
+         DgwACs99RC4IWV27WUCP0Rmuj0xHIZKjlIvWn9q909LcvK8HeWas2k7/ekUxLEnZBoyX
+         CfySzvt7ZAfgnTiovMOIpAvuRBmA+LtZC3P8uBjkB148V4wqdMAS3hTTS424U88o7tl9
+         IiIMoWsrWoQWU+pDxCQu33v7SMf45cBaQwo35rT8Ag2PvmVeVjbtoeyDfplerZ5v2UHT
+         RCZg==
+X-Forwarded-Encrypted: i=1; AJvYcCVF1VA6S3R/NQZ6D4NrGZGEvsdDKTjiPf3eVO4wNS/ji7gGmC0WKmgERhApsyOT0r8wsdpYcBTdOzRTRWM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysoaMQgkulYB2OrgjLZJFF1n2KPb1QMlzXzx3wlFLl4fiHWEct
+	8xyFSzx6V+eAOns44Rv3Xw9xxOFaDYZrtZFzXuo1THZW40O3zxKiJRAzMfHwFyx7ZxjozfUS5NZ
+	jWT0YeH9xZ3W526DbYxAdbXt+gH+/jIa0OIRYAfRePzTx7S4=
+X-Google-Smtp-Source: AGHT+IGgau4syMiJqpfiz+BN973InPoO24YNAxRH9R43N/ngNivhfxeEELeM5iRFh9PG59Y1/XRvme2ovOJhUwuCj+M=
+X-Received: by 2002:a05:6830:2d88:b0:710:f76b:350b with SMTP id
+ 46e09a7af769-713c7d942c7mr1549438a34.5.1727236880259; Tue, 24 Sep 2024
+ 21:01:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/6] arm64: dts: qcom: x1e80100: Add support for PCIe3
- on x1e80100
-To: Konrad Dybcio <konradybcio@kernel.org>, <manivannan.sadhasivam@linaro.org>,
-        <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
-        <andersson@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>, <abel.vesa@linaro.org>,
-        <quic_msarkar@quicinc.com>, <quic_devipriy@quicinc.com>
-CC: <dmitry.baryshkov@linaro.org>, <kw@linux.com>, <lpieralisi@kernel.org>,
-        <neil.armstrong@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-References: <20240924101444.3933828-1-quic_qianyu@quicinc.com>
- <20240924101444.3933828-7-quic_qianyu@quicinc.com>
- <9a692c98-eb0a-4d86-b642-ea655981ff53@kernel.org>
-Content-Language: en-US
-From: Qiang Yu <quic_qianyu@quicinc.com>
-In-Reply-To: <9a692c98-eb0a-4d86-b642-ea655981ff53@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: c8VYh7fdAYRf9m3U8TbeBHMSdcxHJSVY
-X-Proofpoint-ORIG-GUID: c8VYh7fdAYRf9m3U8TbeBHMSdcxHJSVY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- impostorscore=0 bulkscore=0 spamscore=0 clxscore=1015 mlxlogscore=999
- mlxscore=0 adultscore=0 phishscore=0 suspectscore=0 priorityscore=1501
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409250027
+References: <20240924035231.1163670-1-treapking@chromium.org>
+ <20240924035231.1163670-2-treapking@chromium.org> <CAD=FV=VEMkociw5gyVOtVCPmCyf1b0G7owsAm=o-LxB33YUnjg@mail.gmail.com>
+In-Reply-To: <CAD=FV=VEMkociw5gyVOtVCPmCyf1b0G7owsAm=o-LxB33YUnjg@mail.gmail.com>
+From: Pin-yen Lin <treapking@chromium.org>
+Date: Wed, 25 Sep 2024 12:01:09 +0800
+Message-ID: <CAEXTbpe4R8rXHn1+e55RxzryNW-0YexQfr7M5CBz2hP9qneTQA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] drm/bridge: anx7625: Drop EDID cache on bridge power off
+To: Doug Anderson <dianders@chromium.org>
+Cc: Xin Ji <xji@analogixsemi.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, linux-kernel@vger.kernel.org, 
+	Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi,
 
-On 9/24/2024 10:26 PM, Konrad Dybcio wrote:
-> On 24.09.2024 12:14 PM, Qiang Yu wrote:
->> Describe PCIe3 controller and PHY. Also add required system resources like
->> regulators, clocks, interrupts and registers configuration for PCIe3.
->>
->> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
->> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> ---
-> Qiang, Mani
+On Wed, Sep 25, 2024 at 12:43=E2=80=AFAM Doug Anderson <dianders@chromium.o=
+rg> wrote:
 >
-> I have a RTS5261 mmc chip on PCIe3 on the Surface Laptop.
-> Adding the global irq breaks sdcard detection (the chip still comes
-> up fine) somehow. Removing the irq makes it work again :|
+> Hi,
 >
-> I've confirmed that the irq number is correct
-Actually, I verified this patch with several devices (SDX75, AIC100 and
-R8169 of TP-LINK) attached to X1E80100 QCP. But I didn't meet this issue.
-Each device was detected. Can you please share boot log if it is possible?
-
-Mani, did you ever meet similar issue on other platforms?
-
-0003:01:00.0 Class 0200: Device 10ec:8161 (rev 15)
-         Subsystem: Device 10ec:8168
-         I/O ports at 100000 [size=256]
-         Memory at 78304000 (64-bit, non-prefetchable) [size=4K]
-         Memory at 78300000 (64-bit, non-prefetchable) [size=16K]
-         Kernel driver in use: r8169
-
-0003:01:00.0 Class ff00: Device 17cb:0309
-         Subsystem: Device 17cb:0309
-         Memory at 78580000 (64-bit, non-prefetchable) [size=4K]
-         Memory at 78581000 (64-bit, non-prefetchable) [size=4K]
-         Kernel driver in use: mhi-pci-generic
-
-0003:01:00.0 Class 1200: Device 17cb:a100
-         Subsystem: Device 17cb:a100
-         Region 0: Memory at 78300000 (64-bit, non-prefetchable) 
-[disabled] [size=4K]
-         Region 2: Memory at 78400000 (64-bit, non-prefetchable) 
-[disabled] [size=2M]
-         Region 4: Memory at 78600000 (64-bit, prefetchable) [disabled] 
-[size=64K]
-
-Thanks,
-Qiang Yu
+> On Mon, Sep 23, 2024 at 8:53=E2=80=AFPM Pin-yen Lin <treapking@chromium.o=
+rg> wrote:
+> >
+> > The bridge might miss the display change events when it's powered off.
+> > This happens when a user changes the external monitor when the system
+> > is suspended and the embedded controller doesn't not wake AP up.
+> >
+> > It's also observed that one DP-to-HDMI bridge doesn't work correctly
+> > when there is no EDID read after it is powered on.
+> >
+> > Drop the cache to force an EDID read after system resume to fix this.
+> >
+> > Fixes: 8bdfc5dae4e3 ("drm/bridge: anx7625: Add anx7625 MIPI DSI/DPI to =
+DP")
+> > Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+> > ---
+> >
+> >  drivers/gpu/drm/bridge/analogix/anx7625.c | 1 +
+> >  1 file changed, 1 insertion(+)
 >
-> Konrad
+> I'm not totally sure if it matters, but I wonder if you should change
+> this to only delete the EDID cache if you're in DP mode and not eDP
+> mode? For eDP mode the panel is not allowed to change and re-reading
+> it needlessly seems like it would slow down things like
+> suspend/resume. I think this would only matter if someone were using
+> eDP panels in the "old" way (not under the aux-bus) because we don't
+> set the "DRM_BRIDGE_OP_EDID" when we see "aux-bus", so maybe we don't
+> care that much but still...
+
+I'll update this in v2.
+>
+> Other than that, I know that there have been discussions in the past
+> about EDID caches but I can't quite remember all the details. I know
+> that panel-edp.c still caches it, so we must have concluded that it's
+> at least fine/reasonable for panels. I don't remember whether caching
+> is encouraged / suggested for external displays, though. Do you happen
+> to know if it even makes a difference there (in other words, do you
+> actually see multiple calls to read the EDID when you plug in a DP
+> display)?
+
+At least on ChromeOS, Chrome triggers two EDID reads when I plug in an
+external monitor. I'm not sure if this is common for other DRM masters
+though.
+>
+> -Doug
+
+Regards,
+Pin-yen
 
