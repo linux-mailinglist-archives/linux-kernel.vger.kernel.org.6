@@ -1,174 +1,217 @@
-Return-Path: <linux-kernel+bounces-339336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7727E98647C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:09:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AF89986476
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 18:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 884B2B2D7C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:28:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FD7AB32AC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7723A50A63;
-	Wed, 25 Sep 2024 15:15:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1390B1D5ACC;
+	Wed, 25 Sep 2024 15:25:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=freebsd.org header.i=@freebsd.org header.b="QC6DhPC+"
-Received: from mx2.freebsd.org (mx2.freebsd.org [96.47.72.81])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="lMMTSp0j"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A482752F76;
-	Wed, 25 Sep 2024 15:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=96.47.72.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727277305; cv=pass; b=EJitmFZiAfGUhM0V4T28ePTYVfkzqfMK/g+B+Vy0h+4fhHd9WPUBjN2g1NNlGKtR+O4msMKzay7cXQqxfifdcG2pFnkVLeH7AlzqiLl+1gWJTuDGeUe3FMy85QjvHOnxmeZ7ja9148ic1I8qnkW1jp+V8zEyBfxQTOqHrnZ8qk8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727277305; c=relaxed/simple;
-	bh=VM/YYffBWkguWTHJS2ZypByDinCPYMqILQPCR+ZVSNg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XK4MQOP5SgTiqEabiJnL5jIkGPT/T86ZQd3uCAruDazAq3+d4irZw437IxAXxJkBgFeRq0SD8KutcMXiEiRqun2PIy5xXbtbd7v8RMkNfMrkMbBLivjgbmGttAR5n+L1BF4qikWTAohvVbTi38ETOprPyqUlmVtGAKnOhD06oLc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freebsd.org; spf=pass smtp.mailfrom=freebsd.org; dkim=pass (2048-bit key) header.d=freebsd.org header.i=@freebsd.org header.b=QC6DhPC+; arc=pass smtp.client-ip=96.47.72.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freebsd.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freebsd.org
-Received: from mx1.freebsd.org (mx1.freebsd.org [96.47.72.80])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits)
-	 client-signature RSA-PSS (4096 bits))
-	(Client CN "mx1.freebsd.org", Issuer "R10" (verified OK))
-	by mx2.freebsd.org (Postfix) with ESMTPS id 4XDKzB4mRwz4K5k;
-	Wed, 25 Sep 2024 15:15:02 +0000 (UTC)
-	(envelope-from ssouhlal@freebsd.org)
-Received: from freefall.freebsd.org (freefall.freebsd.org [96.47.72.132])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "freefall.freebsd.org", Issuer "R11" (verified OK))
-	by mx1.freebsd.org (Postfix) with ESMTPS id 4XDKzB3dNZz4NQH;
-	Wed, 25 Sep 2024 15:15:02 +0000 (UTC)
-	(envelope-from ssouhlal@freebsd.org)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=freebsd.org; s=dkim;
-	t=1727277302;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GRJ2gwEj7+IQtC9Il0Y7ZgRAIbHvah9E9o2WhQEI5lc=;
-	b=QC6DhPC+Fa32OFil9l2pEimeAzgo6mYg9N6fjyvjBnbvg3GQRJPVQSymBs5LSv9A0vTPYi
-	ovyAW2X3CwP/JTRSMdo/os3ZztkTs287jZa0ZLXL0qA29qPG75KVNOnc8Nt69iN9lDenc6
-	XsJCSFwLmLYZiiilTugH8bkH1KwlX/Y6BaWZevksOyLCKesFFm2JaQ2HdrVNsED2A85yT0
-	W8dFWYDBPoWvmRXJmNuX7L4/bKiYJz1gefFqHEIw6GEX2KzDMScqGXvwWJa3s7PzAdH4M7
-	lP9KQMny/A9ILiRFgW2RG143Oh4qz6oxJq0RCsWcJDBLt4gQwL4E40Bpcc7k5w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=freebsd.org;
-	s=dkim; t=1727277302;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GRJ2gwEj7+IQtC9Il0Y7ZgRAIbHvah9E9o2WhQEI5lc=;
-	b=PmYz6sxd3J/oDN4eJCdOOgbyCylKcpXc11DPggBw3QcfN1hGAq1OBoPAdOi28yuLCXSA5q
-	vaYViKgnpFCXkP0hH1miq1hiA3IT8kATi8OaSCuKFu0EdIndv10UgWn1HH/6NqS6nSnD9K
-	z/F6TTwMUw75On1QyWf7mSCbpuMwVma3nCpO/sR/+4ymdMCINl9FkcmpB9k1/UQNn3F9JO
-	PRDStVrFeBdEu4ls/i11K6XM1TKZUHlwKZVEkFRNrnFhC6aMzpE8Bw2hkpy3zfurhZpQyX
-	q05YwGmfZT/j5CkpKPhhKLIEDhghLStOt57zS7Hi4ijfr1k7WY5XPGMLa0PVdw==
-ARC-Authentication-Results: i=1;
-	mx1.freebsd.org;
-	none
-ARC-Seal: i=1; s=dkim; d=freebsd.org; t=1727277302; a=rsa-sha256; cv=none;
-	b=E1oSMUz8fCyKpiwrPeIox5gtDyLvZF2+LDC2U9y2XQ1c2fvAwRSv+SocX39mTPynnlpqjK
-	CJAcWW8Zps2xmxvf00UTePQy+at2dQ8SW/O+J4w4QR2sGXXa9pZ3hwzKAOUXkS2t52wYnc
-	sjvFZM/4xgndC5okLYdvZNiQxJn24RrqwtfrmhAB8VS/svR07x/HWzA0PCWuK5rUJ1nQUm
-	OIaJ7RJV512QkLtXve0qPZbmetRBnsocd2zquslLtVXb7dT4v6E4+UYLl6nIHPhU6P+V2y
-	x6oyjFsQwp78j/13UQ9xCdBkHyZpdAKO2PzSIm4m6z0AdcOa8ejoOnqU5+/G0A==
-Received: by freefall.freebsd.org (Postfix, from userid 1026)
-	id 74228E953; Wed, 25 Sep 2024 15:15:02 +0000 (UTC)
-Date: Wed, 25 Sep 2024 15:15:02 +0000
-From: Suleiman Souhlal <ssouhlal@freebsd.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Suleiman Souhlal <suleiman@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, joelaf@google.com,
-	vineethrp@google.com, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, Srikar Dronamraju <srikar@linux.ibm.com>,
-	Sean Christopherson <seanjc@google.com>
-Subject: Re: [PATCH v2] sched: Don't try to catch up excess steal time.
-Message-ID: <ZvQo9gJgTlZ3nB03@freefall.freebsd.org>
-References: <20240911111522.1110074-1-suleiman@google.com>
- <f0535c47ea81a311efd5cade70543cdf7b25b15c.camel@infradead.org>
- <ZvQPTYo2oCN-4YTM@freefall.freebsd.org>
- <c393230b8c258ab182f85b74cbc9f866acc2a5a2.camel@infradead.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE551F5F6;
+	Wed, 25 Sep 2024 15:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727277901; cv=none; b=iQd1Spf00jZWxdPLKj2i1jvGdzSvCaXbaPqK9aCrJFkUU04GWQ5ndbFFKSZeDGTASUioeIIuth95zfuIIURcAeIGYIz4yfgClCOw2rdKQfKnjJOdZtL1CWmaHoJIN6PQYyHanER8rcreHY2tM6yg01NdN1rHHTkTSWipt8gDGrA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727277901; c=relaxed/simple;
+	bh=8UbC7Glv53C5Wh4gGajAzcDOxSrszEi7y/jg4Pu+9Uc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ceSCvc1W5BoITVkLa7xh9CQoO9wplwkVjGkc4g39Amp7GP0cC/x9zv2Upfw7uW+zXZJkgXnq6kVcUuNtulSSl+XcIEMnUUG5A39bm7s3TTnpPxNM3NN1e8pxcmAbRBDt/RLFSicCOd+bhtOaoNtJQNWBHCENZu7Mrc2Qgn4FkQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=lMMTSp0j; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1727277899; x=1758813899;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=8UbC7Glv53C5Wh4gGajAzcDOxSrszEi7y/jg4Pu+9Uc=;
+  b=lMMTSp0jvkGSKtPUgwVt3hAk0vBRMg6FqMrzaV7wSUhawc5JDPW0hXUN
+   5bGUllN/dEJpnmmBrZGPOxgRVujn06R9wuk26A342PHSZpl8f+d2d41rT
+   3uKiX5Ljr13g6gdvpwDiAerCgQ3X1pTWhRZmK7YMlrffHFHxorl2mz8dX
+   wcP2xyAel4T0gwenLSg+XCnqiaDTBRHqrm4Rwi9Osy9p+hc5xv76Lj75t
+   PNcZkZ2pOnVgvcQF89Aq0YaI+h86ZvJH//AcxheR8mBz52lWcWHl+LAAE
+   eGAwiHzjKe90CWwEKJQC6wxWMhwYbsSIzjIP5iKAhFQ7AyZGSHd/AZWwg
+   w==;
+X-CSE-ConnectionGUID: OOlwZxHRS2etYem7By+NLw==
+X-CSE-MsgGUID: 0AFWp061Qqqb5rmbRepGNQ==
+X-IronPort-AV: E=Sophos;i="6.10,257,1719903600"; 
+   d="scan'208";a="32100963"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Sep 2024 08:24:58 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 25 Sep 2024 08:24:28 -0700
+Received: from [10.171.248.56] (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Wed, 25 Sep 2024 08:24:25 -0700
+Message-ID: <da8ad5eb-355c-44c1-a060-76576bd419e9@microchip.com>
+Date: Wed, 25 Sep 2024 17:24:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c393230b8c258ab182f85b74cbc9f866acc2a5a2.camel@infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 09/12] clk: at91: sam9x60: Allow enabling main_rc_osc
+ through DT
+Content-Language: en-US, fr-FR
+To: Ryan Wanner <ryan.wanner@microchip.com>, Claudiu Beznea
+	<claudiu.beznea@tuxon.dev>, <ada@thorsis.com>
+CC: Conor Dooley <conor+dt@kernel.org>, "moderated list:ARM/Microchip (AT91)
+ SoC support" <linux-arm-kernel@lists.infradead.org>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, "open list:OPEN FIRMWARE AND FLATTENED
+ DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:COMMON CLK
+ FRAMEWORK" <linux-clk@vger.kernel.org>, Rob Herring <robh@kernel.org>, "open
+ list" <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Christian Melki <christian.melki@t2data.com>, "Michael
+ Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+References: <20240821105943.230281-1-ada@thorsis.com>
+ <20240821105943.230281-10-ada@thorsis.com>
+ <20240919-outsider-extending-e0a926bd23fa@thorsis.com>
+ <464f599a-7f0b-4e4e-901a-8f88a25428d6@microchip.com>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+In-Reply-To: <464f599a-7f0b-4e4e-901a-8f88a25428d6@microchip.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 25, 2024 at 03:26:56PM +0100, David Woodhouse wrote:
-> On Wed, 2024-09-25 at 13:25 +0000, Suleiman Souhlal wrote:
-> > > 
-> > > I'm still not utterly convinced this is the right thing to do, though.
-> > > It means you will constantly undermeasure the accounting of steal time
-> > > as you discard the excess each time.
-> > > 
-> > > The underlying bug here is that we are sampling the steal time and the
-> > > time slice at *different* times. This update_rq_clock_task() function
-> > > could be called with a calculated 'delta' argument... and then
-> > > experience a large amount of steal time *before* calling
-> > > paravirt_steal_clock(), which is how we end up in the situation where
-> > > the calculated steal time exceeds the running time of the previous
-> > > task.
-> > > 
-> > > Which task *should* that steal time be accounted to? At the moment it
-> > > ends up being accounted to the next task to run — which seems to make
-> > > sense to me. In the situation I just described, we can consider the
-> > > time stolen in update_rq_clock_task() itself to have been stolen from
-> > > the *incoming* task, not the *outgoing* one. But that seems to be what
-> > > you're objecting to?
-> > 
-> > This is a good description of the problem, except that the time stolen
-> > in update_rq_clock_task() itself is actually being stolen from the 
-> > outgoing task. This is because we are still trying to calculate how long
-> > it ran for (update_curr()), and time hasn't started ticking for the
-> > incoming task yet. We haven't set the incoming task's exec_start with the
-> > new clock_task time yet.
-> > 
-> > So, in my opinion, it's wrong to give that time to the incoming task.
+On 24/09/2024 at 17:52, Ryan Wanner wrote:
+> Hello Alex,
 > 
-> That makes sense. That steal time is actually stolen from *neither*
-> task, since it's after the 'end' timestamp of the outgoing task, and
-> before the 'start' timestamp of the incoming task.
+> I think a possible solution is to put the DT binding ID for main rc oc
+> after PMC_MCK and then add 1 to all the other IDs that are not dependent
+> on PMC_MAIN, the IDs that are before the branch for the sama7g54.
 > 
-> So where *should* it be accounted?
-> 
-> Or is it actually correct to drop it completely?
-> 
-> If you can make a coherent case for the fact that dropping it is really
-> the right thing to do (not *just* that it doesn't belong to the
-> outgoing task, which is the case you make in your existing commit
-> message), then I suppose I'm OK with your patch as-is.
-> > 
+> One issue I see with this solution is with SoCs that do not want the
+> main rc os exported to the DT the driver array might be allocating too
+> much memory, this can be solved by removing the +1 that is in the clock
 
-Yes, that's a good way to put it: The excess steal time isn't actually
-being stolen from anyone.
-And since it's not being stolen from anyone, isn't the right thing to do
-to drop it?
+We're talking about a handful of bytes, we can surely afford that.
 
-There might still be extra steal time that doesn't exceed the current
-'delta' from the race between reading the two values, that would still
-be erroneously accounted to the outgoing task, which this patch doesn't
-address, but we know that any steal > delta is from this race and should
-be dropped.
+My $0.02. Regards,
+   Nicolas
 
--- Suleiman
+> drivers next to the device tree binding macro, since this macro is now
+> increased by 1 with this change.
+> 
+> Doing a quick test on the sam9x60 and sama7g54 I did not see any glaring
+> issues with this potential solution.
+> 
+> Best,
+> 
+> Ryan
+> 
+> 
+> On 9/19/24 05:39, Alexander Dahl wrote:
+>> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+>>
+>> Hello Claudiu,
+>>
+>> after being busy with other things, I'm back looking at this series.
+>> As Nicolas pointed out [1], we need three clocks for the OTPC to work,
+>> quote:
+>>
+>>    "for all the products, the main RC oscillator, the OTPC peripheral
+>>    clock and the MCKx clocks associated to OTP must be enabled."
+>>
+>> I have a problem with making the main_rc_osc accessible for both
+>> SAM9X60 and SAMA7G5 here, see below.
+>>
+>> Am Wed, Aug 21, 2024 at 12:59:40PM +0200 schrieb Alexander Dahl:
+>>> SAM9X60 Datasheet (DS60001579G) Section "23.4 Product Dependencies"
+>>> says:
+>>>
+>>>      "The OTPC is clocked through the Power Management Controller (PMC).
+>>>      The user must power on the main RC oscillator and enable the
+>>>      peripheral clock of the OTPC prior to reading or writing the OTP
+>>>      memory."
+>>>
+>>> The code for enabling/disabling that clock is already present, it was
+>>> just not possible to hook into DT anymore, after at91 clk devicetree
+>>> binding rework back in 2018 for kernel v4.19.
+>>>
+>>> Signed-off-by: Alexander Dahl <ada@thorsis.com>
+>>> ---
+>>>   drivers/clk/at91/sam9x60.c       | 3 ++-
+>>>   include/dt-bindings/clock/at91.h | 1 +
+>>>   2 files changed, 3 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
+>>> index e309cbf3cb9a..4d5ee20b8fc4 100644
+>>> --- a/drivers/clk/at91/sam9x60.c
+>>> +++ b/drivers/clk/at91/sam9x60.c
+>>> @@ -207,7 +207,7 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
+>>>        if (IS_ERR(regmap))
+>>>                return;
+>>>
+>>> -     sam9x60_pmc = pmc_data_allocate(PMC_PLLACK + 1,
+>>> +     sam9x60_pmc = pmc_data_allocate(PMC_MAIN_RC + 1,
+>>>                                        nck(sam9x60_systemck),
+>>>                                        nck(sam9x60_periphck),
+>>>                                        nck(sam9x60_gck), 8);
+>>> @@ -218,6 +218,7 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
+>>>                                           50000000);
+>>>        if (IS_ERR(hw))
+>>>                goto err_free;
+>>> +     sam9x60_pmc->chws[PMC_MAIN_RC] = hw;
+>>>
+>>>        hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name, NULL, 0);
+>>>        if (IS_ERR(hw))
+>>> diff --git a/include/dt-bindings/clock/at91.h b/include/dt-bindings/clock/at91.h
+>>> index 3e3972a814c1..f957625cb3ac 100644
+>>> --- a/include/dt-bindings/clock/at91.h
+>>> +++ b/include/dt-bindings/clock/at91.h
+>>> @@ -25,6 +25,7 @@
+>>>   #define PMC_PLLBCK           8
+>>>   #define PMC_AUDIOPLLCK               9
+>>>   #define PMC_AUDIOPINCK               10
+>>> +#define PMC_MAIN_RC          11
+>>>
+>>>   /* SAMA7G5 */
+>>>   #define PMC_CPUPLL           (PMC_MAIN + 1)
+>>
+>> There are IDs defined in the devicetree bindings here, which are used
+>> both in dts and in driver code as array indexes.  In v1 of the patch
+>> series I just added a new last element in the end of the generic list
+>> and used that for SAM9X60.
+>>
+>> For SAMA7G5 those IDs are branched of from PMC_MAIN in between, making
+>> SAMA7G5 using a different last element, and different values after
+>> PMC_MAIN.
+>>
+>> Now we need a new ID for main rc osc, but not only for SAM9X60, but
+>> also for SAMA7G5.  I'm not sure what the implications would be, if the
+>> new ID would be added in between before PMC_MAIN, so all values would
+>> change?  Adding it to the end of the lists would probably be safe, but
+>> then you would need a diffently named variant for SAMA7G5's different
+>> IDs.  I find the current status somewhat unfortunate for future
+>> extensions.  How should this new ID be added here?  What would be the
+>> way forward?
+>>
+>> Greets
+>> Alex
+>>
+>> [1] https://lore.kernel.org/linux-clk/ec34efc2-2051-4b8a-b5d8-6e2fd5e08c28@microchip.com/T/#u
+>>
+>>> --
+>>> 2.39.2
+>>>
+>>>
+>>
+> 
 
 
