@@ -1,124 +1,184 @@
-Return-Path: <linux-kernel+bounces-339105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16C68986190
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:55:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C21798605B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:21:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C33B5B25AF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:21:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE9A51F26A7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:21:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29FB1A3A84;
-	Wed, 25 Sep 2024 12:51:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F7C21A3AB8;
+	Wed, 25 Sep 2024 12:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WjrkDDfz"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eY/PoDy8"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34CB1A3A86;
-	Wed, 25 Sep 2024 12:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7971A3A80
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 12:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727268692; cv=none; b=fWiLLrtS8D8REsf0J2WvTpH+9Ndcr8Kmcg4kFYIs2AW/edk5bi9rNnoD8ABD9Ypkx+Csij0famn3BJWJ7Ntue50YVWNd55HZcKlGR0cLHFrwJX/6pS3Nq62eyV5x71v5UrqvE9lBZKCEvoP+lB20DCEXMsXnGEdP9RS70XMWp1E=
+	t=1727268690; cv=none; b=hKS2ejz5KiQD93U7ESdSKlONdkqwzHNXj38SHnQVgHC1OzMsCKaO3xoSxMMu7rgJd8AUuXpHAcL6A5Mx83S9KLHQsXDZwTKLStLLs0qZp/AvdIG+TIlrgnEnwpqO+9XNROlmPswEL9hESDkhv78UCa+DNtlysjGzTY5dot04dT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727268692; c=relaxed/simple;
-	bh=XKDJRemG30MdQosPcxnzXCGtHjGACAtGk0mGfKXPlBw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XS8TqzOaRSSCxUa+PA4f38mjY+DrWRty3+kKTlRQ/EXNZ4pi0LL6fRsvQHfyEReiX1lXDXZFmH+K1a4tqzHpqa/fLxKRlSW4A4nqzLL2VL3DWWAKRtau8bvzCDNeWgvNeFOi+N9GfhGgQ79SXMBP8MKTxRl/1QYFtQu7Sx/N0pM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=WjrkDDfz; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48PCpGQ4053160;
-	Wed, 25 Sep 2024 07:51:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1727268676;
-	bh=hmz4qaO/RbA9PPYEPGz7JVFerhgtzV5gt7TFDktNz2M=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=WjrkDDfzCt1XocZmOL8qayPOgEk0vAeW7kJ46uMUIYaYskzX4QqbpMd5GZpE1I4x8
-	 urJ4q3+t7zx1eq4FQXO3gnuUd9dnSpGSFYGTb52j5z5ma5k+OWnriakR+u9iZSYOqQ
-	 DIp8j7Wudu0oanrOfb/nGkUnWuHONPACitUYW4SI=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48PCpGBb014077
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 25 Sep 2024 07:51:16 -0500
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 25
- Sep 2024 07:51:15 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 25 Sep 2024 07:51:15 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48PCpFx6092503;
-	Wed, 25 Sep 2024 07:51:15 -0500
-Date: Wed, 25 Sep 2024 07:51:15 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Dhruva Gole <d-gole@ti.com>
-CC: Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        Andrew Davis
-	<afd@ti.com>, Bryan Brattlof <bb@ti.com>
-Subject: Re: [PATCH v5 0/6] ti: k3-am62{a,p}x-sk: add opp frequencies
-Message-ID: <20240925125115.hkdhczffhauy6met@lushly>
-References: <20240924-ti-cpufreq-fixes-v5-v5-0-cbe16b9ddb1b@ti.com>
- <20240924121544.62my7eqnudc76orl@subscribe>
- <20240925074738.a43uwqen4dvbd5mc@lcpd911>
+	s=arc-20240116; t=1727268690; c=relaxed/simple;
+	bh=VaGcEgU1zLaiGWkgHYrfGIyiwGmvJRjCRyKHQ9r/rA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SJvMumiTBPRL7H4+6TSMpJB6gp0F+AhvQUYsgXqPcJyuK6Fd400Y0Bt2G7bXhvL9/CU3NkIzpOKWudsmULgQ6Z81YDHohhmL1X85goXBtA2+/I26zNqzdGIZjXuYLqAVtn45pYjeXMR3lZEOStG17EAXgFlzYkp5YsQ85j7c1hY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eY/PoDy8; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f75f116d11so68893491fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 05:51:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727268687; x=1727873487; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=LGma69Sr28MXVjXEqnOY6cy8Xe0bfhYxw2mh4o1EehI=;
+        b=eY/PoDy8rk1Al5yd1n1Fx7jQF1lLALJU9odverL3LC2cqiTWTUgeepeT87QqHPs5pA
+         RGdmQj4IQ+694p3C/y7z1Syr+nGI89KeRy1yU8PTNFvmGUlfBouJDW+jQTHkddoqPND4
+         hiZX7qNR4UjLs7TwE2N+nTIgXluo+1I0fT9ZsocPWKb7MFi/RvbGOps7MgHdyd/0Hv7j
+         QXLsWJIaZ7r8cV8ywd7Kmh3MdN9DAWIDyawokhZu96zx4oLUmlAoGDdsMrGMNojFEzEz
+         qoqct5OQJE5SF71iPZ2X4Q4AwGAsZ0GIwFGnaAKOjKoM9A4owAQsh3IlmWK51Z19Uc/x
+         2SaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727268687; x=1727873487;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LGma69Sr28MXVjXEqnOY6cy8Xe0bfhYxw2mh4o1EehI=;
+        b=Gfq+6c5dlbMMLweOtQu2VXQLoqEeB/nza07B4qqNwUoCdq8QO3qOInHpQEunpZZiIk
+         gpAB8DkAzInOTh/kQeHJk2r7556MSxgb4lfkrQgfPhahioqDdXqezCp3aBZ2o+AqNpdv
+         r9fj0gx9Aewvi6c5A7hWm33/+AffM7nsUnx95GdV39CmE9APTNunPLOTQaAv1KBDrHWt
+         6mApRUMqd5xV+sDt0/4gp550NWlOm9jlStw/07mY36n+ZhJ+vjjMOv/XBoyhpddZ2OWA
+         dNQpKHd49kecdzKH4qkukUIGq8I6uCx41ptDcznhYi7BzmoZqOlDQc1WMYrQ1+kkc612
+         ZT5w==
+X-Forwarded-Encrypted: i=1; AJvYcCUoM9JIh63a6UglalsBIrvgb7cUMQDsbEbeZjKNFUlZ0vt1VcXipAZYK57si0S5Gf11usLrs01FAQ3tPYU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhvpC3jzlHy5HjwoMHjFghPay4Rae2CQh8yVpQp1Fttpp9QDfL
+	9w3HlRCCEWiuilGztEadrux7D57TbX7klngJaeL0NF9IjMgaw30MSbDrAa4Hce8=
+X-Google-Smtp-Source: AGHT+IEGQnkRVJDhYLTjRbwCd1JcWlry2TnoRPviQ16wlDbXpkXhhkV0VphxcyVjJS5vqRD4q2JN9A==
+X-Received: by 2002:a2e:90c3:0:b0:2f6:649e:bf70 with SMTP id 38308e7fff4ca-2f916012799mr14524141fa.26.1727268686577;
+        Wed, 25 Sep 2024 05:51:26 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f8d28998e5sm4935891fa.101.2024.09.25.05.51.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 05:51:25 -0700 (PDT)
+Date: Wed, 25 Sep 2024 15:51:22 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Christian =?utf-8?B?S8O2bmln?= <ckoenig.leichtzumerken@gmail.com>
+Cc: Andrew Davis <afd@ti.com>, Jens Wiklander <jens.wiklander@linaro.org>, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, op-tee@lists.trustedfirmware.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	Olivier Masse <olivier.masse@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Yong Wu <yong.wu@mediatek.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, Sumit Garg <sumit.garg@linaro.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [Linaro-mm-sig] Re: [RFC PATCH 0/4] Linaro restricted heap
+Message-ID: <lk7a2xuqrctyywuanjwseh5lkcz3soatc2zf3kn3uwc43pdyic@edm3hcd2koas>
+References: <20240830070351.2855919-1-jens.wiklander@linaro.org>
+ <dhxvyshwi4qmcmwceokhqey2ww4azjcs6qrpnkgivdj7tv5cke@r36srvvbof6q>
+ <d8e0cb78-7cfb-42bf-b3a5-f765592e8dd4@ti.com>
+ <mzur3odofwwrdqnystozjgf3qtvb73wqjm6g2vf5dfsqiehaxk@u67fcarhm6ge>
+ <e967e382-6cca-4dee-8333-39892d532f71@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240925074738.a43uwqen4dvbd5mc@lcpd911>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e967e382-6cca-4dee-8333-39892d532f71@gmail.com>
 
-On 13:17-20240925, Dhruva Gole wrote:
-> On Sep 24, 2024 at 07:15:44 -0500, Nishanth Menon wrote:
-> > On 15:20-20240924, Dhruva Gole wrote:
-> > [...]
-> > > 
-> > > I am sorry that this breaks compatibility with older AM625 devicetree.
-> > > However, the old devicetree was marking the entire wkup_conf as "syscon",
-> > > "simple-mfd" which was wrong and needed to be fixed.
-> > > 
-> > > This series finally tries to bring order to DT and the driver.
-> > > 
-> > > However, if there is still any way to maintain the backward
-> > > compatibility, then I am open to suggestions. Please try
-> > > and understand here that the ask for backward compatibility here
-> > > is to ask the driver to support a case where the register offset itself
-> > > was to be picked from a different node. I am not sure if there's any
-> > > cleaner way to do this.
-> > 
-> > 
-> > Have you tried to handle this with quirks? I am not in favor of breaking
-> > backward compatibility.
+On Wed, Sep 25, 2024 at 10:51:15AM GMT, Christian König wrote:
+> Am 25.09.24 um 01:05 schrieb Dmitry Baryshkov:
+> > On Tue, Sep 24, 2024 at 01:13:18PM GMT, Andrew Davis wrote:
+> > > On 9/23/24 1:33 AM, Dmitry Baryshkov wrote:
+> > > > Hi,
+> > > > 
+> > > > On Fri, Aug 30, 2024 at 09:03:47AM GMT, Jens Wiklander wrote:
+> > > > > Hi,
+> > > > > 
+> > > > > This patch set is based on top of Yong Wu's restricted heap patch set [1].
+> > > > > It's also a continuation on Olivier's Add dma-buf secure-heap patch set [2].
+> > > > > 
+> > > > > The Linaro restricted heap uses genalloc in the kernel to manage the heap
+> > > > > carvout. This is a difference from the Mediatek restricted heap which
+> > > > > relies on the secure world to manage the carveout.
+> > > > > 
+> > > > > I've tried to adress the comments on [2], but [1] introduces changes so I'm
+> > > > > afraid I've had to skip some comments.
+> > > > I know I have raised the same question during LPC (in connection to
+> > > > Qualcomm's dma-heap implementation). Is there any reason why we are
+> > > > using generic heaps instead of allocating the dma-bufs on the device
+> > > > side?
+> > > > 
+> > > > In your case you already have TEE device, you can use it to allocate and
+> > > > export dma-bufs, which then get imported by the V4L and DRM drivers.
+> > > > 
+> > > This goes to the heart of why we have dma-heaps in the first place.
+> > > We don't want to burden userspace with having to figure out the right
+> > > place to get a dma-buf for a given use-case on a given hardware.
+> > > That would be very non-portable, and fail at the core purpose of
+> > > a kernel: to abstract hardware specifics away.
+> > Unfortunately all proposals to use dma-buf heaps were moving in the
+> > described direction: let app select (somehow) from a platform- and
+> > vendor- specific list of dma-buf heaps. In the kernel we at least know
+> > the platform on which the system is running. Userspace generally doesn't
+> > (and shouldn't). As such, it seems better to me to keep the knowledge in
+> > the kernel and allow userspace do its job by calling into existing
+> > device drivers.
 > 
-> I was thinking of something on those lines, but quirks makes sense for
-> the case that there's a quirky behaviour in the SoC itself. Here it
-> seems to me that we are adding a quirk to handle quirk in some old devicetree.
+> The idea of letting the kernel fully abstract away the complexity of inter
+> device data exchange is a completely failed design. There has been plenty of
+> evidence for that over the years.
 > 
-> There's no way to detect the devicetree version or somehow distinguish
-> within the driver if it's an old or a new DT. One way I could think of
-> is on these lines:
+> Because of this in DMA-buf it's an intentional design decision that
+> userspace and *not* the kernel decides where and what to allocate from.
 
-I suggest going and experimenting a bit. Sorry, changes that break
-backward compatibility: NAK!
+Hmm, ok.
+
+> 
+> What the kernel should provide are the necessary information what type of
+> memory a device can work with and if certain memory is accessible or not.
+> This is the part which is unfortunately still not well defined nor
+> implemented at the moment.
+> 
+> Apart from that there are a whole bunch of intentional design decision which
+> should prevent developers to move allocation decision inside the kernel. For
+> example DMA-buf doesn't know what the content of the buffer is (except for
+> it's total size) and which use cases a buffer will be used with.
+> 
+> So the question if memory should be exposed through DMA-heaps or a driver
+> specific allocator is not a question of abstraction, but rather one of the
+> physical location and accessibility of the memory.
+> 
+> If the memory is attached to any physical device, e.g. local memory on a
+> dGPU, FPGA PCIe BAR, RDMA, camera internal memory etc, then expose the
+> memory as device specific allocator.
+
+So, for embedded systems with unified memory all buffers (maybe except
+PCIe BARs) should come from DMA-BUF heaps, correct?
+
+> 
+> If the memory is not physically attached to any device, but rather just
+> memory attached to the CPU or a system wide memory controller then expose
+> the memory as DMA-heap with specific requirements (e.g. certain sized pages,
+> contiguous, restricted, encrypted, ...).
+
+Is encrypted / protected a part of the allocation contract or should it
+be enforced separately via a call to TEE / SCM / anything else?
 
 -- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+With best wishes
+Dmitry
 
