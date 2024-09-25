@@ -1,177 +1,182 @@
-Return-Path: <linux-kernel+bounces-339286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 754E2986226
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:08:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42583986438
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:55:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AB781F27932
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:08:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D2D2B34913
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:24:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EEFE188A18;
-	Wed, 25 Sep 2024 14:55:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A185C17BEB8;
+	Wed, 25 Sep 2024 15:05:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CDvtJlod"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lV/dEyYi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF666188934;
-	Wed, 25 Sep 2024 14:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B0416DEDF;
+	Wed, 25 Sep 2024 15:05:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727276111; cv=none; b=cfvKHGEF6Ni6347E2VlME9x65+PB703O+I3cgSXi3EiAyg8PeCFQkaLJ+LDk2jHDox4oRMEBhqq4I/VjaoBn6xw7XHZnAwrbrp/NDtqVe0JI2wPPfaYA/XDngv3aJCfAibfkW7cyifcipqaxeWj5kc690QKXPWmijlAac25fokI=
+	t=1727276727; cv=none; b=UCUqzPdzRLQY8R1yUG0+RoHaWvgISE4CFZpt6EWhqLmjdsRfV0Zf72p8MEGCniJPf3yvryLSTY+B1mt8i//Hu91BL7XuCw1lXKznVtjkNjZHYFUTZGu0MB1Vw02My8NlA1RXVXZQC9t5V7xlCyaBB/2pO25gUFrH8SPdh0JSvDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727276111; c=relaxed/simple;
-	bh=xdbK3sX33TuJDpUjLbXTCDI0D2SFxjFhg9r0p9JHT54=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=SnXCM9KIJMfasgy/5X14fBtKkyulCNGOxQHeNQd9P2QUUlVpjenmzGjqgGNjWr7rXUZRi7zGbrWNJYN+3ypHvI5zimMhQOSwXVw0Ge/9n43K+ELJfBWhLItAlwppmFif+/Ph1Ld28tl2d6Vt3ugh5WPR7MGbAv9w0TyRf1eG9mM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=CDvtJlod; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48PEt4j0062997;
-	Wed, 25 Sep 2024 09:55:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1727276104;
-	bh=SoE3frTgrrAbkkW+0hWzW5YqidptuOBpjGiZMGx02Ew=;
-	h=From:Date:Subject:References:In-Reply-To:To:CC;
-	b=CDvtJlodjAiDT7Nhnkp/7jYUbnMMzvkawKosGqASR/HqCJ1dsLuM6sWKATA2dHRnY
-	 oy2cqf05zgXHk4P8vbvNUGlgpYww7nNURikWbXxltfgF80lIvro4Bg2K5KtsQcAneo
-	 MzNGEktsZCQ/ks2QZwAXroZCZ4OmRZP5G0g7ofTo=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48PEt4D3092264
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 25 Sep 2024 09:55:04 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 25
- Sep 2024 09:55:04 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 25 Sep 2024 09:55:04 -0500
-Received: from [127.0.1.1] (lcpd911.dhcp.ti.com [172.24.227.226])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48PEsYCn110564;
-	Wed, 25 Sep 2024 09:55:00 -0500
-From: Dhruva Gole <d-gole@ti.com>
-Date: Wed, 25 Sep 2024 20:24:20 +0530
-Subject: [PATCH v6 6/6] cpufreq: ti-cpufreq: Update efuse/rev offsets in
- AM62 family
+	s=arc-20240116; t=1727276727; c=relaxed/simple;
+	bh=LTFovhotCR3F0gjdRFbbOMrUPSlsAH2Mi6k1oPhssn0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UwLQGKhzmFDiZCEYOFszKA2iysb2DrWh1nMqY68/cvYapmY/kbPd5ZFbh8SWrcYYsNV+AbbP3/ylTKBQoGbcUiNJ3qY04CWf8SkgEtqMdzX/pS2wKrnzp/jvravR1Sk/qOJ40novOJWHnudjE7c0q9mFzKQVvWg2eNjnMjdEXxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lV/dEyYi; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727276726; x=1758812726;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=LTFovhotCR3F0gjdRFbbOMrUPSlsAH2Mi6k1oPhssn0=;
+  b=lV/dEyYibagIHuQvOXg5M78AV3oH9/1pbaF41/rpAG1o4xfXp5Yf9vC9
+   NdLP3PtytXUqiqbZMd5NGh3zxm1sg4a0H9ruJYXJC8OAtIGLWWwRvuwky
+   DST+0k8NlEABCcGRsyscQve21QpYNt03z79P6KForVrF7cyFQmKS91TsL
+   spWWGTkhkwkAHBfWMYowWbNZiLItv2ReDTUTu74688YrmNYbLM4S6QBRc
+   WHt4aOiQ/d13QZae+tUReW5UDS7xQI8HL6wpitYKWrpDbQfuHnCgL/N54
+   7uEt/7LlRaiGcTqyfE3D+be+UNuVXECahP92qlOXGBeKuyibxvoGesaAI
+   w==;
+X-CSE-ConnectionGUID: BApjExqiTim3RzQByOk0ww==
+X-CSE-MsgGUID: iDKTPwRRQ865FqjgcAKOpA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11206"; a="26482948"
+X-IronPort-AV: E=Sophos;i="6.10,257,1719903600"; 
+   d="scan'208";a="26482948"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 08:05:25 -0700
+X-CSE-ConnectionGUID: uBmKSm89TSiRGkjsbpUpYg==
+X-CSE-MsgGUID: ELGXt5SjQ5GvFpL3sot2/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,257,1719903600"; 
+   d="scan'208";a="76317739"
+Received: from kniemiec-mobl1.ger.corp.intel.com (HELO [10.245.246.30]) ([10.245.246.30])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 08:05:20 -0700
+Message-ID: <8bb65adc-e995-443e-80c9-36e9b5d8eee3@linux.intel.com>
+Date: Wed, 25 Sep 2024 16:54:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v28 30/32] ALSA: usb-audio: Add USB offload route kcontrol
+To: Wesley Cheng <quic_wcheng@quicinc.com>, srinivas.kandagatla@linaro.org,
+ mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
+ dmitry.torokhov@gmail.com, corbet@lwn.net, broonie@kernel.org,
+ lgirdwood@gmail.com, tiwai@suse.com, krzk+dt@kernel.org,
+ Thinh.Nguyen@synopsys.com, bgoswami@quicinc.com, robh@kernel.org,
+ gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-doc@vger.kernel.org, alsa-devel@alsa-project.org
+References: <20240925010000.2231406-1-quic_wcheng@quicinc.com>
+ <20240925010000.2231406-31-quic_wcheng@quicinc.com>
+Content-Language: en-US
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <20240925010000.2231406-31-quic_wcheng@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240925-ti-cpufreq-fixes-v5-v6-6-46f41a903e01@ti.com>
-References: <20240925-ti-cpufreq-fixes-v5-v6-0-46f41a903e01@ti.com>
-In-Reply-To: <20240925-ti-cpufreq-fixes-v5-v6-0-46f41a903e01@ti.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Rafael
- J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        Andrew Davis
-	<afd@ti.com>, Bryan Brattlof <bb@ti.com>,
-        Dhruva Gole <d-gole@ti.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1727276075; l=2875;
- i=d-gole@ti.com; s=20240919; h=from:subject:message-id;
- bh=xdbK3sX33TuJDpUjLbXTCDI0D2SFxjFhg9r0p9JHT54=;
- b=NmSRfzqh6TLYqUwObdIiSB6IE4akueqjdw/lEC4Fha1Jn88KcxDq7HkAmiVYRgZFBN5G6+uWR
- jR+3L1vtZzvDViVVX6hXPF+4Cc+vwrPq8p8x5/NQfUR3hut2Ojara8K
-X-Developer-Key: i=d-gole@ti.com; a=ed25519;
- pk=k8NnY4RbxVqeqGsYfTHeVn4hPOHkjg7Mii0Ixs4rghM=
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-With the Silicon revision being taken directly from socinfo, there's no
-longer any need for reading any SOC register for revision from this driver.
-Hence, we do not require any rev_offset for AM62 family of devices.
-The efuse offset should be 0x0 for AM625 as well, as the syscon
-register being used from DT refers to the efuse_offset directly.
 
-However, to maintain the backward compatibility with old devicetree, also
-add condition to handle the case where we have the wrong offset and add
-the older efuse_offset value there such that we don't end up reading the
-wrong register offset.
 
-Signed-off-by: Dhruva Gole <d-gole@ti.com>
----
- drivers/cpufreq/ti-cpufreq.c | 23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
-index ba621ce1cdda694c98867422dbb7f10c0df2afef..8a97b95b4c44a76b12cab76ddc0f9a5b8ae73f84 100644
---- a/drivers/cpufreq/ti-cpufreq.c
-+++ b/drivers/cpufreq/ti-cpufreq.c
-@@ -313,10 +313,9 @@ static const struct soc_device_attribute k3_cpufreq_soc[] = {
- 
- static struct ti_cpufreq_soc_data am625_soc_data = {
- 	.efuse_xlate = am625_efuse_xlate,
--	.efuse_offset = 0x0018,
-+	.efuse_offset = 0x0,
- 	.efuse_mask = 0x07c0,
- 	.efuse_shift = 0x6,
--	.rev_offset = 0x0014,
- 	.multi_regulator = false,
- };
- 
-@@ -325,7 +324,6 @@ static struct ti_cpufreq_soc_data am62a7_soc_data = {
- 	.efuse_offset = 0x0,
- 	.efuse_mask = 0x07c0,
- 	.efuse_shift = 0x6,
--	.rev_offset = 0x0014,
- 	.multi_regulator = false,
- };
- 
-@@ -334,7 +332,6 @@ static struct ti_cpufreq_soc_data am62p5_soc_data = {
- 	.efuse_offset = 0x0,
- 	.efuse_mask = 0x07c0,
- 	.efuse_shift = 0x6,
--	.rev_offset = 0x0014,
- 	.multi_regulator = false,
- };
- 
-@@ -349,11 +346,25 @@ static int ti_cpufreq_get_efuse(struct ti_cpufreq_data *opp_data,
- 				u32 *efuse_value)
- {
- 	struct device *dev = opp_data->cpu_dev;
-+	struct device_node *np = opp_data->opp_node;
- 	u32 efuse;
- 	int ret;
- 
--	ret = regmap_read(opp_data->syscon, opp_data->soc_data->efuse_offset,
--			  &efuse);
-+	/*
-+	 * The following check is used as a way to check if this is an older devicetree
-+	 * being used where the entire wkup_conf node was marked as "syscon",
-+	 * "simple-mfd".
-+	 * Since this bug only affects AM625, make sure it enters this condition
-+	 * only for that SoC.
-+	 */
-+	if (of_device_is_compatible(np, "simple-mfd") &&
-+	    of_device_is_compatible(np, "ti,am625")) {
-+		ret = regmap_read(opp_data->syscon, opp_data->soc_data->efuse_offset + 0x0018,
-+				  &efuse);
-+	} else {
-+		ret = regmap_read(opp_data->syscon, opp_data->soc_data->efuse_offset,
-+				  &efuse);
-+	}
- 	if (opp_data->soc_data->quirks & TI_QUIRK_SYSCON_MAY_BE_MISSING && ret == -EIO) {
- 		/* not a syscon register! */
- 		void __iomem *regs = ioremap(OMAP3_SYSCON_BASE +
+> +static int
+> +snd_usb_offload_route_get(struct snd_kcontrol *kcontrol,
+> +			  struct snd_ctl_elem_value *ucontrol)
+> +{
+> +	struct device *sysdev = snd_kcontrol_chip(kcontrol);
+> +	int ret;
+> +
+> +	ret = snd_soc_usb_update_offload_route(sysdev,
+> +					       CARD_IDX(kcontrol->private_value),
+> +					       PCM_IDX(kcontrol->private_value),
+> +					       SNDRV_PCM_STREAM_PLAYBACK,
+> +					       ucontrol->value.integer.value);
+> +	if (ret < 0) {
+> +		ucontrol->value.integer.value[0] = -1;
+> +		ucontrol->value.integer.value[1] = -1;
+> +	}
 
--- 
-2.34.1
+well this invalidates again what I understood from the last patch and
+goes back to what I understood initially: the error code is never
+returned to higher levels - when offload is not supported the kcontrol
+values are encoded to the -1 magic value.
 
+> +	return 0;
+
+and this begs the question if this helper should return a void value.
+
+> +}
+> +
+> +static int snd_usb_offload_route_info(struct snd_kcontrol *kcontrol,
+> +				      struct snd_ctl_elem_info *uinfo)
+> +{
+> +	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
+> +	uinfo->count = 2;
+> +	uinfo->value.integer.min = -1;
+> +	/* Arbitrary max value, as there is no 'limit' on number of PCM devices */
+> +	uinfo->value.integer.max = 0xff;
+> +
+> +	return 0;
+> +}
+> +
+> +static struct snd_kcontrol_new snd_usb_offload_mapped_ctl = {
+> +	.iface = SNDRV_CTL_ELEM_IFACE_CARD,
+> +	.access = SNDRV_CTL_ELEM_ACCESS_READ,
+> +	.info = snd_usb_offload_route_info,
+> +	.get = snd_usb_offload_route_get,
+> +};
+> +
+> +/**
+> + * snd_usb_offload_create_ctl() - Add USB offload bounded mixer
+> + * @chip - USB SND chip device
+> + *
+> + * Creates a sound control for a USB audio device, so that applications can
+> + * query for if there is an available USB audio offload path, and which
+> + * card is managing it.
+> + */
+> +int snd_usb_offload_create_ctl(struct snd_usb_audio *chip)
+> +{
+> +	struct usb_device *udev = chip->dev;
+> +	struct snd_kcontrol_new *chip_kctl;
+> +	struct snd_usb_substream *subs;
+> +	struct snd_usb_stream *as;
+> +	char ctl_name[37];
+
+that's quite a magic value.
+
+> +	int ret;
+> +
+> +	list_for_each_entry(as, &chip->pcm_list, list) {
+> +		subs = &as->substream[SNDRV_PCM_STREAM_PLAYBACK];
+> +		if (!subs->ep_num)
+> +			continue;
+> +
+> +		chip_kctl = &snd_usb_offload_mapped_ctl;
+> +		chip_kctl->count = 1;
+> +		/*
+> +		 * Store the associated USB SND card number and PCM index for
+> +		 * the kctl.
+> +		 */
+> +		chip_kctl->private_value = as->pcm_index |
+> +					  chip->card->number << 16;
+> +		sprintf(ctl_name, "USB Offload Playback Route PCM#%d",
+> +			as->pcm_index);
+> +		chip_kctl->name = ctl_name;
+> +		ret = snd_ctl_add(chip->card, snd_ctl_new1(chip_kctl,
+> +				  udev->bus->sysdev));
+> +		if (ret < 0)
+> +			break;
+> +	}
+> +
+> +	return ret;
+> +}
 
