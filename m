@@ -1,126 +1,160 @@
-Return-Path: <linux-kernel+bounces-338158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6041E98541D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:27:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E44619853B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:20:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 911901C202F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:27:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A41C32854E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774C5158557;
-	Wed, 25 Sep 2024 07:23:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3121315854F;
+	Wed, 25 Sep 2024 07:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EmWZm82l"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pR/c9L9H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67AD215852E
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 07:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72693157466;
+	Wed, 25 Sep 2024 07:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727249016; cv=none; b=oa/Fc1g6wt51kJJx0T8Kcv3h+KEpz6c3yrsu2npUmHEZDC4rE51YVLICZ7IW01KNMLOMEbCV3FZQ1zTgCAIy3V+fHildH9yHQFdh8yU2p6dORvdj4V7FwN0HGZ7R/rMT9N2Bh1Ygmmy7JkksxIiy/3efHHLKM5MGxNgiUFM/U9s=
+	t=1727248832; cv=none; b=PKb8lMaj6K4awco3x9nTfdaV1aFL1mG6rp4Rf65gDhLuzdC5wojtMwqcy2Pwhjt2I26Ty+hWGtTTMb4KjcXrujpR6G3xwsvFb815u/6E9Gf/QQHCE1ydBcxJyZ+byUjmDPhviZeKpm0vNfEUn4yQpnh/v7W+BRnoZ4T8tiWFAeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727249016; c=relaxed/simple;
-	bh=Fbab7FZMNC0c+b4Oy70/Uh2GSx8i/kzZr1RGlGnO0PM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Zrq3qdl5EizmCtiwFQAhS8E+E2xeOGjns2/bFRf/9If9civEkvlyUIZPEkyd1effOZNM7zmKkVaehb9J6TVdr25cOdkIPMEflYKXb/F3qz8NMFT/Ecyp4t0Uehd/ZAXTYUOAlyKTZxZxXFyqzGcE3A19nuIEkvNKq/hvZecNzTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EmWZm82l; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727249015; x=1758785015;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=Fbab7FZMNC0c+b4Oy70/Uh2GSx8i/kzZr1RGlGnO0PM=;
-  b=EmWZm82lP+D5pKbTUn09q/zgZO8+E2zj+QQ2ImjAL1UGHDyJ+knpaNGU
-   POSc0TL7F8e248s0ROYHxbvfNXjh7xa43gWwLRF13socBD/ekOoE2h2jJ
-   Cm+xFAxcei4HWfpFt96AJnNIN4fk1XNJTB8rjOvsSrUe0rO6CyCOzVqc8
-   dUIpk9F4lhuHa7e9XSvTIkX9ELHp+VhasSuxqETTNkyv5zXKhT7g9Kebc
-   7QsKVgGcLoDEeItTu76pyevZHPwT+iWHpbFC2lg7XqrT1vR6TAYHy9rPQ
-   5OOdyvDxOU0mLDAADcBLHcmYL/JrSyKTYx0AyWCuNuEhqFkDM/A8jJVTG
-   Q==;
-X-CSE-ConnectionGUID: UY6Cq7iNRButAsQmj5fXnQ==
-X-CSE-MsgGUID: y0Xr0hCZTeCBtpqDNrybzg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="36862829"
-X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
-   d="scan'208";a="36862829"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 00:23:34 -0700
-X-CSE-ConnectionGUID: kOut79YfQOqKx+6r2a1pZg==
-X-CSE-MsgGUID: NzQ6/hS0SLa/6VDp5Jy5TA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
-   d="scan'208";a="71986383"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 00:23:30 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: Yosry Ahmed <yosryahmed@google.com>,  Baolin Wang
- <baolin.wang@linux.alibaba.com>,  akpm@linux-foundation.org,
-  hannes@cmpxchg.org,  hughd@google.com,  shakeel.butt@linux.dev,
-  ryan.roberts@arm.com,  chrisl@kernel.org,  david@redhat.com,
-  kasong@tencent.com,  willy@infradead.org,  viro@zeniv.linux.org.uk,
-  baohua@kernel.org,  chengming.zhou@linux.dev,  linux-mm@kvack.org,
-  kernel-team@meta.com,  linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/2] remove SWAP_MAP_SHMEM
-In-Reply-To: <CAKEwX=ML4+iW+WkyjezaqipZU=N=DeB561M4XzOqQMD6drk9dA@mail.gmail.com>
-	(Nhat Pham's message of "Tue, 24 Sep 2024 08:48:09 -0700")
-References: <20240923231142.4155415-1-nphamcs@gmail.com>
-	<4d38c65d-760c-43a5-bb47-8e0235c13a51@linux.alibaba.com>
-	<CAJD7tkamKcaqHR5V+4+9ixmFc3dC2NnGcu7YzdXqxqNEe8FqqA@mail.gmail.com>
-	<9a110f20-42ad-468b-96c6-683e162452a9@linux.alibaba.com>
-	<CAKEwX=PiOdrR7Ad5XoT8pRZDLB=q6B_fmwQ3ScgWFPNptBuHPw@mail.gmail.com>
-	<CAJD7tkZFu3DbovTwyRdQmEG=7nQtmzrjQVgyhE4mNzbCtZxFZA@mail.gmail.com>
-	<CAKEwX=ML4+iW+WkyjezaqipZU=N=DeB561M4XzOqQMD6drk9dA@mail.gmail.com>
-Date: Wed, 25 Sep 2024 15:19:57 +0800
-Message-ID: <87o74cryhu.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1727248832; c=relaxed/simple;
+	bh=ihfm19gdQct+dOCnbbGQGXW0Vuu7HUy2XR6uso/97fU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WlN0rbrlVXEZxMhdX3AGPMIipqN8/ZjOTfYunGr14Vt/ozezR5+KrobITyWavIxocqc91pDQXf4pdZ/qCWQc/VfxVBrDRj48OsY8gtFY8tEBRs+3C7oz0EIgFB0H4+MtTeqGrIUmh/vQGPmtzNRY5owWoQWVzZgnFBshz3ZrjlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pR/c9L9H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 952B0C4CEC3;
+	Wed, 25 Sep 2024 07:20:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727248830;
+	bh=ihfm19gdQct+dOCnbbGQGXW0Vuu7HUy2XR6uso/97fU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pR/c9L9HBYWXkAeYFUhFCGfXDkutUwFicV3AGy5DB9bHAO17CJUUVozFiOXYvN2fQ
+	 ESTqxxUcyoyQ7T9/U1huwzjuR2WpKm0J5DCAvXb+rXEJHZHGekVbILgjA24MgbLa1T
+	 4x4NSaFBo1AE8vTQpL12dhrzNLZKclU1gr4IdRqrWQ6vPWMUO5xbwGCzU4fsyJy3Lk
+	 QjR89sXK5gawsYORKuV3HYp+WziXTrPzyHA0ICN7H8wRH+3aNd6Z0Hped6lD++bE/D
+	 VIijVabKZ7scozMlzvGl+YMS+PCkkbDsJfGbS1AsKTr4+cVmoODcEX8I0vRPw+GpiQ
+	 MWe7g8FxZ8HVw==
+Message-ID: <29f8c438-6e4a-4c1f-b68b-5f7d1bd0235e@kernel.org>
+Date: Wed, 25 Sep 2024 09:20:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/3] dt-bindings: mfd: Add more RTL9300 variants
+To: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+Cc: "lee@kernel.org" <lee@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "tsbogend@alpha.franken.de" <tsbogend@alpha.franken.de>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
+References: <20240923225719.2999821-1-chris.packham@alliedtelesis.co.nz>
+ <20240923225719.2999821-4-chris.packham@alliedtelesis.co.nz>
+ <zir7rpbrq3c6kyn2guanmfnkbw6e36qb5r4onzwv7qgytt64if@jurnymcbgx2k>
+ <0886f3fb-4e05-4787-aecc-5a5b8a3b8d73@alliedtelesis.co.nz>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <0886f3fb-4e05-4787-aecc-5a5b8a3b8d73@alliedtelesis.co.nz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Nhat Pham <nphamcs@gmail.com> writes:
+On 24/09/2024 22:59, Chris Packham wrote:
+> 
+> On 24/09/24 20:40, Krzysztof Kozlowski wrote:
+>> On Tue, Sep 24, 2024 at 10:57:19AM +1200, Chris Packham wrote:
+>>> Add the RTL9301, RTL9300B and RTL9303. These have the same SoC as the
+>>> RTL9302C but differ in the Ethernet switch/SERDES arrangement.
+>>>
+>>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+>>> ---
+>>>
+>>> Notes:
+>>>      Changes in v4:
+>>>      - New
+>>>
+>>>   .../devicetree/bindings/mfd/realtek,rtl9302c-switch.yaml       | 3 +++
+>>>   1 file changed, 3 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/mfd/realtek,rtl9302c-switch.yaml b/Documentation/devicetree/bindings/mfd/realtek,rtl9302c-switch.yaml
+>>> index 2d20dd07a7e9..a3ba6d9bacaa 100644
+>>> --- a/Documentation/devicetree/bindings/mfd/realtek,rtl9302c-switch.yaml
+>>> +++ b/Documentation/devicetree/bindings/mfd/realtek,rtl9302c-switch.yaml
+>>> @@ -18,7 +18,10 @@ properties:
+>>>     compatible:
+>>>       items:
+>>>         - enum:
+>>> +          - realtek,rtl9301-switch
+>>> +          - realtek,rtl9302b-switch
+>>>             - realtek,rtl9302c-switch
+>>> +          - realtek,rtl9303-switch
+>> This should be squashed. One logical change is to add a new binding for
+>> entire family, not device-by-device.
+> Yes I did consider that. The main thing that gave me pause for thought 
+> was the file naming thing. If I squash this should I switch back to the 
+> realtek,rtl9300-switch filename? I'll probably add the 
+> realtek,rtl9300-switch fallback as well (and add the chip specific 
+> compatibles for the i2c).
 
-[snip]
+Splitting this per patch did not solve it - following your logic, file
+should be renamed.
 
->
-> My understanding now is that there are two for loops. One for loop
-> that checks the entry's states, and one for loop that does the actual
-> incrementing work (or state modification).
->
-> We can check in the first for loop, if it is safe to proceed:
->
-> if (!count && !has_cache) {
->     err = -ENOENT;
-> } else if (usage == SWAP_HAS_CACHE) {
-> if (has_cache)
->     err = -EEXIST;
-> } else if ((count & ~COUNT_CONTINUED) > SWAP_MAP_MAX) {
->     err = -EINVAL;
-> } else if (usage == 1 && nr > 1 && (count & ~COUNT_CONTINUED) >=
-> SWAP_MAP_MAX)) {
->     /* the batched variants currently do not support rollback */
->     err = -ENOMEM;
-> }
->
-> At this point, IIUC, we have not done any incrementing, so no rollback
-> needed? :)
+Choose name matching one compatible, e.g. the fallback. Aren't all these
+devices compatible?
 
-I think that it's better to add a VM_WARN_ONCE() here.  If someone
-enabled 'nr > 1' for __swap_duplicate(), the issue will be more
-explicit.
+Best regards,
+Krzysztof
 
-[snip]
-
---
-Best Regards,
-Huang, Ying
 
