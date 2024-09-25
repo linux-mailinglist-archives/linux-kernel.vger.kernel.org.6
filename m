@@ -1,117 +1,97 @@
-Return-Path: <linux-kernel+bounces-339175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D467986113
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:40:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0099986115
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:40:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66E0C1C2655C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:40:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B026C28979B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:40:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D42E1714BD;
-	Wed, 25 Sep 2024 13:53:31 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 757BC188705;
+	Wed, 25 Sep 2024 13:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pXD0LcCq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660B174070;
-	Wed, 25 Sep 2024 13:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B5326AF5;
+	Wed, 25 Sep 2024 13:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727272410; cv=none; b=RSPAhBYmQ8+98+3L7C1EfoyJI6cETu6ZA10onAMmi3HR37ub4fr7i1ej8pYlH+wQ8QkZbgRHTf+ca1dI/de0JEoNoiv8My83IGr+W4k9Hp9YTAroXR0//b+RWVNY6bhy4TduNbmUu51UkjD78SDKMDAFASKz1LIZWReQ+QguYR0=
+	t=1727272412; cv=none; b=PYPmoWVWbibtotuCGGrwxUxed08BA+eHFoHEHz2/Uc17TWtUtmHHxcPgQ9o/+uWeU7vUFF8k8VFEQ2yfd8vWeSq7KMQFB1s38cA//qk1WsLxo+tw/sNGCCxH6SwHfZDrrST/B/4AUcnWqv+Poz3yjjKnSHRWXGFrQ5AZr3n+A+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727272410; c=relaxed/simple;
-	bh=N47RVWYbJs6WXjYO7l2l3RvOQIdHLMdUeS34uIw42Xw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hGwlTqJNW3fdYAOE2RIPemku1s2xtHqv0tiOmz+xW1CbA40uJf8QAU3+l0zyiL70y+plsBewxQeJkICXOT8x74zVSwKT2DBRLl4lGbgHFhGeKD2RjoXZLgCr4lhvFlE9BShiJysU7d4AV/SvWU83E0aztSFlBVWkoswPvWiq86I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.2.100] (213.87.134.192) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Wed, 25 Sep
- 2024 16:53:09 +0300
-Message-ID: <600de175-c4e2-f45a-dd23-c9ea324ef826@omp.ru>
-Date: Wed, 25 Sep 2024 16:53:08 +0300
+	s=arc-20240116; t=1727272412; c=relaxed/simple;
+	bh=iG2/lTAfEgLjAaRpv4EoM4L/DWaXGYqjJGv5aw2l9SI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mf5aGQ2uj5HiyDYBiHytnv9KVc4t0qZlKSI5VxjaZX73YUuzTQtoSMZ3of2PdKWPHLHPIWm3RNvA79a+HGmeexOrNZBYd6Chspj7t9ioVBDr8ls6tzQK8UdK9bbtcnw/pmaBogrUzG5TggzCAGS/NZj5nFJtynpFFpi5E7wU5tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pXD0LcCq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E66CC4CEC7;
+	Wed, 25 Sep 2024 13:53:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727272412;
+	bh=iG2/lTAfEgLjAaRpv4EoM4L/DWaXGYqjJGv5aw2l9SI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=pXD0LcCq772rNuTIJDDjOooo3H1qUN4uilnjWwub6U0A8jeKSseaQ9CcfgmmUcc1K
+	 wP6EMiX8i1AX4Orj565pmn558DHjbzcggKad97k6UtIAUsFQtw6MkTXgeJ6WEHnU7I
+	 eYsCKWaziqUZmv9O+KybuhfT3PzufyJYDdlSOeQLWvtGyf4XCqO8niDyKn+AhJHCcg
+	 keDwN6qOwdM/Df3SSbNVLVtCMql7o5IHRRRHo8jaalc76oB6BbbwnJadBsUplnwC68
+	 VxkSr0ACN0KfebDp7kPewgSN9VR8Uq+Ic0aBmaSU5U5MdXg3J9wwmE7ythhqwMO7jB
+	 wGZKqpZXw6B6g==
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3e06853e579so3616417b6e.0;
+        Wed, 25 Sep 2024 06:53:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVASpDXqAOvlbckvPa3WIoU0DDmhxXmsoD3LRfLWznno9CW85OcTvNs92zIwLrIqdbyKf1uL/fRcxtJ@vger.kernel.org, AJvYcCVZp1q65WbbytzG0QfjHtuHx1dIii78ZJlHcVt+0vFnus2Ue/tjdLyQAO/fFWTlZGCWaXZv9SCG6ujJIoGV@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgqYap94pybCoftf2/vg469XUgDzEEXVhE7Q+VZiLYGm0nrC64
+	1ZGRRsdHc35VIirLRE5AQbL3fU8t2I4HAbI+Jcx6d/Sl6sY36DJiQy2U2Czna74aWp2RbyznJZ3
+	BuweWueKGB1jV/rBuhLvwpraPE2Y=
+X-Google-Smtp-Source: AGHT+IElzBEU3s+VBMa7k1g2Urn4DTRJjr0JWICjaq9tn8fBnjdxqevworOBb6UwozmZ8jWB2kDA2hGqzutJm+tOnRg=
+X-Received: by 2002:a05:6871:1cd:b0:261:110b:84fd with SMTP id
+ 586e51a60fabf-286e13810eemr2152155fac.11.1727272411709; Wed, 25 Sep 2024
+ 06:53:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH AUTOSEL 6.11 146/244] ata: sata_sil: Rename sil_blacklist
- to sil_quirks
-Content-Language: en-US
-To: Sasha Levin <sashal@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<stable@vger.kernel.org>
-CC: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>,
-	Igor Pylypiv <ipylypiv@google.com>, <linux-ide@vger.kernel.org>
-References: <20240925113641.1297102-1-sashal@kernel.org>
- <20240925113641.1297102-146-sashal@kernel.org>
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-In-Reply-To: <20240925113641.1297102-146-sashal@kernel.org>
+References: <20240925074323.9823-1-shenlichuan@vivo.com>
+In-Reply-To: <20240925074323.9823-1-shenlichuan@vivo.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Wed, 25 Sep 2024 22:53:19 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-O3zANLJaQpaDc7VsUJTODRG5k08L+HG7sjLAwv7MpGg@mail.gmail.com>
+Message-ID: <CAKYAXd-O3zANLJaQpaDc7VsUJTODRG5k08L+HG7sjLAwv7MpGg@mail.gmail.com>
+Subject: Re: [PATCH v1] smb: Correct typos in multiple comments across various files
+To: Shen Lichuan <shenlichuan@vivo.com>
+Cc: sfrench@samba.org, senozhatsky@chromium.org, tom@talpey.com, 
+	pc@manguebit.com, ronniesahlberg@gmail.com, sprasad@microsoft.com, 
+	bharathsm@microsoft.com, linux-cifs@vger.kernel.org, 
+	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org, 
+	opensource.kernel@vivo.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 09/25/2024 13:28:57
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 19
-X-KSE-AntiSpam-Info: Lua profiles 187978 [Sep 25 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.0.4
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 34 0.3.34
- 8a1fac695d5606478feba790382a59668a4f0039
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 213.87.134.192 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info:
-	omp.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.134.192
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 19
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 09/25/2024 13:33:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 9/25/2024 11:06:00 AM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Transfer-Encoding: quoted-printable
 
-On 9/25/24 14:26, Sasha Levin wrote:
-
-> From: Damien Le Moal <dlemoal@kernel.org>
-> 
-> [ Upstream commit 93b0f9e11ce511353c65b7f924cf5f95bd9c3aba ]
-> 
-> Rename the array sil_blacklist to sil_quirks as this name is more
-> neutral and is also consistent with how this driver define quirks with
-> the SIL_QUIRK_XXX flags.
-> 
-> Signed-off-by: Damien Le Moal <dlemoal@kernel.org>
-> Reviewed-by: Niklas Cassel <cassel@kernel.org>
-> Reviewed-by: Igor Pylypiv <ipylypiv@google.com>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-[...]
-
-   Are you serious? What does this fix?
-
-MBR, Sergey
-
+On Wed, Sep 25, 2024 at 4:43=E2=80=AFPM Shen Lichuan <shenlichuan@vivo.com>=
+ wrote:
+>
+> Fixed some confusing typos that were currently identified witch codespell=
+,
+> the details are as follows:
+>
+> -in the code comments:
+> fs/smb/common/smb2pdu.h:9: specfication =3D=3D> specification
+> fs/smb/common/smb2pdu.h:494: usally =3D=3D> usually
+> fs/smb/common/smb2pdu.h:1064: Attrubutes =3D=3D> Attributes
+> fs/smb/server/connection.c:28: cleand =3D=3D> cleaned
+> fs/smb/server/ksmbd_netlink.h:216: struture =3D=3D> structure
+> fs/smb/server/oplock.c:799: conains =3D=3D> contains
+> fs/smb/server/oplock.c:1487: containted =3D=3D> contained
+> fs/smb/server/server.c:282: proccessing =3D=3D> processing
+> fs/smb/server/smb_common.c:491: comforms =3D=3D> conforms
+> fs/smb/server/xattr.h:102: ATTRIBUITE =3D=3D> ATTRIBUTE
+>
+> Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
+Applied it to #ksmbd-for-next-next.
+Thanks!
 
