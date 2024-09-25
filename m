@@ -1,417 +1,169 @@
-Return-Path: <linux-kernel+bounces-339329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D27AB986368
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:25:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3003498636A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:26:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87179282D59
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:25:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA3981F2836A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:26:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37667185B70;
-	Wed, 25 Sep 2024 15:06:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2BF183CCE;
+	Wed, 25 Sep 2024 15:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="Ckoqkc9b"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ZEsCmHCj"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C337185B46
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 15:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF57E22318
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 15:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727276800; cv=none; b=ZERapAJpEotMBKkelcwbz1EqEsbggE+5u/kZgNI+QPpYy6gbvmICgxwvLpFBRA4KaYm2PMAKYSg7QnKMZCacu9ORwcsjbC/ooAYKmcGZN/afZmFbgmyXlfi87n9Vp2fhzKxPWf9vLkCO98P9caigvanDA1Oily68PWJq7UkrD3U=
+	t=1727276857; cv=none; b=HBHLxmQ8leVZT6KZED6/soTvjUF4btY6Ml4d23RWIyyYvUClmvcKqopydQAquL6jdK2sNizx+Llhr8jzwDtRMaY7snCaq10BUp8pTpQATcC9vS3PlWKYor8A4GdLfU6qU6j3ik9kEsioROzvslW6WYZAX20uH1PFiBimBVZTVUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727276800; c=relaxed/simple;
-	bh=gGu0eK+yYBv0S8tvwaku7YNarLnucTywg2GlfM4KYPM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J2WK0K4rj5EAP36dgzEMiLVssSnOUwCi+/ltqf+ASd5uB7Ya8fOSf7lpLrLPdeir+5aBIJfJp+siU4uJuPvCY0S2YoPz+gJpTZ/S+UhnzyC3UiWxs2X1iBIByAUb3bY5HDef2fRfUP+v9BQzQ3PSYB972yHRpSliUnk//DkOOfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=Ckoqkc9b; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f75428b9f8so91017621fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:06:37 -0700 (PDT)
+	s=arc-20240116; t=1727276857; c=relaxed/simple;
+	bh=WsCh6ssXxMdWFTiE+4Zre6Ax1+Bve0twBDDs58T2ZRo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hKER8YAVgyRdSW4h8WLTJjANLfv9vFp0T6zdbdkta9Zo+hUiWcsPXQjoDlRX8rY2vuGoeT/9mxeSTaPsjz4WfEy0e62ByKovkMxYMawJaNDrPcqTyR8NGrGyhvSMBkfDSySYN2ZMO3o0v09oCazKCOVkfmkaPVOb8WGBQ4Lu4us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ZEsCmHCj; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42cc43454d5so56357095e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:07:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1727276796; x=1727881596; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KiTz7kgecrlqOcQOw0Qwa9iZTNZzfgTIlV+IOVwZltc=;
-        b=Ckoqkc9bAa99MYgPaAM+tV6+IcdHHp1Deoc7K02D3mHrHglc6Yc62cGs3r0FqkpVfF
-         uahVAv3f6AsesafdBHiobarZfcW9vMtKCpAPQYamc05ssGTFMvK9TDnihfVWCKlCofo/
-         H+5mpWTIYnpyznEGhBX88rMKHAe4pHIGu+vtyeJt3q/tg03rZ3jLuUzJZyD/tzIfRHcz
-         7wtNqKcvqtVrSaY69nEIT3XbMXkyl+/7S9DTAQHUWCVmCy1FzO8yKGt1GYVOyyyUggst
-         r5yHhrungA9p2pdQ+KCvlmTwtpEWgFWwUbRFdrQmI1NNUoyXCo9rL1+WSZdaBDRyk2B1
-         dAGg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727276854; x=1727881654; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DWF83HMoN2Ea7DGvk+6V2CllZTFpJS9ca4WBd4vItNM=;
+        b=ZEsCmHCj3lrnFRi8vjShxG34AysoU5V+qkOFhYEUn8SCCLowq4X2IXZcUm/h9E9HFM
+         cuL3PwVbEHUzrs7VE+sh7GocG2V78AoDZk3pKrPI/QqjuaKchng1AtLBSedyUj+delBG
+         47BOwoepMeSXTank4RQY+x5NkaWOsoEuv1kr1BKwLfRhEA6SHLaaSbM4UvssHZ8W8ORA
+         6ooDuZ7l97JDMCqr8ptjzbRM6KnGscM5UwJFDn1zvvfaY3xjmT/srTg2ru9rX7MOCuCT
+         LbdYYqlh+PypQ3TGAd63lhoiHMLltEVDmTsS2/6YT6LCteupM92p6blD0A7qMi8fNoSE
+         XLPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727276796; x=1727881596;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KiTz7kgecrlqOcQOw0Qwa9iZTNZzfgTIlV+IOVwZltc=;
-        b=Hzsn1NSxNdjs1a9uTrkrsv20E4gV1B/CqPuyIsenkTufJwnVeJ8XfWuZTk0srolrFS
-         LQSRusvrSoNviMJircb0RRk63SQ5EGY1MyjG5mBgck3oVP5YkBD4OU8PgSoAjSlA1Pik
-         BaPJtPoBkSFNKcTBtzPjnrE4e2SHC9kz3uWUU/WxF81IolnuAwIpCz22/uuL6JRMCQHM
-         Mxob6jY2uyHNDnK3IMJkV9H50hQIaVRgjywoxtsAYkecuBz9SdXS3P4yFtJm4/v9Mwon
-         4FMef18YwTFLNzEh3J9nP/9INGnF7vDIfTPYGdszZPjGpOOGqePC1kL/Pr+wnhn9IgMf
-         dCPw==
-X-Forwarded-Encrypted: i=1; AJvYcCVdTw/MgMi4Ma8vvwwjLczk3LI4qmAp0HQ/OlvaAQ4uFsI7cdUVfnUKlcwQD9ElQXqvjGPJ/OKPECSOio4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyI3Bu8VyzLEG9/OcIZo2X4i8GpcgMcyZQS78Gj3skFCqd/dp4R
-	NdanNqU2jwC69SuXD53GyZJeM59B5qqDuZo9x9WsFWbqPUO3cUbigom6jhxECmCvCZOJ4UbZAwn
-	SYRuRTSw8ouzrcSCyC3PllDUZ0tWKckoXjJzEGw==
-X-Google-Smtp-Source: AGHT+IE3yw3jrNgYkX7FHY5DrVTXk+hwVKWMFflu+TBKnjpbuRsc0AXaAfafd1KbL9E0TNJs8uC8Hi0hgXlQqu32i4I=
-X-Received: by 2002:a05:6512:33d2:b0:536:7377:7d23 with SMTP id
- 2adb3069b0e04-5387755cf84mr2904074e87.40.1727276795803; Wed, 25 Sep 2024
- 08:06:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727276854; x=1727881654;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DWF83HMoN2Ea7DGvk+6V2CllZTFpJS9ca4WBd4vItNM=;
+        b=pJO6nklau/0/Q6W7n1/LJ1xTX+6CGDqlpv82FqN7gJ/tXFSpKs3y4GSCgVzDdSxBgg
+         4fW6bDmerZ7zyEJ6XDntN17AUpOK+gW8ElrIdu8ynElqB9vJL20wJ+ZEHeGW30uEAEW/
+         rVg7WuBQo90mPhGkbVpCDplC1W/w99mWv5gne67Zrvj5wcFekYF9ZXTjjGLlparJkqdA
+         nsP3Nc7oKALbL9d9ttQN6pXPIorymcbD9BG6zYf+GsOp6rYaPJsDeJIPrWYBg6n4C8Wu
+         GWVtS8jHmYu10RFeYE3adNdb5igw1jv9baq+rPaE897a6NXnIGgtUK85rRo2mr68gIh2
+         aALw==
+X-Forwarded-Encrypted: i=1; AJvYcCVsFddqsaUxHIY+qycpGSjmk9BhlYwyRkFt68OduyBIIvcsx3q78Td0EPYbAMTtc0Xb9mLI/j6FoekGfPQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvKhIawBHWBmD3tWnHsWCgY6N0vjTeLQOEMWlBonY4Z3Vujka8
+	FsyxQuvod06ZWjyUAZUFLl3BZLW1eB/d0gy+pb2Dj8VihvpSaygYE4SUkLiK1BE=
+X-Google-Smtp-Source: AGHT+IGip3sOgl+bQOmdyqaao7YVehMer8d8+AYC1VqOmcY2i0t8OPHuGhScpGVwZxC3FqSYI+aIsw==
+X-Received: by 2002:a05:600c:470e:b0:42b:a7c7:5667 with SMTP id 5b1f17b1804b1-42e96144a7cmr19014655e9.25.1727276853820;
+        Wed, 25 Sep 2024 08:07:33 -0700 (PDT)
+Received: from localhost (amontpellier-556-1-151-252.w109-210.abo.wanadoo.fr. [109.210.7.252])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e96a52308sm21474945e9.43.2024.09.25.08.07.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 08:07:33 -0700 (PDT)
+Date: Wed, 25 Sep 2024 17:07:32 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Lei Liu <liulei.rjpt@vivo.com>
+Cc: Neal Liu <neal_liu@aspeedtech.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Joel Stanley <joel@jms.id.au>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, linux-aspeed@lists.ozlabs.org, linux-usb@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+Subject: Re: [PATCH v3 1/5] usb: aspeed_udc: Use devm_clk_get_enabled()
+ helpers
+Message-ID: <zi5lq44bc4vd33y42zkmn7hr7rw64wfxe2rvuvkekola6ctckc@buv7ybvq5skt>
+References: <20240826081900.2284-1-liulei.rjpt@vivo.com>
+ <20240826082140.2311-1-liulei.rjpt@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CALrw=nGoSW=M-SApcvkP4cfYwWRj=z7WonKi6fEksWjMZTs81A@mail.gmail.com>
- <CALrw=nEoT2emQ0OAYCjM1d_6Xe_kNLSZ6dhjb5FxrLFYh4kozA@mail.gmail.com>
-In-Reply-To: <CALrw=nEoT2emQ0OAYCjM1d_6Xe_kNLSZ6dhjb5FxrLFYh4kozA@mail.gmail.com>
-From: Daniel Dao <dqminh@cloudflare.com>
-Date: Wed, 25 Sep 2024 16:06:24 +0100
-Message-ID: <CA+wXwBTT74RErDGAnj98PqS=wvdh8eM1pi4q6tTdExtjnokKqA@mail.gmail.com>
-Subject: Re: wireguard/napi stuck in napi_disable
-To: Ignat Korchagin <ignat@cloudflare.com>
-Cc: Jason@zx2c4.com, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	wireguard@lists.zx2c4.com, netdev <netdev@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, jiri@resnulli.us, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Lorenzo Bianconi <lorenzo@kernel.org>, 
-	kernel-team <kernel-team@cloudflare.com>, Tejun Heo <tj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6dsn6gbwes7baogl"
+Content-Disposition: inline
+In-Reply-To: <20240826082140.2311-1-liulei.rjpt@vivo.com>
+
+
+--6dsn6gbwes7baogl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 23, 2024 at 10:33=E2=80=AFPM Ignat Korchagin <ignat@cloudflare.=
-com> wrote:
->
-> On Mon, Sep 23, 2024 at 7:23=E2=80=AFPM Ignat Korchagin <ignat@cloudflare=
-.com> wrote:
-> >
-> > Hello,
-> >
-> > We run calico on our Kubernetes cluster, which uses Wireguard to
-> > encrypt in-cluster traffic [1]. Recently we tried to improve the
-> > throughput of the cluster and eliminate some packet drops we=E2=80=99re=
- seeing
-> > by switching on threaded NAPI [2] on these managed Wireguard
-> > interfaces. However, our Kubernetes hosts started to lock up once in a
-> > while.
-> >
-> > Analyzing one stuck host with drgn we were able to confirm that the
-> > code is just waiting in this loop [3] for the NAPI_STATE_SCHED bit to
-> > be cleared for the Wireguard peer napi instance, but that never
-> > happens for some reason. For context the full state of the stuck napi
-> > instance is 0b100110111. What makes things worse - this happens when
-> > calico removes a Wireguard peer, which happens while holding the
-> > global rtnl_mutex, so all the other tasks requiring that mutex get
-> > stuck as well.
-> >
-> > Full stacktrace of the =E2=80=9Clooping=E2=80=9D task:
-> >
-> > #0  context_switch (linux/kernel/sched/core.c:5380:2)
-> > #1  __schedule (linux/kernel/sched/core.c:6698:8)
-> > #2  schedule (linux/kernel/sched/core.c:6772:3)
-> > #3  schedule_hrtimeout_range_clock (linux/kernel/time/hrtimer.c:2311:3)
-> > #4  usleep_range_state (linux/kernel/time/timer.c:2363:8)
-> > #5  usleep_range (linux/include/linux/delay.h:68:2)
-> > #6  napi_disable (linux/net/core/dev.c:6477:4)
-> > #7  peer_remove_after_dead (linux/drivers/net/wireguard/peer.c:120:2)
-> > #8  set_peer (linux/drivers/net/wireguard/netlink.c:425:3)
-> > #9  wg_set_device (linux/drivers/net/wireguard/netlink.c:592:10)
-> > #10 genl_family_rcv_msg_doit (linux/net/netlink/genetlink.c:971:8)
-> > #11 genl_family_rcv_msg (linux/net/netlink/genetlink.c:1051:10)
-> > #12 genl_rcv_msg (linux/net/netlink/genetlink.c:1066:8)
-> > #13 netlink_rcv_skb (linux/net/netlink/af_netlink.c:2545:9)
-> > #14 genl_rcv (linux/net/netlink/genetlink.c:1075:2)
-> > #15 netlink_unicast_kernel (linux/net/netlink/af_netlink.c:1342:3)
-> > #16 netlink_unicast (linux/net/netlink/af_netlink.c:1368:10)
-> > #17 netlink_sendmsg (linux/net/netlink/af_netlink.c:1910:8)
-> > #18 sock_sendmsg_nosec (linux/net/socket.c:730:12)
-> > #19 __sock_sendmsg (linux/net/socket.c:745:16)
-> > #20 ____sys_sendmsg (linux/net/socket.c:2560:8)
-> > #21 ___sys_sendmsg (linux/net/socket.c:2614:8)
-> > #22 __sys_sendmsg (linux/net/socket.c:2643:8)
-> > #23 do_syscall_x64 (linux/arch/x86/entry/common.c:51:14)
-> > #24 do_syscall_64 (linux/arch/x86/entry/common.c:81:7)
-> > #25 entry_SYSCALL_64+0x9c/0x184 (linux/arch/x86/entry/entry_64.S:121)
-> >
+Hello,
 
-Looking at this further to understand why the napi state would be 0b1001101=
-11
-which decoded to: SCHED | MISSED | DISABLE | LISTED | NO_BUSY_POLL | THREAD=
-ED,
-I think this is a problem with MISSED wakeup in napi threaded mode.
+On Mon, Aug 26, 2024 at 04:21:39PM +0800, Lei Liu wrote:
+> diff --git a/drivers/usb/gadget/udc/aspeed_udc.c b/drivers/usb/gadget/udc=
+/aspeed_udc.c
+> index f4781e611aaa..a362e31f7550 100644
+> --- a/drivers/usb/gadget/udc/aspeed_udc.c
+> +++ b/drivers/usb/gadget/udc/aspeed_udc.c
+> @@ -1459,8 +1459,6 @@ static void ast_udc_remove(struct platform_device *=
+pdev)
+>  	ctrl =3D ast_udc_read(udc, AST_UDC_FUNC_CTRL) & ~USB_UPSTREAM_EN;
+>  	ast_udc_write(udc, ctrl, AST_UDC_FUNC_CTRL);
+> =20
+> -	clk_disable_unprepare(udc->clk);
+> -
+>  	spin_unlock_irqrestore(&udc->lock, flags);
 
-napi_complete_done calls __napi_schedule when state has `NAPIF_STATE_MISSED=
-`,
-but in 6.6, it does not set NAPI_STATE_SCHED_THREADED when the napi thread =
-is
-running, and since the thread is running, wakeup does not do anything. Ther=
-efore
-we missed the chance to do another poll, and if we race with napi_disable t=
-hen
-the state will be SCHED | MISSED | DISABLE, and we stuck.
+Isn't it broken to call clk_disable_unprepare() while holding a
+spinlock?
 
-However it looks like the following commit resolves that situation for us
+I guess that means that the remove path is untested in practise and this
+patches fixes a sleep-in-atomic. IMHO this invalidates Ulf's concern in
+his reply to the cover letter for this patch at least.
+ =20
+>  	if (udc->ep0_buf)
+> @@ -1500,16 +1498,11 @@ static int ast_udc_probe(struct platform_device *=
+pdev)
+> =20
+>  	platform_set_drvdata(pdev, udc);
+> =20
+> -	udc->clk =3D devm_clk_get(&pdev->dev, NULL);
+> +	udc->clk =3D devm_clk_get_enabled(&pdev->dev, NULL);
+>  	if (IS_ERR(udc->clk)) {
+>  		rc =3D PTR_ERR(udc->clk);
 
-commit 56364c910691f6d10ba88c964c9041b9ab777bd6
-Author: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Date:   Mon Mar 25 08:40:28 2024 +0100
+An error message here would be nice. Something like
 
-    net: Remove conditional threaded-NAPI wakeup based on task state.
+	rc =3D dev_err_probe(&pdev->dev, PTR_ERR(udc->clk), "Failed to get clock\n=
+");
 
-As long as we always set SCHED_THREADED, the next loop in napi thread will =
-do
-the right thing and clear SCHED, letting napi_disable complete.
+should work.
 
-We are testing 6.6 with this patch, and haven't seen any similar lockups so=
- far.
+>  		goto err;
+>  	}
+> -	rc =3D clk_prepare_enable(udc->clk);
+> -	if (rc) {
+> -		dev_err(&pdev->dev, "Failed to enable clock (0x%x)\n", rc);
+> -		goto err;
+> -	}
+> =20
+>  	/* Check if we need to limit the HW to USB1 */
+>  	max_speed =3D usb_get_maximum_speed(&pdev->dev);
 
-> > We have also noticed that a similar issue is observed, when we switch
-> > Wireguard threaded NAPI back to off: removing a Wireguard peer task
-> > may still spend a considerable amount of time in the above loop (and
-> > hold rtnl_mutex), however the host eventually recovers from this
-> > state.
+Best regards
+Uwe
 
-However, these lockups become much more prominent now. Here is the
-stack trace of
-peer_remove_after_dead
+--6dsn6gbwes7baogl
+Content-Type: application/pgp-signature; name="signature.asc"
 
-#0  context_switch (/cfsetup_build/build/linux/kernel/sched/core.c:5380:2)
-#1  __schedule (/cfsetup_build/build/linux/kernel/sched/core.c:6699:8)
-#2  schedule (/cfsetup_build/build/linux/kernel/sched/core.c:6773:3)
-#3  schedule_timeout (/cfsetup_build/build/linux/kernel/time/timer.c:2143:3=
-)
-#4  do_wait_for_common
-(/cfsetup_build/build/linux/kernel/sched/completion.c:95:14)
-#5  __wait_for_common
-(/cfsetup_build/build/linux/kernel/sched/completion.c:116:12)
-#6  wait_for_common (/cfsetup_build/build/linux/kernel/sched/completion.c:1=
-27:9)
-#7  wait_for_completion
-(/cfsetup_build/build/linux/kernel/sched/completion.c:148:2)
-#8  __flush_workqueue (/cfsetup_build/build/linux/kernel/workqueue.c:3196:2=
-)
-#9  peer_remove_after_dead
-(/cfsetup_build/build/linux/drivers/net/wireguard/peer.c:116:2)
-#10 set_peer (/cfsetup_build/build/linux/drivers/net/wireguard/netlink.c:42=
-5:3)
-#11 wg_set_device
-(/cfsetup_build/build/linux/drivers/net/wireguard/netlink.c:592:10)
-#12 genl_family_rcv_msg_doit
-(/cfsetup_build/build/linux/net/netlink/genetlink.c:971:8)
-#13 genl_family_rcv_msg
-(/cfsetup_build/build/linux/net/netlink/genetlink.c:1051:10)
-#14 genl_rcv_msg (/cfsetup_build/build/linux/net/netlink/genetlink.c:1066:8=
-)
-#15 netlink_rcv_skb (/cfsetup_build/build/linux/net/netlink/af_netlink.c:25=
-44:9)
-#16 genl_rcv (/cfsetup_build/build/linux/net/netlink/genetlink.c:1075:2)
-#17 netlink_unicast_kernel
-(/cfsetup_build/build/linux/net/netlink/af_netlink.c:1342:3)
-#18 netlink_unicast
-(/cfsetup_build/build/linux/net/netlink/af_netlink.c:1368:10)
-#19 netlink_sendmsg (/cfsetup_build/build/linux/net/netlink/af_netlink.c:19=
-10:8)
-#20 sock_sendmsg_nosec (/cfsetup_build/build/linux/net/socket.c:730:12)
-#21 __sock_sendmsg (/cfsetup_build/build/linux/net/socket.c:745:16)
-#22 ____sys_sendmsg (/cfsetup_build/build/linux/net/socket.c:2590:8)
-#23 ___sys_sendmsg (/cfsetup_build/build/linux/net/socket.c:2644:8)
-#24 __sys_sendmsg (/cfsetup_build/build/linux/net/socket.c:2673:8)
-#25 do_syscall_x64 (/cfsetup_build/build/linux/arch/x86/entry/common.c:51:1=
-4)
-#26 do_syscall_64 (/cfsetup_build/build/linux/arch/x86/entry/common.c:81:7)
-#27 entry_SYSCALL_64+0x9c/0x184
-(/cfsetup_build/build/linux/arch/x86/entry/entry_64.S:121)
-#28 0x41262e
+-----BEGIN PGP SIGNATURE-----
 
-drgn shows that we are waiting to for completion of work for
-wg_packet_tx_worker,
-which is destined for a completely different peer than the peer we
-want to remove.
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmb0JzEACgkQj4D7WH0S
+/k7BAggAkHqZteCrETJY7VyuZN1rZlaLtOcZtOwWhGS/VU77rZ3XggeRv3m4vC47
+hPTn3yyiJND47OJu6fIC9tSLUrY8K1HNI1kZ03J3SiDOrPevc0wzDlNITQCENVL4
+Nc4lAtMYR1ZfCzNJ7+MK0PXCHZGkREp7DF8RLnvp2EOqdSadL6ZOexvONaOp0z2w
+fI+4yzo1++k7+EBuSnnL7xVwk+T55OezIBpcy0cLeQRgcjOrbhPd7Evo8VtyGLAe
+ZkZW3RhxSAIMpu1Kux0lFaFV+0Zp+piZSwYUIet5L87cJhdOy5gKFnSDTQp1U+tk
+RwwyaG8WrFuECHX+T+NlpPRYc0btYw==
+=rUO+
+-----END PGP SIGNATURE-----
 
-*(struct worker *)0xffff888107f640c0 =3D {
-        .entry =3D (struct list_head){
-                .next =3D (struct list_head *)0x0,
-                .prev =3D (struct list_head *)0xffff8897e0cb1f50,
-        },
-        .hentry =3D (struct hlist_node){
-                .next =3D (struct hlist_node *)0x0,
-                .pprev =3D (struct hlist_node **)0xffff8897e0cb1f50,
-        },
-        .current_work =3D (struct work_struct *)0xffff8881a32638d0,
-        .current_func =3D (work_func_t)wg_packet_tx_worker+0x0 =3D
-0xffffffffc0f6ca40,
-        .current_pwq =3D (struct pool_workqueue *)0xffff88812bca6400,
-        .current_at =3D (u64)3491257913,
-        .current_color =3D (unsigned int)4,
-        .sleeping =3D (int)0,
-        .last_func =3D (work_func_t)wg_packet_tx_worker+0x0 =3D 0xffffffffc=
-0f6ca40,
-        .scheduled =3D (struct list_head){
-                .next =3D (struct list_head *)0xffff8881a32638d8,
-                .prev =3D (struct list_head *)0xffff8881a32638d8,
-        },
-        .task =3D (struct task_struct *)0xffff888472a08000,
-        .pool =3D (struct worker_pool *)0xffff8897e0cb1cc0,
-        .node =3D (struct list_head){
-                .next =3D (struct list_head *)0xffff888107f64360,
-                .prev =3D (struct list_head *)0xffff888107f645a0,
-        },
-        .last_active =3D (unsigned long)4409382646,
-        .flags =3D (unsigned int)64,
-        .id =3D (int)1,
-        .desc =3D (char [32])"wg-crypt-wireguard.cali",
-        .rescue_wq =3D (struct workqueue_struct *)0x0,
-}
-
-This can take a very long time especially if the peers produce/receive
-as fast as it
-can, as in our test setup. We setup some metrics with bpftrace to measure t=
-he
-duration of peer_remove_after_dead and wg_packet_tx_worker and got the foll=
-owing
-measurements after a long wait time.
-
-@duration_ms[peer_remove_after_dead]:
-[512K, 1M)             1 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@=
-@@@|
-@duration_ms[wg_packet_tx_worker]:
-[0]               744612 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@=
-@@@|
-[1]                   20 |                                                 =
-   |
-[2, 4)                 2 |                                                 =
-   |
-[4, 8)                 2 |                                                 =
-   |
-[16, 32)               2 |                                                 =
-   |
-[256K, 512K)           1 |                                                 =
-   |
-[2M, 4M)               1 |                                                 =
-   |
-
-We can see that peer_remove_after_dead took between 512s to 1000s to comple=
-te,
-while wg_packet_tx_worker can take up to [2000s, 4000s) to complete, which =
-is an
-awfully long time.
-
-Daniel
-
-> >
-> > So the questions are:
-> > 1. Any ideas why NAPI_STATE_SCHED bit never gets cleared for the
-> > threaded NAPI case in Wireguard?
-> > 2. Is it generally a good idea for Wireguard to loop for an
-> > indeterminate amount of time, while holding the rtnl_mutex? Or can it
-> > be refactored?
->
-> I've been also trying to reproduce this issue with a script [1]. While
-> I could not reproduce the complete lockup I've been able to confirm
-> that peer_remove_after_dead() may take multiple seconds to execute -
-> all while holding the rtnl_mutex. Below is bcc-tools funclatency
-> output from a freshly compiled mainline (6.11):
->
-> # /usr/share/bcc/tools/funclatency peer_remove_after_dead
-> Tracing 1 functions for "peer_remove_after_dead"... Hit Ctrl-C to end.
-> ^C
->                nsecs                         : count     distribution
->                    0 -> 1                    : 0        |                =
-    |
->                    2 -> 3                    : 0        |                =
-    |
->                    4 -> 7                    : 0        |                =
-    |
->                    8 -> 15                   : 0        |                =
-    |
->                   16 -> 31                   : 0        |                =
-    |
->                   32 -> 63                   : 0        |                =
-    |
->                   64 -> 127                  : 0        |                =
-    |
->                  128 -> 255                  : 0        |                =
-    |
->                  256 -> 511                  : 0        |                =
-    |
->                  512 -> 1023                 : 0        |                =
-    |
->                 1024 -> 2047                 : 0        |                =
-    |
->                 2048 -> 4095                 : 0        |                =
-    |
->                 4096 -> 8191                 : 0        |                =
-    |
->                 8192 -> 16383                : 0        |                =
-    |
->                16384 -> 32767                : 0        |                =
-    |
->                32768 -> 65535                : 0        |                =
-    |
->                65536 -> 131071               : 0        |                =
-    |
->               131072 -> 262143               : 0        |                =
-    |
->               262144 -> 524287               : 68       |**              =
-    |
->               524288 -> 1048575              : 658      |****************=
-****|
->              1048576 -> 2097151              : 267      |********        =
-    |
->              2097152 -> 4194303              : 68       |**              =
-    |
->              4194304 -> 8388607              : 124      |***             =
-    |
->              8388608 -> 16777215             : 182      |*****           =
-    |
->             16777216 -> 33554431             : 72       |**              =
-    |
->             33554432 -> 67108863             : 34       |*               =
-    |
->             67108864 -> 134217727            : 22       |                =
-    |
->            134217728 -> 268435455            : 11       |                =
-    |
->            268435456 -> 536870911            : 2        |                =
-    |
->            536870912 -> 1073741823           : 2        |                =
-    |
->           1073741824 -> 2147483647           : 1        |                =
-    |
->           2147483648 -> 4294967295           : 0        |                =
-    |
->           4294967296 -> 8589934591           : 1        |                =
-    |
->
-> avg =3D 14251705 nsecs, total: 21548578415 nsecs, count: 1512
->
-> Detaching...
->
-> So we have cases where it takes 2 or even 8 seconds to remove a single
-> peer, which is definitely not great considering we're holding a global
-> lock.
->
-> > We have observed the problem on Linux 6.6.47 and 6.6.48. We did try to
-> > downgrade the kernel a couple of patch revisions, but it did not help
-> > and our logs indicate that at least the non-threaded prolonged holding
-> > of the rtnl_mutex is happening for a while now.
-> >
-> > [1]: https://docs.tigera.io/calico/latest/network-policy/encrypt-cluste=
-r-pod-traffic
-> > [2]: https://docs.kernel.org/networking/napi.html#threaded
-> > [3]: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/t=
-ree/net/core/dev.c?h=3Dv6.6.48#n6476
->
-> Ignat
->
-> [1]: https://gist.githubusercontent.com/ignatk/4505d96e02815de3aa5649c4aa=
-7c3fca/raw/177e4eab9f491024db6488cd0ea1cbba2d5579b4/wg.sh
+--6dsn6gbwes7baogl--
 
