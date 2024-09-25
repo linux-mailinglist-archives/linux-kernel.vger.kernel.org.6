@@ -1,210 +1,228 @@
-Return-Path: <linux-kernel+bounces-339631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB6FC986824
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 23:11:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83EE2986828
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 23:11:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A51A1F257C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:11:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F093DB23731
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F08A157A72;
-	Wed, 25 Sep 2024 21:11:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B48145FFF;
+	Wed, 25 Sep 2024 21:11:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="h6Z48oLx"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2073.outbound.protection.outlook.com [40.107.94.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oGw98LgU"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A417B22EE4;
-	Wed, 25 Sep 2024 21:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727298668; cv=fail; b=Am4+LQmF5FKO2G6qDd3ZFcc9e0L767CLY+37zUIDkKcQPMbMIhN3/0Wi+SAa+ALmNF2ecBQEYgPr1AIXW9e75frIirR8xZzukDQIyl7FzfXfqRkIOCYWN5S0JZPG4ntPrhzjtR1MoGNQgJSWSl2zxiZIMw/Sv39eDGEMqOuMctg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727298668; c=relaxed/simple;
-	bh=ssIs9WtPLkYu01Dj+z1Mc0lHQSYIPGLQzn3LK0r2/QY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nmZubnjtzeo37Vd0oyCEeADQhdp7jZcYPsplNXarjctQjsSfiTAN053gDItAUxlL2MGWEp65jgbWO8anyWR2QXWdh94wBvIikBukvO8Vstuv2S7XLkgMJc2ndLtG/vX6ge36KxNAIj8eBB7rOS3RgEXwjGL6Pc9ktxBv5ccRQP4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=h6Z48oLx; arc=fail smtp.client-ip=40.107.94.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cqT95vw/VV8DqM7+q5RQ6kDVcqMAiEwJReRSupa/k+gLdONpBQdJ2y/3AW7axB8SHameZOsfWdjlVxIYzNAqaHreHmaY9F9tzniJ9wnXWAF+NaLP3JHsCBXkyzHHy1jkmekYqo1N/P2yPFozWn5j1L+uVxF/LdoiBzgh3auZ9vEeImmmXhPvIFpbqIezwOfyjlYfCN7OIiQxAJHxS7szfrt0/ZmQwbnylt6y6+fFwGiGI75GSVBwz13RxfGcgZ22H1N/SYMHL7NjtMJVcE5Bf5QmjtWEXv05+HQH8XGuQi3N3MSEsW1tEvpl/Y7/biiR6Xl+udnyb2sxoX4Dba8ryg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=G0seTHlNHKQRCkaKgJf0QsO+AMWS+fi600xH0eeDjsI=;
- b=VS5xwu3RXucPSM5uqoxfFbbVTpKUyM9XXS179XfKTfjvz61gR88GBCEkvycxDmVJQ3pyOJkxFSXgVqzTzoA8b/z5wZHyZHR09xUU2JkcB0aHrhpWxM9exJhz4ryCF2cRrTbD3lk792bx5lEfgehNxJtq97Giskga75h5UPWdsWeURwf1DziEkpaOvwQCiboUxPnsVSitPD+klPLSXDKUjx6GK0z6UZUC6a4Ez0AnFFME3mmeO+SSsleGm9iEyCcUJElA8lKYor8nQYdAmCwcJZcob50HvTQTH4TW9NaZ5VNOkBYEQCMWYXy3ekKXuyJCKzG/DirZhxPD9s/y9swvig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G0seTHlNHKQRCkaKgJf0QsO+AMWS+fi600xH0eeDjsI=;
- b=h6Z48oLxyTskg8BvMmpDA2Eomh1ZNb0XlNtkZW9UttutjmeSvHlMuO41N/vpI4bAu+2QspT6lYEOmybH4l/+K+E6ekA4vKGZyIoHda+WMm/d/w4LWhSY18YifIqOHyerA2eBy8YhFqt25NEiVzW9bIv7JRmi2aLL0jtb2ZzwKDM=
-Received: from BN9P221CA0014.NAMP221.PROD.OUTLOOK.COM (2603:10b6:408:10a::19)
- by SA0PR12MB4430.namprd12.prod.outlook.com (2603:10b6:806:70::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.28; Wed, 25 Sep
- 2024 21:11:03 +0000
-Received: from BN2PEPF000055DC.namprd21.prod.outlook.com
- (2603:10b6:408:10a:cafe::3a) by BN9P221CA0014.outlook.office365.com
- (2603:10b6:408:10a::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.26 via Frontend
- Transport; Wed, 25 Sep 2024 21:11:03 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN2PEPF000055DC.mail.protection.outlook.com (10.167.245.6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8026.0 via Frontend Transport; Wed, 25 Sep 2024 21:11:03 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 25 Sep
- 2024 16:11:03 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 25 Sep
- 2024 16:11:02 -0500
-Received: from [172.18.112.153] (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 25 Sep 2024 16:10:59 -0500
-Message-ID: <81fb3f6b-4ded-41d1-be66-d86af4f22171@amd.com>
-Date: Wed, 25 Sep 2024 17:10:56 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5F814D430
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 21:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727298699; cv=none; b=CBd701haCzJeZzluxmF8qRp6dhpZwfeT6auHLeQ1BGRk46443p5vfV15TFc7hNZPRQ3is0IGbj7lyxEOAlIaij1gBrfujhoBpd+fUBlee/5Tqv/vVOCRx0XHD1mgeM3KK2DXnvOa+D8NXtMfYs2cKkBqiFT4VinreSWB35ehv+E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727298699; c=relaxed/simple;
+	bh=uaJyIEoSwNKsjJkoEyrCnv8T+eq1xY6FzObEOx7j1Ic=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WIIpx/IjHZguqqmFZks2fxxTqxDBLB8QuYeVBJLCFMizh4bJCDvdpwRYcSwh0Uqpa8sI57nyMOO+AIc2D7PVNZq1uPehqyy8Zxfu56HOpqAmWFIY3985WigE0nw2BBvaV9l/JLMQbYOKwgpvWDsN/a31WjDI07k76NvFpPcvbHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oGw98LgU; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6e22f10cc11so3246927b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 14:11:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727298697; x=1727903497; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+9TIU+9hxJV2zxmNs4d032rUDDVyJj1j83Li4zDnFvc=;
+        b=oGw98LgU9N+LZvTwAj1dGhCsC5B4hX0XLm9HNsbxKvvdDW59MjvzZ1KLJa3b0/Ft+O
+         QXnTpzvx2bUIt1PKSeVXYOgYVgP84/iTRBDRe3ngkwba/KfcwnTD7IKYdqhemXzkwpu+
+         nRZVZUw9pKWf8WkTMu1vpX3ZtY8BdSDzZRJLL0Tecs1B0xMiNwD6k39FviBkmJuo4ID9
+         PXEbP9IKW6oLtYTljFSwHI7qqdEIaGHBgnlD+oChwcQ6aoGwJFIKui7ZVUyZoX98pC87
+         7Sm6RaoO3xqTezzr+dQnp3XnLsQgjRud3sBOGIkaOZf/cdEnqW+Tejxqe3rTBxf/Q1yZ
+         jPbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727298697; x=1727903497;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+9TIU+9hxJV2zxmNs4d032rUDDVyJj1j83Li4zDnFvc=;
+        b=LaZppsjYj53hB3mAI+zGB2ChWqFAq1ZIwrDVnTdtzXil5RVzdOkLvsBDdE4JlpfiR+
+         RKXCUJaQroDwJEgRkti0kmnr2EeZ4Q8/FEJ3PPWA61H/ToezQ2i4Oju4X2hGoYPJxCi7
+         2F9RLfktyOESZTNlSmWGNdrP7zjE7COjc028/Ls1mAEOVFNmxHozr0vVnJNHubRkBUBZ
+         Rs5msjpYbwC3oG1NUKslNBnsB1kRUZd3dRddNrRMSlXqWCfMUv0Xx29xiHawiSJIo6Va
+         ht2b5/sWkwxegSxWS9MdTJPJtjtK/BlqtEF7DGnPMC0gJ46MpyVhaBQocO0qVydL/2+f
+         +VhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVy/33xzdiyyarXYnUzfYJtY+oDDH5Tgv2A0itxtaesTrMyDVugv0JsKqFenY+5/t5BRLzAgGsVnkqVteU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxci6TYBWzbJZ6d8s8sUaCJIIcgh/fU3DRVWFwjosZCgcUReTsi
+	LKyIN0wvouQR1FZ3mr3BuMAnuAL5DGqrHW8rzB5fu2QwQQo8nt5NFQsQItC7PvR8d4PllwVy7sU
+	3e06eSXE1yHQXe+2PUKzfNlUfE8P0rCkg4qQpJg==
+X-Google-Smtp-Source: AGHT+IEp+mxvGkg3YqT/1KJufgJQB/xXWcnPMsUafm3tUlKhN15iL95oyO8K6Op3Y8xSE5IQjn21aX/7DyU72/mq1E4=
+X-Received: by 2002:a05:690c:660f:b0:6de:b23:f2c3 with SMTP id
+ 00721157ae682-6e21d6ec709mr41328167b3.7.1727298696928; Wed, 25 Sep 2024
+ 14:11:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 11/28] x86/pvh: Avoid absolute symbol references in
- .head.text
-To: Ard Biesheuvel <ardb+git@google.com>, <linux-kernel@vger.kernel.org>
-CC: Ard Biesheuvel <ardb@kernel.org>, <x86@kernel.org>, "H. Peter Anvin"
-	<hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, Peter Zijlstra
-	<peterz@infradead.org>, Uros Bizjak <ubizjak@gmail.com>, Dennis Zhou
-	<dennis@kernel.org>, Tejun Heo <tj@kernel.org>, Christoph Lameter
-	<cl@linux.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, "Paolo
- Bonzini" <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Juergen Gross <jgross@suse.com>, Boris Ostrovsky
-	<boris.ostrovsky@oracle.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Masahiro Yamada
-	<masahiroy@kernel.org>, Kees Cook <kees@kernel.org>, Nathan Chancellor
-	<nathan@kernel.org>, Keith Packard <keithp@keithp.com>, Justin Stitt
-	<justinstitt@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>, "Arnaldo
- Carvalho de Melo" <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-	"Jiri Olsa" <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, Adrian
- Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>,
-	<linux-doc@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-	<kvm@vger.kernel.org>, <xen-devel@lists.xenproject.org>,
-	<linux-efi@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-	<linux-sparse@vger.kernel.org>, <linux-kbuild@vger.kernel.org>,
-	<linux-perf-users@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
-	<llvm@lists.linux.dev>
-References: <20240925150059.3955569-30-ardb+git@google.com>
- <20240925150059.3955569-41-ardb+git@google.com>
-Content-Language: en-US
-From: Jason Andryuk <jason.andryuk@amd.com>
-In-Reply-To: <20240925150059.3955569-41-ardb+git@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Received-SPF: None (SATLEXMB05.amd.com: jason.andryuk@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF000055DC:EE_|SA0PR12MB4430:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2a8b3ce5-d2b6-407b-9a44-08dcdda69057
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OEJwb29wcWhNT2x0SDFYTTlrdFNpeXNaNG1QcnFKM2hsMDlQS2RMOHNXSWNw?=
- =?utf-8?B?QTZrKzVTaytRaWk2WFU0Z1RHWjJxNkJ3ZGNoeTNtYVBGQXU5TkxNZDJPZWtO?=
- =?utf-8?B?ZXFSNm5xQm50blV0UGpWaUlXQy9XZC9wZXAzL3Avd09mdHZ5MjFGTEZ5czlU?=
- =?utf-8?B?Tmtidk93YjdEc0xScG1qYXJtcUNTNjI5NDlCbmZZWHM2TUxZVE9NK3ZmWFZk?=
- =?utf-8?B?b2crQlBOOFdJa3VUWkZXQkd6T2Yyb2wzTThLbDUxVTJMN205azNmWEQzUzlS?=
- =?utf-8?B?UVluRmtYNXp5eEYwL0c1TXVJb2RXSDAvdjNmTC8ramFpVmVNZGdqY1Nma2RT?=
- =?utf-8?B?WFB5ZExVdDdYd0pJTGtGNGdra2lJMkE4emxBdk9HZTNRR3BwQk5pdk83L1Rl?=
- =?utf-8?B?UVNTNE9Nakc0SDZQZ3crVFNoZjFKZkhjRVoydStBQmQxeDl3RnN3MDFQVXlP?=
- =?utf-8?B?ZEpxbndkZDlqMjY0VzBhUENpQWFlMTlGcTFxNzV4aEJHV1Jnai9jelpOMGRR?=
- =?utf-8?B?eFk2WWh5c3pOTmpYN2ZhVVg5aWhoTVV4Sm5BcWhod3RVOEROWVcwaHcrYWxQ?=
- =?utf-8?B?WGdLZEovZFRjSWx2NFlRdlorclQwdUg5TG9KS3pxTEhkbUFPMGFNeUhhb3d3?=
- =?utf-8?B?bkxxYUpZbkMxcnpJby9hTGpkNnRyVEdHSDczeUlYNUgwYU9HYnF1OHE2emZU?=
- =?utf-8?B?OXpNMEZnVXJjNmpKY3hQbVhMT3Awc3lzVmE0andMbVU4Sld1d2Rqa3VSZGp3?=
- =?utf-8?B?MS9jTk8yVW5NbGVkZU1yZ1BIVTE1UVZ2UlRlL0EwN0VwZ2lySEdqbktHK2M2?=
- =?utf-8?B?bExaZ0pIcHR1OTlIcGNDYTE4ZnFoTGFiR2dqOW1JWXVhdWl3YVNJZDJTeWpR?=
- =?utf-8?B?YzlpaEk3UEszMWw5cUd0RmpOb1ZuMU41N3pHQ28zRVdDNVhaTGFFeS9MbVI1?=
- =?utf-8?B?Z2ZyVTJsYU43cUlkT21scHN5OHVFWUlraSs4OHVFWnRLVzhNL1lxVEJDNTZm?=
- =?utf-8?B?OEdKTmk1dmw0eHM1U0c3QzkxT0ZRL0Y4Uks0T21mc1RsNXB0WjMxdCtnN2ZN?=
- =?utf-8?B?OEpxZU43c2F0UVhnSXlaSGYwZjFrWkNzQ0tOMzFCQnhZYnJYY1VqVmVsN2Ex?=
- =?utf-8?B?ZG9xajlZU0ZpNndCWHI5Z2gyOFF6M3pNODNKcGE4blgrYzA4Wk55eFViN1RT?=
- =?utf-8?B?WndIZ3RGTDhDSWNBYnM3S0toOVd5OWdzY3JlODhFdTFHaGF0RUp5RkcwWVk5?=
- =?utf-8?B?NTNjL3laaFNBUDVFd3hPYVZTajZ2Ykk3OUJBM1I2aHl4bzdYZGlieUp0NDdi?=
- =?utf-8?B?T3dTT25XNHBZbnBsTlMwNzZzWFdUNkVkWWxrTWJCbDFvUkZ4VVNtTzc4cXB4?=
- =?utf-8?B?VUFuVmh0b2FsbzY5dlhXWTBCMS9IMzY4TjVZSTNpZjU1c2NFRVNBUC9OdTFQ?=
- =?utf-8?B?NzFvRjYrTDlrbjFRWWIrTzFvYTVvN2pBOEJacnQ0UkYrQUczUWRONVc1eVp0?=
- =?utf-8?B?aHVwQW5sOU9uWWtJeExZSFlKQU9hVE8rT2dxbUVuRCt4bVFjNmF5VHlGTEhZ?=
- =?utf-8?B?bjQxY0tadnlMb0hYVUlBOG5PZTBMSEdCdDdmTUVSRmRDRXVqamNxRVpjYkRp?=
- =?utf-8?B?aC9BQ0RuUWJ1VzRwTmpmamtNWVJocUxnRkxGajQyZ3M4THl0cUJOQVhtaEFI?=
- =?utf-8?B?UHJ0bWs1bkluR0xVOWJMUnJBMDRibXcwVFN5S05kajZJdE43aWtQS1Qwa2J5?=
- =?utf-8?B?c2JsblY3Um5TY1g3SUgrTWN5bStOdkVpSmxjK3RRaStBUS9XL3ArR3NVcndr?=
- =?utf-8?B?cVp5S0pZTHNBd0lZM2oxOHVRVkFiS2FUWXY1YzFJVnkvOFRCUmhhZjhNdXpJ?=
- =?utf-8?Q?quEuBNmFiQ/hN?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(7416014)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2024 21:11:03.4956
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2a8b3ce5-d2b6-407b-9a44-08dcdda69057
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF000055DC.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4430
+References: <20240924-concurrent-wb-v2-0-7849f900e863@quicinc.com>
+ <20240924-concurrent-wb-v2-5-7849f900e863@quicinc.com> <dv5iij6v76ieprfckdjo4yksrjrgqw73v2lh7u4xffpu7rdrf3@zgjcp3a2hlxo>
+ <24a11f4c-d848-4f1b-afbd-35b135fa3105@quicinc.com>
+In-Reply-To: <24a11f4c-d848-4f1b-afbd-35b135fa3105@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Wed, 25 Sep 2024 23:11:25 +0200
+Message-ID: <CAA8EJpraspHpgGvJxe7dXx-hN+yirs_+AacjkrHvPWuEvrLJ-w@mail.gmail.com>
+Subject: Re: [PATCH v2 05/22] drm/msm/dpu: move resource allocation to CRTC
+To: Jessica Zhang <quic_jesszhan@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, quic_abhinavk@quicinc.com, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, quic_ebharadw@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Rob Clark <robdclark@chromium.org>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Ard,
+On Wed, 25 Sept 2024 at 22:39, Jessica Zhang <quic_jesszhan@quicinc.com> wrote:
+>
+>
+>
+> On 9/24/2024 4:13 PM, Dmitry Baryshkov wrote:
+> > On Tue, Sep 24, 2024 at 03:59:21PM GMT, Jessica Zhang wrote:
+> >> From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> >>
+> >> All resource allocation is centered around the LMs. Then other blocks
+> >> (except DSCs) are allocated basing on the LMs that was selected, and LM
+> >> powers up the CRTC rather than the encoder.
+> >>
+> >> Moreover if at some point the driver supports encoder cloning,
+> >> allocating resources from the encoder will be incorrect, as all clones
+> >> will have different encoder IDs, while LMs are to be shared by these
+> >> encoders.
+> >>
+> >> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> >> [quic_abhinavk@quicinc.com: Refactored resource allocation for CDM]
+> >> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> >> [quic_jesszhan@quicinc.com: Changed to grabbing exising global state]
+> >> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+> >> ---
+> >>   drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    |  86 ++++++++++++
+> >>   drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 201 +++++++++++-----------------
+> >>   drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h |  19 +++
+> >>   3 files changed, 183 insertions(+), 123 deletions(-)
+> >>
+> >> @@ -544,159 +542,117 @@ void dpu_encoder_helper_split_config(
+> >>      }
+> >>   }
+> >>
+> >> -bool dpu_encoder_use_dsc_merge(struct drm_encoder *drm_enc)
+> >> +void dpu_encoder_update_topology(struct drm_encoder *drm_enc,
+> >> +                             struct msm_display_topology *topology,
+> >> +                             struct drm_atomic_state *state,
+> >> +                             const struct drm_display_mode *adj_mode)
+> >>   {
+> >>      struct dpu_encoder_virt *dpu_enc = to_dpu_encoder_virt(drm_enc);
+> >> -    int i, intf_count = 0, num_dsc = 0;
+> >> +    struct drm_connector *connector;
+> >> +    struct drm_connector_state *conn_state;
+> >> +    struct msm_display_info *disp_info;
+> >> +    struct drm_framebuffer *fb;
+> >> +    struct msm_drm_private *priv;
+> >> +    int i;
+> >>
+> >>      for (i = 0; i < MAX_PHYS_ENCODERS_PER_VIRTUAL; i++)
+> >>              if (dpu_enc->phys_encs[i])
+> >> -                    intf_count++;
+> >> +                    topology->num_intf++;
+> >>
+> >> -    /* See dpu_encoder_get_topology, we only support 2:2:1 topology */
+> >> +    /* We only support 2 DSC mode (with 2 LM and 1 INTF) */
+> >>      if (dpu_enc->dsc)
+> >> -            num_dsc = 2;
+> >> +            topology->num_dsc += 2;
+> >>
+> >> -    return (num_dsc > 0) && (num_dsc > intf_count);
+> >> -}
+> >> +    connector = drm_atomic_get_new_connector_for_encoder(state, drm_enc);
+> >> +    if (!connector)
+> >> +            return;
+> >> +    conn_state = drm_atomic_get_new_connector_state(state, connector);
+> >> +    if (!conn_state)
+> >> +            return;
+> >>
+> >> -struct drm_dsc_config *dpu_encoder_get_dsc_config(struct drm_encoder *drm_enc)
+> >> -{
+> >> -    struct msm_drm_private *priv = drm_enc->dev->dev_private;
+> >> -    struct dpu_encoder_virt *dpu_enc = to_dpu_encoder_virt(drm_enc);
+> >> -    int index = dpu_enc->disp_info.h_tile_instance[0];
+> >> +    disp_info = &dpu_enc->disp_info;
+> >>
+> >> -    if (dpu_enc->disp_info.intf_type == INTF_DSI)
+> >> -            return msm_dsi_get_dsc_config(priv->dsi[index]);
+> >> +    priv = drm_enc->dev->dev_private;
+> >>
+> >> -    return NULL;
+> >> +    /*
+> >> +     * Use CDM only for writeback or DP at the moment as other interfaces cannot handle it.
+> >> +     * If writeback itself cannot handle cdm for some reason it will fail in its atomic_check()
+> >> +     * earlier.
+> >> +     */
+> >> +    if (disp_info->intf_type == INTF_WB && conn_state->writeback_job) {
+> >> +            fb = conn_state->writeback_job->fb;
+> >> +
+> >> +            if (fb && MSM_FORMAT_IS_YUV(msm_framebuffer_format(fb)))
+> >> +                    topology->needs_cdm = true;
+> >> +    } else if (disp_info->intf_type == INTF_DP) {
+> >> +            if (msm_dp_is_yuv_420_enabled(priv->dp[disp_info->h_tile_instance[0]], adj_mode))
+> >> +                    topology->needs_cdm = true;
+> >> +    }
+> >
+> > Just to note, the needs_cdm is not enough once you introduce CWB
+> > support. E.g. DP/YUV420 + WB/YUV case requires two CDM blocks (which we
+> > don't have), but this doesn't get reflected in the topology.
+>
+> Hi Dmitry,
+>
+> Ack. I can add something to make atomic_check fail if the input FB is
+> YUV format and CWB is enabled.
 
-On 2024-09-25 11:01, Ard Biesheuvel wrote:
-> From: Ard Biesheuvel <ardb@kernel.org>
-> 
-> The .head.text section contains code that may execute from a different
-> address than it was linked at. This is fragile, given that the x86 ABI
-> can refer to global symbols via absolute or relative references, and the
-> toolchain assumes that these are interchangeable, which they are not in
-> this particular case.
-> 
-> In the case of the PVH code, there are some additional complications:
-> - the absolute references are in 32-bit code, which get emitted with
->    R_X86_64_32 relocations, and these are not permitted in PIE code;
-> - the code in question is not actually relocatable: it can only run
->    correctly from the physical load address specified in the ELF note.
-> 
-> So rewrite the code to only rely on relative symbol references: these
-> are always 32-bits wide, even in 64-bit code, and are resolved by the
-> linker at build time.
-> 
-> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+I'd prefer for this to be more natural rather than just checking for
+the DP && DP_YUV420 && WB && WB_FMT_YUV. In the worst case, count CDM
+requests and then in RM check them against the catalog. But I had a
+more logical (although more intrusive) implementation on my mind:
 
-Juergen queued up my patches to make the PVH entry point position 
-independent (5 commits):
-https://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git/log/?h=linux-next
+struct msm_display_topology {
+    struct {
+      u32 num_intf;
+      u32 num_wb;
+      u32 num_dsc;
+      bool needs_cdm;
+    } outputs[MAX_OUTPUTS];
+    u32 num_lm;
+};
 
-My commit that corresponds to this patch of yours is:
-https://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git/commit/?h=linux-next&id=1db29f99edb056d8445876292f53a63459142309
+WDYT?
 
-(There are more changes to handle adjusting the page tables.)
+>
+> Thanks,
+>
+> Jessica Zhang
+>
+> >
+> >>   }
+> >>
+> > --
+> > With best wishes
+> > Dmitry
+>
 
-Regards,
-Jason
+
+-- 
+With best wishes
+Dmitry
 
