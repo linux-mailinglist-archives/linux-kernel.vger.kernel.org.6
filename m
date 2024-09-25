@@ -1,120 +1,153 @@
-Return-Path: <linux-kernel+bounces-338037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D97E8985290
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:39:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F734985291
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:41:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E7A7282F37
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 05:39:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 775111C22F04
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 05:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4517384A32;
-	Wed, 25 Sep 2024 05:39:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE6514D29B;
+	Wed, 25 Sep 2024 05:41:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BotfmFAG"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EJK0k7M8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF97B132103
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 05:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95500132103
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 05:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727242757; cv=none; b=CIe03zAcYLU7Np4+5cNXO2cLnRsu1wtKxHdJ42Gif4htqmRdsBupBNiLgweQ78OQm5Df+O0BfU9joff/8X0w2Fps29QJ0AkLeq2bGs1fN8hgFHydMbfwLMRjc1oK0JwClxvwyrO/enZKGsDZkLTbMSR3ZxHIfZuF8GWL61bqjFc=
+	t=1727242865; cv=none; b=Qm5TX2TXoy3kW6OdHVVhgNRZQYPyhZRwr333QwG9IaMBv9O79DGgNPLsYUh5BX6sOxNYyJ3Tef8fOsa8HHhVf6mwi9efPTapraYX4AAk7uXbreIAq1YKMSvIcBmfQywtIqZfis6/XQCrQmn03VYcLGtE5/NLY/tDMaPQzezK9VQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727242757; c=relaxed/simple;
-	bh=ioBjncIRbnomi2/T1x4IMAoeQBg0/qKRK6KzIkmrYpU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hBvhz74rxNqFtHwTYMNHCUf+x/ZKLtsQIxwHCkxQapmENsCmZJGMfVwXIMohGH55f2AvouIWdUPtHc/X+rjNKwIVTg/qlECWMTXT4nmoujfi54hIp2burkdWBdBALpkTZeGRstsLUzbnqI99g2/y8EIYpbouLkZwxqn0IoYik9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BotfmFAG; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53652c3bffdso922705e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 22:39:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727242754; x=1727847554; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NuoTbNYEXcRzlHV0UDmWGbYbWThePpqhU/Cw4g62gBU=;
-        b=BotfmFAGLE45b8FzqN/kT+IcV5FsiX0+l40BrsV5Nagbg0bECCdLRMn40Z2D3ydtDP
-         M1wb+g3wC/7qrRNpfaCQttbVXTCiiCgzxKJl8Q8mJKfmMLPMfg9UpkB3pQrchh7xppBh
-         n2/V732CGqyI5FT4WZPZsA+s1QtIwwEPBCBbIRXVhm4eRQzxewSpzeI5hyKIuL0IrjCO
-         YGgfQ0Q0jOtkSe3Ioovz0jwhuKU42MYGUSDbFwz6CAUmtISQtRXtskAVbvWjTfjJwWfj
-         kcSNxaNPnmnSm624Gcrh5WKG2AbHByVPvg4NV88zW3E3DVwVW6Rn/Y5ocKLFjy5I1XfJ
-         ACFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727242754; x=1727847554;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NuoTbNYEXcRzlHV0UDmWGbYbWThePpqhU/Cw4g62gBU=;
-        b=c7YfxhakHJJD4leGKgl/T5U91zgliUz2g0aYt9ndR0cFBsiiYkTMrcjdPClh4EcM7P
-         uoK2ki7JxJEF6XbkdbrSG/hfDM8B13BuZT4jOx4Mit/56CpCpCU4VPHryKQgoCrRbVSt
-         Tbt7gHo8TAV9LU1Ec/YoVJfjc4vl3QAJygMmDg/RgggVpGvERvE5k/bqqvHkeRx2sAu3
-         3csH/27Vdsfw5+9t8kDccYzxxOXPSSqkmQY7ZNQamtVMqY8TD1C6apRhkpsdLlwMT8+8
-         G9mx2cfzJp3P6Oxn9rlR2XoAh3kYjAka3NQdHNz43mPx9tnFfsQQeiaTAw+r5iTw7h92
-         IJOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVdjL4GdEKo3rs/ZKP+zKCLrywdlhH3ekg5ce4hqmO4ZktIT+xQi1HUTbwTI+CD4Abs1fKaRmKvtU4ts0U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywb8IMbHHPReSdPjumYoW3X+YRXabvW9z/2+z/pTFK3JgrjGWoW
-	Ef7S93y7xxkQHzrVMFiy9o+TuM3T5qMChrBBrzrhcDzy5hrUfCAJn1HLJbi0bHs=
-X-Google-Smtp-Source: AGHT+IHF3QiJxER+VyGdO/3Hm3IdA+yzkNdykvDcKwwmnQf+UaG3+ePGNNZ29XjKb6oMtDXt0vv/KA==
-X-Received: by 2002:a05:6512:3b98:b0:52f:c438:883c with SMTP id 2adb3069b0e04-53870487e54mr207685e87.1.1727242753829;
-        Tue, 24 Sep 2024 22:39:13 -0700 (PDT)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-537a85e0b8dsm418150e87.61.2024.09.24.22.39.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Sep 2024 22:39:12 -0700 (PDT)
-Message-ID: <4de5ead0-0d66-4e57-85bb-cd8a6ca29fcf@linaro.org>
-Date: Wed, 25 Sep 2024 08:39:04 +0300
+	s=arc-20240116; t=1727242865; c=relaxed/simple;
+	bh=UVkNjYeFFCF67JxcsgWC+lgXDCVMhTIWWgUX3vPrnss=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=p+nU+TnJf34Tzr4Y6o016TO3cuD2lcybRiuvs5rwlSlj26qWPp0kaD9Bi55LcQQ4nTEhIYjrFf9BJHn3Dzx0rBTStVWh81yeiliJdkgQ77WZxhDOGHtdahQm/XV4Hgz5ar1MaQ09aF9bL/kYM+nA+/TzC8rdGK2CkEipEfR7ZRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EJK0k7M8; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727242863; x=1758778863;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=UVkNjYeFFCF67JxcsgWC+lgXDCVMhTIWWgUX3vPrnss=;
+  b=EJK0k7M8jR6WbXLBsVkGDtAVeU2dmXJpanAuFNzPSmuz6Av2oTuKDX3T
+   0R+9pToHvOhzx8Zy+z8P+YCYiV65QMxjyfJaatbQ7TJ1cOeqPoavsaDbh
+   UrmhZeR/Qkt/Yy51xFcm0VaLew9JCLMtarNi3jA67NllEJ6/AHo++GIXm
+   awY6s6OFsei8hhqJeE5O8mnHlrJhc7w82rptcu8R43SC6Nt8TKckuR3hR
+   6tPsam0dzsyygUa0jaiRzV/3h3Lw67+KqEsPK2Qny0gukLE2DidtsKgkL
+   3Cxau4a3F0iZZW0r1noMz+HGrDErvRpyYS2YEM4Ndanf97cM8lWJsuvuz
+   g==;
+X-CSE-ConnectionGUID: AOeg/Z54T/WRVGGubseTXA==
+X-CSE-MsgGUID: fvbbwJ03RIiKl6fmKrGc9w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="51687044"
+X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
+   d="scan'208";a="51687044"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 22:41:03 -0700
+X-CSE-ConnectionGUID: s9ITmdW2TCWoATkkNVKhOw==
+X-CSE-MsgGUID: 70CtaZREQvuuNdPRWdaYaA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
+   d="scan'208";a="71535129"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 24 Sep 2024 22:41:02 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1stKln-000JBU-0c;
+	Wed, 25 Sep 2024 05:40:59 +0000
+Date: Wed, 25 Sep 2024 13:40:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org
+Subject: arch/arc/kernel/smp.c:267:18: sparse: sparse: cast removes address
+ space '__percpu' of expression
+Message-ID: <202409251336.ToC0TvWB-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] i2c: qcom-geni: add 32MHz I2C SE clock support for
- IPQ5424
-Content-Language: en-US
-To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>, andi.shyti@kernel.org,
- linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: quic_srichara@quicinc.com, quic_varada@quicinc.com
-References: <20240924065020.2009975-1-quic_mmanikan@quicinc.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20240924065020.2009975-1-quic_mmanikan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello Manikanta,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   684a64bf32b6e488004e0ad7f0d7e922798f65b6
+commit: f2519d4d4fc4d36f2b58c5614357de9f5b4032fc ARC: Emulate one-byte cmpxchg
+date:   12 days ago
+config: arc-randconfig-r123-20240925 (https://download.01.org/0day-ci/archive/20240925/202409251336.ToC0TvWB-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20240925/202409251336.ToC0TvWB-lkp@intel.com/reproduce)
 
-On 9/24/24 09:50, Manikanta Mylavarapu wrote:
-> The IPQ5424 I2C SE clock operates at a frequency of 32MHz. Since the
-> existing map table is based on 19.2MHz, this patch incorporate the
-> clock map table to derive the SCL clock from the 32MHz SE clock.
-> 
-> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-> ---
->   drivers/i2c/busses/i2c-qcom-geni.c | 11 +++++++++++
->   1 file changed, 11 insertions(+)
-> 
-> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
-> index 212336f724a6..bbd9ecf09f4b 100644
-> --- a/drivers/i2c/busses/i2c-qcom-geni.c
-> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
-> @@ -71,6 +71,7 @@ enum geni_i2c_err_code {
->   
->   #define I2C_AUTO_SUSPEND_DELAY	250
->   #define KHZ(freq)		(1000 * freq)
-> +#define MHZ(freq)		(1000000 * freq)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409251336.ToC0TvWB-lkp@intel.com/
 
-pleae drop this new macro, please use freq * HZ_PER_MHZ instead of MHZ(freq).
+sparse warnings: (new ones prefixed by >>)
+   arch/arc/kernel/smp.c:252:48: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected unsigned long [noderef] __percpu *ipi_data_ptr @@     got unsigned long * @@
+   arch/arc/kernel/smp.c:252:48: sparse:     expected unsigned long [noderef] __percpu *ipi_data_ptr
+   arch/arc/kernel/smp.c:252:48: sparse:     got unsigned long *
+   arch/arc/kernel/smp.c:267:18: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile *v @@     got unsigned long [noderef] __percpu *__ai_ptr @@
+   arch/arc/kernel/smp.c:267:18: sparse:     expected void const volatile *v
+   arch/arc/kernel/smp.c:267:18: sparse:     got unsigned long [noderef] __percpu *__ai_ptr
+>> arch/arc/kernel/smp.c:267:18: sparse: sparse: cast removes address space '__percpu' of expression
+>> arch/arc/kernel/smp.c:267:18: sparse: sparse: cast removes address space '__percpu' of expression
+   arch/arc/kernel/smp.c:401:72: sparse: sparse: incorrect type in argument 4 (different address spaces) @@     expected void [noderef] __percpu *percpu_dev_id @@     got int *dev @@
+   arch/arc/kernel/smp.c:401:72: sparse:     expected void [noderef] __percpu *percpu_dev_id
+   arch/arc/kernel/smp.c:401:72: sparse:     got int *dev
+   arch/arc/kernel/smp.c:265:30: sparse: sparse: dereference of noderef expression
 
-KHZ(freq) macro should be also replaced by HZ_PER_KHZ, but it's a separate change.
+vim +/__percpu +267 arch/arc/kernel/smp.c
 
---
-Best wishes,
-Vladimir
+41195d236e8445 Vineet Gupta    2013-01-18  249  
+ddf84433f411b6 Vineet Gupta    2013-11-25  250  static void ipi_send_msg_one(int cpu, enum ipi_msg_type msg)
+41195d236e8445 Vineet Gupta    2013-01-18  251  {
+f2a4aa5646687f Vineet Gupta    2013-11-26  252  	unsigned long __percpu *ipi_data_ptr = per_cpu_ptr(&ipi_data, cpu);
+d8e8c7dda11f5d Vineet Gupta    2013-11-28  253  	unsigned long old, new;
+41195d236e8445 Vineet Gupta    2013-01-18  254  	unsigned long flags;
+41195d236e8445 Vineet Gupta    2013-01-18  255  
+f2a4aa5646687f Vineet Gupta    2013-11-26  256  	pr_debug("%d Sending msg [%d] to %d\n", smp_processor_id(), msg, cpu);
+f2a4aa5646687f Vineet Gupta    2013-11-26  257  
+41195d236e8445 Vineet Gupta    2013-01-18  258  	local_irq_save(flags);
+41195d236e8445 Vineet Gupta    2013-01-18  259  
+d8e8c7dda11f5d Vineet Gupta    2013-11-28  260  	/*
+d8e8c7dda11f5d Vineet Gupta    2013-11-28  261  	 * Atomically write new msg bit (in case others are writing too),
+d8e8c7dda11f5d Vineet Gupta    2013-11-28  262  	 * and read back old value
+d8e8c7dda11f5d Vineet Gupta    2013-11-28  263  	 */
+d8e8c7dda11f5d Vineet Gupta    2013-11-28  264  	do {
+c6ed4d84a2c49d Bang Li         2022-03-19  265  		new = old = *ipi_data_ptr;
+d8e8c7dda11f5d Vineet Gupta    2013-11-28  266  		new |= 1U << msg;
+d8e8c7dda11f5d Vineet Gupta    2013-11-28 @267  	} while (cmpxchg(ipi_data_ptr, old, new) != old);
+41195d236e8445 Vineet Gupta    2013-01-18  268  
+d8e8c7dda11f5d Vineet Gupta    2013-11-28  269  	/*
+d8e8c7dda11f5d Vineet Gupta    2013-11-28  270  	 * Call the platform specific IPI kick function, but avoid if possible:
+d8e8c7dda11f5d Vineet Gupta    2013-11-28  271  	 * Only do so if there's no pending msg from other concurrent sender(s).
+82a423053eb3cf Changcheng Deng 2021-08-14  272  	 * Otherwise, receiver will see this msg as well when it takes the
+d8e8c7dda11f5d Vineet Gupta    2013-11-28  273  	 * IPI corresponding to that msg. This is true, even if it is already in
+d8e8c7dda11f5d Vineet Gupta    2013-11-28  274  	 * IPI handler, because !@old means it has not yet dequeued the msg(s)
+d8e8c7dda11f5d Vineet Gupta    2013-11-28  275  	 * so @new msg can be a free-loader
+d8e8c7dda11f5d Vineet Gupta    2013-11-28  276  	 */
+d8e8c7dda11f5d Vineet Gupta    2013-11-28  277  	if (plat_smp_ops.ipi_send && !old)
+ddf84433f411b6 Vineet Gupta    2013-11-25  278  		plat_smp_ops.ipi_send(cpu);
+41195d236e8445 Vineet Gupta    2013-01-18  279  
+41195d236e8445 Vineet Gupta    2013-01-18  280  	local_irq_restore(flags);
+41195d236e8445 Vineet Gupta    2013-01-18  281  }
+41195d236e8445 Vineet Gupta    2013-01-18  282  
+
+:::::: The code at line 267 was first introduced by commit
+:::::: d8e8c7dda11f5d5cf90495f2e89d917a83509bc0 ARC: [SMP] optimize IPI send and receive
+
+:::::: TO: Vineet Gupta <vgupta@synopsys.com>
+:::::: CC: Vineet Gupta <vgupta@synopsys.com>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
