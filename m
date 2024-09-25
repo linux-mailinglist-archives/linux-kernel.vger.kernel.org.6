@@ -1,157 +1,121 @@
-Return-Path: <linux-kernel+bounces-339069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7506C985FF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:10:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1B02985FEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:09:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2BE51C25F7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:10:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1ECC1C25E24
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4EB1D5AA2;
-	Wed, 25 Sep 2024 12:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3E41D55AF;
+	Wed, 25 Sep 2024 12:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="lg0mlkrI"
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="croZ6UPG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC081D5AA5
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 12:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B0C22C3C5;
+	Wed, 25 Sep 2024 12:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727266729; cv=none; b=rCRMb2A0KdLGumR6E31q/JoFxh2ZYqbe1wsVOjBBI/audUVSWqj1nHi3yovxK2oHYjfdkHGpPiMEiQPIdI3MjL6uruvbmpFAB1qL5uE+TNXdJDyopbP+7t5e8cZQOdBEnJ+C+O7bP0ouLWw9ClGP3XVzFnCzaLTlbvmUEbLr9zo=
+	t=1727266686; cv=none; b=ZO/rgOB14LlneXMsx7/88LVuTj2wJ49ERuI351oEsh5yrQTyYRDqacropRFc+jBKg3aIJDaCflCPc6WUQT2gEgQoqSQGMIZr4oaIfau+6FdzPF5kpXJm51PVHi8MuhVTJtkjvvyjZlCJIC3G2/wkP3pRXdtP21nKjGF2TW63UAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727266729; c=relaxed/simple;
-	bh=HVChrobm56k0POkWg+Ge0IFTdeSavWkyfqUKA01l8KI=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=gLn/yjdMzX1KEmZpqnNygyHBraN9UWcqQoEQJqdG/GXVJNx0SQaXisqUuGml/XNQXjLJB8iuAZOP53O0D7DRuVWT0RYD+JzLSbR+pAEdjzMJJJnNNGqmvxsfilQ0xj6MJhC8yNNw9ypMuEx6mh3DRuKziO2TGW9xt7zwSO0nmFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=lg0mlkrI; arc=none smtp.client-ip=162.62.57.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1727266717; bh=ehee5zzBVWYAjZlEYmL71vLcriO/wtDFnsMdeCY4x68=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=lg0mlkrIaPuvwJea7shGJ38ZuA6TNmWuAFlxlTBhLxh/3GuyctjIEaXQo1v6/JBHD
-	 u4Fazu4pVi9Q0qrr/4w8gG3P1wrfqKzUjpEf52z140tqyR5NNADAMDVM3VVUPCiQHk
-	 PQvwNUuuswqmoHNMRR7zDjCDymzeE0rNDWQ4aBLc=
-Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
-	by newxmesmtplogicsvrszb9-1.qq.com (NewEsmtp) with SMTP
-	id 26F0A485; Wed, 25 Sep 2024 20:09:47 +0800
-X-QQ-mid: xmsmtpt1727266187thx2rxfo0
-Message-ID: <tencent_11342DC56C149450EACEED06CE087BDE6F0A@qq.com>
-X-QQ-XMAILINFO: OCYbvBDBNb9r8hn6TBozAikYLJd7ss1PLbMqc6ot7sjydA4n6f0KeDtwDjIHtF
-	 +zntDkb3Lm9e29BGFoDyjJWR/RG4DOUvu/GsFVHaS5m8E6j1q/lh+wPqaDFSPZMmFnh4DL+4dsiU
-	 FgFzCSZyiICwLoHfIgXQLMTfIwwb4tR1iXr+kuKitUIAiYN9BoZ87g3wz8L5xXTCArVv1wHenRm2
-	 L2fhuKO4vVQGE5YHidh9XwdQvwIScTyFynPvWeRyhIzZ3QuQgcvMEW9nXmZUtGUsCExGL6fBZDIw
-	 wUJv63WfjzY1HedubZTpsP8CfGRB6wS/oyVijRQ/ToPgl/RoAUeMd9VmdjLAaGA9xi/Pm6Lh32XX
-	 hOn67xvWzWxCpWQ8DKFUAYVbgjmxsfrDn8c0K5MMu51R+cOM9Y9QP+ICt0NdmLmBT0gNHMTKrDez
-	 1pLJIl3BmXCZ21flLRmC6PaVNPVe5UYZGopBpYuqdwQuKoeRiul3sqIRhHJHOopC8g95+tS8RlBF
-	 BNHTHSlENmd5r4NeOhk/9R5jcben9aUL+iKo+TzjKSRS63G8fxNRvzmp0wdP/OwU4BTIC2sTV3ts
-	 Lbawq/GJqNd7M8clq/CBfh9HZFLGVkIbL6WHp6DUgt5OquJUrWApZPtn++frffyPQY2slh+pUMHa
-	 nW7yxaMJdeDlrSQXC9gEu5xPiyOlBzPf0kt9sEFrJuwYwpAUxlQencljlYP/B5erRhw/NyyFuOro
-	 7E4yQ71YQP4i+vW5QOmpfNyWfCEv6/EMIavzLHiCrV6L1sl5JGN8lr3ukpFySF0WVgvvfMGRG9LN
-	 uu/vtw7vbChrzR20kP7zsfhJxC9P265FXYm8jgV+QOIkZz51br/XoWih+MjvfDUk4FGTv1sK1QB9
-	 47UxjKP0M13bpXcvShAbUL+w7E6u5vbwFI/jN9xMsqThxjbCNlAVHN0UVokLBibPFqxayfkdZE
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+c0360e8367d6d8d04a66@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in vfs_get_tree
-Date: Wed, 25 Sep 2024 20:09:47 +0800
-X-OQ-MSGID: <20240925120946.1460178-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <66f33aad.050a0220.457fc.0030.GAE@google.com>
-References: <66f33aad.050a0220.457fc.0030.GAE@google.com>
+	s=arc-20240116; t=1727266686; c=relaxed/simple;
+	bh=WYbX/CYBzzvA0ZfKnz90ChZuthLl9se19UtmvW4qUEI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PXQqK6wJslFnJEeOZv+fVAEjxk7yuoqAZu9Tm8olcYmgxqWNXjgM0IDxvyo/NphwwKYkzAMlJRsyntuRo6/Zuc+MUj2Iw5t1J1lqPP3TGTDwkm3VoPXdVJKiPsI2ymQbOKbFyELaqx4GrzudwiwAQgWy3sx/MYxZtaoIBZdqGN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=croZ6UPG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C49CC4CEC3;
+	Wed, 25 Sep 2024 12:18:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1727266686;
+	bh=WYbX/CYBzzvA0ZfKnz90ChZuthLl9se19UtmvW4qUEI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=croZ6UPGprZAJSjf0wJwbyfqPwCA2datii0S8U5MolJ8XkVLBH5Llns4Oy+e8POS5
+	 3KbzEc1zLmslvG4H65+v5H3XZ8/u2ek5/AiiFDyg3JCAcJ6i3iRUBAY2zQdRlHRtpT
+	 xXypFo6xn1PqUO1kAhZempBHDQFj0TCpak4yuBdg=
+Date: Wed, 25 Sep 2024 14:18:01 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Gaosheng Cui <cuigaosheng1@huawei.com>
+Cc: rafael@kernel.org, akpm@linux-foundation.org,
+	thunder.leizhen@huawei.com, wangweiyang2@huawei.com,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH -next 1/2] kobject: fix memory leak in kset_register()
+ due to uninitialized kset->kobj.ktype
+Message-ID: <2024092552-buckskin-frivolous-3728@gregkh>
+References: <20240925120747.1930709-1-cuigaosheng1@huawei.com>
+ <20240925120747.1930709-2-cuigaosheng1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240925120747.1930709-2-cuigaosheng1@huawei.com>
 
-db
+On Wed, Sep 25, 2024 at 08:07:46PM +0800, Gaosheng Cui wrote:
+> If a kset with uninitialized kset->kobj.ktype be registered,
+> kset_register() will return error, and the kset.kobj.name allocated
+> by kobject_set_name() will be leaked.
+> 
+> To mitigate this, we free the name in kset_register() when an error
+> is encountered due to uninitialized kset->kobj.ktype.
+> 
+> Fixes: 4d0fe8c52bb3 ("kobject: Add sanity check for kset->kobj.ktype in kset_register()")
+> Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
+> ---
+>  lib/kobject.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/lib/kobject.c b/lib/kobject.c
+> index 72fa20f405f1..ecca72622933 100644
+> --- a/lib/kobject.c
+> +++ b/lib/kobject.c
+> @@ -862,6 +862,8 @@ int kset_register(struct kset *k)
+>  		return -EINVAL;
+>  
+>  	if (!k->kobj.ktype) {
+> +		kfree_const(k->kobj.name);
+> +		k->kobj.name = NULL;
+>  		pr_err("must have a ktype to be initialized properly!\n");
+>  		return -EINVAL;
+>  	}
+> -- 
+> 2.25.1
+> 
 
-#syz test
+Hi,
 
-diff --git a/fs/bcachefs/btree_node_scan.c b/fs/bcachefs/btree_node_scan.c
-index b28c649c6838..aa247ca6270d 100644
---- a/fs/bcachefs/btree_node_scan.c
-+++ b/fs/bcachefs/btree_node_scan.c
-@@ -280,7 +280,7 @@ static int read_btree_nodes(struct find_btree_nodes *f)
- 			percpu_ref_put(&ca->io_ref);
- 			closure_put(&cl);
- 			f->ret = ret;
--			bch_err(c, "error starting kthread: %i", ret);
-+			bch_err(c, "error starting kthread: %i %d", ret, PTR_ERR(t));
- 			break;
- 		}
- 	}
-@@ -358,6 +358,7 @@ int bch2_scan_for_btree_nodes(struct bch_fs *c)
- 	mutex_init(&f->lock);
- 
- 	ret = read_btree_nodes(f);
-+	pr_info("ret: %d, %s\n", ret, __func__);
- 	if (ret)
- 		return ret;
- 
-diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
-index 4a1bb07a2574..49d711e9837e 100644
---- a/fs/bcachefs/fs.c
-+++ b/fs/bcachefs/fs.c
-@@ -2148,6 +2148,7 @@ static int bch2_fs_get_tree(struct fs_context *fc)
- out:
- 	fc->root = dget(sb->s_root);
- err:
-+	pr_info("ret: %d, sb: %p, fc: %p, fcroot: %p, %s\n", ret, sb, fc, fc->root, __func__);
- 	darray_exit(&devs_to_fs);
- 	bch2_darray_str_exit(&devs);
- 	if (ret)
-diff --git a/fs/bcachefs/recovery.c b/fs/bcachefs/recovery.c
-index be1e7ca4362f..aeeeda0f01d4 100644
---- a/fs/bcachefs/recovery.c
-+++ b/fs/bcachefs/recovery.c
-@@ -522,8 +522,8 @@ static int read_btree_roots(struct bch_fs *c)
- 					bch2_btree_id_str(i)) ||
- 		    mustfix_fsck_err_on((ret = r->error = bch2_btree_root_read(c, i, &r->key, r->level)),
- 					c, btree_root_read_error,
--					"error reading btree root %s l=%u: %s",
--					bch2_btree_id_str(i), r->level, bch2_err_str(ret))) {
-+					"error reading btree root %s l=%u: %s ret: %d",
-+					bch2_btree_id_str(i), r->level, bch2_err_str(ret), ret)) {
- 			if (btree_id_is_alloc(i)) {
- 				c->opts.recovery_passes |= BIT_ULL(BCH_RECOVERY_PASS_check_allocations);
- 				c->opts.recovery_passes |= BIT_ULL(BCH_RECOVERY_PASS_check_alloc_info);
-@@ -849,6 +849,7 @@ int bch2_fs_recovery(struct bch_fs *c)
- 		atomic64_add(1 << 16, &c->key_version);
- 
- 	ret = read_btree_roots(c);
-+	pr_info("ret: %d, %s\n", ret, __func__);
- 	if (ret)
- 		goto err;
- 
-@@ -967,6 +968,7 @@ int bch2_fs_recovery(struct bch_fs *c)
- 
- 	ret = 0;
- out:
-+	pr_info("out ret: %d, %s\n", ret, __func__);
- 	bch2_flush_fsck_errs(c);
- 
- 	if (!c->opts.retain_recovery_info) {
-diff --git a/fs/bcachefs/super.c b/fs/bcachefs/super.c
-index 873e4be7e1dc..74d0af559a77 100644
---- a/fs/bcachefs/super.c
-+++ b/fs/bcachefs/super.c
-@@ -1036,6 +1036,7 @@ int bch2_fs_start(struct bch_fs *c)
- 	ret = BCH_SB_INITIALIZED(c->disk_sb.sb)
- 		? bch2_fs_recovery(c)
- 		: bch2_fs_initialize(c);
-+	pr_info("2ret: %d, %s\n", ret, __func__);
- 	if (ret)
- 		goto err;
- 
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
