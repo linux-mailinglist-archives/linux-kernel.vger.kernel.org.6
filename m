@@ -1,182 +1,232 @@
-Return-Path: <linux-kernel+bounces-337926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9127F985118
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 04:49:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74C9298511C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 04:51:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B46551C2348E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 02:49:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 980671C22CD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 02:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052F2149C4B;
-	Wed, 25 Sep 2024 02:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="v784tjO+"
-Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11010017.outbound.protection.outlook.com [52.101.128.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9942B149C5B;
+	Wed, 25 Sep 2024 02:51:03 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49755146D6D;
-	Wed, 25 Sep 2024 02:48:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727232541; cv=fail; b=AQnYvKztyW7NVit22UgrdzEH8VZwzlB+UjlEZxZ2L9c7Lwium7J2vB5QwHpyV+AJMpkhpaxFTd6PcpZU72zowE1imZblih8DDI9i25kQf5To8YKcyvAYqRY7ILhBeBbszNeD7q9BRUPEaLszOisQg+pQFwhKsamwnsbHJJyGVP0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727232541; c=relaxed/simple;
-	bh=LObJaivAr5g8eQmdUtd9SPilVMyK93oE+3S2pUy8GiA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Fgywb4lgmlKEGD3VxhlVvFmHLBDzXjRhhGx7WSU8VSUBmqEjw5MUz9U4dcfgdJMEeFde02/b3zNJvbjWdMFrpWlJ/u8dKJNbUmFns/koh/9i1+mtsGG2y/xdx/SQweSDSapEPBzC0+PvvXO8y48S+QvAgAZGyHR121eu22VTetE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=v784tjO+; arc=fail smtp.client-ip=52.101.128.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LQ9JLfUp9P/MfTe2/cmnVRMsgvZIJdRZfHIy61YM+/rR1kNa2VLkIJHorgXiZC1L3IIrDJYKXtVR+crf3WE0c6Mt3l5fbDXeuF/Vj0U/9w0EowXcU1U8Wg7jD42c9fqSh0y/CQZR/NrECx1AO6xSUrSIuEnJjoxky5lAm77NAdt0h1nwFQcC/N6z1j5jGr55gdAafAanBEwAqRbOUpft3CfxK8D9HPUxJgM2+4CVVe5HPEWkJm32tR9WALAwaP4rKMj+aiOHJ55Fraa67T9aGrMastJLcAgd95H0m8fPC0lreSZf381Krou43rbMkbHFcDIG5szU358J/Z+jZYs6Qw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Mx4BEAP9cjjHSnFpGBz0GVMHLyRxFNFGoyL4vlRV2d4=;
- b=NHmSchiSyUqFcR7lG2yqkiizlwDkaiZ0xIYv0hBhQN5ILGDgBBY53hwIecsFgqb8K0ZWHjk4IpqtL0LHanMgBDD1VrTKSgUV9MjLKnjeFiaxRfoCTkY7qJxOJgq15gNArI/aEpfdoz/GOLnk4+ZGUeBw2336CvlIprsYSM07MjctOKUYhTl/E3IfO4Ifk3JQwDqUch2J9ciV6JSxIUfUjya0qtzNk6YFkXRQiDkNYLvmGZxrEtkA+ViWaUQlAVo2heK9Gks15TXj6OU7nf4cVlBF4CV2IP6XZSnpdEzVw/5Gf6YiwpLygORWrLjErfR3PyFxBYoqQBKh7NwK/c/ZQg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 58.252.5.68) smtp.rcpttodomain=samsung.com smtp.mailfrom=oppo.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=oppo.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Mx4BEAP9cjjHSnFpGBz0GVMHLyRxFNFGoyL4vlRV2d4=;
- b=v784tjO+WY2yUz8vRfR6Z/JbL5WpKyFtJISUhPSuBuxofIdNiMi9J0SCCxyjXGboDxHoo0PDc8YzBG25xLiVRlI1SvKXIdi+1KMP9/h0ASIWpUTO3XkuMiErTlRc92X2TCpotU/TPtirHlb/90WzSTSH9OT1Fm7W//zzBmTtJb0=
-Received: from SG2PR06CA0232.apcprd06.prod.outlook.com (2603:1096:4:ac::16) by
- SEYPR02MB6243.apcprd02.prod.outlook.com (2603:1096:101:d0::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7982.24; Wed, 25 Sep 2024 02:48:54 +0000
-Received: from SG2PEPF000B66CC.apcprd03.prod.outlook.com
- (2603:1096:4:ac:cafe::68) by SG2PR06CA0232.outlook.office365.com
- (2603:1096:4:ac::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.17 via Frontend
- Transport; Wed, 25 Sep 2024 02:48:54 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
- smtp.mailfrom=oppo.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=oppo.com;
-Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
- 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
- client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
-Received: from mail.oppo.com (58.252.5.68) by
- SG2PEPF000B66CC.mail.protection.outlook.com (10.167.240.25) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7918.13 via Frontend Transport; Wed, 25 Sep 2024 02:48:54 +0000
-Received: from cndgdcavdu0c-218-29.172.16.40.114 (172.16.40.118) by
- mailappw30.adc.com (172.16.56.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 25 Sep 2024 10:48:53 +0800
-From: <liuderong@oppo.com>
-To: <alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>
-CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>, liuderong
-	<liuderong@oppo.com>
-Subject: [PATCH] scsi:ufs:core: Add trace READ(16)/WRITE(16) commands
-Date: Wed, 25 Sep 2024 10:48:43 +0800
-Message-ID: <1727232523-188866-1-git-send-email-liuderong@oppo.com>
-X-Mailer: git-send-email 2.7.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B0F647;
+	Wed, 25 Sep 2024 02:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727232663; cv=none; b=NMWz+6b7Jcs7jCweBHxQ8aVob1lSUFAWkDKBjBpXVdcgwstXW1aqDF/ofCKAsmtcclca8wGoV14EJrX47AbEabP+TaDiFCwuMOkE92cMthzutC+x8xFFgQylqIcEnw9w+rPqJfQgBhbmyp/ARUBnDueJaoaS+IkCYqYz70LM1jQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727232663; c=relaxed/simple;
+	bh=X4i0ZHgtKU7Kwg4TLW6QIIbvLLD68f4+T4tliHc1Q8s=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SMVtvhzEir5tJp8eHDWalG5TB0S1jq5JBp5F9vm5ShgtrplTdiUQexD8gFjsQEbkzyZjDmITApkbaA5GBSK1G61UofFKNVn5h56TSOaIgHywdw1P2CZLpWovgwoy3DrqP02jK70K06ea659bn8mw81nFrUZkntRWWAS1umL7nQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: f7d466be7ae811efa216b1d71e6e1362-20240925
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
+	HR_CTT_TXT, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_DIGIT_LEN
+	HR_FROM_NAME, HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER
+	HR_SJ_NOR_SYM, HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT
+	HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED
+	SA_UNTRUSTED, SA_LOWREP, SA_EXISTED, SN_UNTRUSTED, SN_UNFAMILIAR
+	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD_SPF
+	GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_T1, AMN_GOOD
+	AMN_C_TI, AMN_C_BU
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:18718b90-26fc-4408-8b40-5aaaf0e9f18f,IP:0,U
+	RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+	ON:release,TS:-30
+X-CID-INFO: VERSION:1.1.38,REQID:18718b90-26fc-4408-8b40-5aaaf0e9f18f,IP:0,URL
+	:0,TC:0,Content:-25,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-30
+X-CID-META: VersionHash:82c5f88,CLOUDID:eff6b00a5657bc2d841e4c61fd906f9e,BulkI
+	D:240925105050B74JZEQX,BulkQuantity:0,Recheck:0,SF:66|38|17|19|102,TC:nil,
+	Content:0,EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:
+	0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_FSD,TF_CID_SPAM_SNR,TF_CID_SPAM_FAS
+X-UUID: f7d466be7ae811efa216b1d71e6e1362-20240925
+X-User: dengjie03@kylinos.cn
+Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <dengjie03@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 1752275317; Wed, 25 Sep 2024 10:50:48 +0800
+From: dengjie <dengjie03@kylinos.cn>
+To: rafael@kernel.org,
+	pavel@ucw.cz,
+	len.brown@intel.com,
+	gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	xiehongyu1@kylinos.cn,
+	duanchenghao@kylinos.cn,
+	xiongxin@kylinos.cn,
+	dengjie <dengjie03@kylinos.cn>
+Subject: [PATCH v2] USB: Fix the issue of S4 wakeup queisce phase where task resumption fails due to USB status
+Date: Wed, 25 Sep 2024 10:50:41 +0800
+Message-Id: <20240925025041.149206-1-dengjie03@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240923100553.119324-1-dengjie03@kylinos.cn>
+References: <20240923100553.119324-1-dengjie03@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: mailappw30.adc.com (172.16.56.197) To mailappw30.adc.com
- (172.16.56.197)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG2PEPF000B66CC:EE_|SEYPR02MB6243:EE_
-X-MS-Office365-Filtering-Correlation-Id: d9ad3e61-838a-45a9-27c6-08dcdd0c9841
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?VpORU51jA87sJ7mSr/gin7eMNn5fuDUIOL6sV4fl234AFs43Jy3laKLZQWkA?=
- =?us-ascii?Q?/pi1TVFcSVQCdyIrvS/r4SDPjKBTjNBCFNW8/FaCNCcJYkkvnMrFQW6cM1SF?=
- =?us-ascii?Q?zJdvm5ax08/5JORJe4P5OR3oa2hC0ZWqAltshrvZ+flJ7xSfecTuOTHQMBKC?=
- =?us-ascii?Q?26nx+SWXzTfIRJNTeZVx+BAytsmmwdkiqfmkF7q56ig8r03C4qMsiBWeCBZD?=
- =?us-ascii?Q?EyVwXNjDbi2KCmGxTgb6fqxQhH7tRh/qPzNvXrtQhBsGphtIwQCuqP5Kw5QH?=
- =?us-ascii?Q?0rt8/4bnjI/z8SXqa1+UYDLq5SO7xB/ss4GAI1B7flbHoDqFjgb4+fyu4HEa?=
- =?us-ascii?Q?wM2B9KLeL/0p1OM3ZmC9p/2MPptJb+RYTEufzK8Xs1BsfIq8BcsPsmvH1Fw9?=
- =?us-ascii?Q?N+BgkJjSjO9iXNmoO8spzJoJSSfJ6nCSvgPdykUwgpVq3zWlf8YOA50vkMpa?=
- =?us-ascii?Q?zkrI1QvZggXWF7XStyfLoO7lSnZac9jW6NxnFV4J0QWEp6gKzVfkzLnLfztD?=
- =?us-ascii?Q?rGH8JfEKpZoVWrV+LMPBvGftOP20MSkNPVAoDnGeI+hJXyEfVAG5XSKnNxv6?=
- =?us-ascii?Q?EFMH44x6oB/x+qWgtwS9lD01T2GTHVzvNkm/4XbgdyGaJJRWqFwQyMCql8MO?=
- =?us-ascii?Q?fLrLX5eAdOR4UyHzJMzeKsMeV+yFEX76MQJqIhyuvl2ClrdKmdUqtxN/N9OR?=
- =?us-ascii?Q?hMVhHlWqspWEvtkmQm3ulvyz8FNgSstOgggcWT7FTGp/hq3B887RvJhwTXsX?=
- =?us-ascii?Q?uv4vmlfE5Zfw5WDa8Waob7CE7t9IDVu7q3HJPNC3ZO1DwPRZ4VVtu72eBWDw?=
- =?us-ascii?Q?7Vm7Cz/E/AMhDfez9sB3K5KRfzMH76nv8sxKVVhTICUkdq0emYO/x8XnCe5L?=
- =?us-ascii?Q?cBQSzRgwLJzG0/jC3iTptkTZ7npf/taNnchI5r5vNxQJvcilSU9cAoZhyCxf?=
- =?us-ascii?Q?D4cBcrs1YVRdJy/YZZ8ZsMfyn9P/al39V6xMQwB7w96544dewp0ylnbwITEK?=
- =?us-ascii?Q?3rgxvaGI0CrCiOj25Bw6ujN7fgX1V54kFX68j2EW+styx0tcOyyD6y57BkoL?=
- =?us-ascii?Q?nnBr1Dt106cnQ9bM/b/RxEjqVPN8mGdWmvgYsN9Y59ZncNxQzhPoq4yZsTW2?=
- =?us-ascii?Q?R9tH42nx1NBE4uvy5OstZcI8hBXwQMCJfajhyow+xbaaPNzhmvV3GP3QdmFH?=
- =?us-ascii?Q?k/KfkXsoQwRV5qvx+kqVlyXRCGPa886pU3NgTfkHdSS9ysedd0vPXAq3i0iI?=
- =?us-ascii?Q?yJGL4sjhEMQkFcBBi+54KvriRjpEFvdHtjKbSYm62TD/L/onjxPTB7sEeVEe?=
- =?us-ascii?Q?RWmh0gT3ykAF/XkgV6jhjN5SUohCtCl1GGS9YNfn7Yjvt+/K/OXx4KiyMooo?=
- =?us-ascii?Q?qs+rTeGuAAAxE/QXHQrymCPD+CvN?=
-X-Forefront-Antispam-Report:
-	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2024 02:48:54.2426
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d9ad3e61-838a-45a9-27c6-08dcdd0c9841
-X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SG2PEPF000B66CC.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR02MB6243
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: liuderong <liuderong@oppo.com>
+Reproduction of the problem: During the S4 stress test, when a USB device is inserted or
+removed, there is a probability that the S4 wakeup will turn into a reboot.The following
+two points describe how to analyze and locate the problem points:
 
-For sd_zbc_read_zones, READ(16)/WRITE(16) are mandatory for ZBC disks.
-Currently, when printing the trace:ufshcd_command on zone UFS devices,
-the LBA and SIZE fields appear invalid,
-making it difficult to trace commands.
-So add trace READ(16)/WRITE(16) commands for zone ufs device.
+1. During the boot stage when S4 is awakened, after the USB RootHub is initialized,
+it will enter the runtime suspend state. From then on, whenever an xhci port change
+event occurs, it will trigger a remote wakeup request event and add wakeup_work
+to pm_wq, where the subsequent RootHub runtime resume process will be handled by pm_wq.
 
-Trace sample:
-ufshcd_command: send_req: 1d84000.ufshc: tag: 31, DB: 0x0,
-size: -1, IS: 0, LBA: 0, opcode: 0x8a (WRITE_16), group_id: 0x0, hwq_id: 7
-ufshcd_command: complete_rsp: 1d84000.ufshc: tag: 31, DB: 0x0,
-size: -1, IS: 0, LBA: 0, opcode: 0x8a (WRITE_16), group_id: 0x0, hwq_id: 7
+xhci runtime suspend flow：
+S4 boot
+   |->xhci init
+       |->register_root_hub
+	   |->hub_probe
+	       |->callback = RPM_GET_CALLBACK(dev, runtime_suspend)   /* xhci RootHub runtime suspend */
 
-Signed-off-by: liuderong <liuderong@oppo.com>
+xhci runtime resume flow ：
+xhci_irq()
+    |->xhci_handle_event()
+	|->handle_port_status()
+   	    |->if(hcd->state == HC_STATE_SUSPENDED)
+		 |->usb_hcd_resume_root_hub()
+		    |->set_bit(HCD_FLAG_WAKEUP_PENDING, &hcd->flags)   /* wakeup pending signal to be set */
+  		    |->queue_work(pm_wq, &hcd->wakeup_work)
+			|->hcd_resume_work()			       /* hcd->wakeup_work */
+			    |->usb_remote_wakeup()
+				|->callback = RPM_GET_CALLBACK(dev, runtime_resume)
+				    |->usb_runtime_resume()            /* usb runtime resume  */
+					|->generic_resume()
+					    |->hcd_bus_resume()
+						|->clear_bit(HCD_FLAG_WAKEUP_PENDING, &hcd->flags);
+						  /* wakeup pending signal to be clear */
+
+2. However, during the quiesce phase of S4 wakeup, freeze_kernel_threads() will freeze this pm_wq,
+and between freeze_kernel_threads() and dpm_suspend_start(), there exists a very time-consuming
+S4 image loading process. This leads to a situation where, if an xhci port change event occurs
+after freeze_kernel_threads(), triggering the wakeup pending signal to be set,but it cannot
+be processed by pm_wq to clear this wakeup_pending bit, it will result in a subsequent
+dpm_suspend_start() where USB suspend_common() detects the wakeup pending signal being
+set and returns an -EBUSY error, interrupting the S4 quiesce process and reverting to a reboot.
+
+S4 wakeup
+    |->resume_store
+	|->software_resume()
+	    |->freeze_kernel_threads()		/* will freeze pm_wq */
+	    |->load_image_and_restore()
+		  |->swsusp_read()    	        /* S4 image loading: time-consuming .
+When an xhci port change event occurs at this point, it triggers the wakeup pending signal to be set.
+However, since the pm_wq is in a frozen state, the wakeup_pending bit cannot be cleared.*/
+   		  |->hibernation_restore
+			|->dpm_suspend_start(PMSG_QUIESCE)
+			    |->hcd_pci_suspend()
+				|->suspend_common()
+				    |->if (do_wakeup && HCD_WAKEUP_PENDING(hcd))  return -EBUSY;
+
+Below is a description of the countermeasures taken to address this issue:
+1. Considering the restore process that occurs after the quiesce phase during S4 wakeup,
+which essentially resets all root hubs,checking this wakeup pending status in USB suspend_common()
+during the quiesce phase is of little significance and should therefore be filtered out.
+
+S4 wakeup restore phase
+    |->dpm_resume(PMSG_RESTORE)
+	|->hcd_pci_restore()
+	    |->xhci_resume()		       /* reset all root hubs */
+
+Fixes: 3904bdf0821c ("PM: hibernate: Freeze kernel threads in software_resume()")
+Signed-off-by: dengjie <dengjie03@kylinos.cn>
 ---
- drivers/ufs/core/ufshcd.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+v2:
+	* Fix the formatting issues and function naming conventions in the v1 patch.
+v1:
+	* USB: Fix the issue of S4 wakeup queisce phase where task resumption fails
+ 	   due to USB status.
+---
 
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index 5e3c67e..9e5e903 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -434,15 +434,19 @@ static void ufshcd_add_command_trace(struct ufs_hba *hba, unsigned int tag,
+diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+index fb4d18a0b185..7723e7082a36 100644
+--- a/drivers/base/power/main.c
++++ b/drivers/base/power/main.c
+@@ -559,6 +559,11 @@ bool dev_pm_may_skip_resume(struct device *dev)
+ 	return !dev->power.must_resume && pm_transition.event != PM_EVENT_RESTORE;
+ }
  
- 	opcode = cmd->cmnd[0];
- 
--	if (opcode == READ_10 || opcode == WRITE_10) {
-+	if (opcode == READ_10 || opcode == READ_16 ||
-+		opcode == WRITE_10 || opcode == WRITE_16) {
- 		/*
--		 * Currently we only fully trace read(10) and write(10) commands
-+		 * Currently we only fully trace the following commands,
-+		 * read(10),read(16),write(10), and write(16)
++bool pm_event_is_queisce(void)
++{
++	return pm_transition.event == PM_EVENT_QUIESCE;
++}
++
+ static pm_callback_t dpm_subsys_resume_noirq_cb(struct device *dev,
+ 						pm_message_t state,
+ 						const char **info_p)
+diff --git a/drivers/usb/core/hcd-pci.c b/drivers/usb/core/hcd-pci.c
+index 77830f120834..af2c60049e4a 100644
+--- a/drivers/usb/core/hcd-pci.c
++++ b/drivers/usb/core/hcd-pci.c
+@@ -456,18 +456,25 @@ static int suspend_common(struct device *dev, bool do_wakeup)
+ 		/* Optimization: Don't suspend if a root-hub wakeup is
+ 		 * pending and it would cause the HCD to wake up anyway.
  		 */
- 		transfer_len =
- 		       be32_to_cpu(lrbp->ucd_req_ptr->sc.exp_data_transfer_len);
- 		lba = scsi_get_lba(cmd);
- 		if (opcode == WRITE_10)
- 			group_id = lrbp->cmd->cmnd[6];
-+		if (opcode == WRITE_16)
-+			group_id = lrbp->cmd->cmnd[14];
- 	} else if (opcode == UNMAP) {
- 		/*
- 		 * The number of Bytes to be unmapped beginning with the lba.
+-		if (do_wakeup && HCD_WAKEUP_PENDING(hcd))
+-			return -EBUSY;
+-		if (do_wakeup && hcd->shared_hcd &&
+-				HCD_WAKEUP_PENDING(hcd->shared_hcd))
++		/* Considering the restore process that occurs after
++		 * the quiesce phase during S4 wakeup, which essentially
++		 * resets all root hubs,checking this wakeup pending status
++		 * in USB suspend_common() during the quiesce phase is of
++		 * little significance and should therefore be filtered out.
++		 */
++		if (!pm_event_is_queisce() && do_wakeup &&
++		    (HCD_WAKEUP_PENDING(hcd) ||
++		     (hcd->shared_hcd &&
++		      HCD_WAKEUP_PENDING(hcd->shared_hcd))))
+ 			return -EBUSY;
+ 		retval = hcd->driver->pci_suspend(hcd, do_wakeup);
+ 		suspend_report_result(hcd->driver->pci_suspend, retval);
+ 
+ 		/* Check again in case wakeup raced with pci_suspend */
+-		if ((retval == 0 && do_wakeup && HCD_WAKEUP_PENDING(hcd)) ||
+-				(retval == 0 && do_wakeup && hcd->shared_hcd &&
+-				 HCD_WAKEUP_PENDING(hcd->shared_hcd))) {
++		if (retval == 0 && !pm_event_is_queisce() && do_wakeup &&
++		    (HCD_WAKEUP_PENDING(hcd) ||
++		     (hcd->shared_hcd &&
++		      HCD_WAKEUP_PENDING(hcd->shared_hcd)))) {
+ 			if (hcd->driver->pci_resume)
+ 				hcd->driver->pci_resume(hcd, false);
+ 			retval = -EBUSY;
+diff --git a/include/linux/pm.h b/include/linux/pm.h
+index 4c441be03079..dad87c9ecfee 100644
+--- a/include/linux/pm.h
++++ b/include/linux/pm.h
+@@ -758,6 +758,7 @@ extern void pm_generic_complete(struct device *dev);
+ 
+ extern bool dev_pm_may_skip_resume(struct device *dev);
+ extern bool dev_pm_smart_suspend_and_suspended(struct device *dev);
++extern bool pm_event_is_queisce(void);
+ 
+ #else /* !CONFIG_PM_SLEEP */
+ 
 -- 
-2.7.4
+2.25.1
 
 
