@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-338372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25A75985705
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:15:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 832F4985707
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:15:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 567D31C2297E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:15:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 434FA281F33
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A79D18308A;
-	Wed, 25 Sep 2024 10:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3EF189904;
+	Wed, 25 Sep 2024 10:15:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d1P7vZGp"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NMdvomyo"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AF215C12F;
-	Wed, 25 Sep 2024 10:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29710165EF2;
+	Wed, 25 Sep 2024 10:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727259313; cv=none; b=rUByjxWIJLMjecp1qDwxdz8OOJkAXGFAUqlTaef2XIYoSjzslBJs2QpLzRSUlHx8NHhZdUa2HTLbILbVEigRJh/SKSiSWLUhANH7cZbFNhDWn1VBvEHGiEwT1cXA/XiKYBlF3cWthg0ebIObRiSUO5KMtMUdvBSdWfpn0Ndkaxo=
+	t=1727259314; cv=none; b=GeSCgRtvqkAKtfkArqI9vternsiROPFrFUZr2wxvQC4ywZOx3dSdYx98HO7avGSSBH8hmFDwmulqaku7Tp0ltlHKW3MvRjgHtEVCNkeuWwNBSb+NGElr7qZy1eZcfziP564NXkdutdQnQ27WQ/XI0LAwaAFSb+JgufIs5QWNW6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727259313; c=relaxed/simple;
-	bh=yw1mImiPrjqLQht4OtSvNd0TeQGoObVDJhFgu2dtlzE=;
+	s=arc-20240116; t=1727259314; c=relaxed/simple;
+	bh=QucO8gEJfWJotXRfJzgyT4H1qW+PxQlhdlDNc0h4/gk=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pFWLKV69aKv8EuPntAm1LAA0Wp8fFBy6lglgtWGU2a5zBQN7VhOekpa0/8FHE4upo+/dGJ1dII3BT5D032eQiQm+w4PcLTvXEwRqimf9orzT2IU1ZnfNVPJJwiXT4r2h9VL2vBgCoDr9zLH+2WQIQElih19WyqeN4dDxeDTG4I4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d1P7vZGp; arc=none smtp.client-ip=209.85.221.46
+	 MIME-Version; b=AwjMGx1WME1W6ckX9U4dmNi7T6HsR/SD8G9qH/eX/I7Shc2dCr2380/ZAwrm7sOysGN2UOMrIcyiHlhxY5VoI+/uekmZaX4ieFZTZ80wzNFDXYFC+RL0bnzqtUyDBN26k0bZRD0suDwARcrPEXBMUu+w8nyxBqvo5Vegzq44tII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NMdvomyo; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-374d29ad8a7so4524203f8f.2;
-        Wed, 25 Sep 2024 03:15:11 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42cde6b5094so61130925e9.3;
+        Wed, 25 Sep 2024 03:15:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727259310; x=1727864110; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1727259311; x=1727864111; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=mH3iAq1TAeBK36lg95WliQsOcKLSEbditM8M8e4wTwE=;
-        b=d1P7vZGpwwqgZ3VNhdNnYIAIEzl5QOVA/wrDKvZqYaQxyzhXYDEW4N0Fpp8UFMhHnU
-         cN/d0NZLX5kS93hlLi7Zi3hQzvMq44X6HrUa5p3S6o9i9hQCw3uwRm1Znk7RZl8zR7ln
-         vZ2PbrIg4hBEQq40A1YCvuiRcbibr5Me/sTVJD14nB6MDjSk3eZjZyUfJzTs7HMA3U0m
-         p+yqindUFz0tVGeOGmsWN1/frB1AAIim9tI1B3pEqFrAiwyP3rorU5iaxxV2DSFkV4Rq
-         rUmYbB7uijG/bVIZlUS8CH8Wdp8o7igR84f7crCvsWWpmBHDH+jGSnr3rSUUXDWQLeC1
-         28zw==
+        bh=q0yqjz/vLAoslnLJDGa7eN7K2Pvc9Kf7CmkO2W3efDk=;
+        b=NMdvomyoyLvTQqgZ1rn+RcL1LUYQA1aEFWikH2dfXZ9toMfsYEQToZgPf6paCnNV5F
+         WxI2LsOQmxMXhX2zX84nkKAwTMxZ2XFXh23EwoX2O9fQZcXbEmdgJmrMNOtfff66yR06
+         K+TQSGg4mstZBa5qU7Ga1hGN7bOVouBc/88a3FSjVkfgGl8SoYhe1ze8qHMrL7ScOVwR
+         woTc5yq9DdW3Hi1XugksGweLkBH9ovYJaPtUlyekJbN1Px9PknH8Jo6wSVIciM9md6Td
+         ibNv4+w9MMUfBowKfb7gz2cZsESjsV3H5kIwWtBH3eTpfgtLsUnmPyW/UwrycCmvnxYo
+         0aaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727259310; x=1727864110;
+        d=1e100.net; s=20230601; t=1727259311; x=1727864111;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mH3iAq1TAeBK36lg95WliQsOcKLSEbditM8M8e4wTwE=;
-        b=i2OTbBj+eLJ/g2RyyG6k1+TzdTf0wJ8izPZGeWfIoMFy5KwGut1Iou36vPCNU4n9wu
-         EhItN2QeMQm+L/HCeTJB4WOZ0wxh2h7AzXOfe/RM0ZVCbwP4l7/KJt8YglPAzdC2Lv29
-         nbrrz9WoUMqq2dLmGMdFlrrueSlR/0sejURwlTCLRYla5jRcVbZWCIdTxTfUmr2oiPj7
-         GG7eayFYSMNcK6r8SmPcSzDOu4IvvKA8tQA0+4zf7YzXRp2Q8gMmZSTRQCseYnpDPE25
-         GldKhNfLIQtlB/NzzL4x37gkk5CCd6eDfnq+XPZ7yv7hkC77OccaCtQRcYm2a7tsi2PU
-         TY0A==
-X-Forwarded-Encrypted: i=1; AJvYcCU4evc+ZIUstJ62lYNBuDGZuRA0xSd6aKeizxV2s2TAx0zWZ9DAb/UteSvDWLJ8GHUN2uNYLi7qF1C3@vger.kernel.org, AJvYcCWuxG39fWKKUEMh9Me6h8BFRemOQda33gMmckiW2uv4eKtCTZ1qUb027agd6yNallCEvmQh15MsLmnpsIVJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMQgrqACqYRZxcDvs3nLaybBVdnzA1st9t3IXPbKSRTUjEUgcl
-	LMQmR8eeS5mMUxRQ21kW+WHTsFIJM8PgLs/SZ1tMbibtVyLI/N+x
-X-Google-Smtp-Source: AGHT+IEDuMF7AmbE72EiRIWfTyj8UDV6s6Ac8BVbi1Q8y0Keq8ajGW2UzIm9myAL8AG1LUQcAtjFmA==
-X-Received: by 2002:adf:f1ca:0:b0:374:c8cc:1bb1 with SMTP id ffacd0b85a97d-37cc24b575bmr1521519f8f.39.1727259309987;
-        Wed, 25 Sep 2024 03:15:09 -0700 (PDT)
+        bh=q0yqjz/vLAoslnLJDGa7eN7K2Pvc9Kf7CmkO2W3efDk=;
+        b=HiWp8ziW3psPFZWWhGM4VEEme23wyc1AR3xpXO2MFUJfRhIfI3J9h6QyRTegbHz6O4
+         jKPV2BxD1n+5c/xQBQbUkaslpO6TTHf3T9UVAzbU2cjFHI9KazCtpbOw70e0l3Be0D1/
+         7fVW/Ks5gNHBxTp4wykLEyYFc1qy7XM1JyteDVr8umI4ZhfSsKec57LGNnQxHHJbucWm
+         ozpS+mKKmQRDCSz7Zt6AXd+TzQcewOoFHu1JGJML813wdj6II5SqswX4ZnDpxlO2MwMs
+         kZBr4y/91/QBN5+XEKZcWQqCyuBq+Ka4W+mLCxEJ/5vgqVY2MPaYMSWD85KK1c8z9x6q
+         YZxg==
+X-Forwarded-Encrypted: i=1; AJvYcCX85FPPGQj8VLTossQdzQwXoKga7Mvm5gUz/VNlI9u1+nlVoc+meDWderfzNM3mY3NjanWJwe+RgxMb@vger.kernel.org, AJvYcCXUgyJQzG+JqkyDsuuFt6x6wRRvUpS21/leEI3fPcjsR4vT3sEJyQz40va4lt3QL3pY8HIUjo7Oso5KtXnI@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAtrDEOJs/wK9aZ8wao8dohcl1Cs7ZggOyCYyd82bdpbgI7Tho
+	ewv1azQ3bQjHa93qdSH0U53Tw4FQCjOnNoEhrHevl3hZc3BL8lmQ
+X-Google-Smtp-Source: AGHT+IGGrksQqujrE8tWrONIU2RpDc8dp9sRezir+8ahhKdtMo+RszPM/Z6hhXo38BC01/GaWh/h6Q==
+X-Received: by 2002:a05:600c:4689:b0:42c:b16e:7a22 with SMTP id 5b1f17b1804b1-42e9610d52fmr15491985e9.12.1727259311130;
+        Wed, 25 Sep 2024 03:15:11 -0700 (PDT)
 Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37cbc1560a7sm3628194f8f.0.2024.09.25.03.15.08
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37cbc1560a7sm3628194f8f.0.2024.09.25.03.15.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 03:15:09 -0700 (PDT)
+        Wed, 25 Sep 2024 03:15:10 -0700 (PDT)
 From: Christian Marangi <ansuelsmth@gmail.com>
 To: Miquel Raynal <miquel.raynal@bootlin.com>,
 	Richard Weinberger <richard@nod.at>,
@@ -83,9 +83,9 @@ To: Miquel Raynal <miquel.raynal@bootlin.com>,
 	linux-kernel@vger.kernel.org,
 	Lorenzo Bianconi <lorenzo@kernel.org>,
 	upstream@airoha.com
-Subject: [PATCH 1/3] of: also export of_update_property
-Date: Wed, 25 Sep 2024 12:13:57 +0200
-Message-ID: <20240925101422.8373-2-ansuelsmth@gmail.com>
+Subject: [PATCH 2/3] dt-bindings: mtd: Add Documentation for Airoha fixed-partitions
+Date: Wed, 25 Sep 2024 12:13:58 +0200
+Message-ID: <20240925101422.8373-3-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240925101422.8373-1-ansuelsmth@gmail.com>
 References: <20240925101422.8373-1-ansuelsmth@gmail.com>
@@ -97,27 +97,123 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Similar to how is done for of_add_property and of_remove_property, also
-export of_update_property to permit kmod to use this additional function
-and correctly update entry in DT.
+Add Documentation for Airoha fixed-partitions compatibles.
+
+Airoha based SoC declare a dedicated partition at the end of the flash to
+store calibration and device specific data, in addition to fixed
+partitions.
+
+The offset of this special partition is not well defined as a custom bad
+block management driver is used that reserve space at the end of the flash.
+
+This binding allows defining all fixed partitions and marking the last one
+to detect the correct offset.
 
 Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
- drivers/of/base.c | 1 +
- 1 file changed, 1 insertion(+)
+ .../partitions/airoha,fixed-partitions.yaml   | 80 +++++++++++++++++++
+ .../bindings/mtd/partitions/partitions.yaml   |  1 +
+ 2 files changed, 81 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mtd/partitions/airoha,fixed-partitions.yaml
 
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index 20603d3c9931..b2d523cf4925 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -1746,6 +1746,7 @@ int of_update_property(struct device_node *np, struct property *newprop)
+diff --git a/Documentation/devicetree/bindings/mtd/partitions/airoha,fixed-partitions.yaml b/Documentation/devicetree/bindings/mtd/partitions/airoha,fixed-partitions.yaml
+new file mode 100644
+index 000000000000..a45df51065af
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mtd/partitions/airoha,fixed-partitions.yaml
+@@ -0,0 +1,80 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mtd/partitions/airoha,fixed-partitions.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Airoha SoC partitioning
++
++description: |
++  Airoha based SoC declare a dedicated partition at the end of the flash to
++  store calibration and device specific data, in addition to fixed partitions.
++
++  The offset of this special partition is not well defined as a custom bad block
++  management driver is used that reserve space at the end of the flash.
++
++  This binding allows defining all fixed partitions and marking the last one to
++  detect the correct offset from the new end of the flash.
++
++maintainers:
++  - Christian Marangi <ansuelsmth@gmail.com>
++
++select: false
++
++properties:
++  compatible:
++    const: airoha,fixed-partitions
++
++  "#address-cells":
++    enum: [ 1, 2 ]
++
++  "#size-cells":
++    enum: [ 1, 2 ]
++
++patternProperties:
++  "^partition@[0-9a-f]+$":
++    $ref: partition.yaml#
++    properties:
++      compatible:
++        const: airoha,dynamic-art
++    unevaluatedProperties: false
++
++required:
++  - "#address-cells"
++  - "#size-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    partitions {
++        compatible = "airoha,fixed-partitions";
++        #address-cells = <1>;
++        #size-cells = <1>;
++
++        partition@0 {
++          label = "bootloader";
++          reg = <0x00000000 0x00080000>;
++        };
++
++        partition@80000 {
++          label = "tclinux";
++          reg = <0x00080000 0x02800000>;
++        };
++
++        partition@2880000 {
++          label = "tclinux_slave";
++          reg = <0x02880000 0x02800000>;
++        };
++
++        partition@5080000 {
++          label = "rootfs_data";
++          reg = <0x5080000 0x00800000>;
++        };
++
++        partition@ffffffff {
++          compatible = "airoha,dynamic-art";
++          label = "art";
++          reg = <0xffffffff 0x00300000>;
++        };
++    };
+diff --git a/Documentation/devicetree/bindings/mtd/partitions/partitions.yaml b/Documentation/devicetree/bindings/mtd/partitions/partitions.yaml
+index 1dda2c80747b..ec254e03adf0 100644
+--- a/Documentation/devicetree/bindings/mtd/partitions/partitions.yaml
++++ b/Documentation/devicetree/bindings/mtd/partitions/partitions.yaml
+@@ -14,6 +14,7 @@ maintainers:
+   - Miquel Raynal <miquel.raynal@bootlin.com>
  
- 	return rc;
- }
-+EXPORT_SYMBOL_GPL(of_update_property);
- 
- static void of_alias_add(struct alias_prop *ap, struct device_node *np,
- 			 int id, const char *stem, int stem_len)
+ oneOf:
++  - $ref: airoha,fixed-partitions.yaml
+   - $ref: arm,arm-firmware-suite.yaml
+   - $ref: brcm,bcm4908-partitions.yaml
+   - $ref: brcm,bcm947xx-cfe-partitions.yaml
 -- 
 2.45.2
 
