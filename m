@@ -1,55 +1,44 @@
-Return-Path: <linux-kernel+bounces-338363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 336B59856E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:05:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08AA09856E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:07:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D091E1F211DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:05:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D9DDB20EA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:06:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B67415E5B5;
-	Wed, 25 Sep 2024 10:05:38 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B910515B111;
+	Wed, 25 Sep 2024 10:06:52 +0000 (UTC)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A3614AD19;
-	Wed, 25 Sep 2024 10:05:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE2214037F;
+	Wed, 25 Sep 2024 10:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727258738; cv=none; b=GV+wh+lXihvi/Qi+kR/xd0v/Jkf3IMMXddkBsJGci5n+uecigo29P1hGEO+b/TkNZgAqNyeMMWQ7IIECv2+rASpgyorZNxVv4QaleQUcYUUH0yf5wf30GE9AtfZ8qbfbpmAO1YX+RUz/eYFuCD8pedqPPEZQh6RE3lcOA9bshCE=
+	t=1727258812; cv=none; b=lFsqQuFyHHyvLuUxoC+lXKZ8qr1LHIiV4DoVhhJOIUGpGRciysou+ySA1N1ZhWsYKyXmmwlcG5ePwkuF+ra7z1XeeO2hgktaeTObwahjOWshZNGOtZ8O4GiN/hDBq7skQxbPQ4RaAnxsww+X5UWXphY8Xntt9eImlpcBZlim93Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727258738; c=relaxed/simple;
-	bh=qGQI1uV9gNC0+wFAUvqgZd/1D5PbfUTEFlfPnBq4z74=;
+	s=arc-20240116; t=1727258812; c=relaxed/simple;
+	bh=FPRD666LMhdvP+lcHLT9OxVZv6e01nd/FLUR4GiY0Tk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K3CqNewdwzYmZOrjtjj0eMBG/5PwdrY1ehWrMcLkM3YEhl7VDkIjspmNbyNjSSbuyvDk2Vda22Gfj6siCZUu6Kbpdkyx/EB9t1IphrEiRJPWijw6n51uTj4LXpm1EbUD+d9Oga4nfCtVFWq/Dk5TdDvJn1Dsb+fZrvg65+KyOu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4XDC664Lgnz9sSK;
-	Wed, 25 Sep 2024 12:05:34 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id tdRuDw19ZA5l; Wed, 25 Sep 2024 12:05:34 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4XDC663XQwz9sRr;
-	Wed, 25 Sep 2024 12:05:34 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 66F1B8B76E;
-	Wed, 25 Sep 2024 12:05:34 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id PJHxtpbIOOEt; Wed, 25 Sep 2024 12:05:34 +0200 (CEST)
-Received: from [192.168.232.90] (PO27091.IDSI0.si.c-s.fr [192.168.232.90])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id CBE218B763;
-	Wed, 25 Sep 2024 12:05:33 +0200 (CEST)
-Message-ID: <f40ea8bf-0862-41a7-af19-70bfbd838568@csgroup.eu>
-Date: Wed, 25 Sep 2024 12:05:33 +0200
+	 In-Reply-To:Content-Type; b=ZD/TubaRuBaqHy1AapJHRfHGvmszYTlpz8rCDyJzTn8KsaZjcYw0Bmfejg1HrhHIJ8MN1aLXN4BPsZ+RFGuzGTkhskvNdCo2LfgxlYbXap/Tm3X7EeF8yKF1uySGZaoZWUmVWZMWYhFt364mApgv+otv55xMaE4S9hDGy1F1Vbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4XDBhj5c3Vz9v7N8;
+	Wed, 25 Sep 2024 17:47:01 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 13D6D140590;
+	Wed, 25 Sep 2024 18:06:44 +0800 (CST)
+Received: from [10.45.145.58] (unknown [10.45.145.58])
+	by APP2 (Coremail) with SMTP id GxC2BwD3psej4PNmhg+eAQ--.32700S2;
+	Wed, 25 Sep 2024 11:06:43 +0100 (CET)
+Message-ID: <07c9285f-44a1-486a-8390-0c63cefae35a@huaweicloud.com>
+Date: Wed, 25 Sep 2024 12:06:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,69 +46,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 0/7] mm: Use pxdp_get() for accessing page table
- entries
-To: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- "Mike Rapoport (IBM)" <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- x86@kernel.org, linux-m68k@lists.linux-m68k.org,
- linux-fsdevel@vger.kernel.org, kasan-dev@googlegroups.com,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-References: <20240917073117.1531207-1-anshuman.khandual@arm.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20240917073117.1531207-1-anshuman.khandual@arm.com>
+Subject: Re: [RFC PATCH 1/1] hpref: Hazard Pointers with Reference Counter
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Boqun Feng <boqun.feng@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Alan Stern
+ <stern@rowland.harvard.edu>, John Stultz <jstultz@google.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
+ <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
+ Mateusz Guzik <mjguzik@gmail.com>, rcu@vger.kernel.org, linux-mm@kvack.org,
+ lkmm@lists.linux.dev
+References: <20240921164210.256278-1-mathieu.desnoyers@efficios.com>
+ <e4721439-8cad-4134-8c07-84b6ecc69573@huaweicloud.com>
+ <48ae741e-98aa-49d9-b677-6c4f8fd1bcb0@efficios.com>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <48ae741e-98aa-49d9-b677-6c4f8fd1bcb0@efficios.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:GxC2BwD3psej4PNmhg+eAQ--.32700S2
+X-Coremail-Antispam: 1UD129KBjvJXoWruw1xtr48JF4DuFyUur1kGrg_yoW8JF17pr
+	Z7KFy7CFyDGF9akryxtw1UZ348AFZYvas8XaykWrnrZa95WryFqr1SkF1UuF93Aws7XryU
+	trWrArZxCasrJaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUIF
+	4iUUUUU
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
 
 
-Le 17/09/2024 à 09:31, Anshuman Khandual a écrit :
-> This series converts all generic page table entries direct derefences via
-> pxdp_get() based helpers extending the changes brought in via the commit
-> c33c794828f2 ("mm: ptep_get() conversion"). First it does some platform
-> specific changes for m68k and x86 architecture.
+Am 9/25/2024 um 8:35 AM schrieb Mathieu Desnoyers:
+> On 2024-09-25 07:57, Jonas Oberhauser wrote:
+>> Hi Mathieu,
+
+>> I haven't read your code in detail but it seems to me you have an ABA 
+>> bug: as I explained elsewhere, you could read the same pointer after 
+>> ABA but you don't synchronize with the newer store that gave you 
+>> node2, leaving you to speculatively read stale values through *ctx->hp.
+>> (I am assuming here that ctx->hp is essentially an out parameter used 
+>> to let the caller know which node got protected).
 > 
-> This series has been build tested on multiple architecture such as x86,
-> arm64, powerpc, powerpc64le, riscv, and m68k etc.
+> The following change should fix it:
+> 
+>       cmm_barrier();
+> -    node2 = uatomic_load(node_p, CMM_RELAXED);    /* Load A */
+> +    node2 = rcu_dereference(*node_p);    /* Load A */
+> 
 
-Seems like this series imply sub-optimal code with unnecessary reads.
+I don't think this fixes it, because IIRC rcu_dereference relies on the 
+address dependency (which we don't have here) to provide ordering.
 
-Lets take a simple exemple : function mm_find_pmd() in mm/rmap.c
+I would recommend either:
 
-On a PPC32 platform (2 level pagetables):
+-    ctx->hp = node;
++    ctx->hp = node2;
 
-Before the patch:
+which fixes the problem under the perhaps too weak assumption that the 
+compiler doesn't use its knowledge that node==node2 to just undo this 
+fix, or more strictly,
 
-00001b54 <mm_find_pmd>:
-     1b54:	80 63 00 18 	lwz     r3,24(r3)
-     1b58:	54 84 65 3a 	rlwinm  r4,r4,12,20,29
-     1b5c:	7c 63 22 14 	add     r3,r3,r4
-     1b60:	4e 80 00 20 	blr
++    ctx->hp = READ_ONCE(node2);
 
-Here, the function reads mm->pgd, then calculates and returns a pointer 
-to the PMD entry corresponding to the address.
+which I believe makes sure that the value of node2 is used.
 
-After the patch:
+Alternatively you could always use an acquire load.
 
-00001b54 <mm_find_pmd>:
-     1b54:	81 23 00 18 	lwz     r9,24(r3)
-     1b58:	54 84 65 3a 	rlwinm  r4,r4,12,20,29
-     1b5c:	7d 49 20 2e 	lwzx    r10,r9,r4	<= useless read
-     1b60:	7c 69 22 14 	add     r3,r9,r4
-     1b64:	7d 49 20 2e 	lwzx    r10,r9,r4	<= useless read
-     1b68:	7d 29 20 2e 	lwzx    r9,r9,r4	<= useless read
-     1b6c:	4e 80 00 20 	blr
 
-Here, the function also reads mm->pgd and still calculates and returns a 
-pointer to the PMD entry corresponding to the address. But in addition 
-to that it reads three times that entry while doing nothing at all with 
-the value read.
+Best wishes,
 
-On PPC32, PMD/PUD/P4D are single entry tables folded into the 
-corresponding PGD entry, it is therefore pointless to read the 
-intermediate entries.
+   jonas
 
-Christophe
 
