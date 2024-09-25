@@ -1,99 +1,160 @@
-Return-Path: <linux-kernel+bounces-339620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 923839867ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 23:04:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A56669867F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 23:06:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC1131C214CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:04:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DA421F21433
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:06:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A5114AD24;
-	Wed, 25 Sep 2024 21:04:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1691537AA;
+	Wed, 25 Sep 2024 21:06:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hLM5iGnF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ty4V85so"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C4C13E02E
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 21:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE5613E02E;
+	Wed, 25 Sep 2024 21:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727298257; cv=none; b=j0Mb2tB+4Ep+N5akycqZpTR2op+UDAnuqdHlxPxT8uh5Z1Br9WIIFslGRESqeWYXPzfFROcOEUkBiLvrEBw3ax2kWsO5AMfmPatRakbwFPwE/+rFJ4xNisSIQEAKi24Zrz3MGg6HKXu8y7eQkJJipnXNo2y5PD89dA5qFwSEMjs=
+	t=1727298403; cv=none; b=NRAkC7Q0cFUSMBnTaOOyIIledD9Iag0DlewbsJ2HStO5SYJ8YtctSc7JlEcXvsYLlrEncpOQaP9idUrd6uZcV38lHKHOWjvXYPNqT0Dty3WfU/XLddkyPf9IhZI6xf3drcr/iZK4ch3keNPOJjhK2wYDBOHoYIeyZOgkjCp/dfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727298257; c=relaxed/simple;
-	bh=cyanZkb9d26TDKDlSfaHdhJwah9qTldIxfXFZtL2ffU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rn+vGEDBxljXfY7CYuz2zmk1P41JeKZHUWbBp67eBV7LjwU9htwEY2kG9aH5Fmz/Pjo/BzZWkUz1KHsSR/cqGZEsdN8jZCaUG2WktmIVZccbmGv3fTnJiwqCeXxKGYW+9JdVMyUihllHJAgQDMuUlOwdEmoDzj+jVSWWz0eLWAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hLM5iGnF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A97BFC4CEC3;
-	Wed, 25 Sep 2024 21:04:16 +0000 (UTC)
+	s=arc-20240116; t=1727298403; c=relaxed/simple;
+	bh=ov11DCW5fbfEkeXbc3N4tknYqvWLCe6U3JzkfrFWpkU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sMlh/Df+xbZb7LfQOkzBeQayWqBDRBZNvJEiIHtV+JelViyEsdy5+fgtSp60qc6h1ONx468d+CC2762ukDUUb1Xw1AdJOIa54JXgJweANz2oDz6usOPUp672SXX5gz1YPEbgIGAVGl3MTuDJzCXjRj4SPs65KytjiPo+rnl22so=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ty4V85so; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B07B6C4CEC3;
+	Wed, 25 Sep 2024 21:06:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727298256;
-	bh=cyanZkb9d26TDKDlSfaHdhJwah9qTldIxfXFZtL2ffU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hLM5iGnFGhHISqB6rmDrupKCW95tITt+gSshV99aIyTwyFBG6BjwNm01nvzJ7Jg8O
-	 JlFlIgLi0uiJqvuyV41QHgOa4A9QAYNKoaopYBO26/aYb9+l/GfInILsLd04+l5lCF
-	 Ru16VsDwZTgMJcpUP6m8G/ggj59M5MZidTVuJsdlVoaqpr9Hs0Xh7dEdDQjnrQXrid
-	 vVdEaPNp1gLNvDFc6k57Pgiya68O8t495B0yAOdiNRwZjfcLh9a7sPdYiZ0vfPdHn8
-	 WnY+xyRsm4V3z+VjcfDtdZPnatsX1LbLkLx8SF2pJ4fcvu9LTsGp23iQGt2/hzk6fj
-	 aE3lFgT1Ir8RA==
-Date: Wed, 25 Sep 2024 11:04:15 -1000
-From: Tejun Heo <tj@kernel.org>
-To: David Vernet <void@manifault.com>
-Cc: kernel-team@meta.com, linux-kernel@vger.kernel.org, sched-ext@meta.com
-Subject: Re: [PATCH 2/5] sched_ext: Allow only user DSQs for
- scx_bpf_consume(), scx_bpf_dsq_nr_queued() and bpf_iter_scx_dsq_new()
-Message-ID: <ZvR6z9WoThpP5pWo@slm.duckdns.org>
-References: <20240925000622.1972325-1-tj@kernel.org>
- <20240925000622.1972325-3-tj@kernel.org>
- <20240925170956.GC26346@maniforge>
+	s=k20201202; t=1727298402;
+	bh=ov11DCW5fbfEkeXbc3N4tknYqvWLCe6U3JzkfrFWpkU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Ty4V85soYpqEM8sUDM/PovDueJXmKYgUPZM3jqIVSWscNGO92pmJEBZ1JtV6lKwJu
+	 /VNXVBsrBStlI+XfgvZYiro5DKkIxm1ox9IPT+JTFsrByJ7QQm6NjYBoXUBQxPCXLS
+	 dj5bSZq++t5pObMmZdgm5I9UMfcwcKwUA1wBFgahGj4alaWxqRSwAUTR4/2d034XBs
+	 WfH5LoTr3+nivVv/e+fjWSSrGa4mL16ZuTIMzAQvCXJOw//669VS4xztlBK2UwzGsJ
+	 AJOAs+o3b2GwT7zi/iHnQ4PcfCPCbxIqmRkrUIFZPDrXPvg7ncTbC16FbQwGAeeU/r
+	 TTlUE0B/JK86A==
+From: Arnd Bergmann <arnd@kernel.org>
+To: linux-mm@kvack.org
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	David Hildenbrand <david@redhat.com>,
+	Greg Ungerer <gerg@linux-m68k.org>,
+	Helge Deller <deller@gmx.de>,
+	Kees Cook <kees@kernel.org>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Matt Turner <mattst88@gmail.com>,
+	Max Filippov <jcmvbkbc@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Michal Hocko <mhocko@suse.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Vladimir Murzin <vladimir.murzin@arm.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-arch@vger.kernel.org
+Subject: [PATCH 0/5] asm-generic: clean up asm/mman.h
+Date: Wed, 25 Sep 2024 21:06:10 +0000
+Message-Id: <20240925210615.2572360-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240925170956.GC26346@maniforge>
+Content-Transfer-Encoding: 8bit
 
-Hello,
+From: Arnd Bergmann <arnd@arndb.de>
 
-On Wed, Sep 25, 2024 at 12:09:56PM -0500, David Vernet wrote:
-> On Tue, Sep 24, 2024 at 02:06:04PM -1000, Tejun Heo wrote:
-...
-> This API impedance where you can dispatch but not consume feels unnatural, and
-> a bit leaky. I understand why we don't want to allow BPF to consume it -- we're
-> already doing it for the user as part of (and before) the dispatch loop. That's
-> also one-off logic that's separate from the normal interface for DSQs though,
-> and because of that, SCX_DSQ_GLOBAL imposes a cognitive overhead that IMO
-> arguably outweighs the convenience it provides.
+While thinking about the changes to linux/mman.h in
+https://lore.kernel.org/all/20240923141943.133551-1-vincenzo.frascino@arm.com/
+I ended up trying to clean up the duplicate definitions in order to
+better see what's in there, and then I found a clash between two MAP_* flags.
 
-I don't know. One can also argue that this makes all built-in DSQs behave
-more consistently as the local DSQs can only be dispatched to too. Either
-way, I don't think it makes meaningful differences.
+Here is my current state, lightly tested. Please have a look at
+the last patch in particular.
 
-> I'm still of the opinion that we should just hide SCX_DSQ_GLOBAL from the user
-> altogether. It makes sense why we'd need it as a backup DSQ for when we're e.g.
-> unloading the scheduler, but as a building block that's provided by the kernel
-> to the user, I'm not sure. In a realistic production scenario where you're
-> doing something like running a scheduler that's latency sensitive and cares
-> about deadlines, I'm not sure it would be viable or ever the optimal decision
-> to throw the task in a global DSQ and tolerate it being consumed before other
-> higher-priority tasks that were enqueued in normal DSQs. Or at the very least,
-> I could see users being surprised by the semantics, and having instead expected
-> it to function as just a built-in / pre-created DSQ that functions normally
-> otherwise.
+     Arnd
 
-Maybe we can further block it in the future but it doesn't seem material
-either way and I tend to prefer not putting extra restrictions unless
-necessary.
+Arnd Bergmann (5):
+  asm-generic: cosmetic updates to uapi/asm/mman.h
+  asm-generic: move MAP_* flags from mman-common.h to mman.h
+  asm-generic: use asm-generic/mman-common.h on mips and xtensa
+  asm-generic: use asm-generic/mman-common.h on parisc and alpha
+  [RFC] mm: Remove MAP_UNINITIALIZED support
 
-Thanks.
+ Documentation/admin-guide/mm/nommu-mmap.rst | 10 +--
+ arch/alpha/include/uapi/asm/mman.h          | 93 ++++++-------------
+ arch/mips/include/uapi/asm/mman.h           | 95 +++-----------------
+ arch/parisc/include/uapi/asm/mman.h         | 79 ++++-------------
+ arch/powerpc/include/uapi/asm/mman.h        | 11 +++
+ arch/sh/configs/rsk7264_defconfig           |  1 -
+ arch/sparc/include/uapi/asm/mman.h          | 12 +++
+ arch/xtensa/include/uapi/asm/mman.h         | 98 +++------------------
+ fs/binfmt_elf_fdpic.c                       |  3 +-
+ include/linux/mman.h                        |  4 -
+ include/uapi/asm-generic/mman-common.h      | 31 +++----
+ include/uapi/asm-generic/mman.h             | 17 ++++
+ include/uapi/linux/mman.h                   |  5 ++
+ mm/Kconfig                                  | 22 -----
+ mm/nommu.c                                  |  4 +-
+ 15 files changed, 125 insertions(+), 360 deletions(-)
 
 -- 
-tejun
+2.39.2
+
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: Andreas Larsson <andreas@gaisler.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Damien Le Moal <dlemoal@kernel.org>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Greg Ungerer <gerg@linux-m68k.org>
+Cc: Helge Deller <deller@gmx.de>
+Cc: Kees Cook <kees@kernel.org>
+Cc: Liam R. Howlett <Liam.Howlett@oracle.com> 
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Matt Turner <mattst88@gmail.com>
+Cc: Max Filippov <jcmvbkbc@gmail.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Richard Henderson <richard.henderson@linaro.org>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: Vladimir Murzin <vladimir.murzin@arm.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: linux-stm32@st-md-mailman.stormreply.com
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-parisc@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-mm@kvack.org
+Cc: linux-arch@vger.kernel.org
+
 
