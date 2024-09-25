@@ -1,109 +1,157 @@
-Return-Path: <linux-kernel+bounces-338817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B36B4985D59
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:08:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAA24985D4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:07:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E404C1C24338
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:08:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C027284131
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:07:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C80F1E009B;
-	Wed, 25 Sep 2024 12:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="YfTEtCdv"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174621DEFF7;
+	Wed, 25 Sep 2024 12:03:15 +0000 (UTC)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5F01DFE0F
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 12:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014741DCB24;
+	Wed, 25 Sep 2024 12:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727265798; cv=none; b=UK9MNXrZTAJN5u5zk44breoXu5F8MGhtCATld3pfD9zChqfuczub6R1DMw0O/rmm7ew1O4yslhFgp0n7dyCJd9lLjYrZVBWBcOIN6fR9NH4ischg4Vb8bMlfs1rUrHuDo4zkUOUs3Z/hTEX0JONMfG4oLM67lbeqNES2uTYED5M=
+	t=1727265794; cv=none; b=Se61/fBw3OoyAJcgLV7vZpa0YWnBBp+W32vXB9FX3QboHsydZqFbrRo3lpUehfcTNpqlxAMkeRF39QQH8sOGWAElDuQZxNkaAVclWXCgSkEA1N8T+UCcooo+Hsp1NKd6l2G3DFh0jNv1rYERvG8l44nKn+VwKRmOUZooM3QgaGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727265798; c=relaxed/simple;
-	bh=upH0O8JzvIpfiMCChGQ55KjOcO7PFmHXfBFJn2x6/Tg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hfcpuxrq4Pw8J0JPd0Nb73ibpRIhifMGLaLgR6c15csYMOfvQb+H6E250gXEevuT8PD6CsqJznNooL22dN6RBTeAXhsY0lgBX8JfHyJADP3/kqdbpOnKkAH2l0yhfHsn/CWnAcxcC4G9HVtxh/7sUhky/nD3HAHO49zMplwY6iI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=YfTEtCdv; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1727265796; x=1758801796;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=upH0O8JzvIpfiMCChGQ55KjOcO7PFmHXfBFJn2x6/Tg=;
-  b=YfTEtCdvKDjVHhS2gNmnO9rAivkvjVM+PjilhlRFxA1jx9KtXe2N16nO
-   3HFvU9UlycXtF5+lz1FJgrlHUWyas4Wr4YnETL/XXi6oM9vinZGDmKPEn
-   mBP0TCCmHPKhQaI7AmA+nYT3sxOPW74vZHlRiqpVTc5Z5OtTYP8eMi3Su
-   vaqTC31JjytS9to/kQDruG/B6Rh0sGjXLDoacKh72OtzPt/wVOaqndTIr
-   MwWIPdlUfvirrwAfvxMCCJJDx7TY0So4nVp313Vev7c07UPSNA+wjc84g
-   Im8GJ5lG8fL5PavRVYK1VyVsBqsmKBPbRXecqRUvfDVME4biKICoE8iXZ
-   A==;
-X-CSE-ConnectionGUID: 7pv67hfBR/CMeWSpXiVEqA==
-X-CSE-MsgGUID: shnxUCg6T/qj/O+1CC2bsA==
-X-IronPort-AV: E=Sophos;i="6.10,257,1719903600"; 
-   d="scan'208";a="263240529"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Sep 2024 05:03:15 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 25 Sep 2024 05:02:44 -0700
-Received: from ROB-ULT-M76677.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Wed, 25 Sep 2024 05:02:43 -0700
-From: Andrei Simion <andrei.simion@microchip.com>
-To: <nicolas.ferre@microchip.com>, <claudiu.beznea@tuxon.dev>
-CC: <linux-kernel@vger.kernel.org>, <cristian.birsan@microchip.com>, "Andrei
- Simion" <andrei.simion@microchip.com>
-Subject: [PATCH] MAINTAINERS: Update maintainer list for MICROCHIP ASOC and MCP16502 drivers
-Date: Wed, 25 Sep 2024 15:02:25 +0300
-Message-ID: <20240925120224.120032-1-andrei.simion@microchip.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727265794; c=relaxed/simple;
+	bh=1kaYRJyiAfAl7JXGJzyXeta5OCaKkLICDp1w+ZIW4mU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JhZVh9cuzRIWnqM89VXlNJ1WDWq2IQsrlWjwEE42TIDD69ZlEYJIK8/ufMHHowD8GVqxYJyoyGttmvPM+XT43QvUBKdUOxMHnByqZx+W8pc5Hudi/Tw4D7jxxa5Pn+oa5LTbkMrv0VWQ3BhJ80fcndJa8wyeZfos6L9eVUTnH9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4XDFGt2RyFz9v7Nd;
+	Wed, 25 Sep 2024 19:43:18 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 6A2F21402E1;
+	Wed, 25 Sep 2024 20:03:02 +0800 (CST)
+Received: from [10.81.208.14] (unknown [10.81.208.14])
+	by APP1 (Coremail) with SMTP id LxC2BwDHWDDn+_Nmp9abAQ--.40229S2;
+	Wed, 25 Sep 2024 13:03:01 +0100 (CET)
+Message-ID: <b3b9e8e8-a3b5-4398-92b9-ff46b8ec53a9@huaweicloud.com>
+Date: Wed, 25 Sep 2024 14:02:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/1] hpref: Hazard Pointers with Reference Counter
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Boqun Feng <boqun.feng@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Alan Stern
+ <stern@rowland.harvard.edu>, John Stultz <jstultz@google.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
+ <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
+ Mateusz Guzik <mjguzik@gmail.com>, rcu@vger.kernel.org, linux-mm@kvack.org,
+ lkmm@lists.linux.dev
+References: <20240921164210.256278-1-mathieu.desnoyers@efficios.com>
+ <e4721439-8cad-4134-8c07-84b6ecc69573@huaweicloud.com>
+ <48ae741e-98aa-49d9-b677-6c4f8fd1bcb0@efficios.com>
+ <07c9285f-44a1-486a-8390-0c63cefae35a@huaweicloud.com>
+ <38b04b86-1e85-40f0-8174-3c8ab29cbcaf@efficios.com>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <38b04b86-1e85-40f0-8174-3c8ab29cbcaf@efficios.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-CM-TRANSID:LxC2BwDHWDDn+_Nmp9abAQ--.40229S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ar4xJFW8ArykWw4xZFyDAwb_yoW8Kr1Upr
+	ZxKa4q9F4kGF4Fkr1xtw1UWFy0yF1ftFW5XFyvgr1fAa90gry0gr13tF98u3ZxA397JryU
+	tr4FqrZxZasxJa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07
+	jxCztUUUUU=
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
-To help Claudiu and offload the work, add myself to the maintainer list for
-those drivers.
 
-Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 09d0f09c36cc..7f2f87a2483a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15088,6 +15088,7 @@ F:	drivers/spi/spi-at91-usart.c
- 
- MICROCHIP AUDIO ASOC DRIVERS
- M:	Claudiu Beznea <claudiu.beznea@tuxon.dev>
-+M:	Andrei Simion <andrei.simion@microchip.com>
- L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
- S:	Supported
- F:	Documentation/devicetree/bindings/sound/atmel*
-@@ -15196,6 +15197,7 @@ F:	include/video/atmel_lcdc.h
- 
- MICROCHIP MCP16502 PMIC DRIVER
- M:	Claudiu Beznea <claudiu.beznea@tuxon.dev>
-+M:	Andrei Simion <andrei.simion@microchip.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Supported
- F:	Documentation/devicetree/bindings/regulator/microchip,mcp16502.yaml
+Am 9/25/2024 um 1:36 PM schrieb Mathieu Desnoyers:
+> On 2024-09-25 12:06, Jonas Oberhauser wrote:
+>>
+>>
+>> Am 9/25/2024 um 8:35 AM schrieb Mathieu Desnoyers:
+>>> On 2024-09-25 07:57, Jonas Oberhauser wrote:
+>>>> Hi Mathieu,
+>>
+>>>> I haven't read your code in detail but it seems to me you have an 
+>>>> ABA bug: as I explained elsewhere, you could read the same pointer 
+>>>> after ABA but you don't synchronize with the newer store that gave 
+>>>> you node2, leaving you to speculatively read stale values through 
+>>>> *ctx->hp.
+>>>> (I am assuming here that ctx->hp is essentially an out parameter 
+>>>> used to let the caller know which node got protected).
+>>>
+>>> The following change should fix it:
+>>>
+>>>       cmm_barrier();
+>>> -    node2 = uatomic_load(node_p, CMM_RELAXED);    /* Load A */
+>>> +    node2 = rcu_dereference(*node_p);    /* Load A */
+>>>
+>>
+>> I don't think this fixes it, because IIRC rcu_dereference relies on 
+>> the address dependency (which we don't have here) to provide ordering.
+>>
+>> I would recommend either:
+>>
+>> -    ctx->hp = node;
+>> +    ctx->hp = node2;
+>>
+>> which fixes the problem under the perhaps too weak assumption that the 
+>> compiler doesn't use its knowledge that node==node2 to just undo this 
+>> fix, or more strictly,
+> 
+> As stated in Documentation/RCU/rcu_dereference.rst from the Linux
+> kernel, comparing the result of rcu_dereference against another
+> non-NULL pointer is discouraged, as you rightly point out.
+> 
+>>
+>> +    ctx->hp = READ_ONCE(node2);
+>>
+>> which I believe makes sure that the value of node2 is used.
+> 
+> I am not entirely sure this extra READ_ONCE() would be sufficient
+> to prevent the compiler from making assumptions about the content
+> of node2 and thus use the result of the first load (node) instead.
+> It would also not suffice to prevent the CPU from speculatively
+> using the result of the first load to perform dependent loads AFAIU.
 
-base-commit: 2b7275670032a98cba266bd1b8905f755b3e650f
--- 
-2.34.1
+The reason I think it should be sufficient is that it forces the 
+compiler to assume that since the comparison, the value of node2 might 
+have changed.
+Therefore, simply using the value of node at that point should be 
+unsound from the compiler's POV.
+
+But I'm not a compiler expert... So I definitely support uneasiness 
+about this construct :))
+
+jonas
 
 
