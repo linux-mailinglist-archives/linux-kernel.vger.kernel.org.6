@@ -1,120 +1,112 @@
-Return-Path: <linux-kernel+bounces-338322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38DE298566D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:35:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6C50985671
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:36:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC885281C89
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:35:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 382A7B23C04
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE8115CD54;
-	Wed, 25 Sep 2024 09:35:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451C215D5C4;
+	Wed, 25 Sep 2024 09:36:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W21+6nzi"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="JJ4qxbTi"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1130E13AA53;
-	Wed, 25 Sep 2024 09:35:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C65515C136;
+	Wed, 25 Sep 2024 09:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727256946; cv=none; b=Hy0fgtQXHtp5tU+HtKZJVaMoNCsJhUBo6tQwhmRPc1zjiG3vGPff+j+SgzAoqj0G50gsiLFVkbzs0GUzNwbkHWe9Tiw+VY9crRA+GsTUYmgP0GxZuic0h9M3eZsPhuD67lnBf45wD2YPmVCprV/wM5OFqPgQyJs8DHC7WM1pnfA=
+	t=1727256966; cv=none; b=o3iTOf9aLzK4hDz50A+bq2MWu+it872KEOGdCfJdWqCPiBmW2vkqfd9cTdPbJj3S2wNtvworvj2dqtJkrYyQWU1w+/LIvJA9aQbByfa898U9oy4KZ80E1fUOPk1GGlvuHmA7hsZexu4Qm5EHutplhTZ7qvu6tXiOS6V+u5OIIA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727256946; c=relaxed/simple;
-	bh=2GPgVJ0/g0Ha/YUnhKpQQX58Iusuhm5y+hBXDyEaAws=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GPANP4VoLS7sm3wiUp3MADv0dz+XIAKijOS2YsMs6VpLeMc8pkICfi0F57+Cuxykb6kHXO9P3O8olWd4iy9iG121fZCy3LnDF8DET00YlmDBuraLuxFrHVrXT0oYY9FF3mrJJowQ/IdU4/xpsW25vCdbgdnRJyumeJflS9k9Ws0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W21+6nzi; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727256945; x=1758792945;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=2GPgVJ0/g0Ha/YUnhKpQQX58Iusuhm5y+hBXDyEaAws=;
-  b=W21+6nzipnMoeUG0YcMiJinTl0IoYMYYB0rIzKefjKuV3PhsUydh6YuD
-   3E9h8+HYb9KC612/CkdakXpGsKpIx9wFL+KtZIG1UKHJfyTH8LgFa8yXm
-   EvkpvERPCU1McoR1iRsQ46d8WqsN7dYhLIvp/oMOiJGYE5YZBSgxPoSgl
-   X9XynId3u7h2UBfEar4u3IwoNPs9yBu96rJoFKy3vFR4oW97xMJ3KVwlL
-   SCe7LlrscuN56DEwUHxQk41waX4yj2SWHqSKIzU5djqax3R+hYg9KTzgm
-   3CuSy2Kl6UuPHSI7iso4ZZtOeryazNdSzEtFiI3NfjZpmpWDtccL+vx4W
-   A==;
-X-CSE-ConnectionGUID: CQw6tMsTQwWmf1gRKBD05w==
-X-CSE-MsgGUID: b5TqQ1Y2QTKZkxBeJLlk8g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="26392362"
-X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
-   d="scan'208";a="26392362"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 02:35:42 -0700
-X-CSE-ConnectionGUID: pfCtISnXTGKtj/ucoT2vHA==
-X-CSE-MsgGUID: E5+kPXTmQUO44qA4CcqoTQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
-   d="scan'208";a="71859389"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa008.fm.intel.com with ESMTP; 25 Sep 2024 02:35:40 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id 93AAF565; Wed, 25 Sep 2024 12:35:38 +0300 (EEST)
-Date: Wed, 25 Sep 2024 12:35:38 +0300
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-usb@vger.kernel.org, Andreas Noever <andreas.noever@gmail.com>,
-	Michael Jamet <michael.jamet@intel.com>,
-	Yehezkel Bernat <YehezkelShB@gmail.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] thunderbolt: Use common error handling code in
- update_property_block()
-Message-ID: <20240925093538.GZ275077@black.fi.intel.com>
-References: <26b7f215-4f83-413c-9dab-737d790053c0@web.de>
- <20240925084501.GY275077@black.fi.intel.com>
- <a0c37886-cf9e-4c4c-8ff2-db8735f97cb6@web.de>
+	s=arc-20240116; t=1727256966; c=relaxed/simple;
+	bh=CSyw/rmUFgoF3lhN+3SxM6fPIijxXPqwH+NyFYCYIdM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cYQMOllVv8Qa+gxmvowMzKyMEuQNytyguK7TSr/zH5jDNIBAZh5PZXAG7uhKcF5FLUSDofdUllCsQji3bFCba5r7RG5HGs8+bfhtJwQz3sptaRzRv3r52IjAbZ6Eu537lcFYJPPmzFCtGKHSvyuAO9As1XtqhQu2SqHfIuxWeeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=JJ4qxbTi; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=A7Vne/vD04XPaVw8nS9P4ozVjWxkAVK8DIWS6/xVwKQ=;
+	t=1727256964; x=1727688964; b=JJ4qxbTix9L0bTXGkOlhjrzJyRiGLOsHglzO8+T9BpRz7x4
+	q2MTP1YQcmvco31kCMyfWsGTk6991ExI5yts8Aa9pxKjLNnjE1Tx2ynqsT4fd9CrpygY8L2jnwVAC
+	4/KJT6oZyJQ3KRruhbCVmYvGL2Wvodcdoycv12pqqE4TtXqu/yd2QaaHRiXRR9WVceZ2H8kd6W3pI
+	tfaqV+MHyCL7UJ6hn5gm/TDc+TQ8lPCJdHKMH4S8f0youwtQQpr0FRImBZoRjVgFYt0peoWK8ZKtD
+	fnvwRgTxESmEkZriF+eH8HDTGZOoPfTTi+uGChQwWCgr1cg9+OT2egsb0S/f9YTA==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1stOR7-0003iw-QJ; Wed, 25 Sep 2024 11:35:53 +0200
+Message-ID: <e1089f44-5415-4a46-a8fb-9711f122a6bd@leemhuis.info>
+Date: Wed, 25 Sep 2024 11:35:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a0c37886-cf9e-4c4c-8ff2-db8735f97cb6@web.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/2] firmware: qcom: scm: fix SMC calls on ARM32
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Andrew Halaney
+ <ahalaney@redhat.com>, Elliot Berman <quic_eberman@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Rudraksha Gupta <guptarud@gmail.com>,
+ Linux kernel regressions list <regressions@lists.linux.dev>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20240911-tzmem-null-ptr-v2-0-7c61b1a1b463@linaro.org>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+In-Reply-To: <20240911-tzmem-null-ptr-v2-0-7c61b1a1b463@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1727256964;9deb32e6;
+X-HE-SMSGID: 1stOR7-0003iw-QJ
 
-On Wed, Sep 25, 2024 at 11:20:45AM +0200, Markus Elfring wrote:
-> >>  out_unlock:
-> >>  	mutex_unlock(&xd->lock);
-> >>  	mutex_unlock(&xdomain_lock);
-> >> +	return;
-> >> +
-> >> +out_free_dir:
-> >> +	tb_property_free_dir(dir);
-> >> +	goto out_unlock;
-> >
-> > No way, this kind of spaghetti is really hard to follow.
+On 11.09.24 11:07, Bartosz Golaszewski wrote:
+> The new TZ Mem allocator assumes the SCM driver is always probed which
+> apparently isn't the case on older platforms. Add a proper workaround.
 > 
-> Under which circumstances would you follow advice more from the section
-> “7) Centralized exiting of functions” (according to a well-known information source)?
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?h=v6.11#n526
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+> Changes in v2:
+> - use likely() for the more likely branch in smc_args_free()
+> - Link to v1: https://lore.kernel.org/r/20240909-tzmem-null-ptr-v1-0-96526c421bac@linaro.org
+
+Thx for working on this. This afaics is fixing a regression from the
+6.11 cycle; we already missed fixing this for 6.11[1], but please allow
+me to ask: is that something that bothers many people and thus should
+maybe be fixed rather sooner than later? No pressure, just wondering, as
+it seems the review is making slow progress.
+
+Ciao, Thorsten
+
+[1] a 'CC: stable...' thus might be wise, but of course that's up to you
+Bartosz!
+
+> ---
+> Bartosz Golaszewski (2):
+>       firmware: qcom: scm: fix a NULL-pointer dereference
+>       firmware: qcom: scm: fall back to kcalloc() for no SCM device bound
 > 
-> How do you think about to increase the application of scope-based resource management?
+>  drivers/firmware/qcom/qcom_scm-smc.c | 28 ++++++++++++++++++++++++----
+>  drivers/firmware/qcom/qcom_scm.c     |  2 +-
+>  2 files changed, 25 insertions(+), 5 deletions(-)
+> ---
+> base-commit: 6708132e80a2ced620bde9b9c36e426183544a23
+> change-id: 20240909-tzmem-null-ptr-2a9ddd9889aa
+> 
+> Best regards,
 
-It is fine to use goto as it is described in the document you linked but
-this what you are doing is certainly not fine, at least in the code I'm
-maintaining:
-
-out_unlock:
- 	mutex_unlock(&xd->lock);
-  	mutex_unlock(&xdomain_lock);
-	return;
-
-out_free_dir:
-	tb_property_free_dir(dir);
-	goto out_unlock;
-
-This "goto out_unlock" adds another goto to upwards which makes it
-really hard to follow because the flow is not anymore just downwards.
 
