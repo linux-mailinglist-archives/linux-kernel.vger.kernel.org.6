@@ -1,129 +1,162 @@
-Return-Path: <linux-kernel+bounces-337808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91CE5984F39
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 01:59:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BC64984F3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 02:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CC01284D78
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 23:59:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 209FA285165
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:00:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14490189BB8;
-	Tue, 24 Sep 2024 23:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F77E1A28C;
+	Wed, 25 Sep 2024 00:00:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C1s8JMVQ"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cmeTM33+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB57183CA1
-	for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 23:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B13819
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 00:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727222378; cv=none; b=gvCVjEwGGnrLi9cCW8PHH+niB3JbnY1rvngBXm2blLQOqxcpTCUY9ofmpRl2hQWGBPDKlKh4RxpodpNZM2yNVF2AYSpcQnWSO8M2fgAeuJxBHl9V4iMCZB8kKarIfmffolgaOF1TaYV5GPhefjPc7htOrFM+EM6psvoAaN/jgQU=
+	t=1727222453; cv=none; b=buBmKyhIbizUJDbMBplPcQ5v2RAdFIewn2KABTqpDU2Hqumn4YP3IGzcwqMVMDFb+ysvpFr03lV7Bp+KfUB8DO8d6mMVaR2NwGQdvn/AiSfrUBJv0T8eJYGn8DnyHcfWT6WgWy4InFc5LjAGvQ2xEtTLEEGZ3heZrwd/C3O8ANo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727222378; c=relaxed/simple;
-	bh=NPBhGsZGXeHhMhqBrOs0lKj/hQr4Of+6SHrSbODGWf4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WsMfV/gS9x3rRatNE4ejDvZMDssZTzAU44WsytSvEyhkUjCcEBXj01oB9ea8m1RqKAQ6w1jcR1JOMiUyT1FFGn6XN10d39qDcUV/O8AFZWmEgEbTBSiE4SGr4h+Oj07JHnsJeuMDRcD9aqXqP9GcvAdcgtUAnWB6ZLbRxTLrrXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C1s8JMVQ; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c4146c7b28so7665682a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 16:59:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727222375; x=1727827175; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kI/ysPTxQWzKUDDa2gWjdjf1UvW+7XakeF8GyEGFOL4=;
-        b=C1s8JMVQK72Or/DSqyLJddljAAr1GPC6xpU4g8GQH/zuuTw+Uq1U/eIevT0wvc8bnk
-         CnPH1pzbq8lNTEQn09jeX1oOwydIX6kHmQkF2/Bret20o2Qf2ylxjJryk4GRCgfCvaL/
-         USsz5xUSIkRUIDnLV9HwohaOM09bNWGy1Trtooh6tmrVkk5/fLoGz5OXxkbOy2DhpFLs
-         H3C4gPzmg9THz/thIC7obNyinBGQ4hKMgwA4d1NceBGAR4Z46JErp0keHP/FMBVsRr8a
-         oi5ld/RnpkgbXM9ATBYvVU3ep3o5jjeXOPBSIxyAWBdvc3jzjNC/+AcVchpCZ0p984e2
-         D/4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727222375; x=1727827175;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kI/ysPTxQWzKUDDa2gWjdjf1UvW+7XakeF8GyEGFOL4=;
-        b=mf+tQK7SUrBUypQmjncJpzoXF9ksp39YqN53+nOO9xtwO+sVkd4bHeVFURGT1mAHKO
-         IRZIzhQXdQTyXFcV0ubLxh4fyDNw69rWf79G/7GGclI1huE0JCWQBkt1oXU8Od89FGUi
-         hjk51sQDS+yAf2FsUG0Dua7qDM0PjtqhhyF5SCZNduESYZZ+ngCgC92BN1aJ28KHbEwQ
-         McCKQywcJxX9HZay1x7gJOHLT8G9s5STGnf/Gn95/O+LBcpdEdElsSsLe+p0A1KVc+t2
-         eWPiuj8D8TH7NsnJcJV1NHhQiMhXTq25MVkHD9Dk6HmFJ8qHOj4izPH4esZ1aX2qYj2L
-         XuDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUd0/jJjRG/SJtvvHzjwsL3eL7bwq89MfYEVoNcBYAWU0sGFk2zu01OTsxZK1kPxPAqd/5FSEa3yIGLiKc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlAQhBKGCfhhen3FB4q0mRzgd+JzokYXTGiCbUtG0d2RmGvDcx
-	bU3PdIWANFe6cJOX9VyGUVyFOgh9AC0Pli3pPXaMjHJm1w1A7W1huIjQopnkYjCh8dZr2yPmw6c
-	Qd8Y2+fEip3E2m4HzDed4ASubqS8169XZjUo=
-X-Google-Smtp-Source: AGHT+IEFAG3wub9OvDEOs3FiLz5OFqv+WsMgtvScIRg52xRzRH+AwJSsf6BAU1gkGTOMfniTFrgvm8bolZPFDbB+GIQ=
-X-Received: by 2002:a17:907:7d9f:b0:a77:b01b:f949 with SMTP id
- a640c23a62f3a-a93a03e3726mr75990466b.35.1727222374772; Tue, 24 Sep 2024
- 16:59:34 -0700 (PDT)
+	s=arc-20240116; t=1727222453; c=relaxed/simple;
+	bh=xrDiBntnkYADoF8Z2z96ru7m5IezmardL6OOcKZEkRQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q6si5ZzQ5J/g+ol9C5891JBSXzYjJXNQxBwromGP0C1TjxLjmRufTyulh0rzZTkGGd5WA1HWpwD9Z2xxESZLcT8JAex70jpN3U7Aza4lREQFDPb+VfsDL0MfewnmHA6LBfdXPASCTIn/Ch5XfKMu8NWhw9C2juxHAKhpxI3qXso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cmeTM33+; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727222451; x=1758758451;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xrDiBntnkYADoF8Z2z96ru7m5IezmardL6OOcKZEkRQ=;
+  b=cmeTM33+fgtCeWYTcRmLVKmGBi/RNCqoBRj+Bgczr0XQarfw6Cvj/LgV
+   5R30PGaCX3Ff6PxQNKLNaq0DvAbc/MripL41zBsCcCdadn5Yb2MK0PFAv
+   h3T8G2p6e+AR8E5OjcmnWCcpkWs/RBmjrkuEcDpDn9Czu85nPzJFAcZZZ
+   a6j4g8dV6X/MPlBEwqWHLZrg4/AcYYUNNLutAGqj7V6YmEF10yRwIOg/H
+   GxZWsubBLchPfh5b6jjPSE/UyHK3bCHZozR02ajO9c/i3aTqrTkM4F3SQ
+   wIYF1/JY6AQl1Fc7udDBhOKB8pPxNcJelQbV/9owEV/det0ui7/Eh37IO
+   A==;
+X-CSE-ConnectionGUID: sv3wHn+wR5mFenv+xElqzg==
+X-CSE-MsgGUID: R8OCe7QRTWGvQvrbF7Cz0A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="30037218"
+X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
+   d="scan'208";a="30037218"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2024 17:00:50 -0700
+X-CSE-ConnectionGUID: C5zgOdcWQy6HlX7MjgduhA==
+X-CSE-MsgGUID: MvFO1ljCQuSw85pjwxKGYQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
+   d="scan'208";a="71216609"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 24 Sep 2024 17:00:47 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1stFSX-000Ixa-1G;
+	Wed, 25 Sep 2024 00:00:45 +0000
+Date: Wed, 25 Sep 2024 08:00:23 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dipendra Khadka <kdipendra88@gmail.com>, will@kernel.org,
+	robin.murphy@arm.com, joro@8bytes.org, baolu.lu@linux.intel.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Dipendra Khadka <kdipendra88@gmail.com>,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Staging: iommu:  Replace null pointer check with IS_ERR
+ in arm_smmu_domain_alloc_user()
+Message-ID: <202409250755.nLQtNlCf-lkp@intel.com>
+References: <20240922155621.49432-1-kdipendra88@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1727191485.git.skhan@linuxfoundation.org> <f797bc704d8eb03234a3447c77fa7b704339f89a.1727191485.git.skhan@linuxfoundation.org>
-In-Reply-To: <f797bc704d8eb03234a3447c77fa7b704339f89a.1727191485.git.skhan@linuxfoundation.org>
-From: John Stultz <jstultz@google.com>
-Date: Tue, 24 Sep 2024 16:59:22 -0700
-Message-ID: <CANDhNCpsEQL+S8gadXMjvbE-6r8c6owzz+_DhN6JAVqQ8Hg=_g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] selftests: timers: Remove local NSEC_PER_SEC and
- USEC_PER_SEC defines
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: tglx@linutronix.de, sboyd@kernel.org, shuah@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240922155621.49432-1-kdipendra88@gmail.com>
 
-On Tue, Sep 24, 2024 at 8:57=E2=80=AFAM Shuah Khan <skhan@linuxfoundation.o=
-rg> wrote:
->
-> Remove local NSEC_PER_SEC and USEC_PER_SEC defines. Pick them up from
-> include/vdso/time64.h. This requires -I $(top_srcdir) to the timers
-> Makefile to include the include/vdso/time64.h.
->
-> posix_timers test names the defines NSECS_PER_SEC and USECS_PER_SEC.
-> Include the include/vdso/time64.h and change NSECS_PER_SEC and
-> USECS_PER_SEC references to NSEC_PER_SEC and USEC_PER_SEC respectively.
+Hi Dipendra,
 
-Nit: You got the last bit switched there. This patch changes local
-NSEC_PER_SEC to the upstream defined NSECS_PER_SEC.
+kernel test robot noticed the following build errors:
 
-Overall no objection from me. I've always pushed to have the tests be
-mostly self-contained so they can be built outside of the kernel
-source, but at this point the current kselftest.h dependencies means
-it already takes some work, so this isn't introducing an undue
-hardship.
+[auto build test ERROR on staging/staging-testing]
 
-Other then the nit,
-  Acked-by: John Stultz <jstultz@google.com>
+url:    https://github.com/intel-lab-lkp/linux/commits/Dipendra-Khadka/Staging-iommu-Replace-null-pointer-check-with-IS_ERR-in-arm_smmu_domain_alloc_user/20240922-235756
+base:   staging/staging-testing
+patch link:    https://lore.kernel.org/r/20240922155621.49432-1-kdipendra88%40gmail.com
+patch subject: [PATCH] Staging: iommu:  Replace null pointer check with IS_ERR in arm_smmu_domain_alloc_user()
+config: arm64-randconfig-003-20240925 (https://download.01.org/0day-ci/archive/20240925/202409250755.nLQtNlCf-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 7773243d9916f98ba0ffce0c3a960e4aa9f03e81)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240925/202409250755.nLQtNlCf-lkp@intel.com/reproduce)
 
-> diff --git a/tools/testing/selftests/timers/adjtick.c b/tools/testing/sel=
-ftests/timers/adjtick.c
-> index 205b76a4abb4..cb9a30f54662 100644
-> --- a/tools/testing/selftests/timers/adjtick.c
-> +++ b/tools/testing/selftests/timers/adjtick.c
-> @@ -22,14 +22,12 @@
->  #include <sys/time.h>
->  #include <sys/timex.h>
->  #include <time.h>
-> +#include <include/vdso/time64.h>
->
->  #include "../kselftest.h"
->
->  #define CLOCK_MONOTONIC_RAW    4
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409250755.nLQtNlCf-lkp@intel.com/
 
-I suspect CLOCK_MONOTONIC_RAW (and the other clockid definitions)
-could be similarly removed here as well in a future patch?
+All errors (new ones prefixed by >>):
 
-thanks
--john
+   In file included from drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:15:
+   In file included from include/linux/crash_dump.h:5:
+   In file included from include/linux/kexec.h:18:
+   In file included from include/linux/vmcore_info.h:6:
+   In file included from include/linux/elfcore.h:11:
+   In file included from include/linux/ptrace.h:10:
+   In file included from include/linux/pid_namespace.h:7:
+   In file included from include/linux/mm.h:2228:
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:3066:10: error: incompatible pointer types returning 'struct arm_smmu_domain *' from a function with result type 'struct iommu_domain *' [-Werror,-Wincompatible-pointer-types]
+    3066 |                 return smmu_domain;
+         |                        ^~~~~~~~~~~
+   1 warning and 1 error generated.
+
+
+vim +3066 drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+
+  3048	
+  3049	static struct iommu_domain *
+  3050	arm_smmu_domain_alloc_user(struct device *dev, u32 flags,
+  3051				   struct iommu_domain *parent,
+  3052				   const struct iommu_user_data *user_data)
+  3053	{
+  3054		struct arm_smmu_master *master = dev_iommu_priv_get(dev);
+  3055		const u32 PAGING_FLAGS = IOMMU_HWPT_ALLOC_DIRTY_TRACKING;
+  3056		struct arm_smmu_domain *smmu_domain;
+  3057		int ret;
+  3058	
+  3059		if (flags & ~PAGING_FLAGS)
+  3060			return ERR_PTR(-EOPNOTSUPP);
+  3061		if (parent || user_data)
+  3062			return ERR_PTR(-EOPNOTSUPP);
+  3063	
+  3064		smmu_domain = arm_smmu_domain_alloc();
+  3065		if (IS_ERR(smmu_domain))
+> 3066			return smmu_domain;
+  3067	
+  3068		smmu_domain->domain.type = IOMMU_DOMAIN_UNMANAGED;
+  3069		smmu_domain->domain.ops = arm_smmu_ops.default_domain_ops;
+  3070		ret = arm_smmu_domain_finalise(smmu_domain, master->smmu, flags);
+  3071		if (ret)
+  3072			goto err_free;
+  3073		return &smmu_domain->domain;
+  3074	
+  3075	err_free:
+  3076		kfree(smmu_domain);
+  3077		return ERR_PTR(ret);
+  3078	}
+  3079	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
