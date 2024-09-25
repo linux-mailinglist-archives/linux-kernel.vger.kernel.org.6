@@ -1,127 +1,162 @@
-Return-Path: <linux-kernel+bounces-339496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E80849865EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:46:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45B3E9865ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 249351C23F9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:46:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9AD61F21356
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C551D132132;
-	Wed, 25 Sep 2024 17:46:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE8312B176;
+	Wed, 25 Sep 2024 17:48:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="I/DyKUqZ"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bnDwKmEK"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C2A4962B
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 17:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B7953376
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 17:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727286409; cv=none; b=VIPXVcHB9CEy8Pdu4N1Kp75AC5jpWLuamnq5XSg4jGAlP+7De1VDCA1aU2wznRLf6VWfPnYOl6vX0iK/7ieWIQN01DL7+ZuNeVoqdOycT2sESz81Zx7/ideNsUoIHmEkGO8HVcTRS9cIPhbt5s7C4+Q+B0fAM4zjr6nsA7zU+KU=
+	t=1727286512; cv=none; b=XKeOkdAcoEhZTSYdZpRoPXD73+fc4nDoZh0M5v2jPMKw7EymAEqE87vDlMuN3tL7eK0BZptY8CZFydhk2rJasY7ZvcU8/2TAHKHos+4bZ6A6EX7fay2qjsuLAn45GDPLP2QkVI+d9HCIlmquSEoRaVOERZDJEWnyR7Rje6+hqdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727286409; c=relaxed/simple;
-	bh=M0I8Ig3rWuZiRXKwtw6xWqst8IlFBQrwd0ojV3Hws8A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J9iVnbxPR1UhKXgObgbAc8Q4Z00CMlDer74wPC5mfSnA2X/5fEm/jLTwzvnIIwX4EoqCHkp2p2MMMeGnHM4AzjJkwXYnY0wCFKQa5t7Ftu8WaXH5gZFYE88jBaF1m4zV2JlwnQMX2jQfmOOyhQbb+bGznEgxBqXfFj+CO/e1/9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=I/DyKUqZ; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c5cf26b95aso5769a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 10:46:44 -0700 (PDT)
+	s=arc-20240116; t=1727286512; c=relaxed/simple;
+	bh=s+Fsq6c0E4UqhDF+GTJIyrIlBaNJKj4Eto+OjSrKVpY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LqXEQeqzB74/Goe0E0PQgdXgb9I/0KRbCCmtPIHPPOYyu88anqSF8as6G5MkXl19JXSbWciqaIuA4Nu/c9pOZc9QmIPTXYjsT+0AFkhiHKrwFxn8L3jVtT3utFelpPedrvb00ok99S+gTXyH7eAqj/RJfeBI+/5qK0pnMHtYDlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bnDwKmEK; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20b061b7299so14015ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 10:48:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1727286402; x=1727891202; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=q7bFD0zsvjm6ZC77c3M7GAfUg/FjJi2MmJVwp+M6KhE=;
-        b=I/DyKUqZq7G4SWzTih4+crIdvuLRktb+OCIDqZ6y/8nBqCF9gDCaZpwEy4ZEG9e7il
-         J54KmCoAC0n/jDYDzteXMFSJ0xDwJ4A8p8gTOtu2TqKzhSFios0Rewv3Dvwo2wu9oKvz
-         BFdgnwIlqfDExj/wh4KqFMA/8t3PZaGcgqQ68=
+        d=google.com; s=20230601; t=1727286510; x=1727891310; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ozwTA3TD6zQfqCMRip8pZ83VBEALnmG9iDzNvfVVggI=;
+        b=bnDwKmEKswx1XNmNjHhO6J1B8VRHNuYvbGmWukW5e3VLNwWjKiH9zrRQR9hxZ87Igx
+         ppN55h7nIyO2da3Zw5gwIjBsUzFbKC5erbEAxpZXnA/zo/Wtavb+4txewVrTpqOP8/BK
+         ya9nTq9MsNBPaNJb0/xltOzS4uo37RtXx0jZFvIYMJxehGCiFfEJgKywmy9AYTsQSTl3
+         OwOQNNRyWz8j2oX9ywUB4KemybXAjJSeOXUUYSTpwMLPzkxKcibwlCmgDFGs74ZTbqxn
+         bRyETbgvGVOgSAv1g1mIcXCxyMCwJaZO6ne8h4PT+RAs2l3KNEuSsEE3mmG6v4pdhgkr
+         aqwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727286402; x=1727891202;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=q7bFD0zsvjm6ZC77c3M7GAfUg/FjJi2MmJVwp+M6KhE=;
-        b=a1liVg1+c+mFPE9C1pkCo/SvB4fUrqxhHJ8rZMGhkwbjMNKFCO6VHDEyQ3kQ2M2Vu5
-         q2kbgLQWgzQen77GOmDkpCeODyXcV06dIRBM6nHGZUK4Trp4EfVtcYAK1CYl5AOXSP61
-         Isc67ebHfuxGHEDbq7iDjUzVh840NL4TbF5Eui6Oys722eIjRDiLeNfANpEy/I7P44tC
-         zO9OSpsuy+AeYlg8zZzZOUI9SpwymDY/D1fKsDyuc22Ly1lW+C+hmTNdUIy1r2WD6hl6
-         7x4UUAIxsSBBRG7KZOPL3v3uhI61Hb7/CJabmv8TTVugvQY62NC3ZLFfAh1MNyK/6HdH
-         3rPw==
-X-Forwarded-Encrypted: i=1; AJvYcCX8XCWaguY9S87c/+zYAgTxLf/SrXXSml6WacjFfYc+JzdyAkZBNdQAFO9E3eHv9vM37DuvwwEEFc2y+jk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEUvyypZTSDgpuJIWUhaCJOq25MjbKZ3l1tcNgYRisKMAApzl1
-	wNe2vA3jsmKwVy86Y3X6QNySbyglN/cPv5989ho4Ae3Coh5AVC0sgnZj6tiKH3pTpBmfE5VZuHO
-	OudCLyw==
-X-Google-Smtp-Source: AGHT+IFqQHQQxZhkP9CJoca3/GjnOhtQLOb9mpyZMLrvKQloFsbgECdemAoJalVDlpw986u8JGgmsg==
-X-Received: by 2002:a05:6402:40c5:b0:5c4:2343:1227 with SMTP id 4fb4d7f45d1cf-5c72060887dmr2769500a12.5.1727286402296;
-        Wed, 25 Sep 2024 10:46:42 -0700 (PDT)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c5cf48bfddsm2193904a12.12.2024.09.25.10.46.39
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Sep 2024 10:46:41 -0700 (PDT)
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a8d56155f51so13081266b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 10:46:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWibLtZ0voCCH46UQUapBSjE5g5tu96i/tleKArBceONl1W6xpmLA0no66UWssoRAuVak2VNU76oBBhWp0=@vger.kernel.org
-X-Received: by 2002:a17:906:f5aa:b0:a8d:2ab2:c9b1 with SMTP id
- a640c23a62f3a-a93a06b92camr365210666b.56.1727286399053; Wed, 25 Sep 2024
- 10:46:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727286510; x=1727891310;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ozwTA3TD6zQfqCMRip8pZ83VBEALnmG9iDzNvfVVggI=;
+        b=U1pBKDOiWRkZDBo0J+3aim6JpFvg7ZRxNMgYI/RL783PFic4OuPcSpxq9RNC5vRalL
+         WG1Sd2BEnafla1j50J/ICkdMgBucTyPJ+1gr6eDTnHueH5eOw7zzz+vMfIK3Vs2MnCTY
+         xhRKPk1u+yZRTPwKwIhFIEcHrlSPxf4bQBnIjNJKjT5N+BqXwrJf9NaRqCCMbIsgdOmo
+         4dxgK6gwGLT8ZzY7wZgkv4JRMktqUeQH+GolgRqGG8W/tczhW8mEs/tlTCSSVGvv+ZUT
+         /a+qWX3ok5dpLxvubNy8AUWdNvdTk8vJEm1IC4RjQ5sp4PPd9uezGikXjeQRniHLMLTl
+         qqPw==
+X-Forwarded-Encrypted: i=1; AJvYcCXVZzWjOG2iZWKiVjeS/O8xXiZT3QCSttGCpf+Ahu3YBmpUdmiOS0PGcwGTgGAGMKFniT5tbdx6z19UqUM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxui6tF0DIOxhy2PlOwxKK6Dphy96NvDhvPyYHHaM5w7JSvWo7X
+	N2RmqZOWk7UJdxBBA2U7d3Bpf28pEqjATz9JonBVzhuzpufl0R3wthMO/T9r9Q==
+X-Google-Smtp-Source: AGHT+IFutEWYBK/Nvgcz2Tx6c1LNM5iBgzNMwt4bAnNvki4icwmyytR7tK14mV2RcwMW77JMVHQ4NA==
+X-Received: by 2002:a17:902:e84f:b0:205:937f:3add with SMTP id d9443c01a7336-20b1b4c13d0mr46215ad.1.1727286509972;
+        Wed, 25 Sep 2024 10:48:29 -0700 (PDT)
+Received: from google.com (201.215.168.34.bc.googleusercontent.com. [34.168.215.201])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b0f8b1d1dsm6606605ad.298.2024.09.25.10.48.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 10:48:29 -0700 (PDT)
+Date: Wed, 25 Sep 2024 17:48:25 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Yu-Ting Tseng <yutingtseng@google.com>,
+	linux-kernel@vger.kernel.org, kernel-team@android.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 2/4] binder: fix OOB in binder_add_freeze_work()
+Message-ID: <ZvRM6RHstUiTSsk4@google.com>
+References: <20240924184401.76043-1-cmllamas@google.com>
+ <20240924184401.76043-3-cmllamas@google.com>
+ <CAH5fLghapZJ4PbbkC8V5A6Zay-_sgTzwVpwqk6RWWUNKKyJC_Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240924221023.197610-1-ojeda@kernel.org>
-In-Reply-To: <20240924221023.197610-1-ojeda@kernel.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 25 Sep 2024 10:46:22 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjuMrUMceYX01T0SBz4E0yL4Kh2Jb_8qyKxJwwitCG6Zw@mail.gmail.com>
-Message-ID: <CAHk-=wjuMrUMceYX01T0SBz4E0yL4Kh2Jb_8qyKxJwwitCG6Zw@mail.gmail.com>
-Subject: Re: [GIT PULL] Rust for 6.12
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Wedson Almeida Filho <wedsonaf@gmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH5fLghapZJ4PbbkC8V5A6Zay-_sgTzwVpwqk6RWWUNKKyJC_Q@mail.gmail.com>
 
-On Tue, 24 Sept 2024 at 15:11, Miguel Ojeda <ojeda@kernel.org> wrote:
->
-> Rust changes for v6.12
+On Wed, Sep 25, 2024 at 10:02:51AM +0200, 'Alice Ryhl' via kernel-team wrote:
+> On Tue, Sep 24, 2024 at 8:44 PM Carlos Llamas <cmllamas@google.com> wrote:
+> >
+> > In binder_add_freeze_work() we iterate over the proc->nodes with the
+> > proc->inner_lock held. However, this lock is temporarily dropped to
+> > acquire the node->lock first (lock nesting order). This can race with
+> > binder_deferred_release() which removes the nodes from the proc->nodes
+> > rbtree and adds them into binder_dead_nodes list. This leads to a broken
+> > iteration in binder_add_freeze_work() as rb_next() will use data from
+> > binder_dead_nodes, triggering an out-of-bounds access:
+> >
+> >   ==================================================================
+> >   BUG: KASAN: global-out-of-bounds in rb_next+0xfc/0x124
+> >   Read of size 8 at addr ffffcb84285f7170 by task freeze/660
+> >
+> >   CPU: 8 UID: 0 PID: 660 Comm: freeze Not tainted 6.11.0-07343-ga727812a8d45 #18
+> >   Hardware name: linux,dummy-virt (DT)
+> >   Call trace:
+> >    rb_next+0xfc/0x124
+> >    binder_add_freeze_work+0x344/0x534
+> >    binder_ioctl+0x1e70/0x25ac
+> >    __arm64_sys_ioctl+0x124/0x190
+> >
+> >   The buggy address belongs to the variable:
+> >    binder_dead_nodes+0x10/0x40
+> >   [...]
+> >   ==================================================================
+> >
+> > This is possible because proc->nodes (rbtree) and binder_dead_nodes
+> > (list) share entries in binder_node through a union:
+> >
+> >         struct binder_node {
+> >         [...]
+> >                 union {
+> >                         struct rb_node rb_node;
+> >                         struct hlist_node dead_node;
+> >                 };
+> >
+> > Fix the race by checking that the proc is still alive. If not, simply
+> > break out of the iteration.
+> >
+> > Fixes: d579b04a52a1 ("binder: frozen notification")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Carlos Llamas <cmllamas@google.com>
+> 
+> This change LGTM.
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> 
+> I reviewed some other code paths to verify whether there are other
+> problems with processes dying concurrently with operations on freeze
+> notifications. I didn't notice any other memory safety issues, but I
 
-So it looks like now the only thing holding Rust testing back for the
-allmodconfig case is the MODVERSIONS support (assuming modern enough
-tool chains etc).
+Yeah most other paths are protected with binder_procs_lock mutex.
 
-I'm inclined to just do this:
+> noticed that binder_request_freeze_notification returns EINVAL if you
+> try to use it with a node from a dead process. That seems problematic,
+> as this means that there's no way to invoke that command without
+> risking an EINVAL error if the remote process dies. We should not
+> return EINVAL errors on correct usage of the driver.
 
-   config MODVERSIONS
-          bool "Module versioning support"
-  +       depends on !COMPILE_TEST
-          help
-            Usually, you have to use modules compiled with your kernel.
-            Saying Y here makes it sometimes possible to use modules
+Agreed, this should probably be -ESRCH or something. I'll add it to v2,
+thanks for the suggestion.
 
-in order to have the basic Rust stuff be part of the usual allmodconfig build.
-
-That gets it building for me on x86-64, at least. But at the
-maintainer summit I think you said MODVERSIONS support is being worked
-on too, no?
-
-On my arm64 box, Rust support is still disabled due to
-RUSTC_SUPPORTS_ARM64 not being true (which in turn seems to be due to
-SHADOW_CALL_STACK support, and that needs rust 18.2 which I don't
-have).
-
-Anyway, just a heads up that I think we'll have more "unintentional"
-Rust build test coverage this way.
-
-                  Linus
+Cheers,
+Carlos Llamas
 
