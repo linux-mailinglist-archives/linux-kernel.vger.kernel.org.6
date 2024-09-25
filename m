@@ -1,142 +1,344 @@
-Return-Path: <linux-kernel+bounces-339290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 924A6986232
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:09:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA35598641A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:49:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFCA81C2735F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:09:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6497B322A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0065F381C2;
-	Wed, 25 Sep 2024 15:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783B518CC07;
+	Wed, 25 Sep 2024 15:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="omoHMJqQ"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Oyca0lHS"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00FFC38FA6
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 15:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573A118BBA5
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 15:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727276512; cv=none; b=BaNYkTU6A2tuHDEo/NxQ5zCoQ9pkefbVePOuQqYTNDJtuoz4wENa6AuCkXde8yUCbwAkJv6JY17ufX8x3nTjvaKxKG5+E7zUNTJpcXTQa10tk4N6+jRrW5rHgyhZqgAxj9KfEbHgsLyIrONlvyevuPSOmGV9Krud/K3+8vIE8SE=
+	t=1727276536; cv=none; b=JSIAWgv1lvWkdR7HMDD4ZO0nvM61NBjhRLGIXp23VBUddjlCe2HldL9QLpI5dd9q+xjpp0ruirYjOsSZA+6czPm4V8M9YYDQlbGfWclfKWjQJKEAM2lEiakuyD9MA6RCPWb+1KojwJQIq00YLEHD5b1A2Iy5yG4lBCROMHafnak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727276512; c=relaxed/simple;
-	bh=HyezUH8s4vB3bE8d9XKTG58UQRvZwYgHO4cj+l8WGCs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E5CeQERugO6M4nxfZFct2aDfvKYp1RyX460Y/DtLEF2oWwtQy9lWABcaW2HVCYTtOR7pRHH2c6Y/fAegvi6PGGEbhdjVr6TmUr+9CcJAjyGHRi9gGYFAhyap0E7CISJvxBwALq5RH8Lc+Be1GI0kHm25kx3aVh7kbM0qKUxYlR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=omoHMJqQ; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37ccc600466so277507f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:01:49 -0700 (PDT)
+	s=arc-20240116; t=1727276536; c=relaxed/simple;
+	bh=7D0glTmsZexHQSacQdFwY8gTv02ecHvdzfYXGwImFZM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p+XT6V7VtxB58NEBnUbm0EX/UPJE5HIl2P+eF8VmQQzF1sU2V7Vf8npxZ8foDX+2K9Zds0r6AVmVn/Xq7Qz1TFJqBstyt3UL68fW9bEE9C8LuFxro4g/+TUtd16xTT3RFtAmZmY9rSsUi1aAlFUNYz12G3BBGRKyjRuzjdrjZig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Oyca0lHS; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5365a9574b6so10037798e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:02:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727276508; x=1727881308; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=a+DIs+cjfT3JD55mRAd2TBTt3EC9HtAmYb81V/vRFFU=;
-        b=omoHMJqQQquU9+SzmRf3jVcybk8bIgw6mPAn8HvsvvA5Uh/hC26ISRJ1EzH8ZNhUU5
-         91NEqnK+pFsdMWz2Qs+PULlGV1LGlphOQUB9jsgD0o46p79hKbBgs0Be4vTETUD290cL
-         Q5GD0UAzyuFgLOBSP8MbfYtJQ/PEW2Fw7mDdd5tWgsykY8m1FEDOHRy08xB5s+EQ6TOx
-         0Xh/n5HMNGtApTpFY3g7ZhmpzGR76xOAg92ju3E7Vcx+ytQQibJQf//UyCUcZyUI0yKG
-         KEqVLNmLBmHLcGZQ9n0vh+1oUntWgTDgT49wIY+970scMo+EhnmuKMoRYSFhWGqregbA
-         5lDA==
+        d=bytedance.com; s=google; t=1727276531; x=1727881331; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HO/+/lbyK8ksHcPo+SH99FQp4hBv6ylL+MzFpb065DQ=;
+        b=Oyca0lHSJ78XSUzef8HpRODUfSCORl/bAUj0sqmDFUMO0iQePgIorbmcnTO7n/wqmS
+         HrMgxC6z6fF4m+IrJMaCKAw0b/40/9sBinh8+BRFaR74/1OrOLbWgKxCJPqB/+kq1YKr
+         FZMY6YjVupOKTJXLXjt3u2YFoqhhoWBftZWcumYgergqcACmxIDoXnDsoykd0LW4DhoA
+         i+7uGKZrG4hmwobj827DnbgfeOxb7vUSICQazxnRdfnI/CoHGB4x5J7DuY3W8gf3p1PM
+         ejlnLNOE79r5TsHZqNiO6+lggcqlNnWD3Fn1Pd7ISDfl1WWWUCTIqPiQtsfA7map+Ik0
+         Urug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727276508; x=1727881308;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=a+DIs+cjfT3JD55mRAd2TBTt3EC9HtAmYb81V/vRFFU=;
-        b=JKuKq5KU5iEnfRjxqqDZQo/RfSP2q6vgVbhCVrErGym2c9z7bAOU4V2QtU2v3V1ijF
-         aa35S8460qAP5mWmN7q+Iu2lptmLJtd1031KPfFCmvT2N6Ymb5YJuJhL48YKNJfO/eg+
-         9Gf0UM9iA8i5uonAsZpB4tuSm3MaedZ2KbzjKa542o2rkFwL2lxDgoQFXi6RBQgQpr1Z
-         rjDfPrQV+TavWsogUY5oLPUFTkv1RPBz8CnK67eGrX+kAeUPrWWZYY3/q/iOLKGp3D5I
-         PTeh2F9fj14o40v/hsl1QIL3ZjeU4RhLOBhYNiLHSh3xHydpAI3+3J2Ls6cbLLR2kCvW
-         loOg==
-X-Forwarded-Encrypted: i=1; AJvYcCXa1x/eX/akhzKdtkPbDwqTDu1DvnSCKRW1v63CENkeIjBom531FAsWxr1vMsn/8gUOy0KMamryIYdU/4Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpSX3aKmNSdpcnWHK1OsQlC+wS2KiIJfEEupqnfJ1P1mFYriOV
-	05vBzTKOjZFjEVnlUSRs3kJkY+HdZV3Q2AUa/AuSNf77glMBp2nxvhlGO+YDFgg=
-X-Google-Smtp-Source: AGHT+IHfbzpphdy6WAUwhQp1pcPNJKsRYShLsVQDedS0f/0PBeU1GtCFcb/lDjITm8qpA3o3J6cTfg==
-X-Received: by 2002:adf:f5d2:0:b0:374:c56e:1d44 with SMTP id ffacd0b85a97d-37cc24c9fd3mr2148358f8f.48.1727276508205;
-        Wed, 25 Sep 2024 08:01:48 -0700 (PDT)
-Received: from Red ([2a01:cb1d:3d3:3500:4a02:2aff:fe07:1efc])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37cbc2c1eb8sm4233697f8f.42.2024.09.25.08.01.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 08:01:47 -0700 (PDT)
-Date: Wed, 25 Sep 2024 17:01:42 +0200
-From: Corentin LABBE <clabbe@baylibre.com>
-To: Janpieter Sollie <janpieter.sollie@kabelmail.de>
-Cc: linux.amoon@gmail.com, Jason@zx2c4.com, heiko@sntech.de,
-	herbert@gondor.apana.org.au, hl@rock-chips.com,
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, mike.rudenko@gmail.com,
-	robin.murphy@arm.com, shawn.lin@rock-chips.com,
-	troy.lin@rock-chips.com, ty@wevs.org
-Subject: Re: [PATCH] hw_random: rockchip: import driver from vendor tree
-Message-ID: <ZvQl1i2TfA6JYUDH@Red>
-References: <CANAwSgTTzZOwBaR9zjJ5VMpxm5BydtW6rB2S7jg+dnoX8hAoWg@mail.gmail.com>
- <ef2f6e41-bf9e-470e-a416-fda7ce5d8a51@kabelmail.de>
+        d=1e100.net; s=20230601; t=1727276531; x=1727881331;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HO/+/lbyK8ksHcPo+SH99FQp4hBv6ylL+MzFpb065DQ=;
+        b=F/ncUnob6ANf8eZWwavvdpM5bjf9ouOpV3u4MUQjTJzeuE3E8RcDDyNGDnPpb4L3uh
+         A24iQpBfBkQDoltT/DB5Fid8kAAHu/+AJChcgNHmqzwsAvq9Bjd/qMfNYT1hzAW5R7cC
+         sB5926MiBAzobhGaBeRC1Zkc7AO12SSvKCTRpHlH1qH0LOArQ1eHfSfw5kCWMx7Ei4/+
+         sg6IritqV/qWivD0MaJF+3GLKq0LVOcwvUWrJ4Nj31CEvuFxEEIb6L4gbxFmTNw9XAw4
+         /omhBUXRldzD1B3Oabsq/omBxZBW+zozuaJNPKFYQgzRsRKwLj0RjBp0F7McN3YwHYc9
+         eORg==
+X-Forwarded-Encrypted: i=1; AJvYcCUyKNU7xNGDMmpy4386xecbWaHry523ETcsPRJGA2kgt69CftAanMY6jnZUI14f/NpL3y3RBNhKIPlyNgs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz13fFrfz2s2ckmSrpDjLmEPc+beAkf9oXEMnW8aRdzt6Y1ABTq
+	OfMU+9dUuejh6LO3AmHLsfsLUR3XC2zsRCOvnlc0XEATXF6SUW5cVy49OUVVEET2VbhG/5ZdEh+
+	vxjjaDjLI4QjjQ30bzmLEtOHRAWr2TA9oMray6A==
+X-Google-Smtp-Source: AGHT+IEXlP8gBlUBBp0VF550p0+a52bnbtKGUL1au3ez/hcODyDv8IXO/NkHq/Tva2S1xm8hPYAs3Jr8t04j/sUSPqg=
+X-Received: by 2002:a05:6512:1310:b0:533:483f:9562 with SMTP id
+ 2adb3069b0e04-5387755ce6dmr2988884e87.42.1727276530966; Wed, 25 Sep 2024
+ 08:02:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ef2f6e41-bf9e-470e-a416-fda7ce5d8a51@kabelmail.de>
+References: <20240925131547.42396-1-luxu.kernel@bytedance.com>
+ <20240925131547.42396-2-luxu.kernel@bytedance.com> <20240925-2acd8d9743cf40b999172b40@orel>
+In-Reply-To: <20240925-2acd8d9743cf40b999172b40@orel>
+From: Xu Lu <luxu.kernel@bytedance.com>
+Date: Wed, 25 Sep 2024 23:01:58 +0800
+Message-ID: <CAPYmKFuLYyOcVjXrX_cQU-OwUvcFfQcN5GRStS6AyBXpqAVP6g@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v3 1/2] riscv: process: Introduce idle
+ thread using Zawrs extension
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	andy.chiu@sifive.com, guoren@kernel.org, christoph.muellner@vrull.eu, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	lihangjing@bytedance.com, dengliang.1214@bytedance.com, 
+	xieyongji@bytedance.com, chaiwen.cc@bytedance.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le Mon, Sep 23, 2024 at 09:48:54AM +0200, Janpieter Sollie a écrit :
-> 
-> Hi everybody,
-> 
-> Is there any chance this random driver will be upstreamed?
-> I'm using it instead of the built-in crypto driver (rk3328-crypto), as this crypto driver showed 
-> the following:
-> 
-> > [     9.270549] rk3288-crypto ff060000.crypto: will run requests pump with realtime priority
-> > [     9.270687] rk3288-crypto ff060000.crypto: Register ecb(aes) as ecb-aes-rk
-> > [     9.270808] rk3288-crypto ff060000.crypto: Register cbc(aes) as cbc-aes-rk
-> > [     9.270831] rk3288-crypto ff060000.crypto: Register ecb(des) as ecb-des-rk
-> > [     9.270848] rk3288-crypto ff060000.crypto: Register cbc(des) as cbc-des-rk
-> > [     9.270864] rk3288-crypto ff060000.crypto: Register ecb(des3_ede) as ecb-des3-ede-rk
-> > [     9.270880] rk3288-crypto ff060000.crypto: Register cbc(des3_ede) as cbc-des3-ede-rk
-> > [     9.270896] rk3288-crypto ff060000.crypto: Register sha1 as rk-sha1
-> > [     9.270915] rk3288-crypto ff060000.crypto: Register sha256 as rk-sha256
-> > [     9.270932] rk3288-crypto ff060000.crypto: Register md5 as rk-md5
-> 
-> so the options here are pretty useless:
-> standard tls / ssh (ktls anyone?) almost never uses ecb or cbc ciphers, and about des ... yeah, 
-> won't dig into that one.
-> I think a rk3328 device will actually benefit more from a entropy source (even if it's not 
-> high-quality) than from sha1/256 which are almost always covered by armv8 crypto extensions.
-> I tried this patch (and disabled the crypto device in dts), it works.
-> Off course there are FIPS failures, but the user employing a rk3328 board probably knows this is 
-> not a high-security device.
-> 
-> Any chances here? applying the patch on 6.6.48 (even with clang thinLTO) works flawlessly.
-> 
-> kind regards,
-> 
-> Janpieter Sollie
+Hi Andrew,
 
-Did you test if it really works by testing entropy output QUALITY ?
+Thanks a lot for your reply.
 
-I asked how the serie was tested and the sender never answered raising a big red flag.
-If you check the thread, someone tested and the quality bringed by the vendor driver is really BAD.
-This is due to the fact that their sample value was really too short.
-So as-is, this serie is a security issue to the randomness quality.
+On Wed, Sep 25, 2024 at 9:54=E2=80=AFPM Andrew Jones <ajones@ventanamicro.c=
+om> wrote:
+>
+> On Wed, Sep 25, 2024 at 09:15:46PM GMT, Xu Lu wrote:
+> > The Zawrs extension introduces a new instruction WRS.NTO, which will
+> > register a reservation set and causes the hart to temporarily stall
+> > execution in a low-power state until a store occurs to the reservation
+> > set or an interrupt is observed.
+> >
+> > This commit implements new version of idle thread for RISC-V via Zawrs
+> > extension.
+> >
+> > Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
+> > Reviewed-by: Hangjing Li <lihangjing@bytedance.com>
+> > Reviewed-by: Liang Deng <dengliang.1214@bytedance.com>
+> > Reviewed-by: Wen Chai <chaiwen.cc@bytedance.com>
+> > ---
+> >  arch/riscv/Kconfig                 | 10 ++++++++
+> >  arch/riscv/include/asm/cpuidle.h   | 11 +-------
+> >  arch/riscv/include/asm/processor.h | 18 +++++++++++++
+> >  arch/riscv/kernel/cpu.c            |  5 ++++
+> >  arch/riscv/kernel/process.c        | 41 +++++++++++++++++++++++++++++-
+> >  5 files changed, 74 insertions(+), 11 deletions(-)
+> >
+> > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> > index 939ea7f6a228..56cf6000d286 100644
+> > --- a/arch/riscv/Kconfig
+> > +++ b/arch/riscv/Kconfig
+> > @@ -23,6 +23,7 @@ config RISCV
+> >       select ARCH_ENABLE_SPLIT_PMD_PTLOCK if PGTABLE_LEVELS > 2
+> >       select ARCH_ENABLE_THP_MIGRATION if TRANSPARENT_HUGEPAGE
+> >       select ARCH_HAS_BINFMT_FLAT
+> > +     select ARCH_HAS_CPU_FINALIZE_INIT
+> >       select ARCH_HAS_CURRENT_STACK_POINTER
+> >       select ARCH_HAS_DEBUG_VIRTUAL if MMU
+> >       select ARCH_HAS_DEBUG_VM_PGTABLE
+> > @@ -1153,6 +1154,15 @@ endmenu # "Power management options"
+> >
+> >  menu "CPU Power Management"
+> >
+> > +config RISCV_ZAWRS_IDLE
+> > +     bool "Idle thread using ZAWRS extensions"
+> > +     depends on RISCV_ISA_ZAWRS
+> > +     default y
+> > +     help
+> > +             Adds support to implement idle thread using ZAWRS extensi=
+on.
+> > +
+> > +             If you don't know what to do here, say Y.
+> > +
+> >  source "drivers/cpuidle/Kconfig"
+> >
+> >  source "drivers/cpufreq/Kconfig"
+> > diff --git a/arch/riscv/include/asm/cpuidle.h b/arch/riscv/include/asm/=
+cpuidle.h
+> > index 71fdc607d4bc..94c9ecb46571 100644
+> > --- a/arch/riscv/include/asm/cpuidle.h
+> > +++ b/arch/riscv/include/asm/cpuidle.h
+> > @@ -10,15 +10,6 @@
+> >  #include <asm/barrier.h>
+> >  #include <asm/processor.h>
+> >
+> > -static inline void cpu_do_idle(void)
+> > -{
+> > -     /*
+> > -      * Add mb() here to ensure that all
+> > -      * IO/MEM accesses are completed prior
+> > -      * to entering WFI.
+> > -      */
+> > -     mb();
+> > -     wait_for_interrupt();
+> > -}
+> > +void cpu_do_idle(void);
+> >
+> >  #endif
+> > diff --git a/arch/riscv/include/asm/processor.h b/arch/riscv/include/as=
+m/processor.h
+> > index efa1b3519b23..d0dcdb7e7392 100644
+> > --- a/arch/riscv/include/asm/processor.h
+> > +++ b/arch/riscv/include/asm/processor.h
+> > @@ -12,6 +12,7 @@
+> >
+> >  #include <vdso/processor.h>
+> >
+> > +#include <asm/insn-def.h>
+> >  #include <asm/ptrace.h>
+> >
+> >  #define arch_get_mmap_end(addr, len, flags)                  \
+> > @@ -148,6 +149,21 @@ static inline void wait_for_interrupt(void)
+> >       __asm__ __volatile__ ("wfi");
+> >  }
+> >
+> > +static inline void wrs_nto(unsigned long *addr)
+> > +{
+> > +     int val;
+> > +
+> > +     __asm__ __volatile__(
+> > +#ifdef CONFIG_64BIT
+> > +                     "lr.d %[p], %[v]\n\t"
+> > +#else
+> > +                     "lr.w %[p], %[v]\n\t"
+> > +#endif
+>
+> val is always 32-bit since it's an int. We should always use lr.w.
 
-I need to regrab some time finishing, my patch adding support for it on intree crypto driver.
-I found an old tree that I push here https://github.com/montjoie/linux/tree/rk3288-trng
-This is not a final patch, but it could help finding a correct value of sample via the debugfs.
-I dont remember which value of sample was necessary to obtain a minimal quality. (perhaps 500 since it seems the default in my patch).
+The 'int val' is a mistake here. The val can be an unsigned long
+(thread_info->flags) when CONFIG_SMP is disabled. So the lr.d is
+necessary. I will update the declaration of val from 'int' to
+'unsigned long'.
 
-Unfortunatly, I cannot test it immediatly, as my CI controller got some HW issue, and I need to fix them.
+>
+> > +                     ZAWRS_WRS_NTO "\n\t"
+> > +                     : [p] "=3D&r" (val), [v] "+A" (*addr)
+>
+> What do 'p' and 'v' represent? If they are pointer and value then they're
+> backwards. I would just spell them out [val] and [addr].
 
-Regards
+Great insight. I will refine the name here to make it more readable.
+
+>
+> > +                     : : "memory");
+> > +}
+> > +
+> >  extern phys_addr_t dma32_phys_limit;
+> >
+> >  struct device_node;
+> > @@ -177,6 +193,8 @@ extern int set_unalign_ctl(struct task_struct *tsk,=
+ unsigned int val);
+> >  #define RISCV_SET_ICACHE_FLUSH_CTX(arg1, arg2)       riscv_set_icache_=
+flush_ctx(arg1, arg2)
+> >  extern int riscv_set_icache_flush_ctx(unsigned long ctx, unsigned long=
+ per_thread);
+> >
+> > +extern void select_idle_routine(void);
+> > +
+> >  #endif /* __ASSEMBLY__ */
+> >
+> >  #endif /* _ASM_RISCV_PROCESSOR_H */
+> > diff --git a/arch/riscv/kernel/cpu.c b/arch/riscv/kernel/cpu.c
+> > index f6b13e9f5e6c..97a7144fa6cd 100644
+> > --- a/arch/riscv/kernel/cpu.c
+> > +++ b/arch/riscv/kernel/cpu.c
+> > @@ -23,6 +23,11 @@ bool arch_match_cpu_phys_id(int cpu, u64 phys_id)
+> >       return phys_id =3D=3D cpuid_to_hartid_map(cpu);
+> >  }
+> >
+> > +void __init arch_cpu_finalize_init(void)
+> > +{
+> > +     select_idle_routine();
+> > +}
+>
+> Is there a reason we need to do this at arch_cpu_finalize_init() time?
+> This seems like the type of thing we have typically done at the bottom of
+> setup_arch().
+
+Actually, there is no special reason here. Just imitated the placement
+of x86. It works well too if we put it at the end of setup_arch().
+
+>
+> > +
+> >  /*
+> >   * Returns the hart ID of the given device tree node, or -ENODEV if th=
+e node
+> >   * isn't an enabled and valid RISC-V hart node.
+> > diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
+> > index e4bc61c4e58a..77769965609e 100644
+> > --- a/arch/riscv/kernel/process.c
+> > +++ b/arch/riscv/kernel/process.c
+> > @@ -15,6 +15,7 @@
+> >  #include <linux/tick.h>
+> >  #include <linux/ptrace.h>
+> >  #include <linux/uaccess.h>
+> > +#include <linux/static_call.h>
+> >
+> >  #include <asm/unistd.h>
+> >  #include <asm/processor.h>
+> > @@ -35,11 +36,49 @@ EXPORT_SYMBOL(__stack_chk_guard);
+> >
+> >  extern asmlinkage void ret_from_fork(void);
+> >
+> > -void noinstr arch_cpu_idle(void)
+> > +static __cpuidle void default_idle(void)
+> > +{
+> > +     /*
+> > +      * Add mb() here to ensure that all
+> > +      * IO/MEM accesses are completed prior
+> > +      * to entering WFI.
+> > +      */
+> > +     mb();
+> > +     wait_for_interrupt();
+> > +}
+> > +
+> > +static __cpuidle void wrs_idle(void)
+> > +{
+> > +     /*
+> > +      * Add mb() here to ensure that all
+> > +      * IO/MEM accesses are completed prior
+> > +      * to entering WRS.NTO.
+> > +      */
+> > +     mb();
+> > +     wrs_nto(&current_thread_info()->flags);
+> > +}
+> > +
+> > +DEFINE_STATIC_CALL_NULL(riscv_idle, default_idle);
+> > +
+> > +void __cpuidle cpu_do_idle(void)
+> > +{
+> > +     static_call(riscv_idle)();
+> > +}
+> > +
+> > +void __cpuidle arch_cpu_idle(void)
+>
+> Switching the section of this from '.noinstr.text' to 'cpuidle.text'
+> should probably be a separate patch.
+>
+> >  {
+> >       cpu_do_idle();
+> >  }
+> >
+> > +void __init select_idle_routine(void)
+> > +{
+> > +     if (IS_ENABLED(CONFIG_RISCV_ZAWRS_IDLE) &&
+> > +                     riscv_has_extension_likely(RISCV_ISA_EXT_ZAWRS))
+> > +             static_call_update(riscv_idle, wrs_idle);
+> > +     else
+> > +             static_call_update(riscv_idle, default_idle);
+>
+> Do we need this 'else'? Can't we set the default at DEFINE_STATIC_CALL*
+> time?
+
+Yes, the 'else' branch can be canceled if we set the default idle
+function to 'wfi' one using DEFINE_STATIC_CALL. Just not sure which
+code looks better.
+
+>
+> > +}
+> > +
+> >  int set_unalign_ctl(struct task_struct *tsk, unsigned int val)
+> >  {
+> >       if (!unaligned_ctl_available())
+> > --
+> > 2.20.1
+> >
+>
+> Thanks,
+> drew
+
+Best regards,
+
+Xu Lu.
 
