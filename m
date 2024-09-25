@@ -1,157 +1,163 @@
-Return-Path: <linux-kernel+bounces-338473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B996985877
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:43:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 817CD985841
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:40:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C54A71F23B44
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:43:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0F911C235D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 11:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B05C18E052;
-	Wed, 25 Sep 2024 11:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC6E18A6C0;
+	Wed, 25 Sep 2024 11:37:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="NzUR10xe"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jifn3Vh/"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B54218DF78;
-	Wed, 25 Sep 2024 11:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83BE175D37;
+	Wed, 25 Sep 2024 11:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727264261; cv=none; b=NWN1AHDTp/i3td6Z96Iz14uKtfdvzOHZSKnwwK7Or3C5iYns2UMqjDns9Ib3b5e4bOfHlRoL/T564PclyUnn13kWdhBn9hbf9LgeK0vNSvmPH5+eblxIJ2IPZEboVv2D4OIMqAErPJERrFCSqejoC8BSFxd85BWPA714UNspXFo=
+	t=1727264234; cv=none; b=iI5Y1y8WjD1AwjhREIJ6ND11zgrDKHE+4D0yMKHL5+H5ptltlBrLCzhFyKuJdo0CqYW62MQEPMXIfJtTl7SxPVTfmp9dpg5UevWd2ZbI60dCMgzKx0w0YgLh0gPgyE3V6i15SlXYJYDXnkGrnoH10VPm87aVZw5T04C7GBrij9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727264261; c=relaxed/simple;
-	bh=mNVhvWOEn6bEbyXBRFPt8xXjd1N12QiImpkDDnCHGZg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ul6KBDEgHbeDU9Fw+Wxoqoqom1O8VB33QnEbZ3b8u0pfuZHMorUCzxO3wsCG6/zff7O9Fheepfqb+PMHZxOUf+ozKCarkFaH4eJ3OFfAkwQzwTT/mK/gkjrXpPme3nNByuPqZc9J+MGkZnmGZ1KRCiHUZRR41kbo8ReW7jsYxbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=NzUR10xe; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1727264258;
-	bh=mNVhvWOEn6bEbyXBRFPt8xXjd1N12QiImpkDDnCHGZg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=NzUR10xe39M7KcplzFnp+pUsEnYBTpuWdGy3vbCLCSkWSGx7UPd4EO5CiQnCY1JYv
-	 JtRxX5/Ixr7OvlSMQIatUb49kBUW3RitX8UtpVMisU2jOeRGePJAlTKFYsM9DatxiC
-	 i6QageZOCnVC23DGwUXJfVSZG3TkO7GsMJitiSGz5o3khKYim3JA9CZgkBj4oyP6Bh
-	 r4K6hqSj61MhTBA4aXhIbWOuA1mN4pMErKQ29tuxB+3hbN3+GUh2dqogU9ky+12xgT
-	 wgQOr4BhV3FzutJAbY057deM4ZjVSuYufhlTHd+ecR9QhWlEcFwcK6EQMFnb6BbooY
-	 PUPJVGFPX6eHQ==
-Received: from [192.168.126.112] (unknown [147.75.204.251])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XDF885PTZz1LfT;
-	Wed, 25 Sep 2024 07:37:28 -0400 (EDT)
-Message-ID: <38b04b86-1e85-40f0-8174-3c8ab29cbcaf@efficios.com>
-Date: Wed, 25 Sep 2024 13:36:47 +0200
+	s=arc-20240116; t=1727264234; c=relaxed/simple;
+	bh=7Dve7AlWC4FeBvaR1mefkGri4yYyskMUqoxhoVI9PZo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M1W1Xvk3BwFYf+SYTzemVvNSzgJf0Bv7FTP7lIUpQZHuyd6Jqch60Eo4O3LEpnRiSu4kxSlqJ8A8DeQVIk2R69BitD8lx1dkUcWZ1vuIV19ss3Eexli4J+gCTSN7VAlzinj6NAiiroQ2GJp2LC9tQlUYJ2HFnfDr39GWlNzOfNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jifn3Vh/; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-537a399e06dso4136836e87.1;
+        Wed, 25 Sep 2024 04:37:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727264231; x=1727869031; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=M2c4QkqUSunQnHqhEYmc9PBGDMAL9urYEXHH5gg9oUE=;
+        b=jifn3Vh//p3T0L5e4osZpVPMwKeK0u24ztLc4sfEpP894i5eYiN9D/zhOSKFeVfQYP
+         iXdklKlIAwzeDgQknGmxroUPwQKJhRSsdY2+Iv4Wm9wj7R6/zZMhJ7ufygW8LzOH40dV
+         OpyDw/NbayHyECxt02LY0hiD/+I8cUbXQ1QmHn9Yfy6NugY5YlDU6FiGOQlX26lslzEu
+         IcEEHBmem4IDTPqIquqzCgqjtW6/45dxCV474aidsaJwUDYOJQcTkTR0e1kNVIIznQF4
+         5YilsOtDENiyMLcyShofBj5gcnzwE34t9f2hQwG2QipGCxMtsN1Sz7N3YzTTKWaZF4zk
+         hZWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727264231; x=1727869031;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M2c4QkqUSunQnHqhEYmc9PBGDMAL9urYEXHH5gg9oUE=;
+        b=uYJYtUyaxLofDieA5IKZQF6F7vTR5PCYjUadp42n8JkCGbXF1LF7wgrqIkAU5/3+bW
+         M6+9KvE3JM4ZqbQTqckypZ3sUtAXllOwPuzBwF5F9toHchh01bEef+HFPjFV+B5GZU+V
+         t0cJhZahgNkzZO2X5I8zvkO5fI5zcz8/0NwWvvwinlYgqACPQmhIhGr25/y185d8RAPl
+         OcOqSGiK8P0+qfKf/GG1lUVNRKYtDJeKA3QFYtdf3iDwmQBJuLaWZ7uSyo9FEu4N9+Zw
+         RCfjHav+MI9aLvs+JRRCiOzS410rYr+zHj2IYh+xCQSej8rZ/VNiBEQYB6qXk9mC14pM
+         KXNg==
+X-Forwarded-Encrypted: i=1; AJvYcCWQggSNxofWONQa0dPWDqDO6NnDYNpHAIxt0aIruTv+l9fuXEdVl39cBKG90s0WgrzAp0wdBjtlmwTjrAc=@vger.kernel.org, AJvYcCX/xZLYffODbb2W/3x3tAsYDT9U+rAHjoIt1iZLAVc1jPX/i3TYFUTuJTrwMP0ACZqTH/K6Rw3M66M7Bif8UHVs9RUrTeRO@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEToJX3ANRPMZHfDOfKlJiok6xhVP6vas0cMa44lZDKQeQALSn
+	f0teljqL5AEoMUZt9g1kE+pat+sRC6SgnBndpIj04g4ZqLIC1nxCDmLvkHio2YXtYaCtgFqynFR
+	FkTCULMmEw15jICypLF13fkC4IYg=
+X-Google-Smtp-Source: AGHT+IHYrPcfkliD+Hijl1J7liKGDqIM1On5CGTajvpqJdM+yKtElYu1h+7Y/NbqHMu3+t5CBuXW2otvJhFl3+q/9Mk=
+X-Received: by 2002:a05:6512:68c:b0:535:6965:be30 with SMTP id
+ 2adb3069b0e04-5387756722fmr1303526e87.50.1727264230308; Wed, 25 Sep 2024
+ 04:37:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/1] hpref: Hazard Pointers with Reference Counter
-To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
- Boqun Feng <boqun.feng@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Alan Stern
- <stern@rowland.harvard.edu>, John Stultz <jstultz@google.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Frederic Weisbecker <frederic@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
- <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
- Mateusz Guzik <mjguzik@gmail.com>, rcu@vger.kernel.org, linux-mm@kvack.org,
- lkmm@lists.linux.dev
-References: <20240921164210.256278-1-mathieu.desnoyers@efficios.com>
- <e4721439-8cad-4134-8c07-84b6ecc69573@huaweicloud.com>
- <48ae741e-98aa-49d9-b677-6c4f8fd1bcb0@efficios.com>
- <07c9285f-44a1-486a-8390-0c63cefae35a@huaweicloud.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <07c9285f-44a1-486a-8390-0c63cefae35a@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240925063034.169-1-ebpqwerty472123@gmail.com>
+ <72050879-4546-4bc7-9983-79ad437594d4@lucifer.local> <CAHQche8ijvNfKHBLV8BWWq85rjKQbjO+0w2s6kj4V3OpBANcuA@mail.gmail.com>
+ <78a854db-e8ea-475c-950d-2d9faf72f2b4@lucifer.local>
+In-Reply-To: <78a854db-e8ea-475c-950d-2d9faf72f2b4@lucifer.local>
+From: Shu Han <ebpqwerty472123@gmail.com>
+Date: Wed, 25 Sep 2024 19:36:59 +0800
+Message-ID: <CAHQche_92iaqxWK7WKDnEDkCRV-r2HXL2xuRa7b2NBaLhUg7-Q@mail.gmail.com>
+Subject: Re: [PATCH] mm: move the check of READ_IMPLIES_EXEC out of do_mmap()
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org, 
+	serge@hallyn.com, Liam.Howlett@oracle.com, vbabka@suse.cz, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024-09-25 12:06, Jonas Oberhauser wrote:
-> 
-> 
-> Am 9/25/2024 um 8:35 AM schrieb Mathieu Desnoyers:
->> On 2024-09-25 07:57, Jonas Oberhauser wrote:
->>> Hi Mathieu,
-> 
->>> I haven't read your code in detail but it seems to me you have an ABA 
->>> bug: as I explained elsewhere, you could read the same pointer after 
->>> ABA but you don't synchronize with the newer store that gave you 
->>> node2, leaving you to speculatively read stale values through *ctx->hp.
->>> (I am assuming here that ctx->hp is essentially an out parameter used 
->>> to let the caller know which node got protected).
->>
->> The following change should fix it:
->>
->>       cmm_barrier();
->> -    node2 = uatomic_load(node_p, CMM_RELAXED);    /* Load A */
->> +    node2 = rcu_dereference(*node_p);    /* Load A */
->>
-> 
-> I don't think this fixes it, because IIRC rcu_dereference relies on the 
-> address dependency (which we don't have here) to provide ordering.
-> 
-> I would recommend either:
-> 
-> -    ctx->hp = node;
-> +    ctx->hp = node2;
-> 
-> which fixes the problem under the perhaps too weak assumption that the 
-> compiler doesn't use its knowledge that node==node2 to just undo this 
-> fix, or more strictly,
+> No need to be sorry! :) Sorry if I sound harsh here - it's more a case of
+> trying to be as clear as I can be as that is the best approach for everyone
+> I think.
 
-As stated in Documentation/RCU/rcu_dereference.rst from the Linux
-kernel, comparing the result of rcu_dereference against another
-non-NULL pointer is discouraged, as you rightly point out.
+> This code is sensitive, so we have to super careful!
 
-> 
-> +    ctx->hp = READ_ONCE(node2);
-> 
-> which I believe makes sure that the value of node2 is used.
+Thanks a lot! :)
 
-I am not entirely sure this extra READ_ONCE() would be sufficient
-to prevent the compiler from making assumptions about the content
-of node2 and thus use the result of the first load (node) instead.
-It would also not suffice to prevent the CPU from speculatively
-using the result of the first load to perform dependent loads AFAIU.
+> I would disagree it's down to taste, I noted on the move the check to
+> do_mmap() series a number of issues and concerns, to me that seems
+> unworkable in it's current form, the locking thing is fatal for instance.
 
-> Alternatively you could always use an acquire load.
+> What you link to there seems to be neither approach (I didn't read your
+> second series though as that needs an RFC tag)? I mean I think perhaps what
+> you are doing there is the best _first step_ - simply add the checks in
+> each of the callsites that you feel are missing them.
 
-Unless someone comes up with a sound alternate approach,
-I am tempted to go with an acquire load as the second load
-within hpref_hp_get().
+> This is the least controversial way and then allows maintainers of the
+> callers to assess whether they intended for that.
 
-This way, the compiler would not attempt to use the
-node value from the first load for dependent loads,
-and the and CPU won't try to speculate dependent loads
-either.
+> If then you end up wtih _all_ callers doing this check, we can take another
+> look at possibly bringing it into do_mmap() but we would absolutely have to
+> ensure it was done correctly, however.
 
-Thanks,
+> 1. (If you haven't already) Submit a series that adds patches to add checks
+>    at call sites that don't already check.
 
-Mathieu
+> 2. If these are accepted at _all_ callsites, revisit the do_mmap() change,
+>    properly accounting for locks (I can help with this).
 
-> 
-> 
-> Best wishes,
-> 
->    jonas
-> 
+In fact, "mm: move the check of READ_IMPLIES_EXEC out of do_mmap()" does
+not have the locking issue. These two patches are quite different. This is
+also the modification I recommended, while another modification was
+suggested by LSM maintainers(Perhaps I need to add suggested-by? But
+that was mentioned in a non-public security mailing list, and I'm not sure
+if it's appropriate.).
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+The __core__ problem is "no LSM hook" +
+"have logic about READ_IMPLIES_EXEC". Removing one of them is OK.
 
+The "mm: move security_file_mmap() back into do_mmap()" fixes this by
+adding a LSM hook. The requirement to call LSM hooks comes from the
+LSM modules, _not these call sites_. The issue for locks also comes
+from the specific implementation of LSM modules. So I send patches
+to LSM maintainers at the same time.
+
+The "mm: move the check of READ_IMPLIES_EXEC out of do_mmap()" fixes this
+by removing the logic about READ_IMPLIES_EXEC that is not needed. So no
+locking issues there(no changes to LSM). This will result in some minor
+behavioral changes for call sites mentioned in the patch. Unfortunately,
+due to this logic being placed in a single function do_mmap now, it is
+impossible to confirm it through patches one by one before change the mm
+module. Fortunately, these changes should clearly be fine, and here are
+the reasons(more specific versions):
+
+fs/aio.c, mm/util.c, ipc/shm.c: no changes
+arch/x86/kernel/shstk.c: Shadow Stack is stack only store return
+addresses, adding execute permission to shadow stack is never
+required.
+mm/mmap.c: in the history, remap_file_pages won't care about the
+READ_IMPLIES_EXEC. this side effect is introduced in the emulated
+version, after the deprecated mark exists. The patch only removes the
+side effects introduced. And this(mm) is the module. :)
+
+BTW, The link is the _first step_ in required(if the check is missing in
+that call site, there will be a bug) call sites, which has been done.
+
+> I do feel we need to better document these functions, so I will add
+> comments. I see you did so as part of your other series, but think maybe we
+> need to expand this and possibly rename both and add some asserts... it's
+> on the todo list!
+
+Perhaps adding sufficient comments is also a completely appropriate method
+as another alternative.
+
+Thanks for your kind review!
 
