@@ -1,109 +1,115 @@
-Return-Path: <linux-kernel+bounces-339132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70F2E9860A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:29:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 991169860A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:29:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A23521C265D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:29:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62CF5288DBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7CE4AEF2;
-	Wed, 25 Sep 2024 13:18:51 +0000 (UTC)
-Received: from out02.mta.xmission.com (out02.mta.xmission.com [166.70.13.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C4C5C603;
+	Wed, 25 Sep 2024 13:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B5/nx5z8"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6259F487B0;
-	Wed, 25 Sep 2024 13:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99EBD537F5
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 13:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727270330; cv=none; b=dCV4cibeHzCN1JDTVaAA/Wd/XEhjsKZZieZFT04JFZvmFdbEjJAbsqgv7/6fDpVf0dlO6fBlwjGGd6Jnh3VtGvZ8xL2XAXpXIqclAK76wd/1ibDu37wm1qVhg55rvJVXbpcSVdtm8wzFYCYh936Y5nm7dTtCw+f6Tv/ZtLYxGgY=
+	t=1727270344; cv=none; b=qfC72XJulmpKN4OjFOa9GVeb1hOqW/T4MvPEztiOPi69mq8R8QlTk3A7i/5XpheWI8IgC5gCw/DNIx1vnT2G5dR/yh8SYVYf98MTe8qDK0fNkyxfV3IFKiTOFwDhejv7Z8eDirp2fOnE/ZcmouILBaKh+wnZOxes3jY23OGq884=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727270330; c=relaxed/simple;
-	bh=PP7aq5C8n8TxDp+EHp46ciDzlU37Fv5PHSVhKT+8QHk=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=Kn0JouL5poqp6ABJxzTLCc5+DBxmPjTJxHXJjfc+m8lQXZRl9QA7Eq2/2psm7zZtQ9atqJC2V0aJlGnrMEIrXaaK15cwFvJ72BjTGVnx0tRFe/OUEk/5nqxug/rEjWi22whwMl5tsBIJkiG+TiXvh4KyXttesI36jMyFFyTxG4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in01.mta.xmission.com ([166.70.13.51]:53986)
-	by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1stRup-006dUP-MN; Wed, 25 Sep 2024 07:18:47 -0600
-Received: from ip68-227-165-127.om.om.cox.net ([68.227.165.127]:58286 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1stRuo-004SfG-DQ; Wed, 25 Sep 2024 07:18:46 -0600
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Tycho Andersen <tycho@tycho.pizza>,  Alexander Viro
- <viro@zeniv.linux.org.uk>,  Jan Kara <jack@suse.cz>,  Kees Cook
- <kees@kernel.org>,  Jeff Layton <jlayton@kernel.org>,  Chuck Lever
- <chuck.lever@oracle.com>,  Alexander Aring <alex.aring@gmail.com>,
-  linux-fsdevel@vger.kernel.org,  linux-mm@kvack.org,
-  linux-kernel@vger.kernel.org,  Tycho Andersen <tandersen@netflix.com>,
-  Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,  Aleksa
- Sarai
- <cyphar@cyphar.com>
-References: <20240924141001.116584-1-tycho@tycho.pizza>
-	<20240925-herziehen-unerbittlich-23c5845fed06@brauner>
-Date: Wed, 25 Sep 2024 08:18:39 -0500
-In-Reply-To: <20240925-herziehen-unerbittlich-23c5845fed06@brauner> (Christian
-	Brauner's message of "Wed, 25 Sep 2024 10:31:04 +0200")
-Message-ID: <874j63an2o.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1727270344; c=relaxed/simple;
+	bh=bSUUCMRcUEPJMWUyyq7cDb8aB2SQdtv/cShWT/TdmWY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JEif9zkeypMbUNNardOmVl+ByIJmDuTIlQuIYWPgfkaWlqKFnWqVgDdEThyxlr1tpGRL+u3eyhp+0stixNlgPTrP9BsFBufGewdkJ12H5jxQsv/e65a0fyWXiehoYLzXCIXqJa7RgbelfIHwX7rAJdlFWS/yGNjjJgtvZrCGwHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B5/nx5z8; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53659c8d688so774305e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 06:19:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727270341; x=1727875141; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bSUUCMRcUEPJMWUyyq7cDb8aB2SQdtv/cShWT/TdmWY=;
+        b=B5/nx5z8eviWPW+i9uZOuT9VAnXcyB8hteg/z4567NlvaoSRfLww3ZTUzUK3jcw3JR
+         yAi7Fle+vK6K4a7I3R3eL4bSqtG7wFsadmAVJgzbGCHaFzDR9UWFwgDAI0n3zY7CRAMZ
+         ahrmO7Mmo29kPf0NY3fU/C5gUJliaKxUsUsFVg8SNXDcBnJv9x6Ds+ovYtJusdKthjjs
+         zBmTqiavc/a+PzGjOHbZGJrPLnlDDfPNP/dS67T9YroWScrtZbAlzDouVOSmD4rCxwLA
+         Yji89MaOHTSEjNgKtdTAgNUqDaUNkzAKdBGLqFLzIQHH6Qa8yYLiCj1wzgeDOuQY/og0
+         S5XA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727270341; x=1727875141;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bSUUCMRcUEPJMWUyyq7cDb8aB2SQdtv/cShWT/TdmWY=;
+        b=jmIELcM/5J77cVZxUPwFvCVHrB91SPxvo7ShYJFxzrumQwRQVfQBB3jn5UElphqIXS
+         mVID8K1QGL1KMKKlDxC94lz+pQDvjHT+nqD76ZACKAJrpRjJ8p3BB6NZTMHZRkwJjK3+
+         m7aQQSVcbOgbXzWsWipW12s809gkhMBGfxGekYlSUsxzNjr3tZepThgzu/pTW+MVZCOH
+         u5aj5thvsUr+wIjkv2cmBvIPOYNyJPW3ye8vbpENMcy44rxh0ONp1fBo3lfdrFJaQtGC
+         4VCXkpsGnBn87RBs27MaASvEPytQ0QF46sLIuYsvyR8pYdJy4ZYNIku6l2lXXC5VGAFc
+         2sxw==
+X-Forwarded-Encrypted: i=1; AJvYcCX1qsnVNRXpADh1YR4C7UhizH7yAji+QvCiQhAmB/FPuvsmXQXqqvUmlyheo2CQ7IohPAFPYOAtzybSCFc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNAmc3NLA8n4WZhBIO19vnYfCs/mwV9vjxMS6l4tMrl8VbRy0U
+	BhPFhJkAfOatFE17Y/cbz/4ROKG63kx1yXbkq4tbjQLnwsCHa8YMP44HWSLPnfRk23IxZeRnw9G
+	OQB3lL43QWmGael7qEKr6AY6oWtg=
+X-Google-Smtp-Source: AGHT+IFl452v5tYyj4PohbBlaI7VqwpRobJ6IjXzS1JpKUP9zXdChn582VM47JwDn1+7KDLISV/7kYSXOzSvXmKG24A=
+X-Received: by 2002:a05:6512:118a:b0:533:32cf:6420 with SMTP id
+ 2adb3069b0e04-5385117d7c7mr983870e87.8.1727270340398; Wed, 25 Sep 2024
+ 06:19:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1stRuo-004SfG-DQ;;;mid=<874j63an2o.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.165.127;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX1+iuWV+WzFVZr6NUegQlBB1YDjWlT50k0Y=
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.4009]
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-	* -0.0 T_SCC_BODY_TEXT_LINE No description available.
-	*  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Christian Brauner <brauner@kernel.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 346 ms - load_scoreonly_sql: 0.06 (0.0%),
-	signal_user_changed: 9 (2.6%), b_tie_ro: 7 (2.1%), parse: 1.01 (0.3%),
-	extract_message_metadata: 3.1 (0.9%), get_uri_detail_list: 0.77 (0.2%),
-	 tests_pri_-2000: 2.5 (0.7%), tests_pri_-1000: 3.3 (1.0%),
-	tests_pri_-950: 1.35 (0.4%), tests_pri_-900: 1.15 (0.3%),
-	tests_pri_-90: 146 (42.1%), check_bayes: 143 (41.3%), b_tokenize: 5
-	(1.5%), b_tok_get_all: 4.1 (1.2%), b_comp_prob: 1.71 (0.5%),
-	b_tok_touch_all: 128 (37.1%), b_finish: 0.91 (0.3%), tests_pri_0: 159
-	(45.9%), check_dkim_signature: 0.54 (0.2%), check_dkim_adsp: 8 (2.3%),
-	poll_dns_idle: 6 (1.8%), tests_pri_10: 2.2 (0.6%), tests_pri_500: 7
-	(2.2%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [RFC] exec: add a flag for "reasonable" execveat() comm
-X-SA-Exim-Connect-IP: 166.70.13.51
-X-SA-Exim-Rcpt-To: cyphar@cyphar.com, zbyszek@in.waw.pl, tandersen@netflix.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, alex.aring@gmail.com, chuck.lever@oracle.com, jlayton@kernel.org, kees@kernel.org, jack@suse.cz, viro@zeniv.linux.org.uk, tycho@tycho.pizza, brauner@kernel.org
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-SA-Exim-Scanned: No (on out02.mta.xmission.com); SAEximRunCond expanded to false
+References: <20240925032256.1782-1-fangzheng.zhang@unisoc.com>
+In-Reply-To: <20240925032256.1782-1-fangzheng.zhang@unisoc.com>
+From: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Date: Wed, 25 Sep 2024 22:18:47 +0900
+Message-ID: <CAB=+i9TJcnFhwef+efw8yBynZ28M2tWiYvuYS0aVoD4yt_+0Zw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Introduce panic function when slub leaks
+To: Fangzheng Zhang <fangzheng.zhang@unisoc.com>
+Cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, 
+	David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Greg KH <gregkh@linuxfoundation.org>, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, tkjos@google.com, 
+	Fangzheng Zhang <fangzheng.zhang1003@gmail.com>, Yuming Han <yuming.han@unisoc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Christian Brauner <brauner@kernel.org> writes:
-
-> Please add a:
+On Wed, Sep 25, 2024 at 12:23=E2=80=AFPM Fangzheng Zhang
+<fangzheng.zhang@unisoc.com> wrote:
 >
-> Link: https://github.com/uapi-group/kernel-features#set-comm-field-before-exec
->
-> to the commit where this originated from.
+> Hi all,
 
-What standing does some random github project have? 
+Hi Fangzheng,
 
-Eric
+> A method to detect slub leaks by monitoring its usage in real time
+> on the page allocation path of the slub. When the slub occupancy
+> exceeds the user-set value, it is considered that the slub is leaking
+> at this time
+
+I'm not sure why this should be a kernel feature. Why not write a user
+script that parses
+MemTotal: and Slab: part of /proc/meminfo file and generates a log
+entry or an alarm?
+
+> and a panic operation will be triggered immediately.
+
+I don't think it would be a good idea to panic unnecessarily.
+IMO it is not proper to panic when the kernel can still run.
+
+Any thoughts?
+
+Thanks,
+Hyeonggon
 
