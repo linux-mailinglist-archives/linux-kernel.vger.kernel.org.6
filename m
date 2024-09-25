@@ -1,149 +1,134 @@
-Return-Path: <linux-kernel+bounces-338370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23773985700
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:12:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 575C6985703
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:15:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6809B20CFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:12:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B80C282FEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64CD1865FE;
-	Wed, 25 Sep 2024 10:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C7FE1607AC;
+	Wed, 25 Sep 2024 10:15:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="EhvSPEZL"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jqwR1xAD"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685BB15B966;
-	Wed, 25 Sep 2024 10:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D786C3F9D5;
+	Wed, 25 Sep 2024 10:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727259147; cv=none; b=jRupnAuLfnlkv0AtqhFrXQ4kJM9JnU/OVr49qboNQLNraAYuouAbveE9B00W9lkAUus+9ixVQl3fF20BsexqmWG9/hr8egxFeYlyyhmLMKV2LABLVKEiXNHkqbJo/LrjNPzdpFhKdyjOnpT1HJWawL341rkfyMuCjyqyThwQ8CU=
+	t=1727259312; cv=none; b=goM39lULlUrrH3xU9YloM049niPExUCYaLAHhQvb4jND2jpMdBqGnMLq9p11jxFjBuT22Ty484/GbNYeOOFnn7xU81L35chVgYc/qwGevaHLufX0ELh45qjKKA0gi2/cTVNvb+OaKjXNfTTAiX92HEUILj26Cldx5VrZd2HgkQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727259147; c=relaxed/simple;
-	bh=3q9s6Vw7uH+PCgqxX0aWg6g2gWqXS1lHc1WrlVHoEUI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lIK0firnnvh6HmXTqky93+H4OHtHr5DLKU3E1x76EeOc/SHHbAi11Bbi0HSkdaEVsEpWb0srS495Kr1CVCtneNM84Cip5wgdDaLNLM7Rmc5bfHrFYHuRy8HjWccgsqahK9mT152NXPcsGcneq+l4a6WiQxUsIu2uxqwx5XwPdYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=EhvSPEZL; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=S/Mnn3eVQ+O1lmZHAuc1mutxHotBW3h1Bj4uCFY1CU8=; b=EhvSPEZLef6O0Y8aVlARJnBF6f
-	NGbQuY+02uSoNi6XkvcZSUoY3TtaouVaR4Hfavg06pLMIkPCNk2awXVVkR+VBM8VT0Ly3S28oJbiA
-	ZPxUCkS8kQS0Oun54v9pBX4Lz5kBFoUROCrXT3PNoy15mxuKBUpxX+zruWF4isFy/A9syM384FvN4
-	uYHP1y3i7CqHbeuVlh9Rt9olAdSvkcRUoqKmNquxypJ2V4U/QEGRqGTopqPHekj8hJE2XJo/f8ZMD
-	JhTvyyV5COWbm1lnNiAFgQeNJNxcKOKVLt9LxhN64vd8ooKv0w93XZikRoBpYdVkjNSjPDRKgBnlf
-	bzGigpdQ==;
-Date: Wed, 25 Sep 2024 12:12:17 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Roger Quadros <rogerq@kernel.org>
-Cc: linux-omap@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, Kevin
- Hilman <khilman@baylibre.com>, Michael Turquette <mturquette@baylibre.com>,
- Aaro Koskinen <aaro.koskinen@iki.fi>, linux-kernel@vger.kernel.org, Lee
- Jones <lee@kernel.org>, Tony Lindgren <tony@atomide.com>,
- linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: twl: add TWL6030 support
-Message-ID: <20240925121217.0aa54808@akair>
-In-Reply-To: <9b7f6995-586e-44ee-a73b-9baf1bf23a69@kernel.org>
-References: <20240924103609.12513-1-andreas@kemnade.info>
-	<20240924103609.12513-3-andreas@kemnade.info>
-	<9b7f6995-586e-44ee-a73b-9baf1bf23a69@kernel.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727259312; c=relaxed/simple;
+	bh=7M6pAgVOmnipHjCRRRJJhaiyPcFLNWvmHrTECV+D4kU=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=S2rAQZ/nJ8pAwg/AP0/PgdrIjAnTdXFaj85TrdMlysgm+ub39PJQspcCq+eoQonzQ06aS73NtXBmal5yhbcf5cGdLn+CEXnm3WaPVUzfEt03cuRlSRBm4g/BddVbHe3lgQGqXZrmul1EbcqtX5bsFTqo072vpEYjyt2nVHGntRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jqwR1xAD; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-374ba74e9b6so5397717f8f.0;
+        Wed, 25 Sep 2024 03:15:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727259309; x=1727864109; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ilIaUtbIEpTD2StWHvTRKlM/sRvr3jwjW7JtAZ7o8Ew=;
+        b=jqwR1xADGbZDrxjq+YgaOXZJNdIJHMJJoA6G/DSk00BdFM0OZDhokUXRvn70ty3ekV
+         KnLUbuz8TIbV9tj+ZSkDh1pBywhaEIyaF8tJ61hu7/mn6kkXewFYAgcR7f0iQUE1ap5G
+         bOY8xsaq+rMBrNT8Tp2SS9jVqUYROlkPrv8DubVtS0ShpNjfCZZ2kdfoYbYCEpTSBN8r
+         m6Q8lOkpD9itJVWRCso2NEJdpBeu+M0UwMADRlYqfxNx1N95t6KC/C3DcxDGEjLK31Bg
+         PvZTufoqIl4FNl7BucNZasNuj6MjxbBwHNpAt8r1k3lXnOXe5s7L5obYDdGLe1eRtokA
+         5vJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727259309; x=1727864109;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ilIaUtbIEpTD2StWHvTRKlM/sRvr3jwjW7JtAZ7o8Ew=;
+        b=FSnpKD6dv5AlY5L3f2KZ1X02FO6ba0p2bjHr/0zDk98ZHb/T0LWqUt5jLveM+ScsCA
+         lFXJEv/uzDaHzJTGeuDDtrdoLsImSNMeqYZjJIh/LPlu/0jqf51KtCycH+B8rPU/GmF4
+         c0neo2qX+9K/dT1lihi22caczGeBbYK0e7i/I7A9hOzj8+OvB6o828NW6Y+vyfSXX/Ar
+         uZfvwlTN+gOYBf2fG5hQK4fMO8VrSaw2iKl9vqi+fkdIOHzYKN+1ohNtAa9/9RM8dZTh
+         b2rx7UGs+mz/tfwEFOuN6b6VRaS68+wdmX5EtHPUbbrho+eWUK5KWQRGHHpefOx8NHYq
+         UHnA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2BHJ2sHIHoAaZweM5fNoUdhW/7etkVTShSI8KOTl6CNrko6wsWvavDSih9vnAVEALOj8GRuZs/Z1M@vger.kernel.org, AJvYcCWrBX/gJMei1521ep3bTR1/VnsXCIew7kBCjuF55AcP8vLG1mSscwnsc8QKS1Rg/zmGTDy4F6hWQwNqwBR2@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrqQ7AGIjZMgnemOU9beXycsQqKcDej6aMi7g3iHchGE7EuGrF
+	OpiwG4ILA4bU4qrk7jRBWYcP7Dun+mlt8pTiAsvpMFU8ix+Qi/2W
+X-Google-Smtp-Source: AGHT+IEmsRgIRfzVIU5fak3npQDb5hJ8p1AtivNkdH9EjqCFOo9Ah8NVO0bkOdgO29790nCRUCu71g==
+X-Received: by 2002:a05:6000:1141:b0:374:c90e:990c with SMTP id ffacd0b85a97d-37cc2480bcdmr1731315f8f.33.1727259308798;
+        Wed, 25 Sep 2024 03:15:08 -0700 (PDT)
+Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37cbc1560a7sm3628194f8f.0.2024.09.25.03.15.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 03:15:08 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-mtd@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	upstream@airoha.com
+Subject: [PATCH 0/3] mtd: Add support for Airoha partition scheme
+Date: Wed, 25 Sep 2024 12:13:56 +0200
+Message-ID: <20240925101422.8373-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Am Wed, 25 Sep 2024 10:07:29 +0300
-schrieb Roger Quadros <rogerq@kernel.org>:
+This is split from a different series called "mtd: improve block2mtd +
+airoha parser" with only the parser changes.
 
-[...]
-> > +static void twl6030_clks_unprepare(struct clk_hw *hw)
-> > +{
-> > +	struct twl_clock_info *cinfo = to_twl_clks_info(hw);
-> > +
-> > +	twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
-> > +		     ALL_GRP << TWL6030_CFG_STATE_GRP_SHIFT |  
-> 
-> Why are you unpreparing ALL_GRP? In prepare you only used VREG_GRP.
->
-well, if we want control, then I think using every group to turn it off
-into a defined state is a good idea.
+This series add support for the Airoha partition table where
+the last partition is always ART and is placed at the end of the flash.
 
+This require dynamic calculation of the offset as some dedicated
+driver for bad block management might be used that reserve some space
+at the end of the flash for bad block accounting. This special driver
+change the end offset of the flash hence a dynamic parser is needed.
 
-> > +		     TWL6030_CFG_STATE_OFF);
-> > +}
-> > +
-> > +static int twl6030_clks_is_prepared(struct clk_hw *hw)
-> > +{
-> > +	struct twl_clock_info *cinfo = to_twl_clks_info(hw);
-> > +	int val;
-> > +
-> > +	val = twlclk_read(cinfo, TWL_MODULE_PM_RECEIVER, VREG_GRP);
-> > +	if (val < 0)
-> > +		return val;
-> > +
-> > +	if (!(val & P1_GRP))
-> > +		return 0;
-> > +
-> > +	val = twlclk_read(cinfo, TWL_MODULE_PM_RECEIVER,
-> > VREG_STATE);
-> > +	if (val < 0)
-> > +		return val;
-> > +
-> > +	val = TWL6030_CFG_STATE_APP(val);
-> > +	return val == TWL6030_CFG_STATE_ON  
-> 
-> Is there a possibility that after calling twl6030_clks_prepare()
-> the clock can still remain OFF?
+New aarch64 Airoha SoC (EN7581) make use of this partition scheme or
+calibration data is not accessible.
 
-I do not see a reason. 
+Relevant Changes from old series:
+Changes v3:
+- Add compatible to partitions.yaml
 
-> If not then we could just use a private flag to indicate clock
-> prepared status and return that instead of reading the registers
-> again.
->
-The clock core already uses prepare_count if no is_prepared() is
-defined.
-So this prepare functions can just be dropped.
+Christian Marangi (3):
+  of: also export of_update_property
+  dt-bindings: mtd: Add Documentation for Airoha fixed-partitions
+  mtd: parser: add support for Airoha parser
 
-> 
-> > +}
-> > +
-> >  static int twl6032_clks_prepare(struct clk_hw *hw)
-> >  {
-> >  	struct twl_clock_info *cinfo = to_twl_clks_info(hw);
-> > @@ -93,6 +148,13 @@ static int twl6032_clks_is_prepared(struct
-> > clk_hw *hw) return val == TWL6030_CFG_STATE_ON;
-> >  }
-> >  
-> > +static const struct clk_ops twl6030_clks_ops = {
-> > +	.prepare	= twl6030_clks_prepare,
-> > +	.unprepare	= twl6030_clks_unprepare,
-> > +	.is_prepared	= twl6030_clks_is_prepared,
-> > +	.recalc_rate	= twl_clks_recalc_rate,
-> > +};  
-> 
-> Instead of re-defining all the clock ops can't we just reuse the
-> existing twl6032 clock ops?
-> 
-> We just need to tackle the twl6030 specific stuff inside the ops
-> based on some platform driver data flag.
-> 
-a big if (driver_data == TWL6032) in each of the ops might be ok, since
-we have an int and not a pointer there anyways might be the easiest way
-to go.
+ .../partitions/airoha,fixed-partitions.yaml   | 80 +++++++++++++++++++
+ .../bindings/mtd/partitions/partitions.yaml   |  1 +
+ drivers/mtd/parsers/Kconfig                   | 10 +++
+ drivers/mtd/parsers/Makefile                  |  1 +
+ drivers/mtd/parsers/ofpart_airoha.c           | 57 +++++++++++++
+ drivers/mtd/parsers/ofpart_airoha.h           | 18 +++++
+ drivers/mtd/parsers/ofpart_core.c             |  6 ++
+ drivers/of/base.c                             |  1 +
+ 8 files changed, 174 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mtd/partitions/airoha,fixed-partitions.yaml
+ create mode 100644 drivers/mtd/parsers/ofpart_airoha.c
+ create mode 100644 drivers/mtd/parsers/ofpart_airoha.h
 
-Regards,
-Andreas
+-- 
+2.45.2
+
 
