@@ -1,126 +1,150 @@
-Return-Path: <linux-kernel+bounces-339457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BC0C986554
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:10:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07726986569
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:13:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 027F41F24E88
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:10:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C0E8B25638
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0FB34CC4;
-	Wed, 25 Sep 2024 17:10:03 +0000 (UTC)
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E7912E1CD;
+	Wed, 25 Sep 2024 17:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="E3YYUJP3"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8F542067
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 17:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F58134BD;
+	Wed, 25 Sep 2024 17:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727284202; cv=none; b=Wdw/t4/rABvD5rJlaHbZnh8UEUW9eLiU3b57KH+cia6OL+LJOvncSZSeOIg31zb6qqBZ7P2AEfwjQXbs7ncdYtSYm8dIePuW2W+uGgEseXIFKinl8I0vrzbcsOoTJI+VijTKjh5iPNPoAUsyLB63EENUCg3zWJFhOFUgtR/0u3Y=
+	t=1727284341; cv=none; b=SDh6/ejfavZU5QV0XJ7zzKXnIED/lJ9OFqZ9BFRvp7/02DNP77oNRTt3tuUISE2N5d3qBUynpJKjAJotQaLJtY8SFfAusEwXbgwKlsJXvBiLEoFy/Mb6LBKZ2Mgnuf82JdBQeO2jGbKbeyIjcplGB3APg0NSsQVu7BXErc99kp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727284202; c=relaxed/simple;
-	bh=dVfDOPAUWKopfjcK6mbg81OFsQ0vEB/NnHfWeZb5iPA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EM3VOePQz/JCacsPDBB6ifFQsiDHBT0rUUf952Vgzw2hhIEmFhZ2pEjMbN/7nxAlcq6KmkQoYEvifj4Oh6w/Rtqp1xxYhTWzVxrq3D0/uhXdasPjk7G/bC/I6f/ZtGS6l6nIFWsycKD8gA6ICtBZb5Gqbu3G4xnZle9b51RphtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-82a626d73efso2400839f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 10:10:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727284200; x=1727889000;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dVfDOPAUWKopfjcK6mbg81OFsQ0vEB/NnHfWeZb5iPA=;
-        b=nyiK1shnrWoN3iSIHuQw1vN6oBYk8R0Wbu3BTK/ihc6l1PeClv4UUCj/RjUygzuNWW
-         1ZnQ0QUr4FtvSVKL8DjtyiUC7xBzcUFryhNYTawLOp3c6m0A4aBIgnCuQZdGdQHiw7dw
-         nERX721+usqlre7+WAiA9tLll+2aNt0LAYBGdzM6XeGhMXjh7AnRR5yFzTajP7W5jvMR
-         toXzSBY4gg6ZPtZjI8hfo3hPzfnYCk+DTr/ZfgOTSc6YgTIYed8STAUR0sR4YQ47ZNbe
-         rrw8S31imaK6hxIMZX1/u2BOjMvFZgBoiJVALW7Z5EGRsOWlI++J8tyfRAzckHqKmmDo
-         DVLw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/iMQFX+Ad2yuwOPlBTAWBnPgEFjWPm1TeGaIgEXh75L1aq02s5i+lCKhRnc8AXoxeTf6hwYl9fsvlnPQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yys0ENqNUykIjzsHQRr80cuhL0y4mVGLCAmK7UhtDJsg9Azu6dc
-	2kch2Rh8kj8O40kJ3P/D9A0wso8YPZ1oIwlGPdAiuUZTcBcXw8sb
-X-Google-Smtp-Source: AGHT+IG+cqBmv4mixYRblbHFRMFXJlw3s2aimTw4OARVVHFCPyZeyTpsoJgc1OpY2Hv5pLWGroy6SA==
-X-Received: by 2002:a05:6602:1691:b0:82a:a8af:626f with SMTP id ca18e2360f4ac-83247cfb73fmr408828539f.2.1727284199891;
-        Wed, 25 Sep 2024 10:09:59 -0700 (PDT)
-Received: from maniforge (c-76-141-129-107.hsd1.il.comcast.net. [76.141.129.107])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d40f1bbb09sm1174624173.105.2024.09.25.10.09.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 10:09:58 -0700 (PDT)
-Date: Wed, 25 Sep 2024 12:09:56 -0500
-From: David Vernet <void@manifault.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: kernel-team@meta.com, linux-kernel@vger.kernel.org, sched-ext@meta.com
-Subject: Re: [PATCH 2/5] sched_ext: Allow only user DSQs for
- scx_bpf_consume(), scx_bpf_dsq_nr_queued() and bpf_iter_scx_dsq_new()
-Message-ID: <20240925170956.GC26346@maniforge>
-References: <20240925000622.1972325-1-tj@kernel.org>
- <20240925000622.1972325-3-tj@kernel.org>
+	s=arc-20240116; t=1727284341; c=relaxed/simple;
+	bh=gYWxM1TeoQg6TO2sus0j7GCmOr+z2YV/d6+5qLSlM8s=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=K/vtbSSbhii+o4Jsyhbug0e6YDAuMc2jxy1XKAz9AJYKUM0hIkT1YinZHU8F5uQKg8FgUdgV4rGCfuYmyKUqYmGZPGcJAZLUgiaLUrndjtXc1/ax4sHXBO+KLSXzNM7zknDNTT9xUQCPnOEWe43p5QLVcIglIDFDiP/Wz/HjCFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=E3YYUJP3; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 4e1f18f27b6111efb66947d174671e26-20240926
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=QoTT/6NBpLK4C3nKaQBc7mw+Qc83kZKYIzQinskh5z4=;
+	b=E3YYUJP3qFE9CEzvkSi92QwQmgSvurO67cJMihMVaMXQhNG6Bu0BB0IjHL5eOAD+aoSbC6YEOER/of2D6ymuRTWRJ1GW/7LaKl6g3dCjiWBQ5DGwOU1imvfwFUTPSYwR4pudx4p3FaJPVGFuel+P6XDYteG/eL9VVm07iZE4WPU=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:909b3bb8-c860-4021-bf38-7ebda0659179,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:a078c2d0-7921-4900-88a1-3aef019a55ce,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 4e1f18f27b6111efb66947d174671e26-20240926
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
+	(envelope-from <macpaul.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 129292092; Thu, 26 Sep 2024 01:12:12 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Thu, 26 Sep 2024 01:12:08 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Thu, 26 Sep 2024 01:12:08 +0800
+From: Macpaul Lin <macpaul.lin@mediatek.com>
+To: Sen Chu <sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
+	Macpaul Lin <macpaul.lin@mediatek.com>, Lee Jones <lee@kernel.org>, "Rob
+ Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	<linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, Alexandre Mergnat
+	<amergnat@baylibre.com>
+CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+	Macpaul Lin <macpaul@gmail.com>, Chris-qj chen <chris-qj.chen@mediatek.com>,
+	MediaTek Chromebook Upstream
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai
+	<wenst@chromium.org>
+Subject: [PATCH 1/2] dt-bindings: mfd: mediatek: mt6397: add adc and regulators for mt6359
+Date: Thu, 26 Sep 2024 01:11:55 +0800
+Message-ID: <20240925171156.9115-1-macpaul.lin@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="EGART9XIPc7IMxU+"
-Content-Disposition: inline
-In-Reply-To: <20240925000622.1972325-3-tj@kernel.org>
-User-Agent: Mutt/2.2.13 (00d56288) (2024-03-09)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--4.079200-8.000000
+X-TMASE-MatchedRID: SsmlBu/h5g26lIBLPjRk6RWCVBr+Ay98wQ0CCpqVHSz98u70/pR9Gpas
+	fA8Y/RCFDGo03EdVgDKjp64yUKGpZGaAyMVnPatL6/xAZojbl7cP4vBWNr0zgZsoi2XrUn/Jn6K
+	dMrRsL14qtq5d3cxkNSjkRB+q9uV+Jsb3yTJxofTGAeY87hnlSO/NyqpYUkJBsqIjn1nHtvvMuU
+	MG5xRFzczHQD4nSrHNeHsfn6gZqBMJzWjfPdXPzo7NPt9DnHpk82Gj2QC3yG0smXVK/H8eHzG7s
+	r7xobSAsPEFD+rZA81DDKa3G4nrLQ==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--4.079200-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	B3DCA1ED930D0C66E8405AD4634D85CB39EA432A4B1306D31E1ACE828E230CF82000:8
+X-MTK: N
 
+Since MT6359 PMIC has been added as one of the compatibles of
+"mediatek,mt6397.yaml", the sub-device node of "MT6359 PMIC AUXADC" and
+"MT6359 PMIC Regulators" should also be contained in this DT Schema as
+well.
 
---EGART9XIPc7IMxU+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This patch includes:
+ - add 'adc' property and $ref for 'mediatek,mt6359-auxadc'.
+ - add 'mt6359-regulator' to the compatibles of regulators.
 
-On Tue, Sep 24, 2024 at 02:06:04PM -1000, Tejun Heo wrote:
+Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+---
+ Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Hi Tejun,
+diff --git a/Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml b/Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml
+index 953358bc997a..40cabaf60d0d 100644
+--- a/Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml
++++ b/Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml
+@@ -17,6 +17,7 @@ description: |
+   MT6397/MT6323 is a multifunction device with the following sub modules:
+   - Regulators
+   - RTC
++  - ADC
+   - Audio codec
+   - GPIO
+   - Clock
+@@ -86,6 +87,7 @@ properties:
+           - enum:
+               - mediatek,mt6323-regulator
+               - mediatek,mt6358-regulator
++              - mediatek,mt6359-regulator
+               - mediatek,mt6397-regulator
+           - items:
+               - enum:
+@@ -95,6 +97,11 @@ properties:
+     required:
+       - compatible
+ 
++  adc:
++    type: object
++    $ref: /schemas/iio/adc/mediatek,mt6359-auxadc.yaml#
++    unevaluatedProperties: false
++
+   audio-codec:
+     type: object
+     additionalProperties: false
+-- 
+2.45.2
 
-> SCX_DSQ_GLOBAL is special in that it can't be used as a priority queue and
-> is consumed implicitly, but all BPF DSQ related kfuncs could be used on it.
-> SCX_DSQ_GLOBAL will be split per-node for scalability and those operations
-> won't make sense anymore. Disallow SCX_DSQ_GLOBAL on scx_bpf_consume(),
-> scx_bpf_dsq_nr_queued() and bpf_iter_scx_dsq_new(). This means that
-> SCX_DSQ_GLOBAL can only be used as a dispatch target from BPF schedulers.
-
-This API impedance where you can dispatch but not consume feels unnatural, and
-a bit leaky. I understand why we don't want to allow BPF to consume it -- we're
-already doing it for the user as part of (and before) the dispatch loop. That's
-also one-off logic that's separate from the normal interface for DSQs though,
-and because of that, SCX_DSQ_GLOBAL imposes a cognitive overhead that IMO
-arguably outweighs the convenience it provides.
-
-I'm still of the opinion that we should just hide SCX_DSQ_GLOBAL from the user
-altogether. It makes sense why we'd need it as a backup DSQ for when we're e.g.
-unloading the scheduler, but as a building block that's provided by the kernel
-to the user, I'm not sure. In a realistic production scenario where you're
-doing something like running a scheduler that's latency sensitive and cares
-about deadlines, I'm not sure it would be viable or ever the optimal decision
-to throw the task in a global DSQ and tolerate it being consumed before other
-higher-priority tasks that were enqueued in normal DSQs. Or at the very least,
-I could see users being surprised by the semantics, and having instead expected
-it to function as just a built-in / pre-created DSQ that functions normally
-otherwise.
-
-Thanks,
-David
-
---EGART9XIPc7IMxU+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYKAB0WIQRBxU1So5MTLwphjdFZ5LhpZcTzZAUCZvRD5AAKCRBZ5LhpZcTz
-ZF4wAP4lBF49R6R4otL4+6fzp8HMNMrAr0JDNS6EDDrm4tovBQD/TI1GSwhQtFqI
-/Zdxqh0WgOM2zJxCwpnqHJxw3tnCBgc=
-=w+y+
------END PGP SIGNATURE-----
-
---EGART9XIPc7IMxU+--
 
