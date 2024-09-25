@@ -1,123 +1,158 @@
-Return-Path: <linux-kernel+bounces-339124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D235986094
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:27:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39BC4986097
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:27:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33F631F26993
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:27:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6ECE1F267A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:27:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D7818C02E;
-	Wed, 25 Sep 2024 13:13:09 +0000 (UTC)
-Received: from out02.mta.xmission.com (out02.mta.xmission.com [166.70.13.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBF618C03C;
+	Wed, 25 Sep 2024 13:13:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KlaVt/Ja"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76CFC178364;
-	Wed, 25 Sep 2024 13:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0E0178364;
+	Wed, 25 Sep 2024 13:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727269989; cv=none; b=fRIYQl4LIVrdmaGl/+zgYCifAidoDyKWjCEQXh+SazLYlcOlh2TdHduq8zwDbrAEbc8w+zsLmAr7aO/tnYDkO59W0pSs0dAg6J+fdi6JmbjwemwOAh7hOQ38J1hbtz5LMq8YD5+QiTLG8V8ubHrcAgEa1TqhKOJx9Hbh4l6tUho=
+	t=1727270011; cv=none; b=pVWVZPuM1JVKmXSwzXYuOJH7PYpkz840WBdKtw5Ny5B11b/miRLbIURKrr0e1VljDGxx/Hyctc5zp1JO1PmghxTqazyV3QHLUEVAYH+wK+AhbExHnrmMMeipT4IB8k4eP4o0y0+b9ym6Pbu1uotfJqJJmv2fXvHqKUTAWLU0Kzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727269989; c=relaxed/simple;
-	bh=sbJ8aZpQr6pbj4aIFTdsqChrPekZT8zbN4JHc+deSzU=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=VK1Bj+Xa61vz82iXhQW7f7J5EYhJqECZ3RSgiKrXl9VLv4AXEvm9ovH1LsOtgs8EufQv1CoeoTxnoBWnCQG9fD950jNxUNs/IKIezbL8r2Pnc3Zk8+Jjf7NVjca7peb1aYIalr05MJVvHEMymnh8GMMr6QJ4fN/OxWhFoUfCT8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in02.mta.xmission.com ([166.70.13.52]:51622)
-	by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1stRpJ-006czo-NF; Wed, 25 Sep 2024 07:13:05 -0600
-Received: from ip68-227-165-127.om.om.cox.net ([68.227.165.127]:42346 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1stRpI-007JzX-O3; Wed, 25 Sep 2024 07:13:05 -0600
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Tycho Andersen <tycho@tycho.pizza>
-Cc: Kees Cook <kees@kernel.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
-  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,  Jeff
- Layton <jlayton@kernel.org>,  Chuck Lever <chuck.lever@oracle.com>,
-  Alexander Aring <alex.aring@gmail.com>,  linux-fsdevel@vger.kernel.org,
-  linux-mm@kvack.org,  linux-kernel@vger.kernel.org,  Tycho Andersen
- <tandersen@netflix.com>,  Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?=
- <zbyszek@in.waw.pl>,
-  Aleksa Sarai <cyphar@cyphar.com>
-References: <20240924141001.116584-1-tycho@tycho.pizza>
-	<87msjx9ciw.fsf@email.froward.int.ebiederm.org>
-	<8D545969-2EFA-419A-B988-74AD0C26020C@kernel.org>
-	<ZvNEVT+AR6dX88KK@tycho.pizza>
-Date: Wed, 25 Sep 2024 08:12:29 -0500
-In-Reply-To: <ZvNEVT+AR6dX88KK@tycho.pizza> (Tycho Andersen's message of "Tue,
-	24 Sep 2024 16:59:33 -0600")
-Message-ID: <87cykrancy.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1727270011; c=relaxed/simple;
+	bh=wUArarG6n2kJj23FJq/ZMQBAp3XK0MTI36XBDrbYweQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JcxmDb2CN+KSRa5FZDV3EXbLMKQ6pEWcgYi+JlnxBmVRxaWaQ/mwo/8Ib3xSr/l0fDcGSRBxaub/dwRtkhcWqwPmnBEPOEGq9VlACOa2Y+WblJQJP4Hkf0yjvI4WbEgLZ3tn7n/hf2DXyRG8+C6Gpcy2uxNgCD718T3jPcZAJbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KlaVt/Ja; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7db90a28cf6so663552a12.0;
+        Wed, 25 Sep 2024 06:13:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727270009; x=1727874809; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pF+8WlBbXZYz8Bkk1bGI+HA3coAVwVqgSPCrJ+jSKNg=;
+        b=KlaVt/JazX7mpqNe0sQmdaQdRHosSRNucX2rH35/3dSsVHypswRrYKUf96CQWI2ZzT
+         4AL9FkSngECt4GL0bgdoZIOaVGxTtpAMzgJMBcFZKS+0uegIZuRFcb6n+e7M0x6pOcS/
+         9JQslkigFdD6Zrrf13NhO7NtoRDjh3SuhR5TQhPCGh3c+nXQOXXRMmdLxZilxmAiq89p
+         1mAn60L0VPCBq9vYCEx6tLyw/8qIRQfgVqRzD5n8yDE0V+fEuQdxUEwPiymtnrBpB/hK
+         9H7md5JFOHXFW2HOgHccD0GNXBZNZCmDoBLCnIf/t4YIrEPJkj5Z0NZVVSfxiv/NDa+4
+         WPWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727270009; x=1727874809;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pF+8WlBbXZYz8Bkk1bGI+HA3coAVwVqgSPCrJ+jSKNg=;
+        b=nwPfxFtdb/cT1wc7S/aU/sBu1j++kff/qFL4rKvLj5PwFlkIAiNyPZKmIxSbzo+LYT
+         0cYzSBuIuqrsLmFmGOXBI9njooccuqGlaiGmNgl0YkeXZvjtwWUL60aw/IMC81BhVRcA
+         ogH7zXzGi0bC8VtAMLEv2fTKUQhkdvriH6eyimRuZYu82EARLM+eW2xWQyxUcEzWY3Rt
+         J9uboUdpN1uqNzzAjWsuAYb9i/n3bazBdqglGD9aKzXhPxiq4KQ0JaSIJM5qTPkzSXU3
+         1zmr6lIde3PybwF2S3UafYD3QgKGWi1ZP/hESTfvulVtTjK/Qn5MFwYyrFN9JYVRmzuI
+         FcOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUfx0VMG4ALmDxEVzMMZGY3AHguVK2vvlKlazkS95O0zfdRbNEBI0MSL2FJxrTXSP9mK4++xMli/8TsF8pb@vger.kernel.org, AJvYcCX8r1wtKRQHQTeHyEXjI6+q/LaOfIP5uzyIjzTg7RPH+jyqIFtRYqvbN6wk0zjYKF0d3KZ3ZwNsNnyX@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3uipdOtjqTAud5zzXoYN9GAlKzPkbUa1YZwovz0oOE0fjrPQO
+	o3VHHAtxopsfTahPrVwk2G5FGQiRUBd8ONZ3x9miVwXQnDP1lAw+
+X-Google-Smtp-Source: AGHT+IGfDyKdsibjf7iP9mgQXsToZxWJyjsVkvPRdIPhfxBNkAZUDgM6Q7UmYzDciFRtQ9adkuACTA==
+X-Received: by 2002:a17:90b:388b:b0:2d8:a744:a81c with SMTP id 98e67ed59e1d1-2e0567ba473mr10175586a91.1.1727270008997;
+        Wed, 25 Sep 2024 06:13:28 -0700 (PDT)
+Received: from rigel.home.arpa (14-202-6-222.static.tpgi.com.au. [14.202.6.222])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e06e1fedadsm1481973a91.28.2024.09.25.06.13.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 06:13:28 -0700 (PDT)
+From: Kent Gibson <warthog618@gmail.com>
+To: brgl@bgdev.pl,
+	gregkh@linuxfoundation.org,
+	sashal@kernel.org,
+	linus.walleij@linaro.org
+Cc: stable@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Kent Gibson <warthog618@gmail.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH 5.10.y 5.15.y] gpiolib: cdev: Ignore reconfiguration without direction
+Date: Wed, 25 Sep 2024 21:13:12 +0800
+Message-Id: <20240925131312.653040-1-warthog618@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1stRpI-007JzX-O3;;;mid=<87cykrancy.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.165.127;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX1/yeLOS1QR7U73+X4NTDuprnZz0rCrRSGw=
-X-Spam-Level: 
-X-Spam-Virus: No
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	* -0.0 BAYES_40 BODY: Bayes spam probability is 20 to 40%
-	*      [score: 0.3860]
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa03 1397; Body=1 Fuz1=1 Fuz2=1]
-	*  0.0 T_TooManySym_01 4+ unique symbols in subject
-	* -0.0 T_SCC_BODY_TEXT_LINE No description available.
-X-Spam-DCC: XMission; sa03 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Tycho Andersen <tycho@tycho.pizza>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 397 ms - load_scoreonly_sql: 0.02 (0.0%),
-	signal_user_changed: 3.8 (0.9%), b_tie_ro: 2.5 (0.6%), parse: 0.65
-	(0.2%), extract_message_metadata: 10 (2.5%), get_uri_detail_list: 0.49
-	(0.1%), tests_pri_-2000: 14 (3.6%), tests_pri_-1000: 3.2 (0.8%),
-	tests_pri_-950: 1.37 (0.3%), tests_pri_-900: 1.04 (0.3%),
-	tests_pri_-90: 205 (51.7%), check_bayes: 203 (51.2%), b_tokenize: 4.2
-	(1.0%), b_tok_get_all: 5 (1.4%), b_comp_prob: 1.11 (0.3%),
-	b_tok_touch_all: 189 (47.7%), b_finish: 0.74 (0.2%), tests_pri_0: 147
-	(37.0%), check_dkim_signature: 0.35 (0.1%), check_dkim_adsp: 3.2
-	(0.8%), poll_dns_idle: 1.75 (0.4%), tests_pri_10: 1.62 (0.4%),
-	tests_pri_500: 6 (1.5%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [RFC] exec: add a flag for "reasonable" execveat() comm
-X-SA-Exim-Connect-IP: 166.70.13.52
-X-SA-Exim-Rcpt-To: cyphar@cyphar.com, zbyszek@in.waw.pl, tandersen@netflix.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, alex.aring@gmail.com, chuck.lever@oracle.com, jlayton@kernel.org, jack@suse.cz, brauner@kernel.org, viro@zeniv.linux.org.uk, kees@kernel.org, tycho@tycho.pizza
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-SA-Exim-Scanned: No (on out02.mta.xmission.com); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 8bit
 
-Tycho Andersen <tycho@tycho.pizza> writes:
+[ Upstream commit b440396387418fe2feaacd41ca16080e7a8bc9ad ]
 
-> Yeah, on second thought we could do something like:
->
-> diff --git a/fs/exec.c b/fs/exec.c
-> index 36434feddb7b..a45ea270cc43 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1416,7 +1416,10 @@ int begin_new_exec(struct linux_binprm * bprm)
->                 set_dumpable(current->mm, SUID_DUMP_USER);
->
->         perf_event_exec();
-> -       __set_task_comm(me, kbasename(bprm->filename), true);
-> +       if (needs_comm_fixup)
-> +               __set_task_comm(me, argv0, true);
-                                  ^^^^^ nit: make that kbasename(argv0)
+linereq_set_config() behaves badly when direction is not set.
+The configuration validation is borrowed from linereq_create(), where,
+to verify the intent of the user, the direction must be set to in order to
+effect a change to the electrical configuration of a line. But, when
+applied to reconfiguration, that validation does not allow for the unset
+direction case, making it possible to clear flags set previously without
+specifying the line direction.
 
-The typical case is for applications to use the filename as argv0,
-at which point the directories in the pathname are just noise.
+Adding to the inconsistency, those changes are not immediately applied by
+linereq_set_config(), but will take effect when the line value is next get
+or set.
 
-With only 16 characters in TASK_COMM we want to keep the noise down.
+For example, by requesting a configuration with no flags set, an output
+line with GPIO_V2_LINE_FLAG_ACTIVE_LOW and GPIO_V2_LINE_FLAG_OPEN_DRAIN
+set could have those flags cleared, inverting the sense of the line and
+changing the line drive to push-pull on the next line value set.
 
-Eric
+Skip the reconfiguration of lines for which the direction is not set, and
+only reconfigure the lines for which direction is set.
+
+Fixes: a54756cb24ea ("gpiolib: cdev: support GPIO_V2_LINE_SET_CONFIG_IOCTL")
+Signed-off-by: Kent Gibson <warthog618@gmail.com>
+Link: https://lore.kernel.org/r/20240626052925.174272-3-warthog618@gmail.com
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/gpio/gpiolib-cdev.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
+index c2f9d95d1086..fe0926ce0068 100644
+--- a/drivers/gpio/gpiolib-cdev.c
++++ b/drivers/gpio/gpiolib-cdev.c
+@@ -1186,15 +1186,18 @@ static long linereq_set_config_unlocked(struct linereq *lr,
+ 	for (i = 0; i < lr->num_lines; i++) {
+ 		desc = lr->lines[i].desc;
+ 		flags = gpio_v2_line_config_flags(lc, i);
++		/*
++		 * Lines not explicitly reconfigured as input or output
++		 * are left unchanged.
++		 */
++		if (!(flags & GPIO_V2_LINE_DIRECTION_FLAGS))
++			continue;
++
+ 		polarity_change =
+ 			(!!test_bit(FLAG_ACTIVE_LOW, &desc->flags) !=
+ 			 ((flags & GPIO_V2_LINE_FLAG_ACTIVE_LOW) != 0));
+
+ 		gpio_v2_line_config_flags_to_desc_flags(flags, &desc->flags);
+-		/*
+-		 * Lines have to be requested explicitly for input
+-		 * or output, else the line will be treated "as is".
+-		 */
+ 		if (flags & GPIO_V2_LINE_FLAG_OUTPUT) {
+ 			int val = gpio_v2_line_config_output_value(lc, i);
+
+@@ -1202,7 +1205,7 @@ static long linereq_set_config_unlocked(struct linereq *lr,
+ 			ret = gpiod_direction_output(desc, val);
+ 			if (ret)
+ 				return ret;
+-		} else if (flags & GPIO_V2_LINE_FLAG_INPUT) {
++		} else {
+ 			ret = gpiod_direction_input(desc);
+ 			if (ret)
+ 				return ret;
+--
+2.39.5
+
 
