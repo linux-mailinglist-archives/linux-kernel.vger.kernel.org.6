@@ -1,145 +1,127 @@
-Return-Path: <linux-kernel+bounces-339493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84B199865E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:44:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E80849865EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:46:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48105282050
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:44:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 249351C23F9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:46:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4FF139D0B;
-	Wed, 25 Sep 2024 17:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C551D132132;
+	Wed, 25 Sep 2024 17:46:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="S7E9AvB8"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="I/DyKUqZ"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A6A8289A
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 17:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C2A4962B
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 17:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727286249; cv=none; b=m1o62ZLSTcO2clU2QxJ1UBESNxcvvdYucDS0yGf0uJ2JHfUPOufM/ta+LdGDX4Rb2Os13ZW/Gy9D01z0OY4ImC8bJPnFu9cklkYL+6xxzSVQ9908+r7eCWRpiViksmT+0/wyyif1NjCpd3fZuctphLsvRPuN3Rfw8PELR4FVpOI=
+	t=1727286409; cv=none; b=VIPXVcHB9CEy8Pdu4N1Kp75AC5jpWLuamnq5XSg4jGAlP+7De1VDCA1aU2wznRLf6VWfPnYOl6vX0iK/7ieWIQN01DL7+ZuNeVoqdOycT2sESz81Zx7/ideNsUoIHmEkGO8HVcTRS9cIPhbt5s7C4+Q+B0fAM4zjr6nsA7zU+KU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727286249; c=relaxed/simple;
-	bh=mdOJO1T2SXtgXhpZ8IXEcyfGOLgVnBuAE9fSfJICRmk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IU1lYPJTezrhZFGP1k3OgCIDj+kuQrHGGFS4g+rLR2OxRsLQ5DPenSlDktPBaJcPspq4dvy1BTH6xYXPz1y3vfljTo3ziwqQhGB4Eh+T6qVKQqO97b4Vpdf9z5bOHqS3Z2HAX8+vtB7eeX7E/Fi9rgw7qzzlOEY5ZTMVv5E0k9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=S7E9AvB8; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+	s=arc-20240116; t=1727286409; c=relaxed/simple;
+	bh=M0I8Ig3rWuZiRXKwtw6xWqst8IlFBQrwd0ojV3Hws8A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J9iVnbxPR1UhKXgObgbAc8Q4Z00CMlDer74wPC5mfSnA2X/5fEm/jLTwzvnIIwX4EoqCHkp2p2MMMeGnHM4AzjJkwXYnY0wCFKQa5t7Ftu8WaXH5gZFYE88jBaF1m4zV2JlwnQMX2jQfmOOyhQbb+bGznEgxBqXfFj+CO/e1/9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=I/DyKUqZ; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3a0cc384a85so459065ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 10:44:05 -0700 (PDT)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c5cf26b95aso5769a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 10:46:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1727286245; x=1727891045; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=S1NOQIHvoS1b32+JnBJFUorwn4fOby0JeQc5DVFR9XI=;
-        b=S7E9AvB8z9vhEKVxqeOY3EdmweLKcSMceSz9dRv4NyFaQbru0zdCiB1lzgxnqoKW4M
-         HxKWfW1ecyDsEZxPxQBrPPMxwQVgJrzsQ8g81PThpkCF2/kt5A3bUtxIAjNf0jLAXRvY
-         R3rnJy+A8XnIt7aSrbivsyU67NaF+rE3JZFjY=
+        d=linux-foundation.org; s=google; t=1727286402; x=1727891202; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=q7bFD0zsvjm6ZC77c3M7GAfUg/FjJi2MmJVwp+M6KhE=;
+        b=I/DyKUqZq7G4SWzTih4+crIdvuLRktb+OCIDqZ6y/8nBqCF9gDCaZpwEy4ZEG9e7il
+         J54KmCoAC0n/jDYDzteXMFSJ0xDwJ4A8p8gTOtu2TqKzhSFios0Rewv3Dvwo2wu9oKvz
+         BFdgnwIlqfDExj/wh4KqFMA/8t3PZaGcgqQ68=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727286245; x=1727891045;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S1NOQIHvoS1b32+JnBJFUorwn4fOby0JeQc5DVFR9XI=;
-        b=uIMXchG/yOSdCUwLghff7emhsQszg3q4vA5luBj8PnUuvuyI1VpMhZ7KVdYcbCSAtF
-         aHHNk8zbftlk0d4eKTiUevpO/E83Kgs1eHzKfArzzQXVZf2C/YJadpOH0t1kpxizkldU
-         ICpChNJdJ9zB/ZkUcelMnFKAy9FELAvLzfvuUzLg2v9y4yWWTENibwQlASRyVy1C5yr0
-         aSGmSNmsOKp3P99u2gc4xu/COJm1RBTxZwgFbbuqHEYMXYR4z8MUeMIkT47fTg85CV0M
-         bvhXuzjOUdyGW3aWoxYt9f7aWzFcNzxIxqg0pI7xZMFvPJ+azkNCITL3rN1GOKMiCu+B
-         cjdA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxGL1WYa+3sZ4YMcRyjmEYRt3di6N323ev1vgyH4hmXo+HLJakPCCBmdOIZhkefDcNOQUWD1Juu1DgUfQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5vv9lJkhDY+hzMIju8DQr5J+TDLNxNsU29ucJOhhXI1pktupf
-	4m375QXqNsd4Lg8Cj71euUYP90+1g/xlMjHW8xz5XexeirxFdSKWinPz5aSOezU=
-X-Google-Smtp-Source: AGHT+IGU2iXvHZXBx7d7MTmHzpaHRYoM0isbxb+yjYZRM40BVKEyJurIZQMglgYHXU0dupnd4jnbLw==
-X-Received: by 2002:a05:6e02:13aa:b0:39d:4c8a:370d with SMTP id e9e14a558f8ab-3a26d7a0ed1mr37529425ab.18.1727286245036;
-        Wed, 25 Sep 2024 10:44:05 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a1a5713ac4sm12296485ab.68.2024.09.25.10.44.03
+        d=1e100.net; s=20230601; t=1727286402; x=1727891202;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=q7bFD0zsvjm6ZC77c3M7GAfUg/FjJi2MmJVwp+M6KhE=;
+        b=a1liVg1+c+mFPE9C1pkCo/SvB4fUrqxhHJ8rZMGhkwbjMNKFCO6VHDEyQ3kQ2M2Vu5
+         q2kbgLQWgzQen77GOmDkpCeODyXcV06dIRBM6nHGZUK4Trp4EfVtcYAK1CYl5AOXSP61
+         Isc67ebHfuxGHEDbq7iDjUzVh840NL4TbF5Eui6Oys722eIjRDiLeNfANpEy/I7P44tC
+         zO9OSpsuy+AeYlg8zZzZOUI9SpwymDY/D1fKsDyuc22Ly1lW+C+hmTNdUIy1r2WD6hl6
+         7x4UUAIxsSBBRG7KZOPL3v3uhI61Hb7/CJabmv8TTVugvQY62NC3ZLFfAh1MNyK/6HdH
+         3rPw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8XCWaguY9S87c/+zYAgTxLf/SrXXSml6WacjFfYc+JzdyAkZBNdQAFO9E3eHv9vM37DuvwwEEFc2y+jk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEUvyypZTSDgpuJIWUhaCJOq25MjbKZ3l1tcNgYRisKMAApzl1
+	wNe2vA3jsmKwVy86Y3X6QNySbyglN/cPv5989ho4Ae3Coh5AVC0sgnZj6tiKH3pTpBmfE5VZuHO
+	OudCLyw==
+X-Google-Smtp-Source: AGHT+IFqQHQQxZhkP9CJoca3/GjnOhtQLOb9mpyZMLrvKQloFsbgECdemAoJalVDlpw986u8JGgmsg==
+X-Received: by 2002:a05:6402:40c5:b0:5c4:2343:1227 with SMTP id 4fb4d7f45d1cf-5c72060887dmr2769500a12.5.1727286402296;
+        Wed, 25 Sep 2024 10:46:42 -0700 (PDT)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c5cf48bfddsm2193904a12.12.2024.09.25.10.46.39
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Sep 2024 10:44:04 -0700 (PDT)
-Message-ID: <576dd993-1428-4be0-9e5d-abec44a039c5@linuxfoundation.org>
-Date: Wed, 25 Sep 2024 11:44:03 -0600
+        Wed, 25 Sep 2024 10:46:41 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a8d56155f51so13081266b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 10:46:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWibLtZ0voCCH46UQUapBSjE5g5tu96i/tleKArBceONl1W6xpmLA0no66UWssoRAuVak2VNU76oBBhWp0=@vger.kernel.org
+X-Received: by 2002:a17:906:f5aa:b0:a8d:2ab2:c9b1 with SMTP id
+ a640c23a62f3a-a93a06b92camr365210666b.56.1727286399053; Wed, 25 Sep 2024
+ 10:46:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] selftests: exec: update gitignore for load_address
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- Allison Henderson <allison.henderson@oracle.com>,
- Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
- rds-devel@oss.oracle.com, linux-mm@kvack.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240924-selftests-gitignore-v1-0-9755ac883388@gmail.com>
- <20240924-selftests-gitignore-v1-4-9755ac883388@gmail.com>
- <e537539f-85a5-42eb-be8a-8a865db53ca2@linuxfoundation.org>
- <70864b3b-ad84-49b2-859c-8c7e6814c3f1@gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <70864b3b-ad84-49b2-859c-8c7e6814c3f1@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240924221023.197610-1-ojeda@kernel.org>
+In-Reply-To: <20240924221023.197610-1-ojeda@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 25 Sep 2024 10:46:22 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjuMrUMceYX01T0SBz4E0yL4Kh2Jb_8qyKxJwwitCG6Zw@mail.gmail.com>
+Message-ID: <CAHk-=wjuMrUMceYX01T0SBz4E0yL4Kh2Jb_8qyKxJwwitCG6Zw@mail.gmail.com>
+Subject: Re: [GIT PULL] Rust for 6.12
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Wedson Almeida Filho <wedsonaf@gmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/25/24 10:25, Javier Carrasco wrote:
-> On 25/09/2024 17:46, Shuah Khan wrote:
->> On 9/24/24 06:49, Javier Carrasco wrote:
->>> The name of the "load_address" objects has been modified, but the
->>> corresponding entry in the gitignore file must be updated.
->>>
->>> Update the load_address entry in the gitignore file to account for
->>> the new names.
->>>
->>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
->>> ---
->>>    tools/testing/selftests/exec/.gitignore | 2 +-
->>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/tools/testing/selftests/exec/.gitignore b/tools/testing/
->>> selftests/exec/.gitignore
->>> index 90c238ba6a4b..4d9fb7b20ea7 100644
->>> --- a/tools/testing/selftests/exec/.gitignore
->>> +++ b/tools/testing/selftests/exec/.gitignore
->>> @@ -9,7 +9,7 @@ execveat.ephemeral
->>>    execveat.denatured
->>>    non-regular
->>>    null-argv
->>> -/load_address_*
->>> +/load_address.*
->>
->> Hmm. This will include the load_address.c which shouldn't
->> be included in the .gitignore?
->>
->>>    /recursion-depth
->>>    xxxxxxxx*
->>>    pipe
->>>
->>
->> thanks,
->> -- Shuah
-> 
-> 
-> Hi, the kernel test robot already notified me about that issue, and I
-> sent a v2 to fix it shortly after. Please take a look at the newer
-> version where I added the exception for load_address.c.
-> 
+On Tue, 24 Sept 2024 at 15:11, Miguel Ojeda <ojeda@kernel.org> wrote:
+>
+> Rust changes for v6.12
 
-Thanks. I saw your v2 after sending this email. I have a comment
-on v2 to split core and net patch
+So it looks like now the only thing holding Rust testing back for the
+allmodconfig case is the MODVERSIONS support (assuming modern enough
+tool chains etc).
 
-thanks,
--- Shuah
+I'm inclined to just do this:
 
+   config MODVERSIONS
+          bool "Module versioning support"
+  +       depends on !COMPILE_TEST
+          help
+            Usually, you have to use modules compiled with your kernel.
+            Saying Y here makes it sometimes possible to use modules
+
+in order to have the basic Rust stuff be part of the usual allmodconfig build.
+
+That gets it building for me on x86-64, at least. But at the
+maintainer summit I think you said MODVERSIONS support is being worked
+on too, no?
+
+On my arm64 box, Rust support is still disabled due to
+RUSTC_SUPPORTS_ARM64 not being true (which in turn seems to be due to
+SHADOW_CALL_STACK support, and that needs rust 18.2 which I don't
+have).
+
+Anyway, just a heads up that I think we'll have more "unintentional"
+Rust build test coverage this way.
+
+                  Linus
 
