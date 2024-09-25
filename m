@@ -1,239 +1,115 @@
-Return-Path: <linux-kernel+bounces-338189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A22B98547F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:50:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D0A5985484
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:50:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53177286B61
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:50:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 439D7287079
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19903158870;
-	Wed, 25 Sep 2024 07:49:42 +0000 (UTC)
-Received: from chessie.everett.org (chessie.fmt1.pfcs.com [66.220.13.234])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B81F158524
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 07:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.220.13.234
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727250581; cv=none; b=s2th7s/dEM4gWNPcL3PWXl+KQ1f7MIe+AaLoOmh2QNDguyM9rU9XmRKgKSUHlJPV92ly3VFSkkSVPQQbwc5CZXH4gnX/k+JAX9F6Gh3Vtzr/cl2wgWCJl8LMrMYdAVrtOKTPjWXvTqCg1x70TnmPiAHqMC8lziO5wlNGwvE+p0w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727250581; c=relaxed/simple;
-	bh=7Op0nto/rRHpCq2Bio2KG5rW7fSEZg+r64jHW/KPG0Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BW7wbiRRrEI6raJWobhPSmBs9ApAE39xbtcGxBoOQFUt8OPhxKJwVab0ejVh4idfVEDEb0AsV3G30786FNhAbDArGzLEXvfkkYWkOJMzDhuQg5GbVZxOPH3qC+6dVOWH09h3Wl8zkZdW1TQ3FhGuNYSFQN3y5jcI2MUwiPx4NI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nwtime.org; spf=pass smtp.mailfrom=nwtime.org; arc=none smtp.client-ip=66.220.13.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nwtime.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nwtime.org
-Received: from localhost.localdomain (ip-77-25-16-238.web.vodafone.de [77.25.16.238])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD5A15852E;
+	Wed, 25 Sep 2024 07:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FCd0kQSH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by chessie.everett.org (Postfix) with ESMTPSA id 4XD85568QfzMR9w;
-	Wed, 25 Sep 2024 07:49:29 +0000 (UTC)
-From: Erez Geva <erezgeva@nwtime.org>
-To: linux-mtd@lists.infradead.org,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Michael Walle <mwalle@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Esben Haabendal <esben@geanix.com>,
-	Erez Geva <ErezGeva2@gmail.com>
-Subject: [PATCH 2/2] mtd: spi-nor: macronix: add manufacturer flags
-Date: Wed, 25 Sep 2024 09:49:03 +0200
-Message-Id: <20240925074903.1983601-3-erezgeva@nwtime.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20240925074903.1983601-1-erezgeva@nwtime.org>
-References: <20240925074903.1983601-1-erezgeva@nwtime.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1A8157492;
+	Wed, 25 Sep 2024 07:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727250611; cv=none; b=KvxmfgqKblMrXVo6Wfjnf/nR2E+NsKNn8wMVif9aCvhAOoZW7FNoooY+AL4rNUpb4kQArYEekXauqAjIiJmsL66Sl1lOHm8MLCRssWwHE6TKPMgq+7t/KKq4F4156ez434SxwG3tlk2XtpaJp0MleCAG9D7EUwbnrRmoY8ETJm4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727250611; c=relaxed/simple;
+	bh=jpwCPw9gO66yBXZYDqQ9z6hyrzpWpbRkEarKWVXKXSI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ISPENZmNRAHxt35zCIgbnJw4S7hz2Z5Mecmm/ZSBB1rer/uKQpJLa+uMxjbwH6e7iuLa4yrkXUausPOwnlOg5+V7PMagL1SlA9Y+c/0t3lf2iZm1tJ/L9NVMUUJPW4ASjqYL10Ry33iz+OFH7dZwuEi8o4S3G/qnSdn+LXvaojE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FCd0kQSH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A9FDC4CEC6;
+	Wed, 25 Sep 2024 07:50:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727250610;
+	bh=jpwCPw9gO66yBXZYDqQ9z6hyrzpWpbRkEarKWVXKXSI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FCd0kQSHfT/NK8Yc6CwRmfutmQESaE7UFlSTa3Se47Uz6Bh+yc0DBQ+LYx9fym8Tg
+	 xXjjq4xWJGgArkHMGywBkOav7eW/pzkVriKUDtR4JASw/VvabZmIbViT+Zzws3kp6e
+	 pRFtn6tJdsSEPMZXfU+2KRdibFffIRa9zMFUDySFySjqwrIeh625j86j30zn6PGzmU
+	 dHiK/sLnIleh4/lH4+c/7O65/u0BtNt5LoD1qNZzEkPyqPYOUblJGeorkwYokdtwXf
+	 1rB/SyA5JqUAj+iZR3FGFrhza3qCoUyxNM8/mo8YWGtbJVkbf4DQLwFQg8Qce0XMqT
+	 Aab1KNASbH6KQ==
+Date: Wed, 25 Sep 2024 09:50:06 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: l.stach@pengutronix.de, kwilczynski@kernel.org, bhelgaas@google.com, 
+	lpieralisi@kernel.org, frank.li@nxp.com, robh+dt@kernel.org, conor+dt@kernel.org, 
+	shawnguo@kernel.org, krzysztof.kozlowski+dt@linaro.org, festevam@gmail.com, 
+	s.hauer@pengutronix.de, linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kernel@pengutronix.de, 
+	imx@lists.linux.dev
+Subject: Re: [PATCH v2 1/9] dt-bindings: imx6q-pcie: Add ref clock for i.MX95
+ PCIe
+Message-ID: <vtrxj3r4wy6htxyl44rzjyao4zso6z2idexkvxrh3cg4wazcdc@gffmfu22jiyh>
+References: <1727245477-15961-1-git-send-email-hongxing.zhu@nxp.com>
+ <1727245477-15961-2-git-send-email-hongxing.zhu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1727245477-15961-2-git-send-email-hongxing.zhu@nxp.com>
 
-From: Erez Geva <ErezGeva2@gmail.com>
+On Wed, Sep 25, 2024 at 02:24:29PM +0800, Richard Zhu wrote:
+> Previous reference clock of i.MX95 is on when system boot to kernel. But
+> boot firmware change the behavor, it is off when boot. So it needs be turn
+> on when it is used. Also it needs be turn off/on when suspend and resume.
 
-Add flag for always trying reading SFDP.
-All new chips from Macronix support SFDP.
-All old chips in the IDs table were reused by new chips.
-There is no reason the skip SFDP
-when using now chips that reuse old JEDEC IDs.
+That's an old platform... How come that you changed bootloader just now?
+Like 7 or 8 years after?
 
-Signed-off-by: Erez Geva <ErezGeva2@gmail.com>
----
+For the future: you should document all clock inputs, not only ones
+needed for given bootloader...
 
-Notes:
-    * Testing with MX25L3233F using BeagleBone Black.
-    
-    * After adding the new patch of always reading the SFDP
-    
-    $ cat /sys/bus/spi/devices/spi0.0/spi-nor/jedec_id
-    c22016
-    $ cat /sys/bus/spi/devices/spi0.0/spi-nor/manufacturer
-    macronix
-    $ cat /sys/bus/spi/devices/spi0.0/spi-nor/partname
-    mx25l3205d
-    $ xxd -p /sys/bus/spi/devices/spi0.0/spi-nor/sfdp
-    53464450000101ff00000109300000ffc2000104600000ffffffffffffff
-    ffffffffffffffffffffffffffffffffffffe520f1ffffffff0144eb086b
-    083b04bbeeffffffffff00ffffff00ff0c200f5210d800ffffffffffffff
-    ffffffffffff003650269ef97764fecfffffffffffff
-    $ sha256sum /sys/bus/spi/devices/spi0.0/spi-nor/sfdp
-    22d5d34af77c3628300056a0fc4bfbeafa027f544998852cf27f7cebf7881196  /sys/bus/spi/devices/spi0.0/spi-nor/sfdp
-    
-    $ cat /sys/kernel/debug/spi-nor/spi0.0/capabilities
-    Supported read modes by the flash
-     1S-1S-1S
-      opcode        0x03
-      mode cycles   0
-      dummy cycles  0
-     1S-1S-2S
-      opcode        0x3b
-      mode cycles   0
-      dummy cycles  8
-     1S-2S-2S
-      opcode        0xbb
-      mode cycles   0
-      dummy cycles  4
-     1S-1S-4S
-      opcode        0x6b
-      mode cycles   0
-      dummy cycles  8
-     1S-4S-4S
-      opcode        0xeb
-      mode cycles   2
-      dummy cycles  4
-    
-    Supported page program modes by the flash
-     1S-1S-1S
-      opcode        0x02
-    
-    $ cat /sys/kernel/debug/spi-nor/spi0.0/params
-    name            mx25l3205d
-    id              c2 20 16 c2 20 16
-    size            4.00 MiB
-    write size      1
-    page size       256
-    address nbytes  3
-    flags           HAS_16BIT_SR
-    
-    opcodes
-     read           0x03
-      dummy cycles  0
-     erase          0x20
-     program        0x02
-     8D extension   none
-    
-    protocols
-     read           1S-1S-1S
-     write          1S-1S-1S
-     register       1S-1S-1S
-    
-    erase commands
-     20 (4.00 KiB) [1]
-     52 (32.0 KiB) [2]
-     d8 (64.0 KiB) [3]
-     c7 (4.00 MiB)
-    
-    sector map
-     region (in hex)   | erase mask | flags
-     ------------------+------------+----------
-     00000000-003fffff |     [ 123] |
-    
-    # mtd_debug info /dev/mtd0
-    mtd.type = MTD_NORFLASH
-    mtd.flags = MTD_CAP_NORFLASH
-    mtd.size = 4194304 (4M)
-    mtd.erasesize = 4096 (4K)
-    mtd.writesize = 1
-    mtd.oobsize = 0
-    regions = 0
-    
-    * Test that mimic old Macronix chip lack SFDP.
-    * In order to check how will the driver cope with an old Macronix chip.
-    * As we do not posses such an old chip, we will change RDSFDP to an unused opcode.
-    
-    $ git diff -U0
-    diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
-    index 4ebc527aadc1..784cba9b2d0d 100644
-    --- a/include/linux/mtd/spi-nor.h
-    +++ b/include/linux/mtd/spi-nor.h
-    @@ -47 +47 @@
-    -#define SPINOR_OP_RDSFDP       0x5a    /* Read SFDP */
-    +#define SPINOR_OP_RDSFDP       0x57    /* Read SFDP */
-    
-    # dmesg | grep spi
-    [   42.436974] spi-nor spi0.0: mx25l3205d (4096 Kbytes)
-    
-    * No error in kernel log!
-    
-    # ls /sys/bus/spi/devices/spi0.0/spi-nor/
-    jedec_id  manufacturer  partname
-    
-    * No SFDP, as expected!
-    
-    $ cat /sys/kernel/debug/spi-nor/spi0.0/capabilities
-    Supported read modes by the flash
-     1S-1S-1S
-      opcode        0x03
-      mode cycles   0
-      dummy cycles  0
-    
-    Supported page program modes by the flash
-     1S-1S-1S
-      opcode        0x02
-    
-    $ cat /sys/kernel/debug/spi-nor/spi0.0/params
-    name            mx25l3205d
-    id              c2 20 16 c2 20 16
-    size            4.00 MiB
-    write size      1
-    page size       256
-    address nbytes  3
-    flags           HAS_16BIT_SR
-    
-    opcodes
-     read           0x03
-      dummy cycles  0
-     erase          0x20
-     program        0x02
-     8D extension   none
-    
-    protocols
-     read           1S-1S-1S
-     write          1S-1S-1S
-     register       1S-1S-1S
-    
-    erase commands
-     20 (4.00 KiB) [0]
-     d8 (64.0 KiB) [1]
-     c7 (4.00 MiB)
-    
-    sector map
-     region (in hex)   | erase mask | flags
-     ------------------+------------+----------
-     00000000-003fffff |     [01  ] |
+> 
+> Add one ref clock for i.MX95 PCIe. Increase clocks' maxItems to 5 and keep
+> the same restriction with other compatible string.
 
- drivers/mtd/spi-nor/macronix.c | 1 +
- 1 file changed, 1 insertion(+)
+<form letter>
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC (and consider --no-git-fallback argument). It might
+happen, that command when run on an older kernel, gives you outdated
+entries. Therefore please be sure you base your patches on recent Linux
+kernel.
 
-diff --git a/drivers/mtd/spi-nor/macronix.c b/drivers/mtd/spi-nor/macronix.c
-index ea6be95e75a5..292a149c37d8 100644
---- a/drivers/mtd/spi-nor/macronix.c
-+++ b/drivers/mtd/spi-nor/macronix.c
-@@ -208,4 +208,5 @@ const struct spi_nor_manufacturer spi_nor_macronix = {
- 	.parts = macronix_nor_parts,
- 	.nparts = ARRAY_SIZE(macronix_nor_parts),
- 	.fixups = &macronix_nor_fixups,
-+	.flags = SPI_NOR_MANUFACT_TRY_SFDP,
- };
--- 
-2.39.5
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about  if you added new
+patches to the patchset.
+</form letter>
+
+and I was wondering why I cannot find this and previous thread in my
+inbox... So please stop developing on two year old kernels (and before
+you say "I do not", well, then fix way how you use tools).
+
+
+> 
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> ---
+>  .../bindings/pci/fsl,imx6q-pcie-common.yaml   |  4 +--
+>  .../bindings/pci/fsl,imx6q-pcie.yaml          | 25 ++++++++++++++++---
+>  2 files changed, 23 insertions(+), 6 deletions(-)
+> 
+
+You missed to update ep binding.
+
+Best regards,
+Krzysztof
 
 
