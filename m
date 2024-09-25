@@ -1,108 +1,94 @@
-Return-Path: <linux-kernel+bounces-339226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 428D698617B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:53:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 040E998617D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:53:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE70F1F2ABC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:53:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEAD528AC11
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:53:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693ED199EA4;
-	Wed, 25 Sep 2024 14:19:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0DA219A2AE;
+	Wed, 25 Sep 2024 14:20:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b="xw5FwFdK"
-Received: from mail.avm.de (mail.avm.de [212.42.244.119])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mv54xMFA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F34414C5BE;
-	Wed, 25 Sep 2024 14:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C3619922D;
+	Wed, 25 Sep 2024 14:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727273948; cv=none; b=dxUB13vXDAEH02kkbctXfOn3o8pKG5Pp2PcgKzv2H0nqfJTNfkWMhRwC/JEyZPlv714y4jY+Q4lbJ2h0A/sM/+dVGv70/uDKzYb+E4myRnvZ26XtAfNmish6bFhWM8Rxofqbs4eokn3Qwvs0DScykC9zNNWnCFc7vBtgjB+EP5s=
+	t=1727274014; cv=none; b=P5vHe238sbon3Ftu7qBgoLb6Jy4U87nKkN+Qx7QhSEi8jT+yVCn8lylqswMMHT4zvMkvIvHZIia+ps3JzD+irHQ4MEUpIqCz/dYqpdUGg67WGuOf8O/lG/xN/IkhVVXxqS+wGakdBPL8Ct2yLo1XkrX2XdNZCawTv/1feWpXXw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727273948; c=relaxed/simple;
-	bh=HTRkcPAenTvzMegv6n0mYFDgPoWbuIyb8kMa5lB9u2Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q6amaWIrpTAH5nLBpcItknxtAvRn/WDrD3MONDif2F7Vd3nwe55fqDI7bBmK48E0Mq/E8EZg5tnavvkjgizfYrCvZCDZRl4flxbG0QUuuRcS3vhwmF8yd4BAapLaompKj6PSAIMUuLp4ouUMfisXX7VnBk9PH5Qe/eCQwdCzIfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de; spf=pass smtp.mailfrom=avm.de; dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b=xw5FwFdK; arc=none smtp.client-ip=212.42.244.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=avm.de; s=mail;
-	t=1727273938; bh=HTRkcPAenTvzMegv6n0mYFDgPoWbuIyb8kMa5lB9u2Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=xw5FwFdKa6jAXe1hRBtroB7RximLHdQkRtXOKHHmDWBVEh/PvkhrZcN/TQoThTivR
-	 kISV/p1NJBru/Z7sz9Yh8eLkKTGSAN6mIUt8v6POhNkcIeqftG3eWbXt0D3Zd9uE2I
-	 z3kXYGKO3v8/b6ilWRBwIZQRzzePgcF1SO+9zov4=
-Received: from mail-auth.avm.de (dovecot-mx-01.avm.de [212.42.244.71])
-	by mail.avm.de (Postfix) with ESMTPS;
-	Wed, 25 Sep 2024 16:18:58 +0200 (CEST)
-Received: from l-nschier-nb (unknown [61.8.139.63])
-	by mail-auth.avm.de (Postfix) with ESMTPSA id 366B98069E;
-	Wed, 25 Sep 2024 16:18:58 +0200 (CEST)
-Date: Wed, 25 Sep 2024 16:18:56 +0200
-From: Nicolas Schier <n.schier@avm.de>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH 12/23] scripts/nsdeps: use VPATH as src_prefix
-Message-ID: <ZvQb0Bsvrm-HLQ6g@l-nschier-nb>
-References: <20240917141725.466514-1-masahiroy@kernel.org>
- <20240917141725.466514-13-masahiroy@kernel.org>
+	s=arc-20240116; t=1727274014; c=relaxed/simple;
+	bh=M9KdoTdlnqS+mkVwasUHP0kB5BHjAyz9IxrCDFf+DxM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u2bzcTCqgaZaqM5iRzP0vZmJKoFztyHn2ohr2sAMTaE/Pl1ZAsZoXiCAeqaqhZX9SFkTp8IntTEZB0jxP9rWvaa4r0VhoEbm/3Gd7owz3yD+tLawf/LqUF0wcg/n+6uq1LxUvxkdSrTFrtN8do17P9hYVK+Kr1pUiwj94K3CxfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mv54xMFA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C70C6C4CEC3;
+	Wed, 25 Sep 2024 14:20:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727274013;
+	bh=M9KdoTdlnqS+mkVwasUHP0kB5BHjAyz9IxrCDFf+DxM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=mv54xMFAMO5ds4Qy7NBd1w+WG3QNwtHhZIYqc4pF+QGqaTB290afYj4Y4liS6g8M/
+	 KMgLqah7xSGAIqpmV1MZU3rKVjUbpg1IFhexkxxfuleYbhDov6OtJAnBtDCUiaD8dK
+	 rePx1wVL8pXclns5nPIvtCz47GxISUhpkIJhlsIsY8FeplGSxIo72NI0jHbmDW32Sz
+	 hNzGGC/93toJ76kY9rRM++hctyCiduOHr77q2BUpgCXrxQZJaUw0RCxqEGuvX//vWk
+	 qliAPXuR0++Jm3o1sh9HUwcQ/6XPDQ7brid8KvxNJE66MciBKRzPvqGQJSYx5EctZv
+	 RYeLrCYLcIhoQ==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: [PATCH] rust: cfi: fix `patchable-function-entry` starting version
+Date: Wed, 25 Sep 2024 16:19:44 +0200
+Message-ID: <20240925141944.277936-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240917141725.466514-13-masahiroy@kernel.org>
-X-purgate-ID: 149429::1727273938-81DB7BF0-0AA19826/0/0
-X-purgate-type: clean
-X-purgate-size: 1078
-X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
-X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
-X-purgate: clean
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 17, 2024 at 11:16:40PM +0900, Masahiro Yamada wrote:
-> This change allows it to work not only for in-tree modules but also for
-> external modules, even if they are built in a separate build directory.
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
-> 
->  scripts/nsdeps | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/scripts/nsdeps b/scripts/nsdeps
-> index f1718cc0d700..8b4db63838ce 100644
-> --- a/scripts/nsdeps
-> +++ b/scripts/nsdeps
-> @@ -19,10 +19,10 @@ if ! { echo "$SPATCH_REQ_VERSION"; echo "$SPATCH_VERSION"; } | sort -CV ; then
->  	exit 1
->  fi
->  
-> -if [ "$KBUILD_EXTMOD" ]; then
-> +if [ "${VPATH+set}" ]; then
->  	src_prefix=
->  else
-> -	src_prefix=$srctree/
-> +	src_prefix=$VPATH/
+The `-Zpatchable-function-entry` flag is available since Rust
+1.81.0, not Rust 1.80.0, i.e. commit ac7595fdb1ee ("Support for -Z
+patchable-function-entry") in upstream Rust.
 
-In kbuild, we expect VPATH to be empty or hold one single directory,
-while make itself allows VPATH to be a list of directories.  Might it
-make sense to mention this at some place?
+Fixes: ca627e636551 ("rust: cfi: add support for CFI_CLANG with Rust")
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+---
+ init/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Nicolas Schier <n.schier@avm.de>
+diff --git a/init/Kconfig b/init/Kconfig
+index 4ea2a161d362..89bbd0b8bdb7 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1911,7 +1911,7 @@ config RUST
+ 	depends on !DEBUG_INFO_BTF || PAHOLE_HAS_LANG_EXCLUDE
+ 	depends on !CFI_CLANG || RUSTC_VERSION >= 107900 && $(cc-option,-fsanitize=kcfi -fsanitize-cfi-icall-experimental-normalize-integers)
+ 	select CFI_ICALL_NORMALIZE_INTEGERS if CFI_CLANG
+-	depends on !CALL_PADDING || RUSTC_VERSION >= 108000
++	depends on !CALL_PADDING || RUSTC_VERSION >= 108100
+ 	depends on !KASAN_SW_TAGS
+ 	help
+ 	  Enables Rust support in the kernel.
 
->  fi
->  
->  generate_deps_for_ns() {
-> -- 
-> 2.43.0
-> 
+base-commit: a2f11547052001bd448ccec81dd1e68409078fbb
+-- 
+2.46.2
+
 
