@@ -1,62 +1,73 @@
-Return-Path: <linux-kernel+bounces-338262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42F49985592
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:35:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8693E985593
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:36:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAE561F24D60
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:35:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48FCB2840D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F8B15AAB8;
-	Wed, 25 Sep 2024 08:35:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B4415AAC6;
+	Wed, 25 Sep 2024 08:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GKf0QUl0"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j4KiXF85"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2127E574;
-	Wed, 25 Sep 2024 08:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4F015990E
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727253322; cv=none; b=i8tdyMYs7+0yToCh4L3RJtuSQn73gN+T3ahJ3qE2437z5wX1pP0BBAPznplVT4/+Ts4myNww5O7/DnY7U4Z1iKuIwIel6Vf7Uhp3xGsUfwamlwD+lEEy6zuKUvpT4X+sXYQxRGUz39B4JfaPn6Mv3owMsmj3baXLHQ26WEPeA1Y=
+	t=1727253380; cv=none; b=YTtC4KSBU3DBVmZIB8MO/dcyrxeGbNdA1Y72cSaJJRJLHSYeLioIQwZqPuI8NJax6mYRuz0hbfbPKzKushCQ9P/h6XChRkv/hgWqVasJcBEiyQoLDBiUwhHpcojwYQ+15Yb8uNoDduTthcq09mI7VGEJxCEJFGOhJeY0i6Ep4Z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727253322; c=relaxed/simple;
-	bh=xlPqrbJPXVE7wan+59bxGDR4Ggy2KqMregQ/uHCASr4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Ak0MNs6WieNmyi0TRMIkBHi7ztCdDt2Wd1kpoCmqasZ/SNXPby3RfbEVlvJJ9wnSjH3cVwWlKcWxvtSPXSRNGQBPdMXvns3yjkGzIUvUFNO9WOf+MlvW0Ixjq8IrPSbrKwvUvPIVB1OTLdhgDu2cG9kx7VaXDeyH1VpGDsaVRgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GKf0QUl0; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48P8GTaR025590;
-	Wed, 25 Sep 2024 08:35:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	T3FAkH6d418feTnfCXosHaU3P+44x+E4HdZmGGvo8FM=; b=GKf0QUl0MTBC01eD
-	1Eunmd97bUCTPGmIDCnsjuhtOEK1jDViF0y/XuVVqlNaK4EHRxlpGDNrPHOn2est
-	55G9mHzRR3zK7IBDVlm2c/cJbXcoIRAk5eMJauVL/xjHijdLH5359Z58U2y1znIM
-	AfRenjHozdvhYL1McAkyzlVsto1BBK8QgukBb10VVwgRWHYzlhiAj3bJ/wg1KTdW
-	y7QkEIt3rJswQzYJkMhts7xM6Ks+jZR//JEGNfYAOU0xBPZld0MOu0GT8XPCaBWl
-	JF9vs3n9HLkfgbE3uqLLHUeZyZG5z729UnWgnaGrkJV0J56/X5m9uTByx+i7+TXE
-	X4IhAw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sn3sbajh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 08:35:16 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48P8ZFTV010347
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Sep 2024 08:35:15 GMT
-Received: from [10.233.21.53] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 25 Sep
- 2024 01:35:12 -0700
-Message-ID: <2144d060-7454-46a3-96ed-6173e1ba2523@quicinc.com>
-Date: Wed, 25 Sep 2024 16:35:10 +0800
+	s=arc-20240116; t=1727253380; c=relaxed/simple;
+	bh=oitXK+OEA9BE37g2KeTUWl9Ho1Qq0dOTe5le8iXubTE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Cwp5CQQOMxviNPZtYJ6Zp2aKaqCIOqAwG8JkcaNJQCUEh8qwvDLrs/aWZnFL7392DNN6giLVSTOxuFiCl8jIN/tMgQgyTpMl+Im4CPT8sIiUN+S5ZIVZ9tNZtV+xWqqYW959AwqtZVkndFiqQAF5QRxGIkFQGI6MBfcLsNEt2d4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j4KiXF85; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c42f406e29so9221338a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 01:36:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727253377; x=1727858177; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ksp6a+vBmT9tTbuHR2BiPBA+vRFwOJtyTtU/9OAbDfY=;
+        b=j4KiXF85GTT33DY1Lym5+059Bcvb2bQMDJtqVw9lQiCFrE+aAGNOED1ywPnPNfQrjU
+         fV8L8v3To4K48YCnrTjN53BPO6mtjcoqpZe6Ovewr5H2UQ62PTTKXu3SoXuDl2DdDCVH
+         xnYFC0NNvvLva0Rm+paY8NxDzXNNimi0f31GaH3QVLf/E6iWXDv/gCARMQurvKeT4I4B
+         yF39hvcz2ADQefWE4zMQBYEZTirBYK0+0QixlnqxmEPUjrrNW8LdM7fn9cDVKQkEZpYx
+         UXxrB5jrNsVc/y1D+RiCfmFQ+xa7ot1vPdPUybVWIXThdcnRk//XurvRgYAle5QNCgMq
+         cuog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727253377; x=1727858177;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ksp6a+vBmT9tTbuHR2BiPBA+vRFwOJtyTtU/9OAbDfY=;
+        b=YCuEAJ072MVHQKqgeIU8oq+2D+Snai4N/y/6fFWbiU8TxM6IIh+kw48HXB10r42teK
+         zlOYN2rHEPJDD1hk/erWVWoVVk0ZhK/TtPQi4Q91a1W9HIc2qZ4UFpDdGK6m9hi98t/p
+         mmNXLelsFzpRSQeb5MMPXtRrYXmDisbPnZdmjcH1upN04LdbfboBYcbanviu7nFIR7BG
+         BMMHg9B+e0gwspnb6VJZBPoh/pocpbd5J4FYpl4nfndecxZhLbyTylKITuawhS/edaXV
+         RtEIzb6ackm9vCCuwkVwC6MEMVLeLGLf19Ctmduo/whU2gP76rZVDc+7aKzKnmPPaSYp
+         gM9g==
+X-Forwarded-Encrypted: i=1; AJvYcCU3M9SOIVgVKfLcdAlx5Av55BEdfDMmaf6IC/PM9bNwbUby730gwa4MXTJM06klkjS2sQD4kDhtYkrNHXA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1OfmZOMQjjzvJaDwZvFVjK4u+aiCDw4jHYpnKajBvTL2ZH6d6
+	vPz2T0+q51NcuK9ldBVaeFD8sbwjxrHErkuWxhrFurGqbwlbPD/lvNSvOZgoC+o=
+X-Google-Smtp-Source: AGHT+IE7u/39911j1c3sz50SAnSlko3wr3KlRCn4HiDW+ocZgc3Eog0SsprY2n653epsmYu7G78Wbw==
+X-Received: by 2002:a05:6402:3207:b0:5bf:2577:32b8 with SMTP id 4fb4d7f45d1cf-5c72061b565mr1672076a12.9.1727253376929;
+        Wed, 25 Sep 2024 01:36:16 -0700 (PDT)
+Received: from [192.168.1.3] ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c5cf49728asm1632068a12.33.2024.09.25.01.36.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Sep 2024 01:36:16 -0700 (PDT)
+Message-ID: <f436dc23-bcaf-493b-93a9-699b63a18d46@linaro.org>
+Date: Wed, 25 Sep 2024 09:36:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,172 +75,189 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] dt-bindings: remoteproc: qcom,sa8775p-pas: Document
- QCS8300 remoteproc
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Bartosz
- Golaszewski" <bartosz.golaszewski@linaro.org>,
-        <quic_tengfan@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Xin Liu
-	<quic_liuxin@quicinc.com>
-References: <20240925-qcs8300_remoteproc_binding-v3-1-21b0c52b142b@quicinc.com>
- <bxkkqezsvvgf7xi6nhxjdpxhr76lrcjp65gtk56x45nhkygdmh@z3lzuz6honcg>
+Subject: Re: [PATCH 04/10] perf stat: Add --exclude-guest option
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: "Liang, Kan" <kan.liang@linux.intel.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org,
+ Ravi Bangoria <ravi.bangoria@amd.com>, Mark Rutland <mark.rutland@arm.com>,
+ James Clark <james.clark@arm.com>, Kajol Jain <kjain@linux.ibm.com>,
+ Thomas Richter <tmricht@linux.ibm.com>, Atish Patra <atishp@atishpatra.org>,
+ Palmer Dabbelt <palmer@rivosinc.com>, Mingwei Zhang <mizhang@google.com>
+References: <20240905202426.2690105-1-namhyung@kernel.org>
+ <20240905202426.2690105-5-namhyung@kernel.org>
+ <b1002dc7-78bf-40ed-83af-12a50622fb76@linux.intel.com>
+ <c26e646d-5ebf-473e-91e2-db28fc01e35d@linaro.org>
+ <ZvMfVe1VXwhCIOB9@google.com>
 Content-Language: en-US
-From: Jingyi Wang <quic_jingyw@quicinc.com>
-In-Reply-To: <bxkkqezsvvgf7xi6nhxjdpxhr76lrcjp65gtk56x45nhkygdmh@z3lzuz6honcg>
-Content-Type: text/plain; charset="UTF-8"
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <ZvMfVe1VXwhCIOB9@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: hDinfHGBngBjAtQcwJghIrejhRmXjMNw
-X-Proofpoint-ORIG-GUID: hDinfHGBngBjAtQcwJghIrejhRmXjMNw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
- mlxscore=0 impostorscore=0 spamscore=0 malwarescore=0 suspectscore=0
- priorityscore=1501 lowpriorityscore=0 mlxlogscore=999 clxscore=1015
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409250061
 
 
 
-On 9/25/2024 4:01 PM, Dmitry Baryshkov wrote:
-> On Wed, Sep 25, 2024 at 03:21:37PM GMT, Jingyi Wang wrote:
->> Document the components used to boot the ADSP, CDSP and GPDSP on the
->> Qualcomm QCS8300 SoC. Use fallback to indicate the compatibility of the
->> remoteproc on the QCS8300 with that on the SA8775P.
-
-Hi Dmitry,
-
+On 24/09/2024 9:21 pm, Namhyung Kim wrote:
+> Hello,
 > 
-> Are there any SoC-specific quirks that demand a separate compat string?
+> On Mon, Sep 23, 2024 at 09:47:17AM +0100, James Clark wrote:
+>>
+>>
+>> On 06/09/2024 3:33 pm, Liang, Kan wrote:
+>>>
+>>>
+>>> On 2024-09-05 4:24 p.m., Namhyung Kim wrote:
+>>>> This option is to support the old behavior of setting exclude_guest by
+>>>> default.  Now it doesn't set the bit so users want the old behavior can
+>>>> use this option.
+>>>>
+>>>>     $ perf stat true
+>>>>
+>>>>      Performance counter stats for 'true':
+>>>>
+>>>>                   0.86 msec task-clock:u                     #    0.443 CPUs utilized
+>>>>                      0      context-switches:u               #    0.000 /sec
+>>>>                      0      cpu-migrations:u                 #    0.000 /sec
+>>>>                     49      page-faults:u                    #   56.889 K/sec
+>>>>                    ...
+>>>>
+>>>>     $ perf stat --exclude-guest true
+>>>>
+>>>>      Performance counter stats for 'true':
+>>>>
+>>>>                   0.79 msec task-clock:Hu                    #    0.490 CPUs utilized
+>>>>                      0      context-switches:Hu              #    0.000 /sec
+>>>>                      0      cpu-migrations:Hu                #    0.000 /sec
+>>>>                     49      page-faults:Hu                   #   62.078 K/sec
+>>>>                    ...
+>>>>
+>>>> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+>>>> ---
+>>>>    tools/perf/Documentation/perf-stat.txt | 7 +++++++
+>>>>    tools/perf/builtin-stat.c              | 2 ++
+>>>>    2 files changed, 9 insertions(+)
+>>>>
+>>>> diff --git a/tools/perf/Documentation/perf-stat.txt b/tools/perf/Documentation/perf-stat.txt
+>>>> index 2bc06367248691dd..d28d8370a856598f 100644
+>>>> --- a/tools/perf/Documentation/perf-stat.txt
+>>>> +++ b/tools/perf/Documentation/perf-stat.txt
+>>>> @@ -382,6 +382,13 @@ color the metric's computed value.
+>>>>    Don't print output, warnings or messages. This is useful with perf stat
+>>>>    record below to only write data to the perf.data file.
+>>>> +--exclude-guest::
+>>>> +Don't count event in the guest mode.  It was the old behavior but the
+>>>> +default is changed to count guest events also.  Use this option if you
+>>>> +want the old behavior (host only).  Note that this option needs to be
+>>>> +before other events in case you added -e/--event option in the command
+>>>> +line.
+>>>
+>>> I'm not sure if we really need this option. I think it may bring more
+>>> trouble than what we get.
+>>>
+>>> The name of the "--exclude-guest" sounds like a replacement of the event
+>>> modifier "H". But in fact, it's not. It should only affect the default.
+>>> It doesn't set the "H" for any events.
 > 
-> In other similar cases (sm8250 vs qrb5165, sc7280 vs qcm6490 vs qcs6490
-> we are adding new compatibles only if it is expected that the hardware
-> (or firmware) is actually different.
+> Well I think it's tricky but it'd set "H" modifier events after the
+> option.  But I have to agree that it can bring more troubles.
+> 
+>>>
+>>> Except for the perf kvm user, I don't think there are many users which
+>>> care the exclude_guest. The behavior of the perf kvm is not changed. So
+>>> the option seems not that important. If we really want an option to
+>>> restore the old behavior, it's better to choose a better name and update
+>>> the description.
+> 
+> Personally I don't want to this option but just worried if there's a
+> case where exclude_guest is preferred.
+> 
+>>
+>> Do we not want to keep exclude_guest for record, but remove it for stat?
+> 
+> What I really want is to synchronize record and stat behavior in terms
+> of the default exclusion mode.  If everyone is fine, I'd like to remove
+> exclude_guest from the default and set it only if needed (through the
+> fallback) like we do for exclude_kernel.
+> 
+>>
+>> Because in record the addresses of guest samples don't make sense without
+>> extra work, but for stat you might want to see an overview of the whole
+>> system.
+> 
+> I think it depends on the use case and (power) users should know about
+> their environment and requirement.  The concern is what's the reasonable
+> default, but I think it should be the same both in perf record and stat
+> at least.
+> 
+>>
+>> For Coresight tracing and SPE we would want to keep exclude_guest, otherwise
+>> you generate a load of extra trace that you can't make use of. Say you were
+>> doing PGO on your host you wouldn't be recompiling anything the guests were
+>> running.
+> 
+> For the specific use case, I think we can guide users to add "H"
+> modifier (I guess it's not the default event for perf record).
+> Maybe we can consider per-PMU default attributes.
 > 
 
-This case is different from the cases above as qcs8300 and sa8775p are
-different SoCs.(sm8250 and qrb5165 are different variants for the same
-SoC). QCS8300 has one cdsp&gpdsp while SA8775P has 2, but they share the
-same driver data, we used to discuss with Krzysztof how to deal case
-like this and got the following suggestion to use fallback in yaml:
-https://lore.kernel.org/all/6652a08e-7143-4214-a864-9f27c10d7571@kernel.org/
+Yeah I was thinking about adding it as a default when the Coresight and 
+SPE events are configured, but I think it's too much to expect for 
+people to know all the edge cases about what the per PMU defaults will 
+be. Having one default for all PMUs makes more sense to me.
 
->> Co-developed-by: Xin Liu <quic_liuxin@quicinc.com>
->> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
->> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
->> ---
->> Changes in v3:
->> - add "contains" and remove redundant compatible.
->> - Link to v2: https://lore.kernel.org/r/20240911-qcs8300_remoteproc_binding-v2-1-01921b110532@quicinc.com
+I suppose asking Coresight users to add :H when they need it might be a 
+less bad thing than this change to clean up the fragmentation in the 
+defaults.
+
+I expect most of the time if :H is not added things continue to work, 
+just that more data will be recorded. One real concern is that in some 
+configurations there is a limited buffer size and once it's filled you 
+don't get any more data. If that buffer is filled by guest trace then 
+maybe some Auto FDO flow could break. But it's kind of an edge case of 
+an edge case and adding :H isn't really the end of the world.
+
 >>
->> Changes in v2:
->> - decoupled from the original series.
->> - Use fallback to indicate compatibility with SA8775P.
->> - Link to v1: https://lore.kernel.org/r/20240904-qcs8300_initial_dtsi-v1-0-d0ea9afdc007@quicinc.com
->> ---
->>  .../bindings/remoteproc/qcom,sa8775p-pas.yaml      | 44 +++++++++++++++-------
->>  1 file changed, 30 insertions(+), 14 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
->> index 7fe401a06805..a66007951d58 100644
->> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
->> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
->> @@ -15,12 +15,25 @@ description:
->>  
->>  properties:
->>    compatible:
->> -    enum:
->> -      - qcom,sa8775p-adsp-pas
->> -      - qcom,sa8775p-cdsp0-pas
->> -      - qcom,sa8775p-cdsp1-pas
->> -      - qcom,sa8775p-gpdsp0-pas
->> -      - qcom,sa8775p-gpdsp1-pas
->> +    oneOf:
->> +      - items:
->> +          - enum:
->> +              - qcom,qcs8300-adsp-pas
->> +          - const: qcom,sa8775p-adsp-pas
->> +      - items:
->> +          - enum:
->> +              - qcom,qcs8300-cdsp-pas
->> +          - const: qcom,sa8775p-cdsp0-pas
->> +      - items:
->> +          - enum:
->> +              - qcom,qcs8300-gpdsp-pas
->> +          - const: qcom,sa8775p-gpdsp0-pas
->> +      - enum:
->> +          - qcom,sa8775p-adsp-pas
->> +          - qcom,sa8775p-cdsp0-pas
->> +          - qcom,sa8775p-cdsp1-pas
->> +          - qcom,sa8775p-gpdsp0-pas
->> +          - qcom,sa8775p-gpdsp1-pas
->>  
->>    reg:
->>      maxItems: 1
->> @@ -63,8 +76,9 @@ allOf:
->>    - if:
->>        properties:
->>          compatible:
->> -          enum:
->> -            - qcom,sa8775p-adsp-pas
->> +          contains:
->> +            enum:
->> +              - qcom,sa8775p-adsp-pas
->>      then:
->>        properties:
->>          power-domains:
->> @@ -79,9 +93,10 @@ allOf:
->>    - if:
->>        properties:
->>          compatible:
->> -          enum:
->> -            - qcom,sa8775p-cdsp0-pas
->> -            - qcom,sa8775p-cdsp1-pas
->> +          contains:
->> +            enum:
->> +              - qcom,sa8775p-cdsp0-pas
->> +              - qcom,sa8775p-cdsp1-pas
->>      then:
->>        properties:
->>          power-domains:
->> @@ -98,9 +113,10 @@ allOf:
->>    - if:
->>        properties:
->>          compatible:
->> -          enum:
->> -            - qcom,sa8775p-gpdsp0-pas
->> -            - qcom,sa8775p-gpdsp1-pas
->> +          contains:
->> +            enum:
->> +              - qcom,sa8775p-gpdsp0-pas
->> +              - qcom,sa8775p-gpdsp1-pas
->>      then:
->>        properties:
->>          power-domains:
->>
->> ---
->> base-commit: 4d0326b60bb753627437fff0f76bf1525bcda422
->> change-id: 20240925-qcs8300_remoteproc_binding-a2837bab2150
->>
->> Best regards,
->> -- 
->> Jingyi Wang <quic_jingyw@quicinc.com>
->>
+>> If we do change the defaults isn't ':H' already enough to go back to the old
+>> behavior? I'm wondering why we need an argument when all the other exclude
+>> rules are done with the letter modifiers?
 > 
-Thanks,
-Jingyi
+> I'm not sure I follow this.  But maybe we don't need this option at all.
+> We can add ":H" for every event but I'm too lazy to add them to all the
+> default events in perf data. :)
+> 
+> Thanks,
+> Namhyung
+>   
+
+Oh I see yes, the argument is a shortcut to adding H on all events 
+and/or the default ones. I wasn't sure if was added because it couldn't 
+be done with :H, but I see it's an alternative instead. So adding it 
+makes sense.
+
+>>>> +
+>>>>    STAT RECORD
+>>>>    -----------
+>>>>    Stores stat data into perf data file.
+>>>> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+>>>> index d8315dae930184ba..4d47675af5cc3094 100644
+>>>> --- a/tools/perf/builtin-stat.c
+>>>> +++ b/tools/perf/builtin-stat.c
+>>>> @@ -2491,6 +2491,8 @@ int cmd_stat(int argc, const char **argv)
+>>>>    		OPT_BOOLEAN_FLAG(0, "all-user", &stat_config.all_user,
+>>>>    				"Configure all used events to run in user space.",
+>>>>    				PARSE_OPT_EXCLUSIVE),
+>>>> +		OPT_BOOLEAN(0, "exclude-guest", &exclude_HG_default,
+>>>> +			"Don't count events in the guest mode"),
+
+Maybe this would be a good hint if it really is equivalent:
+
+  +	"Don't count events in the guest mode. (Add :H to all events)"),
+
+>>>>    		OPT_BOOLEAN(0, "percore-show-thread", &stat_config.percore_show_thread,
+>>>>    			"Use with 'percore' event qualifier to show the event "
+>>>>    			"counts of one hardware thread by sum up total hardware "
+>>
 
 
