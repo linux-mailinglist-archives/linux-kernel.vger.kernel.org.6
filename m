@@ -1,162 +1,209 @@
-Return-Path: <linux-kernel+bounces-337842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-337839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05A72984F9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 02:53:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E33F9984F94
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 02:50:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B911C280FB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:53:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1092B1C2287A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 00:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 593C71332A1;
-	Wed, 25 Sep 2024 00:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596FF132132;
+	Wed, 25 Sep 2024 00:50:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="kPpkFzRV"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LR+V/BUw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4F3135A79
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 00:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8CE6130499;
+	Wed, 25 Sep 2024 00:50:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727225582; cv=none; b=Aq4EqFqhHDwszauQE+YsBRPCkjbnDlJzlJVegVW781YjtEndH1Yj4eD9Uh92sTTgBGrcBqxGnIzTk4nFCcuSJn+dEtKCTsHhrz3AkGJWszEb1aj+bUrKUU6rhSRgc/PzjtIFautYX44Nmc3gvhxVBluS2QSTwCj7oPqDOmyAwsY=
+	t=1727225406; cv=none; b=Re8ddgqePCLI1Xs0xNVBTEtxhGJmCHIGkFJFPr7xyqsEluoeT0aPRQaNL9Imv8zTFHsk5UDrMZLWG5t+7CmtXCBEr1kkDOUTy6oWPzD5mJBfRfYnukW6Mg4lT3SpN5IeXXaOedg8pohjlryiqKDnz5t3XTf6XRm2DuHUgEl+UQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727225582; c=relaxed/simple;
-	bh=Ci4/UoxRRXd5uvuxYWSx4T5/MgJvAfME+zZeKA/e0oc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JtzlsMc3M4DFo9CDzEqB03ivKMoLVjxLmlb57w8Qj18+qMkRaIixUauiQkXGLvItsYMP3z0q3296XlYAFzICplk6kKZBi7MWuiLYgBOIu0x1/BiPhK5V4ObP6/3c9ywqHFt7eNx+lHs0PK+M/Emwzpi5u0TJTvj0yAzPNg11vd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=android.com; spf=pass smtp.mailfrom=android.com; dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b=kPpkFzRV; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=android.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=android.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f75aa08a96so64042301fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2024 17:53:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20230601; t=1727225579; x=1727830379; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S8FbQywdH0oWZCGZXj5Hbv7B2G2tFNgGOo6kZcwthgc=;
-        b=kPpkFzRVtxE+6FzFTW2iPA11I7blLrzEq2d8CtFRs1y6u+ns7TG8qHikKFrYCdKrw/
-         901r0rm+r3MgxwqJNmHqCUjTzQuJdZyIJnw1b3z3oZm9gBFihsvEyr3CtuulxXDxkKpc
-         dwGvhalbMvbpgmSi5K99Z/0zCgugitr4hUdAxx0Lu92FbOwHeS0jotlKP+EvgpmWATlG
-         yh9oxFiqMorO1hBSn+szu6PiY49FIBPA40gGrsUagwdwVNh4NXnY3v8eW3kJqL/1l/Fe
-         CTrxbeKSW0BUuvzXlMrErVNEjEOO6XXS9hJbItqj/m+8H/WyCjXNG9ilt5Wd3Z0nfiTt
-         +kyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727225579; x=1727830379;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S8FbQywdH0oWZCGZXj5Hbv7B2G2tFNgGOo6kZcwthgc=;
-        b=hKo3we8FsLVV/PQaAD1ndqGnb5tqe19UlXVkQUBIXDG7Uh38tCI6GbfsBYOPSLREa5
-         u7yO83JzFTieZvlaVy8ROCNJyREc2WbrO7/KpPR7SHPGgl7U4E6M/LmSFobmDgNxRR8I
-         r/XNuS1WfcDIXPm7/5fJ4mEHRukm/YlVUSXqHHON25aKjGawhQEfWIZpk3DN9l0kcf+O
-         V20bXD4oy6D3xCi2JEOA5ek+HupmGy6FItGZZ3PoWrX72hbzDAVtsiq/d+uFncAGuQon
-         tmHNEdnjyGJ0/qy0gUAYzqkv8yN+sTXEr42gTmjsuBChwt59pDhWNQHUPqa4azrRsuSr
-         3Lbw==
-X-Forwarded-Encrypted: i=1; AJvYcCU8g+HwlsyO7hCFH4HPl2lugbcd8QhO4iItIwu8eaTTRPXctP7uLV2AWfeGAfKX681Jnh4VO9Ko724Bf8I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqaYRtdbAkrWrUNZljWYhE4Zetu7dZSRxuKXGaxEc5tQ7tVh5E
-	6CkQbKqF1w0Ufak5zTP7WmtF62BKrBg0GgGOsv0f+MBWpJtmKunyaiIE+I62PPE6I1daPrqC2qp
-	vez0xyHBhRCueGeenqG9fJ9m4TFIBNSaFGhpp
-X-Google-Smtp-Source: AGHT+IEKqWZXHJ23DqHLKjn4v9fYYdxuY4ehghseFGkkd3Td6DXyGrindh9PvHj2mgDcjz/xQVGCMaxpHu4dh7YjjOs=
-X-Received: by 2002:a05:651c:1502:b0:2f3:df8f:bfaa with SMTP id
- 38308e7fff4ca-2f91ca6ed4fmr5783971fa.36.1727225578729; Tue, 24 Sep 2024
- 17:52:58 -0700 (PDT)
+	s=arc-20240116; t=1727225406; c=relaxed/simple;
+	bh=n9b2CcW3JcflL4xUUDh/blICAcUDGjmnRZHdA6aXMZY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ChmkqGk4s8+e4ENM/BtNQtJuXfUhh6mZrmOdsdnxzewSnH1TKpU1Cbz4iggib0PpFKcN+A8gKjr8qm7Vy1iFNkrGREkrsbkDdFtIpuqLkC5bzTM8aXX8Bgk+kb+XjvSyCKgETCJ/hguIhR1vI9xYuTuiltci1AvqaebNrk+gGjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LR+V/BUw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA45AC4CEC4;
+	Wed, 25 Sep 2024 00:50:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727225406;
+	bh=n9b2CcW3JcflL4xUUDh/blICAcUDGjmnRZHdA6aXMZY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LR+V/BUwffxK2X8mV7Pu6x1gSzmO5d1+YwaUopuUgjZQQjGV4xF3ff5eGISvr6OA+
+	 ZA5RUiT6oHOwtxpqfKT94uOKh6VVgEqH7/EfWPg8GDU/k726DvcbpjwRJ666LWEAm+
+	 P93PeVXMUFiKRWq2FUsR5YArVAahxeER1e12WeoLWHKGlfCa7GKwWrUaookXDPGeRL
+	 6+WTmUNBG9Vz/lB6PcxWvOMgt/4TmpDithskA7MdHzXtYQQZzqsndMalWoK3uYS2FK
+	 6KkONLkFvnoAJwg0RD6HbuAM1Mg20mz9Bffh5GKenPtpLL6ebVfgcqSpciijPbOatz
+	 FwARod0/wKabw==
+Date: Tue, 24 Sep 2024 17:53:26 -0700
+From: Bjorn Andersson <andersson@kernel.org>
+To: Wasim Nazir <quic_wasimn@quicinc.com>
+Cc: Shuah Khan <shuah@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH] selftest: remoteproc: Add basic test for start/stop
+ sequence
+Message-ID: <ad6zsxcmqxavf7uo76ipriqjg7ipijafkaehgs5wthyyf364lv@kg4kzrxgucgl>
+References: <20240920175842.388781-1-quic_wasimn@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240924184401.76043-1-cmllamas@google.com> <20240924184401.76043-4-cmllamas@google.com>
-In-Reply-To: <20240924184401.76043-4-cmllamas@google.com>
-From: Todd Kjos <tkjos@android.com>
-Date: Tue, 24 Sep 2024 17:52:47 -0700
-Message-ID: <CAD0t5oNFc0UtFpsPVWBVTzZbEgqy+PeuW4uv1_sNM=+Aqbu2kA@mail.gmail.com>
-Subject: Re: [PATCH 3/4] binder: fix freeze UAF in binder_release_work()
-To: Carlos Llamas <cmllamas@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, 
-	Christian Brauner <brauner@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Yu-Ting Tseng <yutingtseng@google.com>, linux-kernel@vger.kernel.org, 
-	kernel-team@android.com, Alice Ryhl <aliceryhl@google.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240920175842.388781-1-quic_wasimn@quicinc.com>
 
-On Tue, Sep 24, 2024 at 11:44=E2=80=AFAM Carlos Llamas <cmllamas@google.com=
-> wrote:
->
-> When a binder reference is cleaned up, any freeze work queued in the
-> associated process should also be removed. Otherwise, the reference is
-> freed while its ref->freeze.work is still queued in proc->work leading
-> to a use-after-free issue as shown by the following KASAN report:
->
->   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->   BUG: KASAN: slab-use-after-free in binder_release_work+0x398/0x3d0
->   Read of size 8 at addr ffff31600ee91488 by task kworker/5:1/211
->
->   CPU: 5 UID: 0 PID: 211 Comm: kworker/5:1 Not tainted 6.11.0-rc7-00382-g=
-fc6c92196396 #22
->   Hardware name: linux,dummy-virt (DT)
->   Workqueue: events binder_deferred_func
->   Call trace:
->    binder_release_work+0x398/0x3d0
->    binder_deferred_func+0xb60/0x109c
->    process_one_work+0x51c/0xbd4
->    worker_thread+0x608/0xee8
->
->   Allocated by task 703:
->    __kmalloc_cache_noprof+0x130/0x280
->    binder_thread_write+0xdb4/0x42a0
->    binder_ioctl+0x18f0/0x25ac
->    __arm64_sys_ioctl+0x124/0x190
->    invoke_syscall+0x6c/0x254
->
->   Freed by task 211:
->    kfree+0xc4/0x230
->    binder_deferred_func+0xae8/0x109c
->    process_one_work+0x51c/0xbd4
->    worker_thread+0x608/0xee8
->   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> This commit fixes the issue by ensuring any queued freeze work is removed
-> when cleaning up a binder reference.
->
-> Fixes: d579b04a52a1 ("binder: frozen notification")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Carlos Llamas <cmllamas@google.com>
+On Fri, Sep 20, 2024 at 11:28:42PM GMT, Wasim Nazir wrote:
+> Add new basic remoteproc test that check start/stop
+> sequence of all subsystems available.
+> 
 
-Acked-by: Todd Kjos <tkjos@android.com>
+Please describe your test scenario more than just "check start/stop
+sequence".
 
-> ---
->  drivers/android/binder.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-> index 8bca2de6fa24..d955135ee37a 100644
-> --- a/drivers/android/binder.c
-> +++ b/drivers/android/binder.c
-> @@ -1225,6 +1225,12 @@ static void binder_cleanup_ref_olocked(struct bind=
-er_ref *ref)
->                 binder_dequeue_work(ref->proc, &ref->death->work);
->                 binder_stats_deleted(BINDER_STAT_DEATH);
->         }
+Signed-off-by...
+
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index e062b5328341..aff76edc4242 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -18225,6 +18225,7 @@ F:	Documentation/staging/remoteproc.rst
+>  F:	drivers/remoteproc/
+>  F:	include/linux/remoteproc.h
+>  F:	include/linux/remoteproc/
+> +F:	tools/testing/selftests/remoteproc/
+> 
+>  REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM
+>  M:	Bjorn Andersson <andersson@kernel.org>
+> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+> index 697f13bbbc32..31db0311efdc 100644
+> --- a/tools/testing/selftests/Makefile
+> +++ b/tools/testing/selftests/Makefile
+> @@ -68,6 +68,7 @@ TARGETS += proc
+>  TARGETS += pstore
+>  TARGETS += ptrace
+>  TARGETS += openat2
+> +TARGETS += remoteproc
+>  TARGETS += resctrl
+>  TARGETS += riscv
+>  TARGETS += rlimits
+> diff --git a/tools/testing/selftests/remoteproc/Makefile b/tools/testing/selftests/remoteproc/Makefile
+> new file mode 100644
+> index 000000000000..a84b3934fd36
+> --- /dev/null
+> +++ b/tools/testing/selftests/remoteproc/Makefile
+> @@ -0,0 +1,4 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +TEST_PROGS := remoteproc_test.sh
 > +
-> +       if (ref->freeze) {
-> +               binder_dequeue_work(ref->proc, &ref->freeze->work);
-> +               binder_stats_deleted(BINDER_STAT_FREEZE);
-> +       }
+> +include ../lib.mk
+> diff --git a/tools/testing/selftests/remoteproc/config b/tools/testing/selftests/remoteproc/config
+> new file mode 100644
+> index 000000000000..a5c237d2f3b4
+> --- /dev/null
+> +++ b/tools/testing/selftests/remoteproc/config
+> @@ -0,0 +1 @@
+> +CONFIG_REMOTEPROC=y
+> diff --git a/tools/testing/selftests/remoteproc/remoteproc_test.sh b/tools/testing/selftests/remoteproc/remoteproc_test.sh
+> new file mode 100644
+> index 000000000000..88c8f15d8406
+> --- /dev/null
+> +++ b/tools/testing/selftests/remoteproc/remoteproc_test.sh
+> @@ -0,0 +1,165 @@
+> +#!/bin/sh
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+> +#
 > +
->         binder_stats_deleted(BINDER_STAT_REF);
->  }
->
-> --
-> 2.46.0.792.g87dc391469-goog
->
+> +DIR="$(dirname $(readlink -f "$0"))"
+> +
+> +KTAP_HELPERS="${DIR}/../kselftest/ktap_helpers.sh"
+> +if [ -e "$KTAP_HELPERS" ]; then
+> +    source "$KTAP_HELPERS"
+> +else
+> +    echo -n "1..0 # SKIP $KTAP_HELPERS file not found"
+> +	exit 4
+> +fi
+> +
+> +RPROC_SYS=/sys/class/remoteproc
+> +RPROC_SEQ_SLEEP=5
+> +rproc_ss_files=
+> +num_tests=0
+> +test_err=0
+> +
+> +check_error() {
+> +	if [ $? -ne 0 ]; then
+> +		test_err=$((test_err+1))
+> +		ktap_print_msg "$@"
+> +	fi
+> +}
+> +
+> +rproc_seq_test_ss_one() {
+> +	ss=$1
+
+"ss" or "subsystem" are Qualcomm terms, please use "remoteproc instance"
+instead.
+
+> +	rproc=${RPROC_SYS}/$ss
+> +	rproc_name=$(cat $rproc/name)
+> +	rproc_state=$(cat $rproc/state)
+> +	rproc_ssr=$(cat $rproc/recovery)
+> +	ktap_print_msg "Testing rproc sequence for $rproc_name"
+> +
+> +	# Reset test_err value
+> +	test_err=0
+> +	if [ "$rproc_ssr" != "enabled" ]; then
+> +		echo enabled > $rproc/recovery
+> +		check_error "$rproc_name SSR-enabled failed"
+
+Same with "SSR", you can express this with standard terms.
+
+Why do we need "recovery" enabled in order to perform start/stop or
+stop/start testing? Doesn't recovery only affect the crash code path?
+
+> +	fi
+> +
+> +	if [ "$rproc_state" != "running" ]; then
+
+I'd like to see your arguments in the commit message, or a comment here,
+of why you do either start/stop or stop/start - instead of e.g. make
+sure they are all stopped and then start/stop them in the test.
+
+
+PS. Please use check go/upstream and adopt b4.
+
+Regards,
+Bjorn
+
+> +		echo start > "$rproc/state"
+> +		check_error "$rproc_name state-start failed"
+> +
+> +		sleep ${RPROC_SEQ_SLEEP}
+> +
+> +		echo stop > "$rproc/state"
+> +		check_error "$rproc_name state-stop failed"
+> +	else
+> +		echo stop > "$rproc/state"
+> +		check_error "$rproc_name state-stop failed"
+> +
+> +		sleep ${RPROC_SEQ_SLEEP}
+> +
+> +		echo start > "$rproc/state"
+> +		check_error "$rproc_name state-start failed"
+> +	fi
+> +
+> +	if [ $test_err -ne 0 ]; then
+> +		ktap_test_fail "$rproc_name"
+> +	else
+> +		ktap_test_pass "$rproc_name"
+> +	fi
+> +}
 
