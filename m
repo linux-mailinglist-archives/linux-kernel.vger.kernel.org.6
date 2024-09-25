@@ -1,149 +1,106 @@
-Return-Path: <linux-kernel+bounces-338650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11D04985B7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:25:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0B4F985C59
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:45:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFE5D1F25D8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:25:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA638B29E89
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B275199E88;
-	Wed, 25 Sep 2024 11:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B4A1A286D;
+	Wed, 25 Sep 2024 11:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BZe/bp7W"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bIpQSq7x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C14A199937
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 11:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F5E170A3E;
+	Wed, 25 Sep 2024 11:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727265013; cv=none; b=VfZmeF24PCVdfPzBEWfcvvWYmHTD6AE+5ySDOkI2kf45unuT1uJoMUNmauub3Ug4dTX8eC1xJwVcGwBh4ektY5gcmeetdPW1AeGOywSP9jAAljr6B/znu6zCLkPKKdbwgeXkg7MSn4TCnBtX3gsG2/6vN17Ms9j6itH6Od4/R2U=
+	t=1727265507; cv=none; b=qcDeNt505TqoRmWK0xOhUoyuowvkjQhgK6SRGqjsDyxzy78bKkT5T+/s7EKetvkcukRhJ0NyKVFdo74gOYx5AEsDsA0I4jt/nI2yzUJ/NzzWz+zD1K3mn4vI0ID/nxbx06tX0I1jpLfwsLb4iMd8AjF90QI4xBC1Jvw6O6dHSpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727265013; c=relaxed/simple;
-	bh=H+gsI2joGdRifKrtElCoqBe7xywJACmsoWad01IrgO0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=twFZXToodG832nQUWAQqYRm6f5iJl2zYjX9skFMu4KsW3V2BTz7kqDooPFmlCrMFmh5c35z0d7pVSW8JmRdTYcawep6eSaSE4k5pzFTMB5sMYVm2CmzZKSsxvS9VmQl9ZSGyP9rR9Y5xthefYsw8tMae209FMBs104kJlzapEiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BZe/bp7W; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f8c3c83ce0so3350701fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 04:50:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727265010; x=1727869810; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=axWWiXyzRMbM4Axw/3+vRv92qzmnqSQaWTNdg37rIL8=;
-        b=BZe/bp7W71w+CJxjiEC/xgLp8o528DcBPOBjUOl0lwuo6sbzaZpiM5wAs0OcqRHH6z
-         AlGKcAb4jVuTlf6M7sauZl4TvjF9GK4Ay/juDx/HhTV0EwxkUEAqsEE5D8Lz42Ey3uHI
-         SpaXt1hxcOuNNhvT3mYBYD9Iwxh73+uTgawXQb1mT0P64V9V+s6JQP11QQVGjnZOQell
-         EPl9SuoOExg597Y7ms6ExBiOGnQAayN6wTmKrw9xYm8d+Ex/wvJ/ObtaxM5x+DTm6Q9X
-         iPqCRescGZx/o6uPsSkHHn6QkZ0ULwVugSydifi7w8d/derA/PIzMro+3eEUDD55u+fm
-         k2iQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727265010; x=1727869810;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=axWWiXyzRMbM4Axw/3+vRv92qzmnqSQaWTNdg37rIL8=;
-        b=gEoQFg6x34P+PQ51QfXMUtZCYvAEJSaOuqSRfUr6hoJDsAm2VzVPvZQiYXDGdURLSU
-         QG9TICk+ZqilrXgC5144ijfyGKmJ21PSpXB87htvB96j3oTr6FHo8dhS9+mmBWY9Da9k
-         L0esx6pnuJmRLMJ2+BugVPEpf1FOsnXziEaXpawC9p4Lv8pL5HqklQbshReyv3R+khWx
-         ycSxp33mAQ/KxzE/DVyZSmFOXK7KFhTN+WNWEXN+VKzr6OoNr5cp2HUc4bS6irYALu2N
-         y4DGMLB53HoD8elot3U0awcwvhqcFehoIUrC/hyYRVbzRhWjwWVzyEiw8kqfx4ZbxEUy
-         ecLw==
-X-Forwarded-Encrypted: i=1; AJvYcCWdSDA8G464rtc2GP13/b5SVBeo9mbnioT58jw4AG7pMn/vMO3TQa5rLYyFtOYEfHXa0N88Vr8a+hEVAOw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzamGhE9wWODJzzxcZEGBJHwOXiOa0GWUtpnoAR/kR2aP53QqKo
-	YnjyX3q+6W4VvRMZG/mXwtXNpVCgSdF+ZM4VKCqMgOvW6R6Z0A6UT4b8IPusB7/KONqe1xlIPJn
-	rBwz3QQDGKn9Z4qv9+6RiCNMZ0Jo=
-X-Google-Smtp-Source: AGHT+IF8UF9Wbeti2cAKtDua2321UrAXvsnz1+fp+jvpuvrupGkGqOJ1vrY5ZGsW7/LY01nXQcJmi1iha+a+I76tE2E=
-X-Received: by 2002:a05:651c:2115:b0:2ef:24a9:6aa8 with SMTP id
- 38308e7fff4ca-2f904a76d19mr3985471fa.0.1727265009613; Wed, 25 Sep 2024
- 04:50:09 -0700 (PDT)
+	s=arc-20240116; t=1727265507; c=relaxed/simple;
+	bh=DHKg4G/Asx6z3gXHGGyKUwxi9cSsvXk2f1FXaNNbvXE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fnOXMNDJBydfvKHMOrtUyHgdq1KtdC+MlnSwjHWtYVoobsVQ5Nn5HK41tMqQHIoMIOI4DvjkW1P3z1gy7ULY/uLMxDIGMjr0x+ILodNz/CFtkbCC+K7HzgzT9cTK5vHLF3J7UQXkFrfJ2Wg4/hKKSOKnGIVJkqcX2qK0tRRIYfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bIpQSq7x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAC3FC4CEC7;
+	Wed, 25 Sep 2024 11:58:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727265506;
+	bh=DHKg4G/Asx6z3gXHGGyKUwxi9cSsvXk2f1FXaNNbvXE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=bIpQSq7xLVwQaRNvDVED3scuFjhCJj7tTdnC+U2jBWrEjq+fczreIyNqxLogobzLj
+	 CnWsmmYfOUYYP8uHU1nRwgMEB2rVrHaYZK2U4Kgf9ru1RqgM97ditagjsBmRbNGxRS
+	 jsa09p2LuoK3Rv6Gted35EEdlTzZHkRDI4oCcw3TR+X0ZBlRkoyXWE72UqbEiDcwwE
+	 56IgTwDs1MhI6wzu65+b2O8LopNZtPRrkcds4u25kRB5i3ZjRcXcMfBiABDJkEtZ6s
+	 6/ecJcdzWqXTXmCb3SfbEVC5qmnc6wOxq6GOGCVq7EnSCh5+pKy192f3GIBvGZf4G7
+	 yyjJrTYKCBGqA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Dmitry Kandybka <d.kandybka@gmail.com>,
+	=?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
+	Kalle Valo <quic_kvalo@quicinc.com>,
+	Sasha Levin <sashal@kernel.org>,
+	kvalo@kernel.org,
+	linux-wireless@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.10 001/197] wifi: ath9k: fix possible integer overflow in ath9k_get_et_stats()
+Date: Wed, 25 Sep 2024 07:50:20 -0400
+Message-ID: <20240925115823.1303019-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925030225.236143-1-zhaoyang.huang@unisoc.com> <20240925024215.265614f6839e752882b1c28b@linux-foundation.org>
-In-Reply-To: <20240925024215.265614f6839e752882b1c28b@linux-foundation.org>
-From: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Date: Wed, 25 Sep 2024 19:49:58 +0800
-Message-ID: <CAGWkznG40FyJxOzB1jRsBVGPrZhV=ceKWzTQSTq2TbzRLMAZ5w@mail.gmail.com>
-Subject: Re: [PATCH] mm: migrate LRU_REFS_MASK bits in folio_migrate_flags
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, David Hildenbrand <david@redhat.com>, 
-	Matthew Wilcox <willy@infradead.org>, Yu Zhao <yuzhao@google.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, steve.kang@unisoc.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.10.11
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 25, 2024 at 5:42=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
->
-> On Wed, 25 Sep 2024 11:02:25 +0800 "zhaoyang.huang" <zhaoyang.huang@uniso=
-c.com> wrote:
->
-> > From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-> >
-> > Bits of LRU_REFS_MASK are not inherited during migration which lead to
-> > new_folio start from tier0. Fix this by migrate the bits domain.
->
-> I'm having trouble understanding this, sorry.  Please more fully
-> describe the runtime effects of this flaw.
-Sorry for bringing confusion. According to my understanding, MGLRU
-records how many times that vfs access this page in a range of bits
-domain(LRU_REFS_MASK) in folio->flags which are not being migrated to
-new_folios so far. This commit would like to do so to have the
-new_folio inherit these bits from the old folio. Is it right and
-worthy to do?
->
-> > --- a/include/linux/mm_inline.h
-> > +++ b/include/linux/mm_inline.h
-> > @@ -291,6 +291,12 @@ static inline bool lru_gen_del_folio(struct lruvec=
- *lruvec, struct folio *folio,
-> >       return true;
-> >  }
-> >
-> > +static inline void folio_migrate_refs(struct folio *new_folio, struct =
-folio *folio)
-> > +{
-> > +     unsigned long refs =3D READ_ONCE(folio->flags) & LRU_REFS_MASK;
-> > +
-> > +     set_mask_bits(&new_folio->flags, LRU_REFS_MASK, refs);
-> > +}
-> >  #else /* !CONFIG_LRU_GEN */
-> >
-> >  static inline bool lru_gen_enabled(void)
-> > @@ -313,6 +319,8 @@ static inline bool lru_gen_del_folio(struct lruvec =
-*lruvec, struct folio *folio,
-> >       return false;
-> >  }
-> >
-> > +static inline void folio_migrate_refs(struct folio *new_folio, struct =
-folio *folio)
-> > +{}
-> >  #endif /* CONFIG_LRU_GEN */
-> >
-> >  static __always_inline
-> > diff --git a/mm/migrate.c b/mm/migrate.c
-> > index 923ea80ba744..60c97e235ae7 100644
-> > --- a/mm/migrate.c
-> > +++ b/mm/migrate.c
-> > @@ -618,6 +618,7 @@ void folio_migrate_flags(struct folio *newfolio, st=
-ruct folio *folio)
-> >       if (folio_test_idle(folio))
-> >               folio_set_idle(newfolio);
-> >
-> > +     folio_migrate_refs(newfolio, folio);
-> >       /*
-> >        * Copy NUMA information to the new page, to prevent over-eager
-> >        * future migrations of this same page.
-> > --
-> > 2.25.1
+From: Dmitry Kandybka <d.kandybka@gmail.com>
+
+[ Upstream commit 3f66f26703093886db81f0610b97a6794511917c ]
+
+In 'ath9k_get_et_stats()', promote TX stats counters to 'u64'
+to avoid possible integer overflow. Compile tested only.
+
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Signed-off-by: Dmitry Kandybka <d.kandybka@gmail.com>
+Acked-by: Toke Høiland-Jørgensen <toke@toke.dk>
+Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
+Link: https://patch.msgid.link/20240725111743.14422-1-d.kandybka@gmail.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/wireless/ath/ath9k/debug.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/ath9k/debug.c b/drivers/net/wireless/ath/ath9k/debug.c
+index d84e3ee7b5d90..886a102e5b025 100644
+--- a/drivers/net/wireless/ath/ath9k/debug.c
++++ b/drivers/net/wireless/ath/ath9k/debug.c
+@@ -1325,11 +1325,11 @@ void ath9k_get_et_stats(struct ieee80211_hw *hw,
+ 	struct ath_softc *sc = hw->priv;
+ 	int i = 0;
+ 
+-	data[i++] = (sc->debug.stats.txstats[PR_QNUM(IEEE80211_AC_BE)].tx_pkts_all +
++	data[i++] = ((u64)sc->debug.stats.txstats[PR_QNUM(IEEE80211_AC_BE)].tx_pkts_all +
+ 		     sc->debug.stats.txstats[PR_QNUM(IEEE80211_AC_BK)].tx_pkts_all +
+ 		     sc->debug.stats.txstats[PR_QNUM(IEEE80211_AC_VI)].tx_pkts_all +
+ 		     sc->debug.stats.txstats[PR_QNUM(IEEE80211_AC_VO)].tx_pkts_all);
+-	data[i++] = (sc->debug.stats.txstats[PR_QNUM(IEEE80211_AC_BE)].tx_bytes_all +
++	data[i++] = ((u64)sc->debug.stats.txstats[PR_QNUM(IEEE80211_AC_BE)].tx_bytes_all +
+ 		     sc->debug.stats.txstats[PR_QNUM(IEEE80211_AC_BK)].tx_bytes_all +
+ 		     sc->debug.stats.txstats[PR_QNUM(IEEE80211_AC_VI)].tx_bytes_all +
+ 		     sc->debug.stats.txstats[PR_QNUM(IEEE80211_AC_VO)].tx_bytes_all);
+-- 
+2.43.0
+
 
