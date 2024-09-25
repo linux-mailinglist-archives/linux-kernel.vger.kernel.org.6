@@ -1,47 +1,59 @@
-Return-Path: <linux-kernel+bounces-339082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E486986022
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:15:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89AED986026
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:15:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 219102885D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:15:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F9A1288A4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:15:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F00518453D;
-	Wed, 25 Sep 2024 12:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA20618595F;
+	Wed, 25 Sep 2024 12:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p/Uih25E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="B0GuRjMS"
+Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D74126BFE;
-	Wed, 25 Sep 2024 12:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9213415CD46;
+	Wed, 25 Sep 2024 12:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727267635; cv=none; b=FOgUb793d74FlAWKyCYT3kRXbfEREeQMwPjX/ZnEiFHPj1Iu+O333lMyLubqWcr3xQOReNXo5MP2F688xOiSRHrAwFmkPQcPF4q9x4CvGCRFPlqeEKddwyC/ppGhgKlG86BqqU9+9HCAm1iYIzE/YSQ0w9pYi3xl0lDjvsUHEQQ=
+	t=1727267877; cv=none; b=c5dNsnGjPb5zSuzgioR26auvsNc80PVC2mR/VB8wP8prXBc4cqmLh5umchGWGDfUSP2Ec6tLAfmaWIi1mxrVd+i0smn4toFsjkpqprmmT+/Wx4lmIOj+7ytVsXF+EjzEGdAhHAej9q2KyLlU56NMsinRonDP6Vq4iqBPuNGoJ7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727267635; c=relaxed/simple;
-	bh=6k5ITNytTdH6fEqAVvLa7B903k78f8uZRP1Pv3xgFEY=;
+	s=arc-20240116; t=1727267877; c=relaxed/simple;
+	bh=yGA4k9fPRkP7UNwjMq/bcpk/wx7MQAsUF0sTAoJLV6I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wh91aUTMpKBIS4Q1ADSEkRxvsuynxMDrliag9eNtnr4YLsRgdZZlE5k1jsefgLe4LIwX3c8e7Hyx6pwx1iOc9l6xacTzhEhfeDdY0aukXWtavsreKph2Ed4NJaStVf2pGnnlFBsw4Q1oioTEIsCQb46sGftNJ1hnqzJ0nadgfTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p/Uih25E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EF39C4CEC3;
-	Wed, 25 Sep 2024 12:33:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727267634;
-	bh=6k5ITNytTdH6fEqAVvLa7B903k78f8uZRP1Pv3xgFEY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=p/Uih25E11ECt1iv400ZtPfsX58TF2Vnp3vqSebGnONwGiGWZ4F9PSvOYiDVdXVx+
-	 5NfQavi/T/Fq+OCIgI+w6R6HlBPvU7aaUoKSRU1CVZMuR2osLnYRyGn6aRqI751pUX
-	 wQjP6eFTWMRXk19jB0mgNnqdYmSiiwYVrwV3zL7OPTf5DH/oHDinLmNZz7bPcE6tQG
-	 RKJDTtqEd+r5tzjjqrlrMAxurnwWuhEafmvcHziUzN6sRM/9kDAKLnQ6xxeE6rHkvn
-	 QNxOYLzhbK2CFIPrGWy4JLKWn55bcZEcE0NImL/LZquMis5jmD9/y2CT34nLvoofVT
-	 JuKQZwa0Q+mFg==
-Message-ID: <9507b3e6-3be6-4392-94f7-8fb05e3ace4c@kernel.org>
-Date: Wed, 25 Sep 2024 14:33:46 +0200
+	 In-Reply-To:Content-Type; b=QAdmrkj/HA8pHWGo5HTnDwhXOmegBlaLbuli8X9fFHpLT7aoNH36tz0gRoLUg9vFRBnzxPGwOSZuMOcFB4rtrKITktnLPZLdtW4XTTahLPwLAlqq3b2jyL/FGz5FHpAuNX0mATQ6EiZ2cqPha0HbxLXkQXqrgNwtXKBG2ah2Dxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=B0GuRjMS; arc=none smtp.client-ip=213.133.104.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=77XXD0LA4ebMzrDQBNCHl27giGc0zGFsG6O/kyjKY7c=; b=B0GuRjMSashd8iRo1h/j4+zK0+
+	cUYDB0lfz3MKusy39Ke9+5GPmF+GdcYlcVLlMm0HYCqXn/Oh30fiyeEOZZ57PoL2SFaD6d5LHu4Kh
+	CyukCpKp82pZQo9iu7nUT15Z4qbPGFtc/CFsdKCnnb2hsohlB2FtZaEHscLH+pL6wsW9uFWBH5UJn
+	JrZfLynGrJ7TDjpohdcfMzkcJ5uPimIMpKn/sxxEZJSCuP+SgLqBxD/DE8Oyc5LjaPiMH2FTu9qfT
+	NlX2dLO+0qRT93QwajRkzZyXmicoHfbBEWtuoc4y5AsjLDKvqLob34iyPyzMMqhZBHx7DEXsWF5pv
+	1B3Tu6lQ==;
+Received: from sslproxy03.your-server.de ([88.198.220.132])
+	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1stRH6-000AIM-6U; Wed, 25 Sep 2024 14:37:44 +0200
+Received: from [178.197.249.20] (helo=[192.168.1.114])
+	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1stRH5-0004VM-0Y;
+	Wed, 25 Sep 2024 14:37:43 +0200
+Message-ID: <eebea88a-ebef-4bc7-9859-52820113318d@iogearbox.net>
+Date: Wed, 25 Sep 2024 14:37:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,76 +61,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: spi: zynqmp-qspi: Include two 'reg'
- properties only for the Zynq UltraScale QSPI
-To: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>, broonie@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: michal.simek@amd.com, linux-spi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, git@amd.com,
- amitrkcian2002@gmail.com
-References: <20240925114203.2234735-1-amit.kumar-mahapatra@amd.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] BPF : arch/x86/net/bpf_jit_comp.c : fix wrong condition
+ code in jit compiler
+To: zyf <zhouyangfan20s@ict.ac.cn>, bpf@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, dsahern@kernel.org,
+ Yonghong Song <yonghong.song@linux.dev>
+References: <20240925082332.2849923-1-zhouyangfan20s@ict.ac.cn>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240925114203.2234735-1-amit.kumar-mahapatra@amd.com>
-Content-Type: text/plain; charset=UTF-8
+From: Daniel Borkmann <daniel@iogearbox.net>
+In-Reply-To: <20240925082332.2849923-1-zhouyangfan20s@ict.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27409/Wed Sep 25 11:17:07 2024)
 
-On 25/09/2024 13:42, Amit Kumar Mahapatra wrote:
-> Linear mode is only supported by the Zynq UltraScale QSPI controller,
-> so update the bindings to include two 'reg' properties only for the
-> Zynq UltraScale QSPI controller.
-> 
-> Signed-off-by: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+On 9/25/24 10:23 AM, zyf wrote:
+> change 'case BPF_ALU64 | BPF_END | BPF_FROM_LE' to 'case BPF_ALU64 | BPF_END | BPF_FROM_BE'
+>
+> Signed-off-by: zyf <zhouyangfan20s@ict.ac.cn>
 > ---
-> BRANCH: for-next
-> 
+>   arch/x86/net/bpf_jit_comp.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/net/bpf_jit_comp.c b/arch/x86/net/bpf_jit_comp.c
+> index 06b080b61aa5..7f954d76b3a6 100644
+> --- a/arch/x86/net/bpf_jit_comp.c
+> +++ b/arch/x86/net/bpf_jit_comp.c
+> @@ -1786,7 +1786,7 @@ static int do_jit(struct bpf_prog *bpf_prog, int *addrs, u8 *image, u8 *rw_image
+>   			break;
+>   
+>   		case BPF_ALU | BPF_END | BPF_FROM_BE:
+> -		case BPF_ALU64 | BPF_END | BPF_FROM_LE:
+> +		case BPF_ALU64 | BPF_END | BPF_FROM_BE:
+>   			switch (imm32) {
+>   			case 16:
+>   				/* Emit 'ror %ax, 8' to swap lower 2 bytes */
+Please elaborate on the exact issue you've encountered. Right now it looks
+like you did this change just based on code review but not based on a real
+world bug?
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Best regards,
-Krzysztof
-
+BPF_ALU64 | BPF_END | BPF_FROM_LE instruction is unconditonal swap,
+see also commit 0845c3db7bf5c4ceb ("bpf: Support new unconditional bswap 
+instruction").
+As it stands your change additionally breaks BPF selftests.
 
