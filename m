@@ -1,270 +1,178 @@
-Return-Path: <linux-kernel+bounces-338104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0B85985360
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:05:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85DA0985361
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 09:05:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69A3B282460
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:05:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 201EAB2290A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 07:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E7E154C08;
-	Wed, 25 Sep 2024 07:05:15 +0000 (UTC)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD331537AC;
+	Wed, 25 Sep 2024 07:05:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0XFwGSg+";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="D54eyQq+";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0XFwGSg+";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="D54eyQq+"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D0B132103;
-	Wed, 25 Sep 2024 07:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A4313D62F
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 07:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727247915; cv=none; b=E8Q2hyH7IGiP2gHwRPFoP5XONKr3DcWLpzxcG3Ltc2uP9YH3+B8MZwIHfFOBVZYqUAnNA2xJ+HQ/+V3DWdpXpEkaqpDn5kM5V8StuvymaqQe6mfSxszJtZ7MYe9i0tlGi7qUIS/BXeFO1cGbsams/SuBj1EJp2iJ/Bx/dCEHzMA=
+	t=1727247950; cv=none; b=mizUfD2dVcZ2AxEeNSobG/icTFm4gMMPpbvkFHeRSiMp+bDhy66qZvMSlW7HjcrdDT/7MzVipL/n0N4oxcDJwP/AckJWC0Qn66Kn4JPeSdc1LlUopzCWqCT4bDT0fglvmpbWDaoSgJ6jriJXEyi0h2byHlla2Zi+AwIIbSHGNzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727247915; c=relaxed/simple;
-	bh=aPSRE4NYCT9TKWV6OoV1ZBRSXDwMdPJSA6UtuGxJfEo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BUstXFvKfsnoQq4O8k1asIXhk9odI/P48n/87HVwCc9Jls3NSGWsN24DGrVixLorJt06fGZs1PS1mNRSau+vk3Q1uxBU3sEXRaA5syrmpKr0mvcHQa1mN5FDjWeUFpsfvwhtHU+blEMcChpArXW71+eprbZNIFFCh7cDmvKYiOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c42384c517so7733018a12.3;
-        Wed, 25 Sep 2024 00:05:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727247911; x=1727852711;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LY+HitzXmGPeKw42ml4AV13uCy/oN2qRncK/eGGEhRs=;
-        b=il8xqdopejMNUsPy9LEiz9E/ERUobfYRpwlSSCZAaPcwKT//6oKwumEKjRgKJWF9eb
-         KkGR7IQx4awyXhb5vd8X4Ssq3fBS/pnmw12mnOrGYrN26JE4aEJTm9WLOQljn2Xlf4N+
-         F4MPUctbK5QYhm64xcVPFbiB/ssWgn+XopMAp9sH//8T9gYa434qOP3eH0DRKOVqtAwT
-         2mZl8mvw6MxDgIJpPpUOyGKqkxNwargx6jmRBPde8qDJpchLRk5XJbBtgPlmLLPDvlat
-         LO7zmwgKcoLZ4YTq62QV65gRdqIYKpx6Nghjvph1bIS4WW9IKGTmmNHjFgWDugm3rbJj
-         UaNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmDkZJll4MyH26Rj0jvNfWaoNI/J9zUyHKammUDkPirclrXELNtNRAFWS4tDt9q38PJed+Z95DyXxfmE4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+V8xI5IBpKXZXnv+qyOc3k5y+IzbdY3BEsCJKeVvkPxOeGurB
-	5UjwcUWThng3sjA8aFhocNdAr0kHt3i8ysIFoKUSb92oKvjEDbqdcczqgoeraUc=
-X-Google-Smtp-Source: AGHT+IE+7ohWss1V/0YPwisXn98gRCcXXFVJc23DGsBU9E1BD9R6s5yR7Q/ZqJq3rIyjClpkuNWi7g==
-X-Received: by 2002:a05:6402:241a:b0:5c5:b9bb:c3d2 with SMTP id 4fb4d7f45d1cf-5c72073c9famr1058634a12.26.1727247910833;
-        Wed, 25 Sep 2024 00:05:10 -0700 (PDT)
-Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c5cf4d78cbsm1571702a12.90.2024.09.25.00.05.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Sep 2024 00:05:09 -0700 (PDT)
-Message-ID: <681d8d8b-e527-4f01-b3d6-01eb573e72df@kernel.org>
-Date: Wed, 25 Sep 2024 09:05:08 +0200
+	s=arc-20240116; t=1727247950; c=relaxed/simple;
+	bh=j6KEFY/IEdZVw1ZnPv878iZd+JawJ6cVoKv42dv8BXo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l7xLKO4tC7nXim8+fyAKaKSg7mEjTIHpJX4/jouV7OWqYb4GU6rPP9mLTVHF7l3+Ch2VY/u7J7aug6sTcsa557EZ+KrJFya5y8DUgOlhkyNIfZvYUWU/6iDuSeuoinANVOcz8HiTWcvgCji1tBkzY5mBeAtTDGB03q8oMeevznc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0XFwGSg+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=D54eyQq+; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0XFwGSg+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=D54eyQq+; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 452071FB9D;
+	Wed, 25 Sep 2024 07:05:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727247946; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5FwztsJJrsZ1NiowiTUpMKZ+weXOKJuzpzW72D1YPg4=;
+	b=0XFwGSg+68UyOlmxAAe3FmVToIaeKsoOZeK3iI2AEzizoGS5HUbVLD6/ZTgIMPCDN4//0s
+	4Y7mFuocj+7hAlbHl3JDbEYbWmO0zLeoPt/GxHn1C8/v2gvXWGzKdTCVTDHtnmt2ILV6bH
+	g9BTlX12DEn8Ezl6Qu+wj4FTvE1faVU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727247946;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5FwztsJJrsZ1NiowiTUpMKZ+weXOKJuzpzW72D1YPg4=;
+	b=D54eyQq+M3QfHrjMwhXUdBOPeM+lGuJKOdMG+sZLOGQX5S7WfKjyJX57SwoJDz17CY4a8G
+	UJhTKHl8K+zzCIAw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=0XFwGSg+;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=D54eyQq+
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727247946; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5FwztsJJrsZ1NiowiTUpMKZ+weXOKJuzpzW72D1YPg4=;
+	b=0XFwGSg+68UyOlmxAAe3FmVToIaeKsoOZeK3iI2AEzizoGS5HUbVLD6/ZTgIMPCDN4//0s
+	4Y7mFuocj+7hAlbHl3JDbEYbWmO0zLeoPt/GxHn1C8/v2gvXWGzKdTCVTDHtnmt2ILV6bH
+	g9BTlX12DEn8Ezl6Qu+wj4FTvE1faVU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727247946;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5FwztsJJrsZ1NiowiTUpMKZ+weXOKJuzpzW72D1YPg4=;
+	b=D54eyQq+M3QfHrjMwhXUdBOPeM+lGuJKOdMG+sZLOGQX5S7WfKjyJX57SwoJDz17CY4a8G
+	UJhTKHl8K+zzCIAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 36A1F13793;
+	Wed, 25 Sep 2024 07:05:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id uL7XDEq282YiaQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 25 Sep 2024 07:05:46 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id CE483A08A7; Wed, 25 Sep 2024 09:05:30 +0200 (CEST)
+Date: Wed, 25 Sep 2024 09:05:30 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhao Mengmeng <zhaomzhao@126.com>
+Cc: Jan Kara <jack@suse.cz>, jack@suse.com, zhaomengmeng@kylinos.cn,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] udf: refactor udf_next_aext() to handle error
+Message-ID: <20240925070530.cddj4cs4ia7qy6qm@quack3>
+References: <20240918093634.12906-1-zhaomzhao@126.com>
+ <20240918093634.12906-3-zhaomzhao@126.com>
+ <20240920154701.xotlrf37bjlwtg3i@quack3>
+ <6b22baa6-a75f-45ff-a0cb-33ae0ecf4720@126.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] tty: n_gsm: Fix use-after-free in gsm_cleanup_mux
-To: Longlong Xia <xialonglong@kylinos.cn>, gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- "D. Starke" <daniel.starke@siemens.com>
-References: <20240924093519.767036-1-xialonglong@kylinos.cn>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20240924093519.767036-1-xialonglong@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6b22baa6-a75f-45ff-a0cb-33ae0ecf4720@126.com>
+X-Rspamd-Queue-Id: 452071FB9D
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[126.com];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[126.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Cc Daniel.
-
-On 24. 09. 24, 11:35, Longlong Xia wrote:
-> BUG: KASAN: slab-use-after-free in gsm_cleanup_mux+0x7e5/0x820 [n_gsm]
-> Read of size 8 at addr ffff88814941c700 by task poc/3395
+On Tue 24-09-24 20:08:56, Zhao Mengmeng wrote:
+> On 2024/9/20 23:47, Jan Kara wrote:
+> > On Wed 18-09-24 17:36:33, Zhao Mengmeng wrote:
+> >> diff --git a/fs/udf/truncate.c b/fs/udf/truncate.c
+> >> index 91b6e2698e7e..b7361222f988 100644
+> >> --- a/fs/udf/truncate.c
+> >> +++ b/fs/udf/truncate.c
+> >> @@ -85,7 +85,7 @@ void udf_truncate_tail_extent(struct inode *inode)
+> >>  		BUG();
+> >>  
+> >>  	/* Find the last extent in the file */
+> >> -	while ((netype = udf_next_aext(inode, &epos, &eloc, &elen, 1)) != -1) {
+> >> +	while (!udf_next_aext(inode, &epos, &eloc, &elen, &netype, 1)) {
+> >>  		etype = netype;
+> >>  		lbcount += elen;
+> >>  		if (lbcount > inode->i_size) {
+> > 
+> > This should be checking for error (after the loop) so that we don't
+> > accidentally try to truncate extents early in case of error.
+> > 
+> Sorry to bother, in case of error(including EOF), it won't go into the loop and
+> has chance to call extent_trunc(). After the loop, only some update and clean op,
 > 
-> CPU: 0 UID: 0 PID: 3395 Comm: poc Not tainted 6.11.0+ #46
-> Hardware name: VMware, Inc. VMware Virtual Platform/440BX
-> Desktop Reference Platform, BIOS 6.00 11/12/2020
-> Call Trace:
->   <TASK>
->   dump_stack_lvl+0x6c/0x90
->   print_report+0xce/0x610
->   kasan_complete_mode_report_info+0x5d/0x1e0
->   gsm_cleanup_mux+0x7e5/0x820 [n_gsm]
->   kasan_report+0xbd/0xf0
->   gsm_cleanup_mux+0x7e5/0x820 [n_gsm]
->   __asan_report_load8_noabort+0x14/0x20
->   gsm_cleanup_mux+0x7e5/0x820 [n_gsm]
->   __pfx_gsm_cleanup_mux+0x10/0x10 [n_gsm]
->   __rseq_handle_notify_resume+0x188/0xc50
->   __kasan_check_write+0x14/0x20
->   gsmld_ioctl+0x3c3/0x15b0 [n_gsm]
->   __kasan_check_write+0x14/0x20
->   __pfx_gsmld_ioctl+0x10/0x10 [n_gsm]
->   do_syscall_64+0x88/0x160
->   __kasan_check_write+0x14/0x20
->   ldsem_down_read+0x94/0x4e0
->   __pfx_ldsem_down_read+0x10/0x10
->   __pfx___rseq_handle_notify_resume+0x10/0x10
->   switch_fpu_return+0xed/0x200
->   tty_ioctl+0x660/0x1260
-
-Could you decode the above to line numbers using 
-./scripts/decode_stacktrace.sh?
-
-And then trim the unnecessary entries like:
-
->   __pfx___handle_mm_fault+0x10/0x10
->   __pfx_tty_ioctl+0x10/0x10
->   __count_memcg_events+0xf5/0x3d0
->   fdget+0x2de/0x4f0
->   __x64_sys_ioctl+0x132/0x1b0
->   x64_sys_call+0x1205/0x20d0
->   do_syscall_64+0x7c/0x160
->   clear_bhb_loop+0x15/0x70
->   entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
-up to here.
-
-BTW do you use ORC or is this with unreliable FRAME_POINTERs? I am 
-asking because the stack traces contain a full load of ballast. Like 
-do_syscall_64() after tty_ioctl().
-
-> Allocated by task 808:
-
-Also drop this:
->   kasan_save_stack+0x28/0x50
->   kasan_save_track+0x14/0x30
->   kasan_save_alloc_info+0x36/0x40
->   __kasan_kmalloc+0xb1/0xc0
->   __kmalloc_noprof+0x1f6/0x4b0
-
-up to here ^^^.
-
->   gsm_data_alloc.constprop.0+0x2e/0x1a0 [n_gsm]
->   gsm_send+0x2f/0x5d0 [n_gsm]
->   gsm_queue+0x522/0x730 [n_gsm]
->   gsm1_receive+0x58b/0xb70 [n_gsm]
->   gsmld_receive_buf+0x173/0x2a0 [n_gsm]
->   tty_ldisc_receive_buf+0x115/0x1e0
->   tty_port_default_receive_buf+0x66/0xa0
->   flush_to_ldisc+0x1b0/0x7c0
->   process_scheduled_works+0x2bc/0x10c0
->   worker_thread+0x3d4/0x970
->   kthread+0x2b6/0x390
->   ret_from_fork+0x39/0x80
->   ret_from_fork_asm+0x1a/0x30
+> 	iinfo->i_lenExtents = inode->i_size;
+> 	brelse(epos.bh);
 > 
-> Freed by task 3377:
+> So I'm a little confused which part of this piece of code needs to change?
 
-And here:
+So if we are not able to scan until EOF due to error, we should set
+i_lenExtents to i_size but you're right this is mostly a cosmetic thing.
 
->   kasan_save_stack+0x28/0x50
->   kasan_save_track+0x14/0x30
->   kasan_save_free_info+0x3a/0x50
->   __kasan_slab_free+0x54/0x70
-
-^^^
-
->   kfree+0x126/0x420
->   gsm_cleanup_mux+0x3ae/0x820 [n_gsm]
->   gsmld_ioctl+0x3c3/0x15b0 [n_gsm]
->   tty_ioctl+0x660/0x1260
-
-this:
-
->   __x64_sys_ioctl+0x132/0x1b0
->   x64_sys_call+0x1205/0x20d0
->   do_syscall_64+0x7c/0x160
->   entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
-^^^
-
-> [Analysis]
-> gsm_msg on the tx_ctrl_list or tx_data_list of gsm_mux
-> can be freed by multi threads through ioctl,which leads
-> to the occurrence of uaf. Protect it by gsm tx lock.
-
-LGTM. But Daniel might have a different opinion...
-
-> Signed-off-by: Longlong Xia <xialonglong@kylinos.cn>
-> ---
->   drivers/tty/n_gsm.c | 4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/tty/n_gsm.c b/drivers/tty/n_gsm.c
-> index 5d37a0984916..1ed68a6aba4e 100644
-> --- a/drivers/tty/n_gsm.c
-> +++ b/drivers/tty/n_gsm.c
-> @@ -3125,6 +3125,7 @@ static void gsm_cleanup_mux(struct gsm_mux *gsm, bool disc)
->   	int i;
->   	struct gsm_dlci *dlci;
->   	struct gsm_msg *txq, *ntxq;
-> +	unsigned long flags;
->   
->   	gsm->dead = true;
->   	mutex_lock(&gsm->mutex);
-> @@ -3157,12 +3158,15 @@ static void gsm_cleanup_mux(struct gsm_mux *gsm, bool disc)
->   	mutex_unlock(&gsm->mutex);
->   	/* Now wipe the queues */
->   	tty_ldisc_flush(gsm->tty);
-> +
-> +	spin_lock_irqsave(&gsm->tx_lock, flags);
-
-Perhaps use guard(spinlock_irqsave) instead?
-
->   	list_for_each_entry_safe(txq, ntxq, &gsm->tx_ctrl_list, list)
->   		kfree(txq);
->   	INIT_LIST_HEAD(&gsm->tx_ctrl_list);
->   	list_for_each_entry_safe(txq, ntxq, &gsm->tx_data_list, list)
->   		kfree(txq);
->   	INIT_LIST_HEAD(&gsm->tx_data_list);
-> +	spin_unlock_irqrestore(&gsm->tx_lock, flags);
->   }
->   
->   /**
-
+								Honza
 -- 
-js
-suse labs
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
