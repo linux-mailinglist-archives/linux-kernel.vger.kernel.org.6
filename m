@@ -1,57 +1,66 @@
-Return-Path: <linux-kernel+bounces-339030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E98C4985F8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:00:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DEFB5985F8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:00:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94D621F25993
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:00:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 861331F25967
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D2A1D359D;
-	Wed, 25 Sep 2024 12:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F790184543;
+	Wed, 25 Sep 2024 12:16:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="okaVJrcL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YgwH7SRK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9FEE1D3586;
-	Wed, 25 Sep 2024 12:16:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D4422667A;
+	Wed, 25 Sep 2024 12:16:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727266586; cv=none; b=mcSdJAbg4ikYx1st/nyxFDPsTZTd9LgCXHXcs6SStbP/1Nj49YCAta60DMxXUq9wwPvpYs6bSXKr1BboCRzmy41xgsji4RfxYsSSjVNGT5sOdCXJfC/bejArUxwYcmKh2X36aa52vhx4exlIhh1bXkOGZGw5NdoGF3n+Xc1i4Tc=
+	t=1727266598; cv=none; b=bp+aWpo2I7qSpGVx9D2mQ7qcgwwElfKvVq1AW+5KVuTZfXFw6hspOcfB3wX5Z6AkhFCQrtr7mP35HR9tbMyX6EMDPLkDEeDMP3JLssjy10AakkO1x1oC1//1vvOp1/JpcVkqggzwsX/zYXh+IK1r3Vjf0kpNeEfJqvLcQSBMw78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727266586; c=relaxed/simple;
-	bh=2sCL9w3aGSXasarMLkUqCUiWFdQaWGl2HXSuOS/diQ4=;
+	s=arc-20240116; t=1727266598; c=relaxed/simple;
+	bh=RAGSkXWuKFUFwcxyIZ3t1x8TvDIpRJx22tAg6NSoFUM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZYg/EiRqCB5dMALgBDKwgI3EokKxABQAqoCC6N89XVXrE3wylk4Vo1E3DRTs5XTFwo3m1hxP9+yinjxN0msfqFv7GWy+sMqgJbJCngK9oWAOaBucPz6A+BzmpsJL2/M2o1ORPjAQvMAX4nhgjmNA5XoZI3nM6XvcoCmlibn8lJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=okaVJrcL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C946C4CECE;
-	Wed, 25 Sep 2024 12:16:25 +0000 (UTC)
+	 MIME-Version; b=fveYhjfgGNq/LDkVRv5agQnN+2Vv/ILWvV6zyedhYnzDtyo4UUBzuBb+d1Kz3JGxQJVje+Iwxx5C0JkhW+S2aNWkPDw8k4S0pGE/Sm2A6XLRfq8D/LVm8BcBW8BCH8i6UMSyiWVFYHk4GM1iG8WovG0tVtT7qm9+VyxrSvfWCcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YgwH7SRK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EC0EC4CEC3;
+	Wed, 25 Sep 2024 12:16:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727266586;
-	bh=2sCL9w3aGSXasarMLkUqCUiWFdQaWGl2HXSuOS/diQ4=;
+	s=k20201202; t=1727266597;
+	bh=RAGSkXWuKFUFwcxyIZ3t1x8TvDIpRJx22tAg6NSoFUM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=okaVJrcLFzodkQcb2J8YXct98GwZZvAnOmx3LIBYoCzySHJd2xWQUN9iVwGDHeXW+
-	 eZj8ZVWZAhJgLL3N7mR8BluAXGsuvHoURJT4SGKQ/ghZpUbJO3ji9K5VL9GOzlvi33
-	 RCqi0q5qIb9IAjtO6V0cg0npPU3/pbAQnbT1UINaBnDGPMqP4hDvTvWxARFFG8BIJa
-	 YrAZb/76wYlq1WNlZ3gTbwYh9omaYa+OIYQAEbhXvFekJgQP8NIYAqfxIqdbSJzR/e
-	 iKyjxD0puI6nRKayi6QikovXUtSIQyZU3xqxKt6WRnSc8A8EM3EO324SKOhf0xEU+E
-	 xlg3XzMH8Tt1A==
+	b=YgwH7SRKOGhSJQc2F+mnLGOsUN4dHv7zr6GJa5/O/Lbxp1uWOPrWPQwZim0bn/NuQ
+	 OYx5e1/uqQhBRMhKUphpe48iINtWqzQbhyccgez+la0ngLeMD1aH835ehTXNf1iSTY
+	 ayP+hOQVYCGXR4IfAVIb6XbtffZcYI+Lp00DjgdV3KXneMtRHXMYew69ZU4YFRXOEj
+	 wSlCGHkhZbTCuVBuNEnwqZky3ccLGM8YR/JViwE4RjTTvcvOWRpGfTjUsADRbnyCef
+	 IHiSovyDXkvy20C5BpdiA+c4BVyHObhoqqB9byfba3YW+ahEBZa6EDUZpooRxbgHve
+	 bYnD7RS5j/Fcg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Ckath <ckath@yandex.ru>,
-	Hans de Goede <hdegoede@redhat.com>,
+Cc: Alex Hung <alex.hung@amd.com>,
+	Rodrigo Siqueira <rodrigo.siqueira@amd.com>,
+	Jerry Zuo <jerry.zuo@amd.com>,
+	Daniel Wheeler <daniel.wheeler@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
 	Sasha Levin <sashal@kernel.org>,
-	ilpo.jarvinen@linux.intel.com,
-	linux-input@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 105/139] platform/x86: touchscreen_dmi: add nanote-next quirk
-Date: Wed, 25 Sep 2024 08:08:45 -0400
-Message-ID: <20240925121137.1307574-105-sashal@kernel.org>
+	harry.wentland@amd.com,
+	sunpeng.li@amd.com,
+	Rodrigo.Siqueira@amd.com,
+	christian.koenig@amd.com,
+	Xinhui.Pan@amd.com,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 6.6 108/139] drm/amd/display: Check link_res->hpo_dp_link_enc before using it
+Date: Wed, 25 Sep 2024 08:08:48 -0400
+Message-ID: <20240925121137.1307574-108-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240925121137.1307574-1-sashal@kernel.org>
 References: <20240925121137.1307574-1-sashal@kernel.org>
@@ -66,67 +75,52 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.6.52
 Content-Transfer-Encoding: 8bit
 
-From: Ckath <ckath@yandex.ru>
+From: Alex Hung <alex.hung@amd.com>
 
-[ Upstream commit c11619af35bae5884029bd14170c3e4b55ddf6f3 ]
+[ Upstream commit 0beca868cde8742240cd0038141c30482d2b7eb8 ]
 
-Add touschscreen info for the nanote next (UMPC-03-SR).
+[WHAT & HOW]
+Functions dp_enable_link_phy and dp_disable_link_phy can pass link_res
+without initializing hpo_dp_link_enc and it is necessary to check for
+null before dereferencing.
 
-After checking with multiple owners the DMI info really is this generic.
+This fixes 2 FORWARD_NULL issues reported by Coverity.
 
-Signed-off-by: Ckath <ckath@yandex.ru>
-Link: https://lore.kernel.org/r/e8dda83a-10ae-42cf-a061-5d29be0d193a@yandex.ru
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Rodrigo Siqueira <rodrigo.siqueira@amd.com>
+Signed-off-by: Jerry Zuo <jerry.zuo@amd.com>
+Signed-off-by: Alex Hung <alex.hung@amd.com>
+Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/touchscreen_dmi.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ .../gpu/drm/amd/display/dc/link/hwss/link_hwss_hpo_dp.c    | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/platform/x86/touchscreen_dmi.c b/drivers/platform/x86/touchscreen_dmi.c
-index 06ebab520f271..30c05a9948319 100644
---- a/drivers/platform/x86/touchscreen_dmi.c
-+++ b/drivers/platform/x86/touchscreen_dmi.c
-@@ -885,6 +885,21 @@ static const struct ts_dmi_data rwc_nanote_p8_data = {
- 	.properties = rwc_nanote_p8_props,
- };
+diff --git a/drivers/gpu/drm/amd/display/dc/link/hwss/link_hwss_hpo_dp.c b/drivers/gpu/drm/amd/display/dc/link/hwss/link_hwss_hpo_dp.c
+index e1257404357b1..d0148f10dfc0a 100644
+--- a/drivers/gpu/drm/amd/display/dc/link/hwss/link_hwss_hpo_dp.c
++++ b/drivers/gpu/drm/amd/display/dc/link/hwss/link_hwss_hpo_dp.c
+@@ -28,6 +28,8 @@
+ #include "dccg.h"
+ #include "clk_mgr.h"
  
-+static const struct property_entry rwc_nanote_next_props[] = {
-+	PROPERTY_ENTRY_U32("touchscreen-min-x", 5),
-+	PROPERTY_ENTRY_U32("touchscreen-min-y", 5),
-+	PROPERTY_ENTRY_U32("touchscreen-size-x", 1785),
-+	PROPERTY_ENTRY_U32("touchscreen-size-y", 1145),
-+	PROPERTY_ENTRY_BOOL("touchscreen-inverted-y"),
-+	PROPERTY_ENTRY_STRING("firmware-name", "gsl1680-rwc-nanote-next.fw"),
-+	{ }
-+};
++#define DC_LOGGER link->ctx->logger
 +
-+static const struct ts_dmi_data rwc_nanote_next_data = {
-+	.acpi_name = "MSSL1680:00",
-+	.properties = rwc_nanote_next_props,
-+};
+ void set_hpo_dp_throttled_vcp_size(struct pipe_ctx *pipe_ctx,
+ 		struct fixed31_32 throttled_vcp_size)
+ {
+@@ -124,6 +126,11 @@ void disable_hpo_dp_link_output(struct dc_link *link,
+ 		const struct link_resource *link_res,
+ 		enum signal_type signal)
+ {
++	if (!link_res->hpo_dp_link_enc) {
++		DC_LOG_ERROR("%s: invalid hpo_dp_link_enc\n", __func__);
++		return;
++	}
 +
- static const struct property_entry schneider_sct101ctm_props[] = {
- 	PROPERTY_ENTRY_U32("touchscreen-size-x", 1715),
- 	PROPERTY_ENTRY_U32("touchscreen-size-y", 1140),
-@@ -1648,6 +1663,17 @@ const struct dmi_system_id touchscreen_dmi_table[] = {
- 			DMI_MATCH(DMI_PRODUCT_SKU, "0001")
- 		},
- 	},
-+	{
-+		/* RWC NANOTE NEXT */
-+		.driver_data = (void *)&rwc_nanote_next_data,
-+		.matches = {
-+			DMI_MATCH(DMI_PRODUCT_NAME, "To be filled by O.E.M."),
-+			DMI_MATCH(DMI_BOARD_NAME, "To be filled by O.E.M."),
-+			DMI_MATCH(DMI_BOARD_VENDOR, "To be filled by O.E.M."),
-+			/* Above matches are too generic, add bios-version match */
-+			DMI_MATCH(DMI_BIOS_VERSION, "S8A70R100-V005"),
-+		},
-+	},
- 	{
- 		/* Schneider SCT101CTM */
- 		.driver_data = (void *)&schneider_sct101ctm_data,
+ 		link_res->hpo_dp_link_enc->funcs->link_disable(link_res->hpo_dp_link_enc);
+ 		link_res->hpo_dp_link_enc->funcs->disable_link_phy(
+ 				link_res->hpo_dp_link_enc, signal);
 -- 
 2.43.0
 
