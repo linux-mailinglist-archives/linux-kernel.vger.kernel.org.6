@@ -1,350 +1,178 @@
-Return-Path: <linux-kernel+bounces-338054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80F769852D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:18:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 805029852D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:18:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3FF4B228F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 06:18:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA38EB22989
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 06:18:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D693B1553AB;
-	Wed, 25 Sep 2024 06:18:03 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB2C314F9E9;
-	Wed, 25 Sep 2024 06:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7129C155359;
+	Wed, 25 Sep 2024 06:18:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Nb9FQ3pZ"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0FE0B657;
+	Wed, 25 Sep 2024 06:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727245083; cv=none; b=LN0p0la84Ox6J7LOlNv3tq3LYqs/FsJ9HWLS3le1CEpxT0UDPhcWNQzA81lFLTNwMZoxT7RL1u8poFnGApH0HvtDVrtC5ZbYUWvgGoQKBaRuzIkyMk4LQZHZ1d1U+5F4gmbj34Fd1wxzMDDb0ufKHVVuFCu2NCA/LmCxWnDEE2o=
+	t=1727245119; cv=none; b=Bgcw+TmTymBx94lA2aEtM2bdRPFYtaQpsvRYNHcGO3roYExAgfaula1jMlofDHR7n+iWXBQfEygYFNlJSUyGJ2ZhbAn1MD42Zzek0GxELluNB9LPf8cSPFTkus5nUqVUnh3Ilv3nYmvK3JmbLkT77saZy6WJgbVaCpxTbg3nDSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727245083; c=relaxed/simple;
-	bh=aHAbNSWKzAKrphe975SpARTujH9GMH69NKz2hP+CtPw=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Tbajss9mWg7vMusvEhsJfhDiuGGRtB8nnvt8+9RJR7VXL0t+uG363EWUh6Dl/A+ZIL4QBx6PY83egnfClmyzSqcv7OD/PrkAhkRt1SZjTYpXWzHYD1msF+kIQNkHXekGqwfvwqd4VkDeSeQR2FA+4IZxwLQEx4lFxLTToyfbUMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.164])
-	by gateway (Coremail) with SMTP id _____8DxrfAUq_NmyRsAAA--.513S3;
-	Wed, 25 Sep 2024 14:17:56 +0800 (CST)
-Received: from [10.20.42.164] (unknown [10.20.42.164])
-	by front2 (Coremail) with SMTP id qciowMAxEuQSq_NmkvcRAA--.6832S2;
-	Wed, 25 Sep 2024 14:17:55 +0800 (CST)
-Subject: Re: [PATCH v5 2/2] Loongarch: EDAC driver for loongson memory
- controller
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, bp@alien8.de,
- tony.luck@intel.com, linux-edac@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@xen0n.name, james.morse@arm.com,
- mchehab@kernel.org, rric@kernel.org, loongarch@lists.linux.dev
-References: <20240925024038.9844-1-zhaoqunqin@loongson.cn>
- <20240925024038.9844-3-zhaoqunqin@loongson.cn>
- <CAAhV-H5e4TxqeZtSRjKUVs7=U=EZsGu8+TLVxv+qCknYkNCBFQ@mail.gmail.com>
-From: Zhao Qunqin <zhaoqunqin@loongson.cn>
-Message-ID: <e5b5aa3f-c766-2966-72f1-0dbf08b1e19a@loongson.cn>
-Date: Wed, 25 Sep 2024 14:17:46 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1727245119; c=relaxed/simple;
+	bh=9s2aBJy7wXkWf6jJRXZJXFKvV282uBhAewcxbEafd74=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IxTopjGcL5mqNoltMzXvWCpegJuNNBBrq1xRXVmK939hpg3HpHTxV8Voqwuwog/vfA+OGiemHSswNlokE1D/BLLid6HR+H6NSnMu2sNUqr96cE+nw9WdcWioorptfUV06vFviZjZnVlvq69y2cokNxDvdGHXmxKdrFq3BDlXQEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Nb9FQ3pZ; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: f9efa50e7b0511ef8b96093e013ec31c-20240925
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=k9sz9F33oYRkRDljM840h89ujFz6JH+m4NCRZgOqIbc=;
+	b=Nb9FQ3pZd7R57M3QBb0IvShsKUkFOEYWmOdm21WwZik4fMn8qDMaLhtlohyJW3S0E/V736xpVDQzcN3tdo3N3umWZGhuTkw+VWgBDs42B7h4P0sJLIhgScpumNl7iqhCoAsLZu9uLXn3gldGeojGyYUR4cdSRJeKotKTMaUSn3I=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:ba5166c2-c6b9-4237-a9b7-7b727fd9cf1f,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:82cd3718-b42d-49a6-94d2-a75fa0df01d2,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: f9efa50e7b0511ef8b96093e013ec31c-20240925
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
+	(envelope-from <macpaul.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 329252572; Wed, 25 Sep 2024 14:18:27 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 25 Sep 2024 14:18:14 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkmbs11n2.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
+ Transport; Wed, 25 Sep 2024 14:18:14 +0800
+Message-ID: <aca569b8-6867-ae9f-0746-021696b801fe@mediatek.com>
+Date: Wed, 25 Sep 2024 14:18:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAhV-H5e4TxqeZtSRjKUVs7=U=EZsGu8+TLVxv+qCknYkNCBFQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH 2/6] dt-bindings: iommu: mediatek: Fix interrupt count
+ constraint for new SoCs
 Content-Language: en-US
-X-CM-TRANSID:qciowMAxEuQSq_NmkvcRAA--.6832S2
-X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoWxtF47ZrW5KF4DJFyDWw47Jrc_yoW3AFWDpF
-	n8Aa1rCr48tr17GwsYvrWUXF1Yvw4fKF12k3y7tayakr9Fyryku3sYgry2kFn7Cr1DGr40
-	va4rKwsruFs8KrgCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPab4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	AVWUtwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
-	8JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWx
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU2-VyUU
-	UUU
+To: Conor Dooley <conor@kernel.org>, <friday.yang@mediatek.com>, Yong Wu
+	<yong.wu@mediatek.com>
+CC: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel
+	<p.zabel@pengutronix.de>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Yong Wu
+	<yong.wu@mediatek.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon
+	<will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, <dri-devel@lists.freedesktop.org>,
+	<linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, Alexandre Mergnat
+	<amergnat@baylibre.com>, Bear Wang <bear.wang@mediatek.com>, Pablo Sun
+	<pablo.sun@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, Sen Chu
+	<sen.chu@mediatek.com>, Chris-qj chen <chris-qj.chen@mediatek.com>, "MediaTek
+ Chromebook Upstream" <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	Chen-Yu Tsai <wenst@chromium.org>
+References: <20240924103156.13119-1-macpaul.lin@mediatek.com>
+ <20240924103156.13119-2-macpaul.lin@mediatek.com>
+ <20240924-haiku-drudge-79e5824d4b6f@spud>
+From: Macpaul Lin <macpaul.lin@mediatek.com>
+In-Reply-To: <20240924-haiku-drudge-79e5824d4b6f@spud>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--6.588500-8.000000
+X-TMASE-MatchedRID: QfHZjzml1E8OwH4pD14DsPHkpkyUphL9BGvINcfHqhdb6PBUqmq+UvQU
+	BVrvaj2GVqzxHEDTg4yCIO7cu5PDkZShxRaS8Dn1EhGH3CRdKUUS12tj9Zvd8zRCaZSKE/Osl0B
+	rH8BQUYUhXi7xgp14q38pRfXsZjabnEpyfsnNrVIzw5Ejs3g1lqIf1lfNT7ZiVxk27EKh25I+C9
+	E+fi6GeW7movz4+rjW78PdD37e4xy4aCSQ7hdJ78xmTzofEWOOazzS+36ix9ybKItl61J/ycnjL
+	TA/UDoAA6QGdvwfwZZWRVlrjsKO8N0H8LFZNFG7CKFCmhdu5cXEsTcv4IYmcFuCpxJB4M3gJq70
+	pWlFtQWWbNCyNAdblyX6zonwXAPVNJ30o4E0TPxXF3PdlZlUCc0/jHJTVScj1iM9jSWVg5985c/
+	x1FQodgevtLgqnPLci7PEd0wIBlEj2EMHngcSkJ6oP1a0mRIj
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--6.588500-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	BF41B72D588AEB07E4AC90B862252831A27D922EF92665FEF4C9BB815DD795142000:8
 
 
-在 2024/9/25 下午12:46, Huacai Chen 写道:
-> Hi, Qunqin,
->
-> The title should be "EDAC: Add EDAC driver for loongson memory controller"
-Will fix
-> On Wed, Sep 25, 2024 at 10:40 AM Zhao Qunqin <zhaoqunqin@loongson.cn> wrote:
->> Reports single bit errors (CE) only.
+On 9/25/24 00:02, Conor Dooley wrote:
+> On Tue, Sep 24, 2024 at 06:31:52PM +0800, Macpaul Lin wrote:
+>> The infra-iommu node in mt8195.dtsi was triggering a CHECK_DTBS error due
+>> to an excessively long 'interrupts' property. The error message was:
 >>
->> Signed-off-by: Zhao Qunqin <zhaoqunqin@loongson.cn>
+>>    infra-iommu@10315000: interrupts: [[0, 795, 4, 0], [0, 796, 4, 0],
+>>                       [0, 797, 4, 0], [0, 798, 4, 0], [0, 799, 4, 0]]
+>>                       is too long
+>>
+>> To address this issue, add "minItems: 1" and "maxItems: 5" constraints to
+>> the 'interrupts' property in the DT binding schema. This change allows for
+>> flexibility in the number of interrupts for new SoCs
+>>
+>> Fixes: bca28426805d ("dt-bindings: iommu: mediatek: Convert IOMMU to DT schema")
+>>
+> 
+> This space should be removed.
+
+Thanks! Will fix it in the next version.
+
+>> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
 >> ---
->> Changes in v5:
->>          - Drop the loongson_ prefix from all static functions.
->>          - Align function arguments on the opening brace.
->>          - Drop useless comments and useless wrapper. Drop side comments.
->>          - Reorder variable declarations.
+>>   Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
 >>
->> Changes in v4:
->>          - None
->>
->> Changes in v3:
->>          - Addressed review comments raised by Krzysztof and Huacai
->>
->> Changes in v2:
->>          - Addressed review comments raised by Krzysztof
->>
->>   MAINTAINERS                  |   1 +
->>   arch/loongarch/Kconfig       |   1 +
->>   drivers/edac/Kconfig         |   8 ++
->>   drivers/edac/Makefile        |   1 +
->>   drivers/edac/loongson_edac.c | 168 +++++++++++++++++++++++++++++++++++
->>   5 files changed, 179 insertions(+)
->>   create mode 100644 drivers/edac/loongson_edac.c
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 6cc8cfc8f..5b4526638 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -13242,6 +13242,7 @@ M:      Zhao Qunqin <zhaoqunqin@loongson.cn>
->>   L:     linux-edac@vger.kernel.org
->>   S:     Maintained
->>   F:     Documentation/devicetree/bindings/edac/loongson,ls3a5000-mc-edac.yaml
->> +F:     drivers/edac/loongson_edac.c
->>
->>   LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)
->>   M:     Sathya Prakash <sathya.prakash@broadcom.com>
->> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
->> index 70f169210..9c135f1a2 100644
->> --- a/arch/loongarch/Kconfig
->> +++ b/arch/loongarch/Kconfig
->> @@ -181,6 +181,7 @@ config LOONGARCH
->>          select PCI_MSI_ARCH_FALLBACKS
->>          select PCI_QUIRKS
->>          select PERF_USE_VMALLOC
->> +       select EDAC_SUPPORT
->>          select RTC_LIB
->>          select SPARSE_IRQ
->>          select SYSCTL_ARCH_UNALIGN_ALLOW
->> diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
->> index 81af6c344..719bb6ca7 100644
->> --- a/drivers/edac/Kconfig
->> +++ b/drivers/edac/Kconfig
->> @@ -564,5 +564,13 @@ config EDAC_VERSAL
->>            Support injecting both correctable and uncorrectable errors
->>            for debugging purposes.
->>
->> +config EDAC_LOONGSON3
->> +       tristate "Loongson-3 Memory Controller"
->> +       depends on LOONGARCH || COMPILE_TEST
->> +       help
->> +         Support for error detection and correction on the Loongson-3
->> +         family memory controller. This driver reports single bit
->> +         errors (CE) only. Loongson-3A5000/3C5000/3D5000/3C5000L/3A6000/3C6000
->> +         are compatible.
->>
->>   endif # EDAC
->> diff --git a/drivers/edac/Makefile b/drivers/edac/Makefile
->> index faf310eec..e72ca1be4 100644
->> --- a/drivers/edac/Makefile
->> +++ b/drivers/edac/Makefile
->> @@ -88,3 +88,4 @@ obj-$(CONFIG_EDAC_DMC520)             += dmc520_edac.o
->>   obj-$(CONFIG_EDAC_NPCM)                        += npcm_edac.o
->>   obj-$(CONFIG_EDAC_ZYNQMP)              += zynqmp_edac.o
->>   obj-$(CONFIG_EDAC_VERSAL)              += versal_edac.o
->> +obj-$(CONFIG_EDAC_LOONGSON3)           += loongson_edac.o
-> Change the Kconfig name to CONFIG_EDAC_LOONGSON, or change the file
-> name to loongson3_edac.c may be a little better.
->
-> Huacai
-Will fix
->> diff --git a/drivers/edac/loongson_edac.c b/drivers/edac/loongson_edac.c
->> new file mode 100644
->> index 000000000..2721dfba5
->> --- /dev/null
->> +++ b/drivers/edac/loongson_edac.c
->> @@ -0,0 +1,168 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (C) 2024 Loongson Technology Corporation Limited.
->> + */
->> +
->> +#include <linux/edac.h>
->> +#include <linux/module.h>
->> +#include <linux/init.h>
->> +#include <linux/platform_device.h>
->> +
->> +#include "edac_module.h"
->> +
->> +enum ecc_index {
->> +       ECC_SET = 0,
->> +       ECC_RESERVED,
->> +       ECC_COUNT,
->> +       ECC_CS_COUNT,
->> +       ECC_CODE,
->> +       ECC_ADDR,
->> +       ECC_DATA0,
->> +       ECC_DATA1,
->> +       ECC_DATA2,
->> +       ECC_DATA3,
->> +};
->> +
->> +struct loongson_edac_pvt {
->> +       u64 *ecc_base;
->> +       int last_ce_count;
->> +};
->> +
->> +static int read_ecc(struct mem_ctl_info *mci)
->> +{
->> +       struct loongson_edac_pvt *pvt = mci->pvt_info;
->> +       u64 ecc;
->> +       int cs;
->> +
->> +       if (!pvt->ecc_base)
->> +               return pvt->last_ce_count;
->> +
->> +       ecc = pvt->ecc_base[ECC_CS_COUNT];
->> +       /* cs0 -- cs3 */
->> +       cs = ecc & 0xff;
->> +       cs += (ecc >> 8) & 0xff;
->> +       cs += (ecc >> 16) & 0xff;
->> +       cs += (ecc >> 24) & 0xff;
->> +
->> +       return cs;
->> +}
->> +
->> +static void edac_check(struct mem_ctl_info *mci)
->> +{
->> +       struct loongson_edac_pvt *pvt = mci->pvt_info;
->> +       int new, add;
->> +
->> +       new = read_ecc(mci);
->> +       add = new - pvt->last_ce_count;
->> +       pvt->last_ce_count = new;
->> +       if (add <= 0)
->> +               return;
->> +
->> +       edac_mc_handle_error(HW_EVENT_ERR_CORRECTED, mci, add,
->> +                            0, 0, 0, 0, 0, -1, "error", "");
->> +       edac_mc_printk(mci, KERN_INFO, "add: %d", add);
->> +}
->> +
->> +static int get_dimm_config(struct mem_ctl_info *mci)
->> +{
->> +       struct dimm_info *dimm;
->> +       u32 size, npages;
->> +
->> +       /* size not used */
->> +       size = -1;
->> +       npages = MiB_TO_PAGES(size);
->> +
->> +       dimm = edac_get_dimm(mci, 0, 0, 0);
->> +       dimm->nr_pages = npages;
->> +       snprintf(dimm->label, sizeof(dimm->label),
->> +                "MC#%uChannel#%u_DIMM#%u", mci->mc_idx, 0, 0);
->> +       dimm->grain = 8;
->> +
->> +       return 0;
->> +}
->> +
->> +static void pvt_init(struct mem_ctl_info *mci, u64 *vbase)
->> +{
->> +       struct loongson_edac_pvt *pvt = mci->pvt_info;
->> +
->> +       pvt->ecc_base = vbase;
->> +       pvt->last_ce_count = read_ecc(mci);
->> +}
->> +
->> +static int edac_probe(struct platform_device *pdev)
->> +{
->> +       struct edac_mc_layer layers[2];
->> +       struct loongson_edac_pvt *pvt;
->> +       struct mem_ctl_info *mci;
->> +       u64 *vbase;
->> +       int ret;
->> +
->> +       vbase = devm_platform_ioremap_resource(pdev, 0);
->> +       if (IS_ERR(vbase))
->> +               return PTR_ERR(vbase);
->> +
->> +       /* allocate a new MC control structure */
->> +       layers[0].type = EDAC_MC_LAYER_CHANNEL;
->> +       layers[0].size = 1;
->> +       layers[0].is_virt_csrow = false;
->> +       layers[1].type = EDAC_MC_LAYER_SLOT;
->> +       layers[1].size = 1;
->> +       layers[1].is_virt_csrow = true;
->> +       mci = edac_mc_alloc(0, ARRAY_SIZE(layers), layers, sizeof(*pvt));
->> +       if (mci == NULL)
->> +               return -ENOMEM;
->> +
->> +       mci->mc_idx = edac_device_alloc_index();
->> +       mci->mtype_cap = MEM_FLAG_RDDR4;
->> +       mci->edac_ctl_cap = EDAC_FLAG_NONE;
->> +       mci->edac_cap = EDAC_FLAG_NONE;
->> +       mci->mod_name = "loongson_edac.c";
->> +       mci->ctl_name = "loongson_edac_ctl";
->> +       mci->dev_name = "loongson_edac_dev";
->> +       mci->ctl_page_to_phys = NULL;
->> +       mci->pdev = &pdev->dev;
->> +       mci->error_desc.grain = 8;
->> +       /* Set the function pointer to an actual operation function */
->> +       mci->edac_check = edac_check;
->> +
->> +       pvt_init(mci, vbase);
->> +       get_dimm_config(mci);
->> +
->> +       ret = edac_mc_add_mc(mci);
->> +       if (ret) {
->> +               edac_dbg(0, "MC: failed edac_mc_add_mc()\n");
->> +               edac_mc_free(mci);
->> +               return ret;
->> +       }
->> +       edac_op_state = EDAC_OPSTATE_POLL;
->> +
->> +       return 0;
->> +}
->> +
->> +static void edac_remove(struct platform_device *pdev)
->> +{
->> +       struct mem_ctl_info *mci = edac_mc_del_mc(&pdev->dev);
->> +
->> +       if (mci)
->> +               edac_mc_free(mci);
->> +}
->> +
->> +static const struct of_device_id loongson_edac_of_match[] = {
->> +       { .compatible = "loongson,ls3a5000-mc-edac", },
->> +       {}
->> +};
->> +MODULE_DEVICE_TABLE(of, loongson_edac_of_match);
->> +
->> +static struct platform_driver loongson_edac_driver = {
->> +       .probe          = edac_probe,
->> +       .remove         = edac_remove,
->> +       .driver         = {
->> +               .name   = "loongson-mc-edac",
->> +               .of_match_table = loongson_edac_of_match,
->> +       },
->> +};
->> +module_platform_driver(loongson_edac_driver);
->> +
->> +MODULE_LICENSE("GPL");
->> +MODULE_AUTHOR("Zhao Qunqin <zhaoqunqin@loongson.cn>");
->> +MODULE_DESCRIPTION("EDAC driver for loongson memory controller");
->> --
->> 2.43.0
->>
+>> diff --git a/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml b/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml
+>> index ea6b0f5f24de..a00f1f0045b1 100644
+>> --- a/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml
+>> +++ b/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml
+>> @@ -96,7 +96,8 @@ properties:
+>>       maxItems: 1
+>>   
+>>     interrupts:
+>> -    maxItems: 1
+>> +    minItems: 1
+>> +    maxItems: 5
+> 
+> You need to add an items list here, and probably some per compatible
+> constraints. What are each of the itnerrupts for?
+> 
+
+According to Friday Yang's comment,
+The IOMMU of MT8195 has 5 banks: 0/1/2/3/4. Each bank has a set of APB 
+registers
+corresponding to the normal world, protected world 1/2/3,
+and secure world, respectively.
+Therefore, 5 interrupt numbers are needed.
+
+>>   
+>>     clocks:
+>>       items:
+>> -- 
+>> 2.45.2
 >>
 
+Will try to fix it and add some description for MT8195.
+I think this patch could be split as a separated patch from the origin
+patch set. It'll take some time to refine the patch.
+
+Thanks
+Macpaul Lin
 
