@@ -1,174 +1,112 @@
-Return-Path: <linux-kernel+bounces-339204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA9A598615E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:47:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30A84986160
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:47:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87E8E1F28B16
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:47:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 622821C26E5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 790CC1922E2;
-	Wed, 25 Sep 2024 14:09:44 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB6F1B5EB0;
+	Wed, 25 Sep 2024 14:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b="YYrqZx01"
+Received: from mail.avm.de (mail.avm.de [212.42.244.94])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870F1181334
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 14:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE761922EB;
+	Wed, 25 Sep 2024 14:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.94
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727273384; cv=none; b=rOiUBEzGWvDuwRfJY+ptCUYx1N3q8P0+cXMeQwVhwtwPh4/Cz/5VKRVFBPH8XPEtG2XWMxeyI+4bw7Uo2wYGZ7DVymXjgIampZEh8Kci3DuXCWKELp2VbGhknkKLJHuvhg6xymHQ6wEW2RNFcnSvDndkJEXRnXKCw1x51HSRxM8=
+	t=1727273413; cv=none; b=Y295sZJWCJWnz14uptga42PY+lVZc/5pTKh+XJ8g26UActkhy6wTj/ODvYFrMUcmG4ow9jHnxBQ37qDA9V3SL2NCqIbdFh2uBgICSPypCGq6gZiDNfwzLNXbDkjsA20uco2ss9esq4strH9g7uNxdnReqNcFG5i9lEp5Mung2ZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727273384; c=relaxed/simple;
-	bh=DGHiXvzQMRFCDzpgzmClzbYpKThl8klnczixHZk5YOM=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=szoxerKA14R2UA/6+elQ061UaKcRYIMpKTU7bcaP0WXuRahspMWgSC+RlZJw5BiuHwBvc9z1Oxlw55tZ0lsf28H59x+AuAaJpBrR1GekO1uUn70juWmIcyq3Xvs0AVg9DivPDRsCVyOpsCnkRJvzvK0KZBelHe7ScBcp4ofKRmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XDJR53vnjz6D8gq;
-	Wed, 25 Sep 2024 22:05:37 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7E119140B39;
-	Wed, 25 Sep 2024 22:09:35 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 25 Sep
- 2024 16:09:34 +0200
-Date: Wed, 25 Sep 2024 15:09:33 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-CC: Igor Mammedov <imammedo@redhat.com>, Shiju Jose <shiju.jose@huawei.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>,
-	Dongjiu Geng <gengdongjiu1@gmail.com>, <linux-kernel@vger.kernel.org>,
-	<qemu-arm@nongnu.org>, <qemu-devel@nongnu.org>
-Subject: Re: [PATCH 02/15] acpi/ghes: simplify acpi_ghes_record_errors()
- code
-Message-ID: <20240925150933.0000373d@Huawei.com>
-In-Reply-To: <45dcc7644e2b2a04645a37e561ed7294482b0744.1727236561.git.mchehab+huawei@kernel.org>
-References: <cover.1727236561.git.mchehab+huawei@kernel.org>
-	<45dcc7644e2b2a04645a37e561ed7294482b0744.1727236561.git.mchehab+huawei@kernel.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1727273413; c=relaxed/simple;
+	bh=jMbh8EIoBcNAiLcYUayH9PzTT/FazOE+eEcWJvKJ1wg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fKR/MBzvbdNC+uWzLo0toTfAIE4Adl4JxvGTIdwFEQ+5XDKCn7G3H5eQujNmZJy1cadaGiJ9c73JlWTLGq4E/8yE088dsCDwCslkCMM8c9HqI7qJdQaHwY777IV6bDQLqbvQj5MA1H5MhHepmX+5z5myNwIVmHMpEn/e8Q7qS84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de; spf=pass smtp.mailfrom=avm.de; dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b=YYrqZx01; arc=none smtp.client-ip=212.42.244.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=avm.de; s=mail;
+	t=1727273408; bh=jMbh8EIoBcNAiLcYUayH9PzTT/FazOE+eEcWJvKJ1wg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YYrqZx01em46u+78Ce9xo15ynsZieKfBZb1lh4stwg7JAxNG1E9gy1SAjCxTPbfth
+	 YZt5hygkbNE315aYVSeYQrHEf1hmMDZtB8LlQbObVem2sKXNm1I77bUj5uhfckGg6y
+	 0gmkc7nJraWtditRn37FlVttbmsi21TXPz0FBxXs=
+Received: from mail-auth.avm.de (dovecot-mx-01.avm.de [IPv6:2001:bf0:244:244::71])
+	by mail.avm.de (Postfix) with ESMTPS;
+	Wed, 25 Sep 2024 16:10:08 +0200 (CEST)
+Received: from l-nschier-nb (unknown [61.8.139.63])
+	by mail-auth.avm.de (Postfix) with ESMTPSA id 79A5380515;
+	Wed, 25 Sep 2024 16:10:07 +0200 (CEST)
+Date: Wed, 25 Sep 2024 16:10:05 +0200
+From: Nicolas Schier <n.schier@avm.de>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH 11/23] kbuild: check the presence of
+ include/generated/rustc_cfg
+Message-ID: <ZvQZvUEzQAx0aFAl@l-nschier-nb>
+References: <20240917141725.466514-1-masahiroy@kernel.org>
+ <20240917141725.466514-12-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240917141725.466514-12-masahiroy@kernel.org>
+X-purgate-ID: 149429::1727273408-DA50800A-50DB458E/0/0
+X-purgate-type: clean
+X-purgate-size: 1624
+X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
+X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
+X-purgate: clean
 
-On Wed, 25 Sep 2024 06:04:07 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-
-> Reduce the ident of the function and prepares it for
-> the next changes.
+On Tue, Sep 17, 2024 at 11:16:39PM +0900, Masahiro Yamada wrote:
+> Since commit 2f7ab1267dc9 ("Kbuild: add Rust support"), Kconfig
+> generates include/generated/rustc_cfg, but its presence is not checked
+> in the top-level Makefile. It should be checked similarly to the C
+> header counterpart, include/generated/autoconf.h.
 > 
-> No functional changes.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> Reviewed-by: Igor Mammedov <imammedo@redhat.com>
-Some of the alignment doesn't seem to match local style which
-is either align after ( or align 4 spaces in from line above for
-multiple line argument lists.
-
-Code is fine as I guess the later structure is to prepare
-for additions that prevent early returns being sensible.
-
-With that in mind.
-
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 > ---
->  hw/acpi/ghes.c | 56 ++++++++++++++++++++++++++------------------------
->  1 file changed, 29 insertions(+), 27 deletions(-)
 > 
-> diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-> index dc217694deb9..dacbd4d0c093 100644
-> --- a/hw/acpi/ghes.c
-> +++ b/hw/acpi/ghes.c
-> @@ -402,40 +402,42 @@ int acpi_ghes_record_errors(uint8_t source_id, uint64_t physical_address)
+>  Makefile | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Makefile b/Makefile
+> index 3f5c273c2901..5700d08c9b57 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -780,7 +780,7 @@ else # !may-sync-config
+>  # and include/config/auto.conf but do not care if they are up-to-date.
+>  # Use auto.conf to show the error message
 >  
->      start_addr = le64_to_cpu(ags->ghes_addr_le);
+> -checked-configs := include/generated/autoconf.h include/config/auto.conf
+> +checked-configs := include/generated/autoconf.h include/generated/rustc_cfg include/config/auto.conf
+>  missing-configs := $(filter-out $(wildcard $(checked-configs)), $(checked-configs))
 >  
-> -    if (physical_address) {
-> +    if (!physical_address) {
-> +        return -1;
-> +    }
+>  ifdef missing-configs
+> @@ -1187,7 +1187,8 @@ PHONY += prepare archprepare
 >  
-> -        if (source_id < ACPI_GHES_ERROR_SOURCE_COUNT) {
-> -            start_addr += source_id * sizeof(uint64_t);
-> -        }
-> +    if (source_id < ACPI_GHES_ERROR_SOURCE_COUNT) {
-> +        start_addr += source_id * sizeof(uint64_t);
-> +    }
+>  archprepare: outputmakefile archheaders archscripts scripts include/config/kernel.release \
+>  	asm-generic $(version_h) include/generated/utsrelease.h \
+> -	include/generated/compile.h include/generated/autoconf.h remove-stale-files
+> +	include/generated/compile.h include/generated/autoconf.h \
+> +	include/generated/rustc_cfg remove-stale-files
 >  
-> -        cpu_physical_memory_read(start_addr, &error_block_addr,
-> -                                 sizeof(error_block_addr));
-> +    cpu_physical_memory_read(start_addr, &error_block_addr,
-> +                                sizeof(error_block_addr));
->  
-> -        error_block_addr = le64_to_cpu(error_block_addr);
-> +    error_block_addr = le64_to_cpu(error_block_addr);
->  
-> -        read_ack_register_addr = start_addr +
-> -            ACPI_GHES_ERROR_SOURCE_COUNT * sizeof(uint64_t);
-> +    read_ack_register_addr = start_addr +
-> +        ACPI_GHES_ERROR_SOURCE_COUNT * sizeof(uint64_t);
->  
-> -        cpu_physical_memory_read(read_ack_register_addr,
-> -                                 &read_ack_register, sizeof(read_ack_register));
-> +    cpu_physical_memory_read(read_ack_register_addr,
-> +                                &read_ack_register, sizeof(read_ack_register));
+>  prepare0: archprepare
+>  	$(Q)$(MAKE) $(build)=scripts/mod
+> -- 
+> 2.43.0
+> 
 
-Alignment looks fishy plus maybe move &read_ack_register up a line.
-
-
->  
-> -        /* zero means OSPM does not acknowledge the error */
-> -        if (!read_ack_register) {
-> -            error_report("OSPM does not acknowledge previous error,"
-> -                " so can not record CPER for current error anymore");
-> -        } else if (error_block_addr) {
-> -            read_ack_register = cpu_to_le64(0);
-> -            /*
-> -             * Clear the Read Ack Register, OSPM will write it to 1 when
-> -             * it acknowledges this error.
-> -             */
-> -            cpu_physical_memory_write(read_ack_register_addr,
-> -                &read_ack_register, sizeof(uint64_t));
-> +    /* zero means OSPM does not acknowledge the error */
-> +    if (!read_ack_register) {
-> +        error_report("OSPM does not acknowledge previous error,"
-> +            " so can not record CPER for current error anymore");
-I guess later changes make it unwise to just return -1 here.	
-
-> +    } else if (error_block_addr) {
-> +        read_ack_register = cpu_to_le64(0);
-> +        /*
-> +         * Clear the Read Ack Register, OSPM will write it to 1 when
-> +         * it acknowledges this error.
-> +         */
-> +        cpu_physical_memory_write(read_ack_register_addr,
-> +            &read_ack_register, sizeof(uint64_t));
->  
-> -            ret = acpi_ghes_record_mem_error(error_block_addr,
-> -                                             physical_address);
-> -        } else
-> -            error_report("can not find Generic Error Status Block");
-> +        ret = acpi_ghes_record_mem_error(error_block_addr,
-> +                                            physical_address);
-or return here.
-> +    } else {
-> +        error_report("can not find Generic Error Status Block");
->      }
->  
->      return ret;
-
+Reviewed-by: Nicolas Schier <n.schier@avm.de>
 
