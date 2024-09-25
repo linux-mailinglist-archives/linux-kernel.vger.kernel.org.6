@@ -1,148 +1,112 @@
-Return-Path: <linux-kernel+bounces-339346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0ABE986392
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:31:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA047986398
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:32:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D0F01F26947
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:31:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 065D01C23817
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7E2145B25;
-	Wed, 25 Sep 2024 15:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1D81428F1;
+	Wed, 25 Sep 2024 15:27:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="O/wrq9JK"
-Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OiybpZce"
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3001725757
-	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 15:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1FA71D5AB1;
+	Wed, 25 Sep 2024 15:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727277930; cv=none; b=dB7+v6LoNsYZ995pVkJjQP7PJrtoSvtHx8XlCz0byHLx3v5UPjI2whnyW4dF0vsW0lTbjEZZWbpqwBQvO18R8WTUJ4VakXnSrwegn1p9kY2F5OQY/eRpUanrI9yuIFZeZ83GtaGz3gx4+w5VRc5iYJ44HxsczD7mQw1xnDwvtb4=
+	t=1727278044; cv=none; b=N+5NwJqwGZu1pK6KF0jzhpSC72NYVDhk9/GXmfV6YLFdp0q9RKcFK+s/VJi90ymtSW9Kjy2s/ai+HiOxpdagjRwtAKZLcRARlk4Z9xwpbaFd1YyIrxeK3sSS+0gqhfSIR/ChqZb+igS+X6KlZCTc/jrHidZyXbjZjDbhNxqlkXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727277930; c=relaxed/simple;
-	bh=X9nuUw3jVOO4MXPUAlef0b2lkZeeYOB1+7M8HOVTIak=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MtOjeRvfrC1uo+jJF42rPmtpTxoCI1BHZIiDowy8PBswrxXQn7Joq03VJVOijZIjaxdamjsaRQLFL7TQhXUSwERt6986bYKlhcrlm3e/Dx7h1i+uGSLqqqgBqoLcEZNafTl/cjk8K0MUxVCUXYQg06+M8q72sUkcM9fdkGIbYkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=O/wrq9JK; arc=none smtp.client-ip=99.78.197.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+	s=arc-20240116; t=1727278044; c=relaxed/simple;
+	bh=VLJzEBA6BP1aaYoFnRl+tPYJhwrgksdsnuLTdmQ5FcM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mgd20B9Swwqcb0UNPQMV6d5e8fiKGRaNdztprQRfD3zGO0uki1pF+OW7h1Zt9+UknG3jAQLwJhAJo35fNkXaeYhOTgbfT27OkvQmLiw+kvEZSHgv3wtFgkHxzlDFBdY+YM7a7dpzKyppE3/Enx0YNPuWYuEhhQ9LPoxO8PvBNro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OiybpZce; arc=none smtp.client-ip=209.85.210.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7124395ca86so2716007a34.0;
+        Wed, 25 Sep 2024 08:27:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1727277929; x=1758813929;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=As6Tj8wcJOBT4bSyBpmyxkEQ1WVmrxVnT+g27ZYlr1k=;
-  b=O/wrq9JKRIOKIgLPJTFbaJNbY7fANOqpSiINE2D98XPGZVT63q9lDeRb
-   x/vy2sCVUItDFBqDKT4hf8cn4VljxlIY+3i+Ff/z9CRU7BMTx/Ft/hGQ1
-   AKkzAW7rNz2BMt62eQTGMhO48WTLPbeaBtWE6ZWailXTBBW6w/kCxq0dw
-   E=;
-X-IronPort-AV: E=Sophos;i="6.10,257,1719878400"; 
-   d="scan'208";a="335003636"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 15:25:24 +0000
-Received: from EX19MTAEUC001.ant.amazon.com [10.0.43.254:31774]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.17.12:2525] with esmtp (Farcaster)
- id de8fdb25-e828-423b-86df-630a32d02633; Wed, 25 Sep 2024 15:25:24 +0000 (UTC)
-X-Farcaster-Flow-ID: de8fdb25-e828-423b-86df-630a32d02633
-Received: from EX19D007EUA002.ant.amazon.com (10.252.50.68) by
- EX19MTAEUC001.ant.amazon.com (10.252.51.155) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Wed, 25 Sep 2024 15:25:23 +0000
-Received: from EX19MTAUWC002.ant.amazon.com (10.250.64.143) by
- EX19D007EUA002.ant.amazon.com (10.252.50.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Wed, 25 Sep 2024 15:25:22 +0000
-Received: from email-imr-corp-prod-pdx-1box-2b-8c2c6aed.us-west-2.amazon.com
- (10.25.36.210) by mail-relay.amazon.com (10.250.64.149) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1258.34 via Frontend Transport; Wed, 25 Sep 2024 15:25:22 +0000
-Received: from dev-dsk-faresx-1b-27755bf1.eu-west-1.amazon.com (dev-dsk-faresx-1b-27755bf1.eu-west-1.amazon.com [10.253.79.181])
-	by email-imr-corp-prod-pdx-1box-2b-8c2c6aed.us-west-2.amazon.com (Postfix) with ESMTPS id 662B9A06E7;
-	Wed, 25 Sep 2024 15:25:18 +0000 (UTC)
-From: Fares Mehanna <faresx@amazon.de>
-To: <liam.howlett@oracle.com>
-CC: <akpm@linux-foundation.org>, <ardb@kernel.org>, <arnd@arndb.de>,
-	<bhelgaas@google.com>, <broonie@kernel.org>, <catalin.marinas@arm.com>,
-	<david@redhat.com>, <faresx@amazon.de>, <james.morse@arm.com>,
-	<javierm@redhat.com>, <jean-philippe@linaro.org>, <joey.gouly@arm.com>,
-	<kristina.martsenko@arm.com>, <kvmarm@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <mark.rutland@arm.com>, <maz@kernel.org>,
-	<nh-open-source@amazon.com>, <oliver.upton@linux.dev>, <ptosi@google.com>,
-	<rdunlap@infradead.org>, <rkagan@amazon.de>, <rppt@kernel.org>,
-	<shikemeng@huaweicloud.com>, <suzuki.poulose@arm.com>, <tabba@google.com>,
-	<will@kernel.org>, <yuzenghui@huawei.com>
-Subject: Re: [RFC PATCH 1/7] mseal: expose interface to seal / unseal user memory ranges
-Date: Wed, 25 Sep 2024 15:25:09 +0000
-Message-ID: <20240925152509.87152-1-faresx@amazon.de>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <zghnfw2vvrvlxenzx3oi55hzznxbx2nhcuwfk5zpe42bm4dxzv@zknjtfa2fu7n>
-References: <zghnfw2vvrvlxenzx3oi55hzznxbx2nhcuwfk5zpe42bm4dxzv@zknjtfa2fu7n>
+        d=gmail.com; s=20230601; t=1727278042; x=1727882842; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VLJzEBA6BP1aaYoFnRl+tPYJhwrgksdsnuLTdmQ5FcM=;
+        b=OiybpZcewW42EySMnPn0rGX0gjar+9O0q06pZWf26KW63VKxH6y2vc0UOuWn1X0L+4
+         QhFp3iSFgfiLZikxobugGrRRNWGcHPcnXTXibCR7e+49EFLZ1YsEODtCsu5aikcabXnK
+         ZMNLvsVCIQ0qlLT1XjiXl59tkz1ka65NVHbp6MrtA0UvrFoWWtk4QO9WM0VY7cnJpM9H
+         ngjlbL3JzNOfM0/UvrWu20HgJs50F6t48VveNiipEDq0M27I02W7QIYze2lejTGmmnRm
+         EEb2hh/hugATdFBrOtPOYtsLAovX2m/+BpV1u8X2kp07UqN/RiQtQr8lh9vcg358QWA5
+         8cTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727278042; x=1727882842;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VLJzEBA6BP1aaYoFnRl+tPYJhwrgksdsnuLTdmQ5FcM=;
+        b=SC2Jew/D/vuaShUT9E67Fil5kjr8Sgq9aCjz1d6XyFrTfh569/hfSqs77kMkqae5Pb
+         DJrt0LknRKU9yEZsttPxu7JBM7KybKhVBX9JKaQb8L1gsG6JMwMxpHWU6yivoW/tO/q8
+         Jf4EqFbUTXCfpMPcPny4xilwn2dPdlQs1MlW5lCENGqQIRXxB7avTmokEWWqd30JQWWN
+         8T1Nr6Lev351ZNypMfFMxsTTWjuculgotk9WwqLz+PTyX392cF3qLhhD1g0XkxPgCu7c
+         pbj5ZM7bDqmQd4qpUdNUfYRT8+nZkm+Qabm3RJzB9Jnb+8lBtMbGi+A52gzJIuOFwbFk
+         dgNA==
+X-Forwarded-Encrypted: i=1; AJvYcCVbe1s/u/odh8i5SBvxQKJN/J8UBe165QH9yoRh+lCYduCjLzeNQ5bzDm/I3T2A0QzJ1nrIHcvV8KBTgCE=@vger.kernel.org, AJvYcCWF2KZ5ZvmZw79eKoufUhIjeDRJEz0NG5Ik+QCsCqR0cZtGSfUfimF8pNXwIAe+gxu7dSkWl+EdXba5Jmk=@vger.kernel.org, AJvYcCXcyNGZXeOepvHpZabj5yJikXa3pUm+03R930IqBm8F8efnmSfChyC3LlWvqzilb2BbCfBxO0DPZ0joVc6Wzr+qbjA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2lgdCdqsXr4HaPntldAkUp12521UxF2ISc9KAtSLu4QEywfDF
+	l1RfHnF0vTXA2AwJBN5J+ziwiLS+knpl1VTtVC9b3n7X7EV6liu3CIak7wC23Jk8ycfybq6Va7y
+	JiU4sf39gBs7B4fqfXZao0acwftw=
+X-Google-Smtp-Source: AGHT+IFcoo4m0J3fW0Fjub2lfthqwCKhP3Gnjm4sWBC69WipXB2td90mcLi9PLM6DP3Zb4BX4NfRdBNTIS4xje69jI8=
+X-Received: by 2002:a05:6830:d0b:b0:713:8387:9efc with SMTP id
+ 46e09a7af769-713c7d94344mr3523790a34.3.1727278041765; Wed, 25 Sep 2024
+ 08:27:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+References: <20240910170610.226189-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240910170610.226189-6-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240924224452.GN7165@pendragon.ideasonboard.com>
+In-Reply-To: <20240924224452.GN7165@pendragon.ideasonboard.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Wed, 25 Sep 2024 16:26:55 +0100
+Message-ID: <CA+V-a8tGREVn_LWJbrKwb1HGjp4g7r=ZXu4AZWS+0RfdXhYrdg@mail.gmail.com>
+Subject: Re: [PATCH v2 05/11] media: i2c: ov5645: Use v4l2_async_register_subdev_sensor()
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Kieran Bingham <kieran.bingham@ideasonboard.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Laurent,
 
-Thanks for taking a look and apologies for my delayed response.
+Thank you for the review.
 
-> It is not clear from the change log above or the cover letter as to why
-> you need to go this route instead of using the mmap lock.
+On Tue, Sep 24, 2024 at 11:45=E2=80=AFPM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> On Tue, Sep 10, 2024 at 06:06:04PM +0100, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Make use v4l2_async_register_subdev_sensor() helper to register
+> > the subdev.
+>
+> The commit message should explain why.
+>
+Sure I'll update the commit message.
 
-In the current form of the patches I use memfd_secret() to allocate the pages
-and remove them from kernel linear address. [1]
-
-This allocate pages, map them in user virtual addresses and track them in a VMA.
-
-Before flipping the permissions on those pages to be used by the kernel, I need
-to make sure that those virtual addresses and this VMA is off-limits to the
-owning process.
-
-memfd_secret() pages are locked by default, so they won't swap out. I need to
-seal the VMA to make sure the owner process can't unmap/remap/... or change the
-protection of this VMA.
-
-So before changing the permissions on the secret pages, I make sure the pages
-are faulted in, locked and sealed. So userspace can't influence this mapping.
-
-> We can't use the mseal feature for this; it is supposed to be a one way
-> transition.
-
-For this approach, I need the unseal operation when releasing the memory range.
-
-The kernel can be done with the secret pages in one of two scenarios:
-1. During lifecycle of the process.
-2. When the process terminates.
-
-For the first case, I need to unmap the VMA so it can be reused by the owning
-process later, so I need the unseal operation. For the second case however we
-don't need that since the process mm is already destructed or just about to be
-destructed anyway, regardless of sealed/unsealed VMAs. [1]
-
-I didn't expose	the unseal operation to userspace.
-
-[1] https://lore.kernel.org/linux-arm-kernel/20240911143421.85612-3-faresx@amazon.de/
-
-Thanks!
-Fares.
-
-
-
-Amazon Web Services Development Center Germany GmbH
-Krausenstr. 38
-10117 Berlin
-Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
-Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
-Sitz: Berlin
-Ust-ID: DE 365 538 597
-
+Cheers,
+Prabhakar
 
