@@ -1,117 +1,117 @@
-Return-Path: <linux-kernel+bounces-339182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CD66986127
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:41:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D467986113
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:40:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B65DD1F216FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:41:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66E0C1C2655C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26EB18F2DD;
-	Wed, 25 Sep 2024 13:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="dIUEdKsi"
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D42E1714BD;
+	Wed, 25 Sep 2024 13:53:31 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4EEF17E00C;
-	Wed, 25 Sep 2024 13:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660B174070;
+	Wed, 25 Sep 2024 13:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727272698; cv=none; b=ZOeImoPlHZ17vrBOuy+2bO/XDOFIQL2zqr9k4IOL0HfZcLer58zvdSmrUxHZLbzPMs6LclPoT9vVXqzqSitLJerSKqfzs72b5LRwB+3qnjmrEsFju4QZYtCboScJxDxKTQUvWOGX4CPLOBs6FcZ4DJQADEGbYBILSprNkTWVQfE=
+	t=1727272410; cv=none; b=RSPAhBYmQ8+98+3L7C1EfoyJI6cETu6ZA10onAMmi3HR37ub4fr7i1ej8pYlH+wQ8QkZbgRHTf+ca1dI/de0JEoNoiv8My83IGr+W4k9Hp9YTAroXR0//b+RWVNY6bhy4TduNbmUu51UkjD78SDKMDAFASKz1LIZWReQ+QguYR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727272698; c=relaxed/simple;
-	bh=24MQxyf9XU7dt8p5pJ4zrnOq+YqSfpDo/gZcai/d4jo=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=DsIYWP1IXnohejJpWznYcEPTBWBtiNPPWF01UxnuQKYMBkGBi17sWifl1ZM/hFVSxyhndeMb6EwrU9Htu6GXlIyPPCzgAsJRdAu6fq/P30OlaiRNYwqPIDUyd5CZTQJG3+xDwsbhPZwLJGTyhktjv+/nABe3baCc90xDOrpL1fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=dIUEdKsi; arc=none smtp.client-ip=162.62.58.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1727272384; bh=xDQ/047YH46qDRI7w0LS7iGSEzIWbAIopOEzW3KNye8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=dIUEdKsibdJ9eB6mwGiMepFV+OHk5tdw69lrvlVAIY59UO9kMKFsqmajSpNh/ScC9
-	 KLXq6Dl6cM7gl08G3UUCNI3J1l9rp33ObVUMzuOjISnkwB7kOBQgt57uiWxJam4oNK
-	 j/z7MB4p/nLhR2AquYRvBwex8IdhRJHxNOlpZdyc=
-Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id D402DE7B; Wed, 25 Sep 2024 21:53:00 +0800
-X-QQ-mid: xmsmtpt1727272380tbx63wbr1
-Message-ID: <tencent_4A8FBB4133EA9E461B0C4B2C1B2425FFBA08@qq.com>
-X-QQ-XMAILINFO: NY3HYYTs4gYSCD4BjJa3oLj2wgetdTniRHGpPBJX6dm2difxmsv/fwTkOwmJY5
-	 jt6PpNTqYy5rI38TJLLAuCSkY9gVU7Q9eiFK6tOPRHW+31HToo0IeL9lZyo0XXXcimsazmvxSkDU
-	 XsppQQ+lej3dGDsGYjcz9Z08yBJUjda5SL4rMt1d1cXVHFgfCSPofoHQAMIwwua3bZgglf/2fTJw
-	 xuva/rW5nYj7cLej6f+agYfo1K4Jd8lmwlDaz90B6FatPhiCWahiQQMk5syEUo1GtcCAtBSS7Rgw
-	 rBSa8TEPCMvN1MavC1SapZm9spMn/wQqFM033aokDKbrrPktRBuHT8AZSPSkSDRVgWboMxmvBxMX
-	 ekLHmFDkJEeDNKscbmtad1u3WHrP5TcGft0y06HnSDNW+y0AYGL1b49jWnDtiZRdJW50hntyYd0N
-	 sOpUrOaR0n9yKJc+YykZIdNC2gl1yL0noZWUlgWkw0cQ0etXcVT6NUlA8JOPM6UlmYJjkaLdq85R
-	 x4lcUzbzuewh0jinBtzNh19RyTs282HQ1RIFzFor4QViHsDAf/WtbTzR1bpk5X9s7k/HcWIDy185
-	 lygJYt2/BZCw0Cf9LlNZVdop+HbUSXAXbduPEy3s53lwUdYzELuE72EXJkYfrS7DYoWz48HEz5Jc
-	 IN6eB9GzQO/fjMGyo0ejV53kUdAU35ydnwuYV0FH3Ve3siXTDuqhGJMD5J5VHTjj814m3n7Hkbx7
-	 fdfR+id0RUI/Dg5gA35pOZHciygL2fMkXpUGuCIIYuZM3UhXsdEKMA4W9VdxgJSh4OcGqUUPBFUB
-	 vKYjJ1FNJFlQ9ShemPz6QYdIPX4C4dxThAuTeQe7gceAyVgGfkcE4XwNJQqGYNGjPJ5Jr9aJh9RN
-	 K1BcHgb5UrMqPm28AnpE8Z1NLhhBjFLGC/rI9hrf8e6BDFb31tb9YjGQ2In0U8WL2M9OS/fwlG+L
-	 Fr9Wtq65s=
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+c0360e8367d6d8d04a66@syzkaller.appspotmail.com
-Cc: brauner@kernel.org,
-	jack@suse.cz,
-	jfs-discussion@lists.sourceforge.net,
-	kent.overstreet@linux.dev,
-	linux-bcachefs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shaggy@kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	viro@zeniv.linux.org.uk
-Subject: [PATCH] bcachefs: return the error code instead of the return value of IS_ERR_OR_NULL
-Date: Wed, 25 Sep 2024 21:53:00 +0800
-X-OQ-MSGID: <20240925135259.1575815-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <66f33aad.050a0220.457fc.0030.GAE@google.com>
-References: <66f33aad.050a0220.457fc.0030.GAE@google.com>
+	s=arc-20240116; t=1727272410; c=relaxed/simple;
+	bh=N47RVWYbJs6WXjYO7l2l3RvOQIdHLMdUeS34uIw42Xw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=hGwlTqJNW3fdYAOE2RIPemku1s2xtHqv0tiOmz+xW1CbA40uJf8QAU3+l0zyiL70y+plsBewxQeJkICXOT8x74zVSwKT2DBRLl4lGbgHFhGeKD2RjoXZLgCr4lhvFlE9BShiJysU7d4AV/SvWU83E0aztSFlBVWkoswPvWiq86I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.2.100] (213.87.134.192) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Wed, 25 Sep
+ 2024 16:53:09 +0300
+Message-ID: <600de175-c4e2-f45a-dd23-c9ea324ef826@omp.ru>
+Date: Wed, 25 Sep 2024 16:53:08 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH AUTOSEL 6.11 146/244] ata: sata_sil: Rename sil_blacklist
+ to sil_quirks
+Content-Language: en-US
+To: Sasha Levin <sashal@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<stable@vger.kernel.org>
+CC: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>,
+	Igor Pylypiv <ipylypiv@google.com>, <linux-ide@vger.kernel.org>
+References: <20240925113641.1297102-1-sashal@kernel.org>
+ <20240925113641.1297102-146-sashal@kernel.org>
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+In-Reply-To: <20240925113641.1297102-146-sashal@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 09/25/2024 13:28:57
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 19
+X-KSE-AntiSpam-Info: Lua profiles 187978 [Sep 25 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.0.4
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 34 0.3.34
+ 8a1fac695d5606478feba790382a59668a4f0039
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 213.87.134.192 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info:
+	omp.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.134.192
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 19
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 09/25/2024 13:33:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 9/25/2024 11:06:00 AM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-Syzbot report a kernel BUG in vfs_get_tree.
-The root cause is that read_btree_nodes() returned 1 and returned -EINTR
-due to kthread_run() execution failure.
+On 9/25/24 14:26, Sasha Levin wrote:
 
-The -EINTR needs to be returnned to bch2_fs_recovery(), not return to
-"ret = IS_ERR_OR_NULL(t)".
+> From: Damien Le Moal <dlemoal@kernel.org>
+> 
+> [ Upstream commit 93b0f9e11ce511353c65b7f924cf5f95bd9c3aba ]
+> 
+> Rename the array sil_blacklist to sil_quirks as this name is more
+> neutral and is also consistent with how this driver define quirks with
+> the SIL_QUIRK_XXX flags.
+> 
+> Signed-off-by: Damien Le Moal <dlemoal@kernel.org>
+> Reviewed-by: Niklas Cassel <cassel@kernel.org>
+> Reviewed-by: Igor Pylypiv <ipylypiv@google.com>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+[...]
 
-Reported-and-tested-by: syzbot+c0360e8367d6d8d04a66@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=c0360e8367d6d8d04a66
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/bcachefs/btree_node_scan.c | 4 ++++
- 1 file changed, 4 insertions(+)
+   Are you serious? What does this fix?
 
-diff --git a/fs/bcachefs/btree_node_scan.c b/fs/bcachefs/btree_node_scan.c
-index b28c649c6838..df7090ca1e81 100644
---- a/fs/bcachefs/btree_node_scan.c
-+++ b/fs/bcachefs/btree_node_scan.c
-@@ -281,6 +281,10 @@ static int read_btree_nodes(struct find_btree_nodes *f)
- 			closure_put(&cl);
- 			f->ret = ret;
- 			bch_err(c, "error starting kthread: %i", ret);
-+			if (IS_ERR(t)) {
-+				closure_sync(&cl);
-+				return PTR_ERR(t);
-+			}
- 			break;
- 		}
- 	}
--- 
-2.43.0
+MBR, Sergey
 
 
