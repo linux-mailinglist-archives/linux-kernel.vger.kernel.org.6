@@ -1,53 +1,39 @@
-Return-Path: <linux-kernel+bounces-339265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5FC19861DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:03:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1870F9861E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 17:03:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0328E1C27225
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:03:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C32541F2CA39
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A889513D52C;
-	Wed, 25 Sep 2024 14:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="EQB6wfO3"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE4A3770D;
-	Wed, 25 Sep 2024 14:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0351459FD;
+	Wed, 25 Sep 2024 14:45:58 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B75D1448E6
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 14:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727275521; cv=none; b=PbJ56Zcm4bGB2zbJXpJfTqAZNoskIWi8nFa+3OgEmKWgoD/yp6F7awnTv1PFYMHVKYP3e0X1FMQTqikyPT89UlioLPabKBF+UGgw2CEe/zzvgYyKElgUDONJhireM8jolnSa3pC3wTvc23B+1eW9RMt7aKmCcdtwx7XlmXfRuMM=
+	t=1727275558; cv=none; b=U3hpkiQWCbPFA9qV9aIRQPXfajo5QULCnVjJM/MzjmJDPsWiWaPsH3e78I4awPu2jEhQ5HfLCF6WPf5Q4nueFwXVMjCDzY8USmgwYmrQ90y62MZdpzt1ecgwfhh12I84KXYIFrYaWbXUON5w/berNhy0IwajchHPHLp+nCNjjo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727275521; c=relaxed/simple;
-	bh=aCQbL7dF8bvGol6YIVUGOYiuq5XdVTTI8DgtLt/G+VA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=cMS1y8Vd6Zj7yV+4Pjceqm6c6Ug2q+5Esk3HRA/5sxk635Vracrqdd8rP6ZlJPurCH6QX4BS7oG/USlLlOtaoOv3mKa3DcMhJYurgrYZBRHMrd4RbJcVSQ2WiIHEzbNk+U8CjPHdulzLwtXtE+ah8r0bG50HhCE5PwfoZcmil8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=EQB6wfO3; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727275509; x=1727880309; i=markus.elfring@web.de;
-	bh=TsWyf1tLlFqi0zeqVIDw1sDXr1M2uMya2IFc+ykY6u0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=EQB6wfO39aLBZsoooW3NerOA/NMRJjoasXE1cG9hkRSOenrdovVZgUqRWp5COihW
-	 nLDBV9y8NnFG+DLoDhF7rVxq5z9x7pOhx9WJG591dCRLRigMYS4+fggD2dioyZkOv
-	 C8f1j3J9CR11ttd22UHazbzZOd3yb2Pqo810WIHETUUraiyzAS8YKeA8U0EMy0jrT
-	 nom1VdoKlzKdy6V7X58N6dBKyd2DULWcI+aHPRXvwYJ2TNLiZUGXFr51X4i8n1/06
-	 t0WIAeWyq3MF/vRSj6a45jPH/0JNE/yYpkeD27kdpCZ8itS0ii8mayxG64zFtlFxn
-	 DeNUIXNGHheFD0HfFg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MnG2Q-1sATrN1Axw-00mLmc; Wed, 25
- Sep 2024 16:45:09 +0200
-Message-ID: <f1216028-ef38-4f05-996b-bafc71777abd@web.de>
-Date: Wed, 25 Sep 2024 16:45:06 +0200
+	s=arc-20240116; t=1727275558; c=relaxed/simple;
+	bh=51YIh3MoXVJOH1DmYE2jppK5C00w+soNvQojdZ9P814=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uU9R+ea1x+cAGwJ75aNwxJPrAYAtd6HtDbrWKn7+ByfpwQnPEfGIKllymw02T5NSJvGgpDTpttnGIy+XAw+m2hxsNKQWp16MAqdi8t0A1BmmGZgYzjziYSxOrJIaD51SYjRrHy519nXPbVIyeknHsh3NYpAdhxB1jUcGz18xaXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 91824150C;
+	Wed, 25 Sep 2024 07:46:23 -0700 (PDT)
+Received: from [10.57.78.226] (unknown [10.57.78.226])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9C21C3F64C;
+	Wed, 25 Sep 2024 07:45:52 -0700 (PDT)
+Message-ID: <127aae99-c2c6-47e6-adba-66953e23f94e@arm.com>
+Date: Wed, 25 Sep 2024 15:45:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,78 +41,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: linux-serial@vger.kernel.org,
- Alexander Stein <alexander.stein@ew.tq-group.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Peng Fan <peng.fan@nxp.com>,
- Sherry Sun <sherry.sun@nxp.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Subject: Re: [PATCH v3 0/2] drm/panthor: Expose realtime group priority and
+ allowed priorites to userspace
+To: Mary Guillemard <mary.guillemard@collabora.com>,
+ linux-kernel@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Christopher Healy <healych@amazon.com>, kernel@collabora.com
+References: <20240909064820.34982-2-mary.guillemard@collabora.com>
+From: Steven Price <steven.price@arm.com>
 Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] tty: serial: fsl_lpuart: Use common code in
- lpuart_global_reset()
+In-Reply-To: <20240909064820.34982-2-mary.guillemard@collabora.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:9jkkLVsaL/iWBpu6jmFJB7K3jL8mWlukwV+25UaUp/DjIhZY9tM
- ssLmIOq1tjHac8OQOSYr4GeVJUMZU+wiogfyfpHsLHDzwB7CsXfl44eVsd2a/1YHzhR55BR
- ePqBTJJrr67O108kHZSMz4HznwZBecVao6SNtjqrDp89kK43WVUv7/0iJK92+kwqr8TllYV
- PqNA9j4wqryA3tPNaFAiA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:wCJw6HKMH2Y=;JgVHGL0SjEFwIqv+JRvsshpN4mi
- 23eY5kpjAc3DzSdV2l8PZQUpBDDTJuf8J1lCHh0EMOYYXBAPDU9lOtNCFl00JHHYM4N39bJ+G
- uzOGOjKX5dCVIHAZPiKsKhNXSBzPwXW1Omjwp8MqSfCURJmDOHjbJZE+Y7utCg+tEnbZcQO+c
- UIF2sHqHQUL3Pd2Zc+Y0qXfvvqO1W5P3LFjiohIgwTMvHALbP7FEn3KQdA1g6pFye/dGbf8Sn
- yDNGe+EW1BnoYOuLUwYB5bZn+S6eWTlU06YRs8J99DVST2sEG9dadjvTKIRmYR7sZ8Wr/V813
- rdNnXuLMUnOcK36Mm+b4Juz/iO3fo9ZJB/SsaDqm+FC+3oAbpT9bjWMRiqdxbPSc5SzlBk9W0
- 1YNS2ESejoZe07Gl/8poofpKrRAt3a+BwXf0Pe46LACiV4KLXVxvPgJJM0Z6B3in6uO8HUeX3
- 85dfY2YPj/F0XM7XSFJ3HgT5t/GkFRy/0/OMdXUIOVM7CdlhvJb9IXs6EvAuVC5tTEBOV4H2W
- uQ73mZan1sIIw5D9635ZI35MdS5ojJM1eWweIqjO7sFyT+vK36u0uOHRfLx9A9YJrv4uDQBZZ
- /PkLB0v2Db/xvGeJATw/Q+N1nFA1geIc2Qeluk0PaHk9BmIv77RwJZFN/7cGu4f+PpOHXfsXB
- O78ySO/xlirSjrilLznECMlA0GC+/TwEPf6UNanISMre7CFf5RYBP2dbjIy4gBKWxAq3Ggs80
- P7m9W/8C2+iLpvodubYntQBUOxrEOsGbWFBXzCD3+EJcvtFxImY+/8Gf/UIVRYZyI5EVLpfWW
- I67B8GdAHxqoDatfPkznIcjA==
+Content-Transfer-Encoding: 7bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 25 Sep 2024 16:36:20 +0200
+On 09/09/2024 07:48, Mary Guillemard wrote:
+> This patch series adds support for realtime group priority and exposes
+> allowed priorities info with a new dev query.
+> 
+> Those changes are required to implement EGL_IMG_context_priority and
+> EGL_NV_context_priority_realtime extensions properly.
+> 
+> This patch series assumes that [1] is applied. (found in drm-misc-fixes)
+> 
+> The Mesa MR using this series is available here [2].
 
-Add a label so that two statements can be better reused at the end of
-this function implementation.
+Pushed to drm-misc-next
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/tty/serial/fsl_lpuart.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpua=
-rt.c
-index 77efa7ee6eda..b63419c1a4ea 100644
-=2D-- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -2811,8 +2811,7 @@ static int lpuart_global_reset(struct lpuart_port *s=
-port)
- 					      port)) {
- 				dev_warn(sport->port.dev,
- 					 "timeout waiting for transmit engine to complete\n");
--				clk_disable_unprepare(sport->ipg_clk);
--				return 0;
-+				goto disable_unprepare_clk;
- 			}
- 		}
-
-@@ -2828,7 +2827,7 @@ static int lpuart_global_reset(struct lpuart_port *s=
-port)
- 			lpuart32_write(port, ctrl, UARTCTRL);
- 		}
- 	}
--
-+disable_unprepare_clk:
- 	clk_disable_unprepare(sport->ipg_clk);
- 	return 0;
- }
-=2D-
-2.46.1
+> 
+> v2:
+> - Add Steven Price r-b on the first patch
+> - Remove drm_panthor_group_allow_priority_flags definition and document
+>   that allowed_mask is a bitmask of drm_panthor_group_priority on the
+>   second patch
+> 
+> v3:
+> - Use BIT macro in panthor_query_group_priorities_info
+> - Add r-b from Steven Price and Boris Brezillon
+> 
+> [1]https://lore.kernel.org/all/20240903144955.144278-2-mary.guillemard@collabora.com/
+> [2]https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/30991
+> 
+> Mary Guillemard (2):
+>   drm/panthor: Add PANTHOR_GROUP_PRIORITY_REALTIME group priority
+>   drm/panthor: Add DEV_QUERY_GROUP_PRIORITIES_INFO dev query
+> 
+>  drivers/gpu/drm/panthor/panthor_drv.c   | 61 +++++++++++++++++--------
+>  drivers/gpu/drm/panthor/panthor_sched.c |  2 -
+>  include/uapi/drm/panthor_drm.h          | 29 ++++++++++++
+>  3 files changed, 71 insertions(+), 21 deletions(-)
+> 
 
 
