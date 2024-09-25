@@ -1,267 +1,128 @@
-Return-Path: <linux-kernel+bounces-338919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74FE4985E49
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 15:32:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB7B8985C05
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97ACB1C236CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 13:32:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A08091F21319
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 12:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD63220F486;
-	Wed, 25 Sep 2024 12:09:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B3B185B6D;
+	Wed, 25 Sep 2024 11:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KfLE1/Bw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hA0rMtdq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF14920F46F;
-	Wed, 25 Sep 2024 12:09:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9148D18594A;
+	Wed, 25 Sep 2024 11:54:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727266158; cv=none; b=Ys6u+vbV7HFXrH/1MihItfqbeRNGUVttBm6Is+5i2ky3ZwjyeKyTd4l/UdpkX0qASQf2CJuR3Syp1hfzdQ3nVpkrCoxvD8IQ9nU2+Fuk/27hO7anv5RHSs4RRCpcYo1oghQ4DlbbBNgBoEvhFR83oQednaiXANa/7wvFzONuGgU=
+	t=1727265264; cv=none; b=Gtf6qtj8RI1LtSPgbyqxwjSGkmLV+JoICDqDXhxq7VK307ExhR/JQbM1XE9Zbq6fWZvxsvvYO2Fa6M2vFXpJCbNHCLRM7tSvU9xEf/zE66fFBH1LucESH6Yz2THmzHoRBpHW8oaplbCZ/vCwfpWhebWccfvOQ4Jqil4ITGd5JEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727266158; c=relaxed/simple;
-	bh=loYJO/RaPJeM1OklIUynPjd7v+eKV64W9YBNv88pymA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=V6Ff3FlV2kQOcJih8Z0Cm0d4AlBIkkMAl6L3UO1ceDsJhFMNvcfgA4vMIJT24EiIC35o+73SqTMRtjNUa9JphdRNGuXGPXDLjZemD/yqDbrF1YpLCVD13s3W4apYEvj2WvDnCwRErB6mm8VqDtGSLpi926pCjtAjDMBSonWEEDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KfLE1/Bw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51979C4CEC3;
-	Wed, 25 Sep 2024 12:09:16 +0000 (UTC)
+	s=arc-20240116; t=1727265264; c=relaxed/simple;
+	bh=WPP4f3Ed9xZu5RoXhYOHB/S+JHHFmiBXycaazZ7fSXc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N0JCVRUZy7c3LOg2IR3A15iNLGoqW1EkMNV/Bp7SyFmEsiaTdZiEi6454jUM7pc0VHdWcsKdHnI9FW0W4ABieNdoJ+08YkhVRLPb1SmBuvj4vdSSQOIZ25254TQEZhxRHCENVEyQB3zIODxcgBXGh9TDMUCyCZ9Ei/6VQmxqDUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hA0rMtdq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 314F3C4CEC3;
+	Wed, 25 Sep 2024 11:54:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727266157;
-	bh=loYJO/RaPJeM1OklIUynPjd7v+eKV64W9YBNv88pymA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KfLE1/BwaY2xWgO9LLerBJtkOcc178227vcXGZrhWmb967gS35wt3BCWR7yc/YgYb
-	 DWV2E6lb/AxrNA4ZEG32adYc3jWrxEZJjHtaNfg8G7sl5poTa9TUfSKesr2u2S7iOE
-	 WnMPpfciXEUl3AIg9wWV60sJL6uOLqP0U3UnLZv36P66Gf4aE5ZmkE8QgBkTBF76xB
-	 D9uS4B7UqR/chXsF2ZfDFy0YUqUVH8vuYQroXQ1PKjBACbGYHpqV6uES1oZsIB8ekY
-	 lnpdSW2+5X+x+sp/HJtGp/YcASzUgokACsLMGU8iI6dkyIXIbh0kZ3KXAF3bGkEs9R
-	 5WzYVVdDwCwCA==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Yonghong Song <yonghong.song@linux.dev>,
-	Zac Ecob <zacecob@protonmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	daniel@iogearbox.net,
-	bpf@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.10 197/197] bpf: Fix a sdiv overflow issue
-Date: Wed, 25 Sep 2024 07:53:36 -0400
-Message-ID: <20240925115823.1303019-197-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240925115823.1303019-1-sashal@kernel.org>
-References: <20240925115823.1303019-1-sashal@kernel.org>
+	s=k20201202; t=1727265264;
+	bh=WPP4f3Ed9xZu5RoXhYOHB/S+JHHFmiBXycaazZ7fSXc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hA0rMtdqlEbnmqimDLGMQ2WI5UT6eus6Pci3GmDCWZ0XMa8XlZWLEFu33a+p8zwJL
+	 nbW6gwTVvz+v21/jPT6RW43bYNlOpvD2YzNDsbrLKIDAToA0wYpvsaCa7KGHCSJTgH
+	 tzTTQ0qEz11AnYVWe6iJ98x2j5LK2zbPkzTR4M4SuZewDBQLT+Fj1NGNMzRdULKY4P
+	 c3kSFMl7m1+y6mzXXkZIp9L53MC+QyElo7lpR752P6aEGT1th6iM1BjYtncqdAvTJd
+	 Xfw//OP6VgMV/Ih4nhVTwmH3jMo4+idmDwjjr47YIp22PQ++jihoYVfzMEFv6VzLdO
+	 we+WjDEcOo1PA==
+Date: Wed, 25 Sep 2024 13:54:20 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+Cc: Jiri Kosina <jikos@kernel.org>, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] HID: i2c-hid: introduce re-power-on quirk
+Message-ID: <2xb4vqlt2gdrmioyx7tjaw2vfw55pmhvz54q7f2ldrkikzzxge@737bp5ms6gwc>
+References: <20240925100303.9112-1-alex.vinarskis@gmail.com>
+ <20240925100303.9112-2-alex.vinarskis@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.10.11
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240925100303.9112-2-alex.vinarskis@gmail.com>
 
-From: Yonghong Song <yonghong.song@linux.dev>
+On Sep 25 2024, Aleksandrs Vinarskis wrote:
+> It appears some keyboards from vendor 'QTEC' will not work properly until
+> suspend & resume.
+> 
+> Empirically narrowed down to solution of re-sending power on command
+> _after_ initialization was completed before the end of initial probing.
+> 
+> Signed-off-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+> ---
+>  drivers/hid/i2c-hid/i2c-hid-core.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
+> index 632eaf9e11a6..087ca2474176 100644
+> --- a/drivers/hid/i2c-hid/i2c-hid-core.c
+> +++ b/drivers/hid/i2c-hid/i2c-hid-core.c
+> @@ -50,6 +50,7 @@
+>  #define I2C_HID_QUIRK_BAD_INPUT_SIZE		BIT(3)
+>  #define I2C_HID_QUIRK_NO_WAKEUP_AFTER_RESET	BIT(4)
+>  #define I2C_HID_QUIRK_NO_SLEEP_ON_SUSPEND	BIT(5)
+> +#define I2C_HID_QUIRK_RE_POWER_ON		BIT(6)
+>  
+>  /* Command opcodes */
+>  #define I2C_HID_OPCODE_RESET			0x01
+> @@ -1048,7 +1049,11 @@ static int i2c_hid_core_register_hid(struct i2c_hid *ihid)
+>  		return ret;
+>  	}
+>  
+> -	return 0;
+> +	/* At least some QTEC devices need this after initialization */
+> +	if (ihid->quirks & I2C_HID_QUIRK_RE_POWER_ON)
+> +		ret = i2c_hid_set_power(ihid, I2C_HID_PWR_ON);
 
-[ Upstream commit 7dd34d7b7dcf9309fc6224caf4dd5b35bedddcb7 ]
+I'd rather not have this in i2c-hid-core.c, TBH.
 
-Zac Ecob reported a problem where a bpf program may cause kernel crash due
-to the following error:
-  Oops: divide error: 0000 [#1] PREEMPT SMP KASAN PTI
+We do have a nice split separation of i2c-hid which allows to add vendor
+specific i2c-hid-of drivers. We currently have 2 (goodix and elan) and a
+third wouldn't be much of an issue.
 
-The failure is due to the below signed divide:
-  LLONG_MIN/-1 where LLONG_MIN equals to -9,223,372,036,854,775,808.
-LLONG_MIN/-1 is supposed to give a positive number 9,223,372,036,854,775,808,
-but it is impossible since for 64-bit system, the maximum positive
-number is 9,223,372,036,854,775,807. On x86_64, LLONG_MIN/-1 will
-cause a kernel exception. On arm64, the result for LLONG_MIN/-1 is
-LLONG_MIN.
+I'm not really happy of this admittely simple solution in this patch
+because:
+- what if QTEC "fixes" that behavior in the future?
+- what if you actually need to enable/disable regulators like goodix and
+  elan do
 
-Further investigation found all the following sdiv/smod cases may trigger
-an exception when bpf program is running on x86_64 platform:
-  - LLONG_MIN/-1 for 64bit operation
-  - INT_MIN/-1 for 32bit operation
-  - LLONG_MIN%-1 for 64bit operation
-  - INT_MIN%-1 for 32bit operation
-where -1 can be an immediate or in a register.
+So to me, a better solution would be to create a i2c-hid-of-qtec.c,
+assign a new compatible for this keyboard, and try to fix up the initial
+powerup in .power_up in that particular driver. This way, we can extend
+the driver for the regulators, and we can also fix this issue while being
+sure we do not touch at anything else.
 
-On arm64, there are no exceptions:
-  - LLONG_MIN/-1 = LLONG_MIN
-  - INT_MIN/-1 = INT_MIN
-  - LLONG_MIN%-1 = 0
-  - INT_MIN%-1 = 0
-where -1 can be an immediate or in a register.
+Anyway, glad to see the bringup of the new arm based XPS-13 taking
+shape!
 
-Insn patching is needed to handle the above cases and the patched codes
-produced results aligned with above arm64 result. The below are pseudo
-codes to handle sdiv/smod exceptions including both divisor -1 and divisor 0
-and the divisor is stored in a register.
+Cheers,
+Benjamin
 
-sdiv:
-      tmp = rX
-      tmp += 1 /* [-1, 0] -> [0, 1]
-      if tmp >(unsigned) 1 goto L2
-      if tmp == 0 goto L1
-      rY = 0
-  L1:
-      rY = -rY;
-      goto L3
-  L2:
-      rY /= rX
-  L3:
 
-smod:
-      tmp = rX
-      tmp += 1 /* [-1, 0] -> [0, 1]
-      if tmp >(unsigned) 1 goto L1
-      if tmp == 1 (is64 ? goto L2 : goto L3)
-      rY = 0;
-      goto L2
-  L1:
-      rY %= rX
-  L2:
-      goto L4  // only when !is64
-  L3:
-      wY = wY  // only when !is64
-  L4:
-
-  [1] https://lore.kernel.org/bpf/tPJLTEh7S_DxFEqAI2Ji5MBSoZVg7_G-Py2iaZpAaWtM961fFTWtsnlzwvTbzBzaUzwQAoNATXKUlt0LZOFgnDcIyKCswAnAGdUF3LBrhGQ=@protonmail.com/
-
-Reported-by: Zac Ecob <zacecob@protonmail.com>
-Signed-off-by: Yonghong Song <yonghong.song@linux.dev>
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
-Link: https://lore.kernel.org/r/20240913150326.1187788-1-yonghong.song@linux.dev
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- kernel/bpf/verifier.c | 93 +++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 89 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 2eff14da6bf16..c713ca32ab046 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -19927,13 +19927,46 @@ static int do_misc_fixups(struct bpf_verifier_env *env)
- 			/* Convert BPF_CLASS(insn->code) == BPF_ALU64 to 32-bit ALU */
- 			insn->code = BPF_ALU | BPF_OP(insn->code) | BPF_SRC(insn->code);
- 
--		/* Make divide-by-zero exceptions impossible. */
-+		/* Make sdiv/smod divide-by-minus-one exceptions impossible. */
-+		if ((insn->code == (BPF_ALU64 | BPF_MOD | BPF_K) ||
-+		     insn->code == (BPF_ALU64 | BPF_DIV | BPF_K) ||
-+		     insn->code == (BPF_ALU | BPF_MOD | BPF_K) ||
-+		     insn->code == (BPF_ALU | BPF_DIV | BPF_K)) &&
-+		    insn->off == 1 && insn->imm == -1) {
-+			bool is64 = BPF_CLASS(insn->code) == BPF_ALU64;
-+			bool isdiv = BPF_OP(insn->code) == BPF_DIV;
-+			struct bpf_insn *patchlet;
-+			struct bpf_insn chk_and_sdiv[] = {
-+				BPF_RAW_INSN((is64 ? BPF_ALU64 : BPF_ALU) |
-+					     BPF_NEG | BPF_K, insn->dst_reg,
-+					     0, 0, 0),
-+			};
-+			struct bpf_insn chk_and_smod[] = {
-+				BPF_MOV32_IMM(insn->dst_reg, 0),
-+			};
-+
-+			patchlet = isdiv ? chk_and_sdiv : chk_and_smod;
-+			cnt = isdiv ? ARRAY_SIZE(chk_and_sdiv) : ARRAY_SIZE(chk_and_smod);
-+
-+			new_prog = bpf_patch_insn_data(env, i + delta, patchlet, cnt);
-+			if (!new_prog)
-+				return -ENOMEM;
-+
-+			delta    += cnt - 1;
-+			env->prog = prog = new_prog;
-+			insn      = new_prog->insnsi + i + delta;
-+			goto next_insn;
-+		}
-+
-+		/* Make divide-by-zero and divide-by-minus-one exceptions impossible. */
- 		if (insn->code == (BPF_ALU64 | BPF_MOD | BPF_X) ||
- 		    insn->code == (BPF_ALU64 | BPF_DIV | BPF_X) ||
- 		    insn->code == (BPF_ALU | BPF_MOD | BPF_X) ||
- 		    insn->code == (BPF_ALU | BPF_DIV | BPF_X)) {
- 			bool is64 = BPF_CLASS(insn->code) == BPF_ALU64;
- 			bool isdiv = BPF_OP(insn->code) == BPF_DIV;
-+			bool is_sdiv = isdiv && insn->off == 1;
-+			bool is_smod = !isdiv && insn->off == 1;
- 			struct bpf_insn *patchlet;
- 			struct bpf_insn chk_and_div[] = {
- 				/* [R,W]x div 0 -> 0 */
-@@ -19953,10 +19986,62 @@ static int do_misc_fixups(struct bpf_verifier_env *env)
- 				BPF_JMP_IMM(BPF_JA, 0, 0, 1),
- 				BPF_MOV32_REG(insn->dst_reg, insn->dst_reg),
- 			};
-+			struct bpf_insn chk_and_sdiv[] = {
-+				/* [R,W]x sdiv 0 -> 0
-+				 * LLONG_MIN sdiv -1 -> LLONG_MIN
-+				 * INT_MIN sdiv -1 -> INT_MIN
-+				 */
-+				BPF_MOV64_REG(BPF_REG_AX, insn->src_reg),
-+				BPF_RAW_INSN((is64 ? BPF_ALU64 : BPF_ALU) |
-+					     BPF_ADD | BPF_K, BPF_REG_AX,
-+					     0, 0, 1),
-+				BPF_RAW_INSN((is64 ? BPF_JMP : BPF_JMP32) |
-+					     BPF_JGT | BPF_K, BPF_REG_AX,
-+					     0, 4, 1),
-+				BPF_RAW_INSN((is64 ? BPF_JMP : BPF_JMP32) |
-+					     BPF_JEQ | BPF_K, BPF_REG_AX,
-+					     0, 1, 0),
-+				BPF_RAW_INSN((is64 ? BPF_ALU64 : BPF_ALU) |
-+					     BPF_MOV | BPF_K, insn->dst_reg,
-+					     0, 0, 0),
-+				/* BPF_NEG(LLONG_MIN) == -LLONG_MIN == LLONG_MIN */
-+				BPF_RAW_INSN((is64 ? BPF_ALU64 : BPF_ALU) |
-+					     BPF_NEG | BPF_K, insn->dst_reg,
-+					     0, 0, 0),
-+				BPF_JMP_IMM(BPF_JA, 0, 0, 1),
-+				*insn,
-+			};
-+			struct bpf_insn chk_and_smod[] = {
-+				/* [R,W]x mod 0 -> [R,W]x */
-+				/* [R,W]x mod -1 -> 0 */
-+				BPF_MOV64_REG(BPF_REG_AX, insn->src_reg),
-+				BPF_RAW_INSN((is64 ? BPF_ALU64 : BPF_ALU) |
-+					     BPF_ADD | BPF_K, BPF_REG_AX,
-+					     0, 0, 1),
-+				BPF_RAW_INSN((is64 ? BPF_JMP : BPF_JMP32) |
-+					     BPF_JGT | BPF_K, BPF_REG_AX,
-+					     0, 3, 1),
-+				BPF_RAW_INSN((is64 ? BPF_JMP : BPF_JMP32) |
-+					     BPF_JEQ | BPF_K, BPF_REG_AX,
-+					     0, 3 + (is64 ? 0 : 1), 1),
-+				BPF_MOV32_IMM(insn->dst_reg, 0),
-+				BPF_JMP_IMM(BPF_JA, 0, 0, 1),
-+				*insn,
-+				BPF_JMP_IMM(BPF_JA, 0, 0, 1),
-+				BPF_MOV32_REG(insn->dst_reg, insn->dst_reg),
-+			};
- 
--			patchlet = isdiv ? chk_and_div : chk_and_mod;
--			cnt = isdiv ? ARRAY_SIZE(chk_and_div) :
--				      ARRAY_SIZE(chk_and_mod) - (is64 ? 2 : 0);
-+			if (is_sdiv) {
-+				patchlet = chk_and_sdiv;
-+				cnt = ARRAY_SIZE(chk_and_sdiv);
-+			} else if (is_smod) {
-+				patchlet = chk_and_smod;
-+				cnt = ARRAY_SIZE(chk_and_smod) - (is64 ? 2 : 0);
-+			} else {
-+				patchlet = isdiv ? chk_and_div : chk_and_mod;
-+				cnt = isdiv ? ARRAY_SIZE(chk_and_div) :
-+					      ARRAY_SIZE(chk_and_mod) - (is64 ? 2 : 0);
-+			}
- 
- 			new_prog = bpf_patch_insn_data(env, i + delta, patchlet, cnt);
- 			if (!new_prog)
--- 
-2.43.0
-
+> +
+> +	return ret;
+>  }
+>  
+>  static int i2c_hid_core_probe_panel_follower(struct i2c_hid *ihid)
+> -- 
+> 2.43.0
+> 
 
