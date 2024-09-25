@@ -1,121 +1,128 @@
-Return-Path: <linux-kernel+bounces-339136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB8BB9860A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:30:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FABD9860AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:30:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4D3A1C267AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:30:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60DAD1C26855
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:30:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1749D185606;
-	Wed, 25 Sep 2024 13:20:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15706126F0A;
-	Wed, 25 Sep 2024 13:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AAEA18C358;
+	Wed, 25 Sep 2024 13:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="nPlSkVvc"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8777518C03D;
+	Wed, 25 Sep 2024 13:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727270436; cv=none; b=hrYYo8+GYYKEsPsDluSpyBLrFSP4ulll/ZLouNQ9Taw5GhGNnhmEO4/zcjqQ3wuWaVR0c1oMVqke5rW4i5XGmFBS7AAvgcBo8fQ2ZZ1BS0pU9eqM0lpcckc23Z6KIsQWdo0FVpSaa2lB+0RvrzMYULyDBjzQuv1S0TswUS3DneY=
+	t=1727270510; cv=none; b=Pai477fhdvIKux7B3tDbfzrwq1WClkz4eUNuc87Wz+BUDZwjKSvOui1hq6d9DuQpJQl70tpopZY8hzmsdlB1dYSPgGkW56LrzQWNIhSBYUEETiwWGZmd8PWMZFekQcvariBPYk0jFc/DAeejF94pMAvr1iEE3eZsLM5D6DuorM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727270436; c=relaxed/simple;
-	bh=VWkCCMmt+SSlKeFVFSzuMOqde4LRaApjaJXEOTiXnew=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hcwCqD0xSyLLp6KA1lE0hK372mJdXhiHdbEKrvGqBNVyvDCo2+MQKOS5JOpicH0/dMh6CS3eomhTmbv3QII2kn7i61jFFFdb7RLNW6Y2ma1wgUtGY9pcyVmTCAitKXHxslus8zHRNr5sAFZAeWJwcGPJqCkRuOcHgf4qqJ9OBcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C1B9C150C;
-	Wed, 25 Sep 2024 06:21:03 -0700 (PDT)
-Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 83E723F64C;
-	Wed, 25 Sep 2024 06:20:32 -0700 (PDT)
-From: Levi Yun <yeoreum.yun@arm.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	james.clark@linaro.org,
-	howardchu95@gmail.com
-Cc: nd@arm.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Levi Yun <yeoreum.yun@arm.com>
-Subject: [PATCH v6 2/2] perf stat: Stop repeating when ref_perf_stat() returns -1
-Date: Wed, 25 Sep 2024 14:20:22 +0100
-Message-Id: <20240925132022.2650180-3-yeoreum.yun@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240925132022.2650180-1-yeoreum.yun@arm.com>
-References: <20240925132022.2650180-1-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1727270510; c=relaxed/simple;
+	bh=b3Uax3+rp7gtwhp//ajM56k9gXFv76k3I57QzMJ/Jic=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Nr4UjQiYC/Qd2KXCM8HsZDNS9DkMsaOIw0t1LzmR7EwwDfaSsqyPn+g6UDvbm6xaERIuyZn1KluavUAYZdQ+s5R4jmxSmDqbtXMu4r1t6XmMsF+jAIW0j9wJy0ZiWhJJZOx5DpO+CCrUc4esdRiIEWfBsIN/kVL6iC2zEJmWhQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=nPlSkVvc; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1727270508;
+	bh=b3Uax3+rp7gtwhp//ajM56k9gXFv76k3I57QzMJ/Jic=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=nPlSkVvcakqjs0Pf5vAv5qs75CAE4pm0O+LM83/WA1QNYIOxm5VMP5e1CncMDM6mu
+	 XTy8gvC3iaHwaKKA+AQ/IbBOi1tZjzfYYh9GEznLuGVk7fiBq6zbYxMy7Ee6FLyjsI
+	 O2B1bpVv1NjrSJ/qGcQZBpUEiypcAC7Vn6e+WdcW+I0YRTXyG8bYlBY4RkUXwUWhoO
+	 4z73XTbzvWAAf66z4NXmUehWTL0D9UTdhyNLIwcFC7lrT93Vtn+ec2CTwhC2gxrDuH
+	 yOvv0ZJ0AlBhDMuPlHKGjF0zNcqe/S8ofDorLNq6jafLN3z8cUU1nkX6gdtdV5lk0P
+	 K0lS1ikXWI4XA==
+Received: from [192.168.126.112] (unknown [147.75.204.251])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XDHSM2sF6z1M9H;
+	Wed, 25 Sep 2024 09:21:39 -0400 (EDT)
+Message-ID: <e2733938-06fa-46c3-8839-4349fe50d46f@efficios.com>
+Date: Wed, 25 Sep 2024 15:20:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
+ pointers
+Content-Language: en-US
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
+ linux-kernel@vger.kernel.org, rcu@vger.kernel.org, linux-mm@kvack.org,
+ lkmm@lists.linux.dev, "Paul E. McKenney" <paulmck@kernel.org>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
+ <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Kent Overstreet <kent.overstreet@gmail.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
+ Neeraj Upadhyay <neeraj.upadhyay@amd.com>
+References: <20240917143402.930114-1-boqun.feng@gmail.com>
+ <20240917143402.930114-2-boqun.feng@gmail.com>
+ <55975a55-302f-4c45-bfcc-192a8a1242e9@huaweicloud.com>
+ <ZvPfmAp_2mDkI3ss@boqun-archlinux>
+ <f5aeeeda-c725-422a-9481-4795bd3ade0f@huaweicloud.com>
+ <ZvPp4taB9uu__oSQ@boqun-archlinux>
+ <4167e6f5-4ff9-4aaa-915e-c1e692ac785a@efficios.com>
+ <ZvP_H_R43bXpmkMS@boqun-archlinux>
+ <a87040be-890b-4e83-86bb-5018da4a894d@efficios.com>
+ <48992c9f-6c61-4716-977c-66e946adb399@efficios.com>
+In-Reply-To: <48992c9f-6c61-4716-977c-66e946adb399@efficios.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Exit when run_perf_stat() returns an error to avoid continuously
-repeating the same error message. It's not expected that COUNTER_FATAL
-or internal errors are recoverable so there's no point in retrying.
+On 2024-09-25 15:10, Mathieu Desnoyers wrote:
+[...]
 
-This fixes the following flood of error messages for permission issues,
-for example when perf_event_paranoid==3:
-  perf stat -r 1044 -- false
+Cleaner without goto in the user code:
 
-  Error:
-  Access to performance monitoring and observability operations is limited.
-  ...
-  Error:
-  Access to performance monitoring and observability operations is limited.
-  ...
-  (repeating for 1044 times).
+#include <stdio.h>
+#include <stdbool.h>
 
-Signed-off-by: Levi Yun <yeoreum.yun@arm.com>
-Reviewed-by: James Clark <james.clark@linaro.org>
----
- tools/perf/builtin-stat.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+static inline
+bool same_ptr(void *a, void *b)
+{
+     asm goto (
+         "cmpq %[a], %[b]\n\t"
+         "jne %l[ne]\n\t"
+         : : [a] "r" (a), [b] "r" (b)
+         : : ne);
+     return true;
+ne:
+     return false;
+}
 
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 2c46bdbd9914..6cad3435b198 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -968,6 +968,14 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
- 	return err;
- }
+int x;
 
-+/*
-+ * Returns -1 for fatal errors which signifies to not continue
-+ * when in repeat mode.
-+ *
-+ * Returns < -1 error codes when stat record is used. These
-+ * result in the stat information being displayed, but writing
-+ * to the file fails and is non fatal.
-+ */
- static int run_perf_stat(int argc, const char **argv, int run_idx)
- {
- 	int ret;
-@@ -2899,7 +2907,10 @@ int cmd_stat(int argc, const char **argv)
- 			evlist__reset_prev_raw_counts(evsel_list);
+int v[2];
 
- 		status = run_perf_stat(argc, argv, run_idx);
--		if (forever && status != -1 && !interval) {
-+		if (status == -1)
-+			break;
-+
-+		if (forever && !interval) {
- 			print_counters(NULL, argc, argv);
- 			perf_stat__reset_stats();
- 		}
---
-LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+int main(void)
+{
+     if (same_ptr(v, v + 1))
+         x = 1;
+     printf("%d\n", x);
+     return 0;
+}
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
 
