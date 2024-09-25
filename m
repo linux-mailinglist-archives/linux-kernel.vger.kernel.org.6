@@ -1,130 +1,156 @@
-Return-Path: <linux-kernel+bounces-339544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16D399866B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:14:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84D529866B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 21:15:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B061028670E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:14:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B816B22615
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 19:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA6C1428F3;
-	Wed, 25 Sep 2024 19:14:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D05E13C67C;
+	Wed, 25 Sep 2024 19:15:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YGBPGmYg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="Hsy9z3zD"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E1D3A8F0;
-	Wed, 25 Sep 2024 19:14:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF51219E0;
+	Wed, 25 Sep 2024 19:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727291682; cv=none; b=ZljYXOoaiTIHQeLRak/2Xi/DPE4fmpdBwMhsR9ZOaOq4BiHiFHbUo91bUS7ebgCB1+0967874/Dxn12L/BCpi+Q+tmeG1eAV3wEWmxFGNCYw9/7WZdJeC8ChcDBGpWNPBeR/m9rMQBhXVQHx7Jt1FuDxjFn370tG1w36PXU1Zbc=
+	t=1727291733; cv=none; b=o8W5SMuzO6DOISwGVsTRwPXSZVSAoxdD6RSlLLI85tfH6UDr9E1Bujp0WNep00J8akp3DZe2AktmW8x+1NdN5qrSTZvI/70Yzpe/UVnpy5BbUOWHY697oA3d+mBr3HVxYn5JX9vJRrQAVVftYZ/AepnOGQhLYB4s20HEbTDT7AY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727291682; c=relaxed/simple;
-	bh=v6vimdadH9tmhJ3NLSECJJW2W8zTrYSh4bxODwkPlVY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rQ3MKgNRanmxBRzCKICgOnjdUxLPZsCMCiFvXWVuJTeFGMi+KM1lJB1SVxUpGgg7WmDZJ2+yQufQr7dtMBz02Bh5VzVJubPoFh4JepRHCJMpR1khuY+XX/ErlYkqZNWBUiL85j2vf8Sq/MpBL5UV7IBnbvRgKMvSqzltqfplPHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YGBPGmYg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3478C4CEDC;
-	Wed, 25 Sep 2024 19:14:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727291681;
-	bh=v6vimdadH9tmhJ3NLSECJJW2W8zTrYSh4bxODwkPlVY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=YGBPGmYgAPdAFKNTwwajPecfktex9cSL6WggNqGsmkyZ+kpGzsxngdf8S8+81jNKy
-	 eRHOxSC4Er/nJLoAMfLrBkTHIcD1IdZYm1TNFrPbeS5EE4HG+uTT9AVyVqhIl/8HJL
-	 psBuU8DB8inowiaBUE9F9LJuDlTjOY0eHfoSjx7oH91PPbsHYt2Ihsnvpoy1LM1AK1
-	 tYHEHOvaPLcu5CS66hGTlA73hlGTptk2NtlRfVRmbHTdaNwk1haPSHF9lDYgrCR7dL
-	 s9OTTLilWDbSivuiX3XMZtzsg/Rv746l/RHhNETo2Bt5HCeuV+cwNeebX7eUhXXI68
-	 feesglxmQ0ChQ==
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f75d044201so2549571fa.0;
-        Wed, 25 Sep 2024 12:14:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV5ZeKdfIgrlWJVoF3dZw/MryjDq1OBAtW7/wWvZ39Q8BYCf3Ta5zIib4Sb9UNbOpdChRG8oILJpZ7Yew==@vger.kernel.org, AJvYcCVEepfcUoJK0hFRyMtMo4ttgzHs3Yc0sqKD1gwEgeEk5nbGJzB6/Li7pSDLXz4jCXt+mmM=@vger.kernel.org, AJvYcCVINns85+lJO3p8tYXZKpz8JLPjaqekX/L03ecB5f0kANpmr/loxQFZGer3a7q+dOlbBT1Or/mlLkPehN4W@vger.kernel.org, AJvYcCWZoiKqGorhzylWXT0hVTGex8LYmBYZMmgz9J1spOqF5zn/7Otpc9HeeEtDHIPlvwUST9+PgstxLnMCgI5O@vger.kernel.org, AJvYcCWatXrn6ZA/WaewE9IJM1shPVHyL+xJ2T7Jg4i1TtHVT6bCzceTHE5csOy4qD9ZgT+3FKeC+KGSY8Z9@vger.kernel.org, AJvYcCWbr4fkQOZCfejjRkSXIRpNNMhsLtY8IMIQ6lPCA/ae921YSBeHLUe8aFrehlMR4iqW/BmZ3xPICTE=@vger.kernel.org, AJvYcCX0mraYPupOVPOePgaZNlNxeJ7IwkpjEVKl3eut3msYDKcNU11DbTeoSWciRXQYcJJcrAqS36zQpuxSZUKV@vger.kernel.org, AJvYcCXANerKtuePxb1v8UUkb3xwCqAtqCA2ZgqsrzCfh7vBGALrjE8U0g3s5pdbzvPnOctnmtOdDupstXOE@vger.kernel.org, AJvYcCXX+LCkerne2OmJmbORYpIVxPT412JYbgbrJX6sel/ZW4+4wHv4DeIuA883QW/1YOsqYpOjLebxOjVA87S8eY5yaA==@vger.kernel.org, AJvYcCXb3VRxTG7pjiHDSOc5+lVfN598
- MSvY8qUrR8LbbgZmoCNT5WvhVv51KW192Ml+t4+YNCCWgEcAtm4e8SBS7sk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGNRGNmMd8VCp3rtX41FszfYFhV6086KoQZoTAtL6FLl0PFzQP
-	xgrGBVBHKjaNJy/kRUVQUhYM0C5YsTZhZYt5/I1IjI0MrJpQtZoH5FINdwISlFhnu+S1s0tAYBR
-	EACk9hTthTy4YKoONcnwjQpT8LXE=
-X-Google-Smtp-Source: AGHT+IHhx37wVyIVLg+xrue+pSSLZp5Q9LgYurWqXbgYba/vJ5Rw09i+I8llv3k1oq/x6sYNFgZcR26HfbSEX6O6VBA=
-X-Received: by 2002:a05:651c:2126:b0:2f7:631a:6df8 with SMTP id
- 38308e7fff4ca-2f9c6cecd0fmr2173111fa.23.1727291679841; Wed, 25 Sep 2024
- 12:14:39 -0700 (PDT)
+	s=arc-20240116; t=1727291733; c=relaxed/simple;
+	bh=C1OmoBXqJ67UcxbNfdrP+Y4HHhyF6o/lJp44waSGKkE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Zf3BjeY80iHMG+urDxzWfN8M1yx3uw7c3IIX37BlPMNffEf1sC82TlIydaHx8EiAvwPqH9ie4nKWHtAqPNg7R7yJL3Q03w8/v651zQEmYfehp5M95rpgFHZ1ORXIS8gI2jK7tS/ML4MkGcNSgUJHdgZw2uQW0Jpd3LDVgebARqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=Hsy9z3zD; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727291727; x=1727896527; i=spasswolf@web.de;
+	bh=YLx3JywVR9hDPbwv6E+58VAcGrN7Fy5JyoLdwEIiNqw=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Hsy9z3zDClF1/D/4IAqQ7Mi0RVEOdYE9rMKDKyKezv9PJ8Z7h7yjcgwvMJvXRrHr
+	 zjXtxeUyy8yDLpLfLoCtI1YsMNXk6OFovIN2eU2pHnRIt3amaA2JgMEZLs39LmSJO
+	 QEwo1o27i4P6d96+/wBsPAPMmkOyssTS+K38ZRRz6YhJucOG2IbW0GqGtUifexRG+
+	 FO6gvRBnSoaEgm4niXh40rrXQrU7nqeYDFcaK7adHRFzDnWZKgbLI8fJRtq/9C3al
+	 MPZj9aaD7AUtipFcxJtvJGoUt8Ed0wtOT+nalSoWj/g31H0oRQpLbSeBFGxigVHF8
+	 dOFWXHsXW7OFgSzIhQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.0.101] ([84.119.92.193]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MvKbd-1s35Ly237J-00surM; Wed, 25
+ Sep 2024 21:15:27 +0200
+Message-ID: <a48564f002b31cb1a8db7680729aac91bc3d3b6b.camel@web.de>
+Subject: Re: hung tasks on shutdown in linux-next-202409{20,23,24,25}
+From: Bert Karwatzki <spasswolf@web.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Stuart Hayes <stuart.w.hayes@gmail.com>, linux-kernel@vger.kernel.org, 
+	linux-next@vger.kernel.org, spasswolf@web.de
+Date: Wed, 25 Sep 2024 21:15:27 +0200
+In-Reply-To: <2024092503-banshee-reoccupy-93d1@gregkh>
+References: <20240925114002.3380-1-spasswolf@web.de>
+			 <2024092503-banshee-reoccupy-93d1@gregkh>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.54.0-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925150059.3955569-30-ardb+git@google.com>
- <20240925150059.3955569-57-ardb+git@google.com> <CAFULd4YnvhnUvq8epLqFs3hXLMCCrEi=HTRtRkLm4fg9YbP10g@mail.gmail.com>
-In-Reply-To: <CAFULd4YnvhnUvq8epLqFs3hXLMCCrEi=HTRtRkLm4fg9YbP10g@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 25 Sep 2024 21:14:28 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXEL+BBTpaYzw_vkPdo18gF0-gjxBMbZyuaNhmWZC8=6tw@mail.gmail.com>
-Message-ID: <CAMj1kXEL+BBTpaYzw_vkPdo18gF0-gjxBMbZyuaNhmWZC8=6tw@mail.gmail.com>
-Subject: Re: [RFC PATCH 27/28] x86/kernel: Switch to PIE linking for the core kernel
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Vitaly Kuznetsov <vkuznets@redhat.com>, Juergen Gross <jgross@suse.com>, 
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Keith Packard <keithp@keithp.com>, 
-	Justin Stitt <justinstitt@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, linux-doc@vger.kernel.org, 
-	linux-pm@vger.kernel.org, kvm@vger.kernel.org, xen-devel@lists.xenproject.org, 
-	linux-efi@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	llvm@lists.linux.dev, Hou Wenlong <houwenlong.hwl@antgroup.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:iGwryk7L2xKR4XUC26mi5GjGbCWT3inQBi6wQMzWggRBu+c8YMw
+ 4WKfUgFaBNWUEUkDBdUOwjpa8WghjWuTSMsWLHu+G41/lTvt1zAZRF5YNGk7bDKM8zAR/2y
+ J87NKOBTB1OVH1kUgaaO91Ss7yu71QJ67O5q235siGRXj15vAA5X3hrQDIGI4qXJPnzXRLC
+ 3wND6szN86upvABfLVIDA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:cLi0tN1OEmg=;45cBUNzM0uDAJPvWxyPitfnqgZc
+ uW33XUdZmp5ObA5/tqii+uo+8j1JVxnLU46WjSGyq42n9QBgxagCUc/taTjxAFZB1kL1CWhr8
+ UIQgNACI3nsjb1T1Gx0pjR1rt7h/Ns6oa0OSbsES+rLi7OOALCJ5N72+tz1WU7GzNrxs9PUf7
+ k0zryNiXFQryfW0PlBqzmoZhJQvxYq36enOL04a2aCU+cfemKzoRVO6JEqBC6f6Y7H022YOVa
+ G+8BK/ZDhW4MXbiookTkhND+2UC3nxvq6L4Fx5oPPBnOURWAQMmZcknVtNHqN6NtukoBzgndi
+ aaLK3475MlyL7r7JDsyW7+mKAE24K3eKHjYeM7AM0rK+XXW3eXqN4DubtCGmmJKqks8v3GmrF
+ 6tUfwKJxgFUmos5dNZ2LQBhb6lSD2aBVTwyPTNIFQXPNnXcCZQpIPkRXyMzeepp76g6ocaS0A
+ pHu3pINxiN7rnP+ww6LPA8MgI0Q6P7poUQDUlDnrOiyjqIjBfBzuAwF3bRhwPVusQOpZir+ZQ
+ wRQrMcSLssijKVZDSnovNMAyNE730l2pdXoQf6oWC4kwtSla6UFWBc8Hg/67FMjpvipUcBS/D
+ xHx0OXjT44Xt9Zdnm4jzBgky8+N6RFphkJLjyRXxhjZ2G9tzQ+q/q0BNqZtzjkO8TtSaEzWNj
+ LwMsL2v3bpVg8ARqsn8eKG2ZbAog6yRbj/IojAOdm0jUKnd/BvqCxDFEk7rPsbjw8PzzjGuk0
+ U/DG3AP+U9QoTCMFz0I/YpRoRdBJXqFPnw/oUX74h8/9OIxh1i6tYgXkDHTHZsB7dm3p9mV2t
+ qd+0PRwIqR19NgBoI2rB3CtQ==
 
-On Wed, 25 Sept 2024 at 20:54, Uros Bizjak <ubizjak@gmail.com> wrote:
+Am Mittwoch, dem 25.09.2024 um 14:09 +0200 schrieb Greg Kroah-Hartman:
 >
-> On Wed, Sep 25, 2024 at 5:02=E2=80=AFPM Ard Biesheuvel <ardb+git@google.c=
-om> wrote:
-> >
-> > From: Ard Biesheuvel <ardb@kernel.org>
-> >
-> > Build the kernel as a Position Independent Executable (PIE). This
-> > results in more efficient relocation processing for the virtual
-> > displacement of the kernel (for KASLR). More importantly, it instructs
-> > the linker to generate what is actually needed (a program that can be
-> > moved around in memory before execution), which is better than having t=
-o
-> > rely on the linker to create a position dependent binary that happens t=
-o
-> > tolerate being moved around after poking it in exactly the right manner=
-.
-> >
-> > Note that this means that all codegen should be compatible with PIE,
-> > including Rust objects, so this needs to switch to the small code model
-> > with the PIE relocation model as well.
 >
-> I think that related to this work is the patch series [1] that
-> introduces the changes necessary to build the kernel as Position
-> Independent Executable (PIE) on x86_64 [1]. There are some more places
-> that need to be adapted for PIE. The patch series also introduces
-> objtool functionality to add validation for x86 PIE.
+> Thanks for the report, I _just_ reverted all of these in my branch due
+> to another report just like this.  I'll be glad to take them back after
+> -rc1 if these issues can be worked out.
 >
-> [1] "[PATCH RFC 00/43] x86/pie: Make kernel image's virtual address flexi=
-ble"
-> https://lore.kernel.org/lkml/cover.1682673542.git.houwenlong.hwl@antgroup=
-.com/
+> So the next linux-next release should be good, OR if you could pull my
+> driver-core.git driver-core-next branch to verify the revert worked for
+> you, that would be great.
 >
+> thanks,
+>
+> greg k-h
 
-Hi Uros,
+The situation is a little more complicated: Your branch (driver-core-next)=
+ works
+fine(I just retested 10 reboot=C2=A0cycles with=C2=A0driver-core-next, com=
+mit 4f2c346e6216
+as HEAD). The problems only occur when your branch is merged into linux-ne=
+xt.=C2=A0
+I had the suspicion that the bug is locking related and recompiled next-20=
+240925
+with CONFIG_LOCKDEP=3Dy.
 
-I am aware of that discussion, as I took part in it as well.
+These are the lock debugging option I used:
 
-I don't think any of those changes are actually needed now - did you
-notice anything in particular that is missing?
+#
+# Lock Debugging (spinlocks, mutexes, etc...)
+#
+CONFIG_LOCK_DEBUGGING_SUPPORT=3Dy
+CONFIG_PROVE_LOCKING=3Dy
+# CONFIG_PROVE_RAW_LOCK_NESTING is not set
+# CONFIG_LOCK_STAT is not set
+CONFIG_DEBUG_RT_MUTEXES=3Dy
+CONFIG_DEBUG_SPINLOCK=3Dy
+CONFIG_DEBUG_MUTEXES=3Dy
+CONFIG_DEBUG_WW_MUTEX_SLOWPATH=3Dy
+CONFIG_DEBUG_RWSEMS=3Dy
+CONFIG_DEBUG_LOCK_ALLOC=3Dy
+CONFIG_LOCKDEP=3Dy
+CONFIG_LOCKDEP_BITS=3D15
+CONFIG_LOCKDEP_CHAINS_BITS=3D16
+CONFIG_LOCKDEP_STACK_TRACE_BITS=3D19
+CONFIG_LOCKDEP_STACK_TRACE_HASH_BITS=3D14
+CONFIG_LOCKDEP_CIRCULAR_QUEUE_BITS=3D12
+# CONFIG_DEBUG_LOCKDEP is not set
+# CONFIG_DEBUG_ATOMIC_SLEEP is not set
+# CONFIG_DEBUG_LOCKING_API_SELFTESTS is not set
+# CONFIG_LOCK_TORTURE_TEST is not set
+# CONFIG_WW_MUTEX_SELFTEST is not set
+# CONFIG_SCF_TORTURE_TEST is not set
+# CONFIG_CSD_LOCK_WAIT_DEBUG is not set
+# end of Lock Debugging (spinlocks, mutexes, etc...)
+
+With these .config options the bug becomes harder to trigger, but after 11
+reboots
+I finally got a screen=C2=A0flooded with messages of the following type:
+
+2 locks held by kworker/u64:251/3047
+#0: ffff9fdf80d39548 ((wq_completion)async){+.+.}-{0:0}, at
+process_one_work+0x4a4/0x580
+#1: ffffb54b11307e58 ((work_completion)(&entry->work)){+.+.}-{0:0}, at
+process_one_work+0x1c7/0x580
+
+
+Bert Karwatzki
+
 
