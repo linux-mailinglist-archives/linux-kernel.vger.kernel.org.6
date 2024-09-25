@@ -1,174 +1,156 @@
-Return-Path: <linux-kernel+bounces-339200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2816D986154
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:46:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63E5F986122
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 16:41:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4BB31F26A6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:46:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25D10288585
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 14:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C31991B4C3B;
-	Wed, 25 Sep 2024 14:06:41 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA0318EFC8;
+	Wed, 25 Sep 2024 13:55:28 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954511B3F3E;
-	Wed, 25 Sep 2024 14:06:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C470418893A
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 13:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727273201; cv=none; b=IZkYfzVf365nxpTchjcnrF8yXbi4HK0Tnf5l5Kxj/WUPmcLXzC1FRzfwQoyVAOaMssApWwsbZpbIctRdSYqy+SuOuzcUpN2jV3mW5E8/ia31jxuvps6lS/GDOvJrHcBMUBx5xP8mTQKtmw+Xl6b6aEOIB3MzlJrz9/gWn6Cm60Y=
+	t=1727272528; cv=none; b=i2Npy42DpencuE1LIeNJYOUv29KJAuCjh+bOCxl1BYKwPvdHPOJe5YTIDRPHaiQ4Yuws5mJB9SpaYL9Q5jWnx/WHBxWzz7y8ESI3+wNOuJ8AAbAcE6LnP6KVpnFgazB6idfFS54nj9u4UeQA3BOEMuKUtZI+09RpYjC65JY3d6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727273201; c=relaxed/simple;
-	bh=X2lPzjfCfv1KuQ2t48jGTVr/WPoj/wwdy2lWQNASttY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IKjo7JO5nczgsDrbmU++T/InK0O1v5ExOcHD2lLpp1dN0CWc6F5y6cE0Aya91mpzYgsSZg6tK9/ua090gB27NBndJPxPB7Znf9sG1oMPDNgaaJT+dnzaQzlKl2pT8siYTBH1GY6S9RMbnhcBrIKZlYHHyd3mAU3zxdwCAlC9osQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XDJRt11D0z4f3lV7;
-	Wed, 25 Sep 2024 22:06:18 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 148281A0568;
-	Wed, 25 Sep 2024 22:06:35 +0800 (CST)
-Received: from huawei.com (unknown [10.67.174.45])
-	by APP4 (Coremail) with SMTP id gCh0CgBHfMjLGPRmMo9HCQ--.17785S4;
-	Wed, 25 Sep 2024 22:06:34 +0800 (CST)
-From: Tengda Wu <wutengda@huaweicloud.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: song@kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: [PATCH -next 2/2] perf stat: Fix incorrect display of bperf when event count is 0
-Date: Wed, 25 Sep 2024 13:55:23 +0000
-Message-Id: <20240925135523.367957-3-wutengda@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240925135523.367957-1-wutengda@huaweicloud.com>
-References: <20240925135523.367957-1-wutengda@huaweicloud.com>
+	s=arc-20240116; t=1727272528; c=relaxed/simple;
+	bh=c/RXjAQdQZsSdgp0f9EvpCNzCzvtO+26felbWv3Y754=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BtjBmEXDMsG9JBPAi6hkU2ldFgCsjjjtxusv9CGhdfA0Sc+pwZYEhSaswbpb36dqVMe9SRf5HW27NBvH6PjjnYs8C3NJkGmSGDZLmcEPP1E59+oFE2QJsaPgs9438DROYBy8L1dT7o+yKrwBMXQdqVG+8pC5AX/xuQcmobQ9+nA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a1a8a4174dso17333565ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 06:55:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727272526; x=1727877326;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vLMBv9Fe6JcSvW5DsInLOm7dJ+eWmOXJ66A06ODGD+g=;
+        b=TE9Kh16KLec2//1IO+UQVHdElBqnh+CAMXOPlU44tPUyBlEDOMGqAiqYDCoQQ404Yw
+         vZEZm5c6vQykoUcDV+/7Fhxqv5gfhfr+Wnz8fTlfBMSwegSQsOq1yUh5qXd+GLb3VfV8
+         GxCBolOHWAYF3fdNSTUFzgTvt8mE19T8CO6rhyXJ6IcCmZOEQB/RaHsc0mjK1Nlku4Nf
+         9Two+Ol3uS9p8b4S48yZgywwdBwCM8GXFrgYHQoLJyUDl0dBSi9bQ6XjP03SI/VraaS2
+         bgD7wENIOQYNce0IzvytZHQbW79BRrAmulkOSkLbYpG5dBMnYvkAf/SYv45MZQUL9p+q
+         F/kA==
+X-Forwarded-Encrypted: i=1; AJvYcCUcUWJHhLlKggi/Gj9vR+KHtRJ3s83IFofHxKKUi4qxRtbiyKf5/BjSRRafSey+QUZ3Klhdm6lEY6Ptq5k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxA4l8F2S3ZBmvC8eJ5B5kJZOOp0HLntWczPSXmt6ubg1Xl1cSG
+	37SOP+aagqX/ifrue3lTJ4qcTrJS5y+PSCg0IJIyjdM6ootNVpEF8GZ0utPqJCyZZkJ9tIl+sEr
+	QF6PLr+XuQBibzBOfm76RfBESc3QnVGwHsyly8oEl+8l8217rIHo7PO4=
+X-Google-Smtp-Source: AGHT+IFStIZgHMGq388F7aa+FYX4ZUpuZlggvMhl6a4RPAOA3kcvP7JdTFUH7YX4i0AZBckg3Iw+o950NEyc18w78nrd96LbckfW
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHfMjLGPRmMo9HCQ--.17785S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxAr4UGr1rJF1UXw13Cr4UJwb_yoW5KFyDpa
-	n3Cry7KryrXrWDZwn8ZwsFgay09w1fW3yag3s5KrWrAFsxX3ZrXry8Ja12y345XrnYyFya
-	qw4q9r47ArW3ZrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPFb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUXw
-	A2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMc
-	Ij6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_
-	Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI
-	0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG
-	67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MI
-	IYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E
-	14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJV
-	W8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFSdy
-	UUUUU
-X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
+X-Received: by 2002:a05:6e02:1a24:b0:3a0:52f9:9170 with SMTP id
+ e9e14a558f8ab-3a26d6f9e12mr30454645ab.1.1727272525843; Wed, 25 Sep 2024
+ 06:55:25 -0700 (PDT)
+Date: Wed, 25 Sep 2024 06:55:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f4164d.050a0220.211276.0032.GAE@google.com>
+Subject: [syzbot] [kvm?] WARNING in srcu_check_nmi_safety (2)
+From: syzbot <syzbot+314c2cfd4071ad738810@syzkaller.appspotmail.com>
+To: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, pbonzini@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-There are 2 possible reasons for the event count being 0: not
-supported and not counted. Perf distinguishes between these two
-possibilities through `evsel->supported`, but in bperf, this value
-is always false. This is because bperf is prematurely break or
-continue in the evlist__for_each_cpu loop under __run_perf_stat(),
-skipping the `counter->supported` assignment, resulting in bperf
-incorrectly displaying <not supported> when the count is 0.
+Hello,
 
-The most direct way to fix it is to do `evsel->supported` assignment
-when opening an event in bperf. However, since bperf only opens
-events when loading the leader, the followers are not aware of
-whether the event is supported or not. Therefore, we store the
-`evsel->supported` value in a common location, which is the
-`perf_event_attr_map`, to achieve synchronization of event support
-across perf sessions.
+syzbot found the following issue on:
 
-Fixes: 7fac83aaf2ee ("perf stat: Introduce 'bperf' to share hardware PMCs with BPF")
-Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
+HEAD commit:    abf2050f51fd Merge tag 'media/v6.12-1' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=114cc99f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bc30a30374b0753
+dashboard link: https://syzkaller.appspot.com/bug?extid=314c2cfd4071ad738810
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-abf2050f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2179ebeade58/vmlinux-abf2050f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f05289b5cf7c/bzImage-abf2050f.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+314c2cfd4071ad738810@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+CPU 0 old state 2 new state 1
+WARNING: CPU: 0 PID: 73 at kernel/rcu/srcutree.c:708 srcu_check_nmi_safety+0xca/0x150 kernel/rcu/srcutree.c:708
+Modules linked in:
+CPU: 0 UID: 0 PID: 73 Comm: kswapd0 Not tainted 6.11.0-syzkaller-09959-gabf2050f51fd #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:srcu_check_nmi_safety+0xca/0x150 kernel/rcu/srcutree.c:708
+Code: 81 c3 c8 01 00 00 48 89 d8 48 c1 e8 03 42 0f b6 04 20 84 c0 75 77 8b 33 48 c7 c7 20 0c 0c 8c 89 ea 44 89 f9 e8 b7 8c db ff 90 <0f> 0b 90 90 eb 0c 42 0f b6 04 23 84 c0 75 3d 45 89 3e 48 83 c4 08
+RSP: 0018:ffffc90000e464e0 EFLAGS: 00010246
+RAX: 41404736cdfea900 RBX: ffffe8ffffc414c8 RCX: ffff88801efb0000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000002 R08: ffffffff8155aaa2 R09: 1ffff11003f8519a
+R10: dffffc0000000000 R11: ffffed1003f8519b R12: dffffc0000000000
+R13: 0000607fe0041300 R14: ffffe8ffffc41320 R15: 0000000000000001
+FS:  0000000000000000(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000564aa6d10940 CR3: 0000000011c68000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ srcu_read_lock include/linux/srcu.h:248 [inline]
+ __kvm_handle_hva_range virt/kvm/kvm_main.c:612 [inline]
+ kvm_handle_hva_range virt/kvm/kvm_main.c:684 [inline]
+ kvm_mmu_notifier_clear_flush_young+0xe6/0x820 virt/kvm/kvm_main.c:867
+ __mmu_notifier_clear_flush_young+0x11d/0x1d0 mm/mmu_notifier.c:379
+ mmu_notifier_clear_flush_young include/linux/mmu_notifier.h:410 [inline]
+ folio_referenced_one+0xb9d/0x2160 mm/rmap.c:895
+ rmap_walk_anon+0x4cd/0x8a0 mm/rmap.c:2638
+ rmap_walk mm/rmap.c:2716 [inline]
+ folio_referenced+0x394/0x7a0 mm/rmap.c:1008
+ folio_check_references mm/vmscan.c:863 [inline]
+ shrink_folio_list+0xe96/0x8cc0 mm/vmscan.c:1198
+ evict_folios+0x549b/0x7b50 mm/vmscan.c:4583
+ try_to_shrink_lruvec+0x9ab/0xbb0 mm/vmscan.c:4778
+ shrink_one+0x3b9/0x850 mm/vmscan.c:4816
+ shrink_many mm/vmscan.c:4879 [inline]
+ lru_gen_shrink_node mm/vmscan.c:4957 [inline]
+ shrink_node+0x3799/0x3de0 mm/vmscan.c:5937
+ kswapd_shrink_node mm/vmscan.c:6765 [inline]
+ balance_pgdat mm/vmscan.c:6957 [inline]
+ kswapd+0x1ca3/0x3700 mm/vmscan.c:7226
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
 ---
- tools/lib/perf/include/perf/bpf_perf.h |  1 +
- tools/perf/util/bpf_counter.c          | 18 ++++++++++--------
- 2 files changed, 11 insertions(+), 8 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/tools/lib/perf/include/perf/bpf_perf.h b/tools/lib/perf/include/perf/bpf_perf.h
-index e7cf6ba7b674..64c8d211726d 100644
---- a/tools/lib/perf/include/perf/bpf_perf.h
-+++ b/tools/lib/perf/include/perf/bpf_perf.h
-@@ -23,6 +23,7 @@
- struct perf_event_attr_map_entry {
- 	__u32 link_id;
- 	__u32 diff_map_id;
-+	__u8 supported;
- };
- 
- /* default attr_map name */
-diff --git a/tools/perf/util/bpf_counter.c b/tools/perf/util/bpf_counter.c
-index 3346129c20cf..c04b274c3c45 100644
---- a/tools/perf/util/bpf_counter.c
-+++ b/tools/perf/util/bpf_counter.c
-@@ -425,18 +425,19 @@ static int bperf_reload_leader_program(struct evsel *evsel, int attr_map_fd,
- 	diff_map_fd = bpf_map__fd(skel->maps.diff_readings);
- 	entry->link_id = bpf_link_get_id(link_fd);
- 	entry->diff_map_id = bpf_map_get_id(diff_map_fd);
--	err = bpf_map_update_elem(attr_map_fd, &evsel->core.attr, entry, BPF_ANY);
--	assert(err == 0);
--
--	evsel->bperf_leader_link_fd = bpf_link_get_fd_by_id(entry->link_id);
--	assert(evsel->bperf_leader_link_fd >= 0);
--
- 	/*
- 	 * save leader_skel for install_pe, which is called within
- 	 * following evsel__open_per_cpu call
- 	 */
- 	evsel->leader_skel = skel;
--	evsel__open_per_cpu(evsel, all_cpu_map, -1);
-+	if (!evsel__open_per_cpu(evsel, all_cpu_map, -1))
-+		entry->supported = true;
-+
-+	err = bpf_map_update_elem(attr_map_fd, &evsel->core.attr, entry, BPF_ANY);
-+	assert(err == 0);
-+
-+	evsel->bperf_leader_link_fd = bpf_link_get_fd_by_id(entry->link_id);
-+	assert(evsel->bperf_leader_link_fd >= 0);
- 
- out:
- 	bperf_leader_bpf__destroy(skel);
-@@ -446,7 +447,7 @@ static int bperf_reload_leader_program(struct evsel *evsel, int attr_map_fd,
- 
- static int bperf__load(struct evsel *evsel, struct target *target)
- {
--	struct perf_event_attr_map_entry entry = {0xffffffff, 0xffffffff};
-+	struct perf_event_attr_map_entry entry = {0xffffffff, 0xffffffff, false};
- 	int attr_map_fd, diff_map_fd = -1, err;
- 	enum bperf_filter_type filter_type;
- 	__u32 filter_entry_cnt, i;
-@@ -494,6 +495,7 @@ static int bperf__load(struct evsel *evsel, struct target *target)
- 		err = -1;
- 		goto out;
- 	}
-+	evsel->supported = entry.supported;
- 	/*
- 	 * The bpf_link holds reference to the leader program, and the
- 	 * leader program holds reference to the maps. Therefore, if
--- 
-2.34.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
