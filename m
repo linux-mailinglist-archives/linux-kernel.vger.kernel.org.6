@@ -1,176 +1,256 @@
-Return-Path: <linux-kernel+bounces-338270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-338260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3405E9855B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:41:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E04F98558B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 10:33:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A358B284390
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:41:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A711E1F248B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 08:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C44015B118;
-	Wed, 25 Sep 2024 08:41:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1731591F0;
+	Wed, 25 Sep 2024 08:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="oWlpPDJ1";
-	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="lXNmIS/b"
-Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8528C158D8D;
-	Wed, 25 Sep 2024 08:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R7FwaUrz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA44815666A
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 08:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727253678; cv=none; b=VCS3LtUkSJw1+V3XsZngiiEVetmVJubmbmY0WdulVjHs7Y5AL5RkXmwdYiR5gRgzZKhj83Ypt7Zl0WL/IDQml5H6fmcyrXUkNAJVPKcMMzxcrv+d7G1UBZl4U+kY9bDWkogZ9ZmWkUvI4RABMp6aifXDiIzv02/qibi0PvmsR+U=
+	t=1727253213; cv=none; b=YWzNe72MYTxaxA/nxH/8WU6RjVaSU9Jhw25gmzgtVl3oDM3Dm47+ABOarxR1oUqQ1AX0HAZjdr5rWXAFxgIWFcjm+5IPyBgbfugcTj7oZqJsYzt3qWnDcCJktShg0t3y0aqAZACSm4y5bAsUvi7WQu2jjiiPnFYu51FdmJCH1pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727253678; c=relaxed/simple;
-	bh=hG2GUbm3yiSgMz+SgpzUWv5SUgrpVENjU8/tkhb8kY8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dP1eBcw7afFhBrOeUXNmMYjUM3tyltdcyqokeIhCqjJlDW306ovbO42Cu9ewRcjeBt9arK1zNWkZ9wjvC7tcJ+zD/WhH5UvgVgqCwe23SLdlnDBcgKzdVXB9EqJZo8THEdj2+2UmVs0KOrtFBR0e9Fc27L6zhUxR/9TwXRyWEe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=oWlpPDJ1; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=lXNmIS/b; arc=none smtp.client-ip=220.130.44.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
-X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
-	s=richtek; t=1727253673;
-	bh=77wqm6qbVAW23ObIDiogsupfm9Sxgz3rpNFpYbVnXws=; l=2463;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=oWlpPDJ1PdAFFOvaDnZS3r2C3k6TPsDRdcpazlWbv5g29kH/tX+4RkYOn1TWj2I9+
-	 HPeBSfpOaPq7i2gUgq5dLNsPxXDTdhNf86dWR+2Skv6Y51Ghk4vYlevUpyuYP4ghro
-	 RqTq7f93NwHb9l8k13ZjcmArQqjozYFjidlzETcQjKnpVUB9aKpGyEh2JTyqFiAc2S
-	 jWH5QzpYfkWt6WGldw0zZ5KmeMuID6mfjogQ5y4YER1a/hsIcZ6e0iWjyGwURVvNYn
-	 CwrzaQX/9MjLLcr3npbo9ZoeV6IhNESdPtlw7JBkKiHwdEbsMaCvm7d0pYrczB1IDd
-	 RZW4+jOlfLuGw==
-Received: from 192.168.8.21
-	by mg.richtek.com with MailGates ESMTP Server V3.0(3190219:0:AUTH_RELAY)
-	(envelope-from <prvs=1995EE0AA0=cy_huang@richtek.com>); Wed, 25 Sep 2024 16:41:12 +0800 (CST)
-X-MailGates: (compute_score:DELIVER,40,3)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
-	s=richtek; t=1727253672;
-	bh=77wqm6qbVAW23ObIDiogsupfm9Sxgz3rpNFpYbVnXws=; l=2463;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=lXNmIS/b9Hm1rBn0F6XauWsIlWCbyCdSULK/An9tdWe8WWmwgQeHZAohP3hNZUs61
-	 JLKaxarZdIVBXPVtrYYlg/A+wJo46uWqiRX+jJ3XZYI2l2oX863nbZ3SCtAUjRVNFR
-	 6ZbvnB5RP3MIv8R2AdufoHRqqZY80VMVxfl+h8Un9JzCakMhn9NqabUPp/a2H8nIGe
-	 wYchmtDHffHEcGss0ivw0YhGVrtERKfOSx9T8k5ww9O1sFW2CJ1u59uvQybxtGW8Kl
-	 xaMQuEQVs2eqjmojmYShbI4tmcSxWzwX28DgEcilVAGz5vTuROdx0cxARtwYjh5ONe
-	 vCC0qYaVVOrZA==
-Received: from 192.168.10.47
-	by mg.richtek.com with MailGates ESMTPS Server V6.0(1322962:0:AUTH_RELAY)
-	(envelope-from <cy_huang@richtek.com>)
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Wed, 25 Sep 2024 16:33:17 +0800 (CST)
-Received: from ex4.rt.l (192.168.10.47) by ex4.rt.l (192.168.10.47) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 25 Sep
- 2024 16:33:16 +0800
-Received: from git-send.richtek.com (192.168.10.154) by ex4.rt.l
- (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.11 via Frontend
- Transport; Wed, 25 Sep 2024 16:33:16 +0800
-From: <cy_huang@richtek.com>
-To: 'Lucas Tsai ' <lucas_tsai@richtek.com>, Sebastian Reichel <sre@kernel.org>
-CC: ChiYuan Huang <cy_huang@richtek.com>, <linux-pm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/2] power: supply: rt9471: Use IC status regfield to report real charger status
-Date: Wed, 25 Sep 2024 16:32:59 +0800
-Message-ID: <67ba92bb4a9c51d9cafadab30b788a3a2c3048e1.1727252762.git.cy_huang@richtek.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <cover.1727252762.git.cy_huang@richtek.com>
-References: <cover.1727252762.git.cy_huang@richtek.com>
+	s=arc-20240116; t=1727253213; c=relaxed/simple;
+	bh=jFfGRsQmotDYwKRXWJkZoomWJG3x00ioH21oH7oqs84=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oHO4AcoXY/McqwraBeRB18xUYhpSniOFfQxbtMq40QYy5YUBu28IwYRlJiaxJ48IL8LC33FJm0TnHsNkVUfsde22slcBTeaqh971YCkFlXGRYtTDYplNYvTUiy2GUkezP+yEm+GKOTayoBDSW6Fx9sWevc9YyjsK9foPzWsGoe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R7FwaUrz; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727253210;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eZA8VDPtGlvwIthUScFgsavzcHEFuzxlED4I0C6Ur+E=;
+	b=R7FwaUrzhQ2x8lwpV9etbXYi68y3i8J8aYoZvgulKl20wYnjxeVuS4wyr1zrlSBRY5eV2z
+	hefN2I+1iCr/wNSLffgmQAOqatuc2JYICknwx4CS8yu6grRQkciC0xxTphNvZGZvKxInkQ
+	9spacfzrm90LhNSG3k0UywUZFzreswo=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-556-9Zf_TGS6NzKtVMx4fOf5Dg-1; Wed, 25 Sep 2024 04:33:28 -0400
+X-MC-Unique: 9Zf_TGS6NzKtVMx4fOf5Dg-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3787ea79dceso2474346f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 01:33:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727253207; x=1727858007;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eZA8VDPtGlvwIthUScFgsavzcHEFuzxlED4I0C6Ur+E=;
+        b=hIdYg0lH7uCWD7PnioNUeDCf3Hp1DxzxzO1f7sXYuMLE7wTBgUqg0Xpb6BfogxYoRm
+         +ZGXuvpJCB/JFedTwY99XKfZcRn2WRiJUjnTjOdjylQzld7S5QX/qbP9A3IbQFxjuDGg
+         vY6LTWs8Iy0U0sO4k85Yhb47hxuljlRuQQNJXwMxAFElx32jc98EY9rqxhIljepngSWW
+         oHkDHbhzpTCtM/KqGHMzj68/l9fASZIYDtBkewR2snK9dc4O+HUSsRwp1WAHCT/AxEf7
+         S6D6UWLVeJFmTr20EY9yKTqihuVx6R90UXnDLoNt8K7q19+qaSWc/XzFZd0qfVCvNB13
+         oSpA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1asjFfoSq9v7vf8E4dZ7WNLQmaVhlNDbP9JIg7oilP9U7HoUhssGXN+GssBuDQC+HtZKhWbebfiKju38=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyUozC1DlODFrup741vOgtBjHdf2SewUVnKeq1bgPcABoJVX9W
+	MM8xAvi7otWa1vvKK0Bh5aDPCFFGK1KGxoGu2k5A0f5ggebPmFUGgQjogCG+gSRpxYkOf04nQUf
+	v+nAsSMOL0ewu7IGx8x18ATHC8YnaN7A4xulCQJ5G5PBedukH5NK5bZEX7o+znA==
+X-Received: by 2002:a5d:452d:0:b0:374:c0c9:d171 with SMTP id ffacd0b85a97d-37cc245b7d5mr1365138f8f.1.1727253207422;
+        Wed, 25 Sep 2024 01:33:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFymhK0jUZ+fPlNh2eTsqndaCWYE8cdqkpijneOQ2sfuibiyEcvSp9O/qZ6iD39XtkpfqBumw==
+X-Received: by 2002:a5d:452d:0:b0:374:c0c9:d171 with SMTP id ffacd0b85a97d-37cc245b7d5mr1365123f8f.1.1727253207018;
+        Wed, 25 Sep 2024 01:33:27 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cbc2cece5sm3328624f8f.54.2024.09.25.01.33.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Sep 2024 01:33:26 -0700 (PDT)
+Message-ID: <8a1afe12-4d59-4cbd-aede-fce22f8fb979@redhat.com>
+Date: Wed, 25 Sep 2024 10:33:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/amdgpu: add dce6 drm_panic support
+To: Alex Deucher <alexdeucher@gmail.com>
+Cc: Lu Yao <yaolu@kylinos.cn>, ckoenig.leichtzumerken@gmail.com,
+ daniel@ffwll.ch, Xinhui.Pan@amd.com, airlied@gmail.com,
+ alexander.deucher@amd.com, amd-gfx@lists.freedesktop.org,
+ christian.koenig@amd.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, srinivasan.shanmugam@amd.com,
+ sunil.khatri@amd.com
+References: <20240802071752.116541-1-yaolu@kylinos.cn>
+ <20240812060914.102614-1-yaolu@kylinos.cn>
+ <CADnq5_OcUgV9dgAynDCQnm9NS+QCvhBiHvxWnhWqi2qqhh=zXg@mail.gmail.com>
+ <16352ae0-7e61-440d-8c04-7ec912f9bf9a@redhat.com>
+ <CADnq5_O7njHcvu0ejvVPPKF7szsbEQ8oFfHr9GTyD+zAe2EJ8g@mail.gmail.com>
+Content-Language: en-US, fr
+From: Jocelyn Falempe <jfalempe@redhat.com>
+In-Reply-To: <CADnq5_O7njHcvu0ejvVPPKF7szsbEQ8oFfHr9GTyD+zAe2EJ8g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-From: ChiYuan Huang <cy_huang@richtek.com>
+On 24/09/2024 16:02, Alex Deucher wrote:
+> On Fri, Sep 20, 2024 at 11:36 AM Jocelyn Falempe <jfalempe@redhat.com> wrote:
+>>
+>> On 17/09/2024 15:21, Alex Deucher wrote:
+>>> On Mon, Aug 12, 2024 at 2:10 AM Lu Yao <yaolu@kylinos.cn> wrote:
+>>>>
+>>>> Add support for the drm_panic module, which displays a pretty user
+>>>> friendly message on the screen when a Linux kernel panic occurs.
+>>>>
+>>>> Signed-off-by: Lu Yao <yaolu@kylinos.cn>
+>>>
+>>> Patch looks good to me.  Any chance you want to convert the other
+>>> non-DC dce files (dce_v8_0.c, dce_v10_0.c, dce_v11_0.c) while you are
+>>> at it?
+>>
+>> I've made a similar patch in amdgpu_dm_plane.c, and it works on a Radeon
+>> pro w6400.
+>> But it only works when I'm in a VT terminal (so the framebuffer is
+>> linear and CPU accessible).
+>> When under Gnome/Wayland, the flag AMDGPU_GEM_CREATE_NO_CPU_ACCESS is
+>> set, so that means I can't vmap it ?
+> 
+> It just means that the application does not need CPU access.  Whether
+> or not the CPU can access the buffer or not depends on the size of the
+> PCI BAR.  E.g., if the driver or bios has resized the PCI BAR, then
+> the CPU can access the entire BAR, but if not you are generally
+> limited to the first 256M of framebuffer.
 
-Use IC status regfield to rewrite the 'get_staus' function. The original
-one cannot cover some special scenario like as charger OTP or JEITA case.
+I tried to use ttm_bo_kmap() anyway, it returns a valid virtual address, 
+but writing to it has no effect on the display.
+> 
+>>
+>> Also I don't know if there is a similar way to disable
+>> tiling/compression on this hardware.
+> 
+> UNP_GRPH_CONTROL on chips with DCE display hardware and
+> DCSURF_ADDR_CONFIG and DCSURF_TILING_CONFIG on DCN display hardware.
 
-Fixes: 4a1a5f6781d8 ("power: supply: rt9471: Add Richtek RT9471 charger driver")
-Reported-by: Lucas Tsai <lucas_tsai@richtek.com>
-Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
----
- drivers/power/supply/rt9471.c | 48 ++++++++++++++++++++++-------------
- 1 file changed, 31 insertions(+), 17 deletions(-)
+Thanks a lot, I will see if I can make this work.
+For DCN, it depends on the HUBP version, and I need a pipe_ctx to access 
+it. I didn't find how to get a pipe_ctx from the current primary plane.
 
-diff --git a/drivers/power/supply/rt9471.c b/drivers/power/supply/rt9471.c
-index 730b252b4900..67b86ac91a21 100644
---- a/drivers/power/supply/rt9471.c
-+++ b/drivers/power/supply/rt9471.c
-@@ -139,6 +139,19 @@ enum {
- 	RT9471_PORTSTAT_DCP,
- };
- 
-+enum {
-+	RT9471_ICSTAT_SLEEP = 0,
-+	RT9471_ICSTAT_VBUSRDY,
-+	RT9471_ICSTAT_TRICKLECHG,
-+	RT9471_ICSTAT_PRECHG,
-+	RT9471_ICSTAT_FASTCHG,
-+	RT9471_ICSTAT_IEOC,
-+	RT9471_ICSTAT_BGCHG,
-+	RT9471_ICSTAT_CHGDONE,
-+	RT9471_ICSTAT_CHGFAULT,
-+	RT9471_ICSTAT_OTG = 15,
-+};
-+
- struct rt9471_chip {
- 	struct device *dev;
- 	struct regmap *regmap;
-@@ -255,31 +268,32 @@ static int rt9471_get_ieoc(struct rt9471_chip *chip, int *microamp)
- 
- static int rt9471_get_status(struct rt9471_chip *chip, int *status)
- {
--	unsigned int chg_ready, chg_done, fault_stat;
-+	unsigned int ic_stat;
- 	int ret;
- 
--	ret = regmap_field_read(chip->rm_fields[F_ST_CHG_RDY], &chg_ready);
--	if (ret)
--		return ret;
--
--	ret = regmap_field_read(chip->rm_fields[F_ST_CHG_DONE], &chg_done);
-+	ret = regmap_field_read(chip->rm_fields[F_IC_STAT], &ic_stat);
- 	if (ret)
- 		return ret;
- 
--	ret = regmap_read(chip->regmap, RT9471_REG_STAT1, &fault_stat);
--	if (ret)
--		return ret;
--
--	fault_stat &= RT9471_CHGFAULT_MASK;
--
--	if (chg_ready && chg_done)
--		*status = POWER_SUPPLY_STATUS_FULL;
--	else if (chg_ready && fault_stat)
-+	switch (ic_stat) {
-+	case RT9471_ICSTAT_VBUSRDY:
-+	case RT9471_ICSTAT_CHGFAULT:
- 		*status = POWER_SUPPLY_STATUS_NOT_CHARGING;
--	else if (chg_ready && !fault_stat)
-+		break;
-+	case RT9471_ICSTAT_TRICKLECHG ... RT9471_ICSTAT_BGCHG:
- 		*status = POWER_SUPPLY_STATUS_CHARGING;
--	else
-+		break;
-+	case RT9471_ICSTAT_CHGDONE:
-+		*status = POWER_SUPPLY_STATUS_FULL;
-+		break;
-+	case RT9471_ICSTAT_SLEEP:
-+	case RT9471_ICSTAT_OTG:
- 		*status = POWER_SUPPLY_STATUS_DISCHARGING;
-+		break;
-+	default:
-+		*status = POWER_SUPPLY_STATUS_UNKNOWN;
-+		break;
-+	}
- 
- 	return 0;
- }
+Best regards,
+
 -- 
-2.34.1
+
+Jocelyn
+
+> 
+> Alex
+> 
+>>
+>> Best regards,
+>>
+>> --
+>>
+>> Jocelyn
+>>
+>>
+>>>
+>>> Alex
+>>>
+>>>
+>>>> ---
+>>>> Changes in v2:
+>>>> 1. Drop include "drm_internal.h"
+>>>> 2. Add disabling DC tiling ops.
+>>>> Per suggestion from previous thread:
+>>>> https://patchwork.freedesktop.org/patch/606879/?series=136832&rev=1
+>>>> ---
+>>>>    drivers/gpu/drm/amd/amdgpu/dce_v6_0.c | 48 +++++++++++++++++++++++++++
+>>>>    1 file changed, 48 insertions(+)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+>>>> index 05c0df97f01d..ba1b7a36caa3 100644
+>>>> --- a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+>>>> +++ b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+>>>> @@ -28,6 +28,7 @@
+>>>>    #include <drm/drm_modeset_helper.h>
+>>>>    #include <drm/drm_modeset_helper_vtables.h>
+>>>>    #include <drm/drm_vblank.h>
+>>>> +#include <drm/drm_panic.h>
+>>>>
+>>>>    #include "amdgpu.h"
+>>>>    #include "amdgpu_pm.h"
+>>>> @@ -2600,6 +2601,52 @@ static const struct drm_crtc_helper_funcs dce_v6_0_crtc_helper_funcs = {
+>>>>           .get_scanout_position = amdgpu_crtc_get_scanout_position,
+>>>>    };
+>>>>
+>>>> +static int dce_v6_0_drm_primary_plane_get_scanout_buffer(struct drm_plane *plane,
+>>>> +                                                        struct drm_scanout_buffer *sb)
+>>>> +{
+>>>> +       struct drm_framebuffer *fb;
+>>>> +       struct amdgpu_bo *abo;
+>>>> +       struct amdgpu_crtc *amdgpu_crtc;
+>>>> +       struct amdgpu_device *adev;
+>>>> +       uint32_t fb_format;
+>>>> +
+>>>> +       if (!plane->fb)
+>>>> +               return -EINVAL;
+>>>> +
+>>>> +       fb = plane->fb;
+>>>> +
+>>>> +       abo = gem_to_amdgpu_bo(fb->obj[0]);
+>>>> +       amdgpu_crtc = to_amdgpu_crtc(plane->crtc);
+>>>> +       adev = drm_to_adev(fb->dev);
+>>>> +
+>>>> +       if (!abo->kmap.virtual &&
+>>>> +           ttm_bo_kmap(&abo->tbo, 0, PFN_UP(abo->tbo.base.size), &abo->kmap)) {
+>>>> +               DRM_WARN("amdgpu bo map failed, panic won't be displayed\n");
+>>>> +               return -ENOMEM;
+>>>> +       }
+>>>> +
+>>>> +       if (abo->kmap.bo_kmap_type & TTM_BO_MAP_IOMEM_MASK)
+>>>> +               iosys_map_set_vaddr_iomem(&sb->map[0], abo->kmap.virtual);
+>>>> +       else
+>>>> +               iosys_map_set_vaddr(&sb->map[0], abo->kmap.virtual);
+>>>> +
+>>>> +       sb->width = fb->width;
+>>>> +       sb->height = fb->height;
+>>>> +       sb->format = fb->format;
+>>>> +       sb->pitch[0] = fb->pitches[0];
+>>>> +
+>>>> +       /* Disable DC tiling */
+>>>> +       fb_format = RREG32(mmGRPH_CONTROL + amdgpu_crtc->crtc_offset);
+>>>> +       fb_format &= ~GRPH_ARRAY_MODE(0x7);
+>>>> +       WREG32(mmGRPH_CONTROL + amdgpu_crtc->crtc_offset, fb_format);
+>>>> +
+>>>> +       return 0;
+>>>> +}
+>>>> +
+>>>> +static const struct drm_plane_helper_funcs dce_v6_0_drm_primary_plane_helper_funcs = {
+>>>> +       .get_scanout_buffer = dce_v6_0_drm_primary_plane_get_scanout_buffer
+>>>> +};
+>>>> +
+>>>>    static int dce_v6_0_crtc_init(struct amdgpu_device *adev, int index)
+>>>>    {
+>>>>           struct amdgpu_crtc *amdgpu_crtc;
+>>>> @@ -2627,6 +2674,7 @@ static int dce_v6_0_crtc_init(struct amdgpu_device *adev, int index)
+>>>>           amdgpu_crtc->encoder = NULL;
+>>>>           amdgpu_crtc->connector = NULL;
+>>>>           drm_crtc_helper_add(&amdgpu_crtc->base, &dce_v6_0_crtc_helper_funcs);
+>>>> +       drm_plane_helper_add(amdgpu_crtc->base.primary, &dce_v6_0_drm_primary_plane_helper_funcs);
+>>>>
+>>>>           return 0;
+>>>>    }
+>>>> --
+>>>> 2.25.1
+>>>>
+>>>
+>>
+> 
 
 
