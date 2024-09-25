@@ -1,89 +1,79 @@
-Return-Path: <linux-kernel+bounces-339701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-339702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F03F5986943
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 00:41:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A341986948
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2024 00:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C81A1C22746
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 22:41:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48B0E1C21960
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2024 22:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CCAA15A858;
-	Wed, 25 Sep 2024 22:41:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4078156F54;
+	Wed, 25 Sep 2024 22:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lXi+mWOb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="C89w00GP"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB1814A4F7;
-	Wed, 25 Sep 2024 22:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E4F3F9D5
+	for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2024 22:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727304088; cv=none; b=kCZG7dP+g2gepLrlUvHzawSzcYdQb6zY5L5lD1zWF848YaLpGE+tc2LjcHQ389W7nzFbuaBpPDjl78f/VmjnL52zdTrz3uwVCzQXs8asXUNgA8sovxERt3nhizrwtZNgOCmIYcBCL1nGw3HfM5++8FPIfGu1uoznaWTEGXzRL+8=
+	t=1727304456; cv=none; b=NC7xZemMXvQMmKCEepjuN0nqfKzNglxkaGXGVaHv/31FjdhNSO50F/bJbW9R91AD9Yh9FjEswacRJ07rWNFBq/TJEEWBHTc8AZM0hmnpH6lWdNazhornsAXBtrjD+JwciYbDrCwxyYZY92P/3/X3RGINuSXPSEx0jMhs0KyXGdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727304088; c=relaxed/simple;
-	bh=f8rgSsrdqhPl8sTal/zHbbynm32osaID12MIGLYJ7hU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fDp7OQVTBUIl6oNtFJroQjXQslOlOQLyswrmRNsAw+7Y3s5q7C67fQVOvZ9bghCEqz/dLKnnsHzNEc9IByGcLU1olOtG7RUcaZuhRT9Pwd8FYYdJX0QIsU8Tp/39ZlbSt6/rPJ+2WGHRRC0uKE8Q+VGRKTs3TwF8dCQ12ws6MyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lXi+mWOb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C1A7C4CEC3;
-	Wed, 25 Sep 2024 22:41:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727304088;
-	bh=f8rgSsrdqhPl8sTal/zHbbynm32osaID12MIGLYJ7hU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lXi+mWObndtA/pVacgk+1v6m8erLJbOBtJxg6xI4e17vlzWC2KK+gwkoMZYeGzn7H
-	 kytY5h7iWxVdOpwCMbbqBA2iUKrg+DIux11UpLD8InbPVQ6Mz7Fns+nuhEHvhpU0G1
-	 bwrJaGiD7pmquRlUF9Cdv9JuQZVAsPnJPc/dade4yslLUCLi5QAwMOMxJnTfRYU3Wi
-	 vcBM7mJ/G+/MQt6Rdop190LTnm/ZBHo9kJL74OqLMEk1qSMCguoeN0JKHjQaLsqbid
-	 MkhAahCbW8P9xaZDV961ZRsNELKH8RoYXj9ZvEeulO98jluMHG33P2VxxCShcy85fF
-	 dJkAl0vl6lk+Q==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Masum Reza <masumrezarock100@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Ze Gao <zegao2021@gmail.com>,
-	Yang Jihong <yangjihong1@huawei.com>,
-	Yunseong Kim <yskelg@gmail.com>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf evsel: display dmesg command of showing a hardcoded path
-Date: Wed, 25 Sep 2024 15:41:25 -0700
-Message-ID: <172730392642.3246951.14949475927195901266.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.46.0.792.g87dc391469-goog
-In-Reply-To: <20240922112619.149429-1-masumrezarock100@gmail.com>
-References: <20240922112619.149429-1-masumrezarock100@gmail.com>
+	s=arc-20240116; t=1727304456; c=relaxed/simple;
+	bh=p+9rbjsq50i5itRuXcqvLYoWEZmflkI55q9w/nQRU3Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PAUA2P7XiM0Kzj+XB5hra0viYQAj/W0oDH9eFmvLx4akQMf5Fyg63gK/HKsU+S3oiAR9voQJEour1ZHbpMED/C0Kd6Z2m9eTZfvOvaVGmq4yHo+WQm65Kd3+eKlBKRi55GFTo6ajH1EnmIJZ59xvZ5DaDKHbb0cQ4jxraRT4zSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=C89w00GP; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727304451;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/B1kxCt19FnSzGhJtqVM2Hk/XjnG0/kbcpwDshTcxlg=;
+	b=C89w00GP0fkkJIUQJIETvnm5w9AeH36DChrxj8APCp3D42Qg7tv6rlx9+FeeXuaveIIVnA
+	2fvmx28RoNDoJIzg305uVgLn9Zum/CjAr0tdcm0hYoG/5K8vRNaaQ47WGNwcRRtOOOS/my
+	v2Wpl7w/Ks1vbsiL294UPYuE2d53E8E=
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Omar Sandoval <osandov@osandov.com>,
+	Chris Mason <clm@fb.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>
+Subject: [PATCH v2 0/2] mm: optimize shadow entries removal
+Date: Wed, 25 Sep 2024 15:47:14 -0700
+Message-ID: <20240925224716.2904498-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Sun, 22 Sep 2024 16:56:16 +0530, Masum Reza wrote:
+Some of our production workloads which processes a large amount of data
+spends considerable amount of CPUs on truncation and invalidation of
+large sized files (100s of GiBs of size). Tracing the operations showed
+that most of the time is in shadow entries removal. This patch series
+optimizes the truncation and invalidation operations.
 
-> In non-FHS compliant distros like NixOS, nothing resides in `/bin`
-> and `/usr/bin`. Instead dynamically symlinked into
-> `/run/current-system/sw/bin/`, the executable resides in `/nix/store`.
-> 
-> With this patch,`/bin` prefix from the dmesg command in the error
-> message is stripped.
-> 
-> [...]
+Shakeel Butt (2):
+  mm: optimize truncation of shadow entries
+  mm: optimize invalidation of shadow entries
 
-Applied to perf-tools-next, thanks!
+ mm/truncate.c | 99 +++++++++++++++++++++++----------------------------
+ 1 file changed, 44 insertions(+), 55 deletions(-)
 
-Best regards,
-Namhyung
+-- 
+2.43.5
+
 
